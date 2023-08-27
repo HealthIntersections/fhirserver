@@ -94,7 +94,7 @@ type
 
   TSemaphore = class (TEventObject)
   public
-    constructor create(attr: PSecurityAttributes; AInitialCount, AMaximumCount: Integer; const Name: string);
+    constructor Create(attr: PSecurityAttributes; AInitialCount, AMaximumCount: Integer; const Name: string);
     procedure Release; override;
   end;
 
@@ -678,7 +678,7 @@ end;
 //begin
 //  inflateEnd(FZStream);
 //  if FOwnsStream then
-//    FStream.Free;
+//    FStream.free;
 //  inherited Destroy;
 //end;
 //
@@ -800,7 +800,7 @@ var
   ts: TStringList;
   SearchRec: TSearchRec;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FindFirst(fsl_utilities.FilePath([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
@@ -822,7 +822,7 @@ var
   ts: TStringList;
   SearchRec: TSearchRec;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FindFirst(fsl_utilities.FilePath([Path, Mask]), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin
@@ -844,7 +844,7 @@ var
   ts: TStringList;
   SearchRec: TSearchRec;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FindFirst(fsl_utilities.FilePath([Path, '*']), faAnyFile, SearchRec) = 0 then // DO NOT LOCALIZE
     begin

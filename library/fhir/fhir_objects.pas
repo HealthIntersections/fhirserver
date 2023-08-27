@@ -154,8 +154,8 @@ Type
 
   EFHIRException = class (EFslException)
   public
-    constructor CreateLang(code : String; const lang : THTTPLanguages); overload;
-    constructor CreateLang(code : String; const lang : THTTPLanguages; const Args: array of const); overload;
+    constructor CreateLang(code : String; langList : THTTPLanguageList); overload;
+    constructor CreateLang(code : String; langList : THTTPLanguageList; const Args: array of const); overload;
   end;
   EFHIRTodo = Class(EFHIRException)
   public
@@ -178,8 +178,8 @@ Type
     FStatus : word;
     FCode : TFhirIssueType;
   Public
-    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage : String; const lang : THTTPLanguages); Overload; Virtual;
-    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage : String; const lang : THTTPLanguages; const Args: array of const); Overload; Virtual;
+    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage : String; langList : THTTPLanguageList); Overload; Virtual;
+    constructor Create(Const sContext : String; aStatus : word; code : TFhirIssueType; sMessage : String; langList : THTTPLanguageList; const Args: array of const); Overload; Virtual;
 
     Property Status : word read FStatus write FStatus;
     Property Code : TFhirIssueType read FCode write FCode;
@@ -264,7 +264,7 @@ type
 
     Function Link : TFHIRProperty; overload;
 
-    class function create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty; Overload;
+    class function Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty; Overload;
 
     {$IFNDEF FPC}
     class function create<T : TFslObject>(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<T>) : TFHIRProperty; Overload;
@@ -384,7 +384,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor create(prop : TFHIRProperty; value : TFHIRObject);
+    constructor Create(prop : TFHIRProperty; value : TFHIRObject);
     destructor Destroy; override;
 
     property prop : TFHIRProperty read FProp;
@@ -439,7 +439,8 @@ type
 
     function hasExtension(url : String) : boolean; virtual;
     function hasExtensions : boolean; virtual; abstract;
-    function getExtensionString(url : String) : String; virtual;
+    function getExtensionString(url : String) : String; virtual; 
+    function getExtensionValue(url : String) : TFHIRObject; virtual;
     function extensionCount(url : String) : integer; virtual;
     function getExtensionsV : TFslList<TFHIRObject>; overload; virtual;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; overload; virtual;
@@ -608,8 +609,10 @@ type
   { TFHIRWorkerContextV }
 
   TFHIRWorkerContextV = class (TFslObject)
+  private
+    procedure SetLangList(AValue: THTTPLanguageList);
   protected
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FPackages : TStringList;
     FLock : TFslLock;
 
@@ -622,7 +625,7 @@ type
 
     property Packages : TStringList read FPackages;
 
-    property lang : THTTPLanguages read FLang write FLang;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
     procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
     Property version : TFHIRVersion read GetVersion;
     function versionString : String;
@@ -857,8 +860,8 @@ function isEmptyProp(v : TFHIRObjectList) : boolean; overload;
 function objectsEqual(o1, o2 : TFHIRObject) : boolean; // true if all properties are equal, recursively
 function objectsEquivalent(o1, o2 : TFHIRObject) : boolean; // true if all properties that exist on both objects are equivalent, recursively
 
-function GetFhirMessage(id : String; const lang : THTTPLanguages) : String; overload;
-function GetFhirMessage(id : String; const lang : THTTPLanguages; def : String) : String; overload;
+function GetFhirMessage(id : String; langList : THTTPLanguageList) : String; overload;
+function GetFhirMessage(id : String; langList : THTTPLanguageList; def : String) : String; overload;
 
 procedure LoadMessages;
 
@@ -896,9 +899,9 @@ Implementation
 
 { TFHIRNamedValue }
 
-constructor TFHIRNamedValue.create;
+constructor TFHIRNamedValue.Create;
 begin
-  inherited create;
+  inherited Create;
 end;
 
 constructor TFHIRNamedValue.Create(name, type_: String; value: TFhirObject; list : TFHIRObjectList);
@@ -912,8 +915,8 @@ end;
 
 destructor TFHIRNamedValue.Destroy;
 begin
-  FValue.Free;
-  FList.Free;
+  FValue.free;
+  FList.free;
   inherited Destroy;
 end;
 
@@ -938,9 +941,9 @@ begin
   result := not FParseFinish.isNull or not FComposeFinish.isNull;
 end;
 
-constructor TFHIRObjectLocationData.create;
+constructor TFHIRObjectLocationData.Create;
 begin
-  inherited create;
+  inherited Create;
   FComposeStart := TSourceLocation.CreateNull;
   FComposeFinish := TSourceLocation.CreateNull;
   FParseStart := TSourceLocation.CreateNull;
@@ -959,7 +962,7 @@ end;
 
 { TFHIRLocatedNode }
 
-constructor TFHIRLocatedNode.create(prop: TFHIRProperty; value: TFHIRObject);
+constructor TFHIRLocatedNode.Create(prop: TFHIRProperty; value: TFHIRObject);
 begin
   inherited Create;
   FProp := prop;
@@ -968,8 +971,8 @@ end;
 
 destructor TFHIRLocatedNode.Destroy;
 begin
-  FProp.Free;
-  FValue.Free;
+  FProp.free;
+  FValue.free;
   inherited Destroy;
 end;
 
@@ -990,11 +993,11 @@ end;
 
 destructor TFHIRObject.Destroy;
 begin
-  FLocationData.Free;
-  FCommentsStart.Free;
-  FCommentsEnd.Free;
-  FTags.Free;
-  FTag.Free;
+  FLocationData.free;
+  FCommentsStart.free;
+  FCommentsEnd.free;
+  FTags.free;
+  FTag.free;
   inherited;
 end;
 
@@ -1033,22 +1036,22 @@ end;
 
 procedure TFHIRObject.addExtensionV(url: String; value: TFHIRObject);
 begin
-  raise EFHIRException.create('Extensions are not supported on this object');
+  raise EFHIRException.Create('Extensions are not supported on this object');
 end;
 
 procedure TFHIRObject.addExtensionV(extension: TFHIRObject);
 begin
-  raise EFHIRException.create('Extensions are not supported on this object');
+  raise EFHIRException.Create('Extensions are not supported on this object');
 end;
 
 procedure TFHIRObject.deleteExtensionV(extension: TFHIRObject);
 begin
-  raise EFHIRException.create('Extensions are not supported on this object');
+  raise EFHIRException.Create('Extensions are not supported on this object');
 end;
 
 procedure TFHIRObject.deleteExtensionByUrl(url: String);
 begin
-  raise EFHIRException.create('Extensions are not supported on this object');
+  raise EFHIRException.Create('Extensions are not supported on this object');
 end;
 
 procedure TFHIRObject.stripExtensions(exemptUrls: TStringArray);
@@ -1057,7 +1060,7 @@ var
   p : TFHIRProperty;
   o : TFHIRObject;
 begin
-  list := TFHIRPropertyList.create;
+  list := TFHIRPropertyList.Create;
   try
     ListProperties(list, true, false);
     for p in list do
@@ -1099,7 +1102,7 @@ end;
 
 function TFHIRObject.createIterator(bInheritedProperties, bPrimitiveValues: Boolean): TFHIRPropertyIterator;
 begin
-  Result := TFHIRPropertyIterator.create(self, bInheritedProperties, bPrimitiveValues);
+  Result := TFHIRPropertyIterator.Create(self, bInheritedProperties, bPrimitiveValues);
 end;
 
 function TFHIRObject.createPropertyList(bPrimitiveValues : boolean): TFHIRPropertyList;
@@ -1109,13 +1112,13 @@ begin
     ListProperties(result, true, bPrimitiveValues);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TFHIRObject.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('The property "'+propName+'" on "'+fhirType+'" is unknown"');
+  raise EFHIRException.Create('The property "'+propName+'" on "'+fhirType+'" is unknown"');
 end;
 
 procedure TFHIRObject.GetChildrenByName(name: string; list: TFHIRSelectionList);
@@ -1126,7 +1129,7 @@ end;
 function TFHIRObject.getTags(name: String): String;
 begin
   if FTags = nil then
-    FTags := TFslStringDictionary.create;
+    FTags := TFslStringDictionary.Create;
   if FTags.ContainsKey(name) then
     result := FTags[name]
   else
@@ -1136,7 +1139,7 @@ end;
 function TFHIRObject.GetLocationData : TFHIRObjectLocationData;
 begin
   if FLocationData = nil then
-    FLocationData := TFHIRObjectLocationData.create;
+    FLocationData := TFHIRObjectLocationData.Create;
   result := FLocationData;
 end;
 
@@ -1155,7 +1158,7 @@ begin
   result := GetLocationData.inSpan(loc);
   if result then
   begin
-    path.add(TFHIRLocatedNode.create(propFrom.Link, self.link));
+    path.add(TFHIRLocatedNode.Create(propFrom.Link, self.link));
 
     properties := createPropertyList(true);
     try
@@ -1172,14 +1175,14 @@ begin
         end;
       end;
     finally
-      properties.Free;
+      properties.free;
     end;
   end;
 end;
 
 function TFHIRObject.findLocation(loc: TSourceLocation): TFslList<TFHIRLocatedNode>;
 begin
-  result := TFslList<TFHIRLocatedNode>.create;
+  result := TFslList<TFHIRLocatedNode>.Create;
   try
     findLocation(loc, nil, result);
     result.Link;
@@ -1218,7 +1221,7 @@ end;
 
 function TFHIRObject.getTypesForProperty(propName: string): String;
 begin
-  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (getting types for property)"');
+  raise EFHIRException.Create('The property "'+propName+'" is unknown or not a list property (getting types for property)"');
 end;
 
 function TFHIRObject.GetFhirObjectVersion: TFHIRVersion;
@@ -1248,7 +1251,7 @@ var
   p : TFHIRProperty;
   v : TFHIRObject;
 begin
-  result := TFslList<TFHIRNamedValue>.create;
+  result := TFslList<TFHIRNamedValue>.Create;
   try
     list := createPropertyList(true);
     try
@@ -1257,9 +1260,9 @@ begin
         if p.hasValue then
           for v in p.Values do
             if p.IsList then
-              result.add(TFHIRNamedValue.create(p.Name, p.Type_, v.link, p.Values.link))
+              result.add(TFHIRNamedValue.Create(p.Name, p.Type_, v.link, p.Values.link))
             else
-              result.add(TFHIRNamedValue.create(p.Name, p.Type_, v.link, nil));
+              result.add(TFHIRNamedValue.Create(p.Name, p.Type_, v.link, nil));
       end;
     finally
       list.free;
@@ -1278,14 +1281,14 @@ end;
 
 procedure TFHIRObject.SetTag(const Value: TFslObject);
 begin
-  FTag.Free;
+  FTag.free;
   FTag := Value;
 end;
 
 procedure TFHIRObject.SetTags(name: String; const Value: String);
 begin
   if FTags = nil then
-    FTags := TFslStringDictionary.create;
+    FTags := TFslStringDictionary.Create;
   FTags.AddOrSetValue(name, value);
 end;
 
@@ -1296,7 +1299,7 @@ end;
 
 procedure TFHIRObject.deleteProperty(propName: string; propValue: TFHIRObject);
 begin
-  raise EFHIRException.create('The property "'+propName+'" is unknown deleting the property"');
+  raise EFHIRException.Create('The property "'+propName+'" is unknown deleting the property"');
 end;
 
 procedure TFHIRObject.deletePropertyValue(name : String; list: TFHIRObjectList; value: TFHIRObject);
@@ -1305,7 +1308,7 @@ var
 begin
   i := list.IndexByReference(value);
   if (i = -1) then
-    raise EFHIRException.create('Unable to find object in '+name+' to remove it');
+    raise EFHIRException.Create('Unable to find object in '+name+' to remove it');
   list.DeleteByIndex(i);
 end;
 
@@ -1328,12 +1331,12 @@ end;
 
 function TFHIRObject.getExtensionsV: TFslList<TFHIRObject>;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
 end;
 
 function TFHIRObject.getExtensionsV(url: String): TFslList<TFHIRObject>;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
 end;
 
 function TFHIRObject.getExtensionV(url : String) : TFHIRObject;
@@ -1343,7 +1346,7 @@ begin
   list := getExtensionsV(url);
   try
     if list.count > 1 then
-      raise EFHIRException.create('Multiple matches for extension "'+url+'"')
+      raise EFHIRException.Create('Multiple matches for extension "'+url+'"')
     else if list.count = 1 then
       result := list[0].link
     else
@@ -1365,10 +1368,15 @@ begin
   result := '';
 end;
 
+function TFHIRObject.getExtensionValue(url: String): TFHIRObject;
+begin
+  result := nil;
+end;
+
 procedure TFHIRObject.getProperty(name: String; checkValid: boolean; list: TFslList<TFHIRObject>);
 begin
   if checkValid then
-    raise EFHIRException.create('Property '+name+' is not valid');
+    raise EFHIRException.Create('Property '+name+' is not valid');
 end;
 
 function TFHIRObject.getPropertyValue(propName: string): TFHIRProperty;
@@ -1384,7 +1392,7 @@ begin
       if (p.Name = propName) or (p.name.endsWith('[x]') and propName.startsWith(p.Name.subString(0, p.Name.length-3))) then
         exit(p.Link);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1407,7 +1415,7 @@ end;
 
 procedure TFHIRObject.insertProperty(propName: string; propValue: TFHIRObject; index: integer);
 begin
-  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (inserting value)"');
+  raise EFHIRException.Create('The property "'+propName+'" is unknown or not a list property (inserting value)"');
 end;
 
 function TFHIRObject.isBooleanPrimitive: boolean;
@@ -1530,25 +1538,25 @@ end;
 
 { TFHIRObjectText }
 
-constructor TFHIRObjectText.create(value: String);
+constructor TFHIRObjectText.Create(value: String);
 begin
   Create;
   self.value := value;
 end;
 
-constructor TFHIRObjectText.create(value: boolean);
+constructor TFHIRObjectText.Create(value: boolean);
 begin
   Create;
   self.value := lowercase(BooleanToString(value));
 end;
 
-constructor TFHIRObjectText.create(value: TFslDateTime);
+constructor TFHIRObjectText.Create(value: TFslDateTime);
 begin
   Create;
   self.value := value.toXML;
 end;
 
-constructor TFHIRObjectText.create(value: TBytes);
+constructor TFHIRObjectText.Create(value: TBytes);
 begin
   Create;
   self.value := String(EncodeBase64(value));
@@ -1562,7 +1570,7 @@ end;
 
 function TFHIRObjectText.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.equals(other : TObject): boolean;
@@ -1582,7 +1590,7 @@ end;
 
 function TFHIRObjectText.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.hasExtensions: boolean;
@@ -1604,22 +1612,22 @@ procedure TFHIRObjectText.ListProperties(oList: TFHIRPropertyList; bInheritedPro
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
+  oList.add(TFHIRProperty.Create(self, 'value', 'string', false, nil, FValue));
 end;
 
 function TFHIRObjectText.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.makeIntValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.makeStringValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.primitiveValue: String;
@@ -1633,7 +1641,7 @@ end;
 
 function TFHIRObjectText.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRObjectText.makeStringValue: not sure how to implement this?');
 end;
 
 function TFHIRObjectText.sizeInBytesV(magic : integer) : cardinal;
@@ -1658,8 +1666,8 @@ end;
 
 destructor TFHIRObjectList.Destroy;
 begin
-  FTags.Free;
-  FLocationData.Free;;
+  FTags.free;
+  FLocationData.free;;
   inherited;
 end;
 
@@ -1676,7 +1684,7 @@ end;
 function TFHIRObjectList.GetLocationData: TFHIRObjectLocationData;
 begin
   if FLocationData = nil then
-    FLocationData := TFHIRObjectLocationData.create;
+    FLocationData := TFHIRObjectLocationData.Create;
   result := FLocationData;
 end;
 
@@ -1693,7 +1701,7 @@ end;
 function TFHIRObjectList.getTags(name: String): String;
 begin
   if FTags = nil then
-    FTags := TFslStringDictionary.create;
+    FTags := TFslStringDictionary.Create;
   if FTags.ContainsKey(name) then
     result := FTags[name]
   else
@@ -1726,7 +1734,7 @@ end;
 procedure TFHIRObjectList.SetTags(name: String; const Value: String);
 begin
   if FTags = nil then
-    FTags := TFslStringDictionary.create;
+    FTags := TFslStringDictionary.Create;
   FTags.AddOrSetValue(name, value);
 end;
 
@@ -1870,11 +1878,11 @@ begin
   inc(result, (FEnumName.length * sizeof(char)) + 12);
 end;
 
-class function TFHIRProperty.create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty;
+class function TFHIRProperty.Create(oOwner : TFHIRObject; Const sName, sType : String; bList : boolean; cClass : TClass; oList : TFslList<TFslObject>) : TFHIRProperty;
 var
   o : TFslObject;
 begin
-  result := TFHIRProperty.create(oOwner, sName, sType, bList, cClass);
+  result := TFHIRProperty.Create(oOwner, sName, sType, bList, cClass);
   try
     for o in oList do
       result.FList.Add(o.Link);
@@ -1890,7 +1898,7 @@ class function TFHIRProperty.create<T>(oOwner : TFHIRObject; Const sName, sType 
 var
   o : T;
 begin
-  result := TFHIRProperty.create(oOwner, sName, sType, bList, cClass);
+  result := TFHIRProperty.Create(oOwner, sName, sType, bList, cClass);
   try
     for o in oList do
       result.FList.Add(o.Link);
@@ -1941,7 +1949,7 @@ end;
 
 destructor TFHIRPropertyIterator.Destroy;
 begin
-  FProperties.Free;
+  FProperties.free;
   inherited;
 end;
 
@@ -1983,7 +1991,7 @@ end;
 
 Destructor TFhirPropertyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -2009,7 +2017,7 @@ end;
 
 Destructor TFhirObjectListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -2109,13 +2117,13 @@ end;
 
 procedure TFHIRObject.reorderProperty(propName: string; source, destination: integer);
 begin
-  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list reordering the property"');
+  raise EFHIRException.Create('The property "'+propName+'" is unknown or not a list reordering the property"');
 end;
 
 procedure TFHIRObject.replaceProperty(propName: string; existing: TFHIRObject;
   new: TFHIRObject);
 begin
-  raise EFHIRException.create('The property "'+propName+'" is unknown replacing the property"');
+  raise EFHIRException.Create('The property "'+propName+'" is unknown replacing the property"');
 end;
 
 procedure TFHIRObject.replacePropertyValue(name: String; list: TFHIRObjectList; existing, new: TFHIRObject);
@@ -2124,7 +2132,7 @@ var
 begin
   i := list.IndexByReference(existing);
   if (i = -1) then
-    raise EFHIRException.create('Unable to find object in '+name+' to remove it');
+    raise EFHIRException.Create('Unable to find object in '+name+' to remove it');
   list.SetItem(i, new);
 end;
 
@@ -2140,7 +2148,7 @@ end;
 
 function TFHIRObject.setProperty(propName: string; propValue: TFHIRObject): TFHIRObject;
 begin
-  raise EFHIRException.create('The property "'+propName+'" is unknown or not a list property (setting property)"');
+  raise EFHIRException.Create('The property "'+propName+'" is unknown or not a list property (setting property)"');
 end;
 
 function TFHIRObject.ToString: String;
@@ -2162,13 +2170,13 @@ end;
 
 constructor TFHIRSelection.Create(focus: TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   FValue := focus;
 end;
 
 constructor TFHIRSelection.Create(parent : TFHIRObject; name : String; focus: TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   FParent := parent;
   FName := name;
   FValue := focus;
@@ -2181,8 +2189,8 @@ end;
 
 destructor TFHIRSelection.Destroy;
 begin
-  FParent.Free;
-  FValue.Free;
+  FParent.free;
+  FValue.free;
   inherited;
 end;
 
@@ -2247,13 +2255,13 @@ end;
 
 constructor TFHIRSelectionList.Create(parent : TFHIRObject; name : String; focus: TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   Add(parent, name, focus);
 end;
 
 constructor TFHIRSelectionList.Create(focus: TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   Add(focus);
 end;
 
@@ -2316,7 +2324,7 @@ begin
       result.Add(s.value.link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2382,16 +2390,23 @@ end;
 constructor TFHIRWorkerContextV.Create;
 begin
   inherited;
-  FLang := defLang;
-  FPackages := TStringList.create;
-  FLock := TFslLock.create(className);
+  FLangList := THTTPLanguageList.defaultLocal;
+  FPackages := TStringList.Create;
+  FLock := TFslLock.Create(className);
 end;
 
 destructor TFHIRWorkerContextV.Destroy;
 begin
-  FLock.Free;
-  FPackages.Free;
+  FLangList.free;
+  FLock.free;
+  FPackages.free;
   inherited Destroy;
+end;
+
+procedure TFHIRWorkerContextV.SetLangList(AValue: THTTPLanguageList);
+begin
+  FLangList.free;
+  FLangList := AValue;
 end;
 
 function TFHIRWorkerContextV.GetVersion: TFHIRVersion;
@@ -2445,7 +2460,7 @@ end;
 
 constructor TValidationResult.Create(Severity: TIssueSeverity; Message: String);
 begin
-  inherited create;
+  inherited Create;
   FSeverity := Severity;
   FMessage := Message;
 end;
@@ -2574,12 +2589,12 @@ end;
 constructor TFHIRSystemTuple.Create;
 begin
   inherited;
-  FFields := TFslMap<TFhirObject>.create('tuple');
+  FFields := TFslMap<TFhirObject>.Create('tuple');
 end;
 
 destructor TFHIRSystemTuple.Destroy;
 begin
-  FFields.Free;
+  FFields.free;
   inherited;
 end;
 
@@ -2680,7 +2695,7 @@ begin
       this.Fields.AddOrSetValue(pm.Name[i], TFHIRSystemString.Create(pm[pm.Name[i]]));
     result := this.Link;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -2718,7 +2733,7 @@ begin
 
   source := TMXmlParser.parse(LoadSource, [xpDropWhitespace, xpDropComments]);
   try
-    GMessages := TFslMap<TFHIRMessage>.create('MXml Parser');
+    GMessages := TFslMap<TFHIRMessage>.Create('MXml Parser');
     child := source.document.firstElement;
     while child <> nil do
     begin
@@ -2737,15 +2752,15 @@ begin
   end;
 end;
 
-function GetFhirMessage(id : String; const lang : THTTPLanguages) : String;
+function GetFhirMessage(id : String; langList : THTTPLanguageList) : String;
 begin
-  result := GetFhirMessage(id, lang, '??');
+  result := GetFhirMessage(id, langList, '??');
 end;
 
-function GetFhirMessage(id : String; const lang : THTTPLanguages; def : String) : String;
+function GetFhirMessage(id : String; langList : THTTPLanguageList; def : String) : String;
 var
   msg : TFHIRMessage;
-  l : string;
+  l : THTTPLanguageEntry;
 begin
   result := '';
   if GMessages = nil then
@@ -2755,9 +2770,14 @@ begin
   else
   begin
     msg := GMessages[id];
-    for l in lang.codes do
-      if (result = '') and (msg.FMessages.ContainsKey(l)) then
-        result := msg.FMessages[l];
+    if (langList <> nil) then
+    begin
+      for l in langList.langs do
+      begin
+        if (result = '') and (l.value > 0) and (msg.FMessages.ContainsKey(l.lang)) then
+          result := msg.FMessages[l.lang];
+      end;
+    end;
     if result = '' then
       result := msg.FMessages['en'];
     if result = '' then
@@ -2772,12 +2792,12 @@ end;
 constructor TFHIRMessage.Create;
 begin
   inherited;
-  FMessages := TFslStringDictionary.create;
+  FMessages := TFslStringDictionary.Create;
 end;
 
 destructor TFHIRMessage.Destroy;
 begin
-  FMessages.Free;
+  FMessages.free;
   inherited;
 end;
 
@@ -2789,31 +2809,31 @@ end;
 
 { EFHIRException }
 
-constructor EFHIRException.CreateLang(code : String; const lang : THTTPLanguages);
+constructor EFHIRException.CreateLang(code : String; langList : THTTPLanguageList);
 begin
-  inherited Create(GetFhirMessage(code, lang));
+  inherited Create(GetFhirMessage(code, langList));
 end;
 
-constructor EFHIRException.CreateLang(code : String; const lang : THTTPLanguages; const Args: array of const);
+constructor EFHIRException.CreateLang(code : String; langList : THTTPLanguageList; const Args: array of const);
 begin
-  inherited Create(Format(GetFhirMessage(code, lang), args));
+  inherited Create(Format(GetFhirMessage(code, langList), args));
 end;
 
 
 { ERestfulException }
 
-constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; const lang : THTTPLanguages; const Args: array of const);
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; langList : THTTPLanguageList; const Args: array of const);
 begin
-  inherited Create(Format(GetFhirMessage(sMessage, lang), args));
+  inherited Create(Format(GetFhirMessage(sMessage, langList), args));
 
   FContext := sContext;
   FStatus := aStatus;
   FCode := code;
 end;
 
-constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; const lang : THTTPLanguages);
+constructor ERestfulException.Create(const sContext: String; aStatus: word; code: TFhirIssueType; sMessage : String; langList : THTTPLanguageList);
 begin
-  inherited Create(GetFhirMessage(sMessage, lang, sMessage));
+  inherited Create(GetFhirMessage(sMessage, langList, sMessage));
   FContext := sContext;
   FStatus := aStatus;
   FCode := code;
@@ -2826,35 +2846,35 @@ end;
 
 { EFHIRPath }
 
-constructor EFHIRPath.create(path: String; offset: integer; problem: String);
+constructor EFHIRPath.Create(path: String; offset: integer; problem: String);
 begin
-  inherited create('fhir2_pathengine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
+  inherited Create('fhir2_pathengine error "'+problem+'" at position '+inttostr(offset)+' in "'+path+'"');
 end;
 
-constructor EFHIRPath.create(problem: String);
+constructor EFHIRPath.Create(problem: String);
 begin
-  inherited create(problem);
+  inherited Create(problem);
 end;
 
 { EFHIRTodo }
 
 constructor EFHIRTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
 { EDefinitionExceptionTodo }
 
 constructor EDefinitionExceptionTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
 { EFHIRPathTodo }
 
 constructor EFHIRPathTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
 
@@ -2868,8 +2888,8 @@ end;
 
 destructor THealthcareCard.Destroy;
 begin
-  FBundle.Free;
-  FLinks.Free;
+  FBundle.free;
+  FLinks.free;
   inherited;
 end;
 
@@ -2880,7 +2900,7 @@ end;
 
 procedure THealthcareCard.SetBundle(const Value: TFHIRResourceV);
 begin
-  FBundle.Free;
+  FBundle.free;
   FBundle := Value;
 end;
 
@@ -2904,7 +2924,7 @@ var
   ch : Char;
   i : byte;
 begin
-  b := TFslStringBuilder.create;
+  b := TFslStringBuilder.Create;
   try
     for ch in jws do
     begin
@@ -2924,7 +2944,7 @@ procedure THealthcareCard.toBmp(bmp: TBitmap);
 var
   qr : TSegmentedQRCode;
 begin
-  qr := TSegmentedQRCode.create;
+  qr := TSegmentedQRCode.Create;
   try
     qr.AddBinarySegment('shc:/');
     qr.AddNumericSegment(qrSource(false));
@@ -2937,5 +2957,5 @@ end;
 initialization
   GMessages := nil;
 finalization
-  GMessages.Free;
+  GMessages.free;
 end.

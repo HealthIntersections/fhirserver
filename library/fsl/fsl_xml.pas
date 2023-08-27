@@ -1015,9 +1015,9 @@ end;
 
 destructor TMXmlElement.Destroy;
 begin
-  FNext.Free;
-  FAttributes.Free;
-  FChildren.Free;
+  FNext.free;
+  FAttributes.free;
+  FChildren.free;
   inherited;
 end;
 
@@ -1195,7 +1195,7 @@ begin
         b.Append(c.FText);
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
   end;
 end;
@@ -1238,14 +1238,14 @@ end;
 function TMXmlElement.GetAttributes: TFslList<TMXmlAttribute>;
 begin
   if (FAttributes = nil) then
-    FAttributes := TFslList<TMXmlAttribute>.create;
+    FAttributes := TFslList<TMXmlAttribute>.Create;
   result := FAttributes;
 end;
 
 function TMXmlElement.GetChildren: TFslList<TMXmlElement>;
 begin
   if (FChildren = nil) then
-    FChildren := TFslList<TMXmlElement>.create;
+    FChildren := TFslList<TMXmlElement>.Create;
   result := FChildren;
 end;
 
@@ -1401,14 +1401,14 @@ begin
         Attributes.Add(attr.Link);
       end;
     finally
-      attr.Free;
+      attr.free;
     end;
   end;
 end;
 
 procedure TMXmlElement.SetNext(const Value: TMXmlElement);
 begin
-  FNext.Free;
+  FNext.free;
   FNext := Value;
 end;
 
@@ -1436,12 +1436,12 @@ function TMXmlElement.ToXml(pretty : boolean = false): String;
 var
   b : TStringBuilder;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     writeToXml(b, pretty, 0);
     result := b.toString();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1581,12 +1581,12 @@ class function TMXmlParser.parse(content: TStream; options : TMXmlParserOptions)
 var
   s : TFslVCLStream;
 begin
-  s := TFslVCLStream.create;
+  s := TFslVCLStream.Create;
   try
     s.Stream := content;
     result := parse(s, options);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1594,14 +1594,14 @@ class function TMXmlParser.parse(content: String; options : TMXmlParserOptions):
 var
   this : TMXmlParser;
 begin
-  this := TMXmlParser.create;
+  this := TMXmlParser.Create;
   try
     this.options := options;
     this.reader := TFslStringReader.create(content);
     try
       result := this.parse();
     finally
-      this.reader.Free;
+      this.reader.free;
     end;
   finally
     this.free;
@@ -1612,17 +1612,17 @@ class function TMXmlParser.parse(content: TFslStream; options : TMXmlParserOptio
 var
   this : TMXmlParser;
 begin
-  this := TMXmlParser.create;
+  this := TMXmlParser.Create;
   try
     this.options := options;
     this.reader := TFslStreamReader.create(content.Link, TEncoding.UTF8, true);
     try
       result := this.parse;
     finally
-      this.reader.Free;
+      this.reader.free;
     end;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -1634,7 +1634,7 @@ begin
   try
     result := parse(s, options);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1650,10 +1650,10 @@ begin
       readXpathExpression(result, []);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 
 end;
@@ -1670,10 +1670,10 @@ begin
       this.moveOperationsToProximal(result);
       this.organisePrecedence(result, true);
     finally
-      this.reader.Free;
+      this.reader.free;
     end;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -1750,13 +1750,13 @@ end;
 constructor TMXmlParser.Create;
 begin
   inherited;
-  FHtmlEntities := TDictionary<String, String>.create;
+  FHtmlEntities := TDictionary<String, String>.Create;
   registerEntities(FHtmlEntities);
 end;
 
 destructor TMXmlParser.Destroy;
 begin
-  FHtmlEntities.Free;
+  FHtmlEntities.free;
   inherited;
 end;
 
@@ -2007,12 +2007,12 @@ begin
       result.fixChildren;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
     if xpResolveNamespaces in options then
       resolveNamespaces(result, '');
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -2057,7 +2057,7 @@ begin
     parent.addChild(e.Link, false);
     e.fixChildren;
   finally
-    e.Free;
+    e.free;
   end;
 end;
 
@@ -2072,7 +2072,7 @@ begin
   res := TMXmlElement.Create(ntProcessingInstruction);
   try
     res.Start := FStartLocation;
-    c := TStringBuilder.create;
+    c := TStringBuilder.Create;
     try
       done := false;
       repeat
@@ -2093,7 +2093,7 @@ begin
     if not (xpDropComments in options) then
       parent.Children.add(res.Link);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -2115,7 +2115,7 @@ begin
     result.Stop := FLocation;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2129,7 +2129,7 @@ begin
   res := TMXmlElement.Create(ntComment);
   try
     res.Start := FStartLocation;
-    c := TStringBuilder.create;
+    c := TStringBuilder.Create;
     try
       rule(read = '-', 'Syntax Error reading comment');
       rule(read = '-', 'Syntax Error reading comment');
@@ -2154,7 +2154,7 @@ begin
     if not (xpDropComments in options) then
       parent.Children.add(res.Link);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -2169,7 +2169,7 @@ begin
     e.Stop := FLocation;
     parent.Children.add(e.Link);
   finally
-    e.Free;
+    e.free;
   end;
 end;
 
@@ -2370,7 +2370,7 @@ begin
         s := readXPathToken(true, true);
         node.Filters.Add(f.Link);
       finally
-        f.Free;
+        f.free;
       end;
     end;
     if (s = '/') then
@@ -2506,7 +2506,7 @@ begin
   try
     result := parse(s, options);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -2530,25 +2530,25 @@ end;
 
 destructor TMXPathExpressionNode.Destroy;
 begin
-  FFilters.Free;
-  FNext.Free;
-  FNextOp.Free;
-  FGroup.Free;
-  FParams.Free;
+  FFilters.free;
+  FNext.free;
+  FNextOp.free;
+  FGroup.free;
+  FParams.free;
   inherited;
 end;
 
 function TMXPathExpressionNode.GetFilters: TFslList<TMXPathExpressionNode>;
 begin
   if FFilters = nil then
-    FFilters := TFslList<TMXPathExpressionNode>.create;
+    FFilters := TFslList<TMXPathExpressionNode>.Create;
   result := FFilters;
 end;
 
 function TMXPathExpressionNode.GetParams: TFslList<TMXPathExpressionNode>;
 begin
   if FParams = nil then
-    FParams := TFslList<TMXPathExpressionNode>.create;
+    FParams := TFslList<TMXPathExpressionNode>.Create;
   result := FParams;
 end;
 
@@ -2564,19 +2564,19 @@ end;
 
 procedure TMXPathExpressionNode.SetGroup(const Value: TMXPathExpressionNode);
 begin
-  FGroup.Free;
+  FGroup.free;
   FGroup := Value;
 end;
 
 procedure TMXPathExpressionNode.SetNext(const Value: TMXPathExpressionNode);
 begin
-  FNext.Free;
+  FNext.free;
   FNext := Value;
 end;
 
 procedure TMXPathExpressionNode.SetNextOp(const Value: TMXPathExpressionNode);
 begin
-  FNextOp.Free;
+  FNextOp.free;
   FNextOp := Value;
 end;
 
@@ -2586,7 +2586,7 @@ var
   first : boolean;
   p : TMXPathExpressionNode;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     if (FAxis <> axisChild) and (FNodeType <> xentGroup) then
     begin
@@ -2646,7 +2646,7 @@ begin
       b.Append(' '+Operation_CODES[FOp]+' '+ NextOp.ToString);
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -2676,18 +2676,18 @@ end;
 constructor TMXmlDocument.Create;
 begin
   inherited Create(ntDocument);
-  FNamespaceAbbreviations := TFslStringDictionary.create;
+  FNamespaceAbbreviations := TFslStringDictionary.Create;
 end;
 
 constructor TMXmlDocument.Create(nodeType: TMXmlElementType; name: String);
 begin
-  inherited create(ntDocument);
+  inherited Create(ntDocument);
   addElement(name);
 end;
 
 destructor TMXmlDocument.Destroy;
 begin
-  FNamespaceAbbreviations.Free;
+  FNamespaceAbbreviations.free;
   inherited;
 end;
 
@@ -2700,9 +2700,9 @@ var
   i : integer;
   f : TMXPathExpressionNode;
 begin
-  work := TFslList<TMXmlNode>.create;
-  fwork := TFslList<TMXmlNode>.create;
-  list := TFslList<TMXmlNode>.create;
+  work := TFslList<TMXmlNode>.Create;
+  fwork := TFslList<TMXmlNode>.Create;
+  list := TFslList<TMXmlNode>.Create;
   try
     for item in focus do
     begin
@@ -2719,7 +2719,7 @@ begin
             try
               fwork.AddAll(work2);
             finally
-              work2.Free;
+              work2.free;
             end;
           end;
         xentRoot : fwork.add(self.link);
@@ -2760,7 +2760,7 @@ begin
         work2 := preOperate(work, last.Op);
         if work2 <> nil then
         begin
-          work.Free;
+          work.free;
           work := work2;
         end
         else
@@ -2768,10 +2768,10 @@ begin
           work2 := evaluate(next, atEntry, variables, position, focus);
           try
             result := operate(work, last.Op, work2);
-            work.Free;
+            work.free;
             work := result;
           finally
-            work2.Free;
+            work2.free;
           end;
         end;
         last := next;
@@ -2780,9 +2780,9 @@ begin
     end;
     result := work.link;
   finally
-    work.Free;
+    work.free;
     list.free;
-    fwork.Free;
+    fwork.free;
   end;
 end;
 
@@ -2790,12 +2790,12 @@ function TMXmlDocument.evaluate(expr: TMXPathExpressionNode; atEntry: boolean; v
 var
   work : TFslList<TMXmlNode>;
 begin
-  work := TFslList<TMXmlNode>.create;
+  work := TFslList<TMXmlNode>.Create;
   try
     work.add(item.Link);
     result := evaluate(expr, atEntry, variables, position, work);
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
@@ -2852,7 +2852,7 @@ var
   vars : TXPathVariables;
   n : TMXmlNode;
 begin
-  vars := TXPathVariables.create;
+  vars := TXPathVariables.Create;
   try
     list := evaluate(expr.Params[0], atEntry, variables, position, focus);
     try
@@ -2864,23 +2864,23 @@ begin
           try
             work.AddAll(res);
           finally
-            res.Free;
+            res.free;
           end;
         finally
-          vars.Free;
+          vars.free;
         end;
       end;
     finally
-      list.Free;
+      list.free;
     end;
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
 function TMXmlDocument.findLocation(loc : TSourceLocation) : TFslList<TMXmlNamedNode>;
 begin
-  result := TFslList<TMXmlNamedNode>.create;
+  result := TFslList<TMXmlNamedNode>.Create;
   try
     docElement.findLocation(loc, result);
     result.link;
@@ -2927,7 +2927,7 @@ begin
   try
     result := TMXmlNumber.create(work.Count);
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
@@ -2954,7 +2954,7 @@ begin
         work.Add(list[i].Link);
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -2980,7 +2980,7 @@ begin
   try
     result := TMXmlBoolean.create(not work.Empty);
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
@@ -3018,7 +3018,7 @@ begin
       p2.free;
     end;
   finally
-    p1.Free;
+    p1.free;
   end;
 
 end;
@@ -3067,11 +3067,11 @@ begin
         end;
       end;
     finally
-      work.Free;
+      work.free;
     end;
     result := TMXmlString.Create(b.ToString.Trim);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3085,7 +3085,7 @@ begin
   try
     result := TMXmlBoolean.create(not evaluateBoolean(work));
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
@@ -3105,13 +3105,13 @@ begin
       for n in work do
         b.Append(n.ToString);
     finally
-      work.Free;
+      work.free;
     end;
     if not StringIsInteger32(b.ToString) then
       raise EXmlException.Create('The string "'+b.toString+'" is not a valid number');
     result := TMXmlNumber.Create(StringToInteger32(b.ToString));
   finally
-    b.Free;
+    b.free;
   end;
 
 end;
@@ -3139,7 +3139,7 @@ begin
       p2.free;
     end;
   finally
-    p1.Free;
+    p1.free;
   end;
 end;
 
@@ -3158,11 +3158,11 @@ begin
       for n in work do
         b.Append(n.ToString);
     finally
-      work.Free;
+      work.free;
     end;
     result := TMXmlString.Create(b.ToString);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3192,7 +3192,7 @@ begin
       p2.free;
     end;
   finally
-    p1.Free;
+    p1.free;
   end;
 end;
 
@@ -3222,7 +3222,7 @@ begin
         b.Append(ch);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3242,13 +3242,13 @@ begin
         if (p2.Count = 1) and (p1.Count = 1) and (p3.Count = 1) then
           result := TMXmlString.Create(StringTranslate(p1[0].toString, p2[0].toString, p3[0].toString));
       finally
-        p3.Free;
+        p3.free;
       end;
     finally
       p2.free;
     end;
   finally
-    p1.Free;
+    p1.free;
   end;
 end;
 
@@ -3290,12 +3290,12 @@ begin
         for n in work do
           b.Append(n.ToString);
       finally
-        work.Free;
+        work.free;
       end;
     end;
     result := TMXmlString.Create(b.ToString);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3323,13 +3323,13 @@ begin
       p2.free;
     end;
   finally
-    p1.Free;
+    p1.free;
   end;
 end;
 
 function TMXmlDocument.list(value: boolean): TFslList<TMXmlNode>;
 begin
-  result := TFslList<TMXmlNode>.create;
+  result := TFslList<TMXmlNode>.Create;
   result.Add(TMXmlBoolean.Create(value));
 end;
 
@@ -3342,17 +3342,17 @@ begin
     result := StringToInteger32(filter.value) = position
   else
   begin
-    focus := TFslList<TMXmlNode>.create;
+    focus := TFslList<TMXmlNode>.Create;
     try
       focus.Add(item.Link);
       list := evaluate(filter, atEntry, variables, position, focus);
       try
         result := evaluateBoolean(list);
       finally
-        list.Free;
+        list.free;
       end;
     finally
-      focus.Free;
+      focus.free;
     end;
   end;
 end;
@@ -3609,7 +3609,7 @@ function TMXmlDocument.opUnion(left, right: TFslList<TMXmlNode>): TFslList<TMXml
 var
   item : TMXmlNode;
 begin
-  result := TFslList<TMXmlNode>.create;
+  result := TFslList<TMXmlNode>.Create;
   try
     for item in left do
       if not contains(result, item) then
@@ -3619,7 +3619,7 @@ begin
         result.Add(item.link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3790,7 +3790,7 @@ begin
   try
     result := select(expr, focus);
   finally
-    expr.Free;
+    expr.free;
   end;
 end;
 
@@ -3799,7 +3799,7 @@ var
   list : TFslList<TMXmlNode>;
   item : TMXmlNode;
 begin
-  result := TFslList<TMXmlElement>.create;
+  result := TFslList<TMXmlElement>.Create;
   try
     list := select(xpath, focus);
     try
@@ -3809,7 +3809,7 @@ begin
         else
           raise EXmlException.create('Error Message');
     finally
-      list.Free;
+      list.free;
     end;
     result.link;
   finally
@@ -3827,15 +3827,15 @@ begin
 
   variables := TXPathVariables.Create('%current', focus.Link);
   try
-    work := TFslList<TMXmlNode>.create;
+    work := TFslList<TMXmlNode>.Create;
     try
       work.Add(focus.Link);
       result := evaluate(xpath, true, variables, 0, work);
     finally
-      work.Free;
+      work.free;
     end;
   finally
-    variables.Free;
+    variables.free;
   end;
 end;
 
@@ -3844,7 +3844,7 @@ var
   list : TFslList<TMXmlNode>;
   item : TMXmlNode;
 begin
-  result := TFslList<TMXmlElement>.create;
+  result := TFslList<TMXmlElement>.Create;
   try
     list := select(xpath, focus);
     try
@@ -3854,7 +3854,7 @@ begin
         else
           raise EXmlException.create('Error Message');
     finally
-      list.Free;
+      list.free;
     end;
     result.link;
   finally
@@ -3886,7 +3886,7 @@ function TMXmlDocument.ToXml(pretty, xmlHeader: boolean): String;
 var
   b : TStringBuilder;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     if xmlHeader then
     begin
@@ -3897,13 +3897,13 @@ begin
     writeToXml(b, pretty, 0);
     result := b.toString();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
 constructor TMXmlDocument.CreateNS(nodeType: TMXmlElementType; ns, local: String);
 begin
-  inherited create(ntDocument);
+  inherited Create(ntDocument);
   addElementNS(ns, local);
 end;
 
@@ -3977,7 +3977,7 @@ end;
 
 destructor TXPathVariables.Destroy;
 begin
-  FMap.Free;
+  FMap.free;
   inherited;
 end;
 
@@ -4002,7 +4002,7 @@ begin
     result.FMap.AddOrSetValue(name, value.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4080,9 +4080,9 @@ end;
 
 Procedure TFslXmlBuilder.Finish;
 begin
-  xml.Free;
+  xml.free;
   xml := nil;
-  mem.Free;
+  mem.free;
   mem := nil;
 end;
 
@@ -4145,9 +4145,9 @@ begin
   CurrentNamespaces.Add(uri, abbrev);
 end;
 
-destructor TFslXmlBuilder.destroy;
+destructor TFslXmlBuilder.Destroy;
 begin
-  buf.Free;
+  buf.free;
   inherited;
 end;
 
@@ -4344,13 +4344,13 @@ end;
 constructor TXmlBuilder.Create;
 begin
   inherited;
-  FNamespaces := TFslObjectList.create;
+  FNamespaces := TFslObjectList.Create;
   FNamespaces.Add(TXmlBuilderNamespaceList.Create());
 end;
 
 destructor TXmlBuilder.Destroy;
 begin
-  FNamespaces.Free;
+  FNamespaces.free;
   inherited;
 end;
 
@@ -4511,7 +4511,7 @@ begin
     else
       raise EXmlException.Create('Unknown value for type: '+typ);
   finally
-    matches.Free;
+    matches.free;
   end;
 end;
 
@@ -4541,7 +4541,7 @@ begin
             TMXmlElement(matches[0]).parent.Children.replace(TMXmlElement(matches[0]), ce.Link);
             ce.Parent := matches[0].parent;
           finally
-            ce.Free;
+            ce.free;
           end;
         end;
       ntText,
@@ -4551,7 +4551,7 @@ begin
       raise EXmlException.Create('Unsupported Node Type for replace');
     end;
   finally
-    matches.Free;
+    matches.free;
   end;
 end;
 
@@ -4578,7 +4578,7 @@ begin
     else
       matches[0].parent.Children.remove(matches[0] as TMXmlElement);
   finally
-    matches.Free;
+    matches.free;
   end;
 end;
 
@@ -4600,7 +4600,7 @@ begin
           addChildNodes(doc, n, ce, '');
           c := ce.Link;
         finally
-          ce.Free;
+          ce.free;
         end;
         end;
       ntText :
@@ -4640,8 +4640,8 @@ End;
 
 destructor TFslXMLFormatter.Destroy;
 Begin
-  FAttributes.Free;
-  FBuilder.Free;
+  FAttributes.free;
+  FBuilder.free;
 
   Inherited;
 End;  
@@ -4835,7 +4835,7 @@ Begin
       attr.SortKey := sNs+#1+sName;
     FAttributes.Add(Attr.Link);
   finally
-    attr.Free;
+    attr.free;
   end;
 End;
 
@@ -4958,7 +4958,7 @@ begin
     attr.Value := value;
     add(attr.link);
   finally
-    attr.Free;
+    attr.free;
   end;
 end;
 
@@ -5062,7 +5062,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -5080,7 +5080,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -5098,7 +5098,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -5116,7 +5116,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -5262,7 +5262,7 @@ End;
 
 Destructor TFslXMLNamespaceEntry.Destroy;
 Begin
-  FValues.Free;
+  FValues.free;
 
   Inherited;
 End;
@@ -5315,7 +5315,7 @@ Begin
 
     Result := IndexBy(oEntry, CompareByKey);
   Finally
-    oEntry.Free;
+    oEntry.free;
   End;
 End;
 
@@ -5349,7 +5349,7 @@ End;
 
 Destructor TFslXMLNamespaceLevel.Destroy;
 Begin
-  FEntryList.Free;
+  FEntryList.free;
 
   Inherited;
 End;
@@ -5401,8 +5401,8 @@ End;
 
 Destructor TFslXMLNamespaceManager.Destroy;
 Begin
-  FEntryList.Free;
-  FLevelList.Free;
+  FEntryList.free;
+  FLevelList.free;
 
   Inherited;
 End;
@@ -5486,7 +5486,7 @@ Begin
         FEntryList.DeleteByReference(oEntry);
     End;
   Finally
-    oLevel.Free;
+    oLevel.free;
   End;
 End;
 
@@ -5561,7 +5561,7 @@ Begin
 
     FLevelList.Add(oLevel.Link);
   Finally
-    oLevel.Free;
+    oLevel.free;
   End;
 End;
 
@@ -5583,7 +5583,7 @@ procedure TMXmlBuilder.Start(oNode : TMXmlElement);
 begin
   if oNode = nil Then
   Begin
-    FDoc := TMXmlDocument.create;
+    FDoc := TMXmlDocument.Create;
     if CharEncoding <> '' Then
       FDoc.addChild(TMXmlElement.createProcessingInstruction(CharEncoding), true);
     FStack.Add(FDoc.Link);
@@ -5602,7 +5602,7 @@ Begin
     oVCL.Stream := oStream.Link;
     Build(oVCL);
   Finally
-    oVCL.Free;
+    oVCL.free;
   End;
 End;
 
@@ -5610,7 +5610,7 @@ procedure TMXmlBuilder.Finish;
 Begin
   if FStack.Count > 1 Then
     RaiseError('Close', 'Document is not finished');
-  FDoc.Free;
+  FDoc.free;
 End;
 
 procedure TMXmlBuilder.inject(const bytes: TBytes);
@@ -5658,7 +5658,7 @@ begin
     FStack.Add(oElem.Link);
     result := FSourceLocation;
   finally
-    oElem.Free;
+    oElem.free;
   end;
 end;
 
@@ -5781,7 +5781,7 @@ begin
     Build(oStream);
     Result := oStream.DataString;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 end;
 
@@ -5796,9 +5796,9 @@ end;
 
 destructor TMXmlBuilder.Destroy;
 begin
-  FStack.Free;
+  FStack.free;
   FStack := nil;
-  FAttributes.Free;
+  FAttributes.free;
   FAttributes := nil;
   inherited;
 end;
@@ -5867,8 +5867,8 @@ End;
 
 Destructor TFslXMLExtractor.Destroy;
 Begin
-  FNamespaceManager.Free;
-  FAttributes.Free;
+  FNamespaceManager.free;
+  FAttributes.free;
 
   Inherited;
 End;

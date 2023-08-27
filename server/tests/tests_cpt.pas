@@ -90,7 +90,7 @@ begin
     fn := GCPTDataFile
   else
     fn := TestSettings.serverTestFile(['testcases', 'cpt', 'cpt-fragment.db']);
-  FCPT := TCPTServices.create(nil, TFDBSQLiteManager.create('test', fn, false, 4));
+  FCPT := TCPTServices.Create(nil, TFDBSQLiteManager.Create('test', fn, false, 4));
 end;
 
 procedure TCPTTests.TearDown;
@@ -111,7 +111,7 @@ begin
   ctxt := FCPT.locate('99202', nil, msg);
   try
     assertTrue(ctxt <> nil);
-    assertEquals('Office or other outpatient visit for the evaluation and management of a new patient, which requires a medically appropriate history and/or examination and straightforward medical decision making. When using time for code selection, 15-29 minutes of total time is spent on the date of the encounter.', FCPT.Display(ctxt, defLang));
+    assertEquals('Office or other outpatient visit for the evaluation and management of a new patient, which requires a medically appropriate history and/or examination and straightforward medical decision making. When using time for code selection, 15-29 minutes of total time is spent on the date of the encounter.', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
@@ -140,7 +140,7 @@ begin
   ctxt := FCPT.locate('99202:P1', nil, msg);
   try
     assertTrue(ctxt <> nil);
-    assertEquals('', FCPT.Display(ctxt, defLang));
+    assertEquals('', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
@@ -179,7 +179,7 @@ begin
       end;
     end;
   finally
-    iter.Free;
+    iter.free;
   end;
 end;
 
@@ -419,7 +419,7 @@ begin
   try
     assertTrue(ctxt <> nil);
     assertTrue(msg = '');
-    assertEquals('', FCPT.Display(ctxt, defLang));
+    assertEquals('', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
@@ -434,7 +434,7 @@ begin
   try
     assertTrue(ctxt = nil);
     assertEquals('The modifier 95 cannot be used with the code 99252 as it is not designated for telemedicine', msg);
-    assertEquals('', FCPT.Display(ctxt, defLang));
+    assertEquals('', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;

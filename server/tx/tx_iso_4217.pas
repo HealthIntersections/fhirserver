@@ -81,13 +81,13 @@ type
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -111,7 +111,7 @@ implementation
 
 { TIso4217Services }
 
-Constructor TIso4217Services.create(languages : TIETFLanguageDefinitions);
+Constructor TIso4217Services.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
   FCurrencies := TIso4217CurrencySet.Create;
@@ -139,7 +139,7 @@ begin
   result := '';
 end;
 
-function TIso4217Services.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TIso4217Services.getDisplay(code : String; langList : THTTPLanguageList):String;
 begin
   result := FCurrencies.Map[code].display.Trim;
 end;
@@ -175,14 +175,14 @@ begin
   inherited;
 end;
 
-function TIso4217Services.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TIso4217Services.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TIso4217Concept(context).display.Trim;
 end;
 
 procedure TIso4217Services.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation(true, true, '', Display(context, nil));
 end;
 
 function TIso4217Services.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -216,7 +216,7 @@ end;
 
 function TIso4217Services.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Iso4217', itNotSupported); // Iso4217 doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.Create('locateIsA not supported by Iso4217', itNotSupported); // Iso4217 doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -228,7 +228,7 @@ end;
 
 function TIso4217Services.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TIso4217Services.searchFilter');
+  raise ETerminologyTodo.Create('TIso4217Services.searchFilter');
 end;
 
 function TIso4217Services.subsumesTest(codeA, codeB: String): String;
@@ -243,23 +243,23 @@ var
 begin
   if (prop = 'decimals') and (op = foEqual) then
   begin
-    res := TIso4217ConceptFilter.create;
+    res := TIso4217ConceptFilter.Create;
     try
       for c in FCurrencies.Codes do
         if inttostr(c.decimals) = value then
-          res.flist.Add(TIso4217Concept.create(c.link));
+          res.flist.Add(TIso4217Concept.Create(c.link));
         result := res.link;
     finally
-      res.Free;
+      res.free;
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
+    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
 end;
 
 function TIso4217Services.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TIso4217Services.filterLocate');
+  raise ETerminologyTodo.Create('TIso4217Services.filterLocate');
 end;
 
 function TIso4217Services.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -275,7 +275,7 @@ end;
 
 function TIso4217Services.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TIso4217Services.InFilter');
+  raise ETerminologyTodo.Create('TIso4217Services.InFilter');
 end;
 
 { TIso4217ConceptFilter }
@@ -289,7 +289,7 @@ end;
 
 destructor TIso4217ConceptFilter.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -300,7 +300,7 @@ end;
 
 { TIso4217Concept }
 
-constructor TIso4217Concept.create(o: TIso4217Currency);
+constructor TIso4217Concept.Create(o: TIso4217Currency);
 begin
   Inherited Create;
   FCurrency := o;
@@ -308,7 +308,7 @@ end;
 
 destructor TIso4217Concept.Destroy;
 begin
-  FCurrency.Free;
+  FCurrency.free;
   inherited;
 end;
 

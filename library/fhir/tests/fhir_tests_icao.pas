@@ -78,20 +78,20 @@ begin
       imp.issuer := 'http://test.fhir.org';
       imp.jwk := TJWK.loadFromFile(TestSettings.serverTestFile(['testcases' ,'jwk', 'test.jwk']));
       imp.mustVerify := true;
-      imp.Store := TX509CertificateStore.create;
+      imp.Store := TX509CertificateStore.Create;
       imp.Store.addFolder(TestSettings.serverTestFile(['testcases' ,'jwk', 'store']));
 
       card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao.json']), TEncoding.UTF8));
       try
         assertTrue(card <> nil);
       finally
-        card.Free;
+        card.free;
       end;
     finally
       StringToFile(imp.htmlReport, FilePath(['[tmp]', 'icao-verify.log']), TEncoding.UTF8);
     end;
   finally
-    imp.Free;
+    imp.free;
   end;
 end;
 {$ENDIF}
@@ -109,7 +109,7 @@ begin
     imp.factory := TFHIRFactoryR4.Create;
     imp.issuer := 'http://test.fhir.org';
     imp.jwk := TJWK.loadFromFile(TestSettings.serverTestFile(['testcases' ,'jwk', 'test.jwk']));
-    imp.Store := TX509CertificateStore.create;
+    imp.Store := TX509CertificateStore.Create;
     imp.Store.addFolder(TestSettings.serverTestFile(['testcases' ,'jwk', 'store']));
 
     try
@@ -120,7 +120,7 @@ begin
         assertEqual('The Covid Passport Signature is not valid', e.message, 'Exception Message is wrong for signature validation fail');
     end;
   finally
-    imp.Free;
+    imp.free;
   end;
   {$ENDIF}
 end;
@@ -139,7 +139,7 @@ begin
     imp.issuer := 'http://test.fhir.org';
     imp.jwk := TJWK.loadFromFile(TestSettings.serverTestFile(['testcases' ,'jwk', 'test.jwk']));
     imp.mustVerify := true;
-    imp.Store := TX509CertificateStore.create;
+    imp.Store := TX509CertificateStore.Create;
     try
       card := imp.import(FileToString(TestSettings.serverTestFile(['testcases' ,'icao', 'fhir-test-icao-broken.json']), TEncoding.UTF8));
       assertFail('Should have blown up');
@@ -148,7 +148,7 @@ begin
         assertEqual('Cannot verify certificate - no match for key "3617C1E7F56795712E3775708E55833186E9380E"', e.message, 'Exception Message is wrong for certificate verification fail');
     end;
   finally
-    imp.Free;
+    imp.free;
   end;
   {$ENDIF}
 end;

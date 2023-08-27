@@ -89,7 +89,7 @@ begin
     ResourceDisplayForm.WebBrowser1.Navigate('file:'+fn);
     ResourceDisplayForm.ShowModal;
   finally
-    ResourceDisplayForm.Free;
+    ResourceDisplayForm.free;
   end;
 end;
 

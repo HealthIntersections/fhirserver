@@ -62,8 +62,8 @@ type
     FEndpoints : TStringList;
 
   public
-    constructor create; override;
-    destructor destroy; override;
+    constructor Create; override;
+    destructor Destroy; override;
 
     property Magic : integer read FMagic write FMagic;
     property Memory : UInt64 read FMemory write FMemory;
@@ -94,7 +94,7 @@ type
     FLastTime : UInt64;
     FEndPointNames : TStringList;
   public
-    constructor create;
+    constructor Create;
     destructor Destroy; override;
 
     property EndPointNames : TStringList read FEndPointNames;
@@ -111,16 +111,16 @@ implementation
 
 { TStatusRecord }
 
-constructor TStatusRecord.create;
+constructor TStatusRecord.Create;
 begin
-  inherited create;
-  FEndpoints := TStringList.create;
+  inherited Create;
+  FEndpoints := TStringList.Create;
 end;
 
-destructor TStatusRecord.destroy;
+destructor TStatusRecord.Destroy;
 begin
   FEndpoints.free;
-  inherited destroy;
+  inherited Destroy;
 end;
 
 procedure TStatusRecord.clear;
@@ -177,10 +177,10 @@ end;
 
 { TStatusRecords }
 
-constructor TStatusRecords.create;
+constructor TStatusRecords.Create;
 begin
-  inherited create;
-  FEndPointNames := TStringList.create;
+  inherited Create;
+  FEndPointNames := TStringList.Create;
 end;
 
 destructor TStatusRecords.Destroy;
@@ -237,7 +237,7 @@ var
   i : integer;
   s, n: String;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     s := 'Minutes'+#9+'Date/Time'+#9+'Memory'+#9+'Threads'+#9+
          'Request Count'+#9+'Total Requests'+#9+
@@ -262,7 +262,7 @@ var
   i : integer;
   s, n : String;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     s := 'Minutes'+#9+'Date/Time'+#9+'Memory'+#9+'Threads'+#9+
          'Request Count'+#9+'Total Requests'+#9+
@@ -288,7 +288,7 @@ var
   i : integer;
   s, n : String;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     b.append('<table>'+#13#10);
     s := '<tr><td>Minutes</td><td>Date/Time</td><td>Memory</td><td>Threads</td><td>'+

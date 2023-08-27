@@ -87,8 +87,8 @@ implementation
 
 procedure TNewResourceDialog.FormDestroy(Sender: TObject);
 begin
-  FList.Free;
-  FContext.Free;
+  FList.free;
+  FContext.free;
 end;
 
 procedure TNewResourceDialog.FormShow(Sender: TObject);
@@ -126,7 +126,7 @@ end;
 procedure TNewResourceDialog.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
-  FList := TFslList<TFhirStructureDefinitionW>.create;
+  FList := TFslList<TFhirStructureDefinitionW>.Create;
 end;
 
 procedure TNewResourceDialog.cbxResourceChange(Sender: TObject);
@@ -157,7 +157,7 @@ end;
 
 procedure TNewResourceDialog.SetContext(AValue: TToolkitContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := AValue;
 end;
 
@@ -196,9 +196,9 @@ begin
   r := makeResource(c);
   try
     if format = 'json' then
-      p := c.Factory.makeComposer(c.Link, ffJson, defLang, OutputStylePretty)
+      p := c.Factory.makeComposer(c.Link, ffJson, nil, OutputStylePretty)
     else
-      p := c.Factory.makeComposer(c.Link, ffJson, defLang, OutputStylePretty);
+      p := c.Factory.makeComposer(c.Link, ffJson, nil, OutputStylePretty);
     try
       result := p.ComposeBytes(r);
     finally

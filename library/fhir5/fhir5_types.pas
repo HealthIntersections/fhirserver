@@ -257,7 +257,8 @@ type
     property DisallowExtensions : boolean read FDisallowExtensions write FDisallowExtensions;
     function hasExtensions : boolean; override;
     function hasExtension(url : string) : boolean; override;
-    function getExtensionString(url : String) : String; override;
+    function getExtensionString(url : String) : String; override; 
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
     function getExtensionsV : TFslList<TFHIRObject>; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
@@ -9635,7 +9636,7 @@ end;
 destructor TFhirElement.Destroy;
 begin
   FId.free;
-  FExtensionList.Free;
+  FExtensionList.free;
   inherited;
 end;
 
@@ -9803,7 +9804,7 @@ begin
   if value <> '' then
   begin
     if FId = nil then
-      FId := TFhirString.create;
+      FId := TFhirString.Create;
     FId.value := value
   end
   else if FId <> nil then
@@ -9901,13 +9902,13 @@ function TFhirElement.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
       
@@ -9915,14 +9916,14 @@ function TFhirElement.getExtensionsV(url: String): TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -9959,6 +9960,26 @@ begin
     end;
   end;
 end;
+
+function TFhirElement.getExtensionValue(url: String): TFHIRObject;
+var
+  ex : TFhirExtension;
+begin
+  result := nil;
+  for ex in ExtensionList do
+  begin
+    if ex.url = url then
+    begin
+      if not ex.value.isPrimitive then
+        raise EFHIRException.Create('Complex extension '+url)
+      else if result <> nil then
+        raise EFHIRException.Create('Duplicate extension '+url)
+      else
+        result := ex.value;
+    end;
+  end;
+end;
+
 { TFhirBackboneElement }
 
 constructor TFhirBackboneElement.Create;
@@ -9968,7 +9989,7 @@ end;
 
 destructor TFhirBackboneElement.Destroy;
 begin
-  FModifierExtensionList.Free;
+  FModifierExtensionList.free;
   inherited;
 end;
 
@@ -10136,7 +10157,7 @@ end;
 
 destructor TFhirBackboneType.Destroy;
 begin
-  FModifierExtensionList.Free;
+  FModifierExtensionList.free;
   inherited;
 end;
 
@@ -10313,7 +10334,7 @@ begin
   if (propName = 'value') then
   begin
     StringValue := propValue.primitiveValue;
-    propValue.Free;
+    propValue.free;
     result := self;
   end
   else
@@ -10440,7 +10461,7 @@ end;
 
 destructor TFhirEnumListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -10473,7 +10494,7 @@ constructor TFhirEnumList.Create(Systems, Codes : Array Of String);
 var
   i : integer;
 begin
-  inherited create;
+  inherited Create;
   SetLength(FSystems, length(systems));
   SetLength(FCodes, length(codes));
   for i := 0 to length(systems) - 1 do
@@ -10491,7 +10512,7 @@ end;
 
 function TFhirEnumList.Append: TFhirEnum;
 begin
-  result := TFhirEnum.create;
+  result := TFhirEnum.Create;
   try
     add(result.Link);
   finally
@@ -10535,7 +10556,7 @@ end;
 
 function TFhirEnumList.Insert(index: Integer): TFhirEnum;
 begin
-  result := TFhirEnum.create;
+  result := TFhirEnum.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -10703,7 +10724,7 @@ end;
 
 destructor TFhirDateListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -10739,7 +10760,7 @@ end;
 
 function TFhirDateList.Append: TFhirDate;
 begin
-  result := TFhirDate.create;
+  result := TFhirDate.Create;
   try
     add(result.Link);
   finally
@@ -10783,7 +10804,7 @@ end;
 
 function TFhirDateList.Insert(index: Integer): TFhirDate;
 begin
-  result := TFhirDate.create;
+  result := TFhirDate.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -10957,7 +10978,7 @@ end;
 
 destructor TFhirDateTimeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -10993,7 +11014,7 @@ end;
 
 function TFhirDateTimeList.Append: TFhirDateTime;
 begin
-  result := TFhirDateTime.create;
+  result := TFhirDateTime.Create;
   try
     add(result.Link);
   finally
@@ -11037,7 +11058,7 @@ end;
 
 function TFhirDateTimeList.Insert(index: Integer): TFhirDateTime;
 begin
-  result := TFhirDateTime.create;
+  result := TFhirDateTime.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11184,7 +11205,7 @@ end;
 
 destructor TFhirStringListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11221,7 +11242,7 @@ end;
 
 function TFhirStringList.Append: TFhirString;
 begin
-  result := TFhirString.create;
+  result := TFhirString.Create;
   try
     add(result.Link);
   finally
@@ -11265,7 +11286,7 @@ end;
 
 function TFhirStringList.Insert(index: Integer): TFhirString;
 begin
-  result := TFhirString.create;
+  result := TFhirString.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11418,7 +11439,7 @@ end;
 
 destructor TFhirIntegerListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11455,7 +11476,7 @@ end;
 
 function TFhirIntegerList.Append: TFhirInteger;
 begin
-  result := TFhirInteger.create;
+  result := TFhirInteger.Create;
   try
     add(result.Link);
   finally
@@ -11499,7 +11520,7 @@ end;
 
 function TFhirIntegerList.Insert(index: Integer): TFhirInteger;
 begin
-  result := TFhirInteger.create;
+  result := TFhirInteger.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11646,7 +11667,7 @@ end;
 
 destructor TFhirUriListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11683,7 +11704,7 @@ end;
 
 function TFhirUriList.Append: TFhirUri;
 begin
-  result := TFhirUri.create;
+  result := TFhirUri.Create;
   try
     add(result.Link);
   finally
@@ -11727,7 +11748,7 @@ end;
 
 function TFhirUriList.Insert(index: Integer): TFhirUri;
 begin
-  result := TFhirUri.create;
+  result := TFhirUri.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11895,7 +11916,7 @@ end;
 
 destructor TFhirInstantListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11931,7 +11952,7 @@ end;
 
 function TFhirInstantList.Append: TFhirInstant;
 begin
-  result := TFhirInstant.create;
+  result := TFhirInstant.Create;
   try
     add(result.Link);
   finally
@@ -11975,7 +11996,7 @@ end;
 
 function TFhirInstantList.Insert(index: Integer): TFhirInstant;
 begin
-  result := TFhirInstant.create;
+  result := TFhirInstant.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12122,7 +12143,7 @@ end;
 
 destructor TFhirXhtmlListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12159,7 +12180,7 @@ end;
 
 function TFhirXhtmlList.Append: TFhirXhtml;
 begin
-  result := TFhirXhtml.create;
+  result := TFhirXhtml.Create;
   try
     add(result.Link);
   finally
@@ -12203,7 +12224,7 @@ end;
 
 function TFhirXhtmlList.Insert(index: Integer): TFhirXhtml;
 begin
-  result := TFhirXhtml.create;
+  result := TFhirXhtml.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12354,7 +12375,7 @@ end;
 
 destructor TFhirBooleanListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12390,7 +12411,7 @@ end;
 
 function TFhirBooleanList.Append: TFhirBoolean;
 begin
-  result := TFhirBoolean.create;
+  result := TFhirBoolean.Create;
   try
     add(result.Link);
   finally
@@ -12434,7 +12455,7 @@ end;
 
 function TFhirBooleanList.Insert(index: Integer): TFhirBoolean;
 begin
-  result := TFhirBoolean.create;
+  result := TFhirBoolean.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12581,7 +12602,7 @@ end;
 
 destructor TFhirBase64BinaryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12617,7 +12638,7 @@ end;
 
 function TFhirBase64BinaryList.Append: TFhirBase64Binary;
 begin
-  result := TFhirBase64Binary.create;
+  result := TFhirBase64Binary.Create;
   try
     add(result.Link);
   finally
@@ -12661,7 +12682,7 @@ end;
 
 function TFhirBase64BinaryList.Insert(index: Integer): TFhirBase64Binary;
 begin
-  result := TFhirBase64Binary.create;
+  result := TFhirBase64Binary.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12808,7 +12829,7 @@ end;
 
 destructor TFhirTimeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12845,7 +12866,7 @@ end;
 
 function TFhirTimeList.Append: TFhirTime;
 begin
-  result := TFhirTime.create;
+  result := TFhirTime.Create;
   try
     add(result.Link);
   finally
@@ -12889,7 +12910,7 @@ end;
 
 function TFhirTimeList.Insert(index: Integer): TFhirTime;
 begin
-  result := TFhirTime.create;
+  result := TFhirTime.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13036,7 +13057,7 @@ end;
 
 destructor TFhirDecimalListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13073,7 +13094,7 @@ end;
 
 function TFhirDecimalList.Append: TFhirDecimal;
 begin
-  result := TFhirDecimal.create;
+  result := TFhirDecimal.Create;
   try
     add(result.Link);
   finally
@@ -13117,7 +13138,7 @@ end;
 
 function TFhirDecimalList.Insert(index: Integer): TFhirDecimal;
 begin
-  result := TFhirDecimal.create;
+  result := TFhirDecimal.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13203,7 +13224,7 @@ end;
 
 destructor TFhirCodeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13240,7 +13261,7 @@ end;
 
 function TFhirCodeList.Append: TFhirCode;
 begin
-  result := TFhirCode.create;
+  result := TFhirCode.Create;
   try
     add(result.Link);
   finally
@@ -13284,7 +13305,7 @@ end;
 
 function TFhirCodeList.Insert(index: Integer): TFhirCode;
 begin
-  result := TFhirCode.create;
+  result := TFhirCode.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13370,7 +13391,7 @@ end;
 
 destructor TFhirCanonicalListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13407,7 +13428,7 @@ end;
 
 function TFhirCanonicalList.Append: TFhirCanonical;
 begin
-  result := TFhirCanonical.create;
+  result := TFhirCanonical.Create;
   try
     add(result.Link);
   finally
@@ -13451,7 +13472,7 @@ end;
 
 function TFhirCanonicalList.Insert(index: Integer): TFhirCanonical;
 begin
-  result := TFhirCanonical.create;
+  result := TFhirCanonical.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13537,7 +13558,7 @@ end;
 
 destructor TFhirOidListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13574,7 +13595,7 @@ end;
 
 function TFhirOidList.Append: TFhirOid;
 begin
-  result := TFhirOid.create;
+  result := TFhirOid.Create;
   try
     add(result.Link);
   finally
@@ -13618,7 +13639,7 @@ end;
 
 function TFhirOidList.Insert(index: Integer): TFhirOid;
 begin
-  result := TFhirOid.create;
+  result := TFhirOid.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13704,7 +13725,7 @@ end;
 
 destructor TFhirUuidListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13741,7 +13762,7 @@ end;
 
 function TFhirUuidList.Append: TFhirUuid;
 begin
-  result := TFhirUuid.create;
+  result := TFhirUuid.Create;
   try
     add(result.Link);
   finally
@@ -13785,7 +13806,7 @@ end;
 
 function TFhirUuidList.Insert(index: Integer): TFhirUuid;
 begin
-  result := TFhirUuid.create;
+  result := TFhirUuid.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13871,7 +13892,7 @@ end;
 
 destructor TFhirUrlListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13908,7 +13929,7 @@ end;
 
 function TFhirUrlList.Append: TFhirUrl;
 begin
-  result := TFhirUrl.create;
+  result := TFhirUrl.Create;
   try
     add(result.Link);
   finally
@@ -13952,7 +13973,7 @@ end;
 
 function TFhirUrlList.Insert(index: Integer): TFhirUrl;
 begin
-  result := TFhirUrl.create;
+  result := TFhirUrl.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14038,7 +14059,7 @@ end;
 
 destructor TFhirMarkdownListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14075,7 +14096,7 @@ end;
 
 function TFhirMarkdownList.Append: TFhirMarkdown;
 begin
-  result := TFhirMarkdown.create;
+  result := TFhirMarkdown.Create;
   try
     add(result.Link);
   finally
@@ -14119,7 +14140,7 @@ end;
 
 function TFhirMarkdownList.Insert(index: Integer): TFhirMarkdown;
 begin
-  result := TFhirMarkdown.create;
+  result := TFhirMarkdown.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14205,7 +14226,7 @@ end;
 
 destructor TFhirUnsignedIntListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14242,7 +14263,7 @@ end;
 
 function TFhirUnsignedIntList.Append: TFhirUnsignedInt;
 begin
-  result := TFhirUnsignedInt.create;
+  result := TFhirUnsignedInt.Create;
   try
     add(result.Link);
   finally
@@ -14286,7 +14307,7 @@ end;
 
 function TFhirUnsignedIntList.Insert(index: Integer): TFhirUnsignedInt;
 begin
-  result := TFhirUnsignedInt.create;
+  result := TFhirUnsignedInt.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14372,7 +14393,7 @@ end;
 
 destructor TFhirIdListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14409,7 +14430,7 @@ end;
 
 function TFhirIdList.Append: TFhirId;
 begin
-  result := TFhirId.create;
+  result := TFhirId.Create;
   try
     add(result.Link);
   finally
@@ -14453,7 +14474,7 @@ end;
 
 function TFhirIdList.Insert(index: Integer): TFhirId;
 begin
-  result := TFhirId.create;
+  result := TFhirId.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14539,7 +14560,7 @@ end;
 
 destructor TFhirPositiveIntListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14576,7 +14597,7 @@ end;
 
 function TFhirPositiveIntList.Append: TFhirPositiveInt;
 begin
-  result := TFhirPositiveInt.create;
+  result := TFhirPositiveInt.Create;
   try
     add(result.Link);
   finally
@@ -14620,7 +14641,7 @@ end;
 
 function TFhirPositiveIntList.Insert(index: Integer): TFhirPositiveInt;
 begin
-  result := TFhirPositiveInt.create;
+  result := TFhirPositiveInt.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14706,7 +14727,7 @@ end;
 
 destructor TFhirInteger64ListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14743,7 +14764,7 @@ end;
 
 function TFhirInteger64List.Append: TFhirInteger64;
 begin
-  result := TFhirInteger64.create;
+  result := TFhirInteger64.Create;
   try
     add(result.Link);
   finally
@@ -14787,7 +14808,7 @@ end;
 
 function TFhirInteger64List.Insert(index: Integer): TFhirInteger64;
 begin
-  result := TFhirInteger64.create;
+  result := TFhirInteger64.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14840,7 +14861,7 @@ begin
   FUse.free;
   FType_.free;
   FText.free;
-  FLineList.Free;
+  FLineList.free;
   FCity.free;
   FDistrict.free;
   FState.free;
@@ -15168,7 +15189,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -15206,7 +15227,7 @@ begin
   if value <> '' then
   begin
     if FCity = nil then
-      FCity := TFhirString.create;
+      FCity := TFhirString.Create;
     FCity.value := value
   end
   else if FCity <> nil then
@@ -15232,7 +15253,7 @@ begin
   if value <> '' then
   begin
     if FDistrict = nil then
-      FDistrict := TFhirString.create;
+      FDistrict := TFhirString.Create;
     FDistrict.value := value
   end
   else if FDistrict <> nil then
@@ -15258,7 +15279,7 @@ begin
   if value <> '' then
   begin
     if FState = nil then
-      FState := TFhirString.create;
+      FState := TFhirString.Create;
     FState.value := value
   end
   else if FState <> nil then
@@ -15284,7 +15305,7 @@ begin
   if value <> '' then
   begin
     if FPostalCode = nil then
-      FPostalCode := TFhirString.create;
+      FPostalCode := TFhirString.Create;
     FPostalCode.value := value
   end
   else if FPostalCode <> nil then
@@ -15310,7 +15331,7 @@ begin
   if value <> '' then
   begin
     if FCountry = nil then
-      FCountry := TFhirString.create;
+      FCountry := TFhirString.Create;
     FCountry.value := value
   end
   else if FCountry <> nil then
@@ -15334,7 +15355,7 @@ end;
 
 destructor TFhirAddressListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -15366,7 +15387,7 @@ end;
 
 function TFhirAddressList.Append: TFhirAddress;
 begin
-  result := TFhirAddress.create;
+  result := TFhirAddress.Create;
   try
     add(result.Link);
   finally
@@ -15410,7 +15431,7 @@ end;
 
 function TFhirAddressList.Insert(index: Integer): TFhirAddress;
 begin
-  result := TFhirAddress.create;
+  result := TFhirAddress.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -15629,7 +15650,7 @@ end;
 procedure TFhirAnnotation.SetTimeST(value : TFslDateTime);
 begin
   if FTime = nil then
-    FTime := TFhirDateTime.create;
+    FTime := TFhirDateTime.Create;
   FTime.value := value
 end;
 
@@ -15652,7 +15673,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirMarkdown.create;
+      FText := TFhirMarkdown.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -15670,7 +15691,7 @@ end;
 
 destructor TFhirAnnotationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -15702,7 +15723,7 @@ end;
 
 function TFhirAnnotationList.Append: TFhirAnnotation;
 begin
-  result := TFhirAnnotation.create;
+  result := TFhirAnnotation.Create;
   try
     add(result.Link);
   finally
@@ -15746,7 +15767,7 @@ end;
 
 function TFhirAnnotationList.Insert(index: Integer): TFhirAnnotation;
 begin
-  result := TFhirAnnotation.create;
+  result := TFhirAnnotation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16116,7 +16137,7 @@ begin
   if value <> '' then
   begin
     if FContentType = nil then
-      FContentType := TFhirCode.create;
+      FContentType := TFhirCode.Create;
     FContentType.value := value
   end
   else if FContentType <> nil then
@@ -16142,7 +16163,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -16168,7 +16189,7 @@ begin
   if value <> nil then
   begin
     if FData = nil then
-      FData := TFhirBase64Binary.create;
+      FData := TFhirBase64Binary.Create;
     FData.value := value
   end
   else if FData <> nil then
@@ -16194,7 +16215,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUrl.create;
+      FUrl := TFhirUrl.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -16220,7 +16241,7 @@ begin
   if value <> '' then
   begin
     if FSize = nil then
-      FSize := TFhirInteger64.create;
+      FSize := TFhirInteger64.Create;
     FSize.value := value
   end
   else if FSize <> nil then
@@ -16246,7 +16267,7 @@ begin
   if value <> nil then
   begin
     if FHash = nil then
-      FHash := TFhirBase64Binary.create;
+      FHash := TFhirBase64Binary.Create;
     FHash.value := value
   end
   else if FHash <> nil then
@@ -16272,7 +16293,7 @@ begin
   if value <> '' then
   begin
     if FTitle = nil then
-      FTitle := TFhirString.create;
+      FTitle := TFhirString.Create;
     FTitle.value := value
   end
   else if FTitle <> nil then
@@ -16296,7 +16317,7 @@ end;
 procedure TFhirAttachment.SetCreationST(value : TFslDateTime);
 begin
   if FCreation = nil then
-    FCreation := TFhirDateTime.create;
+    FCreation := TFhirDateTime.Create;
   FCreation.value := value
 end;
 
@@ -16319,7 +16340,7 @@ begin
   if value <> '' then
   begin
     if FHeight = nil then
-      FHeight := TFhirPositiveInt.create;
+      FHeight := TFhirPositiveInt.Create;
     FHeight.value := value
   end
   else if FHeight <> nil then
@@ -16345,7 +16366,7 @@ begin
   if value <> '' then
   begin
     if FWidth = nil then
-      FWidth := TFhirPositiveInt.create;
+      FWidth := TFhirPositiveInt.Create;
     FWidth.value := value
   end
   else if FWidth <> nil then
@@ -16371,7 +16392,7 @@ begin
   if value <> '' then
   begin
     if FFrames = nil then
-      FFrames := TFhirPositiveInt.create;
+      FFrames := TFhirPositiveInt.Create;
     FFrames.value := value
   end
   else if FFrames <> nil then
@@ -16397,7 +16418,7 @@ begin
   if value <> '' then
   begin
     if FDuration = nil then
-      FDuration := TFhirDecimal.create;
+      FDuration := TFhirDecimal.Create;
     FDuration.value := value
   end
   else if FDuration <> nil then
@@ -16423,7 +16444,7 @@ begin
   if value <> '' then
   begin
     if FPages = nil then
-      FPages := TFhirPositiveInt.create;
+      FPages := TFhirPositiveInt.Create;
     FPages.value := value
   end
   else if FPages <> nil then
@@ -16441,7 +16462,7 @@ end;
 
 destructor TFhirAttachmentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16473,7 +16494,7 @@ end;
 
 function TFhirAttachmentList.Append: TFhirAttachment;
 begin
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     add(result.Link);
   finally
@@ -16517,7 +16538,7 @@ end;
 
 function TFhirAttachmentList.Insert(index: Integer): TFhirAttachment;
 begin
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16567,7 +16588,7 @@ end;
 
 destructor TFhirAvailabilityAvailableTime.Destroy;
 begin
-  FDaysOfWeek.Free;
+  FDaysOfWeek.free;
   FAllDay.free;
   FAvailableStartTime.free;
   FAvailableEndTime.free;
@@ -16792,7 +16813,7 @@ end;
 procedure TFhirAvailabilityAvailableTime.SetAllDayST(value : Boolean);
 begin
   if FAllDay = nil then
-    FAllDay := TFhirBoolean.create;
+    FAllDay := TFhirBoolean.Create;
   FAllDay.value := value
 end;
 
@@ -16815,7 +16836,7 @@ begin
   if value <> '' then
   begin
     if FAvailableStartTime = nil then
-      FAvailableStartTime := TFhirTime.create;
+      FAvailableStartTime := TFhirTime.Create;
     FAvailableStartTime.value := value
   end
   else if FAvailableStartTime <> nil then
@@ -16841,7 +16862,7 @@ begin
   if value <> '' then
   begin
     if FAvailableEndTime = nil then
-      FAvailableEndTime := TFhirTime.create;
+      FAvailableEndTime := TFhirTime.Create;
     FAvailableEndTime.value := value
   end
   else if FAvailableEndTime <> nil then
@@ -16859,7 +16880,7 @@ end;
 
 destructor TFhirAvailabilityAvailableTimeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16891,7 +16912,7 @@ end;
 
 function TFhirAvailabilityAvailableTimeList.Append: TFhirAvailabilityAvailableTime;
 begin
-  result := TFhirAvailabilityAvailableTime.create;
+  result := TFhirAvailabilityAvailableTime.Create;
   try
     add(result.Link);
   finally
@@ -16935,7 +16956,7 @@ end;
 
 function TFhirAvailabilityAvailableTimeList.Insert(index: Integer): TFhirAvailabilityAvailableTime;
 begin
-  result := TFhirAvailabilityAvailableTime.create;
+  result := TFhirAvailabilityAvailableTime.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17134,7 +17155,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -17158,7 +17179,7 @@ end;
 
 destructor TFhirAvailabilityNotAvailableTimeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17190,7 +17211,7 @@ end;
 
 function TFhirAvailabilityNotAvailableTimeList.Append: TFhirAvailabilityNotAvailableTime;
 begin
-  result := TFhirAvailabilityNotAvailableTime.create;
+  result := TFhirAvailabilityNotAvailableTime.Create;
   try
     add(result.Link);
   finally
@@ -17234,7 +17255,7 @@ end;
 
 function TFhirAvailabilityNotAvailableTimeList.Insert(index: Integer): TFhirAvailabilityNotAvailableTime;
 begin
-  result := TFhirAvailabilityNotAvailableTime.create;
+  result := TFhirAvailabilityNotAvailableTime.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17284,8 +17305,8 @@ end;
 
 destructor TFhirAvailability.Destroy;
 begin
-  FAvailableTimeList.Free;
-  FNotAvailableTimeList.Free;
+  FAvailableTimeList.free;
+  FNotAvailableTimeList.free;
   inherited;
 end;
 
@@ -17476,7 +17497,7 @@ end;
 
 destructor TFhirAvailabilityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17508,7 +17529,7 @@ end;
 
 function TFhirAvailabilityList.Append: TFhirAvailability;
 begin
-  result := TFhirAvailability.create;
+  result := TFhirAvailability.Create;
   try
     add(result.Link);
   finally
@@ -17552,7 +17573,7 @@ end;
 
 function TFhirAvailabilityList.Insert(index: Integer): TFhirAvailability;
 begin
-  result := TFhirAvailability.create;
+  result := TFhirAvailability.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17602,7 +17623,7 @@ end;
 
 destructor TFhirCodeableConcept.Destroy;
 begin
-  FCodingList.Free;
+  FCodingList.free;
   FText.free;
   inherited;
 end;
@@ -17777,7 +17798,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -17795,7 +17816,7 @@ end;
 
 destructor TFhirCodeableConceptListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17827,7 +17848,7 @@ end;
 
 function TFhirCodeableConceptList.Append: TFhirCodeableConcept;
 begin
-  result := TFhirCodeableConcept.create;
+  result := TFhirCodeableConcept.Create;
   try
     add(result.Link);
   finally
@@ -17871,7 +17892,7 @@ end;
 
 function TFhirCodeableConceptList.Insert(index: Integer): TFhirCodeableConcept;
 begin
-  result := TFhirCodeableConcept.create;
+  result := TFhirCodeableConcept.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18074,7 +18095,7 @@ end;
 
 destructor TFhirCodeableReferenceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18106,7 +18127,7 @@ end;
 
 function TFhirCodeableReferenceList.Append: TFhirCodeableReference;
 begin
-  result := TFhirCodeableReference.create;
+  result := TFhirCodeableReference.Create;
   try
     add(result.Link);
   finally
@@ -18150,7 +18171,7 @@ end;
 
 function TFhirCodeableReferenceList.Insert(index: Integer): TFhirCodeableReference;
 begin
-  result := TFhirCodeableReference.create;
+  result := TFhirCodeableReference.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18396,7 +18417,7 @@ begin
   if value <> '' then
   begin
     if FSystem = nil then
-      FSystem := TFhirUri.create;
+      FSystem := TFhirUri.Create;
     FSystem.value := value
   end
   else if FSystem <> nil then
@@ -18422,7 +18443,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -18448,7 +18469,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -18474,7 +18495,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -18498,7 +18519,7 @@ end;
 procedure TFhirCoding.SetUserSelectedST(value : Boolean);
 begin
   if FUserSelected = nil then
-    FUserSelected := TFhirBoolean.create;
+    FUserSelected := TFhirBoolean.Create;
   FUserSelected.value := value
 end;
 
@@ -18513,7 +18534,7 @@ end;
 
 destructor TFhirCodingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18545,7 +18566,7 @@ end;
 
 function TFhirCodingList.Append: TFhirCoding;
 begin
-  result := TFhirCoding.create;
+  result := TFhirCoding.Create;
   try
     add(result.Link);
   finally
@@ -18589,7 +18610,7 @@ end;
 
 function TFhirCodingList.Insert(index: Integer): TFhirCoding;
 begin
-  result := TFhirCoding.create;
+  result := TFhirCoding.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18640,7 +18661,7 @@ end;
 destructor TFhirContactDetail.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -18802,7 +18823,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -18832,7 +18853,7 @@ end;
 
 destructor TFhirContactDetailListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18864,7 +18885,7 @@ end;
 
 function TFhirContactDetailList.Append: TFhirContactDetail;
 begin
-  result := TFhirContactDetail.create;
+  result := TFhirContactDetail.Create;
   try
     add(result.Link);
   finally
@@ -18908,7 +18929,7 @@ end;
 
 function TFhirContactDetailList.Insert(index: Integer): TFhirContactDetail;
 begin
-  result := TFhirContactDetail.create;
+  result := TFhirContactDetail.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19176,7 +19197,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -19224,7 +19245,7 @@ begin
   if value <> '' then
   begin
     if FRank = nil then
-      FRank := TFhirPositiveInt.create;
+      FRank := TFhirPositiveInt.Create;
     FRank.value := value
   end
   else if FRank <> nil then
@@ -19248,7 +19269,7 @@ end;
 
 destructor TFhirContactPointListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19280,7 +19301,7 @@ end;
 
 function TFhirContactPointList.Append: TFhirContactPoint;
 begin
-  result := TFhirContactPoint.create;
+  result := TFhirContactPoint.Create;
   try
     add(result.Link);
   finally
@@ -19324,7 +19345,7 @@ end;
 
 function TFhirContactPointList.Insert(index: Integer): TFhirContactPoint;
 begin
-  result := TFhirContactPoint.create;
+  result := TFhirContactPoint.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19376,7 +19397,7 @@ destructor TFhirContributor.Destroy;
 begin
   FType_.free;
   FName.free;
-  FContactList.Free;
+  FContactList.free;
   inherited;
 end;
 
@@ -19575,7 +19596,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -19605,7 +19626,7 @@ end;
 
 destructor TFhirContributorListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19637,7 +19658,7 @@ end;
 
 function TFhirContributorList.Append: TFhirContributor;
 begin
-  result := TFhirContributor.create;
+  result := TFhirContributor.Create;
   try
     add(result.Link);
   finally
@@ -19681,7 +19702,7 @@ end;
 
 function TFhirContributorList.Insert(index: Integer): TFhirContributor;
 begin
-  result := TFhirContributor.create;
+  result := TFhirContributor.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19734,7 +19755,7 @@ begin
   FPath.free;
   FSearchParam.free;
   FValueSet.free;
-  FCodeList.Free;
+  FCodeList.free;
   inherited;
 end;
 
@@ -19925,7 +19946,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -19951,7 +19972,7 @@ begin
   if value <> '' then
   begin
     if FSearchParam = nil then
-      FSearchParam := TFhirString.create;
+      FSearchParam := TFhirString.Create;
     FSearchParam.value := value
   end
   else if FSearchParam <> nil then
@@ -19977,7 +19998,7 @@ begin
   if value <> '' then
   begin
     if FValueSet = nil then
-      FValueSet := TFhirCanonical.create;
+      FValueSet := TFhirCanonical.Create;
     FValueSet.value := value
   end
   else if FValueSet <> nil then
@@ -20007,7 +20028,7 @@ end;
 
 destructor TFhirDataRequirementCodeFilterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20039,7 +20060,7 @@ end;
 
 function TFhirDataRequirementCodeFilterList.Append: TFhirDataRequirementCodeFilter;
 begin
-  result := TFhirDataRequirementCodeFilter.create;
+  result := TFhirDataRequirementCodeFilter.Create;
   try
     add(result.Link);
   finally
@@ -20083,7 +20104,7 @@ end;
 
 function TFhirDataRequirementCodeFilterList.Insert(index: Integer): TFhirDataRequirementCodeFilter;
 begin
-  result := TFhirDataRequirementCodeFilter.create;
+  result := TFhirDataRequirementCodeFilter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20298,7 +20319,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -20324,7 +20345,7 @@ begin
   if value <> '' then
   begin
     if FSearchParam = nil then
-      FSearchParam := TFhirString.create;
+      FSearchParam := TFhirString.Create;
     FSearchParam.value := value
   end
   else if FSearchParam <> nil then
@@ -20348,7 +20369,7 @@ end;
 
 destructor TFhirDataRequirementDateFilterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20380,7 +20401,7 @@ end;
 
 function TFhirDataRequirementDateFilterList.Append: TFhirDataRequirementDateFilter;
 begin
-  result := TFhirDataRequirementDateFilter.create;
+  result := TFhirDataRequirementDateFilter.Create;
   try
     add(result.Link);
   finally
@@ -20424,7 +20445,7 @@ end;
 
 function TFhirDataRequirementDateFilterList.Insert(index: Integer): TFhirDataRequirementDateFilter;
 begin
-  result := TFhirDataRequirementDateFilter.create;
+  result := TFhirDataRequirementDateFilter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20654,7 +20675,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -20680,7 +20701,7 @@ begin
   if value <> '' then
   begin
     if FSearchParam = nil then
-      FSearchParam := TFhirString.create;
+      FSearchParam := TFhirString.Create;
     FSearchParam.value := value
   end
   else if FSearchParam <> nil then
@@ -20726,7 +20747,7 @@ end;
 
 destructor TFhirDataRequirementValueFilterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20758,7 +20779,7 @@ end;
 
 function TFhirDataRequirementValueFilterList.Append: TFhirDataRequirementValueFilter;
 begin
-  result := TFhirDataRequirementValueFilter.create;
+  result := TFhirDataRequirementValueFilter.Create;
   try
     add(result.Link);
   finally
@@ -20802,7 +20823,7 @@ end;
 
 function TFhirDataRequirementValueFilterList.Insert(index: Integer): TFhirDataRequirementValueFilter;
 begin
-  result := TFhirDataRequirementValueFilter.create;
+  result := TFhirDataRequirementValueFilter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21001,7 +21022,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -21041,7 +21062,7 @@ end;
 
 destructor TFhirDataRequirementSortListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21073,7 +21094,7 @@ end;
 
 function TFhirDataRequirementSortList.Append: TFhirDataRequirementSort;
 begin
-  result := TFhirDataRequirementSort.create;
+  result := TFhirDataRequirementSort.Create;
   try
     add(result.Link);
   finally
@@ -21117,7 +21138,7 @@ end;
 
 function TFhirDataRequirementSortList.Insert(index: Integer): TFhirDataRequirementSort;
 begin
-  result := TFhirDataRequirementSort.create;
+  result := TFhirDataRequirementSort.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21168,14 +21189,14 @@ end;
 destructor TFhirDataRequirement.Destroy;
 begin
   FType_.free;
-  FProfileList.Free;
+  FProfileList.free;
   FSubject.free;
-  FMustSupportList.Free;
-  FCodeFilterList.Free;
-  FDateFilterList.Free;
-  FValueFilterList.Free;
+  FMustSupportList.free;
+  FCodeFilterList.free;
+  FDateFilterList.free;
+  FValueFilterList.free;
   FLimit.free;
-  FSortList.Free;
+  FSortList.free;
   inherited;
 end;
 
@@ -21592,7 +21613,7 @@ begin
   if value <> '' then
   begin
     if FLimit = nil then
-      FLimit := TFhirPositiveInt.create;
+      FLimit := TFhirPositiveInt.Create;
     FLimit.value := value
   end
   else if FLimit <> nil then
@@ -21622,7 +21643,7 @@ end;
 
 destructor TFhirDataRequirementListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21654,7 +21675,7 @@ end;
 
 function TFhirDataRequirementList.Append: TFhirDataRequirement;
 begin
-  result := TFhirDataRequirement.create;
+  result := TFhirDataRequirement.Create;
   try
     add(result.Link);
   finally
@@ -21698,7 +21719,7 @@ end;
 
 function TFhirDataRequirementList.Insert(index: Integer): TFhirDataRequirement;
 begin
-  result := TFhirDataRequirement.create;
+  result := TFhirDataRequirement.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21944,7 +21965,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -21970,7 +21991,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirId.create;
+      FName := TFhirId.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -21996,7 +22017,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -22022,7 +22043,7 @@ begin
   if value <> '' then
   begin
     if FExpression = nil then
-      FExpression := TFhirString.create;
+      FExpression := TFhirString.Create;
     FExpression.value := value
   end
   else if FExpression <> nil then
@@ -22048,7 +22069,7 @@ begin
   if value <> '' then
   begin
     if FReference = nil then
-      FReference := TFhirUri.create;
+      FReference := TFhirUri.Create;
     FReference.value := value
   end
   else if FReference <> nil then
@@ -22066,7 +22087,7 @@ end;
 
 destructor TFhirExpressionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22098,7 +22119,7 @@ end;
 
 function TFhirExpressionList.Append: TFhirExpression;
 begin
-  result := TFhirExpression.create;
+  result := TFhirExpression.Create;
   try
     add(result.Link);
   finally
@@ -22142,7 +22163,7 @@ end;
 
 function TFhirExpressionList.Insert(index: Integer): TFhirExpression;
 begin
-  result := TFhirExpression.create;
+  result := TFhirExpression.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22193,8 +22214,8 @@ end;
 destructor TFhirExtendedContactDetail.Destroy;
 begin
   FPurpose.free;
-  FNameList.Free;
-  FTelecomList.Free;
+  FNameList.free;
+  FTelecomList.free;
   FAddress.free;
   FOrganization.free;
   FPeriod.free;
@@ -22470,7 +22491,7 @@ end;
 
 destructor TFhirExtendedContactDetailListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22502,7 +22523,7 @@ end;
 
 function TFhirExtendedContactDetailList.Append: TFhirExtendedContactDetail;
 begin
-  result := TFhirExtendedContactDetail.create;
+  result := TFhirExtendedContactDetail.Create;
   try
     add(result.Link);
   finally
@@ -22546,7 +22567,7 @@ end;
 
 function TFhirExtendedContactDetailList.Insert(index: Integer): TFhirExtendedContactDetail;
 begin
-  result := TFhirExtendedContactDetail.create;
+  result := TFhirExtendedContactDetail.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22745,7 +22766,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -22769,7 +22790,7 @@ end;
 
 destructor TFhirExtensionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22801,7 +22822,7 @@ end;
 
 function TFhirExtensionList.Append: TFhirExtension;
 begin
-  result := TFhirExtension.create;
+  result := TFhirExtension.Create;
   try
     add(result.Link);
   finally
@@ -22845,7 +22866,7 @@ end;
 
 function TFhirExtensionList.Insert(index: Integer): TFhirExtension;
 begin
-  result := TFhirExtension.create;
+  result := TFhirExtension.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22898,9 +22919,9 @@ begin
   FUse.free;
   FText.free;
   FFamily.free;
-  FGivenList.Free;
-  FPrefixList.Free;
-  FSuffixList.Free;
+  FGivenList.free;
+  FPrefixList.free;
+  FSuffixList.free;
   FPeriod.free;
   inherited;
 end;
@@ -23184,7 +23205,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -23210,7 +23231,7 @@ begin
   if value <> '' then
   begin
     if FFamily = nil then
-      FFamily := TFhirString.create;
+      FFamily := TFhirString.Create;
     FFamily.value := value
   end
   else if FFamily <> nil then
@@ -23270,7 +23291,7 @@ end;
 
 destructor TFhirHumanNameListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23302,7 +23323,7 @@ end;
 
 function TFhirHumanNameList.Append: TFhirHumanName;
 begin
-  result := TFhirHumanName.create;
+  result := TFhirHumanName.Create;
   try
     add(result.Link);
   finally
@@ -23346,7 +23367,7 @@ end;
 
 function TFhirHumanNameList.Insert(index: Integer): TFhirHumanName;
 begin
-  result := TFhirHumanName.create;
+  result := TFhirHumanName.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23635,7 +23656,7 @@ begin
   if value <> '' then
   begin
     if FSystem = nil then
-      FSystem := TFhirUri.create;
+      FSystem := TFhirUri.Create;
     FSystem.value := value
   end
   else if FSystem <> nil then
@@ -23661,7 +23682,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -23691,7 +23712,7 @@ end;
 
 destructor TFhirIdentifierListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23723,7 +23744,7 @@ end;
 
 function TFhirIdentifierList.Append: TFhirIdentifier;
 begin
-  result := TFhirIdentifier.create;
+  result := TFhirIdentifier.Create;
   try
     add(result.Link);
   finally
@@ -23767,7 +23788,7 @@ end;
 
 function TFhirIdentifierList.Insert(index: Integer): TFhirIdentifier;
 begin
-  result := TFhirIdentifier.create;
+  result := TFhirIdentifier.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23820,9 +23841,9 @@ begin
   FVersionId.free;
   FLastUpdated.free;
   FSource.free;
-  FProfileList.Free;
-  FSecurityList.Free;
-  FTagList.Free;
+  FProfileList.free;
+  FSecurityList.free;
+  FTagList.free;
   inherited;
 end;
 
@@ -24068,7 +24089,7 @@ begin
   if value <> '' then
   begin
     if FVersionId = nil then
-      FVersionId := TFhirId.create;
+      FVersionId := TFhirId.Create;
     FVersionId.value := value
   end
   else if FVersionId <> nil then
@@ -24092,7 +24113,7 @@ end;
 procedure TFhirMeta.SetLastUpdatedST(value : TFslDateTime);
 begin
   if FLastUpdated = nil then
-    FLastUpdated := TFhirInstant.create;
+    FLastUpdated := TFhirInstant.Create;
   FLastUpdated.value := value
 end;
 
@@ -24115,7 +24136,7 @@ begin
   if value <> '' then
   begin
     if FSource = nil then
-      FSource := TFhirUri.create;
+      FSource := TFhirUri.Create;
     FSource.value := value
   end
   else if FSource <> nil then
@@ -24169,7 +24190,7 @@ end;
 
 destructor TFhirMetaListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24201,7 +24222,7 @@ end;
 
 function TFhirMetaList.Append: TFhirMeta;
 begin
-  result := TFhirMeta.create;
+  result := TFhirMeta.Create;
   try
     add(result.Link);
   finally
@@ -24245,7 +24266,7 @@ end;
 
 function TFhirMetaList.Insert(index: Integer): TFhirMeta;
 begin
-  result := TFhirMeta.create;
+  result := TFhirMeta.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -24503,7 +24524,7 @@ begin
   if value <> '' then
   begin
     if FFactor = nil then
-      FFactor := TFhirDecimal.create;
+      FFactor := TFhirDecimal.Create;
     FFactor.value := value
   end
   else if FFactor <> nil then
@@ -24527,7 +24548,7 @@ end;
 
 destructor TFhirMonetaryComponentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24559,7 +24580,7 @@ end;
 
 function TFhirMonetaryComponentList.Append: TFhirMonetaryComponent;
 begin
-  result := TFhirMonetaryComponent.create;
+  result := TFhirMonetaryComponent.Create;
   try
     add(result.Link);
   finally
@@ -24603,7 +24624,7 @@ end;
 
 function TFhirMonetaryComponentList.Insert(index: Integer): TFhirMonetaryComponent;
 begin
-  result := TFhirMonetaryComponent.create;
+  result := TFhirMonetaryComponent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -24802,7 +24823,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirDecimal.create;
+      FValue := TFhirDecimal.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -24828,7 +24849,7 @@ begin
   if value <> '' then
   begin
     if FCurrency = nil then
-      FCurrency := TFhirCode.create;
+      FCurrency := TFhirCode.Create;
     FCurrency.value := value
   end
   else if FCurrency <> nil then
@@ -24846,7 +24867,7 @@ end;
 
 destructor TFhirMoneyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24878,7 +24899,7 @@ end;
 
 function TFhirMoneyList.Append: TFhirMoney;
 begin
-  result := TFhirMoney.create;
+  result := TFhirMoney.Create;
   try
     add(result.Link);
   finally
@@ -24922,7 +24943,7 @@ end;
 
 function TFhirMoneyList.Insert(index: Integer): TFhirMoney;
 begin
-  result := TFhirMoney.create;
+  result := TFhirMoney.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25141,7 +25162,7 @@ end;
 
 destructor TFhirNarrativeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25173,7 +25194,7 @@ end;
 
 function TFhirNarrativeList.Append: TFhirNarrative;
 begin
-  result := TFhirNarrative.create;
+  result := TFhirNarrative.Create;
   try
     add(result.Link);
   finally
@@ -25217,7 +25238,7 @@ end;
 
 function TFhirNarrativeList.Insert(index: Integer): TFhirNarrative;
 begin
-  result := TFhirNarrative.create;
+  result := TFhirNarrative.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25494,7 +25515,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirCode.create;
+      FName := TFhirCode.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -25542,7 +25563,7 @@ begin
   if value <> '' then
   begin
     if FMin = nil then
-      FMin := TFhirInteger.create;
+      FMin := TFhirInteger.Create;
     FMin.value := value
   end
   else if FMin <> nil then
@@ -25568,7 +25589,7 @@ begin
   if value <> '' then
   begin
     if FMax = nil then
-      FMax := TFhirString.create;
+      FMax := TFhirString.Create;
     FMax.value := value
   end
   else if FMax <> nil then
@@ -25594,7 +25615,7 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
@@ -25642,7 +25663,7 @@ begin
   if value <> '' then
   begin
     if FProfile = nil then
-      FProfile := TFhirCanonical.create;
+      FProfile := TFhirCanonical.Create;
     FProfile.value := value
   end
   else if FProfile <> nil then
@@ -25660,7 +25681,7 @@ end;
 
 destructor TFhirParameterDefinitionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25692,7 +25713,7 @@ end;
 
 function TFhirParameterDefinitionList.Append: TFhirParameterDefinition;
 begin
-  result := TFhirParameterDefinition.create;
+  result := TFhirParameterDefinition.Create;
   try
     add(result.Link);
   finally
@@ -25736,7 +25757,7 @@ end;
 
 function TFhirParameterDefinitionList.Insert(index: Integer): TFhirParameterDefinition;
 begin
-  result := TFhirParameterDefinition.create;
+  result := TFhirParameterDefinition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25933,7 +25954,7 @@ end;
 procedure TFhirPeriod.SetStartST(value : TFslDateTime);
 begin
   if FStart = nil then
-    FStart := TFhirDateTime.create;
+    FStart := TFhirDateTime.Create;
   FStart.value := value
 end;
 
@@ -25954,7 +25975,7 @@ end;
 procedure TFhirPeriod.SetEnd_ST(value : TFslDateTime);
 begin
   if FEnd_ = nil then
-    FEnd_ := TFhirDateTime.create;
+    FEnd_ := TFhirDateTime.Create;
   FEnd_.value := value
 end;
 
@@ -25969,7 +25990,7 @@ end;
 
 destructor TFhirPeriodListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26001,7 +26022,7 @@ end;
 
 function TFhirPeriodList.Append: TFhirPeriod;
 begin
-  result := TFhirPeriod.create;
+  result := TFhirPeriod.Create;
   try
     add(result.Link);
   finally
@@ -26045,7 +26066,7 @@ end;
 
 function TFhirPeriodList.Insert(index: Integer): TFhirPeriod;
 begin
-  result := TFhirPeriod.create;
+  result := TFhirPeriod.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26291,7 +26312,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirDecimal.create;
+      FValue := TFhirDecimal.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -26339,7 +26360,7 @@ begin
   if value <> '' then
   begin
     if FUnit_ = nil then
-      FUnit_ := TFhirString.create;
+      FUnit_ := TFhirString.Create;
     FUnit_.value := value
   end
   else if FUnit_ <> nil then
@@ -26365,7 +26386,7 @@ begin
   if value <> '' then
   begin
     if FSystem = nil then
-      FSystem := TFhirUri.create;
+      FSystem := TFhirUri.Create;
     FSystem.value := value
   end
   else if FSystem <> nil then
@@ -26391,7 +26412,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -26409,7 +26430,7 @@ end;
 
 destructor TFhirQuantityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26441,7 +26462,7 @@ end;
 
 function TFhirQuantityList.Append: TFhirQuantity;
 begin
-  result := TFhirQuantity.create;
+  result := TFhirQuantity.Create;
   try
     add(result.Link);
   finally
@@ -26485,7 +26506,7 @@ end;
 
 function TFhirQuantityList.Insert(index: Integer): TFhirQuantity;
 begin
-  result := TFhirQuantity.create;
+  result := TFhirQuantity.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26688,7 +26709,7 @@ end;
 
 destructor TFhirRangeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26720,7 +26741,7 @@ end;
 
 function TFhirRangeList.Append: TFhirRange;
 begin
-  result := TFhirRange.create;
+  result := TFhirRange.Create;
   try
     add(result.Link);
   finally
@@ -26764,7 +26785,7 @@ end;
 
 function TFhirRangeList.Insert(index: Integer): TFhirRange;
 begin
-  result := TFhirRange.create;
+  result := TFhirRange.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26967,7 +26988,7 @@ end;
 
 destructor TFhirRatioListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26999,7 +27020,7 @@ end;
 
 function TFhirRatioList.Append: TFhirRatio;
 begin
-  result := TFhirRatio.create;
+  result := TFhirRatio.Create;
   try
     add(result.Link);
   finally
@@ -27043,7 +27064,7 @@ end;
 
 function TFhirRatioList.Insert(index: Integer): TFhirRatio;
 begin
-  result := TFhirRatio.create;
+  result := TFhirRatio.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27268,7 +27289,7 @@ end;
 
 destructor TFhirRatioRangeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27300,7 +27321,7 @@ end;
 
 function TFhirRatioRangeList.Append: TFhirRatioRange;
 begin
-  result := TFhirRatioRange.create;
+  result := TFhirRatioRange.Create;
   try
     add(result.Link);
   finally
@@ -27344,7 +27365,7 @@ end;
 
 function TFhirRatioRangeList.Insert(index: Integer): TFhirRatioRange;
 begin
-  result := TFhirRatioRange.create;
+  result := TFhirRatioRange.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27574,7 +27595,7 @@ begin
   if value <> '' then
   begin
     if FReference = nil then
-      FReference := TFhirString.create;
+      FReference := TFhirString.Create;
     FReference.value := value
   end
   else if FReference <> nil then
@@ -27600,7 +27621,7 @@ begin
   if value <> '' then
   begin
     if FType_ = nil then
-      FType_ := TFhirUri.create;
+      FType_ := TFhirUri.Create;
     FType_.value := value
   end
   else if FType_ <> nil then
@@ -27632,7 +27653,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -27650,7 +27671,7 @@ end;
 
 destructor TFhirReferenceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27682,7 +27703,7 @@ end;
 
 function TFhirReferenceList.Append: TFhirReference;
 begin
-  result := TFhirReference.create;
+  result := TFhirReference.Create;
   try
     add(result.Link);
   finally
@@ -27726,7 +27747,7 @@ end;
 
 function TFhirReferenceList.Insert(index: Integer): TFhirReference;
 begin
-  result := TFhirReference.create;
+  result := TFhirReference.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27777,7 +27798,7 @@ end;
 destructor TFhirRelatedArtifact.Destroy;
 begin
   FType_.free;
-  FClassifierList.Free;
+  FClassifierList.free;
   FLabel_.free;
   FDisplay.free;
   FCitation.free;
@@ -28097,7 +28118,7 @@ begin
   if value <> '' then
   begin
     if FLabel_ = nil then
-      FLabel_ := TFhirString.create;
+      FLabel_ := TFhirString.Create;
     FLabel_.value := value
   end
   else if FLabel_ <> nil then
@@ -28123,7 +28144,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -28149,7 +28170,7 @@ begin
   if value <> '' then
   begin
     if FCitation = nil then
-      FCitation := TFhirMarkdown.create;
+      FCitation := TFhirMarkdown.Create;
     FCitation.value := value
   end
   else if FCitation <> nil then
@@ -28181,7 +28202,7 @@ begin
   if value <> '' then
   begin
     if FResource = nil then
-      FResource := TFhirCanonical.create;
+      FResource := TFhirCanonical.Create;
     FResource.value := value
   end
   else if FResource <> nil then
@@ -28233,7 +28254,7 @@ end;
 procedure TFhirRelatedArtifact.SetPublicationDateST(value : TFslDateTime);
 begin
   if FPublicationDate = nil then
-    FPublicationDate := TFhirDate.create;
+    FPublicationDate := TFhirDate.Create;
   FPublicationDate.value := value
 end;
 
@@ -28248,7 +28269,7 @@ end;
 
 destructor TFhirRelatedArtifactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28280,7 +28301,7 @@ end;
 
 function TFhirRelatedArtifactList.Append: TFhirRelatedArtifact;
 begin
-  result := TFhirRelatedArtifact.create;
+  result := TFhirRelatedArtifact.Create;
   try
     add(result.Link);
   finally
@@ -28324,7 +28345,7 @@ end;
 
 function TFhirRelatedArtifactList.Insert(index: Integer): TFhirRelatedArtifact;
 begin
-  result := TFhirRelatedArtifact.create;
+  result := TFhirRelatedArtifact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -28622,7 +28643,7 @@ begin
   if value <> '' then
   begin
     if FInterval = nil then
-      FInterval := TFhirDecimal.create;
+      FInterval := TFhirDecimal.Create;
     FInterval.value := value
   end
   else if FInterval <> nil then
@@ -28648,7 +28669,7 @@ begin
   if value <> '' then
   begin
     if FIntervalUnit = nil then
-      FIntervalUnit := TFhirCode.create;
+      FIntervalUnit := TFhirCode.Create;
     FIntervalUnit.value := value
   end
   else if FIntervalUnit <> nil then
@@ -28674,7 +28695,7 @@ begin
   if value <> '' then
   begin
     if FFactor = nil then
-      FFactor := TFhirDecimal.create;
+      FFactor := TFhirDecimal.Create;
     FFactor.value := value
   end
   else if FFactor <> nil then
@@ -28700,7 +28721,7 @@ begin
   if value <> '' then
   begin
     if FLowerLimit = nil then
-      FLowerLimit := TFhirDecimal.create;
+      FLowerLimit := TFhirDecimal.Create;
     FLowerLimit.value := value
   end
   else if FLowerLimit <> nil then
@@ -28726,7 +28747,7 @@ begin
   if value <> '' then
   begin
     if FUpperLimit = nil then
-      FUpperLimit := TFhirDecimal.create;
+      FUpperLimit := TFhirDecimal.Create;
     FUpperLimit.value := value
   end
   else if FUpperLimit <> nil then
@@ -28752,7 +28773,7 @@ begin
   if value <> '' then
   begin
     if FDimensions = nil then
-      FDimensions := TFhirPositiveInt.create;
+      FDimensions := TFhirPositiveInt.Create;
     FDimensions.value := value
   end
   else if FDimensions <> nil then
@@ -28778,7 +28799,7 @@ begin
   if value <> '' then
   begin
     if FData = nil then
-      FData := TFhirString.create;
+      FData := TFhirString.Create;
     FData.value := value
   end
   else if FData <> nil then
@@ -28796,7 +28817,7 @@ end;
 
 destructor TFhirSampledDataListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28828,7 +28849,7 @@ end;
 
 function TFhirSampledDataList.Append: TFhirSampledData;
 begin
-  result := TFhirSampledData.create;
+  result := TFhirSampledData.Create;
   try
     add(result.Link);
   finally
@@ -28872,7 +28893,7 @@ end;
 
 function TFhirSampledDataList.Insert(index: Integer): TFhirSampledData;
 begin
-  result := TFhirSampledData.create;
+  result := TFhirSampledData.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -28922,7 +28943,7 @@ end;
 
 destructor TFhirSignature.Destroy;
 begin
-  FType_List.Free;
+  FType_List.free;
   FWhen.free;
   FWho.free;
   FOnBehalfOf.free;
@@ -29173,7 +29194,7 @@ end;
 procedure TFhirSignature.SetWhenST(value : TFslDateTime);
 begin
   if FWhen = nil then
-    FWhen := TFhirInstant.create;
+    FWhen := TFhirInstant.Create;
   FWhen.value := value
 end;
 
@@ -29208,7 +29229,7 @@ begin
   if value <> '' then
   begin
     if FTargetFormat = nil then
-      FTargetFormat := TFhirCode.create;
+      FTargetFormat := TFhirCode.Create;
     FTargetFormat.value := value
   end
   else if FTargetFormat <> nil then
@@ -29234,7 +29255,7 @@ begin
   if value <> '' then
   begin
     if FSigFormat = nil then
-      FSigFormat := TFhirCode.create;
+      FSigFormat := TFhirCode.Create;
     FSigFormat.value := value
   end
   else if FSigFormat <> nil then
@@ -29260,7 +29281,7 @@ begin
   if value <> nil then
   begin
     if FData = nil then
-      FData := TFhirBase64Binary.create;
+      FData := TFhirBase64Binary.Create;
     FData.value := value
   end
   else if FData <> nil then
@@ -29278,7 +29299,7 @@ end;
 
 destructor TFhirSignatureListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29310,7 +29331,7 @@ end;
 
 function TFhirSignatureList.Append: TFhirSignature;
 begin
-  result := TFhirSignature.create;
+  result := TFhirSignature.Create;
   try
     add(result.Link);
   finally
@@ -29354,7 +29375,7 @@ end;
 
 function TFhirSignatureList.Insert(index: Integer): TFhirSignature;
 begin
-  result := TFhirSignature.create;
+  result := TFhirSignature.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29409,7 +29430,7 @@ begin
   FCode.free;
   FSubscriptionTopic.free;
   FTiming.free;
-  FDataList.Free;
+  FDataList.free;
   FCondition.free;
   inherited;
 end;
@@ -29667,7 +29688,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -29699,7 +29720,7 @@ begin
   if value <> '' then
   begin
     if FSubscriptionTopic = nil then
-      FSubscriptionTopic := TFhirCanonical.create;
+      FSubscriptionTopic := TFhirCanonical.Create;
     FSubscriptionTopic.value := value
   end
   else if FSubscriptionTopic <> nil then
@@ -29741,7 +29762,7 @@ end;
 
 destructor TFhirTriggerDefinitionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29773,7 +29794,7 @@ end;
 
 function TFhirTriggerDefinitionList.Append: TFhirTriggerDefinition;
 begin
-  result := TFhirTriggerDefinition.create;
+  result := TFhirTriggerDefinition.Create;
   try
     add(result.Link);
   finally
@@ -29817,7 +29838,7 @@ end;
 
 function TFhirTriggerDefinitionList.Insert(index: Integer): TFhirTriggerDefinition;
 begin
-  result := TFhirTriggerDefinition.create;
+  result := TFhirTriggerDefinition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30020,7 +30041,7 @@ end;
 
 destructor TFhirUsageContextListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30052,7 +30073,7 @@ end;
 
 function TFhirUsageContextList.Append: TFhirUsageContext;
 begin
-  result := TFhirUsageContext.create;
+  result := TFhirUsageContext.Create;
   try
     add(result.Link);
   finally
@@ -30096,7 +30117,7 @@ end;
 
 function TFhirUsageContextList.Insert(index: Integer): TFhirUsageContext;
 begin
-  result := TFhirUsageContext.create;
+  result := TFhirUsageContext.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30148,7 +30169,7 @@ destructor TFhirVirtualServiceDetail.Destroy;
 begin
   FChannelType.free;
   FAddress.free;
-  FAdditionalInfoList.Free;
+  FAdditionalInfoList.free;
   FMaxParticipants.free;
   FSessionKey.free;
   inherited;
@@ -30380,7 +30401,7 @@ begin
   if value <> '' then
   begin
     if FMaxParticipants = nil then
-      FMaxParticipants := TFhirPositiveInt.create;
+      FMaxParticipants := TFhirPositiveInt.Create;
     FMaxParticipants.value := value
   end
   else if FMaxParticipants <> nil then
@@ -30406,7 +30427,7 @@ begin
   if value <> '' then
   begin
     if FSessionKey = nil then
-      FSessionKey := TFhirString.create;
+      FSessionKey := TFhirString.Create;
     FSessionKey.value := value
   end
   else if FSessionKey <> nil then
@@ -30424,7 +30445,7 @@ end;
 
 destructor TFhirVirtualServiceDetailListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30456,7 +30477,7 @@ end;
 
 function TFhirVirtualServiceDetailList.Append: TFhirVirtualServiceDetail;
 begin
-  result := TFhirVirtualServiceDetail.create;
+  result := TFhirVirtualServiceDetail.Create;
   try
     add(result.Link);
   finally
@@ -30500,7 +30521,7 @@ end;
 
 function TFhirVirtualServiceDetailList.Insert(index: Integer): TFhirVirtualServiceDetail;
 begin
-  result := TFhirVirtualServiceDetail.create;
+  result := TFhirVirtualServiceDetail.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30569,7 +30590,7 @@ end;
 
 destructor TFhirAgeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30601,7 +30622,7 @@ end;
 
 function TFhirAgeList.Append: TFhirAge;
 begin
-  result := TFhirAge.create;
+  result := TFhirAge.Create;
   try
     add(result.Link);
   finally
@@ -30645,7 +30666,7 @@ end;
 
 function TFhirAgeList.Insert(index: Integer): TFhirAge;
 begin
-  result := TFhirAge.create;
+  result := TFhirAge.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30714,7 +30735,7 @@ end;
 
 destructor TFhirCountListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30746,7 +30767,7 @@ end;
 
 function TFhirCountList.Append: TFhirCount;
 begin
-  result := TFhirCount.create;
+  result := TFhirCount.Create;
   try
     add(result.Link);
   finally
@@ -30790,7 +30811,7 @@ end;
 
 function TFhirCountList.Insert(index: Integer): TFhirCount;
 begin
-  result := TFhirCount.create;
+  result := TFhirCount.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30859,7 +30880,7 @@ end;
 
 destructor TFhirDistanceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30891,7 +30912,7 @@ end;
 
 function TFhirDistanceList.Append: TFhirDistance;
 begin
-  result := TFhirDistance.create;
+  result := TFhirDistance.Create;
   try
     add(result.Link);
   finally
@@ -30935,7 +30956,7 @@ end;
 
 function TFhirDistanceList.Insert(index: Integer): TFhirDistance;
 begin
-  result := TFhirDistance.create;
+  result := TFhirDistance.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31160,7 +31181,7 @@ end;
 
 destructor TFhirDosageDoseAndRateListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -31192,7 +31213,7 @@ end;
 
 function TFhirDosageDoseAndRateList.Append: TFhirDosageDoseAndRate;
 begin
-  result := TFhirDosageDoseAndRate.create;
+  result := TFhirDosageDoseAndRate.Create;
   try
     add(result.Link);
   finally
@@ -31236,7 +31257,7 @@ end;
 
 function TFhirDosageDoseAndRateList.Insert(index: Integer): TFhirDosageDoseAndRate;
 begin
-  result := TFhirDosageDoseAndRate.create;
+  result := TFhirDosageDoseAndRate.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31288,16 +31309,16 @@ destructor TFhirDosage.Destroy;
 begin
   FSequence.free;
   FText.free;
-  FAdditionalInstructionList.Free;
+  FAdditionalInstructionList.free;
   FPatientInstruction.free;
   FTiming.free;
   FAsNeeded.free;
-  FAsNeededForList.Free;
+  FAsNeededForList.free;
   FSite.free;
   FRoute.free;
   FMethod.free;
-  FDoseAndRateList.Free;
-  FMaxDosePerPeriodList.Free;
+  FDoseAndRateList.free;
+  FMaxDosePerPeriodList.free;
   FMaxDosePerAdministration.free;
   FMaxDosePerLifetime.free;
   inherited;
@@ -31676,7 +31697,7 @@ begin
   if value <> '' then
   begin
     if FSequence = nil then
-      FSequence := TFhirInteger.create;
+      FSequence := TFhirInteger.Create;
     FSequence.value := value
   end
   else if FSequence <> nil then
@@ -31702,7 +31723,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -31740,7 +31761,7 @@ begin
   if value <> '' then
   begin
     if FPatientInstruction = nil then
-      FPatientInstruction := TFhirString.create;
+      FPatientInstruction := TFhirString.Create;
     FPatientInstruction.value := value
   end
   else if FPatientInstruction <> nil then
@@ -31770,7 +31791,7 @@ end;
 procedure TFhirDosage.SetAsNeededST(value : Boolean);
 begin
   if FAsNeeded = nil then
-    FAsNeeded := TFhirBoolean.create;
+    FAsNeeded := TFhirBoolean.Create;
   FAsNeeded.value := value
 end;
 
@@ -31851,7 +31872,7 @@ end;
 
 destructor TFhirDosageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -31883,7 +31904,7 @@ end;
 
 function TFhirDosageList.Append: TFhirDosage;
 begin
-  result := TFhirDosage.create;
+  result := TFhirDosage.Create;
   try
     add(result.Link);
   finally
@@ -31927,7 +31948,7 @@ end;
 
 function TFhirDosageList.Insert(index: Integer): TFhirDosage;
 begin
-  result := TFhirDosage.create;
+  result := TFhirDosage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31996,7 +32017,7 @@ end;
 
 destructor TFhirDurationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32028,7 +32049,7 @@ end;
 
 function TFhirDurationList.Append: TFhirDuration;
 begin
-  result := TFhirDuration.create;
+  result := TFhirDuration.Create;
   try
     add(result.Link);
   finally
@@ -32072,7 +32093,7 @@ end;
 
 function TFhirDurationList.Insert(index: Integer): TFhirDuration;
 begin
-  result := TFhirDuration.create;
+  result := TFhirDuration.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32122,7 +32143,7 @@ end;
 
 destructor TFhirElementDefinitionSlicing.Destroy;
 begin
-  FDiscriminatorList.Free;
+  FDiscriminatorList.free;
   FDescription.free;
   FOrdered.free;
   FRules.free;
@@ -32328,7 +32349,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -32352,7 +32373,7 @@ end;
 procedure TFhirElementDefinitionSlicing.SetOrderedST(value : Boolean);
 begin
   if FOrdered = nil then
-    FOrdered := TFhirBoolean.create;
+    FOrdered := TFhirBoolean.Create;
   FOrdered.value := value
 end;
 
@@ -32389,7 +32410,7 @@ end;
 
 destructor TFhirElementDefinitionSlicingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32421,7 +32442,7 @@ end;
 
 function TFhirElementDefinitionSlicingList.Append: TFhirElementDefinitionSlicing;
 begin
-  result := TFhirElementDefinitionSlicing.create;
+  result := TFhirElementDefinitionSlicing.Create;
   try
     add(result.Link);
   finally
@@ -32465,7 +32486,7 @@ end;
 
 function TFhirElementDefinitionSlicingList.Insert(index: Integer): TFhirElementDefinitionSlicing;
 begin
-  result := TFhirElementDefinitionSlicing.create;
+  result := TFhirElementDefinitionSlicing.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32686,7 +32707,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -32704,7 +32725,7 @@ end;
 
 destructor TFhirElementDefinitionSlicingDiscriminatorListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32736,7 +32757,7 @@ end;
 
 function TFhirElementDefinitionSlicingDiscriminatorList.Append: TFhirElementDefinitionSlicingDiscriminator;
 begin
-  result := TFhirElementDefinitionSlicingDiscriminator.create;
+  result := TFhirElementDefinitionSlicingDiscriminator.Create;
   try
     add(result.Link);
   finally
@@ -32780,7 +32801,7 @@ end;
 
 function TFhirElementDefinitionSlicingDiscriminatorList.Insert(index: Integer): TFhirElementDefinitionSlicingDiscriminator;
 begin
-  result := TFhirElementDefinitionSlicingDiscriminator.create;
+  result := TFhirElementDefinitionSlicingDiscriminator.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32995,7 +33016,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -33021,7 +33042,7 @@ begin
   if value <> '' then
   begin
     if FMin = nil then
-      FMin := TFhirUnsignedInt.create;
+      FMin := TFhirUnsignedInt.Create;
     FMin.value := value
   end
   else if FMin <> nil then
@@ -33047,7 +33068,7 @@ begin
   if value <> '' then
   begin
     if FMax = nil then
-      FMax := TFhirString.create;
+      FMax := TFhirString.Create;
     FMax.value := value
   end
   else if FMax <> nil then
@@ -33065,7 +33086,7 @@ end;
 
 destructor TFhirElementDefinitionBaseListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33097,7 +33118,7 @@ end;
 
 function TFhirElementDefinitionBaseList.Append: TFhirElementDefinitionBase;
 begin
-  result := TFhirElementDefinitionBase.create;
+  result := TFhirElementDefinitionBase.Create;
   try
     add(result.Link);
   finally
@@ -33141,7 +33162,7 @@ end;
 
 function TFhirElementDefinitionBaseList.Insert(index: Integer): TFhirElementDefinitionBase;
 begin
-  result := TFhirElementDefinitionBase.create;
+  result := TFhirElementDefinitionBase.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -33192,9 +33213,9 @@ end;
 destructor TFhirElementDefinitionType.Destroy;
 begin
   FCode.free;
-  FProfileList.Free;
-  FTargetProfileList.Free;
-  FAggregation.Free;
+  FProfileList.free;
+  FTargetProfileList.free;
+  FAggregation.free;
   FVersioning.free;
   inherited;
 end;
@@ -33423,7 +33444,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirUri.create;
+      FCode := TFhirUri.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -33523,7 +33544,7 @@ end;
 
 destructor TFhirElementDefinitionTypeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33555,7 +33576,7 @@ end;
 
 function TFhirElementDefinitionTypeList.Append: TFhirElementDefinitionType;
 begin
-  result := TFhirElementDefinitionType.create;
+  result := TFhirElementDefinitionType.Create;
   try
     add(result.Link);
   finally
@@ -33599,7 +33620,7 @@ end;
 
 function TFhirElementDefinitionTypeList.Insert(index: Integer): TFhirElementDefinitionType;
 begin
-  result := TFhirElementDefinitionType.create;
+  result := TFhirElementDefinitionType.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -33798,7 +33819,7 @@ begin
   if value <> '' then
   begin
     if FLabel_ = nil then
-      FLabel_ := TFhirString.create;
+      FLabel_ := TFhirString.Create;
     FLabel_.value := value
   end
   else if FLabel_ <> nil then
@@ -33822,7 +33843,7 @@ end;
 
 destructor TFhirElementDefinitionExampleListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33854,7 +33875,7 @@ end;
 
 function TFhirElementDefinitionExampleList.Append: TFhirElementDefinitionExample;
 begin
-  result := TFhirElementDefinitionExample.create;
+  result := TFhirElementDefinitionExample.Create;
   try
     add(result.Link);
   finally
@@ -33898,7 +33919,7 @@ end;
 
 function TFhirElementDefinitionExampleList.Insert(index: Integer): TFhirElementDefinitionExample;
 begin
-  result := TFhirElementDefinitionExample.create;
+  result := TFhirElementDefinitionExample.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34190,7 +34211,7 @@ begin
   if value <> '' then
   begin
     if FKey = nil then
-      FKey := TFhirId.create;
+      FKey := TFhirId.Create;
     FKey.value := value
   end
   else if FKey <> nil then
@@ -34216,7 +34237,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirMarkdown.create;
+      FRequirements := TFhirMarkdown.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -34262,7 +34283,7 @@ end;
 procedure TFhirElementDefinitionConstraint.SetSuppressST(value : Boolean);
 begin
   if FSuppress = nil then
-    FSuppress := TFhirBoolean.create;
+    FSuppress := TFhirBoolean.Create;
   FSuppress.value := value
 end;
 
@@ -34285,7 +34306,7 @@ begin
   if value <> '' then
   begin
     if FHuman = nil then
-      FHuman := TFhirString.create;
+      FHuman := TFhirString.Create;
     FHuman.value := value
   end
   else if FHuman <> nil then
@@ -34311,7 +34332,7 @@ begin
   if value <> '' then
   begin
     if FExpression = nil then
-      FExpression := TFhirString.create;
+      FExpression := TFhirString.Create;
     FExpression.value := value
   end
   else if FExpression <> nil then
@@ -34337,7 +34358,7 @@ begin
   if value <> '' then
   begin
     if FXpath = nil then
-      FXpath := TFhirString.create;
+      FXpath := TFhirString.Create;
     FXpath.value := value
   end
   else if FXpath <> nil then
@@ -34363,7 +34384,7 @@ begin
   if value <> '' then
   begin
     if FSource = nil then
-      FSource := TFhirCanonical.create;
+      FSource := TFhirCanonical.Create;
     FSource.value := value
   end
   else if FSource <> nil then
@@ -34381,7 +34402,7 @@ end;
 
 destructor TFhirElementDefinitionConstraintListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34413,7 +34434,7 @@ end;
 
 function TFhirElementDefinitionConstraintList.Append: TFhirElementDefinitionConstraint;
 begin
-  result := TFhirElementDefinitionConstraint.create;
+  result := TFhirElementDefinitionConstraint.Create;
   try
     add(result.Link);
   finally
@@ -34457,7 +34478,7 @@ end;
 
 function TFhirElementDefinitionConstraintList.Insert(index: Integer): TFhirElementDefinitionConstraint;
 begin
-  result := TFhirElementDefinitionConstraint.create;
+  result := TFhirElementDefinitionConstraint.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34694,7 +34715,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirMarkdown.create;
+      FDescription := TFhirMarkdown.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -34720,7 +34741,7 @@ begin
   if value <> '' then
   begin
     if FValueSet = nil then
-      FValueSet := TFhirCanonical.create;
+      FValueSet := TFhirCanonical.Create;
     FValueSet.value := value
   end
   else if FValueSet <> nil then
@@ -34738,7 +34759,7 @@ end;
 
 destructor TFhirElementDefinitionBindingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34770,7 +34791,7 @@ end;
 
 function TFhirElementDefinitionBindingList.Append: TFhirElementDefinitionBinding;
 begin
-  result := TFhirElementDefinitionBinding.create;
+  result := TFhirElementDefinitionBinding.Create;
   try
     add(result.Link);
   finally
@@ -34814,7 +34835,7 @@ end;
 
 function TFhirElementDefinitionBindingList.Insert(index: Integer): TFhirElementDefinitionBinding;
 begin
-  result := TFhirElementDefinitionBinding.create;
+  result := TFhirElementDefinitionBinding.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35044,7 +35065,7 @@ begin
   if value <> '' then
   begin
     if FIdentity = nil then
-      FIdentity := TFhirId.create;
+      FIdentity := TFhirId.Create;
     FIdentity.value := value
   end
   else if FIdentity <> nil then
@@ -35070,7 +35091,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -35096,7 +35117,7 @@ begin
   if value <> '' then
   begin
     if FMap = nil then
-      FMap := TFhirString.create;
+      FMap := TFhirString.Create;
     FMap.value := value
   end
   else if FMap <> nil then
@@ -35122,7 +35143,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirMarkdown.create;
+      FComment := TFhirMarkdown.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -35140,7 +35161,7 @@ end;
 
 destructor TFhirElementDefinitionMappingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -35172,7 +35193,7 @@ end;
 
 function TFhirElementDefinitionMappingList.Append: TFhirElementDefinitionMapping;
 begin
-  result := TFhirElementDefinitionMapping.create;
+  result := TFhirElementDefinitionMapping.Create;
   try
     add(result.Link);
   finally
@@ -35216,7 +35237,7 @@ end;
 
 function TFhirElementDefinitionMappingList.Insert(index: Integer): TFhirElementDefinitionMapping;
 begin
-  result := TFhirElementDefinitionMapping.create;
+  result := TFhirElementDefinitionMapping.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35267,39 +35288,39 @@ end;
 destructor TFhirElementDefinition.Destroy;
 begin
   FPath.free;
-  FRepresentation.Free;
+  FRepresentation.free;
   FSliceName.free;
   FSliceIsConstraining.free;
   FLabel_.free;
-  FCodeList.Free;
+  FCodeList.free;
   FSlicing.free;
   FShort.free;
   FDefinition.free;
   FComment.free;
   FRequirements.free;
-  FAliasList.Free;
+  FAliasList.free;
   FMin.free;
   FMax.free;
   FBase.free;
   FContentReference.free;
-  FType_List.Free;
+  FType_List.free;
   FDefaultValue.free;
   FMeaningWhenMissing.free;
   FOrderMeaning.free;
   FFixed.free;
   FPattern.free;
-  FExampleList.Free;
+  FExampleList.free;
   FMinValue.free;
   FMaxValue.free;
   FMaxLength.free;
-  FConditionList.Free;
-  FConstraintList.Free;
+  FConditionList.free;
+  FConstraintList.free;
   FMustSupport.free;
   FIsModifier.free;
   FIsModifierReason.free;
   FIsSummary.free;
   FBinding.free;
-  FMappingList.Free;
+  FMappingList.free;
   inherited;
 end;
 
@@ -36013,7 +36034,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -36075,7 +36096,7 @@ begin
   if value <> '' then
   begin
     if FSliceName = nil then
-      FSliceName := TFhirString.create;
+      FSliceName := TFhirString.Create;
     FSliceName.value := value
   end
   else if FSliceName <> nil then
@@ -36099,7 +36120,7 @@ end;
 procedure TFhirElementDefinition.SetSliceIsConstrainingST(value : Boolean);
 begin
   if FSliceIsConstraining = nil then
-    FSliceIsConstraining := TFhirBoolean.create;
+    FSliceIsConstraining := TFhirBoolean.Create;
   FSliceIsConstraining.value := value
 end;
 
@@ -36122,7 +36143,7 @@ begin
   if value <> '' then
   begin
     if FLabel_ = nil then
-      FLabel_ := TFhirString.create;
+      FLabel_ := TFhirString.Create;
     FLabel_.value := value
   end
   else if FLabel_ <> nil then
@@ -36166,7 +36187,7 @@ begin
   if value <> '' then
   begin
     if FShort = nil then
-      FShort := TFhirString.create;
+      FShort := TFhirString.Create;
     FShort.value := value
   end
   else if FShort <> nil then
@@ -36192,7 +36213,7 @@ begin
   if value <> '' then
   begin
     if FDefinition = nil then
-      FDefinition := TFhirMarkdown.create;
+      FDefinition := TFhirMarkdown.Create;
     FDefinition.value := value
   end
   else if FDefinition <> nil then
@@ -36218,7 +36239,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirMarkdown.create;
+      FComment := TFhirMarkdown.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -36244,7 +36265,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirMarkdown.create;
+      FRequirements := TFhirMarkdown.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -36282,7 +36303,7 @@ begin
   if value <> '' then
   begin
     if FMin = nil then
-      FMin := TFhirUnsignedInt.create;
+      FMin := TFhirUnsignedInt.Create;
     FMin.value := value
   end
   else if FMin <> nil then
@@ -36308,7 +36329,7 @@ begin
   if value <> '' then
   begin
     if FMax = nil then
-      FMax := TFhirString.create;
+      FMax := TFhirString.Create;
     FMax.value := value
   end
   else if FMax <> nil then
@@ -36340,7 +36361,7 @@ begin
   if value <> '' then
   begin
     if FContentReference = nil then
-      FContentReference := TFhirUri.create;
+      FContentReference := TFhirUri.Create;
     FContentReference.value := value
   end
   else if FContentReference <> nil then
@@ -36384,7 +36405,7 @@ begin
   if value <> '' then
   begin
     if FMeaningWhenMissing = nil then
-      FMeaningWhenMissing := TFhirMarkdown.create;
+      FMeaningWhenMissing := TFhirMarkdown.Create;
     FMeaningWhenMissing.value := value
   end
   else if FMeaningWhenMissing <> nil then
@@ -36410,7 +36431,7 @@ begin
   if value <> '' then
   begin
     if FOrderMeaning = nil then
-      FOrderMeaning := TFhirString.create;
+      FOrderMeaning := TFhirString.Create;
     FOrderMeaning.value := value
   end
   else if FOrderMeaning <> nil then
@@ -36472,7 +36493,7 @@ begin
   if value <> '' then
   begin
     if FMaxLength = nil then
-      FMaxLength := TFhirInteger.create;
+      FMaxLength := TFhirInteger.Create;
     FMaxLength.value := value
   end
   else if FMaxLength <> nil then
@@ -36520,7 +36541,7 @@ end;
 procedure TFhirElementDefinition.SetMustSupportST(value : Boolean);
 begin
   if FMustSupport = nil then
-    FMustSupport := TFhirBoolean.create;
+    FMustSupport := TFhirBoolean.Create;
   FMustSupport.value := value
 end;
 
@@ -36541,7 +36562,7 @@ end;
 procedure TFhirElementDefinition.SetIsModifierST(value : Boolean);
 begin
   if FIsModifier = nil then
-    FIsModifier := TFhirBoolean.create;
+    FIsModifier := TFhirBoolean.Create;
   FIsModifier.value := value
 end;
 
@@ -36564,7 +36585,7 @@ begin
   if value <> '' then
   begin
     if FIsModifierReason = nil then
-      FIsModifierReason := TFhirString.create;
+      FIsModifierReason := TFhirString.Create;
     FIsModifierReason.value := value
   end
   else if FIsModifierReason <> nil then
@@ -36588,7 +36609,7 @@ end;
 procedure TFhirElementDefinition.SetIsSummaryST(value : Boolean);
 begin
   if FIsSummary = nil then
-    FIsSummary := TFhirBoolean.create;
+    FIsSummary := TFhirBoolean.Create;
   FIsSummary.value := value
 end;
 
@@ -36621,7 +36642,7 @@ end;
 
 destructor TFhirElementDefinitionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36653,7 +36674,7 @@ end;
 
 function TFhirElementDefinitionList.Append: TFhirElementDefinition;
 begin
-  result := TFhirElementDefinition.create;
+  result := TFhirElementDefinition.Create;
   try
     add(result.Link);
   finally
@@ -36697,7 +36718,7 @@ end;
 
 function TFhirElementDefinitionList.Insert(index: Integer): TFhirElementDefinition;
 begin
-  result := TFhirElementDefinition.create;
+  result := TFhirElementDefinition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -36965,7 +36986,7 @@ end;
 procedure TFhirMarketingStatus.SetRestoreDateST(value : TFslDateTime);
 begin
   if FRestoreDate = nil then
-    FRestoreDate := TFhirDateTime.create;
+    FRestoreDate := TFhirDateTime.Create;
   FRestoreDate.value := value
 end;
 
@@ -36980,7 +37001,7 @@ end;
 
 destructor TFhirMarketingStatusListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37012,7 +37033,7 @@ end;
 
 function TFhirMarketingStatusList.Append: TFhirMarketingStatus;
 begin
-  result := TFhirMarketingStatus.create;
+  result := TFhirMarketingStatus.Create;
   try
     add(result.Link);
   finally
@@ -37056,7 +37077,7 @@ end;
 
 function TFhirMarketingStatusList.Insert(index: Integer): TFhirMarketingStatus;
 begin
-  result := TFhirMarketingStatus.create;
+  result := TFhirMarketingStatus.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37302,7 +37323,7 @@ end;
 
 destructor TFhirPopulationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37334,7 +37355,7 @@ end;
 
 function TFhirPopulationList.Append: TFhirPopulation;
 begin
-  result := TFhirPopulation.create;
+  result := TFhirPopulation.Create;
   try
     add(result.Link);
   finally
@@ -37378,7 +37399,7 @@ end;
 
 function TFhirPopulationList.Insert(index: Integer): TFhirPopulation;
 begin
-  result := TFhirPopulation.create;
+  result := TFhirPopulation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37430,7 +37451,7 @@ destructor TFhirProductShelfLife.Destroy;
 begin
   FType_.free;
   FPeriod.free;
-  FSpecialPrecautionsForStorageList.Free;
+  FSpecialPrecautionsForStorageList.free;
   inherited;
 end;
 
@@ -37623,7 +37644,7 @@ end;
 
 destructor TFhirProductShelfLifeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37655,7 +37676,7 @@ end;
 
 function TFhirProductShelfLifeList.Append: TFhirProductShelfLife;
 begin
-  result := TFhirProductShelfLife.create;
+  result := TFhirProductShelfLife.Create;
   try
     add(result.Link);
   finally
@@ -37699,7 +37720,7 @@ end;
 
 function TFhirProductShelfLifeList.Insert(index: Integer): TFhirProductShelfLife;
 begin
-  result := TFhirProductShelfLife.create;
+  result := TFhirProductShelfLife.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37760,9 +37781,9 @@ begin
   FPeriod.free;
   FPeriodMax.free;
   FPeriodUnit.free;
-  FDayOfWeek.Free;
-  FTimeOfDayList.Free;
-  FWhen.Free;
+  FDayOfWeek.free;
+  FTimeOfDayList.free;
+  FWhen.free;
   FOffset.free;
   inherited;
 end;
@@ -38138,7 +38159,7 @@ begin
   if value <> '' then
   begin
     if FCount = nil then
-      FCount := TFhirPositiveInt.create;
+      FCount := TFhirPositiveInt.Create;
     FCount.value := value
   end
   else if FCount <> nil then
@@ -38164,7 +38185,7 @@ begin
   if value <> '' then
   begin
     if FCountMax = nil then
-      FCountMax := TFhirPositiveInt.create;
+      FCountMax := TFhirPositiveInt.Create;
     FCountMax.value := value
   end
   else if FCountMax <> nil then
@@ -38190,7 +38211,7 @@ begin
   if value <> '' then
   begin
     if FDuration = nil then
-      FDuration := TFhirDecimal.create;
+      FDuration := TFhirDecimal.Create;
     FDuration.value := value
   end
   else if FDuration <> nil then
@@ -38216,7 +38237,7 @@ begin
   if value <> '' then
   begin
     if FDurationMax = nil then
-      FDurationMax := TFhirDecimal.create;
+      FDurationMax := TFhirDecimal.Create;
     FDurationMax.value := value
   end
   else if FDurationMax <> nil then
@@ -38264,7 +38285,7 @@ begin
   if value <> '' then
   begin
     if FFrequency = nil then
-      FFrequency := TFhirPositiveInt.create;
+      FFrequency := TFhirPositiveInt.Create;
     FFrequency.value := value
   end
   else if FFrequency <> nil then
@@ -38290,7 +38311,7 @@ begin
   if value <> '' then
   begin
     if FFrequencyMax = nil then
-      FFrequencyMax := TFhirPositiveInt.create;
+      FFrequencyMax := TFhirPositiveInt.Create;
     FFrequencyMax.value := value
   end
   else if FFrequencyMax <> nil then
@@ -38316,7 +38337,7 @@ begin
   if value <> '' then
   begin
     if FPeriod = nil then
-      FPeriod := TFhirDecimal.create;
+      FPeriod := TFhirDecimal.Create;
     FPeriod.value := value
   end
   else if FPeriod <> nil then
@@ -38342,7 +38363,7 @@ begin
   if value <> '' then
   begin
     if FPeriodMax = nil then
-      FPeriodMax := TFhirDecimal.create;
+      FPeriodMax := TFhirDecimal.Create;
     FPeriodMax.value := value
   end
   else if FPeriodMax <> nil then
@@ -38474,7 +38495,7 @@ begin
   if value <> '' then
   begin
     if FOffset = nil then
-      FOffset := TFhirUnsignedInt.create;
+      FOffset := TFhirUnsignedInt.Create;
     FOffset.value := value
   end
   else if FOffset <> nil then
@@ -38492,7 +38513,7 @@ end;
 
 destructor TFhirTimingRepeatListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -38524,7 +38545,7 @@ end;
 
 function TFhirTimingRepeatList.Append: TFhirTimingRepeat;
 begin
-  result := TFhirTimingRepeat.create;
+  result := TFhirTimingRepeat.Create;
   try
     add(result.Link);
   finally
@@ -38568,7 +38589,7 @@ end;
 
 function TFhirTimingRepeatList.Insert(index: Integer): TFhirTimingRepeat;
 begin
-  result := TFhirTimingRepeat.create;
+  result := TFhirTimingRepeat.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -38618,7 +38639,7 @@ end;
 
 destructor TFhirTiming.Destroy;
 begin
-  FEventList.Free;
+  FEventList.free;
   FRepeat_.free;
   FCode.free;
   inherited;
@@ -38813,7 +38834,7 @@ end;
 
 destructor TFhirTimingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -38845,7 +38866,7 @@ end;
 
 function TFhirTimingList.Append: TFhirTiming;
 begin
-  result := TFhirTiming.create;
+  result := TFhirTiming.Create;
   try
     add(result.Link);
   finally
@@ -38889,7 +38910,7 @@ end;
 
 function TFhirTimingList.Insert(index: Integer): TFhirTiming;
 begin
-  result := TFhirTiming.create;
+  result := TFhirTiming.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -38939,16 +38960,16 @@ begin
   else if obj is TFHIRCode then
   begin
     result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRCode(obj).value)], TFHIRCode(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if obj is TFHIRString then
   begin
     result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRString(obj).value)], TFHIRString(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
   end;
 end;
@@ -38960,16 +38981,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDate"')
   end;
 end;
@@ -38981,16 +39002,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDateTime"')
   end;
 end;
@@ -39002,16 +39023,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRString.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRString.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRString"')
   end;
 end;
@@ -39023,16 +39044,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRInteger.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRInteger.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger"')
   end;
 end;
@@ -39044,16 +39065,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUri.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUri.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUri"')
   end;
 end;
@@ -39065,16 +39086,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRObject(obj).primitiveValue));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInstant"')
   end;
 end;
@@ -39086,16 +39107,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRXhtml.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRXhtml.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRXhtml"')
   end;
 end;
@@ -39107,16 +39128,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRBoolean.create(TFHIRMMElement(obj).value = 'true');
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRBoolean.create(TFHIRObject(obj).primitiveValue = 'true');
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBoolean"')
   end;
 end;
@@ -39128,16 +39149,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRBase64Binary.create(DecodeBase64(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRBase64Binary.create(DecodeBase64(TFHIRObject(obj).primitiveValue));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRBase64Binary"')
   end;
 end;
@@ -39149,16 +39170,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRTime.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRTime.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRTime"')
   end;
 end;
@@ -39170,16 +39191,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRDecimal.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRDecimal.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRDecimal"')
   end;
 end;
@@ -39191,16 +39212,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRCode.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRCode.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCode"')
   end;
 end;
@@ -39212,16 +39233,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRCanonical.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRCanonical.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRCanonical"')
   end;
 end;
@@ -39233,16 +39254,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIROid.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIROid.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIROid"')
   end;
 end;
@@ -39254,16 +39275,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUuid.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUuid.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUuid"')
   end;
 end;
@@ -39275,16 +39296,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUrl.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUrl.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUrl"')
   end;
 end;
@@ -39296,16 +39317,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRMarkdown.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRMarkdown"')
   end;
 end;
@@ -39317,16 +39338,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUnsignedInt.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUnsignedInt.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRUnsignedInt"')
   end;
 end;
@@ -39338,16 +39359,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRId.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRId.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRId"')
   end;
 end;
@@ -39359,16 +39380,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRPositiveInt.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRPositiveInt.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRPositiveInt"')
   end;
 end;
@@ -39380,16 +39401,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRInteger64.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRInteger64.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFhirException.Create('Type mismatch: cannot convert from "'+obj.className+'" to "TFHIRInteger64"')
   end;
 end;

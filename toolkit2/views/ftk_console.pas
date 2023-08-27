@@ -107,14 +107,14 @@ end;
 constructor TToolkitConsole.Create;
 begin
   inherited Create;
-  FLock := TFslLock.create('console');
-  FLines := TStringList.create;
+  FLock := TFslLock.Create('console');
+  FLines := TStringList.Create;
 end;
 
 destructor TToolkitConsole.Destroy;
 begin
-  FLines.Free;
-  FLock.Free;
+  FLines.free;
+  FLock.free;
   inherited Destroy;
 end;
 

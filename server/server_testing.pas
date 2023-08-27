@@ -103,7 +103,7 @@ begin
   app.Mode := cpmVerbose;
   app.sparse := true;
   app.Run;
-  app.Free;
+  app.free;
 end;
 {$ELSE}
 begin

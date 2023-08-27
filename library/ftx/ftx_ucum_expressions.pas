@@ -269,8 +269,8 @@ end;
 
 destructor TUcumSymbol.Destroy;
 begin
-  FPrefix.Free;
-  FUnit_.Free;
+  FPrefix.free;
+  FUnit_.free;
   inherited;
 end;
 
@@ -291,13 +291,13 @@ end;
 
 procedure TUcumSymbol.SetPrefix(const Value: TUcumPrefix);
 begin
-  FPrefix.Free;
+  FPrefix.free;
   FPrefix := Value;
 end;
 
 procedure TUcumSymbol.SetUnit_(const Value: TUcumUnit);
 begin
-  FUnit_.Free;
+  FUnit_.free;
   FUnit_ := Value;
 end;
 
@@ -318,8 +318,8 @@ end;
 
 destructor TUcumTerm.Destroy;
 begin
-  FTerm.Free;
-  FComponent.Free;
+  FTerm.free;
+  FComponent.free;
   inherited;
 end;
 
@@ -330,13 +330,13 @@ end;
 
 procedure TUcumTerm.SetComponent(const Value: TUcumComponent);
 begin
-  FComponent.Free;
+  FComponent.free;
   FComponent := Value;
 end;
 
 procedure TUcumTerm.SetTerm(const Value: TUcumTerm);
 begin
-  FTerm.Free;
+  FTerm.free;
   FTerm := Value;
 end;
 
@@ -374,15 +374,15 @@ Begin
     oSelf.FLexer := TUcumLexer.Create(sExpression);
     result := oSelf.ParseTerm(true);
   Finally
-    oSelf.Free;
+    oSelf.free;
   End;
 End;
 
 
 Destructor TUcumExpressionParser.Destroy;
 Begin
-  FLexer.Free;
-  FModel.Free;
+  FLexer.free;
+  FModel.free;
   Inherited;
 End;
 
@@ -424,7 +424,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -510,7 +510,7 @@ Begin
 
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -717,7 +717,7 @@ begin
       composeTerm(oBuilder, Term);
       result := oBuilder.AsString;
     Finally
-      oBuilder.Free;
+      oBuilder.free;
     End;
   End;
 End;
@@ -824,9 +824,9 @@ end;
 
 destructor TUcumConverter.Destroy;
 begin
-  Fmodel.Free;
-  Fhandlers.Free;
-  FOne.Free;
+  Fmodel.free;
+  Fhandlers.free;
+  FOne.free;
   inherited;
 end;
 
@@ -868,7 +868,7 @@ begin
           end;
           result.Units.addAll(temp.Units);
         finally
-          temp.Free;
+          temp.free;
         end;
       end
       else if (t.Component is TUcumFactor) then
@@ -895,7 +895,7 @@ begin
           end;
           result.Units.addAll(temp.Units);
         finally
-          temp.Free;
+          temp.free;
         end;
       end;
       divb := t.Operator = DIVISION;
@@ -931,7 +931,7 @@ begin
     debug(indent, 'done', result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -986,7 +986,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1014,10 +1014,10 @@ begin
       result.multiplyValue(unit_.Value.Value);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    t.Free;
+    t.free;
   end;
 end;
 
@@ -1042,12 +1042,12 @@ end;
 constructor TUcumCanonical.Create;
 begin
   inherited;
-  FUnits := TFslList<TUcumCanonicalUnit>.create;
+  FUnits := TFslList<TUcumCanonicalUnit>.Create;
 end;
 
 destructor TUcumCanonical.Destroy;
 begin
-  FUnits.Free;
+  FUnits.free;
   inherited;
 end;
 
@@ -1086,7 +1086,7 @@ Begin
     composeTerm(oBldr, oTerm);
     result := obldr.AsString;
   Finally
-    oBldr.Free;
+    oBldr.free;
   End;
 End;
 
@@ -1161,13 +1161,13 @@ end;
 
 destructor TUcumCanonicalUnit.Destroy;
 begin
-  FBase.Free;
+  FBase.free;
   inherited;
 end;
 
 procedure TUcumCanonicalUnit.SetBase(value : TUcumBaseUnit);
 begin
-  FBase.Free;
+  FBase.free;
   FBase := value;
 end;
 

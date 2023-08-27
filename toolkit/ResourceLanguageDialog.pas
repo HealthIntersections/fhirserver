@@ -73,7 +73,7 @@ implementation
 
 destructor TResourceLanguageForm.Destroy;
 begin
-  FResource.Free;
+  FResource.free;
   inherited;
 end;
 
@@ -107,7 +107,7 @@ begin
           ComboEdit1.Items.Add(langDesc(s));
     end;
   finally
-    st.Free;
+    st.free;
   end;
   translatable := 0;
   translated := 0;
@@ -125,7 +125,7 @@ end;
 
 procedure TResourceLanguageForm.SetResource(const Value: TFHIRResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := value;
 end;
 

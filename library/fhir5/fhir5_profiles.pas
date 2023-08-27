@@ -246,7 +246,7 @@ end;
 
 { TProfileUtilities }
 
-constructor TProfileUtilities.create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
+constructor TProfileUtilities.Create(context : TFHIRWorkerContext; messages : TFhirOperationOutcomeIssueList);
 begin
   inherited Create;
   self.context := context;
@@ -255,8 +255,8 @@ end;
 
 destructor TProfileUtilities.Destroy;
 begin
-  context.Free;
-  messages.Free;
+  context.free;
+  messages.free;
   inherited;
 end;
 
@@ -265,11 +265,11 @@ end;
 //  baseCursor, diffCursor: Integer;
 //begin
 //  if (base = nil) then
-//    raise EDefinitionException.create('no base profile provided');
+//    raise EDefinitionException.Create('no base profile provided');
 //  if (derived = nil) then
-//    raise EDefinitionException.create('no derived structure provided');
+//    raise EDefinitionException.Create('no derived structure provided');
 //
-//  derived.Snapshot := TFhirStructureDefinitionSnapshot.create();
+//  derived.Snapshot := TFhirStructureDefinitionSnapshot.Create();
 //
 //  // so we have two lists - the base list, and the differential list
 //  // the differential list is only allowed to include things that are in the base list, but
@@ -391,7 +391,7 @@ end;
 //        if (resultPathBase = '') then
 //          resultPathBase := outcome.path
 //        else if (not outcome.path.startsWith(resultPathBase)) then
-//          raise EDefinitionException.create('Adding wrong path');
+//          raise EDefinitionException.Create('Adding wrong path');
 //        result.elementList.add(outcome);
 //        inc(baseCursor);
 //      end
@@ -415,7 +415,7 @@ end;
 //              end;
 //            end;
 //          finally
-//            sd.Free;
+//            sd.free;
 //          end;
 //        end;
 //        if (template = nil) then
@@ -436,7 +436,7 @@ end;
 //        if (resultPathBase = '') then
 //          resultPathBase := outcome.path
 //        else if (not outcome.path.startsWith(resultPathBase)) then
-//          raise EDefinitionException.create('Adding wrong path');
+//          raise EDefinitionException.Create('Adding wrong path');
 //        result.elementList.add(outcome);
 //        inc(baseCursor);
 //        diffCursor := differential.elementList.indexOf(diffMatches[0])+1;
@@ -445,10 +445,10 @@ end;
 //          if (pathStartsWith(differential.elementList[diffCursor].path, fixedPath(contextPath, diffMatches[0].path+'.'))) then
 //          begin
 //            if (outcome.type_List.Count > 1) then
-//              raise EDefinitionException.create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') and multiple types ('+typeCode(outcome.type_List)+') in profile '+profileName);
+//              raise EDefinitionException.Create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') and multiple types ('+typeCode(outcome.type_List)+') in profile '+profileName);
 //            dt := getProfileForDataType(outcome.type_List[0]);
 //            if (dt = nil) then
-//              raise EDefinitionException.create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') for type '+typeCode(outcome.type_List)+' in profile '+profileName+', but can''t find type');
+//              raise EDefinitionException.Create(diffMatches[0].path+' has children ('+differential.elementList[diffCursor].path+') for type '+typeCode(outcome.type_List)+' in profile '+profileName+', but can''t find type');
 //            try
 //              log(cpath+': now walk into the profile '+dt.url);
 //              contextName := dt.url;
@@ -458,7 +458,7 @@ end;
 //              processPaths(result, dt.snapshot, differential, 1 { starting again on the data type, but skip the root }, start-1, dt.Snapshot.elementList.Count-1,
 //                  diffCursor - 1, url, profileName+pathTail(diffMatches[0]), diffMatches[0].path, trimDifferential, contextName, resultPathBase, false);
 //            finally
-//              dt.Free;
+//              dt.free;
 //            end;
 //          end;
 //        end;
@@ -471,9 +471,9 @@ end;
 //        if (not unbounded(currentBase)) and (not isSlicedToOneOnly(diffMatches[0])) then
 //          // you can only slice an element that doesn't repeat if the sum total of your slices is limited to 1
 //          // (but you might do that in order to split up constraints by type)
-//          raise EDefinitionException.create('Attempt to a slice an element that does not repeat: '+currentBase.path+'/'+currentBase.slicename+' from '+contextName);
+//          raise EDefinitionException.Create('Attempt to a slice an element that does not repeat: '+currentBase.path+'/'+currentBase.slicename+' from '+contextName);
 //        if (diffMatches[0].slicing = nil) and (not isExtension(currentBase)) then // well, the diff has set up a slice, but hasn't defined it. this is an error
-//          raise EDefinitionException.create('differential does not have a slice: '+currentBase.path);
+//          raise EDefinitionException.Create('differential does not have a slice: '+currentBase.path);
 //
 //        // well, if it passed those preconditions then we slice the dest.
 //        // we're just going to accept the differential slicing at face value
@@ -486,7 +486,7 @@ end;
 //        else
 //          outcome.slicing := diffMatches[0].slicing.clone();
 //        if (not outcome.path.startsWith(resultPathBase)) then
-//          raise EDefinitionException.create('Adding wrong path');
+//          raise EDefinitionException.Create('Adding wrong path');
 //        result.elementList.add(outcome);
 //
 //        // differential - if the first one in the list has a name, we'll process it. Else we'll treat it as the base definition of the slice.
@@ -495,7 +495,7 @@ end;
 //        begin
 //          updateFromDefinition(outcome, diffMatches[0], profileName, trimDifferential, url);
 //          if (outcome.type_List.Count = 0) then
-//            raise EDefinitionExceptionTodo.create();
+//            raise EDefinitionExceptionTodo.Create();
 //          start := 1;
 //        end;
 //
@@ -537,7 +537,7 @@ end;
 //        begin
 //          outcome := updateURLs(url, base.elementList[baseCursor].clone());
 //          if (not outcome.path.startsWith(resultPathBase)) then
-//            raise EDefinitionException.create('Adding wrong path');
+//            raise EDefinitionException.Create('Adding wrong path');
 //          result.elementList.add(outcome); // so we just copy it in
 //          inc(baseCursor);
 //        end;
@@ -555,11 +555,11 @@ end;
 //          dSlice := diffMatches[0].slicing;
 //          bSlice := currentBase.slicing;
 //          if (not orderMatches(dSlice.orderedElement, bSlice.orderedElement)) then
-//            raise EDefinitionException.create('Slicing rules on differential ('+summariseSlicing(dSlice)+') do not match those on base ('+summariseSlicing(bSlice)+') - order @ '+path+' ('+contextName+')');
+//            raise EDefinitionException.Create('Slicing rules on differential ('+summariseSlicing(dSlice)+') do not match those on base ('+summariseSlicing(bSlice)+') - order @ '+path+' ('+contextName+')');
 //          if (not discriiminatorMatches(dSlice.discriminatorList, bSlice.discriminatorList)) then
-//            raise EDefinitionException.create('Slicing rules on differential ('+summariseSlicing(dSlice)+') do not match those on base ('+summariseSlicing(bSlice)+') - disciminator @ '+path+' ('+contextName+')');
+//            raise EDefinitionException.Create('Slicing rules on differential ('+summariseSlicing(dSlice)+') do not match those on base ('+summariseSlicing(bSlice)+') - disciminator @ '+path+' ('+contextName+')');
 //          if (not ruleMatches(dSlice.rules, bSlice.rules)) then
-//           raise EDefinitionException.create('Slicing rules on differential ('+summariseSlicing(dSlice)+') do not match those on base ('+summariseSlicing(bSlice)+') - rule @ '+path+' ('+contextName+')');
+//           raise EDefinitionException.Create('Slicing rules on differential ('+summariseSlicing(dSlice)+') do not match those on base ('+summariseSlicing(bSlice)+') - rule @ '+path+' ('+contextName+')');
 //        end;
 //        outcome := updateURLs(url, currentBase.clone());
 //        outcome.path := fixedPath(contextPath, outcome.path);
@@ -581,7 +581,7 @@ end;
 //          outcome.path := fixedPath(contextPath, outcome.path);
 //          outcome.slicing := nil;
 //          if (not outcome.path.startsWith(resultPathBase)) then
-//            raise EDefinitionException.create('Adding wrong path');
+//            raise EDefinitionException.Create('Adding wrong path');
 //          if (diffMatches[diffpos].slicename = '') and (diffMatches[diffpos].slicing <> nil) then
 //          begin
 //            inc(diffpos);
@@ -612,27 +612,27 @@ end;
 //              outcome := updateURLs(url, currentBase.clone());
 //              outcome.path := fixedPath(contextPath, outcome.path);
 //              if (not outcome.path.startsWith(resultPathBase)) then
-//                raise EDefinitionException.create('Adding wrong path');
+//                raise EDefinitionException.Create('Adding wrong path');
 //              result.elementList.add(outcome);
 //              inc(baseCursor);
 //            end;
 //          end;
 //        end;
-//        // finally, we process any remaining entries in diff, which are TFHIR.create(and which are only allowed if the base wasn't closed
+//        // finally, we process any remaining entries in diff, which are TFHIR.Create(and which are only allowed if the base wasn't closed
 //        if (closed) and (diffpos < diffMatches.Count) then
-//          raise EDefinitionException.create('The base snapshot marks a slicing as closed, but the differential tries to extend it in '+profileName+' at '+path+' ('+cpath+')');
+//          raise EDefinitionException.Create('The base snapshot marks a slicing as closed, but the differential tries to extend it in '+profileName+' at '+path+' ('+cpath+')');
 //        while (diffpos < diffMatches.Count) do
 //        begin
 //          diffItem := diffMatches[diffpos];
 //          for baseItem in baseMatches do
 //            if (baseItem.slicename = diffItem.slicename) then
-//              raise EDefinitionException.create('Named items are out of order in the slice');
+//              raise EDefinitionException.Create('Named items are out of order in the slice');
 //          outcome := updateURLs(url, original.clone());
 //          outcome.path := fixedPath(contextPath, outcome.path);
 //          updateFromBase(outcome, currentBase);
 //          outcome.slicing := nil;
 //          if (not outcome.path.startsWith(resultPathBase)) then
-//            raise EDefinitionException.create('Adding wrong path');
+//            raise EDefinitionException.Create('Adding wrong path');
 //          result.elementList.add(outcome);
 //          updateFromDefinition(outcome, diffItem, profileName, trimDifferential, url);
 //          inc(diffpos);
@@ -682,7 +682,7 @@ end;
 //    end;
 //    result := b.toString();
 //  finally
-//    b.Free;
+//    b.free;
 //  end;
 //end;
 //
@@ -726,7 +726,7 @@ begin
       exit;
     end;
   end;
-  raise EDefinitionException.create('Unable to find property for '+ed.path);
+  raise EDefinitionException.Create('Unable to find property for '+ed.path);
 end;
 
 function wantGenerate(name, path : String) : boolean;
@@ -759,10 +759,10 @@ begin
           result.display := vs1.expansion.containsList[0].display;
         end;
       finally
-        vs1.Free;
+        vs1.free;
       end;
     finally
-      vs.Free;
+      vs.free;
     end;
   end;
 end;
@@ -793,7 +793,7 @@ begin
             if item is TFhirElement then
               createBasicChildren(item as TFhirElement, coding);
           finally
-            coding.Free;
+            coding.free;
           end;
         end
         else
@@ -826,15 +826,15 @@ begin
                     populate(profile, value, ed, stack);
                   item.setProperty(prop.Name, value.Link);
                 finally
-                  value.Free;
+                  value.free;
                 end;
               end;
             end;
       finally
-        children.Free;
+        children.free;
       end;
     finally
-      props.Free;
+      props.free;
     end;
   finally
     stack.Delete(stack.Count - 1);
@@ -847,12 +847,12 @@ var
   estack : TFslList<TFhirElementDefinition>;
 begin
   if profile.kind <> StructureDefinitionKindResource then
-    raise EDefinitionException.create('Unsuitable type of profile for creating a resource');
+    raise EDefinitionException.Create('Unsuitable type of profile for creating a resource');
   if profile.snapshot = nil then
-    raise EDefinitionException.create('Unsuitable profile for creating a resource - no snapshot');
+    raise EDefinitionException.Create('Unsuitable profile for creating a resource - no snapshot');
 
   path := profile.type_;
-  estack := TFslList<TFhirElementDefinition>.create;
+  estack := TFslList<TFhirElementDefinition>.Create;
   try
     result := CreateResourceByName(path);
     try
@@ -866,7 +866,7 @@ begin
 
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     estack.free;
@@ -920,7 +920,7 @@ end;
 //    end;
 //    result := b.toString();
 //  finally
-//    b.Free;
+//    b.free;
 //  end;
 //end;
 //
@@ -988,7 +988,7 @@ end;
 //  path : String;
 //  cursor : integer;
 //begin
-//  result := TFslList<TFhirElementDefinition>.create;
+//  result := TFslList<TFhirElementDefinition>.Create;
 //  path := current.path;
 //  cursor := list.indexOf(current)+1;
 //  while (cursor < list.Count) and (list[cursor].path.length >= path.length) do
@@ -1049,8 +1049,8 @@ end;
 //
 //function TProfileUtilities.makeExtensionSlicing : TFhirElementDefinitionSlicing;
 //begin
-//  result := TFhirElementDefinitionSlicing.create;
-//  result.discriminatorList.Add(TFHIRString.create('url'));
+//  result := TFhirElementDefinitionSlicing.Create;
+//  result.discriminatorList.Add(TFHIRString.Create('url'));
 //  result.ordered := false;
 //  result.rules := ResourceSlicingRulesOpen;
 //end;
@@ -1065,7 +1065,7 @@ end;
 //  i : integer;
 //  statedPath : String;
 //begin
-//  result := TFslList<TFhirElementDefinition>.create;
+//  result := TFslList<TFhirElementDefinition>.Create;
 //  for i := istart to iend do
 //  begin
 //    statedPath := context.elementList[i].path;
@@ -1271,7 +1271,7 @@ end;
 //      if (not compareDeep(derived.minElement, base.minElement, false)) then
 //      begin
 //        if (derived.min < base.min) then
-//          messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Derived min  ('+derived.min+') cannot be less than base min ('+base.min+')'));
+//          messages.add(TFhirOperationOutcomeIssue.Create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Derived min  ('+derived.min+') cannot be less than base min ('+base.min+')'));
 //        base.MinElement := derived.MinElement.clone();
 //      end
 //      else if (trimDifferential) then
@@ -1285,7 +1285,7 @@ end;
 //      if (not compareDeep(derived.maxElement, base.maxElement, false)) then
 //      begin
 //        if isLargerMax(derived.max, base.max) then
-//          messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Derived max ('+derived.max+') cannot be greater than base max ('+base.max+')'));
+//          messages.add(TFhirOperationOutcomeIssue.Create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Derived max ('+derived.max+') cannot be greater than base max ('+base.max+')'));
 //        base.maxElement := derived.maxElement.clone();
 //      end
 //      else if (trimDifferential) then
@@ -1369,8 +1369,8 @@ end;
 //      if (not compareDeep(derived.binding, base.binding, false)) then
 //      begin
 //        if (base.binding <> nil ) and ( base.binding.strength = BindingStrengthREQUIRED ) and ( derived.binding.strength <> BindingStrengthREQUIRED) then
-//          messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'illegal attempt to change a binding from '+CODES_TFhirBindingStrengthEnum[base.binding.strength]+' to '+CODES_TFhirBindingStrengthEnum[derived.binding.strength]))
-////            raise EDefinitionException.create('StructureDefinition '+pn+' at '+derived.path+': illegal attempt to change a binding from '+base.binding.strength.toCode()+' to '+derived.binding.strength.toCode());
+//          messages.add(TFhirOperationOutcomeIssue.Create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'illegal attempt to change a binding from '+CODES_TFhirBindingStrengthEnum[base.binding.strength]+' to '+CODES_TFhirBindingStrengthEnum[derived.binding.strength]))
+////            raise EDefinitionException.Create('StructureDefinition '+pn+' at '+derived.path+': illegal attempt to change a binding from '+base.binding.strength.toCode()+' to '+derived.binding.strength.toCode());
 //        else if (base.binding <> nil) and (derived.binding <> nil) and (base.binding.strength = BindingStrengthREQUIRED) then
 //        begin
 //          expBase := nil;
@@ -1387,18 +1387,18 @@ end;
 //            expBase := context.expand(vsBase);
 //            expDerived := context.expand(vsDerived);
 //            if (expBase = nil) then
-//              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+base.path, 'Binding '+(base.binding.valueSet as TFhirReference).reference+' could not be expanded'))
+//              messages.add(TFhirOperationOutcomeIssue.Create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+base.path, 'Binding '+(base.binding.valueSet as TFhirReference).reference+' could not be expanded'))
 //            else if (expDerived = nil) then
-//              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
+//              messages.add(TFhirOperationOutcomeIssue.Create(IssueSeverityWARNING, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' could not be expanded'))
 //            else if not isSubset(expBase, expDerived) then
-//              messages.add(TFhirOperationOutcomeIssue.create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
+//              messages.add(TFhirOperationOutcomeIssue.Create(IssueSeverityERROR, IssueTypeBUSINESSRULE, pn+'.'+derived.path, 'Binding '+(derived.binding.valueSet as TFhirReference).reference+' is not a subset of binding '+(base.binding.valueSet as TFhirReference).reference));
 //              end;
 //            end;
 //          finally
-//            expBase.Free;
-//            expDerived.Free;
-//            vsBase.Free;
-//            vsDerived.Free;
+//            expBase.free;
+//            expDerived.free;
+//            vsBase.free;
+//            vsDerived.free;
 //          end;
 //        end;
 //        base.binding := derived.binding.clone();
@@ -1438,9 +1438,9 @@ end;
 //                  ok := true;
 //              end;
 //              if (not ok) then
-//                raise EDefinitionException.create('StructureDefinition '+pn+' at '+derived.path+': illegal constrained type '+ts.code+' from '+b.CommaText);
+//                raise EDefinitionException.Create('StructureDefinition '+pn+' at '+derived.path+': illegal constrained type '+ts.code+' from '+b.CommaText);
 //            finally
-//              b.Free;
+//              b.free;
 //            end;
 //          end;
 //        end;
@@ -1512,8 +1512,8 @@ end;
 //
 //destructor TExtensionContext.Destroy;
 //begin
-//  FDefinition.Free;
-//  FElement.Free;
+//  FDefinition.free;
+//  FElement.free;
 //  inherited;
 //end;
 
@@ -1562,16 +1562,16 @@ begin
   inherited;
   FLock := TFslLock.Create('worker-context r5');
   FProfiles := TProfileManager.Create;
-  FCustomResources := TFslMap<TFHIRCustomResourceInformation>.create('profiles.custom');
-  FNamingSystems := TFslMap<TFHIRResourceProxy>.create('profiles.ns');
+  FCustomResources := TFslMap<TFHIRCustomResourceInformation>.Create('profiles.custom');
+  FNamingSystems := TFslMap<TFHIRResourceProxy>.Create('profiles.ns');
 end;
 
 destructor TBaseWorkerContextR5.Destroy;
 begin
-  FNamingSystems.Free;
-  FCustomResources.Free;
+  FNamingSystems.free;
+  FCustomResources.free;
   FProfiles.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -1654,7 +1654,7 @@ begin
         result.add(CODES_TFhirResourceType[a]);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1665,7 +1665,7 @@ var
   sns : String;
   url : string;
 begin
-  list := TFslList<TFhirStructureDefinition>.create;
+  list := TFslList<TFhirStructureDefinition>.Create;
   try
     listStructures(list);
     result := nil;
@@ -1691,7 +1691,7 @@ begin
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1754,13 +1754,13 @@ var
   fp : TFHIRParser;
 begin
   // read the zip, loading the resources we need
-  b := TFslBuffer.create;
+  b := TFslBuffer.Create;
   try
     b.LoadFromFileName(filename);
-    m := TFslMemoryStream.create;
+    m := TFslMemoryStream.Create;
     try
       m.Buffer := b.Link;
-      r := TFslZipReader.create;
+      r := TFslZipReader.Create;
       try
         r.Stream := m.Link;
         r.ReadZip;
@@ -1770,16 +1770,16 @@ begin
             // ignore
           else if (ExtractFileExt(r.Parts[i].Name) = '.xml') or (ExtractFileExt(r.Parts[i].Name) = '.json') then
           begin
-            mem := TFslMemoryStream.create;
+            mem := TFslMemoryStream.Create;
             try
               mem.Buffer := r.Parts[i].Link;
-              vcl := TVCLStream.create;
+              vcl := TVCLStream.Create;
               try
                 vcl.Stream := mem.link;
                 if ExtractFileExt(r.Parts[i].Name) = '.json' then
-                  fp := TFHIRParsers5.parser(self.link, ffJson, lang)
+                  fp := TFHIRParsers5.parser(self.link, ffJson, langList.link)
                 else
-                  fp := TFHIRParsers5.parser(self.link, ffXml, lang);
+                  fp := TFHIRParsers5.parser(self.link, ffXml, langList.link);
                 try
                   fp.IgnoreHtml := true;
                   fp.source := vcl;
@@ -1828,10 +1828,10 @@ begin
       else
         SeeResource(parser.resource as TFHIRResource);
     finally
-      fn.Free;
+      fn.free;
     end;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -1841,9 +1841,9 @@ begin
   if ExtractFileExt(filename) = '.zip' then
     LoadFromDefinitions(filename)
   else if ExtractFileExt(filename) = '.json' then
-    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffJson, lang))
+    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffJson, langlist.link))
   else if ExtractFileExt(filename) = '.xml' then
-    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffXml, lang))
+    LoadFromFile(filename, TFHIRParsers5.parser(self.link, ffXml, langlist.link))
 end;
 
 procedure TBaseWorkerContextR5.LoadFromFolder(folder: string);
@@ -1881,7 +1881,7 @@ procedure TBaseWorkerContextR5.seeResource(res: TFHIRResourceV);
 var
   proxy : TFHIRResourceProxy;
 begin
-  proxy := TFHIRResourceProxy.create(factory.link, res.link as TFHIRResource);
+  proxy := TFHIRResourceProxy.Create(factory.link, res.link as TFHIRResource);
   try
     SeeResourceProxy(proxy);
   finally
@@ -1936,7 +1936,7 @@ end;
 
 procedure TBaseWorkerContextR5.SetProfiles(const Value: TProfileManager);
 begin
-  FProfiles.Free;
+  FProfiles.free;
   FProfiles := Value;
 end;
 
@@ -1946,9 +1946,9 @@ constructor TProfileManager.Create;
 begin
   inherited;
   lock := TFslLock.Create('profiles r5');
-  FProfilesById := TFslMap<TFhirStructureDefinition>.create('profiles.id');
-  FProfilesByURL := TFslMap<TFhirStructureDefinition>.create('profiles.url');
-  FProfilesByType := TFslMap<TFhirStructureDefinition>.create('profiles.type');
+  FProfilesById := TFslMap<TFhirStructureDefinition>.Create('profiles.id');
+  FProfilesByURL := TFslMap<TFhirStructureDefinition>.Create('profiles.url');
+  FProfilesByType := TFslMap<TFhirStructureDefinition>.Create('profiles.type');
 end;
 
 destructor TProfileManager.Destroy;
@@ -1956,7 +1956,7 @@ begin
   FProfilesById.free;
   FProfilesByURL.free;
   FProfilesByType.free;
-  lock.Free;
+  lock.free;
   inherited;
 end;
 
@@ -1976,21 +1976,21 @@ begin
 //    begin
 //      sd := ProfilesByURL[p.baseDefinition];
 //      if sd = nil then
-//        raise EDefinitionException.create('Unknown base profile: "'+p.baseDefinition+'" for '+p.url);
+//        raise EDefinitionException.Create('Unknown base profile: "'+p.baseDefinition+'" for '+p.url);
 //      try
-//        messages := TFhirOperationOutcomeIssueList.create;
-//        pu := TProfileUtilities.create(self.link, messages.link);
+//        messages := TFhirOperationOutcomeIssueList.Create;
+//        pu := TProfileUtilities.Create(self.link, messages.link);
 //        try
 //          pu.generateSnapshot(sd, p, p.url, p.Name);
 //          for message in messages do
 //            if (message.severity in [IssueSeverityFatal, IssueSeverityError]) then
-//              raise EDefinitionException.create('Error generating snapshot: '+message.details.text);
+//              raise EDefinitionException.Create('Error generating snapshot: '+message.details.text);
 //        finally
-//          pu.Free;
+//          pu.free;
 //          messages.free;
 //        end;
 //      finally
-//        sd.Free;
+//        sd.free;
 //      end;
 //    end;
 //  end;
@@ -2001,7 +2001,7 @@ function TProfileManager.getExtensionDefn(source: TFHirStructureDefinition; url:
 //  id, code : String;
 //  i : integer;
 begin
-  raise EDefinitionExceptionTodo.create('TProfileManager.getExtensionDefn');
+  raise EDefinitionExceptionTodo.Create('TProfileManager.getExtensionDefn');
 {  result := false;
   if url.StartsWith('#') then
   begin
@@ -2050,7 +2050,7 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     lock.Unlock;
@@ -2112,7 +2112,7 @@ begin
     result := true;
   end;
   if (code <> '') then
-    raise EDefinitionExceptionTodo.create('TProfileManager.getProfileStructure');
+    raise EDefinitionExceptionTodo.Create('TProfileManager.getProfileStructure');
 end;
 
 function TProfileManager.Link: TProfileManager;
@@ -2194,9 +2194,9 @@ end;
 destructor TProfileDefinition.Destroy;
 begin
   FType.free;
-  FProfiles.Free;
-  FProfile.Free;
-  FElement.Free;
+  FProfiles.free;
+  FProfile.free;
+  FElement.free;
   inherited;
 end;
 
@@ -2210,7 +2210,7 @@ begin
 //  if FActualPath = '' then
 //    path := id
 //  else if not id.StartsWith(FStatedPath) then
-//    raise EDefinitionException.create('Bad Path "'+id+'"')
+//    raise EDefinitionException.Create('Bad Path "'+id+'"')
 //  else
 //   path := FActualPath+ id.Substring(FStatedPath.Length);
 
@@ -2226,20 +2226,20 @@ begin
   begin
     profile := FProfiles['http://hl7.org/fhir/Profile/'+Types[0].code];
     if (profile = nil) then
-      raise EDefinitionException.create('Unable to find profile for '+Types[0].code+' @ '+id);
+      raise EDefinitionException.Create('Unable to find profile for '+Types[0].code+' @ '+id);
     path := Types[0].code+id.Substring(statedPath.Length);
   end
   else if FType <> nil then
   begin
     profile := FProfiles['http://hl7.org/fhir/Profile/'+FType.code];
     if (profile = nil) then
-      raise EDefinitionException.create('Unable to find profile for '+FType.code+' @ '+id);
+      raise EDefinitionException.Create('Unable to find profile for '+FType.code+' @ '+id);
     if not id.startsWith(statedPath+'._'+FType.tags['type']) then
-      raise EDefinitionException.create('Internal logic error');
+      raise EDefinitionException.Create('Internal logic error');
     path := Types[0].code+id.Substring(statedPath.Length+2+FType.tags['type'].length);
   end
   else
-    raise EDefinitionException.create('not handled - multiple types');
+    raise EDefinitionException.Create('not handled - multiple types');
   elements := profile.snapshot.elementList;
 
   result := nil;
@@ -2258,7 +2258,7 @@ begin
     end;
 
   if result = nil then
-    raise EDefinitionException.create('Unable to resolve path "'+id+'"');
+    raise EDefinitionException.Create('Unable to resolve path "'+id+'"');
 end;
 
 function TProfileDefinition.GetName: String;
@@ -2283,7 +2283,7 @@ end;
 
 procedure TProfileDefinition.setType(t: TFhirElementDefinitionType);
 begin
-  FType.Free;
+  FType.free;
   FType := t;
 end;
 
@@ -2294,7 +2294,7 @@ begin
   else if Types.Count = 1 then
     result := Types[0]
   else
-    raise EDefinitionException.create('Shouldn''t get here');
+    raise EDefinitionException.Create('Shouldn''t get here');
 end;
 
 

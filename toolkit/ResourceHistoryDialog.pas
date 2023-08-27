@@ -128,7 +128,7 @@ end;
 
 destructor TResourceHistoryForm.Destroy;
 begin
-  FExtension.Free;
+  FExtension.free;
   inherited;
 end;
 
@@ -153,7 +153,7 @@ end;
 
 procedure TResourceHistoryForm.SetExtension(const Value: TFhirExtension);
 begin
-  FExtension.Free;
+  FExtension.free;
   FExtension := Value;
 end;
 

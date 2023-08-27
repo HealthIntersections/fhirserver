@@ -106,7 +106,7 @@ begin
     try
       json := TJSONParser.Parse(f)
     finally
-      f.Free;
+      f.free;
     end;
   end;
 end;
@@ -115,15 +115,15 @@ function TFHIRClientRegistry.default(purpose : String): TRegisteredFHIRServer;
 var
   l : TFslList<TRegisteredFHIRServer>;
 begin
-  l := TFslList<TRegisteredFHIRServer>.create;
+  l := TFslList<TRegisteredFHIRServer>.Create;
   try
     ListServers(purpose, l);
     if l.Count > 0 then
       result := l[0].Link
     else
-      raise EFHIRException.create('No default server exists');
+      raise EFHIRException.Create('No default server exists');
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -131,34 +131,34 @@ function TFHIRClientRegistry.defaultAddress(purpose : String): String;
 var
   l : TFslList<TRegisteredFHIRServer>;
 begin
-  l := TFslList<TRegisteredFHIRServer>.create;
+  l := TFslList<TRegisteredFHIRServer>.Create;
   try
     ListServers(purpose, l);
     if l.Count > 0 then
       result := l[0].fhirEndpoint
     else
-      raise EFHIRException.create('No default server exists');
+      raise EFHIRException.Create('No default server exists');
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
 destructor TFHIRClientRegistry.Destroy;
 begin
-  json.Free;
+  json.free;
   inherited;
 end;
 
 procedure TFHIRClientRegistry.AbandonChanges;
 begin
-  json.Free;
+  json.free;
   json := copy;
   copy := nil;
 end;
 
 procedure TFHIRClientRegistry.CommitChanges;
 begin
-  copy.Free;
+  copy.free;
   copy := nil;
   Save;
 end;
@@ -177,7 +177,7 @@ begin
   try
     copy := TJSONParser.Parse(f)
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -192,13 +192,13 @@ var
   servers : TFslList<TRegisteredFHIRServer>;
   server : TRegisteredFHIRServer;
 begin
-  servers := TFslList<TRegisteredFHIRServer>.create();
+  servers := TFslList<TRegisteredFHIRServer>.Create();
   try
     ListServers(purpose, servers);
     for server in servers do
       items.Add(server.fhirEndpoint);
   finally
-    servers.Free;
+    servers.free;
   end;
 end;
 
@@ -213,7 +213,7 @@ begin
   for i := 0 to arr.Count - 1 do
     if i <> server.id then
       if (arr.Obj[i].str['Name'] = server.name) then
-        raise EFHIRException.create('Duplicate Server Name '+server.name);
+        raise EFHIRException.Create('Duplicate Server Name '+server.name);
 
   o := arr.Obj[server.id];
   server.writeToJson(o);
@@ -236,7 +236,7 @@ begin
       if (srv.version in FVersions) then
         items.Add(srv.Link);
     finally
-      srv.Free;
+      srv.free;
     end;
   end;
 end;
@@ -320,7 +320,7 @@ begin
   arr := json.forceArr[srvname(purpose)];
   for i := 0 to arr.Count - 1 do
     if (arr.Obj[i].str['Name'] = server.name) then
-      raise EFHIRException.create('Duplicate Server Name '+server.name);
+      raise EFHIRException.Create('Duplicate Server Name '+server.name);
   o := arr.addObject;
   server.writeToJson(o);
   Save;
@@ -338,7 +338,7 @@ begin
   try
     TJSONWriter.writeObject(f, json, true);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -346,12 +346,12 @@ function TFHIRClientRegistry.ServerCount(purpose : String): integer;
 var
   l : TFslList<TRegisteredFHIRServer>;
 begin
-  l := TFslList<TRegisteredFHIRServer>.create;
+  l := TFslList<TRegisteredFHIRServer>.Create;
   try
     ListServers(purpose, l);
     result := l.Count;
   finally
-    l.Free;
+    l.free;
   end;
 end;
 

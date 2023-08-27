@@ -114,13 +114,13 @@ end;
 constructor TInternetFetcher.Create;
 begin
   inherited;
-  FBuffer := TFslBuffer.create;
+  FBuffer := TFslBuffer.Create;
   FMethod := imfGet;
 end;
 
 destructor TInternetFetcher.Destroy;
 begin
-  FBuffer.Free;
+  FBuffer.free;
   inherited;
 end;
 
@@ -156,7 +156,7 @@ begin
             if FMethod = imfPost then
             begin
               oHTTP.Request.ContentType := FContentType;
-              pmem := TMemoryStream.create;
+              pmem := TMemoryStream.Create;
               FBuffer.SaveToStream(pmem);
               pmem.position := 0;
             end;
@@ -188,14 +188,14 @@ begin
               FLastModified := oHTTP.Response.LastModified;
               FResponseCode := oHTTP.ResponseCode;
             Finally
-              oMem.Free;
+              oMem.free;
             End;
           Finally
-            oSSL.Free;
+            oSSL.free;
           End;
         Finally
-          oHTTP.Free;
-          pmem.Free;
+          oHTTP.free;
+          pmem.free;
         End;
       End
       Else if oUri.Protocol = 'ftp' then
@@ -218,16 +218,16 @@ begin
             FBuffer.Capacity := oMem.Size;
             oMem.read(Fbuffer.Data^, oMem.Size);
           Finally
-            oMem.Free;
+            oMem.free;
           End;
         Finally
-          oFtp.Free;
+          oFtp.free;
         End;
       End
       Else
         raise EWebException.create('Protocol '+oUri.Protocol+' not supported');
     Finally
-      oUri.Free;
+      oUri.free;
     End;
   End;
 end;
@@ -255,7 +255,7 @@ begin
     this.Fetch;
     result := this.Buffer.AsBytes;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -293,7 +293,7 @@ end;
 
 procedure TInternetFetcher.SetBuffer(const Value: TFslBuffer);
 begin
-  FBuffer.Free;
+  FBuffer.free;
   FBuffer := Value;
 end;
 

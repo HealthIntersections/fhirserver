@@ -118,7 +118,7 @@ begin
     //  if md.HasTable('TestTable') then
     //    conn.DropTable('TestTable');
     //finally
-    //  md.Free;
+    //  md.free;
     //end;
 
     conn.ExecSQL('CREATE TABLE TestTable ( ' + #13#10 + ' TestKey ' + DBKeyType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' +
@@ -134,7 +134,7 @@ begin
       try
         assertTrue(md.HasTable('TestTable'))
       finally
-        md.Free;
+        md.free;
       end;
       assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
 
@@ -242,7 +242,7 @@ begin
     try
       assertFalse(md.HasTable('TestTable'), 'dbt.38')
     finally
-      md.Free;
+      md.free;
     end;
 
     conn.Release;
@@ -273,14 +273,14 @@ begin
     settings := TestSettings.section('mssql');
     try
 //      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
-      db := TFDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
+      db := TFDBOdbcManager.Create('test', kdbSqlServer, 8, 200, settings);
       try
         test(db);
       finally
-        db.Free;
+        db.free;
       end;
     finally
-      settings.Free;
+      settings.free;
     end;
   end;
 end;
@@ -302,18 +302,18 @@ begin
     try
 //      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
       {$IFDEF FPC}
-      db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
+      db := TFDBOdbcManager.Create('test', kdbMySql, 8, 200, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
 //      db := TFDBSQLDBManager.Create('test', kdbMySQL, settings['server'], settings['database'], settings['username'], settings['password'], 100);
       {$ELSE}
-      db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+      db := TFDBOdbcManager.Create('test', kdbMySql, 8, 200, settings);
       {$ENDIF}
       try
         test(db);
       finally
-        db.Free;
+        db.free;
       end;
     finally
-      settings.Free;
+      settings.free;
     end;
   end;
 end;
@@ -378,7 +378,7 @@ end;
 // Stmt.StepAndReset;
 // IDs[6] := DB.LastInsertRowID;
 // finally
-// Stmt.Free;
+// Stmt.free;
 // end;
 //
 // // Create table "paintings"
@@ -453,11 +453,11 @@ end;
 // Stmt.BindInt (3, IDs[6]);
 // Stmt.StepAndReset;
 // finally
-// Stmt.Free;
+// Stmt.free;
 // end;
 //
 // finally
-// DB.Free;
+// DB.free;
 // end;
 
 // end;
@@ -486,7 +486,7 @@ begin
   //end
   //else
   //  Logging.log('SQLite DB @ '+fn);
-  db := TFDBSQLiteManager.create('test', fn, true, 4);
+  db := TFDBSQLiteManager.Create('test', fn, true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -555,7 +555,7 @@ begin
     end;
     assertTrue(db.CurrConnCount = 4);
   finally
-    db.Free;
+    db.free;
   end;
 end;
 
@@ -630,7 +630,7 @@ End;
 //  procedure check(retValue : integer; op : String; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE);
 //  begin
 //    if (retValue <> 0) then
-//      raise ELibraryException.create('return value from '+op+' = '+inttostr(retValue)+': '+odbcError(retValue, aHandleType, aHandle));
+//      raise ELibraryException.Create('return value from '+op+' = '+inttostr(retValue)+': '+odbcError(retValue, aHandleType, aHandle));
 //  end;
 //var
 //  env : SQLHENV;
@@ -691,11 +691,11 @@ begin
   //end
   //else
   //  Logging.log('SQLite DB @ '+fn);
-  db := TFDBSQLiteManager.create('test', fn, true, 4);
+  db := TFDBSQLiteManager.Create('test', fn, true, 4);
   try
     test(db);
   finally
-    db.Free;
+    db.free;
   end;
 end;
 
@@ -703,11 +703,11 @@ end;
 // var
 // db : TFDBManager;
 // begin
-// db := TFDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+// db := TFDBOdbcManager.Create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
 // try
 // test(db);
 // finally
-// db.Free;
+// db.free;
 // end;
 // end;
 //

@@ -350,7 +350,7 @@ Type
     FIndex: cardinal;
     FKind: TLoincProviderContextKind;
   public
-    constructor create(kind : TLoincProviderContextKind; index : cardinal);
+    constructor Create(kind : TLoincProviderContextKind; index : cardinal);
     property kind : TLoincProviderContextKind read FKind write FKind;
     property index : cardinal read FIndex write FIndex;
   end;
@@ -405,8 +405,8 @@ Type
     Procedure Load(Const sFilename : String);
     class function checkFile(Const sFilename : String) : String;
     Procedure Save(Const sFilename : String; statedDate : String);
-    function langsForLang(const lang : THTTPLanguages): TLangArray;
-    function supportsLang(const lang : THTTPLanguages): boolean;
+    function langsForLang(langList : THTTPLanguageList): TLangArray;
+    function supportsLang(langList : THTTPLanguageList): boolean;
 
     Function GetDisplayByName(Const sCode : String; langs : TLangArray) : String;
     procedure GetDisplaysByName(Const sCode : String; langs : TLangArray; list : TConceptDesignations);
@@ -444,12 +444,12 @@ Type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -462,8 +462,8 @@ Type
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
@@ -589,7 +589,7 @@ procedure TLoincStrings.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TLoincStrings.StartBuild;
@@ -640,7 +640,7 @@ procedure TLOINCReferences.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TLOINCReferences.StartBuild;
@@ -716,7 +716,7 @@ procedure TLOINCConcepts.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster) div 12;
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TLOINCConcepts.StartBuild;
@@ -816,7 +816,7 @@ end;
 procedure TLOINCCodeList.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 {$Q-}
@@ -939,8 +939,8 @@ begin
   FConcepts := TLOINCConcepts.Create(FRefs);
   FWords := TLoincWords.Create;
   FStems := TLoincStems.Create;
-  FEntries := TLOINCHeirarchyEntryList.create;
-  FAnswerLists := TLOINCAnswersList.create;
+  FEntries := TLOINCHeirarchyEntryList.Create;
+  FAnswerLists := TLOINCAnswersList.Create;
 end;
 
 procedure TLOINCServices.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -977,15 +977,15 @@ end;
 
 destructor TLOINCServices.Destroy;
 begin
-  FAnswerLists.Free;
-  FEntries.Free;
-  FWords.Free;
-  FStems.Free;
-  FRefs.Free;
-  FConcepts.Free;
-  FDesc.Free;
-  FLang.Free;
-  FCode.Free;
+  FAnswerLists.free;
+  FEntries.free;
+  FWords.free;
+  FStems.free;
+  FRefs.free;
+  FConcepts.free;
+  FDesc.free;
+  FLang.free;
+  FCode.free;
   inherited;
 end;
 
@@ -1018,7 +1018,7 @@ begin
   Begin
     CodeList.GetInformation(iIndex, langs, sCode1, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
     assert(sCode = sCode1);
-    list.addBase('', Desc.GetEntry(iDescription, ilang).trim);
+    list.addDesignation(true, true, '', Desc.GetEntry(iDescription, ilang).trim);
     if iOtherNames <> 0 then
     begin
       names := FRefs.GetRefs(iOtherNames);
@@ -1027,7 +1027,7 @@ begin
         s := Desc.GetEntry(name, ilang);
         for l in langs do
           if (l = ilang) then
-            list.addDesignation(langDesc(iLang), s.trim);
+            list.addDesignation(false, true, langDesc(iLang), s.trim);
       end;
     end;
   End
@@ -1035,13 +1035,13 @@ begin
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
     s := Desc.GetEntry(iDescription, ilang);
-    list.addBase(langDesc(iLang), s.Trim);
+    list.addDesignation(true, true,langDesc(iLang), s.Trim);
   end
   else if Entries.FindCode(sCode, iIndex, FDesc) then
   begin
     FEntries.GetEntry(iIndex, iCode, text, parents, children, concepts, descendentConcepts, stems);
     s := Desc.GetEntry(text, ilang).Trim;
-    list.addBase(langDesc(iLang), s);
+    list.addDesignation(true, true,langDesc(iLang), s);
   end
 end;
 
@@ -1137,7 +1137,7 @@ begin
   end;
 end;
 
-function TLOINCServices.langsForLang(const lang : THTTPLanguages): TLangArray;
+function TLOINCServices.langsForLang(langList : THTTPLanguageList): TLangArray;
   procedure add(b : byte);
   begin
     SetLength(result, length(result)+1);
@@ -1147,7 +1147,7 @@ var
   i : integer;
   llang, country : string;
 begin
-  if lang.header = '' then
+  if lang = nil then
     result := noLang
   else
   begin
@@ -1157,7 +1157,7 @@ begin
     for i := 0 to FLang.count - 1 do
     begin
       FLang.GetEntry(i, llang, country);
-      if (llang +'-'+country = lang.header) then
+      if (llang +'-'+country = langList.source) then
         add(i);
     end;
     if length(result) = 0 then
@@ -1166,14 +1166,14 @@ begin
       for i := 0 to FLang.count - 1 do
       begin
         FLang.GetEntry(i, llang, country);
-        if (llang +'-'+llang.ToUpper = lang.header) then
+        if (llang +'-'+llang.ToUpper = langList.source) then
           add(i);
       end;
       // other possible matches
       for i := 0 to FLang.count - 1 do
       begin
         FLang.GetEntry(i, llang, country);
-        if lang.header = llang then
+        if langList.source = llang then
           add(i);
       end;
     end;
@@ -1239,10 +1239,10 @@ begin
       For a := Low(TLoincSubsetId) To High(TLoincSubsetId) Do
         FSubsets[a] := oRead.ReadInteger;
     Finally
-      oread.Free;
+      oread.free;
     End;
   Finally
-    oFile.Free;
+    oFile.free;
   End;
   Loaded := true;
 end;
@@ -1283,10 +1283,10 @@ begin
         else
           result := 'Needs rebuilding';
       Finally
-        oread.Free;
+        oread.free;
       End;
     Finally
-      oFile.Free;
+      oFile.free;
     End;
   except
     on e : Exception do
@@ -1340,10 +1340,10 @@ begin
       For a := Low(TLoincSubsetId) To High(TLoincSubsetId) Do
         oWrite.WriteInteger(FSubsets[a]);
     Finally
-      oWrite.Free;
+      oWrite.free;
     End;
   Finally
-    oFile.Free;
+    oFile.free;
   End;
   // set up website upload
   if FileExists('C:\work\com.healthintersections.fhir\website\FhirServer\loinc.inc') then
@@ -1358,14 +1358,12 @@ begin
       zip.addFile('loinc_'+v+'.cache', sFilename);
       zip.WriteZip;
     finally
-      zip.Free;
+      zip.free;
     end;
   end;
 end;
 
-function TLOINCServices.searchFilter(filter: TSearchFilterText;
-  prep: TCodeSystemProviderFilterPreparationContext; sort: boolean
-  ): TCodeSystemProviderFilterContext;
+function TLOINCServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 var
   matches : TMatchArray;
   children : TConceptReferenceArray;
@@ -1382,21 +1380,21 @@ begin
   TLoincFilterHolder(result).SetChildren(children);
 end;
 
-function TLOINCServices.supportsLang(const lang : THTTPLanguages): boolean;
+function TLOINCServices.supportsLang(langList : THTTPLanguageList): boolean;
 var
   i : integer;
   llang, country : string;
 begin
-  if lang.header = '' then
+  if lang = nil then
     result := false
   else
   begin
     for i := 0 to FLang.count - 1 do
     begin
       FLang.GetEntry(i, llang, country);
-      if (llang = lang.header) then
+      if (llang = langList.source) then
         exit(true);
-      if (llang +'-'+country = lang.header) then
+      if (llang +'-'+country = langList.source) then
         exit(true);
     end;
     result := false;
@@ -1678,7 +1676,7 @@ begin
     End;
     SetLength(result, iCount);
   Finally
-    oReg.Free;
+    oReg.free;
   End;
 end;
 *)
@@ -1703,7 +1701,7 @@ end;
 
 destructor TLOINCServiceList.Destroy;
 begin
-  FDefinition.Free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -1792,7 +1790,7 @@ procedure TLoincWords.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TLoincWords.GetEntry(iIndex: Cardinal; var index: Cardinal; var flags: Byte);
@@ -1841,7 +1839,7 @@ procedure TLoincStems.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TLoincStems.GetEntry(iIndex: Cardinal; var index: Cardinal);
@@ -1897,7 +1895,7 @@ begin
 end;
 
 
-procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
+procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   b : TStringBuilder;
   iIndex : Cardinal;
@@ -1913,7 +1911,7 @@ var
   ll, ilang : byte;
   ok : boolean;
 begin
-  langs := langsForLang(lang);
+  langs := langsForLang(langList);
   b := TStringBuilder.Create;
   try
     iRefs := nil;
@@ -1997,7 +1995,7 @@ begin
     b.Append(#13#10+'This LOINC&copy; content is copyright &copy; 1995 Regenstrief Institute, Inc. and the LOINC Committee, and available at no cost under the license at <http://loinc.org/terms-of-use>'#13#10);
     card.detail := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -2064,10 +2062,10 @@ begin
           filt.op := foEqual;
           filt.value := id.Substring(20);
         finally
-          filt.Free;
+          filt.free;
         end;
       finally
-        inc.Free;
+        inc.free;
       end;
       result.link;
     finally
@@ -2101,7 +2099,7 @@ begin
           end;
         end;
       finally
-        inc.Free;
+        inc.free;
       end;
       result.link;
     finally
@@ -2162,8 +2160,7 @@ begin
   end;
 end;
 
-function TLOINCServices.Display(context: TCodeSystemProviderContext;
-  const lang: THTTPLanguages): string;
+function TLOINCServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 var
   iCode, iDescription, iStems, iCategories, iOtherNames, iOther : Cardinal;
   iEntries, iParents, iChildren, iConcepts, iDescendantConcepts, iStem : Cardinal;
@@ -2176,7 +2173,7 @@ begin
   case ctxt.kind of
     lpckCode:
       begin
-      CodeList.GetInformation(ctxt.index, langsForLang(lang), result, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
+      CodeList.GetInformation(ctxt.index, langsForLang(langList), result, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags)
       end;
     lpckPart:
       begin
@@ -2195,7 +2192,7 @@ begin
   GetDisplaysByName(Code(context), allLangs, list);
 end;
 
-procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   iDescription, iStems, iCategories, iOtherNames : Cardinal;
   iEntries : Cardinal;
@@ -2211,7 +2208,7 @@ var
   {$ENDIF}
   ctx : TLoincProviderContext;
 begin
-  langs := langsForLang(lang);
+  langs := langsForLang(langList);
   ctx := ctxt as TLoincProviderContext;
   if ctx.FKind = lpckCode then
   begin
@@ -2304,9 +2301,9 @@ begin
   result := '';
 end;
 
-function TLOINCServices.getDisplay(code: String; const lang: THTTPLanguages): String;
+function TLOINCServices.getDisplay(code: String; langList : THTTPLanguageList): String;
 begin
-  result := GetDisplayByName(code, langsForLang(lang));
+  result := GetDisplayByName(code, langsForLang(langList));
   if result = '' then
     raise ETerminologyError.create('unable to find '+code+' in '+systemUri(nil), itInvalid);
 end;
@@ -2417,7 +2414,7 @@ begin
       regex.free;
     end;
     SetLength(aMatches, t);
-    result := TLoincFilterHolder.create;
+    result := TLoincFilterHolder.Create;
     TLoincFilterHolder(result).SetChildren(aMatches);
   end
   else
@@ -2426,7 +2423,7 @@ begin
       p := value.Split([#1])
     else
       p := value.Split([',']);
-    result := TLoincFilterHolder.create;
+    result := TLoincFilterHolder.Create;
     try
       SetLength(aMatches, 0);
       for v in p do
@@ -2473,7 +2470,7 @@ begin
     children[i].index := refs[i];
     children[i].kind := lpckCode;
   end;
-  result := TLoincFilterHolder.create;
+  result := TLoincFilterHolder.Create;
   TLoincFilterHolder(result).SetChildren(children);
 end;
 
@@ -2539,7 +2536,7 @@ var
   s : String;
   i : integer;
 begin
-  result := TLoincFilterHolder.create;
+  result := TLoincFilterHolder.Create;
   try
     if (op = foEqual) and (value.Contains(',')) then
       raise ETerminologyError.create('Value is illegal - no commas', itInvalid);
@@ -2584,7 +2581,7 @@ var
   code, text, parents, children, concepts, descendentConcepts, stems: Cardinal;
   s : String;
 begin
-  result := TLoincFilterHolder.create;
+  result := TLoincFilterHolder.Create;
   try
     setLength(aChildren, 0);
 
@@ -2645,7 +2642,7 @@ begin
   if FAnswerLists.FindCode(list, index, FDesc) then
   begin
     FAnswerLists.GetEntry(index, code, text, children);
-    result := TLoincFilterHolder.create;
+    result := TLoincFilterHolder.Create;
     refs := FRefs.GetRefs(children);
     setLength(matches, length(refs));
     for i := 0 to length(refs) do
@@ -2728,8 +2725,7 @@ begin
     and ((a as TLoincProviderContext).FIndex = (b as TLoincProviderContext).FIndex);
 end;
 
-function TLOINCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext;
-  code: String; var message: String): TCodeSystemProviderContext;
+function TLOINCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 var
   i : Cardinal;
   holder : TLoincFilterHolder;
@@ -2787,7 +2783,7 @@ end;
 procedure TLOINCHeirarchyEntryList.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 function TLOINCHeirarchyEntryList.FindCode(sCode: String; var iIndex: Cardinal; Strings : TLoincStrings): Boolean;
@@ -2868,7 +2864,7 @@ end;
 procedure TLOINCAnswersList.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 function TLOINCAnswersList.FindCode(sCode: String; var iIndex: Cardinal; Strings: TLoincStrings): Boolean;
@@ -2981,7 +2977,7 @@ procedure TLoincLanguages.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TLoincLanguages.GetEntry(iIndex: byte; var lang, country: String);

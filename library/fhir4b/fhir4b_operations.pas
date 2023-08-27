@@ -1627,9 +1627,9 @@ begin
   FLocal.free;
   FLocal := value;
 end;
-constructor TFHIRPopulateOpRequest.create;
+constructor TFHIRPopulateOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRPopulateOpRequest.load(params : TFHIRParameters);
 begin
@@ -1650,7 +1650,7 @@ begin
   inherited;
 end;
 function TFHIRPopulateOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FSubject <> nil) then
       result.addParameter('subject', FSubject.Link);
@@ -1678,9 +1678,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRPopulateOpResponse.create;
+constructor TFHIRPopulateOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRPopulateOpResponse.load(params : TFHIRParameters);
 begin
@@ -1697,7 +1697,7 @@ begin
   inherited;
 end;
 function TFHIRPopulateOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -1747,10 +1747,10 @@ begin
   FSettingContext.free;
   FSettingContext := value;
 end;
-constructor TFHIRApplyOpRequest.create;
+constructor TFHIRApplyOpRequest.Create;
 begin
-  inherited create();
-  FSubjectList := TStringList.create;
+  inherited Create();
+  FSubjectList := TStringList.Create;
 end;
 procedure TFHIRApplyOpRequest.load(params : TFHIRParameters);
 var
@@ -1798,18 +1798,18 @@ begin
   inherited;
 end;
 function TFHIRApplyOpRequest.asParams : TFhirParameters;var  v1 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FActivityDefinition <> nil) then
       result.addParameter('activityDefinition', FActivityDefinition.Link);
     for v1 in FSubjectList do
-      result.AddParameter('subject', TFhirString.create(v1));
+      result.AddParameter('subject', TFhirString.Create(v1));
     if (FEncounter <> '') then
-      result.addParameter('encounter', TFHIRString.create(FEncounter));
+      result.addParameter('encounter', TFHIRString.Create(FEncounter));
     if (FPractitioner <> '') then
-      result.addParameter('practitioner', TFHIRString.create(FPractitioner));
+      result.addParameter('practitioner', TFHIRString.Create(FPractitioner));
     if (FOrganization <> '') then
-      result.addParameter('organization', TFHIRString.create(FOrganization));
+      result.addParameter('organization', TFHIRString.Create(FOrganization));
     if (FUserType <> nil) then
       result.addParameter('userType', FUserType.Link);
     if (FUserLanguage <> nil) then
@@ -1850,9 +1850,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRApplyOpResponse.create;
+constructor TFHIRApplyOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRApplyOpResponse.load(params : TFHIRParameters);
 begin
@@ -1869,7 +1869,7 @@ begin
   inherited;
 end;
 function TFHIRApplyOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -1889,9 +1889,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRDataRequirementsOpRequest.create;
+constructor TFHIRDataRequirementsOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRDataRequirementsOpRequest.load(params : TFHIRParameters);
 begin
@@ -1906,7 +1906,7 @@ begin
   inherited;
 end;
 function TFHIRDataRequirementsOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     writeExtensions(result);
     result.link;
@@ -1928,9 +1928,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRDataRequirementsOpResponse.create;
+constructor TFHIRDataRequirementsOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRDataRequirementsOpResponse.load(params : TFHIRParameters);
 begin
@@ -1947,7 +1947,7 @@ begin
   inherited;
 end;
 function TFHIRDataRequirementsOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -1967,9 +1967,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRConformsOpRequest.create;
+constructor TFHIRConformsOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRConformsOpRequest.load(params : TFHIRParameters);
 begin
@@ -1990,14 +1990,14 @@ begin
   inherited;
 end;
 function TFHIRConformsOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FLeft <> '') then
-      result.addParameter('left', TFHIRCanonical.create(FLeft));
+      result.addParameter('left', TFHIRCanonical.Create(FLeft));
     if (FRight <> '') then
-      result.addParameter('right', TFHIRCanonical.create(FRight));
+      result.addParameter('right', TFHIRCanonical.Create(FRight));
     if (FMode <> '') then
-      result.addParameter('mode', TFHIRCode.create(FMode));
+      result.addParameter('mode', TFHIRCode.Create(FMode));
     writeExtensions(result);
     result.link;
   finally
@@ -2031,9 +2031,9 @@ begin
   FIntersection.free;
   FIntersection := value;
 end;
-constructor TFHIRConformsOpResponse.create;
+constructor TFHIRConformsOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRConformsOpResponse.load(params : TFHIRParameters);
 begin
@@ -2054,7 +2054,7 @@ begin
   inherited;
 end;
 function TFHIRConformsOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FIssues <> nil) then
       result.addParameter('issues', FIssues.Link);
@@ -2085,9 +2085,9 @@ begin
   FResource.free;
   FResource := value;
 end;
-constructor TFHIRImplementsOpRequest.create;
+constructor TFHIRImplementsOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRImplementsOpRequest.load(params : TFHIRParameters);
 begin
@@ -2108,12 +2108,12 @@ begin
   inherited;
 end;
 function TFHIRImplementsOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FServer <> '') then
-      result.addParameter('server', TFHIRCanonical.create(FServer));
+      result.addParameter('server', TFHIRCanonical.Create(FServer));
     if (FClient <> '') then
-      result.addParameter('client', TFHIRCanonical.create(FClient));
+      result.addParameter('client', TFHIRCanonical.Create(FClient));
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);
     writeExtensions(result);
@@ -2139,9 +2139,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRImplementsOpResponse.create;
+constructor TFHIRImplementsOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRImplementsOpResponse.load(params : TFHIRParameters);
 begin
@@ -2158,7 +2158,7 @@ begin
   inherited;
 end;
 function TFHIRImplementsOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -2178,10 +2178,10 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRSubsetOpRequest.create;
+constructor TFHIRSubsetOpRequest.Create;
 begin
-  inherited create();
-  FResourceList := TStringList.create;
+  inherited Create();
+  FResourceList := TStringList.Create;
 end;
 procedure TFHIRSubsetOpRequest.load(params : TFHIRParameters);
 var
@@ -2208,12 +2208,12 @@ begin
   inherited;
 end;
 function TFHIRSubsetOpRequest.asParams : TFhirParameters;var  v1 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FServer <> '') then
-      result.addParameter('server', TFHIRUri.create(FServer));
+      result.addParameter('server', TFHIRUri.Create(FServer));
     for v1 in FResourceList do
-      result.AddParameter('resource', TFhirCode.create(v1));
+      result.AddParameter('resource', TFhirCode.Create(v1));
     writeExtensions(result);
     result.link;
   finally
@@ -2236,9 +2236,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRSubsetOpResponse.create;
+constructor TFHIRSubsetOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSubsetOpResponse.load(params : TFHIRParameters);
 begin
@@ -2255,7 +2255,7 @@ begin
   inherited;
 end;
 function TFHIRSubsetOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -2275,9 +2275,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRVersionsOpRequest.create;
+constructor TFHIRVersionsOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRVersionsOpRequest.load(params : TFHIRParameters);
 begin
@@ -2292,7 +2292,7 @@ begin
   inherited;
 end;
 function TFHIRVersionsOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     writeExtensions(result);
     result.link;
@@ -2309,10 +2309,10 @@ begin
   result := inherited sizeInBytesV(magic);
 end;
 
-constructor TFHIRVersionsOpResponse.create;
+constructor TFHIRVersionsOpResponse.Create;
 begin
-  inherited create();
-  FVersionList := TStringList.create;
+  inherited Create();
+  FVersionList := TStringList.Create;
 end;
 procedure TFHIRVersionsOpResponse.load(params : TFHIRParameters);
 var
@@ -2339,12 +2339,12 @@ begin
   inherited;
 end;
 function TFHIRVersionsOpResponse.asParams : TFhirParameters;var  v1 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     for v1 in FVersionList do
-      result.AddParameter('version', TFhirCode.create(v1));
+      result.AddParameter('version', TFhirCode.Create(v1));
     if (FDefault <> '') then
-      result.addParameter('default', TFHIRCode.create(FDefault));
+      result.addParameter('default', TFHIRCode.Create(FDefault));
     writeExtensions(result);
     result.link;
   finally
@@ -2367,9 +2367,9 @@ begin
   FResource.free;
   FResource := value;
 end;
-constructor TFHIRSubmitOpRequest.create;
+constructor TFHIRSubmitOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSubmitOpRequest.load(params : TFHIRParameters);
 begin
@@ -2386,7 +2386,7 @@ begin
   inherited;
 end;
 function TFHIRSubmitOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);
@@ -2411,9 +2411,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRSubmitOpResponse.create;
+constructor TFHIRSubmitOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSubmitOpResponse.load(params : TFHIRParameters);
 begin
@@ -2430,7 +2430,7 @@ begin
   inherited;
 end;
 function TFHIRSubmitOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -2460,13 +2460,13 @@ begin
   FValue.free;
   FValue := value;
 end;
-constructor TFHIRFindMatchesOpReqSubproperty.create;
+constructor TFHIRFindMatchesOpReqSubproperty.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
-constructor TFHIRFindMatchesOpReqSubproperty.create(params : TFhirParametersParameter);
+constructor TFHIRFindMatchesOpReqSubproperty.Create(params : TFhirParametersParameter);
 begin
-  inherited create();
+  inherited Create();
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFHIRCode).Value; 
   if params.param['value'] <> nil then
@@ -2479,11 +2479,11 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpReqSubproperty.asParams(name : String) : TFhirParametersParameter;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FValue <> nil) then
       result.addParameter('value', FValue.Link);
     writeExtensions(result);
@@ -2503,24 +2503,24 @@ begin
   inc(result, FValue.sizeInBytes(magic));
 end;
 
-constructor TFHIRFindMatchesOpReqProperty_.create;
+constructor TFHIRFindMatchesOpReqProperty_.Create;
 begin
-  inherited create();
-  FSubpropertyList := TFslList<TFHIRFindMatchesOpReqSubproperty>.create;
+  inherited Create();
+  FSubpropertyList := TFslList<TFHIRFindMatchesOpReqSubproperty>.Create;
 end;
-constructor TFHIRFindMatchesOpReqProperty_.create(params : TFhirParametersParameter);
+constructor TFHIRFindMatchesOpReqProperty_.Create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
-  inherited create();
-  FSubpropertyList := TFslList<TFHIRFindMatchesOpReqSubproperty>.create;
+  inherited Create();
+  FSubpropertyList := TFslList<TFHIRFindMatchesOpReqSubproperty>.Create;
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFHIRCode).Value; 
   if params.param['value'] <> nil then
     FValue := (params.param['value'].value as TFhirDataType).Link;
   for p in params.partList do
     if p.name = 'subproperty' then
-      FSubpropertyList.Add(TFHIRFindMatchesOpReqSubproperty.create(p));
+      FSubpropertyList.Add(TFHIRFindMatchesOpReqSubproperty.Create(p));
   loadExtensions(params);
 end;
 destructor TFHIRFindMatchesOpReqProperty_.Destroy;
@@ -2530,11 +2530,11 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpReqProperty_.asParams(name : String) : TFhirParametersParameter;var  v1 : TFHIRFindMatchesOpReqSubproperty;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FValue <> nil) then
       result.addParameter('value', FValue.Link);
     for v1 in FSubpropertyList do
@@ -2557,10 +2557,10 @@ begin
   inc(result, FSubpropertyList.sizeInBytes(magic));
 end;
 
-constructor TFHIRFindMatchesOpRequest.create;
+constructor TFHIRFindMatchesOpRequest.Create;
 begin
-  inherited create();
-  FProperty_List := TFslList<TFHIRFindMatchesOpReqProperty_>.create;
+  inherited Create();
+  FProperty_List := TFslList<TFHIRFindMatchesOpReqProperty_>.Create;
 end;
 procedure TFHIRFindMatchesOpRequest.load(params : TFHIRParameters);
 var
@@ -2572,7 +2572,7 @@ begin
     FVersion := (params.param['version'].value as TFHIRString).Value; 
   for p in params.parameterList do
     if p.name = 'property' then
-      FProperty_List.Add(TFHIRFindMatchesOpReqProperty_.create(p));
+      FProperty_List.Add(TFHIRFindMatchesOpReqProperty_.Create(p));
   if params.param['exact'] <> nil then
     FExact := (params.param['exact'].value as TFHIRBoolean).Value; 
   if params.param['compositional'] <> nil then
@@ -2589,16 +2589,16 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpRequest.asParams : TFhirParameters;var  v1 : TFHIRFindMatchesOpReqProperty_;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRUri.create(FSystem));
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     for v1 in FProperty_List do
       result.AddParameter(v1.asParams('property'));
-      result.addParameter('exact', TFHIRBoolean.create(FExact));
-      result.addParameter('compositional', TFHIRBoolean.create(FCompositional));
+      result.addParameter('exact', TFHIRBoolean.Create(FExact));
+      result.addParameter('compositional', TFHIRBoolean.Create(FCompositional));
     writeExtensions(result);
     result.link;
   finally
@@ -2632,13 +2632,13 @@ begin
   FValue.free;
   FValue := value;
 end;
-constructor TFHIRFindMatchesOpRespProperty_.create;
+constructor TFHIRFindMatchesOpRespProperty_.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
-constructor TFHIRFindMatchesOpRespProperty_.create(params : TFhirParametersParameter);
+constructor TFHIRFindMatchesOpRespProperty_.Create(params : TFhirParametersParameter);
 begin
-  inherited create();
+  inherited Create();
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFHIRCode).Value; 
   if params.param['value'] <> nil then
@@ -2651,11 +2651,11 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpRespProperty_.asParams(name : String) : TFhirParametersParameter;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FValue <> nil) then
       result.addParameter('value', FValue.Link);
     writeExtensions(result);
@@ -2675,24 +2675,24 @@ begin
   inc(result, FValue.sizeInBytes(magic));
 end;
 
-constructor TFHIRFindMatchesOpRespUnmatched.create;
+constructor TFHIRFindMatchesOpRespUnmatched.Create;
 begin
-  inherited create();
-  FProperty_List := TFslList<TFHIRFindMatchesOpRespProperty_>.create;
+  inherited Create();
+  FProperty_List := TFslList<TFHIRFindMatchesOpRespProperty_>.Create;
 end;
-constructor TFHIRFindMatchesOpRespUnmatched.create(params : TFhirParametersParameter);
+constructor TFHIRFindMatchesOpRespUnmatched.Create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
-  inherited create();
-  FProperty_List := TFslList<TFHIRFindMatchesOpRespProperty_>.create;
+  inherited Create();
+  FProperty_List := TFslList<TFHIRFindMatchesOpRespProperty_>.Create;
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFHIRCode).Value; 
   if params.param['value'] <> nil then
     FValue := (params.param['value'].value as TFhirDataType).Link;
   for p in params.partList do
     if p.name = 'property' then
-      FProperty_List.Add(TFHIRFindMatchesOpRespProperty_.create(p));
+      FProperty_List.Add(TFHIRFindMatchesOpRespProperty_.Create(p));
   loadExtensions(params);
 end;
 destructor TFHIRFindMatchesOpRespUnmatched.Destroy;
@@ -2702,11 +2702,11 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpRespUnmatched.asParams(name : String) : TFhirParametersParameter;var  v1 : TFHIRFindMatchesOpRespProperty_;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FValue <> nil) then
       result.addParameter('value', FValue.Link);
     for v1 in FProperty_List do
@@ -2729,22 +2729,22 @@ begin
   inc(result, FProperty_List.sizeInBytes(magic));
 end;
 
-constructor TFHIRFindMatchesOpRespMatch.create;
+constructor TFHIRFindMatchesOpRespMatch.Create;
 begin
-  inherited create();
-  FUnmatchedList := TFslList<TFHIRFindMatchesOpRespUnmatched>.create;
+  inherited Create();
+  FUnmatchedList := TFslList<TFHIRFindMatchesOpRespUnmatched>.Create;
 end;
-constructor TFHIRFindMatchesOpRespMatch.create(params : TFhirParametersParameter);
+constructor TFHIRFindMatchesOpRespMatch.Create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
-  inherited create();
-  FUnmatchedList := TFslList<TFHIRFindMatchesOpRespUnmatched>.create;
+  inherited Create();
+  FUnmatchedList := TFslList<TFHIRFindMatchesOpRespUnmatched>.Create;
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFhirCoding).Link;
   for p in params.partList do
     if p.name = 'unmatched' then
-      FUnmatchedList.Add(TFHIRFindMatchesOpRespUnmatched.create(p));
+      FUnmatchedList.Add(TFHIRFindMatchesOpRespUnmatched.Create(p));
   if params.param['comment'] <> nil then
     FComment := (params.param['comment'].value as TFHIRString).Value; 
   loadExtensions(params);
@@ -2756,7 +2756,7 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpRespMatch.asParams(name : String) : TFhirParametersParameter;var  v1 : TFHIRFindMatchesOpRespUnmatched;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> nil) then
@@ -2764,7 +2764,7 @@ function TFHIRFindMatchesOpRespMatch.asParams(name : String) : TFhirParametersPa
     for v1 in FUnmatchedList do
       result.AddParameter(v1.asParams('unmatched'));
     if (FComment <> '') then
-      result.addParameter('comment', TFHIRString.create(FComment));
+      result.addParameter('comment', TFHIRString.Create(FComment));
     writeExtensions(result);
     result.link;
   finally
@@ -2783,10 +2783,10 @@ begin
   inc(result, (FComment.length * sizeof(char))+12);
 end;
 
-constructor TFHIRFindMatchesOpResponse.create;
+constructor TFHIRFindMatchesOpResponse.Create;
 begin
-  inherited create();
-  FMatchList := TFslList<TFHIRFindMatchesOpRespMatch>.create;
+  inherited Create();
+  FMatchList := TFslList<TFHIRFindMatchesOpRespMatch>.Create;
 end;
 procedure TFHIRFindMatchesOpResponse.load(params : TFHIRParameters);
 var
@@ -2794,7 +2794,7 @@ var
 begin
   for p in params.parameterList do
     if p.name = 'match' then
-      FMatchList.Add(TFHIRFindMatchesOpRespMatch.create(p));
+      FMatchList.Add(TFHIRFindMatchesOpRespMatch.Create(p));
   loadExtensions(params);
 end;
 procedure TFHIRFindMatchesOpResponse.load(params : THTTPParameters);
@@ -2807,7 +2807,7 @@ begin
   inherited;
 end;
 function TFHIRFindMatchesOpResponse.asParams : TFhirParameters;var  v1 : TFHIRFindMatchesOpRespMatch;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     for v1 in FMatchList do
       result.AddParameter(v1.asParams('match'));
@@ -2832,10 +2832,10 @@ begin
   FCoding.free;
   FCoding := value;
 end;
-constructor TFHIRLookupOpRequest.create;
+constructor TFHIRLookupOpRequest.Create;
 begin
-  inherited create();
-  FProperty_List := TStringList.create;
+  inherited Create();
+  FProperty_List := TStringList.Create;
 end;
 procedure TFHIRLookupOpRequest.load(params : TFHIRParameters);
 var
@@ -2873,22 +2873,22 @@ begin
   inherited;
 end;
 function TFHIRLookupOpRequest.asParams : TFhirParameters;var  v1 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRUri.create(FSystem));
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     if (FCoding <> nil) then
       result.addParameter('coding', FCoding.Link);
     if (FDate.notNull) then
-      result.addParameter('date', TFHIRDateTime.create(FDate));
+      result.addParameter('date', TFHIRDateTime.Create(FDate));
     if (FDisplayLanguage <> '') then
-      result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));
+      result.addParameter('displayLanguage', TFHIRCode.Create(FDisplayLanguage));
     for v1 in FProperty_List do
-      result.AddParameter('property', TFhirCode.create(v1));
+      result.AddParameter('property', TFhirCode.Create(v1));
     writeExtensions(result);
     result.link;
   finally
@@ -2915,13 +2915,13 @@ begin
   FUse.free;
   FUse := value;
 end;
-constructor TFHIRLookupOpRespDesignation.create;
+constructor TFHIRLookupOpRespDesignation.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
-constructor TFHIRLookupOpRespDesignation.create(params : TFhirParametersParameter);
+constructor TFHIRLookupOpRespDesignation.Create(params : TFhirParametersParameter);
 begin
-  inherited create();
+  inherited Create();
   if params.param['language'] <> nil then
     FLanguage := (params.param['language'].value as TFHIRCode).Value; 
   if params.param['use'] <> nil then
@@ -2936,15 +2936,15 @@ begin
   inherited;
 end;
 function TFHIRLookupOpRespDesignation.asParams(name : String) : TFhirParametersParameter;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FLanguage <> '') then
-      result.addParameter('language', TFHIRCode.create(FLanguage));
+      result.addParameter('language', TFHIRCode.Create(FLanguage));
     if (FUse <> nil) then
       result.addParameter('use', FUse.Link);
     if (FValue <> '') then
-      result.addParameter('value', TFHIRString.create(FValue));
+      result.addParameter('value', TFHIRString.Create(FValue));
     writeExtensions(result);
     result.link;
   finally
@@ -2973,13 +2973,13 @@ begin
   FValue.free;
   FValue := value;
 end;
-constructor TFHIRLookupOpRespSubproperty.create;
+constructor TFHIRLookupOpRespSubproperty.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
-constructor TFHIRLookupOpRespSubproperty.create(params : TFhirParametersParameter);
+constructor TFHIRLookupOpRespSubproperty.Create(params : TFhirParametersParameter);
 begin
-  inherited create();
+  inherited Create();
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFHIRCode).Value; 
   if params.param['value'] <> nil then
@@ -2994,15 +2994,15 @@ begin
   inherited;
 end;
 function TFHIRLookupOpRespSubproperty.asParams(name : String) : TFhirParametersParameter;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FValue <> nil) then
       result.addParameter('value', FValue.Link);
     if (FDescription <> '') then
-      result.addParameter('description', TFHIRString.create(FDescription));
+      result.addParameter('description', TFHIRString.Create(FDescription));
     writeExtensions(result);
     result.link;
   finally
@@ -3021,17 +3021,17 @@ begin
   inc(result, (FDescription.length * sizeof(char))+12);
 end;
 
-constructor TFHIRLookupOpRespProperty_.create;
+constructor TFHIRLookupOpRespProperty_.Create;
 begin
-  inherited create();
-  FSubpropertyList := TFslList<TFHIRLookupOpRespSubproperty>.create;
+  inherited Create();
+  FSubpropertyList := TFslList<TFHIRLookupOpRespSubproperty>.Create;
 end;
-constructor TFHIRLookupOpRespProperty_.create(params : TFhirParametersParameter);
+constructor TFHIRLookupOpRespProperty_.Create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
-  inherited create();
-  FSubpropertyList := TFslList<TFHIRLookupOpRespSubproperty>.create;
+  inherited Create();
+  FSubpropertyList := TFslList<TFHIRLookupOpRespSubproperty>.Create;
   if params.param['code'] <> nil then
     FCode := (params.param['code'].value as TFHIRCode).Value; 
   if params.param['value'] <> nil then
@@ -3040,7 +3040,7 @@ begin
     FDescription := (params.param['description'].value as TFHIRString).Value; 
   for p in params.partList do
     if p.name = 'subproperty' then
-      FSubpropertyList.Add(TFHIRLookupOpRespSubproperty.create(p));
+      FSubpropertyList.Add(TFHIRLookupOpRespSubproperty.Create(p));
   loadExtensions(params);
 end;
 destructor TFHIRLookupOpRespProperty_.Destroy;
@@ -3050,15 +3050,15 @@ begin
   inherited;
 end;
 function TFHIRLookupOpRespProperty_.asParams(name : String) : TFhirParametersParameter;var  v1 : TFHIRLookupOpRespSubproperty;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FValue <> nil) then
       result.addParameter('value', FValue.Link);
     if (FDescription <> '') then
-      result.addParameter('description', TFHIRString.create(FDescription));
+      result.addParameter('description', TFHIRString.Create(FDescription));
     for v1 in FSubpropertyList do
       result.AddParameter(v1.asParams('subproperty'));
     writeExtensions(result);
@@ -3080,11 +3080,11 @@ begin
   inc(result, FSubpropertyList.sizeInBytes(magic));
 end;
 
-constructor TFHIRLookupOpResponse.create;
+constructor TFHIRLookupOpResponse.Create;
 begin
-  inherited create();
-  FDesignationList := TFslList<TFHIRLookupOpRespDesignation>.create;
-  FProperty_List := TFslList<TFHIRLookupOpRespProperty_>.create;
+  inherited Create();
+  FDesignationList := TFslList<TFHIRLookupOpRespDesignation>.Create;
+  FProperty_List := TFslList<TFHIRLookupOpRespProperty_>.Create;
 end;
 procedure TFHIRLookupOpResponse.load(params : TFHIRParameters);
 var
@@ -3098,10 +3098,10 @@ begin
     FDisplay := (params.param['display'].value as TFHIRString).Value; 
   for p in params.parameterList do
     if p.name = 'designation' then
-      FDesignationList.Add(TFHIRLookupOpRespDesignation.create(p));
+      FDesignationList.Add(TFHIRLookupOpRespDesignation.Create(p));
   for p in params.parameterList do
     if p.name = 'property' then
-      FProperty_List.Add(TFHIRLookupOpRespProperty_.create(p));
+      FProperty_List.Add(TFHIRLookupOpRespProperty_.Create(p));
   loadExtensions(params);
 end;
 procedure TFHIRLookupOpResponse.load(params : THTTPParameters);
@@ -3115,14 +3115,14 @@ begin
   inherited;
 end;
 function TFHIRLookupOpResponse.asParams : TFhirParameters;var  v1 : TFHIRLookupOpRespDesignation;  v2 : TFHIRLookupOpRespProperty_;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FName <> '') then
-      result.addParameter('name', TFHIRString.create(FName));
+      result.addParameter('name', TFHIRString.Create(FName));
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     if (FDisplay <> '') then
-      result.addParameter('display', TFHIRString.create(FDisplay));
+      result.addParameter('display', TFHIRString.Create(FDisplay));
     for v1 in FDesignationList do
       result.AddParameter(v1.asParams('designation'));
     for v2 in FProperty_List do
@@ -3157,9 +3157,9 @@ begin
   FCodingB.free;
   FCodingB := value;
 end;
-constructor TFHIRSubsumesOpRequest.create;
+constructor TFHIRSubsumesOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSubsumesOpRequest.load(params : TFHIRParameters);
 begin
@@ -3188,16 +3188,16 @@ begin
   inherited;
 end;
 function TFHIRSubsumesOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FCodeA <> '') then
-      result.addParameter('codeA', TFHIRCode.create(FCodeA));
+      result.addParameter('codeA', TFHIRCode.Create(FCodeA));
     if (FCodeB <> '') then
-      result.addParameter('codeB', TFHIRCode.create(FCodeB));
+      result.addParameter('codeB', TFHIRCode.Create(FCodeB));
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRUri.create(FSystem));
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     if (FCodingA <> nil) then
       result.addParameter('codingA', FCodingA.Link);
     if (FCodingB <> nil) then
@@ -3223,9 +3223,9 @@ begin
   inc(result, FCodingB.sizeInBytes(magic));
 end;
 
-constructor TFHIRSubsumesOpResponse.create;
+constructor TFHIRSubsumesOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSubsumesOpResponse.load(params : TFHIRParameters);
 begin
@@ -3242,10 +3242,10 @@ begin
   inherited;
 end;
 function TFHIRSubsumesOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FOutcome <> '') then
-      result.addParameter('outcome', TFHIRCode.create(FOutcome));
+      result.addParameter('outcome', TFHIRCode.Create(FOutcome));
     writeExtensions(result);
     result.link;
   finally
@@ -3277,9 +3277,9 @@ begin
   FCodeableConcept.free;
   FCodeableConcept := value;
 end;
-constructor TFHIRValidateCodeOpRequest.create;
+constructor TFHIRValidateCodeOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRValidateCodeOpRequest.load(params : TFHIRParameters);
 begin
@@ -3316,27 +3316,27 @@ begin
   inherited;
 end;
 function TFHIRValidateCodeOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRUri.create(FUrl));
+      result.addParameter('url', TFHIRUri.Create(FUrl));
     if (FCodeSystem <> nil) then
       result.addParameter('codeSystem', FCodeSystem.Link);
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     if (FDisplay <> '') then
-      result.addParameter('display', TFHIRString.create(FDisplay));
+      result.addParameter('display', TFHIRString.Create(FDisplay));
     if (FCoding <> nil) then
       result.addParameter('coding', FCoding.Link);
     if (FCodeableConcept <> nil) then
       result.addParameter('codeableConcept', FCodeableConcept.Link);
     if (FDate.notNull) then
-      result.addParameter('date', TFHIRDateTime.create(FDate));
-      result.addParameter('abstract', TFHIRBoolean.create(FAbstract));
+      result.addParameter('date', TFHIRDateTime.Create(FDate));
+      result.addParameter('abstract', TFHIRBoolean.Create(FAbstract));
     if (FDisplayLanguage <> '') then
-      result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));
+      result.addParameter('displayLanguage', TFHIRCode.Create(FDisplayLanguage));
     writeExtensions(result);
     result.link;
   finally
@@ -3360,9 +3360,9 @@ begin
   inc(result, (FDisplayLanguage.length * sizeof(char))+12);
 end;
 
-constructor TFHIRValidateCodeOpResponse.create;
+constructor TFHIRValidateCodeOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRValidateCodeOpResponse.load(params : TFHIRParameters);
 begin
@@ -3383,13 +3383,13 @@ begin
   inherited;
 end;
 function TFHIRValidateCodeOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
-      result.addParameter('result', TFHIRBoolean.create(FResult));
+      result.addParameter('result', TFHIRBoolean.Create(FResult));
     if (FMessage <> '') then
-      result.addParameter('message', TFHIRString.create(FMessage));
+      result.addParameter('message', TFHIRString.Create(FMessage));
     if (FDisplay <> '') then
-      result.addParameter('display', TFHIRString.create(FDisplay));
+      result.addParameter('display', TFHIRString.Create(FDisplay));
     writeExtensions(result);
     result.link;
   finally
@@ -3407,9 +3407,9 @@ begin
   inc(result, (FDisplay.length * sizeof(char))+12);
 end;
 
-constructor TFHIRDocumentOpRequest.create;
+constructor TFHIRDocumentOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRDocumentOpRequest.load(params : TFHIRParameters);
 begin
@@ -3430,13 +3430,13 @@ begin
   inherited;
 end;
 function TFHIRDocumentOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FId <> '') then
-      result.addParameter('id', TFHIRUri.create(FId));
-      result.addParameter('persist', TFHIRBoolean.create(FPersist));
+      result.addParameter('id', TFHIRUri.Create(FId));
+      result.addParameter('persist', TFHIRBoolean.Create(FPersist));
     if (FGraph <> '') then
-      result.addParameter('graph', TFHIRUri.create(FGraph));
+      result.addParameter('graph', TFHIRUri.Create(FGraph));
     writeExtensions(result);
     result.link;
   finally
@@ -3454,9 +3454,9 @@ begin
   inc(result, (FGraph.length * sizeof(char))+12);
 end;
 
-constructor TFHIRDocumentOpResponse.create;
+constructor TFHIRDocumentOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRDocumentOpResponse.load(params : TFHIRParameters);
 begin
@@ -3471,7 +3471,7 @@ begin
   inherited;
 end;
 function TFHIRDocumentOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     writeExtensions(result);
     result.link;
@@ -3488,10 +3488,10 @@ begin
   result := inherited sizeInBytesV(magic);
 end;
 
-constructor TFHIRClosureOpRequest.create;
+constructor TFHIRClosureOpRequest.Create;
 begin
-  inherited create();
-  FConceptList := TFslList<TFhirCoding>.create;
+  inherited Create();
+  FConceptList := TFslList<TFhirCoding>.Create;
 end;
 procedure TFHIRClosureOpRequest.load(params : TFHIRParameters);
 var
@@ -3516,14 +3516,14 @@ begin
   inherited;
 end;
 function TFHIRClosureOpRequest.asParams : TFhirParameters;var  v1 : TFhirCoding;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FName <> '') then
-      result.addParameter('name', TFHIRString.create(FName));
+      result.addParameter('name', TFHIRString.Create(FName));
     for v1 in FConceptList do
       result.AddParameter('concept', v1.Link);
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     writeExtensions(result);
     result.link;
   finally
@@ -3547,9 +3547,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRClosureOpResponse.create;
+constructor TFHIRClosureOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRClosureOpResponse.load(params : TFHIRParameters);
 begin
@@ -3566,7 +3566,7 @@ begin
   inherited;
 end;
 function TFHIRClosureOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -3606,13 +3606,13 @@ begin
   FConcept.free;
   FConcept := value;
 end;
-constructor TFHIRTranslateOpReqDependency.create;
+constructor TFHIRTranslateOpReqDependency.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
-constructor TFHIRTranslateOpReqDependency.create(params : TFhirParametersParameter);
+constructor TFHIRTranslateOpReqDependency.Create(params : TFhirParametersParameter);
 begin
-  inherited create();
+  inherited Create();
   if params.param['element'] <> nil then
     FElement := (params.param['element'].value as TFHIRUri).Value; 
   if params.param['concept'] <> nil then
@@ -3625,11 +3625,11 @@ begin
   inherited;
 end;
 function TFHIRTranslateOpReqDependency.asParams(name : String) : TFhirParametersParameter;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FElement <> '') then
-      result.addParameter('element', TFHIRUri.create(FElement));
+      result.addParameter('element', TFHIRUri.Create(FElement));
     if (FConcept <> nil) then
       result.addParameter('concept', FConcept.Link);
     writeExtensions(result);
@@ -3649,10 +3649,10 @@ begin
   inc(result, FConcept.sizeInBytes(magic));
 end;
 
-constructor TFHIRTranslateOpRequest.create;
+constructor TFHIRTranslateOpRequest.Create;
 begin
-  inherited create();
-  FDependencyList := TFslList<TFHIRTranslateOpReqDependency>.create;
+  inherited Create();
+  FDependencyList := TFslList<TFHIRTranslateOpReqDependency>.Create;
 end;
 procedure TFHIRTranslateOpRequest.load(params : TFHIRParameters);
 var
@@ -3681,7 +3681,7 @@ begin
     FTargetsystem := (params.param['targetsystem'].value as TFHIRUri).Value; 
   for p in params.parameterList do
     if p.name = 'dependency' then
-      FDependencyList.Add(TFHIRTranslateOpReqDependency.create(p));
+      FDependencyList.Add(TFHIRTranslateOpReqDependency.Create(p));
   if params.param['reverse'] <> nil then
     FReverse := (params.param['reverse'].value as TFHIRBoolean).Value; 
   loadExtensions(params);
@@ -3699,33 +3699,33 @@ begin
   inherited;
 end;
 function TFHIRTranslateOpRequest.asParams : TFhirParameters;var  v1 : TFHIRTranslateOpReqDependency;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRUri.create(FUrl));
+      result.addParameter('url', TFHIRUri.Create(FUrl));
     if (FConceptMap <> nil) then
       result.addParameter('conceptMap', FConceptMap.Link);
     if (FConceptMapVersion <> '') then
-      result.addParameter('conceptMapVersion', TFHIRString.create(FConceptMapVersion));
+      result.addParameter('conceptMapVersion', TFHIRString.Create(FConceptMapVersion));
     if (FCode <> '') then
-      result.addParameter('code', TFHIRCode.create(FCode));
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRUri.create(FSystem));
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     if (FVersion <> '') then
-      result.addParameter('version', TFHIRString.create(FVersion));
+      result.addParameter('version', TFHIRString.Create(FVersion));
     if (FSource <> '') then
-      result.addParameter('source', TFHIRUri.create(FSource));
+      result.addParameter('source', TFHIRUri.Create(FSource));
     if (FCoding <> nil) then
       result.addParameter('coding', FCoding.Link);
     if (FCodeableConcept <> nil) then
       result.addParameter('codeableConcept', FCodeableConcept.Link);
     if (FTarget <> '') then
-      result.addParameter('target', TFHIRUri.create(FTarget));
+      result.addParameter('target', TFHIRUri.Create(FTarget));
     if (FTargetsystem <> '') then
-      result.addParameter('targetsystem', TFHIRUri.create(FTargetsystem));
+      result.addParameter('targetsystem', TFHIRUri.Create(FTargetsystem));
     for v1 in FDependencyList do
       result.AddParameter(v1.asParams('dependency'));
-      result.addParameter('reverse', TFHIRBoolean.create(FReverse));
+      result.addParameter('reverse', TFHIRBoolean.Create(FReverse));
     writeExtensions(result);
     result.link;
   finally
@@ -3763,13 +3763,13 @@ begin
   FConcept.free;
   FConcept := value;
 end;
-constructor TFHIRTranslateOpRespProduct.create;
+constructor TFHIRTranslateOpRespProduct.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
-constructor TFHIRTranslateOpRespProduct.create(params : TFhirParametersParameter);
+constructor TFHIRTranslateOpRespProduct.Create(params : TFhirParametersParameter);
 begin
-  inherited create();
+  inherited Create();
   if params.param['element'] <> nil then
     FElement := (params.param['element'].value as TFHIRUri).Value; 
   if params.param['concept'] <> nil then
@@ -3782,11 +3782,11 @@ begin
   inherited;
 end;
 function TFHIRTranslateOpRespProduct.asParams(name : String) : TFhirParametersParameter;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FElement <> '') then
-      result.addParameter('element', TFHIRUri.create(FElement));
+      result.addParameter('element', TFHIRUri.Create(FElement));
     if (FConcept <> nil) then
       result.addParameter('concept', FConcept.Link);
     writeExtensions(result);
@@ -3806,24 +3806,24 @@ begin
   inc(result, FConcept.sizeInBytes(magic));
 end;
 
-constructor TFHIRTranslateOpRespMatch.create;
+constructor TFHIRTranslateOpRespMatch.Create;
 begin
-  inherited create();
-  FProductList := TFslList<TFHIRTranslateOpRespProduct>.create;
+  inherited Create();
+  FProductList := TFslList<TFHIRTranslateOpRespProduct>.Create;
 end;
-constructor TFHIRTranslateOpRespMatch.create(params : TFhirParametersParameter);
+constructor TFHIRTranslateOpRespMatch.Create(params : TFhirParametersParameter);
 var
   p : TFhirParametersParameter;
 begin
-  inherited create();
-  FProductList := TFslList<TFHIRTranslateOpRespProduct>.create;
+  inherited Create();
+  FProductList := TFslList<TFHIRTranslateOpRespProduct>.Create;
   if params.param['equivalence'] <> nil then
     FEquivalence := (params.param['equivalence'].value as TFHIRCode).Value; 
   if params.param['concept'] <> nil then
     FConcept := (params.param['concept'].value as TFhirCoding).Link;
   for p in params.partList do
     if p.name = 'product' then
-      FProductList.Add(TFHIRTranslateOpRespProduct.create(p));
+      FProductList.Add(TFHIRTranslateOpRespProduct.Create(p));
   if params.param['source'] <> nil then
     FSource := (params.param['source'].value as TFHIRUri).Value; 
   loadExtensions(params);
@@ -3835,17 +3835,17 @@ begin
   inherited;
 end;
 function TFHIRTranslateOpRespMatch.asParams(name : String) : TFhirParametersParameter;var  v1 : TFHIRTranslateOpRespProduct;begin
-  result := TFHIRParametersParameter.create;
+  result := TFHIRParametersParameter.Create;
   try
     result.name := name;
     if (FEquivalence <> '') then
-      result.addParameter('equivalence', TFHIRCode.create(FEquivalence));
+      result.addParameter('equivalence', TFHIRCode.Create(FEquivalence));
     if (FConcept <> nil) then
       result.addParameter('concept', FConcept.Link);
     for v1 in FProductList do
       result.AddParameter(v1.asParams('product'));
     if (FSource <> '') then
-      result.addParameter('source', TFHIRUri.create(FSource));
+      result.addParameter('source', TFHIRUri.Create(FSource));
     writeExtensions(result);
     result.link;
   finally
@@ -3865,10 +3865,10 @@ begin
   inc(result, (FSource.length * sizeof(char))+12);
 end;
 
-constructor TFHIRTranslateOpResponse.create;
+constructor TFHIRTranslateOpResponse.Create;
 begin
-  inherited create();
-  FMatchList := TFslList<TFHIRTranslateOpRespMatch>.create;
+  inherited Create();
+  FMatchList := TFslList<TFHIRTranslateOpRespMatch>.Create;
 end;
 procedure TFHIRTranslateOpResponse.load(params : TFHIRParameters);
 var
@@ -3880,7 +3880,7 @@ begin
     FMessage := (params.param['message'].value as TFHIRString).Value; 
   for p in params.parameterList do
     if p.name = 'match' then
-      FMatchList.Add(TFHIRTranslateOpRespMatch.create(p));
+      FMatchList.Add(TFHIRTranslateOpRespMatch.Create(p));
   loadExtensions(params);
 end;
 procedure TFHIRTranslateOpResponse.load(params : THTTPParameters);
@@ -3893,11 +3893,11 @@ begin
   inherited;
 end;
 function TFHIRTranslateOpResponse.asParams : TFhirParameters;var  v1 : TFHIRTranslateOpRespMatch;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
-      result.addParameter('result', TFHIRBoolean.create(FResult));
+      result.addParameter('result', TFHIRBoolean.Create(FResult));
     if (FMessage <> '') then
-      result.addParameter('message', TFHIRString.create(FMessage));
+      result.addParameter('message', TFHIRString.Create(FMessage));
     for v1 in FMatchList do
       result.AddParameter(v1.asParams('match'));
     writeExtensions(result);
@@ -3917,10 +3917,10 @@ begin
   inc(result, FMatchList.sizeInBytes(magic));
 end;
 
-constructor TFHIREverythingOpRequest.create;
+constructor TFHIREverythingOpRequest.Create;
 begin
-  inherited create();
-  FTypeList := TStringList.create;
+  inherited Create();
+  FTypeList := TStringList.Create;
 end;
 procedure TFHIREverythingOpRequest.load(params : TFHIRParameters);
 var
@@ -3949,14 +3949,14 @@ begin
   inherited;
 end;
 function TFHIREverythingOpRequest.asParams : TFhirParameters;var  v1 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FSince.notNull) then
-      result.addParameter('_since', TFHIRInstant.create(FSince));
+      result.addParameter('_since', TFHIRInstant.Create(FSince));
     for v1 in FTypeList do
-      result.AddParameter('_type', TFhirCode.create(v1));
+      result.AddParameter('_type', TFhirCode.Create(v1));
     if (FCount <> '') then
-      result.addParameter('_count', TFHIRInteger.create(FCount));
+      result.addParameter('_count', TFHIRInteger.Create(FCount));
     writeExtensions(result);
     result.link;
   finally
@@ -3979,9 +3979,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIREverythingOpResponse.create;
+constructor TFHIREverythingOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIREverythingOpResponse.load(params : TFHIRParameters);
 begin
@@ -3998,7 +3998,7 @@ begin
   inherited;
 end;
 function TFHIREverythingOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -4018,9 +4018,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRFindOpRequest.create;
+constructor TFHIRFindOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRFindOpRequest.load(params : TFHIRParameters);
 begin
@@ -4039,12 +4039,12 @@ begin
   inherited;
 end;
 function TFHIRFindOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FPatient <> '') then
-      result.addParameter('patient', TFHIRId.create(FPatient));
+      result.addParameter('patient', TFHIRId.Create(FPatient));
     if (FName <> '') then
-      result.addParameter('name', TFHIRCode.create(FName));
+      result.addParameter('name', TFHIRCode.Create(FName));
     writeExtensions(result);
     result.link;
   finally
@@ -4062,9 +4062,9 @@ begin
   inc(result, (FName.length * sizeof(char))+12);
 end;
 
-constructor TFHIRFindOpResponse.create;
+constructor TFHIRFindOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRFindOpResponse.load(params : TFHIRParameters);
 begin
@@ -4079,7 +4079,7 @@ begin
   inherited;
 end;
 function TFHIRFindOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     writeExtensions(result);
     result.link;
@@ -4096,9 +4096,9 @@ begin
   result := inherited sizeInBytesV(magic);
 end;
 
-constructor TFHIRCareGapsOpRequest.create;
+constructor TFHIRCareGapsOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRCareGapsOpRequest.load(params : TFHIRParameters);
 begin
@@ -4121,16 +4121,16 @@ begin
   inherited;
 end;
 function TFHIRCareGapsOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FPeriodStart.notNull) then
-      result.addParameter('periodStart', TFHIRDate.create(FPeriodStart));
+      result.addParameter('periodStart', TFHIRDate.Create(FPeriodStart));
     if (FPeriodEnd.notNull) then
-      result.addParameter('periodEnd', TFHIRDate.create(FPeriodEnd));
+      result.addParameter('periodEnd', TFHIRDate.Create(FPeriodEnd));
     if (FTopic <> '') then
-      result.addParameter('topic', TFHIRString.create(FTopic));
+      result.addParameter('topic', TFHIRString.Create(FTopic));
     if (FSubject <> '') then
-      result.addParameter('subject', TFHIRString.create(FSubject));
+      result.addParameter('subject', TFHIRString.Create(FSubject));
     writeExtensions(result);
     result.link;
   finally
@@ -4153,9 +4153,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRCareGapsOpResponse.create;
+constructor TFHIRCareGapsOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRCareGapsOpResponse.load(params : TFHIRParameters);
 begin
@@ -4172,7 +4172,7 @@ begin
   inherited;
 end;
 function TFHIRCareGapsOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -4192,9 +4192,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRCollectDataOpRequest.create;
+constructor TFHIRCollectDataOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRCollectDataOpRequest.load(params : TFHIRParameters);
 begin
@@ -4221,20 +4221,20 @@ begin
   inherited;
 end;
 function TFHIRCollectDataOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FPeriodStart.notNull) then
-      result.addParameter('periodStart', TFHIRDate.create(FPeriodStart));
+      result.addParameter('periodStart', TFHIRDate.Create(FPeriodStart));
     if (FPeriodEnd.notNull) then
-      result.addParameter('periodEnd', TFHIRDate.create(FPeriodEnd));
+      result.addParameter('periodEnd', TFHIRDate.Create(FPeriodEnd));
     if (FMeasure <> '') then
-      result.addParameter('measure', TFHIRString.create(FMeasure));
+      result.addParameter('measure', TFHIRString.Create(FMeasure));
     if (FSubject <> '') then
-      result.addParameter('subject', TFHIRString.create(FSubject));
+      result.addParameter('subject', TFHIRString.Create(FSubject));
     if (FPractitioner <> '') then
-      result.addParameter('practitioner', TFHIRString.create(FPractitioner));
+      result.addParameter('practitioner', TFHIRString.Create(FPractitioner));
     if (FLastReceivedOn.notNull) then
-      result.addParameter('lastReceivedOn', TFHIRDateTime.create(FLastReceivedOn));
+      result.addParameter('lastReceivedOn', TFHIRDateTime.Create(FLastReceivedOn));
     writeExtensions(result);
     result.link;
   finally
@@ -4258,10 +4258,10 @@ begin
   FMeasureReport.free;
   FMeasureReport := value;
 end;
-constructor TFHIRCollectDataOpResponse.create;
+constructor TFHIRCollectDataOpResponse.Create;
 begin
-  inherited create();
-  FResourceList := TFslList<TFhirResource>.create;
+  inherited Create();
+  FResourceList := TFslList<TFhirResource>.Create;
 end;
 procedure TFHIRCollectDataOpResponse.load(params : TFHIRParameters);
 var
@@ -4284,7 +4284,7 @@ begin
   inherited;
 end;
 function TFHIRCollectDataOpResponse.asParams : TFhirParameters;var  v1 : TFhirResource;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FMeasureReport <> nil) then
       result.addParameter('measureReport', FMeasureReport.Link);
@@ -4307,9 +4307,9 @@ begin
   inc(result, FResourceList.sizeInBytes(magic));
 end;
 
-constructor TFHIREvaluateMeasureOpRequest.create;
+constructor TFHIREvaluateMeasureOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIREvaluateMeasureOpRequest.load(params : TFHIRParameters);
 begin
@@ -4338,22 +4338,22 @@ begin
   inherited;
 end;
 function TFHIREvaluateMeasureOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FPeriodStart.notNull) then
-      result.addParameter('periodStart', TFHIRDate.create(FPeriodStart));
+      result.addParameter('periodStart', TFHIRDate.Create(FPeriodStart));
     if (FPeriodEnd.notNull) then
-      result.addParameter('periodEnd', TFHIRDate.create(FPeriodEnd));
+      result.addParameter('periodEnd', TFHIRDate.Create(FPeriodEnd));
     if (FMeasure <> '') then
-      result.addParameter('measure', TFHIRString.create(FMeasure));
+      result.addParameter('measure', TFHIRString.Create(FMeasure));
     if (FReportType <> '') then
-      result.addParameter('reportType', TFHIRCode.create(FReportType));
+      result.addParameter('reportType', TFHIRCode.Create(FReportType));
     if (FSubject <> '') then
-      result.addParameter('subject', TFHIRString.create(FSubject));
+      result.addParameter('subject', TFHIRString.Create(FSubject));
     if (FPractitioner <> '') then
-      result.addParameter('practitioner', TFHIRString.create(FPractitioner));
+      result.addParameter('practitioner', TFHIRString.Create(FPractitioner));
     if (FLastReceivedOn.notNull) then
-      result.addParameter('lastReceivedOn', TFHIRDateTime.create(FLastReceivedOn));
+      result.addParameter('lastReceivedOn', TFHIRDateTime.Create(FLastReceivedOn));
     writeExtensions(result);
     result.link;
   finally
@@ -4378,9 +4378,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIREvaluateMeasureOpResponse.create;
+constructor TFHIREvaluateMeasureOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIREvaluateMeasureOpResponse.load(params : TFHIRParameters);
 begin
@@ -4397,7 +4397,7 @@ begin
   inherited;
 end;
 function TFHIREvaluateMeasureOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -4422,10 +4422,10 @@ begin
   FMeasureReport.free;
   FMeasureReport := value;
 end;
-constructor TFHIRSubmitDataOpRequest.create;
+constructor TFHIRSubmitDataOpRequest.Create;
 begin
-  inherited create();
-  FResourceList := TFslList<TFhirResource>.create;
+  inherited Create();
+  FResourceList := TFslList<TFhirResource>.Create;
 end;
 procedure TFHIRSubmitDataOpRequest.load(params : TFHIRParameters);
 var
@@ -4448,7 +4448,7 @@ begin
   inherited;
 end;
 function TFHIRSubmitDataOpRequest.asParams : TFhirParameters;var  v1 : TFhirResource;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FMeasureReport <> nil) then
       result.addParameter('measureReport', FMeasureReport.Link);
@@ -4471,9 +4471,9 @@ begin
   inc(result, FResourceList.sizeInBytes(magic));
 end;
 
-constructor TFHIRSubmitDataOpResponse.create;
+constructor TFHIRSubmitDataOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSubmitDataOpResponse.load(params : TFHIRParameters);
 begin
@@ -4488,7 +4488,7 @@ begin
   inherited;
 end;
 function TFHIRSubmitDataOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     writeExtensions(result);
     result.link;
@@ -4510,9 +4510,9 @@ begin
   FContent.free;
   FContent := value;
 end;
-constructor TFHIRProcessMessageOpRequest.create;
+constructor TFHIRProcessMessageOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRProcessMessageOpRequest.load(params : TFHIRParameters);
 begin
@@ -4533,13 +4533,13 @@ begin
   inherited;
 end;
 function TFHIRProcessMessageOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FContent <> nil) then
       result.addParameter('content', FContent.Link);
-      result.addParameter('async', TFHIRBoolean.create(FAsync));
+      result.addParameter('async', TFHIRBoolean.Create(FAsync));
     if (FResponseUrl <> '') then
-      result.addParameter('response-url', TFHIRUrl.create(FResponseUrl));
+      result.addParameter('response-url', TFHIRUrl.Create(FResponseUrl));
     writeExtensions(result);
     result.link;
   finally
@@ -4562,9 +4562,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRProcessMessageOpResponse.create;
+constructor TFHIRProcessMessageOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRProcessMessageOpResponse.load(params : TFHIRParameters);
 begin
@@ -4581,7 +4581,7 @@ begin
   inherited;
 end;
 function TFHIRProcessMessageOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -4601,9 +4601,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRPreferredIdOpRequest.create;
+constructor TFHIRPreferredIdOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRPreferredIdOpRequest.load(params : TFHIRParameters);
 begin
@@ -4622,12 +4622,12 @@ begin
   inherited;
 end;
 function TFHIRPreferredIdOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FId <> '') then
-      result.addParameter('id', TFHIRString.create(FId));
+      result.addParameter('id', TFHIRString.Create(FId));
     if (FType_ <> '') then
-      result.addParameter('type', TFHIRCode.create(FType_));
+      result.addParameter('type', TFHIRCode.Create(FType_));
     writeExtensions(result);
     result.link;
   finally
@@ -4645,9 +4645,9 @@ begin
   inc(result, (FType_.length * sizeof(char))+12);
 end;
 
-constructor TFHIRPreferredIdOpResponse.create;
+constructor TFHIRPreferredIdOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRPreferredIdOpResponse.load(params : TFHIRParameters);
 begin
@@ -4664,10 +4664,10 @@ begin
   inherited;
 end;
 function TFHIRPreferredIdOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FResult <> '') then
-      result.addParameter('result', TFHIRString.create(FResult));
+      result.addParameter('result', TFHIRString.Create(FResult));
     writeExtensions(result);
     result.link;
   finally
@@ -4684,9 +4684,9 @@ begin
   inc(result, (FResult.length * sizeof(char))+12);
 end;
 
-constructor TFHIRLastnOpRequest.create;
+constructor TFHIRLastnOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRLastnOpRequest.load(params : TFHIRParameters);
 begin
@@ -4703,10 +4703,10 @@ begin
   inherited;
 end;
 function TFHIRLastnOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FMax <> '') then
-      result.addParameter('max', TFHIRPositiveInt.create(FMax));
+      result.addParameter('max', TFHIRPositiveInt.Create(FMax));
     writeExtensions(result);
     result.link;
   finally
@@ -4728,9 +4728,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRLastnOpResponse.create;
+constructor TFHIRLastnOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRLastnOpResponse.load(params : TFHIRParameters);
 begin
@@ -4747,7 +4747,7 @@ begin
   inherited;
 end;
 function TFHIRLastnOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -4772,12 +4772,12 @@ begin
   FPeriod.free;
   FPeriod := value;
 end;
-constructor TFHIRStatsOpRequest.create;
+constructor TFHIRStatsOpRequest.Create;
 begin
-  inherited create();
-  FCodeList := TStringList.create;
-  FCodingList := TFslList<TFhirCoding>.create;
-  FStatisticList := TStringList.create;
+  inherited Create();
+  FCodeList := TStringList.Create;
+  FCodingList := TFslList<TFhirCoding>.Create;
+  FStatisticList := TStringList.Create;
 end;
 procedure TFHIRStatsOpRequest.load(params : TFHIRParameters);
 var
@@ -4825,25 +4825,25 @@ begin
   inherited;
 end;
 function TFHIRStatsOpRequest.asParams : TFhirParameters;var  v1 : String;  v2 : TFhirCoding;  v3 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FSubject <> '') then
-      result.addParameter('subject', TFHIRUri.create(FSubject));
+      result.addParameter('subject', TFHIRUri.Create(FSubject));
     for v1 in FCodeList do
-      result.AddParameter('code', TFhirString.create(v1));
+      result.AddParameter('code', TFhirString.Create(v1));
     if (FSystem <> '') then
-      result.addParameter('system', TFHIRUri.create(FSystem));
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     for v2 in FCodingList do
       result.AddParameter('coding', v2.Link);
     if (FDuration <> '') then
-      result.addParameter('duration', TFHIRDecimal.create(FDuration));
+      result.addParameter('duration', TFHIRDecimal.Create(FDuration));
     if (FPeriod <> nil) then
       result.addParameter('period', FPeriod.Link);
     for v3 in FStatisticList do
-      result.AddParameter('statistic', TFhirCode.create(v3));
-      result.addParameter('include', TFHIRBoolean.create(FInclude));
+      result.AddParameter('statistic', TFhirCode.Create(v3));
+      result.addParameter('include', TFHIRBoolean.Create(FInclude));
     if (FLimit <> '') then
-      result.addParameter('limit', TFHIRPositiveInt.create(FLimit));
+      result.addParameter('limit', TFHIRPositiveInt.Create(FLimit));
     writeExtensions(result);
     result.link;
   finally
@@ -4867,11 +4867,11 @@ begin
   inc(result, (FLimit.length * sizeof(char))+12);
 end;
 
-constructor TFHIRStatsOpResponse.create;
+constructor TFHIRStatsOpResponse.Create;
 begin
-  inherited create();
-  FStatisticsList := TFslList<TFhirObservation>.create;
-  FSourceList := TFslList<TFhirObservation>.create;
+  inherited Create();
+  FStatisticsList := TFslList<TFhirObservation>.Create;
+  FSourceList := TFslList<TFhirObservation>.Create;
 end;
 procedure TFHIRStatsOpResponse.load(params : TFHIRParameters);
 var
@@ -4896,7 +4896,7 @@ begin
   inherited;
 end;
 function TFHIRStatsOpResponse.asParams : TFhirParameters;var  v1 : TFhirObservation;  v2 : TFhirObservation;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     for v1 in FStatisticsList do
       result.AddParameter('statistics', v1.Link);
@@ -4924,9 +4924,9 @@ begin
   FResource.free;
   FResource := value;
 end;
-constructor TFHIRMatchOpRequest.create;
+constructor TFHIRMatchOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMatchOpRequest.load(params : TFHIRParameters);
 begin
@@ -4947,13 +4947,13 @@ begin
   inherited;
 end;
 function TFHIRMatchOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);
-      result.addParameter('onlyCertainMatches', TFHIRBoolean.create(FOnlyCertainMatches));
+      result.addParameter('onlyCertainMatches', TFHIRBoolean.Create(FOnlyCertainMatches));
     if (FCount <> '') then
-      result.addParameter('count', TFHIRInteger.create(FCount));
+      result.addParameter('count', TFHIRInteger.Create(FCount));
     writeExtensions(result);
     result.link;
   finally
@@ -4976,9 +4976,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRMatchOpResponse.create;
+constructor TFHIRMatchOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMatchOpResponse.load(params : TFHIRParameters);
 begin
@@ -4995,7 +4995,7 @@ begin
   inherited;
 end;
 function TFHIRMatchOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5020,9 +5020,9 @@ begin
   FInput.free;
   FInput := value;
 end;
-constructor TFHIRConvertOpRequest.create;
+constructor TFHIRConvertOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRConvertOpRequest.load(params : TFHIRParameters);
 begin
@@ -5039,7 +5039,7 @@ begin
   inherited;
 end;
 function TFHIRConvertOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FInput <> nil) then
       result.addParameter('input', FInput.Link);
@@ -5064,9 +5064,9 @@ begin
   FOutput.free;
   FOutput := value;
 end;
-constructor TFHIRConvertOpResponse.create;
+constructor TFHIRConvertOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRConvertOpResponse.load(params : TFHIRParameters);
 begin
@@ -5083,7 +5083,7 @@ begin
   inherited;
 end;
 function TFHIRConvertOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FOutput <> nil) then
       result.addParameter('output', FOutput.Link);
@@ -5103,9 +5103,9 @@ begin
   inc(result, FOutput.sizeInBytes(magic));
 end;
 
-constructor TFHIRGraphOpRequest.create;
+constructor TFHIRGraphOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRGraphOpRequest.load(params : TFHIRParameters);
 begin
@@ -5122,10 +5122,10 @@ begin
   inherited;
 end;
 function TFHIRGraphOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FGraph <> '') then
-      result.addParameter('graph', TFHIRUri.create(FGraph));
+      result.addParameter('graph', TFHIRUri.Create(FGraph));
     writeExtensions(result);
     result.link;
   finally
@@ -5147,9 +5147,9 @@ begin
   FResult.free;
   FResult := value;
 end;
-constructor TFHIRGraphOpResponse.create;
+constructor TFHIRGraphOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRGraphOpResponse.load(params : TFHIRParameters);
 begin
@@ -5166,7 +5166,7 @@ begin
   inherited;
 end;
 function TFHIRGraphOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FResult <> nil) then
       result.addParameter('result', FResult.Link);
@@ -5186,9 +5186,9 @@ begin
   inc(result, FResult.sizeInBytes(magic));
 end;
 
-constructor TFHIRGraphqlOpRequest.create;
+constructor TFHIRGraphqlOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRGraphqlOpRequest.load(params : TFHIRParameters);
 begin
@@ -5205,10 +5205,10 @@ begin
   inherited;
 end;
 function TFHIRGraphqlOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FQuery <> '') then
-      result.addParameter('query', TFHIRString.create(FQuery));
+      result.addParameter('query', TFHIRString.Create(FQuery));
     writeExtensions(result);
     result.link;
   finally
@@ -5230,9 +5230,9 @@ begin
   FResult.free;
   FResult := value;
 end;
-constructor TFHIRGraphqlOpResponse.create;
+constructor TFHIRGraphqlOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRGraphqlOpResponse.load(params : TFHIRParameters);
 begin
@@ -5249,7 +5249,7 @@ begin
   inherited;
 end;
 function TFHIRGraphqlOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FResult <> nil) then
       result.addParameter('result', FResult.Link);
@@ -5269,9 +5269,9 @@ begin
   inc(result, FResult.sizeInBytes(magic));
 end;
 
-constructor TFHIRMetaOpRequest.create;
+constructor TFHIRMetaOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMetaOpRequest.load(params : TFHIRParameters);
 begin
@@ -5286,7 +5286,7 @@ begin
   inherited;
 end;
 function TFHIRMetaOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     writeExtensions(result);
     result.link;
@@ -5308,9 +5308,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRMetaOpResponse.create;
+constructor TFHIRMetaOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMetaOpResponse.load(params : TFHIRParameters);
 begin
@@ -5328,7 +5328,7 @@ begin
   inherited;
 end;
 function TFHIRMetaOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5353,9 +5353,9 @@ begin
   FMeta.free;
   FMeta := value;
 end;
-constructor TFHIRMetaAddOpRequest.create;
+constructor TFHIRMetaAddOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMetaAddOpRequest.load(params : TFHIRParameters);
 begin
@@ -5373,7 +5373,7 @@ begin
   inherited;
 end;
 function TFHIRMetaAddOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FMeta <> nil) then
       result.addParameter('meta', FMeta.Link);
@@ -5398,9 +5398,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRMetaAddOpResponse.create;
+constructor TFHIRMetaAddOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMetaAddOpResponse.load(params : TFHIRParameters);
 begin
@@ -5418,7 +5418,7 @@ begin
   inherited;
 end;
 function TFHIRMetaAddOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5443,9 +5443,9 @@ begin
   FMeta.free;
   FMeta := value;
 end;
-constructor TFHIRMetaDeleteOpRequest.create;
+constructor TFHIRMetaDeleteOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMetaDeleteOpRequest.load(params : TFHIRParameters);
 begin
@@ -5463,7 +5463,7 @@ begin
   inherited;
 end;
 function TFHIRMetaDeleteOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FMeta <> nil) then
       result.addParameter('meta', FMeta.Link);
@@ -5488,9 +5488,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRMetaDeleteOpResponse.create;
+constructor TFHIRMetaDeleteOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRMetaDeleteOpResponse.load(params : TFHIRParameters);
 begin
@@ -5508,7 +5508,7 @@ begin
   inherited;
 end;
 function TFHIRMetaDeleteOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5533,9 +5533,9 @@ begin
   FResource.free;
   FResource := value;
 end;
-constructor TFHIRValidateOpRequest.create;
+constructor TFHIRValidateOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRValidateOpRequest.load(params : TFHIRParameters);
 begin
@@ -5556,14 +5556,14 @@ begin
   inherited;
 end;
 function TFHIRValidateOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FResource <> nil) then
       result.addParameter('resource', FResource.Link);
     if (FMode <> '') then
-      result.addParameter('mode', TFHIRCode.create(FMode));
+      result.addParameter('mode', TFHIRCode.Create(FMode));
     if (FProfile <> '') then
-      result.addParameter('profile', TFHIRCanonical.create(FProfile));
+      result.addParameter('profile', TFHIRCanonical.Create(FProfile));
     writeExtensions(result);
     result.link;
   finally
@@ -5587,9 +5587,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRValidateOpResponse.create;
+constructor TFHIRValidateOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRValidateOpResponse.load(params : TFHIRParameters);
 begin
@@ -5606,7 +5606,7 @@ begin
   inherited;
 end;
 function TFHIRValidateOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5626,9 +5626,9 @@ begin
   inc(result, FReturn.sizeInBytes(magic));
 end;
 
-constructor TFHIRQuestionnaireOpRequest.create;
+constructor TFHIRQuestionnaireOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRQuestionnaireOpRequest.load(params : TFHIRParameters);
 begin
@@ -5651,15 +5651,15 @@ begin
   inherited;
 end;
 function TFHIRQuestionnaireOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FIdentifier <> '') then
-      result.addParameter('identifier', TFHIRCanonical.create(FIdentifier));
+      result.addParameter('identifier', TFHIRCanonical.Create(FIdentifier));
     if (FProfile <> '') then
-      result.addParameter('profile', TFHIRString.create(FProfile));
+      result.addParameter('profile', TFHIRString.Create(FProfile));
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRCanonical.create(FUrl));
-      result.addParameter('supportedOnly', TFHIRBoolean.create(FSupportedOnly));
+      result.addParameter('url', TFHIRCanonical.Create(FUrl));
+      result.addParameter('supportedOnly', TFHIRBoolean.Create(FSupportedOnly));
     writeExtensions(result);
     result.link;
   finally
@@ -5683,9 +5683,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRQuestionnaireOpResponse.create;
+constructor TFHIRQuestionnaireOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRQuestionnaireOpResponse.load(params : TFHIRParameters);
 begin
@@ -5702,7 +5702,7 @@ begin
   inherited;
 end;
 function TFHIRQuestionnaireOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5727,9 +5727,9 @@ begin
   FDefinition.free;
   FDefinition := value;
 end;
-constructor TFHIRSnapshotOpRequest.create;
+constructor TFHIRSnapshotOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSnapshotOpRequest.load(params : TFHIRParameters);
 begin
@@ -5748,12 +5748,12 @@ begin
   inherited;
 end;
 function TFHIRSnapshotOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FDefinition <> nil) then
       result.addParameter('definition', FDefinition.Link);
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRString.create(FUrl));
+      result.addParameter('url', TFHIRString.Create(FUrl));
     writeExtensions(result);
     result.link;
   finally
@@ -5776,9 +5776,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRSnapshotOpResponse.create;
+constructor TFHIRSnapshotOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRSnapshotOpResponse.load(params : TFHIRParameters);
 begin
@@ -5795,7 +5795,7 @@ begin
   inherited;
 end;
 function TFHIRSnapshotOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5820,9 +5820,9 @@ begin
   FContent.free;
   FContent := value;
 end;
-constructor TFHIRTransformOpRequest.create;
+constructor TFHIRTransformOpRequest.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRTransformOpRequest.load(params : TFHIRParameters);
 begin
@@ -5841,10 +5841,10 @@ begin
   inherited;
 end;
 function TFHIRTransformOpRequest.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FSource <> '') then
-      result.addParameter('source', TFHIRUri.create(FSource));
+      result.addParameter('source', TFHIRUri.Create(FSource));
     if (FContent <> nil) then
       result.addParameter('content', FContent.Link);
     writeExtensions(result);
@@ -5869,9 +5869,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRTransformOpResponse.create;
+constructor TFHIRTransformOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRTransformOpResponse.load(params : TFHIRParameters);
 begin
@@ -5888,7 +5888,7 @@ begin
   inherited;
 end;
 function TFHIRTransformOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);
@@ -5913,14 +5913,14 @@ begin
   FValueSet.free;
   FValueSet := value;
 end;
-constructor TFHIRExpandOpRequest.create;
+constructor TFHIRExpandOpRequest.Create;
 begin
-  inherited create();
-  FDesignationList := TStringList.create;
-  FExcludeSystemList := TStringList.create;
-  FSystemVersionList := TStringList.create;
-  FCheckSystemVersionList := TStringList.create;
-  FForceSystemVersionList := TStringList.create;
+  inherited Create();
+  FDesignationList := TStringList.Create;
+  FExcludeSystemList := TStringList.Create;
+  FSystemVersionList := TStringList.Create;
+  FCheckSystemVersionList := TStringList.Create;
+  FForceSystemVersionList := TStringList.Create;
 end;
 procedure TFHIRExpandOpRequest.load(params : TFHIRParameters);
 var
@@ -6001,44 +6001,44 @@ begin
   inherited;
 end;
 function TFHIRExpandOpRequest.asParams : TFhirParameters;var  v1 : String;  v2 : String;  v3 : String;  v4 : String;  v5 : String;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FUrl <> '') then
-      result.addParameter('url', TFHIRUri.create(FUrl));
+      result.addParameter('url', TFHIRUri.Create(FUrl));
     if (FValueSet <> nil) then
       result.addParameter('valueSet', FValueSet.Link);
     if (FValueSetVersion <> '') then
-      result.addParameter('valueSetVersion', TFHIRString.create(FValueSetVersion));
+      result.addParameter('valueSetVersion', TFHIRString.Create(FValueSetVersion));
     if (FContext <> '') then
-      result.addParameter('context', TFHIRUri.create(FContext));
+      result.addParameter('context', TFHIRUri.Create(FContext));
     if (FContextDirection <> '') then
-      result.addParameter('contextDirection', TFHIRCode.create(FContextDirection));
+      result.addParameter('contextDirection', TFHIRCode.Create(FContextDirection));
     if (FFilter <> '') then
-      result.addParameter('filter', TFHIRString.create(FFilter));
+      result.addParameter('filter', TFHIRString.Create(FFilter));
     if (FDate.notNull) then
-      result.addParameter('date', TFHIRDateTime.create(FDate));
+      result.addParameter('date', TFHIRDateTime.Create(FDate));
     if (FOffset <> '') then
-      result.addParameter('offset', TFHIRInteger.create(FOffset));
+      result.addParameter('offset', TFHIRInteger.Create(FOffset));
     if (FCount <> '') then
-      result.addParameter('count', TFHIRInteger.create(FCount));
-      result.addParameter('includeDesignations', TFHIRBoolean.create(FIncludeDesignations));
+      result.addParameter('count', TFHIRInteger.Create(FCount));
+      result.addParameter('includeDesignations', TFHIRBoolean.Create(FIncludeDesignations));
     for v1 in FDesignationList do
-      result.AddParameter('designation', TFhirString.create(v1));
-      result.addParameter('includeDefinition', TFHIRBoolean.create(FIncludeDefinition));
-      result.addParameter('activeOnly', TFHIRBoolean.create(FActiveOnly));
-      result.addParameter('excludeNested', TFHIRBoolean.create(FExcludeNested));
-      result.addParameter('excludeNotForUI', TFHIRBoolean.create(FExcludeNotForUI));
-      result.addParameter('excludePostCoordinated', TFHIRBoolean.create(FExcludePostCoordinated));
+      result.AddParameter('designation', TFhirString.Create(v1));
+      result.addParameter('includeDefinition', TFHIRBoolean.Create(FIncludeDefinition));
+      result.addParameter('activeOnly', TFHIRBoolean.Create(FActiveOnly));
+      result.addParameter('excludeNested', TFHIRBoolean.Create(FExcludeNested));
+      result.addParameter('excludeNotForUI', TFHIRBoolean.Create(FExcludeNotForUI));
+      result.addParameter('excludePostCoordinated', TFHIRBoolean.Create(FExcludePostCoordinated));
     if (FDisplayLanguage <> '') then
-      result.addParameter('displayLanguage', TFHIRCode.create(FDisplayLanguage));
+      result.addParameter('displayLanguage', TFHIRCode.Create(FDisplayLanguage));
     for v2 in FExcludeSystemList do
-      result.AddParameter('exclude-system', TFhirCanonical.create(v2));
+      result.AddParameter('exclude-system', TFhirCanonical.Create(v2));
     for v3 in FSystemVersionList do
-      result.AddParameter('system-version', TFhirCanonical.create(v3));
+      result.AddParameter('system-version', TFhirCanonical.Create(v3));
     for v4 in FCheckSystemVersionList do
-      result.AddParameter('check-system-version', TFhirCanonical.create(v4));
+      result.AddParameter('check-system-version', TFhirCanonical.Create(v4));
     for v5 in FForceSystemVersionList do
-      result.AddParameter('force-system-version', TFhirCanonical.create(v5));
+      result.AddParameter('force-system-version', TFhirCanonical.Create(v5));
     writeExtensions(result);
     result.link;
   finally
@@ -6073,9 +6073,9 @@ begin
   FReturn.free;
   FReturn := value;
 end;
-constructor TFHIRExpandOpResponse.create;
+constructor TFHIRExpandOpResponse.Create;
 begin
-  inherited create();
+  inherited Create();
 end;
 procedure TFHIRExpandOpResponse.load(params : TFHIRParameters);
 begin
@@ -6092,7 +6092,7 @@ begin
   inherited;
 end;
 function TFHIRExpandOpResponse.asParams : TFhirParameters;begin
-  result := TFHIRParameters.create;
+  result := TFHIRParameters.Create;
   try
     if (FReturn <> nil) then
       result.addParameter('return', FReturn.Link);

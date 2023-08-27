@@ -363,7 +363,7 @@ uses
 //  f : String;
 //begin
 //  if GLock = nil then
-//    GLock := TFslLock.create('hlog');
+//    GLock := TFslLock.Create('hlog');
 //  GLock.lock;
 //  try
 //    if FileExists(filename) then
@@ -556,12 +556,12 @@ begin
       begin
         inc(LSeg);
         if lSeg > 4 Then
-          raise EHL7CommunicationError.create(Name, 'The value "'+aStr+'" is not a valid IP Address');
+          raise EHL7CommunicationError.Create(Name, 'The value "'+aStr+'" is not a valid IP Address');
       end
       else if CharInSet(AStr[i], ['0'..'9']) Then
         LArray[LSeg] := (LArray[LSeg] shl 3) + (LArray[LSeg] shl 1) + Ord(AStr[i]) - Ord('0')
       Else
-        raise EHL7CommunicationError.create(Name, 'The value "'+aStr+'" is not a valid IP Address');
+        raise EHL7CommunicationError.Create(Name, 'The value "'+aStr+'" is not a valid IP Address');
       inc(i);
       end;
     Result := LArray[1] shl 24 + LArray[2] shl 16 + LArray[3] shl 8 + LArray[4];

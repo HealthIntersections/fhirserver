@@ -113,13 +113,13 @@ end;
 
 function TIPSGenerator.makeCodeableConcept(systemUri, code, display : String) : TFhirCodeableConcept;
 begin
-  result := TFHIRCodeableConcept.create(systemUri, code);
+  result := TFHIRCodeableConcept.Create(systemUri, code);
   result.codingList[0].display := display;
 end;
 
 function TIPSGenerator.makeAttachment(mimeType, title: String; content: TFslBuffer): TFhirAttachment;
 begin
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     result.contentType := mimeType;
     result.title := title;
@@ -132,7 +132,7 @@ end;
 
 function TIPSGenerator.makeAttachment(mimeType, title: String; ref: String): TFhirAttachment;
 begin
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     result.contentType := mimeType;
     result.title := title;
@@ -145,13 +145,13 @@ end;
 
 function TIPSGenerator.makeDiv(ext : boolean; out x : TFhirXHtmlNode): TFHIRNarrative;
 begin
-  result := TFHIRNarrative.create;
+  result := TFHIRNarrative.Create;
   try
     if ext then
       result.status := NarrativeStatusExtensions
     else
       result.status := NarrativeStatusGenerated;
-    result.div_ := TFhirXHtmlNode.create('div');
+    result.div_ := TFhirXHtmlNode.Create('div');
     result.div_.attribute('xmlns', 'http://www.w3.org/1999/xhtml');
     x := result.div_;
     result.link;
@@ -187,10 +187,10 @@ end;
 
 function TIPSGenerator.makeBundle: TFhirBundle;
 begin
-  result := TFhirBundle.create;
+  result := TFhirBundle.Create;
   try
     result.id := newGuidId;
-    result.identifier := TFhirIdentifier.create;
+    result.identifier := TFhirIdentifier.Create;
     result.identifier.system := 'urn:ietf:rfc:3986';
     result.identifier.value := 'urn:uuid:'+result.id;
     result.type_ := BundleTypeDocument;
@@ -205,12 +205,12 @@ function TIPSGenerator.makeComposition: TFHIRComposition;
 var
   ref : TFHIRReference;
 begin
-  result := TFHIRComposition.create;
+  result := TFHIRComposition.Create;
   try
     result.id := nextId('cmp');
     result.status := CompositionStatusFinal;
     result.type_ := makeCodeableConcept('http://loinc.org', '60591-5', '');
-    result.subject := TFhirReference.create;
+    result.subject := TFhirReference.Create;
     result.subject.reference := 'Patient/p1';
     result.date := TFslDateTime.makeToday;
     if (params.has('author')) then
@@ -264,7 +264,7 @@ begin
       tg := '';
     end
     else
-      raise EFslException.create('Unknown value for gender: '+params['gender']);
+      raise EFslException.Create('Unknown value for gender: '+params['gender']);
   end;
   if (params.has('pronouns')) then
   begin
@@ -290,11 +290,11 @@ begin
       tp := 'they/them';
     end
     else
-      raise EFslException.create('Unknown value for pronouns: '+params['pronouns']);
+      raise EFslException.Create('Unknown value for pronouns: '+params['pronouns']);
   end;
 
 
-  result := TFhirPatient.create;
+  result := TFhirPatient.Create;
   try
     result.id := 'p1';
     result.text := makeDiv((tp <> '') or (tg <> ''), x);
@@ -356,7 +356,7 @@ begin
       x.br;
     if params.has('culture') then
     begin
-      result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/patient-cultural-background', TFHIRString.create(params['culture']));
+      result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/patient-cultural-background', TFHIRString.Create(params['culture']));
       x.tx('Cultural background: '+params['culture']);
       x.br;
     end;
@@ -400,7 +400,7 @@ begin
       x.br;
       x.tx('Next of Kin: '+params['nok']);
       nok := result.contactList.Append;
-      nok.name := TFhirHumanName.create;
+      nok.name := TFhirHumanName.Create;
       nok.name.text := params['nok'];
       if params.has('nokemail') or params.has('nokmobile') or params.has('nokphone') then
       begin
@@ -450,14 +450,14 @@ begin
     result := nil
   else
   begin
-    result := TFHIRCondition.create;
+    result := TFHIRCondition.Create;
     try
       result.id := nextId('cnd');  
       result.text := makeDiv(false, rx);
       result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'active', 'Active');
       result.code := makeCodeableConcept(systemUri, code, display);
       result.code.text := text;
-      result.subject := TFHIRReference.create('Patient/p1');
+      result.subject := TFHIRReference.Create('Patient/p1');
       sect.entryList.Append.reference := 'Condition/'+result.id;
       ul.li.tx(text);
       rx.p.tx('Condition for '+FPatDesc);
@@ -477,14 +477,14 @@ begin
     result := nil
   else
   begin
-    result := TFHIRCondition.create;
+    result := TFHIRCondition.Create;
     try
       result.id := nextId('cnd'); 
       result.text := makeDiv(false, rx);
       result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'active', 'Active');
-      result.code := TFhirCodeableConcept.create;
+      result.code := TFhirCodeableConcept.Create;
       result.code.text := params[paramName];
-      result.subject := TFHIRReference.create('Patient/p1');
+      result.subject := TFHIRReference.Create('Patient/p1');
       sect.entryList.Append.reference := 'Condition/'+result.id;
       x.p.tx(params[paramName]);
       rx.p.tx('Condition for '+FPatDesc);
@@ -508,11 +508,11 @@ begin
   else
   begin
     li := ul.li;
-    result := TFHIRRelatedPerson.create;
+    result := TFHIRRelatedPerson.Create;
     try
       result.id := nextId('rp');
       result.text := makeDiv(false, rx);
-      result.patient := TFHIRReference.create('Patient/p1');
+      result.patient := TFHIRReference.Create('Patient/p1');
       li.tx('Care Advocate:');
       rx.p.tx('Care Advocate for '+FPatDesc+':');
       result.nameList.Append.text := params['name'];
@@ -593,19 +593,19 @@ begin
   else
   begin
     li := ul.li;
-    result := TFHIRConsent.create;
+    result := TFHIRConsent.Create;
     try
       result.id := nextId('cnst');
       result.text := makeDiv(false, rx);
       li.tx('Consent: ');
       rx.p.tx('Consent for '+FPatDesc+': ');
-      result.patient := TFHIRReference.create('Patient/p1');
+      result.patient := TFHIRReference.Create('Patient/p1');
       result.status := ConsentStateCodesActive;
       result.scope := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/consentscope', 'adr', 'Advanced Care Directive');
       result.categoryList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/consentcategorycodes', 'acd', 'Advance Directive'));
-      result.policyRule := TFhirCodeableConcept.create;
+      result.policyRule := TFhirCodeableConcept.Create;
       result.policyRule.text := 'Unknown Policy';
-      result.provision := TFHIRConsentProvision.create;
+      result.provision := TFHIRConsentProvision.Create;
       if (params[paramName] = 'false') xor fwds then
       begin
         result.provision.type_ := ConsentProvisionTypePermit;
@@ -640,12 +640,12 @@ begin
   else
   begin
     li := ul.li;
-    result := TFHIRDocumentReference.create;
+    result := TFHIRDocumentReference.Create;
     try
       result.id := nextId('dr');
       result.text := makeDiv(false, rx);
       result.status := DocumentReferenceStatusCurrent;
-      result.subject := TFHIRReference.create('Patient/p1');
+      result.subject := TFHIRReference.Create('Patient/p1');
       result.type_ := makeCodeableConcept('http://loinc.org', '75320-2', 'Advance directive');
       li.tx('Advance Care Directive:');
       rx.p.tx('Advance Care Directive '+FPatDesc+':');
@@ -735,31 +735,31 @@ var
 begin
   bnd := generateBundle;
   try
-    result := TFslBuffer.create;
+    result := TFslBuffer.Create;
     try
       if FFormatChoice = 'j' then
       begin
-        comp := TFHIRJsonComposer.create(nil, OutputStylePretty, defLang);
+        comp := TFHIRJsonComposer.Create(nil, OutputStylePretty, nil);
         try
           result.AsText := comp.Compose(bnd);
         finally
-          comp.Free;
+          comp.free;
         end;
         result.Format := 'application/fhir+json';
       end
       else if FFormatChoice = 'x' then
       begin
-        comp := TFHIRXmlComposer.create(nil, OutputStylePretty, defLang);
+        comp := TFHIRXmlComposer.Create(nil, OutputStylePretty, nil);
         try
           result.AsText := comp.Compose(bnd);
         finally
-          comp.Free;
+          comp.free;
         end;
         result.Format := 'application/fhir+xml';
       end
       else
       begin
-        wrap := TIPSWrapper.create;
+        wrap := TIPSWrapper.Create;
         try
           wrap.startBuild('Patient Authored Passport (IPS)');
           wrap.addIPS(bnd, ivkOriginal, 'Health Intersections Website');
@@ -776,7 +776,7 @@ begin
       result.free;
     end;
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -791,7 +791,7 @@ end;
 constructor TIPSWrapper.Create;
 begin
   inherited Create;
-  FContent := TFslMap<TFslBuffer>.create;
+  FContent := TFslMap<TFslBuffer>.Create;
 end;
 
 destructor TIPSWrapper.Destroy;
@@ -803,7 +803,7 @@ end;
 
 procedure TIPSWrapper.startBuild(name : String);
 begin
-  FManifest := TJsonObject.create;
+  FManifest := TJsonObject.Create;
   FManifest.str['format'] := 'ips-wrapper/1';
   FManifest.str['description'] := name;
 end;
@@ -822,13 +822,13 @@ begin
   e.str['source'] := id;
   e.str['kind'] := CODES_TIPSVersionKind[kind];
   e.str['mimetype'] := 'application/fhir+json';
-  bin := TFslBuffer.create;
+  bin := TFslBuffer.Create;
   try
-    comp := TFHIRJsonComposer.create(nil, OutputStylePretty, defLang);
+    comp := TFHIRJsonComposer.Create(nil, OutputStylePretty, nil);
     try
       bin.AsText := comp.Compose(ips);
     finally
-      comp.Free;
+      comp.free;
     end;
     FContent.Add(id, bin.link);
   finally
@@ -850,22 +850,22 @@ end;
 
 class function TIPSWrapper.fromStream(stream: TStream): TIPSWrapper;
 begin
-  raise Exception.create('Not done yet');
+  raise Exception.Create('Not done yet');
 end;
 
 class function TIPSWrapper.fromStream(stream: TFslStream): TIPSWrapper;
 begin
-  raise Exception.create('Not done yet');
+  raise Exception.Create('Not done yet');
 end;
 
 procedure TIPSWrapper.saveToStream(stream: TStream);
 begin
-  raise Exception.create('Not done yet');
+  raise Exception.Create('Not done yet');
 end;
 
 procedure TIPSWrapper.saveToStream(stream: TFslStream);
 begin
-  raise Exception.create('Not done yet');
+  raise Exception.Create('Not done yet');
 end;
 
 
@@ -880,7 +880,7 @@ Begin
   ss := TFslStringStream.Create;
   try
     ss.Bytes := sSource;
-    zip := TFslZipPartList.create;
+    zip := TFslZipPartList.Create;
     reader := TFslZipReader.Create;
     try
       reader.Stream := ss.Link;
@@ -903,12 +903,12 @@ var
   writer : TFslZipWriter;
   name : String;
 begin
-  zip := TFslZipPartList.create;
+  zip := TFslZipPartList.Create;
   try
     zip.Add('manifest.json', WriteManifest);
     for name in FContent.Keys do
       zip.Add(name, FContent[name].AsBytes);
-    writer := TFslZipWriter.create;
+    writer := TFslZipWriter.Create;
     try
       writer.Parts := zip.Link;
       ss := TFslStringStream.Create;

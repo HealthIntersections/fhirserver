@@ -128,7 +128,7 @@ end;
 Constructor TFHIRTagList.Create(factory : TFHIRFactory);
 begin
   inherited Create;
-  FList := TFslList<TFHIRTag>.create;
+  FList := TFslList<TFHIRTag>.Create;
   FFactory := factory;
 end;
 
@@ -156,8 +156,8 @@ end;
 
 Destructor TFHIRTagList.Destroy;
 begin
-  FList.Free;
-  FFactory.Free;
+  FList.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -177,7 +177,7 @@ function TFHIRTagList.addTag(key: integer; kind: TFHIRTagCategory; system, code,
 var
   tag : TFHIRTag;
 begin
-  tag := TFHIRTag.create;
+  tag := TFHIRTag.Create;
   try
     tag.Key := Key;
     tag.Category := kind;
@@ -246,7 +246,7 @@ begin
     vs := TFslVCLStream.Create;
     try
       vs.Stream := s;
-      json := TJsonWriterDirect.create;
+      json := TJsonWriterDirect.Create;
       try
         json.Stream := vs.link;
         json.Start(true);
@@ -268,7 +268,7 @@ begin
         json.free;
       end;
     finally
-      vs.Free;
+      vs.free;
     end;
     result := s.Bytes;
   finally

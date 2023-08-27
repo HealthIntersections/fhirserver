@@ -226,13 +226,13 @@ end;
 
 destructor TDocumentGeneratorForm.Destroy;
 begin
-  FProvenance.Free;
-  FDocumentReference.Free;
-  //FAuthors.Free;
-  FSettings.Free;
-  FPatient.Free;
-  FClient.Free;
-  FBundle.Free;
+  FProvenance.free;
+  FDocumentReference.free;
+  //FAuthors.free;
+  FSettings.free;
+  FPatient.free;
+  FClient.free;
+  FBundle.free;
   inherited;
 end;
 
@@ -393,7 +393,7 @@ begin
   tvStructure.AddObject(bi);
   bi.TagObject := Document;
 
-  refList := TFslList<TFhirResource>.create;
+  refList := TFslList<TFhirResource>.Create;
   try
     first := true;
     for be in Document.entryList do
@@ -430,7 +430,7 @@ begin
       end;
     end;
   finally
-    refList.Free;
+    refList.free;
   end;
   tvStructure.ExpandAll;
 end;
@@ -484,43 +484,43 @@ end;
 
 //procedure TDocumentGeneratorForm.SetAuthors(const Value: TFslList<TFHIRPractitioner>);
 //begin
-//  FAuthors.Free;
+//  FAuthors.free;
 //  FAuthors := Value;
 //end;
 //
 procedure TDocumentGeneratorForm.SetBundle(const Value: TFhirBundle);
 begin
-  FBundle.Free;
+  FBundle.free;
   FBundle := Value;
 end;
 
 procedure TDocumentGeneratorForm.SetClient(const Value: TFHIRClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
 procedure TDocumentGeneratorForm.SetDocumentReference(const Value: TFhirDocumentReference);
 begin
-  FDocumentReference.Free;
+  FDocumentReference.free;
   FDocumentReference := Value;
 end;
 
 procedure TDocumentGeneratorForm.SetPatient(const Value: TFHIRPatient);
 begin
-  FPatient.Free;
+  FPatient.free;
   FPatient := Value;
 end;
 
 procedure TDocumentGeneratorForm.SetProvenance(const Value: TFhirProvenance);
 begin
-  FProvenance.Free;
+  FProvenance.free;
   FProvenance := Value;
 end;
 
 procedure TDocumentGeneratorForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

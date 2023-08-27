@@ -171,7 +171,7 @@ Begin
   Try
     LoadHTML(oFile, 'file://'+PathFolder(sFilename));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -191,8 +191,8 @@ Begin
 
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -207,7 +207,7 @@ Begin
 
     LoadHTML(oStream, Context);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -223,7 +223,7 @@ Begin
 
     oBuffer.Format := 'text/html';
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -240,7 +240,7 @@ Begin
     oHTMLer.OnSaveImage := FOnSaveImage;
     oHTMLer.Write(GetHostDocument);
   Finally
-    oHTMLer.Free;
+    oHTMLer.free;
   End;
 End;
 
@@ -252,7 +252,7 @@ Begin
   Try
     SaveHTML(oFile, PathTitle(sFileName));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -267,7 +267,7 @@ Begin
     oStream.Size := 0;
     SaveMHT(oStream, sTitle);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -284,7 +284,7 @@ Begin
     oMHTer.OnSaveImage := FOnSaveImage;
     oMHTer.Write(GetHostDocument);
   Finally
-    oMHTer.Free;
+    oMHTer.free;
   End;
 End;
 
@@ -296,7 +296,7 @@ Begin
   Try
     SaveMHT(oFile, PathTitle(sFileName));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -309,7 +309,7 @@ Begin
   Try
     LoadRTF(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -327,8 +327,8 @@ Begin
     oReader.Read(oDocument);
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -341,7 +341,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadRTF(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -357,7 +357,7 @@ Begin
 
     oBuffer.Format := 'application/rtf';
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -373,7 +373,7 @@ Begin
     oRTFer.OnSaveImage := FOnSaveImage;
     oRTFer.Write(GetHostDocument);
   Finally
-    oRTFer.Free;
+    oRTFer.free;
   End;
 End;
 
@@ -385,7 +385,7 @@ Begin
   Try
     SaveRTF(oFile, PathTitle(sFileName));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -397,7 +397,7 @@ Begin
   Try
     LoadCDA(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -415,8 +415,8 @@ Begin
     oReader.Read(oDocument);
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -429,7 +429,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadCDA(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -445,7 +445,7 @@ Begin
 
     oBuffer.Format := 'application/cda';
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -461,7 +461,7 @@ Begin
     oCDAer.OnSaveImage := FOnSaveImage;
     oCDAer.Write(GetHostDocument);
   Finally
-    oCDAer.Free;
+    oCDAer.free;
   End;
 End;
 
@@ -473,7 +473,7 @@ Begin
   Try
     SaveCDA(oFile, PathTitle(sFileName));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -486,7 +486,7 @@ Begin
   Try
     LoadODT(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -504,8 +504,8 @@ Begin
     oReader.Read(oDocument);
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -518,7 +518,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadODT(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -532,7 +532,7 @@ Begin
     oStream.Size := 0;
     SaveODT(oStream, sTitle);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -548,7 +548,7 @@ Begin
     oODTer.OnSaveImage := FOnSaveImage;
     oODTer.Write(GetHostDocument);
   Finally
-    oODTer.Free;
+    oODTer.free;
   End;
 End;
 
@@ -560,7 +560,7 @@ Begin
   Try
     SaveODT(oFile, PathTitle(sFileName));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -573,7 +573,7 @@ Begin
   Try
     LoadHL7(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -591,8 +591,8 @@ Begin
     oReader.Read(oDocument);
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -605,7 +605,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadHL7(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -621,7 +621,7 @@ Begin
 
     oBuffer.Format := 'application/hl7';
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -638,7 +638,7 @@ Begin
     oHL7er.Width := 88; // actual limit is 90 for Medical Director. keep a couple of chars up our sleeve 
     oHL7er.Write(GetHostDocument);
   Finally
-    oHL7er.Free;
+    oHL7er.free;
   End;
 End;
 
@@ -650,7 +650,7 @@ Begin
   Try
     SaveHL7(oFile, PathTitle(sFileName));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -665,7 +665,7 @@ Begin
   Try
     bSnap := oDoc.docElement.Name = 'snapshot';
   Finally
-    oDoc.Free;
+    oDoc.free;
   End;
   If bSnap Then
   begin
@@ -688,7 +688,7 @@ Begin
   Try
     LoadNative(oFile, 'file://'+PathFolder(sFilename));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -708,10 +708,10 @@ Begin
       oReader.Read(oDocument);
       SetHostDocument(oDocument, oReader.Styles);
     Finally
-      oReader.Free;
+      oReader.free;
     End;
   Finally
-    oDocument.Free;
+    oDocument.free;
   End;
 End;
 
@@ -724,7 +724,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadNative(oStream, Context);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -740,7 +740,7 @@ Begin
 
     oBuffer.Format := 'application/xml';
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -757,7 +757,7 @@ Begin
     oNativeer.OnSaveImage := FOnSaveImage;
     oNativeer.Write(GetHostDocument);
   Finally
-    oNativeer.Free;
+    oNativeer.free;
   End;
 End;
 
@@ -769,7 +769,7 @@ Begin
   Try
     SaveNative(oFile, True);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -784,7 +784,7 @@ Begin
     SaveHTML(oStream, 'HTML');
     result := TEncoding.UTF8.GetString(oStream.Bytes);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -797,7 +797,7 @@ Begin
     SaveRTF(oStream, 'RTF');
     Result := string(oStream.Data);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -818,7 +818,7 @@ Begin
     SetString(Result, PChar(chars), Length(chars));
 {$ENDIF}
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -839,7 +839,7 @@ Begin
     SetString(Result, PChar(chars), Length(chars));
 {$ENDIF}
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -860,7 +860,7 @@ Begin
     SetString(Result, PChar(chars), Length(chars));
 {$ENDIF}
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -872,7 +872,7 @@ Begin
   Try
     LoadText(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -890,8 +890,8 @@ Begin
 
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -905,7 +905,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadText(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -921,7 +921,7 @@ Begin
 
     oBuffer.Format := 'text/plain';
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -935,7 +935,7 @@ Begin
     oTexter.Styles := GetHostWorkingStyles.Link;
     oTexter.Write(GetHostDocument);
   Finally
-    oTexter.Free;
+    oTexter.free;
   End;
 End;
 
@@ -947,7 +947,7 @@ Begin
   Try
     SaveText(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -965,7 +965,7 @@ Begin
 {$ENDIF}
     LoadHTML(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -979,7 +979,7 @@ Begin
     oStream.Data := AnsiString(sContent);
     LoadRTF(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -997,7 +997,7 @@ Begin
 {$ENDIF}
     LoadHL7(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1015,7 +1015,7 @@ Begin
 {$ENDIF}
     LoadNative(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1033,7 +1033,7 @@ Begin
 {$ENDIF}
     LoadText(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1152,7 +1152,7 @@ Begin
       LoadNative(sFilename);
     end;
   Finally
-    oDom.Free;
+    oDom.free;
   End;
 end;
 
@@ -1208,10 +1208,10 @@ Begin
       oTranslator.TranslateToWorking;
       SetHostDocument(oWorking, oTranslator.WorkingStyles);
     Finally
-      oTranslator.Free;
+      oTranslator.free;
     End;
   Finally
-    oWorking.Free;
+    oWorking.free;
   End;
 End;
 
@@ -1227,7 +1227,7 @@ Begin
     oTranslator.Document := oDocument.Link;
     oTranslator.TranslateToDocument;
   Finally
-    oTranslator.Free;
+    oTranslator.free;
   End;
 End;
 
@@ -1254,13 +1254,13 @@ Begin
         oTranslator.TranslateToWorking;
         SetHostDocument(oWorking, oTranslator.WorkingStyles);
       Finally
-        oTranslator.Free;
+        oTranslator.free;
       End;
     Finally
-      oWorking.Free;
+      oWorking.free;
     End;
   Finally
-    oDocument.Free;
+    oDocument.free;
   End;
 End;
 
@@ -1273,7 +1273,7 @@ Begin
   Try
     LoadSnapshot(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -1291,8 +1291,8 @@ Begin
     oReader.Read(oDocument);
     SetHostDocument(oDocument, oReader.Styles);
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -1305,7 +1305,7 @@ Begin
     oStream.Buffer := oBuffer.Link;
     LoadSnapshot(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1313,13 +1313,13 @@ End;
 
 Procedure TWPDocumentHandler.SetSettings(oSettings: TWPSettings);
 Begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := oSettings;
 End;
 
 Destructor TWPDocumentHandler.Destroy;
 Begin
-  FSettings.Free;
+  FSettings.free;
   Inherited;
 End;
 
@@ -1336,7 +1336,7 @@ Begin
       oBuilder.Append(oDocument.Pieces[iLoop].LogicalText);
     result := oBuilder.ToString;
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 end;
 

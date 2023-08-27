@@ -395,7 +395,7 @@ end;
 
 destructor TNodeStack.Destroy;
 begin
-  logicalPaths.Free;
+  logicalPaths.free;
   inherited;
 end;
 
@@ -456,7 +456,7 @@ begin
       result.logicalPaths.AddStrings(logicalPaths);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -484,7 +484,7 @@ begin
     end;
     result := b.toString();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -509,7 +509,7 @@ end;
 
 destructor TFHIRValidator5.Destroy;
 begin
-  FPathEngine.Free;
+  FPathEngine.free;
   // FContext don't free- just a copy of what parent owns
   inherited;
 end;
@@ -537,7 +537,7 @@ begin
         if propFU.hasValue then
           u := propFU.Values[0].primitiveValue;
       finally
-        propFU.Free;
+        propFU.free;
       end;
       if (u = url) then
       begin
@@ -546,12 +546,12 @@ begin
           if propR.hasValue then
             exit(propR.Values[0].Link);
         finally
-          propR.Free;
+          propR.free;
         end;
       end;
     end;
   finally
-    propE.Free;
+    propE.free;
   end;
 end;
 
@@ -570,7 +570,7 @@ procedure TFHIRValidator5.validate(ctxt : TFHIRValidatorContext; element: TMXmlE
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, element, profiles);
   finally
@@ -582,7 +582,7 @@ procedure TFHIRValidator5.validate(ctxt : TFHIRValidatorContext; obj: TJsonObjec
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, obj, profiles);
   finally
@@ -656,7 +656,7 @@ procedure TFHIRValidator5.validate(ctxt : TFHIRValidatorContext; document: TMXml
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, document, profiles);
   finally
@@ -723,7 +723,7 @@ begin
     c.display := item.getNamedChildValue('display');
     result := c.Link;
   finally
-    c.Free;
+    c.free;
   end;
 end;
 {$IFDEF DSTU21}
@@ -787,7 +787,7 @@ begin
           res.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
     except
       on e: Exception do
@@ -847,7 +847,7 @@ begin
   text := element.getNamedChildValue('text');
   rule(ctxt, IssueTypeInvalid, element.locStart, element.locEnd, stack.literalPath, (text = '') or (text = qItem.text), 'If text exists, it must match the questionnaire definition for linkId '+qItem.linkId);
 
-  answers := TFslList<TFHIRMMElement>.create;
+  answers := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildren('answer', answers);
     if inProgress then
@@ -890,13 +890,13 @@ begin
       end;
     end;
   finally
-    answers.Free;
+    answers.free;
   end;
   if qitem.type_ = ItemTypeGroup then
     validateQuestionannaireResponseItems(qsrc, qitem.itemList, errors, element, stack, inProgress)
   else
   begin
-    items := TFslList<TFHIRMMElement>.create;
+    items := TFslList<TFHIRMMElement>.Create;
     try
       element.getNamedChildren('item', items);
       for item in items do
@@ -909,7 +909,7 @@ begin
         end;
       end;
     finally
-      answers.Free;
+      answers.free;
     end;
   end;
 end;
@@ -951,11 +951,11 @@ var
         exit(i);
   end;
 begin
-  items := TFslList<TFHIRMMElement>.create;
+  items := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildren('item', items);
     // now, sort into stacks
-    map := TFslMap<TFslList<TFHIRMMElement>>.create;
+    map := TFslMap<TFslList<TFHIRMMElement>>.Create;
     try
       lastIndex := -1;
       for item in items do
@@ -985,7 +985,7 @@ begin
             lastIndex := index;
             if not map.TryGetValue(linkId, mapItem) then
             begin
-              mapItem := TFslList<TFHIRMMElement>.create;
+              mapItem := TFslList<TFHIRMMElement>.Create;
               map.Add(linkId, mapitem);
             end;
             mapItem.Add(item.Link);
@@ -1002,10 +1002,10 @@ begin
           rule(ctxt, IssueTypeRequired, element.locStart, element.locEnd, stack.literalPath, not qItem.required, 'No response found for required item '+qItem.linkId);
       end;
     finally
-      map.Free;
+      map.free;
     end;
   finally
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1021,7 +1021,7 @@ var
   s, l : String;
 begin
   result := '';
-  values := TFslList<TFHIRMMElement>.create;
+  values := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildrenWithWildcard('value[x]', values);
     if values.Count > 0 then
@@ -1047,7 +1047,7 @@ begin
       end;
     end;
   finally
-    values.Free;
+    values.free;
   end;
 end;
 {$ENDIF}
@@ -1071,7 +1071,7 @@ begin
         result := resource.children[0];
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1109,7 +1109,7 @@ begin
           if (rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
             resource.profiles.addProfile(sd.link);
       finally
-        sd.Free;
+        sd.free;
       end;
     end;
 
@@ -1203,7 +1203,7 @@ begin
               if (rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
                 resource.profiles.addProfile(sd.Link);
           finally
-            sd.Free;
+            sd.free;
           end;
           inc(i);
         end;
@@ -1255,7 +1255,7 @@ begin
         if (type_ = 'message') then
           validateMessage(ctxt, bundle);
       finally
-        firstStack.Free;
+        firstStack.free;
       end;
     end;
   finally
@@ -1284,7 +1284,7 @@ begin
     try
       validateBundleReference(ctxt, entries, composition.getNamedChild('subject'), 'Composition Subject', ns, fullUrl, 'Composition', id);
     finally
-      ns.Free;
+      ns.free;
     end;
     validateSections(ctxt, entries, composition, stack, fullUrl, id);
   end;
@@ -1313,7 +1313,7 @@ begin
         validateBundleReference(ctxt, entries, section.getNamedChild('content'), 'Section Content', localStack, fullUrl, 'Composition', id);
         validateSections(ctxt, entries, section, localStack, fullUrl, id);
       finally
-        localStack.Free;
+        localStack.free;
       end;
     end;
   finally
@@ -1579,7 +1579,7 @@ begin
         childDefinitions.free;
         childDefinitions := getChildMap(dt, dt.snapshot.ElementList[0]);
       finally
-        dt.Free;
+        dt.free;
       end;
     end;
 
@@ -1589,7 +1589,7 @@ begin
       while (iter.next()) do
         children.Add(TElementInfo.Create(iter.name(), iter.element(), iter.path(), iter.count()));
     finally
-      iter.Free;
+      iter.free;
     end;
 
     // 2. assign children to a definition
@@ -1598,7 +1598,7 @@ begin
     unsupportedSlicing := false;
     slicingPath := '';
     sliceOffset := 0;
-    problematicPaths := TStringList.create;
+    problematicPaths := TStringList.Create;
     try
       for i := 0 to childDefinitions.count - 1 do
       begin
@@ -1834,13 +1834,13 @@ begin
               validateElement(ctxt, profile, ei.definition, nil, nil, resource, ei.element, t, localStack, false);
           end;
         finally
-          localStack.Free;
+          localStack.free;
         end;
       end;
     end;
   finally
-    childDefinitions.Free;
-    children.Free;
+    childDefinitions.free;
+    children.free;
   end;
 end;
 
@@ -1912,7 +1912,7 @@ begin
       vm.details.text := msg;
       ctxt.Issues.Add(TFHIROperationOutcomeIssue5.Create(vm.Link));
     finally
-      vm.Free;
+      vm.free;
     end;
   end;
   result := thePass;
@@ -1942,7 +1942,7 @@ begin
       vm.details.text := msg;
       ctxt.issues.Add(TFHIROperationOutcomeIssue5.Create(vm.Link));
     finally
-      vm.Free;
+      vm.free;
     end;
   end;
   result := thePass;
@@ -2037,7 +2037,7 @@ begin
     end;
     raise EFHIRException.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
   finally
-    childDefinitions.Free;
+    childDefinitions.free;
   end;
 end;
 
@@ -2787,7 +2787,7 @@ begin
                     res.free;
                   end;
                 finally
-                  c.Free;
+                  c.free;
                 end;
               except
                 on e: Exception do
@@ -2836,8 +2836,8 @@ begin
     cc.text := element.getNamedChildValue('text');
     result := cc.Link;
   finally
-    cc.Free;
-    list.Free;
+    cc.free;
+    list.free;
   end;
 End;
 
@@ -2924,7 +2924,7 @@ begin
       else
         result := rule(ctxt, IssueTypeCODEINVALID, element.LocationData.ParseStart, element.LocationData.ParseFinish, path, s = nil, s.message);
     finally
-      s.Free;
+      s.free;
     end;
   end
   // else if (system.startsWith('http://hl7.org/fhir')) then
@@ -3534,10 +3534,10 @@ begin
       if (element <> nil) then
         validate(ctxt, element, profiles);
     finally
-      element.Free;
+      element.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -3555,7 +3555,7 @@ begin
       gen.description := ctxt.OperationDescription;
       gen.generate(result.Resource);
     finally
-      gen.Free;
+      gen.free;
     end;
     result.Link;
   finally
@@ -3580,7 +3580,7 @@ procedure TFHIRValidator5.validate(ctxt: TFHIRValidatorContext; source: TFslBuff
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, source, format, profiles);
   finally
@@ -3592,7 +3592,7 @@ procedure TFHIRValidator5.validate(ctxt: TFHIRValidatorContext; resource: TFhirR
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, resource, profiles);
   finally
@@ -3647,7 +3647,7 @@ end;
 
 constructor TChildIterator.Create(path: String; element: TFHIRMMElement);
 begin
-  inherited create;
+  inherited Create;
   parent := element;
   basePath := path;
   cursor := -1;
@@ -3730,11 +3730,11 @@ end;
 
 { TValidationProfileSet }
 
-constructor TValidationProfileSet.create;
+constructor TValidationProfileSet.Create;
 begin
   inherited;
-  FCanonical := TStringList.create;
-  FDefinitions := TFHIRStructureDefinitionList.create;
+  FCanonical := TStringList.Create;
+  FDefinitions := TFHIRStructureDefinitionList.Create;
 
 end;
 
@@ -3762,8 +3762,8 @@ end;
 
 destructor TValidationProfileSet.Destroy;
 begin
-  FCanonical.Free;
-  FDefinitions.Free;
+  FCanonical.free;
+  FDefinitions.free;
   inherited;
 end;
 

@@ -1364,7 +1364,7 @@ procedure TFhirOperationOutcome5.addIssue(issue: TFhirOperationOutcomeIssueW; fr
 begin
   (Fres as TFhirOperationOutcome).issueList.Add((issue.Element as TFhirOperationOutcomeIssue).link);
   if free then
-    issue.Free;
+    issue.free;
 end;
 
 procedure TFhirOperationOutcome5.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message: String; addIfDuplicate : boolean);
@@ -1444,7 +1444,7 @@ function TFhirOperationOutcome5.issues: TFslList<TFhirOperationOutcomeIssueW>;
 var
   iss : TFhirOperationOutcomeIssue;
 begin
-  result := TFslList<TFhirOperationOutcomeIssueW>.create;
+  result := TFslList<TFhirOperationOutcomeIssueW>.Create;
   for iss in (resource as TFhirOperationOutcome).issueList do
     result.Add(TFHIROperationOutcomeIssue5.Create(iss.Link));
 end;
@@ -1541,13 +1541,13 @@ function TFHIRBundle5.entries: TFslList<TFhirBundleEntryW>;
 var
   be : TFHIRBundleEntry;
 begin
-  result := TFslList<TFhirBundleEntryW>.create;
+  result := TFslList<TFhirBundleEntryW>.Create;
   try
     for be in bundle.entryList do
       result.Add(TFhirBundleEntry5.create(be.Link));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1967,7 +1967,7 @@ begin
     statement.restList[0].interactionList.Append.code := SystemRestfulInteractionSearchSystem;
   if history then
     statement.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
-  statement.text := TFhirNarrative.create;
+  statement.text := TFhirNarrative.Create;
   statement.text.status := NarrativeStatusGenerated;
   statement.instantiatesList.AddItem(TFHIRCanonical.Create('http://hl7.org/fhir/Conformance/terminology-server'));
   // commented out until we sort out cds-hooks
@@ -2330,7 +2330,7 @@ var
 begin
   if FList = nil then
     populateList;
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.sorted := true;
     ts.duplicates := dupIgnore;
@@ -2401,13 +2401,13 @@ function TFHIRStructureDefinition5.elements: TFslList<TFHIRElementDefinitionW>;
 var
   ed : TFhirElementDefinition;
 begin
-  result := TFslList<TFHIRElementDefinitionW>.create;
+  result := TFslList<TFHIRElementDefinitionW>.Create;
   try
     for ed in sd.snapshot.elementList do
       result.Add(TFhirElementDefinition5.create(ed.Link));
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2672,14 +2672,14 @@ end;
 procedure TFHIRBundleEntry5.setRequestMethod(Value: String);
 begin
   if entry.request = nil then
-    entry.request := TFHIRBundleEntryRequest.create;
+    entry.request := TFHIRBundleEntryRequest.Create;
   entry.request.method := TFhirHttpVerbEnum(ord(StringArrayIndexOfSensitive(CODES_TFhirHttpVerbEnum, value)));
 end;
 
 procedure TFHIRBundleEntry5.setRequestUrl(Value: String);
 begin
   if entry.request = nil then
-    entry.request := TFHIRBundleEntryRequest.create;
+    entry.request := TFHIRBundleEntryRequest.Create;
   entry.request.url := value;
 end;
 
@@ -2691,35 +2691,35 @@ end;
 procedure TFHIRBundleEntry5.setResponseDate(Value: TFslDateTime);
 begin
   if entry.response = nil then
-    entry.response := TFHIRBundleEntryResponse.create;
+    entry.response := TFHIRBundleEntryResponse.Create;
   entry.response.lastModified := value;
 end;
 
 procedure TFHIRBundleEntry5.setResponseStatus(Value: String);
 begin
   if entry.response = nil then
-    entry.response := TFHIRBundleEntryResponse.create;
+    entry.response := TFHIRBundleEntryResponse.Create;
   entry.response.status := value;
 end;
 
 procedure TFHIRBundleEntry5.setSearchMode(Value: TFHIRBundleEntrySearchMode);
 begin
   if entry.search = nil then
-    entry.search := TFHIRBundleEntrySearch.create;
+    entry.search := TFHIRBundleEntrySearch.Create;
   entry.search.mode := MAP_SEARCH_MODE2[value];
 end;
 
 procedure TFHIRBundleEntry5.setSearchMpiMatch(Value: String);
 begin
   if entry.search = nil then
-    entry.search := TFHIRBundleEntrySearch.create;
+    entry.search := TFHIRBundleEntrySearch.Create;
   entry.search.setExtensionString('http://hl7.org/fhir/StructureDefinition/patient-mpi-match', value)
 end;
 
 procedure TFHIRBundleEntry5.setSearchScore(Value: String);
 begin
   if entry.search = nil then
-    entry.search := TFHIRBundleEntrySearch.create;
+    entry.search := TFHIRBundleEntrySearch.Create;
   entry.search.score := value;
 end;
 
@@ -2749,7 +2749,7 @@ end;
 procedure TFHIRBundleEntry5.setrequestIfNoneExist(Value: String);
 begin
   if entry.request = nil then
-    entry.request := TFhirBundleEntryRequest.create;
+    entry.request := TFhirBundleEntryRequest.Create;
   entry.request.ifNoneExist := value;
 end;
 
@@ -2772,14 +2772,14 @@ end;
 procedure TFHIRBundleEntry5.setrequestIfMatch(Value: String);
 begin
   if entry.request = nil then
-    entry.request := TFhirBundleEntryRequest.create;
+    entry.request := TFhirBundleEntryRequest.Create;
   entry.request.IfMatch := value;
 end;
 
 procedure TFHIRBundleEntry5.setrequestIfModifiedSince(Value: TFslDateTime);
 begin
   if entry.request = nil then
-    entry.request := TFhirBundleEntryRequest.create;
+    entry.request := TFhirBundleEntryRequest.Create;
   entry.request.ifModifiedSince := value;
 end;
 
@@ -2799,7 +2799,7 @@ end;
 procedure TFHIRBundleEntry5.setrequestIfNoneMatch(Value: String);
 begin
   if entry.request = nil then
-    entry.request := TFhirBundleEntryRequest.create;
+    entry.request := TFhirBundleEntryRequest.Create;
   entry.request.IfNoneMatch := value;
 end;
 
@@ -2814,7 +2814,7 @@ end;
 procedure TFHIRBundleEntry5.setResponseETag(Value: string);
 begin
   if entry.response = nil then
-    entry.response := TFHIRBundleEntryResponse.create;
+    entry.response := TFHIRBundleEntryResponse.Create;
   entry.response.ETag := value;
 end;
 
@@ -2829,7 +2829,7 @@ end;
 procedure TFHIRBundleEntry5.setResponseLocation(Value: string);
 begin
   if entry.response = nil then
-    entry.response := TFHIRBundleEntryResponse.create;
+    entry.response := TFHIRBundleEntryResponse.Create;
   entry.response.Location := value;
 end;
 
@@ -2853,7 +2853,7 @@ function TFHIRValueSet5.getComposeExtensions: TFslList<TFHIRExtensionW>;
 var
   ext : TFHIRObject;
 begin
-  result := TFslList<TFHIRExtensionW>.create;
+  result := TFslList<TFHIRExtensionW>.Create;
   try
     if (vs.compose <> nil) then
       for ext in vs.compose.getExtensionsV do
@@ -2902,7 +2902,7 @@ end;
 
 destructor TFHIRValueSet5.Destroy;
 begin
-  FExp.Free;
+  FExp.free;
   inherited;
 end;
 
@@ -2935,7 +2935,7 @@ end;
 function TFHIRValueSet5.forceExpansion: TFhirValueSetExpansionW;
 begin
   if (vs.expansion = nil) then
-    vs.expansion := TFhirValueSetExpansion.create;
+    vs.expansion := TFhirValueSetExpansion.Create;
   vs.expansion.timestamp := TFslDateTime.makeUTC;
   vs.expansion.identifier := NewGuidURN;
   vs.expansion.parameterList.Clear;
@@ -3232,7 +3232,7 @@ function TFhirValueSetComposeIncludeConcept5.designations: TFslList<TFhirValueSe
 var
   item : TFhirValueSetComposeIncludeConceptDesignation;
 begin
-  result := TFslList<TFhirValueSetComposeIncludeConceptDesignationW>.create;
+  result := TFslList<TFhirValueSetComposeIncludeConceptDesignationW>.Create;
   for item in (Element as TFhirValueSetComposeIncludeConcept).designationList do
     result.Add(TFhirValueSetComposeIncludeConceptDesignation5.create(item.Link));
 end;
@@ -3278,7 +3278,7 @@ function TFHIRLookupOpResponse5.addDesignation(lang, system, code, display, valu
 var
   p : TFHIRLookupOpRespDesignation;
 begin
-  p := TFHIRLookupOpRespDesignation.create;
+  p := TFHIRLookupOpRespDesignation.Create;
   try
     if (system <> '') then
     begin
@@ -3301,7 +3301,7 @@ function TFHIRLookupOpResponse5.addDesignation(lang, value: string): TFHIRLookup
 var
   p : TFHIRLookupOpRespDesignation;
 begin
-  p := TFHIRLookupOpRespDesignation.create;
+  p := TFHIRLookupOpRespDesignation.Create;
   try
     p.language := lang;
     p.value := value;
@@ -3327,14 +3327,14 @@ function TFHIRLookupOpResponse5.addProp(name: string): TFHIRLookupOpRespProperty
 var
   p : TFHIRLookupOpRespProperty_;
 begin
-  p := TFHIRLookupOpRespProperty_.create;
+  p := TFHIRLookupOpRespProperty_.Create;
   try
     p.code := name;
     (op as TFHIRLookupOpResponse).property_List.Add(p.link as TFHIRLookupOpRespProperty_);
     result := TFHIRLookupOpRespProperty5.create(p.Link);
     List.add(result); // make sure it gets cleaned up
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -3443,14 +3443,14 @@ function TFHIRLookupOpRespProperty5.addSubProp(name: String): TFHIRLookupOpRespS
 var
   p : TFHIRLookupOpRespSubProperty;
 begin
-  p := TFHIRLookupOpRespSubProperty.create;
+  p := TFHIRLookupOpRespSubProperty.Create;
   try
     p.code := name;
     (obj as TFHIRLookupOpRespProperty_).subpropertyList.Add(p.link as TFHIRLookupOpRespSubProperty);
     result := TFHIRLookupOpRespSubProperty5.create(p.Link);
     List.add(result); // make sure it gets cleaned up
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -3688,7 +3688,7 @@ end;
 
 constructor TFhirCodeSystemConcept5.Create(elem: TFHIRObject; cs: TFHIRCodeSystem);
 begin
-  inherited create(elem);
+  inherited Create(elem);
   FCodeSystem := cs;
 end;
 
@@ -3718,7 +3718,7 @@ var
 begin
   if FConceptList = nil then
   begin
-    FConceptList := TFhirCodeSystemConceptListW.create;
+    FConceptList := TFhirCodeSystemConceptListW.Create;
     for i in (element as TFhirCodeSystemConcept).conceptList do
       FConceptList.Add(TFhirCodeSystemConcept5.create(i.Link, FCodeSystem));
   end;
@@ -3739,7 +3739,7 @@ function TFhirCodeSystemConcept5.designations: TFslList<TFhirCodeSystemConceptDe
 var
   i : TFhirCodeSystemConceptDesignation;
 begin
-  result := TFslList<TFhirCodeSystemConceptDesignationW>.create;
+  result := TFslList<TFhirCodeSystemConceptDesignationW>.Create;
   for i in c.designationList do
     result.Add(TFhirCodeSystemConceptDesignation5.Create(i.Link));
 end;
@@ -3802,7 +3802,7 @@ function TFhirCodeSystemConcept5.properties: TFslList<TFhirCodeSystemConceptProp
 var
   i : TFhirCodeSystemConceptProperty;
 begin
-  result := TFslList<TFhirCodeSystemConceptPropertyW>.create;
+  result := TFslList<TFhirCodeSystemConceptPropertyW>.Create;
   for i in c.property_List do
     result.Add(TFhirCodeSystemConceptProperty5.Create(i.Link));
 end;
@@ -3842,7 +3842,7 @@ var
 begin
   if FConceptList = nil then
   begin
-    FConceptList := TFhirCodeSystemConceptListW.create;
+    FConceptList := TFhirCodeSystemConceptListW.Create;
     for i in (resource as TFhirCodeSystem).conceptList do
       FConceptList.Add(TFhirCodeSystemConcept5.create(i.Link, cs));
   end;
@@ -3891,13 +3891,13 @@ var
 begin
   list := cs.getChildren(c.element as TFhirCodeSystemConcept);
   try
-    result := TFhirCodeSystemConceptListW.create;
+    result := TFhirCodeSystemConceptListW.Create;
     try
       for i in list do
         result.Add(TFhirCodeSystemConcept5.Create(i.Link, cs));
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     c.free;
@@ -3927,13 +3927,13 @@ var
 begin
   list := cs.getParents(c.element as TFhirCodeSystemConcept);
   try
-    result := TFhirCodeSystemConceptListW.create;
+    result := TFhirCodeSystemConceptListW.Create;
     try
       for i in list do
         result.Add(TFhirCodeSystemConcept5.Create(i.Link, cs));
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     c.free;
@@ -3984,7 +3984,7 @@ function TFhirCodeSystem5.properties: TFslList<TFhirCodeSystemPropertyW>;
 var
   i : TFhirCodeSystemProperty;
 begin
-  result := TFslList<TFhirCodeSystemPropertyW>.create;
+  result := TFslList<TFhirCodeSystemPropertyW>.Create;
   for i in cs.property_List do
     result.Add(TFhirCodeSystemProperty5.Create(i.Link));
 end;
@@ -4110,7 +4110,7 @@ function TFhirValueSetExpansion5.contains: TFslList<TFhirValueSetExpansionContai
 var
   item : TFhirValueSetExpansionContains;
 begin
-  result := TFslList<TFhirValueSetExpansionContainsW>.create;
+  result := TFslList<TFhirValueSetExpansionContainsW>.Create;
   for item in (Element as TFhirValueSetExpansion).containsList do
     result.Add(TFhirValueSetExpansionContains5.Create(item.Link));
 end;
@@ -4252,7 +4252,7 @@ begin
   end;
 end;
 
-procedure TFhirValueSetExpansionContains5.addDesignation(lang: TIETFLang; use: TFHIRCodingW; value: TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>);
+procedure TFhirValueSetExpansionContains5.addDesignation(lang : TIETFLang; use: TFHIRCodingW; value: TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>);
 var
   d : TFhirValueSetComposeIncludeConceptDesignation;
   ext : TFHIRExtensionW;
@@ -4302,7 +4302,7 @@ function TFhirValueSetExpansionContains5.contains: TFslList<TFhirValueSetExpansi
 var
   item : TFhirValueSetExpansionContains;
 begin
-  result := TFslList<TFhirValueSetExpansionContainsW>.create;
+  result := TFslList<TFhirValueSetExpansionContainsW>.Create;
   for item in (Element as TFhirValueSetExpansionContains).containsList do
     result.Add(TFhirValueSetExpansionContains5.Create(item.Link));
 end;
@@ -4326,7 +4326,7 @@ function TFhirValueSetExpansionContains5.properties: TFslList<TFhirCodeSystemCon
 var
   item : TFhirValueSetExpansionContainsProperty;
 begin
-  result := TFslList<TFhirCodeSystemConceptPropertyW>.create;
+  result := TFslList<TFhirCodeSystemConceptPropertyW>.Create;
   for item in (Element as TFhirValueSetExpansionContains).property_List do
     result.Add(TFhirCodeSystemConceptProperty5.Create(item.Link));
 end;
@@ -4449,7 +4449,7 @@ function TFhirConceptMap5.groups: TFslList<TFhirConceptMapGroupW>;
 var
   g : TFhirConceptMapGroup;
 begin
-  result := TFslList<TFhirConceptMapGroupW>.create;
+  result := TFslList<TFhirConceptMapGroupW>.Create;
   for g in cm.groupList do
     result.Add(TFhirConceptMapGroup5.create(g.Link))
 end;
@@ -4601,7 +4601,7 @@ function TFhirConceptMapGroupElementTarget5.products: TFslList<TFhirConceptMapGr
 var
   i : TFhirConceptMapGroupElementTargetDependsOn;
 begin
-  result := TFslList<TFhirConceptMapGroupElementDependsOnW>.create;
+  result := TFslList<TFhirConceptMapGroupElementDependsOnW>.Create;
   for i in (Element as TFhirConceptMapGroupElementTarget).productList do
     result.Add(TFhirConceptMapGroupElementDependsOn5.Create(i.link));
 end;
@@ -4637,7 +4637,7 @@ function TFhirConceptMapGroupElement5.targets: TFslList<TFhirConceptMapGroupElem
 var
   i : TFhirConceptMapGroupElementTarget;
 begin
-  result := TFslList<TFhirConceptMapGroupElementTargetW>.create;
+  result := TFslList<TFhirConceptMapGroupElementTargetW>.Create;
   for i in (Element as TFhirConceptMapGroupElement).targetList do
     result.Add(TFhirConceptMapGroupElementTarget5.Create(i.link));
 end;
@@ -4663,7 +4663,7 @@ function TFhirConceptMapGroup5.elements: TFslList<TFhirConceptMapGroupElementW>;
 var
   t : TFhirConceptMapGroupElement;
 begin
-  result := TFslList<TFhirConceptMapGroupElementW>.create;
+  result := TFslList<TFhirConceptMapGroupElementW>.Create;
   for t in (Element as TFhirConceptMapGroup).elementList do
     result.Add(TFhirConceptMapGroupElement5.Create(t.link))
 end;
@@ -4686,14 +4686,14 @@ var
   c : TFHIRCoding;
 begin
   force;
-  c := TFHIRCoding.create;
+  c := TFHIRCoding.Create;
   try
     c.system := system;
     c.code := code;
     c.display := display;
     m.securityList.Add(c.link);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -4708,14 +4708,14 @@ var
   c : TFHIRCoding;
 begin
   force;
-  c := TFHIRCoding.create;
+  c := TFHIRCoding.Create;
   try
     c.system := system;
     c.code := code;
     c.display := display;
     m.tagList.Add(c.link);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -4739,7 +4739,7 @@ end;
 
 destructor TFHIRMeta5.Destroy;
 begin
-  FResource.Free;
+  FResource.free;
   inherited;
 end;
 
@@ -4799,7 +4799,7 @@ function TFHIRMeta5.labels: TFslList<TFHIRCodingW>;
 var
   i : TFHIRCoding;
 begin
-  result := TFslList<TFHIRCodingW>.create;
+  result := TFslList<TFHIRCodingW>.Create;
   if Element <> nil then
     for i in m.securityList do
       result.Add(TFHIRCoding5.create(i.Link));
@@ -4855,7 +4855,7 @@ end;
 
 procedure TFHIRMeta5.setResource(value: TFHIRResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := value;
 end;
 
@@ -4869,7 +4869,7 @@ function TFHIRMeta5.tags: TFslList<TFHIRCodingW>;
 var
   i : TFHIRCoding;
 begin
-  result := TFslList<TFHIRCodingW>.create;
+  result := TFslList<TFHIRCodingW>.Create;
   if Element <> nil then
     for i in m.tagList do
       result.Add(TFHIRCoding5.create(i.Link));
@@ -5002,7 +5002,7 @@ procedure TFhirCapabilityStatementRestResource5.addParam(html, n, url, d: String
 var
   param : TFhirCapabilityStatementRestResourceSearchParam;
 begin
-  param := TFhirCapabilityStatementRestResourceSearchParam.create;
+  param := TFhirCapabilityStatementRestResourceSearchParam.Create;
   try
     param.name := n;
     param.definition := url;
@@ -5224,7 +5224,7 @@ function TFhirObservationComponent5.codings: TFslList<TFHIRCodingW>;
 var
   c : TFHIRCoding;
 begin
-  result := TFslList<TFHIRCodingW>.create;
+  result := TFslList<TFHIRCodingW>.Create;
   if comp.code <> nil then
     for c in comp.code.codingList do
       result.Add(TFHIRCoding5.Create(c.Link));
@@ -5321,7 +5321,7 @@ function TFhirObservation5.codings: TFslList<TFHIRCodingW>;
 var
   c : TFHIRCoding;
 begin
-  result := TFslList<TFHIRCodingW>.create;
+  result := TFslList<TFHIRCodingW>.Create;
   if obs.code <> nil then
     for c in obs.code.codingList do
       result.Add(TFHIRCoding5.Create(c.Link));
@@ -5331,7 +5331,7 @@ function TFhirObservation5.components: TFslList<TFhirObservationComponentW>;
 var
   c : TFhirObservationComponent;
 begin
-  result := TFslList<TFhirObservationComponentW>.create;
+  result := TFslList<TFhirObservationComponentW>.Create;
   for c in obs.componentList do
     result.Add(TFhirObservationComponent5.Create(c.Link));
 end;
@@ -5396,7 +5396,7 @@ var
   cc : TFHIRCodeableConcept;
   c : TFHIRCoding;
 begin
-  result := TFslList<TFHIRCodingW>.create;
+  result := TFslList<TFHIRCodingW>.Create;
   for cc in obs.categoryList do
     for c in cc.codingList do
       result.Add(TFHIRCoding5.Create(c.Link));
@@ -5414,7 +5414,7 @@ begin
   if value <> '' then
   begin
     if obs.code = nil then
-      obs.code := TFhirCodeableConcept.create;
+      obs.code := TFhirCodeableConcept.Create;
     obs.code.text := Value
   end
   else if (obs.code <> nil) and not obs.code.hasCoding then
@@ -5885,7 +5885,7 @@ function TFhirCodeableConcept5.codings: TFslList<TFhirCodingW>;
 var
   c : TFHIRCoding;
 begin
-  result := TFslList<TFhirCodingW>.create;
+  result := TFslList<TFhirCodingW>.Create;
   for c in (Element as TFhirCodeableConcept).codingList do
     result.Add(TFHIRCoding5.Create(c.Link));
 end;
@@ -5952,7 +5952,7 @@ function TFHIRGroup5.characteristics: TFslList<TFHIRGroupCharacteristicW>;
 var
   gc : TFHIRGroupCharacteristic;
 begin
-  result := TFslList<TFHIRGroupCharacteristicW>.create;
+  result := TFslList<TFHIRGroupCharacteristicW>.Create;
   for gc in (Resource as TFHIRGroup).characteristicList do
     result.add(TFHIRGroupCharacteristic5.create(gc.link));
 end;
@@ -7013,7 +7013,7 @@ begin
   if imm.manufacturer = nil then
     imm.manufacturer := TFhirCodeableReference.Create;
   if imm.manufacturer.reference = nil then
-    imm.manufacturer.reference := TFhirReference.create;
+    imm.manufacturer.reference := TFhirReference.Create;
   if imm.manufacturer.reference.identifier = nil then
     imm.manufacturer.reference.identifier := TFhirIdentifier.Create;
   imm.manufacturer.reference.identifier.system := value;

@@ -75,14 +75,14 @@ implementation
 
 function showUpgradeInformation(owner : TComponent; urlPage, urlExe, md : String) : TModalResult;
 begin
-  ToolkitUpgradeForm := TToolkitUpgradeForm.create(owner);
+  ToolkitUpgradeForm := TToolkitUpgradeForm.Create(owner);
   try
     ToolkitUpgradeForm.urlPage := urlPage;
     ToolkitUpgradeForm.urlExe := urlExe;
     ToolkitUpgradeForm.markdown := md;
     result := ToolkitUpgradeForm.ShowModal;
   finally
-    ToolkitUpgradeForm.Free;
+    ToolkitUpgradeForm.free;
   end;
 end;
 
@@ -109,9 +109,9 @@ begin
     if OpenDocument(fn) then
       ModalResult := mrOk
     else
-      raise EFslException.create('Unable to execute download '+fn);
+      raise EFslException.Create('Unable to execute download '+fn);
     {$ELSE}
-    raise EFslException.create('Not implemented yet');
+    raise EFslException.Create('Not implemented yet');
     {$ENDIF}
   except
     on e : Exception do

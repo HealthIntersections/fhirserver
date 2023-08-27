@@ -464,7 +464,7 @@ Type
     FLastSeperator : String;
     FList : TStringList;
   public
-    constructor create(sep, lastSep : String);
+    constructor Create(sep, lastSep : String);
     destructor Destroy; override;
 
     property Seperator : String read FSeperator;
@@ -3905,7 +3905,7 @@ var
   ts : TStringList;
 begin
   // https://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version/6316023#6316023
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.text := FileToString('/etc/os-release', TEncoding.UTF8);
     result := ts.Values['NAME']+' v'+ts.Values['VERSION'];
@@ -4095,7 +4095,7 @@ Begin
 //      End;
 //    End;
 //  Finally
-//    oRegistry.Free;
+//    oRegistry.free;
 //  End;
 End;
 {$ENDIF}
@@ -4399,7 +4399,7 @@ Begin
 
       oRegistry.CloseKey;
     Finally
-      oRegistry.Free;
+      oRegistry.free;
     End;
   End;
 End;
@@ -4418,7 +4418,7 @@ Begin
     Else
       Result := '';
   Finally
-   oRegistry.Free;
+   oRegistry.free;
   End;
 End;
 
@@ -5990,7 +5990,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -6009,7 +6009,7 @@ var
       result := ' ';
   end;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     i := 0;
     while (i < s.length) do
@@ -6802,7 +6802,7 @@ End;
 
 destructor TFslStringBuilder.Destroy;
 begin
-  FBuilder.Free;
+  FBuilder.free;
   inherited;
 end;
 
@@ -6920,14 +6920,14 @@ end;
 
 constructor TCommaBuilder.Create;
 begin
-  inherited create;
+  inherited Create;
   list := TStringList.Create;
   FSeperator := ', ';
 end;
 
 destructor TCommaBuilder.Destroy;
 begin
-  list.Free;
+  list.free;
   inherited;
 end;
 
@@ -10687,7 +10687,7 @@ Begin
         End;
       End;
     Finally
-      oReg.Free;
+      oReg.free;
     End;
     // This is a temporary workaround for erroneous information in
     // some windows registries. Fix is http://support.microsoft.com/hotfix/KBHotfix.aspx?kbnum=974176&kbln=en-us
@@ -10725,7 +10725,7 @@ Begin
     For iYearRuleIndex := Low(aTimeZoneInformation.YearRules) To High(aTimeZoneInformation.YearRules) Do
       FreeAndNil(aTimeZoneInformation.YearRules[iYearRuleIndex]);
 
-    aTimeZoneInformation.Free;
+    aTimeZoneInformation.free;
     aTimeZoneInformation := Nil;
   End;
 End;
@@ -13984,7 +13984,7 @@ end;
 //        o.Append('#'+inttostr(ord(a[i])));
 //    result := o.AsString;
 //  Finally
-//    o.Free;
+//    o.free;
 //  End;
 //End;
 //
@@ -14326,7 +14326,7 @@ begin
         o.Append('#'+inttostr(a[i]));
     result := o.AsString;
   Finally
-    o.Free;
+    o.free;
   End;
 End;
 
@@ -14654,7 +14654,7 @@ begin
   try
     f.write(bytes[0], length(bytes));
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -14667,7 +14667,7 @@ begin
     setLength(result, f.Size);
     f.Read(result[0], f.Size);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -14724,7 +14724,7 @@ begin
     try
       es.Write(value[0],Length(value));
     finally
-      es.Free;
+      es.free;
     end;
     result := ss.DataString;
   finally
@@ -14780,13 +14780,13 @@ begin
         b.CopyFrom(ds,ds.Size);
         Result := copy(b.Bytes, 0, b.Size);
       finally
-        ds.Free;
+        ds.free;
       end;
     finally
-      b.Free;
+      b.free;
     end;
   finally
-    ss.Free;
+    ss.free;
   end;
 {$ELSE}
   result := EncdDecd.DecodeBase64(AnsiString(value));
@@ -14940,7 +14940,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -14952,7 +14952,7 @@ begin
   if Length(AStr) <= 0 then
     exit('');
 
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for c in unicodeChars(AStr) do
     begin
@@ -15064,7 +15064,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15135,7 +15135,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15367,7 +15367,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15655,7 +15655,7 @@ var
   c : char;
   i : integer;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for c in sValue do
 begin
@@ -15685,7 +15685,7 @@ var
   b : TStringBuilder;
   c : char;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     i := 1;
     while i <= length(sValue) do
@@ -15710,13 +15710,13 @@ end;
 
 constructor TFslWordStemmer.create(lang: String);
 begin
-  inherited create;
+  inherited Create;
 //  FStem := GetStemmer(lang);
 end;
 
 destructor TFslWordStemmer.Destroy;
 begin
-//  FStem.Free;
+//  FStem.free;
   inherited;
 end;
 
@@ -16783,13 +16783,13 @@ var
   ch : UnicodeChar;
   b : TFslStringBuilder;
 begin
-  b := TFslStringBuilder.create;
+  b := TFslStringBuilder.Create;
   try
     for ch in unicodeChars(s) do
       b.append(removeAccentFromChar(ch));
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -17084,7 +17084,7 @@ begin
   try
     z := TZDecompressionStream.create(b1);
     try
-      b2  := TBytesStream.create;
+      b2  := TBytesStream.Create;
       try
         b2.CopyFrom(z, z.Size);
         result := b2.Bytes;
@@ -17499,7 +17499,7 @@ begin
   inherited Create;
   FSeperator := sep;
   FLastSeperator := LastSep;
-  FList := TStringList.create;
+  FList := TStringList.Create;
 end;
 
 destructor TCommaSeparatedStringBuilder.Destroy;

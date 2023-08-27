@@ -116,13 +116,13 @@ end;
 constructor TFHIRLoadContextTaskRequest.Create;
 begin
   inherited Create;
-  FPackages := TStringList.create;
+  FPackages := TStringList.Create;
 end;
 
 destructor TFHIRLoadContextTaskRequest.Destroy;
 begin
-  FPackages.Free;
-  FContext.Free;
+  FPackages.free;
+  FContext.free;
   inherited Destroy;
 end;
 
@@ -133,7 +133,7 @@ end;
 
 procedure TFHIRLoadContextTaskRequest.SetContext(AValue: TFHIRWorkerContextWithFactory);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := AValue;
 end;
 
@@ -146,7 +146,7 @@ end;
 
 destructor TFHIRContextLoaderEngine.Destroy;
 begin
-  FNpm.Free;
+  FNpm.free;
   inherited Destroy;
 end;
 
@@ -184,7 +184,7 @@ begin
       if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
         context.seeResource(res);
     finally
-      cs.Free;
+      cs.free;
     end;
   end
   else
@@ -211,7 +211,7 @@ begin
     FNpm := TFHIRPackageManager.Create(npmModeUser);
   i := 0;
 
-  p := context.factory.makeParser(context.Link, ffJson, defLang);
+  p := context.factory.makeParser(context.Link, ffJson, nil);
   try
     FNpm.OnWork := doNpmWork;
     npm := FNpm.loadPackage(id);
@@ -236,15 +236,15 @@ begin
               raise EFHIRException.Create('Error Loading '+s+': '+e.Message);
           end;
         finally
-          res.Free;
+          res.free;
         end;
       end;
       Logging.log('Loaded '+npm.name+'#'+npm.version+': '+inttostr(i)+' resources');
     finally
-      npm.Free;
+      npm.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
   doProgress('Loading Package ' +id, 1, 1);
 end;

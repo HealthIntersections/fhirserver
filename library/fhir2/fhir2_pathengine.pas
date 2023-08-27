@@ -299,7 +299,7 @@ begin
       ctxt.free;
     end;
   finally
-    types.Free;
+    types.free;
   end;
 end;
 
@@ -339,7 +339,7 @@ begin
   primitiveTypes := TStringList.Create;
   if (worker <> nil) then
   begin
-    list := TFslList<TFHIRStructureDefinition>.create;
+    list := TFslList<TFHIRStructureDefinition>.Create;
     try
       worker.listStructures(list);
       for sd in list do
@@ -382,7 +382,7 @@ begin
       pack.outcome := outcome.Link;
       Ondebug(self, pack);
     finally
-      pack.Free;
+      pack.free;
     end;
   end
   else
@@ -397,13 +397,13 @@ begin
   end;
 end;
 
-destructor TFHIRPathEngine.destroy;
+destructor TFHIRPathEngine.Destroy;
 begin
-  FLog.Free;
-  worker.Free;
-  primitiveTypes.Free;
-  allTypes.Free;
-  FUcum.Free;
+  FLog.free;
+  worker.free;
+  primitiveTypes.free;
+  allTypes.free;
+  FUcum.free;
 
   inherited;
 end;
@@ -427,7 +427,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -449,7 +449,7 @@ begin
         ctxt.free;
       end;
     finally
-      list.Free;
+      list.free;
     end;
   finally
     exp.free;
@@ -468,10 +468,10 @@ begin
     try
       result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -490,10 +490,10 @@ begin
       try
         result := execute(ctxt, list, exp, true);
       finally
-        ctxt.Free;
+        ctxt.free;
       end;
     finally
-      list.Free;
+      list.free;
     end;
   finally
     exp.free;
@@ -550,10 +550,10 @@ begin
     try
       result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -570,7 +570,7 @@ begin
   try
     result := convertToBoolean(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -582,7 +582,7 @@ begin
   try
     result := convertToBoolean(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -594,7 +594,7 @@ begin
   try
     result := convertToString(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -606,7 +606,7 @@ begin
   try
     result := convertToString(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -674,7 +674,7 @@ begin
             try
               result.update(work);
             finally
-              work.Free;
+              work.free;
             end;
           end;
           if (result.hasNoTypes) then
@@ -686,7 +686,7 @@ begin
           try
             result.update(work)
           finally
-            work.Free;
+            work.free;
           end;
         end;
       enkConstant:
@@ -697,7 +697,7 @@ begin
           try
             result.update(work)
           finally
-            work.Free;
+            work.free;
           end;
         end;
     end;
@@ -707,7 +707,7 @@ begin
     if (exp.Inner <> nil) then
     begin
       work := executeType(ctxt, result, exp.Inner, false);
-      result.Free;
+      result.free;
       result := work;
     end;
 
@@ -723,10 +723,10 @@ begin
           work := executeType(ctxt, focus, next, atEntry);
         try
           work2 := operateTypes(result, last.Operation, work);
-          result.Free;
+          result.free;
           result := work2;
         finally
-          work.Free;
+          work.free;
         end;
         last := next;
         next := next.OpNext;
@@ -735,7 +735,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -764,11 +764,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(all));
     end
@@ -791,7 +791,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -808,7 +808,7 @@ begin
         result.add(b.Link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -822,7 +822,7 @@ begin
       listAllChildren(item.value, result, false);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -847,7 +847,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -866,7 +866,7 @@ begin
       listAllChildren(item.value, result, true);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -896,7 +896,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -926,7 +926,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -947,7 +947,7 @@ begin
       result.add(TFHIRBoolean.create(false));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -958,7 +958,7 @@ begin
     result.add(TFHIRBoolean.create(true));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1037,7 +1037,7 @@ begin
   try
     s := convertToString(res);
   finally
-    res.Free;
+    res.free;
   end;
   result := TFHIRSelectionList.Create;
   if StringIsInteger16(s) and (focus.Count > StrToInt(s)) then
@@ -1064,7 +1064,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1079,7 +1079,7 @@ begin
     log(name, convertToString(focus));
     result := focus.Link;
   finally
-    n1.Free;
+    n1.free;
   end;
 end;
 
@@ -1111,7 +1111,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1161,10 +1161,10 @@ begin
             try
               added.addAll(work);
             finally
-              work.Free;
+              work.free;
             end;
           finally
-            ctxt.Free;
+            ctxt.free;
           end;
           inc(i);
         end;
@@ -1187,9 +1187,9 @@ begin
     end;
     result.Link;
   finally
-    current.Free;
-    added.Free;
-    result.Free;
+    current.free;
+    added.free;
+    result.free;
   end;
 end;
 
@@ -1240,7 +1240,7 @@ begin
             end;
           end
         finally
-          p.Free;
+          p.free;
         end;
       end
       else
@@ -1254,7 +1254,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1278,10 +1278,10 @@ begin
           try
             result.addAll(work);
           finally
-            work.Free;
+            work.free;
           end;
         finally
-          ctxt.Free;
+          ctxt.free;
         end;
       end;
     finally
@@ -1289,7 +1289,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1337,7 +1337,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1410,7 +1410,7 @@ begin
   finally
     n1.free;
     n2.free;
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1479,18 +1479,18 @@ begin
             if convertToString(vl) = url then
               result.Add(ex.Link);
           finally
-            vl.Free;
+            vl.free;
           end;
         end;
       finally
-        ext.Free;
+        ext.free;
       end;
     end;
 
     result.Link;
   finally
     n1.free;
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1572,19 +1572,19 @@ begin
             if convertToBoolean(res) then
               result.Add(item.Link);
           finally
-            res.Free;
+            res.free;
           end;
         finally
-          ctxt.Free;
+          ctxt.free;
         end;
       end;
     finally
-      pc.Free;
+      pc.free;
     end;
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1613,11 +1613,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(all));
     end
@@ -1640,7 +1640,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1669,11 +1669,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(any));
     end
@@ -1696,7 +1696,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1705,7 +1705,7 @@ var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     for item in focus do
       result.add(item.link);
@@ -1718,7 +1718,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1743,10 +1743,10 @@ begin
           result.add(b.Link);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    n1.Free;
+    n1.free;
   end;
 end;
 
@@ -1791,17 +1791,17 @@ begin
             if not found then
               ok := false;
           finally
-            u.Free;
+            u.free;
           end;
         end;
         result := TFHIRSelectionList.Create();
         result.add(TFhirBoolean.Create(ok));
       finally
-        me.Free;
+        me.free;
       end;
     end;
   finally
-    n1.Free;
+    n1.free;
   end;
 end;
 
@@ -1961,7 +1961,7 @@ begin
         result.add(b.Link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2026,7 +2026,7 @@ begin
       raise EFHIRPath.create(StringFormat('Error performing div: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2127,7 +2127,7 @@ var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -2144,8 +2144,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'unit', lUnit);
         ListChildrenByName(right[0].value, 'unit', rUnit);
@@ -2160,13 +2160,13 @@ begin
         else
           raise EFHIRPath.create('Canonical Comparison isn''t done yet');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2175,7 +2175,7 @@ var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -2192,8 +2192,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'unit', lUnit);
         ListChildrenByName(right[0].value, 'unit', rUnit);
@@ -2208,13 +2208,13 @@ begin
         else
           raise EFHIRPath.create('Canonical Comparison isn"t done yet');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2267,7 +2267,7 @@ var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -2284,8 +2284,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'unit', lUnit);
         ListChildrenByName(right[0].value, 'unit', rUnit);
@@ -2300,13 +2300,13 @@ begin
         else
           raise EFHIRPath.create('Canonical Comparison isn"t done yet (units =  '+lUnit[0].value.primitiveValue+'/'+rUnit[0].value.primitiveValue+')');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2315,7 +2315,7 @@ var
   l, r : TFHIRObject;
   lUnit, rUnit : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -2332,8 +2332,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'unit', lUnit);
         ListChildrenByName(right[0].value, 'unit', rUnit);
@@ -2348,13 +2348,13 @@ begin
         else
           raise EFHIRPath.create('Canonical Comparison isn"t done yet');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2395,7 +2395,7 @@ begin
       raise EFHIRPath.create(StringFormat('Error performing -: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2436,7 +2436,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2549,7 +2549,7 @@ begin
       raise EFHIRPath.create(StringFormat('Error performing +: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2607,7 +2607,7 @@ function TFHIRPathEngine.opUnion(left, right: TFHIRSelectionList): TFHIRSelectio
 var
   item : TFHIRSelection;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     for item in left do
       if not contains(result, item.value) then
@@ -2617,7 +2617,7 @@ begin
         result.add(item.link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2663,7 +2663,7 @@ begin
                 if (base.value <> nil) then
                   work.Add(base.Link);
             finally
-              outcome.Free;
+              outcome.free;
             end;
           end;
       enkFunction:
@@ -2672,7 +2672,7 @@ begin
         try
           work.addAll(work2);
         finally
-          work2.Free;
+          work2.free;
         end;
         end;
       enkConstant:
@@ -2689,7 +2689,7 @@ begin
         try
           work.addAll(work2);
         finally
-          work2.Free;
+          work2.free;
         end;
         end;
     end;
@@ -2699,7 +2699,7 @@ begin
     if (exp.Inner <> nil) then
     begin
       result := execute(context, work, exp.Inner, false);
-      work.Free;
+      work.free;
       work := result;
     end;
 
@@ -2714,7 +2714,7 @@ begin
         if work2 <> nil then
         begin
           Debug(context, exp, true, work, nil, work2);
-          work.Free;
+          work.free;
           work := work2;
         end
         else
@@ -2728,11 +2728,11 @@ begin
             try
               Debug(context, exp, true, work, work2, result);
             finally
-              work.Free;
+              work.free;
               work := result;
             end;
           finally
-            work2.Free;
+            work2.free;
           end;
         end;
         last := next;
@@ -2741,7 +2741,7 @@ begin
     end;
     result := work.Link;
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
@@ -2756,7 +2756,7 @@ begin
       ListChildTypesByName(focus, exp.name, result);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -2862,7 +2862,7 @@ begin
     end;
   finally
     for pt in typeSet do
-      pt.Free;
+      pt.free;
   end;
 end;
 
@@ -2886,7 +2886,7 @@ var
   paramTypes : TFslList<TFHIRTypeDetails>;
   nc : TFHIRPathExecutionTypeContext;
 begin
-  paramTypes := TFslList<TFHIRTypeDetails>.create;
+  paramTypes := TFslList<TFHIRTypeDetails>.Create;
   try
     if (exp.FunctionId in [pfIs, pfAs]) then
       paramTypes.add(TFHIRTypeDetails.create(csSINGLETON, ['string']))
@@ -2900,7 +2900,7 @@ begin
         for expr in exp.Parameters do
           paramTypes.add(executeType(nc, focus, expr, true));
       finally
-        nc.Free;
+        nc.free;
       end;
     end;
 
@@ -3144,7 +3144,7 @@ begin
       raise EFHIRPath.create('not Implemented yet?');
     end;
   finally
-    paramTypes.Free;
+    paramTypes.free;
   end;
 end;
 
@@ -3263,7 +3263,7 @@ begin
   try
     result := parser.parse(path);
     finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -3300,7 +3300,7 @@ begin
   if (sd = nil) then
     raise EFHIRPath.create('Unknown item '+item); // this really is an error, because we can only get to here if the internal infrastrucgture is wrong
   ed := nil;
-  sdl := TFslList<TFhirStructureDefinition>.create;
+  sdl := TFslList<TFhirStructureDefinition>.Create;
   try
     if (item.contains('.')) then
       ed := getElementDefinition(sd, item, true, specifiedType);
@@ -3383,7 +3383,7 @@ begin
                   for r in rt do
                     result.addType(r)
                 finally
-                  rt.Free;
+                  rt.free;
                 end;
               end
               else
@@ -3415,7 +3415,7 @@ begin
                   for r in rt do
                     result.addType(r)
                 finally
-                  rt.Free;
+                  rt.free;
                 end;
               end
               else
@@ -3426,8 +3426,8 @@ begin
       end;
     end;
   finally
-    sdl.Free;
-    sd.Free;
+    sdl.free;
+    sd.free;
   end;
 end;
 
@@ -3501,7 +3501,7 @@ begin
           raise EDefinitionException.create('Unknown type '+ed.type_List[0].code);
         result := getElementDefinition(sd, sd.id+path.Substring(ed.path.Length), true, specifiedType);
       finally
-        sd.Free;
+        sd.free;
       end;
     end;
     if ((ed.ContentReference <> '') and path.startsWith(ed.path+'.')) then
@@ -3548,8 +3548,8 @@ end;
 
 destructor TFHIRPathExecutionTypeContext.Destroy;
 begin
-  FAppInfo.Free;
-  FContext.Free;
+  FAppInfo.free;
+  FContext.free;
   inherited;
 end;
 
@@ -3606,7 +3606,7 @@ begin
       result.free;
     end;
   finally
-    lexer.Free;
+    lexer.free;
   end;
 end;
 
@@ -3787,7 +3787,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3835,7 +3835,7 @@ begin
     group := newGroup(lexer, start);
     group.proximal := true;
     focus := start;
-    start.Free;
+    start.free;
     start := group;
   end
   else

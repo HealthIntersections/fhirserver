@@ -93,14 +93,14 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -114,8 +114,8 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -168,14 +168,14 @@ implementation
 
 constructor TUMLSImporter.Create(folder: String; conn: TFDBConnection);
 begin
-  inherited create;
+  inherited Create;
   FFolder := folder;
   FCOnn := conn;
 end;
 
 destructor TUMLSImporter.Destroy;
 begin
-  FConn.Free;
+  FConn.free;
   inherited Destroy;
 end;
 
@@ -255,7 +255,7 @@ var
   i : integer;
 begin
   callback(self, 0, false, 'Load RXNCONSO (Step 2 of 5)');
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.LoadFromFile(path([FFolder, 'RXNCONSO.RRF']));
     if FConn.Owner.Platform = kdbSQLite then
@@ -296,7 +296,7 @@ var
   i : integer;
 begin
   callback(self, 0, false, 'Load RXNREL (Step 3 of 5)');
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.LoadFromFile(path([FFolder, 'RXNREL.RRF']));
     if FConn.Owner.Platform = kdbSQLite then
@@ -337,7 +337,7 @@ var
   i : integer;
 begin
   callback(self, 0, false, 'Load RXNSTY (Step 4 of 5)');
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.LoadFromFile(path([FFolder, 'RXNSTY.RRF']));
     if FConn.Owner.Platform = kdbSQLite then
@@ -374,7 +374,7 @@ var
 begin
   callback(self, 100, false, 'Generate Word Index (Step 5 of 5)');
 
-  stemmer := TFslWordStemmer.create('english');
+  stemmer := TFslWordStemmer.Create('english');
   stems := TStringList.Create;
   try
     stems.Sorted := true;
@@ -420,8 +420,8 @@ begin
   finally
     for i := 0 to stems.Count - 1 do
       stems.Objects[i].free;
-    stems.Free;
-    stemmer.Free;
+    stems.free;
+    stemmer.free;
   end;
 end;
 
@@ -476,11 +476,11 @@ begin
   else
     dbprefix := 'RxNorm';
   self.db := db;
-  rels := TStringList.create;
-  reltypes := TStringList.create;
+  rels := TStringList.Create;
+  reltypes := TStringList.Create;
 
   if (TotalCount = 0) then
-    raise EDBException.create('Error Connecting to RxNorm');
+    raise EDBException.Create('Error Connecting to RxNorm');
   load(rels, 'select distinct REL from RXNREL');
   load(reltypes, 'select distinct RELA from RXNREL');
 end;
@@ -525,7 +525,7 @@ begin
   result := '';
 end;
 
-function TUMLSServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TUMLSServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 var
   qry : TFDBConnection;
 begin
@@ -615,7 +615,7 @@ begin
         until (not qry.FetchNext);
         result := res.Link;
       finally
-        res.Free;
+        res.free;
       end;
     end;
     qry.Terminate;
@@ -643,24 +643,24 @@ end;
 
 destructor TUMLSServices.Destroy;
 begin
-  DB.Free;
+  DB.free;
   rels.free;
   reltypes.free;
   inherited;
 end;
 
-function TUMLSServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TUMLSServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TUMLSConcept(context).FDisplay.Trim;
 end;
 
 procedure TUMLSServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
-  list.addDesignation('', TUMLSConcept(context).FOthers);
+  list.addDesignation(true, true, '', Display(context, nil));
+  list.addDesignation(false, true, '', TUMLSConcept(context).FOthers);
 end;
 
-procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang : THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TUMLSServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   qry : TFDBConnection;
   b : boolean;
@@ -697,7 +697,7 @@ begin
     else
       resp.addExtension('inactive', b);
   end;
-  list := TConceptDesignations.create(Factory.link, FLanguages.link);
+  list := TConceptDesignations.Create(Factory.link, FLanguages.link);
   try
     Designations(ctxt, list);
     for cd in list.designations do
@@ -758,7 +758,7 @@ begin
   end;
 end;
 
-procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display: String);
+procedure TUMLSServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
 //    b.Append(#13#10+'This term definition is derived from SNOMED CT, which is copyright ) 2002+ International Health Terminology Standards Development Organisation (IHTSDO)'#13#10);
   card.detail := 'Not done yet';
@@ -771,7 +771,7 @@ end;
 
 function TUMLSServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('getNextContext not supported by RXNorm', itException); // only used when iterating the entire code system. and RxNorm is too big
+  raise ETerminologyError.Create('getNextContext not supported by RXNorm', itException); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 function TUMLSServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
@@ -838,7 +838,7 @@ begin
       res.sql := s;
       result := res.link;
     finally
-      res.Free;
+      res.free;
     end;
   end
   else
@@ -854,7 +854,7 @@ begin
           result := res.link;
         TUMLSPrep(prep).filters.Add(res.Link);
       finally
-        res.Free;
+        res.free;
       end;
     end;
   end;
@@ -900,9 +900,9 @@ begin
         TUMLSPrep(prep).filters.Add(res.Link);
     end
     else
-      raise ETerminologyError.create('Unknown filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'"', itInvalid);
+      raise ETerminologyError.Create('Unknown filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'"', itInvalid);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -927,7 +927,7 @@ begin
         res.FDisplay := qry.ColString[2];
         result := res.Link;
       finally
-        res.Free;
+        res.free;
       end;
     end;
     qry.Terminate;
@@ -970,13 +970,13 @@ begin
     res.FDisplay := filter.qry.ColString[2];
     result := res.Link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
 function TUMLSServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyError.create('Error in internal logic - filter not prepped?', itException);
+  raise ETerminologyError.Create('Error in internal logic - filter not prepped?', itException);
 end;
 
 
@@ -1001,7 +1001,7 @@ begin
       filter.qry := nil;
     end;
   end;
-  filters.Free;
+  filters.free;
   inherited;
 end;
 
@@ -1025,13 +1025,13 @@ end;
 
 { TUMLSConcept }
 
-constructor TUMLSConcept.create;
+constructor TUMLSConcept.Create;
 begin
   inherited;
   FOthers := TStringList.Create;
 end;
 
-destructor TUMLSConcept.destroy;
+destructor TUMLSConcept.Destroy;
 begin
   FOthers.free;
   inherited;
@@ -1041,7 +1041,7 @@ end;
 
 constructor TRxNormServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
 begin
-  inherited create(languages, false, db);
+  inherited Create(languages, false, db);
 end;
 
 function TRxNormServices.description: String;
@@ -1068,7 +1068,7 @@ end;
 
 constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
 begin
-  inherited create(languages, false, db);
+  inherited Create(languages, false, db);
 end;
 
 function TNDFRTServices.description: String;

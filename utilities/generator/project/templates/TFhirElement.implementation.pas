@@ -28,14 +28,14 @@ function TFhirElement.extensions(url: String): TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       if ex.url = url then
         result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -64,9 +64,9 @@ begin
     if ex.url = url then
     begin
       if not ex.value.isPrimitive then
-        raise EFHIRException.create('Complex extension '+url)
+        raise EFHIRException.Create('Complex extension '+url)
       else if result <> '' then
-        raise EFHIRException.create('Duplicate extension '+url)
+        raise EFHIRException.Create('Duplicate extension '+url)
       else
         result := ex.value.primitiveValue;
     end;

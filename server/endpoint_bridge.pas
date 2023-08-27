@@ -133,7 +133,7 @@ Type
     function ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; override;
     function ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; override;
   public
-    constructor Create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Conn : TFDBConnection; const lang : THTTPLanguages);
+    constructor Create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Conn : TFDBConnection; langList : THTTPLanguageList);
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
     function GetResourceById(request: TFHIRRequest; aType : String; id, base : String; var needSecure : boolean) : TFHIRResourceV; override;
@@ -171,7 +171,7 @@ Type
     procedure ProcessObservations; override;
     procedure RunValidation; override;
 
-    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
+    function createOperationContext(langList : THTTPLanguageList) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
 
     procedure Sweep; override;
@@ -208,13 +208,13 @@ Type
     FBridge : TBridgeEndPoint;
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
-    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
-    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
+    Function BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
-    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
-    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
+    Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
+    function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; override;
   public
     destructor Destroy; override;
     function link : TBridgeWebServer; overload;
@@ -266,7 +266,7 @@ end;
 
 constructor TBridgeEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, pcm, i18n);
+  inherited Create(config, settings, db, common, pcm, i18n);
 end;
 
 destructor TBridgeEndPoint.Destroy;
@@ -287,7 +287,7 @@ begin
   s := Config['data-path'].value;
   if (s = '') then
     s := SystemTemp;
-  store := TExampleFhirServerStorage.create(TFHIRFactoryR3.create);
+  store := TExampleFhirServerStorage.Create(TFHIRFactoryR3.create);
   store.FDataBase := Database.Link;
   FServerContext := TFHIRServerContext.Create(Config.name, store, TExampleServerFactory.create, FPcm.link);
   store.FServerContext := FServerContext;
@@ -349,7 +349,7 @@ begin
       if meta.HasTable('Config') then
         conn.DropTable('Config');
     finally
-      meta.Free;
+      meta.free;
     end;
     conn.Release;
   except
@@ -363,7 +363,7 @@ end;
 
 procedure TBridgeEndPoint.Unload;
 begin
-  FServerContext.Free;
+  FServerContext.free;
   FServerContext := nil;
 end;
 
@@ -397,9 +397,9 @@ end;
 
 { TExampleFHIROperationEngine }
 
-constructor TExampleFHIROperationEngine.create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Conn : TFDBConnection; const lang : THTTPLanguages);
+constructor TExampleFHIROperationEngine.Create(storage : TExampleFhirServerStorage; serverContext : TFHIRServerContext; Conn : TFDBConnection; langList : THTTPLanguageList);
 begin
-  inherited Create(storage, serverContext, lang);
+  inherited Create(storage, serverContext, langList);
   FConnection := Conn;
 end;
 
@@ -433,7 +433,7 @@ begin
   if request.ResourceName = 'Patient' then
     result := patientCreate(request, response)
   else
-    raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
+    raise EFHIRException.Create('The resource "'+request.ResourceName+'" is not supported by this server');
 end;
 
 function TExampleFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean;
@@ -441,7 +441,7 @@ begin
   if request.ResourceName = 'Patient' then
     result := patientRead(request, response)
   else
-    raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
+    raise EFHIRException.Create('The resource "'+request.ResourceName+'" is not supported by this server');
 end;
 
 
@@ -451,7 +451,7 @@ begin
   if request.ResourceName = 'Patient' then
     patientUpdate(request, response)
   else
-    raise EFHIRException.create('The resource "'+request.ResourceName+'" is not supported by this server');
+    raise EFHIRException.Create('The resource "'+request.ResourceName+'" is not supported by this server');
 end;
 
 function TExampleFHIROperationEngine.GetResourceById(request: TFHIRRequest; aType, id, base: String; var needSecure: boolean): TFHIRResourceV;
@@ -495,7 +495,7 @@ begin
       result.active := FConnection.ColIntegerByName['Active'] = 1;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end
   else
@@ -533,15 +533,15 @@ var
 begin
   id := pat.identifierList.BySystem(SYSTEM_ID);
   if (id = nil) or (id.value = '') then
-    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A MRN (system = "http://example.org/mrn-id") is required', lang);
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A MRN (system = "http://example.org/mrn-id") is required', langList);
   if FConnection.CountSQL('Select count(*) from Patients where MRN = '+id.value) > 0 then
-    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'Duplicate MRNs are not allowed ('+id.value+')', lang);
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'Duplicate MRNs are not allowed ('+id.value+')', langList);
   if (pat.nameList.IsEmpty) then
-    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A name is required', lang);
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A name is required', langList);
   if (pat.nameList[0].family = '') then
-    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A family name is required', lang);
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A family name is required', langList);
   if (pat.nameList[0].givenList.isEmpty) then
-    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A given name is required', lang);
+    raise ERestfulException.Create('CreatePatientRecord', 422, itRequired, 'A given name is required', langList);
 
   if (key = 0) then
     key := FConnection.CountSQL('Select Max(PatientKey) from Patients')+1;
@@ -583,7 +583,7 @@ begin
   id := patClient.identifierList.BySystem(SYSTEM_ID);
 
   if not StringIsInteger32(patClient.id) then
-    raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'Paitent ID must be a 32bit integer', lang);
+    raise ERestfulException.Create('TExampleFHIROperationEngine.dataFromPatient', 422, itRequired, 'Paitent ID must be a 32bit integer', langList);
   key := StrToInt(patClient.id);
 
   patServer := nil;
@@ -592,7 +592,7 @@ begin
     if FConnection.CountSQL('Select count(PatientKey) from Patients where PatientKey = '+inttostr(key)) = 0 then
       patServer := CreatePatientRecord(key, patClient)
     else if (id <> nil) and (FConnection.Lookup('Patients', 'PatientKey', patClient.id, 'MRN', '$$') <> id.value) then
-      raise ERestfulException.Create('patientUpdate', 422, itRequired, 'The Patient''s MRN (system = "http://example.org/mrn-id") cannot be changed once created', lang)
+      raise ERestfulException.Create('patientUpdate', 422, itRequired, 'The Patient''s MRN (system = "http://example.org/mrn-id") cannot be changed once created', langList)
     else
     begin
       sql := 'update Patients set VersionId = VersionId + 1, LastModified = :lm';
@@ -642,7 +642,7 @@ begin
     response.Message := 'OK';
     response.Location := request.baseUrl+'Patient/'+request.id+'/_history/'+response.versionId;
   finally
-    patServer.Free;
+    patServer.free;
   end;
 end;
 
@@ -660,7 +660,7 @@ begin
   begin
     response.HTTPCode := 404;
     response.Message := 'Not Found';
-    response.Resource := BuildOperationOutcome(lang, 'not found', IssueTypeUnknown);
+    response.Resource := BuildOperationOutcome(langList, 'not found', IssueTypeUnknown);
   end
   else
   begin
@@ -676,7 +676,7 @@ begin
     begin
       response.HTTPCode := 404;
       response.Message := 'Not Found';
-      response.Resource := BuildOperationOutcome(lang, 'not found', IssueTypeUnknown);
+      response.Resource := BuildOperationOutcome(langList, 'not found', IssueTypeUnknown);
     end;
   end;
 end;
@@ -690,7 +690,7 @@ end;
 
 destructor TExampleFhirServerStorage.Destroy;
 begin
-  FDatabase.Free;
+  FDatabase.free;
   inherited;
 end;
 
@@ -723,9 +723,9 @@ begin
   // this server doesn't track sessions
 end;
 
-function TExampleFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
+function TExampleFhirServerStorage.createOperationContext(langList : THTTPLanguageList): TFHIROperationEngine;
 begin
-  result := TExampleFHIROperationEngine.create(self.Link, FServerContext.link, FDataBase.GetConnection('operation'), lang);
+  result := TExampleFHIROperationEngine.Create(self.Link, FServerContext.link, FDataBase.GetConnection('operation'), langList.link);
 end;
 
 
@@ -849,7 +849,7 @@ begin
     else
       eop.FConnection.Release;
   finally
-    op.Free;
+    op.free;
   end;
 end;
 
@@ -913,7 +913,7 @@ end;
 
 function TExampleServerFactory.makeIndexes: TFHIRIndexBuilder;
 begin
-  result := TFHIRIndexBuilderR3.create;
+  result := TFHIRIndexBuilderR3.Create;
 end;
 
 function TExampleServerFactory.makeSubscriptionManager(ServerContext: TFslObject): TSubscriptionManager;
@@ -939,17 +939,17 @@ begin
   inherited;
 end;
 
-function TBridgeWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
+function TBridgeWebServer.BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
   raise EFslException.Create('Authentication is not supported for this endpoint');
 end;
 
-function TBridgeWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TBridgeWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 begin
   result := processContent('template-fhir.html', secure, 'Bridge Home Page', 'Home Page');
 end;
 
-function TBridgeWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+function TBridgeWebServer.BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 begin
   raise EFslException.Create('Upload is not supported for this endpoint');
 end;
@@ -959,7 +959,7 @@ begin
   result := 'Bridge, with data  '+FBridge.Database.DBDetails;
 end;
 
-function TBridgeWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
+function TBridgeWebServer.DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW;
 begin
   raise EFslException.Create('todo?');
 end;
@@ -984,7 +984,7 @@ begin
   result := 'BR';
 end;
 
-function TBridgeWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+function TBridgeWebServer.ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 begin
   raise EFslException.Create('Upload is not supported for this endpoint');
 end;

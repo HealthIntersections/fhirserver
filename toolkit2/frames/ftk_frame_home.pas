@@ -96,7 +96,7 @@ const
 
 destructor THomePageFrame.Destroy;
 begin
-  FMru.Free;
+  FMru.free;
   FTempStore.free;
   inherited;
 end;
@@ -121,7 +121,7 @@ procedure THomePageFrame.init(json: TJsonObject);
 var
   proc : TMarkdownProcessor;
 begin
-  FMru := TStringList.create;
+  FMru := TStringList.Create;
   proc := TMarkdownProcessor.createDialect(mdCommonMark); // or flavor of your choice
   try
     proc.allowUnsafe := false;
@@ -158,7 +158,7 @@ end;
 
 procedure THomePageFrame.SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
 begin
-  FTempStore.Free;
+  FTempStore.free;
   FTempStore := AValue;
 end;
 

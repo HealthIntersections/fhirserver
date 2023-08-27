@@ -709,7 +709,7 @@ begin
 
     Result := scrypt.DeriveBytes(Passphrase, saltUtf8, costFactor, blockSizeFactor, parallelizationFactor, nDesiredBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1051,7 +1051,7 @@ begin
       scrypt.BurnBytes(expected);
     end;
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1361,7 +1361,7 @@ begin
   try
     Result := scrypt.DeriveBytes(Passphrase, saltUtf8, CostFactor, BlockSizeFactor, ParallelizationFactor, DesiredBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1404,7 +1404,7 @@ begin
 
     Result := scrypt.FormatPasswordHash(costFactor, blockSizeFactor, parallelizationFactor, salt, derivedBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1514,7 +1514,7 @@ begin
 
     Result := scrypt.FormatPasswordHash(costFactor, blockSizeFactor, ParallelizationFactor, salt, derivedBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 

@@ -82,10 +82,10 @@ function ContactsAsText(cps : TFhirContactPointList):String;
 
 Function RecogniseFHIRResourceName(Const sName : String; out aType : TFhirResourceType): boolean;
 Function RecogniseFHIRResourceManagerName(Const sName : String; out aType : TFhirResourceType): boolean;
-function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
-function MakeComposer(style : TFHIROutputStyle; const lang : THTTPLanguages; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeParser(oWorker : TFHIRWorkerContext; langList : THTTPLanguageList; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TFHIRWorkerContext; langList : THTTPLanguageList; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TFHIRWorkerContext; langList : THTTPLanguageList; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeComposer(style : TFHIROutputStyle; langList : THTTPLanguageList; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 function geTFhirResourceNarrativeAsText(resource : TFhirDomainResource) : String;
 function fullResourceUri(base: String; aType : TFhirResourceType; id : String) : String; overload;
 function fullResourceUri(base: String; url : String) : String; overload;
@@ -95,12 +95,12 @@ procedure listReferences(resource : TFhirResource; list : TFhirReferenceList);
 procedure listAttachments(resource : TFhirResource; list : TFhirAttachmentList);
 function FindContainedResource(resource : TFhirDomainResource; ref : TFhirReference) : TFhirResource; overload;
 function FindContainedResource(resource : TFhirDomainResource; ref : string) : TFhirResource; overload;
-function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages) : TFhirResource;
-function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
-function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
+function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; langList : THTTPLanguageList) : TFhirResource;
+function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; langList : THTTPLanguageList; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
+function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; langList : THTTPLanguageList; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 
-function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
-Function BuildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+function BuildOperationOutcome(langList : THTTPLanguageList; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 
 function getChildMap(profile : TFHIRStructureDefinition; name, path, nameReference : String) : TFHIRElementDefinitionList; overload;
 function getChildMap(profile : TFHIRStructureDefinition; element : TFHIRElementDefinition) : TFHIRElementDefinitionList; overload;
@@ -940,10 +940,10 @@ begin
       st.AddToStrings(ts, true);
       result := ts.Text;
     finally
-      ts.Free;
+      ts.free;
     end;
   finally
-    st.Free;
+    st.free;
   end;
   end
   else
@@ -951,28 +951,28 @@ begin
 end;
 {$ENDIF}
 
-function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+function MakeParser(oWorker : TFHIRWorkerContext; langList : THTTPLanguageList; aFormat: TFHIRFormat; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 var
   mem : TBytesStream;
 begin
   mem := TBytesStream.Create(content);
   try
-    result := MakeParser(oWorker, lang, aformat, mem, policy);
+    result := MakeParser(oWorker, langList, aformat, mem, policy);
   finally
-    mem.Free;
+    mem.free;
   end;
 end;
 
-function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
+function MakeParser(oWorker : TFHIRWorkerContext; langList : THTTPLanguageList; mimetype : String; content: TBytes; policy : TFHIRXhtmlParserPolicy): TFHIRParser; overload;
 begin
   if mimeType.Contains('application/json') or mimeType.Contains('application/fhir+json') Then
-    result := TFHIRParsers5.parser(oWorker.Link, ffJson, lang)
+    result := TFHIRParsers5.parser(oWorker.Link, ffJson, langList.link)
   else if mimeType.Contains('text/plain') then
-    result := TFHIRParsers5.parser(oWorker.Link, ffText, lang)
+    result := TFHIRParsers5.parser(oWorker.Link, ffText, langList.link)
   else if mimeType.Contains('application/xml') or mimeType.Contains('application/fhir+xml') or mimeType.Contains('text/xml')  then
-    result := TFHIRParsers5.parser(oWorker.Link, ffXml, lang)
+    result := TFHIRParsers5.parser(oWorker.Link, ffXml, langList.link)
   else
-    result := TFHIRParsers5.parser(oWorker.Link, DetectFormat(content), lang);
+    result := TFHIRParsers5.parser(oWorker.Link, DetectFormat(content), langList.link);
   try
     result.ParserPolicy := policy;
     result.Link;
@@ -980,12 +980,12 @@ begin
     result.free;
   end;
 end;
-function MakeParser(oWorker : TFHIRWorkerContext; const lang : THTTPLanguages; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
+function MakeParser(oWorker : TFHIRWorkerContext; langList : THTTPLanguageList; aFormat: TFHIRFormat; oContent: TStream; policy : TFHIRXhtmlParserPolicy): TFHIRParser;
 begin
   if aFormat in [ffUnspecified, ffXhtml] then
-    result := TFHIRParsers5.parser(oWorker.Link, DetectFormat(oContent), lang)
+    result := TFHIRParsers5.parser(oWorker.Link, DetectFormat(oContent), langList.link)
   else
-    result := TFHIRParsers5.parser(oWorker.Link, aFormat, lang);
+    result := TFHIRParsers5.parser(oWorker.Link, aFormat, langList.link);
   try
     result.source := oContent;
     result.ParserPolicy := policy;
@@ -996,12 +996,12 @@ begin
   end;
 end;
 
-function MakeComposer(Style : TFHIROutputStyle; const lang : THTTPLanguages; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
+function MakeComposer(Style : TFHIROutputStyle; langList : THTTPLanguageList; mimetype : String; worker : TFHIRWorkerContext) : TFHIRComposer;
 begin
   if mimeType.StartsWith('text/xml') or mimeType.StartsWith('application/xml') or mimeType.StartsWith('application/fhir+xml') or (mimetype = 'xml') then
-    result := TFHIRParsers5.composer(worker.link, ffXml, lang, Style)
+    result := TFHIRParsers5.composer(worker.link, ffXml, langList.link, Style)
   else if mimeType.StartsWith('text/json') or mimeType.StartsWith('application/json') or mimeType.StartsWith('application/fhir+json') or (mimetype = 'json') then
-    result := TFHIRParsers5.composer(worker.link, ffJson, lang, Style)
+    result := TFHIRParsers5.composer(worker.link, ffJson, langList.link, Style)
 //  else if mimeType.StartsWith('text/html') or mimeType.StartsWith('text/xhtml') or mimeType.StartsWith('application/fhir+xhtml') or (mimetype = 'xhtml') then
 //    result := TFHIRXhtmlComposer.Create(worker.link, Style, lang)
   else
@@ -1285,12 +1285,12 @@ begin
     end;
 end;
 
-function BuildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;
+function BuildOperationOutcome(langList : THTTPLanguageList; e : exception; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome;
 begin
-  result := BuildOperationOutcome(lang, e.message, issueCode);
+  result := BuildOperationOutcome(langList, e.message, issueCode);
 end;
 
-Function BuildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
+Function BuildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueTypeEnum = IssueTypeNull) : TFhirOperationOutcome; overload;
 var
   outcome : TFhirOperationOutcome;
   report :  TFhirOperationOutcomeIssue;
@@ -1299,7 +1299,7 @@ begin
   try
     outcome.text := TFhirNarrative.create;
     outcome.text.status := NarrativeStatusGenerated;
-    outcome.text.div_ := TFHIRXhtmlParser.Parse(lang, xppReject, [], '<div><p>'+FormatTextToHTML(message)+'</p></div>');
+    outcome.text.div_ := TFHIRXhtmlParser.Parse(langList, xppReject, [], '<div><p>'+FormatTextToHTML(message)+'</p></div>');
     report := outcome.issueList.Append;
     report.severity := issueSeverityError;
     report.code := issueCode;
@@ -1851,7 +1851,7 @@ begin
 end;
 
 
-function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
+function LoadDTFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; langList : THTTPLanguageList; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 var
   ct : String;
   parser : TFHIRParser;
@@ -1865,13 +1865,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRParsers5.parser(worker.link, ffJson, lang)
+        parser := TFHIRParsers5.parser(worker.link, ffJson, langList.link)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRParsers5.parser(worker.link, ffXml, lang);
+        parser := TFHIRParsers5.parser(worker.link, ffXml, langList.link);
     end;
     if parser = nil then
-      parser := TFHIRParsers5.parser(worker.link, DetectFormat(part.content), lang);
+      parser := TFHIRParsers5.parser(worker.link, DetectFormat(part.content), langList.link);
     mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1881,22 +1881,22 @@ begin
         parser.source := s;
         result := parser.ParseDT(name, type_) as TFHIRDataType;
       finally
-        s.Free;
+        s.free;
       end;
     finally
-      mem.Free;
+      mem.free;
     end;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
-function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; const lang : THTTPLanguages; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
+function LoadDTFromParam(worker : TFHIRWorkerContext; value : String; langList : THTTPLanguageList; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 var
   parser : TFHIRParser;
   mem : TStringStream;
 begin
-  parser := TFHIRParsers5.parser(worker.link, ffJson, lang);
+  parser := TFHIRParsers5.parser(worker.link, ffJson, langList.link);
   try
     // first, figure out the format
     mem := TStringStream.Create(value, TEncoding.UTF8);
@@ -1904,14 +1904,14 @@ begin
       parser.source := mem;
       result := parser.ParseDT(name, type_) as TFHIRDataType;
     finally
-      mem.Free;
+      mem.free;
     end;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
-function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; const lang : THTTPLanguages) : TFhirResource;
+function LoadFromFormParam(worker : TFHIRWorkerContext; part : TMimePart; langList : THTTPLanguageList) : TFhirResource;
 var
   ct : String;
   parser : TFHIRParser;
@@ -1925,13 +1925,13 @@ begin
     if ct <> '' then
     begin
       if StringStartsWithInsensitive(ct, 'application/json') or StringStartsWithInsensitive(ct, 'application/fhir+json') or StringStartsWithInsensitive(ct, 'application/json+fhir') or StringStartsWithInsensitive(ct, 'json') or StringStartsWithInsensitive(ct, 'text/json') Then
-        parser := TFHIRParsers5.parser(worker.link, ffJson, lang)
+        parser := TFHIRParsers5.parser(worker.link, ffJson, langList.link)
       else if StringStartsWithInsensitive(ct, 'text/xml') or StringStartsWithInsensitive(ct, 'application/xml') or
           StringStartsWithInsensitive(ct, 'application/fhir+xml') or StringStartsWithInsensitive(ct, 'application/xml+fhir') or StringStartsWithInsensitive(ct, 'xml') Then
-        parser := TFHIRParsers5.parser(worker.link, ffXml, lang);
+        parser := TFHIRParsers5.parser(worker.link, ffXml, langList.link);
     end;
     if parser = nil then
-      parser := TFHIRParsers5.parser(worker.link, DetectFormat(part.content), Lang);
+      parser := TFHIRParsers5.parser(worker.link, DetectFormat(part.content), langList.link);
     mem := TFslMemoryStream.Create;
     try
       mem.Buffer := part.content.Link;
@@ -1942,13 +1942,13 @@ begin
         parser.Parse;
         result := parser.resource.Link as TFHIRResource;
       finally
-        s.Free;
+        s.free;
       end;
     finally
-      mem.Free;
+      mem.free;
     end;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -2124,7 +2124,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3112,7 +3112,7 @@ begin
     b.Append(pat.birthDate.toString('c'));
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3131,7 +3131,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -4599,7 +4599,7 @@ begin
   else if element.FhirType = 'Narrative' then
   begin
     TFhirNarrative(element).status := NarrativeStatusAdditional;
-    TFhirNarrative(element).div_ := TFHIRXhtmlParser.Parse(THTTPLanguages.create('en'), xppAllow, [], '<div xmlns="http://www.w3.org/1999/xhtml"><p>%Some xhtml content%</p></div>');
+    TFhirNarrative(element).div_ := TFHIRXhtmlParser.Parse(nil, xppAllow, [], '<div xmlns="http://www.w3.org/1999/xhtml"><p>%Some xhtml content%</p></div>');
   end
   else if element.FhirType = 'Meta' then
   begin
@@ -4618,16 +4618,16 @@ begin
   else if obj is TFHIREnum then
   begin
     result := TFHIRCode.create(TFHIREnum(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRCode.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
   end;
 end;
@@ -4639,16 +4639,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRMarkdown.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRMarkdown.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
 end;
@@ -4659,12 +4659,12 @@ begin
     result := obj as TFhirXHtmlNode
   else if obj.isPrimitive then
   begin
-    result := TFHIRXhtmlParser.parse(THTTPLanguages.create('en'), xppDrop, [], obj.primitiveValue);
-    obj.Free;
+    result := TFHIRXhtmlParser.parse(nil, xppDrop, [], obj.primitiveValue);
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRMarkdown\"')
   end;
 end;
@@ -4681,16 +4681,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRString.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRString.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRString\"')
   end;
 end;
@@ -4702,11 +4702,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRId.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRId\"')
   end;
 end;
@@ -4718,16 +4718,16 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUri.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if (obj is TFHIRObject) and (TFHIRObject(obj).isPrimitive) then
   begin
     result := TFHIRUri.create(TFHIRObject(obj).primitiveValue);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUri\"')
   end;
 end;
@@ -4739,11 +4739,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRDateTime.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDateTime\"')
   end;
 end;
@@ -4755,11 +4755,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRUnsignedInt.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRUnsignedInt\"')
   end;
 end;
@@ -4771,11 +4771,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRPositiveInt.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRPositiveInt\"')
   end;
 end;
@@ -4787,11 +4787,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRInstant.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInstant\"')
   end;
 end;
@@ -4803,11 +4803,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRBoolean.create(TFHIRMMElement(obj).value = 'true');
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBoolean\"')
   end;
 end;
@@ -4819,11 +4819,11 @@ begin
 //  else if obj is TFHIRMMElement then
 //  begin
 //    result := TFHIRBase64Binary.create(TFHIRMMElement(obj).value);
-//    obj.Free;
+//    obj.free;
 //  end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRBase64Binary\"')
   end;
 end;
@@ -4835,11 +4835,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRDate.create(TFslDateTime.fromXml(TFHIRMMElement(obj).value));
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDate\"')
   end;
 end;
@@ -4851,11 +4851,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRDecimal.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRDecimal\"')
   end;
 end;
@@ -4867,11 +4867,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRTime.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRTime\"')
   end;
 end;
@@ -4883,11 +4883,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIROid.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIROid\"')
   end;
 end;
@@ -4899,11 +4899,11 @@ begin
   else if obj is TFHIRMMElement then
   begin
     result := TFHIRInteger.create(TFHIRMMElement(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRInteger\"')
   end;
 end;
@@ -4914,7 +4914,7 @@ begin
     result := obj as TFHIRResource
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
   end;
 end;
@@ -4925,7 +4925,7 @@ begin
     result := obj as TFHIRExtension
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRResource\"')
   end;
 end;
@@ -4937,16 +4937,16 @@ begin
   else if obj is TFHIRCode then
   begin
     result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRCode(obj).value)], TFHIRCode(obj).value);
-    obj.Free;
+    obj.free;
   end
   else if obj is TFHIRString then
   begin
     result := TFHIREnum.create(systems[StringArrayIndexOf(values, TFHIRString(obj).value)], TFHIRString(obj).value);
-    obj.Free;
+    obj.free;
   end
   else
   begin
-    obj.Free;
+    obj.free;
     raise EFHIRException.create('Type mismatch: cannot convert from \"'+obj.className+'\" to \"TFHIRCode\"')
   end;
 end;
@@ -4955,11 +4955,11 @@ function ComposeJson(worker: TFHIRWorkerContext; r : TFhirResource) : String;
 var
   comp : TFHIRComposer;
 begin
-  comp := TFHIRParsers5.composer(worker.link, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
+  comp := TFHIRParsers5.composer(worker.link, ffJson, nil, OutputStyleNormal);
   try
     result := comp.Compose(r);
   finally
-    comp.Free;
+    comp.free;
   end;
 end;
 
@@ -5136,7 +5136,7 @@ begin
     result.compose.includeList.Append.system := url;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5163,7 +5163,7 @@ begin
           result.Add(c.link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5184,7 +5184,7 @@ begin
     scanForSubsumes(result, conceptList, concept.code);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 
 end;
@@ -5298,7 +5298,7 @@ end;
 
 procedure TFhirAuditEventHelper.SetEvent(const Value: TFhirAuditEvent);
 begin
-  value.Free;
+  value.free;
 end;
 
 { TFhirCodingHelper }
@@ -5325,7 +5325,7 @@ begin
     result.editString := s;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5733,7 +5733,7 @@ begin
     result.editString := s;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5745,7 +5745,7 @@ begin
     result.system := 'http://unitsofmeasure.org/';
     result.code := units;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5869,7 +5869,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -5900,10 +5900,10 @@ begin
         else
           filename := makeFileName(description)+'.zip';
       finally
-        zip.Free;
+        zip.free;
       end;
     finally
-      vcl.Free;
+      vcl.free;
     end;
     result.Position := 0;
   except
@@ -5974,10 +5974,10 @@ Begin
           fReg.CloseKey;
       end;
       finally
-        ts.Free;
+        ts.free;
       end;
     Finally
-      freg.Free;
+      freg.free;
     End;
   Except
   End;
@@ -6026,7 +6026,7 @@ begin
       result.Name := result.Name+GetExtForMimeType(result.Comment);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 {$ELSE}
@@ -6104,7 +6104,7 @@ begin
   try
     result := streamToResource(f, format);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -6132,7 +6132,7 @@ begin
   try
     result := streamToResource(b, format);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -6142,13 +6142,13 @@ var
 begin
   if format = ffUnspecified then
     format := DetectFormat(stream);
-  p := TFHIRParsers5.parser(nil, format, THTTPLanguages.create('en'));
+  p := TFHIRParsers5.parser(nil, format, nil);
   try
     p.source := stream;
     p.Parse;
     result := p.resource.Link as TFHIRResource;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -6161,7 +6161,7 @@ begin
     resourceToStream(res, f, format, style);
     result := f.DataString;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -6175,7 +6175,7 @@ begin
     result := f.Bytes;
     SetLength(result, f.size);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -6187,7 +6187,7 @@ begin
   try
     resourceToStream(res, f, format, style);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -6197,11 +6197,11 @@ var
 begin
   if format = ffXhtml then
     format := ffXml;
-  c := TFHIRParsers5.composer(nil, format, THTTPLanguages.create('en'), style);
+  c := TFHIRParsers5.composer(nil, format, nil, style);
   try
     c.Compose(stream, res);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -6483,7 +6483,7 @@ begin
     result.editString := s;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -6545,7 +6545,7 @@ begin
     result.editString := s;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -6611,7 +6611,7 @@ begin
         for child in p.Values do
           iterateObject(child, proc);
     finally
-      pl.Free;
+      pl.free;
     end;
   end;
 end;

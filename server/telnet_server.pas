@@ -107,8 +107,8 @@ begin
   FWelcomeMsg := WelcomeMsg;
   FLock := TFslLock.Create('TelnetServer');
   FStats := stats;
-  FClients := TFslList<TTelnetThreadHelper>.create;
-  FEndPoints := TFslList<TFHIRServerEndPoint>.create;
+  FClients := TFslList<TTelnetThreadHelper>.Create;
+  FEndPoints := TFslList<TFHIRServerEndPoint>.Create;
 
   FLog := TStringList.Create;
 
@@ -129,18 +129,18 @@ end;
 destructor TFHIRTelnetServer.Destroy;
 begin
   try
-    FStats.Free;
+    FStats.free;
     FThread.StopAndWait(100);
-    FThread.Free;
+    FThread.free;
     FServer.Active := false;
-    FServer.Free;
-    FClients.Free;
-    FEndPoints.Free;
+    FServer.free;
+    FClients.free;
+    FEndPoints.free;
   except
     // not interested
   end;
-  FLog.Free;
-  FLock.Free;
+  FLog.free;
+  FLock.free;
   inherited;
 end;
 
@@ -161,9 +161,9 @@ var
   tth : TTelnetThreadHelper;
   list : TFslList<TTelnetThreadHelper>;
 begin
-  list := TFslList<TTelnetThreadHelper>.create;
+  list := TFslList<TTelnetThreadHelper>.Create;
   try
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       FLock.Lock;
       try
@@ -184,10 +184,10 @@ begin
         tth.ping;
       end;
     finally
-      ts.Free;
+      ts.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -248,7 +248,7 @@ begin
       end;
     end;
   finally
-    tth.Free;
+    tth.free;
   end;
 end;
 
@@ -256,7 +256,7 @@ end;
 
 constructor TTelnetThreadHelper.Create(server : TFHIRTelnetServer; context: TIdContext);
 begin
-  inherited create;
+  inherited Create;
   FServer := server;
   FContext := context;
 end;
@@ -342,13 +342,13 @@ begin
   else if (s = '@caches') then
   begin
     Logging.log('Console requested Cache Information');
-    ci := TCacheInformation.create;
+    ci := TCacheInformation.Create;
     try
       for ep in FServer.FEndPoints do
         ep.getCacheInfo(ci);
       send('$@cache: '+ci.text('|'));
     finally
-      ci.Free;
+      ci.free;
     end;
   end
   else if (s = '@locks') then
@@ -367,13 +367,13 @@ begin
     for ep in FServer.FEndPoints do
       ep.clearCache;
     Logging.log('Clear Cache finished: '+Logging.MemoryStatus(true));
-    ci := TCacheInformation.create;
+    ci := TCacheInformation.Create;
     try
       for ep in FServer.FEndPoints do
         ep.getCacheInfo(ci);
       send('$@cache: '+ci.text('|'));
     finally
-      ci.Free;
+      ci.free;
     end;
   end
   else

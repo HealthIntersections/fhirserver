@@ -70,16 +70,16 @@ var
 begin
   f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
   try
-    prsr := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+    prsr := TFHIRJsonParser.Create(nil, nil);
     try
       prsr.source := f;
       prsr.parse;
       result := prsr.resource.Link;
     finally
-      prsr.Free;
+      prsr.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -90,8 +90,8 @@ var
   id : string;
   ok : boolean;
 begin
-  client.conformance(true).Free;
-  client.conformance(false).Free;
+  client.conformance(true).free;
+  client.conformance(false).free;
   patient := LoadResource('C:\work\org.hl7.fhir.old\org.hl7.fhir.dstu2\build\publish\patient-example.json') as TFHIRPatient;
   try
     client.createResource(patient, id);
@@ -108,12 +108,12 @@ begin
   ok := false;
   client.deleteResource(frtPatient, id);
   try
-    client.readResource(frtPatient, id).Free;
+    client.readResource(frtPatient, id).free;
   except
     ok := true;
   end;
   if not ok then
-    raise ETestCase.create('test failed');
+    raise ETestCase.Create('test failed');
 end;
 
 class procedure TFhirHTTPClientTests.tests(url: String);
@@ -161,7 +161,7 @@ end;
 
 procedure TFhirHTTPClientTests.TearDown;
 begin
-  FWorker.Free;
+  FWorker.free;
 end;
 
 initialization

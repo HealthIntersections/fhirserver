@@ -97,10 +97,10 @@ const
 
 procedure TInstallProgressForm.FormCreate(Sender: TObject);
 begin
-  FThread := TInstallerThread.create;
+  FThread := TInstallerThread.Create;
   FThread.FForm := self;
-  FLock := TFslLock.create;
-  FIncoming := TStringList.create;
+  FLock := TFslLock.Create;
+  FIncoming := TStringList.Create;
   Timer1.Enabled := true;
 end;
 
@@ -108,9 +108,9 @@ procedure TInstallProgressForm.FormDestroy(Sender: TObject);
 begin
   Timer1.Enabled := false;
   FThread.StopAndWait(2000);
-  FThread.Free;
-  FIncoming.Free;
-  FLock.Free;
+  FThread.free;
+  FIncoming.free;
+  FLock.free;
 end;
 
 procedure TInstallProgressForm.FormShow(Sender: TObject);
@@ -185,7 +185,7 @@ var
 begin
   fform.lblStatus.caption := 'Getting Ready';
   fform.processOutput('Running Server to do the install...');
-  process := TProcess.create(nil);
+  process := TProcess.Create(nil);
   try
     process.Executable := IncludeTrailingPathDelimiter(ExtractFileDir(ParamStr(0)))+'fhirserver.exe';
     for s in FForm.command.split([' ']) do

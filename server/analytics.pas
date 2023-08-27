@@ -91,13 +91,13 @@ constructor TGoogleAnalyticsProvider.Create;
 begin
   inherited;
   FLock := TFslLock.Create('GoogleAnalytics');
-  FEvents := TFslList<TGoogleAnalyaticsEventData>.create;
+  FEvents := TFslList<TGoogleAnalyaticsEventData>.Create;
 end;
 
 destructor TGoogleAnalyticsProvider.Destroy;
 begin
-  FEvents.Free;
-  FLock.Free;
+  FEvents.free;
+  FLock.free;
   inherited;
 end;
 
@@ -108,7 +108,7 @@ var
   post, resp : TStringStream;
 begin
   exit;
-  post := TStringStream.create(cnt, TEncoding.UTF8);
+  post := TStringStream.Create(cnt, TEncoding.UTF8);
   try
     http := TIdHTTP.Create(nil);
     Try
@@ -118,13 +118,13 @@ begin
         ssl.SSLOptions.Mode := sslmClient;
         ssl.SSLOptions.Method := sslvTLSv1_2;
         http.Request.ContentType := 'application/x-www-form-urlencoded';
-        resp := TStringStream.create;
+        resp := TStringStream.Create;
         try
           try
             http.Post('https://www.google-analytics.com/batch', post, resp);
           except
             on e : EIdHTTPProtocolException do
-              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.Create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;
@@ -164,7 +164,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    event.Free;
+    event.free;
   end;
 end;
 
@@ -222,7 +222,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 

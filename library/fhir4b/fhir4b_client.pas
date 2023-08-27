@@ -76,12 +76,12 @@ implementation
 
 function TFhirClient4B.makeParser(fmt : TFHIRFormat) : TFHIRParser;
 begin
-  result := TFHIRParsers4B.parser(Worker.Link as TFHIRWorkerContext, fmt, Lang);
+  result := TFHIRParsers4B.parser(Worker.Link as TFHIRWorkerContext, fmt, LangList.link);
 end;
 
 function TFhirClient4B.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
 begin
-  result := TFHIRParsers4B.composer(Worker.Link as TFHIRWorkerContext, fmt, Lang, style);
+  result := TFHIRParsers4B.composer(Worker.Link as TFHIRWorkerContext, fmt, LangList.link, style);
 end;
 
 function TFhirClient4B.opWrapper : TFhirOperationOutcomeWClass;

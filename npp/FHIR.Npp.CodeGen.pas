@@ -81,7 +81,7 @@ begin
     else
       clp.AsText := memo1.Text;
   finally
-    clp.Free;
+    clp.free;
   end;
 end;
 
@@ -90,12 +90,12 @@ var
   codegen : TFHIRCodeGenerator;
 begin
   case cbxLanguage.ItemIndex of
-    0: codegen := TFHIRCodeGeneratorJavaRI.create;
-    1: codegen := TFHIRCodeGeneratorJavaHapi.create;
-    2: codegen := TFHIRCodeGeneratorPascal.create;
-    3: codegen := TFHIRCodeGeneratorDotNet.create;
+    0: codegen := TFHIRCodeGeneratorJavaRI.Create;
+    1: codegen := TFHIRCodeGeneratorJavaHapi.Create;
+    2: codegen := TFHIRCodeGeneratorPascal.Create;
+    3: codegen := TFHIRCodeGeneratorDotNet.Create;
   else
-    raise EFHIRException.create('Unknown language');
+    raise EFHIRException.Create('Unknown language');
   end;
   try
     codegen.Resource := Resource.Link;
@@ -109,8 +109,8 @@ end;
 
 procedure TCodeGeneratorForm.FormDestroy(Sender: TObject);
 begin
-  FContext.Free;
-  FResource.Free;
+  FContext.free;
+  FResource.free;
 end;
 
 procedure TCodeGeneratorForm.FormShow(Sender: TObject);
@@ -120,13 +120,13 @@ end;
 
 procedure TCodeGeneratorForm.SetContext(const Value: TFHIRWorkerContextWithFactory);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TCodeGeneratorForm.SetResource(const Value: TFHIRResourceV);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 

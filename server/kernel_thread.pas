@@ -176,7 +176,7 @@ procedure TFhirServerMaintenanceThreadTask.checkStatus;
 begin
   if (FStatus = ktsResting) and (FThread <> nil) then
   begin
-    FThread.Free;
+    FThread.free;
     FThread := nil;
   end;
 
@@ -241,12 +241,12 @@ end;
 constructor TFhirServerMaintenanceThread.Create;
 begin
   inherited;
-  FTasks := TFslList<TFhirServerMaintenanceThreadTask>.create;
+  FTasks := TFslList<TFhirServerMaintenanceThreadTask>.Create;
 end;
 
 destructor TFhirServerMaintenanceThread.Destroy;
 begin
-  FTasks.Free;
+  FTasks.free;
   inherited;
 end;
 
@@ -262,7 +262,7 @@ begin
     task.FLastStarted := GetTickCount64;
     FTasks.Add(task.Link);
   finally
-    task.Free;
+    task.free;
   end;
 end;
 

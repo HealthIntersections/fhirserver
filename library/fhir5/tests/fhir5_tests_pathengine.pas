@@ -181,7 +181,7 @@ begin
         begin
           if not resources.TryGetValue(input, res) then
           begin
-            p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
+            p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
             try
               f := TFileStream.Create(FHIR_PUB_FILE(input), fmOpenRead);
               try
@@ -189,10 +189,10 @@ begin
                 p.parse;
                 res := p.resource.Link as TFHIRResource;
               finally
-                f.Free;
+                f.free;
               end;
             finally
-              p.Free;
+              p.free;
             end;
             resources.Add(input, res.link);
           end
@@ -208,7 +208,7 @@ begin
         begin
           ok := false;
           Assert.IsTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
-          outcome := TFHIRSelectionList.create;
+          outcome := TFHIRSelectionList.Create;
         end;
       end;
       if ok then
@@ -217,7 +217,7 @@ begin
       begin
         ok := engine.convertToBoolean(outcome);
         outcome.clear();
-        outcome.add(TFHIRBoolean.create(ok));
+        outcome.add(TFHIRBoolean.Create(ok));
       end;
       s := engine.UseLog;
       if (s <> '') then
@@ -265,10 +265,10 @@ begin
           end;
         end;
       finally
-        expected.Free;
+        expected.free;
       end;
     finally
-      node.Free;
+      node.free;
     end;
   finally
     res.free;
@@ -278,7 +278,7 @@ end;
 
 procedure TFHIRPathTests.setup;
 begin
-  resources := TFslMap<TFHIRResource>.create;
+  resources := TFslMap<TFHIRResource>.Create;
   if gTests = nil then
     gTests := TMXmlParser.ParseFile('C:\work\org.hl7.fhir\org.hl7.fhir.core\org.hl7.fhir.r4\src\main\resources\fhirpath\tests-fhir-r4.xml', [xpDropWhitespace, xpDropComments]);
   {$IFNDEF SIMPLETEST}
@@ -295,8 +295,8 @@ begin
   {$IFNDEF SIMPLETEST}
   ucum.free;
   {$ENDIF}
-  engine.Free;
-  resources.Free;
+  engine.free;
+  resources.free;
 end;
 
 function TFHIRPathTests.sizeInBytesV(magic : integer) : cardinal;
@@ -311,5 +311,5 @@ initialization
   TDUnitX.RegisterTestFixture(TFHIRPathTests);
   TDUnitX.RegisterTestFixture(TFHIRPathTests);
 finalization
-  gTests.Free;
+  gTests.free;
 end.

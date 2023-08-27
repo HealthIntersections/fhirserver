@@ -135,7 +135,7 @@ end;
 
 destructor TPackageListManager.Destroy;
 begin
-  FCache.Free;
+  FCache.free;
   inherited Destroy;
 end;
 
@@ -153,9 +153,9 @@ function TPackageListManager.loadList : boolean;
 var
   resp : TFHIRLoadPackagesTaskResponse;
 begin
-  resp := TFHIRLoadPackagesTaskResponse.create;
+  resp := TFHIRLoadPackagesTaskResponse.Create;
   try
-    result := DoBackgroundTask(PackageCacheForm, GPackageLoaderTaskId, TFHIRLoadPackagesTaskRequest.create(FCache.link), resp.link);
+    result := DoBackgroundTask(PackageCacheForm, GPackageLoaderTaskId, TFHIRLoadPackagesTaskRequest.Create(FCache.link), resp.link);
     if result then
       Data.AddAll(resp.Packages);
   finally
@@ -237,7 +237,7 @@ end;
 
 procedure TPackageCacheForm.FormCreate(Sender: TObject);
 begin
-  FManager := TPackageListManager.create;
+  FManager := TPackageListManager.Create;
   FManager.List := ListView1;
   FManager.registerControl(btnImportFile, copAdd, 'file');
   FManager.registerControl(btnImportURL, copAdd, 'url');
@@ -269,7 +269,7 @@ end;
 
 procedure TPackageCacheForm.btnFindPackagesClick(Sender: TObject);
 begin
-  PackageRegistryForm := TPackageRegistryForm.create(self);
+  PackageRegistryForm := TPackageRegistryForm.Create(self);
   try
     PackageRegistryForm.Ini := FIni;
     PackageRegistryForm.showModal;
@@ -303,7 +303,7 @@ begin
   ini.writeInteger('package-manager-view', 'width-canonical', ListView1.Columns[5].width);
   ini.writeInteger('package-manager-view', 'width', width);
   ini.writeInteger('package-manager-view', 'height', height);
-  FManager.Free;
+  FManager.free;
 end;
 
 procedure TPackageCacheForm.FormShow(Sender: TObject);
@@ -317,7 +317,7 @@ begin
   width := ini.readInteger('package-manager-view', 'width', width);
   height := ini.readInteger('package-manager-view', 'height', height);
   if FManager.FCache = nil then
-    FManager.FCache := TFHIRPackageManager.create(npmMode);
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
 
   if not FManager.doLoad then
     Close;
@@ -335,7 +335,7 @@ function TPackageCacheForm.GetCache: TFHIRPackageManager;
 begin
   if FManager.FCache = nil then
   begin
-    FManager.FCache := TFHIRPackageManager.create(npmMode);
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
     FManager.doLoad;
   end;
   result := FManager.FCache;
@@ -345,8 +345,8 @@ procedure TPackageCacheForm.rbSystemChange(Sender: TObject);
 begin
   if FManager.FCache.Mode <> npmMode then
   begin
-    FManager.FCache.Free;
-    FManager.FCache := TFHIRPackageManager.create(npmMode);
+    FManager.FCache.free;
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
     FManager.doLoad;
   end;
 end;
@@ -355,8 +355,8 @@ procedure TPackageCacheForm.rbUserModeChange(Sender: TObject);
 begin
   if FManager.FCache.Mode <> npmMode then
   begin
-    FManager.FCache.Free;
-    FManager.FCache := TFHIRPackageManager.create(npmMode);
+    FManager.FCache.free;
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
     FManager.doLoad;
   end;
 end;

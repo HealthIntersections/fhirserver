@@ -76,7 +76,7 @@ var
   hash : TIdHashSHA256;
   f : TFileStream;
 begin
-  hash := TIdHashSHA256.create;
+  hash := TIdHashSHA256.Create;
   try
     f := TFileStream.create(fn, fmOpenRead);
     try
@@ -108,7 +108,7 @@ end;
 
 procedure TSnomedTests.TearDown;
 begin
-  FServices.Free;
+  FServices.free;
 end;
 
 procedure TSnomedTests.Base;
@@ -265,7 +265,7 @@ begin
       ce.free;
     end;
   finally
-    pe.Free;
+    pe.free;
   end;
 end;
 
@@ -285,7 +285,7 @@ begin
       ex2.free;
     end;
   finally
-    ex1.Free;
+    ex1.free;
   end;
 end;
 
@@ -313,7 +313,7 @@ begin
       ex2.free;
     end;
   finally
-    ex1.Free;
+    ex1.free;
   end;
 end;
 

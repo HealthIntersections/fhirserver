@@ -175,13 +175,13 @@ end;
 
 procedure TIIEditForm.FormDestroy(Sender: TObject);
 begin
-  fii.Free;
-  oids.Free;
+  fii.free;
+  oids.free;
 end;
 
 procedure TIIEditForm.Setii(const Value: Tv3II);
 begin
-  FIi.Free;
+  FIi.free;
   FIi := Value;
   bind;
 end;

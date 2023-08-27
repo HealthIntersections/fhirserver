@@ -109,7 +109,7 @@ end;
 
 constructor TSnomedWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, common, nil, i18n);
+  inherited Create(config, settings, nil, common, nil, i18n);
 end;
 
 destructor TSnomedWebEndPoint.Destroy;
@@ -185,7 +185,7 @@ end;
 
 destructor TSnomedWebServer.Destroy;
 begin
-  FTx.Free;
+  FTx.free;
   inherited;
 end;
 
@@ -235,9 +235,9 @@ begin
   begin
     result := 'Snomed Analysis';
     FTx.DefSnomed.RecordUse;
-    analysis := TSnomedAnalysis.create(FTx.DefSnomed.Link);
+    analysis := TSnomedAnalysis.Create(FTx.DefSnomed.Link);
     try
-      pm := THTTPParameters.create(request.UnparsedParams);
+      pm := THTTPParameters.Create(request.UnparsedParams);
       try
         buf := analysis.generate(pm);
         try
@@ -248,7 +248,7 @@ begin
           buf.free;
         end;
       finally
-        pm.Free;
+        pm.free;
       end;
       response.ResponseNo := 200;
     finally
@@ -280,11 +280,11 @@ begin
 
       try
         html := THtmlPublisher.Create();
-        pub := TSnomedPublisher.create(ss, AbsoluteURL(secure));
+        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure));
         try
           html.Version := SERVER_FULL_VERSION;
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';
-          html.Lang := THTTPLanguages.Create(request.AcceptLanguage);
+          html.LangList := THTTPLanguageList.Create(request.AcceptLanguage, true);
           pub.PublishDict(code, PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/', html);
           returnContent(request, response, request.Document, secure, 'SNOMED CT Browser', html.output);
         finally
@@ -329,7 +329,7 @@ procedure TSnomedWebServer.returnContent(request: TIdHTTPRequestInfo; response: 
 var
   vars :  TFslMap<TFHIRObject>;
 begin
-  vars := TFslMap<TFHIRObject>.create;
+  vars := TFslMap<TFHIRObject>.Create;
   try
     vars.add('title', TFHIRObjectText.Create(title));
     vars.add('content', TFHIRObjectText.Create(content));
@@ -364,7 +364,6 @@ begin
       sl := TConceptDesignations.Create(nil, FTx.Languages.link);
       try
         ss.ListDisplayNames(sl, code, '', ALL_DISPLAY_NAMES);
-        result := result + '<display value="'+FormatTextToXml(sl.display.AsString, xmlAttribute)+'"/>';
         for cd in sl.designations do
           result := result + '<display value="'+FormatTextToXml(cd.value.asString, xmlAttribute)+'"/>';
       finally
@@ -378,7 +377,6 @@ begin
       sl := TConceptDesignations.Create(nil, FTx.Languages.link);
       try
         ss.ListDisplayNames(sl, inttostr(id), '', ALL_DISPLAY_NAMES);
-        result := result + '<display value="'+FormatTextToXml(sl.display.asString, xmlAttribute)+'"/>';
         for cd in sl.designations do
           result := result + '<display value="'+FormatTextToXml(cd.value.asString, xmlAttribute)+'"/>';
       finally
@@ -396,7 +394,7 @@ begin
       result := '<snomed version="'+ss.VersionDate+'" type="expression" expression="'+code+'" expressionMinimal="'+FormatTextToXml(ss.renderExpression(exp, sroMinimal), xmlAttribute)+'" expressionMax="'+
       FormatTextToXml(ss.renderExpression(exp, sroReplaceAll), xmlAttribute)+'" display="'+FormatTextToXml(ss.displayExpression(exp), xmlAttribute)+'" ok="true"/>';
     finally
-      exp.Free;
+      exp.free;
     end;
   end;
 end;
@@ -434,7 +432,7 @@ begin
     html.done;
     result := html.output;
   finally
-    html.Free;
+    html.free;
   end;
 end;
 

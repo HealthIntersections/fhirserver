@@ -102,7 +102,7 @@ type
     FProvider : TFGraphDataProvider;
     FIndex : integer;
   protected
-    constructor create(provider : TFGraphDataProvider);
+    constructor Create(provider : TFGraphDataProvider);
     function DoGetCurrent: TFGraphDataPoint; override;
     function DoMoveNext: boolean; override;
   end;
@@ -342,7 +342,7 @@ type
 
   While an annotation is attached to a graph it can be accessed using
   the annotations[i] property. the value i is the id given in the
-  .create(id, caption, time) routine. the id can't be changed while the
+  .Create(id, caption, time) routine. the id can't be changed while the
   annotation is attached to a graph. Annotation ID's must be unique within
   the graph; and exception will be raised if an attempt is made to add a
   duplicate ID
@@ -950,9 +950,9 @@ end;
 
 { TFGraphDataPointEnumerator }
 
-constructor TFGraphDataPointEnumerator.create(provider: TFGraphDataProvider);
+constructor TFGraphDataPointEnumerator.Create(provider: TFGraphDataProvider);
 begin
-  inherited create;
+  inherited Create;
   FProvider := provider;
   FIndex := -1;
 end;
@@ -987,7 +987,7 @@ end;
 
 function TFGraphDataProvider.GetEnumerator: TFGraphDataPointEnumerator;
 begin
-  result := TFGraphDataPointEnumerator.create(self);
+  result := TFGraphDataPointEnumerator.Create(self);
 end;
 
 { TFGraphSeries }
@@ -997,13 +997,13 @@ begin
   inherited Create;
   FData := provider;
   FData.FSeries := self;
-  FRegressionData := TFslList<TFGraphRegressionPoint>.create;
+  FRegressionData := TFslList<TFGraphRegressionPoint>.Create;
 end;
 
 destructor TFGraphSeries.Destroy;
 begin
-  FRegressionData.Free;
-  FData.Free;
+  FRegressionData.free;
+  FData.free;
   inherited;
 end;
 
@@ -1371,7 +1371,7 @@ begin
   end
   else
   begin
-    points := TList<Double>.create;
+    points := TList<Double>.Create;
     try
       for i := 0 to Data.count - 1 do
       begin
@@ -1407,7 +1407,7 @@ begin
       FAnalysis.RegressionIntercept := rstats.median;
       FAnalysis.IntSD := rstats.SD;  {!! this gives a falsely low sense of the sd on the intercept, as it does not include contributory uncertainty from the slope sd. yet to be fixed }
     finally
-      points.Free;
+      points.free;
     end;
     populateRegression(FAnalysis.RegSlope2, FAnalysis.RegSlope, FAnalysis.RegressionIntercept);
   end;
@@ -1504,12 +1504,12 @@ var
 
   procedure initqueue(y:double);
   begin
-    queue := TList<Double>.create;
+    queue := TList<Double>.Create;
     queue.Add(y);
     queuesum := y;
     queuelimit := trunc(1/FRegControl2);
     if queuelimit < 2 then
-      raise EFslException.create('Invalid Running Average limit');
+      raise EFslException.Create('Invalid Running Average limit');
   end;
 
   procedure addqueue(y:double);
@@ -1551,7 +1551,7 @@ begin
         end;
       end;
     finally
-      queue.Free;
+      queue.free;
     end;
   end;
 end;
@@ -1841,7 +1841,7 @@ begin
   end
   else
   begin
-    list := TList<Double>.create;
+    list := TList<Double>.Create;
     try
       for pp in Data do
       begin
@@ -1855,7 +1855,7 @@ begin
         list.Sort;
        DoCalcStats(list,Stats);
     finally
-      list.Free;
+      list.free;
     end;
   end;
 end;
@@ -1908,7 +1908,7 @@ procedure TFGraphSeries.correlate;
        if ((abs(az-aold)) < (eps*abs(az))) THEN break;
      end;
      if ((abs(az-aold)) >= (eps*abs(az))) then
-       raise EFslException.create('internal data error in correlation');
+       raise EFslException.Create('internal data error in correlation');
      result := az;
    end;
    function gammln(xx: double): double;
@@ -1943,7 +1943,7 @@ procedure TFGraphSeries.correlate;
    var bt: double;
    begin
      if ((x < 0.0) or (x > 1.0)) then
-       raise EFslException.create('Invalid internal data, Correlation');
+       raise EFslException.Create('Invalid internal data, Correlation');
      bt := exp(gammln(a+b)-gammln(a)-gammln(b) +a*ln(x)+b*ln(1.0-x));
      if (x < ((a+1.0)/(a+b+2.0))) then
        result := bt*betacf(a,b,x)/a
@@ -2048,9 +2048,9 @@ end;
 
 { TFGraphAnnotation }
 
-constructor TFGraphAnnotation.create(const caption : string; DrawTime : TFGraphDrawTime);
+constructor TFGraphAnnotation.Create(const caption : string; DrawTime : TFGraphDrawTime);
 begin
-  inherited create;
+  inherited Create;
   FCaption := caption;
   FVisible := true;
   FDrawTime := DrawTime;
@@ -3390,13 +3390,13 @@ end;
 constructor TFGraph.Create(AOwner : TComponent);
 begin
   inherited Create(AOwner);
-  FSeries := TFslList<TFGraphSeries>.create;
+  FSeries := TFslList<TFGraphSeries>.Create;
   FSeries.OnNotify := SeriesChange;
-  FAnnotations := TFslList<TFGraphAnnotation>.create;
+  FAnnotations := TFslList<TFGraphAnnotation>.Create;
   FAnnotations.OnNotify := AnnotationChange;
-  FFunctions := TFslList<TFGraphFunction>.create;
+  FFunctions := TFslList<TFGraphFunction>.Create;
   FFunctions.OnNotify := FunctionsChange;
-  FBands := TFslList<TFGraphBand>.create;
+  FBands := TFslList<TFGraphBand>.Create;
   FBands.OnNotify := BandChange;
 
   FCanvas := TGraphCanvas.Create(Canvas);
@@ -3449,11 +3449,11 @@ begin
     FCaptionFont.OnChange := FontChanged;
     FErrorFont.OnChange := FontChanged;
   end;
-  FLegend := TFGraphLegend.create;
+  FLegend := TFGraphLegend.Create;
   with FLegend do
   begin
     FGraph := self;
-    Ffont := TFontAdapted.create;
+    Ffont := TFontAdapted.Create;
 //    if (FCanvas.Font <> nil) then
 //      FFont.assign(FCanvas.font);
     Ffont.Onchange := fontchanged;
@@ -3473,7 +3473,7 @@ begin
     result.color := clRed;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3608,7 +3608,7 @@ begin
     end;
   {dragging : }
   FHasDragged := false;
-  drect := TRect.create(0,0,0,0);
+  drect := TRect.Create(0,0,0,0);
 end;
 
 
@@ -3617,31 +3617,31 @@ begin
   FPlotting := false;
   with FAppearance do
   begin
-    FTitleFont.Free;
+    FTitleFont.free;
     FTitleFont := nil;
-    FLabelFont.Free;
+    FLabelFont.free;
     FLabelFont := nil;
-    FCaptionFont.Free;
+    FCaptionFont.free;
     FCaptionFont := nil;
-    FErrorFont.Free;
+    FErrorFont.free;
     FErrorFont := nil;
   end;
   with FLegend do
   begin
-    FFont.Free;
+    FFont.free;
     FFont := nil
   end;
-  FXAxis.Free;
-  FYAxis.Free;
-  FYAxis2.Free;
+  FXAxis.free;
+  FYAxis.free;
+  FYAxis2.free;
   FDimensions.free;
   FAppearance.free;
   FLegend.free;
-  FCanvas.Free;
-  FSeries.Free;
-  FFunctions.Free;
-  FAnnotations.Free;
-  FBands.Free;
+  FCanvas.free;
+  FSeries.free;
+  FFunctions.free;
+  FAnnotations.free;
+  FBands.free;
   inherited Destroy;
 end;
 
@@ -3778,7 +3778,7 @@ begin
   begin
     FCanvas.penColor := clBlack;
     FCanvas.penMode := pmCopy; {//pmXOr;}
-    drect := TRect.create(0,0,0,0);
+    drect := TRect.Create(0,0,0,0);
     {$IFNDEF FPC}
     releaseCapture;
     {$ENDIF}
@@ -3988,7 +3988,7 @@ begin
     bnd.opacity := opacity;
     Bands.Add(bnd.link);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -4018,7 +4018,7 @@ end;
 function TFGraph.fx(v : Double) : Integer;
 var w : Double;
 begin
-{  if not FXAxis.FScaledOk then raise EFslException.create('call to fx when x fails');}
+{  if not FXAxis.FScaledOk then raise EFslException.Create('call to fx when x fails');}
   with FXAxis do
     if FLogging then
       w := (Ln(v) - Ln(FMin)) * FM
@@ -5961,7 +5961,7 @@ begin
 
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -6038,7 +6038,7 @@ end;
 
 function TFGraph.createMark(x1,y1, x2,y2 : Double; c : TAlphaColor; name : string; marktype : TFGraphMarkType; markpos : TFGraphMarkPos; DrawTime : TFGraphDrawTime) : TFGraphMark;
 begin
-  result := TFGraphMark.create(name, drawtime);
+  result := TFGraphMark.Create(name, drawtime);
   try
     result.Color := c;
     result.x1 := x1;
@@ -6102,7 +6102,7 @@ begin
     result.RegControl1 := 100;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -6145,9 +6145,9 @@ end;
 
 { TGraphCanvas }
 
-constructor TGraphCanvas.create(canvas: TCanvas);
+constructor TGraphCanvas.Create(canvas: TCanvas);
 begin
-  inherited create;
+  inherited Create;
   FCanvas := canvas;
 end;
 
@@ -6167,7 +6167,7 @@ begin
   SelectClipRgn(FCanvas.Handle, ClipRgn);
   DeleteObject(ClipRgn);
   {$ELSE}
-  FCanvas.ClipRect := TRect.create(x1, y1, x2, y2);
+  FCanvas.ClipRect := TRect.Create(x1, y1, x2, y2);
   FCanvas.Clipping := true;
   {$ENDIF}
 end;
@@ -6285,7 +6285,7 @@ begin
       Blend.AlphaFormat := 0;
       AlphaBlend(FCanvas.Handle, x1, y2, x2-x1, y1-y2, bmp.Canvas.Handle, 0, 0, 1, 1, Blend);
     finally
-      bmp.Free;
+      bmp.free;
      end;
   end
   else

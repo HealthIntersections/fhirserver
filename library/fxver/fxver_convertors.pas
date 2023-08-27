@@ -42,107 +42,107 @@ uses
 type
   TFhirVersionConvertors = class
   private
-    class function parse(s : TStream; fmt : TFHIRFormat; version : TFHIRVersion; const lang : THTTPLanguages) : TFHIRResourceV;
-    class procedure compose(s : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version : TFHIRVersion; const lang : THTTPLanguages; resource : TFHIRResourceV);
+    class function parse(s : TStream; fmt : TFHIRFormat; version : TFHIRVersion; langList : THTTPLanguageList) : TFHIRResourceV;
+    class procedure compose(s : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version : TFHIRVersion; langList : THTTPLanguageList; resource : TFHIRResourceV);
   public
-    class function convertResource(resource : TFHIRResourceV; const lang : THTTPLanguages; vSource, vDest : TFHIRVersion) : TFHIRResourceV; overload;
-    class function convertResource(resource : TBytes; fmt : TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest : TFHIRVersion) : TBytes; overload;
-    class procedure convertResource(resource : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest : TFHIRVersion; dest : TStream); overload;
+    class function convertResource(resource : TFHIRResourceV; langList : THTTPLanguageList; vSource, vDest : TFHIRVersion) : TFHIRResourceV; overload;
+    class function convertResource(resource : TBytes; fmt : TFHIRFormat; style : TFHIROutputStyle; langList : THTTPLanguageList; vSource, vDest : TFHIRVersion) : TBytes; overload;
+    class procedure convertResource(resource : TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; langList : THTTPLanguageList; vSource, vDest : TFHIRVersion; dest : TStream); overload;
   end;
 
 implementation
 
 { TFhirVersionConvertors }
 
-class function TFhirVersionConvertors.parse(s: TStream; fmt : TFHIRFormat; version: TFHIRVersion; const lang : THTTPLanguages): TFHIRResourceV;
+class function TFhirVersionConvertors.parse(s: TStream; fmt : TFHIRFormat; version: TFHIRVersion; langList : THTTPLanguageList): TFHIRResourceV;
 var
   p : TFHIRParser;
 begin
   case version of
  //   fhirVersionRelease2: c := TFHIR;
-    fhirVersionRelease3: p := TFHIRParsers3.parser(nil, fmt, lang);
-    fhirVersionRelease4: p := TFHIRParsers4.parser(nil, fmt, lang);
+    fhirVersionRelease3: p := TFHIRParsers3.parser(nil, fmt, langList.link);
+    fhirVersionRelease4: p := TFHIRParsers4.parser(nil, fmt, langList.link);
   else
-    raise EFHIRException.CreateLang('Unsupported Version %s', lang, [CODES_TFHIRVersion[version]] );
+    raise EFHIRException.CreateLang('Unsupported Version %s', langList, [CODES_TFHIRVersion[version]] );
   end;
   try
     result := p.parseResource(s);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
-class procedure TFhirVersionConvertors.compose(s: TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version: TFHIRVersion; const lang : THTTPLanguages; resource: TFHIRResourceV);
+class procedure TFhirVersionConvertors.compose(s: TStream; fmt : TFHIRFormat; style : TFHIROutputStyle; version: TFHIRVersion; langList : THTTPLanguageList; resource: TFHIRResourceV);
 var
   c : TFHIRComposer;
 begin
   case version of
  //   fhirVersionRelease2: c := TFHIR;
-    fhirVersionRelease3: c := TFHIRParsers3.composer(nil, fmt, lang, style);
-    fhirVersionRelease4: c := TFHIRParsers4.composer(nil, fmt, lang, style);
+    fhirVersionRelease3: c := TFHIRParsers3.composer(nil, fmt, langList.link, style);
+    fhirVersionRelease4: c := TFHIRParsers4.composer(nil, fmt, langList.link, style);
   else
-    raise EFHIRException.CreateLang('Unsupported Version %s', lang, [CODES_TFHIRVersion[version]] );
+    raise EFHIRException.CreateLang('Unsupported Version %s', langList, [CODES_TFHIRVersion[version]] );
   end;
   try
     c.Compose(s, resource);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
-class function TFhirVersionConvertors.convertResource(resource: TBytes; fmt: TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest: TFHIRVersion): TBytes;
+class function TFhirVersionConvertors.convertResource(resource: TBytes; fmt: TFHIRFormat; style : TFHIROutputStyle; langList : THTTPLanguageList; vSource, vDest: TFHIRVersion): TBytes;
 var
   s1, s2 : TBytesStream;
   r1, r2 : TFHIRResourceV;
 begin
   s1 := TBytesStream.Create(resource);
   try
-    r1 := parse(s1, fmt, vSource, lang);
+    r1 := parse(s1, fmt, vSource, langList);
     try
-      r2 := convertResource(r1, lang, vSource, vDest);
+      r2 := convertResource(r1, langList, vSource, vDest);
       try
         s2 := TBytesStream.Create;
         try
-          compose(s2, fmt, style, vDest, lang, r2);
+          compose(s2, fmt, style, vDest, langList, r2);
           result := copy(s2.Bytes, 0, s2.position);
         finally
-          s2.Free;
+          s2.free;
         end;
       finally
-        r2.Free;
+        r2.free;
       end;
     finally
-      r1.Free;
+      r1.free;
     end;
   finally
-    s1.Free;
+    s1.free;
   end;
 end;
 
-class procedure TFhirVersionConvertors.convertResource(resource: TStream; fmt: TFHIRFormat; style : TFHIROutputStyle; const lang : THTTPLanguages; vSource, vDest: TFHIRVersion; dest: TStream);
+class procedure TFhirVersionConvertors.convertResource(resource: TStream; fmt: TFHIRFormat; style : TFHIROutputStyle; langList : THTTPLanguageList; vSource, vDest: TFHIRVersion; dest: TStream);
 var
   r1, r2 : TFHIRResourceV;
 begin
-  r1 := parse(resource, fmt, vSource, lang);
+  r1 := parse(resource, fmt, vSource, langList);
   try
-    r2 := convertResource(r1, lang, vSource, vDest);
+    r2 := convertResource(r1, langList, vSource, vDest);
     try
-      compose(dest, fmt, style, vDest, lang, r2);
+      compose(dest, fmt, style, vDest, langList, r2);
     finally
-      r2.Free;
+      r2.free;
     end;
   finally
-    r1.Free;
+    r1.free;
   end;
 end;
 
-class function TFhirVersionConvertors.convertResource(resource: TFHIRResourceV; const lang : THTTPLanguages; vSource, vDest: TFHIRVersion): TFHIRResourceV;
+class function TFhirVersionConvertors.convertResource(resource: TFHIRResourceV; langList : THTTPLanguageList; vSource, vDest: TFHIRVersion): TFHIRResourceV;
 begin
   case vSource of
     fhirVersionRelease3:
       begin
         if not (resource is fhir3_resources.TFhirResource) then
-          raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', lang, [CODES_TFHIRVersion[vSource]] );
+          raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', langList, [CODES_TFHIRVersion[vSource]] );
         case vDest of
           fhirVersionRelease4: exit(TVersionConvertor_30_40.convertResource3(resource as fhir3_resources.TFhirResource));
         end;
@@ -150,13 +150,13 @@ begin
     fhirVersionRelease4:
       begin
         if not (resource is fhir4_resources.TFhirResource) then
-          raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', lang, [CODES_TFHIRVersion[vSource]] );
+          raise EFHIRException.CreateLang('Unsupported Version conversion source resource is not actually %s', langList, [CODES_TFHIRVersion[vSource]] );
         case vDest of
           fhirVersionRelease3: exit(TVersionConvertor_30_40.convertResource4(resource as fhir4_resources.TFhirResource));
         end;
       end;
   end;
-  raise EFHIRException.CreateLang('Unsupported Version conversion from %s to %s', lang, [CODES_TFHIRVersion[vSource], CODES_TFHIRVersion[vDest]] );
+  raise EFHIRException.CreateLang('Unsupported Version conversion from %s to %s', langList, [CODES_TFHIRVersion[vSource], CODES_TFHIRVersion[vDest]] );
 end;
 
 end.

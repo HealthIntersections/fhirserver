@@ -52,7 +52,7 @@ implementation
 
 { TFHIRNarrativeGeneratorBase }
 
-constructor TFHIRNarrativeGeneratorBase.create(context: TFHIRWorkerContextV);
+constructor TFHIRNarrativeGeneratorBase.Create(context: TFHIRWorkerContextV);
 begin
   inherited Create;
 end;

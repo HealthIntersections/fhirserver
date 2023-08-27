@@ -168,7 +168,7 @@ begin
     Content := FileContent.Text;
     Result := True;
   finally
-    FileContent.Free;
+    FileContent.free;
   end;
 end;
 
@@ -188,7 +188,7 @@ var
   ts : TStringList;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     for i := 0 to ts.count - 1 do
       if TUnicodeUtilities.hasUnicodeBiDiChars(ts[i]) then
@@ -280,7 +280,7 @@ begin
     end;
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -372,7 +372,7 @@ begin
   if (sscLineEndings in checks) and StringArrayExists(['.pas', '.inc', '.dpr', '.lpr'], ExtractFileExt(filename)) then
     src := checkFileForLineEndings(filename, FileToString(filename, nil));
 
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.Text := src;
     if (sscLicense in checks) and StringArrayExists(['.pas'], ExtractFileExt(filename)) then
@@ -456,7 +456,7 @@ var
   dt, inc : string;
 begin
   if not TSemanticVersion.isValid(v) then
-    raise Exception.create('Invalid semantic version '+v);
+    raise Exception.Create('Invalid semantic version '+v);
 
   dt := TFslDateTime.makeUTC().toString('yyyy-mm-dd');
   Writeln('Update version.inc to set version to '+v+' on '+dt);
@@ -552,9 +552,9 @@ var
   s : String;
 begin
   if not TSemanticVersion.isValid(v) then
-    raise Exception.create('Invalid semantic version '+v);
+    raise Exception.Create('Invalid semantic version '+v);
 
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.LoadFromFile(FilePath([FProjectDir, n]));
     for i := 0 to ts.count - 1 do
@@ -676,7 +676,7 @@ begin
     {$ENDIF}
       CodeApp.run;
   finally
-    CodeApp.Free;
+    CodeApp.free;
   end;
 end.
 

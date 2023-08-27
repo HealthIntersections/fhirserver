@@ -148,7 +148,7 @@ var
 constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName,
   Welcome: String; ini: TFHIRServerConfigFile);
 begin
-  inherited create(ASystemName, ADisplayName);
+  inherited Create(ASystemName, ADisplayName);
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
   FTelnet.Password := FIni.web['telnet-password'].value;
@@ -164,20 +164,20 @@ begin
     FPcm := TFHIRPackageManager.Create(npmModeSystem);
 
   FMaxMem := FSettings.Ini.service['max-memory'].readAsUInt64(0) * 1024 * 1024;
-  FEndPoints := TFslList<TFHIRServerEndPoint>.create;
-  FStatsRecord := TStatusRecord.create;
+  FEndPoints := TFslList<TFHIRServerEndPoint>.Create;
+  FStatsRecord := TStatusRecord.Create;
 end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
   FStatsRecord.free;
   FI18n.free;
-  FPcm.Free;
+  FPcm.free;
   Logging.removeListener(FTelnet);
-  FEndPoints.Free;
-  FIni.Free;
-  FSettings.Free;
-  FTelnet.Free;
+  FEndPoints.free;
+  FIni.free;
+  FSettings.free;
+  FTelnet.free;
   inherited;
 end;
 
@@ -242,7 +242,7 @@ begin
     if FMaintenanceThread <> nil then
     begin
       FMaintenanceThread.StopAndWait(21000); // see comments in FMaintenanceThread.finalise
-      FMaintenanceThread.Free;
+      FMaintenanceThread.free;
     end;
     Logging.log('stop web server');
     StopWebServer;
@@ -283,7 +283,7 @@ begin
   FTerminologies := TCommonTerminologies.Create(Settings.link);
   FTerminologies.load(Ini['terminologies'], false);
 
-  fI18n := TI18nSupport.create(FTerminologies.Languages.link);
+  fI18n := TI18nSupport.Create(FTerminologies.Languages.link);
   FI18n.loadPropertiesFile(partnerFile('Messages.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_es.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_de.properties'));
@@ -338,7 +338,7 @@ procedure TFHIRServiceKernel.startWebServer;
 var
   ep : TFHIRServerEndPoint;
 begin
-  FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
+  FWebServer := TFhirWebServer.Create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
   FWebServer.Common.cache.cacheDwellTime := Settings.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
 
@@ -397,7 +397,7 @@ end;
 
 procedure TFHIRServiceKernel.unloadTerminologies;
 begin
-  FTerminologies.Free;
+  FTerminologies.freeForReal;
   FTerminologies := nil;
 end;
 
@@ -632,7 +632,7 @@ begin
       logMsg := 'Using Configuration file '+ini.FileName;
     Logging.log(logMsg);
 
-    svc := TFHIRServiceKernel.create(svcName, dispName, logMsg, ini.link);
+    svc := TFHIRServiceKernel.Create(svcName, dispName, logMsg, ini.link);
     try
       {$IFDEF FPC}
       if FakeConsoleForm <> nil then
@@ -665,7 +665,7 @@ begin
         {$ENDIF}
       end;
     finally
-      svc.Free;
+      svc.free;
     end;
   end;
 end;
@@ -850,9 +850,9 @@ begin
   {$ENDIF}
 
   if (getCommandLineParam('cfg', fn)) then
-    localConfig := TIniFile.create(fn)
+    localConfig := TIniFile.Create(fn)
   else
-    localConfig := TIniFile.create(localDir + 'fhirserver.ini');
+    localConfig := TIniFile.Create(localDir + 'fhirserver.ini');
 
   try
     try
@@ -868,7 +868,7 @@ begin
         Logging.Log('Config: '+cfgName);
 
           // ok, now, what are we running?
-        cfg := TFHIRServerConfigFile.create(cfgName);
+        cfg := TFHIRServerConfigFile.Create(cfgName);
         try
           ExecuteFhirServer(cfg);
         finally

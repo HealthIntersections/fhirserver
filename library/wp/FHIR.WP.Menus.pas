@@ -511,7 +511,7 @@ Begin
         mnuSpellingAllow.Enabled := Not bField;
         mnuSpellingAdd.Enabled := Not bField;
       Finally
-        oSuggestions.Free;
+        oSuggestions.free;
       End;
     End
     Else
@@ -1000,7 +1000,7 @@ Begin
       // won't hide the first 2 submenus, which are for insert into table
       mnuPasteSpecial.Items[ord(aStyle) + 1].Visible := (Not TWordProcessor(Owner).Settings.ConsoleMode Or (aStyle In [wcctText, wcctUnicode])) And (aStyle In aStyles);
   Finally
-    oClip.Free;
+    oClip.free;
   End;
 End;
 
@@ -1082,13 +1082,13 @@ End;
 
 Procedure TWPPopupMenu.Finalise;
 Begin
-  FMouseInfo.Free;
+  FMouseInfo.free;
   Inherited;
 End;
 
 Procedure TWPPopupMenu.SetMouseInfo(Const Value: TWPMouseInfo);
 Begin
-  FMouseInfo.Free;
+  FMouseInfo.free;
   FMouseInfo := Value;
 End;
 

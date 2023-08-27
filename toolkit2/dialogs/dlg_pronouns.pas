@@ -98,7 +98,7 @@ end;
 
 destructor TPronounsDialog.Destroy;
 begin
-  FFactory.Free;
+  FFactory.free;
   inherited Destroy;
 end;
 

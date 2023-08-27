@@ -84,7 +84,7 @@ Type
     FSearchControls : TFHIRSearchControlParameterSet;
     function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
-    constructor create(searchControls : TFHIRSearchControlParameterSet);
+    constructor Create(searchControls : TFHIRSearchControlParameterSet);
     function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
     function buildUrl(base : String; search : TFslList<TSearchParameter>): String;
   end;
@@ -186,8 +186,8 @@ end;
 
 destructor TSearchParameter.Destroy;
 begin
-  FIndex.Free;
-  FNext.Free;
+  FIndex.free;
+  FNext.free;
   inherited;
 end;
 
@@ -199,18 +199,18 @@ end;
 procedure TSearchParameter.processPrefix;
 begin
   case index.SearchType of
-    sptNull : raise EFHIRException.create('Unknown parameter type for '+Index.Name);
+    sptNull : raise EFHIRException.Create('Unknown parameter type for '+Index.Name);
     sptNumber :
       begin
       checkOrderingPrefix;
       if not StringIsInteger32(value) then
-        raise EFHIRException.create('Numerical Parameter value "value" is not an integer');
+        raise EFHIRException.Create('Numerical Parameter value "value" is not an integer');
       end;
     sptDate :
       begin
       checkOrderingPrefix;
       if not TFslDateTime.isValidXmlDate(value) then
-        raise EFHIRException.create('Numerical Parameter value "value" is not a date');
+        raise EFHIRException.Create('Numerical Parameter value "value" is not a date');
       end;
     sptString : ; // nothing
     sptToken :
@@ -219,21 +219,21 @@ begin
           StringSplit(value, '|', FNamespace, FValue);
       end;
     sptReference : ; // nothing
-    sptComposite : raise EFHIRException.create('composite parameters not done yet');
-    sptQuantity : raise EFHIRException.create('quantity parameters not done yet');
+    sptComposite : raise EFHIRException.Create('composite parameters not done yet');
+    sptQuantity : raise EFHIRException.Create('quantity parameters not done yet');
     sptUri : ; // nothing
   end;
 end;
 
 procedure TSearchParameter.SetIndex(const Value: TFhirIndex);
 begin
-  FIndex.Free;
+  FIndex.free;
   FIndex := Value;
 end;
 
 procedure TSearchParameter.SetNext(const Value: TSearchParameter);
 begin
-  Fnext.Free;
+  Fnext.free;
   Fnext := Value;
 end;
 
@@ -255,7 +255,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 
 end;
@@ -266,7 +266,7 @@ var
   name, value : String;
   sp : TSearchParameter;
 begin
-  result := TFslList<TSearchParameter>.create;
+  result := TFslList<TSearchParameter>.Create;
   try
     for iName := 0 to pm.Count - 1 do
     begin
@@ -284,7 +284,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -315,9 +315,9 @@ begin
       if (r <> '') then
       begin
         if index.SearchType <> sptReference then
-          raise EFHIRException.create('chained, but not a reference: '+name);
+          raise EFHIRException.Create('chained, but not a reference: '+name);
         if length(index.TargetTypes) <> 1 then
-          raise EFHIRException.create('not handled yet');
+          raise EFHIRException.Create('not handled yet');
         result.next := processParam(indexes, index.TargetTypes[0], r, value);
       end
       else
@@ -348,12 +348,12 @@ begin
           result.modifierType := m;
         end
         else
-          raise EFHIRException.create('Unknown Modifier '+m);
+          raise EFHIRException.Create('Unknown Modifier '+m);
       end;
 
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end
   else if (StringArrayExists(CODES_TFHIRSearchControlParameter, n)) then
@@ -386,7 +386,7 @@ begin
   end;
 end;
 
-constructor TSearchParser.create(searchControls: TFHIRSearchControlParameterSet);
+constructor TSearchParser.Create(searchControls: TFHIRSearchControlParameterSet);
 begin
   inherited Create;
   FSearchControls := searchControls;

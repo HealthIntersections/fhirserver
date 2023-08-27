@@ -133,7 +133,7 @@ unzip := true;
         linkedForm.caption := 'Done Downloading';
     end;
   finally
-    Stream.Free;
+    Stream.free;
     linkedForm.busy := false;
   end;
   downloadform.modalresult := mrOK;

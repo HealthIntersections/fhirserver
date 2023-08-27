@@ -195,8 +195,8 @@ constructor THealthCardGenerator.Create(manager: TFHIROperationEngine; request :
 begin
   inherited Create;
   FManager := manager;
-  FCards := TFslList<THealthcareCard>.create;
-  FIssues := TStringList.create;
+  FCards := TFslList<THealthcareCard>.Create;
+  FIssues := TStringList.Create;
   FJwk := key;
   key.checkThumbprintIsSHA256Hash;
   FRequest := request;
@@ -204,12 +204,12 @@ end;
 
 destructor THealthCardGenerator.Destroy;
 begin
-  FRequest.Free;
-  FJwk.Free;
+  FRequest.free;
+  FJwk.free;
   FIssues.free;
   FCards.free;
-  FParams.Free;
-  FManager.Free;
+  FParams.free;
+  FManager.free;
   inherited;
 end;
 
@@ -235,10 +235,10 @@ begin
         card.links.assign(engine.links);
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
   finally
-    engine.Free;
+    engine.free;
   end;
 end;
 
@@ -263,10 +263,10 @@ begin
         card.links.assign(engine.links);
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
   finally
-    engine.Free;
+    engine.free;
   end;
 end;
 
@@ -321,13 +321,13 @@ end;
 
 procedure THealthCardGenerator.SetManager(const Value: TFHIROperationEngine);
 begin
-  FManager.Free;
+  FManager.free;
   FManager := Value;
 end;
 
 procedure THealthCardGenerator.SetParams(const Value: TFhirParameters);
 begin
-  FParams.Free;
+  FParams.free;
   FParams := Value;
 end;
 
@@ -344,18 +344,18 @@ begin
     result.id := inttostr(key);
     result.issuer := ExcludeTrailingSlash(FIssuerUrl);
     result.types := types;
-    util := THealthcareCardUtilities.create;
+    util := THealthcareCardUtilities.Create;
     try
       util.Factory := TFHIRFactoryR4.Create;
       util.sign(result, FJwk);
       FManager.storage.logHealthCard(key, shcSrcFromResources, result.issueDate, IntToStr(result.issueDate.toNbf), util.hash(result), PatientId, TEncoding.UTF8.GetBytes(bundle.asJson));
       result.image := util.generateImage(result);
     finally
-      util.Free;
+      util.free;
     end;
     FCards.add(result.link);
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -367,14 +367,14 @@ begin
   FManager := manager;
   FRequest := request;
   FIssues := issues;
-  FLinks := TFslStringDictionary.create;
+  FLinks := TFslStringDictionary.Create;
 end;
 
 destructor TCardMaker.Destroy;
 begin
-  FLinks.Free;
-  FRequest.Free;
-  FManager.Free;
+  FLinks.free;
+  FRequest.free;
+  FManager.free;
   inherited;
 end;
 
@@ -406,7 +406,7 @@ begin
     result.birthDate := patient.birthDate;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -423,7 +423,7 @@ var
   bnd : TFhirBundle;
   be : TFhirBundleEntry;
 begin
-  result := TFslList<TFHIRImmunization>.create;
+  result := TFslList<TFHIRImmunization>.Create;
   try
     bw := FManager.DoSearch(FRequest, 'Immunization', 'patient='+FPatientId+'&_sort=date');
     try
@@ -432,11 +432,11 @@ begin
         if (be.resource <> nil) and (be.resource is TFhirImmunization) then
           result.Add((be.resource as TFhirImmunization).link);
     finally
-      bw.Free;
+      bw.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -473,7 +473,7 @@ begin
       linkResource(0, 'Patient/'+pat.id);
       bundle.entryList.Append('resource:0').resource := makePatient(pat);
     finally
-      pat.Free;
+      pat.free;
     end;
     i := 1;
     immList := findImmunizations;
@@ -486,7 +486,7 @@ begin
           inc(i);
         end;
     finally
-      immList.Free;
+      immList.free;
     end;
     if bundle.entryList.Count >= 2 then
       result := bundle.Link
@@ -496,7 +496,7 @@ begin
       result := nil;
     end;
   finally
-    bundle.Free;
+    bundle.free;
   end;
 end;
 
@@ -508,7 +508,7 @@ var
   p : TResourceWithReference;
   s : String;
 begin
-  result := TFhirImmunization.create;
+  result := TFhirImmunization.Create;
   try
     result.status := imm.status;
     result.vaccineCode := TFhirCodeableConcept.Create;
@@ -522,7 +522,7 @@ begin
         begin
           t.display := c.display;
           if (t.display = '') then
-            t.display := serverContext.TerminologyServer.getDisplayForCode(FRequest.Lang, t.system, c.version, t.code);
+            t.display := serverContext.TerminologyServer.getDisplayForCode(FRequest.langList, t.system, c.version, t.code);
         end;
       end;
     result.patient := TFhirReference.Create('resource:0');
@@ -542,7 +542,7 @@ begin
       begin
         if actor.display <> '' then
         begin
-          a := TFhirReference.create;
+          a := TFhirReference.Create;
           result.performerList.Append.actor := a;
           a.display := actor.display;
           break;
@@ -555,7 +555,7 @@ begin
             s := serverContext.Factory.describe(p.Resource);
             if (s <> '') then
             begin
-              a := TFhirReference.create;
+              a := TFhirReference.Create;
               result.performerList.Append.actor := a;
               a.display := s;
               break;
@@ -567,7 +567,7 @@ begin
     result.isSubpotentElement := imm.isSubpotentElement.link;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -598,7 +598,7 @@ var
   bnd : TFhirBundle;
   be : TFhirBundleEntry;
 begin
-  result := TFslList<TFHIRObservation>.create;
+  result := TFslList<TFHIRObservation>.Create;
   try
     bw := FManager.DoSearch(FRequest, 'Observation', 'patient='+FPatientId+'&_sort=date');
     try
@@ -607,11 +607,11 @@ begin
         if (be.resource <> nil) and (be.resource is TFHIRObservation) then
           result.Add((be.resource as TFHIRObservation).link);
     finally
-      bw.Free;
+      bw.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -639,7 +639,7 @@ begin
     else
       result := ctxt.TerminologyServer.codeInValueSet(c, 'http://test.fhir.org/r4/ValueSet/InfectiousDiseaseLabsLabs');
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -659,11 +659,11 @@ begin
       linkResource(0, 'Patient/'+pat.id);
       bundle.entryList.Append('resource:0').resource := makePatient(pat);
     finally
-      pat.Free;
+      pat.free;
     end;
     obsList := findObservations;
     try
-      map := TFslMap<TFhirObservation>.create;
+      map := TFslMap<TFhirObservation>.Create;
       try
         for obs in obsList do
           if isRelevantObservation(obs) then
@@ -672,7 +672,7 @@ begin
         for obs in map.Values do
           obsList.Add(obs.link);
       finally
-        map.Free;
+        map.free;
       end;
       obsList.SortE(DoSortObservations);
       i := 1;
@@ -683,7 +683,7 @@ begin
         inc(i);
       end;
     finally
-      obsList.Free;
+      obsList.free;
     end;
     if bundle.entryList.Count >= 2 then
       result := bundle.Link
@@ -693,7 +693,7 @@ begin
       result := nil;
     end;
   finally
-    bundle.Free;
+    bundle.free;
   end;
 end;
 
@@ -748,7 +748,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -763,8 +763,8 @@ end;
 
 destructor THealthCardFormGenerator.Destroy;
 begin
-  FIssues.Free;
-  FJwk.Free;
+  FIssues.free;
+  FJwk.free;
   inherited;
 end;
 
@@ -780,18 +780,18 @@ begin
     // result.id := inttostr(key);
     result.issuer := ExcludeTrailingSlash(FIssuerUrl);
     result.types := [ctCovidCard, ctImmunizationCard];
-    util := THealthcareCardUtilities.create;
+    util := THealthcareCardUtilities.Create;
     try
       util.Factory := TFHIRFactoryR4.Create;
       util.sign(result, FJwk);
       // FManager.storage.logHealthCard(key, shcSrcFromResources, result.issueDate, IntToStr(result.issueDate.toNbf), util.hash(result), PatientId, TEncoding.UTF8.GetBytes(bundle.asJson));
       result.image := util.generateImage(result);
     finally
-      util.Free;
+      util.free;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -815,7 +815,7 @@ begin
     end;
     result := bundle.Link;
   finally
-    bundle.Free;
+    bundle.free;
   end;
 
 end;
@@ -829,7 +829,7 @@ begin
     result := nil
   else
   begin
-    result := TFhirImmunization.create;
+    result := TFhirImmunization.Create;
     try
       result.status := ImmunizationStatusCompleted;
       result.vaccineCode := TFhirCodeableConcept.Create;
@@ -841,7 +841,7 @@ begin
       if (pr <> '') then
       begin
         prf := result.performerList.Append;
-        prf.actor := TFhirReference.create;
+        prf.actor := TFhirReference.Create;
         prf.actor.display := pr;
       end;
       if TFslDateTime.isValidDate('yyyy-mm-dd', date) then
@@ -850,7 +850,7 @@ begin
         result.occurrence := TFhirDateTime.Create(TFslDateTime.fromFormat('dd-mm-yyyy', date));
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -872,7 +872,7 @@ begin
       result.birthDate := TFslDateTime.fromFormat('dd-mm-yyyy', dob);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 
 end;

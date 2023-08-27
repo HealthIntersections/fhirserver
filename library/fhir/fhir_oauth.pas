@@ -322,7 +322,7 @@ begin
   authorize := '';
   token := '';
   if not conf.hasRest then
-    raise EFHIRException.create('Unable to find rest entry in conformance statement');
+    raise EFHIRException.Create('Unable to find rest entry in conformance statement');
   if (conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/restful-security-service', 'OAuth2') or
      // work around for some servers
       conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'SMART-on-FHIR') or conf.hasSecurity('http://hl7.org/fhir/vs/restful-security-service', 'OAuth2') or
@@ -340,7 +340,7 @@ var
   json : TJSONObject;
   s : String;
 begin
-  post := TBytesStream.create(TEncoding.UTF8.getBytes(request));
+  post := TBytesStream.Create(TEncoding.UTF8.getBytes(request));
   try
     http := TIdHTTP.Create(nil);
     Try
@@ -356,7 +356,7 @@ begin
         ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
         ssl.Options.VerifyServerCertificate := false;
         http.Request.ContentType := 'application/x-www-form-urlencoded; charset=UTF-8';
-        resp := TBytesStream.create;
+        resp := TBytesStream.Create;
         try
           try
             http.Post(server.tokenEndpoint, post, resp);
@@ -366,14 +366,14 @@ begin
               result := TClientAccessToken.Create;
               try
                 if not sameText(json.vStr['token_type'], 'Bearer') then
-                  raise EFHIRException.create('token type is not "Bearer" (is '+json.vStr['token_type']+')');
+                  raise EFHIRException.Create('token type is not "Bearer" (is '+json.vStr['token_type']+')');
                 result.accesstoken := json.vStr['access_token'];
                 result.scopes := json.vStr['scope'];
                 s := json.vStr['expires_in'];
                 if (s <> '') then
                 begin
                   if not StringIsInteger16(s) then
-                    raise EFHIRException.create('expires_in is not an integer');
+                    raise EFHIRException.Create('expires_in is not an integer');
                   result.expires := now + StrToInt(s) * DATETIME_SECOND_ONE;
                 end;
                 if json.vStr['id_token'] <> '' then
@@ -381,14 +381,14 @@ begin
                 result.patient := json.vStr['patient'];
                 result.Link;
               finally
-                result.Free;
+                result.free;
               end;
             finally
               json.free;
             end;
           except
             on e : EIdHTTPProtocolException do
-              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.Create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;
@@ -424,7 +424,7 @@ begin
     result.hook := hook;
     cdshooks.add(result.link);
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -454,12 +454,12 @@ end;
 constructor TRegisteredFHIRServer.Create;
 begin
   inherited;
-  Fcdshooks := TFslList<TRegisteredCDSHook>.create;
+  Fcdshooks := TFslList<TRegisteredCDSHook>.Create;
 end;
 
 destructor TRegisteredFHIRServer.Destroy;
 begin
-  Fcdshooks.Free;
+  Fcdshooks.free;
   inherited;
 end;
 
@@ -638,7 +638,7 @@ end;
 
 destructor TRegisteredCDSHook.Destroy;
 begin
-  FPrefetch.Free;
+  FPrefetch.free;
   inherited;
 end;
 
@@ -700,8 +700,8 @@ end;
 
 destructor TSmartAppLaunchLogin.Destroy;
 begin
-  Fserver.Free;
-  Ftoken.Free;
+  Fserver.free;
+  Ftoken.free;
   inherited;
 end;
 
@@ -722,7 +722,7 @@ begin
   if ARequestInfo.Document = '/done' then
   begin
     s := ARequestInfo.RawHTTPCommand.Split([' ']);
-    pm := THTTPParameters.create(s[1].Substring(6));
+    pm := THTTPParameters.Create(s[1].Substring(6));
     try
       FFinalState := pm['state'];
       if pm['error'] <> '' then
@@ -772,7 +772,7 @@ end;
 function TSmartAppLaunchLogin.login: boolean;
 begin
   case server.SmartAppLaunchMode of
-    salmNone: raise EFHIRException.create('Smart App Launch is not configured for this server');
+    salmNone: raise EFHIRException.Create('Smart App Launch is not configured for this server');
     salmOAuthClient: result := loginOAuthClient;
     salmBackendClient: result := loginBackendClient;
   else
@@ -796,7 +796,7 @@ begin
     jwt.id := NewGuidId;
     jwt_header := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, nil, server.privatekey, server.passphrase);
   finally
-    jwt.Free;
+    jwt.free;
   end;
 
   // 2. submit to server;
@@ -836,7 +836,7 @@ begin
         exit;
     end;
     if (FInitialState <> FFinalState) then
-      raise EFHIRException.create('State parameter mismatch ('+FInitialState+'/'+FFinalState+')');
+      raise EFHIRException.Create('State parameter mismatch ('+FInitialState+'/'+FFinalState+')');
     progress('Fetching Access Token');
     if FAuthcode <> '' then
       token := getSmartOnFhirAuthToken(server, FAuthcode);
@@ -875,13 +875,13 @@ end;
 
 procedure TSmartAppLaunchLogin.SetServer(const Value: TRegisteredFHIRServer);
 begin
-  Fserver.Free;
+  Fserver.free;
   Fserver := Value;
 end;
 
 procedure TSmartAppLaunchLogin.Settoken(const Value: TClientAccessToken);
 begin
-  Ftoken.Free;
+  Ftoken.free;
   Ftoken := Value;
 end;
 

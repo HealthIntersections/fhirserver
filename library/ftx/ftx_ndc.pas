@@ -59,13 +59,13 @@ implementation
 
 constructor TNdcImporter.Create(source: String);
 begin
-  inherited create;
+  inherited Create;
   FSource := source;
 end;
 
 destructor TNdcImporter.Destroy;
 begin
-  FDatabase.Free;
+  FDatabase.free;
   inherited;
 end;
 

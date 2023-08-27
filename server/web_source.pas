@@ -142,7 +142,7 @@ var
   src : TFslBuffer;
 begin
   if not FZip.TryGetValue(filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename+ ' in archive');
+    raise EIOException.Create('Unable to find '+filename+ ' in archive');
   result := src.AsBytes;
 end;
 
@@ -151,7 +151,7 @@ var
   src : TFslBuffer;
 begin
   if not FZip.TryGetValue(filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename+ ' in archive');
+    raise EIOException.Create('Unable to find '+filename+ ' in archive');
   result := TMemoryStream.Create;
   src.SaveToStream(result);
   result.Position := 0;
@@ -163,7 +163,7 @@ var
   i : integer;
 begin
   inherited Create;
-  FZip := TFslMap<TFslBuffer>.create('web.source');
+  FZip := TFslMap<TFslBuffer>.Create('web.source');
   zip := TFslZipReader.Create;
   try
     zip.Stream := TFslFile.Create(path, fmOpenRead);
@@ -172,13 +172,13 @@ begin
     for i := 0 to zip.Parts.Count - 1 do
       FZip.Add(zip.Parts[i].Name, zip.Parts[i].Link);
   finally
-    zip.Free;
+    zip.free;
   end;
 end;
 
 destructor TFHIRWebServerSourceZipProvider.Destroy;
 begin
-  FZip.Free;
+  FZip.free;
   inherited;
 end;
 
@@ -192,7 +192,7 @@ var
   src : TFslBuffer;
 begin
   if not FZip.TryGetValue(filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename+ ' in archive');
+    raise EIOException.Create('Unable to find '+filename+ ' in archive');
   result := src.AsText;
 end;
 

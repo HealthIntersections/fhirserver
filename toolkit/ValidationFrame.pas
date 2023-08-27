@@ -283,7 +283,7 @@ end;
 
 destructor TValidationEngineFrame.Destroy;
 begin
-  FValidator.Free;
+  FValidator.free;
   inherited;
 end;
 
@@ -330,7 +330,7 @@ begin
     if Settings.CacheManager.packageExists('hl7.fhir.core', '4.0.0') then
       cbxVersion.Items.Add('4.0.0 (R4)');
     if cbxVersion.Items.Count = 0 then
-      raise EFHIRException.create('Invalid installation/system - no FHIR packages found');
+      raise EFHIRException.Create('Invalid installation/system - no FHIR packages found');
 
     cbxVersion.ItemIndex := cbxVersion.Items.IndexOf(Settings.getValue('Validation', 'version', ''));
     if cbxVersion.ItemIndex = -1 then

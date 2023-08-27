@@ -347,7 +347,7 @@ End;
 Constructor TFslWinInetClient.Create;
 Begin
   Inherited;
-  FHeaders := TFslStringDictionary.create;
+  FHeaders := TFslStringDictionary.Create;
 
 
 
@@ -371,11 +371,11 @@ Begin
   if FReqHandle <> nil then
     mInternetCloseHandle(FReqHandle);
 
-  FHeaders.Free;
+  FHeaders.free;
   Disconnect;
 
-  FResponse.Free;
-  FRequest.Free;
+  FResponse.free;
+  FRequest.free;
 
   Inherited;
 End;
@@ -540,7 +540,7 @@ Begin
     FResponse.Copy(oResponse.Buffer);
   Finally
     FreeMem(pData);
-    oResponse.Free;
+    oResponse.free;
   End;
 End;
 
@@ -645,13 +645,13 @@ End;
 
 Procedure TFslWinInetClient.SetResponse(Const Value: TFslBuffer);
 Begin
-  FResponse.Free;
+  FResponse.free;
   FResponse := Value;
 End;
 
 Procedure TFslWinInetClient.SetRequest(Const Value: TFslBuffer);
 Begin
-  FRequest.Free;
+  FRequest.free;
   FRequest := Value;
 End;
 

@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_utilities, fsl_lang;
+  fsl_base, fsl_utilities, fsl_lang, fsl_http;
 
 type
 
@@ -46,6 +46,7 @@ type
     FMessages : TFslMap<TFslStringMap>;
 
     function chooseForLang(lang : String) : TFslStringMap;
+    function chooseForLangs(langs: THTTPLanguageList): TFslStringMap;
   public
     constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
@@ -55,20 +56,21 @@ type
     // the file name has the language appended to the filename
     procedure loadPropertiesFile(filename : String);
 
-    function translate(id, lang : String; const args : TStringArray) :  String;
-    function translatePlural(count : integer; id, lang : String; const args : TStringArray) :  String;
+    function translateS(id, lang : String; const args : TStringArray) :  String; overload;
+    function translate(id : String; langs : THTTPLanguageList; const args : TStringArray) :  String; overload;
+    function translatePluralS(count : integer; id, lang : String; const args : TStringArray) :  String;  overload;
+    function translatePlural(count : integer; id : String; langs : THTTPLanguageList; const args : TStringArray) :  String;  overload;
   end;
 
 implementation
 
 { TI18nSupport }
 
-
 constructor TI18nSupport.Create(languages: TIETFLanguageDefinitions);
 begin
   inherited Create;
   FLanguages := languages;
-  FMessages := TFslMap<TFslStringMap>.create;
+  FMessages := TFslMap<TFslStringMap>.Create;
   FMessages.DefaultValue := nil;
 end;
 
@@ -96,7 +98,7 @@ begin
     lang := 'en';
   if not FileExists(filename) then
     raise EFslException.create('Properties File "'+filename+'" not found');
-  msgs := TFslStringMap.create;
+  msgs := TFslStringMap.Create;
   try
     assignfile(f, filename);
     reset(f);
@@ -118,7 +120,7 @@ begin
   end;
 end;
 
-function TI18nSupport.translate(id, lang: String; const args : TStringArray): String;
+function TI18nSupport.translateS(id, lang: String; const args : TStringArray): String;
 var
   fmt : String;
   i : integer;
@@ -136,7 +138,27 @@ begin
   end;
 end;
 
-function TI18nSupport.translatePlural(count: integer; id, lang: String; const args: TStringArray): String;
+
+function TI18nSupport.translate(id: String; langs : THTTPLanguageList; const args : TStringArray): String;
+var
+  fmt : String;
+  i : integer;
+begin
+  fmt := chooseForLangs(langs)[id];
+  if (fmt = '') then
+    fmt := chooseForLang('')[id];
+  if fmt = '' then
+    result := id
+  else
+  begin
+    for i := 0 to length(args) - 1 do
+      fmt := fmt.replace('{'+inttostr(i)+'}', args[i]);
+    result := fmt.replace('''''', '''');
+  end;
+end;
+
+
+function TI18nSupport.translatePluralS(count: integer; id, lang: String; const args: TStringArray): String;
 var
   fmt : String;
   i : integer;
@@ -161,6 +183,30 @@ begin
 end;
 
 
+function TI18nSupport.translatePlural(count: integer; id: String; langs : THTTPLanguageList; const args: TStringArray): String;
+var
+  fmt : String;
+  i : integer;
+begin
+  if (count = 1) then
+    id := id + '_one'
+  else
+    id := id + '_other';
+
+  fmt := chooseForLangs(langs)[id];
+  if (fmt = '') then
+    fmt := chooseForLang('')[id];
+  if fmt = '' then
+    result := id
+  else
+  begin
+    fmt := fmt.replace('{0}', inttostr(count));
+    for i := 0 to length(args) - 1 do
+      fmt := fmt.replace('{'+inttostr(i+1)+'}', args[i]);
+    result := fmt.replace('''''', '''');
+  end;
+end;
+
 function TI18nSupport.chooseForLang(lang: String): TFslStringMap;
 begin
   if lang.Length > 2 then
@@ -169,6 +215,25 @@ begin
     result := FMessages[lang]
   else
     result := FMessages['en'];
+end;
+
+function TI18nSupport.chooseForLangs(langs: THTTPLanguageList): TFslStringMap;
+var
+  e : THTTPLanguageEntry;
+  l : String;
+begin
+  if (langs <> nil) then
+  begin
+    for e in langs.langs do
+    begin
+      l := e.lang;        
+      if l.length > 2 then
+        l := l.subString(0, 2);
+      if FMessages.ContainsKey(l) then
+        exit(FMessages[l]);
+    end;
+  end;
+  result := FMessages['en'];
 end;
 
 end.

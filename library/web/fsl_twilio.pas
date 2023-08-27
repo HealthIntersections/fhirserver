@@ -89,7 +89,7 @@ var
   params : TIdMultiPartFormDataStream;
 begin
   url := 'https://api.twilio.com/2010-04-01/Accounts/'+Account+'/Messages';
-  params := TIdMultiPartFormDataStream.create;
+  params := TIdMultiPartFormDataStream.Create;
   try
     params.AddFormField('To', Dest);
     params.AddFormField('From', From);
@@ -104,9 +104,9 @@ begin
       http.Request.Password := Token;
       http.Post(url, params, response);
     finally
-      response.Free;
+      response.free;
       http.free;
-      ssl.Free;
+      ssl.free;
     end;
   finally
     params.free;
@@ -137,7 +137,7 @@ begin
      this.Body := 'Someone is running FHIR Server tests @ '+FormatDateTime('c', now);
      this.send;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 

@@ -412,7 +412,7 @@ const
 
 constructor TFslTestSettings.Create(folder, filename: String);
 begin
-  inherited create;
+  inherited Create;
   if (folder = '') then
     folder := executableDirectory;
   FFilename := FilePath([folder, filename]);
@@ -437,7 +437,7 @@ end;
 
 constructor TFslTestSettings.Create(filename: String);
 begin
-  inherited create;
+  inherited Create;
   if (not FileExists(filename)) then
     raise EFslException.create('Test Settings File '+filename+' not found');
   FFilename := filename;
@@ -463,7 +463,7 @@ end;
 
 destructor TFslTestSettings.Destroy;
 begin
-  FIni.Free;
+  FIni.free;
   inherited;
 end;
 
@@ -555,11 +555,11 @@ begin
       for s in list do
         result.Items[s] := FIni.ReadString(name, s, '');
     finally
-      list.Free;
+      list.free;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -571,7 +571,7 @@ end;
 initialization
   TestSettings := TFslTestSettings.Create('', 'fhir-tests.ini');
 finalization
-  TestSettings.Free;
+  TestSettings.free;
 end.
 
 

@@ -746,8 +746,8 @@ begin
     Dispose(p);
     GThreadList.Delete(i);
   end;
-  GThreadList.Free;
-  GBackgroundTasks.Free;
+  GThreadList.free;
+  GBackgroundTasks.free;
   DeleteCriticalSection(GCritSct);
 end;
 
@@ -756,17 +756,17 @@ end;
 constructor TFslExternalProcessThread.Create;
 begin
   inherited Create;
-  FLines := TStringList.create;
-  FParameters := TStringList.create;
+  FLines := TStringList.Create;
+  FParameters := TStringList.Create;
   FLock := TFslLock.create('ProcessThreadLock');
   FStatus := epsInitialising;
 end;
 
 destructor TFslExternalProcessThread.Destroy;
 begin
-  FLock.Free;
-  FLines.Free;
-  FParameters.Free;
+  FLock.free;
+  FLines.free;
+  FParameters.free;
   inherited Destroy;
 end;
 
@@ -915,8 +915,8 @@ end;
 
 destructor TBackgroundTaskPackagePair.Destroy;
 begin
-  FRequest.Free;
-  FResponse.Free;
+  FRequest.free;
+  FResponse.free;
   inherited Destroy;
 end;
 
@@ -1248,7 +1248,7 @@ End;
 destructor TFslThread.Destroy;
 Begin
   if not FAutoFree then
-    FInternal.Free;
+    FInternal.free;
   Inherited;
 End;
 
@@ -1353,7 +1353,7 @@ Begin
   TerminateThread(FInternal.Handle, 0);
   {$ENDIF}
   FRunning := False;
-  FInternal.Free;
+  FInternal.free;
   FInternal := nil;
 End;
 
@@ -1385,7 +1385,7 @@ End;
 constructor TInternalThread.Create(thread: TFslThread);
 begin
   FOwner := thread;
-  inherited create(false);
+  inherited Create(false);
 end;
 
 procedure TInternalThread.execute;
@@ -1399,7 +1399,7 @@ begin
   FOwner.FRunning := False;
   if FOwner.AutoFree then
   begin
-    FOwner.Free;
+    FOwner.free;
     try
       Destroy;
     except
@@ -1412,8 +1412,8 @@ end;
 constructor TBackgroundTaskEngine.Create;
 begin
   inherited Create;
-  FWaiting := TFslList<TBackgroundTaskPackagePair>.create;
-  FDone := TFslList<TBackgroundTaskPackagePair>.create;
+  FWaiting := TFslList<TBackgroundTaskPackagePair>.Create;
+  FDone := TFslList<TBackgroundTaskPackagePair>.Create;
   FStatus := btsWaiting;
   FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
@@ -1426,8 +1426,8 @@ end;
 
 destructor TBackgroundTaskEngine.Destroy;
 begin
-  FWaiting.Free;
-  FDone.Free;
+  FWaiting.free;
+  FDone.free;
   inherited;
 end;
 
@@ -1461,7 +1461,7 @@ begin
     GBackgroundTasks.FLock.Lock;
     try
       SetStatus(btsProcessing);
-      FCurrentTask.Free;
+      FCurrentTask.free;
       FCurrentTask := nil;
     finally
       GBackgroundTasks.FLock.UnLock;
@@ -1499,7 +1499,7 @@ end;
 procedure TBackgroundTaskEngine.listTasks(list: TFslList<TBackgroundTaskStatusInfo>);
   function reportForTask(tp : TBackgroundTaskPackagePair) : TBackgroundTaskStatusInfo;
   begin
-    result := TBackgroundTaskStatusInfo.create;
+    result := TBackgroundTaskStatusInfo.Create;
     result.id := FId;
     result.UniqueID := tp.FUniqueID;
     result.name := name;
@@ -1593,7 +1593,7 @@ begin
           doExec(pck);
           FDone.add(pck.link);
         finally
-          pck.Free;
+          pck.free;
         end;
         SetThreadStatus('Sleeping');
       end;
@@ -1647,7 +1647,7 @@ constructor TBackgroundTaskManager.Create;
 begin
   inherited;
   FLock := TFslLock.create('BackgroundTaskManager');
-  FEngines := TFslList<TBackgroundTaskEngine>.create;
+  FEngines := TFslList<TBackgroundTaskEngine>.Create;
   FStart := now;
   registerTaskEngine(TNullTaskEngine.create); // the main reason for this is so that no real engine has a task id of 0
 end;
@@ -1656,8 +1656,8 @@ destructor TBackgroundTaskManager.Destroy;
 begin
   StopAll;
   sleep(200);
-  FEngines.Free;
-  FLock.Free;
+  FEngines.free;
+  FLock.free;
   inherited;
 end;
 
@@ -1798,7 +1798,7 @@ begin
           e.OnNotify(e.FId, pck.response);
         log('notified response for '+e.name);
       finally
-        pck.Free;
+        pck.free;
       end;
       exit; // only one outcome per iteration - don't tie up the pimary thread
     end;
@@ -1848,8 +1848,8 @@ begin
   //      end;
   //      log('finished getting UI Response for '+e.name);
   //    finally
-  //      uReq.Free;
-  //      uResp.Free;
+  //      uReq.free;
+  //      uResp.free;
   //    end;
   //    exit; // only one outcome per iteration - don't tie up the pimary thread
   //  end;

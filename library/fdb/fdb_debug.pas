@@ -56,7 +56,7 @@ type
 
 { TFDBBackdoor }
 
-constructor TFDBBackdoor.create;
+constructor TFDBBackdoor.Create;
 var
   i : integer;
 begin
@@ -68,7 +68,7 @@ begin
     end;
 end;
 
-destructor TFDBBackdoor.destroy;
+destructor TFDBBackdoor.Destroy;
 begin
   KDBManagers.UnRegisterHook('fdb_debug');
   inherited;
@@ -147,7 +147,7 @@ var
   GKDBBackdoor : TFDBBackdoor;
 
 initialization
-  GKDBBackdoor := TFDBBackdoor.create;
+  GKDBBackdoor := TFDBBackdoor.Create;
 finalization
   FreeAndNil(GKDBBackdoor);
 end.

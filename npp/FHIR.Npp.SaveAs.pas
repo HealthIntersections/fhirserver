@@ -131,7 +131,7 @@ begin
         resource := rRecv.link;
         ShowMessage('Posted to '+UrlPath([conn.client.address, rRecv.fhirType, id]));
       finally
-        rRecv.Free;
+        rRecv.free;
       end;
     end
     else
@@ -154,14 +154,14 @@ end;
 
 procedure TSaveOnServerDialog.FormCreate(Sender: TObject);
 begin
-  FServers := TFslList<TRegisteredFHIRServer>.create;
+  FServers := TFslList<TRegisteredFHIRServer>.Create;
 end;
 
 procedure TSaveOnServerDialog.FormDestroy(Sender: TObject);
 begin
   FResource.free;
-  FServers.Free;
-  FContext.Free;
+  FServers.free;
+  FContext.free;
 end;
 
 procedure TSaveOnServerDialog.FormShow(Sender: TObject);
@@ -196,13 +196,13 @@ end;
 
 procedure TSaveOnServerDialog.SetContext(const Value: TFHIRNppContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TSaveOnServerDialog.SetResource(const Value: TFHIRResourceV);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 

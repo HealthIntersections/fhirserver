@@ -167,7 +167,7 @@ type
     procedure updateProvenance(prv : TFhirProvenanceW; inTransaction : boolean; rtype, id, vid : String);
 
     function GetNewResourceId(aType : String; ForTesting : boolean; var id : string; var key : integer):Boolean;
-    function AddNewResourceId(aType, id : String; const lang : THTTPLanguages; forTesting : boolean; var resourceKey : integer) : Boolean;
+    function AddNewResourceId(aType, id : String; langList : THTTPLanguageList; forTesting : boolean; var resourceKey : integer) : Boolean;
     Procedure ProcessBlob(request: TFHIRRequest; response : TFHIRResponse; field : String; fmt : TFHIRFormat);
     function ScanId(request : TFHIRRequest; entry : TFHIRBundleEntryW; ids : TFHIRTransactionEntryList; index : integer) : TFHIRTransactionEntry;
     function commitResource(request: TFHIRRequest; response : TFHIRResponse; mode : TOperationMode; entry : TFHIRBundleEntryW; i : integer; id : TFHIRTransactionEntry; session : TFhirSession; resp : TFHIRBundleW) : boolean;
@@ -190,7 +190,7 @@ type
   protected
     function factory : TFHIRFactory;
     function resolveConditionalURL(request : TFHIRRequest; resp : TFHIRResponse; url : String) : String;
-    procedure FixXhtmlUrls(const lang : THTTPLanguages; base: String; ids: TFHIRTransactionEntryList; node: TFhirXHtmlNode);
+    procedure FixXhtmlUrls(langList : THTTPLanguageList; base: String; ids: TFHIRTransactionEntryList; node: TFhirXHtmlNode);
 
     procedure StartTransaction; override;
     procedure CommitTransaction; override;
@@ -220,7 +220,7 @@ type
     procedure checkProposedDeletion(session : TFHIRSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
     function DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW; override;
   public
-    constructor Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
+    constructor Create(langList : THTTPLanguageList; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
     destructor Destroy; Override;
     function Link : TFHIRNativeOperationEngine; overload;
 
@@ -254,7 +254,7 @@ type
     procedure CreateIndexer;
     property Indexer : TFHIRIndexManager read FIndexer;
     function loadResources(keys : TList<integer>) : TFslList<TFHIRResourceV>;
-    procedure processIncludes(request : TFHIRRequest; session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; base : String; const lang : THTTPLanguages; field : String; fmt : TFHIRFormat; patIds : TPatientIdTracker);
+    procedure processIncludes(request : TFHIRRequest; session : TFhirSession; secure : boolean; _includes, _reverseIncludes : String; bundle : TFHIRBundleBuilder; keys : TKeyList; base : String; langList : THTTPLanguageList; field : String; fmt : TFHIRFormat; patIds : TPatientIdTracker);
 
     // called when kernel actually wants to process against the store
 //    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; override;
@@ -349,7 +349,7 @@ type
     constructor Create(DB: TFDBManager; factory : TFHIRFactory); reintroduce;
     destructor Destroy; Override;
     Function Link: TFHIRNativeStorageService; virtual;
-    function engineFactory(const lang : THTTPLanguages; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
+    function engineFactory(langList : THTTPLanguageList; usage : String) : TFHIRNativeOperationEngine; virtual; abstract;
     procedure Initialise(); override;
     procedure UnLoad; override;
 //    procedure SaveResource(res: TFHIRResourceV; dateTime: TFslDateTime; origin : TFHIRRequestOrigin);
@@ -372,7 +372,7 @@ type
     procedure RegisterTag(tag: TFHIRTag; conn: TFDBConnection); overload;
     procedure RegisterTag(tag: TFHIRTag); overload;
     procedure checkProposedResource(session : TFhirSession; needsSecure, created : boolean; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList); virtual; abstract;
-    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFHIRResourceV; conn: TFDBConnection; reload: Boolean; session: TFhirSession; const lang : THTTPLanguages; src : TBytes); virtual; abstract;
+    procedure SeeResource(key, vkey, pvkey: integer; id: string; needsSecure, created : boolean; resource: TFHIRResourceV; conn: TFDBConnection; reload: Boolean; session: TFhirSession; langList : THTTPLanguageList; src : TBytes); virtual; abstract;
     procedure checkDropResource(session : TFhirSession; request : TFHIRRequest; resource : TFHIRResourceV; tags : TFHIRTagList);
     procedure DropResource(key, vkey, pvkey: integer; id, resource: string; indexer: TFhirIndexManager; conn: TFDBConnection);
     procedure Sweep; override;
@@ -384,7 +384,7 @@ type
     procedure StoreObservation(conn: TFDBConnection; key : integer);
     procedure UnStoreObservation(conn: TFDBConnection; key : integer);
 
-    function ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; override;
+    function ExpandVS(vs: TFHIRValueSetW; ref: string; langList : THTTPLanguageList; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; override;
     function LookupCode(system, version, code: String): String; override;
     procedure QueueResource(session : TFHIRSession; r: TFHIRResourceV); overload; override;
     procedure QueueResource(session : TFHIRSession; r: TFHIRResourceV; dateTime: TFslDateTime); overload; override;
@@ -470,9 +470,9 @@ end;
 
 { TFHIRNativeOperationEngine }
 
-constructor TFHIRNativeOperationEngine.Create(const lang : THTTPLanguages; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
+constructor TFHIRNativeOperationEngine.Create(langList : THTTPLanguageList; ServerContext : TFHIRServerContext; repository : TFHIRNativeStorageService; Connection : TFDBConnection);
 begin
-  inherited Create(repository, ServerContext, lang);
+  inherited Create(repository, ServerContext, langList);
   FConnection := Connection;
 
   registerOperations;
@@ -506,7 +506,7 @@ begin
           list.Add(TFHIRQueuedResource.Create(nil, op.Resource.link));
         end;
       finally
-        op.Free;
+        op.free;
       end;
     end;
     for i := 0 to list.Count - 1 do
@@ -519,12 +519,12 @@ begin
           list2.add(q.resource.link);
         Repository.ServerContext.TerminologyServer.declareCodeSystems(list2);
       finally
-        list2.Free;
+        list2.free;
       end;
     end;
     storeResources(list, roConfig, opmCmdLine); // not actually sure whrn this is called
   finally
-    list.Free;
+    list.free;
   end;
 
 end;
@@ -533,7 +533,7 @@ destructor TFHIRNativeOperationEngine.Destroy;
 begin
 /// Just checking: The Create method adds a bunch of Operations, and I'm not sure they are destroyed. To be checked.
 ///    Possibly also related with TFslObject and TFslList  - as noted in indexing.pas
-  FIndexer.Free;
+  FIndexer.free;
   inherited;
 end;
 
@@ -598,7 +598,7 @@ begin
       result.Url := AppendForwardSlash(base)+type_+'/'+sId;
       bundle.addEntry(result, first);
     finally
-      result.Free;
+      result.free;
     end;
   end
   else if not isSecure and (FConnection.ColIntegerByName['Secure'] = 1) then
@@ -607,13 +607,13 @@ begin
       exit;
     result := factory.wrapBundleEntry(factory.makeByName('Bundle.entry'));
     try
-      result.resource := Factory.BuildOperationOutcome(THTTPLanguages.create('en'), 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', itSuppressed);
+      result.resource := Factory.BuildOperationOutcome(nil, 'Some resources have been omitted from this bundle because they are labelled with a with a security tag that means this server will only send it if the connection is secure', itSuppressed);
       result.resource.Tags[OP_MASK_TAG] := 'secure';
       addRequest(result);
       bundle.addEntry(result, first);
       bundle.hasSecureOp := true;
     finally
-      result.Free;
+      result.free;
     end;
   end
   else
@@ -640,14 +640,14 @@ begin
         addRequest(result);
         bundle.addEntry(result, first);
       finally
-        result.Free;
+        result.free;
       end;
     end
     else
     begin
       mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
       try
-        parser := factory.makeParser(ServerContext.ValidatorContext.link, fmt, lang);
+        parser := factory.makeParser(ServerContext.ValidatorContext, fmt, langList);
         try
           parser.source := mem;
           parser.ParserPolicy := xppDrop;
@@ -672,13 +672,13 @@ begin
             addRequest(result);
             bundle.addEntry(result, first);
           finally
-            result.Free;
+            result.free;
           end;
         finally
           parser.free;
         end;
       finally
-        mem.Free;
+        mem.free;
       end;
     end;
   end;
@@ -693,16 +693,16 @@ begin
   b :=  TBytesStream.Create;
   try
     if (xml) then
-      comp := factory.makeComposer(ServerContext.ValidatorContext.Link, ffXml, THTTPLanguages.create('en'),  OutputStyleNormal)
+      comp := factory.makeComposer(ServerContext.ValidatorContext, ffXml, nil,  OutputStyleNormal)
     else
-      comp := factory.makeComposer(ServerContext.ValidatorContext.Link, ffJson, THTTPLanguages.create('en'),  OutputStyleNormal);
+      comp := factory.makeComposer(ServerContext.ValidatorContext, ffJson, nil,  OutputStyleNormal);
     try
       comp.SummaryOption := summary;
       comp.NoHeader := true;
 
       comp.Compose(b, r);
     finally
-      comp.Free;
+      comp.free;
     end;
     result := copy(b.Bytes, 0, b.size);
   finally
@@ -728,13 +728,13 @@ begin
   CheckCreateNarrative(request);
   try
     ok := true;
-    if not check(response, (context.mode in OP_CODES_NO_SEC_ON_INSERT) or request.canWrite(request.ResourceName), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if not check(response, (context.mode in OP_CODES_NO_SEC_ON_INSERT) or request.canWrite(request.ResourceName), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
-    if ok and not check(response, opAllowed(request.ResourceName, fcmdCreate), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if ok and not check(response, opAllowed(request.ResourceName, fcmdCreate), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
 
-    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), itRequired)
-         or not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), itInvalid)) then
+    if ok and (not check(response, request.Resource <> nil, 400, langList, GetFhirMessage('MSG_RESOURCE_REQUIRED', langList), itRequired)
+         or not check(response, request.ResourceName = request.resource.fhirType, 400, langList, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', langList), itInvalid)) then
       ok := false;
 
     ok := ok and checkOkToStore(request, response, needSecure);
@@ -761,11 +761,11 @@ begin
           response.Location := request.baseUrl+request.ResourceName+'/'+Connection.Lookup('Ids', 'ResourceKey', inttostr(list[0].key), 'Id', '')+'/_history/'+Connection.Lookup('Versions', 'ResourceVersionKey', inttostr(list[0].version), 'VersionId', '');
         end
         else if list.Count > 1 then
-          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), itNotFound)
+          check(response, false, 412, langList, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', langList), itNotFound)
         else
           ok := true;
       finally
-        list.Free;
+        list.free;
       end;
     end;
 
@@ -786,14 +786,14 @@ begin
           else if (idState = idCheckNew) then
           begin
             sId := request.Id;
-            if not check(response, sId <> '', 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), itInvalid) or
-              not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), itInvalid) then
+            if not check(response, sId <> '', 404, langList, GetFhirMessage('MSG_INVALID_ID', langList), itInvalid) or
+              not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, langList, tags.hasTestingTag, resourceKey), 404, langList, GetFhirMessage('MSG_INVALID_ID', langList), itInvalid) then
                 ok := false;
           end
           else if (idState = idMaybeNew) and (request.Id <> '') then
           begin
             sId := request.Id;
-            if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, lang, tags.hasTestingTag, resourceKey), 404, lang, GetFhirMessage('MSG_INVALID_ID', lang), itInvalid) then
+            if not check(response, (Length(sId) <= ID_LENGTH) and AddNewResourceId(request.resourceName, sId, langList, tags.hasTestingTag, resourceKey), 404, langList, GetFhirMessage('MSG_INVALID_ID', langList), itInvalid) then
               ok := false;
           end
           else if (idState = idIsNew) then
@@ -801,14 +801,14 @@ begin
             sid := request.id;
             resourceKey := iAssignedKey;
           end
-          else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, lang, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', lang), [sId, request.ResourceName]), itDuplicate) then
+          else if not check(response, GetNewResourceId(request.ResourceName, tags.hasTestingTag, sId, resourceKey), 404, langList, StringFormat(GetFhirMessage('MSG_DUPLICATE_ID', langList), [sId, request.ResourceName]), itDuplicate) then
              ok := false
 
           else
             request.resource.id := sId;
 
           if ok then
-            if not check(response, request.Resource.id = sId, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.Resource.id+'/'+sId+' (1)', itInvalid) then
+            if not check(response, request.Resource.id = sId, 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', langList)+' '+request.Resource.id+'/'+sId+' (1)', itInvalid) then
               ok := false;
 
           updateProvenance(request.Provenance, context.inTransaction, request.ResourceName, sid, '1');
@@ -864,7 +864,7 @@ begin
             finally
               comps.free
             end;
-            Repository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.Lang, src);
+            Repository.SeeResource(resourceKey, key, 0, sId, needSecure, true, request.Resource, FConnection, false, request.Session, request.langList, src);
             if request.resourceName = 'Patient' then
               FConnection.execSQL('update Compartments set CompartmentKey = '+inttostr(resourceKey)+' where Id = '''+sid+''' and CompartmentKey is null');
             response.HTTPCode := 201;
@@ -915,7 +915,7 @@ begin
   nvid := 0;
   try
     ok := true;
-    if not check(response, request.canWrite(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if not check(response, request.canWrite(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
 
     if (request.DefaultSearch) then
@@ -926,18 +926,18 @@ begin
         if list.count = 0 then
           NoMatch(request, response)
         else if list.Count > 1 then
-          check(response, false, 412, lang, GetFhirMessage('DELETE_MULTIPLE_MATCHES', lang), itNotFound)
+          check(response, false, 412, langList, GetFhirMessage('DELETE_MULTIPLE_MATCHES', langList), itNotFound)
         else
         begin
           request.Id := list[0].name;
           ok := true;
         end;
       finally
-        list.Free;
+        list.free;
       end;
     end;
 
-    if ok and not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), itInvalid) then
+    if ok and not check(response, length(request.id) <= ID_LENGTH, 400, langList, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', langList), [request.id]), itInvalid) then
       ok := false;
 
     if ok and (not FindResource(request.ResourceName, request.Id, [froFindDeletedResource, froForCommit], resourceKey, versionKey, request, response, nil)) then
@@ -949,10 +949,10 @@ begin
       ok := false;
     end;
 
-    if ok and FTestServer and not check(response, request.id <> 'example', 400, lang, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', lang), itForbidden) then
+    if ok and FTestServer and not check(response, request.id <> 'example', 400, langList, GetFhirMessage('MSG_RESOURCE_EXAMPLE_PROTECTED', langList), itForbidden) then
       ok := false;
 
-    if ok and ((request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (2)', itInvalid)) Then
+    if ok and ((request.Resource <> nil) and not check(response, request.id = request.Resource.id, 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', langList)+' '+request.id+'/'+request.resource.id+' (2)', itInvalid)) Then
       ok := false;
 
     if ok then
@@ -1010,19 +1010,19 @@ begin
         CreateIndexer;
         Repository.DropResource(ResourceKey, key, versionKey, request.Id, request.ResourceName, FIndexer, FConnection);
         response.HTTPCode := 204;
-        response.Message := GetFhirMessage('MSG_DELETED_DONE', lang);
+        response.Message := GetFhirMessage('MSG_DELETED_DONE', langList);
         if request.resource <> nil then
         begin
           response.HTTPCode := 200;
-          response.Message := GetFhirMessage('MSG_DELETED_DONE', lang);
+          response.Message := GetFhirMessage('MSG_DELETED_DONE', langList);
           response.Resource := TFHIRServerContext(FServerContext).Factory.makeByName(request.Resource.fhirType) as TFHIRResourceV;
           response.Resource.id := request.id;
           response.Resource.setProperty('meta', meta.element.link);
         end;
       finally
         tags.free;
-        meta.Free;
-        rp.Free;
+        meta.free;
+        rp.free;
       end;
     end;
     AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, inttostr(nvid), key, request.CommandType, request.Provenance, response.httpCode, '', response.message, patientIds(request, request.Resource));
@@ -1062,7 +1062,7 @@ begin
       else if request.Parameters.has('query') then
         gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
       else
-        raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.lang));
+        raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.langList));
       gql.focus := nil;
       gql.execute;
       response.Resource := nil;
@@ -1074,24 +1074,24 @@ begin
         str.Append('}'+#13#10);
         response.Body := str.ToString;
       finally
-        str.Free;
+        str.free;
       end;
       response.ContentType := 'application/json';
     finally
-      gql.Free;
+      gql.free;
     end;
   except
     on e : EJsonException do
     begin
       response.HTTPCode := 400;
-      response.Message := GetFhirMessage('GRAPHQL_ERROR', request.Lang);
-      response.Resource := Factory.BuildOperationOutcome(request.Lang, e, itInvalid);
+      response.Message := GetFhirMessage('GRAPHQL_ERROR', request.langList);
+      response.Resource := Factory.BuildOperationOutcome(request.langList, e, itInvalid);
     end;
     on e : Exception do
     begin
       response.HTTPCode := 500;
-      response.Message := GetFhirMessage('GRAPHQL_ERROR', request.Lang);
-      response.Resource := Factory.BuildOperationOutcome(request.Lang, e, itException);
+      response.Message := GetFhirMessage('GRAPHQL_ERROR', request.langList);
+      response.Resource := Factory.BuildOperationOutcome(request.langList, e, itException);
     end;
   end;
 end;
@@ -1116,7 +1116,7 @@ begin
         else if request.Parameters.has('query') then
           gql.GraphQL := TGraphQLParser.parse(request.Parameters.Value['query'])
         else
-          raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.Lang));
+          raise EJsonException.Create(GetFhirMessage('GRAPHQL_NOT_FOUND', request.langList));
         gql.focus := response.Resource.Link;
         gql.execute;
         response.Resource := nil;
@@ -1128,11 +1128,11 @@ begin
           str.Append('}'+#13#10);
           response.Body := str.ToString;
         finally
-          str.Free;
+          str.free;
         end;
         response.ContentType := 'application/json';
       finally
-        gql.Free;
+        gql.free;
       end;
     end;
   except
@@ -1140,13 +1140,13 @@ begin
     begin
       response.HTTPCode := 400;
       response.Message := 'Error in GraphQL';
-      response.Resource := Factory.BuildOperationOutcome(request.Lang, e, itInvalid);
+      response.Resource := Factory.BuildOperationOutcome(request.langList, e, itInvalid);
     end;
     on e : Exception do
     begin
       response.HTTPCode := 500;
       response.Message := 'Error processing GraphQL';
-      response.Resource := Factory.BuildOperationOutcome(request.Lang, e, itException);
+      response.Resource := Factory.BuildOperationOutcome(request.langList, e, itException);
     end;
   end;
 end;
@@ -1174,7 +1174,7 @@ begin
     fcmdHistoryInstance :
       begin
         TypeNotFound(request, response);
-        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
           result := false
         else if (length(request.id) > ID_LENGTH) or not FindResource(request.ResourceName, request.Id, [froFindDeletedResource], resourceKey, versionKey, request, response, nil) then
           result := false
@@ -1182,20 +1182,20 @@ begin
           FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
            'from Versions, Ids, Sessions '+
            'where Versions.ResourceKey = '+inttostr(resourceKey)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
-        title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [request.ResourceName+' '+GetFhirMessage('NAME_RESOURCE', lang)+' '+request.Id]);
+        title := StringFormat(GetFhirMessage('MSG_HISTORY', langList), [request.ResourceName+' '+GetFhirMessage('NAME_RESOURCE', langList)+' '+request.Id]);
         base := request.baseUrl+''+request.ResourceName+'/'+request.id+'/_history?';
       end;
     fcmdHistoryType :
       begin
         TypeNotFound(request, response);
-        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+        if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
           result := false
         else
         begin
           FConnection.SQL := 'Insert into SearchEntries Select '+searchkey+', Ids.ResourceKey, Versions.ResourceVersionKey, RIGHT (''0000000000000''+CAST(Versions.ResourceVersionKey AS VARCHAR(14)),14) as sort, null, null ' +
           'from Versions, Ids, Sessions '+
           'where Ids.ResourceTypeKey = '+inttostr(ServerContext.ResConfig[request.ResourceName].key)+' '+cmp+' and Versions.ResourceKey = Ids.ResourceKey and Versions.SessionKey = Sessions.SessionKey';
-          title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [request.ResourceName]);
+          title := StringFormat(GetFhirMessage('MSG_HISTORY', langList), [request.ResourceName]);
           base := request.baseUrl+''+request.ResourceName+'/_history?';
         end;
       end;
@@ -1216,7 +1216,7 @@ begin
             'where Versions.ResourceKey = Ids.ResourceKey '+cmp+' and Versions.SessionKey = Sessions.SessionKey and Ids.ResourceTypeKey in ('+lt.Substring(1)+')';
         end;
 
-        title := StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)]);
+        title := StringFormat(GetFhirMessage('MSG_HISTORY', langList), [GetFhirMessage('NAME_SYSTEM', langList)]);
         base := request.baseUrl+'_history?';
       end;
   else
@@ -1278,12 +1278,12 @@ begin
   end;
 end;
 
-function extractProfileId(const lang : THTTPLanguages; base, s : String) : String;
+function extractProfileId(langList : THTTPLanguageList; base, s : String) : String;
 begin
   if s.StartsWith(base+'StructureDefinition/') and s.EndsWith('/$questionnaire') then
     result := s.Substring(0, s.Length-15).Substring(base.Length+8)
   else
-    raise EFHIRException.CreateLang('MSG_INVALID_ID', lang);
+    raise EFHIRException.CreateLang('MSG_INVALID_ID', langList);
 end;
 
 
@@ -1314,7 +1314,7 @@ begin
       if request.parameters.value[HISTORY_PARAM_NAME_ID] <> '' then
       begin
         ok := FindSavedSearch(request.parameters.value[HISTORY_PARAM_NAME_ID], request.Session, 2, id, link, sql, title, base, total, dummy, request.strictSearch, sortStatus1, sortStatus2, sortStatus3);
-        if check(response, ok, 400, lang, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', lang), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), itProcessing) then
+        if check(response, ok, 400, langList, StringFormat(GetFhirMessage('MSG_HISTORY_EXPIRED', langList), [request.parameters.value[HISTORY_PARAM_NAME_ID]]), itProcessing) then
           link := HISTORY_PARAM_NAME_ID+'='+request.parameters.value[HISTORY_PARAM_NAME_ID]
       end
       else
@@ -1389,7 +1389,7 @@ begin
             response.Body := '';
             response.resource := bundle.getBundle;
         finally
-          bundle.Free;
+          bundle.free;
         end;
       end;
       AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, '', 0, request.CommandType, request.Provenance, response.httpCode, '', response.message, patIds.ids);
@@ -1417,7 +1417,7 @@ begin
   result := false;
   try
     NotFound(request, response);
-    if request.canRead(request.ResourceName) and check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if request.canRead(request.ResourceName) and check(response, opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (length(request.id) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, [], resourceKey, versionKey, request, response, nil) then
       begin
@@ -1429,7 +1429,7 @@ begin
           if FConnection.FetchNext then
           Begin
             if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
-              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', itSuppressed)
+              check(response, false, 403, langList, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', itSuppressed)
             else if not ignoreHeaders and (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
@@ -1511,11 +1511,11 @@ begin
 
   s := NextSegment(url);
   if (s = '') then
-    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system search
+    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.langList) // system search
   else if (s.StartsWith('$')) then
-    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system level operation
+    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.langList) // system level operation
   else if (s.StartsWith('_')) then
-    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // system history
+    raise EFHIRException.CreateLang('NOT_DONE_YET', Request.langList) // system history
   else if not StringArrayExistsSensitive(factory.ResourceNames, s) then
     raise EFHIRException.create('Unknown path type "'+entry.url+'"')
   else
@@ -1525,11 +1525,11 @@ begin
     if (s = '') then
       ExecuteSearch(request, response)
     else if (s.StartsWith('$')) then
-      raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // resource type level operation
+      raise EFHIRException.CreateLang('NOT_DONE_YET', Request.langList) // resource type level operation
     else if (s.StartsWith('_')) then
-      raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // resource type history
+      raise EFHIRException.CreateLang('NOT_DONE_YET', Request.langList) // resource type history
     else if not IsId(s) then
-      raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
+      raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.langList, [entry.url])
     else
     begin
       request.Id := s;
@@ -1537,14 +1537,14 @@ begin
       if (s = '') then
         ExecuteRead(request, response, false)
       else if (s.StartsWith('$')) then
-        raise EFHIRException.CreateLang('NOT_DONE_YET', Request.lang) // resource instance level operation
+        raise EFHIRException.CreateLang('NOT_DONE_YET', Request.langList) // resource instance level operation
       else if (s = '_history') then
       begin
         s := NextSegment(url);
         if (s = '') then
           ExecuteHistory(request, response)
         else if not IsId(s) then
-          raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
+          raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.langList, [entry.url])
         else
         begin
           request.SubId := s;
@@ -1552,11 +1552,11 @@ begin
           if (s = '') then
             ExecuteVersionRead(request, response)
           else
-            raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
+            raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.langList, [entry.url])
         end;
       end
       else
-        raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.Lang, [entry.url])
+        raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.langList, [entry.url])
     end;
   end;
 end;
@@ -1610,7 +1610,7 @@ begin
     if (params['_query'] = 'mpi') and (aType = 'Patient') then
       ProcessMPISearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, link, sql, total, summaryStatus, strict, sortStatus1, sortStatus2, sortStatus3)
     else
-      raise EFHIRException.createLang('UNKNOWN_QUERY', lang, [params['_query']]);
+      raise EFHIRException.createLang('UNKNOWN_QUERY', langList, [params['_query']]);
   end
   else
     ProcessDefaultSearch(typekey, session, aType, params, baseURL, requestCompartment, sessionCompartments, id, result, op, link, sql, total, summaryStatus, strict, sortStatus1, sortStatus2, sortStatus3);
@@ -1638,7 +1638,7 @@ begin
     sp.compartment := requestCompartment.Link;
     sp.SessionCompartments := sessionCompartments.link;
     sp.baseURL := baseURL;
-    sp.lang := lang;
+    sp.langList := langList.link;
     sp.params := params;
     CreateIndexer;
     sp.indexes := ServerContext.Indexes.Link;
@@ -1701,7 +1701,7 @@ begin
     mpi.compartment := requestCompartment.Link;
     mpi.sessionCompartments := sessionCompartments.link;
     mpi.baseURL := baseURL;
-    mpi.lang := lang;
+    mpi.langList := langList.link;
     mpi.params := params;
     CreateIndexer;
     mpi.indexes := ServerContext.Indexes.Link;
@@ -1757,29 +1757,29 @@ begin
         response.resource := nil;
         response.Body := str.ToString;
       finally
-        str.Free;
+        str.free;
       end;
       response.ContentType := 'application/json';
     finally
-      gql.Free;
+      gql.free;
     end;
   except
     on e : EJsonException do
     begin
       response.HTTPCode := 400;
       response.Message := 'Error in GraphQL';
-      response.Resource := Factory.BuildOperationOutcome(request.Lang, e, itInvalid);
+      response.Resource := Factory.BuildOperationOutcome(request.langList, e, itInvalid);
     end;
     on e : Exception do
     begin
       response.HTTPCode := 500;
       response.Message := 'Error processing GraphQL';
-      response.Resource := Factory.BuildOperationOutcome(request.Lang, e, itException);
+      response.Resource := Factory.BuildOperationOutcome(request.langList, e, itException);
     end;
   end;
 end;
 
-procedure TFHIRNativeOperationEngine.processIncludes(request : TFHIRRequest; session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; base : String; const lang : THTTPLanguages; field: String; fmt : TFHIRFormat; patIds : TPatientIdTracker);
+procedure TFHIRNativeOperationEngine.processIncludes(request : TFHIRRequest; session: TFhirSession; secure : boolean; _includes, _reverseIncludes: String; bundle: TFHIRBundleBuilder; keys : TKeyList; base : String; langList : THTTPLanguageList; field: String; fmt : TFHIRFormat; patIds : TPatientIdTracker);
 var
   s, sql : String;
   sl, p : TArray<String>;
@@ -1803,7 +1803,7 @@ begin
       begin
         key2 := ServerContext.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
-          raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', lang, [p[1]]);
+          raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', langList, [p[1]]);
         if (length(p) = 3) then
         begin
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[2])+') and Ids.ResourceKey = IndexEntries.Target and Ids.ResoureTypeKey = '+inttostr(ServerContext.ResConfig[p[2]].key)+')');
@@ -1812,7 +1812,7 @@ begin
           sel.Add('Ids.ResourceKey in (select Target from IndexEntries where IndexKey = '+inttostr(key2)+' and ResourceKey in ('+keys.forType(p[0])+'))');
       end
       else
-        raise EFHIRException.createLang('MSG_BAD_SYNTAX', lang, [s]);
+        raise EFHIRException.createLang('MSG_BAD_SYNTAX', langList, [s]);
     end;
 
     if _reverseIncludes.contains(',') then
@@ -1826,11 +1826,11 @@ begin
       begin
         key2 := ServerContext.Indexes.GetKeyByName(p[1]);
         if (key2 = 0) then
-          raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', lang, [p[0]]);
+          raise EFHIRException.createLang('MSG_PARAM_UNKNOWN', langList, [p[0]]);
         sel.Add('Ids.ResourceKey in (select IndexEntries.ResourceKey from IndexEntries, Ids where IndexKey = '+inttostr(key2)+' and Target in ('+keys.forAll+') and Ids.ResourceKey = IndexEntries.ResourceKey and Ids.ResourceTypeKey = '+inttostr(ServerContext.ResConfig[p[0]].key)+')');
       end
       else
-        raise EFHIRException.createLang('MSG_BAD_SYNTAX', lang, [s]);
+        raise EFHIRException.createLang('MSG_BAD_SYNTAX', langList, [s]);
     end;
     if (sel.count > 0) then
     begin
@@ -1851,7 +1851,7 @@ begin
       end;
     end;
   finally
-    sel.Free;
+    sel.free;
   end;
 end;
 
@@ -1882,7 +1882,7 @@ begin
        conformance
        quantity searches
       }
-      if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+      if not check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
         // ok := false
       else if (request.Parameters.Count = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
         BuildSearchForm(request, response)
@@ -1892,7 +1892,7 @@ begin
         if request.resourceName <> '' then
         begin
           key := FConnection.CountSQL('select ResourceTypeKey from Types where supported = 1 and ResourceName = '''+request.ResourceName+'''');
-          if not check(response, key > 0, 404, lang, 'Resource Type '+request.ResourceName+' not known', itNotSupported) then
+          if not check(response, key > 0, 404, langList, 'Resource Type '+request.ResourceName+' not known', itNotSupported) then
               ok := false;
         end
         else
@@ -2001,7 +2001,7 @@ begin
                 end;
               end;
 
-              processIncludes(request, request.session, request.secure, request.Parameters['_include'], request.Parameters['_revinclude'], bundle, keys, request.baseUrl, request.lang, field, prsrFmt, patIds);
+              processIncludes(request, request.session, request.secure, request.Parameters['_include'], request.Parameters['_revinclude'], bundle, keys, request.baseUrl, request.langList, field, prsrFmt, patIds);
             end;
 
             bundle.setId(FhirGUIDToString(CreateGUID));
@@ -2013,7 +2013,7 @@ begin
                 be.searchMode := smOutcome;
                 bundle.addEntry(be.Link, false);
               finally
-                be.Free;
+                be.free;
               end;
             end;
 
@@ -2024,9 +2024,9 @@ begin
             response.Resource := nil;
             response.resource := bundle.getBundle;
           finally
-            keys.Free;
-            bundle.Free;
-            op.Free;
+            keys.free;
+            bundle.free;
+            op.free;
           end;
         end;
       end;
@@ -2040,7 +2040,7 @@ begin
       end;
     end;
   finally
-    patids.Free;
+    patids.free;
   end;
 end;
 
@@ -2065,13 +2065,13 @@ begin
   key := 0;
   try
     ok := true;
-    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
 
-    if ok and (not check(response, request.Resource <> nil, 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), itRequired) or
-       not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), itInvalid) or
-       not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+'('+request.id +' / '+request.resource.id+')', itInvalid) or
-       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), itInvalid)) then
+    if ok and (not check(response, request.Resource <> nil, 400, langList, GetFhirMessage('MSG_RESOURCE_REQUIRED', langList), itRequired) or
+       not check(response, request.ResourceName = request.resource.fhirType, 400, langList, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', langList), itInvalid) or
+       not check(response, request.id = request.resource.id, 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', langList)+'('+request.id +' / '+request.resource.id+')', itInvalid) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, langList, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', langList), [request.id]), itInvalid)) then
       ok := false;
 
     ok := ok and checkOkToStore(request, response, needSecure);
@@ -2096,7 +2096,7 @@ begin
         if (list.Count > 1) then
         begin
           ok := false;
-          check(response, false, 412, lang, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang), itNotFound);
+          check(response, false, 412, langList, GetFhirMessage('UPDATE_MULTIPLE_MATCHES', langList), itNotFound);
         end
         else
         begin
@@ -2104,13 +2104,13 @@ begin
           request.Resource.id := list[0].name;
         end;
       finally
-        list.Free;
+        list.free;
       end;
     end;
 
-    if ok and not check(response, request.Resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', itRequired) Then
+    if ok and not check(response, request.Resource.id <> '', 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISSING', langList)+' '+request.id+'/'+request.resource.id+' (3)', itRequired) Then
       ok := false;
-    if ok and not check(response, request.id = request.Resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', itInvalid) Then
+    if ok and not check(response, request.id = request.Resource.id, 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', langList)+' '+request.id+'/'+request.resource.id+' (3)', itInvalid) Then
       ok := false;
 
 
@@ -2124,7 +2124,7 @@ begin
     end;
 
 
-    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), itBusinessRule) then
+    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, langList, GetFhirMessage('MSG_VERSION_AWARE', langList), itBusinessRule) then
       ok := false;
 
 
@@ -2137,7 +2137,7 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 409, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), itConflict) then
+        if not check(response, s = inttostr(nvid-1), 409, langList, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', langList), [inttostr(nvid-1), s]), itConflict) then
           ok := false;
       end;
     end;
@@ -2203,7 +2203,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags, request).free;
-          Repository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.Lang, src);
+          Repository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.Resource, FConnection, false, request.Session, request.langList, src);
           if ((request.ResourceName = 'AuditEvent') and request.Resource.hasTag('verkey')) then
             FConnection.ExecSQL('update Versions set AuditKey = '+inttostr(resourceKey)+' where ResourceVersionKey = '+request.Resource.Tags['verkey']);
 
@@ -2213,7 +2213,7 @@ begin
             try
               b.addEntry('', request.Resource.link);
             finally
-              b.Free;
+              b.free;
             end;
           end
           else
@@ -2228,7 +2228,7 @@ begin
         end;
       finally
         tags.free;
-        meta.Free;
+        meta.free;
       end;
     end;
     if request.ResourceName <> 'AuditEvent' then // else you never stop
@@ -2274,23 +2274,23 @@ begin
   key := 0;
   try
     ok := true;
-    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if ok and not check(response, request.canWrite(request.ResourceName) or opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
 
-    if ok and (not check(response, (request.Resource <> nil) or (request.patchJson <> nil) or (request.patchXml <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), itRequired) or
-       not check(response, length(request.id) <= ID_LENGTH, 400, lang, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', lang), [request.id]), itInvalid)) then
+    if ok and (not check(response, (request.Resource <> nil) or (request.patchJson <> nil) or (request.patchXml <> nil), 400, langList, GetFhirMessage('MSG_RESOURCE_REQUIRED', langList), itRequired) or
+       not check(response, length(request.id) <= ID_LENGTH, 400, langList, StringFormat(GetFhirMessage('MSG_ID_TOO_LONG', langList), [request.id]), itInvalid)) then
       ok := false;
 
     if ok and request.DefaultSearch then // conditional update
     begin
       list := ResolveSearchId(request.ResourceName, request.compartment, request.SessionCompartments, request.baseUrl, request.Parameters.Source);
       try
-        if check(response, list.count = 1, 412, lang, GetFhirMessage('UPDATE_NOT_ONE_MATCH', lang), itNotFound) then
+        if check(response, list.count = 1, 412, langList, GetFhirMessage('UPDATE_NOT_ONE_MATCH', langList), itNotFound) then
           request.Id := list[0].name
         else
           ok := false;
       finally
-        list.Free;
+        list.free;
       end;
     end;
 
@@ -2298,7 +2298,7 @@ begin
       if not FindResource(request.ResourceName, request.Id, [froFindDeletedResource, froForCommit], resourceKey, versionKey, request, response, nil) Then
         ok := false;
 
-    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, lang, GetFhirMessage('MSG_VERSION_AWARE', lang), itBusinessRule) then
+    if ok and not check(response, not ServerContext.ResConfig[request.ResourceName].versionUpdates or (request.ifMatch <> ''), 412, langList, GetFhirMessage('MSG_VERSION_AWARE', langList), itBusinessRule) then
       ok := false;
 
 
@@ -2311,7 +2311,7 @@ begin
       begin
         s := request.IfMatch;
 
-        if not check(response, s = inttostr(nvid-1), 412, lang, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), [inttostr(nvid-1), s]), itConflict) then
+        if not check(response, s = inttostr(nvid-1), 412, langList, StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', langList), [inttostr(nvid-1), s]), itConflict) then
           ok := false;
       end;
     end;
@@ -2326,7 +2326,7 @@ begin
       FConnection.Prepare;
       try
         FConnection.Execute;
-        if not check(response, FConnection.FetchNext, 500, lang, 'Resource Not Found internally', itNotFound) then
+        if not check(response, FConnection.FetchNext, 500, langList, 'Resource Not Found internally', itNotFound) then
           ok := false
         else if (request.patchJson <> nil) then
           json := TJSONParser.Parse(FConnection.ColBlobByName['JsonContent'])
@@ -2334,11 +2334,11 @@ begin
           xml := TMXmlParser.Parse(FConnection.ColBlobByName['XmlContent'], [xpResolveNamespaces])
         else
         begin
-          parser := factory.makeParser(request.Context.link, ffXml, THTTPLanguages.create('en'));
+          parser := factory.makeParser(request.Context, ffXml, nil);
           try
             res := parser.parseResource(FConnection.ColBlobByName['XmlContent']);
           finally
-            parser.Free;
+            parser.free;
           end;
         end;
       finally
@@ -2353,7 +2353,7 @@ begin
         begin
           json2 := TJsonPatchEngine.applyPatch(json, request.patchJson);
           try
-            parser := factory.makeParser(request.Context.link, ffJson, request.lang);
+            parser := factory.makeParser(request.Context, ffJson, request.langList);
             try
               TFHIRJsonParserBase(parser).parse(json2);
               request.Resource := parser.resource.Link as TFHIRResourceV;
@@ -2367,10 +2367,10 @@ begin
                 ms.free;
               end;
             finally
-              parser.Free;
+              parser.free;
             end;
           finally
-            json2.Free;
+            json2.free;
           end;
         end
         else if (request.patchXml <> nil) then
@@ -2378,13 +2378,13 @@ begin
           TXmlPatchEngine.execute(xml, xml, request.patchXml);
           request.Source.AsText := xml.ToXml;
           request.PostFormat := ffXml;
-          parser := factory.makeParser(request.Context.link, ffXml, request.lang);
+          parser := factory.makeParser(request.Context, ffXml, request.langList);
           try
             TFHIRXmlParserBase(parser).element := xml.document.Link;
             parser.parse();
             request.Resource := parser.resource.Link as TFHIRResourceV;
           finally
-            parser.Free;
+            parser.free;
           end;
         end
         else // request.resource <> nil
@@ -2394,24 +2394,24 @@ begin
             diff := TDifferenceEngine.Create(request.Context.link, factory.link);
             try
               request.Resource := diff.applyDifference(res, params) as TFHIRResourceV;
-              comp := factory.makeComposer(request.Context.link, ffXml, THTTPLanguages.create('en'), OutputStyleNormal);
+              comp := factory.makeComposer(request.Context.link, ffXml, nil, OutputStyleNormal);
               try
                 request.Source.AsBytes := comp.ComposeBytes(request.Resource);
               finally
-                comp.Free;
+                comp.free;
               end;
               request.PostFormat := ffXml;
             finally
-              diff.Free;
+              diff.free;
             end;
           finally
-            params.Free;
+            params.free;
           end;
         end;
       finally
-        json.Free;
-        xml.Free;
-        res.Free;
+        json.free;
+        xml.free;
+        res.free;
       end;
 
       // ok, now we have a resource.....
@@ -2425,11 +2425,11 @@ begin
         response.Resource := nil;
       end;
 
-      if ok and not check(response, request.resource.id <> '', 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISSING', lang)+' '+request.id+'/'+request.resource.id+' (3)', itRequired) Then
+      if ok and not check(response, request.resource.id <> '', 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISSING', langList)+' '+request.id+'/'+request.resource.id+' (3)', itRequired) Then
         ok := false;
-      if ok and not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), itInvalid) then
+      if ok and not check(response, request.ResourceName = request.resource.fhirType, 400, langList, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', langList), itInvalid) then
         ok := false;
-      if ok and not check(response, request.id = request.resource.id, 400, lang, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', lang)+' '+request.id+'/'+request.resource.id+' (3)', itInvalid) Then
+      if ok and not check(response, request.id = request.resource.id, 400, langList, GetFhirMessage('MSG_RESOURCE_ID_MISMATCH', langList)+' '+request.id+'/'+request.resource.id+' (3)', itInvalid) Then
         ok := false;
 
       if ok then
@@ -2486,7 +2486,7 @@ begin
           CommitTags(tags, key);
           CreateIndexer;
           FIndexer.execute(resourceKey, request.id, request.resource, tags, request).free;
-          Repository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.Lang, src);
+          Repository.SeeResource(resourceKey, key, versionKey, request.id, needSecure, false, request.resource, FConnection, false, request.Session, request.langList, src);
 
           if (response.Resource <> nil) and (response.Resource.fhirType = 'Bundle') then
           begin
@@ -2494,7 +2494,7 @@ begin
             try
               b.addEntry('', request.Resource.link);
             finally
-              b.Free;
+              b.free;
             end;
           end
           else
@@ -2509,7 +2509,7 @@ begin
             SaveProvenance(request.Session, request.Provenance);
         finally
           tags.free;
-          meta.Free;
+          meta.free;
         end;
       end;
     end;
@@ -2546,10 +2546,10 @@ begin
           if b.contentType = '' then
             op.addIssue(factory.makeIssue(isError, itInvalid, 'Binary', 'A contentType is required'), true);
         finally
-          b.Free;
+          b.free;
         end;
       finally
-        op.Free;
+        op.free;
       end;
     end
     else if (request.Source <> nil) and (request.postFOrmat <> ffText) then
@@ -2562,7 +2562,7 @@ begin
         ServerContext.Validator.validate(ctxt, request.Source, request.PostFormat);
         response.outcome := ServerContext.Validator.describe(ctxt);
       finally
-        ctxt.Free;
+        ctxt.free;
       end;
     end
     else
@@ -2575,7 +2575,7 @@ begin
         ServerContext.Validator.validate(ctxt, request.Resource);
         response.outcome := ServerContext.Validator.describe(ctxt);
       finally
-        ctxt.Free;
+        ctxt.free;
       end;
     end;
 
@@ -2613,7 +2613,7 @@ var
 begin
   try
     NotFound(request, response);
-    if check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if check(response, request.canRead(request.ResourceName) and opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
     begin
       if (length(request.id) <= ID_LENGTH) and (length(request.subid) <= ID_LENGTH) and FindResource(request.ResourceName, request.Id, [froFindDeletedResource], resourceKey, versionKey, request, response, nil) then
       begin
@@ -2628,7 +2628,7 @@ begin
           if FConnection.FetchNext then
           Begin
             if (FConnection.ColIntegerByName['Secure'] = 1) and not request.secure then
-              check(response, false, 403, lang, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', itSuppressed)
+              check(response, false, 403, langList, 'This resource is labelled with a security tag that means this server will only send it if the connection is secure', itSuppressed)
             else if (request.IfNoneMatch <> '') and (request.IfNoneMatch = FConnection.GetColStringByName('VersionId')) then
             begin
               response.HTTPCode := 304;
@@ -2702,7 +2702,7 @@ begin
     else
     begin
       if response <> nil then
-        check(response, false, 410, lang, StringFormat(GetFhirMessage('MSG_DELETED_ID', lang), [sId]), itNotFound);
+        check(response, false, 410, langList, StringFormat(GetFhirMessage('MSG_DELETED_ID', langList), [sId]), itNotFound);
       result := false;
     end;
   end
@@ -2719,17 +2719,17 @@ begin
       conn.execute;
       if conn.FetchNext then
       begin
-        check(response, false, 403, lang, StringFormat(GetFhirMessage('MSG_NO_ACCESS', lang), [aType+'/'+sid]), itSecurity);
+        check(response, false, 403, langList, StringFormat(GetFhirMessage('MSG_NO_ACCESS', langList), [aType+'/'+sid]), itSecurity);
         abort;
       end;
     end;
     if response <> nil then
-      check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [aType+'/'+sid]), itNotFound);
+      check(response, false, 404 , langList, StringFormat(GetFhirMessage('MSG_NO_EXIST', langList), [aType+'/'+sid]), itNotFound);
   end;
   conn.terminate;
 end;
 
-function TFHIRNativeOperationEngine.AddNewResourceId(aType, id : String; const lang : THTTPLanguages; forTesting : boolean; var resourceKey : integer) : Boolean;
+function TFHIRNativeOperationEngine.AddNewResourceId(aType, id : String; langList : THTTPLanguageList; forTesting : boolean; var resourceKey : integer) : Boolean;
 var
   itype : integer;
   exists : boolean;
@@ -2749,7 +2749,7 @@ begin
     FConnection.Terminate;
 
     if exists then
-      raise ERestfulException.create('TFHIRNativeOperationEngine.AddNewResourceId', 404, itDuplicate, 'MSG_DUPLICATE_ID', lang, [id, aType]);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.AddNewResourceId', 404, itDuplicate, 'MSG_DUPLICATE_ID', langList, [id, aType]);
 
     FConnection.SQL := 'insert into Ids (ResourceKey, ResourceTypeKey, Id, MostRecent, Deleted, ForTesting) values (:k, :r, :i, null, 0, :ft)';
     FConnection.Prepare;
@@ -2809,7 +2809,7 @@ end;
 procedure TFHIRNativeOperationEngine.checkNotSubsetted(meta: TFHIRMetaW; msg: String);
 begin
   if meta.HasTag('http://hl7.org/fhir/v3/ObservationValue', 'SUBSETTED') then
-    raise EFHIRException.createLang('SUBSETTED', lang, [msg]);
+    raise EFHIRException.createLang('SUBSETTED', langList, [msg]);
 end;
 
 function TFHIRNativeOperationEngine.hasActCodeSecurityLabel(res : TFHIRResourceV; codes : array of string) : boolean;
@@ -2824,7 +2824,7 @@ begin
       if (c.systemUri = 'http://hl7.org/fhir/v3/ActCode') and StringArrayExistsSensitive(codes, c.code) then
         exit(true);
   finally
-    m.Free;
+    m.free;
   end;
 end;
 
@@ -2840,7 +2840,7 @@ begin
       if (c.systemUri = 'http://hl7.org/fhir/v3/Confidentiality') and StringArrayExistsSensitive(codes, c.code) then
         exit(true);
   finally
-    m.Free;
+    m.free;
   end;
 end;
 
@@ -2850,11 +2850,11 @@ begin
     StringArrayExistsSensitive(['CPLYCD', 'CPLYJPP', 'CPLYOPP', 'CPLYOSP', 'CPLYPOL', 'ENCRYPT', 'ENCRYPTR', 'ENCRYPTT', 'ENCRYPTU',
                 'ETH', 'GDIS', 'HIV', 'PSY', 'SCA', 'SDV', 'SEX', 'STD', 'TBOO', 'SICKLE', 'DEMO', 'DOB', 'GENDER', 'LIVARG', 'MARST', 'RACE', 'REL',
                 'B', 'EMPL', 'LOCIS', 'SSP', 'ADOL', 'CEL', 'DIA', 'DRGIS', 'EMP', 'PDS', 'PRS'], code),
-        403, lang, 'This security label can only be deleted on a secure connection', itSuppressed);
+        403, langList, 'This security label can only be deleted on a secure connection', itSuppressed);
   if result then
     result := check(response, request.secure or (system <> 'http://hl7.org/fhir/v3/Confidentiality') or not
             StringArrayExistsSensitive(['L', 'M', 'N', 'R', 'U', 'V', 'B', 'D', 'I', 'ETH', 'HIV', 'PSY', 'SDV', 'C', 'S', 'T'], code),
-        403, lang, 'This security label can only be deleted on a secure connection', itSuppressed);
+        403, langList, 'This security label can only be deleted on a secure connection', itSuppressed);
 end;
 
 function TFHIRNativeOperationEngine.Link: TFHIRNativeOperationEngine;
@@ -2895,7 +2895,7 @@ end;
 //          ServerContext.ValidatorContext.registerCustomResource(cr);
 //        end;
 //    finally
-//      ig.Free;
+//      ig.free;
 //    end;
 //  finally
 //    crs.free;
@@ -2924,7 +2924,7 @@ begin
         while FConnection.FetchNext do
         begin
           s := FConnection.ColBlobByName['JsonContent'];
-          parser := factory.makeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+          parser := factory.makeParser(ServerContext.ValidatorContext, ffJson, langList);
           try
             result.Add(parser.parseResource(s));
           finally
@@ -2935,11 +2935,11 @@ begin
         FConnection.Terminate;
       end;
     finally
-      sb.Free;
+      sb.free;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2958,7 +2958,7 @@ begin
       else
         raise EFHIRException.create('Unable to find previous version of resource');
     s := FConnection.ColBlobByName['JsonContent'];
-    parser := factory.makeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+    parser := factory.makeParser(ServerContext.ValidatorContext, ffJson, langList);
     try
       result := parser.parseresource(s);
     finally
@@ -3003,7 +3003,7 @@ end;
 //          ServerContext.ValidatorContext.registerCustomResource(cr);
 //        end;
 //    finally
-//      ig.Free;
+//      ig.free;
 //    end;
 //  finally
 //    crs.free;
@@ -3051,10 +3051,10 @@ end;
 //      cr.SearchParameters.AddAll(list);
 //      result := cr.Link;
 //    finally
-//      cr.Free;
+//      cr.free;
 //    end;
 //  finally
-//    list.Free;
+//    list.free;
 //  end;
 //end;
 //{$ENDIF}
@@ -3065,12 +3065,12 @@ begin
   secure := false;
   result := check(response,
       not hasActCodeSecurityLabel(request.Resource, ['CPLYCD', 'CPLYJPP', 'CPLYOPP', 'CPLYOSP', 'CPLYPOL']),
-        403, lang, 'This resource is labelled with a security tag that requires compliance with a policy, but no policy is known', itNotSupported);
+        403, langList, 'This resource is labelled with a security tag that requires compliance with a policy, but no policy is known', itNotSupported);
   if result then
     if hasActCodeSecurityLabel(request.Resource, ['ENCRYPT', 'ENCRYPTR', 'ENCRYPTT', 'ENCRYPTU']) then
     begin
       secure := true;
-      result := check(response, request.secure, 403, lang, 'This resource is labelled with a security tag that requires encryption, but encryption was not used', itBusinessRule);
+      result := check(response, request.secure, 403, langList, 'This resource is labelled with a security tag that requires encryption, but encryption was not used', itBusinessRule);
     end;
   // extra conditions
   if result and not secure then
@@ -3136,13 +3136,13 @@ var
 begin
   try
     ok := true;
-    if not check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+    if not check(response, opAllowed(request.ResourceName, request.CommandType), 400, langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
       ok := false;
 
-    if ok and not check(response, request.canWrite(request.ResourceName) and (request.Resource <> nil), 400, lang, GetFhirMessage('MSG_RESOURCE_REQUIRED', lang), itRequired) then
+    if ok and not check(response, request.canWrite(request.ResourceName) and (request.Resource <> nil), 400, langList, GetFhirMessage('MSG_RESOURCE_REQUIRED', langList), itRequired) then
       ok := false;
     if ok and (request.Resource <> nil) then
-      if not check(response, request.ResourceName = request.resource.fhirType, 400, lang, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', lang), itInvalid) then
+      if not check(response, request.ResourceName = request.resource.fhirType, 400, langList, GetFhirMessage('MSG_RESOURCE_TYPE_MISMATCH', langList), itInvalid) then
         ok := false;
     // todo: check version id integrity
     // todo: check version integrity
@@ -3171,7 +3171,7 @@ begin
     ''#13#10+
     '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10+
     '<head>'#13#10+
-    '    <title>'+StringFormat(GetFhirMessage('UPLOAD_DONE', lang), [request.resource.fhirType])+'</title>'#13#10+
+    '    <title>'+StringFormat(GetFhirMessage('UPLOAD_DONE', langList), [request.resource.fhirType])+'</title>'#13#10+
     '    <link rel="Stylesheet" href="/css/fhir.css" type="text/css" media="screen" />'#13#10+
     FHIR_JS+
     '</head>'#13#10+
@@ -3179,26 +3179,26 @@ begin
     '<body>'#13#10+
     ''#13#10+
     '<div class="header">'#13#10+
-    '  <a href="http://www.hl7.org/fhir" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img src="/img/flame16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
+    '  <a href="http://www.hl7.org/fhir" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', langList)+'"><img src="/img/flame16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
     ''#13#10+
     '  &copy; HL7.org 2011+'#13#10+
     '  &nbsp;'#13#10+
-    '  '+ServerContext.Globals.OwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', lang)+#13#10+
+    '  '+ServerContext.Globals.OwnerName+' FHIR '+GetFhirMessage('NAME_IMPLEMENTATION', langList)+#13#10+
     '  &nbsp;'#13#10+
-    '  '+GetFhirMessage('NAME_VERSION', lang)+' '+factory.versionString+#13#10;
+    '  '+GetFhirMessage('NAME_VERSION', langList)+' '+factory.versionString+#13#10;
 
     if request.session <> nil then
       response.Body := response.Body +'&nbsp;&nbsp;'+FormatTextToXml(request.Session.SessionName, xmlText);
 
     response.Body := response.Body +
-    '  &nbsp;<a href="'+request.baseUrl+'">'+GetFhirMessage('MSG_BACK_HOME', lang)+'</a>'#13#10+
+    '  &nbsp;<a href="'+request.baseUrl+'">'+GetFhirMessage('MSG_BACK_HOME', langList)+'</a>'#13#10+
     '</div>'#13#10+
     ''#13#10+
     '<div id="div-cnt" class="content">'#13#10+
-    '<h2>'+StringFormat(GetFhirMessage('UPLOAD_DONE', lang), [request.resource.fhirType])+'</h2>'#13#10+
+    '<h2>'+StringFormat(GetFhirMessage('UPLOAD_DONE', langList), [request.resource.fhirType])+'</h2>'#13#10+
     '<p>'+s+'</p>'#13#10+
     ''#13#10+
-    '<p><br/><a href="'+request.baseUrl+'">'+GetFhirMessage('MSG_BACK_HOME', lang)+'</a></p>'+
+    '<p><br/><a href="'+request.baseUrl+'">'+GetFhirMessage('MSG_BACK_HOME', langList)+'</a></p>'+
     '</div>'#13#10+
     '</body>'#13#10+
     '</html>'#13#10+
@@ -3252,7 +3252,7 @@ begin
       sp.compartment := requestCompartment.Link;
       sp.sessionCompartments := sessionCompartments.link;
       sp.baseURL := baseURL;
-      sp.lang := lang;
+      sp.langList := langList.link;
       sp.params := p;
       CreateIndexer;
       sp.indexes := ServerContext.Indexes.Link;
@@ -3282,7 +3282,7 @@ begin
       end;
     finally
       sp.free;
-      p.Free;
+      p.free;
     end;
     result.Link;
   finally
@@ -3328,7 +3328,7 @@ begin
   if entry.resource <> nil then
     aType := entry.resource.fhirType
   else if (StringArrayExistsSensitive(['DELETE', 'GET'], entry.requestMethod)) or (entry.requesturl = '') then // must be deleting something
-    raise EFHIRException.createLang('TRANSACTION_RESOURCE_MISSING', request.Lang, [inttostr(index+1)])
+    raise EFHIRException.createLang('TRANSACTION_RESOURCE_MISSING', request.langList, [inttostr(index+1)])
   else
   begin
     s := entry.requesturl;
@@ -3337,15 +3337,15 @@ begin
     sParts := s.Split(['/']);
     aType := sParts[0];
     if not StringArrayExistsSensitive(factory.ResourceNames, atype) {and Not ServerContext.ValidatorContext.hasCustomResource(aType) }then
-      raise EFHIRException.createLang('MSG_UNKNOWN_TYPE', Request.Lang, [sParts[0]]);
+      raise EFHIRException.createLang('MSG_UNKNOWN_TYPE', Request.langList, [sParts[0]]);
   end;
 
   if (entry.requestmethod = 'DELETE') and not ServerContext.ResConfig[aType].cmdDelete then
-    raise EFHIRException.createLang('MSG_OP_NOT_ALLOWED', Request.Lang, ['Delete', entry.resource.fhirType]);
+    raise EFHIRException.createLang('MSG_OP_NOT_ALLOWED', Request.langList, ['Delete', entry.resource.fhirType]);
 
 
   if not ServerContext.ResConfig[aType].cmdUpdate and not ServerContext.ResConfig[aType].cmdCreate then
-    raise EFHIRException.createLang('MSG_OP_NOT_ALLOWED', Request.Lang, ['Create', entry.resource.fhirType]);
+    raise EFHIRException.createLang('MSG_OP_NOT_ALLOWED', Request.langList, ['Create', entry.resource.fhirType]);
 
   if (entry.resource <> nil) and  (entry.resource.id.Contains('[x]')) then
     raise EFHIRException.create('not handled - error in transaction (entry '+entry.resource.fhirType+'/'+entry.resource.id+' @ entry '+inttostr(index+1)+')');
@@ -3391,16 +3391,16 @@ begin
               id.outcomeVersion := list[0].version+1;
             end
             else if list.Count > 1 then
-              raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', langList)+' (entry '+inttostr(index+1)+')');
           finally
-            list.Free;
+            list.free;
           end;
         end;
 
         if id.state = tesCreate then
         begin
           if not GetNewResourceId(entry.resource.fhirType, false {testing-todo},  sId, k) then
-            raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
+            raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', langList)+' (entry '+inttostr(index+1)+')');
           id.id := sId;
           id.key := k;
         end;
@@ -3424,14 +3424,14 @@ begin
             begin
               id.state := tesCreate;
               if not GetNewResourceId(entry.resource.fhirType, false {testing-todo},   sId, k) then
-                raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
+                raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', langList)+' (entry '+inttostr(index+1)+')');
               id.id := sId;
               id.key := k;
             end
             else if list.Count > 1 then
-              raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', langList)+' (entry '+inttostr(index+1)+')');
           finally
-            list.Free;
+            list.free;
           end;
         end
         else
@@ -3441,18 +3441,18 @@ begin
             id.outcomeVersion := FConnection.CountSQL('select Max(VersionId) from Versions where ResourceKey = '+inttostr(id.key))+1;
         end;
         if ids.ExistsByTypeAndId(id) then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
+          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', langList), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
 
         if (id.state = tesUpdate) and (id.key <> 0) then
         begin
           if entry.requestIfMatch <> '' then
           begin
             if 'W/"'+inttostr(id.outcomeVersion)+'"' <> entry.requestIfMatch then
-              raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', langList), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')');
           end;
         end
         else if entry.requestIfMatch <> '' then
-           raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')');
+           raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', langList), ['(n/a)', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')');
       end
       else if entry.requestmethod = 'DELETE' then
       begin
@@ -3474,9 +3474,9 @@ begin
               id.state := tesIgnore;
             end
             else if list.Count > 1 then
-              raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', lang)+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(GetFhirMessage('UPDATE_MULTIPLE_MATCHES', langList)+' (entry '+inttostr(index+1)+')');
           finally
-            list.Free;
+            list.free;
           end;
         end
         else
@@ -3486,7 +3486,7 @@ begin
             id.outcomeVersion := FConnection.CountSQL('select Max(VersionId) from Versions where ResourceKey = '+inttostr(id.key)) + 1;
         end;
         if (id.state = tesDelete) and ids.ExistsByTypeAndId(id) then
-              raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_Transaction_DUPLICATE_ID', langList), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
 
         // version check
         if (id.state = tesDelete) and (id.key <> 0) then
@@ -3494,11 +3494,11 @@ begin
           if entry.requestIfMatch <> '' then
           begin
             if 'W/"'+inttostr(id.outcomeVersion)+'"' <> entry.requestIfMatch then
-             raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')');
+             raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', langList), ['W/"'+inttostr(id.outcomeVersion)+'"', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')');
           end;
         end
         else if entry.requestIfMatch <> '' then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', lang), ['(n/a)', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')')
+          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_VERSION_AWARE_CONFLICT', langList), ['(n/a)', entry.requestIfMatch])+' (entry '+inttostr(index+1)+')')
         else if (id.state = tesDelete) then
           id.state := tesIgnore; // nothing to delete
       end
@@ -3509,7 +3509,7 @@ begin
     begin
       id.state := tesCreate; // or it might be update - we'll figure out whether it's a create or an update based on the resource itself
       if (entry.resource = nil) then
-        raise EFHIRException.createLang('TRANSACTION_RESOURCE_MISSING', request.Lang, [inttostr(index+1)]);
+        raise EFHIRException.createLang('TRANSACTION_RESOURCE_MISSING', request.langList, [inttostr(index+1)]);
       if (entry.resource.id <> '') and not IsId(entry.resource.id) then
         entry.resource.id := ''; // just ignore it
 //        raise EFHIRException.createLang('resource id is illegal ("'+entry.resource.id+'") (entry '+inttostr(index+1)+')');
@@ -3530,14 +3530,14 @@ begin
           if ids.dropDuplicates then
             id.state := tesIgnore
           else
-            raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_TRANSACTION_DUPLICATE_ID', lang), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
+            raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_TRANSACTION_DUPLICATE_ID', langList), [id.restype+'/'+id.id])+' (entry '+inttostr(index+1)+')');
       end;
       case id.state of
         tesIgnore: ; // yup, ignore it
         tesCreate:
           begin
             if not GetNewResourceId(entry.resource.FhirType,  false {testing-todo},  sId, k) then
-              raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', lang)+' (entry '+inttostr(index+1)+')');
+              raise EFHIRException.create(GetFhirMessage('MSG_RESOURCE_ID_FAIL', langList)+' (entry '+inttostr(index+1)+')');
             id.id := sId;
             id.key := k;
             entry.resource.id := sId;
@@ -3560,7 +3560,7 @@ begin
 end;
 
 
-procedure TFHIRNativeOperationEngine.FixXhtmlUrls(const lang : THTTPLanguages; base : String; ids : TFHIRTransactionEntryList; node : TFhirXHtmlNode);
+procedure TFHIRNativeOperationEngine.FixXhtmlUrls(langList : THTTPLanguageList; base : String; ids : TFHIRTransactionEntryList; node : TFhirXHtmlNode);
 var
   i, j, k : integer;
   s, url, vHist : string;
@@ -3592,12 +3592,12 @@ begin
         if (vhist = '') then
           node.Attributes.SetValue('href', ids[j].resType+'/'+ids[j].id)
         else if (ids[j].version <> '') and (ids[j].version <> vHist) then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+' in narrative: reference to version '+vHist+', reference is '+ids[j].version, lang), [s]))
+          raise EFHIRException.create(StringFormat(GetFhirMessage('Version ID Mismatch for '+url+' in narrative: reference to version '+vHist+', reference is '+ids[j].version, langList), [s]))
         else
           node.Attributes.SetValue('href', ids[j].resType+'/'+ids[j].id+'/_history/'+inttostr(ids[j].outcomeVersion));
       end
       else if isLogicalReference(s) then
-        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', langList), [s]));
     end;
     if (node.Name = 'img') and (node.Attributes.Get('src') <> '') then
     begin
@@ -3606,10 +3606,10 @@ begin
       if (j > -1) then
         node.Attributes.SetValue('src', base+ids[j].resType+'/'+ids[j].id)
       else if isLogicalReference(s) then
-        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', lang), [s]));
+        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_LOCAL_FAIL', langList), [s]));
     end;
     for i := 0 to node.ChildNodes.count - 1 do
-      FixXhtmlUrls(lang, base, ids, node.childNodes[i]);
+      FixXhtmlUrls(langList, base, ids, node.childNodes[i]);
   end;
 end;
 
@@ -3664,7 +3664,7 @@ begin
     else if response.Resource.fhirType = 'OperationOutcome' then
       result := false
     else
-      result := check(response, response.HTTPCode < 300, response.HTTPCode, lang, response.Message, itNull);
+      result := check(response, response.HTTPCode < 300, response.HTTPCode, langList, response.Message, itNull);
     ne := id.entry;
     ne.resource := response.resource.Link;
     ne.responseStatus := inttostr(response.HTTPCode);
@@ -3672,7 +3672,7 @@ begin
     ne.responseEtag := 'W/'+response.versionId;
     ne.responseDate := TFslDateTime.makeUTC(response.lastModifiedDate);
   finally
-    context.Free;
+    context.free;
   end;
 end;
 
@@ -3715,9 +3715,9 @@ begin
   result := 'Transaction';
   try
     ok := true;
-    if not check(response, ServerContext.SupportTransaction, 405, lang, 'Transaction Operations not allowed', itNotSupported) then
+    if not check(response, ServerContext.SupportTransaction, 405, langList, 'Transaction Operations not allowed', itNotSupported) then
       ok := false;
-    if ok and not check(response, request.Resource.fhirType = 'Bundle', 400, lang, 'A bundle is required for a Transaction operation', itInvalid) then
+    if ok and not check(response, request.Resource.fhirType = 'Bundle', 400, langList, 'A bundle is required for a Transaction operation', itInvalid) then
       ok := false;
 
     if ok then
@@ -3838,7 +3838,7 @@ begin
               bundle.free;
             end;
           finally
-            bl.Free;
+            bl.free;
           end;
           if (request.Provenance <> nil) then
             SaveProvenance(request.session, request.Provenance);
@@ -3910,7 +3910,7 @@ begin
           request.PostFormat := ffXml;
           if (context.mode in OP_MODES_CHECK) and ServerContext.validate and (request.resource <> nil) then
           begin
-            comp := factory.makeComposer(ServerContext.ValidatorContext.Link, ffXml, THTTPLanguages.create('en'), OutputStylePretty);
+            comp := factory.makeComposer(ServerContext.ValidatorContext, ffXml, nil, OutputStylePretty);
             mem := TFslMemoryStream.Create;
             m := TVCLStream.Create;
             try
@@ -3918,9 +3918,9 @@ begin
               mem.Buffer := request.source.Link;
               comp.compose(m, request.resource);
             finally
-              m.Free;
-              comp.Free;
-              mem.Free;
+              m.free;
+              comp.free;
+              mem.free;
             end;
           end;
           Execute(context, request, response, tt);
@@ -3934,12 +3934,12 @@ begin
           on e : ERestfulException do
           begin
             dest.responseStatus := inttostr(e.Status);
-            dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+            dest.resource := Factory.BuildOperationOutcome(request.LangList, e);
           end;
           on e : Exception do
           begin
             dest.responseStatus := '500';
-            dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+            dest.resource := Factory.BuildOperationOutcome(request.LangList, e);
           end;
         end;
       end;
@@ -4065,7 +4065,7 @@ var
 begin
   mem := TBytesStream.Create(FConnection.ColBlobByName[field]);
   try
-    parser := factory.makeParser(ServerContext.ValidatorContext.link, fmt, lang);
+    parser := factory.makeParser(ServerContext.ValidatorContext, fmt, LangList);
     try
       parser.source := mem;
       parser.ParserPolicy := xppDrop;
@@ -4075,7 +4075,7 @@ begin
       parser.free;
     end;
   finally
-    mem.Free;
+    mem.free;
   end;
 end;
 
@@ -4147,7 +4147,7 @@ begin
       if FConnection.FetchNext then
       begin
         s := FConnection.ColBlobByName['JsonContent'];
-        parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+        parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, LangList);
         try
           result := TResourceWithReference.Create(id, parser.parseResource(s));
         finally
@@ -4177,7 +4177,7 @@ end;
 //begin
 //  try
 //    NotFound(request, response);
-//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
 //    begin
 //      if FindResource(request.ResourceName, request.Id, false, resourceKey, request, response, request.compartments) then
 //      begin
@@ -4215,7 +4215,7 @@ end;
 //                response.links.Add('edit-post', baseUrl+request.ResourceName+'/'+request.id+'/$qa-post');
 //                response.Resource := builder.Answers.Link;
 //              finally
-//                builder.Free;
+//                builder.free;
 //              end;
 //            finally
 //              questionnaire.free;
@@ -4224,7 +4224,7 @@ end;
 //            profile.free;
 //          end;
 //        finally
-//          source.Free;
+//          source.free;
 //        end;
 //      end;
 //    end;
@@ -4255,7 +4255,7 @@ begin
   if result then
     resourceVersionKey := FConnection.ColIntegerByName['ResourceVersionKey']
   else
-    check(response, false, 404 , lang, StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.subid]), itNotFound);
+    check(response, false, 404, LangList, StringFormat(GetFhirMessage('MSG_NO_EXIST', langList), [request.subid]), itNotFound);
   FConnection.terminate;
 end;
 
@@ -4301,7 +4301,7 @@ end;
 //begin
 //  try
 //    NotFound(request, response);
-//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', lang), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
+//    if check(response, opAllowed(request.ResourceName, request.CommandType), 400, lang, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
 //    begin
 //      if (request.id = '') or ((length(request.id) <= ID_LENGTH) and FindResource(frtStructureDefinition, request.Id, false, resourceKey, request, response, request.compartments)) then
 //      begin
@@ -4347,7 +4347,7 @@ end;
 //                if id <> '' then
 //                  Repository.QuestionnaireCache.putQuestionnaire(frtStructureDefinition, id, questionnaire, builder.dependencies);
 //              finally
-//                builder.Free;
+//                builder.free;
 //              end;
 //            end;
 //            response.HTTPCode := 200;
@@ -4356,7 +4356,7 @@ end;
 //            response.LastModifiedDate := now;
 //            response.Resource := questionnaire.Link;
 //          finally
-//            questionnaire.Free;
+//            questionnaire.free;
 //          end;
 //        finally
 //          profile.free;
@@ -4372,12 +4372,12 @@ end;
 //            response.Resource := op.link;
 //          end;
 //        finally
-//          op.Free;
+//          op.free;
 //        end;
 //      end;
 //    end;
 //    inc(iCount);
-//    TFHIRXhtmlComposer.Create(THTTPLanguages.create('en')).Compose(TFileStream.Create(filePath(['[tmp]', 'q'+inttostr(iCount)+'.xml', fmCreate), response.Resource, true, nil);
+//    TFHIRXhtmlComposer.Create(nil).Compose(TFileStream.Create(filePath(['[tmp]', 'q'+inttostr(iCount)+'.xml', fmCreate), response.Resource, true, nil);
 //    AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message);
 //  except
 //    on e: exception do
@@ -4416,15 +4416,15 @@ begin
       if allowNil then
         exit(nil)
       else
-        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itUnknown, 'Unknown '+aType+' url: '+url, lang);
+        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itUnknown, 'Unknown '+aType+' url: '+url, LangList);
     needSecure := FConnection.ColIntegerByName['Secure'] = 1;
     s := FConnection.ColBlobByName['JsonContent'];
-    parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+    parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, langList);
     try
       result := parser.parseResource(s);
       try
         if FConnection.FetchNext then
-          raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Found multiple matches for '+aType+' '+url+'. Pick one by the resource id', lang);
+          raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Found multiple matches for '+aType+' '+url+'. Pick one by the resource id', langList);
         result.link;
       finally
         result.free;
@@ -4456,7 +4456,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+        parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, langList);
         try
           result.Add(parser.parseresource(s));
         finally
@@ -4468,7 +4468,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4489,7 +4489,7 @@ begin
   if result then
     targetContext := target.Link
   else
-    target.Free;
+    target.free;
 end;
 
 procedure TFHIRNativeOperationEngine.GraphListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
@@ -4519,7 +4519,7 @@ begin
       end;
       url := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
 
     sp := TSearchProcessor.create(ServerContext);
@@ -4531,7 +4531,7 @@ begin
       sp.compartment := request.compartment.Link;
       sp.sessionCompartments := request.SessionCompartments.Link;
       sp.baseURL := request.baseURL;
-      sp.lang := lang;
+      sp.langList := langList.link;
       sp.params := THTTPParameters.create(url);
       CreateIndexer;
       sp.indexes := ServerContext.Indexes.Link;
@@ -4543,11 +4543,11 @@ begin
 
       sql := sql + ' and '+sp.filter;
     finally
-      sp.Free;
+      sp.free;
     end;
   end;
   sql := sql + ' order by Ids.ResourceKey DESC';
-  json := factory.makeParser(request.Context.link, ffJson, request.lang);
+  json := factory.makeParser(request.Context, ffJson, request.langList);
   try
     FConnection.Sql := sql;
     FConnection.Prepare;
@@ -4563,7 +4563,7 @@ begin
       FConnection.Terminate;
     end;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -4578,7 +4578,7 @@ begin
   result := (res <> nil) and (not secure or req.secure);
   if (not result and (res <> nil)) then
   begin
-    res.Free;
+    res.free;
     res := nil;
   end;
 end;
@@ -4621,7 +4621,7 @@ begin
       raise EJsonException.Create(getOpException(response.resource));
     result := (FServerContext as TFHIRServerContext).ValidatorContext.factory.wrapBundle(response.resource.Link);
   finally
-    response.Free;
+    response.free;
   end;
 end;
 
@@ -4650,7 +4650,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := factory.makeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+        parser := factory.makeParser(ServerContext.ValidatorContext, ffJson, langList);
         try
           result := parser.parseResource(s);
         finally
@@ -4658,13 +4658,13 @@ begin
         end;
       end
       else
-        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unable to find '+aType+'/'+id, lang);
+        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unable to find '+aType+'/'+id, langList);
     finally
       FConnection.Terminate;
     end;
   end
   else
-    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unknown resource '+aType+'/'+id, lang);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unknown resource '+aType+'/'+id, langList);
 end;
 
 
@@ -4681,7 +4681,7 @@ begin
     begin
       needSecure := FConnection.ColIntegerByName['Secure'] = 1;
       s := FConnection.ColBlobByName['JsonContent'];
-      parser := factory.makeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+      parser := factory.makeParser(ServerContext.ValidatorContext, ffJson, langList);
       try
         result := parser.parseresource(s);
       finally
@@ -4689,7 +4689,7 @@ begin
       end;
     end
     else
-      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unable to find resource '+inttostr(key), lang);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unable to find resource '+inttostr(key), langList);
   finally
     FConnection.Terminate;
   end;
@@ -4712,7 +4712,7 @@ begin
     for res in factory.getContained(source).forEnum do
       if '#'+res.id = url then
         exit(res.link);
-    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Cannot resolve local reference: '+url, lang);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Cannot resolve local reference: '+url, langList);
   end;
 
   for i := 0 to ServerContext.Globals.Bases.Count - 1 do
@@ -4720,25 +4720,25 @@ begin
       url := url.Substring(ServerContext.Globals.Bases[i].Length);
 
   if (url.StartsWith('http://') or url.StartsWith('https://')) then
-    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Cannot resolve external reference: '+url, lang);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Cannot resolve external reference: '+url, langList);
 
   parts := url.Split(['/']);
   if length(parts) = 2 then
   begin
     if not StringArrayExistsSensitive(factory.ResourceNames, parts[0]) then
-      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'URL not understood: '+url, lang);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'URL not understood: '+url, langList);
     rType := parts[0];
     id := parts[1];
   end else if (length(parts) = 4) and (parts[2] = '_history') then
   begin
     if not StringArrayExistsSensitive(factory.ResourceNames, parts[0]) then
-      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'URL not understood: '+url, lang);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'URL not understood: '+url, langList);
     rType := parts[0];
     id := parts[1];
     ver := parts[3];
   end
   else
-    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'URL not understood: '+url, lang);
+    raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'URL not understood: '+url, langList);
 
   if FindResource(rtype, id, [], key, versionKey, req, nil, nil) then
   begin
@@ -4753,7 +4753,7 @@ begin
       begin
         s := FConnection.ColBlobByName['JsonContent'];
         needSecure := FConnection.ColIntegerByName['Secure'] = 1;
-        parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+        parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, langList);
         try
           result := parser.parseresource(s);
         finally
@@ -4761,7 +4761,7 @@ begin
         end;
       end
       else if not allowNil then
-        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unable to find resource '+inttostr(key), lang);
+        raise ERestfulException.create('TFHIRNativeOperationEngine.GetResourceByUrl', 404, itNotFound, 'Unable to find resource '+inttostr(key), langList);
     finally
       FConnection.Terminate;
     end;
@@ -4895,12 +4895,12 @@ begin
         Execute(context, request, response, tt);
       end;
     finally
-      tt.Free;
-      response.Free;
+      tt.free;
+      response.free;
       request.free;
     end;
   finally
-    context.Free;
+    context.free;
   end;
 end;
 
@@ -4951,7 +4951,7 @@ begin
       begin
         tags := TFHIRTagList.create(factory.link);
         try
-          parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, THTTPLanguages.create('en'));
+          parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, nil);
           try
             r := parser.parseresource(Connection.ColBlobByName['JsonContent']);
             FConnection.terminate;
@@ -5006,11 +5006,11 @@ begin
     if list.Count = 1 then
       result := parts[0]+'/'+list[0].Name
     else if list.Count > 1 then
-      raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 412, itConflict, 'Multiple matches found for '+url, lang)
+      raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 412, itConflict, 'Multiple matches found for '+url, langList)
     else
-      raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 404, itConflict, 'No matches found for '+url, lang);
+      raise ERestfulException.create('TFHIRNativeOperationEngine.resolveConditionalURL', 404, itConflict, 'No matches found for '+url, langList);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -5082,7 +5082,7 @@ begin
         if conn.FetchNext then
         begin
           b := conn.ColBlobByName['JsonContent'];
-          parser := factory.MakeParser(ServerContext.ValidatorContext.link, ffJson, lang);
+          parser := factory.MakeParser(ServerContext.ValidatorContext, ffJson, langList);
           try
             result := parser.parseResource(b);
           finally
@@ -5165,7 +5165,7 @@ begin
         if (a.ResourceType = b.ResourceType) and (a.Id = b.Id) then
           ok := true;
       if not ok then
-        raise EFHIRException.createLang('COMPARTMENT_ERROR', lang, [a.ToString]);
+        raise EFHIRException.createLang('COMPARTMENT_ERROR', langList, [a.ToString]);
     end;
   end;
 end;
@@ -5607,7 +5607,7 @@ begin
             res.free;
           end;
         finally
-          li.Free;
+          li.free;
         end;
         if ServerContext.Globals.forLoad then
         begin
@@ -5783,10 +5783,10 @@ begin
   for rc in ServerContext.ResConfig.Values do
     DB.ExecSQL('Update Types set LastId = '+inttostr(rc.lastResourceId)+' where ResourceTypeKey = '+inttostr(rc.key), 'key-update');
   FQueue.free;
-  FSpaces.Free;
-  FRegisteredValueSets.Free;
+  FSpaces.free;
+  FRegisteredValueSets.free;
   FLock.free;
-  FDB.Free;
+  FDB.free;
   inherited;
 end;
 
@@ -5800,7 +5800,7 @@ begin
     request.session := ServerContext.SessionManager.CreateImplicitSession('n/a', ServerContext.Globals.OwnerName, 'subscripion manager', systemInternal, true, false);
   context := TOperationContext.create;
   try
-    storage := engineFactory(THTTPLanguages.create('en'), 'fhir.operation');
+    storage := engineFactory(nil, 'fhir.operation');
     try
       storage.Connection.StartTransact;
       try
@@ -5808,7 +5808,7 @@ begin
         try
           storage.Execute(context, request, response, tt);
         finally
-          tt.Free;
+          tt.free;
         end;
         storage.Connection.Commit;
         storage.Connection.Release;
@@ -5825,7 +5825,7 @@ begin
       storage.free;
     end;
   finally
-    context.Free;
+    context.free;
   end;
 end;
 
@@ -5841,7 +5841,7 @@ begin
     sp.compartment := compartment.Link;
     sp.sessionCompartments := sessionCompartments.link;
     sp.baseURL := ServerContext.FormalURLPlain; // todo: what?
-    sp.lang := THTTPLanguages.create('en');
+    sp.langList := nil;
     sp.params := params;
     sp.indexes := ServerContext.Indexes.Link;
     sp.countAllowed := false;
@@ -5858,7 +5858,7 @@ begin
   result := true;
 end;
 
-function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSetW;
+function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; langList : THTTPLanguageList; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSetW;
 var
   profile : TFHIRExpansionParams;
 begin
@@ -5946,7 +5946,7 @@ begin
         client.patientContext := conn.ColIntegerByName['PatientContext'] = 1;
         list.Add(client.link);
       finally
-        client.Free;
+        client.free;
       end;
     end;
     conn.Terminate;
@@ -5980,7 +5980,7 @@ begin
         task.names := conn.ColStringByName['Names'].Split([',']);
         tasks.Add(task.Link);
       finally
-        task.Free;
+        task.free;
       end;
     end;
     conn.Terminate;
@@ -6105,7 +6105,7 @@ begin
       if not conn.FetchNext then
         raise EFHIRException.create('Unable to load resource '+inttostr(key));
       mem := conn.ColBlobByName['JsonContent'];
-      parser := ServerContext.Factory.makeParser(ServerContext.ValidatorContext.link, ffJson, THTTPLanguages.create('en'));
+      parser := ServerContext.Factory.makeParser(ServerContext.ValidatorContext, ffJson, nil);
       try
         result := parser.parseresource(mem);
       finally
@@ -6493,7 +6493,7 @@ begin
             b.Append('  '+iss.display+#13#10);
       end;
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   except
     on e:exception do
@@ -6555,7 +6555,7 @@ begin
       bufJ.free;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -6632,7 +6632,7 @@ begin
     if list <> nil then
     begin
       setThreadStatus('Sweeping - audits');
-      storage := engineFactory(THTTPLanguages.create('en'), 'fhir.sweep');
+      storage := engineFactory(nil, 'fhir.sweep');
       try
         try
           storage.storeResources(list, roSweep, opmSweep);
@@ -7000,13 +7000,13 @@ begin
               for i := 0 to cl.Count - 1 do
                 categories[i] := resolveConcept(conn, cl[i]);
             finally
-              cl.Free;
+              cl.free;
             end;
             ProcessObservationContent(conn, key, rk, obs, subj, categories)
           end;
         end;
       finally
-        obs.Free;
+        obs.free;
       end;
     except
       on e : Exception do
@@ -7109,10 +7109,10 @@ begin
           cval := upC.Value;
           cu := resolveConcept(conn, URI_UCUM, upC.UnitCode);
         finally
-          upC.Free;
+          upC.free;
         end;
       finally
-        upS.Free;
+        upS.free;
       end;
     end
     else
@@ -7410,7 +7410,7 @@ begin
     end;
     result := client.link;
   finally
-    client.Free;
+    client.free;
   end;
 end;
 
@@ -7469,7 +7469,7 @@ end;
 //begin
 ////  names := TStringList.create;
 ////  try
-////    storage := engineFactory(THTTPLanguages.create('en'), 'fhir.loadCustom');
+////    storage := engineFactory(nil, 'fhir.loadCustom');
 ////    try
 ////      try
 ////        for s in guides do
@@ -7487,7 +7487,7 @@ end;
 ////      storage.free;
 ////    end;
 ////  finally
-////    names.Free;
+////    names.free;
 ////  end;
 ////  raise EFslException.Create('not currently supported');
 //end;
@@ -7515,7 +7515,7 @@ begin
       begin
         inc(i);
         mem := conn.ColBlobByName['XmlContent'];
-        parser := factory.makeParser(ServerContext.ValidatorContext.link, ffXml, THTTPLanguages.create('en'));
+        parser := factory.makeParser(ServerContext.ValidatorContext, ffXml, nil);
         try
           try
             p := parser.parseResource(mem);
@@ -7525,9 +7525,9 @@ begin
                 0,
                 conn.ColStringByName['Id'],
                 conn.ColIntegerByName['Secure'] = 1,
-                false, p, cback, true, nil, THTTPLanguages.create('en'), mem);
+                false, p, cback, true, nil, nil, mem);
             finally
-              p.Free;
+              p.free;
             end;
           except
             on e : Exception do
@@ -7578,7 +7578,7 @@ begin
           o.count := conn.ColIntegerByName['Resources'];
           map.AddOrSetValue(o.id, o.link);
         finally
-          o.Free;
+          o.free;
         end;
       end;
       conn.Terminate;
@@ -7593,7 +7593,7 @@ begin
     end;
     result := map.Link;
   finally
-    map.Free;
+    map.free;
   end;
 end;
 
@@ -7611,11 +7611,11 @@ begin
   if not conn.FetchNext then
     raise EFHIRException.create('unable to find resource '+inttostr(key));
   mem := conn.ColBlobByName['JsonContent'];
-  parser := Factory.makeParser(ServerContext.ValidatorContext.link, ffJson, THTTPLanguages.create('en'));
+  parser := Factory.makeParser(ServerContext.ValidatorContext, ffJson, nil);
   try
     result := parser.parseresource(mem);
   finally
-    parser.Free;
+    parser.free;
   end;
   conn.terminate;
 end;
@@ -7673,7 +7673,7 @@ begin
       prov := ServerContext.TerminologyServer.getProvider(system, version, params);
       try
         if prov <> nil then
-          result := prov.getDisplay(code, ServerContext.ValidatorContext.lang);
+          result := prov.getDisplay(code, ServerContext.ValidatorContext.langList);
       finally
         prov.free;
       end;
@@ -7681,7 +7681,7 @@ begin
       result := '';
     end;
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -7761,8 +7761,8 @@ end;
 
 destructor TFHIRQueuedResource.Destroy;
 begin
-  FSession.Free;;
-  FResource.Free;
+  FSession.free;;
+  FResource.free;
   inherited;
 end;
 
@@ -7778,7 +7778,7 @@ end;
 
 destructor TPatientIdTracker.Destroy;
 begin
-  FIds.Free;
+  FIds.free;
   inherited;
 end;
 

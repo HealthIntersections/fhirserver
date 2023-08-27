@@ -246,9 +246,9 @@ begin
   finally
     if Assigned(ProgressWriter) then
       ExitCode := ProgressWriter.GetExitCode;
-    TestResult.Free;
-    ResultsWriter.Free;
-    ProgressWriter.Free;
+    TestResult.free;
+    ResultsWriter.free;
+    ProgressWriter.free;
   end;
 end;
 
@@ -289,7 +289,7 @@ begin
         else
           Writeln('No tests selected.');
       finally
-        TS.Free;
+        TS.free;
       end;
     end;
 end;

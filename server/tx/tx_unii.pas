@@ -82,13 +82,13 @@ type
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -186,7 +186,7 @@ begin
   result := '';
 end;
 
-function TUniiServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TUniiServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 var
   qry : TFDBConnection;
 begin
@@ -212,7 +212,7 @@ end;
 
 function TUniiServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise ETerminologyTodo.create('TUniiServices.getPrepContext');
+  raise ETerminologyTodo.Create('TUniiServices.getPrepContext');
 end;
 
 Procedure ImportUnii(filename, version : String; dbm : TFDBManager; callback : TWorkProgressEvent);
@@ -249,7 +249,7 @@ begin
 
     last := 0;
     lastDesc := 0;
-    map := TFslStringIntegerMatch.create;
+    map := TFslStringIntegerMatch.Create;
     try
       map.forced := true;
       f := TFslFile.Create(filename, fmOpenRead);
@@ -285,10 +285,10 @@ begin
           end;
           callback(nil, 100, true, 'Loading');
         finally
-          tab.Free;
+          tab.free;
         end;
       finally
-        f.Free;
+        f.free;
       end;
     finally
       map.free;
@@ -332,7 +332,7 @@ begin
         end;
         result := res.Link;
       finally
-        res.Free;
+        res.free;
       end;
     end;
     qry.Terminate;
@@ -365,19 +365,19 @@ end;
 
 destructor TUniiServices.Destroy;
 begin
-  db.Free;
+  db.free;
   inherited;
 end;
 
-function TUniiServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TUniiServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TUniiConcept(context).FDisplay.trim;
 end;
 
 procedure TUniiServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
-  list.addDesignation('', TUniiConcept(context).FOthers);
+  list.addDesignation(true, true, '', Display(context, nil));
+  list.addDesignation(false, true, '', TUniiConcept(context).FOthers);
 end;
 
 function TUniiServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -417,12 +417,12 @@ end;
 
 function TUniiServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUniiServices.getcontext');
+  raise ETerminologyTodo.Create('TUniiServices.getcontext');
 end;
 
 function TUniiServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Unii', itNotSupported); // Unii doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.Create('locateIsA not supported by Unii', itNotSupported); // Unii doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -433,37 +433,37 @@ end;
 
 function TUniiServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TUniiServices.prepare');
+  raise ETerminologyTodo.Create('TUniiServices.prepare');
 end;
 
 function TUniiServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TUniiServices.searchFilter');
+  raise ETerminologyTodo.Create('TUniiServices.searchFilter');
 end;
 
 function TUniiServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TUniiServices.filter');
+  raise ETerminologyTodo.Create('TUniiServices.filter');
 end;
 
 function TUniiServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUniiServices.filterLocate');
+  raise ETerminologyTodo.Create('TUniiServices.filterLocate');
 end;
 
 function TUniiServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TUniiServices.FilterMore');
+  raise ETerminologyTodo.Create('TUniiServices.FilterMore');
 end;
 
 function TUniiServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUniiServices.FilterConcept');
+  raise ETerminologyTodo.Create('TUniiServices.FilterConcept');
 end;
 
 function TUniiServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TUniiServices.InFilter');
+  raise ETerminologyTodo.Create('TUniiServices.InFilter');
 end;
 
 { TUniiPrep }
@@ -487,13 +487,13 @@ end;
 
 { TUniiConcept }
 
-constructor TUniiConcept.create;
+constructor TUniiConcept.Create;
 begin
   inherited;
   FOthers := TStringList.Create;
 end;
 
-destructor TUniiConcept.destroy;
+destructor TUniiConcept.Destroy;
 begin
   FOthers.free;
   inherited;

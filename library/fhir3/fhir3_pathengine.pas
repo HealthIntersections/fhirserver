@@ -378,15 +378,15 @@ implementation
 
 { TFHIRConstant }
 
-constructor TFHIRConstant.create(value: String);
+constructor TFHIRConstant.Create(value: String);
 begin
-  inherited create;
+  inherited Create;
   FValue := value;
 end;
 
 function TFHIRConstant.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRTodo.create('TFHIRConstant.createPropertyValue');
+  raise EFHIRTodo.Create('TFHIRConstant.createPropertyValue');
 end;
 
 function TFHIRConstant.fhirType: string;
@@ -396,12 +396,12 @@ end;
 
 function TFHIRConstant.getId: String;
 begin
-  raise EFHIRTodo.create('TFHIRConstant.getId:');
+  raise EFHIRTodo.Create('TFHIRConstant.getId:');
 end;
 
 function TFHIRConstant.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRTodo.create('TFHIRConstant.getTypesForProperty');
+  raise EFHIRTodo.Create('TFHIRConstant.getTypesForProperty');
 end;
 
 function TFHIRConstant.hasExtensions: boolean;
@@ -426,12 +426,12 @@ end;
 
 procedure TFHIRConstant.setIdValue(id: String);
 begin
-  raise EFHIRTodo.create('TFHIRConstant.setIdValue');
+  raise EFHIRTodo.Create('TFHIRConstant.setIdValue');
 end;
 
 function TFHIRConstant.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRTodo.create('TFHIRConstant.setProperty');
+  raise EFHIRTodo.Create('TFHIRConstant.setProperty');
 end;
 
 function TFHIRConstant.sizeInBytesV(magic : integer) : cardinal;
@@ -442,20 +442,20 @@ end;
 
 { TFHIRClassTypeInfo }
 
-constructor TFHIRClassTypeInfo.create(instance: TFHIRObject);
+constructor TFHIRClassTypeInfo.Create(instance: TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   FInstance := instance;
 end;
 
 function TFHIRClassTypeInfo.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRTodo.create('TFHIRClassTypeInfo.createPropertyValue');
+  raise EFHIRTodo.Create('TFHIRClassTypeInfo.createPropertyValue');
 end;
 
-destructor TFHIRClassTypeInfo.destroy;
+destructor TFHIRClassTypeInfo.Destroy;
 begin
-  FInstance.Free;
+  FInstance.free;
   inherited;
 end;
 
@@ -467,9 +467,9 @@ end;
 procedure TFHIRClassTypeInfo.GetChildrenByName(name: string; list: TFHIRSelectionList);
 begin
   if (name = 'name') then
-    list.add(TFHIRString.create(getName).noExtensions)
+    list.add(TFHIRString.Create(getName).noExtensions)
   else if (name = 'namespace') then
-    list.add(TFHIRString.create(getNamespace).noExtensions)
+    list.add(TFHIRString.Create(getNamespace).noExtensions)
   else
     inherited GetChildrenByName(name, list);
 end;
@@ -486,7 +486,7 @@ end;
 
 function TFHIRClassTypeInfo.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRTodo.create('TFHIRClassTypeInfo.getTypesForProperty');
+  raise EFHIRTodo.Create('TFHIRClassTypeInfo.getTypesForProperty');
 end;
 
 function TFHIRClassTypeInfo.hasExtensions: boolean;
@@ -496,7 +496,7 @@ end;
 
 function TFHIRClassTypeInfo.getId: String;
 begin
-  raise EFHIRTodo.create('TFHIRClassTypeInfo.getId:');
+  raise EFHIRTodo.Create('TFHIRClassTypeInfo.getId:');
 end;
 
 function TFHIRClassTypeInfo.makeCodeValue(v: String): TFHIRObject;
@@ -516,12 +516,12 @@ end;
 
 procedure TFHIRClassTypeInfo.setIdValue(id: String);
 begin
-  raise EFHIRTodo.create('TFHIRClassTypeInfo.setIdValue');
+  raise EFHIRTodo.Create('TFHIRClassTypeInfo.setIdValue');
 end;
 
 function TFHIRClassTypeInfo.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRTodo.create('TFHIRClassTypeInfo.setProperty');
+  raise EFHIRTodo.Create('TFHIRClassTypeInfo.setProperty');
 end;
 
 function TFHIRClassTypeInfo.getName: String;
@@ -551,7 +551,7 @@ begin
   result := parseExpression(lexer, true);
   try
     if not result.check(msg, 0) then
-      raise EFHIRPath.create('Error "'+msg+'" parsing "'+lexer.Path);
+      raise EFHIRPath.Create('Error "'+msg+'" parsing "'+lexer.Path);
     result.Link;
   finally
     result.free;
@@ -572,14 +572,14 @@ begin
       if not lexer.done then
         raise lexer.error('Premature expression termination at unexpected token "'+lexer.current+'"');
       if not result.check(msg, 0) then
-        raise EFHIRPath.create('Error parsing "'+path+'": '+msg);
+        raise EFHIRPath.Create('Error parsing "'+path+'": '+msg);
 
       result.Link;
     finally
       result.free;
     end;
   finally
-    lexer.Free;
+    lexer.free;
   end;
 end;
 
@@ -698,7 +698,7 @@ end;
 
 destructor TFHIRPathParser.Destroy;
 begin
-  FExtensions.Free;
+  FExtensions.free;
   inherited;
 end;
 
@@ -714,14 +714,14 @@ begin
     result := parseExpression(lexer, true);
     try
       if not result.check(msg, 0) then
-        raise EFHIRPath.create('Error parsing "'+path+'": '+msg);
+        raise EFHIRPath.Create('Error parsing "'+path+'": '+msg);
       result.Link;
     finally
       result.free;
     end;
     i := lexer.CurrentStart;
   finally
-    lexer.Free;
+    lexer.free;
   end;
 end;
 
@@ -792,7 +792,7 @@ begin
         end
         else
           ucum := lexer.readConstant('units');
-        q := TFHIRQuantity.create;
+        q := TFHIRQuantity.Create;
         try
           q.value := result.constant.primitiveValue;
           q.unit_ := unit_;
@@ -803,7 +803,7 @@ begin
           end;
           result.constant := q.Link;
         finally
-          q.Free;
+          q.free;
         end;
       end;
       result.SourceLocationEnd := lexer.CurrentLocation;
@@ -894,7 +894,7 @@ begin
     else
       result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -942,7 +942,7 @@ begin
     group := newGroup(lexer, start);
     group.proximal := true;
     focus := start;
-    start.Free;
+    start.free;
     start := group;
   end
   else
@@ -1061,14 +1061,14 @@ begin
   end;
 
   try
-    ctxt := TFHIRPathExecutionTypeContext.create(appInfo, resourceType, types.Link, types.Link);
+    ctxt := TFHIRPathExecutionTypeContext.Create(appInfo, resourceType, types.Link, types.Link);
     try
       result := executeType(ctxt, types, expr, true);
     finally
       ctxt.free;
     end;
   finally
-    types.Free;
+    types.free;
   end;
 end;
 
@@ -1110,7 +1110,7 @@ begin
 end;
 
 
-constructor TFHIRPathEngine.create(context: TFHIRWorkerContext; ucum : TUcumServiceInterface);
+constructor TFHIRPathEngine.Create(context: TFHIRWorkerContext; ucum : TUcumServiceInterface);
 var
   sd : TFhirStructureDefinition;
   list : TFslList<TFHIRStructureDefinition>;
@@ -1124,7 +1124,7 @@ begin
   primitiveTypes := TStringList.Create;
   if (worker <> nil) then
   begin
-    list := TFslList<TFHIRStructureDefinition>.create;
+    list := TFslList<TFHIRStructureDefinition>.Create;
     try
       worker.listStructures(list);
       for sd in list do
@@ -1136,7 +1136,7 @@ begin
           if (sd.derivation = TypeDerivationRuleSPECIALIZATION) and (sd.kind = StructureDefinitionKindPrimitiveType) then
             primitiveTypes.add(sd.id);
           {$ELSE}
-          raise EFHIRException.create('Debug this');
+          raise EFHIRException.Create('Debug this');
           if (sd.constrainedType = DefinedTypesNull) then
             allTypes.add(sd.id);
           if (sd.constrainedType = DefinedTypesNull) and isPrimitive(sd) then
@@ -1144,7 +1144,7 @@ begin
           {$ENDIF}
       end;
     finally
-      list.Free;
+      list.free;
     end;
   end;
 end;
@@ -1166,11 +1166,11 @@ begin
      if (c = 'years') or (c = 'year') then
        result.dateValue := d.dateValue.add(v, dtuYear)
      else if (c = 'a') then
-       raise EFHIRPath.create(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
+       raise EFHIRPath.Create(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
      else if (c = 'months') or (c = 'month') then
        result.dateValue := d.dateValue.add(v, dtuMonth)
      else if (c = 'mo') then
-       raise EFHIRPath.create(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
+       raise EFHIRPath.Create(format('Error in date arithmetic: attempt to add a definite quantity duration time unit %s', [c]))
      else if (c = 'weeks') or (c = 'week') or (c = 'wk') then
        result.dateValue := d.dateValue.add(v * 7, dtuDay)
      else if (c = 'days') or (c = 'day') or (c = 'd') then
@@ -1184,10 +1184,10 @@ begin
      else if (c = 'millisecond') or (c = 'millisecond') or (c = 'ms') then
        result.dateValue := d.dateValue.add(v, dtuMillisecond)
      else
-       raise EFHIRPath.create(format('Error in date arithmetic: unrecognized time unit %s', [c]));
+       raise EFHIRPath.Create(format('Error in date arithmetic: unrecognized time unit %s', [c]));
      result.Link;
    finally
-     result.Free;
+     result.free;
    end;
 end;
 
@@ -1217,7 +1217,7 @@ begin
       pack.outcome := outcome.Link;
       Ondebug(self, pack);
     finally
-      pack.Free;
+      pack.free;
     end;
   end
   else
@@ -1234,11 +1234,11 @@ end;
 
 destructor TFHIRPathEngine.Destroy;
 begin
-  FLog.Free;
-  FUcum.Free;
-  worker.Free;
-  primitiveTypes.Free;
-  allTypes.Free;
+  FLog.free;
+  FUcum.free;
+  worker.free;
+  primitiveTypes.free;
+  allTypes.free;
   inherited;
 end;
 
@@ -1261,7 +1261,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1283,7 +1283,7 @@ begin
         ctxt.free;
       end;
     finally
-      list.Free;
+      list.free;
     end;
   finally
     exp.free;
@@ -1302,10 +1302,10 @@ begin
     try
       result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1324,10 +1324,10 @@ begin
       try
         result := execute(ctxt, list, exp, true);
       finally
-        ctxt.Free;
+        ctxt.free;
       end;
     finally
-      list.Free;
+      list.free;
     end;
   finally
     exp.free;
@@ -1457,16 +1457,16 @@ begin
       ctxt.This := base;
       result := execute(ctxt, list, expr as TFHIRPathExpressionNode, true);
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
 function TFHIRPathEngine.evaluateCustomFunctionType(context: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode): TFHIRTypeDetails;
 begin
-  raise EFHIRPath.create('Unknown Function '+exp.name);
+  raise EFHIRPath.Create('Unknown Function '+exp.name);
 end;
 
 function TFHIRPathEngine.executeV(context: TFHIRPathExecutionContext; item: TFHIRObject; exp: TFHIRPathExpressionNodeV; atEntry: boolean): TFHIRSelectionList;
@@ -1487,7 +1487,7 @@ begin
   try
     result := convertToBoolean(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -1499,7 +1499,7 @@ begin
   try
     result := convertToBoolean(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -1511,7 +1511,7 @@ begin
   try
     result := convertToString(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -1523,7 +1523,7 @@ begin
   try
     result := convertToString(res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -1599,51 +1599,51 @@ end;
 function TFHIRPathEngine.resolveConstantType(ctxt: TFHIRPathExecutionTypeContext; constant : TFHIRObject) : TFHIRTypeDetails;
 begin
   if (constant is TFHIRBoolean) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Boolean])
   else if (constant is TFHIRInteger) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_Integer])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Integer])
   else if (constant is TFHIRDecimal) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_Decimal])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Decimal])
   else if (constant is TFHIRQuantity) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_Quantity])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Quantity])
   else if (constant is TFHIRConstant) then
     result := resolveConstantType(ctxt, (constant as TFHIRConstant).FValue)
   else
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String]);
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String]);
 end;
 
 function TFHIRPathEngine.resolveConstantType(ctxt: TFHIRPathExecutionTypeContext; s : String) : TFHIRTypeDetails;
 begin
   if (s.startsWith('@')) then
     if (s.startsWith('@T')) then
-      result := TFHIRTypeDetails.create(csSINGLETON, [FP_Time])
+      result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Time])
     else
-      result := TFHIRTypeDetails.create(csSINGLETON, [FP_DateTime])
+      result := TFHIRTypeDetails.Create(csSINGLETON, [FP_DateTime])
   else if (s.equals('%sct')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.equals('%loinc')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.equals('%ucum')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.equals('%resource')) then
   begin
     if (ctxt.resourceType = '') then
-      raise EFHIRPath.create('%resource cannot be used in this context');
-    result := TFHIRTypeDetails.create(csSINGLETON, [ctxt.resourceType]);
+      raise EFHIRPath.Create('%resource cannot be used in this context');
+    result := TFHIRTypeDetails.Create(csSINGLETON, [ctxt.resourceType]);
   end else if (s.equals('%context')) then
     result := ctxt.context.link
   else if (s.equals('%map-codes')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.equals('%us-zip')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.startsWith('%`vs-')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.startsWith('%`cs-')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else if (s.startsWith('%`ext-')) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [FP_String])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String])
   else
-    raise EFHIRPath.create('Unknown fixed constant type for "'+s+'"');
+    raise EFHIRPath.Create('Unknown fixed constant type for "'+s+'"');
 end;
 
 function TFHIRPathEngine.executeType(ctxt: TFHIRPathExecutionTypeContext; focus: TFHIRTypeDetails; exp: TFHIRPathExpressionNode; atEntry : boolean): TFHIRTypeDetails;
@@ -1670,11 +1670,11 @@ begin
             try
               result.update(work);
             finally
-              work.Free;
+              work.free;
             end;
           end;
           if (result.hasNoTypes) then
-            raise EFHIRPath.create('The name '+exp.Name+' was not valid for any of the possible types: '+focus.describe());
+            raise EFHIRPath.Create('The name '+exp.Name+' was not valid for any of the possible types: '+focus.describe());
         end;
       enkUnary :
         begin
@@ -1688,7 +1688,7 @@ begin
           try
             result.update(work)
           finally
-            work.Free;
+            work.free;
           end;
         end;
       enkConstant:
@@ -1697,7 +1697,7 @@ begin
           try
             result.update(work)
           finally
-            work.Free;
+            work.free;
           end;
         end;
       enkGroup:
@@ -1706,7 +1706,7 @@ begin
           try
             result.update(work)
           finally
-            work.Free;
+            work.free;
           end;
         end;
     end;
@@ -1716,7 +1716,7 @@ begin
     if (exp.Inner <> nil) then
     begin
       work := executeType(ctxt, result, exp.Inner, false);
-      result.Free;
+      result.free;
       result := work;
     end;
 
@@ -1727,15 +1727,15 @@ begin
       while (next <> nil) do
       begin
         if (last.Operation in [popIs, popAs]) then
-          work := TFHIRTypeDetails.create(csSINGLETON, next.name)
+          work := TFHIRTypeDetails.Create(csSINGLETON, next.name)
         else
           work := executeType(ctxt, focus, next, atEntry);
         try
           work2 := operateTypes(result, last.Operation, work);
-          result.Free;
+          result.free;
           result := work2;
         finally
-          work.Free;
+          work.free;
         end;
         last := next;
         next := next.OpNext;
@@ -1744,7 +1744,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1773,11 +1773,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(all).noExtensions)
     end
@@ -1796,7 +1796,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1824,7 +1824,7 @@ begin
           result.add(b.Link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1838,7 +1838,7 @@ begin
       listAllChildren(item.value, result, false);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1859,15 +1859,15 @@ begin
       end;
 
       if (focus.count <> 1) then
-        result.add(TFHIRBoolean.create(false).noExtensions)
+        result.add(TFHIRBoolean.Create(false).noExtensions)
       else if sw = '' then
-        result.add(TFHIRBoolean.create(true).noExtensions)
+        result.add(TFHIRBoolean.Create(true).noExtensions)
       else
-        result.add(TFHIRBoolean.create(convertToString(focus[0].value).contains(sw)).noExtensions);
+        result.add(TFHIRBoolean.Create(convertToString(focus[0].value).contains(sw)).noExtensions);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1900,7 +1900,7 @@ begin
     else
       result := TFHIRSelectionList.Create();
   finally
-    nl.Free;
+    nl.free;
   end;
 end;
 
@@ -1914,7 +1914,7 @@ begin
       listAllChildren(item.value, result, true);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1951,7 +1951,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1984,7 +1984,7 @@ begin
     else
       result := TFHIRSelectionList.Create();
   finally
-    nl.Free;
+    nl.free;
   end;
 end;
 
@@ -2005,15 +2005,15 @@ begin
       end;
 
       if (focus.count <> 1) then
-        result.add(TFHIRBoolean.create(false).noExtensions)
+        result.add(TFHIRBoolean.Create(false).noExtensions)
       else if (sw = '') then
-        result.add(TFHIRBoolean.create(true).noExtensions)
+        result.add(TFHIRBoolean.Create(true).noExtensions)
       else
-        result.add(TFHIRBoolean.create(convertToString(focus[0].value).endsWith(sw)).noExtensions);
+        result.add(TFHIRBoolean.Create(convertToString(focus[0].value).endsWith(sw)).noExtensions);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2041,7 +2041,7 @@ begin
     else
       result := TFHIRSelectionList.Create();
   finally
-    nl.Free;
+    nl.free;
   end;
 end;
 
@@ -2072,14 +2072,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Floor.AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for abs.floor: expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2102,7 +2102,7 @@ begin
     end;
     result := TFHIRSelectionList.Create(TFhirString.Create(b.AsString));
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -2132,18 +2132,18 @@ begin
             ListChildrenByName(ex.value, 'url', vl);
             result.Add(TFhirBoolean.Create(convertToString(vl) = url).noExtensions);
           finally
-            vl.Free;
+            vl.free;
           end;
         end;
       finally
-        ext.Free;
+        ext.free;
       end;
     end;
 
     result.Link;
   finally
     n1.free;
-    result.Free;
+    result.free;
   end;
 
 end;
@@ -2153,12 +2153,12 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count = 1) then
-      result.add(TFHIRBoolean.create(focus[0].value.hasPrimitiveValue).noExtensions)
+      result.add(TFHIRBoolean.Create(focus[0].value.hasPrimitiveValue).noExtensions)
     else
-      result.add(TFHIRBoolean.create(false).noExtensions);
+      result.add(TFHIRBoolean.Create(false).noExtensions);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2166,10 +2166,10 @@ function TFHIRPathEngine.funcHtmlChecks(context: TFHIRPathExecutionContext; focu
 begin
   result := TFHIRSelectionList.Create;
   try
-    result.add(TFHIRBoolean.create(true).noExtensions);
+    result.add(TFHIRBoolean.Create(true).noExtensions);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2201,18 +2201,18 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count = 0) or (focus.count > 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions)
+      result.add(TFHIRBoolean.Create(false).noExtensions)
     else
     begin
       ns := '';
       n := '';
       texp := exp.Parameters[0];
       if (texp.Kind <> enkName) then
-        raise EFHIRPath.create('Unsupported Expression type for Parameter on Is');
+        raise EFHIRPath.Create('Unsupported Expression type for Parameter on Is');
       if (texp.inner <> nil) then
       begin
         if (texp.Kind <> enkName) then
-          raise EFHIRPath.create('Unsupported Expression type for Parameter on Is');
+          raise EFHIRPath.Create('Unsupported Expression type for Parameter on Is');
         ns := texp.Name;
         n := texp.inner.Name;
       end
@@ -2229,19 +2229,19 @@ begin
       if (ns = 'System') then
       begin
         if (focus[0].value is TFHIRResource) then
-          result.add(TFHIRBoolean.create(false).noExtensions)
+          result.add(TFHIRBoolean.Create(false).noExtensions)
         else if (not (focus[0].value is TFHIRElement) or (focus[0].value as TFHIRElement).DisallowExtensions) then
           if (focus[0].value.fhirType = 'date') and (n = 'DateTime') then
-            result.add(TFHIRBoolean.create(true).noExtensions)
+            result.add(TFHIRBoolean.Create(true).noExtensions)
         else
-            result.add(TFHIRBoolean.create(n = capitalise(focus[0].value.fhirType)).noExtensions)
+            result.add(TFHIRBoolean.Create(n = capitalise(focus[0].value.fhirType)).noExtensions)
         else
-          result.add(TFHIRBoolean.create(false).noExtensions);
+          result.add(TFHIRBoolean.Create(false).noExtensions);
       end
       else if (ns = 'FHIR') then
-        result.add(TFHIRBoolean.create(n = focus[0].value.fhirType).noExtensions)
+        result.add(TFHIRBoolean.Create(n = focus[0].value.fhirType).noExtensions)
       else
-        result.add(TFHIRBoolean.create(false).noExtensions);
+        result.add(TFHIRBoolean.Create(false).noExtensions);
     end;
     result.link;
   finally
@@ -2258,7 +2258,7 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count = 1) then
-      result.add(TFHIRBoolean.create(true).noExtensions)
+      result.add(TFHIRBoolean.Create(true).noExtensions)
     else if (focus.count > 1) then
     begin
       distinct := true;
@@ -2277,7 +2277,7 @@ begin
             break;
           end;
         end;
-      result.add(TFHIRBoolean.create(distinct).noExtensions);
+      result.add(TFHIRBoolean.Create(distinct).noExtensions);
     end;
     result.link;
   finally
@@ -2295,7 +2295,7 @@ begin
   try
     s := convertToString(res);
   finally
-    res.Free;
+    res.free;
   end;
   result := TFHIRSelectionList.Create;
   if StringIsInteger16(s) then
@@ -2327,10 +2327,10 @@ begin
       end;
       result := TFHIRSelectionList.Create(TFhirString.Create(b.ToString));
     finally
-      b.Free;
+      b.free;
     end;
   finally
-    nl.Free;
+    nl.free;
   end;
 end;
 
@@ -2352,14 +2352,14 @@ begin
         begin
           sw := convertToString(nl);
           if (sw = '') then
-            result.add(TFHIRInteger.create(0))
+            result.add(TFHIRInteger.Create(0))
           else // if (focus[0].hasType(FHIR_TYPES_STRING)) then
           begin
             s := convertToString(focus[0].value);
             if (s = '')  then
-              result.add(TFHIRInteger.create(0))
+              result.add(TFHIRInteger.Create(0))
             else
-              result.add(TFHIRInteger.create(s.indexOf(sw)));
+              result.add(TFHIRInteger.Create(s.indexOf(sw)));
           end;
         end;
       finally
@@ -2387,11 +2387,11 @@ begin
     if (focus.count = 1) then
     begin
       s := convertToString(focus[0].value);
-      result.add(TFHIRInteger.create(inttostr(s.length)).noExtensions);
+      result.add(TFHIRInteger.Create(inttostr(s.length)).noExtensions);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2415,14 +2415,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Ln.AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for ln.focus. expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2440,14 +2440,14 @@ begin
       try
         log(name, convertToString(n2));
       finally
-        n2.Free;
+        n2.free;
       end;
     end
     else
       log(name, convertToString(focus));
     result := focus.Link;
   finally
-    n1.Free;
+    n1.free;
   end;
 end;
 
@@ -2479,14 +2479,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Trunc.AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for truncate.focus: expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2506,13 +2506,13 @@ begin
         begin
           p := convertToString(res);
           if (p = '') then
-            result.add(TFHIRBoolean.create(false))
+            result.add(TFHIRBoolean.Create(false))
           else
           begin
             reg := TRegularExpression.Create('(?s)' + p, [roCompiled]);
             try
               s := convertToString(focus[0].value);
-              result.add(TFHIRBoolean.create(reg.isMatch(s)));
+              result.add(TFHIRBoolean.Create(reg.isMatch(s)));
             finally
               reg.free;
             end;
@@ -2524,7 +2524,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2544,15 +2544,15 @@ begin
         begin
           p := convertToString(res);
           if (p = '') then
-            result.add(TFHIRBoolean.create(false))
+            result.add(TFHIRBoolean.Create(false))
           else
           begin
             reg := TRegularExpression.Create('(?s)' + p, [roCompiled]);
             try
               s := convertToString(focus[0].value);
-              result.add(TFHIRBoolean.create(reg.isFullMatch(s)));
+              result.add(TFHIRBoolean.Create(reg.isFullMatch(s)));
             finally
-              reg.Free;
+              reg.free;
             end;
           end;
         end;
@@ -2562,13 +2562,13 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TFHIRPathEngine.funcMemberOf(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
-  raise EFHIRPathTodo.create('TFHIRPathEngine.funcMemberOf');
+  raise EFHIRPathTodo.Create('TFHIRPathEngine.funcMemberOf');
 end;
 
 function TFHIRPathEngine.funcNot(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -2584,7 +2584,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2624,10 +2624,10 @@ begin
             try
               added.addAll(work);
             finally
-              work.Free;
+              work.free;
             end;
           finally
-            ctxt.Free;
+            ctxt.free;
           end;
           inc(i);
         end;
@@ -2650,9 +2650,9 @@ begin
     end;
     result.Link;
   finally
-    current.Free;
-    added.Free;
-    result.Free;
+    current.free;
+    added.free;
+    result.free;
   end;
 end;
 
@@ -2677,10 +2677,10 @@ begin
         begin
           f := convertToString(focus[0].value);
           if (f = '') then
-            result.add(TFHIRString.create(''))
+            result.add(TFHIRString.Create(''))
           else if (t = '') then
           begin
-            b := TFslStringBuilder.create;
+            b := TFslStringBuilder.Create;
             try
               b.append(r);
               for i := 1 to f.length do
@@ -2688,7 +2688,7 @@ begin
                 b.append(f[i]);
                 b.append(r);
               end;
-              result.add(TFHIRString.create(b.toString))
+              result.add(TFHIRString.Create(b.toString))
             finally
               b.free;
             end;
@@ -2696,7 +2696,7 @@ begin
           else
           begin
             n := f.replace(t, r);
-            result.add(TFHIRString.create(n));
+            result.add(TFHIRString.Create(n));
           end
         end
         else
@@ -2710,7 +2710,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2735,13 +2735,13 @@ begin
         begin
           f := convertToString(focus[0].value);
           if (f = '') then
-            result.add(TFHIRString.create(''))
+            result.add(TFHIRString.Create(''))
           else if (t = '') then
-            result.add(TFHIRString.create(f))
+            result.add(TFHIRString.Create(f))
           else
           begin
             n := f.replace(t, r);
-            result.add(TFHIRString.create(TRegularExpression.replace(n, t, r)));
+            result.add(TFHIRString.Create(TRegularExpression.replace(n, t, r)));
           end
         end
         else
@@ -2755,7 +2755,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2800,13 +2800,13 @@ begin
               end;
             end
           finally
-            p.Free;
+            p.free;
           end;
         end
         else
         begin
           if not assigned(FOnResolveReference) then
-            raise EFHIRPath.create('resolve() - resolution services for '+exp.name+' not implemented yet');
+            raise EFHIRPath.Create('resolve() - resolution services for '+exp.name+' not implemented yet');
           res := FOnResolveReference(self, context.appInfo, s);
         end;
         if (res <> nil) then
@@ -2815,7 +2815,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2843,7 +2843,7 @@ begin
 
         p := StrToIntDef(n[0].value.primitiveValue, 0);
       finally
-        n.Free;
+        n.free;
       end;
     end;
     if (base.hasType(FHIR_TYPES_NUMERIC)) then
@@ -2855,14 +2855,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Round(p).AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for round.focus. expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2888,10 +2888,10 @@ begin
           try
             result.addAll(work);
           finally
-            work.Free;
+            work.free;
           end;
         finally
-          ctxt.Free;
+          ctxt.free;
         end;
         inc(i);
       end;
@@ -2900,14 +2900,14 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TFHIRPathEngine.funcSingle(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
 begin
   if (focus.count <> 1) then
-    raise EFHIRPath.create(StringFormat('Single() : checking for 1 item but found %d items', [focus.count]));
+    raise EFHIRPath.Create(StringFormat('Single() : checking for 1 item but found %d items', [focus.count]));
   result := focus.link;
 end;
 
@@ -2940,16 +2940,16 @@ begin
       begin
         sw := convertToString(swb);
         if (sw = '') then
-          result.add(TFHIRBoolean.create(true).noExtensions)
+          result.add(TFHIRBoolean.Create(true).noExtensions)
         else
-          result.add(TFHIRBoolean.create(convertToString(focus[0].value).startsWith(sw)).noExtensions);
+          result.add(TFHIRBoolean.Create(convertToString(focus[0].value).startsWith(sw)).noExtensions);
       end;
     finally
       swb.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2983,7 +2983,7 @@ begin
         break;
       end;
     end;
-    result := TFHIRSelectionList.Create(TFHIRBoolean.create(valid).noExtensions);
+    result := TFHIRSelectionList.Create(TFHIRBoolean.Create(valid).noExtensions);
   finally
     target.free;
   end;
@@ -3026,7 +3026,7 @@ begin
   finally
     n1.free;
     n2.free;
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3041,7 +3041,7 @@ begin
   result := TFHIRSelectionList.Create;
   try
     empty := true;
-    pc := TFHIRSelectionList.create;
+    pc := TFHIRSelectionList.Create;
     try
       i := 0;
       for f in focus do
@@ -3057,10 +3057,10 @@ begin
               if asBool(res) = equalTrue then
                 empty := false;
             finally
-              res.Free;
+              res.free;
             end;
           finally
-            ctxt.Free;
+            ctxt.free;
           end;
           inc(i);
         end
@@ -3068,10 +3068,10 @@ begin
           empty := false;
       end;
     finally
-      pc.Free;
+      pc.free;
     end;
 
-    result.add(TFHIRBoolean.create(not empty).noExtensions);
+    result.add(TFHIRBoolean.Create(not empty).noExtensions);
     result.link;
   finally
     result.free;
@@ -3099,7 +3099,7 @@ begin
           qty.value := TFslDecimal.Create(qty.value).Exp.AsString;
           result.add(qty.Link);
         finally
-          qty.Free;
+          qty.free;
         end;
       end
       else
@@ -3107,7 +3107,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3141,7 +3141,7 @@ begin
         break;
       end;
     end;
-    result := TFHIRSelectionList.Create(TFHIRBoolean.create(valid).noExtensions);
+    result := TFHIRSelectionList.Create(TFHIRBoolean.Create(valid).noExtensions);
   finally
     target.free;
   end;
@@ -3174,18 +3174,18 @@ begin
             if convertToString(vl) = url then
               result.Add(ex.Link);
           finally
-            vl.Free;
+            vl.free;
           end;
         end;
       finally
-        ext.Free;
+        ext.free;
       end;
     end;
 
     result.Link;
   finally
     n1.free;
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3277,20 +3277,20 @@ begin
             if asBool(res) = equalTrue then
               result.Add(item.Link);
           finally
-            res.Free;
+            res.free;
           end;
         finally
-          ctxt.Free;
+          ctxt.free;
         end;
         inc(i);
       end;
     finally
-      pc.Free;
+      pc.free;
     end;
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3319,11 +3319,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(all).noExtensions);
     end
@@ -3342,7 +3342,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3371,11 +3371,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(any).noExtensions);
     end
@@ -3394,7 +3394,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3423,11 +3423,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(all).noExtensions);
     end
@@ -3446,7 +3446,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3475,11 +3475,11 @@ begin
               break;
             end;
           finally
-            res.Free;
+            res.free;
           end;
         end;
       finally
-        pc.Free;
+        pc.free;
       end;
       result.add(TFhirBoolean.Create(any).noExtensions);
     end
@@ -3498,7 +3498,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3507,7 +3507,7 @@ var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     for item in focus do
       result.add(item.link);
@@ -3520,7 +3520,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3528,9 +3528,9 @@ function TFHIRPathEngine.funcType(context : TFHIRPathExecutionContext; focus: TF
 var
   item : TFHIRSelection;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   for item in focus do
-    result.add(TFHIRClassTypeInfo.create(item.value.Link));
+    result.add(TFHIRClassTypeInfo.Create(item.value.Link));
 end;
 
 function TFHIRPathEngine.funcOfType(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -3571,28 +3571,28 @@ begin
             result.add(qty.Link);
           end;
         finally
-          qty.Free;
+          qty.free;
         end;
       end
       else
         raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for exp.focus. expecting integer, decimal or quantity');
     finally
-      n.Free;
+      n.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TFHIRPathEngine.funcElementDefinition(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRTodo.create('TFHIRPathEngine.funcElementDefinition');
+  raise EFHIRTodo.Create('TFHIRPathEngine.funcElementDefinition');
 end;
 
 function TFHIRPathEngine.funcSlice(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRTodo.create('TFHIRPathEngine.funcSlice');
+  raise EFHIRTodo.Create('TFHIRPathEngine.funcSlice');
 end;
 
 function TFHIRPathEngine.funcSplit(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -3610,10 +3610,10 @@ begin
           result.add(TFhirString.Create(s));
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    nl.Free;
+    nl.free;
   end;
 end;
 
@@ -3642,14 +3642,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Sqrt.AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for ln.focus. expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3690,26 +3690,26 @@ begin
 
       base := focus[0].value;
       if (base.hasType('decimal')) then
-        result.add(TFhirDecimal.create(lowBoundaryForDecimal(base.primitiveValue(), dp(8))))
+        result.add(TFhirDecimal.Create(lowBoundaryForDecimal(base.primitiveValue(), dp(8))))
       else if (base.hasType('date')) then
-        result.add(TFHIRDateTime.create(lowBoundaryForDate(base.primitiveValue(), dp(8))))
+        result.add(TFHIRDateTime.Create(lowBoundaryForDate(base.primitiveValue(), dp(8))))
       else if (base.hasType('dateTime')) then
-        result.add(TFHIRDateTime.create(lowBoundaryForDate(base.primitiveValue(), dp(17))))
+        result.add(TFHIRDateTime.Create(lowBoundaryForDate(base.primitiveValue(), dp(17))))
       else if (base.hasType('time')) then
-        result.add(TFHIRTime.create(lowBoundaryForTime(base.primitiveValue(), dp(9))))
+        result.add(TFHIRTime.Create(lowBoundaryForTime(base.primitiveValue(), dp(9))))
       else if (base.hasType('Quantity')) then
       begin
         value := base.getPrimitiveValue('value');
         v := base.Clone;
         result.add(v);
-        v.setProperty('value', TFHIRDecimal.create(lowBoundaryForDecimal(value, dp(8))));
+        v.setProperty('value', TFHIRDecimal.Create(lowBoundaryForDecimal(value, dp(8))));
       end
       else
         raise EFHIRPath.Create('Unable to generate low boundary for '+base.fhirType);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3749,26 +3749,26 @@ begin
 
       base := focus[0].value;
       if (base.hasType('decimal')) then
-        result.add(TFhirDecimal.create(highBoundaryForDecimal(base.primitiveValue(), dp(8))))
+        result.add(TFhirDecimal.Create(highBoundaryForDecimal(base.primitiveValue(), dp(8))))
       else if (base.hasType('date')) then
-        result.add(TFHIRDateTime.create(highBoundaryForDate(base.primitiveValue(), dp(8))))
+        result.add(TFHIRDateTime.Create(highBoundaryForDate(base.primitiveValue(), dp(8))))
       else if (base.hasType('dateTime')) then
-        result.add(TFHIRDateTime.create(highBoundaryForDate(base.primitiveValue(), dp(17))))
+        result.add(TFHIRDateTime.Create(highBoundaryForDate(base.primitiveValue(), dp(17))))
       else if (base.hasType('time')) then
-        result.add(TFHIRTime.create(highBoundaryForTime(base.primitiveValue(), dp(9))))
+        result.add(TFHIRTime.Create(highBoundaryForTime(base.primitiveValue(), dp(9))))
       else if (base.hasType('Quantity')) then
       begin
         value := base.getPrimitiveValue('value');
         v := base.Clone;
         result.add(v);
-        v.setProperty('value', TFHIRDecimal.create(highBoundaryForDecimal(value, dp(8))));
+        v.setProperty('value', TFHIRDecimal.Create(highBoundaryForDecimal(value, dp(8))));
       end
       else
         raise EFHIRPath.Create('Unable to generate low boundary for '+base.fhirType);
       result.Link;
     end;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3785,17 +3785,17 @@ begin
 
       base := focus[0].value;
       if (base.hasType('decimal')) then
-        result.add(TFHIRInteger.create(getDecimalPrecision(base.primitiveValue())))
+        result.add(TFHIRInteger.Create(getDecimalPrecision(base.primitiveValue())))
       else if (base.hasType('date') or base.hasType('dateTime')) then
-        result.add(TFHIRInteger.create(getDatePrecision(base.primitiveValue())))
+        result.add(TFHIRInteger.Create(getDatePrecision(base.primitiveValue())))
       else if (base.hasType('time')) then
-        result.add(TFHIRInteger.create(getTimePrecision(base.primitiveValue())))
+        result.add(TFHIRInteger.Create(getTimePrecision(base.primitiveValue())))
       else
         raise EFHIRPath.Create('Unable to get precision for '+base.fhirType);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3819,14 +3819,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Trunc.Add(1).AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for abs.floor: expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3861,23 +3861,23 @@ begin
             if not found then
               ok := false;
           finally
-            u.Free;
+            u.free;
           end;
         end;
         result := TFHIRSelectionList.Create();
         result.add(TFhirBoolean.Create(ok).noExtensions);
       finally
-        me.Free;
+        me.free;
       end;
     end;
   finally
-    n1.Free;
+    n1.free;
   end;
 end;
 
 function TFHIRPathEngine.funcConformsTo(context : TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRTodo.create('TFHIRPathEngine.funcConformsTo');
+  raise EFHIRTodo.Create('TFHIRPathEngine.funcConformsTo');
 end;
 
 function TFHIRPathEngine.funcAbs(context: TFHIRPathExecutionContext; focus: TFHIRSelectionList; exp: TFHIRPathExpressionNode): TFHIRSelectionList;
@@ -3900,14 +3900,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Abs.AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for abs.focus. expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -3933,22 +3933,22 @@ begin
           c.total := total.Link;
           work := execute(c, pc, exp.Parameters[0], true);
           try
-            total.Free;
+            total.free;
             total := work.Link;
           finally
-            work.Free;
+            work.free;
           end;
         finally
-          c.Free;
+          c.free;
         end;
         inc(i);
       end;
     finally
-      pc.Free;
+      pc.free;
     end;
     result := total.Link;
   finally
-    total.Free;
+    total.free;
   end;
 end;
 
@@ -3976,7 +3976,7 @@ begin
     else
       result := TFHIRSelectionList.Create();
   finally
-    nl.Free;
+    nl.free;
   end;
 end;
 
@@ -3986,12 +3986,12 @@ var
   thisList, res : TFHIRSelectionList;
 
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     for item in focus do
       if not contains(result, item.value) then
         result.add(item.link);
-    thisList := TFHIRSelectionList.create;
+    thisList := TFHIRSelectionList.Create;
     try
       thisList.add(context.this.link);
       res := execute(context, thisList, exp.Parameters[0], true);
@@ -4007,7 +4007,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4016,7 +4016,7 @@ var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     res := execute(context, focus, exp.Parameters[0], true);
     try
@@ -4028,7 +4028,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4037,7 +4037,7 @@ var
   item : TFHIRSelection;
   res : TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     res := execute(context, focus, exp.Parameters[0], true);
     try
@@ -4049,7 +4049,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4076,7 +4076,7 @@ begin
         raise EFHIRPath.Create('Error: the parameter round('+n[0].value.primitiveValue+') is not an integer');
 
     finally
-      n.Free;
+      n.free;
     end;
   end;
 
@@ -4092,14 +4092,14 @@ begin
         qty.value := TFslDecimal.Create(qty.value).Log(p).AsString;
         result.add(qty.Link);
       finally
-        qty.Free;
+        qty.free;
       end;
     end
     else
       raise EFHIRPath.Create('Error evaluating FHIRPath expression: The parameter type '+base.fhirType+' is not legal for ln.focus. expecting integer, decimal or quantity');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4113,11 +4113,11 @@ begin
     begin
       sw := convertToString(focus[0].value);
       if sw <> '' then
-        result.add(TFHIRString.create(sw.ToLower).noExtensions);
+        result.add(TFHIRString.Create(sw.ToLower).noExtensions);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4131,11 +4131,11 @@ begin
     begin
       sw := convertToString(focus[0].value);
       if sw <> '' then
-        result.add(TFHIRString.create(sw.ToUpper).noExtensions);
+        result.add(TFHIRString.Create(sw.ToUpper).noExtensions);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4150,11 +4150,11 @@ begin
     begin
       sw := convertToString(focus[0].value);
       for c in sw do
-        result.add(TFHIRString.create(c).noExtensions);
+        result.add(TFHIRString.Create(c).noExtensions);
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4171,8 +4171,8 @@ begin
       else if (focus[0].value is TFHIRInteger) then
       begin
         case StrToInt((focus[0].value as TFHIRInteger).value) of
-          0: result.add(TFHIRBoolean.create(false).noExtensions());
-          1: result.add(TFHIRBoolean.create(true).noExtensions());
+          0: result.add(TFHIRBoolean.Create(false).noExtensions());
+          1: result.add(TFHIRBoolean.Create(true).noExtensions());
         else
         end;
       end
@@ -4180,19 +4180,19 @@ begin
       begin
         s := removeTrailingZeros(TFHIRDecimal(focus[0].value).value);
         if (s = '0') then
-          result.add(TFHIRBoolean.create(false).noExtensions())
+          result.add(TFHIRBoolean.Create(false).noExtensions())
         else if (s = '1') then
-          result.add(TFHIRBoolean.create(true).noExtensions());
+          result.add(TFHIRBoolean.Create(true).noExtensions());
       end
       else if (focus[0].value is TFHIRString) then
         if SameText('true', focus[0].value.primitiveValue) then
-          result.add(TFHIRBoolean.create(true).noExtensions())
+          result.add(TFHIRBoolean.Create(true).noExtensions())
         else if SameText('false', focus[0].value.primitiveValue) then
-          result.add(TFHIRBoolean.create(false).noExtensions());
+          result.add(TFHIRBoolean.Create(false).noExtensions());
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4220,18 +4220,18 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TFHIRPathEngine.funcToDateTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRTodo.create('TFHIRPathEngine.funcToDateTime');
+  raise EFHIRTodo.Create('TFHIRPathEngine.funcToDateTime');
 end;
 
 function TFHIRPathEngine.funcToTime(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
 begin
-  raise EFHIRTodo.create('TFHIRPathEngine.funcToTime');
+  raise EFHIRTodo.Create('TFHIRPathEngine.funcToTime');
 end;
 
 function TFHIRPathEngine.funcIsInteger(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNode) : TFHIRSelectionList;
@@ -4239,18 +4239,18 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRInteger) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRBoolean) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(StringIsInteger32(convertToString(focus[0].value))).noExtensions())
+      result.add(TFHIRBoolean.Create(StringIsInteger32(convertToString(focus[0].value))).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4259,20 +4259,20 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRInteger) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRBoolean) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRDecimal) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(StringIsDecimal(convertToString(focus[0].value))).noExtensions())
+      result.add(TFHIRBoolean.Create(StringIsDecimal(convertToString(focus[0].value))).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4281,14 +4281,14 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if not (focus[0].value is TFHIRDateTime) and not (focus[0].value is TFHIRTime) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4297,20 +4297,20 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRInteger) and (StrToIntDef((focus[0].value as TFHIRInteger).value, -1) >= 0) and (StrToIntDef((focus[0].value as TFHIRInteger).value, -1) <= 1) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRBoolean) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRDecimal) then
-      result.add(TFHIRBoolean.create(StringArrayExistsSensitive(['0', '1'], removeTrailingZeros(focus[0].value.primitiveValue))).noExtensions())
+      result.add(TFHIRBoolean.Create(StringArrayExistsSensitive(['0', '1'], removeTrailingZeros(focus[0].value.primitiveValue))).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(StringArrayExistsInSensitive(['true', 'false'], convertToString(focus[0].value))).noExtensions())
+      result.add(TFHIRBoolean.Create(StringArrayExistsInSensitive(['true', 'false'], convertToString(focus[0].value))).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4323,7 +4323,7 @@ begin
     parser.FExtensions := FExtensions.Link;
     result := parser.parse(path, i);
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -4380,25 +4380,25 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRInteger) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRDecimal) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRQuantity) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRBoolean) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
     begin
       q := parseQuantityString(focus[0].value.primitiveValue());
-      result.add(TFHIRBoolean.create(q <> nil).noExtensions());
+      result.add(TFHIRBoolean.Create(q <> nil).noExtensions());
     end
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4408,18 +4408,18 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRDateTime) or (focus[0].value is TFHIRDate) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegularExpression.isMatch(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.Create(TRegularExpression.isMatch(convertToString(focus[0].value),
           '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1]))?)?'
        )).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4428,18 +4428,18 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRDateTime) or (focus[0].value is TFHIRDate) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegularExpression.isMatch(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.Create(TRegularExpression.isMatch(convertToString(focus[0].value),
           '([0-9]([0-9]([0-9][1-9]|[1-9]0)|[1-9]00)|[1-9]000)(-(0[1-9]|1[0-2])(-(0[1-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:([0-5][0-9]|60)(\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?'
        )).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4448,17 +4448,17 @@ begin
   result := TFHIRSelectionList.Create;
   try
     if (focus.count <> 1) then
-      result.add(TFHIRBoolean.create(false).noExtensions())
+      result.add(TFHIRBoolean.Create(false).noExtensions())
     else if (focus[0].value is TFHIRTime) then
-      result.add(TFHIRBoolean.create(true).noExtensions())
+      result.add(TFHIRBoolean.Create(true).noExtensions())
     else if (focus[0].value is TFHIRString) then
-      result.add(TFHIRBoolean.create(TRegularExpression.IsMatch(convertToString(focus[0].value),
+      result.add(TFHIRBoolean.Create(TRegularExpression.IsMatch(convertToString(focus[0].value),
           '(T)?([01][0-9]|2[0-3])(:[0-5][0-9](:([0-5][0-9]|60))?)?(\\.[0-9]+)?(Z|(\\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?')).noExtensions())
     else
-      result.add(TFHIRBoolean.create(false).noExtensions());
+      result.add(TFHIRBoolean.Create(false).noExtensions());
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4487,7 +4487,7 @@ end;
 function TFHIRPathEngine.operate(left: TFHIRSelectionList; op: TFHIRPathOperation; right: TFHIRSelectionList): TFHIRSelectionList;
 begin
   case op of
-    popNull: raise EFHIRPath.create('An internal error has occurred');
+    popNull: raise EFHIRPath.Create('An internal error has occurred');
     popEquals: result := opequal(left, right);
     popEquivalent: result := opEquivalent(left, right);
     popNotEquals: result := opNotequal(left, right);
@@ -4512,9 +4512,9 @@ begin
     popMod: result := opMod(left, right);
     popIs: result := opIs(left, right);
     popAs: result := opAs(left, right);
-    popCustom : raise EFHIRPath.create('An internal error has occurred (custom operation not implemented)');
+    popCustom : raise EFHIRPath.Create('An internal error has occurred (custom operation not implemented)');
   else
-    raise EFHIRPath.create('An internal error has occurred (operation not implemented)');
+    raise EFHIRPath.Create('An internal error has occurred (operation not implemented)');
   end;
 end;
 
@@ -4522,37 +4522,37 @@ end;
 function TFHIRPathEngine.operateTypes(left: TFHIRTypeDetails; op: TFHIRPathOperation; right: TFHIRTypeDetails): TFHIRTypeDetails;
 begin
   case op of
-    popEquals: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popEquivalent: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popNotEquals: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popNotEquivalent: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popLessThan: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popGreater: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popLessOrEqual: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popGreaterOrEqual: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popIs: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+    popEquals: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popEquivalent: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popNotEquals: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popNotEquivalent: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popLessThan: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popGreater: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popLessOrEqual: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popGreaterOrEqual: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popIs: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
     popAs: result := TFHIRTypeDetails.createList(csSINGLETON, right.Types);
     popUnion: result := left.union(right);
-    popOr: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popAnd: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popXor: result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popImplies : result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+    popOr: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popAnd: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popXor: result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popImplies : result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
     popTimes: begin
-      result := TFHIRTypeDetails.create(csSINGLETON, []);
+      result := TFHIRTypeDetails.Create(csSINGLETON, []);
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_integer)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
         result.addType(FP_decimal);
     end;
     popDivideBy: begin
-      result := TFHIRTypeDetails.create(csSINGLETON, []);
+      result := TFHIRTypeDetails.Create(csSINGLETON, []);
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_decimal)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
         result.addType(FP_decimal)
     end;
     popPlus:  begin
-      result := TFHIRTypeDetails.create(csSINGLETON, []);
+      result := TFHIRTypeDetails.Create(csSINGLETON, []);
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_integer)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
@@ -4560,9 +4560,9 @@ begin
       else if (left.hasType(context, ['string', 'id', 'code', 'uri'])) and (right.hasType(context, ['string', 'id', 'code', 'uri'])) then
         result.addType(FP_string);
     end;
-    popConcatenate : result := TFHIRTypeDetails.create(csSINGLETON, ['string']);
+    popConcatenate : result := TFHIRTypeDetails.Create(csSINGLETON, ['string']);
     popMinus:  begin
-      result := TFHIRTypeDetails.create(csSINGLETON, []);
+      result := TFHIRTypeDetails.Create(csSINGLETON, []);
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_integer)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
@@ -4574,22 +4574,22 @@ begin
         if (right.hasType(context, ['Quantity'])) then
           result.addType(left.type_)
         else
-          raise EFHIRPath.create(format('Error in date arithmetic: Unable to subtract type {0} from {1}', [right.type_, left.type_]));
+          raise EFHIRPath.Create(format('Error in date arithmetic: Unable to subtract type {0} from {1}', [right.type_, left.type_]));
       end;
     end;
     popDiv, popMod:  begin
-      result := TFHIRTypeDetails.create(csSINGLETON, []);
+      result := TFHIRTypeDetails.Create(csSINGLETON, []);
       if (left.hasType(context, 'integer')) and (right.hasType(context, 'integer')) then
         result.addType(FP_integer)
       else if (left.hasType(context, ['integer', 'decimal'])) and (right.hasType(context, ['integer', 'decimal'])) then
         result.addType(FP_Decimal);
     end;
-    popIn:  result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
-    popContains:  result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+    popIn:  result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
+    popContains:  result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
     // todo: add memberOf
-    popCustom : raise EFHIRPath.create('An internal error has occurred (operation not implemented)');
+    popCustom : raise EFHIRPath.Create('An internal error has occurred (operation not implemented)');
   else
-    raise EFHIRPathTodo.create('TFHIRPathEngine.operateTypes');
+    raise EFHIRPathTodo.Create('TFHIRPathEngine.operateTypes');
   end;
 end;
 
@@ -4629,7 +4629,7 @@ begin
         result.add(b.Link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4673,17 +4673,17 @@ var
   pl, pr : TUcumPair;
 begin
   if (left.count = 0) then
-    raise EFHIRPath.create('Error performing div: left operand has no value');
+    raise EFHIRPath.Create('Error performing div: left operand has no value');
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing div: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing div: left operand has more than one value');
   if (not left[0].value.isPrimitive()) and not left[0].value.hasType('Quantity') then
-    raise EFHIRPath.create(StringFormat('Error performing div: left operand has the wrong type (%s)', [left[0].value.fhirType]));
+    raise EFHIRPath.Create(StringFormat('Error performing div: left operand has the wrong type (%s)', [left[0].value.fhirType]));
   if (right.count = 0) then
-    raise EFHIRPath.create('Error performing div: right operand has no value');
+    raise EFHIRPath.Create('Error performing div: right operand has no value');
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing div: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing div: right operand has more than one value');
   if (not right[0].value.isPrimitive()) and not right[0].value.hasType('Quantity') then
-    raise EFHIRPath.create(StringFormat('Error performing div: right operand has the wrong type (%s)', [right[0].value.fhirType]));
+    raise EFHIRPath.Create(StringFormat('Error performing div: right operand has the wrong type (%s)', [right[0].value.fhirType]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -4693,7 +4693,7 @@ begin
     if (l.hasType('integer')) and (r.hasType('integer')) then
     begin
       if r.primitiveValue() <> '0' then
-        result.add(TFHIRInteger.create(inttostr(strtoInt(l.primitiveValue()) div strtoInt(r.primitiveValue()))).noExtensions)
+        result.add(TFHIRInteger.Create(inttostr(strtoInt(l.primitiveValue()) div strtoInt(r.primitiveValue()))).noExtensions)
     end
     else if (l.hasType(['quantity'])) and (r.hasType(['quantity'])) and (FUcum <> nil) and FUcum.isConfigured then
     begin
@@ -4707,15 +4707,15 @@ begin
 //            try
 //              result.add(pairToQty(p));
 //            finally
-//              p.Free;
+//              p.free;
 //            end;
           except
           end;
         finally
-          pr.Free;
+          pr.free;
         end;
       finally
-        pl.Free;
+        pl.free;
       end;
     end
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
@@ -4723,13 +4723,13 @@ begin
       d1 := TFslDecimal.valueOf(l.primitiveValue());
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.divInt(d2);
-      result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+      result.add(TFHIRDecimal.Create(d3.asDecimal).noExtensions);
     end
     else
-      raise EFHIRPath.create(StringFormat('Error performing div: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
+      raise EFHIRPath.Create(StringFormat('Error performing div: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4740,17 +4740,17 @@ var
   pl, pr, p : TUcumPair;
 begin
   if (left.count = 0) then
-    raise EFHIRPath.create('Error performing /: left operand has no value');
+    raise EFHIRPath.Create('Error performing /: left operand has no value');
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing /: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing /: left operand has more than one value');
   if (not left[0].value.isPrimitive()) and not left[0].value.hasType('Quantity') then
-    raise EFHIRPath.create(StringFormat('Error performing -: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing -: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count = 0) then
-    raise EFHIRPath.create('Error performing /: right operand has no value');
+    raise EFHIRPath.Create('Error performing /: right operand has no value');
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing /: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing /: right operand has more than one value');
   if (not right[0].value.isPrimitive()) and not right[0].value.hasType('Quantity') then
-    raise EFHIRPath.create(StringFormat('Error performing /: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing /: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -4763,7 +4763,7 @@ begin
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.divide(d2);
       if not d3.IsUndefined then
-        result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+        result.add(TFHIRDecimal.Create(d3.asDecimal).noExtensions);
     end
     else if (l.hasType(['Quantity'])) and (r.hasType(['Quantity'])) and (FUcum <> nil) and FUcum.isConfigured then
     begin
@@ -4776,19 +4776,19 @@ begin
             try
               result.add(pairToQty(p));
             finally
-              p.Free;
+              p.free;
             end;
           except
           end;
         finally
-          pr.Free;
+          pr.free;
         end;
       finally
-        pl.Free;
+        pl.free;
       end;
     end
     else
-      raise EFHIRPath.create(StringFormat('Error performing /: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
+      raise EFHIRPath.Create(StringFormat('Error performing /: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.link;
   finally
     result.free;
@@ -4864,7 +4864,7 @@ var
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -4896,8 +4896,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'code', lUnit);
         ListChildrenByName(right[0].value, 'code', rUnit);
@@ -4914,24 +4914,24 @@ begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
           try
-            dl.add(TFhirDecimal.create(qtyToCanonical(left[0].value as TFhirQuantity).Value));
-            dr.add(TFhirDecimal.create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
+            dl.add(TFhirDecimal.Create(qtyToCanonical(left[0].value as TFhirQuantity).Value));
+            dr.add(TFhirDecimal.Create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
             result := opGreater(dl, dr);
           finally
-            dl.Free;
-            dr.Free;
+            dl.free;
+            dr.free;
           end;
         end
         else
-          raise EFHIRPath.create('Canonical Comparison isn''t available');
+          raise EFHIRPath.Create('Canonical Comparison isn''t available');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4943,7 +4943,7 @@ var
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -4973,8 +4973,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'unit', lUnit);
         ListChildrenByName(right[0].value, 'unit', rUnit);
@@ -4991,24 +4991,24 @@ begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
           try
-            dl.add(TFhirDecimal.create(qtyToCanonical(left[0].value as TFhirQuantity).Value));
-            dr.add(TFhirDecimal.create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
+            dl.add(TFhirDecimal.Create(qtyToCanonical(left[0].value as TFhirQuantity).Value));
+            dr.add(TFhirDecimal.Create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
             result := opGreaterOrEqual(dl, dr);
           finally
-            dl.Free;
-            dr.Free;
+            dl.free;
+            dr.free;
           end;
         end
         else
-          raise EFHIRPath.create('Canonical Comparison isn''t available');
+          raise EFHIRPath.Create('Canonical Comparison isn''t available');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5021,7 +5021,7 @@ begin
   if (left.count = 0) then
     exit(TFHIRSelectionList.Create);
   if (right.count = 0) then
-    exit(TFHIRSelectionList.Create(TFHIRBoolean.create(false)));
+    exit(TFHIRSelectionList.Create(TFHIRBoolean.Create(false)));
   ans := true;
   for l in left do
   begin
@@ -5057,9 +5057,9 @@ begin
     begin
       tn := convertToString(right);
       if not (left[0].value is TFHIRElement) or (left[0].value as TFHIRElement).DisallowExtensions then
-        result.add(TFHIRBoolean.create((capitalise(left[0].value.fhirType) = tn) or ('System.'+capitalise(left[0].value.fhirType) = tn)).noExtensions)
+        result.add(TFHIRBoolean.Create((capitalise(left[0].value.fhirType) = tn) or ('System.'+capitalise(left[0].value.fhirType) = tn)).noExtensions)
       else
-        result.add(TFHIRBoolean.create(left[0].value.hasType(tn)).noExtensions);
+        result.add(TFHIRBoolean.Create(left[0].value.hasType(tn)).noExtensions);
     end;
     result.link;
   finally
@@ -5075,7 +5075,7 @@ var
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -5104,8 +5104,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'unit', lUnit);
         ListChildrenByName(right[0].value, 'unit', rUnit);
@@ -5122,24 +5122,24 @@ begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
           try
-            dl.add(TFhirDecimal.create(qtyToCanonical(left[0].value as TFhirQuantity).value));
-            dr.add(TFhirDecimal.create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
+            dl.add(TFhirDecimal.Create(qtyToCanonical(left[0].value as TFhirQuantity).value));
+            dr.add(TFhirDecimal.Create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
             result := opLessOrEqual(dl, dr);
           finally
-            dl.Free;
-            dr.Free;
+            dl.free;
+            dr.free;
           end;
         end
         else
-          raise EFHIRPath.create('Canonical Comparison isn''t available');
+          raise EFHIRPath.Create('Canonical Comparison isn''t available');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5151,7 +5151,7 @@ var
 begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (Left.Count = 1) and (right.count = 1) and (left[0].value.isPrimitive) and (right[0].value.isPrimitive) then
     begin
@@ -5182,8 +5182,8 @@ begin
     end
     else if (Left.Count = 1) and (right.count = 1) and left[0].value.hasType('Quantity') and right[0].value.hasType('Quantity') then
     begin
-      lUnit := TFHIRSelectionList.create;
-      rUnit := TFHIRSelectionList.create;
+      lUnit := TFHIRSelectionList.Create;
+      rUnit := TFHIRSelectionList.Create;
       try
         ListChildrenByName(left[0].value, 'code', lUnit);
         ListChildrenByName(right[0].value, 'code', rUnit);
@@ -5200,24 +5200,24 @@ begin
           dl := TFHIRSelectionList.Create;
           dr := TFHIRSelectionList.Create;
           try
-            dl.add(TFhirDecimal.create(qtyToCanonical(left[0].value as TFhirQuantity).Value));
-            dr.add(TFhirDecimal.create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
+            dl.add(TFhirDecimal.Create(qtyToCanonical(left[0].value as TFhirQuantity).Value));
+            dr.add(TFhirDecimal.Create(qtyToCanonical(right[0].value as TFhirQuantity).Value));
             result := opLessThan(dl, dr);
           finally
-            dl.Free;
-            dr.Free;
+            dl.free;
+            dr.free;
           end;
         end
         else
-          raise EFHIRPath.create('Canonical Comparison isn''t available');
+          raise EFHIRPath.Create('Canonical Comparison isn''t available');
       finally
-        lUnit.Free;
-        rUnit.Free;
+        lUnit.free;
+        rUnit.free;
       end;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5231,13 +5231,13 @@ begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing -: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing -: left operand has more than one value');
   if (not left[0].value.isPrimitive() and not left[0].hasType('Quantity')) then
-    raise EFHIRPath.create(StringFormat('Error performing -: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing -: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing -: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing -: right operand has more than one value');
   if (not right[0].value.isPrimitive() and not ((left[0].value.isDateTime() or ('0' = left[0].value.primitiveValue) or left[0].value.hasType('Quantity')) and right[0].value.hasType('Quantity'))) then
-    raise EFHIRPath.create(StringFormat('Error performing -: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing -: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -5245,13 +5245,13 @@ begin
     r := right[0].value;
 
     if (l.hasType('integer')) and (r.hasType('integer')) then
-      result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) - strToInt(r.primitiveValue()))).noExtensions)
+      result.add(TFHIRInteger.Create(inttostr(strToInt(l.primitiveValue()) - strToInt(r.primitiveValue()))).noExtensions)
     else if (l.hasType('decimal') or l.hasType('integer')) and (r.hasType('decimal') or r.hasType('integer')) then
     begin
       d1 := TFslDecimal.valueOf(l.primitiveValue());
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Subtract(d2);
-      result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+      result.add(TFHIRDecimal.Create(d3.asDecimal).noExtensions);
     end
     else if (l.hasType(['decimal', 'integer', 'Quantity']) and r.hasType('Quantity')) then
     begin
@@ -5271,10 +5271,10 @@ begin
     else if (l.isDateTime() and r.hasType('Quantity')) then
       result.add(dateAdd(l, r as TFHIRQuantity, true))
     else
-      raise EFHIRPath.create(StringFormat('Error performing -: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
+      raise EFHIRPath.Create(StringFormat('Error performing -: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5284,17 +5284,17 @@ var
   d1, d2, d3 : TFslDecimal;
 begin
   if (left.count = 0) then
-    raise EFHIRPath.create('Error performing mod: left operand has no value');
+    raise EFHIRPath.Create('Error performing mod: left operand has no value');
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing mod: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing mod: left operand has more than one value');
   if (not left[0].value.isPrimitive()) then
-    raise EFHIRPath.create(StringFormat('Error performing mod: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing mod: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count = 0) then
-    raise EFHIRPath.create('Error performing mod: right operand has no value');
+    raise EFHIRPath.Create('Error performing mod: right operand has no value');
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing mod: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing mod: right operand has more than one value');
   if (not right[0].value.isPrimitive()) then
-    raise EFHIRPath.create(StringFormat('Error performing mod: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing mod: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -5304,21 +5304,21 @@ begin
     if (l.hasType('integer')) and (r.hasType('integer')) then
     begin
       if r.primitiveValue() <> '0' then
-        result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) mod strToInt(r.primitiveValue()))).noExtensions)
+        result.add(TFHIRInteger.Create(inttostr(strToInt(l.primitiveValue()) mod strToInt(r.primitiveValue()))).noExtensions)
     end
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
       d1 := TFslDecimal.valueOf(l.primitiveValue());
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Modulo(d2);
-      result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+      result.add(TFHIRDecimal.Create(d3.asDecimal).noExtensions);
     end
     else
-      raise EFHIRPath.create(StringFormat('Error performing mod: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
+      raise EFHIRPath.Create(StringFormat('Error performing mod: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5411,13 +5411,13 @@ var
   l, r : String;
 begin
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing &: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing &: left operand has more than one value');
   if (left.Count = 1) and (not left[0].value.hasType(FHIR_TYPES_STRING)) then
-    raise EFHIRPath.create(StringFormat('Error performing &: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing &: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing &: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing &: right operand has more than one value');
   if (right.Count = 1) and (not right[0].value.hasType(FHIR_TYPES_STRING)) then
-    raise EFHIRPath.create(StringFormat('Error performing &: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing &: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -5429,10 +5429,10 @@ begin
       r := ''
     else
       r := right[0].value.primitiveValue();
-    result.add(TFHIRString.create(l + r).noExtensions);
+    result.add(TFHIRString.Create(l + r).noExtensions);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5444,13 +5444,13 @@ begin
   if (left.count = 0) or (right.count = 0) then
     exit(TFHIRSelectionList.Create);
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing +: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing +: left operand has more than one value');
   if (not left[0].value.isPrimitive()) then
-    raise EFHIRPath.create(StringFormat('Error performing +: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing +: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing +: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing +: right operand has more than one value');
   if (not right[0].value.isPrimitive() and not ((left[0].value.isDateTime() or ('0' = left[0].value.primitiveValue) or left[0].value.hasType('Quantity')) and right[0].value.hasType('Quantity'))) then
-    raise EFHIRPath.create(StringFormat('Error performing +: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing +: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -5458,23 +5458,23 @@ begin
     r := right[0].value;
 
     if (l.hasType(['string', 'id', 'code', 'uri'])) and (r.hasType(['string', 'id', 'code', 'uri'])) then
-      result.add(TFHIRString.create(l.primitiveValue() + r.primitiveValue()).noExtensions)
+      result.add(TFHIRString.Create(l.primitiveValue() + r.primitiveValue()).noExtensions)
     else if (l.hasType('integer')) and (r.hasType('integer')) then
-      result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) + strToInt(r.primitiveValue()))).noExtensions)
+      result.add(TFHIRInteger.Create(inttostr(strToInt(l.primitiveValue()) + strToInt(r.primitiveValue()))).noExtensions)
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
     begin
       d1 := TFslDecimal.valueOf(l.primitiveValue());
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Add(d2);
-      result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+      result.add(TFHIRDecimal.Create(d3.asDecimal).noExtensions);
     end
     else if (l.isDateTime) and (r.hasType('Quantity')) then
       result.add(dateAdd(l, r as TFHIRQuantity, false))
     else
-      raise EFHIRPath.create(StringFormat('Error performing +: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
+      raise EFHIRPath.Create(StringFormat('Error performing +: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5485,17 +5485,17 @@ var
   p, pl, pr : TUcumPair;
 begin
   if (left.count = 0) then
-    raise EFHIRPath.create('Error performing *: left operand has no value');
+    raise EFHIRPath.Create('Error performing *: left operand has no value');
   if (left.count > 1) then
-    raise EFHIRPath.create('Error performing *: left operand has more than one value');
+    raise EFHIRPath.Create('Error performing *: left operand has more than one value');
   if (not left[0].value.isPrimitive()) and not left[0].value.hasType('Quantity') then
-    raise EFHIRPath.create(StringFormat('Error performing +: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing +: left operand has the wrong type (%s)', [left[0].value.fhirType()]));
   if (right.count = 0) then
-    raise EFHIRPath.create('Error performing *: right operand has no value');
+    raise EFHIRPath.Create('Error performing *: right operand has no value');
   if (right.count > 1) then
-    raise EFHIRPath.create('Error performing *: right operand has more than one value');
+    raise EFHIRPath.Create('Error performing *: right operand has more than one value');
   if (not right[0].value.isPrimitive()) and not right[0].value.hasType('Quantity') then
-    raise EFHIRPath.create(StringFormat('Error performing *: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
+    raise EFHIRPath.Create(StringFormat('Error performing *: right operand has the wrong type (%s)', [right[0].value.fhirType()]));
 
   result := TFHIRSelectionList.Create();
   try
@@ -5503,7 +5503,7 @@ begin
     r := right[0].value;
 
     if (l.hasType('integer')) and (r.hasType('integer')) then
-      result.add(TFHIRInteger.create(inttostr(strToInt(l.primitiveValue()) * strToInt(r.primitiveValue()))).noExtensions)
+      result.add(TFHIRInteger.Create(inttostr(strToInt(l.primitiveValue()) * strToInt(r.primitiveValue()))).noExtensions)
     else if (l.hasType(['Quantity'])) and (r.hasType(['Quantity'])) and (FUcum <> nil) and FUcum.isConfigured then
     begin
       pl := qtyToPair(l as TFHIRQuantity);
@@ -5515,15 +5515,15 @@ begin
             try
               result.add(pairToQty(p));
             finally
-              p.Free;
+              p.free;
             end;
           except
           end;
         finally
-          pr.Free;
+          pr.free;
         end;
       finally
-        pl.Free;
+        pl.free;
       end;
     end
     else if (l.hasType(['integer', 'decimal'])) and (r.hasType(['integer', 'decimal'])) then
@@ -5531,10 +5531,10 @@ begin
       d1 := TFslDecimal.valueOf(l.primitiveValue());
       d2 := TFslDecimal.valueOf(r.primitiveValue());
       d3 := d1.Multiply(d2);
-      result.add(TFHIRDecimal.create(d3.asDecimal).noExtensions);
+      result.add(TFHIRDecimal.Create(d3.asDecimal).noExtensions);
     end
     else
-      raise EFHIRPath.create(StringFormat('Error performing /: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
+      raise EFHIRPath.Create(StringFormat('Error performing /: left and right operand have incompatible or illegal types (%s, %s)', [left[0].value.fhirType(), right[0].value.fhirType()]));
     result.link;
   finally
     result.free;
@@ -5555,7 +5555,7 @@ function TFHIRPathEngine.opUnion(left, right: TFHIRSelectionList): TFHIRSelectio
 var
   item : TFHIRSelection;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     for item in left do
       if not contains(result, item.value) then
@@ -5565,7 +5565,7 @@ begin
         result.add(item.link);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5630,7 +5630,7 @@ begin
   else if (c.FValue.startsWith('@')) then
     result := processDateConstant(context.appInfo, c.FValue.substring(1))
   else
-    raise EFHIRPath.create('Invaild FHIR Constant '+c.FValue);
+    raise EFHIRPath.Create('Invaild FHIR Constant '+c.FValue);
 end;
 
 function TFHIRPathEngine.processDateConstant(appinfo : TFslObject; value : String) : TFHIRObject;
@@ -5639,7 +5639,7 @@ var
   v : string;
 begin
   if (value.startsWith('T')) then
-    exit(TFHIRTime.create(value.substring(1)).noExtensions());
+    exit(TFHIRTime.Create(value.substring(1)).noExtensions());
 
   v := value;
   if (v.length > 10) then
@@ -5653,9 +5653,9 @@ begin
       v := v.substring(0, 10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TFslDateTime.fromXML(value)).noExtensions()
+    result := TFHIRDateTime.Create(TFslDateTime.fromXML(value)).noExtensions()
   else
-    result := TFHIRDate.create(TFslDateTime.fromXML(value)).noExtensions();
+    result := TFHIRDate.Create(TFslDateTime.fromXML(value)).noExtensions();
 end;
 
 function TFHIRPathEngine.qtyEqual(left, right: TFHIRQuantity): TEqualityTriState;
@@ -5705,7 +5705,7 @@ begin
       try
         result := c.link;
       finally
-        c.Free;
+        c.free;
       end;
     finally
       p.free;
@@ -5772,10 +5772,10 @@ begin
       try
         result := equivalent(dl, dr);
       finally
-        dr.Free;
+        dr.free;
       end;
     finally
-      dl.Free;
+      dl.free;
     end;
   end;
 end;
@@ -5786,27 +5786,27 @@ var
   ext : TFHIRPathEngineExtension;
 begin
   if (s = '%sct') then
-    result := TFHIRString.create(URI_SNOMED).noExtensions()
+    result := TFHIRString.Create(URI_SNOMED).noExtensions()
   else if (s = '%loinc') then
-    result := TFHIRString.create(URI_LOINC).noExtensions()
+    result := TFHIRString.Create(URI_LOINC).noExtensions()
   else if (s = '%ucum') then
-    result := TFHIRString.create(URI_UCUM).noExtensions()
+    result := TFHIRString.Create(URI_UCUM).noExtensions()
   else if (s = '%resource') then
   begin
     if (context.resource = nil) then
-      raise EFHIRPath.create('Cannot use %resource in this context');
+      raise EFHIRPath.Create('Cannot use %resource in this context');
     result := context.resource.Link;
   end
   else if (s = '%context') then
     result := context.context.link
   else if (s = '%us-zip') then
-    result := TFHIRString.create('[0-9]{5}(-[0-9]{4}){0,1}').noExtensions()
+    result := TFHIRString.Create('[0-9]{5}(-[0-9]{4}){0,1}').noExtensions()
   else if (s.startsWith('%`vs-')) then
-    result := TFHIRString.create('http://hl7.org/fhir/ValueSet/'+s.substring(5, s.length-6)).noExtensions()
+    result := TFHIRString.Create('http://hl7.org/fhir/ValueSet/'+s.substring(5, s.length-6)).noExtensions()
   else if (s.startsWith('%`cs-')) then
-    result := TFHIRString.create('http://hl7.org/fhir/'+s.substring(5, s.length-1)).noExtensions()
+    result := TFHIRString.Create('http://hl7.org/fhir/'+s.substring(5, s.length-1)).noExtensions()
   else if (s.startsWith('%`ext-')) then
-    result := TFHIRString.create('http://hl7.org/fhir/StructureDefinition/'+s.substring(6, s.length-7)).noExtensions()
+    result := TFHIRString.Create('http://hl7.org/fhir/StructureDefinition/'+s.substring(6, s.length-7)).noExtensions()
   else
   begin
     for ext in FExtensions do
@@ -5814,7 +5814,7 @@ begin
       if ext.resolveConstant(context, s, result) then
         exit;
     end;
-    raise EFHIRPath.create('Unknown fixed constant "'+s+'"')
+    raise EFHIRPath.Create('Unknown fixed constant "'+s+'"')
   end;
 end;
 
@@ -5837,7 +5837,7 @@ begin
         else if atEntry and (exp.name = '$total') then
           work.addAll(context.total)
         else if atEntry and (exp.name = '$index') then
-          work.add(TFHIRInteger.create(context.index))
+          work.add(TFHIRInteger.Create(context.index))
         else
           for item in focus do
           begin
@@ -5854,7 +5854,7 @@ begin
                   work.Add(base.Link);
 
             finally
-              outcome.Free;
+              outcome.free;
             end;
           end;
       enkFunction:
@@ -5863,7 +5863,7 @@ begin
         try
           work.addAll(work2);
         finally
-          work2.Free;
+          work2.free;
         end;
         end;
       enkConstant:
@@ -5880,7 +5880,7 @@ begin
         try
           work.addAll(work2);
         finally
-          work2.Free;
+          work2.free;
         end;
         end;
     end;
@@ -5890,7 +5890,7 @@ begin
     if (exp.Inner <> nil) then
     begin
       result := execute(context, work, exp.Inner, false);
-      work.Free;
+      work.free;
       work := result;
     end;
 
@@ -5905,7 +5905,7 @@ begin
         if work2 <> nil then
         begin
           Debug(context, exp, true, work, nil, work2);
-          work.Free;
+          work.free;
           work := work2;
         end
         else
@@ -5924,11 +5924,11 @@ begin
             try
               Debug(context, exp, true, work, work2, result);
             finally
-              work.Free;
+              work.free;
               work := result;
             end;
           finally
-            work2.Free;
+            work2.free;
           end;
         end;
         last := next;
@@ -5937,22 +5937,22 @@ begin
     end;
     result := work.Link;
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
 function TFHIRPathEngine.executeType(focus: String; exp: TFHIRPathExpressionNode; atEntry : boolean): TFHIRTypeDetails;
 begin
   if (atEntry and exp.Name[1].IsUpper) and (focus = TFHIRProfiledType.ns(exp.Name)) then
-    result := TFHIRTypeDetails.create(csSINGLETON, [focus])
+    result := TFHIRTypeDetails.Create(csSINGLETON, [focus])
   else
   begin
-    result := TFHIRTypeDetails.create(csNULL, []);
+    result := TFHIRTypeDetails.Create(csNULL, []);
     try
       ListChildTypesByName(focus, exp.name, result);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -6059,7 +6059,7 @@ begin
     pfPrecision : result := funcPrecision(context, focus, exp);
     pfCustom : result := funcCustom(context, focus, exp);
   else
-    raise EFHIRPath.create('Unknown Function '+exp.name);
+    raise EFHIRPath.Create('Unknown Function '+exp.name);
   end;
 end;
 
@@ -6082,7 +6082,7 @@ begin
       if ext.functionApplies(context, focus, exp.name) then
       begin
         done := true;
-        plist := TFslList<TFHIRPathExpressionNodeV>.create;
+        plist := TFslList<TFHIRPathExpressionNodeV>.Create;
         try
           for p in exp.parameters do
             plist.add(p.link);
@@ -6092,7 +6092,7 @@ begin
             try
               result.addAll(work);
             finally
-              work.Free;
+              work.free;
             end;
           end;
         finally
@@ -6102,10 +6102,10 @@ begin
       end;
     end;
     if not done and (not couldHaveBeen or (focus.Count > 0)) then
-      raise EFHIRPath.create('Unknown Function '+exp.name);
+      raise EFHIRPath.Create('Unknown Function '+exp.name);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -6204,13 +6204,13 @@ begin
             sd := context.fetchResource(frtStructureDefinition, sd.baseDefinition, '') as TFhirStructureDefinition;
           end;
           if (not ok) then
-          raise EFHIRPath.create('The parameter type "'+a.uri+'" is not legal for '+CODES_TFHIRPathFunctions[funcId]+' parameter '+Integer.toString(i)+', expecting '+pt.describe());
+          raise EFHIRPath.Create('The parameter type "'+a.uri+'" is not legal for '+CODES_TFHIRPathFunctions[funcId]+' parameter '+Integer.toString(i)+', expecting '+pt.describe());
     end;
       end;
     end;
   finally
     for pt in typeSet do
-      pt.Free;
+      pt.free;
   end;
 end;
 
@@ -6218,7 +6218,7 @@ function TFHIRPathEngine.childTypes(focus : TFHIRTypeDetails; mask : string) : T
 var
   f : TFHIRProfiledType;
 begin
-  result := TFHIRTypeDetails.create(csUNORDERED, []);
+  result := TFHIRTypeDetails.Create(csUNORDERED, []);
   try
     for f in focus.types do
       ListChildTypesByName(f.uri, mask, result);
@@ -6252,10 +6252,10 @@ var
   targets : TStringList;
   td : TFHIRTypeDetails;
 begin
-  paramTypes := TFslList<TFHIRTypeDetails>.create;
+  paramTypes := TFslList<TFHIRTypeDetails>.Create;
   try
     if (exp.FunctionId in [pfIs, pfAs, pfOfType]) then
-      paramTypes.add(TFHIRTypeDetails.create(csSINGLETON, [FP_string]))
+      paramTypes.add(TFHIRTypeDetails.Create(csSINGLETON, [FP_string]))
     else
     begin
       i := 0;
@@ -6278,32 +6278,32 @@ begin
 
     case exp.FunctionId of
       pfEmpty :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfNot :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfExists :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfSubsetOf :
         begin
         checkParamTypes(exp.FunctionId, paramTypes, [focus.link]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfSupersetOf :
         begin
         checkParamTypes(exp.FunctionId, paramTypes, [focus.link]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfIsDistinct :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfDistinct :
         result := focus.Link;
       pfCount :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_integer]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_integer]);
       pfWhere :
         if (focus.hasType(self.context, 'Reference')) then
         begin
           canRestrictTargets := not exp.Parameters.Empty;
-          targets := TStringList.create;
+          targets := TStringList.Create;
           try
             //if (canRestrictTargets) then
             //begin
@@ -6331,7 +6331,7 @@ begin
       pfSelect :
         result := paramTypes[0].link;
       pfAll :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfRepeat :
         result := TFHIRTypeDetails.createList(focus.CollectionStatus, allTypes);
       pfAggregate :
@@ -6339,14 +6339,14 @@ begin
       pfItem :
         begin
         if (focus.CollectionStatus = csUNORDERED) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
-         checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_integer])]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
+         checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_integer])]);
         result := focus.Link;
         end;
       pfOfType :
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, TFHIRTypeDetails.create(csSINGLETON, [FP_String]));
-        result := TFHIRTypeDetails.create(csSINGLETON, [exp.Parameters[0].name]);
+        checkParamTypes(exp.FunctionId, paramTypes, TFHIRTypeDetails.Create(csSINGLETON, [FP_String]));
+        result := TFHIRTypeDetails.Create(csSINGLETON, [exp.Parameters[0].name]);
         end;
       pfType :
         begin
@@ -6358,54 +6358,54 @@ begin
           c := c or not pt.isSystemType();
         end;
         if (s and c) then
-          result := TFHIRTypeDetails.create(csSINGLETON, [FP_SimpleTypeInfo, FP_ClassInfo])
+          result := TFHIRTypeDetails.Create(csSINGLETON, [FP_SimpleTypeInfo, FP_ClassInfo])
         else if (s) then
-          result := TFHIRTypeDetails.create(csSINGLETON, [FP_SimpleTypeInfo])
+          result := TFHIRTypeDetails.Create(csSINGLETON, [FP_SimpleTypeInfo])
         else
-          result := TFHIRTypeDetails.create(csSINGLETON, [FP_ClassInfo]);
+          result := TFHIRTypeDetails.Create(csSINGLETON, [FP_ClassInfo]);
         end;
       pfAs :
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, exp.Parameters[0].Name);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, exp.Parameters[0].Name);
         end;
       pfIs :
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfSingle :
         result := focus.toSingleton();
       pfFirst :
         begin
         if (focus.CollectionStatus = csUNORDERED) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
         result := focus.toSingleton();
         end;
       pfLast :
         begin
         if (focus.CollectionStatus = csUNORDERED) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
         result := focus.toSingleton();
         end;
       pfTail :
         begin
         if (focus.CollectionStatus = csUNORDERED) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
         result := focus.Link;
         end;
       pfSkip :
         begin
         if (focus.CollectionStatus = csUNORDERED) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_integer])]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_integer])]);
         result := focus.Link;
         end;
       pfTake :
         begin
         if (focus.CollectionStatus = csUNORDERED) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_integer])]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on ordered collections');
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_integer])]);
         result := focus.Link;
         end;
       pfUnion :
@@ -6418,7 +6418,7 @@ begin
         result := focus.link;
       pfIif :
         begin
-        result := TFHIRTypeDetails.create(csNull, []);
+        result := TFHIRTypeDetails.Create(csNull, []);
         result.update(paramTypes[0]);
         if (paramTypes.count > 1) then
           result.update(paramTypes[1]);
@@ -6426,75 +6426,75 @@ begin
       pfLower :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfUpper :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfToChars :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfSubstring :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_Integer]), TFHIRTypeDetails.create(csSINGLETON, [FP_integer])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_Integer]), TFHIRTypeDetails.Create(csSINGLETON, [FP_integer])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfStartsWith :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfEndsWith :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfMatches, pfMatchesFull :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfReplaceMatches :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string]), TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string]), TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfContains :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfReplace :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'id'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string]), TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, id'+' not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string]), TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfLength :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_integer]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_integer]);
         end;
       pfChildren :
         result := childTypes(focus, '*');
@@ -6503,221 +6503,221 @@ begin
       pfMemberOf :
         begin
         if (not focus.hasType(self.context, ['string', 'code', 'uri', 'Coding', 'CodeableConcept'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, Coding, CodeableConcept not '+focus.describe);
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on string, code, uri, Coding, CodeableConcept not '+focus.describe);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfTrace :
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
         result := focus.Link;
         end;
       pfToday :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_DateTime]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_DateTime]);
       pfNow :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_dateTime]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_dateTime]);
       pfResolve :
         begin
         if (not focus.hasType(self.context, ['uri', 'Reference'])) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on uri, Reference not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, ['DomainResource']);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on uri, Reference not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, ['DomainResource']);
         end;
       pfExtension :
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, ['Extension']);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, ['Extension']);
         end;
       pfHasExtension :
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfAllFalse:
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfAnyFalse:
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfAllTrue:
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfAnyTrue:
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfElementDefinition:
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, ['ElementDefinition']);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, ['ElementDefinition']);
         end;
       pfSlice:
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string, FP_string])]);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string, FP_string])]);
         result := focus.Link;
         end;
       pfCheckModifiers:
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csUNORDERED, [FP_string])]);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csUNORDERED, [FP_string])]);
         result := focus.Link;
         end;
       pfConformsTo:
         begin
-        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_string])]);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_string])]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
         end;
       pfHasValue:
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfHtmlChecks:
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_boolean]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_boolean]);
       pfToInteger :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_integer]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_integer]);
         end;
       pfToDecimal :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_decimal]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_decimal]);
         end;
       pfToString :
         begin
         if (not focus.hasType(self.context, primitiveTypes) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_string]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_string]);
         end;
       pfToQuantity :
         begin
         if (not focus.hasType(self.context, primitiveTypes) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Quantity]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Quantity]);
         end;
       pfToBoolean :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Boolean]);
         end;
       pfToDateTime :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_DateTime]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_DateTime]);
         end;
       pfToTime :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Time]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Time]);
         end;
       pfAbs :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfCeiling :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfExp :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfFloor :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfLn :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfLog :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfPower :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfTruncate :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfRound :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfSqrt :
         begin
         if (not focus.hasType(self.context, FHIR_TYPES_NUMERIC) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+CommaText(FHIR_TYPES_NUMERIC)+' and Quantity not '+focus.describe);
         result := TFHIRTypeDetails.createList(csSINGLETON, focus.types);
         end;
       pfConvertsToString, pfConvertsToQuantity :
         begin
         if (not focus.hasType(self.context, primitiveTypes) and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Boolean]);
         end;
       pfConvertsToInteger, pfConvertsToDecimal, pfConvertsToDateTime, pfConvertsToDate, pfConvertsToTime, pfConvertsToBoolean :
         begin
         if (not focus.hasType(self.context, primitiveTypes)) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Boolean]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on '+primitiveTypes.CommaText+' not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Boolean]);
         end;
       pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim :
         begin
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_String]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String]);
         end;
       pfSplit :
-        result := TFHIRTypeDetails.create(csORDERED, [FP_String]);
+        result := TFHIRTypeDetails.Create(csORDERED, [FP_String]);
       pfJoin :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_String]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_String]);
       pfIndexOf :
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Integer]);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Integer]);
       pfLowBoundary, pfHighBoundary :
         begin
         if (not focus.hasNoTypes() and not focus.hasType(self.context, 'decimal') and not focus.hasType(self.context, 'date')
             and not focus.hasType(self.context, 'dateTime') and not focus.hasType(self.context, 'time') and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on decimal, date, datetime, instant, time and Quantity, not '+focus.describe);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on decimal, date, datetime, instant, time and Quantity, not '+focus.describe);
         if (paramTypes.count > 0) then
-          checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.create(csSINGLETON, [FP_Integer])]);
+          checkParamTypes(exp.FunctionId, paramTypes, [TFHIRTypeDetails.Create(csSINGLETON, [FP_Integer])]);
         if (focus.hasType(self.context, 'date') or focus.hasType(self.context, 'dateTime') or focus.hasType(self.context, 'instant')) then
-          result := TFHIRTypeDetails.create(csSINGLETON, [FP_DateTime])
+          result := TFHIRTypeDetails.Create(csSINGLETON, [FP_DateTime])
         else if (focus.hasType(self.context, 'decimal')) then
-          result := TFHIRTypeDetails.create(csSINGLETON, [FP_Decimal])
+          result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Decimal])
         else if (focus.hasType(self.context, 'time')) then
-          result := TFHIRTypeDetails.create(csSINGLETON, [FP_Time])
+          result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Time])
         else
-          result := TFHIRTypeDetails.create(csSINGLETON, [])
+          result := TFHIRTypeDetails.Create(csSINGLETON, [])
         end;
       pfPrecision :
         begin
         if (not focus.hasNoTypes() and not focus.hasType(self.context, 'decimal') and not focus.hasType(self.context, 'date')
             and not focus.hasType(self.context, 'dateTime') and not focus.hasType(self.context, 'time') and not focus.hasType(self.context, 'Quantity')) then
-          raise EFHIRPath.create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on decima;, date, datetime, instant, time and Quantity, not '+focus.describe);
-        result := TFHIRTypeDetails.create(csSINGLETON, [FP_Integer]);
+          raise EFHIRPath.Create('The function "'+CODES_TFHIRPathFunctions[exp.FunctionId]+'()" can only be used on decima;, date, datetime, instant, time and Quantity, not '+focus.describe);
+        result := TFHIRTypeDetails.Create(csSINGLETON, [FP_Integer]);
         end;
       pfCustom :
         result := evaluateCustomFunctionType(context, focus, exp);
     else
-      raise EFHIRPath.create('not Implemented yet?');
+      raise EFHIRPath.Create('not Implemented yet?');
     end;
   finally
-    paramTypes.Free;
+    paramTypes.free;
   end;
 end;
 
@@ -6729,7 +6729,7 @@ var
   i : integer;
 begin
   if (s.startsWith('T')) then
-    exit(TFHIRTime.create(s.substring(1)).noExtensions as TFhirType);
+    exit(TFHIRTime.Create(s.substring(1)).noExtensions as TFhirType);
   v := s;
   if (v.length > 10) then
   begin
@@ -6744,9 +6744,9 @@ begin
       v := v.substring(0,  10+i);
   end;
   if (v.length > 10) then
-    result := TFHIRDateTime.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType
+    result := TFHIRDateTime.Create(TFslDateTime.fromXML(s)).noExtensions as TFhirType
   else
-    result := TFHIRDate.create(TFslDateTime.fromXML(s)).noExtensions as TFhirType;
+    result := TFHIRDate.Create(TFslDateTime.fromXML(s)).noExtensions as TFhirType;
 end;
 
 //function TFHIRPathEngine.readConstant(context : TFHIRPathExecutionContext; constant: String): TFHIRObject;
@@ -6782,7 +6782,7 @@ end;
 //  else if s = '%resource' then
 //  begin
 //    if (context.resource = nil) then
-//      raise EFHIRPath.create('%resource cannot be used in this context');
+//      raise EFHIRPath.Create('%resource cannot be used in this context');
 //    result := context.resource.link;
 //  end
 //  else if s = '%us-zip' then
@@ -6794,7 +6794,7 @@ end;
 //  else if s.StartsWith('%"ext-') then
 //    result := TFhirString.Create('http://hl7.org/fhir/StructureDefinition/'+s.Substring(6, s.length-7)).noExtensions
 //  else
-//    raise EFHIRPath.create('Unknown fixed constant '+s);
+//    raise EFHIRPath.Create('Unknown fixed constant '+s);
 //end;
 //
 
@@ -6818,7 +6818,7 @@ begin
     parser.FExtensions := FExtensions.Link;
     result := parser.parse(path);
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -6854,7 +6854,7 @@ var
   rt : TFslStringSet;
 begin
   if (type_ = '') then
-    raise EFHIRPath.create('No type provided in BuildToolPathEvaluator.ListChildTypesByName');
+    raise EFHIRPath.Create('No type provided in BuildToolPathEvaluator.ListChildTypesByName');
   if (type_ = 'http://hl7.org/fhir/StructureDefinition/xhtml') then
     exit;
   if (type_ = 'Custom') or (type_ = 'http://hl7.org/fhir/StructureDefinition/Custom') then
@@ -6887,9 +6887,9 @@ begin
 
     sd := worker.fetchResource(frtStructureDefinition, url, '') as TFhirStructureDefinition;
     if (sd = nil) then
-      raise EFHIRPath.create('Unknown type '+type_); // this really is an error, because we can only get to here if the internal infrastrucgture is wrong
+      raise EFHIRPath.Create('Unknown type '+type_); // this really is an error, because we can only get to here if the internal infrastrucgture is wrong
     m := nil;
-    sdl := TFslList<TFhirStructureDefinition>.create;
+    sdl := TFslList<TFhirStructureDefinition>.Create;
     try
       if (type_.contains('#')) then
         m := getElementDefinition(sd, type_.substring(type_.indexOf('#')+1), true, specifiedType);
@@ -6899,7 +6899,7 @@ begin
         begin
           dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+specifiedType, '') as TFhirStructureDefinition;
           if (dt = nil) then
-            raise EFHIRPath.create('unknown data type '+specifiedType);
+            raise EFHIRPath.Create('unknown data type '+specifiedType);
           sdl.add(dt);
         end
         else
@@ -6907,7 +6907,7 @@ begin
           begin
             dt := worker.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/'+t.Code, '') as TFhirStructureDefinition;
             if (dt = nil) then
-              raise EFHIRPath.create('unknown data type '+t.code);
+              raise EFHIRPath.Create('unknown data type '+t.code);
             sdl.add(dt);
           end;
       end
@@ -6975,7 +6975,7 @@ begin
                     for r in rt do
                       result.addType(r)
                   finally
-                    rt.Free;
+                    rt.free;
                   end;
                 end
                 else
@@ -6996,7 +6996,7 @@ begin
               for t in ed.type_list do
               begin
                 if (t.code = '') then
-                  break; // raise EFHIRPath.create('Illegal reference to primitive value attribute @ '+path);
+                  break; // raise EFHIRPath.Create('Illegal reference to primitive value attribute @ '+path);
 
                 if (t.code = 'Element') or (t.code = 'BackboneElement') then
                   result.addType(path)
@@ -7007,7 +7007,7 @@ begin
                     for r in rt do
                       result.addType(r)
                   finally
-                    rt.Free;
+                    rt.free;
                   end;
                 end
                 else
@@ -7018,8 +7018,8 @@ begin
         end;
       end;
     finally
-      sdl.Free;
-      sd.Free;
+      sdl.free;
+      sd.free;
     end;
   end;
 end;
@@ -7092,14 +7092,14 @@ begin
       // now we walk into the type.
 
       if (ed.type_list.count > 1) then // if there's more than one type, the test above would fail this
-        raise EFHIRException.create('Internal typing issue....');
+        raise EFHIRException.Create('Internal typing issue....');
       sd := worker.getStructure('http://hl7.org/fhir/StructureDefinition/'+ed.type_List[0].code);
       try
         if (sd = nil) then
-          raise EDefinitionException.create('Unknown type '+ed.type_List[0].code);
+          raise EDefinitionException.Create('Unknown type '+ed.type_List[0].code);
         result := getElementDefinition(sd, sd.id+path.Substring(ed.path.Length), true, specifiedType);
       finally
-        sd.Free;
+        sd.free;
       end;
     end;
     if ((ed.ContentReference <> '') and path.startsWith(ed.path+'.')) then
@@ -7151,9 +7151,9 @@ end;
 
 destructor TFHIRPathExecutionTypeContext.Destroy;
 begin
-  FAppInfo.Free;
-  FContext.Free;
-  FThis.Free;
+  FAppInfo.free;
+  FContext.free;
+  FThis.free;
   inherited;
 end;
 
@@ -7200,20 +7200,20 @@ end;
 function TFHIRPathLexeR3.processConstant : TFHIRObject;
 begin
   if (isStringConstant()) then
-    result := TFHIRString.create(TFHIRPathLexer.processConstant(take())).noExtensions()
+    result := TFHIRString.Create(TFHIRPathLexer.processConstant(take())).noExtensions()
    else if (StringIsInteger32(current)) then
-    result := TFHIRInteger.create(take).noExtensions()
+    result := TFHIRInteger.Create(take).noExtensions()
    else if (StringIsDecimal(current)) then
-     result := TFHIRDecimal.create(take).noExtensions()
+     result := TFHIRDecimal.Create(take).noExtensions()
    else if (StringArrayExistsSensitive(['true', 'false'], current)) then
-     result := TFHIRBoolean.create(take = 'true').noExtensions()
+     result := TFHIRBoolean.Create(take = 'true').noExtensions()
    else if (current = '{}') then
    begin
       take;
       result := nil;
    end
    else if (current.startsWith('%') or current.startsWith('@')) then
-      result := TFHIRConstant.create(take)
+      result := TFHIRConstant.Create(take)
    else
       raise error('Invalid Constant '+current);
 end;

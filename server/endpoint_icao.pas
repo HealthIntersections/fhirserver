@@ -105,19 +105,19 @@ implementation
 
 constructor TICAOWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, nil, nil, i18n);
+  inherited Create(config, settings, nil, nil, nil, i18n);
   FJWK :=  TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
   FJWKSFile := Settings.Ini.web['card-jwks'].value;
-  FStore := TX509CertificateStore.create;
+  FStore := TX509CertificateStore.Create;
   if Settings.Ini.web['cert-store'].value <> '' then
     FStore.addFolder(Settings.Ini.web['cert-store'].value);
 end;
 
 destructor TICAOWebEndPoint.Destroy;
 begin
-  FJWK.Free;
+  FJWK.free;
   FICAOServer.free;
-  FStore.Free;
+  FStore.free;
   inherited;
 end;
 
@@ -157,7 +157,7 @@ end;
 constructor TICAOWebServer.Create(code, path : String; common : TFHIRWebServerCommon);
 begin
   inherited;
-  FPDFLock := TFslLock.create;
+  FPDFLock := TFslLock.Create;
   PdfiumDllFileName := 'libpdf.dll';
 end;
 
@@ -165,7 +165,7 @@ destructor TICAOWebServer.Destroy;
 begin
   FJWK.free;
   FStore.free;
-  FPDFLock.Free;
+  FPDFLock.free;
   inherited;
 end;
 
@@ -286,7 +286,7 @@ begin
   if accept = 'image/png' then
   begin
     response.ContentType := 'image/png';
-    response.ContentStream := TBytesStream.create(card.image);
+    response.ContentStream := TBytesStream.Create(card.image);
     response.FreeContentStream := true;
   end
   else if accept = 'application/jwt' then
@@ -336,7 +336,7 @@ var
   gen : THealthCardFormGenerator;
   card : THealthcareCard;
 begin
-  gen := THealthCardFormGenerator.create(FJWK.link);
+  gen := THealthCardFormGenerator.Create(FJWK.link);
   try
     gen.IssuerURL := AbsoluteURL(true);
     try
@@ -350,11 +350,11 @@ begin
           try
             result := processSHC(card, request.Accept, 'SHC Generation', 'Processing User Form', gen.issues.Text, response);
           finally
-            card.Free;
+            card.free;
           end;
         end;
       finally
-        vars.Free;
+        vars.free;
       end;
     except
       on e : Exception do
@@ -371,9 +371,9 @@ var
   conv : TICAOCardImporter;
   card : THealthcareCard;
 begin
-  conv := TICAOCardImporter.create;
+  conv := TICAOCardImporter.Create;
   try
-    conv.factory := TFHIRFactoryR4.create;
+    conv.factory := TFHIRFactoryR4.Create;
     conv.issuer := AbsoluteURL(true);
     conv.store := FStore.Link;
     conv.mustVerify := true;
@@ -393,7 +393,7 @@ begin
           result := processError(e.message, accept, conv.htmlReport, response);
       end;
     finally
-      bmp.Free;
+      bmp.free;
     end;
   finally
     conv.free;
@@ -405,9 +405,9 @@ var
   conv : TICAOCardImporter;
   card : THealthcareCard;
 begin
-  conv := TICAOCardImporter.create;
+  conv := TICAOCardImporter.Create;
   try
-    conv.factory := TFHIRFactoryR4.create;
+    conv.factory := TFHIRFactoryR4.Create;
     conv.issuer := AbsoluteURL(true);
     conv.store := FStore.Link;
     conv.mustVerify := true;
@@ -433,9 +433,9 @@ var
   conv : TICAOCardImporter;
   card : THealthcareCard;
 begin
-  conv := TICAOCardImporter.create;
+  conv := TICAOCardImporter.Create;
   try
-    conv.factory := TFHIRFactoryR4.create;
+    conv.factory := TFHIRFactoryR4.Create;
     conv.issuer := AbsoluteURL(true);
     conv.store := FStore.Link;
     conv.mustVerify := true;
@@ -502,9 +502,9 @@ begin
         else
           params := params+'&'+p.ParamName+'='+p.Content.AsText;
 
-    result := extractFileData(defLang, form, name, ct);
+    result := extractFileData(nil, form, name, ct);
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -514,13 +514,13 @@ var
   stream : TStream;
   params, ct : String;
 begin
-  ipsGen := TIPSGenerator.create;
+  ipsGen := TIPSGenerator.Create;
   try
     stream := extractFile(request, 'acfile', params, ct);
     if (stream <> nil) then
     begin
       try
-        ipsgen.attachment := TFslBuffer.create;
+        ipsgen.attachment := TFslBuffer.Create;
         ipsgen.attachment.LoadFromStream(stream);
         ipsgen.attachment.Format := ct;
       finally
@@ -585,7 +585,7 @@ begin
         else
           result := processQRCode(s, request.Accept, response)
       finally
-         s.Free;
+         s.free;
       end;
     end
     else if (request.Command = 'POST') then

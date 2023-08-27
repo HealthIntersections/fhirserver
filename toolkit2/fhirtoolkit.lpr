@@ -42,7 +42,7 @@ begin
   Application.Scaled:=True;
   Application.Initialize;
 
-  frm := TToolkitAboutForm.create(Application);
+  frm := TToolkitAboutForm.Create(Application);
   try
     frm.Button1.Visible := false;
     frm.Show;
@@ -50,7 +50,7 @@ begin
     Application.CreateForm(TMainToolkitForm, MainToolkitForm);
     frm.Close;
   finally
-    frm.Free;
+    frm.free;
   end;
   Application.CreateForm(TIGPublisherConfigForm, IGPublisherConfigForm);
   Application.CreateForm(TForm1, Form1);

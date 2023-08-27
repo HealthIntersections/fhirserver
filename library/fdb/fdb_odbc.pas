@@ -137,16 +137,16 @@ function StandardODBCDriverName(APlatform: TFDBPlatform): String;
 implementation
 
 
-constructor TFDBOdbcConnection.create(AOwner : TFDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
+constructor TFDBOdbcConnection.Create(AOwner : TFDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
 begin
-  inherited create(AOwner);
+  inherited Create(AOwner);
   FEnv := Env;
   FHdbc := AHdbc;
   FStmt := AStmt;
   FASAMode := -1; // transaction isolation level unknown
 end;
 
-destructor TFDBOdbcConnection.destroy;
+destructor TFDBOdbcConnection.Destroy;
 begin
   FStmt.free;
   FStmt := Nil;
@@ -375,7 +375,7 @@ begin
     LCat.TableType := [ttTable];
     AList.Assign(LCat.TableNames);
   finally
-    LCat.Free;
+    LCat.free;
     end;
 end;
 
@@ -610,7 +610,7 @@ Begin
     result := trunc(strToFloat(v)*1024*1024)
   else if sameText(u, 'GB') Then
     result := trunc(strToFloat(v)*1024*1024*1024)
-  else raise EDBException.create('unknown unit ' +u);
+  else raise EDBException.Create('unknown unit ' +u);
 End;
 
 
@@ -648,7 +648,7 @@ Begin
   try
     Execute;
     if not FetchNext Then
-      raise EDBException.create('Table "'+sName+'" not found checking size');
+      raise EDBException.Create('Table "'+sName+'" not found checking size');
     result := ReadBytes(ColStringByName['reserved']);
   Finally
     Terminate;
@@ -674,7 +674,7 @@ Begin
     kdbSQLServer  :
       result := DatabaseSizeMSSQL;
   else // kdbUnknown, kdbSybase11, kdbAccess, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
-    raise EDBException.create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
+    raise EDBException.Create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
 
@@ -685,7 +685,7 @@ Begin
     kdbSQLServer  :
       result := TableSizeMSSQL(sName);
   else // kdbUnknown, kdbSybase11, kdbAccess, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
-    raise EDBException.create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
+    raise EDBException.Create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
 
@@ -697,7 +697,7 @@ End;
 
 function TFDBOdbcConnection.FetchColumnMetaData(ASrc : TCatalogColumn) : TFDBColumn;
 begin
-  result := TFDBColumn.create;
+  result := TFDBColumn.Create;
   try
     result.Name := ASrc.ColumnName;
     result.DataType := ConvertColType(ASrc.DataType);
@@ -720,9 +720,9 @@ var
   LIndexUnique : Boolean;
   i : Integer;
 begin
-  result := TFDBIndex.create;
+  result := TFDBIndex.Create;
   try
-    LFields := TStringList.create;
+    LFields := TStringList.Create;
     try
       ACat.ParseIndex(AName, LName, LIndexUnique, LFields);
       result.Name := LName;
@@ -732,7 +732,7 @@ begin
         result.Columns.add(TFDBColumn.Create(LFields[i]));
         end;
     finally
-      LFields.Free;
+      LFields.free;
     end;
   except
     on e:exception do
@@ -748,7 +748,7 @@ function TFDBOdbcConnection.FetchRelationshipMetaData(ACat: TOdbcCatalog; aDetai
 var
   ColumnName, ForeignOwner, ForeignTable, ForeignColumn : String;
 begin
-  result := TFDBRelationship.create;
+  result := TFDBRelationship.Create;
   try
     ACat.ParseForeignKey(aDetails, ColumnName, ForeignOwner, ForeignTable, ForeignColumn);
     result.Column := columnName;
@@ -768,7 +768,7 @@ function TFDBOdbcConnection.FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatal
 var
   i : integer;
 begin
-  result := TFDBTable.create;
+  result := TFDBTable.Create;
   try
     result.Name := ASrc.TableName;
     result.Owner := ASrc.TableOwner;
@@ -804,7 +804,7 @@ begin
   LCat := TOdbcCatalog.Create(FEnv, FHdbc);
   try
     LCat.hDbc := FHdbc;
-    LRes := TFDBMetaData.create;
+    LRes := TFDBMetaData.Create;
     try
       for i := 0 to LCat.Tables.ItemCount - 1 do
         begin
@@ -822,23 +822,23 @@ begin
       result := LRes;
       LRes := nil;
     finally
-      LRes.Free;
+      LRes.free;
     end;
   finally
-    LCat.Free;
+    LCat.free;
     end;
 end;
 
 { TFDBOdbcManager }
 
-constructor TFDBOdbcManager.create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFDBOdbcManager.Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   {$IFDEF FPC}
   if not isODBCLoaded then
     InitialiseODBC;
   {$ENDIF}
-  inherited create(Aname, AMaxConnCount);
-  FAttributes := TStringList.create;
+  inherited Create(Aname, AMaxConnCount);
+  FAttributes := TStringList.Create;
   FDriver := ADriver;
   FServer := AServer;
   FDatabase := ADatabase;
@@ -889,12 +889,12 @@ destructor TFDBOdbcManager.Destroy;
 begin
   FAttributes.free;
   inherited;
-  FEnv.Free;
+  FEnv.free;
 end;
 
 procedure TFDBOdbcManager.init;
 begin
-  FEnv := TOdbcEnv.create;
+  FEnv := TOdbcEnv.Create;
 end;
 
 function TFDBOdbcManager.ConnectionFactory: TFDBConnection;
@@ -930,7 +930,7 @@ begin
     LStmt.CursorType := SQL_CURSOR_FORWARD_ONLY;
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
-    result := TFDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
+    result := TFDBOdbcConnection.Create(self, FEnv, LHdbc, LStmt);
     try
       result.Initialise;
       result.link;
@@ -997,7 +997,7 @@ end;
 
 { TFDBOdbcExpress }
                            {
-constructor TFDBOdbcExpress.create(AName : String; AIniFile : TIniFile; ASection : String; AIdent : String = '');
+constructor TFDBOdbcExpress.Create(AName : String; AIniFile : TIniFile; ASection : String; AIdent : String = '');
 begin
   Create(AName, AIniFile.ReadInteger(ASection, 'MaxConnections', 20), AIniFile.ReadString(ASection, 'DSN', ''),
       AIniFile.ReadString(ASection, 'ODBCDriver', ''), AIniFile.ReadString(ASection, 'Server', ''),
@@ -1005,10 +1005,10 @@ begin
       AIniFile.ReadString(ASection, 'Password', ''));
 end;
 
-constructor TFDBOdbcExpress.create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFDBOdbcExpress.Create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
-  inherited create(Aname, AMaxConnCount);
-  FAttributes := TIdStringList.create;
+  inherited Create(Aname, AMaxConnCount);
+  FAttributes := TIdStringList.Create;
   FDsn := ADSN;
   FDriver := ADriver;
   FServer := AServer;
@@ -1040,7 +1040,7 @@ end;
 
 destructor TOdbcBoundBytes.Destroy;
 begin
-  FBytes.Free;
+  FBytes.free;
   inherited;
 end;
 

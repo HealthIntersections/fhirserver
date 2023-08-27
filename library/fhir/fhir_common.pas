@@ -102,6 +102,7 @@ type
     // extensions:
     function hasExtension(url : String) : boolean; override;
     function getExtensionString(url : String) : String; override;
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; overload; override;
     function getExtensionsV : TFslList<TFHIRObject>; overload; override;
@@ -251,6 +252,7 @@ type
     // extensions:
     function hasExtension(url : String) : boolean; override;
     function getExtensionString(url : String) : String; override;
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function getExtensionsV : TFslList<TFHIRObject>; override;
     function extensionCount(url : String) : integer; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
@@ -1641,15 +1643,15 @@ end;
 
 constructor TFHIRXVersionResourceWrapper.Create(res: TFHIRResourceV);
 begin
-  inherited create;
+  inherited Create;
   if (res = nil) then
-    raise EFHIRException.create('A value must be provided');
+    raise EFHIRException.Create('A value must be provided');
   FRes := res;
 end;
 
 destructor TFHIRXVersionResourceWrapper.Destroy;
 begin
-  FRes.Free;
+  FRes.free;
   inherited;
 end;
 
@@ -1693,6 +1695,11 @@ begin
   Result:= FRes.getExtensionString(url);
 end;
 
+function TFHIRXVersionResourceWrapper.getExtensionValue(url: String): TFHIRObject;
+begin
+  Result:= FRes.getExtensionValue(url);
+end;
+
 function TFHIRXVersionResourceWrapper.getExtensionsV: TFslList<TFHIRObject>;
 begin
   Result:= FRes.getExtensionsV();
@@ -1718,7 +1725,7 @@ var
   list : TFslList<TFHIRObject>;
   o : TFHIRObject;
 begin
-  result := TFslList<TFhirExtensionW>.create;
+  result := TFslList<TFhirExtensionW>.Create;
   try
     list := getExtensionsV(url);
     try
@@ -1740,7 +1747,7 @@ begin
   list := getExtensionsW(url);
   try
     if list.count > 1 then
-      raise EFHIRException.create('Multiple matches for extension "'+url+'"')
+      raise EFHIRException.Create('Multiple matches for extension "'+url+'"')
     else if list.count = 1 then
       result := list[0].link
     else
@@ -1843,7 +1850,7 @@ end;
 
 destructor TFhirParametersParameterW.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1863,7 +1870,7 @@ end;
 procedure TFhirParametersParameterW.populateList;
 begin
   if FList = nil then
-    FList := TFslList<TFhirParametersParameterW>.create;
+    FList := TFslList<TFhirParametersParameterW>.Create;
   FList.Clear;
 end;
 
@@ -1890,7 +1897,7 @@ var
   list : TFslList<TFHIRObject>;
   o : TFHIRObject;
 begin
-  result := TFslList<TFhirExtensionW>.create;
+  result := TFslList<TFhirExtensionW>.Create;
   try
     list := getExtensionsV(url);
     try
@@ -1910,7 +1917,7 @@ var
   list : TFslList<TFHIRObject>;
   o : TFHIRObject;
 begin
-  result := TFslList<TFhirExtensionW>.create;
+  result := TFslList<TFhirExtensionW>.Create;
   try
     list := getExtensionsV;
     try
@@ -1932,7 +1939,7 @@ begin
   list := getExtensionsW(url);
   try
     if list.count > 1 then
-      raise EFHIRException.create('Multiple matches for extension "'+url+'"')
+      raise EFHIRException.Create('Multiple matches for extension "'+url+'"')
     else if list.count = 1 then
       result := list[0].link
     else
@@ -1974,15 +1981,15 @@ end;
 
 constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   if (elem = nil) and not NoElementOk then
-    raise EFHIRException.create('A value must be provided');
+    raise EFHIRException.Create('A value must be provided');
   FElement := elem;
 end;
 
 destructor TFHIRXVersionElementWrapper.Destroy;
 begin
-  FElement.Free;
+  FElement.free;
   inherited;
 end;
 
@@ -2014,6 +2021,11 @@ end;
 function TFHIRXVersionElementWrapper.getExtensionString(url: String): String;
 begin
   result := FElement.getExtensionString(url);
+end;
+
+function TFHIRXVersionElementWrapper.getExtensionValue(url: String): TFHIRObject;
+begin
+  Result := FElement.getExtensionValue(url);
 end;
 
 function TFHIRXVersionElementWrapper.getId: String;
@@ -2080,7 +2092,7 @@ end;
 
 destructor TFHIRParametersW.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -2099,7 +2111,7 @@ end;
 procedure TFHIRParametersW.populateList;
 begin
   if FList = nil then
-    FList := TFslList<TFhirParametersParameterW>.create;
+    FList := TFslList<TFhirParametersParameterW>.Create;
   FList.Clear;
 end;
 
@@ -2164,7 +2176,7 @@ end;
 
 destructor TFhirCodeSystemW.Destroy;
 begin
-  FConceptList.Free;
+  FConceptList.free;
   inherited;
 end;
 
@@ -2193,7 +2205,7 @@ end;
 
 destructor TFhirCodeSystemConceptW.Destroy;
 begin
-  FConceptList.Free;
+  FConceptList.free;
   inherited;
 end;
 
@@ -2228,16 +2240,16 @@ end;
 
 constructor TFHIRXVersionOperationWrapper.Create(res: TFslObject);
 begin
-  inherited create;
+  inherited Create;
   if (res = nil) then
-    raise EFHIRException.create('A value must be provided');
+    raise EFHIRException.Create('A value must be provided');
   FOp := res;
 end;
 
 destructor TFHIRXVersionOperationWrapper.Destroy;
 begin
-  FList.Free;
-  FOp.Free;
+  FList.free;
+  FOp.free;
   inherited;
 end;
 
@@ -2250,7 +2262,7 @@ end;
 function TFHIRXVersionOperationWrapper.List: TFslList<TFslObject>;
 begin
   if FList = nil then
-    FList := TFslList<TFslObject>.create;
+    FList := TFslList<TFslObject>.Create;
   result := FList;
 end;
 
@@ -2504,16 +2516,16 @@ end;
 
 constructor TFHIRXVersionOperationObjectWrapper.Create(res: TFslObject);
 begin
-  inherited create;
+  inherited Create;
   if (res = nil) then
-    raise EFHIRException.create('An object must be provided');
+    raise EFHIRException.Create('An object must be provided');
   FObj := res;
 end;
 
 destructor TFHIRXVersionOperationObjectWrapper.Destroy;
 begin
-  FList.Free;
-  FObj.Free;
+  FList.free;
+  FObj.free;
   inherited;
 end;
 
@@ -2526,7 +2538,7 @@ end;
 function TFHIRXVersionOperationObjectWrapper.List: TFslList<TFslObject>;
 begin
   if FList = nil then
-    FList := TFslList<TFslObject>.create;
+    FList := TFslList<TFslObject>.Create;
   result := FList;
 end;
 
@@ -2656,15 +2668,15 @@ end;
 constructor TFHIRMetadataResourceManagerW<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<TFHIRResourceProxyV>.create('Metadata Resource Manager ('+T.className+')');
+  FMap := TFslMap<TFHIRResourceProxyV>.Create('Metadata Resource Manager ('+T.className+')');
   FMap.defaultValue := nil;
-  FList := TFslList<TFHIRResourceProxyV>.create;
+  FList := TFslList<TFHIRResourceProxyV>.Create;
 end;
 
 destructor TFHIRMetadataResourceManagerW<T>.Destroy;
 begin
-  FMap.Free;
-  FList.Free;
+  FMap.free;
+  FList.free;
   inherited;
 end;
 
@@ -2724,7 +2736,7 @@ var
   tt, latest : TFHIRResourceProxyV;
   lv : String;
 begin
-  rl := TFslList<TFHIRResourceProxyV>.create;
+  rl := TFslList<TFHIRResourceProxyV>.Create;
   try
     for tt in FList do
     begin
@@ -3006,7 +3018,7 @@ end;
 
 destructor TFhirIdentifierW.Destroy;
 begin
-  FType.Free;
+  FType.free;
   inherited;
 end;
 
@@ -3024,7 +3036,7 @@ end;
 
 procedure TFhirIdentifierW.SetType(const Value: TFhirCodeableConceptW);
 begin
-  FType.Free;
+  FType.free;
   FType := Value;
   SetTypeV(value);
 end;
@@ -3093,12 +3105,12 @@ end;
 
 procedure TFHIRPrimitiveX.SetAsString(value: String);
 begin
-  raise EFSLException.create('SetAsString is not supported in a version-less context');
+  raise EFSLException.Create('SetAsString is not supported in a version-less context');
 end;
 
 function TFHIRPrimitiveX.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
 begin
-  raise EFSLException.create('Extensions are not supported in a version-less context');
+  raise EFSLException.Create('Extensions are not supported in a version-less context');
 end;
 
 end.

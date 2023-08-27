@@ -1201,8 +1201,8 @@ End;
 
 Destructor TFslVCLGraphic.Destroy;
 Begin
-  FHandle.Free;
-  FBuffer.Free;
+  FHandle.free;
+  FBuffer.free;
 
   Inherited;
 End;
@@ -1223,7 +1223,7 @@ Begin
 
     Handle.LoadFromStream(oAdapter);
   Finally
-    oAdapter.Free;
+    oAdapter.free;
   End;
 End;
 
@@ -1238,7 +1238,7 @@ Begin
 
     Handle.SaveToStream(oAdapter);
   Finally
-    oAdapter.Free;
+    oAdapter.free;
   End;
 End;
 
@@ -1278,7 +1278,7 @@ End;
 
 Procedure TFslVCLGraphic.SetHandle(Const Value: TGraphic);
 Begin
-  FHandle.Free;
+  FHandle.free;
   FHandle := Value;
 End;
 
@@ -1346,7 +1346,7 @@ Begin
     oStream.Position := 0;
     Handle.LoadFromStream(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1563,7 +1563,7 @@ Begin
       Result.Canvas.Unlock;
     End;
   Except
-    Result.Free;
+    Result.free;
 
     Raise;
   End;
@@ -1602,7 +1602,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1897,7 +1897,7 @@ End;
 
 Destructor TFslBrush.Destroy;
 Begin
-  FBitmap.Free;
+  FBitmap.free;
 
   Inherited;
 End;
@@ -1979,7 +1979,7 @@ Begin
   ClearHandle;
   Change;
 
-  FBitmap.Free;
+  FBitmap.free;
   FBitmap := Value;
 End;
 
@@ -2674,8 +2674,8 @@ Begin
       oResourceStream.Close;
     End;
   Finally
-    oVCLStream.Free;
-    oResourceStream.Free;
+    oVCLStream.free;
+    oResourceStream.free;
   End;
 End;
 
@@ -2696,10 +2696,10 @@ Begin
 
       oPNG.SaveToStream(oAdaptor);
     Finally
-      oAdaptor.Free;
+      oAdaptor.free;
     End;
   Finally
-    oPng.Free;
+    oPng.free;
   End;
 End;
 

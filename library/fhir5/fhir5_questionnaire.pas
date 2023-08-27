@@ -48,7 +48,7 @@ Const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : String; const lang : THTTPLanguages; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : String; langList : THTTPLanguageList; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFslObject; uri : String) : TResourceWithReference of object;
 
@@ -84,7 +84,7 @@ Type
     FOnLookupReference : TLookupReferenceEvent;
     FContext : TFslObject;
     FDependencies: TList<String>;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
 
     function nextId(prefix : string) : String;
 
@@ -150,7 +150,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(const lang : THTTPLanguages);
+    constructor Create(langList : THTTPLanguageList);
     destructor Destroy; override;
 
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
@@ -210,7 +210,7 @@ begin
 
 
   list := TFhirElementDefinitionList.Create;
-  answerGroups := TFhirQuestionnaireResponseItemList.create;
+  answerGroups := TFhirQuestionnaireResponseItemList.Create;
   try
     if resource <> nil then
       answerGroups.AddAll(FAnswers.itemList);
@@ -228,8 +228,8 @@ begin
       for item in FQuestionnaire.itemList do
         buildGroup(item, profile, profile.snapshot.elementList[0], list, answerGroups);
   finally
-    list.Free;
-    answerGroups.Free;
+    list.free;
+    answerGroups.free;
   end;
 
   if FAnswers <> nil then
@@ -257,21 +257,22 @@ begin
           nAnswers.add(ans.link);
         end;
     finally
-      children.Free;
+      children.free;
     end;
   end;
 end;
 
 destructor TQuestionnaireBuilder.Destroy;
 begin
-  FDependencies.Free;
-  vsCache.Free;
-  FResource.Free;
-  FProfile.Free;
-  FQuestionnaire.Free;
-  FAnswers.Free;
-  FProfiles.Free;
-  FPrebuiltQuestionnaire.Free;
+  FLangList.free;
+  FDependencies.free;
+  vsCache.free;
+  FResource.free;
+  FProfile.free;
+  FQuestionnaire.free;
+  FAnswers.free;
+  FProfiles.free;
+  FPrebuiltQuestionnaire.free;
   FContext.free;
   inherited;
 end;
@@ -320,10 +321,10 @@ begin
     result := FQuestionnaire.contained[vsCache.GetValueByKey(url)].link as TFhirValueSet
   else
   begin
-    dependencies := TStringList.create;
+    dependencies := TStringList.Create;
     try
       try
-        vs := OnExpand(nil, url, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        vs := OnExpand(nil, url, FLangList, MaxListboxCodings, 0, 0, false, dependencies);
         try
         for s in dependencies do
           if not FDependencies.Contains(s) then
@@ -340,7 +341,7 @@ begin
             result.url := url;
             result.link;
           finally
-            result.Free;
+            result.free;
           end;
         end;
         on e : Exception do
@@ -350,7 +351,7 @@ begin
         end;
       end;
     finally
-      dependencies.Free;
+      dependencies.free;
     end;
   end;
 end;
@@ -369,7 +370,7 @@ begin
   if (binding = nil) or (binding.Valueset = '') then
     exit;
 
-  dependencies := TStringList.create;
+  dependencies := TStringList.Create;
   try
     if binding.valueset.StartsWith('#') then
     begin
@@ -377,17 +378,17 @@ begin
       try
         v := FFactory.wrapValueSet(vs);
         try
-          vsw := OnExpand(v, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
+          vsw := OnExpand(v, '', FLangList, MaxListboxCodings, 0, 0, false, dependencies);
           try
             for s in dependencies do
               if not FDependencies.Contains(s) then
                 FDependencies.Add(s);
             result := vsw.Resource.link as TFhirValueSet;
           finally
-            vsw.Free;
+            vsw.free;
           end;
         finally
-          v.Free;
+          v.free;
         end;
       except
         on e: ETooCostly do
@@ -397,7 +398,7 @@ begin
             result.url := binding.valueset;
             result.link;
           finally
-            result.Free;
+            result.free;
           end;
         end;
         on e : Exception do
@@ -412,14 +413,14 @@ begin
       result := FQuestionnaire.contained[vsCache.GetValueByKey(binding.valueset)].link as TFhirValueSet
     else
       try
-        vsw := OnExpand(nil, binding.valueset, FLang, MaxListboxCodings, 0, 0,false, dependencies);
+        vsw := OnExpand(nil, binding.valueset, FLangList, MaxListboxCodings, 0, 0,false, dependencies);
         try
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
           result := vsw.Resource.link as TFhirValueSet;
         finally
-          vsw.Free;
+          vsw.free;
         end;
       except
         on e: ETooCostly do
@@ -429,7 +430,7 @@ begin
             result.url := binding.valueset;
             result.link;
           finally
-            result.Free;
+            result.free;
           end;
         end;
         on e : Exception do
@@ -439,43 +440,43 @@ begin
         end;
       end;
   finally
-    dependencies.Free;
+    dependencies.free;
   end;
 end;
 
 procedure TQuestionnaireBuilder.SetAnswers(const Value: TFhirQuestionnaireResponse);
 begin
-  FAnswers.Free;
+  FAnswers.free;
   FAnswers := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetContext(const Value: TFslObject);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
 begin
-  FPrebuiltQuestionnaire.Free;
+  FPrebuiltQuestionnaire.free;
   FPrebuiltQuestionnaire := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetProfile(const Value: TFHirStructureDefinition);
 begin
-  FProfile.Free;
+  FProfile.free;
   FProfile := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetProfiles(const Value: TProfileManager);
 begin
-  FProfiles.Free;
+  FProfiles.free;
   FProfiles := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetResource(const Value: TFhirDomainResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 
@@ -504,7 +505,7 @@ begin
   try
     gen.generate(Resource, profile);
   finally
-    gen.Free;
+    gen.free;
   end;
 end;
 
@@ -574,7 +575,7 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -650,12 +651,12 @@ begin
                 result := true;
               end;
             finally
-              o.Free;
+              o.free;
             end;
           end;
         end;
       finally
-        t.Free;
+        t.free;
       end;
     finally
       d.free;
@@ -723,15 +724,15 @@ begin
             else
               buildQuestion(childGroup, profile, child, child.path, nAnswers);
           finally
-            nAnswers.Free;
+            nAnswers.free;
           end;
         finally
-          nparents.Free;
+          nparents.free;
         end;
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -748,7 +749,7 @@ begin
 
       if (e.contentReference <> '') and path.startsWith(p) then
       begin
-        result.Free;
+        result.free;
         if (path.length > p.length) then
           result := getChildList(profile, e.contentReference+'.'+path.substring(p.length+1))
         else
@@ -763,7 +764,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -840,7 +841,7 @@ function TQuestionnaireBuilder.expandTypeList(types: TFhirElementDefinitionTypeL
 var
   t : TFhirElementDefinitionType;
 begin
-  result := TFhirElementDefinitionTypeList.create;
+  result := TFhirElementDefinitionTypeList.Create;
   try
     for t in types do
     begin
@@ -888,7 +889,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -904,11 +905,11 @@ begin
       result.name := 'All codes known to the system';
       result.description := 'All codes known to the system';
       result.status := PublicationStatusActive;
-      result.compose := TFhirValueSetCompose.create;
+      result.compose := TFhirValueSetCompose.Create;
       result.compose.includeList.Append.system := ANY_CODE_VS;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 
@@ -953,7 +954,7 @@ begin
     end;
     result := vs.Link;
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -1041,7 +1042,7 @@ begin
 
     end;
   finally
-    temp.Free;
+    temp.free;
   end;
 end;
 
@@ -1086,7 +1087,7 @@ begin
         sub.Text := t.tags['type'];
         // always optional, never repeats
 
-        selected := TFhirQuestionnaireResponseItemList.create;
+        selected := TFhirQuestionnaireResponseItemList.Create;
         try
           selectTypes(profile, sub, t, answerGroups, selected);
           processDataType(profile, sub, element, element.Path+'._'+t.tags['type'], t, group.required, selected);
@@ -1196,13 +1197,13 @@ begin
         result := value.link as TFhirDataType
       else if value is TFHIREnum then
       begin
-        result := TFhirCoding.create;
+        result := TFhirCoding.Create;
         TFhirCoding(result).code := TFHIREnum(value).value;
         TFhirCoding(result).system := getSystemForCode(vs, TFHIREnum(value).value, path);
       end
       else if value is TFHIRString then
       begin
-        result := TFhirCoding.create;
+        result := TFhirCoding.Create;
         TFhirCoding(result).code := TFHIRString(value).value;
         TFhirCoding(result).system := getSystemForCode(vs, TFHIRString(value).value, path);
       end;
@@ -1223,12 +1224,12 @@ end;
 
 
 
-constructor TQuestionnaireBuilder.create(const lang : THTTPLanguages);
+constructor TQuestionnaireBuilder.create(langList : THTTPLanguageList);
 begin
-  inherited create;
-  vsCache := TFslStringMatch.create;
-  FDependencies := TList<String>.create;
-  FLang := lang;
+  inherited Create;
+  vsCache := TFslStringMatch.Create;
+  FDependencies := TList<String>.Create;
+  FLangList := langList;
 end;
 
 function TQuestionnaireBuilder.addQuestion(group : TFHIRQuestionnaireItem; af : TFhirQuestionnaireItemTypeEnum; path, id, name : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet) : TFHIRQuestionnaireItem;
@@ -1264,7 +1265,7 @@ begin
             questionnaire.containedList.Add(vse.Link);
             result.answerValueSet := '#'+vse.xmlId;
           finally
-            vse.Free;
+            vse.free;
           end;
         end
         else
@@ -1308,12 +1309,12 @@ begin
               aq.answerList.append.value := convertType(child.value, af, vs, result.linkId);
             end;
         finally
-          children.Free;
+          children.free;
         end;
       end;
     end;
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -1625,7 +1626,7 @@ begin
   inc(result, FPrebuiltQuestionnaire.sizeInBytes(magic));
   inc(result, FContext.sizeInBytes(magic));
 //  inc(result, FDependencies.sizeInBytes(magic));
-  inc(result, FLang.sizeInBytes(magic));
+  inc(result, FLangList.sizeInBytes(magic));
 end;
 
 end.

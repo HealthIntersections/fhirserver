@@ -109,7 +109,7 @@ implementation
 
 procedure TEditTxForm.FormDestroy(Sender: TObject);
 begin
-  FTx.Free;
+  FTx.free;
 end;
 
 procedure TEditTxForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -211,13 +211,13 @@ var
  env : TOdbcEnv;
  adm : TOdbcAdministrator;
 begin
-  env := TOdbcEnv.create;
+  env := TOdbcEnv.Create;
   try
-    adm := TOdbcAdministrator.create(env);
+    adm := TOdbcAdministrator.Create(env);
     try
       cbxDriver.items.assign(adm.Drivers);
     finally
-      adm.Free;
+      adm.free;
     end;
   finally
     env.free;
@@ -255,7 +255,7 @@ end;
 
 procedure TEditTxForm.SetTx(AValue: TFHIRServerConfigSection);
 begin
-  FTx.Free;
+  FTx.free;
   FTx := AValue;
 
   if FTx <> nil then

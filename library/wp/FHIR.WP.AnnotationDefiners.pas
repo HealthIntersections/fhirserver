@@ -144,7 +144,7 @@ Begin
       result := earUnChanged;
     sAnnotation := oDlg.Term;
   Finally
-    oDlg.Free;
+    oDlg.free;
   End;
 end;
 
@@ -161,7 +161,7 @@ end;
 
 destructor TWPSnomedDefinitionProvider.Destroy;
 begin
-  FClient.Free;
+  FClient.free;
   inherited;
 end;
 
@@ -172,7 +172,7 @@ end;
 
 procedure TWPSnomedDefinitionProvider.SetClient(const Value: TSnomedClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
@@ -226,7 +226,7 @@ Begin
     else
       result := earUnchanged;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 end;
 

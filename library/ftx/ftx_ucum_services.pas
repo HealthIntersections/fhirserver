@@ -240,11 +240,11 @@ Type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -259,7 +259,7 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     //function subsumes(codeA, codeB : String) : String; override;
   End;
@@ -387,7 +387,7 @@ begin
     Try
       result := TUcumFormalStructureComposer.Compose(oTerm);
     Finally
-      oTerm.Free;
+      oTerm.free;
     End;
   End;
 end;
@@ -416,7 +416,7 @@ begin
     try
       Term := TUcumExpressionParser.Parse(FModel, sourceUnit);
       src := oConv.convert(term);
-      term.Free;
+      term.free;
       term := TUcumExpressionParser.Parse(FModel, destUnit);
       dst := oConv.convert(term);
       s := TUcumExpressionComposer.compose(src, false);
@@ -426,10 +426,10 @@ begin
       t := value.Multiply(src.Value);
       result := t.Divide(dst.Value);
     Finally
-      term.Free;
-      src.Free;
-      dst.Free;
-      oConv.Free;
+      term.free;
+      src.free;
+      dst.free;
+      oConv.free;
     End;
   End;
 end;
@@ -459,10 +459,10 @@ end;
 
 destructor TUcumServices.Destroy;
 begin
-  FCommonUnits.Free;
-  FCommonUnitList.Free;
-  FHandlers.Free;
-  FModel.Free;
+  FCommonUnits.free;
+  FCommonUnitList.free;
+  FHandlers.free;
+  FModel.free;
   inherited;
 end;
 
@@ -484,13 +484,13 @@ begin
       Try
         result := TUcumPair.Create(value.Value.Multiply(c.Value), TUcumExpressionComposer.Compose(c, false))
       Finally
-        c.Free;
+        c.free;
       End;
     Finally
       conv.free;
     End;
   Finally
-    t.Free;
+    t.free;
   End;
 end;
 
@@ -510,17 +510,17 @@ begin
       Try
         result := TUcumExpressionComposer.Compose(c, false);
       Finally
-        c.Free;
+        c.free;
       End;
     Finally
       conv.free;
     End;
   Finally
-    t.Free;
+    t.free;
   End;
 end;
 
-procedure TUcumServices.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
+procedure TUcumServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   s : String;
   b : TStringBuilder;
@@ -535,7 +535,7 @@ begin
     b.Append(#13#10+'Copyright: UCUM is Copyright &copy; 1999+ Regenstrief Institute, Inc. and The UCUM Organization, Indianapolis, IN. See [Terms Of Use](http://unitsofmeasure.org/trac//wiki/TermsOfUse)'+#13#10);
     card.detail := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -601,7 +601,7 @@ begin
     res.UnitCode := o1.UnitCode +'.'+o2.UnitCode;
     result := getCanonicalForm(res);
   Finally
-    res.Free;
+    res.free;
   End;
 end;
 
@@ -620,7 +620,7 @@ begin
   Try
     result := oSearch.DoSearch(model, kind, text, isRegex);
   Finally
-    oSearch.Free;
+    oSearch.free;
   End;
 end;
 
@@ -633,9 +633,9 @@ procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSetW);
 var
   inc : TFhirValueSetComposeIncludeW;
 begin
-  FCommonUnits.Free;
+  FCommonUnits.free;
   FCommonUnits := vs;
-  FCommonUnitList.Free;
+  FCommonUnitList.free;
   FCommonUnitList := nil;
   for inc in FCommonUnits.includes.forEnum do
     if FCommonUnitList = nil then
@@ -654,7 +654,7 @@ function TUcumServices.validate(code: String): String;
 begin
   if (code <> '') Then
   Try
-    TUcumExpressionParser.parse(Fmodel, code).Free;
+    TUcumExpressionParser.parse(Fmodel, code).free;
     result := '';
   Except
     on E:Exception do
@@ -670,7 +670,7 @@ begin
   Try
     oValidator.validate(oErrors);
   Finally
-    oValidator.Free;
+    oValidator.free;
   End;
 end;
 
@@ -698,13 +698,13 @@ begin
           if cu <> canonical then
             result := 'unit '+code+' has the canonical units '+cu+', not '+canonical+' as required.';
         Finally
-          c.Free;
+          c.free;
         End;
       Finally
         conv.free;
       End;
     Finally
-      t.Free;
+      t.free;
     End;
   Except
     on e:exception do
@@ -746,13 +746,13 @@ begin
             exit('');
            exit('unit '+code+' has the base units '+cu+', and is not from the property '+propertyType+' as required.');
         Finally
-          c.Free;
+          c.free;
         End;
       Finally
         conv.free;
       End;
     Finally
-      t.Free;
+      t.free;
     End;
   Except
     on e:exception do
@@ -792,7 +792,7 @@ end;
 
 destructor TUcumServiceList.Destroy;
 begin
-  FDefinition.Free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -844,7 +844,7 @@ end;
 
 procedure TUcumServiceList.SetDefinition(Value: TUcumServices);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Value;
 end;
 
@@ -874,17 +874,17 @@ begin
 //  result := nil;
 end;
 
-function TUcumServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
+function TUcumServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
   if context = nil then
     result := ''
   else
-    result := getDisplay(TUCUMContext(context).concept.code, lang);
+    result := getDisplay(TUCUMContext(context).concept.code, langList);
 end;
 
 procedure TUcumServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Code(context).Trim);
+  list.addDesignation(true, true, '', Code(context).Trim);
 end;
 
 function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
@@ -906,11 +906,11 @@ begin
     res.UnitCode := s;
     result := getCanonicalForm(res);
   Finally
-    res.Free;
+    res.free;
   End;
 end;
 
-function TUcumServices.getDisplay(code: String; const lang : THTTPLanguages): String;
+function TUcumServices.getDisplay(code: String; langList : THTTPLanguageList): String;
 var
   inc : TFhirValueSetComposeIncludeW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -964,10 +964,10 @@ begin
       if oErrors.Count > 0 then
         raise ETerminologySetup.create(oErrors.asText);
     Finally
-      oErrors.Free;
+      oErrors.free;
     End;
   finally
-    oXml.Free;
+    oXml.free;
   end;
 end;
 
@@ -988,7 +988,7 @@ begin
         result := 'Ok (version = '+oXml.document.attribute['version']+', date = '+rd+')';
       end;
     finally
-      oXml.Free;
+      oXml.free;
     end;
   except
     on e : Exception do
@@ -1121,7 +1121,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1152,7 +1152,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1191,7 +1191,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1227,13 +1227,13 @@ end;
 
 destructor TUCUMContext.Destroy;
 begin
-  FConcept.Free;
+  FConcept.free;
   inherited;
 end;
 
 procedure TUCUMContext.SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
 begin
-  FConcept.Free;
+  FConcept.free;
   FConcept := Value;
 end;
 
@@ -1247,13 +1247,13 @@ end;
 
 constructor TUcumServiceImplementation.Create(svc: TUcumServices);
 begin
-  inherited create;
+  inherited Create;
   FSvc := svc;
 end;
 
 destructor TUcumServiceImplementation.Destroy;
 begin
-  FSvc.Free;
+  FSvc.free;
   inherited;
 end;
 

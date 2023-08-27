@@ -162,14 +162,14 @@ end;
 
 constructor TPackageServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, nil, i18n);
+  inherited Create(config, settings, db, common, nil, i18n);
   upgradeDatabase;
   FSystemToken := settings.Ini.service.prop['system-token'].value;
 end;
 
 destructor TPackageServerEndPoint.Destroy;
 begin
-  FPackageServer.Free;
+  FPackageServer.free;
 
   inherited;
 end;
@@ -194,7 +194,7 @@ end;
 procedure TPackageServerEndPoint.Unload;
 begin
   FUpdater.StopAndWait(50);
-  FUpdater.Free;
+  FUpdater.free;
   FUpdater := nil;
 end;
 
@@ -205,7 +205,7 @@ var
 begin
   conn := Database.GetConnection('install');
   try
-    dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
+    dbi := TFHIRDatabaseInstaller.Create(conn, nil, nil);
     try
       dbi.installPackageServer;
     finally
@@ -228,7 +228,7 @@ var
 begin
   conn := Database.GetConnection('uninstall');
   try
-    dbi := TFHIRDatabaseInstaller.create(conn, nil, nil);
+    dbi := TFHIRDatabaseInstaller.Create(conn, nil, nil);
     try
       dbi.Uninstall;
     finally
@@ -295,7 +295,7 @@ begin
     try
       if not (m.HasTable('Packages')) then
       begin
-        inst := TFHIRDatabaseInstaller.create(c, nil, nil);
+        inst := TFHIRDatabaseInstaller.Create(c, nil, nil);
         try
           inst.installPackageServer;
         finally
@@ -335,7 +335,7 @@ begin
         end;
       end;
     finally
-      m.Free;
+      m.free;
     end;
     generateHashes(c);
     c.Release;
@@ -350,7 +350,7 @@ var
   hashes : TFslStringDictionary;
   s : String;
 begin
-  hashes := TFslStringDictionary.create;
+  hashes := TFslStringDictionary.Create;
   try
     conn.SQL := 'select PackageVersionKey, Content from PackageVersions where Hash is NULL';
     conn.prepare;
@@ -370,7 +370,7 @@ end;
 
 constructor TPackageUpdaterThread.Create(db: TFDBManager; endPoint : TPackageServerEndPoint);
 begin
-  inherited create;
+  inherited Create;
   FDB := db;
   FEndPoint := endPoint;
   FNextRun := now + 1/(24 * 60);
@@ -380,8 +380,8 @@ end;
 
 destructor TPackageUpdaterThread.Destroy;
 begin
-  FDB.Free;
-  FZulip.Free;
+  FDB.free;
+  FZulip.free;
   inherited;
 end;
 
@@ -414,7 +414,7 @@ var
 begin
   conn := FDB.getConnection('server.packages.update');
   try
-    upd := TPackageUpdater.create(FZulip.link);
+    upd := TPackageUpdater.Create(FZulip.link);
     try
       upd.OnSendEmail := doSendEmail;
       try
@@ -479,7 +479,7 @@ end;
 
 destructor TFHIRPackageWebServer.Destroy;
 begin
-  FDB.Free;
+  FDB.free;
   inherited;
 end;
 
@@ -532,7 +532,7 @@ type
 
 constructor TFHIRPackageWebServerSorter.Create(sort: TMatchTableSort; factor: integer);
 begin
-  inherited create;
+  inherited Create;
   self.sort := sort;
   self.factor := factor;
 end;
@@ -572,9 +572,9 @@ begin
   else
     ss := '?sort=';
   if rev then
-    list.sort(TFHIRPackageWebServerSorter.create(sort, -1))
+    list.sort(TFHIRPackageWebServerSorter.Create(sort, -1))
   else
-    list.sort(TFHIRPackageWebServerSorter.create(sort, 1));
+    list.sort(TFHIRPackageWebServerSorter.Create(sort, 1));
   b := TFslStringBuilder.Create;
   try
     b.Append('<table class="grid pck-matches">'#13#10);
@@ -613,7 +613,7 @@ begin
     b.Append('</table>'#13#10);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -674,7 +674,7 @@ begin
       ts[i] := processVersion(ts[i]);
     result := ts.CommaText;
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -751,13 +751,13 @@ procedure TFHIRPackageWebServer.servePage(fn : String; request: TIdHTTPRequestIn
 var
   vars : TFslMap<TFHIRObject>;
 begin
-  vars := TFslMap<TFHIRObject>.create('vars');
+  vars := TFslMap<TFHIRObject>.Create('vars');
   try
-    vars.add('count', TFHIRObjectText.create(FDB.CountSQL('Select count(*) from PackageVersions', 'Package.server.home')));
-    vars.add('downloads', TFHIRObjectText.create(FDB.CountSQL('Select sum(DownloadCount) from Packages', 'Package.server.home')));
-    vars.add('prefix', TFHIRObjectText.create(AbsoluteURL(secure)));
-    vars.add('ver', TFHIRObjectText.create('4.0.1'));
-    vars.add('status', TFHIRObjectText.create(status));
+    vars.add('count', TFHIRObjectText.Create(FDB.CountSQL('Select count(*) from PackageVersions', 'Package.server.home')));
+    vars.add('downloads', TFHIRObjectText.Create(FDB.CountSQL('Select sum(DownloadCount) from Packages', 'Package.server.home')));
+    vars.add('prefix', TFHIRObjectText.Create(AbsoluteURL(secure)));
+    vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+    vars.add('status', TFHIRObjectText.Create(status));
     returnFile(request, response, nil, request.Document, fn, false, vars);
   finally
     vars.free;
@@ -784,11 +784,11 @@ begin
       conn.terminate;
       response.ResponseNo := 200;
       response.ResponseText := 'OK';
-      vars := TFslMap<TFHIRObject>.create;
+      vars := TFslMap<TFHIRObject>.Create;
       try
-        vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(false)));
-        vars.add('ver', TFHIRObjectText.create('4.0.1'));
-        vars.add('pid', TFHIRObjectText.create(id));
+        vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
+        vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+        vars.add('pid', TFHIRObjectText.Create(id));
         returnFile(request, response, nil, request.Document, 'packages-protect.html', false, vars);
       finally
         vars.free;
@@ -832,9 +832,9 @@ begin
     conn.sql := 'Select Version, PubDate, FhirVersions, Canonical, DownloadCount, Kind, Hash, Description from PackageVersions where Id = '''+sqlWrapString(id)+''' order by PubDate asc';
     conn.prepare;
     conn.Execute;
-    list := TFslList<TJsonObject>.create;
+    list := TFslList<TJsonObject>.Create;
     try
-      vars := TFslMap<TFHIRObject>.create('vars');
+      vars := TFslMap<TFHIRObject>.Create('vars');
       try
         json := TJsonObject.Create;
         try
@@ -866,23 +866,23 @@ begin
               dist['tarball'] := 'http://'+request.Host+'/'+id+'/'+conn.ColStringByName['Version'];
           end;
 
-          vars.add('name', TFHIRObjectText.create(json['name']));
-          vars.add('desc', TFHIRObjectText.create(FormatTextToHTML(json['description'])));
+          vars.add('name', TFHIRObjectText.Create(json['name']));
+          vars.add('desc', TFHIRObjectText.Create(FormatTextToHTML(json['description'])));
           src := TJsonWriterDirect.writeObjectStr(json, true);
         finally
-          json.Free;
+          json.free;
         end;
         conn.terminate;
         response.ResponseNo := 200;
         response.ResponseText := 'OK';
         if (request.Accept.contains('/html')) then
         begin
-          vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(false)));
-          vars.add('ver', TFHIRObjectText.create('4.0.1'));
-          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/'+ID, list, readSort(sort), sort.startsWith('-'), false, secure, false)));
-          vars.add('status', TFHIRObjectText.create(status));
-          vars.add('count', TFHIRObjectText.create(conn.CountSQL('Select count(*) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
-          vars.add('downloads', TFHIRObjectText.create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
+          vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
+          vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+          vars.add('matches', TFHIRObjectText.Create(genTable(AbsoluteUrl(secure)+'/'+ID, list, readSort(sort), sort.startsWith('-'), false, secure, false)));
+          vars.add('status', TFHIRObjectText.Create(status));
+          vars.add('count', TFHIRObjectText.Create(conn.CountSQL('Select count(*) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
+          vars.add('downloads', TFHIRObjectText.Create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions where Id = '''+sqlWrapString(id)+'''')));
           returnFile(request, response, nil, request.Document, 'packages-versions.html', false, vars);
         end
         else
@@ -894,7 +894,7 @@ begin
         vars.free;
       end;
     finally
-      list.Free;
+      list.free;
     end;
     conn.release;
   except
@@ -950,7 +950,7 @@ begin
       'where Packages.CurrentVersion = PackageVersions.PackageVersionKey '+filter+' order by PubDate';
     conn.prepare;
     conn.Execute;
-    list := TFslList<TJsonObject>.create;
+    list := TFslList<TJsonObject>.Create;
     try
       json := TJsonArray.Create;
       try
@@ -979,7 +979,7 @@ begin
 
         src := TJsonWriterDirect.writeArrayStr(json, true);
       finally
-        json.Free;
+        json.free;
       end;
 
       conn.terminate;
@@ -987,21 +987,21 @@ begin
       response.ResponseText := 'OK';
       if (request.Accept.contains('/html')) then
       begin
-        vars := TFslMap<TFHIRObject>.create('vars');
+        vars := TFslMap<TFHIRObject>.Create('vars');
         try
-          vars.add('name', TFHIRObjectText.create(name));
-          vars.add('canonicalPkg', TFHIRObjectText.create(canonicalPkg));
-          vars.add('canonicalUrl', TFHIRObjectText.create(canonicalUrl));
-          vars.add('FHIRVersion', TFHIRObjectText.create(FHIRVersion));
-          vars.add('count', TFHIRObjectText.create(conn.CountSQL('Select count(*) from PackageVersions')));
-          vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(secure)));
-          vars.add('ver', TFHIRObjectText.create('4.0.1'));
-          vars.add('r2selected', TFHIRObjectText.create(sel('R2', FHIRVersion)));
-          vars.add('r3selected', TFHIRObjectText.create(sel('R3', FHIRVersion)));
-          vars.add('r4selected', TFHIRObjectText.create(sel('R4', FHIRVersion)));
-          vars.add('matches', TFHIRObjectText.create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonicalPkg='+canonicalPkg+'&canonical='+canonicalUrl, list, readSort(sort), sort.startsWith('-'), true, secure, true)));
-          vars.add('status', TFHIRObjectText.create(status));
-          vars.add('downloads', TFHIRObjectText.create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions')));
+          vars.add('name', TFHIRObjectText.Create(name));
+          vars.add('canonicalPkg', TFHIRObjectText.Create(canonicalPkg));
+          vars.add('canonicalUrl', TFHIRObjectText.Create(canonicalUrl));
+          vars.add('FHIRVersion', TFHIRObjectText.Create(FHIRVersion));
+          vars.add('count', TFHIRObjectText.Create(conn.CountSQL('Select count(*) from PackageVersions')));
+          vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(secure)));
+          vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+          vars.add('r2selected', TFHIRObjectText.Create(sel('R2', FHIRVersion)));
+          vars.add('r3selected', TFHIRObjectText.Create(sel('R3', FHIRVersion)));
+          vars.add('r4selected', TFHIRObjectText.Create(sel('R4', FHIRVersion)));
+          vars.add('matches', TFHIRObjectText.Create(genTable(AbsoluteUrl(secure)+'/catalog?name='+name+'&fhirVersion='+FHIRVersion+'&canonicalPkg='+canonicalPkg+'&canonical='+canonicalUrl, list, readSort(sort), sort.startsWith('-'), true, secure, true)));
+          vars.add('status', TFHIRObjectText.Create(status));
+          vars.add('downloads', TFHIRObjectText.Create(conn.CountSQL('select Sum(DownloadCount) from PackageVersions')));
           returnFile(request, response, nil, request.Document, 'packages-search.html', secure, vars);
         finally
           vars.free;
@@ -1013,7 +1013,7 @@ begin
         response.ContentText := src;
       end;
     finally
-      list.Free;
+      list.free;
     end;
     conn.release;
   except
@@ -1057,7 +1057,7 @@ begin
 
       src := TJsonWriterDirect.writeArrayStr(json, true);
     finally
-      json.Free;
+      json.free;
     end;
     conn.terminate;
     response.ResponseNo := 200;
@@ -1154,7 +1154,7 @@ begin
       response.ResponseNo := 200;
       response.ContentText := 'Current Version Updated';
     finally
-      npm.Free;
+      npm.free;
     end;
     c.Release;
   except
@@ -1237,7 +1237,7 @@ begin
         ts.free;
       end;
     finally
-      npm.Free;
+      npm.free;
     end;
     conn.Release;
     response.ResponseNo := 202;
@@ -1295,12 +1295,12 @@ begin
         conn.ExecSQL('Update Packages set Security = 1, ManualToken = '''+pword+''' where Id = '''+sqlWrapString(id)+'''');
         response.ResponseNo := 200;
         response.ResponseText := 'OK';
-        vars := TFslMap<TFHIRObject>.create;
+        vars := TFslMap<TFHIRObject>.Create;
         try
-          vars.add('prefix', TFHIRObjectText.create(AbsoluteUrl(false)));
-          vars.add('ver', TFHIRObjectText.create('4.0.1'));
-          vars.add('pid', TFHIRObjectText.create(id));
-          vars.add('pword', TFHIRObjectText.create(pword));
+          vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
+          vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+          vars.add('pid', TFHIRObjectText.Create(id));
+          vars.add('pword', TFHIRObjectText.Create(pword));
           returnFile(request, response, nil, request.Document, 'packages-protected.html', false, vars);
         finally
           vars.free;
@@ -1323,7 +1323,7 @@ var
   s : TArray<String>;
   sId : string;
 begin
-  pm := THTTPParameters.create(request.UnparsedParams);
+  pm := THTTPParameters.Create(request.UnparsedParams);
   try
     if (request.CommandType = hcGET) and (request.Document = '/packages/catalog') then
     begin

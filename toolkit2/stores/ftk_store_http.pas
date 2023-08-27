@@ -102,7 +102,7 @@ function THTTPStorageService.load(address: String; doException: boolean): TLoade
 var
   fetcher : TInternetFetcher;
 begin
-  fetcher := TInternetFetcher.create;
+  fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := address;
     fetcher.Fetch;
@@ -116,14 +116,14 @@ end;
 
 function THTTPStorageService.save(address: String; bytes: TBytes): TDateTime;
 begin
-  raise EFHIRException.create('This store cannot save');
+  raise EFHIRException.Create('This store cannot save');
 end;
 
 function THTTPStorageService.CaptionForAddress(address: String): String;
 var
   uri : TIdUri;
 begin
-  uri := TIdURI.create(address);
+  uri := TIdURI.Create(address);
   try
     result := uri.document;
   finally
@@ -138,17 +138,17 @@ end;
 
 procedure THTTPStorageService.delete(address: String);
 begin
-  raise EFHIRException.create('This store cannot delete');
+  raise EFHIRException.Create('This store cannot delete');
 end;
 
 function THTTPStorageService.openDlg(out newName: String): boolean;
 begin
-  raise EFHIRException.create('Not supported by this store');
+  raise EFHIRException.Create('Not supported by this store');
 end;
 
 function THTTPStorageService.saveDlg(existing: String; suggestedExtension: String; out newName: String): boolean;
 begin
-  raise EFHIRException.create('Not supported by this store');
+  raise EFHIRException.Create('Not supported by this store');
 end;
 
 function THTTPStorageService.MakeFilename(address: String): String;
@@ -158,17 +158,17 @@ end;
 
 function THTTPStorageService.clientForAddress(address: String): TFHIRClientV;
 begin
-  raise EFHIRException.create('Not supported by this store');
+  raise EFHIRException.Create('Not supported by this store');
 end;
 
 procedure THTTPStorageService.forceLocation(address: String);
 begin
-  raise EFHIRException.create('Not supported by this store');
+  raise EFHIRException.Create('Not supported by this store');
 end;
 
 function THTTPStorageService.getName(address: String; mode: TNameMode): String;
 begin
-  raise EFHIRException.create('Not supported by this store');
+  raise EFHIRException.Create('Not supported by this store');
 end;
 
 end.

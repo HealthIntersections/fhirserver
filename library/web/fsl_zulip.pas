@@ -46,7 +46,7 @@ type
     FBotEmail : string;
     FBotAccessKey : String;
   public
-    constructor create(address, botEmail, botAccessKey : String);
+    constructor Create(address, botEmail, botAccessKey : String);
 
     procedure sendMessage(stream, topic, message : String);
   end;
@@ -99,7 +99,7 @@ begin
     end;
 
   finally
-    client.Free;
+    client.free;
   end;
 end;
 

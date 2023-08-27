@@ -107,9 +107,9 @@ end;
 
 destructor TFHIREditor.Destroy;
 begin
-  FResource.Free;
-  FFactory.Free;
-  FSync.Free;
+  FResource.free;
+  FFactory.free;
+  FSync.free;
   inherited Destroy;
 end;
 
@@ -117,12 +117,12 @@ function TFHIREditor.parseResource(source: String): TFHirResourceV;
 var
   p : TFHIRParser;
 begin
-  p := FFactory.makeParser(nil, getCurrentFormat, THTTPLanguages.Create('en'));
+  p := FFactory.makeParser(nil, getCurrentFormat, nil);
   try
     p.KeepParseLocations := true;
     result := p.parseResource(source);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -150,9 +150,9 @@ end;
 function TFHIREditor.makeHighlighter: TSynCustomHighlighter;
 begin
   if FFormat = ffJson then
-    Result := TSynJSonSyn.create(nil)
+    Result := TSynJSonSyn.Create(nil)
   else
-    Result := TSynXmlSyn.create(nil);
+    Result := TSynXmlSyn.Create(nil);
 end;
 
 procedure TFHIREditor.getNavigationList(navpoints: TStringList);
@@ -201,7 +201,7 @@ begin
         end;
       end;
     finally
-      properties.Free;
+      properties.free;
     end;
   end;
 end;
@@ -252,7 +252,7 @@ end;
 
 procedure TFHIREditor.ContentChanged;
 begin
-  FResource.Free;
+  FResource.free;
   FResource := nil;
 end;
 
@@ -310,7 +310,7 @@ begin
         checkForEncoding(s, i);
       end;
     end;
-    FResource.Free;
+    FResource.free;
     FResource := nil;
     try
       FResource := parseResource(FContent.text);
@@ -362,16 +362,16 @@ end;
 function TFHIREditor.frameFactory(rType : String) : TResourceDesignerFrame;
 begin
   if rType = 'Patient' then
-    result := TPatientFrame.create(FDesignerPanelWork)
+    result := TPatientFrame.Create(FDesignerPanelWork)
   else
-    result := TResourceTreeFrame.create(FDesignerPanelWork);
+    result := TResourceTreeFrame.Create(FDesignerPanelWork);
 end;
 
 
 procedure TFHIREditor.makeDesigner;
 begin
   inherited makeDesigner;
-  FSync := TFHIRSynEditSynchroniser.create;
+  FSync := TFHIRSynEditSynchroniser.Create;
   FSync.SynEdit := TextEditor;
   FSync.Factory := context.factory(fhirVersionRelease4);
   FSync.Format := FFormat;
@@ -398,7 +398,7 @@ begin
     try
       SetContentUndoable(x.ToXml(true, false));
     finally
-      x.Free;
+      x.free;
     end;
   end
   else
@@ -407,7 +407,7 @@ begin
     try
       SetContentUndoable(TJsonWriter.writeObjectStr(j, true));
     finally
-      j.Free;
+      j.free;
     end;
   end;
 end;
@@ -423,7 +423,7 @@ begin
     try
       SetContentUndoable(x.ToXml(false, false));
     finally
-      x.Free;
+      x.free;
     end;
   end
   else
@@ -432,7 +432,7 @@ begin
     try
       SetContentUndoable(TJsonWriter.writeObjectStr(j, false));
     finally
-      j.Free;
+      j.free;
     end;
   end;
 end;
@@ -449,9 +449,9 @@ begin
   else
     tgt := ffJson;
 
-  p := FFactory.makeParser(nil, getCurrentFormat, THTTPLanguages.create('en'));
+  p := FFactory.makeParser(nil, getCurrentFormat, nil);
   try
-    c := FFactory.makeComposer(nil, tgt, THTTPLanguages.create('en'), OutputStylePretty);
+    c := FFactory.makeComposer(nil, tgt, nil, OutputStylePretty);
     try
       res := p.parseResource(TextEditor.text);
       try
@@ -460,7 +460,7 @@ begin
         res.free;
       end;
     finally
-      c.Free;
+      c.free;
     end;
   finally
     p.free;
@@ -478,7 +478,7 @@ end;
 
 procedure TFHIREditor.updateDesigner;
 begin
-  FResource.Free;
+  FResource.free;
   FResource := nil;
   FSync.Format := getCurrentFormat;
   FSync.load;

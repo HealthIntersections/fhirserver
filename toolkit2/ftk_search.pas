@@ -192,7 +192,7 @@ implementation
 
 constructor TToolkitSearchSource.Create(name, address, content: String);
 begin
-  inherited create;
+  inherited Create;
   FName := name;
   FAddress := address;
   FContent := content;
@@ -201,7 +201,7 @@ end;
 
 constructor TToolkitSearchSource.Create(name, address: String);
 begin
-  inherited create;
+  inherited Create;
   FName := name;
   FAddress := address;
   FLoaded := false;
@@ -233,7 +233,7 @@ end;
 constructor TToolkitSearchSpecification.Create;
 begin
   inherited Create;
-  FSources := TFslList<TToolkitSearchSource>.create;
+  FSources := TFslList<TToolkitSearchSource>.Create;
 end;
 
 destructor TToolkitSearchSpecification.Destroy;
@@ -279,7 +279,7 @@ procedure TToolkitSearchTaskEngine.execute(request: TBackgroundTaskRequestPackag
 var
   engine : TToolkitSearchEngine;
 begin
-  engine := TToolkitSearchEngine.create;
+  engine := TToolkitSearchEngine.Create;
   try
     engine.spec := (request as TToolkitSearchTaskRequest).spec.link;
     engine.context := (request as TToolkitSearchTaskRequest).context.link;
@@ -302,7 +302,7 @@ end;
 
 destructor TToolkitSearchTaskRequest.Destroy;
 begin
-  FSpec.Free;
+  FSpec.free;
   FContext.free;
   inherited Destroy;
 end;
@@ -317,12 +317,12 @@ end;
 constructor TToolkitSearchTaskResponse.Create;
 begin
   inherited Create;
-  FResults := TFslList<TToolkitSearchMatch>.create;
+  FResults := TFslList<TToolkitSearchMatch>.Create;
 end;
 
 destructor TToolkitSearchTaskResponse.Destroy;
 begin
-  FResults.Free;
+  FResults.free;
   inherited Destroy;
 end;
 
@@ -336,7 +336,7 @@ end;
 
 destructor TToolkitSearchEngine.Destroy;
 begin
-  FResults.Free;
+  FResults.free;
   FContext.free;
   inherited Destroy;
 end;
@@ -349,13 +349,13 @@ end;
 
 procedure TToolkitSearchEngine.SetResults(AValue: TFslList<TToolkitSearchMatch>);
 begin
-  FResults.Free;
+  FResults.free;
   FResults := AValue;
 end;
 
 procedure TToolkitSearchEngine.SetSpec(AValue: TToolkitSearchSpecification);
 begin
-  FSpec.Free;
+  FSpec.free;
   FSpec := AValue;
 end;
 
@@ -410,7 +410,7 @@ begin
     if match > 0 then
     begin
       if not spec.wholeWords or isWord(line, match-1, match+spec.text.length) then
-        results.add(TToolkitSearchMatch.create(src.name, src.address, TSourceLocation.Create(linenum, match), fragment(line, match, spec.text.length)));
+        results.add(TToolkitSearchMatch.Create(src.name, src.address, TSourceLocation.Create(linenum, match), fragment(line, match, spec.text.length)));
     end;
     cursor := match + length(spec.text);
   until match = 0;
@@ -422,7 +422,7 @@ var
   line : String;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if src.loaded then
       ts.text := src.content
@@ -478,7 +478,7 @@ begin
   begin
     e := ExtractFileExt(f);
     if StringArrayExistsInsensitive(KNOWN_EXTENSIONS, e) then
-      spec.sources.Add(TToolkitSearchSource.create(f.Substring(root.Length), 'file:'+f));
+      spec.sources.Add(TToolkitSearchSource.Create(f.Substring(root.Length), 'file:'+f));
   end;
 
   for f in TDirectory.getDirectories(path) do

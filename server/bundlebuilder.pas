@@ -98,8 +98,8 @@ end;
 
 destructor TFHIRBundleBuilder.Destroy;
 begin
-  FBundle.Free;
-  FFactory.Free;
+  FBundle.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -163,7 +163,7 @@ end;
 destructor TFHIRBundleBuilderNDJson.Destroy;
 begin
   writeResource(FBundle.Resource);
-  Ffiles.Free;
+  Ffiles.free;
   inherited;
 end;
 
@@ -194,7 +194,7 @@ end;
 
 function TFHIRBundleBuilderNDJson.moveToFirst(res: TFhirResourceV): TFhirBundleEntryW;
 begin
-  raise EFHIRTodo.create('TFHIRBundleBuilderNDJson.moveToFirst');
+  raise EFHIRTodo.Create('TFHIRBundleBuilderNDJson.moveToFirst');
 end;
 
 
@@ -210,11 +210,11 @@ begin
     b := #10;
     f.Write(b, 1);
   end;
-  json := FFactory.makeComposer(nil, ffJson, THTTPLanguages.create('en'), OutputStyleNormal);
+  json := FFactory.makeComposer(nil, ffJson, nil, OutputStyleNormal);
   try
     json.Compose(f, res);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 

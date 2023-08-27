@@ -154,7 +154,7 @@ type
     destructor Destroy; override;
 
     function loadMultipartForm(const request: TStream; const contentType: String; out mode : TOperationMode): TMimeMessage;
-    function extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
+    function extractFileData(langList : THTTPLanguageList; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     function port(actual, default: integer): String;
 
     property Common : TFHIRWebServerCommon read FCommon;
@@ -187,7 +187,7 @@ implementation
 constructor TFHIRWebServerStats.Create;
 begin
   inherited;
-  FLock := TFslLock.create('web.stats');
+  FLock := TFslLock.Create('web.stats');
   FRestCount := 0;
   FRestTime := 0;
   FStartTime := 0;
@@ -319,14 +319,14 @@ begin
   FCertificateIdList := TStringList.Create;
   FCommon := common;
   if FCommon = nil then
-    FCommon := TFHIRWebServerCommon.create;
+    FCommon := TFHIRWebServerCommon.Create;
 end;
 
 destructor TFHIRWebServerBase.Destroy;
 begin
-  FPatientViewServers.Free;
-  FCertificateIdList.Free;
-  FCommon.Free;
+  FPatientViewServers.free;
+  FCertificateIdList.free;
+  FCommon.free;
   inherited;
 end;
 
@@ -348,14 +348,14 @@ begin
   Except
     on e: exception do
     begin
-      m.Free;
+      m.free;
       recordStack(e);
       raise;
     end;
   End;
 end;
 
-function TFHIRWebServerBase.extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
+function TFHIRWebServerBase.extractFileData(langList : THTTPLanguageList; form: TMimeMessage; const name: String; var sContentType: String): TStream;
 var
   sLeft, sRight: String;
   iLoop: integer;
@@ -394,7 +394,7 @@ begin
         else if StringStartsWith(sContent, '{', false) then
           sContentType := 'application/fhir+json'
         else
-          raise EFHIRException.CreateLang('FORMAT_UNRECOGNIZED', lang, [sContent]);
+          raise EFHIRException.CreateLang('FORMAT_UNRECOGNIZED', langList, [sContent]);
       end;
     End
   End;
@@ -446,7 +446,7 @@ Begin
         result := fReg.ReadString('Content Type');
         fReg.CloseKey;
       Finally
-        fReg.Free;
+        fReg.free;
       End;
     Except
     End;
@@ -496,17 +496,17 @@ constructor TFHIRWebServerCommon.Create;
 begin
   inherited Create;
   FGoogle := TGoogleAnalyticsProvider.Create;
-  FStats := TFHIRWebServerStats.create;
+  FStats := TFHIRWebServerStats.Create;
   FLock := TFslLock.Create('web.common');
 end;
 
 destructor TFHIRWebServerCommon.Destroy;
 begin
-  FCache.Free;
-  FLock.Free;
-  FStats.Free;
-  FSourceProvider.Free;
-  FGoogle.Free;
+  FCache.free;
+  FLock.free;
+  FStats.free;
+  FSourceProvider.free;
+  FGoogle.free;
   inherited;
 end;
 
@@ -517,13 +517,13 @@ end;
 
 procedure TFHIRWebServerCommon.SetCache(const Value: THTTPCacheManager);
 begin
-  FCache.Free;
+  FCache.free;
   FCache := Value;
 end;
 
 procedure TFHIRWebServerCommon.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
 begin
-  FSourceProvider.Free;
+  FSourceProvider.free;
   FSourceProvider := Value;
 end;
 

@@ -101,7 +101,7 @@ type
     procedure SetTag(AValue: integer);
   public
     constructor Create; override;
-    Destructor destroy; override;
+    Destructor Destroy; override;
     function link : TContentAction; overload;
 
     property menuItem : TMenuItem read FMenuItem;
@@ -257,12 +257,12 @@ implementation
 constructor TContentAction.Create;
 begin
   inherited Create;
-  FSubItems := TFslList<TContentSubAction>.create;
+  FSubItems := TFslList<TContentSubAction>.Create;
 end;
 
-destructor TContentAction.destroy;
+destructor TContentAction.Destroy;
 begin
-  FSubItems.Free;
+  FSubItems.free;
   inherited Destroy;
 end;
 
@@ -418,15 +418,15 @@ end;
 constructor TBaseEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FActions := TFslList<TContentAction>.create;
-  FContent := TStringList.create;
+  FActions := TFslList<TContentAction>.Create;
+  FContent := TStringList.Create;
   FSelectCursor := -1;
 end;
 
 destructor TBaseEditor.Destroy;
 begin
   FContent.free;
-  FActions.Free;
+  FActions.free;
   inherited Destroy;
 end;
 
@@ -457,7 +457,7 @@ begin
   begin
     if not a.noContextMenu then
     begin
-      a.FmenuItem := TMenuItem.create(tab);
+      a.FmenuItem := TMenuItem.Create(tab);
       content.Add(a.FMenuItem);
       a.FmenuItem.Caption := a.Caption;
       a.FmenuItem.Tag := a.Tag;
@@ -465,7 +465,7 @@ begin
       a.FmenuItem.Enabled := a.Enabled;
       for sa in a.FSubItems do
       begin
-        sa.FMenuItem := TMenuItem.create(tab);
+        sa.FMenuItem := TMenuItem.Create(tab);
         a.FmenuItem.Add(sa.FMenuItem);
         sa.FmenuItem.Caption := sa.Caption;
         sa.FmenuItem.Tag := sa.Tag;
@@ -510,7 +510,7 @@ begin
   act.OnPopulate(self);
   for sa in act.subItems do
   begin
-    sa.FMenuItem := TMenuItem.create(tab);
+    sa.FMenuItem := TMenuItem.Create(tab);
     act.FmenuItem.Add(sa.FMenuItem);
     sa.FmenuItem.Caption := sa.Caption;
     sa.FmenuItem.Tag := sa.Tag;
@@ -531,10 +531,10 @@ end;
 
 function TBaseEditor.makeAction(bar: TToolBar; caption: String; imageIndex: integer): TContentAction;
 begin
-  result := TContentAction.create;
+  result := TContentAction.Create;
   try
     result.FButton := addButtonToToolbar(bar);
-    result.FPopup := TPopupMenu.create(tab);
+    result.FPopup := TPopupMenu.Create(tab);
     result.FPopup.Images := Context.images;
     result.caption := caption;
     result.imageIndex := imageIndex;
@@ -549,7 +549,7 @@ end;
 
 function TBaseEditor.makeAction(bar: TToolBar; caption: String; imageIndex, tag: integer; event: TNotifyEvent; dontAddToContextMenu : boolean = false): TContentAction;
 begin
-  result := TContentAction.create;
+  result := TContentAction.Create;
   try
     result.FButton := addButtonToToolbar(bar);
     result.caption := caption;
@@ -565,9 +565,9 @@ end;
 
 function TBaseEditor.makeSubAction(action : TContentAction; caption: String; imageIndex, tag : integer; event : TNotifyEvent): TContentSubAction;
 begin
-  result := TContentSubAction.create;
+  result := TContentSubAction.Create;
   try
-    result.FMenuItemP := TMenuItem.create(tab);
+    result.FMenuItemP := TMenuItem.Create(tab);
     result.caption := caption;
     result.imageIndex := imageIndex;
     result.tag := tag;
@@ -583,7 +583,7 @@ procedure TBaseEditor.makeDivider(bar: TToolBar);
 var
   act : TContentAction;
 begin
-  act := TContentAction.create;
+  act := TContentAction.Create;
   try
     act.FButton := addButtonToToolbar(bar);
     act.FButton.Style := tbsDivider;
@@ -626,7 +626,7 @@ var
   encoding : TSourceEncoding;
 begin
   updateToContent;
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     first := true;
     for s in FContent do
@@ -951,7 +951,7 @@ begin
   end;
 
   loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     validate(true, true, loc, ts);
     if (Context.Focus = self) then
@@ -974,7 +974,7 @@ begin
   if (Context.Focus = self) then
   begin
     loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       validate(false, true, loc, ts);
         Context.Inspector.Populate(ts);
@@ -1079,25 +1079,25 @@ begin
   inherited bindToTab(tab, pnl);
 
   // create the pages
-  FPageControl := TPageControl.create(pnl);
+  FPageControl := TPageControl.Create(pnl);
   FPageControl.ShowTabs := false;
   FPageControl.Align := alClient;
   FTextTab := FPageControl.AddTabSheet;
   FDesignTab := FPageControl.AddTabSheet;
 
   // create the side by side
-  FTextPanelBase := TPanel.create(pnl);
+  FTextPanelBase := TPanel.Create(pnl);
   FTextPanelBase.BevelWidth := 1;
   FTextPanelBase.BorderWidth := 2;
   FTextPanelBase.Align := alLeft;
   FTextPanelBase.Width := (tab.width div 2) - 4;
   FTextPanelBase.Color := clLime;
   FTextPanelBase.ShowHint := false;
-  FSplitter := TSplitter.create(pnl);
+  FSplitter := TSplitter.Create(pnl);
   FSplitter.Width := 8;
   FSplitter.Align := alLeft;
   FSplitter.ResizeControl := FTextPanelBase;
-  FDesignerPanelBase := TPanel.create(pnl);
+  FDesignerPanelBase := TPanel.Create(pnl);
   FDesignerPanelBase.BevelWidth := 1;
   FDesignerPanelBase.BorderWidth := 2;
   FDesignerPanelBase.Align := alClient;
@@ -1108,14 +1108,14 @@ begin
   // create the panels
   if hasTextTab then
   begin
-    FTextPanelWork := TPanel.create(pnl);
+    FTextPanelWork := TPanel.Create(pnl);
     FTextPanelWork.BevelWidth := 1;
     FTextPanelWork.Align := alClient;
     FTextPanelWork.Color := clBtnFace;
   end;
   if hasDesigner then
   begin
-    FDesignerPanelWork := TPanel.create(pnl);
+    FDesignerPanelWork := TPanel.Create(pnl);
     FDesignerPanelWork.BevelWidth := 1;
     FDesignerPanelWork.Align := alClient;
     FDesignerPanelWork.Color := clBtnFace;
@@ -1163,26 +1163,26 @@ procedure TBaseEditor.makeTextTab;
 var
   mnu : TMenuItem;
 begin
-  FEditorPopup := TPopupMenu.create(tab);
+  FEditorPopup := TPopupMenu.Create(tab);
   FEditorPopup.Images := Context.images;
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditUndo');
   FEditorPopup.Items.Add(mnu);
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditCut');
   FEditorPopup.Items.Add(mnu);
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditCopy');
   FEditorPopup.Items.Add(mnu);
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditPaste');
   FEditorPopup.Items.Add(mnu);
 
-  TextToolbar := TToolBar.create(tab);
+  TextToolbar := TToolBar.Create(tab);
   TextToolbar.parent := FTextPanelWork;
   TextToolbar.align := alTop;
   TextToolbar.Images := Context.Images;
@@ -1225,7 +1225,7 @@ begin
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
-  TextEditor := TSynEdit.create(tab);
+  TextEditor := TSynEdit.Create(tab);
   TextEditor.parent := FTextPanelWork;
   TextEditor.align := alClient;
   TextEditor.Font.Size := 10;
@@ -1239,7 +1239,7 @@ end;
 
 procedure TBaseEditor.makeDesigner;
 begin
-  DesignerToolbar := TToolBar.create(tab);
+  DesignerToolbar := TToolBar.Create(tab);
   DesignerToolbar.parent := FDesignerPanelWork;
   DesignerToolbar.align := alTop;
   DesignerToolbar.Images := Context.Images;
@@ -1365,7 +1365,7 @@ var
 begin
   actNavigate.subItems.clear;
   makeSubAction(actNavigate, 'Start', -1, 0, DoMnuNavigate);
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     getNavigationList(ts);
     for i := 0 to ts.count - 1 do

@@ -106,12 +106,12 @@ implementation
 constructor TCDSHooksServer.Create(ServerContext : TFslObject);
 begin
   inherited Create(ServerContext);
-  FServices := TFslMap<TCDSHooksService>.create('cds.hooks.event');
+  FServices := TFslMap<TCDSHooksService>.Create('cds.hooks.event');
 end;
 
 destructor TCDSHooksServer.Destroy;
 begin
-  FServices.Free;
+  FServices.free;
   inherited;
 end;
 
@@ -172,7 +172,7 @@ begin
     response.ContentType := 'application/json';
     response.ContentText := TJSONWriter.writeObjectStr(json,true);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -186,7 +186,7 @@ end;
 constructor TCDSHooksService.Create;
 begin
   inherited;
-  FEngines := TList<TCDSHooksProcessorClass>.create;
+  FEngines := TList<TCDSHooksProcessorClass>.Create;
 end;
 
 
@@ -206,7 +206,7 @@ begin
     try
       req := TCDSHookRequest.Create(jrequest);
       try
-        req.lang := THTTPLanguages.Create(request.AcceptLanguage);
+        req.langList := THTTPLanguageList.Create(request.AcceptLanguage, true);
         req.baseURL := base;
         resp := HandleRequest(server, secure, session, context, req);
         try
@@ -221,7 +221,7 @@ begin
         req.free;
       end;
     finally
-      jrequest.Free;
+      jrequest.free;
     end;
   except
     on e : Exception do
@@ -238,7 +238,7 @@ begin
         response.ContentType := 'application/json';
         response.ContentText := resp.asJson;
       finally
-        resp.Free;
+        resp.free;
       end;
     end;
   end;
@@ -246,7 +246,7 @@ end;
 
 destructor TCDSHooksService.Destroy;
 begin
-  FEngines.Free;
+  FEngines.free;
   inherited;
 end;
 
@@ -265,7 +265,7 @@ begin
 
   if FEngines.Count = 0 then
     exit(false);
-  client := server.Storage.createClient(THTTPLanguages.create('en'), server, server.ValidatorContext, session);
+  client := server.Storage.createClient(nil, server, server.ValidatorContext, session);
   try
     for t in FEngines do
     begin
@@ -277,7 +277,7 @@ begin
         if p.execute then
           exit(true);
       finally
-        p.Free;
+        p.free;
       end;
     end;
     server.Storage.Yield(client, nil);
@@ -298,7 +298,7 @@ end;
 Procedure TCDSHooksService.require(test: boolean; msg: String);
 begin
   if not test then
-    raise EFHIRException.create(msg);
+    raise EFHIRException.Create(msg);
 end;
 
 
@@ -322,9 +322,9 @@ end;
 
 destructor TCDSHooksProcessor.Destroy;
 begin
-  Frequest.Free;
-  Fresponse.Free;
-  FClient.Free;
+  Frequest.free;
+  Fresponse.free;
+  FClient.free;
 
   inherited;
 end;
@@ -341,19 +341,19 @@ end;
 
 procedure TCDSHooksProcessor.SetClient(const Value: TFHIRClientV);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
 procedure TCDSHooksProcessor.Setrequest(const Value: TCDSHookRequest);
 begin
-  Frequest.Free;
+  Frequest.free;
   Frequest := Value;
 end;
 
 procedure TCDSHooksProcessor.Setresponse(const Value: TCDSHookResponse);
 begin
-  Fresponse.Free;
+  Fresponse.free;
   Fresponse := Value;
 end;
 

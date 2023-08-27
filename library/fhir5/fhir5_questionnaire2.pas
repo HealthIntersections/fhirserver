@@ -72,7 +72,7 @@ implementation
 destructor TQuestionnaireRenderer.Destroy;
 begin
   FQuestionnaire.free;
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
 
   inherited;
 end;
@@ -162,7 +162,7 @@ function TQuestionnaireRenderer.render: String;
 var
   html : THtmlPublisher;
 begin
-  html := THtmlPublisher.create(TFHIRFactoryR5.create);
+  html := THtmlPublisher.Create(TFHIRFactoryR5.create);
   try
     generate(html);
     result := html.output;
@@ -179,7 +179,7 @@ end;
 
 procedure TQuestionnaireRenderer.SetTerminologyServer(const Value: TFHIRClient);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
 end;
 

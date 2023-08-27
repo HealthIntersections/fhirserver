@@ -81,7 +81,7 @@ begin
   try
     http.SetAddress('http://www.healthintersections.com.au/oids.zip');
     http.requestMethod := 'GET';
-    http.response := TFslBuffer.create;
+    http.response := TFslBuffer.Create;
     http.OnProgress := DoProgress;
     http.Execute;
     DoProgress(self, 'Processsing OIDs...');
@@ -94,10 +94,10 @@ begin
         zip.ReadZip;
         zip.Parts[0].SaveToFileName('oids.csv');
       finally
-        zip.Free;
+        zip.free;
       end;
     finally
-      mem.Free;
+      mem.free;
     end;
   finally
     http.free;

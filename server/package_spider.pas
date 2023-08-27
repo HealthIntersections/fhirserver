@@ -183,7 +183,7 @@ end;
 
 destructor TPackageUpdater.Destroy;
 begin
-  FZulip.Free;
+  FZulip.free;
   inherited;
 end;
 
@@ -216,7 +216,7 @@ begin
     fetcher.Fetch;
     result := fetcher.Buffer.AsBytes;
   finally
-    fetcher.Free;
+    fetcher.free;
   end;
   FTotalBytes := FTotalBytes + length(result);
 end;
@@ -264,7 +264,7 @@ begin
           if json.has('url') then
             ts.Add(json.str['url']);
         finally
-          json.Free;
+          json.free;
         end;
       end
       else if s.EndsWith('.xml') then
@@ -276,7 +276,7 @@ begin
           if u <> nil then
             ts.Add(u.attribute['value']);
         finally
-          e.Free;
+          e.free;
         end;
       end
     except
@@ -314,7 +314,7 @@ begin
     if not isAbsoluteUrl(canonical) then
       raise EFslException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
 
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       processURLs(npm, ts);
       
@@ -324,7 +324,7 @@ begin
     end;
 
   finally
-    npm.Free;
+    npm.free;
   end;
 end;
 
@@ -363,13 +363,13 @@ begin
       log('Fetch '+MASTER_URL, '', false);
       json := fetchJson(MASTER_URL);
       try
-        pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
+        pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
         try
           arr := json.arr['feeds'];
           for i := 0 to arr.Count - 1 do
             updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
         finally
-          pr.Free;
+          pr.free;
         end;
       finally
         json.free;
@@ -384,7 +384,7 @@ begin
       FZulip.send;
     log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
   finally
-    FIni.Free;
+    FIni.free;
   end;
 end;
 
@@ -417,7 +417,7 @@ begin
         end;
       end;
     finally
-      xml.Free;
+      xml.free;
     end;
     if (FFeedErrors <> '') and (email <> '') then
         DoSendEmail(email, 'Errors Processing '+url, FFeedErrors);
@@ -483,7 +483,7 @@ end;
 
 destructor TPackageRestrictions.Destroy;
 begin
-  FJson.Free;
+  FJson.free;
   inherited;
 end;
 
@@ -532,15 +532,15 @@ end;
 
 constructor TZulipTracker.Create(address, email, apikey: String);
 begin
-  inherited create;
-  FZulip := TZulipSender.create(address, email, apikey);
-  FErrors := TFslMap<TZulipItem>.create;
+  inherited Create;
+  FZulip := TZulipSender.Create(address, email, apikey);
+  FErrors := TFslMap<TZulipItem>.Create;
 end;
 
 destructor TZulipTracker.Destroy;
 begin
-  FErrors.Free;
-  FZulip.Free;
+  FErrors.free;
+  FZulip.free;
   inherited;
 end;
 
@@ -586,7 +586,7 @@ begin
   try
     result := hash.HashBytesAsHex(bytes);
   finally
-    hash.Free;
+    hash.free;
   end;
 end;
 

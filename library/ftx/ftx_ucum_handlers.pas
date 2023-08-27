@@ -125,7 +125,7 @@ end;
 
 constructor TUcumUnitHandler.Create(Code : String);
 begin
-  inherited create;
+  inherited Create;
   Name := code;
   FCode := Code;
 end;

@@ -62,7 +62,7 @@ implementation
 
 function TJavascriptEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynJscriptSyn.create(nil);
+  Result := TSynJscriptSyn.Create(nil);
 end;
 
 procedure TJavascriptEditor.getNavigationList(navpoints: TStringList);

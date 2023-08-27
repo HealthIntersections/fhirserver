@@ -68,21 +68,21 @@ var
   ctxt : TFHIRWorkerContext;
 begin
 //  AllocConsole;
-  r := TFHIRParsers2.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+  r := TFHIRParsers2.parseFile(nil, ffXml, nil, filename);
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers2.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
+      TFHIRParsers2.composeFile(nil, ffXml, r, nil, fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRParsers2.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
+    TFHIRParsers2.composeFile(nil, ffJson, r, nil, j1, OutputStylePretty);
   finally
-    r.Free;
+    r.free;
   end;
 
   ctxt := TTestingWorkerContext.Use;
@@ -101,7 +101,7 @@ begin
       j2 := MakeTempFilename();
       TFHIRMMManager.composeFile(ctxt, re, j2, ffJson, true);
     finally
-      re.Free;
+      re.free;
     end;
   finally
     ctxt.free;
@@ -112,21 +112,21 @@ begin
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRParsers2.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
+  r := TFHIRParsers2.parseFile(nil, ffJson, nil, j2); // crossover too
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers2.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
+      TFHIRParsers2.composeFile(nil, ffJson, r, nil, fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assert.IsTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRParsers2.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
+    TFHIRParsers2.composeFile(nil, ffXml, r, nil, x1, OutputStyleNormal);
   finally
-    r.Free;
+    r.free;
   end;
 
   ctxt := TTestingWorkerContext.Use;
@@ -145,7 +145,7 @@ begin
       x2 := MakeTempFilename();
       TFHIRMMManager.composeFile(ctxt, re, x2, ffXml, true);
     finally
-      re.Free;
+      re.free;
     end;
   finally
     ctxt.free;

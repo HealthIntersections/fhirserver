@@ -80,18 +80,18 @@ end;
 constructor TFHIRTransformerContext.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.create('Value Sets');
-  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.create('Code Systems');
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('Questionnaires');
-  FConceptMaps := TFslMap<fhir4_resources.TFHIRConceptMap>.create('Concept Maps');
+  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.Create('Value Sets');
+  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.Create('Code Systems');
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('Questionnaires');
+  FConceptMaps := TFslMap<fhir4_resources.TFHIRConceptMap>.Create('Concept Maps');
 end;
 
 destructor TFHIRTransformerContext.Destroy;
 begin
-  FValueSets.Free;
-  FCodeSystems.Free;
-  FQuestionnaires.Free;
-  FConceptMaps.Free;
+  FValueSets.free;
+  FCodeSystems.free;
+  FQuestionnaires.free;
+  FConceptMaps.free;
   inherited;
 end;
 
@@ -144,10 +144,10 @@ begin
 //          result.free;
 //        end;
 //      finally
-//        p.Free;
+//        p.free;
 //      end;
 //    finally
-//      c.Free;
+//      c.free;
 //    end;
 //  finally
 //    vsw.free;
@@ -207,10 +207,10 @@ begin
 //    try
 //      result := res.Resource as TFhirValueSet;
 //    finally
-//      res.Free;
+//      res.free;
 //    end;
 //  finally
-//    vsw.Free;
+//    vsw.free;
 //  end;
 end;
 
@@ -229,7 +229,7 @@ begin
 //  try
 //    result := TValidationResult.Create;
 //    try
-//      if FTerminologyServer.checkCode(op, THTTPLanguages.create('en'), '', code, system, version, display) then
+//      if FTerminologyServer.checkCode(op, nil, '', code, system, version, display) then
 //        result.Severity := isNull
 //      else if op.issueCount = 1 then
 //      begin
@@ -243,10 +243,10 @@ begin
 //      end;
 //      result.Link;
 //    finally
-//      result.Free;
+//      result.free;
 //    end;
 //  finally
-//    op.Free;
+//    op.free;
 //  end;
 end;
 
@@ -272,17 +272,17 @@ begin
 //          else
 //            result.Severity := isError;
 //        finally
-//          p.Free;
+//          p.free;
 //        end;
 //      finally
-//        c.Free;
+//        c.free;
 //      end;
 //      result.Link;
 //    finally
-//      result.Free;
+//      result.free;
 //    end;
 //  finally
-//    vsw.Free;
+//    vsw.free;
 //  end;
 end;
 
@@ -308,17 +308,17 @@ begin
 //          else
 //            result.Severity := isError;
 //        finally
-//          p.Free;
+//          p.free;
 //        end;
 //      finally
-//        c.Free;
+//        c.free;
 //      end;
 //      result.Link;
 //    finally
-//      result.Free;
+//      result.free;
 //    end;
 //  finally
-//    vsw.Free;
+//    vsw.free;
 //  end;
 end;
 

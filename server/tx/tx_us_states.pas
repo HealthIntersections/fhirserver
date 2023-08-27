@@ -76,13 +76,13 @@ type
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -105,11 +105,11 @@ implementation
 
 { TUSStateServices }
 
-Constructor TUSStateServices.create(languages : TIETFLanguageDefinitions);
+Constructor TUSStateServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
-  FCodes := TFslList<TUSStateConcept>.create;
-  FMap := TFslMap<TUSStateConcept>.create('tx.usstate');
+  FCodes := TFslList<TUSStateConcept>.Create;
+  FMap := TFslMap<TUSStateConcept>.Create('tx.usstate');
   FMap.defaultValue := nil;
   Load;
 end;
@@ -135,7 +135,7 @@ begin
   result := '';
 end;
 
-function TUSStateServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TUSStateServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 var
   v : TUSStateConcept;
 begin
@@ -163,7 +163,7 @@ procedure TUSStateServices.load;
       FCodes.Add(c.Link);
       FMap.Add(code, c.Link);
     finally
-      c.Free;
+      c.free;
     end;
   end;
 begin
@@ -255,18 +255,18 @@ end;
 destructor TUSStateServices.Destroy;
 begin
   FMap.free;
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
-function TUSStateServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TUSStateServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TUSStateConcept(context).display.Trim;
 end;
 
 procedure TUSStateServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation(true, true, '', Display(context, nil));
 end;
 
 function TUSStateServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -300,7 +300,7 @@ end;
 
 function TUSStateServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by USState', itNotSupported); // USState doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.Create('locateIsA not supported by USState', itNotSupported); // USState doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -312,7 +312,7 @@ end;
 
 function TUSStateServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TUSStateServices.searchFilter');
+  raise ETerminologyTodo.Create('TUSStateServices.searchFilter');
 end;
 
 function TUSStateServices.subsumesTest(codeA, codeB: String): String;
@@ -322,12 +322,12 @@ end;
 
 function TUSStateServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
+  raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
 end;
 
 function TUSStateServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUSStateServices.filterLocate');
+  raise ETerminologyTodo.Create('TUSStateServices.filterLocate');
 end;
 
 function TUSStateServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -343,7 +343,7 @@ end;
 
 function TUSStateServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TUSStateServices.InFilter');
+  raise ETerminologyTodo.Create('TUSStateServices.InFilter');
 end;
 
 { TUSStateConcept }
@@ -364,7 +364,7 @@ end;
 
 destructor TUSStateConceptFilter.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 

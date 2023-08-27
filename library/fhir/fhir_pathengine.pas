@@ -282,12 +282,12 @@ end;
 constructor TFHIRPathEngineV.Create;
 begin
   inherited;
-  FExtensions := TFslList<TFHIRPathEngineExtension>.create;
+  FExtensions := TFslList<TFHIRPathEngineExtension>.Create;
 end;
 
 destructor TFHIRPathEngineV.Destroy;
 begin
-  FExtensions.Free;
+  FExtensions.free;
   inherited;
 end;
 
@@ -339,7 +339,7 @@ begin
         end;
       end;
     finally
-      pl.Free;
+      pl.free;
     end;
   end;
   if (result = '') and (loc >= base.LocationData.ParseStart) and (loc <= base.LocationData.ParseFinish)  then
@@ -389,9 +389,9 @@ end;
 
 destructor TFHIRPathExecutionContext.Destroy;
 begin
-  FAppInfo.Free;
-  FResource.Free;
-  FContext.Free;
+  FAppInfo.free;
+  FResource.free;
+  FContext.free;
   inherited;
 end;
 
@@ -431,13 +431,13 @@ end;
 
 { TFHIRPathDebugPackage }
 
-destructor TFHIRPathDebugPackage.destroy;
+destructor TFHIRPathDebugPackage.Destroy;
 begin
-  Fcontext.Free;
-  Finput2.Free;
-  Finput1.Free;
-  FExpression.Free;
-  Foutcome.Free;
+  Fcontext.free;
+  Finput2.free;
+  Finput1.free;
+  FExpression.free;
+  Foutcome.free;
   inherited;
 end;
 
@@ -448,31 +448,31 @@ end;
 
 procedure TFHIRPathDebugPackage.Setcontext(const Value: TFHIRPathExecutionContext);
 begin
-  Fcontext.Free;
+  Fcontext.free;
   Fcontext := Value;
 end;
 
 procedure TFHIRPathDebugPackage.SetExpression(const Value: TFHIRPathExpressionNodeV);
 begin
-  FExpression.Free;
+  FExpression.free;
   FExpression := Value;
 end;
 
 procedure TFHIRPathDebugPackage.Setinput1(const Value: TFHIRSelectionList);
 begin
-  Finput1.Free;
+  Finput1.free;
   Finput1 := Value;
 end;
 
 procedure TFHIRPathDebugPackage.Setinput2(const Value: TFHIRSelectionList);
 begin
-  Finput2.Free;
+  Finput2.free;
   Finput2 := Value;
 end;
 
 procedure TFHIRPathDebugPackage.Setoutcome(const Value: TFHIRSelectionList);
 begin
-  Foutcome.Free;
+  Foutcome.free;
   Foutcome := Value;
 end;
 
@@ -539,10 +539,10 @@ begin
               inc(i,4);
             end
             else
-              raise EFHIRException.create('Improper unicode escape in '+s);
+              raise EFHIRException.Create('Improper unicode escape in '+s);
             end
         else
-          raise EFHIRException.create('Unknown character escape \'+ch);
+          raise EFHIRException.Create('Unknown character escape \'+ch);
         end;
         inc(i);
       end
@@ -554,7 +554,7 @@ begin
     end;
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -585,7 +585,7 @@ begin
   FPath := path;
   FCursor := offset;
   FCurrentLocation := TSourceLocation.Create;
-  FComments := TStringList.create;
+  FComments := TStringList.Create;
   next;
 end;
 
@@ -596,13 +596,13 @@ begin
   FPath := path;
   FCursor := 1;
   FCurrentLocation := TSourceLocation.Create;
-  FComments := TStringList.create;
+  FComments := TStringList.Create;
   next;
 end;
 
 destructor TFHIRPathLexer.Destroy;
 begin
-  FComments.Free;
+  FComments.free;
   inherited;
 end;
 
@@ -741,7 +741,7 @@ begin
         else
           escape := (FPath[FCursor] = '\');
         if CharInSet(FPath[FCursor], [#13, #10, #9]) then
-          raise EFHIRPath.create('illegal character in string');
+          raise EFHIRPath.Create('illegal character in string');
         nextChar;
       end;
       if (FCursor > FPath.length) then
@@ -760,7 +760,7 @@ begin
         else
           escape := (FPath[FCursor] = '\');
         if CharInSet(FPath[FCursor], [#13, #10, #9]) then
-          raise EFHIRPath.create('illegal character in string');
+          raise EFHIRPath.Create('illegal character in string');
         nextChar;
       end;
       if (FCursor > FPath.length) then
@@ -779,7 +779,7 @@ begin
         else
           escape := (FPath[FCursor] = '\');
         if (ord(FPath[FCursor]) < 32) and not CharInSet(FPath[FCursor], [#13, #10, #9]) then
-          raise EFHIRPath.create('illegal character in string');
+          raise EFHIRPath.Create('illegal character in string');
         nextChar;
       end;
       if (FCursor > FPath.length) then
@@ -854,7 +854,7 @@ begin
       end;
       if (FCursor > FPath.length) then
       begin
-        raise EFHIRPath.create('Unfinished comment');
+        raise EFHIRPath.Create('Unfinished comment');
       end
       else
       begin
@@ -1061,7 +1061,7 @@ function TFHIRPathLexer.takeDottedToken() : String;
 var
   b : TStringBuilder;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     b.append(take());
     while not done() and (FCurrent = '.') do

@@ -105,12 +105,12 @@ implementation
 constructor TFHIRFeature.Create;
 begin
   inherited;
-  FContext := TFslList<TFHIRFeatureContextNode>.create;
+  FContext := TFslList<TFHIRFeatureContextNode>.Create;
 end;
 
 destructor TFHIRFeature.Destroy;
 begin
-  FContext.Free;
+  FContext.free;
   inherited;
 end;
 
@@ -144,7 +144,7 @@ begin
       result.FContext.Add(TFHIRFeatureContextNode.fromString(s.Trim));
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -210,7 +210,7 @@ end;
 constructor TFHIRFeatureEngine.Create;
 begin
   inherited;
-  FCollection := TFslList<TFHIRFeature>.create;
+  FCollection := TFslList<TFHIRFeature>.Create;
 end;
 
 procedure TFHIRFeatureEngine.defineFeature(id: String; value: boolean);
@@ -230,7 +230,7 @@ end;
 
 destructor TFHIRFeatureEngine.Destroy;
 begin
-  FCollection.Free;
+  FCollection.free;
   inherited;
 end;
 
@@ -271,7 +271,7 @@ begin
       result.FKind := syntax;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

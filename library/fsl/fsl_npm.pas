@@ -312,7 +312,7 @@ end;
 function TNpmPackageIndexBuilder.build: String;
 begin
   result := TJsonWriterDirect.writeObjectStr(index, true);
-  index.Free;
+  index.free;
   index := nil;
   files := nil;
 end;
@@ -328,7 +328,7 @@ end;
 
 constructor TNpmPackageFolder.Create;
 begin
-  inherited create;
+  inherited Create;
   FContent := TFslMap<TFslBuffer>.create('Npm Packages');
 end;
 
@@ -340,8 +340,8 @@ end;
 
 destructor TNpmPackageFolder.Destroy;
 begin
-  FContent.Free;
-  FResources.Free;
+  FContent.free;
+  FResources.free;
   inherited;
 end;
 
@@ -417,7 +417,7 @@ begin
   if FResources <> nil then
     FResources.Clear
   else
-    FResources := TFslList<TNpmPackageResource>.create;
+    FResources := TFslList<TNpmPackageResource>.Create;
   for e in index.arr['files'] do
   begin
     f := e as TJsonObject;
@@ -459,8 +459,8 @@ end;
 
 destructor TNpmPackage.Destroy;
 begin
-  FNpm.Free;
-  FFolders.Free;
+  FNpm.free;
+  FFolders.free;
   inherited;
 end;
 
@@ -475,7 +475,7 @@ begin
   begin
     if (folder.FResources = nil) then
     begin
-      indexer := TNpmPackageIndexBuilder.create;
+      indexer := TNpmPackageIndexBuilder.Create;
       try
         for n in folder.listFiles() do 
         begin
@@ -513,7 +513,7 @@ class function TNpmPackage.fromFolder(path: String): TNpmPackage;
 var
   this : TNpmPackage;
 begin
-  this := TNpmPackage.create;
+  this := TNpmPackage.Create;
   try
     this.loadFiles(path, []);
     this.checkIndexed(path);
@@ -527,7 +527,7 @@ class function TNpmPackage.fromFolderQuick(path: String): TNpmPackage;
 var
   this : TNpmPackage;
 begin
-  this := TNpmPackage.create;
+  this := TNpmPackage.Create;
   try
     this.FNpm := TJsonParser.parseFile(filePath([path, 'package', 'package.json']));
     result := this.link;
@@ -550,7 +550,7 @@ class function TNpmPackage.fromPackage(tgz: TStream; desc: String; progress: TWo
 var
   this : TNpmPackage;
 begin
-  this := TNpmPackage.create;
+  this := TNpmPackage.Create;
   try
     this.FSuppressLoadingErrors := suppressErrors;
     this.readStream(tgz, desc, progress);
@@ -580,7 +580,7 @@ var
   sl : TStringList;
   n : String;
 begin
-  sl := TStringList.create;
+  sl := TStringList.Create;
   try
     if (info.has('dependencies')) then
     begin
@@ -598,7 +598,7 @@ var
   sl : TStringList;
   n : String;
 begin
-  sl := TStringList.create;
+  sl := TStringList.Create;
   try
     if (info.has('dependencies')) then
     begin
@@ -659,7 +659,7 @@ var
   sl : TStringList;
   i : integer;
 begin
-  sl := TStringList.create;
+  sl := TStringList.Create;
   try
     if (info.has('fhirVersions')) then
     begin
@@ -816,7 +816,7 @@ var
   f : TNpmPackageFolder;
   r : TNpmPackageResource;
 begin
-  sl := TStringList.create;
+  sl := TStringList.Create;
   try
     f := findFolder('package');
     if (length(types) = 0) then
@@ -1066,7 +1066,7 @@ begin
     for i := 0 to ts.Count - 1 do
       result := result + ts[i]+': '+inttostr(Integer(ts.Objects[i]))+#13#10;
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -1137,7 +1137,7 @@ begin
   try
     result := fromPackage(s, desc, progress, suppressErrors);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 

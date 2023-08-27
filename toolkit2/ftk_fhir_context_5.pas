@@ -92,11 +92,11 @@ begin
   if (FServer = nil) or (FCapabilityStatement = nil) then
   begin
     if FServer <> nil then
-      FServer.Free;
+      FServer.free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as TFhirClient5;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR_ENUM_VERSIONS[factory.version] then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
+      raise EFHIRException.Create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
   end;
 end;
 
@@ -104,18 +104,18 @@ constructor TToolkitValidatorContextR5.Create(factory : TFHIRFactory; languages 
 begin
   inherited Create(factory, pcm);
   FLanguages := languages;
-  FValueSets := TFHIRMetadataResourceManager<TFHIRValueSet>.create();
-  FCodeSystems := TFHIRMetadataResourceManager<TFHIRCodeSystem>.create();
+  FValueSets := TFHIRMetadataResourceManager<TFHIRValueSet>.Create();
+  FCodeSystems := TFHIRMetadataResourceManager<TFHIRCodeSystem>.Create();
   FUrl := TerminologyServer;
 end;
 
 destructor TToolkitValidatorContextR5.Destroy;
 begin
-  FValueSets.Free;
-  FServer.Free;
-  FCapabilityStatement.Free;
-  FCodeSystems.Free;
-  FLanguages.Free;
+  FValueSets.free;
+  FServer.free;
+  FCapabilityStatement.free;
+  FCodeSystems.free;
+  FLanguages.free;
   inherited;
 end;
 
@@ -125,8 +125,8 @@ var
 begin
   cs := FCodeSystems.get(url);
   if cs = nil then
-    raise ETerminologyError.create('Unable to resolve code system '+url);
-  result := TFhirCodeSystemProvider.create(FLanguages.link, Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+    raise ETerminologyError.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.Create(FLanguages.link, Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
 procedure TToolkitValidatorContextR5.doGetList(sender: TObject; url: String;
@@ -141,7 +141,7 @@ var
 begin
   vs := FValueSets.get(url);
   if vs = nil then
-    raise ETerminologyError.create('Unable to resolve value set '+url);
+    raise ETerminologyError.Create('Unable to resolve value set '+url);
   result := Factory.wrapValueSet(vs.link);
 end;
 
@@ -157,7 +157,7 @@ begin
     pIn.AddParameter('_limit', '10');
     result := FServer.operation(frtValueSet, 'expand', pIn) as TFhirValueSet;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 
 end;
@@ -265,10 +265,10 @@ begin
         else
           result := TValidationResult.Create(isError, pOut.str['message']);
       finally
-        pOut.Free;
+        pOut.free;
       end;
     finally
-      pIn.Free;
+      pIn.free;
     end;
   end;
 end;
@@ -295,10 +295,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -318,10 +318,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -335,14 +335,14 @@ begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
-      validator := TValueSetChecker.Create(Factory.link, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '', nil);
+      validator := TValueSetChecker.Create(Factory.link, nil, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '', nil);
       try
         params := TFHIRExpansionParams.Create;
         try
           validator.prepare(vsw, params);
           p := validator.check('code', system, version, code, false);
           try
-            res := TValidationResult.create;
+            res := TValidationResult.Create;
             if p.bool('result') then
               res.Severity := isInformation
             else
@@ -351,16 +351,16 @@ begin
               res.Message := p.str('message');
             end;
           finally
-            p.Free;
+            p.free;
           end;
         finally
-          params.Free;
+          params.free;
         end;
       finally
-        validator.Free;
+        validator.free;
       end;
     finally
-      vsw.Free;
+      vsw.free;
     end;
     result := true;
   except
@@ -384,10 +384,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 

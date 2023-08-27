@@ -82,13 +82,13 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -142,7 +142,7 @@ begin
   result := '';
 end;
 
-function TIETFLanguageCodeServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TIETFLanguageCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 var
   c : TIETFLang;
   msg : String;
@@ -158,7 +158,7 @@ begin
       else
         result := '??';
     finally
-      c.Free;
+      c.free;
     end;
   end;
 end;
@@ -178,9 +178,9 @@ begin
     c := context as TIETFLanguageCodeConcept;
     if (c.FInfo <> nil) then
     begin
-      list.addBase('', FLanguages.present(c.FInfo).Trim);
+      list.addDesignation(true, true, '', FLanguages.present(c.FInfo).Trim);
       if (c.FInfo.isLangRegion) then
-        list.addDesignation('', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
+        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
     end;
   end;
 end;
@@ -206,9 +206,11 @@ function TIETFLanguageCodeServices.description: String;
 begin
   result := 'IETF language codes';
 end;
-function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+
+
+function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
-  result := getDisplay(TIETFLanguageCodeConcept(context).FInfo.code, lang);
+  result := getDisplay(TIETFLanguageCodeConcept(context).FInfo.code, langList);
 end;
 
 function TIETFLanguageCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -331,7 +333,7 @@ end;
 
 constructor TIETFLanguageCodeFilter.create(component: TIETFLanguageComponent; status: boolean);
 begin
-  inherited create;
+  inherited Create;
   FComponent := component;
   FStatus := status;
 end;
@@ -341,13 +343,13 @@ end;
 
 constructor TIETFLanguageCodeConcept.Create(info: TIETFLang);
 begin
-  inherited create;
+  inherited Create;
   FInfo := info;
 end;
 
 destructor TIETFLanguageCodeConcept.Destroy;
 begin
-  FInfo.Free;
+  FInfo.free;
   inherited;
 end;
 

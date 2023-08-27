@@ -89,7 +89,7 @@ function TBaseResourceFrame.canOrganise: boolean;
 var
   org : TFHIRResourceOrganiser;
 begin
-  org := TFHIRResourceOrganiser.create;
+  org := TFHIRResourceOrganiser.Create;
   try
     result := org.canOrganise(Fresource.ResourceType);
   finally
@@ -119,8 +119,8 @@ end;
 
 destructor TBaseResourceFrame.Destroy;
 begin
-  FResource.Free;
-  FOriginal.Free;
+  FResource.free;
+  FOriginal.free;
   inherited;
 end;
 
@@ -146,7 +146,7 @@ procedure TBaseResourceFrame.organise;
 var
   org : TFHIRResourceOrganiser;
 begin
-  org := TFHIRResourceOrganiser.create;
+  org := TFHIRResourceOrganiser.Create;
   try
     if org.canOrganise(Fresource.ResourceType) then
     begin
@@ -177,7 +177,7 @@ begin
     begin
       res := Client.updateResource(FResource);
       try
-        FResource.Free;
+        FResource.free;
         FResource := res.Link;
         load;
       finally
@@ -203,7 +203,7 @@ end;
 
 procedure TBaseResourceFrame.SetResource(const Value: TFHIRResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
   FOriginal := FResource.Clone;
 end;

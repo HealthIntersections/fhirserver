@@ -86,8 +86,8 @@ implementation
 
 procedure TProjectSettingsForm.FormDestroy(Sender: TObject);
 begin
-  FProject.Free;
-  FProjects.Free;
+  FProject.free;
+  FProjects.free;
 end;
 
 procedure TProjectSettingsForm.SpeedButton1Click(Sender: TObject);
@@ -128,7 +128,7 @@ end;
 
 procedure TProjectSettingsForm.SetProject(AValue: TFHIRProjectNode);
 begin
-  FProject.Free;
+  FProject.free;
   FProject := AValue;
   edtName.text := FProject.name;
   edtFolder.text := FProject.address;
@@ -138,7 +138,7 @@ end;
 
 procedure TProjectSettingsForm.SetProjects(AValue: TFslList<TFHIRProjectNode>);
 begin
-  FProjects.Free;
+  FProjects.free;
   FProjects := AValue;
 end;
 

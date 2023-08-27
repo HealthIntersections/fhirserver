@@ -60,14 +60,14 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -81,8 +81,8 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -186,7 +186,7 @@ begin
   result := db.countSql('Select count(*) from Concepts', 'TotalCount');
 end;
 
-function TOMOPServices.getDisplay(code: String; const lang: THTTPLanguages): String;
+function TOMOPServices.getDisplay(code: String; langList : THTTPLanguageList): String;
 var
   c : TOMOPConcept;
   msg : String;
@@ -219,7 +219,7 @@ begin
     conn.Execute;
     if conn.FetchNext then
     begin
-      c := TOMOPConcept.create;
+      c := TOMOPConcept.Create;
       try
         c.code := code;
         c.display := conn.ColStringByName['concept_name'];
@@ -272,7 +272,7 @@ end;
 
 function TOMOPServices.getNextContext(context: TCodeSystemIteratorContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('getNextContext not supported by RXNorm', itException); // only used when iterating the entire code system. and RxNorm is too big
+  raise ETerminologyError.Create('getNextContext not supported by RXNorm', itException); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 function TOMOPServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -288,7 +288,7 @@ begin
     result := '';
 end;
 
-function TOMOPServices.Display(context: TCodeSystemProviderContext; const lang: THTTPLanguages): string;
+function TOMOPServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
   if (context is TOMOPConcept) then
     result := (context as TOMOPConcept).display
@@ -302,14 +302,14 @@ var
 begin
   if (context is TOMOPConcept) then
   begin
-    list.addBase('en', (context as TOMOPConcept).Display);
+    list.addDesignation(true, true, 'en', (context as TOMOPConcept).Display);
     conn := db.GetConnection('display');
     try
       conn.sql := 'Select concept_synonym_name from ConceptSynonyms where concept_id = '''+SQLWrapString((context as TOMOPConcept).code)+'''';
       conn.Prepare;
       conn.Execute;
       while conn.FetchNext do
-        list.addDesignation('en', conn.ColStringByName['concept_synonym_name']);
+        list.addDesignation(false, false, 'en', conn.ColStringByName['concept_synonym_name']);
       conn.terminate;
       conn.Release;
     except
@@ -339,7 +339,7 @@ end;
 
 function TOMOPServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet: searchFilter');
+  raise ETerminologyError.Create('not done yet: searchFilter');
 end;
 
 function TOMOPServices.filter(forIteration: boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -348,7 +348,7 @@ var
 begin
   if (prop = 'domain') and (op = foEqual) then
   begin
-    f := TOMOPFilter.create;
+    f := TOMOPFilter.Create;
     try
       f.conn := db.GetConnection('filter');
       f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where domain_id = '''+SQLWrapString(value)+'''';
@@ -360,12 +360,12 @@ begin
     end;
   end
   else
-    raise ETerminologyError.create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP');
+    raise ETerminologyError.Create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP');
 end;
 
 function TOMOPServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet: filterLocate');
+  raise ETerminologyError.Create('not done yet: filterLocate');
 end;
 
 function TOMOPServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
@@ -379,7 +379,7 @@ var
   c : TOMOPConcept;
 begin
   conn := (ctxt as TOMOPFilter).Conn;
-  c := TOMOPConcept.create;
+  c := TOMOPConcept.Create;
   try
     c.code := conn.ColStringByName['concept_id'];
     c.display := conn.ColStringByName['concept_name'];
@@ -392,7 +392,7 @@ end;
 
 function TOMOPServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyError.create('not done yet: InFilter');
+  raise ETerminologyError.Create('not done yet: InFilter');
 end;
 
 function TOMOPServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
@@ -400,12 +400,12 @@ begin
   result := false;
 end;
 
-procedure TOMOPServices.getCDSInfo(card: TCDSHookCard; const lang: THTTPLanguages; baseURL, code, display: String);
+procedure TOMOPServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  raise ETerminologyError.create('not done yet: getCDSInfo');
+  raise ETerminologyError.Create('not done yet: getCDSInfo');
 end;
 
-procedure TOMOPServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang: THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TOMOPServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   conn : TFDBConnection;
 begin
@@ -431,7 +431,7 @@ end;
 
 procedure TOMOPServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  raise ETerminologyError.create('not done yet: defineFeatures');
+  raise ETerminologyError.Create('not done yet: defineFeatures');
 end;
 
 end.

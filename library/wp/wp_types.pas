@@ -2352,8 +2352,8 @@ End;
 
 Destructor TWPStyle.Destroy;
 Begin
-  FFont.Free;
-  FParagraph.Free;
+  FFont.free;
+  FParagraph.free;
 
   Inherited;
 End;
@@ -2383,14 +2383,14 @@ End;
 
 Procedure TWPStyle.SetFont(Const Value: TWPSFontDetails);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := Value;
 End;
 
 
 Procedure TWPStyle.SetParagraph(Const Value: TWPSParagraphDetails);
 Begin
-  FParagraph.Free;
+  FParagraph.free;
   FParagraph := Value;
 End;
 
@@ -2652,7 +2652,7 @@ End;
 
 Destructor TWPStyles.Destroy;
 Begin
-  FDefaultStyle.Free;
+  FDefaultStyle.free;
   Inherited;
 End;
 
@@ -2747,7 +2747,7 @@ Begin
 
     SetDefaultStyle(oStyle.Link);
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -2818,7 +2818,7 @@ Begin
     Result.Name := sName;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2982,7 +2982,7 @@ End;
 
 Destructor TWPBorder.Destroy;
 Begin
-  FBrushImage.Free;
+  FBrushImage.free;
   Inherited;
 End;
 
@@ -3124,7 +3124,7 @@ Procedure TWPBorder.SetBrushImage(Const Value : TFslBitmapGraphic);
 Begin
   If Value <> FBrushImage Then
   Begin
-    FBrushImage.Free;
+    FBrushImage.free;
     FBrushImage := Value;
     Change(ctLayout, Self);
   End;
@@ -3690,7 +3690,7 @@ End;
 Destructor TWPImageMap.Destroy;
 Begin
   FAreas.UnHook(Change);
-  FAreas.Free;
+  FAreas.free;
   Inherited;
 End;
 
@@ -3778,7 +3778,7 @@ End;
 Destructor TWPImageMapArea.Destroy;
 Begin
   FCoordinates.UnHook(Change);
-  FCoordinates.Free;
+  FCoordinates.free;
   Inherited;
 End;
 
@@ -3954,7 +3954,7 @@ Begin
     oCoord.y := y;
     Add(oCoord.Link);
   Finally
-    oCoord.Free;
+    oCoord.free;
   End;
 End;
 
@@ -4027,9 +4027,9 @@ end;
 
 destructor TWPDocumentImageAdornment.Destroy;
 begin
-  FCaptionPoint.Free;
-  FCoordinates.Free;
-  FFont.Free;
+  FCaptionPoint.free;
+  FCoordinates.free;
+  FFont.free;
   inherited;
 end;
 
@@ -4286,7 +4286,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4307,7 +4307,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4354,7 +4354,7 @@ Begin
     Result.Name := sName;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4363,27 +4363,27 @@ End;
 
 Destructor TWPMouseInfo.Destroy;
 Begin
-  FAdornment.Free;
-  FHotspot.Free;
-  FSubject.Free;
+  FAdornment.free;
+  FHotspot.free;
+  FSubject.free;
   Inherited;
 End;
 
 Procedure TWPMouseInfo.SetSubject(Const Value: TFslObject);
 Begin
-  FSubject.Free;
+  FSubject.free;
   FSubject := Value;
 End;
 
 Procedure TWPMouseInfo.SetHotspot(Const Value: TWPHotspot);
 Begin
-  FHotspot.Free;
+  FHotspot.free;
   FHotspot := Value;
 End;
 
 procedure TWPMouseInfo.SetAdornment(const Value: TWPDocumentImageAdornment);
 begin
-  FAdornment.Free;
+  FAdornment.free;
   FAdornment := Value;
 end;
 
@@ -4606,7 +4606,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -4624,7 +4624,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -4692,7 +4692,7 @@ Begin
     Result.Content := sContent;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4743,7 +4743,7 @@ Begin
     If Not Find(oObserver, Result, CompareByObject) Then
       Result := -1;
   Finally
-    oObserver.Free;
+    oObserver.free;
   End;
 End;
 
@@ -4772,7 +4772,7 @@ Begin
     oObserver.Event := aEvent;
     Add(oObserver.Link);
   Finally
-    oObserver.Free;
+    oObserver.free;
   End;
 End;
 
@@ -4810,7 +4810,7 @@ End;
 
 Destructor TWPProperty.Destroy;
 Begin
-  FChildren.Free;
+  FChildren.free;
   Inherited;
 End;
 
@@ -4834,7 +4834,7 @@ End;
 
 Procedure TWPProperty.SetChildren(Const Value: TWPPropertyList);
 Begin
-  FChildren.Free;
+  FChildren.free;
   FChildren := Value;
 End;
 
@@ -4868,7 +4868,7 @@ Begin
     oProp.Value := sValue;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -4895,7 +4895,7 @@ Begin
       oProp.Value := ColourToHTMLColourString(aValue);
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -4919,7 +4919,7 @@ Begin
     oProp.Enum := aEnum;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -4943,7 +4943,7 @@ Begin
     oProp.Enum := aEnum;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -4967,7 +4967,7 @@ Begin
     oProp.Enum := aEnum;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -4983,7 +4983,7 @@ Begin
     Add(oProp.Link);
     Result := oProp.Children;
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5000,7 +5000,7 @@ Begin
     oProp.Value := IntegerToString(iValue);
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5018,7 +5018,7 @@ Begin
       oProp.Value := IntegerToString(iValue);
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5035,7 +5035,7 @@ Begin
     oProp.Value := RealToString(rValue);
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5052,7 +5052,7 @@ Begin
     oProp.Value := sValue;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5069,7 +5069,7 @@ Begin
     oProp.Value := sValue;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5086,7 +5086,7 @@ Begin
     oProp.Value := sValue;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5113,7 +5113,7 @@ Begin
     oProp.Value := sValue;
     Add(oProp.Link);
   Finally
-    oProp.Free;
+    oProp.free;
   End;
 End;
 
@@ -5238,7 +5238,7 @@ Begin
         End;
     End;
   Finally
-    oTemp.Free;
+    oTemp.free;
   End;
 End;
 
@@ -5254,8 +5254,8 @@ End;
 
 Destructor TWPRendererTableColumnMetric.Destroy;
 Begin
-  FDeadLefts.Free;
-  FDeadRights.Free;
+  FDeadLefts.free;
+  FDeadRights.free;
   Inherited;
 End;
 
@@ -5354,7 +5354,7 @@ End;
 
 Destructor TWPFieldModel.Destroy;
 Begin
-  FEntries.Free;
+  FEntries.free;
 
   Inherited;
 End;

@@ -117,7 +117,7 @@ end;
 
 procedure TCodeSystemFrame.initialize;
 begin
-  FManager := TObjectManager.create;
+  FManager := TObjectManager.Create;
   //FManager.registerControl('url', edtURL);
   //FManager.registerControl('name', edtName, btnName);
   //FManager.registerControl('version', edtVersion);

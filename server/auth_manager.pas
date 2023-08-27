@@ -201,13 +201,13 @@ uses
 
 constructor TAuth2Server.Create(factory : TFHIRFactory; ini : TFHIRServerConfigFile; Host, SSLPort, path : String);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
   FHost := host;
   FSSLPort := SSLPort;
   FLock := TFslLock.Create('auth-server');
-  FLoginTokens := TFslMap<TFhirLoginToken>.create('auth.server.login');
-  FNonceList := TStringList.create;
+  FLoginTokens := TFslMap<TFhirLoginToken>.Create('auth.server.login');
+  FNonceList := TStringList.Create;
   FNonceList.Sorted := true;
 
   FHL7Appid := ini.identityProviders.section['hl7.org']['app-id'].value;
@@ -225,12 +225,12 @@ end;
 
 destructor TAuth2Server.Destroy;
 begin
-  FNonceList.Free;
-  FLoginTokens.Free;;
-  FLock.Free;
-  FServerContext.Free;
+  FNonceList.free;
+  FLoginTokens.free;;
+  FLock.free;
+  FServerContext.free;
   FUserProvider.free;
-  FFactory.Free;
+  FFactory.free;
   inherited;
 end;
 
@@ -253,7 +253,7 @@ begin
   t := now;
   FLock.Lock;
   try
-    login := TFhirLoginToken.create;
+    login := TFhirLoginToken.Create;
     try
       login.FPath := path;
       login.FExpires := now + DATETIME_MINUTE_ONE * 30;
@@ -274,7 +274,7 @@ begin
       for s in st do
         FLoginTokens.Remove(s);
     finally
-      st.Free;
+      st.free;
     end;
   finally
     FLock.Unlock;
@@ -304,7 +304,7 @@ end;
 function TAuth2Server.checkNotEmpty(v, n, location, state : String) : String;
 begin
   if (v = '') then
-    raise EAuthClientException.create('Parameter "'+n+'" not found', afrInvalidRequest, location, state);
+    raise EAuthClientException.Create('Parameter "'+n+'" not found', afrInvalidRequest, location, state);
   result := v;
 end;
 
@@ -338,13 +338,13 @@ end;
 
 procedure TAuth2Server.SetServerContext(const Value: TFHIRServerContext);
 begin
-  FServerContext.Free;
+  FServerContext.free;
   FServerContext := Value;
 end;
 
 procedure TAuth2Server.SetUserProvider(const Value: TFHIRUserProvider);
 begin
-  FUserProvider.Free;
+  FUserProvider.free;
   FUserProvider := Value;
 end;
 
@@ -371,25 +371,25 @@ begin
   client := ServerContext.Storage.getClientInfo(client_id);
   try
     if client = nil then
-      raise EAuthClientException.create('Unknown Client Identifier "'+client_id+'"', afrNone, '', '');
+      raise EAuthClientException.Create('Unknown Client Identifier "'+client_id+'"', afrNone, '', '');
     redirect_uri := checkNotEmpty(params['redirect_uri'], 'redirect_uri', '', '');
     if not ((client_id = 'c.1') and (redirect_uri = ServerContext.FormalURLSecure+'/internal')) then
       if not isAllowedRedirect(client, redirect_uri) then
-        raise EAuthClientException.create('Unacceptable Redirect url "'+redirect_uri+'"', afrNone, '', '');
+        raise EAuthClientException.Create('Unacceptable Redirect url "'+redirect_uri+'"', afrNone, '', '');
     state := checkNotEmpty(params['state'], 'state', redirect_uri, state);
     if params['response_type'] <> 'code' then
-      raise EAuthClientException.create('Only response_type allowed is ''code''', afrUnauthorizedClient, redirect_uri, state);
+      raise EAuthClientException.Create('Only response_type allowed is ''code''', afrUnauthorizedClient, redirect_uri, state);
     scope := checkNotEmpty(params['scope'], 'scope', redirect_uri, state);
     aud := checkNotEmpty(params['aud'], 'aud', redirect_uri, state);
     if not isAllowedAud(client_id, aud) then
-      raise EAuthClientException.create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')', afrInvalidRequest, redirect_uri, state);
+      raise EAuthClientException.Create('Unacceptable FHIR Server URL "'+aud+'" (should be '+EndPoint+')', afrInvalidRequest, redirect_uri, state);
 
     id := newguidid;
     ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state, params['launch']);
     b := TStringBuilder.Create;
     try
       ok := true;
-      variables := TFslMap<TFHIRObject>.create('scim.vars');
+      variables := TFslMap<TFHIRObject>.Create('scim.vars');
       try
         variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
         variables.Add('idmethods', TFHIRSystemString.Create(BuildLoginList(id)));
@@ -403,7 +403,7 @@ begin
         variables.free;
       end;
     finally
-      b.Free;
+      b.free;
     end;
   finally
     client.free;
@@ -423,7 +423,7 @@ var
   redirect, state, scope, launch : String;
 begin
   if session = nil then
-    raise EAuthClientException.create('User Session not found');
+    raise EAuthClientException.Create('User Session not found');
 
   if FSSLPort = '443' then
     authurl := 'https://'+FHost+FPath
@@ -431,11 +431,11 @@ begin
     authurl := 'https://'+FHost+':'+FSSLPort+FPath;
 
   if not ServerContext.Storage.fetchOAuthDetails(session.key, 2, client_id, name, redirect, state, scope, launch) then
-    raise EAuthClientException.create('State Error - session "'+inttostr(session.key)+'" not ready for a choice', afrInvalidRequest, '', '');
+    raise EAuthClientException.Create('State Error - session "'+inttostr(session.key)+'" not ready for a choice', afrInvalidRequest, '', '');
 
   if params['form'] = 'true' then
   begin
-    scopes := TStringList.create;
+    scopes := TStringList.Create;
     try
       readScopes(scopes, params);
 
@@ -475,12 +475,12 @@ begin
       else
         response.Redirect(redirect+'?code='+session.OuterToken+'&state='+state);
     finally
-      scopes.Free;
+      scopes.free;
     end;
   end
   else
   begin
-    variables := TFslMap<TFHIRObject>.create('scim.vars');
+    variables := TFslMap<TFHIRObject>.Create('scim.vars');
     try
       variables.Add('client', TFHIRSystemString.Create(ServerContext.Storage.getClientName(client_id)));
       variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
@@ -505,7 +505,7 @@ begin
   end
   else
   begin
-    obj := TJsonObject.create;
+    obj := TJsonObject.Create;
     try
       obj['issuer'] := FHost;
       obj['authorization_endpoint'] := BasePath+'/auth';
@@ -543,7 +543,7 @@ begin
     ServerContext.SessionManager.EndAllSessions(params['cookie'], request.RemoteIP);
     response.Redirect(FRawPath);
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -580,10 +580,10 @@ begin
     password := params['password'];
 
     if not FUserProvider.CheckLogin(username, password, key) then
-      raise EAuthClientException.create('Login failed', afrAccessDenied, redirect, state);
+      raise EAuthClientException.Create('Login failed', afrAccessDenied, redirect, state);
 
     if not ServerContext.Storage.hasOAuthSession(id, 1) then
-      raise EAuthClientException.create('State failed - no login session active', afrAccessDenied, redirect, state);
+      raise EAuthClientException.Create('State failed - no login session active', afrAccessDenied, redirect, state);
 
     session := ServerContext.SessionManager.RegisterSession(userLogin, apInternal, '', id, username, '', '', '', '1440', AContext.Binding.PeerIP, '');
     try
@@ -593,14 +593,14 @@ begin
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
-      session.Free;
+      session.free;
     end;
   end
   else if request.document.startsWith(FPath+'/auth_dest/state/') then
   begin
     // HL7
     if not CheckLoginToken(copy(request.document, 26, $FF), id, provider) then
-      raise EAuthClientException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
+      raise EAuthClientException.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
     uid := params['userid'];
     name := params['fullName'];
     expires := inttostr(60 * 24 * 10); // 10 days
@@ -612,7 +612,7 @@ begin
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
-      session.Free;
+      session.free;
     end;
   end
   else if (params.has('state')) then
@@ -624,11 +624,11 @@ begin
 
     state := params['state'];
     if not StringStartsWith(state, OAUTH_LOGIN_PREFIX, false) then
-      raise EAuthClientException.create('State Prefix mis-match', afrInvalidRequest, redirect, state);
+      raise EAuthClientException.Create('State Prefix mis-match', afrInvalidRequest, redirect, state);
     if not CheckLoginToken(state, id, provider) then
-      raise EAuthClientException.create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
+      raise EAuthClientException.Create('The state does not match. You may be a victim of a cross-site spoof (or this server has restarted, try again)', afrInvalidRequest, redirect, state);
     if params.has('error') then
-      raise EAuthClientException.create('error_description', afrServerError, redirect, state);
+      raise EAuthClientException.Create('error_description', afrServerError, redirect, state);
 
     if provider = apGoogle then
     begin
@@ -643,7 +643,7 @@ begin
         ok := FacebookGetDetails(token, uid, name, email, msg);
     end;
     if not ok then
-      raise EAuthClientException.create('Processing the login failed ('+msg+')', afrAccessDenied, redirect, state);
+      raise EAuthClientException.Create('Processing the login failed ('+msg+')', afrAccessDenied, redirect, state);
     session := ServerContext.SessionManager.RegisterSession(userExternalOAuth, provider, token, id, uid, name, email, '', expires, AContext.Binding.PeerIP, '');
     try
       ServerContext.Storage.updateOAuthSession(id, 2, session.key, client_id);
@@ -652,11 +652,11 @@ begin
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
-      session.Free;
+      session.free;
     end;
   end
   else
-    raise EAuthClientException.create('Login attempt not understood', afrInvalidRequest, redirect, state);
+    raise EAuthClientException.Create('Login attempt not understood', afrInvalidRequest, redirect, state);
 end;
 
 //  "grant_types" : "client_credentials",
@@ -683,18 +683,18 @@ var
   begin
     result := json.str[name];
     if result = '' then
-      raise EAuthClientException.create('A '+name+' field is required in the json token');
+      raise EAuthClientException.Create('A '+name+' field is required in the json token');
   end;
   procedure checkValue(name, value : String);
   begin
     if json.str[name] <> value then
-      raise EAuthClientException.create('The '+name+' field must have the value "'+value+'" but has the value "'+json.str[name]+'"');
+      raise EAuthClientException.Create('The '+name+' field must have the value "'+value+'" but has the value "'+json.str[name]+'"');
   end;
   function checkPresentA(name : String) : TJsonArray;
   begin
     result := json.arr[name];
     if (result = nil) or (result.Count < 1) then
-      raise EAuthClientException.create('A value for '+name+' field is required in the json token');
+      raise EAuthClientException.Create('A value for '+name+' field is required in the json token');
   end;
   procedure checkValueA(name, value, opt : String);
   var
@@ -704,16 +704,16 @@ var
   begin
     arr := json.arr[name];
     if (arr = nil) or (arr.Count < 1) then
-      raise EAuthClientException.create('The '+name+' field must have a value "'+value);
+      raise EAuthClientException.Create('The '+name+' field must have a value "'+value);
     for e in arr do
     begin
       s := (e as TJsonString).value;
       if (s = value) then
         exit;
       if (s <> opt) and (opt <> '') then
-        raise EAuthClientException.create('The '+name+' field has an unacceptable value "'+s+'"');
+        raise EAuthClientException.Create('The '+name+' field has an unacceptable value "'+s+'"');
     end;
-    raise EAuthClientException.create('The '+name+' field must have the value "'+value+'" but it was not found');
+    raise EAuthClientException.Create('The '+name+' field must have the value "'+value+'" but it was not found');
   end;
 begin
   try
@@ -727,7 +727,7 @@ begin
 //          disabled after discussion with Luis Maas - pending further discussion
 //             - determine when this should be done
 //          if Session = nil then
-//            raise EFHIRException.create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
+//            raise EFHIRException.Create('User must be identified; log in to the server using the web interface, and get a token that can be used to register the client');
           // check that it meets business rules
           client.name := checkPresent('client_name');
           resp.str['client_name'] := client.name;
@@ -767,11 +767,11 @@ begin
             checkValueA('response_types', 'token', '');
             resp.forceArr['response_types'].add('token');
             if json.obj['jwks'] = nil then
-              raise EAuthClientException.create('No jwks found');
+              raise EAuthClientException.Create('No jwks found');
             if json.obj['jwks'].arr['keys'] = nil then
-              raise EAuthClientException.create('No keys found in jwks');
+              raise EAuthClientException.Create('No keys found in jwks');
             if json.obj['jwks'].arr['keys'].Count = 0 then
-              raise EAuthClientException.create('No Keys found in jwks.keys');
+              raise EAuthClientException.Create('No Keys found in jwks.keys');
             client.publicKey := TJsonWriter.writeObjectStr(json.obj['jwks']);
             client.issuer := checkPresent('issuer');
           end
@@ -795,7 +795,7 @@ begin
             // no secret
           end
           else
-            raise EAuthClientException.create('Unable to recognise client mode');
+            raise EAuthClientException.Create('Unable to recognise client mode');
           client.patientContext := json.bool['fhir_patient_context'];
           resp.str['client_id'] := ServerContext.Storage.storeClient(client, 0 {session.Key});
           resp.str['client_id_issued_at'] := IntToStr(DateTimeToUnix(now));
@@ -804,18 +804,18 @@ begin
           response.ResponseText := 'OK';
           response.ContentType := 'application/json';
         finally
-          client.Free;
+          client.free;
         end;
       finally
-        resp.Free;
+        resp.free;
       end;
     finally
-      json.Free;
+      json.free;
     end;
   except
     on e : Exception do
     begin
-      json := TJsonObject.create;
+      json := TJsonObject.Create;
       try
         json.str['error'] := 'invalid_client';
         json.str['error_description'] := e.Message;
@@ -824,7 +824,7 @@ begin
         response.ResponseText := 'Client Error';
         response.ContentType := 'application/json';
       finally
-        json.Free;
+        json.free;
       end;
     end;
   end;
@@ -851,7 +851,7 @@ begin
         response.CustomHeaders.add('Access-Control-Allow-Headers: '+request.RawHeaders.Values['Access-Control-Request-Headers']);
       response.ContentType := 'application/json';
 
-      params := THTTPParameters.create(request.UnparsedParams);
+      params := THTTPParameters.Create(request.UnparsedParams);
       try
         if (secure and (request.Document = FPath+'/auth')) then
           HandleAuth(AContext, request, session, params, response)
@@ -878,9 +878,9 @@ begin
         else if (request.Document = FPath+'/logout-all') then
           HandleEndAllSessions(AContext, request, session, response)
         else
-          raise EAuthClientException.create('Invalid URL');
+          raise EAuthClientException.Create('Invalid URL');
       finally
-        params.Free;
+        params.free;
       end;
     except
       on e : EAuthClientException do
@@ -921,7 +921,7 @@ begin
     password := checkNotEmpty(params['password'], 'password', '', '');
 
     if FPassword <> password then
-      raise EAuthClientException.create('Admin Password fail');
+      raise EAuthClientException.Create('Admin Password fail');
 
     // update the login record
     // create a session
@@ -931,28 +931,28 @@ begin
       session.SystemName := client_id;
       session.SystemEvidence := systemFromOAuth;
     finally
-      session.Free;
+      session.free;
     end;
     response.ContentText := 'done';
   end
   else if params['id'] <> '' then
   begin
     if not ServerContext.SessionManager.GetSessionByToken(params['id'], session) then
-      raise EAuthClientException.create('State Error (1)');
+      raise EAuthClientException.Create('State Error (1)');
     try
       if not ServerContext.Storage.hasOAuthSessionByKey(session.Key, 2) then
-        raise EAuthClientException.create('State Error (2)');
+        raise EAuthClientException.Create('State Error (2)');
       setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
       response.Redirect(FPath+'/auth_choice');
     finally
-      session.Free;
+      session.free;
     end
   end
   else
   begin
-    variables := TFslMap<TFHIRObject>.create('scim.vars');
+    variables := TFslMap<TFHIRObject>.Create('scim.vars');
     try
-      variables.Add('/oauth2', TFHIRSystemString.create(FPath));
+      variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
       OnProcessFile(request, response, session, FPath+'/auth_skype.html', true, variables);
     finally
       variables.free;
@@ -966,7 +966,7 @@ var
   list : TStringList;
 begin
   result := '';
-  list := TStringList.create;
+  list := TStringList.Create;
   try
     list.CommaText := scope.Replace(' ', ',');
     for i := 0 to list.Count - 1 do
@@ -983,7 +983,7 @@ var
   list : TStringList;
 begin
   result := [];
-  list := TStringList.create;
+  list := TStringList.Create;
   try
     list.CommaText := scope.Replace(' ', ',');
     for i := 0 to list.count - 1 do
@@ -1015,7 +1015,7 @@ begin
   begin
     response.ResponseNo := 500;
     response.ContentType := 'application/json';
-    json := TJsonWriterDirect.create;
+    json := TJsonWriterDirect.Create;
     try
       json.Start(true);
       json.Value('error', 'unsupported_grant_type');
@@ -1023,7 +1023,7 @@ begin
       json.Finish(true);
       response.ContentText := json.ToString;
     finally
-      json.Free;
+      json.free;
     end;
   end;
 end;
@@ -1047,21 +1047,21 @@ begin
   try
     errCode := 'invalid_request';
     if not (request.AuthUsername = INTERNAL_SECRET) then
-      raise EAuthClientException.create('Can only call grant_type=client_credentials if the Authorization Header has a Bearer Token');
+      raise EAuthClientException.Create('Can only call grant_type=client_credentials if the Authorization Header has a Bearer Token');
     try
       jwt := TJWTUtils.decodeJWT(request.AuthPassword); // todo:
     except
       on e : exception do
-        raise EAuthClientException.create('Error reading JWT: '+e.message);
+        raise EAuthClientException.Create('Error reading JWT: '+e.message);
     end;
     try
       uuid := params['scope'];
       if not ServerContext.Storage.FetchAuthorization(uuid, PatientId, ConsentKey, SessionKey, Expiry, jwtStored) then
-        raise EAuthClientException.create('Unrecognised Token');
+        raise EAuthClientException.Create('Unrecognised Token');
       if (jwtStored <> request.AuthPassword) then
-        raise EAuthClientException.create('JWT mismatch');
+        raise EAuthClientException.Create('JWT mismatch');
       if (expiry < now) then
-        raise EAuthClientException.create('The authorization has expired');
+        raise EAuthClientException.Create('The authorization has expired');
 
       session := ServerContext.SessionManager.RegisterSessionFromPastSession(userBearerJWT, sessionKey, expiry, AContext.Binding.PeerIP);
       try
@@ -1071,7 +1071,7 @@ begin
         setCookie(response, FHIR_COOKIE_NAME, session.Cookie, domain, '', session.Expires, false);
         if FFactory.version <> fhirVersionRelease2 then
           populateFromConsent(consentKey, session);
-        json := TJsonWriterDirect.create;
+        json := TJsonWriterDirect.Create;
         try
           json.Start;
           json.Value('access_token', session.Cookie);
@@ -1083,20 +1083,20 @@ begin
           json.Finish;
           response.ContentText := json.ToString;
         finally
-          json.Free;
+          json.free;
         end;
       finally
-        session.Free;
+        session.free;
       end;
     finally
-      jwt.Free;
+      jwt.free;
     end;
     response.ResponseNo := 200;
   except
     on e : Exception do
     begin
       response.ResponseNo := 500;
-      json := TJsonWriterDirect.create;
+      json := TJsonWriterDirect.Create;
       try
         json.Start;
         json.Value('error', errCode);
@@ -1104,7 +1104,7 @@ begin
         json.Finish;
         response.ContentText := json.ToString;
       finally
-        json.Free;
+        json.free;
       end;
     end;
   end;
@@ -1134,7 +1134,7 @@ begin
       jwt := TJWTUtils.decodeJWT(params['client_assertion']); // todo:
     except
       on e : exception do
-        raise EAuthClientException.create('Error reading JWT: '+e.message);
+        raise EAuthClientException.Create('Error reading JWT: '+e.message);
     end;
     try
       client := ServerContext.Storage.getClientInfo(jwt.subject);
@@ -1144,26 +1144,26 @@ begin
         // check that this is not a jti value seen before (prevention of replay attacks)
         // ensure that the client_id provided is valid etc
         if client = nil then
-          raise EAuthClientException.create('Unknown client_id "'+jwt.subject+'"');
+          raise EAuthClientException.Create('Unknown client_id "'+jwt.subject+'"');
         if jwt.issuer <> client.issuer then
-          raise EAuthClientException.create('Stated Issuer does not match registered issuer');
+          raise EAuthClientException.Create('Stated Issuer does not match registered issuer');
         if not nonceIsUnique(jwt.id) then
-          raise EAuthClientException.create('Repeat Nonce Token - not allowed');
+          raise EAuthClientException.Create('Repeat Nonce Token - not allowed');
         if (jwt.expires > TFslDateTime.makeUTC.DateTime + 5 * DATETIME_MINUTE_ONE)then
-          raise EAuthClientException.create('JWT Expiry is too far in the future - ('+FormatDateTime('c', jwt.expires)+', must be < 5 minutes)');
+          raise EAuthClientException.Create('JWT Expiry is too far in the future - ('+FormatDateTime('c', jwt.expires)+', must be < 5 minutes)');
         if (jwt.expires < TFslDateTime.makeUTC.DateTime) then
-          raise EAuthClientException.create('JWT expiry ('+TFslDateTime.make(jwt.expires, dttzUTC).toXML+') is too old');
+          raise EAuthClientException.Create('JWT expiry ('+TFslDateTime.make(jwt.expires, dttzUTC).toXML+') is too old');
 
-        jwk := TJWKList.create(client.publicKey);
+        jwk := TJWKList.Create(client.publicKey);
         try
           jwt2 := TJWTUtils.decodeJWT(params['client_assertion']);
           try
             TJWTUtils.verifyJWT(jwt2, jwk, true);
           finally
-            jwt2.Free;
+            jwt2.free;
           end;
         finally
-          jwk.Free;
+          jwk.free;
         end;
         // all done... now create the session
         session := ServerContext.SessionManager.CreateImplicitSession(AContext.Binding.PeerIP, jwt.subject, 'n/a', systemFromJWT, false, true);
@@ -1171,7 +1171,7 @@ begin
           session.SystemName := jwt.subject;
           session.SystemEvidence := systemFromJWT;
           session.scopes := params['scope'];
-          json := TJsonWriterDirect.create;
+          json := TJsonWriterDirect.Create;
           try
             json.Start;
             json.Value('access_token', session.Cookie);
@@ -1181,23 +1181,23 @@ begin
             json.Finish;
             response.ContentText := json.ToString;
           finally
-            json.Free;
+            json.free;
           end;
         finally
-          session.Free;
+          session.free;
         end;
       finally
         client.free;
       end;
     finally
-      jwt.Free;
+      jwt.free;
     end;
     response.ResponseNo := 200;
   except
     on e : Exception do
     begin
       response.ResponseNo := 500;
-      json := TJsonWriterDirect.create;
+      json := TJsonWriterDirect.Create;
       try
         json.Start;
         json.Value('error', errCode);
@@ -1205,7 +1205,7 @@ begin
         json.Finish;
         response.ContentText := json.ToString;
       finally
-        json.Free;
+        json.free;
       end;
     end;
   end;
@@ -1232,10 +1232,10 @@ begin
       errCode := 'invalid_request';
       code := checkNotEmpty(params['code'], 'code', '', '');
       if not ServerContext.SessionManager.GetSessionByToken(code, session) then // todo: why is session passed in too?
-        raise EAuthClientException.create('Authorization Code not recognized');
+        raise EAuthClientException.Create('Authorization Code not recognized');
       try
         if not ServerContext.Storage.fetchOAuthDetails(session.key, 3, pclientid, pname, predirect, pstate, pscope, launch) then
-          raise EAuthClientException.create('Authorization Code not recognized (2)');
+          raise EAuthClientException.Create('Authorization Code not recognized (2)');
         client := ServerContext.Storage.getClientInfo(pclientid);
         try
           // what happens now depends on whether there's a client secret or not
@@ -1245,7 +1245,7 @@ begin
             errCode := 'invalid_client';
             clientId := checkNotEmpty(params['client_id'], 'client_id', '', '');
             if clientId <> pclientid then
-              raise EAuthClientException.create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
+              raise EAuthClientException.Create('Client Id is wrong ("'+clientId+'") is wrong in parameter');
           end
           else
           begin
@@ -1258,27 +1258,27 @@ begin
               clientSecret := params['client_secret'];
             end;
             if clientId <> pclientid then
-              raise EAuthClientException.create('Client Id is wrong ("'+clientId+'") in Authorization Header');
+              raise EAuthClientException.Create('Client Id is wrong ("'+clientId+'") in Authorization Header');
             if clientSecret <> client.secret then
-              raise EAuthClientException.create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
+              raise EAuthClientException.Create('Client Secret in Authorization header is wrong ("'+clientSecret+'")');
           end;
 
           // now check the redirect URL
           uri := checkNotEmpty(params['redirect_uri'], 'redirect_uri', '', '');
           errCode := 'invalid_request';
           if predirect <> uri then
-            raise EAuthClientException.create('Mismatch between claimed and actual redirection URIs');
+            raise EAuthClientException.Create('Mismatch between claimed and actual redirection URIs');
 
           // ok, well, it's passed.
           scope := pscope;
           ServerContext.Storage.updateOAuthSession(session.OuterToken, 4, session.Key, client_id);
           if (session.SystemName <> client_id) or (session.SystemName <> clientId) then
-            raise EAuthClientException.create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
+            raise EAuthClientException.Create('Session client id mismatch ("'+session.SystemName+'"/"'+client_id+'"/"'+clientId+'")');
 
           launchParams := readLaunchScopes(scope);
           launchParamValues := FOnProcessLaunchParams(request, session, launch, launchParams);
           try
-            json := TJsonWriterDirect.create;
+            json := TJsonWriterDirect.Create;
             try
               json.Stream := buffer.link;
               json.Start;
@@ -1292,13 +1292,13 @@ begin
                 json.Value(n, launchParamValues[n]);
               json.Finish;
             finally
-              json.Free;
+              json.free;
             end;
           finally
-            launchParamValues.Free;
+            launchParamValues.free;
           end;
         finally
-          client.Free;
+          client.free;
         end;
       finally
         session.free;
@@ -1309,7 +1309,7 @@ begin
       begin
         Logging.log('Error in OAuth Token call: '+e.Message+' (params = '+params.Source+')');
         response.ResponseNo := 400;
-        json := TJsonWriterDirect.create;
+        json := TJsonWriterDirect.Create;
         try
           json.Stream := buffer.link;
           json.Start;
@@ -1317,7 +1317,7 @@ begin
           json.Value('error_description', e.Message);
           json.Finish;
         finally
-          json.Free;
+          json.free;
         end;
       end;
     end;
@@ -1325,7 +1325,7 @@ begin
     response.ContentText := buffer.Buffer.AsText;
     response.WriteContent;
   finally
-    buffer.Free;
+    buffer.free;
   end;
 end;
 
@@ -1341,10 +1341,10 @@ begin
   try
     try
       if request.AuthUsername <> 'Bearer' then
-        raise EAuthClientException.create('OAuth2 Access Token is required in the HTTP Authorization Header (type Bearer)');
+        raise EAuthClientException.Create('OAuth2 Access Token is required in the HTTP Authorization Header (type Bearer)');
       token := checkNotEmpty(params['token'], 'token', '', '');
       if request.AuthPassword <> token then
-        raise EAuthClientException.create('Access Token Required');
+        raise EAuthClientException.Create('Access Token Required');
 
       clientId := checkNotEmpty(params['client_id'], 'client_id', '', '');
       clientSecret := checkNotEmpty(params['client_secret'], 'client_secret', '', '');
@@ -1352,23 +1352,23 @@ begin
       client := ServerContext.Storage.getClientInfo(clientId);
       try
         if client.secret <> clientSecret then
-          raise EAuthClientException.create('Client Id or secret is wrong ("'+clientId+'")');
+          raise EAuthClientException.Create('Client Id or secret is wrong ("'+clientId+'")');
 
         if not ServerContext.SessionManager.GetSession(token, session, check) then
         begin
-          json := TJsonWriterDirect.create;
+          json := TJsonWriterDirect.Create;
           try
             json.Stream := buffer.link;
             json.Start;
             json.Value('active', false);
             json.Finish;
           finally
-            json.Free;
+            json.free;
           end;
         end
         else
         try
-          json := TJsonWriterDirect.create;
+          json := TJsonWriterDirect.Create;
           try
             json.Stream := buffer.link;
             json.Start;
@@ -1387,19 +1387,19 @@ begin
             end;
             json.Finish;
           finally
-            json.Free;
+            json.free;
           end;
         finally
           session.free;
         end;
       finally
-        client.Free;
+        client.free;
       end;
       response.ResponseNo := 200;
     except
       on e : Exception do
       begin
-        json := TJsonWriterDirect.create;
+        json := TJsonWriterDirect.Create;
         try
           json.Stream := buffer.link;
           json.Start;
@@ -1407,14 +1407,14 @@ begin
           json.Value('error_description', e.Message);
           json.Finish;
         finally
-          json.Free;
+          json.free;
         end;
       end;
     end;
     response.ContentText := buffer.Buffer.AsText;
     response.WriteContent;
   finally
-    buffer.Free;
+    buffer.free;
   end;
 end;
 
@@ -1429,14 +1429,14 @@ begin
   begin
     if params['form'] = 'true' then
     begin
-      raise EFHIRTodo.create('TAuth2Server.HandleUserDetails');
+      raise EFHIRTodo.Create('TAuth2Server.HandleUserDetails');
     end
     else
     begin
-      variables := TFslMap<TFHIRObject>.create('scim.vars');
+      variables := TFslMap<TFHIRObject>.Create('scim.vars');
       try
-        variables.Add('username', TFHIRSystemString.create(session.User.username));
-        variables.Add('/oauth2', TFHIRSystemString.create(FPath));
+        variables.Add('username', TFHIRSystemString.Create(session.User.username));
+        variables.Add('/oauth2', TFHIRSystemString.Create(FPath));
         OnProcessFile(request, response, session, '/oauth_userdetails.html', true, variables)
       finally
         variables.free;
@@ -1524,7 +1524,7 @@ begin
   dict := TFslStringDictionary.Create;
   try
     FOnGetPatients(dict);
-    b := TStringBuilder.create;
+    b := TStringBuilder.Create;
     try
       b.Append('<option value=""/>');
       for s in dict.Keys do
@@ -1543,10 +1543,10 @@ begin
       end;
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
   finally
-    dict.Free;
+    dict.free;
   end;
 end;
 
@@ -1564,11 +1564,11 @@ begin
 //      if (c.System = 'http://smarthealthit.org/fhir/scopes') then
 //        s := s +' '+c.code;
 //    {$ELSE}
-//    raise EFHIRException.create('This operation is only supported in R3 for now');
+//    raise EFHIRException.Create('This operation is only supported in R3 for now');
 //    {$ENDIF}
 //    session.scopes := s.Trim;
 //  finally
-//    consent.Free;
+//    consent.free;
 //  end;
 //  raise EFslException.Create('Needs further development right now');
 end;
@@ -1583,24 +1583,24 @@ var
   security : TFHIRSecurityRights;
   s, c : String;
 begin
-  variables.add('userlevel', TFHIRSystemString.create(''));
-  variables.add('userinfo', TFHIRSystemString.create(''));
-  security := TFHIRSecurityRights.create(ServerContext.ValidatorContext.Link, user, scope, true);
+  variables.add('userlevel', TFHIRSystemString.Create(''));
+  variables.add('userinfo', TFHIRSystemString.Create(''));
+  security := TFHIRSecurityRights.Create(ServerContext.ValidatorContext.Link, user, scope, true);
   try
     if security.canAdministerUsers then
-      variables.add('useradmin', TFHIRSystemString.create('<input type="checkbox" name="useradmin" value="1"/> Administer Users'))
+      variables.add('useradmin', TFHIRSystemString.Create('<input type="checkbox" name="useradmin" value="1"/> Administer Users'))
     else
-      variables.add('useradmin', TFHIRSystemString.create(''));
+      variables.add('useradmin', TFHIRSystemString.Create(''));
     if security.canGetUserInfo then
-      variables['userinfo'] := TFHIRSystemString.create('checked');
+      variables['userinfo'] := TFHIRSystemString.Create('checked');
 
   for s in FFactory.ResourceNames do
   begin
     c := CODES_TTokenCategory[FFactory.resCategory(s)];
-    variables.AddOrSetValue('read'+c, TFHIRSystemString.create(''));
-    variables.AddOrSetValue('write'+c, TFHIRSystemString.create(''));
-    variables.AddOrSetValue('read'+c+'disabled', TFHIRSystemString.create('disabled'));
-    variables.AddOrSetValue('write'+c+'disabled', TFHIRSystemString.create('disabled'));
+    variables.AddOrSetValue('read'+c, TFHIRSystemString.Create(''));
+    variables.AddOrSetValue('write'+c, TFHIRSystemString.Create(''));
+    variables.AddOrSetValue('read'+c+'disabled', TFHIRSystemString.Create('disabled'));
+    variables.AddOrSetValue('write'+c+'disabled', TFHIRSystemString.Create('disabled'));
   end;
 
     for s in FFactory.ResourceNames do
@@ -1608,13 +1608,13 @@ begin
       c := CODES_TTokenCategory[FFactory.resCategory(s)];
       if security.canRead(s) then
       begin
-        variables['read'+c] := TFHIRSystemString.create('checked');
-        variables['read'+c+'disabled'] := TFHIRSystemString.create('');
+        variables['read'+c] := TFHIRSystemString.Create('checked');
+        variables['read'+c+'disabled'] := TFHIRSystemString.Create('');
       end;
       if security.canWrite(s) then
       begin
-        variables['write'+c] := TFHIRSystemString.create('checked');
-        variables['write'+c+'disabled'] := TFHIRSystemString.create('');
+        variables['write'+c] := TFHIRSystemString.Create('checked');
+        variables['write'+c+'disabled'] := TFHIRSystemString.Create('');
       end;
     end;
   finally

@@ -549,7 +549,7 @@ begin
     _alg.Key := idb(aKey);
     Result := idb(_alg.HashValue(idb(aMessage)));
   finally
-    _alg.Free;
+    _alg.free;
   end;
 end;
 
@@ -574,13 +574,13 @@ end;
 
 constructor TJWK.Create(obj: TJsonObject);
 begin
-  create;
+  Create;
   FObj := obj;
 end;
 
 destructor TJWK.Destroy;
 begin
-  FObj.Free;
+  FObj.free;
   inherited;
 end;
 
@@ -593,7 +593,7 @@ var
   res : integer;
   ctx : PBN_CTX;
 begin
-  result := create( TJsonObject.Create);
+  result := Create( TJsonObject.Create);
   try
     result.keyType := 'EC';
 
@@ -667,7 +667,7 @@ var
   b : TBytes;
   pe, pn, pd : PBIGNUM;
 begin
-  result := create(TJsonObject.Create);
+  result := Create(TJsonObject.Create);
   try
     result.keyType := 'RSA';
 
@@ -704,7 +704,7 @@ begin
   try
     result := TJWK.Create(json.link);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -713,7 +713,7 @@ var
   b : TBytes;
   pp, pq, pg, pPub, pPriv : PBIGNUM;
 begin
-  result := create(TJsonObject.Create);
+  result := Create(TJsonObject.Create);
   try
     result.keyType := 'DSA';
     DSA_get0_pqg(pkey, @pp, @pq, @pg);
@@ -926,7 +926,7 @@ end;
 
 procedure TJWK.setObj(const Value: TJsonObject);
 begin
-  FObj.Free;
+  FObj.free;
   FObj := Value;
 end;
 
@@ -1051,7 +1051,7 @@ begin
     b := hash.HashString(can);
     result := JWTBase64URLStr(idb(b));
   finally
-    hash.Free;
+    hash.free;
   end;
 end;
 
@@ -1072,7 +1072,7 @@ begin
   try
     readFromJson(json);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -1400,7 +1400,7 @@ begin
   try
     z := TZDecompressionStream.create(b1, false); // -15);
     try
-      b2  := TBytesStream.create;
+      b2  := TBytesStream.Create;
       try
         b2.CopyFrom(z, z.Size);
         result := b2.Bytes;
@@ -1440,7 +1440,7 @@ class function TJWTUtils.decodeJWT(token: string): TJWT;
 var
   header, payload, sig : String;
 begin
-  result := TJWT.create;
+  result := TJWT.Create;
   try
     // 1. split up the jwt
     StringSplit(token, '.', header, payload);
@@ -1646,7 +1646,7 @@ begin
     keys.Add(key.link);
     result := verifyJWT(jwt, keys, exception);
   finally
-    keys.Free;
+    keys.free;
   end;
 end;
 
@@ -1705,12 +1705,12 @@ begin
     RSA_free(rkey);
   end;
 
-  keys := TJWKList.create;
+  keys := TJWKList.Create;
   try
     keys.Add(key.Link);
     Verify_Hmac_RSA256(input, result, nil, keys);
   finally
-    keys.Free;
+    keys.free;
   end;
 end;
 
@@ -1931,10 +1931,10 @@ begin
       xb.Finish;
       result := TEncoding.UTF8.GetBytes(xb.Build);
     finally
-      xb.Free;
+      xb.free;
     end;
   finally
-    dom.Free;
+    dom.free;
   end;
 
 end;
@@ -1953,7 +1953,7 @@ begin
     xb.Finish;
     result := TEncoding.UTF8.GetBytes(xb.Build);
   finally
-    xb.Free;
+    xb.free;
   end;
 end;
 
@@ -1969,7 +1969,7 @@ begin
     xb.Finish;
     result := TEncoding.UTF8.GetBytes(xb.Build);
   finally
-    xb.Free;
+    xb.free;
   end;
 end;
 
@@ -1985,7 +1985,7 @@ end;
 //    xb.Finish;
 //    result := TEncoding.UTF8.GetBytes(xb.Build);
 //  finally
-//    xb.Free;
+//    xb.free;
 //  end;
 //end;
 //
@@ -2033,7 +2033,7 @@ begin
 end;
 
 
-constructor TDigitalSigner.create;
+constructor TDigitalSigner.Create;
 begin
   inherited;
 //  LoadEAYExtensions(true);
@@ -2084,7 +2084,7 @@ begin
       v := decodeBase64(sig.element('SignatureValue').text);
       result := key.checkSignature(can, v, signatureMethod(si.elementNS(NS_DS, 'SignatureMethod').attribute['Algorithm']));
     finally
-      key.Free;
+      key.free;
     end;
   finally
     doc.free;
@@ -2199,7 +2199,7 @@ begin
   try
     result := idb(hash.HashBytes(idb(source)));
   finally
-    hash.Free;
+    hash.free;
   end;
 end;
 
@@ -2214,7 +2214,7 @@ begin
     b := hash.HashBytes(b);
     result := idb(b);
   finally
-    hash.Free;
+    hash.free;
   end;
 end;
 
@@ -2389,7 +2389,7 @@ begin
     s := dom.ToXml(false, true);
     result := TEncoding.UTF8.GetBytes(s);
   finally
-    dom.Free;
+    dom.free;
   end;
 end;
 
@@ -2445,7 +2445,7 @@ begin
     s := dom.ToXml(false, true);
     result := TEncoding.UTF8.GetBytes(s);
   finally
-    dom.Free;
+    dom.free;
   end;
 end;
 {$ENDIF}
@@ -2581,7 +2581,7 @@ begin
 //
 //    result.Link;
 //  finally
-//    result.Free;
+//    result.free;
 //  end;
   result := nil;
 end;
@@ -2601,7 +2601,7 @@ begin
     fetch.Fetch;
     result := fetch.Buffer.AsBytes;
   finally
-    fetch.Free;
+    fetch.free;
   end;
 end;
 
@@ -2641,7 +2641,7 @@ end;
 
 destructor TDigitalSignatureReference.Destroy;
 begin
-  FTransforms.Free;
+  FTransforms.free;
   inherited;
 end;
 
@@ -2659,7 +2659,7 @@ var
   pCert : PX509;
 begin
   pCert := d2i_X509(nil, @src, length(src));
-  inherited create(pcert);
+  inherited Create(pcert);
 end;
 
 destructor TX509Certificate.Destroy;
@@ -2707,13 +2707,13 @@ end;
 constructor TX509CertificateStore.Create;
 begin
   inherited Create;
-  FList := TObjectList<TX509Certificate>.create;
+  FList := TObjectList<TX509Certificate>.Create;
   FList.OwnsObjects := true;
 end;
 
 destructor TX509CertificateStore.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -2813,7 +2813,7 @@ var
   this : TX509CertificateVerifier;
   c : TX509Certificate;
 begin
-  this := TX509CertificateVerifier.create;
+  this := TX509CertificateVerifier.Create;
   try
     this.prepare;
     try

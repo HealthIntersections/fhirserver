@@ -122,7 +122,7 @@ end;
 Constructor TFHIRTagList.Create;
 begin
   inherited;
-  FList := TFslList<TFHIRTag>.create;
+  FList := TFslList<TFHIRTag>.Create;
 end;
 
 
@@ -140,7 +140,7 @@ end;
 
 Destructor TFHIRTagList.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -160,7 +160,7 @@ function TFHIRTagList.addTag(key: integer; kind: TFHIRTagCategory; system, code,
 var
   tag : TFHIRTag;
 begin
-  tag := TFHIRTag.create;
+  tag := TFHIRTag.Create;
   try
     tag.Key := Key;
     tag.Category := kind;
@@ -176,7 +176,7 @@ end;
 
 function TFHIRTagList.asHeader: String;
 begin
-  raise EFHIRTodo.create('TFHIRTagList.asHeader');
+  raise EFHIRTodo.Create('TFHIRTagList.asHeader');
 end;
 
 function TFHIRTagList.GetCount: Integer;
@@ -251,7 +251,7 @@ begin
         json.free;
       end;
     finally
-      vs.Free;
+      vs.free;
     end;
     result := s.Bytes;
   finally

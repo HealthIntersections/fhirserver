@@ -91,7 +91,7 @@ implementation
 procedure TServerGUI.FormCreate(Sender: TObject);
 begin
   Fini := TFHIRServerConfigFile.Create(FilePath([executableDirectory(), 'fhir-server-gui.cfg']));
-  FServer := TFHIRServerController.create(FIni.link);
+  FServer := TFHIRServerController.Create(FIni.link);
   FServer.OnStatusChange := serverStatusChange;
   FServer.OnLog := log;
   FServer.Initialise;
@@ -101,8 +101,8 @@ end;
 
 procedure TServerGUI.FormDestroy(Sender: TObject);
 begin
-  FServer.Free;
-  FIni.Free;
+  FServer.free;
+  FIni.free;
 end;
 
 procedure TServerGUI.log(msg: String);

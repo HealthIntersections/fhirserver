@@ -121,7 +121,7 @@ begin
   try
     if ASettings.ReadString('Provider', '') = '' then
       begin
-      raise EKDBFactoryException.create('Database access not configured');
+      raise EKDBFactoryException.Create('Database access not configured');
       end;
     LProv := TFDBProvider(IdStringToEnum(TypeInfo(TFDBProvider), ASettings.ReadString('Provider', '')));
     if ASettings.ReadInteger('Platform', -1) <> -1 then
@@ -138,20 +138,20 @@ begin
       end;
     if not (LPlat in APlatforms) then
       begin
-      raise EKDBFactoryException.create('Platform '+ASettings.ReadString('Platform', '')+' is not supported');
+      raise EKDBFactoryException.Create('Platform '+ASettings.ReadString('Platform', '')+' is not supported');
       end;
     case LProv of
-      kdbpUnknown : raise EKDBFactoryException.create('unknown provider');
+      kdbpUnknown : raise EKDBFactoryException.Create('unknown provider');
       kdbpDSN : VDescription := ASettings.ReadString('DSN')+' ['+ASettings.ReadString('Username')+']';
       kdbpODBC : VDescription := '\\'+ASettings.ReadString('Server')+'\'+ASettings.ReadString('Database')+' ['+ASettings.ReadString('Username')+']';
       kdbpFirebird : VDescription := '\\'+ASettings.ReadString('Server')+'\'+ASettings.ReadString('Database')+' ['+ASettings.ReadString('Username')+']';
       kdbpDBIsam : VDescription := ASettings.ReadString('Directory');
-      kdbpDBXpress : raise EKDBFactoryException.create('DBXpress not handled yet');
+      kdbpDBXpress : raise EKDBFactoryException.Create('DBXpress not handled yet');
       kdbpSoapClient : VDescription := ASettings.ReadString('URL');
       kdbpMySQL : VDescription := '\\'+ASettings.ReadString('Server')+'\'+ASettings.ReadString('Database')+' ['+ASettings.ReadString('Username')+']';
       kdbpAccess : VDescription := ASettings.ReadString('Database');
     else
-      raise EKDBFactoryException.create('Unexpected Provider');
+      raise EKDBFactoryException.Create('Unexpected Provider');
     end;
     VDescription := DescribePlatform(LPlat)+': '+VDescription;
     result := true;
@@ -178,7 +178,7 @@ begin
    {$ENDIF}
   else
     // kdbpUnknown,
-    raise EKDBFactoryException.create(ASSERT_LOCATION+': the provider '+IdEnumToString(TypeInfo(TFDBProvider), ord(AProvider))+' is not known or not supported by this system');
+    raise EKDBFactoryException.Create(ASSERT_LOCATION+': the provider '+IdEnumToString(TypeInfo(TFDBProvider), ord(AProvider))+' is not known or not supported by this system');
   end;
 end;
 

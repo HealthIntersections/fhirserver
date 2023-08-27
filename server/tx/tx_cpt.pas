@@ -100,7 +100,7 @@ type
     FIndex : integer;
     FList : TFslList<TCPTConcept>;
   public
-    constructor create(name : String; list : TFslList<TCPTConcept>; closed : boolean);
+    constructor Create(name : String; list : TFslList<TCPTConcept>; closed : boolean);
     destructor Destroy; override;
 
     property closed : boolean read FClosed;
@@ -168,14 +168,14 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -186,8 +186,8 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -197,12 +197,12 @@ implementation
 
 { TCPTFilterContext }
 
-constructor TCPTFilterContext.create(name : String; list: TFslList<TCPTConcept>; closed: boolean);
+constructor TCPTFilterContext.Create(name : String; list: TFslList<TCPTConcept>; closed: boolean);
 var
   i : integer;
   s : String;
 begin
-  inherited create;
+  inherited Create;
   FName := name;
   FList := list;
   FClosed := closed;
@@ -231,9 +231,9 @@ end;
 constructor TCPTIteratorContext.Create(list: TFslList<TCPTConcept>);
 begin
   if list = nil then
-    inherited create(nil, 0)
+    inherited Create(nil, 0)
   else
-    inherited create(nil, list.Count);
+    inherited Create(nil, list.Count);
   FList := list;
 end;
 
@@ -263,14 +263,14 @@ end;
 constructor TCPTConcept.Create;
 begin
   inherited Create;
-  FDesignations := TFslList<TCPTConceptDesignation>.create;
-  FProperties := TFslList<TCPTConceptProperty>.create;
+  FDesignations := TFslList<TCPTConceptDesignation>.Create;
+  FProperties := TFslList<TCPTConceptProperty>.Create;
 end;
 
 destructor TCPTConcept.Destroy;
 begin
-  FProperties.Free;
-  FDesignations.Free;
+  FProperties.free;
+  FDesignations.free;
   inherited Destroy;
 end;
 
@@ -283,7 +283,7 @@ procedure TCPTConcept.addProperty(name, value: String);
 var
   p : TCPTConceptProperty;
 begin
-  p := TCPTConceptProperty.create;
+  p := TCPTConceptProperty.Create;
   try
     p.name := name;
     p.value := value;
@@ -307,7 +307,7 @@ procedure TCPTConcept.addDesignation(kind, value: String);
 var
   d : TCPTConceptDesignation;
 begin
-  d := TCPTConceptDesignation.create;
+  d := TCPTConceptDesignation.Create;
   try
     d.kind := kind;
     d.value := value;
@@ -332,13 +332,13 @@ end;
 constructor TCPTExpression.Create;
 begin
   inherited Create;
-  FModifiers := TFslList<TCPTConcept>.create;
+  FModifiers := TFslList<TCPTConcept>.Create;
 end;
 
 destructor TCPTExpression.Destroy;
 begin
-  FModifiers.Free;
-  FFocus.Free;
+  FModifiers.free;
+  FFocus.free;
   inherited Destroy;
 end;
 
@@ -368,7 +368,7 @@ end;
 
 procedure TCPTExpression.SetFocus(AValue: TCPTConcept);
 begin
-  FFocus.Free;
+  FFocus.free;
   FFocus := AValue;
 end;
 
@@ -377,22 +377,22 @@ end;
 constructor TCPTServices.Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
 begin
   inherited Create(languages);
-  FMap := TFslMap<TCPTConcept>.create;
+  FMap := TFslMap<TCPTConcept>.Create;
   FMap.defaultValue := nil;
-  FList := TFslList<TCPTConcept>.create;
-  FBase := TFslList<TCPTConcept>.create;
-  FModifier := TFslList<TCPTConcept>.create;
-  self.db := db.link;
+  FList := TFslList<TCPTConcept>.Create;
+  FBase := TFslList<TCPTConcept>.Create;
+  FModifier := TFslList<TCPTConcept>.Create;
+  self.db := db;
   load;
 end;
 
 destructor TCPTServices.Destroy;
 begin
-  db.Free;
-  FMap.Free;
-  FBase.Free;
-  FModifier.Free;
-  FList.Free;
+  db.free;
+  FMap.free;
+  FBase.free;
+  FModifier.free;
+  FList.free;
   inherited Destroy;
 end;
 
@@ -446,7 +446,7 @@ var
   list : TStringList;
   s : string;
 begin
-  list := TStringList.create;
+  list := TStringList.Create;
   try
     for modifier in exp.modifiers do
     begin
@@ -526,7 +526,7 @@ begin
       msg := 'Base CPT Code '''+parts[0]+''' not found'
     else
     begin
-      exp := TCPTExpression.create;
+      exp := TCPTExpression.Create;
       try
         exp.focus := c.link;
         for i := 1 to length(parts) - 1 do
@@ -572,7 +572,7 @@ begin
     conn.Execute;
     while conn.FetchNext do
     begin
-      c := TCPTConcept.create;
+      c := TCPTConcept.Create;
       try
         c.code := conn.ColStringByName['code'];
         c.modifier :=  conn.ColIntegerByName['modifier'] = 1;
@@ -583,7 +583,7 @@ begin
           FBase.Add(c.link);
         FList.add(c.Link);
       finally
-        c.Free;
+        c.free;
       end;
     end;
     conn.terminate;
@@ -658,7 +658,7 @@ begin
   end;
 end;
 
-function TCPTServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TCPTServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 var
   c : TCPTConcept;
 begin
@@ -725,7 +725,7 @@ begin
   end;
 end;
 
-function TCPTServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TCPTServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 var
   e : TCPTExpression;
   c : TCPTConcept;
@@ -763,20 +763,20 @@ begin
     c := (context as TCPTConcept);
     c := (context as TCPTConcept);
     for d in c.designations do
-      list.addDesignation('en', d.value, d.kind = 'display');
+      list.addDesignation(d.kind = 'display', d.kind = 'display', 'en', d.value);
   end;
 end;
 
 function TCPTServices.Definition(context : TCodeSystemProviderContext) : string;
 begin
-  result := Display(context, defLang);
+  result := Display(context, nil);
 end;
 
-procedure TCPTServices.getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String);
+procedure TCPTServices.getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String);
 begin
 end;
 
-procedure TCPTServices.extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TCPTServices.extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 
 var
   c : TCPTConcept;
@@ -789,7 +789,7 @@ begin
   if (ctxt is TCPTExpression) then
   begin
     e := (ctxt as TCPTExpression);
-    extendLookup(factory, e.focus, lang, props, resp);
+    extendLookup(factory, e.focus, langList, props, resp);
     for c in e.modifiers do
     begin
       pp := resp.addProp('modifier');
@@ -827,9 +827,9 @@ end;
 function TCPTServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
   if (context = nil) then
-    result := TCPTIteratorContext.create(FList.link)
+    result := TCPTIteratorContext.Create(FList.link)
   else
-    result := TCPTIteratorContext.create(nil);
+    result := TCPTIteratorContext.Create(nil);
 end;
 
 function TCPTServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
@@ -847,7 +847,7 @@ end;
 
 function TCPTServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('Not supported yet');
+  raise ETerminologyError.Create('Not supported yet');
 end;
 
 function TCPTServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
@@ -868,26 +868,26 @@ begin
   begin
     b := value = 'true';
     if b then
-      result := TCPTFilterContext.create('modifier:true', FModifier.link, true)
+      result := TCPTFilterContext.Create('modifier:true', FModifier.link, true)
     else
-      result := TCPTFilterContext.create('modifier:false', FBase.link, true)
+      result := TCPTFilterContext.Create('modifier:false', FBase.link, true)
   end
   else if (prop = 'modified') and (op = foEqual) then
   begin
     b := value = 'true';
     if (b) then
-      result := TCPTFilterContext.create('modified:true', TFslList<TCPTConcept>.create, false)
+      result := TCPTFilterContext.Create('modified:true', TFslList<TCPTConcept>.create, false)
     else
-      result := TCPTFilterContext.create('modified:false', FList.link, true);
+      result := TCPTFilterContext.Create('modified:false', FList.link, true);
   end
   else if (prop = 'kind') and (op = foEqual) then
   begin
-    list := TFslList<TCPTConcept>.create;
+    list := TFslList<TCPTConcept>.Create;
     try
       for item in Flist do
         if item.hasProperty('kind', value) then
           list.add(item.link);
-      result := TCPTFilterContext.create('kind:'+value, list.link, true);
+      result := TCPTFilterContext.Create('kind:'+value, list.link, true);
     finally
       list.free;
     end;

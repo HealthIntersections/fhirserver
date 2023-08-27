@@ -208,13 +208,13 @@ uses
 constructor TFHIRProjectNode.Create;
 begin
   inherited Create;
-  FChildren := TFslList<TFHIRProjectNode>.create;
+  FChildren := TFslList<TFHIRProjectNode>.Create;
 end;
 
 destructor TFHIRProjectNode.Destroy;
 begin
-  FChildren.Free;
-  FIgnorer.Free;
+  FChildren.free;
+  FIgnorer.free;
   inherited Destroy;
 end;
 
@@ -264,7 +264,7 @@ end;
 procedure TFHIRProjectNode.loadIgnorer;
 begin
   if (FIgnorer = nil) then
-    FIgnorer := TProjectIgnorer.create(address, FIgnoreFile);
+    FIgnorer := TProjectIgnorer.Create(address, FIgnoreFile);
 end;
 
 function TFHIRProjectNode.getChildCount: integer;
@@ -287,7 +287,7 @@ function TFHIRProjectNode.toJson: TJsonObject;
 var
   i : integer;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result['id'] := FId;
     result['kind'] := CODES_TFHIRProjectNodeKind[FKind];
@@ -308,7 +308,7 @@ class function TFHIRProjectNode.fromJson(json: TJsonObject): TFHIRProjectNode;
 var
   i : integer;
 begin
-  result := TFHIRProjectNode.create;
+  result := TFHIRProjectNode.Create;
   try
     result.FId := json['id'];
     result.FKind := TFHIRProjectNodeKind(StringArrayIndexOf(CODES_TFHIRProjectNodeKind, json['kind']));
@@ -339,7 +339,7 @@ begin
     begin
       if (FileGetAttr(s) and faHidden = 0) and not FIgnorer.ignore(s+'/') then
       begin
-        n := TFHIRProjectNode.create;
+        n := TFHIRProjectNode.Create;
         FChildren.add(n);
         n.kind := pnkFolder;
         n.name := ExtractFileName(s);
@@ -353,7 +353,7 @@ begin
     begin
       if (FileGetAttr(s) and faHidden = 0) and not FIgnorer.ignore(s) then
       begin
-        n := TFHIRProjectNode.create;
+        n := TFHIRProjectNode.Create;
         FChildren.add(n);
         n.kind := pnkFile;
         n.name := ExtractFileName(s);
@@ -421,7 +421,7 @@ end;
 
 destructor TProjectTreeManager.Destroy;
 begin
-  FContext.Free;
+  FContext.free;
   inherited Destroy;
 end;
 
@@ -445,7 +445,7 @@ end;
 
 procedure TProjectTreeManager.SetContext(AValue: TToolkitContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := AValue;
 end;
 function TProjectTreeManager.doubleClickEdit: boolean;
@@ -600,7 +600,7 @@ begin
   if (mode = 'folder') then
   begin
     n := parent.getNewName('');
-    result := TFHIRProjectNode.create;
+    result := TFHIRProjectNode.Create;
     try
       result.kind := pnkFolder;
       result.name := n;
@@ -621,7 +621,7 @@ begin
       p := p.substring(5); // remove the file:
       n := ExtractFileName(p);
       n := parent.getNameForFile(n);
-      result := TFHIRProjectNode.create;
+      result := TFHIRProjectNode.Create;
       try
         result.kind := pnkFile;
         result.name := n;
@@ -649,7 +649,7 @@ begin
     begin
       e := EXTENSIONS_TSourceEditorKind[k];
       n := parent.getNewName(e);
-      result := TFHIRProjectNode.create;
+      result := TFHIRProjectNode.Create;
       try
         result.kind := pnkFile;
         result.name := n;
@@ -823,15 +823,15 @@ end;
 
 constructor TFHIRProjectsView.Create(settings : TIniFile);
 begin
-  inherited create;
-  FManager := TProjectTreeManager.create;
+  inherited Create;
+  FManager := TProjectTreeManager.Create;
   FManager.Settings := Settings;
   FManager.FView := self;
 end;
 
 destructor TFHIRProjectsView.Destroy;
 begin
-  FManager.Free;
+  FManager.free;
   inherited Destroy;
 end;
 
@@ -903,7 +903,7 @@ var
   json : TJsonObject;
   p : TFHIRProjectNode;
 begin
-  json := TJsonObject.create;
+  json := TJsonObject.Create;
   try
     json.str['edit'] := 'Don''t edit this file manually';
     for p in FManager.Data do
@@ -932,7 +932,7 @@ begin
   if FileExists(FControlFile) then
     json := TJsonParser.ParseFile(FControlFile)
   else
-    json := TJsonObject.create;
+    json := TJsonObject.Create;
   try
     json.str['edit'] := 'Don''t edit this file manually';
     json.forceArr['projects'].add(project.toJson);
@@ -977,7 +977,7 @@ begin
   if FileExists(FControlFile) then
     json := TJsonParser.ParseFile(FControlFile)
   else
-    json := TJsonObject.create;
+    json := TJsonObject.Create;
 
   try
     json.str['edit'] := 'Don''t edit this file manually';
@@ -1037,7 +1037,7 @@ end;
 constructor TProjectIgnorer.Create(folder, ignoreFile : String);
 begin
   inherited Create;
-  FLines := TStringList.create;
+  FLines := TStringList.Create;
   FFolder := folder;
   FIgnoreFile := ignoreFile;
   load();
@@ -1074,7 +1074,7 @@ procedure TProjectIgnorer.addPath(path: String);
 var
   ts : TStringList;
 begin
-  ts := TStringlist.create;
+  ts := TStringlist.Create;
   try
     ts.LoadFromFile(FilePath([FFolder, FIgnoreFile]));
     ts.add(path);

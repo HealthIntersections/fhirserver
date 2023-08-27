@@ -52,7 +52,7 @@ type
     FStart : TDateTime;
     FDuration : TDateTime;
   public
-    constructor create(d : TDateTime);
+    constructor Create(d : TDateTime);
   end;
 
   TPublisherForm = class;
@@ -180,7 +180,7 @@ begin
   panel2.Width := FIni.ReadInteger('window', 'split', panel2.Width);
   Fini.WriteDateTime('status', 'last-start', now);
   lbFolders.ItemIndex := 0;
-  FRuns := TFslMap<TRunRecord>.create('Publisher');
+  FRuns := TFslMap<TRunRecord>.Create('Publisher');
   for s in lbFolders.Items do
     FRuns.Add(s, TRunRecord.Create(FIni.ReadFloat('folders', s, 0)));
   FLock := TFslLock.Create('msg-queue');
@@ -196,16 +196,16 @@ end;
 procedure TPublisherForm.FormDestroy(Sender: TObject);
 begin
   saveList;
-  FRuns.Free;
+  FRuns.free;
   FIni.WriteInteger('window', 'left', Left);
   FIni.WriteInteger('window', 'top', Top);
   FIni.WriteInteger('window', 'height', ClientHeight);
   FIni.WriteInteger('window', 'width', ClientWidth);
   FIni.WriteInteger('window', 'split', panel2.Width);
 
-  FIni.Free;
-  FQueue.Free;
-  FLock.Free;
+  FIni.free;
+  FQueue.free;
+  FLock.free;
 end;
 
 procedure TPublisherForm.FormShow(Sender: TObject);
@@ -350,7 +350,7 @@ begin
 //>>>>>>> .theirs
 //    sl := lbFolders.Items[lbFolders.ItemIndex];
 //    if not FRuns.ContainsKey(sl) then
-//      FRuns.Add(sl, TRunRecord.create(0));
+//      FRuns.Add(sl, TRunRecord.Create(0));
 //    FRecord := FRuns[sl];
 //    sf := sl.Substring(sl.IndexOf(':')+1).trim;
 //    addFolder(sf, false);
@@ -392,7 +392,7 @@ end;
 
 { TRunRecord }
 
-constructor TRunRecord.create(d: TDateTime);
+constructor TRunRecord.Create(d: TDateTime);
 begin
   inherited Create;
   FDuration := d;

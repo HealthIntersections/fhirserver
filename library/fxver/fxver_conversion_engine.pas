@@ -88,9 +88,9 @@ end;
 
 destructor TFHIRConversionEngine.Destroy;
 begin
-  FTerminologyServer.Free;
-  FAPI.Free;
-  FWorker.Free;
+  FTerminologyServer.free;
+  FAPI.free;
+  FWorker.free;
   inherited;
 end;
 
@@ -148,13 +148,13 @@ end;
 //        try
 //          result := js.wrap(pOut.Link, true);
 //        finally
-//          pOut.Free;
+//          pOut.free;
 //        end;
 //      finally
-//        pm.Free;
+//        pm.free;
 //      end;
 //    finally
-//      pIn.Free;
+//      pIn.free;
 //    end;
 //  finally
 //    coding.free;

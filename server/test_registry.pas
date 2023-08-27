@@ -114,7 +114,7 @@ begin
     ini.WriteString('mysql', 'username', 'test');
     ini.WriteString('mysql', 'password', 'test');
   finally
-    ini.Free;
+    ini.free;
   end;
 end;
 

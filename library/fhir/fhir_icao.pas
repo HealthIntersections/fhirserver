@@ -132,7 +132,7 @@ begin
       result.issuer := issuer;
       result.types := [ctHealthCard, ctCovidCard, ctImmunizationCard];
       result.id := msg['uvci'];
-      util := THealthcareCardUtilities.create;
+      util := THealthcareCardUtilities.Create;
       try
         util.Factory := FFactory.link;
         Flog.Append('<p>Sign with Certificate '+FJwk.id+' ('+FJwk.thumbprint+')</p>'#13#10);
@@ -140,11 +140,11 @@ begin
         Flog.Append('<p>Build QR Code</p>'#13#10);
         result.image := util.generateImage(result);
       finally
-        util.Free;
+        util.free;
       end;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     bundle.free;
@@ -178,7 +178,7 @@ begin
     // we ignore gender.
     result := pat.Resource.link;
   finally
-    pat.Free;
+    pat.free;
   end;
 end;
 
@@ -231,7 +231,7 @@ begin
     Flog.Append('<p>Vaccinated with CVX#'+cvxCode+' ('+displayCvx(cvxCode)+') on '+encodeXml(vd['dvc'])+' by '+encodeXml(vd['adm'])+', lot# = '+encodeXml(imm.lotNumber)+'</p>'#13#10);
     result := imm.Resource.link;
   finally
-    imm.Free;
+    imm.free;
   end;
 end;
 
@@ -264,7 +264,7 @@ begin
   vl := unBase64URL(sig['sigvl']);
   src := TJsonWriterCanonical.canonicaliseObject(data);
 
-  x := TX509Certificate.create(cert);
+  x := TX509Certificate.Create(cert);
   try
     Flog.Append('<p>Check Certificate # '+encodeXml(x.SerialNumber)+'</p>'#13#10);
     Flog.Append('<p>Issuer = '+encodeXml(x.Issuer.AsString)+'</p>'#13#10);
@@ -301,25 +301,25 @@ begin
       if s <> '' then
         raise EFHIRException.Create('The Covid Passport Signature is not valid');
     finally
-      jwk.Free;
+      jwk.free;
     end;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
 constructor TICAOCardImporter.Create;
 begin
   inherited;
-  FLog := TFslStringBuilder.create;
+  FLog := TFslStringBuilder.Create;
 end;
 
 destructor TICAOCardImporter.Destroy;
 begin
-  FStore.Free;
-  FLog.Free;
-  FJWK.Free;
-  FFactory.Free;
+  FStore.free;
+  FLog.free;
+  FJWK.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -330,19 +330,19 @@ end;
 
 procedure TICAOCardImporter.SetFactory(const Value: TFHIRFactory);
 begin
-  FFactory.Free;
+  FFactory.free;
   FFactory := Value;
 end;
 
 procedure TICAOCardImporter.SetJWK(const Value: TJWK);
 begin
-  FJWK.Free;
+  FJWK.free;
   FJWK := Value;
 end;
 
 procedure TICAOCardImporter.SetStore(const Value: TX509CertificateStore);
 begin
-  FStore.Free;
+  FStore.free;
   FStore := Value;
 end;
 
@@ -366,7 +366,7 @@ var
   stream : TBytesStream;
 begin
   Flog.Append('<p>Importing from an image format ('+inttostr(length(image))+'bytes)</p>'#13#10);
-  picture := TPicture.create;
+  picture := TPicture.Create;
   try
     stream := TBytesStream.Create(image);
     try
@@ -378,13 +378,13 @@ begin
         bitmap.Canvas.Draw(0, 0, Picture.Graphic);
         result := import(bitmap);
       finally
-        bitmap.Free;
+        bitmap.free;
       end;
     finally
       stream.free;
     end;
   finally
-    picture.Free;
+    picture.free;
   end;
 end;
 
@@ -399,7 +399,7 @@ var
   bc : TReadResult;
 begin
   Flog.Append('<p>Scanning image for QR code ('+inttostr(image.Width)+'x'+inttostr(image.Height)+')</p>'#13#10);
-  scanner := TScanManager.create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
+  scanner := TScanManager.Create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
   try
     bc := scanner.Scan(image);
     try

@@ -659,7 +659,7 @@ var
   list : TFslList<TFHIRPackageInfo>;
 begin
   sleep(1000);
-  client := TFHIRPackageClient.create(PACKAGE_SERVER_BACKUP);
+  client := TFHIRPackageClient.Create(PACKAGE_SERVER_BACKUP);
   try
     list := client.search('', '', '', false);
     list.SortE(compare);
@@ -670,7 +670,7 @@ begin
       MainConsoleForm.Flock.UnLock;
     end;
   finally
-    client.Free;
+    client.free;
   end;
 end;
 
@@ -751,13 +751,13 @@ end;
 constructor TServerSession.Create;
 begin
   inherited Create;
-  FLog := TStringList.create;
+  FLog := TStringList.Create;
   FLocal := Now;
 end;
 
 destructor TServerSession.Destroy;
 begin
-  FLog.Free;
+  FLog.free;
   inherited Destroy;
 end;
 
@@ -786,12 +786,12 @@ begin
   GBackgroundTasks.start;
 
   s := getAppConfigDir(false);
-  FIni := TIniFile.create(FilePath([s, 'FHIRConsole.ini']));
+  FIni := TIniFile.Create(FilePath([s, 'FHIRConsole.ini']));
   FAddress := FIni.ReadString('console', 'address', 'Localhost');
   FPassword := FIni.ReadString('console', 'password', DEF_PASSWORD); // this password only works from localhost
   readFontFromIni(FIni, 'font', mConsole.font);
 
-  FTelnet := TIdTelnet.create(nil);
+  FTelnet := TIdTelnet.Create(nil);
   FTelnet.Port := 44123;
   FTelnet.ThreadedEvent := true;
   FTelnet.OnConnected := DoConnected;
@@ -800,19 +800,19 @@ begin
 
   setupTerminologyPage;
   FStatus := csDiconnected;
-  FIncoming := TStringList.create;
-  FThreads := TStringList.create;;
-  FLines := TStringList.create;
-  FStatistics := TServerSessionStatistics.create;
-  FLock := TFslLock.create('incoming');
-  FThread := TConnectingThread.create;
+  FIncoming := TStringList.Create;
+  FThreads := TStringList.Create;;
+  FLines := TStringList.Create;
+  FStatistics := TServerSessionStatistics.Create;
+  FLock := TFslLock.Create('incoming');
+  FThread := TConnectingThread.Create;
   FThread.Start;
 
-  FPackages := TFslList<TFHIRPackageInfo>.create;
-  FPackageThread := TPackageClientThread.create;
+  FPackages := TFslList<TFHIRPackageInfo>.Create;
+  FPackageThread := TPackageClientThread.Create;
   FPackageThread.Start;
 
-  FTxManager := TTxManager.create;
+  FTxManager := TTxManager.Create;
   FTxManager.Settings := FIni;
   FTxManager.Images := ImageList1;
   FTxManager.List := lvTx;
@@ -820,7 +820,7 @@ begin
   FTxManager.registerControl(btnTxDelete, copDelete);
   FTxManager.registerControl(btnTxImport, copExecute);
 
-  FEPManager := TEndPointManager.create;
+  FEPManager := TEndPointManager.Create;
   FEPManager.Settings := FIni;
   FEPManager.Images := ImageList1;
   FEPManager.List := lvEP;
@@ -829,7 +829,7 @@ begin
   FEPManager.registerControl(btnEPInstall, copExecute);
   FEPManager.OnSetFocus := EPFocusChange;
 
-  FIDManager := TIdentityProviderManager.create;
+  FIDManager := TIdentityProviderManager.Create;
   FIDManager.Settings := FIni;
   FIDManager.Images := ImageList1;
   FIDManager.List := lvID;
@@ -851,22 +851,22 @@ begin
 
   GBackgroundTasks.stopAll;
   FThread.StopAndWait(40);
-  FThread.Free;
+  FThread.free;
   GBackgroundTasks.Wait(2000);
   FPackageThread.Stop;
-  FPackageThread.Free;
-  FTxManager.Free;
-  FEPManager.Free;
-  FIDManager.Free;
+  FPackageThread.free;
+  FTxManager.free;
+  FEPManager.free;
+  FIDManager.free;
   FConfig.free;
   FPackages.free;
-  FTelnet.Free;
-  FIncoming.Free;
-  FThreads.Free;
-  FLines.Free;
-  FStatistics.Free;
-  FLock.Free;
-  FIni.Free;
+  FTelnet.free;
+  FIncoming.free;
+  FThreads.free;
+  FLines.free;
+  FStatistics.free;
+  FLock.free;
+  FIni.free;
 end;
 
 procedure TMainConsoleForm.FormResize(Sender: TObject);
@@ -971,7 +971,7 @@ procedure TMainConsoleForm.MenuItem11Click(Sender: TObject);
 var
   TestForm : TTestForm;
 begin
-  TestForm := TTestForm.create(self);
+  TestForm := TTestForm.Create(self);
   try
     TestForm.ShowModal;
   finally
@@ -993,11 +993,11 @@ procedure TMainConsoleForm.MenuItem37Click(Sender: TObject);
 var
   frm : TConsoleAboutForm;
 begin
-  frm := TConsoleAboutForm.create(self);
+  frm := TConsoleAboutForm.Create(self);
   try
     frm.ShowModal;
   finally
-    frm.Free;
+    frm.free;
   end;
 end;
 
@@ -1025,11 +1025,11 @@ end;
 
 procedure TMainConsoleForm.MenuItem6Click(Sender: TObject);
 begin
-  PackageCacheForm := TPackageCacheForm.create(self);
+  PackageCacheForm := TPackageCacheForm.Create(self);
    try
      PackageCacheForm.Ini := FIni;
      if (FConfig <> nil) and (FConfig.service['package-cache'].value <> '') then
-       PackageCacheForm.Cache := TFHIRPackageManager.create(FConfig.service['package-cache'].value);
+       PackageCacheForm.Cache := TFHIRPackageManager.Create(FConfig.service['package-cache'].value);
      PackageCacheForm.showModal;
    finally
      PackageCacheForm.free;
@@ -1046,7 +1046,7 @@ begin
     pwd := FIni.ReadString('servers', FAddress, '');
   if (pwd = '') then
   begin
-    ServerConnectionForm := TServerConnectionForm.create(self);
+    ServerConnectionForm := TServerConnectionForm.Create(self);
     try
       ServerConnectionForm.edtServer.Text := server;
       ServerConnectionForm.edtServer.ReadOnly := true;
@@ -1087,7 +1087,7 @@ Begin
 
       list.assign(aStringlist);
     finally
-      aRegistry.Free;
+      aRegistry.free;
     end;
   finally
     aStringlist.Sort;
@@ -1099,8 +1099,8 @@ begin
   if (FConfig <> nil) and (FConfig.filename = edtConfigFile.text) then
     exit;
   if FConfig <> nil then
-    FConfig.Free;
-  FConfig := TFHIRServerConfigFile.create(edtConfigFile.text);
+    FConfig.free;
+  FConfig := TFHIRServerConfigFile.Create(edtConfigFile.text);
   FTxManager.ConfigFile := FConfig.link;
   FEPManager.ConfigFile := FConfig.link;
   FIDManager.ConfigFile := FConfig.link;
@@ -1169,7 +1169,7 @@ end;
 
 procedure TMainConsoleForm.SetConfigReadonly;
 begin
-  FConfig.Free;
+  FConfig.free;
   FConfig := nil;
   FTxManager.ConfigFile := nil;
   FEPManager.ConfigFile := nil;
@@ -1820,7 +1820,7 @@ begin
         combiner.international.Load(edtInternational.Text, true);
         for i := 0 to lbEditions.Items.Count - 1 do
         begin
-          svc := TSnomedServices.create;
+          svc := TSnomedServices.Create;
           combiner.others.Add(svc);
           svc.load(lbEditions.Items[i], true);
         end;
@@ -1972,15 +1972,15 @@ begin
     try
 
        if rbNDCMSSQL.checked then
-         db := TFDBOdbcManager.create('NDC', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
+         db := TFDBOdbcManager.Create('NDC', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
        else if rbNDCSQLite.checked then
-         db := TFDBSQLiteManager.create('NDC', edtNDCSQLiteFile.Text, true)
+         db := TFDBSQLiteManager.Create('NDC', edtNDCSQLiteFile.Text, true)
        else
-         db := TFDBOdbcManager.create('NDC', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
+         db := TFDBOdbcManager.Create('NDC', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
        try
          c := db.GetConnection('test');
          try
-           NDC := TNdcImporter.create(edtNDCFolder.text, c.link);
+           NDC := TNdcImporter.Create(edtNDCFolder.text, c.link);
            try
              NDC.Doinstall(self, nil, ndcCallback);
            finally
@@ -2057,11 +2057,11 @@ begin
     edtUNIISQLiteFile.enabled := false;
     try
        if rbUNIIMSSQL.checked then
-         db := TFDBOdbcManager.create('UNII', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
+         db := TFDBOdbcManager.Create('UNII', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
        else if rbUNIISQLite.checked then
-         db := TFDBSQLiteManager.create('UNII', edtUNIISQLiteFile.text, true)
+         db := TFDBSQLiteManager.Create('UNII', edtUNIISQLiteFile.text, true)
        else
-         db := TFDBOdbcManager.create('UNII', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
+         db := TFDBOdbcManager.Create('UNII', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
        try
          ImportUnii(edtUNIIFile.text, edtUNIIVersion.text, db, uniiCallback);
        finally
@@ -2146,15 +2146,15 @@ begin
     edtRXNUsername.enabled := false;
     try
        if rbRXNMSSQL.checked then
-         db := TFDBOdbcManager.create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
+         db := TFDBOdbcManager.Create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
        else if rbRXNSQLite.checked then
-         db := TFDBSQLiteManager.create('rxnorm', edtRXNSQLiteFile.text, true)
+         db := TFDBSQLiteManager.Create('rxnorm', edtRXNSQLiteFile.text, true)
        else
-         db := TFDBOdbcManager.create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
+         db := TFDBOdbcManager.Create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
        try
          c := db.GetConnection('test');
          try
-           rxn := TUMLSImporter.create(edtRXNFolder.text, c.link);
+           rxn := TUMLSImporter.Create(edtRXNFolder.text, c.link);
            try
              rxn.Doinstall(self, nil, rxNormCallback);
            finally
@@ -2210,11 +2210,11 @@ begin
     Cursor := crHourGlass;
     try
       if rbNDCMSSQL.checked then
-        db := TFDBOdbcManager.create('ndc', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
+        db := TFDBOdbcManager.Create('ndc', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
       else if rbNDCSQLite.checked then
-        db := TFDBSQLiteManager.create('ndc', edtNDCSQLiteFile.Text, true)
+        db := TFDBSQLiteManager.Create('ndc', edtNDCSQLiteFile.Text, true)
       else
-        db := TFDBOdbcManager.create('ndc', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
+        db := TFDBOdbcManager.Create('ndc', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
       try
         c := db.GetConnection('test');
         try
@@ -2259,11 +2259,11 @@ begin
     Cursor := crHourGlass;
     try
       if rbUNIIMSSQL.checked then
-        db := TFDBOdbcManager.create('unii', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
+        db := TFDBOdbcManager.Create('unii', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
       else if rbUNIISQLite.checked then
-        db := TFDBSQLiteManager.create('unii', edtUNIISQLiteFile.Text, true)
+        db := TFDBSQLiteManager.Create('unii', edtUNIISQLiteFile.Text, true)
       else
-        db := TFDBOdbcManager.create('unii', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
+        db := TFDBOdbcManager.Create('unii', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
       try
         c := db.GetConnection('test');
         try
@@ -2306,11 +2306,11 @@ begin
     Cursor := crHourGlass;
     try
       if rbRXNMSSQL.checked then
-        db := TFDBOdbcManager.create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
+        db := TFDBOdbcManager.Create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
       else if rbRXNSQLite.checked then
-        db := TFDBSQLiteManager.create('rxnorm', edtRXNSQLiteFile.text, true)
+        db := TFDBSQLiteManager.Create('rxnorm', edtRXNSQLiteFile.text, true)
       else
-        db := TFDBOdbcManager.create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
+        db := TFDBOdbcManager.Create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
       try
         c := db.GetConnection('test');
         try
@@ -2515,9 +2515,9 @@ begin
   //    FIni.WriteString('rxnorm-import', 'username', edtUMLSUsername.text);
   //    FIni.WriteString('rxnorm-import', 'password', strEncrypt(edtUMLSPassword.text, GetCryptKey('umls encryption key')));
   //
-  //    ndc := TNDCImporter.create(dlgFolder.FileName);
+  //    ndc := TNDCImporter.Create(dlgFolder.FileName);
   //    try
-  //      ndc.Database := TFDBOdbcManager.create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+  //      ndc.Database := TFDBOdbcManager.Create('ndc', dbtype(cbUMLSType.itemIndex), 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
   //      FWantStop := false;
   //      btnUMLSStop.Visible := true;
   //      cursor := crHourGlass;
@@ -2543,7 +2543,7 @@ begin
   //        umlsCallback(0, '');
   //      end;
   //    finally
-  //      ndc.Free;
+  //      ndc.free;
   //    end;
   //    MessageDlg('Successfully Upload NDC in '+DescribePeriod(now - start), mtInformation, [mbok], 0);
   //  end;
@@ -2694,10 +2694,10 @@ var
   i : integer;
   d : TDateTime;
 begin
-  ts := TStringList.create;
-  tsl := TStringList.create;
-  tsd := TStringList.create;
-  tsth := TStringList.create;
+  ts := TStringList.Create;
+  tsl := TStringList.Create;
+  tsd := TStringList.Create;
+  tsth := TStringList.Create;
   try
     d := 0;
     Flock.Lock;
@@ -2712,7 +2712,7 @@ begin
       begin
         FPackages.Clear;
         FPackages.AddAll(FThreadPackages);
-        FThreadPackages.Free;
+        FThreadPackages.free;
         FThreadPackages := nil;
       end;
       rs := FStatistics.report;
@@ -3054,15 +3054,15 @@ begin
   if lbEditions.Items.Count > 0 then
     lbEditions.Itemindex := 0;
 
-    env := TOdbcEnv.create;
+    env := TOdbcEnv.Create;
   try
-    adm := TOdbcAdministrator.create(env);
+    adm := TOdbcAdministrator.Create(env);
     try
       cbxRXNDriver.items.assign(adm.Drivers);
       cbxNDCDriver.items.assign(adm.Drivers);
       cbxUNIIDriver.items.assign(adm.Drivers);
     finally
-      adm.Free;
+      adm.free;
     end;
   finally
     env.free;
@@ -3140,7 +3140,7 @@ var
   ts : TStringList;
 begin
   FLastIncoming := now;
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.text := TEncoding.UTF8.GetAnsiString(buffer);
     for s in ts do

@@ -174,7 +174,7 @@ begin
           engine.check(nil, '', '', '', node, false)
         else
         begin
-          p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
+          p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
           try
             f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead);
             try
@@ -182,10 +182,10 @@ begin
               p.parse;
               res := p.resource.Link as TFHIRResource;
             finally
-              f.Free;
+              f.free;
             end;
           finally
-            p.Free;
+            p.free;
           end;
 
           engine.check(nil, res.fhirType, res.fhirType, res.fhirType, node, false).free;
@@ -196,14 +196,14 @@ begin
         on e:Exception do
         begin
           Assert.IsTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
-          outcome := TFHIRSelectionList.create;
+          outcome := TFHIRSelectionList.Create;
         end;
       end;
       if (TMsXmlParser.GetAttribute(test, 'predicate') = 'true') then
       begin
         ok := engine.convertToBoolean(outcome);
         outcome.clear();
-        outcome.add(TFHIRBoolean.create(ok));
+        outcome.add(TFHIRBoolean.Create(ok));
       end;
       s := engine.UseLog;
       if (s <> '') then
@@ -226,10 +226,10 @@ begin
           end;
         end;
       finally
-        expected.Free;
+        expected.free;
       end;
     finally
-      node.Free;
+      node.free;
     end;
   finally
     res.free;
@@ -286,7 +286,7 @@ end;
 
 procedure TFHIRPathTest.TearDown;
 begin
-  engine.Free;
+  engine.free;
 end;
 
 initialization

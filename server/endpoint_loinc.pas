@@ -109,7 +109,7 @@ end;
 
 constructor TLoincWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, db, common, nil, i18n);
+  inherited Create(config, settings, db, common, nil, i18n);
 end;
 
 destructor TLoincWebEndPoint.Destroy;
@@ -185,7 +185,7 @@ end;
 
 destructor TLoincWebServer.Destroy;
 begin
-  FTx.Free;
+  FTx.free;
   inherited;
 end;
 
@@ -196,66 +196,73 @@ var
   html : THtmlPublisher;
   i : integer;
   st : TStringList;
+  langList : THTTPLanguageList;
 begin
   FTx.Loinc.RecordUse;
   code := request.UnparsedParams;
   lang := request.Document.Substring(PathWithSlash.Length);
-  result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
-  if ((lang = '') and (code = '')) or ((lang <> '') and not FTX.Loinc.supportsLang(THTTPLanguages.create(lang))) then
-  begin
-    st := TStringList.create;
-    try
-      for i := 0 to FTX.Loinc.Lang.count - 1 do
-      begin
-        FTX.Loinc.Lang.GetEntry(i, lang, country);
-        st.add(lang+'-'+country);
-      end;
-      st.sort;
-      html := THtmlPublisher.Create();
+  langList := THTTPLanguageList.Create(lang, true);
+  try
+    result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
+
+    if ((lang = '') and (code = '')) or ((lang <> '') and not FTX.Loinc.supportsLang(langList)) then
+    begin
+      st := TStringList.Create;
       try
-        html.Version := SERVER_FULL_VERSION;
-        html.BaseURL := '/loinc/doco/';
-        html.Lang := THTTPLanguages.create(lang);
-        html.Heading(1, 'LOINC Languages');
-        html.StartList();
-        for i := 0 to st.count - 1 do
+        for i := 0 to FTX.Loinc.Lang.count - 1 do
         begin
-          html.StartListItem;
-          html.URL(st[i], st[i]);
-          html.EndListItem;
+          FTX.Loinc.Lang.GetEntry(i, lang, country);
+          st.add(lang+'-'+country);
         end;
-        html.EndList();
-        returnContent(request, response, request.Document, secure, 'LOINC Langauges', html.output);
+        st.sort;
+        html := THtmlPublisher.Create();
+        try
+          html.Version := SERVER_FULL_VERSION;
+          html.BaseURL := '/loinc/doco/';
+          html.LangList := langList.link;
+          html.Heading(1, 'LOINC Languages');
+          html.StartList();
+          for i := 0 to st.count - 1 do
+          begin
+            html.StartListItem;
+            html.URL(st[i], st[i]);
+            html.EndListItem;
+          end;
+          html.EndList();
+          returnContent(request, response, request.Document, secure, 'LOINC Langauges', html.output);
+        finally
+          html.free;
+        end;
       finally
-        html.free;
+        st.free;
       end;
-    finally
-      st.free;
-    end;
-  end
-  else
-  begin
-    result := 'Loinc Doco: '+code;
-    try
-      html := THtmlPublisher.Create();
-      pub := TLoincPublisher.create(FTX.Loinc, AbsoluteURL(secure), THTTPLanguages.Create(lang));
+    end
+    else
+    begin
+      result := 'Loinc Doco: '+code;
       try
-        html.Version := SERVER_FULL_VERSION;
-        html.BaseURL := PathWithSlash+lang;
-        html.Lang := THTTPLanguages.Create(Lang);
-        pub.PublishDict(code, PathWithSlash+lang, html);
-        returnContent(request, response, request.Document, secure, 'LOINC Content', html.output);
-      finally
-        html.free;
-        pub.free;
-      end;
-    except
-      on e:exception do
-      begin
-        response.ResponseNo := 500;
-        response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
+        html := THtmlPublisher.Create();
+        pub := TLoincPublisher.Create(FTX.Loinc, AbsoluteURL(secure), langList.link);
+        try
+          html.Version := SERVER_FULL_VERSION;
+          html.BaseURL := PathWithSlash+lang;
+          html.LangList := langList.link;
+          pub.PublishDict(code, PathWithSlash+lang, html);
+          returnContent(request, response, request.Document, secure, 'LOINC Content', html.output);
+        finally
+          html.free;
+          pub.free;
+        end;
+      except
+        on e:exception do
+        begin
+          response.ResponseNo := 500;
+          response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
+        end;
       end;
     end;
+  finally
+    langList.free;
   end;
 end;
 
@@ -280,7 +287,7 @@ procedure TLoincWebServer.returnContent(request: TIdHTTPRequestInfo; response: T
 var
   vars :  TFslMap<TFHIRObject>;
 begin
-  vars := TFslMap<TFHIRObject>.create;
+  vars := TFslMap<TFHIRObject>.Create;
   try
     vars.add('title', TFHIRObjectText.Create(title));
     vars.add('content', TFHIRObjectText.Create(content));

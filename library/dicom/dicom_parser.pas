@@ -212,30 +212,30 @@ End;
 
 Destructor TDicomParserContext.Destroy;
 Begin
-  FDictionary.Free;
-  FInput.Free;
+  FDictionary.free;
+  FInput.free;
   Inherited;
 End;
 
 procedure TDicomParserContext.SetInput(const Value: TFslStream);
 begin
-  FInput.Free;
+  FInput.free;
   FInput := Value;
 end;
 
 
 procedure TDicomParserContext.SetDictionary(const Value: TDicomDictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 end;
 
 Procedure TDicomParserContext.Initialise;
 Begin
   if FInput = nil Then
-    raise EDicomException.create('no Input provided');
+    raise EDicomException.Create('no Input provided');
   if FDictionary = nil Then
-    raise EDicomException.create('no Dictionary provided');
+    raise EDicomException.Create('no Dictionary provided');
   FErrorMessage := '';
   FMapOffset := 0;
   if MakeMap then
@@ -325,7 +325,7 @@ var
   iLen : Cardinal;
 begin
   if not (FInput is TFslAccessStream) Then
-    raise EDicomException.create('Cannot determine whether stream is PDU unless stream supports positioning');
+    raise EDicomException.Create('Cannot determine whether stream is PDU unless stream supports positioning');
 
   result := False;
   iPos := TFslAccessStream(FInput).Position;
@@ -391,7 +391,7 @@ end;
 
 destructor TDicomParserBase.Destroy;
 begin
-  FContext.Free;
+  FContext.free;
   inherited;
 end;
 
@@ -404,7 +404,7 @@ end;
 
 procedure TDicomParserBase.SetContext(oValue: TDicomParserContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := oValue;
   FOffset := FContext.FMapOffset;
 end;
@@ -503,7 +503,7 @@ Begin
       result.OffsetEnd := FOffset;
       result.Link;
     Finally
-      result.Free;
+      result.free;
     End;
   End
   Else
@@ -529,7 +529,7 @@ Begin
       result.OffsetEnd := FOffset;
       result.Link;
     Finally
-      result.Free;
+      result.free;
     End;
   End;
 End;
@@ -566,7 +566,7 @@ Begin
         if (iElementId = 0) Then
         Begin
           FContext.Backmark(dburKnownTag, 4);
-          ParseElement(0, 0).Free; // just dispose of this length
+          ParseElement(0, 0).free; // just dispose of this length
         End
         Else if (iGroupId = $FFFE) And (iElementId = $E00D) Then
         Begin
@@ -582,7 +582,7 @@ Begin
     result.offsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -732,7 +732,7 @@ Begin
     aBytes[B_0+2] := b;
     End;
   Else
-    raise EDicomException.create('Unknown big endian correction for '+ DICOM_VR_TYPE_NAMES_S[aType]);
+    raise EDicomException.Create('Unknown big endian correction for '+ DICOM_VR_TYPE_NAMES_S[aType]);
   End;
 End;
 
@@ -804,7 +804,7 @@ begin
       End;
       iLen := ReadCardinal(dburLength);
       if (iGr <> $FFFE) Or (iElem = $E0D) Or (iLen <> 0) Then
-        raise EDicomException.create('unexpected termination tag ('+sTag+')');
+        raise EDicomException.Create('unexpected termination tag ('+sTag+')');
     End
     Else
     Begin
@@ -909,13 +909,13 @@ begin
         5 : result.ReleaseRequest := ParseReleaseRequest;
         6 : result.ReleaseResponse := ParseReleaseResponse;
         7 : result.Abort := ParseAbort;
-  ///      8 : raise EDicomException.create('not known');
+  ///      8 : raise EDicomException.Create('not known');
       Else
         raise MakeError(2, 'Unknown PDU Type '+inttostr(iType));
       End;
       result.Link;
     Finally
-      result.Free;
+      result.free;
     End;
 
   Finally
@@ -941,7 +941,7 @@ begin
       5 : result := ParseReleaseRequest;
       6 : result := ParseReleaseResponse;
       7 : result := ParseAbort;
-///      8 : raise EDicomException.create('not known');
+///      8 : raise EDicomException.Create('not known');
     Else
       raise MakeError(2, 'Unknown PDU Type '+inttostr(iType));
     End;
@@ -986,7 +986,7 @@ begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -1024,7 +1024,7 @@ begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -1043,7 +1043,7 @@ begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -1085,7 +1085,7 @@ begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -1117,7 +1117,7 @@ begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -1177,7 +1177,7 @@ Begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1213,13 +1213,13 @@ Begin
         oValue.OffsetEnd := FOffset;
         result.DataValues.Add(oValue.Link);
       Finally
-        oValue.Free;
+        oValue.free;
       End;
     End;
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1233,7 +1233,7 @@ Begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1247,7 +1247,7 @@ Begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1264,7 +1264,7 @@ Begin
     result.OffsetEnd := FOffset;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1376,7 +1376,7 @@ begin
     End;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1441,7 +1441,7 @@ begin
 
     Result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1485,10 +1485,10 @@ begin
           result.FileObject := oFile.ExecuteFile;
           result.Link;
         Finally
-          result.Free;
+          result.free;
         End;
       Finally
-        oFile.Free;
+        oFile.free;
       End;
     End;
   End;
@@ -1510,10 +1510,10 @@ begin
           result.Message := oMessage.ExecuteMessage;
           result.Link;
         Finally
-          result.Free;
+          result.free;
         End;
       Finally
-        oMessage.Free;
+        oMessage.free;
       End;
     End;
   End;
@@ -1531,7 +1531,7 @@ begin
         oPDU.Context := Context.Link;
         result := oPDU.ExecuteInstance;
       Finally
-        oPDU.Free;
+        oPDU.free;
       End;
     End
     else if false and (iLength < oInput.Size - 6) Then
@@ -1546,11 +1546,11 @@ begin
           Try
             oPDU.Context := Context.Link;
             oPDU.InitContext := false;
-            result.Free;
+            result.free;
             result := nil;
             result := oPDU.ExecuteInstance;
           Finally
-            oPDU.Free;
+            oPDU.free;
           End;
         End;
       Finally
@@ -1577,7 +1577,7 @@ begin
         oPDU.Context := Context.Link;
         result := oPDU.ExecuteInstance;
       Finally
-        oPDU.Free;
+        oPDU.free;
       End;
     End;
   End;
@@ -1594,10 +1594,10 @@ begin
         result.SimpleObject := oObj.Execute;
         result.Link;
       Finally
-        result.Free;
+        result.free;
       End;
     Finally
-      oObj.Free;
+      oObj.free;
     End;
   End;
 end;

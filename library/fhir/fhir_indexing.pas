@@ -184,14 +184,14 @@ end;
 
 constructor TFhirIndex.Create(factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
 end;
 
 destructor TFhirIndex.Destroy;
 begin
-  FFactory.Free;
-  FExpression.Free;
+  FFactory.free;
+  FExpression.free;
   inherited;
 end;
 
@@ -202,7 +202,7 @@ end;
 
 procedure TFhirIndex.SetExpression(const Value: TFHIRPathExpressionNodeV);
 begin
-  FExpression.Free;
+  FExpression.free;
   FExpression := Value;
 end;
 
@@ -289,7 +289,7 @@ end;
 
 destructor TFhirIndexList.Destroy;
 begin
-  FFactory.Free;
+  FFactory.free;
   inherited;
 end;
 
@@ -326,14 +326,14 @@ function TFhirIndexList.listByType(aType: String): TFslList<TFhirIndex>;
 var
   i : integer;
 begin
-  result := TFslList<TFhirIndex>.create;
+  result := TFslList<TFhirIndex>.Create;
   try
     for i := 0 to Count - 1 do
       if (Item[i].ResourceType = aType) then
         result.Add(Item[i].Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -365,12 +365,12 @@ end;
 constructor TFhirComposite.Create;
 begin
   inherited;
-  FComponents := TFslStringDictionary.create;
+  FComponents := TFslStringDictionary.Create;
 end;
 
 destructor TFhirComposite.Destroy;
 begin
-  FComponents.Free;
+  FComponents.free;
   inherited;
 end;
 
@@ -448,11 +448,11 @@ end;
 constructor TFHIRCompartmentList.Create;
 begin
   inherited;
-  FPatientCompartment := TFslMap<TFslStringSet>.create('Patient Compartment');
-  FPractitionerCompartment := TFslMap<TFslStringSet>.create('Practitioner Compartment');
-  FEncounterCompartment := TFslMap<TFslStringSet>.create('Encounter Compartment');
-  FRelatedPersonCompartment := TFslMap<TFslStringSet>.create('RelatedPerson Compartment');
-  FDeviceCompartment := TFslMap<TFslStringSet>.create('Device Compartment');
+  FPatientCompartment := TFslMap<TFslStringSet>.Create('Patient Compartment');
+  FPractitionerCompartment := TFslMap<TFslStringSet>.Create('Practitioner Compartment');
+  FEncounterCompartment := TFslMap<TFslStringSet>.Create('Encounter Compartment');
+  FRelatedPersonCompartment := TFslMap<TFslStringSet>.Create('RelatedPerson Compartment');
+  FDeviceCompartment := TFslMap<TFslStringSet>.Create('Device Compartment');
 end;
 
 destructor TFHIRCompartmentList.Destroy;
@@ -505,23 +505,23 @@ end;
 
 //procedure TFHIRCompartmentList.registerComp(comp: TFHIRResourceType; resource, list: String);
 //begin
-//  raise EFHIRTodo.create();
+//  raise EFHIRTodo.Create();
 //end;
 //
 procedure TFHIRCompartmentList.register(comp: String; resource : String; indexes : array of String);
 begin
   if comp = 'Patient' then
-    FPatientCompartment.add(resource, TFslStringSet.create(indexes))
+    FPatientCompartment.add(resource, TFslStringSet.Create(indexes))
   else if comp = 'Practitioner' then
-    FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes))
+    FPractitionerCompartment.Add(resource, TFslStringSet.Create(indexes))
   else if comp = 'Encounter' then
-    FEncounterCompartment.add(resource, TFslStringSet.create(indexes))
+    FEncounterCompartment.add(resource, TFslStringSet.Create(indexes))
   else if comp = 'RelatedPerson' then
-    FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes))
+    FRelatedPersonCompartment.add(resource, TFslStringSet.Create(indexes))
   else if comp = 'Device' then
-    FDeviceCompartment.add(resource, TFslStringSet.create(indexes))
+    FDeviceCompartment.add(resource, TFslStringSet.Create(indexes))
   else
-    raise EFHIRException.create('Unknown compartment');
+    raise EFHIRException.Create('Unknown compartment');
 end;
 
 

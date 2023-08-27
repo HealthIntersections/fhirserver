@@ -91,7 +91,7 @@ begin
     FFhirServerPath := ini.ReadString('paths', 'server', '');
     FMarkdownPath := ini.ReadString('paths', 'markdown', '');
   finally
-    ini.Free;
+    ini.free;
   end;
 end;
 

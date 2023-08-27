@@ -97,20 +97,20 @@ type
 constructor TConfigurationBuilder.Create;
 begin
   inherited;
-  FFiles := TFslStringDictionary.create;
-  FEndPoints := TFslMap<TEndPointInfo>.create;
-  FEndPoints.Add('r2', TEndPointInfo.create(fhirVersionRelease2));
-  FEndPoints.Add('r3', TEndPointInfo.create(fhirVersionRelease3));
-  FEndPoints.Add('r4', TEndPointInfo.create(fhirVersionRelease4));
-  FEndPoints.Add('r5', TEndPointInfo.create(fhirVersionRelease5));
+  FFiles := TFslStringDictionary.Create;
+  FEndPoints := TFslMap<TEndPointInfo>.Create;
+  FEndPoints.Add('r2', TEndPointInfo.Create(fhirVersionRelease2));
+  FEndPoints.Add('r3', TEndPointInfo.Create(fhirVersionRelease3));
+  FEndPoints.Add('r4', TEndPointInfo.Create(fhirVersionRelease4));
+  FEndPoints.Add('r5', TEndPointInfo.Create(fhirVersionRelease5));
   FEndPoints.defaultValue := nil;
 end;
 
 destructor TConfigurationBuilder.Destroy;
 begin
-  FEndPoints.Free;
-  FFiles.Free;
-  FJson.Free;
+  FEndPoints.free;
+  FFiles.free;
+  FJson.free;
   inherited;
 end;
 
@@ -135,7 +135,7 @@ begin
             Logging.log('Unable to upgrade existing database '+fn+': '+e.message);
         end;
       finally
-        installer.Free;
+        installer.free;
       end;
       conn.Release;
     except
@@ -145,7 +145,7 @@ begin
       end;
     end;
   finally
-    sql.Free;
+    sql.free;
   end;
 end;
 
@@ -163,7 +163,7 @@ begin
       try
         installer.InstallTerminologyServer;
       finally
-        installer.Free;
+        installer.free;
       end;
       conn.Release;
     except
@@ -173,7 +173,7 @@ begin
       end;
     end;
   finally
-    sql.Free;
+    sql.free;
   end;
 end;
 
@@ -306,7 +306,7 @@ begin
 
     cfg.Save;
   finally
-    cfg.Free;
+    cfg.free;
   end;
 end;
 
@@ -420,7 +420,7 @@ begin
   try
     TJSONWriter.writeObject(f, FJson, true);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -479,7 +479,7 @@ begin
           fetcher.Buffer.SaveToFileName(tgt);
           Logging.finish(' Done ('+DescribeBytes(fetcher.buffer.size)+', '+DescribePeriod(now - start)+')');
         finally
-          fetcher.Free;
+          fetcher.free;
         end;
       except
         on e : Exception do
@@ -515,7 +515,7 @@ begin
       cb.setupEndPoints;
       cb.buildConfig(result, local);
     finally
-      cb.Free;
+      cb.free;
     end;
   except
     on e : Exception do
@@ -543,7 +543,7 @@ end;
 
 destructor TEndPointInfo.Destroy;
 begin
-  FPackages.Free;
+  FPackages.free;
   inherited;
 end;
 

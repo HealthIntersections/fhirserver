@@ -199,20 +199,20 @@ uses
 
 { TSearchEntryPanel }
 
-constructor TSearchEntryPanel.create(form: TFetchResourceFrm; definition : TFHIRSearchParamDefinitionW);
+constructor TSearchEntryPanel.Create(form: TFetchResourceFrm; definition : TFHIRSearchParamDefinitionW);
 begin
-  inherited create;
+  inherited Create;
   self.form := form;
   self.definition := definition;
   build;
 end;
 
-destructor TSearchEntryPanel.destroy;
+destructor TSearchEntryPanel.Destroy;
 begin
-  lbl.Free;
-  modList.Free;
-  panel.Free;
-  definition.Free;
+  lbl.free;
+  modList.free;
+  panel.free;
+  definition.free;
   inherited;
 end;
 
@@ -478,21 +478,21 @@ end;
 
 procedure TFetchResourceFrm.FormCreate(Sender: TObject);
 begin
-  FServers := TFslList<TRegisteredFHIRServer>.create;
-  FSearchItems := TFslList<TSearchEntryPanel>.create;
-  FColumns := TFslStringDictionary.create;
-  FMatches := TFslList<TFHIRResourceV>.create;
-  FLinks := TFslStringDictionary.create;
+  FServers := TFslList<TRegisteredFHIRServer>.Create;
+  FSearchItems := TFslList<TSearchEntryPanel>.Create;
+  FColumns := TFslStringDictionary.Create;
+  FMatches := TFslList<TFHIRResourceV>.Create;
+  FLinks := TFslStringDictionary.Create;
 end;
 
 procedure TFetchResourceFrm.FormDestroy(Sender: TObject);
 begin
-  FServers.Free;
-  FContext.Free;
-  FSearchItems.Free;
-  FColumns.Free;
-  FMatches.Free;
-  FLinks.Free;
+  FServers.free;
+  FContext.free;
+  FSearchItems.free;
+  FColumns.free;
+  FMatches.free;
+  FLinks.free;
 end;
 
 procedure TFetchResourceFrm.FormResize(Sender: TObject);
@@ -502,7 +502,7 @@ end;
 
 procedure TFetchResourceFrm.SetContext(value: TFHIRNppContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := value;
 end;
 
@@ -552,7 +552,7 @@ begin
         FConnection.free;
       end;
     end;
-    FQuery.Free;
+    FQuery.free;
     FQuery := vf.Factory.makePathEngine(vf.Worker.link, nil);
   end;
   cbxType.Items.Clear;
@@ -577,7 +577,7 @@ begin
   if cbxType.ItemIndex > -1 then
   begin
     FType := cbxType.Items[cbxType.Itemindex];
-    searchParams := TFslList<TFHIRSearchParamDefinitionW>.create;
+    searchParams := TFslList<TFHIRSearchParamDefinitionW>.Create;
     try
       FConnection.statement.listSearchParams(FType, searchParams);
       for sp in searchParams do
@@ -588,7 +588,7 @@ begin
       layoutSearchParameters;
       setupColumns;
     finally
-      searchParams.Free;
+      searchParams.free;
     end;
     btnCopy.Enabled := true;
     btnPaste.Enabled := true;
@@ -634,10 +634,10 @@ begin
           if ed.path.Contains('.') and ed.isSummary and not ignoreColumn(sd, ed) then
             AddColumn(tail(ed.path), ed.path);
       finally
-        edl.Free;
+        edl.free;
       end;
     finally
-      sd.Free;
+      sd.free;
     end;
   end
   else
@@ -677,7 +677,7 @@ end;
 
 procedure TFetchResourceFrm.addSearchItem(sp : TFHIRSearchParamDefinitionW);
 begin
-  FSearchItems.Add(TSearchEntryPanel.create(self, sp.Link));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, sp.Link));
 end;
 
 function enough(v, i: Integer) : integer;
@@ -750,7 +750,7 @@ begin
   try
     FNpp.newResource(f, rs.version, fmt, url);
   finally
-    f.Free;
+    f.free;
   end;
   modalResult := mrClose;
 end;
@@ -765,11 +765,11 @@ begin
   Clipboard.Close;
   if s.Contains('?') then
     s := s.Substring(s.IndexOf('?')+1);
-  pm := THTTPParameters.create(s);
+  pm := THTTPParameters.Create(s);
   try
     readURL(pm);
   finally
-    pm.Free;
+    pm.free;
   end;
 end;
 
@@ -796,7 +796,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -861,7 +861,7 @@ begin
     vtMatches.RootNodeCount := FMatches.Count;
     vtMatches.Invalidate;
   finally
-    bundle.Free;
+    bundle.free;
   end;
 end;
 
@@ -927,10 +927,10 @@ begin
   for sp in rr.searchParamList do
     n := n or (sp.name = '_id');
   if not n then
-    FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_id', 'Resource id', sptToken)));
+    FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_id', 'Resource id', sptToken)));
   for sp in rr.searchParamList do
     if not ignore(sp.name) then
-      FSearchItems.Add(TSearchEntryPanel.create(self, sp.Link));
+      FSearchItems.Add(TSearchEntryPanel.Create(self, sp.Link));
   loadSortCombo;
   FormResize(nil);
   ClearColumns;
@@ -947,19 +947,19 @@ begin
         if ed.path.Contains('.') and ed.isSummary and not ignoreColumn(st, ed) then
           AddColumn(tail(ed.path), ed.path);
     finally
-      st.Free;
+      st.free;
     end;
 end;
 
 procedure TFetchResourceFrm.AddSearchAll;
 begin
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_id', 'Resource id', sptToken)));
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_text', 'Search by text content (narrative)', sptString)));
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_content', 'Search by text content (all elements)', sptString)));
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_lastUpdated', 'Search by date of last update', sptDate)));
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_profile', 'Search by Profile', sptToken)));
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_security', 'Search by security label', sptToken)));
-  FSearchItems.Add(TSearchEntryPanel.create(self, createSearchParam('_tag', 'Search by workflow tag', sptToken)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_id', 'Resource id', sptToken)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_text', 'Search by text content (narrative)', sptString)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_content', 'Search by text content (all elements)', sptString)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_lastUpdated', 'Search by date of last update', sptDate)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_profile', 'Search by Profile', sptToken)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_security', 'Search by security label', sptToken)));
+  FSearchItems.Add(TSearchEntryPanel.Create(self, createSearchParam('_tag', 'Search by workflow tag', sptToken)));
   FormResize(nil);
   loadSortCombo;
 
@@ -1020,7 +1020,7 @@ begin
     result.type_ := type_;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1074,19 +1074,19 @@ end;
 
 procedure TFetchResourceFrm.SetClient(const Value: TFhirClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
 procedure TFetchResourceFrm.SetCapabilityStatement(const Value: TFhirCapabilityStatement);
 begin
-  FCapabilityStatement.Free;
+  FCapabilityStatement.free;
   FCapabilityStatement := Value;
 end;
 
 procedure TFetchResourceFrm.SetProfiles(const Value: TProfileManager);
 begin
-  FProfiles.Free;
+  FProfiles.free;
   FProfiles := Value;
 end;
 
@@ -1109,13 +1109,13 @@ end;
           else
             saveFileAs(IncludeTrailingPathDelimiter(SystemTemp)+CODES_TFhirResourceType[res.ResourceType]+'-'+res.id+'.xml');
         finally
-          s.Free;
+          s.free;
         end;
       finally
-        comp.Free;
+        comp.free;
       end;
     finally
-      res.Free;
+      res.free;
     end;
   end;
   *)

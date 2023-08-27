@@ -175,7 +175,7 @@ procedure TCdaHeaderDialog.btnDocIdEditClick(Sender: TObject);
 var
   iiedit : TIIEditForm;
 begin
-  iiedit := TIIEditForm.create(self);
+  iiedit := TIIEditForm.Create(self);
   try
     iiedit.ii := cda.id.Clone(nil);
     if iiedit.ShowModal = mrOk then
@@ -223,7 +223,7 @@ var
   l, r : String;
 begin
   if cda.effectiveTime = nil then
-    cda.effectiveTime := Tv3TS.create;
+    cda.effectiveTime := Tv3TS.Create;
   cda.effectiveTime.value := TFslDateTime.makeLocal(dtpSec).toHL7;
   if pos('-', cda.effectiveTime.value) > 0 then
     StringSplit(cda.effectiveTime.value, '-', l, r)
@@ -250,7 +250,7 @@ end;
 
 destructor TCdaHeaderDialog.Destroy;
 begin
-  cda.Free;
+  cda.free;
   inherited;
 end;
 
@@ -270,7 +270,7 @@ begin
   else
   begin
     if cda.effectiveTime = nil then
-      cda.effectiveTime := Tv3TS.create;
+      cda.effectiveTime := Tv3TS.Create;
     // cda.effectiveTime.value := HL7DateToString(edtDocTime.AsDateTime, 'yyyymmddhhnnss', false) + edtDocTimezone.Text;
     cda.effectiveTime.value := edtDocTime.text;
   end;
@@ -285,7 +285,7 @@ begin
   else
   begin
     if cda.effectiveTime = nil then
-      cda.effectiveTime := Tv3TS.create;
+      cda.effectiveTime := Tv3TS.Create;
 //    cda.effectiveTime.value := HL7DateToString(edtDocTime.AsDateTime, 'yyyymmddhhnnss', false) + edtDocTimezone.Text;
     cda.effectiveTime.value := edtDocTime.Text;
   end;
@@ -306,7 +306,7 @@ end;
 
 procedure TCdaHeaderDialog.setcda(const value: TcdaClinicalDocument);
 begin
-  cda.Free;
+  cda.free;
   cda := value;
   if (cda <> nil) then
     bind;

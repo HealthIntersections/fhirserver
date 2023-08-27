@@ -954,8 +954,8 @@ End;
 destructor TFHIRDatabaseInstaller.Destroy;
 begin
   FServerFactory.free;
-  FBases.Free;
-  FFactory.Free;
+  FBases.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -1057,7 +1057,7 @@ begin
 //  inc(k);
 //  FConn.terminate;
 
-  m := TFHIRIndexInformation.create(FFactory.link, FServerFactory.link);
+  m := TFHIRIndexInformation.Create(FFactory.link, FServerFactory.link);
   names := TStringList.Create;
   try
     for i := 0 to m.Indexes.count - 1 do
@@ -1201,7 +1201,7 @@ end;
 //  lines : TStringList;
 //  sql, l : String;
 //begin
-//  lines := TStringList.create;
+//  lines := TStringList.Create;
 //  try
 //    lines.Text := replaceColumnWrappingChars(FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI), FConn.Owner.Platform);
 //    sql := '';
@@ -1329,9 +1329,9 @@ begin
     isTx := Fconn.Lookup('Config', 'ConfigKey', '100', 'Value', '').startsWith('terminology|');
 
     if version > ServerDBVersion then
-      raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
+      raise EDBException.Create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
     if (version < ServerDBVersionEarliestSupported) then
-      raise EDBException.create('Database must be rebuilt');
+      raise EDBException.Create('Database must be rebuilt');
     if (version < 13) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD  IsComponent int NULL');

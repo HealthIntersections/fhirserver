@@ -39,7 +39,7 @@ uses
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
-Function RecogniseFHIRFormat(Const sName : String; const lang : THTTPLanguages): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName : String; langList : THTTPLanguageList): TFHIRFormat;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function IsId(s : String) : boolean;
 function isHistoryURL(url : String) : boolean;
@@ -123,7 +123,7 @@ begin
         break;
     end;
   finally
-    ctl.Free;
+    ctl.free;
   end;
   if result = ffUnspecified then
     result := def;
@@ -155,11 +155,11 @@ begin
     else if StringExistsInsensitive(ct.base, 'turtle') then result := ffTurtle
     else if StringExistsSensitive(ct.base, '*/*') Then result := ffXhtml;
   finally
-    ct.Free;
+    ct.free;
   end;
 end;
 
-Function RecogniseFHIRFormat(Const sName : String; const lang : THTTPLanguages): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName : String; langList : THTTPLanguageList): TFHIRFormat;
 Begin
   if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
     result := ffXml
@@ -168,7 +168,7 @@ Begin
   else if sName = '' then
     result := ffUnspecified
   else
-    raise ERestfulException.create('fhir_objects.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, itStructure, 'Unknown format '+sName, lang);
+    raise ERestfulException.Create('fhir_objects.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, itStructure, 'Unknown format '+sName, langList);
 End;
 
 Function FhirGUIDToString(aGuid : TGuid):String;
@@ -214,7 +214,7 @@ var
   n : TJsonNode;
 begin
   result := false;
-  fetcher := TInternetFetcher.create;
+  fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := 'http://www.healthintersections.com.au/resource-policy.json';
     fetcher.Fetch;
@@ -232,13 +232,13 @@ begin
           if name = TJsonString(n).value then
             exit(true);
       finally
-        json.Free;
+        json.free;
       end;
     finally
-      stream.Free;
+      stream.free;
     end;
   finally
-    fetcher.Free;
+    fetcher.free;
   end;
 end;
 
@@ -350,17 +350,17 @@ begin
     if isOid(id) then
       result := base+id
     else
-      raise EFHIRException.create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
+      raise EFHIRException.Create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
   end
   else if (base = 'urn:uuid:') then
   begin
     if isGuid(id) then
       result := base+id
     else
-      raise EFHIRException.create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
+      raise EFHIRException.Create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
   end
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.Create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+aType+'/'+id;
 end;
@@ -372,7 +372,7 @@ begin
   else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
     result := url
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.Create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+url;
 end;

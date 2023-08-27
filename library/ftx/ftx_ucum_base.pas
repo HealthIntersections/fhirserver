@@ -195,7 +195,7 @@ end;
 
 destructor TUcumConcept.Destroy;
 begin
-  FNames.Free;
+  FNames.free;
   inherited;
 end;
 
@@ -305,7 +305,7 @@ end;
 
 destructor TUcumDefinedUnit.Destroy;
 begin
-  Fvalue.Free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -351,10 +351,10 @@ end;
 
 destructor TUcumModel.Destroy;
 begin
-  Fprefixes.Free;
-  FbaseUnits.Free;
-  FdefinedUnits.Free;
-  FProperties.Free;
+  Fprefixes.free;
+  FbaseUnits.free;
+  FdefinedUnits.free;
+  FProperties.free;
   inherited;
 end;
 
@@ -391,7 +391,7 @@ end;
 
 destructor TUcumProperty.Destroy;
 begin
-  FCommonUnits.Free;
+  FCommonUnits.free;
   inherited;
 end;
 

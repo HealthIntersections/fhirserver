@@ -71,7 +71,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
+    constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; langList : THTTPLanguageList);
     destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
@@ -165,7 +165,7 @@ Begin
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, html);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -895,7 +895,7 @@ begin
   html.ParaURL('LOINC Home', sPrefix);
 end;
 
-constructor TloincPublisher.Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
+constructor TloincPublisher.Create(oLoinc : TLoincServices; FHIRPathEngine : String; langList : THTTPLanguageList);
 begin
   inherited Create;
   Lock := TFslLock.Create('LOINC publisher');
@@ -903,7 +903,7 @@ begin
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;
   FFHIRPath := FHIRPathEngine;
-  langs := FLoinc.langsForLang(lang);
+  langs := FLoinc.langsForLang(langList);
 end;
 
 destructor TloincPublisher.Destroy;
@@ -911,10 +911,10 @@ var
   i : integer;
 begin
   For i := 0 to FSearchCache.Count - 1 do
-    FSearchCache.Objects[i].Free;
-  FSearchCache.Free;
-  Lock.Free;
-  FLoinc.Free;
+    FSearchCache.Objects[i].free;
+  FSearchCache.free;
+  Lock.free;
+  FLoinc.free;
   inherited;
 end;
 

@@ -36,7 +36,7 @@ public class FactoryGenerator extends BaseGenerator {
   public void seeType(Analysis analysis) {
     if (!analysis.isAbstract()) {
       line(gen, "  else if name = '"+analysis.getName()+"' then");
-      line(gen, "    result := "+analysis.getClassName()+".create()");
+      line(gen, "    result := "+analysis.getClassName()+".Create()");
     }
   }
 
@@ -46,11 +46,11 @@ public class FactoryGenerator extends BaseGenerator {
     line(gen, "{$IFDEF "+analysis.getDefineName()+"}");
     for (TypeInfo ti : analysis.getTypeList()) {
       line(gen, "  else if name = '"+ti.getDefn().getPath()+"' then");
-      line(gen, "    result := "+ti.getName()+".create()");
+      line(gen, "    result := "+ti.getName()+".Create()");
     }
     if (!analysis.isAbstract() && !analysis.isInterface()) {
       line(gen, "  else if name = '"+analysis.getName()+"' then");
-      line(gen, "    result := "+analysis.getClassName()+".create()");
+      line(gen, "    result := "+analysis.getClassName()+".Create()");
     }      
     line(gen, "{$ENDIF "+analysis.getDefineName()+"}");    
   }

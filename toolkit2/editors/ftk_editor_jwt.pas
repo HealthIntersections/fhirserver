@@ -136,7 +136,7 @@ var
   json : TJsonObject;
   s : String;
 begin
-  jwt := TJWT.create;
+  jwt := TJWT.Create;
   try
     try
        jwt.header := TJSONParser.Parse(synHeader.text);
@@ -158,7 +158,7 @@ begin
     end;
     json := fetchJson(edtPrivateKey.text);
     try
-      jwk := TJWK.create(json.link);
+      jwk := TJWK.Create(json.link);
       try
         s := TJWTUtils.encodeJWT(jwt, jwk);
       finally
@@ -302,9 +302,9 @@ begin
       kid := jwt.kid;
       try
         if kid = 'QvVUYmIjO-FjJ8DWRgL_G01SQhm5xO4lBryOrx656QY' then
-          jwks := TJWKList.create(EXAMPLE_JWKS)
+          jwks := TJWKList.Create(EXAMPLE_JWKS)
         else if edtPublicKey.text <> '' then
-          jwks := TJWKList.create(fetchJson(edtPublicKey.text))
+          jwks := TJWKList.Create(fetchJson(edtPublicKey.text))
         else
           jwks := nil;
         if jwks <> nil then
@@ -347,7 +347,7 @@ var
 begin
   inherited makeTextTab;
 
-  pnlMain := TPanel.create(tab);
+  pnlMain := TPanel.Create(tab);
   pnlMain.parent := tab;
   pnlMain.align := alBottom;
   pnlMain.height := tab.Height - 100;
@@ -355,14 +355,14 @@ begin
   pnlMain.BevelOuter := bvNone;
   tab.OnResize := doTabResize;
 
-  panel := TPanel.create(pnlMain);
+  panel := TPanel.Create(pnlMain);
   panel.parent := pnlMain;
   panel.align := alTop;
   panel.height := 140;
   panel.caption := '';
   panel.BevelOuter := bvNone;
 
-  pnlSub := TPanel.create(panel);
+  pnlSub := TPanel.Create(panel);
   pnlSub.parent := panel;
   pnlSub.align := alTop;
   pnlSub.height := 30;
@@ -370,7 +370,7 @@ begin
   pnlSub.caption := '  Header';
   pnlSub.BevelOuter := bvNone;
 
-  btn := TButton.create(pnlSub);
+  btn := TButton.Create(pnlSub);
   btn.parent := pnlSub;
   btn.top := 2;
   btn.left := 100;
@@ -379,7 +379,7 @@ begin
   btn.Anchors := [akTop, akLeft];
   btn.OnClick := doHeaderPretty;
 
-  btn := TButton.create(pnlSub);
+  btn := TButton.Create(pnlSub);
   btn.parent := pnlSub;
   btn.top := 2;
   btn.left := 160;
@@ -388,24 +388,24 @@ begin
   btn.Anchors := [akTop, akLeft];
   btn.OnClick := doHeaderDense;
 
-  synHeader := TSynEdit.create(panel);
+  synHeader := TSynEdit.Create(panel);
   synHeader.parent := panel;
   synHeader.align := alClient;
   synHeader.Font.Size := 10;
-  synHeader.Highlighter := TSynJSonSyn.create(nil);
+  synHeader.Highlighter := TSynJSonSyn.Create(nil);
   synHeader.OnChange := DoContentChange;
   //synHeader.OnStatusChange := DoTextEditorStatusChange;
   //synHeader.PopupMenu := FEditorPopup;
 
 
-  panel := TPanel.create(pnlMain);
+  panel := TPanel.Create(pnlMain);
   panel.parent := pnlMain;
   panel.align := alBottom;
   panel.height := 110;
   panel.caption := '';
   panel.BevelOuter := bvNone;
 
-  pnlSub := TPanel.create(panel);
+  pnlSub := TPanel.Create(panel);
   pnlSub.parent := panel;
   pnlSub.align := alTop;
   pnlSub.height := 24;
@@ -413,19 +413,19 @@ begin
   pnlSub.caption := '  Signature';
   pnlSub.BevelOuter := bvNone;
 
-  lblSig := TLabel.create(panel);
+  lblSig := TLabel.Create(panel);
   lblSig.parent := panel;
   lblSig.top := 28;
   lblSig.left := 20;
   lblSig.Caption := 'The JWT has not been validated';
 
-  lbl := TLabel.create(panel);
+  lbl := TLabel.Create(panel);
   lbl.parent := panel;
   lbl.top := 51;
   lbl.left := 20;
   lbl.Caption := 'Public Key';
 
-  edtPublicKey := TEdit.create(panel);
+  edtPublicKey := TEdit.Create(panel);
   edtPublicKey.parent := panel;
   edtPublicKey.top := 48;
   edtPublicKey.left := 80;
@@ -434,7 +434,7 @@ begin
   edtPublicKey.TextHint := '(File/URL of JSON JWKS)';
   edtPublicKey.OnChange := DoContentChange;
 
-  btnValidate := TButton.create(panel);
+  btnValidate := TButton.Create(panel);
   btnValidate.parent := panel;
   btnValidate.top := 48;
   btnValidate.left := panel.Width - 90;
@@ -444,13 +444,13 @@ begin
   btnValidate.OnClick := doValidate;
   btnValidate.enabled := false;
 
-  lbl := TLabel.create(panel);
+  lbl := TLabel.Create(panel);
   lbl.parent := panel;
   lbl.top := 77;
   lbl.left := 20;
   lbl.Caption := 'Private Key';
 
-  edtPrivateKey := TEdit.create(panel);
+  edtPrivateKey := TEdit.Create(panel);
   edtPrivateKey.parent := panel;
   edtPrivateKey.top := 74;
   edtPrivateKey.left := 80;
@@ -459,7 +459,7 @@ begin
   edtPrivateKey.TextHint := '(File/URL of JSON JWK that includes )';
   edtPrivateKey.OnChange := DoContentChange;
 
-  btnUpdate := TButton.create(panel);
+  btnUpdate := TButton.Create(panel);
   btnUpdate.parent := panel;
   btnUpdate.top := 74;
   btnUpdate.left := panel.Width - 90;
@@ -469,13 +469,13 @@ begin
   btnUpdate.OnClick := doRegenerate;
   btnUpdate.enabled := false;
 
-  panel := TPanel.create(pnlMain);
+  panel := TPanel.Create(pnlMain);
   panel.parent := pnlMain;
   panel.align := alClient;
   panel.caption := '';
   panel.BevelOuter := bvNone;
 
-  pnlSub := TPanel.create(panel);
+  pnlSub := TPanel.Create(panel);
   pnlSub.parent := panel;
   pnlSub.align := alTop;
   pnlSub.height := 30;
@@ -483,7 +483,7 @@ begin
   pnlSub.caption := '  Payload';
   pnlSub.BevelOuter := bvNone;
 
-  btn := TButton.create(pnlSub);
+  btn := TButton.Create(pnlSub);
   btn.parent := pnlSub;
   btn.top := 2;
   btn.left := 100;
@@ -492,7 +492,7 @@ begin
   btn.Anchors := [akTop, akLeft];
   btn.OnClick := doPayloadPretty;
 
-  btn := TButton.create(pnlSub);
+  btn := TButton.Create(pnlSub);
   btn.parent := pnlSub;
   btn.top := 2;
   btn.left := 160;
@@ -501,7 +501,7 @@ begin
   btn.Anchors := [akTop, akLeft];
   btn.OnClick := doPayloadDense;
 
-  btnResource := TButton.create(pnlSub);
+  btnResource := TButton.Create(pnlSub);
   btnResource.parent := pnlSub;
   btnResource.top := 2;
   btnResource.left := 240;
@@ -511,11 +511,11 @@ begin
   btnResource.OnClick := doOpenResource;
 
 
-  synPayload := TSynEdit.create(panel);
+  synPayload := TSynEdit.Create(panel);
   synPayload.parent := panel;
   synPayload.align := alClient;
   synPayload.Font.Size := 10;
-  synPayload.Highlighter := TSynJSonSyn.create(nil);
+  synPayload.Highlighter := TSynJSonSyn.Create(nil);
   synPayload.OnChange := DoContentChange;
   //synPayload.OnStatusChange := DoTextEditorStatusChange;
   //synPayload.PopupMenu := FEditorPopup;
@@ -546,11 +546,11 @@ begin
 
   json := TJSONParser.Parse(EXAMPLE_JWKS);
   try
-    jwk := TJWK.create(json.Link);
+    jwk := TJWK.Create(json.Link);
     try
-      jwt := TJWT.create;
+      jwt := TJWT.Create;
       try
-        jwt.header := TJsonObject.create;
+        jwt.header := TJsonObject.Create;
         jwt.payload := TJSONParser.Parse('{ "content" : "example JSON" }');
         TextEditor.Text := TJWTUtils.encodeJWT(jwt, jwt_es256, jwk, 'DEF');
       finally

@@ -55,7 +55,7 @@ type
    protected
      FIni : TIniFile;
    public
-     constructor create(handle : TComponent; ini : TIniFile);
+     constructor Create(handle : TComponent; ini : TIniFile);
 
      function link : TStorageService; overload;
 
@@ -86,9 +86,9 @@ implementation
 
 { TStorageService }
 
-constructor TStorageService.create(handle: TComponent; ini : TIniFile);
+constructor TStorageService.Create(handle: TComponent; ini : TIniFile);
 begin
-  inherited create;
+  inherited Create;
   FHandle := handle;
   FIni := ini;
 end;

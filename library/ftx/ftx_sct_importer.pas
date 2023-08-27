@@ -355,7 +355,7 @@ begin
     imp.Go;
     result := imp.outputFile;
   finally
-    imp.Free;
+    imp.free;
   end;
 end;
 
@@ -373,7 +373,7 @@ End;
 
 constructor TStemCache.Create(stem: String);
 begin
-  inherited create;
+  inherited Create;
   values := TFslIntegerList.Create;
   values.SortAscending;
 end;
@@ -437,7 +437,7 @@ end;
 
 destructor TConcept.Destroy;
 begin
-  Stems.Free;
+  Stems.free;
   inherited;
 end;
 
@@ -445,7 +445,7 @@ end;
 
 constructor TWordCache.create(word, aStem: String);
 begin
-  inherited create;
+  inherited Create;
   self.word := word;
   Stem := aStem;
 end;
@@ -462,26 +462,26 @@ End;
 constructor TSnomedImporter.Create;
 begin
   inherited;
-  FConceptFiles := TStringList.create;
-  FRelationshipFiles := TStringList.create;
-  FDescriptionFiles := TStringList.create;
-  FDirectoryReferenceSets := TStringList.create;
-  FRels := TDictionary<UInt64,cardinal>.create;
-  FDuplicateRelationships := TStringList.create;
-  FRefSetTypes := TDictionary<String, cardinal>.create;
-  FConceptIndex := TDictionary<Uint64, integer>.create;
+  FConceptFiles := TStringList.Create;
+  FRelationshipFiles := TStringList.Create;
+  FDescriptionFiles := TStringList.Create;
+  FDirectoryReferenceSets := TStringList.Create;
+  FRels := TDictionary<UInt64,cardinal>.Create;
+  FDuplicateRelationships := TStringList.Create;
+  FRefSetTypes := TDictionary<String, cardinal>.Create;
+  FConceptIndex := TDictionary<Uint64, integer>.Create;
 end;
 
 destructor TSnomedImporter.Destroy;
 begin
   FConceptIndex.free;
   FRefSetTypes.free;
-  FDuplicateRelationships.Free;
+  FDuplicateRelationships.free;
   FDirectoryReferenceSets.free;
-  FRels.Free;
-  FConceptFiles.Free;
-  FRelationshipFiles.Free;
-  FDescriptionFiles.Free;
+  FRels.free;
+  FConceptFiles.free;
+  FRelationshipFiles.free;
+  FDescriptionFiles.free;
   inherited;
 end;
 
@@ -582,12 +582,12 @@ begin
     // SetFileReadOnly(sFilename, true);
   Finally
     Frefsets.free;
-    FWordList.Free;
-    FStemList.Free;
-    FStringsTemp.Free;
-    FConcepts.Free;
-    FSvc.Free;
-    FStemmer.Free;
+    FWordList.free;
+    FStemList.free;
+    FStringsTemp.free;
+    FConcepts.free;
+    FSvc.free;
+    FStemmer.free;
   End;
 End;
 
@@ -605,7 +605,7 @@ begin
     SetLength(result, f.Size);
     f.Read(result[0], f.Size);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -1107,7 +1107,7 @@ begin
     oConcept.Identity := aId;
     iIndex := FConcepts.IndexBy(oConcept, Compare);
   Finally
-    oConcept.Free;
+    oConcept.free;
   End;
   if iIndex >= 0 Then
     result := TConcept(FConcepts[iIndex])
@@ -1264,10 +1264,10 @@ begin
         if e <> inttostr(TConcept(FConcepts[i]).Identity) then
           FConcept.SetNormalForm(TConcept(FConcepts[i]).Index, FStrings.AddString(e));
       finally
-        n.Free;
+        n.free;
       end;
     finally
-      exp.Free;
+      exp.free;
     end;
   end;
 end;
@@ -2095,7 +2095,7 @@ begin
       inc(iCursor, 1);
     End;
   finally
-    fieldnames.Free;
+    fieldnames.free;
   end;
 end;
 
@@ -2157,7 +2157,7 @@ begin
       result.index := MAGIC_NO_CHILDREN;
       add(result.Link);
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;

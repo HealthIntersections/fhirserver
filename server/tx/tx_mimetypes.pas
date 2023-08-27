@@ -63,13 +63,13 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -117,7 +117,7 @@ begin
   result := '';
 end;
 
-function TMimeTypeCodeServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TMimeTypeCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 begin
   result := code.Trim;
 end;
@@ -138,7 +138,7 @@ begin
     else
       result := nil;
   finally
-    mt.Free;
+    mt.free;
   end;
 end;
 
@@ -162,14 +162,14 @@ begin
   inherited;
 end;
 
-function TMimeTypeCodeServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TMimeTypeCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
-  result := getDisplay(TMTCodeSystemProviderContext(context).mt.source, lang);
+  result := getDisplay(TMTCodeSystemProviderContext(context).mt.source, langList);
 end;
 
 procedure TMimeTypeCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation(true, true, '', Display(context, nil));
 end;
 
 function TMimeTypeCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -194,7 +194,7 @@ end;
 
 function TMimeTypeCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TMimeTypeCodeServices.getcontext');
+  raise ETerminologyTodo.Create('TMimeTypeCodeServices.getcontext');
 end;
 
 function TMimeTypeCodeServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
@@ -215,7 +215,7 @@ end;
 
 function TMimeTypeCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TMimeTypeCodeServices.searchFilter');
+  raise ETerminologyTodo.Create('TMimeTypeCodeServices.searchFilter');
 end;
 
 function TMimeTypeCodeServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
@@ -230,17 +230,17 @@ end;
 
 function TMimeTypeCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TMimeTypeCodeServices.FilterMore');
+  raise ETerminologyTodo.Create('TMimeTypeCodeServices.FilterMore');
 end;
 
 function TMimeTypeCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TMimeTypeCodeServices.FilterConcept');
+  raise ETerminologyTodo.Create('TMimeTypeCodeServices.FilterConcept');
 end;
 
 function TMimeTypeCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TMimeTypeCodeServices.InFilter');
+  raise ETerminologyTodo.Create('TMimeTypeCodeServices.InFilter');
 end;
 
 { TMTCodeSystemProviderContext }
@@ -253,13 +253,13 @@ end;
 
 destructor TMTCodeSystemProviderContext.Destroy;
 begin
-  FMt.Free;
+  FMt.free;
   inherited;
 end;
 
 procedure TMTCodeSystemProviderContext.SetMt(const Value: TMimeContentType);
 begin
-  FMt.Free;
+  FMt.free;
   FMt := Value;
 end;
 

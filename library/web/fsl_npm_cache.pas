@@ -277,12 +277,12 @@ end;
 constructor TFHIRLoadPackagesTaskResponse.Create;
 begin
   inherited Create;
-  FPackages := TFslList<TNpmPackage>.create;
+  FPackages := TFslList<TNpmPackage>.Create;
 end;
 
 destructor TFHIRLoadPackagesTaskResponse.Destroy;
 begin
-  FPackages.Free;
+  FPackages.free;
   inherited Destroy;
 end;
 
@@ -355,9 +355,9 @@ end;
 
 destructor TFHIRPackageManager.Destroy;
 begin
-  FCache.Free;
-  FIni.Free;
-  FLock.Free;
+  FCache.free;
+  FIni.free;
+  FLock.free;
   Inherited;
 end;
 
@@ -400,7 +400,7 @@ begin
           list.Add(TFHIRPackageInfo.Create(npm.name, npm.version, npm.fhirVersion, npm.description, npm.canonical, npm.url));
       end;
     finally
-      npm.Free;
+      npm.free;
     end;
   end;
   TFHIRPackageClient.loadPackagesForVersion(list, PACKAGE_SERVER_BACKUP, ver);
@@ -466,7 +466,7 @@ begin
       if url = FIni.ReadString('urls', s, '') then
         exit(s);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -495,7 +495,7 @@ begin
         for s in npm.obj['dependencies'].properties.Keys do
           autoInstallPackage(s, npm.obj['dependencies'].str[s]);
     finally
-      npm.Free;
+      npm.free;
     end;
     if packageExists(id, ver) then
       if not check('Replace existing copy of '+id+' version '+ver+'?') then
@@ -508,7 +508,7 @@ begin
     ForceFolder(dir);
     size := 0;
     c := 0;
-    indexer := TNpmPackageIndexBuilder.create;
+    indexer := TNpmPackageIndexBuilder.Create;
     try
       for s in files.Keys do
       begin
@@ -545,7 +545,7 @@ begin
       indexer.free;
     end;
   finally
-    files.Free;
+    files.free;
   end;
 end;
 
@@ -560,7 +560,7 @@ begin
   try
     fetch.onProgress := progress;
     FTaskDesc := 'Downloading from '+url;
-    fetch.Buffer := TFslBuffer.create;
+    fetch.Buffer := TFslBuffer.Create;
     aborted := false;
     s := '';
     result := false;
@@ -582,7 +582,7 @@ begin
       Import(fetch.Buffer.AsBytes).free;
     end;
   finally
-    fetch.Free;
+    fetch.free;
   end;
 end;
 
@@ -653,7 +653,7 @@ begin
     end;
     work(100, true, '');
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -697,7 +697,7 @@ begin
     end;
     work(100, true, '');
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -735,7 +735,7 @@ var
 begin
   work(0, false, 'Loading Package');
   try
-    result := TDictionary<String, TBytes>.create;
+    result := TDictionary<String, TBytes>.Create;
     bo := TBytesStream.Create(content);
     try
       z := TZDecompressionStream.Create(bo, false); //  15+16);
@@ -764,10 +764,10 @@ begin
             end;
           end;
         finally
-          tar.Free;
+          tar.free;
         end;
       finally
-        z.Free;
+        z.free;
       end;
     finally
       bo.free;
@@ -786,7 +786,7 @@ begin
   try
     loadPackage(id, ver, fsl, loadInfo);
   finally
-    fsl.Free;
+    fsl.free;
   end;
 end;
 
@@ -872,7 +872,7 @@ begin
 
           end;
         finally
-          f.Free;
+          f.free;
         end;
       end;
       work(trunc((c / npm.Folders['package'].resources.count) * 100), false, 'Package '+id+'#'+ver+': Load '+fi.Name);
@@ -880,7 +880,7 @@ begin
     end;
     work(100, true, 'Complete');
   finally
-    npm.Free;
+    npm.free;
   end;
 end;
 
@@ -925,7 +925,7 @@ begin
   result := packageExists(id, ver);
   if (not result) then
   begin
-    list := TFslList<TFHIRPackageInfo>.create;
+    list := TFslList<TFHIRPackageInfo>.Create;
     try
       if (ver = 'current') then
         TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_CIBUILD, id)
@@ -942,7 +942,7 @@ begin
       if (pd <> nil) then
         self.install(pd.Url);
     finally
-      list.Free;
+      list.free;
     end;
     result := packageExists(id, ver);
   end
@@ -1025,7 +1025,7 @@ begin
       end;
     end;
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -1053,7 +1053,7 @@ var
   list : TFslList<TFHIRPackageInfo>;
 begin
   result := '';
-  list := TFslList<TFHIRPackageInfo>.create;
+  list := TFslList<TFHIRPackageInfo>.Create;
   try
     try
       TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_PRIMARY, id);
@@ -1114,13 +1114,13 @@ begin
     b.AppendLine('Packages in '+Folder);
     b.AppendLine;
 
-    list := TFslList<TNpmPackage>.create;
+    list := TFslList<TNpmPackage>.Create;
     try
       ListPackages(All_Package_Kinds, list);
       for p in list do
         p.report(b);
     finally
-      list.Free;
+      list.free;
     end;
 
     b.AppendLine;
@@ -1131,11 +1131,11 @@ begin
       for s in ts do
         b.AppendLine('  '+s+'='+FIni.ReadString('urls', s, ''));
     finally
-      ts.Free;
+      ts.free;
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1165,7 +1165,7 @@ end;
 
 destructor TPackageLoadingInformation.Destroy;
 begin
-  FLoaded.Free;
+  FLoaded.free;
   FVersion.free;
   inherited;
 end;

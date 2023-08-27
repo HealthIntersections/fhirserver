@@ -56,7 +56,7 @@ Type
   private
     FValue: String;
   public
-    constructor create(value : String); overload;
+    constructor Create(value : String); overload;
     property value : String read FValue write FValue;
   end;
 
@@ -722,7 +722,7 @@ begin
   csv := TFslCSVExtractor.create(TFslFile.create(TestSettings.serverTestFile(['testcases', 'csv', 'test.csv']), fmOpenRead));
   try
     csv.IgnoreWhitespace := true;
-    items := TFslStringList.create;
+    items := TFslStringList.Create;
     try
       csv.consumeEntries(items);
       AssertEqual(items[0], 'Column 1', items[0]+' = Column 1');
@@ -751,10 +751,10 @@ var
   a, b, c, d : TFslTestObject;
 begin
   // ---------------------
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   d.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -765,10 +765,10 @@ begin
   a.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   d.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -779,10 +779,10 @@ begin
   c.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   d.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -793,10 +793,10 @@ begin
   c.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   d.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -807,10 +807,10 @@ begin
   b.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   d.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -821,197 +821,197 @@ begin
   b.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   d.free;
   AssertEqual(3, classCount('TFslTestObject'));
   b.free;
   AssertEqual(2, classCount('TFslTestObject'));
   c.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-
-  // ---------------------
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  // ---------------------
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  a.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  d.free;
-  AssertEqual(1, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(0, classCount('TFslTestObject'));
-
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
-  AssertEqual(4, classCount('TFslTestObject'));
-  b.free;
-  AssertEqual(3, classCount('TFslTestObject'));
-  c.free;
-  AssertEqual(2, classCount('TFslTestObject'));
-  d.free;
   AssertEqual(1, classCount('TFslTestObject'));
   a.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
 
   // ---------------------
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  // ---------------------
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
+  AssertEqual(4, classCount('TFslTestObject'));
+  b.free;
+  AssertEqual(3, classCount('TFslTestObject'));
+  c.free;
+  AssertEqual(2, classCount('TFslTestObject'));
+  d.free;
+  AssertEqual(1, classCount('TFslTestObject'));
+  a.free;
+  AssertEqual(0, classCount('TFslTestObject'));
+
+
+  // ---------------------
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   c.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -1022,10 +1022,10 @@ begin
   d.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   a.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -1036,10 +1036,10 @@ begin
   d.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   b.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -1050,10 +1050,10 @@ begin
   d.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   c.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -1064,10 +1064,10 @@ begin
   d.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   a.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -1078,10 +1078,10 @@ begin
   d.free;
   AssertEqual(0, classCount('TFslTestObject'));
 
-  a := TFslTestObject.create;
-  b := TFslTestObject.create;
-  c := TFslTestObject.create;
-  d := TFslTestObject.create;
+  a := TFslTestObject.Create;
+  b := TFslTestObject.Create;
+  c := TFslTestObject.Create;
+  d := TFslTestObject.Create;
   AssertEqual(4, classCount('TFslTestObject'));
   b.free;
   AssertEqual(3, classCount('TFslTestObject'));
@@ -1235,7 +1235,7 @@ begin
       b.Finish;
       s := b.Build();
     finally
-      b.Free;
+      b.free;
     end;
     StringToFile(s, fnDst, TEncoding.UTF8);
     ok := CheckXMLIsSame(fnSrc, fnDst, s);
@@ -1256,7 +1256,7 @@ begin
       b.Finish;
       s := b.Build();
     finally
-      b.Free;
+      b.free;
     end;
     StringToFile(s, fnDst, TEncoding.UTF8);
     ok := CheckXMLIsSame(fnSrc, fnDst, s);
@@ -1305,12 +1305,12 @@ var
 begin
   // you should get one leak when you execute these tests. this exists to make sure that the leak tracking system is working
   x := TFslObject.Create;
-  l := TFslList<TFslObject>.create;
+  l := TFslList<TFslObject>.Create;
   try
     l.Add(TFslObject.Create);
     assertTrue(l.Count = 1, 'Count should be 1');
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -1348,7 +1348,7 @@ begin
     assertTrue(list[1].value = 'b');
     assertTrue(list[2].value = 'c');
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1358,8 +1358,8 @@ var
   l2 : TFslList<TFslTestString>;
   o : TFslTestString;
 begin
-  l := TFslList<TFslObject>.create;
-  l2 := TFslList<TFslTestString>.create;
+  l := TFslList<TFslObject>.Create;
+  l2 := TFslList<TFslTestString>.Create;
   try
     l.Add(TFslObject.Create);
     l2.Add(TFslTestString.create('test'));
@@ -1367,8 +1367,8 @@ begin
       l.add(o.Link);
     assertTrue(l.Count = 2);
   finally
-    l.Free;
-    l2.Free;
+    l.free;
+    l2.free;
   end;
 end;
 
@@ -1376,7 +1376,7 @@ procedure TFslGenericsTests.testRemove;
 var
   l : TFslList<TFslObject>;
 begin
-  l := TFslList<TFslObject>.create;
+  l := TFslList<TFslObject>.Create;
   try
     l.Add(TFslObject.Create);
     assertTrue(l.Count = 1);
@@ -1385,7 +1385,7 @@ begin
     l.Add(TFslObject.Create);
     assertTrue(l.Count = 1);
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -1393,13 +1393,13 @@ procedure TFslGenericsTests.testReplace;
 var
   l : TFslList<TFslObject>;
 begin
-  l := TFslList<TFslObject>.create;
+  l := TFslList<TFslObject>.Create;
   try
     l.Add(TFslObject.Create);
     l[0] := TFslObject.Create;
     assertTrue(l.Count = 1);
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -1409,7 +1409,7 @@ var
   c : integer;
   o : TFslObject;
 begin
-  l := TFslList<TFslObject>.create;
+  l := TFslList<TFslObject>.Create;
   try
     l.Add(TFslObject.Create);
     l.Add(TFslObject.Create);
@@ -1422,7 +1422,7 @@ begin
       raise ETestCase.create('Wrong Count');
     assertTrue(l.Count = 3);
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -1442,7 +1442,7 @@ begin
     map.Remove('1est1');
     assertTrue(map.Count = 2);
   finally
-    map.Free;
+    map.free;
   end;
 end;
 
@@ -1466,7 +1466,7 @@ var
   tests : TMXmlDocument;
   test : TMXmlElement;
 begin
-  inherited create;
+  inherited Create;
   tests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'patch', 'xml-patch-tests.xml']), [xpResolveNamespaces]);
   try
     test := tests.document.first;
@@ -1477,7 +1477,7 @@ begin
       test := test.Next;
     end;
   finally
-    tests.Free;
+    tests.free;
   end;
 end;
 
@@ -1526,8 +1526,8 @@ end;
 
 procedure TXmlPatchTest.TearDown;
 begin
-  engine.Free;
-  tests.Free;
+  engine.free;
+  tests.free;
 end;
 
 { TXmlParserTest }
@@ -1540,7 +1540,7 @@ begin
   try
     assertPass();
   finally
-    xml.Free;
+    xml.free;
   end;
 end;
 
@@ -1577,7 +1577,7 @@ begin
       path := path.next;
     end;
   finally
-    tests.Free;
+    tests.free;
   end;
 end;
 
@@ -1621,7 +1621,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 }
@@ -1669,8 +1669,8 @@ end;
 
 procedure TXPathParserTest.TearDown;
 begin
-  functionNames.Free;
-  tests.Free;
+  functionNames.free;
+  tests.free;
 end;
 
 constructor TXPathEngineTests.Create;
@@ -1678,7 +1678,7 @@ var
   tests : TMXmlDocument;
   tcase : TMXmlElement;
 begin
-  inherited create;
+  inherited Create;
   tests := TMXmlParser.ParseFile(TestSettings.serverTestFile(['testcases', 'xml', 'xpath-tests.xml']), [xpResolveNamespaces]);
   try
     tcase := tests.document.firstElement;
@@ -1689,7 +1689,7 @@ begin
       tcase := tcase.nextElement;
     end;
   finally
-    tests.Free;
+    tests.free;
   end;
 end;
 
@@ -1882,7 +1882,7 @@ begin
     end;
   end;
   finally
-    nodes.Free;
+    nodes.free;
   end;
 end;
 
@@ -1903,7 +1903,7 @@ begin
       {$ENDIF}
       runXTest(test, outcomes);
     finally
-      outcomes.Free;
+      outcomes.free;
     end;
   end;
 end;
@@ -1921,7 +1921,7 @@ end;
 
 procedure TXPathEngineTest.TearDown;
 begin
-  tests.Free;
+  tests.free;
 end;
 
 { TDecimalTests }
@@ -2476,7 +2476,7 @@ begin
       assertTrue(ttl <> nil);
       assertTrue(ok);
     finally
-      ttl.Free;
+      ttl.free;
     end;
   except
     on e : Exception do
@@ -4376,7 +4376,7 @@ begin
   try
     f.Write(TEST_FILE_CONTENT[1], length(TEST_FILE_CONTENT));
   finally
-    f.Free;
+    f.free;
   end;
   assertTrue(FileExists(filename), 'FileExists(filename) #2');
   assertTrue(FileSize(filename) = 27, 'FileSize(filename) = 27');
@@ -4386,7 +4386,7 @@ begin
     f.Read(s[1], f.Size);
     assertTrue(s = TEST_FILE_CONTENT, 's = TEST_FILE_CONTENT');
   finally
-    f.Free;
+    f.free;
   end;
   if (FileCanBeReadOnly) then
   begin
@@ -4417,10 +4417,10 @@ begin
     assertTrue(obj.FslObjectReferenceCount = 0);
     obj.Link;
     assertTrue(obj.FslObjectReferenceCount = 1);
-    obj.Free;
+    obj.free;
     assertTrue(obj.FslObjectReferenceCount = 0);
   finally
-    obj.Free;
+    obj.free;
   end;
 end;
 
@@ -4450,7 +4450,7 @@ begin
       kcs.Leave;
     end;
   finally
-    kcs.Free;
+    kcs.free;
   end;
 end;
 
@@ -4661,7 +4661,7 @@ begin
     sleep(500);
     assertTrue(globalNum = 100, '100');
   finally
-    sem.Free;
+    sem.free;
   end;
 end;
 
@@ -4725,7 +4725,7 @@ begin
     ok := CheckJsonIsSame(fnSrc, fnDst, s);
     assertTrue(ok, s);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -4740,10 +4740,10 @@ begin
     try
       assertTrue(json <> nil);
     finally
-      json.Free;
+      json.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4788,10 +4788,10 @@ begin
       assertTrue(json.arr['prefixes'].Count = 1);
       assertTrue(json.arr['names'].Count = 1);
     finally
-      json.Free;
+      json.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4810,10 +4810,10 @@ begin
       assertTrue(json.arr['prefixes'].Count = 1);
       assertTrue(json.arr['names'].Count = 1);
     finally
-      json.Free;
+      json.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4832,7 +4832,7 @@ begin
     assertTrue(json.int['nbf3'] = 1622690247979);
 
   finally
-    json.Free;
+    json.free;
   end;
 
 end;
@@ -4848,10 +4848,10 @@ begin
     try
       assertTrue(json <> nil);
     finally
-      json.Free;
+      json.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4876,7 +4876,7 @@ var
   test : TJsonNode;
   s : string;
 begin
-  inherited create;
+  inherited Create;
   tests := TJSONParser.ParseNode(FileToBytes(TestSettings.serverTestFile(['testcases', 'json', 'json-patch-tests.json']))) as TJsonArray;
   try
     for test in tests do
@@ -4894,7 +4894,7 @@ end;
 
 procedure TJsonPatchTest.execute(context : TObject);
 begin
-  engine.applyPatch(test.obj['doc'], test.arr['patch']).Free;
+  engine.applyPatch(test.obj['doc'], test.arr['patch']).free;
 end;
 
 procedure TJsonPatchTest.TestCase(Name: String);
@@ -4919,7 +4919,7 @@ begin
         try
           assertTrue(TJsonNode.compare(outcome, test.obj['expected']))
         finally
-          outcome.Free;
+          outcome.free;
         end;
       end;
     end;
@@ -4934,8 +4934,8 @@ end;
 
 procedure TJsonPatchTest.TearDown;
 begin
-  engine.Free;
-  tests.Free;
+  engine.free;
+  tests.free;
 end;
 
 (*
@@ -4958,7 +4958,7 @@ begin
   try
     assertTrue(sig.verifySignature(bytes));
   finally
-    sig.Free;
+    sig.free;
   end;
 end;
 
@@ -4988,14 +4988,14 @@ begin
 
     bytes := sig.signEnveloped(TEncoding.UTF8.GetBytes('<Envelope xmlns="urn:envelope">'+#13#10+'</Envelope>'+#13#10), sdXmlRSASha1, true);
   finally
-    sig.Free;
+    sig.free;
   end;
 
   sig := TDigitalSigner.Create;
   try
     assertTrue(sig.verifySignature(bytes));
   finally
-    sig.Free;
+    sig.free;
   end;
 end;
 
@@ -5010,14 +5010,14 @@ begin
 
     bytes := sig.signEnveloped(TEncoding.UTF8.GetBytes('<Envelope xmlns="urn:envelope">'+#13#10+'</Envelope>'+#13#10), sdXmlRSASha256, true);
   finally
-    sig.Free;
+    sig.free;
   end;
 
   sig := TDigitalSigner.Create;
   try
     assertTrue(sig.verifySignature(bytes));
   finally
-    sig.Free;
+    sig.free;
   end;
 end;
 
@@ -5033,14 +5033,14 @@ end;
 //
 //    bytes := sig.signEnveloped(TEncoding.UTF8.GetBytes('<Envelope xmlns="urn:envelope">'+#13#10+'</Envelope>'+#13#10), sdXmlDSASha1, true);
 //  finally
-//    sig.Free;
+//    sig.free;
 //  end;
 //
 //  sig := TDigitalSigner.Create;
 //  try
 //    assertTrue(sig.verifySignature(bytes));
 //  finally
-//    sig.Free;
+//    sig.free;
 //  end;
 //end;
 //
@@ -5056,14 +5056,14 @@ end;
 //
 //    bytes := sig.signEnveloped(TEncoding.UTF8.GetBytes('<Envelope xmlns="urn:envelope">'+#13#10+'</Envelope>'+#13#10), sdXmlDSASha256, true);
 //  finally
-//    sig.Free;
+//    sig.free;
 //  end;
 //
 //  sig := TDigitalSigner.Create;
 //  try
 //    assertTrue(sig.verifySignature(bytes));
 //  finally
-//    sig.Free;
+//    sig.free;
 //  end;
 //end;
   *)
@@ -5105,7 +5105,7 @@ Begin
 
     Result := FindByValue(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -5123,12 +5123,12 @@ end;
 
 procedure TFslCollectionsTests.testAdd;
 begin
-  list := TFslTestObjectList.create;
+  list := TFslTestObjectList.Create;
   try
     list.Add(TFslTestObject.create);
     assertTrue(list.Count = 1);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -5139,18 +5139,18 @@ end;
 
 procedure TFslCollectionsTests.testAddFail;
 begin
-  list := TFslTestObjectList.create;
+  list := TFslTestObjectList.Create;
   try
     assertWillRaise(executeFail, nil, EFslInvariant, '');
     assertTrue(list.Count = 0);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
 procedure TFslCollectionsTests.testSort;
 begin
-  list := TFslTestObjectList.create;
+  list := TFslTestObjectList.Create;
   try
     list.Add(TFslTestObject.create('B'));
     list.Add(TFslTestObject.create('D'));
@@ -5162,13 +5162,13 @@ begin
     assertTrue(list[2].Value = 'C');
     assertTrue(list[3].Value = 'D');
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
 procedure TFslCollectionsTests.testSort2;
 begin
-  list := TFslTestObjectList.create;
+  list := TFslTestObjectList.Create;
   try
     list.sortedByValue;
     list.Add(TFslTestObject.create('A'));
@@ -5179,7 +5179,7 @@ begin
     assertTrue(list.getByValue('B') <> nil);
     assertTrue(list.getByValue('C') = nil);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -5204,7 +5204,7 @@ begin
   try
     output := x.ToXml(true, false);
   finally
-    x.Free;
+    x.free;
   end;
   StringToFile(output, TestSettings.serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
   assertEqual(output, tgt);
@@ -5221,7 +5221,7 @@ begin
   try
     output := x.ToXml(false, false);
   finally
-    x.Free;
+    x.free;
   end;
   StringToFile(output, TestSettings.serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
   assertEqual(output, tgt);
@@ -5238,7 +5238,7 @@ begin
   try
     output := x.ToXml(true, false);
   finally
-    x.Free;
+    x.free;
   end;
   StringToFile(output, TestSettings.serverTestFile(['testcases', 'xml', 'xml-output.xml']), TEncoding.UTF8);
   assertEqual(output, tgt);
@@ -5255,7 +5255,7 @@ begin
   try
     output := x.ToXml(false, false);
   finally
-    x.Free;
+    x.free;
   end;
   assertEqual(output, tgt);
 end;
@@ -5271,7 +5271,7 @@ var
   item : TFslNameBuffer;
   stream : TFileStream;
 begin
-  result := TFslList<TFslNameBuffer>.create;
+  result := TFslList<TFslNameBuffer>.Create;
   try
     stream := TFileStream.Create(filename, fmOpenRead);
     try
@@ -5294,7 +5294,7 @@ begin
               end;
               result.Add(item.link)
             finally
-              item.Free;
+              item.free;
             end;
             //break;
           end;
@@ -5305,11 +5305,11 @@ begin
         z.free;
       end;
     finally
-      stream.Free;
+      stream.free;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5321,7 +5321,7 @@ begin
   try
     assertTrue(tgz.Count = 11);
   finally
-    tgz.Free;
+    tgz.free;
   end;
 end;
 
@@ -5333,7 +5333,7 @@ begin
   try
     assertTrue(tgz.Count = 12);
   finally
-    tgz.Free;
+    tgz.free;
   end;
 end;
 

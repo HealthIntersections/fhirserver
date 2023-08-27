@@ -61,14 +61,14 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
@@ -84,11 +84,11 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
      procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -128,14 +128,14 @@ begin
   result := 'HGVS codes';
 end;
 
-function THGVSProvider.Display(context: TCodeSystemProviderContext; const lang: THTTPLanguages): string;
+function THGVSProvider.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
   result := Code(Context);
 end;
 
 procedure THGVSProvider.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', code(context));
+  list.addDesignation(true, true, '', code(context));
 end;
 
 function THGVSProvider.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
@@ -143,7 +143,7 @@ begin
   result := false;
 end;
 
-procedure THGVSProvider.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang: THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure THGVSProvider.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 begin
   // nothing
 end;
@@ -173,7 +173,7 @@ begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
 
-procedure THGVSProvider.getCDSInfo(card: TCDSHookCard; const lang: THTTPLanguages; baseURL, code, display: String);
+procedure THGVSProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   // nothing
 end;
@@ -189,7 +189,7 @@ begin
   result := '';
 end;
 
-function THGVSProvider.getDisplay(code: String; const lang: THTTPLanguages): String;
+function THGVSProvider.getDisplay(code: String; langList : THTTPLanguageList): String;
 begin
   result := code;
 end;
@@ -244,11 +244,11 @@ begin
           CommaAdd(message, o.str['message']);
       end;
     finally
-      json.Free;
+      json.free;
     end;
   except
     on e : Exception do
-      raise EFHIRException.create('Error parsing HGVS response: '+e.message);
+      raise EFHIRException.Create('Error parsing HGVS response: '+e.message);
   end;
 end;
 

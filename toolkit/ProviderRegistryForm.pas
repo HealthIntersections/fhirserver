@@ -142,10 +142,10 @@ begin
     begin
       FConfMatches.Clear;
       gridConfMatches.RowCount := FConfMatches.Count;
-      FConfBundle.Free;
+      FConfBundle.free;
       FConfBundle := nil;
 
-      params := TFslStringDictionary.create;
+      params := TFslStringDictionary.Create;
       try
         case cbxType.ItemIndex of
           0 : {Profiles}
@@ -211,7 +211,7 @@ begin
         lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start)+'. search String = '+FMXescape(FClient.lastURL);
         btnFetchMore.Visible := FConfBundle.Links['next'] <> '';
       finally
-        params.Free;
+        params.free;
       end;
     end);
 end;
@@ -229,7 +229,7 @@ begin
     begin
       btnFetchMore.Visible := false;
       url := FConfBundle.Links['next'];
-      FConfBundle.Free;
+      FConfBundle.free;
       FConfBundle := nil;
       start := now;
       FConfBundle := Client.searchAgain(url);
@@ -266,9 +266,9 @@ end;
 destructor TProviderDirectoryFrame.Destroy;
 begin
   FClient.free;
-  FConfBundle.Free;
-  FPatBundle.Free;
-  FConfMatches.Free;
+  FConfBundle.free;
+  FPatBundle.free;
+  FConfMatches.free;
 
   inherited;
 end;
@@ -288,7 +288,7 @@ begin
   try
     OnOpenResource(self, client, client.format, res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -376,7 +376,7 @@ begin
   cbxProfile.ItemIndex := Settings.getValue('Registry-search', 'profile', 0);
 
   btnFetchMore.Visible := false;
-  FConfMatches := TFslList<TFHIRResource>.create;
+  FConfMatches := TFslList<TFHIRResource>.Create;
 end;
 
 

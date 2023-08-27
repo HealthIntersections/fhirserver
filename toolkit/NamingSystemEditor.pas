@@ -268,12 +268,12 @@ begin
     2: id.preferred := value.asBoolean;
     3: begin
        if (id.period = nil) then
-         id.period := TFHIRPeriod.create;
+         id.period := TFHIRPeriod.Create;
        id.period.start := TFslDateTime.makeLocal(value.asExtended).TruncToDay;
        end;
     4: begin
        if (id.period = nil) then
-         id.period := TFHIRPeriod.create;
+         id.period := TFHIRPeriod.Create;
        id.period.end_ := TFslDateTime.makeLocal(value.asExtended).TruncToDay;
        end;
     5: id.comment := value.asString;

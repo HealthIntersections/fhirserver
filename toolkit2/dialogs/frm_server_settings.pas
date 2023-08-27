@@ -121,8 +121,8 @@ implementation
 
 procedure TServerSettingsForm.FormDestroy(Sender: TObject);
 begin
-  FServerList.Free;
-  FServer.Free;
+  FServerList.free;
+  FServer.free;
 end;
 
 //factory : TFHIRFactory;
@@ -296,7 +296,7 @@ end;
 procedure TServerSettingsForm.SetServer(AValue: TFHIRServerEntry);
 begin
   pgSettings.PageIndex := 0;
-  FServer.Free;
+  FServer.free;
   FServer := AValue;
   if FServer = nil then
   begin
@@ -373,7 +373,7 @@ end;
 
 procedure TServerSettingsForm.SetServerList(AValue: TFslList<TFHIRServerEntry>);
 begin
-  FServerList.Free;
+  FServerList.free;
   FServerList := AValue;
 end;
 

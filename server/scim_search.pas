@@ -119,8 +119,8 @@ implementation
 
 destructor TSCIMSearchFilterCriteria.Destroy;
 begin
-  FCriterion1.Free;
-  FCriterion2.Free;
+  FCriterion1.free;
+  FCriterion2.free;
   inherited;
 end;
 
@@ -131,13 +131,13 @@ end;
 
 procedure TSCIMSearchFilterCriteria.SetCriterion1(const Value: TSCIMSearchFilter);
 begin
-  FCriterion1.Free;
+  FCriterion1.free;
   FCriterion1 := Value;
 end;
 
 procedure TSCIMSearchFilterCriteria.SetCriterion2(const Value: TSCIMSearchFilter);
 begin
-  FCriterion2.Free;
+  FCriterion2.free;
   FCriterion2 := Value;
 end;
 
@@ -145,7 +145,7 @@ end;
 
 destructor TSCIMSearchFilterValuePath.Destroy;
 begin
-  FFilter.Free;
+  FFilter.free;
   inherited;
 end;
 
@@ -156,7 +156,7 @@ end;
 
 procedure TSCIMSearchFilterValuePath.SetFilter(const Value: TSCIMSearchFilter);
 begin
-  FFilter.Free;
+  FFilter.free;
   FFilter := Value;
 end;
 
@@ -209,8 +209,8 @@ var
 begin
   filter := parse(expression);
   if filter = nil then
-    raise ELibraryException.create('parsing failed - returned nil');
-  filter.Free;
+    raise ELibraryException.Create('parsing failed - returned nil');
+  filter.free;
 end;
 
 class function TSCIMSearchParser.parse(expression: String): TSCIMSearchFilter;
@@ -224,7 +224,7 @@ begin
     this.parse;
     result := this.filter.link as TSCIMSearchFilter;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -233,7 +233,7 @@ procedure TSCIMSearchParser.parse;
 begin
   filter := parseOpen;
   if cursor <= length(original) then
-    raise ELibraryException.create('Expression did not terminate at '+inttostr(cursor));
+    raise ELibraryException.Create('Expression did not terminate at '+inttostr(cursor));
 end;
 
 function TSCIMSearchParser.peek: TSCIMSearchLexType;
@@ -253,7 +253,7 @@ begin
      '[' : result := sltOpenSq;
      ']' : result := sltCloseSq;
    else
-     raise ELibraryException.create('Unknown Character at '+inttostr(cursor));
+     raise ELibraryException.Create('Unknown Character at '+inttostr(cursor));
    end;
 end;
 
@@ -268,11 +268,11 @@ begin
     result := parseOpen;
     try
       if peek <> sltClose then
-        raise ELibraryException.create('Expected '')'' at '+inttostr(cursor));
+        raise ELibraryException.Create('Expected '')'' at '+inttostr(cursor));
       inc(cursor);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end
   else
@@ -287,7 +287,7 @@ begin
       else
       begin
         if peek <> sltName then
-          raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
+          raise ELibraryException.Create('Unexpected Character at '+inttostr(cursor));
 
         test := TSCIMSearchFilterTest.Create;
         try
@@ -304,7 +304,7 @@ begin
           else if s = 'le' then test.FOperation := sfoLe
           else if s = 'pr' then test.FOperation := sfoPr
           else
-            raise ELibraryException.create('Unknown operation '+s+' at '+inttostr(cursor));
+            raise ELibraryException.Create('Unknown operation '+s+' at '+inttostr(cursor));
 
           if test.FOperation <> sfoPr then
           begin
@@ -313,12 +313,12 @@ begin
                 begin
                 test.FValue := ConsumeName;
                 if (test.Value <> 'null') and (test.Value <> 'true')  and (test.Value <> 'false')  then
-                  raise ELibraryException.create('Unexpected value '''+test.value+''' at '+inttostr(cursor));
+                  raise ELibraryException.Create('Unexpected value '''+test.value+''' at '+inttostr(cursor));
                 end;
               sltNumber : test.FValue := ConsumeNumber;
               sltString: test.FValue := ConsumeString;
             else
-              raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
+              raise ELibraryException.Create('Unexpected Character at '+inttostr(cursor));
             end;
           end;
 
@@ -326,7 +326,7 @@ begin
             sltName : result := parseLogical(test);
             sltEnded, sltClose, sltCloseSq : result := test.Link as TSCIMSearchFilterTest;
           else
-            raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
+            raise ELibraryException.Create('Unexpected Character at '+inttostr(cursor));
           end;
         finally
           test.free;
@@ -346,16 +346,16 @@ begin
     inc(cursor);
     vp.FFilter := parseOpen;
     if peek <> sltCloseSq then
-      raise ELibraryException.create('Problem with filter termination at '+inttostr(cursor));
+      raise ELibraryException.Create('Problem with filter termination at '+inttostr(cursor));
     inc(cursor);
     case peek of
       sltName : result := parseLogical(vp);
       sltEnded, sltClose, sltCloseSq : result := vp.Link as TSCIMSearchFilter;
     else
-      raise ELibraryException.create('Unexpected Character at '+inttostr(cursor));
+      raise ELibraryException.Create('Unexpected Character at '+inttostr(cursor));
     end;
   finally
-    vp.Free;
+    vp.free;
   end;
 end;
 
@@ -407,13 +407,13 @@ begin
       else if (original[cursor] = 'n') then
         result[l] := #10
       else
-        raise ELibraryException.create('Unknown escape sequence at '+inttostr(cursor));
+        raise ELibraryException.Create('Unknown escape sequence at '+inttostr(cursor));
     end;
     inc(cursor);
   end;
   SetLength(result, l);
   if (cursor > length(original)) or (original[cursor] <> '"') then
-    raise ELibraryException.create('Problem with string termination at '+inttostr(cursor));
+    raise ELibraryException.Create('Problem with string termination at '+inttostr(cursor));
   inc(cursor);
 end;
 
@@ -427,7 +427,7 @@ begin
   else
     s := ConsumeName;
   if (s <> 'or') and (s <> 'and') and (s <> 'not') then
-    raise ELibraryException.create('Unexpected Name at '+inttostr(cursor));
+    raise ELibraryException.Create('Unexpected Name at '+inttostr(cursor));
   criteria := TSCIMSearchFilterCriteria.Create;
   try
     criteria.FCriterion1 := test.Link as TSCIMSearchFilter;
@@ -441,7 +441,7 @@ begin
 
     result := criteria.Link as TSCIMSearchFilter;
   finally
-    criteria.Free;
+    criteria.free;
   end;
 end;
 

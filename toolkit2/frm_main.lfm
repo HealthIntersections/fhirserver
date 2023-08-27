@@ -3207,7 +3207,7 @@ object MainToolkitForm: TMainToolkitForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.2.5.0'
+  LCLVersion = '2.2.7.0'
   object pnlStatus: TStatusBar
     Left = 0
     Height = 18
@@ -3283,7 +3283,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton6: TToolButton
       Left = 116
-      Height = 24
+      Height = 8
       Top = 2
       Caption = 'ToolButton6'
       Style = tbsSeparator
@@ -3315,7 +3315,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton12: TToolButton
       Left = 239
-      Height = 24
+      Height = 8
       Top = 2
       Caption = 'ToolButton12'
       Style = tbsSeparator
@@ -3342,7 +3342,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton27: TToolButton
       Left = 339
-      Height = 24
+      Height = 8
       Top = 2
       Caption = 'ToolButton27'
       Style = tbsSeparator
@@ -3369,7 +3369,7 @@ object MainToolkitForm: TMainToolkitForm
     end
     object ToolButton34: TToolButton
       Left = 439
-      Height = 24
+      Height = 8
       Top = 2
       Caption = 'ToolButton34'
       Style = tbsSeparator
@@ -3815,8 +3815,8 @@ object MainToolkitForm: TMainToolkitForm
         object tbTasks: TTabSheet
           BorderWidth = 4
           Caption = 'Tasks'
-          ClientHeight = 110
-          ClientWidth = 1056
+          ClientHeight = 0
+          ClientWidth = 0
           ImageIndex = 46
           ParentFont = False
           object pnlTasks: TPanel
@@ -4830,7 +4830,7 @@ object MainToolkitForm: TMainToolkitForm
                 Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goThumbTracking, goCellEllipsis]
                 ColWidths = (
                   64
-                  212
+                  214
                 )
               end
             end

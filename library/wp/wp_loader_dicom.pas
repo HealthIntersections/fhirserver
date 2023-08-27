@@ -150,7 +150,7 @@ Begin
   Else if iDefault > -1 Then
     result := iDefault
   Else
-    raise EDicomException.create('Unable to find image tag '+sTag);
+    raise EDicomException.Create('Unable to find image tag '+sTag);
 End;
 
 Function TDicomImageExtractor.ReadStringValue(sTag : String; iDefault : String = '') : String;
@@ -163,7 +163,7 @@ Begin
   Else if iDefault > '' Then
     result := iDefault
   Else
-    raise EDicomException.create('Unable to find image tag '+sTag);
+    raise EDicomException.Create('Unable to find image tag '+sTag);
 End;
 
 Procedure TDicomImageExtractor.LoadBytes(oRoot : TDicomObject);
@@ -190,7 +190,7 @@ Begin
   FPatientSex := ReadStringValue('0010,0040', ' ');
 
   //if FPixelRepresentation > 0 then
-  //  raise EDicomException.create('Pixel Representation '+inttostr(FPixelRepresentation)+' is not yet handled');
+  //  raise EDicomException.Create('Pixel Representation '+inttostr(FPixelRepresentation)+' is not yet handled');
 
   FStride := FWidth * 3;
   if FStride mod 4 <> 0 Then
@@ -198,14 +198,14 @@ Begin
 
   oElem := FRoot.Elements.GetByTag('7FE0,0010');
   if (oElem = nil) Then
-    raise EDicomException.create('Unable to find Pixel Data');
+    raise EDicomException.Create('Unable to find Pixel Data');
   if not (oElem.Values.KnownType in [dvtOB, dvtOW]) Then
-    raise EDicomException.create('Unexpected VR Type "'+DICOM_VR_TYPE_NAMES[oElem.Values.KnownType]+'" for Pixel Data');
+    raise EDicomException.Create('Unexpected VR Type "'+DICOM_VR_TYPE_NAMES[oElem.Values.KnownType]+'" for Pixel Data');
 
   if (FTransferSyntax = '1.2.840.10008.1.2.2') or (FTransferSyntax = '1.2.840.10008.1.2.1') or (FTransferSyntax = '1.2.840.10008.1.2') Or (FTransferSyntax = '') Then
   Begin
     if oElem.Values.Count <> 1 Then
-      raise EDicomException.create('unexpected value count for pixel data: '+inttostr(oElem.Values.COunt));
+      raise EDicomException.Create('unexpected value count for pixel data: '+inttostr(oElem.Values.COunt));
     FBytes := oElem.values[0].AsOB;
   End
   Else if FTransferSyntax = '1.2.840.10008.1.2.4.80' Then
@@ -213,11 +213,11 @@ Begin
   Else if FTransferSyntax = '1.2.840.10008.1.2.4.81' Then
     FBytes := LoadJpegLS(oElem)
   Else if (FTransferSyntax = '1.2.840.10008.1.2.5') Then
-    raise EDicomException.create('RLE Encoding not yet supported')
+    raise EDicomException.Create('RLE Encoding not yet supported')
   Else if FRoot.Elements.Dictionary.TransferSyntaxName(FTransferSyntax) = '' then
-    raise EDicomException.create('Unknown transfer encoding '+ FTransferSyntax)
+    raise EDicomException.Create('Unknown transfer encoding '+ FTransferSyntax)
   Else
-    raise EDicomException.create('Unsupported transfer encoding '+ FTransferSyntax+' ('+FRoot.Elements.Dictionary.TransferSyntaxName(FTransferSyntax)+')');
+    raise EDicomException.Create('Unsupported transfer encoding '+ FTransferSyntax+' ('+FRoot.Elements.Dictionary.TransferSyntaxName(FTransferSyntax)+')');
 
   if FScaleContrast Then
   Begin
@@ -323,7 +323,7 @@ var
  // ff : word;
 Begin
   if length(FBytes) < FWidth * FHeight * (iFrameIndex + 1) Then
-    raise EDicomException.create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
+    raise EDicomException.Create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
 
 //  ff := (1 shl FBitsStored) - 1;
   if not FScaleContrast Or (FHighestValue = 0) Then
@@ -359,7 +359,7 @@ var
   ff : word;
 Begin
   if length(FBytes) < FWidth * FHeight * 2 * (iFrameIndex + 1) Then
-    raise EDicomException.create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
+    raise EDicomException.Create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
 
   ff := (1 shl FBitsStored) - 1;
   if not FScaleContrast Or (FHighestValue = 0) Then
@@ -391,7 +391,7 @@ var
   i, iX, iY, iBase : integer;
 Begin
   if length(FBytes) < FWidth * FHeight * 3 * (iFrameIndex + 1) Then
-    raise EDicomException.create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
+    raise EDicomException.Create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
 
   i := FWidth * FHeight * 3 * iFrameIndex;
   result := Fillbytes(0, FStride * FHeight);
@@ -421,7 +421,7 @@ var
   End;
 Begin
   if length(FBytes) < FWidth * FHeight * 6 * (iFrameIndex + 1) Then
-    raise EDicomException.create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
+    raise EDicomException.Create('Insufficient Pixel Data retrieving image '+inttostr(iFrameIndex)+' (0-based)');
 
   if not FScaleContrast Or (FHighestValue = 0) Then
     FHighestValue := 1 shl FBitsStored;
@@ -450,7 +450,7 @@ var
   oAnnotator : TGdiPlusImageAnnotator;
 Begin
   if (iIndex >= FFrameCount) Then
-    raise EDicomException.create('Unable to retrieve frame '+inttostr(iIndex)+' of '+inttostr(FFrameCount));
+    raise EDicomException.Create('Unable to retrieve frame '+inttostr(iIndex)+' of '+inttostr(FFrameCount));
 
   if (FSamplesPerPixel = 1) Then
   Begin
@@ -459,22 +459,22 @@ Begin
     Else if (FBitsAllocated = 16) And (FBitsStored <= FBitsAllocated) And (FHighBit = FBitsStored - 1)  Then
       oImage.LoadFromPixels(FWidth, FHeight, FStride, PixelFormat24bppRGB, ReadGray16X(iIndex))
     Else
-      raise EDicomException.create(StringFormat('not done yet (spp = %d, Ba = %d, Bs = %d, Bh = %d)', [FSamplesPerPixel, FBitsAllocated, FBitsStored, FHighBit]));
+      raise EDicomException.Create(StringFormat('not done yet (spp = %d, Ba = %d, Bs = %d, Bh = %d)', [FSamplesPerPixel, FBitsAllocated, FBitsStored, FHighBit]));
   End
   Else if (3 = FSamplesPerPixel) Then
   Begin
     if FPlanarConfiguration > 0 then
-      raise EDicomException.create('Planar Configuration > 0 is not supported');
+      raise EDicomException.Create('Planar Configuration > 0 is not supported');
 
     If (8 = FBitsAllocated) and (8 = FBitsStored) And (7 = FHighBit) Then
       oImage.LoadFromPixels(FWidth, FHeight, FStride, PixelFormat24bppRGB, ReadRGB24(iIndex))
     Else If (16 = FBitsAllocated) and (12 = FBitsStored) And (11 = FHighBit) Then
       oImage.LoadFromPixels(FWidth, FHeight, FStride, PixelFormat24bppRGB, ReadRGB36(iIndex))
     else
-      raise EDicomException.create(StringFormat('not done yet (spp = %d, Ba = %d, Bs = %d, Bh = %d)', [FSamplesPerPixel, FBitsAllocated, FBitsStored, FHighBit]));
+      raise EDicomException.Create(StringFormat('not done yet (spp = %d, Ba = %d, Bs = %d, Bh = %d)', [FSamplesPerPixel, FBitsAllocated, FBitsStored, FHighBit]));
   End
   Else
-    raise EDicomException.create(StringFormat('not done yet (spp = %d, Ba = %d, Bs = %d, Bh = %d)', [FSamplesPerPixel, FBitsAllocated, FBitsStored, FHighBit]));
+    raise EDicomException.Create(StringFormat('not done yet (spp = %d, Ba = %d, Bs = %d, Bh = %d)', [FSamplesPerPixel, FBitsAllocated, FBitsStored, FHighBit]));
 
   if bAnnotations Then
   Begin
@@ -501,7 +501,7 @@ Begin
         oAnnotator.Annotate('Sex: '+FPatientSex);
 
     Finally
-      oAnnotator.Free;
+      oAnnotator.free;
     End;
   End;
 end;
@@ -509,10 +509,10 @@ end;
 
 procedure TDicomImageExtractor.Close;
 begin
-  FInstance.Free;
+  FInstance.free;
   FInstance := nil;
   SetLength(FBytes, 0);
-  FRoot.Free;
+  FRoot.free;
   FRoot := nil;
 end;
 
@@ -562,7 +562,7 @@ Begin
   End;
 
   If Not bOk Then
-    raise EDicomException.create('JPEG/MPEG Encoding not yet supported');
+    raise EDicomException.Create('JPEG/MPEG Encoding not yet supported');
 End;
 
 
@@ -614,7 +614,7 @@ Begin
     UnloadDll;
   End;
   If Not bOk Then
-    raise EDicomException.create('JPEG/MPEG Encoding not yet supported');
+    raise EDicomException.Create('JPEG/MPEG Encoding not yet supported');
 End; }
 
 function TDicomImageExtractor.sizeInBytesV(magic : integer) : cardinal;

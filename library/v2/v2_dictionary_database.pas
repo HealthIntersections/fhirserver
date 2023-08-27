@@ -289,7 +289,7 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oField := THL7V2ModelField.create;
+        oField := THL7V2ModelField.Create;
         try
           oField.DataElement := oConn.ColIntegerByName[FN_DATAITEM];
           oField.Required := (oConn.ColStringByName[FN_REQOPT] = 'R');
@@ -298,7 +298,7 @@ begin
           oField.FieldNumber := oConn.ColIntegerByName[FieldNum];
           oSegment.Fields.Add(oField.Link);
         finally
-          oField.Free;
+          oField.free;
         end;
         end;
     finally
@@ -366,7 +366,7 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oComponent := THL7V2ModelComponent.create;
+        oComponent := THL7V2ModelComponent.Create;
         try
           oComponent.Name := oConn.ColStringByName[FN_DESCRIPTION];
           oComponent.Table := oConn.ColIntegerByName[FN_TABLEID];
@@ -374,7 +374,7 @@ begin
           oComponent.Number := oConn.ColIntegerByName[GetCompNumName];
           oComponents.Add(oComponent.Link);
         finally
-          oComponent.Free;
+          oComponent.free;
         end;
         end;
     finally
@@ -431,7 +431,7 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oDataElement := THL7V2ModelDataElement.create;
+        oDataElement := THL7V2ModelDataElement.Create;
         try
           oDataElement.Description := oConn.colStringByName[FN_DESCRIPTION];
           oDataElement.Structure := oConn.ColStringByName[FN_DATASTRUC];
@@ -447,7 +447,7 @@ begin
           oDataElement.Id := oConn.ColIntegerByName[FN_DATAITEM];
           oDataElements.Add(oDataElement.Link);
         finally
-          oDataElement.Free;
+          oDataElement.free;
         end;
         end;
     finally
@@ -513,14 +513,14 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oDataType := THL7V2ModelDataType.create;
+        oDataType := THL7V2ModelDataType.Create;
         try
           oDataType.Name := oConn.ColStringByName[FN_DTCODE];
           oDataType.Description := oConn.ColStringByName[FN_DESCRIPTION];
           oDataType.Length := oConn.ColIntegerByName[FN_LENGTH];
           oDataTypes.Add(oDataType.Link);
         finally
-          oDataType.Free;
+          oDataType.free;
         end;
         end;
     finally
@@ -573,13 +573,13 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oSegment := THL7V2ModelSegment.create;
+        oSegment := THL7V2ModelSegment.Create;
         try
           oSegment.Code := oConn.ColStringByName[FN_SEGCODE];
           oSegment.Description := oConn.ColStringByName[FN_DESCRIPTION];
           oSegments.Add(oSegment.Link);
         finally
-          oSegment.Free;
+          oSegment.free;
         end;
         end;
     finally
@@ -631,7 +631,7 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oStructure := THL7V2ModelStructure.create;
+        oStructure := THL7V2ModelStructure.Create;
         try
           oStructure.Name := oConn.ColStringByName[FN_DATASTRUC];
           oStructure.Description := oConn.ColStringByName[FN_DESCRIPTION];
@@ -639,7 +639,7 @@ begin
           oStructure.ID := oConn.ColIntegerByName[FN_ELEMENTARY];
           oStructures.Add(oStructure.Link);
         finally
-          oStructure.Free;
+          oStructure.free;
         end;
         end;
     finally
@@ -763,13 +763,13 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oTable := THL7V2ModelTable.create;
+        oTable := THL7V2ModelTable.Create;
         try
           oTable.Description := oConn.ColStringByName[FN_DESCRIPTIONP];
           oTable.ID := oConn.ColIntegerByName[FN_TABLEID];
           oTables.Add(oTable.Link);
         finally
-          oTable.Free;
+          oTable.free;
         end;
         end;
     finally
@@ -781,14 +781,14 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oTableItem := THL7V2ModelTableItem.create;
+        oTableItem := THL7V2ModelTableItem.Create;
         try
           oTableItem.ID := oConn.ColIntegerByName[GetSortNumName];
           oTableItem.Code := oConn.ColStringByName[FN_TABLEVALS];
           oTableItem.Description := oConn.ColStringByName[FN_DESCRIPTIONP];
           oTables.GetByID(oConn.ColIntegerByName[FN_TABLEID]).Items.Add(oTableItem.Link);
         finally
-          oTableItem.Free;
+          oTableItem.free;
         end;
         end;
     finally
@@ -862,13 +862,13 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oEvent := THL7V2ModelEvent.create;
+        oEvent := THL7V2ModelEvent.Create;
         try
           oEvent.Name := oConn.ColStringByName[FN_EVNTCODE];
           oEvent.Description := oConn.ColStringByName[FN_DESCRIPTION];
           oEvents.Add(oEvent.Link);
         finally
-          oEvent.Free;
+          oEvent.free;
         end;
         end;
     finally
@@ -922,7 +922,7 @@ begin
       while oConn.FetchNext do
         begin
         oEvent := oEvents.GetByName(oConn.ColStringByName[FN_EVNTCODE]);
-        oMessage := THL7V2ModelEventMessage.create;
+        oMessage := THL7V2ModelEventMessage.Create;
         try
           oMessage.Message := oConn.ColStringByName[FN_MSGTYP_SEND];
           oMessage.Structure := oConn.ColStringByName[FN_MSGSTRUC_SEND];
@@ -930,7 +930,7 @@ begin
           oMessage.ReplyStructure := oConn.ColStringByName[FN_MSGSTRUC_RETN];
           oEvent.Messages.add(oMessage.Link);
         finally
-          oMessage.Free;
+          oMessage.free;
         end;
         end;
     finally
@@ -996,7 +996,7 @@ begin
       oConn.Execute;
       while oConn.FetchNext do
         begin
-        oMessageStructure := THL7V2ModelMessageStructure.create;
+        oMessageStructure := THL7V2ModelMessageStructure.Create;
         try
           oMessageStructure.Name := oConn.ColStringByName[FN_MSG_STRUCT];
           oMessageStructure.Description := oConn.ColStringByName[FN_DESCRIPTION];
@@ -1005,7 +1005,7 @@ begin
           oMessageStructure.Action := oConn.ColStringByName[FixActionFieldName(oConn.Owner.Platform)];
           oMessageStructures.Add(oMessageStructure.Link);
         finally
-          oMessageStructure.Free;
+          oMessageStructure.free;
         end;
         end;
     finally
@@ -1061,18 +1061,18 @@ begin
   if StringArrayExistsSensitive(['{', '<', '[', '{[', '[{'], sName) then
     begin
     if sName = '{' then
-      oGroup := THL7V2ModelSegmentGroup.create(oConn.ColStringByName[FN_GROUPNAME], False, True, gtGroup)
+      oGroup := THL7V2ModelSegmentGroup.Create(oConn.ColStringByName[FN_GROUPNAME], False, True, gtGroup)
     else if sName = '<' then
-      oGroup := THL7V2ModelSegmentGroup.create(oConn.ColStringByName[FN_GROUPNAME], False, True, gtChoice)
+      oGroup := THL7V2ModelSegmentGroup.Create(oConn.ColStringByName[FN_GROUPNAME], False, True, gtChoice)
     else if sName = '[' then
-      oGroup := THL7V2ModelSegmentGroup.create(oConn.ColStringByName[FN_GROUPNAME], True, False, gtGroup)
+      oGroup := THL7V2ModelSegmentGroup.Create(oConn.ColStringByName[FN_GROUPNAME], True, False, gtGroup)
     else // sName = '{[' or = '[{'
-      oGroup := THL7V2ModelSegmentGroup.create(oConn.ColStringByName[FN_GROUPNAME], True, True, gtGroup);
+      oGroup := THL7V2ModelSegmentGroup.Create(oConn.ColStringByName[FN_GROUPNAME], True, True, gtGroup);
     try
       oFocus.Children.add(oGroup.Link);
       oStack.Insert(0, oGroup.Link);
     finally
-      oGroup.Free;
+      oGroup.free;
     end;
     end
   else if StringArrayExistsSensitive(['}]', ']}', '}', ']', '>'], sName) then
@@ -1081,11 +1081,11 @@ begin
     assert(oFocus.GroupType = gtChoice, 'Segment | encountered when not in Choice Segment')  // we can safely ignore this on the assumption that there will be only one segment per choice item there is no mandate for this but it is true in all existing choices and there won't be any more
   else
     begin
-    oGroup := THL7V2ModelSegmentGroup.create(oConn.ColStringByName[FN_SEGCODE], oConn.ColIntegerByName[FN_OPTNAL] = 1, oConn.ColIntegerByName[FN_REPNAL] = 1, gtSingle);
+    oGroup := THL7V2ModelSegmentGroup.Create(oConn.ColStringByName[FN_SEGCODE], oConn.ColIntegerByName[FN_OPTNAL] = 1, oConn.ColIntegerByName[FN_REPNAL] = 1, gtSingle);
     try
       oFocus.Children.add(oGroup.Link);
     finally
-      oGroup.Free;
+      oGroup.free;
     end;
     end;
 end;
@@ -1098,7 +1098,7 @@ var
   oStack : THL7V2ModelSegmentGroups;
 begin
   oStructure := nil;
-  oStack := THL7V2ModelSegmentGroups.create;
+  oStack := THL7V2ModelSegmentGroups.Create;
   try
     oConn := GetConnection('LoadSegmentMaps');
     try
@@ -1114,7 +1114,7 @@ begin
             begin
             sLastName := oConn.ColStringByName[FN_MSG_STRUCT];
             oStructure := oMessageStructures.GetByName(sLastName);
-            oStructure.SegmentMap := THL7V2ModelSegmentGroup.create;
+            oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
             oStructure.SegmentMap.Code := sLastName;
             oStructure.SegmentMap.GroupType := gtGroup;
             oStack.Clear;
@@ -1140,16 +1140,16 @@ begin
             oStructure := oMessageStructures.GetByName(sLastName);
             if not assigned(oStructure) then
               begin
-              oStructure := THL7V2ModelMessageStructure.create;
+              oStructure := THL7V2ModelMessageStructure.Create;
               try
                 oStructure.Name := sLastName;
                 oStructure.Description := '(Implicitly Created by HL7Connect)';
                 oMessageStructures.Add(oStructure.Link);
               finally
-                oStructure.Free;
+                oStructure.free;
               end;
               end;
-            oStructure.SegmentMap := THL7V2ModelSegmentGroup.create;
+            oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
             oStructure.SegmentMap.GroupType := gtGroup;
             oStructure.SegmentMap.Code := sLastName;
             oStack.Clear;
@@ -1165,7 +1165,7 @@ begin
       YieldConnection(oConn);
     end;
   finally
-    oStack.Free;
+    oStack.free;
   end;
 end;
 
@@ -1431,7 +1431,7 @@ begin
     Fstmt.Release;
     end;
   if assigned(FManager) then
-    FManager.Free;
+    FManager.free;
 end;
 
 function THL7V2AccessDictionary.sizeInBytesV(magic : integer) : cardinal;

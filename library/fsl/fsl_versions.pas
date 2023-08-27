@@ -104,7 +104,7 @@ var
   o : TSemanticVersion;
 begin
   try
-    o := TSemanticVersion.create;
+    o := TSemanticVersion.Create;
     try
       result := true;
     finally
@@ -164,7 +164,7 @@ begin
     if strict and ((c < 1) or (c > 2)) then
       raise ESemVerException.create('Error reading SemVer: Structure "'+ver+'" is not correct');
 
-    result := TSemanticVersion.create;
+    result := TSemanticVersion.Create;
     try
       result.FRaw := ver;
       parts := ver.Split(['.']);
@@ -474,7 +474,7 @@ begin
   xml := TMXmlParser.parseFile(project, [xpDropWhitespace]);
   try
     pr := xml.docElement;
-    list := TFslList<TMXmlElement>.create;
+    list := TFslList<TMXmlElement>.Create;
     try
       pr.listElements('PropertyGroup', list);
       for pg in list do

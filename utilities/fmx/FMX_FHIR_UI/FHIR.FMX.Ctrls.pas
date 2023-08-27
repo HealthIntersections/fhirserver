@@ -168,7 +168,7 @@ begin
   pBtn.ShowScrollBars := false;
   pBtn.Stored := false;
 
-  Btn := TButton.create(pBtn);
+  Btn := TButton.Create(pBtn);
 
   Btn.Parent := pBtn;
   Btn.text := '+';

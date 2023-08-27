@@ -151,20 +151,20 @@ end;
 
 function TFormatListManager.loadList: boolean;
 begin
-  Data.Add(TSourceFormat.create(sekFHIR, ' '+NAMES_TSourceEditorKind[sekFHIR], 'http://hl7.org/fhir'));
-  Data.Add(TSourceFormat.create(sekv2, ' '+NAMES_TSourceEditorKind[sekv2], 'https://en.wikipedia.org/wiki/Health_Level_7#Version_2_messaging'));
-  Data.Add(TSourceFormat.create(sekCDA, ' '+NAMES_TSourceEditorKind[sekCDA], 'http://hl7.org/cda'));
-  Data.Add(TSourceFormat.create(sekXML, ' '+NAMES_TSourceEditorKind[sekXML], 'https://www.w3.org/TR/xml/'));
-  Data.Add(TSourceFormat.create(sekJson, ' '+NAMES_TSourceEditorKind[sekJson], 'https://www.json.org/json-en.html'));
-  Data.Add(TSourceFormat.create(sekLiquid, ' '+NAMES_TSourceEditorKind[sekLiquid], 'https://shopify.github.io/liquid/'));
-  Data.Add(TSourceFormat.create(sekMap, ' '+NAMES_TSourceEditorKind[sekMap], 'http://hl7.org/fhir/StructureMap'));
-  Data.Add(TSourceFormat.create(sekIni, ' '+NAMES_TSourceEditorKind[sekIni], 'https://en.wikipedia.org/wiki/INI_file'));
-  Data.Add(TSourceFormat.create(sekText, ' '+NAMES_TSourceEditorKind[sekText], 'https://home.unicode.org/'));
-  Data.Add(TSourceFormat.create(sekMD, ' '+NAMES_TSourceEditorKind[sekMD], 'https://spec.commonmark.org/'));
-  Data.Add(TSourceFormat.create(sekJS, ' '+NAMES_TSourceEditorKind[sekJS], 'https://www.ecma-international.org/publications-and-standards/standards/ecma-262/'));
-  Data.Add(TSourceFormat.create(sekHTML, ' '+NAMES_TSourceEditorKind[sekHTML], 'https://en.wikipedia.org/wiki/HTML5'));
-  Data.Add(TSourceFormat.create(sekDicom, ' '+NAMES_TSourceEditorKind[sekDicom], 'https://www.dicomstandard.org/'));
-  Data.Add(TSourceFormat.create(sekJWT, ' '+NAMES_TSourceEditorKind[sekJWT], 'https://datatracker.ietf.org/doc/html/rfc7519'));
+  Data.Add(TSourceFormat.Create(sekFHIR, ' '+NAMES_TSourceEditorKind[sekFHIR], 'http://hl7.org/fhir'));
+  Data.Add(TSourceFormat.Create(sekv2, ' '+NAMES_TSourceEditorKind[sekv2], 'https://en.wikipedia.org/wiki/Health_Level_7#Version_2_messaging'));
+  Data.Add(TSourceFormat.Create(sekCDA, ' '+NAMES_TSourceEditorKind[sekCDA], 'http://hl7.org/cda'));
+  Data.Add(TSourceFormat.Create(sekXML, ' '+NAMES_TSourceEditorKind[sekXML], 'https://www.w3.org/TR/xml/'));
+  Data.Add(TSourceFormat.Create(sekJson, ' '+NAMES_TSourceEditorKind[sekJson], 'https://www.json.org/json-en.html'));
+  Data.Add(TSourceFormat.Create(sekLiquid, ' '+NAMES_TSourceEditorKind[sekLiquid], 'https://shopify.github.io/liquid/'));
+  Data.Add(TSourceFormat.Create(sekMap, ' '+NAMES_TSourceEditorKind[sekMap], 'http://hl7.org/fhir/StructureMap'));
+  Data.Add(TSourceFormat.Create(sekIni, ' '+NAMES_TSourceEditorKind[sekIni], 'https://en.wikipedia.org/wiki/INI_file'));
+  Data.Add(TSourceFormat.Create(sekText, ' '+NAMES_TSourceEditorKind[sekText], 'https://home.unicode.org/'));
+  Data.Add(TSourceFormat.Create(sekMD, ' '+NAMES_TSourceEditorKind[sekMD], 'https://spec.commonmark.org/'));
+  Data.Add(TSourceFormat.Create(sekJS, ' '+NAMES_TSourceEditorKind[sekJS], 'https://www.ecma-international.org/publications-and-standards/standards/ecma-262/'));
+  Data.Add(TSourceFormat.Create(sekHTML, ' '+NAMES_TSourceEditorKind[sekHTML], 'https://en.wikipedia.org/wiki/HTML5'));
+  Data.Add(TSourceFormat.Create(sekDicom, ' '+NAMES_TSourceEditorKind[sekDicom], 'https://www.dicomstandard.org/'));
+  Data.Add(TSourceFormat.Create(sekJWT, ' '+NAMES_TSourceEditorKind[sekJWT], 'https://datatracker.ietf.org/doc/html/rfc7519'));
 end;
 
 function TFormatListManager.getImageIndex(item: TSourceFormat): integer;
@@ -264,7 +264,7 @@ end;
 procedure TFileFormatChooser.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
-  FManager := TFormatListManager.create;
+  FManager := TFormatListManager.Create;
   FManager.Kinds := FILE_SourceEditorKinds;
   Fmanager.List := lvFormats;
   FManager.onsetfocus := listbox1Click;

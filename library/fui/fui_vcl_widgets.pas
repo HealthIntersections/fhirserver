@@ -205,7 +205,7 @@ end;
 
 destructor TLookAheadEdit.Destroy;
 begin
-  FStoredItems.Free;
+  FStoredItems.free;
   inherited;
 end;
 
@@ -553,7 +553,7 @@ begin
     end
     else
     begin
-      FTimer.Free;
+      FTimer.free;
     end;
     FAnimating := Value;
   end;

@@ -95,7 +95,7 @@ constructor THTTPCacheManager.Create(minTat : cardinal);
 begin
   inherited Create;
   FLock := TFslLock.Create('HTTP.Cache');
-  FCache := TFslMap<TCachedHTTPResponse>.create('HTTP.Cache');
+  FCache := TFslMap<TCachedHTTPResponse>.Create('HTTP.Cache');
   FSize := 0;
   FMaxSize := 1024 * 1024 * 1024; // 1 GB
   FMinTat := minTat;
@@ -104,8 +104,8 @@ end;
 
 destructor THTTPCacheManager.Destroy;
 begin
-  FCache.Free;
-  FLock.Free;
+  FCache.free;
+  FLock.free;
   inherited;
 end;
 
@@ -146,7 +146,7 @@ begin
         FLock.Unlock;
       end;
     finally
-      co.Free;
+      co.free;
     end;
     response.ContentStream.Position := pos;
   end;
@@ -174,13 +174,13 @@ begin
   begin
     try
       co.FLastTouched := now;
-      response.ContentStream := TMemoryStream.create;
+      response.ContentStream := TMemoryStream.Create;
       co.SaveToStream(response.ContentStream);
       response.ContentStream.Position := 0;
       response.ContentType := co.ContentType;
       summary := co.Summary + ' (from cache)';
     finally
-      co.Free;
+      co.free;
     end;
   end;
 end;
@@ -200,7 +200,7 @@ var
   dt : TDateTime;
 begin
   callback(self, 'Trimming Cache', -1);
-  list := TStringList.create;
+  list := TStringList.Create;
   try
     FLock.Lock;
     try
@@ -238,7 +238,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 

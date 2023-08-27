@@ -108,20 +108,20 @@ var
   rng : TFhirRange;
 begin
   case cbxCommon.ItemIndex of
-    0 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'gender');
-    1 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'age');
-    2 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'focus');
-    3 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'user');
-    4 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'workflow');
-    5 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'task');
-    6 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'venue');
-    7 : FUsageContext.code := TFHIRCoding.create('http://hl7.org/fhir/usage-context-type', 'species');
+    0 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'gender');
+    1 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'age');
+    2 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'focus');
+    3 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'user');
+    4 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'workflow');
+    5 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'task');
+    6 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'venue');
+    7 : FUsageContext.code := TFHIRCoding.Create('http://hl7.org/fhir/usage-context-type', 'species');
     8 :
       begin
         if (edtSystem.Text <> '') or (edtCode.Text <> '') then
-          FUsageContext.code := TFHIRCoding.create(edtSystem.Text, edtCode.Text)
+          FUsageContext.code := TFHIRCoding.Create(edtSystem.Text, edtCode.Text)
         else
-         raise EFHIRException.create('Error: must provide a system/code');
+         raise EFHIRException.Create('Error: must provide a system/code');
       end;
   end;
 
@@ -197,8 +197,8 @@ end;
 
 destructor TUsageContextDialog.Destroy;
 begin
-  FUsageContext.Free;
-  FLookup.Free;
+  FUsageContext.free;
+  FLookup.free;
   inherited;
 end;
 
@@ -207,7 +207,7 @@ var
   qty : TFhirQuantity;
   rng : TFhirRange;
 begin
-  FLookup := TCodeableConceptLookup.create(edtCCText, lbCodes, lblErr,
+  FLookup := TCodeableConceptLookup.Create(edtCCText, lbCodes, lblErr,
     TFhirClients.makeHTTP(nil, Settings.defaultAddress('Terminology'),
       false, Settings.timeout * 1000, Settings.proxy));
 
@@ -301,7 +301,7 @@ end;
 
 procedure TUsageContextDialog.SetUsageContext(const Value: TFhirUsageContext);
 begin
-  FUsageContext.Free;
+  FUsageContext.free;
   FUsageContext := Value;
 end;
 

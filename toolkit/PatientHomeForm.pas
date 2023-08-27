@@ -234,10 +234,10 @@ begin
       series.Active := true;
       FgrHR.Series.Add(series.Link);
     finally
-      series.Free;
+      series.free;
     end;
   finally
-    dp.Free;
+    dp.free;
   end;       }
 end;
 
@@ -249,9 +249,9 @@ end;
 destructor TPatientHomeFrame.Destroy;
 begin
   FResources.free;
-  FPatient.Free;
-  FCapabilityStatement.Free;
-  FClient.Free;
+  FPatient.free;
+  FCapabilityStatement.free;
+  FClient.free;
   inherited;
 end;
 
@@ -292,7 +292,7 @@ var
   prac : TFslList<TFHIRPractitioner>;
 begin
   cmp := lbCompositions.Items.Objects[lbCompositions.itemIndex] as TFhirComposition;
-  prac := TFslList<TFHIRPractitioner>.create;
+  prac := TFslList<TFHIRPractitioner>.Create;
   try
     doc := nil;
     work('Fetch Document', true, procedure (context : pointer)
@@ -307,11 +307,11 @@ begin
               if (be.resource <> nil) and (be.resource is TFhirPractitioner)  then
                 prac.Add(be.resource.Link as TFhirPractitioner);
           finally
-            bnd.Free;
+            bnd.free;
           end;
         end);
     try
-      form := TDocumentGeneratorForm.create(self);
+      form := TDocumentGeneratorForm.Create(self);
       try
         form.settings := settings.link;
         form.client := Client.link;
@@ -323,7 +323,7 @@ begin
         form.free;
       end;
     finally
-      doc.Free;
+      doc.free;
     end;
   finally
     prac.free;
@@ -345,7 +345,7 @@ begin
   grdName.RowCount := patient.nameList.count;
 
   if FResources = nil then
-    FResources := TFslMap<TFhirResource>.create('resources');
+    FResources := TFslMap<TFhirResource>.Create('resources');
 
   work('Loading Patient Data', true,
     procedure  (context : pointer)
@@ -370,7 +370,7 @@ begin
             end;
           lblOutcome.Text := 'Fetched '+inttostr(FResources.Count)+' resources in '+describePeriod(now - start);
         finally
-          bundle.Free;
+          bundle.free;
         end;
       end;
   end);
@@ -378,19 +378,19 @@ end;
 
 procedure TPatientHomeFrame.SetCapabilityStatement(const Value: TFhirCapabilityStatement);
 begin
-  FCapabilityStatement.Free;
+  FCapabilityStatement.free;
   FCapabilityStatement := Value;
 end;
 
 procedure TPatientHomeFrame.SetClient(const Value: TFHIRClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
 procedure TPatientHomeFrame.SetPatient(const Value: TFHIRPatient);
 begin
-  FPatient.Free;
+  FPatient.free;
   FPatient := Value;
 end;
 
