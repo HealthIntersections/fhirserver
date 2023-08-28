@@ -397,7 +397,7 @@ end;
 
 procedure TFHIRServiceKernel.unloadTerminologies;
 begin
-  FTerminologies.freeForReal;
+  FTerminologies.free;
   FTerminologies := nil;
 end;
 

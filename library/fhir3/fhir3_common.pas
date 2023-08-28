@@ -2272,7 +2272,10 @@ end;
 
 function TFhirParametersParameter3.valueString: String;
 begin
-  result := parameter.value.primitiveValue;
+  if (parameter.value = nil) or (not parameter.value.isPrimitive) then
+    result := ''
+  else
+    result := parameter.value.primitiveValue;
 end;
 
 { TFHIRParameters3 }

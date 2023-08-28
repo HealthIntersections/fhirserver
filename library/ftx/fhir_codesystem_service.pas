@@ -730,17 +730,17 @@ var
 begin
   result := TFhirCodeSystemProviderContext(context).concept.display;
   for ccd in TFhirCodeSystemProviderContext(context).concept.designations.forEnum do
-    if langList.matches(FLanguages, ccd.language) then
+    if (langList = nil) or langList.matches(FLanguages, ccd.language) then
       result := ccd.value.Trim;
   for css in FCs.Supplements do
   begin
     cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).concept.code, css.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), nil);
     if (cc <> nil) then
     begin
-      if langList.matches(FLanguages, css.language) then
+      if (langList <> nil) and langList.matches(FLanguages, css.language) then
         result := cc.display.Trim;
       for ccd in cc.designations.forEnum do
-        if langList.matches(FLanguages, ccd.language) then
+        if (langList <> nil) and langList.matches(FLanguages, ccd.language) then
           result := ccd.value.Trim;
     end;
   end;

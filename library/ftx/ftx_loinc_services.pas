@@ -356,6 +356,8 @@ Type
   end;
 
 
+  { TLoincFilterHolder }
+
   TLoincFilterHolder = class (TCodeSystemProviderFilterContext)
   private
     FIndex: integer;
@@ -1157,7 +1159,7 @@ begin
     for i := 0 to FLang.count - 1 do
     begin
       FLang.GetEntry(i, llang, country);
-      if (llang +'-'+country = langList.source) then
+      if (langList = nil) or (llang +'-'+country = langList.source) then
         add(i);
     end;
     if length(result) = 0 then
@@ -1166,14 +1168,14 @@ begin
       for i := 0 to FLang.count - 1 do
       begin
         FLang.GetEntry(i, llang, country);
-        if (llang +'-'+llang.ToUpper = langList.source) then
+        if (langList = nil) or (llang +'-'+llang.ToUpper = langList.source) then
           add(i);
       end;
       // other possible matches
       for i := 0 to FLang.count - 1 do
       begin
         FLang.GetEntry(i, llang, country);
-        if langList.source = llang then
+        if (langList = nil) or (langList.source = llang) then
           add(i);
       end;
     end;
@@ -1385,8 +1387,10 @@ var
   i : integer;
   llang, country : string;
 begin
-  if lang = nil then
+  if (lang = nil) then
     result := false
+  else if (langList = nil) then
+    result := true
   else
   begin
     for i := 0 to FLang.count - 1 do
@@ -2645,7 +2649,7 @@ begin
     result := TLoincFilterHolder.Create;
     refs := FRefs.GetRefs(children);
     setLength(matches, length(refs));
-    for i := 0 to length(refs) do
+    for i := 0 to length(refs) - 1 do
     begin
       matches[i].index := refs[i];
       matches[i].kind := lpckAnswer;

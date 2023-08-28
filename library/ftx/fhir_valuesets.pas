@@ -1508,16 +1508,16 @@ begin
           if (coding.display <> '') and (not list.hasDisplay(FParams.languages, coding.display, dcsCaseInsensitive, diff)) then
           begin
              baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
-             dc := list.displayCount(FParams.languages);
+             dc := list.displayCount(FParams.languages, true);
              if dc > 0 then
              begin
                if (diff = ddNormalised) then
                  baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of';
                if dc = 1 then
                  result.AddParamStr('message', FI18n.translate(baseMsg+'_one', FParams.languages,
-                  ['', coding.systemUri, coding.code, list.present(FParams.languages), coding.display, FParams.langSummary]))
+                  ['', coding.systemUri, coding.code, list.present(FParams.languages, true), coding.display, FParams.langSummary]))
                else
-                 result.AddParamStr('message', FI18n.translate(baseMsg+'_other', FParams.languages, [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.languages), coding.display, FParams.langSummary]));
+                 result.AddParamStr('message', FI18n.translate(baseMsg+'_other', FParams.languages, [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.languages, true), coding.display, FParams.langSummary]));
              end;
           end;
           pd := list.preferredDisplay(FParams.languages);
@@ -1694,20 +1694,20 @@ begin
                 baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
               else
                 baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
-              dc := list.displayCount(FParams.languages);
+              dc := list.displayCount(FParams.languages, true);
               severity := dispWarning;
               if dc = 0 then
               begin
                 severity := isWarning;
                 m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                  ['', c.systemUri, c.code, list.present(FParams.languages), c.display, FParams.langSummary])
+                  ['', c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
               end
               else if dc = 1 then
                 m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                  ['', c.systemUri, c.code, list.present(FParams.languages), c.display, FParams.langSummary])
+                  ['', c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
               else
                 m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.languages), c.display, FParams.langSummary]);
+                  [inttostr(dc), c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary]);
               msg(m);
               op.addIssue(severity, itInvalid, addToPath(path, 'display'), m);
             end;
@@ -1782,19 +1782,19 @@ begin
                      else
                        baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
 
-                     dc := list.displayCount(FParams.languages);
+                     dc := list.displayCount(FParams.languages, true);
                      if dc = 0 then
                      begin
                        severity := isWarning;
                        m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.languages), c.display, FParams.langSummary])
+                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
                      end
                      else if dc = 1 then
                        m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.languages), c.display, FParams.langSummary])
+                         ['', prov.systemUri(ctxt), c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
                      else
                        m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.languages), c.display, FParams.langSummary]);
+                        [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.languages, true), c.display, FParams.langSummary]);
                      msg(m);
                      op.addIssue(severity, itInvalid, addToPath(path, 'display'), m);
                    end;

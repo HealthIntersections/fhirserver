@@ -228,28 +228,29 @@ function THGVSProvider.locate(code: String; altOpt : TAlternateCodeOptions; var 
 var
   json, o : TJsonObject;
 begin
-  try
-    json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
-    try
-      if json.bool['valid'] then
-      begin
-        result := THGVSCode.Create;
-        THGVSCode(result).code := code;
-      end
-      else
-      begin
-        result := nil;
-        message := '';
-        for o in json.forceArr['messages'].asObjects.forEnum do
-          CommaAdd(message, o.str['message']);
-      end;
-    finally
-      json.free;
-    end;
-  except
-    on e : Exception do
-      raise EFHIRException.Create('Error parsing HGVS response: '+e.message);
-  end;
+  raise ETerminologyError.create('HGVS is not supported at this time');
+  //try
+  //  json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
+  //  try
+  //    if json.bool['valid'] then
+  //    begin
+  //      result := THGVSCode.Create;
+  //      THGVSCode(result).code := code;
+  //    end
+  //    else
+  //    begin
+  //      result := nil;
+  //      message := '';
+  //      for o in json.forceArr['messages'].asObjects.forEnum do
+  //        CommaAdd(message, o.str['message']);
+  //    end;
+  //  finally
+  //    json.free;
+  //  end;
+  //except
+  //  on e : Exception do
+  //    raise EFHIRException.Create('Error parsing HGVS response: '+e.message);
+  //end;
 end;
 
 function THGVSProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;

@@ -156,11 +156,11 @@ Type
     function  addDesignation(ccd : TFhirValueSetComposeIncludeConceptDesignationW) : TConceptDesignation; overload;
 
     function hasDisplay(langList : THTTPLanguageList; value : String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference) : boolean;
-    function displayCount(langList : THTTPLanguageList) : integer;
+    function displayCount(langList : THTTPLanguageList; displayOnly : boolean) : integer;
+    function present(langList : THTTPLanguageList; displayOnly : boolean) : String;
     function include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
     function preferredDesignation(langList : THTTPLanguageList = nil) : TConceptDesignation;
     function preferredDisplay(langList : THTTPLanguageList = nil) : String;
-    function present(langList : THTTPLanguageList) : String;
 
     property factory : TFHIRFactory read FFactory;
     property baseLang : TIETFLang read FBaseLang write SetBaseLang;
@@ -514,14 +514,31 @@ begin
 end;
 
 
-function TConceptDesignations.displayCount(langList : THTTPLanguageList): integer;
+function TConceptDesignations.displayCount(langList : THTTPLanguageList; displayOnly : boolean): integer;
 var
   cd : TConceptDesignation;
 begin
   result := 0;
   for cd in FDesignations do
-    if (cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, false) then
+    if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, false)  and (cd.value <> nil) then
       inc(result);
+end;
+
+
+function TConceptDesignations.present(langList : THTTPLanguageList; displayOnly : boolean): String;
+var
+  cd : TConceptDesignation;
+  b : TCommaSeparatedStringBuilder;
+begin
+  b := TCommaSeparatedStringBuilder.create(', ', ' or ');
+  try
+    for cd in designations do
+      if  (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+        b.append(''''+cd.display+'''');
+    result := b.makeString;
+  finally
+    b.free;
+  end;
 end;
 
 function TConceptDesignations.include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
@@ -558,23 +575,6 @@ begin
       end;
   end;
 end;
-
-function TConceptDesignations.present(langList : THTTPLanguageList): String;
-var
-  cd : TConceptDesignation;
-  b : TCommaSeparatedStringBuilder;
-begin
-  b := TCommaSeparatedStringBuilder.create(', ', ' or ');
-  try
-    for cd in designations do
-      if (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
-        b.append(''''+cd.display+'''');
-    result := b.makeString;
-  finally
-    b.free;
-  end;
-end;
-
 
 function TConceptDesignations.langMatches(lang : THTTPLanguageEntry; stated: TIETFLang; exact : boolean): boolean;
 var
@@ -760,7 +760,7 @@ end;
 
 procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  card.summary := 'No CDSHook Implemeentation for code system '+systemUri(nil)+' for code '+code+' ('+display+')';
+  card.summary := 'No CDSHook Implementation for code system '+systemUri(nil)+' for code '+code+' ('+display+')';
 end;
 
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;

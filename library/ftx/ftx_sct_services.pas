@@ -4487,7 +4487,7 @@ begin
           break;
         end;
       if not ok then
-        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil)+'")', itInvalid);
+        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil, true)+'")', itInvalid);
     finally
       list.free;
     end;
