@@ -176,7 +176,7 @@ type
 
    { TToolkitSearchTaskEngine }
 
-   TToolkitSearchTaskEngine  = class abstract (TBackgroundTaskEngine)
+   TToolkitSearchTaskEngine  = class (TBackgroundTaskEngine)
    private
      procedure doWork(sender : TObject; pct : integer; done : boolean; desc : String);
    protected

@@ -42,7 +42,7 @@ type
 
   { TFHIRLoadContextTaskRequest }
 
-  TFHIRLoadContextTaskRequest = class abstract (TBackgroundTaskRequestPackage)
+  TFHIRLoadContextTaskRequest = class (TBackgroundTaskRequestPackage)
    private
      FContext: TFHIRWorkerContextWithFactory;
      FIgnoreEmptyCodeSystems: boolean;
@@ -63,7 +63,7 @@ type
 
    { TFHIRLoadContextTaskResponse }
 
-   TFHIRLoadContextTaskResponse = class abstract (TBackgroundTaskResponsePackage)
+   TFHIRLoadContextTaskResponse = class (TBackgroundTaskResponsePackage)
    private
      FContext: TFHIRWorkerContextWithFactory;
      procedure SetContext(AValue: TFHIRWorkerContextWithFactory);
