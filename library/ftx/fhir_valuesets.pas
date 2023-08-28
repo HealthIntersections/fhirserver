@@ -1673,7 +1673,7 @@ begin
             cc := ws+'#'+c.code
           else
             cc := ws+'|'+c.version+'#'+c.code;
-          CommaAdd(codelist, cc);
+          CommaAdd(codelist, ''''+cc+'''');
 
           if (ok <> bTrue) and (v <> bFalse) then
             ok := v;

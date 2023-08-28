@@ -2855,12 +2855,20 @@ end;
 function TFHIRValueSet5.getComposeExtensions: TFslList<TFHIRExtensionW>;
 var
   ext : TFHIRObject;
+  list : TFslList<TFHIRObject>;
 begin
   result := TFslList<TFHIRExtensionW>.Create;
   try
     if (vs.compose <> nil) then
-      for ext in vs.compose.getExtensionsV do
-        result.add(TFHIRExtension5.create(ext.link));
+    begin
+      list := vs.compose.getExtensionsV;
+      try
+        for ext in list do
+          result.add(TFHIRExtension5.Create(ext.link));
+      finally
+        list.free;
+      end;
+    end;
     result.link;
   finally
     result.free;

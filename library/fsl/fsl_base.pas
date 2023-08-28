@@ -187,6 +187,7 @@ Type
 
     function ObjectCrossesThreads : boolean;
     function dumpSummary : String;
+    function updatedDebugInfo : String;
   Protected
     // Declared here for ease of implementing interfaces.
     Function _AddRef : Integer; Stdcall;
@@ -1499,13 +1500,22 @@ begin
   if false then
   {$ENDIF}
   {$IFDEF OBJECT_TRACKING}
-  else if (FDebugInfo <> '?') then
+  else if (updatedDebugInfo <> '?') then
     result := result +'(^'+FDebugInfo+')'
   else if (FSerial > 0) then
     result := result +'(#'+inttostr(FSerial)+')'
   {$ENDIF}
   else if FMagic <> 0 then
     result := result +'($'+inttostr(FMagic)+')';
+end;
+
+function TFslObject.updatedDebugInfo: String;
+begin
+  try
+    updateDebugInfo;
+  except
+  end;
+  result := FDebugInfo;
 end;
 
 function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod, sMessage: String): Boolean;

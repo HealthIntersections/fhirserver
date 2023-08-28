@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang,
+  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang, fsl_logging,
   fsl_http,
   fhir_common, fhir_factory, fhir_features, fhir_objects,
   fhir_cdshooks;
@@ -360,6 +360,7 @@ end;
 
 function TConceptDesignations.addDesignation(base, isDisplay : boolean; lang, display: String): TConceptDesignation;
 begin
+  //Logging.log('Add designation '+display+' for lang '+lang+' (base = '+booleanToString(base)+', display = '+booleanToString(isDisplay)+')');
   result := TConceptDesignation.Create;
   try
     result.language := FLanguages.parse(lang);
@@ -386,6 +387,7 @@ function TConceptDesignations.addDesignation(base, isDisplay : boolean; lang: St
 var
   ext : TFHIRExtensionW;
 begin
+  //Logging.log('Add designation '+value.AsString+' for lang '+lang+' (base = '+booleanToString(base)+', display = '+booleanToString(isDisplay)+')');
   result := TConceptDesignation.Create;
   try
     result.language := FLanguages.parse(lang);
@@ -402,10 +404,19 @@ begin
   end;
 end;
 
+function codingToString(code : TFHIRCodingW) : String;
+begin
+  if (code = nil) then
+    result := '--'
+  else
+    result := code.renderText;
+end;
+
 function TConceptDesignations.addDesignation(ccd : TFhirCodeSystemConceptDesignationW) : TConceptDesignation;
 var
   list : TFslList<TFHIRExtensionW>;
 begin
+  //Logging.log('Add designation '+ccd.value+' for lang '+ccd.language+' (use = '+codingToString(ccd.use)+')');
   result := TConceptDesignation.Create;
   try
     result.Language := FLanguages.parse(ccd.language);
@@ -428,6 +439,7 @@ function TConceptDesignations.addDesignation(ccd : TFhirValueSetComposeIncludeCo
 var
   list : TFslList<TFHIRExtensionW>;
 begin
+  //Logging.log('Add designation '+ccd.value+' for lang '+ccd.language+' (use = '+codingToString(ccd.use)+')');
   result := TConceptDesignation.Create;
   try
     result.Language := FLanguages.parse(ccd.language);
@@ -534,7 +546,10 @@ begin
   try
     for cd in designations do
       if  (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
-        b.append(''''+cd.display+'''');
+        if (cd.language <> nil) then
+          b.append(''''+cd.display+''' ('+cd.language.code+')')
+        else
+          b.append(''''+cd.display+'''');
     result := b.makeString;
   finally
     b.free;

@@ -3087,6 +3087,9 @@ function AddItem(value : TFhirElement): TFhirElement; overload;
   TFHIRTypeClass = class of TFhirType;
   
   // A base FHIR type - (polymorphism support)
+
+  { TFHIRPrimitiveType }
+
   TFHIRPrimitiveType = class (TFhirType)
   Private
     Function GetStringValue : String;
@@ -3101,6 +3104,8 @@ function AddItem(value : TFhirElement): TFhirElement; overload;
     function primitiveValue : string; override;
     function setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject; override;
     function ToString : String; override;
+
+    function debugInfo : String; override;
   End;
   TFHIRPrimitiveTypeClass = class of TFHIRPrimitiveType;
 
@@ -3641,8 +3646,6 @@ function AddItem(value : TFslDateTime): TFslDateTime; overload;
   {$IFNDEF FPC}Published{$ENDIF}
     // The actual value of the string
     property value : String read FValue write SetValue;
-
-    function debugInfo : String; override;
   End;    
 
   TFhirStringListEnumerator = class (TFslObject)
@@ -7158,6 +7161,9 @@ function AddItem(value : TFhirSubstanceAmount): TFhirSubstanceAmount; overload;
   End;
 
   // A reference to a code defined by a terminology system.
+
+  { TFhirCoding }
+
   TFhirCoding = class (TFhirType)
   protected
     FSystem : TFhirUri;
@@ -7227,6 +7233,7 @@ function AddItem(value : TFhirSubstanceAmount): TFhirSubstanceAmount; overload;
     // Indicates that this coding was chosen by a user directly - e.g. off a pick list of available items (codes or displays).
     property userSelectedElement : TFhirBoolean read FUserSelected write SetUserSelected;
 
+    function debugInfo : String; override;
   end;
 
   TFhirCodingListEnumerator = class (TFslObject)
@@ -13669,7 +13676,7 @@ begin
   result := TFHIRPrimitiveType(inherited Clone);
 end;
 
-function TFHIRPrimitiveType.GetStringValue : string;
+function TFHIRPrimitiveType.GetStringValue: String;
 begin
   if self = nil then
     result := ''
@@ -13704,9 +13711,14 @@ begin
     result := inherited setProperty(propName, propValue);
 end;
 
-function TFHIRPrimitiveType.toString : String;
+function TFHIRPrimitiveType.ToString: String;
 begin
   result := StringValue;
+end;
+
+function TFHIRPrimitiveType.debugInfo: String;
+begin
+  Result := primitiveValue;
 end;
 
 { TFhirBackboneElement }
@@ -15045,11 +15057,6 @@ begin
   result := 'string';
 end;
 
-function TFhirString.debugInfo: String;
-begin
-  Result := FValue;
-end;
-
 procedure TFhirString.GetChildrenByName(child_name : string; list : TFHIRSelectionList);
 begin
   inherited;
@@ -15078,7 +15085,6 @@ end;
 procedure TFhirString.SetStringValue(value: String);
 begin
   FValue := value;
-  updateDebugInfo;
 end;
 
 function TFhirString.Equals(other: TObject): boolean;
@@ -15114,8 +15120,6 @@ end;
 procedure TFhirString.setValue(value : String);
 begin
   FValue := value;
-  if (FValue = 'Serum Cholesterol') then
-    updateDebugInfo;
 end;
 
 procedure TFhirString.listFieldsInOrder(fields : TStringList);
@@ -24688,7 +24692,12 @@ begin
   result := inherited isEmpty  and isEmptyProp(FSystem) and isEmptyProp(FVersion) and isEmptyProp(FCode) and isEmptyProp(FDisplay) and isEmptyProp(FUserSelected);
 end;
 
-function TFhirCoding.equals(other : TObject) : boolean; 
+function TFhirCoding.debugInfo: String;
+begin
+  Result := system+'#'+code;
+end;
+
+function TFhirCoding.Equals(other: TObject): boolean;
 var
   o : TFhirCoding;
 begin
@@ -24727,13 +24736,13 @@ end;
 
 { TFhirCoding }
 
-Procedure TFhirCoding.SetSystem(value : TFhirUri);
+procedure TFhirCoding.SetSystem(value: TFhirUri);
 begin
   FSystem.free;
   FSystem := value;
 end;
 
-Function TFhirCoding.GetSystemST : String;
+function TFhirCoding.GetSystemST: String;
 begin
   if FSystem = nil then
     result := ''
@@ -24741,7 +24750,7 @@ begin
     result := FSystem.value;
 end;
 
-Procedure TFhirCoding.SetSystemST(value : String);
+procedure TFhirCoding.SetSystemST(value: String);
 begin
   if value <> '' then
   begin
@@ -24753,13 +24762,13 @@ begin
     FSystem.value := '';
 end;
 
-Procedure TFhirCoding.SetVersion(value : TFhirString);
+procedure TFhirCoding.SetVersion(value: TFhirString);
 begin
   FVersion.free;
   FVersion := value;
 end;
 
-Function TFhirCoding.GetVersionST : String;
+function TFhirCoding.GetVersionST: String;
 begin
   if FVersion = nil then
     result := ''
@@ -24767,7 +24776,7 @@ begin
     result := FVersion.value;
 end;
 
-Procedure TFhirCoding.SetVersionST(value : String);
+procedure TFhirCoding.SetVersionST(value: String);
 begin
   if value <> '' then
   begin
@@ -24779,13 +24788,13 @@ begin
     FVersion.value := '';
 end;
 
-Procedure TFhirCoding.SetCode(value : TFhirCode);
+procedure TFhirCoding.SetCode(value: TFhirCode);
 begin
   FCode.free;
   FCode := value;
 end;
 
-Function TFhirCoding.GetCodeST : String;
+function TFhirCoding.GetCodeST: String;
 begin
   if FCode = nil then
     result := ''
@@ -24793,7 +24802,7 @@ begin
     result := FCode.value;
 end;
 
-Procedure TFhirCoding.SetCodeST(value : String);
+procedure TFhirCoding.SetCodeST(value: String);
 begin
   if value <> '' then
   begin
@@ -24805,13 +24814,13 @@ begin
     FCode.value := '';
 end;
 
-Procedure TFhirCoding.SetDisplay(value : TFhirString);
+procedure TFhirCoding.SetDisplay(value: TFhirString);
 begin
   FDisplay.free;
   FDisplay := value;
 end;
 
-Function TFhirCoding.GetDisplayST : String;
+function TFhirCoding.GetDisplayST: String;
 begin
   if FDisplay = nil then
     result := ''
@@ -24819,7 +24828,7 @@ begin
     result := FDisplay.value;
 end;
 
-Procedure TFhirCoding.SetDisplayST(value : String);
+procedure TFhirCoding.SetDisplayST(value: String);
 begin
   if value <> '' then
   begin
@@ -24831,13 +24840,13 @@ begin
     FDisplay.value := '';
 end;
 
-Procedure TFhirCoding.SetUserSelected(value : TFhirBoolean);
+procedure TFhirCoding.SetUserSelected(value: TFhirBoolean);
 begin
   FUserSelected.free;
   FUserSelected := value;
 end;
 
-Function TFhirCoding.GetUserSelectedST : Boolean;
+function TFhirCoding.GetUserSelectedST: Boolean;
 begin
   if FUserSelected = nil then
     result := false
@@ -24845,7 +24854,7 @@ begin
     result := FUserSelected.value;
 end;
 
-Procedure TFhirCoding.SetUserSelectedST(value : Boolean);
+procedure TFhirCoding.SetUserSelectedST(value: Boolean);
 begin
   if FUserSelected = nil then
     FUserSelected := TFhirBoolean.Create;
