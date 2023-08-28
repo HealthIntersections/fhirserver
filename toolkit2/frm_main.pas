@@ -50,7 +50,7 @@ uses
 
   fui_lcl_cache, fui_lcl_utilities, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade;
+  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade, frm_home;
 
 type
   {$IFDEF WINDOWS}
@@ -183,6 +183,7 @@ type
     lvMessages: TListView;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    MenuItem57: TMenuItem;
     mnuInspectorCopyAll: TMenuItem;
     mnuInspectorCopyValue: TMenuItem;
     mnuTextDown: TMenuItem;
@@ -521,6 +522,7 @@ type
     procedure MenuItem118Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem40Click(Sender: TObject);
+    procedure MenuItem57Click(Sender: TObject);
     procedure mnuInspectorCopyAllClick(Sender: TObject);
     procedure mnuInspectorCopyValueClick(Sender: TObject);
     procedure mnuTextAddClick(Sender: TObject);
@@ -940,6 +942,16 @@ end;
 procedure TMainToolkitForm.MenuItem40Click(Sender: TObject);
 begin
   AddServer('hapi.fhir.org', 'http://hapi.fhir.org/baseR4');
+end;
+
+procedure TMainToolkitForm.MenuItem57Click(Sender: TObject);
+begin
+  IPSManagerForm := TIPSManagerForm.create(self);
+  try
+    IPSManagerForm.ShowModal;
+  finally
+    FreeAndNil(IPSManagerForm)
+  end;
 end;
 
 procedure TMainToolkitForm.mnuInspectorCopyAllClick(Sender: TObject);
