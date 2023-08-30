@@ -466,7 +466,7 @@ begin
           end;
           if (prop.value = 'hcpcs') then
           begin
-            if (exp.hasModifier('59')) then
+            if (not exp.hasModifier('59')) then
               list.add('The modifier '+modifier.code+' is an hcpcs code that can only be used if the modifier 59 is also used');
           end;
         end;
