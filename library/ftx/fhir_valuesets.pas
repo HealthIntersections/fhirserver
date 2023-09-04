@@ -1083,6 +1083,14 @@ begin
   end;
 end;
 
+function vurl(system, version : String) : String;
+begin
+  if version = '' then
+    result := system
+  else
+    result := system+'|'+version;
+end;
+
 function TValueSetChecker.check(path, system, version, code: String; abstractOk, inferSystem: boolean; displays: TConceptDesignations;
   unknownSystems : TStringList;
   var message, ver: String; var inactive : boolean; var vstatus : String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
@@ -1136,14 +1144,14 @@ begin
             result := bTrue; // we can't say it isn't valid. Need a third status?
             cause := itNotFound;
             FLog := 'Not found in Incomplete Code System';
-            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.languages, [code, system]));
+            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.languages, [code, vurl(system, version)]));
           end
           else
           begin
             result := bFalse;
             cause := itCodeInvalid;
             FLog := 'Unknown code';
-            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, system]));
+            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(system, version)]));
           end;
         end
         else
@@ -1219,14 +1227,14 @@ begin
             result := bTrue; // we can't say it isn't valid. Need a third status?
             cause := itNotFound;
             FLog := 'Not found in Incomplete Code System';
-            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.languages, [code, system]));
+            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.languages, [code, vurl(system, version)]));
           end
           else
           begin
             result := bFalse;
             cause := itCodeInvalid;
             FLog := 'Unknown code';
-            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, system]));
+            op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(system, version)]));
           end;
         end
         else
@@ -1765,7 +1773,7 @@ begin
                      msg(message);
                      op.addIssue(isInformation, cause, path, message);
                    end;
-                   m := FI18N.translate('Unknown_Code__in_', FParams.languages, [c.code, ws]);
+                   m := FI18N.translate('Unknown_Code__in_', FParams.languages, [c.code, vurl(ws, prov.version(nil))]);
                    cause := itCodeInvalid;
                    msg(m);
                    vcc.removeCoding(prov.systemUri(nil), prov.version(nil), c.code);
@@ -1977,7 +1985,7 @@ begin
       if loc = nil then
       begin
         if (FParams.valueSetMode <> vsvmMembershipOnly) then
-          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, cs.systemUri(nil)]))
+          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(cs.systemUri(nil), cs.version(nil))]))
       end
       else if not (abstractOk or not cs.IsAbstract(loc)) then
       begin
@@ -2236,7 +2244,7 @@ begin
     if loc = nil then
     begin
       if (FParams.valueSetMode <> vsvmMembershipOnly) then
-        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, cs.systemUri(nil)]))
+        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(cs.systemUri(nil), cs.version(nil))]))
     end
     else if not (abstractOk or not cs.IsAbstract(loc)) then
     begin
