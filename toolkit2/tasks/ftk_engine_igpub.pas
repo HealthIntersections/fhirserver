@@ -63,8 +63,11 @@ type
   { TIgPublisherUpdateEngine }
 
   TIgPublisherUpdateEngine = class (TIgPublisherBuildBaseEngine)
+  private
+    FStash : boolean;
   public
     procedure execute; override;
+    property Stash : boolean read FStash write FStash;
   end;
 
   { TIgPublisherJekyllEngine }
@@ -199,6 +202,24 @@ procedure TIgPublisherUpdateEngine.execute;
 var
   p : TFslExternalProcessThread;
 begin
+  if FStash then
+  begin
+    FOnEmitLine('git stash', false);
+
+    p := TFslExternalProcessThread.Create;
+    try
+      p.command := 'git';
+      p.parameters.Add('stash');
+      p.folder := FFolder;
+      p.OnEmitLine := procEmitLine;
+      p.Start;
+      while p.Running do
+        sleep(50);
+    finally
+      p.free;
+    end;
+  end;
+
   FOnEmitLine('git pull', false);
 
   p := TFslExternalProcessThread.Create;

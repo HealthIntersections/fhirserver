@@ -756,6 +756,7 @@ begin
   begin
     item.lines.clear;
     item.engine := TIgPublisherUpdateEngine.Create;
+    (item.engine as TIgPublisherUpdateEngine).Stash := (mode = 'stash');
     item.engine.folder := item.folder;
     item.engine.OnEmitLine := item.emitLine;
     item.engine.Start;
@@ -949,6 +950,7 @@ begin
   FManager.registerControl(tbStop, copStop);
 
   FManager.registerMenuEntry('Add', 4, copAdd);
+  FManager.registerMenuEntry('Add from GitHub', 4, copAdd, 'git');
   FManager.registerMenuEntry('Up', 11, copUp);
   FManager.registerMenuEntry('Down', 10, copDown);
   FManager.registerMenuEntry('Delete', 12, copDelete);

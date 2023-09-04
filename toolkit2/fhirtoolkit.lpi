@@ -906,6 +906,9 @@
       <Item>
         <Name Value="00000010ESemVerException"/>
       </Item>
+      <Item>
+        <Name Value="0000000fEIdResolveError\rEIdNotASocket"/>
+      </Item>
     </Exceptions>
   </Debugging>
 </CONFIG>

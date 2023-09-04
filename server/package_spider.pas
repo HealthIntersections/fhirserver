@@ -42,6 +42,7 @@ uses
 
 const
   MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
+  MANUAL_REG_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/manual-package-list.json';
   EMAIL_DAYS_LIMIT= 7;
 
 Type
@@ -380,6 +381,27 @@ begin
         Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
       end;
     end;
+    //try
+    //  log('Fetch '+MANUAL_REG_URL, '', false);
+    //  json := fetchJson(MANUAL_REG_URL);
+    //  try
+    //    pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
+    //    try
+    //      arr := json.arr['feeds'];
+    //      for i := 0 to arr.Count - 1 do
+    //        updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
+    //    finally
+    //      pr.free;
+    //    end;
+    //  finally
+    //    json.free;
+    //  end;
+    //except
+    //  on e : Exception do
+    //  begin
+    //    Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
+    //  end;
+    //end;
     if FZulip <> nil then
       FZulip.send;
     log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
