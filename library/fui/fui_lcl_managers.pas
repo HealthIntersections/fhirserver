@@ -1320,7 +1320,8 @@ begin
     begin
       DeleteItem(f);
       i := FList.itemIndex;
-      FData.Delete(i);
+      FData.Remove(f);
+      FFiltered.Remove(f);
       FList.Items.Delete(i);
       updateStatus;
     end;
@@ -1330,7 +1331,8 @@ begin
     if DeleteItem(f) then
     begin
       i := FList.itemIndex;
-      FData.Delete(i);
+      FFiltered.remove(f);
+      FData.remove(f);
       FList.Items.Delete(i);
       updateStatus;
     end;
@@ -1368,7 +1370,10 @@ begin
     item := getFocus;
     n := UpdateItem(item, mode);
     if n <> nil then
+    begin
       refreshItem(n);
+      updateStatus
+    end;
   end;
 end;
 
@@ -1380,7 +1385,10 @@ begin
   begin
     item := getFocus;
     if StopItem(item, mode) then
+    begin
       refresh(item);
+      updateStatus;
+    end;
   end;
 end;
 
