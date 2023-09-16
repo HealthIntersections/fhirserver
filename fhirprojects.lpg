@@ -19,12 +19,12 @@
       <Target FileName="server/fhirserver.lpi">
         <BuildModes>
           <Mode Name="default"/>
-          <Mode Name="win32" Compile="True"/>
           <Mode Name="win64"/>
           <Mode Name="linux"/>
           <Mode Name="osx"/>
           <Mode Name="osx-m1"/>
           <Mode Name="win64-release"/>
+          <Mode Name="linux-release"/>
         </BuildModes>
       </Target>
       <Target FileName="toolkit2/fhirtoolkit.lpi">
@@ -37,6 +37,7 @@
           <Mode Name="win64-release"/>
           <Mode Name="osx-release"/>
           <Mode Name="osx-m1-release"/>
+          <Mode Name="linux-release"/>
         </BuildModes>
       </Target>
       <Target FileName="utilities/codescan/codescan.lpi">
@@ -56,6 +57,20 @@
           <Mode Name="osx"/>
           <Mode Name="osx-m1"/>
           <Mode Name="win64-release"/>
+          <Mode Name="linux-release"/>
+        </BuildModes>
+      </Target>
+      <Target FileName="ipsmanager/ipsmanager.lpi">
+        <BuildModes>
+          <Mode Name="default" Compile="True"/>
+          <Mode Name="win64"/>
+          <Mode Name="linux"/>
+          <Mode Name="osx"/>
+          <Mode Name="osx-m1"/>
+          <Mode Name="win64-release"/>
+          <Mode Name="osx-release"/>
+          <Mode Name="osx-m1-release"/>
+          <Mode Name="linux-release"/>
         </BuildModes>
       </Target>
     </Targets>
