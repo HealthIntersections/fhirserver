@@ -877,7 +877,7 @@ procedure TMainConsoleForm.FormShow(Sender: TObject);
 var
   fn : string;
 begin
-  if getCommandLineParam('installer', fn) then
+  if false {getCommandLineParam('installer', fn)} then
   begin
     edtConfigFile.text := fn;
     edtConfigFileChange(self);

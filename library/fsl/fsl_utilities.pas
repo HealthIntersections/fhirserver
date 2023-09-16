@@ -1818,10 +1818,28 @@ Type
       Property CaseSensitive : Boolean Read FCaseSensitive Write FCaseSensitive;
   End;
 
-function hasCommandLineParam(name : String) : boolean;
-function getCommandLineParam(name : String; out res : String) : boolean;
-function commandLineAsString : String;
-function executableDirectory : String;
+  { TCommandLineParameters }
+
+  TCommandLineParameters = class (TFslObject)
+  private
+    FList : TStringList;
+    function removeQuotes(s: String):String;
+  public
+    constructor Create; overload;
+    constructor Create(params : Array of String); overload;
+    constructor Create(param : string); overload;
+    destructor Destroy; override;
+    function link : TCommandLineParameters; overload;
+
+    class function exec : String;
+    class function execDir : String;
+    function has(name : String) : boolean;
+    function get(name : String) : String; overload;
+    function get(name : String; out value : String) : boolean; overload;
+    function asString : String;
+    function hasParams : boolean;
+  end;
+
 
 
 type
@@ -1857,6 +1875,124 @@ Uses
   {$IFDEF DELPHI} IOUtils, {$ENDIF}
   DateUtils, fsl_stream;
 
+
+{ TCommandLineParameters }
+
+function TCommandLineParameters.removeQuotes(s: String): String;
+begin
+  if ((s.Length > 2) and s.startsWith('"') and s.endsWith('"')) then
+    result := s.Substring(2, s.length-3)
+  else
+    result := s;
+end;
+
+constructor TCommandLineParameters.Create;
+var
+  i : integer;
+begin
+  inherited Create;
+  FList := TStringList.create;
+  for i := 1 to ParamCount do
+    FList.add(paramstr(i));
+end;
+
+constructor TCommandLineParameters.Create(params: array of String);
+var
+  s : String;
+begin
+  inherited Create;
+  FList := TStringList.create;
+  for s in params do
+    FList.add(removeQuotes(s));
+end;
+
+constructor TCommandLineParameters.Create(param: string); 
+var
+  s : String;
+begin
+  inherited Create;
+  FList := TStringList.create;
+  for s in param.split([' ']) do
+    FList.add(removeQuotes(s));
+end;
+
+destructor TCommandLineParameters.Destroy;
+begin
+  FList.free;
+  inherited Destroy;
+end;
+
+function TCommandLineParameters.link: TCommandLineParameters;
+begin
+  result := TCommandLineParameters(inherited Link);
+end;
+
+class function TCommandLineParameters.exec: String;
+begin
+  result := paramstr(0);
+end;
+
+class function TCommandLineParameters.execDir: String;
+begin
+result := PathFolder(paramstr(0));
+ {$IFDEF OSX}
+ result := PathFolder(result.replace('/Contents/MacOS/', ''));
+ {$ENDIF}
+end;
+
+function TCommandLineParameters.has(name: String): boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in FList do
+    if (s = '-'+name) then
+      exit(true);
+end;
+
+function TCommandLineParameters.get(name: String): String;
+var
+  s : String;
+begin
+  result := '';
+  for s in FList do
+    if (s = '-'+name) then
+      exit(s);
+end;
+
+function TCommandLineParameters.get(name: String; out value: String): boolean;
+var
+  i : integer;
+  s : String;
+begin
+  result := false;
+  value := '';
+  for i := 0 to FList.count - 2 do
+  begin
+    if (FList[i] = '-'+name) then
+    begin
+      value := FList[i+1];
+      exit(true);
+    end;
+  end;
+end;
+
+function TCommandLineParameters.asString: String;
+var
+  s : String;
+begin
+  result := exec;
+  for s in Flist do
+    if (s.Contains(' ')) then
+      result := result + ' "'+s+'"'
+    else
+      result := result + ' '+s;
+end;
+
+function TCommandLineParameters.hasParams: boolean;
+begin
+  result := Flist.Count > 0;
+end;
 
 Function Percentage(Const iPart, iTotal : Integer) : Real;
 Begin
@@ -2849,7 +2985,7 @@ begin
     end
     else if s = '[exe]' then
     begin
-      result := executableDirectory();
+      result := TCommandLineParameters.execDir;
     end
     else if s = '[curr]' then
     begin
@@ -2886,18 +3022,24 @@ end;
 
 function URLPath(parts : array of String) : String;
 var
-  part : String;
+  part, s : String;
 begin
   result := '';
   for part in parts do
-    if result = '' then
-      result := part
-    else if not result.EndsWith('/') and not part.startsWith('/') then
-      result := result +'/'+part
-    else if not result.EndsWith('/') or not part.startsWith('/') then
-      result := result + part
+  begin
+    if (part = '[tmp]') then
+      s := SystemTemp
     else
-      result := result + part.substring(1);
+      s := part;
+    if result = '' then
+      result := s
+    else if not result.EndsWith('/') and not s.startsWith('/') then
+      result := result +'/'+s
+    else if not result.EndsWith('/') or not s.startsWith('/') then
+      result := result + s
+    else
+      result := result + s.substring(1);
+  end;
 end;
 
 Function CreateGUID : TGUID;
@@ -4111,6 +4253,8 @@ End;
 Begin
   Result := '';
 End;
+
+
 
 {$ENDIF}
 {$IFDEF LINUX}
@@ -16985,66 +17129,6 @@ begin
   result := cardinal(length(b));
 end;
 
-function getCommandLineParam(name : String; out res : String) : boolean;
-{$IFDEF FPC}
-var
-  i : integer;
-begin
-  result := false;
-  for i := 1 to paramCount - 1 do
-  begin
-    if paramStr(i) = '-'+name then
-    begin
-      res := paramStr(i+1);
-      exit(true);
-    end;
-  end;
-{$ELSE}
-begin
-  result := FindCmdLineSwitch(name, res, true, [clstValueNextParam]);
-{$ENDIF}
-end;
-
-function hasCommandLineParam(name : String) : boolean;
-{$IFDEF FPC}
-var
-  i : integer;
-begin
-  result := false;
-  for i := 1 to paramCount  do
-  begin
-    if paramStr(i) = '-'+name then
-      exit(true);
-  end;
-{$ELSE}
-begin
-  result := FindCmdLineSwitch(name);
-{$ENDIF}
-end;
-
-function commandLineAsString : String;
-var
-  i : integer;
-  s : String;
-begin
-  result := ParamStr(0);
-  for i := 1 to ParamCount do
-  begin
-    s := paramstr(i);
-    if (s.Contains(' ')) then
-      result := result + ' "'+s+'"'
-    else
-      result := result + ' '+s;
-  end
-end;
-
-function executableDirectory : String;
-begin
-  result := PathFolder(paramstr(0));
-  {$IFDEF OSX}
-  result := PathFolder(result.replace('/Contents/MacOS/', ''));
-  {$ENDIF}
-end;
 
 function AllContentHex(s: String): Boolean;
 var

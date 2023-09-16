@@ -534,16 +534,16 @@ begin
   FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
        ' Id nchar('+inttostr(ID_LENGTH)+') NOT NULL, '+#13#10+
        ' Client nchar(48) NOT NULL, '+#13#10+
-       ' Scope nchar(1024) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
        ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
+       ' Launch nchar(255) NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
-       ' Launch nchar(255) NULL, '+#13#10+
+       ' Scope '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' ClientState '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+

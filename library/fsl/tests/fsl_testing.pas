@@ -414,7 +414,7 @@ constructor TFslTestSettings.Create(folder, filename: String);
 begin
   inherited Create;
   if (folder = '') then
-    folder := executableDirectory;
+    folder := TCommandLineParameters.execDir;
   FFilename := FilePath([folder, filename]);
   FIni := TIniFile.create(filename);
   if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then

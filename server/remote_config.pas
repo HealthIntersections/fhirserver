@@ -40,7 +40,7 @@ uses
   server_config, database_installer, server_factory, server_constants,
   endpoint_txsvr;
 
-function loadRemoteConfig(src : String; local : TIniFile) : String;
+function loadRemoteConfig(params : TCommandLineParameters; src : String; local : TIniFile) : String;
 
 implementation
 
@@ -71,6 +71,7 @@ type
 
   TConfigurationBuilder = class (TFslObject)
   private
+    FParams : TCommandLineParameters;
     FLastPct : Integer;
     FJson : TJsonObject;
     FFolder : String;
@@ -90,13 +91,14 @@ type
     procedure DownloadFileList(files: TJsonObject);
     procedure seePackages(realm : TJsonObject);
   public
-    constructor Create; override;
+    constructor Create(params : TCommandLineParameters);
     destructor Destroy; override;
   end;
 
-constructor TConfigurationBuilder.Create;
+constructor TConfigurationBuilder.Create(params : TCommandLineParameters);
 begin
-  inherited;
+  inherited Create;
+  FParams := params;
   FFiles := TFslStringDictionary.Create;
   FEndPoints := TFslMap<TEndPointInfo>.Create;
   FEndPoints.Add('r2', TEndPointInfo.Create(fhirVersionRelease2));
@@ -108,6 +110,7 @@ end;
 
 destructor TConfigurationBuilder.Destroy;
 begin
+  FParams.free;
   FEndPoints.free;
   FFiles.free;
   FJson.free;
@@ -330,7 +333,7 @@ var
   v, vl : String;
   ep : TEndPointInfo;
 begin
-  if not getCommandLineParam('version', vl) then
+  if not FParams.get('version', vl) then
     vl := '*';
   if (vl = '*') then
     vl := '2,3,4,5';
@@ -368,7 +371,7 @@ begin
   files := realm.forceObj['files'];
   DownloadFileList(files);
 
-  if not getCommandLineParam('realm', r) then
+  if not FParams.get('realm', r) then
     r := '*';
 
   if (r = '*') then
@@ -494,7 +497,7 @@ begin
   end;
 end;
 
-function loadRemoteConfig(src : String; local : TIniFile) : String;
+function loadRemoteConfig(params : TCommandLineParameters; src : String; local : TIniFile) : String;
 var
   cb : TConfigurationBuilder;
   dir : String;
@@ -503,7 +506,7 @@ begin
 
   result := FilePath([dir, 'fhir-server', 'fhir-server-config.cfg']);
   try
-    cb := TConfigurationBuilder.Create;
+    cb := TConfigurationBuilder.Create(params.link);
     try
       cb.FUrl := src;
       cb.FFolder := ExtractFilePath(result);

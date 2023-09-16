@@ -66,7 +66,7 @@ uses
 
   tests_search_syntax, test_server_config;
 
-procedure registerTests;
+procedure registerTests(params : TCommandLineParameters);
 
 implementation
 
@@ -118,11 +118,11 @@ begin
   end;
 end;
 
-procedure registerTests;
+procedure registerTests(params : TCommandLineParameters);
 var
   iniName : String;
 begin
-  if not getCommandLineParam('test-settings', iniName) then
+  if not params.get('test-settings', iniName) then
     iniName := partnerFile('test-settings.ini');
 
   Logging.log('Test Settings from '+iniName);

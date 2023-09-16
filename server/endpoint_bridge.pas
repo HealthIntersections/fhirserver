@@ -234,10 +234,10 @@ Type
 
     procedure Load; override;
     procedure Unload; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SweepCaches; override;
@@ -295,7 +295,7 @@ begin
   FServerContext.userProvider := TExampleFHIRUserProvider.Create;
 end;
 
-procedure TBridgeEndPoint.LoadPackages(plist: String);
+procedure TBridgeEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
   raise EFslException.Create('This is not supported by the bridge end point');
 end;

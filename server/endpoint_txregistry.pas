@@ -130,10 +130,10 @@ type
 
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
@@ -224,7 +224,7 @@ begin
   // todo: health check on spider
 end;
 
-procedure TTxRegistryServerEndPoint.LoadPackages(plist: String);
+procedure TTxRegistryServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
   raise EFslException.Create('This is not applicable to this endpoint');
 end;

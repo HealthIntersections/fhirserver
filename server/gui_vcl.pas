@@ -105,7 +105,7 @@ end;
 
 procedure TServerGUI.FormCreate(Sender: TObject);
 begin
-  Fini := TFHIRServerConfigFile.Create(FilePath([executableDirectory(), 'fhir-server-gui.cfg']));
+  Fini := TFHIRServerConfigFile.Create(FilePath([TCommandLineParameters.execDir(), 'fhir-server-gui.cfg']));
   FServer := TFHIRServerController.Create(FIni.link);
   FServer.OnStatusChange := serverStatusChange;
   FServer.OnLog := log;

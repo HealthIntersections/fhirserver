@@ -207,7 +207,7 @@ end;
 //
 function localFile(s : String) : String;
 begin
-  result := FilePath([executableDirectory(), s]);
+  result := FilePath([TCommandLineParameters.execDir(), s]);
 end;
 
 function makeUcum : TFHIRServerConfigSection;

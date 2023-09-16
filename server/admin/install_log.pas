@@ -36,21 +36,37 @@ uses
   Process,
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, ComCtrls,
   ExtCtrls, StdCtrls,
-  fsl_base, fsl_threads, fsl_utilities;
+  fsl_base, fsl_threads, fsl_utilities, fsl_logging,
+  kernel;
 
 type
   TInstallProgressForm = class;
+  TInstallerThread = class;
+
+  { TInstallerListener }
+  TInstallerListener = class (TLogListener)
+  private
+    FThread : TInstallerThread;
+  public                        
+    procedure log(const s : String); override;
+  end;
+
+  TInstallerThreadState = (itsWaiting, itsRunning, itsStopping, itsFinished);
 
   { TInstallerThread }
 
   TInstallerThread = class (TFslThread)
   private
     FForm : TInstallProgressForm;
-    FCarry : String;
-    process : TProcess;
-    procedure processOutput(text : String);
+    FIncoming : TStringList;
+    FState : TInstallerThreadState;
+    FLock : TFslLock;
+    procedure getLog(ts : TStringList; var status : String);
   protected
     procedure Execute; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
   end;
 
   { TInstallProgressForm }
@@ -72,12 +88,9 @@ type
     procedure Timer1Timer(Sender: TObject);
   private
     FCommand: String;
-    FIncoming : TStringList;
     FThread : TInstallerThread;
-    FLock : TFslLock;
 
-    procedure processOutput(s : String);
-    procedure log(s : String);
+    procedure addToLog(s : String);
 
   public
     property command : String read FCommand write FCommand;
@@ -85,13 +98,11 @@ type
 
 var
   InstallProgressForm: TInstallProgressForm;
+  CODES_TInstallerThreadState : array [TInstallerThreadState] of String = ('Waiting', 'Running', 'Stopping', 'Finished');
 
 implementation
 
 {$R *.lfm}
-
-const
-  BUF_SIZE = 2048; // Buffer size for reading the output in chunks
 
 { TInstallProgressForm }
 
@@ -99,8 +110,6 @@ procedure TInstallProgressForm.FormCreate(Sender: TObject);
 begin
   FThread := TInstallerThread.Create;
   FThread.FForm := self;
-  FLock := TFslLock.Create;
-  FIncoming := TStringList.Create;
   Timer1.Enabled := true;
 end;
 
@@ -109,8 +118,6 @@ begin
   Timer1.Enabled := false;
   FThread.StopAndWait(2000);
   FThread.free;
-  FIncoming.free;
-  FLock.free;
 end;
 
 procedure TInstallProgressForm.FormShow(Sender: TObject);
@@ -125,89 +132,146 @@ end;
 
 procedure TInstallProgressForm.btnCancelClick(Sender: TObject);
 begin
-  if FThread.process <> nil then
-    FThread.process.Terminate(0);
-  ModalResult := mrCancel;
-end;
-
-procedure TInstallProgressForm.processOutput(s: String);
-begin
-  FLock.Lock;
-  try
-    FIncoming.add(s);
-  finally
-    FLock.unlock;
-  end;
+  logging.log('Terminating...');
+  FThread.Stop;
 end;
 
 procedure TInstallProgressForm.Timer1Timer(Sender: TObject);
 var
+  ts : TStringList;
   s : String;
 begin
-  FLock.Lock;
+  ts := TStringList.create;
   try
-    for s in FIncoming do
-      log(s);
-    FIncoming.clear;
+    FThread.getLog(ts, s);
+    lblStatus.caption := s;
+    if (s = 'Finished') then
+
+
+    for s in ts do
+      addToLog(s);
   finally
-    FLock.unlock;
+    ts.free;
   end;
 end;
 
-procedure TInstallProgressForm.log(s: String);
+procedure TInstallProgressForm.addToLog(s: String);
 begin
   Memo1.lines.Add(s);
   btnCopy.enabled := true;
-  if (s.contains('---completed ok---')) then
-    ModalResult := mrOk;
+end;
+               
+{ TInstallerListener }
+
+procedure TInstallerListener.log(const s: String);
+begin
+  FThread.Flock.Lock;
+  try
+    FThread.FIncoming.add(s);
+  finally
+    FThread.Flock.Unlock;
+  end;
 end;
 
 { TInstallerThread }
-
-procedure TInstallerThread.processOutput(text : String);
-var
-  curr, s : String;
+                      
+constructor TInstallerThread.Create;
 begin
-  curr := FCarry + text;
-  while curr.contains(#13#10) do
-  begin
-    StringSplit(curr, #13#10, s, curr);
-    fform.processOutput(s);
+  inherited Create;
+  FIncoming := TStringList.create; 
+  FLock := TFslLock.Create;
+end;
+
+destructor TInstallerThread.Destroy;
+begin
+  FLock.free;
+  FIncoming.free;
+  inherited;
+end;
+
+procedure TInstallerThread.getLog(ts: TStringList; var status : String);
+begin
+  FLock.lock;
+  try
+    ts.Assign(FIncoming);
+    FIncoming.Clear;
+    status := CODES_TInstallerThreadState[FState]
+  finally
+    FLock.Unlock;
   end;
-  FCarry := curr;
 end;
 
 procedure TInstallerThread.Execute;
 var
-  BytesRead    : longint;
-  Buffer       : TBytes;
-  s : String;
+  cp : TCommandLineParameters;
+  listener : TInstallerListener;
 begin
-  fform.lblStatus.caption := 'Getting Ready';
-  fform.processOutput('Running Server to do the install...');
-  process := TProcess.Create(nil);
+  listener := TInstallerListener.create;
+  cp := TCommandLineParameters.create(FForm.command);
   try
-    process.Executable := IncludeTrailingPathDelimiter(ExtractFileDir(ParamStr(0)))+'fhirserver.exe';
-    for s in FForm.command.split([' ']) do
-      process.Parameters.add(s);
-    process.Options := [poUsePipes];
-    process.ShowWindow := swoHIDE;
-    process.Execute;
-    fform.lblStatus.caption := 'Running';
-    repeat
-      SetLength(Buffer, BUF_SIZE);
-      BytesRead := process.Output.Read(Buffer, BUF_SIZE);
-      processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
-    until BytesRead = 0;
+    listener.FThread := self;
+    Logging.addListener(listener);
+    try
+      FState := itsRunning;
+      try
+        ExecuteFhirServer(cp);
+      finally
+        FState := itsFinished;
+      end;
+    finally
+      Logging.removeListener(listener);
+    end;
   finally
-    process.free;
+    cp.free;
+    listener.free;
   end;
-  process := nil;
-  fform.lblStatus.caption := 'Finished';
-  fform.btnCancel.caption := 'Close';
-  fform.processOutput('Server Process Terminated');
 end;
 
-
 end.
+//
+//              
+//const                  ModalResult := mrCancel;
+//
+//  BUF_SIZE = 2048; // Buffer size for reading the output in chunks
+//
+//end.          
+//  FLock.Lock;
+//  try
+//    for s in FIncoming do
+//      log(s);
+//    FIncoming.clear;
+//  finally
+//    FLock.unlock;
+//  end;
+//    //
+////    procedure processOutput(s : String);       
+//  if (s.contains('---completed ok---')) then
+//    ModalResult := mrOk;
+//
+//
+//procedure TInstallerThread.processOutput(text : String);
+//var
+//  curr, s : String;
+//begin
+//  curr := FCarry + text;
+//  while curr.contains(#13#10) do
+//  begin
+//    StringSplit(curr, #13#10, s, curr);
+//    fform.processOutput(s);
+//  end;
+//  FCarry := curr;
+//end;
+//
+//  FIncoming.free;
 
+//
+//procedure TInstallProgressForm.processOutput(s: String);
+//begin
+//  FLock.Lock;
+//  try
+//    FIncoming.add(s);
+//  finally
+//    FLock.unlock;
+//  end;
+//end;
+//

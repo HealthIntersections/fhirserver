@@ -157,11 +157,12 @@ type
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
     procedure recordStats(rec : TStatusRecord); virtual;
+    procedure buildIndexes; virtual;
 
-    procedure InstallDatabase; virtual;
+    procedure InstallDatabase(params : TCommandLineParameters); virtual;
     procedure UninstallDatabase; virtual;
-    procedure LoadPackages(plist : String); virtual;
-    procedure updateAdminPassword; virtual;
+    procedure LoadPackages(installer : boolean; plist : String); virtual;
+    procedure updateAdminPassword(pw : String); virtual;
     procedure Load; virtual;
     Procedure Unload; virtual;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); virtual;
@@ -443,7 +444,12 @@ begin
   rec.countEP(s, c);
 end;
 
-procedure TFHIRServerEndPoint.InstallDatabase;
+procedure TFHIRServerEndPoint.buildIndexes;
+begin
+  // nothing
+end;
+
+procedure TFHIRServerEndPoint.InstallDatabase(params: TCommandLineParameters);
 begin
  // nothing
 end;
@@ -463,7 +469,7 @@ begin
  // nothing
 end;
 
-procedure TFHIRServerEndPoint.LoadPackages(plist: String);
+procedure TFHIRServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
  // nothing
 end;
@@ -479,7 +485,7 @@ begin
     WebEndPoint.Common.Cache.Caching := status;
 end;
 
-procedure TFHIRServerEndPoint.updateAdminPassword;
+procedure TFHIRServerEndPoint.updateAdminPassword(pw: String);
 begin
  // nothing
 end;

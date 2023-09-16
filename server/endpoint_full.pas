@@ -208,10 +208,10 @@ Type
 
     procedure Load; override;
     procedure Unload; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
@@ -743,18 +743,18 @@ begin
   end;
 end;
 
-procedure TFullServerEndPoint.InstallDatabase;
+procedure TFullServerEndPoint.InstallDatabase(params : TCommandLineParameters);
 var
   conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   rights, un, pw, em : String;
 begin
-  if not getCommandLineParam('default-rights', rights) then
+  if not params.get('default-rights', rights) then
     raise EFslException.Create('Some default rights are required');
-  if not getCommandLineParam('username', un) then
+  if not params.get('username', un) then
     raise EFslException.Create('An Administrator username is required');
-  if not getCommandLineParam('password', pw) then
+  if not params.get('password', pw) then
     raise EFslException.Create('An Administrator password is required');
   if not Settings.Ini.admin.getProp('email', em) then
     raise EFslException.Create('An Administrator email address is required in the configuration');
@@ -815,13 +815,12 @@ begin
   Logging.log('Wiping database Done');
 end;
 
-procedure TFullServerEndPoint.updateAdminPassword;
+procedure TFullServerEndPoint.updateAdminPassword(pw : String);
 var
   scim : TSCIMServer;
   conn : TFDBConnection;
-  pw : String;
 begin
-  if not getCommandLineParam('password', pw) then
+  if pw = '' then
     raise EFslException.Create('An Administrator password is required');
   conn := Database.getConnection('install');
   try
@@ -856,7 +855,7 @@ end;
 
 
 
-procedure TFullServerEndPoint.LoadPackages(plist: String);
+procedure TFullServerEndPoint.LoadPackages(installer : boolean; plist: String);
 var
   p, pi, pv : String;
   pl : TArray<String>;
@@ -886,7 +885,7 @@ begin
           loadList := ploader.FFactory.resourceNames;
           FServerContext.pcm.loadPackage(pi, pv, loadList, li);
           logLevel := ollHuman;
-          if hasCommandLineParam('installer') then
+          if installer then
             logLevel := ollInstaller;
           Transaction(ploader.bundle, true, p, '', opmCmdLine, logLevel);
         finally

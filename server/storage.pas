@@ -616,8 +616,7 @@ begin
   FStorage := Storage;
 end;
 
-function TFHIROperationEngine.createClient(langList : THTTPLanguageList;
-  session: TFHIRSession): TFhirClientV;
+function TFHIROperationEngine.createClient(langList : THTTPLanguageList; session: TFHIRSession): TFhirClientV;
 var
   int : TFHIRInternalCommunicator;
 begin
@@ -627,7 +626,7 @@ begin
     int.FEngine := self.link as TFHIROperationEngine;
     int.Context := TFHIRServerContext(FServerContext).ValidatorContext.link;
     int.session := session.link;
-    result := factory.makeClientInt(TFHIRServerContext(FServerContext).ValidatorContext.link, langList.link, int.link);
+    result := factory.makeClientInt(TFHIRServerContext(FServerContext).ValidatorContext.link, langList, int.link);
   finally
     int.free;
   end;
@@ -1354,7 +1353,7 @@ begin
     int.FEngine := createOperationContext(langList).link as TFHIROperationEngine;
     int.Context := context.link;
     int.session := session.link;
-    result := factory.makeClientInt(TFHIRServerContext(ServerContext).ValidatorContext.link, langList.link, int.link);
+    result := factory.makeClientInt(TFHIRServerContext(ServerContext).ValidatorContext.link, langList, int.link);
   finally
     int.free;
   end;

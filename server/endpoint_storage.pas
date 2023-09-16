@@ -1828,7 +1828,6 @@ Begin
     if not redirect then
     begin
       oRequest.analyse(sCommand, sURL, relativeReferenceAdjustment, FAdaptors);
-
       if (oRequest.CommandType <> fcmdNull) then
       begin
         if (oRequest.CommandType in [fcmdTransaction, fcmdBatch, fcmdUpdate, fcmdPatch, fcmdValidate, fcmdCreate]) or
@@ -2213,7 +2212,7 @@ begin
           oComp := FContext.factory.makeComposer(self.Context.ValidatorContext, ffXml, langList, OutputStyleNormal);
         ffXhtml:
           begin
-            oComp := TFHIRXhtmlComposer.Create(self.Context.ValidatorContext, OutputStyleNormal, langList, AppendForwardSlash(url));
+            oComp := TFHIRXhtmlComposer.Create(self.Context.ValidatorContext, OutputStyleNormal, langList.link, AppendForwardSlash(url));
             TFHIRXhtmlComposer(oComp).Version := SERVER_FULL_VERSION;
             TFHIRXhtmlComposer(oComp).Session := Session.link;
             TFHIRXhtmlComposer(oComp).relativeReferenceAdjustment := relativeReferenceAdjustment;
@@ -2221,7 +2220,7 @@ begin
         ffJson, ffNDJson:
           oComp := FContext.factory.makeComposer(self.Context.ValidatorContext, ffJson, langList, OutputStyleNormal);
         ffText:
-          oComp := TFHIRTextComposer.Create(self.Context.ValidatorContext, OutputStyleNormal, langList);
+          oComp := TFHIRTextComposer.Create(self.Context.ValidatorContext, OutputStyleNormal, langList.link);
       else
         oComp := FContext.factory.makeComposer(self.Context.ValidatorContext, ffJson, langList, OutputStyleNormal);
       end;

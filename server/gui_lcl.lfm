@@ -4,12 +4,12 @@ object ServerGUI: TServerGUI
   Top = 201
   Width = 935
   Caption = 'FHIR Terminology Server'
-  ClientHeight = 710
+  ClientHeight = 730
   ClientWidth = 935
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.2.7.0'
   object Panel3: TPanel
     Left = 0
     Height = 73

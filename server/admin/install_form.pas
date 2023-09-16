@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, ExtCtrls,
-  StdCtrls, ComCtrls,
+  StdCtrls, ComCtrls, IniFiles,
   fsl_base, fsl_utilities, fsl_npm_client,
   fdb_manager,
   server_config, utilities, database_installer,
@@ -304,11 +304,20 @@ end;
 
 function TEndpointInstallForm.command: String;
 var
-  s : String;
+  f, s : String;
   i : TListItem;
+  ini : TIniFile;
 begin
+  f := FilePath(['[tmp]', 'fhir-server-install.ini']);
+  Ini := TIniFile.create(f);
+  try
+    ini.writeString('config', 'cfgFile', filename);
+  finally
+    Ini.Free;
+  end;
+
   // default-rights
-  result := '-cmd installdb -installer -cfg "'+filename+'" -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
+  result := '-cmd installdb -installer -cfg "'+f+'" -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
   case cbxSecurity.ItemIndex of
     0: result := result + ' -security open';
     1: result := result + ' -security oauth?';

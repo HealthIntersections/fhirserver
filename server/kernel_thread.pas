@@ -70,6 +70,7 @@ type
     FLastStarted: UInt64;
     FFrequency: integer;
     FRunTime : UInt64;
+    FDisabled : boolean;
 
     FThread : TFhirServerMaintenanceThreadTaskThread;
     procedure checkStatus;
@@ -85,9 +86,12 @@ type
     property lastStarted : UInt64 read FLastStarted;
     property status : TFhirServerMaintenanceThreadTaskStatus read FStatus;
     property State : String read FState;
+    property disabled : Boolean read FDisabled write FDisabled;
 
     function describe(pad : integer; due : boolean) : String;
   end;
+
+  { TFhirServerMaintenanceThread }
 
   TFhirServerMaintenanceThread = class (TFslThread)
   private
@@ -102,6 +106,7 @@ type
     destructor Destroy; override;
 
     procedure defineTask(name : String; event : TFhirServerMaintenanceThreadTaskEvent; frequency : integer);
+    procedure disableTask(name : String);
     procedure logStatus(workingOnly, due : boolean);
   end;
 
@@ -180,7 +185,7 @@ begin
     FThread := nil;
   end;
 
-  if (FStatus in [ktsInitialised, ktsResting]) and (FLastStarted + (FFrequency * 1000) < GetTickCount64) then
+  if not Disabled and (FStatus in [ktsInitialised, ktsResting]) and (FLastStarted + (FFrequency * 1000) < GetTickCount64) then
   begin
     FStatus := ktsPreparing;
     FThread := TFhirServerMaintenanceThreadTaskThread.Create(self);
@@ -264,6 +269,15 @@ begin
   finally
     task.free;
   end;
+end;
+
+procedure TFhirServerMaintenanceThread.disableTask(name: String);
+var
+  task : TFhirServerMaintenanceThreadTask;
+begin
+  for task in FTasks do
+    if task.name = name then
+      task.disabled := true;
 end;
 
 function TFhirServerMaintenanceThread.ThreadName: String;

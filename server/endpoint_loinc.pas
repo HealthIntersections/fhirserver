@@ -74,10 +74,10 @@ type
 
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure Load; override;
     Procedure Unload; override;
     function cacheSize(magic : integer) : UInt64; override;
@@ -156,7 +156,7 @@ procedure TLoincWebEndPoint.Load;
 begin
 end;
 
-procedure TLoincWebEndPoint.LoadPackages(plist: String);
+procedure TLoincWebEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
   raise EFslException.Create('This operation is not supported for this endpoint');
 end;

@@ -694,7 +694,7 @@ end;
 constructor TSmartAppLaunchLogin.Create;
 begin
   inherited;
-  FlogoPath := FilePath([ExtractFilePath(paramstr(0)), ChangeFileExt(executableDirectory(), '.png')]);
+  FlogoPath := FilePath([ExtractFilePath(paramstr(0)), ChangeFileExt(TCommandLineParameters.execDir, '.png')]);
   FTemplate := templateSource;
 end;
 

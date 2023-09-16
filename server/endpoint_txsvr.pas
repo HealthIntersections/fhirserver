@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads, fsl_i18n,
-  fdb_manager,
+  fdb_manager, fdb_fts,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
 
@@ -83,20 +83,26 @@ type
   private
     FPackages : TStringList;
     FCodeSystems : TFslMap<TFHIRResourceProxyV>;
+    FTextIndex: TFDBFullTextSearch;
     FValueSets : TFslMap<TFHIRResourceProxyV>;
     FNamingSystems : TFslMap<TFHIRResourceProxyV>;
     FConceptMaps : TFslMap<TFHIRResourceProxyV>;
+    procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create; override;
+    constructor Create(TextIndex : TFDBFullTextSearch);
     destructor Destroy; override;
     function link : TTerminologyServerData; overload;
+
     procedure clear;
+    procedure buildIndex;
+
     property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
     property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
     property NamingSystems : TFslMap<TFHIRResourceProxyV> read FNamingSystems;
     property ConceptMaps : TFslMap<TFHIRResourceProxyV> read FConceptMaps;
+    property TextIndex : TFDBFullTextSearch read FTextIndex;
   end;
 
   TTerminologyFhirServerStorage = class;
@@ -253,17 +259,18 @@ type
 
     procedure Load; override;
     procedure Unload; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;    
-    procedure recordStats(rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;  
+    procedure buildIndexes; override;
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -346,7 +353,7 @@ end;
 
 { TTerminologyServerData }
 
-constructor TTerminologyServerData.Create;
+constructor TTerminologyServerData.Create(TextIndex : TFDBFullTextSearch);
 begin
   inherited create;
   FCodeSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
@@ -358,6 +365,7 @@ begin
   FConceptMaps := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FConceptMaps.defaultValue := nil;
   FPackages := TStringList.create;
+  FTextIndex := TextIndex;
 end;
 
 destructor TTerminologyServerData.Destroy;
@@ -367,6 +375,7 @@ begin
   FNamingSystems.free;
   FValueSets.free;
   FCodeSystems.free;
+  FTextIndex.free;
 
   inherited;
 end;
@@ -382,6 +391,62 @@ begin
   FValueSets.clear;
   FNamingSystems.clear;
   FConceptMaps.clear;
+end;
+
+procedure TTerminologyServerData.addCodesToIndex(cmp : TFDBFullTextSearchCompartment; vurl : String; codes : TFhirCodeSystemConceptListW);
+var
+  cc : TFHIRCodeSystemConceptW;
+begin
+  for cc in codes do
+  begin
+    FTextIndex.addText(cmp, vurl+'#'+cc.code, cc.code+': '+cc.display, cc.definition);
+    addCodesToIndex(cmp, vurl, cc.conceptList);
+  end;
+end;
+
+procedure TTerminologyServerData.buildIndex;
+var
+  cmp : TFDBFullTextSearchCompartment;
+  pr : TFHIRResourceProxyV;
+  vs : TFHIRValueSetW;
+  cs : TFHIRCodeSystemW;
+  start : UInt64;
+begin
+  start := GetTickCount64;
+  cmp := FTextIndex.createCompartment('CodeSystems');
+  try
+    for pr in FCodeSystems.Values do
+    begin
+      cs := pr.resourceW as TFHIRCodeSystemW;
+      FTextIndex.addText(cmp, cs.vurl, cs.name, cs.description);
+    end;
+  finally
+    Logging.log('CodeSystems Indexed for '+FTextIndex.name+'. '+FTextIndex.closeCompartment(cmp)+' in '+inttostr(GetTickCount64 - start)+'ms');
+  end;
+
+  start := GetTickCount64;
+  cmp := FTextIndex.createCompartment('Codes');
+  try
+    for pr in FCodeSystems.Values do
+    begin
+      cs := pr.resourceW as TFHIRCodeSystemW;
+      addCodesToIndex(cmp, cs.vurl, cs.conceptList);
+    end;
+  finally
+    Logging.log('Codes Indexed for '+FTextIndex.name+'. '+FTextIndex.closeCompartment(cmp)+' in '+inttostr(GetTickCount64 - start)+'ms');
+  end;
+
+  start := GetTickCount64;
+  cmp := FTextIndex.createCompartment('ValueSets');
+  try
+    for pr in FValueSets.Values do
+    begin                             
+      vs := pr.resourceW as TFHIRValueSetW;
+      FTextIndex.addText(cmp, vs.vurl, vs.name, vs.description);
+    end;
+  finally
+    Logging.log('ValueSets Indexed for '+FTextIndex.name+'. '+FTextIndex.closeCompartment(cmp)+' in '+inttostr(GetTickCount64 - start)+'ms');
+  end;
 end;
 
 function TTerminologyServerData.sizeInBytesV(magic: integer): cardinal;
@@ -1010,7 +1075,7 @@ end;
 constructor TTerminologyFhirServerStorage.Create(factory : TFHIRFactory);
 begin
   inherited Create(factory);
-  FData := TTerminologyServerData.create;
+  FData := TTerminologyServerData.create(TFDBFullTextSearchFactory.makeSQLiteTextSearch(factory.versionName))         ;
   FLock := TFslLock.create('tx.storage');
 end;
 
@@ -1515,6 +1580,11 @@ begin
   FServerContext.TerminologyServer.recordStats(rec);
 end;
 
+procedure TTerminologyServerEndPoint.buildIndexes;
+begin
+  FStore.FData.buildIndex;
+end;
+
 function TTerminologyServerEndPoint.summary: String;
 begin
   result := 'Terminology Server using '+describeDatabase(Config);
@@ -1606,7 +1676,8 @@ begin
   end;
 end;
 
-procedure TTerminologyServerEndPoint.InstallDatabase;
+procedure TTerminologyServerEndPoint.InstallDatabase(
+  params: TCommandLineParameters);
 var
   conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
@@ -1652,12 +1723,12 @@ begin
   end;
 end;
 
-procedure TTerminologyServerEndPoint.LoadPackages(plist: String);
+procedure TTerminologyServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
   raise EFslException.Create('This operation does not apply to this endpoint');
 end;
 
-procedure TTerminologyServerEndPoint.updateAdminPassword;
+procedure TTerminologyServerEndPoint.updateAdminPassword(pw: String);
 begin
   raise EFslException.Create('This operation does not apply to this endpoint');
 end;

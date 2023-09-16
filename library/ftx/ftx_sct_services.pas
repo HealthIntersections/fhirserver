@@ -246,7 +246,7 @@ Type
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     function Count : Cardinal;
-    Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
+    Procedure GetDescription(iIndex : Cardinal; out iDesc : Cardinal; out id : UInt64; out date : TSnomedDate; out concept, module, kind, caps, refsets, valueses : Cardinal; out active : Boolean; out lang : byte);
     function ConceptByIndex(iIndex : Cardinal) : cardinal;
 
 
@@ -266,7 +266,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    Function FindDescription(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
+    Function FindDescription(iIdentity : UInt64; out IIndex : Cardinal) : boolean;
 
     Procedure StartBuild;
     procedure AddDescription(id : UInt64; reference : Cardinal);
@@ -306,7 +306,7 @@ Type
   Public
     Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
     function getConceptId(iIndex : Cardinal) : UInt64;
-    procedure GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+    procedure GetConcept(iIndex : Cardinal; out Identity : UInt64; out Flags : Byte; out effectiveTime : TSnomedDate; out Parents : Cardinal; out Descriptions : Cardinal; out Inbounds : Cardinal; out outbounds : Cardinal; out refsets : Cardinal);
     Function GetParent(iIndex : Cardinal): Cardinal;
     Function GetIdentity(iIndex : Cardinal): UInt64;
     Function Count : Cardinal;
@@ -361,7 +361,7 @@ Type
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     // for Persistence
-    Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : Integer);
+    Procedure GetRelationship(iIndex: Cardinal; out identity : UInt64; out Source, Target, RelType, module, kind, modifier : Cardinal; out date : TSnomedDate; out Active, Defining : Boolean; out Group : Integer);
 
     Procedure StartBuild;
     Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Active, Defining : Boolean; Group : integer) : Cardinal;
@@ -415,7 +415,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    Procedure GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+    Procedure GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
     Function GetRefSetByConcept(iIndex : Cardinal) : Cardinal;
     Function Count : Integer;
@@ -1023,7 +1023,7 @@ begin
   FBuilder.free;
 end;
 
-procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
+procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; out iDesc : Cardinal; out id : UInt64; out date : TSnomedDate; out concept, module, kind, caps, refsets, valueses : Cardinal; out active : Boolean; out lang : byte);
 Begin
   if (iIndex >= FLength) then
     Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details', itException);
@@ -1160,7 +1160,7 @@ Begin
   Move(FMaster[iIndex+0], result, 8);
 End;
 
-procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; out Identity : UInt64; out Flags : Byte; out effectiveTime : TSnomedDate; out Parents : Cardinal; out Descriptions : Cardinal; out Inbounds : Cardinal; out outbounds : Cardinal; out refsets : Cardinal);
 Begin
   if (iIndex >= FLength) then
     Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
@@ -2955,7 +2955,7 @@ begin
   FBuilder.free;
 end;
 
-procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : integer);
+procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; out identity : UInt64; out Source, Target, RelType, module, kind, modifier : Cardinal; out date : TSnomedDate; out Active, Defining : Boolean; out Group : integer);
 // (iIndex: Cardinal; var Source, Target, RelType: Cardinal; var Flags, Group : Byte);
 begin
   if (iIndex >= FLength) then
@@ -3196,7 +3196,7 @@ begin
   End;
 end;
 
-procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
 begin
   iIndex := iIndex * REFSET_SIZE;
   if (iIndex >= FLength) then
@@ -3256,7 +3256,7 @@ begin
   FBuilder.free;
 end;
 
-function TSnomedDescriptionIndex.FindDescription(iIdentity: UInt64; var IIndex: Cardinal): boolean;
+function TSnomedDescriptionIndex.FindDescription(iIdentity: UInt64; out IIndex: Cardinal): boolean;
 var
   aConcept : UInt64;
   L, H, I: Integer;
