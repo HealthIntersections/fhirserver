@@ -50,6 +50,9 @@ uses
   tx_manager, tx_webserver, telnet_server, time_tracker, server_stats,
   web_base, web_cache, endpoint;
 
+const
+  POST_SIZE_LIMIT = 20; // MB
+
 type
   TStorageEndPoint = class;
   TStorageWebEndpoint = class;
@@ -1241,8 +1244,8 @@ Begin
         end
         else if request.PostStream <> nil then
         begin
-          if request.PostStream.Size > 10 * 1024 * 1024 then
-            raise ERestfulException.Create('TFhirWebServer.HandleRequest', HTTP_ERR_BAD_REQUEST, itTooCostly, 'POST Stream too large (>10MB)', langList);
+          if request.PostStream.Size > POST_SIZE_LIMIT * 1024 * 1024 then
+            raise ERestfulException.Create('TFhirWebServer.HandleRequest', HTTP_ERR_BAD_REQUEST, itTooCostly, 'POST Stream too large ('+DescribeBytes(request.PostStream.Size)+' - limit is '+inttostr(POST_SIZE_LIMIT)+'MB)', langList);
           oStream := TMemoryStream.Create;
           oStream.CopyFrom(request.PostStream, request.PostStream.Size);
           oStream.Position := 0;

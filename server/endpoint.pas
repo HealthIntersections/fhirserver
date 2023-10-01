@@ -101,7 +101,7 @@ type
     procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>); overload;
     procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String); overload;
   public
-    constructor Create(code, path : String; common : TFHIRWebServerCommon);
+    constructor Create(code, path : String; common : TFHIRWebServerCommon); virtual;
     destructor Destroy; override;
     property PathNoSlash : String read FPathNoSlash;
     property PathWithSlash : String read FPathWithSlash;
@@ -157,7 +157,6 @@ type
     procedure SetCacheStatus(status : boolean); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
     procedure recordStats(rec : TStatusRecord); virtual;
-    procedure buildIndexes; virtual;
 
     procedure InstallDatabase(params : TCommandLineParameters); virtual;
     procedure UninstallDatabase; virtual;
@@ -442,11 +441,6 @@ begin
   s := webendPoint.code;
   c := webendPoint.RequestCount;
   rec.countEP(s, c);
-end;
-
-procedure TFHIRServerEndPoint.buildIndexes;
-begin
-  // nothing
 end;
 
 procedure TFHIRServerEndPoint.InstallDatabase(params: TCommandLineParameters);
