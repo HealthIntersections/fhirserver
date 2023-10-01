@@ -1263,9 +1263,22 @@ end;
 
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
 var
-  s, n: String;
+  s, n, h, t: String;
+  i : integer;
 begin
   s := SourceProvider.getSource(actual);
+  i := s.IndexOf('[%include');
+  while (i > -1) do
+  begin
+    h := s.subString(0, i);
+    s := s.subString(i);
+    i := s.indexOf('%]');
+    t := s.subString(i+2);
+    n := s.Substring(10, i-10);
+    s := h + SourceProvider.getSource(n) + t; 
+    i := s.IndexOf('[%include');
+  end;
+
   s := s.Replace('[%id%]', Common.Name, [rfReplaceAll]);
   s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
   s := s.Replace('[%web%]', WebDesc(secure), [rfReplaceAll]);
