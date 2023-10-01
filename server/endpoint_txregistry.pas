@@ -409,7 +409,7 @@ begin
     if (srvr = '') then
       b.append('<td><b>Server</b></td>'#13#10);
     if (ver = '') then
-      b.append('<td><b>Version</b></td>'#13#10);
+      b.append('<td><b>FHIR Version</b></td>'#13#10);
     b.append('<td><b>Url</b></td>'#13#10);
     b.append('<td><b>Status</b></td>'#13#10);
     b.append('<td><b>Content</b></td>'#13#10);
@@ -425,7 +425,7 @@ begin
       if (srvr = '') then
         b.append('<td><a href="'+path+'&server='+row.str['server-code']+'">'+FormatTextToHTML(row.str['server-name'])+'</a></td>'#13#10);
       if (ver = '') then
-        b.append('<td><a href="'+path+'&version='+row.str['version']+'">'+row.str['version']+'</a></td>'#13#10);
+        b.append('<td><a href="'+path+'&fhirVersion='+row.str['fhirVersion']+'">'+row.str['fhirVersion']+'</a></td>'#13#10);
       b.append('<td><a href="'+FormatTextToHTML(row.str['url'])+'">'+FormatTextToHTML(row.str['url'])+'</a></td>'#13#10);
       if (row.str['error']) <> '' then
         b.append('<td>>span style="color: maroon">Error: '+FormatTextToHTML(row.str['error'])+'</span>Last OK '+DurationToSecondsString(row.int['last-success'])+' ago</td>'#13#10)
@@ -475,7 +475,7 @@ begin
   if (srvr <> '') then
     path := path+'&server='+srvr;
   if (ver <> '') then
-    path := path+'&version='+ver;
+    path := path+'&fhirVersion='+ver;
   if (tx <> '') then
     path := path+'&url='+tx;
 
@@ -486,7 +486,7 @@ begin
     vars.add('count', TFHIRObjectText.Create(json.forceArr['results'].Count));
     vars.add('registry', TFHIRObjectText.Create(reg));
     vars.add('server', TFHIRObjectText.Create(srvr));
-    vars.add('version', TFHIRObjectText.Create(ver));
+    vars.add('fhirVersion', TFHIRObjectText.Create(ver));
     vars.add('url', TFHIRObjectText.Create(tx));
     vars.add('status', TFHIRObjectText.Create(status));
     returnFile(request, response, nil, request.Document, 'tx-registry.html', false, vars);
@@ -657,11 +657,11 @@ begin
     begin
       reg := pm.Value['registry'];
       srvr := pm.Value['server'];
-      ver := pm.Value['version'];
+      ver := pm.Value['fhirVersion'];
       tx := pm.Value['url'];
       json := listRows(reg, srvr, ver, tx);
       try
-        result := 'Tx servers (registry='+reg+', server='+srvr+', version='+ver+', url='+tx+')';
+        result := 'Tx servers (registry='+reg+', server='+srvr+', fhirVersion='+ver+', url='+tx+')';
         if (pm.has('sort')) then
           sortJson(json, pm.Value['sort']);
         if request.Accept.Contains('json') then
