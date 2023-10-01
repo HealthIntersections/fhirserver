@@ -72,6 +72,7 @@ Type
     FType : String;
     FId : String;
     FURL : String;
+    FValueSet: String;
     FVersion : String;
     FSize: Integer;
     FKind: String;
@@ -92,6 +93,7 @@ Type
     property Content : String read FContent write FContent;
     property size : Integer read FSize write FSize;
     property filename : String read FFilename write FFilename;
+    property valueSet : String read FValueSet write FValueSet;
 
 
     function matches(text : String) : boolean;
@@ -276,7 +278,7 @@ procedure TNpmPackageIndexBuilder.seeFile(name: String; bytes: TBytes);
 var
   json, fi : TJsonObject;
 begin
-  if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json') and not name.EndsWith('ig-r4.json')) then
+  if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json') and not name.EndsWith('.index.db') and not name.EndsWith('ig-r4.json')) then
   begin
     try
       json := TJSONParser.Parse(bytes);
@@ -300,6 +302,8 @@ begin
             fi.str['supplements'] := json.str['supplements'];
           if (json.has('content') and (json.node['content'].kind = jnkString)) then
             fi.str['content'] := json.str['content'];
+          if (json.has('valueSet') and (json.node['valueSet'].kind = jnkString)) then
+            fi.str['valueSet'] := json.str['valueSet'];
         end;
       finally
         json.free;
@@ -389,7 +393,7 @@ begin
       for f in TDirectory.GetFiles(FFolder) do
       begin
         fl := ExtractFileName(f);
-        if not folderExists(f) and not StringArrayExists(['package.json', '.index.json'], fl) then
+        if not folderExists(f) and not StringArrayExists(['package.json', '.index.json', '.index.db'], fl) then
           sl.add(fl);
       end;
     end
@@ -397,7 +401,7 @@ begin
     begin
       for f in FContent.keys do
       begin
-        if not StringArrayExists(['package.json', '.index.json'], f) then
+        if not StringArrayExists(['package.json', '.index.json', '.index.db'], f) then
           sl.add(f);
       end;
     end;
@@ -433,6 +437,7 @@ begin
     r.Version := f.str['version'];
     r.Supplements := f.str['supplements'];
     r.Content := f.str['content'];
+    r.ValueSet := f.str['valueSet'];
     r.FFilename := FilePath([FFolder, f.str['filename']]);
     if FFolder <> '' then
       r.size := FileSize(FilePath([FFolder, r.name]));
@@ -479,7 +484,8 @@ begin
       try
         for n in folder.listFiles() do 
         begin
-          if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json') and not name.EndsWith('ig-r4.json')) then
+          if (name.endsWith('.json') and not name.EndsWith('package.json') and not name.EndsWith('.index.json')
+               and not name.EndsWith('.index.db') and not name.EndsWith('ig-r4.json')) then
              indexer.seeFile(n, folder.fetchFile(n));
         end;
         try
@@ -1070,8 +1076,35 @@ begin
   end;
 end;
 
+function readZLibHeader(stream : TStream) : TBytes;
+var
+  b : TBytes;
+  p : int64;
+  i : integer;
+begin
+  b := StreamToBytes(stream);
+  if (length(b) < 10) or (b[0] <> $1F) or (b[1] <> $8B) then
+    result := b
+  else
+  begin
+    i := 10;
+    if ((b[3] and $08) > 0) then
+    begin
+      repeat
+        inc(i);
+      until (i = length(b)) or (b[i] = 0);
+      inc(i);
+    end;
+    if i >= length(b) then
+      result := b
+    else
+       result := copy(b, i, length(b)-i-8);
+  end;
+end;
+
 procedure TNpmPackage.readStream(tgz: TStream; desc: String; progress: TWorkProgressEvent);
 var
+  bs : TBytesStream;
   z : TZDecompressionStream;
   tar : TTarArchive;
   entry : TTarDirRec;
@@ -1079,34 +1112,39 @@ var
   b : TBytes;
   bi : TBytesStream;
 begin
-  z := TZDecompressionStream.Create(tgz, false); // 15+16);
+  bs := TBytesStream.create(readZLibHeader(tgz));
   try
-    tar := TTarArchive.Create(z);
+    z := TZDecompressionStream.Create(bs, true); // 15+16);
     try
-      tar.Reset;
-      while tar.FindNext(entry) do
-      begin
-        n := String(entry.Name);
-        if (n.contains('..')) then
-          raise EFSLException.create('The package "'+desc+'" contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
-        bi := TBytesStream.Create;
-        try
-          tar.ReadFile(bi);
-          b := copy(bi.Bytes, 0, bi.size);
-        finally
-          bi.free;
+      tar := TTarArchive.Create(z);
+      try
+        tar.Reset;
+        while tar.FindNext(entry) do
+        begin
+          n := String(entry.Name);
+          if (n.contains('..')) then
+            raise EFSLException.create('The package "'+desc+'" contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
+          bi := TBytesStream.Create;
+          try
+            tar.ReadFile(bi);
+            b := copy(bi.Bytes, 0, bi.size);
+          finally
+            bi.free;
+          end;
+          loadFile(n, b);
+          if assigned(progress) then
+            progress(self, -1, false, 'Loading '+n);
         end;
-        loadFile(n, b);
-        if assigned(progress) then
-          progress(self, -1, false, 'Loading '+n);
+      finally
+        tar.free;
       end;
     finally
-      tar.free;
+      z.free;
     end;
   finally
-    z.free;
+    bs.free;
   end;
-  try 
+  try
     FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'));
   except 
     on e : Exception do

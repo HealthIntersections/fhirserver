@@ -733,7 +733,8 @@ var
   fn : String;
   b : TBytes;
 begin
-  work(0, false, 'Loading Package');
+  Logging.log('Loading Package ('+DescribeBytes(length(content))+')');
+  work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
     bo := TBytesStream.Create(content);

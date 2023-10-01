@@ -14796,7 +14796,8 @@ var
 begin
   f :=  TFileStream.Create(filename, fmCreate);
   try
-    f.write(bytes[0], length(bytes));
+    if length(bytes) > 0 then
+      f.write(bytes[0], length(bytes));
   finally
     f.free;
   end;
