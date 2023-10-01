@@ -189,8 +189,8 @@ begin
       log('Fetch '+FAddress, '', false);
       json := fetchJson(FAddress);
       try
-        if json.str['version'] <> '1' then
-          raise EFslException.Create('Unable to proceed: registries version is '+json.str['version']+' not "1"');
+        if json.str['formatVersion'] <> '1' then
+          raise EFslException.Create('Unable to proceed: registries version is '+json.str['formatVersion']+' not "1"');
 
         arr := json.arr['registries'];
         for i := 0 to arr.Count - 1 do
@@ -243,8 +243,8 @@ begin
     FRegistryErrors := '';
     json := fetchJson(reg.Address);
     try
-      if json.str['version'] <> '1' then
-        raise EFslException.Create('Unable to proceed: registry version @'+reg.Address+' is '+json.str['version']+' not "1"');
+      if json.str['formatVersion'] <> '1' then
+        raise EFslException.Create('Unable to proceed: registry version @'+reg.Address+' is '+json.str['formatVersion']+' not "1"');
       
       arr := json.arr['servers'];
       for i := 0 to arr.Count - 1 do
@@ -290,7 +290,7 @@ begin
     raise EFslException.Create('No url provided for '+srvr.Name);
   obj.forceArr['authoritative'].readStrings(srvr.AuthList);
 
-  arr := obj.arr['versions'];
+  arr := obj.arr['fhirVersions'];
   for i := 0 to arr.Count - 1 do
   begin
     v := TServerVersionInformation.Create;

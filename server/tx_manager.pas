@@ -38,7 +38,7 @@ uses
   fdb_manager,
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
   fhir_codesystem_service, fhir_valuesets,
-  ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir,
+  ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir, xig_provider,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt, tx_omop,
   utilities, server_config, kernel_thread, server_stats;
@@ -117,6 +117,7 @@ Type
     FNDFRT: TNDFRTServices;
     FNDC : TNDCServices;
     FOMOP : TOMOPServices;
+    FXIG: TXIGProvider;
 
     procedure SetCPT(AValue: TCPTServices);
     procedure SetOMOP(AValue: TOMOPServices);
@@ -131,6 +132,7 @@ Type
     procedure getSummary(b : TStringBuilder);
 
     procedure SetNDFRT(const Value: TNDFRTServices);
+    procedure SetXIG(AValue: TXIGProvider);
   public
     constructor Create(settings : TFHIRServerSettings);
     destructor Destroy; Override;
@@ -164,6 +166,7 @@ Type
     property CPT : TCPTServices read FCPT write SetCPT;
     property OMOP : TOMOPServices read FOMOP write SetOMOP;
     Property ACIR : TACIRServices read FACIR write SetACIR;
+    property XIG : TXIGProvider read FXIG write SetXIG;
   end;
 
   TLoadedConceptMap = class (TFslObject)
@@ -222,7 +225,7 @@ Type
     FValueSets : TFHIRMetadataResourceManagerW<TFHIRValueSetW>; // by local system's id
     FCodeSystems : TFHIRCodeSystemManager; // all current value sets that define systems, by their url
     FCodeSystemsByVsUrl : TFslMap<TFHIRCodeSystemEntry>; // all current value sets that define systems, by their url
-    FSupplementsById : TFslMap<TFHIRCodeSystemW>; // All supplements
+    FSupplementsById : TFslMap<TFHIRResourceProxyV>; // All supplements
 
     FBaseValueSets : TFslMap<TFHIRResourceProxyV>; // value sets out of the specification - these can be overriden, but they never go away
     FBaseCodeSystems : TFslMap<TFHIRCodeSystemEntry>; // value sets out of the specification - these can be overriden, but they never go away
@@ -233,13 +236,15 @@ Type
 
     FLoading : boolean;
 
+    procedure checkCSLoaded(codesystem: TFHIRCodeSystemEntry);
     procedure SetLoading(AValue: boolean);
     procedure UpdateConceptMaps;
     procedure BuildStems(cs : TFhirCodeSystemW);
 
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptListW; url : String);
     function checkVersion(system, version: String; profile: TFHIRExpansionParams): String;
-    procedure AddCodeSystemToCache(cs : TFhirCodeSystemW; base : boolean);
+    procedure AddCodeSystemToCache(cs : TFHIRResourceProxyV; base : boolean); overload;
+    procedure AddCodeSystemToCache(cs : TFHIRCodeSystemW; base : boolean); overload;
     procedure RemoveCodeSystemFromCache(id : String);
     function getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
     function defToLatestForSystem(system : String) : boolean;
@@ -879,7 +884,7 @@ begin
   FCodeSystemsByVsUrl := TFslMap<TFhirCodeSystemEntry>.Create('tx.cs.url');
   FBaseValueSets := TFslMap<TFhirResourceProxyV>.Create('tx.vs.base');
   FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.Create('tx.cs.base');
-  FSupplementsById := TFslMap<TFhirCodeSystemW>.Create('tx.cs.suppl');
+  FSupplementsById := TFslMap<TFhirResourceProxyV>.Create('tx.cs.suppl');
 
   FBaseConceptMaps := TFslMap<TLoadedConceptMap>.Create('tx.cm.base');
   FConceptMapsById := TFslMap<TLoadedConceptMap>.Create('tx.cm.id');
@@ -1058,10 +1063,10 @@ begin
 end;
 
 
-procedure TTerminologyServerStore.AddCodeSystemToCache(cs : TFhirCodeSystemW; base : boolean);
+procedure TTerminologyServerStore.AddCodeSystemToCache(cs : TFHIRResourceProxyV; base : boolean);
 var
   cse, ct : TFHIRCodeSystemEntry;
-  supp : TFhirCodeSystemW;
+  supp : TFHIRResourceProxyV;
 begin
   cse := TFHIRCodeSystemEntry.Create(cs.Link);
   try
@@ -1073,21 +1078,57 @@ begin
       if cs.supplements.StartsWith('CodeSystem/') then
       begin
         if FCodeSystems.has(cs.supplements.Substring(11), ct) then
-          ct.Supplements.Add(cs.Link);
+          ct.SupplementProxies.Add(cs.Link);
       end
       else if FCodeSystems.has(cs.supplements, ct) then
-        ct.Supplements.Add(cs.Link);
+        ct.SupplementProxies.Add(cs.Link);
     end
     else
     begin
       FCodeSystems.see(cse);
       if cs.valueSet <> '' then
         FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cse.Link);
-      if (FDB <> nil) then // don't build stems in this case
-        BuildStems(cs); // todo: move this out of the lock
+      //if (FDB <> nil) then // don't build stems in this case
+      //  BuildStems(cs); // todo: bring it back and move this out of the lock
       for supp in FSupplementsById.values do
         if (supp.supplements = cs.url) or (supp.supplements = 'CodeSystem/'+cs.id) then
-          cse.Supplements.Add(cs.Link);
+          cse.SupplementProxies.Add(cs.Link);
+    end;
+  finally
+    cse.free;
+  end;
+end;
+
+procedure TTerminologyServerStore.AddCodeSystemToCache(cs: TFHIRCodeSystemW; base: boolean);
+var
+  cse, ct : TFHIRCodeSystemEntry;
+  supp : TFHIRResourceProxyV;
+begin
+  cse := TFHIRCodeSystemEntry.Create(cs.Link);
+  try
+    if base then
+      FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
+    if (cs.supplements <> '') then
+    begin
+      FSupplementsById.AddOrSetValue(cs.id, TFHIRResourceProxyW.create(cs.Link, cs.url, cs.version));
+      if cs.supplements.StartsWith('CodeSystem/') then
+      begin
+        if FCodeSystems.has(cs.supplements.Substring(11), ct) then
+          ct.SupplementProxies.Add(TFHIRResourceProxyW.create(cs.Link, cs.vurl, cs.version));
+      end
+      else if FCodeSystems.has(cs.supplements, ct) then
+        ct.SupplementProxies.Add(TFHIRResourceProxyW.create(cs.Link, cs.url, cs.version));
+    end
+    else
+    begin
+      FCodeSystems.see(cse);
+      if cs.valueSet <> '' then
+        FCodeSystemsByVsUrl.AddOrSetValue(cs.valueSet, cse.Link);
+      //if (FDB <> nil) then // don't build stems in this case
+      //  BuildStems(cs); // todo: bring it back and move this out of the lock
+      for supp in FSupplementsById.values do
+        if (supp.supplements = cs.url) or (supp.supplements = 'CodeSystem/'+cs.id) then
+          cse.SupplementProxies.Add(TFHIRResourceProxyW.create(cs.Link, cs.url, cs.version));
     end;
   finally
     cse.free;
@@ -1097,14 +1138,14 @@ end;
 procedure TTerminologyServerStore.RemoveCodeSystemFromCache(id : String);
 var
   cse, cs1 : TFHIRCodeSystemEntry;
-  cs : TFhirCodeSystemW;
+  cs : TFHIRResourceProxyV;
 begin
   if (FCodeSystems.has(id, cse)) then
   begin
     cs1 := FBaseCodeSystems[cse.CodeSystem.url].Link;
     try
       if cs1 <> nil then
-        AddCodeSystemToCache(cs1.codeSystem, false);
+        AddCodeSystemToCache(cs1.CodeSystemProxy, false);
     finally
       cs1.free;
     end;
@@ -1117,12 +1158,12 @@ begin
       if cs.supplements.StartsWith('CodeSystem/') then
       begin
         if FCodeSystems.has(cs.supplements.Substring(11), cse) then
-          cse.Supplements.Remove(cs);
+          cse.SupplementProxies.Remove(cs);
       end
       else if FCodeSystems.has(cs.supplements, cse) then
-        cse.Supplements.remove(cs);
+        cse.SupplementProxies.remove(cs);
       if cs1 <> nil then
-        AddCodeSystemToCache(cs1.codeSystem, false);
+        AddCodeSystemToCache(cs1.CodeSystemProxy, false);
     finally
       cs1.free;
     end;
@@ -1162,8 +1203,7 @@ begin
     end
     else if (resource.fhirType = 'CodeSystem') then
     begin
-      cs := resource.resourceW as TFHIRCodeSystemW;
-      AddCodeSystemToCache(cs, true);
+      AddCodeSystemToCache(resource, true);
     end
     else if (resource.fhirType = 'ConceptMap') then
     begin
@@ -1592,7 +1632,10 @@ begin
           cs := FCodeSystems.get(system).link;
         try
           if cs <> nil then
+          begin
+            checkCSLoaded(cs);
             result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
+          end;
         finally
           cs.free;
         end;
@@ -1620,6 +1663,24 @@ begin
       raise ETerminologySetup.Create('Unable to provide support for code system '+system);
 end;
 
+procedure TTerminologyServerStore.checkCSLoaded(codesystem: TFHIRCodeSystemEntry);
+var
+  p : TFHIRResourceProxyV;
+begin
+  // todo: make this more efficient on the lock
+  FLock.Lock;
+  try
+    if not codeSystem.Loaded then
+    begin
+      codeSystem.Loaded := true;
+      codesystem.CodeSystem := codeSystem.CodeSystemProxy.resourceW.link as TFHIRCodeSystemW;
+      for p in codeSystem.SupplementProxies do
+        codeSystem.Supplements.add(p.resourceW.link as TFHIRCodeSystemW);
+    end;
+  finally
+    FLock.Unlock;
+  end;
+end;
 
 function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW; profile: TFHIRExpansionParams): TCodeSystemProvider;
 begin
@@ -2042,6 +2103,7 @@ begin
   FACIR.free;
   FUcum.free;
   FRxNorm.free;
+  FXIG.free;
   FLanguages.free;
   inherited;
 end;
@@ -2266,6 +2328,11 @@ begin
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
         OMOP := TOMOPServices.Create(FLanguages.link, connectToDatabase(tx))
+      end           
+      else if tx['type'].value = 'xig' then
+      begin
+        Logging.log('load '+s+' from '+describeDatabase(tx));
+        XIG := TXIGProvider.Create(FLanguages.link, connectToDatabase(tx))
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);
@@ -2357,6 +2424,12 @@ begin
     FProviderClasses.add(FNDFRT.systemUri(nil), TCodeSystemProviderGeneralFactory.Create(FNDFRT.Link));
     FProviderClasses.add(FNDFRT.systemUri(nil)+URI_VERSION_BREAK+FNDFRT.version(nil), TCodeSystemProviderGeneralFactory.Create(FNDFRT.Link));
   end;
+end;
+
+procedure TCommonTerminologies.SetXIG(AValue: TXIGProvider);
+begin
+  FXIG.free;
+  FXIG:=AValue;
 end;
 
 procedure TCommonTerminologies.SetUnii(const Value: TUniiServices);
