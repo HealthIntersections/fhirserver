@@ -75,6 +75,7 @@ type
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
     FEndPoints : TFslList<TFHIRServerEndPoint>;
+    FShuttingDown: boolean;
     FStats : TStatusRecords;
     FPassword : String;
     FLog : TStringList;
@@ -95,6 +96,7 @@ type
 
     procedure addEndPoint(ep : TFHIRServerEndPoint);
     procedure removeEndPoint(ep : TFHIRServerEndPoint);
+    property ShuttingDown : boolean read FShuttingDown write FShuttingDown;
   end;
 
 implementation
@@ -297,7 +299,11 @@ var
   magic : integer;
 begin
   magic := TFslObject.nextMagic;
-  if (now > FNextPing) then
+  if FServer.FShuttingDown then
+  begin
+    send('$@ping: '+inttostr(GetThreadCount)+' threads; shutting down');
+  end
+  else if (now > FNextPing) then
   begin
     mem := 0;
     for ep in FServer.FEndPoints do
@@ -305,8 +311,8 @@ begin
       mem := mem + ep.cacheSize(magic);
     end;
     send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
-    FNextPing := now + (DATETIME_SECOND_ONE * 10);
   end;
+  FNextPing := now + (DATETIME_SECOND_ONE * 10);
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
