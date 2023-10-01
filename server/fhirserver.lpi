@@ -378,7 +378,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="94">
+    <Units Count="96">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -758,6 +758,14 @@
         <Filename Value="tests\tests_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit93>
+      <Unit94>
+        <Filename Value="xig_provider.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit94>
+      <Unit95>
+        <Filename Value="endpoint_xig.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit95>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -802,7 +810,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="39">
+    <Exceptions Count="40">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -882,12 +890,14 @@
       </Item20>
       <Item21>
         <Name Value="00000015EAssertionFailedError"/>
+        <Enabled Value="False"/>
       </Item21>
       <Item22>
         <Name Value="00000006EAbort"/>
       </Item22>
       <Item23>
         <Name Value="00000010ESemVerException"/>
+        <Enabled Value="False"/>
       </Item23>
       <Item24>
         <Name Value="00000018ERestfulExceptionUnknown"/>
@@ -919,6 +929,7 @@
       </Item32>
       <Item33>
         <Name Value="0000000eEFHIRException"/>
+        <Enabled Value="False"/>
       </Item33>
       <Item34>
         <Name Value="00000011ETerminologySetup"/>
@@ -928,16 +939,22 @@
       </Item35>
       <Item36>
         <Name Value="EFHIRPath"/>
+        <Enabled Value="False"/>
       </Item36>
       <Item37>
         <Name Value="00000010EParserException"/>
       </Item37>
       <Item38>
         <Name Value="EFslInvariant"/>
+        <Enabled Value="False"/>
       </Item38>
       <Item39>
         <Name Value="00000016EIdOpenSSLConnectError"/>
       </Item39>
+      <Item40>
+        <Name Value="00000013Edecompressionerror"/>
+        <Enabled Value="False"/>
+      </Item40>
     </Exceptions>
   </Debugging>
 </CONFIG>

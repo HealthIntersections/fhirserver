@@ -254,11 +254,13 @@ begin
       sct := cfg.section['terminologies'].section[PathTitle(n)];
       sct['type'].value := FFiles[n];
       sct['active'].value := 'true';
-      if StringArrayExists(['rxnorm', 'ndc', 'unii', 'cpt', 'omop'], FFiles[n]) then
+      if StringArrayExists(['rxnorm', 'ndc', 'unii', 'cpt', 'omop', 'xig'], FFiles[n]) then
       begin
         sct['db-type'].value := 'sqlite';
         if (FFiles[n] = 'cpt') and (local.ValueExists('cpt', 'local-source')) then
           sct['db-file'].value := local.ReadString('cpt', 'local-source', '')
+        else if (n.startsWith('file:')) then
+          sct['db-file'].value := FilePath([FFolder, extractFileName(n.subString(5))])
         else
           sct['db-file'].value := FilePath([FFolder, n]);
         sct['db-auto-create'].value := 'false';
@@ -453,8 +455,16 @@ var
   fetcher : TInternetFetcher;
   start : TDateTime;
 begin
-  src := UrlPath([FUrl, fn]);
-  tgt := FilePath([FFolder, fn]);
+  if (fn.StartsWith('file:')) then
+  begin
+    src := fn;
+    tgt := FilePath([FFolder, extractFileName(fn)]);
+  end
+  else
+  begin
+    src := UrlPath([FUrl, fn]);
+    tgt := FilePath([FFolder, fn]);
+  end;
   if (src.StartsWith('file:')) then
   begin
     if not (FileExists(tgt)) then

@@ -53,7 +53,8 @@ Uses
   tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
   server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
-  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao, endpoint_txregistry;
+  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao,
+  endpoint_txregistry, endpoint_xig;
 
 
 // how the kernel works:
@@ -105,7 +106,6 @@ type
 
     procedure recordStats(callback : TFhirServerMaintenanceThreadTaskCallBack);
     procedure sweepCaches(callback : TFhirServerMaintenanceThreadTaskCallBack);  
-    procedure buildIndexes(callback : TFhirServerMaintenanceThreadTaskCallBack);
 
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
@@ -174,6 +174,7 @@ end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  FTelnet.ShuttingDown := true;
   FParams.free;
   FStatsRecord.free;
   FI18n.free;
@@ -215,7 +216,6 @@ begin
     FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
     FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
     FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
-    FMaintenanceThread.defineTask('build-indexes', buildIndexes, 1);
     FMaintenanceThread.Start;
 
 
@@ -307,7 +307,7 @@ begin
     result := fhirVersionRelease3
   else if (v = 'r4') then
     result := fhirVersionRelease4
-  else if (v = 'r5b') then
+  else if (v = 'r4b') then
     result := fhirVersionRelease4B
   else if (v = 'r5') then
     result := fhirVersionRelease5
@@ -317,7 +317,7 @@ end;
 
 function versionOk(section : TFHIRServerConfigSection) : boolean;
 begin
-   result := epVersion(section) in [fhirVersionUnknown, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4]
+   result := epVersion(section) in [fhirVersionUnknown, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4,  fhirVersionRelease4B,  fhirVersionRelease5]
 end;
 
 procedure TFHIRServiceKernel.loadEndPoints;
@@ -431,15 +431,6 @@ begin
     ep.SweepCaches;
 end;
 
-procedure TFHIRServiceKernel.buildIndexes(callback: TFhirServerMaintenanceThreadTaskCallBack);
-var
-  ep : TFHIRServerEndPoint;
-begin
-  for ep in FEndPoints do
-    ep.buildIndexes;
-  FMaintenanceThread.disableTask('build-indexes');
-end;
-
 procedure TFHIRServiceKernel.dump;
 begin
   // nothing?
@@ -548,6 +539,8 @@ begin
     result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'bridge' then
     result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+  else if config['type'].value = 'xig' then
+    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'terminology' then
     result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
