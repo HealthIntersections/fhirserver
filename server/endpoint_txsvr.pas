@@ -52,7 +52,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, time_tracker,
-  telnet_server, kernel_thread, server_stats,
+  telnet_server, kernel_thread, server_stats, xig_provider,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -96,7 +96,6 @@ type
     function link : TTerminologyServerData; overload;
 
     procedure clear;
-    procedure buildIndex;
 
     property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
     property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
@@ -150,7 +149,6 @@ type
     FLock : TFslLock;
     FData : TTerminologyServerData;
     FServerContext : TFHIRServerContext; // free from owner
-    function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
     procedure loadResource(res: TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
     procedure loadBytes(factory: TFHIRFactory; name: String; cnt: TBytes);
     procedure loadFromZip(factory: TFHIRFactory; cnt: TBytes);
@@ -199,9 +197,9 @@ type
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
 
-    procedure loadUTGFolder(folder : String);
     procedure loadPackage(pid : String; ignoreEmptyCodeSystems : boolean);
     procedure loadFile(factory : TFHIRFactory; name : String);
+    procedure loadFromXig(xig : TXIGProvider; ignoreEmptyCodeSystems : boolean);
 
     function cacheSize(magic : integer) : UInt64; override;
     function issueHealthCardKey : integer; override;
@@ -270,7 +268,6 @@ type
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;    
     procedure recordStats(rec : TStatusRecord); override;  
-    procedure buildIndexes; override;
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -401,51 +398,6 @@ begin
   begin
     FTextIndex.addText(cmp, vurl+'#'+cc.code, cc.code+': '+cc.display, cc.definition);
     addCodesToIndex(cmp, vurl, cc.conceptList);
-  end;
-end;
-
-procedure TTerminologyServerData.buildIndex;
-var
-  cmp : TFDBFullTextSearchCompartment;
-  pr : TFHIRResourceProxyV;
-  vs : TFHIRValueSetW;
-  cs : TFHIRCodeSystemW;
-  start : UInt64;
-begin
-  start := GetTickCount64;
-  cmp := FTextIndex.createCompartment('CodeSystems');
-  try
-    for pr in FCodeSystems.Values do
-    begin
-      cs := pr.resourceW as TFHIRCodeSystemW;
-      FTextIndex.addText(cmp, cs.vurl, cs.name, cs.description);
-    end;
-  finally
-    Logging.log('CodeSystems Indexed for '+FTextIndex.name+'. '+FTextIndex.closeCompartment(cmp)+' in '+inttostr(GetTickCount64 - start)+'ms');
-  end;
-
-  start := GetTickCount64;
-  cmp := FTextIndex.createCompartment('Codes');
-  try
-    for pr in FCodeSystems.Values do
-    begin
-      cs := pr.resourceW as TFHIRCodeSystemW;
-      addCodesToIndex(cmp, cs.vurl, cs.conceptList);
-    end;
-  finally
-    Logging.log('Codes Indexed for '+FTextIndex.name+'. '+FTextIndex.closeCompartment(cmp)+' in '+inttostr(GetTickCount64 - start)+'ms');
-  end;
-
-  start := GetTickCount64;
-  cmp := FTextIndex.createCompartment('ValueSets');
-  try
-    for pr in FValueSets.Values do
-    begin                             
-      vs := pr.resourceW as TFHIRValueSetW;
-      FTextIndex.addText(cmp, vs.vurl, vs.name, vs.description);
-    end;
-  finally
-    Logging.log('ValueSets Indexed for '+FTextIndex.name+'. '+FTextIndex.closeCompartment(cmp)+' in '+inttostr(GetTickCount64 - start)+'ms');
   end;
 end;
 
@@ -1345,64 +1297,33 @@ begin
   Logging.finish(' - done');
 end;
 
-function TTerminologyFhirServerStorage.loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
+procedure TTerminologyFhirServerStorage.loadFromXig(xig: TXIGProvider; ignoreEmptyCodeSystems : boolean);
 var
-  filename : String;
-  p : TFHIRParser;
-  procedure load(fn : String);
-  var
-    res : TFHIRResourceV;
-    pr : TFHIRResourceProxyV;
-  begin
-    inc(result);
-    res := p.parseResource(FileToBytes(fn));
-    try
-      pr := factory.makeProxy(res.link);
-      try
-        loadResource(pr, true);
-      finally
-        pr.free;
-      end;
-    finally
-      res.free;
-    end;
-  end;
+  xl : TXigLoader;
+  res : TFHIRResourceProxyV;
+  i : integer;
 begin
-  p := factory.makeParser(FServerContext.ValidatorContext.Link, ffXml, nil);
+  i := 0;
+  Logging.start('Load from XIG');
+  xl := xig.startLoad(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']);
   try
-    Logging.continue('.');
-    result := 0;
-    for filename in TDirectory.GetFiles(folder, '*.xml') do
-      load(filename);
-    if FolderExists(path([folder, 'codeSystems'])) then
-      for filename in TDirectory.GetFiles(path([folder, 'codeSystems']), '*.xml') do
-        load(filename);
-    if  FolderExists(path([folder, 'valueSets'])) then
-      for filename in TDirectory.GetFiles(path([folder, 'valueSets']), '*.xml') do
-        load(filename);
+    xl.factory := Factory.link;
+    while xl.next do
+    begin
+      inc(i);
+      if (i mod 400 = 0) then
+        Logging.continue('.');
+      res := xl.makeResource;
+      try
+        loadResource(res, ignoreEmptyCodeSystems);
+      finally
+        res.free;
+      end;
+    end;
   finally
-    p.free;
+    Logging.finish(' '+inttostr(i)+' resources');
+    xl.free;
   end;
-end;
-
-procedure TTerminologyFhirServerStorage.loadUTGFolder(folder : String);
-var
-  count : integer;
-begin
-  if FolderExists(path([folder, 'input'])) then
-    folder := path([folder, 'input']);
-  if FolderExists(path([folder, 'sourceOfTruth'])) then
-    folder := path([folder, 'sourceOfTruth']);
-
-  Logging.start('Load UTG Folder '+folder);
-  count := 0;
-  count := count + loadFromUTG(factory, path([folder, 'cimi']));
-  count := count + loadFromUTG(factory, path([folder, 'v2']));
-  count := count + loadFromUTG(factory, path([folder, 'v3']));
-  count := count + loadFromUTG(factory, path([folder, 'external']));
-  count := count + loadFromUTG(factory, path([folder, 'fhir']));
-  count := count + loadFromUTG(factory, path([folder, 'unified']));
-  Logging.finish(inttostr(count)+' resources loaded');
 end;
 
 procedure TTerminologyFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
@@ -1580,11 +1501,6 @@ begin
   FServerContext.TerminologyServer.recordStats(rec);
 end;
 
-procedure TTerminologyServerEndPoint.buildIndexes;
-begin
-  FStore.FData.buildIndex;
-end;
-
 function TTerminologyServerEndPoint.summary: String;
 begin
   result := 'Terminology Server using '+describeDatabase(Config);
@@ -1638,12 +1554,13 @@ begin
 
   FServerContext.TerminologyServer.Loading := true;
   FStore.loadPackage(FStore.factory.corePackage, false);
-  if UTGFolder <> '' then
-    FStore.loadUTGFolder(UTGFolder);
 
   for pid in Config['packages'].values do
     if not pid.StartsWith('hl7.terminology') or (UTGFolder = '') then
       FStore.loadPackage(pid, true);
+
+  if (FServerContext.Factory.version = fhirVersionRelease5) and (Terminologies.XIG <> nil) then
+    FStore.loadFromXig(Terminologies.XIG, true);
 
   FServerContext.TerminologyServer.Loading := false;
 
