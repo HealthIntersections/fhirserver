@@ -1691,7 +1691,7 @@ begin
           begin
             if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
             begin
-              m := 'The system "'+c.display+'" '+c.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
+              m := 'The system '+c.systemUri+' was found but did not contain enough information to properly validate the code "'+c.code+'" ("'+c.display+'") (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
               msg(m);
               op.addIssue(isWarning, itNotFound, path, m);
             end
