@@ -140,6 +140,7 @@ implementation
 
 uses
   fhir2_utilities, fsl_utilities, fhir_utilities;
+
 { TFHIRResourceProxy }
 
 constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
@@ -148,10 +149,9 @@ begin
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
-  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited Create(fhirVersionRelease2, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
+  inherited Create(fhirVersionRelease2, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;

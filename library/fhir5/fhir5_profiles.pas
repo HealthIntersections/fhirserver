@@ -1879,9 +1879,9 @@ end;
 
 procedure TBaseWorkerContextR5.seeResource(res: TFHIRResourceV);
 var
-  proxy : TFHIRResourceProxy;
+  proxy : TNpmResourceProxy;
 begin
-  proxy := TFHIRResourceProxy.Create(factory.link, res.link as TFHIRResource);
+  proxy := TNpmResourceProxy.Create(factory.link, res.link as TFHIRResource);
   try
     SeeResourceProxy(proxy);
   finally

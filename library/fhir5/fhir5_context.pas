@@ -51,21 +51,34 @@ type
 
     // for lazy loading
     FWorker : TFHIRWorkerContextV;
-    FInfo : TNpmPackageResource;
     FLock : TFslLock;
 
     function GetResource : TFHIRResource;
+    procedure SetFactory(AValue: TFHIRFactory);
   protected
-    procedure loadResource;  override;
     function wrapResource : TFHIRXVersionResourceWrapper; override;
   public
     constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
-    constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
     destructor Destroy; override;
 
     function link : TFHIRResourceProxy; overload;
     property resource : TFHIRResource read GetResource;
+    property Factory : TFHIRFactory read FFactory write SetFactory;
+    property Worker : TFHIRWorkerContextV read FWorker;
   end;
+
+  { TNpmResourceProxy }
+
+  TNpmResourceProxy = class (TFHIRResourceProxy)
+  private
+    FInfo : TNpmPackageResource;
+  protected
+    procedure loadResource;  override;
+  public
+    constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+    destructor Destroy; override;
+  end;
+
 
   TFHIRCustomResourceInformation = class (TFslObject)
   private
@@ -185,8 +198,7 @@ uses
 
 { TFHIRResourceProxy }
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory;
-  resource: TFHIRResource);
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
 begin
   if resource is TFHIRCanonicalResource then
     inherited Create(resource, TFHIRCanonicalResource(resource).url, TFHIRCanonicalResource(resource).version)
@@ -195,21 +207,10 @@ begin
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
-  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
-begin
-  inherited Create(fhirVersionRelease5, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
-  FFactory := factory;
-  FWorker := worker;
-  FInfo := pi;
-  FLock := lock;
-end;
-
 destructor TFHIRResourceProxy.Destroy;
 begin
   FFactory.free;
   FWorker.free;
-  FInfo.free;
   FLock.free;
   inherited Destroy;
 end;
@@ -224,7 +225,35 @@ begin
   result := ResourceV as TFHIRResource;
 end;
 
-procedure TFHIRResourceProxy.loadResource;
+procedure TFHIRResourceProxy.SetFactory(AValue: TFHIRFactory);
+begin
+  FFactory.free;
+  FFactory := AValue;
+end;
+
+function TFHIRResourceProxy.wrapResource : TFHIRXVersionResourceWrapper;
+begin
+  result := FFactory.wrapResource(resource.link);
+end;
+
+{ TNpmResourceProxy }
+
+constructor TNpmResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+begin
+  inherited Create(fhirVersionRelease5, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
+  FFactory := factory;
+  FWorker := worker;
+  FInfo := pi;
+  FLock := lock;
+end;
+
+destructor TNpmResourceProxy.Destroy;
+begin                    
+  FInfo.free;
+  inherited Destroy;
+end;
+
+procedure TNpmResourceProxy.loadResource;
 var
   p : TFHIRParser;
   stream : TStream;
@@ -263,11 +292,6 @@ begin
   finally
     FLock.unlock;
   end;
-end;
-
-function TFHIRResourceProxy.wrapResource : TFHIRXVersionResourceWrapper;
-begin
-  result := FFactory.wrapResource(resource.link);
 end;
 
 { TFHIRWorkerContext }

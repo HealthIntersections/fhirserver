@@ -185,8 +185,7 @@ uses
 
 { TFHIRResourceProxy }
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory;
-  resource: TFHIRResource);
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
 begin
   if resource is TFHIRCanonicalResource then
     inherited Create(resource, TFHIRCanonicalResource(resource).url, TFHIRCanonicalResource(resource).version)
@@ -195,10 +194,9 @@ begin
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
-  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited Create(fhirVersionRelease4b, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
+  inherited Create(fhirVersionRelease4b, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;

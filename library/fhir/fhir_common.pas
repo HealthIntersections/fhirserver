@@ -234,6 +234,7 @@ type
     constructor Create(res : TFHIRResourceV);
     destructor Destroy; override;
 
+    function link : TFHIRXVersionResourceWrapper; overload;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
@@ -1501,6 +1502,7 @@ type
     FSupplements: String;
     FUrl : String;
     FVersion : String;
+    FValueSet : String;
     FResourceW : TFHIRXVersionResourceWrapper;
     function GetResourceV : TFHIRResourceV;
     function GetResourceW : TFHIRXVersionResourceWrapper;
@@ -1510,7 +1512,7 @@ type
     function wrapResource : TFHIRXVersionResourceWrapper; virtual; abstract;
     procedure SetResourceV(value : TFHIRResourceV);
   public
-    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content : String); overload;
+    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String); overload;
     constructor Create(resource : TFHIRResourceV; url, version : String); overload;
     destructor Destroy; override;
     function link : TFHIRResourceProxyV; overload;
@@ -1522,9 +1524,20 @@ type
     property version : String read FVersion;
     property supplements : String read FSupplements;
     property content : String read FContent;
+    property valueSet : String read FValueSet;
 
     property resourceV : TFHIRResourceV read GetResourceV;
     property resourceW : TFHIRXVersionResourceWrapper read getResourceW;
+  end;
+
+  { TFHIRResourceProxyW }
+
+  TFHIRResourceProxyW = class (TFHIRResourceProxyV)
+  protected
+    procedure loadResource; override;
+    function wrapResource : TFHIRXVersionResourceWrapper; override;
+  public
+    constructor Create(resource : TFHIRXVersionResourceWrapper; url, version : String); overload;
   end;
 
   TFHIRMetadataResourceManagerW<T : TFHIRMetadataResourceW> = class (TFslObject)
@@ -1613,6 +1626,25 @@ type
 
 implementation
 
+{ TFHIRResourceProxyW }
+
+procedure TFHIRResourceProxyW.loadResource;
+begin
+  // nothing
+end;
+
+function TFHIRResourceProxyW.wrapResource: TFHIRXVersionResourceWrapper;
+begin
+  // nothing
+
+end;
+
+constructor TFHIRResourceProxyW.Create(resource: TFHIRXVersionResourceWrapper; url, version: String);
+begin
+  inherited create(resource.Resource.link, url, version);
+  FResourceW := resource.link;
+end;
+
 { TFHIRLookupOpRespSubPropertyW }
 
 function TFHIRLookupOpRespSubPropertyW.link: TFHIRLookupOpRespSubPropertyW;
@@ -1653,6 +1685,11 @@ destructor TFHIRXVersionResourceWrapper.Destroy;
 begin
   FRes.free;
   inherited;
+end;
+
+function TFHIRXVersionResourceWrapper.link: TFHIRXVersionResourceWrapper;
+begin
+  result := TFHIRXVersionResourceWrapper(inherited Link);
 end;
 
 function TFHIRXVersionResourceWrapper.createPropertyValue(propName: string): TFHIRObject;
@@ -3043,7 +3080,7 @@ end;
 
 { TFHIRResourceProxyV }
 
-constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content : String);
+constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String);
 begin
   inherited Create;
   FFhirObjectVersion := fhirObjectVersion;
@@ -3053,6 +3090,7 @@ begin
   FVersion := version;
   FSupplements := supplements;
   FContent := content;
+  FValueSet := valueSet;
 end;
 
 constructor TFHIRResourceProxyV.Create(resource : TFHIRResourceV; url, version : String);
@@ -3080,7 +3118,8 @@ end;
 
 function TFHIRResourceProxyV.GetResourceV : TFHIRResourceV;
 begin
-  loadResource;
+  if FResourceV = nil then
+    loadResource;
   result := FResourceV;
 end;
 

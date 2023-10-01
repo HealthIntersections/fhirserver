@@ -366,7 +366,7 @@ end;
 
 function TFHIRFactoryR5.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.Create(self.link, lock, worker, pi);
+  result := TNpmResourceProxy.Create(self.link, lock, worker, pi);
 end;
 
 function TFHIRFactoryR5.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;

@@ -146,6 +146,8 @@ type
     procedure addCoding(systemUri, version, code, display : String); overload; override;
   end;
 
+  { TFhirIdentifier5 }
+
   TFhirIdentifier5 = class (TFhirIdentifierW)
   private
     function id : TFHIRIdentifier;
@@ -205,7 +207,7 @@ type
     procedure setSearchMpiMatch(Value: String); override;
     procedure setSearchScore(Value: String); override;
     function getURL: String; override;
-     procedure setUrl(Value: String);  override;
+    procedure setUrl(Value: String);  override;
     function getrequestIfNoneExist: String; override;
     procedure setrequestIfNoneExist(Value: String); override;
     function getrequestIfMatch: String; override;
@@ -609,6 +611,8 @@ type
     procedure setPublisher(value : String); override;
     function source : String; override;
     function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFHIRLookupOpRequest5 }
@@ -774,6 +778,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
   end;
 
   { TFhirConceptMapGroupElementDependsOn5 }
@@ -1371,6 +1377,11 @@ procedure TFhirOperationOutcome5.addIssue(level: TIssueSeverity; cause: TFHIRIss
 var
   iss : TFhirOperationOutcomeIssue;
 begin
+  if (message = '') then
+    raise EFslException.Create('Attempt to create an issue with no message');
+  if (cause = itNull) then
+    raise EFslException.Create('Attempt to create an issue with no cause');
+
   if not addIfDuplicate then
   begin
     for iss in (Fres as TFhirOperationOutcome).issueList do
@@ -1641,7 +1652,12 @@ end;
 
 function TFHIRBundle5.getTimestamp: TFslDateTime;
 begin
-  result := bundle.timestamp;
+  if bundle.timestampElement <> nil then
+    result := bundle.timestamp
+  else if bundle.meta <> nil then
+    result := bundle.meta.lastUpdated
+  else
+    result := TFslDateTime.makeNull;
 end;
 
 function TFHIRBundle5.getTotal: integer;
@@ -1969,7 +1985,8 @@ begin
     statement.restList[0].interactionList.Append.code := SystemRestfulInteractionHistorySystem;
   statement.text := TFhirNarrative.Create;
   statement.text.status := NarrativeStatusGenerated;
-  statement.instantiatesList.AddItem(TFHIRCanonical.Create('http://hl7.org/fhir/Conformance/terminology-server'));
+  if (ts <> '') then
+    statement.instantiatesList.AddItem(TFHIRCanonical.Create(ts));
   // commented out until we sort out cds-hooks
 //  ext := statement.restList[0].addExtension('http://fhir-registry.smarthealthit.org/StructureDefinition/cds-activity');
 //  ext.addExtension('name', 'Fetch Patient Alerts');
@@ -3089,6 +3106,15 @@ begin
     result := TFhirValueSetExpansionContains5.create(cc.link);
 end;
 
+function TFHIRValueSet5.getExperimental: boolean;
+begin
+  result := vs.experimental;
+end;
+
+procedure TFHIRValueSet5.setExperimental(value: boolean);
+begin
+  vs.experimental := value;
+end;
 function TFHIRValueSet5.getVersion: String;
 begin
   result := vs.Version;
@@ -4033,6 +4059,16 @@ end;
 procedure TFhirCodeSystem5.setPublisher(Value: String);
 begin
   cs.publisher := value;
+end;
+
+function TFhirCodeSystem5.getExperimental: boolean;
+begin
+  result := cs.experimental;
+end;
+
+procedure TFhirCodeSystem5.setExperimental(value: boolean);
+begin
+  cs.experimental := value;
 end;
 
 procedure TFhirCodeSystem5.setStatus(Value: TPublicationStatus);
