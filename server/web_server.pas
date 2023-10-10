@@ -170,6 +170,7 @@ Type
     FSecureCount, FPlainCount : Integer;
     FStats : TStatusRecords;
 
+    function insertValue(n: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
     function isLogging : boolean;
     procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
@@ -1261,43 +1262,57 @@ begin
   ReturnProcessedFile(sender, request, response, named, path, secure, variables);
 end;
 
+function  TFhirWebServer.insertValue(n : String; secure: boolean; variables: TFslMap<TFHIRObject>) : String;
+begin
+  if n.startsWith('include ') then
+    result := SourceProvider.getSource(n.subString(8))
+  else if n = 'id' then
+    result := Common.Name
+  else if n = 'specurl' then
+    result := 'http://hl7.org/fhir'
+  else if n = 'web' then
+    result := WebDesc(secure)
+  else if n = 'admin' then
+    result := Common.AdminEmail
+  else if n = 'logout' then
+    result := 'User: [n/a]'
+  else if n = 'endpoints' then
+    result := endpointList
+  else if n = 'host' then
+    if Common.StatedPort = 80 then
+      result := Common.Host
+    else
+      result := Common.Host + ':' + inttostr(Common.StatedPort)
+  else if n = 'securehost' then
+    if Common.StatedSSLPort = 80 then
+      result := Common.Host
+    else
+      result := Common.Host + ':' + inttostr(Common.StatedSSLPort)
+  else if (variables <> nil) and variables.ContainsKey(n) then
+    result := variables[n].primitiveValue
+  else if n = 'ver' then
+    result := 'n/a'
+  else
+    result := '??'+n+'??';
+end;
+
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
 var
   s, n, h, t: String;
   i : integer;
 begin
   s := SourceProvider.getSource(actual);
-  i := s.IndexOf('[%include');
+  i := s.IndexOf('[%');
   while (i > -1) do
   begin
     h := s.subString(0, i);
     s := s.subString(i);
     i := s.indexOf('%]');
     t := s.subString(i+2);
-    n := s.Substring(10, i-10);
-    s := h + SourceProvider.getSource(n) + t; 
-    i := s.IndexOf('[%include');
+    n := s.Substring(2, i-2);
+    s := h + insertValue(n, secure, variables) + t;
+    i := s.IndexOf('[%');
   end;
-
-  s := s.Replace('[%id%]', Common.Name, [rfReplaceAll]);
-  s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
-  s := s.Replace('[%web%]', WebDesc(secure), [rfReplaceAll]);
-  s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
-  s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
-  s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  if Common.StatedPort = 80 then
-    s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
-  else
-    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.StatedPort), [rfReplaceAll]);
-
-  if Common.StatedSSLPort = 443 then
-    s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
-  else
-    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.StatedSSLPort), [rfReplaceAll]);
-  if variables <> nil then
-    for n in variables.Keys do
-      s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
 
   response.Expires := Now + 1;
   response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
