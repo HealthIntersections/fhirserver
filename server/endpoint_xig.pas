@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, ZStream,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   fsl_base, fsl_utilities, fsl_json, fsl_i18n, fsl_http, fsl_html,
-  fhir_objects,
+  fhir_objects, fhir_xhtml,
   fdb_manager,
   utilities, server_config, tx_manager, time_tracker, kernel_thread,
   web_base, endpoint, server_stats;
@@ -70,6 +70,7 @@ type
 
   TFHIRXIGWebServer = class (TFhirWebServerEndpoint)
   private
+    FMetadata : TFslStringDictionary;
     FVersions : TStringList;
     FRealms : TStringList;
     FAuthorities : TStringList;
@@ -85,6 +86,8 @@ type
     FTerminologySources : TStringList;
 
     function authBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
+    function adjustLinks(x : TFhirXHtmlNode; base : String) : String;
+    function fixNarrative(src, base: String): String;
     function realmBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
     function typeBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
     function versionBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
@@ -94,7 +97,7 @@ type
     procedure renderExtension(b : TFslStringBuilder; details : String);
     function hasTerminologySource(s : String): boolean;
     function extLink(url : String) : String;
-    function contentRes(pid, rtype, id  : String) : String;
+    function contentRes(pid, rtype, id  : String; secure : boolean) : String;
 
     procedure sendViewHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; rtype, auth, realm, ver, rt, text, offset : String);
     procedure sendResourceHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; pid, rtype, id  : String);
@@ -206,6 +209,13 @@ var
 begin
   conn := Database.GetConnection('Load');
   try
+    conn.SQL := 'select Name, Value from Metadata';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      FXIGServer.FMetadata.addOrSetValue(conn.ColStringByName['Name'], conn.ColStringByName['Value']);
+    conn.terminate;
+
     conn.SQL := 'select Code from realms';
     conn.Prepare;
     conn.Execute;
@@ -222,7 +232,6 @@ begin
     conn.terminate;
     FXIGServer.FAuthorities.sort;
 
-
     conn.SQL := 'select PackageKey, Id, PID, Web, Canonical from Packages';
     conn.Prepare;
     conn.Execute;
@@ -231,7 +240,7 @@ begin
       pck := TPackageInformation.create(conn.ColStringByName['PackageKey'], conn.ColStringByName['Id'], conn.ColStringByName['PID'].replace('#', '|'), conn.ColStringByName['Web'], conn.ColStringByName['Canonical']);
       try
         FXIGServer.FPackages.add(pck.key, pck.link);
-        FXIGServer.FPackagesById.add(pck.vid, pck.link);
+        FXIGServer.FPackagesById.addOrSetValue(pck.vid, pck.link);
       finally
         pck.free;
       end;
@@ -392,10 +401,12 @@ begin
   FExtensionContexts := TStringList.create;
   FExtensionTypes := TStringList.create;
   FTerminologySources := TStringList.create;
+  FMetadata := TFslStringDictionary.create;
 end;
 
 destructor TFHIRXIGWebServer.Destroy;
 begin
+  FMetadata.free;
   FPackagesById.free;
   FExtensionContexts.free;
   FExtensionTypes.free;
@@ -743,7 +754,7 @@ begin
       else
         b.append('Type: '+makeSelect(rt, FResourceTypes)+'<br/>');
       end;
-      b.append('Text: <input type="text" name="text" value="'+FormatTextToHtml(text)+'"/>');
+      b.append('Text: <input type="text" name="text" value="'+FormatTextToHtml(text)+'"/>[%include xig-help.html%]<br/>');
       b.append('<input type="submit" value="Search"/>');
       b.append('</form>');
 
@@ -990,13 +1001,46 @@ begin
   end;
 end;
 
+function fixLink(base, link : String) : String;
+begin
+  if link.StartsWith('http:') or link.StartsWith('https:') or link.StartsWith('data:') then
+    result := link
+  else
+    result := URLPath([base, link]);
+end;
 
-function TFHIRXIGWebServer.contentRes(pid, rtype, id: String): String;
+function TFHIRXIGWebServer.adjustLinks(x : TFhirXHtmlNode; base : String) : String;
+var
+  c : TFhirXHtmlNode;
+begin
+  if (x.name = 'img') and x.HasAttribute('src') then
+    x.attribute('src', fixLink(base, x.attribute('src')))
+  else if (x.name = 'a') and (x.HasAttribute('href')) then
+    x.attribute('href', fixLink(base, x.attribute('href')));
+
+  for c in x.ChildNodes do
+    adjustLinks(c, base);
+end;
+
+function TFHIRXIGWebServer.fixNarrative(src, base : String) : String;
+var
+  x : TFhirXHtmlNode;
+begin
+  x := TFHIRXhtmlParser.parse(nil, xppAllow, [xopTrimWhitspace], src);
+  try
+    adjustLinks(x, base);
+    result := TFHIRXhtmlParser.compose(x, false);
+  finally
+    x.free;
+  end;
+end;
+
+function TFHIRXIGWebServer.contentRes(pid, rtype, id: String; secure : boolean): String;
 var
   db : TFDBConnection;
   b : TFslStringBuilder;
   pck : TPackageInformation;
-  rk, s, dv, js: String;
+  rk, s, dv, js, base, st: String;
   j : TBytes;
   json, txt : TJsonObject;
 begin
@@ -1013,6 +1057,9 @@ begin
        if not db.FetchNext then
          raise exception.create('Unknown Resource '+rtype+'/'+id+' in package '+pid);
        rk := db.ColStringByName['ResourceKey'];
+       base := db.ColStringByName['Web'];
+       base := base.Substring(0, base.LastIndexOf('/'));
+
        b.append('<table class="grid">');
        b.append('<tr> <td>Package</td> <td><a href="'+pck.web+'">'+pck.id+'</a></td> </tr>');
        b.append('<tr> <td>Type</td> <td>'+rtype+'</td> </tr>');
@@ -1068,6 +1115,75 @@ begin
        b.append('</table>');
        db.terminate;
 
+       b.append('<hr/>');
+       b.append('<h3>Resources that use this resource</h3>');
+       db.SQL := 'Select Packages.PID, Resources.ResourceType, Resources.Id, Resources.URL, Resources.Web, Resources.Name, Resources.Title from DependencyList, Resources, Packages where DependencyList.TargetKey = '+rk+' and DependencyList.SourceKey = Resources.ResourceKey  and Resources.PackageKey = Packages.PackageKey order by ResourceType';
+       st := '';
+       db.Prepare;
+       db.execute;
+       while db.fetchNext do
+       begin
+         if st = '' then
+         begin
+           st := db.ColStringByName['ResourceType'];
+           b.append('<table class="grid">');
+           b.append('<tr style="background-color: #eeeeee"><td colspan="2"><b>'+st+'</b></td></tr>');
+         end;
+         b.append('<tr>');
+         id := AbsoluteURL(secure)+'/'+db.colStringByName['PID'].replace('#','|')+'/'+db.ColStringByName['ResourceType']+'/'+db.ColStringByName['Id'];
+         if db.ColStringByName['Url'] <> '' then
+           b.append('<td><a href="'+id+'">'+db.ColStringByName['Url'].replace(pck.canonical+st+'/', '')+extLink(db.ColStringByName['Web'])+'</a></td>')
+         else
+           b.append('<td><a href="'+id+'">'+(db.ColStringByName['ResourceType']+'/').replace(st+'/', '')+db.ColStringByName['Id']+extLink(db.ColStringByName['Web'])+'</a></td>');
+         if db.ColStringByName['Title'] <> '' then
+           b.append('<td>'+db.ColStringByName['Title']+'</td>')
+         else
+           b.append('<td>'+db.ColStringByName['Name']+'</td>');
+         b.append('</tr>');
+       end;
+       if (st <> '') then
+       begin
+           b.append('</table>');
+       end
+       else
+         b.append('<p style="color: #808080">No resources found</p>');
+       db.terminate;
+                                
+       b.append('<hr/>');
+       b.append('<h3>Resources that this resource uses</h3>');
+       db.SQL := 'Select Packages.PID, Resources.ResourceType, Resources.Id, Resources.URL, Resources.Web, Resources.Name, Resources.Title from DependencyList, Resources, Packages where DependencyList.SourceKey = '+rk+' and DependencyList.TargetKey = Resources.ResourceKey  and Resources.PackageKey = Packages.PackageKey order by ResourceType';
+       st := '';
+       db.Prepare;
+       db.execute;
+       while db.fetchNext do
+       begin
+         if st = '' then
+         begin
+           st := db.ColStringByName['ResourceType'];
+           b.append('<table class="grid">');
+           b.append('<tr style="background-color: #eeeeee"><td colspan="2"><b>'+st+'</b></td></tr>');
+         end;
+         b.append('<tr>');
+         id := AbsoluteURL(secure)+'/'+db.colStringByName['PID'].replace('#','|')+'/'+db.ColStringByName['ResourceType']+'/'+db.ColStringByName['Id'];
+         if db.ColStringByName['Url'] <> '' then
+           b.append('<td><a href="'+id+'">'+db.ColStringByName['Url'].replace(pck.canonical+st+'/', '')+extLink(db.ColStringByName['Web'])+'</a></td>')
+         else
+           b.append('<td><a href="'+id+'">'+(db.ColStringByName['ResourceType']+'/').replace(st+'/', '')+db.ColStringByName['Id']+extLink(db.ColStringByName['Web'])+'</a></td>');
+         if db.ColStringByName['Title'] <> '' then
+           b.append('<td>'+db.ColStringByName['Title']+'</td>')
+         else
+           b.append('<td>'+db.ColStringByName['Name']+'</td>');
+         b.append('</tr>');
+       end;
+       if (st <> '') then
+       begin
+           b.append('</table>');
+       end
+       else
+         b.append('<p style="color: #808080">No resources found</p>');
+       db.terminate;
+
+       b.append('<hr/>');
        db.SQL := 'Select * from Contents where ResourceKey = '+rk;
        db.prepare;
        db.Execute;
@@ -1082,9 +1198,10 @@ begin
          dv := txt.str['div'];
          if (dv <> '') then
          begin
+           dv := fixNarrative(dv, base);
            b.append('<hr/>');
            b.append('<h3>Narrative</h3>');   
-           b.append('<p style="color: maroon">Note: This is the original narrative; links are presented as is but will be broken</p>');
+           b.append('<p style="color: maroon">Note: links and images are rebased to the (stated) source</p>');
            b.append(dv);
          end;
          js := TJSONWriter.writeObjectStr(json, true);
@@ -1094,7 +1211,7 @@ begin
        b.append('<hr/>');
        b.append('<h3>Source</h3>');
        b.append('<pre>');
-       b.append(js);
+       b.append(FormatTextToHtml(js));
        b.append('</pre>');
 
       result := b.AsString;
@@ -1114,6 +1231,7 @@ procedure TFHIRXIGWebServer.sendViewHtml(request: TIdHTTPRequestInfo; response: 
 var
   vars : TFslMap<TFHIRObject>;
   ms : int64;
+  s : String;
 begin
   vars := TFslMap<TFHIRObject>.Create('vars');
   try
@@ -1121,6 +1239,8 @@ begin
     vars.add('auth-bar', TFHIRObjectText.Create(authBar(secure, realm, auth, ver, rtype, rt, text)));
     vars.add('version-bar', TFHIRObjectText.Create(versionBar(secure, realm, auth, ver, rtype, rt, text)));
     vars.add('type-bar', TFHIRObjectText.Create(typeBar(secure, realm, auth, ver, rtype, rt, text)));
+    for s in FMetadata.keys do
+      vars.add('metadata-'+s, TFHIRObjectText.Create(FMetadata[s]));
 
     ms := getTickCount64;
     if (rtype = '') then
@@ -1168,7 +1288,7 @@ begin
     vars.add('id', TFHIRObjectText.Create(id));
 
     ms := getTickCount64;
-    vars.add('content', TFHIRObjectText.Create(contentRes(pid, rtype, id)));
+    vars.add('content', TFHIRObjectText.Create(contentRes(pid, rtype, id, secure)));
     vars.add('ms', TFHIRObjectText.Create(inttostr(getTickCount64 - ms)));
     returnFile(request, response, nil, request.Document, 'xig-res.html', false, vars);
   finally

@@ -153,7 +153,8 @@ Type
     function fhirType : String; override;
     function NsDecl : String; virtual;
     function hasAttribute(name : String): boolean;
-    procedure attribute(name, value : String);
+    function attribute(name: String) : String; overload;
+    procedure attribute(name, value : String); overload;
     property Location : TSourceLocation read FLocation write FLocation;
 
     {
@@ -946,6 +947,17 @@ begin
     for attr in FAttributes do
       if attr.Name = name then
         exit(true);
+end;
+
+function TFhirXHtmlNode.attribute(name: String): String;
+var
+  attr : TFHIRAttribute;
+begin
+  result := '';
+  if FAttributes <> nil then
+    for attr in FAttributes do
+      if attr.Name = name then
+        exit(attr.Value);
 end;
 
 function TFhirXHtmlNode.HasAttributes: boolean;

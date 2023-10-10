@@ -79,7 +79,8 @@ type
     FFiles : TFslStringDictionary;
     FEndPoints : TFslMap<TEndPointInfo>;
     procedure DownloadProgress(sender : TObject; progress : integer);
-    procedure downloadFile(fn : String);
+    procedure downloadFile(fn : String); overload;
+    procedure downloadFile(src, tgt : String); overload;
     procedure DownloadFiles;
     function fixDBPath(fn: String): String;
     procedure readConfig;
@@ -182,7 +183,12 @@ end;
 
 function TConfigurationBuilder.fixDBPath(fn : String) : String;
 begin
-  if (ExtractFilePath(fn) = '') then
+  if (fn.StartsWith('http:') or fn.StartsWith('https:')) then
+  begin
+    result := FilePath([FFolder, fn.Substring(fn.LastIndexOf('/')+1)]);
+    downloadFile(fn, result);
+  end
+  else if (ExtractFilePath(fn) = '') then
     result := FilePath([FFolder, fn])
   else
     result := fn;
@@ -303,6 +309,7 @@ begin
       sct['path'].value := o.str['path'];
       sct['active'].value := 'true';
       sct['db-type'].value := o.str['db-type'];
+      sct['db-source'].value := o.str['db-file'];
       sct['db-file'].value := fixDbPath(o.str['db-file']);
       sct['db-auto-create'].value := o.str['db-auto-create'];
       if o.has('folder') then
@@ -452,8 +459,6 @@ end;
 procedure TConfigurationBuilder.downloadFile(fn : String);
 var
   src, tgt : String;
-  fetcher : TInternetFetcher;
-  start : TDateTime;
 begin
   if (fn.StartsWith('file:')) then
   begin
@@ -465,11 +470,19 @@ begin
     src := UrlPath([FUrl, fn]);
     tgt := FilePath([FFolder, fn]);
   end;
+  downloadFile(src, tgt);
+end;
+
+procedure TConfigurationBuilder.downloadFile(src, tgt : String);
+var
+  fetcher : TInternetFetcher;
+  start : TDateTime;
+begin
   if (src.StartsWith('file:')) then
   begin
     if not (FileExists(tgt)) then
     begin
-      Logging.start('Copy '+fn);
+      Logging.start('Copy '+src);
       BytesToFile(FileToBytes(src.Substring(5)), tgt);
       Logging.finish(' Done');
     end;
@@ -481,7 +494,7 @@ begin
     FLastPct := 0;
     if not FileExists(tgt) then
     begin
-      Logging.start('Download '+fn);
+      Logging.start('Download '+src);
       try
         start := now;
         fetcher := TInternetFetcher.Create;
