@@ -1550,6 +1550,13 @@ var
 begin
   if not AConn.FCurrentlyInUse then
     raise EDBException.Create('Attempt to release ODBC connection twice (error)');
+  if AConn.Prepared then
+  begin
+    try
+      AConn.Terminate;
+    except
+    end;
+  end;
   AConn.FCurrentlyInUse := false;
 
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
