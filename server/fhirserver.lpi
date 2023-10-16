@@ -810,7 +810,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="40">
+    <Exceptions Count="41">
       <Item1>
         <Name Value="EAbort"/>
         <Enabled Value="False"/>
@@ -955,6 +955,9 @@
         <Name Value="00000013Edecompressionerror"/>
         <Enabled Value="False"/>
       </Item40>
+      <Item41>
+        <Name Value="00000013EWebServerException"/>
+      </Item41>
     </Exceptions>
   </Debugging>
 </CONFIG>

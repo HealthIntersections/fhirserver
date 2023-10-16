@@ -1008,16 +1008,51 @@ begin
   else
     result := URLPath([base, link]);
 end;
+            
+function fixStyleLink(base, style : String) : String;
+var
+  i, j : integer;
+  s : String;
+begin
+  result := '';
+  i := 1;
+  while (i <= length(style)) do
+    if copy(style, i, 4) = 'url(' then
+    begin
+      j := i + 1;
+      while (j <= length(style)) and (style[j] <> ')') do
+        inc(j);
+      if j <= length(style) then
+      begin
+        s := copy(style, i+4, j-i-4);
+        if (s.StartsWith('http:') or s.StartsWith('https:') or s.StartsWith('data:')) then
+          result := result + 'url('+s+')'
+        else
+          result := result + 'url('+URLPath([base, s])+')'
+      end
+      else
+        result := result + copy(style, i, length(style));
+      i := j + 1;
+    end
+    else
+    begin
+      result := result + style[i];
+      inc(i);
+    end;
+end;
 
 function TFHIRXIGWebServer.adjustLinks(x : TFhirXHtmlNode; base : String) : String;
 var
   c : TFhirXHtmlNode;
+  s : String;
 begin
   if (x.name = 'img') and x.HasAttribute('src') then
     x.attribute('src', fixLink(base, x.attribute('src')))
   else if (x.name = 'a') and (x.HasAttribute('href')) then
     x.attribute('href', fixLink(base, x.attribute('href')));
 
+  if (x.hasAttribute('style')) then
+    x.attribute('style', fixStyleLink(base, x.attribute('style')));
   for c in x.ChildNodes do
     adjustLinks(c, base);
 end;
@@ -1050,12 +1085,12 @@ begin
     try   
       pck := FPackagesById[pid];
       if (pck = nil) then
-        raise exception.create('Unknown Package '+pid.replace('|', '#'));
+        raise EWebServerException.create('Unknown Package '+pid.replace('|', '#'));
        db.sql := 'Select * from Resources where PackageKey = '+pck.key+' and ResourceType = '''+SqlWrapString(rtype)+''' and Id = '''+SqlWrapString(id)+'''';
        db.prepare;
        db.Execute;
        if not db.FetchNext then
-         raise exception.create('Unknown Resource '+rtype+'/'+id+' in package '+pid);
+         raise EWebServerException.create('Unknown Resource '+rtype+'/'+id+' in package '+pid);
        rk := db.ColStringByName['ResourceKey'];
        base := db.ColStringByName['Web'];
        base := base.Substring(0, base.LastIndexOf('/'));
