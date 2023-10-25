@@ -109,6 +109,7 @@ type
     constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
     destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; override;
+    property Filename : String read FFilename;
   end;
 
 implementation

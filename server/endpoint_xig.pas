@@ -35,9 +35,9 @@ interface
 uses
   SysUtils, Classes, ZStream,
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_json, fsl_i18n, fsl_http, fsl_html,
+  fsl_base, fsl_utilities, fsl_json, fsl_i18n, fsl_http, fsl_html, fsl_fetcher, fsl_logging, fsl_threads,
   fhir_objects, fhir_xhtml,
-  fdb_manager,
+  fdb_manager, fdb_sqlite3,
   utilities, server_config, tx_manager, time_tracker, kernel_thread,
   web_base, endpoint, server_stats;
 
@@ -66,9 +66,9 @@ type
     property canonical : String read FCanonical write FCanonical;
   end;
 
-  { TFHIRXIGWebServer }
+  { TFHIRXIGWebContext }
 
-  TFHIRXIGWebServer = class (TFhirWebServerEndpoint)
+  TFHIRXIGWebContext = class (TFslObject)
   private
     FMetadata : TFslStringDictionary;
     FVersions : TStringList;
@@ -84,21 +84,39 @@ type
     FExtensionContexts : TStringList;
     FExtensionTypes : TStringList;
     FTerminologySources : TStringList;
+    FDate : String;
 
-    function authBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
+    procedure loadFromDB;
+
+    function authBar(url, realm, auth, ver, rtype, rt, text: String): String;
+    function realmBar(url, realm, auth, ver, rtype, rt, text: String): String;
+    function typeBar(url, realm, auth, ver, rtype, rt, text: String): String;
+    function versionBar(url, realm, auth, ver, rtype, rt, text: String): String;
+    function makeSelect(rt : String; list : TStringList) : String;
+    function hasTerminologySource(s : String): boolean;
+  public
+    constructor create(db : TFDBManager);
+    destructor Destroy; override;
+    function link : TFHIRXIGWebContext; overload;
+  end;
+
+  { TFHIRXIGWebServer }
+
+  TFHIRXIGWebServer = class (TFhirWebServerEndpoint)
+  private
+    FLock : TFslLock;
+    FContext : TFHIRXIGWebContext;
+
     function adjustLinks(x : TFhirXHtmlNode; base : String) : String;
     function fixNarrative(src, base: String): String;
-    function realmBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
-    function typeBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
-    function versionBar(secure: boolean; realm, auth, ver, rtype, rt, text: String): String;
-    function makeSelect(rt : String; list : TStringList) : String;
 
-    function contentAll(mode : TContentMode; secure: boolean; realm, auth, ver, rt, text, offset: String): String;
     procedure renderExtension(b : TFslStringBuilder; details : String);
-    function hasTerminologySource(s : String): boolean;
     function extLink(url : String) : String;
-    function contentRes(pid, rtype, id  : String; secure : boolean) : String;
 
+    function contentAll(context : TFHIRXIGWebContext; mode : TContentMode; secure: boolean; realm, auth, ver, rt, text, offset: String): String;
+    function contentRes(context : TFHIRXIGWebContext; pid, rtype, id  : String; secure : boolean) : String;
+
+    function getContext : TFHIRXIGWebContext;
     procedure sendViewHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; rtype, auth, realm, ver, rt, text, offset : String);
     procedure sendResourceHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; pid, rtype, id  : String);
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
@@ -118,7 +136,12 @@ type
   TXIGServerEndPoint = class (TFHIRServerEndPoint)
   private
     FXIGServer : TFHIRXIGWebServer;
+    FLastCheck : TDateTime;
+    FLastDownload : String;
     procedure loadFromDB;
+    function downloadTimestampFile : String;
+    procedure downloadAndReload;
+    function dateBuilt : String;
   public
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
@@ -141,6 +164,356 @@ type
   end;
 
 implementation
+
+{ TFHIRXIGWebContext }
+
+constructor TFHIRXIGWebContext.create(db: TFDBManager);
+begin
+  inherited create;
+
+  FVersions := TStringList.create;
+  FRealms := TStringList.create;
+  FAuthorities := TStringList.create;
+  FTypes := TStringList.create;
+  FPackages := TFslMap<TPackageInformation>.create;
+  FPackagesById := TFslMap<TPackageInformation>.create;
+  FPackagesById.defaultValue := nil;
+  FProfileResources := TStringList.create;
+  FProfileTypes := TStringList.create;
+  FResourceTypes := TStringList.create;
+  FExtensionContexts := TStringList.create;
+  FExtensionTypes := TStringList.create;
+  FTerminologySources := TStringList.create;
+  FMetadata := TFslStringDictionary.create;
+
+  FDatabase := db;
+  loadFromDB;
+end;
+
+destructor TFHIRXIGWebContext.Destroy;
+begin
+  FMetadata.free;
+  FPackagesById.free;
+  FExtensionContexts.free;
+  FExtensionTypes.free;
+  FTerminologySources.free;
+  FResourceTypes.free;
+  FProfileResources.Free;
+  FProfileTypes.Free;
+  FPackages.Free;
+  FDatabase.Free;
+  FVersions.Free;
+  FRealms.Free;
+  FAuthorities.Free;
+  FTypes.Free;
+
+  inherited Destroy;
+end;
+
+          
+procedure TFHIRXIGWebContext.loadFromDB;
+var
+  conn : TFDBConnection;
+  pck : TPackageInformation;
+begin
+  conn := FDatabase.GetConnection('Load');
+  try
+    conn.SQL := 'select Name, Value from Metadata';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      FMetadata.addOrSetValue(conn.ColStringByName['Name'], conn.ColStringByName['Value']);
+    conn.terminate;
+    FDate := FMetadata['date'];
+
+    conn.SQL := 'select Code from realms';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      FRealms.add(conn.ColStringByName['Code']);
+    conn.terminate;
+    FRealms.Sort;
+
+    conn.SQL := 'select Code from Authorities';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      FAuthorities.add(conn.ColStringByName['Code']);
+    conn.terminate;
+    FAuthorities.sort;
+
+    conn.SQL := 'select PackageKey, Id, PID, Web, Canonical from Packages';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+    begin
+      pck := TPackageInformation.create(conn.ColStringByName['PackageKey'], conn.ColStringByName['Id'], conn.ColStringByName['PID'].replace('#', '|'), conn.ColStringByName['Web'], conn.ColStringByName['Canonical']);
+      try
+        FPackages.add(pck.key, pck.link);
+        FPackagesById.addOrSetValue(pck.vid, pck.link);
+      finally
+        pck.free;
+      end;
+    end;
+    conn.terminate;
+    FAuthorities.sort;
+
+    conn.SQL := 'Select distinct type from Resources where ResourceType = ''StructureDefinition'' and Kind = ''resource''';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      if conn.ColStringByName['Type'] <> '' then
+      FProfileResources.add(conn.ColStringByName['Type']);
+    conn.terminate;
+    FProfileResources.Sort;
+
+    conn.SQL := 'Select distinct type from Resources where ResourceType = ''StructureDefinition'' and (Kind = ''complex-type'' or Kind = ''primitive-type'')';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      if (conn.ColStringByName['Type'] <> 'Extension') and (conn.ColStringByName['Type'] <> '') then
+        FProfileTypes.add(conn.ColStringByName['Type']);
+    conn.terminate;
+    FProfileTypes.Sort;
+
+    conn.SQL := 'Select distinct ResourceType from Resources';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      if (conn.ColStringByName['ResourceType'] <> '') and (conn.ColStringByName['ResourceType'] <> 'StructureDefinition') and (conn.ColStringByName['ResourceType'] <> 'CodeSystem') and
+        (conn.ColStringByName['ResourceType'] <> 'ValueSet') and (conn.ColStringByName['ResourceType'] <> 'ConceptMap') then
+        FResourceTypes.add(conn.ColStringByName['ResourceType']);
+    conn.terminate;
+    FResourceTypes.Sort;
+
+    conn.SQL := 'Select distinct Code from Categories where mode = 2';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      if (conn.ColStringByName['Code'] <> '') then
+        FExtensionContexts.add(conn.ColStringByName['Code']);
+    conn.terminate;
+    FExtensionContexts.Sort;
+
+    conn.SQL := 'Select distinct Code from Categories where mode = 3';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      if (conn.ColStringByName['Code'] <> '') then
+        FExtensionTypes.add(conn.ColStringByName['Code']);
+    conn.terminate;
+    FExtensionTypes.Sort;
+
+    conn.SQL := 'Select Code, Display from TxSource';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do
+      if (conn.ColStringByName['Code'] <> '') then
+        FTerminologySources.add(conn.ColStringByName['Code']+'='+conn.ColStringByName['Display']);
+    conn.terminate;
+    FTerminologySources.Sort;
+
+
+    FVersions.Add('R2');
+    FVersions.Add('R2B');
+    FVersions.Add('R3');
+    FVersions.Add('R4');
+    FVersions.Add('R4B');
+    FVersions.Add('R5');
+    FVersions.Add('R6');
+
+    FTypes.add('rp=Resource Profiles');
+    FTypes.add('dp=Datatype Profiles');
+    FTypes.add('ext=Extensions');
+    FTypes.add('lm=Logical Models');
+    FTypes.add('cs=CodeSystems');
+    FTypes.add('vs=ValueSets');
+    FTypes.add('cm=ConceptMaps');
+
+    conn.release;
+  except
+    on e : Exception do
+      conn.Error(e);
+  end;
+end;
+
+function TFHIRXIGWebContext.link: TFHIRXIGWebContext;
+begin
+  result := TFHIRXIGWebContext(inherited Link);
+end;
+
+function TFHIRXIGWebContext.realmBar(url, realm, auth, ver, rtype, rt, text : String) : String;
+var
+  p, s : String;
+begin
+  p := url+'/?';
+  if (rtype <> '') then
+    p := p+'&type='+rtype;
+  if (auth <> '') then
+    p := p+'&auth='+auth;
+  if (ver <> '') then
+    p := p+'&ver='+ver;
+  if (rt <> '') then
+      p := p + '&rt='+rt;
+  if (text <> '') then
+      p := p + '&text='+encodePercent(text);
+  if realm = '' then
+    result := '<b>All</b>'
+  else
+    result := '<a href="'+p+'">All</a>';
+  for s in FRealms do
+    if (s = realm) then
+      result := result + ' | <b>'+s+'</b>'
+    else
+      result := result + ' | <a href="'+p+'&realm='+s+'">'+s+'</a>';
+end;
+
+function TFHIRXIGWebContext.authBar(url, realm, auth, ver, rtype, rt, text  : String) : String;
+var
+  p, s : String;
+begin
+  p := url+'/?';
+  if (rtype <> '') then
+    p := p+'&type='+rtype;
+  if (realm <> '') then
+    p := p+'&realm='+realm;
+  if (ver <> '') then
+    p := p+'&ver='+ver;
+  if (rt <> '') then
+      p := p + '&rt='+rt;
+  if (text <> '') then
+      p := p + '&text='+encodePercent(text);
+  if auth = '' then
+    result := '<b>All</b>'
+  else
+    result := '<a href="'+p+'">All</a>';
+  for s in FAuthorities do
+    if (s = auth) then
+      result := result + ' | <b>'+s+'</b>'
+    else
+      result := result + ' | <a href="'+p+'&auth='+s+'">'+s+'</a>';
+end;
+
+function TFHIRXIGWebContext.versionBar(url, realm, auth, ver, rtype, rt, text  : String) : String;
+var
+  p, s : String;
+begin
+  p := url+'/?';
+  if (rtype <> '') then
+    p := p+'&type='+rtype;
+  if (realm <> '') then
+    p := p+'&realm='+realm;
+  if (auth <> '') then
+    p := p+'&auth='+auth;
+  if (rt <> '') then
+      p := p + '&rt='+rt;
+  if (text <> '') then
+      p := p + '&text='+encodePercent(text);
+  if ver = '' then
+    result := '<b>All</b>'
+  else
+    result := '<a href="'+p+'">All</a>';
+  for s in FVersions do
+    if (s = ver) then
+      result := result + ' | <b>'+s+'</b>'
+    else
+      result := result + ' | <a href="'+p+'&ver='+s+'">'+s+'</a>';
+end;
+
+function TFHIRXIGWebContext.typeBar(url, realm, auth, ver, rtype, rt, text  : String) : String;
+var
+  p, s, n, v : String;
+begin
+  p := url+'/?';
+  if (ver <> '') then
+    p := p+'&ver='+ver;
+  if (realm <> '') then
+    p := p+'&realm='+realm;
+  if (auth <> '') then
+    p := p+'&auth='+auth;
+  if (rt <> '') then
+      p := p + '&rt='+rt;
+  if (text <> '') then
+      p := p + '&text='+encodePercent(text);
+  if rtype = '' then
+    result := '<b>All</b>'
+  else
+    result := '<a href="'+p+'">All</a>';
+  for s in FTypes do
+  begin
+    StringSplit(s, '=', n, v);
+    if (n = rtype) then
+      result := result + ' | <b>'+v+'</b>'
+    else
+      result := result + ' | <a href="'+p+'&type='+n+'">'+v+'</a>';
+  end;
+end;
+
+function showVersion(db : TFDBConnection) : String;
+begin
+  result := '';
+  if (db.ColIntegerByName['R2'] = 1) then
+    CommaAdd(result, 'R2');
+  if (db.ColIntegerByName['R2B'] = 1) then
+    CommaAdd(result, 'R2B');
+  if (db.ColIntegerByName['R3'] = 1) then
+    CommaAdd(result, 'R3');
+  if (db.ColIntegerByName['R4'] = 1) then
+    CommaAdd(result, 'R4');
+  if (db.ColIntegerByName['R4B'] = 1) then
+    CommaAdd(result, 'R4B');
+  if (db.ColIntegerByName['R5'] = 1) then
+    CommaAdd(result, 'R5');
+  if (db.ColIntegerByName['R6'] = 1) then
+    CommaAdd(result, 'R6');
+end;
+
+function TFHIRXIGWebContext.makeSelect(rt : String; list : TStringList) : String;
+var
+  b : TFslStringBuilder;
+  s : String;
+  procedure add(t : String);
+  var
+    n, v :String;
+  begin
+    if t.contains('=') then
+      StringSplit(t, '=', n, v)
+    else
+    begin
+      n := t;
+      v := t;
+    end;
+    if (rt = n) then
+      b.append('<option value="'+n+'" selected="true">'+v+'</option>')
+    else
+      b.append('<option value="'+n+'">'+v+'</option>')
+  end;
+begin
+  b := TFslStringBuilder.create;
+  try
+    b.append('<select name="rt" size="1">');
+    add('');
+
+    for s in list do
+      add(s);
+
+    b.append('</select>');
+    result := b.asString;
+  finally
+    b.free;
+  end;
+end;
+
+function TFHIRXIGWebContext.hasTerminologySource(s: String): boolean;
+var
+  t : String;
+begin
+  result := false;
+  for t in FTerminologySources do
+    if (t.startsWith(s+'=')) then
+      exit(true);
+end;
+
 
 { TPackageInformation }
 
@@ -203,128 +576,73 @@ begin
 end;
 
 procedure TXIGServerEndPoint.loadFromDB;
-var
-  conn : TFDBConnection;
-  pck : TPackageInformation;
 begin
-  conn := Database.GetConnection('Load');
+  FXIGServer.FContext := TFHIRXIGWebContext.create(Database);
+end;
+
+function TXIGServerEndPoint.downloadTimestampFile: String;
+var
+  url : String;
+begin
+  url := Config.prop['db-source'].value.replace('xig.db', 'timestamp.txt');
+  result := TInternetFetcher.fetchUrlString(url).trim();
+end;
+
+procedure TXIGServerEndPoint.downloadAndReload;
+var
+  src, tgt : String;
+  fetcher : TInternetFetcher;
+  start : TDateTime;
+  xig, oxig : TFHIRXIGWebContext;
+begin
+  src := Config.prop['db-source'].value;
+  tgt := Config.prop['db-file'].value.replace('.db', '-'+FLastDownload+'.db');
+
+  if (FileExists(tgt)) then
+    deleteFile(tgt);
+  Logging.log('Download new XIG from '+src);
   try
-    conn.SQL := 'select Name, Value from Metadata';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      FXIGServer.FMetadata.addOrSetValue(conn.ColStringByName['Name'], conn.ColStringByName['Value']);
-    conn.terminate;
-
-    conn.SQL := 'select Code from realms';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      FXIGServer.FRealms.add(conn.ColStringByName['Code']);
-    conn.terminate;
-    FXIGServer.FRealms.Sort;
-
-    conn.SQL := 'select Code from Authorities';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      FXIGServer.FAuthorities.add(conn.ColStringByName['Code']);
-    conn.terminate;
-    FXIGServer.FAuthorities.sort;
-
-    conn.SQL := 'select PackageKey, Id, PID, Web, Canonical from Packages';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-    begin
-      pck := TPackageInformation.create(conn.ColStringByName['PackageKey'], conn.ColStringByName['Id'], conn.ColStringByName['PID'].replace('#', '|'), conn.ColStringByName['Web'], conn.ColStringByName['Canonical']);
-      try
-        FXIGServer.FPackages.add(pck.key, pck.link);
-        FXIGServer.FPackagesById.addOrSetValue(pck.vid, pck.link);
-      finally
-        pck.free;
-      end;
+    start := now;
+    fetcher := TInternetFetcher.Create;
+    try
+      fetcher.URL := src;
+      fetcher.Fetch;
+      fetcher.Buffer.SaveToFileName(tgt);
+      Logging.Log('Finished Downloading ('+DescribeBytes(fetcher.buffer.size)+', '+DescribePeriod(now - start)+'). reload');
+    finally
+      fetcher.free;
     end;
-    conn.terminate;
-    FXIGServer.FAuthorities.sort;
-                                    
-    conn.SQL := 'Select distinct type from Resources where ResourceType = ''StructureDefinition'' and Kind = ''resource''';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if conn.ColStringByName['Type'] <> '' then
-      FXIGServer.FProfileResources.add(conn.ColStringByName['Type']);
-    conn.terminate;
-    FXIGServer.FProfileResources.Sort;
-
-    conn.SQL := 'Select distinct type from Resources where ResourceType = ''StructureDefinition'' and (Kind = ''complex-type'' or Kind = ''primitive-type'')';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if (conn.ColStringByName['Type'] <> 'Extension') and (conn.ColStringByName['Type'] <> '') then
-        FXIGServer.FProfileTypes.add(conn.ColStringByName['Type']);
-    conn.terminate;
-    FXIGServer.FProfileTypes.Sort;
-                     
-    conn.SQL := 'Select distinct ResourceType from Resources';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if (conn.ColStringByName['ResourceType'] <> '') and (conn.ColStringByName['ResourceType'] <> 'StructureDefinition') and (conn.ColStringByName['ResourceType'] <> 'CodeSystem') and
-        (conn.ColStringByName['ResourceType'] <> 'ValueSet') and (conn.ColStringByName['ResourceType'] <> 'ConceptMap') then
-        FXIGServer.FResourceTypes.add(conn.ColStringByName['ResourceType']);
-    conn.terminate;
-    FXIGServer.FResourceTypes.Sort;
-
-    conn.SQL := 'Select distinct Code from Categories where mode = 2';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if (conn.ColStringByName['Code'] <> '') then
-        FXIGServer.FExtensionContexts.add(conn.ColStringByName['Code']);
-    conn.terminate;
-    FXIGServer.FExtensionContexts.Sort;
-
-    conn.SQL := 'Select distinct Code from Categories where mode = 3';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if (conn.ColStringByName['Code'] <> '') then
-        FXIGServer.FExtensionTypes.add(conn.ColStringByName['Code']);
-    conn.terminate;
-    FXIGServer.FExtensionTypes.Sort;
-
-    conn.SQL := 'Select Code, Display from TxSource';
-    conn.Prepare;
-    conn.Execute;
-    while conn.FetchNext do
-      if (conn.ColStringByName['Code'] <> '') then
-        FXIGServer.FTerminologySources.add(conn.ColStringByName['Code']+'='+conn.ColStringByName['Display']);
-    conn.terminate;
-    FXIGServer.FTerminologySources.Sort;
-
-
-    FXIGServer.FVersions.Add('R2');
-    FXIGServer.FVersions.Add('R2B');
-    FXIGServer.FVersions.Add('R3');
-    FXIGServer.FVersions.Add('R4');
-    FXIGServer.FVersions.Add('R4B');
-    FXIGServer.FVersions.Add('R5');
-    FXIGServer.FVersions.Add('R6');
-
-    FXIGServer.FTypes.add('rp=Resource Profiles');
-    FXIGServer.FTypes.add('dp=Datatype Profiles');
-    FXIGServer.FTypes.add('ext=Extensions');
-    FXIGServer.FTypes.add('lm=Logical Models');
-    FXIGServer.FTypes.add('cs=CodeSystems');
-    FXIGServer.FTypes.add('vs=ValueSets');
-    FXIGServer.FTypes.add('cm=ConceptMaps');
-
-    conn.release;
   except
     on e : Exception do
-      conn.Error(e);
+    begin
+      Logging.finish(' '+e.Message);
+      raise;
+    end;
   end;
+  xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, false));
+  try
+    FXIGServer.FLock.lock;
+    try
+      oxig := FXIGServer.FContext;
+      FXIGServer.FContext := xig.link;
+    finally
+       FXIGServer.FLock.unlock;
+    end;
+  finally
+    xig.free;
+  end;
+  Logging.Log('Reloaded XIG from '+tgt);
+  tgt := (oxig.FDatabase as TFDBSQLiteManager).FileName;
+  oxig.free;
+  DeleteFile(tgt);
+end;
+
+function TXIGServerEndPoint.dateBuilt: String;
+begin
+  if (FXIGServer = nil) or (FXIGServer.FContext = nil) then
+    result := '???'
+  else
+    result :=  FXIGServer.FContext.FDate;
 end;
 
 procedure TXIGServerEndPoint.Unload;
@@ -340,9 +658,21 @@ begin
 end;
 
 procedure TXIGServerEndPoint.internalThread(callback: TFhirServerMaintenanceThreadTaskCallBack);
+var
+  dt : TDateTime;
+  s : String;
 begin
-  // nothing, for now
-  // todo: health check on spider
+  dt := trunc(now);
+  if (dt > FLastCheck) then
+  begin
+    s := downloadTimestampFile;
+    if (s <> FLastDownload) then
+    begin                   
+      FLastDownload := s;
+      downloadAndReload();
+    end;
+    FLastCheck := dt;
+  end;
 end;
 
 procedure TXIGServerEndPoint.LoadPackages(installer : boolean; plist: String);
@@ -356,9 +686,8 @@ var
 begin
   inherited makeWebEndPoint(common);
   FXIGServer := TFHIRXIGWebServer.Create(config.name, config['path'].value, common);
+  (FXIGServer as TFHIRXIGWebServer).FContext := TFHIRXIGWebContext.create(Database.link);
   WebEndPoint := FXIGServer;
-  loadFromDB;
-  FXIGServer.FDatabase := Database.link;
   result := FXIGServer.link;
 end;
 
@@ -369,7 +698,7 @@ end;
 
 function TXIGServerEndPoint.summary: String;
 begin
-  result := 'XIG Server based on database built ???'; // +dateBuilt();
+  result := 'XIG Server based on database built '+dateBuilt();
 end;
 
 procedure TXIGServerEndPoint.updateAdminPassword(pw: String);
@@ -387,210 +716,22 @@ end;
 constructor TFHIRXIGWebServer.Create(code, path: String; common: TFHIRWebServerCommon);
 begin
   inherited Create(code, path, common);
-
-  FVersions := TStringList.create;
-  FRealms := TStringList.create;
-  FAuthorities := TStringList.create;
-  FTypes := TStringList.create;
-  FPackages := TFslMap<TPackageInformation>.create;
-  FPackagesById := TFslMap<TPackageInformation>.create;
-  FPackagesById.defaultValue := nil;
-  FProfileResources := TStringList.create;
-  FProfileTypes := TStringList.create;
-  FResourceTypes := TStringList.create;
-  FExtensionContexts := TStringList.create;
-  FExtensionTypes := TStringList.create;
-  FTerminologySources := TStringList.create;
-  FMetadata := TFslStringDictionary.create;
+  FLock := TFslLock.create('xig-server');
 end;
 
 destructor TFHIRXIGWebServer.Destroy;
 begin
-  FMetadata.free;
-  FPackagesById.free;
-  FExtensionContexts.free;
-  FExtensionTypes.free;
-  FTerminologySources.free;
-  FResourceTypes.free;
-  FProfileResources.Free;
-  FProfileTypes.Free;
-  FPackages.Free;
-  FDatabase.Free;
-  FVersions.Free;
-  FRealms.Free;
-  FAuthorities.Free;
-  FTypes.Free;
+  FContext.Free;
+  FLock.free;
   inherited;
 end;
 
 function TFHIRXIGWebServer.description: String;
 begin
-  result := 'XIG Server based on database built ???';
+  result := 'XIG Server based on database built '+FContext.FDate;
 end;
 
-function TFHIRXIGWebServer.realmBar(secure: boolean; realm, auth, ver, rtype, rt, text : String) : String;
-var
-  p, s : String;
-begin
-  p := AbsoluteURL(secure)+'/?'; 
-  if (rtype <> '') then
-    p := p+'&type='+rtype;
-  if (auth <> '') then
-    p := p+'&auth='+auth;
-  if (ver <> '') then
-    p := p+'&ver='+ver;  
-  if (rt <> '') then
-      p := p + '&rt='+rt;
-  if (text <> '') then
-      p := p + '&text='+encodePercent(text);
-  if realm = '' then
-    result := '<b>All</b>'
-  else
-    result := '<a href="'+p+'">All</a>';
-  for s in FRealms do
-    if (s = realm) then
-      result := result + ' | <b>'+s+'</b>'
-    else
-      result := result + ' | <a href="'+p+'&realm='+s+'">'+s+'</a>';
-end;
-
-function TFHIRXIGWebServer.authBar(secure: boolean; realm, auth, ver, rtype, rt, text  : String) : String;
-var
-  p, s : String;
-begin                 
-  p := AbsoluteURL(secure)+'/?';
-  if (rtype <> '') then
-    p := p+'&type='+rtype;
-  if (realm <> '') then
-    p := p+'&realm='+realm;
-  if (ver <> '') then
-    p := p+'&ver='+ver;  
-  if (rt <> '') then
-      p := p + '&rt='+rt;
-  if (text <> '') then
-      p := p + '&text='+encodePercent(text);
-  if auth = '' then
-    result := '<b>All</b>'
-  else
-    result := '<a href="'+p+'">All</a>';
-  for s in FAuthorities do
-    if (s = auth) then
-      result := result + ' | <b>'+s+'</b>'
-    else
-      result := result + ' | <a href="'+p+'&auth='+s+'">'+s+'</a>';
-end;
-
-function TFHIRXIGWebServer.versionBar(secure: boolean; realm, auth, ver, rtype, rt, text  : String) : String;
-var
-  p, s : String;
-begin   
-  p := AbsoluteURL(secure)+'/?';
-  if (rtype <> '') then
-    p := p+'&type='+rtype;
-  if (realm <> '') then
-    p := p+'&realm='+realm;
-  if (auth <> '') then
-    p := p+'&auth='+auth;  
-  if (rt <> '') then
-      p := p + '&rt='+rt;
-  if (text <> '') then
-      p := p + '&text='+encodePercent(text);
-  if ver = '' then
-    result := '<b>All</b>'
-  else
-    result := '<a href="'+p+'">All</a>';
-  for s in FVersions do
-    if (s = ver) then
-      result := result + ' | <b>'+s+'</b>'
-    else
-      result := result + ' | <a href="'+p+'&ver='+s+'">'+s+'</a>';
-end;
-
-function TFHIRXIGWebServer.typeBar(secure: boolean; realm, auth, ver, rtype, rt, text  : String) : String;
-var
-  p, s, n, v : String;
-begin
-  p := AbsoluteURL(secure)+'/?';
-  if (ver <> '') then
-    p := p+'&ver='+ver;
-  if (realm <> '') then
-    p := p+'&realm='+realm;
-  if (auth <> '') then
-    p := p+'&auth='+auth;
-  if (rt <> '') then
-      p := p + '&rt='+rt;    
-  if (text <> '') then
-      p := p + '&text='+encodePercent(text);
-  if rtype = '' then
-    result := '<b>All</b>'
-  else
-    result := '<a href="'+p+'">All</a>';
-  for s in FTypes do
-  begin
-    StringSplit(s, '=', n, v);
-    if (n = rtype) then
-      result := result + ' | <b>'+v+'</b>'
-    else
-      result := result + ' | <a href="'+p+'&type='+n+'">'+v+'</a>';
-  end;
-end;
-
-function showVersion(db : TFDBConnection) : String;
-begin
-  result := '';
-  if (db.ColIntegerByName['R2'] = 1) then
-    CommaAdd(result, 'R2');
-  if (db.ColIntegerByName['R2B'] = 1) then
-    CommaAdd(result, 'R2B');
-  if (db.ColIntegerByName['R3'] = 1) then
-    CommaAdd(result, 'R3');
-  if (db.ColIntegerByName['R4'] = 1) then
-    CommaAdd(result, 'R4');
-  if (db.ColIntegerByName['R4B'] = 1) then
-    CommaAdd(result, 'R4B');
-  if (db.ColIntegerByName['R5'] = 1) then
-    CommaAdd(result, 'R5');
-  if (db.ColIntegerByName['R6'] = 1) then
-    CommaAdd(result, 'R6');
-end;
-
-function TFHIRXIGWebServer.makeSelect(rt : String; list : TStringList) : String;
-var
-  b : TFslStringBuilder;
-  s : String;
-  procedure add(t : String);
-  var
-    n, v :String;
-  begin
-    if t.contains('=') then
-      StringSplit(t, '=', n, v)
-    else
-    begin
-      n := t;
-      v := t;
-    end;
-    if (rt = n) then
-      b.append('<option value="'+n+'" selected="true">'+v+'</option>')
-    else
-      b.append('<option value="'+n+'">'+v+'</option>')
-  end;
-begin
-  b := TFslStringBuilder.create;
-  try
-    b.append('<select name="rt" size="1">');
-    add('');
-
-    for s in list do
-      add(s);
-
-    b.append('</select>');
-    result := b.asString;
-  finally
-    b.free;
-  end;
-end;
-
-function TFHIRXIGWebServer.contentAll(mode : TContentMode; secure: boolean; realm, auth, ver, rt, text, offset: String): String;
+function TFHIRXIGWebServer.contentAll(context : TFHIRXIGWebContext; mode : TContentMode; secure: boolean; realm, auth, ver, rt, text, offset: String): String;
 var
   db : TFDBConnection;
   b : TFslStringBuilder;
@@ -666,36 +807,36 @@ begin
       cmResProfile :
         begin
           filter := filter + ' and ResourceType = ''StructureDefinition'' and kind = ''resource''';
-          if (rt <> '') and (FProfileResources.IndexOf(rt) > -1)  then
+          if (rt <> '') and (context.FProfileResources.IndexOf(rt) > -1)  then
             filter := filter + ' and Type = '''+sqlWrapString(rt)+''''
         end;
       cmDTProfile :
         begin
           filter := filter + ' and ResourceType = ''StructureDefinition'' and (kind = ''complex-type'' or kind = ''primitive-type'')';
-          if (rt <> '') and (FProfileTypes.IndexOf(rt) > -1) then
+          if (rt <> '') and (context.FProfileTypes.IndexOf(rt) > -1) then
             filter := filter + ' and Type = '''+sqlWrapString(rt)+''''
         end;
       cmLogical: filter := filter + ' and ResourceType = ''StructureDefinition'' and kind = ''logical''';
       cmExtensions :
         begin
           filter := filter + ' and ResourceType = ''StructureDefinition'' and  (Type = ''Extension'')';
-          if (rt <> '') and (FExtensionContexts.IndexOf(rt) > -1) then
+          if (rt <> '') and (context.FExtensionContexts.IndexOf(rt) > -1) then
             filter := filter + ' and ResourceKey  in (Select ResourceKey from  Categories where Mode = 2 and Code = '''+sqlWrapString(rt)+''')'
         end;
       cmValueSet:    
         begin
           filter := filter + ' and ResourceType = ''ValueSet''';
-          if (rt <> '') and (hasTerminologySource(rt)) then
+          if (rt <> '') and (context.hasTerminologySource(rt)) then
             filter := filter + ' and ResourceKey  in (Select ResourceKey from  Categories where Mode = 1 and Code = '''+sqlWrapString(rt)+''')'
         end;
       cmConceptMap:
         begin
           filter := filter + ' and ResourceType = ''ConceptMap''';
-          if (rt <> '') and (hasTerminologySource(rt)) then
+          if (rt <> '') and (context.hasTerminologySource(rt)) then
             filter := filter + ' and ResourceKey  in (Select ResourceKey from  Categories where Mode = 1 and Code = '''+sqlWrapString(rt)+''')'
         end;
     else
-    if (rt <> '') and (FResourceTypes.IndexOf(rt) > -1)  then
+    if (rt <> '') and (context.FResourceTypes.IndexOf(rt) > -1)  then
       filter := filter + ' and ResourceType = '''+sqlWrapString(rt)+''''
     else
       ; // nothing
@@ -710,7 +851,7 @@ begin
     if filter <> '' then
       filter := 'where '+filter.substring(4);
 
-    db := FDatabase.GetConnection('content-all');
+    db := context.FDatabase.GetConnection('content-all');
     try
       b.append('<p>');
       count := db.CountSQL('select count(*) from Resources '+filter);
@@ -728,31 +869,31 @@ begin
         cmResProfile:
           begin
             b.append('<input type="hidden" name="type" value="rp"/>'); 
-            b.append('Type: '+makeSelect(rt, FProfileResources)+'<br/>');
+            b.append('Type: '+context.makeSelect(rt, context.FProfileResources)+'<br/>');
           end;
         cmDTProfile:
           begin
             b.append('<input type="hidden" name="type" value="dp"/>');
-            b.append('Type: '+makeSelect(rt, FProfileTypes)+'<br/>');
+            b.append('Type: '+context.makeSelect(rt, context.FProfileTypes)+'<br/>');
           end;
         cmLogical: b.append('<input type="hidden" name="type" value="lm"/>');   
         cmExtensions:
           begin
             b.append('<input type="hidden" name="type" value="ext"/>');
-            b.append('Context: '+makeSelect(rt, FExtensionContexts)+'<br/>');
+            b.append('Context: '+context.makeSelect(rt, context.FExtensionContexts)+'<br/>');
           end;
         cmValueSet:
           begin
             b.append('<input type="hidden" name="type" value="vs"/>');
-            b.append('Source: '+makeSelect(rt, FTerminologySources)+'<br/>');
+            b.append('Source: '+context.makeSelect(rt, context.FTerminologySources)+'<br/>');
           end;
         cmConceptMap:
           begin
             b.append('<input type="hidden" name="type" value="cm"/>');
-            b.append('Source: '+makeSelect(rt, FTerminologySources)+'<br/>');
+            b.append('Source: '+context.makeSelect(rt, context.FTerminologySources)+'<br/>');
           end;
       else
-        b.append('Type: '+makeSelect(rt, FResourceTypes)+'<br/>');
+        b.append('Type: '+context.makeSelect(rt, context.FResourceTypes)+'<br/>');
       end;
       b.append('Text: <input type="text" name="text" value="'+FormatTextToHtml(text)+'"/>[%include xig-help.html%]<br/>');
       b.append('<input type="submit" value="Search"/>');
@@ -763,7 +904,7 @@ begin
         if ver = '' then
         begin
           b.append('<p>By Version</p><ul style="columns: 4; -webkit-columns: 4; -moz-columns: 4">');
-          for s in FVersions do
+          for s in context.FVersions do
           begin
             if filter = '' then
               c := db.CountSQL('select count(*) from Resources where '+s+' = 1')
@@ -873,7 +1014,7 @@ begin
         while db.fetchnext do
         begin          
           b.append('<tr>');
-          pck := FPackages[db.ColStringByName['PackageKey']];
+          pck := context.FPackages[db.ColStringByName['PackageKey']];
           if (pck.web <> '') then
             b.append('<td><a href="'+pck.web+'">'+pck.id+'</a></td>')
           else
@@ -939,16 +1080,6 @@ begin
     b.append('<td><b>(all)</b></td>')
   else
     b.append('<td>'+p1[1].subString(5).replace(',', ' ')+'</td>');
-end;
-
-function TFHIRXIGWebServer.hasTerminologySource(s: String): boolean;
-var
-  t : String;
-begin
-  result := false;
-  for t in FTerminologySources do
-    if (t.startsWith(s+'=')) then
-      exit(true);
 end;
 
 function TFHIRXIGWebServer.extLink(url: String): String;
@@ -1070,7 +1201,7 @@ begin
   end;
 end;
 
-function TFHIRXIGWebServer.contentRes(pid, rtype, id: String; secure : boolean): String;
+function TFHIRXIGWebServer.contentRes(context : TFHIRXIGWebContext; pid, rtype, id: String; secure : boolean): String;
 var
   db : TFDBConnection;
   b : TFslStringBuilder;
@@ -1081,9 +1212,9 @@ var
 begin
   b := TFslStringBuilder.create;
   try
-    db := FDatabase.GetConnection('content-res');
+    db := context.FDatabase.GetConnection('content-res');
     try   
-      pck := FPackagesById[pid];
+      pck := context.FPackagesById[pid];
       if (pck = nil) then
         raise EWebServerException.create('Unknown Package '+pid.replace('|', '#'));
        db.sql := 'Select * from Resources where PackageKey = '+pck.key+' and ResourceType = '''+SqlWrapString(rtype)+''' and Id = '''+SqlWrapString(id)+'''';
@@ -1262,52 +1393,68 @@ begin
   end;
 end;
 
+function TFHIRXIGWebServer.getContext: TFHIRXIGWebContext;
+begin
+  FLock.Lock;
+  try
+    result := FContext.link;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TFHIRXIGWebServer.sendViewHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; rtype, auth, realm, ver, rt, text, offset : String);
 var
   vars : TFslMap<TFHIRObject>;
   ms : int64;
   s : String;
+  ctxt : TFHIRXIGWebContext;
 begin
-  vars := TFslMap<TFHIRObject>.Create('vars');
+  ctxt := getContext;
   try
-    vars.add('realm-bar', TFHIRObjectText.Create(realmBar(secure, realm, auth, ver, rtype, rt, text)));
-    vars.add('auth-bar', TFHIRObjectText.Create(authBar(secure, realm, auth, ver, rtype, rt, text)));
-    vars.add('version-bar', TFHIRObjectText.Create(versionBar(secure, realm, auth, ver, rtype, rt, text)));
-    vars.add('type-bar', TFHIRObjectText.Create(typeBar(secure, realm, auth, ver, rtype, rt, text)));
-    for s in FMetadata.keys do
-      vars.add('metadata-'+s, TFHIRObjectText.Create(FMetadata[s]));
+    vars := TFslMap<TFHIRObject>.Create('vars');
+    try
+      vars.add('realm-bar', TFHIRObjectText.Create(ctxt.realmBar(absoluteUrl(secure), realm, auth, ver, rtype, rt, text)));
+      vars.add('auth-bar', TFHIRObjectText.Create(ctxt.authBar(absoluteUrl(secure), realm, auth, ver, rtype, rt, text)));
+      vars.add('version-bar', TFHIRObjectText.Create(ctxt.versionBar(absoluteUrl(secure), realm, auth, ver, rtype, rt, text)));
+      vars.add('type-bar', TFHIRObjectText.Create(ctxt.typeBar(absoluteUrl(secure), realm, auth, ver, rtype, rt, text)));
+      for s in ctxt.FMetadata.keys do
+        vars.add('metadata-'+s, TFHIRObjectText.Create(ctxt.FMetadata[s]));
 
-    ms := getTickCount64;
-    if (rtype = '') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmAll, secure, realm, auth, ver, rt, text, offset)))
-    else if (rtype = 'cs') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmCodeSystem, secure, realm, auth, ver, '', text, offset)))
-    else if (rtype = 'rp') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmResProfile, secure, realm, auth, ver, rt, text, offset)))
-    else if (rtype = 'dp') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmDTProfile, secure, realm, auth, ver, rt, text, offset)))
-    else if (rtype = 'lm') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmLogical, secure, realm, auth, ver, rt, text, offset)))
-    else if (rtype = 'ext') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmExtensions, secure, realm, auth, ver, rt, text, offset)))
-    else if (rtype = 'vs') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmValueset, secure, realm, auth, ver, rt, text, offset)))
-    else if (rtype = 'cm') then
-      vars.add('content', TFHIRObjectText.Create(contentAll(cmConceptMap, secure, realm, auth, ver, rt, text, offset)))
-    else
-      vars.add('content', TFHIRObjectText.Create('<p>Not done yet</p>'));
-    vars.add('ms', TFHIRObjectText.Create(inttostr(getTickCount64 - ms)));
+      ms := getTickCount64;
+      if (rtype = '') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmAll, secure, realm, auth, ver, rt, text, offset)))
+      else if (rtype = 'cs') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmCodeSystem, secure, realm, auth, ver, '', text, offset)))
+      else if (rtype = 'rp') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmResProfile, secure, realm, auth, ver, rt, text, offset)))
+      else if (rtype = 'dp') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmDTProfile, secure, realm, auth, ver, rt, text, offset)))
+      else if (rtype = 'lm') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmLogical, secure, realm, auth, ver, rt, text, offset)))
+      else if (rtype = 'ext') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmExtensions, secure, realm, auth, ver, rt, text, offset)))
+      else if (rtype = 'vs') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmValueset, secure, realm, auth, ver, rt, text, offset)))
+      else if (rtype = 'cm') then
+        vars.add('content', TFHIRObjectText.Create(contentAll(ctxt, cmConceptMap, secure, realm, auth, ver, rt, text, offset)))
+      else
+        vars.add('content', TFHIRObjectText.Create('<p>Not done yet</p>'));
+      vars.add('ms', TFHIRObjectText.Create(inttostr(getTickCount64 - ms)));
 
-    //vars.add('matches', TFHIRObjectText.Create(renderJson(json, path, reg, srvr, ver)));
-    //vars.add('count', TFHIRObjectText.Create(json.forceArr['results'].Count));
-    //vars.add('registry', TFHIRObjectText.Create(reg));
-    //vars.add('server', TFHIRObjectText.Create(srvr));
-    //vars.add('version', TFHIRObjectText.Create(ver));
-    //vars.add('url', TFHIRObjectText.Create(tx));
-    //vars.add('status', TFHIRObjectText.Create(status));
-    returnFile(request, response, nil, request.Document, 'xig.html', false, vars);
+      //vars.add('matches', TFHIRObjectText.Create(renderJson(json, path, reg, srvr, ver)));
+      //vars.add('count', TFHIRObjectText.Create(json.forceArr['results'].Count));
+      //vars.add('registry', TFHIRObjectText.Create(reg));
+      //vars.add('server', TFHIRObjectText.Create(srvr));
+      //vars.add('version', TFHIRObjectText.Create(ver));
+      //vars.add('url', TFHIRObjectText.Create(tx));
+      //vars.add('status', TFHIRObjectText.Create(status));
+      returnFile(request, response, nil, request.Document, 'xig.html', false, vars);
+    finally
+      vars.free;
+    end;
   finally
-    vars.free;
+    ctxt.free;
   end;
 end;
 
@@ -1315,19 +1462,25 @@ procedure TFHIRXIGWebServer.sendResourceHtml(request: TIdHTTPRequestInfo; respon
 var
   vars : TFslMap<TFHIRObject>;
   ms : int64;
+  ctxt : TFHIRXIGWebContext;
 begin
-  vars := TFslMap<TFHIRObject>.Create('vars');
+  ctxt := getContext;
   try
-    vars.add('pid', TFHIRObjectText.Create(pid.replace('|', '#')));
-    vars.add('rtype', TFHIRObjectText.Create(rtype));
-    vars.add('id', TFHIRObjectText.Create(id));
+    vars := TFslMap<TFHIRObject>.Create('vars');
+    try
+      vars.add('pid', TFHIRObjectText.Create(pid.replace('|', '#')));
+      vars.add('rtype', TFHIRObjectText.Create(rtype));
+      vars.add('id', TFHIRObjectText.Create(id));
 
-    ms := getTickCount64;
-    vars.add('content', TFHIRObjectText.Create(contentRes(pid, rtype, id, secure)));
-    vars.add('ms', TFHIRObjectText.Create(inttostr(getTickCount64 - ms)));
-    returnFile(request, response, nil, request.Document, 'xig-res.html', false, vars);
+      ms := getTickCount64;
+      vars.add('content', TFHIRObjectText.Create(contentRes(ctxt, pid, rtype, id, secure)));
+      vars.add('ms', TFHIRObjectText.Create(inttostr(getTickCount64 - ms)));
+      returnFile(request, response, nil, request.Document, 'xig-res.html', false, vars);
+    finally
+      vars.free;
+    end;
   finally
-    vars.free;
+    ctxt.free;
   end;
 end;
 
