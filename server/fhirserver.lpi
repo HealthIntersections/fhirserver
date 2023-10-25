@@ -810,10 +810,9 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="41">
+    <Exceptions Count="47">
       <Item1>
         <Name Value="EAbort"/>
-        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>
@@ -829,7 +828,6 @@
       </Item4>
       <Item5>
         <Name Value="EIdHTTPProtocolException"/>
-        <Enabled Value="False"/>
       </Item5>
       <Item6>
         <Name Value="EInOutError"/>
@@ -841,7 +839,6 @@
       </Item7>
       <Item8>
         <Name Value="EIdSocketError"/>
-        <Enabled Value="False"/>
       </Item8>
       <Item9>
         <Name Value="EIdConnClosedGracefully"/>
@@ -886,7 +883,6 @@
       </Item19>
       <Item20>
         <Name Value="EIdResolveError"/>
-        <Enabled Value="False"/>
       </Item20>
       <Item21>
         <Name Value="00000015EAssertionFailedError"/>
@@ -958,6 +954,24 @@
       <Item41>
         <Name Value="00000013EWebServerException"/>
       </Item41>
+      <Item42>
+        <Name Value="0000000eEIdSocketError"/>
+      </Item42>
+      <Item43>
+        <Name Value="00000018EPackageCrawlerException"/>
+      </Item43>
+      <Item44>
+        <Name Value="0000000fEZulipException\fTZulipSender"/>
+      </Item44>
+      <Item45>
+        <Name Value="EReadError"/>
+      </Item45>
+      <Item46>
+        <Name Value="EFslException"/>
+      </Item46>
+      <Item47>
+        <Name Value="Edecompressionerror"/>
+      </Item47>
     </Exceptions>
   </Debugging>
 </CONFIG>
