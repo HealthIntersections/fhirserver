@@ -1635,9 +1635,38 @@ begin
   end;
 end;
 
+function isIntPart(s : String; start, length, min, max : integer; var value : integer) : boolean;
+var
+  v : String;
+begin
+  v := copy(s, start, length);
+  value := StrToIntDef(v, -1);
+  result := (value > -1) and (value >= min) and (value <= max);
+end;
+
+function isDate(s : String; out y, m, d : integer) : Boolean;
+begin
+  y := 0;
+  m := 0;
+  d := 0;
+
+  if (length(s) = 6) then
+    result := isIntPart(s, 1, 4, 0, 9999, y) and isIntPart(s, 5, 2, 1, 12, m)
+  else if length(s) = 7 then
+    result := isIntPart(s, 1, 4, 0, 9999, y) and isIntPart(s, 6, 2, 1, 12, m)
+  else if length(s) = 8 then
+    result := isIntPart(s, 1, 4, 0, 9999, y) and isIntPart(s, 5, 2, 1, 12, m) and isIntPart(s, 7, 2, 1, 31, d)
+  else if length(s) = 10 then
+    result := isIntPart(s, 1, 4, 0, 9999, y) and isIntPart(s, 6, 2, 1, 12, m) and isIntPart(s, 9, 2, 1, 31, d)
+  else
+    result := false
+end;
+
 {$IFDEF FPC}
 function TFHIRCodeSystemManager.sort(sender : TObject; const L, R: TFHIRCodeSystemEntry): Integer;
-var v1, v2, mm1, mm2 : string;
+var
+  v1, v2, mm1, mm2 : string;
+  y1, y2, m1, m2, d1, d2 : integer;
 begin
   v1 := l.version;
   v2 := r.version;
@@ -1647,7 +1676,7 @@ begin
     result := -1
   else if (v2 = '') then
     result := 1
-  else
+  else if (TSemanticVersion.isValid(v1) and TSemanticVersion.isValid(v2)) then
   begin
     mm1 := TFHIRVersions.getMajMin(v1);
     mm2 := TFHIRVersions.getMajMin(v2);
@@ -1655,7 +1684,18 @@ begin
       result := v1.compareTo(v2)
     else
       result := CompareText(mm1, mm2);
-  end;
+  end
+  else if isDate(v1, y1, m1, d1) and isDate(v2, y2, m2, d2) then
+  begin
+    if (y1 <> y2) then
+      result := y1 - y2
+    else if (m1 <> m2) then
+      result := m1 - m2
+    else
+      result := d1 - d2;
+  end
+  else
+    result := CompareText(v1, v2);
 end;
 {$ENDIF}
 
