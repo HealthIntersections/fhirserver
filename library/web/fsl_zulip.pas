@@ -40,6 +40,8 @@ uses
   fsl_base, fsl_utilities, fsl_json, fsl_fetcher;
 
 type
+  EZulipException = class (EFslException);
+
   TZulipSender = class (TFslObject)
   private
     FAddress : string;
@@ -89,7 +91,7 @@ begin
       begin
         json := TJSONParser.Parse(client.Buffer.AsText);
         try
-          raise EFslException.Create('Error Sending Message: '+json.str['msg']);
+          raise EZulipException.Create('Error Sending Message: '+json.str['msg']);
         finally
           json.free;
         end;

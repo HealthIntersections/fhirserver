@@ -93,7 +93,8 @@ Type
     property OnProgress : TProgressEvent read FOnProgress write FOnProgress;
     property Timeout : cardinal read FTimeout write FTimeout;
     property NoErrors : boolean read FNoErrors write FNoErrors;
-
+                                                                            
+    class function fetchUrlString(url : String; timeout : cardinal = 0) : String;
     class function fetchUrl(url : String; timeout : cardinal = 0) : TBytes;
     class function fetchJson(url : String; timeout : cardinal = 0) : TJsonObject;
     class function fetchJsonArray(url : String; timeout : cardinal = 0) : TJsonArray;
@@ -230,6 +231,11 @@ begin
       oUri.free;
     End;
   End;
+end;
+
+class function TInternetFetcher.fetchUrlString(url: String; timeout: cardinal): String;
+begin
+  result := TEncoding.UTF8.GetString(fetchUrl(url, timeout));
 end;
 
 function TInternetFetcher.sizeInBytesV(magic : integer) : cardinal;

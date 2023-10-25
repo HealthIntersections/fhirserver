@@ -46,6 +46,8 @@ const
   EMAIL_DAYS_LIMIT= 7;
 
 Type
+  EPackageCrawlerException = class (EFslException);
+
   TPackageRestrictions = class (TFslObject)
   private
     FJson : TJsonArray;
@@ -95,7 +97,7 @@ Type
     function fetchXml(url : string) : TMXmlElement;
 
     function hasStored(guid : String) : boolean;
-    procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
+    procedure store(source, url, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
     procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
@@ -254,13 +256,15 @@ var
   json : TJsonObject;
   xml : TMXmlDocument;
   e, u : TMXmlElement;
+  bytes : TBytes;
 begin
   for s in npm.list('package') do
   begin
     try
       if s.EndsWith('.json') then
       begin
-        json := TJSONParser.parse(npm.loadBytes('package', s));
+        bytes := npm.loadBytes('package', s);
+        json := TJSONParser.parse(bytes);
         try
           if json.has('url') then
             ts.Add(json.str['url']);
@@ -270,7 +274,8 @@ begin
       end
       else if s.EndsWith('.xml') then
       begin
-        xml := TMXmlParser.parse(npm.loadBytes('package', s), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
+        bytes := npm.loadBytes('package', s);
+        xml := TMXmlParser.parse(bytes, [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
         try
           e := xml.docElement;
           u := e.element('url');
@@ -281,13 +286,16 @@ begin
         end;
       end
     except
-      on e : Exception do 
-        Writeln('Error processing '+npm.name+'#'+npm.version+'/package/'+s+': '+e.Message);
+      on e : Exception do
+      begin
+        BytesToFile(bytes, '/Users/grahamegrieve/temp/content.bin');
+        Logging.log('Error processing '+npm.name+'#'+npm.version+'/package/'+s+': '+e.Message);
+      end;
     end;
   end;
 end;
 
-procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
+procedure TPackageUpdater.store(source, url, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
   id, version, description, canonical, fhirVersion : String;
@@ -307,13 +315,16 @@ begin
       log('Warning processing '+idver+': this package is not suitable for publication (likely broken links)', source, true);
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
-      raise EFslException.Create('NPM Id "'+id+'" is not valid from '+source);
+      raise EPackageCrawlerException.Create('NPM Id "'+id+'" is not valid from '+source);
     if not TSemanticVersion.isValid(version) then
-      raise EFslException.Create('NPM Version "'+version+'" is not valid from '+source);
+      raise EPackageCrawlerException.Create('NPM Version "'+version+'" is not valid from '+source);
     if (canonical = '') then
-      raise EFslException.Create('No canonical found in npm from '+source);
+    begin
+      log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
+      canonical := 'http://simplifier.net/packages/fictitious/'+id;
+    end;
     if not isAbsoluteUrl(canonical) then
-      raise EFslException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
+      raise EPackageCrawlerException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
 
     ts := TStringList.Create;
     try
@@ -480,7 +491,7 @@ begin
         url := fix(item.element('link').Text);
         log('Fetch '+url, source, false);
         content := fetchUrl(url, 'application/tar+gzip');
-        store(source, guid, date, content, id);
+        store(source, url, guid, date, content, id);
       end;
     end
     else

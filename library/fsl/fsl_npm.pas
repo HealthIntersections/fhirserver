@@ -231,7 +231,7 @@ function isValidPackagePart(part : String) : boolean;
 var
   ch : char;
 begin
-  if (part = '') or not CharInSet(part[1], ['a'..'z', 'A'..'Z']) then
+  if (part = '') or not CharInSet(part[1], ['a'..'z', 'A'..'Z', '0'..'9']) then
     result := false
   else
   begin

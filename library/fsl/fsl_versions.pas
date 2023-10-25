@@ -102,16 +102,28 @@ implementation
 class function TSemanticVersion.isValid(ver: String): boolean;
 var
   o : TSemanticVersion;
+  c1, c2 : integer;
+  v : String;
 begin
-  try
-    o := TSemanticVersion.Create;
+  v := ver;
+  c2 := ver.CountChar('-');
+  if (c2 > 0) then
+    v := ver.Substring(0, ver.indexOf('-'));
+  c1 := v.CountChar('.');
+  if (c1 < 1) or (c1 > 2) then
+    result := false
+  else
+  begin
     try
-      result := true;
-    finally
-      o.free;
+      o := TSemanticVersion.Create;
+      try
+        result := true;
+      finally
+        o.free;
+      end;
+    except
+      result := false;
     end;
-  except
-    result := false;
   end;
 end;
 
