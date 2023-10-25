@@ -1020,7 +1020,7 @@ begin
   begin
     list := TCountryCodeConceptFilter.Create;
     try
-      regex := TRegularExpression.Create(value);
+      regex := TRegularExpression.Create('^'+value+'$');
       try
         for concept in FCodes do
           if regex.IsMatch(concept.code) then

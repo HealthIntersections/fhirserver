@@ -210,7 +210,7 @@ begin
     i := 0;
     for ep in FEndPoints do
     begin
-      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, (60+i)*10);
+      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
       i := i + 5;
     end;
     FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
