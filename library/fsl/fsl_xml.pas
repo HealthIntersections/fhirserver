@@ -3525,6 +3525,7 @@ end;
 function TMXmlDocument.opMinus(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr, so: String;
+  d1, d2 : TFslDecimal;
 begin
   result := TFslList<TMXmlNode>.Create;
   try
@@ -3537,7 +3538,11 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         so := IntToStr(StringToInteger32(sl) - StringToInteger32(sr))
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        so := TFslDecimal.ValueOf(sl).Subtract(TFslDecimal.ValueOf(sr)).AsString
+      begin
+        d1 := TFslDecimal.ValueOf(sl);
+        d2 := TFslDecimal.ValueOf(sr);
+        so := d1.Subtract(d2).AsString;
+      end
       else
         so := sl.Replace(sr, '');
     end;
@@ -3582,6 +3587,7 @@ end;
 function TMXmlDocument.opPlus(left, right: TFslList<TMXmlNode>): TFslList<TMXmlNode>;
 var
   sl, sr, so: String;
+  d1, d2, d3 : TFslDecimal;
 begin
   result := TFslList<TMXmlNode>.Create;
   try
@@ -3594,7 +3600,12 @@ begin
       if StringIsInteger32(sl) and StringIsInteger32(sr) then
         so := IntToStr(StringToInteger32(sl) + StringToInteger32(sr))
       else if StringIsDecimal(sl) and StringIsDecimal(sr) then
-        so := TFslDecimal.ValueOf(sl).Add(TFslDecimal.ValueOf(sr)).AsString
+      begin
+        d1 := TFslDecimal.ValueOf(sl);
+        d2 := TFslDecimal.ValueOf(sr);
+        d3 := d1.Add(d2);
+        so := d3.AsString;
+      end
       else
         so := sl+sr;
     end;

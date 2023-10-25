@@ -1156,11 +1156,12 @@ end;
 procedure TListManager<T>.doMnuClick(Sender: TObject);
 var
   mnu : TMenuItem;
-  mode : String;
+  name, mode : String;
 begin
   mnu := (Sender as TMenuItem);
-  if mnu.Name.StartsWith('mnuMode') then
-    mode := mnu.Name.Substring(7)
+  name := mnu.Name;
+  if name.StartsWith('mnuMode') then
+    mode := name.Substring(7)
   else
     mode := '';
 
@@ -2219,9 +2220,11 @@ procedure TTreeManager<T>.doPopup(sender: TObject);
   procedure visitItem(item : TMenuItem);
   var
     i : integer;
+    name : String;
   begin
+    name := item.name;
     if item.Tag = ord(copCopy) then
-      item.Enabled := getCanCopy(focus, item.name.subString(7));
+      item.Enabled := getCanCopy(focus, name.subString(7));
     for i := 0 to item.Count - 1 do
       visitItem(item.Items[i]);
   end;
@@ -2255,11 +2258,12 @@ end;
 procedure TTreeManager<T>.doMnuClick(Sender: TObject);
 var
   mnu : TMenuItem;
-  mode : String;
+  name, mode : String;
 begin
   mnu := (Sender as TMenuItem);
-  if mnu.Name.StartsWith('mnuMode') then
-    mode := mnu.Name.Substring(7)
+  name := mnu.Name;
+  if Name.StartsWith('mnuMode') then
+    mode := Name.Substring(7)
   else
     mode := '';
 
@@ -2806,9 +2810,11 @@ procedure TVTreeManager<T>.doPopup(sender: TObject);
   procedure visitItem(item : TMenuItem);
   var
     i : integer;
+    name : String;
   begin
+    name := item.name;
     if item.Tag = ord(copCopy) then
-      item.Enabled := getCanCopy(focus, item.name.subString(7));
+      item.Enabled := getCanCopy(focus, name.subString(7));
     for i := 0 to item.Count do
       visitItem(item.Items[i]);
   end;
@@ -2842,11 +2848,12 @@ end;
 procedure TVTreeManager<T>.doMnuClick(Sender: TObject);
 var
   mnu : TMenuItem;
-  mode : String;
+  name, mode : String;
 begin
   mnu := (Sender as TMenuItem);
-  if mnu.Name.StartsWith('mnuMode') then
-    mode := mnu.Name.Substring(7)
+  name := mnu.Name;
+  if name.StartsWith('mnuMode') then
+    mode := name.Substring(7)
   else
     mode := '';
 

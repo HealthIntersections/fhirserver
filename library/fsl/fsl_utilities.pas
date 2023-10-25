@@ -1611,7 +1611,7 @@ Type
     Function Modulo(oOther : TFslDecimal) : TFslDecimal; Overload;
     Function Modulo(iOther : Integer) : TFslDecimal; Overload;
     Function Add(oOther : TFslDecimal) : TFslDecimal; Overload;
-    Function Add(iOther : Integer) : TFslDecimal; Overload;
+    Function AddInt(iOther : Integer) : TFslDecimal; Overload;
     Function Subtract(iOther : Integer) : TFslDecimal; Overload;
     Function Subtract(oOther : TFslDecimal) : TFslDecimal; Overload;
     function Abs: TFslDecimal; overload;
@@ -12610,7 +12610,7 @@ begin
     result.FNegative := false;
 end;
 
-Function TFslDecimalHelper.Add(iOther : Integer) : TFslDecimal;
+Function TFslDecimalHelper.AddInt(iOther : Integer) : TFslDecimal;
 var
   oTemp : TFslDecimal;
 Begin

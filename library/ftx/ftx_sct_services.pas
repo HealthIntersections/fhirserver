@@ -1485,7 +1485,8 @@ begin
         v := oRead.ReadString;
         if (v = SNOMED_CACHE_VERSION_CURRENT) or (v = SNOMED_CACHE_VERSION_UTF16) Then
         begin
-          s := oread.ReadString.split(['/']);
+          v := oRead.ReadString;
+          s := v.split(['/']);
           v := oread.ReadString;
           result := 'Ok (edition = '+s[4]+', version = '+s[6]+', date = '+v+')'
         end

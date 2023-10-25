@@ -3564,7 +3564,8 @@ begin
       begin
         qty := (base as TFhirQuantity).Clone;
         try
-          d := TFslDecimal.Create(qty.value).Power(e);
+          d := TFslDecimal.Create(qty.value);
+          d := d.Power(e);
           if not d.IsUndefined then
           begin
             qty.value := d.AsString;
@@ -3803,6 +3804,7 @@ function TFHIRPathEngine.funcCeiling(context: TFHIRPathExecutionContext; focus: 
 var
   base : TFHIRObject;
   qty : TFHIRQuantity;
+  v : TFslDecimal;
 begin
   if (focus.count <> 1) then
     raise EFHIRPath.Create('Error evaluating FHIRPath expression: focus for floor has more than one value');
@@ -3816,7 +3818,10 @@ begin
     begin
       qty := (base as TFhirQuantity).Clone;
       try
-        qty.value := TFslDecimal.Create(qty.value).Trunc.Add(1).AsString;
+        v := TFslDecimal.Create(qty.value);
+        v := v.Trunc;
+        v := v.AddInt(1);
+        qty.value := v.AsString;
         result.add(qty.Link);
       finally
         qty.free;
