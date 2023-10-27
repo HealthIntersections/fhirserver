@@ -368,7 +368,7 @@ implementation
 constructor TGraphQLArgument.Create;
 begin
   inherited;
-  FValues := TFslList<TGraphQLValue>.create;
+  FValues := TFslList<TGraphQLValue>.Create;
 end;
 
 procedure TGraphQLArgument.addValue(value: TGraphQLValue);
@@ -392,7 +392,7 @@ end;
 
 destructor TGraphQLArgument.Destroy;
 begin
-  FValues.Free;
+  FValues.free;
   inherited;
 end;
 
@@ -485,12 +485,12 @@ end;
 constructor TGraphQLDirective.Create;
 begin
   inherited;
-  FArguments := TFslList<TGraphQLArgument>.create;
+  FArguments := TFslList<TGraphQLArgument>.Create;
 end;
 
 destructor TGraphQLDirective.Destroy;
 begin
-  FArguments.Free;
+  FArguments.free;
   inherited;
 end;
 
@@ -521,16 +521,16 @@ end;
 constructor TGraphQLField.Create;
 begin
   inherited;
-  FSelectionSet := TFslList<TGraphQLSelection>.create;
-  FArguments := TFslList<TGraphQLArgument>.create;
-  FDirectives := TFslList<TGraphQLDirective>.create;
+  FSelectionSet := TFslList<TGraphQLSelection>.Create;
+  FArguments := TFslList<TGraphQLArgument>.Create;
+  FDirectives := TFslList<TGraphQLDirective>.Create;
 end;
 
 destructor TGraphQLField.Destroy;
 begin
-  FSelectionSet.Free;
-  FArguments.Free;
-  FDirectives.Free;
+  FSelectionSet.free;
+  FArguments.free;
+  FDirectives.free;
   inherited;
 end;
 
@@ -574,12 +574,12 @@ end;
 constructor TGraphQLFragmentSpread.Create;
 begin
   inherited;
-  FDirectives := TFslList<TGraphQLDirective>.create;
+  FDirectives := TFslList<TGraphQLDirective>.Create;
 end;
 
 destructor TGraphQLFragmentSpread.Destroy;
 begin
-  FDirectives.Free;
+  FDirectives.free;
   inherited;
 end;
 
@@ -614,9 +614,9 @@ end;
 
 destructor TGraphQLSelection.Destroy;
 begin
-  FField.Free;
-  FInlineFragment.Free;
-  FFragmentSpread.Free;
+  FField.free;
+  FInlineFragment.free;
+  FFragmentSpread.free;
   inherited;
 end;
 
@@ -627,19 +627,19 @@ end;
 
 procedure TGraphQLSelection.SetField(const Value: TGraphQLField);
 begin
-  FField.Free;
+  FField.free;
   FField := Value;
 end;
 
 procedure TGraphQLSelection.SetFragmentSpread(const Value: TGraphQLFragmentSpread);
 begin
-  FFragmentSpread.Free;
+  FFragmentSpread.free;
   FFragmentSpread := Value;
 end;
 
 procedure TGraphQLSelection.SetInlineFragment(const Value: TGraphQLFragment);
 begin
-  FInlineFragment.Free;
+  FInlineFragment.free;
   FInlineFragment := Value;
 end;
 
@@ -655,7 +655,7 @@ end;
 
 destructor TGraphQLVariable.Destroy;
 begin
-  FDefaultValue.Free;
+  FDefaultValue.free;
   inherited;
 end;
 
@@ -666,7 +666,7 @@ end;
 
 procedure TGraphQLVariable.SetDefaultValue(const Value: TGraphQLValue);
 begin
-  FDefaultValue.Free;
+  FDefaultValue.free;
   FDefaultValue := Value;
 end;
 
@@ -683,16 +683,16 @@ end;
 constructor TGraphQLOperation.Create;
 begin
   inherited;
-  FSelectionSet := TFslList<TGraphQLSelection>.create;
-  FVariables := TFslList<TGraphQLVariable>.create;
-  FDirectives := TFslList<TGraphQLDirective>.create;
+  FSelectionSet := TFslList<TGraphQLSelection>.Create;
+  FVariables := TFslList<TGraphQLVariable>.Create;
+  FDirectives := TFslList<TGraphQLDirective>.Create;
 end;
 
 destructor TGraphQLOperation.Destroy;
 begin
-  FSelectionSet.Free;
-  FVariables.Free;
-  FDirectives.Free;
+  FSelectionSet.free;
+  FVariables.free;
+  FDirectives.free;
   inherited;
 end;
 
@@ -726,13 +726,13 @@ end;
 constructor TGraphQLFragment.Create;
 begin
   inherited;
-  FSelectionSet := TFslList<TGraphQLSelection>.create;
-  FDirectives := TFslList<TGraphQLDirective>.create;
+  FSelectionSet := TFslList<TGraphQLSelection>.Create;
+  FDirectives := TFslList<TGraphQLDirective>.Create;
 end;
 
 destructor TGraphQLFragment.Destroy;
 begin
-  FSelectionSet.Free;
+  FSelectionSet.free;
   FDirectives.free;
   inherited;
 end;
@@ -766,14 +766,14 @@ end;
 constructor TGraphQLDocument.Create;
 begin
   inherited;
-  FFragments := TFslList<TGraphQLFragment>.create;
-  FOperations := TFslList<TGraphQLOperation>.create;
+  FFragments := TFslList<TGraphQLFragment>.Create;
+  FOperations := TFslList<TGraphQLOperation>.Create;
 end;
 
 destructor TGraphQLDocument.Destroy;
 begin
-  FFragments.Free;
-  FOperations.Free;
+  FFragments.free;
+  FOperations.free;
   inherited;
 end;
 
@@ -972,7 +972,7 @@ begin
       this.free;
     end;
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
@@ -999,7 +999,7 @@ begin
       this.free;
     end;
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
@@ -1021,7 +1021,7 @@ begin
       result.Values.Add(parseValue);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1042,7 +1042,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1058,7 +1058,7 @@ begin
       parseOperationInner(op);
       doc.Operations.Add(op.Link);
     finally
-      op.Free;
+      op.free;
     end;
   end
   else
@@ -1106,7 +1106,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1152,7 +1152,7 @@ begin
       result.Directives.Add(parseDirective);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1168,7 +1168,7 @@ begin
     parseFragmentInner(result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1196,7 +1196,7 @@ begin
           this.free;
         end;
       finally
-        stream.Free;
+        stream.free;
       end;
       if json.has('variables') then
       begin
@@ -1206,10 +1206,10 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -1234,7 +1234,7 @@ begin
     parseOperationInner(result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1276,7 +1276,7 @@ begin
       result.field := parseField;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1307,7 +1307,7 @@ begin
     next;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1327,7 +1327,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1357,7 +1357,7 @@ end;
 
 destructor TGraphQLParser.Destroy;
 begin
-  FToken.Free;
+  FToken.free;
   inherited;
 end;
 
@@ -1567,7 +1567,7 @@ begin
       result.listStatus := listStatus;
       FFields.Add(result.Link);
     finally
-      result.Free;
+      result.free;
     end;
   end
   else if result.listStatus = listStatusSingleton then
@@ -1579,7 +1579,7 @@ end;
 constructor TGraphQLObjectValue.Create;
 begin
   inherited;
-  FFields := TFslList<TGraphQLArgument>.create;
+  FFields := TFslList<TGraphQLArgument>.Create;
 end;
 
 constructor TGraphQLObjectValue.Create(json: TJsonObject);
@@ -1593,7 +1593,7 @@ end;
 
 destructor TGraphQLObjectValue.Destroy;
 begin
-  FFields.Free;
+  FFields.free;
   inherited;
 end;
 
@@ -1639,7 +1639,7 @@ end;
 constructor TGraphQLPackage.Create;
 begin
   inherited;
-  FVariables := TFslList<TGraphQLArgument>.create;
+  FVariables := TFslList<TGraphQLArgument>.Create;
 end;
 
 constructor TGraphQLPackage.Create(document: TGraphQLDocument);
@@ -1650,8 +1650,8 @@ end;
 
 destructor TGraphQLPackage.Destroy;
 begin
-  FDocument.Free;
-  FVariables.Free;
+  FDocument.free;
+  FVariables.free;
   inherited;
 end;
 
@@ -1662,7 +1662,7 @@ end;
 
 procedure TGraphQLPackage.SetDocument(const Value: TGraphQLDocument);
 begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 end;
 

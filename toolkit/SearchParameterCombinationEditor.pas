@@ -88,7 +88,7 @@ begin
       inc(t);
 
   if t < 2 then
-    raise EFHIRException.create('At least 2 parameters must be selected');
+    raise EFHIRException.Create('At least 2 parameters must be selected');
 
   FExtension.removeExtension('required');
   for i := 0 to lbParameters.Items.Count - 1 do
@@ -97,10 +97,10 @@ begin
 
 
   case cbxConformance.ItemIndex of
-    1: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL'));
-    2: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHOULD'));
-    3: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('MAY'));
-    4: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL NOT'));
+    1: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('SHALL'));
+    2: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('SHOULD'));
+    3: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('MAY'));
+    4: FExtension.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('SHALL NOT'));
   else
     FExtension.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
   end;
@@ -110,8 +110,8 @@ end;
 
 destructor TSearchParameterCombinationEditorForm.Destroy;
 begin
-  FParameters.Free;
-  FExtension.Free;
+  FParameters.free;
+  FExtension.free;
   inherited;
 end;
 
@@ -156,13 +156,13 @@ end;
 
 procedure TSearchParameterCombinationEditorForm.SetExtension(const Value: TFhirExtension);
 begin
-  FExtension.Free;
+  FExtension.free;
   FExtension := Value;
 end;
 
 procedure TSearchParameterCombinationEditorForm.SetParameters(const Value: TFhirCapabilityStatementRestResourceSearchParamList);
 begin
-  FParameters.Free;
+  FParameters.free;
   FParameters := Value;
 end;
 

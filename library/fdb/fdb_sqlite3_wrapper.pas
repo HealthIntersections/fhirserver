@@ -204,10 +204,10 @@ begin
       Rollback;
     // Delete all statements
     for I := FStatementList.Count - 1 downto 0 do
-      TSQLite3Statement(FStatementList[I]).Free;
+      TSQLite3Statement(FStatementList[I]).free;
     // Delete all blob handlers
     for I := FBlobHandlerList.Count - 1 downto 0 do
-      TSQLite3BlobHandler(FBlobHandlerList[I]).Free;
+      TSQLite3BlobHandler(FBlobHandlerList[I]).free;
     sqlite3_close(FHandle);
     FHandle := nil;
   end;
@@ -234,8 +234,8 @@ end;
 destructor TSQLite3Database.Destroy;
 begin
   Close;
-  FBlobHandlerList.Free;
-  FStatementList.Free;
+  FBlobHandlerList.free;
+  FStatementList.free;
   inherited;
 end;
 

@@ -14,7 +14,7 @@ Unit fui_gfx;
 //
 // The original code is GraphicColor.pas, released November 1, 1999.
 //
-// The initial developer of the original code is Dipl. Ing. Mike Lischke (Pleißa, Germany, www.delphi-gems.com),
+// The initial developer of the original code is Dipl. Ing. Mike Lischke (Pleiï¿½a, Germany, www.delphi-gems.com),
 //
 // Portions created by Dipl. Ing. Mike Lischke are Copyright (C)
 // 1999-2003 Dipl. Ing. Mike Lischke. All Rights Reserved.
@@ -293,7 +293,7 @@ Type
     Class Function CanLoad(Stream: TStream): Boolean; Override;
     Procedure LoadFromStream(Stream: TStream); Override;
     Function ReadImageProperties(Stream: TStream; ImageIndex: Cardinal): Boolean; Override;
-    class var DefaultResolution: Integer; // 2 = default; 0: 128 × 192; 1: 256 × 384; 2: 512 × 768; 3: 1024 × 1536; 4: 2048 × 3072; 5: 4096 × 6144 optional
+    class var DefaultResolution: Integer; // 2 = default; 0: 128 ï¿½ 192; 1: 256 ï¿½ 384; 2: 512 ï¿½ 768; 3: 1024 ï¿½ 1536; 4: 2048 ï¿½ 3072; 5: 4096 ï¿½ 6144 optional
   End;
   {$ENDIF}
 
@@ -1062,7 +1062,7 @@ Begin
       Work.Canvas.Unlock;
     End;
   Finally
-    Work.Free;
+    Work.free;
     CurrentLineR := Nil;
     CurrentLineG := Nil;
     CurrentLineB := Nil;
@@ -1112,7 +1112,7 @@ Begin
       Target.Canvas.Unlock;
     End;
   Finally
-    Target.Free;
+    Target.free;
   End;
 End;
 
@@ -1223,7 +1223,7 @@ End;
 Destructor TGraphicExGraphic.Destroy;
 
 Begin
-  FColorManager.Free;
+  FColorManager.free;
   Inherited;
 End;
 
@@ -1248,7 +1248,7 @@ Begin
   Try
     Result := CanLoad(Stream);
   Finally
-    Stream.Free;
+    Stream.free;
   End;
 End;
 
@@ -1276,7 +1276,7 @@ Begin
   Try
     LoadFromStream(Stream);
   Finally
-    Stream.Free;
+    Stream.free;
   End;
 End;
 
@@ -1292,7 +1292,7 @@ Begin
   Try
     LoadFromStream(Stream);
   Finally
-    Stream.Free;
+    Stream.free;
   End;
 End;
 
@@ -1734,7 +1734,7 @@ Begin
         If Assigned(GreenBuffer) Then FreeMem(GreenBuffer);
         If Assigned(BlueBuffer) Then FreeMem(BlueBuffer);
         If Assigned(AlphaBuffer) Then FreeMem(AlphaBuffer);
-        FDecoder.Free;
+        FDecoder.free;
       End;
     End;
   End
@@ -2880,7 +2880,7 @@ Begin
       Progress(Self, psEnding, 0, False, FProgressRect, '');
 
       If Assigned(Decoder) Then Decoder.DecodeEnd;
-      Decoder.Free;
+      Decoder.free;
     End;
   End
   Else GraphicExError(gesInvalidImage, ['TIF/TIFF']);
@@ -3434,7 +3434,7 @@ Begin
               End;
             Finally
               If Assigned(RLEBuffer) Then FreeMem(RLEBuffer);
-              Decoder.Free;
+              Decoder.free;
             End;
           End;
       End;
@@ -3614,7 +3614,7 @@ Begin
         End;
       Finally
         If Assigned(RLEBuffer) Then FreeMem(RLEBuffer);
-        Encoder.Free;
+        Encoder.free;
       End;
     End
     Else
@@ -4156,7 +4156,7 @@ Begin
                 End;
               End;
             Finally
-              Decoder.Free;
+              Decoder.free;
             End;
           End;
 
@@ -4173,7 +4173,7 @@ Begin
           C1 := YCbCrData[1];
           C2 := YCbCrData[2];
 
-          // For the rotated mode where we need to turn the image by 90°. We can speed up loading
+          // For the rotated mode where we need to turn the image by 90ï¿½. We can speed up loading
           // the image by factor 2 by using a local copy of the Scanline pointers.
           If Rotate In [1, 3] Then
           Begin
@@ -4195,7 +4195,7 @@ Begin
 
           Try
             Case Rotate Of
-              1: // rotate -90°
+              1: // rotate -90ï¿½
                 Begin
                   For Y := 0 To Height - 1 Do
                   Begin
@@ -4216,7 +4216,7 @@ Begin
                     OffsetRect(FProgressRect, 0, 1);
                   End;
                 End;
-              3: // rotate 90°
+              3: // rotate 90ï¿½
                 Begin
                   For Y := 0 To Height - 1 Do
                   Begin
@@ -4779,7 +4779,7 @@ Begin
         End;
 
       Finally
-        Decoder.Free;
+        Decoder.free;
         If Assigned(Buffer) Then FreeMem(Buffer);
       End;
 
@@ -5150,7 +5150,7 @@ Begin
             Run := RawData;
             Decoder.Decode(Pointer(Run), TargetBuffer, Pass, Width * Height);
           Finally
-            Decoder.Free;
+            Decoder.free;
           End;
           Progress(Self, psEnding, 0, False, FProgressRect, '');
 
@@ -5486,7 +5486,7 @@ Begin
         If Assigned(GreenBuffer) Then FreeMem(GreenBuffer);
         If Assigned(BlueBuffer) Then FreeMem(BlueBuffer);
         If Assigned(AlphaBuffer) Then FreeMem(AlphaBuffer);
-        Decoder.Free;
+        Decoder.free;
       End;
       Progress(Self, psEnding, 0, False, FProgressRect, '');
     End;
@@ -5900,7 +5900,7 @@ Begin
         End;
 
       Finally
-        Decoder.Free;
+        Decoder.free;
         Progress(Self, psEnding, 0, False, FProgressRect, '');
       End;
     End;
@@ -6400,7 +6400,7 @@ Var
       Decoder.DecodeEnd;
     Finally
       If Assigned(RawBuffer) Then FreeMem(RawBuffer);
-      Decoder.Free;
+      Decoder.free;
     End;
   End;
 
@@ -7087,7 +7087,7 @@ Begin
         If Assigned(FDecoder) Then
         Begin
           FDecoder.DecodeEnd;
-          FDecoder.Free;
+          FDecoder.free;
         End;
         If Assigned(FRawBuffer) Then FreeMem(FRawBuffer);
         Progress(Self, psEnding, 0, False, FProgressRect, '');
@@ -7631,8 +7631,8 @@ Destructor TFileFormatList.Destroy;
 
 Begin
   Clear;
-  FClassList.Free;
-  FExtensionList.Free;
+  FClassList.free;
+  FExtensionList.free;
   Inherited;
 End;
 
@@ -7835,9 +7835,9 @@ Begin
     // remove last separator in string
     if Length(Result) > 0 then SetLength(Result, Length(Result) - 1);
   finally
-    All.Free;
-    EL.Free;
-    DL.Free;
+    All.free;
+    EL.free;
+    DL.free;
   end;
 End;
 
@@ -7874,7 +7874,7 @@ Begin
   Try
     Result := GraphicFromContent(Stream);
   Finally
-    Stream.Free;
+    Stream.free;
   End;
 End;
 

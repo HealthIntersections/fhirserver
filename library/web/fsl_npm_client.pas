@@ -121,7 +121,7 @@ var
   obj : TJsonObject;
   s : String;
 begin
-  result := TFslList<TFHIRPackageInfo>.create;
+  result := TFslList<TFHIRPackageInfo>.Create;
   try
     arr := TInternetFetcher.fetchJsonArray(FAddress);
     try
@@ -158,7 +158,7 @@ var
   json, versions, obj : TJsonObject;
   s : String;
 begin
-  result := TFslList<TFHIRPackageInfo>.create;
+  result := TFslList<TFHIRPackageInfo>.Create;
   try
     try
       json := TInternetFetcher.fetchJson(URLPath([address, id]));
@@ -217,7 +217,7 @@ begin
       // suppress for now
     end;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -249,7 +249,7 @@ begin
       // suppress for now
     end;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -270,7 +270,7 @@ begin
       b.add('fhirversion='+fhirVersion);
     if (preRelease) then
       b.add('prerelease='+BooleanToString(preRelease));
-    result := TFslList<TFHIRPackageInfo>.create;
+    result := TFslList<TFHIRPackageInfo>.Create;
     try
       json := TInternetFetcher.fetchJsonArray(URLPath([address, 'catalog?'])+b.asString());
       try
@@ -285,10 +285,10 @@ begin
       end;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 

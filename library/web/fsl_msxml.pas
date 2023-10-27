@@ -7795,7 +7795,7 @@ end;
 destructor TDOMDocument.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -7946,7 +7946,7 @@ end;
 destructor TDOMDocument26.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -8097,7 +8097,7 @@ end;
 destructor TDOMDocument30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -8248,7 +8248,7 @@ end;
 destructor TDOMDocument40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -8399,7 +8399,7 @@ end;
 destructor TFreeThreadedDOMDocument.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -8550,7 +8550,7 @@ end;
 destructor TFreeThreadedDOMDocument26.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -8701,7 +8701,7 @@ end;
 destructor TFreeThreadedDOMDocument30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -8852,7 +8852,7 @@ end;
 destructor TFreeThreadedDOMDocument40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9000,7 +9000,7 @@ end;
 destructor TXMLSchemaCache.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9132,7 +9132,7 @@ end;
 destructor TXMLSchemaCache26.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9264,7 +9264,7 @@ end;
 destructor TXMLSchemaCache30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9396,7 +9396,7 @@ end;
 destructor TXMLSchemaCache40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9523,7 +9523,7 @@ end;
 destructor TXSLTemplate.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9640,7 +9640,7 @@ end;
 destructor TXSLTemplate26.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9757,7 +9757,7 @@ end;
 destructor TXSLTemplate30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9874,7 +9874,7 @@ end;
 destructor TXSLTemplate40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -9991,7 +9991,7 @@ end;
 destructor TDSOControl.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -10133,7 +10133,7 @@ end;
 destructor TDSOControl26.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -10275,7 +10275,7 @@ end;
 destructor TDSOControl30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -10417,7 +10417,7 @@ end;
 destructor TDSOControl40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -10559,7 +10559,7 @@ end;
 destructor TXMLHTTP.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -10784,7 +10784,7 @@ end;
 destructor TXMLHTTP26.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -11009,7 +11009,7 @@ end;
 destructor TXMLHTTP30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -11234,7 +11234,7 @@ end;
 destructor TXMLHTTP40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -11459,7 +11459,7 @@ end;
 destructor TServerXMLHTTP.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -11732,7 +11732,7 @@ end;
 destructor TServerXMLHTTP30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -12006,7 +12006,7 @@ end;
 destructor TServerXMLHTTP40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -12280,7 +12280,7 @@ end;
 destructor TSAXXMLReader.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -12522,7 +12522,7 @@ end;
 destructor TSAXXMLReader30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -12764,7 +12764,7 @@ end;
 destructor TSAXXMLReader40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -13006,7 +13006,7 @@ end;
 destructor TMXXMLWriter.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -13263,7 +13263,7 @@ end;
 destructor TMXXMLWriter30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -13520,7 +13520,7 @@ end;
 destructor TMXXMLWriter40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -13777,7 +13777,7 @@ end;
 destructor TMXHTMLWriter.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -14034,7 +14034,7 @@ end;
 destructor TMXHTMLWriter30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -14291,7 +14291,7 @@ end;
 destructor TMXHTMLWriter40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -14548,7 +14548,7 @@ end;
 destructor TSAXAttributes.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -14699,7 +14699,7 @@ end;
 destructor TSAXAttributes30.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -14850,7 +14850,7 @@ end;
 destructor TSAXAttributes40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -15001,7 +15001,7 @@ end;
 destructor TMXNamespaceManager.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -15159,7 +15159,7 @@ end;
 destructor TMXNamespaceManager40.Destroy;
 begin
 {$IFDEF LIVE_SERVER_AT_DESIGN_TIME}
-  FProps.Free;
+  FProps.free;
 {$ENDIF}
   inherited Destroy;
 end;
@@ -15345,7 +15345,7 @@ begin
         raise EXmlException.create('HTTP Error '+oWeb.ResponseCode);
       result := Parse(oWeb.Response, locations);
     Finally
-      oWeb.Free;
+      oWeb.free;
     End;
   End
   Else
@@ -15355,7 +15355,7 @@ begin
     Try
       Result := Parse(oFile, locations);
     Finally
-      oFile.Free;
+      oFile.free;
     End;
   End;
 end;
@@ -15403,7 +15403,7 @@ begin
       ms.ParseByHandler(oSource, sax);
       result := iDom;
     finally
-      ms.Free;
+      ms.free;
     end;
   end;
 end;
@@ -15423,7 +15423,7 @@ begin
     oWrapper.Stream := oSource.Link;
     Result := Parse(oWrapper, locations);
   Finally
-    oWrapper.Free;
+    oWrapper.free;
   End;
 end;
 
@@ -15560,7 +15560,7 @@ begin
         raise EXmlException.create('HTTP Error '+oWeb.ResponseCode);
       ParseByHandler(oWeb.Response, handler);
     Finally
-      oWeb.Free;
+      oWeb.free;
     End;
   End
   Else
@@ -15570,7 +15570,7 @@ begin
     Try
       ParseByHandler(oFile, handler);
     Finally
-      oFile.Free;
+      oFile.free;
     End;
   End;
 
@@ -15585,7 +15585,7 @@ begin
     oMem.Buffer := oSource.Link;
     ParseByHandler(oMem, handler);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 end;
 
@@ -15602,7 +15602,7 @@ begin
   try
     result := Parse(oMem, locations);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 end;
 
@@ -15615,7 +15615,7 @@ begin
     oWrapper.Stream := oSource.Link;
     ParseByHandler(oWrapper, handler);
   Finally
-    oWrapper.Free;
+    oWrapper.free;
   End;
 
 end;
@@ -15661,7 +15661,7 @@ begin
     oMem.Buffer := oSource.Link;
     result := Parse(oMem, locations);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 end;
 
@@ -15679,7 +15679,7 @@ begin
   try
     result := parse(b, locations);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15691,15 +15691,15 @@ begin
   text(chars, FLocation);
 end;
 
-constructor TMsXmlSaxHandler.create;
+constructor TMsXmlSaxHandler.Create;
 begin
   inherited;
-  FXmlComments := TFslStringList.create;
+  FXmlComments := TFslStringList.Create;
 end;
 
-destructor TMsXmlSaxHandler.destroy;
+destructor TMsXmlSaxHandler.Destroy;
 begin
-  FXmlComments.Free;
+  FXmlComments.free;
   inherited;
 end;
 
@@ -15815,18 +15815,18 @@ end;
 
 constructor TLocatingSaxToDomParser.create(locations : TFslList<TSourceLocationObject>; timeToAbort : cardinal);
 begin
-  FStack := TList<IXMLDOMElement>.create;
+  FStack := TList<IXMLDOMElement>.Create;
   FDom := CoDOMDocument.Create;
   FLocations := locations;
   FTimeToAbort := timeToAbort;
 end;
 
 
-destructor TLocatingSaxToDomParser.destroy;
+destructor TLocatingSaxToDomParser.Destroy;
 begin
-  FStack.Free;
+  FStack.free;
   FDom := nil;
-  FLocations.Free;
+  FLocations.free;
   inherited;
 end;
 

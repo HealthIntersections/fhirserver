@@ -150,11 +150,12 @@ type
 var
   TestSettings : TFslTestSettings;
   GSnomedDataFile : string = '';
+  GCPTDataFile : string = '';
 
 
 {$IFDEF FPC}
 //procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
-procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
+procedure RegisterTest(ASuitePath: String; ATest: TTest);
 {$ELSE}
 procedure RegisterTest(SuitePath: string; test: ITest);
 {$ENDIF}
@@ -167,7 +168,7 @@ begin
   TestRegistry.RegisterTest(ASuitePath, ATestClass);
 end;
 
-procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
+procedure RegisterTest(ASuitePath: String; ATest: TTest);
 begin
   TestRegistry.RegisterTest(ASuitePath, ATest);
 end;
@@ -411,9 +412,9 @@ const
 
 constructor TFslTestSettings.Create(folder, filename: String);
 begin
-  inherited create;
+  inherited Create;
   if (folder = '') then
-    folder := executableDirectory;
+    folder := TCommandLineParameters.execDir;
   FFilename := FilePath([folder, filename]);
   FIni := TIniFile.create(filename);
   if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
@@ -424,16 +425,19 @@ begin
     MDTestRoot := FIni.ReadString('locations', 'markdown', '');
   if not getCommandLineParam('snomed-data', GSnomedDataFile) then
     GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  if not getCommandLineParam('cpt-data', GCPTDataFile) then
+    GCPTDataFile := FIni.ReadString('locations', 'cpt', '');
   Logging.log('Test Locations: ');
   Logging.log('  fhirserver='+FServerTestsRoot);
   Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
   Logging.log('  markdown='+MDTestRoot);
   Logging.log('  snomed='+GSnomedDataFile);
+  Logging.log('  cpt='+GCPTDataFile);
 end;
 
 constructor TFslTestSettings.Create(filename: String);
 begin
-  inherited create;
+  inherited Create;
   if (not FileExists(filename)) then
     raise EFslException.create('Test Settings File '+filename+' not found');
   FFilename := filename;
@@ -446,16 +450,20 @@ begin
     MDTestRoot := FIni.ReadString('locations', 'markdown', '');
   if not getCommandLineParam('snomed-data', GSnomedDataFile) then
     GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  if not getCommandLineParam('cpt-data', GCPTDataFile) then
+    GCPTDataFile := FIni.ReadString('locations', 'cpt', '');
+
   Logging.log('Test Locations: ');
   Logging.log('  fhirserver='+FServerTestsRoot);
   Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
   Logging.log('  markdown='+MDTestRoot);
   Logging.log('  snomed='+GSnomedDataFile);
+  Logging.log('  cpt='+GCPTDataFile);
 end;
 
 destructor TFslTestSettings.Destroy;
 begin
-  FIni.Free;
+  FIni.free;
   inherited;
 end;
 
@@ -547,11 +555,11 @@ begin
       for s in list do
         result.Items[s] := FIni.ReadString(name, s, '');
     finally
-      list.Free;
+      list.free;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -563,7 +571,7 @@ end;
 initialization
   TestSettings := TFslTestSettings.Create('', 'fhir-tests.ini');
 finalization
-  TestSettings.Free;
+  TestSettings.free;
 end.
 
 

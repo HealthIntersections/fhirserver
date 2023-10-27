@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-constructor TFHIRClientAsyncTask.create(client: TFhirClientV; factory : TFHIRFactory);
+constructor TFHIRClientAsyncTask.Create(client: TFhirClientV; factory : TFHIRFactory);
 begin
   inherited Create;
   FClient := client;
@@ -153,17 +153,17 @@ begin
   FStart := now;
   FFactory := factory;
   FStatus := asyncReady;
-  FFiles := TFslList<TDownloadFile>.create;
-  FTypes := TStringList.create;
+  FFiles := TFslList<TDownloadFile>.Create;
+  FTypes := TStringList.Create;
   log('Initialised at '+FormatDateTime('c', now));
 end;
 
 destructor TFHIRClientAsyncTask.Destroy;
 begin
-  FFiles.Free;
-  FTypes.Free;
-  FClient.Free;
-  FFactory.Free;
+  FFiles.free;
+  FTypes.free;
+  FClient.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -237,7 +237,7 @@ begin
             end;
             FStatus := asyncDownload;
           finally
-            json.Free;
+            json.free;
           end;
         end
       else if FClient.LastStatus >= 500 then
@@ -260,21 +260,21 @@ begin
                 r.free;
               end;
             finally
-              p.Free;
+              p.free;
             end;
           except
           end;
-        raise EFHIRException.create(FError);
+        raise EFHIRException.Create(FError);
       end
       else
       begin
         FStatus := asyncFailed;
         FError := 'Unexpected response : '+inttostr(FClient.LastStatus)+ ' '+FClient.LastStatusMsg;
-        raise EFHIRException.create(FError);
+        raise EFHIRException.Create(FError);
       end;
     end;
   finally
-    buf.Free;
+    buf.free;
   end;
 end;
 
@@ -341,10 +341,10 @@ begin
     begin
       FStatus := asyncFailed;
       FError := 'Unexpected response : '+inttostr(FClient.LastStatus)+ ' '+FClient.LastStatusMsg;
-      raise EFHIRException.create(FError);
+      raise EFHIRException.Create(FError);
     end;
   finally
-    buf.Free;
+    buf.free;
   end;
 end;
 
@@ -358,7 +358,7 @@ begin
     asyncPinging: ; // nothing
     asyncDownload : doDownload;
     asyncDownloading: ; // nothing
-    asyncFailed: raise EFHIRException.create('Error: '+FError);
+    asyncFailed: raise EFHIRException.Create('Error: '+FError);
   end;
 end;
 

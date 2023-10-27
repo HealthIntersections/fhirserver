@@ -97,7 +97,7 @@ procedure TSettingsForm.btnAddClick(Sender: TObject);
 var
   form : TEditRegisteredServerForm;
 begin
-  form := TEditRegisteredServerForm.create(self);
+  form := TEditRegisteredServerForm.Create(self);
   try
     form.Server := TRegisteredFHIRServer.Create;
     form.Versions := Settings.Versions.link;
@@ -108,7 +108,7 @@ begin
       lbServersClick(nil);
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -156,7 +156,7 @@ var
   i : integer;
   form : TEditRegisteredServerForm;
 begin
-  form := TEditRegisteredServerForm.create(self);
+  form := TEditRegisteredServerForm.Create(self);
   try
     form.Server := TRegisteredFHIRServer(lbServers.ListItems[lbServers.ItemIndex].Data).Link;
     if ShowModalHack(form) = mrOk then
@@ -166,14 +166,14 @@ begin
       lbServersClick(nil);
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
 destructor TSettingsForm.Destroy;
 begin
-  FSettings.Free;
-  FServers.Free;
+  FSettings.free;
+  FServers.free;
   inherited;
 end;
 
@@ -237,7 +237,7 @@ end;
 
 procedure TSettingsForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

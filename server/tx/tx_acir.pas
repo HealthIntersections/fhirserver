@@ -84,13 +84,13 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -107,9 +107,6 @@ type
 
     function subsumesTest(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -117,11 +114,11 @@ implementation
 
 { TACIRServices }
 
-Constructor TACIRServices.create(languages : TIETFLanguageDefinitions);
+Constructor TACIRServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited Create(languages);
-  FList := TFslList<TACIRConcept>.create;
-  FMap := TFslMap<TACIRConcept>.create('tx.acir');
+  FList := TFslList<TACIRConcept>.Create;
+  FMap := TFslMap<TACIRConcept>.Create('tx.acir');
   FMap.defaultValue := nil;
 
   Load;
@@ -153,7 +150,7 @@ begin
   result := FMap[code].definition;
 end;
 
-function TACIRServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TACIRServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 begin
   result := FMap[code].display.Trim;
 end;
@@ -167,79 +164,79 @@ procedure TACIRServices.load;
 var
   c : TACIRConcept;
 begin
-  FList.add(TACIRConcept.create('AGRPAL', 'Agrippal', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('AVAXM', 'Avaxim', 'Hepatitis A', 'Hepatitis A'));
-  FList.add(TACIRConcept.create('BCG', 'BCG', 'Tuberculosis', 'Tuberculosis'));
-  FList.add(TACIRConcept.create('CDT', 'CDT', 'Diphtheria, tetanus', 'Diphtheria, Tetanus'));
-  FList.add(TACIRConcept.create('CMX', 'COMVAX', 'Hib, hepatitis B', 'Hib Hepatitis B'));
-  FList.add(TACIRConcept.create('DTP', 'Triple Antigen', 'Triple Antigen', 'Diphtheria, Tetanus, Pertussis'));
-  FList.add(TACIRConcept.create('DTPA', 'DTPa', 'DTPa', 'Diphtheria, Tetanus, Pertussis'));
-  FList.add(TACIRConcept.create('ENGP', 'Engerix B', 'B Hepatitis B (paediatric)', 'Hepatitis B'));
-  FList.add(TACIRConcept.create('FLRIX', 'Fluarix', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('FLUVAX', 'Fluvax', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('FLVRN', 'Fluvirin', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('FVXJNR', 'Fluvax Junior', 'Junior Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('GNDIP', 'Diphtheria', 'Diphtheria', 'Diphtheria'));
-  FList.add(TACIRConcept.create('GNFLU', 'Influenza', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('GNHEP', 'Hepatitis B', 'Hepatitis B', 'Hepatitis B'));
-  FList.add(TACIRConcept.create('GNHIB', 'HIB', 'HIB', 'Hib'));
-  FList.add(TACIRConcept.create('GNHPA', 'Hepatitis A', 'Hepatitis A', 'Hepatitis A'));
-  FList.add(TACIRConcept.create('GNJEN', 'Japanese Encephalitis', 'Japanese Encephalitis', 'Japanese Encephalitis'));
-  FList.add(TACIRConcept.create('GNMEA', 'Measles', 'Measles', 'Measles'));
-  FList.add(TACIRConcept.create('GNMEN', 'Meningococcal C', 'Meningococcal C', 'Meningococcal C'));
-  FList.add(TACIRConcept.create('GNMUM', 'Mumps', 'Mumps', 'Mumps'));
-  FList.add(TACIRConcept.create('GNPNE', 'Pneumococcal', 'Pneumococcal', 'Pneumococcal'));
-  FList.add(TACIRConcept.create('GNPOL', 'Polio', 'Polio', 'Polio'));
-  FList.add(TACIRConcept.create('GNROX', 'Rotavirus', 'Rotavirus', 'Rotavirus'));
-  FList.add(TACIRConcept.create('GNRUB', 'Rubella', 'Rubella', 'Rubella'));
-  FList.add(TACIRConcept.create('GNTET', 'Tetanus', 'Tetanus', 'Tetanus'));
-  FList.add(TACIRConcept.create('GNVAR', 'Varicella', 'Varicella', 'Varicella'));
-  FList.add(TACIRConcept.create('HATWNJ', 'Twinrix Junior', 'Junior Hepatitis A &amp; B', 'Hepatitis A'));
-  FList.add(TACIRConcept.create('HAVAQ', 'Vaqta Paed/Adol', 'Paediatric/Adolescent formulation Hepatitis A', 'Hepatitis A'));
-  FList.add(TACIRConcept.create('HAVJ', 'Havrix Junior', 'Junior Hepatitis A', 'Hepatitis A'));
-  FList.add(TACIRConcept.create('HBOC', 'HibTITER', 'Hib', 'Hib'));
-  FList.add(TACIRConcept.create('HBV', 'HBV', 'HBV', 'Hepatitis B'));
-  FList.add(TACIRConcept.create('HBVP', 'HBVAX II', 'II Hepatitis B (paediatric)', 'Hepatitis B'));
-  FList.add(TACIRConcept.create('HBX', 'Hiberix', 'Hib', 'Hib'));
-  FList.add(TACIRConcept.create('IFHX', 'Infanrix Hexa', 'Hexa Diphtheria, tetanus, pertussis, inactivated polio, Hib, hepatitis B', 'Diphtheria, Tetanus, Pertussis, Hepatitis B, Polio, Hib'));
-  FList.add(TACIRConcept.create('IFIP', 'Infanrix-IPV', 'IPV Diphtheria, tetanus, pertussis, inactivated polio', 'Diphtheria, Tetanus, Pertussis, Polio'));
-  FList.add(TACIRConcept.create('IFPA', 'Infanrix Penta', 'Penta Diphtheria, tetanus, pertussis, hepatitis B, inactivated polio', 'Diphtheria, Tetanus, Pertussis, Hepatitis B, Polio'));
-  FList.add(TACIRConcept.create('IFX', 'Infanrix', 'Diphtheria, tetanus, pertussis', 'Diphtheria, Tetanus, Pertussis'));
-  FList.add(TACIRConcept.create('IFXB', 'InfanrixHepB', '-Hep B Diphtheria, tetanus, pertussis, hepatitis B', 'Diphtheria, Tetanus, Pertussis, Hepatitis B'));
-  FList.add(TACIRConcept.create('INFLUV', 'Influvac', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('IPV', 'IPOL', 'Inactivated polio (injection)', 'Polio'));
-  FList.add(TACIRConcept.create('JEVAX', 'JE-VAX', '-VAX Japanese encephalitis', 'Japanese Encephalitis'));
-  FList.add(TACIRConcept.create('MENJUG', 'Menjugate', 'Meningococcal C (conjugate)', 'Meningococcal C'));
-  FList.add(TACIRConcept.create('MENTEC', 'Meningitec', 'Meningococcal C (conjugate)', 'Meningococcal C'));
-  FList.add(TACIRConcept.create('MENUME', 'Menomune', 'Meningococcal A,C,W135 &amp; Y (polysaccharide)', 'Meningococcal'));
-  FList.add(TACIRConcept.create('MENVAX', 'Mencevax ACWY', 'ACWY Meningococcal A,C,W135 &amp; Y (polysaccharide)', 'Meningococcal'));
-  FList.add(TACIRConcept.create('MMR', 'MMR', 'MMR', 'Measles, Mumps, Rubella'));
-  FList.add(TACIRConcept.create('MMRCSL', 'MMR II', 'II Measles, mumps, rubella', 'Measles, Mumps, Rubella'));
-  FList.add(TACIRConcept.create('MMRSKB', 'Priorix', 'Measles, mumps, rubella', 'Measles, Mumps, Rubella'));
-  FList.add(TACIRConcept.create('MNTRX', 'Menitorix', 'Meningococcal C (conjugate), Hib', 'Meningococcal C, Hib'));
-  FList.add(TACIRConcept.create('NEISVC', 'NeisVac-C', '-C Meningococcal C (conjugate)', 'Meningococcal C'));
-  FList.add(TACIRConcept.create('OPV', 'Polio', 'Sabin (Oral) Oral polio', 'Polio'));
-  FList.add(TACIRConcept.create('P', 'Pertussis', 'Pertussis', 'Pertussis'));
-  FList.add(TACIRConcept.create('PANVAX', 'Panvax', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('PDCL', 'Pediacel', 'Diphtheria, tetanus, pertussis, inactivated polio, Hib', 'Diphtheria, Tetanus, Pertussis, Polio, Hib'));
-  FList.add(TACIRConcept.create('PLCL', 'Poliacel', 'Diphtheria, tetanus, pertussis, inactivated polio, Hib', 'Diphtheria, Tetanus, Pertussis, Polio, Hib'));
-  FList.add(TACIRConcept.create('PNEUMO', 'Pneumovax', '23 Pneumococcal (23vPCV)', '23 Pneumococcal'));
-  FList.add(TACIRConcept.create('PRPD', 'ProHIBit', 'ProHIBit', 'Hib'));
-  FList.add(TACIRConcept.create('PROQAD', 'ProQuad', 'Measles, mumps, rubella, varicella', 'Measles, Mumps, Rubella, Varicella'));
-  FList.add(TACIRConcept.create('PRPOMP', 'PedvaxHIB', 'Hib', 'Hib'));
-  FList.add(TACIRConcept.create('PRPT', 'ActHIB', 'Hib', 'Hib'));
-  FList.add(TACIRConcept.create('PRVNR', 'Prevenar 7', '7 Pneumococcal (7vPCV)', 'Pneumococcal'));
-  FList.add(TACIRConcept.create('PRVTH', 'Prevenar 13', '13 Pneumococcal (13vPCV)', 'Pneumococcal'));
-  FList.add(TACIRConcept.create('PRXTEX', 'Priorix-Tetra', '-Tetra Measles, mumps, rubella, varicella', 'Measles, Mumps, Rubella, Varicella'));
-  FList.add(TACIRConcept.create('QDCL', 'Quadracel', 'Diphtheria, tetanus, pertussis, inactivated polio', 'Diphtheria, Tetanus, Pertussis, Polio'));
-  FList.add(TACIRConcept.create('ROTRIX', 'Rotarix', 'Rotavirus', 'Rotavirus'));
-  FList.add(TACIRConcept.create('ROTTEQ', 'Rotateq', 'Rotavirus', 'Rotavirus'));
-  FList.add(TACIRConcept.create('SYNFLX', 'Synflorix', 'Pneumococcal (11vPCV)', 'Pneumococcal'));
-  FList.add(TACIRConcept.create('TCL', 'Tripacel', 'Diphtheria, tetanus, pertussis', 'Diphtheria, Tetanus, Pertussis'));
-  FList.add(TACIRConcept.create('VAXGRP', 'Vaxigrip', 'Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('VGRJNR', 'Vaxigrip Junior', 'Junior Influenza', 'Influenza'));
-  FList.add(TACIRConcept.create('VLRIX', 'Varilrix', 'Varicella Zoster', 'Varicella'));
-  FList.add(TACIRConcept.create('VRVAX', 'Varivax', 'Varicella Zoster', 'Varicella'));
+  FList.add(TACIRConcept.Create('AGRPAL', 'Agrippal', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('AVAXM', 'Avaxim', 'Hepatitis A', 'Hepatitis A'));
+  FList.add(TACIRConcept.Create('BCG', 'BCG', 'Tuberculosis', 'Tuberculosis'));
+  FList.add(TACIRConcept.Create('CDT', 'CDT', 'Diphtheria, tetanus', 'Diphtheria, Tetanus'));
+  FList.add(TACIRConcept.Create('CMX', 'COMVAX', 'Hib, hepatitis B', 'Hib Hepatitis B'));
+  FList.add(TACIRConcept.Create('DTP', 'Triple Antigen', 'Triple Antigen', 'Diphtheria, Tetanus, Pertussis'));
+  FList.add(TACIRConcept.Create('DTPA', 'DTPa', 'DTPa', 'Diphtheria, Tetanus, Pertussis'));
+  FList.add(TACIRConcept.Create('ENGP', 'Engerix B', 'B Hepatitis B (paediatric)', 'Hepatitis B'));
+  FList.add(TACIRConcept.Create('FLRIX', 'Fluarix', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('FLUVAX', 'Fluvax', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('FLVRN', 'Fluvirin', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('FVXJNR', 'Fluvax Junior', 'Junior Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('GNDIP', 'Diphtheria', 'Diphtheria', 'Diphtheria'));
+  FList.add(TACIRConcept.Create('GNFLU', 'Influenza', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('GNHEP', 'Hepatitis B', 'Hepatitis B', 'Hepatitis B'));
+  FList.add(TACIRConcept.Create('GNHIB', 'HIB', 'HIB', 'Hib'));
+  FList.add(TACIRConcept.Create('GNHPA', 'Hepatitis A', 'Hepatitis A', 'Hepatitis A'));
+  FList.add(TACIRConcept.Create('GNJEN', 'Japanese Encephalitis', 'Japanese Encephalitis', 'Japanese Encephalitis'));
+  FList.add(TACIRConcept.Create('GNMEA', 'Measles', 'Measles', 'Measles'));
+  FList.add(TACIRConcept.Create('GNMEN', 'Meningococcal C', 'Meningococcal C', 'Meningococcal C'));
+  FList.add(TACIRConcept.Create('GNMUM', 'Mumps', 'Mumps', 'Mumps'));
+  FList.add(TACIRConcept.Create('GNPNE', 'Pneumococcal', 'Pneumococcal', 'Pneumococcal'));
+  FList.add(TACIRConcept.Create('GNPOL', 'Polio', 'Polio', 'Polio'));
+  FList.add(TACIRConcept.Create('GNROX', 'Rotavirus', 'Rotavirus', 'Rotavirus'));
+  FList.add(TACIRConcept.Create('GNRUB', 'Rubella', 'Rubella', 'Rubella'));
+  FList.add(TACIRConcept.Create('GNTET', 'Tetanus', 'Tetanus', 'Tetanus'));
+  FList.add(TACIRConcept.Create('GNVAR', 'Varicella', 'Varicella', 'Varicella'));
+  FList.add(TACIRConcept.Create('HATWNJ', 'Twinrix Junior', 'Junior Hepatitis A &amp; B', 'Hepatitis A'));
+  FList.add(TACIRConcept.Create('HAVAQ', 'Vaqta Paed/Adol', 'Paediatric/Adolescent formulation Hepatitis A', 'Hepatitis A'));
+  FList.add(TACIRConcept.Create('HAVJ', 'Havrix Junior', 'Junior Hepatitis A', 'Hepatitis A'));
+  FList.add(TACIRConcept.Create('HBOC', 'HibTITER', 'Hib', 'Hib'));
+  FList.add(TACIRConcept.Create('HBV', 'HBV', 'HBV', 'Hepatitis B'));
+  FList.add(TACIRConcept.Create('HBVP', 'HBVAX II', 'II Hepatitis B (paediatric)', 'Hepatitis B'));
+  FList.add(TACIRConcept.Create('HBX', 'Hiberix', 'Hib', 'Hib'));
+  FList.add(TACIRConcept.Create('IFHX', 'Infanrix Hexa', 'Hexa Diphtheria, tetanus, pertussis, inactivated polio, Hib, hepatitis B', 'Diphtheria, Tetanus, Pertussis, Hepatitis B, Polio, Hib'));
+  FList.add(TACIRConcept.Create('IFIP', 'Infanrix-IPV', 'IPV Diphtheria, tetanus, pertussis, inactivated polio', 'Diphtheria, Tetanus, Pertussis, Polio'));
+  FList.add(TACIRConcept.Create('IFPA', 'Infanrix Penta', 'Penta Diphtheria, tetanus, pertussis, hepatitis B, inactivated polio', 'Diphtheria, Tetanus, Pertussis, Hepatitis B, Polio'));
+  FList.add(TACIRConcept.Create('IFX', 'Infanrix', 'Diphtheria, tetanus, pertussis', 'Diphtheria, Tetanus, Pertussis'));
+  FList.add(TACIRConcept.Create('IFXB', 'InfanrixHepB', '-Hep B Diphtheria, tetanus, pertussis, hepatitis B', 'Diphtheria, Tetanus, Pertussis, Hepatitis B'));
+  FList.add(TACIRConcept.Create('INFLUV', 'Influvac', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('IPV', 'IPOL', 'Inactivated polio (injection)', 'Polio'));
+  FList.add(TACIRConcept.Create('JEVAX', 'JE-VAX', '-VAX Japanese encephalitis', 'Japanese Encephalitis'));
+  FList.add(TACIRConcept.Create('MENJUG', 'Menjugate', 'Meningococcal C (conjugate)', 'Meningococcal C'));
+  FList.add(TACIRConcept.Create('MENTEC', 'Meningitec', 'Meningococcal C (conjugate)', 'Meningococcal C'));
+  FList.add(TACIRConcept.Create('MENUME', 'Menomune', 'Meningococcal A,C,W135 &amp; Y (polysaccharide)', 'Meningococcal'));
+  FList.add(TACIRConcept.Create('MENVAX', 'Mencevax ACWY', 'ACWY Meningococcal A,C,W135 &amp; Y (polysaccharide)', 'Meningococcal'));
+  FList.add(TACIRConcept.Create('MMR', 'MMR', 'MMR', 'Measles, Mumps, Rubella'));
+  FList.add(TACIRConcept.Create('MMRCSL', 'MMR II', 'II Measles, mumps, rubella', 'Measles, Mumps, Rubella'));
+  FList.add(TACIRConcept.Create('MMRSKB', 'Priorix', 'Measles, mumps, rubella', 'Measles, Mumps, Rubella'));
+  FList.add(TACIRConcept.Create('MNTRX', 'Menitorix', 'Meningococcal C (conjugate), Hib', 'Meningococcal C, Hib'));
+  FList.add(TACIRConcept.Create('NEISVC', 'NeisVac-C', '-C Meningococcal C (conjugate)', 'Meningococcal C'));
+  FList.add(TACIRConcept.Create('OPV', 'Polio', 'Sabin (Oral) Oral polio', 'Polio'));
+  FList.add(TACIRConcept.Create('P', 'Pertussis', 'Pertussis', 'Pertussis'));
+  FList.add(TACIRConcept.Create('PANVAX', 'Panvax', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('PDCL', 'Pediacel', 'Diphtheria, tetanus, pertussis, inactivated polio, Hib', 'Diphtheria, Tetanus, Pertussis, Polio, Hib'));
+  FList.add(TACIRConcept.Create('PLCL', 'Poliacel', 'Diphtheria, tetanus, pertussis, inactivated polio, Hib', 'Diphtheria, Tetanus, Pertussis, Polio, Hib'));
+  FList.add(TACIRConcept.Create('PNEUMO', 'Pneumovax', '23 Pneumococcal (23vPCV)', '23 Pneumococcal'));
+  FList.add(TACIRConcept.Create('PRPD', 'ProHIBit', 'ProHIBit', 'Hib'));
+  FList.add(TACIRConcept.Create('PROQAD', 'ProQuad', 'Measles, mumps, rubella, varicella', 'Measles, Mumps, Rubella, Varicella'));
+  FList.add(TACIRConcept.Create('PRPOMP', 'PedvaxHIB', 'Hib', 'Hib'));
+  FList.add(TACIRConcept.Create('PRPT', 'ActHIB', 'Hib', 'Hib'));
+  FList.add(TACIRConcept.Create('PRVNR', 'Prevenar 7', '7 Pneumococcal (7vPCV)', 'Pneumococcal'));
+  FList.add(TACIRConcept.Create('PRVTH', 'Prevenar 13', '13 Pneumococcal (13vPCV)', 'Pneumococcal'));
+  FList.add(TACIRConcept.Create('PRXTEX', 'Priorix-Tetra', '-Tetra Measles, mumps, rubella, varicella', 'Measles, Mumps, Rubella, Varicella'));
+  FList.add(TACIRConcept.Create('QDCL', 'Quadracel', 'Diphtheria, tetanus, pertussis, inactivated polio', 'Diphtheria, Tetanus, Pertussis, Polio'));
+  FList.add(TACIRConcept.Create('ROTRIX', 'Rotarix', 'Rotavirus', 'Rotavirus'));
+  FList.add(TACIRConcept.Create('ROTTEQ', 'Rotateq', 'Rotavirus', 'Rotavirus'));
+  FList.add(TACIRConcept.Create('SYNFLX', 'Synflorix', 'Pneumococcal (11vPCV)', 'Pneumococcal'));
+  FList.add(TACIRConcept.Create('TCL', 'Tripacel', 'Diphtheria, tetanus, pertussis', 'Diphtheria, Tetanus, Pertussis'));
+  FList.add(TACIRConcept.Create('VAXGRP', 'Vaxigrip', 'Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('VGRJNR', 'Vaxigrip Junior', 'Junior Influenza', 'Influenza'));
+  FList.add(TACIRConcept.Create('VLRIX', 'Varilrix', 'Varicella Zoster', 'Varicella'));
+  FList.add(TACIRConcept.Create('VRVAX', 'Varivax', 'Varicella Zoster', 'Varicella'));
 
   for c in FList do
     FMap.AddOrSetValue(c.code, c.link);
@@ -247,7 +244,7 @@ end;
 
 function TACIRServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 
@@ -273,14 +270,14 @@ begin
   inherited;
 end;
 
-function TACIRServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TACIRServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TACIRConcept(context).Display.Trim;
 end;
 
 procedure TACIRServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation(true, true, '', Display(context, nil));
 end;
 
 function TACIRServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -308,7 +305,7 @@ end;
 
 function TACIRServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FList[context.current];
+  result := FList[context.current].link;
   context.next;
 end;
 
@@ -325,12 +322,12 @@ end;
 
 function TACIRServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TACIRServices.prepare');
+  raise ETerminologyTodo.Create('TACIRServices.prepare');
 end;
 
 function TACIRServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TACIRServices.searchFilter');
+  raise ETerminologyTodo.Create('TACIRServices.searchFilter');
 end;
 
 function TACIRServices.subsumesTest(codeA, codeB: String): String;
@@ -340,40 +337,27 @@ end;
 
 function TACIRServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TACIRServices.filter');
+  raise ETerminologyTodo.Create('TACIRServices.filter');
 end;
 
 function TACIRServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TACIRServices.filterLocate');
+  raise ETerminologyTodo.Create('TACIRServices.filterLocate');
 end;
 
 function TACIRServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TACIRServices.FilterMore');
+  raise ETerminologyTodo.Create('TACIRServices.FilterMore');
 end;
 
 function TACIRServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TACIRServices.FilterConcept');
+  raise ETerminologyTodo.Create('TACIRServices.FilterConcept');
 end;
 
 function TACIRServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TACIRServices.InFilter');
-end;
-
-procedure TACIRServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-end;
-
-procedure TACIRServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-end;
-
-procedure TACIRServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  raise ETerminologyTodo.create('TACIRServices.Close');
+  raise ETerminologyTodo.Create('TACIRServices.InFilter');
 end;
 
 { TACIRPrep }

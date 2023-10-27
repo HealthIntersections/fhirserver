@@ -273,7 +273,7 @@ End;
 function TCDAParser.ParsePiece(oDoc: TMXmlElement; const sClass : String): Tv3Base;
 begin
   if sClass = '' Then
-    raise ECDAException.create('Class name is required');
+    raise ECDAException.Create('Class name is required');
 
   if sClass = 'ANY' Then
     result := ParseANY('ANY', oDoc)
@@ -536,7 +536,7 @@ begin
   Else if sClass = 'Supply' Then
     result := ParseSupply('Supply', oDoc)
   Else
-    raise ECDAException.create('unknown piece type '+sClass);
+    raise ECDAException.Create('unknown piece type '+sClass);
 end;
 
 
@@ -773,7 +773,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -807,7 +807,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -847,7 +847,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -881,7 +881,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -916,7 +916,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -950,7 +950,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -969,7 +969,7 @@ Begin
     try
       Result.value := ParseDecimal(sPath+'\@value', oElement.Attribute['value']);
     except
-      result.originalText := Tv3ED.create;
+      result.originalText := Tv3ED.Create;
       result.originalText.dataAsString := oElement.Attribute['value'];
     end;
     Result.unit_ := oElement.attribute['unit'];
@@ -996,7 +996,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1040,7 +1040,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1079,7 +1079,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1147,7 +1147,7 @@ Begin
     ParseCDValue(sPath, oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1162,7 +1162,7 @@ Begin
     result.Value := ParseDecimal(sPath+'\@value', oElement.Attribute['value']);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1206,7 +1206,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1240,7 +1240,7 @@ Begin
           Try
             result.event := Tv3TimingEvent(ParseEnum(sPath+'\event\@code', oEvent.code, CODES_Tv3TimingEvent))
           Finally
-            oEvent.Free;
+            oEvent.free;
           End;
         End
         Else if Errors Then
@@ -1253,7 +1253,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1291,7 +1291,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1332,7 +1332,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1373,7 +1373,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1479,7 +1479,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1539,7 +1539,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1554,7 +1554,7 @@ Begin
     Result.type_ := aType;
     oEN.part.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1628,7 +1628,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1642,7 +1642,7 @@ Begin
     Result.type_ := aType;
     oAD.part.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1693,7 +1693,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1756,7 +1756,7 @@ Begin
             Try
               Result.AddComp(oTemp.Link);
             Finally
-              oTemp.Free;
+              oTemp.free;
             End;
           End
           Else
@@ -1770,7 +1770,7 @@ Begin
                 If Not Result.AddComp(oTemp.Link) Then
                   RaiseError('ParseSXPR', 'Too many components for the operator provided @'+sPath);
               Finally
-                oTemp.Free;
+                oTemp.free;
               End;
             End;
           End
@@ -1794,10 +1794,10 @@ Begin
     End;
     Result.Link;
   Finally
-    oComments.Free;
-    Result.Free;
-    oFirst.Free;
-    oText.Free;
+    oComments.free;
+    Result.free;
+    oFirst.free;
+    oText.free;
   End;
 End;
 
@@ -1809,7 +1809,7 @@ Begin
     result.anyIsValue := false;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1825,7 +1825,7 @@ Begin
   Begin
     Result := Tv3QSS.Create(Tv3TS);
     AddToMap(oElement, Result);
-    Tv3QSS(Result).terms := Tv3SetQTY.create(result);
+    Tv3QSS(Result).terms := Tv3SetQTY.Create(result);
     Tv3QSS(Result).terms.Add(ParseTS(sPath, oElement));
   End
   Else if (sXsiType = 'PIVL_TS') Then
@@ -1877,7 +1877,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2043,7 +2043,7 @@ Begin
       Result.negationInd := ParseBoolean(sPath+'\@negationInd', oElement.Attribute['negationInd']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2100,7 +2100,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2143,7 +2143,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2196,7 +2196,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2251,7 +2251,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2298,7 +2298,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2345,7 +2345,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2394,7 +2394,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2437,7 +2437,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2480,7 +2480,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2569,7 +2569,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2612,7 +2612,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2659,7 +2659,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2702,7 +2702,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2767,7 +2767,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2815,7 +2815,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2858,7 +2858,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2907,7 +2907,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2950,7 +2950,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -2999,7 +2999,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3044,7 +3044,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3093,7 +3093,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3136,7 +3136,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3191,7 +3191,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3266,7 +3266,7 @@ Begin
       Result.moodCode := oElement.Attribute['moodCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3313,7 +3313,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3362,7 +3362,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3425,7 +3425,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3498,7 +3498,7 @@ Begin
       Result.negationInd := ParseBoolean(sPath+'\@negationInd', oElement.Attribute['negationInd']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3547,7 +3547,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3600,7 +3600,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3649,7 +3649,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3696,7 +3696,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3751,7 +3751,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3802,7 +3802,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3849,7 +3849,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3894,7 +3894,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3937,7 +3937,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -3990,7 +3990,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4035,7 +4035,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4084,7 +4084,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4129,7 +4129,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4176,7 +4176,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4219,7 +4219,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4264,7 +4264,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4315,7 +4315,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4362,7 +4362,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4407,7 +4407,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4498,7 +4498,7 @@ Begin
       Result.negationInd := ParseBoolean(sPath+'\@negationInd', oElement.Attribute['negationInd']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4567,7 +4567,7 @@ Begin
       Result.moodCode := oElement.Attribute['moodCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4618,7 +4618,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4667,7 +4667,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4720,7 +4720,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4771,7 +4771,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4842,7 +4842,7 @@ Begin
       Result.moodCode := oElement.Attribute['moodCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4893,7 +4893,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4942,7 +4942,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -4991,7 +4991,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5050,7 +5050,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5115,7 +5115,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5166,7 +5166,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5215,7 +5215,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5262,7 +5262,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5305,7 +5305,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5350,7 +5350,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5401,7 +5401,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5444,7 +5444,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5529,7 +5529,7 @@ Begin
       Result.negationInd := ParseBoolean(sPath+'\@negationInd', oElement.Attribute['negationInd']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5572,7 +5572,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5615,7 +5615,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5670,7 +5670,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5713,7 +5713,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5780,7 +5780,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5825,7 +5825,7 @@ Begin
       Result.typeCode := oElement.Attribute['typeCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5878,7 +5878,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5929,7 +5929,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5972,7 +5972,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6037,7 +6037,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6088,7 +6088,7 @@ Begin
       Result.classCode := oElement.Attribute['classCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6131,7 +6131,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6176,7 +6176,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6223,7 +6223,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6268,7 +6268,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6315,7 +6315,7 @@ Begin
       Result.nullFlavor := ParseNullFlavor(sPath+'\@nullFlavor', oElement.Attribute['nullFlavor']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6406,7 +6406,7 @@ Begin
       Result.negationInd := ParseBoolean(sPath+'\@negationInd', oElement.Attribute['negationInd']);
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6489,7 +6489,7 @@ Begin
       Result.moodCode := oElement.Attribute['moodCode'];
     Result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -6508,7 +6508,7 @@ begin
     ParseCMGeneralList(sPath, Result.parts, oElement, nil);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6528,9 +6528,9 @@ Begin
   Begin
     if oChild.nodeType = ntText then
       if StripWhitespace Then
-        oParts.Append.text := TsnString.create(Trim(oChild.text, true))
+        oParts.Append.text := TsnString.Create(Trim(oChild.text, true))
       else
-        oParts.Append.text := TsnString.create(oChild.text)
+        oParts.Append.text := TsnString.Create(oChild.text)
     else if oChild.nodeType = ntElement then
     Begin
       if oChild.Name = 'content' Then
@@ -6573,9 +6573,9 @@ Begin
   Begin
     if oChild.nodeType = ntText then
       if StripWhitespace Then
-        oParts.Append.text := TsnString.create(Trim(oChild.text, true))
+        oParts.Append.text := TsnString.Create(Trim(oChild.text, true))
       else
-        oParts.Append.text := TsnString.create(oChild.text)
+        oParts.Append.text := TsnString.Create(oChild.text)
     else if oChild.nodeType = ntElement then
     Begin
       if oChild.Name = 'content' Then
@@ -6614,9 +6614,9 @@ Begin
   Begin
     if oChild.nodeType = ntText then
       if StripWhitespace Then
-        oParts.Append.text := TsnString.create(Trim(oChild.text, true))
+        oParts.Append.text := TsnString.Create(Trim(oChild.text, true))
       else
-        oParts.Append.text := TsnString.create(oChild.text)
+        oParts.Append.text := TsnString.Create(oChild.text)
     else if oChild.nodeType = ntElement then
     Begin
       if oChild.Name = 'footnote' Then
@@ -6640,9 +6640,9 @@ Begin
   Begin
     if oChild.nodeType = ntText then
       if StripWhitespace Then
-        oParts.Append.text := TsnString.create(Trim(oChild.text, true))
+        oParts.Append.text := TsnString.Create(Trim(oChild.text, true))
       else
-        oParts.Append.text := TsnString.create(oChild.text)
+        oParts.Append.text := TsnString.Create(oChild.text)
     else if oChild.nodeType = ntElement then
     Begin
       if oChild.Name = 'linkHtml' Then
@@ -6665,12 +6665,12 @@ End;
 
 Function TCDAParser.ParseBr(Const sPath : String; oElement : TMXmlElement) : TsnBr;
 Begin
-  Result := TsnBr.create;
+  Result := TsnBr.Create;
   Try
     AddToMap(oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6681,7 +6681,7 @@ Begin
     AddToMap(oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6692,7 +6692,7 @@ Begin
     AddToMap(oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6707,7 +6707,7 @@ Begin
     ParseCMContentList(sPath, Result.parts, oElement, nil);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6726,7 +6726,7 @@ Begin
     ParseCMFootnotesList(sPath, Result.parts, oElement);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6739,7 +6739,7 @@ Begin
     ParseCMGeneralList(sPath, Result.parts, oElement, nil);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6753,7 +6753,7 @@ Begin
     Result.IDREF := oElement.Attribute['IDREF'];
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6766,7 +6766,7 @@ Begin
     ParseCMContentList(sPath, Result.parts, oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6803,7 +6803,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6817,7 +6817,7 @@ Begin
     ParseCMGeneralList(sPath, Result.parts, oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6851,7 +6851,7 @@ Begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6864,7 +6864,7 @@ Begin
     ParseCMInlineList(sPath, Result.parts, oElement);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6916,7 +6916,7 @@ begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6930,7 +6930,7 @@ begin
     ParseColItem(sPath, oElement, Result);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -6980,7 +6980,7 @@ begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -7014,7 +7014,7 @@ begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -7049,7 +7049,7 @@ begin
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7071,7 +7071,7 @@ begin
     ParseCMGeneralList(sPath, Result.parts, oElement, nil);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7108,7 +7108,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 
 end;
@@ -7127,8 +7127,8 @@ end;
 
 destructor TCDAParser.Destroy;
 begin
-  FIdentifiedObjects.Free;
-  FComments.Free;
+  FIdentifiedObjects.free;
+  FComments.free;
   inherited;
 end;
 
@@ -7227,7 +7227,7 @@ Begin
 (*
     for i := 0 to oElement.attributes.Count - 1 Do
     begin
-      extension := Tv3Extension.create;
+      extension := Tv3Extension.Create;
       try
         extension.namespace := oElement.attributes[i].namespaceURI;
         extension.name := '@'+oElement.attributee[i].Name;
@@ -7249,7 +7249,7 @@ Begin
 *)
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 

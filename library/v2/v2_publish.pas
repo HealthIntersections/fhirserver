@@ -187,13 +187,13 @@ end;
 
 destructor THL7V2DocumentPublisher.Destroy;
 begin
-  FTitleStyle.Free;
+  FTitleStyle.free;
   inherited;
 end;
 
 procedure THL7V2DocumentPublisher.SetTitleStyle(const Value: TWPStyle);
 begin
-  FTitleStyle.Free;
+  FTitleStyle.free;
   FTitleStyle := Value;
 end;
 
@@ -309,7 +309,7 @@ Begin
     ProcessMap(sPath, oMap);
     Result := PublishDict(oMap, sPrefix, sTitle);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -331,13 +331,13 @@ Begin
     Else
       PublishDictHomeInternal(sPrefix, oBuilder);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
 destructor THL7V2HTMLPublisher.Destroy;
 begin
-  FDict.Free;
+  FDict.free;
   inherited;
 end;
 
@@ -350,7 +350,7 @@ Begin
     TWPFormatConvertor.Convert(oDocument, oStream, wpfHTML, [foNoHtmlBody]);
     Result := oStream.Data;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -372,7 +372,7 @@ Begin
     sTitle := oBuilder.Title;
     Result := DocToHTML(oBuilder.Document, sTitle);
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 End;
 
@@ -1194,7 +1194,7 @@ End;
 
 procedure THL7V2HTMLPublisher.SetDict(const Value: THL7V2Dictionary);
 begin
-  FDict.Free;
+  FDict.free;
   FDict := Value;
 end;
 

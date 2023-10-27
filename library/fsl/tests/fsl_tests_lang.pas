@@ -69,7 +69,7 @@ begin
     assertTrue(o = nil);
     assertTrue(msg <> '');
   finally
-    o.Free;
+    o.free;
   end;
 end;
 
@@ -83,7 +83,7 @@ begin
     assertTrue(o <> nil, msg);
     assertTrue(msg = '');
   finally
-    o.Free;
+    o.free;
   end;
 end;
 
@@ -94,7 +94,7 @@ end;
 
 procedure TIETFLangTests.TearDown;
 begin
-  FDefinitions.Free;
+  FDefinitions.free;
 end;
 
 procedure TIETFLangTests.TestSimple;

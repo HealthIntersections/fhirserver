@@ -697,7 +697,7 @@ begin
   if tvConceptTree.Selected = nil then
     exit;
   sel := TFhirCodeSystemConcept(tvConceptTree.Selected.TagObject);
-  form := TCodeSystemConceptForm.create(self);
+  form := TCodeSystemConceptForm.Create(self);
   try
     form.CodeSystem := CodeSystem.Link;
     form.Concept := sel.Clone;
@@ -774,7 +774,7 @@ begin
       )
     end
     else
-      raise EFHIRException.create('Unknown format for file "'+dlgExport.FileName+'"');
+      raise EFHIRException.Create('Unknown format for file "'+dlgExport.FileName+'"');
   end;
 
 end;
@@ -891,7 +891,7 @@ begin
   if (edtConceptCount.Text = '') or StringIsInteger32(edtConceptCount.Text) then
     CodeSystem.count := edtConceptCount.Text
   else
-    raise EFHIRException.create('Integer required');
+    raise EFHIRException.Create('Integer required');
   CodeSystem.caseSensitive := cbCaseSensitive.IsChecked;
   CodeSystem.compositional := cbCompositional.IsChecked;
   CodeSystem.versionNeeded := cbNeedsVersion.IsChecked;
@@ -905,12 +905,12 @@ end;
 constructor TCodeSystemEditorFrame.Create(owner: TComponent);
 begin
   inherited;
-  flatConcepts := TFslList<TFhirCodeSystemConcept>.create;
+  flatConcepts := TFslList<TFhirCodeSystemConcept>.Create;
 end;
 
 destructor TCodeSystemEditorFrame.Destroy;
 begin
-  flatConcepts.Free;
+  flatConcepts.free;
   inherited;
 end;
 
@@ -1179,7 +1179,7 @@ begin
           l := CODES_TFhirFilterOperatorEnum[FilterOperatorEqual];
           for i := FilterOperatorIsA to high(TFhirFilterOperatorEnum) do
             l := l +', '+ CODES_TFhirFilterOperatorEnum[i];
-          raise EFHIRException.create('Unknown Operator '+s+': use a space separated set from '+l);
+          raise EFHIRException.Create('Unknown Operator '+s+': use a space separated set from '+l);
         end;
       f.operator := e;
       end;

@@ -99,7 +99,7 @@ implementation
 
 { TFHIROperationRequest }
 
-constructor TFHIROperationRequest.create;
+constructor TFHIROperationRequest.Create;
 begin
   inherited Create;
 end;
@@ -107,7 +107,7 @@ end;
 
 { TFHIROperationResponse }
 
-constructor TFHIROperationResponse.create;
+constructor TFHIROperationResponse.Create;
 begin
   inherited Create;
 end;
@@ -120,7 +120,7 @@ begin
   result := nil;
 end;
 
-constructor TFHIROperationObject.create;
+constructor TFHIROperationObject.Create;
 begin
   inherited;
 
@@ -128,7 +128,7 @@ end;
 
 constructor TFHIROperationObject.Create(params: TFhirParametersParameter);
 begin
-  inherited create;
+  inherited Create;
 end;
 
 
@@ -166,14 +166,14 @@ end;
 
 destructor TFHIROperationBaseObject.Destroy;
 begin
-  FExtensions.Free;
+  FExtensions.free;
   inherited;
 end;
 
 function TFHIROperationBaseObject.GetExtensions: TFslList<TFHIROpExtension>;
 begin
   if FExtensions = nil then
-    FExtensions := TFslList<TFHIROpExtension>.create;
+    FExtensions := TFslList<TFHIROpExtension>.Create;
   result := FExtensions;
 end;
 
@@ -245,13 +245,13 @@ end;
 
 destructor TFHIROpExtension.Destroy;
 begin
-  FValue.Free;
+  FValue.free;
   inherited;
 end;
 
 procedure TFHIROpExtension.SetValue(const Value: TFHIRType);
 begin
-  FValue.Free;
+  FValue.free;
   FValue := Value;
 end;
 

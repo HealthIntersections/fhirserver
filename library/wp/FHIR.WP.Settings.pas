@@ -379,9 +379,9 @@ End;
 
 Destructor TWPSettings.Destroy;
 Begin
-  FDicomDictionary.Free;
-  FFieldDefinitions.Free;
-  FAnnotationDefinitions.Free;
+  FDicomDictionary.free;
+  FFieldDefinitions.free;
+  FAnnotationDefinitions.free;
   Inherited;
 End;
 
@@ -947,7 +947,7 @@ end;
 
 procedure TWPSettings.SetDicomDictionary(const Value: TDicomDictionary);
 begin
-  FDicomDictionary.Free;
+  FDicomDictionary.free;
   FDicomDictionary := Value;
 end;
 
@@ -1066,7 +1066,7 @@ End;
 
 Destructor TWPSettable.Destroy;
 Begin
-  FSettings.Free;
+  FSettings.free;
   Inherited;
 End;
 
@@ -1079,7 +1079,7 @@ End;
 
 Procedure TWPSettable.SetSettings(Const Value : TWPSettings);
 Begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 End;
 

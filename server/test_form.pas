@@ -119,7 +119,7 @@ implementation
 
 procedure TTestForm.FormCreate(Sender: TObject);
 begin
-  FManager := TTestTreeManager.create;
+  FManager := TTestTreeManager.Create;
   FManager.registerControl(btnAdd, copAdd);
   FManager.registerControl(btnEdit, copEdit);
   FManager.registerControl(btnDelete, copDelete);
@@ -138,7 +138,7 @@ end;
 
 procedure TTestForm.FormDestroy(Sender: TObject);
 begin
-  FManager.Free;
+  FManager.free;
 end;
 
 { TTestTreeManager }
@@ -156,10 +156,10 @@ begin
   result := true;
   for i := 0 to Random(10) do
   begin
-    n := TTestNode.create(Random(Images.count-3), 'Root.'+inttostr(i));
+    n := TTestNode.Create(Random(Images.count-3), 'Root.'+inttostr(i));
     Data.add(n);
     for j := 0 to Random(5) do
-      n.Children.add(TTestNode.create(Random(Images.count-3), 'Root.'+inttostr(i)+'-'+inttostr(j)));
+      n.Children.add(TTestNode.Create(Random(Images.count-3), 'Root.'+inttostr(i)+'-'+inttostr(j)));
   end;
 end;
 
@@ -216,7 +216,7 @@ begin
   n := 'Node.n-n';
   if InputQuery('Add Test Node', 'Enter Name:', n) then
   begin
-    result := TTestNode.create(Random(Images.count-3), n);
+    result := TTestNode.Create(Random(Images.count-3), n);
     parent.Children.add(result);
   end;
 end;
@@ -251,7 +251,7 @@ end;
 constructor TTestNode.Create;
 begin
   inherited Create;
-  FChildren := TFslList<TTestNode>.create;
+  FChildren := TFslList<TTestNode>.Create;
 end;
 
 constructor TTestNode.Create(index: integer; name: String);

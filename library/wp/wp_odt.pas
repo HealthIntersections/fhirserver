@@ -941,13 +941,13 @@ End;
 
 Destructor TWPOdtReader.Destroy;
 Begin
-  FFontDecls.Free;
-  FDefaultStyles.Free;
-  FStyles.Free;
+  FFontDecls.free;
+  FDefaultStyles.free;
+  FStyles.free;
 
-  FStyleStack.Free;
+  FStyleStack.free;
 
-  FOdtAdapter.Free;
+  FOdtAdapter.free;
 
   Inherited;
 End;
@@ -963,7 +963,7 @@ Begin
   Try
     oReader.Skip([TFslXMLKnownHeaderType, TFslXMLKnownCommentType]);
     If Not oReader.IsNode(OFFICE_NS, 'document-content') Then
-      raise EWPException.create('Expect "document-content" in namespace ' + OFFICE_NS);
+      raise EWPException.Create('Expect "document-content" in namespace ' + OFFICE_NS);
 
     If oReader.PeekIsOpen Then
     Begin
@@ -990,7 +990,7 @@ Begin
     Else
       oReader.SkipNext;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 End;
 
@@ -1005,7 +1005,7 @@ Begin
   Try
     oReader.SkipNext;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
   End;
 End;
@@ -1021,7 +1021,7 @@ Begin
   Try
     oReader.SkipNext;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
   End;
 End;
@@ -1051,7 +1051,7 @@ Begin
       End;
     End;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
   End;
 End;
@@ -1136,7 +1136,7 @@ Begin
             FDefaultStyles.Add(oStyle.Link);
           End;
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else If oReader.IsNode(TEXT_NS, 'list-style') Then
@@ -1146,7 +1146,7 @@ Begin
           oStyle.StyleType := ostCommon;
           FStyles.Add(oStyle.Link);
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else
@@ -1176,7 +1176,7 @@ Begin
           oStyle.StyleType := ostAutomatic;
           FStyles.Add(oStyle.Link);
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else If oReader.IsNode(TEXT_NS, 'list-style') Then
@@ -1186,7 +1186,7 @@ Begin
           oStyle.StyleType := ostAutomatic;
           FStyles.Add(oStyle.Link);
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else
@@ -1298,7 +1298,7 @@ Begin
         oStyle.TableFormat.ApplyFormat(oStart);
       Result := oDocument.Pieces.Add(oStart.Link);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
     oReader.ConsumeOpen;
 
@@ -1317,7 +1317,7 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
     oReader.ConsumeClose;
   End;
@@ -1373,7 +1373,7 @@ Begin
         oStyle.RowFormat.ApplyFormat(oStart);
       Result := oDocument.Pieces.Add(oStart.Link);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
     oReader.ConsumeOpen;
 
@@ -1390,7 +1390,7 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
     oReader.ConsumeClose;
   End;
@@ -1416,7 +1416,7 @@ Begin
         oStyle.CellFormat.ApplyFormat(oStart);
       Result := oDocument.Pieces.Add(oStart.Link);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     oReader.ConsumeOpen;
@@ -1427,7 +1427,7 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
     oReader.ConsumeClose;
   End;
@@ -1552,7 +1552,7 @@ Begin
 
       Result := oDocument.Pieces.Add(oParagraph.Link);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
     oReader.ConsumeClose;
     If bHasStyle Then
@@ -1656,7 +1656,7 @@ Begin
       oText.Content := Splitter.Next;
       oDocument.Pieces.Add(oText.Link);
     Finally
-      oText.Free;
+      oText.free;
     End;
   End;
 End;
@@ -1672,7 +1672,7 @@ Begin
     // TODO: apply style to break piece
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -1704,12 +1704,12 @@ Begin
         oStop.Style := oStart.Style;
         oStop.Font.Assign(oStart.Font);
       Finally
-        oStart.Free;
+        oStart.free;
       End;
 
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   End;
 End;
@@ -1724,7 +1724,7 @@ Begin
     // TODO: Read style
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 
   oReader.SkipNext;
@@ -1805,7 +1805,7 @@ Begin
 
             oStyle.ListFormat.Add(oLevelFormat.Link);
           Finally
-            oLevelFormat.Free;
+            oLevelFormat.free;
           End;
         End;
 
@@ -1816,7 +1816,7 @@ Begin
     End;
     Result := oStyle.Link;
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -1889,7 +1889,7 @@ Begin
     End;
     Result := oStyle.Link;
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -2078,12 +2078,12 @@ End;
 
 Destructor TWPOdtWriter.Destroy;
 Begin
-  FOdtAdapter.Free;
+  FOdtAdapter.free;
 
-  FFontDecls.Free;
-  FDefaultStyles.Free;
-  FStyles.Free;
-  FStyleStack.Free;
+  FFontDecls.free;
+  FDefaultStyles.free;
+  FStyles.free;
+  FStyleStack.free;
 
   Inherited;
 End;
@@ -2126,10 +2126,10 @@ Begin
       oFormatter.HasWhitespace := True;
       WriteStyleSubDoc(oFormatter);
     Finally
-      oFormatter.Free;
+      oFormatter.free;
     End;
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 
   FOdtAdapter.Finish(Stream);
@@ -2156,11 +2156,11 @@ Begin
       Inherited;
       FFormatter.ProduceClose('office:document-content');
     Finally
-      FFormatter.Free;
+      FFormatter.free;
       FFormatter := Nil;
     End;
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 End;
 
@@ -2597,7 +2597,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2632,7 +2632,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2674,7 +2674,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2707,7 +2707,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2740,7 +2740,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2773,7 +2773,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2934,7 +2934,7 @@ End;
 
 Destructor TOdtReaderAdapter.Destroy;
 Begin
-  FPackage.Free;
+  FPackage.free;
 
   Inherited;
 End;
@@ -3003,10 +3003,10 @@ Begin
     Try
       ReadManifest(oExtractor);
     Finally
-      oExtractor.Free;
+      oExtractor.free;
     End;
   Finally
-    oManifestStream.Free;
+    oManifestStream.free;
   End;
 End;
 
@@ -3025,7 +3025,7 @@ Begin
     oReader.Stream := oStream.Link;
     oReader.ReadZip;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 
   LoadManifest;
@@ -3052,10 +3052,10 @@ Begin
     Try
       Result := oResult.Link;
     Finally
-      oResult.Free;
+      oResult.free;
     End
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3082,7 +3082,7 @@ End;
 
 Destructor TOdtWriterAdapter.Destroy;
 Begin
-  FPackage.Free;
+  FPackage.free;
 
   Inherited;
 End;
@@ -3107,7 +3107,7 @@ Begin
     oWriter.Stream := oStream.Link;
     oWriter.WriteZip;
   Finally
-    oWriter.Free;
+    oWriter.free;
   End;
 
   FPackage.Clear;
@@ -3129,7 +3129,7 @@ Begin
     FPackage.Add(oPart.Link);
     Result := oPart;
   Finally
-    oPart.Free;
+    oPart.free;
   End;
 End;
 
@@ -3172,10 +3172,10 @@ Begin
         End;
       oFormatter.ProduceClose('manifest:manifest');
     Finally
-      oFormatter.Free;
+      oFormatter.free;
     End;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3191,7 +3191,7 @@ Begin
     sText := 'application/vnd.oasis.opendocument.text';
     oStream.Write(Pointer(sText)^, Length(sText));
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3258,7 +3258,7 @@ Begin
     End;
     Result := oBorder.Link;
   Finally
-    oBorder.Free;
+    oBorder.free;
   End;
 End;
 
@@ -3856,12 +3856,12 @@ End;
 
 Destructor TOdtStyle.Destroy;
 Begin
-  FTextFormat.Free;
-  FParagraphFormat.Free;
-  FListFormat.Free;
-  FTableFormat.Free;
-  FRowFormat.Free;
-  FCellFormat.Free;
+  FTextFormat.free;
+  FParagraphFormat.free;
+  FListFormat.free;
+  FTableFormat.free;
+  FRowFormat.free;
+  FCellFormat.free;
 
   Inherited;
 End;
@@ -3882,7 +3882,7 @@ End;
 
 Procedure TOdtStyle.SetListFormat(oFormat: TOdtListFormat);
 Begin
-  FListFormat.Free;
+  FListFormat.free;
   FListFormat := oFormat;
 End;
 
@@ -3902,7 +3902,7 @@ End;
 
 Procedure TOdtStyle.SetParaFormat(oFormat: TOdtParagraphFormat);
 Begin
-  FParagraphFormat.Free;
+  FParagraphFormat.free;
   FParagraphFormat := oFormat;
 End;
 
@@ -3922,7 +3922,7 @@ End;
 
 Procedure TOdtStyle.SetTextFormat(oFormat: TOdtTextFormat);
 Begin
-  FTextFormat.Free;
+  FTextFormat.free;
   FTextFormat := oFormat;
 End;
 
@@ -3947,7 +3947,7 @@ End;
 
 Procedure TOdtStyle.SetCellFormat(oFormat: TOdtTableCellFormat);
 Begin
-  FCellFormat.Free;
+  FCellFormat.free;
   FCellFormat := oFormat;
 End;
 
@@ -3967,7 +3967,7 @@ End;
 
 Procedure TOdtStyle.SetRowFormat(oFormat: TOdtTableRowFormat);
 Begin
-  FRowFormat.Free;
+  FRowFormat.free;
   FRowFormat := oFormat;
 End;
 
@@ -3987,7 +3987,7 @@ End;
 
 Procedure TOdtStyle.SetTableFormat(oFormat: TOdtTableFormat);
 Begin
-  FTableFormat.Free;
+  FTableFormat.free;
   FTableFormat := oFormat;
 End;
 
@@ -4289,7 +4289,7 @@ Begin
     Try
       Self.Add(oLevelFormat.Link);
     Finally
-      oLevelFormat.Free;
+      oLevelFormat.free;
     End;
   End;
 End;
@@ -4307,7 +4307,7 @@ Begin
   Try
     Self.Add(oLevelFormat.Link);
   Finally
-    oLevelFormat.Free;
+    oLevelFormat.free;
   End;
 End;
 
@@ -4659,7 +4659,7 @@ Begin
     Try
       Result := oCell.TopBorder.IsCompatible(oBorder);
     Finally
-      oBorder.Free;
+      oBorder.free;
       Inc(iIndex);
     End;
   End;

@@ -129,7 +129,7 @@ implementation
 
 destructor TFHIRGraphDefinitionParser5.Destroy;
 begin
-  FLexer.Free;
+  FLexer.free;
   inherited;
 end;
 
@@ -169,12 +169,12 @@ begin
           expr.free;
         end;
       finally
-        fpp.Free;
+        fpp.free;
       end;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -191,7 +191,7 @@ begin
       raise FLexer.error('Unexpected content');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 
 end;
@@ -238,7 +238,7 @@ begin
         expr.free;
       end;
     finally
-      fpp.Free;
+      fpp.free;
     end;
     if (FLexer.takeToken('cardinality')) then
     begin
@@ -267,7 +267,7 @@ begin
     until not FLexer.hasToken(';');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -327,7 +327,7 @@ begin
     readLinkList(tgt.link_List);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -344,7 +344,7 @@ begin
     writeDefinition(b, t);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -508,36 +508,36 @@ end;
 
 destructor TFHIRGraphDefinitionEngine4.Destroy;
 begin
-  FAppinfo.Free;
-  FBundle.Free;
-  FDefinition.Free;
-  FStart.Free;
-  FPathEngine.Free;
-  FContext.Free;
+  FAppinfo.free;
+  FBundle.free;
+  FDefinition.free;
+  FStart.free;
+  FPathEngine.free;
+  FContext.free;
   inherited;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetAppInfo(const Value: TFslObject);
 begin
-  FAppinfo.Free;
+  FAppinfo.free;
   FAppinfo := Value;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetBundle(const Value: TFHIRBundle);
 begin
-  FBundle.Free;
+  FBundle.free;
   FBundle := Value;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetDefinition(const Value: TFhirGraphDefinition);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Value;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetStart(const Value: TFHIRResource);
 begin
-  FStart.Free;
+  FStart.free;
   FStart := Value;
 end;
 
@@ -612,7 +612,7 @@ begin
       end;
     end;
   finally
-    p.Free;
+    p.free;
   end;
   check(refed, 'no use of {ref} found');
 end;
@@ -670,16 +670,16 @@ begin
               end;
             end;
           finally
-            tgtCtxt.Free;
-            res.Free;
+            tgtCtxt.free;
+            res.free;
           end;
         end;
       end;
     finally
-      matches.Free;
+      matches.free;
     end;
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -696,9 +696,9 @@ begin
   check(link.targetList[0].params.Contains('{ref}'), 'If there is no path, the target must have parameters that include a parameter using {ref} at '+focusPath);
   path := focusPath+' -> '+CODES_TFhirAllResourceTypesEnum[link.targetList[0].type_]+'?'+link.targetList[0].params;
 
-  list := TFslList<TFHIRResourceV>.create;
+  list := TFslList<TFHIRResourceV>.Create;
   try
-    params := TFslList<TGraphQLArgument>.create;
+    params := TFslList<TGraphQLArgument>.Create;
     try
       parseParams(params, link.targetList[0].params, focus);
       FOnListResources(appInfo, CODES_TFhirAllResourceTypesEnum[link.targetList[0].type_], params, list);
@@ -717,7 +717,7 @@ begin
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 

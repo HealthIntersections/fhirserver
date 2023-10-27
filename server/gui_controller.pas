@@ -106,11 +106,11 @@ implementation
 constructor TFHIRServerController.Create(ini: TFHIRServerConfigFile);
 begin
   inherited Create;
-  FLock := TFslLock.create('GUI controller');
+  FLock := TFslLock.Create('GUI controller');
   FThread := nil;
   FIni := ini;
-  FMessagesIn := TStringList.create;
-  FMessages := TStringList.create;
+  FMessagesIn := TStringList.Create;
+  FMessages := TStringList.Create;
   Logging.addListener(self);
   Logging.LogToConsole := false;
   ForcedNpmCacheMode := npmModeUser;
@@ -119,10 +119,10 @@ end;
 destructor TFHIRServerController.Destroy;
 begin
   Logging.removeListener(self);
-  FMessages.Free;
-  FMessagesIn.Free;
-  FIni.Free;
-  FLock.Free;
+  FMessages.free;
+  FMessagesIn.free;
+  FIni.free;
+  FLock.free;
   inherited;
 end;
 
@@ -179,7 +179,7 @@ begin
       if FThread <> nil then
       begin
         FThread.StopAndWait(50);
-        FThread.Free;
+        FThread.free;
         FThread := nil;
       end;
     end;
@@ -207,7 +207,7 @@ end;
 //
 function localFile(s : String) : String;
 begin
-  result := FilePath([executableDirectory(), s]);
+  result := FilePath([TCommandLineParameters.execDir(), s]);
 end;
 
 function makeUcum : TFHIRServerConfigSection;
@@ -269,14 +269,14 @@ begin
 //  pw := 'xx';
 //  em := 'none@nowhere.org';
 //
-//  db := TFDBSQLiteManager.create('db', localFile('fhir-server-gui.db'), true);
+//  db := TFDBSQLiteManager.Create('db', localFile('fhir-server-gui.db'), true);
 //  try
-//    Logging.log('Ínstall database');
+//    Logging.log('ï¿½nstall database');
 //    scim := TSCIMServer.Create(db.Link, salt, 'localhost', dr, true);
 //    try
 //      conn := db.GetConnection('setup');
 //      try
-//        dbi := TFHIRDatabaseInstaller.create(conn, TFHIRFactoryR4.create, TTerminologyServerFactory.create(fhirVersionRelease4));
+//        dbi := TFHIRDatabaseInstaller.Create(conn, TFHIRFactoryR4.create, TTerminologyServerFactory.Create(fhirVersionRelease4));
 //        try
 //          dbi.Bases.Add('http://healthintersections.com.au/fhir/argonaut');
 //          dbi.Bases.Add('http://hl7.org/fhir');
@@ -297,7 +297,7 @@ begin
 //         end;
 //      end;
 //    finally
-//      scim.Free;
+//      scim.free;
 //    end;
 //  finally
 //    db.free;
@@ -307,9 +307,9 @@ end;
 procedure TFHIRServerController.checkOk;
 begin
   if not StringIsInteger16(FIni.web['http'].value) then
-    raise EFslException.create('Port must be a Positive Integer between 0 and 65535');
+    raise EFslException.Create('Port must be a Positive Integer between 0 and 65535');
 //  if not folderExists(FIni.kernel['utg-folder']) then
-//    raise EFslException.create('UTG Folder "'+FIni.kernel['utg-folder']+'" not found');
+//    raise EFslException.Create('UTG Folder "'+FIni.kernel['utg-folder']+'" not found');
 
   // we're going to run r4, on /r4, on the nominated port
   // we're going to trample all over the ini file to make sure it's set up correct
@@ -348,7 +348,7 @@ end;
 constructor TFHIRServerControllerThread.Create(controller: TFHIRServerController);
 begin
   FController := controller;
-  inherited create;
+  inherited Create;
 end;
 
 procedure TFHIRServerControllerThread.Execute;
@@ -377,13 +377,13 @@ begin
 //        end;
 //        s := 'Stopping';
 //        Logging.log('Stopping');
-//        FController.FStats.Free;
+//        FController.FStats.free;
 //        FController.FStats := nil;
 //        FController.setStatus(ssStopping);
 //        svc.Stop('User Command');
 //        svc.DoStop;
 //      finally
-//        svc.Free;
+//        svc.free;
 //      end;
 //      Logging.log('Stopped');
 //    except

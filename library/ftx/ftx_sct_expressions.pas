@@ -226,7 +226,7 @@ begin
     result.copyFrom(self);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -342,7 +342,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -384,15 +384,15 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
 destructor TSnomedExpression.Destroy;
 begin
-  FrefinementGroups.Free;
-  Frefinements.Free;
-  Fconcepts.Free;
+  FrefinementGroups.free;
+  Frefinements.free;
+  Fconcepts.free;
   inherited;
 end;
 
@@ -557,8 +557,8 @@ end;
 
 destructor TSnomedRefinement.Destroy;
 begin
-  Fname.Free;
-  Fvalue.Free;
+  Fname.free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -578,13 +578,13 @@ end;
 
 procedure TSnomedRefinement.SetName(const Value: TSnomedConcept);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := value;
 end;
 
 procedure TSnomedRefinement.SetValue(const Value: TSnomedExpression);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := value;
 end;
 
@@ -607,7 +607,7 @@ begin
       result.refinements.Add(refinement.canonical);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -638,13 +638,13 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
 destructor TSnomedRefinementGroup.Destroy;
 begin
-  Frefinements.Free;
+  Frefinements.free;
   inherited;
 end;
 
@@ -733,7 +733,7 @@ begin
     result.stop := cursor;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -809,7 +809,7 @@ begin
     result.stop := cursor;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -824,7 +824,7 @@ begin
   else
   begin
     result := expression;
-//    result := TSnomedExpression.create;
+//    result := TSnomedExpression.Create;
 //    try
 //      result.start := cursor;
 //      result.concepts.Add(concept);

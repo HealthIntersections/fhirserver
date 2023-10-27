@@ -137,7 +137,7 @@ Type
 
   TFHIRPluginValidatorContext = class
   public
-    class function create(factory : TFHIRFactory; TerminologyServer : String) : TFHIRWorkerContextWithFactory;
+    class function Create(factory : TFHIRFactory; TerminologyServer : String) : TFHIRWorkerContextWithFactory;
   end;
 
 implementation
@@ -155,28 +155,28 @@ begin
   if (FServer = nil) or (FCapabilityStatement = nil) then
   begin
     if FServer <> nil then
-      FServer.Free;
+      FServer.free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as fhir2_client.TFhirClient2;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> fhir2_constants.FHIR_GENERATED_VERSION then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+fhir2_constants.FHIR_GENERATED_VERSION+')');
+      raise EFHIRException.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+fhir2_constants.FHIR_GENERATED_VERSION+')');
   end;
 end;
 
 constructor TFHIRPluginValidatorContextR2.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<fhir2_resources.TFHIRValueSet>.create('ValueSets');
-  FCodeSystems := TFslMap<fhir2_resources.TFHIRValueSet>.create('CodeSystems');
+  FValueSets := TFslMap<fhir2_resources.TFHIRValueSet>.Create('ValueSets');
+  FCodeSystems := TFslMap<fhir2_resources.TFHIRValueSet>.Create('CodeSystems');
   FUrl := TerminologyServer;
 end;
 
 destructor TFHIRPluginValidatorContextR2.Destroy;
 begin
-  FValueSets.Free;
-  FServer.Free;
-  FCapabilityStatement.Free;
-  FCodeSystems.Free;
+  FValueSets.free;
+  FServer.free;
+  FCapabilityStatement.free;
+  FCodeSystems.free;
   inherited;
 end;
 
@@ -186,8 +186,8 @@ var
 begin
   cs := FCodeSystems[url];
   if cs = nil then
-    raise ETerminologyError.create('Unable to resolve code system '+url);
-  result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+    raise ETerminologyError.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.Create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
 function TFHIRPluginValidatorContextR2.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
@@ -196,7 +196,7 @@ var
 begin
   vs := FValueSets[url];
   if vs = nil then
-    raise ETerminologyError.create('Unable to resolve value set '+url);
+    raise ETerminologyError.Create('Unable to resolve value set '+url);
   result := Factory.wrapValueSet(vs.link);
 end;
 
@@ -212,7 +212,7 @@ begin
     pIn.AddParameter('_limit', '10');
     result := FServer.operation(fhir2_resources_base.frtValueSet, 'expand', pIn) as fhir2_resources.TFhirValueSet;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 
 end;
@@ -315,10 +315,10 @@ begin
         else
           result := TValidationResult.Create(isError, pOut.str['message']);
       finally
-        pOut.Free;
+        pOut.free;
       end;
     finally
-      pIn.Free;
+      pIn.free;
     end;
   end;
 end;
@@ -344,10 +344,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -367,10 +367,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -391,7 +391,7 @@ begin
           validator.prepare(vsw, params);
           p := validator.check(system, version, code, false);
           try
-            res := TValidationResult.create;
+            res := TValidationResult.Create;
             if p.bool('result') then
               res.Severity := isInformation
             else
@@ -400,16 +400,16 @@ begin
               res.Message := p.str('message');
             end;
           finally
-            p.Free;
+            p.free;
           end;
         finally
-          params.Free;
+          params.free;
         end;
       finally
-        validator.Free;
+        validator.free;
       end;
     finally
-      vsw.Free;
+      vsw.free;
     end;
     result := true;
   except
@@ -433,10 +433,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -447,28 +447,28 @@ begin
   if (FServer = nil) or (FCapabilityStatement = nil) then
   begin
     if FServer <> nil then
-      FServer.Free;
+      FServer.free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as fhir3_client.TFhirClient3;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> fhir3_constants.FHIR_GENERATED_VERSION then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+fhir3_constants.FHIR_GENERATED_VERSION+')');
+      raise EFHIRException.Create('Terminology Server / Plug-in Version mismatch ('+FCapabilityStatement.fhirVersion+' / '+fhir3_constants.FHIR_GENERATED_VERSION+')');
   end;
 end;
 
 constructor TFHIRPluginValidatorContextR3.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<fhir3_resources.TFHIRValueSet>.create('Value Sets');
-  FCodeSystems := TFslMap<fhir3_resources.TFHIRCodeSystem>.create('Code Systems');
+  FValueSets := TFslMap<fhir3_resources.TFHIRValueSet>.Create('Value Sets');
+  FCodeSystems := TFslMap<fhir3_resources.TFHIRCodeSystem>.Create('Code Systems');
   FUrl := TerminologyServer;
 end;
 
 destructor TFHIRPluginValidatorContextR3.Destroy;
 begin
-  FValueSets.Free;
-  FServer.Free;
-  FCapabilityStatement.Free;
-  FCodeSystems.Free;
+  FValueSets.free;
+  FServer.free;
+  FCapabilityStatement.free;
+  FCodeSystems.free;
   inherited;
 end;
 
@@ -478,8 +478,8 @@ var
 begin
   cs := FCodeSystems[url];
   if cs = nil then
-    raise ETerminologyError.create('Unable to resolve code system '+url);
-  result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+    raise ETerminologyError.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.Create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
 function TFHIRPluginValidatorContextR3.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
@@ -488,7 +488,7 @@ var
 begin
   vs := FValueSets[url];
   if vs = nil then
-    raise ETerminologyError.create('Unable to resolve value set '+url);
+    raise ETerminologyError.Create('Unable to resolve value set '+url);
   result := Factory.wrapValueSet(vs.link);
 end;
 
@@ -504,7 +504,7 @@ begin
     pIn.AddParameter('_limit', '10');
     result := FServer.operation(fhir3_resources_base.frtValueSet, 'expand', pIn) as fhir3_resources.TFhirValueSet;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 
 end;
@@ -607,10 +607,10 @@ begin
         else
           result := TValidationResult.Create(isError, pOut.str['message']);
       finally
-        pOut.Free;
+        pOut.free;
       end;
     finally
-      pIn.Free;
+      pIn.free;
     end;
   end;
 end;
@@ -637,10 +637,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -660,10 +660,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -684,7 +684,7 @@ begin
           validator.prepare(vsw, params);
           p := validator.check(system, version, code, false);
           try
-            res := TValidationResult.create;
+            res := TValidationResult.Create;
             if p.bool('result') then
               res.Severity := isInformation
             else
@@ -693,16 +693,16 @@ begin
               res.Message := p.str('message');
             end;
           finally
-            p.Free;
+            p.free;
           end;
         finally
-          params.Free;
+          params.free;
         end;
       finally
-        validator.Free;
+        validator.free;
       end;
     finally
-      vsw.Free;
+      vsw.free;
     end;
     result := true;
   except
@@ -726,10 +726,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -740,28 +740,28 @@ begin
   if (FServer = nil) or (FCapabilityStatement = nil) then
   begin
     if FServer <> nil then
-      FServer.Free;
+      FServer.free;
     FServer := Factory.makeClient(self.link, FUrl, fctWinInet, ffJson, 5000) as fhir4_client.TFhirClient4;
     FCapabilityStatement := FServer.conformance(true);
     if FCapabilityStatement.fhirVersion <> FHIR_ENUM_VERSIONS[factory.version] then
-      raise EFHIRException.create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
+      raise EFHIRException.Create('Terminology Server / Plug-in Version mismatch ('+CODES_TFhirFHIRVersionEnum[FCapabilityStatement.fhirVersion]+' / '+CODES_TFHIRVersion[factory.version]+')');
   end;
 end;
 
 constructor TFHIRPluginValidatorContextR4.Create(factory : TFHIRFactory; TerminologyServer : String);
 begin
   inherited Create(factory);
-  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.create('R4.ValueSets');
-  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.create('R4.CodeSystems');
+  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.Create('R4.ValueSets');
+  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.Create('R4.CodeSystems');
   FUrl := TerminologyServer;
 end;
 
 destructor TFHIRPluginValidatorContextR4.Destroy;
 begin
-  FValueSets.Free;
-  FServer.Free;
-  FCapabilityStatement.Free;
-  FCodeSystems.Free;
+  FValueSets.free;
+  FServer.free;
+  FCapabilityStatement.free;
+  FCodeSystems.free;
   inherited;
 end;
 
@@ -771,8 +771,8 @@ var
 begin
   cs := FCodeSystems[url];
   if cs = nil then
-    raise ETerminologyError.create('Unable to resolve code system '+url);
-  result := TFhirCodeSystemProvider.create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+    raise ETerminologyError.Create('Unable to resolve code system '+url);
+  result := TFhirCodeSystemProvider.Create(Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
 function TFHIRPluginValidatorContextR4.doGetVs(sender: TObject; url: String): TFHIRValueSetW;
@@ -781,7 +781,7 @@ var
 begin
   vs := FValueSets[url];
   if vs = nil then
-    raise ETerminologyError.create('Unable to resolve value set '+url);
+    raise ETerminologyError.Create('Unable to resolve value set '+url);
   result := Factory.wrapValueSet(vs.link);
 end;
 
@@ -797,7 +797,7 @@ begin
     pIn.AddParameter('_limit', '10');
     result := FServer.operation(fhir4_resources_base.frtValueSet, 'expand', pIn) as fhir4_resources.TFhirValueSet;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 
 end;
@@ -900,10 +900,10 @@ begin
         else
           result := TValidationResult.Create(isError, pOut.str['message']);
       finally
-        pOut.Free;
+        pOut.free;
       end;
     finally
-      pIn.Free;
+      pIn.free;
     end;
   end;
 end;
@@ -930,10 +930,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -953,10 +953,10 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
@@ -977,7 +977,7 @@ begin
           validator.prepare(vsw, params);
           p := validator.check(system, version, code, false);
           try
-            res := TValidationResult.create;
+            res := TValidationResult.Create;
             if p.bool('result') then
               res.Severity := isInformation
             else
@@ -986,16 +986,16 @@ begin
               res.Message := p.str('message');
             end;
           finally
-            p.Free;
+            p.free;
           end;
         finally
-          params.Free;
+          params.free;
         end;
       finally
-        validator.Free;
+        validator.free;
       end;
     finally
-      vsw.Free;
+      vsw.free;
     end;
     result := true;
   except
@@ -1019,23 +1019,23 @@ begin
       else
         result := TValidationResult.Create(isError, pOut.str['message']);
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 
 { TFHIRPluginValidatorContext }
 
-class function TFHIRPluginValidatorContext.create(factory: TFHIRFactory; TerminologyServer: String): TFHIRWorkerContextWithFactory;
+class function TFHIRPluginValidatorContext.Create(factory: TFHIRFactory; TerminologyServer: String): TFHIRWorkerContextWithFactory;
 begin
   case factory.version of
     fhirVersionRelease2 : result := TFHIRPluginValidatorContextR2.Create(factory, TerminologyServer);
     fhirVersionRelease3 : result := TFHIRPluginValidatorContextR3.Create(factory, TerminologyServer);
     fhirVersionRelease4 : result := TFHIRPluginValidatorContextR4.Create(factory, TerminologyServer);
   else
-    raise EFHIRException.create('Unexpected version');
+    raise EFHIRException.Create('Unexpected version');
   end;
 end;
 

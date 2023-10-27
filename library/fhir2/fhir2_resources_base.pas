@@ -312,7 +312,8 @@ function AddItem(value : TFhirResource): TFhirResource; overload;
     function fhirType : string; override;
     function isDomainResource : boolean; override;
     function hasExtension(url : string) : boolean; override;
-    function getExtensionString(url : String) : String; override;
+    function getExtensionString(url : String) : String; override; 
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
     function getExtensionsV : TFslList<TFHIRObject>; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
@@ -646,7 +647,7 @@ begin
   if value <> '' then
   begin
     if FId = nil then
-      FId := TFhirId.create;
+      FId := TFhirId.Create;
     FId.value := value
   end
   else if FId <> nil then
@@ -678,7 +679,7 @@ begin
   if value <> '' then
   begin
     if FImplicitRules = nil then
-      FImplicitRules := TFhirUri.create;
+      FImplicitRules := TFhirUri.Create;
     FImplicitRules.value := value
   end
   else if FImplicitRules <> nil then
@@ -704,7 +705,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -722,7 +723,7 @@ end;
 
 destructor TFhirResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -827,9 +828,9 @@ end;
 destructor TFhirDomainResource.Destroy;
 begin
   FText.free;
-  FContainedList.Free;
-  FExtensionList.Free;
-  FModifierExtensionList.Free;
+  FContainedList.free;
+  FExtensionList.free;
+  FModifierExtensionList.free;
   inherited;
 end;
 
@@ -957,13 +958,13 @@ function TFhirDomainResource.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -971,14 +972,14 @@ function TFhirDomainResource.getExtensionsV(url: String): TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1002,6 +1003,25 @@ begin
         raise EFHIRException.create('Duplicate extension '+url)
       else
         result := ex.value.primitiveValue;
+    end;
+  end;
+end;
+
+function TFhirDomainResource.getExtensionValue(url: String): TFHIRObject;
+var
+  ex : TFhirExtension;
+begin
+  result := nil;
+  for ex in ExtensionList do
+  begin
+    if ex.url = url then
+    begin
+      if not ex.value.isPrimitive then
+        raise EFHIRException.Create('Complex extension '+url)
+      else if result <> nil then
+        raise EFHIRException.Create('Duplicate extension '+url)
+      else
+        result := ex.value;
     end;
   end;
 end;
@@ -1218,7 +1238,7 @@ end;
 
 destructor TFhirDomainResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 

@@ -73,14 +73,14 @@ implementation
 
 destructor THealthcareCardUtilities.Destroy;
 begin
-  FJWKList.Free;
-  FFactory.Free;
+  FJWKList.free;
+  FFactory.free;
   inherited;
 end;
 
 procedure THealthcareCardUtilities.SetFactory(const Value: TFHIRFactory);
 begin
-  FFactory.Free;
+  FFactory.free;
   FFactory := Value;
 end;
 
@@ -104,11 +104,11 @@ begin
   result := result + '],"credentialSubject":{'+
      '"fhirVersion":"4.0.1",'+
      '"fhirBundle":';
-  json := FFactory.makeComposer(nil, ffJson, defLang, OutputStyleNormal);
+  json := FFactory.makeComposer(nil, ffJson, nil, OutputStyleNormal);
   try
     result := result + json.Compose(card.bundle);
   finally
-    json.Free;
+    json.free;
   end;
   result := result + '}}}';
 end;
@@ -129,7 +129,7 @@ end;
 
 procedure THealthcareCardUtilities.SetJWKList(AValue: TJWKList);
 begin
-  FJWKList.Free;
+  FJWKList.free;
   FJWKList := AValue;
 end;
 
@@ -150,7 +150,7 @@ begin
   begin
     json := TInternetFetcher.fetchJson(URLPath([jwt.issuer, '.well-known', 'jwks.json']));
     try
-      jwks := TJWKList.create(json);
+      jwks := TJWKList.Create(json);
       try
         FJWKList.AddAll(jwks);
       finally
@@ -175,10 +175,10 @@ begin
   bmp := TBitmap.Create;
   try
     card.toBmp(bmp);
-    mem := TBytesStream.create;
+    mem := TBytesStream.Create;
     try
       {$IFDEF FPC}
-      png := TPortableNetworkGraphic.create; //((bmp.Width, bmp.Height);
+      png := TPortableNetworkGraphic.Create; //((bmp.Width, bmp.Height);
       try
         png.Assign(bmp);
         png.SaveToStream(mem); //, TFPWriterPNG.create);
@@ -191,7 +191,7 @@ begin
         png.Assign(bmp);
         png.SaveToStream(mem);
       finally
-        png.Free;
+        png.free;
       end;
       {$ENDIF}
       result := mem.Bytes;
@@ -199,7 +199,7 @@ begin
       mem.free;
     end;
   finally
-    bmp.Free;
+    bmp.free;
   end;
 end;
 
@@ -213,7 +213,7 @@ begin
     b := hash.HashString(card.jws);
     result := Base64URL(idb(b));
   finally
-    hash.Free;
+    hash.free;
   end;
 end;
 
@@ -229,7 +229,7 @@ begin
   try
     card.payloadSource := TJSONWriter.writeObjectStr(j, true);
   finally
-    j.Free;
+    j.free;
   end;
   bytes := DeflateRfc1951(TEncoding.UTF8.GetBytes(payload));
   card.jws := TJWTUtils.encodeJWT('{"alg":"ES256","zip":"DEF","kid":"'+jwk.id+'"}', bytes, jwt_es256, jwk);
@@ -258,7 +258,7 @@ begin
       result.issueDate := TFslDateTime.make(dt1+dt2, dttzUTC);
       vc := p.obj['vc'];
       if (vc = nil) then
-        raise EFHIRException.create('"vc" not found in JWT');
+        raise EFHIRException.Create('"vc" not found in JWT');
       result.types := [];
       for i := 0 to vc.forceArr['type'].Count - 1 do
         result.types := result.types + [readCredential(vc.arr['type'].Value[i])];
@@ -267,11 +267,11 @@ begin
       result.jws := token;
       cs := vc.obj['credentialSubject'];
       if (cs = nil) then
-        raise EFHIRException.create('"credentialSubject" not found in JWT');
+        raise EFHIRException.Create('"credentialSubject" not found in JWT');
       if (TFHIRVersions.getMajMin(Factory.versionString) <> TFHIRVersions.getMajMin(cs.str['fhirVersion'])) then
-        raise EFHIRException.create('Healthcard fhir version is not supported (found '+cs.str['fhirVersion']+' expecting '+Factory.versionString+')');
+        raise EFHIRException.Create('Healthcard fhir version is not supported (found '+cs.str['fhirVersion']+' expecting '+Factory.versionString+')');
 
-      j := Factory.makeParser(nil, ffjson, defLang) as TFHIRJsonParserBase;
+      j := Factory.makeParser(nil, ffjson, nil) as TFHIRJsonParserBase;
       try
         j.Parse(cs.obj['fhirBundle']);
         result.bundle := j.resource.link;
@@ -284,7 +284,7 @@ begin
       result.free;
     end;
   finally
-    jwt.Free;
+    jwt.free;
   end;
 end;
 
@@ -296,7 +296,7 @@ var
 begin
   if not src.StartsWith('shc:/') then
     raise EFslException.Create('Unable to process smart health card (didn''t start with shc:/)');
-  b := TFslStringBuilder.create;
+  b := TFslStringBuilder.Create;
   try
     for i := 0 to ((length(src)-5) div 2) - 1 do
     begin

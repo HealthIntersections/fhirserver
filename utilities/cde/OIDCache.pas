@@ -59,7 +59,7 @@ begin
         cache.AddOrSetValue(l, r);
         end;
     finally
-      ts.Free;
+      ts.free;
     end;
   end;
 end;
@@ -72,7 +72,7 @@ end;
 
 procedure start;
 begin
-  cache := TFslStringDictionary.create;
+  cache := TFslStringDictionary.Create;
 end;
 
 procedure stop;

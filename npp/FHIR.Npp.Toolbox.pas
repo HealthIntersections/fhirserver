@@ -233,8 +233,8 @@ end;
 
 procedure TFHIRToolbox.FormDestroy(Sender: TObject);
 begin
-  FContext.Free;
-  FServers.Free;
+  FContext.free;
+  FServers.free;
   inherited;
 end;
 
@@ -288,13 +288,13 @@ begin
   else
   begin
     try
-      qry := TFHIRPathEngine.create(nil, nil);
+      qry := TFHIRPathEngine.Create(nil, nil);
       try
         qry.parse(edtPath.Text).free;
         edtPath.Color := clWindow;
         edtPath.Hint := 'FHIR Path Statement';
       finally
-        qry.Free;
+        qry.free;
       end;
       FHasValidPath := true;
       FNpp.reset;
@@ -327,14 +327,14 @@ begin
     try
       FHIRPathDocumentationForm.ShowModal;
     finally
-      FHIRPathDocumentationForm.Free;
+      FHIRPathDocumentationForm.free;
     end;
   end;
 end;
 
 procedure TFHIRToolbox.SetContext(const Value: TFHIRNppContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 

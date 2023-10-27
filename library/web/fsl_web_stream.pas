@@ -148,13 +148,13 @@ end;
 
 { TMimeBase }
 
-constructor TMimeBase.create;
+constructor TMimeBase.Create;
 begin
   inherited;
   FHeaders := TIdHeaderList.create(QuotePlain);
 end;
 
-destructor TMimeBase.destroy;
+destructor TMimeBase.Destroy;
 begin
   FreeAndNil(FHeaders);
   inherited;
@@ -215,15 +215,15 @@ end;
 
 { TMimePart }
 
-constructor TMimePart.create;
+constructor TMimePart.Create;
 begin
   inherited;
-  FContent := TFslBuffer.create;
+  FContent := TFslBuffer.Create;
 end;
 
-destructor TMimePart.destroy;
+destructor TMimePart.Destroy;
 begin
-  FContent.Free;
+  FContent.free;
   inherited;
 end;
 
@@ -329,7 +329,7 @@ end;
 
 procedure TMimePart.SetContent(const AValue: TFslBuffer);
 begin
-  FContent.Free;
+  FContent.free;
   FContent := AValue;
 end;
 
@@ -467,7 +467,7 @@ end;
 
 function TMimePartList.AddPart(AId: String): TMimePart;
 begin
-  result := TMimePart.create;
+  result := TMimePart.Create;
   result.Id := AId;
   add(result);
 end;
@@ -483,7 +483,7 @@ end;
 
 function TMimeMessage.AddPart(id: String): TMimePart;
 begin
-  result := TMimePart.create;
+  result := TMimePart.Create;
   FParts.Add(result);
   result.Id := id;
 end;
@@ -529,15 +529,15 @@ begin
     end;
 end;
 
-constructor TMimeMessage.create;
+constructor TMimeMessage.Create;
 begin
-  inherited create;
-  FParts := TFslList<TMimePart>.create;
+  inherited Create;
+  FParts := TFslList<TMimePart>.Create;
 end;
 
-destructor TMimeMessage.destroy;
+destructor TMimeMessage.Destroy;
 begin
-  FParts.Free;
+  FParts.free;
   inherited;
 end;
 
@@ -599,7 +599,7 @@ begin
     LTemp := ReadBytes(AStream, 2);
     if LTemp = EOL then
       begin
-      LPart := TMimePart.create;
+      LPart := TMimePart.Create;
       try
         LPart.ReadFromStream(AStream, FBoundary);
       except

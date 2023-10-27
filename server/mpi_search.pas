@@ -45,6 +45,8 @@ uses
 Type
   TMPICertainty = (mcNull, mcCertain, mcProbable, mcPossible);
 
+  { TMPISearchProcessor }
+
   TMPISearchProcessor = class (TFslObject)
   private
     // inputs
@@ -54,7 +56,7 @@ Type
     Ftypekey: integer;
     Findexes: TFHIRIndexInformation;
     Flink_: string;
-    Flang: THTTPLanguages;
+    FLangList : THTTPLanguageList;
     Fsession: TFHIRSession;
     FKey : String;
 
@@ -70,6 +72,7 @@ Type
 
     procedure SetConnection(const Value: TFDBConnection);
     procedure Setindexes(const Value: TFHIRIndexInformation);
+    procedure SetLangList(AValue: THTTPLanguageList);
     procedure Setparams(const Value: THTTPParameters);
     procedure Setsession(const Value: TFHIRSession);
 
@@ -91,7 +94,7 @@ Type
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
     property sessionCompartments : TFslList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : string read FbaseURL write FbaseURL;
-    property lang : THTTPLanguages read Flang write Flang;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
     property params : THTTPParameters read Fparams write Setparams;
     property indexes : TFHIRIndexInformation read Findexes write Setindexes;
     property session : TFHIRSession read Fsession write Setsession;
@@ -123,11 +126,12 @@ end;
 
 destructor TMPISearchProcessor.Destroy;
 begin
-  FSessionCompartments.Free;
-  FCompartment.Free;
-  FConnection.Free;
-  Findexes.Free;
-  Fsession.Free;
+  FSessionCompartments.free;
+  FCompartment.free;
+  FConnection.free;
+  Findexes.free;
+  Fsession.free;
+  FLangList.free;
 
   inherited;
 end;
@@ -142,7 +146,7 @@ begin
   FIdentifier := FParams['identifier'].ToLower;
 
   if (FFirstName = '') or (FFamilyName = '') or (FGender = '') then
-    raise EFHIRException.create('You must provide at least given name, family name, and gender for an MPI search');
+    raise EFHIRException.Create('You must provide at least given name, family name, and gender for an MPI search');
 
   Flink_ := '_query=mpi&family='+EncodeMIME(FFamilyName)+'&given='+EncodeMIME(FFirstName)+'&gender='+EncodeMIME(FGender)+'&birthdate='+EncodeMIME(FDateOfBirth)+'&identifier='+EncodeMIME(FIdentifier);
 
@@ -264,20 +268,26 @@ end;
 
 procedure TMPISearchProcessor.SetCompartment(const Value: TFHIRCompartmentId);
 begin
-  FCompartment.Free;
+  FCompartment.free;
   FCompartment := Value;
 end;
 
 procedure TMPISearchProcessor.SetConnection(const Value: TFDBConnection);
 begin
-  FConnection.Free;
+  FConnection.free;
   FConnection := Value;
 end;
 
 procedure TMPISearchProcessor.Setindexes(const Value: TFHIRIndexInformation);
 begin
-  Findexes.Free;
+  Findexes.free;
   Findexes := Value;
+end;
+
+procedure TMPISearchProcessor.SetLangList(AValue: THTTPLanguageList);
+begin
+  FLangList.free;
+  FLangList := AValue;
 end;
 
 procedure TMPISearchProcessor.Setparams(const Value: THTTPParameters);
@@ -285,16 +295,15 @@ begin
   Fparams := Value;
 end;
 
-
 procedure TMPISearchProcessor.Setsession(const Value: TFHIRSession);
 begin
-  Fsession.Free;
+  Fsession.free;
   Fsession := Value;
 end;
 
 procedure TMPISearchProcessor.SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
 begin
-  FSessionCompartments.Free;
+  FSessionCompartments.free;
   FSessionCompartments := Value;
 end;
 

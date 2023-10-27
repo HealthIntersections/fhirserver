@@ -34,9 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_http, fsl_versions, fsl_npm, fsl_threads,
+  fsl_base, fsl_versions, fsl_npm, fsl_threads,
   fhir_objects, fhir_factory, fhir_common, fhir_parser,
-  fhir2_types, fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other;
+  fhir2_types, fhir2_resources_base, fhir2_resources_canonical;
 
 type
   { TFHIRResourceProxy }
@@ -140,6 +140,7 @@ implementation
 
 uses
   fhir2_utilities, fsl_utilities, fhir_utilities;
+
 { TFHIRResourceProxy }
 
 constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
@@ -148,10 +149,9 @@ begin
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;
-  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited create(fhirVersionRelease2, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content);
+  inherited Create(fhirVersionRelease2, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;
@@ -160,10 +160,10 @@ end;
 
 destructor TFHIRResourceProxy.Destroy;
 begin
-  FFactory.Free;
-  FWorker.Free;
-  FInfo.Free;
-  FLock.Free;
+  FFactory.free;
+  FWorker.free;
+  FInfo.free;
+  FLock.free;
   inherited Destroy;
 end;
 
@@ -195,15 +195,15 @@ begin
   end;
   r := nil;
 
-  p := FFactory.makeParser(FWorker.link, ffJson, THTTPLanguages.Create('en'));
+  p := FFactory.makeParser(FWorker, ffJson, nil);
   try
-    stream := TFileStream.create(FInfo.filename, fmOpenRead);
+    stream := TFileStream.Create(FInfo.filename, fmOpenRead);
     try
       try
         r := p.parseResource(stream);
       except
         on e : Exception do
-          raise EFHIRException.create('Error reading '+fInfo.filename+': '+e.message);
+          raise EFHIRException.Create('Error reading '+fInfo.filename+': '+e.message);
       end;
     finally
       stream.free;
@@ -252,7 +252,7 @@ begin
   if RecogniseFHIRResourceName(rType, t) then
     result := fetchResource(t, url, version)
   else
-    raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
+    raise EFHIRException.Create('Unknown type '+rType+' in '+versionString);
 end;
 
 procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);
@@ -260,13 +260,13 @@ var
   l : TFslList<TFHIRStructureDefinition>;
   sd : TFHIRStructureDefinition;
 begin
-  l := TFslList<TFHIRStructureDefinition>.create;
+  l := TFslList<TFHIRStructureDefinition>.Create;
   try
     listStructures(l);
     for sd in l do
       list.add(factory.wrapStructureDefinition(sd.link));
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -278,13 +278,13 @@ begin
   inherited Create;
   FDefinition := definition;
   FName := definition.snapshot.elementList[0].path;
-  FSearchParameters := TFslList<TFHIRSearchParameter>.create;
+  FSearchParameters := TFslList<TFHIRSearchParameter>.Create;
 end;
 
 destructor TFHIRCustomResourceInformation.Destroy;
 begin
-  FSearchParameters.Free;
-  FDefinition.Free;
+  FSearchParameters.free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -299,15 +299,15 @@ end;
 constructor TFHIRMetadataResourceManager<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create('metadata resource manager '+t.className);
+  FMap := TFslMap<T>.Create('metadata resource manager '+t.className);
   FMap.defaultValue := T(nil);
-  FList := TFslList<T>.create;
+  FList := TFslList<T>.Create;
 end;
 
 destructor TFHIRMetadataResourceManager<T>.Destroy;
 begin
-  FMap.Free;
-  FList.Free;
+  FMap.free;
+  FList.free;
   inherited;
 end;
 
@@ -385,7 +385,7 @@ var
   tt, latest : T;
   lv : String;
 begin
-  rl := TFslList<T>.create;
+  rl := TFslList<T>.Create;
   try
     for tt in FList do
     begin

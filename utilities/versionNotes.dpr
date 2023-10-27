@@ -22,11 +22,11 @@ begin
       if LFileStream.Size > 0 then
         LFileStream.Read(result[1], LFileStream.size);
     finally
-      LFileStream.Free;
+      LFileStream.free;
     end;
   end
   else
-    raise Exception.create('File "' + filename + '" not found');
+    raise Exception.Create('File "' + filename + '" not found');
 end;
 
 procedure StringToFile(content : AnsiString; filename : String);
@@ -37,7 +37,7 @@ begin
   try
     LFileStream.write(content[1], length(content));
   finally
-    LFileStream.Free;
+    LFileStream.free;
   end;
 end;
 

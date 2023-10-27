@@ -113,7 +113,7 @@ begin
       // Assert.AreEqual(normalise(source), normalise(output), 'input and output do not match');
       Assert.IsTrue(true);
     finally
-      utils.Free;
+      utils.free;
     end;
   finally
     ctxt.free;
@@ -158,7 +158,7 @@ end;
 
 procedure TMapTransformTests.TearDown;
 begin
-  utils.Free;
+  utils.free;
   ctxt.free;
 end;
 
@@ -169,7 +169,7 @@ var
   s : TStringStream;
   cd : TFhirCodeableConcept;
 begin
-  x := TFHIRXmlParser.Create(ctxt.link, THTTPLanguages.create('en'));
+  x := TFHIRXmlParser.Create(ctxt.link, nil);
   try
     s := TStringStream.Create('<CD xmlns="urn:hl7-org:v3" code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>');
     try
@@ -182,13 +182,13 @@ begin
         assert.AreEqual(cd.codingList[0].code, '34133-9');
         assert.AreEqual(cd.codingList[0].system, URI_LOINC);
       finally
-        cd.Free;
+        cd.free;
       end;
     finally
-      s.Free;
+      s.free;
     end;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -216,7 +216,7 @@ end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise ETestCase.create('Not done yet');
+  raise ETestCase.Create('Not done yet');
 end;
 
 initialization

@@ -70,9 +70,9 @@ End;
 
 Destructor TUcumValidator.Destroy;
 Begin
-  FModel.Free;
-  Fhandlers.Free;
-  FResult.Free;
+  FModel.free;
+  Fhandlers.free;
+  FResult.free;
   Inherited;
 End;
 
@@ -130,13 +130,13 @@ Begin
         Try
           // what? oCan.Unit_;
         Finally
-          oCan.Free;
+          oCan.free;
         End;
       Finally
-        oConv.Free;
+        oConv.free;
       End;
     Finally
-      term.Free;
+      term.free;
     End;
   except
     on e : exception do

@@ -68,7 +68,7 @@ end;
 
 procedure TFhirHTTPClientTests4.TearDown;
 begin
-  FWorker.Free;
+  FWorker.free;
 end;
 
 function TFhirHTTPClientTests4.LoadResource(filename: String): TFHIRResource;
@@ -78,16 +78,16 @@ var
 begin
   f := TFileStream.Create(TestSettings.fhirTestFile(['r4', 'examples', filename]), fmOpenRead + fmShareDenyWrite);
   try
-    prsr := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+    prsr := TFHIRJsonParser.Create(nil, nil);
     try
       prsr.source := f;
       prsr.parse;
       result := prsr.resource.Link as TFhirResource;
     finally
-      prsr.Free;
+      prsr.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -97,8 +97,8 @@ var
   id : string;
   ok : boolean;
 begin
-  client.conformance(true).Free;
-  client.conformance(false).Free;
+  client.conformance(true).free;
+  client.conformance(false).free;
   patient := LoadResource('patient-example.json') as TFHIRPatient;
   try
     client.createResource(patient, id);
@@ -115,7 +115,7 @@ begin
   ok := false;
   client.deleteResource(frtPatient, id);
   try
-    client.readResource(frtPatient, id).Free;
+    client.readResource(frtPatient, id).free;
   except
     ok := true;
   end;
@@ -131,15 +131,15 @@ begin
   http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
   try
     http.UseIndy := false;
-    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    client := TFhirClient4.Create(FWorker.link, nil, http.link);
     try
       client.format := ffJson;
       testClient(client);
     finally
-      client.Free;
+      client.free;
     end;
   finally
-    http.Free;
+    http.free;
   end;
 end;
 
@@ -151,15 +151,15 @@ begin
   http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
   try
     http.UseIndy := false;
-    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    client := TFhirClient4.Create(FWorker.link, nil, http.link);
     try
       client.format := ffXml;
       testClient(client);
     finally
-      client.Free;
+      client.free;
     end;
   finally
-    http.Free;
+    http.free;
   end;
 end;
 {$ENDIF}
@@ -172,15 +172,15 @@ begin
    http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
   try
     http.UseIndy := true;
-    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    client := TFhirClient4.Create(FWorker.link, nil, http.link);
     try
       client.format := ffJson;
       //testClient(client);
     finally
-      client.Free;
+      client.free;
     end;
   finally
-    http.Free;
+    http.free;
   end;
 end;
 
@@ -192,15 +192,15 @@ begin
   http := TFHIRHTTPCommunicator.Create('http://test.fhir.org/r4');
   try
     http.UseIndy := true;
-    client := TFhirClient4.Create(FWorker.link, THTTPLanguages.Create('en'), http.link);
+    client := TFhirClient4.Create(FWorker.link, nil, http.link);
     try
       client.format := ffXml;
       //testClient(client);
     finally
-      client.Free;
+      client.free;
     end;
   finally
-    http.Free;
+    http.free;
   end;
 end;
 

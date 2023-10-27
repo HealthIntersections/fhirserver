@@ -189,7 +189,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="admin;tx"/>
+            <OtherUnitFiles Value="admin;tx;..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;..\library\fcomp\tests;modules;tests"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -208,7 +208,7 @@
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
-              <OptimizationLevel Value="3"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
@@ -316,34 +316,61 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="18">
       <Item1>
-        <PackageName Value="fcomp"/>
+        <PackageName Value="Pdfium"/>
       </Item1>
       <Item2>
-        <PackageName Value="laz.virtualtreeview_package"/>
+        <PackageName Value="markdowntests"/>
       </Item2>
       <Item3>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="idetester"/>
       </Item3>
       <Item4>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="fhir4b"/>
       </Item4>
       <Item5>
-        <PackageName Value="fhir"/>
+        <PackageName Value="fhir5"/>
       </Item5>
       <Item6>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="fhir3"/>
       </Item6>
       <Item7>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fhir2"/>
       </Item7>
       <Item8>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="fhir_xver"/>
       </Item8>
       <Item9>
-        <PackageName Value="LCL"/>
+        <PackageName Value="fhir4"/>
       </Item9>
+      <Item10>
+        <PackageName Value="fcomp"/>
+      </Item10>
+      <Item11>
+        <PackageName Value="laz.virtualtreeview_package"/>
+      </Item11>
+      <Item12>
+        <PackageName Value="LazControls"/>
+      </Item12>
+      <Item13>
+        <PackageName Value="fhir_fsl"/>
+      </Item13>
+      <Item14>
+        <PackageName Value="fhir"/>
+      </Item14>
+      <Item15>
+        <PackageName Value="fhir_fui"/>
+      </Item15>
+      <Item16>
+        <PackageName Value="MarkdownEngine"/>
+      </Item16>
+      <Item17>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item17>
+      <Item18>
+        <PackageName Value="LCL"/>
+      </Item18>
     </RequiredPackages>
     <Units Count="14">
       <Unit0>

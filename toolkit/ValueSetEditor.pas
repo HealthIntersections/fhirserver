@@ -306,7 +306,7 @@ begin
     ValueSet.compose := nil;
     tvCompose := TTreeViewItem.Create(tvStructure);
     tvStructure.RemoveObject(tvCompose);
-    tvCompose.Free;
+    tvCompose.free;
     tvCompose := nil;
     btnFlipCompose.text := 'Add Content Definition';
     tvStructure.Selected := tvMetadata;
@@ -409,7 +409,7 @@ begin
   begin
     ValueSet.expansion := nil;
     tvStructure.RemoveObject(tvExpansion);
-    tvExpansion.Free;
+    tvExpansion.free;
     tvExpansion := nil;
     btnFlipExpansion.text := 'Add Fixed Expansion';
     tvStructure.Selected := tvMetadata;
@@ -614,7 +614,7 @@ begin
       ResourceIsDirty := true;
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -680,7 +680,7 @@ begin
       rbFilter.Enabled := false;
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -733,7 +733,7 @@ begin
       ResourceIsDirty := true;
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -788,7 +788,7 @@ begin
     end
     end
     else
-      raise EFHIRException.create('Unknown format');
+      raise EFHIRException.Create('Unknown format');
   end;
 end;
 
@@ -1229,7 +1229,7 @@ begin
              raise;
            end;
          finally
-           v.Free;
+           v.free;
          end;
        end;
     end;

@@ -890,7 +890,7 @@ Begin
     LHCPValidateEvent.Msg := AMsg;
     Result := Add(LHCPValidateEvent.Link);
   Finally
-    LHCPValidateEvent.Free;
+    LHCPValidateEvent.free;
     End;
   If Assigned(ErrorCollector) And Assigned(AElement) Then
     Begin
@@ -1001,7 +1001,7 @@ End;
 
 Destructor THCPProperties.Destroy;
 Begin
-  FPropList.Free;
+  FPropList.free;
   Inherited;
 End;
 
@@ -1039,7 +1039,7 @@ End;
 
 Destructor THCPPropertyElement.Destroy;
 Begin
-  FProperties.Free;
+  FProperties.free;
   Inherited;
 End;
 
@@ -1063,7 +1063,7 @@ Begin
       LIter.Next;
       End;
   Finally
-    LIter.Free;
+    LIter.free;
   End;
 End;
 
@@ -1098,7 +1098,7 @@ Begin
     LItem.FValue := AValue;
     FProperties.FPropList.Add(LItem.Link);
   Finally
-    Litem.Free;
+    Litem.free;
     End;
 End;
 
@@ -1240,7 +1240,7 @@ End;
 
 Destructor THCPTable.Destroy;
 Begin
-  FItems.Free;
+  FItems.free;
   Inherited;
 End;
 
@@ -1309,7 +1309,7 @@ Begin
       LIterator.Next;
       End;
   Finally
-    LIterator.Free;
+    LIterator.free;
     End;
 End;
 
@@ -1382,7 +1382,7 @@ End;
 
 Destructor THCPCell.Destroy;
 Begin
-  FDataValues.Free;
+  FDataValues.free;
   Inherited;
 End;
 
@@ -1447,13 +1447,13 @@ Begin
   If Assigned(AElement.element('Reference')) Then
     SetProp('Reference', AElement.element('Reference').Text);
 
-  elems := TFslList<TMXmlElement>.create;
+  elems := TFslList<TMXmlElement>.Create;
   try
     AElement.listElements('DataValues', elems);
     for LElem in elems do
       FDataValues.Add(LElem.attribute['ExValue']);
   finally
-    elems.Free;
+    elems.free;
   end;
 End;
 
@@ -1700,7 +1700,7 @@ End;
 
 Destructor THCPComponent.Destroy;
 Begin
-  FSubComponents.Free;
+  FSubComponents.free;
   Inherited;
 End;
 
@@ -1857,7 +1857,7 @@ End;
 
 Destructor THCPField.Destroy;
 Begin
-  FComponents.Free;
+  FComponents.free;
   Inherited;
 End;
 
@@ -2272,7 +2272,7 @@ End;
 
 Destructor THCPSegment.Destroy;
 Begin
-  FFields.Free;
+  FFields.free;
   Inherited;
 End;
 
@@ -2354,7 +2354,7 @@ End;
 
 Destructor THCPSegGroup.Destroy;
 Begin
-  FSegments.Free;
+  FSegments.free;
   Inherited;
 End;
 
@@ -2451,8 +2451,8 @@ End;
 
 Destructor THCPStaticDef.Destroy;
 Begin
-  FMetaData.Free;
-  FSegments.Free;
+  FMetaData.free;
+  FSegments.free;
   Inherited;
 End;
 
@@ -2863,7 +2863,7 @@ End;
 
 Destructor THCPDynamicDef.Destroy;
 Begin
-  FStaticDefs.Free;
+  FStaticDefs.free;
   Inherited;
 End;
 
@@ -2913,7 +2913,7 @@ Begin
       LStaticDef.Read(LElem, Path);
       FStaticDefs.Add(LStaticDef.Link);
     Finally
-      LStaticDef.Free;
+      LStaticDef.free;
     End;
     LElem := LElem.nextElement;
     End;
@@ -2962,7 +2962,7 @@ Var
   oDynDef : THCPDynamicDef;
   list : TFslList<TMXmlElement>;
 Begin
-  list := TFslList<TMXmlElement>.create;
+  list := TFslList<TMXmlElement>.Create;
   try
     AElement.listElements('DynamicDef', list);
     for oElem in list do
@@ -2973,11 +2973,11 @@ Begin
         oDynDef.Read(oElem, sPath);
         Add(oDynDef.Link);
       Finally
-        oDynDef.Free;
+        oDynDef.free;
       End;
     End;
   finally
-    list.Free;
+    list.free;
   end;
 End;
 
@@ -3002,11 +3002,11 @@ End;
 
 Destructor THCPSpecification.Destroy;
 Begin
-  FMetaData.Free;
-  FUseCase.Free;
-  FEncodings.Free;
-  FDynamicDefs.Free;
-  FTables.Free;
+  FMetaData.free;
+  FUseCase.free;
+  FEncodings.free;
+  FDynamicDefs.free;
+  FTables.free;
   Inherited;
 End;
 
@@ -3104,7 +3104,7 @@ Begin
       VHCPValidateEvents.RecordError(eHCP_Fatal,'',LErrMsg);
       End;
   Finally
-    LMessage.Free;
+    LMessage.free;
     End;
 End;
 
@@ -3173,7 +3173,7 @@ Begin
       Result.Read(oDocument.docElement);
       Result.Link;
     Finally
-      Result.Free;
+      Result.free;
     End;
   End
   Else If StringEquals('Specification', oDocument.docElement.Name) Then
@@ -3190,7 +3190,7 @@ Begin
   Try
     Result := LoadHCPSpec(oDoc);
   Finally
-    oDoc.Free;
+    oDoc.free;
   End;
 End;
 
@@ -3205,10 +3205,10 @@ Begin
     Try
       Result := LoadHCPSpec(oDoc);
     Finally
-      oDoc.Free;
+      oDoc.free;
     End;
   finally
-    f.Free;
+    f.free;
   end;
 End;
 

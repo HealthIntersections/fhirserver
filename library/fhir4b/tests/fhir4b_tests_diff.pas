@@ -99,7 +99,7 @@ begin
     test := tests.document.firstElement;
     while test <> nil do
     begin
-      AddTest(TFHIRDifferenceTest4.create(test.Link));
+      AddTest(TFHIRDifferenceTest4.Create(test.Link));
       test := test.nextElement;
     end;
   finally
@@ -120,17 +120,17 @@ var
   p : TFHIRXmlComposer;
   s : TStringStream;
 begin
-  p := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
+  p := TFHIRXmlComposer.Create(nil, OutputStylePretty, nil);
   try
     s := TStringStream.Create;
     try
       p.Compose(s, res);
       result := s.DataString;
     finally
-      s.Free;
+      s.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -158,7 +158,7 @@ var
 begin
   ctxt := context as TFHIRDifferenceTestContext;
 
-  w := TFhirParameters4.create(ctxt.diff.link);
+  w := TFhirParameters4.Create(ctxt.diff.link);
   try
     ctxt.engine.applyDifference(ctxt.input, w);
   finally
@@ -182,7 +182,7 @@ begin
       try
         compareXml(TestName, 'Difference', diff, delta.Resource as TFHIRParameters);
       finally
-        delta.Free;
+        delta.free;
       end;
     finally
       engine.free;
@@ -193,13 +193,13 @@ begin
   begin
     engine := TDifferenceEngine.Create(TTestingWorkerContext4.Use, TFHIRFactoryR4.create);
     try
-      w := TFhirParameters4.create(diff.link);
+      w := TFhirParameters4.Create(diff.link);
       try
         outcome := engine.applyDifference(input, w) as TFhirResource;
         try
           compareXml(TestName, 'Output', output, outcome);
         finally
-          outcome.Free;
+          outcome.free;
         end;
       finally
         w.free;
@@ -228,7 +228,7 @@ begin
         context.engine.free;
       end;
     finally
-      context.Free;
+      context.free;
     end;
   end;
 
@@ -246,7 +246,7 @@ begin
         context.engine.free;
       end;
     finally
-      context.Free;
+      context.free;
     end;
   end;
 end;
@@ -265,13 +265,13 @@ function TFHIRDifferenceTest4.parseResource(elem: TMXmlElement): TFhirResource;
 var
   p : TFHIRXmlParser;
 begin
-  p := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'));
+  p := TFHIRXmlParser.Create(nil, nil);
   try
     p.Element := elem.firstElement.Link;
     p.Parse;
     result := p.resource.Link as TFHIRResource;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -298,10 +298,10 @@ begin
         end;
       end;
     finally
-      diff.Free;
+      diff.free;
     end;
   finally
-    input.Free;
+    input.free;
   end;
 end;
 

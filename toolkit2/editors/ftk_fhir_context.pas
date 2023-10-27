@@ -41,14 +41,14 @@ uses
 type
   TToolkitValidatorContext = class
   public
-    class function create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; TerminologyServer : String; pcm : TFHIRPackageManager) : TFHIRWorkerContextWithFactory;
+    class function Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; TerminologyServer : String; pcm : TFHIRPackageManager) : TFHIRWorkerContextWithFactory;
   end;
 
 implementation
 
 { TToolkitValidatorContext }
 
-class function TToolkitValidatorContext.create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; TerminologyServer: String; pcm : TFHIRPackageManager): TFHIRWorkerContextWithFactory;
+class function TToolkitValidatorContext.Create(languages : TIETFLanguageDefinitions; factory: TFHIRFactory; TerminologyServer: String; pcm : TFHIRPackageManager): TFHIRWorkerContextWithFactory;
 begin
   case factory.version of
     fhirVersionRelease2 : result := TToolkitValidatorContextR2.Create(factory, languages, TerminologyServer, pcm.link);
@@ -56,7 +56,7 @@ begin
     fhirVersionRelease4 : result := TToolkitValidatorContextR4.Create(factory, languages, TerminologyServer, pcm.link);
     fhirVersionRelease5 : result := TToolkitValidatorContextR5.Create(factory, languages, TerminologyServer, pcm.link);
   else
-    raise EFHIRException.create('Unexpected version');
+    raise EFHIRException.Create('Unexpected version');
   end;
 end;
 

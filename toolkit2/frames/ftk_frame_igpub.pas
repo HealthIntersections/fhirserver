@@ -303,13 +303,13 @@ end;
 
 procedure TDeleteTaskContext.SetFolder(AValue: TIGPublicationFolder);
 begin
-  FFolder.Free;
+  FFolder.free;
   FFolder := AValue;
 end;
 
 destructor TDeleteTaskContext.Destroy;
 begin
-  FFolder.Free;
+  FFolder.free;
   inherited Destroy;
 end;
 
@@ -325,7 +325,7 @@ var
 begin
   if FCurrent <> nil then
   begin
-    ts := TStringlist.create;
+    ts := TStringlist.Create;
     try
       FLock.Lock;
       try
@@ -455,7 +455,7 @@ begin
       FolderDelete(deleteTask.folder.folder);
       progress(self, 100, true, 'Delete Files in '+deleteTask.folder.folder);
     finally
-      ts.Free;
+      ts.free;
     end;
   end;
 end;
@@ -463,12 +463,12 @@ end;
 constructor TIGPublicationManager.Create;
 begin
   inherited Create;
-  FLock := TFslLock.create('IG publisher');
+  FLock := TFslLock.Create('IG publisher');
 end;
 
 destructor TIGPublicationManager.Destroy;
 begin
-  FLock.Free;
+  FLock.free;
   FFolderList.free;
   inherited Destroy;
 end;
@@ -536,7 +536,7 @@ var
   o : TJsonObject;
 begin
   for o in FFolderList.asObjects.forEnum do
-    Data.Add(TIGPublicationFolder.create(self, o['name'], o['folder'], o.int['run-length'], o.int['line-count']));
+    Data.Add(TIGPublicationFolder.Create(self, o['name'], o['folder'], o.int['run-length'], o.int['line-count']));
   result := true;
 end;
 
@@ -602,13 +602,13 @@ begin
   FCurrent := item;
   FCurrentLine := 0;
 
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if (item <> nil) then
       item.inspect(ts);
     FFrame.Context.Inspector.Populate(ts);
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -619,7 +619,7 @@ begin
   result := nil;
   if (mode = 'git') then
   begin
-    IgGitHubDialog := TIgGitHubDialog.create(FFrame);
+    IgGitHubDialog := TIgGitHubDialog.Create(FFrame);
     try
       IgGitHubDialog.edtFolder.Text := FFrame.FDefaultRootFolder;
       if IgGitHubDialog.ShowModal = mrOk then
@@ -627,7 +627,7 @@ begin
         FFrame.FDefaultRootFolder := IgGitHubDialog.edtFolder.Text;
         name := IgGitHubDialog.edtLocalFolder.Text;
         folder := FilePath([FFrame.FDefaultRootFolder, name]);
-        result := TIGPublicationFolder.create(self, name, folder, 0, 0);
+        result := TIGPublicationFolder.Create(self, name, folder, 0, 0);
         FFrame.FWorker.lastChange := GetTickCount64;
         FFrame.FWorker.lastChangeChecked := false;
         FFrame.FWorker.session.NeedsSaving := true;
@@ -644,7 +644,7 @@ begin
       if not FileNameCaseSensitive then
         folder := folder.ToLower;
       name := ExtractFileName(folder);
-      result := TIGPublicationFolder.create(self, name, folder, 0, 0);
+      result := TIGPublicationFolder.Create(self, name, folder, 0, 0);
       FFrame.FWorker.lastChange := GetTickCount64;
       FFrame.FWorker.lastChangeChecked := false;
       FFrame.FWorker.session.NeedsSaving := true;
@@ -659,14 +659,14 @@ begin
   result := nil;
   if FFrame.fd.execute then
   begin
-    result := TFslList<TIGPublicationFolder>.create;
+    result := TFslList<TIGPublicationFolder>.Create;
     for s in TDirectory.getDirectories(FFrame.fd.filename) do
     begin
       folder := s;
       if not FileNameCaseSensitive then
         folder := folder.ToLower;
       name := ExtractFileName(folder);
-      result.add(TIGPublicationFolder.create(self, name, folder, 0, 0));
+      result.add(TIGPublicationFolder.Create(self, name, folder, 0, 0));
     end;
     FFrame.FWorker.lastChange := GetTickCount64;
     FFrame.FWorker.lastChangeChecked := false;
@@ -686,7 +686,7 @@ begin
   result := res <> mrCancel;
   if result then
   begin
-    ctxt := TDeleteTaskContext.create;
+    ctxt := TDeleteTaskContext.Create;
     try
       ctxt.folder := item.link;
       ctxt.killFirst := item.status = fsRunning;
@@ -715,7 +715,7 @@ begin
   begin
     item.lines.clear;
     item.lines.add('fBuilding '+item.name+'. Starting at '+TFslDateTime.makeLocal.toString('c'));
-    engine := TIgPublisherBuildEngine.create;
+    engine := TIgPublisherBuildEngine.Create;
     item.engine := engine;
     engine.folder := item.folder;
     engine.OnEmitLine := item.emitLine;
@@ -755,7 +755,8 @@ begin
   else
   begin
     item.lines.clear;
-    item.engine := TIgPublisherUpdateEngine.create;
+    item.engine := TIgPublisherUpdateEngine.Create;
+    (item.engine as TIgPublisherUpdateEngine).Stash := (mode = 'stash');
     item.engine.folder := item.folder;
     item.engine.OnEmitLine := item.emitLine;
     item.engine.Start;
@@ -791,7 +792,7 @@ constructor TIGPublicationFolder.Create(manager : TIGPublicationManager);
 begin
   inherited Create;
   FManager := manager; // no own
-  FLines := TStringList.create;
+  FLines := TStringList.Create;
 end;
 
 constructor TIGPublicationFolder.Create(manager : TIGPublicationManager; name, folder: String; RunLength, LineCount : integer);
@@ -802,13 +803,13 @@ begin
   self.folder := folder;
   self.RunLength := RunLength;
   self.LineCount := LineCount;
-  FLines := TStringList.create;
+  FLines := TStringList.Create;
 end;
 
 destructor TIGPublicationFolder.Destroy;
 begin
-  FLines.Free;
-  FEngine.Free;
+  FLines.free;
+  FEngine.free;
   inherited Destroy;
 end;
 
@@ -824,7 +825,7 @@ end;
 
 procedure TIGPublicationFolder.SetEngine(AValue: TIgPublisherBuildBaseEngine);
 begin
-  FEngine.Free;
+  FEngine.free;
   FEngine := AValue;
 end;
 
@@ -846,7 +847,7 @@ var
   b : TStringBuilder;
   s : String;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     FManager.FLock.Lock;
     try
@@ -872,7 +873,7 @@ var
 begin
   result := 'GitHub Repo URL unknown';
   try
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       ts.LoadFromFile(FilePath([folder, '.git', 'config']));
       for i := 0 to ts.count - 1 do
@@ -907,9 +908,9 @@ end;
 
 destructor TIgPubPageFrame.Destroy;
 begin
-  FManager.Free;
+  FManager.free;
   FTempStore.free;
-  FIgPublisherVersions.Free;
+  FIgPublisherVersions.free;
   inherited;
 end;
 
@@ -933,9 +934,9 @@ var
   grp : TControlEntry;
   mDev : TMenuItem;
 begin
-  FIgPublisherVersions := TFslList<TIgPublisherVersion>.create;
+  FIgPublisherVersions := TFslList<TIgPublisherVersion>.Create;
 
-  FManager := TIGPublicationManager.create;
+  FManager := TIGPublicationManager.Create;
   FManager.FFrame := self;
 
   grp := FManager.registerControlForMenu(tbAdd, pmAdd);
@@ -949,6 +950,7 @@ begin
   FManager.registerControl(tbStop, copStop);
 
   FManager.registerMenuEntry('Add', 4, copAdd);
+  FManager.registerMenuEntry('Add from GitHub', 4, copAdd, 'git');
   FManager.registerMenuEntry('Up', 11, copUp);
   FManager.registerMenuEntry('Down', 10, copDown);
   FManager.registerMenuEntry('Delete', 12, copDelete);
@@ -991,7 +993,7 @@ procedure TIgPubPageFrame.tbConfigClick(Sender: TObject);
 var
   igp : TIgPublisherVersion;
 begin
-  IGPublisherConfigForm := TIGPublisherConfigForm.create(self);
+  IGPublisherConfigForm := TIGPublisherConfigForm.Create(self);
   try
     IGPublisherConfigForm.edtDevParams.Text := FDevParams;
     IGPublisherConfigForm.edtJavaCmd.Text := FJavaCmd;
@@ -1004,7 +1006,7 @@ begin
         if IGPublisherConfigForm.edtDevParams.Text <> '' then
         begin
           FDevParams := IGPublisherConfigForm.edtDevParams.Text;
-          igp := TIgPublisherVersion.create('Dev', '#dev');
+          igp := TIgPublisherVersion.Create('Dev', '#dev');
           try
             FIgPublisherVersions.add(igp.link);
             cbxVersions.items.InsertObject(0, 'Dev', igp);
@@ -1076,7 +1078,7 @@ begin
         StringToFile(makeCleanSh, fn, TEncoding.ASCII);
       {$ENDIF}
       FManager.FCurrent.lines.clear;
-      FManager.FCurrent.engine := TIgPublisherCleanEngine.create;
+      FManager.FCurrent.engine := TIgPublisherCleanEngine.Create;
       FManager.FCurrent.engine.folder := FManager.FCurrent.folder;
       FManager.FCurrent.engine.OnEmitLine := FManager.FCurrent.emitLine;
       FManager.FCurrent.engine.Start;
@@ -1088,7 +1090,7 @@ end;
 
 procedure TIgPubPageFrame.MenuItem1Click(Sender: TObject);
 begin
-  raise EFslException.create('todo');
+  raise EFslException.Create('todo');
 end;
 
 procedure TIgPubPageFrame.MenuItem2Click(Sender: TObject);
@@ -1130,7 +1132,7 @@ begin
   if FManager.FCurrent <> nil then
   begin
     {$IFDEF WINDOWS}
-    proc := TProcess.create(nil);
+    proc := TProcess.Create(nil);
     try
       proc.CurrentDirectory := FilePath([FManager.FCurrent.FFolder]);
       proc.CommandLine := 'cmd';
@@ -1144,7 +1146,7 @@ begin
       proc.free;
     end;
     {$ELSE}
-    proc := TProcess.create(nil);
+    proc := TProcess.Create(nil);
     try
       proc.CurrentDirectory := FilePath([FManager.FCurrent.FFolder]);
       proc.Executable := 'open';
@@ -1182,7 +1184,7 @@ begin
       if jekyllCommand(FManager.FCurrent.log, c, f) then
       begin
         FManager.FCurrent.lines.clear;
-        j := TIgPublisherJekyllEngine.create;
+        j := TIgPublisherJekyllEngine.Create;
         FManager.FCurrent.engine := j;
         FManager.FCurrent.engine.folder := f;
         j.command := c;
@@ -1221,7 +1223,7 @@ end;
 
 procedure TIgPubPageFrame.SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
 begin
-  FTempStore.Free;
+  FTempStore.free;
   FTempStore := AValue;
 end;
 
@@ -1233,7 +1235,7 @@ var
   var
     igp : TIgPublisherVersion;
   begin
-    igp := TIgPublisherVersion.create(version, url);
+    igp := TIgPublisherVersion.Create(version, url);
     try
       FIgPublisherVersions.add(igp.link);
       cbxVersions.items.addObject(version, igp);
@@ -1269,7 +1271,7 @@ begin
       end;
     except
       on e : Exception do
-        raise EFslException.create('Unable to fetch IG publisher versions from https://api.github.com/repos/HL7/fhir-ig-publisher/releases: '+e.message);
+        raise EFslException.Create('Unable to fetch IG publisher versions from https://api.github.com/repos/HL7/fhir-ig-publisher/releases: '+e.message);
     end;
   end;
 end;
@@ -1339,7 +1341,7 @@ begin
   begin
     if igp.url <> '#dev' then
     begin
-      v := TJsonObject.create;
+      v := TJsonObject.Create;
       arr.add(v);
       v.str['version'] := igp.version;
       v.str['url'] := igp.url;
@@ -1350,7 +1352,7 @@ begin
   arr.clear;
   for i := 0 to FManager.Data.count - 1 do
   begin
-    v := TJsonObject.create;
+    v := TJsonObject.Create;
     arr.add(v);
     v.str['name'] := FManager.Data[i].name;
     v.str['folder'] := FManager.Data[i].folder;
@@ -1370,13 +1372,13 @@ procedure TIgPubPageFrame.inspect;
 var
   ts : TStringList;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FManager.Focus <> nil then
       FManager.Focus.inspect(ts);
     Context.Inspector.Populate(ts);
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 

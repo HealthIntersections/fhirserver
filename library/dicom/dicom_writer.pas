@@ -133,21 +133,21 @@ End;
 
 destructor TDicomWriter.Destroy;
 begin
-  FOutput.Free;
-  FDictionary.Free;
-  FBuilder.Free;
+  FOutput.free;
+  FDictionary.free;
+  FBuilder.free;
   inherited;
 end;
 
 procedure TDicomWriter.SetOutput(const Value: TFslStream);
 begin
-  FOutput.Free;
+  FOutput.free;
   FOutput := Value;
 end;
 
 procedure TDicomWriter.SetDictionary(const Value: TDicomDictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 end;
 
@@ -509,7 +509,7 @@ end;
 procedure TDicomWriter.Execute(sPath : string; oInstance: TDicomInstance);
 begin
   case oInstance.InstanceType of
-    ditNull : raise EDicomException.create('no content to encode');
+    ditNull : raise EDicomException.Create('no content to encode');
     ditSimpleObject : Execute(sPath, oInstance.SimpleObject);
     ditFileObject : EncodeFile(sPath, oInstance.FileObject);
     ditMessage : EncodeMessage(sPath, oInstance.Message);
@@ -521,7 +521,7 @@ begin
     ditReleaseRequestPDU : EncodeReleaseRequest(sPath, oInstance.ReleaseRequest);
     ditReleaseResponsePDU : EncodeReleaseResponse(sPath, oInstance.ReleaseResponse);
   else
-    raise EDicomException.create('not supported');
+    raise EDicomException.Create('not supported');
   End;
 end;
 
@@ -845,7 +845,7 @@ begin
     pduReleaseRequest : EncodeReleaseRequest(sPath, TDicomReleaseRequestPDU(oPDU));
     pduReleaseResponse : EncodeReleaseResponse(sPath, TDicomReleaseResponsePDU(oPDU));
   else
-    raise EDicomException.create('not supported');
+    raise EDicomException.Create('not supported');
   End;
 end;
 

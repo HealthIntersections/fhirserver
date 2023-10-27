@@ -73,7 +73,7 @@ begin
     if InteractiveClientForm.showModal = mrAbort then
       raise EAbort.Create('Operation aborted by debugger');
   finally
-    InteractiveClientForm.Free;
+    InteractiveClientForm.free;
   end;
   {$ELSE}
   raise EFslException.Create('VCL not done yet');

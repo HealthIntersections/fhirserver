@@ -66,7 +66,7 @@ begin
   try
     assertTrue(npm <> nil);
   finally
-    npm.Free;
+    npm.free;
   end;
 
 end;
@@ -92,7 +92,7 @@ var
   ts : TStringList;
 begin
   FCache.clear;
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     FCache.ListPackageIds(ts);
     AssertTrue(ts.count = 0, 'Should be no packages left, but found '+ts.commaText);

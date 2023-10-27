@@ -244,7 +244,7 @@ Type
     FProvenanceString : String;
     FVersionSpecific: boolean;
     FFormat : TFHIRFormat;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
     FOnProgress : TFhirClientProgressEvent;
@@ -260,14 +260,14 @@ Type
     function getResourceVersionId(res : TFHIRResourceV) : string; virtual;
     function getBundleClass : TFHIRBundleWClass; virtual; abstract;
   public
-    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
+    constructor Create(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 
     function makeParser(fmt : TFHIRFormat) : TFHIRParser; virtual; abstract;
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
 
-    property lang : THTTPLanguages read FLang;
+    Property LangList : THTTPLanguageList read FLangList;
     property Worker : TFHIRWorkerContextV read FWorker;
     function version : TFHIRVersion; virtual; abstract;
     function address : String; // result from the communicator
@@ -405,22 +405,22 @@ end;
 
 { EFHIRClientException }
 
-constructor EFHIRClientException.create(code : integer; message: String; issue: TFhirOperationOutcomeW);
+constructor EFHIRClientException.Create(code : integer; message: String; issue: TFhirOperationOutcomeW);
 begin
-  inherited create(message);
+  inherited Create(message);
   FCode := code;
   FIssue := issue;
 end;
 
-constructor EFHIRClientException.create(code : integer; message: String);
+constructor EFHIRClientException.Create(code : integer; message: String);
 begin
-  inherited create(message);
+  inherited Create(message);
   FCode := code;
 end;
 
-destructor EFHIRClientException.destroy;
+destructor EFHIRClientException.Destroy;
 begin
-  FIssue.Free;
+  FIssue.free;
   inherited;
 end;
 
@@ -512,12 +512,11 @@ end;
 
 { TFhirClientV }
 
-constructor TFhirClientV.Create(worker: TFHIRWorkerContextV;
-  const lang: THTTPLanguages; communicator: TFHIRClientCommunicator);
+constructor TFhirClientV.Create(worker: TFHIRWorkerContextV; langList : THTTPLanguageList; communicator: TFHIRClientCommunicator);
 begin
   inherited Create;
   FWorker := worker;
-  FLang := lang;
+  FLangList := langList;
   FCommunicator := communicator;
   communicator.FClient := self;
   FLogger := TNullLogger.Create;
@@ -526,11 +525,12 @@ end;
 
 destructor TFhirClientV.Destroy;
 begin
-  FSmartToken.Free;
-  FWorker.Free;
-  FCommunicator.Free;
-  FLogger.Free;
-  FProvenance.Free;
+  FLangList.free;
+  FSmartToken.free;
+  FWorker.free;
+  FCommunicator.free;
+  FLogger.free;
+  FProvenance.free;
   inherited;
 end;
 
@@ -541,7 +541,7 @@ end;
 
 function TFhirClientV.getResourceVersionId(res : TFHIRResourceV) : string;
 begin
-  raise EFHIRException.create('Must override getResourceValue in '+className);
+  raise EFHIRException.Create('Must override getResourceValue in '+className);
 end;
 
 function TFhirClientV.link: TFhirClientV;
@@ -551,7 +551,7 @@ end;
 
 procedure TFhirClientV.SetLogger(const Value: TFHIRClientLogger);
 begin
-  FLogger.Free;
+  FLogger.free;
   FLogger := Value;
 end;
 
@@ -559,7 +559,7 @@ procedure TFhirClientV.SetProvenance(const Value: TFhirProvenanceW);
 var
   c : TFHIRComposer;
 begin
-  FProvenance.Free;
+  FProvenance.free;
   FProvenance := Value;
   if FProvenance <> nil then
   begin
@@ -567,7 +567,7 @@ begin
     try
       FProvenanceString := c.Compose(value.Resource);
     finally
-      c.Free;
+      c.free;
     end;
   end
   else
@@ -577,7 +577,7 @@ end;
 procedure TFhirClientV.SetFormat(fmt : TFhirFormat);
 begin
   if not (fmt in [ffXml, ffJson, ffTurtle]) then
-    raise EFHIRException.create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
+    raise EFHIRException.Create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
 
   FFormat := fmt;
 end;
@@ -705,7 +705,7 @@ end;
 
 procedure TFhirClientV.SetSmartToken(const Value: TClientAccessToken);
 begin
-  FSmartToken.Free;
+  FSmartToken.free;
   FSmartToken := Value;
   // todo: set the header for the access token
 end;
@@ -731,7 +731,7 @@ end;
 
 destructor TClientAccessToken.Destroy;
 begin
-  FidToken.Free;
+  FidToken.free;
   inherited;
 end;
 
@@ -742,7 +742,7 @@ end;
 
 procedure TClientAccessToken.SetidToken(const Value: TJWT);
 begin
-  FidToken.Free;
+  FidToken.free;
   FidToken := Value;
 end;
 

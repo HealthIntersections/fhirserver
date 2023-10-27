@@ -226,7 +226,7 @@ end;
 
 procedure TPackageCacheForm.Button4Click(Sender: TObject);
 begin
-  PackageFinderForm := TPackageFinderForm.create(self);
+  PackageFinderForm := TPackageFinderForm.Create(self);
   try
     PackageFinderForm.OnLoadUrl := importUrl;
     PackageFinderForm.ShowModal;
@@ -306,14 +306,14 @@ end;
 
 procedure TPackageCacheForm.FormDestroy(Sender: TObject);
 begin
-  FCache.Free;
-  FPackages.Free;
+  FCache.free;
+  FPackages.free;
 end;
 
 procedure TPackageCacheForm.FormShow(Sender: TObject);
 begin
   if assigned(FCache) then
-    FCache.Free;
+    FCache.free;
   FCache := TFHIRPackageManager.Create(UserMode);
   FCache.OnCheck := packageCheck;
   FCache.OnWork := packageWork;
@@ -348,7 +348,7 @@ begin
     task.Form := self;
     task.runTask(self);
   finally
-    task.Free;
+    task.free;
   end;
   sortPackageVersions;
   vtPackages.RootNodeCount := 0;

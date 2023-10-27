@@ -68,7 +68,7 @@ begin
     PopupMenuWorkaroundForm.ShowModal;
     result := PopupMenuWorkaroundForm.Selected;
   finally
-    PopupMenuWorkaroundForm.Free;
+    PopupMenuWorkaroundForm.free;
   end;
 end;
 

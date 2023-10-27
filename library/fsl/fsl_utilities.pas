@@ -294,6 +294,7 @@ Function StringTrimWhitespaceLeft(Const sValue : String) : String; Overload;
 Function StringTrimSetRight(Const sValue : String; aChars : TCharSet) : String; Overload;
 Function StringTrimSetLeft(Const sValue : String; aChars : TCharSet) : String; Overload;
 Function StringTrimSet(Const sValue : String; aChars : TCharSet) : String; Overload;
+Function StringNormalizeWhitespace(Const sValue : String) : String; Overload;
 
 Function StringToBoolean(Const sValue : String) : Boolean; Overload;
 Function StringToReal(Const sValue : String) : Real; Overload;
@@ -463,7 +464,7 @@ Type
     FLastSeperator : String;
     FList : TStringList;
   public
-    constructor create(sep, lastSep : String);
+    constructor Create(sep, lastSep : String);
     destructor Destroy; override;
 
     property Seperator : String read FSeperator;
@@ -1610,7 +1611,7 @@ Type
     Function Modulo(oOther : TFslDecimal) : TFslDecimal; Overload;
     Function Modulo(iOther : Integer) : TFslDecimal; Overload;
     Function Add(oOther : TFslDecimal) : TFslDecimal; Overload;
-    Function Add(iOther : Integer) : TFslDecimal; Overload;
+    Function AddInt(iOther : Integer) : TFslDecimal; Overload;
     Function Subtract(iOther : Integer) : TFslDecimal; Overload;
     Function Subtract(oOther : TFslDecimal) : TFslDecimal; Overload;
     function Abs: TFslDecimal; overload;
@@ -1817,10 +1818,28 @@ Type
       Property CaseSensitive : Boolean Read FCaseSensitive Write FCaseSensitive;
   End;
 
-function hasCommandLineParam(name : String) : boolean;
-function getCommandLineParam(name : String; out res : String) : boolean;
-function commandLineAsString : String;
-function executableDirectory : String;
+  { TCommandLineParameters }
+
+  TCommandLineParameters = class (TFslObject)
+  private
+    FList : TStringList;
+    function removeQuotes(s: String):String;
+  public
+    constructor Create; overload;
+    constructor Create(params : Array of String); overload;
+    constructor Create(param : string); overload;
+    destructor Destroy; override;
+    function link : TCommandLineParameters; overload;
+
+    class function exec : String;
+    class function execDir : String;
+    function has(name : String) : boolean;
+    function get(name : String) : String; overload;
+    function get(name : String; out value : String) : boolean; overload;
+    function asString : String;
+    function hasParams : boolean;
+  end;
+
 
 
 type
@@ -1856,6 +1875,124 @@ Uses
   {$IFDEF DELPHI} IOUtils, {$ENDIF}
   DateUtils, fsl_stream;
 
+
+{ TCommandLineParameters }
+
+function TCommandLineParameters.removeQuotes(s: String): String;
+begin
+  if ((s.Length > 2) and s.startsWith('"') and s.endsWith('"')) then
+    result := s.Substring(2, s.length-3)
+  else
+    result := s;
+end;
+
+constructor TCommandLineParameters.Create;
+var
+  i : integer;
+begin
+  inherited Create;
+  FList := TStringList.create;
+  for i := 1 to ParamCount do
+    FList.add(paramstr(i));
+end;
+
+constructor TCommandLineParameters.Create(params: array of String);
+var
+  s : String;
+begin
+  inherited Create;
+  FList := TStringList.create;
+  for s in params do
+    FList.add(removeQuotes(s));
+end;
+
+constructor TCommandLineParameters.Create(param: string); 
+var
+  s : String;
+begin
+  inherited Create;
+  FList := TStringList.create;
+  for s in param.split([' ']) do
+    FList.add(removeQuotes(s));
+end;
+
+destructor TCommandLineParameters.Destroy;
+begin
+  FList.free;
+  inherited Destroy;
+end;
+
+function TCommandLineParameters.link: TCommandLineParameters;
+begin
+  result := TCommandLineParameters(inherited Link);
+end;
+
+class function TCommandLineParameters.exec: String;
+begin
+  result := paramstr(0);
+end;
+
+class function TCommandLineParameters.execDir: String;
+begin
+result := PathFolder(paramstr(0));
+ {$IFDEF OSX}
+ result := PathFolder(result.replace('/Contents/MacOS/', ''));
+ {$ENDIF}
+end;
+
+function TCommandLineParameters.has(name: String): boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in FList do
+    if (s = '-'+name) then
+      exit(true);
+end;
+
+function TCommandLineParameters.get(name: String): String;
+var
+  s : String;
+begin
+  result := '';
+  for s in FList do
+    if (s = '-'+name) then
+      exit(s);
+end;
+
+function TCommandLineParameters.get(name: String; out value: String): boolean;
+var
+  i : integer;
+  s : String;
+begin
+  result := false;
+  value := '';
+  for i := 0 to FList.count - 2 do
+  begin
+    if (FList[i] = '-'+name) then
+    begin
+      value := FList[i+1];
+      exit(true);
+    end;
+  end;
+end;
+
+function TCommandLineParameters.asString: String;
+var
+  s : String;
+begin
+  result := exec;
+  for s in Flist do
+    if (s.Contains(' ')) then
+      result := result + ' "'+s+'"'
+    else
+      result := result + ' '+s;
+end;
+
+function TCommandLineParameters.hasParams: boolean;
+begin
+  result := Flist.Count > 0;
+end;
 
 Function Percentage(Const iPart, iTotal : Integer) : Real;
 Begin
@@ -2848,7 +2985,7 @@ begin
     end
     else if s = '[exe]' then
     begin
-      result := executableDirectory();
+      result := TCommandLineParameters.execDir;
     end
     else if s = '[curr]' then
     begin
@@ -2885,18 +3022,24 @@ end;
 
 function URLPath(parts : array of String) : String;
 var
-  part : String;
+  part, s : String;
 begin
   result := '';
   for part in parts do
-    if result = '' then
-      result := part
-    else if not result.EndsWith('/') and not part.startsWith('/') then
-      result := result +'/'+part
-    else if not result.EndsWith('/') or not part.startsWith('/') then
-      result := result + part
+  begin
+    if (part = '[tmp]') then
+      s := SystemTemp
     else
-      result := result + part.substring(1);
+      s := part;
+    if result = '' then
+      result := s
+    else if not result.EndsWith('/') and not s.startsWith('/') then
+      result := result +'/'+s
+    else if not result.EndsWith('/') or not s.startsWith('/') then
+      result := result + s
+    else
+      result := result + s.substring(1);
+  end;
 end;
 
 Function CreateGUID : TGUID;
@@ -3904,7 +4047,7 @@ var
   ts : TStringList;
 begin
   // https://stackoverflow.com/questions/6315666/c-get-linux-distribution-name-version/6316023#6316023
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.text := FileToString('/etc/os-release', TEncoding.UTF8);
     result := ts.Values['NAME']+' v'+ts.Values['VERSION'];
@@ -4094,7 +4237,7 @@ Begin
 //      End;
 //    End;
 //  Finally
-//    oRegistry.Free;
+//    oRegistry.free;
 //  End;
 End;
 {$ENDIF}
@@ -4110,6 +4253,8 @@ End;
 Begin
   Result := '';
 End;
+
+
 
 {$ENDIF}
 {$IFDEF LINUX}
@@ -4398,7 +4543,7 @@ Begin
 
       oRegistry.CloseKey;
     Finally
-      oRegistry.Free;
+      oRegistry.free;
     End;
   End;
 End;
@@ -4417,7 +4562,7 @@ Begin
     Else
       Result := '';
   Finally
-   oRegistry.Free;
+   oRegistry.free;
   End;
 End;
 
@@ -5175,6 +5320,37 @@ Begin
   Result := Copy(sValue, 1, iFinish);
 End;
 
+
+Function StringNormalizeWhitespace(Const sValue : String) : String; Overload;
+var
+  s : String;
+  i, j : integer;
+  ws : boolean;
+  procedure add(ch : char);
+  begin
+    inc(j);
+    result[j] := ch;
+  end;
+begin
+  s := Sysutils.Trim(sValue);
+  result := s;
+  j := 0;
+  ws := false;
+  for i := 1 to length(s) do
+  begin
+    if not isWhitespace(s[i]) then
+    begin
+      ws := false;
+      add(s[i]);
+    end
+    else if not ws then
+    begin
+      ws := true;
+      add(' ')
+    end;
+  end;
+  setLength(result, j);
+end;
 
 Function StringTrimWhitespace(Const sValue : String) : String;
 Begin
@@ -5958,7 +6134,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -5977,7 +6153,7 @@ var
       result := ' ';
   end;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     i := 0;
     while (i < s.length) do
@@ -6770,7 +6946,7 @@ End;
 
 destructor TFslStringBuilder.Destroy;
 begin
-  FBuilder.Free;
+  FBuilder.free;
   inherited;
 end;
 
@@ -6888,14 +7064,14 @@ end;
 
 constructor TCommaBuilder.Create;
 begin
-  inherited create;
+  inherited Create;
   list := TStringList.Create;
   FSeperator := ', ';
 end;
 
 destructor TCommaBuilder.Destroy;
 begin
-  list.Free;
+  list.free;
   inherited;
 end;
 
@@ -10655,7 +10831,7 @@ Begin
         End;
       End;
     Finally
-      oReg.Free;
+      oReg.free;
     End;
     // This is a temporary workaround for erroneous information in
     // some windows registries. Fix is http://support.microsoft.com/hotfix/KBHotfix.aspx?kbnum=974176&kbln=en-us
@@ -10693,7 +10869,7 @@ Begin
     For iYearRuleIndex := Low(aTimeZoneInformation.YearRules) To High(aTimeZoneInformation.YearRules) Do
       FreeAndNil(aTimeZoneInformation.YearRules[iYearRuleIndex]);
 
-    aTimeZoneInformation.Free;
+    aTimeZoneInformation.free;
     aTimeZoneInformation := Nil;
   End;
 End;
@@ -12434,7 +12610,7 @@ begin
     result.FNegative := false;
 end;
 
-Function TFslDecimalHelper.Add(iOther : Integer) : TFslDecimal;
+Function TFslDecimalHelper.AddInt(iOther : Integer) : TFslDecimal;
 var
   oTemp : TFslDecimal;
 Begin
@@ -13952,7 +14128,7 @@ end;
 //        o.Append('#'+inttostr(ord(a[i])));
 //    result := o.AsString;
 //  Finally
-//    o.Free;
+//    o.free;
 //  End;
 //End;
 //
@@ -14294,7 +14470,7 @@ begin
         o.Append('#'+inttostr(a[i]));
     result := o.AsString;
   Finally
-    o.Free;
+    o.free;
   End;
 End;
 
@@ -14620,9 +14796,10 @@ var
 begin
   f :=  TFileStream.Create(filename, fmCreate);
   try
-    f.write(bytes[0], length(bytes));
+    if length(bytes) > 0 then
+      f.write(bytes[0], length(bytes));
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -14635,7 +14812,7 @@ begin
     setLength(result, f.Size);
     f.Read(result[0], f.Size);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -14692,7 +14869,7 @@ begin
     try
       es.Write(value[0],Length(value));
     finally
-      es.Free;
+      es.free;
     end;
     result := ss.DataString;
   finally
@@ -14748,13 +14925,13 @@ begin
         b.CopyFrom(ds,ds.Size);
         Result := copy(b.Bytes, 0, b.Size);
       finally
-        ds.Free;
+        ds.free;
       end;
     finally
-      b.Free;
+      b.free;
     end;
   finally
-    ss.Free;
+    ss.free;
   end;
 {$ELSE}
   result := EncdDecd.DecodeBase64(AnsiString(value));
@@ -14908,7 +15085,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -14920,7 +15097,7 @@ begin
   if Length(AStr) <= 0 then
     exit('');
 
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for c in unicodeChars(AStr) do
     begin
@@ -15032,7 +15209,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15103,7 +15280,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15335,7 +15512,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -15623,7 +15800,7 @@ var
   c : char;
   i : integer;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for c in sValue do
 begin
@@ -15653,7 +15830,7 @@ var
   b : TStringBuilder;
   c : char;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     i := 1;
     while i <= length(sValue) do
@@ -15678,13 +15855,13 @@ end;
 
 constructor TFslWordStemmer.create(lang: String);
 begin
-  inherited create;
+  inherited Create;
 //  FStem := GetStemmer(lang);
 end;
 
 destructor TFslWordStemmer.Destroy;
 begin
-//  FStem.Free;
+//  FStem.free;
   inherited;
 end;
 
@@ -16751,13 +16928,13 @@ var
   ch : UnicodeChar;
   b : TFslStringBuilder;
 begin
-  b := TFslStringBuilder.create;
+  b := TFslStringBuilder.Create;
   try
     for ch in unicodeChars(s) do
       b.append(removeAccentFromChar(ch));
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -16953,66 +17130,6 @@ begin
   result := cardinal(length(b));
 end;
 
-function getCommandLineParam(name : String; out res : String) : boolean;
-{$IFDEF FPC}
-var
-  i : integer;
-begin
-  result := false;
-  for i := 1 to paramCount - 1 do
-  begin
-    if paramStr(i) = '-'+name then
-    begin
-      res := paramStr(i+1);
-      exit(true);
-    end;
-  end;
-{$ELSE}
-begin
-  result := FindCmdLineSwitch(name, res, true, [clstValueNextParam]);
-{$ENDIF}
-end;
-
-function hasCommandLineParam(name : String) : boolean;
-{$IFDEF FPC}
-var
-  i : integer;
-begin
-  result := false;
-  for i := 1 to paramCount  do
-  begin
-    if paramStr(i) = '-'+name then
-      exit(true);
-  end;
-{$ELSE}
-begin
-  result := FindCmdLineSwitch(name);
-{$ENDIF}
-end;
-
-function commandLineAsString : String;
-var
-  i : integer;
-  s : String;
-begin
-  result := ParamStr(0);
-  for i := 1 to ParamCount do
-  begin
-    s := paramstr(i);
-    if (s.Contains(' ')) then
-      result := result + ' "'+s+'"'
-    else
-      result := result + ' '+s;
-  end
-end;
-
-function executableDirectory : String;
-begin
-  result := PathFolder(paramstr(0));
-  {$IFDEF OSX}
-  result := PathFolder(result.replace('/Contents/MacOS/', ''));
-  {$ENDIF}
-end;
 
 function AllContentHex(s: String): Boolean;
 var
@@ -17052,7 +17169,7 @@ begin
   try
     z := TZDecompressionStream.create(b1);
     try
-      b2  := TBytesStream.create;
+      b2  := TBytesStream.Create;
       try
         b2.CopyFrom(z, z.Size);
         result := b2.Bytes;
@@ -17467,7 +17584,7 @@ begin
   inherited Create;
   FSeperator := sep;
   FLastSeperator := LastSep;
-  FList := TStringList.create;
+  FList := TStringList.Create;
 end;
 
 destructor TCommaSeparatedStringBuilder.Destroy;

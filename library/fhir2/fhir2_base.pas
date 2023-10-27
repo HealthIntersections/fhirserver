@@ -33,7 +33,6 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  fsl_http,
   fhir_objects;
 
 type
@@ -74,11 +73,11 @@ function TFHIRObject2.asJson: String;
 var
   j : TFHIRJsonComposer;
 begin
-  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
   try
     result := j.Compose(fhirType, self);
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -114,11 +113,11 @@ function TFHIRResource2.asJson: String;
 var
   j : TFHIRJsonComposer;
 begin
-  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
   try
     result := j.Compose(self);
   finally
-    j.Free;
+    j.free;
   end;
 end;
 

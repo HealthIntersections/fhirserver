@@ -638,7 +638,7 @@ begin
         checkExecutionState;
       end;
     finally
-      TransformerExecConfigForm.Free;
+      TransformerExecConfigForm.free;
     end;
   end;
 end;
@@ -655,7 +655,7 @@ begin
     try
       FEngine.debug(ev);
     finally
-      ev.Free;
+      ev.free;
     end;
   end;
 end;
@@ -705,7 +705,7 @@ begin
   if FEngine.Running then
     exit;
 
-  ec := TWorkspaceExecConfig.create;
+  ec := TWorkspaceExecConfig.Create;
   try
     TransformerExecConfigForm := TTransformerExecConfigForm.create(self);
     try
@@ -726,10 +726,10 @@ begin
         checkExecutionState;
       end;
     finally
-      TransformerExecConfigForm.Free;
+      TransformerExecConfigForm.free;
     end;
   finally
-    ec.Free;
+    ec.free;
   end;
 end;
 
@@ -805,7 +805,7 @@ begin
         b.free;
       end;
     finally
-      engine.Free;
+      engine.free;
     end;
   finally
     context.free;
@@ -820,7 +820,7 @@ begin
   try
     FEngine.run(ev);
   finally
-    ev.Free;
+    ev.free;
   end;
 end;
 
@@ -837,7 +837,7 @@ begin
   FProgress.pbPercent.Update;
   if done then
   begin
-    FProgress.Free;
+    FProgress.free;
     FProgress := nil;
   end;
   Application.ProcessMessages;
@@ -861,7 +861,7 @@ begin
     else
       lblExecutionError.Caption := 'Cannot Execute: '+msg;
   finally
-    ev.Free;
+    ev.free;
   end;
 end;
 
@@ -1008,7 +1008,7 @@ begin
     if form.cbDontAsk.Checked then
       FIni.WriteBool('Workspace', 'AutoSave', true);
   finally
-    form.Free;
+    form.free;
   end;
   FWorkspace.save;
 end;
@@ -1057,7 +1057,7 @@ begin
       SetStepLine(nil, -1);
     end;
   finally
-    FDebugInfo.Free;
+    FDebugInfo.free;
     FDebugInfo := nil;
   end;
   if FStepOutcome >= DBG_STOP then
@@ -1197,7 +1197,7 @@ begin
     if form.cbDontAsk.Checked then
       FIni.WriteBool('Workspace', 'AutoSave-'+cmdCode, true);
   finally
-    form.Free;
+    form.free;
   end;
   FWorkspace.save;
 end;
@@ -1394,7 +1394,7 @@ begin
         end;
         e.FileTime := TFile.GetLastWriteTimeUtc(s);
       finally
-        FileChangedForm.Free;
+        FileChangedForm.free;
       end;
     end;
   end;
@@ -1461,7 +1461,7 @@ begin
     if form.cbDontAsk.Checked then
       FIni.WriteBool('Workspace', 'AutoSave', true);
   finally
-    form.Free;
+    form.free;
   end;
   if (FDebugInfo <> nil) and CanClose then
   begin
@@ -1477,9 +1477,9 @@ var
 begin
   InitExceptions;
   Application.OnActivate := FormActivate;
-  FPathSelection := TFslList<TPathSelection>.create;
+  FPathSelection := TFslList<TPathSelection>.Create;
 
-  FCache := TResourceMemoryCache.create;
+  FCache := TResourceMemoryCache.Create;
   FCache.Packages := ['hl7.fhir.r4.core#4.0.1', 'hl7.fhir.cda#0.0.1'];
   FCache.ResourceTypes := [{'CodeSystem', 'ValueSet', }'ConceptMap', 'StructureMap', 'StructureDefinition', 'NamingSystem'];
   FCache.OnLog := cacheLog;
@@ -1506,12 +1506,12 @@ var
   i : integer;
 begin
   for i := mnuWorkspace.Count - 1 downto 1 do
-    mnuWorkspace.Items[I].Free;
-  FIni.Free;
-  FCache.Free;
-  FEngine.Free;
-  FWorkspace.Free;
-  FPathSelection.Free;
+    mnuWorkspace.Items[I].free;
+  FIni.free;
+  FCache.free;
+  FEngine.free;
+  FWorkspace.free;
+  FPathSelection.free;
   CloseExceptions;
 end;
 
@@ -1624,8 +1624,8 @@ begin
     for i := pgTabs.PageCount - 1 downto 1 do
       closeWorkspaceFile(editorForTab(pgTabs.Pages[i]), false);
   end;
-  FEngine.Free;
-  FWorkspace.Free;
+  FEngine.free;
+  FWorkspace.free;
   FWorkspace := proj;
   FEngine := TTransformEngine.Create(FWorkspace.link);
   FEngine.OnFileUpdate := ExecutorUpdateFile;
@@ -1657,7 +1657,7 @@ begin
       for f in files do
         openWorkspaceFile(f);
     finally
-      files.Free;
+      files.free;
     end;
     pgTabsChange(self);
     vtConfig.RootNodeCount := 0;
@@ -1667,7 +1667,7 @@ begin
     FLoading := false;
   end;
   for i := mnuWorkspace.Count - 1 downto 1 do
-    mnuWorkspace.Items[I].Free;
+    mnuWorkspace.Items[I].free;
   st := TStringList.Create;
   try
     FIni.ReadSection('Workspaces', st);
@@ -1681,7 +1681,7 @@ begin
         mnuWorkspace.add(mnu);
       end;
   finally
-    st.Free;
+    st.free;
   end;
   if FInitialised then
   begin
@@ -1980,7 +1980,7 @@ begin
   try
     PackageCacheForm.ShowModal;
   finally
-    PackageCacheForm.Free;
+    PackageCacheForm.free;
   end;
 end;
 
@@ -2002,7 +2002,7 @@ begin
   else
   begin
     f := '';
-    st := TStringList.create;
+    st := TStringList.Create;
     try
       FIni.ReadSection('Workspaces', st);
       for s in st do
@@ -2716,7 +2716,7 @@ begin
   try
     form.ShowModal;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -2847,7 +2847,7 @@ begin
   end;
   if pgTabs.ActivePage = editor.tab then
     pgTabs.TabIndex := pgTabs.TabIndex - 1;
-  editor.tab.Free;
+  editor.tab.free;
   FEngine.editors.Remove(editor);
 end;
 
@@ -3139,7 +3139,7 @@ begin
     ExceptionHandlerDialog.eMessage.Caption := e.Message+#13#10#13#10+e.StackTrace;
     ExceptionHandlerDialog.ShowModal;
   Finally
-    ExceptionHandlerDialog.Free;
+    ExceptionHandlerDialog.free;
   End;
 end;
 

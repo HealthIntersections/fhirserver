@@ -51,7 +51,7 @@ var
 function showModalHack(form : TForm) : TModalResult;
 begin
   if GStack = nil then
-    GStack := TObjectList<TForm>.create(false);
+    GStack := TObjectList<TForm>.Create(false);
   GStack.add(form);
   try
     result := form.showModal

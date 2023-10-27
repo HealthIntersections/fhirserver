@@ -330,7 +330,7 @@ begin
       freemem(info);
     end;
   finally
-    Bitmap.Free;
+    Bitmap.free;
   end;
 end;
 
@@ -369,7 +369,7 @@ begin
       freemem(info);
     end;
   finally
-    Bitmap.Free;
+    Bitmap.free;
   end;
 end;
 
@@ -407,7 +407,7 @@ begin
   finally
     ResStream.free;
   end;
-  GCharNames := TDictionary<Char,String>.create;
+  GCharNames := TDictionary<Char,String>.Create;
   i := 1;
   while (i< length(ansi)) do
   begin
@@ -438,5 +438,5 @@ end;
 
 Initialization
 finalization
-  GCharNames.Free;
+  GCharNames.free;
 end.

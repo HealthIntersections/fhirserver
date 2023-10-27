@@ -129,7 +129,7 @@ var
   v : TFHIRVersion;
 begin
   inherited;
-  FConnections := TFslMap<TFHIRNppServerConnection>.create('Connections');
+  FConnections := TFslMap<TFHIRNppServerConnection>.Create('Connections');
   FVersions := TFHIRVersionFactories.Create;
 
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
@@ -144,14 +144,14 @@ destructor TFHIRNppContext.Destroy;
 var
   v : TFHIRVersion;
 begin
-  FCache.Free;
+  FCache.free;
   for v := low(TFHIRVersion) to High(TFHIRVersion) do
   begin
-    FVersionList[v].Free;
+    FVersionList[v].free;
     FLoadInfoList[v].free;
   end;
-  FVersions.Free;
-  FConnections.Free;
+  FVersions.free;
+  FConnections.free;
   inherited;
 end;
 
@@ -165,7 +165,7 @@ end;
 function TFHIRNppContext.GetVersion(a: TFHIRVersion): TFHIRNppVersionFactory;
 begin
   if VersionLoading[a] <> vlsLoaded then
-    raise EFHIRException.create('Version not loaded (yet?)');
+    raise EFHIRException.Create('Version not loaded (yet?)');
   result := FVersionList[a];
 end;
 
@@ -182,7 +182,7 @@ end;
 procedure TFHIRNppContext.SetVersion(a: TFHIRVersion; const Value: TFHIRNppVersionFactory);
 begin
   if (a = fhirVersionUnknown) then
-    raise EFHIRException.create('Illegal Version');
+    raise EFHIRException.Create('Illegal Version');
   value.FContext := self;
   FVersionList[a] := value;
   FVersions[a] := value.FFactory.link;
@@ -192,7 +192,7 @@ end;
 procedure TFHIRNppContext.SetVersionLoading(a: TFHIRVersion; const Value: TFHIRVersionLoadingStatus);
 begin
   if (a = fhirVersionUnknown) and (value <> vlsNotSupported) then
-    raise EFHIRException.create('Illegal Version');
+    raise EFHIRException.Create('Illegal Version');
   FVersionStatus[a] := value;
 end;
 
@@ -227,15 +227,15 @@ end;
 
 constructor TFHIRNppVersionFactory.Create(factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
 end;
 
 destructor TFHIRNppVersionFactory.Destroy;
 begin
-  FEngine.Free;
-  FFactory.Free;
-  FWorker.Free;
+  FEngine.free;
+  FFactory.free;
+  FWorker.free;
   inherited;
 end;
 
@@ -256,9 +256,9 @@ end;
 
 procedure TFHIRNppVersionFactory.SetWorker(const Value: TFHIRWorkerContextWithFactory);
 begin
-  FWorker.Free;
+  FWorker.free;
   FWorker := Value;
-  FEngine.Free;
+  FEngine.free;
   FEngine := Factory.makePathEngine(FWorker.link, nil);
 end;
 
@@ -271,8 +271,8 @@ end;
 
 destructor TFHIRNppServerConnection.Destroy;
 begin
-  FClient.Free;
-  FStatement.Free;
+  FClient.free;
+  FStatement.free;
   inherited;
 end;
 
@@ -283,13 +283,13 @@ end;
 
 procedure TFHIRNppServerConnection.SetClient(const Value: TFhirClientV);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
 procedure TFHIRNppServerConnection.SetStatement(const Value: TFHIRCapabilityStatementW);
 begin
-  FStatement.Free;
+  FStatement.free;
   FStatement := Value;
 end;
 

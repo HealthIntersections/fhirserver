@@ -78,13 +78,13 @@ type
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -100,21 +100,17 @@ type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
-
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
   end;
 
 implementation
 
 { TAreaCodeServices }
 
-Constructor TAreaCodeServices.create(languages : TIETFLanguageDefinitions);
+Constructor TAreaCodeServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited Create(languages);
-  FCodes := TFslList<TAreaCodeConcept>.create;
-  FMap := TFslMap<TAreaCodeConcept>.create('tx.areacode');
+  FCodes := TFslList<TAreaCodeConcept>.Create;
+  FMap := TFslMap<TAreaCodeConcept>.Create('tx.areacode');
   Load;
 end;
 
@@ -141,7 +137,7 @@ begin
   result := '';
 end;
 
-function TAreaCodeServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TAreaCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 begin
   result := FMap[code].display;
 end;
@@ -168,7 +164,7 @@ procedure TAreaCodeServices.load;
       FCodes.Add(c.Link);
       FMap.Add(code, c.Link);
     finally
-      c.Free;
+      c.free;
     end;
   end;
 begin
@@ -446,7 +442,7 @@ end;
 
 function TAreaCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 
@@ -468,18 +464,18 @@ end;
 destructor TAreaCodeServices.Destroy;
 begin
   FMap.free;
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
-function TAreaCodeServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TAreaCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TAreaCodeConcept(context).display;
 end;
 
 procedure TAreaCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation(true, true, '', Display(context, nil));
 end;
 
 function TAreaCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -507,13 +503,13 @@ end;
 
 function TAreaCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FCodes[context.current];
+  result := FCodes[context.current].link;
   context.next;
 end;
 
 function TAreaCodeServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by AreaCode', itNotSupported); // AreaCode doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.Create('locateIsA not supported by AreaCode', itNotSupported); // AreaCode doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -525,7 +521,7 @@ end;
 
 function TAreaCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TAreaCodeServices.searchFilter');
+  raise ETerminologyTodo.Create('TAreaCodeServices.searchFilter');
 end;
 
 function TAreaCodeServices.subsumesTest(codeA, codeB: String): String;
@@ -540,18 +536,18 @@ var
 begin
   if ((prop = 'type') or (prop = 'class')) and (op = foEqual) then
   begin
-    res := TAreaCodeConceptFilter.create;
+    res := TAreaCodeConceptFilter.Create;
     try
       for c in FCodes do
         if c.class_ = value then
           res.flist.Add(c.link);
         result := res.link;
     finally
-      res.Free;
+      res.free;
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not support for '+systemUri(nil), itNotSupported);
+    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
 end;
 
 function TAreaCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -574,27 +570,12 @@ end;
 
 function TAreaCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TAreaCodeConceptFilter(ctxt).FList[TAreaCodeConceptFilter(ctxt).FCursor];
+  result := TAreaCodeConceptFilter(ctxt).FList[TAreaCodeConceptFilter(ctxt).FCursor].link;
 end;
 
 function TAreaCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TAreaCodeServices.InFilter');
-end;
-
-procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-//  ctxt.free;
-end;
-
-procedure TAreaCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TAreaCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  // nothing
+  raise ETerminologyTodo.Create('TAreaCodeServices.InFilter');
 end;
 
 { TAreaCodeConcept }
@@ -615,7 +596,7 @@ end;
 
 destructor TAreaCodeConceptFilter.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 

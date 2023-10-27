@@ -181,7 +181,7 @@ var
   DownloadForm: TDownloadForm;
 begin
 {
-  DownloadForm := TDownloadForm.create(self);
+  DownloadForm := TDownloadForm.Create(self);
   DownloadForm.SourceURL := 'https://bitbucket.org/costateixeira/ig-builder/downloads/simpleESRender.zip';
   DownloadForm.localFileName := ESRenderFolder + '\render.zip';
   DownloadForm.UnzipLocation := ESRenderFolder;

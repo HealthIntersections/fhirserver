@@ -89,7 +89,7 @@ type
   private
     c : UnicodeChar;
     i : integer;
-    constructor create(aC: UnicodeChar; aI : integer);
+    constructor Create(aC: UnicodeChar; aI : integer);
   end;
 
 function InSet(c : UnicodeChar; arr : TUCharArray) : boolean;
@@ -150,7 +150,7 @@ var
   b : TStringBuilder;
   c : UnicodeChar;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for c in unicodeChars(src) do
       if inSet(c, ALL_BIDI_CHARS) then
@@ -167,7 +167,7 @@ class function TUnicodeUtilities.checkUnicodeWellFormed(src: String): String;
 var
   this : TUnicodeUtilities;
 begin
-  this := TUnicodeUtilities.create;
+  this := TUnicodeUtilities.Create;
   try
     result := this.checkWellFormed(src);
   finally
@@ -178,7 +178,7 @@ end;
 constructor TUnicodeUtilities.Create;
 begin
   inherited Create;
-  FList := TObjectList.create;
+  FList := TObjectList.Create;
   FList.OwnsObjects := true;
 end;
 
@@ -255,7 +255,7 @@ end;
 
 destructor TUnicodeUtilities.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited Destroy;
 end;
 

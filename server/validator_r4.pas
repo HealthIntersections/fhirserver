@@ -100,12 +100,12 @@ constructor TFHIRServerWorkerContextR4.Create(factory : TFHIRFactory; pc : TFHIR
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r4');
-  FProfile := TFhirExpansionParams.create;
+  FProfile := TFhirExpansionParams.Create;
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('ctxt.q');
-  FSearchParameters := TFslMap<TFhirSearchParameter>.create('ctxt.sp');
-  FCompartments := TFslMap<TFhirCompartmentDefinition>.create('ctxt.comp');
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.q');
+  FSearchParameters := TFslMap<TFhirSearchParameter>.Create('ctxt.sp');
+  FCompartments := TFslMap<TFhirCompartmentDefinition>.Create('ctxt.comp');
   FSearchParameters.defaultValue := nil;
   FCompartments.defaultValue := nil;
 end;
@@ -115,13 +115,13 @@ var
   a : TFhirResourceType;
 begin
   for a := low(TFhirResourceType) to High(TFhirResourceType) do
-     FPatientIdExpressions[a].Free;
-  FSearchParameters.Free;
-  FCompartments.Free;
-  FQuestionnaires.Free;
-  FProfile.Free;
-  FTerminologyServer.Free;
-  FLock.Free;
+     FPatientIdExpressions[a].free;
+  FSearchParameters.free;
+  FCompartments.free;
+  FQuestionnaires.free;
+  FProfile.free;
+  FTerminologyServer.free;
+  FLock.free;
   inherited;
 end;
 
@@ -154,7 +154,7 @@ var
   sp : TFhirSearchParameter;
   fpe : TFHIRPathEngine;
 begin
-  fpe := TFHIRPathEngine.create(nil, nil);
+  fpe := TFHIRPathEngine.Create(nil, nil);
   try
     comp := FCompartments['http://hl7.org/fhir/CompartmentDefinition/patient'];
     if comp <> nil then
@@ -178,7 +178,7 @@ begin
       end;
     end;
   finally
-    fpe.Free;
+    fpe.free;
   end;
 end;
 
@@ -251,10 +251,10 @@ begin
           result.free;
         end;
       finally
-        p.Free;
+        p.free;
       end;
     finally
-      c.Free;
+      c.free;
     end;
   finally
     vsw.free;
@@ -263,7 +263,7 @@ end;
 
 procedure TFHIRServerWorkerContextR4.SetTerminologyServer(const Value: TTerminologyServer);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
 end;
 
@@ -327,10 +327,10 @@ begin
     try
       result := res.Resource as TFhirValueSet;
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 
@@ -347,7 +347,7 @@ begin
   try
     result := TValidationResult.Create;
     try
-      if FTerminologyServer.checkCode(op, lang, '', code, system, version, display) then
+      if FTerminologyServer.checkCode(op, langList, '', code, system, version, display) then
         result.Severity := isNull
       else if op.issueCount = 1 then
       begin
@@ -361,10 +361,10 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    op.Free;
+    op.free;
   end;
 end;
 
@@ -390,17 +390,17 @@ begin
           else
             result.Severity := isError;
         finally
-          p.Free;
+          p.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 
@@ -426,17 +426,17 @@ begin
           else
             result.Severity := isError;
         finally
-          p.Free;
+          p.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 

@@ -210,11 +210,11 @@ var
   t : TToolkitContextTerminologyServer;
 begin
   result := nil;
-  TxServerPropertiesDialog := TTxServerPropertiesDialog.create(ToolkitSettingsForm);
+  TxServerPropertiesDialog := TTxServerPropertiesDialog.Create(ToolkitSettingsForm);
   try
     if (TxServerPropertiesDialog.showModal = mrOK) then
     begin
-      result := TToolkitContextTerminologyServer.create;
+      result := TToolkitContextTerminologyServer.Create;
       result.name := TxServerPropertiesDialog.edtName.text;
       result.address := TxServerPropertiesDialog.edtAddress.text;
       result.default := TxServerPropertiesDialog.chkDefault.checked;
@@ -234,7 +234,7 @@ function TServerManager.editItem(item : TToolkitContextTerminologyServer; mode :
 var
   t : TToolkitContextTerminologyServer;
 begin
-  TxServerPropertiesDialog := TTxServerPropertiesDialog.create(ToolkitSettingsForm);
+  TxServerPropertiesDialog := TTxServerPropertiesDialog.Create(ToolkitSettingsForm);
   try
     TxServerPropertiesDialog.edtName.text := item.name;
     TxServerPropertiesDialog.edtAddress.text := item.address;
@@ -375,7 +375,7 @@ end;
 procedure TToolkitSettingsForm.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
-  FManager := TServerManager.create;
+  FManager := TServerManager.Create;
   FManager.List := lvServers;
   FManager.registerControl(btnAddServer, copAdd);
   FManager.registerControl(btnEditServer, copEdit);
@@ -384,7 +384,7 @@ end;
 
 procedure TToolkitSettingsForm.FormDestroy(Sender: TObject);
 begin
-  FManager.Free;
+  FManager.free;
 end;
 
 end.

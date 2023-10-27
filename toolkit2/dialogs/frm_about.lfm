@@ -10,7 +10,7 @@ object ToolkitAboutForm: TToolkitAboutForm
   ClientWidth = 530
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.0.0.2'
   object Panel1: TPanel
     Left = 0
     Height = 223
@@ -21,6 +21,7 @@ object ToolkitAboutForm: TToolkitAboutForm
     ClientHeight = 223
     ClientWidth = 530
     Color = clWhite
+    ParentBackground = False
     ParentColor = False
     TabOrder = 0
     object Bevel2: TBevel

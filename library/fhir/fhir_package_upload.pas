@@ -101,8 +101,8 @@ implementation
 constructor TFHIRPackageUploader.Create;
 begin
   inherited Create;
-  FLoadedPackages := TStringList.create;
-  FCache := TFHIRPackageManager.create(npmModeUser);
+  FLoadedPackages := TStringList.Create;
+  FCache := TFHIRPackageManager.Create(npmModeUser);
 end;
 
 destructor TFHIRPackageUploader.Destroy;
@@ -110,7 +110,7 @@ begin
   FClient.free;
   FFactory.free;
   FLoadedPackages.free;
-  FCache.Free;
+  FCache.free;
   inherited Destroy;
 end;
 
@@ -151,7 +151,7 @@ begin
     else
     begin
       log('Resource '+describe(r)+' already exists - halting');
-      raise EFHIRException.create('Resource '+describe(r)+' already exists');
+      raise EFHIRException.Create('Resource '+describe(r)+' already exists');
     end
   end;
 

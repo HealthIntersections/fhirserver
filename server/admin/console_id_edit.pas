@@ -73,7 +73,7 @@ implementation
 
 procedure TEditIDForm.FormDestroy(Sender: TObject);
 begin
-  FId.Free;
+  FId.free;
 end;
 
 procedure TEditIDForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -87,7 +87,7 @@ end;
 
 procedure TEditIDForm.SetId(AValue: TFHIRServerConfigSection);
 begin
-  FId.Free;
+  FId.free;
   FId := AValue;
 
   if FId <> nil then

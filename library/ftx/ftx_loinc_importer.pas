@@ -333,7 +333,7 @@ begin
     imp.ImportLOINC;
     imp.progress(16, 0, 'Done '+inttostr(imp.TotalConcepts)+' Concepts');
   finally
-    imp.Free;
+    imp.free;
   end;
 end;
 
@@ -537,7 +537,7 @@ begin
   Try
     for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
     begin
-      oSubsets[a] := TCodeList.create;
+      oSubsets[a] := TCodeList.Create;
       oSubsets[a].SortedByCode;
     end;
     Progress(0, 24, 'Loading Languages');
@@ -547,7 +547,7 @@ begin
 
     iCount := 0;
     Progress(0, 0, 'Loading Concepts');
-    items := TFslStringList.create;
+    items := TFslStringList.Create;
     f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead);
     try
       csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
@@ -698,7 +698,7 @@ begin
                 oCode.Names := FRefs.AddRefs(aNames);
               End;
             Finally
-              oNames.Free;
+              oNames.free;
             End;
 
             // properties
@@ -710,7 +710,7 @@ begin
         End;
       Finally
         csv.free;
-        items.Free;
+        items.free;
       End;
     finally
       f.free;
@@ -891,8 +891,8 @@ begin
           raise ETerminologySetup.create('Error Message');
       end;
     finally
-      st.Free;
-      st2.Free;
+      st.free;
+      st2.free;
     end;
     FAnswers.DoneBuild;
 
@@ -920,7 +920,7 @@ begin
       FStems.AddStem(iStem);
       for j := 0 to oTemp.Count - 1 Do
         TDescribed(oTemp[j]).Stems.Add(iStem);
-      oTemp.Free;
+      oTemp.free;
       FStemList.Objects[i] := nil;
     End;
     FStems.DoneBuild;
@@ -971,17 +971,17 @@ begin
   Finally
     for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
       osubsets[a].free;
-    oHeirarchy.Free;
-    oCodes.Free;
-    oComps.Free;
-    oProps.Free;
-    oTime.Free;
-    oSystem.Free;
-    oScale.Free;
-    oMethod.Free;
-    oClass.Free;
-    FAnswerLists.Free;
-    FAnswerMap.Free;
+    oHeirarchy.free;
+    oCodes.free;
+    oComps.free;
+    oProps.free;
+    oTime.free;
+    oSystem.free;
+    oScale.free;
+    oMethod.free;
+    oClass.free;
+    FAnswerLists.free;
+    FAnswerMap.free;
 
   End;
 End;
@@ -994,7 +994,7 @@ var
   lang : TLoincLanguage;
   i : integer;
 begin
-  items := TFslStringList.create;
+  items := TFslStringList.Create;
   f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead);
   try
     csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
@@ -1011,7 +1011,7 @@ begin
             readLanguage(i, items[0], lang);
             FLanguages.Add(lang.Link);
           finally
-            lang.Free;
+            lang.free;
           end;
         end;
         inc(i);
@@ -1021,7 +1021,7 @@ begin
     End;
   finally
     f.free;
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1032,7 +1032,7 @@ Begin
   try
     result := LoadLOINCFiles(folder, props, roots, subsets);
   Finally
-    FStrings.Free;
+    FStrings.free;
   End;
 End;
 
@@ -1049,7 +1049,7 @@ var
   oLang : TLoincLanguage;
 begin
   FStart := now;
-  FLanguages := TFslList<TLoincLanguage>.create;
+  FLanguages := TFslList<TLoincLanguage>.Create;
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
   FStemmer := TFslWordStemmer.create('english');
@@ -1104,13 +1104,13 @@ begin
 
     Progress(15, 0.5, 'Cleanup');
   Finally
-    oSvc.Free;
-    FWordList.Free;
+    oSvc.free;
+    FWordList.free;
     For i := 0 to FStemList.Count - 1 do
-      FStemList.Objects[i].Free;
-    FStemList.Free;
-    FStemmer.Free;
-    FLanguages.Free;
+      FStemList.Objects[i].free;
+    FStemList.free;
+    FStemmer.free;
+    FLanguages.free;
   End;
   TLoincServices.Create(nil).Load(FOutputFile);
 End;
@@ -1231,7 +1231,7 @@ begin
           answer.Parents.Add(list.Link as TAnswerList);
           FAnswerMap.Add(AnswerStringID, answer.Link as TAnswer);
         finally
-          answer.Free;
+          answer.free;
         end;
       end;
     end;
@@ -1343,7 +1343,7 @@ begin
     write('.');
 end;
 
-procedure TLoincImporter.readLanguage(i : integer; index: String; lang: TLoincLanguage);
+procedure TLoincImporter.readLanguage(i : integer; index: String; lang : TLoincLanguage);
 var
   f : TFslFile;
   items : TFslStringList;
@@ -1354,7 +1354,7 @@ var
 
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
-  items := TFslStringList.create;
+  items := TFslStringList.Create;
   f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead);
   try
     fs := f.size;
@@ -1390,7 +1390,7 @@ begin
                 code.RelatedNames.add(p.trim());
             lang.Codes.Add(items[0], code.Link);
           finally
-            code.Free;
+            code.free;
           end;
         end;
       End;
@@ -1399,7 +1399,7 @@ begin
     End;
   finally
     f.free;
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1415,7 +1415,7 @@ end;
 
 destructor TConcept.Destroy;
 begin
-  Codes.Free;
+  Codes.free;
   inherited;
 end;
 
@@ -1467,7 +1467,7 @@ begin
     SetLength(aChildren[i], Count);
   end;
 
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     for s in keys do
       ts.add(s);
@@ -1525,18 +1525,18 @@ end;
 constructor THeirarchyEntry.Create;
 begin
   inherited;
-  FChildren := THeirarchyEntryList.create;
-  FParents := THeirarchyEntryList.create;
+  FChildren := THeirarchyEntryList.Create;
+  FParents := THeirarchyEntryList.Create;
   FConcepts := TCodeList.Create;
   FDescendentConcepts := TCodeList.Create;
 end;
 
 destructor THeirarchyEntry.Destroy;
 begin
-  FConcepts.Free;
+  FConcepts.free;
   FChildren.free;
   FDescendentConcepts.free;
-  FParents.Free;
+  FParents.free;
   inherited;
 end;
 
@@ -1572,7 +1572,7 @@ Begin
 
     Result := FindByCode(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -1601,7 +1601,7 @@ Begin
 
     Result := FindByText(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -1658,7 +1658,7 @@ Begin
 
     Result := FindByCode(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -1698,7 +1698,7 @@ end;
 
 destructor TDescribed.Destroy;
 begin
-  Stems.Free;
+  Stems.free;
   inherited;
 end;
 
@@ -1713,21 +1713,21 @@ end;
 
 destructor TAnswerList.Destroy;
 begin
-  FAnswers.Free;
+  FAnswers.free;
   inherited;
 end;
 
 { TAnswer }
 
-constructor TAnswer.create;
+constructor TAnswer.Create;
 begin
-  inherited create;
-  FParents := TFslList<TAnswerList>.create;
+  inherited Create;
+  FParents := TFslList<TAnswerList>.Create;
 end;
 
-destructor TAnswer.destroy;
+destructor TAnswer.Destroy;
 begin
-  FParents.Free;
+  FParents.free;
   inherited;
 end;
 
@@ -1736,12 +1736,12 @@ end;
 constructor TLoincLanguageCodes.Create;
 begin
   inherited;
-  FRelatedNames := TStringList.create;
+  FRelatedNames := TStringList.Create;
 end;
 
 destructor TLoincLanguageCodes.Destroy;
 begin
-  FRelatedNames.Free;
+  FRelatedNames.free;
   inherited;
 end;
 
@@ -1780,7 +1780,7 @@ end;
 
 destructor TLoincLanguage.Destroy;
 begin
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
@@ -1792,7 +1792,7 @@ end;
 constructor TCode.Create(langCount: integer);
 begin
   inherited Create;
-  entries := TFslList<THeirarchyEntry>.create;
+  entries := TFslList<THeirarchyEntry>.Create;
   SetLength(Comps, langCount);
   SetLength(Props, langCount);
   SetLength(Time, langCount);

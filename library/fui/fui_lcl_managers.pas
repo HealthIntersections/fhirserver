@@ -553,7 +553,7 @@ type
     FFraction: Double;
     FHeading: TPanel;
   public
-    constructor create(container, heading : TPanel);
+    constructor Create(container, heading : TPanel);
 
     property container : TPanel read FContainer write FContainer;
     property heading : TPanel read FHeading write FHeading;
@@ -597,7 +597,7 @@ end;
 
 { TPanelStackSubPanel }
 
-constructor TPanelStackSubPanel.create(container, heading: TPanel);
+constructor TPanelStackSubPanel.Create(container, heading: TPanel);
 begin
   inherited Create;
   FContainer := container;
@@ -609,7 +609,7 @@ end;
 
 constructor TObjectManagerControl.Create(kind: TObjectManagerControlKind);
 begin
-  inherited create;
+  inherited Create;
   FKind := kind;
 end;
 
@@ -621,7 +621,7 @@ end;
 
 procedure TObjectManagerControl.SetList(AValue: TListOrTreeManagerBase);
 begin
-  FList.Free;
+  FList.free;
   FList := AValue;
 end;
 
@@ -650,14 +650,14 @@ end;
 constructor TObjectManager.Create;
 begin
   inherited Create;
-  FControls := TFslList<TObjectManagerControl>.create;
+  FControls := TFslList<TObjectManagerControl>.Create;
   FFocus := nil;
 end;
 
 destructor TObjectManager.Destroy;
 begin
-  FFocus.Free;
-  FControls.Free;
+  FFocus.free;
+  FControls.free;
   inherited Destroy;
 end;
 
@@ -665,7 +665,7 @@ procedure TObjectManager.registerControl(propName: String; control: TEdit);
 var
   ctrl : TObjectManagerControl;
 begin
-  ctrl := TObjectManagerControl.create(ckEdit);
+  ctrl := TObjectManagerControl.Create(ckEdit);
   FControls.add(ctrl);
   ctrl.control := control;
 end;
@@ -674,7 +674,7 @@ procedure TObjectManager.registerControl(propName: String; control: TEdit; butto
 var
   ctrl : TObjectManagerControl;
 begin
-  ctrl := TObjectManagerControl.create(ckEdit);
+  ctrl := TObjectManagerControl.Create(ckEdit);
   FControls.add(ctrl);
   ctrl.control := control;
   ctrl.button := button;
@@ -684,7 +684,7 @@ procedure TObjectManager.registerManager(propName: String; manager: TListOrTreeM
 var
   ctrl : TObjectManagerControl;
 begin
-  ctrl := TObjectManagerControl.create(ckList);
+  ctrl := TObjectManagerControl.Create(ckList);
   FControls.add(ctrl);
   ctrl.list := manager;
 end;
@@ -693,7 +693,7 @@ procedure TObjectManager.registerControl(propName: String; control: TDateEdit);
 var
   ctrl : TObjectManagerControl;
 begin
-  ctrl := TObjectManagerControl.create(ckDate);
+  ctrl := TObjectManagerControl.Create(ckDate);
   FControls.add(ctrl);
   ctrl.control := control;
 end;
@@ -702,7 +702,7 @@ procedure TObjectManager.registerControl(propName: String; control: TCombobox; l
 var
   ctrl : TObjectManagerControl;
 begin
-  ctrl := TObjectManagerControl.create(ckCombo);
+  ctrl := TObjectManagerControl.Create(ckCombo);
   FControls.add(ctrl);
   ctrl.control := control;
   ctrl.OnLookup := lookupEvent;
@@ -712,7 +712,7 @@ procedure TObjectManager.registerControl(propName: String; control: TCheckBox);
 var
   ctrl : TObjectManagerControl;
 begin
-  ctrl := TObjectManagerControl.create(ckCheck);
+  ctrl := TObjectManagerControl.Create(ckCheck);
   FControls.add(ctrl);
   ctrl.control := control;
 end;
@@ -721,7 +721,7 @@ end;
 
 destructor TControlEntry.Destroy;
 begin
-  FMenuItems.Free;
+  FMenuItems.free;
   inherited Destroy;
 end;
 
@@ -735,14 +735,14 @@ end;
 constructor TListOrTreeManagerBase.Create;
 begin
   inherited Create;
-  FPopup := TPopupMenu.create(nil);
-  FControls := TFslList<TControlEntry>.create;
+  FPopup := TPopupMenu.Create(nil);
+  FControls := TFslList<TControlEntry>.Create;
 end;
 
 destructor TListOrTreeManagerBase.Destroy;
 begin
-  FPopUp.Free;
-  FControls.Free;
+  FPopUp.free;
+  FControls.free;
   inherited Destroy;
 end;
 
@@ -760,7 +760,7 @@ procedure TListOrTreeManagerBase.registerControl(c : TControl; op : TControlOper
 var
   entry : TControlEntry;
 begin
-  entry := TControlEntry.create;
+  entry := TControlEntry.Create;
   try
     entry.control := c;
     entry.op := op;
@@ -775,7 +775,7 @@ end;
 
 function TListOrTreeManagerBase.registerControlForMenu(c: TControl; menu : TPopupMenu): TControlEntry;
 begin
-  result := TControlEntry.create;
+  result := TControlEntry.Create;
   try
     result.control := c;
     result.op := copNone;
@@ -792,7 +792,7 @@ var
   list : TStringList;
   i : integer;
 begin
-  result  := TMenuItem.create(nil);
+  result  := TMenuItem.Create(nil);
   FPopup.Items.add(result);
   result.caption := caption;
   result.imageIndex := imageIndex;
@@ -804,7 +804,7 @@ begin
   if (op = copCopy) then
   begin
     FHasCopy := true;
-    list := TStringList.create;
+    list := TStringList.Create;
     try
       getCopyModes(list);
       for i := 0 to list.count - 1 do
@@ -823,7 +823,7 @@ var
   list : TStringList;
   i : integer;
 begin
-  result  := TMenuItem.create(nil);
+  result  := TMenuItem.Create(nil);
   grp.FMenu.Items.add(result);
   result.caption := caption;
   result.imageIndex := imageIndex;
@@ -836,7 +836,7 @@ end;
 
 function TListOrTreeManagerBase.registerSubMenuEntry(parent: TMenuItem; caption: String; imageIndex: integer; op: TControlOperation; mode: String): TMenuItem;
 begin
-  result  := TMenuItem.create(nil);
+  result  := TMenuItem.Create(nil);
   parent.add(result);
   result.caption := caption;
   result.imageIndex := imageIndex;
@@ -896,8 +896,8 @@ end;
 constructor TListManager<T>.Create;
 begin
   inherited Create;
-  FData := TFslList<T>.create;
-  FFiltered := TFslList<T>.create;
+  FData := TFslList<T>.Create;
+  FFiltered := TFslList<T>.Create;
 end;
 
 destructor TListManager<T>.Destroy;
@@ -1156,11 +1156,12 @@ end;
 procedure TListManager<T>.doMnuClick(Sender: TObject);
 var
   mnu : TMenuItem;
-  mode : String;
+  name, mode : String;
 begin
   mnu := (Sender as TMenuItem);
-  if mnu.Name.StartsWith('mnuMode') then
-    mode := mnu.Name.Substring(7)
+  name := mnu.Name;
+  if name.StartsWith('mnuMode') then
+    mode := name.Substring(7)
   else
     mode := '';
 
@@ -1251,7 +1252,7 @@ begin
       internalAddItem(item);
       updateStatus;
     finally
-      item.Free;
+      item.free;
     end;
   end;
 end;
@@ -1269,7 +1270,7 @@ begin
         internalAddItem(item);
       updateStatus;
     finally
-      items.Free;
+      items.free;
     end;
   end;
 end;
@@ -1320,7 +1321,8 @@ begin
     begin
       DeleteItem(f);
       i := FList.itemIndex;
-      FData.Delete(i);
+      FData.Remove(f);
+      FFiltered.Remove(f);
       FList.Items.Delete(i);
       updateStatus;
     end;
@@ -1330,7 +1332,8 @@ begin
     if DeleteItem(f) then
     begin
       i := FList.itemIndex;
-      FData.Delete(i);
+      FFiltered.remove(f);
+      FData.remove(f);
       FList.Items.Delete(i);
       updateStatus;
     end;
@@ -1368,7 +1371,10 @@ begin
     item := getFocus;
     n := UpdateItem(item, mode);
     if n <> nil then
+    begin
       refreshItem(n);
+      updateStatus
+    end;
   end;
 end;
 
@@ -1380,7 +1386,10 @@ begin
   begin
     item := getFocus;
     if StopItem(item, mode) then
+    begin
       refresh(item);
+      updateStatus;
+    end;
   end;
 end;
 
@@ -1599,9 +1608,9 @@ end;
 
 destructor TFHIRSynEditSynchroniser.Destroy;
 begin
-  FFocus.Free;  // though we really expect it to be nil
+  FFocus.free;  // though we really expect it to be nil
   FFactory.free;
-  FResource.Free;
+  FResource.free;
   inherited Destroy;
 end;
 
@@ -1620,12 +1629,12 @@ procedure TFHIRSynEditSynchroniser.loadXml;
 var
   p : TFHIRParser;
 begin
-  FResource.Free;
+  FResource.free;
   FResource := nil;
 
   // todo: for the synchronizer, we require that we're using default namespaces. It's not clear what's the best way
   // to manage this
-  p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
+  p := FFactory.makeParser(nil, FFormat, nil);
   try
     p.KeepParseLocations := true;
     FResource := p.parseResource(SynEdit.text); // this will use UTF8, so that positions match, since we are UTF-8 internally
@@ -1638,10 +1647,10 @@ procedure TFHIRSynEditSynchroniser.loadJson;
 var
   p : TFHIRParser;
 begin
-  FResource.Free;
+  FResource.free;
   FResource := nil;
 
-  p := FFactory.makeParser(nil, FFormat, THTTPLanguages.Create('en'));
+  p := FFactory.makeParser(nil, FFormat, nil);
   try
     p.KeepParseLocations := true;
     FResource := p.parseResource(SynEdit.text); // this will use UTF8, so that positions match, since we are UTF-8 internally
@@ -1655,9 +1664,9 @@ var
   ss : TStringStream;
   c : TFHIRComposer;
 begin
-  ss := TStringStream.create('', TEncoding.UTF8);
+  ss := TStringStream.Create('', TEncoding.UTF8);
   try
-    c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.Create('en'), OutputStylePretty);
+    c := FFactory.makeComposer(nil, FFormat, nil, OutputStylePretty);
     try
       c.KeepLocationData := true;
       c.compose(ss, FResource);
@@ -1724,7 +1733,7 @@ begin
   if do1 and do2 then
     raise EFslException.Create('not supported yet');
 
-  lines := TStringList.create;
+  lines := TStringList.Create;
   try
     // write the parent object to the selected format
     lines.Text := writeToSource; // for more efficiency, try just the immediate parent (not ready yet)
@@ -1740,7 +1749,7 @@ begin
 
     added := measure(src);
   finally
-    lines.Free;
+    lines.free;
   end;
 
   // start a transaction
@@ -1831,7 +1840,7 @@ end;
 procedure TFHIRSynEditSynchroniser.abandon;
 begin
   FOpInProgress := opNone;
-  FFocus.Free;
+  FFocus.free;
 end;
 
 { TTreeManager }
@@ -1839,12 +1848,12 @@ end;
 constructor TTreeManager<T>.Create;
 begin
   inherited Create;
-  FData := TFslList<T>.create;
+  FData := TFslList<T>.Create;
 end;
 
 destructor TTreeManager<T>.Destroy;
 begin
-  FData.Free;
+  FData.free;
   Inherited Destroy;
 end;
 
@@ -1910,13 +1919,13 @@ end;
 
 procedure TTreeManager<T>.doAddSet(mode: String);
 begin
-  raise ETodo.create('doAddSet');
+  raise ETodo.Create('doAddSet');
 end;
 
 procedure TTreeManager<T>.doEdit(mode: String);
 begin
   changed;
-  raise ETodo.create('doEdit');
+  raise ETodo.Create('doEdit');
 end;
 
 procedure TTreeManager<T>.doDelete(mode: String);
@@ -2072,7 +2081,7 @@ end;
 procedure TTreeManager<T>.buildTreeNode(parent : TTreenode; item : T);
 begin
   if item.FNode <> nil then
-    raise ELibraryException.create('Node appears in the tree more than once');
+    raise ELibraryException.Create('Node appears in the tree more than once');
   if (parent = nil) then
     item.FNode := FTree.Items.add(nil, '')
   else
@@ -2211,9 +2220,11 @@ procedure TTreeManager<T>.doPopup(sender: TObject);
   procedure visitItem(item : TMenuItem);
   var
     i : integer;
+    name : String;
   begin
+    name := item.name;
     if item.Tag = ord(copCopy) then
-      item.Enabled := getCanCopy(focus, item.name.subString(7));
+      item.Enabled := getCanCopy(focus, name.subString(7));
     for i := 0 to item.Count - 1 do
       visitItem(item.Items[i]);
   end;
@@ -2247,11 +2258,12 @@ end;
 procedure TTreeManager<T>.doMnuClick(Sender: TObject);
 var
   mnu : TMenuItem;
-  mode : String;
+  name, mode : String;
 begin
   mnu := (Sender as TMenuItem);
-  if mnu.Name.StartsWith('mnuMode') then
-    mode := mnu.Name.Substring(7)
+  name := mnu.Name;
+  if Name.StartsWith('mnuMode') then
+    mode := Name.Substring(7)
   else
     mode := '';
 
@@ -2369,12 +2381,12 @@ end;
 constructor TVTreeManager<T>.Create;
 begin
   inherited Create;
-  FData := TFslList<T>.create;
+  FData := TFslList<T>.Create;
 end;
 
 destructor TVTreeManager<T>.Destroy;
 begin
-  FData.Free;
+  FData.free;
   Inherited Destroy;
 end;
 
@@ -2437,7 +2449,7 @@ end;
 
 procedure TVTreeManager<T>.doAddSet(mode: String);
 begin
-  raise ETodo.create('doAddSet');
+  raise ETodo.Create('doAddSet');
 end;
 
 procedure TVTreeManager<T>.doEdit(mode: String);
@@ -2632,7 +2644,7 @@ end;
 procedure TVTreeManager<T>.buildTreeNode(parent : PVirtualNode; item : T);
 begin
   if item.FNode <> nil then
-    raise ELibraryException.create('Node appears in the tree more than once');
+    raise ELibraryException.Create('Node appears in the tree more than once');
   item.FPNode := FTree.AddChild(parent);
   setT(item.FPNode, item);
   populateTreeNode(item);
@@ -2798,9 +2810,11 @@ procedure TVTreeManager<T>.doPopup(sender: TObject);
   procedure visitItem(item : TMenuItem);
   var
     i : integer;
+    name : String;
   begin
+    name := item.name;
     if item.Tag = ord(copCopy) then
-      item.Enabled := getCanCopy(focus, item.name.subString(7));
+      item.Enabled := getCanCopy(focus, name.subString(7));
     for i := 0 to item.Count do
       visitItem(item.Items[i]);
   end;
@@ -2834,11 +2848,12 @@ end;
 procedure TVTreeManager<T>.doMnuClick(Sender: TObject);
 var
   mnu : TMenuItem;
-  mode : String;
+  name, mode : String;
 begin
   mnu := (Sender as TMenuItem);
-  if mnu.Name.StartsWith('mnuMode') then
-    mode := mnu.Name.Substring(7)
+  name := mnu.Name;
+  if name.StartsWith('mnuMode') then
+    mode := name.Substring(7)
   else
     mode := '';
 
@@ -2958,12 +2973,12 @@ begin
   inherited Create;
   FSpace := space;
   FSpace.OnResize := doResize;
-  FPanels := TFslList<TPanelStackSubPanel>.create;
+  FPanels := TFslList<TPanelStackSubPanel>.Create;
 end;
 
 destructor TPanelStack.Destroy;
 begin
-  FPanels.Free;
+  FPanels.free;
   inherited Destroy;
 end;
 
@@ -2977,7 +2992,7 @@ var
   h, c : TPanel;
   s : TSplitter;
 begin
-  c := TPanel.create(FSpace);
+  c := TPanel.Create(FSpace);
   if FPanels.Count = 0 then // the first is special
   begin
     c.parent := FSpace;
@@ -2990,7 +3005,7 @@ begin
     c.parent := FPanels.Last.container;
     c.align := alBottom;
     c.Height := FSpace.height div FCount; // gets fixed up later
-    s := TSplitter.create(FSpace);
+    s := TSplitter.Create(FSpace);
     s.parent := FPanels.Last.Container;
     s.align := alBottom;
   end;
@@ -2998,7 +3013,7 @@ begin
   c.caption := '';
   c.ParentColor := false;
   c.color := clWhite;
-  h := TPanel.create(c);
+  h := TPanel.Create(c);
   h.parent := c;
   h.align := alTop;
   h.Height := 26;
@@ -3007,7 +3022,7 @@ begin
   h.caption := '  Caption';
   h.ParentColor := false;
   h.color := clBtnFace;
-  FPanels.add(TPanelStackSubPanel.create(c, h));
+  FPanels.add(TPanelStackSubPanel.Create(c, h));
 end;
 
 procedure TPanelStack.doResize(sender: TObject);

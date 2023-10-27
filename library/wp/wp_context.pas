@@ -39,7 +39,7 @@ type
   TWPContext = class (TFSlObject)
   private
   public
-   // constructor create(
+   // constructor Create(
   end;
 
 implementation

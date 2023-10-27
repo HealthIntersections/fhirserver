@@ -115,29 +115,29 @@ implementation
 
 destructor TLoggingService.Destroy;
 begin
-  FServer.Free;
-  FOpenIdToken.Free;
+  FServer.free;
+  FOpenIdToken.free;
   inherited;
 end;
 
 procedure TLoggingService.recordResourceReadFail(logId : String; resourceType: String; id: string; e: exception);
 begin
-  raise EFHIRException.create('Need to override recordResourceReadFail in ' + className);
+  raise EFHIRException.Create('Need to override recordResourceReadFail in ' + className);
 end;
 
 procedure TLoggingService.recordResourceReadSuccess(logId : String; resourceType: String; id: string; r : TFHIRResourceV);
 begin
-  raise EFHIRException.create('Need to override recordResourceReadSuccess in ' + className);
+  raise EFHIRException.Create('Need to override recordResourceReadSuccess in ' + className);
 end;
 
 procedure TLoggingService.recordResourceSearchFail(logId : String; resourceType: String; params: TStringList; e : exception = nil);
 begin
-  raise EFHIRException.create('Need to override recordResourceSearchFail in ' + className);
+  raise EFHIRException.Create('Need to override recordResourceSearchFail in ' + className);
 end;
 
 procedure TLoggingService.recordResourceSearchSuccess(logId : String; resourceType: String; params: TStringList; bnd: TFHIRResourceV);
 begin
-  raise EFHIRException.create('Need to override recordResourceSearchSuccess in ' + className);
+  raise EFHIRException.Create('Need to override recordResourceSearchSuccess in ' + className);
 end;
 
 function TLoggingService.encodeParams(params: TStringList): String;
@@ -155,23 +155,23 @@ end;
 
 procedure TLoggingService.recordLogin;
 begin
-  raise EFHIRException.create('Need to override recordLogin in ' + className);
+  raise EFHIRException.Create('Need to override recordLogin in ' + className);
 end;
 
 procedure TLoggingService.recordLogout;
 begin
-  raise EFHIRException.create('Need to override recordLogout in ' + className);
+  raise EFHIRException.Create('Need to override recordLogout in ' + className);
 end;
 
 procedure TLoggingService.SetOpenIdToken(const Value: TJWT);
 begin
-  FOpenIdToken.Free;
+  FOpenIdToken.free;
   FOpenIdToken := Value;
 end;
 
 procedure TLoggingService.SetServer(const Value: TRegisteredFHIRServer);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := Value;
 end;
 
@@ -189,7 +189,7 @@ end;
 
 destructor TFileLoggingService.Destroy;
 begin
-  FFile.Free;
+  FFile.free;
   inherited;
 end;
 
@@ -274,7 +274,7 @@ end;
 
 destructor TAuditEventLoggingService.Destroy;
 begin
-  FClient.Free;
+  FClient.free;
   inherited;
 end;
 
@@ -330,7 +330,7 @@ begin
 //    end;
 //
 //    o := se.object_List.Append;
-//    o.reference := TFhirReference.create;
+//    o.reference := TFhirReference.Create;
 //    o.reference.reference := resourceType + '/' + id;
 //    o.type_ := TFhirCoding.Create;
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
@@ -390,7 +390,7 @@ begin
 //    end;
 //
 //    o := se.object_List.Append;
-//    o.reference := TFhirReference.create;
+//    o.reference := TFhirReference.Create;
 //    o.reference.reference := resourceType + '/' + id;
 //    o.type_ := TFhirCoding.Create;
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
@@ -450,7 +450,7 @@ begin
 //    end;
 //
 //    o := se.object_List.Append;
-//    o.reference := TFhirReference.create;
+//    o.reference := TFhirReference.Create;
 //    o.reference.reference := resourceType;
 //    o.type_ := TFhirCoding.Create;
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
@@ -509,7 +509,7 @@ begin
 //    end;
 //
 //    o := se.object_List.Append;
-//    o.reference := TFhirReference.create;
+//    o.reference := TFhirReference.Create;
 //    o.reference.reference := resourceType;
 //    o.type_ := TFhirCoding.Create;
 //    o.type_.system := 'http://hl7.org/fhir/security-source-type';
@@ -631,7 +631,7 @@ end;
 
 destructor TDemoHttpLogger.Destroy;
 begin
-  FLog.Free;
+  FLog.free;
   inherited;
 end;
 

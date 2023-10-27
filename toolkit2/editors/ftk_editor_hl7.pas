@@ -68,7 +68,7 @@ implementation
 constructor THL7Editor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FParser := TV2Parser.create;
+  FParser := TV2Parser.Create;
 end;
 
 destructor THL7Editor.Destroy;
@@ -80,7 +80,7 @@ end;
 
 function THL7Editor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynHL7Syn.create(nil);
+  Result := TSynHL7Syn.Create(nil);
 end;
 
 procedure THL7Editor.getNavigationList(navpoints: TStringList);
@@ -153,7 +153,7 @@ begin
       if (validate) then
         checkForEncoding(s, i);
     end;
-    FMsg.Free;
+    FMsg.free;
     FMsg := nil;
     try
       FMsg := FParser.parse(FContent.text, [v2Validating]);

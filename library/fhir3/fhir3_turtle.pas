@@ -2047,7 +2047,7 @@ function TFHIRTurtleParser.ParseElement(obj : TTurtleComplex) : TFhirElement;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElement.create;
+  result := TFhirElement.Create;
   try
     ParseElementProperties(obj, result);
     result.link;
@@ -2100,7 +2100,7 @@ function TFHIRTurtleParser.ParseBackboneElement(obj : TTurtleComplex) : TFhirBac
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBackboneElement.create;
+  result := TFhirBackboneElement.Create;
   try
     ParseBackboneElementProperties(obj, result);
     result.link;
@@ -2142,8 +2142,8 @@ begin
     value := obj.stringLiteral('http://hl7.org/fhir/value');
   i := StringArrayIndexOfSensitive(aNames, value);
   if (value <> '') and (i < 0) then
-    raise ERdfException.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));
-  result := TFHIREnum.create;
+    raise ERdfException.Create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));
+  result := TFHIREnum.Create;
   try
     result.value := value;
     result.system := aSystems[i];
@@ -2178,7 +2178,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2206,7 +2206,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2234,7 +2234,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2262,7 +2262,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2290,7 +2290,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2318,7 +2318,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2346,7 +2346,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2374,7 +2374,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2402,7 +2402,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2430,7 +2430,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2458,7 +2458,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2486,7 +2486,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2514,7 +2514,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2542,7 +2542,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2570,7 +2570,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2598,7 +2598,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2626,7 +2626,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2654,7 +2654,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2733,7 +2733,7 @@ function TFHIRTurtleParser.ParseParametersParameter(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirParametersParameter.create;
+  result := TFhirParametersParameter.Create;
   try
     ParseParametersParameterProperties(obj, result);
     result.link;
@@ -2933,7 +2933,7 @@ function TFHIRTurtleParser.ParseParameters(obj : TTurtleComplex) : TFhirParamete
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirParameters.create;
+  result := TFhirParameters.Create;
   try
     ParseParametersProperties(obj, result);
     result.link;
@@ -2977,7 +2977,7 @@ function TFHIRTurtleParser.ParseExtension(obj : TTurtleComplex) : TFhirExtension
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExtension.create;
+  result := TFhirExtension.Create;
   try
     ParseExtensionProperties(obj, result);
     result.link;
@@ -3168,7 +3168,7 @@ function TFHIRTurtleParser.ParseNarrative(obj : TTurtleComplex) : TFhirNarrative
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNarrative.create;
+  result := TFhirNarrative.Create;
   try
     ParseNarrativeProperties(obj, result);
     result.link;
@@ -3207,7 +3207,7 @@ function TFHIRTurtleParser.ParseContributor(obj : TTurtleComplex) : TFhirContrib
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContributor.create;
+  result := TFhirContributor.Create;
   try
     ParseContributorProperties(obj, result);
     result.link;
@@ -3254,7 +3254,7 @@ function TFHIRTurtleParser.ParseAttachment(obj : TTurtleComplex) : TFhirAttachme
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     ParseAttachmentProperties(obj, result);
     result.link;
@@ -3313,7 +3313,7 @@ function TFHIRTurtleParser.ParseDataRequirementCodeFilter(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDataRequirementCodeFilter.create;
+  result := TFhirDataRequirementCodeFilter.Create;
   try
     ParseDataRequirementCodeFilterProperties(obj, result);
     result.link;
@@ -3376,7 +3376,7 @@ function TFHIRTurtleParser.ParseDataRequirementDateFilter(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDataRequirementDateFilter.create;
+  result := TFhirDataRequirementDateFilter.Create;
   try
     ParseDataRequirementDateFilterProperties(obj, result);
     result.link;
@@ -3427,7 +3427,7 @@ function TFHIRTurtleParser.ParseDataRequirement(obj : TTurtleComplex) : TFhirDat
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDataRequirement.create;
+  result := TFhirDataRequirement.Create;
   try
     ParseDataRequirementProperties(obj, result);
     result.link;
@@ -3487,7 +3487,7 @@ function TFHIRTurtleParser.ParseDosage(obj : TTurtleComplex) : TFhirDosage;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDosage.create;
+  result := TFhirDosage.Create;
   try
     ParseDosageProperties(obj, result);
     result.link;
@@ -3588,7 +3588,7 @@ function TFHIRTurtleParser.ParseIdentifier(obj : TTurtleComplex) : TFhirIdentifi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirIdentifier.create;
+  result := TFhirIdentifier.Create;
   try
     ParseIdentifierProperties(obj, result);
     result.link;
@@ -3641,7 +3641,7 @@ function TFHIRTurtleParser.ParseCoding(obj : TTurtleComplex) : TFhirCoding;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCoding.create;
+  result := TFhirCoding.Create;
   try
     ParseCodingProperties(obj, result);
     result.link;
@@ -3691,7 +3691,7 @@ function TFHIRTurtleParser.ParseSampledData(obj : TTurtleComplex) : TFhirSampled
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSampledData.create;
+  result := TFhirSampledData.Create;
   try
     ParseSampledDataProperties(obj, result);
     result.link;
@@ -3743,7 +3743,7 @@ function TFHIRTurtleParser.ParseRatio(obj : TTurtleComplex) : TFhirRatio;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRatio.create;
+  result := TFhirRatio.Create;
   try
     ParseRatioProperties(obj, result);
     result.link;
@@ -3784,7 +3784,7 @@ function TFHIRTurtleParser.ParseReference(obj : TTurtleComplex) : TFhirReference
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirReference.create;
+  result := TFhirReference.Create;
   try
     ParseReferenceProperties(obj, result);
     result.link;
@@ -3828,7 +3828,7 @@ function TFHIRTurtleParser.ParseTriggerDefinition(obj : TTurtleComplex) : TFhirT
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTriggerDefinition.create;
+  result := TFhirTriggerDefinition.Create;
   try
     ParseTriggerDefinitionProperties(obj, result);
     result.link;
@@ -3889,7 +3889,7 @@ function TFHIRTurtleParser.ParsePeriod(obj : TTurtleComplex) : TFhirPeriod;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPeriod.create;
+  result := TFhirPeriod.Create;
   try
     ParsePeriodProperties(obj, result);
     result.link;
@@ -3930,7 +3930,7 @@ function TFHIRTurtleParser.ParseQuantity(obj : TTurtleComplex) : TFhirQuantity;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuantity.create;
+  result := TFhirQuantity.Create;
   try
     ParseQuantityProperties(obj, result);
     result.link;
@@ -3980,7 +3980,7 @@ function TFHIRTurtleParser.ParseRange(obj : TTurtleComplex) : TFhirRange;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRange.create;
+  result := TFhirRange.Create;
   try
     ParseRangeProperties(obj, result);
     result.link;
@@ -4021,7 +4021,7 @@ function TFHIRTurtleParser.ParseRelatedArtifact(obj : TTurtleComplex) : TFhirRel
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRelatedArtifact.create;
+  result := TFhirRelatedArtifact.Create;
   try
     ParseRelatedArtifactProperties(obj, result);
     result.link;
@@ -4073,7 +4073,7 @@ function TFHIRTurtleParser.ParseAnnotation(obj : TTurtleComplex) : TFhirAnnotati
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAnnotation.create;
+  result := TFhirAnnotation.Create;
   try
     ParseAnnotationProperties(obj, result);
     result.link;
@@ -4123,7 +4123,7 @@ function TFHIRTurtleParser.ParseContactDetail(obj : TTurtleComplex) : TFhirConta
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContactDetail.create;
+  result := TFhirContactDetail.Create;
   try
     ParseContactDetailProperties(obj, result);
     result.link;
@@ -4169,7 +4169,7 @@ function TFHIRTurtleParser.ParseUsageContext(obj : TTurtleComplex) : TFhirUsageC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirUsageContext.create;
+  result := TFhirUsageContext.Create;
   try
     ParseUsageContextProperties(obj, result);
     result.link;
@@ -4220,7 +4220,7 @@ function TFHIRTurtleParser.ParseSignature(obj : TTurtleComplex) : TFhirSignature
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSignature.create;
+  result := TFhirSignature.Create;
   try
     ParseSignatureProperties(obj, result);
     result.link;
@@ -4286,7 +4286,7 @@ function TFHIRTurtleParser.ParseCodeableConcept(obj : TTurtleComplex) : TFhirCod
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeableConcept.create;
+  result := TFhirCodeableConcept.Create;
   try
     ParseCodeableConceptProperties(obj, result);
     result.link;
@@ -4332,7 +4332,7 @@ function TFHIRTurtleParser.ParseParameterDefinition(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirParameterDefinition.create;
+  result := TFhirParameterDefinition.Create;
   try
     ParseParameterDefinitionProperties(obj, result);
     result.link;
@@ -4386,7 +4386,7 @@ function TFHIRTurtleParser.ParseContactPoint(obj : TTurtleComplex) : TFhirContac
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContactPoint.create;
+  result := TFhirContactPoint.Create;
   try
     ParseContactPointProperties(obj, result);
     result.link;
@@ -4436,7 +4436,7 @@ function TFHIRTurtleParser.ParseHumanName(obj : TTurtleComplex) : TFhirHumanName
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirHumanName.create;
+  result := TFhirHumanName.Create;
   try
     ParseHumanNameProperties(obj, result);
     result.link;
@@ -4501,7 +4501,7 @@ function TFHIRTurtleParser.ParseMeta(obj : TTurtleComplex) : TFhirMeta;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeta.create;
+  result := TFhirMeta.Create;
   try
     ParseMetaProperties(obj, result);
     result.link;
@@ -4560,7 +4560,7 @@ function TFHIRTurtleParser.ParseAddress(obj : TTurtleComplex) : TFhirAddress;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAddress.create;
+  result := TFhirAddress.Create;
   try
     ParseAddressProperties(obj, result);
     result.link;
@@ -4630,7 +4630,7 @@ function TFHIRTurtleParser.ParseElementDefinitionSlicing(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionSlicing.create;
+  result := TFhirElementDefinitionSlicing.Create;
   try
     ParseElementDefinitionSlicingProperties(obj, result);
     result.link;
@@ -4681,7 +4681,7 @@ function TFHIRTurtleParser.ParseElementDefinitionSlicingDiscriminator(obj : TTur
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionSlicingDiscriminator.create;
+  result := TFhirElementDefinitionSlicingDiscriminator.Create;
   try
     ParseElementDefinitionSlicingDiscriminatorProperties(obj, result);
     result.link;
@@ -4720,7 +4720,7 @@ function TFHIRTurtleParser.ParseElementDefinitionBase(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionBase.create;
+  result := TFhirElementDefinitionBase.Create;
   try
     ParseElementDefinitionBaseProperties(obj, result);
     result.link;
@@ -4761,7 +4761,7 @@ function TFHIRTurtleParser.ParseElementDefinitionType(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionType.create;
+  result := TFhirElementDefinitionType.Create;
   try
     ParseElementDefinitionTypeProperties(obj, result);
     result.link;
@@ -4818,7 +4818,7 @@ function TFHIRTurtleParser.ParseElementDefinitionExample(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionExample.create;
+  result := TFhirElementDefinitionExample.Create;
   try
     ParseElementDefinitionExampleProperties(obj, result);
     result.link;
@@ -5009,7 +5009,7 @@ function TFHIRTurtleParser.ParseElementDefinitionConstraint(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionConstraint.create;
+  result := TFhirElementDefinitionConstraint.Create;
   try
     ParseElementDefinitionConstraintProperties(obj, result);
     result.link;
@@ -5061,7 +5061,7 @@ function TFHIRTurtleParser.ParseElementDefinitionBinding(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionBinding.create;
+  result := TFhirElementDefinitionBinding.Create;
   try
     ParseElementDefinitionBindingProperties(obj, result);
     result.link;
@@ -5111,7 +5111,7 @@ function TFHIRTurtleParser.ParseElementDefinitionMapping(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinitionMapping.create;
+  result := TFhirElementDefinitionMapping.Create;
   try
     ParseElementDefinitionMappingProperties(obj, result);
     result.link;
@@ -5156,7 +5156,7 @@ function TFHIRTurtleParser.ParseElementDefinition(obj : TTurtleComplex) : TFhirE
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirElementDefinition.create;
+  result := TFhirElementDefinition.Create;
   try
     ParseElementDefinitionProperties(obj, result);
     result.link;
@@ -5821,7 +5821,7 @@ function TFHIRTurtleParser.ParseTimingRepeat(obj : TTurtleComplex) : TFhirTiming
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTimingRepeat.create;
+  result := TFhirTimingRepeat.Create;
   try
     ParseTimingRepeatProperties(obj, result);
     result.link;
@@ -5925,7 +5925,7 @@ function TFHIRTurtleParser.ParseTiming(obj : TTurtleComplex) : TFhirTiming;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTiming.create;
+  result := TFhirTiming.Create;
   try
     ParseTimingProperties(obj, result);
     result.link;
@@ -5974,7 +5974,7 @@ function TFHIRTurtleParser.ParseCount(obj : TTurtleComplex) : TFhirCount;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCount.create;
+  result := TFhirCount.Create;
   try
     ParseCountProperties(obj, result);
     result.link;
@@ -6009,7 +6009,7 @@ function TFHIRTurtleParser.ParseMoney(obj : TTurtleComplex) : TFhirMoney;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMoney.create;
+  result := TFhirMoney.Create;
   try
     ParseMoneyProperties(obj, result);
     result.link;
@@ -6044,7 +6044,7 @@ function TFHIRTurtleParser.ParseAge(obj : TTurtleComplex) : TFhirAge;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAge.create;
+  result := TFhirAge.Create;
   try
     ParseAgeProperties(obj, result);
     result.link;
@@ -6079,7 +6079,7 @@ function TFHIRTurtleParser.ParseDistance(obj : TTurtleComplex) : TFhirDistance;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDistance.create;
+  result := TFhirDistance.Create;
   try
     ParseDistanceProperties(obj, result);
     result.link;
@@ -6114,7 +6114,7 @@ function TFHIRTurtleParser.ParseDuration(obj : TTurtleComplex) : TFhirDuration;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDuration.create;
+  result := TFhirDuration.Create;
   try
     ParseDurationProperties(obj, result);
     result.link;
@@ -6150,7 +6150,7 @@ function TFHIRTurtleParser.ParseAccountCoverage(obj : TTurtleComplex) : TFhirAcc
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAccountCoverage.create;
+  result := TFhirAccountCoverage.Create;
   try
     ParseAccountCoverageProperties(obj, result);
     result.link;
@@ -6190,7 +6190,7 @@ function TFHIRTurtleParser.ParseAccountGuarantor(obj : TTurtleComplex) : TFhirAc
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAccountGuarantor.create;
+  result := TFhirAccountGuarantor.Create;
   try
     ParseAccountGuarantorProperties(obj, result);
     result.link;
@@ -6233,7 +6233,7 @@ function TFHIRTurtleParser.ParseAccount(obj : TTurtleComplex) : TFhirAccount;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAccount.create;
+  result := TFhirAccount.Create;
   try
     ParseAccountProperties(obj, result);
     result.link;
@@ -6315,7 +6315,7 @@ function TFHIRTurtleParser.ParseActivityDefinitionParticipant(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirActivityDefinitionParticipant.create;
+  result := TFhirActivityDefinitionParticipant.Create;
   try
     ParseActivityDefinitionParticipantProperties(obj, result);
     result.link;
@@ -6355,7 +6355,7 @@ function TFHIRTurtleParser.ParseActivityDefinitionDynamicValue(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirActivityDefinitionDynamicValue.create;
+  result := TFhirActivityDefinitionDynamicValue.Create;
   try
     ParseActivityDefinitionDynamicValueProperties(obj, result);
     result.link;
@@ -6402,7 +6402,7 @@ function TFHIRTurtleParser.ParseActivityDefinition(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirActivityDefinition.create;
+  result := TFhirActivityDefinition.Create;
   try
     ParseActivityDefinitionProperties(obj, result);
     result.link;
@@ -6585,7 +6585,7 @@ function TFHIRTurtleParser.ParseAdverseEventSuspectEntity(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAdverseEventSuspectEntity.create;
+  result := TFhirAdverseEventSuspectEntity.Create;
   try
     ParseAdverseEventSuspectEntityProperties(obj, result);
     result.link;
@@ -6640,7 +6640,7 @@ function TFHIRTurtleParser.ParseAdverseEvent(obj : TTurtleComplex) : TFhirAdvers
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAdverseEvent.create;
+  result := TFhirAdverseEvent.Create;
   try
     ParseAdverseEventProperties(obj, result);
     result.link;
@@ -6738,7 +6738,7 @@ function TFHIRTurtleParser.ParseAllergyIntoleranceReaction(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAllergyIntoleranceReaction.create;
+  result := TFhirAllergyIntoleranceReaction.Create;
   try
     ParseAllergyIntoleranceReactionProperties(obj, result);
     result.link;
@@ -6800,7 +6800,7 @@ function TFHIRTurtleParser.ParseAllergyIntolerance(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAllergyIntolerance.create;
+  result := TFhirAllergyIntolerance.Create;
   try
     ParseAllergyIntoleranceProperties(obj, result);
     result.link;
@@ -6911,7 +6911,7 @@ function TFHIRTurtleParser.ParseAppointmentParticipant(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAppointmentParticipant.create;
+  result := TFhirAppointmentParticipant.Create;
   try
     ParseAppointmentParticipantProperties(obj, result);
     result.link;
@@ -6962,7 +6962,7 @@ function TFHIRTurtleParser.ParseAppointment(obj : TTurtleComplex) : TFhirAppoint
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAppointment.create;
+  result := TFhirAppointment.Create;
   try
     ParseAppointmentProperties(obj, result);
     result.link;
@@ -7080,7 +7080,7 @@ function TFHIRTurtleParser.ParseAppointmentResponse(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAppointmentResponse.create;
+  result := TFhirAppointmentResponse.Create;
   try
     ParseAppointmentResponseProperties(obj, result);
     result.link;
@@ -7146,7 +7146,7 @@ function TFHIRTurtleParser.ParseAuditEventAgent(obj : TTurtleComplex) : TFhirAud
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAuditEventAgent.create;
+  result := TFhirAuditEventAgent.Create;
   try
     ParseAuditEventAgentProperties(obj, result);
     result.link;
@@ -7222,7 +7222,7 @@ function TFHIRTurtleParser.ParseAuditEventAgentNetwork(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAuditEventAgentNetwork.create;
+  result := TFhirAuditEventAgentNetwork.Create;
   try
     ParseAuditEventAgentNetworkProperties(obj, result);
     result.link;
@@ -7263,7 +7263,7 @@ function TFHIRTurtleParser.ParseAuditEventSource(obj : TTurtleComplex) : TFhirAu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAuditEventSource.create;
+  result := TFhirAuditEventSource.Create;
   try
     ParseAuditEventSourceProperties(obj, result);
     result.link;
@@ -7311,7 +7311,7 @@ function TFHIRTurtleParser.ParseAuditEventEntity(obj : TTurtleComplex) : TFhirAu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAuditEventEntity.create;
+  result := TFhirAuditEventEntity.Create;
   try
     ParseAuditEventEntityProperties(obj, result);
     result.link;
@@ -7383,7 +7383,7 @@ function TFHIRTurtleParser.ParseAuditEventEntityDetail(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAuditEventEntityDetail.create;
+  result := TFhirAuditEventEntityDetail.Create;
   try
     ParseAuditEventEntityDetailProperties(obj, result);
     result.link;
@@ -7422,7 +7422,7 @@ function TFHIRTurtleParser.ParseAuditEvent(obj : TTurtleComplex) : TFhirAuditEve
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirAuditEvent.create;
+  result := TFhirAuditEvent.Create;
   try
     ParseAuditEventProperties(obj, result);
     result.link;
@@ -7496,7 +7496,7 @@ function TFHIRTurtleParser.ParseBasic(obj : TTurtleComplex) : TFhirBasic;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBasic.create;
+  result := TFhirBasic.Create;
   try
     ParseBasicProperties(obj, result);
     result.link;
@@ -7552,7 +7552,7 @@ function TFHIRTurtleParser.ParseBinary(obj : TTurtleComplex) : TFhirBinary;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBinary.create;
+  result := TFhirBinary.Create;
   try
     ParseBinaryProperties(obj, result);
     result.link;
@@ -7596,7 +7596,7 @@ function TFHIRTurtleParser.ParseBodySite(obj : TTurtleComplex) : TFhirBodySite;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBodySite.create;
+  result := TFhirBodySite.Create;
   try
     ParseBodySiteProperties(obj, result);
     result.link;
@@ -7662,7 +7662,7 @@ function TFHIRTurtleParser.ParseBundleLink(obj : TTurtleComplex) : TFhirBundleLi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBundleLink.create;
+  result := TFhirBundleLink.Create;
   try
     ParseBundleLinkProperties(obj, result);
     result.link;
@@ -7701,7 +7701,7 @@ function TFHIRTurtleParser.ParseBundleEntry(obj : TTurtleComplex) : TFhirBundleE
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBundleEntry.create;
+  result := TFhirBundleEntry.Create;
   try
     ParseBundleEntryProperties(obj, result);
     result.link;
@@ -7759,7 +7759,7 @@ function TFHIRTurtleParser.ParseBundleEntrySearch(obj : TTurtleComplex) : TFhirB
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBundleEntrySearch.create;
+  result := TFhirBundleEntrySearch.Create;
   try
     ParseBundleEntrySearchProperties(obj, result);
     result.link;
@@ -7800,7 +7800,7 @@ function TFHIRTurtleParser.ParseBundleEntryRequest(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBundleEntryRequest.create;
+  result := TFhirBundleEntryRequest.Create;
   try
     ParseBundleEntryRequestProperties(obj, result);
     result.link;
@@ -7851,7 +7851,7 @@ function TFHIRTurtleParser.ParseBundleEntryResponse(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBundleEntryResponse.create;
+  result := TFhirBundleEntryResponse.Create;
   try
     ParseBundleEntryResponseProperties(obj, result);
     result.link;
@@ -7900,7 +7900,7 @@ function TFHIRTurtleParser.ParseBundle(obj : TTurtleComplex) : TFhirBundle;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirBundle.create;
+  result := TFhirBundle.Create;
   try
     ParseBundleProperties(obj, result);
     result.link;
@@ -7961,7 +7961,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementSoftware(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementSoftware.create;
+  result := TFhirCapabilityStatementSoftware.Create;
   try
     ParseCapabilityStatementSoftwareProperties(obj, result);
     result.link;
@@ -8004,7 +8004,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementImplementation(obj : TTurtleC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementImplementation.create;
+  result := TFhirCapabilityStatementImplementation.Create;
   try
     ParseCapabilityStatementImplementationProperties(obj, result);
     result.link;
@@ -8044,7 +8044,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRest(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRest.create;
+  result := TFhirCapabilityStatementRest.Create;
   try
     ParseCapabilityStatementRestProperties(obj, result);
     result.link;
@@ -8115,7 +8115,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestSecurity(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestSecurity.create;
+  result := TFhirCapabilityStatementRestSecurity.Create;
   try
     ParseCapabilityStatementRestSecurityProperties(obj, result);
     result.link;
@@ -8169,7 +8169,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestSecurityCertificate(obj :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestSecurityCertificate.create;
+  result := TFhirCapabilityStatementRestSecurityCertificate.Create;
   try
     ParseCapabilityStatementRestSecurityCertificateProperties(obj, result);
     result.link;
@@ -8210,7 +8210,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestResource(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestResource.create;
+  result := TFhirCapabilityStatementRestResource.Create;
   try
     ParseCapabilityStatementRestResourceProperties(obj, result);
     result.link;
@@ -8304,7 +8304,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestResourceInteraction(obj :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestResourceInteraction.create;
+  result := TFhirCapabilityStatementRestResourceInteraction.Create;
   try
     ParseCapabilityStatementRestResourceInteractionProperties(obj, result);
     result.link;
@@ -8344,7 +8344,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestResourceSearchParam(obj :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestResourceSearchParam.create;
+  result := TFhirCapabilityStatementRestResourceSearchParam.Create;
   try
     ParseCapabilityStatementRestResourceSearchParamProperties(obj, result);
     result.link;
@@ -8389,7 +8389,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestInteraction(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestInteraction.create;
+  result := TFhirCapabilityStatementRestInteraction.Create;
   try
     ParseCapabilityStatementRestInteractionProperties(obj, result);
     result.link;
@@ -8429,7 +8429,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementRestOperation(obj : TTurtleCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementRestOperation.create;
+  result := TFhirCapabilityStatementRestOperation.Create;
   try
     ParseCapabilityStatementRestOperationProperties(obj, result);
     result.link;
@@ -8468,7 +8468,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementMessaging(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementMessaging.create;
+  result := TFhirCapabilityStatementMessaging.Create;
   try
     ParseCapabilityStatementMessagingProperties(obj, result);
     result.link;
@@ -8527,7 +8527,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementMessagingEndpoint(obj : TTurt
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementMessagingEndpoint.create;
+  result := TFhirCapabilityStatementMessagingEndpoint.Create;
   try
     ParseCapabilityStatementMessagingEndpointProperties(obj, result);
     result.link;
@@ -8566,7 +8566,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementMessagingSupportedMessage(obj
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementMessagingSupportedMessage.create;
+  result := TFhirCapabilityStatementMessagingSupportedMessage.Create;
   try
     ParseCapabilityStatementMessagingSupportedMessageProperties(obj, result);
     result.link;
@@ -8605,7 +8605,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementMessagingEvent(obj : TTurtleC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementMessagingEvent.create;
+  result := TFhirCapabilityStatementMessagingEvent.Create;
   try
     ParseCapabilityStatementMessagingEventProperties(obj, result);
     result.link;
@@ -8656,7 +8656,7 @@ function TFHIRTurtleParser.ParseCapabilityStatementDocument(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatementDocument.create;
+  result := TFhirCapabilityStatementDocument.Create;
   try
     ParseCapabilityStatementDocumentProperties(obj, result);
     result.link;
@@ -8698,7 +8698,7 @@ function TFHIRTurtleParser.ParseCapabilityStatement(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCapabilityStatement.create;
+  result := TFhirCapabilityStatement.Create;
   try
     ParseCapabilityStatementProperties(obj, result);
     result.link;
@@ -8835,7 +8835,7 @@ function TFHIRTurtleParser.ParseCarePlanActivity(obj : TTurtleComplex) : TFhirCa
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCarePlanActivity.create;
+  result := TFhirCarePlanActivity.Create;
   try
     ParseCarePlanActivityProperties(obj, result);
     result.link;
@@ -8894,7 +8894,7 @@ function TFHIRTurtleParser.ParseCarePlanActivityDetail(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCarePlanActivityDetail.create;
+  result := TFhirCarePlanActivityDetail.Create;
   try
     ParseCarePlanActivityDetailProperties(obj, result);
     result.link;
@@ -9001,7 +9001,7 @@ function TFHIRTurtleParser.ParseCarePlan(obj : TTurtleComplex) : TFhirCarePlan;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCarePlan.create;
+  result := TFhirCarePlan.Create;
   try
     ParseCarePlanProperties(obj, result);
     result.link;
@@ -9124,7 +9124,7 @@ function TFHIRTurtleParser.ParseCareTeamParticipant(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCareTeamParticipant.create;
+  result := TFhirCareTeamParticipant.Create;
   try
     ParseCareTeamParticipantProperties(obj, result);
     result.link;
@@ -9171,7 +9171,7 @@ function TFHIRTurtleParser.ParseCareTeam(obj : TTurtleComplex) : TFhirCareTeam;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCareTeam.create;
+  result := TFhirCareTeam.Create;
   try
     ParseCareTeamProperties(obj, result);
     result.link;
@@ -9261,7 +9261,7 @@ function TFHIRTurtleParser.ParseChargeItemParticipant(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirChargeItemParticipant.create;
+  result := TFhirChargeItemParticipant.Create;
   try
     ParseChargeItemParticipantProperties(obj, result);
     result.link;
@@ -9301,7 +9301,7 @@ function TFHIRTurtleParser.ParseChargeItem(obj : TTurtleComplex) : TFhirChargeIt
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirChargeItem.create;
+  result := TFhirChargeItem.Create;
   try
     ParseChargeItemProperties(obj, result);
     result.link;
@@ -9434,7 +9434,7 @@ function TFHIRTurtleParser.ParseClaimRelated(obj : TTurtleComplex) : TFhirClaimR
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimRelated.create;
+  result := TFhirClaimRelated.Create;
   try
     ParseClaimRelatedProperties(obj, result);
     result.link;
@@ -9478,7 +9478,7 @@ function TFHIRTurtleParser.ParseClaimPayee(obj : TTurtleComplex) : TFhirClaimPay
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimPayee.create;
+  result := TFhirClaimPayee.Create;
   try
     ParseClaimPayeeProperties(obj, result);
     result.link;
@@ -9521,7 +9521,7 @@ function TFHIRTurtleParser.ParseClaimCareTeam(obj : TTurtleComplex) : TFhirClaim
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimCareTeam.create;
+  result := TFhirClaimCareTeam.Create;
   try
     ParseClaimCareTeamProperties(obj, result);
     result.link;
@@ -9569,7 +9569,7 @@ function TFHIRTurtleParser.ParseClaimInformation(obj : TTurtleComplex) : TFhirCl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimInformation.create;
+  result := TFhirClaimInformation.Create;
   try
     ParseClaimInformationProperties(obj, result);
     result.link;
@@ -9640,7 +9640,7 @@ function TFHIRTurtleParser.ParseClaimDiagnosis(obj : TTurtleComplex) : TFhirClai
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimDiagnosis.create;
+  result := TFhirClaimDiagnosis.Create;
   try
     ParseClaimDiagnosisProperties(obj, result);
     result.link;
@@ -9696,7 +9696,7 @@ function TFHIRTurtleParser.ParseClaimProcedure(obj : TTurtleComplex) : TFhirClai
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimProcedure.create;
+  result := TFhirClaimProcedure.Create;
   try
     ParseClaimProcedureProperties(obj, result);
     result.link;
@@ -9746,7 +9746,7 @@ function TFHIRTurtleParser.ParseClaimInsurance(obj : TTurtleComplex) : TFhirClai
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimInsurance.create;
+  result := TFhirClaimInsurance.Create;
   try
     ParseClaimInsuranceProperties(obj, result);
     result.link;
@@ -9801,7 +9801,7 @@ function TFHIRTurtleParser.ParseClaimAccident(obj : TTurtleComplex) : TFhirClaim
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimAccident.create;
+  result := TFhirClaimAccident.Create;
   try
     ParseClaimAccidentProperties(obj, result);
     result.link;
@@ -9851,7 +9851,7 @@ function TFHIRTurtleParser.ParseClaimItem(obj : TTurtleComplex) : TFhirClaimItem
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimItem.create;
+  result := TFhirClaimItem.Create;
   try
     ParseClaimItemProperties(obj, result);
     result.link;
@@ -9985,7 +9985,7 @@ function TFHIRTurtleParser.ParseClaimItemDetail(obj : TTurtleComplex) : TFhirCla
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimItemDetail.create;
+  result := TFhirClaimItemDetail.Create;
   try
     ParseClaimItemDetailProperties(obj, result);
     result.link;
@@ -10066,7 +10066,7 @@ function TFHIRTurtleParser.ParseClaimItemDetailSubDetail(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimItemDetailSubDetail.create;
+  result := TFhirClaimItemDetailSubDetail.Create;
   try
     ParseClaimItemDetailSubDetailProperties(obj, result);
     result.link;
@@ -10142,7 +10142,7 @@ function TFHIRTurtleParser.ParseClaim(obj : TTurtleComplex) : TFhirClaim;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaim.create;
+  result := TFhirClaim.Create;
   try
     ParseClaimProperties(obj, result);
     result.link;
@@ -10290,7 +10290,7 @@ function TFHIRTurtleParser.ParseClaimResponseItem(obj : TTurtleComplex) : TFhirC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseItem.create;
+  result := TFhirClaimResponseItem.Create;
   try
     ParseClaimResponseItemProperties(obj, result);
     result.link;
@@ -10345,7 +10345,7 @@ function TFHIRTurtleParser.ParseClaimResponseItemAdjudication(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseItemAdjudication.create;
+  result := TFhirClaimResponseItemAdjudication.Create;
   try
     ParseClaimResponseItemAdjudicationProperties(obj, result);
     result.link;
@@ -10391,7 +10391,7 @@ function TFHIRTurtleParser.ParseClaimResponseItemDetail(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseItemDetail.create;
+  result := TFhirClaimResponseItemDetail.Create;
   try
     ParseClaimResponseItemDetailProperties(obj, result);
     result.link;
@@ -10446,7 +10446,7 @@ function TFHIRTurtleParser.ParseClaimResponseItemDetailSubDetail(obj : TTurtleCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseItemDetailSubDetail.create;
+  result := TFhirClaimResponseItemDetailSubDetail.Create;
   try
     ParseClaimResponseItemDetailSubDetailProperties(obj, result);
     result.link;
@@ -10496,7 +10496,7 @@ function TFHIRTurtleParser.ParseClaimResponseAddItem(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseAddItem.create;
+  result := TFhirClaimResponseAddItem.Create;
   try
     ParseClaimResponseAddItemProperties(obj, result);
     result.link;
@@ -10571,7 +10571,7 @@ function TFHIRTurtleParser.ParseClaimResponseAddItemDetail(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseAddItemDetail.create;
+  result := TFhirClaimResponseAddItemDetail.Create;
   try
     ParseClaimResponseAddItemDetailProperties(obj, result);
     result.link;
@@ -10636,7 +10636,7 @@ function TFHIRTurtleParser.ParseClaimResponseError(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseError.create;
+  result := TFhirClaimResponseError.Create;
   try
     ParseClaimResponseErrorProperties(obj, result);
     result.link;
@@ -10682,7 +10682,7 @@ function TFHIRTurtleParser.ParseClaimResponsePayment(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponsePayment.create;
+  result := TFhirClaimResponsePayment.Create;
   try
     ParseClaimResponsePaymentProperties(obj, result);
     result.link;
@@ -10735,7 +10735,7 @@ function TFHIRTurtleParser.ParseClaimResponseProcessNote(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseProcessNote.create;
+  result := TFhirClaimResponseProcessNote.Create;
   try
     ParseClaimResponseProcessNoteProperties(obj, result);
     result.link;
@@ -10782,7 +10782,7 @@ function TFHIRTurtleParser.ParseClaimResponseInsurance(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponseInsurance.create;
+  result := TFhirClaimResponseInsurance.Create;
   try
     ParseClaimResponseInsuranceProperties(obj, result);
     result.link;
@@ -10837,7 +10837,7 @@ function TFHIRTurtleParser.ParseClaimResponse(obj : TTurtleComplex) : TFhirClaim
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClaimResponse.create;
+  result := TFhirClaimResponse.Create;
   try
     ParseClaimResponseProperties(obj, result);
     result.link;
@@ -10960,7 +10960,7 @@ function TFHIRTurtleParser.ParseClinicalImpressionInvestigation(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClinicalImpressionInvestigation.create;
+  result := TFhirClinicalImpressionInvestigation.Create;
   try
     ParseClinicalImpressionInvestigationProperties(obj, result);
     result.link;
@@ -11005,7 +11005,7 @@ function TFHIRTurtleParser.ParseClinicalImpressionFinding(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClinicalImpressionFinding.create;
+  result := TFhirClinicalImpressionFinding.Create;
   try
     ParseClinicalImpressionFindingProperties(obj, result);
     result.link;
@@ -11053,7 +11053,7 @@ function TFHIRTurtleParser.ParseClinicalImpression(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirClinicalImpression.create;
+  result := TFhirClinicalImpression.Create;
   try
     ParseClinicalImpressionProperties(obj, result);
     result.link;
@@ -11171,7 +11171,7 @@ function TFHIRTurtleParser.ParseCodeSystemFilter(obj : TTurtleComplex) : TFhirCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeSystemFilter.create;
+  result := TFhirCodeSystemFilter.Create;
   try
     ParseCodeSystemFilterProperties(obj, result);
     result.link;
@@ -11222,7 +11222,7 @@ function TFHIRTurtleParser.ParseCodeSystemProperty(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeSystemProperty.create;
+  result := TFhirCodeSystemProperty.Create;
   try
     ParseCodeSystemPropertyProperties(obj, result);
     result.link;
@@ -11267,7 +11267,7 @@ function TFHIRTurtleParser.ParseCodeSystemConcept(obj : TTurtleComplex) : TFhirC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeSystemConcept.create;
+  result := TFhirCodeSystemConcept.Create;
   try
     ParseCodeSystemConceptProperties(obj, result);
     result.link;
@@ -11328,7 +11328,7 @@ function TFHIRTurtleParser.ParseCodeSystemConceptDesignation(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeSystemConceptDesignation.create;
+  result := TFhirCodeSystemConceptDesignation.Create;
   try
     ParseCodeSystemConceptDesignationProperties(obj, result);
     result.link;
@@ -11371,7 +11371,7 @@ function TFHIRTurtleParser.ParseCodeSystemConceptProperty(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeSystemConceptProperty.create;
+  result := TFhirCodeSystemConceptProperty.Create;
   try
     ParseCodeSystemConceptPropertyProperties(obj, result);
     result.link;
@@ -11434,7 +11434,7 @@ function TFHIRTurtleParser.ParseCodeSystem(obj : TTurtleComplex) : TFhirCodeSyst
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCodeSystem.create;
+  result := TFhirCodeSystem.Create;
   try
     ParseCodeSystemProperties(obj, result);
     result.link;
@@ -11559,7 +11559,7 @@ function TFHIRTurtleParser.ParseCommunicationPayload(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCommunicationPayload.create;
+  result := TFhirCommunicationPayload.Create;
   try
     ParseCommunicationPayloadProperties(obj, result);
     result.link;
@@ -11608,7 +11608,7 @@ function TFHIRTurtleParser.ParseCommunication(obj : TTurtleComplex) : TFhirCommu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCommunication.create;
+  result := TFhirCommunication.Create;
   try
     ParseCommunicationProperties(obj, result);
     result.link;
@@ -11731,7 +11731,7 @@ function TFHIRTurtleParser.ParseCommunicationRequestPayload(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCommunicationRequestPayload.create;
+  result := TFhirCommunicationRequestPayload.Create;
   try
     ParseCommunicationRequestPayloadProperties(obj, result);
     result.link;
@@ -11780,7 +11780,7 @@ function TFHIRTurtleParser.ParseCommunicationRequestRequester(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCommunicationRequestRequester.create;
+  result := TFhirCommunicationRequestRequester.Create;
   try
     ParseCommunicationRequestRequesterProperties(obj, result);
     result.link;
@@ -11820,7 +11820,7 @@ function TFHIRTurtleParser.ParseCommunicationRequest(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCommunicationRequest.create;
+  result := TFhirCommunicationRequest.Create;
   try
     ParseCommunicationRequestProperties(obj, result);
     result.link;
@@ -11946,7 +11946,7 @@ function TFHIRTurtleParser.ParseCompartmentDefinitionResource(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCompartmentDefinitionResource.create;
+  result := TFhirCompartmentDefinitionResource.Create;
   try
     ParseCompartmentDefinitionResourceProperties(obj, result);
     result.link;
@@ -11994,7 +11994,7 @@ function TFHIRTurtleParser.ParseCompartmentDefinition(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCompartmentDefinition.create;
+  result := TFhirCompartmentDefinition.Create;
   try
     ParseCompartmentDefinitionProperties(obj, result);
     result.link;
@@ -12082,7 +12082,7 @@ function TFHIRTurtleParser.ParseCompositionAttester(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCompositionAttester.create;
+  result := TFhirCompositionAttester.Create;
   try
     ParseCompositionAttesterProperties(obj, result);
     result.link;
@@ -12132,7 +12132,7 @@ function TFHIRTurtleParser.ParseCompositionRelatesTo(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCompositionRelatesTo.create;
+  result := TFhirCompositionRelatesTo.Create;
   try
     ParseCompositionRelatesToProperties(obj, result);
     result.link;
@@ -12179,7 +12179,7 @@ function TFHIRTurtleParser.ParseCompositionEvent(obj : TTurtleComplex) : TFhirCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCompositionEvent.create;
+  result := TFhirCompositionEvent.Create;
   try
     ParseCompositionEventProperties(obj, result);
     result.link;
@@ -12230,7 +12230,7 @@ function TFHIRTurtleParser.ParseCompositionSection(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCompositionSection.create;
+  result := TFhirCompositionSection.Create;
   try
     ParseCompositionSectionProperties(obj, result);
     result.link;
@@ -12296,7 +12296,7 @@ function TFHIRTurtleParser.ParseComposition(obj : TTurtleComplex) : TFhirComposi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirComposition.create;
+  result := TFhirComposition.Create;
   try
     ParseCompositionProperties(obj, result);
     result.link;
@@ -12385,7 +12385,7 @@ function TFHIRTurtleParser.ParseConceptMapGroup(obj : TTurtleComplex) : TFhirCon
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConceptMapGroup.create;
+  result := TFhirConceptMapGroup.Create;
   try
     ParseConceptMapGroupProperties(obj, result);
     result.link;
@@ -12442,7 +12442,7 @@ function TFHIRTurtleParser.ParseConceptMapGroupElement(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConceptMapGroupElement.create;
+  result := TFhirConceptMapGroupElement.Create;
   try
     ParseConceptMapGroupElementProperties(obj, result);
     result.link;
@@ -12491,7 +12491,7 @@ function TFHIRTurtleParser.ParseConceptMapGroupElementTarget(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConceptMapGroupElementTarget.create;
+  result := TFhirConceptMapGroupElementTarget.Create;
   try
     ParseConceptMapGroupElementTargetProperties(obj, result);
     result.link;
@@ -12551,7 +12551,7 @@ function TFHIRTurtleParser.ParseConceptMapGroupElementTargetDependsOn(obj : TTur
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConceptMapGroupElementTargetDependsOn.create;
+  result := TFhirConceptMapGroupElementTargetDependsOn.Create;
   try
     ParseConceptMapGroupElementTargetDependsOnProperties(obj, result);
     result.link;
@@ -12596,7 +12596,7 @@ function TFHIRTurtleParser.ParseConceptMapGroupUnmapped(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConceptMapGroupUnmapped.create;
+  result := TFhirConceptMapGroupUnmapped.Create;
   try
     ParseConceptMapGroupUnmappedProperties(obj, result);
     result.link;
@@ -12642,7 +12642,7 @@ function TFHIRTurtleParser.ParseConceptMap(obj : TTurtleComplex) : TFhirConceptM
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConceptMap.create;
+  result := TFhirConceptMap.Create;
   try
     ParseConceptMapProperties(obj, result);
     result.link;
@@ -12753,7 +12753,7 @@ function TFHIRTurtleParser.ParseConditionStage(obj : TTurtleComplex) : TFhirCond
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConditionStage.create;
+  result := TFhirConditionStage.Create;
   try
     ParseConditionStageProperties(obj, result);
     result.link;
@@ -12799,7 +12799,7 @@ function TFHIRTurtleParser.ParseConditionEvidence(obj : TTurtleComplex) : TFhirC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConditionEvidence.create;
+  result := TFhirConditionEvidence.Create;
   try
     ParseConditionEvidenceProperties(obj, result);
     result.link;
@@ -12847,7 +12847,7 @@ function TFHIRTurtleParser.ParseCondition(obj : TTurtleComplex) : TFhirCondition
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCondition.create;
+  result := TFhirCondition.Create;
   try
     ParseConditionProperties(obj, result);
     result.link;
@@ -12982,7 +12982,7 @@ function TFHIRTurtleParser.ParseConsentActor(obj : TTurtleComplex) : TFhirConsen
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsentActor.create;
+  result := TFhirConsentActor.Create;
   try
     ParseConsentActorProperties(obj, result);
     result.link;
@@ -13021,7 +13021,7 @@ function TFHIRTurtleParser.ParseConsentPolicy(obj : TTurtleComplex) : TFhirConse
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsentPolicy.create;
+  result := TFhirConsentPolicy.Create;
   try
     ParseConsentPolicyProperties(obj, result);
     result.link;
@@ -13062,7 +13062,7 @@ function TFHIRTurtleParser.ParseConsentData(obj : TTurtleComplex) : TFhirConsent
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsentData.create;
+  result := TFhirConsentData.Create;
   try
     ParseConsentDataProperties(obj, result);
     result.link;
@@ -13101,7 +13101,7 @@ function TFHIRTurtleParser.ParseConsentExcept(obj : TTurtleComplex) : TFhirConse
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsentExcept.create;
+  result := TFhirConsentExcept.Create;
   try
     ParseConsentExceptProperties(obj, result);
     result.link;
@@ -13182,7 +13182,7 @@ function TFHIRTurtleParser.ParseConsentExceptActor(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsentExceptActor.create;
+  result := TFhirConsentExceptActor.Create;
   try
     ParseConsentExceptActorProperties(obj, result);
     result.link;
@@ -13221,7 +13221,7 @@ function TFHIRTurtleParser.ParseConsentExceptData(obj : TTurtleComplex) : TFhirC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsentExceptData.create;
+  result := TFhirConsentExceptData.Create;
   try
     ParseConsentExceptDataProperties(obj, result);
     result.link;
@@ -13260,7 +13260,7 @@ function TFHIRTurtleParser.ParseConsent(obj : TTurtleComplex) : TFhirConsent;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirConsent.create;
+  result := TFhirConsent.Create;
   try
     ParseConsentProperties(obj, result);
     result.link;
@@ -13381,7 +13381,7 @@ function TFHIRTurtleParser.ParseContractAgent(obj : TTurtleComplex) : TFhirContr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractAgent.create;
+  result := TFhirContractAgent.Create;
   try
     ParseContractAgentProperties(obj, result);
     result.link;
@@ -13426,7 +13426,7 @@ function TFHIRTurtleParser.ParseContractSigner(obj : TTurtleComplex) : TFhirCont
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractSigner.create;
+  result := TFhirContractSigner.Create;
   try
     ParseContractSignerProperties(obj, result);
     result.link;
@@ -13472,7 +13472,7 @@ function TFHIRTurtleParser.ParseContractValuedItem(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractValuedItem.create;
+  result := TFhirContractValuedItem.Create;
   try
     ParseContractValuedItemProperties(obj, result);
     result.link;
@@ -13538,7 +13538,7 @@ function TFHIRTurtleParser.ParseContractTerm(obj : TTurtleComplex) : TFhirContra
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractTerm.create;
+  result := TFhirContractTerm.Create;
   try
     ParseContractTermProperties(obj, result);
     result.link;
@@ -13629,7 +13629,7 @@ function TFHIRTurtleParser.ParseContractTermAgent(obj : TTurtleComplex) : TFhirC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractTermAgent.create;
+  result := TFhirContractTermAgent.Create;
   try
     ParseContractTermAgentProperties(obj, result);
     result.link;
@@ -13674,7 +13674,7 @@ function TFHIRTurtleParser.ParseContractTermValuedItem(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractTermValuedItem.create;
+  result := TFhirContractTermValuedItem.Create;
   try
     ParseContractTermValuedItemProperties(obj, result);
     result.link;
@@ -13740,7 +13740,7 @@ function TFHIRTurtleParser.ParseContractFriendly(obj : TTurtleComplex) : TFhirCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractFriendly.create;
+  result := TFhirContractFriendly.Create;
   try
     ParseContractFriendlyProperties(obj, result);
     result.link;
@@ -13785,7 +13785,7 @@ function TFHIRTurtleParser.ParseContractLegal(obj : TTurtleComplex) : TFhirContr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractLegal.create;
+  result := TFhirContractLegal.Create;
   try
     ParseContractLegalProperties(obj, result);
     result.link;
@@ -13830,7 +13830,7 @@ function TFHIRTurtleParser.ParseContractRule(obj : TTurtleComplex) : TFhirContra
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContractRule.create;
+  result := TFhirContractRule.Create;
   try
     ParseContractRuleProperties(obj, result);
     result.link;
@@ -13875,7 +13875,7 @@ function TFHIRTurtleParser.ParseContract(obj : TTurtleComplex) : TFhirContract;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirContract.create;
+  result := TFhirContract.Create;
   try
     ParseContractProperties(obj, result);
     result.link;
@@ -14019,7 +14019,7 @@ function TFHIRTurtleParser.ParseCoverageGrouping(obj : TTurtleComplex) : TFhirCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCoverageGrouping.create;
+  result := TFhirCoverageGrouping.Create;
   try
     ParseCoverageGroupingProperties(obj, result);
     result.link;
@@ -14090,7 +14090,7 @@ function TFHIRTurtleParser.ParseCoverage(obj : TTurtleComplex) : TFhirCoverage;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirCoverage.create;
+  result := TFhirCoverage.Create;
   try
     ParseCoverageProperties(obj, result);
     result.link;
@@ -14184,7 +14184,7 @@ function TFHIRTurtleParser.ParseDataElementMapping(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDataElementMapping.create;
+  result := TFhirDataElementMapping.Create;
   try
     ParseDataElementMappingProperties(obj, result);
     result.link;
@@ -14230,7 +14230,7 @@ function TFHIRTurtleParser.ParseDataElement(obj : TTurtleComplex) : TFhirDataEle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDataElement.create;
+  result := TFhirDataElement.Create;
   try
     ParseDataElementProperties(obj, result);
     result.link;
@@ -14328,7 +14328,7 @@ function TFHIRTurtleParser.ParseDetectedIssueMitigation(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDetectedIssueMitigation.create;
+  result := TFhirDetectedIssueMitigation.Create;
   try
     ParseDetectedIssueMitigationProperties(obj, result);
     result.link;
@@ -14371,7 +14371,7 @@ function TFHIRTurtleParser.ParseDetectedIssue(obj : TTurtleComplex) : TFhirDetec
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDetectedIssue.create;
+  result := TFhirDetectedIssue.Create;
   try
     ParseDetectedIssueProperties(obj, result);
     result.link;
@@ -14447,7 +14447,7 @@ function TFHIRTurtleParser.ParseDeviceUdi(obj : TTurtleComplex) : TFhirDeviceUdi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceUdi.create;
+  result := TFhirDeviceUdi.Create;
   try
     ParseDeviceUdiProperties(obj, result);
     result.link;
@@ -14503,7 +14503,7 @@ function TFHIRTurtleParser.ParseDevice(obj : TTurtleComplex) : TFhirDevice;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDevice.create;
+  result := TFhirDevice.Create;
   try
     ParseDeviceProperties(obj, result);
     result.link;
@@ -14602,7 +14602,7 @@ function TFHIRTurtleParser.ParseDeviceComponentProductionSpecification(obj : TTu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceComponentProductionSpecification.create;
+  result := TFhirDeviceComponentProductionSpecification.Create;
   try
     ParseDeviceComponentProductionSpecificationProperties(obj, result);
     result.link;
@@ -14646,7 +14646,7 @@ function TFHIRTurtleParser.ParseDeviceComponent(obj : TTurtleComplex) : TFhirDev
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceComponent.create;
+  result := TFhirDeviceComponent.Create;
   try
     ParseDeviceComponentProperties(obj, result);
     result.link;
@@ -14718,7 +14718,7 @@ function TFHIRTurtleParser.ParseDeviceMetricCalibration(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceMetricCalibration.create;
+  result := TFhirDeviceMetricCalibration.Create;
   try
     ParseDeviceMetricCalibrationProperties(obj, result);
     result.link;
@@ -14762,7 +14762,7 @@ function TFHIRTurtleParser.ParseDeviceMetric(obj : TTurtleComplex) : TFhirDevice
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceMetric.create;
+  result := TFhirDeviceMetric.Create;
   try
     ParseDeviceMetricProperties(obj, result);
     result.link;
@@ -14831,7 +14831,7 @@ function TFHIRTurtleParser.ParseDeviceRequestRequester(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceRequestRequester.create;
+  result := TFhirDeviceRequestRequester.Create;
   try
     ParseDeviceRequestRequesterProperties(obj, result);
     result.link;
@@ -14871,7 +14871,7 @@ function TFHIRTurtleParser.ParseDeviceRequest(obj : TTurtleComplex) : TFhirDevic
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceRequest.create;
+  result := TFhirDeviceRequest.Create;
   try
     ParseDeviceRequestProperties(obj, result);
     result.link;
@@ -15004,7 +15004,7 @@ function TFHIRTurtleParser.ParseDeviceUseStatement(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDeviceUseStatement.create;
+  result := TFhirDeviceUseStatement.Create;
   try
     ParseDeviceUseStatementProperties(obj, result);
     result.link;
@@ -15089,7 +15089,7 @@ function TFHIRTurtleParser.ParseDiagnosticReportPerformer(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDiagnosticReportPerformer.create;
+  result := TFhirDiagnosticReportPerformer.Create;
   try
     ParseDiagnosticReportPerformerProperties(obj, result);
     result.link;
@@ -15129,7 +15129,7 @@ function TFHIRTurtleParser.ParseDiagnosticReportImage(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDiagnosticReportImage.create;
+  result := TFhirDiagnosticReportImage.Create;
   try
     ParseDiagnosticReportImageProperties(obj, result);
     result.link;
@@ -15169,7 +15169,7 @@ function TFHIRTurtleParser.ParseDiagnosticReport(obj : TTurtleComplex) : TFhirDi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDiagnosticReport.create;
+  result := TFhirDiagnosticReport.Create;
   try
     ParseDiagnosticReportProperties(obj, result);
     result.link;
@@ -15281,7 +15281,7 @@ function TFHIRTurtleParser.ParseDocumentManifestContent(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentManifestContent.create;
+  result := TFhirDocumentManifestContent.Create;
   try
     ParseDocumentManifestContentProperties(obj, result);
     result.link;
@@ -15326,7 +15326,7 @@ function TFHIRTurtleParser.ParseDocumentManifestRelated(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentManifestRelated.create;
+  result := TFhirDocumentManifestRelated.Create;
   try
     ParseDocumentManifestRelatedProperties(obj, result);
     result.link;
@@ -15367,7 +15367,7 @@ function TFHIRTurtleParser.ParseDocumentManifest(obj : TTurtleComplex) : TFhirDo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentManifest.create;
+  result := TFhirDocumentManifest.Create;
   try
     ParseDocumentManifestProperties(obj, result);
     result.link;
@@ -15451,7 +15451,7 @@ function TFHIRTurtleParser.ParseDocumentReferenceRelatesTo(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentReferenceRelatesTo.create;
+  result := TFhirDocumentReferenceRelatesTo.Create;
   try
     ParseDocumentReferenceRelatesToProperties(obj, result);
     result.link;
@@ -15490,7 +15490,7 @@ function TFHIRTurtleParser.ParseDocumentReferenceContent(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentReferenceContent.create;
+  result := TFhirDocumentReferenceContent.Create;
   try
     ParseDocumentReferenceContentProperties(obj, result);
     result.link;
@@ -15530,7 +15530,7 @@ function TFHIRTurtleParser.ParseDocumentReferenceContext(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentReferenceContext.create;
+  result := TFhirDocumentReferenceContext.Create;
   try
     ParseDocumentReferenceContextProperties(obj, result);
     result.link;
@@ -15593,7 +15593,7 @@ function TFHIRTurtleParser.ParseDocumentReferenceContextRelated(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentReferenceContextRelated.create;
+  result := TFhirDocumentReferenceContextRelated.Create;
   try
     ParseDocumentReferenceContextRelatedProperties(obj, result);
     result.link;
@@ -15634,7 +15634,7 @@ function TFHIRTurtleParser.ParseDocumentReference(obj : TTurtleComplex) : TFhirD
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirDocumentReference.create;
+  result := TFhirDocumentReference.Create;
   try
     ParseDocumentReferenceProperties(obj, result);
     result.link;
@@ -15731,7 +15731,7 @@ function TFHIRTurtleParser.ParseEligibilityRequest(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEligibilityRequest.create;
+  result := TFhirEligibilityRequest.Create;
   try
     ParseEligibilityRequestProperties(obj, result);
     result.link;
@@ -15823,7 +15823,7 @@ function TFHIRTurtleParser.ParseEligibilityResponseInsurance(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEligibilityResponseInsurance.create;
+  result := TFhirEligibilityResponseInsurance.Create;
   try
     ParseEligibilityResponseInsuranceProperties(obj, result);
     result.link;
@@ -15872,7 +15872,7 @@ function TFHIRTurtleParser.ParseEligibilityResponseInsuranceBenefitBalance(obj :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEligibilityResponseInsuranceBenefitBalance.create;
+  result := TFhirEligibilityResponseInsuranceBenefitBalance.Create;
   try
     ParseEligibilityResponseInsuranceBenefitBalanceProperties(obj, result);
     result.link;
@@ -15938,7 +15938,7 @@ function TFHIRTurtleParser.ParseEligibilityResponseInsuranceBenefitBalanceFinanc
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEligibilityResponseInsuranceBenefitBalanceFinancial.create;
+  result := TFhirEligibilityResponseInsuranceBenefitBalanceFinancial.Create;
   try
     ParseEligibilityResponseInsuranceBenefitBalanceFinancialProperties(obj, result);
     result.link;
@@ -15997,7 +15997,7 @@ function TFHIRTurtleParser.ParseEligibilityResponseError(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEligibilityResponseError.create;
+  result := TFhirEligibilityResponseError.Create;
   try
     ParseEligibilityResponseErrorProperties(obj, result);
     result.link;
@@ -16034,7 +16034,7 @@ function TFHIRTurtleParser.ParseEligibilityResponse(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEligibilityResponse.create;
+  result := TFhirEligibilityResponse.Create;
   try
     ParseEligibilityResponseProperties(obj, result);
     result.link;
@@ -16119,7 +16119,7 @@ function TFHIRTurtleParser.ParseEncounterStatusHistory(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounterStatusHistory.create;
+  result := TFhirEncounterStatusHistory.Create;
   try
     ParseEncounterStatusHistoryProperties(obj, result);
     result.link;
@@ -16158,7 +16158,7 @@ function TFHIRTurtleParser.ParseEncounterClassHistory(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounterClassHistory.create;
+  result := TFhirEncounterClassHistory.Create;
   try
     ParseEncounterClassHistoryProperties(obj, result);
     result.link;
@@ -16197,7 +16197,7 @@ function TFHIRTurtleParser.ParseEncounterParticipant(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounterParticipant.create;
+  result := TFhirEncounterParticipant.Create;
   try
     ParseEncounterParticipantProperties(obj, result);
     result.link;
@@ -16246,7 +16246,7 @@ function TFHIRTurtleParser.ParseEncounterDiagnosis(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounterDiagnosis.create;
+  result := TFhirEncounterDiagnosis.Create;
   try
     ParseEncounterDiagnosisProperties(obj, result);
     result.link;
@@ -16289,7 +16289,7 @@ function TFHIRTurtleParser.ParseEncounterHospitalization(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounterHospitalization.create;
+  result := TFhirEncounterHospitalization.Create;
   try
     ParseEncounterHospitalizationProperties(obj, result);
     result.link;
@@ -16360,7 +16360,7 @@ function TFHIRTurtleParser.ParseEncounterLocation(obj : TTurtleComplex) : TFhirE
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounterLocation.create;
+  result := TFhirEncounterLocation.Create;
   try
     ParseEncounterLocationProperties(obj, result);
     result.link;
@@ -16403,7 +16403,7 @@ function TFHIRTurtleParser.ParseEncounter(obj : TTurtleComplex) : TFhirEncounter
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEncounter.create;
+  result := TFhirEncounter.Create;
   try
     ParseEncounterProperties(obj, result);
     result.link;
@@ -16527,7 +16527,7 @@ function TFHIRTurtleParser.ParseEndpoint(obj : TTurtleComplex) : TFhirEndpoint;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEndpoint.create;
+  result := TFhirEndpoint.Create;
   try
     ParseEndpointProperties(obj, result);
     result.link;
@@ -16606,7 +16606,7 @@ function TFHIRTurtleParser.ParseEnrollmentRequest(obj : TTurtleComplex) : TFhirE
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEnrollmentRequest.create;
+  result := TFhirEnrollmentRequest.Create;
   try
     ParseEnrollmentRequestProperties(obj, result);
     result.link;
@@ -16672,7 +16672,7 @@ function TFHIRTurtleParser.ParseEnrollmentResponse(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEnrollmentResponse.create;
+  result := TFhirEnrollmentResponse.Create;
   try
     ParseEnrollmentResponseProperties(obj, result);
     result.link;
@@ -16741,7 +16741,7 @@ function TFHIRTurtleParser.ParseEpisodeOfCareStatusHistory(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEpisodeOfCareStatusHistory.create;
+  result := TFhirEpisodeOfCareStatusHistory.Create;
   try
     ParseEpisodeOfCareStatusHistoryProperties(obj, result);
     result.link;
@@ -16780,7 +16780,7 @@ function TFHIRTurtleParser.ParseEpisodeOfCareDiagnosis(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEpisodeOfCareDiagnosis.create;
+  result := TFhirEpisodeOfCareDiagnosis.Create;
   try
     ParseEpisodeOfCareDiagnosisProperties(obj, result);
     result.link;
@@ -16823,7 +16823,7 @@ function TFHIRTurtleParser.ParseEpisodeOfCare(obj : TTurtleComplex) : TFhirEpiso
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirEpisodeOfCare.create;
+  result := TFhirEpisodeOfCare.Create;
   try
     ParseEpisodeOfCareProperties(obj, result);
     result.link;
@@ -16911,7 +16911,7 @@ function TFHIRTurtleParser.ParseExpansionProfileFixedVersion(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileFixedVersion.create;
+  result := TFhirExpansionProfileFixedVersion.Create;
   try
     ParseExpansionProfileFixedVersionProperties(obj, result);
     result.link;
@@ -16952,7 +16952,7 @@ function TFHIRTurtleParser.ParseExpansionProfileExcludedSystem(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileExcludedSystem.create;
+  result := TFhirExpansionProfileExcludedSystem.Create;
   try
     ParseExpansionProfileExcludedSystemProperties(obj, result);
     result.link;
@@ -16992,7 +16992,7 @@ function TFHIRTurtleParser.ParseExpansionProfileDesignation(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileDesignation.create;
+  result := TFhirExpansionProfileDesignation.Create;
   try
     ParseExpansionProfileDesignationProperties(obj, result);
     result.link;
@@ -17033,7 +17033,7 @@ function TFHIRTurtleParser.ParseExpansionProfileDesignationInclude(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileDesignationInclude.create;
+  result := TFhirExpansionProfileDesignationInclude.Create;
   try
     ParseExpansionProfileDesignationIncludeProperties(obj, result);
     result.link;
@@ -17076,7 +17076,7 @@ function TFHIRTurtleParser.ParseExpansionProfileDesignationIncludeDesignation(ob
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileDesignationIncludeDesignation.create;
+  result := TFhirExpansionProfileDesignationIncludeDesignation.Create;
   try
     ParseExpansionProfileDesignationIncludeDesignationProperties(obj, result);
     result.link;
@@ -17117,7 +17117,7 @@ function TFHIRTurtleParser.ParseExpansionProfileDesignationExclude(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileDesignationExclude.create;
+  result := TFhirExpansionProfileDesignationExclude.Create;
   try
     ParseExpansionProfileDesignationExcludeProperties(obj, result);
     result.link;
@@ -17160,7 +17160,7 @@ function TFHIRTurtleParser.ParseExpansionProfileDesignationExcludeDesignation(ob
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfileDesignationExcludeDesignation.create;
+  result := TFhirExpansionProfileDesignationExcludeDesignation.Create;
   try
     ParseExpansionProfileDesignationExcludeDesignationProperties(obj, result);
     result.link;
@@ -17201,7 +17201,7 @@ function TFHIRTurtleParser.ParseExpansionProfile(obj : TTurtleComplex) : TFhirEx
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExpansionProfile.create;
+  result := TFhirExpansionProfile.Create;
   try
     ParseExpansionProfileProperties(obj, result);
     result.link;
@@ -17317,7 +17317,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitRelated(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitRelated.create;
+  result := TFhirExplanationOfBenefitRelated.Create;
   try
     ParseExplanationOfBenefitRelatedProperties(obj, result);
     result.link;
@@ -17361,7 +17361,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitPayee(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitPayee.create;
+  result := TFhirExplanationOfBenefitPayee.Create;
   try
     ParseExplanationOfBenefitPayeeProperties(obj, result);
     result.link;
@@ -17405,7 +17405,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitInformation(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitInformation.create;
+  result := TFhirExplanationOfBenefitInformation.Create;
   try
     ParseExplanationOfBenefitInformationProperties(obj, result);
     result.link;
@@ -17476,7 +17476,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitCareTeam(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitCareTeam.create;
+  result := TFhirExplanationOfBenefitCareTeam.Create;
   try
     ParseExplanationOfBenefitCareTeamProperties(obj, result);
     result.link;
@@ -17524,7 +17524,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitDiagnosis(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitDiagnosis.create;
+  result := TFhirExplanationOfBenefitDiagnosis.Create;
   try
     ParseExplanationOfBenefitDiagnosisProperties(obj, result);
     result.link;
@@ -17580,7 +17580,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitProcedure(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitProcedure.create;
+  result := TFhirExplanationOfBenefitProcedure.Create;
   try
     ParseExplanationOfBenefitProcedureProperties(obj, result);
     result.link;
@@ -17630,7 +17630,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitInsurance(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitInsurance.create;
+  result := TFhirExplanationOfBenefitInsurance.Create;
   try
     ParseExplanationOfBenefitInsuranceProperties(obj, result);
     result.link;
@@ -17676,7 +17676,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitAccident(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitAccident.create;
+  result := TFhirExplanationOfBenefitAccident.Create;
   try
     ParseExplanationOfBenefitAccidentProperties(obj, result);
     result.link;
@@ -17727,7 +17727,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitItem(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitItem.create;
+  result := TFhirExplanationOfBenefitItem.Create;
   try
     ParseExplanationOfBenefitItemProperties(obj, result);
     result.link;
@@ -17871,7 +17871,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitItemAdjudication(obj : TTurt
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitItemAdjudication.create;
+  result := TFhirExplanationOfBenefitItemAdjudication.Create;
   try
     ParseExplanationOfBenefitItemAdjudicationProperties(obj, result);
     result.link;
@@ -17917,7 +17917,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitItemDetail(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitItemDetail.create;
+  result := TFhirExplanationOfBenefitItemDetail.Create;
   try
     ParseExplanationOfBenefitItemDetailProperties(obj, result);
     result.link;
@@ -18010,7 +18010,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitItemDetailSubDetail(obj : TT
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitItemDetailSubDetail.create;
+  result := TFhirExplanationOfBenefitItemDetailSubDetail.Create;
   try
     ParseExplanationOfBenefitItemDetailSubDetailProperties(obj, result);
     result.link;
@@ -18098,7 +18098,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitAddItem(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitAddItem.create;
+  result := TFhirExplanationOfBenefitAddItem.Create;
   try
     ParseExplanationOfBenefitAddItemProperties(obj, result);
     result.link;
@@ -18173,7 +18173,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitAddItemDetail(obj : TTurtleC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitAddItemDetail.create;
+  result := TFhirExplanationOfBenefitAddItemDetail.Create;
   try
     ParseExplanationOfBenefitAddItemDetailProperties(obj, result);
     result.link;
@@ -18238,7 +18238,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitPayment(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitPayment.create;
+  result := TFhirExplanationOfBenefitPayment.Create;
   try
     ParseExplanationOfBenefitPaymentProperties(obj, result);
     result.link;
@@ -18291,7 +18291,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitProcessNote(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitProcessNote.create;
+  result := TFhirExplanationOfBenefitProcessNote.Create;
   try
     ParseExplanationOfBenefitProcessNoteProperties(obj, result);
     result.link;
@@ -18338,7 +18338,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitBenefitBalance(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitBenefitBalance.create;
+  result := TFhirExplanationOfBenefitBenefitBalance.Create;
   try
     ParseExplanationOfBenefitBenefitBalanceProperties(obj, result);
     result.link;
@@ -18404,7 +18404,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefitBenefitBalanceFinancial(obj 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefitBenefitBalanceFinancial.create;
+  result := TFhirExplanationOfBenefitBenefitBalanceFinancial.Create;
   try
     ParseExplanationOfBenefitBenefitBalanceFinancialProperties(obj, result);
     result.link;
@@ -18463,7 +18463,7 @@ function TFHIRTurtleParser.ParseExplanationOfBenefit(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirExplanationOfBenefit.create;
+  result := TFhirExplanationOfBenefit.Create;
   try
     ParseExplanationOfBenefitProperties(obj, result);
     result.link;
@@ -18642,7 +18642,7 @@ function TFHIRTurtleParser.ParseFamilyMemberHistoryCondition(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirFamilyMemberHistoryCondition.create;
+  result := TFhirFamilyMemberHistoryCondition.Create;
   try
     ParseFamilyMemberHistoryConditionProperties(obj, result);
     result.link;
@@ -18706,7 +18706,7 @@ function TFHIRTurtleParser.ParseFamilyMemberHistory(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirFamilyMemberHistory.create;
+  result := TFhirFamilyMemberHistory.Create;
   try
     ParseFamilyMemberHistoryProperties(obj, result);
     result.link;
@@ -18844,7 +18844,7 @@ function TFHIRTurtleParser.ParseFlag(obj : TTurtleComplex) : TFhirFlag;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirFlag.create;
+  result := TFhirFlag.Create;
   try
     ParseFlagProperties(obj, result);
     result.link;
@@ -18907,7 +18907,7 @@ function TFHIRTurtleParser.ParseGoalTarget(obj : TTurtleComplex) : TFhirGoalTarg
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGoalTarget.create;
+  result := TFhirGoalTarget.Create;
   try
     ParseGoalTargetProperties(obj, result);
     result.link;
@@ -18967,7 +18967,7 @@ function TFHIRTurtleParser.ParseGoal(obj : TTurtleComplex) : TFhirGoal;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGoal.create;
+  result := TFhirGoal.Create;
   try
     ParseGoalProperties(obj, result);
     result.link;
@@ -19067,7 +19067,7 @@ function TFHIRTurtleParser.ParseGraphDefinitionLink(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGraphDefinitionLink.create;
+  result := TFhirGraphDefinitionLink.Create;
   try
     ParseGraphDefinitionLinkProperties(obj, result);
     result.link;
@@ -19123,7 +19123,7 @@ function TFHIRTurtleParser.ParseGraphDefinitionLinkTarget(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGraphDefinitionLinkTarget.create;
+  result := TFhirGraphDefinitionLinkTarget.Create;
   try
     ParseGraphDefinitionLinkTargetProperties(obj, result);
     result.link;
@@ -19176,7 +19176,7 @@ function TFHIRTurtleParser.ParseGraphDefinitionLinkTargetCompartment(obj : TTurt
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGraphDefinitionLinkTargetCompartment.create;
+  result := TFhirGraphDefinitionLinkTargetCompartment.Create;
   try
     ParseGraphDefinitionLinkTargetCompartmentProperties(obj, result);
     result.link;
@@ -19221,7 +19221,7 @@ function TFHIRTurtleParser.ParseGraphDefinition(obj : TTurtleComplex) : TFhirGra
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGraphDefinition.create;
+  result := TFhirGraphDefinition.Create;
   try
     ParseGraphDefinitionProperties(obj, result);
     result.link;
@@ -19311,7 +19311,7 @@ function TFHIRTurtleParser.ParseGroupCharacteristic(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGroupCharacteristic.create;
+  result := TFhirGroupCharacteristic.Create;
   try
     ParseGroupCharacteristicProperties(obj, result);
     result.link;
@@ -19371,7 +19371,7 @@ function TFHIRTurtleParser.ParseGroupMember(obj : TTurtleComplex) : TFhirGroupMe
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGroupMember.create;
+  result := TFhirGroupMember.Create;
   try
     ParseGroupMemberProperties(obj, result);
     result.link;
@@ -19414,7 +19414,7 @@ function TFHIRTurtleParser.ParseGroup(obj : TTurtleComplex) : TFhirGroup;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGroup.create;
+  result := TFhirGroup.Create;
   try
     ParseGroupProperties(obj, result);
     result.link;
@@ -19485,7 +19485,7 @@ function TFHIRTurtleParser.ParseGuidanceResponse(obj : TTurtleComplex) : TFhirGu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirGuidanceResponse.create;
+  result := TFhirGuidanceResponse.Create;
   try
     ParseGuidanceResponseProperties(obj, result);
     result.link;
@@ -19576,7 +19576,7 @@ function TFHIRTurtleParser.ParseHealthcareServiceAvailableTime(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirHealthcareServiceAvailableTime.create;
+  result := TFhirHealthcareServiceAvailableTime.Create;
   try
     ParseHealthcareServiceAvailableTimeProperties(obj, result);
     result.link;
@@ -19631,7 +19631,7 @@ function TFHIRTurtleParser.ParseHealthcareServiceNotAvailable(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirHealthcareServiceNotAvailable.create;
+  result := TFhirHealthcareServiceNotAvailable.Create;
   try
     ParseHealthcareServiceNotAvailableProperties(obj, result);
     result.link;
@@ -19671,7 +19671,7 @@ function TFHIRTurtleParser.ParseHealthcareService(obj : TTurtleComplex) : TFhirH
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirHealthcareService.create;
+  result := TFhirHealthcareService.Create;
   try
     ParseHealthcareServiceProperties(obj, result);
     result.link;
@@ -19809,7 +19809,7 @@ function TFHIRTurtleParser.ParseImagingManifestStudy(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingManifestStudy.create;
+  result := TFhirImagingManifestStudy.Create;
   try
     ParseImagingManifestStudyProperties(obj, result);
     result.link;
@@ -19861,7 +19861,7 @@ function TFHIRTurtleParser.ParseImagingManifestStudySeries(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingManifestStudySeries.create;
+  result := TFhirImagingManifestStudySeries.Create;
   try
     ParseImagingManifestStudySeriesProperties(obj, result);
     result.link;
@@ -19910,7 +19910,7 @@ function TFHIRTurtleParser.ParseImagingManifestStudySeriesInstance(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingManifestStudySeriesInstance.create;
+  result := TFhirImagingManifestStudySeriesInstance.Create;
   try
     ParseImagingManifestStudySeriesInstanceProperties(obj, result);
     result.link;
@@ -19949,7 +19949,7 @@ function TFHIRTurtleParser.ParseImagingManifest(obj : TTurtleComplex) : TFhirIma
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingManifest.create;
+  result := TFhirImagingManifest.Create;
   try
     ParseImagingManifestProperties(obj, result);
     result.link;
@@ -20007,7 +20007,7 @@ function TFHIRTurtleParser.ParseImagingStudySeries(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingStudySeries.create;
+  result := TFhirImagingStudySeries.Create;
   try
     ParseImagingStudySeriesProperties(obj, result);
     result.link;
@@ -20085,7 +20085,7 @@ function TFHIRTurtleParser.ParseImagingStudySeriesInstance(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingStudySeriesInstance.create;
+  result := TFhirImagingStudySeriesInstance.Create;
   try
     ParseImagingStudySeriesInstanceProperties(obj, result);
     result.link;
@@ -20130,7 +20130,7 @@ function TFHIRTurtleParser.ParseImagingStudy(obj : TTurtleComplex) : TFhirImagin
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImagingStudy.create;
+  result := TFhirImagingStudy.Create;
   try
     ParseImagingStudyProperties(obj, result);
     result.link;
@@ -20241,7 +20241,7 @@ function TFHIRTurtleParser.ParseImmunizationPractitioner(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationPractitioner.create;
+  result := TFhirImmunizationPractitioner.Create;
   try
     ParseImmunizationPractitionerProperties(obj, result);
     result.link;
@@ -20281,7 +20281,7 @@ function TFHIRTurtleParser.ParseImmunizationExplanation(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationExplanation.create;
+  result := TFhirImmunizationExplanation.Create;
   try
     ParseImmunizationExplanationProperties(obj, result);
     result.link;
@@ -20329,7 +20329,7 @@ function TFHIRTurtleParser.ParseImmunizationReaction(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationReaction.create;
+  result := TFhirImmunizationReaction.Create;
   try
     ParseImmunizationReactionProperties(obj, result);
     result.link;
@@ -20373,7 +20373,7 @@ function TFHIRTurtleParser.ParseImmunizationVaccinationProtocol(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationVaccinationProtocol.create;
+  result := TFhirImmunizationVaccinationProtocol.Create;
   try
     ParseImmunizationVaccinationProtocolProperties(obj, result);
     result.link;
@@ -20435,7 +20435,7 @@ function TFHIRTurtleParser.ParseImmunization(obj : TTurtleComplex) : TFhirImmuni
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunization.create;
+  result := TFhirImmunization.Create;
   try
     ParseImmunizationProperties(obj, result);
     result.link;
@@ -20543,7 +20543,7 @@ function TFHIRTurtleParser.ParseImmunizationRecommendationRecommendation(obj : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationRecommendationRecommendation.create;
+  result := TFhirImmunizationRecommendationRecommendation.Create;
   try
     ParseImmunizationRecommendationRecommendationProperties(obj, result);
     result.link;
@@ -20612,7 +20612,7 @@ function TFHIRTurtleParser.ParseImmunizationRecommendationRecommendationDateCrit
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationRecommendationRecommendationDateCriterion.create;
+  result := TFhirImmunizationRecommendationRecommendationDateCriterion.Create;
   try
     ParseImmunizationRecommendationRecommendationDateCriterionProperties(obj, result);
     result.link;
@@ -20651,7 +20651,7 @@ function TFHIRTurtleParser.ParseImmunizationRecommendationRecommendationProtocol
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationRecommendationRecommendationProtocol.create;
+  result := TFhirImmunizationRecommendationRecommendationProtocol.Create;
   try
     ParseImmunizationRecommendationRecommendationProtocolProperties(obj, result);
     result.link;
@@ -20698,7 +20698,7 @@ function TFHIRTurtleParser.ParseImmunizationRecommendation(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImmunizationRecommendation.create;
+  result := TFhirImmunizationRecommendation.Create;
   try
     ParseImmunizationRecommendationProperties(obj, result);
     result.link;
@@ -20749,7 +20749,7 @@ function TFHIRTurtleParser.ParseImplementationGuideDependency(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependency.Create;
   try
     ParseImplementationGuideDependencyProperties(obj, result);
     result.link;
@@ -20788,7 +20788,7 @@ function TFHIRTurtleParser.ParseImplementationGuidePackage(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuidePackage.create;
+  result := TFhirImplementationGuidePackage.Create;
   try
     ParseImplementationGuidePackageProperties(obj, result);
     result.link;
@@ -20835,7 +20835,7 @@ function TFHIRTurtleParser.ParseImplementationGuidePackageResource(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuidePackageResource.create;
+  result := TFhirImplementationGuidePackageResource.Create;
   try
     ParseImplementationGuidePackageResourceProperties(obj, result);
     result.link;
@@ -20894,7 +20894,7 @@ function TFHIRTurtleParser.ParseImplementationGuideGlobal(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuideGlobal.create;
+  result := TFhirImplementationGuideGlobal.Create;
   try
     ParseImplementationGuideGlobalProperties(obj, result);
     result.link;
@@ -20933,7 +20933,7 @@ function TFHIRTurtleParser.ParseImplementationGuidePage(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuidePage.Create;
   try
     ParseImplementationGuidePageProperties(obj, result);
     result.link;
@@ -20998,7 +20998,7 @@ function TFHIRTurtleParser.ParseImplementationGuide(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirImplementationGuide.create;
+  result := TFhirImplementationGuide.Create;
   try
     ParseImplementationGuideProperties(obj, result);
     result.link;
@@ -21103,7 +21103,7 @@ function TFHIRTurtleParser.ParseLibrary(obj : TTurtleComplex) : TFhirLibrary;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirLibrary.create;
+  result := TFhirLibrary.Create;
   try
     ParseLibraryProperties(obj, result);
     result.link;
@@ -21239,7 +21239,7 @@ function TFHIRTurtleParser.ParseLinkageItem(obj : TTurtleComplex) : TFhirLinkage
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirLinkageItem.create;
+  result := TFhirLinkageItem.Create;
   try
     ParseLinkageItemProperties(obj, result);
     result.link;
@@ -21278,7 +21278,7 @@ function TFHIRTurtleParser.ParseLinkage(obj : TTurtleComplex) : TFhirLinkage;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirLinkage.create;
+  result := TFhirLinkage.Create;
   try
     ParseLinkageProperties(obj, result);
     result.link;
@@ -21328,7 +21328,7 @@ function TFHIRTurtleParser.ParseListEntry(obj : TTurtleComplex) : TFhirListEntry
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirListEntry.create;
+  result := TFhirListEntry.Create;
   try
     ParseListEntryProperties(obj, result);
     result.link;
@@ -21374,7 +21374,7 @@ function TFHIRTurtleParser.ParseList(obj : TTurtleComplex) : TFhirList;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirList.create;
+  result := TFhirList.Create;
   try
     ParseListProperties(obj, result);
     result.link;
@@ -21457,7 +21457,7 @@ function TFHIRTurtleParser.ParseLocationPosition(obj : TTurtleComplex) : TFhirLo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirLocationPosition.create;
+  result := TFhirLocationPosition.Create;
   try
     ParseLocationPositionProperties(obj, result);
     result.link;
@@ -21499,7 +21499,7 @@ function TFHIRTurtleParser.ParseLocation(obj : TTurtleComplex) : TFhirLocation;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirLocation.create;
+  result := TFhirLocation.Create;
   try
     ParseLocationProperties(obj, result);
     result.link;
@@ -21592,7 +21592,7 @@ function TFHIRTurtleParser.ParseMeasureGroup(obj : TTurtleComplex) : TFhirMeasur
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureGroup.create;
+  result := TFhirMeasureGroup.Create;
   try
     ParseMeasureGroupProperties(obj, result);
     result.link;
@@ -21648,7 +21648,7 @@ function TFHIRTurtleParser.ParseMeasureGroupPopulation(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureGroupPopulation.create;
+  result := TFhirMeasureGroupPopulation.Create;
   try
     ParseMeasureGroupPopulationProperties(obj, result);
     result.link;
@@ -21697,7 +21697,7 @@ function TFHIRTurtleParser.ParseMeasureGroupStratifier(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureGroupStratifier.create;
+  result := TFhirMeasureGroupStratifier.Create;
   try
     ParseMeasureGroupStratifierProperties(obj, result);
     result.link;
@@ -21741,7 +21741,7 @@ function TFHIRTurtleParser.ParseMeasureSupplementalData(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureSupplementalData.create;
+  result := TFhirMeasureSupplementalData.Create;
   try
     ParseMeasureSupplementalDataProperties(obj, result);
     result.link;
@@ -21793,7 +21793,7 @@ function TFHIRTurtleParser.ParseMeasure(obj : TTurtleComplex) : TFhirMeasure;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasure.create;
+  result := TFhirMeasure.Create;
   try
     ParseMeasureProperties(obj, result);
     result.link;
@@ -21967,7 +21967,7 @@ function TFHIRTurtleParser.ParseMeasureReportGroup(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureReportGroup.create;
+  result := TFhirMeasureReportGroup.Create;
   try
     ParseMeasureReportGroupProperties(obj, result);
     result.link;
@@ -22020,7 +22020,7 @@ function TFHIRTurtleParser.ParseMeasureReportGroupPopulation(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureReportGroupPopulation.create;
+  result := TFhirMeasureReportGroupPopulation.Create;
   try
     ParseMeasureReportGroupPopulationProperties(obj, result);
     result.link;
@@ -22067,7 +22067,7 @@ function TFHIRTurtleParser.ParseMeasureReportGroupStratifier(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureReportGroupStratifier.create;
+  result := TFhirMeasureReportGroupStratifier.Create;
   try
     ParseMeasureReportGroupStratifierProperties(obj, result);
     result.link;
@@ -22113,7 +22113,7 @@ function TFHIRTurtleParser.ParseMeasureReportGroupStratifierStratum(obj : TTurtl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureReportGroupStratifierStratum.create;
+  result := TFhirMeasureReportGroupStratifierStratum.Create;
   try
     ParseMeasureReportGroupStratifierStratumProperties(obj, result);
     result.link;
@@ -22161,7 +22161,7 @@ function TFHIRTurtleParser.ParseMeasureReportGroupStratifierStratumPopulation(ob
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureReportGroupStratifierStratumPopulation.create;
+  result := TFhirMeasureReportGroupStratifierStratumPopulation.Create;
   try
     ParseMeasureReportGroupStratifierStratumPopulationProperties(obj, result);
     result.link;
@@ -22208,7 +22208,7 @@ function TFHIRTurtleParser.ParseMeasureReport(obj : TTurtleComplex) : TFhirMeasu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMeasureReport.create;
+  result := TFhirMeasureReport.Create;
   try
     ParseMeasureReportProperties(obj, result);
     result.link;
@@ -22276,7 +22276,7 @@ function TFHIRTurtleParser.ParseMedia(obj : TTurtleComplex) : TFhirMedia;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedia.create;
+  result := TFhirMedia.Create;
   try
     ParseMediaProperties(obj, result);
     result.link;
@@ -22381,7 +22381,7 @@ function TFHIRTurtleParser.ParseMedicationIngredient(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationIngredient.create;
+  result := TFhirMedicationIngredient.Create;
   try
     ParseMedicationIngredientProperties(obj, result);
     result.link;
@@ -22432,7 +22432,7 @@ function TFHIRTurtleParser.ParseMedicationPackage(obj : TTurtleComplex) : TFhirM
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationPackage.create;
+  result := TFhirMedicationPackage.Create;
   try
     ParseMedicationPackageProperties(obj, result);
     result.link;
@@ -22483,7 +22483,7 @@ function TFHIRTurtleParser.ParseMedicationPackageContent(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationPackageContent.create;
+  result := TFhirMedicationPackageContent.Create;
   try
     ParseMedicationPackageContentProperties(obj, result);
     result.link;
@@ -22531,7 +22531,7 @@ function TFHIRTurtleParser.ParseMedicationPackageBatch(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationPackageBatch.create;
+  result := TFhirMedicationPackageBatch.Create;
   try
     ParseMedicationPackageBatchProperties(obj, result);
     result.link;
@@ -22572,7 +22572,7 @@ function TFHIRTurtleParser.ParseMedication(obj : TTurtleComplex) : TFhirMedicati
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedication.create;
+  result := TFhirMedication.Create;
   try
     ParseMedicationProperties(obj, result);
     result.link;
@@ -22643,7 +22643,7 @@ function TFHIRTurtleParser.ParseMedicationAdministrationPerformer(obj : TTurtleC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationAdministrationPerformer.create;
+  result := TFhirMedicationAdministrationPerformer.Create;
   try
     ParseMedicationAdministrationPerformerProperties(obj, result);
     result.link;
@@ -22683,7 +22683,7 @@ function TFHIRTurtleParser.ParseMedicationAdministrationDosage(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationAdministrationDosage.create;
+  result := TFhirMedicationAdministrationDosage.Create;
   try
     ParseMedicationAdministrationDosageProperties(obj, result);
     result.link;
@@ -22743,7 +22743,7 @@ function TFHIRTurtleParser.ParseMedicationAdministration(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationAdministration.create;
+  result := TFhirMedicationAdministration.Create;
   try
     ParseMedicationAdministrationProperties(obj, result);
     result.link;
@@ -22873,7 +22873,7 @@ function TFHIRTurtleParser.ParseMedicationDispensePerformer(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationDispensePerformer.create;
+  result := TFhirMedicationDispensePerformer.Create;
   try
     ParseMedicationDispensePerformerProperties(obj, result);
     result.link;
@@ -22913,7 +22913,7 @@ function TFHIRTurtleParser.ParseMedicationDispenseSubstitution(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationDispenseSubstitution.create;
+  result := TFhirMedicationDispenseSubstitution.Create;
   try
     ParseMedicationDispenseSubstitutionProperties(obj, result);
     result.link;
@@ -22966,7 +22966,7 @@ function TFHIRTurtleParser.ParseMedicationDispense(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationDispense.create;
+  result := TFhirMedicationDispense.Create;
   try
     ParseMedicationDispenseProperties(obj, result);
     result.link;
@@ -23108,7 +23108,7 @@ function TFHIRTurtleParser.ParseMedicationRequestRequester(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationRequestRequester.create;
+  result := TFhirMedicationRequestRequester.Create;
   try
     ParseMedicationRequestRequesterProperties(obj, result);
     result.link;
@@ -23148,7 +23148,7 @@ function TFHIRTurtleParser.ParseMedicationRequestDispenseRequest(obj : TTurtleCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationRequestDispenseRequest.create;
+  result := TFhirMedicationRequestDispenseRequest.Create;
   try
     ParseMedicationRequestDispenseRequestProperties(obj, result);
     result.link;
@@ -23198,7 +23198,7 @@ function TFHIRTurtleParser.ParseMedicationRequestSubstitution(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationRequestSubstitution.create;
+  result := TFhirMedicationRequestSubstitution.Create;
   try
     ParseMedicationRequestSubstitutionProperties(obj, result);
     result.link;
@@ -23238,7 +23238,7 @@ function TFHIRTurtleParser.ParseMedicationRequest(obj : TTurtleComplex) : TFhirM
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationRequest.create;
+  result := TFhirMedicationRequest.Create;
   try
     ParseMedicationRequestProperties(obj, result);
     result.link;
@@ -23373,7 +23373,7 @@ function TFHIRTurtleParser.ParseMedicationStatement(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMedicationStatement.create;
+  result := TFhirMedicationStatement.Create;
   try
     ParseMedicationStatementProperties(obj, result);
     result.link;
@@ -23492,7 +23492,7 @@ function TFHIRTurtleParser.ParseMessageDefinitionFocus(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageDefinitionFocus.create;
+  result := TFhirMessageDefinitionFocus.Create;
   try
     ParseMessageDefinitionFocusProperties(obj, result);
     result.link;
@@ -23538,7 +23538,7 @@ function TFHIRTurtleParser.ParseMessageDefinitionAllowedResponse(obj : TTurtleCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageDefinitionAllowedResponse.create;
+  result := TFhirMessageDefinitionAllowedResponse.Create;
   try
     ParseMessageDefinitionAllowedResponseProperties(obj, result);
     result.link;
@@ -23578,7 +23578,7 @@ function TFHIRTurtleParser.ParseMessageDefinition(obj : TTurtleComplex) : TFhirM
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageDefinition.create;
+  result := TFhirMessageDefinition.Create;
   try
     ParseMessageDefinitionProperties(obj, result);
     result.link;
@@ -23698,7 +23698,7 @@ function TFHIRTurtleParser.ParseMessageHeaderDestination(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageHeaderDestination.create;
+  result := TFhirMessageHeaderDestination.Create;
   try
     ParseMessageHeaderDestinationProperties(obj, result);
     result.link;
@@ -23741,7 +23741,7 @@ function TFHIRTurtleParser.ParseMessageHeaderSource(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageHeaderSource.create;
+  result := TFhirMessageHeaderSource.Create;
   try
     ParseMessageHeaderSourceProperties(obj, result);
     result.link;
@@ -23790,7 +23790,7 @@ function TFHIRTurtleParser.ParseMessageHeaderResponse(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageHeaderResponse.create;
+  result := TFhirMessageHeaderResponse.Create;
   try
     ParseMessageHeaderResponseProperties(obj, result);
     result.link;
@@ -23832,7 +23832,7 @@ function TFHIRTurtleParser.ParseMessageHeader(obj : TTurtleComplex) : TFhirMessa
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirMessageHeader.create;
+  result := TFhirMessageHeader.Create;
   try
     ParseMessageHeaderProperties(obj, result);
     result.link;
@@ -23909,7 +23909,7 @@ function TFHIRTurtleParser.ParseNamingSystemUniqueId(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNamingSystemUniqueId.create;
+  result := TFhirNamingSystemUniqueId.Create;
   try
     ParseNamingSystemUniqueIdProperties(obj, result);
     result.link;
@@ -23957,7 +23957,7 @@ function TFHIRTurtleParser.ParseNamingSystem(obj : TTurtleComplex) : TFhirNaming
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNamingSystem.create;
+  result := TFhirNamingSystem.Create;
   try
     ParseNamingSystemProperties(obj, result);
     result.link;
@@ -24042,7 +24042,7 @@ function TFHIRTurtleParser.ParseNutritionOrderOralDiet(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrderOralDiet.create;
+  result := TFhirNutritionOrderOralDiet.Create;
   try
     ParseNutritionOrderOralDietProperties(obj, result);
     result.link;
@@ -24108,7 +24108,7 @@ function TFHIRTurtleParser.ParseNutritionOrderOralDietNutrient(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrderOralDietNutrient.create;
+  result := TFhirNutritionOrderOralDietNutrient.Create;
   try
     ParseNutritionOrderOralDietNutrientProperties(obj, result);
     result.link;
@@ -24149,7 +24149,7 @@ function TFHIRTurtleParser.ParseNutritionOrderOralDietTexture(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrderOralDietTexture.create;
+  result := TFhirNutritionOrderOralDietTexture.Create;
   try
     ParseNutritionOrderOralDietTextureProperties(obj, result);
     result.link;
@@ -24190,7 +24190,7 @@ function TFHIRTurtleParser.ParseNutritionOrderSupplement(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrderSupplement.create;
+  result := TFhirNutritionOrderSupplement.Create;
   try
     ParseNutritionOrderSupplementProperties(obj, result);
     result.link;
@@ -24245,7 +24245,7 @@ function TFHIRTurtleParser.ParseNutritionOrderEnteralFormula(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrderEnteralFormula.create;
+  result := TFhirNutritionOrderEnteralFormula.Create;
   try
     ParseNutritionOrderEnteralFormulaProperties(obj, result);
     result.link;
@@ -24312,7 +24312,7 @@ function TFHIRTurtleParser.ParseNutritionOrderEnteralFormulaAdministration(obj :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrderEnteralFormulaAdministration.create;
+  result := TFhirNutritionOrderEnteralFormulaAdministration.Create;
   try
     ParseNutritionOrderEnteralFormulaAdministrationProperties(obj, result);
     result.link;
@@ -24363,7 +24363,7 @@ function TFHIRTurtleParser.ParseNutritionOrder(obj : TTurtleComplex) : TFhirNutr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirNutritionOrder.create;
+  result := TFhirNutritionOrder.Create;
   try
     ParseNutritionOrderProperties(obj, result);
     result.link;
@@ -24447,7 +24447,7 @@ function TFHIRTurtleParser.ParseObservationReferenceRange(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirObservationReferenceRange.create;
+  result := TFhirObservationReferenceRange.Create;
   try
     ParseObservationReferenceRangeProperties(obj, result);
     result.link;
@@ -24505,7 +24505,7 @@ function TFHIRTurtleParser.ParseObservationRelated(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirObservationRelated.create;
+  result := TFhirObservationRelated.Create;
   try
     ParseObservationRelatedProperties(obj, result);
     result.link;
@@ -24545,7 +24545,7 @@ function TFHIRTurtleParser.ParseObservationComponent(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirObservationComponent.create;
+  result := TFhirObservationComponent.Create;
   try
     ParseObservationComponentProperties(obj, result);
     result.link;
@@ -24636,7 +24636,7 @@ function TFHIRTurtleParser.ParseObservation(obj : TTurtleComplex) : TFhirObserva
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirObservation.create;
+  result := TFhirObservation.Create;
   try
     ParseObservationProperties(obj, result);
     result.link;
@@ -24797,7 +24797,7 @@ function TFHIRTurtleParser.ParseOperationDefinitionParameter(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOperationDefinitionParameter.create;
+  result := TFhirOperationDefinitionParameter.Create;
   try
     ParseOperationDefinitionParameterProperties(obj, result);
     result.link;
@@ -24863,7 +24863,7 @@ function TFHIRTurtleParser.ParseOperationDefinitionParameterBinding(obj : TTurtl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOperationDefinitionParameterBinding.create;
+  result := TFhirOperationDefinitionParameterBinding.Create;
   try
     ParseOperationDefinitionParameterBindingProperties(obj, result);
     result.link;
@@ -24910,7 +24910,7 @@ function TFHIRTurtleParser.ParseOperationDefinitionOverload(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOperationDefinitionOverload.create;
+  result := TFhirOperationDefinitionOverload.Create;
   try
     ParseOperationDefinitionOverloadProperties(obj, result);
     result.link;
@@ -24956,7 +24956,7 @@ function TFHIRTurtleParser.ParseOperationDefinition(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOperationDefinition.create;
+  result := TFhirOperationDefinition.Create;
   try
     ParseOperationDefinitionProperties(obj, result);
     result.link;
@@ -25073,7 +25073,7 @@ function TFHIRTurtleParser.ParseOperationOutcomeIssue(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOperationOutcomeIssue.create;
+  result := TFhirOperationOutcomeIssue.Create;
   try
     ParseOperationOutcomeIssueProperties(obj, result);
     result.link;
@@ -25131,7 +25131,7 @@ function TFHIRTurtleParser.ParseOperationOutcome(obj : TTurtleComplex) : TFhirOp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOperationOutcome.create;
+  result := TFhirOperationOutcome.Create;
   try
     ParseOperationOutcomeProperties(obj, result);
     result.link;
@@ -25175,7 +25175,7 @@ function TFHIRTurtleParser.ParseOrganizationContact(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOrganizationContact.create;
+  result := TFhirOrganizationContact.Create;
   try
     ParseOrganizationContactProperties(obj, result);
     result.link;
@@ -25227,7 +25227,7 @@ function TFHIRTurtleParser.ParseOrganization(obj : TTurtleComplex) : TFhirOrgani
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirOrganization.create;
+  result := TFhirOrganization.Create;
   try
     ParseOrganizationProperties(obj, result);
     result.link;
@@ -25311,7 +25311,7 @@ function TFHIRTurtleParser.ParsePatientContact(obj : TTurtleComplex) : TFhirPati
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPatientContact.create;
+  result := TFhirPatientContact.Create;
   try
     ParsePatientContactProperties(obj, result);
     result.link;
@@ -25374,7 +25374,7 @@ function TFHIRTurtleParser.ParsePatientAnimal(obj : TTurtleComplex) : TFhirPatie
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPatientAnimal.create;
+  result := TFhirPatientAnimal.Create;
   try
     ParsePatientAnimalProperties(obj, result);
     result.link;
@@ -25417,7 +25417,7 @@ function TFHIRTurtleParser.ParsePatientCommunication(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPatientCommunication.create;
+  result := TFhirPatientCommunication.Create;
   try
     ParsePatientCommunicationProperties(obj, result);
     result.link;
@@ -25457,7 +25457,7 @@ function TFHIRTurtleParser.ParsePatientLink(obj : TTurtleComplex) : TFhirPatient
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPatientLink.create;
+  result := TFhirPatientLink.Create;
   try
     ParsePatientLinkProperties(obj, result);
     result.link;
@@ -25496,7 +25496,7 @@ function TFHIRTurtleParser.ParsePatient(obj : TTurtleComplex) : TFhirPatient;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPatient.create;
+  result := TFhirPatient.Create;
   try
     ParsePatientProperties(obj, result);
     result.link;
@@ -25615,7 +25615,7 @@ function TFHIRTurtleParser.ParsePaymentNotice(obj : TTurtleComplex) : TFhirPayme
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPaymentNotice.create;
+  result := TFhirPaymentNotice.Create;
   try
     ParsePaymentNoticeProperties(obj, result);
     result.link;
@@ -25687,7 +25687,7 @@ function TFHIRTurtleParser.ParsePaymentReconciliationDetail(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPaymentReconciliationDetail.create;
+  result := TFhirPaymentReconciliationDetail.Create;
   try
     ParsePaymentReconciliationDetailProperties(obj, result);
     result.link;
@@ -25742,7 +25742,7 @@ function TFHIRTurtleParser.ParsePaymentReconciliationProcessNote(obj : TTurtleCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPaymentReconciliationProcessNote.create;
+  result := TFhirPaymentReconciliationProcessNote.Create;
   try
     ParsePaymentReconciliationProcessNoteProperties(obj, result);
     result.link;
@@ -25783,7 +25783,7 @@ function TFHIRTurtleParser.ParsePaymentReconciliation(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPaymentReconciliation.create;
+  result := TFhirPaymentReconciliation.Create;
   try
     ParsePaymentReconciliationProperties(obj, result);
     result.link;
@@ -25871,7 +25871,7 @@ function TFHIRTurtleParser.ParsePersonLink(obj : TTurtleComplex) : TFhirPersonLi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPersonLink.create;
+  result := TFhirPersonLink.Create;
   try
     ParsePersonLinkProperties(obj, result);
     result.link;
@@ -25911,7 +25911,7 @@ function TFHIRTurtleParser.ParsePerson(obj : TTurtleComplex) : TFhirPerson;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPerson.create;
+  result := TFhirPerson.Create;
   try
     ParsePersonProperties(obj, result);
     result.link;
@@ -25991,7 +25991,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionGoal(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionGoal.create;
+  result := TFhirPlanDefinitionGoal.Create;
   try
     ParsePlanDefinitionGoalProperties(obj, result);
     result.link;
@@ -26055,7 +26055,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionGoalTarget(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionGoalTarget.create;
+  result := TFhirPlanDefinitionGoalTarget.Create;
   try
     ParsePlanDefinitionGoalTargetProperties(obj, result);
     result.link;
@@ -26110,7 +26110,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionAction(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionAction.create;
+  result := TFhirPlanDefinitionAction.Create;
   try
     ParsePlanDefinitionActionProperties(obj, result);
     result.link;
@@ -26264,7 +26264,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionActionCondition(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionActionCondition.create;
+  result := TFhirPlanDefinitionActionCondition.Create;
   try
     ParsePlanDefinitionActionConditionProperties(obj, result);
     result.link;
@@ -26310,7 +26310,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionActionRelatedAction(obj : TTurtleC
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionActionRelatedAction.create;
+  result := TFhirPlanDefinitionActionRelatedAction.Create;
   try
     ParsePlanDefinitionActionRelatedActionProperties(obj, result);
     result.link;
@@ -26359,7 +26359,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionActionParticipant(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionActionParticipant.create;
+  result := TFhirPlanDefinitionActionParticipant.Create;
   try
     ParsePlanDefinitionActionParticipantProperties(obj, result);
     result.link;
@@ -26399,7 +26399,7 @@ function TFHIRTurtleParser.ParsePlanDefinitionActionDynamicValue(obj : TTurtleCo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinitionActionDynamicValue.create;
+  result := TFhirPlanDefinitionActionDynamicValue.Create;
   try
     ParsePlanDefinitionActionDynamicValueProperties(obj, result);
     result.link;
@@ -26446,7 +26446,7 @@ function TFHIRTurtleParser.ParsePlanDefinition(obj : TTurtleComplex) : TFhirPlan
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPlanDefinition.create;
+  result := TFhirPlanDefinition.Create;
   try
     ParsePlanDefinitionProperties(obj, result);
     result.link;
@@ -26583,7 +26583,7 @@ function TFHIRTurtleParser.ParsePractitionerQualification(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPractitionerQualification.create;
+  result := TFhirPractitionerQualification.Create;
   try
     ParsePractitionerQualificationProperties(obj, result);
     result.link;
@@ -26634,7 +26634,7 @@ function TFHIRTurtleParser.ParsePractitioner(obj : TTurtleComplex) : TFhirPracti
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPractitioner.create;
+  result := TFhirPractitioner.Create;
   try
     ParsePractitionerProperties(obj, result);
     result.link;
@@ -26718,7 +26718,7 @@ function TFHIRTurtleParser.ParsePractitionerRoleAvailableTime(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPractitionerRoleAvailableTime.create;
+  result := TFhirPractitionerRoleAvailableTime.Create;
   try
     ParsePractitionerRoleAvailableTimeProperties(obj, result);
     result.link;
@@ -26773,7 +26773,7 @@ function TFHIRTurtleParser.ParsePractitionerRoleNotAvailable(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPractitionerRoleNotAvailable.create;
+  result := TFhirPractitionerRoleNotAvailable.Create;
   try
     ParsePractitionerRoleNotAvailableProperties(obj, result);
     result.link;
@@ -26813,7 +26813,7 @@ function TFHIRTurtleParser.ParsePractitionerRole(obj : TTurtleComplex) : TFhirPr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirPractitionerRole.create;
+  result := TFhirPractitionerRole.Create;
   try
     ParsePractitionerRoleProperties(obj, result);
     result.link;
@@ -26913,7 +26913,7 @@ function TFHIRTurtleParser.ParseProcedurePerformer(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcedurePerformer.create;
+  result := TFhirProcedurePerformer.Create;
   try
     ParseProcedurePerformerProperties(obj, result);
     result.link;
@@ -26956,7 +26956,7 @@ function TFHIRTurtleParser.ParseProcedureFocalDevice(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcedureFocalDevice.create;
+  result := TFhirProcedureFocalDevice.Create;
   try
     ParseProcedureFocalDeviceProperties(obj, result);
     result.link;
@@ -26996,7 +26996,7 @@ function TFHIRTurtleParser.ParseProcedure(obj : TTurtleComplex) : TFhirProcedure
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcedure.create;
+  result := TFhirProcedure.Create;
   try
     ParseProcedureProperties(obj, result);
     result.link;
@@ -27149,7 +27149,7 @@ function TFHIRTurtleParser.ParseProcedureRequestRequester(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcedureRequestRequester.create;
+  result := TFhirProcedureRequestRequester.Create;
   try
     ParseProcedureRequestRequesterProperties(obj, result);
     result.link;
@@ -27189,7 +27189,7 @@ function TFHIRTurtleParser.ParseProcedureRequest(obj : TTurtleComplex) : TFhirPr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcedureRequest.create;
+  result := TFhirProcedureRequest.Create;
   try
     ParseProcedureRequestProperties(obj, result);
     result.link;
@@ -27341,7 +27341,7 @@ function TFHIRTurtleParser.ParseProcessRequestItem(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcessRequestItem.create;
+  result := TFhirProcessRequestItem.Create;
   try
     ParseProcessRequestItemProperties(obj, result);
     result.link;
@@ -27378,7 +27378,7 @@ function TFHIRTurtleParser.ParseProcessRequest(obj : TTurtleComplex) : TFhirProc
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcessRequest.create;
+  result := TFhirProcessRequest.Create;
   try
     ParseProcessRequestProperties(obj, result);
     result.link;
@@ -27471,7 +27471,7 @@ function TFHIRTurtleParser.ParseProcessResponseProcessNote(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcessResponseProcessNote.create;
+  result := TFhirProcessResponseProcessNote.Create;
   try
     ParseProcessResponseProcessNoteProperties(obj, result);
     result.link;
@@ -27512,7 +27512,7 @@ function TFHIRTurtleParser.ParseProcessResponse(obj : TTurtleComplex) : TFhirPro
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProcessResponse.create;
+  result := TFhirProcessResponse.Create;
   try
     ParseProcessResponseProperties(obj, result);
     result.link;
@@ -27599,7 +27599,7 @@ function TFHIRTurtleParser.ParseProvenanceAgent(obj : TTurtleComplex) : TFhirPro
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProvenanceAgent.create;
+  result := TFhirProvenanceAgent.Create;
   try
     ParseProvenanceAgentProperties(obj, result);
     result.link;
@@ -27661,7 +27661,7 @@ function TFHIRTurtleParser.ParseProvenanceEntity(obj : TTurtleComplex) : TFhirPr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProvenanceEntity.create;
+  result := TFhirProvenanceEntity.Create;
   try
     ParseProvenanceEntityProperties(obj, result);
     result.link;
@@ -27718,7 +27718,7 @@ function TFHIRTurtleParser.ParseProvenance(obj : TTurtleComplex) : TFhirProvenan
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirProvenance.create;
+  result := TFhirProvenance.Create;
   try
     ParseProvenanceProperties(obj, result);
     result.link;
@@ -27797,7 +27797,7 @@ function TFHIRTurtleParser.ParseQuestionnaireItem(obj : TTurtleComplex) : TFhirQ
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaireItem.create;
+  result := TFhirQuestionnaireItem.Create;
   try
     ParseQuestionnaireItemProperties(obj, result);
     result.link;
@@ -27931,7 +27931,7 @@ function TFHIRTurtleParser.ParseQuestionnaireItemEnableWhen(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaireItemEnableWhen.create;
+  result := TFhirQuestionnaireItemEnableWhen.Create;
   try
     ParseQuestionnaireItemEnableWhenProperties(obj, result);
     result.link;
@@ -28021,7 +28021,7 @@ function TFHIRTurtleParser.ParseQuestionnaireItemOption(obj : TTurtleComplex) : 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaireItemOption.create;
+  result := TFhirQuestionnaireItemOption.Create;
   try
     ParseQuestionnaireItemOptionProperties(obj, result);
     result.link;
@@ -28078,7 +28078,7 @@ function TFHIRTurtleParser.ParseQuestionnaire(obj : TTurtleComplex) : TFhirQuest
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaire.create;
+  result := TFhirQuestionnaire.Create;
   try
     ParseQuestionnaireProperties(obj, result);
     result.link;
@@ -28197,7 +28197,7 @@ function TFHIRTurtleParser.ParseQuestionnaireResponseItem(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaireResponseItem.create;
+  result := TFhirQuestionnaireResponseItem.Create;
   try
     ParseQuestionnaireResponseItemProperties(obj, result);
     result.link;
@@ -28256,7 +28256,7 @@ function TFHIRTurtleParser.ParseQuestionnaireResponseItemAnswer(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaireResponseItemAnswer.create;
+  result := TFhirQuestionnaireResponseItemAnswer.Create;
   try
     ParseQuestionnaireResponseItemAnswerProperties(obj, result);
     result.link;
@@ -28347,7 +28347,7 @@ function TFHIRTurtleParser.ParseQuestionnaireResponse(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirQuestionnaireResponse.create;
+  result := TFhirQuestionnaireResponse.Create;
   try
     ParseQuestionnaireResponseProperties(obj, result);
     result.link;
@@ -28425,7 +28425,7 @@ function TFHIRTurtleParser.ParseReferralRequestRequester(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirReferralRequestRequester.create;
+  result := TFhirReferralRequestRequester.Create;
   try
     ParseReferralRequestRequesterProperties(obj, result);
     result.link;
@@ -28465,7 +28465,7 @@ function TFHIRTurtleParser.ParseReferralRequest(obj : TTurtleComplex) : TFhirRef
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirReferralRequest.create;
+  result := TFhirReferralRequest.Create;
   try
     ParseReferralRequestProperties(obj, result);
     result.link;
@@ -28598,7 +28598,7 @@ function TFHIRTurtleParser.ParseRelatedPerson(obj : TTurtleComplex) : TFhirRelat
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRelatedPerson.create;
+  result := TFhirRelatedPerson.Create;
   try
     ParseRelatedPersonProperties(obj, result);
     result.link;
@@ -28680,7 +28680,7 @@ function TFHIRTurtleParser.ParseRequestGroupAction(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRequestGroupAction.create;
+  result := TFhirRequestGroupAction.Create;
   try
     ParseRequestGroupActionProperties(obj, result);
     result.link;
@@ -28801,7 +28801,7 @@ function TFHIRTurtleParser.ParseRequestGroupActionCondition(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRequestGroupActionCondition.create;
+  result := TFhirRequestGroupActionCondition.Create;
   try
     ParseRequestGroupActionConditionProperties(obj, result);
     result.link;
@@ -28847,7 +28847,7 @@ function TFHIRTurtleParser.ParseRequestGroupActionRelatedAction(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRequestGroupActionRelatedAction.create;
+  result := TFhirRequestGroupActionRelatedAction.Create;
   try
     ParseRequestGroupActionRelatedActionProperties(obj, result);
     result.link;
@@ -28896,7 +28896,7 @@ function TFHIRTurtleParser.ParseRequestGroup(obj : TTurtleComplex) : TFhirReques
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRequestGroup.create;
+  result := TFhirRequestGroup.Create;
   try
     ParseRequestGroupProperties(obj, result);
     result.link;
@@ -28996,7 +28996,7 @@ function TFHIRTurtleParser.ParseResearchStudyArm(obj : TTurtleComplex) : TFhirRe
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirResearchStudyArm.create;
+  result := TFhirResearchStudyArm.Create;
   try
     ParseResearchStudyArmProperties(obj, result);
     result.link;
@@ -29039,7 +29039,7 @@ function TFHIRTurtleParser.ParseResearchStudy(obj : TTurtleComplex) : TFhirResea
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirResearchStudy.create;
+  result := TFhirResearchStudy.Create;
   try
     ParseResearchStudyProperties(obj, result);
     result.link;
@@ -29164,7 +29164,7 @@ function TFHIRTurtleParser.ParseResearchSubject(obj : TTurtleComplex) : TFhirRes
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirResearchSubject.create;
+  result := TFhirResearchSubject.Create;
   try
     ParseResearchSubjectProperties(obj, result);
     result.link;
@@ -29222,7 +29222,7 @@ function TFHIRTurtleParser.ParseRiskAssessmentPrediction(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRiskAssessmentPrediction.create;
+  result := TFhirRiskAssessmentPrediction.Create;
   try
     ParseRiskAssessmentPredictionProperties(obj, result);
     result.link;
@@ -29286,7 +29286,7 @@ function TFHIRTurtleParser.ParseRiskAssessment(obj : TTurtleComplex) : TFhirRisk
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirRiskAssessment.create;
+  result := TFhirRiskAssessment.Create;
   try
     ParseRiskAssessmentProperties(obj, result);
     result.link;
@@ -29387,7 +29387,7 @@ function TFHIRTurtleParser.ParseSchedule(obj : TTurtleComplex) : TFhirSchedule;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSchedule.create;
+  result := TFhirSchedule.Create;
   try
     ParseScheduleProperties(obj, result);
     result.link;
@@ -29458,7 +29458,7 @@ function TFHIRTurtleParser.ParseSearchParameterComponent(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSearchParameterComponent.create;
+  result := TFhirSearchParameterComponent.Create;
   try
     ParseSearchParameterComponentProperties(obj, result);
     result.link;
@@ -29497,7 +29497,7 @@ function TFHIRTurtleParser.ParseSearchParameter(obj : TTurtleComplex) : TFhirSea
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSearchParameter.create;
+  result := TFhirSearchParameter.Create;
   try
     ParseSearchParameterProperties(obj, result);
     result.link;
@@ -29631,7 +29631,7 @@ function TFHIRTurtleParser.ParseSequenceReferenceSeq(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSequenceReferenceSeq.create;
+  result := TFhirSequenceReferenceSeq.Create;
   try
     ParseSequenceReferenceSeqProperties(obj, result);
     result.link;
@@ -29688,7 +29688,7 @@ function TFHIRTurtleParser.ParseSequenceVariant(obj : TTurtleComplex) : TFhirSeq
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSequenceVariant.create;
+  result := TFhirSequenceVariant.Create;
   try
     ParseSequenceVariantProperties(obj, result);
     result.link;
@@ -29741,7 +29741,7 @@ function TFHIRTurtleParser.ParseSequenceQuality(obj : TTurtleComplex) : TFhirSeq
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSequenceQuality.create;
+  result := TFhirSequenceQuality.Create;
   try
     ParseSequenceQualityProperties(obj, result);
     result.link;
@@ -29817,7 +29817,7 @@ function TFHIRTurtleParser.ParseSequenceRepository(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSequenceRepository.create;
+  result := TFhirSequenceRepository.Create;
   try
     ParseSequenceRepositoryProperties(obj, result);
     result.link;
@@ -29869,7 +29869,7 @@ function TFHIRTurtleParser.ParseSequence(obj : TTurtleComplex) : TFhirSequence;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSequence.create;
+  result := TFhirSequence.Create;
   try
     ParseSequenceProperties(obj, result);
     result.link;
@@ -29963,7 +29963,7 @@ function TFHIRTurtleParser.ParseServiceDefinition(obj : TTurtleComplex) : TFhirS
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirServiceDefinition.create;
+  result := TFhirServiceDefinition.Create;
   try
     ParseServiceDefinitionProperties(obj, result);
     result.link;
@@ -30095,7 +30095,7 @@ function TFHIRTurtleParser.ParseSlot(obj : TTurtleComplex) : TFhirSlot;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSlot.create;
+  result := TFhirSlot.Create;
   try
     ParseSlotProperties(obj, result);
     result.link;
@@ -30170,7 +30170,7 @@ function TFHIRTurtleParser.ParseSpecimenCollection(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSpecimenCollection.create;
+  result := TFhirSpecimenCollection.Create;
   try
     ParseSpecimenCollectionProperties(obj, result);
     result.link;
@@ -30227,7 +30227,7 @@ function TFHIRTurtleParser.ParseSpecimenProcessing(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSpecimenProcessing.create;
+  result := TFhirSpecimenProcessing.Create;
   try
     ParseSpecimenProcessingProperties(obj, result);
     result.link;
@@ -30284,7 +30284,7 @@ function TFHIRTurtleParser.ParseSpecimenContainer(obj : TTurtleComplex) : TFhirS
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSpecimenContainer.create;
+  result := TFhirSpecimenContainer.Create;
   try
     ParseSpecimenContainerProperties(obj, result);
     result.link;
@@ -30347,7 +30347,7 @@ function TFHIRTurtleParser.ParseSpecimen(obj : TTurtleComplex) : TFhirSpecimen;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSpecimen.create;
+  result := TFhirSpecimen.Create;
   try
     ParseSpecimenProperties(obj, result);
     result.link;
@@ -30434,7 +30434,7 @@ function TFHIRTurtleParser.ParseStructureDefinitionMapping(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureDefinitionMapping.create;
+  result := TFhirStructureDefinitionMapping.Create;
   try
     ParseStructureDefinitionMappingProperties(obj, result);
     result.link;
@@ -30480,7 +30480,7 @@ function TFHIRTurtleParser.ParseStructureDefinitionSnapshot(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureDefinitionSnapshot.create;
+  result := TFhirStructureDefinitionSnapshot.Create;
   try
     ParseStructureDefinitionSnapshotProperties(obj, result);
     result.link;
@@ -30522,7 +30522,7 @@ function TFHIRTurtleParser.ParseStructureDefinitionDifferential(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureDefinitionDifferential.create;
+  result := TFhirStructureDefinitionDifferential.Create;
   try
     ParseStructureDefinitionDifferentialProperties(obj, result);
     result.link;
@@ -30564,7 +30564,7 @@ function TFHIRTurtleParser.ParseStructureDefinition(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureDefinition.create;
+  result := TFhirStructureDefinition.Create;
   try
     ParseStructureDefinitionProperties(obj, result);
     result.link;
@@ -30698,7 +30698,7 @@ function TFHIRTurtleParser.ParseStructureMapStructure(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapStructure.create;
+  result := TFhirStructureMapStructure.Create;
   try
     ParseStructureMapStructureProperties(obj, result);
     result.link;
@@ -30743,7 +30743,7 @@ function TFHIRTurtleParser.ParseStructureMapGroup(obj : TTurtleComplex) : TFhirS
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroup.create;
+  result := TFhirStructureMapGroup.Create;
   try
     ParseStructureMapGroupProperties(obj, result);
     result.link;
@@ -30799,7 +30799,7 @@ function TFHIRTurtleParser.ParseStructureMapGroupInput(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroupInput.create;
+  result := TFhirStructureMapGroupInput.Create;
   try
     ParseStructureMapGroupInputProperties(obj, result);
     result.link;
@@ -30844,7 +30844,7 @@ function TFHIRTurtleParser.ParseStructureMapGroupRule(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroupRule.create;
+  result := TFhirStructureMapGroupRule.Create;
   try
     ParseStructureMapGroupRuleProperties(obj, result);
     result.link;
@@ -30906,7 +30906,7 @@ function TFHIRTurtleParser.ParseStructureMapGroupRuleSource(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroupRuleSource.create;
+  result := TFhirStructureMapGroupRuleSource.Create;
   try
     ParseStructureMapGroupRuleSourceProperties(obj, result);
     result.link;
@@ -31121,7 +31121,7 @@ function TFHIRTurtleParser.ParseStructureMapGroupRuleTarget(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroupRuleTarget.create;
+  result := TFhirStructureMapGroupRuleTarget.Create;
   try
     ParseStructureMapGroupRuleTargetProperties(obj, result);
     result.link;
@@ -31190,7 +31190,7 @@ function TFHIRTurtleParser.ParseStructureMapGroupRuleTargetParameter(obj : TTurt
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroupRuleTargetParameter.create;
+  result := TFhirStructureMapGroupRuleTargetParameter.Create;
   try
     ParseStructureMapGroupRuleTargetParameterProperties(obj, result);
     result.link;
@@ -31247,7 +31247,7 @@ function TFHIRTurtleParser.ParseStructureMapGroupRuleDependent(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMapGroupRuleDependent.create;
+  result := TFhirStructureMapGroupRuleDependent.Create;
   try
     ParseStructureMapGroupRuleDependentProperties(obj, result);
     result.link;
@@ -31291,7 +31291,7 @@ function TFHIRTurtleParser.ParseStructureMap(obj : TTurtleComplex) : TFhirStruct
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirStructureMap.create;
+  result := TFhirStructureMap.Create;
   try
     ParseStructureMapProperties(obj, result);
     result.link;
@@ -31395,7 +31395,7 @@ function TFHIRTurtleParser.ParseSubscriptionChannel(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSubscriptionChannel.create;
+  result := TFhirSubscriptionChannel.Create;
   try
     ParseSubscriptionChannelProperties(obj, result);
     result.link;
@@ -31446,7 +31446,7 @@ function TFHIRTurtleParser.ParseSubscription(obj : TTurtleComplex) : TFhirSubscr
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSubscription.create;
+  result := TFhirSubscription.Create;
   try
     ParseSubscriptionProperties(obj, result);
     result.link;
@@ -31510,7 +31510,7 @@ function TFHIRTurtleParser.ParseSubstanceInstance(obj : TTurtleComplex) : TFhirS
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSubstanceInstance.create;
+  result := TFhirSubstanceInstance.Create;
   try
     ParseSubstanceInstanceProperties(obj, result);
     result.link;
@@ -31554,7 +31554,7 @@ function TFHIRTurtleParser.ParseSubstanceIngredient(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSubstanceIngredient.create;
+  result := TFhirSubstanceIngredient.Create;
   try
     ParseSubstanceIngredientProperties(obj, result);
     result.link;
@@ -31602,7 +31602,7 @@ function TFHIRTurtleParser.ParseSubstance(obj : TTurtleComplex) : TFhirSubstance
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSubstance.create;
+  result := TFhirSubstance.Create;
   try
     ParseSubstanceProperties(obj, result);
     result.link;
@@ -31670,7 +31670,7 @@ function TFHIRTurtleParser.ParseSupplyDeliverySuppliedItem(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSupplyDeliverySuppliedItem.create;
+  result := TFhirSupplyDeliverySuppliedItem.Create;
   try
     ParseSupplyDeliverySuppliedItemProperties(obj, result);
     result.link;
@@ -31718,7 +31718,7 @@ function TFHIRTurtleParser.ParseSupplyDelivery(obj : TTurtleComplex) : TFhirSupp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSupplyDelivery.create;
+  result := TFhirSupplyDelivery.Create;
   try
     ParseSupplyDeliveryProperties(obj, result);
     result.link;
@@ -31806,7 +31806,7 @@ function TFHIRTurtleParser.ParseSupplyRequestOrderedItem(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSupplyRequestOrderedItem.create;
+  result := TFhirSupplyRequestOrderedItem.Create;
   try
     ParseSupplyRequestOrderedItemProperties(obj, result);
     result.link;
@@ -31853,7 +31853,7 @@ function TFHIRTurtleParser.ParseSupplyRequestRequester(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSupplyRequestRequester.create;
+  result := TFhirSupplyRequestRequester.Create;
   try
     ParseSupplyRequestRequesterProperties(obj, result);
     result.link;
@@ -31893,7 +31893,7 @@ function TFHIRTurtleParser.ParseSupplyRequest(obj : TTurtleComplex) : TFhirSuppl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirSupplyRequest.create;
+  result := TFhirSupplyRequest.Create;
   try
     ParseSupplyRequestProperties(obj, result);
     result.link;
@@ -31985,7 +31985,7 @@ function TFHIRTurtleParser.ParseTaskRequester(obj : TTurtleComplex) : TFhirTaskR
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTaskRequester.create;
+  result := TFhirTaskRequester.Create;
   try
     ParseTaskRequesterProperties(obj, result);
     result.link;
@@ -32025,7 +32025,7 @@ function TFHIRTurtleParser.ParseTaskRestriction(obj : TTurtleComplex) : TFhirTas
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTaskRestriction.create;
+  result := TFhirTaskRestriction.Create;
   try
     ParseTaskRestrictionProperties(obj, result);
     result.link;
@@ -32074,7 +32074,7 @@ function TFHIRTurtleParser.ParseTaskInput(obj : TTurtleComplex) : TFhirTaskInput
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTaskInput.create;
+  result := TFhirTaskInput.Create;
   try
     ParseTaskInputProperties(obj, result);
     result.link;
@@ -32265,7 +32265,7 @@ function TFHIRTurtleParser.ParseTaskOutput(obj : TTurtleComplex) : TFhirTaskOutp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTaskOutput.create;
+  result := TFhirTaskOutput.Create;
   try
     ParseTaskOutputProperties(obj, result);
     result.link;
@@ -32456,7 +32456,7 @@ function TFHIRTurtleParser.ParseTask(obj : TTurtleComplex) : TFhirTask;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTask.create;
+  result := TFhirTask.Create;
   try
     ParseTaskProperties(obj, result);
     result.link;
@@ -32596,7 +32596,7 @@ function TFHIRTurtleParser.ParseTestReportParticipant(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportParticipant.create;
+  result := TFhirTestReportParticipant.Create;
   try
     ParseTestReportParticipantProperties(obj, result);
     result.link;
@@ -32638,7 +32638,7 @@ function TFHIRTurtleParser.ParseTestReportSetup(obj : TTurtleComplex) : TFhirTes
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportSetup.create;
+  result := TFhirTestReportSetup.Create;
   try
     ParseTestReportSetupProperties(obj, result);
     result.link;
@@ -32680,7 +32680,7 @@ function TFHIRTurtleParser.ParseTestReportSetupAction(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportSetupAction.create;
+  result := TFhirTestReportSetupAction.Create;
   try
     ParseTestReportSetupActionProperties(obj, result);
     result.link;
@@ -32721,7 +32721,7 @@ function TFHIRTurtleParser.ParseTestReportSetupActionOperation(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportSetupActionOperation.create;
+  result := TFhirTestReportSetupActionOperation.Create;
   try
     ParseTestReportSetupActionOperationProperties(obj, result);
     result.link;
@@ -32764,7 +32764,7 @@ function TFHIRTurtleParser.ParseTestReportSetupActionAssert(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportSetupActionAssert.create;
+  result := TFhirTestReportSetupActionAssert.Create;
   try
     ParseTestReportSetupActionAssertProperties(obj, result);
     result.link;
@@ -32807,7 +32807,7 @@ function TFHIRTurtleParser.ParseTestReportTest(obj : TTurtleComplex) : TFhirTest
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportTest.create;
+  result := TFhirTestReportTest.Create;
   try
     ParseTestReportTestProperties(obj, result);
     result.link;
@@ -32855,7 +32855,7 @@ function TFHIRTurtleParser.ParseTestReportTestAction(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportTestAction.create;
+  result := TFhirTestReportTestAction.Create;
   try
     ParseTestReportTestActionProperties(obj, result);
     result.link;
@@ -32896,7 +32896,7 @@ function TFHIRTurtleParser.ParseTestReportTeardown(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportTeardown.create;
+  result := TFhirTestReportTeardown.Create;
   try
     ParseTestReportTeardownProperties(obj, result);
     result.link;
@@ -32938,7 +32938,7 @@ function TFHIRTurtleParser.ParseTestReportTeardownAction(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReportTeardownAction.create;
+  result := TFhirTestReportTeardownAction.Create;
   try
     ParseTestReportTeardownActionProperties(obj, result);
     result.link;
@@ -32975,7 +32975,7 @@ function TFHIRTurtleParser.ParseTestReport(obj : TTurtleComplex) : TFhirTestRepo
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestReport.create;
+  result := TFhirTestReport.Create;
   try
     ParseTestReportProperties(obj, result);
     result.link;
@@ -33052,7 +33052,7 @@ function TFHIRTurtleParser.ParseTestScriptOrigin(obj : TTurtleComplex) : TFhirTe
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptOrigin.create;
+  result := TFhirTestScriptOrigin.Create;
   try
     ParseTestScriptOriginProperties(obj, result);
     result.link;
@@ -33091,7 +33091,7 @@ function TFHIRTurtleParser.ParseTestScriptDestination(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptDestination.create;
+  result := TFhirTestScriptDestination.Create;
   try
     ParseTestScriptDestinationProperties(obj, result);
     result.link;
@@ -33130,7 +33130,7 @@ function TFHIRTurtleParser.ParseTestScriptMetadata(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptMetadata.create;
+  result := TFhirTestScriptMetadata.Create;
   try
     ParseTestScriptMetadataProperties(obj, result);
     result.link;
@@ -33177,7 +33177,7 @@ function TFHIRTurtleParser.ParseTestScriptMetadataLink(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptMetadataLink.create;
+  result := TFhirTestScriptMetadataLink.Create;
   try
     ParseTestScriptMetadataLinkProperties(obj, result);
     result.link;
@@ -33217,7 +33217,7 @@ function TFHIRTurtleParser.ParseTestScriptMetadataCapability(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptMetadataCapability.create;
+  result := TFhirTestScriptMetadataCapability.Create;
   try
     ParseTestScriptMetadataCapabilityProperties(obj, result);
     result.link;
@@ -33279,7 +33279,7 @@ function TFHIRTurtleParser.ParseTestScriptFixture(obj : TTurtleComplex) : TFhirT
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptFixture.create;
+  result := TFhirTestScriptFixture.Create;
   try
     ParseTestScriptFixtureProperties(obj, result);
     result.link;
@@ -33323,7 +33323,7 @@ function TFHIRTurtleParser.ParseTestScriptVariable(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptVariable.create;
+  result := TFhirTestScriptVariable.Create;
   try
     ParseTestScriptVariableProperties(obj, result);
     result.link;
@@ -33381,7 +33381,7 @@ function TFHIRTurtleParser.ParseTestScriptRule(obj : TTurtleComplex) : TFhirTest
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptRule.create;
+  result := TFhirTestScriptRule.Create;
   try
     ParseTestScriptRuleProperties(obj, result);
     result.link;
@@ -33426,7 +33426,7 @@ function TFHIRTurtleParser.ParseTestScriptRuleParam(obj : TTurtleComplex) : TFhi
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptRuleParam.create;
+  result := TFhirTestScriptRuleParam.Create;
   try
     ParseTestScriptRuleParamProperties(obj, result);
     result.link;
@@ -33466,7 +33466,7 @@ function TFHIRTurtleParser.ParseTestScriptRuleset(obj : TTurtleComplex) : TFhirT
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptRuleset.create;
+  result := TFhirTestScriptRuleset.Create;
   try
     ParseTestScriptRulesetProperties(obj, result);
     result.link;
@@ -33510,7 +33510,7 @@ function TFHIRTurtleParser.ParseTestScriptRulesetRule(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptRulesetRule.create;
+  result := TFhirTestScriptRulesetRule.Create;
   try
     ParseTestScriptRulesetRuleProperties(obj, result);
     result.link;
@@ -33555,7 +33555,7 @@ function TFHIRTurtleParser.ParseTestScriptRulesetRuleParam(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptRulesetRuleParam.create;
+  result := TFhirTestScriptRulesetRuleParam.Create;
   try
     ParseTestScriptRulesetRuleParamProperties(obj, result);
     result.link;
@@ -33595,7 +33595,7 @@ function TFHIRTurtleParser.ParseTestScriptSetup(obj : TTurtleComplex) : TFhirTes
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetup.create;
+  result := TFhirTestScriptSetup.Create;
   try
     ParseTestScriptSetupProperties(obj, result);
     result.link;
@@ -33637,7 +33637,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupAction(obj : TTurtleComplex) : TF
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupAction.create;
+  result := TFhirTestScriptSetupAction.Create;
   try
     ParseTestScriptSetupActionProperties(obj, result);
     result.link;
@@ -33678,7 +33678,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionOperation(obj : TTurtleComp
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionOperation.create;
+  result := TFhirTestScriptSetupActionOperation.Create;
   try
     ParseTestScriptSetupActionOperationProperties(obj, result);
     result.link;
@@ -33766,7 +33766,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionOperationRequestHeader(obj 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionOperationRequestHeader.create;
+  result := TFhirTestScriptSetupActionOperationRequestHeader.Create;
   try
     ParseTestScriptSetupActionOperationRequestHeaderProperties(obj, result);
     result.link;
@@ -33805,7 +33805,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionAssert(obj : TTurtleComplex
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionAssert.create;
+  result := TFhirTestScriptSetupActionAssert.Create;
   try
     ParseTestScriptSetupActionAssertProperties(obj, result);
     result.link;
@@ -33912,7 +33912,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionAssertRule(obj : TTurtleCom
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionAssertRule.create;
+  result := TFhirTestScriptSetupActionAssertRule.Create;
   try
     ParseTestScriptSetupActionAssertRuleProperties(obj, result);
     result.link;
@@ -33957,7 +33957,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionAssertRuleParam(obj : TTurt
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionAssertRuleParam.create;
+  result := TFhirTestScriptSetupActionAssertRuleParam.Create;
   try
     ParseTestScriptSetupActionAssertRuleParamProperties(obj, result);
     result.link;
@@ -33996,7 +33996,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionAssertRuleset(obj : TTurtle
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionAssertRuleset.create;
+  result := TFhirTestScriptSetupActionAssertRuleset.Create;
   try
     ParseTestScriptSetupActionAssertRulesetProperties(obj, result);
     result.link;
@@ -34041,7 +34041,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionAssertRulesetRule(obj : TTu
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionAssertRulesetRule.create;
+  result := TFhirTestScriptSetupActionAssertRulesetRule.Create;
   try
     ParseTestScriptSetupActionAssertRulesetRuleProperties(obj, result);
     result.link;
@@ -34086,7 +34086,7 @@ function TFHIRTurtleParser.ParseTestScriptSetupActionAssertRulesetRuleParam(obj 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptSetupActionAssertRulesetRuleParam.create;
+  result := TFhirTestScriptSetupActionAssertRulesetRuleParam.Create;
   try
     ParseTestScriptSetupActionAssertRulesetRuleParamProperties(obj, result);
     result.link;
@@ -34125,7 +34125,7 @@ function TFHIRTurtleParser.ParseTestScriptTest(obj : TTurtleComplex) : TFhirTest
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptTest.create;
+  result := TFhirTestScriptTest.Create;
   try
     ParseTestScriptTestProperties(obj, result);
     result.link;
@@ -34173,7 +34173,7 @@ function TFHIRTurtleParser.ParseTestScriptTestAction(obj : TTurtleComplex) : TFh
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptTestAction.create;
+  result := TFhirTestScriptTestAction.Create;
   try
     ParseTestScriptTestActionProperties(obj, result);
     result.link;
@@ -34214,7 +34214,7 @@ function TFHIRTurtleParser.ParseTestScriptTeardown(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptTeardown.create;
+  result := TFhirTestScriptTeardown.Create;
   try
     ParseTestScriptTeardownProperties(obj, result);
     result.link;
@@ -34256,7 +34256,7 @@ function TFHIRTurtleParser.ParseTestScriptTeardownAction(obj : TTurtleComplex) :
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScriptTeardownAction.create;
+  result := TFhirTestScriptTeardownAction.Create;
   try
     ParseTestScriptTeardownActionProperties(obj, result);
     result.link;
@@ -34293,7 +34293,7 @@ function TFHIRTurtleParser.ParseTestScript(obj : TTurtleComplex) : TFhirTestScri
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirTestScript.create;
+  result := TFhirTestScript.Create;
   try
     ParseTestScriptProperties(obj, result);
     result.link;
@@ -34430,7 +34430,7 @@ function TFHIRTurtleParser.ParseValueSetCompose(obj : TTurtleComplex) : TFhirVal
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetCompose.create;
+  result := TFhirValueSetCompose.Create;
   try
     ParseValueSetComposeProperties(obj, result);
     result.link;
@@ -34483,7 +34483,7 @@ function TFHIRTurtleParser.ParseValueSetComposeInclude(obj : TTurtleComplex) : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetComposeInclude.create;
+  result := TFhirValueSetComposeInclude.Create;
   try
     ParseValueSetComposeIncludeProperties(obj, result);
     result.link;
@@ -34542,7 +34542,7 @@ function TFHIRTurtleParser.ParseValueSetComposeIncludeConcept(obj : TTurtleCompl
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetComposeIncludeConcept.create;
+  result := TFhirValueSetComposeIncludeConcept.Create;
   try
     ParseValueSetComposeIncludeConceptProperties(obj, result);
     result.link;
@@ -34590,7 +34590,7 @@ function TFHIRTurtleParser.ParseValueSetComposeIncludeConceptDesignation(obj : T
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetComposeIncludeConceptDesignation.create;
+  result := TFhirValueSetComposeIncludeConceptDesignation.Create;
   try
     ParseValueSetComposeIncludeConceptDesignationProperties(obj, result);
     result.link;
@@ -34633,7 +34633,7 @@ function TFHIRTurtleParser.ParseValueSetComposeIncludeFilter(obj : TTurtleComple
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetComposeIncludeFilter.create;
+  result := TFhirValueSetComposeIncludeFilter.Create;
   try
     ParseValueSetComposeIncludeFilterProperties(obj, result);
     result.link;
@@ -34674,7 +34674,7 @@ function TFHIRTurtleParser.ParseValueSetExpansion(obj : TTurtleComplex) : TFhirV
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetExpansion.create;
+  result := TFhirValueSetExpansion.Create;
   try
     ParseValueSetExpansionProperties(obj, result);
     result.link;
@@ -34732,7 +34732,7 @@ function TFHIRTurtleParser.ParseValueSetExpansionParameter(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetExpansionParameter.create;
+  result := TFhirValueSetExpansionParameter.Create;
   try
     ParseValueSetExpansionParameterProperties(obj, result);
     result.link;
@@ -34795,7 +34795,7 @@ function TFHIRTurtleParser.ParseValueSetExpansionContains(obj : TTurtleComplex) 
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSetExpansionContains.create;
+  result := TFhirValueSetExpansionContains.Create;
   try
     ParseValueSetExpansionContainsProperties(obj, result);
     result.link;
@@ -34861,7 +34861,7 @@ function TFHIRTurtleParser.ParseValueSet(obj : TTurtleComplex) : TFhirValueSet;
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirValueSet.create;
+  result := TFhirValueSet.Create;
   try
     ParseValueSetProperties(obj, result);
     result.link;
@@ -34965,7 +34965,7 @@ function TFHIRTurtleParser.ParseVisionPrescriptionDispense(obj : TTurtleComplex)
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirVisionPrescriptionDispense.create;
+  result := TFhirVisionPrescriptionDispense.Create;
   try
     ParseVisionPrescriptionDispenseProperties(obj, result);
     result.link;
@@ -35050,7 +35050,7 @@ function TFHIRTurtleParser.ParseVisionPrescription(obj : TTurtleComplex) : TFhir
 begin
   if (obj = nil) then
     exit(nil);
-  result := TFhirVisionPrescription.create;
+  result := TFhirVisionPrescription.Create;
   try
     ParseVisionPrescriptionProperties(obj, result);
     result.link;
@@ -35659,7 +35659,7 @@ begin
     result := parseVisionPrescription(obj)
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise ERdfException.create('error: the element '+type_+' is not a valid fragment name');
+    raise ERdfException.Create('error: the element '+type_+' is not a valid fragment name');
 end;
 
 function TFHIRTurtleParser.ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRTypeClass) : TFHIRType;
@@ -35731,7 +35731,7 @@ begin
   else if (type_ = TFhirDuration) then
     result := parseDuration(obj)
   else
-    raise ERdfException.create('Unknown Type');
+    raise ERdfException.Create('Unknown Type');
 end;
 
 procedure TFHIRTurtleComposer.ComposeResource(parent : TTurtleComplex; resource : TFhirResource);
@@ -36326,7 +36326,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise ERdfException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise ERdfException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 
@@ -37036,7 +37036,7 @@ begin
   {$ENDIF}
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   else
-    raise ERdfException.create('error: the element '+s+' is not a valid resource name');
+    raise ERdfException.Create('error: the element '+s+' is not a valid resource name');
 end;
 
 end.

@@ -473,7 +473,7 @@ end;
 
 destructor Tv3PropertyValueStringCollection.Destroy;
 begin
-  FValue.Free;
+  FValue.free;
   inherited;
 end;
 
@@ -505,7 +505,7 @@ end;
 
 destructor Tv3DataTypePropertyIterator.Destroy;
 begin
-  FProperties.Free;
+  FProperties.free;
   inherited;
 end;
 
@@ -535,7 +535,7 @@ end;
 
 function Tv3Base.createIterator(bInheritedProperties : Boolean): Tv3DataTypePropertyIterator;
 begin
-  Result := Tv3DataTypePropertyIterator.create(self, bInheritedProperties);
+  Result := Tv3DataTypePropertyIterator.Create(self, bInheritedProperties);
 end;
 
 procedure Tv3Base.ListProperties(oList: Tv3PropertyDefinitionList; bInheritedProperties : Boolean);
@@ -554,7 +554,7 @@ end;
 
 procedure Tv3Base.SetTag(const Value: TFslObject);
 begin
-  FTag.Free;
+  FTag.free;
   FTag := Value;
 end;
 
@@ -596,7 +596,7 @@ end;
 destructor Tv3Base.Destroy;
 begin
   FTag.free;
-  Fcomments.Free;
+  Fcomments.free;
   FExtensions.free;
   inherited;
 end;
@@ -824,11 +824,11 @@ end;
 
 destructor Tv3PropertyDefinition.Destroy;
 begin
-  FPossibles.Free;
-  FValueBase.Free;
-  FValueCollection.Free;
+  FPossibles.free;
+  FValueBase.free;
+  FValueCollection.free;
   FValueString := '';
-  FValueStrings.Free;
+  FValueStrings.free;
   inherited;
 end;
 
@@ -905,10 +905,10 @@ begin
         oIterator.Next;
       End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1007,13 +1007,13 @@ begin
 
         Result := oBuilder.AsString;
       Finally
-        oBuilder.Free;
+        oBuilder.free;
       End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1035,7 +1035,7 @@ begin
     End;
     oSet.Unhook;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1079,7 +1079,7 @@ begin
     End;
     oSet.Unhook;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1181,7 +1181,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1191,7 +1191,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1355,7 +1355,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1365,7 +1365,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 

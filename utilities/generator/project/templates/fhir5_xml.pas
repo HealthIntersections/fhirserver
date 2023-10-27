@@ -186,13 +186,13 @@ var
   child : TMXmlElement;
   i : integer;
 begin
-  result := TFhirEnum.create;
+  result := TFhirEnum.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
     i := StringArrayIndexOfSensitive(aNames, result.value);
     if i < 0 then
-      raise EXmlException.create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
+      raise EXmlException.Create('unknown code: '+result.value+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
     result.system := aSystems[i];
     child := FirstChild(element);
     while (child <> nil) do
@@ -227,7 +227,7 @@ function TFHIRXmlParser.ParseDate(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirDate.create;
+  result := TFhirDate.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTFslDateTime(GetAttribute(element, 'value'));
@@ -265,7 +265,7 @@ function TFHIRXmlParser.ParseDateTime(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirDateTime.create;
+  result := TFhirDateTime.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTFslDateTime(GetAttribute(element, 'value'));
@@ -303,7 +303,7 @@ function TFHIRXmlParser.ParseString(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirString.create;
+  result := TFhirString.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -340,7 +340,7 @@ function TFHIRXmlParser.ParseInteger(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirInteger.create;
+  result := TFhirInteger.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -377,7 +377,7 @@ function TFHIRXmlParser.ParseUri(element : TMXmlElement; path : string) : TFhirU
 var
   child : TMXmlElement;
 begin
-  result := TFhirUri.create;
+  result := TFhirUri.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -414,7 +414,7 @@ function TFHIRXmlParser.ParseInstant(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirInstant.create;
+  result := TFhirInstant.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTFslDateTime(GetAttribute(element, 'value'));
@@ -452,7 +452,7 @@ function TFHIRXmlParser.ParseXhtml(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirXhtml.create;
+  result := TFhirXhtml.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -489,7 +489,7 @@ function TFHIRXmlParser.ParseBoolean(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirBoolean.create;
+  result := TFhirBoolean.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := StringToBoolean(GetAttribute(element, 'value'));
@@ -526,7 +526,7 @@ function TFHIRXmlParser.ParseBase64Binary(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirBase64Binary.create;
+  result := TFhirBase64Binary.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTBytes(GetAttribute(element, 'value'));
@@ -564,7 +564,7 @@ function TFHIRXmlParser.ParseTime(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirTime.create;
+  result := TFhirTime.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -601,7 +601,7 @@ function TFHIRXmlParser.ParseDecimal(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirDecimal.create;
+  result := TFhirDecimal.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -638,7 +638,7 @@ function TFHIRXmlParser.ParseCode(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirCode.create;
+  result := TFhirCode.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -675,7 +675,7 @@ function TFHIRXmlParser.ParseCanonical(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirCanonical.create;
+  result := TFhirCanonical.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -712,7 +712,7 @@ function TFHIRXmlParser.ParseOid(element : TMXmlElement; path : string) : TFhirO
 var
   child : TMXmlElement;
 begin
-  result := TFhirOid.create;
+  result := TFhirOid.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -749,7 +749,7 @@ function TFHIRXmlParser.ParseUuid(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirUuid.create;
+  result := TFhirUuid.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -786,7 +786,7 @@ function TFHIRXmlParser.ParseUrl(element : TMXmlElement; path : string) : TFhirU
 var
   child : TMXmlElement;
 begin
-  result := TFhirUrl.create;
+  result := TFhirUrl.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -823,7 +823,7 @@ function TFHIRXmlParser.ParseMarkdown(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirMarkdown.create;
+  result := TFhirMarkdown.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -860,7 +860,7 @@ function TFHIRXmlParser.ParseUnsignedInt(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirUnsignedInt.create;
+  result := TFhirUnsignedInt.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -897,7 +897,7 @@ function TFHIRXmlParser.ParseId(element : TMXmlElement; path : string) : TFhirId
 var
   child : TMXmlElement;
 begin
-  result := TFhirId.create;
+  result := TFhirId.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -934,7 +934,7 @@ function TFHIRXmlParser.ParsePositiveInt(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirPositiveInt.create;
+  result := TFhirPositiveInt.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -971,7 +971,7 @@ function TFHIRXmlParser.ParseInteger64(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirInteger64.create;
+  result := TFhirInteger64.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -1016,7 +1016,7 @@ begin
     Raise EXmlException.Create('error - element is nil')
 {{parse.resource}}
   else
-    raise EXmlException.create('Error: the element '+element.localName+' is not recognised as a valid resource name');
+    raise EXmlException.Create('Error: the element '+element.localName+' is not recognised as a valid resource name');
 end;
 
 procedure TFHIRXmlComposer.ComposeResource(xml : TXmlBuilder; resource: TFhirResource);
@@ -1026,7 +1026,7 @@ begin
   Case resource.ResourceType of
 {{compose.resource}}
   else
-    raise EXmlException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise EXmlException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 
@@ -1036,7 +1036,7 @@ begin
     Raise EXmlException.Create('error - element is nil')
 {{parse.fragment}}
   else
-    raise EXmlException.create('error: the element '+element.Name+' is not a valid fragment name');
+    raise EXmlException.Create('error: the element '+element.Name+' is not a valid fragment name');
 end;
 
 function TFHIRXmlParser.ParseDataType(element : TMXmlElement; name : String; type_ : TFHIRDataTypeClass) : TFhirDataType;
@@ -1045,7 +1045,7 @@ begin
     raise EXmlException.Create('Expected Name mismatch : expected "'+name+'"+, but found "'+element.localName+'"')
 {{parse.type}}
   else
-    raise EXmlException.create('Unknown Type');
+    raise EXmlException.Create('Unknown Type');
 end;
 
 procedure TFHIRXmlComposer.ComposeBase(xml : TXmlBuilder; name : String; base : TFHIRObject);

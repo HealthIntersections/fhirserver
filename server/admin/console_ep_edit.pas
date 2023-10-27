@@ -140,8 +140,8 @@ end;
 
 procedure TEditEPForm.FormDestroy(Sender: TObject);
 begin
-  FEP.Free;
-  FCfg.Free;
+  FEP.free;
+  FCfg.free;
 end;
 
 procedure TEditEPForm.FormResize(Sender: TObject);
@@ -156,15 +156,15 @@ var
  adm : TOdbcAdministrator;
  s : String;
 begin
-  env := TOdbcEnv.create;
+  env := TOdbcEnv.Create;
   try
-    adm := TOdbcAdministrator.create(env);
+    adm := TOdbcAdministrator.Create(env);
     try
       s := cbxDriver.Text;
       cbxDriver.items.assign(adm.Drivers);
       cbxDriver.Text := s;
     finally
-      adm.Free;
+      adm.free;
     end;
   finally
     env.free;
@@ -212,7 +212,7 @@ end;
 
 procedure TEditEPForm.SetEP(AValue: TFHIRServerConfigSection);
 begin
-  FEp.Free;
+  FEp.free;
   FEp := AValue;
 
   if FEp <> nil then
@@ -241,7 +241,7 @@ end;
 
 procedure TEditEPForm.SetCfg(AValue: TFHIRServerConfigFile);
 begin
-  FCfg.Free;
+  FCfg.free;
   FCfg := AValue;
 end;
 

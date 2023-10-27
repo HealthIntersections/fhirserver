@@ -164,7 +164,7 @@ Begin
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, html);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -1476,10 +1476,10 @@ var
   i : integer;
 begin
   For i := 0 to FSearchCache.Count - 1 do
-    FSearchCache.Objects[i].Free;
-  FSearchCache.Free;
-  Lock.Free;
-  FSnomed.Free;
+    FSearchCache.Objects[i].free;
+  FSearchCache.free;
+  Lock.free;
+  FSnomed.free;
   inherited;
 end;
 

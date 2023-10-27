@@ -59,13 +59,13 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -80,9 +80,6 @@ type
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -111,19 +108,19 @@ begin
   result := '';
 end;
 
-function TUriServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TUriServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 begin
   result := '';
 end;
 
 function TUriServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise ETerminologyTodo.create('TUriServices.getPrepContext');
+  raise ETerminologyTodo.Create('TUriServices.getPrepContext');
 end;
 
 function TUriServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := TUriHolder.create(code);
+  result := TUriHolder.Create(code);
 end;
 
 
@@ -146,7 +143,7 @@ begin
   result := 'URIs';
 end;
 
-function TUriServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TUriServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := '';
 end;
@@ -177,12 +174,12 @@ end;
 
 function TUriServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUriServices.getcontext');
+  raise ETerminologyTodo.Create('TUriServices.getcontext');
 end;
 
 function TUriServices.locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('locateIsA not supported by Uri', itNotSupported); // Uri doesn't have formal subsumption property, so this is not used
+  raise ETerminologyError.Create('locateIsA not supported by Uri', itNotSupported); // Uri doesn't have formal subsumption property, so this is not used
 end;
 
 
@@ -193,59 +190,44 @@ end;
 
 function TUriServices.prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TUriServices.prepare');
+  raise ETerminologyTodo.Create('TUriServices.prepare');
 end;
 
 function TUriServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TUriServices.searchFilter');
+  raise ETerminologyTodo.Create('TUriServices.searchFilter');
 end;
 
 function TUriServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TUriServices.filter');
+  raise ETerminologyTodo.Create('TUriServices.filter');
 end;
 
 function TUriServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUriServices.filterLocate');
+  raise ETerminologyTodo.Create('TUriServices.filterLocate');
 end;
 
 function TUriServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
-  raise ETerminologyTodo.create('TUriServices.FilterMore');
+  raise ETerminologyTodo.Create('TUriServices.FilterMore');
 end;
 
 function TUriServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  raise ETerminologyTodo.create('TUriServices.FilterConcept');
+  raise ETerminologyTodo.Create('TUriServices.FilterConcept');
 end;
 
 function TUriServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TUriServices.InFilter');
-end;
-
-procedure TUriServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TUriServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TUriServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  raise ETerminologyTodo.create('TUriServices.Close');
+  raise ETerminologyTodo.Create('TUriServices.InFilter');
 end;
 
 { TUriHolder }
 
-constructor TUriHolder.create(url: String);
+constructor TUriHolder.Create(url: String);
 begin
-  inherited create;
+  inherited Create;
   self.url := url;
 end;
 

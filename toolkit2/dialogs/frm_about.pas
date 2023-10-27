@@ -91,6 +91,7 @@ procedure TToolkitAboutForm.FormShow(Sender: TObject);
 var
   dt : TFslDateTime;
   v : String;
+  cmd : TCommandLineParameters;
 begin
   v := TOOLKIT_VERSION;
   mInfo.Lines.clear;
@@ -109,8 +110,14 @@ begin
   {$IFOPT D+}
   mInfo.Lines.Add('This is the debug version');
   {$ENDIF}
-  mInfo.Lines.add('Run as "'+commandLineAsString+'"');
-  mInfo.Lines.add('Host is '+SystemPlatform+' '+DescribeBytes(SystemMemory.physicalMem, true)+'/' + DescribeBytes(SystemMemory.virtualMem, true));
+
+  cmd := TCommandLineParameters.create;
+  try
+    mInfo.Lines.add('Run as "'+cmd.AsString+'"');
+    mInfo.Lines.add('Host is '+SystemPlatform+' '+DescribeBytes(SystemMemory.physicalMem, true)+'/' + DescribeBytes(SystemMemory.virtualMem, true));
+  finally
+    cmd.free;
+  end;
 end;
 
 end.

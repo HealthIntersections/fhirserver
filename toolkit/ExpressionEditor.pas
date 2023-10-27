@@ -82,7 +82,7 @@ implementation
 
 function editExpression(parent : TComponent; resource : TFHIRResource; exp : TFHIRExpression; doco : String) : TFHIRExpression;
 begin
-  ExpressionEditorForm := TExpressionEditorForm.create(parent);
+  ExpressionEditorForm := TExpressionEditorForm.Create(parent);
   try
     ExpressionEditorForm.lblDoco.text := doco;
 
@@ -99,7 +99,7 @@ begin
     else
     begin
       ExpressionEditorForm.btnClear.enabled := false;
-      ExpressionEditorForm.exp := TFHIRExpression.create;
+      ExpressionEditorForm.exp := TFHIRExpression.Create;
       ExpressionEditorForm.resource := resource.link;
     end;
     case ExpressionEditorForm.showModal of

@@ -94,14 +94,14 @@ var
   fn : String;
 begin
   if not address.startsWith('file:') then
-    raise ELibraryException.create('This is not a file address');
+    raise ELibraryException.Create('This is not a file address');
 
   fn := address.substring(5);
   result.timestamp := 0;
   if not FileExists(fn) then
   begin
     if doException then
-      raise ELibraryException.create('The file '+fn+' does not exist')
+      raise ELibraryException.Create('The file '+fn+' does not exist')
     else
       result.timestamp := -1;
   end
@@ -151,7 +151,7 @@ function TFileStorageService.openDlg(out newName : String) : boolean;
 var
   dlg : TOpenDialog;
 begin
-  dlg := TOpenDialog.create(handle);
+  dlg := TOpenDialog.Create(handle);
   try
     dlg.Filter := 'All Known Files|*.xml; *.json; *.ini; *.txt; *.v2; *.msg; *.hl7; *.template; *.liquid; *.js; *.md; *.htm; *.html|'+
       'XML|*.xml|'+
@@ -182,7 +182,7 @@ var
   dlg : TSaveDialog;
   fn : String;
 begin
-  dlg := TSaveDialog.create(Handle);
+  dlg := TSaveDialog.Create(Handle);
   try
     dlg.Options := [ofOverwritePrompt, ofEnableSizing, ofViewDetail];
     if (existing <> '') and existing.startsWith('file:') then

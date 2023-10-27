@@ -101,8 +101,8 @@ implementation
 
 procedure TEditChangeReviewForm.FormDestroy(Sender: TObject);
 begin
-  FEditor.Free;
-  FDiff.Free;
+  FEditor.free;
+  FDiff.free;
 end;
 
 procedure TEditChangeReviewForm.btnExternalDiffClick(Sender: TObject);
@@ -119,7 +119,7 @@ begin
   end;
   currFile := FilePath(['[tmp]', 'current.'+ExtractFileName(baseFile)]);
   BytesToFile(currBytes, currFile);
-  p := TProcess.create(nil);
+  p := TProcess.Create(nil);
   try
     p.Executable := DiffTool;
     p.Parameters.add(baseFile);
@@ -200,7 +200,7 @@ end;
 
 procedure TEditChangeReviewForm.SetEditor(AValue: TToolkitEditor);
 begin
-  FEditor.Free;
+  FEditor.free;
   FEditor := AValue;
 end;
 
@@ -215,11 +215,11 @@ begin
   btnReplace.Enabled := false;
   FDirty := false;
 
-  FDiff.Free;
-  FDiff := TFslTextComparer.create;
+  FDiff.free;
+  FDiff := TFslTextComparer.Create;
 
-  base := TStringList.create;
-  curr := TStringList.create;
+  base := TStringList.Create;
+  curr := TStringList.Create;
   try
     base.text := TEncoding.UTF8.GetAnsiString(baseBytes).trim+#13#10;
     curr.text := TEncoding.UTF8.GetAnsiString(currBytes).trim+#13#10;

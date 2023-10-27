@@ -76,7 +76,7 @@ begin
   try
     SetContentUndoable(x.ToXml(true, false));
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -88,13 +88,13 @@ begin
   try
     SetContentUndoable(x.ToXml(false, false));
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
 function TXmlEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynXmlSyn.create(nil);
+  Result := TSynXmlSyn.Create(nil);
 end;
 
 procedure TXmlEditor.getNavigationList(navpoints: TStringList);
@@ -160,19 +160,19 @@ end;
 constructor TXmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FParser := TMXmlParser.create;
+  FParser := TMXmlParser.Create;
 end;
 
 destructor TXmlEditor.Destroy;
 begin
   FParser.free;
-  FXml.Free;
+  FXml.free;
   inherited Destroy;
 end;
 
 procedure TXmlEditor.ContentChanged;
 begin
-  FXml.Free;
+  FXml.free;
   FXml := nil;
 end;
 
@@ -209,7 +209,7 @@ begin
         checkForEncoding(s, i);
       end;
     end;
-    FXml.Free;
+    FXml.free;
     FXml := nil;
     try
       FXml := FParser.parse(FContent.text, [xpResolveNamespaces]);

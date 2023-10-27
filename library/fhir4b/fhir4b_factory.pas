@@ -59,8 +59,8 @@ type
     function resCategory(name: String) : TTokenCategory; override;
     function canonicalResources : TArray<String>; override;
     function URLs : TCommonURLs; override;
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; override;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; override;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList) : TFHIRParser; override;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
@@ -68,7 +68,7 @@ type
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
-    function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
+    function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
 
     function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
@@ -83,8 +83,8 @@ type
     procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); override;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
-    function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
-    Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    function buildOperationOutcome(langList : THTTPLanguageList; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
     function makeByName(const name : String) : TFHIRObject; override;
     function makeBoolean(b : boolean): TFHIRObject; override;
@@ -134,7 +134,7 @@ type
     function wrapTestScript(o : TFHIRResourceV) : TFHIRTestScriptW; override;
     function wrapProvenance(o : TFHIRResourceV) : TFHIRProvenanceW; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
-    function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
+    function makeDtFromForm(part : TMimePart; langList : THTTPLanguageList; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeCoding(system, version, code, display : String) : TFHIRObject; override;
     function makeCodeableConcept(coding : TFHIRCodingW) : TFHIRObject; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
@@ -157,14 +157,14 @@ uses
 
 { TFHIRFactoryR4B }
 
-function TFHIRFactoryR4B.buildOperationOutcome(const lang : THTTPLanguages; message: String; issueCode: TFhirIssueType): TFhirResourceV;
+function TFHIRFactoryR4B.buildOperationOutcome(langList : THTTPLanguageList; message: String; issueCode: TFhirIssueType): TFhirResourceV;
 begin
-  result := fhir4b_utilities.BuildOperationOutcome(lang, message, ExceptionTypeTranslations[issueCode]);
+  result := fhir4b_utilities.BuildOperationOutcome(langList, message, ExceptionTypeTranslations[issueCode]);
 end;
 
-function TFHIRFactoryR4B.buildOperationOutcome(const lang : THTTPLanguages; e: Exception; issueCode: TFhirIssueType): TFhirResourceV;
+function TFHIRFactoryR4B.buildOperationOutcome(langList : THTTPLanguageList; e: Exception; issueCode: TFhirIssueType): TFhirResourceV;
 begin
-  result := fhir4b_utilities.BuildOperationOutcome(lang, e, ExceptionTypeTranslations[issueCode]);
+  result := fhir4b_utilities.BuildOperationOutcome(langList, e, ExceptionTypeTranslations[issueCode]);
 end;
 
 function TFHIRFactoryR4B.canonicalResources: TArray<String>;
@@ -205,11 +205,11 @@ function TFHIRFactoryR4B.createFromProfile(worker: TFHIRWorkerContextV;
 var
   pu : TProfileUtilities;
 begin
-  pu := TProfileUtilities.create(worker.Link as TFHIRWorkerContext, nil);
+  pu := TProfileUtilities.Create(worker.Link as TFHIRWorkerContext, nil);
   try
     result := pu.populateByProfile(profile.Resource as TFhirStructureDefinition);
   finally
-    pu.Free;
+    pu.free;
   end;
 end;
 
@@ -227,7 +227,7 @@ function TFHIRFactoryR4B.getContained(r: TFHIRResourceV): TFslList<TFHIRResource
 var
   res : TFHIRResource;
 begin
-  result := TFslList<TFHIRResourceV>.create;
+  result := TFslList<TFHIRResourceV>.Create;
   if (r is TFHIRDomainResource) then
   begin
     for res in (r as TFHIRDomainResource).containedList do
@@ -265,21 +265,21 @@ begin
       http.UseIndy := true;
     http.timeout := timeout;
     http.proxy := proxy;
-    result := TFhirClient4B.Create(worker, THTTPLanguages.create('en'), http.link);
+    result := TFhirClient4B.Create(worker, nil, http.link);
     try
       result.format := fmt;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     http.free;
   end;
 end;
 
-function TFHIRFactoryR4B.makeClientInt(worker: TFHIRWorkerContextV; const lang : THTTPLanguages; comm: TFHIRClientCommunicator): TFhirClientV;
+function TFHIRFactoryR4B.makeClientInt(worker: TFHIRWorkerContextV; langList : THTTPLanguageList; comm: TFHIRClientCommunicator): TFhirClientV;
 begin
-  result := TFhirClient4B.Create(worker, THTTPLanguages.create('en'), comm);
+  result := TFhirClient4B.Create(worker, nil, comm);
 end;
 
 function TFHIRFactoryR4B.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
@@ -288,12 +288,12 @@ var
 begin
   c := TFhirThreadedCommunicator.Create(internal, event);
   try
-    result := TFhirClient4B.Create(worker, THTTPLanguages.create('en'), c.link);
+    result := TFhirClient4B.Create(worker, nil, c.link);
     try
       result.format := internal.format;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     c.free;
@@ -307,7 +307,7 @@ end;
 
 function TFHIRFactoryR4B.makeCoding(system, version, code, display: String): TFHIRObject;
 begin
-  result := TFHIRCoding.create(system, code);
+  result := TFHIRCoding.Create(system, code);
   if version <> '' then
     TFHIRCoding(result).version := version;
   if display <> '' then
@@ -316,14 +316,14 @@ end;
 
 function TFHIRFactoryR4B.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;
 begin
-  result := TFHIRCodeableConcept.create;
+  result := TFHIRCodeableConcept.Create;
   if (coding <> nil) then
     TFHIRCodeableConcept(result).codingList.add(coding.element.link);
 end;
 
-function TFHIRFactoryR4B.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
+function TFHIRFactoryR4B.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle): TFHIRComposer;
 begin
-  result := TFHIRParsers4B.Composer(worker as TFHIRWorkerContext, format, lang, style);
+  result := TFHIRParsers4B.Composer(worker.link as TFHIRWorkerContext, format, langList.link, style);
 end;
 
 function TFHIRFactoryR4B.makeDateTime(value: TFslDateTime): TFHIRObject;
@@ -336,14 +336,14 @@ begin
   result := TFhirDecimal.Create(s);
 end;
 
-function TFHIRFactoryR4B.makeDtFromForm(part: TMimePart; const lang : THTTPLanguages; name: String; type_: string): TFHIRXVersionElementWrapper;
+function TFHIRFactoryR4B.makeDtFromForm(part: TMimePart; langList : THTTPLanguageList; name: String; type_: string): TFHIRXVersionElementWrapper;
 begin
   if type_ = 'Coding' then
-    result := wrapCoding(LoadDTFromFormParam(nil, part, lang, name, TFhirCoding))
+    result := wrapCoding(LoadDTFromFormParam(nil, part, langList, name, TFhirCoding))
   else if type_ = 'CodeableConcept' then
-    result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
+    result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, langList, name, TFhirCodeableConcept))
   else
-    raise EFHIRException.create('Unknown Supported Data Type '+type_);
+    raise EFHIRException.Create('Unknown Supported Data Type '+type_);
 end;
 
 function TFHIRFactoryR4B.makeDuration(dt: TDateTime): TFHIRObject;
@@ -358,7 +358,7 @@ end;
 
 function TFHIRFactoryR4B.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
 begin
-  result := TFHIRNarrativeGenerator.create(worker);
+  result := TFHIRNarrativeGenerator.Create(worker);
 end;
 
 function TFHIRFactoryR4B.makeHealthcareCard: THealthcareCard;
@@ -373,34 +373,34 @@ end;
 
 function TFHIRFactoryR4B.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.create(self.link, lock, worker, pi);
+  result := TFHIRResourceProxy.Create(self.link, lock, worker, pi);
 end;
 
 function TFHIRFactoryR4B.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.create(self.link, resource as TFHIRResource);
+  result := TFHIRResourceProxy.Create(self.link, resource as TFHIRResource);
 end;
 
 function TFHIRFactoryR4B.makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;
 var
   iss : TFhirOperationOutcomeIssue;
 begin
-  iss := TFhirOperationOutcomeIssue.create;
+  iss := TFhirOperationOutcomeIssue.Create;
   try
     iss.severity := ISSUE_SEVERITY_MAP2[level];
     iss.code := ExceptionTypeTranslations[issue];
     iss.details := TFhirCodeableConcept.Create;
     iss.details.text := message;
     iss.locationList.add(location);
-    result := TFhirOperationOutcomeIssue4B.create(iss.Link);
+    result := TFhirOperationOutcomeIssue4B.Create(iss.Link);
   finally
-    iss.Free;
+    iss.free;
   end;
 end;
 
 function TFHIRFactoryR4B.makeOpReqLookup: TFHIRLookupOpRequestW;
 begin
-  result := TFHIRLookupOpRequest4B.create(TFHIRLookupOpRequest.create);
+  result := TFHIRLookupOpRequest4B.Create(TFHIRLookupOpRequest.create);
 end;
 
 function TFHIRFactoryR4B.makeOpReqSubsumes: TFHIRSubsumesOpRequestW;
@@ -410,7 +410,7 @@ end;
 
 function TFHIRFactoryR4B.makeOpRespLookup: TFHIRLookupOpResponseW;
 begin
-  result := TFHIRLookupOpResponse4B.create(TFHIRLookupOpResponse.create);
+  result := TFHIRLookupOpResponse4B.Create(TFHIRLookupOpResponse.create);
 end;
 
 function TFHIRFactoryR4B.makeOpRespSubsumes: TFHIRSubsumesOpResponseW;
@@ -428,7 +428,7 @@ begin
   if (p = nil) then
     result := nil
   else
-    result := TFHIRPrimitive4B.create(p);
+    result := TFHIRPrimitive4B.Create(p);
 end;
 
 function TFHIRFactoryR4B.makeParamsFromForm(s: TStream): TFHIRResourceV;
@@ -436,9 +436,9 @@ begin
   result := parseParamsFromForm(s);
 end;
 
-function TFHIRFactoryR4B.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
+function TFHIRFactoryR4B.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; langList : THTTPLanguageList): TFHIRParser;
 begin
-  result := TFHIRParsers4B.parser(worker as TFHIRWorkerContext, format, lang);
+  result := TFHIRParsers4B.parser(worker.link as TFHIRWorkerContext, format, langList.link);
 end;
 
 function TFHIRFactoryR4B.makePathEngine(worker: TFHIRWorkerContextV; ucum : TUcumServiceInterface): TFHIRPathEngineV;
@@ -456,7 +456,7 @@ end;
 
 function TFHIRFactoryR4B.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  result := TFhirTerminologyCapabilities4B.create(TFhirTerminologyCapabilities.create);
+  result := TFhirTerminologyCapabilities4B.Create(TFhirTerminologyCapabilities.create);
 end;
 
 function TFHIRFactoryR4B.makeUri(s: string): TFHIRObject;
@@ -481,7 +481,7 @@ var
 begin
   res := r as TFhirResource;
   if (res.meta = nil) then
-    res.meta := TFHIRMeta.create;
+    res.meta := TFHIRMeta.Create;
   for tag in res.meta.tagList do
     if (tag.system = systemUri) and (tag.code = code) then
     begin
@@ -551,17 +551,17 @@ begin
   if res = nil then
   begin
     x.free;
-    raise EFHIRException.create('Unable to set xhtml on nil resource');
+    raise EFHIRException.Create('Unable to set xhtml on nil resource');
   end;
   if not (res is TFHIRDomainResource) then
   begin
     x.free;
-    raise EFHIRException.create('Unable to set xhtml on non-domain resource');
+    raise EFHIRException.Create('Unable to set xhtml on non-domain resource');
   end;
   r := res as TFHIRDomainResource;
   if (r.text = nil) then
   begin
-    r.text := TFHIRNarrative.create;
+    r.text := TFHIRNarrative.Create;
     r.text.status := NarrativeStatusGenerated;
   end;
   r.text.div_ := x;
@@ -866,7 +866,7 @@ begin
     TFhirBinary(result).contentType := contentType;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -891,1664 +891,1664 @@ begin
     end;
     result := TFHIRBundle4B.Create(bnd.link);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
 function TFHIRFactoryR4B.makeByName(const name : String) : TFHIRObject;
 begin
   if name = 'enum' then
-    result := TFhirEnum.create()
+    result := TFhirEnum.Create()
   else if name = 'date' then
-    result := TFhirDate.create()
+    result := TFhirDate.Create()
   else if name = 'dateTime' then
-    result := TFhirDateTime.create()
+    result := TFhirDateTime.Create()
   else if name = 'string' then
-    result := TFhirString.create()
+    result := TFhirString.Create()
   else if name = 'integer' then
-    result := TFhirInteger.create()
+    result := TFhirInteger.Create()
   else if name = 'uri' then
-    result := TFhirUri.create()
+    result := TFhirUri.Create()
   else if name = 'instant' then
-    result := TFhirInstant.create()
+    result := TFhirInstant.Create()
   else if name = 'xhtml' then
-    result := TFhirXhtml.create()
+    result := TFhirXhtml.Create()
   else if name = 'boolean' then
-    result := TFhirBoolean.create()
+    result := TFhirBoolean.Create()
   else if name = 'base64Binary' then
-    result := TFhirBase64Binary.create()
+    result := TFhirBase64Binary.Create()
   else if name = 'time' then
-    result := TFhirTime.create()
+    result := TFhirTime.Create()
   else if name = 'decimal' then
-    result := TFhirDecimal.create()
+    result := TFhirDecimal.Create()
   else if name = 'code' then
-    result := TFhirCode.create()
+    result := TFhirCode.Create()
   else if name = 'canonical' then
-    result := TFhirCanonical.create()
+    result := TFhirCanonical.Create()
   else if name = 'oid' then
-    result := TFhirOid.create()
+    result := TFhirOid.Create()
   else if name = 'uuid' then
-    result := TFhirUuid.create()
+    result := TFhirUuid.Create()
   else if name = 'url' then
-    result := TFhirUrl.create()
+    result := TFhirUrl.Create()
   else if name = 'markdown' then
-    result := TFhirMarkdown.create()
+    result := TFhirMarkdown.Create()
   else if name = 'unsignedInt' then
-    result := TFhirUnsignedInt.create()
+    result := TFhirUnsignedInt.Create()
   else if name = 'id' then
-    result := TFhirId.create()
+    result := TFhirId.Create()
   else if name = 'positiveInt' then
-    result := TFhirPositiveInt.create()
+    result := TFhirPositiveInt.Create()
 {gen-factory-start}
   else if name = 'CodeableReference' then
-    result := TFhirCodeableReference.create()
+    result := TFhirCodeableReference.Create()
   else if name = 'RatioRange' then
-    result := TFhirRatioRange.create()
+    result := TFhirRatioRange.Create()
   else if name = 'Address' then
-    result := TFhirAddress.create()
+    result := TFhirAddress.Create()
   else if name = 'Age' then
-    result := TFhirAge.create()
+    result := TFhirAge.Create()
   else if name = 'Annotation' then
-    result := TFhirAnnotation.create()
+    result := TFhirAnnotation.Create()
   else if name = 'Attachment' then
-    result := TFhirAttachment.create()
+    result := TFhirAttachment.Create()
   else if name = 'CodeableConcept' then
-    result := TFhirCodeableConcept.create()
+    result := TFhirCodeableConcept.Create()
   else if name = 'Coding' then
-    result := TFhirCoding.create()
+    result := TFhirCoding.Create()
   else if name = 'ContactDetail' then
-    result := TFhirContactDetail.create()
+    result := TFhirContactDetail.Create()
   else if name = 'ContactPoint' then
-    result := TFhirContactPoint.create()
+    result := TFhirContactPoint.Create()
   else if name = 'Contributor' then
-    result := TFhirContributor.create()
+    result := TFhirContributor.Create()
   else if name = 'Count' then
-    result := TFhirCount.create()
+    result := TFhirCount.Create()
   else if name = 'DataRequirement' then
-    result := TFhirDataRequirement.create()
+    result := TFhirDataRequirement.Create()
   else if name = 'Distance' then
-    result := TFhirDistance.create()
+    result := TFhirDistance.Create()
   else if name = 'Dosage' then
-    result := TFhirDosage.create()
+    result := TFhirDosage.Create()
   else if name = 'Duration' then
-    result := TFhirDuration.create()
+    result := TFhirDuration.Create()
   else if name = 'ElementDefinition' then
-    result := TFhirElementDefinition.create()
+    result := TFhirElementDefinition.Create()
   else if name = 'Expression' then
-    result := TFhirExpression.create()
+    result := TFhirExpression.Create()
   else if name = 'Extension' then
-    result := TFhirExtension.create()
+    result := TFhirExtension.Create()
   else if name = 'HumanName' then
-    result := TFhirHumanName.create()
+    result := TFhirHumanName.Create()
   else if name = 'Identifier' then
-    result := TFhirIdentifier.create()
+    result := TFhirIdentifier.Create()
   else if name = 'MarketingStatus' then
-    result := TFhirMarketingStatus.create()
+    result := TFhirMarketingStatus.Create()
   else if name = 'Meta' then
-    result := TFhirMeta.create()
+    result := TFhirMeta.Create()
   else if name = 'Money' then
-    result := TFhirMoney.create()
+    result := TFhirMoney.Create()
   else if name = 'Narrative' then
-    result := TFhirNarrative.create()
+    result := TFhirNarrative.Create()
   else if name = 'ParameterDefinition' then
-    result := TFhirParameterDefinition.create()
+    result := TFhirParameterDefinition.Create()
   else if name = 'Period' then
-    result := TFhirPeriod.create()
+    result := TFhirPeriod.Create()
   else if name = 'Population' then
-    result := TFhirPopulation.create()
+    result := TFhirPopulation.Create()
   else if name = 'ProdCharacteristic' then
-    result := TFhirProdCharacteristic.create()
+    result := TFhirProdCharacteristic.Create()
   else if name = 'ProductShelfLife' then
-    result := TFhirProductShelfLife.create()
+    result := TFhirProductShelfLife.Create()
   else if name = 'Quantity' then
-    result := TFhirQuantity.create()
+    result := TFhirQuantity.Create()
   else if name = 'Range' then
-    result := TFhirRange.create()
+    result := TFhirRange.Create()
   else if name = 'Ratio' then
-    result := TFhirRatio.create()
+    result := TFhirRatio.Create()
   else if name = 'Reference' then
-    result := TFhirReference.create()
+    result := TFhirReference.Create()
   else if name = 'RelatedArtifact' then
-    result := TFhirRelatedArtifact.create()
+    result := TFhirRelatedArtifact.Create()
   else if name = 'SampledData' then
-    result := TFhirSampledData.create()
+    result := TFhirSampledData.Create()
   else if name = 'Signature' then
-    result := TFhirSignature.create()
+    result := TFhirSignature.Create()
   else if name = 'Timing' then
-    result := TFhirTiming.create()
+    result := TFhirTiming.Create()
   else if name = 'TriggerDefinition' then
-    result := TFhirTriggerDefinition.create()
+    result := TFhirTriggerDefinition.Create()
   else if name = 'UsageContext' then
-    result := TFhirUsageContext.create()
+    result := TFhirUsageContext.Create()
 {$IFDEF FHIR_RESOURCE}
 {$ENDIF FHIR_RESOURCE}
 {$IFDEF FHIR_DOMAINRESOURCE}
 {$ENDIF FHIR_DOMAINRESOURCE}
 {$IFDEF FHIR_ACCOUNT}
   else if name = 'Account.coverage' then
-    result := TFhirAccountCoverage.create()
+    result := TFhirAccountCoverage.Create()
   else if name = 'Account.guarantor' then
-    result := TFhirAccountGuarantor.create()
+    result := TFhirAccountGuarantor.Create()
   else if name = 'Account' then
-    result := TFhirAccount.create()
+    result := TFhirAccount.Create()
 {$ENDIF FHIR_ACCOUNT}
 {$IFDEF FHIR_ACTIVITYDEFINITION}
   else if name = 'ActivityDefinition.participant' then
-    result := TFhirActivityDefinitionParticipant.create()
+    result := TFhirActivityDefinitionParticipant.Create()
   else if name = 'ActivityDefinition.dynamicValue' then
-    result := TFhirActivityDefinitionDynamicValue.create()
+    result := TFhirActivityDefinitionDynamicValue.Create()
   else if name = 'ActivityDefinition' then
-    result := TFhirActivityDefinition.create()
+    result := TFhirActivityDefinition.Create()
 {$ENDIF FHIR_ACTIVITYDEFINITION}
 {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
   else if name = 'AdministrableProductDefinition.property' then
-    result := TFhirAdministrableProductDefinitionProperty.create()
+    result := TFhirAdministrableProductDefinitionProperty.Create()
   else if name = 'AdministrableProductDefinition.routeOfAdministration' then
-    result := TFhirAdministrableProductDefinitionRouteOfAdministration.create()
+    result := TFhirAdministrableProductDefinitionRouteOfAdministration.Create()
   else if name = 'AdministrableProductDefinition.routeOfAdministration.targetSpecies' then
-    result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies.create()
+    result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies.Create()
   else if name = 'AdministrableProductDefinition.routeOfAdministration.targetSpecies.withdrawalPeriod' then
-    result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod.create()
+    result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod.Create()
   else if name = 'AdministrableProductDefinition' then
-    result := TFhirAdministrableProductDefinition.create()
+    result := TFhirAdministrableProductDefinition.Create()
 {$ENDIF FHIR_ADMINISTRABLEPRODUCTDEFINITION}
 {$IFDEF FHIR_ADVERSEEVENT}
   else if name = 'AdverseEvent.suspectEntity' then
-    result := TFhirAdverseEventSuspectEntity.create()
+    result := TFhirAdverseEventSuspectEntity.Create()
   else if name = 'AdverseEvent.suspectEntity.causality' then
-    result := TFhirAdverseEventSuspectEntityCausality.create()
+    result := TFhirAdverseEventSuspectEntityCausality.Create()
   else if name = 'AdverseEvent' then
-    result := TFhirAdverseEvent.create()
+    result := TFhirAdverseEvent.Create()
 {$ENDIF FHIR_ADVERSEEVENT}
 {$IFDEF FHIR_ALLERGYINTOLERANCE}
   else if name = 'AllergyIntolerance.reaction' then
-    result := TFhirAllergyIntoleranceReaction.create()
+    result := TFhirAllergyIntoleranceReaction.Create()
   else if name = 'AllergyIntolerance' then
-    result := TFhirAllergyIntolerance.create()
+    result := TFhirAllergyIntolerance.Create()
 {$ENDIF FHIR_ALLERGYINTOLERANCE}
 {$IFDEF FHIR_APPOINTMENT}
   else if name = 'Appointment.participant' then
-    result := TFhirAppointmentParticipant.create()
+    result := TFhirAppointmentParticipant.Create()
   else if name = 'Appointment' then
-    result := TFhirAppointment.create()
+    result := TFhirAppointment.Create()
 {$ENDIF FHIR_APPOINTMENT}
 {$IFDEF FHIR_APPOINTMENTRESPONSE}
   else if name = 'AppointmentResponse' then
-    result := TFhirAppointmentResponse.create()
+    result := TFhirAppointmentResponse.Create()
 {$ENDIF FHIR_APPOINTMENTRESPONSE}
 {$IFDEF FHIR_AUDITEVENT}
   else if name = 'AuditEvent.agent' then
-    result := TFhirAuditEventAgent.create()
+    result := TFhirAuditEventAgent.Create()
   else if name = 'AuditEvent.agent.network' then
-    result := TFhirAuditEventAgentNetwork.create()
+    result := TFhirAuditEventAgentNetwork.Create()
   else if name = 'AuditEvent.source' then
-    result := TFhirAuditEventSource.create()
+    result := TFhirAuditEventSource.Create()
   else if name = 'AuditEvent.entity' then
-    result := TFhirAuditEventEntity.create()
+    result := TFhirAuditEventEntity.Create()
   else if name = 'AuditEvent.entity.detail' then
-    result := TFhirAuditEventEntityDetail.create()
+    result := TFhirAuditEventEntityDetail.Create()
   else if name = 'AuditEvent' then
-    result := TFhirAuditEvent.create()
+    result := TFhirAuditEvent.Create()
 {$ENDIF FHIR_AUDITEVENT}
 {$IFDEF FHIR_BASIC}
   else if name = 'Basic' then
-    result := TFhirBasic.create()
+    result := TFhirBasic.Create()
 {$ENDIF FHIR_BASIC}
 {$IFDEF FHIR_BINARY}
   else if name = 'Binary' then
-    result := TFhirBinary.create()
+    result := TFhirBinary.Create()
 {$ENDIF FHIR_BINARY}
 {$IFDEF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
   else if name = 'BiologicallyDerivedProduct.collection' then
-    result := TFhirBiologicallyDerivedProductCollection.create()
+    result := TFhirBiologicallyDerivedProductCollection.Create()
   else if name = 'BiologicallyDerivedProduct.processing' then
-    result := TFhirBiologicallyDerivedProductProcessing.create()
+    result := TFhirBiologicallyDerivedProductProcessing.Create()
   else if name = 'BiologicallyDerivedProduct.manipulation' then
-    result := TFhirBiologicallyDerivedProductManipulation.create()
+    result := TFhirBiologicallyDerivedProductManipulation.Create()
   else if name = 'BiologicallyDerivedProduct.storage' then
-    result := TFhirBiologicallyDerivedProductStorage.create()
+    result := TFhirBiologicallyDerivedProductStorage.Create()
   else if name = 'BiologicallyDerivedProduct' then
-    result := TFhirBiologicallyDerivedProduct.create()
+    result := TFhirBiologicallyDerivedProduct.Create()
 {$ENDIF FHIR_BIOLOGICALLYDERIVEDPRODUCT}
 {$IFDEF FHIR_BODYSTRUCTURE}
   else if name = 'BodyStructure' then
-    result := TFhirBodyStructure.create()
+    result := TFhirBodyStructure.Create()
 {$ENDIF FHIR_BODYSTRUCTURE}
 {$IFDEF FHIR_BUNDLE}
   else if name = 'Bundle.link' then
-    result := TFhirBundleLink.create()
+    result := TFhirBundleLink.Create()
   else if name = 'Bundle.entry' then
-    result := TFhirBundleEntry.create()
+    result := TFhirBundleEntry.Create()
   else if name = 'Bundle.entry.search' then
-    result := TFhirBundleEntrySearch.create()
+    result := TFhirBundleEntrySearch.Create()
   else if name = 'Bundle.entry.request' then
-    result := TFhirBundleEntryRequest.create()
+    result := TFhirBundleEntryRequest.Create()
   else if name = 'Bundle.entry.response' then
-    result := TFhirBundleEntryResponse.create()
+    result := TFhirBundleEntryResponse.Create()
   else if name = 'Bundle' then
-    result := TFhirBundle.create()
+    result := TFhirBundle.Create()
 {$ENDIF FHIR_BUNDLE}
 {$IFDEF FHIR_CAPABILITYSTATEMENT}
   else if name = 'CapabilityStatement.software' then
-    result := TFhirCapabilityStatementSoftware.create()
+    result := TFhirCapabilityStatementSoftware.Create()
   else if name = 'CapabilityStatement.implementation' then
-    result := TFhirCapabilityStatementImplementation.create()
+    result := TFhirCapabilityStatementImplementation.Create()
   else if name = 'CapabilityStatement.rest' then
-    result := TFhirCapabilityStatementRest.create()
+    result := TFhirCapabilityStatementRest.Create()
   else if name = 'CapabilityStatement.rest.security' then
-    result := TFhirCapabilityStatementRestSecurity.create()
+    result := TFhirCapabilityStatementRestSecurity.Create()
   else if name = 'CapabilityStatement.rest.resource' then
-    result := TFhirCapabilityStatementRestResource.create()
+    result := TFhirCapabilityStatementRestResource.Create()
   else if name = 'CapabilityStatement.rest.resource.interaction' then
-    result := TFhirCapabilityStatementRestResourceInteraction.create()
+    result := TFhirCapabilityStatementRestResourceInteraction.Create()
   else if name = 'CapabilityStatement.rest.resource.searchParam' then
-    result := TFhirCapabilityStatementRestResourceSearchParam.create()
+    result := TFhirCapabilityStatementRestResourceSearchParam.Create()
   else if name = 'CapabilityStatement.rest.resource.operation' then
-    result := TFhirCapabilityStatementRestResourceOperation.create()
+    result := TFhirCapabilityStatementRestResourceOperation.Create()
   else if name = 'CapabilityStatement.rest.interaction' then
-    result := TFhirCapabilityStatementRestInteraction.create()
+    result := TFhirCapabilityStatementRestInteraction.Create()
   else if name = 'CapabilityStatement.messaging' then
-    result := TFhirCapabilityStatementMessaging.create()
+    result := TFhirCapabilityStatementMessaging.Create()
   else if name = 'CapabilityStatement.messaging.endpoint' then
-    result := TFhirCapabilityStatementMessagingEndpoint.create()
+    result := TFhirCapabilityStatementMessagingEndpoint.Create()
   else if name = 'CapabilityStatement.messaging.supportedMessage' then
-    result := TFhirCapabilityStatementMessagingSupportedMessage.create()
+    result := TFhirCapabilityStatementMessagingSupportedMessage.Create()
   else if name = 'CapabilityStatement.document' then
-    result := TFhirCapabilityStatementDocument.create()
+    result := TFhirCapabilityStatementDocument.Create()
   else if name = 'CapabilityStatement' then
-    result := TFhirCapabilityStatement.create()
+    result := TFhirCapabilityStatement.Create()
 {$ENDIF FHIR_CAPABILITYSTATEMENT}
 {$IFDEF FHIR_CAREPLAN}
   else if name = 'CarePlan.activity' then
-    result := TFhirCarePlanActivity.create()
+    result := TFhirCarePlanActivity.Create()
   else if name = 'CarePlan.activity.detail' then
-    result := TFhirCarePlanActivityDetail.create()
+    result := TFhirCarePlanActivityDetail.Create()
   else if name = 'CarePlan' then
-    result := TFhirCarePlan.create()
+    result := TFhirCarePlan.Create()
 {$ENDIF FHIR_CAREPLAN}
 {$IFDEF FHIR_CARETEAM}
   else if name = 'CareTeam.participant' then
-    result := TFhirCareTeamParticipant.create()
+    result := TFhirCareTeamParticipant.Create()
   else if name = 'CareTeam' then
-    result := TFhirCareTeam.create()
+    result := TFhirCareTeam.Create()
 {$ENDIF FHIR_CARETEAM}
 {$IFDEF FHIR_CATALOGENTRY}
   else if name = 'CatalogEntry.relatedEntry' then
-    result := TFhirCatalogEntryRelatedEntry.create()
+    result := TFhirCatalogEntryRelatedEntry.Create()
   else if name = 'CatalogEntry' then
-    result := TFhirCatalogEntry.create()
+    result := TFhirCatalogEntry.Create()
 {$ENDIF FHIR_CATALOGENTRY}
 {$IFDEF FHIR_CHARGEITEM}
   else if name = 'ChargeItem.performer' then
-    result := TFhirChargeItemPerformer.create()
+    result := TFhirChargeItemPerformer.Create()
   else if name = 'ChargeItem' then
-    result := TFhirChargeItem.create()
+    result := TFhirChargeItem.Create()
 {$ENDIF FHIR_CHARGEITEM}
 {$IFDEF FHIR_CHARGEITEMDEFINITION}
   else if name = 'ChargeItemDefinition.applicability' then
-    result := TFhirChargeItemDefinitionApplicability.create()
+    result := TFhirChargeItemDefinitionApplicability.Create()
   else if name = 'ChargeItemDefinition.propertyGroup' then
-    result := TFhirChargeItemDefinitionPropertyGroup.create()
+    result := TFhirChargeItemDefinitionPropertyGroup.Create()
   else if name = 'ChargeItemDefinition.propertyGroup.priceComponent' then
-    result := TFhirChargeItemDefinitionPropertyGroupPriceComponent.create()
+    result := TFhirChargeItemDefinitionPropertyGroupPriceComponent.Create()
   else if name = 'ChargeItemDefinition' then
-    result := TFhirChargeItemDefinition.create()
+    result := TFhirChargeItemDefinition.Create()
 {$ENDIF FHIR_CHARGEITEMDEFINITION}
 {$IFDEF FHIR_CITATION}
   else if name = 'Citation.classification' then
-    result := TFhirCitationClassification.create()
+    result := TFhirCitationClassification.Create()
   else if name = 'Citation.statusDate' then
-    result := TFhirCitationStatusDate.create()
+    result := TFhirCitationStatusDate.Create()
   else if name = 'Citation.relatesTo' then
-    result := TFhirCitationRelatesTo.create()
+    result := TFhirCitationRelatesTo.Create()
   else if name = 'Citation.citedArtifact' then
-    result := TFhirCitationCitedArtifact.create()
+    result := TFhirCitationCitedArtifact.Create()
   else if name = 'Citation.citedArtifact.version' then
-    result := TFhirCitationCitedArtifactVersion.create()
+    result := TFhirCitationCitedArtifactVersion.Create()
   else if name = 'Citation.citedArtifact.statusDate' then
-    result := TFhirCitationCitedArtifactStatusDate.create()
+    result := TFhirCitationCitedArtifactStatusDate.Create()
   else if name = 'Citation.citedArtifact.title' then
-    result := TFhirCitationCitedArtifactTitle.create()
+    result := TFhirCitationCitedArtifactTitle.Create()
   else if name = 'Citation.citedArtifact.abstract' then
-    result := TFhirCitationCitedArtifactAbstract.create()
+    result := TFhirCitationCitedArtifactAbstract.Create()
   else if name = 'Citation.citedArtifact.part' then
-    result := TFhirCitationCitedArtifactPart.create()
+    result := TFhirCitationCitedArtifactPart.Create()
   else if name = 'Citation.citedArtifact.relatesTo' then
-    result := TFhirCitationCitedArtifactRelatesTo.create()
+    result := TFhirCitationCitedArtifactRelatesTo.Create()
   else if name = 'Citation.citedArtifact.publicationForm' then
-    result := TFhirCitationCitedArtifactPublicationForm.create()
+    result := TFhirCitationCitedArtifactPublicationForm.Create()
   else if name = 'Citation.citedArtifact.publicationForm.publishedIn' then
-    result := TFhirCitationCitedArtifactPublicationFormPublishedIn.create()
+    result := TFhirCitationCitedArtifactPublicationFormPublishedIn.Create()
   else if name = 'Citation.citedArtifact.publicationForm.periodicRelease' then
-    result := TFhirCitationCitedArtifactPublicationFormPeriodicRelease.create()
+    result := TFhirCitationCitedArtifactPublicationFormPeriodicRelease.Create()
   else if name = 'Citation.citedArtifact.publicationForm.periodicRelease.dateOfPublication' then
-    result := TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication.create()
+    result := TFhirCitationCitedArtifactPublicationFormPeriodicReleaseDateOfPublication.Create()
   else if name = 'Citation.citedArtifact.webLocation' then
-    result := TFhirCitationCitedArtifactWebLocation.create()
+    result := TFhirCitationCitedArtifactWebLocation.Create()
   else if name = 'Citation.citedArtifact.classification' then
-    result := TFhirCitationCitedArtifactClassification.create()
+    result := TFhirCitationCitedArtifactClassification.Create()
   else if name = 'Citation.citedArtifact.classification.whoClassified' then
-    result := TFhirCitationCitedArtifactClassificationWhoClassified.create()
+    result := TFhirCitationCitedArtifactClassificationWhoClassified.Create()
   else if name = 'Citation.citedArtifact.contributorship' then
-    result := TFhirCitationCitedArtifactContributorship.create()
+    result := TFhirCitationCitedArtifactContributorship.Create()
   else if name = 'Citation.citedArtifact.contributorship.entry' then
-    result := TFhirCitationCitedArtifactContributorshipEntry.create()
+    result := TFhirCitationCitedArtifactContributorshipEntry.Create()
   else if name = 'Citation.citedArtifact.contributorship.entry.affiliationInfo' then
-    result := TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo.create()
+    result := TFhirCitationCitedArtifactContributorshipEntryAffiliationInfo.Create()
   else if name = 'Citation.citedArtifact.contributorship.entry.contributionInstance' then
-    result := TFhirCitationCitedArtifactContributorshipEntryContributionInstance.create()
+    result := TFhirCitationCitedArtifactContributorshipEntryContributionInstance.Create()
   else if name = 'Citation.citedArtifact.contributorship.summary' then
-    result := TFhirCitationCitedArtifactContributorshipSummary.create()
+    result := TFhirCitationCitedArtifactContributorshipSummary.Create()
   else if name = 'Citation' then
-    result := TFhirCitation.create()
+    result := TFhirCitation.Create()
 {$ENDIF FHIR_CITATION}
 {$IFDEF FHIR_CLAIM}
   else if name = 'Claim.related' then
-    result := TFhirClaimRelated.create()
+    result := TFhirClaimRelated.Create()
   else if name = 'Claim.payee' then
-    result := TFhirClaimPayee.create()
+    result := TFhirClaimPayee.Create()
   else if name = 'Claim.careTeam' then
-    result := TFhirClaimCareTeam.create()
+    result := TFhirClaimCareTeam.Create()
   else if name = 'Claim.supportingInfo' then
-    result := TFhirClaimSupportingInfo.create()
+    result := TFhirClaimSupportingInfo.Create()
   else if name = 'Claim.diagnosis' then
-    result := TFhirClaimDiagnosis.create()
+    result := TFhirClaimDiagnosis.Create()
   else if name = 'Claim.procedure' then
-    result := TFhirClaimProcedure.create()
+    result := TFhirClaimProcedure.Create()
   else if name = 'Claim.insurance' then
-    result := TFhirClaimInsurance.create()
+    result := TFhirClaimInsurance.Create()
   else if name = 'Claim.accident' then
-    result := TFhirClaimAccident.create()
+    result := TFhirClaimAccident.Create()
   else if name = 'Claim.item' then
-    result := TFhirClaimItem.create()
+    result := TFhirClaimItem.Create()
   else if name = 'Claim.item.detail' then
-    result := TFhirClaimItemDetail.create()
+    result := TFhirClaimItemDetail.Create()
   else if name = 'Claim.item.detail.subDetail' then
-    result := TFhirClaimItemDetailSubDetail.create()
+    result := TFhirClaimItemDetailSubDetail.Create()
   else if name = 'Claim' then
-    result := TFhirClaim.create()
+    result := TFhirClaim.Create()
 {$ENDIF FHIR_CLAIM}
 {$IFDEF FHIR_CLAIMRESPONSE}
   else if name = 'ClaimResponse.item' then
-    result := TFhirClaimResponseItem.create()
+    result := TFhirClaimResponseItem.Create()
   else if name = 'ClaimResponse.item.adjudication' then
-    result := TFhirClaimResponseItemAdjudication.create()
+    result := TFhirClaimResponseItemAdjudication.Create()
   else if name = 'ClaimResponse.item.detail' then
-    result := TFhirClaimResponseItemDetail.create()
+    result := TFhirClaimResponseItemDetail.Create()
   else if name = 'ClaimResponse.item.detail.subDetail' then
-    result := TFhirClaimResponseItemDetailSubDetail.create()
+    result := TFhirClaimResponseItemDetailSubDetail.Create()
   else if name = 'ClaimResponse.addItem' then
-    result := TFhirClaimResponseAddItem.create()
+    result := TFhirClaimResponseAddItem.Create()
   else if name = 'ClaimResponse.addItem.detail' then
-    result := TFhirClaimResponseAddItemDetail.create()
+    result := TFhirClaimResponseAddItemDetail.Create()
   else if name = 'ClaimResponse.addItem.detail.subDetail' then
-    result := TFhirClaimResponseAddItemDetailSubDetail.create()
+    result := TFhirClaimResponseAddItemDetailSubDetail.Create()
   else if name = 'ClaimResponse.total' then
-    result := TFhirClaimResponseTotal.create()
+    result := TFhirClaimResponseTotal.Create()
   else if name = 'ClaimResponse.payment' then
-    result := TFhirClaimResponsePayment.create()
+    result := TFhirClaimResponsePayment.Create()
   else if name = 'ClaimResponse.processNote' then
-    result := TFhirClaimResponseProcessNote.create()
+    result := TFhirClaimResponseProcessNote.Create()
   else if name = 'ClaimResponse.insurance' then
-    result := TFhirClaimResponseInsurance.create()
+    result := TFhirClaimResponseInsurance.Create()
   else if name = 'ClaimResponse.error' then
-    result := TFhirClaimResponseError.create()
+    result := TFhirClaimResponseError.Create()
   else if name = 'ClaimResponse' then
-    result := TFhirClaimResponse.create()
+    result := TFhirClaimResponse.Create()
 {$ENDIF FHIR_CLAIMRESPONSE}
 {$IFDEF FHIR_CLINICALIMPRESSION}
   else if name = 'ClinicalImpression.investigation' then
-    result := TFhirClinicalImpressionInvestigation.create()
+    result := TFhirClinicalImpressionInvestigation.Create()
   else if name = 'ClinicalImpression.finding' then
-    result := TFhirClinicalImpressionFinding.create()
+    result := TFhirClinicalImpressionFinding.Create()
   else if name = 'ClinicalImpression' then
-    result := TFhirClinicalImpression.create()
+    result := TFhirClinicalImpression.Create()
 {$ENDIF FHIR_CLINICALIMPRESSION}
 {$IFDEF FHIR_CLINICALUSEDEFINITION}
   else if name = 'ClinicalUseDefinition.contraindication' then
-    result := TFhirClinicalUseDefinitionContraindication.create()
+    result := TFhirClinicalUseDefinitionContraindication.Create()
   else if name = 'ClinicalUseDefinition.contraindication.otherTherapy' then
-    result := TFhirClinicalUseDefinitionContraindicationOtherTherapy.create()
+    result := TFhirClinicalUseDefinitionContraindicationOtherTherapy.Create()
   else if name = 'ClinicalUseDefinition.indication' then
-    result := TFhirClinicalUseDefinitionIndication.create()
+    result := TFhirClinicalUseDefinitionIndication.Create()
   else if name = 'ClinicalUseDefinition.interaction' then
-    result := TFhirClinicalUseDefinitionInteraction.create()
+    result := TFhirClinicalUseDefinitionInteraction.Create()
   else if name = 'ClinicalUseDefinition.interaction.interactant' then
-    result := TFhirClinicalUseDefinitionInteractionInteractant.create()
+    result := TFhirClinicalUseDefinitionInteractionInteractant.Create()
   else if name = 'ClinicalUseDefinition.undesirableEffect' then
-    result := TFhirClinicalUseDefinitionUndesirableEffect.create()
+    result := TFhirClinicalUseDefinitionUndesirableEffect.Create()
   else if name = 'ClinicalUseDefinition.warning' then
-    result := TFhirClinicalUseDefinitionWarning.create()
+    result := TFhirClinicalUseDefinitionWarning.Create()
   else if name = 'ClinicalUseDefinition' then
-    result := TFhirClinicalUseDefinition.create()
+    result := TFhirClinicalUseDefinition.Create()
 {$ENDIF FHIR_CLINICALUSEDEFINITION}
 {$IFDEF FHIR_CODESYSTEM}
   else if name = 'CodeSystem.filter' then
-    result := TFhirCodeSystemFilter.create()
+    result := TFhirCodeSystemFilter.Create()
   else if name = 'CodeSystem.property' then
-    result := TFhirCodeSystemProperty.create()
+    result := TFhirCodeSystemProperty.Create()
   else if name = 'CodeSystem.concept' then
-    result := TFhirCodeSystemConcept.create()
+    result := TFhirCodeSystemConcept.Create()
   else if name = 'CodeSystem.concept.designation' then
-    result := TFhirCodeSystemConceptDesignation.create()
+    result := TFhirCodeSystemConceptDesignation.Create()
   else if name = 'CodeSystem.concept.property' then
-    result := TFhirCodeSystemConceptProperty.create()
+    result := TFhirCodeSystemConceptProperty.Create()
   else if name = 'CodeSystem' then
-    result := TFhirCodeSystem.create()
+    result := TFhirCodeSystem.Create()
 {$ENDIF FHIR_CODESYSTEM}
 {$IFDEF FHIR_COMMUNICATION}
   else if name = 'Communication.payload' then
-    result := TFhirCommunicationPayload.create()
+    result := TFhirCommunicationPayload.Create()
   else if name = 'Communication' then
-    result := TFhirCommunication.create()
+    result := TFhirCommunication.Create()
 {$ENDIF FHIR_COMMUNICATION}
 {$IFDEF FHIR_COMMUNICATIONREQUEST}
   else if name = 'CommunicationRequest.payload' then
-    result := TFhirCommunicationRequestPayload.create()
+    result := TFhirCommunicationRequestPayload.Create()
   else if name = 'CommunicationRequest' then
-    result := TFhirCommunicationRequest.create()
+    result := TFhirCommunicationRequest.Create()
 {$ENDIF FHIR_COMMUNICATIONREQUEST}
 {$IFDEF FHIR_COMPARTMENTDEFINITION}
   else if name = 'CompartmentDefinition.resource' then
-    result := TFhirCompartmentDefinitionResource.create()
+    result := TFhirCompartmentDefinitionResource.Create()
   else if name = 'CompartmentDefinition' then
-    result := TFhirCompartmentDefinition.create()
+    result := TFhirCompartmentDefinition.Create()
 {$ENDIF FHIR_COMPARTMENTDEFINITION}
 {$IFDEF FHIR_COMPOSITION}
   else if name = 'Composition.attester' then
-    result := TFhirCompositionAttester.create()
+    result := TFhirCompositionAttester.Create()
   else if name = 'Composition.relatesTo' then
-    result := TFhirCompositionRelatesTo.create()
+    result := TFhirCompositionRelatesTo.Create()
   else if name = 'Composition.event' then
-    result := TFhirCompositionEvent.create()
+    result := TFhirCompositionEvent.Create()
   else if name = 'Composition.section' then
-    result := TFhirCompositionSection.create()
+    result := TFhirCompositionSection.Create()
   else if name = 'Composition' then
-    result := TFhirComposition.create()
+    result := TFhirComposition.Create()
 {$ENDIF FHIR_COMPOSITION}
 {$IFDEF FHIR_CONCEPTMAP}
   else if name = 'ConceptMap.group' then
-    result := TFhirConceptMapGroup.create()
+    result := TFhirConceptMapGroup.Create()
   else if name = 'ConceptMap.group.element' then
-    result := TFhirConceptMapGroupElement.create()
+    result := TFhirConceptMapGroupElement.Create()
   else if name = 'ConceptMap.group.element.target' then
-    result := TFhirConceptMapGroupElementTarget.create()
+    result := TFhirConceptMapGroupElementTarget.Create()
   else if name = 'ConceptMap.group.element.target.dependsOn' then
-    result := TFhirConceptMapGroupElementTargetDependsOn.create()
+    result := TFhirConceptMapGroupElementTargetDependsOn.Create()
   else if name = 'ConceptMap.group.unmapped' then
-    result := TFhirConceptMapGroupUnmapped.create()
+    result := TFhirConceptMapGroupUnmapped.Create()
   else if name = 'ConceptMap' then
-    result := TFhirConceptMap.create()
+    result := TFhirConceptMap.Create()
 {$ENDIF FHIR_CONCEPTMAP}
 {$IFDEF FHIR_CONDITION}
   else if name = 'Condition.stage' then
-    result := TFhirConditionStage.create()
+    result := TFhirConditionStage.Create()
   else if name = 'Condition.evidence' then
-    result := TFhirConditionEvidence.create()
+    result := TFhirConditionEvidence.Create()
   else if name = 'Condition' then
-    result := TFhirCondition.create()
+    result := TFhirCondition.Create()
 {$ENDIF FHIR_CONDITION}
 {$IFDEF FHIR_CONSENT}
   else if name = 'Consent.policy' then
-    result := TFhirConsentPolicy.create()
+    result := TFhirConsentPolicy.Create()
   else if name = 'Consent.verification' then
-    result := TFhirConsentVerification.create()
+    result := TFhirConsentVerification.Create()
   else if name = 'Consent.provision' then
-    result := TFhirConsentProvision.create()
+    result := TFhirConsentProvision.Create()
   else if name = 'Consent.provision.actor' then
-    result := TFhirConsentProvisionActor.create()
+    result := TFhirConsentProvisionActor.Create()
   else if name = 'Consent.provision.data' then
-    result := TFhirConsentProvisionData.create()
+    result := TFhirConsentProvisionData.Create()
   else if name = 'Consent' then
-    result := TFhirConsent.create()
+    result := TFhirConsent.Create()
 {$ENDIF FHIR_CONSENT}
 {$IFDEF FHIR_CONTRACT}
   else if name = 'Contract.contentDefinition' then
-    result := TFhirContractContentDefinition.create()
+    result := TFhirContractContentDefinition.Create()
   else if name = 'Contract.term' then
-    result := TFhirContractTerm.create()
+    result := TFhirContractTerm.Create()
   else if name = 'Contract.term.securityLabel' then
-    result := TFhirContractTermSecurityLabel.create()
+    result := TFhirContractTermSecurityLabel.Create()
   else if name = 'Contract.term.offer' then
-    result := TFhirContractTermOffer.create()
+    result := TFhirContractTermOffer.Create()
   else if name = 'Contract.term.offer.party' then
-    result := TFhirContractTermOfferParty.create()
+    result := TFhirContractTermOfferParty.Create()
   else if name = 'Contract.term.offer.answer' then
-    result := TFhirContractTermOfferAnswer.create()
+    result := TFhirContractTermOfferAnswer.Create()
   else if name = 'Contract.term.asset' then
-    result := TFhirContractTermAsset.create()
+    result := TFhirContractTermAsset.Create()
   else if name = 'Contract.term.asset.context' then
-    result := TFhirContractTermAssetContext.create()
+    result := TFhirContractTermAssetContext.Create()
   else if name = 'Contract.term.asset.valuedItem' then
-    result := TFhirContractTermAssetValuedItem.create()
+    result := TFhirContractTermAssetValuedItem.Create()
   else if name = 'Contract.term.action' then
-    result := TFhirContractTermAction.create()
+    result := TFhirContractTermAction.Create()
   else if name = 'Contract.term.action.subject' then
-    result := TFhirContractTermActionSubject.create()
+    result := TFhirContractTermActionSubject.Create()
   else if name = 'Contract.signer' then
-    result := TFhirContractSigner.create()
+    result := TFhirContractSigner.Create()
   else if name = 'Contract.friendly' then
-    result := TFhirContractFriendly.create()
+    result := TFhirContractFriendly.Create()
   else if name = 'Contract.legal' then
-    result := TFhirContractLegal.create()
+    result := TFhirContractLegal.Create()
   else if name = 'Contract.rule' then
-    result := TFhirContractRule.create()
+    result := TFhirContractRule.Create()
   else if name = 'Contract' then
-    result := TFhirContract.create()
+    result := TFhirContract.Create()
 {$ENDIF FHIR_CONTRACT}
 {$IFDEF FHIR_COVERAGE}
   else if name = 'Coverage.class' then
-    result := TFhirCoverageClass.create()
+    result := TFhirCoverageClass.Create()
   else if name = 'Coverage.costToBeneficiary' then
-    result := TFhirCoverageCostToBeneficiary.create()
+    result := TFhirCoverageCostToBeneficiary.Create()
   else if name = 'Coverage.costToBeneficiary.exception' then
-    result := TFhirCoverageCostToBeneficiaryException.create()
+    result := TFhirCoverageCostToBeneficiaryException.Create()
   else if name = 'Coverage' then
-    result := TFhirCoverage.create()
+    result := TFhirCoverage.Create()
 {$ENDIF FHIR_COVERAGE}
 {$IFDEF FHIR_COVERAGEELIGIBILITYREQUEST}
   else if name = 'CoverageEligibilityRequest.supportingInfo' then
-    result := TFhirCoverageEligibilityRequestSupportingInfo.create()
+    result := TFhirCoverageEligibilityRequestSupportingInfo.Create()
   else if name = 'CoverageEligibilityRequest.insurance' then
-    result := TFhirCoverageEligibilityRequestInsurance.create()
+    result := TFhirCoverageEligibilityRequestInsurance.Create()
   else if name = 'CoverageEligibilityRequest.item' then
-    result := TFhirCoverageEligibilityRequestItem.create()
+    result := TFhirCoverageEligibilityRequestItem.Create()
   else if name = 'CoverageEligibilityRequest.item.diagnosis' then
-    result := TFhirCoverageEligibilityRequestItemDiagnosis.create()
+    result := TFhirCoverageEligibilityRequestItemDiagnosis.Create()
   else if name = 'CoverageEligibilityRequest' then
-    result := TFhirCoverageEligibilityRequest.create()
+    result := TFhirCoverageEligibilityRequest.Create()
 {$ENDIF FHIR_COVERAGEELIGIBILITYREQUEST}
 {$IFDEF FHIR_COVERAGEELIGIBILITYRESPONSE}
   else if name = 'CoverageEligibilityResponse.insurance' then
-    result := TFhirCoverageEligibilityResponseInsurance.create()
+    result := TFhirCoverageEligibilityResponseInsurance.Create()
   else if name = 'CoverageEligibilityResponse.insurance.item' then
-    result := TFhirCoverageEligibilityResponseInsuranceItem.create()
+    result := TFhirCoverageEligibilityResponseInsuranceItem.Create()
   else if name = 'CoverageEligibilityResponse.insurance.item.benefit' then
-    result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.create()
+    result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.Create()
   else if name = 'CoverageEligibilityResponse.error' then
-    result := TFhirCoverageEligibilityResponseError.create()
+    result := TFhirCoverageEligibilityResponseError.Create()
   else if name = 'CoverageEligibilityResponse' then
-    result := TFhirCoverageEligibilityResponse.create()
+    result := TFhirCoverageEligibilityResponse.Create()
 {$ENDIF FHIR_COVERAGEELIGIBILITYRESPONSE}
 {$IFDEF FHIR_DETECTEDISSUE}
   else if name = 'DetectedIssue.evidence' then
-    result := TFhirDetectedIssueEvidence.create()
+    result := TFhirDetectedIssueEvidence.Create()
   else if name = 'DetectedIssue.mitigation' then
-    result := TFhirDetectedIssueMitigation.create()
+    result := TFhirDetectedIssueMitigation.Create()
   else if name = 'DetectedIssue' then
-    result := TFhirDetectedIssue.create()
+    result := TFhirDetectedIssue.Create()
 {$ENDIF FHIR_DETECTEDISSUE}
 {$IFDEF FHIR_DEVICE}
   else if name = 'Device.udiCarrier' then
-    result := TFhirDeviceUdiCarrier.create()
+    result := TFhirDeviceUdiCarrier.Create()
   else if name = 'Device.deviceName' then
-    result := TFhirDeviceDeviceName.create()
+    result := TFhirDeviceDeviceName.Create()
   else if name = 'Device.specialization' then
-    result := TFhirDeviceSpecialization.create()
+    result := TFhirDeviceSpecialization.Create()
   else if name = 'Device.version' then
-    result := TFhirDeviceVersion.create()
+    result := TFhirDeviceVersion.Create()
   else if name = 'Device.property' then
-    result := TFhirDeviceProperty.create()
+    result := TFhirDeviceProperty.Create()
   else if name = 'Device' then
-    result := TFhirDevice.create()
+    result := TFhirDevice.Create()
 {$ENDIF FHIR_DEVICE}
 {$IFDEF FHIR_DEVICEDEFINITION}
   else if name = 'DeviceDefinition.udiDeviceIdentifier' then
-    result := TFhirDeviceDefinitionUdiDeviceIdentifier.create()
+    result := TFhirDeviceDefinitionUdiDeviceIdentifier.Create()
   else if name = 'DeviceDefinition.deviceName' then
-    result := TFhirDeviceDefinitionDeviceName.create()
+    result := TFhirDeviceDefinitionDeviceName.Create()
   else if name = 'DeviceDefinition.specialization' then
-    result := TFhirDeviceDefinitionSpecialization.create()
+    result := TFhirDeviceDefinitionSpecialization.Create()
   else if name = 'DeviceDefinition.capability' then
-    result := TFhirDeviceDefinitionCapability.create()
+    result := TFhirDeviceDefinitionCapability.Create()
   else if name = 'DeviceDefinition.property' then
-    result := TFhirDeviceDefinitionProperty.create()
+    result := TFhirDeviceDefinitionProperty.Create()
   else if name = 'DeviceDefinition.material' then
-    result := TFhirDeviceDefinitionMaterial.create()
+    result := TFhirDeviceDefinitionMaterial.Create()
   else if name = 'DeviceDefinition' then
-    result := TFhirDeviceDefinition.create()
+    result := TFhirDeviceDefinition.Create()
 {$ENDIF FHIR_DEVICEDEFINITION}
 {$IFDEF FHIR_DEVICEMETRIC}
   else if name = 'DeviceMetric.calibration' then
-    result := TFhirDeviceMetricCalibration.create()
+    result := TFhirDeviceMetricCalibration.Create()
   else if name = 'DeviceMetric' then
-    result := TFhirDeviceMetric.create()
+    result := TFhirDeviceMetric.Create()
 {$ENDIF FHIR_DEVICEMETRIC}
 {$IFDEF FHIR_DEVICEREQUEST}
   else if name = 'DeviceRequest.parameter' then
-    result := TFhirDeviceRequestParameter.create()
+    result := TFhirDeviceRequestParameter.Create()
   else if name = 'DeviceRequest' then
-    result := TFhirDeviceRequest.create()
+    result := TFhirDeviceRequest.Create()
 {$ENDIF FHIR_DEVICEREQUEST}
 {$IFDEF FHIR_DEVICEUSESTATEMENT}
   else if name = 'DeviceUseStatement' then
-    result := TFhirDeviceUseStatement.create()
+    result := TFhirDeviceUseStatement.Create()
 {$ENDIF FHIR_DEVICEUSESTATEMENT}
 {$IFDEF FHIR_DIAGNOSTICREPORT}
   else if name = 'DiagnosticReport.media' then
-    result := TFhirDiagnosticReportMedia.create()
+    result := TFhirDiagnosticReportMedia.Create()
   else if name = 'DiagnosticReport' then
-    result := TFhirDiagnosticReport.create()
+    result := TFhirDiagnosticReport.Create()
 {$ENDIF FHIR_DIAGNOSTICREPORT}
 {$IFDEF FHIR_DOCUMENTMANIFEST}
   else if name = 'DocumentManifest.related' then
-    result := TFhirDocumentManifestRelated.create()
+    result := TFhirDocumentManifestRelated.Create()
   else if name = 'DocumentManifest' then
-    result := TFhirDocumentManifest.create()
+    result := TFhirDocumentManifest.Create()
 {$ENDIF FHIR_DOCUMENTMANIFEST}
 {$IFDEF FHIR_DOCUMENTREFERENCE}
   else if name = 'DocumentReference.relatesTo' then
-    result := TFhirDocumentReferenceRelatesTo.create()
+    result := TFhirDocumentReferenceRelatesTo.Create()
   else if name = 'DocumentReference.content' then
-    result := TFhirDocumentReferenceContent.create()
+    result := TFhirDocumentReferenceContent.Create()
   else if name = 'DocumentReference.context' then
-    result := TFhirDocumentReferenceContext.create()
+    result := TFhirDocumentReferenceContext.Create()
   else if name = 'DocumentReference' then
-    result := TFhirDocumentReference.create()
+    result := TFhirDocumentReference.Create()
 {$ENDIF FHIR_DOCUMENTREFERENCE}
 {$IFDEF FHIR_ENCOUNTER}
   else if name = 'Encounter.statusHistory' then
-    result := TFhirEncounterStatusHistory.create()
+    result := TFhirEncounterStatusHistory.Create()
   else if name = 'Encounter.classHistory' then
-    result := TFhirEncounterClassHistory.create()
+    result := TFhirEncounterClassHistory.Create()
   else if name = 'Encounter.participant' then
-    result := TFhirEncounterParticipant.create()
+    result := TFhirEncounterParticipant.Create()
   else if name = 'Encounter.diagnosis' then
-    result := TFhirEncounterDiagnosis.create()
+    result := TFhirEncounterDiagnosis.Create()
   else if name = 'Encounter.hospitalization' then
-    result := TFhirEncounterHospitalization.create()
+    result := TFhirEncounterHospitalization.Create()
   else if name = 'Encounter.location' then
-    result := TFhirEncounterLocation.create()
+    result := TFhirEncounterLocation.Create()
   else if name = 'Encounter' then
-    result := TFhirEncounter.create()
+    result := TFhirEncounter.Create()
 {$ENDIF FHIR_ENCOUNTER}
 {$IFDEF FHIR_ENDPOINT}
   else if name = 'Endpoint' then
-    result := TFhirEndpoint.create()
+    result := TFhirEndpoint.Create()
 {$ENDIF FHIR_ENDPOINT}
 {$IFDEF FHIR_ENROLLMENTREQUEST}
   else if name = 'EnrollmentRequest' then
-    result := TFhirEnrollmentRequest.create()
+    result := TFhirEnrollmentRequest.Create()
 {$ENDIF FHIR_ENROLLMENTREQUEST}
 {$IFDEF FHIR_ENROLLMENTRESPONSE}
   else if name = 'EnrollmentResponse' then
-    result := TFhirEnrollmentResponse.create()
+    result := TFhirEnrollmentResponse.Create()
 {$ENDIF FHIR_ENROLLMENTRESPONSE}
 {$IFDEF FHIR_EPISODEOFCARE}
   else if name = 'EpisodeOfCare.statusHistory' then
-    result := TFhirEpisodeOfCareStatusHistory.create()
+    result := TFhirEpisodeOfCareStatusHistory.Create()
   else if name = 'EpisodeOfCare.diagnosis' then
-    result := TFhirEpisodeOfCareDiagnosis.create()
+    result := TFhirEpisodeOfCareDiagnosis.Create()
   else if name = 'EpisodeOfCare' then
-    result := TFhirEpisodeOfCare.create()
+    result := TFhirEpisodeOfCare.Create()
 {$ENDIF FHIR_EPISODEOFCARE}
 {$IFDEF FHIR_EVENTDEFINITION}
   else if name = 'EventDefinition' then
-    result := TFhirEventDefinition.create()
+    result := TFhirEventDefinition.Create()
 {$ENDIF FHIR_EVENTDEFINITION}
 {$IFDEF FHIR_EVIDENCE}
   else if name = 'Evidence.variableDefinition' then
-    result := TFhirEvidenceVariableDefinition.create()
+    result := TFhirEvidenceVariableDefinition.Create()
   else if name = 'Evidence.statistic' then
-    result := TFhirEvidenceStatistic.create()
+    result := TFhirEvidenceStatistic.Create()
   else if name = 'Evidence.statistic.sampleSize' then
-    result := TFhirEvidenceStatisticSampleSize.create()
+    result := TFhirEvidenceStatisticSampleSize.Create()
   else if name = 'Evidence.statistic.attributeEstimate' then
-    result := TFhirEvidenceStatisticAttributeEstimate.create()
+    result := TFhirEvidenceStatisticAttributeEstimate.Create()
   else if name = 'Evidence.statistic.modelCharacteristic' then
-    result := TFhirEvidenceStatisticModelCharacteristic.create()
+    result := TFhirEvidenceStatisticModelCharacteristic.Create()
   else if name = 'Evidence.statistic.modelCharacteristic.variable' then
-    result := TFhirEvidenceStatisticModelCharacteristicVariable.create()
+    result := TFhirEvidenceStatisticModelCharacteristicVariable.Create()
   else if name = 'Evidence.certainty' then
-    result := TFhirEvidenceCertainty.create()
+    result := TFhirEvidenceCertainty.Create()
   else if name = 'Evidence' then
-    result := TFhirEvidence.create()
+    result := TFhirEvidence.Create()
 {$ENDIF FHIR_EVIDENCE}
 {$IFDEF FHIR_EVIDENCEREPORT}
   else if name = 'EvidenceReport.subject' then
-    result := TFhirEvidenceReportSubject.create()
+    result := TFhirEvidenceReportSubject.Create()
   else if name = 'EvidenceReport.subject.characteristic' then
-    result := TFhirEvidenceReportSubjectCharacteristic.create()
+    result := TFhirEvidenceReportSubjectCharacteristic.Create()
   else if name = 'EvidenceReport.relatesTo' then
-    result := TFhirEvidenceReportRelatesTo.create()
+    result := TFhirEvidenceReportRelatesTo.Create()
   else if name = 'EvidenceReport.section' then
-    result := TFhirEvidenceReportSection.create()
+    result := TFhirEvidenceReportSection.Create()
   else if name = 'EvidenceReport' then
-    result := TFhirEvidenceReport.create()
+    result := TFhirEvidenceReport.Create()
 {$ENDIF FHIR_EVIDENCEREPORT}
 {$IFDEF FHIR_EVIDENCEVARIABLE}
   else if name = 'EvidenceVariable.characteristic' then
-    result := TFhirEvidenceVariableCharacteristic.create()
+    result := TFhirEvidenceVariableCharacteristic.Create()
   else if name = 'EvidenceVariable.characteristic.timeFromStart' then
-    result := TFhirEvidenceVariableCharacteristicTimeFromStart.create()
+    result := TFhirEvidenceVariableCharacteristicTimeFromStart.Create()
   else if name = 'EvidenceVariable.category' then
-    result := TFhirEvidenceVariableCategory.create()
+    result := TFhirEvidenceVariableCategory.Create()
   else if name = 'EvidenceVariable' then
-    result := TFhirEvidenceVariable.create()
+    result := TFhirEvidenceVariable.Create()
 {$ENDIF FHIR_EVIDENCEVARIABLE}
 {$IFDEF FHIR_EXAMPLESCENARIO}
   else if name = 'ExampleScenario.actor' then
-    result := TFhirExampleScenarioActor.create()
+    result := TFhirExampleScenarioActor.Create()
   else if name = 'ExampleScenario.instance' then
-    result := TFhirExampleScenarioInstance.create()
+    result := TFhirExampleScenarioInstance.Create()
   else if name = 'ExampleScenario.instance.version' then
-    result := TFhirExampleScenarioInstanceVersion.create()
+    result := TFhirExampleScenarioInstanceVersion.Create()
   else if name = 'ExampleScenario.instance.containedInstance' then
-    result := TFhirExampleScenarioInstanceContainedInstance.create()
+    result := TFhirExampleScenarioInstanceContainedInstance.Create()
   else if name = 'ExampleScenario.process' then
-    result := TFhirExampleScenarioProcess.create()
+    result := TFhirExampleScenarioProcess.Create()
   else if name = 'ExampleScenario.process.step' then
-    result := TFhirExampleScenarioProcessStep.create()
+    result := TFhirExampleScenarioProcessStep.Create()
   else if name = 'ExampleScenario.process.step.operation' then
-    result := TFhirExampleScenarioProcessStepOperation.create()
+    result := TFhirExampleScenarioProcessStepOperation.Create()
   else if name = 'ExampleScenario.process.step.alternative' then
-    result := TFhirExampleScenarioProcessStepAlternative.create()
+    result := TFhirExampleScenarioProcessStepAlternative.Create()
   else if name = 'ExampleScenario' then
-    result := TFhirExampleScenario.create()
+    result := TFhirExampleScenario.Create()
 {$ENDIF FHIR_EXAMPLESCENARIO}
 {$IFDEF FHIR_EXPLANATIONOFBENEFIT}
   else if name = 'ExplanationOfBenefit.related' then
-    result := TFhirExplanationOfBenefitRelated.create()
+    result := TFhirExplanationOfBenefitRelated.Create()
   else if name = 'ExplanationOfBenefit.payee' then
-    result := TFhirExplanationOfBenefitPayee.create()
+    result := TFhirExplanationOfBenefitPayee.Create()
   else if name = 'ExplanationOfBenefit.careTeam' then
-    result := TFhirExplanationOfBenefitCareTeam.create()
+    result := TFhirExplanationOfBenefitCareTeam.Create()
   else if name = 'ExplanationOfBenefit.supportingInfo' then
-    result := TFhirExplanationOfBenefitSupportingInfo.create()
+    result := TFhirExplanationOfBenefitSupportingInfo.Create()
   else if name = 'ExplanationOfBenefit.diagnosis' then
-    result := TFhirExplanationOfBenefitDiagnosis.create()
+    result := TFhirExplanationOfBenefitDiagnosis.Create()
   else if name = 'ExplanationOfBenefit.procedure' then
-    result := TFhirExplanationOfBenefitProcedure.create()
+    result := TFhirExplanationOfBenefitProcedure.Create()
   else if name = 'ExplanationOfBenefit.insurance' then
-    result := TFhirExplanationOfBenefitInsurance.create()
+    result := TFhirExplanationOfBenefitInsurance.Create()
   else if name = 'ExplanationOfBenefit.accident' then
-    result := TFhirExplanationOfBenefitAccident.create()
+    result := TFhirExplanationOfBenefitAccident.Create()
   else if name = 'ExplanationOfBenefit.item' then
-    result := TFhirExplanationOfBenefitItem.create()
+    result := TFhirExplanationOfBenefitItem.Create()
   else if name = 'ExplanationOfBenefit.item.adjudication' then
-    result := TFhirExplanationOfBenefitItemAdjudication.create()
+    result := TFhirExplanationOfBenefitItemAdjudication.Create()
   else if name = 'ExplanationOfBenefit.item.detail' then
-    result := TFhirExplanationOfBenefitItemDetail.create()
+    result := TFhirExplanationOfBenefitItemDetail.Create()
   else if name = 'ExplanationOfBenefit.item.detail.subDetail' then
-    result := TFhirExplanationOfBenefitItemDetailSubDetail.create()
+    result := TFhirExplanationOfBenefitItemDetailSubDetail.Create()
   else if name = 'ExplanationOfBenefit.addItem' then
-    result := TFhirExplanationOfBenefitAddItem.create()
+    result := TFhirExplanationOfBenefitAddItem.Create()
   else if name = 'ExplanationOfBenefit.addItem.detail' then
-    result := TFhirExplanationOfBenefitAddItemDetail.create()
+    result := TFhirExplanationOfBenefitAddItemDetail.Create()
   else if name = 'ExplanationOfBenefit.addItem.detail.subDetail' then
-    result := TFhirExplanationOfBenefitAddItemDetailSubDetail.create()
+    result := TFhirExplanationOfBenefitAddItemDetailSubDetail.Create()
   else if name = 'ExplanationOfBenefit.total' then
-    result := TFhirExplanationOfBenefitTotal.create()
+    result := TFhirExplanationOfBenefitTotal.Create()
   else if name = 'ExplanationOfBenefit.payment' then
-    result := TFhirExplanationOfBenefitPayment.create()
+    result := TFhirExplanationOfBenefitPayment.Create()
   else if name = 'ExplanationOfBenefit.processNote' then
-    result := TFhirExplanationOfBenefitProcessNote.create()
+    result := TFhirExplanationOfBenefitProcessNote.Create()
   else if name = 'ExplanationOfBenefit.benefitBalance' then
-    result := TFhirExplanationOfBenefitBenefitBalance.create()
+    result := TFhirExplanationOfBenefitBenefitBalance.Create()
   else if name = 'ExplanationOfBenefit.benefitBalance.financial' then
-    result := TFhirExplanationOfBenefitBenefitBalanceFinancial.create()
+    result := TFhirExplanationOfBenefitBenefitBalanceFinancial.Create()
   else if name = 'ExplanationOfBenefit' then
-    result := TFhirExplanationOfBenefit.create()
+    result := TFhirExplanationOfBenefit.Create()
 {$ENDIF FHIR_EXPLANATIONOFBENEFIT}
 {$IFDEF FHIR_FAMILYMEMBERHISTORY}
   else if name = 'FamilyMemberHistory.condition' then
-    result := TFhirFamilyMemberHistoryCondition.create()
+    result := TFhirFamilyMemberHistoryCondition.Create()
   else if name = 'FamilyMemberHistory' then
-    result := TFhirFamilyMemberHistory.create()
+    result := TFhirFamilyMemberHistory.Create()
 {$ENDIF FHIR_FAMILYMEMBERHISTORY}
 {$IFDEF FHIR_FLAG}
   else if name = 'Flag' then
-    result := TFhirFlag.create()
+    result := TFhirFlag.Create()
 {$ENDIF FHIR_FLAG}
 {$IFDEF FHIR_GOAL}
   else if name = 'Goal.target' then
-    result := TFhirGoalTarget.create()
+    result := TFhirGoalTarget.Create()
   else if name = 'Goal' then
-    result := TFhirGoal.create()
+    result := TFhirGoal.Create()
 {$ENDIF FHIR_GOAL}
 {$IFDEF FHIR_GRAPHDEFINITION}
   else if name = 'GraphDefinition.link' then
-    result := TFhirGraphDefinitionLink.create()
+    result := TFhirGraphDefinitionLink.Create()
   else if name = 'GraphDefinition.link.target' then
-    result := TFhirGraphDefinitionLinkTarget.create()
+    result := TFhirGraphDefinitionLinkTarget.Create()
   else if name = 'GraphDefinition.link.target.compartment' then
-    result := TFhirGraphDefinitionLinkTargetCompartment.create()
+    result := TFhirGraphDefinitionLinkTargetCompartment.Create()
   else if name = 'GraphDefinition' then
-    result := TFhirGraphDefinition.create()
+    result := TFhirGraphDefinition.Create()
 {$ENDIF FHIR_GRAPHDEFINITION}
 {$IFDEF FHIR_GROUP}
   else if name = 'Group.characteristic' then
-    result := TFhirGroupCharacteristic.create()
+    result := TFhirGroupCharacteristic.Create()
   else if name = 'Group.member' then
-    result := TFhirGroupMember.create()
+    result := TFhirGroupMember.Create()
   else if name = 'Group' then
-    result := TFhirGroup.create()
+    result := TFhirGroup.Create()
 {$ENDIF FHIR_GROUP}
 {$IFDEF FHIR_GUIDANCERESPONSE}
   else if name = 'GuidanceResponse' then
-    result := TFhirGuidanceResponse.create()
+    result := TFhirGuidanceResponse.Create()
 {$ENDIF FHIR_GUIDANCERESPONSE}
 {$IFDEF FHIR_HEALTHCARESERVICE}
   else if name = 'HealthcareService.eligibility' then
-    result := TFhirHealthcareServiceEligibility.create()
+    result := TFhirHealthcareServiceEligibility.Create()
   else if name = 'HealthcareService.availableTime' then
-    result := TFhirHealthcareServiceAvailableTime.create()
+    result := TFhirHealthcareServiceAvailableTime.Create()
   else if name = 'HealthcareService.notAvailable' then
-    result := TFhirHealthcareServiceNotAvailable.create()
+    result := TFhirHealthcareServiceNotAvailable.Create()
   else if name = 'HealthcareService' then
-    result := TFhirHealthcareService.create()
+    result := TFhirHealthcareService.Create()
 {$ENDIF FHIR_HEALTHCARESERVICE}
 {$IFDEF FHIR_IMAGINGSTUDY}
   else if name = 'ImagingStudy.series' then
-    result := TFhirImagingStudySeries.create()
+    result := TFhirImagingStudySeries.Create()
   else if name = 'ImagingStudy.series.performer' then
-    result := TFhirImagingStudySeriesPerformer.create()
+    result := TFhirImagingStudySeriesPerformer.Create()
   else if name = 'ImagingStudy.series.instance' then
-    result := TFhirImagingStudySeriesInstance.create()
+    result := TFhirImagingStudySeriesInstance.Create()
   else if name = 'ImagingStudy' then
-    result := TFhirImagingStudy.create()
+    result := TFhirImagingStudy.Create()
 {$ENDIF FHIR_IMAGINGSTUDY}
 {$IFDEF FHIR_IMMUNIZATION}
   else if name = 'Immunization.performer' then
-    result := TFhirImmunizationPerformer.create()
+    result := TFhirImmunizationPerformer.Create()
   else if name = 'Immunization.education' then
-    result := TFhirImmunizationEducation.create()
+    result := TFhirImmunizationEducation.Create()
   else if name = 'Immunization.reaction' then
-    result := TFhirImmunizationReaction.create()
+    result := TFhirImmunizationReaction.Create()
   else if name = 'Immunization.protocolApplied' then
-    result := TFhirImmunizationProtocolApplied.create()
+    result := TFhirImmunizationProtocolApplied.Create()
   else if name = 'Immunization' then
-    result := TFhirImmunization.create()
+    result := TFhirImmunization.Create()
 {$ENDIF FHIR_IMMUNIZATION}
 {$IFDEF FHIR_IMMUNIZATIONEVALUATION}
   else if name = 'ImmunizationEvaluation' then
-    result := TFhirImmunizationEvaluation.create()
+    result := TFhirImmunizationEvaluation.Create()
 {$ENDIF FHIR_IMMUNIZATIONEVALUATION}
 {$IFDEF FHIR_IMMUNIZATIONRECOMMENDATION}
   else if name = 'ImmunizationRecommendation.recommendation' then
-    result := TFhirImmunizationRecommendationRecommendation.create()
+    result := TFhirImmunizationRecommendationRecommendation.Create()
   else if name = 'ImmunizationRecommendation.recommendation.dateCriterion' then
-    result := TFhirImmunizationRecommendationRecommendationDateCriterion.create()
+    result := TFhirImmunizationRecommendationRecommendationDateCriterion.Create()
   else if name = 'ImmunizationRecommendation' then
-    result := TFhirImmunizationRecommendation.create()
+    result := TFhirImmunizationRecommendation.Create()
 {$ENDIF FHIR_IMMUNIZATIONRECOMMENDATION}
 {$IFDEF FHIR_IMPLEMENTATIONGUIDE}
   else if name = 'ImplementationGuide.dependsOn' then
-    result := TFhirImplementationGuideDependsOn.create()
+    result := TFhirImplementationGuideDependsOn.Create()
   else if name = 'ImplementationGuide.global' then
-    result := TFhirImplementationGuideGlobal.create()
+    result := TFhirImplementationGuideGlobal.Create()
   else if name = 'ImplementationGuide.definition' then
-    result := TFhirImplementationGuideDefinition.create()
+    result := TFhirImplementationGuideDefinition.Create()
   else if name = 'ImplementationGuide.definition.grouping' then
-    result := TFhirImplementationGuideDefinitionGrouping.create()
+    result := TFhirImplementationGuideDefinitionGrouping.Create()
   else if name = 'ImplementationGuide.definition.resource' then
-    result := TFhirImplementationGuideDefinitionResource.create()
+    result := TFhirImplementationGuideDefinitionResource.Create()
   else if name = 'ImplementationGuide.definition.page' then
-    result := TFhirImplementationGuideDefinitionPage.create()
+    result := TFhirImplementationGuideDefinitionPage.Create()
   else if name = 'ImplementationGuide.definition.parameter' then
-    result := TFhirImplementationGuideDefinitionParameter.create()
+    result := TFhirImplementationGuideDefinitionParameter.Create()
   else if name = 'ImplementationGuide.definition.template' then
-    result := TFhirImplementationGuideDefinitionTemplate.create()
+    result := TFhirImplementationGuideDefinitionTemplate.Create()
   else if name = 'ImplementationGuide.manifest' then
-    result := TFhirImplementationGuideManifest.create()
+    result := TFhirImplementationGuideManifest.Create()
   else if name = 'ImplementationGuide.manifest.resource' then
-    result := TFhirImplementationGuideManifestResource.create()
+    result := TFhirImplementationGuideManifestResource.Create()
   else if name = 'ImplementationGuide.manifest.page' then
-    result := TFhirImplementationGuideManifestPage.create()
+    result := TFhirImplementationGuideManifestPage.Create()
   else if name = 'ImplementationGuide' then
-    result := TFhirImplementationGuide.create()
+    result := TFhirImplementationGuide.Create()
 {$ENDIF FHIR_IMPLEMENTATIONGUIDE}
 {$IFDEF FHIR_INGREDIENT}
   else if name = 'Ingredient.manufacturer' then
-    result := TFhirIngredientManufacturer.create()
+    result := TFhirIngredientManufacturer.Create()
   else if name = 'Ingredient.substance' then
-    result := TFhirIngredientSubstance.create()
+    result := TFhirIngredientSubstance.Create()
   else if name = 'Ingredient.substance.strength' then
-    result := TFhirIngredientSubstanceStrength.create()
+    result := TFhirIngredientSubstanceStrength.Create()
   else if name = 'Ingredient.substance.strength.referenceStrength' then
-    result := TFhirIngredientSubstanceStrengthReferenceStrength.create()
+    result := TFhirIngredientSubstanceStrengthReferenceStrength.Create()
   else if name = 'Ingredient' then
-    result := TFhirIngredient.create()
+    result := TFhirIngredient.Create()
 {$ENDIF FHIR_INGREDIENT}
 {$IFDEF FHIR_INSURANCEPLAN}
   else if name = 'InsurancePlan.contact' then
-    result := TFhirInsurancePlanContact.create()
+    result := TFhirInsurancePlanContact.Create()
   else if name = 'InsurancePlan.coverage' then
-    result := TFhirInsurancePlanCoverage.create()
+    result := TFhirInsurancePlanCoverage.Create()
   else if name = 'InsurancePlan.coverage.benefit' then
-    result := TFhirInsurancePlanCoverageBenefit.create()
+    result := TFhirInsurancePlanCoverageBenefit.Create()
   else if name = 'InsurancePlan.coverage.benefit.limit' then
-    result := TFhirInsurancePlanCoverageBenefitLimit.create()
+    result := TFhirInsurancePlanCoverageBenefitLimit.Create()
   else if name = 'InsurancePlan.plan' then
-    result := TFhirInsurancePlanPlan.create()
+    result := TFhirInsurancePlanPlan.Create()
   else if name = 'InsurancePlan.plan.generalCost' then
-    result := TFhirInsurancePlanPlanGeneralCost.create()
+    result := TFhirInsurancePlanPlanGeneralCost.Create()
   else if name = 'InsurancePlan.plan.specificCost' then
-    result := TFhirInsurancePlanPlanSpecificCost.create()
+    result := TFhirInsurancePlanPlanSpecificCost.Create()
   else if name = 'InsurancePlan.plan.specificCost.benefit' then
-    result := TFhirInsurancePlanPlanSpecificCostBenefit.create()
+    result := TFhirInsurancePlanPlanSpecificCostBenefit.Create()
   else if name = 'InsurancePlan.plan.specificCost.benefit.cost' then
-    result := TFhirInsurancePlanPlanSpecificCostBenefitCost.create()
+    result := TFhirInsurancePlanPlanSpecificCostBenefitCost.Create()
   else if name = 'InsurancePlan' then
-    result := TFhirInsurancePlan.create()
+    result := TFhirInsurancePlan.Create()
 {$ENDIF FHIR_INSURANCEPLAN}
 {$IFDEF FHIR_INVOICE}
   else if name = 'Invoice.participant' then
-    result := TFhirInvoiceParticipant.create()
+    result := TFhirInvoiceParticipant.Create()
   else if name = 'Invoice.lineItem' then
-    result := TFhirInvoiceLineItem.create()
+    result := TFhirInvoiceLineItem.Create()
   else if name = 'Invoice.lineItem.priceComponent' then
-    result := TFhirInvoiceLineItemPriceComponent.create()
+    result := TFhirInvoiceLineItemPriceComponent.Create()
   else if name = 'Invoice' then
-    result := TFhirInvoice.create()
+    result := TFhirInvoice.Create()
 {$ENDIF FHIR_INVOICE}
 {$IFDEF FHIR_LIBRARY}
   else if name = 'Library' then
-    result := TFhirLibrary.create()
+    result := TFhirLibrary.Create()
 {$ENDIF FHIR_LIBRARY}
 {$IFDEF FHIR_LINKAGE}
   else if name = 'Linkage.item' then
-    result := TFhirLinkageItem.create()
+    result := TFhirLinkageItem.Create()
   else if name = 'Linkage' then
-    result := TFhirLinkage.create()
+    result := TFhirLinkage.Create()
 {$ENDIF FHIR_LINKAGE}
 {$IFDEF FHIR_LIST}
   else if name = 'List.entry' then
-    result := TFhirListEntry.create()
+    result := TFhirListEntry.Create()
   else if name = 'List' then
-    result := TFhirList.create()
+    result := TFhirList.Create()
 {$ENDIF FHIR_LIST}
 {$IFDEF FHIR_LOCATION}
   else if name = 'Location.position' then
-    result := TFhirLocationPosition.create()
+    result := TFhirLocationPosition.Create()
   else if name = 'Location.hoursOfOperation' then
-    result := TFhirLocationHoursOfOperation.create()
+    result := TFhirLocationHoursOfOperation.Create()
   else if name = 'Location' then
-    result := TFhirLocation.create()
+    result := TFhirLocation.Create()
 {$ENDIF FHIR_LOCATION}
 {$IFDEF FHIR_MANUFACTUREDITEMDEFINITION}
   else if name = 'ManufacturedItemDefinition.property' then
-    result := TFhirManufacturedItemDefinitionProperty.create()
+    result := TFhirManufacturedItemDefinitionProperty.Create()
   else if name = 'ManufacturedItemDefinition' then
-    result := TFhirManufacturedItemDefinition.create()
+    result := TFhirManufacturedItemDefinition.Create()
 {$ENDIF FHIR_MANUFACTUREDITEMDEFINITION}
 {$IFDEF FHIR_MEASURE}
   else if name = 'Measure.group' then
-    result := TFhirMeasureGroup.create()
+    result := TFhirMeasureGroup.Create()
   else if name = 'Measure.group.population' then
-    result := TFhirMeasureGroupPopulation.create()
+    result := TFhirMeasureGroupPopulation.Create()
   else if name = 'Measure.group.stratifier' then
-    result := TFhirMeasureGroupStratifier.create()
+    result := TFhirMeasureGroupStratifier.Create()
   else if name = 'Measure.group.stratifier.component' then
-    result := TFhirMeasureGroupStratifierComponent.create()
+    result := TFhirMeasureGroupStratifierComponent.Create()
   else if name = 'Measure.supplementalData' then
-    result := TFhirMeasureSupplementalData.create()
+    result := TFhirMeasureSupplementalData.Create()
   else if name = 'Measure' then
-    result := TFhirMeasure.create()
+    result := TFhirMeasure.Create()
 {$ENDIF FHIR_MEASURE}
 {$IFDEF FHIR_MEASUREREPORT}
   else if name = 'MeasureReport.group' then
-    result := TFhirMeasureReportGroup.create()
+    result := TFhirMeasureReportGroup.Create()
   else if name = 'MeasureReport.group.population' then
-    result := TFhirMeasureReportGroupPopulation.create()
+    result := TFhirMeasureReportGroupPopulation.Create()
   else if name = 'MeasureReport.group.stratifier' then
-    result := TFhirMeasureReportGroupStratifier.create()
+    result := TFhirMeasureReportGroupStratifier.Create()
   else if name = 'MeasureReport.group.stratifier.stratum' then
-    result := TFhirMeasureReportGroupStratifierStratum.create()
+    result := TFhirMeasureReportGroupStratifierStratum.Create()
   else if name = 'MeasureReport.group.stratifier.stratum.component' then
-    result := TFhirMeasureReportGroupStratifierStratumComponent.create()
+    result := TFhirMeasureReportGroupStratifierStratumComponent.Create()
   else if name = 'MeasureReport.group.stratifier.stratum.population' then
-    result := TFhirMeasureReportGroupStratifierStratumPopulation.create()
+    result := TFhirMeasureReportGroupStratifierStratumPopulation.Create()
   else if name = 'MeasureReport' then
-    result := TFhirMeasureReport.create()
+    result := TFhirMeasureReport.Create()
 {$ENDIF FHIR_MEASUREREPORT}
 {$IFDEF FHIR_MEDIA}
   else if name = 'Media' then
-    result := TFhirMedia.create()
+    result := TFhirMedia.Create()
 {$ENDIF FHIR_MEDIA}
 {$IFDEF FHIR_MEDICATION}
   else if name = 'Medication.ingredient' then
-    result := TFhirMedicationIngredient.create()
+    result := TFhirMedicationIngredient.Create()
   else if name = 'Medication.batch' then
-    result := TFhirMedicationBatch.create()
+    result := TFhirMedicationBatch.Create()
   else if name = 'Medication' then
-    result := TFhirMedication.create()
+    result := TFhirMedication.Create()
 {$ENDIF FHIR_MEDICATION}
 {$IFDEF FHIR_MEDICATIONADMINISTRATION}
   else if name = 'MedicationAdministration.performer' then
-    result := TFhirMedicationAdministrationPerformer.create()
+    result := TFhirMedicationAdministrationPerformer.Create()
   else if name = 'MedicationAdministration.dosage' then
-    result := TFhirMedicationAdministrationDosage.create()
+    result := TFhirMedicationAdministrationDosage.Create()
   else if name = 'MedicationAdministration' then
-    result := TFhirMedicationAdministration.create()
+    result := TFhirMedicationAdministration.Create()
 {$ENDIF FHIR_MEDICATIONADMINISTRATION}
 {$IFDEF FHIR_MEDICATIONDISPENSE}
   else if name = 'MedicationDispense.performer' then
-    result := TFhirMedicationDispensePerformer.create()
+    result := TFhirMedicationDispensePerformer.Create()
   else if name = 'MedicationDispense.substitution' then
-    result := TFhirMedicationDispenseSubstitution.create()
+    result := TFhirMedicationDispenseSubstitution.Create()
   else if name = 'MedicationDispense' then
-    result := TFhirMedicationDispense.create()
+    result := TFhirMedicationDispense.Create()
 {$ENDIF FHIR_MEDICATIONDISPENSE}
 {$IFDEF FHIR_MEDICATIONKNOWLEDGE}
   else if name = 'MedicationKnowledge.relatedMedicationKnowledge' then
-    result := TFhirMedicationKnowledgeRelatedMedicationKnowledge.create()
+    result := TFhirMedicationKnowledgeRelatedMedicationKnowledge.Create()
   else if name = 'MedicationKnowledge.monograph' then
-    result := TFhirMedicationKnowledgeMonograph.create()
+    result := TFhirMedicationKnowledgeMonograph.Create()
   else if name = 'MedicationKnowledge.ingredient' then
-    result := TFhirMedicationKnowledgeIngredient.create()
+    result := TFhirMedicationKnowledgeIngredient.Create()
   else if name = 'MedicationKnowledge.cost' then
-    result := TFhirMedicationKnowledgeCost.create()
+    result := TFhirMedicationKnowledgeCost.Create()
   else if name = 'MedicationKnowledge.monitoringProgram' then
-    result := TFhirMedicationKnowledgeMonitoringProgram.create()
+    result := TFhirMedicationKnowledgeMonitoringProgram.Create()
   else if name = 'MedicationKnowledge.administrationGuidelines' then
-    result := TFhirMedicationKnowledgeAdministrationGuidelines.create()
+    result := TFhirMedicationKnowledgeAdministrationGuidelines.Create()
   else if name = 'MedicationKnowledge.administrationGuidelines.dosage' then
-    result := TFhirMedicationKnowledgeAdministrationGuidelinesDosage.create()
+    result := TFhirMedicationKnowledgeAdministrationGuidelinesDosage.Create()
   else if name = 'MedicationKnowledge.administrationGuidelines.patientCharacteristics' then
-    result := TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics.create()
+    result := TFhirMedicationKnowledgeAdministrationGuidelinesPatientCharacteristics.Create()
   else if name = 'MedicationKnowledge.medicineClassification' then
-    result := TFhirMedicationKnowledgeMedicineClassification.create()
+    result := TFhirMedicationKnowledgeMedicineClassification.Create()
   else if name = 'MedicationKnowledge.packaging' then
-    result := TFhirMedicationKnowledgePackaging.create()
+    result := TFhirMedicationKnowledgePackaging.Create()
   else if name = 'MedicationKnowledge.drugCharacteristic' then
-    result := TFhirMedicationKnowledgeDrugCharacteristic.create()
+    result := TFhirMedicationKnowledgeDrugCharacteristic.Create()
   else if name = 'MedicationKnowledge.regulatory' then
-    result := TFhirMedicationKnowledgeRegulatory.create()
+    result := TFhirMedicationKnowledgeRegulatory.Create()
   else if name = 'MedicationKnowledge.regulatory.substitution' then
-    result := TFhirMedicationKnowledgeRegulatorySubstitution.create()
+    result := TFhirMedicationKnowledgeRegulatorySubstitution.Create()
   else if name = 'MedicationKnowledge.regulatory.schedule' then
-    result := TFhirMedicationKnowledgeRegulatorySchedule.create()
+    result := TFhirMedicationKnowledgeRegulatorySchedule.Create()
   else if name = 'MedicationKnowledge.regulatory.maxDispense' then
-    result := TFhirMedicationKnowledgeRegulatoryMaxDispense.create()
+    result := TFhirMedicationKnowledgeRegulatoryMaxDispense.Create()
   else if name = 'MedicationKnowledge.kinetics' then
-    result := TFhirMedicationKnowledgeKinetics.create()
+    result := TFhirMedicationKnowledgeKinetics.Create()
   else if name = 'MedicationKnowledge' then
-    result := TFhirMedicationKnowledge.create()
+    result := TFhirMedicationKnowledge.Create()
 {$ENDIF FHIR_MEDICATIONKNOWLEDGE}
 {$IFDEF FHIR_MEDICATIONREQUEST}
   else if name = 'MedicationRequest.dispenseRequest' then
-    result := TFhirMedicationRequestDispenseRequest.create()
+    result := TFhirMedicationRequestDispenseRequest.Create()
   else if name = 'MedicationRequest.dispenseRequest.initialFill' then
-    result := TFhirMedicationRequestDispenseRequestInitialFill.create()
+    result := TFhirMedicationRequestDispenseRequestInitialFill.Create()
   else if name = 'MedicationRequest.substitution' then
-    result := TFhirMedicationRequestSubstitution.create()
+    result := TFhirMedicationRequestSubstitution.Create()
   else if name = 'MedicationRequest' then
-    result := TFhirMedicationRequest.create()
+    result := TFhirMedicationRequest.Create()
 {$ENDIF FHIR_MEDICATIONREQUEST}
 {$IFDEF FHIR_MEDICATIONSTATEMENT}
   else if name = 'MedicationStatement' then
-    result := TFhirMedicationStatement.create()
+    result := TFhirMedicationStatement.Create()
 {$ENDIF FHIR_MEDICATIONSTATEMENT}
 {$IFDEF FHIR_MEDICINALPRODUCTDEFINITION}
   else if name = 'MedicinalProductDefinition.contact' then
-    result := TFhirMedicinalProductDefinitionContact.create()
+    result := TFhirMedicinalProductDefinitionContact.Create()
   else if name = 'MedicinalProductDefinition.name' then
-    result := TFhirMedicinalProductDefinitionName.create()
+    result := TFhirMedicinalProductDefinitionName.Create()
   else if name = 'MedicinalProductDefinition.name.namePart' then
-    result := TFhirMedicinalProductDefinitionNameNamePart.create()
+    result := TFhirMedicinalProductDefinitionNameNamePart.Create()
   else if name = 'MedicinalProductDefinition.name.countryLanguage' then
-    result := TFhirMedicinalProductDefinitionNameCountryLanguage.create()
+    result := TFhirMedicinalProductDefinitionNameCountryLanguage.Create()
   else if name = 'MedicinalProductDefinition.crossReference' then
-    result := TFhirMedicinalProductDefinitionCrossReference.create()
+    result := TFhirMedicinalProductDefinitionCrossReference.Create()
   else if name = 'MedicinalProductDefinition.operation' then
-    result := TFhirMedicinalProductDefinitionOperation.create()
+    result := TFhirMedicinalProductDefinitionOperation.Create()
   else if name = 'MedicinalProductDefinition.characteristic' then
-    result := TFhirMedicinalProductDefinitionCharacteristic.create()
+    result := TFhirMedicinalProductDefinitionCharacteristic.Create()
   else if name = 'MedicinalProductDefinition' then
-    result := TFhirMedicinalProductDefinition.create()
+    result := TFhirMedicinalProductDefinition.Create()
 {$ENDIF FHIR_MEDICINALPRODUCTDEFINITION}
 {$IFDEF FHIR_MESSAGEDEFINITION}
   else if name = 'MessageDefinition.focus' then
-    result := TFhirMessageDefinitionFocus.create()
+    result := TFhirMessageDefinitionFocus.Create()
   else if name = 'MessageDefinition.allowedResponse' then
-    result := TFhirMessageDefinitionAllowedResponse.create()
+    result := TFhirMessageDefinitionAllowedResponse.Create()
   else if name = 'MessageDefinition' then
-    result := TFhirMessageDefinition.create()
+    result := TFhirMessageDefinition.Create()
 {$ENDIF FHIR_MESSAGEDEFINITION}
 {$IFDEF FHIR_MESSAGEHEADER}
   else if name = 'MessageHeader.destination' then
-    result := TFhirMessageHeaderDestination.create()
+    result := TFhirMessageHeaderDestination.Create()
   else if name = 'MessageHeader.source' then
-    result := TFhirMessageHeaderSource.create()
+    result := TFhirMessageHeaderSource.Create()
   else if name = 'MessageHeader.response' then
-    result := TFhirMessageHeaderResponse.create()
+    result := TFhirMessageHeaderResponse.Create()
   else if name = 'MessageHeader' then
-    result := TFhirMessageHeader.create()
+    result := TFhirMessageHeader.Create()
 {$ENDIF FHIR_MESSAGEHEADER}
 {$IFDEF FHIR_MOLECULARSEQUENCE}
   else if name = 'MolecularSequence.referenceSeq' then
-    result := TFhirMolecularSequenceReferenceSeq.create()
+    result := TFhirMolecularSequenceReferenceSeq.Create()
   else if name = 'MolecularSequence.variant' then
-    result := TFhirMolecularSequenceVariant.create()
+    result := TFhirMolecularSequenceVariant.Create()
   else if name = 'MolecularSequence.quality' then
-    result := TFhirMolecularSequenceQuality.create()
+    result := TFhirMolecularSequenceQuality.Create()
   else if name = 'MolecularSequence.quality.roc' then
-    result := TFhirMolecularSequenceQualityRoc.create()
+    result := TFhirMolecularSequenceQualityRoc.Create()
   else if name = 'MolecularSequence.repository' then
-    result := TFhirMolecularSequenceRepository.create()
+    result := TFhirMolecularSequenceRepository.Create()
   else if name = 'MolecularSequence.structureVariant' then
-    result := TFhirMolecularSequenceStructureVariant.create()
+    result := TFhirMolecularSequenceStructureVariant.Create()
   else if name = 'MolecularSequence.structureVariant.outer' then
-    result := TFhirMolecularSequenceStructureVariantOuter.create()
+    result := TFhirMolecularSequenceStructureVariantOuter.Create()
   else if name = 'MolecularSequence.structureVariant.inner' then
-    result := TFhirMolecularSequenceStructureVariantInner.create()
+    result := TFhirMolecularSequenceStructureVariantInner.Create()
   else if name = 'MolecularSequence' then
-    result := TFhirMolecularSequence.create()
+    result := TFhirMolecularSequence.Create()
 {$ENDIF FHIR_MOLECULARSEQUENCE}
 {$IFDEF FHIR_NAMINGSYSTEM}
   else if name = 'NamingSystem.uniqueId' then
-    result := TFhirNamingSystemUniqueId.create()
+    result := TFhirNamingSystemUniqueId.Create()
   else if name = 'NamingSystem' then
-    result := TFhirNamingSystem.create()
+    result := TFhirNamingSystem.Create()
 {$ENDIF FHIR_NAMINGSYSTEM}
 {$IFDEF FHIR_NUTRITIONORDER}
   else if name = 'NutritionOrder.oralDiet' then
-    result := TFhirNutritionOrderOralDiet.create()
+    result := TFhirNutritionOrderOralDiet.Create()
   else if name = 'NutritionOrder.oralDiet.nutrient' then
-    result := TFhirNutritionOrderOralDietNutrient.create()
+    result := TFhirNutritionOrderOralDietNutrient.Create()
   else if name = 'NutritionOrder.oralDiet.texture' then
-    result := TFhirNutritionOrderOralDietTexture.create()
+    result := TFhirNutritionOrderOralDietTexture.Create()
   else if name = 'NutritionOrder.supplement' then
-    result := TFhirNutritionOrderSupplement.create()
+    result := TFhirNutritionOrderSupplement.Create()
   else if name = 'NutritionOrder.enteralFormula' then
-    result := TFhirNutritionOrderEnteralFormula.create()
+    result := TFhirNutritionOrderEnteralFormula.Create()
   else if name = 'NutritionOrder.enteralFormula.administration' then
-    result := TFhirNutritionOrderEnteralFormulaAdministration.create()
+    result := TFhirNutritionOrderEnteralFormulaAdministration.Create()
   else if name = 'NutritionOrder' then
-    result := TFhirNutritionOrder.create()
+    result := TFhirNutritionOrder.Create()
 {$ENDIF FHIR_NUTRITIONORDER}
 {$IFDEF FHIR_NUTRITIONPRODUCT}
   else if name = 'NutritionProduct.nutrient' then
-    result := TFhirNutritionProductNutrient.create()
+    result := TFhirNutritionProductNutrient.Create()
   else if name = 'NutritionProduct.ingredient' then
-    result := TFhirNutritionProductIngredient.create()
+    result := TFhirNutritionProductIngredient.Create()
   else if name = 'NutritionProduct.productCharacteristic' then
-    result := TFhirNutritionProductProductCharacteristic.create()
+    result := TFhirNutritionProductProductCharacteristic.Create()
   else if name = 'NutritionProduct.instance' then
-    result := TFhirNutritionProductInstance.create()
+    result := TFhirNutritionProductInstance.Create()
   else if name = 'NutritionProduct' then
-    result := TFhirNutritionProduct.create()
+    result := TFhirNutritionProduct.Create()
 {$ENDIF FHIR_NUTRITIONPRODUCT}
 {$IFDEF FHIR_OBSERVATION}
   else if name = 'Observation.referenceRange' then
-    result := TFhirObservationReferenceRange.create()
+    result := TFhirObservationReferenceRange.Create()
   else if name = 'Observation.component' then
-    result := TFhirObservationComponent.create()
+    result := TFhirObservationComponent.Create()
   else if name = 'Observation' then
-    result := TFhirObservation.create()
+    result := TFhirObservation.Create()
 {$ENDIF FHIR_OBSERVATION}
 {$IFDEF FHIR_OBSERVATIONDEFINITION}
   else if name = 'ObservationDefinition.quantitativeDetails' then
-    result := TFhirObservationDefinitionQuantitativeDetails.create()
+    result := TFhirObservationDefinitionQuantitativeDetails.Create()
   else if name = 'ObservationDefinition.qualifiedInterval' then
-    result := TFhirObservationDefinitionQualifiedInterval.create()
+    result := TFhirObservationDefinitionQualifiedInterval.Create()
   else if name = 'ObservationDefinition' then
-    result := TFhirObservationDefinition.create()
+    result := TFhirObservationDefinition.Create()
 {$ENDIF FHIR_OBSERVATIONDEFINITION}
 {$IFDEF FHIR_OPERATIONDEFINITION}
   else if name = 'OperationDefinition.parameter' then
-    result := TFhirOperationDefinitionParameter.create()
+    result := TFhirOperationDefinitionParameter.Create()
   else if name = 'OperationDefinition.parameter.binding' then
-    result := TFhirOperationDefinitionParameterBinding.create()
+    result := TFhirOperationDefinitionParameterBinding.Create()
   else if name = 'OperationDefinition.parameter.referencedFrom' then
-    result := TFhirOperationDefinitionParameterReferencedFrom.create()
+    result := TFhirOperationDefinitionParameterReferencedFrom.Create()
   else if name = 'OperationDefinition.overload' then
-    result := TFhirOperationDefinitionOverload.create()
+    result := TFhirOperationDefinitionOverload.Create()
   else if name = 'OperationDefinition' then
-    result := TFhirOperationDefinition.create()
+    result := TFhirOperationDefinition.Create()
 {$ENDIF FHIR_OPERATIONDEFINITION}
 {$IFDEF FHIR_OPERATIONOUTCOME}
   else if name = 'OperationOutcome.issue' then
-    result := TFhirOperationOutcomeIssue.create()
+    result := TFhirOperationOutcomeIssue.Create()
   else if name = 'OperationOutcome' then
-    result := TFhirOperationOutcome.create()
+    result := TFhirOperationOutcome.Create()
 {$ENDIF FHIR_OPERATIONOUTCOME}
 {$IFDEF FHIR_ORGANIZATION}
   else if name = 'Organization.contact' then
-    result := TFhirOrganizationContact.create()
+    result := TFhirOrganizationContact.Create()
   else if name = 'Organization' then
-    result := TFhirOrganization.create()
+    result := TFhirOrganization.Create()
 {$ENDIF FHIR_ORGANIZATION}
 {$IFDEF FHIR_ORGANIZATIONAFFILIATION}
   else if name = 'OrganizationAffiliation' then
-    result := TFhirOrganizationAffiliation.create()
+    result := TFhirOrganizationAffiliation.Create()
 {$ENDIF FHIR_ORGANIZATIONAFFILIATION}
 {$IFDEF FHIR_PACKAGEDPRODUCTDEFINITION}
   else if name = 'PackagedProductDefinition.legalStatusOfSupply' then
-    result := TFhirPackagedProductDefinitionLegalStatusOfSupply.create()
+    result := TFhirPackagedProductDefinitionLegalStatusOfSupply.Create()
   else if name = 'PackagedProductDefinition.package' then
-    result := TFhirPackagedProductDefinitionPackage.create()
+    result := TFhirPackagedProductDefinitionPackage.Create()
   else if name = 'PackagedProductDefinition.package.property' then
-    result := TFhirPackagedProductDefinitionPackageProperty.create()
+    result := TFhirPackagedProductDefinitionPackageProperty.Create()
   else if name = 'PackagedProductDefinition.package.containedItem' then
-    result := TFhirPackagedProductDefinitionPackageContainedItem.create()
+    result := TFhirPackagedProductDefinitionPackageContainedItem.Create()
   else if name = 'PackagedProductDefinition' then
-    result := TFhirPackagedProductDefinition.create()
+    result := TFhirPackagedProductDefinition.Create()
 {$ENDIF FHIR_PACKAGEDPRODUCTDEFINITION}
 {$IFDEF FHIR_PARAMETERS}
   else if name = 'Parameters.parameter' then
-    result := TFhirParametersParameter.create()
+    result := TFhirParametersParameter.Create()
   else if name = 'Parameters' then
-    result := TFhirParameters.create()
+    result := TFhirParameters.Create()
 {$ENDIF FHIR_PARAMETERS}
 {$IFDEF FHIR_PATIENT}
   else if name = 'Patient.contact' then
-    result := TFhirPatientContact.create()
+    result := TFhirPatientContact.Create()
   else if name = 'Patient.communication' then
-    result := TFhirPatientCommunication.create()
+    result := TFhirPatientCommunication.Create()
   else if name = 'Patient.link' then
-    result := TFhirPatientLink.create()
+    result := TFhirPatientLink.Create()
   else if name = 'Patient' then
-    result := TFhirPatient.create()
+    result := TFhirPatient.Create()
 {$ENDIF FHIR_PATIENT}
 {$IFDEF FHIR_PAYMENTNOTICE}
   else if name = 'PaymentNotice' then
-    result := TFhirPaymentNotice.create()
+    result := TFhirPaymentNotice.Create()
 {$ENDIF FHIR_PAYMENTNOTICE}
 {$IFDEF FHIR_PAYMENTRECONCILIATION}
   else if name = 'PaymentReconciliation.detail' then
-    result := TFhirPaymentReconciliationDetail.create()
+    result := TFhirPaymentReconciliationDetail.Create()
   else if name = 'PaymentReconciliation.processNote' then
-    result := TFhirPaymentReconciliationProcessNote.create()
+    result := TFhirPaymentReconciliationProcessNote.Create()
   else if name = 'PaymentReconciliation' then
-    result := TFhirPaymentReconciliation.create()
+    result := TFhirPaymentReconciliation.Create()
 {$ENDIF FHIR_PAYMENTRECONCILIATION}
 {$IFDEF FHIR_PERSON}
   else if name = 'Person.link' then
-    result := TFhirPersonLink.create()
+    result := TFhirPersonLink.Create()
   else if name = 'Person' then
-    result := TFhirPerson.create()
+    result := TFhirPerson.Create()
 {$ENDIF FHIR_PERSON}
 {$IFDEF FHIR_PLANDEFINITION}
   else if name = 'PlanDefinition.goal' then
-    result := TFhirPlanDefinitionGoal.create()
+    result := TFhirPlanDefinitionGoal.Create()
   else if name = 'PlanDefinition.goal.target' then
-    result := TFhirPlanDefinitionGoalTarget.create()
+    result := TFhirPlanDefinitionGoalTarget.Create()
   else if name = 'PlanDefinition.action' then
-    result := TFhirPlanDefinitionAction.create()
+    result := TFhirPlanDefinitionAction.Create()
   else if name = 'PlanDefinition.action.condition' then
-    result := TFhirPlanDefinitionActionCondition.create()
+    result := TFhirPlanDefinitionActionCondition.Create()
   else if name = 'PlanDefinition.action.relatedAction' then
-    result := TFhirPlanDefinitionActionRelatedAction.create()
+    result := TFhirPlanDefinitionActionRelatedAction.Create()
   else if name = 'PlanDefinition.action.participant' then
-    result := TFhirPlanDefinitionActionParticipant.create()
+    result := TFhirPlanDefinitionActionParticipant.Create()
   else if name = 'PlanDefinition.action.dynamicValue' then
-    result := TFhirPlanDefinitionActionDynamicValue.create()
+    result := TFhirPlanDefinitionActionDynamicValue.Create()
   else if name = 'PlanDefinition' then
-    result := TFhirPlanDefinition.create()
+    result := TFhirPlanDefinition.Create()
 {$ENDIF FHIR_PLANDEFINITION}
 {$IFDEF FHIR_PRACTITIONER}
   else if name = 'Practitioner.qualification' then
-    result := TFhirPractitionerQualification.create()
+    result := TFhirPractitionerQualification.Create()
   else if name = 'Practitioner' then
-    result := TFhirPractitioner.create()
+    result := TFhirPractitioner.Create()
 {$ENDIF FHIR_PRACTITIONER}
 {$IFDEF FHIR_PRACTITIONERROLE}
   else if name = 'PractitionerRole.availableTime' then
-    result := TFhirPractitionerRoleAvailableTime.create()
+    result := TFhirPractitionerRoleAvailableTime.Create()
   else if name = 'PractitionerRole.notAvailable' then
-    result := TFhirPractitionerRoleNotAvailable.create()
+    result := TFhirPractitionerRoleNotAvailable.Create()
   else if name = 'PractitionerRole' then
-    result := TFhirPractitionerRole.create()
+    result := TFhirPractitionerRole.Create()
 {$ENDIF FHIR_PRACTITIONERROLE}
 {$IFDEF FHIR_PROCEDURE}
   else if name = 'Procedure.performer' then
-    result := TFhirProcedurePerformer.create()
+    result := TFhirProcedurePerformer.Create()
   else if name = 'Procedure.focalDevice' then
-    result := TFhirProcedureFocalDevice.create()
+    result := TFhirProcedureFocalDevice.Create()
   else if name = 'Procedure' then
-    result := TFhirProcedure.create()
+    result := TFhirProcedure.Create()
 {$ENDIF FHIR_PROCEDURE}
 {$IFDEF FHIR_PROVENANCE}
   else if name = 'Provenance.agent' then
-    result := TFhirProvenanceAgent.create()
+    result := TFhirProvenanceAgent.Create()
   else if name = 'Provenance.entity' then
-    result := TFhirProvenanceEntity.create()
+    result := TFhirProvenanceEntity.Create()
   else if name = 'Provenance' then
-    result := TFhirProvenance.create()
+    result := TFhirProvenance.Create()
 {$ENDIF FHIR_PROVENANCE}
 {$IFDEF FHIR_QUESTIONNAIRE}
   else if name = 'Questionnaire.item' then
-    result := TFhirQuestionnaireItem.create()
+    result := TFhirQuestionnaireItem.Create()
   else if name = 'Questionnaire.item.enableWhen' then
-    result := TFhirQuestionnaireItemEnableWhen.create()
+    result := TFhirQuestionnaireItemEnableWhen.Create()
   else if name = 'Questionnaire.item.answerOption' then
-    result := TFhirQuestionnaireItemAnswerOption.create()
+    result := TFhirQuestionnaireItemAnswerOption.Create()
   else if name = 'Questionnaire.item.initial' then
-    result := TFhirQuestionnaireItemInitial.create()
+    result := TFhirQuestionnaireItemInitial.Create()
   else if name = 'Questionnaire' then
-    result := TFhirQuestionnaire.create()
+    result := TFhirQuestionnaire.Create()
 {$ENDIF FHIR_QUESTIONNAIRE}
 {$IFDEF FHIR_QUESTIONNAIRERESPONSE}
   else if name = 'QuestionnaireResponse.item' then
-    result := TFhirQuestionnaireResponseItem.create()
+    result := TFhirQuestionnaireResponseItem.Create()
   else if name = 'QuestionnaireResponse.item.answer' then
-    result := TFhirQuestionnaireResponseItemAnswer.create()
+    result := TFhirQuestionnaireResponseItemAnswer.Create()
   else if name = 'QuestionnaireResponse' then
-    result := TFhirQuestionnaireResponse.create()
+    result := TFhirQuestionnaireResponse.Create()
 {$ENDIF FHIR_QUESTIONNAIRERESPONSE}
 {$IFDEF FHIR_REGULATEDAUTHORIZATION}
   else if name = 'RegulatedAuthorization.case' then
-    result := TFhirRegulatedAuthorizationCase.create()
+    result := TFhirRegulatedAuthorizationCase.Create()
   else if name = 'RegulatedAuthorization' then
-    result := TFhirRegulatedAuthorization.create()
+    result := TFhirRegulatedAuthorization.Create()
 {$ENDIF FHIR_REGULATEDAUTHORIZATION}
 {$IFDEF FHIR_RELATEDPERSON}
   else if name = 'RelatedPerson.communication' then
-    result := TFhirRelatedPersonCommunication.create()
+    result := TFhirRelatedPersonCommunication.Create()
   else if name = 'RelatedPerson' then
-    result := TFhirRelatedPerson.create()
+    result := TFhirRelatedPerson.Create()
 {$ENDIF FHIR_RELATEDPERSON}
 {$IFDEF FHIR_REQUESTGROUP}
   else if name = 'RequestGroup.action' then
-    result := TFhirRequestGroupAction.create()
+    result := TFhirRequestGroupAction.Create()
   else if name = 'RequestGroup.action.condition' then
-    result := TFhirRequestGroupActionCondition.create()
+    result := TFhirRequestGroupActionCondition.Create()
   else if name = 'RequestGroup.action.relatedAction' then
-    result := TFhirRequestGroupActionRelatedAction.create()
+    result := TFhirRequestGroupActionRelatedAction.Create()
   else if name = 'RequestGroup' then
-    result := TFhirRequestGroup.create()
+    result := TFhirRequestGroup.Create()
 {$ENDIF FHIR_REQUESTGROUP}
 {$IFDEF FHIR_RESEARCHDEFINITION}
   else if name = 'ResearchDefinition' then
-    result := TFhirResearchDefinition.create()
+    result := TFhirResearchDefinition.Create()
 {$ENDIF FHIR_RESEARCHDEFINITION}
 {$IFDEF FHIR_RESEARCHELEMENTDEFINITION}
   else if name = 'ResearchElementDefinition.characteristic' then
-    result := TFhirResearchElementDefinitionCharacteristic.create()
+    result := TFhirResearchElementDefinitionCharacteristic.Create()
   else if name = 'ResearchElementDefinition' then
-    result := TFhirResearchElementDefinition.create()
+    result := TFhirResearchElementDefinition.Create()
 {$ENDIF FHIR_RESEARCHELEMENTDEFINITION}
 {$IFDEF FHIR_RESEARCHSTUDY}
   else if name = 'ResearchStudy.arm' then
-    result := TFhirResearchStudyArm.create()
+    result := TFhirResearchStudyArm.Create()
   else if name = 'ResearchStudy.objective' then
-    result := TFhirResearchStudyObjective.create()
+    result := TFhirResearchStudyObjective.Create()
   else if name = 'ResearchStudy' then
-    result := TFhirResearchStudy.create()
+    result := TFhirResearchStudy.Create()
 {$ENDIF FHIR_RESEARCHSTUDY}
 {$IFDEF FHIR_RESEARCHSUBJECT}
   else if name = 'ResearchSubject' then
-    result := TFhirResearchSubject.create()
+    result := TFhirResearchSubject.Create()
 {$ENDIF FHIR_RESEARCHSUBJECT}
 {$IFDEF FHIR_RISKASSESSMENT}
   else if name = 'RiskAssessment.prediction' then
-    result := TFhirRiskAssessmentPrediction.create()
+    result := TFhirRiskAssessmentPrediction.Create()
   else if name = 'RiskAssessment' then
-    result := TFhirRiskAssessment.create()
+    result := TFhirRiskAssessment.Create()
 {$ENDIF FHIR_RISKASSESSMENT}
 {$IFDEF FHIR_SCHEDULE}
   else if name = 'Schedule' then
-    result := TFhirSchedule.create()
+    result := TFhirSchedule.Create()
 {$ENDIF FHIR_SCHEDULE}
 {$IFDEF FHIR_SEARCHPARAMETER}
   else if name = 'SearchParameter.component' then
-    result := TFhirSearchParameterComponent.create()
+    result := TFhirSearchParameterComponent.Create()
   else if name = 'SearchParameter' then
-    result := TFhirSearchParameter.create()
+    result := TFhirSearchParameter.Create()
 {$ENDIF FHIR_SEARCHPARAMETER}
 {$IFDEF FHIR_SERVICEREQUEST}
   else if name = 'ServiceRequest' then
-    result := TFhirServiceRequest.create()
+    result := TFhirServiceRequest.Create()
 {$ENDIF FHIR_SERVICEREQUEST}
 {$IFDEF FHIR_SLOT}
   else if name = 'Slot' then
-    result := TFhirSlot.create()
+    result := TFhirSlot.Create()
 {$ENDIF FHIR_SLOT}
 {$IFDEF FHIR_SPECIMEN}
   else if name = 'Specimen.collection' then
-    result := TFhirSpecimenCollection.create()
+    result := TFhirSpecimenCollection.Create()
   else if name = 'Specimen.processing' then
-    result := TFhirSpecimenProcessing.create()
+    result := TFhirSpecimenProcessing.Create()
   else if name = 'Specimen.container' then
-    result := TFhirSpecimenContainer.create()
+    result := TFhirSpecimenContainer.Create()
   else if name = 'Specimen' then
-    result := TFhirSpecimen.create()
+    result := TFhirSpecimen.Create()
 {$ENDIF FHIR_SPECIMEN}
 {$IFDEF FHIR_SPECIMENDEFINITION}
   else if name = 'SpecimenDefinition.typeTested' then
-    result := TFhirSpecimenDefinitionTypeTested.create()
+    result := TFhirSpecimenDefinitionTypeTested.Create()
   else if name = 'SpecimenDefinition.typeTested.container' then
-    result := TFhirSpecimenDefinitionTypeTestedContainer.create()
+    result := TFhirSpecimenDefinitionTypeTestedContainer.Create()
   else if name = 'SpecimenDefinition.typeTested.container.additive' then
-    result := TFhirSpecimenDefinitionTypeTestedContainerAdditive.create()
+    result := TFhirSpecimenDefinitionTypeTestedContainerAdditive.Create()
   else if name = 'SpecimenDefinition.typeTested.handling' then
-    result := TFhirSpecimenDefinitionTypeTestedHandling.create()
+    result := TFhirSpecimenDefinitionTypeTestedHandling.Create()
   else if name = 'SpecimenDefinition' then
-    result := TFhirSpecimenDefinition.create()
+    result := TFhirSpecimenDefinition.Create()
 {$ENDIF FHIR_SPECIMENDEFINITION}
 {$IFDEF FHIR_STRUCTUREDEFINITION}
   else if name = 'StructureDefinition.mapping' then
-    result := TFhirStructureDefinitionMapping.create()
+    result := TFhirStructureDefinitionMapping.Create()
   else if name = 'StructureDefinition.context' then
-    result := TFhirStructureDefinitionContext.create()
+    result := TFhirStructureDefinitionContext.Create()
   else if name = 'StructureDefinition.snapshot' then
-    result := TFhirStructureDefinitionSnapshot.create()
+    result := TFhirStructureDefinitionSnapshot.Create()
   else if name = 'StructureDefinition.differential' then
-    result := TFhirStructureDefinitionDifferential.create()
+    result := TFhirStructureDefinitionDifferential.Create()
   else if name = 'StructureDefinition' then
-    result := TFhirStructureDefinition.create()
+    result := TFhirStructureDefinition.Create()
 {$ENDIF FHIR_STRUCTUREDEFINITION}
 {$IFDEF FHIR_STRUCTUREMAP}
   else if name = 'StructureMap.structure' then
-    result := TFhirStructureMapStructure.create()
+    result := TFhirStructureMapStructure.Create()
   else if name = 'StructureMap.group' then
-    result := TFhirStructureMapGroup.create()
+    result := TFhirStructureMapGroup.Create()
   else if name = 'StructureMap.group.input' then
-    result := TFhirStructureMapGroupInput.create()
+    result := TFhirStructureMapGroupInput.Create()
   else if name = 'StructureMap.group.rule' then
-    result := TFhirStructureMapGroupRule.create()
+    result := TFhirStructureMapGroupRule.Create()
   else if name = 'StructureMap.group.rule.source' then
-    result := TFhirStructureMapGroupRuleSource.create()
+    result := TFhirStructureMapGroupRuleSource.Create()
   else if name = 'StructureMap.group.rule.target' then
-    result := TFhirStructureMapGroupRuleTarget.create()
+    result := TFhirStructureMapGroupRuleTarget.Create()
   else if name = 'StructureMap.group.rule.target.parameter' then
-    result := TFhirStructureMapGroupRuleTargetParameter.create()
+    result := TFhirStructureMapGroupRuleTargetParameter.Create()
   else if name = 'StructureMap.group.rule.dependent' then
-    result := TFhirStructureMapGroupRuleDependent.create()
+    result := TFhirStructureMapGroupRuleDependent.Create()
   else if name = 'StructureMap' then
-    result := TFhirStructureMap.create()
+    result := TFhirStructureMap.Create()
 {$ENDIF FHIR_STRUCTUREMAP}
 {$IFDEF FHIR_SUBSCRIPTION}
   else if name = 'Subscription.channel' then
-    result := TFhirSubscriptionChannel.create()
+    result := TFhirSubscriptionChannel.Create()
   else if name = 'Subscription' then
-    result := TFhirSubscription.create()
+    result := TFhirSubscription.Create()
 {$ENDIF FHIR_SUBSCRIPTION}
 {$IFDEF FHIR_SUBSCRIPTIONSTATUS}
   else if name = 'SubscriptionStatus.notificationEvent' then
-    result := TFhirSubscriptionStatusNotificationEvent.create()
+    result := TFhirSubscriptionStatusNotificationEvent.Create()
   else if name = 'SubscriptionStatus' then
-    result := TFhirSubscriptionStatus.create()
+    result := TFhirSubscriptionStatus.Create()
 {$ENDIF FHIR_SUBSCRIPTIONSTATUS}
 {$IFDEF FHIR_SUBSCRIPTIONTOPIC}
   else if name = 'SubscriptionTopic.resourceTrigger' then
-    result := TFhirSubscriptionTopicResourceTrigger.create()
+    result := TFhirSubscriptionTopicResourceTrigger.Create()
   else if name = 'SubscriptionTopic.resourceTrigger.queryCriteria' then
-    result := TFhirSubscriptionTopicResourceTriggerQueryCriteria.create()
+    result := TFhirSubscriptionTopicResourceTriggerQueryCriteria.Create()
   else if name = 'SubscriptionTopic.eventTrigger' then
-    result := TFhirSubscriptionTopicEventTrigger.create()
+    result := TFhirSubscriptionTopicEventTrigger.Create()
   else if name = 'SubscriptionTopic.canFilterBy' then
-    result := TFhirSubscriptionTopicCanFilterBy.create()
+    result := TFhirSubscriptionTopicCanFilterBy.Create()
   else if name = 'SubscriptionTopic.notificationShape' then
-    result := TFhirSubscriptionTopicNotificationShape.create()
+    result := TFhirSubscriptionTopicNotificationShape.Create()
   else if name = 'SubscriptionTopic' then
-    result := TFhirSubscriptionTopic.create()
+    result := TFhirSubscriptionTopic.Create()
 {$ENDIF FHIR_SUBSCRIPTIONTOPIC}
 {$IFDEF FHIR_SUBSTANCE}
   else if name = 'Substance.instance' then
-    result := TFhirSubstanceInstance.create()
+    result := TFhirSubstanceInstance.Create()
   else if name = 'Substance.ingredient' then
-    result := TFhirSubstanceIngredient.create()
+    result := TFhirSubstanceIngredient.Create()
   else if name = 'Substance' then
-    result := TFhirSubstance.create()
+    result := TFhirSubstance.Create()
 {$ENDIF FHIR_SUBSTANCE}
 {$IFDEF FHIR_SUBSTANCEDEFINITION}
   else if name = 'SubstanceDefinition.moiety' then
-    result := TFhirSubstanceDefinitionMoiety.create()
+    result := TFhirSubstanceDefinitionMoiety.Create()
   else if name = 'SubstanceDefinition.property' then
-    result := TFhirSubstanceDefinitionProperty.create()
+    result := TFhirSubstanceDefinitionProperty.Create()
   else if name = 'SubstanceDefinition.molecularWeight' then
-    result := TFhirSubstanceDefinitionMolecularWeight.create()
+    result := TFhirSubstanceDefinitionMolecularWeight.Create()
   else if name = 'SubstanceDefinition.structure' then
-    result := TFhirSubstanceDefinitionStructure.create()
+    result := TFhirSubstanceDefinitionStructure.Create()
   else if name = 'SubstanceDefinition.structure.representation' then
-    result := TFhirSubstanceDefinitionStructureRepresentation.create()
+    result := TFhirSubstanceDefinitionStructureRepresentation.Create()
   else if name = 'SubstanceDefinition.code' then
-    result := TFhirSubstanceDefinitionCode.create()
+    result := TFhirSubstanceDefinitionCode.Create()
   else if name = 'SubstanceDefinition.name' then
-    result := TFhirSubstanceDefinitionName.create()
+    result := TFhirSubstanceDefinitionName.Create()
   else if name = 'SubstanceDefinition.name.official' then
-    result := TFhirSubstanceDefinitionNameOfficial.create()
+    result := TFhirSubstanceDefinitionNameOfficial.Create()
   else if name = 'SubstanceDefinition.relationship' then
-    result := TFhirSubstanceDefinitionRelationship.create()
+    result := TFhirSubstanceDefinitionRelationship.Create()
   else if name = 'SubstanceDefinition.sourceMaterial' then
-    result := TFhirSubstanceDefinitionSourceMaterial.create()
+    result := TFhirSubstanceDefinitionSourceMaterial.Create()
   else if name = 'SubstanceDefinition' then
-    result := TFhirSubstanceDefinition.create()
+    result := TFhirSubstanceDefinition.Create()
 {$ENDIF FHIR_SUBSTANCEDEFINITION}
 {$IFDEF FHIR_SUPPLYDELIVERY}
   else if name = 'SupplyDelivery.suppliedItem' then
-    result := TFhirSupplyDeliverySuppliedItem.create()
+    result := TFhirSupplyDeliverySuppliedItem.Create()
   else if name = 'SupplyDelivery' then
-    result := TFhirSupplyDelivery.create()
+    result := TFhirSupplyDelivery.Create()
 {$ENDIF FHIR_SUPPLYDELIVERY}
 {$IFDEF FHIR_SUPPLYREQUEST}
   else if name = 'SupplyRequest.parameter' then
-    result := TFhirSupplyRequestParameter.create()
+    result := TFhirSupplyRequestParameter.Create()
   else if name = 'SupplyRequest' then
-    result := TFhirSupplyRequest.create()
+    result := TFhirSupplyRequest.Create()
 {$ENDIF FHIR_SUPPLYREQUEST}
 {$IFDEF FHIR_TASK}
   else if name = 'Task.restriction' then
-    result := TFhirTaskRestriction.create()
+    result := TFhirTaskRestriction.Create()
   else if name = 'Task.input' then
-    result := TFhirTaskInput.create()
+    result := TFhirTaskInput.Create()
   else if name = 'Task.output' then
-    result := TFhirTaskOutput.create()
+    result := TFhirTaskOutput.Create()
   else if name = 'Task' then
-    result := TFhirTask.create()
+    result := TFhirTask.Create()
 {$ENDIF FHIR_TASK}
 {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}
   else if name = 'TerminologyCapabilities.software' then
-    result := TFhirTerminologyCapabilitiesSoftware.create()
+    result := TFhirTerminologyCapabilitiesSoftware.Create()
   else if name = 'TerminologyCapabilities.implementation' then
-    result := TFhirTerminologyCapabilitiesImplementation.create()
+    result := TFhirTerminologyCapabilitiesImplementation.Create()
   else if name = 'TerminologyCapabilities.codeSystem' then
-    result := TFhirTerminologyCapabilitiesCodeSystem.create()
+    result := TFhirTerminologyCapabilitiesCodeSystem.Create()
   else if name = 'TerminologyCapabilities.codeSystem.version' then
-    result := TFhirTerminologyCapabilitiesCodeSystemVersion.create()
+    result := TFhirTerminologyCapabilitiesCodeSystemVersion.Create()
   else if name = 'TerminologyCapabilities.codeSystem.version.filter' then
-    result := TFhirTerminologyCapabilitiesCodeSystemVersionFilter.create()
+    result := TFhirTerminologyCapabilitiesCodeSystemVersionFilter.Create()
   else if name = 'TerminologyCapabilities.expansion' then
-    result := TFhirTerminologyCapabilitiesExpansion.create()
+    result := TFhirTerminologyCapabilitiesExpansion.Create()
   else if name = 'TerminologyCapabilities.expansion.parameter' then
-    result := TFhirTerminologyCapabilitiesExpansionParameter.create()
+    result := TFhirTerminologyCapabilitiesExpansionParameter.Create()
   else if name = 'TerminologyCapabilities.validateCode' then
-    result := TFhirTerminologyCapabilitiesValidateCode.create()
+    result := TFhirTerminologyCapabilitiesValidateCode.Create()
   else if name = 'TerminologyCapabilities.translation' then
-    result := TFhirTerminologyCapabilitiesTranslation.create()
+    result := TFhirTerminologyCapabilitiesTranslation.Create()
   else if name = 'TerminologyCapabilities.closure' then
-    result := TFhirTerminologyCapabilitiesClosure.create()
+    result := TFhirTerminologyCapabilitiesClosure.Create()
   else if name = 'TerminologyCapabilities' then
-    result := TFhirTerminologyCapabilities.create()
+    result := TFhirTerminologyCapabilities.Create()
 {$ENDIF FHIR_TERMINOLOGYCAPABILITIES}
 {$IFDEF FHIR_TESTREPORT}
   else if name = 'TestReport.participant' then
-    result := TFhirTestReportParticipant.create()
+    result := TFhirTestReportParticipant.Create()
   else if name = 'TestReport.setup' then
-    result := TFhirTestReportSetup.create()
+    result := TFhirTestReportSetup.Create()
   else if name = 'TestReport.setup.action' then
-    result := TFhirTestReportSetupAction.create()
+    result := TFhirTestReportSetupAction.Create()
   else if name = 'TestReport.setup.action.operation' then
-    result := TFhirTestReportSetupActionOperation.create()
+    result := TFhirTestReportSetupActionOperation.Create()
   else if name = 'TestReport.setup.action.assert' then
-    result := TFhirTestReportSetupActionAssert.create()
+    result := TFhirTestReportSetupActionAssert.Create()
   else if name = 'TestReport.test' then
-    result := TFhirTestReportTest.create()
+    result := TFhirTestReportTest.Create()
   else if name = 'TestReport.test.action' then
-    result := TFhirTestReportTestAction.create()
+    result := TFhirTestReportTestAction.Create()
   else if name = 'TestReport.teardown' then
-    result := TFhirTestReportTeardown.create()
+    result := TFhirTestReportTeardown.Create()
   else if name = 'TestReport.teardown.action' then
-    result := TFhirTestReportTeardownAction.create()
+    result := TFhirTestReportTeardownAction.Create()
   else if name = 'TestReport' then
-    result := TFhirTestReport.create()
+    result := TFhirTestReport.Create()
 {$ENDIF FHIR_TESTREPORT}
 {$IFDEF FHIR_TESTSCRIPT}
   else if name = 'TestScript.origin' then
-    result := TFhirTestScriptOrigin.create()
+    result := TFhirTestScriptOrigin.Create()
   else if name = 'TestScript.destination' then
-    result := TFhirTestScriptDestination.create()
+    result := TFhirTestScriptDestination.Create()
   else if name = 'TestScript.metadata' then
-    result := TFhirTestScriptMetadata.create()
+    result := TFhirTestScriptMetadata.Create()
   else if name = 'TestScript.metadata.link' then
-    result := TFhirTestScriptMetadataLink.create()
+    result := TFhirTestScriptMetadataLink.Create()
   else if name = 'TestScript.metadata.capability' then
-    result := TFhirTestScriptMetadataCapability.create()
+    result := TFhirTestScriptMetadataCapability.Create()
   else if name = 'TestScript.fixture' then
-    result := TFhirTestScriptFixture.create()
+    result := TFhirTestScriptFixture.Create()
   else if name = 'TestScript.variable' then
-    result := TFhirTestScriptVariable.create()
+    result := TFhirTestScriptVariable.Create()
   else if name = 'TestScript.setup' then
-    result := TFhirTestScriptSetup.create()
+    result := TFhirTestScriptSetup.Create()
   else if name = 'TestScript.setup.action' then
-    result := TFhirTestScriptSetupAction.create()
+    result := TFhirTestScriptSetupAction.Create()
   else if name = 'TestScript.setup.action.operation' then
-    result := TFhirTestScriptSetupActionOperation.create()
+    result := TFhirTestScriptSetupActionOperation.Create()
   else if name = 'TestScript.setup.action.operation.requestHeader' then
-    result := TFhirTestScriptSetupActionOperationRequestHeader.create()
+    result := TFhirTestScriptSetupActionOperationRequestHeader.Create()
   else if name = 'TestScript.setup.action.assert' then
-    result := TFhirTestScriptSetupActionAssert.create()
+    result := TFhirTestScriptSetupActionAssert.Create()
   else if name = 'TestScript.test' then
-    result := TFhirTestScriptTest.create()
+    result := TFhirTestScriptTest.Create()
   else if name = 'TestScript.test.action' then
-    result := TFhirTestScriptTestAction.create()
+    result := TFhirTestScriptTestAction.Create()
   else if name = 'TestScript.teardown' then
-    result := TFhirTestScriptTeardown.create()
+    result := TFhirTestScriptTeardown.Create()
   else if name = 'TestScript.teardown.action' then
-    result := TFhirTestScriptTeardownAction.create()
+    result := TFhirTestScriptTeardownAction.Create()
   else if name = 'TestScript' then
-    result := TFhirTestScript.create()
+    result := TFhirTestScript.Create()
 {$ENDIF FHIR_TESTSCRIPT}
 {$IFDEF FHIR_VALUESET}
   else if name = 'ValueSet.compose' then
-    result := TFhirValueSetCompose.create()
+    result := TFhirValueSetCompose.Create()
   else if name = 'ValueSet.compose.include' then
-    result := TFhirValueSetComposeInclude.create()
+    result := TFhirValueSetComposeInclude.Create()
   else if name = 'ValueSet.compose.include.concept' then
-    result := TFhirValueSetComposeIncludeConcept.create()
+    result := TFhirValueSetComposeIncludeConcept.Create()
   else if name = 'ValueSet.compose.include.concept.designation' then
-    result := TFhirValueSetComposeIncludeConceptDesignation.create()
+    result := TFhirValueSetComposeIncludeConceptDesignation.Create()
   else if name = 'ValueSet.compose.include.filter' then
-    result := TFhirValueSetComposeIncludeFilter.create()
+    result := TFhirValueSetComposeIncludeFilter.Create()
   else if name = 'ValueSet.expansion' then
-    result := TFhirValueSetExpansion.create()
+    result := TFhirValueSetExpansion.Create()
   else if name = 'ValueSet.expansion.parameter' then
-    result := TFhirValueSetExpansionParameter.create()
+    result := TFhirValueSetExpansionParameter.Create()
   else if name = 'ValueSet.expansion.contains' then
-    result := TFhirValueSetExpansionContains.create()
+    result := TFhirValueSetExpansionContains.Create()
   else if name = 'ValueSet' then
-    result := TFhirValueSet.create()
+    result := TFhirValueSet.Create()
 {$ENDIF FHIR_VALUESET}
 {$IFDEF FHIR_VERIFICATIONRESULT}
   else if name = 'VerificationResult.primarySource' then
-    result := TFhirVerificationResultPrimarySource.create()
+    result := TFhirVerificationResultPrimarySource.Create()
   else if name = 'VerificationResult.attestation' then
-    result := TFhirVerificationResultAttestation.create()
+    result := TFhirVerificationResultAttestation.Create()
   else if name = 'VerificationResult.validator' then
-    result := TFhirVerificationResultValidator.create()
+    result := TFhirVerificationResultValidator.Create()
   else if name = 'VerificationResult' then
-    result := TFhirVerificationResult.create()
+    result := TFhirVerificationResult.Create()
 {$ENDIF FHIR_VERIFICATIONRESULT}
 {$IFDEF FHIR_VISIONPRESCRIPTION}
   else if name = 'VisionPrescription.lensSpecification' then
-    result := TFhirVisionPrescriptionLensSpecification.create()
+    result := TFhirVisionPrescriptionLensSpecification.Create()
   else if name = 'VisionPrescription.lensSpecification.prism' then
-    result := TFhirVisionPrescriptionLensSpecificationPrism.create()
+    result := TFhirVisionPrescriptionLensSpecificationPrism.Create()
   else if name = 'VisionPrescription' then
-    result := TFhirVisionPrescription.create()
+    result := TFhirVisionPrescription.Create()
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 {gen-factory-end}
 

@@ -165,8 +165,8 @@ begin
     value := obj.stringLiteral('http://hl7.org/fhir/value');
   i := StringArrayIndexOfSensitive(aNames, value);
   if (value <> '') and (i < 0) then
-    raise ERdfException.create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));
-  result := TFHIREnum.create;
+    raise ERdfException.Create('unknown code: '+value+' from a set of choices of '+StringArrayToCommaString(aNames));
+  result := TFHIREnum.Create;
   try
     result.value := value;
     result.system := aSystems[i];
@@ -201,7 +201,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -229,7 +229,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -257,7 +257,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -285,7 +285,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -313,7 +313,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -341,7 +341,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -369,7 +369,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -397,7 +397,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -425,7 +425,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -453,7 +453,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -481,7 +481,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -509,7 +509,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -537,7 +537,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -565,7 +565,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -593,7 +593,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -621,7 +621,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -649,7 +649,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -677,7 +677,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -705,7 +705,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -733,7 +733,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -761,7 +761,7 @@ begin
     parseElementProperties(obj, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -790,7 +790,7 @@ begin
     Raise ERdfException.Create('error - object is nil')
 {{parser.reg.fragment}}
   else
-    raise ERdfException.create('error: the element '+type_+' is not a valid fragment name');
+    raise ERdfException.Create('error: the element '+type_+' is not a valid fragment name');
 end;
 
 function TFHIRTurtleParser.ParseDataType(obj : TTurtleComplex; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
@@ -799,7 +799,7 @@ begin
     Raise ERdfException.Create('error - object is nil')
 {{parser.reg.type}}
   else
-    raise ERdfException.create('Unknown Type');
+    raise ERdfException.Create('Unknown Type');
 end;
 
 procedure TFHIRTurtleComposer.ComposeResource(parent : TTurtleComplex; resource : TFhirResource);
@@ -812,7 +812,7 @@ begin
   Case resource.ResourceType of
 {{compose.reg.resource}}
   else
-    raise ERdfException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise ERdfException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 
@@ -825,7 +825,7 @@ begin
     Raise ERdfException.Create('error - object has no type')
 {{parser.reg.resource}}
   else
-    raise ERdfException.create('error: the element '+s+' is not a valid resource name');
+    raise ERdfException.Create('error: the element '+s+' is not a valid resource name');
 end;
 
 end.

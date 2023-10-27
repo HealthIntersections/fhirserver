@@ -103,7 +103,7 @@ implementation
 constructor TTextEngine.Create;
 begin
   inherited Create;
-  FSteps := TFslList<TTextEngineStep>.create;
+  FSteps := TFslList<TTextEngineStep>.Create;
 end;
 
 destructor TTextEngine.Destroy;
@@ -119,7 +119,7 @@ end;
 
 procedure TTextEngine.addStep(transform: TTextEngineTransform);
 begin
-  FSteps.add(TTextEngineStep.create(transform));
+  FSteps.add(TTextEngineStep.Create(transform));
 end;
 
 function TTextEngine.execute(src: String): String;

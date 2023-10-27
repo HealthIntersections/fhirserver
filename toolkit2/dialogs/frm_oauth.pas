@@ -85,7 +85,7 @@ implementation
 
 procedure TOAuthForm.FormCreate(Sender: TObject);
 begin
-  FLogin := TSmartAppLaunchLogin.create;
+  FLogin := TSmartAppLaunchLogin.Create;
   FLogin.name := 'FHIR Toolkit';
   FLogin.OnOpenURL := DoOpenUrl;
   FLogin.OnIdle := DoIdle;
@@ -104,7 +104,7 @@ end;
 
 procedure TOAuthForm.FormDestroy(Sender: TObject);
 begin
-  FLogin.Free;
+  FLogin.free;
 end;
 
 procedure TOAuthForm.Timer1Timer(Sender: TObject);

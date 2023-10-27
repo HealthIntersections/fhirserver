@@ -56,7 +56,7 @@ implementation
 ////  req : TFhirProcedureRequest;
 //begin
 //  result := false;
-//  raise EFHIRException.create('to do');
+//  raise EFHIRException.Create('to do');
 //(*  for res in request.context do
 //    if res is TFhirProcedureRequest then
 //    begin
@@ -70,7 +70,7 @@ implementation
 ////var
 ////  enc : TFhirEncounter;
 //begin
-//  raise EFHIRException.create('to do');
+//  raise EFHIRException.Create('to do');
 //(*  if not request.preFetch.ContainsKey('encounter') then
 //    result := false
 //  else
@@ -97,7 +97,7 @@ end;
 ////  bnd : TFhirBundle;
 ////  be : TFhirBundleEntry;
 //begin
-//  raise EFHIRException.create('to do');
+//  raise EFHIRException.Create('to do');
 //(*  bnd := request.preFetch['problems'].resource as TFhirBundle;
 //  result := false;
 //  for be in bnd.entryList do

@@ -170,6 +170,7 @@ Type
     FSecureCount, FPlainCount : Integer;
     FStats : TStatusRecords;
 
+    function insertValue(n: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
     function isLogging : boolean;
     procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
@@ -261,24 +262,24 @@ end;
 constructor TFhirWebServer.Create(settings: TFHIRServerSettings; name: String);
 Begin
   Inherited Create(nil);
-  FEndPoints := TFslList<TFhirWebServerEndpoint>.create;
+  FEndPoints := TFslList<TFhirWebServerEndpoint>.Create;
   self.Common.Name := Name;
   FInLog := nil;
 
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
-  FStats := TStatusRecords.create;
+  FStats := TStatusRecords.Create;
 End;
 
 destructor TFhirWebServer.Destroy;
 Begin
-  FStats.Free;
-  FUsageServer.Free;
-  FEndPoints.Free;
-  FSettings.Free;
-  FClients.Free;
-  FInLog.Free;
-  FOutLog.Free;
+  FStats.free;
+  FUsageServer.free;
+  FEndPoints.free;
+  FSettings.free;
+  FClients.free;
+  FInLog.free;
+  FOutLog.free;
   Inherited;
 End;
 
@@ -342,7 +343,7 @@ begin
     Common.OwnerName := 'Health Intersections';
   Common.AdminEmail := ini.admin['email'].value;
   if Common.AdminEmail = '' then
-    raise EFHIRException.create('An admin email is required');
+    raise EFHIRException.Create('An admin email is required');
 
   if Common.StatedPort = 80 then
     txu := 'http://' + Common.Host
@@ -490,6 +491,7 @@ End;
 procedure TFhirWebServer.recordStats(rec : TStatusRecord);
 begin
   rec.Requests := Common.Stats.TotalCount;
+  rec.RequestTime := Common.Stats.TotalTime;
   rec.ConnCount := FClients.Count;
   FStats.addToList(rec);
 end;
@@ -523,11 +525,11 @@ Begin
     Logging.log('  SSL Password: '+PadString('', length(FSSLPassword), '*'));
 
     If Not FileExists(FCertFile) Then
-      raise EIOException.create('SSL Certificate "' + FCertFile + ' could not be found');
+      raise EIOException.Create('SSL Certificate "' + FCertFile + ' could not be found');
     If Not FileExists(ChangeFileExt(FCertFile, '.key')) Then
-      raise EIOException.create('SSL Certificate Private Key "' + ChangeFileExt(FCertFile, '.key') + ' could not be found');
+      raise EIOException.Create('SSL Certificate Private Key "' + ChangeFileExt(FCertFile, '.key') + ' could not be found');
     If (FRootCertFile <> '') and (Not FileExists(FRootCertFile)) Then
-      raise EIOException.create('SSL Certificate "' + FRootCertFile + ' could not be found');
+      raise EIOException.Create('SSL Certificate "' + FRootCertFile + ' could not be found');
     FSSLServer := TFHIRHTTPServer.Create(Nil);
 //    FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
 //    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
@@ -567,14 +569,14 @@ Begin
   if FSSLServer <> nil then
   begin
     FSSLServer.active := false;
-    FSSLServer.Scheduler.Free;
+    FSSLServer.Scheduler.free;
     FreeAndNil(FSSLServer);
     FreeAndNil(FIOHandler);
   end;
   if FPlainServer <> nil then
   begin
     FPlainServer.active := false;
-    FPlainServer.Scheduler.Free;
+    FPlainServer.Scheduler.free;
     FreeAndNil(FPlainServer);
   end;
 End;
@@ -612,7 +614,7 @@ begin
     b.Append('</table>'#13#10);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -628,6 +630,21 @@ begin
   VHandled := SameText(AAuthType, 'Bearer');
   VUsername := INTERNAL_SECRET;
   VPassword := AAuthData;
+end;
+
+function letterForOp(request : TIdHTTPRequestInfo) : String;
+begin
+  case request.CommandType of
+    hcUnknown : result := 'u';
+    hcHEAD : result := 'h';
+    hcGET : result := 'g';
+    hcPOST : result := 'p';
+    hcDELETE : result := 'd';
+    hcPUT : result := 'l';
+    hcTRACE : result := 't';
+    hcOPTION  : result := 'o';
+    hcPATCH : result := 'a';
+  end;
 end;
 
 procedure TFhirWebServer.logOutput(AContext: TIdContext;
@@ -667,9 +684,9 @@ begin
     s := s + StringPadLeft(inttostr(FSSLServer.Contexts.count), ' ', 2) + ' ';
 
   if secure then
-    s := s + 's'
+    s := s + letterForOp(request).ToUpper
   else
-    s := s + 'p';
+    s := s + letterForOp(request);
   s := s + mimeType(request.ContentType);
   s := s + mimeType(response.ContentType)+' ';
   s := s + inttostr(response.ResponseNo)+' '+
@@ -708,7 +725,7 @@ begin
   else
   begin
     ip := getClientIP(AContext, request);
-    tt := TTimeTracker.create;
+    tt := TTimeTracker.Create;
     try
       InterlockedIncrement(GCounterWebRequests);
       SetThreadStatus('Processing '+request.Document);
@@ -888,7 +905,7 @@ begin
   else
   begin
     ip := getClientIP(AContext, request);
-    tt := TTimeTracker.create;
+    tt := TTimeTracker.Create;
     try
       InterlockedIncrement(GCounterWebRequests);
       cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
@@ -972,7 +989,7 @@ begin
         SetThreadStatus('Done');
       end;
     finally
-      tt.Free;
+      tt.free;
     end;
   end;
 end;
@@ -1052,7 +1069,7 @@ begin
     if FLogFolder <> '' then
       BytesToFile(package.AsBytes, FilePath([FLogFolder, id+'.log']));
   finally
-    package.Free;
+    package.free;
   end;
 end;
 
@@ -1105,7 +1122,7 @@ procedure TFhirWebServer.logResponse(id: String; resp: TIdHTTPResponseInfo);
         BytesToFile(package.AsBytes, FilePath([FLogFolder, id+'.log']));
       end;
     finally
-      package.Free;
+      package.free;
     end;
   end;
 begin
@@ -1189,7 +1206,7 @@ begin
     vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount64 - Common.Stats.StartTime)));
     ReturnProcessedFile(self, request, response, 'Diagnostics', SourceProvider.AltFile('/diagnostics.html', ''), false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
   result := 'Diagnostics';
 end;
@@ -1230,7 +1247,7 @@ var
   b : TStringBuilder;
   ep : TFhirWebServerEndpoint;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     b.append('<ul>');
     if FEndPoints.Count = 0 then
@@ -1273,30 +1290,57 @@ begin
   ReturnProcessedFile(sender, request, response, named, path, secure, variables);
 end;
 
+function  TFhirWebServer.insertValue(n : String; secure: boolean; variables: TFslMap<TFHIRObject>) : String;
+begin
+  if n.startsWith('include ') then
+    result := SourceProvider.getSource(n.subString(8))
+  else if n = 'id' then
+    result := Common.Name
+  else if n = 'specurl' then
+    result := 'http://hl7.org/fhir'
+  else if n = 'web' then
+    result := WebDesc(secure)
+  else if n = 'admin' then
+    result := Common.AdminEmail
+  else if n = 'logout' then
+    result := 'User: [n/a]'
+  else if n = 'endpoints' then
+    result := endpointList
+  else if n = 'host' then
+    if Common.StatedPort = 80 then
+      result := Common.Host
+    else
+      result := Common.Host + ':' + inttostr(Common.StatedPort)
+  else if n = 'securehost' then
+    if Common.StatedSSLPort = 80 then
+      result := Common.Host
+    else
+      result := Common.Host + ':' + inttostr(Common.StatedSSLPort)
+  else if (variables <> nil) and variables.ContainsKey(n) then
+    result := variables[n].primitiveValue
+  else if n = 'ver' then
+    result := 'n/a'
+  else
+    result := '??'+n+'??';
+end;
+
 procedure TFhirWebServer.ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil);
 var
-  s, n: String;
+  s, n, h, t: String;
+  i : integer;
 begin
   s := SourceProvider.getSource(actual);
-  s := s.Replace('[%id%]', Common.Name, [rfReplaceAll]);
-  s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
-  s := s.Replace('[%web%]', WebDesc(secure), [rfReplaceAll]);
-  s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
-  s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
-  s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  if Common.StatedPort = 80 then
-    s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
-  else
-    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.StatedPort), [rfReplaceAll]);
-
-  if Common.StatedSSLPort = 443 then
-    s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
-  else
-    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.StatedSSLPort), [rfReplaceAll]);
-  if variables <> nil then
-    for n in variables.Keys do
-      s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
+  i := s.IndexOf('[%');
+  while (i > -1) do
+  begin
+    h := s.subString(0, i);
+    s := s.subString(i);
+    i := s.indexOf('%]');
+    t := s.subString(i+2);
+    n := s.Substring(2, i-2);
+    s := h + insertValue(n, secure, variables) + t;
+    i := s.IndexOf('[%');
+  end;
 
   response.Expires := Now + 1;
   response.ContentStream := TBytesStream.Create(TEncoding.UTF8.GetBytes(s));
@@ -1322,7 +1366,7 @@ end;
 
 destructor TFHIRWebServerExtension.Destroy;
 begin
-  FContext.Free;
+  FContext.free;
   inherited;
 end;
 
@@ -1331,7 +1375,7 @@ begin
   if (s = '%server') then
   begin
     result := true;
-    obj := TFHIRPathServerObject.create(FContext.link)
+    obj := TFHIRPathServerObject.Create(FContext.link)
   end
   else
     result := false;
@@ -1347,7 +1391,7 @@ end;
 
 destructor TFHIRPathServerObject.Destroy;
 begin
-  FContext.Free;
+  FContext.free;
   inherited;
 end;
 
@@ -1425,7 +1469,7 @@ end;
 
 procedure TFHIRHTTPServer.DoMaxConnectionsExceeded(AIOHandler: TIdIOHandler);
 begin
-  logging.log('Max Connections Exceeeded');
+  logging.log('Max Connections Exceeded');
 end;
 
 End.

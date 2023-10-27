@@ -99,22 +99,22 @@ const
 
 { TFDBLogger }
 
-constructor TFDBLogger.create;
+constructor TFDBLogger.Create;
 begin
   inherited;
   FLock := TFslLock.Create('database.log');
   FTotal := 0;
-  FList := TStringList.create;
+  FList := TStringList.Create;
   FList.OwnsObjects := true;
   FList.Sorted := true;
   FList.Duplicates := dupError;
 end;
 
-destructor TFDBLogger.destroy;
+destructor TFDBLogger.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogger.destroy';
 begin
   FList.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -181,7 +181,7 @@ begin
     end
   else
     begin
-    result := TFDBLogEntry.create(AUsage);
+    result := TFDBLogEntry.Create(AUsage);
     FList.AddObject(AUsage, result);
     end;
 end;
@@ -219,9 +219,9 @@ end;
 
 { TFDBLogEntry }
 
-constructor TFDBLogEntry.create(AUsage : String);
+constructor TFDBLogEntry.Create(AUsage : String);
 begin
-  inherited create;
+  inherited Create;
   FUsage := AUsage;
   FTotalCount := 0;
   FErrorCount := 0;
@@ -231,10 +231,10 @@ begin
   FTotalRows := 0;
   FTotalPreps := 0;
   FRunningAvg := 0;
-  FExceptions := TStringList.create;
+  FExceptions := TStringList.Create;
 end;
 
-destructor TFDBLogEntry.destroy;
+destructor TFDBLogEntry.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogEntry.destroy';
 begin
   FExceptions.free;

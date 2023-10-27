@@ -109,13 +109,14 @@ type
     constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
     destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; override;
+    property Filename : String read FFilename;
   end;
 
 implementation
 
 { TFDBSQLiteManager }
 
-constructor TFDBSQLiteManager.create(AName: String; Filename : String; autoCreate : boolean; maxConn : integer = 100);
+constructor TFDBSQLiteManager.Create(AName: String; Filename : String; autoCreate : boolean; maxConn : integer = 100);
 begin
   FFilename := filename;
   FAutoCreate := autoCreate;
@@ -158,7 +159,7 @@ begin
   assert(sqlite3_threadsafe>0, 'SQLite library is not threadsafe');
   if not FAutoCreate then
     if not FileExists(FFIlename) then
-      raise EDBException.create('SQLite Database '+FFilename+' not found');
+      raise EDBException.Create('SQLite Database '+FFilename+' not found');
 end;
 
 function TFDBSQLiteManager.sizeInBytesV(magic : integer) : cardinal;
@@ -175,9 +176,9 @@ end;
 
 { TFDBSQLiteConnection }
 
-constructor TFDBSQLiteConnection.create(AOwner: TFDBManager; Filename : String; autoCreate : boolean);
+constructor TFDBSQLiteConnection.Create(AOwner: TFDBManager; Filename : String; autoCreate : boolean);
 begin
-  inherited create(AOwner);
+  inherited Create(AOwner);
   FConnection := TSQLite3Database.Create;
   FConnection.Delay := 2000;
   if autoCreate then
@@ -188,9 +189,9 @@ end;
 
 destructor TFDBSQLiteConnection.Destroy;
 begin
-  FConnection.Free;
-  FStatement.Free;
-  FColNames.Free;
+  FConnection.free;
+  FStatement.free;
+  FColNames.free;
   inherited;
 end;
 
@@ -241,7 +242,7 @@ end;
 
 procedure TFDBSQLiteConnection.ClearDatabaseV;
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.ClearDatabaseV');
+  raise EDBTodo.Create('TFDBSQLiteConnection.ClearDatabaseV');
 end;
 
 function TFDBSQLiteConnection.ColByNameV(AColName: String): Integer;
@@ -279,7 +280,7 @@ end;
 
 procedure TFDBSQLiteConnection.DropColumnV(ATableName, AColumnName: String);
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.DropColumnV');
+  raise EDBTodo.Create('TFDBSQLiteConnection.DropColumnV');
 end;
 
 procedure TFDBSQLiteConnection.DropTableV(ATableName: String);
@@ -326,7 +327,7 @@ begin
     result.Nullable := s <> 'not null';
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -356,14 +357,14 @@ begin
             tbl.Columns.Add(readColumn(s.trim));
         result.Tables.Add(tbl.Link);
       finally
-        tbl.Free;
+        tbl.free;
       end;
     end;
     terminate;
     // todo: indexes... :SELECT sql FROM SQLite_master WHERE type = 'index'
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -444,7 +445,7 @@ end;
 
 procedure TFDBSQLiteConnection.ListTablesV(AList: TStrings);
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.ListTablesV');
+  raise EDBTodo.Create('TFDBSQLiteConnection.ListTablesV');
 end;
 
 procedure TFDBSQLiteConnection.PrepareV;
@@ -454,12 +455,12 @@ end;
 
 procedure TFDBSQLiteConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.RenameColumnV');
+  raise EDBTodo.Create('TFDBSQLiteConnection.RenameColumnV');
 end;
 
 procedure TFDBSQLiteConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.RenameTableV');
+  raise EDBTodo.Create('TFDBSQLiteConnection.RenameTableV');
 end;
 
 procedure TFDBSQLiteConnection.RollbackV;
@@ -479,7 +480,7 @@ end;
 
 function TFDBSQLiteConnection.TableSizeV(sName: String): int64;
 begin
-  raise EDBTodo.create('TFDBSQLiteConnection.TableSizeV');
+  raise EDBTodo.Create('TFDBSQLiteConnection.TableSizeV');
 end;
 
 procedure TFDBSQLiteConnection.TerminateV;

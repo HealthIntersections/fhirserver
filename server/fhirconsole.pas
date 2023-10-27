@@ -56,7 +56,7 @@ begin
     InitialiseODBC;
     {$IFNDEF STATICLOAD_OPENSSL}
     {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := executableDirectory();
+    GetOpenSSLLoader.OpenSSLPath := TCommandLineParameters.execDir();
     {$ELSE}
     Must static load openssl if not on windows
     {$ENDIF}

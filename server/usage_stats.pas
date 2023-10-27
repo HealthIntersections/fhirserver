@@ -45,7 +45,7 @@ type
     FDirectory : String;
     function singleJson : String;
   public
-    constructor create(directory : String);
+    constructor Create(directory : String);
 
     property enabled: boolean read FEnabled write FEnabled;
     property path: String read FPath write FPath;
@@ -58,7 +58,7 @@ implementation
 
 { TUsageStatsServer }
 
-constructor TUsageStatsServer.create(directory: String);
+constructor TUsageStatsServer.Create(directory: String);
 begin
   inherited Create;
   FDirectory := directory;
@@ -133,7 +133,7 @@ begin
       json.obj[ExtractFileName(s)] := TJSONParser.ParseFile(s);
     result := TJSONWriter.writeObjectStr(json);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 

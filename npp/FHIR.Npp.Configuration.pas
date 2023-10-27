@@ -184,17 +184,17 @@ begin
     else
       cbR4.enabled := false;
   finally
-    PackageCacheForm.Free;
+    PackageCacheForm.free;
   end;
 
 end;
 
 destructor TSettingForm.Destroy;
 begin
-  FContext.Free;
-  FServers.Free;
-  FVersions.Free;
-  FCache.Free;
+  FContext.free;
+  FServers.free;
+  FVersions.free;
+  FCache.free;
   inherited;
 end;
 
@@ -259,7 +259,7 @@ begin
   if (vtServers.GetFirstSelected() <> nil) then
   begin
     i := vtServers.GetFirstSelected().Index;
-    EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
+    EditRegisteredServerForm := TEditRegisteredServerForm.Create(npp);
     try
       EditRegisteredServerForm.versions := FVersions.link;
       EditRegisteredServerForm.Server := FServers[i].Link;
@@ -269,14 +269,14 @@ begin
         vtServers.Invalidate;
       end;
     finally
-      EditRegisteredServerForm.Free;
+      EditRegisteredServerForm.free;
     end;
   end;
 end;
 
 procedure TSettingForm.btnAddClick(Sender: TObject);
 begin
-  EditRegisteredServerForm := TEditRegisteredServerForm.create(npp);
+  EditRegisteredServerForm := TEditRegisteredServerForm.Create(npp);
   try
     EditRegisteredServerForm.versions := FVersions.link;
     EditRegisteredServerForm.load;
@@ -287,7 +287,7 @@ begin
       vtServers.Invalidate;
     end;
   finally
-    EditRegisteredServerForm.Free;
+    EditRegisteredServerForm.free;
   end;
 end;
 
@@ -295,7 +295,7 @@ procedure TSettingForm.FormCreate(Sender: TObject);
 begin
   inherited;
   Settings.holdChanges;
-  FCache := TFHIRPackageManager.create(true);
+  FCache := TFHIRPackageManager.Create(true);
 end;
 
 procedure TSettingForm.FormShow(Sender: TObject);
@@ -342,13 +342,13 @@ end;
 
 procedure TSettingForm.SetContext(const Value: TFHIRNppContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TSettingForm.SetVersions(const Value: TFHIRVersionFactories);
 begin
-  FVersions.Free;
+  FVersions.free;
   FVersions := Value;
 end;
 

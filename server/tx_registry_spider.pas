@@ -122,7 +122,7 @@ end;
 
 destructor TTxRegistryScanner.Destroy;
 begin
-  FZulip.Free;
+  FZulip.free;
   inherited;
 end;
 
@@ -150,7 +150,7 @@ begin
     fetcher.Fetch;
     result := fetcher.Buffer.AsBytes;
   finally
-    fetcher.Free;
+    fetcher.free;
   end;
   FTotalBytes := FTotalBytes + length(result);
 end;
@@ -189,13 +189,13 @@ begin
       log('Fetch '+FAddress, '', false);
       json := fetchJson(FAddress);
       try
-        if json.str['version'] <> '1' then
-          raise EFslException.create('Unable to proceed: registries version is '+json.str['version']+' not "1"');
+        if json.str['formatVersion'] <> '1' then
+          raise EFslException.Create('Unable to proceed: registries version is '+json.str['formatVersion']+' not "1"');
 
         arr := json.arr['registries'];
         for i := 0 to arr.Count - 1 do
         begin
-          reg := TServerRegistry.create;
+          reg := TServerRegistry.Create;
           try
             info.Registries.add(reg.link);
             processRegistry(arr.Obj[i], reg);
@@ -218,7 +218,7 @@ begin
       FZulip.send;
     log('Finish txRegistry Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
   finally
-    FIni.Free;
+    FIni.free;
   end;
 end;
 
@@ -233,23 +233,23 @@ begin
     reg.Code := obj.str['code'];
     reg.Name := obj.str['name'];
     if (reg.Name = '') then
-      raise EFslException.create('No name provided');
+      raise EFslException.Create('No name provided');
     reg.Authority := obj.str['authority'];
     reg.Address := obj.str['url'];
     if (reg.Address = '') then
-      raise EFslException.create('No url provided for '+reg.Name);
+      raise EFslException.Create('No url provided for '+reg.Name);
 
     log('Fetch '+reg.Address, FAddress, false);
     FRegistryErrors := '';
     json := fetchJson(reg.Address);
     try
-      if json.str['version'] <> '1' then
-        raise EFslException.create('Unable to proceed: registry version @'+reg.Address+' is '+json.str['version']+' not "1"');
+      if json.str['formatVersion'] <> '1' then
+        raise EFslException.Create('Unable to proceed: registry version @'+reg.Address+' is '+json.str['formatVersion']+' not "1"');
       
       arr := json.arr['servers'];
       for i := 0 to arr.Count - 1 do
       begin
-        srvr := TServerInformation.create;
+        srvr := TServerInformation.Create;
         try
           reg.Servers.add(srvr.link);
           processServer(reg.Address, arr.Obj[i], srvr);
@@ -283,17 +283,17 @@ begin
   srvr.Code := obj.str['code'];
   srvr.Name := obj.str['name'];
   if (srvr.Name = '') then
-    raise EFslException.create('No name provided');
+    raise EFslException.Create('No name provided');
   srvr.AccessInfo := obj.str['access_info'];
   srvr.Address := obj.str['url'];
   if (srvr.Address = '') then
-    raise EFslException.create('No url provided for '+srvr.Name);
+    raise EFslException.Create('No url provided for '+srvr.Name);
   obj.forceArr['authoritative'].readStrings(srvr.AuthList);
 
-  arr := obj.arr['versions'];
+  arr := obj.arr['fhirVersions'];
   for i := 0 to arr.Count - 1 do
   begin
-    v := TServerVersionInformation.create;
+    v := TServerVersionInformation.Create;
     try
       srvr.Versions.add(v.link);
       processServerVersion(source, srvr, arr.Obj[i], v);
@@ -336,7 +336,7 @@ var
   tcs : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
 begin
-  client := TFhirClient4.create(nil, defLang, TFHIRHTTPCommunicator.create(url));
+  client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try
     client.format := ffJson;
     cs := client.conformance(true);
@@ -391,7 +391,7 @@ var
   tcs : fhir5_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir5_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
 begin
-  client := TFhirClient5.create(nil, defLang, TFHIRHTTPCommunicator.create(url));
+  client := TFhirClient5.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try                    
     client.format := ffJson;
     cs := client.conformance(true);
@@ -447,7 +447,7 @@ var
   tcsv : fhir3_resources.TFhirParametersParameter;
   n : String;
 begin
-  client := TFhirClient3.create(nil, defLang, TFHIRHTTPCommunicator.create(url));
+  client := TFhirClient3.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try     
     client.format := ffJson;
     cs := client.conformance(true);
@@ -504,15 +504,15 @@ end;
 
 constructor TZulipTracker.Create(address, email, apikey: String);
 begin
-  inherited create;
-  FZulip := TZulipSender.create(address, email, apikey);
-  FErrors := TFslMap<TZulipItem>.create;
+  inherited Create;
+  FZulip := TZulipSender.Create(address, email, apikey);
+  FErrors := TFslMap<TZulipItem>.Create;
 end;
 
 destructor TZulipTracker.Destroy;
 begin
-  FErrors.Free;
-  FZulip.Free;
+  FErrors.free;
+  FZulip.free;
   inherited;
 end;
 

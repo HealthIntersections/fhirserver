@@ -39,12 +39,12 @@ interface
     FTwilioServer : TTwilioServer;
 
     function HandleTwilio(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : string;
-  FTwilioServer.Free;
+  FTwilioServer.free;
   FTwilioDB := ini.admin['twilio'].value;
   FTwilioResponse := ini.admin['twilio-text'].value;
   {$IFDEF WINDOWS}
 //  if FTwilioDB <> '' then
-//    FTwilioServer := TTwilioServer.Create(TFDBOdbcManager.create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
+//    FTwilioServer := TTwilioServer.Create(TFDBOdbcManager.Create('twilio', kdbSqlServer, 20, 5000, 'SQL Server Native Client 11.0', '(local)', FTwilioDB, '', ''), FTwilioResponse);
 //  {$ENDIF}
 //          else if request.Document = '/twilio' then
 //            summ := HandleTwilio(AContext, request, response, false, false)

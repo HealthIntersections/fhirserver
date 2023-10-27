@@ -126,7 +126,7 @@ Begin
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, oBuilder);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -174,7 +174,7 @@ Begin
         oBuilder.ParaURL(o[i], sPrefix+'prop=prop&id='+o[i], '', '');
       oBuilder.EndTableCell;
     Finally
-      o.Free;
+      o.free;
     End;
 
     oBuilder.StartTableCell();
@@ -400,7 +400,7 @@ end;
 
 destructor TUcumPublisher.Destroy;
 begin
-  FUcum.Free;
+  FUcum.free;
   inherited;
 end;
 

@@ -266,13 +266,13 @@ implementation
 
 constructor TSCIMObject.Create(json: TJsonObject);
 begin
-  inherited create;
+  inherited Create;
   self.FJson := json;
 end;
 
 destructor TSCIMObject.Destroy;
 begin
-  FJson.Free;
+  FJson.free;
   inherited;
 end;
 
@@ -933,7 +933,7 @@ end;
 
 constructor TSCIMContact.Create(FJson: TJsonObject);
 begin
-  inherited create;
+  inherited Create;
   self.FJson := FJson;
 end;
 
@@ -998,7 +998,7 @@ end;
 
 constructor TSCIMAddress.Create(FJson: TJsonObject);
 begin
-  inherited create;
+  inherited Create;
   self.FJson := FJson;
 end;
 

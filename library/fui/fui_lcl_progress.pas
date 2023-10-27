@@ -75,7 +75,7 @@ implementation
 
 function DoBackgroundTask(owner : TComponent; taskid : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage) : boolean;
 begin
-  ProgressForm := TProgressForm.create(owner);
+  ProgressForm := TProgressForm.Create(owner);
   try
     ProgressForm.taskId := taskId;
     GBackgroundTasks.queueTask(taskId, request, response, ProgressForm.done);
@@ -88,7 +88,7 @@ end;
 
 function DoForegroundTask(owner : TComponent; context : TObject; event : TPerformTaskEvent) : boolean;
 begin
-  ProgressForm := TProgressForm.create(owner);
+  ProgressForm := TProgressForm.Create(owner);
   try
     ProgressForm.event := event;
     ProgressForm.FContext := context;

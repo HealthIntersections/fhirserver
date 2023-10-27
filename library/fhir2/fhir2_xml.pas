@@ -1861,7 +1861,7 @@ function TFHIRXmlParser.ParseElement(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirElement.create;
+  result := TFhirElement.Create;
   try
     parseElementAttributes(result, path, element);
     result.id := GetAttribute(element, 'id');{x.4}
@@ -1948,7 +1948,7 @@ function TFHIRXmlParser.ParseBackboneElement(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirBackboneElement.create;
+  result := TFhirBackboneElement.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -1984,7 +1984,7 @@ var
   child : TMXmlElement;
   i : integer;
 begin
-  result := TFhirEnum.create;
+  result := TFhirEnum.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2025,7 +2025,7 @@ function TFHIRXmlParser.ParseDateTime(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirDateTime.create;
+  result := TFhirDateTime.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTFslDateTime(GetAttribute(element, 'value'));
@@ -2063,7 +2063,7 @@ function TFHIRXmlParser.ParseDate(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirDate.create;
+  result := TFhirDate.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTFslDateTime(GetAttribute(element, 'value'));
@@ -2101,7 +2101,7 @@ function TFHIRXmlParser.ParseString(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirString.create;
+  result := TFhirString.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2138,7 +2138,7 @@ function TFHIRXmlParser.ParseInteger(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirInteger.create;
+  result := TFhirInteger.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2175,7 +2175,7 @@ function TFHIRXmlParser.ParseUri(element : TMXmlElement; path : string) : TFhirU
 var
   child : TMXmlElement;
 begin
-  result := TFhirUri.create;
+  result := TFhirUri.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2212,7 +2212,7 @@ function TFHIRXmlParser.ParseInstant(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirInstant.create;
+  result := TFhirInstant.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTFslDateTime(GetAttribute(element, 'value'));
@@ -2250,7 +2250,7 @@ function TFHIRXmlParser.ParseBoolean(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirBoolean.create;
+  result := TFhirBoolean.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := StringToBoolean(GetAttribute(element, 'value'));
@@ -2287,7 +2287,7 @@ function TFHIRXmlParser.ParseBase64Binary(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirBase64Binary.create;
+  result := TFhirBase64Binary.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := toTBytes(GetAttribute(element, 'value'));
@@ -2325,7 +2325,7 @@ function TFHIRXmlParser.ParseTime(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirTime.create;
+  result := TFhirTime.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2362,7 +2362,7 @@ function TFHIRXmlParser.ParseDecimal(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirDecimal.create;
+  result := TFhirDecimal.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2399,7 +2399,7 @@ function TFHIRXmlParser.ParseCode(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirCode.create;
+  result := TFhirCode.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2436,7 +2436,7 @@ function TFHIRXmlParser.ParseOid(element : TMXmlElement; path : string) : TFhirO
 var
   child : TMXmlElement;
 begin
-  result := TFhirOid.create;
+  result := TFhirOid.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2473,7 +2473,7 @@ function TFHIRXmlParser.ParseUuid(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirUuid.create;
+  result := TFhirUuid.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2510,7 +2510,7 @@ function TFHIRXmlParser.ParseMarkdown(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirMarkdown.create;
+  result := TFhirMarkdown.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2547,7 +2547,7 @@ function TFHIRXmlParser.ParseUnsignedInt(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirUnsignedInt.create;
+  result := TFhirUnsignedInt.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2584,7 +2584,7 @@ function TFHIRXmlParser.ParseId(element : TMXmlElement; path : string) : TFhirId
 var
   child : TMXmlElement;
 begin
-  result := TFhirId.create;
+  result := TFhirId.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2621,7 +2621,7 @@ function TFHIRXmlParser.ParsePositiveInt(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirPositiveInt.create;
+  result := TFhirPositiveInt.Create;
   try
     ParseElementAttributes(result, path, element);
     result.value := GetAttribute(element, 'value');
@@ -2695,7 +2695,7 @@ function TFHIRXmlParser.ParseParametersParameter(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirParametersParameter.create;
+  result := TFhirParametersParameter.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -2896,7 +2896,7 @@ function TFHIRXmlParser.ParseParameters(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirParameters.create;
+  result := TFhirParameters.Create;
   try
     parseResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -2994,7 +2994,7 @@ function TFHIRXmlParser.ParseExtension(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirExtension.create;
+  result := TFhirExtension.Create;
   try
     parseElementAttributes(result, path, element);
     result.url := GetAttribute(element, 'url');{x.4}
@@ -3183,7 +3183,7 @@ function TFHIRXmlParser.ParseNarrative(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirNarrative.create;
+  result := TFhirNarrative.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3236,7 +3236,7 @@ function TFHIRXmlParser.ParseIdentifier(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirIdentifier.create;
+  result := TFhirIdentifier.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3307,7 +3307,7 @@ function TFHIRXmlParser.ParseCoding(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirCoding.create;
+  result := TFhirCoding.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3374,7 +3374,7 @@ function TFHIRXmlParser.ParseReference(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirReference.create;
+  result := TFhirReference.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3429,7 +3429,7 @@ function TFHIRXmlParser.ParseSignature(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirSignature.create;
+  result := TFhirSignature.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3499,7 +3499,7 @@ function TFHIRXmlParser.ParseSampledData(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirSampledData.create;
+  result := TFhirSampledData.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3570,7 +3570,7 @@ function TFHIRXmlParser.ParsePeriod(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirPeriod.create;
+  result := TFhirPeriod.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3625,7 +3625,7 @@ function TFHIRXmlParser.ParseQuantity(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuantity.create;
+  result := TFhirQuantity.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3692,7 +3692,7 @@ function TFHIRXmlParser.ParseAttachment(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3771,7 +3771,7 @@ function TFHIRXmlParser.ParseRatio(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirRatio.create;
+  result := TFhirRatio.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3826,7 +3826,7 @@ function TFHIRXmlParser.ParseRange(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirRange.create;
+  result := TFhirRange.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3881,7 +3881,7 @@ function TFHIRXmlParser.ParseAnnotation(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirAnnotation.create;
+  result := TFhirAnnotation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -3943,7 +3943,7 @@ function TFHIRXmlParser.ParseCodeableConcept(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirCodeableConcept.create;
+  result := TFhirCodeableConcept.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4001,7 +4001,7 @@ function TFHIRXmlParser.ParseHumanName(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirHumanName.create;
+  result := TFhirHumanName.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4082,7 +4082,7 @@ function TFHIRXmlParser.ParseMeta(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirMeta.create;
+  result := TFhirMeta.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4154,7 +4154,7 @@ function TFHIRXmlParser.ParseContactPoint(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirContactPoint.create;
+  result := TFhirContactPoint.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4221,7 +4221,7 @@ function TFHIRXmlParser.ParseAddress(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirAddress.create;
+  result := TFhirAddress.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4311,7 +4311,7 @@ function TFHIRXmlParser.ParseElementDefinitionSlicing(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinitionSlicing.create;
+  result := TFhirElementDefinitionSlicing.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4376,7 +4376,7 @@ function TFHIRXmlParser.ParseElementDefinitionBase(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinitionBase.create;
+  result := TFhirElementDefinitionBase.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4432,7 +4432,7 @@ function TFHIRXmlParser.ParseElementDefinitionType(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinitionType.create;
+  result := TFhirElementDefinitionType.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4494,7 +4494,7 @@ function TFHIRXmlParser.ParseElementDefinitionConstraint(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinitionConstraint.create;
+  result := TFhirElementDefinitionConstraint.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4557,7 +4557,7 @@ function TFHIRXmlParser.ParseElementDefinitionBinding(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinitionBinding.create;
+  result := TFhirElementDefinitionBinding.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4619,7 +4619,7 @@ function TFHIRXmlParser.ParseElementDefinitionMapping(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinitionMapping.create;
+  result := TFhirElementDefinitionMapping.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -4676,7 +4676,7 @@ function TFHIRXmlParser.ParseElementDefinition(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirElementDefinition.create;
+  result := TFhirElementDefinition.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -5671,7 +5671,7 @@ function TFHIRXmlParser.ParseTimingRepeat(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirTimingRepeat.create;
+  result := TFhirTimingRepeat.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -5770,7 +5770,7 @@ function TFHIRXmlParser.ParseTiming(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirTiming.create;
+  result := TFhirTiming.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -5833,7 +5833,7 @@ function TFHIRXmlParser.ParseAccount(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirAccount.create;
+  result := TFhirAccount.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -5929,7 +5929,7 @@ function TFHIRXmlParser.ParseAllergyIntoleranceReaction(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirAllergyIntoleranceReaction.create;
+  result := TFhirAllergyIntoleranceReaction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6010,7 +6010,7 @@ function TFHIRXmlParser.ParseAllergyIntolerance(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirAllergyIntolerance.create;
+  result := TFhirAllergyIntolerance.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -6117,7 +6117,7 @@ function TFHIRXmlParser.ParseAppointmentParticipant(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirAppointmentParticipant.create;
+  result := TFhirAppointmentParticipant.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6182,7 +6182,7 @@ function TFHIRXmlParser.ParseAppointment(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirAppointment.create;
+  result := TFhirAppointment.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -6282,7 +6282,7 @@ function TFHIRXmlParser.ParseAppointmentResponse(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirAppointmentResponse.create;
+  result := TFhirAppointmentResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -6365,7 +6365,7 @@ function TFHIRXmlParser.ParseAuditEventEvent(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEventEvent.create;
+  result := TFhirAuditEventEvent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6442,7 +6442,7 @@ function TFHIRXmlParser.ParseAuditEventParticipant(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEventParticipant.create;
+  result := TFhirAuditEventParticipant.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6537,7 +6537,7 @@ function TFHIRXmlParser.ParseAuditEventParticipantNetwork(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEventParticipantNetwork.create;
+  result := TFhirAuditEventParticipantNetwork.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6592,7 +6592,7 @@ function TFHIRXmlParser.ParseAuditEventSource(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEventSource.create;
+  result := TFhirAuditEventSource.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6653,7 +6653,7 @@ function TFHIRXmlParser.ParseAuditEventObject(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEventObject.create;
+  result := TFhirAuditEventObject.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6744,7 +6744,7 @@ function TFHIRXmlParser.ParseAuditEventObjectDetail(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEventObjectDetail.create;
+  result := TFhirAuditEventObjectDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -6797,7 +6797,7 @@ function TFHIRXmlParser.ParseAuditEvent(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirAuditEvent.create;
+  result := TFhirAuditEvent.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -6863,7 +6863,7 @@ function TFHIRXmlParser.ParseBasic(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirBasic.create;
+  result := TFhirBasic.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -6934,7 +6934,7 @@ function TFHIRXmlParser.ParseBinary(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirBinary.create;
+  result := TFhirBinary.Create;
   try
     parseResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -6989,7 +6989,7 @@ function TFHIRXmlParser.ParseBodySite(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirBodySite.create;
+  result := TFhirBodySite.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -7066,7 +7066,7 @@ function TFHIRXmlParser.ParseBundleLink(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirBundleLink.create;
+  result := TFhirBundleLink.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7119,7 +7119,7 @@ function TFHIRXmlParser.ParseBundleEntry(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirBundleEntry.create;
+  result := TFhirBundleEntry.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7193,7 +7193,7 @@ function TFHIRXmlParser.ParseBundleEntrySearch(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirBundleEntrySearch.create;
+  result := TFhirBundleEntrySearch.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7248,7 +7248,7 @@ function TFHIRXmlParser.ParseBundleEntryRequest(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirBundleEntryRequest.create;
+  result := TFhirBundleEntryRequest.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7317,7 +7317,7 @@ function TFHIRXmlParser.ParseBundleEntryResponse(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirBundleEntryResponse.create;
+  result := TFhirBundleEntryResponse.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7379,7 +7379,7 @@ function TFHIRXmlParser.ParseBundle(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirBundle.create;
+  result := TFhirBundle.Create;
   try
     parseResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -7451,7 +7451,7 @@ function TFHIRXmlParser.ParseCarePlanRelatedPlan(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirCarePlanRelatedPlan.create;
+  result := TFhirCarePlanRelatedPlan.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7505,7 +7505,7 @@ function TFHIRXmlParser.ParseCarePlanParticipant(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirCarePlanParticipant.create;
+  result := TFhirCarePlanParticipant.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7560,7 +7560,7 @@ function TFHIRXmlParser.ParseCarePlanActivity(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirCarePlanActivity.create;
+  result := TFhirCarePlanActivity.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7627,7 +7627,7 @@ function TFHIRXmlParser.ParseCarePlanActivityDetail(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirCarePlanActivityDetail.create;
+  result := TFhirCarePlanActivityDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7751,7 +7751,7 @@ function TFHIRXmlParser.ParseCarePlan(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirCarePlan.create;
+  result := TFhirCarePlan.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -7874,7 +7874,7 @@ function TFHIRXmlParser.ParseClaimPayee(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimPayee.create;
+  result := TFhirClaimPayee.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7937,7 +7937,7 @@ function TFHIRXmlParser.ParseClaimDiagnosis(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimDiagnosis.create;
+  result := TFhirClaimDiagnosis.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -7990,7 +7990,7 @@ function TFHIRXmlParser.ParseClaimCoverage(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimCoverage.create;
+  result := TFhirClaimCoverage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8068,7 +8068,7 @@ function TFHIRXmlParser.ParseClaimItem(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimItem.create;
+  result := TFhirClaimItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8186,7 +8186,7 @@ function TFHIRXmlParser.ParseClaimItemDetail(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimItemDetail.create;
+  result := TFhirClaimItemDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8273,7 +8273,7 @@ function TFHIRXmlParser.ParseClaimItemDetailSubDetail(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimItemDetailSubDetail.create;
+  result := TFhirClaimItemDetailSubDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8353,7 +8353,7 @@ function TFHIRXmlParser.ParseClaimItemProsthesis(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimItemProsthesis.create;
+  result := TFhirClaimItemProsthesis.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8412,7 +8412,7 @@ function TFHIRXmlParser.ParseClaimMissingTeeth(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimMissingTeeth.create;
+  result := TFhirClaimMissingTeeth.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8470,7 +8470,7 @@ function TFHIRXmlParser.ParseClaim(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaim.create;
+  result := TFhirClaim.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -8644,7 +8644,7 @@ function TFHIRXmlParser.ParseClaimResponseItem(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseItem.create;
+  result := TFhirClaimResponseItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8711,7 +8711,7 @@ function TFHIRXmlParser.ParseClaimResponseItemAdjudication(element : TMXmlElemen
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseItemAdjudication.create;
+  result := TFhirClaimResponseItemAdjudication.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8769,7 +8769,7 @@ function TFHIRXmlParser.ParseClaimResponseItemDetail(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseItemDetail.create;
+  result := TFhirClaimResponseItemDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8831,7 +8831,7 @@ function TFHIRXmlParser.ParseClaimResponseItemDetailAdjudication(element : TMXml
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseItemDetailAdjudication.create;
+  result := TFhirClaimResponseItemDetailAdjudication.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8889,7 +8889,7 @@ function TFHIRXmlParser.ParseClaimResponseItemDetailSubDetail(element : TMXmlEle
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseItemDetailSubDetail.create;
+  result := TFhirClaimResponseItemDetailSubDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -8946,7 +8946,7 @@ function TFHIRXmlParser.ParseClaimResponseItemDetailSubDetailAdjudication(elemen
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseItemDetailSubDetailAdjudication.create;
+  result := TFhirClaimResponseItemDetailSubDetailAdjudication.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9004,7 +9004,7 @@ function TFHIRXmlParser.ParseClaimResponseAddItem(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseAddItem.create;
+  result := TFhirClaimResponseAddItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9080,7 +9080,7 @@ function TFHIRXmlParser.ParseClaimResponseAddItemAdjudication(element : TMXmlEle
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseAddItemAdjudication.create;
+  result := TFhirClaimResponseAddItemAdjudication.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9138,7 +9138,7 @@ function TFHIRXmlParser.ParseClaimResponseAddItemDetail(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseAddItemDetail.create;
+  result := TFhirClaimResponseAddItemDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9199,7 +9199,7 @@ function TFHIRXmlParser.ParseClaimResponseAddItemDetailAdjudication(element : TM
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseAddItemDetailAdjudication.create;
+  result := TFhirClaimResponseAddItemDetailAdjudication.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9257,7 +9257,7 @@ function TFHIRXmlParser.ParseClaimResponseError(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseError.create;
+  result := TFhirClaimResponseError.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9319,7 +9319,7 @@ function TFHIRXmlParser.ParseClaimResponseNote(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseNote.create;
+  result := TFhirClaimResponseNote.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9378,7 +9378,7 @@ function TFHIRXmlParser.ParseClaimResponseCoverage(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponseCoverage.create;
+  result := TFhirClaimResponseCoverage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9456,7 +9456,7 @@ function TFHIRXmlParser.ParseClaimResponse(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirClaimResponse.create;
+  result := TFhirClaimResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -9617,7 +9617,7 @@ function TFHIRXmlParser.ParseClinicalImpressionInvestigations(element : TMXmlEle
 var
   child : TMXmlElement;
 begin
-  result := TFhirClinicalImpressionInvestigations.create;
+  result := TFhirClinicalImpressionInvestigations.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9674,7 +9674,7 @@ function TFHIRXmlParser.ParseClinicalImpressionFinding(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirClinicalImpressionFinding.create;
+  result := TFhirClinicalImpressionFinding.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9728,7 +9728,7 @@ function TFHIRXmlParser.ParseClinicalImpressionRuledOut(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirClinicalImpressionRuledOut.create;
+  result := TFhirClinicalImpressionRuledOut.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9782,7 +9782,7 @@ function TFHIRXmlParser.ParseClinicalImpression(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirClinicalImpression.create;
+  result := TFhirClinicalImpression.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -9910,7 +9910,7 @@ function TFHIRXmlParser.ParseCommunicationPayload(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirCommunicationPayload.create;
+  result := TFhirCommunicationPayload.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -9969,7 +9969,7 @@ function TFHIRXmlParser.ParseCommunication(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirCommunication.create;
+  result := TFhirCommunication.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -10077,7 +10077,7 @@ function TFHIRXmlParser.ParseCommunicationRequestPayload(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirCommunicationRequestPayload.create;
+  result := TFhirCommunicationRequestPayload.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10136,7 +10136,7 @@ function TFHIRXmlParser.ParseCommunicationRequest(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirCommunicationRequest.create;
+  result := TFhirCommunicationRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -10252,7 +10252,7 @@ function TFHIRXmlParser.ParseCompositionAttester(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirCompositionAttester.create;
+  result := TFhirCompositionAttester.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10313,7 +10313,7 @@ function TFHIRXmlParser.ParseCompositionEvent(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirCompositionEvent.create;
+  result := TFhirCompositionEvent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10376,7 +10376,7 @@ function TFHIRXmlParser.ParseCompositionSection(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirCompositionSection.create;
+  result := TFhirCompositionSection.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10459,7 +10459,7 @@ function TFHIRXmlParser.ParseComposition(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirComposition.create;
+  result := TFhirComposition.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -10564,7 +10564,7 @@ function TFHIRXmlParser.ParseConceptMapContact(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirConceptMapContact.create;
+  result := TFhirConceptMapContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10622,7 +10622,7 @@ function TFHIRXmlParser.ParseConceptMapElement(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirConceptMapElement.create;
+  result := TFhirConceptMapElement.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10684,7 +10684,7 @@ function TFHIRXmlParser.ParseConceptMapElementTarget(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirConceptMapElementTarget.create;
+  result := TFhirConceptMapElementTarget.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10758,7 +10758,7 @@ function TFHIRXmlParser.ParseConceptMapElementTargetDependsOn(element : TMXmlEle
 var
   child : TMXmlElement;
 begin
-  result := TFhirConceptMapElementTargetDependsOn.create;
+  result := TFhirConceptMapElementTargetDependsOn.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10814,7 +10814,7 @@ function TFHIRXmlParser.ParseConceptMap(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirConceptMap.create;
+  result := TFhirConceptMap.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -10939,7 +10939,7 @@ function TFHIRXmlParser.ParseConditionStage(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirConditionStage.create;
+  result := TFhirConditionStage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -10997,7 +10997,7 @@ function TFHIRXmlParser.ParseConditionEvidence(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirConditionEvidence.create;
+  result := TFhirConditionEvidence.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11055,7 +11055,7 @@ function TFHIRXmlParser.ParseCondition(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirCondition.create;
+  result := TFhirCondition.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -11206,7 +11206,7 @@ function TFHIRXmlParser.ParseConformanceContact(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceContact.create;
+  result := TFhirConformanceContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11264,7 +11264,7 @@ function TFHIRXmlParser.ParseConformanceSoftware(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceSoftware.create;
+  result := TFhirConformanceSoftware.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11322,7 +11322,7 @@ function TFHIRXmlParser.ParseConformanceImplementation(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceImplementation.create;
+  result := TFhirConformanceImplementation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11376,7 +11376,7 @@ function TFHIRXmlParser.ParseConformanceRest(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRest.create;
+  result := TFhirConformanceRest.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11464,7 +11464,7 @@ function TFHIRXmlParser.ParseConformanceRestSecurity(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestSecurity.create;
+  result := TFhirConformanceRestSecurity.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11531,7 +11531,7 @@ function TFHIRXmlParser.ParseConformanceRestSecurityCertificate(element : TMXmlE
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestSecurityCertificate.create;
+  result := TFhirConformanceRestSecurityCertificate.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11586,7 +11586,7 @@ function TFHIRXmlParser.ParseConformanceRestResource(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestResource.create;
+  result := TFhirConformanceRestResource.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11685,7 +11685,7 @@ function TFHIRXmlParser.ParseConformanceRestResourceInteraction(element : TMXmlE
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestResourceInteraction.create;
+  result := TFhirConformanceRestResourceInteraction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11739,7 +11739,7 @@ function TFHIRXmlParser.ParseConformanceRestResourceSearchParam(element : TMXmlE
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestResourceSearchParam.create;
+  result := TFhirConformanceRestResourceSearchParam.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11817,7 +11817,7 @@ function TFHIRXmlParser.ParseConformanceRestInteraction(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestInteraction.create;
+  result := TFhirConformanceRestInteraction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11871,7 +11871,7 @@ function TFHIRXmlParser.ParseConformanceRestOperation(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceRestOperation.create;
+  result := TFhirConformanceRestOperation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11924,7 +11924,7 @@ function TFHIRXmlParser.ParseConformanceMessaging(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceMessaging.create;
+  result := TFhirConformanceMessaging.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -11990,7 +11990,7 @@ function TFHIRXmlParser.ParseConformanceMessagingEndpoint(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceMessagingEndpoint.create;
+  result := TFhirConformanceMessagingEndpoint.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12043,7 +12043,7 @@ function TFHIRXmlParser.ParseConformanceMessagingEvent(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceMessagingEvent.create;
+  result := TFhirConformanceMessagingEvent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12113,7 +12113,7 @@ function TFHIRXmlParser.ParseConformanceDocument(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformanceDocument.create;
+  result := TFhirConformanceDocument.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12170,7 +12170,7 @@ function TFHIRXmlParser.ParseConformance(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirConformance.create;
+  result := TFhirConformance.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -12306,7 +12306,7 @@ function TFHIRXmlParser.ParseContractActor(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractActor.create;
+  result := TFhirContractActor.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12363,7 +12363,7 @@ function TFHIRXmlParser.ParseContractValuedItem(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractValuedItem.create;
+  result := TFhirContractValuedItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12446,7 +12446,7 @@ function TFHIRXmlParser.ParseContractSigner(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractSigner.create;
+  result := TFhirContractSigner.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12502,7 +12502,7 @@ function TFHIRXmlParser.ParseContractTerm(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractTerm.create;
+  result := TFhirContractTerm.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12604,7 +12604,7 @@ function TFHIRXmlParser.ParseContractTermActor(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractTermActor.create;
+  result := TFhirContractTermActor.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12661,7 +12661,7 @@ function TFHIRXmlParser.ParseContractTermValuedItem(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractTermValuedItem.create;
+  result := TFhirContractTermValuedItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12744,7 +12744,7 @@ function TFHIRXmlParser.ParseContractFriendly(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractFriendly.create;
+  result := TFhirContractFriendly.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12799,7 +12799,7 @@ function TFHIRXmlParser.ParseContractLegal(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractLegal.create;
+  result := TFhirContractLegal.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12854,7 +12854,7 @@ function TFHIRXmlParser.ParseContractRule(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirContractRule.create;
+  result := TFhirContractRule.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -12909,7 +12909,7 @@ function TFHIRXmlParser.ParseContract(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirContract.create;
+  result := TFhirContract.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13049,7 +13049,7 @@ function TFHIRXmlParser.ParseCoverage(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirCoverage.create;
+  result := TFhirCoverage.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13158,7 +13158,7 @@ function TFHIRXmlParser.ParseDataElementContact(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirDataElementContact.create;
+  result := TFhirDataElementContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -13216,7 +13216,7 @@ function TFHIRXmlParser.ParseDataElementMapping(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirDataElementMapping.create;
+  result := TFhirDataElementMapping.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -13278,7 +13278,7 @@ function TFHIRXmlParser.ParseDataElement(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirDataElement.create;
+  result := TFhirDataElement.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13388,7 +13388,7 @@ function TFHIRXmlParser.ParseDetectedIssueMitigation(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirDetectedIssueMitigation.create;
+  result := TFhirDetectedIssueMitigation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -13446,7 +13446,7 @@ function TFHIRXmlParser.ParseDetectedIssue(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirDetectedIssue.create;
+  result := TFhirDetectedIssue.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13539,7 +13539,7 @@ function TFHIRXmlParser.ParseDevice(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirDevice.create;
+  result := TFhirDevice.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13656,7 +13656,7 @@ function TFHIRXmlParser.ParseDeviceComponentProductionSpecification(element : TM
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceComponentProductionSpecification.create;
+  result := TFhirDeviceComponentProductionSpecification.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -13715,7 +13715,7 @@ function TFHIRXmlParser.ParseDeviceComponent(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceComponent.create;
+  result := TFhirDeviceComponent.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13805,7 +13805,7 @@ function TFHIRXmlParser.ParseDeviceMetricCalibration(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceMetricCalibration.create;
+  result := TFhirDeviceMetricCalibration.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -13864,7 +13864,7 @@ function TFHIRXmlParser.ParseDeviceMetric(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceMetric.create;
+  result := TFhirDeviceMetric.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -13953,7 +13953,7 @@ function TFHIRXmlParser.ParseDeviceUseRequest(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceUseRequest.create;
+  result := TFhirDeviceUseRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -14070,7 +14070,7 @@ function TFHIRXmlParser.ParseDeviceUseStatement(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirDeviceUseStatement.create;
+  result := TFhirDeviceUseStatement.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -14170,7 +14170,7 @@ function TFHIRXmlParser.ParseDiagnosticOrderEvent(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirDiagnosticOrderEvent.create;
+  result := TFhirDiagnosticOrderEvent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14231,7 +14231,7 @@ function TFHIRXmlParser.ParseDiagnosticOrderItem(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirDiagnosticOrderItem.create;
+  result := TFhirDiagnosticOrderItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14301,7 +14301,7 @@ function TFHIRXmlParser.ParseDiagnosticOrder(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirDiagnosticOrder.create;
+  result := TFhirDiagnosticOrder.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -14406,7 +14406,7 @@ function TFHIRXmlParser.ParseDiagnosticReportImage(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirDiagnosticReportImage.create;
+  result := TFhirDiagnosticReportImage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14460,7 +14460,7 @@ function TFHIRXmlParser.ParseDiagnosticReport(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirDiagnosticReport.create;
+  result := TFhirDiagnosticReport.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -14586,7 +14586,7 @@ function TFHIRXmlParser.ParseDocumentManifestContent(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentManifestContent.create;
+  result := TFhirDocumentManifestContent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14641,7 +14641,7 @@ function TFHIRXmlParser.ParseDocumentManifestRelated(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentManifestRelated.create;
+  result := TFhirDocumentManifestRelated.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14696,7 +14696,7 @@ function TFHIRXmlParser.ParseDocumentManifest(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentManifest.create;
+  result := TFhirDocumentManifest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -14798,7 +14798,7 @@ function TFHIRXmlParser.ParseDocumentReferenceRelatesTo(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentReferenceRelatesTo.create;
+  result := TFhirDocumentReferenceRelatesTo.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14851,7 +14851,7 @@ function TFHIRXmlParser.ParseDocumentReferenceContent(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentReferenceContent.create;
+  result := TFhirDocumentReferenceContent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14908,7 +14908,7 @@ function TFHIRXmlParser.ParseDocumentReferenceContext(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentReferenceContext.create;
+  result := TFhirDocumentReferenceContext.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -14987,7 +14987,7 @@ function TFHIRXmlParser.ParseDocumentReferenceContextRelated(element : TMXmlElem
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentReferenceContextRelated.create;
+  result := TFhirDocumentReferenceContextRelated.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -15042,7 +15042,7 @@ function TFHIRXmlParser.ParseDocumentReference(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirDocumentReference.create;
+  result := TFhirDocumentReference.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -15162,7 +15162,7 @@ function TFHIRXmlParser.ParseEligibilityRequest(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirEligibilityRequest.create;
+  result := TFhirEligibilityRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -15242,7 +15242,7 @@ function TFHIRXmlParser.ParseEligibilityResponse(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirEligibilityResponse.create;
+  result := TFhirEligibilityResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -15334,7 +15334,7 @@ function TFHIRXmlParser.ParseEncounterStatusHistory(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirEncounterStatusHistory.create;
+  result := TFhirEncounterStatusHistory.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -15387,7 +15387,7 @@ function TFHIRXmlParser.ParseEncounterParticipant(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirEncounterParticipant.create;
+  result := TFhirEncounterParticipant.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -15449,7 +15449,7 @@ function TFHIRXmlParser.ParseEncounterHospitalization(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirEncounterHospitalization.create;
+  result := TFhirEncounterHospitalization.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -15547,7 +15547,7 @@ function TFHIRXmlParser.ParseEncounterLocation(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirEncounterLocation.create;
+  result := TFhirEncounterLocation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -15605,7 +15605,7 @@ function TFHIRXmlParser.ParseEncounter(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirEncounter.create;
+  result := TFhirEncounter.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -15740,7 +15740,7 @@ function TFHIRXmlParser.ParseEnrollmentRequest(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirEnrollmentRequest.create;
+  result := TFhirEnrollmentRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -15829,7 +15829,7 @@ function TFHIRXmlParser.ParseEnrollmentResponse(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirEnrollmentResponse.create;
+  result := TFhirEnrollmentResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -15921,7 +15921,7 @@ function TFHIRXmlParser.ParseEpisodeOfCareStatusHistory(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirEpisodeOfCareStatusHistory.create;
+  result := TFhirEpisodeOfCareStatusHistory.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -15974,7 +15974,7 @@ function TFHIRXmlParser.ParseEpisodeOfCareCareTeam(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirEpisodeOfCareCareTeam.create;
+  result := TFhirEpisodeOfCareCareTeam.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -16036,7 +16036,7 @@ function TFHIRXmlParser.ParseEpisodeOfCare(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirEpisodeOfCare.create;
+  result := TFhirEpisodeOfCare.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -16135,7 +16135,7 @@ function TFHIRXmlParser.ParseExplanationOfBenefit(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirExplanationOfBenefit.create;
+  result := TFhirExplanationOfBenefit.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -16227,7 +16227,7 @@ function TFHIRXmlParser.ParseFamilyMemberHistoryCondition(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirFamilyMemberHistoryCondition.create;
+  result := TFhirFamilyMemberHistoryCondition.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -16301,7 +16301,7 @@ function TFHIRXmlParser.ParseFamilyMemberHistory(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirFamilyMemberHistory.create;
+  result := TFhirFamilyMemberHistory.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -16431,7 +16431,7 @@ function TFHIRXmlParser.ParseFlag(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirFlag.create;
+  result := TFhirFlag.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -16512,7 +16512,7 @@ function TFHIRXmlParser.ParseGoalOutcome(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirGoalOutcome.create;
+  result := TFhirGoalOutcome.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -16567,7 +16567,7 @@ function TFHIRXmlParser.ParseGoal(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirGoal.create;
+  result := TFhirGoal.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -16685,7 +16685,7 @@ function TFHIRXmlParser.ParseGroupCharacteristic(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirGroupCharacteristic.create;
+  result := TFhirGroupCharacteristic.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -16758,7 +16758,7 @@ function TFHIRXmlParser.ParseGroupMember(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirGroupMember.create;
+  result := TFhirGroupMember.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -16816,7 +16816,7 @@ function TFHIRXmlParser.ParseGroup(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirGroup.create;
+  result := TFhirGroup.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -16900,7 +16900,7 @@ function TFHIRXmlParser.ParseHealthcareServiceServiceType(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirHealthcareServiceServiceType.create;
+  result := TFhirHealthcareServiceServiceType.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -16957,7 +16957,7 @@ function TFHIRXmlParser.ParseHealthcareServiceAvailableTime(element : TMXmlEleme
 var
   child : TMXmlElement;
 begin
-  result := TFhirHealthcareServiceAvailableTime.create;
+  result := TFhirHealthcareServiceAvailableTime.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17023,7 +17023,7 @@ function TFHIRXmlParser.ParseHealthcareServiceNotAvailable(element : TMXmlElemen
 var
   child : TMXmlElement;
 begin
-  result := TFhirHealthcareServiceNotAvailable.create;
+  result := TFhirHealthcareServiceNotAvailable.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17077,7 +17077,7 @@ function TFHIRXmlParser.ParseHealthcareService(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirHealthcareService.create;
+  result := TFhirHealthcareService.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -17225,7 +17225,7 @@ function TFHIRXmlParser.ParseImagingObjectSelectionStudy(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingObjectSelectionStudy.create;
+  result := TFhirImagingObjectSelectionStudy.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17289,7 +17289,7 @@ function TFHIRXmlParser.ParseImagingObjectSelectionStudySeries(element : TMXmlEl
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingObjectSelectionStudySeries.create;
+  result := TFhirImagingObjectSelectionStudySeries.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17350,7 +17350,7 @@ function TFHIRXmlParser.ParseImagingObjectSelectionStudySeriesInstance(element :
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingObjectSelectionStudySeriesInstance.create;
+  result := TFhirImagingObjectSelectionStudySeriesInstance.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17413,7 +17413,7 @@ function TFHIRXmlParser.ParseImagingObjectSelectionStudySeriesInstanceFrames(ele
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingObjectSelectionStudySeriesInstanceFrames.create;
+  result := TFhirImagingObjectSelectionStudySeriesInstanceFrames.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17469,7 +17469,7 @@ function TFHIRXmlParser.ParseImagingObjectSelection(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingObjectSelection.create;
+  result := TFhirImagingObjectSelection.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -17545,7 +17545,7 @@ function TFHIRXmlParser.ParseImagingStudySeries(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingStudySeries.create;
+  result := TFhirImagingStudySeries.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17636,7 +17636,7 @@ function TFHIRXmlParser.ParseImagingStudySeriesInstance(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingStudySeriesInstance.create;
+  result := TFhirImagingStudySeriesInstance.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17708,7 +17708,7 @@ function TFHIRXmlParser.ParseImagingStudy(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirImagingStudy.create;
+  result := TFhirImagingStudy.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -17824,7 +17824,7 @@ function TFHIRXmlParser.ParseImmunizationExplanation(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationExplanation.create;
+  result := TFhirImmunizationExplanation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17883,7 +17883,7 @@ function TFHIRXmlParser.ParseImmunizationReaction(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationReaction.create;
+  result := TFhirImmunizationReaction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -17942,7 +17942,7 @@ function TFHIRXmlParser.ParseImmunizationVaccinationProtocol(element : TMXmlElem
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationVaccinationProtocol.create;
+  result := TFhirImmunizationVaccinationProtocol.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18021,7 +18021,7 @@ function TFHIRXmlParser.ParseImmunization(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunization.create;
+  result := TFhirImmunization.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -18155,7 +18155,7 @@ function TFHIRXmlParser.ParseImmunizationRecommendationRecommendation(element : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationRecommendationRecommendation.create;
+  result := TFhirImmunizationRecommendationRecommendation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18236,7 +18236,7 @@ function TFHIRXmlParser.ParseImmunizationRecommendationRecommendationDateCriteri
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationRecommendationRecommendationDateCriterion.create;
+  result := TFhirImmunizationRecommendationRecommendationDateCriterion.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18289,7 +18289,7 @@ function TFHIRXmlParser.ParseImmunizationRecommendationRecommendationProtocol(el
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationRecommendationRecommendationProtocol.create;
+  result := TFhirImmunizationRecommendationRecommendationProtocol.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18352,7 +18352,7 @@ function TFHIRXmlParser.ParseImmunizationRecommendation(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirImmunizationRecommendation.create;
+  result := TFhirImmunizationRecommendation.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -18415,7 +18415,7 @@ function TFHIRXmlParser.ParseImplementationGuideContact(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuideContact.create;
+  result := TFhirImplementationGuideContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18473,7 +18473,7 @@ function TFHIRXmlParser.ParseImplementationGuideDependency(element : TMXmlElemen
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependency.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18526,7 +18526,7 @@ function TFHIRXmlParser.ParseImplementationGuidePackage(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuidePackage.create;
+  result := TFhirImplementationGuidePackage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18586,7 +18586,7 @@ function TFHIRXmlParser.ParseImplementationGuidePackageResource(element : TMXmlE
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuidePackageResource.create;
+  result := TFhirImplementationGuidePackageResource.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18660,7 +18660,7 @@ function TFHIRXmlParser.ParseImplementationGuideGlobal(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuideGlobal.create;
+  result := TFhirImplementationGuideGlobal.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18713,7 +18713,7 @@ function TFHIRXmlParser.ParseImplementationGuidePage(element : TMXmlElement; pat
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuidePage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18790,7 +18790,7 @@ function TFHIRXmlParser.ParseImplementationGuide(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirImplementationGuide.create;
+  result := TFhirImplementationGuide.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -18910,7 +18910,7 @@ function TFHIRXmlParser.ParseListEntry(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirListEntry.create;
+  result := TFhirListEntry.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -18972,7 +18972,7 @@ function TFHIRXmlParser.ParseList(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirList.create;
+  result := TFhirList.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -19075,7 +19075,7 @@ function TFHIRXmlParser.ParseLocationPosition(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirLocationPosition.create;
+  result := TFhirLocationPosition.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19132,7 +19132,7 @@ function TFHIRXmlParser.ParseLocation(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirLocation.create;
+  result := TFhirLocation.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -19233,7 +19233,7 @@ function TFHIRXmlParser.ParseMedia(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedia.create;
+  result := TFhirMedia.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -19331,7 +19331,7 @@ function TFHIRXmlParser.ParseMedicationProduct(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationProduct.create;
+  result := TFhirMedicationProduct.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19394,7 +19394,7 @@ function TFHIRXmlParser.ParseMedicationProductIngredient(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationProductIngredient.create;
+  result := TFhirMedicationProductIngredient.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19448,7 +19448,7 @@ function TFHIRXmlParser.ParseMedicationProductBatch(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationProductBatch.create;
+  result := TFhirMedicationProductBatch.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19503,7 +19503,7 @@ function TFHIRXmlParser.ParseMedicationPackage(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationPackage.create;
+  result := TFhirMedicationPackage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19561,7 +19561,7 @@ function TFHIRXmlParser.ParseMedicationPackageContent(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationPackageContent.create;
+  result := TFhirMedicationPackageContent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19615,7 +19615,7 @@ function TFHIRXmlParser.ParseMedication(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedication.create;
+  result := TFhirMedication.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -19684,7 +19684,7 @@ function TFHIRXmlParser.ParseMedicationAdministrationDosage(element : TMXmlEleme
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationAdministrationDosage.create;
+  result := TFhirMedicationAdministrationDosage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19763,7 +19763,7 @@ function TFHIRXmlParser.ParseMedicationAdministration(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationAdministration.create;
+  result := TFhirMedicationAdministration.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -19880,7 +19880,7 @@ function TFHIRXmlParser.ParseMedicationDispenseDosageInstruction(element : TMXml
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationDispenseDosageInstruction.create;
+  result := TFhirMedicationDispenseDosageInstruction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -19983,7 +19983,7 @@ function TFHIRXmlParser.ParseMedicationDispenseSubstitution(element : TMXmlEleme
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationDispenseSubstitution.create;
+  result := TFhirMedicationDispenseSubstitution.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20045,7 +20045,7 @@ function TFHIRXmlParser.ParseMedicationDispense(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationDispense.create;
+  result := TFhirMedicationDispense.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -20167,7 +20167,7 @@ function TFHIRXmlParser.ParseMedicationOrderDosageInstruction(element : TMXmlEle
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationOrderDosageInstruction.create;
+  result := TFhirMedicationOrderDosageInstruction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20270,7 +20270,7 @@ function TFHIRXmlParser.ParseMedicationOrderDispenseRequest(element : TMXmlEleme
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationOrderDispenseRequest.create;
+  result := TFhirMedicationOrderDispenseRequest.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20341,7 +20341,7 @@ function TFHIRXmlParser.ParseMedicationOrderSubstitution(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationOrderSubstitution.create;
+  result := TFhirMedicationOrderSubstitution.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20395,7 +20395,7 @@ function TFHIRXmlParser.ParseMedicationOrder(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationOrder.create;
+  result := TFhirMedicationOrder.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -20516,7 +20516,7 @@ function TFHIRXmlParser.ParseMedicationStatementDosage(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationStatementDosage.create;
+  result := TFhirMedicationStatementDosage.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20615,7 +20615,7 @@ function TFHIRXmlParser.ParseMedicationStatement(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirMedicationStatement.create;
+  result := TFhirMedicationStatement.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -20732,7 +20732,7 @@ function TFHIRXmlParser.ParseMessageHeaderResponse(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirMessageHeaderResponse.create;
+  result := TFhirMessageHeaderResponse.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20789,7 +20789,7 @@ function TFHIRXmlParser.ParseMessageHeaderSource(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirMessageHeaderSource.create;
+  result := TFhirMessageHeaderSource.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20855,7 +20855,7 @@ function TFHIRXmlParser.ParseMessageHeaderDestination(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirMessageHeaderDestination.create;
+  result := TFhirMessageHeaderDestination.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -20913,7 +20913,7 @@ function TFHIRXmlParser.ParseMessageHeader(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirMessageHeader.create;
+  result := TFhirMessageHeader.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -21007,7 +21007,7 @@ function TFHIRXmlParser.ParseNamingSystemContact(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirNamingSystemContact.create;
+  result := TFhirNamingSystemContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21065,7 +21065,7 @@ function TFHIRXmlParser.ParseNamingSystemUniqueId(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirNamingSystemUniqueId.create;
+  result := TFhirNamingSystemUniqueId.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21126,7 +21126,7 @@ function TFHIRXmlParser.ParseNamingSystem(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirNamingSystem.create;
+  result := TFhirNamingSystem.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -21227,7 +21227,7 @@ function TFHIRXmlParser.ParseNutritionOrderOralDiet(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrderOralDiet.create;
+  result := TFhirNutritionOrderOralDiet.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21305,7 +21305,7 @@ function TFHIRXmlParser.ParseNutritionOrderOralDietNutrient(element : TMXmlEleme
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrderOralDietNutrient.create;
+  result := TFhirNutritionOrderOralDietNutrient.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21360,7 +21360,7 @@ function TFHIRXmlParser.ParseNutritionOrderOralDietTexture(element : TMXmlElemen
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrderOralDietTexture.create;
+  result := TFhirNutritionOrderOralDietTexture.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21415,7 +21415,7 @@ function TFHIRXmlParser.ParseNutritionOrderSupplement(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrderSupplement.create;
+  result := TFhirNutritionOrderSupplement.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21485,7 +21485,7 @@ function TFHIRXmlParser.ParseNutritionOrderEnteralFormula(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrderEnteralFormula.create;
+  result := TFhirNutritionOrderEnteralFormula.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21571,7 +21571,7 @@ function TFHIRXmlParser.ParseNutritionOrderEnteralFormulaAdministration(element 
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrderEnteralFormulaAdministration.create;
+  result := TFhirNutritionOrderEnteralFormulaAdministration.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21634,7 +21634,7 @@ function TFHIRXmlParser.ParseNutritionOrder(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirNutritionOrder.create;
+  result := TFhirNutritionOrder.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -21736,7 +21736,7 @@ function TFHIRXmlParser.ParseObservationReferenceRange(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirObservationReferenceRange.create;
+  result := TFhirObservationReferenceRange.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21803,7 +21803,7 @@ function TFHIRXmlParser.ParseObservationRelated(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirObservationRelated.create;
+  result := TFhirObservationRelated.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21857,7 +21857,7 @@ function TFHIRXmlParser.ParseObservationComponent(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirObservationComponent.create;
+  result := TFhirObservationComponent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -21958,7 +21958,7 @@ function TFHIRXmlParser.ParseObservation(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirObservation.create;
+  result := TFhirObservation.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -22132,7 +22132,7 @@ function TFHIRXmlParser.ParseOperationDefinitionContact(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirOperationDefinitionContact.create;
+  result := TFhirOperationDefinitionContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -22190,7 +22190,7 @@ function TFHIRXmlParser.ParseOperationDefinitionParameter(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirOperationDefinitionParameter.create;
+  result := TFhirOperationDefinitionParameter.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -22272,7 +22272,7 @@ function TFHIRXmlParser.ParseOperationDefinitionParameterBinding(element : TMXml
 var
   child : TMXmlElement;
 begin
-  result := TFhirOperationDefinitionParameterBinding.create;
+  result := TFhirOperationDefinitionParameterBinding.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -22330,7 +22330,7 @@ function TFHIRXmlParser.ParseOperationDefinition(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirOperationDefinition.create;
+  result := TFhirOperationDefinition.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -22454,7 +22454,7 @@ function TFHIRXmlParser.ParseOperationOutcomeIssue(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirOperationOutcomeIssue.create;
+  result := TFhirOperationOutcomeIssue.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -22522,7 +22522,7 @@ function TFHIRXmlParser.ParseOperationOutcome(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirOperationOutcome.create;
+  result := TFhirOperationOutcome.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -22577,7 +22577,7 @@ function TFHIRXmlParser.ParseOrderWhen(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirOrderWhen.create;
+  result := TFhirOrderWhen.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -22632,7 +22632,7 @@ function TFHIRXmlParser.ParseOrder(element : TMXmlElement; path : string) : TFhi
 var
   child : TMXmlElement;
 begin
-  result := TFhirOrder.create;
+  result := TFhirOrder.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -22720,7 +22720,7 @@ function TFHIRXmlParser.ParseOrderResponse(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirOrderResponse.create;
+  result := TFhirOrderResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -22799,7 +22799,7 @@ function TFHIRXmlParser.ParseOrganizationContact(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirOrganizationContact.create;
+  result := TFhirOrganizationContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -22865,7 +22865,7 @@ function TFHIRXmlParser.ParseOrganization(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirOrganization.create;
+  result := TFhirOrganization.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -22952,7 +22952,7 @@ function TFHIRXmlParser.ParsePatientContact(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirPatientContact.create;
+  result := TFhirPatientContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23031,7 +23031,7 @@ function TFHIRXmlParser.ParsePatientAnimal(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirPatientAnimal.create;
+  result := TFhirPatientAnimal.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23089,7 +23089,7 @@ function TFHIRXmlParser.ParsePatientCommunication(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirPatientCommunication.create;
+  result := TFhirPatientCommunication.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23143,7 +23143,7 @@ function TFHIRXmlParser.ParsePatientLink(element : TMXmlElement; path : string) 
 var
   child : TMXmlElement;
 begin
-  result := TFhirPatientLink.create;
+  result := TFhirPatientLink.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23196,7 +23196,7 @@ function TFHIRXmlParser.ParsePatient(element : TMXmlElement; path : string) : TF
 var
   child : TMXmlElement;
 begin
-  result := TFhirPatient.create;
+  result := TFhirPatient.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -23332,7 +23332,7 @@ function TFHIRXmlParser.ParsePaymentNotice(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirPaymentNotice.create;
+  result := TFhirPaymentNotice.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -23423,7 +23423,7 @@ function TFHIRXmlParser.ParsePaymentReconciliationDetail(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirPaymentReconciliationDetail.create;
+  result := TFhirPaymentReconciliationDetail.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23497,7 +23497,7 @@ function TFHIRXmlParser.ParsePaymentReconciliationNote(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirPaymentReconciliationNote.create;
+  result := TFhirPaymentReconciliationNote.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23552,7 +23552,7 @@ function TFHIRXmlParser.ParsePaymentReconciliation(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirPaymentReconciliation.create;
+  result := TFhirPaymentReconciliation.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -23665,7 +23665,7 @@ function TFHIRXmlParser.ParsePersonLink(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirPersonLink.create;
+  result := TFhirPersonLink.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23719,7 +23719,7 @@ function TFHIRXmlParser.ParsePerson(element : TMXmlElement; path : string) : TFh
 var
   child : TMXmlElement;
 begin
-  result := TFhirPerson.create;
+  result := TFhirPerson.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -23815,7 +23815,7 @@ function TFHIRXmlParser.ParsePractitionerPractitionerRole(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirPractitionerPractitionerRole.create;
+  result := TFhirPractitionerPractitionerRole.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23891,7 +23891,7 @@ function TFHIRXmlParser.ParsePractitionerQualification(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirPractitionerQualification.create;
+  result := TFhirPractitionerQualification.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -23956,7 +23956,7 @@ function TFHIRXmlParser.ParsePractitioner(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirPractitioner.create;
+  result := TFhirPractitioner.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -24058,7 +24058,7 @@ function TFHIRXmlParser.ParseProcedurePerformer(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcedurePerformer.create;
+  result := TFhirProcedurePerformer.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24113,7 +24113,7 @@ function TFHIRXmlParser.ParseProcedureFocalDevice(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcedureFocalDevice.create;
+  result := TFhirProcedureFocalDevice.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24167,7 +24167,7 @@ function TFHIRXmlParser.ParseProcedure(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcedure.create;
+  result := TFhirProcedure.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -24317,7 +24317,7 @@ function TFHIRXmlParser.ParseProcedureRequest(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcedureRequest.create;
+  result := TFhirProcedureRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -24441,7 +24441,7 @@ function TFHIRXmlParser.ParseProcessRequestItem(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcessRequestItem.create;
+  result := TFhirProcessRequestItem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24491,7 +24491,7 @@ function TFHIRXmlParser.ParseProcessRequest(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcessRequest.create;
+  result := TFhirProcessRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -24609,7 +24609,7 @@ function TFHIRXmlParser.ParseProcessResponseNotes(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcessResponseNotes.create;
+  result := TFhirProcessResponseNotes.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24664,7 +24664,7 @@ function TFHIRXmlParser.ParseProcessResponse(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirProcessResponse.create;
+  result := TFhirProcessResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -24770,7 +24770,7 @@ function TFHIRXmlParser.ParseProvenanceAgent(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirProvenanceAgent.create;
+  result := TFhirProvenanceAgent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24835,7 +24835,7 @@ function TFHIRXmlParser.ParseProvenanceAgentRelatedAgent(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirProvenanceAgentRelatedAgent.create;
+  result := TFhirProvenanceAgentRelatedAgent.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24888,7 +24888,7 @@ function TFHIRXmlParser.ParseProvenanceEntity(element : TMXmlElement; path : str
 var
   child : TMXmlElement;
 begin
-  result := TFhirProvenanceEntity.create;
+  result := TFhirProvenanceEntity.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -24952,7 +24952,7 @@ function TFHIRXmlParser.ParseProvenance(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirProvenance.create;
+  result := TFhirProvenance.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -25047,7 +25047,7 @@ function TFHIRXmlParser.ParseQuestionnaireGroup(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaireGroup.create;
+  result := TFhirQuestionnaireGroup.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -25131,7 +25131,7 @@ function TFHIRXmlParser.ParseQuestionnaireGroupQuestion(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaireGroupQuestion.create;
+  result := TFhirQuestionnaireGroupQuestion.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -25219,7 +25219,7 @@ function TFHIRXmlParser.ParseQuestionnaire(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaire.create;
+  result := TFhirQuestionnaire.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -25303,7 +25303,7 @@ function TFHIRXmlParser.ParseQuestionnaireResponseGroup(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaireResponseGroup.create;
+  result := TFhirQuestionnaireResponseGroup.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -25378,7 +25378,7 @@ function TFHIRXmlParser.ParseQuestionnaireResponseGroupQuestion(element : TMXmlE
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaireResponseGroupQuestion.create;
+  result := TFhirQuestionnaireResponseGroupQuestion.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -25440,7 +25440,7 @@ function TFHIRXmlParser.ParseQuestionnaireResponseGroupQuestionAnswer(element : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaireResponseGroupQuestionAnswer.create;
+  result := TFhirQuestionnaireResponseGroupQuestionAnswer.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -25546,7 +25546,7 @@ function TFHIRXmlParser.ParseQuestionnaireResponse(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirQuestionnaireResponse.create;
+  result := TFhirQuestionnaireResponse.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -25630,7 +25630,7 @@ function TFHIRXmlParser.ParseReferralRequest(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirReferralRequest.create;
+  result := TFhirReferralRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -25748,7 +25748,7 @@ function TFHIRXmlParser.ParseRelatedPerson(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirRelatedPerson.create;
+  result := TFhirRelatedPerson.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -25842,7 +25842,7 @@ function TFHIRXmlParser.ParseRiskAssessmentPrediction(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirRiskAssessmentPrediction.create;
+  result := TFhirRiskAssessmentPrediction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -25920,7 +25920,7 @@ function TFHIRXmlParser.ParseRiskAssessment(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirRiskAssessment.create;
+  result := TFhirRiskAssessment.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -26013,7 +26013,7 @@ function TFHIRXmlParser.ParseSchedule(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirSchedule.create;
+  result := TFhirSchedule.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -26085,7 +26085,7 @@ function TFHIRXmlParser.ParseSearchParameterContact(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirSearchParameterContact.create;
+  result := TFhirSearchParameterContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26143,7 +26143,7 @@ function TFHIRXmlParser.ParseSearchParameter(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirSearchParameter.create;
+  result := TFhirSearchParameter.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -26250,7 +26250,7 @@ function TFHIRXmlParser.ParseSlot(element : TMXmlElement; path : string) : TFhir
 var
   child : TMXmlElement;
 begin
-  result := TFhirSlot.create;
+  result := TFhirSlot.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -26330,7 +26330,7 @@ function TFHIRXmlParser.ParseSpecimenCollection(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirSpecimenCollection.create;
+  result := TFhirSpecimenCollection.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26408,7 +26408,7 @@ function TFHIRXmlParser.ParseSpecimenTreatment(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirSpecimenTreatment.create;
+  result := TFhirSpecimenTreatment.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26470,7 +26470,7 @@ function TFHIRXmlParser.ParseSpecimenContainer(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirSpecimenContainer.create;
+  result := TFhirSpecimenContainer.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26548,7 +26548,7 @@ function TFHIRXmlParser.ParseSpecimen(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirSpecimen.create;
+  result := TFhirSpecimen.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -26642,7 +26642,7 @@ function TFHIRXmlParser.ParseStructureDefinitionContact(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirStructureDefinitionContact.create;
+  result := TFhirStructureDefinitionContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26700,7 +26700,7 @@ function TFHIRXmlParser.ParseStructureDefinitionMapping(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirStructureDefinitionMapping.create;
+  result := TFhirStructureDefinitionMapping.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26762,7 +26762,7 @@ function TFHIRXmlParser.ParseStructureDefinitionSnapshot(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirStructureDefinitionSnapshot.create;
+  result := TFhirStructureDefinitionSnapshot.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26815,7 +26815,7 @@ function TFHIRXmlParser.ParseStructureDefinitionDifferential(element : TMXmlElem
 var
   child : TMXmlElement;
 begin
-  result := TFhirStructureDefinitionDifferential.create;
+  result := TFhirStructureDefinitionDifferential.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -26868,7 +26868,7 @@ function TFHIRXmlParser.ParseStructureDefinition(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirStructureDefinition.create;
+  result := TFhirStructureDefinition.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -27020,7 +27020,7 @@ function TFHIRXmlParser.ParseSubscriptionChannel(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirSubscriptionChannel.create;
+  result := TFhirSubscriptionChannel.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27081,7 +27081,7 @@ function TFHIRXmlParser.ParseSubscription(element : TMXmlElement; path : string)
 var
   child : TMXmlElement;
 begin
-  result := TFhirSubscription.create;
+  result := TFhirSubscription.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -27162,7 +27162,7 @@ function TFHIRXmlParser.ParseSubstanceInstance(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirSubstanceInstance.create;
+  result := TFhirSubstanceInstance.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27221,7 +27221,7 @@ function TFHIRXmlParser.ParseSubstanceIngredient(element : TMXmlElement; path : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirSubstanceIngredient.create;
+  result := TFhirSubstanceIngredient.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27275,7 +27275,7 @@ function TFHIRXmlParser.ParseSubstance(element : TMXmlElement; path : string) : 
 var
   child : TMXmlElement;
 begin
-  result := TFhirSubstance.create;
+  result := TFhirSubstance.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -27353,7 +27353,7 @@ function TFHIRXmlParser.ParseSupplyDelivery(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirSupplyDelivery.create;
+  result := TFhirSupplyDelivery.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -27449,7 +27449,7 @@ function TFHIRXmlParser.ParseSupplyRequestWhen(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirSupplyRequestWhen.create;
+  result := TFhirSupplyRequestWhen.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27504,7 +27504,7 @@ function TFHIRXmlParser.ParseSupplyRequest(element : TMXmlElement; path : string
 var
   child : TMXmlElement;
 begin
-  result := TFhirSupplyRequest.create;
+  result := TFhirSupplyRequest.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -27600,7 +27600,7 @@ function TFHIRXmlParser.ParseTestScriptContact(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptContact.create;
+  result := TFhirTestScriptContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27658,7 +27658,7 @@ function TFHIRXmlParser.ParseTestScriptMetadata(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptMetadata.create;
+  result := TFhirTestScriptMetadata.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27716,7 +27716,7 @@ function TFHIRXmlParser.ParseTestScriptMetadataLink(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptMetadataLink.create;
+  result := TFhirTestScriptMetadataLink.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27770,7 +27770,7 @@ function TFHIRXmlParser.ParseTestScriptMetadataCapability(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptMetadataCapability.create;
+  result := TFhirTestScriptMetadataCapability.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27843,7 +27843,7 @@ function TFHIRXmlParser.ParseTestScriptFixture(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptFixture.create;
+  result := TFhirTestScriptFixture.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27902,7 +27902,7 @@ function TFHIRXmlParser.ParseTestScriptVariable(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptVariable.create;
+  result := TFhirTestScriptVariable.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -27964,7 +27964,7 @@ function TFHIRXmlParser.ParseTestScriptSetup(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptSetup.create;
+  result := TFhirTestScriptSetup.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28021,7 +28021,7 @@ function TFHIRXmlParser.ParseTestScriptSetupAction(element : TMXmlElement; path 
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptSetupAction.create;
+  result := TFhirTestScriptSetupAction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28076,7 +28076,7 @@ function TFHIRXmlParser.ParseTestScriptSetupActionOperation(element : TMXmlEleme
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptSetupActionOperation.create;
+  result := TFhirTestScriptSetupActionOperation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28182,7 +28182,7 @@ function TFHIRXmlParser.ParseTestScriptSetupActionOperationRequestHeader(element
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptSetupActionOperationRequestHeader.create;
+  result := TFhirTestScriptSetupActionOperationRequestHeader.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28235,7 +28235,7 @@ function TFHIRXmlParser.ParseTestScriptSetupActionAssert(element : TMXmlElement;
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptSetupActionAssert.create;
+  result := TFhirTestScriptSetupActionAssert.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28354,7 +28354,7 @@ function TFHIRXmlParser.ParseTestScriptTest(element : TMXmlElement; path : strin
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptTest.create;
+  result := TFhirTestScriptTest.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28419,7 +28419,7 @@ function TFHIRXmlParser.ParseTestScriptTestAction(element : TMXmlElement; path :
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptTestAction.create;
+  result := TFhirTestScriptTestAction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28474,7 +28474,7 @@ function TFHIRXmlParser.ParseTestScriptTeardown(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptTeardown.create;
+  result := TFhirTestScriptTeardown.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28527,7 +28527,7 @@ function TFHIRXmlParser.ParseTestScriptTeardownAction(element : TMXmlElement; pa
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScriptTeardownAction.create;
+  result := TFhirTestScriptTeardownAction.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28578,7 +28578,7 @@ function TFHIRXmlParser.ParseTestScript(element : TMXmlElement; path : string) :
 var
   child : TMXmlElement;
 begin
-  result := TFhirTestScript.create;
+  result := TFhirTestScript.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -28716,7 +28716,7 @@ function TFHIRXmlParser.ParseValueSetContact(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetContact.create;
+  result := TFhirValueSetContact.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28774,7 +28774,7 @@ function TFHIRXmlParser.ParseValueSetCodeSystem(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetCodeSystem.create;
+  result := TFhirValueSetCodeSystem.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28838,7 +28838,7 @@ function TFHIRXmlParser.ParseValueSetCodeSystemConcept(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetCodeSystemConcept.create;
+  result := TFhirValueSetCodeSystemConcept.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28912,7 +28912,7 @@ function TFHIRXmlParser.ParseValueSetCodeSystemConceptDesignation(element : TMXm
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetCodeSystemConceptDesignation.create;
+  result := TFhirValueSetCodeSystemConceptDesignation.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -28970,7 +28970,7 @@ function TFHIRXmlParser.ParseValueSetCompose(element : TMXmlElement; path : stri
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetCompose.create;
+  result := TFhirValueSetCompose.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29034,7 +29034,7 @@ function TFHIRXmlParser.ParseValueSetComposeInclude(element : TMXmlElement; path
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetComposeInclude.create;
+  result := TFhirValueSetComposeInclude.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29100,7 +29100,7 @@ function TFHIRXmlParser.ParseValueSetComposeIncludeConcept(element : TMXmlElemen
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetComposeIncludeConcept.create;
+  result := TFhirValueSetComposeIncludeConcept.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29161,7 +29161,7 @@ function TFHIRXmlParser.ParseValueSetComposeIncludeFilter(element : TMXmlElement
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetComposeIncludeFilter.create;
+  result := TFhirValueSetComposeIncludeFilter.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29217,7 +29217,7 @@ function TFHIRXmlParser.ParseValueSetExpansion(element : TMXmlElement; path : st
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetExpansion.create;
+  result := TFhirValueSetExpansion.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29290,7 +29290,7 @@ function TFHIRXmlParser.ParseValueSetExpansionParameter(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetExpansionParameter.create;
+  result := TFhirValueSetExpansionParameter.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29364,7 +29364,7 @@ function TFHIRXmlParser.ParseValueSetExpansionContains(element : TMXmlElement; p
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSetExpansionContains.create;
+  result := TFhirValueSetExpansionContains.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29438,7 +29438,7 @@ function TFHIRXmlParser.ParseValueSet(element : TMXmlElement; path : string) : T
 var
   child : TMXmlElement;
 begin
-  result := TFhirValueSet.create;
+  result := TFhirValueSet.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);
@@ -29566,7 +29566,7 @@ function TFHIRXmlParser.ParseVisionPrescriptionDispense(element : TMXmlElement; 
 var
   child : TMXmlElement;
 begin
-  result := TFhirVisionPrescriptionDispense.create;
+  result := TFhirVisionPrescriptionDispense.Create;
   try
     parseElementAttributes(result, path, element);
     child := FirstChild(element);
@@ -29672,7 +29672,7 @@ function TFHIRXmlParser.ParseVisionPrescription(element : TMXmlElement; path : s
 var
   child : TMXmlElement;
 begin
-  result := TFhirVisionPrescription.create;
+  result := TFhirVisionPrescription.Create;
   try
     parseDomainResourceAttributes(result, path, element);
     child := FirstChild(element);

@@ -163,15 +163,15 @@ end;
 constructor TFakeConsoleListener.Create;
 begin
   inherited Create;
-  FLines := TStringList.create;
-  FLock := TFslLock.create;
+  FLines := TStringList.Create;
+  FLock := TFslLock.Create;
   FFinished := true;
 end;
 
 destructor TFakeConsoleListener.Destroy;
 begin
-  FLines.Free;
-  FLock.Free;
+  FLines.free;
+  FLock.free;
   inherited Destroy;
 end;
 
@@ -236,16 +236,16 @@ end;
 
 procedure TFakeConsoleForm.FormCreate(Sender: TObject);
 begin
-  FListener := TFakeConsoleListener.create;
+  FListener := TFakeConsoleListener.Create;
   Logging.addListener(FListener);
   mnuApple.caption := #$EF#$A3#$BF;
   mnuPreferences.caption := 'Preferences...';
   GFinished := false;
-  FIni := TIniFile.create(FilePath([GetAppConfigDir(false), 'fhir_fake_console.ini']));
+  FIni := TIniFile.Create(FilePath([GetAppConfigDir(false), 'fhir_fake_console.ini']));
   FAutoClose := FIni.ReadBool('settings', 'autoclose', false);
   FForwards := FIni.ReadBool('settings', 'forwards', true);
   FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
-  FCache := TStringList.create;
+  FCache := TStringList.Create;
 end;
 
 procedure TFakeConsoleForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -257,7 +257,7 @@ procedure TFakeConsoleForm.FormDestroy(Sender: TObject);
 begin
   Logging.removeListener(FListener);
   FListener.free;
-  FCache.Free;
+  FCache.free;
 end;
 
 procedure TFakeConsoleForm.FormShow(Sender: TObject);
@@ -277,7 +277,7 @@ end;
 
 procedure TFakeConsoleForm.mnuPreferencesClick(Sender: TObject);
 begin
-  FakeConsoleSettingsForm := TFakeConsoleSettingsForm.create(self);
+  FakeConsoleSettingsForm := TFakeConsoleSettingsForm.Create(self);
   try
     FakeConsoleSettingsForm.chkForwards.checked := FIni.ReadBool('settings', 'forwards', false);
     FakeConsoleSettingsForm.chkAutoClose.checked := FIni.ReadBool('settings', 'autoclose', false);
@@ -292,7 +292,7 @@ begin
       FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
     end;
   finally
-    FakeConsoleSettingsForm.Free;
+    FakeConsoleSettingsForm.free;
     FakeConsoleSettingsForm := nil;
   end;
 end;
@@ -376,7 +376,7 @@ procedure TFakeConsoleForm.start;
 begin
   FStarted := true;
   mnuStop.enabled := Assigned(FOnStop);
-  TWorkerThread.create(FOp);
+  TWorkerThread.Create(FOp);
 end;
 
 end.

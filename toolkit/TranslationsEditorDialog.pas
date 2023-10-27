@@ -101,7 +101,7 @@ begin
         button.ImageIndex := translationsImageIndex(element);
     end;
   finally
-    TranslationsEditorForm.Free;
+    TranslationsEditorForm.free;
   end;
 end;
 
@@ -135,14 +135,14 @@ begin
     begin
       s := ext.getExtensionString('lang');
       if s = '' then
-        raise EFHIRException.create('Language missing on a translation');
+        raise EFHIRException.Create('Language missing on a translation');
       if langs.IndexOf(s) > -1 then
-        raise EFHIRException.create('Duplicate translation for '+s);
+        raise EFHIRException.Create('Duplicate translation for '+s);
       langs.Add(s);
       ext.url := 'http://hl7.org/fhir/StructureDefinition/translation';
     end;
   finally
-    langs.Free;
+    langs.free;
   end;
   element.value := edtPrimary.Text;
   element.removeExtension('http://hl7.org/fhir/StructureDefinition/translation');
@@ -154,14 +154,14 @@ end;
 constructor TTranslationsEditorForm.Create;
 begin
   inherited;
-  FExtensions := TFslList<TFhirExtension>.create;
+  FExtensions := TFslList<TFhirExtension>.Create;
 end;
 
 destructor TTranslationsEditorForm.Destroy;
 begin
-  FExtensions.Free;
-  FElement.Free;
-  FResource.Free;
+  FExtensions.free;
+  FElement.free;
+  FResource.free;
   inherited;
 end;
 
@@ -185,7 +185,7 @@ begin
     for s in st do
       PopupColumn1.Items.add(langDesc(s));
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -207,13 +207,13 @@ end;
 
 procedure TTranslationsEditorForm.SetElement(const Value: TFHIRString);
 begin
-  FElement.Free;
+  FElement.free;
   FElement := Value;
 end;
 
 procedure TTranslationsEditorForm.SetResource(const Value: TFHIRResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 

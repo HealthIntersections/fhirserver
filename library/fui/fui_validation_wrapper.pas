@@ -98,17 +98,17 @@ constructor TFHIRValidationWrapper.Create(Cache: TFHIRPackageManager);
 var
   ts : TStringList;
 begin
-  inherited create;
+  inherited Create;
   FCache := cache;
-  FPackages := TStringList.create;
-  FOthers := TStringList.create;
+  FPackages := TStringList.Create;
+  FOthers := TStringList.Create;
 
 end;
 
 destructor TFHIRValidationWrapper.Destroy;
 begin
-  FPackages.Free;
-  FOthers.Free;
+  FPackages.free;
+  FOthers.free;
   FCache.free;
   inherited;
 end;
@@ -178,7 +178,7 @@ end;
 {$ELSE}
 procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
 begin
-  raise EFHIRTodo.create('TFHIRValidationWrapper.executeCommand');
+  raise EFHIRTodo.Create('TFHIRValidationWrapper.executeCommand');
 end;
 {$ENDIF}
 

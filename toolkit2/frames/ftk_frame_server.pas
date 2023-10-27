@@ -218,10 +218,10 @@ end;
 
 destructor TServerWorkerFrame.Destroy;
 begin
-  FPatientManager.Free;
-  FServer.Free;
-  FFactory.Free;
-  FSearch.Free;
+  FPatientManager.free;
+  FServer.free;
+  FFactory.free;
+  FSearch.free;
   inherited;
 end;
 
@@ -233,7 +233,7 @@ end;
 
 procedure TServerWorkerFrame.init(json: TJsonObject);
 begin
-  FPatientManager := TPatientSearchManager.create;
+  FPatientManager := TPatientSearchManager.Create;
   FPatientManager.Images := FContext.images;
   FPatientManager.Settings := FContext.Settings;
   FPatientManager.List := lvPatients;
@@ -262,7 +262,7 @@ begin
       Context.OnConnectToServer(self, FServer);
     FSearch.free;
     FSearch := nil;
-    params := TStringList.create;
+    params := TStringList.Create;
     try
       if edtName.Text <> '' then
         params.add('name='+edtName.text);
@@ -301,7 +301,7 @@ var
   issues : TFslList<TFhirOperationOutcomeIssueW>;
   hb : TFslStringBuilder;
 begin
-  issues := TFslList<TFhirOperationOutcomeIssueW>.create;
+  issues := TFslList<TFhirOperationOutcomeIssueW>.Create;
   try
     if issues.count = 0 then
     begin
@@ -310,7 +310,7 @@ begin
     end
     else
     begin
-      hb := TFslHtmlBuilder.create;
+      hb := TFslHtmlBuilder.Create;
       try
         for issue in issues do
           hb.append('* '+CODES_TIssueSeverity[issue.severity]+': '+issue.display+#13#10);
@@ -356,7 +356,7 @@ begin
 
   if FServer.client <> nil then
   begin
-    ServerPackageUploadForm := TServerPackageUploadForm.create(self);
+    ServerPackageUploadForm := TServerPackageUploadForm.Create(self);
     try
       ServerPackageUploadForm.client := FServer.client.link;
       ServerPackageUploadForm.showModal;
@@ -388,7 +388,7 @@ end;
 
 procedure TServerWorkerFrame.SetServer(AValue: TFHIRServerEntry);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := AValue;
 end;
 

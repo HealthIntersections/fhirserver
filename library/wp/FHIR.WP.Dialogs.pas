@@ -1739,7 +1739,7 @@ End;
 
 Procedure TWPHotspotFrame.Finalise;
 Begin
-  FField.Free;
+  FField.free;
 
   Inherited;
 End;
@@ -1787,7 +1787,7 @@ End;
 
 Procedure TWPHotspotFrame.SetField(Const Value : TWPDocumentField);
 Begin
-  FField.Free;
+  FField.free;
   FField := Value;
 
   If FField.HasHotspot Then
@@ -1999,7 +1999,7 @@ End;
 
 Procedure TWPCodeCompletionDialog.Finalise;
 Begin
-  FList.Free;
+  FList.free;
 
   Inherited;
 End;
@@ -2017,7 +2017,7 @@ Var
   iWidth : Integer;
   iLoop : Integer;
 Begin
-  FList.Free;
+  FList.free;
   FList := Value;
   ClientHeight := FListBox.ItemHeight * IntegerMin(MAX_ITEM_DISPLAY, FList.Count);
   Canvas.Font.Assign(FListBox.Font);
@@ -2176,7 +2176,7 @@ Begin
       If (FFontsAllowed = Nil) Or (FFontsAllowed.Count = 0) Or (FFontsAllowed.ExistsByValue(oList[iLoop])) Then
         FcbxFont.items.Add(oList[iLoop]);
   Finally
-    oList.Free;
+    oList.free;
   End;
 End;
 
@@ -2464,20 +2464,20 @@ begin
       oCanvas.Unlock;
     End;
   Finally
-    oBmp.Free;
+    oBmp.free;
   End;
 end;
 
 procedure TWPAdornmentFrame.Finalise;
 begin
-  FAdornment.Free;
-  FFontsAllowed.Free;
+  FAdornment.free;
+  FFontsAllowed.free;
   inherited;
 end;
 
 procedure TWPAdornmentFrame.SetFontsAllowed(const Value: TFslStringList);
 begin
-  FFontsAllowed.Free;
+  FFontsAllowed.free;
   FFontsAllowed := Value;
 end;
 
@@ -2489,7 +2489,7 @@ End;
 
 Procedure TWPAdornmentFrame.SetAdornment(Const Value : TWPDocumentImageAdornment);
 Begin
-  FAdornment.Free;
+  FAdornment.free;
   FAdornment := Value;
 End;
 
@@ -2616,8 +2616,8 @@ End;
 
 Procedure TWPFontFrame.Finalise;
 Begin
-  FFontsAllowed.Free;
-  FFont.Free;
+  FFontsAllowed.free;
+  FFont.free;
   Inherited;
 End;
 
@@ -2844,7 +2844,7 @@ Begin
       If (FFontsAllowed = Nil) Or (FFontsAllowed.Count = 0) Or (FFontsAllowed.ExistsByValue(oList[iLoop])) Then
         FlstFont.items.Add(oList[iLoop]);
   Finally
-    oList.Free;
+    oList.free;
   End;
 End;
 
@@ -3149,7 +3149,7 @@ End;
 
 Procedure TWPFontFrame.SetFontsAllowed(Const Value: TFslStringList);
 Begin
-  FFontsAllowed.Free;
+  FFontsAllowed.free;
   FFontsAllowed := Value;
 End;
 
@@ -3256,7 +3256,7 @@ Begin
       If aStyle In aStyles Then
         lbFormats.Items.AddObject(WPCLIPBOARDCONTENTTYPE_NAMES[aStyle], TObject(aStyle));
   Finally
-    oClip.Free;
+    oClip.free;
   End;
 End;
 
@@ -3367,7 +3367,7 @@ Begin
   WPIconModule.Images.GetBitmap(WPIconModule.ALIGN_LEFT, oBitmap);
   FbtnLeft.PresentationEntity.IconBitmapImage.LoadFromVCLBitmap(oBitmap);
   FbtnLeft.PresentationEntity.IconBitmapImage.TransparentColour := argbWhite;
-  oBitmap.Free;
+  oBitmap.free;
   AddLabel(FgrpAlign, 65, 33, 'Left');
 
   FbtnCenter := TUixAdvancedButton.Create(Self);
@@ -3383,7 +3383,7 @@ Begin
   WPIconModule.Images.GetBitmap(WPIconModule.ALIGN_CENTRE, oBitmap);
   FbtnCenter.PresentationEntity.IconBitmapImage.LoadFromVCLBitmap(oBitmap);
   FbtnCenter.PresentationEntity.IconBitmapImage.TransparentColour := argbWhite;
-  oBitmap.Free;
+  oBitmap.free;
   AddLabel(FgrpAlign, 65, 105, 'Centre');
 
   FbtnRight := TUixAdvancedButton.Create(Self);
@@ -3399,7 +3399,7 @@ Begin
   WPIconModule.Images.GetBitmap(WPIconModule.ALIGN_RIGHT, oBitmap);
   FbtnRight.PresentationEntity.IconBitmapImage.LoadFromVCLBitmap(oBitmap);
   FbtnRight.PresentationEntity.IconBitmapImage.TransparentColour := argbWhite;
-  oBitmap.Free;
+  oBitmap.free;
   AddLabel(FgrpAlign, 65, 189, 'Right');
 
   FbtnJustify := TUixAdvancedButton.Create(Self);
@@ -3415,7 +3415,7 @@ Begin
   WPIconModule.Images.GetBitmap(WPIconModule.ALIGN_JUSTIFY, oBitmap);
   FbtnJustify.PresentationEntity.IconBitmapImage.LoadFromVCLBitmap(oBitmap);
   FbtnJustify.PresentationEntity.IconBitmapImage.TransparentColour := argbWhite;
-  oBitmap.Free;
+  oBitmap.free;
   AddLabel(FgrpAlign, 65, 267, 'Justify');
 
 
@@ -3525,7 +3525,7 @@ End;
 
 Procedure TWPParagraphFrame.Finalise;
 Begin
-  FParagraph.Free;
+  FParagraph.free;
 
   Inherited;
 End;
@@ -3892,7 +3892,7 @@ End;
 
 Procedure TWPStyleFrame.Finalise;
 Begin
-  FStyle.Free;
+  FStyle.free;
 
   Inherited;
 End;
@@ -4301,7 +4301,7 @@ end;
 
 Procedure TWPImageFrame.Finalise;
 Begin
-  FImage.Free;
+  FImage.free;
 
   Inherited;
 End;
@@ -4316,7 +4316,7 @@ End;
 
 Procedure TWPImageFrame.SetImage(Const Value: TWPWorkingDocumentImagePiece);
 Begin
-  FImage.Free;
+  FImage.free;
   FImage := Value;
 
   FChanging := True;
@@ -4548,7 +4548,7 @@ Begin
   If (sdExport.Execute) Then
   Begin
     // Saving to sdExport.FileName
-    raise EWPException.create('Not done yet');
+    raise EWPException.Create('Not done yet');
   End
 End;
 
@@ -4805,7 +4805,7 @@ Begin
   If Assigned(FArea) Then
   Begin
     DrawAreaMapOnImage;
-    FArea.Free;
+    FArea.free;
     FArea := Nil;
   End;
 
@@ -4960,7 +4960,7 @@ Begin
   If Assigned(FCoord) Then
   Begin
     DrawCurrentCoord;
-    FCoord.Free;
+    FCoord.free;
   End;
 
   If FCoords.ItemIndex <> -1 Then
@@ -4999,7 +4999,7 @@ Begin
     FMaps.ItemIndex := FMaps.Items.Count - 1;
     OnMapAreaSelected(Self);
   Finally
-    oArea.Free;
+    oArea.free;
   End;
 
   If Assigned(FOnMapAreaChanged) Then
@@ -5121,10 +5121,10 @@ End;
 
 Procedure TWPImageMapFrame.Finalise;
 Begin
-  FArea.Free;
-  FCoord.Free;
-  FImage.Free;
-  FBitmap.Free;
+  FArea.free;
+  FCoord.free;
+  FImage.free;
+  FBitmap.free;
 
   Inherited;
 End;
@@ -5141,7 +5141,7 @@ Procedure TWPImageMapFrame.SetImage(Const Value: TWPWorkingDocumentImagePiece);
 Var
   iLoop : Integer;
 Begin
-  FImage.Free;
+  FImage.free;
   FImage := Value;
 
   If Assigned(FImage) Then
@@ -5150,14 +5150,14 @@ Begin
     Try
       // show the image
       FEditBox.Caption := FImage.ImageTypename + ' ('+IntegerToString(FImage.Image.Height)+'px high, '+ IntegerToString(FImage.Image.Width)+'px wide)';
-      FBitmap.Free;
+      FBitmap.free;
       FBitmap := TBitmap.Create;
       FBitmap.Canvas.Lock;
       Try
         FBitmap.Height := FImage.Image.Height;
         FBitmap.Width := FImage.Image.Width;
         if not (FImage.Image is TFslVCLGraphic) then
-          raise EWPException.create('Cannot Edit an image Map for this kind of Image');
+          raise EWPException.Create('Cannot Edit an image Map for this kind of Image');
 
         FBitmap.Canvas.Draw(0, 0, TFslVCLGraphic(FImage.Image).Handle);
       Finally
@@ -5284,7 +5284,7 @@ End;
 
 Procedure TWPSymbolDialog.SetSpecifiedFont(Value : TWPSFontDetails);
 Begin
-  FSpecifiedFont.Free;
+  FSpecifiedFont.free;
   FSpecifiedFont := Value;
   WorkingFont := SpecifiedFont.Clone;
   Frame.SymbolFont := WorkingFont.Link;
@@ -5299,7 +5299,7 @@ End;
 
 Procedure TWPSymbolDialog.SetWorkingFont(Value : TWPSFontDetails);
 Begin
-  FWorkingFont.Free;
+  FWorkingFont.free;
   FWorkingFont := Value;
 End;
 
@@ -5360,9 +5360,9 @@ End;
 
 Destructor TWPSymbolDialog.Destroy;
 Begin
-  FFontsAllowed.Free;
-  FWorkingFont.Free;
-  FSpecifiedFont.Free;
+  FFontsAllowed.free;
+  FWorkingFont.free;
+  FSpecifiedFont.free;
   Inherited;
 End;
 
@@ -5406,7 +5406,7 @@ End;
 
 Procedure TWPSymbolFrame.SetSymbolFont(Value : TWPSFontDetails);
 Begin
-  FSymbolFont.Free;
+  FSymbolFont.free;
   FSymbolFont := Value;
   BuildExample;
 End;
@@ -5422,7 +5422,7 @@ End;
 
 Procedure TWPSymbolFrame.Finalise;
 Begin
-  FSymbolFont.Free;
+  FSymbolFont.free;
   Inherited;
 End;
 
@@ -5475,7 +5475,7 @@ Begin
 
     FGrid.DocumentHandler.LoadDocument(oBuilder.Document);
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 End;
 
@@ -6142,7 +6142,7 @@ Begin
     oBuilder.Stop;
     FExample.DocumentHandler.LoadDocument(oBuilder.Document);
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 
   // mirror selection and styles
@@ -6209,7 +6209,7 @@ End;
 
 Procedure TWPTablePropertiesFrame.SetTable(Const Value : TWPWorkingDocumentTableStartPiece);
 Begin
-  FTable.Free;
+  FTable.free;
   FTable := Value;
   FTableTab.Enabled := Assigned(FTable);
 End;
@@ -6222,7 +6222,7 @@ End;
 
 Procedure TWPTablePropertiesFrame.SetTableRow(Const Value : TWPWorkingDocumentTableRowStartPiece);
 Begin
-  FTableRow.Free;
+  FTableRow.free;
   FTableRow := Value;
   FRowTab.Enabled := Assigned(FTableRow);
 End;
@@ -6235,7 +6235,7 @@ End;
 
 Procedure TWPTablePropertiesFrame.SetTableCell(Const Value : TWPWorkingDocumentTableCellStartPiece);
 Begin
-  FTableCell.Free;
+  FTableCell.free;
   FTableCell := Value;
   FCellTab.Enabled := Assigned(FTableCell);
 End;
@@ -6259,9 +6259,9 @@ End;
 
 Procedure TWPTablePropertiesFrame.Finalise;
 Begin
-  FTable.Free;
-  FTableRow.Free;
-  FTableCell.Free;
+  FTable.free;
+  FTableRow.free;
+  FTableCell.free;
 
   Inherited;
 End;
@@ -6597,7 +6597,7 @@ End;
 
 Procedure TWPTableBorderFrame.Finalise;
 Begin
-  FBorder.Free;
+  FBorder.free;
 
   Inherited;
 End;
@@ -6610,7 +6610,7 @@ End;
 
 Procedure TWPTableBorderFrame.SetBorder(const oBorder: TWPBorder);
 Begin
-  FBorder.Free;
+  FBorder.free;
   FBorder := oBorder;
 End;
 
@@ -6904,7 +6904,7 @@ End;
 
 Procedure TWPLineFrame.SetLine(Const Value : TWPWorkingDocumentBreakPiece);
 Begin
-  FLine.Free;
+  FLine.free;
   FLine := Value;
 End;
 
@@ -6919,7 +6919,7 @@ End;
 
 Procedure TWPLineFrame.Finalise;
 Begin
-  FLine.Free;
+  FLine.free;
   Inherited;
 End;
 
@@ -7039,7 +7039,7 @@ Begin
     oBuilder.Stop;
     FExample.DocumentHandler.LoadDocument(oBuilder.Document);
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 End;
 
@@ -7184,8 +7184,8 @@ End;
 
 Procedure TWPSearchFrame.Finalise;
 Begin
-  FRange.Free;
-  FSearchDetails.Free;
+  FRange.free;
+  FSearchDetails.free;
   Inherited;
 End;
 
@@ -7267,7 +7267,7 @@ End;
 
 Procedure TWPSearchFrame.SetSearchDetails(Const Value: TWPSearchDetails);
 Begin
-  FSearchDetails.Free;
+  FSearchDetails.free;
   FSearchDetails := Value;
   BindToSearch;
 End;
@@ -7366,7 +7366,7 @@ End;
 
 Procedure TWPSearchFrame.SetRange(Const Value : TWPRange);
 Begin
-  FRange.Free;
+  FRange.free;
   FRange := Value;
 End;
 
@@ -7488,9 +7488,9 @@ End;
 
 Procedure TWPReplaceFrame.Finalise;
 Begin
-  FOriginalSelection.Free;
-  FRange.Free;
-  FReplaceDetails.Free;
+  FOriginalSelection.free;
+  FRange.free;
+  FReplaceDetails.free;
   Inherited;
 End;
 
@@ -7591,7 +7591,7 @@ End;
 
 Procedure TWPReplaceFrame.SetReplaceDetails(Const Value: TWPReplaceDetails);
 Begin
-  FReplaceDetails.Free;
+  FReplaceDetails.free;
   FReplaceDetails := Value;
   BindToReplace;
 End;
@@ -7716,7 +7716,7 @@ End;
 
 Procedure TWPReplaceFrame.SetRange(Const Value : TWPRange);
 Begin
-  FRange.Free;
+  FRange.free;
   FRange := Value;
   FOriginalSelection := FRange.Selection.Clone;
 End;
@@ -7864,7 +7864,7 @@ Procedure TWPSortTableFrame.Finalise;
 Begin
   Inherited;
 
-  FSortDetails.Free;
+  FSortDetails.free;
 End;
 
 Procedure TWPSortTableFrame.Initialise;
@@ -7918,7 +7918,7 @@ Begin
       oColumns.Add(sIndex);
     End;
   Finally
-    oColumns.Free;
+    oColumns.free;
   End;
 End;
 
@@ -7937,7 +7937,7 @@ End;
 
 Procedure TWPSortTableFrame.SetTable(Const oTable: TWPWorkingDocumentTableStartPiece);
 Begin
-  FTable.Free;
+  FTable.free;
   FTable := oTable;
 End;
 
@@ -8095,9 +8095,9 @@ End;
 Procedure TWPAllowedWordsFrame.Finalise;
 Begin
   Inherited;
-  FWords.Free;
-  FComponents.Free;
-  FToDictionary.Free;
+  FWords.free;
+  FComponents.free;
+  FToDictionary.free;
 End;
 
 Procedure TWPAllowedWordsFrame.BuildForm;
@@ -8132,7 +8132,7 @@ End;
 
 procedure TWPAllowedWordsFrame.SetWords(const Value: TFslStringList);
 begin
-  FWords.Free;
+  FWords.free;
   FWords := Value;
 end;
 
@@ -8159,7 +8159,7 @@ var
   i : Integer;
 begin
   for i := FComponents.Count - 1 Downto 0 do
-    FComponents[i].Free;
+    FComponents[i].free;
 end;
 
 procedure TWPAllowedWordsFrame.ReloadEdits;
@@ -8410,8 +8410,8 @@ End;
 
 Procedure TWPFieldModelFrame.Finalise;
 Begin
-  FModel.Free;
-  FEntries.Free;
+  FModel.free;
+  FEntries.free;
 
   Inherited;
 End;
@@ -8431,7 +8431,7 @@ Var
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetModel', Value, TWPFieldModel, 'Value'));
 
-  FModel.Free;
+  FModel.free;
   FModel := Value;
   If (Assigned(FModel)) Then
   If FSection Then
@@ -8662,7 +8662,7 @@ Begin
     Width := IntegerMin(iMaximumEntryLength + 20, 600);
     Height := IntegerMin(600, (Model.Entries.Count * 15) + 30);
   Finally
-    oCanvas.Free;
+    oCanvas.free;
   End;
 End;
 
@@ -8848,8 +8848,8 @@ End;
 
 Procedure TWPInputFieldFrame.Finalise;
 Begin
-  FField.Free;
-  FSection.Free;
+  FField.free;
+  FSection.free;
 
   Inherited;
 End;
@@ -8917,7 +8917,7 @@ Begin
       oList.AsText := FmemLstList.Text;
       FField.DataValue[FIELD_DATA_NAME_LIST] := oList.AsCSV;
     Finally
-      oList.Free;
+      oList.free;
     End;
     If FKeyEdit.Text <> '' Then
     Begin
@@ -8958,7 +8958,7 @@ End;
 
 Procedure TWPInputFieldFrame.SetField(Const Value : TWPDocumentField);
 Begin
-  FField.Free;
+  FField.free;
   FField := Value;
 End;
 
@@ -8971,7 +8971,7 @@ End;
 
 Procedure TWPInputFieldFrame.SetSection(Const Value : TWPDocumentSection);
 Begin
-  FSection.Free;
+  FSection.free;
   FSection := Value;
 End;
 
@@ -9038,7 +9038,7 @@ Begin
     oList.AsCSV := FField.DataValue[FIELD_DATA_NAME_LIST];
     FmemLstList.Text := oList.AsText;
   Finally
-    oList.Free;
+    oList.free;
   End;
 
   If FField.HasHotspot Then

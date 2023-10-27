@@ -41,67 +41,67 @@ uses
 type
   TFHIRParsers5 = class
   public
-    class function parser(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser;
-    class function composer(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer;
-    class function ParseFile(worker : TFHIRWorkerContext; format : TFHIRFormat; const lang : THTTPLanguages; filename : String) : TFHIRResource; overload;
-    class procedure composeFile(worker : TFHIRWorkerContext; format : TFHIRFormat; r : TFHIRResourceV; const lang : THTTPLanguages; filename : String; style : TFHIROutputStyle); overload;
+    class function parser(worker : TFHIRWorkerContext; format : TFHIRFormat; langList : THTTPLanguageList) : TFHIRParser;
+    class function composer(worker : TFHIRWorkerContext; format : TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle) : TFHIRComposer;
+    class function ParseFile(worker : TFHIRWorkerContext; format : TFHIRFormat; langList : THTTPLanguageList; filename : String) : TFHIRResource; overload;
+    class procedure composeFile(worker : TFHIRWorkerContext; format : TFHIRFormat; r : TFHIRResourceV; langList : THTTPLanguageList; filename : String; style : TFHIROutputStyle); overload;
   end;
 
 implementation
 
 { TFHIRParsers5 }
 
-class function TFHIRParsers5.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
+class function TFHIRParsers5.composer(worker: TFHIRWorkerContext; format: TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle): TFHIRComposer;
 begin
   case format of
-    ffXml : result := fhir5_xml.TFHIRXmlComposer.Create(worker, style, lang);
-    ffJson : result := fhir5_json.TFHIRJsonComposer.Create(worker, style, lang);
-    ffTurtle : result := fhir5_turtle.TFHIRTurtleComposer.Create(worker, style, lang);
-    ffText : result := TFHIRTextComposer.Create(worker, style, lang);
+    ffXml : result := fhir5_xml.TFHIRXmlComposer.Create(worker, style, langList);
+    ffJson : result := fhir5_json.TFHIRJsonComposer.Create(worker, style, langList);
+    ffTurtle : result := fhir5_turtle.TFHIRTurtleComposer.Create(worker, style, langList);
+    ffText : result := TFHIRTextComposer.Create(worker, style, langList);
   else
-    raise EFHIRException.create('Unspecified/unsupported format');
+    raise EFHIRException.Create('Unspecified/unsupported format');
   end;
 end;
 
-class function TFHIRParsers5.parser(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages): TFHIRParser;
+class function TFHIRParsers5.parser(worker: TFHIRWorkerContext; format: TFHIRFormat; langList : THTTPLanguageList): TFHIRParser;
 begin
   case format of
-    ffXml: result := fhir5_xml.TFHIRXmlParser.Create(worker, lang);
-    ffJson: result := fhir5_json.TFHIRJsonParser.Create(worker, lang);
-    ffTurtle: result := fhir5_turtle.TFHIRTurtleParser.Create(worker, lang);
+    ffXml: result := fhir5_xml.TFHIRXmlParser.Create(worker, langList);
+    ffJson: result := fhir5_json.TFHIRJsonParser.Create(worker, langList);
+    ffTurtle: result := fhir5_turtle.TFHIRTurtleParser.Create(worker, langList);
   else
-    raise EFHIRException.create('Unspecified/unsupported format');
+    raise EFHIRException.Create('Unspecified/unsupported format');
   end;
 end;
 
-class procedure TFHIRParsers5.composeFile(worker: TFHIRWorkerContext; format: TFHIRFormat; r: TFHIRResourceV; const lang : THTTPLanguages; filename: String; style: TFHIROutputStyle);
+class procedure TFHIRParsers5.composeFile(worker: TFHIRWorkerContext; format: TFHIRFormat; r: TFHIRResourceV; langList : THTTPLanguageList; filename: String; style: TFHIROutputStyle);
 var
   c : TFHIRComposer;
   f : TFileStream;
 begin
-  c := composer(worker, format, lang, style);
+  c := composer(worker, format, langList.link, style);
   try
     f := TFileStream.Create(filename, fmCreate);
     try
       c.Compose(f, r);
     finally
-      f.Free;
+      f.free;
     end;
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
-class function TFHIRParsers5.ParseFile(worker: TFHIRWorkerContext; format: TFHIRFormat; const lang : THTTPLanguages; filename: String): TFHIRResource;
+class function TFHIRParsers5.ParseFile(worker: TFHIRWorkerContext; format: TFHIRFormat; langList : THTTPLanguageList; filename: String): TFHIRResource;
 var
   p : TFHIRParser;
 begin
-  p := parser(worker, format, lang);
+  p := parser(worker, format, langList.link);
   try
     p.ParseFile(filename);
     result := p.resource.Link as TFhirResource;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 

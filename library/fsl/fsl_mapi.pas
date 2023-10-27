@@ -172,11 +172,11 @@ Destructor TFslMAPI.Destroy;
 Begin
   Logoff;
 
-  FTos.Free;
-  FCcs.Free;
-  FBccs.Free;
-  FBody.Free;
-  FAttachments.Free;
+  FTos.free;
+  FCcs.free;
+  FBccs.free;
+  FBody.free;
+  FAttachments.free;
 
   Inherited;
 End;

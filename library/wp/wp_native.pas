@@ -453,7 +453,7 @@ End;
 
 Destructor TWPNativeReader.Destroy;
 Begin
-  FAnnotationMap.Free;
+  FAnnotationMap.free;
 
   Inherited;
 End;
@@ -481,7 +481,7 @@ Begin
 
   Finally
     FActiveExtractor.ConsumeClose(TAG_NAME_STREAM);
-    FActiveExtractor.Free;
+    FActiveExtractor.free;
     FActiveExtractor := nil;
   End;
 
@@ -593,7 +593,7 @@ Begin
       Styles.Add(oStyle.Link);
     End;
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -624,7 +624,7 @@ Begin
         oMem.Position := 0;
         oBorder.BrushImage.LoadFromStream(oMem);
       Finally
-        oMem.Free;
+        oMem.free;
       End;
       FActiveExtractor.ConsumeClose;
       FActiveExtractor.ConsumeClose;
@@ -664,7 +664,7 @@ Begin
 
     oDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   While FActiveExtractor.More And FActiveExtractor.PeekIsOpen Do
@@ -676,7 +676,7 @@ Begin
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_TABLE);
@@ -713,7 +713,7 @@ Begin
 
     oDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   While FActiveExtractor.More And FActiveExtractor.PeekIsOpen And (FActiveExtractor.PeekXML = TAG_NAME_TABLE_CELL) Do
@@ -725,7 +725,7 @@ Begin
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   While FActiveExtractor.More And FActiveExtractor.PeekIsOpen And (FActiveExtractor.PeekXML = TAG_NAME_TABLE_ROW) Do
@@ -761,7 +761,7 @@ Begin
 
     oDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   ReadContent(oDocument, [WPNativeReaderAllowedItemParagraph, WPNativeReaderAllowedItemBreak]);
@@ -772,7 +772,7 @@ Begin
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_TABLE_CELL);
@@ -795,7 +795,7 @@ Begin
 
     oDocument.Pieces.Add(oParagraph.Link);
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_PARAGRAPH);
@@ -845,12 +845,12 @@ Begin
       oStop.Font.Assign(oStart.Font);
 
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_FIELD);
@@ -870,7 +870,7 @@ Begin
 
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 End;
 
@@ -891,7 +891,7 @@ Procedure TWPNativeReader.ReadText(oDocument : TWPWorkingDocument);
 
       oDocument.Pieces.Add(oText.Link);
     Finally
-      oText.Free;
+      oText.free;
     End;
   End;
 
@@ -925,7 +925,7 @@ Begin
     oBreak.EndStyle := TFslPenEndStyle(ReadEnumeratedAttribute(FActiveExtractor.Attributes[ATTR_NAME_PENENDSTYLE], ADVPENENDSTYLE_CODES, ord(apesRound)));
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 End;
 
@@ -986,7 +986,7 @@ Begin
 //          if oAttach.mimeType = 'application/pdf' then
 //            oImage.Image := TWPPDFGraphic.Create(oAttach.Link)
 //          else
-            raise EWPException.create('Unknown attachment type '+oAttach.MimeType);
+            raise EWPException.Create('Unknown attachment type '+oAttach.MimeType);
         end
         else If Assigned(OnLoadImage) Then
           OnLoadImage(Self, Context, oImage.Name, oBuffer);
@@ -1032,7 +1032,7 @@ Begin
         End;
 
       Finally
-        oSelectionBuffer.Free;
+        oSelectionBuffer.free;
       End;
 
       If (FVersion <> VERSION_NATIVE_ONE) And (FActiveExtractor.PeekIsOpenTag(TAG_NAME_MAP)) Then
@@ -1059,10 +1059,10 @@ Begin
       If Assigned(oBuffer) or Assigned(oImage.Image) Or FLoadImageHolders Then
         oDocument.Pieces.Add(oImage.Link);
     Finally
-      oBuffer.Free;
+      oBuffer.free;
     End;
   Finally
-    oImage.Free;
+    oImage.free;
   End;
 
   If Not bNoImage Then
@@ -1096,7 +1096,7 @@ Begin
 
       oDocument.Pieces.Add(oSection.Link);
     Finally
-      oSection.Free;
+      oSection.free;
     End;
   End;
 
@@ -1109,7 +1109,7 @@ Begin
       oStop.AssignStyle(oSection);
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   End;
 
@@ -1216,7 +1216,7 @@ Begin
       ReadMapCoordinate(oArea.Coordinates);
     oMap.Areas.Add(oArea.Link);
   Finally
-    oArea.Free;
+    oArea.free;
   End;
   FActiveExtractor.ConsumeClose(TAG_NAME_AREA);
 End;
@@ -1303,7 +1303,7 @@ Begin
 
   FActiveFormatter.ProduceClose(TAG_NAME_STREAM);
   FActiveFormatter.Stream := Nil;
-  FActiveFormatter.Free;
+  FActiveFormatter.free;
   FActiveFormatter := nil;
 
   Inherited;
@@ -1324,7 +1324,7 @@ Begin
     End;
     Result := oBldr.ToString;
   Finally
-    oBldr.Free;
+    oBldr.free;
   End;
 End;
 
@@ -1441,7 +1441,7 @@ Begin
         b := oMem.Buffer.AsBytes;
         FActiveFormatter.ProduceText(TAG_NAME_BRUSH, EncodeBase64(b));
       Finally
-        oMem.Free;
+        oMem.free;
       End;
       FActiveFormatter.ProduceClose(sName);
     End
@@ -1672,7 +1672,7 @@ Begin
       Result := 'png';
     End;
   Finally
-    oMemory.Free;
+    oMemory.free;
   End;
 End;
 
@@ -1790,10 +1790,10 @@ Begin
       Else
         WriteImageSource(oImage, oBuffer, oSelectionBuffer, sExt);
     Finally
-      oSelectionBuffer.Free;
+      oSelectionBuffer.free;
     End;
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -1826,7 +1826,7 @@ Begin
   if FTextPiece.AnnotationId <> 0 Then
     FActiveFormatter.Attributes.Add(ATTR_NAME_ANNOTATION, IntegerToString(FTextPiece.AnnotationId));
   FActiveFormatter.ProduceText(TAG_NAME_TEXT, FText);
-  FTextPiece.Free;
+  FTextPiece.free;
   FTextPiece := Nil;
   FTextOpen := False;
 End;
@@ -2022,7 +2022,7 @@ Begin
 
   Finally
     FActiveExtractor.ConsumeClose(TAG_NAME_STREAM);
-    FActiveExtractor.Free;
+    FActiveExtractor.free;
     FActiveExtractor := nil;
   End;
 
@@ -2134,7 +2134,7 @@ Begin
       Styles.Add(oStyle.Link);
     End;
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -2165,7 +2165,7 @@ Begin
         oMem.Position := 0;
         oBorder.BrushImage.LoadFromStream(oMem);
       Finally
-        oMem.Free;
+        oMem.free;
       End;
       FActiveExtractor.ConsumeClose;
       FActiveExtractor.ConsumeClose;
@@ -2197,7 +2197,7 @@ Begin
 
     oDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   While FActiveExtractor.More And FActiveExtractor.PeekIsOpen Do
@@ -2209,7 +2209,7 @@ Begin
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_TABLE);
@@ -2246,7 +2246,7 @@ Begin
 
     oDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   While FActiveExtractor.More And FActiveExtractor.PeekIsOpen And (FActiveExtractor.PeekXml = TAG_NAME_TABLE_CELL) Do
@@ -2258,7 +2258,7 @@ Begin
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   While FActiveExtractor.More And FActiveExtractor.PeekIsOpen And (FActiveExtractor.PeekXml = TAG_NAME_TABLE_ROW) Do
@@ -2294,7 +2294,7 @@ Begin
 
     oDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   ReadContent(oDocument, [WPNativeDocumentReaderAllowedItemParagraph, WPNativeDocumentReaderAllowedItemBreak]);
@@ -2305,7 +2305,7 @@ Begin
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_TABLE_CELL);
@@ -2328,7 +2328,7 @@ Begin
 
     oDocument.Pieces.Add(oParagraph.Link);
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_PARAGRAPH);
@@ -2373,12 +2373,12 @@ Begin
       oStop.Font.Assign(oStart.Font);
 
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     oDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   FActiveExtractor.ConsumeClose(TAG_NAME_FIELD);
@@ -2397,7 +2397,7 @@ Begin
 
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 End;
 
@@ -2416,7 +2416,7 @@ Procedure TWPNativeDocumentReader.ReadText(oDocument : TWPWorkingDocument);
 
       oDocument.Pieces.Add(oText.Link);
     Finally
-      oText.Free;
+      oText.free;
     End;
   End;
 
@@ -2450,7 +2450,7 @@ Begin
     oBreak.EndStyle := TFslPenEndStyle(ReadEnumeratedAttribute(FActiveExtractor.Attributes[ATTR_NAME_PENENDSTYLE], ADVPENENDSTYLE_CODES, ord(apesRound)));
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 End;
 
@@ -2540,7 +2540,7 @@ Begin
         End;
 
       Finally
-        oSelectionBuffer.Free;
+        oSelectionBuffer.free;
       End;
 
       If (FVersion <> VERSION_NATIVE_ONE) And (FActiveExtractor.PeekIsOpenTag(TAG_NAME_MAP)) Then
@@ -2564,10 +2564,10 @@ Begin
       If Assigned(oBuffer) Or FLoadImageHolders Then
         oDocument.Pieces.Add(oImage.Link);
     Finally
-      oBuffer.Free;
+      oBuffer.free;
     End;
   Finally
-    oImage.Free;
+    oImage.free;
   End;
 
   If Not bNoImage Then
@@ -2601,7 +2601,7 @@ Begin
 
       oDocument.Pieces.Add(oSection.Link);
     Finally
-      oSection.Free;
+      oSection.free;
     End;
   End;
 
@@ -2614,7 +2614,7 @@ Begin
       oStop.AssignStyle(oSection);
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   End;
 
@@ -2704,7 +2704,7 @@ Begin
       ReadMapCoordinate(oArea);
     oMap.Areas.Add(oArea.Link);
   Finally
-    oArea.Free;
+    oArea.free;
   End;
   FActiveExtractor.ConsumeClose(TAG_NAME_AREA);
 End;
@@ -2750,14 +2750,14 @@ end;
 
 Destructor TWPNativeDocumentWriter.Destroy;
 Begin
-  FFormatter.Free;
+  FFormatter.free;
 
   Inherited;
 End;
 
 Procedure TWPNativeDocumentWriter.SetFormatter(Const Value: TFslXMLFormatter);
 Begin
-  FFormatter.Free;
+  FFormatter.free;
   FFormatter := Value;
 End;
 
@@ -3022,10 +3022,10 @@ Begin
 
       WriteImageSource(oImage, oBuffer, oSelectionBuffer, sExt);
     Finally
-      oSelectionBuffer.Free;
+      oSelectionBuffer.free;
     End;
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -3284,7 +3284,7 @@ Begin
         oBorder.BrushImage.SaveToStream(oMem);
         FFormatter.ProduceText(TAG_NAME_BRUSH, EncodeBase64(oMem.Buffer.AsBytes));
       Finally
-        oMem.Free;
+        oMem.free;
       End;
       FFormatter.ProduceClose(sName);
     End
@@ -3308,10 +3308,10 @@ Begin
 
       oPNG.SaveToStream(oAdaptor);
     Finally
-      oAdaptor.Free;
+      oAdaptor.free;
     End;
   Finally
-    oPng.Free;
+    oPng.free;
   End;
 End;
 
@@ -3326,7 +3326,7 @@ Begin
     oMemory.Expand := True;
 
     if not (oImg is TFslVCLGraphic) then
-      raise EWPException.create('Not done yet')
+      raise EWPException.Create('Not done yet')
     else If TFslVCLGraphic(oImg).Handle Is TJPEGImage Then
     Begin
       oImg.SaveToStream(oMemory);
@@ -3338,7 +3338,7 @@ Begin
       Result := 'png';
     End;
   Finally
-    oMemory.Free;
+    oMemory.free;
   End;
 End;
 
@@ -3416,7 +3416,7 @@ begin
 
     oAdornments.Add(oAdornment.Link);
   Finally
-    oAdornment.Free;
+    oAdornment.free;
   End;
   FActiveExtractor.ConsumeClose(TAG_NAME_ADORNMENT);
 end;
@@ -3478,14 +3478,14 @@ Begin
           OnLoadImage(Self, Context, FActiveExtractor.Attributes[ATTR_NAME_IMAGEREF], oBuffer);
           oAttach.LoadFromBuffer(oBuffer);
         finally
-          oBuffer.Free;
+          oBuffer.free;
         end
       end
       else
       oAttach.LoadFromString(ZDecompressStr(DecodeBase64(FActiveExtractor.ConsumeTextBody)));
       oDocument.Attachments.Add(oAttach.Link);
     finally
-      oAttach.Free;
+      oAttach.free;
     end;
     FActiveExtractor.ConsumeClose(TAG_NAME_ATTACHMENT);
   End;
@@ -3519,7 +3519,7 @@ Begin
   try
     ReadSnapshot(oDom.docElement, oDocument);
   Finally
-    oDom.Free;
+    oDom.free;
   End;
   CheckForEmpty(oDocument);
   DoneReading(oDocument);
@@ -3549,7 +3549,7 @@ begin
       ReadStyle(oChild, oStyle);
       Styles.Add(oStyle.Link);
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
     oChild := oChild.nextElement;
   End;
@@ -3769,7 +3769,7 @@ Begin
     oPiece.Content := Attribute(oElement, 'Content');
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3791,7 +3791,7 @@ Begin
     // TODO: what about the actual image?
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3810,7 +3810,7 @@ Begin
     // TODO: raw data:  ProduceData(oPiece.RawData);
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3823,7 +3823,7 @@ Begin
     ReadPieceDetails(oElement, oPiece);
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3836,7 +3836,7 @@ Begin
     ReadPieceDetails(oElement, oPiece);
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3857,7 +3857,7 @@ Begin
     oPiece.EndStyle := AttributeFslPenEndStyle(oElement, 'EndStyle');
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3877,7 +3877,7 @@ Begin
     ReadParaFormat(oElement.element('para-format'), oPiece);
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3899,7 +3899,7 @@ Begin
     ReadBorder(oElement, 'CenterVerticalBorder', oPiece.CenterVerticalBorder);
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3918,7 +3918,7 @@ Begin
     oPiece.Depth := AttributeInt(oElement, 'Depth');
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3940,7 +3940,7 @@ Begin
     oPiece.VerticalAlignment := AttributeWordProcessorVerticalAlignment(oElement, 'VerticalAlignment');
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3954,7 +3954,7 @@ Begin
     oPiece.StopType := AttributeWPWorkingDocumentStopType(oElement, 'StopType');
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -3977,7 +3977,7 @@ Begin
     // TODO: raw data
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -4487,7 +4487,7 @@ End;
 
 Destructor TWPSnapshotWriter.Destroy;
 Begin
-  FIds.Free;
+  FIds.free;
   Inherited;
 End;
 

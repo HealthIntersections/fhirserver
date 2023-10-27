@@ -75,7 +75,7 @@ implementation
 
 function checkDeletedFileAction(owner : TComponent; filename : String) : TDeletedFileAction;
 begin
-  DeletedFileActionForm := TDeletedFileActionForm.create(owner);
+  DeletedFileActionForm := TDeletedFileActionForm.Create(owner);
   try
     DeletedFileActionForm.lblDetails.Caption := 'The file '+filename+' has been deleted from it''s source location. What do you want to do?';
     DeletedFileActionForm.FAction := dfaIgnore;

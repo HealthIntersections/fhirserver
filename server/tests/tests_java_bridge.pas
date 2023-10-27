@@ -73,7 +73,7 @@ begin
     Assert.isTrue(st.has(name));
     Assert.isTrue(st.str[name] = inttostr(value));
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -86,7 +86,7 @@ begin
     Assert.isTrue(st.has(name));
     Assert.isTrue(st.str[name] = value);
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -98,7 +98,7 @@ begin
   try
     Assert.isFalse(st.has(name));
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -110,13 +110,13 @@ begin
   try
     result := StrToIntDef(st.str[name], 0);
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
 procedure TJavaBridgeTests.Setup;
 begin
-  FJavaBridge := TJavaLibraryWrapper.create(PUB_HOME+'\org.hl7.fhir.validator.jar');
+  FJavaBridge := TJavaLibraryWrapper.Create(PUB_HOME+'\org.hl7.fhir.validator.jar');
   FJavaBridge.init(PUB_HOME+'\definitions.xml.zip');
   FJavaBridge.txConnect('http://tx.fhir.org/r4');
 end;
@@ -136,7 +136,7 @@ begin
   try
     Assert.isTrue(p.id = 'example');
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -162,7 +162,7 @@ begin
   try
     FJavaBridge.seeResource(r, []);
   finally
-    r.Free;
+    r.free;
   end;
   checkStatus('custom-resource-count', 1);
 end;
@@ -188,7 +188,7 @@ begin
   try
     Assert.IsTrue(oo.issueList.Count > 0);
   finally
-    oo.Free;
+    oo.free;
   end;
 end;
 

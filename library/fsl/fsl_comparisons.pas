@@ -268,7 +268,7 @@ begin
       msg := CompareElements('', src.document, tgt.document);
       result := msg = '';
     finally
-      tgt.Free;
+      tgt.free;
     end;
   finally
     src.free;
@@ -396,7 +396,7 @@ begin
       j2.free;
     end;
   finally
-    j1.Free;
+    j1.free;
   end;
 end;
 
@@ -424,8 +424,8 @@ begin
       raise EFslException.Create('to do');
       {$ENDIF}
     finally
-      j2.Free;
-      j1.Free;
+      j2.free;
+      j1.free;
     end;
   end;
 end;

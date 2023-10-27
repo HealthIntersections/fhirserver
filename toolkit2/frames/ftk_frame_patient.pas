@@ -657,9 +657,9 @@ var
 begin
   if FFrame.FCards <> nil then
   begin
-    utils := THealthcareCardUtilities.create;
+    utils := THealthcareCardUtilities.Create;
     try
-      utils.JWKList := TJWKList.create;
+      utils.JWKList := TJWKList.Create;
       utils.Factory := FFrame.sync.Factory.link;
       for p in FFrame.FCards.parameterList do
         if p.name = 'verifiableCredential' then
@@ -725,7 +725,7 @@ end;
 destructor TPatientFrame.Destroy;
 begin
   FPatient.free;
-  FCardManager.Free;
+  FCardManager.free;
   FCards.free;
 
   FGenderIdManager.free;
@@ -740,7 +740,7 @@ procedure TPatientFrame.initialize;
 begin
   lvCards.SmallImages := Context.images;
 
-  FCardManager := THealthcardManager.create;
+  FCardManager := THealthcardManager.Create;
   FCardManager.Settings := Context.Settings;
   FCardManager.FFrame := self;
   FCardManager.Images := Context.images;
@@ -827,7 +827,7 @@ begin
     pnlHealthcardsOutome.caption := '  Fetching Healthcare Cards';
     Application.ProcessMessages;
     try
-      FCards.Free;
+      FCards.free;
       FCards := nil;
       FCardManager.doLoad;
       p := sync.Factory.makeParameters;
@@ -869,7 +869,7 @@ var
 begin
   if sd.execute then
   begin
-    bmp := TBitmap.create;
+    bmp := TBitmap.Create;
     try
       FCardManager.Focus.toBmp(bmp);
       bmp.SaveToFile(sd.filename);
@@ -892,7 +892,7 @@ begin
   pbCard.Canvas.FillRect(Rect(0, 0, pbCard.Width, pbCard.Height));
   if FCardManager.Focus <> nil then
   begin
-    bmp := TBitmap.create;
+    bmp := TBitmap.Create;
     try
       FCardManager.Focus.toBmp(bmp);
       if (pbCard.Width < pbCard.Height) then

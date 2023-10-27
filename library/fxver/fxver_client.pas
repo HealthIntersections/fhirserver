@@ -116,12 +116,12 @@ begin
     if fmt = ffUnspecified then
       fmt := ffJson;
 
-    result := TFhirClient.create(worker, worker.lang, http.link);
+    result := TFhirClient.Create(worker, worker.lang, http.link);
     try
       result.format := fmt;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     http.free;
@@ -136,7 +136,7 @@ end;
 
 class function TFhirClients.makeThreaded(worker: TFHIRWorkerContext; internal: TFhirClient; event: TThreadManagementEvent): TFhirClient;
 begin
-  result := TFhirClient.create(worker, worker.lang, TFhirThreadedCommunicator.Create(internal, event));
+  result := TFhirClient.Create(worker, worker.lang, TFhirThreadedCommunicator.Create(internal, event));
 end;
 
 class function TFhirClients.makeIndy(worker: TFHIRWorkerContext; url: String; json: boolean): TFhirClient;

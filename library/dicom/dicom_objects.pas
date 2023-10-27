@@ -2222,10 +2222,10 @@ End;
 
 destructor TDicomDataElement.Destroy;
 Begin
-  FDictionary.Free;
-  FElementDefinition.Free;
-  FObjects.Free;
-  FValues.Free;
+  FDictionary.free;
+  FElementDefinition.free;
+  FObjects.free;
+  FValues.free;
   inherited;
 End;
 
@@ -2251,13 +2251,13 @@ End;
 
 Procedure TDicomDataElement.SetElementDefinition(const Value: TDicomDictionaryElement);
 Begin
-  FElementDefinition.Free;
+  FElementDefinition.free;
   FElementDefinition := Value;
 End;
 
 Procedure TDicomDataElement.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -2317,7 +2317,7 @@ begin
       End;
       result := oBuilder.AsString;
     Finally
-      oBuilder.Free;
+      oBuilder.free;
     End;
   End;
 end;
@@ -2386,7 +2386,7 @@ End;
 
 Destructor TDicomDataElementList.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
 
   Inherited;
 End;
@@ -2415,7 +2415,7 @@ Begin
 
     Result := Find(oElement, iIndex, CompareByTags);
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2527,7 +2527,7 @@ begin
     End;
     result := oBuilder.AsString;
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 end;
 
@@ -2558,8 +2558,8 @@ End;
 
 destructor TDicomObject.Destroy;
 Begin
-  FDictionary.Free;
-  FElements.Free;
+  FDictionary.free;
+  FElements.free;
   inherited;
 End;
 
@@ -2589,7 +2589,7 @@ function TDicomObject.MakeElement(sTag : String; sValue : String): TDicomDataEle
       oVr.AsString := s;
       result.values.Add(oVr.Link);
     Finally
-      oVr.Free;
+      oVr.free;
     End;
   End;
 var
@@ -2618,7 +2618,7 @@ Begin
       Add(sValue);
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -2636,7 +2636,7 @@ Begin
     result.ElementDefinition := oDefn.Link;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -2658,7 +2658,7 @@ Begin
     work := copy(work, 1, i-1);
   End;
   if pos('[', work) > 0 Then
-    raise EDicomException.create('filters are not yet supported')
+    raise EDicomException.Create('filters are not yet supported')
   Else
     tag := work;
   local := TDicomDataElementList.Create(Elements.Dictionary.Link);
@@ -2676,9 +2676,9 @@ Begin
         results.Add(local[i].Link);
     End
     Else
-      raise EDicomException.create('Tail not supported yet');
+      raise EDicomException.Create('Tail not supported yet');
   Finally
-    local.Free;
+    local.free;
   End;
 End;
 
@@ -2700,8 +2700,8 @@ begin
       ExecuteQuery(context, results, path, 1, false);
     result := results.Link;
   Finally
-    results.Free;
-    context.Free;
+    results.free;
+    context.free;
   End;
 end;
 
@@ -2792,7 +2792,7 @@ End;
 
 Destructor TDicomObjectList.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
 
   Inherited;
 End;
@@ -2809,7 +2809,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2844,7 +2844,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2903,25 +2903,25 @@ End;
 
 Procedure TDicomInstance.Clear;
 Begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := nil;
-  FSimpleObject.Free;
+  FSimpleObject.free;
   FSimpleObject := nil;
-  FFileObject.Free;
+  FFileObject.free;
   FFileObject := nil;
-  FAssociateRequest.Free;
+  FAssociateRequest.free;
   FAssociateRequest := nil;
-  FAssociateAccept.Free;
+  FAssociateAccept.free;
   FAssociateAccept := nil;
-  FAssociateReject.Free;
+  FAssociateReject.free;
   FAssociateReject := nil;
-  FData.Free;
+  FData.free;
   FData := nil;
-  FAbort.Free;
+  FAbort.free;
   FAbort := nil;
-  FReleaseRequest.Free;
+  FReleaseRequest.free;
   FReleaseRequest := nil;
-  FReleaseResponse.Free;
+  FReleaseResponse.free;
   FReleaseResponse := nil;
 End;
 
@@ -3006,7 +3006,7 @@ End;
 
 procedure TDicomInstance.SetMessage(const Value: TDicomMessage);
 begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := Value;
 end;
 
@@ -3065,7 +3065,7 @@ End;
 
 destructor TDicomPDU.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 End;
 
@@ -3076,7 +3076,7 @@ End;
 
 Procedure TDicomPDU.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -3109,8 +3109,8 @@ End;
 
 destructor TDicomPresentationContextInfo.Destroy;
 Begin
-  FAbstractSyntax.Free;
-  FTransferSyntaxes.Free;
+  FAbstractSyntax.free;
+  FTransferSyntaxes.free;
   inherited;
 End;
 
@@ -3122,7 +3122,7 @@ End;
 
 Procedure TDicomPresentationContextInfo.SetAbstractSyntax(const Value: TDicomString);
 Begin
-  FAbstractSyntax.Free;
+  FAbstractSyntax.free;
   FAbstractSyntax := Value;
 End;
 
@@ -3150,7 +3150,7 @@ End;
 
 destructor TDicomPresentationAcceptContextInfo.Destroy;
 Begin
-  FTransferSyntax.Free;
+  FTransferSyntax.free;
   inherited;
 End;
 
@@ -3161,7 +3161,7 @@ End;
 
 Procedure TDicomPresentationAcceptContextInfo.SetTransferSyntax(const Value: TDicomString);
 Begin
-  FTransferSyntax.Free;
+  FTransferSyntax.free;
   FTransferSyntax := Value;
 End;
 
@@ -3199,11 +3199,11 @@ End;
 
 destructor TDicomAssociateRequestPDU.Destroy;
 Begin
-  FPresentationContexts.Free;
-  FUserData.Free;
-  FCalledEntity.Free;
-  FCallingEntity.Free;
-  FApplicationContext.Free;
+  FPresentationContexts.free;
+  FUserData.free;
+  FCalledEntity.free;
+  FCallingEntity.free;
+  FApplicationContext.free;
   inherited;
 End;
 
@@ -3214,19 +3214,19 @@ End;
 
 Procedure TDicomAssociateRequestPDU.SetApplicationContext(const Value: TDicomString);
 Begin
-  FApplicationContext.Free;
+  FApplicationContext.free;
   FApplicationContext := Value;
 End;
 
 Procedure TDicomAssociateRequestPDU.SetCalledEntity(const Value: TDicomString);
 Begin
-  FCalledEntity.Free;
+  FCalledEntity.free;
   FCalledEntity := Value;
 End;
 
 Procedure TDicomAssociateRequestPDU.SetCallingEntity(const Value: TDicomString);
 Begin
-  FCallingEntity.Free;
+  FCallingEntity.free;
   FCallingEntity := Value;
 End;
 
@@ -3254,7 +3254,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3279,7 +3279,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3327,7 +3327,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3357,7 +3357,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3414,11 +3414,11 @@ End;
 
 destructor TDicomAssociateAcceptPDU.Destroy;
 Begin
-  FPresentationContexts.Free;
-  FUserData.Free;
-  FCalledEntity.Free;
-  FCallingEntity.Free;
-  FApplicationContext.Free;
+  FPresentationContexts.free;
+  FUserData.free;
+  FCalledEntity.free;
+  FCallingEntity.free;
+  FApplicationContext.free;
   inherited;
 End;
 
@@ -3429,19 +3429,19 @@ End;
 
 Procedure TDicomAssociateAcceptPDU.SetApplicationContext(const Value: TDicomString);
 Begin
-  FApplicationContext.Free;
+  FApplicationContext.free;
   FApplicationContext := Value;
 End;
 
 Procedure TDicomAssociateAcceptPDU.SetCalledEntity(const Value: TDicomString);
 Begin
-  FCalledEntity.Free;
+  FCalledEntity.free;
   FCalledEntity := Value;
 End;
 
 Procedure TDicomAssociateAcceptPDU.SetCallingEntity(const Value: TDicomString);
 Begin
-  FCallingEntity.Free;
+  FCallingEntity.free;
   FCallingEntity := Value;
 End;
 
@@ -3508,7 +3508,7 @@ End;
 
 destructor TDicomDataPDU.Destroy;
 Begin
-  FDataValues.Free;
+  FDataValues.free;
   inherited;
 End;
 
@@ -3613,12 +3613,12 @@ Begin
   try
     oData.Id := iId;
     oData.FValue := oValue.Value;
-    oValue.Free;
+    oValue.free;
     oData.OffsetStart := iOffsetStart;
     oData.OffsetEnd := iOffsetEnd;
     add(oData.Link);
   Finally
-    oData.Free;
+    oData.free;
   End;
 End;
 
@@ -3644,7 +3644,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3669,7 +3669,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3727,7 +3727,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3752,7 +3752,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3787,7 +3787,7 @@ Begin
     oPV.FBytes := oBuffer.AsBytes;
     Add(oPV.Link);
   Finally
-    oPV.Free;
+    oPV.free;
   End;
 End;
 
@@ -3818,8 +3818,8 @@ End;
 
 destructor TDicomFile.Destroy;
 Begin
-  FContent.Free;
-  FHeader.Free;
+  FContent.free;
+  FHeader.free;
   inherited;
 End;
 
@@ -3830,13 +3830,13 @@ End;
 
 Procedure TDicomFile.SetContent(const Value: TDicomObject);
 Begin
-  FContent.Free;
+  FContent.free;
   FContent := Value;
 End;
 
 Procedure TDicomFile.SetHeader(const Value: TDicomObject);
 Begin
-  FHeader.Free;
+  FHeader.free;
   FHeader := Value;
 End;
 
@@ -3985,7 +3985,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4010,7 +4010,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4038,8 +4038,8 @@ End;
 
 destructor TDicomMessage.Destroy;
 Begin
-  FData.Free;
-  FCommand.Free;
+  FData.free;
+  FCommand.free;
   inherited;
 End;
 
@@ -4072,13 +4072,13 @@ End;
 
 Procedure TDicomMessage.SetCommand(const Value: TDicomObject);
 Begin
-  FCommand.Free;
+  FCommand.free;
   FCommand := Value;
 End;
 
 Procedure TDicomMessage.SetData(const Value: TDicomObject);
 Begin
-  FData.Free;
+  FData.free;
   FData := Value;
 End;
 
@@ -4144,7 +4144,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4169,7 +4169,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4258,7 +4258,7 @@ End;
 
 Procedure TDicomValueList.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -4272,7 +4272,7 @@ End;
 
 destructor TDicomValueList.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 End;
 
@@ -4291,7 +4291,7 @@ Begin
 
     Result := oTypes.Link;
   Finally
-    oTypes.Free;
+    oTypes.free;
   End;
 End;
 
@@ -4307,7 +4307,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4332,7 +4332,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4375,7 +4375,7 @@ End;
 
 destructor TDicomValue.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 End;
 
@@ -4400,7 +4400,7 @@ End;
 
 Procedure TDicomValue.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -4409,11 +4409,11 @@ Begin
   if bExact Then
   Begin
     If length(FBytes) <> iOffset + ilength Then
-      raise EDicomException.create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES_S[FKnownType]+' (length is wrong)');
+      raise EDicomException.Create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES_S[FKnownType]+' (length is wrong)');
   End
   Else
     if length(FBytes) < iOffset + ilength Then
-      raise EDicomException.create('Cannot read VR as '+sType);
+      raise EDicomException.Create('Cannot read VR as '+sType);
   Move(FBytes[iOffset], Dest, iLength);
 End;
 
@@ -4528,7 +4528,7 @@ Begin
   else
   Begin
     if (length(FBytes) mod 4 <> 0) Then
-      raise EDicomException.create('cannot read data type as OF');
+      raise EDicomException.Create('cannot read data type as OF');
     SetLength(Result, length(FBytes) div 4);
     for i := 0 to Length(result) - 1 Do
       MoveCheck('OF', i*4, result[i], 4, false);
@@ -4544,7 +4544,7 @@ Begin
   else
   Begin
     if (length(FBytes) mod 2 <> 0) Then
-      raise EDicomException.create('cannot read data type as OW');
+      raise EDicomException.Create('cannot read data type as OW');
     SetLength(Result, length(FBytes) div 2);
     for i := 0 to Length(result) - 1 Do
       MoveCheck('OW', i*2, result[i], 2, false);
@@ -4831,7 +4831,7 @@ Begin
         End;
         result := oBuilder.AsString;
       Finally
-        oBuilder.Free;
+        oBuilder.free;
       End;
       End;
     dvtOF :
@@ -4848,7 +4848,7 @@ Begin
         End;
         result := oBuilder.AsString;
       Finally
-        oBuilder.Free;
+        oBuilder.free;
       End;
       End;
     dvtUN : result := EncodePercent(BytesAsString(AsUN));
@@ -4889,7 +4889,7 @@ Begin
     dvtFD : AsFD := StrToFloat(s);
     dvtOB : AsUN := StringAsBytes(DecodePercent(s));
     dvtOW : SetAsWords(s);
-    dvtOF : raise EDicomException.create('todo'); // AsOF := s;
+    dvtOF : raise EDicomException.Create('todo'); // AsOF := s;
     dvtUN : AsUN := StringAsBytes(DecodePercent(s));
   End;
 End;

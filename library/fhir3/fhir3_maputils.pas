@@ -160,16 +160,16 @@ begin
   FLib := lib;
   FServices := services;
   fpe := TFHIRPathEngine.Create(context.link, nil);
-  fpp := TFHIRPathParser.create;
+  fpp := TFHIRPathParser.Create;
 end;
 
-destructor TFHIRStructureMapUtilities.destroy;
+destructor TFHIRStructureMapUtilities.Destroy;
 begin
-  FWorker.Free;
-  fpe.Free;
-  fpp.Free;
-  FLib.Free;
-  FServices.Free;
+  FWorker.free;
+  fpe.free;
+  fpp.free;
+  FLib.free;
+  FServices.free;
   inherited;
 end;
 
@@ -178,7 +178,7 @@ var
   b : TStringBuilder;
   g : TFhirStructureMapGroup;
 begin
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
     b.append('map "');
     b.append(map.Url);
@@ -457,7 +457,7 @@ function TFHIRStructureMapUtilities.render(map: TFHIRConceptMap): String;
 var
   b : TStringBuilder;
 begin
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
     renderConceptMap(b, map);
     result := b.toString();
@@ -504,7 +504,7 @@ var
       b.append(jsonEscape(code, false));
   end;
 begin
-  prefixes := TFslStringDictionary.create;
+  prefixes := TFslStringDictionary.Create;
   try
     b.append('conceptmap "');
     b.append(map.Url);
@@ -590,7 +590,7 @@ begin
       end;
     b.append('}'#13#10);
   finally
-    prefixes.Free;
+    prefixes.free;
   end;
 end;
 
@@ -619,7 +619,7 @@ begin
   lexer := TFHIRPathLexer3.Create(fpV1, text);
   try
     if (lexer.done()) then
-      raise EFHIRException.create('Map Input cannot be empty');
+      raise EFHIRException.Create('Map Input cannot be empty');
     lexer.skipWhitespaceAndComments();
     lexer.token('map');
     result := TFHIRStructureMap.Create;
@@ -646,13 +646,13 @@ begin
 
       result.text := TFhirNarrative.Create;
       result.text.status := NarrativeStatusGenerated;
-      result.text.div_ := TFHIRXhtmlParser.parse(FWorker.lang, xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
+      result.text.div_ := TFHIRXhtmlParser.parse(FWorker.langList, xppReject, [], '<div><pre>'+FormatTextToXML(text, xmlText)+'</pre></div>');
       result.link;
     finally
       result.free;
     end;
   finally
-    lexer.Free;
+    lexer.free;
   end;
 end;
 
@@ -669,7 +669,7 @@ var
 begin
   tgt := nil;
   lexer.token('conceptmap');
-  map := TFhirConceptMap.create;
+  map := TFhirConceptMap.Create;
   result.ContainedList.add(map);
   id := lexer.readConstant('map id');
   if (not id.startsWith('#')) then
@@ -681,7 +681,7 @@ begin
   //    map.Source := new UriType(lexer.readConstant('source')));
   //    lexer.token('target');
   //    map.Source := new UriType(lexer.readConstant('target')));
-  prefixes := TFslStringDictionary.create;
+  prefixes := TFslStringDictionary.Create;
   try
     while (lexer.hasToken('prefix')) do
     begin
@@ -716,7 +716,7 @@ begin
     end;
     lexer.token('}');
   finally
-    prefixes.Free;
+    prefixes.free;
   end;
 end;
 
@@ -727,7 +727,7 @@ var
 begin
   prefix := lexer.take();
   if (not prefixes.containsKey(prefix)) then
-    raise EFHIRException.create('Unknown prefix "'+prefix+'"');
+    raise EFHIRException.Create('Unknown prefix "'+prefix+'"');
   result := prefixes[prefix];
 end;
 
@@ -755,14 +755,14 @@ begin
   else if (token = '~') then
     result := ConceptMapEquivalenceINEXACT
   else
-    raise EFHIRException.create('Unknown equivalence token "'+token+'"');
+    raise EFHIRException.Create('Unknown equivalence token "'+token+'"');
 end;
 
 function TFHIRStructureMapUtilities.fromEnum(s : String; codes : Array of String) : integer;
 begin
   result := StringArrayIndexOfSensitive(codes, s);
   if result = -1 then
-    raise EFHIRException.create('the code "'+s+'" is not known');
+    raise EFHIRException.Create('the code "'+s+'" is not known');
 end;
 
 
@@ -809,7 +809,7 @@ begin
   while (not lexer.hasToken('endgroup')) do
   begin
     if (lexer.done()) then
-      raise EFHIRException.create('premature termination expecting "endgroup"');
+      raise EFHIRException.Create('premature termination expecting "endgroup"');
     parseRule(group.ruleList, lexer);
   end;
   lexer.token('endgroup');
@@ -877,7 +877,7 @@ begin
       while (not lexer.hasToken('}')) do
       begin
         if (lexer.done()) then
-          raise EFHIRException.create('premature termination expecting "}" in nested group');
+          raise EFHIRException.Create('premature termination expecting "}" in nested group');
         parseRule(rule.ruleList, lexer);
       end;
       lexer.token('}');
@@ -991,7 +991,7 @@ begin
         p := target.parameterList.Append;
         node := fpp.parse(lexer);
         p.tag := node;
-        p.Value := TFHIRString.create(node.toString());
+        p.Value := TFHIRString.Create(node.toString());
       end
       else
       begin
@@ -1014,7 +1014,7 @@ begin
         begin
           id := id + lexer.take() + lexer.take();
         end;
-        target.parameterList.Append.Value := TFHIRId.create(id);
+        target.parameterList.Append.Value := TFHIRId.Create(id);
       end
       else
         target.parameterList.Append.Value := readConstant(name, lexer);
@@ -1045,9 +1045,9 @@ end;
 procedure TFHIRStructureMapUtilities.parseParameter(target : TFHIRStructureMapGroupRuleTarget; lexer : TFHIRPathLexer);
 begin
   if not lexer.isConstant(true) then
-    target.parameterList.Append.Value := TFHIRId.create(lexer.take())
+    target.parameterList.Append.Value := TFHIRId.Create(lexer.take())
   else if (lexer.isStringConstant()) then
-    target.parameterList.Append.Value := TFHIRString.create(lexer.readConstant('??'))
+    target.parameterList.Append.Value := TFHIRString.Create(lexer.readConstant('??'))
   else
     target.parameterList.Append.Value := readConstant(lexer.take(), lexer);
 end;
@@ -1055,13 +1055,13 @@ end;
 function TFHIRStructureMapUtilities.readConstant(s : String; lexer : TFHIRPathLexer) : TFHIRType;
 begin
   if (StringIsInteger32(s)) then
-    result := TFHIRInteger.create(s)
+    result := TFHIRInteger.Create(s)
   else if (StringIsDecimal(s)) then
-    result := TFHIRDecimal.create(s)
+    result := TFHIRDecimal.Create(s)
   else if (s = 'true') or (s = 'false') then
-    result := TFHIRBoolean.create(s = 'true')
+    result := TFHIRBoolean.Create(s = 'true')
   else
-    result := TFHIRString.create(lexer.processConstant(s));
+    result := TFHIRString.Create(lexer.processConstant(s));
 end;
 
 
@@ -1069,14 +1069,14 @@ procedure TFHIRStructureMapUtilities.transform(appInfo : TFslObject; source : TF
 var
   vars : TVariables;
 begin
-  vars := TVariables.create;
+  vars := TVariables.Create;
   try
     vars.add(vmINPUT, 'src', source.Link);
     vars.add(vmOUTPUT, 'tgt', target.Link);
 
     executeGroup('', appInfo, map, vars, map.GroupList[0]);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -1103,7 +1103,7 @@ begin
   srcVars := vars.copy();
   try
     if (rule.sourceList.count <> 1) then
-      raise EFHIRException.create('not handled yet');
+      raise EFHIRException.Create('not handled yet');
     sources := analyseSource(appInfo, srcVars, rule.sourceList[0]);
     try
       if (sources <> nil) then
@@ -1125,10 +1125,10 @@ begin
         end;
       end;
     finally
-      sources.Free;
+      sources.free;
     end;
   finally
-    srcVars.Free;
+    srcVars.free;
   end;
 end;
 
@@ -1156,14 +1156,14 @@ begin
         target := grp;
       end
       else
-        raise EFHIRException.create('Multiple possible matches for rule ''+dependent.Name+''');
+        raise EFHIRException.Create('Multiple possible matches for rule ''+dependent.Name+''');
     end;
   end;
 
   for imp in map.importList do
   begin
     if not FLib.containsKey(imp.value) then
-      raise EFHIRException.create('Unable to find map '+imp.Value);
+      raise EFHIRException.Create('Unable to find map '+imp.Value);
     impMap := Flib[imp.Value];
     for grp in impMap.GroupList do
     begin
@@ -1175,17 +1175,17 @@ begin
           target := grp;
         end
         else
-          raise EFHIRException.create('Multiple possible matches for rule ''+dependent.Name+''');
+          raise EFHIRException.Create('Multiple possible matches for rule ''+dependent.Name+''');
       end;
     end;
   end;
   if (target = nil) then
-    raise EFHIRException.create('No matches found for rule ''+dependent.Name+''');
+    raise EFHIRException.Create('No matches found for rule ''+dependent.Name+''');
 
   if (target.InputList.count <> dependent.variableList.count) then
-    raise EFHIRException.create('Rule ''+dependent.Name+'' has '+Integer.toString(target.InputList.count)+' but the invocation has '+Integer.toString(dependent.variableList.count)+' variables');
+    raise EFHIRException.Create('Rule ''+dependent.Name+'' has '+Integer.toString(target.InputList.count)+' but the invocation has '+Integer.toString(dependent.variableList.count)+' variables');
 
-  v := TVariables.create;
+  v := TVariables.Create;
   try
     for i := 0 to target.InputList.count - 1 do
     begin
@@ -1197,7 +1197,7 @@ begin
         mode := vmOUTPUT;
       vv := vin.get(mode, vr.Value);
       if (vv = nil) then
-        raise EFHIRException.create('Rule ''+dependent.Name+'' '+CODES_TVariableMode[mode]+' variable "'+input.Name+'" has no value');
+        raise EFHIRException.Create('Rule ''+dependent.Name+'' '+CODES_TVariableMode[mode]+' variable "'+input.Name+'" has no value');
       v.add(mode, input.Name, vv.Link);
     end;
     executeGroup(indent+'  ', appInfo, targetMap, v, target);
@@ -1212,14 +1212,14 @@ var
   v : TFHIRSelection;
   list : TFHIRSelectionList;
 begin
-  list := TFHIRSelectionList.create;
+  list := TFHIRSelectionList.Create;
   try
     item.ListChildrenByName(name, list);
     for v in list do
       if (v <> nil) then
         result.add(v.value.Link);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1246,7 +1246,7 @@ var
 begin
   b := vars.get(vmINPUT, src.Context);
   if (b = nil) then
-    raise EFHIRException.create('Unknown input variable '+src.Context);
+    raise EFHIRException.Create('Unknown input variable '+src.Context);
 
   if (src.Condition <> '') then
   begin
@@ -1271,16 +1271,16 @@ begin
       src.checkElement.tag := expr;
     end;
     if (not fpe.evaluateToBoolean(appinfo, nil, b, expr)) then
-      raise EFHIRException.create('Check condition failed');
+      raise EFHIRException.Create('Check condition failed');
   end;
 
-  items := TFslList<TFHIRObject>.create;
+  items := TFslList<TFHIRObject>.Create;
   try
     if (src.Element = '') then
       items.add(b.link)
     else
       getChildrenByName(b, src.Element, items);
-    result := TFslList<TVariables>.create;
+    result := TFslList<TVariables>.Create;
     try
       for r in items do
       begin
@@ -1290,15 +1290,15 @@ begin
             v.add(vmINPUT, src.variable, r.Link);
           result.add(v.Link);
         finally
-          v.Free;
+          v.free;
         end;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1309,9 +1309,9 @@ var
 begin
   dest := vars.get(vmOUTPUT, tgt.Context);
   if (dest = nil) then
-    raise EFHIRException.create('target context not known: '+tgt.Context);
+    raise EFHIRException.Create('target context not known: '+tgt.Context);
   if (tgt.Element = '') then
-    raise EFHIRException.create('Not supported yet');
+    raise EFHIRException.Create('Not supported yet');
   v := nil;
   try
     if (tgt.Transform <> MapTransformNull) then
@@ -1328,7 +1328,7 @@ begin
     if (tgt.Variable <> '') and (v <> nil) then
       vars.add(vmOUTPUT, tgt.variable, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -1348,7 +1348,7 @@ begin
         try
           result := factory.makeByName(getParamString(vars, tgt.ParameterList[0]));
         finally
-          factory.Free;
+          factory.free;
         end;
       end;
     MapTransformCOPY :
@@ -1366,10 +1366,10 @@ begin
         v := fpe.evaluate(nil, nil, getParam(vars, tgt.ParameterList[0]), expr);
         try
           if (v.count <> 1) then
-            raise EFHIRException.create('evaluation of '+expr.toString()+' returned '+Integer.toString(v.count)+' objects');
+            raise EFHIRException.Create('evaluation of '+expr.toString()+' returned '+Integer.toString(v.count)+' objects');
           result := v[0].value.Link;
         finally
-          v.Free;
+          v.free;
         end;
       end;
     MapTransformTRUNCATE :
@@ -1386,15 +1386,15 @@ begin
       end;
     MapTransformESCAPE :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.Create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
     MapTransformCAST :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.Create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
     MapTransformAPPEND :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.Create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
     MapTransformTRANSLATE :
       begin
@@ -1402,11 +1402,11 @@ begin
       end;
     MapTransformREFERENCE :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.Create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
     MapTransformDATEOP :
       begin
-        raise EFHIRException.create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
+        raise EFHIRException.Create('Transform '+CODES_TFhirMapTransformEnum[tgt.Transform]+' not supported yet');
       end;
     MapTransformUUID :
       begin
@@ -1416,12 +1416,12 @@ begin
       begin
         b := getParam(vars, tgt.ParameterList[0]);
         if (b is TFHIRResource) then
-          result := TFHIRUri.create('urn:uuid:'+TFHIRResource(b).Id)
+          result := TFHIRUri.Create('urn:uuid:'+TFHIRResource(b).Id)
         else
-          raise EFHIRException.create('Transform engine cannot point at an element of type '+b.fhirType());
+          raise EFHIRException.Create('Transform engine cannot point at an element of type '+b.fhirType());
       end
   else
-    raise EFHIRException.create('Transform Unknown');
+    raise EFHIRException.Create('Transform Unknown');
   end;
 end;
 
@@ -1483,9 +1483,9 @@ var
   e : TFhirConceptMapGroupElement;
   tgt : TFhirConceptMapGroupElementTarget;
 begin
-  b := TFslList<TFHIRObject>.create;
+  b := TFslList<TFHIRObject>.Create;
   g := nil;
-  src := TFHIRCoding.create;
+  src := TFHIRCoding.Create;
   try
     if (source.isPrimitive()) then
       src.Code := source.primitiveValue()
@@ -1508,7 +1508,7 @@ begin
         src.Code := b[0].primitiveValue();
     end
     else
-      raise EFHIRException.create('Unable to translate source '+source.fhirType());
+      raise EFHIRException.Create('Unable to translate source '+source.fhirType());
 
     if (conceptMapUrl.equals('http://hl7.org/fhir/ConceptMap/special-oid2uri')) then
     begin
@@ -1516,9 +1516,9 @@ begin
       if (uri = '') then
         uri := 'urn:oid:'+src.Code;
       if ('uri'.equals(fieldToReturn)) then
-        result := TFHIRUri.create(uri)
+        result := TFHIRUri.Create(uri)
       else
-        raise EFHIRException.create('Error in return code');
+        raise EFHIRException.Create('Error in return code');
     end
     else
     begin
@@ -1549,7 +1549,7 @@ begin
         end
         else
         begin
-          list := TFslList<TFhirConceptMapGroupElement>.create;
+          list := TFslList<TFhirConceptMapGroupElement>.Create;
           try
             for g in cmap.GroupList do
               for e in g.ElementList do
@@ -1591,24 +1591,24 @@ begin
                 message := 'Concept map '+conceptMapUrl+' found no usable translation for '+src.code;
             end;
           finally
-            list.Free;
+            list.free;
           end;
         end;
         if (not done) then
-          raise EFHIRException.create(message);
+          raise EFHIRException.Create(message);
         if (outcome = nil) then
           result := nil
         else if ('code' = fieldToReturn) then
-          result := TFHIRCode.create(outcome.code)
+          result := TFHIRCode.Create(outcome.code)
         else
           result := outcome.Link;
       finally
-        outcome.Free;
+        outcome.free;
       end;
     end;
   finally
-    src.Free;
-    b.Free;
+    src.free;
+    b.free;
   end;
 end;
 
@@ -1653,15 +1653,15 @@ end;
 
 { TVariables }
 
-constructor TVariables.create;
+constructor TVariables.Create;
 begin
   inherited;
-  list := TFslList<TVariable>.create;
+  list := TFslList<TVariable>.Create;
 end;
 
-destructor TVariables.destroy;
+destructor TVariables.Destroy;
 begin
-  list.Free;
+  list.free;
   inherited;
 end;
 
@@ -1675,7 +1675,7 @@ begin
       vv := v;
   if (vv <> nil) then
     list.remove(vv);
-  v := TVariable.create;
+  v := TVariable.Create;
   list.add(v);
   v.Fname := name;
   v.Fmode := mode;

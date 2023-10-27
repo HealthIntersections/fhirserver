@@ -99,7 +99,7 @@ begin
       button.ImageIndex := translationsImageIndex(element);
     end;
   finally
-    MemoEditorForm.Free;
+    MemoEditorForm.free;
   end;
 end;
 
@@ -117,7 +117,7 @@ begin
       button.ImageIndex := translationsImageIndex(element);
     end;
   finally
-    MemoEditorForm.Free;
+    MemoEditorForm.free;
   end;
 end;
 
@@ -141,10 +141,10 @@ begin
         button.ImageIndex := translationsImageIndex(element);
       end;
     finally
-      MemoEditorForm.Free;
+      MemoEditorForm.free;
     end;
   finally
-    md.Free;
+    md.free;
   end;
 end;
 
@@ -176,7 +176,7 @@ begin
       for c in st do
         checkadd(c);
     finally
-      st.Free;
+      st.free;
     end;
 
     if dlg.ShowModal = mrOk then
@@ -193,7 +193,7 @@ begin
         end;
     end;
   finally
-    dlg.Free;
+    dlg.free;
   end;
 end;
 
@@ -219,14 +219,14 @@ begin
     begin
       s := ext.getExtensionString('lang');
       if s = '' then
-        raise EFHIRException.create('Language missing on a translation');
+        raise EFHIRException.Create('Language missing on a translation');
       if langs.IndexOf(s) > -1 then
-        raise EFHIRException.create('Duplicate translation for '+s);
+        raise EFHIRException.Create('Duplicate translation for '+s);
       langs.Add(s);
       ext.url := 'http://hl7.org/fhir/StructureDefinition/translation';
     end;
   finally
-    langs.Free;
+    langs.free;
   end;
   element.value := FPrimary;
   element.removeExtension('http://hl7.org/fhir/StructureDefinition/translation');
@@ -238,14 +238,14 @@ end;
 constructor TMemoEditorForm.Create(owner: TComponent);
 begin
   inherited;
-  FExtensions := TFslList<TFhirExtension>.create;
+  FExtensions := TFslList<TFhirExtension>.Create;
 end;
 
 destructor TMemoEditorForm.Destroy;
 begin
-  FExtensions.Free;
-  FElement.Free;
-  FResource.Free;
+  FExtensions.free;
+  FElement.free;
+  FResource.free;
   inherited;
 end;
 
@@ -302,13 +302,13 @@ end;
 
 procedure TMemoEditorForm.SetElement(const Value: TFHIRMarkdown);
 begin
-  FElement.Free;
+  FElement.free;
   FElement := Value;
 end;
 
 procedure TMemoEditorForm.SetResource(const Value: TFHIRResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 

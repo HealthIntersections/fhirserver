@@ -113,13 +113,13 @@ end;
 
 destructor TWPSpeller.Destroy;
 begin
-  FAllowedWords.Free;
+  FAllowedWords.free;
   inherited;
 end;
 
 procedure TWPSpeller.SetAllowedWords(const Value: TFslStringList);
 begin
-  FAllowedWords.Free;
+  FAllowedWords.free;
   FAllowedWords := Value;
 end;
 

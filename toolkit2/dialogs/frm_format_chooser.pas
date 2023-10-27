@@ -76,7 +76,7 @@ var
   FormatChooserForm: TFormatChooserForm;
   a : TSourceEditorKind;
 begin
-  FormatChooserForm := TFormatChooserForm.create(owner);
+  FormatChooserForm := TFormatChooserForm.Create(owner);
   try
     FormatChooserForm.mSource.Text := source;
     FormatChooserForm.lbChoices.items.clear;

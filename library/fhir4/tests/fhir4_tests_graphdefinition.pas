@@ -103,11 +103,11 @@ end;
 procedure TFHIRGraphDefinitionTests.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'condition-example.xml')))
+    list.add(TFHIRParsers.ParseFile(nil, ffXml, nil, FHIR_TESTING_FILE(4, 'examples', 'condition-example.xml')))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')));
-    list.Add(TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, nil, FHIR_TESTING_FILE(4, 'examples', 'patient-example.xml')));
+    list.Add(TFHIRParsers.ParseFile(nil, ffXml, nil, FHIR_TESTING_FILE(4, 'examples', 'patient-example-xds.xml')));
   end;
 end;
 
@@ -122,16 +122,16 @@ begin
     raise ELibraryException.Create('not understood');
   f := TFileStream.Create(FHIR_TESTING_FILE(4, 'examples', p[0]+'-'+p[1]+'.xml'), fmOpenRead + fmShareDenyWrite);
   try
-    x := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'));
+    x := TFHIRXmlParser.Create(nil, nil);
     try
       x.source := f;
       x.Parse;
       result := x.resource.Link as TFHIRResource;
     finally
-      x.Free;
+      x.free;
     end;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -162,7 +162,7 @@ begin
     filename := FHIR_TESTING_FILE(4, 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml');
     result := FileExists(filename);
     if result then
-      target := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename)
+      target := TFHIRParsers.ParseFile(nil, ffXml, nil, filename)
     else
     begin
       for filename in TDirectory.GetFiles(FHIR_TESTING_FILE(4, 'examples', ''), parts[0].ToLower+'-*.xml', TSearchOption.soTopDirectoryOnly) do
@@ -172,7 +172,7 @@ begin
           src := fileToString(filename, TEncoding.UTF8);
           if (src.Contains('<id value="'+parts[1]+'"/>')) then
           begin
-            target := TFHIRParsers.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+            target := TFHIRParsers.ParseFile(nil, ffXml, nil, filename);
             exit;
           end;
         end;
@@ -213,7 +213,7 @@ begin
   src := FileToString(FHIR_TESTING_FILE(4, 'graphdefinition', test.attribute['source']), TEncoding.UTF8);
   gd := nil;
   try
-    parser := TFHIRGraphDefinitionParser4.create;
+    parser := TFHIRGraphDefinitionParser4.Create;
     try
       gd := parser.parseV(src) as TFHIRGraphDefinition;
     finally
@@ -236,22 +236,22 @@ begin
 
       f := TFileStream.Create(FHIR_TESTING_FILE(4, 'graphdefinition', test.attribute['source']+'.bundle'), fmCreate);
       try
-        x := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
+        x := TFHIRXmlComposer.Create(nil, OutputStylePretty, nil);
         try
           x.Compose(f, engine.bundle);
         finally
-          x.Free;
+          x.free;
         end;
       finally
-        f.Free;
+        f.free;
       end;
       for rule in test.Children do
         Assert.IsTrue(engine.PathEngine.evaluateToBoolean(nil, engine.bundle, engine.bundle, rule.attribute['expression']), 'Failed rule: '+rule.attribute['description']);
     finally
-      engine.Free;
+      engine.free;
     end;
   finally
-    gd.Free;
+    gd.free;
   end;
 end;
 
@@ -259,6 +259,6 @@ end;
 initialization
   TDUnitX.RegisterTestFixture(TFHIRGraphDefinitionTests);
 finalization
-  tests.Free;
+  tests.free;
 {$ENDIF}
 end.

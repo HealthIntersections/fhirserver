@@ -263,7 +263,7 @@ begin
     else
       result := '';
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -287,7 +287,7 @@ end;
 constructor TIso4217CurrencySet.Create;
 begin
   inherited;
-  FCodes := TFslList<TIso4217Currency>.create;
+  FCodes := TFslList<TIso4217Currency>.Create;
   FMap := TFslMap<TIso4217Currency>.create('tx.currency');
   Load;
 end;
@@ -295,7 +295,7 @@ end;
 destructor TIso4217CurrencySet.Destroy;
 begin
   FMap.free;
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
@@ -318,7 +318,7 @@ procedure TIso4217CurrencySet.load;
       FCodes.Add(c.Link);
       FMap.Add(code, c.Link);
     finally
-      c.Free;
+      c.free;
     end;
   end;
 begin
@@ -518,7 +518,7 @@ end;
 
 constructor TIETFLang.Create(code: String);
 begin
-  inherited create;
+  inherited Create;
   self.FCode := code;
 end;
 
@@ -576,6 +576,9 @@ end;
 
 function TIETFLang.matches(other: TIETFLang): boolean;
 begin
+  if other = nil then
+      exit(false);
+
   if FExtension <> '' then
     if FExtension <> other.FExtension then
       exit(false);
@@ -614,11 +617,11 @@ end;
 
 destructor TIETFLanguageDefinitions.Destroy;
 begin
-  FVariants.Free;
-  FScripts.Free;
-  FExtLanguages.Free;
-  FRegions.Free;
-  FLanguages.Free;
+  FVariants.free;
+  FScripts.free;
+  FExtLanguages.free;
+  FRegions.free;
+  FLanguages.free;
   inherited;
 end;
 
@@ -717,7 +720,7 @@ begin
     else
       result := nil;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -749,25 +752,30 @@ var
     b.Append(v);
   end;
 begin
-  b := TStringBuilder.Create;
-  try
-    b.append(FLanguages[code.language].display);
-    if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
-    begin
-      b.Append(' (');
-      first := true;
-      if (code.script <> '') then
-        note('Script', FScripts[code.script].display);
-      if (code.region <> '') then
-        note('Region', FRegions[code.region].display);
-      if (code.variant <> '') then
-        note('Region', FVariants[code.variant].display);
-      b.Append(')');
-    end;
+  if (code = nil) then
+    result := ''
+  else
+  begin
+    b := TStringBuilder.Create;
+    try
+      b.append(FLanguages[code.language].display);
+      if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
+      begin
+        b.Append(' (');
+        first := true;
+        if (code.script <> '') then
+          note('Script', FScripts[code.script].display);
+        if (code.region <> '') then
+          note('Region', FRegions[code.region].display);
+        if (code.variant <> '') then
+          note('Region', FVariants[code.variant].display);
+        b.Append(')');
+      end;
 
-    result := b.ToString;
-  finally
-    b.Free;
+      result := b.ToString;
+    finally
+      b.free;
+    end;
   end;
 end;
 
@@ -1052,7 +1060,7 @@ begin
   try
     st.Text := source;
     i := 0;
-    vars := TFslStringDictionary.create;
+    vars := TFslStringDictionary.Create;
     try
       while (i < st.Count) and (st[i] = '%%') do
       begin
@@ -1072,12 +1080,12 @@ begin
            raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: found '+vars['Type']+' at line '+inttostr(i+1))
       end;
     finally
-      vars.Free;
+      vars.free;
     end;
     if i < st.count then
       raise EFSLException.create('IETFLang: Unable to parse definitions - premature end at line '+inttostr(i+1))
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -1094,7 +1102,7 @@ begin
     FExtLanguages.Add(cc.code, cc.Link);
     result := i;
   finally
-    cc.Free;
+    cc.free;
   end;
 end;
 
@@ -1115,7 +1123,7 @@ begin
     FLanguages.Add(cc.code, cc.Link);
     result := i;
   finally
-    cc.Free;
+    cc.free;
   end;
 end;
 
@@ -1132,7 +1140,7 @@ begin
     FRegions.Add(cc.code, cc.Link);
     result := i;
   finally
-    cc.Free;
+    cc.free;
   end;
 end;
 
@@ -1149,7 +1157,7 @@ begin
     FScripts.Add(cc.code, cc.Link);
     result := i;
   finally
-    cc.Free;
+    cc.free;
   end;
 end;
 
@@ -1166,7 +1174,7 @@ begin
     FVariants.Add(cc.code, cc.Link);
     result := i;
   finally
-    cc.Free;
+    cc.free;
   end;
 end;
 

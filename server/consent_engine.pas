@@ -125,13 +125,13 @@ implementation
 
 destructor TFHIRConsentEngineOperation.Destroy;
 begin
-  FOutcome.Free;
+  FOutcome.free;
   inherited;
 end;
 
 procedure TFHIRConsentEngineOperation.SetOutcome(const Value: TFHIRResourceV);
 begin
-  FOutcome.Free;
+  FOutcome.free;
   FOutcome := Value;
 end;
 
@@ -173,13 +173,13 @@ end;
 
 constructor TFHIRConsentEngine.Create(factory: TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
 end;
 
 destructor TFHIRConsentEngine.Destroy;
 begin
-  FFactory.Free;
+  FFactory.free;
   inherited;
 end;
 

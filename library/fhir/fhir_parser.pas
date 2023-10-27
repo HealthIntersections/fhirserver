@@ -68,18 +68,22 @@ const
 
 
 Type
+
+  { TFHIRParser }
+
   TFHIRParser = class abstract (TFslObject)
   private
     FAllowUnknownContent: Boolean;
     Fresource: TFhirResourceV;
     FSource: TStream;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FParserPolicy : TFHIRXhtmlParserPolicy;
     FKeepParseLocations : boolean;
     FTimeLimit: Cardinal;
     FTimeToAbort : Cardinal;
     FIgnoreHtml: Boolean;
     FWorker : TFHIRWorkerContextV;
+    procedure setLangList(AValue: THTTPLanguageList);
     procedure SetResource(const Value: TFhirResourceV);
     procedure start;
     procedure checkTimeOut;
@@ -90,7 +94,7 @@ Type
     function StringArrayToCommaString(Const aNames : Array Of String) : String;
     function GetFormat: TFHIRFormat; virtual; abstract;
   public
-    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages); Virtual;
+    constructor Create(worker : TFHIRWorkerContextV; langList : THTTPLanguageList); Virtual;
     destructor Destroy; Override;
     property source : TStream read FSource write FSource;
     procedure Parse; Virtual; abstract;
@@ -104,7 +108,7 @@ Type
 
     procedure ParseFile(filename : String); overload;
     Property AllowUnknownContent : Boolean read FAllowUnknownContent write FAllowUnknownContent;
-    Property Lang : THTTPLanguages read FLang write FLang;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
     property ParserPolicy : TFHIRXhtmlParserPolicy read FParserPolicy write FParserPolicy;
     property KeepParseLocations : boolean read FKeepParseLocations write FKeepParseLocations;
     property timeLimit : Cardinal read FTimeLimit write FTimeLimit;
@@ -203,14 +207,17 @@ Type
     function ParseDT(rootName : String; type_ : TClass) : TFHIRObject; override;
   End;
 
+  { TFHIRComposer }
+
   TFHIRComposer = class abstract (TFslObject)
   private
-    FLang: THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FSummaryOption: TFHIRSummaryOption;
     FNoHeader: Boolean;
     FElements : TStringList;
     FLogId: string;
     FKeepLocationData: boolean;
+    procedure SetLangList(AValue: THTTPLanguageList);
   protected
     FWorker : TFHIRWorkerContextV;
     FStyle : TFHIROutputStyle;
@@ -232,7 +239,7 @@ Type
     procedure ComposeItems(stream : TStream; name : String; items : TFHIRObjectList); Virtual;
     procedure ComposeItem(stream : TStream; name : String; item : TFHIRObject); Virtual;
   public
-    constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
+    constructor Create(worker : TFHIRWorkerContextV; style : TFHIROutputStyle; langList : THTTPLanguageList); Virtual;
     destructor Destroy; override;
     Procedure Compose(stream : TStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
     Procedure Compose(stream : TFslStream; oResource : TFhirResourceV); Overload; Virtual; abstract;
@@ -244,7 +251,7 @@ Type
 
     Function MimeType : String; virtual;
     function Extension : String; virtual;
-    Property Lang : THTTPLanguages read FLang write FLang;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
     Property SummaryOption : TFHIRSummaryOption read FSummaryOption write FSummaryOption;
     property NoHeader : Boolean read FNoHeader write FNoHeader;
     property ElementToCompose : TStringList read FElements;
@@ -376,7 +383,7 @@ var
 begin
   xml := nil;
   try
-    FComments := TFslStringList.create;
+    FComments := TFslStringList.Create;
     try
       if (Element = nil) then
       begin
@@ -389,9 +396,9 @@ begin
       if root.namespaceURI = FHIR_NS Then
         resource := ParseResourceV(root, '')
       else
-        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]))
+        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', LangList), [root.namespaceURI]))
     finally
-      FComments.Free;
+      FComments.free;
     end;
   finally
     xml.free;
@@ -417,7 +424,7 @@ begin
   try
     resource := ParseResourceV(obj);
   finally
-    obj.Free;
+    obj.free;
   end;
 end;
 
@@ -431,7 +438,7 @@ begin
   try
     result := ParseDataTypeV(obj, rootName, type_);
   finally
-    obj.Free;
+    obj.free;
   end;
 end;
 
@@ -449,12 +456,12 @@ end;
 procedure TFHIRXmlParserBase.UnknownContent(element: TMXmlElement; path : String);
 begin
   if Not AllowUnknownContent Then
-    XmlError(PathForElement(element), StringFormat(GetFhirMessage('MSG_UNKNOWN_CONTENT', lang), [element.Name, path]));
+    XmlError(PathForElement(element), StringFormat(GetFhirMessage('MSG_UNKNOWN_CONTENT', langList), [element.Name, path]));
 end;
 
 procedure TFHIRXmlParserBase.XmlError(const sPath, sMessage: String);
 begin
-  raise EXmlException.create(StringFormat(GetFhirMessage('MSG_ERROR_PARSING', lang), [sMessage+' @ '+sPath]));
+  raise EXmlException.Create(StringFormat(GetFhirMessage('MSG_ERROR_PARSING', langList), [sMessage+' @ '+sPath]));
 end;
 
 function TFHIRJsonParserBase.ParseXHtmlNode(path : String; value : TJsonNode): TFhirXHtmlNode;
@@ -463,7 +470,7 @@ begin
     result := nil
   else
   begin
-    result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [], JsonToString(value));
+    result := TFHIRXhtmlParser.parse(langList, FParserPolicy, [], JsonToString(value));
     if KeepParseLocations then
     begin
       result.LocationData.ParseStart := value.LocationStart;
@@ -475,12 +482,12 @@ end;
 function TFHIRXmlParserBase.ParseXHtmlNode(element: TMXmlElement; path : String): TFhirXHtmlNode;
 begin
   if not AllowUnknownContent and (element.namespaceURI <> XHTML_NS) Then
-    XmlError(PathForElement(element), StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [element.namespaceURI]));
+    XmlError(PathForElement(element), StringFormat(GetFhirMessage('MSG_WRONG_NS', langList), [element.namespaceURI]));
   if FIgnoreHtml then
     result := nil
   else
   begin
-    result := TFHIRXhtmlParser.Parse(lang, FParserPolicy, [], element, path, FHIR_NS);
+    result := TFHIRXhtmlParser.Parse(langList, FParserPolicy, [], element, path, FHIR_NS);
     if KeepParseLocations then
     begin
       result.LocationData.ParseStart := element.Start;
@@ -626,7 +633,7 @@ begin
     xml.Finish;
     xml.Build(stream);
   finally
-    xml.Free;
+    xml.free;
   end;
 end;
 
@@ -680,7 +687,7 @@ begin
     ComposeResourceV(xml, oResource);
     xml.Finish;
   finally
-    xml.Free;
+    xml.free;
   end;
 end;
 
@@ -693,7 +700,7 @@ begin
     s.Stream := stream.Link;
     compose(s, oResource);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -702,7 +709,7 @@ begin
   if base.SerialiseUsingProperties then
     ComposeByProperties(xml, name, base)
   else
-    raise EXmlException.create('Unknown type '+base.fhirType);
+    raise EXmlException.Create('Unknown type '+base.fhirType);
 end;
 
 procedure TFHIRXmlComposerBase.ComposeByProperties(xml: TXmlBuilder; name: String; base: TFHIRObject);
@@ -728,7 +735,7 @@ begin
         else
           ComposeByProperties(xml, p.Name, o);
   finally
-    pl.Free;
+    pl.free;
   end;
   xml.Close(name);
 end;
@@ -820,7 +827,7 @@ begin
   if isCanonical then
     json := TJsonWriterCanonical.create
   else
-    json := TJsonWriterDirect.create;
+    json := TJsonWriterDirect.Create;
   try
     oStream := TFslVCLStream.Create;
     json.Stream := oStream;
@@ -904,7 +911,7 @@ begin
   try
     Compose(v, oResource);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -915,7 +922,7 @@ begin
   else if base.SerialiseUsingProperties then
     composeByPropertiesEntry(json, name, base)
   else
-    raise EJsonException.create('Unknown type '+base.className);
+    raise EJsonException.Create('Unknown type '+base.className);
 end;
 
 procedure TFHIRJsonComposerBase.composeByPropertiesEntry(json: TJSONWriter; name: String; base: TFHIRObject);
@@ -974,7 +981,7 @@ begin
           composePropValue(json, p.Name, p.Values[0]);
     end;
   finally
-    pl.Free;
+    pl.free;
   end;
 end;
 
@@ -1046,7 +1053,7 @@ var
   oStream : TFslVCLStream;
   json : TJSONWriter;
 begin
-  json := TJsonWriterDirect.create;
+  json := TJsonWriterDirect.Create;
   try
     oStream := TFslVCLStream.Create;
     json.Stream := oStream;
@@ -1066,7 +1073,7 @@ var
   json : TJSONWriter;
   base : TFHIRObject;
 begin
-  json := TJsonWriterDirect.create;
+  json := TJsonWriterDirect.Create;
   try
     oStream := TFslVCLStream.Create;
     json.Stream := oStream;
@@ -1150,7 +1157,7 @@ begin
       ok := true;
   end;
   if not ok then
-    raise EFHIRException.create('The Date value '+s+' is not in the correct format (Xml Date Format required)');
+    raise EFHIRException.Create('The Date value '+s+' is not in the correct format (Xml Date Format required)');
 end;
 
 procedure TFHIRParser.checkTimeOut;
@@ -1159,17 +1166,18 @@ begin
     abort;
 end;
 
-constructor TFHIRParser.Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages);
+constructor TFHIRParser.Create(worker: TFHIRWorkerContextV; langList : THTTPLanguageList);
 begin
   Inherited Create;
-  FLang := lang;
+  FlangList := langList;
   FWorker := worker;
 end;
 
 destructor TFHIRParser.Destroy;
 begin
-  Fresource.Free;
-  Fworker.Free;
+  FlangList.free;
+  Fresource.free;
+  Fworker.free;
   inherited;
 end;
 
@@ -1183,7 +1191,7 @@ begin
     source := f;
     parse;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -1220,8 +1228,14 @@ end;
 
 procedure TFHIRParser.SetResource(const Value: TFhirResourceV);
 begin
-  Fresource.Free;
+  Fresource.free;
   Fresource := Value;
+end;
+
+procedure TFHIRParser.setLangList(AValue: THTTPLanguageList);
+begin
+  langList.free;
+  langList := AValue;
 end;
 
 procedure TFHIRParser.start;
@@ -1234,7 +1248,7 @@ end;
 
 procedure TFHIRXmlParserBase.SeTFhirElement(const Value: TMXmlElement);
 begin
-  FElement.Free;
+  FElement.free;
   FElement := Value;
 end;
 
@@ -1242,12 +1256,12 @@ function TFHIRComposer.Compose(name : String; items : TFHIRObjectList): String;
 var
   stream : TBytesStream;
 begin
-  stream := TBytesStream.create;
+  stream := TBytesStream.Create;
   try
     composeItems(stream, name, items);
     result := TEncoding.UTF8.GetString(copy(stream.Bytes, 0, stream.position));
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
@@ -1268,12 +1282,12 @@ function TFHIRComposer.Compose(name : String; item : TFHIRObject): String;
 var
   stream : TBytesStream;
 begin
-  stream := TBytesStream.create;
+  stream := TBytesStream.Create;
   try
     composeItem(stream, name, item);
     result := TEncoding.UTF8.GetString(copy(stream.Bytes, 0, stream.position));
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
@@ -1282,23 +1296,23 @@ function TFHIRComposer.ComposeBytes(oResource: TFhirResourceV): TBytes;
 var
   stream : TBytesStream;
 begin
-  stream := TBytesStream.create;
+  stream := TBytesStream.Create;
   try
     compose(stream, oResource);
-    result := stream.Bytes;
+    result := copy(stream.Bytes, 0, stream.Size);
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
 procedure TFHIRComposer.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 begin
-  raise EFHIRException.create('ComposeExpression is Not supported for '+className);
+  raise EFHIRException.Create('ComposeExpression is Not supported for '+className);
 end;
 
 procedure TFHIRComposer.ComposeItems(stream: TStream; name: String; items: TFHIRObjectList);
 begin
-  raise EFHIRException.create('ComposeExpression is Not supported for '+className);
+  raise EFHIRException.Create('ComposeExpression is Not supported for '+className);
 end;
 
 procedure TFHIRComposer.ComposeXHtmlNode(xml: TXmlBuilder; name: String; node: TFhirXHtmlNode);
@@ -1339,7 +1353,7 @@ begin
     xml.Finish;
     xml.Build(stream);
   finally
-    xml.Free;
+    xml.free;
   end;
 end;
 
@@ -1365,7 +1379,7 @@ begin
     xml.Finish;
     xml.Build(stream);
   finally
-    xml.Free;
+    xml.free;
   end;
 end;
 
@@ -1492,12 +1506,12 @@ function TFHIRComposer.Compose(oResource: TFhirResourceV): String;
 var
   stream : TBytesStream;
 begin
-  stream := TBytesStream.create;
+  stream := TBytesStream.Create;
   try
     compose(stream, oResource);
     result := TEncoding.UTF8.GetString(copy(stream.Bytes, 0, stream.position));
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
@@ -1519,7 +1533,7 @@ begin
          ((a.name <> 'url')) and // url is ok on extensions which appear with various names
          (a.name <> 'xmlns') and // namespaces are ok
          (not a.name.StartsWith('xmlns:')) then // namespaces are ok
-        XmlError(path+'/@'+a.name, StringFormat(GetFhirMessage('MSG_UNKNOWN_CONTENT', lang), [a.name, path]));
+        XmlError(path+'/@'+a.name, StringFormat(GetFhirMessage('MSG_UNKNOWN_CONTENT', langList), [a.name, path]));
     end;
   end;
 end;
@@ -1531,7 +1545,7 @@ end;
 
 destructor TFHIRXmlParserBase.Destroy;
 begin
-  FElement.Free;
+  FElement.free;
   inherited;
 end;
 
@@ -1559,7 +1573,7 @@ begin
   start;
   xml := nil;
   try
-    FComments := TFslStringList.create;
+    FComments := TFslStringList.Create;
     try
       if (Element = nil) then
       begin
@@ -1570,14 +1584,14 @@ begin
         root := element;
 
       if root.namespaceURI <> FHIR_NS Then
-        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', lang), [root.namespaceURI]));
+        XmlError('/', StringFormat(GetFhirMessage('MSG_WRONG_NS', langList), [root.namespaceURI]));
 
       result := ParseDataTypeV(root, rootName, type_);
     finally
-      FComments.Free;
+      FComments.free;
     end;
   finally
-    xml.Free;
+    xml.free;
   end;
 end;
 
@@ -1602,19 +1616,20 @@ begin
     result := value.ToXML;
 end;
 
-constructor TFHIRComposer.Create(worker: TFHIRWorkerContextV; Style : TFHIROutputStyle; const lang : THTTPLanguages);
+constructor TFHIRComposer.Create(worker: TFHIRWorkerContextV; style: TFHIROutputStyle; langList : THTTPLanguageList);
 begin
   inherited Create;
   FWorker := worker;
-  FLang := lang;
+  FLangList := langList;
   FStyle := Style;
-  FElements := TStringList.create;
+  FElements := TStringList.Create;
 end;
 
 destructor TFHIRComposer.Destroy;
 begin
+  FLangList.free;
   Fworker.free;
-  FElements.Free;
+  FElements.free;
   inherited;
 end;
 
@@ -1631,6 +1646,12 @@ end;
 function TFHIRComposer.isCanonical: boolean;
 begin
   result := FStyle = OutputStyleCanonical;
+end;
+
+procedure TFHIRComposer.SetLangList(AValue: THTTPLanguageList);
+begin
+  langList.free;
+  langList := AValue;
 end;
 
 function TFHIRComposer.isPretty: boolean;
@@ -1658,7 +1679,7 @@ procedure TFHIRTurtleComposerBase.Compose(stream: TStream; oResource: TFhirResou
 var
   base : TTurtleComplex;
 begin
-  Fttl := TTurtleDocument.create;
+  Fttl := TTurtleDocument.Create;
   try
     Fttl.prefix('fhir', 'http://hl7.org/fhir/');
     Fttl.prefix('rdfs', 'http://www.w3.org/2000/01/rdf-schema#');
@@ -1697,7 +1718,7 @@ begin
 
     TTurtleComposer.compose(Fttl, stream);
   finally
-    Fttl.Free;
+    Fttl.free;
   end;
 end;
 
@@ -1710,7 +1731,7 @@ begin
     s.Stream := stream.Link;
     compose(s, oResource);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1735,12 +1756,12 @@ end;
 
 procedure TFHIRTurtleComposerBase.ComposeItem(stream: TStream; name: String; item: TFHIRObject);
 begin
-  raise EFHIRException.create('not implemented yet');
+  raise EFHIRException.Create('not implemented yet');
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeItems(stream: TStream; name: String; items: TFHIRObjectList);
 begin
-  raise EFHIRException.create('not implemented yet');
+  raise EFHIRException.Create('not implemented yet');
 end;
 
 procedure TFHIRTurtleComposerBase.ComposeXHtmlNode(parent: TTurtleComplex; parentType, name: String; value: TFhirXHtmlNode; useType : boolean; index: integer);
@@ -1773,7 +1794,7 @@ end;
 
 procedure TFHIRTurtleComposerBase.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRException.create('not implemented yet');
+  raise EFHIRException.Create('not implemented yet');
 end;
 
 function TFHIRTurtleComposerBase.MimeType: String;
@@ -1800,30 +1821,30 @@ var
   s : String;
 begin
   s := StreamToString(source, TEncoding.UTF8);
-    raise EFHIRException.create('Unable to process text content - unrecognised');
+    raise EFHIRException.Create('Unable to process text content - unrecognised');
 end;
 
 
 function TFHIRTextParser.ParseDT(rootName: String; type_: TClass): TFHIRObject;
 begin
-  raise EFHIRException.create('The method TFHIRTextParser.ParseDT should never be called');
+  raise EFHIRException.Create('The method TFHIRTextParser.ParseDT should never be called');
 end;
 
 { TFHIRTextComposer }
 
 procedure TFHIRTextComposer.Compose(stream: TStream; oResource: TFhirResourceV);
 begin
-  raise EFHIRTodo.create('TFHIRTextComposer.Compose');
+  raise EFHIRTodo.Create('TFHIRTextComposer.Compose');
 end;
 
 procedure TFHIRTextComposer.ComposeResource(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRTodo.create('TFHIRTextComposer.ComposeResource');
+  raise EFHIRTodo.Create('TFHIRTextComposer.ComposeResource');
 end;
 
 procedure TFHIRTextComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRTodo.create('TFHIRTextComposer.ComposeResourceV');
+  raise EFHIRTodo.Create('TFHIRTextComposer.ComposeResourceV');
 end;
 
 function TFHIRTextComposer.Extension: String;
@@ -1871,21 +1892,21 @@ begin
           if p = nil then
             p := pred
           else
-            raise ERdfException.create('Multiple tree node start points found');
+            raise ERdfException.Create('Multiple tree node start points found');
         end;
     if (p = nil) then
-      raise ERdfException.create('No tree node start point found in Turtle Format');
+      raise ERdfException.Create('No tree node start point found in Turtle Format');
 
     resource := ParseResourceV(p.Value);
     resource.Tags['rdf-url'] := p.URL.uri;
   finally
-    Fdoc.Free;
+    Fdoc.free;
   end;
 end;
 
 function TFHIRTurtleParserBase.ParseDT(rootName: String; type_: TClass): TFHIRObject;
 begin
-  raise ERdfException.create('not supported');
+  raise ERdfException.Create('not supported');
 end;
 
 function TFHIRTurtleParserBase.ParseXHtmlNode(literal: String): TFhirXHtmlNode;
@@ -1893,7 +1914,7 @@ begin
   if literal = '' then
     result := nil
   else
-    result := TFHIRXhtmlParser.parse(lang, FParserPolicy, [xopTrimWhitspace], literal);
+    result := TFHIRXhtmlParser.parse(langList, FParserPolicy, [xopTrimWhitspace], literal);
 end;
 
 function TFHIRTurtleParserBase.rdfsType(obj: TTurtleComplex): string;
@@ -1902,9 +1923,9 @@ var
 begin
   t := obj.predicates['http://www.w3.org/2000/01/rdf-schema#type'];
   if t = nil then
-    raise ERdfException.create('Unable to determine type: rdfs#type not found');
+    raise ERdfException.Create('Unable to determine type: rdfs#type not found');
   if not (t is TTurtleURL) then
-    raise ERdfException.create('Unable to determine type: rdfs#type not a URL');
+    raise ERdfException.Create('Unable to determine type: rdfs#type not a URL');
   result := TTurtleURL(t).uri.Substring(20);
 end;
 {$ENDIF}

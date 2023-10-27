@@ -8,7 +8,7 @@
       <SearchPaths>
         <IncludeFiles Value="../library"/>
         <OtherUnitFiles Value="../library/fdb"/>
-        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)/"/>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
     </CompilerOptions>
     <Files>
@@ -59,6 +59,10 @@
       <Item>
         <Filename Value="../library/fdb/fdb_sqlite3.pas"/>
         <UnitName Value="fdb_sqlite3"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/fdb/fdb_fts.pas"/>
+        <UnitName Value="fdb_fts"/>
       </Item>
     </Files>
     <RequiredPkgs>

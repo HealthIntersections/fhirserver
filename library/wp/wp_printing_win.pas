@@ -1492,11 +1492,11 @@ End;
 
 Destructor TFslPrinter.Destroy;
 Begin
-  FFontList.Free;
-  FPaperSizeList.Free;
-  FDefinition.Free;
-  FSettings.Free;
-  FTrayList.Free;
+  FFontList.free;
+  FPaperSizeList.free;
+  FDefinition.free;
+  FSettings.free;
+  FTrayList.free;
 
   Inherited;
 End;
@@ -1697,7 +1697,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1709,7 +1709,7 @@ Begin
   Try
     oJob.Close;
   Finally
-    oJob.Free;
+    oJob.free;
   End;
 End;
 
@@ -1723,7 +1723,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1735,7 +1735,7 @@ Begin
   Try
 //  oJob.Close; // Don't close because preview jobs are interactive.
   Finally
-    oJob.Free;
+    oJob.free;
   End;
 End;
 
@@ -1759,7 +1759,7 @@ Begin
   Assert(Not Assigned(oValue) Or Invariants('SetDefinition', oValue, TFslPrinterDefinition, 'oValue'));
   Assert(CheckCondition(Not FOpened, 'SetDefinition', 'Cannot change the printer definition while it is open.'));
 
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 End;
 
@@ -1810,7 +1810,7 @@ Begin
   If (Value.Definition.Name <> Definition.Name) Then
     RaiseError('SetSettings', StringFormat('Attempted to attach settings for %s to printer %s.', [Value.Definition.Name, Definition.Name]));
 
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 End;
 
@@ -2006,10 +2006,10 @@ Begin
       If Not Find(oPrinter, Result, CompareByDefault) Then
         Result := -1;
     Finally
-      oPrinter.Free;
+      oPrinter.free;
     End;
   Finally
-    oDefinition.Free;
+    oDefinition.free;
   End;
 End;
 
@@ -2029,10 +2029,10 @@ Begin
       If Not Find(oPrinter, Result, CompareByName) Then
         Result := -1;
     Finally
-      oPrinter.Free;
+      oPrinter.free;
     End;
   Finally
-    oDefinition.Free;
+    oDefinition.free;
   End;
 End;
 
@@ -2052,10 +2052,10 @@ Begin
       If Not Find(oPrinter, Result, CompareByPort) Then
         Result := -1;
     Finally
-      oPrinter.Free;
+      oPrinter.free;
     End;
   Finally
-    oDefinition.Free;
+    oDefinition.free;
   End;
 End;
 
@@ -2278,7 +2278,7 @@ Begin
 
     Add(oFont.Link);
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2445,7 +2445,7 @@ Begin
 
     Result := Add(oSize.Link);
   Finally
-    oSize.Free;
+    oSize.free;
   End;
 End;
 
@@ -2549,7 +2549,7 @@ Begin
     If Not Find(oPrinterTray, Result, CompareByID) Then
       Result := -1;
   Finally
-    oPrinterTray.Free;
+    oPrinterTray.free;
   End;
 End;
 
@@ -2565,7 +2565,7 @@ Begin
     If Not Find(oPrinterTray, Result, CompareByName) Then
       Result := -1;
   Finally
-    oPrinterTray.Free;
+    oPrinterTray.free;
   End;
 End;
 
@@ -2593,7 +2593,7 @@ Begin
 
     Add(oTray.Link);
   Finally
-    oTray.Free;
+    oTray.free;
   End;
 End;
 
@@ -2620,7 +2620,7 @@ End;
 Destructor TFslPrinterSettings.Destroy;
 Begin
   Close;
-  FDefinition.Free;
+  FDefinition.free;
 
   Inherited;
 End;
@@ -3011,7 +3011,7 @@ Procedure TFslPrinterSettings.SetDefinition(oValue : TFslPrinterDefinition);
 Begin
   Assert(Not Assigned(oValue) Or Invariants('SetDefinition', oValue, TFslPrinterDefinition, 'oValue'));
 
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 End;
 
@@ -3264,8 +3264,8 @@ End;
 
 Destructor TFslRenderJob.Destroy;
 Begin
-  FSettings.Free;
-  FCanvas.Free;
+  FSettings.free;
+  FCanvas.free;
 
   Inherited;
 End;
@@ -3375,7 +3375,7 @@ End;
 
 Procedure TFslRenderJob.RecreateCanvas;
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Nil;
   FCanvas := CanvasClass.Create;
 End;
@@ -3573,10 +3573,10 @@ End;
 
 Destructor TFslPrinterCanvas.Destroy;
 Begin
-  FPen.Free;
-  FBrush.Free;
-  FFont.Free;
-  FCanvas.Free;
+  FPen.free;
+  FBrush.free;
+  FFont.free;
+  FCanvas.free;
 
   Inherited;
 End;
@@ -3600,7 +3600,7 @@ End;
 
 Procedure TFslPrinterCanvas.SetBrush(oBrush: TFslBrush);
 Begin
-  FBrush.Free;
+  FBrush.free;
   FBrush := oBrush;
 
   FBrush.Capability := Self;
@@ -3610,7 +3610,7 @@ End;
 
 Procedure TFslPrinterCanvas.SetFont(oFont: TFslFont);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := oFont;
 
   FFont.Capability := Self;
@@ -3620,7 +3620,7 @@ End;
 
 Procedure TFslPrinterCanvas.SetPen(oPen: TFslPen);
 Begin
-  FPen.Free;
+  FPen.free;
   FPen := oPen;
 
   FPen.Capability := Self;
@@ -3630,7 +3630,7 @@ End;
 
 Procedure TFslPrinterCanvas.AttachToPrinter(aHandle : TFslGraphicHandle);
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Nil;
 
   Handle := aHandle;
@@ -3663,7 +3663,7 @@ End;
 
 Procedure TFslPrinterCanvas.AttachToPreview(aHandle: TFslGraphicHandle; iPixelWidth, iPixelHeight: Integer; iLogicalWidth, iLogicalHeight: TFslGraphicMetre);
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Nil;
 
   Handle := aHandle;
@@ -4109,8 +4109,8 @@ Begin
 
     oGpGraphics.DrawImage(oGpBitmap, MakeRectF(iX, iY, iWidth, iHeight), 0, 0, oGpBitmap.GetWidth, oGpBitmap.GetHeight, UnitPixel);
   Finally
-    oGpGraphics.Free;
-    oGpBitmap.Free;
+    oGpGraphics.free;
+    oGpBitmap.free;
   End;
 End;
 
@@ -4153,7 +4153,7 @@ Begin
           oBitmap.Canvas.Unlock;
         End;
       Finally
-        oBitmap.Free;
+        oBitmap.free;
       End;
     End;
   End;
@@ -4199,7 +4199,7 @@ Begin
           oBitmap.Canvas.Unlock;
         End;
       Finally
-        oBitmap.Free;
+        oBitmap.free;
       End;
     End;
   End
@@ -4590,9 +4590,9 @@ End;
 
 Destructor TFslPrinterPreviewJob.Destroy;
 Begin
-  FMeta.Free;
-  FActivePage.Free;
-  FPages.Free;
+  FMeta.free;
+  FActivePage.free;
+  FPages.free;
 
   Inherited;
 End;
@@ -4622,7 +4622,7 @@ Begin
 
   FPages.Add(ActivePage.Link);
 
-  FMeta.Free;
+  FMeta.free;
   FMeta := Nil;
   FMeta := TMetafileCanvas.Create(ActivePage.Handle, FHandle);
 
@@ -4646,7 +4646,7 @@ Procedure TFslPrinterPreviewJob.InternalFinish;
 Begin
   DeleteDC(FHandle);
   ActivePage := Nil;
-  FMeta.Free;
+  FMeta.free;
   FMeta := Nil;
 End;
 
@@ -4667,7 +4667,7 @@ End;
 
 Procedure TFslPrinterPreviewJob.SetActivePage(Const Value: TFslPrinterPreviewPage);
 Begin
-  FActivePage.Free;
+  FActivePage.free;
   FActivePage := Value;
 End;
 
@@ -4726,7 +4726,7 @@ End;
 Destructor TFslPrinterManager.Destroy;
 Begin
   FDefaultDefinition := Nil;
-  FDefinitionList.Free;
+  FDefinitionList.free;
 
   Inherited;
 End;
@@ -4844,7 +4844,7 @@ Begin
 
               FDefinitionList.Add(oDefinition.Link);
             Finally
-              oDefinition.Free;
+              oDefinition.free;
             End;
 
             Inc(pPrinterInfo, SizeOf(TPrinterInfo4));
@@ -4868,7 +4868,7 @@ Begin
 
                 FDefinitionList.Add(oDefinition.Link);
               Finally
-                oDefinition.Free;
+                oDefinition.free;
               End;
 
               pPort := ExtractNextString(pLineCur);
@@ -4968,6 +4968,6 @@ End;
 Initialization
   GSynchroniseLock := TFslLock.Create;
 Finalization
-  GSynchroniseLock.Free;
+  GSynchroniseLock.free;
   GSynchroniseLock := Nil;
 End.

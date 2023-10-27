@@ -74,12 +74,12 @@ implementation
 
 function TJWTServices.jwkList: TJWKList;
 begin
-  result := TJWKList.create;
+  result := TJWKList.Create;
   try
     result.Add(jwk);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -90,7 +90,7 @@ end;
 
 destructor TJWTServices.Destroy;
 begin
-  FCardKey.Free;
+  FCardKey.free;
   inherited;
 end;
 
@@ -155,7 +155,7 @@ end;
 
 procedure TJWTServices.SetCardKey(const Value: TJWK);
 begin
-  FCardKey.Free;
+  FCardKey.free;
   FCardKey := Value;
   if FCardKey <> nil then
     FCardKey.checkThumbprintIsSHA256Hash;

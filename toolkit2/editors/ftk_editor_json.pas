@@ -73,7 +73,7 @@ implementation
 constructor TJsonEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FParser := TJsonParser.create;
+  FParser := TJsonParser.Create;
 end;
 
 destructor TJsonEditor.Destroy;
@@ -91,7 +91,7 @@ begin
   try
     SetContentUndoable(TJsonWriter.writeObjectStr(j, true));
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -103,13 +103,13 @@ begin
   try
     SetContentUndoable(TJsonWriter.writeObjectStr(j, false));
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
 function TJsonEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynJSonSyn.create(nil);
+  Result := TSynJSonSyn.Create(nil);
 end;
 
 procedure TJsonEditor.getNavigationList(navpoints: TStringList);
@@ -187,7 +187,7 @@ begin
         checkForEncoding(s, i);
       end;
     end;
-    FJson.Free;
+    FJson.free;
     FJson := nil;
     try
       FJson := FParser.parseNode(FContent.text);
@@ -214,7 +214,7 @@ end;
 
 procedure TJsonEditor.ContentChanged;
 begin
-  FJson.Free;
+  FJson.free;
   FJson := nil;
 end;
 

@@ -85,7 +85,7 @@ implementation
 
 constructor TRegularExpression.Create(const Pattern: string; Options: TRegExOptions);
 begin
-  inherited create;
+  inherited Create;
   FPattern := pattern;
   {$IFDEF FPC}
   FImpl := TRegExpr.Create(pattern);
@@ -96,7 +96,7 @@ end;
 
 constructor TRegularExpression.Create(const Pattern: string);
 begin
-  inherited create;
+  inherited Create;
   FPattern := pattern;
   {$IFDEF FPC}
   FImpl := TRegExpr.Create(pattern);

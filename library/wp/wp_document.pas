@@ -2005,10 +2005,10 @@ End;
 
 Destructor TWPDocument.Destroy;
 Begin
-  FAllowedWords.Free;
-  FStyles.Free;
-  FAnnotations.Free;
-  FAttachments.Free;
+  FAllowedWords.free;
+  FStyles.free;
+  FAnnotations.free;
+  FAttachments.free;
 
   Inherited;
 End;
@@ -2052,7 +2052,7 @@ End;
 
 Procedure TWPDocument.SetStyles(Const Value : TWPStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := Value;
 End;
 
@@ -2138,7 +2138,7 @@ End;
 
 Destructor TWPDocumentContainer.Destroy;
 Begin
-  FBlocks.Free;
+  FBlocks.free;
 
   Inherited;
 End;
@@ -2180,7 +2180,7 @@ End;
 
 Procedure TWPDocumentContainer.SetBlocks(Const Value : TWPDocumentBlocks);
 Begin
-  FBlocks.Free;
+  FBlocks.free;
   FBlocks := Value;
 End;
 
@@ -2339,7 +2339,7 @@ End;
 
 Destructor TWPDocumentObject.Destroy;
 Begin
-  FHotspot.Free;
+  FHotspot.free;
 
   Inherited;
 End;
@@ -2405,7 +2405,7 @@ End;
 Procedure TWPDocumentObject.SetHotspot(Const Value: TWPHotspot);
 Begin
   Assert(CheckCondition((value = Nil) Or CanHaveHotspot, 'SetHotspot', 'Document Elements of type '+ClassName+' cannot act as hotspots'));
-  FHotspot.Free;
+  FHotspot.free;
   FHotSpot := Value;
 End;
 
@@ -2537,7 +2537,7 @@ End;
 Procedure TWPDocumentObject.Clear;
 Begin
   Defaults;
-  FHotspot.Free;
+  FHotspot.free;
   FHotspot := Nil;
   ClearChildren;
 End;
@@ -2587,8 +2587,8 @@ End;
 
 Destructor TWPDocumentField.Destroy;
 Begin
-  FContents.Free;
-  FData.Free;
+  FContents.free;
+  FData.free;
 
   Inherited;
 End;
@@ -2642,7 +2642,7 @@ End;
 
 Procedure TWPDocumentField.SetContents(Const Value : TWPDocumentSimpleContents);
 Begin
-  FContents.Free;
+  FContents.free;
   FContents := Value;
 End;
 
@@ -2825,7 +2825,7 @@ End;
 
 Destructor TWPDocumentContent.Destroy;
 Begin
-  FFont.Free;
+  FFont.free;
 
   Inherited;
 End;
@@ -2873,7 +2873,7 @@ End;
 
 Procedure TWPDocumentContent.SetFont(Const Value : TWPSFontDetails);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := Value;
 End;
 
@@ -3027,7 +3027,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3070,7 +3070,7 @@ End;
 
 Destructor TWPDocumentSection.Destroy;
 Begin
-  FData.Free;
+  FData.free;
   Inherited;
 End;
 
@@ -3202,10 +3202,10 @@ End;
 
 Destructor TWPDocumentImage.Destroy;
 Begin
-  FImage.Free;
-  FSelectionImage.Free;
-  FMap.Free;
-  FAdornments.Free;
+  FImage.free;
+  FSelectionImage.free;
+  FMap.free;
+  FAdornments.free;
 
   Inherited;
 End;
@@ -3278,7 +3278,7 @@ Procedure TWPDocumentImage.SetImage(Const Value : TFslGraphic);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetImage', Value, TFslGraphic, 'Value'));
 
-  FImage.Free;
+  FImage.free;
   FImage := Value;
 End;
 
@@ -3301,7 +3301,7 @@ Procedure TWPDocumentImage.SetSelectionImage(Const Value : TFslGraphic);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetSelectionImage', Value, TFslGraphic, 'Value'));
 
-  FSelectionImage.Free;
+  FSelectionImage.free;
   FSelectionImage := Value;
 End;
 
@@ -3324,7 +3324,7 @@ Procedure TWPDocumentImage.SetMap(Const Value : TWPImageMap);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetMap', Value, TWPImageMap, 'Value'));
 
-  FMap.Free;
+  FMap.free;
   FMap := Value;
 End;
 
@@ -3412,11 +3412,11 @@ Procedure TWPDocumentImage.Clear;
 Begin
   Inherited;
 
-  FImage.Free;
+  FImage.free;
   FImage := Nil;
-  FSelectionImage.Free;
+  FSelectionImage.free;
   FSelectionImage := Nil;
-  FMap.Free;
+  FMap.free;
   FMap := Nil;
   FFrameIndex := 0;
   Defaults;
@@ -3760,9 +3760,9 @@ End;
 
 Destructor TWPDocumentParagraph.Destroy;
 Begin
-  FContents.Free;
-  FFormat.Free;
-  FFont.Free;
+  FContents.free;
+  FFormat.free;
+  FFont.free;
 
   Inherited;
 End;
@@ -3816,7 +3816,7 @@ End;
 
 Procedure TWPDocumentParagraph.SetFont(Const Value : TWPSFontDetails);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := Value;
 End;
 
@@ -3837,7 +3837,7 @@ End;
 
 Procedure TWPDocumentParagraph.SetFormat(Const Value : TWPSParagraphDetails);
 Begin
-  FFormat.Free;
+  FFormat.free;
   FFormat := Value;
 End;
 
@@ -3858,7 +3858,7 @@ End;
 
 Procedure TWPDocumentParagraph.SetContents(Const Value : TWPDocumentContents);
 Begin
-  FContents.Free;
+  FContents.free;
   FContents := Value;
 End;
 
@@ -3961,10 +3961,10 @@ End;
 
 Destructor TWPDocumentTableItem.Destroy;
 Begin
-  FLeftBorder.Free;
-  FTopBorder.Free;
-  FRightBorder.Free;
-  FBottomBorder.Free;
+  FLeftBorder.free;
+  FTopBorder.free;
+  FRightBorder.free;
+  FBottomBorder.free;
 
   Inherited;
 End;
@@ -4015,7 +4015,7 @@ End;
 
 Procedure TWPDocumentTableItem.SetLeftBorder(Const Value : TWPBorder);
 Begin
-  FLeftBorder.Free;
+  FLeftBorder.free;
   FLeftBorder := Value;
 End;
 
@@ -4035,7 +4035,7 @@ End;
 
 Procedure TWPDocumentTableItem.SetTopBorder(Const Value : TWPBorder);
 Begin
-  FTopBorder.Free;
+  FTopBorder.free;
   FTopBorder := Value;
 End;
 
@@ -4055,7 +4055,7 @@ End;
 
 Procedure TWPDocumentTableItem.SetRightBorder(Const Value : TWPBorder);
 Begin
-  FRightBorder.Free;
+  FRightBorder.free;
   FRightBorder := Value;
 End;
 
@@ -4075,7 +4075,7 @@ End;
 
 Procedure TWPDocumentTableItem.SetBottomBorder(Const Value : TWPBorder);
 Begin
-  FBottomBorder.Free;
+  FBottomBorder.free;
   FBottomBorder := Value;
 End;
 
@@ -4147,7 +4147,7 @@ End;
 
 Destructor TWPDocumentTableCell.Destroy;
 Begin
-  FParagraphs.Free;
+  FParagraphs.free;
 
   Inherited;
 End;
@@ -4218,7 +4218,7 @@ End;
 
 Procedure TWPDocumentTableCell.SetParagraphs(Const Value : TWPDocumentParagraphs);
 Begin
-  FParagraphs.Free;
+  FParagraphs.free;
   FParagraphs := Value;
 End;
 
@@ -4317,8 +4317,8 @@ End;
 
 Destructor TWPDocumentTableRow.Destroy;
 Begin
-  FRows.Free;
-  FCells.Free;
+  FRows.free;
+  FCells.free;
 
   Inherited;
 End;
@@ -4366,7 +4366,7 @@ End;
 
 Procedure TWPDocumentTableRow.SetCells(Const Value : TWPDocumentTableCells);
 Begin
-  FCells.Free;
+  FCells.free;
   FCells := Value;
 End;
 
@@ -4386,7 +4386,7 @@ End;
 
 Procedure TWPDocumentTableRow.SetRows(Const Value : TWPDocumentTableRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := Value;
 End;
 
@@ -4535,9 +4535,9 @@ End;
 
 Destructor TWPDocumentTable.Destroy;
 Begin
-  FCenterHorizontalBorder.Free;
-  FCenterVerticalBorder.Free;
-  FRows.Free;
+  FCenterHorizontalBorder.free;
+  FCenterVerticalBorder.free;
+  FRows.free;
 
   Inherited;
 End;
@@ -4597,7 +4597,7 @@ End;
 
 Procedure TWPDocumentTable.SetCenterHorizontalBorder(Const Value : TWPBorder);
 Begin
-  FCenterHorizontalBorder.Free;
+  FCenterHorizontalBorder.free;
   FCenterHorizontalBorder := Value;
 End;
 
@@ -4617,7 +4617,7 @@ End;
 
 Procedure TWPDocumentTable.SetCenterVerticalBorder(Const Value : TWPBorder);
 Begin
-  FCenterVerticalBorder.Free;
+  FCenterVerticalBorder.free;
   FCenterVerticalBorder := Value;
 End;
 
@@ -4637,7 +4637,7 @@ End;
 
 Procedure TWPDocumentTable.SetRows(Const Value : TWPDocumentTableRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := Value;
 End;
 
@@ -4994,7 +4994,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5015,7 +5015,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5057,7 +5057,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5078,7 +5078,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5120,7 +5120,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5141,7 +5141,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5178,22 +5178,22 @@ end;
 
 procedure TWPDocumentImage.LoadFromFile(sName: String);
 begin
-  raise EWPException.create('not done yet');
+  raise EWPException.Create('not done yet');
 end;
 
 procedure TWPDocumentImage.LoadFromStream(oStream: TStream);
 begin
-  raise EWPException.create('not done yet');
+  raise EWPException.Create('not done yet');
 end;
 
 procedure TWPDocumentImage.SaveToFile(sName: String);
 begin
-  raise EWPException.create('not done yet');
+  raise EWPException.Create('not done yet');
 end;
 
 procedure TWPDocumentImage.SaveToStream(oStream: TStream);
 begin
-  raise EWPException.create('not done yet');
+  raise EWPException.Create('not done yet');
 end;
 
 procedure TWPDocument.StripSections;
@@ -5212,19 +5212,19 @@ begin
 end;
 procedure TWPDocumentAttachment.SetContent(const Value: TFslBuffer);
 begin
-  FContent.Free;
+  FContent.free;
   FContent := Value;
 end;
 
 constructor TWPDocumentAttachment.Create;
 begin
   inherited;
-  FContent := TFslBuffer.create;
+  FContent := TFslBuffer.Create;
 end;
 
 destructor TWPDocumentAttachment.Destroy;
 begin
-  FContent.Free;
+  FContent.free;
   inherited;
 end;
 
@@ -5240,7 +5240,7 @@ End;
 
 Destructor TWPDocumentIteratorContext.Destroy;
 Begin
-  FItem.Free;
+  FItem.free;
 
   Inherited;
 End;
@@ -5270,7 +5270,7 @@ End;
 
 Procedure TWPDocumentIteratorContext.SetItem(Const Value : TWPDocumentIteratorContextItem);
 Begin
-  FItem.Free;
+  FItem.free;
   FItem := Value;
 End;
 
@@ -5334,7 +5334,7 @@ Begin
 
     Add(oContext.Link);
   Finally
-    oContext.Free;
+    oContext.free;
   End;
 End;
 
@@ -5366,8 +5366,8 @@ End;
 
 Destructor TWPDocumentIterator.Destroy;
 Begin
-  FStack.Free;
-  FDocument.Free;
+  FStack.free;
+  FDocument.free;
   Inherited;
 End;
 
@@ -5381,7 +5381,7 @@ End;
 Procedure TWPDocumentIterator.SetDocument(Const Value : TWPDocument);
 Begin
   Assert((Value = Nil) Or Invariants('GetDocument', Value, TWPDocument, 'Document'));
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
@@ -5455,7 +5455,7 @@ End;
 
 Destructor TWPDocumentValidator.Destroy;
 Begin
-  FProblems.Free;
+  FProblems.free;
   Inherited;
 End;
 
@@ -5477,7 +5477,7 @@ Procedure TWPDocumentValidator.Validate(oDocument: TWPDocument);
 Begin
   // normally we might just clear, but users may have made their own
   // links to the problem list.
-  FProblems.Free;
+  FProblems.free;
   FProblems := TWPDocumentValidationProblems.Create;
 
   // for now, the only validation is checking that tables are not empty
@@ -5512,7 +5512,7 @@ Begin
       Raise Exception;
     End;
   Finally
-    oInstance.Free;
+    oInstance.free;
   End;
 End;
 
@@ -5526,7 +5526,7 @@ Begin
     oProblem.Message := sMessage;
     FProblems.Add(oProblem.Link);
   Finally
-    oProblem.Free;
+    oProblem.free;
   End;
 End;
 
@@ -5555,7 +5555,7 @@ End;
 
 Destructor EWPDocumentValidator.Destroy;
 Begin
-  FProblems.Free;
+  FProblems.free;
   Inherited;
 End;
 
@@ -5569,7 +5569,7 @@ End;
 
 Destructor TWPDocumentValidationProblem.Destroy;
 Begin
-  FObject.Free;
+  FObject.free;
   Inherited;
 End;
 
@@ -5653,7 +5653,7 @@ End;
 Procedure TWPDocumentValidationProblem.SetObject(Const Value: TWPDocumentObject);
 Begin
   Assert(Invariants('GetObject', Value, TWPDocumentObject, 'Value'));
-  FObject.Free;
+  FObject.free;
   FObject := Value;
 End;
 

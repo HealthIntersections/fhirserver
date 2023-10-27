@@ -534,16 +534,16 @@ begin
   FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
        ' Id nchar('+inttostr(ID_LENGTH)+') NOT NULL, '+#13#10+
        ' Client nchar(48) NOT NULL, '+#13#10+
-       ' Scope nchar(1024) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
        ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
+       ' Launch nchar(255) NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
-       ' Launch nchar(255) NULL, '+#13#10+
+       ' Scope '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' ClientState '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
@@ -954,8 +954,8 @@ End;
 destructor TFHIRDatabaseInstaller.Destroy;
 begin
   FServerFactory.free;
-  FBases.Free;
-  FFactory.Free;
+  FBases.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -1057,7 +1057,7 @@ begin
 //  inc(k);
 //  FConn.terminate;
 
-  m := TFHIRIndexInformation.create(FFactory.link, FServerFactory.link);
+  m := TFHIRIndexInformation.Create(FFactory.link, FServerFactory.link);
   names := TStringList.Create;
   try
     for i := 0 to m.Indexes.count - 1 do
@@ -1201,7 +1201,7 @@ end;
 //  lines : TStringList;
 //  sql, l : String;
 //begin
-//  lines := TStringList.create;
+//  lines := TStringList.Create;
 //  try
 //    lines.Text := replaceColumnWrappingChars(FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI), FConn.Owner.Platform);
 //    sql := '';
@@ -1329,9 +1329,9 @@ begin
     isTx := Fconn.Lookup('Config', 'ConfigKey', '100', 'Value', '').startsWith('terminology|');
 
     if version > ServerDBVersion then
-      raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
+      raise EDBException.Create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
     if (version < ServerDBVersionEarliestSupported) then
-      raise EDBException.create('Database must be rebuilt');
+      raise EDBException.Create('Database must be rebuilt');
     if (version < 13) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD  IsComponent int NULL');

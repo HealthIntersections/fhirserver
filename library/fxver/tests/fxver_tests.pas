@@ -140,8 +140,8 @@ procedure TVersionConversionTests.test4to3to4(res: TBytes);
 var
   b : TBytes;
 begin
-  b := TFhirVersionConvertors.convertResource(res, ffJson, OutputStylePretty, THTTPLanguages.create('en'), fhirVersionRelease4, fhirVersionRelease3);
-  b := TFhirVersionConvertors.convertResource(b, ffJson, OutputStylePretty, THTTPLanguages.create('en'), fhirVersionRelease3, fhirVersionRelease4);
+  b := TFhirVersionConvertors.convertResource(res, ffJson, OutputStylePretty, nil, fhirVersionRelease4, fhirVersionRelease3);
+  b := TFhirVersionConvertors.convertResource(b, ffJson, OutputStylePretty, nil, fhirVersionRelease3, fhirVersionRelease4);
   assertTrue(length(b) > 0);
 end;
 

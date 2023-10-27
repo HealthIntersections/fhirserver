@@ -162,7 +162,7 @@ const
 constructor TSystemService.Create(const ASystemName, ADisplayName: String);
 const ASSERT_LOCATION = ASSERT_UNIT+'.TSystemService.Create';
 begin
-  inherited create;
+  inherited Create;
   assert(not assigned(GService), ASSERT_LOCATION+': There can only be one service in a process');
   assert(IsValidIdent(ASystemName), ASSERT_LOCATION+': SystemName is not valid');
   assert(ADisplayName <> '', ASSERT_LOCATION+': Display Name is not valid' );
@@ -544,7 +544,7 @@ begin
   if CanInstall then
     begin
     Write('Registering Service '+FDisplayName+'...   ');
-    LSvcMan := TServiceManagerHandle.create;
+    LSvcMan := TServiceManagerHandle.Create;
     try
       LSvcMan.Install(FSystemName, FDisplayName, ParamStr(0));
     finally
@@ -563,7 +563,7 @@ begin
   SetConsoleTitle(pChar(FDisplayName));
   DoRemove;
   Write('Unregistering Service '+FDisplayName+'...   ');
-  LSvcMan := TServiceManagerHandle.create;
+  LSvcMan := TServiceManagerHandle.Create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
@@ -595,7 +595,7 @@ begin
       end;
     end;
   Write('Sending Message '+inttostr(LCmd)+' to Service '+FDisplayName+'...   ');
-  LSvcMan := TServiceManagerHandle.create;
+  LSvcMan := TServiceManagerHandle.Create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
@@ -618,7 +618,7 @@ begin
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
   Write('Starting Service '+FDisplayName+'...');
-  LSvcMan := TServiceManagerHandle.create;
+  LSvcMan := TServiceManagerHandle.Create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
@@ -666,7 +666,7 @@ begin
   Logging.log('Status for Service '+FDisplayName);
   Logging.log('==================='+StringPadRight('', '=', length(FDisplayName)));
   Logging.log('');
-  LSvcMan := TServiceManagerHandle.create;
+  LSvcMan := TServiceManagerHandle.Create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
@@ -698,7 +698,7 @@ begin
   AllocConsole;
   SetConsoleTitle(pChar(FDisplayName));
   Write('Stopping Service '+FDisplayName+'...   ');
-  LSvcMan := TServiceManagerHandle.create;
+  LSvcMan := TServiceManagerHandle.Create;
   try
     LSvc := TServiceHandle.create(LSvcMan, FSystemName);
     try
@@ -753,13 +753,13 @@ end;
 
 constructor TServiceManagerHandle.create(AMachine : String = '');
 begin
-  inherited create;
+  inherited Create;
   FMachine := AMachine;
   FHandle := OpenSCManager(pchar(AMachine), NIL, SC_MANAGER_ALL_ACCESS);
   FHndErr := GetLastError;
 end;
 
-destructor TServiceManagerHandle.destroy;
+destructor TServiceManagerHandle.Destroy;
 begin
   if FHandle <> 0 then
     CloseServiceHandle(FHandle);
@@ -803,14 +803,14 @@ end;
 
 constructor TServiceHandle.create(AServiceManager : TServiceManagerHandle; AName: string);
 begin
-  inherited create;
+  inherited Create;
   FService := AName;
   FManHnd := AServiceManager.FHandle;
   FHndErr := AServiceManager.FHndErr;
   Bind;
 end;
 
-destructor TServiceHandle.destroy;
+destructor TServiceHandle.Destroy;
 begin
   if FHandle <> 0 then
     CloseServiceHandle(FHandle);

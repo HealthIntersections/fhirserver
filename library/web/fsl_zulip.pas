@@ -40,13 +40,15 @@ uses
   fsl_base, fsl_utilities, fsl_json, fsl_fetcher;
 
 type
+  EZulipException = class (EFslException);
+
   TZulipSender = class (TFslObject)
   private
     FAddress : string;
     FBotEmail : string;
     FBotAccessKey : String;
   public
-    constructor create(address, botEmail, botAccessKey : String);
+    constructor Create(address, botEmail, botAccessKey : String);
 
     procedure sendMessage(stream, topic, message : String);
   end;
@@ -89,7 +91,7 @@ begin
       begin
         json := TJSONParser.Parse(client.Buffer.AsText);
         try
-          raise EFslException.Create('Error Sending Message: '+json.str['msg']);
+          raise EZulipException.Create('Error Sending Message: '+json.str['msg']);
         finally
           json.free;
         end;
@@ -99,7 +101,7 @@ begin
     end;
 
   finally
-    client.Free;
+    client.free;
   end;
 end;
 

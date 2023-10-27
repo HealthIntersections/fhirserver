@@ -35,9 +35,9 @@ Interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
-  {$IFNDEF FPC} AnsiStrings, {$ENDIF}
+  {$IFDEF FPC} ZStream, {$ELSE} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  fsl_fpc, fsl_base, fsl_collections, fsl_utilities;
+  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging;
 
 type
   EParserException = class;
@@ -366,6 +366,7 @@ type
     Procedure SaveToStream(oStream : TFslStream); overload;
     Procedure LoadFromStream(oStream : TStream); overload;
     Procedure SaveToStream(oStream : TStream); overload;
+    function asStream: TStream;
 
     Property Data : Pointer Read FData Write SetData;
     Property Capacity : Cardinal Read FCapacity Write SetCapacity;
@@ -1262,6 +1263,8 @@ type
     FCompressedSized : LongWord;
     FDate : Word;
     FTime : Word;
+    FName : AnsiString;
+    FComment : AnsiString;
   End;
 
   TFslZipWriter = Class (TFslZipWorker)
@@ -1300,14 +1303,14 @@ TTarArchive Usage
 - read out the current file                          TA.ReadFile (DestFilename);
   (You can ommit this if you want to
   read in the directory only)                        end;
-- You're done                                      TA.Free;
+- You're done                                      TA.free;
 TTarWriter Usage
 ----------------
 - Choose a constructor
 - Make an instance of TTarWriter                   TW := TTarWriter.Create ('my.tar');
 - Add a file to the tar archive                    TW.AddFile ('foobar.txt');
 - Add a String as a file                           TW.AddString (SL.Text, 'joe.txt', Now);
-- Destroy TarWriter instance                       TW.Free;
+- Destroy TarWriter instance                       TW.free;
 - Now your tar file is ready.
 Source
 --------------------------
@@ -1586,7 +1589,7 @@ End;
 
 Destructor TFslStreamAdapter.Destroy;
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Nil;
 
   Inherited;
@@ -1605,7 +1608,7 @@ Procedure TFslStreamAdapter.SetStream(oStream : TFslStream);
 Begin
   Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslStream, 'oStream'));
 
-  FStream.Free;
+  FStream.free;
   FStream := oStream;
 End;
 
@@ -1744,7 +1747,7 @@ Procedure TFslAccessStreamAdapter.SetStream(oStream: TFslAccessStream);
 Begin
   Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslAccessStream, 'oStream'));
 
-  FStream.Free;
+  FStream.free;
   FStream := oStream;
 End;
 
@@ -1759,7 +1762,7 @@ End;
 
 Destructor TFslAccessStreamAdapter.Destroy;
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Nil;
 
   Inherited;
@@ -1911,7 +1914,7 @@ end;
 
 Destructor TVCLStream.Destroy;
 Begin
-  FStream.Free;
+  FStream.free;
 
   Inherited;
 End;
@@ -1972,7 +1975,7 @@ End;
 
 Procedure TVCLStream.SetStream(Const Value: TFslStream);
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Value;
 End;
 
@@ -2061,6 +2064,11 @@ Begin
    assert(oStream.Position = i + integer(Capacity));
 End;
 
+function TFslBuffer.asStream: TStream;
+begin
+  result := TBytesStream.create(asBytes);
+end;
+
 
 procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
 Begin
@@ -2088,7 +2096,7 @@ Begin
   Try
     LoadFromFile(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -2101,7 +2109,7 @@ Begin
   Try
     SaveToFile(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -2373,7 +2381,7 @@ Begin
     If Not Find(oBuffer, Result, CompareByName) Then
       Result := -1;
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -2395,7 +2403,7 @@ End;
 
 Destructor TFslMemoryStream.Destroy;
 Begin
-  FBuffer.Free;
+  FBuffer.free;
 
   Inherited;
 End;
@@ -2562,7 +2570,7 @@ Procedure TFslMemoryStream.SetBuffer(Const Value: TFslBuffer);
 Begin 
   Assert(Not Assigned(Value) Or Invariants('SetBuffer', Value, TFslBuffer, 'Value'));
 
-  FBuffer.Free;
+  FBuffer.free;
   FBuffer := Value;
 
   If Assigned(FBuffer) Then
@@ -2663,13 +2671,13 @@ end;
 
 constructor TFslFile.Create(const AFileName: string; Mode: Word);
 begin
-  inherited create;
+  inherited Create;
   FStream := TFileStream.Create(AFileName, mode);
 end;
 
 destructor TFslFile.Destroy;
 begin
-  FStream.Free;
+  FStream.free;
   inherited;
 end;
 
@@ -2888,8 +2896,8 @@ End;  { Constructor TAfsEntity.Create }
 Destructor TAfsEntity.Destroy;
 
 Begin { Destructor TAfsEntity.Destroy }
-  FStream.Free;
-  FVolume.Free;
+  FStream.free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsEntity.Destroy }
@@ -2962,7 +2970,7 @@ End;  { Function TAfsEntity.Valid }
 
 Procedure TAfsEntity.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsEntity.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsEntity.SetVolume }
 
@@ -2978,7 +2986,7 @@ End;  { Constructor TAfsContainer.Create }
 
 Destructor TAfsContainer.Destroy;
 Begin { Destructor TAfsContainer.Destroy }
-  FItems.Free;
+  FItems.free;
 
   Inherited;
 End;  { Destructor TAfsContainer.Destroy }
@@ -3031,7 +3039,7 @@ End;  { Procedure TAfsFiles.SetFiles }
 
 Destructor TAfsIterator.Destroy;
 Begin { Destructor TAfsIterator.Destroy }
-  FVolume.Free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsIterator.Destroy }
@@ -3039,14 +3047,14 @@ End;  { Destructor TAfsIterator.Destroy }
 
 Procedure TAfsIterator.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsIterator.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsIterator.SetVolume }
 
 
 Destructor TAfsStream.Destroy;
 Begin { Destructor TAfsStream.Destroy }
-  FVolume.Free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsStream.Destroy }
@@ -3054,7 +3062,7 @@ End;  { Destructor TAfsStream.Destroy }
 
 Procedure TAfsStream.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsStream.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsStream.SetVolume }
 
@@ -3069,8 +3077,8 @@ End;  { Constructor TAfsStreamManager.Create }
 
 Destructor TAfsStreamManager.Destroy;
 Begin { Destructor TAfsStreamManager.Destroy }
-  FStreams.Free;
-  FVolume.Free;
+  FStreams.free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsStreamManager.Destroy }
@@ -3101,7 +3109,7 @@ Begin { Function TAfsStreamManager.Open }
 
     FStreams.Add(Result.Link, oFile.Link);
   Finally
-    oFile.Free;
+    oFile.free;
   End; { Try }
 End;  { Function TAfsStreamManager.Open }
 
@@ -3139,7 +3147,7 @@ End;  { Procedure TAfsStreamManager.Clear }
 
 Procedure TAfsStreamManager.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsStreamManager.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsStreamManager.SetVolume }
 
@@ -3337,7 +3345,7 @@ Begin { Function TAfsResourceVolume.Open }
     Result := TAfsHandle(oFile);
   Except
     // Prevent object leaking if initialisation code raises an exception
-    oFile.Free;
+    oFile.free;
     Result := 0;
   End; { Try }
 End;  { Function TAfsResourceVolume.Open }
@@ -3381,7 +3389,7 @@ Begin { Procedure TAfsResourceVolume.Close }
         RaiseError('Close', 'Could not open update handle.');
     End;  { If }
   Finally
-    oFile.Free;
+    oFile.free;
   End; { Try }
 End;  { Procedure TAfsResourceVolume.Close }
 
@@ -3473,7 +3481,7 @@ End;  { Function TAfsResourceVolume.OpenIterator }
 
 Procedure TAfsResourceVolume.CloseIterator(oIterator : TAfsIterator);
 Begin { Procedure TAfsResourceVolume.CloseIterator }
-  oIterator.Free;
+  oIterator.free;
 End;  { Procedure TAfsResourceVolume.CloseIterator }
 
 
@@ -3527,8 +3535,8 @@ End;  { Constructor TAfsResourceIterator.Create }
 
 Destructor TAfsResourceIterator.Destroy;
 Begin { Destructor TAfsResourceIterator.Destroy }
-  FItems.Free;
-  FCurrent.Free;
+  FItems.free;
+  FCurrent.free;
   Inherited;
 End;  { Destructor TAfsResourceIterator.Destroy }
 
@@ -3593,7 +3601,7 @@ End;
 
 destructor TFslCSVExtractor.Destroy;
 Begin
-  FEntry.Free;
+  FEntry.free;
   Inherited;
 End;
 
@@ -3985,7 +3993,7 @@ End;
 
 Destructor TFslTextExtractor.Destroy;
 Begin
-  FBuilder.Free;
+  FBuilder.free;
 
   Inherited;
 End;
@@ -4359,7 +4367,7 @@ begin
   Try
     Create(oFile.Link, Encoding, DetectBOM, BufferSize);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 end;
 
@@ -4381,7 +4389,7 @@ end;
 
 procedure TFslStreamReader.Close;
 begin
-  FStream.Free;
+  FStream.free;
   FStream := nil;
 
   DiscardBufferedData;
@@ -4751,7 +4759,7 @@ begin
     csv.line;
     values(csv);
   finally
-    csv.Free;
+    csv.free;
   end;
 end;
 {$ENDIF}
@@ -4808,7 +4816,7 @@ begin
       bytes := encoding.GetBytes(content);
     LFileStream.write(bytes[0], length(bytes));
   finally
-    LFileStream.Free;
+    LFileStream.free;
   end;
 end;
 
@@ -4843,7 +4851,7 @@ begin
       if LFileStream.Size > 0 then
         LFileStream.Read(bytes[0], LFileStream.size);
     finally
-      LFileStream.Free;
+      LFileStream.free;
     end;
     if encoding = nil then // special case
     begin
@@ -4911,7 +4919,7 @@ begin
     if length(bytes) > 0 then
       f.Write(bytes[0], length(bytes));
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4924,7 +4932,7 @@ begin
     if length > 0 then
       f.Write(bytes[start], length);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4940,7 +4948,7 @@ begin
     f.CopyFrom(stream, stream.Size - stream.Position);
     stream.Position := i;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4956,7 +4964,7 @@ begin
       if LFileStream.Size > 0 then
         LFileStream.Read(result[0], LFileStream.size);
     finally
-      LFileStream.Free;
+      LFileStream.free;
     end;
     end
   else
@@ -4974,8 +4982,8 @@ End;
 
 Destructor TFslZipWorker.Destroy;
 Begin
-  FStream.Free;
-  FParts.Free;
+  FStream.free;
+  FParts.free;
   Inherited;
 End;
 
@@ -5003,13 +5011,13 @@ End;
 
 Procedure TFslZipWorker.SetParts(oValue: TFslZipPartList);
 Begin
-  FParts.Free;
+  FParts.free;
   FParts := oValue;
 End;
 
 Procedure TFslZipWorker.SetStream(oValue: TFslStream);
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := oValue;
 End;
 
@@ -5066,7 +5074,7 @@ begin
     part.AsBytes := bytes;
     add(part.Link);
   finally
-    part.Free;
+    part.free;
   end;
 end;
 
@@ -5154,7 +5162,7 @@ Begin
 
     Parts.Add(oBuffer.Link);
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -5270,7 +5278,7 @@ Begin
       RaiseError('ReadUnknownLengthDeflate', 'Compressed length expected to be '+IntegerToString(iSizeComp)+' bytes but found '+IntegerToString(oMem.Buffer.Capacity)+' bytes');
     ReadKnownDeflate(oMem.Buffer.Data, partName, iSizeComp + 2, iSizeUncomp, oBuffer);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 End;
 
@@ -5291,12 +5299,6 @@ Begin
   result := 0;
   Raise EFslException.Create('Should never be called');
 End;
-
-
-{$IFDEF FPC}
-type
-   TZDecompressionStream = TDecompressionStream;
-{$ENDIF}
 
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
@@ -5323,10 +5325,10 @@ Begin
         oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
       {$ENDIF}
       Finally
-        oDecompressor.Free;
+        oDecompressor.free;
       End;
     Finally
-      oSrc.Free;
+      oSrc.free;
     End;
   End;
 End;
@@ -5405,7 +5407,7 @@ End;
 
 Destructor TFslZipWriter.Destroy;
 Begin
-  FPartInfo.Free;
+  FPartInfo.free;
   Inherited;
 End;
 
@@ -5457,6 +5459,8 @@ Var
 Begin
   oInfo := TFslZippedData.Create;
   Try
+    oInfo.FName := oPart.Name;
+    oInfo.FComment := oPart.Comment;
     oInfo.FOffset := FOffset;
     WriteLongWord(SIG_LOCAL_FILE_HEADER);
     WriteWord($14);    // version needed to extract. don't know why $14, just observed in any .zip file
@@ -5477,24 +5481,25 @@ Begin
         Compress(oPart, oCompressed);
 
       oInfo.FCompressedSized := oCompressed.Capacity;
+
       WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
       WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
-      WriteWord(Length(oPart.Name));    // filename length                 2 bytes
+      WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
       WriteWord(0);                     // extra field length - we don't use
-      WriteString(AnsiString(oPart.Name));
+      WriteString(oInfo.FName);
 
       If (oCompressed.Capacity > 0) Then
       Begin
-        Stream.Write(oCompressed.Data^, oCompressed.Capacity);
+        Stream.Write(oCompressed.asBytes[0], oCompressed.Capacity);
         Inc(FOffset, oCompressed.Capacity);
       End;
 
     Finally
-      oCompressed.Free;
+      oCompressed.free;
     End;
     FPartInfo.Add(oPart.Link, oInfo.Link);
   Finally
-    oInfo.Free;
+    oInfo.free;
   End;
 End;
 
@@ -5510,30 +5515,31 @@ begin
     part.LoadFromFileName(actual);
     Parts.Add(part.Link);
   finally
-    part.Free;
+    part.free;
   end;
 end;
 
 Procedure TFslZipWriter.Compress(oSource, oDestination: TFslBuffer);
 Var
   oCompressor: TCompressionStream;
-  oCompressedStream: TMemoryStream;
-  pData : PAnsiChar;
+  oCompressedStream: TBytesStream;
+  pData : pointer;
+  bytes : TBytes;
 Begin
-  oCompressedStream := TMemoryStream.Create;
+  oCompressedStream := TBytesStream.Create;
   Try
+    bytes := oSource.AsBytes;
     oCompressor := TCompressionStream.Create(clMax, oCompressedStream);
     Try
-      oCompressor.Write(oSource.Data^, oSource.Capacity);
+      oCompressor.Write(bytes[0], length(bytes));
+      oCompressor.flush;
     Finally
-      oCompressor.Free;
+      oCompressor.free;
     End;
-    pData := oCompressedStream.Memory;
-    pData := PData + 2;
-    oDestination.Capacity := oCompressedStream.Size - 6; // 2 off the front, 4 off the back
-    MemoryMove(oDestination.Data, pData, oDestination.Capacity);
+    bytes := copy(oCompressedStream.Bytes, 0, oCompressedStream.Size);
+    oDestination.AsBytes := copy(bytes, 2, length(bytes)-6);
   Finally
-    oCompressedStream.Free;
+    oCompressedStream.free;
   End;
 End;
 
@@ -5556,15 +5562,15 @@ Begin
   WriteLongWord(GetCRC(oPart.AsBytes));     // crc-32  TODO: cache this?
   WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
   WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
-  WriteWord(Length(oPart.Name));    // filename length                 2 bytes
+  WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
   WriteWord(0);                     // extra field length - we don't use
-  WriteWord(Length(oPart.Comment));    // file comment length             2 bytes
+  WriteWord(Length(oInfo.FComment));    // file comment length             2 bytes
   WriteWord(0);                     // disk number start               2 bytes
   WriteWord(0);                     // internal file attributes        2 bytes
   WriteLongWord(0);                 // external file attributes        4 bytes
   WriteLongWord(oInfo.FOffset);
-  WriteString(AnsiString(oPart.Name));          // filename (variable size)
-  WriteString(AnsiString(oPart.Comment));       // file comment (variable size)
+  WriteString(oPart.Name);          // filename (variable size)
+  WriteString(oPart.Comment);       // file comment (variable size)
 
 End;
 
@@ -6021,7 +6027,7 @@ end;
 destructor TTarArchive.Destroy;
 begin
   if FOwnsStream then
-    FStream.Free;
+    FStream.free;
   inherited Destroy;
 end;
 
@@ -6151,7 +6157,7 @@ begin
   TRY
     ReadFile (FS);
   FINALLY
-    FS.Free;
+    FS.free;
     end;
 end;
 
@@ -6233,7 +6239,7 @@ begin
     FFinalized := TRUE;
     end;
   if FOwnsStream then
-    FStream.Free;
+    FStream.free;
   inherited Destroy;
 end;
 
@@ -6469,7 +6475,7 @@ End;
 
 Destructor TFslByteExtractor.Destroy;
 Begin
-  FBuilder.Free;
+  FBuilder.free;
   Inherited;
 End;
 

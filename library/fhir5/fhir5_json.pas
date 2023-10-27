@@ -4133,7 +4133,7 @@ begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
     raise value.LocationStart.exception('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
-  result := TFHIREnum.create;
+  result := TFHIREnum.Create;
   try
     if (value <> nil) then
     begin
@@ -4220,7 +4220,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4291,7 +4291,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4362,7 +4362,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4433,7 +4433,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4504,7 +4504,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4575,7 +4575,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4646,7 +4646,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4717,7 +4717,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4788,7 +4788,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4859,7 +4859,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4930,7 +4930,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5001,7 +5001,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5072,7 +5072,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5143,7 +5143,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5214,7 +5214,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5285,7 +5285,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5356,7 +5356,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5427,7 +5427,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5498,7 +5498,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5569,7 +5569,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5640,7 +5640,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5697,7 +5697,7 @@ end;
 
 function TFHIRJsonParser.ParseAddress(jsn : TJsonObject) : TFhirAddress;
 begin
-  result := TFhirAddress.create;
+  result := TFhirAddress.Create;
   try
     ParseAddressProperties(jsn, result);
     result.link;
@@ -5805,7 +5805,7 @@ end;
 
 function TFHIRJsonParser.ParseAnnotation(jsn : TJsonObject) : TFhirAnnotation;
 begin
-  result := TFhirAnnotation.create;
+  result := TFhirAnnotation.Create;
   try
     ParseAnnotationProperties(jsn, result);
     result.link;
@@ -5856,7 +5856,7 @@ end;
 
 function TFHIRJsonParser.ParseAttachment(jsn : TJsonObject) : TFhirAttachment;
 begin
-  result := TFhirAttachment.create;
+  result := TFhirAttachment.Create;
   try
     ParseAttachmentProperties(jsn, result);
     result.link;
@@ -5964,7 +5964,7 @@ end;
 
 function TFHIRJsonParser.ParseAvailabilityAvailableTime(jsn : TJsonObject) : TFhirAvailabilityAvailableTime;
 begin
-  result := TFhirAvailabilityAvailableTime.create;
+  result := TFhirAvailabilityAvailableTime.Create;
   try
     ParseAvailabilityAvailableTimeProperties(jsn, result);
     result.link;
@@ -6042,7 +6042,7 @@ end;
 
 function TFHIRJsonParser.ParseAvailabilityNotAvailableTime(jsn : TJsonObject) : TFhirAvailabilityNotAvailableTime;
 begin
-  result := TFhirAvailabilityNotAvailableTime.create;
+  result := TFhirAvailabilityNotAvailableTime.Create;
   try
     ParseAvailabilityNotAvailableTimeProperties(jsn, result);
     result.link;
@@ -6082,7 +6082,7 @@ end;
 
 function TFHIRJsonParser.ParseAvailability(jsn : TJsonObject) : TFhirAvailability;
 begin
-  result := TFhirAvailability.create;
+  result := TFhirAvailability.Create;
   try
     ParseAvailabilityProperties(jsn, result);
     result.link;
@@ -6132,7 +6132,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeableConcept(jsn : TJsonObject) : TFhirCodeableConcept;
 begin
-  result := TFhirCodeableConcept.create;
+  result := TFhirCodeableConcept.Create;
   try
     ParseCodeableConceptProperties(jsn, result);
     result.link;
@@ -6179,7 +6179,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeableReference(jsn : TJsonObject) : TFhirCodeableReference;
 begin
-  result := TFhirCodeableReference.create;
+  result := TFhirCodeableReference.Create;
   try
     ParseCodeableReferenceProperties(jsn, result);
     result.link;
@@ -6217,7 +6217,7 @@ end;
 
 function TFHIRJsonParser.ParseCoding(jsn : TJsonObject) : TFhirCoding;
 begin
-  result := TFhirCoding.create;
+  result := TFhirCoding.Create;
   try
     ParseCodingProperties(jsn, result);
     result.link;
@@ -6277,7 +6277,7 @@ end;
 
 function TFHIRJsonParser.ParseContactDetail(jsn : TJsonObject) : TFhirContactDetail;
 begin
-  result := TFhirContactDetail.create;
+  result := TFhirContactDetail.Create;
   try
     ParseContactDetailProperties(jsn, result);
     result.link;
@@ -6324,7 +6324,7 @@ end;
 
 function TFHIRJsonParser.ParseContactPoint(jsn : TJsonObject) : TFhirContactPoint;
 begin
-  result := TFhirContactPoint.create;
+  result := TFhirContactPoint.Create;
   try
     ParseContactPointProperties(jsn, result);
     result.link;
@@ -6378,7 +6378,7 @@ end;
 
 function TFHIRJsonParser.ParseContributor(jsn : TJsonObject) : TFhirContributor;
 begin
-  result := TFhirContributor.create;
+  result := TFhirContributor.Create;
   try
     ParseContributorProperties(jsn, result);
     result.link;
@@ -6426,7 +6426,7 @@ end;
 
 function TFHIRJsonParser.ParseDataRequirementCodeFilter(jsn : TJsonObject) : TFhirDataRequirementCodeFilter;
 begin
-  result := TFhirDataRequirementCodeFilter.create;
+  result := TFhirDataRequirementCodeFilter.Create;
   try
     ParseDataRequirementCodeFilterProperties(jsn, result);
     result.link;
@@ -6485,7 +6485,7 @@ end;
 
 function TFHIRJsonParser.ParseDataRequirementDateFilter(jsn : TJsonObject) : TFhirDataRequirementDateFilter;
 begin
-  result := TFhirDataRequirementDateFilter.create;
+  result := TFhirDataRequirementDateFilter.Create;
   try
     ParseDataRequirementDateFilterProperties(jsn, result);
     result.link;
@@ -6542,7 +6542,7 @@ end;
 
 function TFHIRJsonParser.ParseDataRequirementValueFilter(jsn : TJsonObject) : TFhirDataRequirementValueFilter;
 begin
-  result := TFhirDataRequirementValueFilter.create;
+  result := TFhirDataRequirementValueFilter.Create;
   try
     ParseDataRequirementValueFilterProperties(jsn, result);
     result.link;
@@ -6603,7 +6603,7 @@ end;
 
 function TFHIRJsonParser.ParseDataRequirementSort(jsn : TJsonObject) : TFhirDataRequirementSort;
 begin
-  result := TFhirDataRequirementSort.create;
+  result := TFhirDataRequirementSort.Create;
   try
     ParseDataRequirementSortProperties(jsn, result);
     result.link;
@@ -6640,7 +6640,7 @@ end;
 
 function TFHIRJsonParser.ParseDataRequirement(jsn : TJsonObject) : TFhirDataRequirement;
 begin
-  result := TFhirDataRequirement.create;
+  result := TFhirDataRequirement.Create;
   try
     ParseDataRequirementProperties(jsn, result);
     result.link;
@@ -6779,7 +6779,7 @@ end;
 
 function TFHIRJsonParser.ParseExpression(jsn : TJsonObject) : TFhirExpression;
 begin
-  result := TFhirExpression.create;
+  result := TFhirExpression.Create;
   try
     ParseExpressionProperties(jsn, result);
     result.link;
@@ -6839,7 +6839,7 @@ end;
 
 function TFHIRJsonParser.ParseExtendedContactDetail(jsn : TJsonObject) : TFhirExtendedContactDetail;
 begin
-  result := TFhirExtendedContactDetail.create;
+  result := TFhirExtendedContactDetail.Create;
   try
     ParseExtendedContactDetailProperties(jsn, result);
     result.link;
@@ -6905,7 +6905,7 @@ end;
 
 function TFHIRJsonParser.ParseExtension(jsn : TJsonObject) : TFhirExtension;
 begin
-  result := TFhirExtension.create;
+  result := TFhirExtension.Create;
   try
     ParseExtensionProperties(jsn, result);
     result.link;
@@ -7215,7 +7215,7 @@ end;
 
 function TFHIRJsonParser.ParseHumanName(jsn : TJsonObject) : TFhirHumanName;
 begin
-  result := TFhirHumanName.create;
+  result := TFhirHumanName.Create;
   try
     ParseHumanNameProperties(jsn, result);
     result.link;
@@ -7347,7 +7347,7 @@ end;
 
 function TFHIRJsonParser.ParseIdentifier(jsn : TJsonObject) : TFhirIdentifier;
 begin
-  result := TFhirIdentifier.create;
+  result := TFhirIdentifier.Create;
   try
     ParseIdentifierProperties(jsn, result);
     result.link;
@@ -7405,7 +7405,7 @@ end;
 
 function TFHIRJsonParser.ParseMeta(jsn : TJsonObject) : TFhirMeta;
 begin
-  result := TFhirMeta.create;
+  result := TFhirMeta.Create;
   try
     ParseMetaProperties(jsn, result);
     result.link;
@@ -7502,7 +7502,7 @@ end;
 
 function TFHIRJsonParser.ParseMonetaryComponent(jsn : TJsonObject) : TFhirMonetaryComponent;
 begin
-  result := TFhirMonetaryComponent.create;
+  result := TFhirMonetaryComponent.Create;
   try
     ParseMonetaryComponentProperties(jsn, result);
     result.link;
@@ -7549,7 +7549,7 @@ end;
 
 function TFHIRJsonParser.ParseMoney(jsn : TJsonObject) : TFhirMoney;
 begin
-  result := TFhirMoney.create;
+  result := TFhirMoney.Create;
   try
     ParseMoneyProperties(jsn, result);
     result.link;
@@ -7591,7 +7591,7 @@ end;
 
 function TFHIRJsonParser.ParseNarrative(jsn : TJsonObject) : TFhirNarrative;
 begin
-  result := TFhirNarrative.create;
+  result := TFhirNarrative.Create;
   try
     ParseNarrativeProperties(jsn, result);
     result.link;
@@ -7627,7 +7627,7 @@ end;
 
 function TFHIRJsonParser.ParseParameterDefinition(jsn : TJsonObject) : TFhirParameterDefinition;
 begin
-  result := TFhirParameterDefinition.create;
+  result := TFhirParameterDefinition.Create;
   try
     ParseParameterDefinitionProperties(jsn, result);
     result.link;
@@ -7693,7 +7693,7 @@ end;
 
 function TFHIRJsonParser.ParsePeriod(jsn : TJsonObject) : TFhirPeriod;
 begin
-  result := TFhirPeriod.create;
+  result := TFhirPeriod.Create;
   try
     ParsePeriodProperties(jsn, result);
     result.link;
@@ -7735,7 +7735,7 @@ end;
 
 function TFHIRJsonParser.ParseQuantity(jsn : TJsonObject) : TFhirQuantity;
 begin
-  result := TFhirQuantity.create;
+  result := TFhirQuantity.Create;
   try
     ParseQuantityProperties(jsn, result);
     result.link;
@@ -7793,7 +7793,7 @@ end;
 
 function TFHIRJsonParser.ParseRange(jsn : TJsonObject) : TFhirRange;
 begin
-  result := TFhirRange.create;
+  result := TFhirRange.Create;
   try
     ParseRangeProperties(jsn, result);
     result.link;
@@ -7831,7 +7831,7 @@ end;
 
 function TFHIRJsonParser.ParseRatio(jsn : TJsonObject) : TFhirRatio;
 begin
-  result := TFhirRatio.create;
+  result := TFhirRatio.Create;
   try
     ParseRatioProperties(jsn, result);
     result.link;
@@ -7869,7 +7869,7 @@ end;
 
 function TFHIRJsonParser.ParseRatioRange(jsn : TJsonObject) : TFhirRatioRange;
 begin
-  result := TFhirRatioRange.create;
+  result := TFhirRatioRange.Create;
   try
     ParseRatioRangeProperties(jsn, result);
     result.link;
@@ -7911,7 +7911,7 @@ end;
 
 function TFHIRJsonParser.ParseReference(jsn : TJsonObject) : TFhirReference;
 begin
-  result := TFhirReference.create;
+  result := TFhirReference.Create;
   try
     ParseReferenceProperties(jsn, result);
     result.link;
@@ -7963,7 +7963,7 @@ end;
 
 function TFHIRJsonParser.ParseRelatedArtifact(jsn : TJsonObject) : TFhirRelatedArtifact;
 begin
-  result := TFhirRelatedArtifact.create;
+  result := TFhirRelatedArtifact.Create;
   try
     ParseRelatedArtifactProperties(jsn, result);
     result.link;
@@ -8049,7 +8049,7 @@ end;
 
 function TFHIRJsonParser.ParseSampledData(jsn : TJsonObject) : TFhirSampledData;
 begin
-  result := TFhirSampledData.create;
+  result := TFhirSampledData.Create;
   try
     ParseSampledDataProperties(jsn, result);
     result.link;
@@ -8118,7 +8118,7 @@ end;
 
 function TFHIRJsonParser.ParseSignature(jsn : TJsonObject) : TFhirSignature;
 begin
-  result := TFhirSignature.create;
+  result := TFhirSignature.Create;
   try
     ParseSignatureProperties(jsn, result);
     result.link;
@@ -8191,7 +8191,7 @@ end;
 
 function TFHIRJsonParser.ParseTriggerDefinition(jsn : TJsonObject) : TFhirTriggerDefinition;
 begin
-  result := TFhirTriggerDefinition.create;
+  result := TFhirTriggerDefinition.Create;
   try
     ParseTriggerDefinitionProperties(jsn, result);
     result.link;
@@ -8277,7 +8277,7 @@ end;
 
 function TFHIRJsonParser.ParseUsageContext(jsn : TJsonObject) : TFhirUsageContext;
 begin
-  result := TFhirUsageContext.create;
+  result := TFhirUsageContext.Create;
   try
     ParseUsageContextProperties(jsn, result);
     result.link;
@@ -8326,7 +8326,7 @@ end;
 
 function TFHIRJsonParser.ParseVirtualServiceDetail(jsn : TJsonObject) : TFhirVirtualServiceDetail;
 begin
-  result := TFhirVirtualServiceDetail.create;
+  result := TFhirVirtualServiceDetail.Create;
   try
     ParseVirtualServiceDetailProperties(jsn, result);
     result.link;
@@ -8424,7 +8424,7 @@ end;
 
 function TFHIRJsonParser.ParseAge(jsn : TJsonObject) : TFhirAge;
 begin
-  result := TFhirAge.create;
+  result := TFhirAge.Create;
   try
     ParseAgeProperties(jsn, result);
     result.link;
@@ -8454,7 +8454,7 @@ end;
 
 function TFHIRJsonParser.ParseCount(jsn : TJsonObject) : TFhirCount;
 begin
-  result := TFhirCount.create;
+  result := TFhirCount.Create;
   try
     ParseCountProperties(jsn, result);
     result.link;
@@ -8484,7 +8484,7 @@ end;
 
 function TFHIRJsonParser.ParseDistance(jsn : TJsonObject) : TFhirDistance;
 begin
-  result := TFhirDistance.create;
+  result := TFhirDistance.Create;
   try
     ParseDistanceProperties(jsn, result);
     result.link;
@@ -8514,7 +8514,7 @@ end;
 
 function TFHIRJsonParser.ParseDosageDoseAndRate(jsn : TJsonObject) : TFhirDosageDoseAndRate;
 begin
-  result := TFhirDosageDoseAndRate.create;
+  result := TFhirDosageDoseAndRate.Create;
   try
     ParseDosageDoseAndRateProperties(jsn, result);
     result.link;
@@ -8568,7 +8568,7 @@ end;
 
 function TFHIRJsonParser.ParseDosage(jsn : TJsonObject) : TFhirDosage;
 begin
-  result := TFhirDosage.create;
+  result := TFhirDosage.Create;
   try
     ParseDosageProperties(jsn, result);
     result.link;
@@ -8684,7 +8684,7 @@ end;
 
 function TFHIRJsonParser.ParseDuration(jsn : TJsonObject) : TFhirDuration;
 begin
-  result := TFhirDuration.create;
+  result := TFhirDuration.Create;
   try
     ParseDurationProperties(jsn, result);
     result.link;
@@ -8714,7 +8714,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionSlicing(jsn : TJsonObject) : TFhirElementDefinitionSlicing;
 begin
-  result := TFhirElementDefinitionSlicing.create;
+  result := TFhirElementDefinitionSlicing.Create;
   try
     ParseElementDefinitionSlicingProperties(jsn, result);
     result.link;
@@ -8770,7 +8770,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionSlicingDiscriminator(jsn : TJsonObject) : TFhirElementDefinitionSlicingDiscriminator;
 begin
-  result := TFhirElementDefinitionSlicingDiscriminator.create;
+  result := TFhirElementDefinitionSlicingDiscriminator.Create;
   try
     ParseElementDefinitionSlicingDiscriminatorProperties(jsn, result);
     result.link;
@@ -8807,7 +8807,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionBase(jsn : TJsonObject) : TFhirElementDefinitionBase;
 begin
-  result := TFhirElementDefinitionBase.create;
+  result := TFhirElementDefinitionBase.Create;
   try
     ParseElementDefinitionBaseProperties(jsn, result);
     result.link;
@@ -8849,7 +8849,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionType(jsn : TJsonObject) : TFhirElementDefinitionType;
 begin
-  result := TFhirElementDefinitionType.create;
+  result := TFhirElementDefinitionType.Create;
   try
     ParseElementDefinitionTypeProperties(jsn, result);
     result.link;
@@ -8969,7 +8969,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionExample(jsn : TJsonObject) : TFhirElementDefinitionExample;
 begin
-  result := TFhirElementDefinitionExample.create;
+  result := TFhirElementDefinitionExample.Create;
   try
     ParseElementDefinitionExampleProperties(jsn, result);
     result.link;
@@ -9279,7 +9279,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionConstraint(jsn : TJsonObject) : TFhirElementDefinitionConstraint;
 begin
-  result := TFhirElementDefinitionConstraint.create;
+  result := TFhirElementDefinitionConstraint.Create;
   try
     ParseElementDefinitionConstraintProperties(jsn, result);
     result.link;
@@ -9350,7 +9350,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionBinding(jsn : TJsonObject) : TFhirElementDefinitionBinding;
 begin
-  result := TFhirElementDefinitionBinding.create;
+  result := TFhirElementDefinitionBinding.Create;
   try
     ParseElementDefinitionBindingProperties(jsn, result);
     result.link;
@@ -9395,7 +9395,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinitionMapping(jsn : TJsonObject) : TFhirElementDefinitionMapping;
 begin
-  result := TFhirElementDefinitionMapping.create;
+  result := TFhirElementDefinitionMapping.Create;
   try
     ParseElementDefinitionMappingProperties(jsn, result);
     result.link;
@@ -9445,7 +9445,7 @@ end;
 
 function TFHIRJsonParser.ParseElementDefinition(jsn : TJsonObject) : TFhirElementDefinition;
 begin
-  result := TFhirElementDefinition.create;
+  result := TFhirElementDefinition.Create;
   try
     ParseElementDefinitionProperties(jsn, result);
     result.link;
@@ -10682,7 +10682,7 @@ end;
 
 function TFHIRJsonParser.ParseMarketingStatus(jsn : TJsonObject) : TFhirMarketingStatus;
 begin
-  result := TFhirMarketingStatus.create;
+  result := TFhirMarketingStatus.Create;
   try
     ParseMarketingStatusProperties(jsn, result);
     result.link;
@@ -10733,7 +10733,7 @@ end;
 
 function TFHIRJsonParser.ParsePopulation(jsn : TJsonObject) : TFhirPopulation;
 begin
-  result := TFhirPopulation.create;
+  result := TFhirPopulation.Create;
   try
     ParsePopulationProperties(jsn, result);
     result.link;
@@ -10783,7 +10783,7 @@ end;
 
 function TFHIRJsonParser.ParseProductShelfLife(jsn : TJsonObject) : TFhirProductShelfLife;
 begin
-  result := TFhirProductShelfLife.create;
+  result := TFhirProductShelfLife.Create;
   try
     ParseProductShelfLifeProperties(jsn, result);
     result.link;
@@ -10839,7 +10839,7 @@ end;
 
 function TFHIRJsonParser.ParseTimingRepeat(jsn : TJsonObject) : TFhirTimingRepeat;
 begin
-  result := TFhirTimingRepeat.create;
+  result := TFhirTimingRepeat.Create;
   try
     ParseTimingRepeatProperties(jsn, result);
     result.link;
@@ -11025,7 +11025,7 @@ end;
 
 function TFHIRJsonParser.ParseTiming(jsn : TJsonObject) : TFhirTiming;
 begin
-  result := TFhirTiming.create;
+  result := TFhirTiming.Create;
   try
     ParseTimingProperties(jsn, result);
     result.link;
@@ -11190,7 +11190,7 @@ end;
 
 function TFHIRJsonParser.ParseAccountCoverage(jsn : TJsonObject) : TFhirAccountCoverage;
 begin
-  result := TFhirAccountCoverage.create;
+  result := TFhirAccountCoverage.Create;
   try
     ParseAccountCoverageProperties(jsn, result);
     result.link;
@@ -11229,7 +11229,7 @@ end;
 
 function TFHIRJsonParser.ParseAccountGuarantor(jsn : TJsonObject) : TFhirAccountGuarantor;
 begin
-  result := TFhirAccountGuarantor.create;
+  result := TFhirAccountGuarantor.Create;
   try
     ParseAccountGuarantorProperties(jsn, result);
     result.link;
@@ -11272,7 +11272,7 @@ end;
 
 function TFHIRJsonParser.ParseAccountRelatedAccount(jsn : TJsonObject) : TFhirAccountRelatedAccount;
 begin
-  result := TFhirAccountRelatedAccount.create;
+  result := TFhirAccountRelatedAccount.Create;
   try
     ParseAccountRelatedAccountProperties(jsn, result);
     result.link;
@@ -11309,7 +11309,7 @@ end;
 
 function TFHIRJsonParser.ParseAccountBalance(jsn : TJsonObject) : TFhirAccountBalance;
 begin
-  result := TFhirAccountBalance.create;
+  result := TFhirAccountBalance.Create;
   try
     ParseAccountBalanceProperties(jsn, result);
     result.link;
@@ -11356,7 +11356,7 @@ end;
 
 function TFHIRJsonParser.ParseAccount(jsn : TJsonObject) : TFhirAccount;
 begin
-  result := TFhirAccount.create;
+  result := TFhirAccount.Create;
   try
     ParseAccountProperties(jsn, result);
     result.link;
@@ -11483,7 +11483,7 @@ end;
 
 function TFHIRJsonParser.ParseActivityDefinitionParticipant(jsn : TJsonObject) : TFhirActivityDefinitionParticipant;
 begin
-  result := TFhirActivityDefinitionParticipant.create;
+  result := TFhirActivityDefinitionParticipant.Create;
   try
     ParseActivityDefinitionParticipantProperties(jsn, result);
     result.link;
@@ -11535,7 +11535,7 @@ end;
 
 function TFHIRJsonParser.ParseActivityDefinitionDynamicValue(jsn : TJsonObject) : TFhirActivityDefinitionDynamicValue;
 begin
-  result := TFhirActivityDefinitionDynamicValue.create;
+  result := TFhirActivityDefinitionDynamicValue.Create;
   try
     ParseActivityDefinitionDynamicValueProperties(jsn, result);
     result.link;
@@ -11572,7 +11572,7 @@ end;
 
 function TFHIRJsonParser.ParseActivityDefinition(jsn : TJsonObject) : TFhirActivityDefinition;
 begin
-  result := TFhirActivityDefinition.create;
+  result := TFhirActivityDefinition.Create;
   try
     ParseActivityDefinitionProperties(jsn, result);
     result.link;
@@ -12019,7 +12019,7 @@ end;
 
 function TFHIRJsonParser.ParseActorDefinition(jsn : TJsonObject) : TFhirActorDefinition;
 begin
-  result := TFhirActorDefinition.create;
+  result := TFhirActorDefinition.Create;
   try
     ParseActorDefinitionProperties(jsn, result);
     result.link;
@@ -12225,7 +12225,7 @@ end;
 
 function TFHIRJsonParser.ParseAdministrableProductDefinitionProperty(jsn : TJsonObject) : TFhirAdministrableProductDefinitionProperty;
 begin
-  result := TFhirAdministrableProductDefinitionProperty.create;
+  result := TFhirAdministrableProductDefinitionProperty.Create;
   try
     ParseAdministrableProductDefinitionPropertyProperties(jsn, result);
     result.link;
@@ -12288,7 +12288,7 @@ end;
 
 function TFHIRJsonParser.ParseAdministrableProductDefinitionRouteOfAdministration(jsn : TJsonObject) : TFhirAdministrableProductDefinitionRouteOfAdministration;
 begin
-  result := TFhirAdministrableProductDefinitionRouteOfAdministration.create;
+  result := TFhirAdministrableProductDefinitionRouteOfAdministration.Create;
   try
     ParseAdministrableProductDefinitionRouteOfAdministrationProperties(jsn, result);
     result.link;
@@ -12352,7 +12352,7 @@ end;
 
 function TFHIRJsonParser.ParseAdministrableProductDefinitionRouteOfAdministrationTargetSpecies(jsn : TJsonObject) : TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies;
 begin
-  result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies.create;
+  result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpecies.Create;
   try
     ParseAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesProperties(jsn, result);
     result.link;
@@ -12396,7 +12396,7 @@ end;
 
 function TFHIRJsonParser.ParseAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod(jsn : TJsonObject) : TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod;
 begin
-  result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod.create;
+  result := TFhirAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriod.Create;
   try
     ParseAdministrableProductDefinitionRouteOfAdministrationTargetSpeciesWithdrawalPeriodProperties(jsn, result);
     result.link;
@@ -12438,7 +12438,7 @@ end;
 
 function TFHIRJsonParser.ParseAdministrableProductDefinition(jsn : TJsonObject) : TFhirAdministrableProductDefinition;
 begin
-  result := TFhirAdministrableProductDefinition.create;
+  result := TFhirAdministrableProductDefinition.Create;
   try
     ParseAdministrableProductDefinitionProperties(jsn, result);
     result.link;
@@ -12539,7 +12539,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventParticipant(jsn : TJsonObject) : TFhirAdverseEventParticipant;
 begin
-  result := TFhirAdverseEventParticipant.create;
+  result := TFhirAdverseEventParticipant.Create;
   try
     ParseAdverseEventParticipantProperties(jsn, result);
     result.link;
@@ -12576,7 +12576,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventSuspectEntity(jsn : TJsonObject) : TFhirAdverseEventSuspectEntity;
 begin
-  result := TFhirAdverseEventSuspectEntity.create;
+  result := TFhirAdverseEventSuspectEntity.Create;
   try
     ParseAdverseEventSuspectEntityProperties(jsn, result);
     result.link;
@@ -12618,7 +12618,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventSuspectEntityCausality(jsn : TJsonObject) : TFhirAdverseEventSuspectEntityCausality;
 begin
-  result := TFhirAdverseEventSuspectEntityCausality.create;
+  result := TFhirAdverseEventSuspectEntityCausality.Create;
   try
     ParseAdverseEventSuspectEntityCausalityProperties(jsn, result);
     result.link;
@@ -12660,7 +12660,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventContributingFactor(jsn : TJsonObject) : TFhirAdverseEventContributingFactor;
 begin
-  result := TFhirAdverseEventContributingFactor.create;
+  result := TFhirAdverseEventContributingFactor.Create;
   try
     ParseAdverseEventContributingFactorProperties(jsn, result);
     result.link;
@@ -12698,7 +12698,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventPreventiveAction(jsn : TJsonObject) : TFhirAdverseEventPreventiveAction;
 begin
-  result := TFhirAdverseEventPreventiveAction.create;
+  result := TFhirAdverseEventPreventiveAction.Create;
   try
     ParseAdverseEventPreventiveActionProperties(jsn, result);
     result.link;
@@ -12736,7 +12736,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventMitigatingAction(jsn : TJsonObject) : TFhirAdverseEventMitigatingAction;
 begin
-  result := TFhirAdverseEventMitigatingAction.create;
+  result := TFhirAdverseEventMitigatingAction.Create;
   try
     ParseAdverseEventMitigatingActionProperties(jsn, result);
     result.link;
@@ -12774,7 +12774,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEventSupportingInfo(jsn : TJsonObject) : TFhirAdverseEventSupportingInfo;
 begin
-  result := TFhirAdverseEventSupportingInfo.create;
+  result := TFhirAdverseEventSupportingInfo.Create;
   try
     ParseAdverseEventSupportingInfoProperties(jsn, result);
     result.link;
@@ -12812,7 +12812,7 @@ end;
 
 function TFHIRJsonParser.ParseAdverseEvent(jsn : TJsonObject) : TFhirAdverseEvent;
 begin
-  result := TFhirAdverseEvent.create;
+  result := TFhirAdverseEvent.Create;
   try
     ParseAdverseEventProperties(jsn, result);
     result.link;
@@ -13014,7 +13014,7 @@ end;
 
 function TFHIRJsonParser.ParseAllergyIntoleranceParticipant(jsn : TJsonObject) : TFhirAllergyIntoleranceParticipant;
 begin
-  result := TFhirAllergyIntoleranceParticipant.create;
+  result := TFhirAllergyIntoleranceParticipant.Create;
   try
     ParseAllergyIntoleranceParticipantProperties(jsn, result);
     result.link;
@@ -13051,7 +13051,7 @@ end;
 
 function TFHIRJsonParser.ParseAllergyIntoleranceReaction(jsn : TJsonObject) : TFhirAllergyIntoleranceReaction;
 begin
-  result := TFhirAllergyIntoleranceReaction.create;
+  result := TFhirAllergyIntoleranceReaction.Create;
   try
     ParseAllergyIntoleranceReactionProperties(jsn, result);
     result.link;
@@ -13125,7 +13125,7 @@ end;
 
 function TFHIRJsonParser.ParseAllergyIntolerance(jsn : TJsonObject) : TFhirAllergyIntolerance;
 begin
-  result := TFhirAllergyIntolerance.create;
+  result := TFhirAllergyIntolerance.Create;
   try
     ParseAllergyIntoleranceProperties(jsn, result);
     result.link;
@@ -13286,7 +13286,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointmentParticipant(jsn : TJsonObject) : TFhirAppointmentParticipant;
 begin
-  result := TFhirAppointmentParticipant.create;
+  result := TFhirAppointmentParticipant.Create;
   try
     ParseAppointmentParticipantProperties(jsn, result);
     result.link;
@@ -13344,7 +13344,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointmentRecurrenceTemplate(jsn : TJsonObject) : TFhirAppointmentRecurrenceTemplate;
 begin
-  result := TFhirAppointmentRecurrenceTemplate.create;
+  result := TFhirAppointmentRecurrenceTemplate.Create;
   try
     ParseAppointmentRecurrenceTemplateProperties(jsn, result);
     result.link;
@@ -13487,7 +13487,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointmentRecurrenceTemplateWeeklyTemplate(jsn : TJsonObject) : TFhirAppointmentRecurrenceTemplateWeeklyTemplate;
 begin
-  result := TFhirAppointmentRecurrenceTemplateWeeklyTemplate.create;
+  result := TFhirAppointmentRecurrenceTemplateWeeklyTemplate.Create;
   try
     ParseAppointmentRecurrenceTemplateWeeklyTemplateProperties(jsn, result);
     result.link;
@@ -13565,7 +13565,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointmentRecurrenceTemplateMonthlyTemplate(jsn : TJsonObject) : TFhirAppointmentRecurrenceTemplateMonthlyTemplate;
 begin
-  result := TFhirAppointmentRecurrenceTemplateMonthlyTemplate.create;
+  result := TFhirAppointmentRecurrenceTemplateMonthlyTemplate.Create;
   try
     ParseAppointmentRecurrenceTemplateMonthlyTemplateProperties(jsn, result);
     result.link;
@@ -13613,7 +13613,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointmentRecurrenceTemplateYearlyTemplate(jsn : TJsonObject) : TFhirAppointmentRecurrenceTemplateYearlyTemplate;
 begin
-  result := TFhirAppointmentRecurrenceTemplateYearlyTemplate.create;
+  result := TFhirAppointmentRecurrenceTemplateYearlyTemplate.Create;
   try
     ParseAppointmentRecurrenceTemplateYearlyTemplateProperties(jsn, result);
     result.link;
@@ -13647,7 +13647,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointment(jsn : TJsonObject) : TFhirAppointment;
 begin
-  result := TFhirAppointment.create;
+  result := TFhirAppointment.Create;
   try
     ParseAppointmentProperties(jsn, result);
     result.link;
@@ -13901,7 +13901,7 @@ end;
 
 function TFHIRJsonParser.ParseAppointmentResponse(jsn : TJsonObject) : TFhirAppointmentResponse;
 begin
-  result := TFhirAppointmentResponse.create;
+  result := TFhirAppointmentResponse.Create;
   try
     ParseAppointmentResponseProperties(jsn, result);
     result.link;
@@ -14003,7 +14003,7 @@ end;
 
 function TFHIRJsonParser.ParseArtifactAssessmentContent(jsn : TJsonObject) : TFhirArtifactAssessmentContent;
 begin
-  result := TFhirArtifactAssessmentContent.create;
+  result := TFhirArtifactAssessmentContent.Create;
   try
     ParseArtifactAssessmentContentProperties(jsn, result);
     result.link;
@@ -14114,7 +14114,7 @@ end;
 
 function TFHIRJsonParser.ParseArtifactAssessment(jsn : TJsonObject) : TFhirArtifactAssessment;
 begin
-  result := TFhirArtifactAssessment.create;
+  result := TFhirArtifactAssessment.Create;
   try
     ParseArtifactAssessmentProperties(jsn, result);
     result.link;
@@ -14225,7 +14225,7 @@ end;
 
 function TFHIRJsonParser.ParseAuditEventOutcome(jsn : TJsonObject) : TFhirAuditEventOutcome;
 begin
-  result := TFhirAuditEventOutcome.create;
+  result := TFhirAuditEventOutcome.Create;
   try
     ParseAuditEventOutcomeProperties(jsn, result);
     result.link;
@@ -14269,7 +14269,7 @@ end;
 
 function TFHIRJsonParser.ParseAuditEventAgent(jsn : TJsonObject) : TFhirAuditEventAgent;
 begin
-  result := TFhirAuditEventAgent.create;
+  result := TFhirAuditEventAgent.Create;
   try
     ParseAuditEventAgentProperties(jsn, result);
     result.link;
@@ -14382,7 +14382,7 @@ end;
 
 function TFHIRJsonParser.ParseAuditEventSource(jsn : TJsonObject) : TFhirAuditEventSource;
 begin
-  result := TFhirAuditEventSource.create;
+  result := TFhirAuditEventSource.Create;
   try
     ParseAuditEventSourceProperties(jsn, result);
     result.link;
@@ -14430,7 +14430,7 @@ end;
 
 function TFHIRJsonParser.ParseAuditEventEntity(jsn : TJsonObject) : TFhirAuditEventEntity;
 begin
-  result := TFhirAuditEventEntity.create;
+  result := TFhirAuditEventEntity.Create;
   try
     ParseAuditEventEntityProperties(jsn, result);
     result.link;
@@ -14503,7 +14503,7 @@ end;
 
 function TFHIRJsonParser.ParseAuditEventEntityDetail(jsn : TJsonObject) : TFhirAuditEventEntityDetail;
 begin
-  result := TFhirAuditEventEntityDetail.create;
+  result := TFhirAuditEventEntityDetail.Create;
   try
     ParseAuditEventEntityDetailProperties(jsn, result);
     result.link;
@@ -14598,7 +14598,7 @@ end;
 
 function TFHIRJsonParser.ParseAuditEvent(jsn : TJsonObject) : TFhirAuditEvent;
 begin
-  result := TFhirAuditEvent.create;
+  result := TFhirAuditEvent.Create;
   try
     ParseAuditEventProperties(jsn, result);
     result.link;
@@ -14716,7 +14716,7 @@ end;
 
 function TFHIRJsonParser.ParseBasic(jsn : TJsonObject) : TFhirBasic;
 begin
-  result := TFhirBasic.create;
+  result := TFhirBasic.Create;
   try
     ParseBasicProperties(jsn, result);
     result.link;
@@ -14774,7 +14774,7 @@ end;
 
 function TFHIRJsonParser.ParseBinary(jsn : TJsonObject) : TFhirBinary;
 begin
-  result := TFhirBinary.create;
+  result := TFhirBinary.Create;
   try
     ParseBinaryProperties(jsn, result);
     result.link;
@@ -14818,7 +14818,7 @@ end;
 
 function TFHIRJsonParser.ParseBiologicallyDerivedProductCollection(jsn : TJsonObject) : TFhirBiologicallyDerivedProductCollection;
 begin
-  result := TFhirBiologicallyDerivedProductCollection.create;
+  result := TFhirBiologicallyDerivedProductCollection.Create;
   try
     ParseBiologicallyDerivedProductCollectionProperties(jsn, result);
     result.link;
@@ -14867,7 +14867,7 @@ end;
 
 function TFHIRJsonParser.ParseBiologicallyDerivedProductProperty(jsn : TJsonObject) : TFhirBiologicallyDerivedProductProperty;
 begin
-  result := TFhirBiologicallyDerivedProductProperty.create;
+  result := TFhirBiologicallyDerivedProductProperty.Create;
   try
     ParseBiologicallyDerivedProductPropertyProperties(jsn, result);
     result.link;
@@ -14945,7 +14945,7 @@ end;
 
 function TFHIRJsonParser.ParseBiologicallyDerivedProduct(jsn : TJsonObject) : TFhirBiologicallyDerivedProduct;
 begin
-  result := TFhirBiologicallyDerivedProduct.create;
+  result := TFhirBiologicallyDerivedProduct.Create;
   try
     ParseBiologicallyDerivedProductProperties(jsn, result);
     result.link;
@@ -15058,7 +15058,7 @@ end;
 
 function TFHIRJsonParser.ParseBodyStructureIncludedStructure(jsn : TJsonObject) : TFhirBodyStructureIncludedStructure;
 begin
-  result := TFhirBodyStructureIncludedStructure.create;
+  result := TFhirBodyStructureIncludedStructure.Create;
   try
     ParseBodyStructureIncludedStructureProperties(jsn, result);
     result.link;
@@ -15106,7 +15106,7 @@ end;
 
 function TFHIRJsonParser.ParseBodyStructureExcludedStructure(jsn : TJsonObject) : TFhirBodyStructureExcludedStructure;
 begin
-  result := TFhirBodyStructureExcludedStructure.create;
+  result := TFhirBodyStructureExcludedStructure.Create;
   try
     ParseBodyStructureExcludedStructureProperties(jsn, result);
     result.link;
@@ -15154,7 +15154,7 @@ end;
 
 function TFHIRJsonParser.ParseBodyStructure(jsn : TJsonObject) : TFhirBodyStructure;
 begin
-  result := TFhirBodyStructure.create;
+  result := TFhirBodyStructure.Create;
   try
     ParseBodyStructureProperties(jsn, result);
     result.link;
@@ -15241,7 +15241,7 @@ end;
 
 function TFHIRJsonParser.ParseBundleLink(jsn : TJsonObject) : TFhirBundleLink;
 begin
-  result := TFhirBundleLink.create;
+  result := TFhirBundleLink.Create;
   try
     ParseBundleLinkProperties(jsn, result);
     result.link;
@@ -15278,7 +15278,7 @@ end;
 
 function TFHIRJsonParser.ParseBundleEntry(jsn : TJsonObject) : TFhirBundleEntry;
 begin
-  result := TFhirBundleEntry.create;
+  result := TFhirBundleEntry.Create;
   try
     ParseBundleEntryProperties(jsn, result);
     result.link;
@@ -15341,7 +15341,7 @@ end;
 
 function TFHIRJsonParser.ParseBundleEntrySearch(jsn : TJsonObject) : TFhirBundleEntrySearch;
 begin
-  result := TFhirBundleEntrySearch.create;
+  result := TFhirBundleEntrySearch.Create;
   try
     ParseBundleEntrySearchProperties(jsn, result);
     result.link;
@@ -15381,7 +15381,7 @@ end;
 
 function TFHIRJsonParser.ParseBundleEntryRequest(jsn : TJsonObject) : TFhirBundleEntryRequest;
 begin
-  result := TFhirBundleEntryRequest.create;
+  result := TFhirBundleEntryRequest.Create;
   try
     ParseBundleEntryRequestProperties(jsn, result);
     result.link;
@@ -15442,7 +15442,7 @@ end;
 
 function TFHIRJsonParser.ParseBundleEntryResponse(jsn : TJsonObject) : TFhirBundleEntryResponse;
 begin
-  result := TFhirBundleEntryResponse.create;
+  result := TFhirBundleEntryResponse.Create;
   try
     ParseBundleEntryResponseProperties(jsn, result);
     result.link;
@@ -15498,7 +15498,7 @@ end;
 
 function TFHIRJsonParser.ParseBundle(jsn : TJsonObject) : TFhirBundle;
 begin
-  result := TFhirBundle.create;
+  result := TFhirBundle.Create;
   try
     ParseBundleProperties(jsn, result);
     result.link;
@@ -15575,7 +15575,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementSoftware(jsn : TJsonObject) : TFhirCapabilityStatementSoftware;
 begin
-  result := TFhirCapabilityStatementSoftware.create;
+  result := TFhirCapabilityStatementSoftware.Create;
   try
     ParseCapabilityStatementSoftwareProperties(jsn, result);
     result.link;
@@ -15621,7 +15621,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementImplementation(jsn : TJsonObject) : TFhirCapabilityStatementImplementation;
 begin
-  result := TFhirCapabilityStatementImplementation.create;
+  result := TFhirCapabilityStatementImplementation.Create;
   try
     ParseCapabilityStatementImplementationProperties(jsn, result);
     result.link;
@@ -15665,7 +15665,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRest(jsn : TJsonObject) : TFhirCapabilityStatementRest;
 begin
-  result := TFhirCapabilityStatementRest.create;
+  result := TFhirCapabilityStatementRest.Create;
   try
     ParseCapabilityStatementRestProperties(jsn, result);
     result.link;
@@ -15774,7 +15774,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRestSecurity(jsn : TJsonObject) : TFhirCapabilityStatementRestSecurity;
 begin
-  result := TFhirCapabilityStatementRestSecurity.create;
+  result := TFhirCapabilityStatementRestSecurity.Create;
   try
     ParseCapabilityStatementRestSecurityProperties(jsn, result);
     result.link;
@@ -15827,7 +15827,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRestResource(jsn : TJsonObject) : TFhirCapabilityStatementRestResource;
 begin
-  result := TFhirCapabilityStatementRestResource.create;
+  result := TFhirCapabilityStatementRestResource.Create;
   try
     ParseCapabilityStatementRestResourceProperties(jsn, result);
     result.link;
@@ -16049,7 +16049,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRestResourceInteraction(jsn : TJsonObject) : TFhirCapabilityStatementRestResourceInteraction;
 begin
-  result := TFhirCapabilityStatementRestResourceInteraction.create;
+  result := TFhirCapabilityStatementRestResourceInteraction.Create;
   try
     ParseCapabilityStatementRestResourceInteractionProperties(jsn, result);
     result.link;
@@ -16088,7 +16088,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRestResourceSearchParam(jsn : TJsonObject) : TFhirCapabilityStatementRestResourceSearchParam;
 begin
-  result := TFhirCapabilityStatementRestResourceSearchParam.create;
+  result := TFhirCapabilityStatementRestResourceSearchParam.Create;
   try
     ParseCapabilityStatementRestResourceSearchParamProperties(jsn, result);
     result.link;
@@ -16137,7 +16137,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRestResourceOperation(jsn : TJsonObject) : TFhirCapabilityStatementRestResourceOperation;
 begin
-  result := TFhirCapabilityStatementRestResourceOperation.create;
+  result := TFhirCapabilityStatementRestResourceOperation.Create;
   try
     ParseCapabilityStatementRestResourceOperationProperties(jsn, result);
     result.link;
@@ -16181,7 +16181,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementRestInteraction(jsn : TJsonObject) : TFhirCapabilityStatementRestInteraction;
 begin
-  result := TFhirCapabilityStatementRestInteraction.create;
+  result := TFhirCapabilityStatementRestInteraction.Create;
   try
     ParseCapabilityStatementRestInteractionProperties(jsn, result);
     result.link;
@@ -16220,7 +16220,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementMessaging(jsn : TJsonObject) : TFhirCapabilityStatementMessaging;
 begin
-  result := TFhirCapabilityStatementMessaging.create;
+  result := TFhirCapabilityStatementMessaging.Create;
   try
     ParseCapabilityStatementMessagingProperties(jsn, result);
     result.link;
@@ -16282,7 +16282,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementMessagingEndpoint(jsn : TJsonObject) : TFhirCapabilityStatementMessagingEndpoint;
 begin
-  result := TFhirCapabilityStatementMessagingEndpoint.create;
+  result := TFhirCapabilityStatementMessagingEndpoint.Create;
   try
     ParseCapabilityStatementMessagingEndpointProperties(jsn, result);
     result.link;
@@ -16319,7 +16319,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementMessagingSupportedMessage(jsn : TJsonObject) : TFhirCapabilityStatementMessagingSupportedMessage;
 begin
-  result := TFhirCapabilityStatementMessagingSupportedMessage.create;
+  result := TFhirCapabilityStatementMessagingSupportedMessage.Create;
   try
     ParseCapabilityStatementMessagingSupportedMessageProperties(jsn, result);
     result.link;
@@ -16356,7 +16356,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatementDocument(jsn : TJsonObject) : TFhirCapabilityStatementDocument;
 begin
-  result := TFhirCapabilityStatementDocument.create;
+  result := TFhirCapabilityStatementDocument.Create;
   try
     ParseCapabilityStatementDocumentProperties(jsn, result);
     result.link;
@@ -16399,7 +16399,7 @@ end;
 
 function TFHIRJsonParser.ParseCapabilityStatement(jsn : TJsonObject) : TFhirCapabilityStatement;
 begin
-  result := TFhirCapabilityStatement.create;
+  result := TFhirCapabilityStatement.Create;
   try
     ParseCapabilityStatementProperties(jsn, result);
     result.link;
@@ -16735,7 +16735,7 @@ end;
 
 function TFHIRJsonParser.ParseCarePlanActivity(jsn : TJsonObject) : TFhirCarePlanActivity;
 begin
-  result := TFhirCarePlanActivity.create;
+  result := TFhirCarePlanActivity.Create;
   try
     ParseCarePlanActivityProperties(jsn, result);
     result.link;
@@ -16793,7 +16793,7 @@ end;
 
 function TFHIRJsonParser.ParseCarePlanActivityPlannedActivityDetail(jsn : TJsonObject) : TFhirCarePlanActivityPlannedActivityDetail;
 begin
-  result := TFhirCarePlanActivityPlannedActivityDetail.create;
+  result := TFhirCarePlanActivityPlannedActivityDetail.Create;
   try
     ParseCarePlanActivityPlannedActivityDetailProperties(jsn, result);
     result.link;
@@ -16979,7 +16979,7 @@ end;
 
 function TFHIRJsonParser.ParseCarePlan(jsn : TJsonObject) : TFhirCarePlan;
 begin
-  result := TFhirCarePlan.create;
+  result := TFhirCarePlan.Create;
   try
     ParseCarePlanProperties(jsn, result);
     result.link;
@@ -17212,7 +17212,7 @@ end;
 
 function TFHIRJsonParser.ParseCareTeamParticipant(jsn : TJsonObject) : TFhirCareTeamParticipant;
 begin
-  result := TFhirCareTeamParticipant.create;
+  result := TFhirCareTeamParticipant.Create;
   try
     ParseCareTeamParticipantProperties(jsn, result);
     result.link;
@@ -17262,7 +17262,7 @@ end;
 
 function TFHIRJsonParser.ParseCareTeam(jsn : TJsonObject) : TFhirCareTeam;
 begin
-  result := TFhirCareTeam.create;
+  result := TFhirCareTeam.Create;
   try
     ParseCareTeamProperties(jsn, result);
     result.link;
@@ -17375,7 +17375,7 @@ end;
 
 function TFHIRJsonParser.ParseChargeItemPerformer(jsn : TJsonObject) : TFhirChargeItemPerformer;
 begin
-  result := TFhirChargeItemPerformer.create;
+  result := TFhirChargeItemPerformer.Create;
   try
     ParseChargeItemPerformerProperties(jsn, result);
     result.link;
@@ -17412,7 +17412,7 @@ end;
 
 function TFHIRJsonParser.ParseChargeItem(jsn : TJsonObject) : TFhirChargeItem;
 begin
-  result := TFhirChargeItem.create;
+  result := TFhirChargeItem.Create;
   try
     ParseChargeItemProperties(jsn, result);
     result.link;
@@ -17654,7 +17654,7 @@ end;
 
 function TFHIRJsonParser.ParseChargeItemDefinitionApplicability(jsn : TJsonObject) : TFhirChargeItemDefinitionApplicability;
 begin
-  result := TFhirChargeItemDefinitionApplicability.create;
+  result := TFhirChargeItemDefinitionApplicability.Create;
   try
     ParseChargeItemDefinitionApplicabilityProperties(jsn, result);
     result.link;
@@ -17696,7 +17696,7 @@ end;
 
 function TFHIRJsonParser.ParseChargeItemDefinitionPropertyGroup(jsn : TJsonObject) : TFhirChargeItemDefinitionPropertyGroup;
 begin
-  result := TFhirChargeItemDefinitionPropertyGroup.create;
+  result := TFhirChargeItemDefinitionPropertyGroup.Create;
   try
     ParseChargeItemDefinitionPropertyGroupProperties(jsn, result);
     result.link;
@@ -17746,7 +17746,7 @@ end;
 
 function TFHIRJsonParser.ParseChargeItemDefinition(jsn : TJsonObject) : TFhirChargeItemDefinition;
 begin
-  result := TFhirChargeItemDefinition.create;
+  result := TFhirChargeItemDefinition.Create;
   try
     ParseChargeItemDefinitionProperties(jsn, result);
     result.link;
@@ -17998,7 +17998,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationSummary(jsn : TJsonObject) : TFhirCitationSummary;
 begin
-  result := TFhirCitationSummary.create;
+  result := TFhirCitationSummary.Create;
   try
     ParseCitationSummaryProperties(jsn, result);
     result.link;
@@ -18036,7 +18036,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationClassification(jsn : TJsonObject) : TFhirCitationClassification;
 begin
-  result := TFhirCitationClassification.create;
+  result := TFhirCitationClassification.Create;
   try
     ParseCitationClassificationProperties(jsn, result);
     result.link;
@@ -18081,7 +18081,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationStatusDate(jsn : TJsonObject) : TFhirCitationStatusDate;
 begin
-  result := TFhirCitationStatusDate.create;
+  result := TFhirCitationStatusDate.Create;
   try
     ParseCitationStatusDateProperties(jsn, result);
     result.link;
@@ -18123,7 +18123,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifact(jsn : TJsonObject) : TFhirCitationCitedArtifact;
 begin
-  result := TFhirCitationCitedArtifact.create;
+  result := TFhirCitationCitedArtifact.Create;
   try
     ParseCitationCitedArtifactProperties(jsn, result);
     result.link;
@@ -18272,7 +18272,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactVersion(jsn : TJsonObject) : TFhirCitationCitedArtifactVersion;
 begin
-  result := TFhirCitationCitedArtifactVersion.create;
+  result := TFhirCitationCitedArtifactVersion.Create;
   try
     ParseCitationCitedArtifactVersionProperties(jsn, result);
     result.link;
@@ -18310,7 +18310,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactStatusDate(jsn : TJsonObject) : TFhirCitationCitedArtifactStatusDate;
 begin
-  result := TFhirCitationCitedArtifactStatusDate.create;
+  result := TFhirCitationCitedArtifactStatusDate.Create;
   try
     ParseCitationCitedArtifactStatusDateProperties(jsn, result);
     result.link;
@@ -18352,7 +18352,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactTitle(jsn : TJsonObject) : TFhirCitationCitedArtifactTitle;
 begin
-  result := TFhirCitationCitedArtifactTitle.create;
+  result := TFhirCitationCitedArtifactTitle.Create;
   try
     ParseCitationCitedArtifactTitleProperties(jsn, result);
     result.link;
@@ -18401,7 +18401,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactAbstract(jsn : TJsonObject) : TFhirCitationCitedArtifactAbstract;
 begin
-  result := TFhirCitationCitedArtifactAbstract.create;
+  result := TFhirCitationCitedArtifactAbstract.Create;
   try
     ParseCitationCitedArtifactAbstractProperties(jsn, result);
     result.link;
@@ -18449,7 +18449,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactPart(jsn : TJsonObject) : TFhirCitationCitedArtifactPart;
 begin
-  result := TFhirCitationCitedArtifactPart.create;
+  result := TFhirCitationCitedArtifactPart.Create;
   try
     ParseCitationCitedArtifactPartProperties(jsn, result);
     result.link;
@@ -18493,7 +18493,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactRelatesTo(jsn : TJsonObject) : TFhirCitationCitedArtifactRelatesTo;
 begin
-  result := TFhirCitationCitedArtifactRelatesTo.create;
+  result := TFhirCitationCitedArtifactRelatesTo.Create;
   try
     ParseCitationCitedArtifactRelatesToProperties(jsn, result);
     result.link;
@@ -18569,7 +18569,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactPublicationForm(jsn : TJsonObject) : TFhirCitationCitedArtifactPublicationForm;
 begin
-  result := TFhirCitationCitedArtifactPublicationForm.create;
+  result := TFhirCitationCitedArtifactPublicationForm.Create;
   try
     ParseCitationCitedArtifactPublicationFormProperties(jsn, result);
     result.link;
@@ -18708,7 +18708,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactPublicationFormPublishedIn(jsn : TJsonObject) : TFhirCitationCitedArtifactPublicationFormPublishedIn;
 begin
-  result := TFhirCitationCitedArtifactPublicationFormPublishedIn.create;
+  result := TFhirCitationCitedArtifactPublicationFormPublishedIn.Create;
   try
     ParseCitationCitedArtifactPublicationFormPublishedInProperties(jsn, result);
     result.link;
@@ -18769,7 +18769,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactWebLocation(jsn : TJsonObject) : TFhirCitationCitedArtifactWebLocation;
 begin
-  result := TFhirCitationCitedArtifactWebLocation.create;
+  result := TFhirCitationCitedArtifactWebLocation.Create;
   try
     ParseCitationCitedArtifactWebLocationProperties(jsn, result);
     result.link;
@@ -18816,7 +18816,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactClassification(jsn : TJsonObject) : TFhirCitationCitedArtifactClassification;
 begin
-  result := TFhirCitationCitedArtifactClassification.create;
+  result := TFhirCitationCitedArtifactClassification.Create;
   try
     ParseCitationCitedArtifactClassificationProperties(jsn, result);
     result.link;
@@ -18870,7 +18870,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactContributorship(jsn : TJsonObject) : TFhirCitationCitedArtifactContributorship;
 begin
-  result := TFhirCitationCitedArtifactContributorship.create;
+  result := TFhirCitationCitedArtifactContributorship.Create;
   try
     ParseCitationCitedArtifactContributorshipProperties(jsn, result);
     result.link;
@@ -18926,7 +18926,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactContributorshipEntry(jsn : TJsonObject) : TFhirCitationCitedArtifactContributorshipEntry;
 begin
-  result := TFhirCitationCitedArtifactContributorshipEntry.create;
+  result := TFhirCitationCitedArtifactContributorshipEntry.Create;
   try
     ParseCitationCitedArtifactContributorshipEntryProperties(jsn, result);
     result.link;
@@ -19010,7 +19010,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactContributorshipEntryContributionInstance(jsn : TJsonObject) : TFhirCitationCitedArtifactContributorshipEntryContributionInstance;
 begin
-  result := TFhirCitationCitedArtifactContributorshipEntryContributionInstance.create;
+  result := TFhirCitationCitedArtifactContributorshipEntryContributionInstance.Create;
   try
     ParseCitationCitedArtifactContributorshipEntryContributionInstanceProperties(jsn, result);
     result.link;
@@ -19049,7 +19049,7 @@ end;
 
 function TFHIRJsonParser.ParseCitationCitedArtifactContributorshipSummary(jsn : TJsonObject) : TFhirCitationCitedArtifactContributorshipSummary;
 begin
-  result := TFhirCitationCitedArtifactContributorshipSummary.create;
+  result := TFhirCitationCitedArtifactContributorshipSummary.Create;
   try
     ParseCitationCitedArtifactContributorshipSummaryProperties(jsn, result);
     result.link;
@@ -19095,7 +19095,7 @@ end;
 
 function TFHIRJsonParser.ParseCitation(jsn : TJsonObject) : TFhirCitation;
 begin
-  result := TFhirCitation.create;
+  result := TFhirCitation.Create;
   try
     ParseCitationProperties(jsn, result);
     result.link;
@@ -19336,7 +19336,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimRelated(jsn : TJsonObject) : TFhirClaimRelated;
 begin
-  result := TFhirClaimRelated.create;
+  result := TFhirClaimRelated.Create;
   try
     ParseClaimRelatedProperties(jsn, result);
     result.link;
@@ -19378,7 +19378,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimPayee(jsn : TJsonObject) : TFhirClaimPayee;
 begin
-  result := TFhirClaimPayee.create;
+  result := TFhirClaimPayee.Create;
   try
     ParseClaimPayeeProperties(jsn, result);
     result.link;
@@ -19415,7 +19415,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimCareTeam(jsn : TJsonObject) : TFhirClaimCareTeam;
 begin
-  result := TFhirClaimCareTeam.create;
+  result := TFhirClaimCareTeam.Create;
   try
     ParseClaimCareTeamProperties(jsn, result);
     result.link;
@@ -19466,7 +19466,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimSupportingInfo(jsn : TJsonObject) : TFhirClaimSupportingInfo;
 begin
-  result := TFhirClaimSupportingInfo.create;
+  result := TFhirClaimSupportingInfo.Create;
   try
     ParseClaimSupportingInfoProperties(jsn, result);
     result.link;
@@ -19552,7 +19552,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimDiagnosis(jsn : TJsonObject) : TFhirClaimDiagnosis;
 begin
-  result := TFhirClaimDiagnosis.create;
+  result := TFhirClaimDiagnosis.Create;
   try
     ParseClaimDiagnosisProperties(jsn, result);
     result.link;
@@ -19609,7 +19609,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimProcedure(jsn : TJsonObject) : TFhirClaimProcedure;
 begin
-  result := TFhirClaimProcedure.create;
+  result := TFhirClaimProcedure.Create;
   try
     ParseClaimProcedureProperties(jsn, result);
     result.link;
@@ -19677,7 +19677,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimInsurance(jsn : TJsonObject) : TFhirClaimInsurance;
 begin
-  result := TFhirClaimInsurance.create;
+  result := TFhirClaimInsurance.Create;
   try
     ParseClaimInsuranceProperties(jsn, result);
     result.link;
@@ -19762,7 +19762,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimAccident(jsn : TJsonObject) : TFhirClaimAccident;
 begin
-  result := TFhirClaimAccident.create;
+  result := TFhirClaimAccident.Create;
   try
     ParseClaimAccidentProperties(jsn, result);
     result.link;
@@ -19808,7 +19808,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimItem(jsn : TJsonObject) : TFhirClaimItem;
 begin
-  result := TFhirClaimItem.create;
+  result := TFhirClaimItem.Create;
   try
     ParseClaimItemProperties(jsn, result);
     result.link;
@@ -20069,7 +20069,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimItemBodySite(jsn : TJsonObject) : TFhirClaimItemBodySite;
 begin
-  result := TFhirClaimItemBodySite.create;
+  result := TFhirClaimItemBodySite.Create;
   try
     ParseClaimItemBodySiteProperties(jsn, result);
     result.link;
@@ -20119,7 +20119,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimItemDetail(jsn : TJsonObject) : TFhirClaimItemDetail;
 begin
-  result := TFhirClaimItemDetail.create;
+  result := TFhirClaimItemDetail.Create;
   try
     ParseClaimItemDetailProperties(jsn, result);
     result.link;
@@ -20233,7 +20233,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimItemDetailSubDetail(jsn : TJsonObject) : TFhirClaimItemDetailSubDetail;
 begin
-  result := TFhirClaimItemDetailSubDetail.create;
+  result := TFhirClaimItemDetailSubDetail.Create;
   try
     ParseClaimItemDetailSubDetailProperties(jsn, result);
     result.link;
@@ -20338,7 +20338,7 @@ end;
 
 function TFHIRJsonParser.ParseClaim(jsn : TJsonObject) : TFhirClaim;
 begin
-  result := TFhirClaim.create;
+  result := TFhirClaim.Create;
   try
     ParseClaimProperties(jsn, result);
     result.link;
@@ -20531,7 +20531,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseItem(jsn : TJsonObject) : TFhirClaimResponseItem;
 begin
-  result := TFhirClaimResponseItem.create;
+  result := TFhirClaimResponseItem.Create;
   try
     ParseClaimResponseItemProperties(jsn, result);
     result.link;
@@ -20617,7 +20617,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseItemAdjudication(jsn : TJsonObject) : TFhirClaimResponseItemAdjudication;
 begin
-  result := TFhirClaimResponseItemAdjudication.create;
+  result := TFhirClaimResponseItemAdjudication.Create;
   try
     ParseClaimResponseItemAdjudicationProperties(jsn, result);
     result.link;
@@ -20664,7 +20664,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseItemDetail(jsn : TJsonObject) : TFhirClaimResponseItemDetail;
 begin
-  result := TFhirClaimResponseItemDetail.create;
+  result := TFhirClaimResponseItemDetail.Create;
   try
     ParseClaimResponseItemDetailProperties(jsn, result);
     result.link;
@@ -20750,7 +20750,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseItemDetailSubDetail(jsn : TJsonObject) : TFhirClaimResponseItemDetailSubDetail;
 begin
-  result := TFhirClaimResponseItemDetailSubDetail.create;
+  result := TFhirClaimResponseItemDetailSubDetail.Create;
   try
     ParseClaimResponseItemDetailSubDetailProperties(jsn, result);
     result.link;
@@ -20827,7 +20827,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseAddItem(jsn : TJsonObject) : TFhirClaimResponseAddItem;
 begin
-  result := TFhirClaimResponseAddItem.create;
+  result := TFhirClaimResponseAddItem.Create;
   try
     ParseClaimResponseAddItemProperties(jsn, result);
     result.link;
@@ -21080,7 +21080,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseAddItemBodySite(jsn : TJsonObject) : TFhirClaimResponseAddItemBodySite;
 begin
-  result := TFhirClaimResponseAddItemBodySite.create;
+  result := TFhirClaimResponseAddItemBodySite.Create;
   try
     ParseClaimResponseAddItemBodySiteProperties(jsn, result);
     result.link;
@@ -21130,7 +21130,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseAddItemDetail(jsn : TJsonObject) : TFhirClaimResponseAddItemDetail;
 begin
-  result := TFhirClaimResponseAddItemDetail.create;
+  result := TFhirClaimResponseAddItemDetail.Create;
   try
     ParseClaimResponseAddItemDetailProperties(jsn, result);
     result.link;
@@ -21255,7 +21255,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseAddItemDetailSubDetail(jsn : TJsonObject) : TFhirClaimResponseAddItemDetailSubDetail;
 begin
-  result := TFhirClaimResponseAddItemDetailSubDetail.create;
+  result := TFhirClaimResponseAddItemDetailSubDetail.Create;
   try
     ParseClaimResponseAddItemDetailSubDetailProperties(jsn, result);
     result.link;
@@ -21371,7 +21371,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseTotal(jsn : TJsonObject) : TFhirClaimResponseTotal;
 begin
-  result := TFhirClaimResponseTotal.create;
+  result := TFhirClaimResponseTotal.Create;
   try
     ParseClaimResponseTotalProperties(jsn, result);
     result.link;
@@ -21407,7 +21407,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponsePayment(jsn : TJsonObject) : TFhirClaimResponsePayment;
 begin
-  result := TFhirClaimResponsePayment.create;
+  result := TFhirClaimResponsePayment.Create;
   try
     ParseClaimResponsePaymentProperties(jsn, result);
     result.link;
@@ -21461,7 +21461,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseProcessNote(jsn : TJsonObject) : TFhirClaimResponseProcessNote;
 begin
-  result := TFhirClaimResponseProcessNote.create;
+  result := TFhirClaimResponseProcessNote.Create;
   try
     ParseClaimResponseProcessNoteProperties(jsn, result);
     result.link;
@@ -21509,7 +21509,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseInsurance(jsn : TJsonObject) : TFhirClaimResponseInsurance;
 begin
-  result := TFhirClaimResponseInsurance.create;
+  result := TFhirClaimResponseInsurance.Create;
   try
     ParseClaimResponseInsuranceProperties(jsn, result);
     result.link;
@@ -21560,7 +21560,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponseError(jsn : TJsonObject) : TFhirClaimResponseError;
 begin
-  result := TFhirClaimResponseError.create;
+  result := TFhirClaimResponseError.Create;
   try
     ParseClaimResponseErrorProperties(jsn, result);
     result.link;
@@ -21611,7 +21611,7 @@ end;
 
 function TFHIRJsonParser.ParseClaimResponse(jsn : TJsonObject) : TFhirClaimResponse;
 begin
-  result := TFhirClaimResponse.create;
+  result := TFhirClaimResponse.Create;
   try
     ParseClaimResponseProperties(jsn, result);
     result.link;
@@ -21812,7 +21812,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalImpressionFinding(jsn : TJsonObject) : TFhirClinicalImpressionFinding;
 begin
-  result := TFhirClinicalImpressionFinding.create;
+  result := TFhirClinicalImpressionFinding.Create;
   try
     ParseClinicalImpressionFindingProperties(jsn, result);
     result.link;
@@ -21852,7 +21852,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalImpression(jsn : TJsonObject) : TFhirClinicalImpression;
 begin
-  result := TFhirClinicalImpression.create;
+  result := TFhirClinicalImpression.Create;
   try
     ParseClinicalImpressionProperties(jsn, result);
     result.link;
@@ -22030,7 +22030,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionContraindication(jsn : TJsonObject) : TFhirClinicalUseDefinitionContraindication;
 begin
-  result := TFhirClinicalUseDefinitionContraindication.create;
+  result := TFhirClinicalUseDefinitionContraindication.Create;
   try
     ParseClinicalUseDefinitionContraindicationProperties(jsn, result);
     result.link;
@@ -22097,7 +22097,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionContraindicationOtherTherapy(jsn : TJsonObject) : TFhirClinicalUseDefinitionContraindicationOtherTherapy;
 begin
-  result := TFhirClinicalUseDefinitionContraindicationOtherTherapy.create;
+  result := TFhirClinicalUseDefinitionContraindicationOtherTherapy.Create;
   try
     ParseClinicalUseDefinitionContraindicationOtherTherapyProperties(jsn, result);
     result.link;
@@ -22133,7 +22133,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionIndication(jsn : TJsonObject) : TFhirClinicalUseDefinitionIndication;
 begin
-  result := TFhirClinicalUseDefinitionIndication.create;
+  result := TFhirClinicalUseDefinitionIndication.Create;
   try
     ParseClinicalUseDefinitionIndicationProperties(jsn, result);
     result.link;
@@ -22215,7 +22215,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionInteraction(jsn : TJsonObject) : TFhirClinicalUseDefinitionInteraction;
 begin
-  result := TFhirClinicalUseDefinitionInteraction.create;
+  result := TFhirClinicalUseDefinitionInteraction.Create;
   try
     ParseClinicalUseDefinitionInteractionProperties(jsn, result);
     result.link;
@@ -22277,7 +22277,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionInteractionInteractant(jsn : TJsonObject) : TFhirClinicalUseDefinitionInteractionInteractant;
 begin
-  result := TFhirClinicalUseDefinitionInteractionInteractant.create;
+  result := TFhirClinicalUseDefinitionInteractionInteractant.Create;
   try
     ParseClinicalUseDefinitionInteractionInteractantProperties(jsn, result);
     result.link;
@@ -22315,7 +22315,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionUndesirableEffect(jsn : TJsonObject) : TFhirClinicalUseDefinitionUndesirableEffect;
 begin
-  result := TFhirClinicalUseDefinitionUndesirableEffect.create;
+  result := TFhirClinicalUseDefinitionUndesirableEffect.Create;
   try
     ParseClinicalUseDefinitionUndesirableEffectProperties(jsn, result);
     result.link;
@@ -22357,7 +22357,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinitionWarning(jsn : TJsonObject) : TFhirClinicalUseDefinitionWarning;
 begin
-  result := TFhirClinicalUseDefinitionWarning.create;
+  result := TFhirClinicalUseDefinitionWarning.Create;
   try
     ParseClinicalUseDefinitionWarningProperties(jsn, result);
     result.link;
@@ -22397,7 +22397,7 @@ end;
 
 function TFHIRJsonParser.ParseClinicalUseDefinition(jsn : TJsonObject) : TFhirClinicalUseDefinition;
 begin
-  result := TFhirClinicalUseDefinition.create;
+  result := TFhirClinicalUseDefinition.Create;
   try
     ParseClinicalUseDefinitionProperties(jsn, result);
     result.link;
@@ -22492,7 +22492,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeSystemFilter(jsn : TJsonObject) : TFhirCodeSystemFilter;
 begin
-  result := TFhirCodeSystemFilter.create;
+  result := TFhirCodeSystemFilter.Create;
   try
     ParseCodeSystemFilterProperties(jsn, result);
     result.link;
@@ -22566,7 +22566,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeSystemProperty(jsn : TJsonObject) : TFhirCodeSystemProperty;
 begin
-  result := TFhirCodeSystemProperty.create;
+  result := TFhirCodeSystemProperty.Create;
   try
     ParseCodeSystemPropertyProperties(jsn, result);
     result.link;
@@ -22615,7 +22615,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeSystemConcept(jsn : TJsonObject) : TFhirCodeSystemConcept;
 begin
-  result := TFhirCodeSystemConcept.create;
+  result := TFhirCodeSystemConcept.Create;
   try
     ParseCodeSystemConceptProperties(jsn, result);
     result.link;
@@ -22690,7 +22690,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeSystemConceptDesignation(jsn : TJsonObject) : TFhirCodeSystemConceptDesignation;
 begin
-  result := TFhirCodeSystemConceptDesignation.create;
+  result := TFhirCodeSystemConceptDesignation.Create;
   try
     ParseCodeSystemConceptDesignationProperties(jsn, result);
     result.link;
@@ -22745,7 +22745,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeSystemConceptProperty(jsn : TJsonObject) : TFhirCodeSystemConceptProperty;
 begin
-  result := TFhirCodeSystemConceptProperty.create;
+  result := TFhirCodeSystemConceptProperty.Create;
   try
     ParseCodeSystemConceptPropertyProperties(jsn, result);
     result.link;
@@ -22825,7 +22825,7 @@ end;
 
 function TFHIRJsonParser.ParseCodeSystem(jsn : TJsonObject) : TFhirCodeSystem;
 begin
-  result := TFhirCodeSystem.create;
+  result := TFhirCodeSystem.Create;
   try
     ParseCodeSystemProperties(jsn, result);
     result.link;
@@ -23096,7 +23096,7 @@ end;
 
 function TFHIRJsonParser.ParseCommunicationPayload(jsn : TJsonObject) : TFhirCommunicationPayload;
 begin
-  result := TFhirCommunicationPayload.create;
+  result := TFhirCommunicationPayload.Create;
   try
     ParseCommunicationPayloadProperties(jsn, result);
     result.link;
@@ -23138,7 +23138,7 @@ end;
 
 function TFHIRJsonParser.ParseCommunication(jsn : TJsonObject) : TFhirCommunication;
 begin
-  result := TFhirCommunication.create;
+  result := TFhirCommunication.Create;
   try
     ParseCommunicationProperties(jsn, result);
     result.link;
@@ -23362,7 +23362,7 @@ end;
 
 function TFHIRJsonParser.ParseCommunicationRequestPayload(jsn : TJsonObject) : TFhirCommunicationRequestPayload;
 begin
-  result := TFhirCommunicationRequestPayload.create;
+  result := TFhirCommunicationRequestPayload.Create;
   try
     ParseCommunicationRequestPayloadProperties(jsn, result);
     result.link;
@@ -23404,7 +23404,7 @@ end;
 
 function TFHIRJsonParser.ParseCommunicationRequest(jsn : TJsonObject) : TFhirCommunicationRequest;
 begin
-  result := TFhirCommunicationRequest.create;
+  result := TFhirCommunicationRequest.Create;
   try
     ParseCommunicationRequestProperties(jsn, result);
     result.link;
@@ -23588,7 +23588,7 @@ end;
 
 function TFHIRJsonParser.ParseCompartmentDefinitionResource(jsn : TJsonObject) : TFhirCompartmentDefinitionResource;
 begin
-  result := TFhirCompartmentDefinitionResource.create;
+  result := TFhirCompartmentDefinitionResource.Create;
   try
     ParseCompartmentDefinitionResourceProperties(jsn, result);
     result.link;
@@ -23669,7 +23669,7 @@ end;
 
 function TFHIRJsonParser.ParseCompartmentDefinition(jsn : TJsonObject) : TFhirCompartmentDefinition;
 begin
-  result := TFhirCompartmentDefinition.create;
+  result := TFhirCompartmentDefinition.Create;
   try
     ParseCompartmentDefinitionProperties(jsn, result);
     result.link;
@@ -23799,7 +23799,7 @@ end;
 
 function TFHIRJsonParser.ParseCompositionAttester(jsn : TJsonObject) : TFhirCompositionAttester;
 begin
-  result := TFhirCompositionAttester.create;
+  result := TFhirCompositionAttester.Create;
   try
     ParseCompositionAttesterProperties(jsn, result);
     result.link;
@@ -23842,7 +23842,7 @@ end;
 
 function TFHIRJsonParser.ParseCompositionEvent(jsn : TJsonObject) : TFhirCompositionEvent;
 begin
-  result := TFhirCompositionEvent.create;
+  result := TFhirCompositionEvent.Create;
   try
     ParseCompositionEventProperties(jsn, result);
     result.link;
@@ -23896,7 +23896,7 @@ end;
 
 function TFHIRJsonParser.ParseCompositionSection(jsn : TJsonObject) : TFhirCompositionSection;
 begin
-  result := TFhirCompositionSection.create;
+  result := TFhirCompositionSection.Create;
   try
     ParseCompositionSectionProperties(jsn, result);
     result.link;
@@ -23985,7 +23985,7 @@ end;
 
 function TFHIRJsonParser.ParseComposition(jsn : TJsonObject) : TFhirComposition;
 begin
-  result := TFhirComposition.create;
+  result := TFhirComposition.Create;
   try
     ParseCompositionProperties(jsn, result);
     result.link;
@@ -24147,7 +24147,7 @@ end;
 
 function TFHIRJsonParser.ParseConceptMapGroup(jsn : TJsonObject) : TFhirConceptMapGroup;
 begin
-  result := TFhirConceptMapGroup.create;
+  result := TFhirConceptMapGroup.Create;
   try
     ParseConceptMapGroupProperties(jsn, result);
     result.link;
@@ -24204,7 +24204,7 @@ end;
 
 function TFHIRJsonParser.ParseConceptMapGroupElement(jsn : TJsonObject) : TFhirConceptMapGroupElement;
 begin
-  result := TFhirConceptMapGroupElement.create;
+  result := TFhirConceptMapGroupElement.Create;
   try
     ParseConceptMapGroupElementProperties(jsn, result);
     result.link;
@@ -24269,7 +24269,7 @@ end;
 
 function TFHIRJsonParser.ParseConceptMapGroupElementTarget(jsn : TJsonObject) : TFhirConceptMapGroupElementTarget;
 begin
-  result := TFhirConceptMapGroupElementTarget.create;
+  result := TFhirConceptMapGroupElementTarget.Create;
   try
     ParseConceptMapGroupElementTargetProperties(jsn, result);
     result.link;
@@ -24346,7 +24346,7 @@ end;
 
 function TFHIRJsonParser.ParseConceptMapGroupElementTargetDependsOn(jsn : TJsonObject) : TFhirConceptMapGroupElementTargetDependsOn;
 begin
-  result := TFhirConceptMapGroupElementTargetDependsOn.create;
+  result := TFhirConceptMapGroupElementTargetDependsOn.Create;
   try
     ParseConceptMapGroupElementTargetDependsOnProperties(jsn, result);
     result.link;
@@ -24446,7 +24446,7 @@ end;
 
 function TFHIRJsonParser.ParseConceptMapGroupUnmapped(jsn : TJsonObject) : TFhirConceptMapGroupUnmapped;
 begin
-  result := TFhirConceptMapGroupUnmapped.create;
+  result := TFhirConceptMapGroupUnmapped.Create;
   try
     ParseConceptMapGroupUnmappedProperties(jsn, result);
     result.link;
@@ -24507,7 +24507,7 @@ end;
 
 function TFHIRJsonParser.ParseConceptMap(jsn : TJsonObject) : TFhirConceptMap;
 begin
-  result := TFhirConceptMap.create;
+  result := TFhirConceptMap.Create;
   try
     ParseConceptMapProperties(jsn, result);
     result.link;
@@ -24745,7 +24745,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionParticipant(jsn : TJsonObject) : TFhirConditionParticipant;
 begin
-  result := TFhirConditionParticipant.create;
+  result := TFhirConditionParticipant.Create;
   try
     ParseConditionParticipantProperties(jsn, result);
     result.link;
@@ -24782,7 +24782,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionStage(jsn : TJsonObject) : TFhirConditionStage;
 begin
-  result := TFhirConditionStage.create;
+  result := TFhirConditionStage.Create;
   try
     ParseConditionStageProperties(jsn, result);
     result.link;
@@ -24831,7 +24831,7 @@ end;
 
 function TFHIRJsonParser.ParseCondition(jsn : TJsonObject) : TFhirCondition;
 begin
-  result := TFhirCondition.create;
+  result := TFhirCondition.Create;
   try
     ParseConditionProperties(jsn, result);
     result.link;
@@ -25006,7 +25006,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionDefinitionObservation(jsn : TJsonObject) : TFhirConditionDefinitionObservation;
 begin
-  result := TFhirConditionDefinitionObservation.create;
+  result := TFhirConditionDefinitionObservation.Create;
   try
     ParseConditionDefinitionObservationProperties(jsn, result);
     result.link;
@@ -25044,7 +25044,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionDefinitionMedication(jsn : TJsonObject) : TFhirConditionDefinitionMedication;
 begin
-  result := TFhirConditionDefinitionMedication.create;
+  result := TFhirConditionDefinitionMedication.Create;
   try
     ParseConditionDefinitionMedicationProperties(jsn, result);
     result.link;
@@ -25082,7 +25082,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionDefinitionPrecondition(jsn : TJsonObject) : TFhirConditionDefinitionPrecondition;
 begin
-  result := TFhirConditionDefinitionPrecondition.create;
+  result := TFhirConditionDefinitionPrecondition.Create;
   try
     ParseConditionDefinitionPreconditionProperties(jsn, result);
     result.link;
@@ -25126,7 +25126,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionDefinitionQuestionnaire(jsn : TJsonObject) : TFhirConditionDefinitionQuestionnaire;
 begin
-  result := TFhirConditionDefinitionQuestionnaire.create;
+  result := TFhirConditionDefinitionQuestionnaire.Create;
   try
     ParseConditionDefinitionQuestionnaireProperties(jsn, result);
     result.link;
@@ -25162,7 +25162,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionDefinitionPlan(jsn : TJsonObject) : TFhirConditionDefinitionPlan;
 begin
-  result := TFhirConditionDefinitionPlan.create;
+  result := TFhirConditionDefinitionPlan.Create;
   try
     ParseConditionDefinitionPlanProperties(jsn, result);
     result.link;
@@ -25199,7 +25199,7 @@ end;
 
 function TFHIRJsonParser.ParseConditionDefinition(jsn : TJsonObject) : TFhirConditionDefinition;
 begin
-  result := TFhirConditionDefinition.create;
+  result := TFhirConditionDefinition.Create;
   try
     ParseConditionDefinitionProperties(jsn, result);
     result.link;
@@ -25439,7 +25439,7 @@ end;
 
 function TFHIRJsonParser.ParseConsentPolicyBasis(jsn : TJsonObject) : TFhirConsentPolicyBasis;
 begin
-  result := TFhirConsentPolicyBasis.create;
+  result := TFhirConsentPolicyBasis.Create;
   try
     ParseConsentPolicyBasisProperties(jsn, result);
     result.link;
@@ -25479,7 +25479,7 @@ end;
 
 function TFHIRJsonParser.ParseConsentVerification(jsn : TJsonObject) : TFhirConsentVerification;
 begin
-  result := TFhirConsentVerification.create;
+  result := TFhirConsentVerification.Create;
   try
     ParseConsentVerificationProperties(jsn, result);
     result.link;
@@ -25555,7 +25555,7 @@ end;
 
 function TFHIRJsonParser.ParseConsentProvision(jsn : TJsonObject) : TFhirConsentProvision;
 begin
-  result := TFhirConsentProvision.create;
+  result := TFhirConsentProvision.Create;
   try
     ParseConsentProvisionProperties(jsn, result);
     result.link;
@@ -25675,7 +25675,7 @@ end;
 
 function TFHIRJsonParser.ParseConsentProvisionActor(jsn : TJsonObject) : TFhirConsentProvisionActor;
 begin
-  result := TFhirConsentProvisionActor.create;
+  result := TFhirConsentProvisionActor.Create;
   try
     ParseConsentProvisionActorProperties(jsn, result);
     result.link;
@@ -25713,7 +25713,7 @@ end;
 
 function TFHIRJsonParser.ParseConsentProvisionData(jsn : TJsonObject) : TFhirConsentProvisionData;
 begin
-  result := TFhirConsentProvisionData.create;
+  result := TFhirConsentProvisionData.Create;
   try
     ParseConsentProvisionDataProperties(jsn, result);
     result.link;
@@ -25749,7 +25749,7 @@ end;
 
 function TFHIRJsonParser.ParseConsent(jsn : TJsonObject) : TFhirConsent;
 begin
-  result := TFhirConsent.create;
+  result := TFhirConsent.Create;
   try
     ParseConsentProperties(jsn, result);
     result.link;
@@ -25901,7 +25901,7 @@ end;
 
 function TFHIRJsonParser.ParseContractContentDefinition(jsn : TJsonObject) : TFhirContractContentDefinition;
 begin
-  result := TFhirContractContentDefinition.create;
+  result := TFhirContractContentDefinition.Create;
   try
     ParseContractContentDefinitionProperties(jsn, result);
     result.link;
@@ -25957,7 +25957,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTerm(jsn : TJsonObject) : TFhirContractTerm;
 begin
-  result := TFhirContractTerm.create;
+  result := TFhirContractTerm.Create;
   try
     ParseContractTermProperties(jsn, result);
     result.link;
@@ -26064,7 +26064,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermSecurityLabel(jsn : TJsonObject) : TFhirContractTermSecurityLabel;
 begin
-  result := TFhirContractTermSecurityLabel.create;
+  result := TFhirContractTermSecurityLabel.Create;
   try
     ParseContractTermSecurityLabelProperties(jsn, result);
     result.link;
@@ -26145,7 +26145,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermOffer(jsn : TJsonObject) : TFhirContractTermOffer;
 begin
-  result := TFhirContractTermOffer.create;
+  result := TFhirContractTermOffer.Create;
   try
     ParseContractTermOfferProperties(jsn, result);
     result.link;
@@ -26285,7 +26285,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermOfferParty(jsn : TJsonObject) : TFhirContractTermOfferParty;
 begin
-  result := TFhirContractTermOfferParty.create;
+  result := TFhirContractTermOfferParty.Create;
   try
     ParseContractTermOfferPartyProperties(jsn, result);
     result.link;
@@ -26329,7 +26329,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermOfferAnswer(jsn : TJsonObject) : TFhirContractTermOfferAnswer;
 begin
-  result := TFhirContractTermOfferAnswer.create;
+  result := TFhirContractTermOfferAnswer.Create;
   try
     ParseContractTermOfferAnswerProperties(jsn, result);
     result.link;
@@ -26431,7 +26431,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermAsset(jsn : TJsonObject) : TFhirContractTermAsset;
 begin
-  result := TFhirContractTermAsset.create;
+  result := TFhirContractTermAsset.Create;
   try
     ParseContractTermAssetProperties(jsn, result);
     result.link;
@@ -26618,7 +26618,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermAssetContext(jsn : TJsonObject) : TFhirContractTermAssetContext;
 begin
-  result := TFhirContractTermAssetContext.create;
+  result := TFhirContractTermAssetContext.Create;
   try
     ParseContractTermAssetContextProperties(jsn, result);
     result.link;
@@ -26669,7 +26669,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermAssetValuedItem(jsn : TJsonObject) : TFhirContractTermAssetValuedItem;
 begin
-  result := TFhirContractTermAssetValuedItem.create;
+  result := TFhirContractTermAssetValuedItem.Create;
   try
     ParseContractTermAssetValuedItemProperties(jsn, result);
     result.link;
@@ -26817,7 +26817,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermAction(jsn : TJsonObject) : TFhirContractTermAction;
 begin
-  result := TFhirContractTermAction.create;
+  result := TFhirContractTermAction.Create;
   try
     ParseContractTermActionProperties(jsn, result);
     result.link;
@@ -27094,7 +27094,7 @@ end;
 
 function TFHIRJsonParser.ParseContractTermActionSubject(jsn : TJsonObject) : TFhirContractTermActionSubject;
 begin
-  result := TFhirContractTermActionSubject.create;
+  result := TFhirContractTermActionSubject.Create;
   try
     ParseContractTermActionSubjectProperties(jsn, result);
     result.link;
@@ -27139,7 +27139,7 @@ end;
 
 function TFHIRJsonParser.ParseContractSigner(jsn : TJsonObject) : TFhirContractSigner;
 begin
-  result := TFhirContractSigner.create;
+  result := TFhirContractSigner.Create;
   try
     ParseContractSignerProperties(jsn, result);
     result.link;
@@ -27186,7 +27186,7 @@ end;
 
 function TFHIRJsonParser.ParseContractFriendly(jsn : TJsonObject) : TFhirContractFriendly;
 begin
-  result := TFhirContractFriendly.create;
+  result := TFhirContractFriendly.Create;
   try
     ParseContractFriendlyProperties(jsn, result);
     result.link;
@@ -27224,7 +27224,7 @@ end;
 
 function TFHIRJsonParser.ParseContractLegal(jsn : TJsonObject) : TFhirContractLegal;
 begin
-  result := TFhirContractLegal.create;
+  result := TFhirContractLegal.Create;
   try
     ParseContractLegalProperties(jsn, result);
     result.link;
@@ -27262,7 +27262,7 @@ end;
 
 function TFHIRJsonParser.ParseContractRule(jsn : TJsonObject) : TFhirContractRule;
 begin
-  result := TFhirContractRule.create;
+  result := TFhirContractRule.Create;
   try
     ParseContractRuleProperties(jsn, result);
     result.link;
@@ -27300,7 +27300,7 @@ end;
 
 function TFHIRJsonParser.ParseContract(jsn : TJsonObject) : TFhirContract;
 begin
-  result := TFhirContract.create;
+  result := TFhirContract.Create;
   try
     ParseContractProperties(jsn, result);
     result.link;
@@ -27575,7 +27575,7 @@ end;
 
 function TFHIRJsonParser.ParseCoveragePaymentBy(jsn : TJsonObject) : TFhirCoveragePaymentBy;
 begin
-  result := TFhirCoveragePaymentBy.create;
+  result := TFhirCoveragePaymentBy.Create;
   try
     ParseCoveragePaymentByProperties(jsn, result);
     result.link;
@@ -27614,7 +27614,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageClass(jsn : TJsonObject) : TFhirCoverageClass;
 begin
-  result := TFhirCoverageClass.create;
+  result := TFhirCoverageClass.Create;
   try
     ParseCoverageClassProperties(jsn, result);
     result.link;
@@ -27656,7 +27656,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageCostToBeneficiary(jsn : TJsonObject) : TFhirCoverageCostToBeneficiary;
 begin
-  result := TFhirCoverageCostToBeneficiary.create;
+  result := TFhirCoverageCostToBeneficiary.Create;
   try
     ParseCoverageCostToBeneficiaryProperties(jsn, result);
     result.link;
@@ -27725,7 +27725,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageCostToBeneficiaryException(jsn : TJsonObject) : TFhirCoverageCostToBeneficiaryException;
 begin
-  result := TFhirCoverageCostToBeneficiaryException.create;
+  result := TFhirCoverageCostToBeneficiaryException.Create;
   try
     ParseCoverageCostToBeneficiaryExceptionProperties(jsn, result);
     result.link;
@@ -27762,7 +27762,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverage(jsn : TJsonObject) : TFhirCoverage;
 begin
-  result := TFhirCoverage.create;
+  result := TFhirCoverage.Create;
   try
     ParseCoverageProperties(jsn, result);
     result.link;
@@ -27909,7 +27909,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityRequestSupportingInfo(jsn : TJsonObject) : TFhirCoverageEligibilityRequestSupportingInfo;
 begin
-  result := TFhirCoverageEligibilityRequestSupportingInfo.create;
+  result := TFhirCoverageEligibilityRequestSupportingInfo.Create;
   try
     ParseCoverageEligibilityRequestSupportingInfoProperties(jsn, result);
     result.link;
@@ -27952,7 +27952,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityRequestInsurance(jsn : TJsonObject) : TFhirCoverageEligibilityRequestInsurance;
 begin
-  result := TFhirCoverageEligibilityRequestInsurance.create;
+  result := TFhirCoverageEligibilityRequestInsurance.Create;
   try
     ParseCoverageEligibilityRequestInsuranceProperties(jsn, result);
     result.link;
@@ -27997,7 +27997,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityRequestItem(jsn : TJsonObject) : TFhirCoverageEligibilityRequestItem;
 begin
-  result := TFhirCoverageEligibilityRequestItem.create;
+  result := TFhirCoverageEligibilityRequestItem.Create;
   try
     ParseCoverageEligibilityRequestItemProperties(jsn, result);
     result.link;
@@ -28108,7 +28108,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityRequestItemDiagnosis(jsn : TJsonObject) : TFhirCoverageEligibilityRequestItemDiagnosis;
 begin
-  result := TFhirCoverageEligibilityRequestItemDiagnosis.create;
+  result := TFhirCoverageEligibilityRequestItemDiagnosis.Create;
   try
     ParseCoverageEligibilityRequestItemDiagnosisProperties(jsn, result);
     result.link;
@@ -28146,7 +28146,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityRequest(jsn : TJsonObject) : TFhirCoverageEligibilityRequest;
 begin
-  result := TFhirCoverageEligibilityRequest.create;
+  result := TFhirCoverageEligibilityRequest.Create;
   try
     ParseCoverageEligibilityRequestProperties(jsn, result);
     result.link;
@@ -28282,7 +28282,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityResponseInsurance(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsurance;
 begin
-  result := TFhirCoverageEligibilityResponseInsurance.create;
+  result := TFhirCoverageEligibilityResponseInsurance.Create;
   try
     ParseCoverageEligibilityResponseInsuranceProperties(jsn, result);
     result.link;
@@ -28336,7 +28336,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItem(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsuranceItem;
 begin
-  result := TFhirCoverageEligibilityResponseInsuranceItem.create;
+  result := TFhirCoverageEligibilityResponseInsuranceItem.Create;
   try
     ParseCoverageEligibilityResponseInsuranceItemProperties(jsn, result);
     result.link;
@@ -28449,7 +28449,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityResponseInsuranceItemBenefit(jsn : TJsonObject) : TFhirCoverageEligibilityResponseInsuranceItemBenefit;
 begin
-  result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.create;
+  result := TFhirCoverageEligibilityResponseInsuranceItemBenefit.Create;
   try
     ParseCoverageEligibilityResponseInsuranceItemBenefitProperties(jsn, result);
     result.link;
@@ -28518,7 +28518,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityResponseError(jsn : TJsonObject) : TFhirCoverageEligibilityResponseError;
 begin
-  result := TFhirCoverageEligibilityResponseError.create;
+  result := TFhirCoverageEligibilityResponseError.Create;
   try
     ParseCoverageEligibilityResponseErrorProperties(jsn, result);
     result.link;
@@ -28551,7 +28551,7 @@ end;
 
 function TFHIRJsonParser.ParseCoverageEligibilityResponse(jsn : TJsonObject) : TFhirCoverageEligibilityResponse;
 begin
-  result := TFhirCoverageEligibilityResponse.create;
+  result := TFhirCoverageEligibilityResponse.Create;
   try
     ParseCoverageEligibilityResponseProperties(jsn, result);
     result.link;
@@ -28688,7 +28688,7 @@ end;
 
 function TFHIRJsonParser.ParseDetectedIssueEvidence(jsn : TJsonObject) : TFhirDetectedIssueEvidence;
 begin
-  result := TFhirDetectedIssueEvidence.create;
+  result := TFhirDetectedIssueEvidence.Create;
   try
     ParseDetectedIssueEvidenceProperties(jsn, result);
     result.link;
@@ -28738,7 +28738,7 @@ end;
 
 function TFHIRJsonParser.ParseDetectedIssueMitigation(jsn : TJsonObject) : TFhirDetectedIssueMitigation;
 begin
-  result := TFhirDetectedIssueMitigation.create;
+  result := TFhirDetectedIssueMitigation.Create;
   try
     ParseDetectedIssueMitigationProperties(jsn, result);
     result.link;
@@ -28781,7 +28781,7 @@ end;
 
 function TFHIRJsonParser.ParseDetectedIssue(jsn : TJsonObject) : TFhirDetectedIssue;
 begin
-  result := TFhirDetectedIssue.create;
+  result := TFhirDetectedIssue.Create;
   try
     ParseDetectedIssueProperties(jsn, result);
     result.link;
@@ -28900,7 +28900,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceUdiCarrier(jsn : TJsonObject) : TFhirDeviceUdiCarrier;
 begin
-  result := TFhirDeviceUdiCarrier.create;
+  result := TFhirDeviceUdiCarrier.Create;
   try
     ParseDeviceUdiCarrierProperties(jsn, result);
     result.link;
@@ -28960,7 +28960,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDeviceName(jsn : TJsonObject) : TFhirDeviceDeviceName;
 begin
-  result := TFhirDeviceDeviceName.create;
+  result := TFhirDeviceDeviceName.Create;
   try
     ParseDeviceDeviceNameProperties(jsn, result);
     result.link;
@@ -28997,7 +28997,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceVersion(jsn : TJsonObject) : TFhirDeviceVersion;
 begin
-  result := TFhirDeviceVersion.create;
+  result := TFhirDeviceVersion.Create;
   try
     ParseDeviceVersionProperties(jsn, result);
     result.link;
@@ -29045,7 +29045,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceSpecialization(jsn : TJsonObject) : TFhirDeviceSpecialization;
 begin
-  result := TFhirDeviceSpecialization.create;
+  result := TFhirDeviceSpecialization.Create;
   try
     ParseDeviceSpecializationProperties(jsn, result);
     result.link;
@@ -29088,7 +29088,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceProperty(jsn : TJsonObject) : TFhirDeviceProperty;
 begin
-  result := TFhirDeviceProperty.create;
+  result := TFhirDeviceProperty.Create;
   try
     ParseDevicePropertyProperties(jsn, result);
     result.link;
@@ -29158,7 +29158,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceOperation(jsn : TJsonObject) : TFhirDeviceOperation;
 begin
-  result := TFhirDeviceOperation.create;
+  result := TFhirDeviceOperation.Create;
   try
     ParseDeviceOperationProperties(jsn, result);
     result.link;
@@ -29223,7 +29223,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceAssociation(jsn : TJsonObject) : TFhirDeviceAssociation;
 begin
-  result := TFhirDeviceAssociation.create;
+  result := TFhirDeviceAssociation.Create;
   try
     ParseDeviceAssociationProperties(jsn, result);
     result.link;
@@ -29275,7 +29275,7 @@ end;
 
 function TFHIRJsonParser.ParseDevice(jsn : TJsonObject) : TFhirDevice;
 begin
-  result := TFhirDevice.create;
+  result := TFhirDevice.Create;
   try
     ParseDeviceProperties(jsn, result);
     result.link;
@@ -29524,7 +29524,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionUdiDeviceIdentifier(jsn : TJsonObject) : TFhirDeviceDefinitionUdiDeviceIdentifier;
 begin
-  result := TFhirDeviceDefinitionUdiDeviceIdentifier.create;
+  result := TFhirDeviceDefinitionUdiDeviceIdentifier.Create;
   try
     ParseDeviceDefinitionUdiDeviceIdentifierProperties(jsn, result);
     result.link;
@@ -29577,7 +29577,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionUdiDeviceIdentifierMarketDistribution(jsn : TJsonObject) : TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistribution;
 begin
-  result := TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistribution.create;
+  result := TFhirDeviceDefinitionUdiDeviceIdentifierMarketDistribution.Create;
   try
     ParseDeviceDefinitionUdiDeviceIdentifierMarketDistributionProperties(jsn, result);
     result.link;
@@ -29614,7 +29614,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionRegulatoryIdentifier(jsn : TJsonObject) : TFhirDeviceDefinitionRegulatoryIdentifier;
 begin
-  result := TFhirDeviceDefinitionRegulatoryIdentifier.create;
+  result := TFhirDeviceDefinitionRegulatoryIdentifier.Create;
   try
     ParseDeviceDefinitionRegulatoryIdentifierProperties(jsn, result);
     result.link;
@@ -29659,7 +29659,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionDeviceName(jsn : TJsonObject) : TFhirDeviceDefinitionDeviceName;
 begin
-  result := TFhirDeviceDefinitionDeviceName.create;
+  result := TFhirDeviceDefinitionDeviceName.Create;
   try
     ParseDeviceDefinitionDeviceNameProperties(jsn, result);
     result.link;
@@ -29696,7 +29696,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionClassification(jsn : TJsonObject) : TFhirDeviceDefinitionClassification;
 begin
-  result := TFhirDeviceDefinitionClassification.create;
+  result := TFhirDeviceDefinitionClassification.Create;
   try
     ParseDeviceDefinitionClassificationProperties(jsn, result);
     result.link;
@@ -29740,7 +29740,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionHasPart(jsn : TJsonObject) : TFhirDeviceDefinitionHasPart;
 begin
-  result := TFhirDeviceDefinitionHasPart.create;
+  result := TFhirDeviceDefinitionHasPart.Create;
   try
     ParseDeviceDefinitionHasPartProperties(jsn, result);
     result.link;
@@ -29779,7 +29779,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionPackaging(jsn : TJsonObject) : TFhirDeviceDefinitionPackaging;
 begin
-  result := TFhirDeviceDefinitionPackaging.create;
+  result := TFhirDeviceDefinitionPackaging.Create;
   try
     ParseDeviceDefinitionPackagingProperties(jsn, result);
     result.link;
@@ -29852,7 +29852,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionPackagingDistributor(jsn : TJsonObject) : TFhirDeviceDefinitionPackagingDistributor;
 begin
-  result := TFhirDeviceDefinitionPackagingDistributor.create;
+  result := TFhirDeviceDefinitionPackagingDistributor.Create;
   try
     ParseDeviceDefinitionPackagingDistributorProperties(jsn, result);
     result.link;
@@ -29899,7 +29899,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionVersion(jsn : TJsonObject) : TFhirDeviceDefinitionVersion;
 begin
-  result := TFhirDeviceDefinitionVersion.create;
+  result := TFhirDeviceDefinitionVersion.Create;
   try
     ParseDeviceDefinitionVersionProperties(jsn, result);
     result.link;
@@ -29941,7 +29941,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionProperty(jsn : TJsonObject) : TFhirDeviceDefinitionProperty;
 begin
-  result := TFhirDeviceDefinitionProperty.create;
+  result := TFhirDeviceDefinitionProperty.Create;
   try
     ParseDeviceDefinitionPropertyProperties(jsn, result);
     result.link;
@@ -30011,7 +30011,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionLink(jsn : TJsonObject) : TFhirDeviceDefinitionLink;
 begin
-  result := TFhirDeviceDefinitionLink.create;
+  result := TFhirDeviceDefinitionLink.Create;
   try
     ParseDeviceDefinitionLinkProperties(jsn, result);
     result.link;
@@ -30047,7 +30047,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionMaterial(jsn : TJsonObject) : TFhirDeviceDefinitionMaterial;
 begin
-  result := TFhirDeviceDefinitionMaterial.create;
+  result := TFhirDeviceDefinitionMaterial.Create;
   try
     ParseDeviceDefinitionMaterialProperties(jsn, result);
     result.link;
@@ -30092,7 +30092,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionGuideline(jsn : TJsonObject) : TFhirDeviceDefinitionGuideline;
 begin
-  result := TFhirDeviceDefinitionGuideline.create;
+  result := TFhirDeviceDefinitionGuideline.Create;
   try
     ParseDeviceDefinitionGuidelineProperties(jsn, result);
     result.link;
@@ -30181,7 +30181,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionCorrectiveAction(jsn : TJsonObject) : TFhirDeviceDefinitionCorrectiveAction;
 begin
-  result := TFhirDeviceDefinitionCorrectiveAction.create;
+  result := TFhirDeviceDefinitionCorrectiveAction.Create;
   try
     ParseDeviceDefinitionCorrectiveActionProperties(jsn, result);
     result.link;
@@ -30222,7 +30222,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinitionChargeItem(jsn : TJsonObject) : TFhirDeviceDefinitionChargeItem;
 begin
-  result := TFhirDeviceDefinitionChargeItem.create;
+  result := TFhirDeviceDefinitionChargeItem.Create;
   try
     ParseDeviceDefinitionChargeItemProperties(jsn, result);
     result.link;
@@ -30273,7 +30273,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDefinition(jsn : TJsonObject) : TFhirDeviceDefinition;
 begin
-  result := TFhirDeviceDefinition.create;
+  result := TFhirDeviceDefinition.Create;
   try
     ParseDeviceDefinitionProperties(jsn, result);
     result.link;
@@ -30533,7 +30533,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDispensePerformer(jsn : TJsonObject) : TFhirDeviceDispensePerformer;
 begin
-  result := TFhirDeviceDispensePerformer.create;
+  result := TFhirDeviceDispensePerformer.Create;
   try
     ParseDeviceDispensePerformerProperties(jsn, result);
     result.link;
@@ -30570,7 +30570,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceDispense(jsn : TJsonObject) : TFhirDeviceDispense;
 begin
-  result := TFhirDeviceDispense.create;
+  result := TFhirDeviceDispense.Create;
   try
     ParseDeviceDispenseProperties(jsn, result);
     result.link;
@@ -30725,7 +30725,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceMetricCalibration(jsn : TJsonObject) : TFhirDeviceMetricCalibration;
 begin
-  result := TFhirDeviceMetricCalibration.create;
+  result := TFhirDeviceMetricCalibration.Create;
   try
     ParseDeviceMetricCalibrationProperties(jsn, result);
     result.link;
@@ -30769,7 +30769,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceMetric(jsn : TJsonObject) : TFhirDeviceMetric;
 begin
-  result := TFhirDeviceMetric.create;
+  result := TFhirDeviceMetric.Create;
   try
     ParseDeviceMetricProperties(jsn, result);
     result.link;
@@ -30849,7 +30849,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceRequestParameter(jsn : TJsonObject) : TFhirDeviceRequestParameter;
 begin
-  result := TFhirDeviceRequestParameter.create;
+  result := TFhirDeviceRequestParameter.Create;
   try
     ParseDeviceRequestParameterProperties(jsn, result);
     result.link;
@@ -30902,7 +30902,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceRequest(jsn : TJsonObject) : TFhirDeviceRequest;
 begin
-  result := TFhirDeviceRequest.create;
+  result := TFhirDeviceRequest.Create;
   try
     ParseDeviceRequestProperties(jsn, result);
     result.link;
@@ -31149,7 +31149,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceUsageAdherence(jsn : TJsonObject) : TFhirDeviceUsageAdherence;
 begin
-  result := TFhirDeviceUsageAdherence.create;
+  result := TFhirDeviceUsageAdherence.Create;
   try
     ParseDeviceUsageAdherenceProperties(jsn, result);
     result.link;
@@ -31193,7 +31193,7 @@ end;
 
 function TFHIRJsonParser.ParseDeviceUsage(jsn : TJsonObject) : TFhirDeviceUsage;
 begin
-  result := TFhirDeviceUsage.create;
+  result := TFhirDeviceUsage.Create;
   try
     ParseDeviceUsageProperties(jsn, result);
     result.link;
@@ -31338,7 +31338,7 @@ end;
 
 function TFHIRJsonParser.ParseDiagnosticReportSupportingInfo(jsn : TJsonObject) : TFhirDiagnosticReportSupportingInfo;
 begin
-  result := TFhirDiagnosticReportSupportingInfo.create;
+  result := TFhirDiagnosticReportSupportingInfo.Create;
   try
     ParseDiagnosticReportSupportingInfoProperties(jsn, result);
     result.link;
@@ -31374,7 +31374,7 @@ end;
 
 function TFHIRJsonParser.ParseDiagnosticReportMedia(jsn : TJsonObject) : TFhirDiagnosticReportMedia;
 begin
-  result := TFhirDiagnosticReportMedia.create;
+  result := TFhirDiagnosticReportMedia.Create;
   try
     ParseDiagnosticReportMediaProperties(jsn, result);
     result.link;
@@ -31413,7 +31413,7 @@ end;
 
 function TFHIRJsonParser.ParseDiagnosticReport(jsn : TJsonObject) : TFhirDiagnosticReport;
 begin
-  result := TFhirDiagnosticReport.create;
+  result := TFhirDiagnosticReport.Create;
   try
     ParseDiagnosticReportProperties(jsn, result);
     result.link;
@@ -31603,7 +31603,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentManifestRelated(jsn : TJsonObject) : TFhirDocumentManifestRelated;
 begin
-  result := TFhirDocumentManifestRelated.create;
+  result := TFhirDocumentManifestRelated.Create;
   try
     ParseDocumentManifestRelatedProperties(jsn, result);
     result.link;
@@ -31641,7 +31641,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentManifest(jsn : TJsonObject) : TFhirDocumentManifest;
 begin
-  result := TFhirDocumentManifest.create;
+  result := TFhirDocumentManifest.Create;
   try
     ParseDocumentManifestProperties(jsn, result);
     result.link;
@@ -31751,7 +31751,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentReferenceAttester(jsn : TJsonObject) : TFhirDocumentReferenceAttester;
 begin
-  result := TFhirDocumentReferenceAttester.create;
+  result := TFhirDocumentReferenceAttester.Create;
   try
     ParseDocumentReferenceAttesterProperties(jsn, result);
     result.link;
@@ -31794,7 +31794,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentReferenceRelatesTo(jsn : TJsonObject) : TFhirDocumentReferenceRelatesTo;
 begin
-  result := TFhirDocumentReferenceRelatesTo.create;
+  result := TFhirDocumentReferenceRelatesTo.Create;
   try
     ParseDocumentReferenceRelatesToProperties(jsn, result);
     result.link;
@@ -31830,7 +31830,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentReferenceContent(jsn : TJsonObject) : TFhirDocumentReferenceContent;
 begin
-  result := TFhirDocumentReferenceContent.create;
+  result := TFhirDocumentReferenceContent.Create;
   try
     ParseDocumentReferenceContentProperties(jsn, result);
     result.link;
@@ -31874,7 +31874,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentReferenceContentProfile(jsn : TJsonObject) : TFhirDocumentReferenceContentProfile;
 begin
-  result := TFhirDocumentReferenceContentProfile.create;
+  result := TFhirDocumentReferenceContentProfile.Create;
   try
     ParseDocumentReferenceContentProfileProperties(jsn, result);
     result.link;
@@ -31922,7 +31922,7 @@ end;
 
 function TFHIRJsonParser.ParseDocumentReference(jsn : TJsonObject) : TFhirDocumentReference;
 begin
-  result := TFhirDocumentReference.create;
+  result := TFhirDocumentReference.Create;
   try
     ParseDocumentReferenceProperties(jsn, result);
     result.link;
@@ -32087,7 +32087,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounterStatusHistory(jsn : TJsonObject) : TFhirEncounterStatusHistory;
 begin
-  result := TFhirEncounterStatusHistory.create;
+  result := TFhirEncounterStatusHistory.Create;
   try
     ParseEncounterStatusHistoryProperties(jsn, result);
     result.link;
@@ -32123,7 +32123,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounterClassHistory(jsn : TJsonObject) : TFhirEncounterClassHistory;
 begin
-  result := TFhirEncounterClassHistory.create;
+  result := TFhirEncounterClassHistory.Create;
   try
     ParseEncounterClassHistoryProperties(jsn, result);
     result.link;
@@ -32159,7 +32159,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounterParticipant(jsn : TJsonObject) : TFhirEncounterParticipant;
 begin
-  result := TFhirEncounterParticipant.create;
+  result := TFhirEncounterParticipant.Create;
   try
     ParseEncounterParticipantProperties(jsn, result);
     result.link;
@@ -32208,7 +32208,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounterDiagnosis(jsn : TJsonObject) : TFhirEncounterDiagnosis;
 begin
-  result := TFhirEncounterDiagnosis.create;
+  result := TFhirEncounterDiagnosis.Create;
   try
     ParseEncounterDiagnosisProperties(jsn, result);
     result.link;
@@ -32251,7 +32251,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounterAdmission(jsn : TJsonObject) : TFhirEncounterAdmission;
 begin
-  result := TFhirEncounterAdmission.create;
+  result := TFhirEncounterAdmission.Create;
   try
     ParseEncounterAdmissionProperties(jsn, result);
     result.link;
@@ -32334,7 +32334,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounterLocation(jsn : TJsonObject) : TFhirEncounterLocation;
 begin
-  result := TFhirEncounterLocation.create;
+  result := TFhirEncounterLocation.Create;
   try
     ParseEncounterLocationProperties(jsn, result);
     result.link;
@@ -32379,7 +32379,7 @@ end;
 
 function TFHIRJsonParser.ParseEncounter(jsn : TJsonObject) : TFhirEncounter;
 begin
-  result := TFhirEncounter.create;
+  result := TFhirEncounter.Create;
   try
     ParseEncounterProperties(jsn, result);
     result.link;
@@ -32602,7 +32602,7 @@ end;
 
 function TFHIRJsonParser.ParseEndpoint(jsn : TJsonObject) : TFhirEndpoint;
 begin
-  result := TFhirEndpoint.create;
+  result := TFhirEndpoint.Create;
   try
     ParseEndpointProperties(jsn, result);
     result.link;
@@ -32760,7 +32760,7 @@ end;
 
 function TFHIRJsonParser.ParseEnrollmentRequest(jsn : TJsonObject) : TFhirEnrollmentRequest;
 begin
-  result := TFhirEnrollmentRequest.create;
+  result := TFhirEnrollmentRequest.Create;
   try
     ParseEnrollmentRequestProperties(jsn, result);
     result.link;
@@ -32827,7 +32827,7 @@ end;
 
 function TFHIRJsonParser.ParseEnrollmentResponse(jsn : TJsonObject) : TFhirEnrollmentResponse;
 begin
-  result := TFhirEnrollmentResponse.create;
+  result := TFhirEnrollmentResponse.Create;
   try
     ParseEnrollmentResponseProperties(jsn, result);
     result.link;
@@ -32900,7 +32900,7 @@ end;
 
 function TFHIRJsonParser.ParseEpisodeOfCareStatusHistory(jsn : TJsonObject) : TFhirEpisodeOfCareStatusHistory;
 begin
-  result := TFhirEpisodeOfCareStatusHistory.create;
+  result := TFhirEpisodeOfCareStatusHistory.Create;
   try
     ParseEpisodeOfCareStatusHistoryProperties(jsn, result);
     result.link;
@@ -32936,7 +32936,7 @@ end;
 
 function TFHIRJsonParser.ParseEpisodeOfCareDiagnosis(jsn : TJsonObject) : TFhirEpisodeOfCareDiagnosis;
 begin
-  result := TFhirEpisodeOfCareDiagnosis.create;
+  result := TFhirEpisodeOfCareDiagnosis.Create;
   try
     ParseEpisodeOfCareDiagnosisProperties(jsn, result);
     result.link;
@@ -32979,7 +32979,7 @@ end;
 
 function TFHIRJsonParser.ParseEpisodeOfCare(jsn : TJsonObject) : TFhirEpisodeOfCare;
 begin
-  result := TFhirEpisodeOfCare.create;
+  result := TFhirEpisodeOfCare.Create;
   try
     ParseEpisodeOfCareProperties(jsn, result);
     result.link;
@@ -33092,7 +33092,7 @@ end;
 
 function TFHIRJsonParser.ParseEventDefinition(jsn : TJsonObject) : TFhirEventDefinition;
 begin
-  result := TFhirEventDefinition.create;
+  result := TFhirEventDefinition.Create;
   try
     ParseEventDefinitionProperties(jsn, result);
     result.link;
@@ -33322,7 +33322,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariableDefinition(jsn : TJsonObject) : TFhirEvidenceVariableDefinition;
 begin
-  result := TFhirEvidenceVariableDefinition.create;
+  result := TFhirEvidenceVariableDefinition.Create;
   try
     ParseEvidenceVariableDefinitionProperties(jsn, result);
     result.link;
@@ -33384,7 +33384,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceStatistic(jsn : TJsonObject) : TFhirEvidenceStatistic;
 begin
-  result := TFhirEvidenceStatistic.create;
+  result := TFhirEvidenceStatistic.Create;
   try
     ParseEvidenceStatisticProperties(jsn, result);
     result.link;
@@ -33477,7 +33477,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceStatisticSampleSize(jsn : TJsonObject) : TFhirEvidenceStatisticSampleSize;
 begin
-  result := TFhirEvidenceStatisticSampleSize.create;
+  result := TFhirEvidenceStatisticSampleSize.Create;
   try
     ParseEvidenceStatisticSampleSizeProperties(jsn, result);
     result.link;
@@ -33542,7 +33542,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceStatisticAttributeEstimate(jsn : TJsonObject) : TFhirEvidenceStatisticAttributeEstimate;
 begin
-  result := TFhirEvidenceStatisticAttributeEstimate.create;
+  result := TFhirEvidenceStatisticAttributeEstimate.Create;
   try
     ParseEvidenceStatisticAttributeEstimateProperties(jsn, result);
     result.link;
@@ -33616,7 +33616,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceStatisticModelCharacteristic(jsn : TJsonObject) : TFhirEvidenceStatisticModelCharacteristic;
 begin
-  result := TFhirEvidenceStatisticModelCharacteristic.create;
+  result := TFhirEvidenceStatisticModelCharacteristic.Create;
   try
     ParseEvidenceStatisticModelCharacteristicProperties(jsn, result);
     result.link;
@@ -33673,7 +33673,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceStatisticModelCharacteristicVariable(jsn : TJsonObject) : TFhirEvidenceStatisticModelCharacteristicVariable;
 begin
-  result := TFhirEvidenceStatisticModelCharacteristicVariable.create;
+  result := TFhirEvidenceStatisticModelCharacteristicVariable.Create;
   try
     ParseEvidenceStatisticModelCharacteristicVariableProperties(jsn, result);
     result.link;
@@ -33739,7 +33739,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceCertainty(jsn : TJsonObject) : TFhirEvidenceCertainty;
 begin
-  result := TFhirEvidenceCertainty.create;
+  result := TFhirEvidenceCertainty.Create;
   try
     ParseEvidenceCertaintyProperties(jsn, result);
     result.link;
@@ -33809,7 +33809,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidence(jsn : TJsonObject) : TFhirEvidence;
 begin
-  result := TFhirEvidence.create;
+  result := TFhirEvidence.Create;
   try
     ParseEvidenceProperties(jsn, result);
     result.link;
@@ -34042,7 +34042,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceReportSubject(jsn : TJsonObject) : TFhirEvidenceReportSubject;
 begin
-  result := TFhirEvidenceReportSubject.create;
+  result := TFhirEvidenceReportSubject.Create;
   try
     ParseEvidenceReportSubjectProperties(jsn, result);
     result.link;
@@ -34092,7 +34092,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceReportSubjectCharacteristic(jsn : TJsonObject) : TFhirEvidenceReportSubjectCharacteristic;
 begin
-  result := TFhirEvidenceReportSubjectCharacteristic.create;
+  result := TFhirEvidenceReportSubjectCharacteristic.Create;
   try
     ParseEvidenceReportSubjectCharacteristicProperties(jsn, result);
     result.link;
@@ -34158,7 +34158,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceReportRelatesTo(jsn : TJsonObject) : TFhirEvidenceReportRelatesTo;
 begin
-  result := TFhirEvidenceReportRelatesTo.create;
+  result := TFhirEvidenceReportRelatesTo.Create;
   try
     ParseEvidenceReportRelatesToProperties(jsn, result);
     result.link;
@@ -34194,7 +34194,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceReportRelatesToTarget(jsn : TJsonObject) : TFhirEvidenceReportRelatesToTarget;
 begin
-  result := TFhirEvidenceReportRelatesToTarget.create;
+  result := TFhirEvidenceReportRelatesToTarget.Create;
   try
     ParseEvidenceReportRelatesToTargetProperties(jsn, result);
     result.link;
@@ -34244,7 +34244,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceReportSection(jsn : TJsonObject) : TFhirEvidenceReportSection;
 begin
-  result := TFhirEvidenceReportSection.create;
+  result := TFhirEvidenceReportSection.Create;
   try
     ParseEvidenceReportSectionProperties(jsn, result);
     result.link;
@@ -34351,7 +34351,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceReport(jsn : TJsonObject) : TFhirEvidenceReport;
 begin
-  result := TFhirEvidenceReport.create;
+  result := TFhirEvidenceReport.Create;
   try
     ParseEvidenceReportProperties(jsn, result);
     result.link;
@@ -34524,7 +34524,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariableCharacteristic(jsn : TJsonObject) : TFhirEvidenceVariableCharacteristic;
 begin
-  result := TFhirEvidenceVariableCharacteristic.create;
+  result := TFhirEvidenceVariableCharacteristic.Create;
   try
     ParseEvidenceVariableCharacteristicProperties(jsn, result);
     result.link;
@@ -34624,7 +34624,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariableCharacteristicDefinitionByTypeAndValue(jsn : TJsonObject) : TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValue;
 begin
-  result := TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValue.create;
+  result := TFhirEvidenceVariableCharacteristicDefinitionByTypeAndValue.Create;
   try
     ParseEvidenceVariableCharacteristicDefinitionByTypeAndValueProperties(jsn, result);
     result.link;
@@ -34706,7 +34706,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariableCharacteristicDefinitionByCombination(jsn : TJsonObject) : TFhirEvidenceVariableCharacteristicDefinitionByCombination;
 begin
-  result := TFhirEvidenceVariableCharacteristicDefinitionByCombination.create;
+  result := TFhirEvidenceVariableCharacteristicDefinitionByCombination.Create;
   try
     ParseEvidenceVariableCharacteristicDefinitionByCombinationProperties(jsn, result);
     result.link;
@@ -34756,7 +34756,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariableCharacteristicTimeFromEvent(jsn : TJsonObject) : TFhirEvidenceVariableCharacteristicTimeFromEvent;
 begin
-  result := TFhirEvidenceVariableCharacteristicTimeFromEvent.create;
+  result := TFhirEvidenceVariableCharacteristicTimeFromEvent.Create;
   try
     ParseEvidenceVariableCharacteristicTimeFromEventProperties(jsn, result);
     result.link;
@@ -34833,7 +34833,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariableCategory(jsn : TJsonObject) : TFhirEvidenceVariableCategory;
 begin
-  result := TFhirEvidenceVariableCategory.create;
+  result := TFhirEvidenceVariableCategory.Create;
   try
     ParseEvidenceVariableCategoryProperties(jsn, result);
     result.link;
@@ -34881,7 +34881,7 @@ end;
 
 function TFHIRJsonParser.ParseEvidenceVariable(jsn : TJsonObject) : TFhirEvidenceVariable;
 begin
-  result := TFhirEvidenceVariable.create;
+  result := TFhirEvidenceVariable.Create;
   try
     ParseEvidenceVariableProperties(jsn, result);
     result.link;
@@ -35107,7 +35107,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioActor(jsn : TJsonObject) : TFhirExampleScenarioActor;
 begin
-  result := TFhirExampleScenarioActor.create;
+  result := TFhirExampleScenarioActor.Create;
   try
     ParseExampleScenarioActorProperties(jsn, result);
     result.link;
@@ -35154,7 +35154,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioInstance(jsn : TJsonObject) : TFhirExampleScenarioInstance;
 begin
-  result := TFhirExampleScenarioInstance.create;
+  result := TFhirExampleScenarioInstance.Create;
   try
     ParseExampleScenarioInstanceProperties(jsn, result);
     result.link;
@@ -35245,7 +35245,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioInstanceVersion(jsn : TJsonObject) : TFhirExampleScenarioInstanceVersion;
 begin
-  result := TFhirExampleScenarioInstanceVersion.create;
+  result := TFhirExampleScenarioInstanceVersion.Create;
   try
     ParseExampleScenarioInstanceVersionProperties(jsn, result);
     result.link;
@@ -35289,7 +35289,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioInstanceContainedInstance(jsn : TJsonObject) : TFhirExampleScenarioInstanceContainedInstance;
 begin
-  result := TFhirExampleScenarioInstanceContainedInstance.create;
+  result := TFhirExampleScenarioInstanceContainedInstance.Create;
   try
     ParseExampleScenarioInstanceContainedInstanceProperties(jsn, result);
     result.link;
@@ -35329,7 +35329,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioProcess(jsn : TJsonObject) : TFhirExampleScenarioProcess;
 begin
-  result := TFhirExampleScenarioProcess.create;
+  result := TFhirExampleScenarioProcess.Create;
   try
     ParseExampleScenarioProcessProperties(jsn, result);
     result.link;
@@ -35392,7 +35392,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioProcessStep(jsn : TJsonObject) : TFhirExampleScenarioProcessStep;
 begin
-  result := TFhirExampleScenarioProcessStep.create;
+  result := TFhirExampleScenarioProcessStep.Create;
   try
     ParseExampleScenarioProcessStepProperties(jsn, result);
     result.link;
@@ -35459,7 +35459,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioProcessStepOperation(jsn : TJsonObject) : TFhirExampleScenarioProcessStepOperation;
 begin
-  result := TFhirExampleScenarioProcessStepOperation.create;
+  result := TFhirExampleScenarioProcessStepOperation.Create;
   try
     ParseExampleScenarioProcessStepOperationProperties(jsn, result);
     result.link;
@@ -35535,7 +35535,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenarioProcessStepAlternative(jsn : TJsonObject) : TFhirExampleScenarioProcessStepAlternative;
 begin
-  result := TFhirExampleScenarioProcessStepAlternative.create;
+  result := TFhirExampleScenarioProcessStepAlternative.Create;
   try
     ParseExampleScenarioProcessStepAlternativeProperties(jsn, result);
     result.link;
@@ -35586,7 +35586,7 @@ end;
 
 function TFHIRJsonParser.ParseExampleScenario(jsn : TJsonObject) : TFhirExampleScenario;
 begin
-  result := TFhirExampleScenario.create;
+  result := TFhirExampleScenario.Create;
   try
     ParseExampleScenarioProperties(jsn, result);
     result.link;
@@ -35761,7 +35761,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitRelated(jsn : TJsonObject) : TFhirExplanationOfBenefitRelated;
 begin
-  result := TFhirExplanationOfBenefitRelated.create;
+  result := TFhirExplanationOfBenefitRelated.Create;
   try
     ParseExplanationOfBenefitRelatedProperties(jsn, result);
     result.link;
@@ -35803,7 +35803,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitPayee(jsn : TJsonObject) : TFhirExplanationOfBenefitPayee;
 begin
-  result := TFhirExplanationOfBenefitPayee.create;
+  result := TFhirExplanationOfBenefitPayee.Create;
   try
     ParseExplanationOfBenefitPayeeProperties(jsn, result);
     result.link;
@@ -35841,7 +35841,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitCareTeam(jsn : TJsonObject) : TFhirExplanationOfBenefitCareTeam;
 begin
-  result := TFhirExplanationOfBenefitCareTeam.create;
+  result := TFhirExplanationOfBenefitCareTeam.Create;
   try
     ParseExplanationOfBenefitCareTeamProperties(jsn, result);
     result.link;
@@ -35892,7 +35892,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitSupportingInfo(jsn : TJsonObject) : TFhirExplanationOfBenefitSupportingInfo;
 begin
-  result := TFhirExplanationOfBenefitSupportingInfo.create;
+  result := TFhirExplanationOfBenefitSupportingInfo.Create;
   try
     ParseExplanationOfBenefitSupportingInfoProperties(jsn, result);
     result.link;
@@ -35978,7 +35978,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitDiagnosis(jsn : TJsonObject) : TFhirExplanationOfBenefitDiagnosis;
 begin
-  result := TFhirExplanationOfBenefitDiagnosis.create;
+  result := TFhirExplanationOfBenefitDiagnosis.Create;
   try
     ParseExplanationOfBenefitDiagnosisProperties(jsn, result);
     result.link;
@@ -36035,7 +36035,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitProcedure(jsn : TJsonObject) : TFhirExplanationOfBenefitProcedure;
 begin
-  result := TFhirExplanationOfBenefitProcedure.create;
+  result := TFhirExplanationOfBenefitProcedure.Create;
   try
     ParseExplanationOfBenefitProcedureProperties(jsn, result);
     result.link;
@@ -36103,7 +36103,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitInsurance(jsn : TJsonObject) : TFhirExplanationOfBenefitInsurance;
 begin
-  result := TFhirExplanationOfBenefitInsurance.create;
+  result := TFhirExplanationOfBenefitInsurance.Create;
   try
     ParseExplanationOfBenefitInsuranceProperties(jsn, result);
     result.link;
@@ -36170,7 +36170,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitAccident(jsn : TJsonObject) : TFhirExplanationOfBenefitAccident;
 begin
-  result := TFhirExplanationOfBenefitAccident.create;
+  result := TFhirExplanationOfBenefitAccident.Create;
   try
     ParseExplanationOfBenefitAccidentProperties(jsn, result);
     result.link;
@@ -36218,7 +36218,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitItem(jsn : TJsonObject) : TFhirExplanationOfBenefitItem;
 begin
-  result := TFhirExplanationOfBenefitItem.create;
+  result := TFhirExplanationOfBenefitItem.Create;
   try
     ParseExplanationOfBenefitItemProperties(jsn, result);
     result.link;
@@ -36518,7 +36518,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitItemBodySite(jsn : TJsonObject) : TFhirExplanationOfBenefitItemBodySite;
 begin
-  result := TFhirExplanationOfBenefitItemBodySite.create;
+  result := TFhirExplanationOfBenefitItemBodySite.Create;
   try
     ParseExplanationOfBenefitItemBodySiteProperties(jsn, result);
     result.link;
@@ -36568,7 +36568,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitItemAdjudication(jsn : TJsonObject) : TFhirExplanationOfBenefitItemAdjudication;
 begin
-  result := TFhirExplanationOfBenefitItemAdjudication.create;
+  result := TFhirExplanationOfBenefitItemAdjudication.Create;
   try
     ParseExplanationOfBenefitItemAdjudicationProperties(jsn, result);
     result.link;
@@ -36615,7 +36615,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitItemDetail(jsn : TJsonObject) : TFhirExplanationOfBenefitItemDetail;
 begin
-  result := TFhirExplanationOfBenefitItemDetail.create;
+  result := TFhirExplanationOfBenefitItemDetail.Create;
   try
     ParseExplanationOfBenefitItemDetailProperties(jsn, result);
     result.link;
@@ -36770,7 +36770,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitItemDetailSubDetail(jsn : TJsonObject) : TFhirExplanationOfBenefitItemDetailSubDetail;
 begin
-  result := TFhirExplanationOfBenefitItemDetailSubDetail.create;
+  result := TFhirExplanationOfBenefitItemDetailSubDetail.Create;
   try
     ParseExplanationOfBenefitItemDetailSubDetailProperties(jsn, result);
     result.link;
@@ -36916,7 +36916,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitAddItem(jsn : TJsonObject) : TFhirExplanationOfBenefitAddItem;
 begin
-  result := TFhirExplanationOfBenefitAddItem.create;
+  result := TFhirExplanationOfBenefitAddItem.Create;
   try
     ParseExplanationOfBenefitAddItemProperties(jsn, result);
     result.link;
@@ -37173,7 +37173,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitAddItemBodySite(jsn : TJsonObject) : TFhirExplanationOfBenefitAddItemBodySite;
 begin
-  result := TFhirExplanationOfBenefitAddItemBodySite.create;
+  result := TFhirExplanationOfBenefitAddItemBodySite.Create;
   try
     ParseExplanationOfBenefitAddItemBodySiteProperties(jsn, result);
     result.link;
@@ -37223,7 +37223,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitAddItemDetail(jsn : TJsonObject) : TFhirExplanationOfBenefitAddItemDetail;
 begin
-  result := TFhirExplanationOfBenefitAddItemDetail.create;
+  result := TFhirExplanationOfBenefitAddItemDetail.Create;
   try
     ParseExplanationOfBenefitAddItemDetailProperties(jsn, result);
     result.link;
@@ -37352,7 +37352,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitAddItemDetailSubDetail(jsn : TJsonObject) : TFhirExplanationOfBenefitAddItemDetailSubDetail;
 begin
-  result := TFhirExplanationOfBenefitAddItemDetailSubDetail.create;
+  result := TFhirExplanationOfBenefitAddItemDetailSubDetail.Create;
   try
     ParseExplanationOfBenefitAddItemDetailSubDetailProperties(jsn, result);
     result.link;
@@ -37472,7 +37472,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitTotal(jsn : TJsonObject) : TFhirExplanationOfBenefitTotal;
 begin
-  result := TFhirExplanationOfBenefitTotal.create;
+  result := TFhirExplanationOfBenefitTotal.Create;
   try
     ParseExplanationOfBenefitTotalProperties(jsn, result);
     result.link;
@@ -37508,7 +37508,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitPayment(jsn : TJsonObject) : TFhirExplanationOfBenefitPayment;
 begin
-  result := TFhirExplanationOfBenefitPayment.create;
+  result := TFhirExplanationOfBenefitPayment.Create;
   try
     ParseExplanationOfBenefitPaymentProperties(jsn, result);
     result.link;
@@ -37564,7 +37564,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitProcessNote(jsn : TJsonObject) : TFhirExplanationOfBenefitProcessNote;
 begin
-  result := TFhirExplanationOfBenefitProcessNote.create;
+  result := TFhirExplanationOfBenefitProcessNote.Create;
   try
     ParseExplanationOfBenefitProcessNoteProperties(jsn, result);
     result.link;
@@ -37614,7 +37614,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitBenefitBalance(jsn : TJsonObject) : TFhirExplanationOfBenefitBenefitBalance;
 begin
-  result := TFhirExplanationOfBenefitBenefitBalance.create;
+  result := TFhirExplanationOfBenefitBenefitBalance.Create;
   try
     ParseExplanationOfBenefitBenefitBalanceProperties(jsn, result);
     result.link;
@@ -37688,7 +37688,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefitBenefitBalanceFinancial(jsn : TJsonObject) : TFhirExplanationOfBenefitBenefitBalanceFinancial;
 begin
-  result := TFhirExplanationOfBenefitBenefitBalanceFinancial.create;
+  result := TFhirExplanationOfBenefitBenefitBalanceFinancial.Create;
   try
     ParseExplanationOfBenefitBenefitBalanceFinancialProperties(jsn, result);
     result.link;
@@ -37750,7 +37750,7 @@ end;
 
 function TFHIRJsonParser.ParseExplanationOfBenefit(jsn : TJsonObject) : TFhirExplanationOfBenefit;
 begin
-  result := TFhirExplanationOfBenefit.create;
+  result := TFhirExplanationOfBenefit.Create;
   try
     ParseExplanationOfBenefitProperties(jsn, result);
     result.link;
@@ -38068,7 +38068,7 @@ end;
 
 function TFHIRJsonParser.ParseFamilyMemberHistoryCondition(jsn : TJsonObject) : TFhirFamilyMemberHistoryCondition;
 begin
-  result := TFhirFamilyMemberHistoryCondition.create;
+  result := TFhirFamilyMemberHistoryCondition.Create;
   try
     ParseFamilyMemberHistoryConditionProperties(jsn, result);
     result.link;
@@ -38141,7 +38141,7 @@ end;
 
 function TFHIRJsonParser.ParseFamilyMemberHistoryProcedure(jsn : TJsonObject) : TFhirFamilyMemberHistoryProcedure;
 begin
-  result := TFhirFamilyMemberHistoryProcedure.create;
+  result := TFhirFamilyMemberHistoryProcedure.Create;
   try
     ParseFamilyMemberHistoryProcedureProperties(jsn, result);
     result.link;
@@ -38221,7 +38221,7 @@ end;
 
 function TFHIRJsonParser.ParseFamilyMemberHistory(jsn : TJsonObject) : TFhirFamilyMemberHistory;
 begin
-  result := TFhirFamilyMemberHistory.create;
+  result := TFhirFamilyMemberHistory.Create;
   try
     ParseFamilyMemberHistoryProperties(jsn, result);
     result.link;
@@ -38449,7 +38449,7 @@ end;
 
 function TFHIRJsonParser.ParseFlag(jsn : TJsonObject) : TFhirFlag;
 begin
-  result := TFhirFlag.create;
+  result := TFhirFlag.Create;
   try
     ParseFlagProperties(jsn, result);
     result.link;
@@ -38520,7 +38520,7 @@ end;
 
 function TFHIRJsonParser.ParseFormularyItem(jsn : TJsonObject) : TFhirFormularyItem;
 begin
-  result := TFhirFormularyItem.create;
+  result := TFhirFormularyItem.Create;
   try
     ParseFormularyItemProperties(jsn, result);
     result.link;
@@ -38569,7 +38569,7 @@ end;
 
 function TFHIRJsonParser.ParseGenomicStudyAnalysis(jsn : TJsonObject) : TFhirGenomicStudyAnalysis;
 begin
-  result := TFhirGenomicStudyAnalysis.create;
+  result := TFhirGenomicStudyAnalysis.Create;
   try
     ParseGenomicStudyAnalysisProperties(jsn, result);
     result.link;
@@ -38736,7 +38736,7 @@ end;
 
 function TFHIRJsonParser.ParseGenomicStudyAnalysisInput(jsn : TJsonObject) : TFhirGenomicStudyAnalysisInput;
 begin
-  result := TFhirGenomicStudyAnalysisInput.create;
+  result := TFhirGenomicStudyAnalysisInput.Create;
   try
     ParseGenomicStudyAnalysisInputProperties(jsn, result);
     result.link;
@@ -38782,7 +38782,7 @@ end;
 
 function TFHIRJsonParser.ParseGenomicStudyAnalysisOutput(jsn : TJsonObject) : TFhirGenomicStudyAnalysisOutput;
 begin
-  result := TFhirGenomicStudyAnalysisOutput.create;
+  result := TFhirGenomicStudyAnalysisOutput.Create;
   try
     ParseGenomicStudyAnalysisOutputProperties(jsn, result);
     result.link;
@@ -38820,7 +38820,7 @@ end;
 
 function TFHIRJsonParser.ParseGenomicStudyAnalysisPerformer(jsn : TJsonObject) : TFhirGenomicStudyAnalysisPerformer;
 begin
-  result := TFhirGenomicStudyAnalysisPerformer.create;
+  result := TFhirGenomicStudyAnalysisPerformer.Create;
   try
     ParseGenomicStudyAnalysisPerformerProperties(jsn, result);
     result.link;
@@ -38858,7 +38858,7 @@ end;
 
 function TFHIRJsonParser.ParseGenomicStudyAnalysisDevice(jsn : TJsonObject) : TFhirGenomicStudyAnalysisDevice;
 begin
-  result := TFhirGenomicStudyAnalysisDevice.create;
+  result := TFhirGenomicStudyAnalysisDevice.Create;
   try
     ParseGenomicStudyAnalysisDeviceProperties(jsn, result);
     result.link;
@@ -38896,7 +38896,7 @@ end;
 
 function TFHIRJsonParser.ParseGenomicStudy(jsn : TJsonObject) : TFhirGenomicStudy;
 begin
-  result := TFhirGenomicStudy.create;
+  result := TFhirGenomicStudy.Create;
   try
     ParseGenomicStudyProperties(jsn, result);
     result.link;
@@ -39029,7 +39029,7 @@ end;
 
 function TFHIRJsonParser.ParseGoalTarget(jsn : TJsonObject) : TFhirGoalTarget;
 begin
-  result := TFhirGoalTarget.create;
+  result := TFhirGoalTarget.Create;
   try
     ParseGoalTargetProperties(jsn, result);
     result.link;
@@ -39111,7 +39111,7 @@ end;
 
 function TFHIRJsonParser.ParseGoal(jsn : TJsonObject) : TFhirGoal;
 begin
-  result := TFhirGoal.create;
+  result := TFhirGoal.Create;
   try
     ParseGoalProperties(jsn, result);
     result.link;
@@ -39247,7 +39247,7 @@ end;
 
 function TFHIRJsonParser.ParseGraphDefinitionLink(jsn : TJsonObject) : TFhirGraphDefinitionLink;
 begin
-  result := TFhirGraphDefinitionLink.create;
+  result := TFhirGraphDefinitionLink.Create;
   try
     ParseGraphDefinitionLinkProperties(jsn, result);
     result.link;
@@ -39318,7 +39318,7 @@ end;
 
 function TFHIRJsonParser.ParseGraphDefinitionLinkTarget(jsn : TJsonObject) : TFhirGraphDefinitionLinkTarget;
 begin
-  result := TFhirGraphDefinitionLinkTarget.create;
+  result := TFhirGraphDefinitionLinkTarget.Create;
   try
     ParseGraphDefinitionLinkTargetProperties(jsn, result);
     result.link;
@@ -39383,7 +39383,7 @@ end;
 
 function TFHIRJsonParser.ParseGraphDefinitionLinkTargetCompartment(jsn : TJsonObject) : TFhirGraphDefinitionLinkTargetCompartment;
 begin
-  result := TFhirGraphDefinitionLinkTargetCompartment.create;
+  result := TFhirGraphDefinitionLinkTargetCompartment.Create;
   try
     ParseGraphDefinitionLinkTargetCompartmentProperties(jsn, result);
     result.link;
@@ -39434,7 +39434,7 @@ end;
 
 function TFHIRJsonParser.ParseGraphDefinition(jsn : TJsonObject) : TFhirGraphDefinition;
 begin
-  result := TFhirGraphDefinition.create;
+  result := TFhirGraphDefinition.Create;
   try
     ParseGraphDefinitionProperties(jsn, result);
     result.link;
@@ -39577,7 +39577,7 @@ end;
 
 function TFHIRJsonParser.ParseGroupCharacteristic(jsn : TJsonObject) : TFhirGroupCharacteristic;
 begin
-  result := TFhirGroupCharacteristic.create;
+  result := TFhirGroupCharacteristic.Create;
   try
     ParseGroupCharacteristicProperties(jsn, result);
     result.link;
@@ -39641,7 +39641,7 @@ end;
 
 function TFHIRJsonParser.ParseGroupMember(jsn : TJsonObject) : TFhirGroupMember;
 begin
-  result := TFhirGroupMember.create;
+  result := TFhirGroupMember.Create;
   try
     ParseGroupMemberProperties(jsn, result);
     result.link;
@@ -39684,7 +39684,7 @@ end;
 
 function TFHIRJsonParser.ParseGroup(jsn : TJsonObject) : TFhirGroup;
 begin
-  result := TFhirGroup.create;
+  result := TFhirGroup.Create;
   try
     ParseGroupProperties(jsn, result);
     result.link;
@@ -39781,7 +39781,7 @@ end;
 
 function TFHIRJsonParser.ParseGuidanceResponse(jsn : TJsonObject) : TFhirGuidanceResponse;
 begin
-  result := TFhirGuidanceResponse.create;
+  result := TFhirGuidanceResponse.Create;
   try
     ParseGuidanceResponseProperties(jsn, result);
     result.link;
@@ -39909,7 +39909,7 @@ end;
 
 function TFHIRJsonParser.ParseHealthcareServiceEligibility(jsn : TJsonObject) : TFhirHealthcareServiceEligibility;
 begin
-  result := TFhirHealthcareServiceEligibility.create;
+  result := TFhirHealthcareServiceEligibility.Create;
   try
     ParseHealthcareServiceEligibilityProperties(jsn, result);
     result.link;
@@ -39949,7 +39949,7 @@ end;
 
 function TFHIRJsonParser.ParseHealthcareService(jsn : TJsonObject) : TFhirHealthcareService;
 begin
-  result := TFhirHealthcareService.create;
+  result := TFhirHealthcareService.Create;
   try
     ParseHealthcareServiceProperties(jsn, result);
     result.link;
@@ -40163,7 +40163,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingSelectionPerformer(jsn : TJsonObject) : TFhirImagingSelectionPerformer;
 begin
-  result := TFhirImagingSelectionPerformer.create;
+  result := TFhirImagingSelectionPerformer.Create;
   try
     ParseImagingSelectionPerformerProperties(jsn, result);
     result.link;
@@ -40201,7 +40201,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingSelectionInstance(jsn : TJsonObject) : TFhirImagingSelectionInstance;
 begin
-  result := TFhirImagingSelectionInstance.create;
+  result := TFhirImagingSelectionInstance.Create;
   try
     ParseImagingSelectionInstanceProperties(jsn, result);
     result.link;
@@ -40284,7 +40284,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingSelectionInstanceImageRegion(jsn : TJsonObject) : TFhirImagingSelectionInstanceImageRegion;
 begin
-  result := TFhirImagingSelectionInstanceImageRegion.create;
+  result := TFhirImagingSelectionInstanceImageRegion.Create;
   try
     ParseImagingSelectionInstanceImageRegionProperties(jsn, result);
     result.link;
@@ -40347,7 +40347,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingSelectionImageRegion(jsn : TJsonObject) : TFhirImagingSelectionImageRegion;
 begin
-  result := TFhirImagingSelectionImageRegion.create;
+  result := TFhirImagingSelectionImageRegion.Create;
   try
     ParseImagingSelectionImageRegionProperties(jsn, result);
     result.link;
@@ -40410,7 +40410,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingSelection(jsn : TJsonObject) : TFhirImagingSelection;
 begin
-  result := TFhirImagingSelection.create;
+  result := TFhirImagingSelection.Create;
   try
     ParseImagingSelectionProperties(jsn, result);
     result.link;
@@ -40567,7 +40567,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingStudySeries(jsn : TJsonObject) : TFhirImagingStudySeries;
 begin
-  result := TFhirImagingStudySeries.create;
+  result := TFhirImagingStudySeries.Create;
   try
     ParseImagingStudySeriesProperties(jsn, result);
     result.link;
@@ -40674,7 +40674,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingStudySeriesPerformer(jsn : TJsonObject) : TFhirImagingStudySeriesPerformer;
 begin
-  result := TFhirImagingStudySeriesPerformer.create;
+  result := TFhirImagingStudySeriesPerformer.Create;
   try
     ParseImagingStudySeriesPerformerProperties(jsn, result);
     result.link;
@@ -40711,7 +40711,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingStudySeriesInstance(jsn : TJsonObject) : TFhirImagingStudySeriesInstance;
 begin
-  result := TFhirImagingStudySeriesInstance.create;
+  result := TFhirImagingStudySeriesInstance.Create;
   try
     ParseImagingStudySeriesInstanceProperties(jsn, result);
     result.link;
@@ -40760,7 +40760,7 @@ end;
 
 function TFHIRJsonParser.ParseImagingStudy(jsn : TJsonObject) : TFhirImagingStudy;
 begin
-  result := TFhirImagingStudy.create;
+  result := TFhirImagingStudy.Create;
   try
     ParseImagingStudyProperties(jsn, result);
     result.link;
@@ -40915,7 +40915,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationPerformer(jsn : TJsonObject) : TFhirImmunizationPerformer;
 begin
-  result := TFhirImmunizationPerformer.create;
+  result := TFhirImmunizationPerformer.Create;
   try
     ParseImmunizationPerformerProperties(jsn, result);
     result.link;
@@ -40952,7 +40952,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationProgramEligibility(jsn : TJsonObject) : TFhirImmunizationProgramEligibility;
 begin
-  result := TFhirImmunizationProgramEligibility.create;
+  result := TFhirImmunizationProgramEligibility.Create;
   try
     ParseImmunizationProgramEligibilityProperties(jsn, result);
     result.link;
@@ -40988,7 +40988,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationReaction(jsn : TJsonObject) : TFhirImmunizationReaction;
 begin
-  result := TFhirImmunizationReaction.create;
+  result := TFhirImmunizationReaction.Create;
   try
     ParseImmunizationReactionProperties(jsn, result);
     result.link;
@@ -41034,7 +41034,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationProtocolApplied(jsn : TJsonObject) : TFhirImmunizationProtocolApplied;
 begin
-  result := TFhirImmunizationProtocolApplied.create;
+  result := TFhirImmunizationProtocolApplied.Create;
   try
     ParseImmunizationProtocolAppliedProperties(jsn, result);
     result.link;
@@ -41095,7 +41095,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunization(jsn : TJsonObject) : TFhirImmunization;
 begin
-  result := TFhirImmunization.create;
+  result := TFhirImmunization.Create;
   try
     ParseImmunizationProperties(jsn, result);
     result.link;
@@ -41304,7 +41304,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationEvaluation(jsn : TJsonObject) : TFhirImmunizationEvaluation;
 begin
-  result := TFhirImmunizationEvaluation.create;
+  result := TFhirImmunizationEvaluation.Create;
   try
     ParseImmunizationEvaluationProperties(jsn, result);
     result.link;
@@ -41403,7 +41403,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationRecommendationRecommendation(jsn : TJsonObject) : TFhirImmunizationRecommendationRecommendation;
 begin
-  result := TFhirImmunizationRecommendationRecommendation.create;
+  result := TFhirImmunizationRecommendationRecommendation.Create;
   try
     ParseImmunizationRecommendationRecommendationProperties(jsn, result);
     result.link;
@@ -41525,7 +41525,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationRecommendationRecommendationDateCriterion(jsn : TJsonObject) : TFhirImmunizationRecommendationRecommendationDateCriterion;
 begin
-  result := TFhirImmunizationRecommendationRecommendationDateCriterion.create;
+  result := TFhirImmunizationRecommendationRecommendationDateCriterion.Create;
   try
     ParseImmunizationRecommendationRecommendationDateCriterionProperties(jsn, result);
     result.link;
@@ -41562,7 +41562,7 @@ end;
 
 function TFHIRJsonParser.ParseImmunizationRecommendation(jsn : TJsonObject) : TFhirImmunizationRecommendation;
 begin
-  result := TFhirImmunizationRecommendation.create;
+  result := TFhirImmunizationRecommendation.Create;
   try
     ParseImmunizationRecommendationProperties(jsn, result);
     result.link;
@@ -41623,7 +41623,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDependsOn(jsn : TJsonObject) : TFhirImplementationGuideDependsOn;
 begin
-  result := TFhirImplementationGuideDependsOn.create;
+  result := TFhirImplementationGuideDependsOn.Create;
   try
     ParseImplementationGuideDependsOnProperties(jsn, result);
     result.link;
@@ -41675,7 +41675,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideGlobal(jsn : TJsonObject) : TFhirImplementationGuideGlobal;
 begin
-  result := TFhirImplementationGuideGlobal.create;
+  result := TFhirImplementationGuideGlobal.Create;
   try
     ParseImplementationGuideGlobalProperties(jsn, result);
     result.link;
@@ -41712,7 +41712,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDefinition(jsn : TJsonObject) : TFhirImplementationGuideDefinition;
 begin
-  result := TFhirImplementationGuideDefinition.create;
+  result := TFhirImplementationGuideDefinition.Create;
   try
     ParseImplementationGuideDefinitionProperties(jsn, result);
     result.link;
@@ -41784,7 +41784,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDefinitionGrouping(jsn : TJsonObject) : TFhirImplementationGuideDefinitionGrouping;
 begin
-  result := TFhirImplementationGuideDefinitionGrouping.create;
+  result := TFhirImplementationGuideDefinitionGrouping.Create;
   try
     ParseImplementationGuideDefinitionGroupingProperties(jsn, result);
     result.link;
@@ -41824,7 +41824,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDefinitionResource(jsn : TJsonObject) : TFhirImplementationGuideDefinitionResource;
 begin
-  result := TFhirImplementationGuideDefinitionResource.create;
+  result := TFhirImplementationGuideDefinitionResource.Create;
   try
     ParseImplementationGuideDefinitionResourceProperties(jsn, result);
     result.link;
@@ -41937,7 +41937,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDefinitionPage(jsn : TJsonObject) : TFhirImplementationGuideDefinitionPage;
 begin
-  result := TFhirImplementationGuideDefinitionPage.create;
+  result := TFhirImplementationGuideDefinitionPage.Create;
   try
     ParseImplementationGuideDefinitionPageProperties(jsn, result);
     result.link;
@@ -42010,7 +42010,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDefinitionParameter(jsn : TJsonObject) : TFhirImplementationGuideDefinitionParameter;
 begin
-  result := TFhirImplementationGuideDefinitionParameter.create;
+  result := TFhirImplementationGuideDefinitionParameter.Create;
   try
     ParseImplementationGuideDefinitionParameterProperties(jsn, result);
     result.link;
@@ -42047,7 +42047,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideDefinitionTemplate(jsn : TJsonObject) : TFhirImplementationGuideDefinitionTemplate;
 begin
-  result := TFhirImplementationGuideDefinitionTemplate.create;
+  result := TFhirImplementationGuideDefinitionTemplate.Create;
   try
     ParseImplementationGuideDefinitionTemplateProperties(jsn, result);
     result.link;
@@ -42091,7 +42091,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideManifest(jsn : TJsonObject) : TFhirImplementationGuideManifest;
 begin
-  result := TFhirImplementationGuideManifest.create;
+  result := TFhirImplementationGuideManifest.Create;
   try
     ParseImplementationGuideManifestProperties(jsn, result);
     result.link;
@@ -42201,7 +42201,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideManifestResource(jsn : TJsonObject) : TFhirImplementationGuideManifestResource;
 begin
-  result := TFhirImplementationGuideManifestResource.create;
+  result := TFhirImplementationGuideManifestResource.Create;
   try
     ParseImplementationGuideManifestResourceProperties(jsn, result);
     result.link;
@@ -42276,7 +42276,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuideManifestPage(jsn : TJsonObject) : TFhirImplementationGuideManifestPage;
 begin
-  result := TFhirImplementationGuideManifestPage.create;
+  result := TFhirImplementationGuideManifestPage.Create;
   try
     ParseImplementationGuideManifestPageProperties(jsn, result);
     result.link;
@@ -42346,7 +42346,7 @@ end;
 
 function TFHIRJsonParser.ParseImplementationGuide(jsn : TJsonObject) : TFhirImplementationGuide;
 begin
-  result := TFhirImplementationGuide.create;
+  result := TFhirImplementationGuide.Create;
   try
     ParseImplementationGuideProperties(jsn, result);
     result.link;
@@ -42537,7 +42537,7 @@ end;
 
 function TFHIRJsonParser.ParseIngredientManufacturer(jsn : TJsonObject) : TFhirIngredientManufacturer;
 begin
-  result := TFhirIngredientManufacturer.create;
+  result := TFhirIngredientManufacturer.Create;
   try
     ParseIngredientManufacturerProperties(jsn, result);
     result.link;
@@ -42574,7 +42574,7 @@ end;
 
 function TFHIRJsonParser.ParseIngredientSubstance(jsn : TJsonObject) : TFhirIngredientSubstance;
 begin
-  result := TFhirIngredientSubstance.create;
+  result := TFhirIngredientSubstance.Create;
   try
     ParseIngredientSubstanceProperties(jsn, result);
     result.link;
@@ -42618,7 +42618,7 @@ end;
 
 function TFHIRJsonParser.ParseIngredientSubstanceStrength(jsn : TJsonObject) : TFhirIngredientSubstanceStrength;
 begin
-  result := TFhirIngredientSubstanceStrength.create;
+  result := TFhirIngredientSubstanceStrength.Create;
   try
     ParseIngredientSubstanceStrengthProperties(jsn, result);
     result.link;
@@ -42722,7 +42722,7 @@ end;
 
 function TFHIRJsonParser.ParseIngredientSubstanceStrengthReferenceStrength(jsn : TJsonObject) : TFhirIngredientSubstanceStrengthReferenceStrength;
 begin
-  result := TFhirIngredientSubstanceStrengthReferenceStrength.create;
+  result := TFhirIngredientSubstanceStrengthReferenceStrength.Create;
   try
     ParseIngredientSubstanceStrengthReferenceStrengthProperties(jsn, result);
     result.link;
@@ -42785,7 +42785,7 @@ end;
 
 function TFHIRJsonParser.ParseIngredient(jsn : TJsonObject) : TFhirIngredient;
 begin
-  result := TFhirIngredient.create;
+  result := TFhirIngredient.Create;
   try
     ParseIngredientProperties(jsn, result);
     result.link;
@@ -42867,7 +42867,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanCoverage(jsn : TJsonObject) : TFhirInsurancePlanCoverage;
 begin
-  result := TFhirInsurancePlanCoverage.create;
+  result := TFhirInsurancePlanCoverage.Create;
   try
     ParseInsurancePlanCoverageProperties(jsn, result);
     result.link;
@@ -42920,7 +42920,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanCoverageBenefit(jsn : TJsonObject) : TFhirInsurancePlanCoverageBenefit;
 begin
-  result := TFhirInsurancePlanCoverageBenefit.create;
+  result := TFhirInsurancePlanCoverageBenefit.Create;
   try
     ParseInsurancePlanCoverageBenefitProperties(jsn, result);
     result.link;
@@ -42970,7 +42970,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanCoverageBenefitLimit(jsn : TJsonObject) : TFhirInsurancePlanCoverageBenefitLimit;
 begin
-  result := TFhirInsurancePlanCoverageBenefitLimit.create;
+  result := TFhirInsurancePlanCoverageBenefitLimit.Create;
   try
     ParseInsurancePlanCoverageBenefitLimitProperties(jsn, result);
     result.link;
@@ -43008,7 +43008,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanPlan(jsn : TJsonObject) : TFhirInsurancePlanPlan;
 begin
-  result := TFhirInsurancePlanPlan.create;
+  result := TFhirInsurancePlanPlan.Create;
   try
     ParseInsurancePlanPlanProperties(jsn, result);
     result.link;
@@ -43089,7 +43089,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanPlanGeneralCost(jsn : TJsonObject) : TFhirInsurancePlanPlanGeneralCost;
 begin
-  result := TFhirInsurancePlanPlanGeneralCost.create;
+  result := TFhirInsurancePlanPlanGeneralCost.Create;
   try
     ParseInsurancePlanPlanGeneralCostProperties(jsn, result);
     result.link;
@@ -43139,7 +43139,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanPlanSpecificCost(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCost;
 begin
-  result := TFhirInsurancePlanPlanSpecificCost.create;
+  result := TFhirInsurancePlanPlanSpecificCost.Create;
   try
     ParseInsurancePlanPlanSpecificCostProperties(jsn, result);
     result.link;
@@ -43183,7 +43183,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefit(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCostBenefit;
 begin
-  result := TFhirInsurancePlanPlanSpecificCostBenefit.create;
+  result := TFhirInsurancePlanPlanSpecificCostBenefit.Create;
   try
     ParseInsurancePlanPlanSpecificCostBenefitProperties(jsn, result);
     result.link;
@@ -43227,7 +43227,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlanPlanSpecificCostBenefitCost(jsn : TJsonObject) : TFhirInsurancePlanPlanSpecificCostBenefitCost;
 begin
-  result := TFhirInsurancePlanPlanSpecificCostBenefitCost.create;
+  result := TFhirInsurancePlanPlanSpecificCostBenefitCost.Create;
   try
     ParseInsurancePlanPlanSpecificCostBenefitCostProperties(jsn, result);
     result.link;
@@ -43279,7 +43279,7 @@ end;
 
 function TFHIRJsonParser.ParseInsurancePlan(jsn : TJsonObject) : TFhirInsurancePlan;
 begin
-  result := TFhirInsurancePlan.create;
+  result := TFhirInsurancePlan.Create;
   try
     ParseInsurancePlanProperties(jsn, result);
     result.link;
@@ -43433,7 +43433,7 @@ end;
 
 function TFHIRJsonParser.ParseInventoryReportInventoryListing(jsn : TJsonObject) : TFhirInventoryReportInventoryListing;
 begin
-  result := TFhirInventoryReportInventoryListing.create;
+  result := TFhirInventoryReportInventoryListing.Create;
   try
     ParseInventoryReportInventoryListingProperties(jsn, result);
     result.link;
@@ -43488,7 +43488,7 @@ end;
 
 function TFHIRJsonParser.ParseInventoryReportInventoryListingItems(jsn : TJsonObject) : TFhirInventoryReportInventoryListingItems;
 begin
-  result := TFhirInventoryReportInventoryListingItems.create;
+  result := TFhirInventoryReportInventoryListingItems.Create;
   try
     ParseInventoryReportInventoryListingItemsProperties(jsn, result);
     result.link;
@@ -43552,7 +43552,7 @@ end;
 
 function TFHIRJsonParser.ParseInventoryReport(jsn : TJsonObject) : TFhirInventoryReport;
 begin
-  result := TFhirInventoryReport.create;
+  result := TFhirInventoryReport.Create;
   try
     ParseInventoryReportProperties(jsn, result);
     result.link;
@@ -43632,7 +43632,7 @@ end;
 
 function TFHIRJsonParser.ParseInvoiceParticipant(jsn : TJsonObject) : TFhirInvoiceParticipant;
 begin
-  result := TFhirInvoiceParticipant.create;
+  result := TFhirInvoiceParticipant.Create;
   try
     ParseInvoiceParticipantProperties(jsn, result);
     result.link;
@@ -43669,7 +43669,7 @@ end;
 
 function TFHIRJsonParser.ParseInvoiceLineItem(jsn : TJsonObject) : TFhirInvoiceLineItem;
 begin
-  result := TFhirInvoiceLineItem.create;
+  result := TFhirInvoiceLineItem.Create;
   try
     ParseInvoiceLineItemProperties(jsn, result);
     result.link;
@@ -43735,7 +43735,7 @@ end;
 
 function TFHIRJsonParser.ParseInvoice(jsn : TJsonObject) : TFhirInvoice;
 begin
-  result := TFhirInvoice.create;
+  result := TFhirInvoice.Create;
   try
     ParseInvoiceProperties(jsn, result);
     result.link;
@@ -43878,7 +43878,7 @@ end;
 
 function TFHIRJsonParser.ParseLibrary(jsn : TJsonObject) : TFhirLibrary;
 begin
-  result := TFhirLibrary.create;
+  result := TFhirLibrary.Create;
   try
     ParseLibraryProperties(jsn, result);
     result.link;
@@ -44129,7 +44129,7 @@ end;
 
 function TFHIRJsonParser.ParseLinkageItem(jsn : TJsonObject) : TFhirLinkageItem;
 begin
-  result := TFhirLinkageItem.create;
+  result := TFhirLinkageItem.Create;
   try
     ParseLinkageItemProperties(jsn, result);
     result.link;
@@ -44165,7 +44165,7 @@ end;
 
 function TFHIRJsonParser.ParseLinkage(jsn : TJsonObject) : TFhirLinkage;
 begin
-  result := TFhirLinkage.create;
+  result := TFhirLinkage.Create;
   try
     ParseLinkageProperties(jsn, result);
     result.link;
@@ -44216,7 +44216,7 @@ end;
 
 function TFHIRJsonParser.ParseListEntry(jsn : TJsonObject) : TFhirListEntry;
 begin
-  result := TFhirListEntry.create;
+  result := TFhirListEntry.Create;
   try
     ParseListEntryProperties(jsn, result);
     result.link;
@@ -44265,7 +44265,7 @@ end;
 
 function TFHIRJsonParser.ParseList(jsn : TJsonObject) : TFhirList;
 begin
-  result := TFhirList.create;
+  result := TFhirList.Create;
   try
     ParseListProperties(jsn, result);
     result.link;
@@ -44366,7 +44366,7 @@ end;
 
 function TFHIRJsonParser.ParseLocationPosition(jsn : TJsonObject) : TFhirLocationPosition;
 begin
-  result := TFhirLocationPosition.create;
+  result := TFhirLocationPosition.Create;
   try
     ParseLocationPositionProperties(jsn, result);
     result.link;
@@ -44410,7 +44410,7 @@ end;
 
 function TFHIRJsonParser.ParseLocation(jsn : TJsonObject) : TFhirLocation;
 begin
-  result := TFhirLocation.create;
+  result := TFhirLocation.Create;
   try
     ParseLocationProperties(jsn, result);
     result.link;
@@ -44577,7 +44577,7 @@ end;
 
 function TFHIRJsonParser.ParseManufacturedItemDefinitionProperty(jsn : TJsonObject) : TFhirManufacturedItemDefinitionProperty;
 begin
-  result := TFhirManufacturedItemDefinitionProperty.create;
+  result := TFhirManufacturedItemDefinitionProperty.Create;
   try
     ParseManufacturedItemDefinitionPropertyProperties(jsn, result);
     result.link;
@@ -44636,7 +44636,7 @@ end;
 
 function TFHIRJsonParser.ParseManufacturedItemDefinitionComponent(jsn : TJsonObject) : TFhirManufacturedItemDefinitionComponent;
 begin
-  result := TFhirManufacturedItemDefinitionComponent.create;
+  result := TFhirManufacturedItemDefinitionComponent.Create;
   try
     ParseManufacturedItemDefinitionComponentProperties(jsn, result);
     result.link;
@@ -44716,7 +44716,7 @@ end;
 
 function TFHIRJsonParser.ParseManufacturedItemDefinitionComponentConstituent(jsn : TJsonObject) : TFhirManufacturedItemDefinitionComponentConstituent;
 begin
-  result := TFhirManufacturedItemDefinitionComponentConstituent.create;
+  result := TFhirManufacturedItemDefinitionComponentConstituent.Create;
   try
     ParseManufacturedItemDefinitionComponentConstituentProperties(jsn, result);
     result.link;
@@ -44784,7 +44784,7 @@ end;
 
 function TFHIRJsonParser.ParseManufacturedItemDefinition(jsn : TJsonObject) : TFhirManufacturedItemDefinition;
 begin
-  result := TFhirManufacturedItemDefinition.create;
+  result := TFhirManufacturedItemDefinition.Create;
   try
     ParseManufacturedItemDefinitionProperties(jsn, result);
     result.link;
@@ -44886,7 +44886,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureTerm(jsn : TJsonObject) : TFhirMeasureTerm;
 begin
-  result := TFhirMeasureTerm.create;
+  result := TFhirMeasureTerm.Create;
   try
     ParseMeasureTermProperties(jsn, result);
     result.link;
@@ -44926,7 +44926,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureGroup(jsn : TJsonObject) : TFhirMeasureGroup;
 begin
-  result := TFhirMeasureGroup.create;
+  result := TFhirMeasureGroup.Create;
   try
     ParseMeasureGroupProperties(jsn, result);
     result.link;
@@ -45011,7 +45011,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureGroupPopulation(jsn : TJsonObject) : TFhirMeasureGroupPopulation;
 begin
-  result := TFhirMeasureGroupPopulation.create;
+  result := TFhirMeasureGroupPopulation.Create;
   try
     ParseMeasureGroupPopulationProperties(jsn, result);
     result.link;
@@ -45064,7 +45064,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureGroupStratifier(jsn : TJsonObject) : TFhirMeasureGroupStratifier;
 begin
-  result := TFhirMeasureGroupStratifier.create;
+  result := TFhirMeasureGroupStratifier.Create;
   try
     ParseMeasureGroupStratifierProperties(jsn, result);
     result.link;
@@ -45119,7 +45119,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureGroupStratifierComponent(jsn : TJsonObject) : TFhirMeasureGroupStratifierComponent;
 begin
-  result := TFhirMeasureGroupStratifierComponent.create;
+  result := TFhirMeasureGroupStratifierComponent.Create;
   try
     ParseMeasureGroupStratifierComponentProperties(jsn, result);
     result.link;
@@ -45162,7 +45162,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureSupplementalData(jsn : TJsonObject) : TFhirMeasureSupplementalData;
 begin
-  result := TFhirMeasureSupplementalData.create;
+  result := TFhirMeasureSupplementalData.Create;
   try
     ParseMeasureSupplementalDataProperties(jsn, result);
     result.link;
@@ -45216,7 +45216,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasure(jsn : TJsonObject) : TFhirMeasure;
 begin
-  result := TFhirMeasure.create;
+  result := TFhirMeasure.Create;
   try
     ParseMeasureProperties(jsn, result);
     result.link;
@@ -45557,7 +45557,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReportGroup(jsn : TJsonObject) : TFhirMeasureReportGroup;
 begin
-  result := TFhirMeasureReportGroup.create;
+  result := TFhirMeasureReportGroup.Create;
   try
     ParseMeasureReportGroupProperties(jsn, result);
     result.link;
@@ -45638,7 +45638,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReportGroupPopulation(jsn : TJsonObject) : TFhirMeasureReportGroupPopulation;
 begin
-  result := TFhirMeasureReportGroupPopulation.create;
+  result := TFhirMeasureReportGroupPopulation.Create;
   try
     ParseMeasureReportGroupPopulationProperties(jsn, result);
     result.link;
@@ -45682,7 +45682,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReportGroupStratifier(jsn : TJsonObject) : TFhirMeasureReportGroupStratifier;
 begin
-  result := TFhirMeasureReportGroupStratifier.create;
+  result := TFhirMeasureReportGroupStratifier.Create;
   try
     ParseMeasureReportGroupStratifierProperties(jsn, result);
     result.link;
@@ -45727,7 +45727,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReportGroupStratifierStratum(jsn : TJsonObject) : TFhirMeasureReportGroupStratifierStratum;
 begin
-  result := TFhirMeasureReportGroupStratifierStratum.create;
+  result := TFhirMeasureReportGroupStratifierStratum.Create;
   try
     ParseMeasureReportGroupStratifierStratumProperties(jsn, result);
     result.link;
@@ -45827,7 +45827,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReportGroupStratifierStratumComponent(jsn : TJsonObject) : TFhirMeasureReportGroupStratifierStratumComponent;
 begin
-  result := TFhirMeasureReportGroupStratifierStratumComponent.create;
+  result := TFhirMeasureReportGroupStratifierStratumComponent.Create;
   try
     ParseMeasureReportGroupStratifierStratumComponentProperties(jsn, result);
     result.link;
@@ -45883,7 +45883,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReportGroupStratifierStratumPopulation(jsn : TJsonObject) : TFhirMeasureReportGroupStratifierStratumPopulation;
 begin
-  result := TFhirMeasureReportGroupStratifierStratumPopulation.create;
+  result := TFhirMeasureReportGroupStratifierStratumPopulation.Create;
   try
     ParseMeasureReportGroupStratifierStratumPopulationProperties(jsn, result);
     result.link;
@@ -45927,7 +45927,7 @@ end;
 
 function TFHIRJsonParser.ParseMeasureReport(jsn : TJsonObject) : TFhirMeasureReport;
 begin
-  result := TFhirMeasureReport.create;
+  result := TFhirMeasureReport.Create;
   try
     ParseMeasureReportProperties(jsn, result);
     result.link;
@@ -46039,7 +46039,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationIngredient(jsn : TJsonObject) : TFhirMedicationIngredient;
 begin
-  result := TFhirMedicationIngredient.create;
+  result := TFhirMedicationIngredient.Create;
   try
     ParseMedicationIngredientProperties(jsn, result);
     result.link;
@@ -46090,7 +46090,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationBatch(jsn : TJsonObject) : TFhirMedicationBatch;
 begin
-  result := TFhirMedicationBatch.create;
+  result := TFhirMedicationBatch.Create;
   try
     ParseMedicationBatchProperties(jsn, result);
     result.link;
@@ -46132,7 +46132,7 @@ end;
 
 function TFHIRJsonParser.ParseMedication(jsn : TJsonObject) : TFhirMedication;
 begin
-  result := TFhirMedication.create;
+  result := TFhirMedication.Create;
   try
     ParseMedicationProperties(jsn, result);
     result.link;
@@ -46206,7 +46206,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationAdministrationPerformer(jsn : TJsonObject) : TFhirMedicationAdministrationPerformer;
 begin
-  result := TFhirMedicationAdministrationPerformer.create;
+  result := TFhirMedicationAdministrationPerformer.Create;
   try
     ParseMedicationAdministrationPerformerProperties(jsn, result);
     result.link;
@@ -46243,7 +46243,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationAdministrationDosage(jsn : TJsonObject) : TFhirMedicationAdministrationDosage;
 begin
-  result := TFhirMedicationAdministrationDosage.create;
+  result := TFhirMedicationAdministrationDosage.Create;
   try
     ParseMedicationAdministrationDosageProperties(jsn, result);
     result.link;
@@ -46303,7 +46303,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationAdministration(jsn : TJsonObject) : TFhirMedicationAdministration;
 begin
-  result := TFhirMedicationAdministration.create;
+  result := TFhirMedicationAdministration.Create;
   try
     ParseMedicationAdministrationProperties(jsn, result);
     result.link;
@@ -46487,7 +46487,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationDispensePerformer(jsn : TJsonObject) : TFhirMedicationDispensePerformer;
 begin
-  result := TFhirMedicationDispensePerformer.create;
+  result := TFhirMedicationDispensePerformer.Create;
   try
     ParseMedicationDispensePerformerProperties(jsn, result);
     result.link;
@@ -46524,7 +46524,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationDispenseSubstitution(jsn : TJsonObject) : TFhirMedicationDispenseSubstitution;
 begin
-  result := TFhirMedicationDispenseSubstitution.create;
+  result := TFhirMedicationDispenseSubstitution.Create;
   try
     ParseMedicationDispenseSubstitutionProperties(jsn, result);
     result.link;
@@ -46577,7 +46577,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationDispense(jsn : TJsonObject) : TFhirMedicationDispense;
 begin
-  result := TFhirMedicationDispense.create;
+  result := TFhirMedicationDispense.Create;
   try
     ParseMedicationDispenseProperties(jsn, result);
     result.link;
@@ -46779,7 +46779,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeRelatedMedicationKnowledge(jsn : TJsonObject) : TFhirMedicationKnowledgeRelatedMedicationKnowledge;
 begin
-  result := TFhirMedicationKnowledgeRelatedMedicationKnowledge.create;
+  result := TFhirMedicationKnowledgeRelatedMedicationKnowledge.Create;
   try
     ParseMedicationKnowledgeRelatedMedicationKnowledgeProperties(jsn, result);
     result.link;
@@ -46823,7 +46823,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeMonograph(jsn : TJsonObject) : TFhirMedicationKnowledgeMonograph;
 begin
-  result := TFhirMedicationKnowledgeMonograph.create;
+  result := TFhirMedicationKnowledgeMonograph.Create;
   try
     ParseMedicationKnowledgeMonographProperties(jsn, result);
     result.link;
@@ -46861,7 +46861,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeCost(jsn : TJsonObject) : TFhirMedicationKnowledgeCost;
 begin
-  result := TFhirMedicationKnowledgeCost.create;
+  result := TFhirMedicationKnowledgeCost.Create;
   try
     ParseMedicationKnowledgeCostProperties(jsn, result);
     result.link;
@@ -46919,7 +46919,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeMonitoringProgram(jsn : TJsonObject) : TFhirMedicationKnowledgeMonitoringProgram;
 begin
-  result := TFhirMedicationKnowledgeMonitoringProgram.create;
+  result := TFhirMedicationKnowledgeMonitoringProgram.Create;
   try
     ParseMedicationKnowledgeMonitoringProgramProperties(jsn, result);
     result.link;
@@ -46959,7 +46959,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeIndicationGuideline(jsn : TJsonObject) : TFhirMedicationKnowledgeIndicationGuideline;
 begin
-  result := TFhirMedicationKnowledgeIndicationGuideline.create;
+  result := TFhirMedicationKnowledgeIndicationGuideline.Create;
   try
     ParseMedicationKnowledgeIndicationGuidelineProperties(jsn, result);
     result.link;
@@ -47009,7 +47009,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeIndicationGuidelineDosingGuideline(jsn : TJsonObject) : TFhirMedicationKnowledgeIndicationGuidelineDosingGuideline;
 begin
-  result := TFhirMedicationKnowledgeIndicationGuidelineDosingGuideline.create;
+  result := TFhirMedicationKnowledgeIndicationGuidelineDosingGuideline.Create;
   try
     ParseMedicationKnowledgeIndicationGuidelineDosingGuidelineProperties(jsn, result);
     result.link;
@@ -47067,7 +47067,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeIndicationGuidelineDosingGuidelineDosage(jsn : TJsonObject) : TFhirMedicationKnowledgeIndicationGuidelineDosingGuidelineDosage;
 begin
-  result := TFhirMedicationKnowledgeIndicationGuidelineDosingGuidelineDosage.create;
+  result := TFhirMedicationKnowledgeIndicationGuidelineDosingGuidelineDosage.Create;
   try
     ParseMedicationKnowledgeIndicationGuidelineDosingGuidelineDosageProperties(jsn, result);
     result.link;
@@ -47111,7 +47111,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeIndicationGuidelineDosingGuidelinePatientCharacteristic(jsn : TJsonObject) : TFhirMedicationKnowledgeIndicationGuidelineDosingGuidelinePatientCharacteristic;
 begin
-  result := TFhirMedicationKnowledgeIndicationGuidelineDosingGuidelinePatientCharacteristic.create;
+  result := TFhirMedicationKnowledgeIndicationGuidelineDosingGuidelinePatientCharacteristic.Create;
   try
     ParseMedicationKnowledgeIndicationGuidelineDosingGuidelinePatientCharacteristicProperties(jsn, result);
     result.link;
@@ -47156,7 +47156,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeMedicineClassification(jsn : TJsonObject) : TFhirMedicationKnowledgeMedicineClassification;
 begin
-  result := TFhirMedicationKnowledgeMedicineClassification.create;
+  result := TFhirMedicationKnowledgeMedicineClassification.Create;
   try
     ParseMedicationKnowledgeMedicineClassificationProperties(jsn, result);
     result.link;
@@ -47214,7 +47214,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgePackaging(jsn : TJsonObject) : TFhirMedicationKnowledgePackaging;
 begin
-  result := TFhirMedicationKnowledgePackaging.create;
+  result := TFhirMedicationKnowledgePackaging.Create;
   try
     ParseMedicationKnowledgePackagingProperties(jsn, result);
     result.link;
@@ -47259,7 +47259,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeStorageGuideline(jsn : TJsonObject) : TFhirMedicationKnowledgeStorageGuideline;
 begin
-  result := TFhirMedicationKnowledgeStorageGuideline.create;
+  result := TFhirMedicationKnowledgeStorageGuideline.Create;
   try
     ParseMedicationKnowledgeStorageGuidelineProperties(jsn, result);
     result.link;
@@ -47319,7 +47319,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeStorageGuidelineEnvironmentalSetting(jsn : TJsonObject) : TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSetting;
 begin
-  result := TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSetting.create;
+  result := TFhirMedicationKnowledgeStorageGuidelineEnvironmentalSetting.Create;
   try
     ParseMedicationKnowledgeStorageGuidelineEnvironmentalSettingProperties(jsn, result);
     result.link;
@@ -47364,7 +47364,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeRegulatory(jsn : TJsonObject) : TFhirMedicationKnowledgeRegulatory;
 begin
-  result := TFhirMedicationKnowledgeRegulatory.create;
+  result := TFhirMedicationKnowledgeRegulatory.Create;
   try
     ParseMedicationKnowledgeRegulatoryProperties(jsn, result);
     result.link;
@@ -47421,7 +47421,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeRegulatorySubstitution(jsn : TJsonObject) : TFhirMedicationKnowledgeRegulatorySubstitution;
 begin
-  result := TFhirMedicationKnowledgeRegulatorySubstitution.create;
+  result := TFhirMedicationKnowledgeRegulatorySubstitution.Create;
   try
     ParseMedicationKnowledgeRegulatorySubstitutionProperties(jsn, result);
     result.link;
@@ -47458,7 +47458,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeRegulatoryMaxDispense(jsn : TJsonObject) : TFhirMedicationKnowledgeRegulatoryMaxDispense;
 begin
-  result := TFhirMedicationKnowledgeRegulatoryMaxDispense.create;
+  result := TFhirMedicationKnowledgeRegulatoryMaxDispense.Create;
   try
     ParseMedicationKnowledgeRegulatoryMaxDispenseProperties(jsn, result);
     result.link;
@@ -47495,7 +47495,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeDefinitional(jsn : TJsonObject) : TFhirMedicationKnowledgeDefinitional;
 begin
-  result := TFhirMedicationKnowledgeDefinitional.create;
+  result := TFhirMedicationKnowledgeDefinitional.Create;
   try
     ParseMedicationKnowledgeDefinitionalProperties(jsn, result);
     result.link;
@@ -47567,7 +47567,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeDefinitionalIngredient(jsn : TJsonObject) : TFhirMedicationKnowledgeDefinitionalIngredient;
 begin
-  result := TFhirMedicationKnowledgeDefinitionalIngredient.create;
+  result := TFhirMedicationKnowledgeDefinitionalIngredient.Create;
   try
     ParseMedicationKnowledgeDefinitionalIngredientProperties(jsn, result);
     result.link;
@@ -47616,7 +47616,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledgeDefinitionalDrugCharacteristic(jsn : TJsonObject) : TFhirMedicationKnowledgeDefinitionalDrugCharacteristic;
 begin
-  result := TFhirMedicationKnowledgeDefinitionalDrugCharacteristic.create;
+  result := TFhirMedicationKnowledgeDefinitionalDrugCharacteristic.Create;
   try
     ParseMedicationKnowledgeDefinitionalDrugCharacteristicProperties(jsn, result);
     result.link;
@@ -47676,7 +47676,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationKnowledge(jsn : TJsonObject) : TFhirMedicationKnowledge;
 begin
-  result := TFhirMedicationKnowledge.create;
+  result := TFhirMedicationKnowledge.Create;
   try
     ParseMedicationKnowledgeProperties(jsn, result);
     result.link;
@@ -47884,7 +47884,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationRequestDose(jsn : TJsonObject) : TFhirMedicationRequestDose;
 begin
-  result := TFhirMedicationRequestDose.create;
+  result := TFhirMedicationRequestDose.Create;
   try
     ParseMedicationRequestDoseProperties(jsn, result);
     result.link;
@@ -47935,7 +47935,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationRequestDispenseRequest(jsn : TJsonObject) : TFhirMedicationRequestDispenseRequest;
 begin
-  result := TFhirMedicationRequestDispenseRequest.create;
+  result := TFhirMedicationRequestDispenseRequest.Create;
   try
     ParseMedicationRequestDispenseRequestProperties(jsn, result);
     result.link;
@@ -48010,7 +48010,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationRequestDispenseRequestInitialFill(jsn : TJsonObject) : TFhirMedicationRequestDispenseRequestInitialFill;
 begin
-  result := TFhirMedicationRequestDispenseRequestInitialFill.create;
+  result := TFhirMedicationRequestDispenseRequestInitialFill.Create;
   try
     ParseMedicationRequestDispenseRequestInitialFillProperties(jsn, result);
     result.link;
@@ -48048,7 +48048,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationRequestSubstitution(jsn : TJsonObject) : TFhirMedicationRequestSubstitution;
 begin
-  result := TFhirMedicationRequestSubstitution.create;
+  result := TFhirMedicationRequestSubstitution.Create;
   try
     ParseMedicationRequestSubstitutionProperties(jsn, result);
     result.link;
@@ -48093,7 +48093,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationRequest(jsn : TJsonObject) : TFhirMedicationRequest;
 begin
-  result := TFhirMedicationRequest.create;
+  result := TFhirMedicationRequest.Create;
   try
     ParseMedicationRequestProperties(jsn, result);
     result.link;
@@ -48303,7 +48303,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationUsageAdherence(jsn : TJsonObject) : TFhirMedicationUsageAdherence;
 begin
-  result := TFhirMedicationUsageAdherence.create;
+  result := TFhirMedicationUsageAdherence.Create;
   try
     ParseMedicationUsageAdherenceProperties(jsn, result);
     result.link;
@@ -48340,7 +48340,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicationUsage(jsn : TJsonObject) : TFhirMedicationUsage;
 begin
-  result := TFhirMedicationUsage.create;
+  result := TFhirMedicationUsage.Create;
   try
     ParseMedicationUsageProperties(jsn, result);
     result.link;
@@ -48493,7 +48493,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionContact(jsn : TJsonObject) : TFhirMedicinalProductDefinitionContact;
 begin
-  result := TFhirMedicinalProductDefinitionContact.create;
+  result := TFhirMedicinalProductDefinitionContact.Create;
   try
     ParseMedicinalProductDefinitionContactProperties(jsn, result);
     result.link;
@@ -48530,7 +48530,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionName(jsn : TJsonObject) : TFhirMedicinalProductDefinitionName;
 begin
-  result := TFhirMedicinalProductDefinitionName.create;
+  result := TFhirMedicinalProductDefinitionName.Create;
   try
     ParseMedicinalProductDefinitionNameProperties(jsn, result);
     result.link;
@@ -48588,7 +48588,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionNamePart(jsn : TJsonObject) : TFhirMedicinalProductDefinitionNamePart;
 begin
-  result := TFhirMedicinalProductDefinitionNamePart.create;
+  result := TFhirMedicinalProductDefinitionNamePart.Create;
   try
     ParseMedicinalProductDefinitionNamePartProperties(jsn, result);
     result.link;
@@ -48625,7 +48625,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionNameUsage(jsn : TJsonObject) : TFhirMedicinalProductDefinitionNameUsage;
 begin
-  result := TFhirMedicinalProductDefinitionNameUsage.create;
+  result := TFhirMedicinalProductDefinitionNameUsage.Create;
   try
     ParseMedicinalProductDefinitionNameUsageProperties(jsn, result);
     result.link;
@@ -48665,7 +48665,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionCrossReference(jsn : TJsonObject) : TFhirMedicinalProductDefinitionCrossReference;
 begin
-  result := TFhirMedicinalProductDefinitionCrossReference.create;
+  result := TFhirMedicinalProductDefinitionCrossReference.Create;
   try
     ParseMedicinalProductDefinitionCrossReferenceProperties(jsn, result);
     result.link;
@@ -48702,7 +48702,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionOperation(jsn : TJsonObject) : TFhirMedicinalProductDefinitionOperation;
 begin
-  result := TFhirMedicinalProductDefinitionOperation.create;
+  result := TFhirMedicinalProductDefinitionOperation.Create;
   try
     ParseMedicinalProductDefinitionOperationProperties(jsn, result);
     result.link;
@@ -48755,7 +48755,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinitionCharacteristic(jsn : TJsonObject) : TFhirMedicinalProductDefinitionCharacteristic;
 begin
-  result := TFhirMedicinalProductDefinitionCharacteristic.create;
+  result := TFhirMedicinalProductDefinitionCharacteristic.Create;
   try
     ParseMedicinalProductDefinitionCharacteristicProperties(jsn, result);
     result.link;
@@ -48828,7 +48828,7 @@ end;
 
 function TFHIRJsonParser.ParseMedicinalProductDefinition(jsn : TJsonObject) : TFhirMedicinalProductDefinition;
 begin
-  result := TFhirMedicinalProductDefinition.create;
+  result := TFhirMedicinalProductDefinition.Create;
   try
     ParseMedicinalProductDefinitionProperties(jsn, result);
     result.link;
@@ -49074,7 +49074,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageDefinitionFocus(jsn : TJsonObject) : TFhirMessageDefinitionFocus;
 begin
-  result := TFhirMessageDefinitionFocus.create;
+  result := TFhirMessageDefinitionFocus.Create;
   try
     ParseMessageDefinitionFocusProperties(jsn, result);
     result.link;
@@ -49123,7 +49123,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageDefinitionAllowedResponse(jsn : TJsonObject) : TFhirMessageDefinitionAllowedResponse;
 begin
-  result := TFhirMessageDefinitionAllowedResponse.create;
+  result := TFhirMessageDefinitionAllowedResponse.Create;
   try
     ParseMessageDefinitionAllowedResponseProperties(jsn, result);
     result.link;
@@ -49163,7 +49163,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageDefinition(jsn : TJsonObject) : TFhirMessageDefinition;
 begin
-  result := TFhirMessageDefinition.create;
+  result := TFhirMessageDefinition.Create;
   try
     ParseMessageDefinitionProperties(jsn, result);
     result.link;
@@ -49395,7 +49395,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageHeaderDestination(jsn : TJsonObject) : TFhirMessageHeaderDestination;
 begin
-  result := TFhirMessageHeaderDestination.create;
+  result := TFhirMessageHeaderDestination.Create;
   try
     ParseMessageHeaderDestinationProperties(jsn, result);
     result.link;
@@ -49445,7 +49445,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageHeaderSource(jsn : TJsonObject) : TFhirMessageHeaderSource;
 begin
-  result := TFhirMessageHeaderSource.create;
+  result := TFhirMessageHeaderSource.Create;
   try
     ParseMessageHeaderSourceProperties(jsn, result);
     result.link;
@@ -49503,7 +49503,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageHeaderResponse(jsn : TJsonObject) : TFhirMessageHeaderResponse;
 begin
-  result := TFhirMessageHeaderResponse.create;
+  result := TFhirMessageHeaderResponse.Create;
   try
     ParseMessageHeaderResponseProperties(jsn, result);
     result.link;
@@ -49543,7 +49543,7 @@ end;
 
 function TFHIRJsonParser.ParseMessageHeader(jsn : TJsonObject) : TFhirMessageHeader;
 begin
-  result := TFhirMessageHeader.create;
+  result := TFhirMessageHeader.Create;
   try
     ParseMessageHeaderProperties(jsn, result);
     result.link;
@@ -49637,7 +49637,7 @@ end;
 
 function TFHIRJsonParser.ParseMolecularSequenceRelative(jsn : TJsonObject) : TFhirMolecularSequenceRelative;
 begin
-  result := TFhirMolecularSequenceRelative.create;
+  result := TFhirMolecularSequenceRelative.Create;
   try
     ParseMolecularSequenceRelativeProperties(jsn, result);
     result.link;
@@ -49695,7 +49695,7 @@ end;
 
 function TFHIRJsonParser.ParseMolecularSequenceRelativeStartingSequence(jsn : TJsonObject) : TFhirMolecularSequenceRelativeStartingSequence;
 begin
-  result := TFhirMolecularSequenceRelativeStartingSequence.create;
+  result := TFhirMolecularSequenceRelativeStartingSequence.Create;
   try
     ParseMolecularSequenceRelativeStartingSequenceProperties(jsn, result);
     result.link;
@@ -49768,7 +49768,7 @@ end;
 
 function TFHIRJsonParser.ParseMolecularSequenceRelativeEdit(jsn : TJsonObject) : TFhirMolecularSequenceRelativeEdit;
 begin
-  result := TFhirMolecularSequenceRelativeEdit.create;
+  result := TFhirMolecularSequenceRelativeEdit.Create;
   try
     ParseMolecularSequenceRelativeEditProperties(jsn, result);
     result.link;
@@ -49822,7 +49822,7 @@ end;
 
 function TFHIRJsonParser.ParseMolecularSequence(jsn : TJsonObject) : TFhirMolecularSequence;
 begin
-  result := TFhirMolecularSequence.create;
+  result := TFhirMolecularSequence.Create;
   try
     ParseMolecularSequenceProperties(jsn, result);
     result.link;
@@ -49907,7 +49907,7 @@ end;
 
 function TFHIRJsonParser.ParseNamingSystemUniqueId(jsn : TJsonObject) : TFhirNamingSystemUniqueId;
 begin
-  result := TFhirNamingSystemUniqueId.create;
+  result := TFhirNamingSystemUniqueId.Create;
   try
     ParseNamingSystemUniqueIdProperties(jsn, result);
     result.link;
@@ -49966,7 +49966,7 @@ end;
 
 function TFHIRJsonParser.ParseNamingSystem(jsn : TJsonObject) : TFhirNamingSystem;
 begin
-  result := TFhirNamingSystem.create;
+  result := TFhirNamingSystem.Create;
   try
     ParseNamingSystemProperties(jsn, result);
     result.link;
@@ -50191,7 +50191,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionIntakeConsumedItem(jsn : TJsonObject) : TFhirNutritionIntakeConsumedItem;
 begin
-  result := TFhirNutritionIntakeConsumedItem.create;
+  result := TFhirNutritionIntakeConsumedItem.Create;
   try
     ParseNutritionIntakeConsumedItemProperties(jsn, result);
     result.link;
@@ -50249,7 +50249,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionIntakeIngredientLabel(jsn : TJsonObject) : TFhirNutritionIntakeIngredientLabel;
 begin
-  result := TFhirNutritionIntakeIngredientLabel.create;
+  result := TFhirNutritionIntakeIngredientLabel.Create;
   try
     ParseNutritionIntakeIngredientLabelProperties(jsn, result);
     result.link;
@@ -50285,7 +50285,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionIntakePerformer(jsn : TJsonObject) : TFhirNutritionIntakePerformer;
 begin
-  result := TFhirNutritionIntakePerformer.create;
+  result := TFhirNutritionIntakePerformer.Create;
   try
     ParseNutritionIntakePerformerProperties(jsn, result);
     result.link;
@@ -50322,7 +50322,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionIntake(jsn : TJsonObject) : TFhirNutritionIntake;
 begin
-  result := TFhirNutritionIntake.create;
+  result := TFhirNutritionIntake.Create;
   try
     ParseNutritionIntakeProperties(jsn, result);
     result.link;
@@ -50544,7 +50544,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderOralDiet(jsn : TJsonObject) : TFhirNutritionOrderOralDiet;
 begin
-  result := TFhirNutritionOrderOralDiet.create;
+  result := TFhirNutritionOrderOralDiet.Create;
   try
     ParseNutritionOrderOralDietProperties(jsn, result);
     result.link;
@@ -50622,7 +50622,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderOralDietSchedule(jsn : TJsonObject) : TFhirNutritionOrderOralDietSchedule;
 begin
-  result := TFhirNutritionOrderOralDietSchedule.create;
+  result := TFhirNutritionOrderOralDietSchedule.Create;
   try
     ParseNutritionOrderOralDietScheduleProperties(jsn, result);
     result.link;
@@ -50673,7 +50673,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderOralDietNutrient(jsn : TJsonObject) : TFhirNutritionOrderOralDietNutrient;
 begin
-  result := TFhirNutritionOrderOralDietNutrient.create;
+  result := TFhirNutritionOrderOralDietNutrient.Create;
   try
     ParseNutritionOrderOralDietNutrientProperties(jsn, result);
     result.link;
@@ -50711,7 +50711,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderOralDietTexture(jsn : TJsonObject) : TFhirNutritionOrderOralDietTexture;
 begin
-  result := TFhirNutritionOrderOralDietTexture.create;
+  result := TFhirNutritionOrderOralDietTexture.Create;
   try
     ParseNutritionOrderOralDietTextureProperties(jsn, result);
     result.link;
@@ -50749,7 +50749,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderSupplement(jsn : TJsonObject) : TFhirNutritionOrderSupplement;
 begin
-  result := TFhirNutritionOrderSupplement.create;
+  result := TFhirNutritionOrderSupplement.Create;
   try
     ParseNutritionOrderSupplementProperties(jsn, result);
     result.link;
@@ -50803,7 +50803,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderSupplementSchedule(jsn : TJsonObject) : TFhirNutritionOrderSupplementSchedule;
 begin
-  result := TFhirNutritionOrderSupplementSchedule.create;
+  result := TFhirNutritionOrderSupplementSchedule.Create;
   try
     ParseNutritionOrderSupplementScheduleProperties(jsn, result);
     result.link;
@@ -50854,7 +50854,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderEnteralFormula(jsn : TJsonObject) : TFhirNutritionOrderEnteralFormula;
 begin
-  result := TFhirNutritionOrderEnteralFormula.create;
+  result := TFhirNutritionOrderEnteralFormula.Create;
   try
     ParseNutritionOrderEnteralFormulaProperties(jsn, result);
     result.link;
@@ -50941,7 +50941,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderEnteralFormulaAdditive(jsn : TJsonObject) : TFhirNutritionOrderEnteralFormulaAdditive;
 begin
-  result := TFhirNutritionOrderEnteralFormulaAdditive.create;
+  result := TFhirNutritionOrderEnteralFormulaAdditive.Create;
   try
     ParseNutritionOrderEnteralFormulaAdditiveProperties(jsn, result);
     result.link;
@@ -50985,7 +50985,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderEnteralFormulaAdministration(jsn : TJsonObject) : TFhirNutritionOrderEnteralFormulaAdministration;
 begin
-  result := TFhirNutritionOrderEnteralFormulaAdministration.create;
+  result := TFhirNutritionOrderEnteralFormulaAdministration.Create;
   try
     ParseNutritionOrderEnteralFormulaAdministrationProperties(jsn, result);
     result.link;
@@ -51031,7 +51031,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrderEnteralFormulaAdministrationSchedule(jsn : TJsonObject) : TFhirNutritionOrderEnteralFormulaAdministrationSchedule;
 begin
-  result := TFhirNutritionOrderEnteralFormulaAdministrationSchedule.create;
+  result := TFhirNutritionOrderEnteralFormulaAdministrationSchedule.Create;
   try
     ParseNutritionOrderEnteralFormulaAdministrationScheduleProperties(jsn, result);
     result.link;
@@ -51082,7 +51082,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionOrder(jsn : TJsonObject) : TFhirNutritionOrder;
 begin
-  result := TFhirNutritionOrder.create;
+  result := TFhirNutritionOrder.Create;
   try
     ParseNutritionOrderProperties(jsn, result);
     result.link;
@@ -51314,7 +51314,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionProductNutrient(jsn : TJsonObject) : TFhirNutritionProductNutrient;
 begin
-  result := TFhirNutritionProductNutrient.create;
+  result := TFhirNutritionProductNutrient.Create;
   try
     ParseNutritionProductNutrientProperties(jsn, result);
     result.link;
@@ -51359,7 +51359,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionProductIngredient(jsn : TJsonObject) : TFhirNutritionProductIngredient;
 begin
-  result := TFhirNutritionProductIngredient.create;
+  result := TFhirNutritionProductIngredient.Create;
   try
     ParseNutritionProductIngredientProperties(jsn, result);
     result.link;
@@ -51403,7 +51403,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionProductCharacteristic(jsn : TJsonObject) : TFhirNutritionProductCharacteristic;
 begin
-  result := TFhirNutritionProductCharacteristic.create;
+  result := TFhirNutritionProductCharacteristic.Create;
   try
     ParseNutritionProductCharacteristicProperties(jsn, result);
     result.link;
@@ -51469,7 +51469,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionProductInstance(jsn : TJsonObject) : TFhirNutritionProductInstance;
 begin
-  result := TFhirNutritionProductInstance.create;
+  result := TFhirNutritionProductInstance.Create;
   try
     ParseNutritionProductInstanceProperties(jsn, result);
     result.link;
@@ -51542,7 +51542,7 @@ end;
 
 function TFHIRJsonParser.ParseNutritionProduct(jsn : TJsonObject) : TFhirNutritionProduct;
 begin
-  result := TFhirNutritionProduct.create;
+  result := TFhirNutritionProduct.Create;
   try
     ParseNutritionProductProperties(jsn, result);
     result.link;
@@ -51653,7 +51653,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationTriggeredBy(jsn : TJsonObject) : TFhirObservationTriggeredBy;
 begin
-  result := TFhirObservationTriggeredBy.create;
+  result := TFhirObservationTriggeredBy.Create;
   try
     ParseObservationTriggeredByProperties(jsn, result);
     result.link;
@@ -51695,7 +51695,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationReferenceRange(jsn : TJsonObject) : TFhirObservationReferenceRange;
 begin
-  result := TFhirObservationReferenceRange.create;
+  result := TFhirObservationReferenceRange.Create;
   try
     ParseObservationReferenceRangeProperties(jsn, result);
     result.link;
@@ -51762,7 +51762,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationComponent(jsn : TJsonObject) : TFhirObservationComponent;
 begin
-  result := TFhirObservationComponent.create;
+  result := TFhirObservationComponent.Create;
   try
     ParseObservationComponentProperties(jsn, result);
     result.link;
@@ -51882,7 +51882,7 @@ end;
 
 function TFHIRJsonParser.ParseObservation(jsn : TJsonObject) : TFhirObservation;
 begin
-  result := TFhirObservation.create;
+  result := TFhirObservation.Create;
   try
     ParseObservationProperties(jsn, result);
     result.link;
@@ -52171,7 +52171,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationDefinitionQuantitativeDetails(jsn : TJsonObject) : TFhirObservationDefinitionQuantitativeDetails;
 begin
-  result := TFhirObservationDefinitionQuantitativeDetails.create;
+  result := TFhirObservationDefinitionQuantitativeDetails.Create;
   try
     ParseObservationDefinitionQuantitativeDetailsProperties(jsn, result);
     result.link;
@@ -52221,7 +52221,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationDefinitionQualifiedValue(jsn : TJsonObject) : TFhirObservationDefinitionQualifiedValue;
 begin
-  result := TFhirObservationDefinitionQualifiedValue.create;
+  result := TFhirObservationDefinitionQualifiedValue.Create;
   try
     ParseObservationDefinitionQualifiedValueProperties(jsn, result);
     result.link;
@@ -52316,7 +52316,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationDefinitionComponent(jsn : TJsonObject) : TFhirObservationDefinitionComponent;
 begin
-  result := TFhirObservationDefinitionComponent.create;
+  result := TFhirObservationDefinitionComponent.Create;
   try
     ParseObservationDefinitionComponentProperties(jsn, result);
     result.link;
@@ -52392,7 +52392,7 @@ end;
 
 function TFHIRJsonParser.ParseObservationDefinition(jsn : TJsonObject) : TFhirObservationDefinition;
 begin
-  result := TFhirObservationDefinition.create;
+  result := TFhirObservationDefinition.Create;
   try
     ParseObservationDefinitionProperties(jsn, result);
     result.link;
@@ -52708,7 +52708,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationDefinitionParameter(jsn : TJsonObject) : TFhirOperationDefinitionParameter;
 begin
-  result := TFhirOperationDefinitionParameter.create;
+  result := TFhirOperationDefinitionParameter.Create;
   try
     ParseOperationDefinitionParameterProperties(jsn, result);
     result.link;
@@ -52871,7 +52871,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationDefinitionParameterBinding(jsn : TJsonObject) : TFhirOperationDefinitionParameterBinding;
 begin
-  result := TFhirOperationDefinitionParameterBinding.create;
+  result := TFhirOperationDefinitionParameterBinding.Create;
   try
     ParseOperationDefinitionParameterBindingProperties(jsn, result);
     result.link;
@@ -52908,7 +52908,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationDefinitionParameterReferencedFrom(jsn : TJsonObject) : TFhirOperationDefinitionParameterReferencedFrom;
 begin
-  result := TFhirOperationDefinitionParameterReferencedFrom.create;
+  result := TFhirOperationDefinitionParameterReferencedFrom.Create;
   try
     ParseOperationDefinitionParameterReferencedFromProperties(jsn, result);
     result.link;
@@ -52948,7 +52948,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationDefinitionOverload(jsn : TJsonObject) : TFhirOperationDefinitionOverload;
 begin
-  result := TFhirOperationDefinitionOverload.create;
+  result := TFhirOperationDefinitionOverload.Create;
   try
     ParseOperationDefinitionOverloadProperties(jsn, result);
     result.link;
@@ -53014,7 +53014,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationDefinition(jsn : TJsonObject) : TFhirOperationDefinition;
 begin
-  result := TFhirOperationDefinition.create;
+  result := TFhirOperationDefinition.Create;
   try
     ParseOperationDefinitionProperties(jsn, result);
     result.link;
@@ -53246,7 +53246,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationOutcomeIssue(jsn : TJsonObject) : TFhirOperationOutcomeIssue;
 begin
-  result := TFhirOperationOutcomeIssue.create;
+  result := TFhirOperationOutcomeIssue.Create;
   try
     ParseOperationOutcomeIssueProperties(jsn, result);
     result.link;
@@ -53348,7 +53348,7 @@ end;
 
 function TFHIRJsonParser.ParseOperationOutcome(jsn : TJsonObject) : TFhirOperationOutcome;
 begin
-  result := TFhirOperationOutcome.create;
+  result := TFhirOperationOutcome.Create;
   try
     ParseOperationOutcomeProperties(jsn, result);
     result.link;
@@ -53389,7 +53389,7 @@ end;
 
 function TFHIRJsonParser.ParseOrganizationQualification(jsn : TJsonObject) : TFhirOrganizationQualification;
 begin
-  result := TFhirOrganizationQualification.create;
+  result := TFhirOrganizationQualification.Create;
   try
     ParseOrganizationQualificationProperties(jsn, result);
     result.link;
@@ -53441,7 +53441,7 @@ end;
 
 function TFHIRJsonParser.ParseOrganization(jsn : TJsonObject) : TFhirOrganization;
 begin
-  result := TFhirOrganization.create;
+  result := TFhirOrganization.Create;
   try
     ParseOrganizationProperties(jsn, result);
     result.link;
@@ -53568,7 +53568,7 @@ end;
 
 function TFHIRJsonParser.ParseOrganizationAffiliation(jsn : TJsonObject) : TFhirOrganizationAffiliation;
 begin
-  result := TFhirOrganizationAffiliation.create;
+  result := TFhirOrganizationAffiliation.Create;
   try
     ParseOrganizationAffiliationProperties(jsn, result);
     result.link;
@@ -53690,7 +53690,7 @@ end;
 
 function TFHIRJsonParser.ParsePackagedProductDefinitionLegalStatusOfSupply(jsn : TJsonObject) : TFhirPackagedProductDefinitionLegalStatusOfSupply;
 begin
-  result := TFhirPackagedProductDefinitionLegalStatusOfSupply.create;
+  result := TFhirPackagedProductDefinitionLegalStatusOfSupply.Create;
   try
     ParsePackagedProductDefinitionLegalStatusOfSupplyProperties(jsn, result);
     result.link;
@@ -53728,7 +53728,7 @@ end;
 
 function TFHIRJsonParser.ParsePackagedProductDefinitionPackaging(jsn : TJsonObject) : TFhirPackagedProductDefinitionPackaging;
 begin
-  result := TFhirPackagedProductDefinitionPackaging.create;
+  result := TFhirPackagedProductDefinitionPackaging.Create;
   try
     ParsePackagedProductDefinitionPackagingProperties(jsn, result);
     result.link;
@@ -53842,7 +53842,7 @@ end;
 
 function TFHIRJsonParser.ParsePackagedProductDefinitionPackagingProperty(jsn : TJsonObject) : TFhirPackagedProductDefinitionPackagingProperty;
 begin
-  result := TFhirPackagedProductDefinitionPackagingProperty.create;
+  result := TFhirPackagedProductDefinitionPackagingProperty.Create;
   try
     ParsePackagedProductDefinitionPackagingPropertyProperties(jsn, result);
     result.link;
@@ -53901,7 +53901,7 @@ end;
 
 function TFHIRJsonParser.ParsePackagedProductDefinitionPackagingContainedItem(jsn : TJsonObject) : TFhirPackagedProductDefinitionPackagingContainedItem;
 begin
-  result := TFhirPackagedProductDefinitionPackagingContainedItem.create;
+  result := TFhirPackagedProductDefinitionPackagingContainedItem.Create;
   try
     ParsePackagedProductDefinitionPackagingContainedItemProperties(jsn, result);
     result.link;
@@ -53938,7 +53938,7 @@ end;
 
 function TFHIRJsonParser.ParsePackagedProductDefinition(jsn : TJsonObject) : TFhirPackagedProductDefinition;
 begin
-  result := TFhirPackagedProductDefinition.create;
+  result := TFhirPackagedProductDefinition.Create;
   try
     ParsePackagedProductDefinitionProperties(jsn, result);
     result.link;
@@ -54078,7 +54078,7 @@ end;
 
 function TFHIRJsonParser.ParseParametersParameter(jsn : TJsonObject) : TFhirParametersParameter;
 begin
-  result := TFhirParametersParameter.create;
+  result := TFhirParametersParameter.Create;
   try
     ParseParametersParameterProperties(jsn, result);
     result.link;
@@ -54403,7 +54403,7 @@ end;
 
 function TFHIRJsonParser.ParseParameters(jsn : TJsonObject) : TFhirParameters;
 begin
-  result := TFhirParameters.create;
+  result := TFhirParameters.Create;
   try
     ParseParametersProperties(jsn, result);
     result.link;
@@ -54444,7 +54444,7 @@ end;
 
 function TFHIRJsonParser.ParsePatientContact(jsn : TJsonObject) : TFhirPatientContact;
 begin
-  result := TFhirPatientContact.create;
+  result := TFhirPatientContact.Create;
   try
     ParsePatientContactProperties(jsn, result);
     result.link;
@@ -54514,7 +54514,7 @@ end;
 
 function TFHIRJsonParser.ParsePatientCommunication(jsn : TJsonObject) : TFhirPatientCommunication;
 begin
-  result := TFhirPatientCommunication.create;
+  result := TFhirPatientCommunication.Create;
   try
     ParsePatientCommunicationProperties(jsn, result);
     result.link;
@@ -54553,7 +54553,7 @@ end;
 
 function TFHIRJsonParser.ParsePatientLink(jsn : TJsonObject) : TFhirPatientLink;
 begin
-  result := TFhirPatientLink.create;
+  result := TFhirPatientLink.Create;
   try
     ParsePatientLinkProperties(jsn, result);
     result.link;
@@ -54589,7 +54589,7 @@ end;
 
 function TFHIRJsonParser.ParsePatient(jsn : TJsonObject) : TFhirPatient;
 begin
-  result := TFhirPatient.create;
+  result := TFhirPatient.Create;
   try
     ParsePatientProperties(jsn, result);
     result.link;
@@ -54754,7 +54754,7 @@ end;
 
 function TFHIRJsonParser.ParsePaymentNotice(jsn : TJsonObject) : TFhirPaymentNotice;
 begin
-  result := TFhirPaymentNotice.create;
+  result := TFhirPaymentNotice.Create;
   try
     ParsePaymentNoticeProperties(jsn, result);
     result.link;
@@ -54837,7 +54837,7 @@ end;
 
 function TFHIRJsonParser.ParsePaymentReconciliationAllocation(jsn : TJsonObject) : TFhirPaymentReconciliationAllocation;
 begin
-  result := TFhirPaymentReconciliationAllocation.create;
+  result := TFhirPaymentReconciliationAllocation.Create;
   try
     ParsePaymentReconciliationAllocationProperties(jsn, result);
     result.link;
@@ -54935,7 +54935,7 @@ end;
 
 function TFHIRJsonParser.ParsePaymentReconciliationProcessNote(jsn : TJsonObject) : TFhirPaymentReconciliationProcessNote;
 begin
-  result := TFhirPaymentReconciliationProcessNote.create;
+  result := TFhirPaymentReconciliationProcessNote.Create;
   try
     ParsePaymentReconciliationProcessNoteProperties(jsn, result);
     result.link;
@@ -54975,7 +54975,7 @@ end;
 
 function TFHIRJsonParser.ParsePaymentReconciliation(jsn : TJsonObject) : TFhirPaymentReconciliation;
 begin
-  result := TFhirPaymentReconciliation.create;
+  result := TFhirPaymentReconciliation.Create;
   try
     ParsePaymentReconciliationProperties(jsn, result);
     result.link;
@@ -55149,7 +55149,7 @@ end;
 
 function TFHIRJsonParser.ParsePermissionJustification(jsn : TJsonObject) : TFhirPermissionJustification;
 begin
-  result := TFhirPermissionJustification.create;
+  result := TFhirPermissionJustification.Create;
   try
     ParsePermissionJustificationProperties(jsn, result);
     result.link;
@@ -55199,7 +55199,7 @@ end;
 
 function TFHIRJsonParser.ParsePermissionRule(jsn : TJsonObject) : TFhirPermissionRule;
 begin
-  result := TFhirPermissionRule.create;
+  result := TFhirPermissionRule.Create;
   try
     ParsePermissionRuleProperties(jsn, result);
     result.link;
@@ -55262,7 +55262,7 @@ end;
 
 function TFHIRJsonParser.ParsePermissionRuleData(jsn : TJsonObject) : TFhirPermissionRuleData;
 begin
-  result := TFhirPermissionRuleData.create;
+  result := TFhirPermissionRuleData.Create;
   try
     ParsePermissionRuleDataProperties(jsn, result);
     result.link;
@@ -55325,7 +55325,7 @@ end;
 
 function TFHIRJsonParser.ParsePermissionRuleDataResource(jsn : TJsonObject) : TFhirPermissionRuleDataResource;
 begin
-  result := TFhirPermissionRuleDataResource.create;
+  result := TFhirPermissionRuleDataResource.Create;
   try
     ParsePermissionRuleDataResourceProperties(jsn, result);
     result.link;
@@ -55361,7 +55361,7 @@ end;
 
 function TFHIRJsonParser.ParsePermissionRuleActivity(jsn : TJsonObject) : TFhirPermissionRuleActivity;
 begin
-  result := TFhirPermissionRuleActivity.create;
+  result := TFhirPermissionRuleActivity.Create;
   try
     ParsePermissionRuleActivityProperties(jsn, result);
     result.link;
@@ -55420,7 +55420,7 @@ end;
 
 function TFHIRJsonParser.ParsePermission(jsn : TJsonObject) : TFhirPermission;
 begin
-  result := TFhirPermission.create;
+  result := TFhirPermission.Create;
   try
     ParsePermissionProperties(jsn, result);
     result.link;
@@ -55507,7 +55507,7 @@ end;
 
 function TFHIRJsonParser.ParsePersonCommunication(jsn : TJsonObject) : TFhirPersonCommunication;
 begin
-  result := TFhirPersonCommunication.create;
+  result := TFhirPersonCommunication.Create;
   try
     ParsePersonCommunicationProperties(jsn, result);
     result.link;
@@ -55546,7 +55546,7 @@ end;
 
 function TFHIRJsonParser.ParsePersonLink(jsn : TJsonObject) : TFhirPersonLink;
 begin
-  result := TFhirPersonLink.create;
+  result := TFhirPersonLink.Create;
   try
     ParsePersonLinkProperties(jsn, result);
     result.link;
@@ -55583,7 +55583,7 @@ end;
 
 function TFHIRJsonParser.ParsePerson(jsn : TJsonObject) : TFhirPerson;
 begin
-  result := TFhirPerson.create;
+  result := TFhirPerson.Create;
   try
     ParsePersonProperties(jsn, result);
     result.link;
@@ -55716,7 +55716,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionGoal(jsn : TJsonObject) : TFhirPlanDefinitionGoal;
 begin
-  result := TFhirPlanDefinitionGoal.create;
+  result := TFhirPlanDefinitionGoal.Create;
   try
     ParsePlanDefinitionGoalProperties(jsn, result);
     result.link;
@@ -55790,7 +55790,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionGoalTarget(jsn : TJsonObject) : TFhirPlanDefinitionGoalTarget;
 begin
-  result := TFhirPlanDefinitionGoalTarget.create;
+  result := TFhirPlanDefinitionGoalTarget.Create;
   try
     ParsePlanDefinitionGoalTargetProperties(jsn, result);
     result.link;
@@ -55865,7 +55865,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActor(jsn : TJsonObject) : TFhirPlanDefinitionActor;
 begin
-  result := TFhirPlanDefinitionActor.create;
+  result := TFhirPlanDefinitionActor.Create;
   try
     ParsePlanDefinitionActorProperties(jsn, result);
     result.link;
@@ -55918,7 +55918,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActorOption(jsn : TJsonObject) : TFhirPlanDefinitionActorOption;
 begin
-  result := TFhirPlanDefinitionActorOption.create;
+  result := TFhirPlanDefinitionActorOption.Create;
   try
     ParsePlanDefinitionActorOptionProperties(jsn, result);
     result.link;
@@ -55966,7 +55966,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionAction(jsn : TJsonObject) : TFhirPlanDefinitionAction;
 begin
-  result := TFhirPlanDefinitionAction.create;
+  result := TFhirPlanDefinitionAction.Create;
   try
     ParsePlanDefinitionActionProperties(jsn, result);
     result.link;
@@ -56233,7 +56233,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActionCondition(jsn : TJsonObject) : TFhirPlanDefinitionActionCondition;
 begin
-  result := TFhirPlanDefinitionActionCondition.create;
+  result := TFhirPlanDefinitionActionCondition.Create;
   try
     ParsePlanDefinitionActionConditionProperties(jsn, result);
     result.link;
@@ -56270,7 +56270,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActionInput(jsn : TJsonObject) : TFhirPlanDefinitionActionInput;
 begin
-  result := TFhirPlanDefinitionActionInput.create;
+  result := TFhirPlanDefinitionActionInput.Create;
   try
     ParsePlanDefinitionActionInputProperties(jsn, result);
     result.link;
@@ -56316,7 +56316,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActionOutput(jsn : TJsonObject) : TFhirPlanDefinitionActionOutput;
 begin
-  result := TFhirPlanDefinitionActionOutput.create;
+  result := TFhirPlanDefinitionActionOutput.Create;
   try
     ParsePlanDefinitionActionOutputProperties(jsn, result);
     result.link;
@@ -56362,7 +56362,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActionRelatedAction(jsn : TJsonObject) : TFhirPlanDefinitionActionRelatedAction;
 begin
-  result := TFhirPlanDefinitionActionRelatedAction.create;
+  result := TFhirPlanDefinitionActionRelatedAction.Create;
   try
     ParsePlanDefinitionActionRelatedActionProperties(jsn, result);
     result.link;
@@ -56407,7 +56407,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActionParticipant(jsn : TJsonObject) : TFhirPlanDefinitionActionParticipant;
 begin
-  result := TFhirPlanDefinitionActionParticipant.create;
+  result := TFhirPlanDefinitionActionParticipant.Create;
   try
     ParsePlanDefinitionActionParticipantProperties(jsn, result);
     result.link;
@@ -56465,7 +56465,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinitionActionDynamicValue(jsn : TJsonObject) : TFhirPlanDefinitionActionDynamicValue;
 begin
-  result := TFhirPlanDefinitionActionDynamicValue.create;
+  result := TFhirPlanDefinitionActionDynamicValue.Create;
   try
     ParsePlanDefinitionActionDynamicValueProperties(jsn, result);
     result.link;
@@ -56505,7 +56505,7 @@ end;
 
 function TFHIRJsonParser.ParsePlanDefinition(jsn : TJsonObject) : TFhirPlanDefinition;
 begin
-  result := TFhirPlanDefinition.create;
+  result := TFhirPlanDefinition.Create;
   try
     ParsePlanDefinitionProperties(jsn, result);
     result.link;
@@ -56803,7 +56803,7 @@ end;
 
 function TFHIRJsonParser.ParsePractitionerQualification(jsn : TJsonObject) : TFhirPractitionerQualification;
 begin
-  result := TFhirPractitionerQualification.create;
+  result := TFhirPractitionerQualification.Create;
   try
     ParsePractitionerQualificationProperties(jsn, result);
     result.link;
@@ -56855,7 +56855,7 @@ end;
 
 function TFHIRJsonParser.ParsePractitioner(jsn : TJsonObject) : TFhirPractitioner;
 begin
-  result := TFhirPractitioner.create;
+  result := TFhirPractitioner.Create;
   try
     ParsePractitionerProperties(jsn, result);
     result.link;
@@ -56980,7 +56980,7 @@ end;
 
 function TFHIRJsonParser.ParsePractitionerRole(jsn : TJsonObject) : TFhirPractitionerRole;
 begin
-  result := TFhirPractitionerRole.create;
+  result := TFhirPractitionerRole.Create;
   try
     ParsePractitionerRoleProperties(jsn, result);
     result.link;
@@ -57102,7 +57102,7 @@ end;
 
 function TFHIRJsonParser.ParseProcedurePerformer(jsn : TJsonObject) : TFhirProcedurePerformer;
 begin
-  result := TFhirProcedurePerformer.create;
+  result := TFhirProcedurePerformer.Create;
   try
     ParseProcedurePerformerProperties(jsn, result);
     result.link;
@@ -57147,7 +57147,7 @@ end;
 
 function TFHIRJsonParser.ParseProcedureFocalDevice(jsn : TJsonObject) : TFhirProcedureFocalDevice;
 begin
-  result := TFhirProcedureFocalDevice.create;
+  result := TFhirProcedureFocalDevice.Create;
   try
     ParseProcedureFocalDeviceProperties(jsn, result);
     result.link;
@@ -57184,7 +57184,7 @@ end;
 
 function TFHIRJsonParser.ParseProcedure(jsn : TJsonObject) : TFhirProcedure;
 begin
-  result := TFhirProcedure.create;
+  result := TFhirProcedure.Create;
   try
     ParseProcedureProperties(jsn, result);
     result.link;
@@ -57486,7 +57486,7 @@ end;
 
 function TFHIRJsonParser.ParseProvenanceAgent(jsn : TJsonObject) : TFhirProvenanceAgent;
 begin
-  result := TFhirProvenanceAgent.create;
+  result := TFhirProvenanceAgent.Create;
   try
     ParseProvenanceAgentProperties(jsn, result);
     result.link;
@@ -57538,7 +57538,7 @@ end;
 
 function TFHIRJsonParser.ParseProvenanceEntity(jsn : TJsonObject) : TFhirProvenanceEntity;
 begin
-  result := TFhirProvenanceEntity.create;
+  result := TFhirProvenanceEntity.Create;
   try
     ParseProvenanceEntityProperties(jsn, result);
     result.link;
@@ -57585,7 +57585,7 @@ end;
 
 function TFHIRJsonParser.ParseProvenance(jsn : TJsonObject) : TFhirProvenance;
 begin
-  result := TFhirProvenance.create;
+  result := TFhirProvenance.Create;
   try
     ParseProvenanceProperties(jsn, result);
     result.link;
@@ -57732,7 +57732,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireItem(jsn : TJsonObject) : TFhirQuestionnaireItem;
 begin
-  result := TFhirQuestionnaireItem.create;
+  result := TFhirQuestionnaireItem.Create;
   try
     ParseQuestionnaireItemProperties(jsn, result);
     result.link;
@@ -57876,7 +57876,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireItemEnableWhen(jsn : TJsonObject) : TFhirQuestionnaireItemEnableWhen;
 begin
-  result := TFhirQuestionnaireItemEnableWhen.create;
+  result := TFhirQuestionnaireItemEnableWhen.Create;
   try
     ParseQuestionnaireItemEnableWhenProperties(jsn, result);
     result.link;
@@ -57974,7 +57974,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireItemAnswerOption(jsn : TJsonObject) : TFhirQuestionnaireItemAnswerOption;
 begin
-  result := TFhirQuestionnaireItemAnswerOption.create;
+  result := TFhirQuestionnaireItemAnswerOption.Create;
   try
     ParseQuestionnaireItemAnswerOptionProperties(jsn, result);
     result.link;
@@ -58046,7 +58046,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireItemInitial(jsn : TJsonObject) : TFhirQuestionnaireItemInitial;
 begin
-  result := TFhirQuestionnaireItemInitial.create;
+  result := TFhirQuestionnaireItemInitial.Create;
   try
     ParseQuestionnaireItemInitialProperties(jsn, result);
     result.link;
@@ -58148,7 +58148,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaire(jsn : TJsonObject) : TFhirQuestionnaire;
 begin
-  result := TFhirQuestionnaire.create;
+  result := TFhirQuestionnaire.Create;
   try
     ParseQuestionnaireProperties(jsn, result);
     result.link;
@@ -58384,7 +58384,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireResponseItem(jsn : TJsonObject) : TFhirQuestionnaireResponseItem;
 begin
-  result := TFhirQuestionnaireResponseItem.create;
+  result := TFhirQuestionnaireResponseItem.Create;
   try
     ParseQuestionnaireResponseItemProperties(jsn, result);
     result.link;
@@ -58450,7 +58450,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireResponseItemAnswer(jsn : TJsonObject) : TFhirQuestionnaireResponseItemAnswer;
 begin
-  result := TFhirQuestionnaireResponseItemAnswer.create;
+  result := TFhirQuestionnaireResponseItemAnswer.Create;
   try
     ParseQuestionnaireResponseItemAnswerProperties(jsn, result);
     result.link;
@@ -58563,7 +58563,7 @@ end;
 
 function TFHIRJsonParser.ParseQuestionnaireResponse(jsn : TJsonObject) : TFhirQuestionnaireResponse;
 begin
-  result := TFhirQuestionnaireResponse.create;
+  result := TFhirQuestionnaireResponse.Create;
   try
     ParseQuestionnaireResponseProperties(jsn, result);
     result.link;
@@ -58660,7 +58660,7 @@ end;
 
 function TFHIRJsonParser.ParseRegulatedAuthorizationCase(jsn : TJsonObject) : TFhirRegulatedAuthorizationCase;
 begin
-  result := TFhirRegulatedAuthorizationCase.create;
+  result := TFhirRegulatedAuthorizationCase.Create;
   try
     ParseRegulatedAuthorizationCaseProperties(jsn, result);
     result.link;
@@ -58724,7 +58724,7 @@ end;
 
 function TFHIRJsonParser.ParseRegulatedAuthorization(jsn : TJsonObject) : TFhirRegulatedAuthorization;
 begin
-  result := TFhirRegulatedAuthorization.create;
+  result := TFhirRegulatedAuthorization.Create;
   try
     ParseRegulatedAuthorizationProperties(jsn, result);
     result.link;
@@ -58850,7 +58850,7 @@ end;
 
 function TFHIRJsonParser.ParseRelatedPersonCommunication(jsn : TJsonObject) : TFhirRelatedPersonCommunication;
 begin
-  result := TFhirRelatedPersonCommunication.create;
+  result := TFhirRelatedPersonCommunication.Create;
   try
     ParseRelatedPersonCommunicationProperties(jsn, result);
     result.link;
@@ -58889,7 +58889,7 @@ end;
 
 function TFHIRJsonParser.ParseRelatedPerson(jsn : TJsonObject) : TFhirRelatedPerson;
 begin
-  result := TFhirRelatedPerson.create;
+  result := TFhirRelatedPerson.Create;
   try
     ParseRelatedPersonProperties(jsn, result);
     result.link;
@@ -59007,7 +59007,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestGroupAction(jsn : TJsonObject) : TFhirRequestGroupAction;
 begin
-  result := TFhirRequestGroupAction.create;
+  result := TFhirRequestGroupAction.Create;
   try
     ParseRequestGroupActionProperties(jsn, result);
     result.link;
@@ -59207,7 +59207,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestGroupActionCondition(jsn : TJsonObject) : TFhirRequestGroupActionCondition;
 begin
-  result := TFhirRequestGroupActionCondition.create;
+  result := TFhirRequestGroupActionCondition.Create;
   try
     ParseRequestGroupActionConditionProperties(jsn, result);
     result.link;
@@ -59245,7 +59245,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestGroupActionRelatedAction(jsn : TJsonObject) : TFhirRequestGroupActionRelatedAction;
 begin
-  result := TFhirRequestGroupActionRelatedAction.create;
+  result := TFhirRequestGroupActionRelatedAction.Create;
   try
     ParseRequestGroupActionRelatedActionProperties(jsn, result);
     result.link;
@@ -59291,7 +59291,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestGroupActionParticipant(jsn : TJsonObject) : TFhirRequestGroupActionParticipant;
 begin
-  result := TFhirRequestGroupActionParticipant.create;
+  result := TFhirRequestGroupActionParticipant.Create;
   try
     ParseRequestGroupActionParticipantProperties(jsn, result);
     result.link;
@@ -59343,7 +59343,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestGroup(jsn : TJsonObject) : TFhirRequestGroup;
 begin
-  result := TFhirRequestGroup.create;
+  result := TFhirRequestGroup.Create;
   try
     ParseRequestGroupProperties(jsn, result);
     result.link;
@@ -59532,7 +59532,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationAction(jsn : TJsonObject) : TFhirRequestOrchestrationAction;
 begin
-  result := TFhirRequestOrchestrationAction.create;
+  result := TFhirRequestOrchestrationAction.Create;
   try
     ParseRequestOrchestrationActionProperties(jsn, result);
     result.link;
@@ -59767,7 +59767,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationActionCondition(jsn : TJsonObject) : TFhirRequestOrchestrationActionCondition;
 begin
-  result := TFhirRequestOrchestrationActionCondition.create;
+  result := TFhirRequestOrchestrationActionCondition.Create;
   try
     ParseRequestOrchestrationActionConditionProperties(jsn, result);
     result.link;
@@ -59804,7 +59804,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationActionInput(jsn : TJsonObject) : TFhirRequestOrchestrationActionInput;
 begin
-  result := TFhirRequestOrchestrationActionInput.create;
+  result := TFhirRequestOrchestrationActionInput.Create;
   try
     ParseRequestOrchestrationActionInputProperties(jsn, result);
     result.link;
@@ -59850,7 +59850,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationActionOutput(jsn : TJsonObject) : TFhirRequestOrchestrationActionOutput;
 begin
-  result := TFhirRequestOrchestrationActionOutput.create;
+  result := TFhirRequestOrchestrationActionOutput.Create;
   try
     ParseRequestOrchestrationActionOutputProperties(jsn, result);
     result.link;
@@ -59896,7 +59896,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationActionRelatedAction(jsn : TJsonObject) : TFhirRequestOrchestrationActionRelatedAction;
 begin
-  result := TFhirRequestOrchestrationActionRelatedAction.create;
+  result := TFhirRequestOrchestrationActionRelatedAction.Create;
   try
     ParseRequestOrchestrationActionRelatedActionProperties(jsn, result);
     result.link;
@@ -59941,7 +59941,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationActionParticipant(jsn : TJsonObject) : TFhirRequestOrchestrationActionParticipant;
 begin
-  result := TFhirRequestOrchestrationActionParticipant.create;
+  result := TFhirRequestOrchestrationActionParticipant.Create;
   try
     ParseRequestOrchestrationActionParticipantProperties(jsn, result);
     result.link;
@@ -60004,7 +60004,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestrationActionDynamicValue(jsn : TJsonObject) : TFhirRequestOrchestrationActionDynamicValue;
 begin
-  result := TFhirRequestOrchestrationActionDynamicValue.create;
+  result := TFhirRequestOrchestrationActionDynamicValue.Create;
   try
     ParseRequestOrchestrationActionDynamicValueProperties(jsn, result);
     result.link;
@@ -60044,7 +60044,7 @@ end;
 
 function TFHIRJsonParser.ParseRequestOrchestration(jsn : TJsonObject) : TFhirRequestOrchestration;
 begin
-  result := TFhirRequestOrchestration.create;
+  result := TFhirRequestOrchestration.Create;
   try
     ParseRequestOrchestrationProperties(jsn, result);
     result.link;
@@ -60229,7 +60229,7 @@ end;
 
 function TFHIRJsonParser.ParseRequirementsStatement(jsn : TJsonObject) : TFhirRequirementsStatement;
 begin
-  result := TFhirRequirementsStatement.create;
+  result := TFhirRequirementsStatement.Create;
   try
     ParseRequirementsStatementProperties(jsn, result);
     result.link;
@@ -60370,7 +60370,7 @@ end;
 
 function TFHIRJsonParser.ParseRequirements(jsn : TJsonObject) : TFhirRequirements;
 begin
-  result := TFhirRequirements.create;
+  result := TFhirRequirements.Create;
   try
     ParseRequirementsProperties(jsn, result);
     result.link;
@@ -60570,7 +60570,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyLabel(jsn : TJsonObject) : TFhirResearchStudyLabel;
 begin
-  result := TFhirResearchStudyLabel.create;
+  result := TFhirResearchStudyLabel.Create;
   try
     ParseResearchStudyLabelProperties(jsn, result);
     result.link;
@@ -60610,7 +60610,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyFocus(jsn : TJsonObject) : TFhirResearchStudyFocus;
 begin
-  result := TFhirResearchStudyFocus.create;
+  result := TFhirResearchStudyFocus.Create;
   try
     ParseResearchStudyFocusProperties(jsn, result);
     result.link;
@@ -60661,7 +60661,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyAssociatedParty(jsn : TJsonObject) : TFhirResearchStudyAssociatedParty;
 begin
-  result := TFhirResearchStudyAssociatedParty.create;
+  result := TFhirResearchStudyAssociatedParty.Create;
   try
     ParseResearchStudyAssociatedPartyProperties(jsn, result);
     result.link;
@@ -60724,7 +60724,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyProgressStatus(jsn : TJsonObject) : TFhirResearchStudyProgressStatus;
 begin
-  result := TFhirResearchStudyProgressStatus.create;
+  result := TFhirResearchStudyProgressStatus.Create;
   try
     ParseResearchStudyProgressStatusProperties(jsn, result);
     result.link;
@@ -60767,7 +60767,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyRecruitment(jsn : TJsonObject) : TFhirResearchStudyRecruitment;
 begin
-  result := TFhirResearchStudyRecruitment.create;
+  result := TFhirResearchStudyRecruitment.Create;
   try
     ParseResearchStudyRecruitmentProperties(jsn, result);
     result.link;
@@ -60817,7 +60817,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyComparisonGroup(jsn : TJsonObject) : TFhirResearchStudyComparisonGroup;
 begin
-  result := TFhirResearchStudyComparisonGroup.create;
+  result := TFhirResearchStudyComparisonGroup.Create;
   try
     ParseResearchStudyComparisonGroupProperties(jsn, result);
     result.link;
@@ -60887,7 +60887,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyObjective(jsn : TJsonObject) : TFhirResearchStudyObjective;
 begin
-  result := TFhirResearchStudyObjective.create;
+  result := TFhirResearchStudyObjective.Create;
   try
     ParseResearchStudyObjectiveProperties(jsn, result);
     result.link;
@@ -60933,7 +60933,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyOutcomeMeasure(jsn : TJsonObject) : TFhirResearchStudyOutcomeMeasure;
 begin
-  result := TFhirResearchStudyOutcomeMeasure.create;
+  result := TFhirResearchStudyOutcomeMeasure.Create;
   try
     ParseResearchStudyOutcomeMeasureProperties(jsn, result);
     result.link;
@@ -60990,7 +60990,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudyWebLocation(jsn : TJsonObject) : TFhirResearchStudyWebLocation;
 begin
-  result := TFhirResearchStudyWebLocation.create;
+  result := TFhirResearchStudyWebLocation.Create;
   try
     ParseResearchStudyWebLocationProperties(jsn, result);
     result.link;
@@ -61028,7 +61028,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchStudy(jsn : TJsonObject) : TFhirResearchStudy;
 begin
-  result := TFhirResearchStudy.create;
+  result := TFhirResearchStudy.Create;
   try
     ParseResearchStudyProperties(jsn, result);
     result.link;
@@ -61305,7 +61305,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchSubjectProgress(jsn : TJsonObject) : TFhirResearchSubjectProgress;
 begin
-  result := TFhirResearchSubjectProgress.create;
+  result := TFhirResearchSubjectProgress.Create;
   try
     ParseResearchSubjectProgressProperties(jsn, result);
     result.link;
@@ -61363,7 +61363,7 @@ end;
 
 function TFHIRJsonParser.ParseResearchSubject(jsn : TJsonObject) : TFhirResearchSubject;
 begin
-  result := TFhirResearchSubject.create;
+  result := TFhirResearchSubject.Create;
   try
     ParseResearchSubjectProperties(jsn, result);
     result.link;
@@ -61442,7 +61442,7 @@ end;
 
 function TFHIRJsonParser.ParseRiskAssessmentPrediction(jsn : TJsonObject) : TFhirRiskAssessmentPrediction;
 begin
-  result := TFhirRiskAssessmentPrediction.create;
+  result := TFhirRiskAssessmentPrediction.Create;
   try
     ParseRiskAssessmentPredictionProperties(jsn, result);
     result.link;
@@ -61511,7 +61511,7 @@ end;
 
 function TFHIRJsonParser.ParseRiskAssessment(jsn : TJsonObject) : TFhirRiskAssessment;
 begin
-  result := TFhirRiskAssessment.create;
+  result := TFhirRiskAssessment.Create;
   try
     ParseRiskAssessmentProperties(jsn, result);
     result.link;
@@ -61639,7 +61639,7 @@ end;
 
 function TFHIRJsonParser.ParseSchedule(jsn : TJsonObject) : TFhirSchedule;
 begin
-  result := TFhirSchedule.create;
+  result := TFhirSchedule.Create;
   try
     ParseScheduleProperties(jsn, result);
     result.link;
@@ -61738,7 +61738,7 @@ end;
 
 function TFHIRJsonParser.ParseSearchParameterComponent(jsn : TJsonObject) : TFhirSearchParameterComponent;
 begin
-  result := TFhirSearchParameterComponent.create;
+  result := TFhirSearchParameterComponent.Create;
   try
     ParseSearchParameterComponentProperties(jsn, result);
     result.link;
@@ -61776,7 +61776,7 @@ end;
 
 function TFHIRJsonParser.ParseSearchParameter(jsn : TJsonObject) : TFhirSearchParameter;
 begin
-  result := TFhirSearchParameter.create;
+  result := TFhirSearchParameter.Create;
   try
     ParseSearchParameterProperties(jsn, result);
     result.link;
@@ -62079,7 +62079,7 @@ end;
 
 function TFHIRJsonParser.ParseServiceRequest(jsn : TJsonObject) : TFhirServiceRequest;
 begin
-  result := TFhirServiceRequest.create;
+  result := TFhirServiceRequest.Create;
   try
     ParseServiceRequestProperties(jsn, result);
     result.link;
@@ -62393,7 +62393,7 @@ end;
 
 function TFHIRJsonParser.ParseSlot(jsn : TJsonObject) : TFhirSlot;
 begin
-  result := TFhirSlot.create;
+  result := TFhirSlot.Create;
   try
     ParseSlotProperties(jsn, result);
     result.link;
@@ -62496,7 +62496,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenFeature(jsn : TJsonObject) : TFhirSpecimenFeature;
 begin
-  result := TFhirSpecimenFeature.create;
+  result := TFhirSpecimenFeature.Create;
   try
     ParseSpecimenFeatureProperties(jsn, result);
     result.link;
@@ -62533,7 +62533,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenCollection(jsn : TJsonObject) : TFhirSpecimenCollection;
 begin
-  result := TFhirSpecimenCollection.create;
+  result := TFhirSpecimenCollection.Create;
   try
     ParseSpecimenCollectionProperties(jsn, result);
     result.link;
@@ -62610,7 +62610,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenProcessing(jsn : TJsonObject) : TFhirSpecimenProcessing;
 begin
-  result := TFhirSpecimenProcessing.create;
+  result := TFhirSpecimenProcessing.Create;
   try
     ParseSpecimenProcessingProperties(jsn, result);
     result.link;
@@ -62672,7 +62672,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenContainer(jsn : TJsonObject) : TFhirSpecimenContainer;
 begin
-  result := TFhirSpecimenContainer.create;
+  result := TFhirSpecimenContainer.Create;
   try
     ParseSpecimenContainerProperties(jsn, result);
     result.link;
@@ -62713,7 +62713,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimen(jsn : TJsonObject) : TFhirSpecimen;
 begin
-  result := TFhirSpecimen.create;
+  result := TFhirSpecimen.Create;
   try
     ParseSpecimenProperties(jsn, result);
     result.link;
@@ -62856,7 +62856,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenDefinitionTypeTested(jsn : TJsonObject) : TFhirSpecimenDefinitionTypeTested;
 begin
-  result := TFhirSpecimenDefinitionTypeTested.create;
+  result := TFhirSpecimenDefinitionTypeTested.Create;
   try
     ParseSpecimenDefinitionTypeTestedProperties(jsn, result);
     result.link;
@@ -62948,7 +62948,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenDefinitionTypeTestedContainer(jsn : TJsonObject) : TFhirSpecimenDefinitionTypeTestedContainer;
 begin
-  result := TFhirSpecimenDefinitionTypeTestedContainer.create;
+  result := TFhirSpecimenDefinitionTypeTestedContainer.Create;
   try
     ParseSpecimenDefinitionTypeTestedContainerProperties(jsn, result);
     result.link;
@@ -63028,7 +63028,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenDefinitionTypeTestedContainerAdditive(jsn : TJsonObject) : TFhirSpecimenDefinitionTypeTestedContainerAdditive;
 begin
-  result := TFhirSpecimenDefinitionTypeTestedContainerAdditive.create;
+  result := TFhirSpecimenDefinitionTypeTestedContainerAdditive.Create;
   try
     ParseSpecimenDefinitionTypeTestedContainerAdditiveProperties(jsn, result);
     result.link;
@@ -63066,7 +63066,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenDefinitionTypeTestedHandling(jsn : TJsonObject) : TFhirSpecimenDefinitionTypeTestedHandling;
 begin
-  result := TFhirSpecimenDefinitionTypeTestedHandling.create;
+  result := TFhirSpecimenDefinitionTypeTestedHandling.Create;
   try
     ParseSpecimenDefinitionTypeTestedHandlingProperties(jsn, result);
     result.link;
@@ -63114,7 +63114,7 @@ end;
 
 function TFHIRJsonParser.ParseSpecimenDefinition(jsn : TJsonObject) : TFhirSpecimenDefinition;
 begin
-  result := TFhirSpecimenDefinition.create;
+  result := TFhirSpecimenDefinition.Create;
   try
     ParseSpecimenDefinitionProperties(jsn, result);
     result.link;
@@ -63349,7 +63349,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureDefinitionMapping(jsn : TJsonObject) : TFhirStructureDefinitionMapping;
 begin
-  result := TFhirStructureDefinitionMapping.create;
+  result := TFhirStructureDefinitionMapping.Create;
   try
     ParseStructureDefinitionMappingProperties(jsn, result);
     result.link;
@@ -63401,7 +63401,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureDefinitionContext(jsn : TJsonObject) : TFhirStructureDefinitionContext;
 begin
-  result := TFhirStructureDefinitionContext.create;
+  result := TFhirStructureDefinitionContext.Create;
   try
     ParseStructureDefinitionContextProperties(jsn, result);
     result.link;
@@ -63438,7 +63438,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureDefinitionSnapshot(jsn : TJsonObject) : TFhirStructureDefinitionSnapshot;
 begin
-  result := TFhirStructureDefinitionSnapshot.create;
+  result := TFhirStructureDefinitionSnapshot.Create;
   try
     ParseStructureDefinitionSnapshotProperties(jsn, result);
     result.link;
@@ -63479,7 +63479,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureDefinitionDifferential(jsn : TJsonObject) : TFhirStructureDefinitionDifferential;
 begin
-  result := TFhirStructureDefinitionDifferential.create;
+  result := TFhirStructureDefinitionDifferential.Create;
   try
     ParseStructureDefinitionDifferentialProperties(jsn, result);
     result.link;
@@ -63520,7 +63520,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureDefinition(jsn : TJsonObject) : TFhirStructureDefinition;
 begin
-  result := TFhirStructureDefinition.create;
+  result := TFhirStructureDefinition.Create;
   try
     ParseStructureDefinitionProperties(jsn, result);
     result.link;
@@ -63752,7 +63752,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapStructure(jsn : TJsonObject) : TFhirStructureMapStructure;
 begin
-  result := TFhirStructureMapStructure.create;
+  result := TFhirStructureMapStructure.Create;
   try
     ParseStructureMapStructureProperties(jsn, result);
     result.link;
@@ -63801,7 +63801,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroup(jsn : TJsonObject) : TFhirStructureMapGroup;
 begin
-  result := TFhirStructureMapGroup.create;
+  result := TFhirStructureMapGroup.Create;
   try
     ParseStructureMapGroupProperties(jsn, result);
     result.link;
@@ -63871,7 +63871,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroupInput(jsn : TJsonObject) : TFhirStructureMapGroupInput;
 begin
-  result := TFhirStructureMapGroupInput.create;
+  result := TFhirStructureMapGroupInput.Create;
   try
     ParseStructureMapGroupInputProperties(jsn, result);
     result.link;
@@ -63920,7 +63920,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroupRule(jsn : TJsonObject) : TFhirStructureMapGroupRule;
 begin
-  result := TFhirStructureMapGroupRule.create;
+  result := TFhirStructureMapGroupRule.Create;
   try
     ParseStructureMapGroupRuleProperties(jsn, result);
     result.link;
@@ -64000,7 +64000,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroupRuleSource(jsn : TJsonObject) : TFhirStructureMapGroupRuleSource;
 begin
-  result := TFhirStructureMapGroupRuleSource.create;
+  result := TFhirStructureMapGroupRuleSource.Create;
   try
     ParseStructureMapGroupRuleSourceProperties(jsn, result);
     result.link;
@@ -64092,7 +64092,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroupRuleTarget(jsn : TJsonObject) : TFhirStructureMapGroupRuleTarget;
 begin
-  result := TFhirStructureMapGroupRuleTarget.create;
+  result := TFhirStructureMapGroupRuleTarget.Create;
   try
     ParseStructureMapGroupRuleTargetProperties(jsn, result);
     result.link;
@@ -64189,7 +64189,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroupRuleTargetParameter(jsn : TJsonObject) : TFhirStructureMapGroupRuleTargetParameter;
 begin
-  result := TFhirStructureMapGroupRuleTargetParameter.create;
+  result := TFhirStructureMapGroupRuleTargetParameter.Create;
   try
     ParseStructureMapGroupRuleTargetParameterProperties(jsn, result);
     result.link;
@@ -64275,7 +64275,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMapGroupRuleDependent(jsn : TJsonObject) : TFhirStructureMapGroupRuleDependent;
 begin
-  result := TFhirStructureMapGroupRuleDependent.create;
+  result := TFhirStructureMapGroupRuleDependent.Create;
   try
     ParseStructureMapGroupRuleDependentProperties(jsn, result);
     result.link;
@@ -64320,7 +64320,7 @@ end;
 
 function TFHIRJsonParser.ParseStructureMap(jsn : TJsonObject) : TFhirStructureMap;
 begin
-  result := TFhirStructureMap.create;
+  result := TFhirStructureMap.Create;
   try
     ParseStructureMapProperties(jsn, result);
     result.link;
@@ -64510,7 +64510,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionFilterBy(jsn : TJsonObject) : TFhirSubscriptionFilterBy;
 begin
-  result := TFhirSubscriptionFilterBy.create;
+  result := TFhirSubscriptionFilterBy.Create;
   try
     ParseSubscriptionFilterByProperties(jsn, result);
     result.link;
@@ -64558,7 +64558,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscription(jsn : TJsonObject) : TFhirSubscription;
 begin
-  result := TFhirSubscription.create;
+  result := TFhirSubscription.Create;
   try
     ParseSubscriptionProperties(jsn, result);
     result.link;
@@ -64711,7 +64711,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionStatusNotificationEvent(jsn : TJsonObject) : TFhirSubscriptionStatusNotificationEvent;
 begin
-  result := TFhirSubscriptionStatusNotificationEvent.create;
+  result := TFhirSubscriptionStatusNotificationEvent.Create;
   try
     ParseSubscriptionStatusNotificationEventProperties(jsn, result);
     result.link;
@@ -64766,7 +64766,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionStatus(jsn : TJsonObject) : TFhirSubscriptionStatus;
 begin
-  result := TFhirSubscriptionStatus.create;
+  result := TFhirSubscriptionStatus.Create;
   try
     ParseSubscriptionStatusProperties(jsn, result);
     result.link;
@@ -64838,7 +64838,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionTopicResourceTrigger(jsn : TJsonObject) : TFhirSubscriptionTopicResourceTrigger;
 begin
-  result := TFhirSubscriptionTopicResourceTrigger.create;
+  result := TFhirSubscriptionTopicResourceTrigger.Create;
   try
     ParseSubscriptionTopicResourceTriggerProperties(jsn, result);
     result.link;
@@ -64918,7 +64918,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionTopicResourceTriggerQueryCriteria(jsn : TJsonObject) : TFhirSubscriptionTopicResourceTriggerQueryCriteria;
 begin
-  result := TFhirSubscriptionTopicResourceTriggerQueryCriteria.create;
+  result := TFhirSubscriptionTopicResourceTriggerQueryCriteria.Create;
   try
     ParseSubscriptionTopicResourceTriggerQueryCriteriaProperties(jsn, result);
     result.link;
@@ -64974,7 +64974,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionTopicEventTrigger(jsn : TJsonObject) : TFhirSubscriptionTopicEventTrigger;
 begin
-  result := TFhirSubscriptionTopicEventTrigger.create;
+  result := TFhirSubscriptionTopicEventTrigger.Create;
   try
     ParseSubscriptionTopicEventTriggerProperties(jsn, result);
     result.link;
@@ -65017,7 +65017,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionTopicCanFilterBy(jsn : TJsonObject) : TFhirSubscriptionTopicCanFilterBy;
 begin
-  result := TFhirSubscriptionTopicCanFilterBy.create;
+  result := TFhirSubscriptionTopicCanFilterBy.Create;
   try
     ParseSubscriptionTopicCanFilterByProperties(jsn, result);
     result.link;
@@ -65099,7 +65099,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionTopicNotificationShape(jsn : TJsonObject) : TFhirSubscriptionTopicNotificationShape;
 begin
-  result := TFhirSubscriptionTopicNotificationShape.create;
+  result := TFhirSubscriptionTopicNotificationShape.Create;
   try
     ParseSubscriptionTopicNotificationShapeProperties(jsn, result);
     result.link;
@@ -65189,7 +65189,7 @@ end;
 
 function TFHIRJsonParser.ParseSubscriptionTopic(jsn : TJsonObject) : TFhirSubscriptionTopic;
 begin
-  result := TFhirSubscriptionTopic.create;
+  result := TFhirSubscriptionTopic.Create;
   try
     ParseSubscriptionTopicProperties(jsn, result);
     result.link;
@@ -65398,7 +65398,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceIngredient(jsn : TJsonObject) : TFhirSubstanceIngredient;
 begin
-  result := TFhirSubstanceIngredient.create;
+  result := TFhirSubstanceIngredient.Create;
   try
     ParseSubstanceIngredientProperties(jsn, result);
     result.link;
@@ -65440,7 +65440,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstance(jsn : TJsonObject) : TFhirSubstance;
 begin
-  result := TFhirSubstance.create;
+  result := TFhirSubstance.Create;
   try
     ParseSubstanceProperties(jsn, result);
     result.link;
@@ -65526,7 +65526,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionMoiety(jsn : TJsonObject) : TFhirSubstanceDefinitionMoiety;
 begin
-  result := TFhirSubstanceDefinitionMoiety.create;
+  result := TFhirSubstanceDefinitionMoiety.Create;
   try
     ParseSubstanceDefinitionMoietyProperties(jsn, result);
     result.link;
@@ -65599,7 +65599,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionProperty(jsn : TJsonObject) : TFhirSubstanceDefinitionProperty;
 begin
-  result := TFhirSubstanceDefinitionProperty.create;
+  result := TFhirSubstanceDefinitionProperty.Create;
   try
     ParseSubstanceDefinitionPropertyProperties(jsn, result);
     result.link;
@@ -65658,7 +65658,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionMolecularWeight(jsn : TJsonObject) : TFhirSubstanceDefinitionMolecularWeight;
 begin
-  result := TFhirSubstanceDefinitionMolecularWeight.create;
+  result := TFhirSubstanceDefinitionMolecularWeight.Create;
   try
     ParseSubstanceDefinitionMolecularWeightProperties(jsn, result);
     result.link;
@@ -65699,7 +65699,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionStructure(jsn : TJsonObject) : TFhirSubstanceDefinitionStructure;
 begin
-  result := TFhirSubstanceDefinitionStructure.create;
+  result := TFhirSubstanceDefinitionStructure.Create;
   try
     ParseSubstanceDefinitionStructureProperties(jsn, result);
     result.link;
@@ -65782,7 +65782,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionStructureRepresentation(jsn : TJsonObject) : TFhirSubstanceDefinitionStructureRepresentation;
 begin
-  result := TFhirSubstanceDefinitionStructureRepresentation.create;
+  result := TFhirSubstanceDefinitionStructureRepresentation.Create;
   try
     ParseSubstanceDefinitionStructureRepresentationProperties(jsn, result);
     result.link;
@@ -65830,7 +65830,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionCode(jsn : TJsonObject) : TFhirSubstanceDefinitionCode;
 begin
-  result := TFhirSubstanceDefinitionCode.create;
+  result := TFhirSubstanceDefinitionCode.Create;
   try
     ParseSubstanceDefinitionCodeProperties(jsn, result);
     result.link;
@@ -65894,7 +65894,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionName(jsn : TJsonObject) : TFhirSubstanceDefinitionName;
 begin
-  result := TFhirSubstanceDefinitionName.create;
+  result := TFhirSubstanceDefinitionName.Create;
   try
     ParseSubstanceDefinitionNameProperties(jsn, result);
     result.link;
@@ -66007,7 +66007,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionNameOfficial(jsn : TJsonObject) : TFhirSubstanceDefinitionNameOfficial;
 begin
-  result := TFhirSubstanceDefinitionNameOfficial.create;
+  result := TFhirSubstanceDefinitionNameOfficial.Create;
   try
     ParseSubstanceDefinitionNameOfficialProperties(jsn, result);
     result.link;
@@ -66051,7 +66051,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionRelationship(jsn : TJsonObject) : TFhirSubstanceDefinitionRelationship;
 begin
-  result := TFhirSubstanceDefinitionRelationship.create;
+  result := TFhirSubstanceDefinitionRelationship.Create;
   try
     ParseSubstanceDefinitionRelationshipProperties(jsn, result);
     result.link;
@@ -66132,7 +66132,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinitionSourceMaterial(jsn : TJsonObject) : TFhirSubstanceDefinitionSourceMaterial;
 begin
-  result := TFhirSubstanceDefinitionSourceMaterial.create;
+  result := TFhirSubstanceDefinitionSourceMaterial.Create;
   try
     ParseSubstanceDefinitionSourceMaterialProperties(jsn, result);
     result.link;
@@ -66189,7 +66189,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceDefinition(jsn : TJsonObject) : TFhirSubstanceDefinition;
 begin
-  result := TFhirSubstanceDefinition.create;
+  result := TFhirSubstanceDefinition.Create;
   try
     ParseSubstanceDefinitionProperties(jsn, result);
     result.link;
@@ -66382,7 +66382,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceNucleicAcidSubunit(jsn : TJsonObject) : TFhirSubstanceNucleicAcidSubunit;
 begin
-  result := TFhirSubstanceNucleicAcidSubunit.create;
+  result := TFhirSubstanceNucleicAcidSubunit.Create;
   try
     ParseSubstanceNucleicAcidSubunitProperties(jsn, result);
     result.link;
@@ -66462,7 +66462,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceNucleicAcidSubunitLinkage(jsn : TJsonObject) : TFhirSubstanceNucleicAcidSubunitLinkage;
 begin
-  result := TFhirSubstanceNucleicAcidSubunitLinkage.create;
+  result := TFhirSubstanceNucleicAcidSubunitLinkage.Create;
   try
     ParseSubstanceNucleicAcidSubunitLinkageProperties(jsn, result);
     result.link;
@@ -66514,7 +66514,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceNucleicAcidSubunitSugar(jsn : TJsonObject) : TFhirSubstanceNucleicAcidSubunitSugar;
 begin
-  result := TFhirSubstanceNucleicAcidSubunitSugar.create;
+  result := TFhirSubstanceNucleicAcidSubunitSugar.Create;
   try
     ParseSubstanceNucleicAcidSubunitSugarProperties(jsn, result);
     result.link;
@@ -66560,7 +66560,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceNucleicAcid(jsn : TJsonObject) : TFhirSubstanceNucleicAcid;
 begin
-  result := TFhirSubstanceNucleicAcid.create;
+  result := TFhirSubstanceNucleicAcid.Create;
   try
     ParseSubstanceNucleicAcidProperties(jsn, result);
     result.link;
@@ -66621,7 +66621,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymerMonomerSet(jsn : TJsonObject) : TFhirSubstancePolymerMonomerSet;
 begin
-  result := TFhirSubstancePolymerMonomerSet.create;
+  result := TFhirSubstancePolymerMonomerSet.Create;
   try
     ParseSubstancePolymerMonomerSetProperties(jsn, result);
     result.link;
@@ -66666,7 +66666,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymerMonomerSetStartingMaterial(jsn : TJsonObject) : TFhirSubstancePolymerMonomerSetStartingMaterial;
 begin
-  result := TFhirSubstancePolymerMonomerSetStartingMaterial.create;
+  result := TFhirSubstancePolymerMonomerSetStartingMaterial.Create;
   try
     ParseSubstancePolymerMonomerSetStartingMaterialProperties(jsn, result);
     result.link;
@@ -66714,7 +66714,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymerRepeat(jsn : TJsonObject) : TFhirSubstancePolymerRepeat;
 begin
-  result := TFhirSubstancePolymerRepeat.create;
+  result := TFhirSubstancePolymerRepeat.Create;
   try
     ParseSubstancePolymerRepeatProperties(jsn, result);
     result.link;
@@ -66765,7 +66765,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymerRepeatRepeatUnit(jsn : TJsonObject) : TFhirSubstancePolymerRepeatRepeatUnit;
 begin
-  result := TFhirSubstancePolymerRepeatRepeatUnit.create;
+  result := TFhirSubstancePolymerRepeatRepeatUnit.Create;
   try
     ParseSubstancePolymerRepeatRepeatUnitProperties(jsn, result);
     result.link;
@@ -66831,7 +66831,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisation(jsn : TJsonObject) : TFhirSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisation;
 begin
-  result := TFhirSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisation.create;
+  result := TFhirSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisation.Create;
   try
     ParseSubstancePolymerRepeatRepeatUnitDegreeOfPolymerisationProperties(jsn, result);
     result.link;
@@ -66883,7 +66883,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymerRepeatRepeatUnitStructuralRepresentation(jsn : TJsonObject) : TFhirSubstancePolymerRepeatRepeatUnitStructuralRepresentation;
 begin
-  result := TFhirSubstancePolymerRepeatRepeatUnitStructuralRepresentation.create;
+  result := TFhirSubstancePolymerRepeatRepeatUnitStructuralRepresentation.Create;
   try
     ParseSubstancePolymerRepeatRepeatUnitStructuralRepresentationProperties(jsn, result);
     result.link;
@@ -66931,7 +66931,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstancePolymer(jsn : TJsonObject) : TFhirSubstancePolymer;
 begin
-  result := TFhirSubstancePolymer.create;
+  result := TFhirSubstancePolymer.Create;
   try
     ParseSubstancePolymerProperties(jsn, result);
     result.link;
@@ -67008,7 +67008,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceProteinSubunit(jsn : TJsonObject) : TFhirSubstanceProteinSubunit;
 begin
-  result := TFhirSubstanceProteinSubunit.create;
+  result := TFhirSubstanceProteinSubunit.Create;
   try
     ParseSubstanceProteinSubunitProperties(jsn, result);
     result.link;
@@ -67080,7 +67080,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceProtein(jsn : TJsonObject) : TFhirSubstanceProtein;
 begin
-  result := TFhirSubstanceProtein.create;
+  result := TFhirSubstanceProtein.Create;
   try
     ParseSubstanceProteinProperties(jsn, result);
     result.link;
@@ -67159,7 +67159,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceReferenceInformationGene(jsn : TJsonObject) : TFhirSubstanceReferenceInformationGene;
 begin
-  result := TFhirSubstanceReferenceInformationGene.create;
+  result := TFhirSubstanceReferenceInformationGene.Create;
   try
     ParseSubstanceReferenceInformationGeneProperties(jsn, result);
     result.link;
@@ -67208,7 +67208,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceReferenceInformationGeneElement(jsn : TJsonObject) : TFhirSubstanceReferenceInformationGeneElement;
 begin
-  result := TFhirSubstanceReferenceInformationGeneElement.create;
+  result := TFhirSubstanceReferenceInformationGeneElement.Create;
   try
     ParseSubstanceReferenceInformationGeneElementProperties(jsn, result);
     result.link;
@@ -67257,7 +67257,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceReferenceInformationTarget(jsn : TJsonObject) : TFhirSubstanceReferenceInformationTarget;
 begin
-  result := TFhirSubstanceReferenceInformationTarget.create;
+  result := TFhirSubstanceReferenceInformationTarget.Create;
   try
     ParseSubstanceReferenceInformationTargetProperties(jsn, result);
     result.link;
@@ -67337,7 +67337,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceReferenceInformation(jsn : TJsonObject) : TFhirSubstanceReferenceInformation;
 begin
-  result := TFhirSubstanceReferenceInformation.create;
+  result := TFhirSubstanceReferenceInformation.Create;
   try
     ParseSubstanceReferenceInformationProperties(jsn, result);
     result.link;
@@ -67402,7 +67402,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterialFractionDescription(jsn : TJsonObject) : TFhirSubstanceSourceMaterialFractionDescription;
 begin
-  result := TFhirSubstanceSourceMaterialFractionDescription.create;
+  result := TFhirSubstanceSourceMaterialFractionDescription.Create;
   try
     ParseSubstanceSourceMaterialFractionDescriptionProperties(jsn, result);
     result.link;
@@ -67442,7 +67442,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterialOrganism(jsn : TJsonObject) : TFhirSubstanceSourceMaterialOrganism;
 begin
-  result := TFhirSubstanceSourceMaterialOrganism.create;
+  result := TFhirSubstanceSourceMaterialOrganism.Create;
   try
     ParseSubstanceSourceMaterialOrganismProperties(jsn, result);
     result.link;
@@ -67513,7 +67513,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterialOrganismAuthor(jsn : TJsonObject) : TFhirSubstanceSourceMaterialOrganismAuthor;
 begin
-  result := TFhirSubstanceSourceMaterialOrganismAuthor.create;
+  result := TFhirSubstanceSourceMaterialOrganismAuthor.Create;
   try
     ParseSubstanceSourceMaterialOrganismAuthorProperties(jsn, result);
     result.link;
@@ -67553,7 +67553,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterialOrganismHybrid(jsn : TJsonObject) : TFhirSubstanceSourceMaterialOrganismHybrid;
 begin
-  result := TFhirSubstanceSourceMaterialOrganismHybrid.create;
+  result := TFhirSubstanceSourceMaterialOrganismHybrid.Create;
   try
     ParseSubstanceSourceMaterialOrganismHybridProperties(jsn, result);
     result.link;
@@ -67611,7 +67611,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterialOrganismOrganismGeneral(jsn : TJsonObject) : TFhirSubstanceSourceMaterialOrganismOrganismGeneral;
 begin
-  result := TFhirSubstanceSourceMaterialOrganismOrganismGeneral.create;
+  result := TFhirSubstanceSourceMaterialOrganismOrganismGeneral.Create;
   try
     ParseSubstanceSourceMaterialOrganismOrganismGeneralProperties(jsn, result);
     result.link;
@@ -67657,7 +67657,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterialPartDescription(jsn : TJsonObject) : TFhirSubstanceSourceMaterialPartDescription;
 begin
-  result := TFhirSubstanceSourceMaterialPartDescription.create;
+  result := TFhirSubstanceSourceMaterialPartDescription.Create;
   try
     ParseSubstanceSourceMaterialPartDescriptionProperties(jsn, result);
     result.link;
@@ -67695,7 +67695,7 @@ end;
 
 function TFHIRJsonParser.ParseSubstanceSourceMaterial(jsn : TJsonObject) : TFhirSubstanceSourceMaterial;
 begin
-  result := TFhirSubstanceSourceMaterial.create;
+  result := TFhirSubstanceSourceMaterial.Create;
   try
     ParseSubstanceSourceMaterialProperties(jsn, result);
     result.link;
@@ -67847,7 +67847,7 @@ end;
 
 function TFHIRJsonParser.ParseSupplyDeliverySuppliedItem(jsn : TJsonObject) : TFhirSupplyDeliverySuppliedItem;
 begin
-  result := TFhirSupplyDeliverySuppliedItem.create;
+  result := TFhirSupplyDeliverySuppliedItem.Create;
   try
     ParseSupplyDeliverySuppliedItemProperties(jsn, result);
     result.link;
@@ -67889,7 +67889,7 @@ end;
 
 function TFHIRJsonParser.ParseSupplyDelivery(jsn : TJsonObject) : TFhirSupplyDelivery;
 begin
-  result := TFhirSupplyDelivery.create;
+  result := TFhirSupplyDelivery.Create;
   try
     ParseSupplyDeliveryProperties(jsn, result);
     result.link;
@@ -68001,7 +68001,7 @@ end;
 
 function TFHIRJsonParser.ParseSupplyRequestParameter(jsn : TJsonObject) : TFhirSupplyRequestParameter;
 begin
-  result := TFhirSupplyRequestParameter.create;
+  result := TFhirSupplyRequestParameter.Create;
   try
     ParseSupplyRequestParameterProperties(jsn, result);
     result.link;
@@ -68054,7 +68054,7 @@ end;
 
 function TFHIRJsonParser.ParseSupplyRequest(jsn : TJsonObject) : TFhirSupplyRequest;
 begin
-  result := TFhirSupplyRequest.create;
+  result := TFhirSupplyRequest.Create;
   try
     ParseSupplyRequestProperties(jsn, result);
     result.link;
@@ -68182,7 +68182,7 @@ end;
 
 function TFHIRJsonParser.ParseTaskRestriction(jsn : TJsonObject) : TFhirTaskRestriction;
 begin
-  result := TFhirTaskRestriction.create;
+  result := TFhirTaskRestriction.Create;
   try
     ParseTaskRestrictionProperties(jsn, result);
     result.link;
@@ -68233,7 +68233,7 @@ end;
 
 function TFHIRJsonParser.ParseTaskInput(jsn : TJsonObject) : TFhirTaskInput;
 begin
-  result := TFhirTaskInput.create;
+  result := TFhirTaskInput.Create;
   try
     ParseTaskInputProperties(jsn, result);
     result.link;
@@ -68542,7 +68542,7 @@ end;
 
 function TFHIRJsonParser.ParseTaskOutput(jsn : TJsonObject) : TFhirTaskOutput;
 begin
-  result := TFhirTaskOutput.create;
+  result := TFhirTaskOutput.Create;
   try
     ParseTaskOutputProperties(jsn, result);
     result.link;
@@ -68851,7 +68851,7 @@ end;
 
 function TFHIRJsonParser.ParseTask(jsn : TJsonObject) : TFhirTask;
 begin
-  result := TFhirTask.create;
+  result := TFhirTask.Create;
   try
     ParseTaskProperties(jsn, result);
     result.link;
@@ -69071,7 +69071,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesSoftware(jsn : TJsonObject) : TFhirTerminologyCapabilitiesSoftware;
 begin
-  result := TFhirTerminologyCapabilitiesSoftware.create;
+  result := TFhirTerminologyCapabilitiesSoftware.Create;
   try
     ParseTerminologyCapabilitiesSoftwareProperties(jsn, result);
     result.link;
@@ -69111,7 +69111,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesImplementation(jsn : TJsonObject) : TFhirTerminologyCapabilitiesImplementation;
 begin
-  result := TFhirTerminologyCapabilitiesImplementation.create;
+  result := TFhirTerminologyCapabilitiesImplementation.Create;
   try
     ParseTerminologyCapabilitiesImplementationProperties(jsn, result);
     result.link;
@@ -69151,7 +69151,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesCodeSystem(jsn : TJsonObject) : TFhirTerminologyCapabilitiesCodeSystem;
 begin
-  result := TFhirTerminologyCapabilitiesCodeSystem.create;
+  result := TFhirTerminologyCapabilitiesCodeSystem.Create;
   try
     ParseTerminologyCapabilitiesCodeSystemProperties(jsn, result);
     result.link;
@@ -69208,7 +69208,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesCodeSystemVersion(jsn : TJsonObject) : TFhirTerminologyCapabilitiesCodeSystemVersion;
 begin
-  result := TFhirTerminologyCapabilitiesCodeSystemVersion.create;
+  result := TFhirTerminologyCapabilitiesCodeSystemVersion.Create;
   try
     ParseTerminologyCapabilitiesCodeSystemVersionProperties(jsn, result);
     result.link;
@@ -69321,7 +69321,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesCodeSystemVersionFilter(jsn : TJsonObject) : TFhirTerminologyCapabilitiesCodeSystemVersionFilter;
 begin
-  result := TFhirTerminologyCapabilitiesCodeSystemVersionFilter.create;
+  result := TFhirTerminologyCapabilitiesCodeSystemVersionFilter.Create;
   try
     ParseTerminologyCapabilitiesCodeSystemVersionFilterProperties(jsn, result);
     result.link;
@@ -69385,7 +69385,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesExpansion(jsn : TJsonObject) : TFhirTerminologyCapabilitiesExpansion;
 begin
-  result := TFhirTerminologyCapabilitiesExpansion.create;
+  result := TFhirTerminologyCapabilitiesExpansion.Create;
   try
     ParseTerminologyCapabilitiesExpansionProperties(jsn, result);
     result.link;
@@ -69450,7 +69450,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesExpansionParameter(jsn : TJsonObject) : TFhirTerminologyCapabilitiesExpansionParameter;
 begin
-  result := TFhirTerminologyCapabilitiesExpansionParameter.create;
+  result := TFhirTerminologyCapabilitiesExpansionParameter.Create;
   try
     ParseTerminologyCapabilitiesExpansionParameterProperties(jsn, result);
     result.link;
@@ -69490,7 +69490,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesValidateCode(jsn : TJsonObject) : TFhirTerminologyCapabilitiesValidateCode;
 begin
-  result := TFhirTerminologyCapabilitiesValidateCode.create;
+  result := TFhirTerminologyCapabilitiesValidateCode.Create;
   try
     ParseTerminologyCapabilitiesValidateCodeProperties(jsn, result);
     result.link;
@@ -69524,7 +69524,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesTranslation(jsn : TJsonObject) : TFhirTerminologyCapabilitiesTranslation;
 begin
-  result := TFhirTerminologyCapabilitiesTranslation.create;
+  result := TFhirTerminologyCapabilitiesTranslation.Create;
   try
     ParseTerminologyCapabilitiesTranslationProperties(jsn, result);
     result.link;
@@ -69558,7 +69558,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilitiesClosure(jsn : TJsonObject) : TFhirTerminologyCapabilitiesClosure;
 begin
-  result := TFhirTerminologyCapabilitiesClosure.create;
+  result := TFhirTerminologyCapabilitiesClosure.Create;
   try
     ParseTerminologyCapabilitiesClosureProperties(jsn, result);
     result.link;
@@ -69594,7 +69594,7 @@ end;
 
 function TFHIRJsonParser.ParseTerminologyCapabilities(jsn : TJsonObject) : TFhirTerminologyCapabilities;
 begin
-  result := TFhirTerminologyCapabilities.create;
+  result := TFhirTerminologyCapabilities.Create;
   try
     ParseTerminologyCapabilitiesProperties(jsn, result);
     result.link;
@@ -69769,7 +69769,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportParticipant(jsn : TJsonObject) : TFhirTestReportParticipant;
 begin
-  result := TFhirTestReportParticipant.create;
+  result := TFhirTestReportParticipant.Create;
   try
     ParseTestReportParticipantProperties(jsn, result);
     result.link;
@@ -69812,7 +69812,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportSetup(jsn : TJsonObject) : TFhirTestReportSetup;
 begin
-  result := TFhirTestReportSetup.create;
+  result := TFhirTestReportSetup.Create;
   try
     ParseTestReportSetupProperties(jsn, result);
     result.link;
@@ -69853,7 +69853,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportSetupAction(jsn : TJsonObject) : TFhirTestReportSetupAction;
 begin
-  result := TFhirTestReportSetupAction.create;
+  result := TFhirTestReportSetupAction.Create;
   try
     ParseTestReportSetupActionProperties(jsn, result);
     result.link;
@@ -69891,7 +69891,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportSetupActionOperation(jsn : TJsonObject) : TFhirTestReportSetupActionOperation;
 begin
-  result := TFhirTestReportSetupActionOperation.create;
+  result := TFhirTestReportSetupActionOperation.Create;
   try
     ParseTestReportSetupActionOperationProperties(jsn, result);
     result.link;
@@ -69936,7 +69936,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportSetupActionAssert(jsn : TJsonObject) : TFhirTestReportSetupActionAssert;
 begin
-  result := TFhirTestReportSetupActionAssert.create;
+  result := TFhirTestReportSetupActionAssert.Create;
   try
     ParseTestReportSetupActionAssertProperties(jsn, result);
     result.link;
@@ -69981,7 +69981,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportTest(jsn : TJsonObject) : TFhirTestReportTest;
 begin
-  result := TFhirTestReportTest.create;
+  result := TFhirTestReportTest.Create;
   try
     ParseTestReportTestProperties(jsn, result);
     result.link;
@@ -70034,7 +70034,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportTestAction(jsn : TJsonObject) : TFhirTestReportTestAction;
 begin
-  result := TFhirTestReportTestAction.create;
+  result := TFhirTestReportTestAction.Create;
   try
     ParseTestReportTestActionProperties(jsn, result);
     result.link;
@@ -70072,7 +70072,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportTeardown(jsn : TJsonObject) : TFhirTestReportTeardown;
 begin
-  result := TFhirTestReportTeardown.create;
+  result := TFhirTestReportTeardown.Create;
   try
     ParseTestReportTeardownProperties(jsn, result);
     result.link;
@@ -70113,7 +70113,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReportTeardownAction(jsn : TJsonObject) : TFhirTestReportTeardownAction;
 begin
-  result := TFhirTestReportTeardownAction.create;
+  result := TFhirTestReportTeardownAction.Create;
   try
     ParseTestReportTeardownActionProperties(jsn, result);
     result.link;
@@ -70146,7 +70146,7 @@ end;
 
 function TFHIRJsonParser.ParseTestReport(jsn : TJsonObject) : TFhirTestReport;
 begin
-  result := TFhirTestReport.create;
+  result := TFhirTestReport.Create;
   try
     ParseTestReportProperties(jsn, result);
     result.link;
@@ -70242,7 +70242,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptOrigin(jsn : TJsonObject) : TFhirTestScriptOrigin;
 begin
-  result := TFhirTestScriptOrigin.create;
+  result := TFhirTestScriptOrigin.Create;
   try
     ParseTestScriptOriginProperties(jsn, result);
     result.link;
@@ -70279,7 +70279,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptDestination(jsn : TJsonObject) : TFhirTestScriptDestination;
 begin
-  result := TFhirTestScriptDestination.create;
+  result := TFhirTestScriptDestination.Create;
   try
     ParseTestScriptDestinationProperties(jsn, result);
     result.link;
@@ -70316,7 +70316,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptMetadata(jsn : TJsonObject) : TFhirTestScriptMetadata;
 begin
-  result := TFhirTestScriptMetadata.create;
+  result := TFhirTestScriptMetadata.Create;
   try
     ParseTestScriptMetadataProperties(jsn, result);
     result.link;
@@ -70366,7 +70366,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptMetadataLink(jsn : TJsonObject) : TFhirTestScriptMetadataLink;
 begin
-  result := TFhirTestScriptMetadataLink.create;
+  result := TFhirTestScriptMetadataLink.Create;
   try
     ParseTestScriptMetadataLinkProperties(jsn, result);
     result.link;
@@ -70406,7 +70406,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptMetadataCapability(jsn : TJsonObject) : TFhirTestScriptMetadataCapability;
 begin
-  result := TFhirTestScriptMetadataCapability.create;
+  result := TFhirTestScriptMetadataCapability.Create;
   try
     ParseTestScriptMetadataCapabilityProperties(jsn, result);
     result.link;
@@ -70516,7 +70516,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptScope(jsn : TJsonObject) : TFhirTestScriptScope;
 begin
-  result := TFhirTestScriptScope.create;
+  result := TFhirTestScriptScope.Create;
   try
     ParseTestScriptScopeProperties(jsn, result);
     result.link;
@@ -70558,7 +70558,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptFixture(jsn : TJsonObject) : TFhirTestScriptFixture;
 begin
-  result := TFhirTestScriptFixture.create;
+  result := TFhirTestScriptFixture.Create;
   try
     ParseTestScriptFixtureProperties(jsn, result);
     result.link;
@@ -70600,7 +70600,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptVariable(jsn : TJsonObject) : TFhirTestScriptVariable;
 begin
-  result := TFhirTestScriptVariable.create;
+  result := TFhirTestScriptVariable.Create;
   try
     ParseTestScriptVariableProperties(jsn, result);
     result.link;
@@ -70676,7 +70676,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptSetup(jsn : TJsonObject) : TFhirTestScriptSetup;
 begin
-  result := TFhirTestScriptSetup.create;
+  result := TFhirTestScriptSetup.Create;
   try
     ParseTestScriptSetupProperties(jsn, result);
     result.link;
@@ -70717,7 +70717,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptSetupAction(jsn : TJsonObject) : TFhirTestScriptSetupAction;
 begin
-  result := TFhirTestScriptSetupAction.create;
+  result := TFhirTestScriptSetupAction.Create;
   try
     ParseTestScriptSetupActionProperties(jsn, result);
     result.link;
@@ -70755,7 +70755,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptSetupActionOperation(jsn : TJsonObject) : TFhirTestScriptSetupActionOperation;
 begin
-  result := TFhirTestScriptSetupActionOperation.create;
+  result := TFhirTestScriptSetupActionOperation.Create;
   try
     ParseTestScriptSetupActionOperationProperties(jsn, result);
     result.link;
@@ -70886,7 +70886,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptSetupActionOperationRequestHeader(jsn : TJsonObject) : TFhirTestScriptSetupActionOperationRequestHeader;
 begin
-  result := TFhirTestScriptSetupActionOperationRequestHeader.create;
+  result := TFhirTestScriptSetupActionOperationRequestHeader.Create;
   try
     ParseTestScriptSetupActionOperationRequestHeaderProperties(jsn, result);
     result.link;
@@ -70924,7 +70924,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptSetupActionAssert(jsn : TJsonObject) : TFhirTestScriptSetupActionAssert;
 begin
-  result := TFhirTestScriptSetupActionAssert.create;
+  result := TFhirTestScriptSetupActionAssert.Create;
   try
     ParseTestScriptSetupActionAssertProperties(jsn, result);
     result.link;
@@ -71080,7 +71080,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptTest(jsn : TJsonObject) : TFhirTestScriptTest;
 begin
-  result := TFhirTestScriptTest.create;
+  result := TFhirTestScriptTest.Create;
   try
     ParseTestScriptTestProperties(jsn, result);
     result.link;
@@ -71133,7 +71133,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptTestAction(jsn : TJsonObject) : TFhirTestScriptTestAction;
 begin
-  result := TFhirTestScriptTestAction.create;
+  result := TFhirTestScriptTestAction.Create;
   try
     ParseTestScriptTestActionProperties(jsn, result);
     result.link;
@@ -71171,7 +71171,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptTeardown(jsn : TJsonObject) : TFhirTestScriptTeardown;
 begin
-  result := TFhirTestScriptTeardown.create;
+  result := TFhirTestScriptTeardown.Create;
   try
     ParseTestScriptTeardownProperties(jsn, result);
     result.link;
@@ -71212,7 +71212,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScriptTeardownAction(jsn : TJsonObject) : TFhirTestScriptTeardownAction;
 begin
-  result := TFhirTestScriptTeardownAction.create;
+  result := TFhirTestScriptTeardownAction.Create;
   try
     ParseTestScriptTeardownActionProperties(jsn, result);
     result.link;
@@ -71245,7 +71245,7 @@ end;
 
 function TFHIRJsonParser.ParseTestScript(jsn : TJsonObject) : TFhirTestScript;
 begin
-  result := TFhirTestScript.create;
+  result := TFhirTestScript.Create;
   try
     ParseTestScriptProperties(jsn, result);
     result.link;
@@ -71466,7 +71466,7 @@ end;
 
 function TFHIRJsonParser.ParseTransportRestriction(jsn : TJsonObject) : TFhirTransportRestriction;
 begin
-  result := TFhirTransportRestriction.create;
+  result := TFhirTransportRestriction.Create;
   try
     ParseTransportRestrictionProperties(jsn, result);
     result.link;
@@ -71517,7 +71517,7 @@ end;
 
 function TFHIRJsonParser.ParseTransportInput(jsn : TJsonObject) : TFhirTransportInput;
 begin
-  result := TFhirTransportInput.create;
+  result := TFhirTransportInput.Create;
   try
     ParseTransportInputProperties(jsn, result);
     result.link;
@@ -71826,7 +71826,7 @@ end;
 
 function TFHIRJsonParser.ParseTransportOutput(jsn : TJsonObject) : TFhirTransportOutput;
 begin
-  result := TFhirTransportOutput.create;
+  result := TFhirTransportOutput.Create;
   try
     ParseTransportOutputProperties(jsn, result);
     result.link;
@@ -72135,7 +72135,7 @@ end;
 
 function TFHIRJsonParser.ParseTransport(jsn : TJsonObject) : TFhirTransport;
 begin
-  result := TFhirTransport.create;
+  result := TFhirTransport.Create;
   try
     ParseTransportProperties(jsn, result);
     result.link;
@@ -72353,7 +72353,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetCompose(jsn : TJsonObject) : TFhirValueSetCompose;
 begin
-  result := TFhirValueSetCompose.create;
+  result := TFhirValueSetCompose.Create;
   try
     ParseValueSetComposeProperties(jsn, result);
     result.link;
@@ -72443,7 +72443,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetComposeInclude(jsn : TJsonObject) : TFhirValueSetComposeInclude;
 begin
-  result := TFhirValueSetComposeInclude.create;
+  result := TFhirValueSetComposeInclude.Create;
   try
     ParseValueSetComposeIncludeProperties(jsn, result);
     result.link;
@@ -72539,7 +72539,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetComposeIncludeConcept(jsn : TJsonObject) : TFhirValueSetComposeIncludeConcept;
 begin
-  result := TFhirValueSetComposeIncludeConcept.create;
+  result := TFhirValueSetComposeIncludeConcept.Create;
   try
     ParseValueSetComposeIncludeConceptProperties(jsn, result);
     result.link;
@@ -72590,7 +72590,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetComposeIncludeConceptDesignation(jsn : TJsonObject) : TFhirValueSetComposeIncludeConceptDesignation;
 begin
-  result := TFhirValueSetComposeIncludeConceptDesignation.create;
+  result := TFhirValueSetComposeIncludeConceptDesignation.Create;
   try
     ParseValueSetComposeIncludeConceptDesignationProperties(jsn, result);
     result.link;
@@ -72645,7 +72645,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetComposeIncludeFilter(jsn : TJsonObject) : TFhirValueSetComposeIncludeFilter;
 begin
-  result := TFhirValueSetComposeIncludeFilter.create;
+  result := TFhirValueSetComposeIncludeFilter.Create;
   try
     ParseValueSetComposeIncludeFilterProperties(jsn, result);
     result.link;
@@ -72686,7 +72686,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetExpansion(jsn : TJsonObject) : TFhirValueSetExpansion;
 begin
-  result := TFhirValueSetExpansion.create;
+  result := TFhirValueSetExpansion.Create;
   try
     ParseValueSetExpansionProperties(jsn, result);
     result.link;
@@ -72773,7 +72773,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetExpansionParameter(jsn : TJsonObject) : TFhirValueSetExpansionParameter;
 begin
-  result := TFhirValueSetExpansionParameter.create;
+  result := TFhirValueSetExpansionParameter.Create;
   try
     ParseValueSetExpansionParameterProperties(jsn, result);
     result.link;
@@ -72856,7 +72856,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetExpansionProperty(jsn : TJsonObject) : TFhirValueSetExpansionProperty;
 begin
-  result := TFhirValueSetExpansionProperty.create;
+  result := TFhirValueSetExpansionProperty.Create;
   try
     ParseValueSetExpansionPropertyProperties(jsn, result);
     result.link;
@@ -72896,7 +72896,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetExpansionContains(jsn : TJsonObject) : TFhirValueSetExpansionContains;
 begin
-  result := TFhirValueSetExpansionContains.create;
+  result := TFhirValueSetExpansionContains.Create;
   try
     ParseValueSetExpansionContainsProperties(jsn, result);
     result.link;
@@ -72991,7 +72991,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetExpansionContainsProperty(jsn : TJsonObject) : TFhirValueSetExpansionContainsProperty;
 begin
-  result := TFhirValueSetExpansionContainsProperty.create;
+  result := TFhirValueSetExpansionContainsProperty.Create;
   try
     ParseValueSetExpansionContainsPropertyProperties(jsn, result);
     result.link;
@@ -73082,7 +73082,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetExpansionContainsPropertySubProperty(jsn : TJsonObject) : TFhirValueSetExpansionContainsPropertySubProperty;
 begin
-  result := TFhirValueSetExpansionContainsPropertySubProperty.create;
+  result := TFhirValueSetExpansionContainsPropertySubProperty.Create;
   try
     ParseValueSetExpansionContainsPropertySubPropertyProperties(jsn, result);
     result.link;
@@ -73162,7 +73162,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSetScope(jsn : TJsonObject) : TFhirValueSetScope;
 begin
-  result := TFhirValueSetScope.create;
+  result := TFhirValueSetScope.Create;
   try
     ParseValueSetScopeProperties(jsn, result);
     result.link;
@@ -73204,7 +73204,7 @@ end;
 
 function TFHIRJsonParser.ParseValueSet(jsn : TJsonObject) : TFhirValueSet;
 begin
-  result := TFhirValueSet.create;
+  result := TFhirValueSet.Create;
   try
     ParseValueSetProperties(jsn, result);
     result.link;
@@ -73423,7 +73423,7 @@ end;
 
 function TFHIRJsonParser.ParseVerificationResultPrimarySource(jsn : TJsonObject) : TFhirVerificationResultPrimarySource;
 begin
-  result := TFhirVerificationResultPrimarySource.create;
+  result := TFhirVerificationResultPrimarySource.Create;
   try
     ParseVerificationResultPrimarySourceProperties(jsn, result);
     result.link;
@@ -73500,7 +73500,7 @@ end;
 
 function TFHIRJsonParser.ParseVerificationResultAttestation(jsn : TJsonObject) : TFhirVerificationResultAttestation;
 begin
-  result := TFhirVerificationResultAttestation.create;
+  result := TFhirVerificationResultAttestation.Create;
   try
     ParseVerificationResultAttestationProperties(jsn, result);
     result.link;
@@ -73568,7 +73568,7 @@ end;
 
 function TFHIRJsonParser.ParseVerificationResultValidator(jsn : TJsonObject) : TFhirVerificationResultValidator;
 begin
-  result := TFhirVerificationResultValidator.create;
+  result := TFhirVerificationResultValidator.Create;
   try
     ParseVerificationResultValidatorProperties(jsn, result);
     result.link;
@@ -73611,7 +73611,7 @@ end;
 
 function TFHIRJsonParser.ParseVerificationResult(jsn : TJsonObject) : TFhirVerificationResult;
 begin
-  result := TFhirVerificationResult.create;
+  result := TFhirVerificationResult.Create;
   try
     ParseVerificationResultProperties(jsn, result);
     result.link;
@@ -73748,7 +73748,7 @@ end;
 
 function TFHIRJsonParser.ParseVisionPrescriptionLensSpecification(jsn : TJsonObject) : TFhirVisionPrescriptionLensSpecification;
 begin
-  result := TFhirVisionPrescriptionLensSpecification.create;
+  result := TFhirVisionPrescriptionLensSpecification.Create;
   try
     ParseVisionPrescriptionLensSpecificationProperties(jsn, result);
     result.link;
@@ -73862,7 +73862,7 @@ end;
 
 function TFHIRJsonParser.ParseVisionPrescriptionLensSpecificationPrism(jsn : TJsonObject) : TFhirVisionPrescriptionLensSpecificationPrism;
 begin
-  result := TFhirVisionPrescriptionLensSpecificationPrism.create;
+  result := TFhirVisionPrescriptionLensSpecificationPrism.Create;
   try
     ParseVisionPrescriptionLensSpecificationPrismProperties(jsn, result);
     result.link;
@@ -73899,7 +73899,7 @@ end;
 
 function TFHIRJsonParser.ParseVisionPrescription(jsn : TJsonObject) : TFhirVisionPrescription;
 begin
-  result := TFhirVisionPrescription.create;
+  result := TFhirVisionPrescription.Create;
   try
     ParseVisionPrescriptionProperties(jsn, result);
     result.link;
@@ -74599,7 +74599,7 @@ end;
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;
 begin
   if (type_ = '') then
-    raise EJsonException.create('no type provided')
+    raise EJsonException.Create('no type provided')
   else if (type_ = 'Address') or (type_ = 'TFhirAddress')  then
     result := parseAddress(jsn)
   else if (type_ = 'Annotation') or (type_ = 'TFhirAnnotation')  then
@@ -75308,13 +75308,13 @@ begin
 {$ENDIF FHIR_VISIONPRESCRIPTION}
 
   else
-    raise EJsonException.create('error: the element '+type_+' is not a valid fragment name');
+    raise EJsonException.Create('error: the element '+type_+' is not a valid fragment name');
 end;
 
 function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 begin
   if (type_ = nil) then
-    raise EJsonException.create('no type provided')
+    raise EJsonException.Create('no type provided')
   else if (type_ = TFhirAddress) then
     result := parseAddress(jsn)
   else if (type_ = TFhirAnnotation) then
@@ -75403,7 +75403,7 @@ begin
     result := parseTiming(jsn)
 
   else
-    raise EJsonException.create('Unknown Type');
+    raise EJsonException.Create('Unknown Type');
 end;
 
 procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);
@@ -76632,7 +76632,7 @@ begin
 {$ENDIF FHIR_VISIONPRESCRIPTION}
   
   else
-    raise EJsonException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise EJsonException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 

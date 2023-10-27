@@ -95,14 +95,14 @@ begin
 
 
   if not IsValidSearchParam(param.name) then
-    raise EFHIRException.create('The parameter name "'+param.name+'" is not valid');
+    raise EFHIRException.Create('The parameter name "'+param.name+'" is not valid');
   if param.type_ = SearchParamTypeNull then
-    raise EFHIRException.create('Please choose a parameter type');
+    raise EFHIRException.Create('Please choose a parameter type');
 end;
 
 destructor TSearchParameterEditorForm.Destroy;
 begin
-  FParam.Free;
+  FParam.free;
   inherited;
 end;
 
@@ -131,7 +131,7 @@ end;
 
 procedure TSearchParameterEditorForm.SetParam(const Value: TFhirCapabilityStatementRestResourceSearchParam);
 begin
-  FParam.Free;
+  FParam.free;
   FParam := Value;
 end;
 

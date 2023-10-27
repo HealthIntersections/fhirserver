@@ -2820,9 +2820,9 @@ type
     // Reason the encounter takes place, as specified using information from another resource. For admissions, this is the admission diagnosis. The indication will typically be a Condition (with other resources referenced in the evidence.detail), or a Procedure.
     property conditionElement : TFhirReference read FCondition write SetCondition;
 
-    // Typed access to Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …). (defined for API consistency)
+    // Typed access to Role that this diagnosis has within the encounter (e.g. admission, billing, discharge ï¿½). (defined for API consistency)
     property use : TFhirCodeableConcept read FUse write SetUse;
-    // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge …).
+    // Role that this diagnosis has within the encounter (e.g. admission, billing, discharge ï¿½).
     property useElement : TFhirCodeableConcept read FUse write SetUse;
 
     // Typed access to Ranking of the diagnosis (for each role type).
@@ -7840,8 +7840,8 @@ end;
 procedure TFhirCatalogEntryRelatedEntry.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'relationtype', 'code', false, TFhirEnum, FRelationtype.Link));
-  oList.add(TFHIRProperty.create(self, 'item', 'Reference', false, TFhirReference, FItem.Link));
+  oList.add(TFHIRProperty.Create(self, 'relationtype', 'code', false, TFhirEnum, FRelationtype.Link));
+  oList.add(TFHIRProperty.Create(self, 'item', 'Reference', false, TFhirReference, FItem.Link));
 end;
 
 function TFhirCatalogEntryRelatedEntry.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -7866,8 +7866,8 @@ end;
 
 function TFhirCatalogEntryRelatedEntry.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'relationtype') then result := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull], CODES_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull]) 
-  else if (propName = 'item') then result := TFhirReference.create()
+  if (propName = 'relationtype') then result := TFhirEnum.Create(SYSTEMS_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull], CODES_TFhirCatalogEntryRelationTypeEnum[CatalogEntryRelationTypeNull]) 
+  else if (propName = 'item') then result := TFhirReference.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -7966,7 +7966,7 @@ begin
   if ord(value) = 0 then
     RelationtypeElement := nil
   else
-    RelationtypeElement := TFhirEnum.create(SYSTEMS_TFhirCatalogEntryRelationTypeEnum[value], CODES_TFhirCatalogEntryRelationTypeEnum[value]);
+    RelationtypeElement := TFhirEnum.Create(SYSTEMS_TFhirCatalogEntryRelationTypeEnum[value], CODES_TFhirCatalogEntryRelationTypeEnum[value]);
 end;
 
 procedure TFhirCatalogEntryRelatedEntry.SetItem(value : TFhirReference);
@@ -7986,7 +7986,7 @@ end;
 
 destructor TFhirCatalogEntryRelatedEntryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -8018,7 +8018,7 @@ end;
 
 function TFhirCatalogEntryRelatedEntryList.Append: TFhirCatalogEntryRelatedEntry;
 begin
-  result := TFhirCatalogEntryRelatedEntry.create;
+  result := TFhirCatalogEntryRelatedEntry.Create;
   try
     add(result.Link);
   finally
@@ -8062,7 +8062,7 @@ end;
 
 function TFhirCatalogEntryRelatedEntryList.Insert(index: Integer): TFhirCatalogEntryRelatedEntry;
 begin
-  result := TFhirCatalogEntryRelatedEntry.create;
+  result := TFhirCatalogEntryRelatedEntry.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -8112,19 +8112,19 @@ end;
 
 destructor TFhirCatalogEntry.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FType_.free;
   FOrderable.free;
   FReferencedItem.free;
-  FAdditionalIdentifierList.Free;
-  FClassificationList.Free;
+  FAdditionalIdentifierList.free;
+  FClassificationList.free;
   FStatus.free;
   FValidityPeriod.free;
   FValidTo.free;
   FLastUpdated.free;
-  FAdditionalCharacteristicList.Free;
-  FAdditionalClassificationList.Free;
-  FRelatedEntryList.Free;
+  FAdditionalCharacteristicList.free;
+  FAdditionalClassificationList.free;
+  FRelatedEntryList.free;
   inherited;
 end;
 
@@ -8245,19 +8245,19 @@ end;
 procedure TFhirCatalogEntry.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'orderable', 'boolean', false, TFhirBoolean, FOrderable.Link));
-  oList.add(TFHIRProperty.create(self, 'referencedItem', 'Reference', false, TFhirReference, FReferencedItem.Link));
-  oList.add(TFHIRProperty.create(self, 'additionalIdentifier', 'Identifier', true, TFhirIdentifier, FAdditionalIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'classification', 'CodeableConcept', true, TFhirCodeableConcept, FClassificationList.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'validityPeriod', 'Period', false, TFhirPeriod, FValidityPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'validTo', 'dateTime', false, TFhirDateTime, FValidTo.Link));
-  oList.add(TFHIRProperty.create(self, 'lastUpdated', 'dateTime', false, TFhirDateTime, FLastUpdated.Link));
-  oList.add(TFHIRProperty.create(self, 'additionalCharacteristic', 'CodeableConcept', true, TFhirCodeableConcept, FAdditionalCharacteristicList.Link));
-  oList.add(TFHIRProperty.create(self, 'additionalClassification', 'CodeableConcept', true, TFhirCodeableConcept, FAdditionalClassificationList.Link));
-  oList.add(TFHIRProperty.create(self, 'relatedEntry', 'BackboneElement', true, TFhirCatalogEntryRelatedEntry, FRelatedEntryList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'orderable', 'boolean', false, TFhirBoolean, FOrderable.Link));
+  oList.add(TFHIRProperty.Create(self, 'referencedItem', 'Reference', false, TFhirReference, FReferencedItem.Link));
+  oList.add(TFHIRProperty.Create(self, 'additionalIdentifier', 'Identifier', true, TFhirIdentifier, FAdditionalIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'classification', 'CodeableConcept', true, TFhirCodeableConcept, FClassificationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'validityPeriod', 'Period', false, TFhirPeriod, FValidityPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'validTo', 'dateTime', false, TFhirDateTime, FValidTo.Link));
+  oList.add(TFHIRProperty.Create(self, 'lastUpdated', 'dateTime', false, TFhirDateTime, FLastUpdated.Link));
+  oList.add(TFHIRProperty.Create(self, 'additionalCharacteristic', 'CodeableConcept', true, TFhirCodeableConcept, FAdditionalCharacteristicList.Link));
+  oList.add(TFHIRProperty.Create(self, 'additionalClassification', 'CodeableConcept', true, TFhirCodeableConcept, FAdditionalClassificationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'relatedEntry', 'BackboneElement', true, TFhirCatalogEntryRelatedEntry, FRelatedEntryList.Link));
 end;
 
 function TFhirCatalogEntry.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -8344,15 +8344,15 @@ end;
 function TFhirCatalogEntry.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (propName = 'orderable') then result := TFhirBoolean.create()
-  else if (propName = 'referencedItem') then result := TFhirReference.create()
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'orderable') then result := TFhirBoolean.Create()
+  else if (propName = 'referencedItem') then result := TFhirReference.Create()
   else if (propName = 'additionalIdentifier') then result := AdditionalIdentifierList.new()
   else if (propName = 'classification') then result := ClassificationList.new()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
-  else if (propName = 'validityPeriod') then result := TFhirPeriod.create()
-  else if (propName = 'validTo') then result := TFhirDateTime.create()
-  else if (propName = 'lastUpdated') then result := TFhirDateTime.create()
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirPublicationStatusEnum[PublicationStatusNull], CODES_TFhirPublicationStatusEnum[PublicationStatusNull]) 
+  else if (propName = 'validityPeriod') then result := TFhirPeriod.Create()
+  else if (propName = 'validTo') then result := TFhirDateTime.Create()
+  else if (propName = 'lastUpdated') then result := TFhirDateTime.Create()
   else if (propName = 'additionalCharacteristic') then result := AdditionalCharacteristicList.new()
   else if (propName = 'additionalClassification') then result := AdditionalClassificationList.new()
   else if (propName = 'relatedEntry') then result := RelatedEntryList.new()
@@ -8533,7 +8533,7 @@ end;
 procedure TFhirCatalogEntry.SetOrderableST(value : Boolean);
 begin
   if FOrderable = nil then
-    FOrderable := TFhirBoolean.create;
+    FOrderable := TFhirBoolean.Create;
   FOrderable.value := value
 end;
 
@@ -8586,7 +8586,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirPublicationStatusEnum[value], CODES_TFhirPublicationStatusEnum[value]);
 end;
 
 procedure TFhirCatalogEntry.SetValidityPeriod(value : TFhirPeriod);
@@ -8612,7 +8612,7 @@ end;
 procedure TFhirCatalogEntry.SetValidToST(value : TFslDateTime);
 begin
   if FValidTo = nil then
-    FValidTo := TFhirDateTime.create;
+    FValidTo := TFhirDateTime.Create;
   FValidTo.value := value
 end;
 
@@ -8633,7 +8633,7 @@ end;
 procedure TFhirCatalogEntry.SetLastUpdatedST(value : TFslDateTime);
 begin
   if FLastUpdated = nil then
-    FLastUpdated := TFhirDateTime.create;
+    FLastUpdated := TFhirDateTime.Create;
   FLastUpdated.value := value
 end;
 
@@ -8684,7 +8684,7 @@ end;
 
 destructor TFhirCatalogEntryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -8716,7 +8716,7 @@ end;
 
 function TFhirCatalogEntryList.Append: TFhirCatalogEntry;
 begin
-  result := TFhirCatalogEntry.create;
+  result := TFhirCatalogEntry.Create;
   try
     add(result.Link);
   finally
@@ -8760,7 +8760,7 @@ end;
 
 function TFhirCatalogEntryList.Insert(index: Integer): TFhirCatalogEntry;
 begin
-  result := TFhirCatalogEntry.create;
+  result := TFhirCatalogEntry.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -8852,12 +8852,12 @@ end;
 procedure TFhirDeviceUdiCarrier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
-  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
-  oList.add(TFHIRProperty.create(self, 'carrierAIDC', 'base64Binary', false, TFhirBase64Binary, FCarrierAIDC.Link));
-  oList.add(TFHIRProperty.create(self, 'carrierHRF', 'string', false, TFhirString, FCarrierHRF.Link));
-  oList.add(TFHIRProperty.create(self, 'entryType', 'code', false, TFhirEnum, FEntryType.Link));
+  oList.add(TFHIRProperty.Create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
+  oList.add(TFHIRProperty.Create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
+  oList.add(TFHIRProperty.Create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
+  oList.add(TFHIRProperty.Create(self, 'carrierAIDC', 'base64Binary', false, TFhirBase64Binary, FCarrierAIDC.Link));
+  oList.add(TFHIRProperty.Create(self, 'carrierHRF', 'string', false, TFhirString, FCarrierHRF.Link));
+  oList.add(TFHIRProperty.Create(self, 'entryType', 'code', false, TFhirEnum, FEntryType.Link));
 end;
 
 function TFhirDeviceUdiCarrier.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -8902,12 +8902,12 @@ end;
 
 function TFhirDeviceUdiCarrier.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'deviceIdentifier') then result := TFhirString.create()
-  else if (propName = 'issuer') then result := TFhirUri.create()
-  else if (propName = 'jurisdiction') then result := TFhirUri.create()
-  else if (propName = 'carrierAIDC') then result := TFhirBase64Binary.create()
-  else if (propName = 'carrierHRF') then result := TFhirString.create()
-  else if (propName = 'entryType') then result := TFhirEnum.create(SYSTEMS_TFhirUDIEntryTypeEnum[UDIEntryTypeNull], CODES_TFhirUDIEntryTypeEnum[UDIEntryTypeNull]) 
+  if (propName = 'deviceIdentifier') then result := TFhirString.Create()
+  else if (propName = 'issuer') then result := TFhirUri.Create()
+  else if (propName = 'jurisdiction') then result := TFhirUri.Create()
+  else if (propName = 'carrierAIDC') then result := TFhirBase64Binary.Create()
+  else if (propName = 'carrierHRF') then result := TFhirString.Create()
+  else if (propName = 'entryType') then result := TFhirEnum.Create(SYSTEMS_TFhirUDIEntryTypeEnum[UDIEntryTypeNull], CODES_TFhirUDIEntryTypeEnum[UDIEntryTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -9024,7 +9024,7 @@ begin
   if value <> '' then
   begin
     if FDeviceIdentifier = nil then
-      FDeviceIdentifier := TFhirString.create;
+      FDeviceIdentifier := TFhirString.Create;
     FDeviceIdentifier.value := value
   end
   else if FDeviceIdentifier <> nil then
@@ -9050,7 +9050,7 @@ begin
   if value <> '' then
   begin
     if FIssuer = nil then
-      FIssuer := TFhirUri.create;
+      FIssuer := TFhirUri.Create;
     FIssuer.value := value
   end
   else if FIssuer <> nil then
@@ -9076,7 +9076,7 @@ begin
   if value <> '' then
   begin
     if FJurisdiction = nil then
-      FJurisdiction := TFhirUri.create;
+      FJurisdiction := TFhirUri.Create;
     FJurisdiction.value := value
   end
   else if FJurisdiction <> nil then
@@ -9102,7 +9102,7 @@ begin
   if value <> nil then
   begin
     if FCarrierAIDC = nil then
-      FCarrierAIDC := TFhirBase64Binary.create;
+      FCarrierAIDC := TFhirBase64Binary.Create;
     FCarrierAIDC.value := value
   end
   else if FCarrierAIDC <> nil then
@@ -9128,7 +9128,7 @@ begin
   if value <> '' then
   begin
     if FCarrierHRF = nil then
-      FCarrierHRF := TFhirString.create;
+      FCarrierHRF := TFhirString.Create;
     FCarrierHRF.value := value
   end
   else if FCarrierHRF <> nil then
@@ -9154,7 +9154,7 @@ begin
   if ord(value) = 0 then
     EntryTypeElement := nil
   else
-    EntryTypeElement := TFhirEnum.create(SYSTEMS_TFhirUDIEntryTypeEnum[value], CODES_TFhirUDIEntryTypeEnum[value]);
+    EntryTypeElement := TFhirEnum.Create(SYSTEMS_TFhirUDIEntryTypeEnum[value], CODES_TFhirUDIEntryTypeEnum[value]);
 end;
 
 { TFhirDeviceUdiCarrierListEnumerator }
@@ -9168,7 +9168,7 @@ end;
 
 destructor TFhirDeviceUdiCarrierListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -9200,7 +9200,7 @@ end;
 
 function TFhirDeviceUdiCarrierList.Append: TFhirDeviceUdiCarrier;
 begin
-  result := TFhirDeviceUdiCarrier.create;
+  result := TFhirDeviceUdiCarrier.Create;
   try
     add(result.Link);
   finally
@@ -9244,7 +9244,7 @@ end;
 
 function TFhirDeviceUdiCarrierList.Insert(index: Integer): TFhirDeviceUdiCarrier;
 begin
-  result := TFhirDeviceUdiCarrier.create;
+  result := TFhirDeviceUdiCarrier.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -9318,8 +9318,8 @@ end;
 procedure TFhirDeviceDeviceName.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
 end;
 
 function TFhirDeviceDeviceName.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -9344,8 +9344,8 @@ end;
 
 function TFhirDeviceDeviceName.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull]) 
+  if (propName = 'name') then result := TFhirString.Create()
+  else if (propName = 'type') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -9443,7 +9443,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -9469,7 +9469,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[value], CODES_TFhirDeviceNameTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirDeviceNameTypeEnum[value], CODES_TFhirDeviceNameTypeEnum[value]);
 end;
 
 { TFhirDeviceDeviceNameListEnumerator }
@@ -9483,7 +9483,7 @@ end;
 
 destructor TFhirDeviceDeviceNameListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -9515,7 +9515,7 @@ end;
 
 function TFhirDeviceDeviceNameList.Append: TFhirDeviceDeviceName;
 begin
-  result := TFhirDeviceDeviceName.create;
+  result := TFhirDeviceDeviceName.Create;
   try
     add(result.Link);
   finally
@@ -9559,7 +9559,7 @@ end;
 
 function TFhirDeviceDeviceNameList.Insert(index: Integer): TFhirDeviceDeviceName;
 begin
-  result := TFhirDeviceDeviceName.create;
+  result := TFhirDeviceDeviceName.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -9633,8 +9633,8 @@ end;
 procedure TFhirDeviceSpecialization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'systemType', 'CodeableConcept', false, TFhirCodeableConcept, FSystemType.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
+  oList.add(TFHIRProperty.Create(self, 'systemType', 'CodeableConcept', false, TFhirCodeableConcept, FSystemType.Link));
+  oList.add(TFHIRProperty.Create(self, 'version', 'string', false, TFhirString, FVersion.Link));
 end;
 
 function TFhirDeviceSpecialization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -9659,8 +9659,8 @@ end;
 
 function TFhirDeviceSpecialization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'systemType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'version') then result := TFhirString.create()
+  if (propName = 'systemType') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'version') then result := TFhirString.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -9764,7 +9764,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -9782,7 +9782,7 @@ end;
 
 destructor TFhirDeviceSpecializationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -9814,7 +9814,7 @@ end;
 
 function TFhirDeviceSpecializationList.Append: TFhirDeviceSpecialization;
 begin
-  result := TFhirDeviceSpecialization.create;
+  result := TFhirDeviceSpecialization.Create;
   try
     add(result.Link);
   finally
@@ -9858,7 +9858,7 @@ end;
 
 function TFhirDeviceSpecializationList.Insert(index: Integer): TFhirDeviceSpecialization;
 begin
-  result := TFhirDeviceSpecialization.create;
+  result := TFhirDeviceSpecialization.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -9936,9 +9936,9 @@ end;
 procedure TFhirDeviceVersion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'component', 'Identifier', false, TFhirIdentifier, FComponent.Link));
-  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFhirString, FValue.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'component', 'Identifier', false, TFhirIdentifier, FComponent.Link));
+  oList.add(TFHIRProperty.Create(self, 'value', 'string', false, TFhirString, FValue.Link));
 end;
 
 function TFhirDeviceVersion.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -9968,9 +9968,9 @@ end;
 
 function TFhirDeviceVersion.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (propName = 'component') then result := TFhirIdentifier.create()
-  else if (propName = 'value') then result := TFhirString.create()
+  if (propName = 'type') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'component') then result := TFhirIdentifier.Create()
+  else if (propName = 'value') then result := TFhirString.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -10085,7 +10085,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -10103,7 +10103,7 @@ end;
 
 destructor TFhirDeviceVersionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -10135,7 +10135,7 @@ end;
 
 function TFhirDeviceVersionList.Append: TFhirDeviceVersion;
 begin
-  result := TFhirDeviceVersion.create;
+  result := TFhirDeviceVersion.Create;
   try
     add(result.Link);
   finally
@@ -10179,7 +10179,7 @@ end;
 
 function TFhirDeviceVersionList.Insert(index: Integer): TFhirDeviceVersion;
 begin
-  result := TFhirDeviceVersion.create;
+  result := TFhirDeviceVersion.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -10230,8 +10230,8 @@ end;
 destructor TFhirDeviceProperty.Destroy;
 begin
   FType_.free;
-  FValueQuantityList.Free;
-  FValueCodeList.Free;
+  FValueQuantityList.free;
+  FValueCodeList.free;
   inherited;
 end;
 
@@ -10277,9 +10277,9 @@ end;
 procedure TFhirDeviceProperty.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link));
-  oList.add(TFHIRProperty.create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link));
+  oList.add(TFHIRProperty.Create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link));
 end;
 
 function TFhirDeviceProperty.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -10311,7 +10311,7 @@ end;
 
 function TFhirDeviceProperty.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  if (propName = 'type') then result := TFhirCodeableConcept.Create()
   else if (propName = 'valueQuantity') then result := ValueQuantityList.new()
   else if (propName = 'valueCode') then result := ValueCodeList.new()
   else result := inherited createPropertyValue(propName);
@@ -10443,7 +10443,7 @@ end;
 
 destructor TFhirDevicePropertyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -10475,7 +10475,7 @@ end;
 
 function TFhirDevicePropertyList.Append: TFhirDeviceProperty;
 begin
-  result := TFhirDeviceProperty.create;
+  result := TFhirDeviceProperty.Create;
   try
     add(result.Link);
   finally
@@ -10519,7 +10519,7 @@ end;
 
 function TFhirDevicePropertyList.Insert(index: Integer): TFhirDeviceProperty;
 begin
-  result := TFhirDeviceProperty.create;
+  result := TFhirDeviceProperty.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -10569,31 +10569,31 @@ end;
 
 destructor TFhirDevice.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FDefinition.free;
-  FUdiCarrierList.Free;
+  FUdiCarrierList.free;
   FStatus.free;
-  FStatusReasonList.Free;
+  FStatusReasonList.free;
   FDistinctIdentifier.free;
   FManufacturer.free;
   FManufactureDate.free;
   FExpirationDate.free;
   FLotNumber.free;
   FSerialNumber.free;
-  FDeviceNameList.Free;
+  FDeviceNameList.free;
   FModelNumber.free;
   FPartNumber.free;
   FType_.free;
-  FSpecializationList.Free;
-  FVersionList.Free;
-  FProperty_List.Free;
+  FSpecializationList.free;
+  FVersionList.free;
+  FProperty_List.free;
   FPatient.free;
   FOwner.free;
-  FContactList.Free;
+  FContactList.free;
   FLocation.free;
   FUrl.free;
-  FNoteList.Free;
-  FSafetyList.Free;
+  FNoteList.free;
+  FSafetyList.free;
   FParent.free;
   inherited;
 end;
@@ -10794,32 +10794,32 @@ end;
 procedure TFhirDevice.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'definition', 'Reference', false, TFhirReference, FDefinition.Link));
-  oList.add(TFHIRProperty.create(self, 'udiCarrier', 'BackboneElement', true, TFhirDeviceUdiCarrier, FUdiCarrierList.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'statusReason', 'CodeableConcept', true, TFhirCodeableConcept, FStatusReasonList.Link));
-  oList.add(TFHIRProperty.create(self, 'distinctIdentifier', 'string', false, TFhirString, FDistinctIdentifier.Link));
-  oList.add(TFHIRProperty.create(self, 'manufacturer', 'string', false, TFhirString, FManufacturer.Link));
-  oList.add(TFHIRProperty.create(self, 'manufactureDate', 'dateTime', false, TFhirDateTime, FManufactureDate.Link));
-  oList.add(TFHIRProperty.create(self, 'expirationDate', 'dateTime', false, TFhirDateTime, FExpirationDate.Link));
-  oList.add(TFHIRProperty.create(self, 'lotNumber', 'string', false, TFhirString, FLotNumber.Link));
-  oList.add(TFHIRProperty.create(self, 'serialNumber', 'string', false, TFhirString, FSerialNumber.Link));
-  oList.add(TFHIRProperty.create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDeviceName, FDeviceNameList.Link));
-  oList.add(TFHIRProperty.create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link));
-  oList.add(TFHIRProperty.create(self, 'partNumber', 'string', false, TFhirString, FPartNumber.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'specialization', 'BackboneElement', true, TFhirDeviceSpecialization, FSpecializationList.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'BackboneElement', true, TFhirDeviceVersion, FVersionList.Link));
-  oList.add(TFHIRProperty.create(self, 'property', 'BackboneElement', true, TFhirDeviceProperty, FProperty_List.Link));
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link));
-  oList.add(TFHIRProperty.create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link));
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link));
-  oList.add(TFHIRProperty.create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'definition', 'Reference', false, TFhirReference, FDefinition.Link));
+  oList.add(TFHIRProperty.Create(self, 'udiCarrier', 'BackboneElement', true, TFhirDeviceUdiCarrier, FUdiCarrierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'statusReason', 'CodeableConcept', true, TFhirCodeableConcept, FStatusReasonList.Link));
+  oList.add(TFHIRProperty.Create(self, 'distinctIdentifier', 'string', false, TFhirString, FDistinctIdentifier.Link));
+  oList.add(TFHIRProperty.Create(self, 'manufacturer', 'string', false, TFhirString, FManufacturer.Link));
+  oList.add(TFHIRProperty.Create(self, 'manufactureDate', 'dateTime', false, TFhirDateTime, FManufactureDate.Link));
+  oList.add(TFHIRProperty.Create(self, 'expirationDate', 'dateTime', false, TFhirDateTime, FExpirationDate.Link));
+  oList.add(TFHIRProperty.Create(self, 'lotNumber', 'string', false, TFhirString, FLotNumber.Link));
+  oList.add(TFHIRProperty.Create(self, 'serialNumber', 'string', false, TFhirString, FSerialNumber.Link));
+  oList.add(TFHIRProperty.Create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDeviceName, FDeviceNameList.Link));
+  oList.add(TFHIRProperty.Create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link));
+  oList.add(TFHIRProperty.Create(self, 'partNumber', 'string', false, TFhirString, FPartNumber.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialization', 'BackboneElement', true, TFhirDeviceSpecialization, FSpecializationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'version', 'BackboneElement', true, TFhirDeviceVersion, FVersionList.Link));
+  oList.add(TFHIRProperty.Create(self, 'property', 'BackboneElement', true, TFhirDeviceProperty, FProperty_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link));
+  oList.add(TFHIRProperty.Create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link));
+  oList.add(TFHIRProperty.Create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link));
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
+  oList.add(TFHIRProperty.Create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link));
 end;
 
 function TFhirDevice.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -10975,31 +10975,31 @@ end;
 function TFhirDevice.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'definition') then result := TFhirReference.create()
+  else if (propName = 'definition') then result := TFhirReference.Create()
   else if (propName = 'udiCarrier') then result := UdiCarrierList.new()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull], CODES_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull]) 
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull], CODES_TFhirFHIRDeviceStatusEnum[FHIRDeviceStatusNull]) 
   else if (propName = 'statusReason') then result := StatusReasonList.new()
-  else if (propName = 'distinctIdentifier') then result := TFhirString.create()
-  else if (propName = 'manufacturer') then result := TFhirString.create()
-  else if (propName = 'manufactureDate') then result := TFhirDateTime.create()
-  else if (propName = 'expirationDate') then result := TFhirDateTime.create()
-  else if (propName = 'lotNumber') then result := TFhirString.create()
-  else if (propName = 'serialNumber') then result := TFhirString.create()
+  else if (propName = 'distinctIdentifier') then result := TFhirString.Create()
+  else if (propName = 'manufacturer') then result := TFhirString.Create()
+  else if (propName = 'manufactureDate') then result := TFhirDateTime.Create()
+  else if (propName = 'expirationDate') then result := TFhirDateTime.Create()
+  else if (propName = 'lotNumber') then result := TFhirString.Create()
+  else if (propName = 'serialNumber') then result := TFhirString.Create()
   else if (propName = 'deviceName') then result := DeviceNameList.new()
-  else if (propName = 'modelNumber') then result := TFhirString.create()
-  else if (propName = 'partNumber') then result := TFhirString.create()
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'modelNumber') then result := TFhirString.Create()
+  else if (propName = 'partNumber') then result := TFhirString.Create()
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create()
   else if (propName = 'specialization') then result := SpecializationList.new()
   else if (propName = 'version') then result := VersionList.new()
   else if (propName = 'property') then result := Property_List.new()
-  else if (propName = 'patient') then result := TFhirReference.create()
-  else if (propName = 'owner') then result := TFhirReference.create()
+  else if (propName = 'patient') then result := TFhirReference.Create()
+  else if (propName = 'owner') then result := TFhirReference.Create()
   else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'location') then result := TFhirReference.create()
-  else if (propName = 'url') then result := TFhirUri.create()
+  else if (propName = 'location') then result := TFhirReference.Create()
+  else if (propName = 'url') then result := TFhirUri.Create()
   else if (propName = 'note') then result := NoteList.new()
   else if (propName = 'safety') then result := SafetyList.new()
-  else if (propName = 'parent') then result := TFhirReference.create()
+  else if (propName = 'parent') then result := TFhirReference.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -11256,7 +11256,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirFHIRDeviceStatusEnum[value], CODES_TFhirFHIRDeviceStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirFHIRDeviceStatusEnum[value], CODES_TFhirFHIRDeviceStatusEnum[value]);
 end;
 
 function TFhirDevice.GetStatusReasonList : TFhirCodeableConceptList;
@@ -11290,7 +11290,7 @@ begin
   if value <> '' then
   begin
     if FDistinctIdentifier = nil then
-      FDistinctIdentifier := TFhirString.create;
+      FDistinctIdentifier := TFhirString.Create;
     FDistinctIdentifier.value := value
   end
   else if FDistinctIdentifier <> nil then
@@ -11316,7 +11316,7 @@ begin
   if value <> '' then
   begin
     if FManufacturer = nil then
-      FManufacturer := TFhirString.create;
+      FManufacturer := TFhirString.Create;
     FManufacturer.value := value
   end
   else if FManufacturer <> nil then
@@ -11340,7 +11340,7 @@ end;
 procedure TFhirDevice.SetManufactureDateST(value : TFslDateTime);
 begin
   if FManufactureDate = nil then
-    FManufactureDate := TFhirDateTime.create;
+    FManufactureDate := TFhirDateTime.Create;
   FManufactureDate.value := value
 end;
 
@@ -11361,7 +11361,7 @@ end;
 procedure TFhirDevice.SetExpirationDateST(value : TFslDateTime);
 begin
   if FExpirationDate = nil then
-    FExpirationDate := TFhirDateTime.create;
+    FExpirationDate := TFhirDateTime.Create;
   FExpirationDate.value := value
 end;
 
@@ -11384,7 +11384,7 @@ begin
   if value <> '' then
   begin
     if FLotNumber = nil then
-      FLotNumber := TFhirString.create;
+      FLotNumber := TFhirString.Create;
     FLotNumber.value := value
   end
   else if FLotNumber <> nil then
@@ -11410,7 +11410,7 @@ begin
   if value <> '' then
   begin
     if FSerialNumber = nil then
-      FSerialNumber := TFhirString.create;
+      FSerialNumber := TFhirString.Create;
     FSerialNumber.value := value
   end
   else if FSerialNumber <> nil then
@@ -11448,7 +11448,7 @@ begin
   if value <> '' then
   begin
     if FModelNumber = nil then
-      FModelNumber := TFhirString.create;
+      FModelNumber := TFhirString.Create;
     FModelNumber.value := value
   end
   else if FModelNumber <> nil then
@@ -11474,7 +11474,7 @@ begin
   if value <> '' then
   begin
     if FPartNumber = nil then
-      FPartNumber := TFhirString.create;
+      FPartNumber := TFhirString.Create;
     FPartNumber.value := value
   end
   else if FPartNumber <> nil then
@@ -11572,7 +11572,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -11620,7 +11620,7 @@ end;
 
 destructor TFhirDeviceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11652,7 +11652,7 @@ end;
 
 function TFhirDeviceList.Append: TFhirDevice;
 begin
-  result := TFhirDevice.create;
+  result := TFhirDevice.Create;
   try
     add(result.Link);
   finally
@@ -11696,7 +11696,7 @@ end;
 
 function TFhirDeviceList.Insert(index: Integer): TFhirDevice;
 begin
-  result := TFhirDevice.create;
+  result := TFhirDevice.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11776,9 +11776,9 @@ end;
 procedure TFhirDeviceDefinitionUdiDeviceIdentifier.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
-  oList.add(TFHIRProperty.create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
-  oList.add(TFHIRProperty.create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
+  oList.add(TFHIRProperty.Create(self, 'deviceIdentifier', 'string', false, TFhirString, FDeviceIdentifier.Link));
+  oList.add(TFHIRProperty.Create(self, 'issuer', 'uri', false, TFhirUri, FIssuer.Link));
+  oList.add(TFHIRProperty.Create(self, 'jurisdiction', 'uri', false, TFhirUri, FJurisdiction.Link));
 end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -11808,9 +11808,9 @@ end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifier.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'deviceIdentifier') then result := TFhirString.create()
-  else if (propName = 'issuer') then result := TFhirUri.create()
-  else if (propName = 'jurisdiction') then result := TFhirUri.create()
+  if (propName = 'deviceIdentifier') then result := TFhirString.Create()
+  else if (propName = 'issuer') then result := TFhirUri.Create()
+  else if (propName = 'jurisdiction') then result := TFhirUri.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -11913,7 +11913,7 @@ begin
   if value <> '' then
   begin
     if FDeviceIdentifier = nil then
-      FDeviceIdentifier := TFhirString.create;
+      FDeviceIdentifier := TFhirString.Create;
     FDeviceIdentifier.value := value
   end
   else if FDeviceIdentifier <> nil then
@@ -11939,7 +11939,7 @@ begin
   if value <> '' then
   begin
     if FIssuer = nil then
-      FIssuer := TFhirUri.create;
+      FIssuer := TFhirUri.Create;
     FIssuer.value := value
   end
   else if FIssuer <> nil then
@@ -11965,7 +11965,7 @@ begin
   if value <> '' then
   begin
     if FJurisdiction = nil then
-      FJurisdiction := TFhirUri.create;
+      FJurisdiction := TFhirUri.Create;
     FJurisdiction.value := value
   end
   else if FJurisdiction <> nil then
@@ -11983,7 +11983,7 @@ end;
 
 destructor TFhirDeviceDefinitionUdiDeviceIdentifierListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12015,7 +12015,7 @@ end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifierList.Append: TFhirDeviceDefinitionUdiDeviceIdentifier;
 begin
-  result := TFhirDeviceDefinitionUdiDeviceIdentifier.create;
+  result := TFhirDeviceDefinitionUdiDeviceIdentifier.Create;
   try
     add(result.Link);
   finally
@@ -12059,7 +12059,7 @@ end;
 
 function TFhirDeviceDefinitionUdiDeviceIdentifierList.Insert(index: Integer): TFhirDeviceDefinitionUdiDeviceIdentifier;
 begin
-  result := TFhirDeviceDefinitionUdiDeviceIdentifier.create;
+  result := TFhirDeviceDefinitionUdiDeviceIdentifier.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12133,8 +12133,8 @@ end;
 procedure TFhirDeviceDefinitionDeviceName.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
 end;
 
 function TFhirDeviceDefinitionDeviceName.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -12159,8 +12159,8 @@ end;
 
 function TFhirDeviceDefinitionDeviceName.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull]) 
+  if (propName = 'name') then result := TFhirString.Create()
+  else if (propName = 'type') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceNameTypeEnum[DeviceNameTypeNull], CODES_TFhirDeviceNameTypeEnum[DeviceNameTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -12258,7 +12258,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -12284,7 +12284,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirDeviceNameTypeEnum[value], CODES_TFhirDeviceNameTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirDeviceNameTypeEnum[value], CODES_TFhirDeviceNameTypeEnum[value]);
 end;
 
 { TFhirDeviceDefinitionDeviceNameListEnumerator }
@@ -12298,7 +12298,7 @@ end;
 
 destructor TFhirDeviceDefinitionDeviceNameListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12330,7 +12330,7 @@ end;
 
 function TFhirDeviceDefinitionDeviceNameList.Append: TFhirDeviceDefinitionDeviceName;
 begin
-  result := TFhirDeviceDefinitionDeviceName.create;
+  result := TFhirDeviceDefinitionDeviceName.Create;
   try
     add(result.Link);
   finally
@@ -12374,7 +12374,7 @@ end;
 
 function TFhirDeviceDefinitionDeviceNameList.Insert(index: Integer): TFhirDeviceDefinitionDeviceName;
 begin
-  result := TFhirDeviceDefinitionDeviceName.create;
+  result := TFhirDeviceDefinitionDeviceName.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12448,8 +12448,8 @@ end;
 procedure TFhirDeviceDefinitionSpecialization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'systemType', 'string', false, TFhirString, FSystemType.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', false, TFhirString, FVersion.Link));
+  oList.add(TFHIRProperty.Create(self, 'systemType', 'string', false, TFhirString, FSystemType.Link));
+  oList.add(TFHIRProperty.Create(self, 'version', 'string', false, TFhirString, FVersion.Link));
 end;
 
 function TFhirDeviceDefinitionSpecialization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -12474,8 +12474,8 @@ end;
 
 function TFhirDeviceDefinitionSpecialization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'systemType') then result := TFhirString.create()
-  else if (propName = 'version') then result := TFhirString.create()
+  if (propName = 'systemType') then result := TFhirString.Create()
+  else if (propName = 'version') then result := TFhirString.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -12573,7 +12573,7 @@ begin
   if value <> '' then
   begin
     if FSystemType = nil then
-      FSystemType := TFhirString.create;
+      FSystemType := TFhirString.Create;
     FSystemType.value := value
   end
   else if FSystemType <> nil then
@@ -12599,7 +12599,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -12617,7 +12617,7 @@ end;
 
 destructor TFhirDeviceDefinitionSpecializationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12649,7 +12649,7 @@ end;
 
 function TFhirDeviceDefinitionSpecializationList.Append: TFhirDeviceDefinitionSpecialization;
 begin
-  result := TFhirDeviceDefinitionSpecialization.create;
+  result := TFhirDeviceDefinitionSpecialization.Create;
   try
     add(result.Link);
   finally
@@ -12693,7 +12693,7 @@ end;
 
 function TFhirDeviceDefinitionSpecializationList.Insert(index: Integer): TFhirDeviceDefinitionSpecialization;
 begin
-  result := TFhirDeviceDefinitionSpecialization.create;
+  result := TFhirDeviceDefinitionSpecialization.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12744,7 +12744,7 @@ end;
 destructor TFhirDeviceDefinitionCapability.Destroy;
 begin
   FType_.free;
-  FDescriptionList.Free;
+  FDescriptionList.free;
   inherited;
 end;
 
@@ -12777,8 +12777,8 @@ end;
 procedure TFhirDeviceDefinitionCapability.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'CodeableConcept', true, TFhirCodeableConcept, FDescriptionList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'description', 'CodeableConcept', true, TFhirCodeableConcept, FDescriptionList.Link));
 end;
 
 function TFhirDeviceDefinitionCapability.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -12804,7 +12804,7 @@ end;
 
 function TFhirDeviceDefinitionCapability.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  if (propName = 'type') then result := TFhirCodeableConcept.Create()
   else if (propName = 'description') then result := DescriptionList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -12916,7 +12916,7 @@ end;
 
 destructor TFhirDeviceDefinitionCapabilityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12948,7 +12948,7 @@ end;
 
 function TFhirDeviceDefinitionCapabilityList.Append: TFhirDeviceDefinitionCapability;
 begin
-  result := TFhirDeviceDefinitionCapability.create;
+  result := TFhirDeviceDefinitionCapability.Create;
   try
     add(result.Link);
   finally
@@ -12992,7 +12992,7 @@ end;
 
 function TFhirDeviceDefinitionCapabilityList.Insert(index: Integer): TFhirDeviceDefinitionCapability;
 begin
-  result := TFhirDeviceDefinitionCapability.create;
+  result := TFhirDeviceDefinitionCapability.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13043,8 +13043,8 @@ end;
 destructor TFhirDeviceDefinitionProperty.Destroy;
 begin
   FType_.free;
-  FValueQuantityList.Free;
-  FValueCodeList.Free;
+  FValueQuantityList.free;
+  FValueCodeList.free;
   inherited;
 end;
 
@@ -13090,9 +13090,9 @@ end;
 procedure TFhirDeviceDefinitionProperty.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link));
-  oList.add(TFHIRProperty.create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'valueQuantity', 'Quantity', true, TFhirQuantity, FValueQuantityList.Link));
+  oList.add(TFHIRProperty.Create(self, 'valueCode', 'CodeableConcept', true, TFhirCodeableConcept, FValueCodeList.Link));
 end;
 
 function TFhirDeviceDefinitionProperty.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -13124,7 +13124,7 @@ end;
 
 function TFhirDeviceDefinitionProperty.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create()
+  if (propName = 'type') then result := TFhirCodeableConcept.Create()
   else if (propName = 'valueQuantity') then result := ValueQuantityList.new()
   else if (propName = 'valueCode') then result := ValueCodeList.new()
   else result := inherited createPropertyValue(propName);
@@ -13256,7 +13256,7 @@ end;
 
 destructor TFhirDeviceDefinitionPropertyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13288,7 +13288,7 @@ end;
 
 function TFhirDeviceDefinitionPropertyList.Append: TFhirDeviceDefinitionProperty;
 begin
-  result := TFhirDeviceDefinitionProperty.create;
+  result := TFhirDeviceDefinitionProperty.Create;
   try
     add(result.Link);
   finally
@@ -13332,7 +13332,7 @@ end;
 
 function TFhirDeviceDefinitionPropertyList.Insert(index: Integer): TFhirDeviceDefinitionProperty;
 begin
-  result := TFhirDeviceDefinitionProperty.create;
+  result := TFhirDeviceDefinitionProperty.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13410,9 +13410,9 @@ end;
 procedure TFhirDeviceDefinitionMaterial.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));
-  oList.add(TFHIRProperty.create(self, 'alternate', 'boolean', false, TFhirBoolean, FAlternate.Link));
-  oList.add(TFHIRProperty.create(self, 'allergenicIndicator', 'boolean', false, TFhirBoolean, FAllergenicIndicator.Link));
+  oList.add(TFHIRProperty.Create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));
+  oList.add(TFHIRProperty.Create(self, 'alternate', 'boolean', false, TFhirBoolean, FAlternate.Link));
+  oList.add(TFHIRProperty.Create(self, 'allergenicIndicator', 'boolean', false, TFhirBoolean, FAllergenicIndicator.Link));
 end;
 
 function TFhirDeviceDefinitionMaterial.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -13442,9 +13442,9 @@ end;
 
 function TFhirDeviceDefinitionMaterial.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'substance') then result := TFhirCodeableConcept.create()
-  else if (propName = 'alternate') then result := TFhirBoolean.create()
-  else if (propName = 'allergenicIndicator') then result := TFhirBoolean.create()
+  if (propName = 'substance') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'alternate') then result := TFhirBoolean.Create()
+  else if (propName = 'allergenicIndicator') then result := TFhirBoolean.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -13551,7 +13551,7 @@ end;
 procedure TFhirDeviceDefinitionMaterial.SetAlternateST(value : Boolean);
 begin
   if FAlternate = nil then
-    FAlternate := TFhirBoolean.create;
+    FAlternate := TFhirBoolean.Create;
   FAlternate.value := value
 end;
 
@@ -13572,7 +13572,7 @@ end;
 procedure TFhirDeviceDefinitionMaterial.SetAllergenicIndicatorST(value : Boolean);
 begin
   if FAllergenicIndicator = nil then
-    FAllergenicIndicator := TFhirBoolean.create;
+    FAllergenicIndicator := TFhirBoolean.Create;
   FAllergenicIndicator.value := value
 end;
 
@@ -13587,7 +13587,7 @@ end;
 
 destructor TFhirDeviceDefinitionMaterialListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13619,7 +13619,7 @@ end;
 
 function TFhirDeviceDefinitionMaterialList.Append: TFhirDeviceDefinitionMaterial;
 begin
-  result := TFhirDeviceDefinitionMaterial.create;
+  result := TFhirDeviceDefinitionMaterial.Create;
   try
     add(result.Link);
   finally
@@ -13663,7 +13663,7 @@ end;
 
 function TFhirDeviceDefinitionMaterialList.Insert(index: Integer): TFhirDeviceDefinitionMaterial;
 begin
-  result := TFhirDeviceDefinitionMaterial.create;
+  result := TFhirDeviceDefinitionMaterial.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13713,28 +13713,28 @@ end;
 
 destructor TFhirDeviceDefinition.Destroy;
 begin
-  FIdentifierList.Free;
-  FUdiDeviceIdentifierList.Free;
+  FIdentifierList.free;
+  FUdiDeviceIdentifierList.free;
   FManufacturer.free;
-  FDeviceNameList.Free;
+  FDeviceNameList.free;
   FModelNumber.free;
   FType_.free;
-  FSpecializationList.Free;
-  FVersionList.Free;
-  FSafetyList.Free;
-  FShelfLifeStorageList.Free;
+  FSpecializationList.free;
+  FVersionList.free;
+  FSafetyList.free;
+  FShelfLifeStorageList.free;
   FPhysicalCharacteristics.free;
-  FLanguageCodeList.Free;
-  FCapabilityList.Free;
-  FProperty_List.Free;
+  FLanguageCodeList.free;
+  FCapabilityList.free;
+  FProperty_List.free;
   FOwner.free;
-  FContactList.Free;
+  FContactList.free;
   FUrl.free;
   FOnlineInformation.free;
-  FNoteList.Free;
+  FNoteList.free;
   FQuantity.free;
   FParentDevice.free;
-  FMaterialList.Free;
+  FMaterialList.free;
   inherited;
 end;
 
@@ -13952,28 +13952,28 @@ end;
 procedure TFhirDeviceDefinition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'udiDeviceIdentifier', 'BackboneElement', true, TFhirDeviceDefinitionUdiDeviceIdentifier, FUdiDeviceIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'manufacturer[x]', 'string|Reference', false, TFhirDataType, FManufacturer.Link));
-  oList.add(TFHIRProperty.create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDefinitionDeviceName, FDeviceNameList.Link));
-  oList.add(TFHIRProperty.create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'specialization', 'BackboneElement', true, TFhirDeviceDefinitionSpecialization, FSpecializationList.Link));
-  oList.add(TFHIRProperty.create(self, 'version', 'string', true, TFhirString, FVersionList.Link));
-  oList.add(TFHIRProperty.create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link));
-  oList.add(TFHIRProperty.create(self, 'shelfLifeStorage', 'ProductShelfLife', true, TFhirProductShelfLife, FShelfLifeStorageList.Link));
-  oList.add(TFHIRProperty.create(self, 'physicalCharacteristics', 'ProdCharacteristic', false, TFhirProdCharacteristic, FPhysicalCharacteristics.Link));
-  oList.add(TFHIRProperty.create(self, 'languageCode', 'CodeableConcept', true, TFhirCodeableConcept, FLanguageCodeList.Link));
-  oList.add(TFHIRProperty.create(self, 'capability', 'BackboneElement', true, TFhirDeviceDefinitionCapability, FCapabilityList.Link));
-  oList.add(TFHIRProperty.create(self, 'property', 'BackboneElement', true, TFhirDeviceDefinitionProperty, FProperty_List.Link));
-  oList.add(TFHIRProperty.create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
-  oList.add(TFHIRProperty.create(self, 'onlineInformation', 'uri', false, TFhirUri, FOnlineInformation.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));
-  oList.add(TFHIRProperty.create(self, 'parentDevice', 'Reference', false, TFhirReference, FParentDevice.Link));
-  oList.add(TFHIRProperty.create(self, 'material', 'BackboneElement', true, TFhirDeviceDefinitionMaterial, FMaterialList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'udiDeviceIdentifier', 'BackboneElement', true, TFhirDeviceDefinitionUdiDeviceIdentifier, FUdiDeviceIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'manufacturer[x]', 'string|Reference', false, TFhirDataType, FManufacturer.Link));
+  oList.add(TFHIRProperty.Create(self, 'deviceName', 'BackboneElement', true, TFhirDeviceDefinitionDeviceName, FDeviceNameList.Link));
+  oList.add(TFHIRProperty.Create(self, 'modelNumber', 'string', false, TFhirString, FModelNumber.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialization', 'BackboneElement', true, TFhirDeviceDefinitionSpecialization, FSpecializationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'version', 'string', true, TFhirString, FVersionList.Link));
+  oList.add(TFHIRProperty.Create(self, 'safety', 'CodeableConcept', true, TFhirCodeableConcept, FSafetyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'shelfLifeStorage', 'ProductShelfLife', true, TFhirProductShelfLife, FShelfLifeStorageList.Link));
+  oList.add(TFHIRProperty.Create(self, 'physicalCharacteristics', 'ProdCharacteristic', false, TFhirProdCharacteristic, FPhysicalCharacteristics.Link));
+  oList.add(TFHIRProperty.Create(self, 'languageCode', 'CodeableConcept', true, TFhirCodeableConcept, FLanguageCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'capability', 'BackboneElement', true, TFhirDeviceDefinitionCapability, FCapabilityList.Link));
+  oList.add(TFHIRProperty.Create(self, 'property', 'BackboneElement', true, TFhirDeviceDefinitionProperty, FProperty_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'owner', 'Reference', false, TFhirReference, FOwner.Link));
+  oList.add(TFHIRProperty.Create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));
+  oList.add(TFHIRProperty.Create(self, 'onlineInformation', 'uri', false, TFhirUri, FOnlineInformation.Link));
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));
+  oList.add(TFHIRProperty.Create(self, 'parentDevice', 'Reference', false, TFhirReference, FParentDevice.Link));
+  oList.add(TFHIRProperty.Create(self, 'material', 'BackboneElement', true, TFhirDeviceDefinitionMaterial, FMaterialList.Link));
 end;
 
 function TFhirDeviceDefinition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -14113,25 +14113,25 @@ function TFhirDeviceDefinition.createPropertyValue(propName : string) : TFHIRObj
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
   else if (propName = 'udiDeviceIdentifier') then result := UdiDeviceIdentifierList.new()
-  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then raise EFHIRException.create('Cannot make property Manufacturer')
+  else if (isMatchingName(propName, 'manufacturer', ['String', 'Reference'])) then raise EFHIRException.Create('Cannot make property Manufacturer')
   else if (propName = 'deviceName') then result := DeviceNameList.new()
-  else if (propName = 'modelNumber') then result := TFhirString.create()
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
+  else if (propName = 'modelNumber') then result := TFhirString.Create()
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create()
   else if (propName = 'specialization') then result := SpecializationList.new()
   else if (propName = 'version') then result := VersionList.new()
   else if (propName = 'safety') then result := SafetyList.new()
   else if (propName = 'shelfLifeStorage') then result := ShelfLifeStorageList.new()
-  else if (propName = 'physicalCharacteristics') then result := TFhirProdCharacteristic.create()
+  else if (propName = 'physicalCharacteristics') then result := TFhirProdCharacteristic.Create()
   else if (propName = 'languageCode') then result := LanguageCodeList.new()
   else if (propName = 'capability') then result := CapabilityList.new()
   else if (propName = 'property') then result := Property_List.new()
-  else if (propName = 'owner') then result := TFhirReference.create()
+  else if (propName = 'owner') then result := TFhirReference.Create()
   else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'url') then result := TFhirUri.create()
-  else if (propName = 'onlineInformation') then result := TFhirUri.create()
+  else if (propName = 'url') then result := TFhirUri.Create()
+  else if (propName = 'onlineInformation') then result := TFhirUri.Create()
   else if (propName = 'note') then result := NoteList.new()
-  else if (propName = 'quantity') then result := TFhirQuantity.create()
-  else if (propName = 'parentDevice') then result := TFhirReference.create()
+  else if (propName = 'quantity') then result := TFhirQuantity.Create()
+  else if (propName = 'parentDevice') then result := TFhirReference.Create()
   else if (propName = 'material') then result := MaterialList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -14390,7 +14390,7 @@ begin
   if value <> '' then
   begin
     if FModelNumber = nil then
-      FModelNumber := TFhirString.create;
+      FModelNumber := TFhirString.Create;
     FModelNumber.value := value
   end
   else if FModelNumber <> nil then
@@ -14530,7 +14530,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -14556,7 +14556,7 @@ begin
   if value <> '' then
   begin
     if FOnlineInformation = nil then
-      FOnlineInformation := TFhirUri.create;
+      FOnlineInformation := TFhirUri.Create;
     FOnlineInformation.value := value
   end
   else if FOnlineInformation <> nil then
@@ -14610,7 +14610,7 @@ end;
 
 destructor TFhirDeviceDefinitionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14642,7 +14642,7 @@ end;
 
 function TFhirDeviceDefinitionList.Append: TFhirDeviceDefinition;
 begin
-  result := TFhirDeviceDefinition.create;
+  result := TFhirDeviceDefinition.Create;
   try
     add(result.Link);
   finally
@@ -14686,7 +14686,7 @@ end;
 
 function TFhirDeviceDefinitionList.Insert(index: Integer): TFhirDeviceDefinition;
 begin
-  result := TFhirDeviceDefinition.create;
+  result := TFhirDeviceDefinition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14766,9 +14766,9 @@ end;
 procedure TFhirDeviceMetricCalibration.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'state', 'code', false, TFhirEnum, FState.Link));
-  oList.add(TFHIRProperty.create(self, 'time', 'instant', false, TFhirInstant, FTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'state', 'code', false, TFhirEnum, FState.Link));
+  oList.add(TFHIRProperty.Create(self, 'time', 'instant', false, TFhirInstant, FTime.Link));
 end;
 
 function TFhirDeviceMetricCalibration.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -14798,9 +14798,9 @@ end;
 
 function TFhirDeviceMetricCalibration.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull], CODES_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull]) 
-  else if (propName = 'state') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull], CODES_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull]) 
-  else if (propName = 'time') then result := TFhirInstant.create()
+  if (propName = 'type') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull], CODES_TFhirDeviceMetricCalibrationTypeEnum[DeviceMetricCalibrationTypeNull]) 
+  else if (propName = 'state') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull], CODES_TFhirDeviceMetricCalibrationStateEnum[DeviceMetricCalibrationStateNull]) 
+  else if (propName = 'time') then result := TFhirInstant.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -14903,7 +14903,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum[value], CODES_TFhirDeviceMetricCalibrationTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricCalibrationTypeEnum[value], CODES_TFhirDeviceMetricCalibrationTypeEnum[value]);
 end;
 
 procedure TFhirDeviceMetricCalibration.SetState(value : TFhirEnum);
@@ -14925,7 +14925,7 @@ begin
   if ord(value) = 0 then
     StateElement := nil
   else
-    StateElement := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum[value], CODES_TFhirDeviceMetricCalibrationStateEnum[value]);
+    StateElement := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricCalibrationStateEnum[value], CODES_TFhirDeviceMetricCalibrationStateEnum[value]);
 end;
 
 procedure TFhirDeviceMetricCalibration.SetTime(value : TFhirInstant);
@@ -14945,7 +14945,7 @@ end;
 procedure TFhirDeviceMetricCalibration.SetTimeST(value : TFslDateTime);
 begin
   if FTime = nil then
-    FTime := TFhirInstant.create;
+    FTime := TFhirInstant.Create;
   FTime.value := value
 end;
 
@@ -14960,7 +14960,7 @@ end;
 
 destructor TFhirDeviceMetricCalibrationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14992,7 +14992,7 @@ end;
 
 function TFhirDeviceMetricCalibrationList.Append: TFhirDeviceMetricCalibration;
 begin
-  result := TFhirDeviceMetricCalibration.create;
+  result := TFhirDeviceMetricCalibration.Create;
   try
     add(result.Link);
   finally
@@ -15036,7 +15036,7 @@ end;
 
 function TFhirDeviceMetricCalibrationList.Insert(index: Integer): TFhirDeviceMetricCalibration;
 begin
-  result := TFhirDeviceMetricCalibration.create;
+  result := TFhirDeviceMetricCalibration.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -15086,7 +15086,7 @@ end;
 
 destructor TFhirDeviceMetric.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FType_.free;
   FUnit_.free;
   FSource.free;
@@ -15095,7 +15095,7 @@ begin
   FColor.free;
   FCategory.free;
   FMeasurementPeriod.free;
-  FCalibrationList.Free;
+  FCalibrationList.free;
   inherited;
 end;
 
@@ -15167,16 +15167,16 @@ end;
 procedure TFhirDeviceMetric.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'unit', 'CodeableConcept', false, TFhirCodeableConcept, FUnit_.Link));
-  oList.add(TFHIRProperty.create(self, 'source', 'Reference', false, TFhirReference, FSource.Link));
-  oList.add(TFHIRProperty.create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link));
-  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'code', false, TFhirEnum, FOperationalStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'color', 'code', false, TFhirEnum, FColor.Link));
-  oList.add(TFHIRProperty.create(self, 'category', 'code', false, TFhirEnum, FCategory.Link));
-  oList.add(TFHIRProperty.create(self, 'measurementPeriod', 'Timing', false, TFhirTiming, FMeasurementPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'calibration', 'BackboneElement', true, TFhirDeviceMetricCalibration, FCalibrationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'unit', 'CodeableConcept', false, TFhirCodeableConcept, FUnit_.Link));
+  oList.add(TFHIRProperty.Create(self, 'source', 'Reference', false, TFhirReference, FSource.Link));
+  oList.add(TFHIRProperty.Create(self, 'parent', 'Reference', false, TFhirReference, FParent.Link));
+  oList.add(TFHIRProperty.Create(self, 'operationalStatus', 'code', false, TFhirEnum, FOperationalStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'color', 'code', false, TFhirEnum, FColor.Link));
+  oList.add(TFHIRProperty.Create(self, 'category', 'code', false, TFhirEnum, FCategory.Link));
+  oList.add(TFHIRProperty.Create(self, 'measurementPeriod', 'Timing', false, TFhirTiming, FMeasurementPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'calibration', 'BackboneElement', true, TFhirDeviceMetricCalibration, FCalibrationList.Link));
 end;
 
 function TFhirDeviceMetric.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -15244,14 +15244,14 @@ end;
 function TFhirDeviceMetric.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (propName = 'unit') then result := TFhirCodeableConcept.create()
-  else if (propName = 'source') then result := TFhirReference.create()
-  else if (propName = 'parent') then result := TFhirReference.create()
-  else if (propName = 'operationalStatus') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull], CODES_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull]) 
-  else if (propName = 'color') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricColorEnum[DeviceMetricColorNull], CODES_TFhirDeviceMetricColorEnum[DeviceMetricColorNull]) 
-  else if (propName = 'category') then result := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull], CODES_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull]) 
-  else if (propName = 'measurementPeriod') then result := TFhirTiming.create()
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'unit') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'source') then result := TFhirReference.Create()
+  else if (propName = 'parent') then result := TFhirReference.Create()
+  else if (propName = 'operationalStatus') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull], CODES_TFhirDeviceMetricOperationalStatusEnum[DeviceMetricOperationalStatusNull]) 
+  else if (propName = 'color') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricColorEnum[DeviceMetricColorNull], CODES_TFhirDeviceMetricColorEnum[DeviceMetricColorNull]) 
+  else if (propName = 'category') then result := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull], CODES_TFhirDeviceMetricCategoryEnum[DeviceMetricCategoryNull]) 
+  else if (propName = 'measurementPeriod') then result := TFhirTiming.Create()
   else if (propName = 'calibration') then result := CalibrationList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -15427,7 +15427,7 @@ begin
   if ord(value) = 0 then
     OperationalStatusElement := nil
   else
-    OperationalStatusElement := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum[value], CODES_TFhirDeviceMetricOperationalStatusEnum[value]);
+    OperationalStatusElement := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricOperationalStatusEnum[value], CODES_TFhirDeviceMetricOperationalStatusEnum[value]);
 end;
 
 procedure TFhirDeviceMetric.SetColor(value : TFhirEnum);
@@ -15449,7 +15449,7 @@ begin
   if ord(value) = 0 then
     ColorElement := nil
   else
-    ColorElement := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricColorEnum[value], CODES_TFhirDeviceMetricColorEnum[value]);
+    ColorElement := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricColorEnum[value], CODES_TFhirDeviceMetricColorEnum[value]);
 end;
 
 procedure TFhirDeviceMetric.SetCategory(value : TFhirEnum);
@@ -15471,7 +15471,7 @@ begin
   if ord(value) = 0 then
     CategoryElement := nil
   else
-    CategoryElement := TFhirEnum.create(SYSTEMS_TFhirDeviceMetricCategoryEnum[value], CODES_TFhirDeviceMetricCategoryEnum[value]);
+    CategoryElement := TFhirEnum.Create(SYSTEMS_TFhirDeviceMetricCategoryEnum[value], CODES_TFhirDeviceMetricCategoryEnum[value]);
 end;
 
 procedure TFhirDeviceMetric.SetMeasurementPeriod(value : TFhirTiming);
@@ -15503,7 +15503,7 @@ end;
 
 destructor TFhirDeviceMetricListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -15535,7 +15535,7 @@ end;
 
 function TFhirDeviceMetricList.Append: TFhirDeviceMetric;
 begin
-  result := TFhirDeviceMetric.create;
+  result := TFhirDeviceMetric.Create;
   try
     add(result.Link);
   finally
@@ -15579,7 +15579,7 @@ end;
 
 function TFhirDeviceMetricList.Insert(index: Integer): TFhirDeviceMetric;
 begin
-  result := TFhirDeviceMetric.create;
+  result := TFhirDeviceMetric.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -15655,8 +15655,8 @@ end;
 procedure TFhirEncounterStatusHistory.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirEncounterStatusHistory.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -15681,8 +15681,8 @@ end;
 
 function TFhirEncounterStatusHistory.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull]) 
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull]) 
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -15780,7 +15780,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[value], CODES_TFhirEncounterStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirEncounterStatusEnum[value], CODES_TFhirEncounterStatusEnum[value]);
 end;
 
 procedure TFhirEncounterStatusHistory.SetPeriod(value : TFhirPeriod);
@@ -15800,7 +15800,7 @@ end;
 
 destructor TFhirEncounterStatusHistoryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -15832,7 +15832,7 @@ end;
 
 function TFhirEncounterStatusHistoryList.Append: TFhirEncounterStatusHistory;
 begin
-  result := TFhirEncounterStatusHistory.create;
+  result := TFhirEncounterStatusHistory.Create;
   try
     add(result.Link);
   finally
@@ -15876,7 +15876,7 @@ end;
 
 function TFhirEncounterStatusHistoryList.Insert(index: Integer): TFhirEncounterStatusHistory;
 begin
-  result := TFhirEncounterStatusHistory.create;
+  result := TFhirEncounterStatusHistory.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -15950,8 +15950,8 @@ end;
 procedure TFhirEncounterClassHistory.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirEncounterClassHistory.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -15976,8 +15976,8 @@ end;
 
 function TFhirEncounterClassHistory.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'class') then result := TFhirCoding.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  if (propName = 'class') then result := TFhirCoding.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16079,7 +16079,7 @@ end;
 
 destructor TFhirEncounterClassHistoryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16111,7 +16111,7 @@ end;
 
 function TFhirEncounterClassHistoryList.Append: TFhirEncounterClassHistory;
 begin
-  result := TFhirEncounterClassHistory.create;
+  result := TFhirEncounterClassHistory.Create;
   try
     add(result.Link);
   finally
@@ -16155,7 +16155,7 @@ end;
 
 function TFhirEncounterClassHistoryList.Insert(index: Integer): TFhirEncounterClassHistory;
 begin
-  result := TFhirEncounterClassHistory.create;
+  result := TFhirEncounterClassHistory.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16205,7 +16205,7 @@ end;
 
 destructor TFhirEncounterParticipant.Destroy;
 begin
-  FType_List.Free;
+  FType_List.free;
   FPeriod.free;
   FIndividual.free;
   inherited;
@@ -16243,9 +16243,9 @@ end;
 procedure TFhirEncounterParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'individual', 'Reference', false, TFhirReference, FIndividual.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'individual', 'Reference', false, TFhirReference, FIndividual.Link));
 end;
 
 function TFhirEncounterParticipant.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -16277,8 +16277,8 @@ end;
 function TFhirEncounterParticipant.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'type') then result := Type_List.new()
-  else if (propName = 'period') then result := TFhirPeriod.create()
-  else if (propName = 'individual') then result := TFhirReference.create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
+  else if (propName = 'individual') then result := TFhirReference.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16400,7 +16400,7 @@ end;
 
 destructor TFhirEncounterParticipantListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16432,7 +16432,7 @@ end;
 
 function TFhirEncounterParticipantList.Append: TFhirEncounterParticipant;
 begin
-  result := TFhirEncounterParticipant.create;
+  result := TFhirEncounterParticipant.Create;
   try
     add(result.Link);
   finally
@@ -16476,7 +16476,7 @@ end;
 
 function TFhirEncounterParticipantList.Insert(index: Integer): TFhirEncounterParticipant;
 begin
-  result := TFhirEncounterParticipant.create;
+  result := TFhirEncounterParticipant.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16554,9 +16554,9 @@ end;
 procedure TFhirEncounterDiagnosis.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'condition', 'Reference', false, TFhirReference, FCondition.Link));
-  oList.add(TFHIRProperty.create(self, 'use', 'CodeableConcept', false, TFhirCodeableConcept, FUse.Link));
-  oList.add(TFHIRProperty.create(self, 'rank', 'positiveInt', false, TFhirPositiveInt, FRank.Link));
+  oList.add(TFHIRProperty.Create(self, 'condition', 'Reference', false, TFhirReference, FCondition.Link));
+  oList.add(TFHIRProperty.Create(self, 'use', 'CodeableConcept', false, TFhirCodeableConcept, FUse.Link));
+  oList.add(TFHIRProperty.Create(self, 'rank', 'positiveInt', false, TFhirPositiveInt, FRank.Link));
 end;
 
 function TFhirEncounterDiagnosis.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -16586,9 +16586,9 @@ end;
 
 function TFhirEncounterDiagnosis.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'condition') then result := TFhirReference.create()
-  else if (propName = 'use') then result := TFhirCodeableConcept.create()
-  else if (propName = 'rank') then result := TFhirPositiveInt.create()
+  if (propName = 'condition') then result := TFhirReference.Create()
+  else if (propName = 'use') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'rank') then result := TFhirPositiveInt.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16703,7 +16703,7 @@ begin
   if value <> '' then
   begin
     if FRank = nil then
-      FRank := TFhirPositiveInt.create;
+      FRank := TFhirPositiveInt.Create;
     FRank.value := value
   end
   else if FRank <> nil then
@@ -16721,7 +16721,7 @@ end;
 
 destructor TFhirEncounterDiagnosisListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16753,7 +16753,7 @@ end;
 
 function TFhirEncounterDiagnosisList.Append: TFhirEncounterDiagnosis;
 begin
-  result := TFhirEncounterDiagnosis.create;
+  result := TFhirEncounterDiagnosis.Create;
   try
     add(result.Link);
   finally
@@ -16797,7 +16797,7 @@ end;
 
 function TFhirEncounterDiagnosisList.Insert(index: Integer): TFhirEncounterDiagnosis;
 begin
-  result := TFhirEncounterDiagnosis.create;
+  result := TFhirEncounterDiagnosis.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16851,9 +16851,9 @@ begin
   FOrigin.free;
   FAdmitSource.free;
   FReAdmission.free;
-  FDietPreferenceList.Free;
-  FSpecialCourtesyList.Free;
-  FSpecialArrangementList.Free;
+  FDietPreferenceList.free;
+  FSpecialCourtesyList.free;
+  FSpecialArrangementList.free;
   FDestination.free;
   FDischargeDisposition.free;
   inherited;
@@ -16929,15 +16929,15 @@ end;
 procedure TFhirEncounterHospitalization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'preAdmissionIdentifier', 'Identifier', false, TFhirIdentifier, FPreAdmissionIdentifier.Link));
-  oList.add(TFHIRProperty.create(self, 'origin', 'Reference', false, TFhirReference, FOrigin.Link));
-  oList.add(TFHIRProperty.create(self, 'admitSource', 'CodeableConcept', false, TFhirCodeableConcept, FAdmitSource.Link));
-  oList.add(TFHIRProperty.create(self, 'reAdmission', 'CodeableConcept', false, TFhirCodeableConcept, FReAdmission.Link));
-  oList.add(TFHIRProperty.create(self, 'dietPreference', 'CodeableConcept', true, TFhirCodeableConcept, FDietPreferenceList.Link));
-  oList.add(TFHIRProperty.create(self, 'specialCourtesy', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialCourtesyList.Link));
-  oList.add(TFHIRProperty.create(self, 'specialArrangement', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialArrangementList.Link));
-  oList.add(TFHIRProperty.create(self, 'destination', 'Reference', false, TFhirReference, FDestination.Link));
-  oList.add(TFHIRProperty.create(self, 'dischargeDisposition', 'CodeableConcept', false, TFhirCodeableConcept, FDischargeDisposition.Link));
+  oList.add(TFHIRProperty.Create(self, 'preAdmissionIdentifier', 'Identifier', false, TFhirIdentifier, FPreAdmissionIdentifier.Link));
+  oList.add(TFHIRProperty.Create(self, 'origin', 'Reference', false, TFhirReference, FOrigin.Link));
+  oList.add(TFHIRProperty.Create(self, 'admitSource', 'CodeableConcept', false, TFhirCodeableConcept, FAdmitSource.Link));
+  oList.add(TFHIRProperty.Create(self, 'reAdmission', 'CodeableConcept', false, TFhirCodeableConcept, FReAdmission.Link));
+  oList.add(TFHIRProperty.Create(self, 'dietPreference', 'CodeableConcept', true, TFhirCodeableConcept, FDietPreferenceList.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialCourtesy', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialCourtesyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialArrangement', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialArrangementList.Link));
+  oList.add(TFHIRProperty.Create(self, 'destination', 'Reference', false, TFhirReference, FDestination.Link));
+  oList.add(TFHIRProperty.Create(self, 'dischargeDisposition', 'CodeableConcept', false, TFhirCodeableConcept, FDischargeDisposition.Link));
 end;
 
 function TFhirEncounterHospitalization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -17000,15 +17000,15 @@ end;
 
 function TFhirEncounterHospitalization.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'preAdmissionIdentifier') then result := TFhirIdentifier.create()
-  else if (propName = 'origin') then result := TFhirReference.create()
-  else if (propName = 'admitSource') then result := TFhirCodeableConcept.create()
-  else if (propName = 'reAdmission') then result := TFhirCodeableConcept.create()
+  if (propName = 'preAdmissionIdentifier') then result := TFhirIdentifier.Create()
+  else if (propName = 'origin') then result := TFhirReference.Create()
+  else if (propName = 'admitSource') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'reAdmission') then result := TFhirCodeableConcept.Create()
   else if (propName = 'dietPreference') then result := DietPreferenceList.new()
   else if (propName = 'specialCourtesy') then result := SpecialCourtesyList.new()
   else if (propName = 'specialArrangement') then result := SpecialArrangementList.new()
-  else if (propName = 'destination') then result := TFhirReference.create()
-  else if (propName = 'dischargeDisposition') then result := TFhirCodeableConcept.create()
+  else if (propName = 'destination') then result := TFhirReference.Create()
+  else if (propName = 'dischargeDisposition') then result := TFhirCodeableConcept.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -17209,7 +17209,7 @@ end;
 
 destructor TFhirEncounterHospitalizationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17241,7 +17241,7 @@ end;
 
 function TFhirEncounterHospitalizationList.Append: TFhirEncounterHospitalization;
 begin
-  result := TFhirEncounterHospitalization.create;
+  result := TFhirEncounterHospitalization.Create;
   try
     add(result.Link);
   finally
@@ -17285,7 +17285,7 @@ end;
 
 function TFhirEncounterHospitalizationList.Insert(index: Integer): TFhirEncounterHospitalization;
 begin
-  result := TFhirEncounterHospitalization.create;
+  result := TFhirEncounterHospitalization.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17367,10 +17367,10 @@ end;
 procedure TFhirEncounterLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference', false, TFhirReference, FLocation.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirEncounterLocation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -17405,10 +17405,10 @@ end;
 
 function TFhirEncounterLocation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'location') then result := TFhirReference.create()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull], CODES_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull]) 
-  else if (propName = 'physicalType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  if (propName = 'location') then result := TFhirReference.Create()
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull], CODES_TFhirEncounterLocationStatusEnum[EncounterLocationStatusNull]) 
+  else if (propName = 'physicalType') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -17521,7 +17521,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirEncounterLocationStatusEnum[value], CODES_TFhirEncounterLocationStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirEncounterLocationStatusEnum[value], CODES_TFhirEncounterLocationStatusEnum[value]);
 end;
 
 procedure TFhirEncounterLocation.SetPhysicalType(value : TFhirCodeableConcept);
@@ -17547,7 +17547,7 @@ end;
 
 destructor TFhirEncounterLocationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17579,7 +17579,7 @@ end;
 
 function TFhirEncounterLocationList.Append: TFhirEncounterLocation;
 begin
-  result := TFhirEncounterLocation.create;
+  result := TFhirEncounterLocation.Create;
   try
     add(result.Link);
   finally
@@ -17623,7 +17623,7 @@ end;
 
 function TFhirEncounterLocationList.Insert(index: Integer): TFhirEncounterLocation;
 begin
-  result := TFhirEncounterLocation.create;
+  result := TFhirEncounterLocation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17673,27 +17673,27 @@ end;
 
 destructor TFhirEncounter.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
-  FStatusHistoryList.Free;
+  FStatusHistoryList.free;
   FClass_.free;
-  FClassHistoryList.Free;
-  FType_List.Free;
+  FClassHistoryList.free;
+  FType_List.free;
   FServiceType.free;
   FPriority.free;
   FSubject.free;
-  FEpisodeOfCareList.Free;
-  FBasedOnList.Free;
-  FParticipantList.Free;
-  FAppointmentList.Free;
+  FEpisodeOfCareList.free;
+  FBasedOnList.free;
+  FParticipantList.free;
+  FAppointmentList.free;
   FPeriod.free;
   FLength.free;
-  FReasonCodeList.Free;
-  FReasonReferenceList.Free;
-  FDiagnosisList.Free;
-  FAccountList.Free;
+  FReasonCodeList.free;
+  FReasonReferenceList.free;
+  FDiagnosisList.free;
+  FAccountList.free;
   FHospitalization.free;
-  FLocationList.Free;
+  FLocationList.free;
   FServiceProvider.free;
   FPartOf.free;
   inherited;
@@ -17916,29 +17916,29 @@ end;
 procedure TFhirEncounter.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'statusHistory', 'BackboneElement', true, TFhirEncounterStatusHistory, FStatusHistoryList.Link));
-  oList.add(TFHIRProperty.create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link));
-  oList.add(TFHIRProperty.create(self, 'classHistory', 'BackboneElement', true, TFhirEncounterClassHistory, FClassHistoryList.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', false, TFhirCodeableConcept, FServiceType.Link));
-  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link));
-  oList.add(TFHIRProperty.create(self, 'episodeOfCare', 'Reference', true, TFhirReference, FEpisodeOfCareList.Link));
-  oList.add(TFHIRProperty.create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link));
-  oList.add(TFHIRProperty.create(self, 'participant', 'BackboneElement', true, TFhirEncounterParticipant, FParticipantList.Link));
-  oList.add(TFHIRProperty.create(self, 'appointment', 'Reference', true, TFhirReference, FAppointmentList.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'length', 'Duration', false, TFhirDuration, FLength.Link));
-  oList.add(TFHIRProperty.create(self, 'reasonCode', 'CodeableConcept', true, TFhirCodeableConcept, FReasonCodeList.Link));
-  oList.add(TFHIRProperty.create(self, 'reasonReference', 'Reference', true, TFhirReference, FReasonReferenceList.Link));
-  oList.add(TFHIRProperty.create(self, 'diagnosis', 'BackboneElement', true, TFhirEncounterDiagnosis, FDiagnosisList.Link));
-  oList.add(TFHIRProperty.create(self, 'account', 'Reference', true, TFhirReference, FAccountList.Link));
-  oList.add(TFHIRProperty.create(self, 'hospitalization', 'BackboneElement', false, TFhirEncounterHospitalization, FHospitalization.Link));
-  oList.add(TFHIRProperty.create(self, 'location', 'BackboneElement', true, TFhirEncounterLocation, FLocationList.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceProvider', 'Reference', false, TFhirReference, FServiceProvider.Link));
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'statusHistory', 'BackboneElement', true, TFhirEncounterStatusHistory, FStatusHistoryList.Link));
+  oList.add(TFHIRProperty.Create(self, 'class', 'Coding', false, TFhirCoding, FClass_.Link));
+  oList.add(TFHIRProperty.Create(self, 'classHistory', 'BackboneElement', true, TFhirEncounterClassHistory, FClassHistoryList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceType', 'CodeableConcept', false, TFhirCodeableConcept, FServiceType.Link));
+  oList.add(TFHIRProperty.Create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link));
+  oList.add(TFHIRProperty.Create(self, 'episodeOfCare', 'Reference', true, TFhirReference, FEpisodeOfCareList.Link));
+  oList.add(TFHIRProperty.Create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link));
+  oList.add(TFHIRProperty.Create(self, 'participant', 'BackboneElement', true, TFhirEncounterParticipant, FParticipantList.Link));
+  oList.add(TFHIRProperty.Create(self, 'appointment', 'Reference', true, TFhirReference, FAppointmentList.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'length', 'Duration', false, TFhirDuration, FLength.Link));
+  oList.add(TFHIRProperty.Create(self, 'reasonCode', 'CodeableConcept', true, TFhirCodeableConcept, FReasonCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'reasonReference', 'Reference', true, TFhirReference, FReasonReferenceList.Link));
+  oList.add(TFHIRProperty.Create(self, 'diagnosis', 'BackboneElement', true, TFhirEncounterDiagnosis, FDiagnosisList.Link));
+  oList.add(TFHIRProperty.Create(self, 'account', 'Reference', true, TFhirReference, FAccountList.Link));
+  oList.add(TFHIRProperty.Create(self, 'hospitalization', 'BackboneElement', false, TFhirEncounterHospitalization, FHospitalization.Link));
+  oList.add(TFHIRProperty.Create(self, 'location', 'BackboneElement', true, TFhirEncounterLocation, FLocationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceProvider', 'Reference', false, TFhirReference, FServiceProvider.Link));
+  oList.add(TFHIRProperty.Create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
 end;
 
 function TFhirEncounter.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -18082,28 +18082,28 @@ end;
 function TFhirEncounter.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull]) 
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirEncounterStatusEnum[EncounterStatusNull], CODES_TFhirEncounterStatusEnum[EncounterStatusNull]) 
   else if (propName = 'statusHistory') then result := StatusHistoryList.new()
-  else if (propName = 'class') then result := TFhirCoding.create()
+  else if (propName = 'class') then result := TFhirCoding.Create()
   else if (propName = 'classHistory') then result := ClassHistoryList.new()
   else if (propName = 'type') then result := Type_List.new()
-  else if (propName = 'serviceType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'priority') then result := TFhirCodeableConcept.create()
-  else if (propName = 'subject') then result := TFhirReference.create()
+  else if (propName = 'serviceType') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'priority') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'subject') then result := TFhirReference.Create()
   else if (propName = 'episodeOfCare') then result := EpisodeOfCareList.new()
   else if (propName = 'basedOn') then result := BasedOnList.new()
   else if (propName = 'participant') then result := ParticipantList.new()
   else if (propName = 'appointment') then result := AppointmentList.new()
-  else if (propName = 'period') then result := TFhirPeriod.create()
-  else if (propName = 'length') then result := TFhirDuration.create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
+  else if (propName = 'length') then result := TFhirDuration.Create()
   else if (propName = 'reasonCode') then result := ReasonCodeList.new()
   else if (propName = 'reasonReference') then result := ReasonReferenceList.new()
   else if (propName = 'diagnosis') then result := DiagnosisList.new()
   else if (propName = 'account') then result := AccountList.new()
-  else if (propName = 'hospitalization') then result := TFhirEncounterHospitalization.create()
+  else if (propName = 'hospitalization') then result := TFhirEncounterHospitalization.Create()
   else if (propName = 'location') then result := LocationList.new()
-  else if (propName = 'serviceProvider') then result := TFhirReference.create()
-  else if (propName = 'partOf') then result := TFhirReference.create()
+  else if (propName = 'serviceProvider') then result := TFhirReference.Create()
+  else if (propName = 'partOf') then result := TFhirReference.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -18335,7 +18335,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirEncounterStatusEnum[value], CODES_TFhirEncounterStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirEncounterStatusEnum[value], CODES_TFhirEncounterStatusEnum[value]);
 end;
 
 function TFhirEncounter.GetStatusHistoryList : TFhirEncounterStatusHistoryList;
@@ -18547,7 +18547,7 @@ end;
 
 destructor TFhirEncounterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18579,7 +18579,7 @@ end;
 
 function TFhirEncounterList.Append: TFhirEncounter;
 begin
-  result := TFhirEncounter.create;
+  result := TFhirEncounter.Create;
   try
     add(result.Link);
   finally
@@ -18623,7 +18623,7 @@ end;
 
 function TFhirEncounterList.Insert(index: Integer): TFhirEncounter;
 begin
-  result := TFhirEncounter.create;
+  result := TFhirEncounter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18675,17 +18675,17 @@ end;
 
 destructor TFhirEndpoint.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FConnectionType.free;
   FName.free;
   FManagingOrganization.free;
-  FContactList.Free;
+  FContactList.free;
   FPeriod.free;
-  FPayloadTypeList.Free;
-  FPayloadMimeTypeList.Free;
+  FPayloadTypeList.free;
+  FPayloadMimeTypeList.free;
   FAddress.free;
-  FHeaderList.Free;
+  FHeaderList.free;
   inherited;
 end;
 
@@ -18790,17 +18790,17 @@ end;
 procedure TFhirEndpoint.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'connectionType', 'Coding', false, TFhirCoding, FConnectionType.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'payloadType', 'CodeableConcept', true, TFhirCodeableConcept, FPayloadTypeList.Link));
-  oList.add(TFHIRProperty.create(self, 'payloadMimeType', 'code', true, TFhirCode, FPayloadMimeTypeList.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'url', false, TFhirUrl, FAddress.Link));
-  oList.add(TFHIRProperty.create(self, 'header', 'string', true, TFhirString, FHeaderList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'connectionType', 'Coding', false, TFhirCoding, FConnectionType.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'contact', 'ContactPoint', true, TFhirContactPoint, FContactList.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'payloadType', 'CodeableConcept', true, TFhirCodeableConcept, FPayloadTypeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'payloadMimeType', 'code', true, TFhirCode, FPayloadMimeTypeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'url', false, TFhirUrl, FAddress.Link));
+  oList.add(TFHIRProperty.Create(self, 'header', 'string', true, TFhirString, FHeaderList.Link));
 end;
 
 function TFhirEndpoint.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -18876,15 +18876,15 @@ end;
 function TFhirEndpoint.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEndpointStatusEnum[EndpointStatusNull], CODES_TFhirEndpointStatusEnum[EndpointStatusNull]) 
-  else if (propName = 'connectionType') then result := TFhirCoding.create()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'managingOrganization') then result := TFhirReference.create()
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirEndpointStatusEnum[EndpointStatusNull], CODES_TFhirEndpointStatusEnum[EndpointStatusNull]) 
+  else if (propName = 'connectionType') then result := TFhirCoding.Create()
+  else if (propName = 'name') then result := TFhirString.Create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.Create()
   else if (propName = 'contact') then result := ContactList.new()
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else if (propName = 'payloadType') then result := PayloadTypeList.new()
   else if (propName = 'payloadMimeType') then result := PayloadMimeTypeList.new()
-  else if (propName = 'address') then result := TFhirUrl.create()
+  else if (propName = 'address') then result := TFhirUrl.Create()
   else if (propName = 'header') then result := HeaderList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -19047,7 +19047,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirEndpointStatusEnum[value], CODES_TFhirEndpointStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirEndpointStatusEnum[value], CODES_TFhirEndpointStatusEnum[value]);
 end;
 
 procedure TFhirEndpoint.SetConnectionType(value : TFhirCoding);
@@ -19075,7 +19075,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -19149,7 +19149,7 @@ begin
   if value <> '' then
   begin
     if FAddress = nil then
-      FAddress := TFhirUrl.create;
+      FAddress := TFhirUrl.Create;
     FAddress.value := value
   end
   else if FAddress <> nil then
@@ -19179,7 +19179,7 @@ end;
 
 destructor TFhirEndpointListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19211,7 +19211,7 @@ end;
 
 function TFhirEndpointList.Append: TFhirEndpoint;
 begin
-  result := TFhirEndpoint.create;
+  result := TFhirEndpoint.Create;
   try
     add(result.Link);
   finally
@@ -19255,7 +19255,7 @@ end;
 
 function TFhirEndpointList.Insert(index: Integer): TFhirEndpoint;
 begin
-  result := TFhirEndpoint.create;
+  result := TFhirEndpoint.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19339,10 +19339,10 @@ end;
 procedure TFhirGroupCharacteristic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'CodeableConcept|boolean|Quantity|Range|Reference', false, TFhirDataType, FValue.Link));
-  oList.add(TFHIRProperty.create(self, 'exclude', 'boolean', false, TFhirBoolean, FExclude.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.Create(self, 'value[x]', 'CodeableConcept|boolean|Quantity|Range|Reference', false, TFhirDataType, FValue.Link));
+  oList.add(TFHIRProperty.Create(self, 'exclude', 'boolean', false, TFhirBoolean, FExclude.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirGroupCharacteristic.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -19377,10 +19377,10 @@ end;
 
 function TFhirGroupCharacteristic.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create()
-  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then raise EFHIRException.create('Cannot make property Value')
-  else if (propName = 'exclude') then result := TFhirBoolean.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  if (propName = 'code') then result := TFhirCodeableConcept.Create()
+  else if (isMatchingName(propName, 'value', ['CodeableConcept', 'Boolean', 'Quantity', 'Range', 'Reference'])) then raise EFHIRException.Create('Cannot make property Value')
+  else if (propName = 'exclude') then result := TFhirBoolean.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -19497,7 +19497,7 @@ end;
 procedure TFhirGroupCharacteristic.SetExcludeST(value : Boolean);
 begin
   if FExclude = nil then
-    FExclude := TFhirBoolean.create;
+    FExclude := TFhirBoolean.Create;
   FExclude.value := value
 end;
 
@@ -19518,7 +19518,7 @@ end;
 
 destructor TFhirGroupCharacteristicListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19550,7 +19550,7 @@ end;
 
 function TFhirGroupCharacteristicList.Append: TFhirGroupCharacteristic;
 begin
-  result := TFhirGroupCharacteristic.create;
+  result := TFhirGroupCharacteristic.Create;
   try
     add(result.Link);
   finally
@@ -19594,7 +19594,7 @@ end;
 
 function TFhirGroupCharacteristicList.Insert(index: Integer): TFhirGroupCharacteristic;
 begin
-  result := TFhirGroupCharacteristic.create;
+  result := TFhirGroupCharacteristic.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19672,9 +19672,9 @@ end;
 procedure TFhirGroupMember.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'entity', 'Reference', false, TFhirReference, FEntity.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'inactive', 'boolean', false, TFhirBoolean, FInactive.Link));
+  oList.add(TFHIRProperty.Create(self, 'entity', 'Reference', false, TFhirReference, FEntity.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'inactive', 'boolean', false, TFhirBoolean, FInactive.Link));
 end;
 
 function TFhirGroupMember.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -19704,9 +19704,9 @@ end;
 
 function TFhirGroupMember.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'entity') then result := TFhirReference.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
-  else if (propName = 'inactive') then result := TFhirBoolean.create()
+  if (propName = 'entity') then result := TFhirReference.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
+  else if (propName = 'inactive') then result := TFhirBoolean.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -19819,7 +19819,7 @@ end;
 procedure TFhirGroupMember.SetInactiveST(value : Boolean);
 begin
   if FInactive = nil then
-    FInactive := TFhirBoolean.create;
+    FInactive := TFhirBoolean.Create;
   FInactive.value := value
 end;
 
@@ -19834,7 +19834,7 @@ end;
 
 destructor TFhirGroupMemberListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19866,7 +19866,7 @@ end;
 
 function TFhirGroupMemberList.Append: TFhirGroupMember;
 begin
-  result := TFhirGroupMember.create;
+  result := TFhirGroupMember.Create;
   try
     add(result.Link);
   finally
@@ -19910,7 +19910,7 @@ end;
 
 function TFhirGroupMemberList.Insert(index: Integer): TFhirGroupMember;
 begin
-  result := TFhirGroupMember.create;
+  result := TFhirGroupMember.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19960,7 +19960,7 @@ end;
 
 destructor TFhirGroup.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
   FType_.free;
   FActual.free;
@@ -19968,8 +19968,8 @@ begin
   FName.free;
   FQuantity.free;
   FManagingEntity.free;
-  FCharacteristicList.Free;
-  FMemberList.Free;
+  FCharacteristicList.free;
+  FMemberList.free;
   inherited;
 end;
 
@@ -20051,16 +20051,16 @@ end;
 procedure TFhirGroup.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'actual', 'boolean', false, TFhirBoolean, FActual.Link));
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'quantity', 'unsignedInt', false, TFhirUnsignedInt, FQuantity.Link));
-  oList.add(TFHIRProperty.create(self, 'managingEntity', 'Reference', false, TFhirReference, FManagingEntity.Link));
-  oList.add(TFHIRProperty.create(self, 'characteristic', 'BackboneElement', true, TFhirGroupCharacteristic, FCharacteristicList.Link));
-  oList.add(TFHIRProperty.create(self, 'member', 'BackboneElement', true, TFhirGroupMember, FMemberList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'actual', 'boolean', false, TFhirBoolean, FActual.Link));
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'unsignedInt', false, TFhirUnsignedInt, FQuantity.Link));
+  oList.add(TFHIRProperty.Create(self, 'managingEntity', 'Reference', false, TFhirReference, FManagingEntity.Link));
+  oList.add(TFHIRProperty.Create(self, 'characteristic', 'BackboneElement', true, TFhirGroupCharacteristic, FCharacteristicList.Link));
+  oList.add(TFHIRProperty.Create(self, 'member', 'BackboneElement', true, TFhirGroupMember, FMemberList.Link));
 end;
 
 function TFhirGroup.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -20129,13 +20129,13 @@ end;
 function TFhirGroup.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirGroupTypeEnum[GroupTypeNull], CODES_TFhirGroupTypeEnum[GroupTypeNull]) 
-  else if (propName = 'actual') then result := TFhirBoolean.create()
-  else if (propName = 'code') then result := TFhirCodeableConcept.create()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'quantity') then result := TFhirUnsignedInt.create()
-  else if (propName = 'managingEntity') then result := TFhirReference.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
+  else if (propName = 'type') then result := TFhirEnum.Create(SYSTEMS_TFhirGroupTypeEnum[GroupTypeNull], CODES_TFhirGroupTypeEnum[GroupTypeNull]) 
+  else if (propName = 'actual') then result := TFhirBoolean.Create()
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'name') then result := TFhirString.Create()
+  else if (propName = 'quantity') then result := TFhirUnsignedInt.Create()
+  else if (propName = 'managingEntity') then result := TFhirReference.Create()
   else if (propName = 'characteristic') then result := CharacteristicList.new()
   else if (propName = 'member') then result := MemberList.new()
   else result := inherited createPropertyValue(propName);
@@ -20288,7 +20288,7 @@ end;
 procedure TFhirGroup.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -20311,7 +20311,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirGroupTypeEnum[value], CODES_TFhirGroupTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirGroupTypeEnum[value], CODES_TFhirGroupTypeEnum[value]);
 end;
 
 procedure TFhirGroup.SetActual(value : TFhirBoolean);
@@ -20331,7 +20331,7 @@ end;
 procedure TFhirGroup.SetActualST(value : Boolean);
 begin
   if FActual = nil then
-    FActual := TFhirBoolean.create;
+    FActual := TFhirBoolean.Create;
   FActual.value := value
 end;
 
@@ -20360,7 +20360,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -20386,7 +20386,7 @@ begin
   if value <> '' then
   begin
     if FQuantity = nil then
-      FQuantity := TFhirUnsignedInt.create;
+      FQuantity := TFhirUnsignedInt.Create;
     FQuantity.value := value
   end
   else if FQuantity <> nil then
@@ -20434,7 +20434,7 @@ end;
 
 destructor TFhirGroupListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20466,7 +20466,7 @@ end;
 
 function TFhirGroupList.Append: TFhirGroup;
 begin
-  result := TFhirGroup.create;
+  result := TFhirGroup.Create;
   try
     add(result.Link);
   finally
@@ -20510,7 +20510,7 @@ end;
 
 function TFhirGroupList.Insert(index: Integer): TFhirGroup;
 begin
-  result := TFhirGroup.create;
+  result := TFhirGroup.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20586,8 +20586,8 @@ end;
 procedure TFhirHealthcareServiceEligibility.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
-  oList.add(TFHIRProperty.create(self, 'comment', 'markdown', false, TFhirMarkdown, FComment.Link));
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.Create(self, 'comment', 'markdown', false, TFhirMarkdown, FComment.Link));
 end;
 
 function TFhirHealthcareServiceEligibility.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -20612,8 +20612,8 @@ end;
 
 function TFhirHealthcareServiceEligibility.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create()
-  else if (propName = 'comment') then result := TFhirMarkdown.create()
+  if (propName = 'code') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'comment') then result := TFhirMarkdown.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20717,7 +20717,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirMarkdown.create;
+      FComment := TFhirMarkdown.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -20735,7 +20735,7 @@ end;
 
 destructor TFhirHealthcareServiceEligibilityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20767,7 +20767,7 @@ end;
 
 function TFhirHealthcareServiceEligibilityList.Append: TFhirHealthcareServiceEligibility;
 begin
-  result := TFhirHealthcareServiceEligibility.create;
+  result := TFhirHealthcareServiceEligibility.Create;
   try
     add(result.Link);
   finally
@@ -20811,7 +20811,7 @@ end;
 
 function TFhirHealthcareServiceEligibilityList.Insert(index: Integer): TFhirHealthcareServiceEligibility;
 begin
-  result := TFhirHealthcareServiceEligibility.create;
+  result := TFhirHealthcareServiceEligibility.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20861,7 +20861,7 @@ end;
 
 destructor TFhirHealthcareServiceAvailableTime.Destroy;
 begin
-  FDaysOfWeek.Free;
+  FDaysOfWeek.free;
   FAllDay.free;
   FAvailableStartTime.free;
   FAvailableEndTime.free;
@@ -20902,10 +20902,10 @@ end;
 procedure TFhirHealthcareServiceAvailableTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
-  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
-  oList.add(TFHIRProperty.create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link));
-  oList.add(TFHIRProperty.create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
+  oList.add(TFHIRProperty.Create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
+  oList.add(TFHIRProperty.Create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link));
 end;
 
 function TFhirHealthcareServiceAvailableTime.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -20941,9 +20941,9 @@ end;
 
 function TFhirHealthcareServiceAvailableTime.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'allDay') then result := TFhirBoolean.create()
-  else if (propName = 'availableStartTime') then result := TFhirTime.create()
-  else if (propName = 'availableEndTime') then result := TFhirTime.create()
+  if (propName = 'allDay') then result := TFhirBoolean.Create()
+  else if (propName = 'availableStartTime') then result := TFhirTime.Create()
+  else if (propName = 'availableEndTime') then result := TFhirTime.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21058,14 +21058,14 @@ procedure TFhirHealthcareServiceAvailableTime.SetDaysOfWeekST(value : TFhirDaysO
 var a : TFhirDaysOfWeekEnum;
 begin
   if FdaysOfWeek = nil then
-    FdaysOfWeek := TFhirEnumList.create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
+    FdaysOfWeek := TFhirEnumList.Create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
   FdaysOfWeek.clear;
   for a := low(TFhirDaysOfWeekEnum) to high(TFhirDaysOfWeekEnum) do
     if a in value then
       begin
          if FdaysOfWeek = nil then
-           FdaysOfWeek := TFhirEnumList.create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
-         FdaysOfWeek.add(TFhirEnum.create(SYSTEMS_TFhirDaysOfWeekEnum[a], CODES_TFhirDaysOfWeekEnum[a]));
+           FdaysOfWeek := TFhirEnumList.Create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
+         FdaysOfWeek.add(TFhirEnum.Create(SYSTEMS_TFhirDaysOfWeekEnum[a], CODES_TFhirDaysOfWeekEnum[a]));
       end;
 end;
 
@@ -21086,7 +21086,7 @@ end;
 procedure TFhirHealthcareServiceAvailableTime.SetAllDayST(value : Boolean);
 begin
   if FAllDay = nil then
-    FAllDay := TFhirBoolean.create;
+    FAllDay := TFhirBoolean.Create;
   FAllDay.value := value
 end;
 
@@ -21109,7 +21109,7 @@ begin
   if value <> '' then
   begin
     if FAvailableStartTime = nil then
-      FAvailableStartTime := TFhirTime.create;
+      FAvailableStartTime := TFhirTime.Create;
     FAvailableStartTime.value := value
   end
   else if FAvailableStartTime <> nil then
@@ -21135,7 +21135,7 @@ begin
   if value <> '' then
   begin
     if FAvailableEndTime = nil then
-      FAvailableEndTime := TFhirTime.create;
+      FAvailableEndTime := TFhirTime.Create;
     FAvailableEndTime.value := value
   end
   else if FAvailableEndTime <> nil then
@@ -21153,7 +21153,7 @@ end;
 
 destructor TFhirHealthcareServiceAvailableTimeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21185,7 +21185,7 @@ end;
 
 function TFhirHealthcareServiceAvailableTimeList.Append: TFhirHealthcareServiceAvailableTime;
 begin
-  result := TFhirHealthcareServiceAvailableTime.create;
+  result := TFhirHealthcareServiceAvailableTime.Create;
   try
     add(result.Link);
   finally
@@ -21229,7 +21229,7 @@ end;
 
 function TFhirHealthcareServiceAvailableTimeList.Insert(index: Integer): TFhirHealthcareServiceAvailableTime;
 begin
-  result := TFhirHealthcareServiceAvailableTime.create;
+  result := TFhirHealthcareServiceAvailableTime.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21303,8 +21303,8 @@ end;
 procedure TFhirHealthcareServiceNotAvailable.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link));
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.Create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link));
 end;
 
 function TFhirHealthcareServiceNotAvailable.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -21329,8 +21329,8 @@ end;
 
 function TFhirHealthcareServiceNotAvailable.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'during') then result := TFhirPeriod.create()
+  if (propName = 'description') then result := TFhirString.Create()
+  else if (propName = 'during') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21428,7 +21428,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -21452,7 +21452,7 @@ end;
 
 destructor TFhirHealthcareServiceNotAvailableListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21484,7 +21484,7 @@ end;
 
 function TFhirHealthcareServiceNotAvailableList.Append: TFhirHealthcareServiceNotAvailable;
 begin
-  result := TFhirHealthcareServiceNotAvailable.create;
+  result := TFhirHealthcareServiceNotAvailable.Create;
   try
     add(result.Link);
   finally
@@ -21528,7 +21528,7 @@ end;
 
 function TFhirHealthcareServiceNotAvailableList.Insert(index: Integer): TFhirHealthcareServiceNotAvailable;
 begin
-  result := TFhirHealthcareServiceNotAvailable.create;
+  result := TFhirHealthcareServiceNotAvailable.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21578,30 +21578,30 @@ end;
 
 destructor TFhirHealthcareService.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
   FProvidedBy.free;
-  FCategoryList.Free;
-  FType_List.Free;
-  FSpecialtyList.Free;
-  FLocationList.Free;
+  FCategoryList.free;
+  FType_List.free;
+  FSpecialtyList.free;
+  FLocationList.free;
   FName.free;
   FComment.free;
   FExtraDetails.free;
   FPhoto.free;
-  FTelecomList.Free;
-  FCoverageAreaList.Free;
-  FServiceProvisionCodeList.Free;
-  FEligibilityList.Free;
-  FProgram_List.Free;
-  FCharacteristicList.Free;
-  FCommunicationList.Free;
-  FReferralMethodList.Free;
+  FTelecomList.free;
+  FCoverageAreaList.free;
+  FServiceProvisionCodeList.free;
+  FEligibilityList.free;
+  FProgram_List.free;
+  FCharacteristicList.free;
+  FCommunicationList.free;
+  FReferralMethodList.free;
   FAppointmentRequired.free;
-  FAvailableTimeList.Free;
-  FNotAvailableList.Free;
+  FAvailableTimeList.free;
+  FNotAvailableList.free;
   FAvailabilityExceptions.free;
-  FEndpointList.Free;
+  FEndpointList.free;
   inherited;
 end;
 
@@ -21855,30 +21855,30 @@ end;
 procedure TFhirHealthcareService.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'providedBy', 'Reference', false, TFhirReference, FProvidedBy.Link));
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
-  oList.add(TFHIRProperty.create(self, 'extraDetails', 'markdown', false, TFhirMarkdown, FExtraDetails.Link));
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'coverageArea', 'Reference', true, TFhirReference, FCoverageAreaList.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceProvisionCode', 'CodeableConcept', true, TFhirCodeableConcept, FServiceProvisionCodeList.Link));
-  oList.add(TFHIRProperty.create(self, 'eligibility', 'BackboneElement', true, TFhirHealthcareServiceEligibility, FEligibilityList.Link));
-  oList.add(TFHIRProperty.create(self, 'program', 'CodeableConcept', true, TFhirCodeableConcept, FProgram_List.Link));
-  oList.add(TFHIRProperty.create(self, 'characteristic', 'CodeableConcept', true, TFhirCodeableConcept, FCharacteristicList.Link));
-  oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link));
-  oList.add(TFHIRProperty.create(self, 'referralMethod', 'CodeableConcept', true, TFhirCodeableConcept, FReferralMethodList.Link));
-  oList.add(TFHIRProperty.create(self, 'appointmentRequired', 'boolean', false, TFhirBoolean, FAppointmentRequired.Link));
-  oList.add(TFHIRProperty.create(self, 'availableTime', 'BackboneElement', true, TFhirHealthcareServiceAvailableTime, FAvailableTimeList.Link));
-  oList.add(TFHIRProperty.create(self, 'notAvailable', 'BackboneElement', true, TFhirHealthcareServiceNotAvailable, FNotAvailableList.Link));
-  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'providedBy', 'Reference', false, TFhirReference, FProvidedBy.Link));
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', false, TFhirString, FComment.Link));
+  oList.add(TFHIRProperty.Create(self, 'extraDetails', 'markdown', false, TFhirMarkdown, FExtraDetails.Link));
+  oList.add(TFHIRProperty.Create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'coverageArea', 'Reference', true, TFhirReference, FCoverageAreaList.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceProvisionCode', 'CodeableConcept', true, TFhirCodeableConcept, FServiceProvisionCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'eligibility', 'BackboneElement', true, TFhirHealthcareServiceEligibility, FEligibilityList.Link));
+  oList.add(TFHIRProperty.Create(self, 'program', 'CodeableConcept', true, TFhirCodeableConcept, FProgram_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'characteristic', 'CodeableConcept', true, TFhirCodeableConcept, FCharacteristicList.Link));
+  oList.add(TFHIRProperty.Create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'referralMethod', 'CodeableConcept', true, TFhirCodeableConcept, FReferralMethodList.Link));
+  oList.add(TFHIRProperty.Create(self, 'appointmentRequired', 'boolean', false, TFhirBoolean, FAppointmentRequired.Link));
+  oList.add(TFHIRProperty.Create(self, 'availableTime', 'BackboneElement', true, TFhirHealthcareServiceAvailableTime, FAvailableTimeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'notAvailable', 'BackboneElement', true, TFhirHealthcareServiceNotAvailable, FNotAvailableList.Link));
+  oList.add(TFHIRProperty.Create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
+  oList.add(TFHIRProperty.Create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirHealthcareService.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -22030,16 +22030,16 @@ end;
 function TFhirHealthcareService.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
-  else if (propName = 'providedBy') then result := TFhirReference.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
+  else if (propName = 'providedBy') then result := TFhirReference.Create()
   else if (propName = 'category') then result := CategoryList.new()
   else if (propName = 'type') then result := Type_List.new()
   else if (propName = 'specialty') then result := SpecialtyList.new()
   else if (propName = 'location') then result := LocationList.new()
-  else if (propName = 'name') then result := TFhirString.create()
-  else if (propName = 'comment') then result := TFhirString.create()
-  else if (propName = 'extraDetails') then result := TFhirMarkdown.create()
-  else if (propName = 'photo') then result := TFhirAttachment.create()
+  else if (propName = 'name') then result := TFhirString.Create()
+  else if (propName = 'comment') then result := TFhirString.Create()
+  else if (propName = 'extraDetails') then result := TFhirMarkdown.Create()
+  else if (propName = 'photo') then result := TFhirAttachment.Create()
   else if (propName = 'telecom') then result := TelecomList.new()
   else if (propName = 'coverageArea') then result := CoverageAreaList.new()
   else if (propName = 'serviceProvisionCode') then result := ServiceProvisionCodeList.new()
@@ -22048,10 +22048,10 @@ begin
   else if (propName = 'characteristic') then result := CharacteristicList.new()
   else if (propName = 'communication') then result := CommunicationList.new()
   else if (propName = 'referralMethod') then result := ReferralMethodList.new()
-  else if (propName = 'appointmentRequired') then result := TFhirBoolean.create()
+  else if (propName = 'appointmentRequired') then result := TFhirBoolean.Create()
   else if (propName = 'availableTime') then result := AvailableTimeList.new()
   else if (propName = 'notAvailable') then result := NotAvailableList.new()
-  else if (propName = 'availabilityExceptions') then result := TFhirString.create()
+  else if (propName = 'availabilityExceptions') then result := TFhirString.Create()
   else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -22293,7 +22293,7 @@ end;
 procedure TFhirHealthcareService.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -22370,7 +22370,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -22396,7 +22396,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirString.create;
+      FComment := TFhirString.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -22422,7 +22422,7 @@ begin
   if value <> '' then
   begin
     if FExtraDetails = nil then
-      FExtraDetails := TFhirMarkdown.create;
+      FExtraDetails := TFhirMarkdown.Create;
     FExtraDetails.value := value
   end
   else if FExtraDetails <> nil then
@@ -22548,7 +22548,7 @@ end;
 procedure TFhirHealthcareService.SetAppointmentRequiredST(value : Boolean);
 begin
   if FAppointmentRequired = nil then
-    FAppointmentRequired := TFhirBoolean.create;
+    FAppointmentRequired := TFhirBoolean.Create;
   FAppointmentRequired.value := value
 end;
 
@@ -22595,7 +22595,7 @@ begin
   if value <> '' then
   begin
     if FAvailabilityExceptions = nil then
-      FAvailabilityExceptions := TFhirString.create;
+      FAvailabilityExceptions := TFhirString.Create;
     FAvailabilityExceptions.value := value
   end
   else if FAvailabilityExceptions <> nil then
@@ -22625,7 +22625,7 @@ end;
 
 destructor TFhirHealthcareServiceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22657,7 +22657,7 @@ end;
 
 function TFhirHealthcareServiceList.Append: TFhirHealthcareService;
 begin
-  result := TFhirHealthcareService.create;
+  result := TFhirHealthcareService.Create;
   try
     add(result.Link);
   finally
@@ -22701,7 +22701,7 @@ end;
 
 function TFhirHealthcareServiceList.Insert(index: Integer): TFhirHealthcareService;
 begin
-  result := TFhirHealthcareService.create;
+  result := TFhirHealthcareService.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22781,9 +22781,9 @@ end;
 procedure TFhirLocationPosition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'longitude', 'decimal', false, TFhirDecimal, FLongitude.Link));
-  oList.add(TFHIRProperty.create(self, 'latitude', 'decimal', false, TFhirDecimal, FLatitude.Link));
-  oList.add(TFHIRProperty.create(self, 'altitude', 'decimal', false, TFhirDecimal, FAltitude.Link));
+  oList.add(TFHIRProperty.Create(self, 'longitude', 'decimal', false, TFhirDecimal, FLongitude.Link));
+  oList.add(TFHIRProperty.Create(self, 'latitude', 'decimal', false, TFhirDecimal, FLatitude.Link));
+  oList.add(TFHIRProperty.Create(self, 'altitude', 'decimal', false, TFhirDecimal, FAltitude.Link));
 end;
 
 function TFhirLocationPosition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -22813,9 +22813,9 @@ end;
 
 function TFhirLocationPosition.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'longitude') then result := TFhirDecimal.create()
-  else if (propName = 'latitude') then result := TFhirDecimal.create()
-  else if (propName = 'altitude') then result := TFhirDecimal.create()
+  if (propName = 'longitude') then result := TFhirDecimal.Create()
+  else if (propName = 'latitude') then result := TFhirDecimal.Create()
+  else if (propName = 'altitude') then result := TFhirDecimal.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -22918,7 +22918,7 @@ begin
   if value <> '' then
   begin
     if FLongitude = nil then
-      FLongitude := TFhirDecimal.create;
+      FLongitude := TFhirDecimal.Create;
     FLongitude.value := value
   end
   else if FLongitude <> nil then
@@ -22944,7 +22944,7 @@ begin
   if value <> '' then
   begin
     if FLatitude = nil then
-      FLatitude := TFhirDecimal.create;
+      FLatitude := TFhirDecimal.Create;
     FLatitude.value := value
   end
   else if FLatitude <> nil then
@@ -22970,7 +22970,7 @@ begin
   if value <> '' then
   begin
     if FAltitude = nil then
-      FAltitude := TFhirDecimal.create;
+      FAltitude := TFhirDecimal.Create;
     FAltitude.value := value
   end
   else if FAltitude <> nil then
@@ -22988,7 +22988,7 @@ end;
 
 destructor TFhirLocationPositionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23020,7 +23020,7 @@ end;
 
 function TFhirLocationPositionList.Append: TFhirLocationPosition;
 begin
-  result := TFhirLocationPosition.create;
+  result := TFhirLocationPosition.Create;
   try
     add(result.Link);
   finally
@@ -23064,7 +23064,7 @@ end;
 
 function TFhirLocationPositionList.Insert(index: Integer): TFhirLocationPosition;
 begin
-  result := TFhirLocationPosition.create;
+  result := TFhirLocationPosition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23114,7 +23114,7 @@ end;
 
 destructor TFhirLocationHoursOfOperation.Destroy;
 begin
-  FDaysOfWeek.Free;
+  FDaysOfWeek.free;
   FAllDay.free;
   FOpeningTime.free;
   FClosingTime.free;
@@ -23155,10 +23155,10 @@ end;
 procedure TFhirLocationHoursOfOperation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
-  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
-  oList.add(TFHIRProperty.create(self, 'openingTime', 'time', false, TFhirTime, FOpeningTime.Link));
-  oList.add(TFHIRProperty.create(self, 'closingTime', 'time', false, TFhirTime, FClosingTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
+  oList.add(TFHIRProperty.Create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
+  oList.add(TFHIRProperty.Create(self, 'openingTime', 'time', false, TFhirTime, FOpeningTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'closingTime', 'time', false, TFhirTime, FClosingTime.Link));
 end;
 
 function TFhirLocationHoursOfOperation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -23194,9 +23194,9 @@ end;
 
 function TFhirLocationHoursOfOperation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'allDay') then result := TFhirBoolean.create()
-  else if (propName = 'openingTime') then result := TFhirTime.create()
-  else if (propName = 'closingTime') then result := TFhirTime.create()
+  if (propName = 'allDay') then result := TFhirBoolean.Create()
+  else if (propName = 'openingTime') then result := TFhirTime.Create()
+  else if (propName = 'closingTime') then result := TFhirTime.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -23310,14 +23310,14 @@ procedure TFhirLocationHoursOfOperation.SetDaysOfWeekST(value : TFhirDaysOfWeekE
 var a : TFhirDaysOfWeekEnum;
 begin
   if FdaysOfWeek = nil then
-    FdaysOfWeek := TFhirEnumList.create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
+    FdaysOfWeek := TFhirEnumList.Create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
   FdaysOfWeek.clear;
   for a := low(TFhirDaysOfWeekEnum) to high(TFhirDaysOfWeekEnum) do
     if a in value then
       begin
          if FdaysOfWeek = nil then
-           FdaysOfWeek := TFhirEnumList.create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
-         FdaysOfWeek.add(TFhirEnum.create(SYSTEMS_TFhirDaysOfWeekEnum[a], CODES_TFhirDaysOfWeekEnum[a]));
+           FdaysOfWeek := TFhirEnumList.Create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
+         FdaysOfWeek.add(TFhirEnum.Create(SYSTEMS_TFhirDaysOfWeekEnum[a], CODES_TFhirDaysOfWeekEnum[a]));
       end;
 end;
 
@@ -23338,7 +23338,7 @@ end;
 procedure TFhirLocationHoursOfOperation.SetAllDayST(value : Boolean);
 begin
   if FAllDay = nil then
-    FAllDay := TFhirBoolean.create;
+    FAllDay := TFhirBoolean.Create;
   FAllDay.value := value
 end;
 
@@ -23361,7 +23361,7 @@ begin
   if value <> '' then
   begin
     if FOpeningTime = nil then
-      FOpeningTime := TFhirTime.create;
+      FOpeningTime := TFhirTime.Create;
     FOpeningTime.value := value
   end
   else if FOpeningTime <> nil then
@@ -23387,7 +23387,7 @@ begin
   if value <> '' then
   begin
     if FClosingTime = nil then
-      FClosingTime := TFhirTime.create;
+      FClosingTime := TFhirTime.Create;
     FClosingTime.value := value
   end
   else if FClosingTime <> nil then
@@ -23405,7 +23405,7 @@ end;
 
 destructor TFhirLocationHoursOfOperationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23437,7 +23437,7 @@ end;
 
 function TFhirLocationHoursOfOperationList.Append: TFhirLocationHoursOfOperation;
 begin
-  result := TFhirLocationHoursOfOperation.create;
+  result := TFhirLocationHoursOfOperation.Create;
   try
     add(result.Link);
   finally
@@ -23481,7 +23481,7 @@ end;
 
 function TFhirLocationHoursOfOperationList.Insert(index: Integer): TFhirLocationHoursOfOperation;
 begin
-  result := TFhirLocationHoursOfOperation.create;
+  result := TFhirLocationHoursOfOperation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23531,23 +23531,23 @@ end;
 
 destructor TFhirLocation.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FOperationalStatus.free;
   FName.free;
-  FAliasList.Free;
+  FAliasList.free;
   FDescription.free;
   FMode.free;
-  FType_List.Free;
-  FTelecomList.Free;
+  FType_List.free;
+  FTelecomList.free;
   FAddress.free;
   FPhysicalType.free;
   FPosition.free;
   FManagingOrganization.free;
   FPartOf.free;
-  FHoursOfOperationList.Free;
+  FHoursOfOperationList.free;
   FAvailabilityExceptions.free;
-  FEndpointList.Free;
+  FEndpointList.free;
   inherited;
 end;
 
@@ -23680,23 +23680,23 @@ end;
 procedure TFhirLocation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'operationalStatus', 'Coding', false, TFhirCoding, FOperationalStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'alias', 'string', true, TFhirString, FAliasList.Link));
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'mode', 'code', false, TFhirEnum, FMode.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
-  oList.add(TFHIRProperty.create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link));
-  oList.add(TFHIRProperty.create(self, 'position', 'BackboneElement', false, TFhirLocationPosition, FPosition.Link));
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
-  oList.add(TFHIRProperty.create(self, 'hoursOfOperation', 'BackboneElement', true, TFhirLocationHoursOfOperation, FHoursOfOperationList.Link));
-  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'operationalStatus', 'Coding', false, TFhirCoding, FOperationalStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'alias', 'string', true, TFhirString, FAliasList.Link));
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.Create(self, 'mode', 'code', false, TFhirEnum, FMode.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
+  oList.add(TFHIRProperty.Create(self, 'physicalType', 'CodeableConcept', false, TFhirCodeableConcept, FPhysicalType.Link));
+  oList.add(TFHIRProperty.Create(self, 'position', 'BackboneElement', false, TFhirLocationPosition, FPosition.Link));
+  oList.add(TFHIRProperty.Create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
+  oList.add(TFHIRProperty.Create(self, 'hoursOfOperation', 'BackboneElement', true, TFhirLocationHoursOfOperation, FHoursOfOperationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
+  oList.add(TFHIRProperty.Create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirLocation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -23803,21 +23803,21 @@ end;
 function TFhirLocation.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirLocationStatusEnum[LocationStatusNull], CODES_TFhirLocationStatusEnum[LocationStatusNull]) 
-  else if (propName = 'operationalStatus') then result := TFhirCoding.create()
-  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirLocationStatusEnum[LocationStatusNull], CODES_TFhirLocationStatusEnum[LocationStatusNull]) 
+  else if (propName = 'operationalStatus') then result := TFhirCoding.Create()
+  else if (propName = 'name') then result := TFhirString.Create()
   else if (propName = 'alias') then result := AliasList.new()
-  else if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'mode') then result := TFhirEnum.create(SYSTEMS_TFhirLocationModeEnum[LocationModeNull], CODES_TFhirLocationModeEnum[LocationModeNull]) 
+  else if (propName = 'description') then result := TFhirString.Create()
+  else if (propName = 'mode') then result := TFhirEnum.Create(SYSTEMS_TFhirLocationModeEnum[LocationModeNull], CODES_TFhirLocationModeEnum[LocationModeNull]) 
   else if (propName = 'type') then result := Type_List.new()
   else if (propName = 'telecom') then result := TelecomList.new()
-  else if (propName = 'address') then result := TFhirAddress.create()
-  else if (propName = 'physicalType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'position') then result := TFhirLocationPosition.create()
-  else if (propName = 'managingOrganization') then result := TFhirReference.create()
-  else if (propName = 'partOf') then result := TFhirReference.create()
+  else if (propName = 'address') then result := TFhirAddress.Create()
+  else if (propName = 'physicalType') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'position') then result := TFhirLocationPosition.Create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.Create()
+  else if (propName = 'partOf') then result := TFhirReference.Create()
   else if (propName = 'hoursOfOperation') then result := HoursOfOperationList.new()
-  else if (propName = 'availabilityExceptions') then result := TFhirString.create()
+  else if (propName = 'availabilityExceptions') then result := TFhirString.Create()
   else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -24010,7 +24010,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirLocationStatusEnum[value], CODES_TFhirLocationStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirLocationStatusEnum[value], CODES_TFhirLocationStatusEnum[value]);
 end;
 
 procedure TFhirLocation.SetOperationalStatus(value : TFhirCoding);
@@ -24038,7 +24038,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -24076,7 +24076,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -24102,7 +24102,7 @@ begin
   if ord(value) = 0 then
     ModeElement := nil
   else
-    ModeElement := TFhirEnum.create(SYSTEMS_TFhirLocationModeEnum[value], CODES_TFhirLocationModeEnum[value]);
+    ModeElement := TFhirEnum.Create(SYSTEMS_TFhirLocationModeEnum[value], CODES_TFhirLocationModeEnum[value]);
 end;
 
 function TFhirLocation.GetType_List : TFhirCodeableConceptList;
@@ -24190,7 +24190,7 @@ begin
   if value <> '' then
   begin
     if FAvailabilityExceptions = nil then
-      FAvailabilityExceptions := TFhirString.create;
+      FAvailabilityExceptions := TFhirString.Create;
     FAvailabilityExceptions.value := value
   end
   else if FAvailabilityExceptions <> nil then
@@ -24220,7 +24220,7 @@ end;
 
 destructor TFhirLocationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24252,7 +24252,7 @@ end;
 
 function TFhirLocationList.Append: TFhirLocation;
 begin
-  result := TFhirLocation.create;
+  result := TFhirLocation.Create;
   try
     add(result.Link);
   finally
@@ -24296,7 +24296,7 @@ end;
 
 function TFhirLocationList.Insert(index: Integer): TFhirLocation;
 begin
-  result := TFhirLocation.create;
+  result := TFhirLocation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -24348,9 +24348,9 @@ end;
 
 destructor TFhirMedia.Destroy;
 begin
-  FIdentifierList.Free;
-  FBasedOnList.Free;
-  FPartOfList.Free;
+  FIdentifierList.free;
+  FBasedOnList.free;
+  FPartOfList.free;
   FStatus.free;
   FType_.free;
   FModality.free;
@@ -24360,7 +24360,7 @@ begin
   FCreated.free;
   FIssued.free;
   FOperator.free;
-  FReasonCodeList.Free;
+  FReasonCodeList.free;
   FBodySite.free;
   FDeviceName.free;
   FDevice.free;
@@ -24369,7 +24369,7 @@ begin
   FFrames.free;
   FDuration.free;
   FContent.free;
-  FNoteList.Free;
+  FNoteList.free;
   inherited;
 end;
 
@@ -24507,28 +24507,28 @@ end;
 procedure TFhirMedia.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link));
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', true, TFhirReference, FPartOfList.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
-  oList.add(TFHIRProperty.create(self, 'modality', 'CodeableConcept', false, TFhirCodeableConcept, FModality.Link));
-  oList.add(TFHIRProperty.create(self, 'view', 'CodeableConcept', false, TFhirCodeableConcept, FView.Link));
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link));
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference', false, TFhirReference, FEncounter.Link));
-  oList.add(TFHIRProperty.create(self, 'created[x]', 'dateTime|Period', false, TFhirDataType, FCreated.Link));
-  oList.add(TFHIRProperty.create(self, 'issued', 'instant', false, TFhirInstant, FIssued.Link));
-  oList.add(TFHIRProperty.create(self, 'operator', 'Reference', false, TFhirReference, FOperator.Link));
-  oList.add(TFHIRProperty.create(self, 'reasonCode', 'CodeableConcept', true, TFhirCodeableConcept, FReasonCodeList.Link));
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));
-  oList.add(TFHIRProperty.create(self, 'deviceName', 'string', false, TFhirString, FDeviceName.Link));
-  oList.add(TFHIRProperty.create(self, 'device', 'Reference', false, TFhirReference, FDevice.Link));
-  oList.add(TFHIRProperty.create(self, 'height', 'positiveInt', false, TFhirPositiveInt, FHeight.Link));
-  oList.add(TFHIRProperty.create(self, 'width', 'positiveInt', false, TFhirPositiveInt, FWidth.Link));
-  oList.add(TFHIRProperty.create(self, 'frames', 'positiveInt', false, TFhirPositiveInt, FFrames.Link));
-  oList.add(TFHIRProperty.create(self, 'duration', 'decimal', false, TFhirDecimal, FDuration.Link));
-  oList.add(TFHIRProperty.create(self, 'content', 'Attachment', false, TFhirAttachment, FContent.Link));
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'basedOn', 'Reference', true, TFhirReference, FBasedOnList.Link));
+  oList.add(TFHIRProperty.Create(self, 'partOf', 'Reference', true, TFhirReference, FPartOfList.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'modality', 'CodeableConcept', false, TFhirCodeableConcept, FModality.Link));
+  oList.add(TFHIRProperty.Create(self, 'view', 'CodeableConcept', false, TFhirCodeableConcept, FView.Link));
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference', false, TFhirReference, FSubject.Link));
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference', false, TFhirReference, FEncounter.Link));
+  oList.add(TFHIRProperty.Create(self, 'created[x]', 'dateTime|Period', false, TFhirDataType, FCreated.Link));
+  oList.add(TFHIRProperty.Create(self, 'issued', 'instant', false, TFhirInstant, FIssued.Link));
+  oList.add(TFHIRProperty.Create(self, 'operator', 'Reference', false, TFhirReference, FOperator.Link));
+  oList.add(TFHIRProperty.Create(self, 'reasonCode', 'CodeableConcept', true, TFhirCodeableConcept, FReasonCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));
+  oList.add(TFHIRProperty.Create(self, 'deviceName', 'string', false, TFhirString, FDeviceName.Link));
+  oList.add(TFHIRProperty.Create(self, 'device', 'Reference', false, TFhirReference, FDevice.Link));
+  oList.add(TFHIRProperty.Create(self, 'height', 'positiveInt', false, TFhirPositiveInt, FHeight.Link));
+  oList.add(TFHIRProperty.Create(self, 'width', 'positiveInt', false, TFhirPositiveInt, FWidth.Link));
+  oList.add(TFHIRProperty.Create(self, 'frames', 'positiveInt', false, TFhirPositiveInt, FFrames.Link));
+  oList.add(TFHIRProperty.Create(self, 'duration', 'decimal', false, TFhirDecimal, FDuration.Link));
+  oList.add(TFHIRProperty.Create(self, 'content', 'Attachment', false, TFhirAttachment, FContent.Link));
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link));
 end;
 
 function TFhirMedia.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -24661,24 +24661,24 @@ begin
   if (propName = 'identifier') then result := IdentifierList.new()
   else if (propName = 'basedOn') then result := BasedOnList.new()
   else if (propName = 'partOf') then result := PartOfList.new()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirEventStatusEnum[EventStatusNull], CODES_TFhirEventStatusEnum[EventStatusNull]) 
-  else if (propName = 'type') then result := TFhirCodeableConcept.create()
-  else if (propName = 'modality') then result := TFhirCodeableConcept.create()
-  else if (propName = 'view') then result := TFhirCodeableConcept.create()
-  else if (propName = 'subject') then result := TFhirReference.create()
-  else if (propName = 'encounter') then result := TFhirReference.create()
-  else if (isMatchingName(propName, 'created', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Created')
-  else if (propName = 'issued') then result := TFhirInstant.create()
-  else if (propName = 'operator') then result := TFhirReference.create()
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirEventStatusEnum[EventStatusNull], CODES_TFhirEventStatusEnum[EventStatusNull]) 
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'modality') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'view') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'subject') then result := TFhirReference.Create()
+  else if (propName = 'encounter') then result := TFhirReference.Create()
+  else if (isMatchingName(propName, 'created', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Created')
+  else if (propName = 'issued') then result := TFhirInstant.Create()
+  else if (propName = 'operator') then result := TFhirReference.Create()
   else if (propName = 'reasonCode') then result := ReasonCodeList.new()
-  else if (propName = 'bodySite') then result := TFhirCodeableConcept.create()
-  else if (propName = 'deviceName') then result := TFhirString.create()
-  else if (propName = 'device') then result := TFhirReference.create()
-  else if (propName = 'height') then result := TFhirPositiveInt.create()
-  else if (propName = 'width') then result := TFhirPositiveInt.create()
-  else if (propName = 'frames') then result := TFhirPositiveInt.create()
-  else if (propName = 'duration') then result := TFhirDecimal.create()
-  else if (propName = 'content') then result := TFhirAttachment.create()
+  else if (propName = 'bodySite') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'deviceName') then result := TFhirString.Create()
+  else if (propName = 'device') then result := TFhirReference.Create()
+  else if (propName = 'height') then result := TFhirPositiveInt.Create()
+  else if (propName = 'width') then result := TFhirPositiveInt.Create()
+  else if (propName = 'frames') then result := TFhirPositiveInt.Create()
+  else if (propName = 'duration') then result := TFhirDecimal.Create()
+  else if (propName = 'content') then result := TFhirAttachment.Create()
   else if (propName = 'note') then result := NoteList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -24914,7 +24914,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirEventStatusEnum[value], CODES_TFhirEventStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirEventStatusEnum[value], CODES_TFhirEventStatusEnum[value]);
 end;
 
 procedure TFhirMedia.SetType_(value : TFhirCodeableConcept);
@@ -24970,7 +24970,7 @@ end;
 procedure TFhirMedia.SetIssuedST(value : TFslDateTime);
 begin
   if FIssued = nil then
-    FIssued := TFhirInstant.create;
+    FIssued := TFhirInstant.Create;
   FIssued.value := value
 end;
 
@@ -25017,7 +25017,7 @@ begin
   if value <> '' then
   begin
     if FDeviceName = nil then
-      FDeviceName := TFhirString.create;
+      FDeviceName := TFhirString.Create;
     FDeviceName.value := value
   end
   else if FDeviceName <> nil then
@@ -25049,7 +25049,7 @@ begin
   if value <> '' then
   begin
     if FHeight = nil then
-      FHeight := TFhirPositiveInt.create;
+      FHeight := TFhirPositiveInt.Create;
     FHeight.value := value
   end
   else if FHeight <> nil then
@@ -25075,7 +25075,7 @@ begin
   if value <> '' then
   begin
     if FWidth = nil then
-      FWidth := TFhirPositiveInt.create;
+      FWidth := TFhirPositiveInt.Create;
     FWidth.value := value
   end
   else if FWidth <> nil then
@@ -25101,7 +25101,7 @@ begin
   if value <> '' then
   begin
     if FFrames = nil then
-      FFrames := TFhirPositiveInt.create;
+      FFrames := TFhirPositiveInt.Create;
     FFrames.value := value
   end
   else if FFrames <> nil then
@@ -25127,7 +25127,7 @@ begin
   if value <> '' then
   begin
     if FDuration = nil then
-      FDuration := TFhirDecimal.create;
+      FDuration := TFhirDecimal.Create;
     FDuration.value := value
   end
   else if FDuration <> nil then
@@ -25163,7 +25163,7 @@ end;
 
 destructor TFhirMediaListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25195,7 +25195,7 @@ end;
 
 function TFhirMediaList.Append: TFhirMedia;
 begin
-  result := TFhirMedia.create;
+  result := TFhirMedia.Create;
   try
     add(result.Link);
   finally
@@ -25239,7 +25239,7 @@ end;
 
 function TFhirMediaList.Insert(index: Integer): TFhirMedia;
 begin
-  result := TFhirMedia.create;
+  result := TFhirMedia.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25293,7 +25293,7 @@ destructor TFhirOrganizationContact.Destroy;
 begin
   FPurpose.free;
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   FAddress.free;
   inherited;
 end;
@@ -25333,10 +25333,10 @@ end;
 procedure TFhirOrganizationContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'purpose', 'CodeableConcept', false, TFhirCodeableConcept, FPurpose.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
+  oList.add(TFHIRProperty.Create(self, 'purpose', 'CodeableConcept', false, TFhirCodeableConcept, FPurpose.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
 end;
 
 function TFhirOrganizationContact.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -25372,10 +25372,10 @@ end;
 
 function TFhirOrganizationContact.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'purpose') then result := TFhirCodeableConcept.create()
-  else if (propName = 'name') then result := TFhirHumanName.create()
+  if (propName = 'purpose') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'name') then result := TFhirHumanName.Create()
   else if (propName = 'telecom') then result := TelecomList.new()
-  else if (propName = 'address') then result := TFhirAddress.create()
+  else if (propName = 'address') then result := TFhirAddress.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -25507,7 +25507,7 @@ end;
 
 destructor TFhirOrganizationContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25539,7 +25539,7 @@ end;
 
 function TFhirOrganizationContactList.Append: TFhirOrganizationContact;
 begin
-  result := TFhirOrganizationContact.create;
+  result := TFhirOrganizationContact.Create;
   try
     add(result.Link);
   finally
@@ -25583,7 +25583,7 @@ end;
 
 function TFhirOrganizationContactList.Insert(index: Integer): TFhirOrganizationContact;
 begin
-  result := TFhirOrganizationContact.create;
+  result := TFhirOrganizationContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25633,16 +25633,16 @@ end;
 
 destructor TFhirOrganization.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
-  FType_List.Free;
+  FType_List.free;
   FName.free;
-  FAliasList.Free;
-  FTelecomList.Free;
-  FAddressList.Free;
+  FAliasList.free;
+  FTelecomList.free;
+  FAddressList.free;
   FPartOf.free;
-  FContactList.Free;
-  FEndpointList.Free;
+  FContactList.free;
+  FEndpointList.free;
   inherited;
 end;
 
@@ -25764,16 +25764,16 @@ end;
 procedure TFhirOrganization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'alias', 'string', true, TFhirString, FAliasList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
-  oList.add(TFHIRProperty.create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'BackboneElement', true, TFhirOrganizationContact, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'alias', 'string', true, TFhirString, FAliasList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.Create(self, 'partOf', 'Reference', false, TFhirReference, FPartOf.Link));
+  oList.add(TFHIRProperty.Create(self, 'contact', 'BackboneElement', true, TFhirOrganizationContact, FContactList.Link));
+  oList.add(TFHIRProperty.Create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirOrganization.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -25846,13 +25846,13 @@ end;
 function TFhirOrganization.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
   else if (propName = 'type') then result := Type_List.new()
-  else if (propName = 'name') then result := TFhirString.create()
+  else if (propName = 'name') then result := TFhirString.Create()
   else if (propName = 'alias') then result := AliasList.new()
   else if (propName = 'telecom') then result := TelecomList.new()
   else if (propName = 'address') then result := AddressList.new()
-  else if (propName = 'partOf') then result := TFhirReference.create()
+  else if (propName = 'partOf') then result := TFhirReference.Create()
   else if (propName = 'contact') then result := ContactList.new()
   else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
@@ -26013,7 +26013,7 @@ end;
 procedure TFhirOrganization.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -26048,7 +26048,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -26132,7 +26132,7 @@ end;
 
 destructor TFhirOrganizationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26164,7 +26164,7 @@ end;
 
 function TFhirOrganizationList.Append: TFhirOrganization;
 begin
-  result := TFhirOrganization.create;
+  result := TFhirOrganization.Create;
   try
     add(result.Link);
   finally
@@ -26208,7 +26208,7 @@ end;
 
 function TFhirOrganizationList.Insert(index: Integer): TFhirOrganization;
 begin
-  result := TFhirOrganization.create;
+  result := TFhirOrganization.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26260,18 +26260,18 @@ end;
 
 destructor TFhirOrganizationAffiliation.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
   FPeriod.free;
   FOrganization.free;
   FParticipatingOrganization.free;
-  FNetworkList.Free;
-  FCodeList.Free;
-  FSpecialtyList.Free;
-  FLocationList.Free;
-  FHealthcareServiceList.Free;
-  FTelecomList.Free;
-  FEndpointList.Free;
+  FNetworkList.free;
+  FCodeList.free;
+  FSpecialtyList.free;
+  FLocationList.free;
+  FHealthcareServiceList.free;
+  FTelecomList.free;
+  FEndpointList.free;
   inherited;
 end;
 
@@ -26409,18 +26409,18 @@ end;
 procedure TFhirOrganizationAffiliation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'participatingOrganization', 'Reference', false, TFhirReference, FParticipatingOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'network', 'Reference', true, TFhirReference, FNetworkList.Link));
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link));
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
-  oList.add(TFHIRProperty.create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'participatingOrganization', 'Reference', false, TFhirReference, FParticipatingOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'network', 'Reference', true, TFhirReference, FNetworkList.Link));
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirOrganizationAffiliation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -26504,10 +26504,10 @@ end;
 function TFhirOrganizationAffiliation.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
-  else if (propName = 'organization') then result := TFhirReference.create()
-  else if (propName = 'participatingOrganization') then result := TFhirReference.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
+  else if (propName = 'organization') then result := TFhirReference.Create()
+  else if (propName = 'participatingOrganization') then result := TFhirReference.Create()
   else if (propName = 'network') then result := NetworkList.new()
   else if (propName = 'code') then result := CodeList.new()
   else if (propName = 'specialty') then result := SpecialtyList.new()
@@ -26685,7 +26685,7 @@ end;
 procedure TFhirOrganizationAffiliation.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -26802,7 +26802,7 @@ end;
 
 destructor TFhirOrganizationAffiliationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26834,7 +26834,7 @@ end;
 
 function TFhirOrganizationAffiliationList.Append: TFhirOrganizationAffiliation;
 begin
-  result := TFhirOrganizationAffiliation.create;
+  result := TFhirOrganizationAffiliation.Create;
   try
     add(result.Link);
   finally
@@ -26878,7 +26878,7 @@ end;
 
 function TFhirOrganizationAffiliationList.Insert(index: Integer): TFhirOrganizationAffiliation;
 begin
-  result := TFhirOrganizationAffiliation.create;
+  result := TFhirOrganizationAffiliation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26930,9 +26930,9 @@ end;
 
 destructor TFhirPatientContact.Destroy;
 begin
-  FRelationshipList.Free;
+  FRelationshipList.free;
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   FAddress.free;
   FGender.free;
   FOrganization.free;
@@ -26994,13 +26994,13 @@ end;
 procedure TFhirPatientContact.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
-  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'HumanName', false, TFhirHumanName, FName.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', false, TFhirAddress, FAddress.Link));
+  oList.add(TFHIRProperty.Create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.Create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
 end;
 
 function TFhirPatientContact.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -27053,12 +27053,12 @@ end;
 function TFhirPatientContact.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'relationship') then result := RelationshipList.new()
-  else if (propName = 'name') then result := TFhirHumanName.create()
+  else if (propName = 'name') then result := TFhirHumanName.Create()
   else if (propName = 'telecom') then result := TelecomList.new()
-  else if (propName = 'address') then result := TFhirAddress.create()
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
-  else if (propName = 'organization') then result := TFhirReference.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'address') then result := TFhirAddress.Create()
+  else if (propName = 'gender') then result := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'organization') then result := TFhirReference.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -27220,7 +27220,7 @@ begin
   if ord(value) = 0 then
     GenderElement := nil
   else
-    GenderElement := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
+    GenderElement := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
 end;
 
 procedure TFhirPatientContact.SetOrganization(value : TFhirReference);
@@ -27246,7 +27246,7 @@ end;
 
 destructor TFhirPatientContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27278,7 +27278,7 @@ end;
 
 function TFhirPatientContactList.Append: TFhirPatientContact;
 begin
-  result := TFhirPatientContact.create;
+  result := TFhirPatientContact.Create;
   try
     add(result.Link);
   finally
@@ -27322,7 +27322,7 @@ end;
 
 function TFhirPatientContactList.Insert(index: Integer): TFhirPatientContact;
 begin
-  result := TFhirPatientContact.create;
+  result := TFhirPatientContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27396,8 +27396,8 @@ end;
 procedure TFhirPatientCommunication.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
-  oList.add(TFHIRProperty.create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link));
+  oList.add(TFHIRProperty.Create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
+  oList.add(TFHIRProperty.Create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link));
 end;
 
 function TFhirPatientCommunication.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -27422,8 +27422,8 @@ end;
 
 function TFhirPatientCommunication.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'language') then result := TFhirCodeableConcept.create()
-  else if (propName = 'preferred') then result := TFhirBoolean.create()
+  if (propName = 'language') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'preferred') then result := TFhirBoolean.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -27525,7 +27525,7 @@ end;
 procedure TFhirPatientCommunication.SetPreferredST(value : Boolean);
 begin
   if FPreferred = nil then
-    FPreferred := TFhirBoolean.create;
+    FPreferred := TFhirBoolean.Create;
   FPreferred.value := value
 end;
 
@@ -27540,7 +27540,7 @@ end;
 
 destructor TFhirPatientCommunicationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27572,7 +27572,7 @@ end;
 
 function TFhirPatientCommunicationList.Append: TFhirPatientCommunication;
 begin
-  result := TFhirPatientCommunication.create;
+  result := TFhirPatientCommunication.Create;
   try
     add(result.Link);
   finally
@@ -27616,7 +27616,7 @@ end;
 
 function TFhirPatientCommunicationList.Insert(index: Integer): TFhirPatientCommunication;
 begin
-  result := TFhirPatientCommunication.create;
+  result := TFhirPatientCommunication.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27690,8 +27690,8 @@ end;
 procedure TFhirPatientLink.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'other', 'Reference', false, TFhirReference, FOther.Link));
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
+  oList.add(TFHIRProperty.Create(self, 'other', 'Reference', false, TFhirReference, FOther.Link));
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFhirEnum, FType_.Link));
 end;
 
 function TFhirPatientLink.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -27716,8 +27716,8 @@ end;
 
 function TFhirPatientLink.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'other') then result := TFhirReference.create()
-  else if (propName = 'type') then result := TFhirEnum.create(SYSTEMS_TFhirLinkTypeEnum[LinkTypeNull], CODES_TFhirLinkTypeEnum[LinkTypeNull]) 
+  if (propName = 'other') then result := TFhirReference.Create()
+  else if (propName = 'type') then result := TFhirEnum.Create(SYSTEMS_TFhirLinkTypeEnum[LinkTypeNull], CODES_TFhirLinkTypeEnum[LinkTypeNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -27821,7 +27821,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirLinkTypeEnum[value], CODES_TFhirLinkTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirLinkTypeEnum[value], CODES_TFhirLinkTypeEnum[value]);
 end;
 
 { TFhirPatientLinkListEnumerator }
@@ -27835,7 +27835,7 @@ end;
 
 destructor TFhirPatientLinkListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27867,7 +27867,7 @@ end;
 
 function TFhirPatientLinkList.Append: TFhirPatientLink;
 begin
-  result := TFhirPatientLink.create;
+  result := TFhirPatientLink.Create;
   try
     add(result.Link);
   finally
@@ -27911,7 +27911,7 @@ end;
 
 function TFhirPatientLinkList.Insert(index: Integer): TFhirPatientLink;
 begin
-  result := TFhirPatientLink.create;
+  result := TFhirPatientLink.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27961,22 +27961,22 @@ end;
 
 destructor TFhirPatient.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
-  FNameList.Free;
-  FTelecomList.Free;
+  FNameList.free;
+  FTelecomList.free;
   FGender.free;
   FBirthDate.free;
   FDeceased.free;
-  FAddressList.Free;
+  FAddressList.free;
   FMaritalStatus.free;
   FMultipleBirth.free;
-  FPhotoList.Free;
-  FContactList.Free;
-  FCommunicationList.Free;
-  FGeneralPractitionerList.Free;
+  FPhotoList.free;
+  FContactList.free;
+  FCommunicationList.free;
+  FGeneralPractitionerList.free;
   FManagingOrganization.free;
-  FLink_List.Free;
+  FLink_List.free;
   inherited;
 end;
 
@@ -28136,22 +28136,22 @@ end;
 procedure TFhirPatient.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
-  oList.add(TFHIRProperty.create(self, 'deceased[x]', 'boolean|dateTime', false, TFhirDataType, FDeceased.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
-  oList.add(TFHIRProperty.create(self, 'maritalStatus', 'CodeableConcept', false, TFhirCodeableConcept, FMaritalStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'multipleBirth[x]', 'boolean|integer', false, TFhirDataType, FMultipleBirth.Link));
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
-  oList.add(TFHIRProperty.create(self, 'contact', 'BackboneElement', true, TFhirPatientContact, FContactList.Link));
-  oList.add(TFHIRProperty.create(self, 'communication', 'BackboneElement', true, TFhirPatientCommunication, FCommunicationList.Link));
-  oList.add(TFHIRProperty.create(self, 'generalPractitioner', 'Reference', true, TFhirReference, FGeneralPractitionerList.Link));
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'link', 'BackboneElement', true, TFhirPatientLink, FLink_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.Create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.Create(self, 'deceased[x]', 'boolean|dateTime', false, TFhirDataType, FDeceased.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.Create(self, 'maritalStatus', 'CodeableConcept', false, TFhirCodeableConcept, FMaritalStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'multipleBirth[x]', 'boolean|integer', false, TFhirDataType, FMultipleBirth.Link));
+  oList.add(TFHIRProperty.Create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
+  oList.add(TFHIRProperty.Create(self, 'contact', 'BackboneElement', true, TFhirPatientContact, FContactList.Link));
+  oList.add(TFHIRProperty.Create(self, 'communication', 'BackboneElement', true, TFhirPatientCommunication, FCommunicationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'generalPractitioner', 'Reference', true, TFhirReference, FGeneralPractitionerList.Link));
+  oList.add(TFHIRProperty.Create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'link', 'BackboneElement', true, TFhirPatientLink, FLink_List.Link));
 end;
 
 function TFhirPatient.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -28256,20 +28256,20 @@ end;
 function TFhirPatient.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
   else if (propName = 'name') then result := NameList.new()
   else if (propName = 'telecom') then result := TelecomList.new()
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
-  else if (propName = 'birthDate') then result := TFhirDate.create()
-  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then raise EFHIRException.create('Cannot make property Deceased')
+  else if (propName = 'gender') then result := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.Create()
+  else if (isMatchingName(propName, 'deceased', ['Boolean', 'DateTime'])) then raise EFHIRException.Create('Cannot make property Deceased')
   else if (propName = 'address') then result := AddressList.new()
-  else if (propName = 'maritalStatus') then result := TFhirCodeableConcept.create()
-  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then raise EFHIRException.create('Cannot make property MultipleBirth')
+  else if (propName = 'maritalStatus') then result := TFhirCodeableConcept.Create()
+  else if (isMatchingName(propName, 'multipleBirth', ['Boolean', 'Integer'])) then raise EFHIRException.Create('Cannot make property MultipleBirth')
   else if (propName = 'photo') then result := PhotoList.new()
   else if (propName = 'contact') then result := ContactList.new()
   else if (propName = 'communication') then result := CommunicationList.new()
   else if (propName = 'generalPractitioner') then result := GeneralPractitionerList.new()
-  else if (propName = 'managingOrganization') then result := TFhirReference.create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.Create()
   else if (propName = 'link') then result := Link_List.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -28461,7 +28461,7 @@ end;
 procedure TFhirPatient.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -28508,7 +28508,7 @@ begin
   if ord(value) = 0 then
     GenderElement := nil
   else
-    GenderElement := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
+    GenderElement := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
 end;
 
 procedure TFhirPatient.SetBirthDate(value : TFhirDate);
@@ -28528,7 +28528,7 @@ end;
 procedure TFhirPatient.SetBirthDateST(value : TFslDateTime);
 begin
   if FBirthDate = nil then
-    FBirthDate := TFhirDate.create;
+    FBirthDate := TFhirDate.Create;
   FBirthDate.value := value
 end;
 
@@ -28639,7 +28639,7 @@ end;
 
 destructor TFhirPatientListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28671,7 +28671,7 @@ end;
 
 function TFhirPatientList.Append: TFhirPatient;
 begin
-  result := TFhirPatient.create;
+  result := TFhirPatient.Create;
   try
     add(result.Link);
   finally
@@ -28715,7 +28715,7 @@ end;
 
 function TFhirPatientList.Insert(index: Integer): TFhirPatient;
 begin
-  result := TFhirPatient.create;
+  result := TFhirPatient.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -28791,8 +28791,8 @@ end;
 procedure TFhirPersonLink.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'target', 'Reference', false, TFhirReference, FTarget.Link));
-  oList.add(TFHIRProperty.create(self, 'assurance', 'code', false, TFhirEnum, FAssurance.Link));
+  oList.add(TFHIRProperty.Create(self, 'target', 'Reference', false, TFhirReference, FTarget.Link));
+  oList.add(TFHIRProperty.Create(self, 'assurance', 'code', false, TFhirEnum, FAssurance.Link));
 end;
 
 function TFhirPersonLink.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -28817,8 +28817,8 @@ end;
 
 function TFhirPersonLink.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'target') then result := TFhirReference.create()
-  else if (propName = 'assurance') then result := TFhirEnum.create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull], CODES_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull]) 
+  if (propName = 'target') then result := TFhirReference.Create()
+  else if (propName = 'assurance') then result := TFhirEnum.Create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull], CODES_TFhirIdentityAssuranceLevelEnum[IdentityAssuranceLevelNull]) 
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -28922,7 +28922,7 @@ begin
   if ord(value) = 0 then
     AssuranceElement := nil
   else
-    AssuranceElement := TFhirEnum.create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[value], CODES_TFhirIdentityAssuranceLevelEnum[value]);
+    AssuranceElement := TFhirEnum.Create(SYSTEMS_TFhirIdentityAssuranceLevelEnum[value], CODES_TFhirIdentityAssuranceLevelEnum[value]);
 end;
 
 { TFhirPersonLinkListEnumerator }
@@ -28936,7 +28936,7 @@ end;
 
 destructor TFhirPersonLinkListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28968,7 +28968,7 @@ end;
 
 function TFhirPersonLinkList.Append: TFhirPersonLink;
 begin
-  result := TFhirPersonLink.create;
+  result := TFhirPersonLink.Create;
   try
     add(result.Link);
   finally
@@ -29012,7 +29012,7 @@ end;
 
 function TFhirPersonLinkList.Insert(index: Integer): TFhirPersonLink;
 begin
-  result := TFhirPersonLink.create;
+  result := TFhirPersonLink.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29062,16 +29062,16 @@ end;
 
 destructor TFhirPerson.Destroy;
 begin
-  FIdentifierList.Free;
-  FNameList.Free;
-  FTelecomList.Free;
+  FIdentifierList.free;
+  FNameList.free;
+  FTelecomList.free;
   FGender.free;
   FBirthDate.free;
-  FAddressList.Free;
+  FAddressList.free;
   FPhoto.free;
   FManagingOrganization.free;
   FActive.free;
-  FLink_List.Free;
+  FLink_List.free;
   inherited;
 end;
 
@@ -29173,16 +29173,16 @@ end;
 procedure TFhirPerson.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link));
-  oList.add(TFHIRProperty.create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'link', 'BackboneElement', true, TFhirPersonLink, FLink_List.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.Create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.Create(self, 'photo', 'Attachment', false, TFhirAttachment, FPhoto.Link));
+  oList.add(TFHIRProperty.Create(self, 'managingOrganization', 'Reference', false, TFhirReference, FManagingOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'link', 'BackboneElement', true, TFhirPersonLink, FLink_List.Link));
 end;
 
 function TFhirPerson.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -29255,12 +29255,12 @@ begin
   if (propName = 'identifier') then result := IdentifierList.new()
   else if (propName = 'name') then result := NameList.new()
   else if (propName = 'telecom') then result := TelecomList.new()
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
-  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (propName = 'gender') then result := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.Create()
   else if (propName = 'address') then result := AddressList.new()
-  else if (propName = 'photo') then result := TFhirAttachment.create()
-  else if (propName = 'managingOrganization') then result := TFhirReference.create()
-  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'photo') then result := TFhirAttachment.Create()
+  else if (propName = 'managingOrganization') then result := TFhirReference.Create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
   else if (propName = 'link') then result := Link_List.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -29442,7 +29442,7 @@ begin
   if ord(value) = 0 then
     GenderElement := nil
   else
-    GenderElement := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
+    GenderElement := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
 end;
 
 procedure TFhirPerson.SetBirthDate(value : TFhirDate);
@@ -29462,7 +29462,7 @@ end;
 procedure TFhirPerson.SetBirthDateST(value : TFslDateTime);
 begin
   if FBirthDate = nil then
-    FBirthDate := TFhirDate.create;
+    FBirthDate := TFhirDate.Create;
   FBirthDate.value := value
 end;
 
@@ -29507,7 +29507,7 @@ end;
 procedure TFhirPerson.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -29534,7 +29534,7 @@ end;
 
 destructor TFhirPersonListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29566,7 +29566,7 @@ end;
 
 function TFhirPersonList.Append: TFhirPerson;
 begin
-  result := TFhirPerson.create;
+  result := TFhirPerson.Create;
   try
     add(result.Link);
   finally
@@ -29610,7 +29610,7 @@ end;
 
 function TFhirPersonList.Insert(index: Integer): TFhirPerson;
 begin
-  result := TFhirPerson.create;
+  result := TFhirPerson.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29662,7 +29662,7 @@ end;
 
 destructor TFhirPractitionerQualification.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FCode.free;
   FPeriod.free;
   FIssuer.free;
@@ -29704,10 +29704,10 @@ end;
 procedure TFhirPractitionerQualification.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'issuer', 'Reference', false, TFhirReference, FIssuer.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'issuer', 'Reference', false, TFhirReference, FIssuer.Link));
 end;
 
 function TFhirPractitionerQualification.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -29744,9 +29744,9 @@ end;
 function TFhirPractitionerQualification.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'code') then result := TFhirCodeableConcept.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
-  else if (propName = 'issuer') then result := TFhirReference.create()
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
+  else if (propName = 'issuer') then result := TFhirReference.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -29878,7 +29878,7 @@ end;
 
 destructor TFhirPractitionerQualificationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29910,7 +29910,7 @@ end;
 
 function TFhirPractitionerQualificationList.Append: TFhirPractitionerQualification;
 begin
-  result := TFhirPractitionerQualification.create;
+  result := TFhirPractitionerQualification.Create;
   try
     add(result.Link);
   finally
@@ -29954,7 +29954,7 @@ end;
 
 function TFhirPractitionerQualificationList.Insert(index: Integer): TFhirPractitionerQualification;
 begin
-  result := TFhirPractitionerQualification.create;
+  result := TFhirPractitionerQualification.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30004,16 +30004,16 @@ end;
 
 destructor TFhirPractitioner.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
-  FNameList.Free;
-  FTelecomList.Free;
-  FAddressList.Free;
+  FNameList.free;
+  FTelecomList.free;
+  FAddressList.free;
   FGender.free;
   FBirthDate.free;
-  FPhotoList.Free;
-  FQualificationList.Free;
-  FCommunicationList.Free;
+  FPhotoList.free;
+  FQualificationList.free;
+  FCommunicationList.free;
   inherited;
 end;
 
@@ -30135,16 +30135,16 @@ end;
 procedure TFhirPractitioner.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
-  oList.add(TFHIRProperty.create(self, 'qualification', 'BackboneElement', true, TFhirPractitionerQualification, FQualificationList.Link));
-  oList.add(TFHIRProperty.create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.Create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.Create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.Create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
+  oList.add(TFHIRProperty.Create(self, 'qualification', 'BackboneElement', true, TFhirPractitionerQualification, FQualificationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'communication', 'CodeableConcept', true, TFhirCodeableConcept, FCommunicationList.Link));
 end;
 
 function TFhirPractitioner.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -30217,12 +30217,12 @@ end;
 function TFhirPractitioner.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
   else if (propName = 'name') then result := NameList.new()
   else if (propName = 'telecom') then result := TelecomList.new()
   else if (propName = 'address') then result := AddressList.new()
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
-  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (propName = 'gender') then result := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.Create()
   else if (propName = 'photo') then result := PhotoList.new()
   else if (propName = 'qualification') then result := QualificationList.new()
   else if (propName = 'communication') then result := CommunicationList.new()
@@ -30384,7 +30384,7 @@ end;
 procedure TFhirPractitioner.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -30443,7 +30443,7 @@ begin
   if ord(value) = 0 then
     GenderElement := nil
   else
-    GenderElement := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
+    GenderElement := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
 end;
 
 procedure TFhirPractitioner.SetBirthDate(value : TFhirDate);
@@ -30463,7 +30463,7 @@ end;
 procedure TFhirPractitioner.SetBirthDateST(value : TFslDateTime);
 begin
   if FBirthDate = nil then
-    FBirthDate := TFhirDate.create;
+    FBirthDate := TFhirDate.Create;
   FBirthDate.value := value
 end;
 
@@ -30514,7 +30514,7 @@ end;
 
 destructor TFhirPractitionerListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30546,7 +30546,7 @@ end;
 
 function TFhirPractitionerList.Append: TFhirPractitioner;
 begin
-  result := TFhirPractitioner.create;
+  result := TFhirPractitioner.Create;
   try
     add(result.Link);
   finally
@@ -30590,7 +30590,7 @@ end;
 
 function TFhirPractitionerList.Insert(index: Integer): TFhirPractitioner;
 begin
-  result := TFhirPractitioner.create;
+  result := TFhirPractitioner.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30642,7 +30642,7 @@ end;
 
 destructor TFhirPractitionerRoleAvailableTime.Destroy;
 begin
-  FDaysOfWeek.Free;
+  FDaysOfWeek.free;
   FAllDay.free;
   FAvailableStartTime.free;
   FAvailableEndTime.free;
@@ -30683,10 +30683,10 @@ end;
 procedure TFhirPractitionerRoleAvailableTime.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
-  oList.add(TFHIRProperty.create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
-  oList.add(TFHIRProperty.create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link));
-  oList.add(TFHIRProperty.create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'daysOfWeek', 'code', true, TFhirEnum, FDaysOfWeek.Link));
+  oList.add(TFHIRProperty.Create(self, 'allDay', 'boolean', false, TFhirBoolean, FAllDay.Link));
+  oList.add(TFHIRProperty.Create(self, 'availableStartTime', 'time', false, TFhirTime, FAvailableStartTime.Link));
+  oList.add(TFHIRProperty.Create(self, 'availableEndTime', 'time', false, TFhirTime, FAvailableEndTime.Link));
 end;
 
 function TFhirPractitionerRoleAvailableTime.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -30722,9 +30722,9 @@ end;
 
 function TFhirPractitionerRoleAvailableTime.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'allDay') then result := TFhirBoolean.create()
-  else if (propName = 'availableStartTime') then result := TFhirTime.create()
-  else if (propName = 'availableEndTime') then result := TFhirTime.create()
+  if (propName = 'allDay') then result := TFhirBoolean.Create()
+  else if (propName = 'availableStartTime') then result := TFhirTime.Create()
+  else if (propName = 'availableEndTime') then result := TFhirTime.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -30839,14 +30839,14 @@ procedure TFhirPractitionerRoleAvailableTime.SetDaysOfWeekST(value : TFhirDaysOf
 var a : TFhirDaysOfWeekEnum;
 begin
   if FdaysOfWeek = nil then
-    FdaysOfWeek := TFhirEnumList.create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
+    FdaysOfWeek := TFhirEnumList.Create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
   FdaysOfWeek.clear;
   for a := low(TFhirDaysOfWeekEnum) to high(TFhirDaysOfWeekEnum) do
     if a in value then
       begin
          if FdaysOfWeek = nil then
-           FdaysOfWeek := TFhirEnumList.create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
-         FdaysOfWeek.add(TFhirEnum.create(SYSTEMS_TFhirDaysOfWeekEnum[a], CODES_TFhirDaysOfWeekEnum[a]));
+           FdaysOfWeek := TFhirEnumList.Create(SYSTEMS_TFhirDaysOfWeekEnum, CODES_TFhirDaysOfWeekEnum);
+         FdaysOfWeek.add(TFhirEnum.Create(SYSTEMS_TFhirDaysOfWeekEnum[a], CODES_TFhirDaysOfWeekEnum[a]));
       end;
 end;
 
@@ -30867,7 +30867,7 @@ end;
 procedure TFhirPractitionerRoleAvailableTime.SetAllDayST(value : Boolean);
 begin
   if FAllDay = nil then
-    FAllDay := TFhirBoolean.create;
+    FAllDay := TFhirBoolean.Create;
   FAllDay.value := value
 end;
 
@@ -30890,7 +30890,7 @@ begin
   if value <> '' then
   begin
     if FAvailableStartTime = nil then
-      FAvailableStartTime := TFhirTime.create;
+      FAvailableStartTime := TFhirTime.Create;
     FAvailableStartTime.value := value
   end
   else if FAvailableStartTime <> nil then
@@ -30916,7 +30916,7 @@ begin
   if value <> '' then
   begin
     if FAvailableEndTime = nil then
-      FAvailableEndTime := TFhirTime.create;
+      FAvailableEndTime := TFhirTime.Create;
     FAvailableEndTime.value := value
   end
   else if FAvailableEndTime <> nil then
@@ -30934,7 +30934,7 @@ end;
 
 destructor TFhirPractitionerRoleAvailableTimeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30966,7 +30966,7 @@ end;
 
 function TFhirPractitionerRoleAvailableTimeList.Append: TFhirPractitionerRoleAvailableTime;
 begin
-  result := TFhirPractitionerRoleAvailableTime.create;
+  result := TFhirPractitionerRoleAvailableTime.Create;
   try
     add(result.Link);
   finally
@@ -31010,7 +31010,7 @@ end;
 
 function TFhirPractitionerRoleAvailableTimeList.Insert(index: Integer): TFhirPractitionerRoleAvailableTime;
 begin
-  result := TFhirPractitionerRoleAvailableTime.create;
+  result := TFhirPractitionerRoleAvailableTime.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31084,8 +31084,8 @@ end;
 procedure TFhirPractitionerRoleNotAvailable.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));
-  oList.add(TFHIRProperty.create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link));
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));
+  oList.add(TFHIRProperty.Create(self, 'during', 'Period', false, TFhirPeriod, FDuring.Link));
 end;
 
 function TFhirPractitionerRoleNotAvailable.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -31110,8 +31110,8 @@ end;
 
 function TFhirPractitionerRoleNotAvailable.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'description') then result := TFhirString.create()
-  else if (propName = 'during') then result := TFhirPeriod.create()
+  if (propName = 'description') then result := TFhirString.Create()
+  else if (propName = 'during') then result := TFhirPeriod.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -31209,7 +31209,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -31233,7 +31233,7 @@ end;
 
 destructor TFhirPractitionerRoleNotAvailableListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -31265,7 +31265,7 @@ end;
 
 function TFhirPractitionerRoleNotAvailableList.Append: TFhirPractitionerRoleNotAvailable;
 begin
-  result := TFhirPractitionerRoleNotAvailable.create;
+  result := TFhirPractitionerRoleNotAvailable.Create;
   try
     add(result.Link);
   finally
@@ -31309,7 +31309,7 @@ end;
 
 function TFhirPractitionerRoleNotAvailableList.Insert(index: Integer): TFhirPractitionerRoleNotAvailable;
 begin
-  result := TFhirPractitionerRoleNotAvailable.create;
+  result := TFhirPractitionerRoleNotAvailable.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31359,20 +31359,20 @@ end;
 
 destructor TFhirPractitionerRole.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
   FPeriod.free;
   FPractitioner.free;
   FOrganization.free;
-  FCodeList.Free;
-  FSpecialtyList.Free;
-  FLocationList.Free;
-  FHealthcareServiceList.Free;
-  FTelecomList.Free;
-  FAvailableTimeList.Free;
-  FNotAvailableList.Free;
+  FCodeList.free;
+  FSpecialtyList.free;
+  FLocationList.free;
+  FHealthcareServiceList.free;
+  FTelecomList.free;
+  FAvailableTimeList.free;
+  FNotAvailableList.free;
   FAvailabilityExceptions.free;
-  FEndpointList.Free;
+  FEndpointList.free;
   inherited;
 end;
 
@@ -31526,20 +31526,20 @@ end;
 procedure TFhirPractitionerRole.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'practitioner', 'Reference', false, TFhirReference, FPractitioner.Link));
-  oList.add(TFHIRProperty.create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link));
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
-  oList.add(TFHIRProperty.create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'availableTime', 'BackboneElement', true, TFhirPractitionerRoleAvailableTime, FAvailableTimeList.Link));
-  oList.add(TFHIRProperty.create(self, 'notAvailable', 'BackboneElement', true, TFhirPractitionerRoleNotAvailable, FNotAvailableList.Link));
-  oList.add(TFHIRProperty.create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
-  oList.add(TFHIRProperty.create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'practitioner', 'Reference', false, TFhirReference, FPractitioner.Link));
+  oList.add(TFHIRProperty.Create(self, 'organization', 'Reference', false, TFhirReference, FOrganization.Link));
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference', true, TFhirReference, FLocationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'healthcareService', 'Reference', true, TFhirReference, FHealthcareServiceList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'availableTime', 'BackboneElement', true, TFhirPractitionerRoleAvailableTime, FAvailableTimeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'notAvailable', 'BackboneElement', true, TFhirPractitionerRoleNotAvailable, FNotAvailableList.Link));
+  oList.add(TFHIRProperty.Create(self, 'availabilityExceptions', 'string', false, TFhirString, FAvailabilityExceptions.Link));
+  oList.add(TFHIRProperty.Create(self, 'endpoint', 'Reference', true, TFhirReference, FEndpointList.Link));
 end;
 
 function TFhirPractitionerRole.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -31634,10 +31634,10 @@ end;
 function TFhirPractitionerRole.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
-  else if (propName = 'period') then result := TFhirPeriod.create()
-  else if (propName = 'practitioner') then result := TFhirReference.create()
-  else if (propName = 'organization') then result := TFhirReference.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
+  else if (propName = 'practitioner') then result := TFhirReference.Create()
+  else if (propName = 'organization') then result := TFhirReference.Create()
   else if (propName = 'code') then result := CodeList.new()
   else if (propName = 'specialty') then result := SpecialtyList.new()
   else if (propName = 'location') then result := LocationList.new()
@@ -31645,7 +31645,7 @@ begin
   else if (propName = 'telecom') then result := TelecomList.new()
   else if (propName = 'availableTime') then result := AvailableTimeList.new()
   else if (propName = 'notAvailable') then result := NotAvailableList.new()
-  else if (propName = 'availabilityExceptions') then result := TFhirString.create()
+  else if (propName = 'availabilityExceptions') then result := TFhirString.Create()
   else if (propName = 'endpoint') then result := EndpointList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -31828,7 +31828,7 @@ end;
 procedure TFhirPractitionerRole.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -31953,7 +31953,7 @@ begin
   if value <> '' then
   begin
     if FAvailabilityExceptions = nil then
-      FAvailabilityExceptions := TFhirString.create;
+      FAvailabilityExceptions := TFhirString.Create;
     FAvailabilityExceptions.value := value
   end
   else if FAvailabilityExceptions <> nil then
@@ -31983,7 +31983,7 @@ end;
 
 destructor TFhirPractitionerRoleListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32015,7 +32015,7 @@ end;
 
 function TFhirPractitionerRoleList.Append: TFhirPractitionerRole;
 begin
-  result := TFhirPractitionerRole.create;
+  result := TFhirPractitionerRole.Create;
   try
     add(result.Link);
   finally
@@ -32059,7 +32059,7 @@ end;
 
 function TFhirPractitionerRoleList.Insert(index: Integer): TFhirPractitionerRole;
 begin
-  result := TFhirPractitionerRole.create;
+  result := TFhirPractitionerRole.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32135,8 +32135,8 @@ end;
 procedure TFhirRelatedPersonCommunication.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
-  oList.add(TFHIRProperty.create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link));
+  oList.add(TFHIRProperty.Create(self, 'language', 'CodeableConcept', false, TFhirCodeableConcept, FLanguage.Link));
+  oList.add(TFHIRProperty.Create(self, 'preferred', 'boolean', false, TFhirBoolean, FPreferred.Link));
 end;
 
 function TFhirRelatedPersonCommunication.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -32161,8 +32161,8 @@ end;
 
 function TFhirRelatedPersonCommunication.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'language') then result := TFhirCodeableConcept.create()
-  else if (propName = 'preferred') then result := TFhirBoolean.create()
+  if (propName = 'language') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'preferred') then result := TFhirBoolean.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -32264,7 +32264,7 @@ end;
 procedure TFhirRelatedPersonCommunication.SetPreferredST(value : Boolean);
 begin
   if FPreferred = nil then
-    FPreferred := TFhirBoolean.create;
+    FPreferred := TFhirBoolean.Create;
   FPreferred.value := value
 end;
 
@@ -32279,7 +32279,7 @@ end;
 
 destructor TFhirRelatedPersonCommunicationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32311,7 +32311,7 @@ end;
 
 function TFhirRelatedPersonCommunicationList.Append: TFhirRelatedPersonCommunication;
 begin
-  result := TFhirRelatedPersonCommunication.create;
+  result := TFhirRelatedPersonCommunication.Create;
   try
     add(result.Link);
   finally
@@ -32355,7 +32355,7 @@ end;
 
 function TFhirRelatedPersonCommunicationList.Insert(index: Integer): TFhirRelatedPersonCommunication;
 begin
-  result := TFhirRelatedPersonCommunication.create;
+  result := TFhirRelatedPersonCommunication.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32405,18 +32405,18 @@ end;
 
 destructor TFhirRelatedPerson.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
   FPatient.free;
-  FRelationshipList.Free;
-  FNameList.Free;
-  FTelecomList.Free;
+  FRelationshipList.free;
+  FNameList.free;
+  FTelecomList.free;
   FGender.free;
   FBirthDate.free;
-  FAddressList.Free;
-  FPhotoList.Free;
+  FAddressList.free;
+  FPhotoList.free;
   FPeriod.free;
-  FCommunicationList.Free;
+  FCommunicationList.free;
   inherited;
 end;
 
@@ -32544,18 +32544,18 @@ end;
 procedure TFhirRelatedPerson.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link));
-  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link));
-  oList.add(TFHIRProperty.create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
-  oList.add(TFHIRProperty.create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
-  oList.add(TFHIRProperty.create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
-  oList.add(TFHIRProperty.create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
-  oList.add(TFHIRProperty.create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
-  oList.add(TFHIRProperty.create(self, 'communication', 'BackboneElement', true, TFhirRelatedPersonCommunication, FCommunicationList.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference', false, TFhirReference, FPatient.Link));
+  oList.add(TFHIRProperty.Create(self, 'relationship', 'CodeableConcept', true, TFhirCodeableConcept, FRelationshipList.Link));
+  oList.add(TFHIRProperty.Create(self, 'name', 'HumanName', true, TFhirHumanName, FNameList.Link));
+  oList.add(TFHIRProperty.Create(self, 'telecom', 'ContactPoint', true, TFhirContactPoint, FTelecomList.Link));
+  oList.add(TFHIRProperty.Create(self, 'gender', 'code', false, TFhirEnum, FGender.Link));
+  oList.add(TFHIRProperty.Create(self, 'birthDate', 'date', false, TFhirDate, FBirthDate.Link));
+  oList.add(TFHIRProperty.Create(self, 'address', 'Address', true, TFhirAddress, FAddressList.Link));
+  oList.add(TFHIRProperty.Create(self, 'photo', 'Attachment', true, TFhirAttachment, FPhotoList.Link));
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));
+  oList.add(TFHIRProperty.Create(self, 'communication', 'BackboneElement', true, TFhirRelatedPersonCommunication, FCommunicationList.Link));
 end;
 
 function TFhirRelatedPerson.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -32638,16 +32638,16 @@ end;
 function TFhirRelatedPerson.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
-  else if (propName = 'patient') then result := TFhirReference.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
+  else if (propName = 'patient') then result := TFhirReference.Create()
   else if (propName = 'relationship') then result := RelationshipList.new()
   else if (propName = 'name') then result := NameList.new()
   else if (propName = 'telecom') then result := TelecomList.new()
-  else if (propName = 'gender') then result := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
-  else if (propName = 'birthDate') then result := TFhirDate.create()
+  else if (propName = 'gender') then result := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[AdministrativeGenderNull], CODES_TFhirAdministrativeGenderEnum[AdministrativeGenderNull]) 
+  else if (propName = 'birthDate') then result := TFhirDate.Create()
   else if (propName = 'address') then result := AddressList.new()
   else if (propName = 'photo') then result := PhotoList.new()
-  else if (propName = 'period') then result := TFhirPeriod.create()
+  else if (propName = 'period') then result := TFhirPeriod.Create()
   else if (propName = 'communication') then result := CommunicationList.new()
   else result := inherited createPropertyValue(propName);
 end;
@@ -32816,7 +32816,7 @@ end;
 procedure TFhirRelatedPerson.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -32881,7 +32881,7 @@ begin
   if ord(value) = 0 then
     GenderElement := nil
   else
-    GenderElement := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
+    GenderElement := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
 end;
 
 procedure TFhirRelatedPerson.SetBirthDate(value : TFhirDate);
@@ -32901,7 +32901,7 @@ end;
 procedure TFhirRelatedPerson.SetBirthDateST(value : TFslDateTime);
 begin
   if FBirthDate = nil then
-    FBirthDate := TFhirDate.create;
+    FBirthDate := TFhirDate.Create;
   FBirthDate.value := value
 end;
 
@@ -32958,7 +32958,7 @@ end;
 
 destructor TFhirRelatedPersonListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32990,7 +32990,7 @@ end;
 
 function TFhirRelatedPersonList.Append: TFhirRelatedPerson;
 begin
-  result := TFhirRelatedPerson.create;
+  result := TFhirRelatedPerson.Create;
   try
     add(result.Link);
   finally
@@ -33034,7 +33034,7 @@ end;
 
 function TFhirRelatedPersonList.Insert(index: Integer): TFhirRelatedPerson;
 begin
-  result := TFhirRelatedPerson.create;
+  result := TFhirRelatedPerson.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -33086,12 +33086,12 @@ end;
 
 destructor TFhirSchedule.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FActive.free;
-  FServiceCategoryList.Free;
-  FServiceTypeList.Free;
-  FSpecialtyList.Free;
-  FActorList.Free;
+  FServiceCategoryList.free;
+  FServiceTypeList.free;
+  FSpecialtyList.free;
+  FActorList.free;
   FPlanningHorizon.free;
   FComment.free;
   inherited;
@@ -33189,14 +33189,14 @@ end;
 procedure TFhirSchedule.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link));
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
-  oList.add(TFHIRProperty.create(self, 'actor', 'Reference', true, TFhirReference, FActorList.Link));
-  oList.add(TFHIRProperty.create(self, 'planningHorizon', 'Period', false, TFhirPeriod, FPlanningHorizon.Link));
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'active', 'boolean', false, TFhirBoolean, FActive.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'actor', 'Reference', true, TFhirReference, FActorList.Link));
+  oList.add(TFHIRProperty.Create(self, 'planningHorizon', 'Period', false, TFhirPeriod, FPlanningHorizon.Link));
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', false, TFhirString, FComment.Link));
 end;
 
 function TFhirSchedule.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -33257,13 +33257,13 @@ end;
 function TFhirSchedule.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new()
-  else if (propName = 'active') then result := TFhirBoolean.create()
+  else if (propName = 'active') then result := TFhirBoolean.Create()
   else if (propName = 'serviceCategory') then result := ServiceCategoryList.new()
   else if (propName = 'serviceType') then result := ServiceTypeList.new()
   else if (propName = 'specialty') then result := SpecialtyList.new()
   else if (propName = 'actor') then result := ActorList.new()
-  else if (propName = 'planningHorizon') then result := TFhirPeriod.create()
-  else if (propName = 'comment') then result := TFhirString.create()
+  else if (propName = 'planningHorizon') then result := TFhirPeriod.Create()
+  else if (propName = 'comment') then result := TFhirString.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -33409,7 +33409,7 @@ end;
 procedure TFhirSchedule.SetActiveST(value : Boolean);
 begin
   if FActive = nil then
-    FActive := TFhirBoolean.create;
+    FActive := TFhirBoolean.Create;
   FActive.value := value
 end;
 
@@ -33486,7 +33486,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirString.create;
+      FComment := TFhirString.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -33504,7 +33504,7 @@ end;
 
 destructor TFhirScheduleListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33536,7 +33536,7 @@ end;
 
 function TFhirScheduleList.Append: TFhirSchedule;
 begin
-  result := TFhirSchedule.create;
+  result := TFhirSchedule.Create;
   try
     add(result.Link);
   finally
@@ -33580,7 +33580,7 @@ end;
 
 function TFhirScheduleList.Insert(index: Integer): TFhirSchedule;
 begin
-  result := TFhirSchedule.create;
+  result := TFhirSchedule.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -33632,10 +33632,10 @@ end;
 
 destructor TFhirSlot.Destroy;
 begin
-  FIdentifierList.Free;
-  FServiceCategoryList.Free;
-  FServiceTypeList.Free;
-  FSpecialtyList.Free;
+  FIdentifierList.free;
+  FServiceCategoryList.free;
+  FServiceTypeList.free;
+  FSpecialtyList.free;
   FAppointmentType.free;
   FSchedule.free;
   FStatus.free;
@@ -33737,17 +33737,17 @@ end;
 procedure TFhirSlot.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link));
-  oList.add(TFHIRProperty.create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link));
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
-  oList.add(TFHIRProperty.create(self, 'appointmentType', 'CodeableConcept', false, TFhirCodeableConcept, FAppointmentType.Link));
-  oList.add(TFHIRProperty.create(self, 'schedule', 'Reference', false, TFhirReference, FSchedule.Link));
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
-  oList.add(TFHIRProperty.create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));
-  oList.add(TFHIRProperty.create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));
-  oList.add(TFHIRProperty.create(self, 'overbooked', 'boolean', false, TFhirBoolean, FOverbooked.Link));
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceCategory', 'CodeableConcept', true, TFhirCodeableConcept, FServiceCategoryList.Link));
+  oList.add(TFHIRProperty.Create(self, 'serviceType', 'CodeableConcept', true, TFhirCodeableConcept, FServiceTypeList.Link));
+  oList.add(TFHIRProperty.Create(self, 'specialty', 'CodeableConcept', true, TFhirCodeableConcept, FSpecialtyList.Link));
+  oList.add(TFHIRProperty.Create(self, 'appointmentType', 'CodeableConcept', false, TFhirCodeableConcept, FAppointmentType.Link));
+  oList.add(TFHIRProperty.Create(self, 'schedule', 'Reference', false, TFhirReference, FSchedule.Link));
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirEnum, FStatus.Link));
+  oList.add(TFHIRProperty.Create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));
+  oList.add(TFHIRProperty.Create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));
+  oList.add(TFHIRProperty.Create(self, 'overbooked', 'boolean', false, TFhirBoolean, FOverbooked.Link));
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', false, TFhirString, FComment.Link));
 end;
 
 function TFhirSlot.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -33825,13 +33825,13 @@ begin
   else if (propName = 'serviceCategory') then result := ServiceCategoryList.new()
   else if (propName = 'serviceType') then result := ServiceTypeList.new()
   else if (propName = 'specialty') then result := SpecialtyList.new()
-  else if (propName = 'appointmentType') then result := TFhirCodeableConcept.create()
-  else if (propName = 'schedule') then result := TFhirReference.create()
-  else if (propName = 'status') then result := TFhirEnum.create(SYSTEMS_TFhirSlotStatusEnum[SlotStatusNull], CODES_TFhirSlotStatusEnum[SlotStatusNull]) 
-  else if (propName = 'start') then result := TFhirInstant.create()
-  else if (propName = 'end') then result := TFhirInstant.create()
-  else if (propName = 'overbooked') then result := TFhirBoolean.create()
-  else if (propName = 'comment') then result := TFhirString.create()
+  else if (propName = 'appointmentType') then result := TFhirCodeableConcept.Create()
+  else if (propName = 'schedule') then result := TFhirReference.Create()
+  else if (propName = 'status') then result := TFhirEnum.Create(SYSTEMS_TFhirSlotStatusEnum[SlotStatusNull], CODES_TFhirSlotStatusEnum[SlotStatusNull]) 
+  else if (propName = 'start') then result := TFhirInstant.Create()
+  else if (propName = 'end') then result := TFhirInstant.Create()
+  else if (propName = 'overbooked') then result := TFhirBoolean.Create()
+  else if (propName = 'comment') then result := TFhirString.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -34039,7 +34039,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirSlotStatusEnum[value], CODES_TFhirSlotStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirSlotStatusEnum[value], CODES_TFhirSlotStatusEnum[value]);
 end;
 
 procedure TFhirSlot.SetStart(value : TFhirInstant);
@@ -34059,7 +34059,7 @@ end;
 procedure TFhirSlot.SetStartST(value : TFslDateTime);
 begin
   if FStart = nil then
-    FStart := TFhirInstant.create;
+    FStart := TFhirInstant.Create;
   FStart.value := value
 end;
 
@@ -34080,7 +34080,7 @@ end;
 procedure TFhirSlot.SetEnd_ST(value : TFslDateTime);
 begin
   if FEnd_ = nil then
-    FEnd_ := TFhirInstant.create;
+    FEnd_ := TFhirInstant.Create;
   FEnd_.value := value
 end;
 
@@ -34101,7 +34101,7 @@ end;
 procedure TFhirSlot.SetOverbookedST(value : Boolean);
 begin
   if FOverbooked = nil then
-    FOverbooked := TFhirBoolean.create;
+    FOverbooked := TFhirBoolean.Create;
   FOverbooked.value := value
 end;
 
@@ -34124,7 +34124,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirString.create;
+      FComment := TFhirString.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -34142,7 +34142,7 @@ end;
 
 destructor TFhirSlotListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34174,7 +34174,7 @@ end;
 
 function TFhirSlotList.Append: TFhirSlot;
 begin
-  result := TFhirSlot.create;
+  result := TFhirSlot.Create;
   try
     add(result.Link);
   finally
@@ -34218,7 +34218,7 @@ end;
 
 function TFhirSlotList.Insert(index: Integer): TFhirSlot;
 begin
-  result := TFhirSlot.create;
+  result := TFhirSlot.Create;
   try
     inherited insert(index, result.Link);
   finally

@@ -68,7 +68,7 @@ implementation
 
 function TMarkdownEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynHtmlSyn.create(nil);
+  Result := TSynHtmlSyn.Create(nil);
 end;
 
 procedure TMarkdownEditor.getNavigationList(navpoints: TStringList);
@@ -88,7 +88,7 @@ end;
 procedure TMarkdownEditor.makeDesigner;
 begin
   inherited makeDesigner;
-  FHtml := THtmlViewer.create(FDesignerPanelWork);
+  FHtml := THtmlViewer.Create(FDesignerPanelWork);
   FHtml.parent := FDesignerPanelWork;
   FHtml.align := alClient;
 end;
@@ -96,7 +96,7 @@ end;
 constructor TMarkdownEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-//  FParser := TMHtmlParser.create;
+//  FParser := TMHtmlParser.Create;
 end;
 
 destructor TMarkdownEditor.Destroy;

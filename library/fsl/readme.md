@@ -20,7 +20,7 @@ Using an object is easy:
     var
       obj : TFslObject; { or any descendent }
     begin
-      obj := TFslObject.create;
+      obj := TFslObject.Create;
       try
         // do things with the object
       finally
@@ -42,7 +42,7 @@ a list:
     var
       obj : TFslObject; { or any descendent }
     begin
-      obj := TFslObject.create;
+      obj := TFslObject.Create;
       try
         // do things with the object and params
         list.add(obj.link);  // add to the reference count
@@ -105,7 +105,7 @@ Then you use it like this:
     var
       s : TSomeObject;
     begin
-      s := TSomeObject.create;
+      s := TSomeObject.Create;
       try
         s.object_ := obj.link; // as long as s lives, it keeps a copy of s.
         // do stuff with s
@@ -116,7 +116,7 @@ Then you use it like this:
 
 And in the TSomeObject Destructor:
 
-    Destructor TSomeObject.destroy;
+    Destructor TSomeObject.Destroy;
     begin
       // other stuff
       Object_ := nil; // equivalent to freeandNil(Object);

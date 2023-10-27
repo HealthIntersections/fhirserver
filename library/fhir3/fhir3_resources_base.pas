@@ -335,7 +335,8 @@ function AddItem(value : TFhirResource): TFhirResource; overload;
     function fhirType : string; override;
     function isDomainResource : boolean; override;
     function hasExtension(url : string) : boolean; override;
-    function getExtensionString(url : String) : String; override;
+    function getExtensionString(url : String) : String; override;  
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
     function getExtensionsV : TFslList<TFHIRObject>; override;
     function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
@@ -514,10 +515,10 @@ end;
 procedure TFhirResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFhirId, FId.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'meta', 'Meta', false, TFhirMeta, FMeta.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'implicitRules', 'uri', false, TFhirUri, FImplicitRules.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'language', 'code', false, TFhirCode, FLanguage.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'id', 'id', false, TFhirId, FId.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'meta', 'Meta', false, TFhirMeta, FMeta.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'implicitRules', 'uri', false, TFhirUri, FImplicitRules.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'language', 'code', false, TFhirCode, FLanguage.Link));{2}
 end;
 
 procedure TFhirResource.listResourceFieldsInOrder(fields: TStringList);
@@ -560,10 +561,10 @@ end;
 
 function TFhirResource.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'id') then result := TFhirId.create() {5b}
-  else if (propName = 'meta') then result := TFhirMeta.create(){4b}
-  else if (propName = 'implicitRules') then result := TFhirUri.create() {5b}
-  else if (propName = 'language') then result := TFhirCode.create() {5b}
+  if (propName = 'id') then result := TFhirId.Create() {5b}
+  else if (propName = 'meta') then result := TFhirMeta.Create(){4b}
+  else if (propName = 'implicitRules') then result := TFhirUri.Create() {5b}
+  else if (propName = 'language') then result := TFhirCode.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -671,7 +672,7 @@ begin
   if value <> '' then
   begin
     if FId = nil then
-      FId := TFhirId.create;
+      FId := TFhirId.Create;
     FId.value := value
   end
   else if FId <> nil then
@@ -703,7 +704,7 @@ begin
   if value <> '' then
   begin
     if FImplicitRules = nil then
-      FImplicitRules := TFhirUri.create;
+      FImplicitRules := TFhirUri.Create;
     FImplicitRules.value := value
   end
   else if FImplicitRules <> nil then
@@ -729,7 +730,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -747,7 +748,7 @@ end;
 
 destructor TFhirResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -852,9 +853,9 @@ end;
 destructor TFhirDomainResource.Destroy;
 begin
   FText.free;
-  FContainedList.Free;
-  FExtensionList.Free;
-  FModifierExtensionList.Free;
+  FContainedList.free;
+  FExtensionList.free;
+  FModifierExtensionList.free;
   inherited;
 end;
 
@@ -982,13 +983,13 @@ function TFhirDomainResource.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -996,14 +997,14 @@ function TFhirDomainResource.getExtensionsV(url: String): TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
       if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1022,11 +1023,30 @@ begin
     if ex.url = url then
     begin
       if not ex.value.isPrimitive then
-        raise EFHIRException.create('Complex extension '+url)
+        raise EFHIRException.Create('Complex extension '+url)
       else if result <> '' then
-        raise EFHIRException.create('Duplicate extension '+url)
+        raise EFHIRException.Create('Duplicate extension '+url)
       else
         result := ex.value.primitiveValue;
+    end;
+  end;
+end;
+
+function TFhirDomainResource.getExtensionValue(url: String): TFHIRObject;
+var
+  ex : TFhirExtension;
+begin
+  result := nil;
+  for ex in ExtensionList do
+  begin
+    if ex.url = url then
+    begin
+      if not ex.value.isPrimitive then
+        raise EFHIRException.Create('Complex extension '+url)
+      else if result <> nil then
+        raise EFHIRException.Create('Duplicate extension '+url)
+      else
+        result := ex.value;
     end;
   end;
 end;
@@ -1049,10 +1069,10 @@ end;
 procedure TFhirDomainResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'text', 'Narrative', false, TFhirNarrative, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'contained', 'Resource', true, TFhirResource, FContainedList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'extension', 'Extension', true, TFhirExtension, FExtensionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'modifierExtension', 'Extension', true, TFhirExtension, FModifierExtensionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'text', 'Narrative', false, TFhirNarrative, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'contained', 'Resource', true, TFhirResource, FContainedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'extension', 'Extension', true, TFhirExtension, FExtensionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'modifierExtension', 'Extension', true, TFhirExtension, FModifierExtensionList.Link)){3};
 end;
 
 function TFhirDomainResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -1090,7 +1110,7 @@ end;
 
 function TFhirDomainResource.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'text') then result := TFhirNarrative.create(){4b}
+  if (propName = 'text') then result := TFhirNarrative.Create(){4b}
   else if (propName = 'extension') then result := ExtensionList.new(){2}
   else if (propName = 'modifierExtension') then result := ModifierExtensionList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -1243,7 +1263,7 @@ end;
 
 destructor TFhirDomainResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 

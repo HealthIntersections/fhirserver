@@ -151,6 +151,7 @@ Type
 
     procedure checkDay;
     procedure close;
+    procedure LogDoubleFreeCallBack(name1, name2: String);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -227,9 +228,9 @@ End;
 
 Destructor TLogger.Destroy;
 Begin
-  FStream.Free;
-  FPolicy.Free;
-  FLock.Free;
+  FStream.free;
+  FPolicy.free;
+  FLock.free;
   Inherited;
 End;
 
@@ -300,10 +301,10 @@ Begin
       src.Position := cs;
       dst.CopyFrom(src, src.Size - cs);
     finally
-      dst.Free;
+      dst.free;
     end;
   finally
-    src.Free;
+    src.free;
   end;
   DeleteFile(PChar(sName + '.tmp'));
 end;
@@ -370,7 +371,7 @@ begin
     end
     else if FOpenName <> sName then
     begin
-      FStream.Free;
+      FStream.free;
       FStream := nil;
       FOpenName := '';
       exists := FileExists(sName);
@@ -390,7 +391,7 @@ begin
       Begin
         if FStream <> nil then
         begin
-          FStream.Free;
+          FStream.free;
           FStream := nil;
         end;
 
@@ -419,7 +420,7 @@ begin
     FStream.Write(bytes[0], length(bytes));
     if FPolicy.closeLog then
     begin
-      FStream.Free;
+      FStream.free;
       FStream := nil;
       FOpenName := '';
     end;
@@ -478,21 +479,28 @@ constructor TLogging.Create;
 begin
   inherited;
   FLock := TFslLock.Create('console');
-  FListeners := TFslList<TLogListener>.create;
+  FListeners := TFslList<TLogListener>.Create;
   FStarting := true;
   FStartTime := now;
   FLastDay := 0;
-  FHeld := TStringList.create;
+  FHeld := TStringList.Create;
+  DoubleFreeCallBack := LogDoubleFreeCallBack;
 end;
 
 destructor TLogging.Destroy;
 begin
+  DoubleFreeCallBack := nil;
   close;
-  FHeld.Free;
-  FFileLogger.Free;
-  FListeners.Free;
-  FLock.Free;
+  FHeld.free;
+  FFileLogger.free;
+  FListeners.free;
+  FLock.free;
   inherited;
+end;
+
+procedure TLogging.LogDoubleFreeCallBack(name1, name2 : String);
+begin
+  log('Attempt to free a class a second time (of type '+name1+' or '+name2+'?)');
 end;
 
 procedure TLogging.addListener(listener: TLogListener);
@@ -808,8 +816,8 @@ begin
 end;
 
 Initialization
-  Logging := TLogging.create;
+  Logging := TLogging.Create;
 Finalization
-  Logging.Free;
+  Logging.free;
 end.
 

@@ -87,12 +87,12 @@ implementation
 
 function TFhirClient3.makeParser(fmt : TFHIRFormat) : TFHIRParser;
 begin
-  result := TFHIRParsers3.parser(Worker.Link as TFHIRWorkerContext, fmt, Lang);
+  result := TFHIRParsers3.parser(Worker.Link as TFHIRWorkerContext, fmt, LangList.link);
 end;
 
 function TFhirClient3.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
 begin
-  result := TFHIRParsers3.composer(Worker.Link as TFHIRWorkerContext, fmt, Lang, style);
+  result := TFHIRParsers3.composer(Worker.Link as TFHIRWorkerContext, fmt, LangList.link, style);
 end;
 
 function TFhirClient3.opWrapper : TFhirOperationOutcomeWClass;
@@ -254,12 +254,12 @@ begin
     if fmt = ffUnspecified then
       fmt := ffJson;
 
-    result := TFhirClient3.create(worker, THTTPLanguages.create('en'), http.link);
+    result := TFhirClient3.Create(worker, nil, http.link);
     try
       result.format := fmt;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     http.free;

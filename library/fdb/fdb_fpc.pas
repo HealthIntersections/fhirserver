@@ -121,18 +121,18 @@ constructor TFDBSQDBConnection.Create(AOwner : TFDBManager; conn : TSQLConnectio
 begin
   inherited Create(AOwner);
   FConn := conn;
-  FTransact := TSQLTransaction.create(nil);
+  FTransact := TSQLTransaction.Create(nil);
   FTransact.SQLConnection := FConn;
-  FQuery := TSQLQuery.create(nil);
+  FQuery := TSQLQuery.Create(nil);
   FQuery.Transaction := FTransact;
   FQuery.SQLConnection := FConn;
 end;
 
 destructor TFDBSQDBConnection.Destroy;
 begin
-  FTransact.Free;
-  FQuery.Free;
-  FConn.Free;
+  FTransact.free;
+  FQuery.free;
+  FConn.free;
   inherited Destroy;
 end;
 
@@ -305,32 +305,32 @@ end;
 
 procedure TFDBSQDBConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.RenameColumnV(ATableName, AOldColumnName, ANewColumnName: String; AColumnDetails: String = '');
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.DropTableV(ATableName : String);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.DropColumnV(ATableName, AColumnName : String);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.ListTablesV(AList : TStrings);
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 procedure TFDBSQDBConnection.ClearDatabaseV;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 function TFDBSQDBConnection.ColByNameV(AColName: String): Integer;
@@ -345,27 +345,27 @@ end;
 
 function TFDBSQDBConnection.DatabaseSizeV : int64;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 Function TFDBSQDBConnection.TableSizeV(sName : String):int64;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 function TFDBSQDBConnection.SupportsSizingV : Boolean;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 function TFDBSQDBConnection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 function TFDBSQDBConnection.FetchMetaDataV : TFDBMetaData;
 begin
-  raise EDBException.create('Not done yet');
+  raise EDBException.Create('Not done yet');
 end;
 
 
@@ -423,7 +423,7 @@ end;
 
 function TFDBSQLDBManager.makeMySqlConnection : TMySQL80Connection;
 begin
-  result := TMySQL80Connection.create(nil);
+  result := TMySQL80Connection.Create(nil);
   result.hostName := FServer;
   result.DatabaseName := FDatabase;
   result.UserName := FUsername;
@@ -433,11 +433,11 @@ end;
 function TFDBSQLDBManager.ConnectionFactory: TFDBConnection;
 begin
   if (FPlatform = kdbMySQL) then
-    result := TFDBSQDBConnection.create(self, makeMySqlConnection)
+    result := TFDBSQDBConnection.Create(self, makeMySqlConnection)
   else if (FPlatform = kdbSQLServer) then
-    raise EDBException.create('not supported yet')
+    raise EDBException.Create('not supported yet')
   else
-    raise EDBException.create('not supported');
+    raise EDBException.Create('not supported');
 end;
 
 end.

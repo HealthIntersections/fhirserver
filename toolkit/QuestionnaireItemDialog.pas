@@ -495,8 +495,8 @@ var
 begin
   Loading := true;
   try
-    bundle := TFhirBundle.create;
-    params := TStringList.create;
+    bundle := TFhirBundle.Create;
+    params := TStringList.Create;
     try
       client := TFhirClients.makeThreaded(nil, TFhirClients.makeHTTP(nil, FSettings.defaultAddress('Terminology'), false, FSettings.timeout * 1000, FSettings.proxy), MasterToolsForm.threadMonitorProc);
       try
@@ -532,10 +532,10 @@ begin
           end;
           cedValueSet.Items.EndUpdate;
         finally
-          bundle.Free;
+          bundle.free;
         end;
       finally
-        client.Free;
+        client.free;
       end;
     finally
       params.free;
@@ -829,7 +829,7 @@ begin
         ref.reference := cbxXUnitValueSet.Text;
       item.setExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-unit-valueSet', ref.Link);
     finally
-      ref.Free;
+      ref.free;
     end;
   end;
   {$ENDIF}
@@ -879,7 +879,7 @@ begin
       d.value := edtObservationPeriod.Text;
       d.unit_ := cbeObservationUnits.Text.Split([' '])[0];
     finally
-      d.Free;
+      d.free;
     end;
   end;
   saveInitialValue;
@@ -887,19 +887,19 @@ end;
 
 destructor TQuestionnaireItemForm.Destroy;
 begin
-  FUnits.Free;
+  FUnits.free;
   FQuestionnaire.free;
-  FSettings.Free;
-  FItem.Free;
+  FSettings.free;
+  FItem.free;
   inherited;
 end;
 
 procedure TQuestionnaireItemForm.FormDestroy(Sender: TObject);
 begin
-  (edtInitialValue.TagObject as TFslObject).Free;
-  (edtCalculatedValue.TagObject as TFslObject).Free;
-  (edtEnableWhen.TagObject as TFslObject).Free;
-  (edtContext.TagObject as TFslObject).Free;
+  (edtInitialValue.TagObject as TFslObject).free;
+  (edtCalculatedValue.TagObject as TFslObject).free;
+  (edtEnableWhen.TagObject as TFslObject).free;
+  (edtContext.TagObject as TFslObject).free;
   Settings.storeValue('Questionnaire.item', 'tab-visible', tabMode.TabIndex);
   inherited;
 end;
@@ -923,7 +923,7 @@ var
   a : TFhirResourceType;
   i : integer;
 begin
-  FUnits := TFslList<TFHIRCoding>.create;
+  FUnits := TFslList<TFHIRCoding>.Create;
   for a := Low(TFhirResourceType) to High(TFhirResourceType) do
     if not (a in [frtNull, frtCustom]) then
       lbXResources.items.add(CODES_TFhirResourceType[a]);
@@ -1720,7 +1720,7 @@ end;
 
 procedure TQuestionnaireItemForm.SetItem(const Value: TFhirQuestionnaireItem);
 begin
-  FItem.Free;
+  FItem.free;
   FItem := Value;
 end;
 
@@ -1737,7 +1737,7 @@ end;
 
 procedure TQuestionnaireItemForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

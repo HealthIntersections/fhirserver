@@ -51,7 +51,7 @@ Type
     Fline: integer;
     Finvalid: boolean;
   public
-    constructor create(line : integer);
+    constructor Create(line : integer);
     property line : integer read Fline write Fline;
     property invalid : boolean read Finvalid write Finvalid;
   end;
@@ -189,7 +189,7 @@ begin
         if x.docElement.NamespaceURI = 'urn:hl7-org:v3' then
           exit(fmtCDA);
       finally
-        x.Free;
+        x.free;
       end;
     except
       on e : Exception do
@@ -220,7 +220,7 @@ begin
   try
     iniT.EraseSection('open-files');
   finally
-    iniT.Free;
+    iniT.free;
   end;
 end;
 
@@ -247,30 +247,30 @@ end;
 constructor TWorkspace.Create(folder: String);
 begin
   inherited Create;
-  FMessages := TFslList<TWorkspaceFile>.create;
-  FDocuments := TFslList<TWorkspaceFile>.create;
-  FMaps := TFslList<TWorkspaceFile>.create;
-  FResources := TFslList<TWorkspaceFile>.create;
-  FScripts := TFslList<TWorkspaceFile>.create;
-  FTemplates := TFslList<TWorkspaceFile>.create;
-  FMarkdowns := TFslList<TWorkspaceFile>.create;
-  FAllFiles := TFslList<TWorkspaceFile>.create;
-  FConfigurations := TFslList<TWorkspaceExecConfig>.create;
+  FMessages := TFslList<TWorkspaceFile>.Create;
+  FDocuments := TFslList<TWorkspaceFile>.Create;
+  FMaps := TFslList<TWorkspaceFile>.Create;
+  FResources := TFslList<TWorkspaceFile>.Create;
+  FScripts := TFslList<TWorkspaceFile>.Create;
+  FTemplates := TFslList<TWorkspaceFile>.Create;
+  FMarkdowns := TFslList<TWorkspaceFile>.Create;
+  FAllFiles := TFslList<TWorkspaceFile>.Create;
+  FConfigurations := TFslList<TWorkspaceExecConfig>.Create;
   FFolder := folder;
   reload;
 end;
 
 destructor TWorkspace.Destroy;
 begin
-  FAllFiles.Free;
-  FMessages.Free;
-  FDocuments.Free;
-  FMaps.Free;
-  FResources.Free;
-  FScripts.Free;
-  FTemplates.Free;
-  FMarkdowns.Free;
-  FConfigurations.Free;
+  FAllFiles.free;
+  FMessages.free;
+  FDocuments.free;
+  FMaps.free;
+  FResources.free;
+  FScripts.free;
+  FTemplates.free;
+  FMarkdowns.free;
+  FConfigurations.free;
   inherited;
 end;
 
@@ -400,7 +400,7 @@ begin
   iniT := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.status']));
   try
     iniT.ReadSection('open-files', st);
-    result := TFslList<TWorkspaceFile>.create;
+    result := TFslList<TWorkspaceFile>.Create;
     try
       for s in st do
       begin
@@ -410,11 +410,11 @@ begin
       end;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    st.Free;
-    iniT.Free;
+    st.free;
+    iniT.free;
   end;
 end;
 
@@ -426,7 +426,7 @@ begin
   try
     iniT.WriteString('open-files', f.filename, '1');
   finally
-    iniT.Free;
+    iniT.free;
   end;
 end;
 
@@ -439,7 +439,7 @@ var
   row : integer;
   bpl : String;
 begin
-  st := TStringList.create;
+  st := TStringList.Create;
   iniVC := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.control'])); // persisted in version control
   iniT := TIniFile.Create(path([folder, 'fhir-transfomer-workspace.status'])); // local only
   try
@@ -485,8 +485,8 @@ begin
       FConfigurations.Add(TWorkspaceExecConfig.Create(iniVC.ReadString('Configurations', s, '')));
   finally
     st.free;
-    iniVC.Free;
-    iniT.Free;
+    iniVC.free;
+    iniT.free;
   end;
 end;
 
@@ -557,8 +557,8 @@ begin
       iniVC.WriteString('Configurations', 'ec'+inttostr(i), ec.read);
     end;
   finally
-    iniVC.Free;
-    iniT.Free;
+    iniVC.free;
+    iniT.free;
   end;
 end;
 
@@ -571,7 +571,7 @@ begin
   FFilename := filename;
   FFormat := format;
   FRow := 0;
-  FBreakPoints := TFslList<TBreakPointInfo>.create;
+  FBreakPoints := TFslList<TBreakPointInfo>.Create;
 end;
 
 function TWorkspaceFile.actualName: String;
@@ -590,7 +590,7 @@ begin
       b.CommaAdd(inttostr(bpi.line));
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -604,7 +604,7 @@ begin
   FFilename := filename;
   FFormat := format;
   FRow := row;
-  FBreakPoints := TFslList<TBreakPointInfo>.create;
+  FBreakPoints := TFslList<TBreakPointInfo>.Create;
   for s in bpl.Split([',']) do
     if StringIsInteger32(s) then
       FBreakPoints.Add(TBreakPointInfo.create(StrToInt(s)));
@@ -613,7 +613,7 @@ end;
 destructor TWorkspaceFile.Destroy;
 begin
   FBreakpoints.free;
-  FCompiled.Free;
+  FCompiled.free;
   inherited;
 end;
 
@@ -644,7 +644,7 @@ end;
 
 procedure TWorkspaceFile.SetCompiled(const Value: TFslObject);
 begin
-  FCompiled.Free;
+  FCompiled.free;
   FCompiled := Value;
 end;
 
@@ -670,12 +670,12 @@ end;
 
 constructor TWorkspaceExecConfig.Create;
 begin
-  inherited create;
+  inherited Create;
 end;
 
 constructor TWorkspaceExecConfig.Create(src: String);
 begin
-  inherited create;
+  inherited Create;
   StringSplit(src, ';', FScript, FFocus);
 end;
 

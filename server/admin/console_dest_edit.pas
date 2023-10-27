@@ -87,8 +87,8 @@ implementation
 
 procedure TEditDestForm.FormDestroy(Sender: TObject);
 begin
-  FIni.Free;
-  FTx.Free;
+  FIni.free;
+  FTx.free;
 end;
 
 procedure TEditDestForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
@@ -109,7 +109,7 @@ procedure TEditDestForm.SetIni(AValue: TFHIRServerIniFile);
 var
   s : String;
 begin
-  FIni.Free;
+  FIni.free;
   FIni := AValue;
   if (FIni <> nil) then
   begin
@@ -161,7 +161,7 @@ end;
 
 procedure TEditDestForm.SetTx(AValue: TFHIRServerIniComplex);
 begin
-  FTx.Free;
+  FTx.free;
   FTx := AValue;
 
   if FTx <> nil then

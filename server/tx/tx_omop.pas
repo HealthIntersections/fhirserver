@@ -13,7 +13,33 @@ uses
   ftx_service;
 
 type
-{ TOMOPServices }
+
+  { TOMOPConcept }
+
+  TOMOPConcept = class (TCodeSystemProviderContext)
+  private
+    FCode : String;
+    FDisplay : String;
+    FDomain: String;
+  public
+    property Code : String read FCode write FCode;
+    property Display : String read FDisplay write FDisplay;
+    property domain : String read FDomain write FDomain;
+  end;
+
+  { TOMOPFilter }
+
+  TOMOPFilter = class (TCodeSystemProviderFilterContext)
+  private
+    FConn : TFDBConnection;
+    procedure SetConn(AValue: TFDBConnection);
+  public
+    destructor Destroy; override;
+
+    property conn : TFDBConnection read FConn write SetConn;
+  end;
+
+  { TOMOPServices }
 
   TOMOPServices = class (TCodeSystemProvider)
   private
@@ -34,14 +60,14 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -55,18 +81,30 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     //function subsumes(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
 
 implementation
+
+{ TOMOPFilter }
+
+procedure TOMOPFilter.SetConn(AValue: TFDBConnection);
+begin
+  FConn.free;
+  FConn:=AValue;
+end;
+
+destructor TOMOPFilter.Destroy;
+begin
+  FConn.terminate;
+  FConn.release;
+  inherited Destroy;
+end;
 
 { TOMOPServices }
 
@@ -145,142 +183,255 @@ end;
 
 function TOMOPServices.TotalCount: integer;
 begin
-  result := db.countSql('TotalCount', 'Select count(*) from Concepts');
+  result := db.countSql('Select count(*) from Concepts', 'TotalCount');
 end;
 
-function TOMOPServices.getIterator(context: TCodeSystemProviderContext): TCodeSystemIteratorContext;
+function TOMOPServices.getDisplay(code: String; langList : THTTPLanguageList): String;
+var
+  c : TOMOPConcept;
+  msg : String;
 begin
-  raise ETerminologyError.create('not done yet');
-end;
-
-function TOMOPServices.getNextContext(context: TCodeSystemIteratorContext): TCodeSystemProviderContext;
-begin
-  raise ETerminologyError.create('not done yet');
-end;
-
-function TOMOPServices.getDisplay(code: String; const lang: THTTPLanguages): String;
-begin
-  raise ETerminologyError.create('not done yet');
+  c := locate(code, nil, msg) as TOMOPConcept;
+  try
+    if c <> nil then
+      result := c.Display
+    else
+      result := '';
+  finally
+    c.free;
+  end;
 end;
 
 function TOMOPServices.getDefinition(code: String): String;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := '';
 end;
 
 function TOMOPServices.locate(code: String; altOpt : TAlternateCodeOptions; var message: String): TCodeSystemProviderContext;
+var
+  conn : TFDBConnection;
+  c : TOMOPConcept;
 begin
-  raise ETerminologyError.create('not done yet');
+  conn := db.GetConnection('locate');
+  try
+    conn.sql := 'Select concept_name, domain_id from Concepts where concept_id = '''+SQLWrapString(code)+'''';
+    conn.Prepare;
+    conn.Execute;
+    if conn.FetchNext then
+    begin
+      c := TOMOPConcept.Create;
+      try
+        c.code := code;
+        c.display := conn.ColStringByName['concept_name'];
+        c.domain := conn.ColStringByName['domain_id'];
+        result := c.link;
+      finally
+        c.free;
+      end;
+    end
+    else
+      result := nil;
+    conn.terminate;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise
+    end;
+  end;
 end;
 
 function TOMOPServices.locateIsA(code, parent: String; disallowParent: boolean): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := nil; // none
 end;
 
 function TOMOPServices.sameContext(a, b: TCodeSystemProviderContext): boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := (a is TOMOPConcept) and (b is TOMOPConcept) and ((a as TOMOPConcept).code = (b as TOMOPConcept).code);
+end;
+
+function TOMOPServices.getIterator(context: TCodeSystemProviderContext): TCodeSystemIteratorContext;
+var
+  qry : TFDBConnection;
+begin
+  qry := db.GetConnection('getIterator');
+  try
+    result := TCodeSystemIteratorContext.Create(nil, qry.CountSQL('Select count(concept_id) from Concepts'));
+    qry.Release;
+  except
+    on e : Exception do
+    begin
+      qry.Error(e);
+      recordStack(e);
+      raise;
+    end;
+  end;
+end;
+
+function TOMOPServices.getNextContext(context: TCodeSystemIteratorContext): TCodeSystemProviderContext;
+begin
+  raise ETerminologyError.Create('getNextContext not supported by RXNorm', itException); // only used when iterating the entire code system. and RxNorm is too big
 end;
 
 function TOMOPServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := false;
 end;
 
 function TOMOPServices.Code(context: TCodeSystemProviderContext): string;
 begin
-  raise ETerminologyError.create('not done yet');
+  if (context is TOMOPConcept) then
+    result := (context as TOMOPConcept).code
+  else
+    result := '';
 end;
 
-function TOMOPServices.Display(context: TCodeSystemProviderContext; const lang: THTTPLanguages): string;
+function TOMOPServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
-  raise ETerminologyError.create('not done yet');
+  if (context is TOMOPConcept) then
+    result := (context as TOMOPConcept).display
+  else
+    result := '';
 end;
 
 procedure TOMOPServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
+var
+  conn : TFDBConnection;
 begin
-  raise ETerminologyError.create('not done yet');
+  if (context is TOMOPConcept) then
+  begin
+    list.addDesignation(true, true, 'en', (context as TOMOPConcept).Display);
+    conn := db.GetConnection('display');
+    try
+      conn.sql := 'Select concept_synonym_name from ConceptSynonyms where concept_id = '''+SQLWrapString((context as TOMOPConcept).code)+'''';
+      conn.Prepare;
+      conn.Execute;
+      while conn.FetchNext do
+        list.addDesignation(false, false, 'en', conn.ColStringByName['concept_synonym_name']);
+      conn.terminate;
+      conn.Release;
+    except
+      on e : Exception do
+      begin
+        conn.Error(e);
+        raise
+      end;
+    end;
+  end;
 end;
 
 function TOMOPServices.Definition(context: TCodeSystemProviderContext): string;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := '';
 end;
 
 function TOMOPServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := nil;
 end;
 
 function TOMOPServices.prepare(prep: TCodeSystemProviderFilterPreparationContext): boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := false;
 end;
 
 function TOMOPServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyError.Create('not done yet: searchFilter');
 end;
 
 function TOMOPServices.filter(forIteration: boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+var
+  f : TOMOPFilter;
 begin
-  raise ETerminologyError.create('not done yet');
+  if (prop = 'domain') and (op = foEqual) then
+  begin
+    f := TOMOPFilter.Create;
+    try
+      f.conn := db.GetConnection('filter');
+      f.conn.sql := 'Select concept_id, concept_name, domain_id from Concepts where domain_id = '''+SQLWrapString(value)+'''';
+      f.conn.Prepare;
+      f.conn.Execute;
+      result := f.link;
+    finally
+      f.free;
+    end;
+  end
+  else
+    raise ETerminologyError.Create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP');
 end;
 
 function TOMOPServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyError.Create('not done yet: filterLocate');
 end;
 
 function TOMOPServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := (ctxt as TOMOPFilter).Conn.FetchNext;
 end;
 
 function TOMOPServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
+var
+  conn : TFDBConnection;
+  c : TOMOPConcept;
 begin
-  raise ETerminologyError.create('not done yet');
+  conn := (ctxt as TOMOPFilter).Conn;
+  c := TOMOPConcept.Create;
+  try
+    c.code := conn.ColStringByName['concept_id'];
+    c.display := conn.ColStringByName['concept_name'];
+    c.domain := conn.ColStringByName['domain_id'];
+    result := c.link;
+  finally
+    c.free;
+  end;
 end;
 
 function TOMOPServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyError.Create('not done yet: InFilter');
 end;
 
 function TOMOPServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
-  raise ETerminologyError.create('not done yet');
+  result := false;
 end;
 
-procedure TOMOPServices.getCDSInfo(card: TCDSHookCard; const lang: THTTPLanguages; baseURL, code, display: String);
+procedure TOMOPServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyError.Create('not done yet: getCDSInfo');
 end;
 
-procedure TOMOPServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang: THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TOMOPServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+var
+  conn : TFDBConnection;
 begin
-  raise ETerminologyError.create('not done yet');
-end;
-
-procedure TOMOPServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  raise ETerminologyError.create('not done yet');
-end;
-
-procedure TOMOPServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  raise ETerminologyError.create('not done yet');
-end;
-
-procedure TOMOPServices.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  raise ETerminologyError.create('not done yet');
+  if hasProp(props, 'domain', true) then
+    resp.addProp('domain').value := factory.makeCode((ctxt as TOMOPConcept).domain);
+  conn := db.GetConnection('display');
+  try
+    conn.sql := 'Select concept_synonym_name from ConceptSynonyms where concept_id = '''+SQLWrapString((ctxt as TOMOPConcept).code)+'''';
+    conn.Prepare;
+    conn.Execute;
+    while conn.FetchNext do    
+     resp.addDesignation('en', '', '', '', conn.ColStringByName['concept_synonym_name']);
+    conn.terminate;
+    conn.Release;
+  except
+    on e : Exception do
+    begin
+      conn.Error(e);
+      raise
+    end;
+  end;
 end;
 
 procedure TOMOPServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  raise ETerminologyError.create('not done yet');
+  raise ETerminologyError.Create('not done yet: defineFeatures');
 end;
 
 end.

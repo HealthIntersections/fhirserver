@@ -76,34 +76,34 @@ implementation
 
 destructor TResourceDesignerFrame.Destroy;
 begin
-  FResource.Free;
-  FSync.Free;
-  FClient.Free;
+  FResource.free;
+  FSync.free;
+  FClient.free;
   inherited Destroy;
 end;
 
 procedure TResourceDesignerFrame.SetResource(AValue: TFHIRResourceV);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := AValue;
   bind;
 end;
 
 procedure TResourceDesignerFrame.SetContext(AValue: TToolkitContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := AValue;
 end;
 
 procedure TResourceDesignerFrame.SetClient(AValue: TFHIRClientV);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := AValue;
 end;
 
 procedure TResourceDesignerFrame.SetSync(AValue: TFHIRSynEditSynchroniser);
 begin
-  FSync.Free;
+  FSync.free;
   FSync := AValue;
 end;
 
@@ -119,7 +119,7 @@ end;
 
 procedure TResourceDesignerFrame.saveStatus;
 begin
-  FContext.Free;
+  FContext.free;
   FContext := nil;
 end;
 

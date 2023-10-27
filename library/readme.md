@@ -105,7 +105,7 @@ Next, create a context, with a factory
    var
      context : TFHIRWorkerContext;
      
-   context := TFHIRWorkerContext.create(TFHIRFactory.create)
+   context := TFHIRWorkerContext.Create(TFHIRFactory.create)
 ```
 
 Reading a resource from a stream:
@@ -135,7 +135,7 @@ Creating a resource:
   var
     r : TFHIRPatient;
   
-  r := TFHIRPatient.create;
+  r := TFHIRPatient.Create;
 ```
 
 Then just use the properties to access to object model of the resource. 

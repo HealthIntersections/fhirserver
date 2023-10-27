@@ -70,7 +70,7 @@ end;
 destructor TServerWorker.Destroy;
 begin
   FServer.workerObject := nil;
-  FServer.Free;
+  FServer.free;
   if (Context <> nil) then
     Context.OnUpdateActions(self);
   inherited Destroy;
@@ -83,13 +83,13 @@ end;
 
 procedure TServerWorker.SetServer(AValue: TFHIRServerEntry);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := AValue;
 end;
 
 function TServerWorker.makeFrame(owner : TComponent): TBaseWorkerFrame;
 begin
-  result := TServerWorkerFrame.create(owner);
+  result := TServerWorkerFrame.Create(owner);
   (result as TServerWorkerFrame).Server := FServer.Link;
 end;
 

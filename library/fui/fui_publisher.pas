@@ -54,7 +54,7 @@ type
   protected
     Procedure Execute; Override;
   public
-    constructor create(owner : TFHIRIGPublisher; cmd : string);
+    constructor Create(owner : TFHIRIGPublisher; cmd : string);
   end;
 
   TFHIRIGPublisher = class (TFslObject)
@@ -88,9 +88,9 @@ implementation
 
 { TPublishThread }
 
-constructor TPublishThread.create(owner: TFHIRIGPublisher; cmd: string);
+constructor TPublishThread.Create(owner: TFHIRIGPublisher; cmd: string);
 begin
-  inherited create;
+  inherited Create;
   self.FOwner := owner;
   self.cmd := cmd;
 end;
@@ -167,7 +167,7 @@ begin
         FIni.writeString('tools', 'jar', FJarFile);
       end;
     finally
-      od.Free;
+      od.free;
     end;
   end;
 end;
@@ -181,13 +181,13 @@ begin
 //      FjarFile := ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar'
 //    else if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
 //      then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
-  thread := TPublishThread.create(self, 'java -jar '+FJarFile+' -ig '+folder);
+  thread := TPublishThread.Create(self, 'java -jar '+FJarFile+' -ig '+folder);
   try
     thread.Open;
     while thread.Running do
       Application.ProcessMessages;
   finally
-    thread.Free;
+    thread.free;
   end;
 end;
 

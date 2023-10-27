@@ -144,7 +144,7 @@ Type
 //    function terminologies : TCommonTerminologies;
     procedure GetPatients(details : TFslStringDictionary);
     function GetLaunchParameters(request: TIdHTTPRequestInfo; session : TFhirSession; launchContext : String; params : TAuthLaunchParamsSet) : TDictionary<String, String>;
-    function GetResource(Session: TFHIRSession; rtype: String; const lang : THTTPLanguages; id, ver, op: String): TFhirResourceV;
+    function GetResource(Session: TFHIRSession; rtype: String; langList : THTTPLanguageList; id, ver, op: String): TFhirResourceV;
     function HandleWebCreate(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebPatientHooks(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
     function HandleWebPatient(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
@@ -152,7 +152,7 @@ Type
     function makingAudits : boolean; override;
 
     {$IFDEF WINDOWS}
-    function transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
+    function transform1(resource: TFhirResourceV; langList : THTTPLanguageList; xslt: String; saveOnly: boolean): string;
     function HandleWebQuestionnaire(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebQuestionnaireInstance(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebProfile(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
@@ -160,15 +160,15 @@ Type
 //    Procedure HandleWebSockets(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String);
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
-    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
-    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
+    Function BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebEdit(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
     function HandleWebPost(request: TFHIRRequest; response: TFHIRResponse): TDateTime;
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
-    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
-    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
+    Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
+    function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; override;
   public
     destructor Destroy; override;
     function link : TFullServerWebEndPoint; overload;
@@ -208,10 +208,10 @@ Type
 
     procedure Load; override;
     procedure Unload; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
@@ -335,9 +335,9 @@ end;
 
 destructor TPackageLoader.Destroy;
 begin
-  FList.Free;
-  FFactory.Free;
-  FBundle.Free;
+  FList.free;
+  FFactory.free;
+  FBundle.free;
   inherited;
 end;
 
@@ -346,7 +346,7 @@ var
   p : TFHIRParser;
   s : String;
 begin
-  p := FFactory.makeParser(nil, ffJson, THTTPLanguages.create('en'));
+  p := FFactory.makeParser(nil, ffJson, nil);
   try
     s := rType + '|' + id;
     if FList.IndexOf(s) = -1 then
@@ -355,7 +355,7 @@ begin
       Flist.Add(s);
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -444,8 +444,8 @@ end;
 
 destructor TFullServerEndPoint.Destroy;
 begin
-  FConfig.Free;
-  FStore.Free;
+  FConfig.free;
+  FStore.free;
   inherited;
 end;
 
@@ -501,7 +501,7 @@ begin
       try
         t := GetTickCount64;
         req.internalRequestId := FServerContext.Globals.nextRequestId;
-        op := FStore.createOperationContext(req.lang);
+        op := FStore.createOperationContext(req.langList.link);
         try
           op.OnCreateBuilder := doGetBundleBuilder;
           op.Execute(Context, req, resp, tt);
@@ -516,13 +516,13 @@ begin
         Logging.log('Upload took '+inttostr((GetTickCount64 - t) div 1000)+' seconds');
       finally
         tt.free;
-        resp.Free;
+        resp.free;
       end;
     finally
-      req.Free;
+      req.free;
     end;
   finally
-    Context.Free;
+    Context.free;
   end;
 end;
 
@@ -647,7 +647,7 @@ begin
           try
             dbi.upgrade(ver);
           finally
-            dbi.Free;
+            dbi.free;
           end;
         end;
       end;
@@ -659,7 +659,7 @@ begin
         FConfig.AddOrSetValue(Conn.ColStringByName['ConfigKey'], Conn.ColStringByName['Value']);
       conn.Terminate;
     finally
-      meta.Free;
+      meta.free;
     end;
     conn.Release;
   except
@@ -705,19 +705,18 @@ procedure TFullServerEndPoint.Unload;
 begin
   FStopping := true;
   FSubscriptionThread.StopAndWait(100);
-  FSubscriptionThread.Free;
+  FSubscriptionThread.free;
   FEmailThread.StopAndWait(100);
-  FEmailThread.Free;
+  FEmailThread.free;
 
-  FServerContext.Free;
+  FServerContext.free;
   FServerContext := nil;
-  FStore.Free;
+  FStore.free;
   FStore := nil;
   inherited;
 end;
 
-procedure TFullServerEndPoint.internalThread(
-  callback: TFhirServerMaintenanceThreadTaskCallBack);
+procedure TFullServerEndPoint.internalThread(callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   try
     if FStopping then exit;
@@ -744,18 +743,18 @@ begin
   end;
 end;
 
-procedure TFullServerEndPoint.InstallDatabase;
+procedure TFullServerEndPoint.InstallDatabase(params : TCommandLineParameters);
 var
   conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
   scim : TSCIMServer;
   rights, un, pw, em : String;
 begin
-  if not getCommandLineParam('default-rights', rights) then
+  if not params.get('default-rights', rights) then
     raise EFslException.Create('Some default rights are required');
-  if not getCommandLineParam('username', un) then
+  if not params.get('username', un) then
     raise EFslException.Create('An Administrator username is required');
-  if not getCommandLineParam('password', pw) then
+  if not params.get('password', pw) then
     raise EFslException.Create('An Administrator password is required');
   if not Settings.Ini.admin.getProp('email', em) then
     raise EFslException.Create('An Administrator email address is required in the configuration');
@@ -773,12 +772,12 @@ begin
         dbi.Bases.Add('http://hl7.org/fhir');
         dbi.Install(scim);
       finally
-        dbi.Free;
+        dbi.free;
       end;
       scim.DefineAnonymousUser(conn);
       scim.DefineAdminUser(conn, un, pw, em);
     finally
-      scim.Free;
+      scim.free;
     end;
     conn.Release;
   except
@@ -816,13 +815,12 @@ begin
   Logging.log('Wiping database Done');
 end;
 
-procedure TFullServerEndPoint.updateAdminPassword;
+procedure TFullServerEndPoint.updateAdminPassword(pw : String);
 var
   scim : TSCIMServer;
   conn : TFDBConnection;
-  pw : String;
 begin
-  if not getCommandLineParam('password', pw) then
+  if pw = '' then
     raise EFslException.Create('An Administrator password is required');
   conn := Database.getConnection('install');
   try
@@ -843,7 +841,7 @@ begin
          end;
       end;
     finally
-      scim.Free;
+      scim.free;
     end;
     conn.Release;
   except
@@ -857,7 +855,7 @@ end;
 
 
 
-procedure TFullServerEndPoint.LoadPackages(plist: String);
+procedure TFullServerEndPoint.LoadPackages(installer : boolean; plist: String);
 var
   p, pi, pv : String;
   pl : TArray<String>;
@@ -887,17 +885,17 @@ begin
           loadList := ploader.FFactory.resourceNames;
           FServerContext.pcm.loadPackage(pi, pv, loadList, li);
           logLevel := ollHuman;
-          if hasCommandLineParam('installer') then
+          if installer then
             logLevel := ollInstaller;
           Transaction(ploader.bundle, true, p, '', opmCmdLine, logLevel);
         finally
-          ploader.Free;
+          ploader.free;
         end;
         Logging.log('Done');
       end;
     end;
   finally
-    li.Free;
+    li.free;
   end;
 
   Logging.log('All Packages Loaded');
@@ -924,16 +922,16 @@ end;
 
 destructor TFHIRWebServerPatientViewContext.Destroy;
 begin
-  FContext.Free;
-  FErrors.Free;
-  FCards.Free;
-  FManager.Free;
+  FContext.free;
+  FErrors.free;
+  FCards.free;
+  FManager.free;
   inherited;
 end;
 
 procedure TFHIRWebServerPatientViewContext.SetManager(const Value: TCDSHooksManager);
 begin
-  FManager.Free;
+  FManager.free;
   FManager := Value;
 end;
 
@@ -942,7 +940,7 @@ end;
 destructor TFullServerWebEndPoint.Destroy;
 begin
   // nothing
-  carry.Free;
+  carry.free;
   inherited;
 end;
 
@@ -976,7 +974,7 @@ end;
 //  result := FEndPoint.FServerContext.TerminologyServer.CommonTerminologies;
 //end;
 //
-function TFullServerWebEndPoint.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
+function TFullServerWebEndPoint.BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params: String): String;
 var
   authurl: string;
   p : THTTPParameters;
@@ -988,16 +986,16 @@ begin
     '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10 + '<head>'#13#10 +
     '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 + '    <title>FHIR RESTful Server - FHIR v' + Factory.versionString
     + '</title>'#13#10 + TFHIRXhtmlComposer.PageLinks + #13#10 + FHIR_JS + '</head>'#13#10 + ''#13#10 + '<body>'#13#10 + ''#13#10 +
-    TFHIRXhtmlComposer.header(factory, nil, PathNoSlash, lang, SERVER_FULL_VERSION) + '<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10;
+    TFHIRXhtmlComposer.header(factory, nil, PathNoSlash, langList, SERVER_FULL_VERSION) + '<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', langList) + '</h2>'#13#10;
 
-  result := result + '<p>'#13#10 + GetFhirMessage('MSG_AUTH_REQUIRED', lang) + '</p>'#13#10;
+  result := result + '<p>'#13#10 + GetFhirMessage('MSG_AUTH_REQUIRED', langList) + '</p>'#13#10;
   if (Msg = '') and (params <> '') then
   begin
     p := THTTPParameters.Create(params);
     try
       msg := p['error_description'];
     finally
-      p.Free;
+      p.free;
     end;
   end;
 
@@ -1012,10 +1010,10 @@ begin
 
   result := result + '<p>&nbsp;</p>'#13#10 +
     '<p>This server uses <a href="http://fhir-docs.smarthealthit.org/argonaut-dev/authorization/">Smart App Launch</a> for OAuth logins</p>'#13#10;
-  result := result + TFHIRXhtmlComposer.Footer(factory, path, lang, logid);
+  result := result + TFHIRXhtmlComposer.Footer(factory, path, langList, logid);
 end;
 
-function TFullServerWebEndPoint.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, rawhost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TFullServerWebEndPoint.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; langList : THTTPLanguageList; host, rawhost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   counts: TStringList;
   a: String;
@@ -1058,9 +1056,9 @@ begin
           '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10 + '<head>'#13#10 +
           '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 + '    <title>FHIR RESTful Server - FHIR v' +
           Factory.versionString + '</title>'#13#10 + TFHIRXhtmlComposer.PageLinks + FHIR_JS + '</head>'#13#10 + ''#13#10 + '<body>'#13#10 +
-          TFHIRXhtmlComposer.header(factory, Session, sBaseURL, lang, SERVER_FULL_VERSION));
+          TFHIRXhtmlComposer.header(factory, Session, sBaseURL, langList, SERVER_FULL_VERSION));
 
-        b.Append('<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + '</h2>'#13#10);
+        b.Append('<h2>' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', langList) + '</h2>'#13#10);
 
         if Session <> nil then
           if secure then
@@ -1071,8 +1069,8 @@ begin
             b.Append('<p>Welcome ' + FormatTextToXML(Session.SessionName, xmlText) + ' (or use <a href="https://' + rawHost + port(Common.StatedSSLPort, 443) + PathNoSlash +
               '">Secure API</a>)</p>'#13#10);
 
-        b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', lang), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
-          StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', lang), [s]) +
+        b.Append('<p>'#13#10 + StringFormat(GetFhirMessage('MSG_HOME_PAGE_1', langList), ['<a href="http://hl7.org/fhir">http://hl7.org/fhir</a>']) + #13#10 +
+          StringFormat(GetFhirMessage('MSG_HOME_PAGE_2', langList), [s]) +
           ' This server defines some <a href="'+PathNoSlash+'/local.hts">extensions to the API</a>, and also offers <a href="'+PathNoSlash+'/tx">Terminology Services</a> or '+
             '(or you can browse <a href="/snomed/doco/">SNOMED-CT</a> or <a href="/loinc/doco/">LOINC</a> directly)' + #13#10);
         if Session.canGetUser and (Session.User <> nil) and not Session.isAnonymous then
@@ -1089,18 +1087,18 @@ begin
         b.Append('<p>GDPR-Disclosure: All access to this server is logged as AuditEvent Resources, and these store your ip address (and '+'logged in user, if one exists). Also, your IP address is logged with Google Analytics for building geomaps of server usage. Your continued use of the API constitutes agreement to these terms. See [link] for erasure requests.</p>');
 
         b.Append(
-          '</p>'#13#10 + '<hr/>'#13#10 + ''#13#10 + '<p>' + GetFhirMessage('SYSTEM_OPERATIONS', lang) + ':</p><ul><li> <a href="' + sBaseURL + '/metadata">' +
-          GetFhirMessage('CONF_PROFILE', lang) + '</a> ' + '(' + GetFhirMessage('OR', lang) + ' <a href="' + sBaseURL +
-          '/metadata?_format=text/xml">as xml</a> (' + GetFhirMessage('OR', lang) + ' <a href="' + sBaseURL +
+          '</p>'#13#10 + '<hr/>'#13#10 + ''#13#10 + '<p>' + GetFhirMessage('SYSTEM_OPERATIONS', langList) + ':</p><ul><li> <a href="' + sBaseURL + '/metadata">' +
+          GetFhirMessage('CONF_PROFILE', langList) + '</a> ' + '(' + GetFhirMessage('OR', langList) + ' <a href="' + sBaseURL +
+          '/metadata?_format=text/xml">as xml</a> (' + GetFhirMessage('OR', langList) + ' <a href="' + sBaseURL +
           '/metadata?_format=application/json">JSON</a>)</li>' + #13#10);
         if not IsTerminologyServerOnly then
-          b.Append('<li><a class="tag" href="' + sBaseURL + '/$meta">' + GetFhirMessage('SYSTEM_TAGS', lang) + '</a></li>');
-        b.Append('<li><a href="' + sBaseURL + '/_search">' + GetFhirMessage('GENERAL_SEARCH', lang) + '</a></li>');
+          b.Append('<li><a class="tag" href="' + sBaseURL + '/$meta">' + GetFhirMessage('SYSTEM_TAGS', langList) + '</a></li>');
+        b.Append('<li><a href="' + sBaseURL + '/_search">' + GetFhirMessage('GENERAL_SEARCH', langList) + '</a></li>');
         if not IsTerminologyServerOnly then
-          b.Append('<li><a href="' + sBaseURL + '/_history">' + StringFormat(GetFhirMessage('MSG_HISTORY', lang), [GetFhirMessage('NAME_SYSTEM', lang)]) +
+          b.Append('<li><a href="' + sBaseURL + '/_history">' + StringFormat(GetFhirMessage('MSG_HISTORY', langList), [GetFhirMessage('NAME_SYSTEM', langList)]) +
             '</a> (History of all resources)</li>' + #13#10);
         if not IsTerminologyServerOnly then
-          b.Append('<li><a href="#upload">' + GetFhirMessage('NAME_UPLOAD_SERVICES', lang) + '</a></li>' + #13#10);
+          b.Append('<li><a href="#upload">' + GetFhirMessage('NAME_UPLOAD_SERVICES', langList) + '</a></li>' + #13#10);
         b.Append('<li><a href="' + sBaseURL + '/package-client.hts">Maintain Packages</a></li>' + #13#10);
         if (secure) then
         begin
@@ -1115,13 +1113,13 @@ begin
         if (Session.canAdministerUsers) then
           b.Append('<li><a href="'+PathNoSlash+'/scim/web">Manage Users</a></li>' + #13#10);
 
-        b.Append('</ul>' + #13#10 + ''#13#10 + '<hr/>'#13#10 + '<p>' + GetFhirMessage('MSG_HOME_PAGE_3', lang) + '</p>' + #13#10);
+        b.Append('</ul>' + #13#10 + ''#13#10 + '<hr/>'#13#10 + '<p>' + GetFhirMessage('MSG_HOME_PAGE_3', langList) + '</p>' + #13#10);
 
         b.Append('<table class="lines">'#13#10 +
 
-          '<tr><th>' + GetFhirMessage('NAME_TYPE', lang) + '</th>' + '<th>' + GetFhirMessage('NAME_STORED', lang) + '</th>' + '<th colspan="4">' +
-          GetFhirMessage('NAME_OPERATIONS', lang) + '</th><td style="border-left: 1px solid grey"/><th>' + GetFhirMessage('NAME_TYPE', lang) + '</th>' + '<th>'
-          + GetFhirMessage('NAME_STORED', lang) + '</th>' + '<th colspan="4">' + GetFhirMessage('NAME_OPERATIONS', lang) + '</th></tr>'#13#10);
+          '<tr><th>' + GetFhirMessage('NAME_TYPE', langList) + '</th>' + '<th>' + GetFhirMessage('NAME_STORED', langList) + '</th>' + '<th colspan="4">' +
+          GetFhirMessage('NAME_OPERATIONS', langList) + '</th><td style="border-left: 1px solid grey"/><th>' + GetFhirMessage('NAME_TYPE', langList) + '</th>' + '<th>'
+          + GetFhirMessage('NAME_STORED', langList) + '</th>' + '<th colspan="4">' + GetFhirMessage('NAME_OPERATIONS', langList) + '</th></tr>'#13#10);
 
         names := TStringList.Create;
         Try
@@ -1146,7 +1144,7 @@ begin
 
               a := names[i];
               ix := counts.IndexOf(a);
-              b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
+              b.Append(TFHIRXhtmlComposer.ResourceLinks(a, langList, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
 
               b.Append('<td style="border-left: 1px solid grey"/>');
 
@@ -1154,7 +1152,7 @@ begin
               begin
                 a := names[1 + i + names.Count div 2];
                 ix := counts.IndexOf(a);
-                b.Append(TFHIRXhtmlComposer.ResourceLinks(a, lang, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
+                b.Append(TFHIRXhtmlComposer.ResourceLinks(a, langList, sBaseURL, integer(counts.Objects[ix]), true, true, Session.canRead(a)));
               end;
 
               b.Append('</tr>');
@@ -1162,34 +1160,34 @@ begin
             end;
           end;
         finally
-          names.Free;
+          names.free;
         end;
         b.Append('</table>'#13#10);
         if not IsTerminologyServerOnly then
-          b.Append('<hr/><h2>' + GetFhirMessage('NAME_UPLOAD_SERVICES', lang) + '</h2>'#13#10 +
+          b.Append('<hr/><h2>' + GetFhirMessage('NAME_UPLOAD_SERVICES', langList) + '</h2>'#13#10 +
             '<a name="upload"> </a><form enctype="multipart/form-data" method="POST">' + #13#10 +
-            '<p><input type="hidden" name="_format" value="text/html"/><br/>' + #13#10 + '' + GetFhirMessage('MSG_CONTENT_MESSAGE', lang) + '.<br/><br/>' +
-            #13#10 + '' + GetFhirMessage('MSG_CONTENT_UPLOAD', lang) + ': <br/><input type="file" name="file" size="60"/><br/>' + #13#10 + '' +
-            GetFhirMessage('MSG_CONTENT_PASTE', lang) + ':<br/> <textarea name="src" cols="70" rows="5"/>' + #13#10 + '</textarea><br/><br/>' + #13#10 +
+            '<p><input type="hidden" name="_format" value="text/html"/><br/>' + #13#10 + '' + GetFhirMessage('MSG_CONTENT_MESSAGE', langList) + '.<br/><br/>' +
+            #13#10 + '' + GetFhirMessage('MSG_CONTENT_UPLOAD', langList) + ': <br/><input type="file" name="file" size="60"/><br/>' + #13#10 + '' +
+            GetFhirMessage('MSG_CONTENT_PASTE', langList) + ':<br/> <textarea name="src" cols="70" rows="5"/>' + #13#10 + '</textarea><br/><br/>' + #13#10 +
             '<table class="none"><tr><td>Operation:</td><td> <select size="1" name="op">' + #13#10 + ' <option value="transaction">Transaction</option>' +
             #13#10 + ' <option value="batch">Batch</option>' + #13#10 + ' <option value="validation">Validation</option>' + #13#10 + '</select></td></tr>' +
             #13#10 + '<tr><td>Profile:</td><td> <select size="1" name="profile">' + #13#10 + '<option value=""></option>' + #13#10 + pol +
             '</select> (if validating, use the selected profile)</td></tr></table><br/>' + #13#10 + '<input type="submit" value="' +
-            GetFhirMessage('NAME_UPLOAD', lang) + '"/>'#13#10 + '</p></form>'#13#10);
-        b.Append(TFHIRXhtmlComposer.Footer(factory, sBaseURL, lang, logId));
+            GetFhirMessage('NAME_UPLOAD', langList) + '"/>'#13#10 + '</p></form>'#13#10);
+        b.Append(TFHIRXhtmlComposer.Footer(factory, sBaseURL, langList, logId));
         result := b.ToString;
       finally
-        b.Free;
+        b.free;
       end;
     finally
-      profiles.Free;
+      profiles.free;
     end;
   finally
-    counts.Free;
+    counts.free;
   end;
 end;
 
-function TFullServerWebEndPoint.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+function TFullServerWebEndPoint.BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 var
   s: String;
 begin
@@ -1198,25 +1196,25 @@ begin
   result := '<?xml version="1.0" encoding="UTF-8"?>'#13#10 + '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10 +
     '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10 + ''#13#10 +
     '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'#13#10 + '<head>'#13#10 +
-    '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 + '    <title>' + StringFormat(GetFhirMessage('UPLOAD', lang),
+    '    <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />' + #13#10 + '    <title>' + StringFormat(GetFhirMessage('UPLOAD', langList),
     [aType]) + '</title>'#13#10 + '    <link rel="Stylesheet" href="/css/fhir.css" type="text/css" media="screen" />'#13#10 + FHIR_JS + '</head>'#13#10 +
     ''#13#10 + '<body>'#13#10 + ''#13#10 + '<div class="header">'#13#10 + '  <a href="http://www.hl7.org/fhir" title="' +
-    GetFhirMessage('MSG_HOME_PAGE_TITLE', lang) + '"><img border="0" src="/img/flame16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10 +
-    ''#13#10 + '  &copy; HL7.org 2011+'#13#10 + '  &nbsp;'#13#10 + '  ' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', lang) + ''#13#10 +
-    '  &nbsp;'#13#10 + '  FHIR ' + GetFhirMessage('NAME_VERSION', lang) + ' ' + Factory.versionString + ''#13#10;
+    GetFhirMessage('MSG_HOME_PAGE_TITLE', langList) + '"><img border="0" src="/img/flame16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10 +
+    ''#13#10 + '  &copy; HL7.org 2011+'#13#10 + '  &nbsp;'#13#10 + '  ' + Common.OwnerName + ' ' + GetFhirMessage('NAME_SERVER', langList) + ''#13#10 +
+    '  &nbsp;'#13#10 + '  FHIR ' + GetFhirMessage('NAME_VERSION', langList) + ' ' + Factory.versionString + ''#13#10;
 
   if Session <> nil then
     result := result + '&nbsp;&nbsp;' + FormatTextToXML(Session.SessionName, xmlText);
 
-  result := result + '  &nbsp;<a href="' + s + '">' + GetFhirMessage('MSG_BACK_HOME', lang) + '</a>'#13#10 + '</div>'#13#10 + ''#13#10 +
-    '<div id="div-cnt" class="content">'#13#10 + '<h2>' + StringFormat(GetFhirMessage('UPLOAD', lang), [aType]) + '</h2>'#13#10 + '<form action="' + s +
+  result := result + '  &nbsp;<a href="' + s + '">' + GetFhirMessage('MSG_BACK_HOME', langList) + '</a>'#13#10 + '</div>'#13#10 + ''#13#10 +
+    '<div id="div-cnt" class="content">'#13#10 + '<h2>' + StringFormat(GetFhirMessage('UPLOAD', langList), [aType]) + '</h2>'#13#10 + '<form action="' + s +
     lowercase(aType) + '/upload" enctype="multipart/form-data" method="POST">' + #13#10 + '<input type="hidden" name="format" size="text/html"/><br/>' + #13#10
-    + '' + GetFhirMessage('MSG_CONTENT_UPLOAD', lang) + ': <input type="file" name="file" size="60"/><br/>' + #13#10 +
-    '<input type="submit" value="Upload"/>'#13#10 + '</form>'#13#10 + ''#13#10 + '<p><br/><a href="' + s + '">' + GetFhirMessage('MSG_BACK_HOME', lang) +
+    + '' + GetFhirMessage('MSG_CONTENT_UPLOAD', langList) + ': <input type="file" name="file" size="60"/><br/>' + #13#10 +
+    '<input type="submit" value="Upload"/>'#13#10 + '</form>'#13#10 + ''#13#10 + '<p><br/><a href="' + s + '">' + GetFhirMessage('MSG_BACK_HOME', langList) +
     '</a></p>' + '</div>'#13#10 + '</body>'#13#10 + '</html>'#13#10 + ''#13#10
 end;
 
-function TFullServerWebEndPoint.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
+function TFullServerWebEndPoint.DoSearch(Session: TFHIRSession; rtype: string; langlist  : THTTPLanguageList; params: String): TFHIRBundleW;
 var
   request: TFHIRRequest;
   response: TFHIRResponse;
@@ -1231,18 +1229,18 @@ begin
     try
       request.Session := Session.link;
       request.ResourceName := rtype;
-      request.lang := lang;
+      request.langList := langList.link;
       request.LoadParams(params);
       request.CommandType := fcmdSearch;
       ProcessRequest(Context, request, response, tt);
       result := factory.wrapBundle(response.resource.link);
     finally
-      tt.Free;
-      response.Free;
-      request.Free;
+      tt.free;
+      response.free;
+      request.free;
     end;
   finally
-    Context.Free;
+    Context.free;
   end;
 end;
 
@@ -1262,11 +1260,11 @@ begin
     begin
       if alpPatient in params then
       begin
-        enc := factory.wrapEncounter(GetResource(session, 'Encounter', THTTPLanguages.Create(request.AcceptLanguage), launchContext.Substring(10), '', ''));
+        enc := factory.wrapEncounter(GetResource(session, 'Encounter', THTTPLanguageList.Create(request.AcceptLanguage, true), launchContext.Substring(10), '', ''));
         try
           result.Add('patient', enc.PatientId);
         finally
-          enc.Free;
+          enc.free;
         end;
       end;
       if alpEncounter in params then
@@ -1281,7 +1279,7 @@ var
   be : TFhirBundleEntryW;
   p : TFhirPatientW;
 begin
-  b := DoSearch(nil, 'Patient', THTTPLanguages.create('en'), '_summary=true&__wantObject=true');
+  b := DoSearch(nil, 'Patient', nil, '_summary=true&__wantObject=true');
   try
     for be in b.entries.forEnum do
     begin
@@ -1289,11 +1287,11 @@ begin
       try
         details.Add(p.id, p.nameSummary);
       finally
-        p.Free;
+        p.free;
       end;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1361,10 +1359,10 @@ begin
   else if request.id.StartsWith('Encounter/') then
     result := HandleWebEncounter(request, response, secure)
   else
-    raise EFHIRException.CreateLang('MSG_UNKNOWN_CONTENT', request.lang, [request.id, 'web UI']);
+    raise EFHIRException.CreateLang('MSG_UNKNOWN_CONTENT', request.langList, [request.id, 'web UI']);
 end;
 
-function TFullServerWebEndPoint.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+function TFullServerWebEndPoint.ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 var
   rdr: TFslZipReader;
   p: TFHIRParser;
@@ -1390,8 +1388,8 @@ begin
     try
       if (rdr = nil) or (name <> carryName) then
       begin
-        rdr.Free;
-        carry.Free;
+        rdr.free;
+        carry.free;
         rdr := TFslZipReader.Create;
         s := TFslVCLStream.Create;
         s.stream := oStream;
@@ -1424,11 +1422,11 @@ begin
           if (rdr.Parts[i].name <> 'package.json') then
           begin
             if rdr.Parts[i].name.EndsWith('.json') then
-              p := self.Context.Factory.makeParser(self.Context.ValidatorContext.Link, ffJson, lang)
+              p := self.Context.Factory.makeParser(self.Context.ValidatorContext.Link, ffJson, langList)
             else if rdr.Parts[i].name.EndsWith('.map') then
-              p := TFHIRTextParser.Create(self.Context.ValidatorContext.link, lang)
+              p := TFHIRTextParser.Create(self.Context.ValidatorContext.link, langList.link)
             else
-              p := self.Context.Factory.makeParser(self.Context.ValidatorContext.Link, ffXml, lang);
+              p := self.Context.Factory.makeParser(self.Context.ValidatorContext.Link, ffXml, langList);
             try
               p.Source := TBytesStream.Create(rdr.Parts[i].AsBytes);
               p.AllowUnknownContent := true;
@@ -1446,7 +1444,7 @@ begin
                     ; // we ignore these for now
                 end;
                 finally
-                  bnd.Free;
+                  bnd.free;
                 end;
               end
               else if (p.resource.fhirType <> 'Parameters') and ok(p.resource) then
@@ -1454,8 +1452,8 @@ begin
                 result.addEntry('', p.resource.link);
               end;
             finally
-              p.Source.Free;
-              p.Free;
+              p.Source.free;
+              p.free;
             end;
           end;
         end;
@@ -1465,16 +1463,16 @@ begin
       else
         cursor := -1;
     finally
-      rdr.Free;
+      rdr.free;
     end;
     result.link;
   finally
-    result.Free;
-    inc.Free;
+    result.free;
+    inc.free;
   end;
 end;
 
-function TFullServerWebEndPoint.GetResource(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; id, ver, op: String): TFhirResourceV;
+function TFullServerWebEndPoint.GetResource(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; id, ver, op: String): TFhirResourceV;
 var
   request: TFHIRRequest;
   response: TFHIRResponse;
@@ -1486,7 +1484,7 @@ begin
   try
     request.Session := Session.link;
     request.ResourceName := rtype;
-    request.lang := lang;
+    request.langList := langList.link;
     request.id := id;
     request.LoadParams('');
     if (op <> '') then
@@ -1506,16 +1504,16 @@ begin
     try
       ProcessRequest(Context, request, response, tt);
     finally
-      tt.Free;
-      Context.Free;
+      tt.free;
+      Context.free;
     end;
     if response.resource <> nil then
       result := response.resource.link
     else
-      raise EFHIRException.CreateLang('MSG_NO_MATCH', lang, [rtype + '/' + id + '/_history/' + ver]);
+      raise EFHIRException.CreateLang('MSG_NO_MATCH', langList, [rtype + '/' + id + '/_history/' + ver]);
   finally
-    response.Free;
-    request.Free;
+    response.free;
+    request.free;
   end;
 end;
 
@@ -1562,7 +1560,7 @@ begin
 //          s := transform1(questionnaire, request.lang, 'QuestionnaireToHTML.xslt', true);
 //          FContext.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
 //        finally
-//          questionnaire.Free;
+//          questionnaire.free;
 //        end;
 //        // insert page headers:
 //        s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
@@ -1573,7 +1571,7 @@ begin
 //        s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(request.baseUrl, request.lang, request.internalRequestId, false));
 //        s := s.Replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "' + request.baseUrl + '$qa-post";');
 //      finally
-//        builder.Free;
+//        builder.free;
 //      end;
 //    end;
 //
@@ -1581,7 +1579,7 @@ begin
 //    result := Now; // don't want anyone caching anything
 //    response.contentType := 'text/html; charset=UTF-8';
 //  finally
-//    profile.Free;
+//    profile.free;
 //  end;
   raise ETodo.create('TFullServerWebEndPoint.HandleWebCreate');
 end;
@@ -1622,7 +1620,7 @@ begin
 //        comp.LogId := request.internalRequestId;
 //        s := comp.Compose(r);
 //      finally
-//        comp.Free;
+//        comp.free;
 //      end;
 //
 //      s := '<?xml version="1.0" encoding="UTF-8"?>' + #13#10 + '<!DOCTYPE HTML "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">' + #13#10 + '' +
@@ -1640,7 +1638,7 @@ begin
 //      response.contentType := 'text/html; charset=UTF-8';
 //    end;
 //  finally
-//    r.Free;
+//    r.free;
 //  end;
 end;
 
@@ -1656,7 +1654,7 @@ begin
   StringSplit(s, '/', id, ver);
   request.id := id;
   if not StringArrayExistsSensitive(factory.ResourceNames, typ) {or FContext.ValidatorContext.hasCustomResource(typ))} then
-    raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.lang, [typ]);
+    raise EFHIRException.CreateLang('MSG_UNKNOWN_TYPE', request.langList, [typ]);
   request.ResourceName := typ;
   request.CommandType := fcmdUpdate;
 
@@ -1665,9 +1663,9 @@ begin
     p := THTTPParameters.Create(TEncoding.UTF8.GetString(request.Source.AsBytes), true);
     try
       if p['srcformat'] = 'json' then
-        prsr := self.Context.Factory.makeParser(self.Context.ValidatorContext.Link, ffJson, request.lang)
+        prsr := self.Context.Factory.makeParser(self.Context.ValidatorContext, ffJson, request.langList)
       else
-        prsr := self.Context.Factory.makeParser(self.Context.ValidatorContext.Link, ffXml, request.lang);
+        prsr := self.Context.Factory.makeParser(self.Context.ValidatorContext, ffXml, request.langList);
       try
         s := p['source'];
         prsr.Source := TStringStream.Create(s, TEncoding.UTF8);
@@ -1682,18 +1680,18 @@ begin
             response.Location := request.baseUrl + typ + '/' + id;
           end;
         finally
-          prsr.Source.Free;
-          tt.Free;
+          prsr.Source.free;
+          tt.free;
         end;
       finally
-        prsr.Free;
+        prsr.free;
       end;
     finally
-      p.Free;
+      p.free;
     end;
     result := 0;
   finally
-    Context.Free;
+    Context.free;
   end;
 end;
 
@@ -1736,10 +1734,10 @@ begin
 //          s := transform1(questionnaire, request.lang, 'QuestionnaireToHTML.xslt', true);
 //          FContext.QuestionnaireCache.putForm(frtStructureDefinition, id, s, builder.Dependencies);
 //        finally
-//          questionnaire.Free;
+//          questionnaire.free;
 //        end;
 //      finally
-//        builder.Free;
+//        builder.free;
 //      end;
 //    end;
 //    // insert page headers:
@@ -1751,7 +1749,7 @@ begin
 //    result := Now; // don't want anyone caching anything
 //    response.contentType := 'text/html; charset=UTF-8';
 //  finally
-//    profile.Free;
+//    profile.free;
 //  end;
 end;
 {$ENDIF}
@@ -1775,12 +1773,12 @@ begin
 //  finally
 //    FWebServer.FLock.Unlock;
 //  end;
-  patient := factory.wrapPatient(GetResource(request.Session, 'Patient', request.lang, id, ver, ''));
+  patient := factory.wrapPatient(GetResource(request.Session, 'Patient', request.langList, id, ver, ''));
   try
     xhtml := factory.getXhtml(patient.Resource).AsPlainText;
  //   startHooks(hooks, patient, request.baseUrl);
   finally
-    patient.Free;
+    patient.free;
   end;
 
 //  s := Common.SourceProvider.getSource('patient.html');
@@ -1843,7 +1841,7 @@ begin
 //    xhtml := factory.getXhtml(encounter.Resource).AsPlainText;
 // //   startHooks(hooks, patient, request.baseUrl);
 //  finally
-//    encounter.Free;
+//    encounter.free;
 //  end;
 //
 //  s := FWebServer.FCommon.SourceProvider.getSource('encounter.html');
@@ -1919,7 +1917,7 @@ begin
 //      response.HTTPCode := 200;
 //      response.contentType := 'text/html; charset=UTF-8';
 //    finally
-//      hooks.Free;
+//      hooks.free;
 //    end;
 //  end;
 result := 0;
@@ -1934,20 +1932,20 @@ var
 begin
   // get the right questionnaire
   StringSplit(request.id.Substring(14), '/', id, ver);
-  questionnaire := GetResource(request.Session, 'Questionnaire', request.lang, id, ver, '');
+  questionnaire := GetResource(request.Session, 'Questionnaire', request.langList.link, id, ver, '');
   try
     // convert to xhtml
-    s := transform1(questionnaire, request.lang, 'QuestionnaireToHTML.xslt', false);
+    s := transform1(questionnaire, request.langList, 'QuestionnaireToHTML.xslt', false);
     // insert page headers:
     s := s.Replace('<!--header insertion point-->', TFHIRXhtmlComposer.PageLinks);
-    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.header(factory, request.Session, request.baseUrl, request.lang, SERVER_FULL_VERSION));
-    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(factory, request.baseUrl, request.lang, request.internalRequestId, false));
+    s := s.Replace('<!--body top insertion point-->', TFHIRXhtmlComposer.header(factory, request.Session, request.baseUrl, request.langList, SERVER_FULL_VERSION));
+    s := s.Replace('<!--body bottom insertion point-->', TFHIRXhtmlComposer.Footer(factory, request.baseUrl, request.langList, request.internalRequestId, false));
     s := s.Replace('var questionnaireAnswersEndpoint = null;', 'var questionnaireAnswersEndpoint = "' + request.baseUrl + '/QuestionnaireAnswers";');
     response.Body := s;
     result := Now; // don't want anyone caching anything
     response.contentType := 'text/html; charset=UTF-8';
   finally
-    questionnaire.Free;
+    questionnaire.free;
   end;
 end;
 
@@ -1994,7 +1992,7 @@ begin
 //      try
 //        j := json.Compose(qa);
 //      finally
-//        json.Free;
+//        json.free;
 //      end;
 //
 //      // insert page headers:
@@ -2008,7 +2006,7 @@ begin
 //      response.contentType := 'text/html; charset=UTF-8';
 //    end;
 //  finally
-//    r.Free;
+//    r.free;
 //  end;
 end;
 {$ENDIF}
@@ -2022,12 +2020,12 @@ end;
 //    if ws.open(AContext, request, response) then
 //      self.Context.SubscriptionManager.HandleWebSocket(ws);
 //  finally
-//    ws.Free;
+//    ws.free;
 //  end;
 //end;
 //
 {$IFDEF WINDOWS}
-function TFullServerWebEndPoint.transform1(resource: TFhirResourceV; const lang : THTTPLanguages; xslt: String; saveOnly: boolean): string;
+function TFullServerWebEndPoint.transform1(resource: TFhirResourceV; langList : THTTPLanguageList; xslt: String; saveOnly: boolean): string;
 var
   xml: TFHIRComposer;
   msx: TMsXmlParser;
@@ -2043,21 +2041,21 @@ begin
 
   b := TBytesStream.Create;
   try
-    xml := factory.makeComposer(Context.ValidatorContext.link, ffXml, lang, OutputStyleNormal);
+    xml := factory.makeComposer(Context.ValidatorContext, ffXml, langList, OutputStyleNormal);
     try
       xml.Compose(b, resource);
     finally
-      xml.Free;
+      xml.free;
     end;
     b.Position := 0;
     msx := TMsXmlParser.Create;
     try
       doc := msx.Parse(b);
     finally
-      msx.Free;
+      msx.free;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 //  Logging.log(doc.documentElement.namespaceURI + ', ' + doc.documentElement.nodeName);
 

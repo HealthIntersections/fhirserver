@@ -1017,7 +1017,7 @@ Begin
       For iFontNameIndex := 0 To oFontNameList.Count - 1 Do
         FFontNameComboBox.Items.Add(oFontNameList[iFontNameIndex]);
     Finally
-      oFontNameList.Free;
+      oFontNameList.free;
     End;
 
     FFontNameComboBox.Cache;
@@ -1602,7 +1602,7 @@ End;
 
 Destructor TWordProcessorTouchToolbar.Destroy;
 Begin
-  FColourDialog.Free;
+  FColourDialog.free;
   FWordProcessor := Nil;
   FImages.free;
 
@@ -1613,7 +1613,7 @@ Function TWordProcessorTouchToolbar.button(owner : TWinControl;  top, left : int
 var
   bmp : TBitmap;
 begin
-  result := TSpeedButton.create(owner);
+  result := TSpeedButton.Create(owner);
   result.Parent := owner;
   result.Left := 4 + left * LEFT_INC_H;
   result.Top := 4 +  top * LEFT_INC_V;
@@ -1633,7 +1633,7 @@ begin
     result.Glyph.Assign(bmp);
     result.NumGlyphs := 1;
   finally
-    bmp.Free;
+    bmp.free;
   end;
 end;
 
@@ -2193,7 +2193,7 @@ begin
     para.AlignLeft;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 end;
 
@@ -2207,7 +2207,7 @@ begin
     para.AlignCentre;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 end;
 
@@ -2221,7 +2221,7 @@ begin
     para.AlignRight;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 end;
 
@@ -2235,7 +2235,7 @@ begin
     para.AlignJustify;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 end;
 
@@ -2249,7 +2249,7 @@ begin
     para.ListType := WPSParagraphListTypeNone;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 
 end;
@@ -2264,7 +2264,7 @@ begin
     para.ListType := WPSParagraphListTypeBullets;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 
 end;
@@ -2279,7 +2279,7 @@ begin
     para.ListType := WPSParagraphListTypeNumbers;
     FWordProcessor.PrimaryRange.ApplyParagraph(para);
   finally
-    para.Free;
+    para.free;
   end;
 
 end;

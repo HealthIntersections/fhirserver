@@ -130,15 +130,15 @@ var
   m : TMenuItem;
 begin
   setForOs(btnOk, btnCancel);
-  FImage := TBitmap.create;
-  FOriginalImage := TBitmap.create;
-  FScanner := TScanManager.create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
-  //FScreens := TStringList.create;
+  FImage := TBitmap.Create;
+  FOriginalImage := TBitmap.Create;
+  FScanner := TScanManager.Create({$IFNDEF FPC}TBarcodeFormat{$ELSE}ZXing.BarCodeFormat{$ENDIF}.QR_CODE, nil);
+  //FScreens := TStringList.Create;
   //listScreens(FScreens);
   //pmScreens.Items.Clear;
   //for i := 0 to FScreens.count - 1 do
   //begin
-  //  m := TMenuItem.create;
+  //  m := TMenuItem.Create;
   //  pmScreens.Items.Add(m);
   //  m.Caption := FScreens[i];
   //  m.Tag := i;
@@ -168,7 +168,7 @@ var
   bmp : TFPCustomImage;
   s : String;
 begin
-  dlg := TOpenDialog.create(self);
+  dlg := TOpenDialog.Create(self);
   try
     dlg.Filter := 'All Known Images|*.bmp; *.jpg; *.gif; *.png; *.tiff|'+
       'All Files|*.*';
@@ -176,7 +176,7 @@ begin
     if dlg.execute then
     begin
       clear;
-      bmp := TFPMemoryImage.create(10, 10);
+      bmp := TFPMemoryImage.Create(10, 10);
       try
         bmp.LoadFromFile(dlg.filename);
         FImage.assign(bmp);
@@ -242,7 +242,7 @@ end;
 //  bmp : TBitmap;
 //  rr : TReadResult;
 //begin
-//  bmp := TBitmap.create;
+//  bmp := TBitmap.Create;
 //  try
 //    bmp.width := 1500;
 //    bmp.height := trunc((bmp.width / pg.Width) * pg.Height);
@@ -279,7 +279,7 @@ var
   dlg : TOpenDialog;
   pdf : TPdfDocument;
 begin
-  dlg := TOpenDialog.create(self);
+  dlg := TOpenDialog.Create(self);
   try
     dlg.Filter := 'PDF Files|*.pdf|'+
       'All Files|*.*';
@@ -344,7 +344,7 @@ end;
 procedure TQRCodeScannerForm.FormDestroy(Sender: TObject);
 begin
   FImage.free;
-  FOriginalImage.Free;
+  FOriginalImage.free;
   FScanner.free;
 end;
 
@@ -431,7 +431,7 @@ begin
     begin
       if not btnReset.enabled then
         FOriginalImage.assign(Image1.picture);
-      bmp := TBitmap.create;
+      bmp := TBitmap.Create;
       try
         src.Top := Trunc(IntegerMin(FStart.y, FEnd.Y) * ImageScale);
         src.Bottom := Trunc(IntegerMax(FStart.y, FEnd.Y) * ImageScale);

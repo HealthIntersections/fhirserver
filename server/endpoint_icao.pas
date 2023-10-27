@@ -41,7 +41,7 @@ uses
   PdfiumCore,
   fsl_utilities, fsl_stream, fsl_crypto, fsl_http, fsl_threads, fsl_i18n, fsl_logging,
   fhir_objects, fhir_icao, fsl_web_stream,
-  fhir4_factory, fhir4_ips, fhir4_json, fhir4_resources,
+  fhir4_factory, fhir4_ips,
   utilities, server_config, time_tracker, storage, server_stats,
   web_base, endpoint, healthcard_generator;
 
@@ -65,9 +65,9 @@ type
     function processError(message, accept, htmlLog: String;  response: TIdHTTPResponseInfo): String;
     function renderError(message, log: String): String;
     function renderStartPage(path: string): String;
-    function extractFile(request: TIdHTTPRequestInfo; var ct : String): TStream;
+    function extractFile(request: TIdHTTPRequestInfo; name : String; out params, ct : String): TStream;
 
-    function genIPS(request: TIdHTTPRequestInfo) : TFhirBundle;
+    function genIPS(request: TIdHTTPRequestInfo) : TFslBuffer;
     procedure processIPS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
   public
     constructor Create(code, path : String; common : TFHIRWebServerCommon);
@@ -105,19 +105,19 @@ implementation
 
 constructor TICAOWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, nil, nil, i18n);
+  inherited Create(config, settings, nil, nil, nil, i18n);
   FJWK :=  TJWK.loadFromFile(Settings.Ini.web['card-key'].value);
   FJWKSFile := Settings.Ini.web['card-jwks'].value;
-  FStore := TX509CertificateStore.create;
+  FStore := TX509CertificateStore.Create;
   if Settings.Ini.web['cert-store'].value <> '' then
     FStore.addFolder(Settings.Ini.web['cert-store'].value);
 end;
 
 destructor TICAOWebEndPoint.Destroy;
 begin
-  FJWK.Free;
+  FJWK.free;
   FICAOServer.free;
-  FStore.Free;
+  FStore.free;
   inherited;
 end;
 
@@ -157,7 +157,7 @@ end;
 constructor TICAOWebServer.Create(code, path : String; common : TFHIRWebServerCommon);
 begin
   inherited;
-  FPDFLock := TFslLock.create;
+  FPDFLock := TFslLock.Create;
   PdfiumDllFileName := 'libpdf.dll';
 end;
 
@@ -165,7 +165,7 @@ destructor TICAOWebServer.Destroy;
 begin
   FJWK.free;
   FStore.free;
-  FPDFLock.Free;
+  FPDFLock.free;
   inherited;
 end;
 
@@ -286,7 +286,7 @@ begin
   if accept = 'image/png' then
   begin
     response.ContentType := 'image/png';
-    response.ContentStream := TBytesStream.create(card.image);
+    response.ContentStream := TBytesStream.Create(card.image);
     response.FreeContentStream := true;
   end
   else if accept = 'application/jwt' then
@@ -336,7 +336,7 @@ var
   gen : THealthCardFormGenerator;
   card : THealthcareCard;
 begin
-  gen := THealthCardFormGenerator.create(FJWK.link);
+  gen := THealthCardFormGenerator.Create(FJWK.link);
   try
     gen.IssuerURL := AbsoluteURL(true);
     try
@@ -350,11 +350,11 @@ begin
           try
             result := processSHC(card, request.Accept, 'SHC Generation', 'Processing User Form', gen.issues.Text, response);
           finally
-            card.Free;
+            card.free;
           end;
         end;
       finally
-        vars.Free;
+        vars.free;
       end;
     except
       on e : Exception do
@@ -371,9 +371,9 @@ var
   conv : TICAOCardImporter;
   card : THealthcareCard;
 begin
-  conv := TICAOCardImporter.create;
+  conv := TICAOCardImporter.Create;
   try
-    conv.factory := TFHIRFactoryR4.create;
+    conv.factory := TFHIRFactoryR4.Create;
     conv.issuer := AbsoluteURL(true);
     conv.store := FStore.Link;
     conv.mustVerify := true;
@@ -393,7 +393,7 @@ begin
           result := processError(e.message, accept, conv.htmlReport, response);
       end;
     finally
-      bmp.Free;
+      bmp.free;
     end;
   finally
     conv.free;
@@ -405,9 +405,9 @@ var
   conv : TICAOCardImporter;
   card : THealthcareCard;
 begin
-  conv := TICAOCardImporter.create;
+  conv := TICAOCardImporter.Create;
   try
-    conv.factory := TFHIRFactoryR4.create;
+    conv.factory := TFHIRFactoryR4.Create;
     conv.issuer := AbsoluteURL(true);
     conv.store := FStore.Link;
     conv.mustVerify := true;
@@ -433,9 +433,9 @@ var
   conv : TICAOCardImporter;
   card : THealthcareCard;
 begin
-  conv := TICAOCardImporter.create;
+  conv := TICAOCardImporter.Create;
   try
-    conv.factory := TFHIRFactoryR4.create;
+    conv.factory := TFHIRFactoryR4.Create;
     conv.issuer := AbsoluteURL(true);
     conv.store := FStore.Link;
     conv.mustVerify := true;
@@ -474,7 +474,10 @@ begin
   path := PathWithSlash;
   Logging.log(path+' : '+request.Document);
   if request.Document = path+'IPS' then
+  begin
+    result := 'process IPS';
     processIPS(request, response)
+  end
   else
   begin
     tgt := URLPath([AbsoluteURL(true), request.document.Substring(PathWithSlash.Length)]);
@@ -483,27 +486,49 @@ begin
   end;
 end;
 
-function TICAOWebServer.extractFile(request: TIdHTTPRequestInfo; var ct : String) : TStream;
+function TICAOWebServer.extractFile(request: TIdHTTPRequestInfo; name : String; out params, ct : String) : TStream;
 var
   form: TMimeMessage;
+  p : TMimePart;
   mode: TOperationMode;
 begin
+  params := '';
   form := loadMultipartForm(request.PostStream, request.contentType, mode);
   try
-    result := extractFileData(defLang, form, 'file', ct);
+    for p in form.Parts do
+      if (p.FileName = '') then
+        if params = '' then
+          params := p.ParamName+'='+p.Content.AsText
+        else
+          params := params+'&'+p.ParamName+'='+p.Content.AsText;
+
+    result := extractFileData(nil, form, name, ct);
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
-function TICAOWebServer.genIPS(request: TIdHTTPRequestInfo): TFhirBundle;
+function TICAOWebServer.genIPS(request: TIdHTTPRequestInfo): TFslBuffer;
 var
   ipsGen : TIPSGenerator;
+  stream : TStream;
+  params, ct : String;
 begin
-  ipsGen := TIPSGenerator.create;
+  ipsGen := TIPSGenerator.Create;
   try
-    ipsGen.params := THTTPParameters.Create(request.UnparsedParams);
-    result := ipsGen.generate;
+    stream := extractFile(request, 'acfile', params, ct);
+    if (stream <> nil) then
+    begin
+      try
+        ipsgen.attachment := TFslBuffer.Create;
+        ipsgen.attachment.LoadFromStream(stream);
+        ipsgen.attachment.Format := ct;
+      finally
+        stream.free;
+      end;
+    end;
+    ipsGen.params := THTTPParameters.Create(params);
+    result := ipsGen.generateBinary;
   finally
     ipsGen.free;
   end;
@@ -511,32 +536,32 @@ end;
 
 procedure TICAOWebServer.processIPS(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
-  bnd : TFHIRBundle;
-  json : TFHIRJsonComposer;
+  bin : TFslBuffer;
 begin
-  bnd := genIPS(request);
+  bin := genIPS(request);
   try
     response.ResponseNo := 200;
-    response.ContentType := 'application/json';
-    json := TFHIRJsonComposer.create(nil, OutputStylePretty, defLang);
-    try
-      response.ContentText := json.Compose(bnd);
-    finally
-      json.Free;
-    end;
+    response.ContentType := bin.format;
+    if (bin.Format = 'application/health-document') then
+      response.ContentDisposition := 'attachment; filename=ips.healthdoc';
+    response.ContentStream := bin.asStream;
+    response.FreeContentStream := true;
   finally
-    bnd.free;
+    bin.free;
   end;
 end;
 
 function TICAOWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
 var
   s : TStream;
-  ct : String;
+  params, ct : String;
 begin
   countRequest;
   if request.Document = PathWithSlash+'ips' then
-    processIPS(request, response)
+  begin
+    processIPS(request, response);
+    result := 'Process IPS';
+  end
   else
   begin
     response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
@@ -553,14 +578,14 @@ begin
       result := processPDF(request.PostStream, request.Accept, response)
     else if (request.Command = 'POST') and request.ContentType.StartsWith('multipart/') then
     begin
-      s := extractFile(request, ct);
+      s := extractFile(request, 'file', params, ct);
       try
         if ct = 'application/pdf' then
           result := processPDF(s, request.Accept, response)
         else
           result := processQRCode(s, request.Accept, response)
       finally
-         s.Free;
+         s.free;
       end;
     end
     else if (request.Command = 'POST') then

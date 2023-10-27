@@ -98,7 +98,7 @@ end;
 
 function TFHIRToolkitTemporaryStorage.startOpenFileList() : TJsonArray;
 begin
-  result := TJsonArray.create;
+  result := TJsonArray.Create;
 end;
 
 procedure TFHIRToolkitTemporaryStorage.storeOpenFile(list : TJsonArray; session : TToolkitEditSession);
@@ -192,7 +192,7 @@ var
   params : TJsonObject;
   i : integer;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.str['guid'] := session.guid;
     if session.Address <> '' then
@@ -227,7 +227,7 @@ function TFHIRToolkitTemporaryStorage.jsonToSession(json: TJsonObject): TToolkit
 var
   n : String;
 begin
-  result := TToolkitEditSession.create;
+  result := TToolkitEditSession.Create;
   try
     result.guid := json.str['guid'];
     result.Address := json.str['address'];
@@ -268,7 +268,7 @@ var
   ts : TStringList;
   s : String;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -291,7 +291,7 @@ var
   ts : TStringList;
   s : String;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -307,7 +307,7 @@ var
   ts : TStringList;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -326,7 +326,7 @@ var
   ts : TStringList;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -351,7 +351,7 @@ var
   s : String;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'urllist.cfg') then
       ts.LoadFromFile(FFolder+'urllist.cfg');

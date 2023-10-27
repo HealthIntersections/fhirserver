@@ -94,8 +94,8 @@ implementation
 procedure TIgGitHubDialog.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
-  FLines := TStringList.create;
-  FLock := TFslLock.create;
+  FLines := TStringList.Create;
+  FLock := TFslLock.Create;
   if isAbsoluteUrl(Clipboard.asText) then
     doPaste(false);
 end;
@@ -135,7 +135,7 @@ var
   b : TStringBuilder;
   ch : char;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for ch in s do
       if (ch in ['a'..'z', 'A'..'Z', '0'..'9', '_', '-', '#', '$', '.']) then
@@ -153,7 +153,7 @@ var
 begin
   try
     if not isAbsoluteUrl(Clipboard.asText) then
-      raise EFslException.create('Not a url: '+Clipboard.asText);
+      raise EFslException.Create('Not a url: '+Clipboard.asText);
 
     branch := 'master';
     url := Clipboard.asText;
@@ -166,7 +166,7 @@ begin
       if (length(p) >= 8) then
       begin
         if ('branches' <> p[6]) then
-          raise EFslException.create('Unable to understand IG location '+url)
+          raise EFslException.Create('Unable to understand IG location '+url)
         else
           branch := p[7];
       end;
@@ -180,11 +180,11 @@ begin
         if ('tree' = p[5]) or ('blob' = p[5]) then
           branch := p[6]
         else
-          raise EFslException.create('Unable to understand IG location '+url);
+          raise EFslException.Create('Unable to understand IG location '+url);
       end;
     end;
     if (org = '') or (repo = '') then
-      raise EFslException.create('Unable to understand IG location: '+url);
+      raise EFslException.Create('Unable to understand IG location: '+url);
 
     edtGitOrg.Text := org;
     edtGitRepoName.Text := repo;
@@ -207,7 +207,7 @@ begin
   Memo1.lines.clear;
   memo1.lines.add('Clone Git repo (git clone --branch '+edtBranch.Text+' https://github.com/'+edtGitOrg.text+'/'+edtGitRepoName.text+' '+lf);
 
-  FGit := TFslExternalProcessThread.create;
+  FGit := TFslExternalProcessThread.Create;
   try
     FGit.command := 'git';
     FGit.parameters.Add('clone');

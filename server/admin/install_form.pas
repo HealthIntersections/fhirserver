@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, ExtCtrls,
-  StdCtrls, ComCtrls,
+  StdCtrls, ComCtrls, IniFiles,
   fsl_base, fsl_utilities, fsl_npm_client,
   fdb_manager,
   server_config, utilities, database_installer,
@@ -125,7 +125,7 @@ begin
     try
       conn := db.GetConnection('install');
       try
-        form := TEndpointInstallForm.create(owner);
+        form := TEndpointInstallForm.Create(owner);
         try
           form.Packages := MainConsoleForm.Packages.link;
           form.Connection := conn.link;
@@ -155,9 +155,9 @@ end;
 
 procedure TEndpointInstallForm.FormDestroy(Sender: TObject);
 begin
-  FSelectedPackages.Free;
-  FPackages.Free;
-  FConnection.Free;
+  FSelectedPackages.free;
+  FPackages.free;
+  FConnection.free;
 end;
 
 procedure TEndpointInstallForm.edtUserNameChange(Sender: TObject);
@@ -172,7 +172,7 @@ procedure TEndpointInstallForm.btnInstallClick(Sender: TObject);
 var
   form : TInstallProgressForm;
 begin
-  form := TInstallProgressForm.create(self);
+  form := TInstallProgressForm.Create(self);
   try
     form.command := command;
     if form.ShowModal = mrOk then
@@ -217,7 +217,7 @@ end;
 
 procedure TEndpointInstallForm.FormShow(Sender: TObject);
 begin
-  FSelectedPackages := TStringList.create;
+  FSelectedPackages := TStringList.Create;
   FSelectedPackages.Duplicates := dupIgnore;
   FSelectedPackages.sorted := true;
   lblMode.caption := 'Install '+type_+' for version '+version;
@@ -274,7 +274,7 @@ end;
 
 procedure TEndpointInstallForm.SetPackages(AValue: TFslList<TFHIRPackageInfo>);
 begin
-  FPackages.Free;
+  FPackages.free;
   FPackages := AValue;
 end;
 
@@ -304,11 +304,20 @@ end;
 
 function TEndpointInstallForm.command: String;
 var
-  s : String;
+  f, s : String;
   i : TListItem;
+  ini : TIniFile;
 begin
+  f := FilePath(['[tmp]', 'fhir-server-install.ini']);
+  Ini := TIniFile.create(f);
+  try
+    ini.writeString('config', 'cfgFile', filename);
+  finally
+    Ini.Free;
+  end;
+
   // default-rights
-  result := '-cmd installdb -installer -cfg "'+filename+'" -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
+  result := '-cmd installdb -installer -cfg "'+f+'" -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
   case cbxSecurity.ItemIndex of
     0: result := result + ' -security open';
     1: result := result + ' -security oauth?';
@@ -335,7 +344,7 @@ end;
 
 procedure TEndpointInstallForm.SetConnection(AValue: TFDBConnection);
 begin
-  FConnection.Free;
+  FConnection.free;
   FConnection := AValue;
 end;
 

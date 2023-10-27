@@ -186,7 +186,7 @@ begin
   b.Append('">');
   b.Append(id);
   b.Append('</a></b> ');
-  b.Append(FormatTextToXML(FSnomed.getDisplay(id, THTTPLanguages.Create('en')), xmlText));
+  b.Append(FormatTextToXML(FSnomed.getDisplay(id, nil), xmlText));
   b.append('.');
   b.Append(inttostr(length(alldesc)));
   b.AppendLine(' rows</td></tr>');
@@ -242,7 +242,7 @@ begin
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -285,9 +285,9 @@ end;
 //    result.reference := '??/'+FSnomed.Services.GetConceptId(index)+'/'+rid
 //end;
 //
-destructor TSnomedAnalysis.destroy;
+destructor TSnomedAnalysis.Destroy;
 begin
-  FSnomed.Services.Free;
+  FSnomed.Services.free;
   inherited;
 end;
 
@@ -416,7 +416,7 @@ begin
         processScript(result, params['script']);
         result.Link;
       finally
-        result.Free;
+        result.free;
       end;
       exit;
     end
@@ -438,7 +438,7 @@ begin
         for s in st do
           assess(b, s);
       finally
-        st.Free;
+        st.free;
       end;
       b.AppendLine('</table>');
     end
@@ -494,7 +494,7 @@ begin
     result.Encoding := TEncoding.UTF8;
     result.AsText := b.AsString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -820,7 +820,7 @@ begin
       for n in json.arr['tables'] do
         processTable(parts, n as TJsonObject);
     finally
-      json.Free;
+      json.free;
     end;
     zip := TFslZipWriter.Create;
     try
@@ -830,10 +830,10 @@ begin
       zip.Parts := parts.Link;
       zip.WriteZip;
     finally
-      zip.Free;
+      zip.free;
     end;
   finally
-    parts.Free;
+    parts.free;
   end;
 end;
 
@@ -854,7 +854,7 @@ begin
 
   tbl := TFslStringBuilder.Create;
   try
-    children := TStringList.create;
+    children := TStringList.Create;
     try
       listChildren(root, children);
       children.sort;
@@ -898,7 +898,7 @@ begin
       children.free;
     end;
   finally
-    tbl.Free;
+    tbl.free;
   end;
 end;
 
@@ -1100,7 +1100,7 @@ begin
     part.Encoding := TEncoding.UTF8;
     part.AsText := tbl.AsString;
   finally
-    tbl.Free;
+    tbl.free;
   end;
 end;
 

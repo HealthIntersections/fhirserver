@@ -79,9 +79,9 @@ implementation
 
 destructor TSourceViewerForm.Destroy;
 begin
-  FFactory.Free;
-  FCurrent.Free;
-  FOriginal.Free;
+  FFactory.free;
+  FCurrent.free;
+  FOriginal.free;
   inherited;
 end;
 
@@ -98,11 +98,11 @@ var
   html : string;
 begin
   if rbXml.IsChecked then
-    c := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'))
+    c := TFHIRXmlComposer.Create(nil, OutputStylePretty, nil)
   else if rbJson.IsChecked then
-    c := TFHIRJsonComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'))
+    c := TFHIRJsonComposer.Create(nil, OutputStylePretty, nil)
   else
-    c := TFHIRTurtleComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
+    c := TFHIRTurtleComposer.Create(nil, OutputStylePretty, nil);
   try
     case TabControl1.TabIndex of
       0 : mSource.Lines.Text := c.Compose(FCurrent);
@@ -115,10 +115,10 @@ begin
           try
             mSource.Lines.Text := c.Compose(diff.Resource);
           finally
-            diff.Free;
+            diff.free;
           end;
         finally
-          engine.Free;
+          engine.free;
         end;
         end;
     end;
@@ -129,19 +129,19 @@ end;
 
 procedure TSourceViewerForm.SetCurrent(const Value: TFHIRResource);
 begin
-  FCurrent.Free;
+  FCurrent.free;
   FCurrent := Value;
 end;
 
 procedure TSourceViewerForm.SetFactory(const Value: TFHIRFactory);
 begin
-  FFactory.Free;
+  FFactory.free;
   FFactory := Value;
 end;
 
 procedure TSourceViewerForm.SetOriginal(const Value: TFHIRResource);
 begin
-  FOriginal.Free;
+  FOriginal.free;
   FOriginal := Value;
 end;
 

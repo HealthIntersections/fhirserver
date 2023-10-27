@@ -155,7 +155,7 @@ implementation
 
 destructor TDifference.Destroy;
 begin
-  FValue.Free;
+  FValue.free;
   inherited;
 end;
 
@@ -173,7 +173,7 @@ procedure TDifferenceList.replace(path: String; value: TFHIRObject);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffReplace;
@@ -184,7 +184,7 @@ procedure TDifferenceList.add(path, name: String; value: TFHIRObject);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffAdd;
@@ -196,7 +196,7 @@ procedure TDifferenceList.delete(path: String);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffDelete;
@@ -207,7 +207,7 @@ procedure TDifferenceList.insert(path: String; index: integer; value: TFHIRObjec
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffInsert;
@@ -219,7 +219,7 @@ procedure TDifferenceList.move(path: String; source, target: integer);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffMove;
@@ -285,9 +285,9 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when adding');
+      raise EFHIRException.Create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.Create('Multiple locations found at '+path+' when adding');
 
     if value.hasValue then
       dest[0].value.setProperty(name, value.value.Link)
@@ -302,7 +302,7 @@ begin
       end;
     end;
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -313,14 +313,14 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when adding');
+      raise EFHIRException.Create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.Create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
-      raise EFHIRException.create('Content returned from Path is not part of Resource');
+      raise EFHIRException.Create('Content returned from Path is not part of Resource');
     dest[0].parent.deleteProperty(dest[0].name, dest[0].value);
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -338,7 +338,7 @@ begin
       result.dropEmpty;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -346,7 +346,7 @@ function TDifferenceEngine.generateDifference(base, modified: TFHIRObject; var h
 var
   list : TDifferenceList;
 begin
-  list := TDifferenceList.create;
+  list := TDifferenceList.Create;
   try
     generate(base.fhirType, base, modified, list);
     result := asParams(list);
@@ -427,8 +427,8 @@ begin
       end;
     end;
   finally
-    ol1.Free;
-    ol2.Free;
+    ol1.free;
+    ol2.free;
   end;
   if (t = 0) then
     result := 0
@@ -452,7 +452,7 @@ begin
         res.setProperty(pp.name, v);
         populateObject(v, pp);
       finally
-        v.Free;
+        v.free;
       end;
     end;
   end;
@@ -497,7 +497,7 @@ begin
           end
           else if dm.FSourceIndex < cb then
           begin
-            raise ETodo.create('TDifferenceEngine.makeListChanges (<)');
+            raise ETodo.Create('TDifferenceEngine.makeListChanges (<)');
             // actually, this can't happen (https://xkcd.com/2200/); a move forwards will become a series of moves backwards?
           end
           else
@@ -524,7 +524,7 @@ begin
       end;
     end;
   finally
-    ol.Free;
+    ol.free;
   end;
 end;
 
@@ -536,7 +536,7 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when inserting');
+      raise EFHIRException.Create('No content found at '+path+' when inserting');
 
     if value.value <> nil then
       dest[0].parent.insertProperty(dest[0].name, value.value.Link, index)
@@ -551,7 +551,7 @@ begin
       end;
     end;
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -562,14 +562,14 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when moving');
+      raise EFHIRException.Create('No content found at '+path+' when moving');
     if dest.Count < 2 then
-      raise EFHIRException.create('Only a single location found at '+path+' when moving');
+      raise EFHIRException.Create('Only a single location found at '+path+' when moving');
     if dest[0].parent = nil then
-      raise EFHIRException.create('Content returned from Path is not part of Resource');
+      raise EFHIRException.Create('Content returned from Path is not part of Resource');
     dest[0].parent.reorderProperty(dest[0].name, source, destination);
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -587,7 +587,7 @@ begin
     diffReplace : applyReplace(res, op.str['path'], op.param['value']);
     diffMove :    applyMove(res, op.str['path'], StrToInt(op.str['source']), StrToInt(op.str['destination']));
   else
-    raise EFHIRException.create('Unknown Operation '+t);
+    raise EFHIRException.Create('Unknown Operation '+t);
   end;
   result := d = diffDelete;
 end;
@@ -601,11 +601,11 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when adding');
+      raise EFHIRException.Create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.Create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
-      raise EFHIRException.create('Content returned from Path is not part of Resource');
+      raise EFHIRException.Create('Content returned from Path is not part of Resource');
     d := dest[0];
     if value.value <> nil then
       d.parent.replaceProperty(d.name, d.value, value.value.Link)
@@ -616,11 +616,11 @@ begin
         d.parent.replaceProperty(d.name, d.value, v.Link);
         populateObject(v, value);
       finally
-        v.Free;
+        v.free;
       end;
     end;
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -673,7 +673,7 @@ begin
     b.append('</table>'#13#10);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -729,7 +729,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -747,11 +747,11 @@ begin
     result := FormatTextToXml(Value.primitiveValue, xmlText)
   else if (value.isType) and StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType) then
   begin
-    c := FFactory.makeComposer(FContext.link, ffJson, FContext.lang, OutputStyleNormal);
+    c := FFactory.makeComposer(FContext, ffJson, FContext.LangList, OutputStyleNormal);
     try
       result := c.Compose('value', value);
     finally
-      c.Free;
+      c.free;
     end;
   end
   else
@@ -787,7 +787,7 @@ end;
 
 constructor TDifferenceEngine.Create(context: TFHIRWorkerContextV; factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
   FContext := context;
   fpe := FFactory.makePathEngine(context.link, nil);
@@ -795,8 +795,8 @@ end;
 
 destructor TDifferenceEngine.Destroy;
 begin
-  fpe.Free;
-  FContext.Free;
+  fpe.free;
+  FContext.free;
   FFactory.free;
   inherited;
 end;
@@ -898,7 +898,7 @@ var
   n : String;
 begin
   if base.fhirType <> modified.fhirType then
-    raise EFHIRException.create('Unable to generate difference for different types ('+base.fhirType+'/'+modified.fhirType+')');
+    raise EFHIRException.Create('Unable to generate difference for different types ('+base.fhirType+'/'+modified.fhirType+')');
   bl := base.createPropertyList(true);
   ml := modified.createPropertyList(true);
   try
@@ -909,7 +909,7 @@ begin
       m.forceValues;
       if b.IsList and ((b.Values.Count > 1) or (m.Values.Count > 1)) then
       begin
-        matches := TDifferenceMatchList.create;
+        matches := TDifferenceMatchList.Create;
         try
           // map the certain matches between lists
           findCertainMatches(matches, b.Values, m.Values);
@@ -921,7 +921,7 @@ begin
           else
             makeListChanges(path, b.Name, matches, b.Values, m.Values, differences);
         finally
-          matches.Free;
+          matches.free;
         end;
       end
       else
@@ -961,8 +961,8 @@ begin
       end;
     end;
   finally
-    bl.Free;
-    ml.Free;
+    bl.free;
+    ml.free;
   end;
 end;
 

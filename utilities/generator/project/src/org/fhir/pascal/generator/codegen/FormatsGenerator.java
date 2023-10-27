@@ -921,7 +921,7 @@ public class FormatsGenerator extends BaseGenerator {
 
     xml.impl.append(
         "begin\r\n"+
-            "  result := "+tn+".create;\r\n"+
+            "  result := "+tn+".Create;\r\n"+
         "  try\r\n");
     if (isElement)
       if (category == ClassGeneratorCategory.Resource)
@@ -1037,7 +1037,7 @@ public class FormatsGenerator extends BaseGenerator {
     json.impl.append(
         "function TFHIRJsonParser"+".Parse"+tn.substring(5)+"(jsn : TJsonObject) : "+tn+";\r\n"+
             "begin\r\n"+
-            "  result := "+tn+".create;\r\n"+
+            "  result := "+tn+".Create;\r\n"+
             "  try\r\n"+
             "    Parse"+tn.substring(5)+"Properties(jsn, result);\r\n"+ 
             "    result.link;\r\n"+
@@ -1051,7 +1051,7 @@ public class FormatsGenerator extends BaseGenerator {
             "begin\r\n"+
             "  if (obj = nil) then\r\n"+
             "    exit(nil);\r\n"+      
-            "  result := "+tn+".create;\r\n"+
+            "  result := "+tn+".Create;\r\n"+
             "  try\r\n"+
             "    Parse"+tn.substring(5)+"Properties(obj, result);\r\n"+ 
             "    result.link;\r\n"+

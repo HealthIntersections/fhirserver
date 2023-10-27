@@ -73,12 +73,12 @@ implementation
 
 procedure TPackageVersionChooserForm.FormCreate(Sender: TObject);
 begin
-  FList := TFslList<TFHIRPackageInfo>.create;
+  FList := TFslList<TFHIRPackageInfo>.Create;
 end;
 
 procedure TPackageVersionChooserForm.FormDestroy(Sender: TObject);
 begin
-  FList.Free;
+  FList.free;
 end;
 
 procedure TPackageVersionChooserForm.gridAddToSelection(Sender: TBaseVirtualTree; Node: PVirtualNode);

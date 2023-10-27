@@ -135,7 +135,7 @@ procedure TValuesetSelectForm.btnSettingsClick(Sender: TObject);
 var
   form : TSettingsForm;
 begin
-  form := TSettingsForm.create(self);
+  form := TSettingsForm.Create(self);
   try
     form.Settings := FSettings.link;
     form.TabControl1.TabIndex := 1;
@@ -208,10 +208,10 @@ end;
 
 destructor TValuesetSelectForm.Destroy;
 begin
-  FSettings.Free;
-  FExpansion.Free;
-  FClient.Free;
-  FServers.Free;
+  FSettings.free;
+  FExpansion.free;
+  FClient.free;
+  FServers.free;
   inherited;
 end;
 
@@ -255,10 +255,10 @@ var
   inc : TFhirValueSetComposeInclude;
   filter : TFhirValueSetComposeIncludeFilter;
 begin
-  vs := TFHIRValueSet.create;
+  vs := TFHIRValueSet.Create;
   try
     vs.url := NewGuidURN;
-    vs.compose := TFhirValueSetCompose.create;
+    vs.compose := TFhirValueSetCompose.Create;
     inc := vs.compose.includeList.Append;
     inc.system := system;
     inc.version := version;
@@ -267,7 +267,7 @@ begin
     filter.op := TFhirFilterOperatorEnum(cbxOperation.ItemIndex);
     filter.value := edtValue.Text;
 
-    FExpansion.Free;
+    FExpansion.free;
     FExpansion := nil;
     gridContains.RowCount := 0;
     btnAppend.Enabled := false;
@@ -292,11 +292,11 @@ begin
           btnAppend.Enabled := selectedCount > 0;
           btnReplace.Enabled := HasConcepts and (selectedCount > 0);
         finally
-          params.Free;
+          params.free;
         end;
       end);
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -357,14 +357,14 @@ end;
 
 procedure TValuesetSelectForm.SetExpansion(const Value: TFHIRValueSet);
 begin
-  FExpansion.Free;
+  FExpansion.free;
   FExpansion := Value;
 end;
 
 
 procedure TValuesetSelectForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

@@ -299,18 +299,18 @@ implementation
 constructor TConversionEngine.Create;
 begin
   inherited;
-  FOutcomes := TFslList<TFhirObject>.create;
+  FOutcomes := TFslList<TFhirObject>.Create;
 end;
 
 destructor TConversionEngine.Destroy;
 begin
-  FOutcomes.Free;
-  FMapUtils.Free;
-  FCache.Free;
-  FWorkspace.Free;
-  FMap.Free;
-  FSource.Free;
-  FFactory.Free;
+  FOutcomes.free;
+  FMapUtils.free;
+  FCache.free;
+  FWorkspace.free;
+  FMap.free;
+  FSource.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -353,25 +353,25 @@ end;
 
 procedure TConversionEngine.SetCache(const Value: TResourceMemoryCache);
 begin
-  FCache.Free;
+  FCache.free;
   FCache := Value;
 end;
 
 procedure TConversionEngine.SetMap(const Value: TWorkspaceFile);
 begin
-  FMap.Free;
+  FMap.free;
   FMap := Value;
 end;
 
 procedure TConversionEngine.SetSource(const Value: TWorkspaceFile);
 begin
-  FSource.Free;
+  FSource.free;
   FSource := Value;
 end;
 
 procedure TConversionEngine.SetWorkspace(const Value: TWorkspace);
 begin
-  FWorkspace.Free;
+  FWorkspace.free;
   FWorkspace := Value;
 end;
 
@@ -429,13 +429,13 @@ begin
 //            for res in services.outcomes do
 //              FOutcomes.Add(res.Link);
 //          finally
-//            services.Free;
+//            services.free;
 //          end;
 //        finally
-//          map.Free;
+//          map.free;
 //        end;
 //      finally
-//        elem.Free;
+//        elem.free;
 //      end;
 //    finally
 //      stream.free;
@@ -465,7 +465,7 @@ constructor TLocalTransformerServices.Create;
 begin
   inherited Create;
   FEngine := engine;
-  FOutcomes := TFslList<TFhirResource>.create;
+  FOutcomes := TFslList<TFhirResource>.Create;
   FFactory := factory;
   FContext := context;
 end;
@@ -500,9 +500,9 @@ end;
 
 destructor TLocalTransformerServices.Destroy;
 begin
-  FOutcomes.Free;
-  FFactory.Free;
-  FContext.Free;
+  FOutcomes.free;
+  FFactory.free;
+  FContext.free;
   inherited;
 end;
 
@@ -552,7 +552,7 @@ end;
 
 destructor TMapBreakpointResolver.Destroy;
 begin
-  FMap.Free;
+  FMap.free;
   inherited;
 end;
 
@@ -595,7 +595,7 @@ begin
             TFHIRMMManager.compose(FContext, f.compiled as TFHIRMMElement, ss, ffXml, OutputStylePretty);
             result := ss.DataString;
           finally
-            ss.Free;
+            ss.free;
           end;
         end;
       fmtResource:
@@ -607,7 +607,7 @@ begin
           try
             result := c.Compose(f.compiled as TFhirResource);
           finally
-            c.Free;
+            c.free;
           end;
         end;
       fmtJS: raise ELibraryException.Create('Canonical Format is not supported for Javscript');
@@ -617,7 +617,7 @@ begin
           try
             result := mu.render(f.compiled as TFhirStructureMap);
           finally
-            mu.Free;
+            mu.free;
           end;
         end;
       fmtTemplate:
@@ -816,7 +816,7 @@ begin
     js.compile(src, f.title);
     result := nil; // for now
   finally
-    js.Free;
+    js.free;
   end;
 end;
 
@@ -841,7 +841,7 @@ begin
       map.free;
     end;
   finally
-    utils.Free;
+    utils.free;
   end;
 end;
 
@@ -871,7 +871,7 @@ begin
   try
     result := le.parse(src, f.title);
   finally
-    le.Free;
+    le.free;
   end;
 end;
 
@@ -882,9 +882,9 @@ end;
 
 constructor TTransformEngine.Create(workspace: TWorkspace);
 begin
-  inherited create;
+  inherited Create;
   FWorkspace := workspace;
-  FEditors := TFslList<TEditorInformation>.create;
+  FEditors := TFslList<TEditorInformation>.Create;
 end;
 
 procedure TTransformEngine.debug(executionDetails : TWorkspaceExecConfig);
@@ -910,7 +910,7 @@ begin
 
 //      Assert.IsTrue(js.asString(js.execute('(()=>{return ''Hello world!'';})()', 'test.js')) = 'Hello world!');
   finally
-    js.Free;
+    js.free;
   end;
 
   //  create javascript
@@ -918,7 +918,7 @@ begin
   //  go;
 
   finally
-    services.Free;
+    services.free;
   end;
 end;
 
@@ -939,10 +939,10 @@ begin
       exit;
   end;
 
-  ctxt := TTransformEngineDebugContext.create;
+  ctxt := TTransformEngineDebugContext.Create;
   try
     ctxt.FPastVariablesAvailable := true;
-    ctxt.FCallStack := TFslList<TTransformEngineExecutionPoint>.create;
+    ctxt.FCallStack := TFslList<TTransformEngineExecutionPoint>.Create;
     d := info;
     while (d <> nil) do
     begin
@@ -966,10 +966,10 @@ begin
     f.compileStatus := csNotCompiled;
   end;
   FEditors.free;
-  FPathEngine.Free;
-  FContext.Free;
-  FWorkspace.Free;
-  FServices.Free;
+  FPathEngine.free;
+  FContext.free;
+  FWorkspace.free;
+  FServices.free;
   inherited;
 end;
 
@@ -981,7 +981,7 @@ procedure TTransformEngine.executeCDA(ev: TWorkspaceExecConfig; debug: boolean);
 //  f : TWorkspaceFile;
 //  src : TFHIRMMElement;
 begin
-//  lib := TFslMap<TFHIRStructureMap>.create;
+//  lib := TFslMap<TFHIRStructureMap>.Create;
 //  try
 //    for f in workspace.maps do
 //    begin
@@ -998,10 +998,10 @@ begin
 //      mu.transform(nil, src, map, nil);
 //      assert(FServices.outcomes.Count = 1);
 //    finally
-//      mu.Free;
+//      mu.free;
 //    end;
 //  finally
-//    lib.Free;
+//    lib.free;
 //  end;
 end;
 (*
@@ -1013,7 +1013,7 @@ var
 begin
   try
     startRunning;
-    engine := TCDAConversionEngine.create;
+    engine := TCDAConversionEngine.Create;
     try
       engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
       engine.map := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;
@@ -1127,7 +1127,7 @@ begin
   FTerminologyServer := Value;
   if (FTxServer <> nil) and (FTxServer.address <> Value) then
   begin
-    FTxServer.Free;
+    FTxServer.free;
     FTxServer := nil;
   end;
 end;
@@ -1136,8 +1136,8 @@ end;
 
 destructor TTransformEngineDebugContext.Destroy;
 begin
-  FCallStack.Free;
-  FVariables.Free;
+  FCallStack.free;
+  FVariables.free;
   inherited;
 end;
 
@@ -1150,8 +1150,8 @@ end;
 
 destructor TTransformEngineExecutionPoint.Destroy;
 begin
-  FEngine.Free;
-  FVariables.Free;
+  FEngine.free;
+  FVariables.free;
   inherited;
 end;
 
@@ -1162,17 +1162,17 @@ constructor TMapTransformEngineExecutionPoint.Create(engine : TTransformEngine; 
 var
   v : TVariable;
 begin
-  inherited create;
+  inherited Create;
   FEngine := engine;
   FInfo := info;
-  FVariables := TFslList<TTransformEngineExecutionVariable>.create;
+  FVariables := TFslList<TTransformEngineExecutionVariable>.Create;
   for v in info.variables.list do
     FVariables.Add(TMapTransformEngineExecutionVariable.Create(Fengine.link, v.link));
 end;
 
 destructor TMapTransformEngineExecutionPoint.Destroy;
 begin
-  FInfo.Free;
+  FInfo.free;
   inherited;
 end;
 
@@ -1212,14 +1212,14 @@ end;
 
 constructor TMapTransformEngineExecutionVariable.Create(engine : TTransformEngine; info: TVariable);
 begin
-  inherited create;
+  inherited Create;
   FEngine := engine;
   FInfo := info;
 end;
 
 destructor TMapTransformEngineExecutionVariable.Destroy;
 begin
-  FInfo.Free;
+  FInfo.free;
   inherited;
 end;
 
@@ -1261,7 +1261,7 @@ end;
 
 destructor TTransformEngineExecutionVariable.Destroy;
 begin
-  FEngine.Free;
+  FEngine.free;
   inherited;
 end;
 
@@ -1282,7 +1282,7 @@ var
 begin
   try
     startRunning;
-    engine := TCDAConversionEngine.create;
+    engine := TCDAConversionEngine.Create;
     try
       engine.source := (cbxSource.Items.Objects[cbxSource.ItemIndex] as TWorkspaceFile).link;
       engine.map := (cbxScript.Items.Objects[cbxScript.ItemIndex] as TWorkspaceFile).link;

@@ -211,7 +211,7 @@ begin
   try
     stream.WriteBuffer(FBuffer[0], bytecount);
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 

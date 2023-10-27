@@ -304,7 +304,7 @@ begin
   i := StringArrayIndexOfSensitive(aNames, JsonToString(value));
   if (value <> nil) and (i < 0) then
     raise value.LocationStart.exception('unknown code: '+JsonToString(value)+' from a set of choices of '+StringArrayToCommaString(aNames)+' for "'+path+'"');
-  result := TFHIREnum.create;
+  result := TFHIREnum.Create;
   try
     if (value <> nil) then
     begin
@@ -391,7 +391,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -462,7 +462,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -533,7 +533,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -604,7 +604,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -675,7 +675,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -746,7 +746,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -817,7 +817,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -888,7 +888,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -959,7 +959,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1030,7 +1030,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1101,7 +1101,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1172,7 +1172,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1243,7 +1243,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1314,7 +1314,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1385,7 +1385,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1456,7 +1456,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1527,7 +1527,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1598,7 +1598,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1669,7 +1669,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1740,7 +1740,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1811,7 +1811,7 @@ begin
       parseElementProperties(jsn, result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1879,19 +1879,19 @@ end;
 function TFHIRJsonParser.ParseFragment(jsn : TJsonObject; type_ : String) : TFHIRObject;
 begin
   if (type_ = '') then
-    raise EJsonException.create('no type provided')
+    raise EJsonException.Create('no type provided')
 {{fragments.parse}}
   else
-    raise EJsonException.create('error: the element '+type_+' is not a valid fragment name');
+    raise EJsonException.Create('error: the element '+type_+' is not a valid fragment name');
 end;
 
 function TFHIRJsonParser.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass) : TFHIRDataType;
 begin
   if (type_ = nil) then
-    raise EJsonException.create('no type provided')
+    raise EJsonException.Create('no type provided')
 {{types.parse}}
   else
-    raise EJsonException.create('Unknown Type');
+    raise EJsonException.Create('Unknown Type');
 end;
 
 procedure TFHIRJsonComposer.ComposeBase(json: TJSONWriter; name: String; base: TFHIRObject);
@@ -1949,7 +1949,7 @@ begin
   Case resource.ResourceType of
 {{compose.resource}}  
   else
-    raise EJsonException.create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
+    raise EJsonException.Create('Internal error: the resource type '+CODES_TFhirResourceType[resource.ResourceType]+' is not a valid resource type');
   end;
 end;
 

@@ -42,9 +42,12 @@ uses
 
 const
   MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
+  MANUAL_REG_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/manual-package-list.json';
   EMAIL_DAYS_LIMIT= 7;
 
 Type
+  EPackageCrawlerException = class (EFslException);
+
   TPackageRestrictions = class (TFslObject)
   private
     FJson : TJsonArray;
@@ -94,7 +97,7 @@ Type
     function fetchXml(url : string) : TMXmlElement;
 
     function hasStored(guid : String) : boolean;
-    procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
+    procedure store(source, url, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
     procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
@@ -183,7 +186,7 @@ end;
 
 destructor TPackageUpdater.Destroy;
 begin
-  FZulip.Free;
+  FZulip.free;
   inherited;
 end;
 
@@ -216,7 +219,7 @@ begin
     fetcher.Fetch;
     result := fetcher.Buffer.AsBytes;
   finally
-    fetcher.Free;
+    fetcher.free;
   end;
   FTotalBytes := FTotalBytes + length(result);
 end;
@@ -253,40 +256,46 @@ var
   json : TJsonObject;
   xml : TMXmlDocument;
   e, u : TMXmlElement;
+  bytes : TBytes;
 begin
   for s in npm.list('package') do
   begin
     try
       if s.EndsWith('.json') then
       begin
-        json := TJSONParser.parse(npm.loadBytes('package', s));
+        bytes := npm.loadBytes('package', s);
+        json := TJSONParser.parse(bytes);
         try
           if json.has('url') then
             ts.Add(json.str['url']);
         finally
-          json.Free;
+          json.free;
         end;
       end
       else if s.EndsWith('.xml') then
       begin
-        xml := TMXmlParser.parse(npm.loadBytes('package', s), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
+        bytes := npm.loadBytes('package', s);
+        xml := TMXmlParser.parse(bytes, [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
         try
           e := xml.docElement;
           u := e.element('url');
           if u <> nil then
             ts.Add(u.attribute['value']);
         finally
-          e.Free;
+          e.free;
         end;
       end
     except
-      on e : Exception do 
-        Writeln('Error processing '+npm.name+'#'+npm.version+'/package/'+s+': '+e.Message);
+      on e : Exception do
+      begin
+        BytesToFile(bytes, '/Users/grahamegrieve/temp/content.bin');
+        Logging.log('Error processing '+npm.name+'#'+npm.version+'/package/'+s+': '+e.Message);
+      end;
     end;
   end;
 end;
 
-procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
+procedure TPackageUpdater.store(source, url, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
   id, version, description, canonical, fhirVersion : String;
@@ -306,15 +315,18 @@ begin
       log('Warning processing '+idver+': this package is not suitable for publication (likely broken links)', source, true);
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
-      raise EFslException.Create('NPM Id "'+id+'" is not valid from '+source);
+      raise EPackageCrawlerException.Create('NPM Id "'+id+'" is not valid from '+source);
     if not TSemanticVersion.isValid(version) then
-      raise EFslException.Create('NPM Version "'+version+'" is not valid from '+source);
+      raise EPackageCrawlerException.Create('NPM Version "'+version+'" is not valid from '+source);
     if (canonical = '') then
-      raise EFslException.Create('No canonical found in npm from '+source);
+    begin
+      log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
+      canonical := 'http://simplifier.net/packages/fictitious/'+id;
+    end;
     if not isAbsoluteUrl(canonical) then
-      raise EFslException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
+      raise EPackageCrawlerException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
 
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       processURLs(npm, ts);
       
@@ -324,7 +336,7 @@ begin
     end;
 
   finally
-    npm.Free;
+    npm.free;
   end;
 end;
 
@@ -363,13 +375,13 @@ begin
       log('Fetch '+MASTER_URL, '', false);
       json := fetchJson(MASTER_URL);
       try
-        pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
+        pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
         try
           arr := json.arr['feeds'];
           for i := 0 to arr.Count - 1 do
             updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
         finally
-          pr.Free;
+          pr.free;
         end;
       finally
         json.free;
@@ -380,11 +392,32 @@ begin
         Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
       end;
     end;
+    //try
+    //  log('Fetch '+MANUAL_REG_URL, '', false);
+    //  json := fetchJson(MANUAL_REG_URL);
+    //  try
+    //    pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
+    //    try
+    //      arr := json.arr['feeds'];
+    //      for i := 0 to arr.Count - 1 do
+    //        updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
+    //    finally
+    //      pr.free;
+    //    end;
+    //  finally
+    //    json.free;
+    //  end;
+    //except
+    //  on e : Exception do
+    //  begin
+    //    Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
+    //  end;
+    //end;
     if FZulip <> nil then
       FZulip.send;
     log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
   finally
-    FIni.Free;
+    FIni.free;
   end;
 end;
 
@@ -417,7 +450,7 @@ begin
         end;
       end;
     finally
-      xml.Free;
+      xml.free;
     end;
     if (FFeedErrors <> '') and (email <> '') then
         DoSendEmail(email, 'Errors Processing '+url, FFeedErrors);
@@ -458,7 +491,7 @@ begin
         url := fix(item.element('link').Text);
         log('Fetch '+url, source, false);
         content := fetchUrl(url, 'application/tar+gzip');
-        store(source, guid, date, content, id);
+        store(source, url, guid, date, content, id);
       end;
     end
     else
@@ -483,7 +516,7 @@ end;
 
 destructor TPackageRestrictions.Destroy;
 begin
-  FJson.Free;
+  FJson.free;
   inherited;
 end;
 
@@ -532,15 +565,15 @@ end;
 
 constructor TZulipTracker.Create(address, email, apikey: String);
 begin
-  inherited create;
-  FZulip := TZulipSender.create(address, email, apikey);
-  FErrors := TFslMap<TZulipItem>.create;
+  inherited Create;
+  FZulip := TZulipSender.Create(address, email, apikey);
+  FErrors := TFslMap<TZulipItem>.Create;
 end;
 
 destructor TZulipTracker.Destroy;
 begin
-  FErrors.Free;
-  FZulip.Free;
+  FErrors.free;
+  FZulip.free;
   inherited;
 end;
 
@@ -586,7 +619,7 @@ begin
   try
     result := hash.HashBytesAsHex(bytes);
   finally
-    hash.Free;
+    hash.free;
   end;
 end;
 
