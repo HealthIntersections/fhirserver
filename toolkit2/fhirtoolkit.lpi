@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -87,7 +87,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -140,7 +140,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -192,7 +192,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -250,7 +250,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -301,7 +301,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -347,7 +347,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -393,7 +393,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -831,6 +831,16 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit>
+      <Unit>
+        <Filename Value="..\ipsmanager\views\mvbase.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="mvBase"/>
+      </Unit>
+      <Unit>
+        <Filename Value="..\ipsmanager\views\mvdatasources.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="mvDataSources"/>
+      </Unit>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -842,7 +852,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
       <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-      <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms"/>
+      <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
       <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <Parsing>

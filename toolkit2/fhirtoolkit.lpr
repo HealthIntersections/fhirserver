@@ -30,7 +30,7 @@ uses
   ftk_image_scanner, ftk_worker_home, dlg_open_url, ftk_store_http, dlg_scanner,
   dlg_upgrade, ftk_engine_igpub, dlg_igpub_config, dlg_igpub_github,
   ftk_engine_text, ftk_text_view, dlg_ig_upload, dlg_server_upload,
-  dlg_txsrvr_props, dlg_gender_identity, frm_home;
+  dlg_txsrvr_props, dlg_gender_identity, frm_home, mvDataSources, mvBase;
 
 {$R *.res}
 

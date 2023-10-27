@@ -9,7 +9,7 @@ object IPSManagerForm: TIPSManagerForm
   Menu = MainMenu1
   OnCreate = FormCreate
   OnDestroy = FormDestroy
-  LCLVersion = '2.2.7.0'
+  LCLVersion = '3.0.0.2'
   object ToolBar1: TToolBar
     Left = 0
     Height = 74
