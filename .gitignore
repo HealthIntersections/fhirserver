@@ -93,3 +93,7 @@ utilities/codescan/codescan.app/Contents/MacOS/
 utilities/codescan/codescan.app/Contents/
 
 exec/cert/
+
+*.res
+
+*.fpc
