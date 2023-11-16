@@ -810,7 +810,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="48">
+    <Exceptions Count="49">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -975,6 +975,9 @@
       <Item48>
         <Name Value="EJsonParserException"/>
       </Item48>
+      <Item49>
+        <Name Value="ESemVerException"/>
+      </Item49>
     </Exceptions>
   </Debugging>
 </CONFIG>
