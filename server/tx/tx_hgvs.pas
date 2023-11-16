@@ -228,29 +228,28 @@ function THGVSProvider.locate(code: String; altOpt : TAlternateCodeOptions; var 
 var
   json, o : TJsonObject;
 begin
-  raise ETerminologyError.create('HGVS is not supported at this time');
-  //try
-  //  json := TInternetFetcher.fetchJson('https://mutalyzer.nl/json/checkSyntax?variant='+code, 5000);
-  //  try
-  //    if json.bool['valid'] then
-  //    begin
-  //      result := THGVSCode.Create;
-  //      THGVSCode(result).code := code;
-  //    end
-  //    else
-  //    begin
-  //      result := nil;
-  //      message := '';
-  //      for o in json.forceArr['messages'].asObjects.forEnum do
-  //        CommaAdd(message, o.str['message']);
-  //    end;
-  //  finally
-  //    json.free;
-  //  end;
-  //except
-  //  on e : Exception do
-  //    raise EFHIRException.Create('Error parsing HGVS response: '+e.message);
-  //end;
+  result := nil;
+  message := '';
+  try
+    json := TInternetFetcher.fetchJson('https://clinicaltables.nlm.nih.gov/fhir/R4/CodeSystem/hgvs/$validate-code?code='+code, 5000);
+    try
+      for o in json.forceArr['parameter'].asObjects.forEnum do
+      begin
+        if (o.str['name'] = 'result') and (o.bool['valueBoolean']) then
+        begin
+          result := THGVSCode.Create;
+          THGVSCode(result).code := code;
+        end
+        else if (o.str['name'] = 'message') then
+          CommaAdd(message, o.str['message']);
+      end;
+    finally
+      json.free;
+    end;
+  except
+    on e : Exception do
+      raise EFHIRException.Create('Error parsing HGVS response: '+e.message);
+  end;
 end;
 
 function THGVSProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;

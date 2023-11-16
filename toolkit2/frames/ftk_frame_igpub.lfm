@@ -7,7 +7,7 @@ object IgPubPageFrame: TIgPubPageFrame
   ClientWidth = 1177
   TabOrder = 0
   DesignLeft = 339
-  DesignTop = 290
+  DesignTop = 534
   object Panel1: TPanel
     Left = 0
     Height = 318
@@ -179,7 +179,7 @@ object IgPubPageFrame: TIgPubPageFrame
         end
         object ToolButton2: TToolButton
           Left = 211
-          Height = 8
+          Height = 40
           Top = 2
           Caption = 'ToolButton2'
           Style = tbsSeparator
@@ -193,7 +193,7 @@ object IgPubPageFrame: TIgPubPageFrame
         end
         object ToolButton4: TToolButton
           Left = 319
-          Height = 8
+          Height = 40
           Top = 2
           Caption = 'ToolButton4'
           Style = tbsSeparator
@@ -223,7 +223,7 @@ object IgPubPageFrame: TIgPubPageFrame
         end
         object ToolButton8: TToolButton
           Left = 504
-          Height = 8
+          Height = 40
           Top = 2
           Caption = 'ToolButton8'
           Style = tbsSeparator
