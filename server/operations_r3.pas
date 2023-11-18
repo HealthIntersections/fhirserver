@@ -840,7 +840,7 @@ end;
 
 function TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
-  result := '??';
+  result := '??qa';
 end;
 
 { TFhirJWTOperation }
@@ -881,7 +881,7 @@ var
   pIn : TFhirParameters;
   pOut : TFhirParameters;
 begin
-  result := '??';
+  result := '??jwt';
   try
     pIn := makeParamsV(request);
     try
@@ -966,7 +966,7 @@ var
   oo : TFHIROperationOutcome;
   issue : TFhirOperationOutcomeIssue;
 begin
-  result := '??';
+  result := '??gen';
   try
     manager.NotFound(request, response);
     if native(manager).check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -1048,7 +1048,7 @@ end;
 
 function TFhirHandleQAPostOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
-  result := '??';
+  result := '??qap';
 end;
 
 function TFhirHandleQAPostOperation.isWrite: boolean;
@@ -1090,7 +1090,7 @@ var
   needSecure : boolean;
   ctxt : TFHIRValidatorContext;
 begin
-  result := '??';
+  result := '??qgen';
   try
     manager.NotFound(request, response);
     if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -1251,7 +1251,7 @@ var
     result := request.Parameters[name];
   end;
 begin
-  result := '??';
+  result := '??val';
   profileId := '';
   profile := nil;
   try
@@ -1361,7 +1361,7 @@ var
   conn : TFDBConnection;
   patIds : TPatientIdTracker;
 begin
-  result := '??';
+  result := '??pe';
   patIds := TPatientIdTracker.Create;
   try
   try
@@ -1489,7 +1489,7 @@ var
   resp : TFhirClaimResponse;
   needSecure : boolean;
 begin
-  result := '??';
+  result := '??claim';
   claim := nil;
   try
     manager.NotFound(request, response);
@@ -1586,7 +1586,7 @@ var
   utils : TProfileUtilities;
   op : TFHIROperationOutcome;
 begin
-  result := '??';
+  result := '??sgen';
   try
     manager.NotFound(request, response);
     if manager.check(response, manager.opAllowed(request.ResourceName, request.CommandType), 400, manager.langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', manager.langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -1702,7 +1702,7 @@ var
   narr : TFHIRNarrativeGenerator;
   needSecure : boolean;
 begin
-  result := '??';
+  result := '??tgen';
   try
     manager.NotFound(request, response);
     if manager.check(response, request.Session.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, request.CommandType), 400, request.langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -1800,7 +1800,7 @@ var
   narr : TFHIRNarrativeGenerator;
   r : TFHIRResourceV;
 begin
-  result := '??';
+  result := '??ngen';
   try
     r := request.Resource;
     if (r = nil) then
@@ -1862,7 +1862,7 @@ end;
 
 function TFhirSuggestKeyWordsOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
-  result := '??';
+  result := '??key';
   raise EFHIRException.CreateLang('NOT_DONE_YET', request.langList);
 end;
 
@@ -1901,7 +1901,7 @@ var
   uri : TFhirUri;
   params : TFhirParameters;
 begin
-  result := '??';
+  result := '??mget';
   try
     ok := true;
     if request.ResourceName = '' then
@@ -2050,7 +2050,7 @@ var
   mw : TFHIRMetaW;
   p : TFHIRResource;
 begin
-  result := '??';
+  result := '??madd';
   meta := nil;
 
   try
@@ -2217,7 +2217,7 @@ var
   mw : TFHIRMetaW;
   p : TFhirResource;
 begin
-  result := '??';
+  result := '??mdel';
   meta := nil;
   try
     ok := true;
@@ -2387,7 +2387,7 @@ var
 //  meta : TFHIRMetaW;
 //  c : TFhirCoding;
 begin
-  result := '??';
+  result := '??diff';
   try
     ok := true;
     if not manager.check(response, request.canRead(request.ResourceName) and manager.opAllowed(request.ResourceName, fcmdRead), 400, request.langList, StringFormat(GetFhirMessage('MSG_OP_NOT_ALLOWED', request.langList), [CODES_TFHIRCommandType[request.CommandType], request.ResourceName]), itForbidden) then
@@ -2468,7 +2468,7 @@ end;
 
 function TFhirConvertOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
-  result := '??';
+  result := '??cnv';
   try
     response.Resource := request.Resource.link;
     response.HTTPCode := 200;
@@ -2552,7 +2552,7 @@ var
   list : TFslList<TFHIRResourceV>;
   res : TFHIRResourceV;
 begin
-  result := '??';
+  result := '??obs';
   try
     manager.NotFound(request, response);
     req := TFHIRStatsOpRequest.Create();
@@ -2670,7 +2670,7 @@ var
   prsrFmt : TFhirFormat;
   patIds : TPatientIdTracker;
 begin
-  result := '??';
+  result := '??lastn';
   patIds := TPatientIdTracker.Create;
   try
     conn := native(manager).Connection;
@@ -3066,7 +3066,7 @@ var
   needSecure : boolean;
   patIds : TPatientIdTracker;
 begin
-  result := '??';
+  result := '??dgen';
   patIds := TPatientIdTracker.Create;
   try
   try

@@ -471,7 +471,7 @@ begin
     case c.source of
       acssLoinc : result := FStore.Loinc.systemUri(c.context);
       acssSnomed : result := FStore.DefSnomed.systemUri();
-      acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.systemUri(c.context) else result := '??';
+      acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.systemUri(c.context) else result := '??tx1';
       acssUnii : result := FStore.Unii.systemUri(c.context);
       acssActCode : result := FActCode.systemUri(c.context);
     end;
@@ -544,7 +544,7 @@ begin
   case c.source of
     acssLoinc : result := FStore.Loinc.Code(c.context);
     acssSnomed : result := FSnomed.Code(c.context);
-    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??';
+    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Code(c.context) else result := '??tx2';
     acssUnii : result := FStore.Unii.Code(c.context);
     acssActCode : result := FActCode.Code(c.context);
   end;
@@ -585,7 +585,7 @@ begin
   case c.source of
     acssLoinc : result := FStore.Loinc.Definition(c.context);
     acssSnomed : result := FSnomed.Definition(c.context);
-    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??';
+    acssRxNorm : if FStore.RxNorm <> nil then result := FStore.RxNorm.Definition(c.context) else result := '??tx3';
     acssUnii : result := FStore.Unii.Definition(c.context);
     acssActCode : result := FActCode.Definition(c.context);
   end;

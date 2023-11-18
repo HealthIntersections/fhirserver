@@ -772,7 +772,7 @@ end;
 
 function TFhirGenerateQAOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
-  result := '??';
+  result := '??qa';
 end;
 
 { TFhirJWTOperation }

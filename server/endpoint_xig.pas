@@ -640,7 +640,7 @@ end;
 function TXIGServerEndPoint.dateBuilt: String;
 begin
   if (FXIGServer = nil) or (FXIGServer.FContext = nil) then
-    result := '???'
+    result := '???xig'
   else
     result :=  FXIGServer.FContext.FDate;
 end;
@@ -979,6 +979,7 @@ begin
         b.append('<th>Identity</th>');
         b.append('<th>Name/Title</th>');
         b.append('<th>Status</th>');
+        b.append('<th>Date</th>');
         if (realm = '') then
           b.append('<th>Realm</th>');
         if (auth = '') then
@@ -1006,9 +1007,9 @@ begin
 
         b.append('</tr>');
         if (text <> '') then
-          db.sql := 'Select PackageKey, ResourceType, Id, R2, R2B, R3, R4, R4B, R5, R6, Web, Url, Version, Status, Name, Title, Realm, Authority, Content, Supplements, Type, Details from Resources '+filter+' LIMIT '+inttostr(offs)+', '+inttostr(offs+200)+''
+          db.sql := 'Select PackageKey, ResourceType, Id, R2, R2B, R3, R4, R4B, R5, R6, Web, Url, Version, Status, Date, Name, Title, Realm, Authority, Content, Supplements, Type, Details from Resources '+filter+' LIMIT '+inttostr(offs)+', '+inttostr(offs+200)+''
         else
-          db.sql := 'Select PackageKey, ResourceType, Id, R2, R2B, R3, R4, R4B, R5, R6, Web, Url, Version, Status, Name, Title, Realm, Authority, Content, Supplements, Type, Details from Resources '+filter+' LIMIT '+inttostr(offs)+', '+inttostr(offs+200)+'';
+          db.sql := 'Select PackageKey, ResourceType, Id, R2, R2B, R3, R4, R4B, R5, R6, Web, Url, Version, Status, Date, Name, Title, Realm, Authority, Content, Supplements, Type, Details from Resources '+filter+' LIMIT '+inttostr(offs)+', '+inttostr(offs+200)+'';
         db.prepare;
         db.execute;
         while db.fetchnext do
@@ -1031,6 +1032,7 @@ begin
           else
             b.append('<td>'+db.ColStringByName['Name']+'</td>');
           b.append('<td>'+db.ColStringByName['Status']+'</td>');
+          b.append('<td>'+TFslDateTime.fromXML(db.ColStringByName['Date']).toString('yyyy-mm')+'</td>');
           if (realm = '') then
             b.append('<td>'+db.ColStringByName['Realm']+'</td>');
           if (auth = '') then

@@ -3363,7 +3363,7 @@ begin
     else if entry.requestUrl <> '' then
       id.Name := fullResourceUri(request.baseUrl, entry.requestUrl)
     else
-      id.Name := '??';
+      id.Name := '??id';
     id.outcomeVersion := 1;
 
     // figure out what kind of operation is involved here

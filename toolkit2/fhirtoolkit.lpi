@@ -34,7 +34,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views;..\dependencies\FMM"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
@@ -251,7 +251,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
+            <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views;..\dependencies\FMM"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>

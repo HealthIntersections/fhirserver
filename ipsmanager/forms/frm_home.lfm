@@ -1,7 +1,7 @@
 object IPSManagerForm: TIPSManagerForm
   Left = 350
   Height = 567
-  Top = 44
+  Top = 288
   Width = 1197
   Caption = 'Patient Summary Manager'
   ClientHeight = 567

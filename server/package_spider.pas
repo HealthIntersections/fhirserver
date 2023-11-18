@@ -471,7 +471,7 @@ var
   date : TFslDateTime;
   id, url, d, list: String;
 begin
-  url := '??';
+  url := '??pck';
   if item.element('guid') = nil then
   begin
     log('Error processing item from '+source+'#item['+inttostr(i)+']: no guid provided', source, true);

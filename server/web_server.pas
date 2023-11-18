@@ -729,7 +729,7 @@ begin
     try
       InterlockedIncrement(GCounterWebRequests);
       SetThreadStatus('Processing '+request.Document);
-      epn := '??';
+      epn := '??preq';
       summ := request.document;
       MarkEntry(AContext, request, response);
       try
@@ -909,7 +909,7 @@ begin
     try
       InterlockedIncrement(GCounterWebRequests);
       cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
-      epn := '??';
+      epn := '??sreq';
 
       SetThreadStatus('Processing '+request.Document);
       MarkEntry(AContext, request, response);

@@ -1199,7 +1199,7 @@ var
 Begin
 //  tt.track('req');
   start := GetTickCount64;
-  result := '??';
+  result := '??eps';
   noErrCode := false;
   mode := opmRestful;
   cache := false;
@@ -2465,7 +2465,7 @@ begin
 //        else if entry.resource is TFhirOrganization then
 //          b.Append(TFhirOrganization(entry.resource).name)
 //        else
-          b.Append('??');
+          b.Append('??hn');
         b.Append(' (');
         b.Append(entry.resource.fhirType);
         b.Append('/');

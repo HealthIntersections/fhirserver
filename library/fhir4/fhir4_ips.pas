@@ -27,7 +27,7 @@ type
     procedure SetParams(AValue: THTTPParameters);
 
     function nextId(pfx : String) : String;
-    function makeCodeableConcept(systemUri, code, display : String) : TFhirCodeableConcept;
+    function makeCodeableConcept(systemUri, code, display, text : String) : TFhirCodeableConcept;
     function makeAttachment(mimeType, title : String; content : TFslBuffer) : TFhirAttachment; overload;
     function makeAttachment(mimeType, title : String; ref : String) : TFhirAttachment; overload;
     function makeDiv(ext : boolean; out x : TFhirXHtmlNode) : TFHIRNarrative;
@@ -38,8 +38,10 @@ type
     function makeComposition : TFHIRComposition;
     function makePatient : TFhirPatient;
     function makeFuncStatusCondition(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode; paramName, text, systemUri, code, display : String) : TFHIRCondition;
+    function makeOrganRegistryEntry(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode; paramName, text, systemUri, code, display : String) : TFHIRObservation;
     function makeFuncStatusTextCondition(sect : TFHIRCompositionSection; x : TFhirXHtmlNode; paramName : string) : TFHIRCondition;
     function makeCareAdvocate(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode) : TFHIRRelatedPerson;
+    procedure makeAvoidanceRelationship(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode; s : String);
     function makeConsent(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode; fwds : boolean; paramName, textYes, textNo, systemUri, code, display : String) : TFHIRConsent;
     function makeDocRef(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode) : TFHIRDocumentReference;
   public
@@ -111,10 +113,11 @@ begin
 end;
 
 
-function TIPSGenerator.makeCodeableConcept(systemUri, code, display : String) : TFhirCodeableConcept;
+function TIPSGenerator.makeCodeableConcept(systemUri, code, display, text : String) : TFhirCodeableConcept;
 begin
   result := TFHIRCodeableConcept.Create(systemUri, code);
   result.codingList[0].display := display;
+  result.text := text;
 end;
 
 function TIPSGenerator.makeAttachment(mimeType, title: String; content: TFslBuffer): TFhirAttachment;
@@ -177,7 +180,7 @@ begin
   result := comp.sectionList.Append;
   try
     result.title := title;
-    result.code := makeCodeableConcept(systemUri, code, '');
+    result.code := makeCodeableConcept(systemUri, code, '', '');
     result.text := makeDiv(false, x);
     result.link;
   finally
@@ -209,7 +212,7 @@ begin
   try
     result.id := nextId('cmp');
     result.status := CompositionStatusFinal;
-    result.type_ := makeCodeableConcept('http://loinc.org', '60591-5', '');
+    result.type_ := makeCodeableConcept('http://loinc.org', '60591-5', '', '');
     result.subject := TFhirReference.Create;
     result.subject.reference := 'Patient/p1';
     result.date := TFslDateTime.makeToday;
@@ -231,7 +234,8 @@ var
   nok : TFHIRPatientContact;
   x : TFhirXHtmlNode;
   ext : TFHIRExtension;
-  sg, cg, dg, tg, sp, cdp, dp, tp : String;
+  l : TFhirPatientCommunication;
+  s, sg, cg, dg, tg, sp, cdp, dp, tp, sv, cdv, dv, tv : String;
 begin
   if (params.has('gender')) then
   begin
@@ -265,7 +269,7 @@ begin
     end
     else
       raise EFslException.Create('Unknown value for gender: '+params['gender']);
-  end;
+  end;    
   if (params.has('pronouns')) then
   begin
     if params['pronouns'] = 'f' then
@@ -292,7 +296,33 @@ begin
     else
       raise EFslException.Create('Unknown value for pronouns: '+params['pronouns']);
   end;
-
+                
+  if (params.has('sexchar')) then
+  begin
+    if params['sexchar'] = 'n' then
+    begin
+      sv := 'http://www.abs.gov.au/ausstats/XXXX';
+      cdv := '2';
+      dv := 'No';
+      tv := 'Typical Sex Characterstics';
+    end
+    else if params['sexchar'] = 'y' then
+    begin
+      sv := 'http://www.abs.gov.au/ausstats/XXXX';
+      cdv := '1';
+      dv := 'Yes';
+      tv := 'Atypical Sex Characterstics';
+    end
+    else if params['sexchar'] = 'u' then
+    begin
+      sv := 'http://www.abs.gov.au/ausstats/XXXX';
+      cdv := '3';
+      dv := 'Don''t know';
+      tv := 'Unsure about sex characterstics';
+    end
+    else
+      raise EFslException.Create('Unknown value for typical sex characteristics: '+params['sexchar']);
+  end;
 
   result := TFhirPatient.Create;
   try
@@ -311,7 +341,7 @@ begin
       x.tx('born '+params['dob']);
       FPatDesc := FPatDesc + ', '+params['dob'];
     end;
-    ;
+
     if (tg <> '') then
     begin
       x.sep(', ');
@@ -325,8 +355,8 @@ begin
         FPatDesc := FPatDesc + '('+tg+')';
       x.tx(')');
       ext := result.addExtension('http://hl7.org/fhir/StructureDefinition/individual-genderIdentity');
-      ext.addExtension('value', makeCodeableConcept(sg,cg,dg));
-    end;
+      ext.addExtension('value', makeCodeableConcept(sg,cg,dg, params['gender-other']));
+    end;    
     if (tp <> '') then
     begin
       if (tg = '') then
@@ -335,15 +365,29 @@ begin
         x.tx(' ('+tp+')');
         FPatDesc := FPatDesc + '('+tp+')';
       end;
-      
+
       ext := result.addExtension('http://hl7.org/fhir/StructureDefinition/individual-pronouns');
-      ext.addExtension('value', makeCodeableConcept(sp,cdp,dp));
+      ext.addExtension('value', makeCodeableConcept(sp,cdp,dp, params['pronouns-other']));
     end;
+    if (tp <> '') then
+    begin
+      x.tx(' ('+tv+')');
+      FPatDesc := FPatDesc + '('+tv+')';
+      ext := result.addExtension('http://hl7.org.au/fhir/StructureDefinition/sex-characterstic-variation');
+      ext.addExtension('value', makeCodeableConcept(sv,cdv,dv,''));
+    end;
+
+    if (params.has('community')) then
+    begin
+      ext := result.addExtension('http://hl7.org.au/fhir/StructureDefinition/community-affiliation');
+      ext.addExtension('value', TFhirString.create(params['community']));
+    end;
+
     if params.has('id') then
     begin
       id := result.identifierList.Append;
       id.value := params['id'];
-      id.type_ := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/v2-0203', 'NIIP', 'National Insurance Payor Identifier (Payor)');
+      id.type_ := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/v2-0203', 'NIIP', 'National Insurance Payor Identifier (Payor)', '');
       x.sep('. ');
       x.tx('National ID '+params['id']);
       FPatDesc := FPatDesc + ', National ID '+params['id'];
@@ -436,6 +480,22 @@ begin
         end;
       end;
     end;
+    if (params.has('language')) then
+    begin
+      s := params['language'].toLower;
+      l := result.communicationList.Append;
+      l.language := TFHIRCodeableConcept.create;
+      l.language.text := params['language'];
+      l.preferred := true;
+      if ((s = 'en') or (s = 'english')) then
+        if (params.has('english')) then
+        begin
+          l := result.communicationList.Append;
+          l.language := TFHIRCodeableConcept.create;
+          l.language.text := 'english';
+        end;
+    end;
+
     result.link;
   finally
     result.free;
@@ -454,10 +514,88 @@ begin
     try
       result.id := nextId('cnd');  
       result.text := makeDiv(false, rx);
-      result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'active', 'Active');
-      result.code := makeCodeableConcept(systemUri, code, display);
+      result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'active', 'Active', '');
+      result.code := makeCodeableConcept(systemUri, code, display, '');
       result.code.text := text;
       result.subject := TFHIRReference.Create('Patient/p1');
+      sect.entryList.Append.reference := 'Condition/'+result.id;
+      ul.li.tx(text);
+      rx.p.tx('Condition for '+FPatDesc);
+      rx.p.tx(text);
+      result.link;
+    finally
+      result.free;
+    end;
+  end;
+end;
+
+function organStatusCode(s : String) : String;
+begin
+  if (s = 'ns') then
+    result := ''
+  else if (s = 'p') then
+    result := 'present'
+  else if (s = 'a') then
+    result := 'transplanted-in'
+  else if (s = 'i') then
+    result := 'implant'
+  else if (s = 'g') then
+    result := 'absent'
+  else if (s = 'np') then
+    result := 'congenitally-absent'
+  else if (s = 'pr') then
+    result := 'partially-excised'
+  else if (s = 'r') then
+    result := 'excised'
+  else
+    result := '';
+end;
+
+
+function organStatusDisplay(s : String) : String;
+begin
+  if (s = 'ns') then
+    result := ''
+  else if (s = 'present') then
+    result := 'present'
+  else if (s = 'transplanted-in') then
+    result := 'transplanted-in'
+  else if (s = 'implant') then
+    result := 'implant'
+  else if (s = 'absent') then
+    result := 'absent'
+  else if (s = 'congenitally-absent') then
+    result := 'congenitally-absent'
+  else if (s = 'partially-excised') then
+    result := 'partially-excised'
+  else if (s = 'excised') then
+    result := 'excised'
+  else
+    result := '';
+end;
+
+
+function TIPSGenerator.makeOrganRegistryEntry(sect : TFHIRCompositionSection; ul : TFhirXHtmlNode; paramName, text, systemUri, code, display : String) : TFHIRObservation;
+var
+  rx : TFhirXHtmlNode;
+  s : String;
+begin
+  if params[paramName] = 'ns' then
+    result := nil
+  else
+  begin
+    result := TFHIRObservation.Create;
+    try
+      result.id := nextId('obs');
+      result.text := makeDiv(false, rx);
+      result.categoryList.add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/observation-category', 'organ-inventory', 'Organ Inventory', ''));
+      result.code := makeCodeableConcept('http://loinc.org', 'XXXXX-Y', 'Organ status', '');
+      result.code.text := text;
+      result.subject := TFHIRReference.Create('Patient/p1');
+      result.effective := TFHIRDateTime.create(TFslDateTime.makeUTC);
+      result.bodySite := makeCodeableConcept(systemUri, code, display, '');
+      s := organStatusCode(params[paramName]);
+      result.value := makeCodeableConcept('http://healthintersections.com.au/fhir/playground/CodeSystem/organ-inventory-status', s, organStatusDisplay(s), '');
       sect.entryList.Append.reference := 'Condition/'+result.id;
       ul.li.tx(text);
       rx.p.tx('Condition for '+FPatDesc);
@@ -481,7 +619,7 @@ begin
     try
       result.id := nextId('cnd'); 
       result.text := makeDiv(false, rx);
-      result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'active', 'Active');
+      result.clinicalStatus := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/condition-clinical', 'active', 'Active', '');
       result.code := TFhirCodeableConcept.Create;
       result.code.text := params[paramName];
       result.subject := TFHIRReference.Create('Patient/p1');
@@ -494,6 +632,19 @@ begin
       result.free;
     end;
   end;
+end;
+
+procedure TIPSGenerator.makeAvoidanceRelationship(sect: TFHIRCompositionSection; ul: TFhirXHtmlNode; s : String);
+var
+  li: TFhirXHtmlNode;
+var
+  ref : TFhirReference;
+begin
+  li := ul.li;
+  li.tx(s);
+  ref := sect.entryList.Append;
+  ref.display := s;
+  ref.addExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/do-not-contact', TFhirBoolean.create(true));
 end;
 
 function TIPSGenerator.makeCareAdvocate(sect: TFHIRCompositionSection; ul: TFhirXHtmlNode): TFHIRRelatedPerson;
@@ -515,9 +666,9 @@ begin
       result.patient := TFHIRReference.Create('Patient/p1');
       li.tx('Care Advocate:');
       rx.p.tx('Care Advocate for '+FPatDesc+':');
-      result.nameList.Append.text := params['name'];
-      li.tx(params['ca']);
-      rx.tx(params['ca']);
+      result.nameList.Append.text := params['caname'];
+      li.tx(params['caname']);
+      rx.tx(params['caname']);
       if params.has('caemail') or params.has('camobile') or params.has('caphone') then
       begin
         li.tx('. Contacts: ');
@@ -566,12 +717,12 @@ begin
       end;
       if params['calegal'] = 'true' then
       begin
-        result.relationshipList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/v3-RoleCode', 'HPOWATT', 'healthcare power of attorney'));
+        result.relationshipList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/v3-RoleCode', 'HPOWATT', 'healthcare power of attorney', ''));
         rx.tx(' (legal power of attorney)');
         li.tx(' (legal power of attorney)');
       end
       else
-        result.relationshipList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/v3-RoleCode', 'NOK', 'next of kin'));
+        result.relationshipList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/v3-RoleCode', 'NOK', 'next of kin', ''));
 
       sect.entryList.Append.reference := 'RelatedPerson/'+result.id;
       result.link;
@@ -601,8 +752,8 @@ begin
       rx.p.tx('Consent for '+FPatDesc+': ');
       result.patient := TFHIRReference.Create('Patient/p1');
       result.status := ConsentStateCodesActive;
-      result.scope := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/consentscope', 'adr', 'Advanced Care Directive');
-      result.categoryList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/consentcategorycodes', 'acd', 'Advance Directive'));
+      result.scope := makeCodeableConcept('http://terminology.hl7.org/CodeSystem/consentscope', 'adr', 'Advanced Care Directive', '');
+      result.categoryList.Add(makeCodeableConcept('http://terminology.hl7.org/CodeSystem/consentcategorycodes', 'acd', 'Advance Directive', ''));
       result.policyRule := TFhirCodeableConcept.Create;
       result.policyRule.text := 'Unknown Policy';
       result.provision := TFHIRConsentProvision.Create;
@@ -618,7 +769,7 @@ begin
         li.tx(textNo);
         rx.tx(textNo);
       end;
-      result.provision.codeList.add(makeCodeableConcept(systemUri, code, display));
+      result.provision.codeList.add(makeCodeableConcept(systemUri, code, display, ''));
 
       sect.entryList.Append.reference := 'Consent/'+result.id;
       result.link;
@@ -646,7 +797,7 @@ begin
       result.text := makeDiv(false, rx);
       result.status := DocumentReferenceStatusCurrent;
       result.subject := TFHIRReference.Create('Patient/p1');
-      result.type_ := makeCodeableConcept('http://loinc.org', '75320-2', 'Advance directive');
+      result.type_ := makeCodeableConcept('http://loinc.org', '75320-2', 'Advance directive', '');
       li.tx('Advance Care Directive:');
       rx.p.tx('Advance Care Directive '+FPatDesc+':');
       if FFormatChoice = 'z' then
@@ -669,6 +820,8 @@ var
   sect : TFHIRCompositionSection;
   cp : TFHIRCarePlan;
   x, ul : TFhirXHtmlNode;
+  ts : TStringList;
+  s : String;
 begin
   FFormatChoice := params['format'];
 
@@ -690,7 +843,8 @@ begin
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'concern-memory', 'Patient has concerns around Memory', 'http://snomed.info/sct', '386807006', 'Memory impairment'));
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'concern-trauma', 'Patient has concerns around dealing with Past Trauma', 'http://snomed.info/sct', '161472001', 'History of psychological trauma'));
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'concern-focus', 'Patient has concerns around Staying focused / Concentration', 'http://snomed.info/sct', '1144748009', 'Impaired concentration'));
-
+    addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'concern-addiction', 'Patient has concerns around managing their addictions', 'http://snomed.info/sct', '32709003', 'Addiction'));
+    addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'concern-city', 'Cities and/or crowds are unfamiliar for the patient', 'http://snomed.info/sct', '5794003', 'Country dweller'));
 
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'eating', 'Patient may need help with Eating / Drinking', 'http://snomed.info/sct', '110292000', 'Difficulty eating'));
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'toileting', 'Patient may need help with Toileting', 'http://snomed.info/sct', '284911003', 'Difficulty using toilet'));
@@ -702,10 +856,53 @@ begin
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'meds', 'Patient may need help with Taking my medications', 'http://snomed.info/sct', '715037005', 'Difficulty taking medication'));
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'reading', 'Patient may need help with Reading Documentation', 'http://snomed.info/sct', '309253009', 'Difficulty reading'));
 
-
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'dog', 'Patient has a Guide Dog', 'http://snomed.info/sct', '105506000', 'Dependence on seeing eye dog'));
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'wheelchair', 'Patient has a Wheelchair', 'http://snomed.info/sct', '105503008', 'Dependence on wheelchair'));
     addToBundle(bnd, makeFuncStatusCondition(sect, ul, 'comm-device', 'Patient has a Communication Device', 'http://snomed.info/sct', '719369003', 'Uses communication device'));
+
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Arm-l', 'Left Arm Status', 'http://snomed.info/sct', '368208006', 'Left upper arm structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Arm-r', 'Right Arm Status', 'http://snomed.info/sct', '368209003', 'Right upper arm structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Hand-l', 'Left Hand Status', 'http://snomed.info/sct', '85151006', 'Structure of left hand'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Hand-r', 'Right Hand Status', 'http://snomed.info/sct', '78791008', 'Structure of right hand'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Fingers-l', 'Left Fingers Status', 'http://snomed.info/sct', '786841006', 'Structure of all fingers of left hand'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Fingers-r', 'Right Fingers Status', 'http://snomed.info/sct', '786842004', 'Structure of all fingers of right hand'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Leg-l', 'Left Leg Status', 'http://snomed.info/sct', '48979004', 'Structure of left lower leg'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Leg-r', 'Right Leg Status', 'http://snomed.info/sct', '32696007', 'Structure of right lower leg'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Calf-l', 'Left Calf Status', 'http://snomed.info/sct', '48979004', 'Structure of left lower leg'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Calf-r', 'Right Calf Status', 'http://snomed.info/sct', '32696007', 'Structure of right lower leg'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Foot-l', 'Left Foot Status', 'http://snomed.info/sct', '22335008', 'Structure of left foot'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Foot-r', 'Right Foot Status', 'http://snomed.info/sct', '7769000', 'Structure of right foot'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Toe-l', 'Left Toe Status', 'http://snomed.info/sct', '785708006', 'Structure of all toes of left foot'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Toe-r', 'Right Toe Status', 'http://snomed.info/sct', '785709003', 'Structure of all toes of right foot'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Hip-l', 'Left Hip Status', 'http://snomed.info/sct', '287679003', 'Left hip region structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Hip-r', 'Right Hip Status', 'http://snomed.info/sct', '287579007', 'Right hip region structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Eye-l', 'Left Eye Status', 'http://snomed.info/sct', '1290041000', 'Entire left eye proper'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Eye-r', 'Right Eye Status', 'http://snomed.info/sct', '1290043002', 'Entire right eye proper'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Hypothalamus', 'Hypothalamus Status', 'http://snomed.info/sct', '67923007', 'Hypothalamic structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Pituitary', 'Pituitary Status', 'http://snomed.info/sct', '56329008', 'Pituitary structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Tongue', 'Tongue Status', 'http://snomed.info/sct', '21974007', 'Tongue structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Jaw', 'Jaw Status', 'http://snomed.info/sct', '661005', 'Jaw region structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Oesophagus', 'Oesophagus Status', 'http://snomed.info/sct', '32849002', 'Esophageal structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'LargeColon', 'Large Colon Status', 'http://snomed.info/sct', '71854001', 'Colon structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Stomach', 'Stomach Status', 'http://snomed.info/sct', '69695003', 'Stomach structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'GallBladder', 'Gall Bladder Status', 'http://snomed.info/sct', '28231008', 'Gallbladder structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Kidney-l', 'Left Kidney Status', 'http://snomed.info/sct', '18639004', 'Left kidney structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Kidney-r', 'Right Kidney Status', 'http://snomed.info/sct', '9846003', 'Right kidney structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Liver', 'Liver Status', 'http://snomed.info/sct', '10200004', '10200004'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Bladder', 'Bladder Status', 'http://snomed.info/sct', '89837001', 'Urinary bladder structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Lung-l', 'Left Lung Status', 'http://snomed.info/sct', '44029006', 'Left lung structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Lung-r', 'Right Lung Status', 'http://snomed.info/sct', '3341006', 'Right lung structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Breasts-l', 'Left Breast Status', 'http://snomed.info/sct', '80248007', 'Left breast structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Breasts-r', 'Right Breast Status', 'http://snomed.info/sct', '73056007', 'Right breast structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Ovary-l', 'Left Ovary Status', 'http://snomed.info/sct', '43981004', 'Structure of left ovary'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Ovary-r', 'Right Ovary Status', 'http://snomed.info/sct', '20837000', 'Structure of right ovary'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Uterus', 'Uterus Status', 'http://snomed.info/sct', '35039007', 'Uterine structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Cervix', 'Cervix Status', 'http://snomed.info/sct', '71252005', 'Cervix uteri structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Vagina', 'Vagina Status', 'http://snomed.info/sct', '76784001', 'Vaginal structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Penis', 'Penis Status', 'http://snomed.info/sct', '18911002', 'Penile structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Prostate', 'Prostate Status', 'http://snomed.info/sct', '41216001', 'Prostatic structure'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Testis-l', 'Left Testis Status', 'http://snomed.info/sct', '63239009', 'Structure of left testis'));
+    addToBundle(bnd, makeOrganRegistryEntry(sect, ul, 'Testis-r', 'Right Testis Status', 'http://snomed.info/sct', '15598003', 'Structure of right testis'));
 
     addToBundle(bnd, makeFuncStatusTextCondition(sect, x, 'text'));
 
@@ -721,6 +918,19 @@ begin
           'Patient does not accept a blood transfusion', 'http://snomed.info/sct', '116859006', 'Blood transfusion'));
     addToBundle(bnd, makeDocRef(sect, ul));
 
+    if (params.has('avoidance')) then
+    begin
+      x.p.tx('Plase avoid contacting/communicating with these individuals:');
+      ul := x.ul;
+      ts := TStringList.create;
+      try
+        ts.text := params['avoidance'];
+        for s in ts do
+          makeAvoidanceRelationship(sect, ul, s);
+      finally
+        ts.free;
+      end;
+    end;
     result := bnd.Link;
   finally
     bnd.free;
@@ -930,4 +1140,5 @@ end;
 
 
 end.
+
 

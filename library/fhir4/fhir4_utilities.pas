@@ -4107,16 +4107,29 @@ begin
     result := result + gen(useContextList[i]);
 end;
 
+function tail(url : String) : String;
+begin
+  if url.contains('/') then
+    result := url.subString(url.lastIndexOf('/')+1)
+  else if url.contains(':') then
+    result := url.subString(url.lastIndexOf(':')+1)
+  else
+    result := url;
+end;
+
 function TFhirValueSetHelper.source: string;
 var
   ts : TStringList;
+  vs : TFhirCanonical;
   comp : TFhirValueSetComposeInclude;
 begin
   ts := TStringList.Create;
   try
     ts.sorted := true;
+    ts.duplicates := dupIgnore;
 
     if (compose <> nil) then
+    begin
       for comp in compose.includeList do
       begin
         if comp.system <> '' then
@@ -4125,9 +4138,16 @@ begin
           begin
             ts.add(csName(comp.system));
           end;
-        end;
+        end
+        else
+          for vs in comp.valueSetList do
+            ts.add('vs:'+tail(vs.value));
       end;
-    result := ts.commaText;
+    end;
+    if (ts.count = 0) then
+      result := 'unknown source'
+    else
+      result := ts.commaText;
   finally
     ts.free;
   end;
