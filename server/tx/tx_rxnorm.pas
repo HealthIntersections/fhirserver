@@ -1061,7 +1061,7 @@ end;
 
 function TRxNormServices.version(context: TCodeSystemProviderContext): String;
 begin
-  result := '??';
+  result := '??rx1';
 end;
 
 { TNDFRTServices }
@@ -1098,7 +1098,7 @@ end;
 
 function TNDFRTServices.version(context: TCodeSystemProviderContext): String;
 begin
-  result := '??';
+  result := '??rx2';
 end;
 
 end.

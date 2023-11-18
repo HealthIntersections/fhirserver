@@ -991,7 +991,7 @@ begin
   else if s.StartsWith('http://www.hl7.org') then
     result := 'HL7'
   else
-    result := '??';
+    result := '??scim';
 end;
 
 procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);

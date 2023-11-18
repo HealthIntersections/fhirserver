@@ -661,7 +661,7 @@ function TFHIRPackageWebServer.interpretVersion(v: String): String;
     else if (v.StartsWith('1')) then
       result := 'R3'
     else
-      result := '??'
+      result := '??V'
   end;
 var
   ts : TStringList;
@@ -815,7 +815,7 @@ begin
     fpkGroup : result := 'Group';
     fpkExamples : result := 'Examples';
   else
-    result := '?? ('+inttostr(kind)+')';
+    result := '??kind ('+inttostr(kind)+')';
   end;
 end;
 

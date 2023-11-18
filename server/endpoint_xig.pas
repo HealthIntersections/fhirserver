@@ -640,7 +640,7 @@ end;
 function TXIGServerEndPoint.dateBuilt: String;
 begin
   if (FXIGServer = nil) or (FXIGServer.FContext = nil) then
-    result := '???'
+    result := '???xig'
   else
     result :=  FXIGServer.FContext.FDate;
 end;

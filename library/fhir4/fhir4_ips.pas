@@ -235,7 +235,7 @@ var
   x : TFhirXHtmlNode;
   ext : TFHIRExtension;
   l : TFhirPatientCommunication;
-  sg, cg, dg, tg, sp, cdp, dp, tp, sv, cdv, dv, tv : String;
+  s, sg, cg, dg, tg, sp, cdp, dp, tp, sv, cdv, dv, tv : String;
 begin
   if (params.has('gender')) then
   begin
@@ -488,7 +488,7 @@ begin
       l.language.text := params['language'];
       l.preferred := true;
       if ((s = 'en') or (s = 'english')) then
-        if (params.has('english') then
+        if (params.has('english')) then
         begin
           l := result.communicationList.Append;
           l.language := TFHIRCodeableConcept.create;

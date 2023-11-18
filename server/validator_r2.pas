@@ -274,7 +274,7 @@ begin
       else
       begin
         result.Severity := isError;
-        result.Message := '??';
+        result.Message := '??val2';
       end;
       result.Link;
     finally

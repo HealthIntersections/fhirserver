@@ -308,7 +308,7 @@ begin
           else if vs.url <> '' then
             result := 'Expand ValueSet '+vs.url+' on '+vs.source
           else
-            result := 'Expand ValueSet  on '+vs.source;
+            result := 'Expand inline ValueSet  on '+vs.source;
           vs.checkNoImplicitRules('ExpandValueSet', 'ValueSet');
           FFactory.checkNoModifiers(vs.Resource, 'ExpandValueSet', 'ValueSet');
 

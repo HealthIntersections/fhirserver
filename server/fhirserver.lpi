@@ -810,7 +810,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="49">
+    <Exceptions Count="50">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -978,6 +978,9 @@
       <Item49>
         <Name Value="ESemVerException"/>
       </Item49>
+      <Item50>
+        <Name Value="EPackageCrawlerException"/>
+      </Item50>
     </Exceptions>
   </Debugging>
 </CONFIG>
