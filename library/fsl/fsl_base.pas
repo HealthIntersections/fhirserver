@@ -1126,7 +1126,7 @@ End;
 
 procedure TFslObject.BeforeDestruction;
 Begin
-  // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
+  // Really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
   Assert(CheckCondition(FFslObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
 
   Inherited;
@@ -1169,9 +1169,6 @@ Begin
     end;
 
     Assert(Invariants('Free', TFslObject));
-                                              
-    if ClassName = 'TFHIRServerWorkerContextR4' then
-      inc(GCounter);
 
     if ObjectCrossesThreads then
       done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
@@ -1291,8 +1288,6 @@ Begin
 
   If Assigned(Self) Then
   Begin
-    if ClassName = 'TFHIRServerWorkerContextR4' then
-      inc(GCounter);
     Assert(Invariants('Link', TFslObject));
 
     if ObjectCrossesThreads then
