@@ -2337,8 +2337,8 @@ begin
   if (source.url <> '') then
     dependencies.Add(source.url);
 
-  if FParams.hasLanguages then
-    result.language := FParams.Languages.prefLang;
+//  if FParams.hasLanguages then
+//    result.language := FParams.Languages.prefLang;
 
   filter := TSearchFilterText.create(textFilter);
 
