@@ -1621,7 +1621,7 @@ var
   op : TFhirOperationOutcomeW;
   log : String;
   tl : TIETFLang;
-  psys, pver, pdisp, pcode, us, baseMsg : String;
+  psys, pver, pdisp, pcode, us, baseMsg, p : String;
   dc, i : integer;
   a : TStringArray;
   unknownSystems : TStringList;
@@ -1826,7 +1826,15 @@ begin
           else
             m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.languages, ['', FValueSet.vurl, codelist]);
           msg(m);
-          op.addIssue(isError, itCodeInvalid, issuePath, m);
+
+          if (issuePath <> 'CodeableConcept') then
+            p := issuePath + '.code'
+          else if code.codingCount = 1 then
+            p := issuePath + '.coding[0].code'
+          else
+            p := issuePath;
+
+          op.addIssue(isError, itCodeInvalid, p, m);
           if cause = itNull then
             cause := itUnknown;
         end;
