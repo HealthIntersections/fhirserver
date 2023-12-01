@@ -1185,7 +1185,7 @@ begin
             if (displays <> nil) then
               listDisplays(displays, cs, ctxt);
           finally
-            ctxt.free;;
+            ctxt.free;
           end;
         end;
       end;
@@ -1262,7 +1262,7 @@ begin
             end;
             listDisplays(displays, cs, ctxt);
           finally
-            ctxt.free;;
+            ctxt.free;
           end;
         end;
       end;
@@ -1666,7 +1666,7 @@ begin
           if (issuePath = 'CodeableConcept') then
             path := addToPath(issuePath, 'coding['+inttostr(i)+']')
           else
-            path := issuePath;;
+            path := issuePath;
           list.clear;
           v := check(path, c.systemUri, c.version, c.code, abstractOk, inferSystem, list, unknownSystems, message, ver, inactive, vstatus, cause, op, vcc, result, contentMode, impliedSystem);
           if (v <> bTrue) and (message <> '') then
@@ -1726,6 +1726,8 @@ begin
             pd := list.preferredDisplay(FParams.languages);
             if pd <> '' then
               pdisp := pd;
+            if (pdisp = '') then
+              pdisp := list.preferredDisplay;
           end
           else if (FParams.valueSetMode <> vsvmMembershipOnly) then
           begin
@@ -1810,7 +1812,7 @@ begin
                      result.addParamStr('version', prov.version(nil));
                  end;
                finally
-                 ctxt.free;;
+                 ctxt.free;
                end;
              end;
             finally
@@ -1961,14 +1963,14 @@ Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderConte
 begin
   result := ctxt <> nil;
   if result then
-    ctxt.free;;
+    ctxt.free;
 end;
 
 Function FreeAsBoolean(cs : TCodeSystemProvider; ctxt : TCodeSystemProviderFilterContext) : boolean; overload;
 begin
   result := ctxt <> nil;
   if result then
-    ctxt.free;;
+    ctxt.free;
 end;
 
 function TValueSetChecker.checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code: String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW): boolean;
@@ -3392,7 +3394,7 @@ begin
                     end;
                   end;
                 finally
-                  ctxt.free;;
+                  ctxt.free;
                 end;
               finally
                 prep.free;
