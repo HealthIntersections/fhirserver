@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - lastbuilt
 #  pull_request:
 jobs:
   Build-Docker-Image:
