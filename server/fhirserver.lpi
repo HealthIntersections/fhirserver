@@ -379,7 +379,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="96">
+    <Units Count="97">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -767,6 +767,10 @@
         <Filename Value="endpoint_xig.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit95>
+      <Unit96>
+        <Filename Value="web_server.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit96>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
