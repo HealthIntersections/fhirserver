@@ -410,7 +410,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R .\"/>
+              <LinkerOptions Value="-R ./"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
