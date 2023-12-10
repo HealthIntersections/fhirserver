@@ -79,6 +79,4 @@ echo ## compile server
 echo ## compile toolkit
 %tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64-release -q -q
     
-	// C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\executables
-	
 chdir /d %FSDIR% 

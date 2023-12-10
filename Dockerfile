@@ -1,6 +1,19 @@
-FROM ubuntu:20.04 as builder
+FROM ubuntu:22.04 as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
+
+
+RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev build-essential
+
+# Download and build OpenSSL 1.1.1w
+WORKDIR /tmp
+RUN wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz \
+    && tar -xf openssl-1.1.1w.tar.gz \
+    && cd openssl-1.1.1w \
+    && ./config \
+    && make \
+    && make test \
+    && make install
 
 RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev && \
     cd /tmp && \
@@ -19,12 +32,10 @@ RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
-RUN /work/bootstrap/linux-libraries.sh /work/bootstrap && \
-    cp exec/pack/linux/*.so /usr/lib/
-RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap && \
-    cp exec/pack/*.properties exec/64 && \
-    find . -name "*.o" -type f -delete -o -name "*.ppu" -type f -delete
-
+RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
+RUN cp exec/pack/linux/*.so /usr/lib/
+RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
+RUN cp exec/pack/*.properties exec/64
 
 ENV DISPLAY :99
 ENV PORT 80
