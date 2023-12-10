@@ -707,18 +707,7 @@ var
   ok : boolean;
   epn, cid, ip : String;
   tt : TTimeTracker;
-  fullPath: String;
-  DefaultFiles: array[0..2] of String;
-  DefaultFile: String;
-  i: Integer;
-  
 begin
-
-  DefaultFiles[0] := 'index.html';
-  DefaultFiles[1] := 'index.htm';
-  DefaultFiles[2] := 'default.html';
-
-
   // when running with a reverse proxy, it's easier to let the reverse proxy just use non-ssl upstream, and pass through the certificate details se we know SSL is being used
   if (Common.SSLHeaderValue <> '') and (request.RawHeaders.Values['X-Client-SSL'] = Common.SSLHeaderValue) then
     SecureRequest(aContext, request, response)
@@ -783,23 +772,6 @@ begin
 
           if not ok then
           begin
-            // Get full path of the requested document
-            fullPath := SourceProvider.AltFile(request.Document, '/');
-
-            // If the path corresponds to a directory, look for a default file
-            if DirectoryExists(fullPath) then
-            begin
-              for i := 0 to 2 do
-              begin
-                DefaultFile := DefaultFiles[i];
-                if FileExists(fullPath + '/' + DefaultFile) then
-                begin
-                  ReturnSpecFile(response, request.Document + '/' + DefaultFile, fullPath + '/' + DefaultFile, false);
-                  Exit;  // Exit the procedure after serving a default file
-                end;
-              end;
-            end;
-
             if request.Document = '/diagnostics' then
             begin
               epn := 'WS';
