@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils,
   mvBase;
-
+  
 type
   { TDataSourceViewManager }
 

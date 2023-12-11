@@ -160,6 +160,4 @@ function TFDBFullTextSearch.link: TFDBFullTextSearch;
 begin
   result := TFDBFullTextSearch(inherited link);
 end;
-
 end.
-
