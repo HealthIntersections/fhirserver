@@ -229,7 +229,7 @@ begin
   begin
     srcns := ts[i].Replace(#9, '').Replace(' ', '').ToLower;
     if srcns.contains('=class(exception)') and not srcns.contains('efslexception=class(exception)') then
-      reportError(filename, i, 'subclasses Exception (should be (EFslException)');
+      reportError(filename, i, 'subclasses Exception (should be (EFslException))');
   end;
 end;
 
@@ -245,20 +245,29 @@ begin
     i := 1;
     l := 0;
     fl := -1;
+    changed := False; // Initialize 'changed' to false
     while (i <= length(src)) do
     begin
       ch := src[i];
       if (ch = #13) then
       begin
         inc(l);
-        b.Append(#13#10);
-        if (i = length(src)) or (src[i+1] <> #10) then
+        if (i = length(src)) then // Check if it's the end of the file
         begin
+          b.Append(ch); // Just append the carriage return without adding a line feed
+          // Do not set 'changed' to true as we are keeping the original ending
+        end
+        else if (src[i+1] <> #10) then
+        begin
+          b.Append(#13#10); // Append Windows-style line ending
           changed := true;
           if fl = -1 then fl := l;
         end
         else
-          inc(i);
+        begin
+          b.Append(ch); // Append the original character
+          inc(i); // Skip the next character as it's a line feed
+        end;
       end
       else if (ch = #10) then
       begin
