@@ -225,6 +225,10 @@ const
 function isValidPackageId(id : String) : boolean;
 function isMoreRecentVersion(test, base : String) : boolean;
 
+
+function readZLibHeader(stream : TStream) : TBytes; overload;
+function readZLibHeader(b : TBytes) : TBytes; overload;
+
 implementation
 
 function isValidPackagePart(part : String) : boolean;
@@ -1077,12 +1081,16 @@ begin
 end;
 
 function readZLibHeader(stream : TStream) : TBytes;
+begin
+  result := readZLibHeader(StreamToBytes(stream));
+
+end;
+
+function readZLibHeader(b : TBytes) : TBytes;
 var
-  b : TBytes;
   p : int64;
   i : integer;
 begin
-  b := StreamToBytes(stream);
   if (length(b) < 10) or (b[0] <> $1F) or (b[1] <> $8B) then
     result := b
   else
