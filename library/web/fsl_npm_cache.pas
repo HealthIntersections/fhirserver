@@ -733,13 +733,14 @@ var
   fn : String;
   b : TBytes;
 begin
+  BytesToFile(content, '/Users/grahamegrieve/temp/package.tgz');
   Logging.log('Loading Package ('+DescribeBytes(length(content))+')');
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
-    bo := TBytesStream.Create(content);
+    bo := TBytesStream.Create(readZLibHeader(content));
     try
-      z := TZDecompressionStream.Create(bo, false); //  15+16);
+      z := TZDecompressionStream.Create(bo, true); //  15+16);
       try
         work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
         tar := TTarArchive.Create(z);
