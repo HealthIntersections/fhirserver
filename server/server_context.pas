@@ -469,7 +469,8 @@ end;
 
 procedure TFHIRServerContext.UnLoad;
 begin
-  FStorage.UnLoad;
+  if FStorage <> nil then
+    FStorage.UnLoad;
   FQuestionnaireCache.clearCache;
   FValidatorContext.UnLoad;
   FValidator.Unload;
