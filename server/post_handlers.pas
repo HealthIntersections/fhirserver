@@ -90,10 +90,10 @@ begin
     c := result.codingList.Append;
     c.system := system;
     c.code := code;
-    c.display := context.TerminologyServer.getDisplayForCode(THTTPLanguages.create('en'), system, '', code);
+    c.display := context.TerminologyServer.getDisplayForCode(nil, system, '', code);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -113,7 +113,7 @@ begin
         result.end_ := TFslDateTime.fromXML(params['endParam']);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -130,16 +130,16 @@ begin
       // todo: look up display
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
 
 destructor TFHIRServerPostHandler.Destroy;
 begin
-  FSession.Free;
-  FContext.Free;
-  FParams.Free;
+  FSession.free;
+  FContext.free;
+  FParams.free;
   inherited;
 end;
 
@@ -165,7 +165,7 @@ begin
           id.type_ := buildCodeableConcept('http://hl7.org/fhir/v2/0203', t);
       list.Add(id.Link);
     finally
-      id.Free;
+      id.free;
     end;
   end;
 end;
@@ -179,25 +179,25 @@ begin
     if ref <> nil then
       list.Add(ref.Link);
   finally
-    ref.Free;
+    ref.free;
   end;
 end;
 
 procedure TFHIRServerPostHandler.SetContext(const Value: TFHIRServerContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TFHIRServerPostHandler.SetParams(const Value: THTTPParameters);
 begin
-  FParams.Free;
+  FParams.free;
   FParams := Value;
 end;
 
 procedure TFHIRServerPostHandler.SetSession(const Value: TFHIRSession);
 begin
-  FSession.Free;
+  FSession.free;
   FSession := Value;
 end;
 
@@ -245,7 +245,7 @@ var
       else if t = 'Identifier' then
         ext.value := TFhirIdentifier.fromEdit(v)
       else if t = 'Reference' then
-        ext.value := TFhirReference.create(v)
+        ext.value := TFhirReference.Create(v)
       else if t = 'Period' then
         ext.value := TFhirPeriod.fromEdit(v)
 //      else if t = 'Range' then
@@ -256,9 +256,9 @@ var
   end;
 begin
   if params['provenance.name'] = '' then
-    raise EFHIRException.create('Please provide a name');
+    raise EFHIRException.Create('Please provide a name');
   if params['provenance.country'] = '' then
-    raise EFHIRException.create('Please provide a country');
+    raise EFHIRException.Create('Please provide a country');
 
   prov := TFhirProvenance.Create;
   try
@@ -334,25 +334,25 @@ begin
       l.id := 'l1';
       prov.location := TFhirReference.Create('#l1');
       l.name := params['provenance.country'];
-      coverage.meta := TFhirMeta.create;
+      coverage.meta := TFhirMeta.Create;
       coverage.meta.extensionList.AddExtension('http://www.healthintersections.com.au/fhir/StructureDefinition/source', params['provenance.name']+' @ '+params['provenance.country']);
 
       // post the coverage
-      client := context.Storage.createClient(THTTPLanguages.create('en'), context, FContext.ValidatorContext.Link, FSession.Link);
+      client := context.Storage.createClient(nil, context, FContext.ValidatorContext.Link, FSession.Link);
       try
         client.provenance := prov.Link;
         client.createResource(coverage, id);
       finally
-        client.Free;
+        client.free;
       end;
 
-      result := TFslStringDictionary.create;
+      result := TFslStringDictionary.Create;
       result.Add('rid', id);
     finally
-      coverage.Free;
+      coverage.free;
     end;
   finally
-    prov.Free;
+    prov.free;
   end;
 end;
 {$ENDIF}

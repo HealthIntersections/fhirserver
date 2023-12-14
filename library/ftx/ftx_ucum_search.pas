@@ -80,7 +80,7 @@ begin
       searchUnits(model, result, model.DefinedUnits, text, isRegex);
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 

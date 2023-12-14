@@ -761,7 +761,7 @@ Begin
       oEvent.code := CODES_Tv3TimingEvent[oDT.event];
       WriteCD(sPath+'\event', oXml, 'event', oEvent, false, false);
     Finally
-      oEvent.Free;
+      oEvent.free;
     End;
   End;
   oXml.Close(sName);
@@ -5059,7 +5059,7 @@ begin
   Else if oPart.RimClassName = 'Supply' Then
     WriteSupply('Supply', oXml, 'Supply', oPart as TcdaSupply, false)
   Else
-    raise ECDAException.create('Unknown type '+oPart.ClassName);
+    raise ECDAException.Create('Unknown type '+oPart.ClassName);
 
 end;
 

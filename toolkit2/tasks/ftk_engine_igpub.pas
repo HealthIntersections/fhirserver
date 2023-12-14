@@ -63,8 +63,11 @@ type
   { TIgPublisherUpdateEngine }
 
   TIgPublisherUpdateEngine = class (TIgPublisherBuildBaseEngine)
+  private
+    FStash : boolean;
   public
     procedure execute; override;
+    property Stash : boolean read FStash write FStash;
   end;
 
   { TIgPublisherJekyllEngine }
@@ -127,7 +130,7 @@ begin
   fn := tempFile('jekyll-command.bat');
   StringToFile(command+#13#10, fn, TEncoding.ASCII);
 
-  p := TFslExternalProcessThread.create;
+  p := TFslExternalProcessThread.Create;
   try
     p.command := 'cmd';
     p.parameters.Add('/c');
@@ -150,7 +153,7 @@ var
 begin
   FOnEmitLine('clean files', false);
 
-  p := TFslExternalProcessThread.create;
+  p := TFslExternalProcessThread.Create;
   try
     p.command := 'cmd';
     p.parameters.add('/c');
@@ -199,9 +202,27 @@ procedure TIgPublisherUpdateEngine.execute;
 var
   p : TFslExternalProcessThread;
 begin
+  if FStash then
+  begin
+    FOnEmitLine('git stash', false);
+
+    p := TFslExternalProcessThread.Create;
+    try
+      p.command := 'git';
+      p.parameters.Add('stash');
+      p.folder := FFolder;
+      p.OnEmitLine := procEmitLine;
+      p.Start;
+      while p.Running do
+        sleep(50);
+    finally
+      p.free;
+    end;
+  end;
+
   FOnEmitLine('git pull', false);
 
-  p := TFslExternalProcessThread.create;
+  p := TFslExternalProcessThread.Create;
   try
     p.command := 'git';
     p.parameters.Add('pull');
@@ -226,7 +247,7 @@ var
 begin
   FOnEmitLine('Check Java Version', false);
 
-  p := TFslExternalProcessThread.create;
+  p := TFslExternalProcessThread.Create;
   try
     p.command := FJavaCmd;
     p.parameters.Add('-version');
@@ -245,7 +266,7 @@ begin
       end;
     end;
     if not ok then
-      raise EFslException.create('Java is not installed or configured correctly');
+      raise EFslException.Create('Java is not installed or configured correctly');
   finally
     p.free;
   end;
@@ -264,18 +285,18 @@ begin
   begin
     FOnEmitLine('Downloading jar from '+url, false);
     try
-      fetcher := TInternetFetcher.create;
+      fetcher := TInternetFetcher.Create;
       try
         fetcher.URL := url;
         fetcher.OnProgress := doFetcherProgress;
         fetcher.Fetch;
         fetcher.Buffer.SaveToFileName(FJarName);
         if not FileExists(FJarName) then
-          raise EFslException.create('Unable to download jar from '+url)
+          raise EFslException.Create('Unable to download jar from '+url)
         else
           FOnEmitLine('Downloaded ('+DescribeBytes(fetcher.Buffer.Size)+' to '+FJarName+')', false);
       finally
-        fetcher.Free;
+        fetcher.free;
       end;
     except
       on e : EAbort do
@@ -304,7 +325,7 @@ var
 begin
   FOnEmitLine('Run Build: java -jar '+FJarName+' -ig '+FFolder+' -tx '+FTxSrvr, false);
 
-  p := TFslExternalProcessThread.create;
+  p := TFslExternalProcessThread.Create;
   try
     p.command := FJavaCmd;
     if (url = '#dev') then

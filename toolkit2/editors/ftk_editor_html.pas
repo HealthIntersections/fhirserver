@@ -72,7 +72,7 @@ implementation
 
 function THtmlEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynHtmlSyn.create(nil);
+  Result := TSynHtmlSyn.Create(nil);
 end;
 
 procedure listHeadings(navpoints: TStringList; element : TMXmlElement);
@@ -101,7 +101,7 @@ end;
 procedure THtmlEditor.makeDesigner;
 begin
   inherited makeDesigner;
-  FHtmlViewer := THtmlViewer.create(FDesignerPanelWork);
+  FHtmlViewer := THtmlViewer.Create(FDesignerPanelWork);
   FHtmlViewer.parent := FDesignerPanelWork;
   FHtmlViewer.align := alClient;
 end;
@@ -109,7 +109,7 @@ end;
 constructor THtmlEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FParser := TMXmlParser.create;
+  FParser := TMXmlParser.Create;
 end;
 
 destructor THtmlEditor.Destroy;
@@ -152,7 +152,7 @@ begin
          checkForEncoding(s, i);
        end;
      end;
-     FXml.Free;
+     FXml.free;
      FXml := nil;
      try
        FXml := FParser.parse(FContent.text, [xpResolveNamespaces, xpHTMLEntities]);
@@ -189,7 +189,7 @@ end;
 
 procedure THtmlEditor.ContentChanged;
 begin
-  FXml.Free;
+  FXml.free;
   FXml := nil;
 end;
 

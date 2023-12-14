@@ -56,7 +56,7 @@ implementation
 
 function TIniEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynIniSyn.create(nil);
+  Result := TSynIniSyn.Create(nil);
 end;
 
 procedure TIniEditor.getNavigationList(navpoints: TStringList);

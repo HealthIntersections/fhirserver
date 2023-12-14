@@ -80,7 +80,7 @@ implementation
 constructor TSmartOnFhirTestingLogin.Create;
 begin
   inherited;
-  FServer := TRegisteredFHIRServer.create;
+  FServer := TRegisteredFHIRServer.Create;
   FClient := TIdHttp.Create(nil);
   FClient.AllowCookies := true;
   FClient.HandleRedirects := false;
@@ -94,10 +94,10 @@ end;
 
 destructor TSmartOnFhirTestingLogin.Destroy;
 begin
-  FSsl.Free;
-  FClient.Free;
-  FServer.Free;
-  FToken.Free;
+  FSsl.free;
+  FClient.free;
+  FServer.free;
+  FToken.free;
   inherited;
 end;
 
@@ -116,7 +116,7 @@ var
   resp : TMemoryStream;
 begin
   FClient.Request.Accept := 'text/html';
-  resp := TMemoryStream.create;
+  resp := TMemoryStream.Create;
   try
     FClient.Get(url, resp);
     if FClient.ResponseCode <> 200 then
@@ -135,9 +135,9 @@ var
 begin
   FClient.Request.Accept := 'text/html';
   FClient.Request.ContentType := 'application/x-www-form-urlencoded';
-  post := TBytesStream.create(TEncoding.ASCII.getBytes(body));
+  post := TBytesStream.Create(TEncoding.ASCII.getBytes(body));
   try
-    resp := TMemoryStream.create;
+    resp := TMemoryStream.Create;
     try
       FClient.Post(url, post, resp);
       resp.position := 0;
@@ -146,7 +146,7 @@ begin
       resp.free;
     end;
   finally
-    post.Free;
+    post.free;
   end;
 end;
 
@@ -157,9 +157,9 @@ var
 begin
   FClient.Request.Accept := 'text/html';
   FClient.Request.ContentType := 'application/x-www-form-urlencoded';
-  post := TBytesStream.create(TEncoding.ASCII.getBytes(body));
+  post := TBytesStream.Create(TEncoding.ASCII.getBytes(body));
   try
-    resp := TMemoryStream.create;
+    resp := TMemoryStream.Create;
     try
       FClient.Post(url, post, resp);
       result := FClient.Response.Location;
@@ -167,7 +167,7 @@ begin
       resp.free;
     end;
   finally
-    post.Free;
+    post.free;
   end;
 end;
 
@@ -249,7 +249,7 @@ end;
 
 procedure TSmartOnFhirTestingLogin.SetServer(const Value: TRegisteredFHIRServer);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := Value;
 end;
 

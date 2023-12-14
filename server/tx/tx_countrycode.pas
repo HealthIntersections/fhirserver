@@ -77,13 +77,13 @@ type
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
 
@@ -99,9 +99,6 @@ type
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
 
@@ -109,11 +106,11 @@ implementation
 
 { TCountryCodeServices }
 
-Constructor TCountryCodeServices.create(languages : TIETFLanguageDefinitions);
+Constructor TCountryCodeServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
-  FCodes := TFslList<TCountryCodeConcept>.create;
-  FMap := TFslMap<TCountryCodeConcept>.create('tx.countrycode');
+  FCodes := TFslList<TCountryCodeConcept>.Create;
+  FMap := TFslMap<TCountryCodeConcept>.Create('tx.countrycode');
   FMap.defaultValue := nil;
   Load;
 end;
@@ -145,7 +142,7 @@ begin
   result := '';
 end;
 
-function TCountryCodeServices.getDisplay(code : String; const lang : THTTPLanguages):String;
+function TCountryCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
 begin
   result := FMap[code].display.Trim;
 end;
@@ -168,7 +165,7 @@ procedure TCountryCodeServices.load;
       FCodes.Add(c.Link);
       FMap.Add(code, c.Link);
     finally
-      c.Free;
+      c.free;
     end;
   end;
 begin
@@ -926,7 +923,7 @@ end;
 
 function TCountryCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 
@@ -948,18 +945,18 @@ end;
 destructor TCountryCodeServices.Destroy;
 begin
   FMap.free;
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
-function TCountryCodeServices.Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string;
+function TCountryCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
 begin
   result := TCountryCodeConcept(context).display.Trim;
 end;
 
 procedure TCountryCodeServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.addBase('', Display(context, THTTPLanguages.create('en')));
+  list.addDesignation(true, true, '', Display(context, nil));
 end;
 
 function TCountryCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -987,7 +984,7 @@ end;
 
 function TCountryCodeServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := FCodes[context.current];
+  result := FCodes[context.current].link;
   context.next;
 end;
 
@@ -1005,7 +1002,7 @@ end;
 
 function TCountryCodeServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyTodo.create('TCountryCodeServices.searchFilter');
+  raise ETerminologyTodo.Create('TCountryCodeServices.searchFilter');
 end;
 
 function TCountryCodeServices.subsumesTest(codeA, codeB: String): String;
@@ -1023,7 +1020,7 @@ begin
   begin
     list := TCountryCodeConceptFilter.Create;
     try
-      regex := TRegularExpression.Create(value);
+      regex := TRegularExpression.Create('^'+value+'$');
       try
         for concept in FCodes do
           if regex.IsMatch(concept.code) then
@@ -1033,16 +1030,16 @@ begin
       end;
       result := list.link;
     finally
-      list.Free;
+      list.free;
     end;
   end
   else
-    raise ETerminologyError.create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
+    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
 end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
 begin
-  result := FMap[code];
+  result := FMap[code].link;
 end;
 
 function TCountryCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
@@ -1053,29 +1050,13 @@ end;
 
 function TCountryCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  result := TCountryCodeConceptFilter(ctxt).FList[TCountryCodeConceptFilter(ctxt).FCursor];
+  result := TCountryCodeConceptFilter(ctxt).FList[TCountryCodeConceptFilter(ctxt).FCursor].link;
 end;
 
 function TCountryCodeServices.InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean;
 begin
-  raise ETerminologyTodo.create('TCountryCodeServices.InFilter');
+  raise ETerminologyTodo.Create('TCountryCodeServices.InFilter');
 end;
-
-procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-//  ctxt.free;
-end;
-
-procedure TCountryCodeServices.Close(ctxt : TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TCountryCodeServices.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  // nothing
-end;
-
 
 { TCountryCodeConcept }
 
@@ -1095,7 +1076,7 @@ end;
 
 destructor TCountryCodeConceptFilter.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 

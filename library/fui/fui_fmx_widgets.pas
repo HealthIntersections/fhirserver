@@ -114,7 +114,7 @@ begin
     ts.Sort;
     items.assign(ts);
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 

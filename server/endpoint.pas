@@ -101,7 +101,7 @@ type
     procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String; variables: TFslMap<TFHIRObject>); overload;
     procedure returnSecureFile(request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession; named, path: String); overload;
   public
-    constructor Create(code, path : String; common : TFHIRWebServerCommon);
+    constructor Create(code, path : String; common : TFHIRWebServerCommon); virtual;
     destructor Destroy; override;
     property PathNoSlash : String read FPathNoSlash;
     property PathWithSlash : String read FPathWithSlash;
@@ -158,10 +158,10 @@ type
     procedure getCacheInfo(ci: TCacheInformation); virtual;
     procedure recordStats(rec : TStatusRecord); virtual;
 
-    procedure InstallDatabase; virtual;
+    procedure InstallDatabase(params : TCommandLineParameters); virtual;
     procedure UninstallDatabase; virtual;
-    procedure LoadPackages(plist : String); virtual;
-    procedure updateAdminPassword; virtual;
+    procedure LoadPackages(installer : boolean; plist : String); virtual;
+    procedure updateAdminPassword(pw : String); virtual;
     procedure Load; virtual;
     Procedure Unload; virtual;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); virtual;
@@ -174,13 +174,13 @@ implementation
 
 destructor TFHIRWebServerClientInfo.Destroy;
 begin
-  FSession.Free;
+  FSession.free;
   inherited;
 end;
 
 procedure TFHIRWebServerClientInfo.SetSession(const Value: TFHIRSession);
 begin
-  FSession.Free;
+  FSession.free;
   FSession := Value;
 end;
 
@@ -200,13 +200,13 @@ constructor TTokenRedirectManager.Create;
 begin
   inherited;
   FLock := TFslLock.Create('token.redirects');
-  FMap := TDictionary<String,String>.create;
+  FMap := TDictionary<String,String>.Create;
 end;
 
 destructor TTokenRedirectManager.Destroy;
 begin
-  FMap.Free;
-  FLock.Free;
+  FMap.free;
+  FLock.free;
   inherited;
 end;
 
@@ -244,7 +244,7 @@ end;
 constructor TFhirWebServerEndpoint.Create(code, path: String;
   common: TFHIRWebServerCommon);
 begin
-  inherited create(common);
+  inherited Create(common);
   FCode := code;
   if (path.EndsWith('/')) then
   begin
@@ -256,12 +256,12 @@ begin
     FPathNoSlash := path;
     FPathWithSlash := path+'/';
   end;
-  FTokenRedirects := TTokenRedirectManager.create;
+  FTokenRedirects := TTokenRedirectManager.Create;
 end;
 
 destructor TFhirWebServerEndpoint.Destroy;
 begin
-  FTokenRedirects.Free;
+  FTokenRedirects.free;
   inherited;
 end;
 
@@ -308,7 +308,7 @@ procedure TFhirWebServerEndpoint.returnSecureFile(request: TIdHTTPRequestInfo; r
 var
   variables : TFslMap<TFHIRObject>;
 begin
-  variables := TFslMap<TFHIRObject>.create;
+  variables := TFslMap<TFHIRObject>.Create;
   try
     FOnReturnFile(self, request, response, session, named, path, true, variables);
   finally
@@ -401,7 +401,7 @@ end;
 
 constructor TFHIRServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
 begin
-  inherited create;
+  inherited Create;
   FConfig := config;
   FSettings := settings;
   FDatabase := db;
@@ -412,12 +412,12 @@ end;
 
 destructor TFHIRServerEndPoint.Destroy;
 begin
-  FPcm.Free;
-  FTerminologies.Free;
-  FConfig.Free;
-  FSettings.Free;
-  FDatabase.Free;
-  FCommon.Free;
+  FPcm.free;
+  FTerminologies.free;
+  FConfig.free;
+  FSettings.free;
+  FDatabase.free;
+  FCommon.free;
   FI18n.free;
   inherited;
 end;
@@ -443,13 +443,12 @@ begin
   rec.countEP(s, c);
 end;
 
-procedure TFHIRServerEndPoint.InstallDatabase;
+procedure TFHIRServerEndPoint.InstallDatabase(params: TCommandLineParameters);
 begin
  // nothing
 end;
 
-procedure TFHIRServerEndPoint.internalThread(
-  callback: TFhirServerMaintenanceThreadTaskCallBack);
+procedure TFHIRServerEndPoint.internalThread(callback: TFhirServerMaintenanceThreadTaskCallBack);
 begin
   // nothing
 end;
@@ -464,7 +463,7 @@ begin
  // nothing
 end;
 
-procedure TFHIRServerEndPoint.LoadPackages(plist: String);
+procedure TFHIRServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
  // nothing
 end;
@@ -480,7 +479,7 @@ begin
     WebEndPoint.Common.Cache.Caching := status;
 end;
 
-procedure TFHIRServerEndPoint.updateAdminPassword;
+procedure TFHIRServerEndPoint.updateAdminPassword(pw: String);
 begin
  // nothing
 end;

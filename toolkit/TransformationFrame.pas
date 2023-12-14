@@ -288,7 +288,7 @@ end;
 
 destructor TTransformationEngineFrame.Destroy;
 begin
-  FValidator.Free;
+  FValidator.free;
   inherited;
 end;
 

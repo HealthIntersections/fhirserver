@@ -232,7 +232,7 @@ end;
 
 destructor TEPStatusCheckResponse.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited Destroy;
 end;
 
@@ -315,7 +315,7 @@ end;
 
 destructor TTXStatusCheckResponse.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited Destroy;
 end;
 
@@ -329,7 +329,7 @@ end;
 
 destructor TTXStatusCheckRequest.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited Destroy;
 end;
 
@@ -348,7 +348,7 @@ end;
 
 destructor TEPStatusCheckRequest.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited;
 end;
 
@@ -361,14 +361,14 @@ end;
 
 procedure TAdminManager.SetFile(value: TFHIRServerConfigFile);
 begin
-  FFile.Free;
+  FFile.free;
   FFile := value;
   Enabled := FFile <> nil
 end;
 
 destructor TAdminManager.Destroy;
 begin
-  FFile.Free;
+  FFile.free;
   inherited Destroy;
 end;
 
@@ -427,7 +427,7 @@ function TIdentityProviderManager.editItem(item: TFHIRServerConfigSection; mode:
 var
   frm : TEditIdForm;
 begin
-  frm := TEditIdForm.create(List.Owner);
+  frm := TEditIdForm.Create(List.Owner);
   try
     frm.ID := item.clone;
     result := frm.ShowModal = mrOK;
@@ -444,9 +444,9 @@ var
   frm : TEditIdForm;
 begin
   Result := nil;
-  frm := TEditIdForm.create(List.Owner);
+  frm := TEditIdForm.Create(List.Owner);
   try
-    frm.Id := TFHIRServerConfigSection.create('id'+inttostr(FFile['identity-providers'].sections.Count));
+    frm.Id := TFHIRServerConfigSection.Create('id'+inttostr(FFile['identity-providers'].sections.Count));
     if frm.ShowModal = mrOK then
     begin
       result := FFile['identity-providers'].section[frm.Id.Name].link;
@@ -474,7 +474,7 @@ begin
   else if (item.status = '') then
   begin
     item.status := 'Checking...';
-    GBackgroundTasks.queueTask(FStatusTask, TEPStatusCheckRequest.create(item.clone), TEPStatusCheckResponse.create(item.link), doStatusCallback);
+    GBackgroundTasks.queueTask(FStatusTask, TEPStatusCheckRequest.Create(item.clone), TEPStatusCheckResponse.Create(item.link), doStatusCallback);
   end;
   result := item.status;
 end;
@@ -580,7 +580,7 @@ function TEndPointManager.editItem(item: TFHIRServerConfigSection; mode: String)
 var
   frm : TEditEPForm;
 begin
-  frm := TEditEPForm.create(List.Owner);
+  frm := TEditEPForm.Create(List.Owner);
   try
     frm.EP := item.clone;
     frm.Cfg := FFile.link;
@@ -598,9 +598,9 @@ var
   frm : TEditEPForm;
 begin
   Result := nil;
-  frm := TEditEPForm.create(List.Owner);
+  frm := TEditEPForm.Create(List.Owner);
   try
-    frm.EP := TFHIRServerConfigSection.create('EP'+inttostr(FFile['endpoints'].sections.Count));
+    frm.EP := TFHIRServerConfigSection.Create('EP'+inttostr(FFile['endpoints'].sections.Count));
     frm.EP['path'].value := '/path';
     frm.Cfg := FFile.link;
     if frm.ShowModal = mrOK then
@@ -668,7 +668,7 @@ begin
   if (item.status = '') then
   begin
     item.status := 'Checking ...';
-    GBackgroundTasks.queueTask(FStatusTask, TTXStatusCheckRequest.create(item.clone), TTXStatusCheckResponse.create(item.link), doStatusCallback);
+    GBackgroundTasks.queueTask(FStatusTask, TTXStatusCheckRequest.Create(item.clone), TTXStatusCheckResponse.Create(item.link), doStatusCallback);
   end;
   result := item.status;
 end;
@@ -689,7 +689,7 @@ var
   dlg : TSelectDirectoryDialog;
   ndc : TNdcImporter;
 begin
-  dlg := TSelectDirectoryDialog.create(List.Owner);
+  dlg := TSelectDirectoryDialog.Create(List.Owner);
   try
     dlg.Filename := Settings.readString('ndc', 'source', '');
     if dlg.execute then
@@ -699,7 +699,7 @@ begin
       try
         conn := db.GetConnection('check');
         try
-          ndc := TNdcImporter.create(dlg.FileName, conn.link);
+          ndc := TNdcImporter.Create(dlg.FileName, conn.link);
           try
             DoForegroundTask(List.Owner, nil, ndc.Doinstall);
           finally
@@ -720,7 +720,7 @@ begin
       end;
     end;
   finally
-    dlg.Free;
+    dlg.free;
   end;
 end;
 
@@ -731,7 +731,7 @@ var
   dlg : TSelectDirectoryDialog;
   umls : TUMLSImporter;
 begin
-  dlg := TSelectDirectoryDialog.create(List.Owner);
+  dlg := TSelectDirectoryDialog.Create(List.Owner);
   try
     dlg.Filename := Settings.readString('rxnorm', 'source', '');
     if dlg.execute then
@@ -741,7 +741,7 @@ begin
       try
         conn := db.GetConnection('check');
         try
-          umls := TUMLSImporter.create(dlg.FileName, conn.link);
+          umls := TUMLSImporter.Create(dlg.FileName, conn.link);
           try
             DoForegroundTask(List.Owner, nil, umls.Doinstall);
           finally
@@ -762,7 +762,7 @@ begin
       end;
     end;
   finally
-    dlg.Free;
+    dlg.free;
   end;
 end;
 
@@ -830,7 +830,7 @@ function TTXManager.editItem(item: TFHIRServerConfigSection; mode: String): bool
 var
   frm : TEditTxForm;
 begin
-  frm := TEditTxForm.create(List.Owner);
+  frm := TEditTxForm.Create(List.Owner);
   try
     frm.Tx := item.clone;
     result := frm.ShowModal = mrOK;
@@ -847,9 +847,9 @@ var
   frm : TEditTxForm;
 begin
   Result := nil;
-  frm := TEditTxForm.create(List.Owner);
+  frm := TEditTxForm.Create(List.Owner);
   try
-    frm.Tx := TFHIRServerConfigSection.create('tx'+inttostr(FFile['terminologies'].sections.Count));
+    frm.Tx := TFHIRServerConfigSection.Create('tx'+inttostr(FFile['terminologies'].sections.Count));
     if frm.ShowModal = mrOK then
     begin
       result := FFile['terminologies'].section[frm.Tx.Name].link;

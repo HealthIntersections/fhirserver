@@ -720,6 +720,7 @@ type
     Function ServerErrorStatus : String;
     property Name : string read FName;
 
+    function debugInfo : String; override;
     property OnChangeConnectionCount : TOnChangeConnectionCount Read FOnChangeConnectionCount Write FOnChangeConnectionCount;
     class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; virtual; abstract;
   end;
@@ -788,7 +789,7 @@ var
 
 constructor TFDBConnection.Create(AOwner: TFDBManager);
 begin
-  inherited create;
+  inherited Create;
   FNoFree := false;
   FOwner := AOwner;
   FUsage := '';
@@ -797,8 +798,8 @@ begin
   FSQL := '';
   FTerminated := true;
   FInTransaction := false;
-  FBoundItems := TFslMap<TFDBBoundParam>.create('KDB.Parameters');
-  FTables := TStringList.create;
+  FBoundItems := TFslMap<TFDBBoundParam>.Create('KDB.Parameters');
+  FTables := TStringList.Create;
 end;
 
 destructor TFDBConnection.Destroy;
@@ -867,7 +868,7 @@ begin
     Execute;
     result := GetRowsAffected;
     if (result <> rows) then
-      raise EDBException.create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
+      raise EDBException.Create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
   finally
     Terminate;
     end;
@@ -1334,19 +1335,19 @@ end;
 
 constructor TFDBManager.Create(AName : String; AMaxConnCount: Integer);
 begin
-  inherited create;
+  inherited Create;
 
   FName := AName;
   FMaxConnCount := AMaxConnCount;
 
-  FLock := TFslLock.create('db manager: '+aName);
-  FDBLogger := TFDBLogger.create;
+  FLock := TFslLock.Create('db manager: '+aName);
+  FDBLogger := TFDBLogger.Create;
   FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
   FWaitCreate := false;
 
-  FConnections := TFslList<TFDBConnection>.create;
-  FAvail := TFslList<TFDBConnection>.create;
-  FInUse := TFslList<TFDBConnection>.create;
+  FConnections := TFslList<TFDBConnection>.Create;
+  FAvail := TFslList<TFDBConnection>.Create;
+  FInUse := TFslList<TFDBConnection>.Create;
 
   FClosing := false;
   GManagers.AddConnMan(self);
@@ -1365,10 +1366,10 @@ begin
 
   FAvail.free;
   FInUse.free;
-  FConnections.Free;
+  FConnections.free;
   FSemaphore.free;
   FDBLogger.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -1456,7 +1457,7 @@ begin
       end
     else
       begin
-      raise EDBException.create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
+      raise EDBException.Create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
       end;
     end;
   FLock.Enter; // lock this because of debugger
@@ -1479,7 +1480,7 @@ var
 begin
   conn := GetConnection('check');
   try
-    conn.FetchMetaData.Free;
+    conn.FetchMetaData.free;
     conn.Release;
   except
     on e : Exception do
@@ -1549,6 +1550,13 @@ var
 begin
   if not AConn.FCurrentlyInUse then
     raise EDBException.Create('Attempt to release ODBC connection twice (error)');
+  if AConn.Prepared then
+  begin
+    try
+      AConn.Terminate;
+    except
+    end;
+  end;
   AConn.FCurrentlyInUse := false;
 
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
@@ -1572,7 +1580,7 @@ begin
         FSemaphore.Release;
     except
       on e : exception do
-        raise EDBException.create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
+        raise EDBException.Create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
     end;
   finally
     FLock.Leave;
@@ -1768,19 +1776,19 @@ end;
 
 { TFDBManagerList }
 
-constructor TFDBManagerList.create;
+constructor TFDBManagerList.Create;
 begin
-  inherited create;
-  FLock := TFslLock.create('database managers');
-  FHooks := TFslList<TFDBHook>.create;
-  FList := TList<TFDBManager>.create;
+  inherited Create;
+  FLock := TFslLock.Create('database managers');
+  FHooks := TFslList<TFDBHook>.Create;
+  FList := TList<TFDBManager>.Create;
 end;
 
-destructor TFDBManagerList.destroy;
+destructor TFDBManagerList.Destroy;
 begin
   FLock.free;
   FHooks.free;
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1856,7 +1864,7 @@ end;
 
 procedure TFDBManagerList.RegisterHook(AName : String; AHook : TFDBManagerEvent);
 begin
-  FHooks.Add(TFDBHook.create(AName, AHook));
+  FHooks.Add(TFDBHook.Create(AName, AHook));
 end;
 
 procedure TFDBManagerList.UnRegisterHook(AName : String);
@@ -1876,9 +1884,9 @@ end;
 
 { TFDBHook }
 
-constructor TFDBHook.create(Name : String; Hook : TFDBManagerEvent);
+constructor TFDBHook.Create(Name : String; Hook : TFDBManagerEvent);
 begin
-  inherited create;
+  inherited Create;
   FName := name;
   FHook := Hook;
 end;
@@ -1893,7 +1901,7 @@ end;
 
 constructor TFDBColumn.Create(name: String);
 begin
-  inherited create;
+  inherited Create;
   self.Name := name;
 end;
 
@@ -1941,7 +1949,7 @@ begin
       s.Append(C.Name);
     end;
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1953,15 +1961,15 @@ end;
 
 { TFDBIndex }
 
-constructor TFDBIndex.create;
+constructor TFDBIndex.Create;
 begin
   inherited;
-  FColumns := TFslList<TFDBColumn>.create;
+  FColumns := TFslList<TFDBColumn>.Create;
 end;
 
-destructor TFDBIndex.destroy;
+destructor TFDBIndex.Destroy;
 begin
-  FColumns.Free;
+  FColumns.free;
   inherited;
 end;
 
@@ -2002,19 +2010,19 @@ end;
 
 { TFDBTable }
 
-constructor TFDBTable.create;
+constructor TFDBTable.Create;
 begin
   inherited;
   FColumns := TFslList<TFDBColumn>.CREATE;
-  FIndexes := TFslList<TFDBIndex>.create;
-  FRelationships := TFslList<TFDBRelationship>.create;
+  FIndexes := TFslList<TFDBIndex>.Create;
+  FRelationships := TFslList<TFDBRelationship>.Create;
 end;
 
-destructor TFDBTable.destroy;
+destructor TFDBTable.Destroy;
 begin
-  FRelationships.Free;
-  FColumns.Free;
-  FIndexes.Free;
+  FRelationships.free;
+  FColumns.free;
+  FIndexes.free;
   inherited;
 end;
 
@@ -2045,17 +2053,17 @@ end;
 
 { TFDBMetaData }
 
-constructor TFDBMetaData.create;
+constructor TFDBMetaData.Create;
 begin
   inherited;
-  FTables := TFslList<TFDBTable>.create;
-  FProcedures := TStringList.create;
+  FTables := TFslList<TFDBTable>.Create;
+  FProcedures := TStringList.Create;
 end;
 
-destructor TFDBMetaData.destroy;
+destructor TFDBMetaData.Destroy;
 begin
-  FTables.Free;
-  FProcedures.Free;
+  FTables.free;
+  FProcedures.free;
   inherited;
 end;
 
@@ -2101,6 +2109,11 @@ Begin
   End;
 End;
 
+function TFDBManager.debugInfo: String;
+begin
+  Result := FName;
+end;
+
 procedure CloseUPGManagers;
 var
   m : TFDBManagerList;
@@ -2111,7 +2124,7 @@ begin
 end;
 
 initialization
-  GManagers := TFDBManagerList.create;
+  GManagers := TFDBManagerList.Create;
 finalization
   CloseUPGManagers;
 end.

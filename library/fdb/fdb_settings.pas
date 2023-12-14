@@ -303,7 +303,7 @@ begin
       end;
 
   finally
-    LStringSettings.Free;
+    LStringSettings.free;
     end;
 end;
 

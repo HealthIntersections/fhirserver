@@ -139,8 +139,8 @@ type
     function resCategory(name: String) : TTokenCategory; virtual; abstract;
     function URLs : TCommonURLs; virtual; abstract;
 
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; virtual; abstract;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList) : TFHIRParser; virtual; abstract;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; virtual; abstract;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; virtual; abstract;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; virtual; abstract;
@@ -153,7 +153,7 @@ type
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual;  abstract;// because using indy is necessary if you're writing a server, or unixready code
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; virtual; abstract;
-    function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; virtual; abstract;
+    function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; virtual; abstract;
 
     function makeHealthcareCard : THealthcareCard; virtual; abstract;
 
@@ -166,8 +166,8 @@ type
     procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); virtual; abstract;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); virtual; abstract;
-    function buildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
-    Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    function buildOperationOutcome(langList : THTTPLanguageList; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
 
     function makeByName(const name : String) : TFHIRObject; virtual; abstract;
     function makeResource(const name : String) : TFHIRResourceV;
@@ -185,7 +185,7 @@ type
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; virtual; abstract;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; virtual; abstract;
     function makeDateTime(dt : TFslDateTime) : TFHIRObject; virtual; abstract;
-    function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
+    function makeDtFromForm(part : TMimePart; langList : THTTPLanguageList; name : String; type_ : string) : TFHIRXVersionElementWrapper; virtual; abstract;
     function makeDuration(dt : TDateTime) : TFHIRObject; virtual; abstract;
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; virtual; abstract;
     function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; virtual; abstract;
@@ -313,8 +313,8 @@ type
     function isResourceName(name : String) : boolean; virtual;
     function resCategory(name: String) : TTokenCategory; override;
     function URLs : TCommonURLs; override;
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; override;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; override;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList) : TFHIRParser; override;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
@@ -326,7 +326,7 @@ type
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal) : TFhirClientV; overload;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; virtual;  abstract;// because using indy is necessary if you're writing a server, or unixready code
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
-    function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
+    function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     procedure setXhtml(res : TFHIRResourceV; x : TFHIRXhtmlNode); override;
@@ -336,8 +336,8 @@ type
     function describe(r : TFHIRResourceV) : String; override;
     procedure markWithTag(r : TFHIRResourceV; systemUri, code, display : String); override;
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
-    function buildOperationOutcome(const lang : THTTPLanguages; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
-    Function buildOperationOutcome(const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    function buildOperationOutcome(langList : THTTPLanguageList; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     function makeByName(const name : String) : TFHIRObject; override;
     function makeResource(const name : String) : TFHIRResourceV;
     function makeBoolean(b : boolean): TFHIRObject; override;
@@ -352,7 +352,7 @@ type
     function makeBinary(content : TBytes; contentType : String) : TFHIRResourceV; override;
     function makeParamsFromForm(s : TStream) : TFHIRResourceV; override;
     function makeDateTime(dt : TFslDateTime) : TFHIRObject; override;
-    function makeDtFromForm(part : TMimePart; const lang : THTTPLanguages; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
+    function makeDtFromForm(part : TMimePart; langList : THTTPLanguageList; name : String; type_ : string) : TFHIRXVersionElementWrapper; override;
     function makeDuration(dt : TDateTime) : TFHIRObject; override;
     function makeBundle(list : TFslList<TFHIRResourceV>) : TFHIRBundleW; override;
     function wrapPrimitive(p : TFHIRObject) : TFHIRPrimitiveW; override;
@@ -408,247 +408,247 @@ implementation
 
 function TFHIRFactoryX.versionName: String;
 begin
-  raise EFslException.create('versionName is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('versionName is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.corePackage: String;
 begin
-  raise EFslException.create('corePackage is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('corePackage is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.specUrl: String;
 begin
-  raise EFslException.create('specUrl is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('specUrl is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.description: String;
 begin
-  raise EFslException.create('description is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('description is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.resourceNames: TArray<String>;
 begin
-  raise EFslException.create('resourceNames is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('resourceNames is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.canonicalResources: TArray<String>;
 begin
-  raise EFslException.create('canonicalResources is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('canonicalResources is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.isResourceName(name: String): boolean;
 begin
-  raise EFslException.create('isResourceName is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('isResourceName is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.resCategory(name: String): TTokenCategory;
 begin
-  raise EFslException.create('resCategory is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('resCategory is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.URLs: TCommonURLs;
 begin
-  raise EFslException.create('URLs is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('URLs is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang: THTTPLanguages): TFHIRParser;
+function TFHIRFactoryX.makeParser(worker: TFHIRWorkerContextV; format: TFHIRFormat; langList : THTTPLanguageList): TFHIRParser;
 begin
-  raise EFslException.create('makeParser is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeParser is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; const lang: THTTPLanguages; style: TFHIROutputStyle): TFHIRComposer;
+function TFHIRFactoryX.makeComposer(worker: TFHIRWorkerContextV; format: TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle): TFHIRComposer;
 begin
-  raise EFslException.create('makeComposer is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeComposer is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
 begin
-  raise EFslException.create('makeValidator is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeValidator is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
 begin
-  raise EFslException.create('makeGenerator is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeGenerator is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makePathEngine(worker: TFHIRWorkerContextV; ucum: TUcumServiceInterface): TFHIRPathEngineV;
 begin
-  raise EFslException.create('makePathEngine is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makePathEngine is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeElementModelManager: TFHIRBaseMMManager;
 begin
-  raise EFslException.create('makeElementModelManager is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeElementModelManager is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.createFromProfile(worker: TFHIRWorkerContextV; profile: TFhirStructureDefinitionW): TFHIRResourceV;
 begin
-  raise EFslException.create('createFromProfile is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('createFromProfile is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.createPropertyList(name: String; bPrimitiveValues: Boolean): TFHIRPropertyList;
 begin
-  raise EFslException.create('createPropertyList is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('createPropertyList is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeClient(worker: TFHIRWorkerContextV; url: String; fmt: TFHIRFormat): TFhirClientV;
 begin
-  raise EFslException.create('makeClient is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeClient is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeClient(worker: TFHIRWorkerContextV; url: String; kind: TFHIRClientType; fmt: TFHIRFormat): TFhirClientV;
 begin
-  raise EFslException.create('makeClient is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeClient is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeClient(worker: TFHIRWorkerContextV; url: String; kind: TFHIRClientType; fmt: TFHIRFormat; timeout: cardinal): TFhirClientV;
 begin
-  raise EFslException.create('makeClient is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeClient is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeClientThreaded(worker: TFHIRWorkerContextV;  internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
 begin
-  raise EFslException.create('makeClientThreaded is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeClientThreaded is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeClientInt(worker: TFHIRWorkerContextV; const lang: THTTPLanguages; comm: TFHIRClientCommunicator): TFhirClientV;
+function TFHIRFactoryX.makeClientInt(worker: TFHIRWorkerContextV; langList : THTTPLanguageList; comm: TFHIRClientCommunicator): TFhirClientV;
 begin
-  raise EFslException.create('makeClientInt is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeClientInt is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeHealthcareCard: THealthcareCard;
 begin
-  raise EFslException.create('makeHealthcareCard is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeHealthcareCard is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.getXhtml(res: TFHIRResourceV): TFHIRXhtmlNode;
 begin
-  raise EFslException.create('getXhtml is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('getXhtml is not implemented in the non-versioned FHIRFactory');
 end;
 
 procedure TFHIRFactoryX.setXhtml(res: TFHIRResourceV; x: TFHIRXhtmlNode);
 begin
-  raise EFslException.create('. is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('. is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.resetXhtml(r: TFHIRResourceV): TFHIRXhtmlNode;
 begin
-  raise EFslException.create('resetXhtml is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('resetXhtml is not implemented in the non-versioned FHIRFactory');
 end;
 
 procedure TFHIRFactoryX.clearXhtml(res: TFHIRResourceV);
 begin
-  raise EFslException.create('. is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('. is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.getContained(r: TFHIRResourceV): TFslList<TFHIRResourceV>;
 begin
-  raise EFslException.create('getContained is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('getContained is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.describe(r: TFHIRResourceV): String;
 begin
-  raise EFslException.create('describe is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('describe is not implemented in the non-versioned FHIRFactory');
 end;
 
 procedure TFHIRFactoryX.markWithTag(r: TFHIRResourceV; systemUri, code, display: String);
 begin
-  raise EFslException.create('. is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('. is not implemented in the non-versioned FHIRFactory');
 end;
 
 procedure TFHIRFactoryX.checkNoModifiers(res: TFHIRObject; method, param: string; allowed: TArray<String>);
 begin
-  raise EFslException.create('. is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('. is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.buildOperationOutcome(const lang: THTTPLanguages; e: exception; issueCode: TFhirIssueType): TFhirResourceV;
+function TFHIRFactoryX.buildOperationOutcome(langList : THTTPLanguageList; e: exception; issueCode: TFhirIssueType): TFhirResourceV;
 begin
-  raise EFslException.create('buildOperationOutcome is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('buildOperationOutcome is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.buildOperationOutcome(const lang: THTTPLanguages; message: String; issueCode: TFhirIssueType): TFhirResourceV;
+function TFHIRFactoryX.buildOperationOutcome(langList : THTTPLanguageList; message: String; issueCode: TFhirIssueType): TFhirResourceV;
 begin
-  raise EFslException.create('buildOperationOutcome is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('buildOperationOutcome is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeByName(const name: String): TFHIRObject;
 begin
-  raise EFslException.create('makeByName is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeByName is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeResource(const name: String): TFHIRResourceV;
 begin
-  raise EFslException.create('makeResource is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeResource is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeBoolean(b: boolean): TFHIRObject;
 begin
-  raise EFslException.create('makeBoolean is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeBoolean is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeCode(s: string): TFHIRObject;
 begin
-  raise EFslException.create('makeCode is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeCode is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;
 begin
-  raise EFslException.create('makeCodeableConcept is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeCodeableConcept is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeCoding(systemUri, version, code, display: String): TFHIRObject;
 begin
-  raise EFslException.create('makeCoding is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeCoding is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeString(s: string): TFHIRObject;
 begin
-  result := TFHIRSystemString.create(s);
+  result := TFHIRSystemString.Create(s);
 end;
 
 function TFHIRFactoryX.makeUri(s: string): TFHIRObject;
 begin
-  raise EFslException.create('makeUri is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeUri is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeInteger(s: string): TFHIRObject;
 begin
-  raise EFslException.create('makeInteger is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeInteger is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeDecimal(s: string): TFHIRObject;
 begin
-  raise EFslException.create('makeDecimal is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeDecimal is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeBinary(content: TBytes; contentType: String): TFHIRResourceV;
 begin
-  raise EFslException.create('makeBinary is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeBinary is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeParamsFromForm(s: TStream): TFHIRResourceV;
 begin
-  raise EFslException.create('makeParamsFromForm is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeParamsFromForm is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeDateTime(dt: TFslDateTime): TFHIRObject;
 begin
-  raise EFslException.create('makeDateTime is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeDateTime is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeDtFromForm(part: TMimePart; const lang: THTTPLanguages; name: String; type_: string): TFHIRXVersionElementWrapper;
+function TFHIRFactoryX.makeDtFromForm(part: TMimePart; langList : THTTPLanguageList; name: String; type_: string): TFHIRXVersionElementWrapper;
 begin
-  raise EFslException.create('makeDtFromForm is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeDtFromForm is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeDuration(dt: TDateTime): TFHIRObject;
 begin
-  raise EFslException.create('makeDuration is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeDuration is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeBundle(list: TFslList<TFHIRResourceV>): TFHIRBundleW;
 begin
-  raise EFslException.create('makeBundle is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeBundle is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapPrimitive(p: TFHIRObject): TFHIRPrimitiveW;
@@ -656,232 +656,232 @@ begin
   if (p = nil) then
     result := nil
   else
-    result := TFHIRPrimitiveX.create(p);
+    result := TFHIRPrimitiveX.Create(p);
 end;
 
 function TFHIRFactoryX.makeParameters: TFHIRParametersW;
 begin
-  raise EFslException.create('makeParameters is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeParameters is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  raise EFslException.create('makeTerminologyCapablities is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeTerminologyCapablities is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeIssue(level: TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;
 begin
-  raise EFslException.create('makeIssue is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeIssue is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeProxy(pi: TNpmPackageResource; worker: TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
-  raise EFslException.create('makeProxy is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeProxy is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeProxy(presource: TFHIRResourceV): TFHIRResourceProxyV;
 begin
-  raise EFslException.create('makeProxy is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeProxy is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapResource(r: TFHIRResourceV): TFHIRXVersionResourceWrapper;
 begin
-  raise EFslException.create('wrapResource is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapResource is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapCapabilityStatement(r: TFHIRResourceV): TFHIRCapabilityStatementW;
 begin
-  raise EFslException.create('wrapCapabilityStatement is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapCapabilityStatement is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapStructureDefinition(r: TFHIRResourceV): TFhirStructureDefinitionW;
 begin
-  raise EFslException.create('wrapStructureDefinition is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapStructureDefinition is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapValueSet(r: TFHIRResourceV): TFhirValueSetW;
 begin
-  raise EFslException.create('wrapValueSet is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapValueSet is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapCodeSystem(r: TFHIRResourceV): TFhirCodeSystemW;
 begin
-  raise EFslException.create('wrapCodeSystem is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapCodeSystem is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapConceptMap(r: TFHIRResourceV): TFhirConceptMapW;
 begin
-  raise EFslException.create('wrapConceptMap is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapConceptMap is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapExtension(o: TFHIRObject): TFhirExtensionW;
 begin
-  raise EFslException.create('wrapExtension is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapExtension is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapCoding(o: TFHIRObject): TFhirCodingW;
 begin
-  raise EFslException.create('wrapCoding is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapCoding is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;
 begin
-  raise EFslException.create('wrapCodeableConcept is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapCodeableConcept is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapIdentifier(o: TFHIRObject): TFhirIdentifierW;
 begin
-  raise EFslException.create('wrapIdentifier is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapIdentifier is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapOperationOutcome(r: TFHIRResourceV): TFhirOperationOutcomeW;
 begin
-  raise EFslException.create('wrapOperationOutcome is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapOperationOutcome is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapBundle(r: TFHIRResourceV): TFhirBundleW;
 begin
-  raise EFslException.create('wrapBundle is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapBundle is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapParams(r: TFHIRResourceV): TFHIRParametersW;
 begin
-  raise EFslException.create('wrapParams is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapParams is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapMeta(r: TFHIRResourceV): TFhirMetaW;
 begin
-  raise EFslException.create('wrapMeta is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapMeta is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapMeta(r: TFHIRObject): TFhirMetaW;
 begin
-  raise EFslException.create('wrapMeta is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapMeta is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapBinary(r: TFHIRResourceV): TFhirBinaryW;
 begin
-  raise EFslException.create('wrapBinary is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapBinary is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapAuditEvent(r: TFHIRResourceV): TFhirAuditEventW;
 begin
-  raise EFslException.create('wrapAuditEvent is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapAuditEvent is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapSubscription(r: TFHIRResourceV): TFhirSubscriptionW;
 begin
-  raise EFslException.create('wrapSubscription is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapSubscription is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapSubscriptionTopic(r: TFHIRResourceV): TFhirSubscriptionTopicW;
 begin
-  raise EFslException.create('wrapSubscriptionTopic is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapSubscriptionTopic is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapObservation(r: TFHIRResourceV): TFhirObservationW;
 begin
-  raise EFslException.create('wrapObservation is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapObservation is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapAttachment(r: TFHIRObject): TFHIRAttachmentW;
 begin
-  raise EFslException.create('wrapAttachment is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapAttachment is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapQuantity(r: TFHIRObject): TFhirQuantityW;
 begin
-  raise EFslException.create('wrapQuantity is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapQuantity is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapPeriod(r: TFHIRObject): TFhirPeriodW;
 begin
-  raise EFslException.create('wrapPeriod is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapPeriod is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapGroup(r: TFHIRResourceV): TFhirGroupW;
 begin
-  raise EFslException.create('wrapGroup is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapGroup is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapPatient(r: TFHIRResourceV): TFhirPatientW;
 begin
-  raise EFslException.create('wrapPatient is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapPatient is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapEncounter(r: TFHIRResourceV): TFhirEncounterW;
 begin
-  raise EFslException.create('wrapEncounter is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapEncounter is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapBundleEntry(o: TFHIRObject): TFhirBundleEntryW;
 begin
-  raise EFslException.create('wrapBundleEntry is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapBundleEntry is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;
 begin
-  raise EFslException.create('wrapNamingSystem is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapNamingSystem is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapStructureMap(o: TFHIRResourceV): TFHIRStructureMapW;
 begin
-  raise EFslException.create('wrapStructureMap is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapStructureMap is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapEventDefinition(o: TFHIRResourceV): TFHIREventDefinitionW;
 begin
-  raise EFslException.create('wrapEventDefinition is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapEventDefinition is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapConsent(o: TFHIRResourceV): TFHIRConsentW;
 begin
-  raise EFslException.create('wrapConsent is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapConsent is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapTestScript(o: TFHIRResourceV): TFHIRTestScriptW;
 begin
-  raise EFslException.create('wrapTestScript is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapTestScript is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapProvenance(o: TFHIRResourceV): TFhirProvenanceW;
 begin
-  raise EFslException.create('wrapProvenance is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapProvenance is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.wrapImmunization(o: TFHIRResourceV): TFhirImmunizationW;
 begin
-  raise EFslException.create('wrapImmunization is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('wrapImmunization is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeOpReqLookup: TFHIRLookupOpRequestW;
 begin
-  raise EFslException.create('makeOpReqLookup is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeOpReqLookup is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeOpRespLookup: TFHIRLookupOpResponseW;
 begin
-  raise EFslException.create('makeOpRespLookup is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeOpRespLookup is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeOpReqSubsumes: TFHIRSubsumesOpRequestW;
 begin
-  raise EFslException.create('makeOpReqSubsumes is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeOpReqSubsumes is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeOpRespSubsumes: TFHIRSubsumesOpResponseW;
 begin
-  raise EFslException.create('makeOpRespSubsumes is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeOpRespSubsumes is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeValueSetContains: TFhirValueSetExpansionContainsW;
 begin
-  raise EFslException.create('makeValueSetContains is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeValueSetContains is not implemented in the non-versioned FHIRFactory');
 end;
 
 function TFHIRFactoryX.makeBase64Binary(s : string) : TFHIRObject;
 begin
-  raise EFslException.create('makeBase64Binary is not implemented in the non-versioned FHIRFactory');
+  raise EFslException.Create('makeBase64Binary is not implemented in the non-versioned FHIRFactory');
 end;
 
 { TFHIRFactory }
@@ -914,7 +914,7 @@ begin
   try
     result := o.createPropertyList(bPrimitiveValues);
   finally
-    o.Free;
+    o.free;
   end;
 end;
 
@@ -952,11 +952,11 @@ function TFHIRFactory.parseJson(worker: TFHIRWorkerContextV; bytes : TBytes): TF
 var
   parser : TFHIRParser;
 begin
-  parser := makeParser(worker, ffJson, THTTPlanguages.Create('en'));
+  parser := makeParser(worker, ffJson, nil);
   try
     result := parser.parseResource(bytes);
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -964,11 +964,11 @@ function TFHIRFactory.parseXml(worker: TFHIRWorkerContextV; bytes : TBytes): TFH
 var
   parser : TFHIRParser;
 begin
-  parser := makeParser(worker, ffXml, THTTPlanguages.Create('en'));
+  parser := makeParser(worker, ffXml, nil);
   try
     result := parser.parseResource(bytes);
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -1091,7 +1091,7 @@ end;
 destructor TFHIRWorkerContextWithFactory.Destroy;
 begin
   FPcm.free;
-  FLoadInfo.Free;
+  FLoadInfo.free;
   FFactory.free;
   inherited;
 end;
@@ -1117,13 +1117,13 @@ procedure TFHIRWorkerContextWithFactory.loadResourceJson(rType, id: String;
 var
   p : TFHIRParser;
 begin
-  p := Factory.makeParser(self.link, ffJson, THTTPLanguages.create('en'));
+  p := Factory.makeParser(self.link, ffJson, nil);
   try
     p.source := json;
     p.Parse;
     SeeResource(p.resource);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1136,23 +1136,23 @@ end;
 
 { TFHIRValidatorContext }
 
-constructor TFHIRValidatorContext.create;
+constructor TFHIRValidatorContext.Create;
 begin
   inherited;
-  FOwned := TFslList<TFslObject>.create;
-  FIssues := TFslList<TFhirOperationOutcomeIssueW>.create;
+  FOwned := TFslList<TFslObject>.Create;
+  FIssues := TFslList<TFhirOperationOutcomeIssueW>.Create;
 end;
 
-destructor TFHIRValidatorContext.destroy;
+destructor TFHIRValidatorContext.Destroy;
   begin
-  FOwned.Free;
-  FIssues.Free;
+  FOwned.free;
+  FIssues.free;
   inherited;
 end;
 
 procedure TFHIRValidatorContext.SetIssues(const Value: TFslList<TFhirOperationOutcomeIssueW>);
 begin
-  FIssues.Free;
+  FIssues.free;
   FIssues := Value;
 end;
 
@@ -1169,13 +1169,13 @@ end;
 
 constructor TFHIRValidatorV.Create(context: TFHIRWorkerContextWithFactory);
 begin
-  inherited create;
+  inherited Create;
   FContext := context;
 end;
 
 destructor TFHIRValidatorV.Destroy;
 begin
-  FContext.Free;
+  FContext.free;
   inherited;
 end;
 

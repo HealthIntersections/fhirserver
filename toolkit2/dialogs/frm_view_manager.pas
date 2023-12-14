@@ -217,18 +217,18 @@ implementation
 constructor TViewManager.Create;
 begin
   inherited Create;
-  FLeft := TStringList.create;
-  FRight := TStringList.create;
-  FBottom := TStringList.create;
-  FHidden := TStringList.create;
+  FLeft := TStringList.Create;
+  FRight := TStringList.Create;
+  FBottom := TStringList.Create;
+  FHidden := TStringList.Create;
 end;
 
 destructor TViewManager.Destroy;
 begin
-  FHidden.Free;
-  FBottom.Free;
-  FRight.Free;
-  FLeft.Free;
+  FHidden.free;
+  FBottom.free;
+  FRight.free;
+  FLeft.free;
   inherited Destroy;
 end;
 
@@ -269,7 +269,7 @@ var
 begin
   i := StringArrayIndexOf(CODES_TViewManagerPanelId, code);
   if i < 0 then
-    raise EFslException.create('Illegal Panel code '+code)
+    raise EFslException.Create('Illegal Panel code '+code)
   else
     result := TViewManagerPanelId(i);
 end;

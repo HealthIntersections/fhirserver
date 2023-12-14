@@ -143,7 +143,7 @@ begin
       assertTrue(dict <> nil);
       assertTrue(dict.Model[hv23].Tables.Count > 0);
     finally
-      dict.Free;
+      dict.free;
     end;
   end
   else
@@ -160,7 +160,7 @@ begin
     assertTrue(dict <> nil);
     assertTrue(dict.Model[hv23].Tables.Count > 0);
   finally
-    dict.Free;
+    dict.free;
   end;
 end;
 {$ENDIF}
@@ -590,7 +590,7 @@ end;
 
 Procedure THL7v2ParserTests.TearDown;
 begin
-  FHL7Dict.Free;
+  FHL7Dict.free;
 end;
 
 procedure THL7v2ParserTests.TestDictionaryParse;
@@ -608,7 +608,7 @@ begin
     try
       assertTrue(msg <> nil);
     finally
-      msg.Free;
+      msg.free;
     end;
   end;
 end;
@@ -625,7 +625,7 @@ begin
   try
     output := TV2Composer.composeString(msg);
   finally
-    msg.Free;
+    msg.free;
   end;
   StringToFile(source, filePath(['[tmp]', 'source.hl7']), TEncoding.UTF8);
   StringToFile(output, filePath(['[tmp]', 'output.hl7']), TEncoding.UTF8);
@@ -653,10 +653,10 @@ begin
         list.free;
       end;
     finally
-      path.Free;
+      path.free;
     end;
   finally
-    msg.Free;
+    msg.free;
   end;
 end;
 
@@ -692,10 +692,10 @@ begin
         list.free;
       end;
     finally
-      path.Free;
+      path.free;
     end;
   finally
-    msg.Free;
+    msg.free;
   end;
 end;
 

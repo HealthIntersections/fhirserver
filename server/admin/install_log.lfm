@@ -11,7 +11,6 @@ object InstallProgressForm: TInstallProgressForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -130,10 +129,11 @@ object InstallProgressForm: TInstallProgressForm
     TabOrder = 1
     object lblStatus: TLabel
       Left = 16
-      Height = 15
+      Height = 16
       Top = 35
-      Width = 79
+      Width = 93
       Caption = 'Not Started Yet'
+      ParentColor = False
       ParentFont = False
     end
     object ProgressBar1: TProgressBar

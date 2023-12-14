@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads, fsl_i18n,
-  fdb_manager,
+  fdb_manager, fdb_fts,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
 
@@ -52,7 +52,7 @@ uses
   tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
   utilities, security, indexing, server_factory, subscriptions, time_tracker,
-  telnet_server, kernel_thread, server_stats,
+  telnet_server, kernel_thread, server_stats, xig_provider,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -83,20 +83,25 @@ type
   private
     FPackages : TStringList;
     FCodeSystems : TFslMap<TFHIRResourceProxyV>;
+    FTextIndex: TFDBFullTextSearch;
     FValueSets : TFslMap<TFHIRResourceProxyV>;
     FNamingSystems : TFslMap<TFHIRResourceProxyV>;
     FConceptMaps : TFslMap<TFHIRResourceProxyV>;
+    procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create; override;
+    constructor Create(TextIndex : TFDBFullTextSearch);
     destructor Destroy; override;
     function link : TTerminologyServerData; overload;
+
     procedure clear;
+
     property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
     property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
     property NamingSystems : TFslMap<TFHIRResourceProxyV> read FNamingSystems;
     property ConceptMaps : TFslMap<TFHIRResourceProxyV> read FConceptMaps;
+    property TextIndex : TFDBFullTextSearch read FTextIndex;
   end;
 
   TTerminologyFhirServerStorage = class;
@@ -125,7 +130,7 @@ type
 
     function Repository : TTerminologyFhirServerStorage; // private - hint busting
   public
-    constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
+    constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; langList : THTTPLanguageList; Data : TTerminologyServerData);
     destructor Destroy; override;
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
@@ -144,7 +149,6 @@ type
     FLock : TFslLock;
     FData : TTerminologyServerData;
     FServerContext : TFHIRServerContext; // free from owner
-    function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
     procedure loadResource(res: TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
     procedure loadBytes(factory: TFHIRFactory; name: String; cnt: TBytes);
     procedure loadFromZip(factory: TFHIRFactory; cnt: TBytes);
@@ -174,7 +178,7 @@ type
     procedure ProcessObservations; override;
     procedure RunValidation; override;
 
-    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
+    function createOperationContext(langList : THTTPLanguageList) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
 
     procedure Sweep; override;
@@ -193,9 +197,9 @@ type
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
 
-    procedure loadUTGFolder(folder : String);
     procedure loadPackage(pid : String; ignoreEmptyCodeSystems : boolean);
     procedure loadFile(factory : TFHIRFactory; name : String);
+    procedure loadFromXig(xig : TXIGProvider; ignoreEmptyCodeSystems : boolean);
 
     function cacheSize(magic : integer) : UInt64; override;
     function issueHealthCardKey : integer; override;
@@ -220,13 +224,13 @@ type
     function terminologies : TCommonTerminologies;
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
-    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
-    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
+    Function BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
-    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
-    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
+    Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
+    function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; override;
 
     function AutoCache : boolean; override;
   public
@@ -253,17 +257,17 @@ type
 
     procedure Load; override;
     procedure Unload; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
     function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;    
-    procedure recordStats(rec : TStatusRecord); override;
+    procedure recordStats(rec : TStatusRecord); override;  
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -346,7 +350,7 @@ end;
 
 { TTerminologyServerData }
 
-constructor TTerminologyServerData.Create;
+constructor TTerminologyServerData.Create(TextIndex : TFDBFullTextSearch);
 begin
   inherited create;
   FCodeSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
@@ -358,15 +362,17 @@ begin
   FConceptMaps := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FConceptMaps.defaultValue := nil;
   FPackages := TStringList.create;
+  FTextIndex := TextIndex;
 end;
 
 destructor TTerminologyServerData.Destroy;
 begin
-  FPackages.Free;
-  FConceptMaps.Free;
-  FNamingSystems.Free;
-  FValueSets.Free;
-  FCodeSystems.Free;
+  FPackages.free;
+  FConceptMaps.free;
+  FNamingSystems.free;
+  FValueSets.free;
+  FCodeSystems.free;
+  FTextIndex.free;
 
   inherited;
 end;
@@ -384,6 +390,17 @@ begin
   FConceptMaps.clear;
 end;
 
+procedure TTerminologyServerData.addCodesToIndex(cmp : TFDBFullTextSearchCompartment; vurl : String; codes : TFhirCodeSystemConceptListW);
+var
+  cc : TFHIRCodeSystemConceptW;
+begin
+  for cc in codes do
+  begin
+    FTextIndex.addText(cmp, vurl+'#'+cc.code, cc.code+': '+cc.display, cc.definition);
+    addCodesToIndex(cmp, vurl, cc.conceptList);
+  end;
+end;
+
 function TTerminologyServerData.sizeInBytesV(magic: integer): cardinal;
 begin
   result := inherited sizeInBytesV(magic) + FPackages.sizeInBytes(magic) + FCodeSystems.sizeInBytes(magic) + FValueSets.sizeInBytes(magic) + FNamingSystems.sizeInBytes(magic) + FConceptMaps.sizeInBytes(magic);
@@ -391,15 +408,15 @@ end;
 
 { TTerminologyServerOperationEngine }
 
-constructor TTerminologyServerOperationEngine.Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
+constructor TTerminologyServerOperationEngine.Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; langList : THTTPLanguageList; Data : TTerminologyServerData);
 begin
-  inherited Create(Storage, ServerContext, lang);
+  inherited Create(Storage, ServerContext, langList);
   FData := data;
 end;
 
 destructor TTerminologyServerOperationEngine.Destroy;
 begin
-  FData.Free;
+  FData.free;
   inherited;
 end;
 
@@ -550,10 +567,10 @@ begin
     begin
       response.HTTPCode := 404;
       response.Message := 'Not Found';
-      response.Resource := factory.BuildOperationOutcome(lang, 'not found', itUnknown);
+      response.Resource := factory.BuildOperationOutcome(langList, 'not found', itUnknown);
     end;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -678,15 +695,15 @@ begin
               filtered.free;
             end;
           finally
-            list.Free;
+            list.free;
           end;
           response.HTTPCode := 200;
           response.Message := 'OK';
           response.Body := '';
           response.resource := bundle.getBundle;
         finally
-          op.Free;
-          bundle.Free;
+          op.free;
+          bundle.free;
         end;
       finally
         search.free;
@@ -712,7 +729,7 @@ begin
   try
     // since we're not making any changes, this is pretty straight forward
     try
-      if check(response, request.Resource.fhirType = 'Bundle', 400, lang, 'A bundle is required for a Transaction operation', itInvalid) then
+      if check(response, request.Resource.fhirType = 'Bundle', 400, langList, 'A bundle is required for a Transaction operation', itInvalid) then
       begin
         req := factory.wrapBundle(request.resource.Link);
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
@@ -760,14 +777,14 @@ begin
                   if req.type_ = btTransaction then
                     raise;
                   dest.responseStatus := inttostr(e.Status);
-                  dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+                  dest.resource := Factory.BuildOperationOutcome(request.langList, e);
                 end;
                 on e : Exception do
                 begin
                   if req.type_ = btTransaction then
                     raise;
                   dest.responseStatus := '500';
-                  dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+                  dest.resource := Factory.BuildOperationOutcome(request.langList, e);
                 end;
               end;
             finally
@@ -829,7 +846,7 @@ begin
     try
       sp.index.expression := parser.parseV(sp.index.Path);
     finally
-      parser.Free;
+      parser.free;
     end;
   end;
 
@@ -853,7 +870,7 @@ begin
         result := result or matchesObject(so.value, sp);
     end;
   finally
-    selection.Free;
+    selection.free;
   end;
 end;
 
@@ -865,7 +882,7 @@ begin
   try
     result := tokenMatchesCoding(c, sp);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -901,11 +918,11 @@ begin
           if tokenMatchesCoding(c, sp) then
             exit(true);
       finally
-        cl.Free;
+        cl.free;
       end;
     end;
   finally
-    cc.Free;
+    cc.free;
   end;
 end;
 
@@ -924,7 +941,7 @@ begin
       result := false;
     end;
   finally
-    id.Free;
+    id.free;
   end;
 end;
 
@@ -1010,14 +1027,14 @@ end;
 constructor TTerminologyFhirServerStorage.Create(factory : TFHIRFactory);
 begin
   inherited Create(factory);
-  FData := TTerminologyServerData.create;
+  FData := TTerminologyServerData.create(TFDBFullTextSearchFactory.makeSQLiteTextSearch(factory.versionName))         ;
   FLock := TFslLock.create('tx.storage');
 end;
 
 destructor TTerminologyFhirServerStorage.Destroy;
 begin
-  FLock.Free;
-  FData.Free;
+  FLock.free;
+  FData.free;
   inherited;
 end;
 
@@ -1056,9 +1073,9 @@ begin
   // this server doesn't track sessions
 end;
 
-function TTerminologyFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
+function TTerminologyFhirServerStorage.createOperationContext(langList : THTTPLanguageList): TFHIROperationEngine;
 begin
-  result := TTerminologyServerOperationEngine.create(self.link, FServerContext {no link}, lang, FData.link);
+  result := TTerminologyServerOperationEngine.create(self.link, FServerContext {no link}, langList, FData.link);
   result.Operations.add(TFhirExpandValueSetOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirLookupCodeSystemOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirValueSetValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
@@ -1187,7 +1204,7 @@ begin
               try
                 loadResource(res, ignoreEmptyCodeSystems);
               finally
-                res.Free;
+                res.free;
               end;
             end;
           end;
@@ -1199,7 +1216,7 @@ begin
       Logging.finish(' '+inttostr(i)+' resources');
     end;
   finally
-    npm.Free;
+    npm.free;
   end;
 end;
 
@@ -1224,7 +1241,7 @@ begin
       loadBytes(factory, zip.Parts[i].Name, zip.Parts[i].AsBytes);
     end;
   finally
-    zip.Free;
+    zip.free;
   end;
 end;
 
@@ -1248,7 +1265,7 @@ begin
 
     if fmt = ffUnspecified then
       raise EFslException.Create('Resource in "'+name+'" could not be parsed (format unrecognised)');
-    p := factory.makeParser(FServerContext.ValidatorContext.Link, fmt, THTTPLanguages.Create('en'));
+    p := factory.makeParser(FServerContext.ValidatorContext.Link, fmt, nil);
     try
       res := p.parseResource(cnt);
       try
@@ -1259,10 +1276,10 @@ begin
           pr.free;
         end;
       finally
-        res.Free;
+        res.free;
       end;
     finally
-      p.Free;
+      p.free;
     end;
   end;
 end;
@@ -1280,64 +1297,33 @@ begin
   Logging.finish(' - done');
 end;
 
-function TTerminologyFhirServerStorage.loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
+procedure TTerminologyFhirServerStorage.loadFromXig(xig: TXIGProvider; ignoreEmptyCodeSystems : boolean);
 var
-  filename : String;
-  p : TFHIRParser;
-  procedure load(fn : String);
-  var
-    res : TFHIRResourceV;
-    pr : TFHIRResourceProxyV;
-  begin
-    inc(result);
-    res := p.parseResource(FileToBytes(fn));
-    try
-      pr := factory.makeProxy(res.link);
-      try
-        loadResource(pr, true);
-      finally
-        pr.free;
-      end;
-    finally
-      res.Free;
-    end;
-  end;
+  xl : TXigLoader;
+  res : TFHIRResourceProxyV;
+  i : integer;
 begin
-  p := factory.makeParser(FServerContext.ValidatorContext.Link, ffXml, THTTPLanguages.Create('en'));
+  i := 0;
+  Logging.start('Load from XIG');
+  xl := xig.startLoad(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']);
   try
-    Logging.continue('.');
-    result := 0;
-    for filename in TDirectory.GetFiles(folder, '*.xml') do
-      load(filename);
-    if FolderExists(path([folder, 'codeSystems'])) then
-      for filename in TDirectory.GetFiles(path([folder, 'codeSystems']), '*.xml') do
-        load(filename);
-    if  FolderExists(path([folder, 'valueSets'])) then
-      for filename in TDirectory.GetFiles(path([folder, 'valueSets']), '*.xml') do
-        load(filename);
+    xl.factory := Factory.link;
+    while xl.next do
+    begin
+      inc(i);
+      if (i mod 400 = 0) then
+        Logging.continue('.');
+      res := xl.makeResource;
+      try
+        loadResource(res, ignoreEmptyCodeSystems);
+      finally
+        res.free;
+      end;
+    end;
   finally
-    p.Free;
+    Logging.finish(' '+inttostr(i)+' resources');
+    xl.free;
   end;
-end;
-
-procedure TTerminologyFhirServerStorage.loadUTGFolder(folder : String);
-var
-  count : integer;
-begin
-  if FolderExists(path([folder, 'input'])) then
-    folder := path([folder, 'input']);
-  if FolderExists(path([folder, 'sourceOfTruth'])) then
-    folder := path([folder, 'sourceOfTruth']);
-
-  Logging.start('Load UTG Folder '+folder);
-  count := 0;
-  count := count + loadFromUTG(factory, path([folder, 'cimi']));
-  count := count + loadFromUTG(factory, path([folder, 'v2']));
-  count := count + loadFromUTG(factory, path([folder, 'v3']));
-  count := count + loadFromUTG(factory, path([folder, 'external']));
-  count := count + loadFromUTG(factory, path([folder, 'fhir']));
-  count := count + loadFromUTG(factory, path([folder, 'unified']));
-  Logging.finish(inttostr(count)+' resources loaded');
 end;
 
 procedure TTerminologyFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
@@ -1413,7 +1399,7 @@ end;
 
 procedure TTerminologyFhirServerStorage.Yield(op: TFHIROperationEngine; exception: Exception);
 begin
-  op.Free;
+  op.free;
 end;
 
 { TTerminologyFHIRUserProvider }
@@ -1461,7 +1447,7 @@ begin
     for s in ts do
       result.addEntitlement(s);
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -1499,7 +1485,7 @@ end;
 
 destructor TTerminologyServerEndPoint.Destroy;
 begin
-  FStore.Free;
+  FStore.free;
   inherited;
 end;
 
@@ -1568,12 +1554,13 @@ begin
 
   FServerContext.TerminologyServer.Loading := true;
   FStore.loadPackage(FStore.factory.corePackage, false);
-  if UTGFolder <> '' then
-    FStore.loadUTGFolder(UTGFolder);
 
   for pid in Config['packages'].values do
     if not pid.StartsWith('hl7.terminology') or (UTGFolder = '') then
       FStore.loadPackage(pid, true);
+
+  if (FServerContext.Factory.version = fhirVersionRelease5) and (Terminologies.XIG <> nil) then
+    FStore.loadFromXig(Terminologies.XIG, true);
 
   FServerContext.TerminologyServer.Loading := false;
 
@@ -1582,10 +1569,13 @@ end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
-  FServerContext.Unload;
-  FServerContext.Free;
+  if FServerContext <> nil then
+  begin
+    FServerContext.Unload;
+    FServerContext.free;
+  end;
   FServerContext := nil;
-  FStore.Free;
+  FStore.free;
   FStore := nil;
 end;
 
@@ -1596,17 +1586,18 @@ begin
     FWeb.Common.Google.commit;
     callback(self, 'Checking Async Tasks', 25);
     FWeb.CheckAsyncTasks;
-    callback(self, 'Sweeping Client Cache', 50);
-    FServerContext.ClientCacheManager.sweep;
-    callback(self, 'Build Terminology Indexes', 75);
-    FServerContext.TerminologyServer.BuildIndexes(false);
+    //callback(self, 'Sweeping Client Cache', 50);
+    //FServerContext.ClientCacheManager.sweep;
+    //callback(self, 'Build Terminology Indexes', 75);
+    //FServerContext.TerminologyServer.BuildIndexes(false);
   except
     on e : exception do
       Logging.log('Error in internal thread for '+Config.name+': '+e.Message);
   end;
 end;
 
-procedure TTerminologyServerEndPoint.InstallDatabase;
+procedure TTerminologyServerEndPoint.InstallDatabase(
+  params: TCommandLineParameters);
 var
   conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
@@ -1617,7 +1608,7 @@ begin
     try
       dbi.InstallTerminologyServer;
     finally
-      dbi.Free;
+      dbi.free;
     end;
     conn.Release;
   except
@@ -1652,12 +1643,12 @@ begin
   end;
 end;
 
-procedure TTerminologyServerEndPoint.LoadPackages(plist: String);
+procedure TTerminologyServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
   raise EFslException.Create('This operation does not apply to this endpoint');
 end;
 
-procedure TTerminologyServerEndPoint.updateAdminPassword;
+procedure TTerminologyServerEndPoint.updateAdminPassword(pw: String);
 begin
   raise EFslException.Create('This operation does not apply to this endpoint');
 end;
@@ -1704,13 +1695,13 @@ begin
   result := true;
 end;
 
-function TTerminologyServerWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
+function TTerminologyServerWebServer.BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
   result := '';
   raise EFslException.Create('Authentication is not supported for the terminology server');
 end;
 
-function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   h : THtmlPublisher;
   s : String;
@@ -1786,11 +1777,11 @@ begin
 
     result := processContent('template-fhir.html', secure, 'Terminology Service Home Page', h.output);
   finally
-    h.Free;
+    h.free;
   end;
 end;
 
-function TTerminologyServerWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+function TTerminologyServerWebServer.BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 begin
   result := '';
   raise EFslException.Create('Uploads are not supported for the terminology server');
@@ -1806,7 +1797,7 @@ begin
   result := 'Terminology server for v'+factory.versionString;
 end;
 
-function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
+function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW;
 begin
   result := nil;
   raise EFslException.Create('Not done yet');
@@ -1829,7 +1820,7 @@ begin
   raise EFslException.Create('The WebUI is not supported for the terminology server');
 end;
 
-function TTerminologyServerWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+function TTerminologyServerWebServer.ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 begin
   result := nil;
   raise EFslException.Create('Uploads are not supported for the terminology server');

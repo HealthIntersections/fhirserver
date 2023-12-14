@@ -40,7 +40,7 @@ uses
   server_config, database_installer, server_factory, server_constants,
   endpoint_txsvr;
 
-function loadRemoteConfig(src : String; local : TIniFile) : String;
+function loadRemoteConfig(params : TCommandLineParameters; src : String; local : TIniFile) : String;
 
 implementation
 
@@ -71,6 +71,7 @@ type
 
   TConfigurationBuilder = class (TFslObject)
   private
+    FParams : TCommandLineParameters;
     FLastPct : Integer;
     FJson : TJsonObject;
     FFolder : String;
@@ -78,7 +79,8 @@ type
     FFiles : TFslStringDictionary;
     FEndPoints : TFslMap<TEndPointInfo>;
     procedure DownloadProgress(sender : TObject; progress : integer);
-    procedure downloadFile(fn : String);
+    procedure downloadFile(fn : String); overload;
+    procedure downloadFile(src, tgt : String); overload;
     procedure DownloadFiles;
     function fixDBPath(fn: String): String;
     procedure readConfig;
@@ -90,27 +92,29 @@ type
     procedure DownloadFileList(files: TJsonObject);
     procedure seePackages(realm : TJsonObject);
   public
-    constructor Create; override;
+    constructor Create(params : TCommandLineParameters);
     destructor Destroy; override;
   end;
 
-constructor TConfigurationBuilder.Create;
+constructor TConfigurationBuilder.Create(params : TCommandLineParameters);
 begin
-  inherited;
-  FFiles := TFslStringDictionary.create;
-  FEndPoints := TFslMap<TEndPointInfo>.create;
-  FEndPoints.Add('r2', TEndPointInfo.create(fhirVersionRelease2));
-  FEndPoints.Add('r3', TEndPointInfo.create(fhirVersionRelease3));
-  FEndPoints.Add('r4', TEndPointInfo.create(fhirVersionRelease4));
-  FEndPoints.Add('r5', TEndPointInfo.create(fhirVersionRelease5));
+  inherited Create;
+  FParams := params;
+  FFiles := TFslStringDictionary.Create;
+  FEndPoints := TFslMap<TEndPointInfo>.Create;
+  FEndPoints.Add('r2', TEndPointInfo.Create(fhirVersionRelease2));
+  FEndPoints.Add('r3', TEndPointInfo.Create(fhirVersionRelease3));
+  FEndPoints.Add('r4', TEndPointInfo.Create(fhirVersionRelease4));
+  FEndPoints.Add('r5', TEndPointInfo.Create(fhirVersionRelease5));
   FEndPoints.defaultValue := nil;
 end;
 
 destructor TConfigurationBuilder.Destroy;
 begin
-  FEndPoints.Free;
-  FFiles.Free;
-  FJson.Free;
+  FParams.free;
+  FEndPoints.free;
+  FFiles.free;
+  FJson.free;
   inherited;
 end;
 
@@ -135,7 +139,7 @@ begin
             Logging.log('Unable to upgrade existing database '+fn+': '+e.message);
         end;
       finally
-        installer.Free;
+        installer.free;
       end;
       conn.Release;
     except
@@ -145,7 +149,7 @@ begin
       end;
     end;
   finally
-    sql.Free;
+    sql.free;
   end;
 end;
 
@@ -163,7 +167,7 @@ begin
       try
         installer.InstallTerminologyServer;
       finally
-        installer.Free;
+        installer.free;
       end;
       conn.Release;
     except
@@ -173,13 +177,18 @@ begin
       end;
     end;
   finally
-    sql.Free;
+    sql.free;
   end;
 end;
 
 function TConfigurationBuilder.fixDBPath(fn : String) : String;
 begin
-  if (ExtractFilePath(fn) = '') then
+  if (fn.StartsWith('http:') or fn.StartsWith('https:')) then
+  begin
+    result := FilePath([FFolder, fn.Substring(fn.LastIndexOf('/')+1)]);
+    downloadFile(fn, result);
+  end
+  else if (ExtractFilePath(fn) = '') then
     result := FilePath([FFolder, fn])
   else
     result := fn;
@@ -251,10 +260,15 @@ begin
       sct := cfg.section['terminologies'].section[PathTitle(n)];
       sct['type'].value := FFiles[n];
       sct['active'].value := 'true';
-      if StringArrayExists(['rxnorm', 'ndc', 'unii'], FFiles[n]) then
+      if StringArrayExists(['rxnorm', 'ndc', 'unii', 'cpt', 'omop', 'xig'], FFiles[n]) then
       begin
         sct['db-type'].value := 'sqlite';
-        sct['db-file'].value := FilePath([FFolder, n]);
+        if (FFiles[n] = 'cpt') and (local.ValueExists('cpt', 'local-source')) then
+          sct['db-file'].value := local.ReadString('cpt', 'local-source', '')
+        else if (n.startsWith('file:')) then
+          sct['db-file'].value := FilePath([FFolder, extractFileName(n.subString(5))])
+        else
+          sct['db-file'].value := FilePath([FFolder, n]);
         sct['db-auto-create'].value := 'false';
       end
       else
@@ -295,6 +309,7 @@ begin
       sct['path'].value := o.str['path'];
       sct['active'].value := 'true';
       sct['db-type'].value := o.str['db-type'];
+      sct['db-source'].value := o.str['db-file'];
       sct['db-file'].value := fixDbPath(o.str['db-file']);
       sct['db-auto-create'].value := o.str['db-auto-create'];
       if o.has('folder') then
@@ -303,7 +318,7 @@ begin
 
     cfg.Save;
   finally
-    cfg.Free;
+    cfg.free;
   end;
 end;
 
@@ -327,7 +342,7 @@ var
   v, vl : String;
   ep : TEndPointInfo;
 begin
-  if not getCommandLineParam('version', vl) then
+  if not FParams.get('version', vl) then
     vl := '*';
   if (vl = '*') then
     vl := '2,3,4,5';
@@ -365,7 +380,7 @@ begin
   files := realm.forceObj['files'];
   DownloadFileList(files);
 
-  if not getCommandLineParam('realm', r) then
+  if not FParams.get('realm', r) then
     r := '*';
 
   if (r = '*') then
@@ -417,7 +432,7 @@ begin
   try
     TJSONWriter.writeObject(f, FJson, true);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -444,16 +459,30 @@ end;
 procedure TConfigurationBuilder.downloadFile(fn : String);
 var
   src, tgt : String;
+begin
+  if (fn.StartsWith('file:')) then
+  begin
+    src := fn;
+    tgt := FilePath([FFolder, extractFileName(fn)]);
+  end
+  else
+  begin
+    src := UrlPath([FUrl, fn]);
+    tgt := FilePath([FFolder, fn]);
+  end;
+  downloadFile(src, tgt);
+end;
+
+procedure TConfigurationBuilder.downloadFile(src, tgt : String);
+var
   fetcher : TInternetFetcher;
   start : TDateTime;
 begin
-  src := UrlPath([FUrl, fn]);
-  tgt := FilePath([FFolder, fn]);
   if (src.StartsWith('file:')) then
   begin
     if not (FileExists(tgt)) then
     begin
-      Logging.start('Copy '+fn);
+      Logging.start('Copy '+src);
       BytesToFile(FileToBytes(src.Substring(5)), tgt);
       Logging.finish(' Done');
     end;
@@ -465,7 +494,7 @@ begin
     FLastPct := 0;
     if not FileExists(tgt) then
     begin
-      Logging.start('Download '+fn);
+      Logging.start('Download '+src);
       try
         start := now;
         fetcher := TInternetFetcher.Create;
@@ -476,7 +505,7 @@ begin
           fetcher.Buffer.SaveToFileName(tgt);
           Logging.finish(' Done ('+DescribeBytes(fetcher.buffer.size)+', '+DescribePeriod(now - start)+')');
         finally
-          fetcher.Free;
+          fetcher.free;
         end;
       except
         on e : Exception do
@@ -491,7 +520,7 @@ begin
   end;
 end;
 
-function loadRemoteConfig(src : String; local : TIniFile) : String;
+function loadRemoteConfig(params : TCommandLineParameters; src : String; local : TIniFile) : String;
 var
   cb : TConfigurationBuilder;
   dir : String;
@@ -500,7 +529,7 @@ begin
 
   result := FilePath([dir, 'fhir-server', 'fhir-server-config.cfg']);
   try
-    cb := TConfigurationBuilder.Create;
+    cb := TConfigurationBuilder.Create(params.link);
     try
       cb.FUrl := src;
       cb.FFolder := ExtractFilePath(result);
@@ -512,7 +541,7 @@ begin
       cb.setupEndPoints;
       cb.buildConfig(result, local);
     finally
-      cb.Free;
+      cb.free;
     end;
   except
     on e : Exception do
@@ -540,7 +569,7 @@ end;
 
 destructor TEndPointInfo.Destroy;
 begin
-  FPackages.Free;
+  FPackages.free;
   inherited;
 end;
 

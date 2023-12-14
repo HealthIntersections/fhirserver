@@ -517,7 +517,7 @@ end;
 constructor TExampleScenarioEditorFrame.Create(owner: TComponent);
 begin
   inherited;
-  // flatItems := TFslList<TFhirQuestionnaireItem>.create;
+  // flatItems := TFslList<TFhirQuestionnaireItem>.Create;
 
   // show;
   // ReloadTreeview(tvStructure.Selected);
@@ -525,7 +525,7 @@ end;
 
 destructor TExampleScenarioEditorFrame.Destroy;
 begin
-  // flatItems.Free;
+  // flatItems.free;
   inherited;
 end;
 
@@ -1325,7 +1325,7 @@ begin
   if ComboBox5.ItemIndex <> -1 then
     (obj).receiver := ComboBox5.Items[ComboBox5.ItemIndex];
 
-  // obj.request.Free;
+  // obj.request.free;
   if ComboBox6.ItemIndex <> -1 then
   begin
     if obj.request = nil then

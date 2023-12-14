@@ -205,7 +205,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -241,13 +241,13 @@ end;
 constructor TRDFComplex.Create(gen : TRDFGenerator);
 begin
   inherited Create;
-  FPredicates := TFslList<TRDFPredicate>.create;
+  FPredicates := TFslList<TRDFPredicate>.Create;
   FGen := gen;
 end;
 
 destructor TRDFComplex.Destroy;
 begin
-  FPredicates.Free;
+  FPredicates.free;
   inherited;
 end;
 
@@ -272,7 +272,7 @@ begin
     p.FObj := obj;
     FPredicates.Add(p.Link);
   finally
-    p.Free;
+    p.free;
   end;
   result := self;
 end;
@@ -348,7 +348,7 @@ end;
 
 destructor TRDFPredicate.Destroy;
 begin
-  FObj.Free;
+  FObj.free;
   inherited;
 end;
 
@@ -401,7 +401,7 @@ begin
     FPredicates.Add(p.Link);
     result := p;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -434,14 +434,14 @@ end;
 
 constructor TRDFSection.Create(gen: TRDFGenerator);
 begin
-  inherited create;
+  inherited Create;
   FGen := gen;
-  FSubjects := TFslList<TRDFSubject>.create;
+  FSubjects := TFslList<TRDFSubject>.Create;
 end;
 
 destructor TRDFSection.Destroy;
 begin
-  FSubjects.Free;
+  FSubjects.free;
   inherited;
 end;
 
@@ -515,20 +515,20 @@ end;
 constructor TRDFGenerator.Create();
 begin
   inherited Create;
-  FSections := TFslList<TRDFSection>.create;
-  FSubjectSet := TList<String>.create;
-  FPredicateSet := TList<String>.create;
-  FObjectSet := TList<String>.create;
-  FPrefixes := TFslStringDictionary.create;
+  FSections := TFslList<TRDFSection>.Create;
+  FSubjectSet := TList<String>.Create;
+  FPredicateSet := TList<String>.Create;
+  FObjectSet := TList<String>.Create;
+  FPrefixes := TFslStringDictionary.Create;
 end;
 
 destructor TRDFGenerator.Destroy;
 begin
-  FSections.Free;
-  FSubjectSet.Free;
-  FPredicateSet.Free;
-  FObjectSet.Free;
-  FPrefixes.Free;
+  FSections.free;
+  FSubjectSet.free;
+  FPredicateSet.free;
+  FObjectSet.free;
+  FPrefixes.free;
   inherited;
 end;
 
@@ -576,7 +576,7 @@ begin
     sort.Sort;
     result := sort.ToStringArray;
   finally
-    sort.Free;
+    sort.free;
   end;
 end;
 

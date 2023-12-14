@@ -420,7 +420,7 @@ Begin
     oDocument.Pieces.Add(oPara.Link);
     FLastWasPara := True;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -446,7 +446,7 @@ Begin
       oDocument.Pieces.Add(oText.Link);
       FLastWasPara := False;
     Finally
-      oText.Free;
+      oText.free;
     End;
     End;
 End;
@@ -598,7 +598,7 @@ End;
 
 Destructor TWPTextModelCell.Destroy;
 Begin
-  FPieces.Free;
+  FPieces.free;
   Inherited;
 End;
 
@@ -612,7 +612,7 @@ End;
 
 Destructor TWPTextModelRow.Destroy;
 Begin
-  FCells.Free;
+  FCells.free;
   Inherited;
 End;
 
@@ -632,7 +632,7 @@ End;
 
 Destructor TWPTextModelTable.Destroy;
 Begin
-  FRows.Free;
+  FRows.free;
   Inherited;
 End;
 
@@ -673,7 +673,7 @@ Var
     Try
       FLines.Add(Result.Link);
     Finally
-      Result.Free;
+      Result.free;
     End;
     iWidth := 0;
   End;
@@ -682,7 +682,7 @@ Begin
   oLine := NewLine;
 
   if iMaxWidth = 0 then
-    raise EWPException.create('The text content contained a table that was too complex to layout given the number of columns available');
+    raise EWPException.Create('The text content contained a table that was too complex to layout given the number of columns available');
 
   iLoop := 0;
   While iLoop < FFragments.Count Do
@@ -761,7 +761,7 @@ Begin
         StringAppend(Result, oWords[iLoop], ' ');
     End;
   Finally
-    oWords.Free;
+    oWords.free;
   End;
   Assert(Length(sText)+iGap = Length(Result),
     'failed to add '+IntegerToString(iGap)+' spaces to '+cReturn+
@@ -884,8 +884,8 @@ End;
 
 Destructor TWPTextModelParagraphPiece.Destroy;
 Begin
-  FFragments.Free;
-  FLines.Free;
+  FFragments.free;
+  FLines.free;
   Inherited;
 End;
 
@@ -1119,11 +1119,11 @@ Begin
               Result := Result + oUsed[iLoop].Final(nil, nil);
           End;
         Finally
-          oSpaces.Free;
+          oSpaces.free;
         End;
       End;
     Finally
-      oUsed.Free;
+      oUsed.free;
     End;
   End;
 End;
@@ -1159,7 +1159,7 @@ Begin
     oFragment.ResetColCount := bResetColCount;
     FFragments.Add(oFragment.Link);
   Finally
-    oFragment.Free;
+    oFragment.free;
   End;
 End;
 
@@ -1240,7 +1240,7 @@ Begin
       ProduceHorizLine(oWidths);
     End;
   Finally
-    oWidths.Free;
+    oWidths.free;
   End;
   ProduceLine('');
 End;
@@ -1258,7 +1258,7 @@ Begin
     For iLoop := 0 To oCalc.Columns.Count - 1 Do
       oWidths.Add(oCalc.Columns[iLoop].Actual);
   Finally
-    oCalc.Free;
+    oCalc.free;
   End;
 End;
 
@@ -1377,9 +1377,9 @@ Begin
     oWriter.Width := FWidth;
     oWriter.Produce(FPieces);
   Finally
-    oWriter.Free;
+    oWriter.free;
   End;
-  FPieces.Free;
+  FPieces.free;
   Inherited;
 End;
 
@@ -1402,7 +1402,7 @@ Begin
     oExpandable.Text := sText;
     FWorkingPieces.Add(oExpandable.Link);
   Finally
-    oExpandable.Free;
+    oExpandable.free;
   End;
 End;
 
@@ -1487,7 +1487,7 @@ Begin
       FWorkingPieces.Add(oPara.Link);
       FCurrentPara := oPara;
     Finally
-      oPara.Free;
+      oPara.free;
     End;
   End;
 End;
@@ -1524,7 +1524,7 @@ Begin
       FCurrentPara := Nil;
       FCurrentTable := oTextTable;
     Finally
-      oTextTable.Free;
+      oTextTable.free;
     End;
   End;
 End;
@@ -1553,7 +1553,7 @@ Begin
       FCurrentTable.Rows.Add(oTextRow.Link);
       FCurrentRow := oTextRow;
     Finally
-      oTextRow.Free;
+      oTextRow.free;
     End;
   End;
 End;
@@ -1580,7 +1580,7 @@ Begin
       FCurrentCell := oTextCell;
       FWorkingPieces := FCurrentCell.Pieces;
     Finally
-      oTextCell.Free;
+      oTextCell.free;
     End;
   End;
 End;
@@ -1622,8 +1622,8 @@ End;
 
 Destructor TWPTextWriterTableColumnSizeCalculator.Destroy;
 Begin
-  FTable.Free;
-  FColumns.Free;
+  FTable.free;
+  FColumns.free;
 
   Inherited;
 End;
@@ -1631,14 +1631,14 @@ End;
 
 Procedure TWPTextWriterTableColumnSizeCalculator.SetTable(Const Value : TWPTextModelTable);
 Begin
-  FTable.Free;
+  FTable.free;
   FTable := Value;
 End;
 
 
 Procedure TWPTextWriterTableColumnSizeCalculator.SetColumns(Const Value : TWPTableColumnMetrics);
 Begin
-  FColumns.Free;
+  FColumns.free;
   FColumns := Value;
 End;
 
@@ -1659,7 +1659,7 @@ Begin
     AllocateExtra(oToAllocate);
     RemoveMargins;
   Finally
-    oToAllocate.Free;
+    oToAllocate.free;
   End;
 End;
 
@@ -1700,7 +1700,7 @@ Begin
       oColumn.DeadRights.Add(2);
       FColumns.Add(oColumn.Link);
     Finally
-      oColumn.Free;
+      oColumn.free;
     End;
   End;
 End;
@@ -1961,7 +1961,7 @@ Begin
         // new width           is   existing width         - (amount to remove            *  percentage count
         oColumns[iCount].Actual := oColumns[iCount].Actual - Trunc((iPartialSum - iWidth) * (oColumns[iCount].TotalChars / iTotal) );
     Finally
-      oColumns.Free;
+      oColumns.free;
     End;
   End;
   // try again, this time not considering total char count
@@ -1990,7 +1990,7 @@ Begin
         // new width           is   existing width         - (amount to remove            *  percentage width
         oColumns[iCount].Actual := IntegerMax(COLUMN_MIN_WIDTH, oColumns[iCount].Actual - Trunc((iPartialSum - iWidth) * (oColumns[iCount].Actual / iPartialSum) ));
     Finally
-      oColumns.Free;
+      oColumns.free;
     End;
   End;
 End;

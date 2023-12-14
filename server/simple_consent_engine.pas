@@ -118,12 +118,12 @@ end;
 constructor TFHIRSimpleConsentEngine.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FCache := TConsentCache.create;
+  FCache := TConsentCache.Create;
 end;
 
 destructor TFHIRSimpleConsentEngine.Destroy;
 begin
-  FCache.Free;
+  FCache.free;
   inherited;
 end;
 
@@ -146,7 +146,7 @@ begin
       else
         FCache.dropConsent(consent.id);
     finally
-      consent.Free;
+      consent.free;
     end;
   end;
 end;
@@ -163,13 +163,13 @@ constructor TConsentCache.Create;
 begin
   inherited;
   FLock := TFslLock.Create('consentStore');
-  FCache := TFslMap<TFslList<TFhirConsentW>>.create('cache');
+  FCache := TFslMap<TFslList<TFhirConsentW>>.Create('cache');
 end;
 
 destructor TConsentCache.Destroy;
 begin
-  FCache.Free;
-  FLock.Free;
+  FCache.free;
+  FLock.free;
   inherited;
 end;
 
@@ -216,7 +216,7 @@ begin
       FIdMap.AddOrSetValue(consent.Resource.id, id);
       if not FCache.TryGetValue(id, list) then
       begin
-        list := TFslList<TFhirConsentW>.create();
+        list := TFslList<TFhirConsentW>.Create();
         FCache.add(id, list);
       end;
       list.RemoveAll(
@@ -235,7 +235,7 @@ function TConsentCache.getConsents(patientId: String): TFslList<TFhirConsentW>;
 var
   list : TFslList<TFhirConsentW>;
 begin
-  result := TFslList<TFhirConsentW>.create;
+  result := TFslList<TFhirConsentW>.Create;
   try
     FLock.Lock;
     try
@@ -246,7 +246,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

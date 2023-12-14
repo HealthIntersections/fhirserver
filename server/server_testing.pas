@@ -46,8 +46,8 @@ uses
   test_registry;
 
 function isTestInsight : boolean;
-procedure runTestInsight(ini : TFHIRServerConfigFile);
-procedure runTests(ini : TFHIRServerConfigFile);
+procedure runTestInsight(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
+procedure runTests(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
 
 implementation
 
@@ -60,10 +60,10 @@ begin
   {$ENDIF}
 end;
 
-procedure runTestInsight;
+procedure runTestInsight(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
 begin
   Logging.Log('Run Tests (TestInsight)');
-  test_registry.registerTests;
+  test_registry.registerTests(params);
   {$IFDEF FPC}
   raise EFslException.Create('This is not supported in FPC');
   {$ELSE}
@@ -103,7 +103,7 @@ begin
   app.Mode := cpmVerbose;
   app.sparse := true;
   app.Run;
-  app.Free;
+  app.free;
 end;
 {$ELSE}
 begin
@@ -116,9 +116,9 @@ begin
 end;
 {$ENDIF}
 
-procedure runTests(ini : TFHIRServerConfigFile);
+procedure runTests(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
 begin
-  test_registry.registerTests;
+  test_registry.registerTests(params);
   if hasCommandLineParam('gui') then
     RunTestGui(ini)
   {$IFDEF FPC}

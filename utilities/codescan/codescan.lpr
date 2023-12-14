@@ -168,7 +168,7 @@ begin
     Content := FileContent.Text;
     Result := True;
   finally
-    FileContent.Free;
+    FileContent.free;
   end;
 end;
 
@@ -188,7 +188,7 @@ var
   ts : TStringList;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     for i := 0 to ts.count - 1 do
       if TUnicodeUtilities.hasUnicodeBiDiChars(ts[i]) then
@@ -280,7 +280,7 @@ begin
     end;
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -372,7 +372,7 @@ begin
   if (sscLineEndings in checks) and StringArrayExists(['.pas', '.inc', '.dpr', '.lpr'], ExtractFileExt(filename)) then
     src := checkFileForLineEndings(filename, FileToString(filename, nil));
 
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.Text := src;
     if (sscLicense in checks) and StringArrayExists(['.pas'], ExtractFileExt(filename)) then
@@ -456,7 +456,7 @@ var
   dt, inc : string;
 begin
   if not TSemanticVersion.isValid(v) then
-    raise Exception.create('Invalid semantic version '+v);
+    raise Exception.Create('Invalid semantic version '+v);
 
   dt := TFslDateTime.makeUTC().toString('yyyy-mm-dd');
   Writeln('Update version.inc to set version to '+v+' on '+dt);
@@ -552,9 +552,9 @@ var
   s : String;
 begin
   if not TSemanticVersion.isValid(v) then
-    raise Exception.create('Invalid semantic version '+v);
+    raise Exception.Create('Invalid semantic version '+v);
 
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.LoadFromFile(FilePath([FProjectDir, n]));
     for i := 0 to ts.count - 1 do
@@ -580,6 +580,7 @@ end;
 procedure TCodeScanner.Run;
 var
   v, n, m, p, d : String;
+  cmd : TCommandLineParameters;
 begin
   v := '';
   n := '';
@@ -587,61 +588,66 @@ begin
   p := '';
   d := '';
 
-  //output(commandLineAsString);
+  cmd := TCommandLineParameters.create;
   try
-    FProjectDir := paramstr(0);
-    FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);
-    if getCommandLineParam('install', n) and getCommandLineParam('version', v) and getCommandLineParam('product', p)  then
-      setInstallVersion(n, p, v)
-    else if getCommandLineParam('proj-version', p) and getCommandLineParam('version', v) and getCommandLineParam('debug', d) then
-      setProjectVersion(p, v, d = 'true')
-    else if getCommandLineParam('version', v) then
-      setSourceVersion(v)
-    else if getCommandLineParam('next-version', v) then
-      setNextSourceVersion(v)
-    else if getCommandLineParam('check', n) and getCommandLineParam('message', m) then
-      check(n, m)
+    //output(commandLineAsString);
+    try
+      FProjectDir := paramstr(0);
+      FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);
+      if cmd.get('install', n) and cmd.get('version', v) and cmd.get('product', p)  then
+        setInstallVersion(n, p, v)
+      else if cmd.get('proj-version', p) and cmd.get('version', v) and cmd.get('debug', d) then
+        setProjectVersion(p, v, d = 'true')
+      else if cmd.get('version', v) then
+        setSourceVersion(v)
+      else if cmd.get('next-version', v) then
+        setNextSourceVersion(v)
+      else if cmd.get('check', n) and cmd.get('message', m) then
+        check(n, m)
+      else
+      begin
+        FSourceDir := FilePath([ParamStr(1), 'source']);
+        output('Running FHIR Code scanner');
+        output('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
+        output('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
+        FAllOk := true;
+        output(FSourceDir+' [unicode]');
+        scanFolder(FSourceDir, [sscUnicode], FProjectDir);
+        output('');
+        output(FilePath([FSourceDir, 'delphi-markdown'])+' [license, eoln, exceptions, full-parse]');
+        scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'delphi-markdown']));
+        output('');
+        output(FilePath([FSourceDir, 'lazarus-ide-tester'])+' [license, eoln, exceptions, full-parse]');
+        scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'lazarus-ide-tester']));
+        output('');
+        output(FProjectDir+' [license, eoln, exceptions, full-parse]');
+        scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse], FilePath([FProjectDir, 'library']));
+        output('');
+      end;
+    except
+      on e : Exception do
+      begin
+        writeln('General Exception: '+e.message);
+        FAllOk := false;
+      end;
+    end;
+    ExitCode := 0;
+    if cmd.has('version') or cmd.has('check') then
+    begin
+      if not FAllOk then
+        ExitCode := 1
+    end
+    else if not FAllOk then
+    begin
+      output('Errors found - code fails checks', true);
+      ExitCode := 1;
+    end
     else
     begin
-      FSourceDir := FilePath([ParamStr(1), 'source']);
-      output('Running FHIR Code scanner');
-      output('  - Project folder = '+FProjectDir+' '+checkExists(FProjectDir));
-      output('  - Source folder = '+FSourceDir+' '+checkExists(FSourceDir));
-      FAllOk := true;
-      output(FSourceDir+' [unicode]');
-      scanFolder(FSourceDir, [sscUnicode], FProjectDir);
-      output('');
-      output(FilePath([FSourceDir, 'delphi-markdown'])+' [license, eoln, exceptions, full-parse]');
-      scanFolder(FilePath([FSourceDir, 'delphi-markdown']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'delphi-markdown']));
-      output('');
-      output(FilePath([FSourceDir, 'lazarus-ide-tester'])+' [license, eoln, exceptions, full-parse]');
-      scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'lazarus-ide-tester']));
-      output('');
-      output(FProjectDir+' [license, eoln, exceptions, full-parse]');
-      scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse], FilePath([FProjectDir, 'library']));
-      output('');
+      output('All OK', true);
     end;
-  except
-    on e : Exception do
-    begin
-      writeln('General Exception: '+e.message);
-      FAllOk := false;
-    end;
-  end;
-  ExitCode := 0;
-  if hasCommandLineParam('version') or hasCommandLineParam('check') then
-  begin
-    if not FAllOk then
-      ExitCode := 1
-  end
-  else if not FAllOk then
-  begin
-    output('Errors found - code fails checks', true);
-    ExitCode := 1;
-  end
-  else
-  begin
-    output('All OK', true);
+  finally
+    cmd.free;
   end;
 end;
 
@@ -676,7 +682,7 @@ begin
     {$ENDIF}
       CodeApp.run;
   finally
-    CodeApp.Free;
+    CodeApp.free;
   end;
 end.
 

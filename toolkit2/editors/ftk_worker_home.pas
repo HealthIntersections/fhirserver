@@ -67,7 +67,7 @@ end;
 
 destructor THomePageWorker.Destroy;
 begin
-  FTempStore.Free;
+  FTempStore.free;
   inherited Destroy;
 end;
 
@@ -78,13 +78,13 @@ end;
 
 procedure THomePageWorker.SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
 begin
-  FTempStore.Free;
+  FTempStore.free;
   FTempStore := AValue;
 end;
 
 function THomePageWorker.makeFrame(owner: TComponent): TBaseWorkerFrame;
 begin
-  result := THomePageFrame.create(owner);
+  result := THomePageFrame.Create(owner);
   (result as THomePageFrame).TempStore := FTempStore.link;
 end;
 

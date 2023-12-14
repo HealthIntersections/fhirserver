@@ -72,7 +72,7 @@ type
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
     function locate(code : String) : TCodeSystemProviderContext; overload; override;
@@ -80,7 +80,7 @@ type
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function itemWeight(context : TCodeSystemProviderContext) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); overload; override;
@@ -97,11 +97,11 @@ type
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const lang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; override;
 
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; const lang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
 
     procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; override;
     procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
@@ -116,7 +116,7 @@ implementation
 
 constructor TICD11Provider.Create(languages: TIETFLanguageDefinitions);
 begin
-  inherited create(languages);
+  inherited Create(languages);
 end;
 
 destructor TICD11Provider.Destroy;
@@ -165,7 +165,7 @@ begin
   result := '';
 end;
 
-function TICD11Provider.Display(context: TCodeSystemProviderContext; const lang: THTTPLanguages): string;
+function TICD11Provider.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
   result := '';
 end;
@@ -179,7 +179,7 @@ begin
   result := false;
 end;
 
-procedure TICD11Provider.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; const lang: THTTPLanguages; props: TArray<String>; resp: TFHIRLookupOpResponseW);
+procedure TICD11Provider.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 begin
 end;
 
@@ -208,7 +208,7 @@ begin
   result := false;
 end;
 
-procedure TICD11Provider.getCDSInfo(card: TCDSHookCard; const lang: THTTPLanguages; baseURL, code, display: String);
+procedure TICD11Provider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
 end;
 
@@ -217,7 +217,7 @@ begin
   result := '';
 end;
 
-function TICD11Provider.getDisplay(code: String; const lang: THTTPLanguages): String;
+function TICD11Provider.getDisplay(code: String; langList : THTTPLanguageList): String;
 begin
   result := '';
 end;

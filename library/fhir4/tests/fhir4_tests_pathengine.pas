@@ -74,7 +74,7 @@ var
 
 procedure TFHIRPathTest4.setup;
 begin
-  resources := TFslMap<TFHIRResource>.create('resources');
+  resources := TFslMap<TFHIRResource>.Create('resources');
   if gTests = nil then
     gTests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r5', 'fhirpath', 'tests-fhir-r4.xml']), [xpDropWhitespace, xpDropComments]);
   ucum := TUcumServices.Create(nil);
@@ -85,8 +85,8 @@ end;
 procedure TFHIRPathTest4.TearDown;
 begin
   ucum.free;
-  engine.Free;
-  resources.Free;
+  engine.free;
+  resources.free;
 end;
 
 function TFHIRPathTest4.findTest(path: String): TMXmlElement;
@@ -177,9 +177,9 @@ begin
           if not resources.TryGetValue(input, res) then
           begin
             if (input.endsWith('.json')) then
-              p := TFHIRJsonParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'))
+              p := TFHIRJsonParser.Create(TTestingWorkerContext4.Use, nil)
             else
-              p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, THTTPLanguages.create('en'));
+              p := TFHIRXmlParser.Create(TTestingWorkerContext4.Use, nil);
             try
               f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead);
               try
@@ -187,10 +187,10 @@ begin
                 p.parse;
                 res := p.resource.Link as TFHIRResource;
               finally
-                f.Free;
+                f.free;
               end;
             finally
-              p.Free;
+              p.free;
             end;
             resources.Add(input, res.link);
           end
@@ -231,7 +231,7 @@ begin
       begin
         ok := engine.convertToBoolean(outcome);
         outcome.clear();
-        outcome.add(TFHIRBoolean.create(ok));
+        outcome.add(TFHIRBoolean.Create(ok));
       end;
 
       expected := TFslList<TMXmlElement>.Create;
@@ -276,11 +276,11 @@ begin
           end;
         end;
       finally
-        expected.Free;
+        expected.free;
       end;
     end;
   finally
-    node.Free;
+    node.free;
     res.free;
     outcome.free;
   end;
@@ -294,7 +294,7 @@ var
   g, t : integer;
   gn, s : String;
 begin
-  inherited create;
+  inherited Create;
   if gTests = nil then
     gTests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r4', 'fhirpath', 'tests-fhir-r4.xml']), [xpDropWhitespace, xpDropComments]);
   group := gtests.document.first;
@@ -333,6 +333,6 @@ end;
 
 initialization
 finalization
-  gTests.Free;
+  gTests.free;
 end.
 

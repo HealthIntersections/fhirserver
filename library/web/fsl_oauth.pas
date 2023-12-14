@@ -56,7 +56,7 @@ var
 begin
   result := false;
   try
-    fetch := TInternetFetcher.create;
+    fetch := TInternetFetcher.Create;
     try
       fetch.URL := 'https://graph.facebook.com/oauth/access_token?client_id='+id+'&redirect_uri='+url+'&client_secret='+secret+'&code='+code;
       fetch.Fetch;
@@ -102,7 +102,7 @@ begin
           http.IOHandler := ssl;
           ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_2;
           http.Request.ContentType := 'application/x-www-form-urlencoded';
-          resp := TBytesStream.create;
+          resp := TBytesStream.Create;
           try
             http.Post('https://accounts.google.com/o/oauth2/token', post, resp);
             resp.position := 0;
@@ -141,7 +141,7 @@ var
 begin
   result := false;
   try
-    fetch := TInternetFetcher.create;
+    fetch := TInternetFetcher.Create;
     try
       fetch.URL := 'https://graph.facebook.com/me?access_token='+token;
       fetch.Fetch;
@@ -172,7 +172,7 @@ var
 begin
   result := false;
   try
-    fetch := TInternetFetcher.create;
+    fetch := TInternetFetcher.Create;
     try
       fetch.URL := 'https://www.googleapis.com/plus/v1/people/me?access_token='+token+'&key='+key;
       fetch.Fetch;
@@ -199,7 +199,7 @@ begin
         if (name = '') then
           name := jwt.name;
       finally
-        jwt.Free;
+        jwt.free;
       end;
     end;
   except
@@ -251,7 +251,7 @@ begin
       'oauth_signature="'+oAuthSign(secret, base)+'"'+
       'oauth_version="1.0"';
 
-    fetch := TInternetFetcher.create;
+    fetch := TInternetFetcher.Create;
     try
       fetch.Method := imfPost;
       fetch.URL := 'https://https://www.fitbit.com/oauth/request_token';

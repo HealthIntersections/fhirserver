@@ -70,7 +70,7 @@ Const
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
-  LOAD_PERIOD = DATETIME_MINUTE_ONE * 30;
+  LOAD_PERIOD = 0; // never unload for now... DATETIME_MINUTE_ONE * 30;
 
 var
   SNOMED_DATE_FORMAT : TFormatSettings;
@@ -246,7 +246,7 @@ Type
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     function Count : Cardinal;
-    Procedure GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
+    Procedure GetDescription(iIndex : Cardinal; out iDesc : Cardinal; out id : UInt64; out date : TSnomedDate; out concept, module, kind, caps, refsets, valueses : Cardinal; out active : Boolean; out lang : byte);
     function ConceptByIndex(iIndex : Cardinal) : cardinal;
 
 
@@ -266,7 +266,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    Function FindDescription(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
+    Function FindDescription(iIdentity : UInt64; out IIndex : Cardinal) : boolean;
 
     Procedure StartBuild;
     procedure AddDescription(id : UInt64; reference : Cardinal);
@@ -306,7 +306,7 @@ Type
   Public
     Function FindConcept(iIdentity : UInt64; var IIndex : Cardinal) : boolean;
     function getConceptId(iIndex : Cardinal) : UInt64;
-    procedure GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+    procedure GetConcept(iIndex : Cardinal; out Identity : UInt64; out Flags : Byte; out effectiveTime : TSnomedDate; out Parents : Cardinal; out Descriptions : Cardinal; out Inbounds : Cardinal; out outbounds : Cardinal; out refsets : Cardinal);
     Function GetParent(iIndex : Cardinal): Cardinal;
     Function GetIdentity(iIndex : Cardinal): UInt64;
     Function Count : Cardinal;
@@ -361,7 +361,7 @@ Type
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     // for Persistence
-    Procedure GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : Integer);
+    Procedure GetRelationship(iIndex: Cardinal; out identity : UInt64; out Source, Target, RelType, module, kind, modifier : Cardinal; out date : TSnomedDate; out Active, Defining : Boolean; out Group : Integer);
 
     Procedure StartBuild;
     Function AddRelationship(identity : UInt64; Source, Target, RelType, module, kind, modifier : Cardinal; date : TSnomedDate; Active, Defining : Boolean; Group : integer) : Cardinal;
@@ -415,7 +415,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    Procedure GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+    Procedure GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
     Function GetMembersByConcept(iIndex : Cardinal; bByName : Boolean) : Cardinal;
     Function GetRefSetByConcept(iIndex : Cardinal) : Cardinal;
     Function Count : Integer;
@@ -729,7 +729,7 @@ operations
     FSct : TSnomedServices;
     FSupplements : TFslList<TFHIRCodeSystemW>;
   public
-    constructor create(sct : TSnomedServices; supplements : TFslList<TFHIRCodeSystemW>);
+    constructor Create(sct : TSnomedServices; supplements : TFslList<TFHIRCodeSystemW>);
     destructor Destroy; override;
 
 
@@ -740,12 +740,12 @@ operations
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function sameContext(a, b : TCodeSystemProviderContext) : boolean; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
@@ -757,18 +757,17 @@ operations
     function getDefinition(code : String):String; override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
-    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; const slang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
+    procedure extendLookup(factory : TFHIRFactory; ctxt : TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW); override;
     function subsumesTest(codeA, codeB : String) : String; overload; override;
-    procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
+    function getCodeStatus(context : TCodeSystemProviderContext) : String; override;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
-
     property Services : TSnomedServices read FSct;
+    procedure checkReady; override;
   end;
 
 
@@ -876,7 +875,7 @@ procedure TSnomedStrings.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TSnomedStrings.StartBuild;
@@ -939,7 +938,7 @@ procedure TSnomedReferences.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TSnomedReferences.StartBuild;
@@ -1021,10 +1020,10 @@ procedure TSnomedDescriptions.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
-procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; var iDesc : Cardinal; var id : UInt64; var date : TSnomedDate; var concept, module, kind, caps, refsets, valueses : Cardinal; var active : Boolean; var lang : byte);
+procedure TSnomedDescriptions.GetDescription(iIndex : Cardinal; out iDesc : Cardinal; out id : UInt64; out date : TSnomedDate; out concept, module, kind, caps, refsets, valueses : Cardinal; out active : Boolean; out lang : byte);
 Begin
   if (iIndex >= FLength) then
     Raise ETerminologyError.Create('Wrong length index getting snomed Desc Details', itException);
@@ -1103,7 +1102,7 @@ procedure TSnomedConceptList.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 {$R-}
@@ -1161,7 +1160,7 @@ Begin
   Move(FMaster[iIndex+0], result, 8);
 End;
 
-procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; var Identity : UInt64; var Flags : Byte; var effectiveTime : TSnomedDate; var Parents : Cardinal; var Descriptions : Cardinal; var Inbounds : Cardinal; var outbounds : Cardinal; var refsets : Cardinal);
+procedure TSnomedConceptList.GetConcept(iIndex : Cardinal; out Identity : UInt64; out Flags : Byte; out effectiveTime : TSnomedDate; out Parents : Cardinal; out Descriptions : Cardinal; out Inbounds : Cardinal; out outbounds : Cardinal; out refsets : Cardinal);
 Begin
   if (iIndex >= FLength) then
     Raise ETerminologyError.Create('Wrong length index '+inttostr(iIndex)+' getting snomed Concept Details. Max = '+inttostr(FLength), itException);
@@ -1407,7 +1406,7 @@ end;
 
 constructor TSnomedServices.Create(languages : TIETFLanguageDefinitions);
 begin
-  inherited create;
+  inherited Create;
   FLanguages := languages;
   FLock := TFslLock.create('Snomed');
   FLastUse := 0;
@@ -1443,18 +1442,18 @@ end;
 
 destructor TSnomedServices.Destroy;
 begin
-  FDescRef.Free;
-  FRefSetIndex.Free;
-  FRefSetMembers.Free;
-  FWords.Free;
-  FStems.Free;
-  FRefs.Free;
-  FStrings.Free;
-  FRel.Free;
-  FDesc.Free;
-  FConcept.Free;
-  FLanguages.Free;
-  FLock.Free;
+  FDescRef.free;
+  FRefSetIndex.free;
+  FRefSetMembers.free;
+  FWords.free;
+  FStems.free;
+  FRefs.free;
+  FStrings.free;
+  FRel.free;
+  FDesc.free;
+  FConcept.free;
+  FLanguages.free;
+  FLock.free;
   inherited;
 end;
 
@@ -1465,7 +1464,7 @@ begin
   if not FileExists(FSourceFile) then
     raise ETerminologySetup.create('The SNOMED CT Source File '+sFilename+' does not exist');
 
-  if immediate then
+  if immediate or (LOAD_PERIOD = 0) then
     LoadFromSource
   else
     InitialLoad;
@@ -1486,17 +1485,18 @@ begin
         v := oRead.ReadString;
         if (v = SNOMED_CACHE_VERSION_CURRENT) or (v = SNOMED_CACHE_VERSION_UTF16) Then
         begin
-          s := oread.ReadString.split(['/']);
+          v := oRead.ReadString;
+          s := v.split(['/']);
           v := oread.ReadString;
           result := 'Ok (edition = '+s[4]+', version = '+s[6]+', date = '+v+')'
         end
         else
           result := 'Needs rebuilding';
       Finally
-        oread.Free;
+        oread.free;
       End;
     Finally
-      oFile.Free;
+      oFile.free;
     End;
   except
     on e : Exception do
@@ -1542,10 +1542,10 @@ begin
       FTotalCount := FConcept.Count;
       FConcept.Clear;
     Finally
-      oread.Free;
+      oread.free;
     End;
   Finally
-    oFile.Free;
+    oFile.free;
   End;
   FLoaded := 0;
 end;
@@ -1617,10 +1617,10 @@ begin
           FActiveRoots[i] := ReadUInt64;
         FDefaultLanguage := oread.ReadInteger;
       Finally
-        oread.Free;
+        oread.free;
       End;
     Finally
-      oFile.Free;
+      oFile.free;
     End;
     if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
       FPreferredTerm := 0;
@@ -1721,10 +1721,10 @@ begin
         writeUInt64(FActiveRoots[i]);
       oWrite.writeInteger(FDefaultLanguage);
     Finally
-      oWrite.Free;
+      oWrite.free;
     End;
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 end;
 
@@ -2269,7 +2269,7 @@ begin
   Begin
     Desc.GetDescription(descs[iLoop], iDesc, iId2, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
     if (active) And ((iLang = 0) or (FindMember(aMembers, descs[iLoop], iInt))) Then
-      list.addDesignation('', Strings.GetEntry(iDesc).trim, true);
+      list.addDesignation(iLoop = 0, true, '', Strings.GetEntry(iDesc).trim);
   End;
 end;
 
@@ -2415,7 +2415,7 @@ var
   grp : TSnomedRefinementGroup;
 begin
   checkIsLoaded;
-  grps := TFslList<TSnomedRefinementGroup>.create;
+  grps := TFslList<TSnomedRefinementGroup>.Create;
   try
     grps.AddAll(exp.refinementGroups);
     for ref in exp.refinements do
@@ -2425,7 +2425,7 @@ begin
       grp.refinements.Add(ref.Link);
     end;
 
-    result := TFslList<TMatchingConcept>.create;
+    result := TFslList<TMatchingConcept>.Create;
     try
       if (exp.concepts.Count = 1) then
       begin
@@ -2438,10 +2438,10 @@ begin
         raise ETerminologyError.create('No matches found for '+exp.ToString, itInvalid);
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    grps.Free;
+    grps.free;
   end;
 end;
 
@@ -2529,11 +2529,11 @@ begin
             RefSetIndex.GetReferenceSet(i, code, iDummy, iDummy, iDummy, iDummy, iDummy, iDummy);
             cc.code := GetConceptId(code);
           finally
-            cc.Free;
+            cc.free;
           end;
         end;
       finally
-        inc.Free;
+        inc.free;
       end;
       result.link;
     finally
@@ -2555,7 +2555,7 @@ begin
       try
         inc.systemUri := URI_SNOMED;
       finally
-        inc.Free;
+        inc.free;
       end;
       result.link;
     finally
@@ -2582,10 +2582,10 @@ begin
           filt.op := foIn;
           filt.value := id.Substring(16);
         finally
-          filt.Free;
+          filt.free;
         end;
       finally
-        inc.Free;
+        inc.free;
       end;
       result.link;
     finally
@@ -2735,7 +2735,7 @@ end;
 
 function TSnomedServices.StringToId(const s: String): UInt64;
 begin
-  result := StrToUInt64(s);
+  result :=  StrToUInt64(s);
 end;
 
 function TSnomedServices.CheckLangSet(sTerm: String): Cardinal;
@@ -2953,10 +2953,10 @@ procedure TSnomedRelationshipList.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
-procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; var identity : UInt64; var Source, Target, RelType, module, kind, modifier : Cardinal; var date : TSnomedDate; var Active, Defining : Boolean; var Group : integer);
+procedure TSnomedRelationshipList.GetRelationship(iIndex: Cardinal; out identity : UInt64; out Source, Target, RelType, module, kind, modifier : Cardinal; out date : TSnomedDate; out Active, Defining : Boolean; out Group : integer);
 // (iIndex: Cardinal; var Source, Target, RelType: Cardinal; var Flags, Group : Byte);
 begin
   if (iIndex >= FLength) then
@@ -3004,7 +3004,7 @@ procedure TSnomedWords.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TSnomedWords.GetEntry(iIndex: Cardinal; var index: Cardinal; var flags: Byte);
@@ -3060,7 +3060,7 @@ procedure TSnomedStems.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 procedure TSnomedStems.GetEntry(iIndex: Cardinal; var index: Cardinal; var reference: Cardinal);
@@ -3097,7 +3097,7 @@ end;
 
 destructor TSnomedServiceList.Destroy;
 begin
-  FDefinition.Free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -3137,7 +3137,7 @@ end;
 
 procedure TSnomedServiceList.SetDefinition(const Value: TSnomedServices);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Value;
 end;
 
@@ -3175,7 +3175,7 @@ procedure TSnomedReferenceSetIndex.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 function TSnomedReferenceSetIndex.GetMembersByConcept(iIndex: Cardinal; bByName : Boolean): Cardinal;
@@ -3197,7 +3197,7 @@ begin
   End;
 end;
 
-procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; var iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
+procedure TSnomedReferenceSetIndex.GetReferenceSet(iIndex: Cardinal; out iName, iFilename, iDefinition, iMembersByRef, iMembersByName, iFieldTypes, iFieldNames: Cardinal);
 begin
   iIndex := iIndex * REFSET_SIZE;
   if (iIndex >= FLength) then
@@ -3254,10 +3254,10 @@ procedure TSnomedDescriptionIndex.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
-function TSnomedDescriptionIndex.FindDescription(iIdentity: UInt64; var IIndex: Cardinal): boolean;
+function TSnomedDescriptionIndex.FindDescription(iIdentity: UInt64; out IIndex: Cardinal): boolean;
 var
   aConcept : UInt64;
   L, H, I: Integer;
@@ -3336,7 +3336,7 @@ procedure TSnomedReferenceSetMembers.DoneBuild;
 begin
   FMaster := FBuilder.AsBytes;
   FLength := Length(FMaster);
-  FBuilder.Free;
+  FBuilder.free;
 end;
 
 function TSnomedReferenceSetMembers.GetMemberCount(iIndex : Cardinal) : cardinal;
@@ -3564,7 +3564,7 @@ begin
     res.descendants[0] := index;
     result := TSnomedFilterContext(res.link);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -3583,7 +3583,7 @@ begin
       res.descendants := GetConceptDescendants(index);
     result := TSnomedFilterContext(res.link);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -3601,7 +3601,7 @@ begin
     res.members := RefSetMembers.GetMembers(members);
     result := TSnomedFilterContext(res.link);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -3755,17 +3755,17 @@ function TSnomedServices.parseExpression(source: String): TSnomedExpression;
 var
   prsr : TSnomedExpressionParser;
 begin
-  prsr := TSnomedExpressionParser.create;
+  prsr := TSnomedExpressionParser.Create;
   try
     result := prsr.parse(source);
     try
       checkExpr(result);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    prsr.Free;
+    prsr.free;
   end;
 end;
 
@@ -3780,10 +3780,10 @@ begin
       msg := e1.matches(e2);
       result := msg = '';
     finally
-      e2.Free;
+      e2.free;
     end;
   finally
-    e1.Free;
+    e1.free;
   end;
 end;
 
@@ -3832,14 +3832,14 @@ begin
               groups[inttostr(group)].refinements.Add(ref.Link);
             end;
           finally
-            ref.Free;
+            ref.free;
           end;
         end;
         for grp in groups.Values do
           if not exp.hasRefinementGroup(grp) then
             exp.refinementGroups.Add(grp.Link);
       finally
-        groups.Free;
+        groups.free;
       end;
     end;
   end;
@@ -3853,12 +3853,12 @@ var
 begin
   if FBuilding then
   begin
-    exp := TSnomedExpression.create;
+    exp := TSnomedExpression.Create;
     try
       createDefinedExpr(reference, exp, false);
       result := normaliseExpression(exp);
     finally
-      exp.Free;
+      exp.free;
     end;
   end
   else
@@ -3875,10 +3875,10 @@ begin
         checkExpr(result);
         result.Link;
       finally
-        result.Free;
+        result.free;
       end;
     finally
-      parser.Free;
+      parser.free;
     end;
   end;
 end;
@@ -3887,7 +3887,7 @@ end;
 //var
 //  b : TStringBuilder;
 //begin
-//  b := TStringBuilder.create;
+//  b := TStringBuilder.Create;
 //  try
 //    renderExpr(b, expr, sroFillMissing);
 //    result := b.ToString;
@@ -3900,7 +3900,7 @@ end;
 //var
 //  b : TStringBuilder;
 //begin
-//  b := TStringBuilder.create;
+//  b := TStringBuilder.Create;
 //  try
 //    renderExpr(b, expr, sroFillMissing);
 //    result := b.ToString;
@@ -4118,7 +4118,7 @@ begin
         try
           work.merge(ex);
         finally
-          ex.Free;
+          ex.free;
         end;
       end;
     end;
@@ -4147,10 +4147,10 @@ begin
       rationaliseExpr(work2);
       result := work2.canonical;
     finally
-      work2.Free;
+      work2.free;
     end;
   finally
-    work.Free;
+    work.free;
   end;
 end;
 
@@ -4176,7 +4176,7 @@ begin
       end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -4223,10 +4223,10 @@ begin
         end;
         result := true;
       finally
-        e2.Free;
+        e2.free;
       end;
     finally
-      e1.Free;
+      e1.free;
     end;
   end;
 end;
@@ -4257,7 +4257,7 @@ begin
   for child in children do
   begin
     s := GetConceptId(child);
-    exp := TSnomedExpression.create;
+    exp := TSnomedExpression.Create;
     try
       createDefinedExpr(child, exp, false);
       for ref in exp.refinements do
@@ -4270,7 +4270,7 @@ begin
 
       allMatched := true;
       oneUnMatched := false;
-      grps := TFslList<TSnomedRefinementGroup>.create;
+      grps := TFslList<TSnomedRefinementGroup>.Create;
       try
         for grp in exp.refinementGroups do
         begin
@@ -4297,14 +4297,14 @@ begin
               list.Add(TMatchingConcept.Create(s, grpNM));
             findMatchingConcepts(list, child, grpNM);
           finally
-            grpNM.Free;
+            grpNM.free;
           end;
         end;
       finally
-        grps.Free;
+        grps.free;
       end;
     finally
-      exp.Free;
+      exp.free;
     end;
   end;
 end;
@@ -4350,7 +4350,7 @@ procedure TSnomedServices.checkUnloadMe;
 begin
   FLock.Lock;
   try
-    if (FLoaded > 0) and (FLastUse < now - LOAD_PERIOD) then
+    if (FLoaded > 0) and (LOAD_PERIOD > 0) and (FLastUse < now - LOAD_PERIOD) then
       UnloadMe;
   finally
     FLock.Unlock;
@@ -4361,7 +4361,7 @@ function TSnomedServices.listNonMatchingGroups(tgt, src : TFslList<TSnomedRefine
 var
   g, r : TSnomedRefinementGroup;
 begin
-  result := TFslList<TSnomedRefinementGroup>.create;
+  result := TFslList<TSnomedRefinementGroup>.Create;
   try
     for g in tgt do
     begin
@@ -4371,7 +4371,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4480,7 +4480,7 @@ begin
     try
       ListDisplayNames(list, iTerm, 0, $FF);
       d := normalise(concept.description);
-      ok := (list.display <> nil) and (normalise(list.display.AsString) = d);
+      ok := (list.preferredDisplay <> '') and (normalise(list.preferredDisplay) = d);
       for i := 0 to list.designations.count - 1 do
         if not ok and (normalise(list.designations[i].value.asString) = d) then
         begin
@@ -4488,7 +4488,7 @@ begin
           break;
         end;
       if not ok then
-        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil)+'")', itInvalid);
+        raise ETerminologyError.Create('Term "'+concept.description+'" doesn''t match a defined term at '+inttostr(concept.start)+' (valid terms would be from this list: "'+list.present(nil, true)+'")', itInvalid);
     finally
       list.free;
     end;
@@ -4556,7 +4556,7 @@ end;
 //var
 //  b : TStringBuilder;
 //begin
-//  b := TStringBuilder.create;
+//  b := TStringBuilder.Create;
 //  try
 //    renderExpr(b, expr, sroFillMissing);
 //    result := b.ToString;
@@ -4725,7 +4725,7 @@ end;
 
 destructor TSnomedExpressionContext.Destroy;
 begin
-  FExpression.Free;
+  FExpression.free;
   inherited;
 end;
 
@@ -4746,7 +4746,7 @@ end;
 
 procedure TSnomedExpressionContext.SetExpression(value: TSnomedExpression);
 begin
-  FExpression.Free;
+  FExpression.free;
   FExpression := value.Link;
 end;
 
@@ -4871,20 +4871,20 @@ constructor TMatchingConcept.Create(match : String);
 begin
   inherited Create;
   FMatched := match;
-  FUnmatched := TFslList<TSnomedRefinementGroup>.create;
+  FUnmatched := TFslList<TSnomedRefinementGroup>.Create;
 end;
 
 constructor TMatchingConcept.Create(match : String; nonmatched: TFslList<TSnomedRefinementGroup>);
 begin
   inherited Create;
   FMatched := match;
-  FUnmatched := TFslList<TSnomedRefinementGroup>.create;
+  FUnmatched := TFslList<TSnomedRefinementGroup>.Create;
   FUnmatched.AddAll(nonmatched);
 end;
 
 destructor TMatchingConcept.Destroy;
 begin
-  FUnmatched.Free;
+  FUnmatched.free;
   inherited;
 end;
 
@@ -4908,8 +4908,8 @@ end;
 destructor TSnomedProvider.Destroy;
 begin
   FSct.FUseCount := FSct.FUseCount + UseCount;
-  FSct.Free;
-  FSupplements.Free;
+  FSct.free;
+  FSupplements.free;
   inherited Destroy;
 end;
 
@@ -4961,15 +4961,15 @@ begin
     res.matches := FSct.Search(0, filter.filter, FSct.FDefaultLanguage, false, true);
     result := res.Link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
-procedure TSnomedProvider.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
+procedure TSnomedProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   b : TStringBuilder;
   Identity : UInt64;
-  Flags, lang: Byte;
+  Flags, bLang: Byte;
   Active, Defining : boolean;
   ParentIndex, iWork, iWork2, iWork3, module, modifier, kind, caps, iDummy : Cardinal;
   DescriptionIndex : Cardinal;
@@ -5008,7 +5008,7 @@ begin
       b.Append('Descriptions: '+#13#10#13#10);
       for i := Low(Descriptions) To High(Descriptions) Do
       Begin
-        FSct.Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
+        FSct.Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active, bLang);
         if Active Then
           if (kind <> 0) then
             b.Append('* '+FSct.Strings.GetEntry(iWork)+' ('+FSct.GetPNForConcept(kind)+')'+#13#10)
@@ -5137,9 +5137,9 @@ begin
   result := TCodeSystemIteratorContext.Create(context.Link, ndx);
 end;
 
-procedure TSnomedProvider.Close(ctxt: TCodeSystemProviderContext);
+procedure TSnomedProvider.checkReady;
 begin
-  ctxt.Free;
+  FSct.checkLoaded;
 end;
 
 function TSnomedProvider.Code(context: TCodeSystemProviderContext): string;
@@ -5211,7 +5211,7 @@ begin
   end;
 end;
 
-function TSnomedProvider.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
+function TSnomedProvider.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 var
   Identity : UInt64;
   Flags : Byte;
@@ -5226,7 +5226,7 @@ begin
     result := FSct.displayExpression(TSnomedExpressionContext(context).Expression)
   else
   begin
-//    if lang = '' then
+//    if lang <> nil then
 
     result := FSct.GetDisplayName(TSnomedExpressionContext(context).reference, FSct.FDefaultLanguage);
     FSct.Concept.GetConcept(TSnomedExpressionContext(context).reference, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
@@ -5245,15 +5245,15 @@ begin
     raise ETerminologyError.create('Unable to find context in '+systemUri(nil), itInvalid)
   else if ctxt.isComplex then
     // there's only one display name - for now?
-    list.addBase('', FSct.displayExpression(ctxt.FExpression).Trim)
+    list.addDesignation(true, true, '', FSct.displayExpression(ctxt.FExpression).Trim)
   else
     FSct.ListDisplayNames(list, TSnomedExpressionContext(ctxt).reference, 0, $FF);
 end;
 
-procedure TSnomedProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; const slang : THTTPLanguages; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TSnomedProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 var
   Identity : UInt64;
-  Flags, lang : Byte;
+  Flags, bLang : Byte;
   ParentIndex, iWork, iWork2, iWork3, module, modifier, kind, caps, iDummy : Cardinal;
   Active, Defining : boolean;
   DescriptionIndex : Cardinal;
@@ -5277,10 +5277,6 @@ begin
 
     p := resp.addProp('copyright');
     p.value := factory.makeString('This response content from SNOMED CT, which is copyright ) 2002+ International Health Terminology Standards Development Organisation (IHTSDO), and distributed '+'by agreement between IHTSDO and HL7. Implementer use of SNOMED CT is not covered by this agreement');
-    if hasProp(props, 'inactive', true) then
-    begin
-      resp.addProp('inactive').value := factory.makeBoolean(not FSct.IsActive(TSnomedExpressionContext(ctxt).reference));
-    end;
 
     if hasProp(props, 'moduleId', true) then
     begin
@@ -5308,10 +5304,10 @@ begin
       Descriptions := FSct.Refs.GetReferences(DescriptionIndex);
       for i := Low(Descriptions) To High(Descriptions) Do
       Begin
-        FSct.Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active, lang);
+        FSct.Desc.GetDescription(Descriptions[i], iWork, Identity, date, iDummy, module, kind, caps, refsets, valueses, active,blang);
         if Active and (kind <> 0) Then
         Begin
-          resp.addDesignation(codeForLang(lang), URI_SNOMED, FSct.GetConceptId(kind), FSct.GetPNForConcept(kind), FSct.Strings.GetEntry(iWork));
+          resp.addDesignation(codeForLang(blang), URI_SNOMED, FSct.GetConceptId(kind), FSct.GetPNForConcept(kind), FSct.Strings.GetEntry(iWork));
         End;
       End;
     End;
@@ -5364,7 +5360,7 @@ begin
   end;
 end;
 
-function TSnomedProvider.getDisplay(code: String; const lang : THTTPLanguages): String;
+function TSnomedProvider.getDisplay(code: String; langList : THTTPLanguageList): String;
 var
   ctxt : TCodeSystemProviderContext;
 begin
@@ -5374,9 +5370,9 @@ begin
     if (ctxt = nil) then
       raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itInvalid)
     else
-      result := Display(ctxt, lang);
+      result := Display(ctxt, langList);
   finally
-    Close(ctxt);
+    ctxt.free;
   end;
 end;
 
@@ -5395,6 +5391,17 @@ begin
     result := not FSct.IsActive(TSnomedExpressionContext(context).reference);
 end;
 
+function TSnomedProvider.getCodeStatus(context: TCodeSystemProviderContext): String;
+begin
+  FSct.checkIsLoaded;
+  if TSnomedExpressionContext(context).isComplex then
+    result := ''
+  else if FSct.IsActive(TSnomedExpressionContext(context).reference) then
+    result := 'active'
+  else
+    result := 'inactive';
+end;
+
 function TSnomedProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   FSct.checkIsLoaded;
@@ -5407,9 +5414,16 @@ var
   index : cardinal;
 begin
   FSct.checkIsLoaded;
-  iId := StrToUInt64Def(code, 0);
+  iId := FSct.StringToIdOrZero(code);
   if iId = 0 then
-    result := TSnomedExpressionContext.Create(code, FSct.parseExpression(code))
+  begin
+    try
+      result := TSnomedExpressionContext.Create(code, FSct.parseExpression(code))
+    except
+      Message := 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')';
+      result := nil;
+    end
+  end
   else if FSct.Concept.FindConcept(iId, index) Then
     result := TSnomedExpressionContext.create(code, index)
   else
@@ -5433,11 +5447,6 @@ end;
 function TSnomedProvider.version(context: TCodeSystemProviderContext): String;
 begin
   result := FSct.FVersionUri;
-end;
-
-procedure TSnomedProvider.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  TSnomedFilterContext(ctxt).free;
 end;
 
 function TSnomedProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;

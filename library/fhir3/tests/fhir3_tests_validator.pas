@@ -131,7 +131,7 @@ end;
 
 procedure TFHIRValidatorTests.TearDown;
 begin
-  FServices.Free;
+  FServices.free;
 end;
 
 procedure TFHIRValidatorTests.validate(path: String; errorCount: integer; fmt : TFHIRFormat);
@@ -152,7 +152,7 @@ begin
 //      try
 //        val.validate(ctxt, src, fmt);
 //      finally
-//        val.Free;
+//        val.free;
 //      end;
       ec := 0;
       for msg in ctxt.Issues do
@@ -168,10 +168,10 @@ begin
       end;
       Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d', [errorCount, ec]));
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   finally
-    src.Free;
+    src.free;
   end;
 end;
 
@@ -187,11 +187,11 @@ end;
 //  s : string;
 //begin
 //  if (fmt = ffXml) then
-//    p := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'))
+//    p := TFHIRXmlParser.Create(nil, nil)
 //  else
-//    p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+//    p := TFHIRJsonParser.Create(nil, nil);
 //  try
-//    f := TFilestream.create(fsl_utilities.path([PUB_HOME, path]), fmOpenRead + fmShareDenywrite);
+//    f := TFilestream.Create(fsl_utilities.path([PUB_HOME, path]), fmOpenRead + fmShareDenywrite);
 //    try
 //      p.source := f;
 //      p.Parse;
@@ -203,7 +203,7 @@ end;
 ////        try
 ////          val.validate(ctxt, p.resource);
 ////        finally
-////          val.Free;
+////          val.free;
 ////        end;
 //        ec := 0;
 //        s := '';
@@ -215,14 +215,14 @@ end;
 //          end;
 //        Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
 //      finally
-//        ctxt.Free;
+//        ctxt.free;
 //      end;
 //
 //    finally
 //      f.free;
 //    end;
 //  finally
-//    p.Free;
+//    p.free;
 //  end;
 //end;
 //

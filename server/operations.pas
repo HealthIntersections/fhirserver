@@ -65,7 +65,7 @@ function TFhirVersionsOperation.Execute(context: TOperationContext; manager: TFH
 var
   p : TFhirParametersW;
 begin
-  result := '??';
+  result := '??op';
   try
     p := FFactory.makeParameters;
     try
@@ -77,7 +77,7 @@ begin
       response.LastModifiedDate := now;
       response.Resource := p.resource.Link;
     finally
-      p.Free;
+      p.free;
     end;
     manager.AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, request.ResourceName, request.id, response.versionId, 0, request.CommandType, request.Provenance, request.OperationName, response.httpCode, '', response.message, []);
   except

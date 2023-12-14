@@ -79,11 +79,11 @@ begin
           stream.Write(ch, 1);
         if be.resource <> nil then
         begin
-          json := factory.makeComposer(FWorker.link, ffJson, lang, OutputStyleNormal);
+          json := factory.makeComposer(FWorker, ffJson, langList, OutputStyleNormal);
           try
             json.Compose(stream, be.resource);
           finally
-            json.Free;
+            json.free;
           end;
         end
         else if be.tag is TFslBuffer then
@@ -92,28 +92,28 @@ begin
         end;
       end;
     finally
-      b.Free;
+      b.free;
     end;
   end
   else
   begin
-    json := factory.makeComposer(FWorker.link, ffJson, lang, OutputStyleNormal);
+    json := factory.makeComposer(FWorker, ffJson, langList, OutputStyleNormal);
     try
       json.Compose(stream, oResource);
     finally
-      json.Free;
+      json.free;
     end;
   end;
 end;
 
 procedure TFHIRNDJsonComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRTodo.create('TFHIRNDJsonComposer.ComposeResourceV');
+  raise EFHIRTodo.Create('TFHIRNDJsonComposer.ComposeResourceV');
 end;
 
 destructor TFHIRNDJsonComposer.Destroy;
 begin
-  FFactory.Free;
+  FFactory.free;
   inherited;
 end;
 
@@ -125,7 +125,7 @@ end;
 
 procedure TFHIRNDJsonComposer.SetFactory(const Value: TFHIRFactory);
 begin
-  FFactory.Free;
+  FFactory.free;
   FFactory := Value;
 end;
 

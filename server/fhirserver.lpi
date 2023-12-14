@@ -188,21 +188,9 @@
             <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
-          <Parsing>
-            <SyntaxOptions>
-              <IncludeAssertionCode Value="True"/>
-            </SyntaxOptions>
-          </Parsing>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
             <RelocatableUnit Value="True"/>
-            <Checks>
-              <IOChecks Value="True"/>
-              <RangeChecks Value="True"/>
-              <OverflowChecks Value="True"/>
-              <StackChecks Value="True"/>
-            </Checks>
-            <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="aarch64"/>
             <TargetOS Value="darwin"/>
             <Optimizations>
@@ -211,6 +199,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
               <TrashVariables Value="True"/>
             </Debugging>
@@ -389,7 +378,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="92">
+    <Units Count="97">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -761,6 +750,26 @@
         <Filename Value="endpoint_icao.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit91>
+      <Unit92>
+        <Filename Value="tx\tx_cpt.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit92>
+      <Unit93>
+        <Filename Value="tests\tests_cpt.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit93>
+      <Unit94>
+        <Filename Value="xig_provider.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit94>
+      <Unit95>
+        <Filename Value="endpoint_xig.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit95>
+      <Unit96>
+        <Filename Value="web_server.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit96>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -805,10 +814,9 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="39">
+    <Exceptions Count="51">
       <Item1>
         <Name Value="EAbort"/>
-        <Enabled Value="False"/>
       </Item1>
       <Item2>
         <Name Value="ECodetoolError"/>
@@ -824,7 +832,6 @@
       </Item4>
       <Item5>
         <Name Value="EIdHTTPProtocolException"/>
-        <Enabled Value="False"/>
       </Item5>
       <Item6>
         <Name Value="EInOutError"/>
@@ -836,7 +843,6 @@
       </Item7>
       <Item8>
         <Name Value="EIdSocketError"/>
-        <Enabled Value="False"/>
       </Item8>
       <Item9>
         <Name Value="EIdConnClosedGracefully"/>
@@ -881,16 +887,17 @@
       </Item19>
       <Item20>
         <Name Value="EIdResolveError"/>
-        <Enabled Value="False"/>
       </Item20>
       <Item21>
         <Name Value="00000015EAssertionFailedError"/>
+        <Enabled Value="False"/>
       </Item21>
       <Item22>
         <Name Value="00000006EAbort"/>
       </Item22>
       <Item23>
         <Name Value="00000010ESemVerException"/>
+        <Enabled Value="False"/>
       </Item23>
       <Item24>
         <Name Value="00000018ERestfulExceptionUnknown"/>
@@ -922,6 +929,7 @@
       </Item32>
       <Item33>
         <Name Value="0000000eEFHIRException"/>
+        <Enabled Value="False"/>
       </Item33>
       <Item34>
         <Name Value="00000011ETerminologySetup"/>
@@ -931,16 +939,56 @@
       </Item35>
       <Item36>
         <Name Value="EFHIRPath"/>
+        <Enabled Value="False"/>
       </Item36>
       <Item37>
         <Name Value="00000010EParserException"/>
       </Item37>
       <Item38>
         <Name Value="EFslInvariant"/>
+        <Enabled Value="False"/>
       </Item38>
       <Item39>
         <Name Value="00000016EIdOpenSSLConnectError"/>
       </Item39>
+      <Item40>
+        <Name Value="00000013Edecompressionerror"/>
+        <Enabled Value="False"/>
+      </Item40>
+      <Item41>
+        <Name Value="00000013EWebServerException"/>
+      </Item41>
+      <Item42>
+        <Name Value="0000000eEIdSocketError"/>
+      </Item42>
+      <Item43>
+        <Name Value="00000018EPackageCrawlerException"/>
+      </Item43>
+      <Item44>
+        <Name Value="0000000fEZulipException\fTZulipSender"/>
+      </Item44>
+      <Item45>
+        <Name Value="EReadError"/>
+      </Item45>
+      <Item46>
+        <Name Value="EFslException"/>
+      </Item46>
+      <Item47>
+        <Name Value="Edecompressionerror"/>
+        <Enabled Value="False"/>
+      </Item47>
+      <Item48>
+        <Name Value="EJsonParserException"/>
+      </Item48>
+      <Item49>
+        <Name Value="ESemVerException"/>
+      </Item49>
+      <Item50>
+        <Name Value="EPackageCrawlerException"/>
+      </Item50>
+      <Item51>
+        <Name Value="&lt;Unknown Class>"/>
+      </Item51>
     </Exceptions>
   </Debugging>
 </CONFIG>

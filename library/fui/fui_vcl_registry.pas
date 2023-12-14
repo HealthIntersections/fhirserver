@@ -133,7 +133,7 @@ begin
     FOnLoad(self, FFiltered[FIndex].Url)
   else
   begin
-    task := TFetchPackageVersionsTask.create;
+    task := TFetchPackageVersionsTask.Create;
     try
       task.FServer := FServer;
       task.id := FFiltered[FIndex].id;
@@ -144,7 +144,7 @@ begin
         if form.ShowModal = mrOk then
           FOnLoad(self, task.FList[form.Index].Url)
       finally
-        form.Free;
+        form.free;
       end;
     finally
       task.free;
@@ -172,14 +172,14 @@ end;
 
 procedure TPackageFinderForm.FormCreate(Sender: TObject);
 begin
-  FList := TFslList<TFHIRPackageInfo>.create;
-  FFiltered := TFslList<TFHIRPackageInfo>.create;
+  FList := TFslList<TFHIRPackageInfo>.Create;
+  FFiltered := TFslList<TFHIRPackageInfo>.Create;
 end;
 
 procedure TPackageFinderForm.FormDestroy(Sender: TObject);
 begin
-  FFiltered.Free;
-  FList.Free;
+  FFiltered.free;
+  FList.free;
 end;
 
 procedure TPackageFinderForm.FormShow(Sender: TObject);
@@ -239,7 +239,7 @@ var
   task : TFetchPackagesTask;
 begin
   FList.clear;
-  task := TFetchPackagesTask.create;
+  task := TFetchPackagesTask.Create;
   try
     task.FServer := FServer;
     task.runTask(self);
@@ -345,7 +345,7 @@ end;
 
 destructor TFetchingTask.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -360,7 +360,7 @@ procedure TFetchPackagesTask.execute;
 var
   pc : TFHIRPackageClient;
 begin
-  pc := TFHIRPackageClient.create(FServer);
+  pc := TFHIRPackageClient.Create(FServer);
   try
     if FServer.Contains('build.fhir.org') then
       FList := pc.fetchFromCIBuild
@@ -382,7 +382,7 @@ procedure TFetchPackageVersionsTask.execute;
 var
   pc : TFHIRPackageClient;
 begin
-  pc := TFHIRPackageClient.create(FServer);
+  pc := TFHIRPackageClient.Create(FServer);
   try
     FList := pc.getVersions(id);
   finally

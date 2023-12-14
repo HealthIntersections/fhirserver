@@ -125,7 +125,7 @@ end;
 
 procedure TBaseWorkerFrame.saveStatus;
 begin
-  FContext.Free;
+  FContext.free;
   FContext := nil;
 end;
 
@@ -177,7 +177,7 @@ procedure TBaseWorker.newContent();
 var
   json : TJsonObject;
 begin
-  json := TJsonObject.create;
+  json := TJsonObject.Create;
   try
      FFrame.init(json);
   finally
@@ -189,12 +189,12 @@ function TBaseWorker.GetBytes: TBytes;
 var
   json : TJsonObject;
 begin
-  json := TJsonObject.create;
+  json := TJsonObject.Create;
   try
     FFrame.save(json);
     result := TJsonWriter.writeObject(json, true);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 

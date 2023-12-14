@@ -105,18 +105,18 @@ begin
     try
       FNpp.newResource(c.Compose(r), v, fmt, '');
     finally
-      c.Free;
+      c.free;
     end;
   finally
-    r.Free;
+    r.free;
   end;
   ModalResult := mrOK;
 end;
 
 destructor TResourceNewForm.Destroy;
 begin
-  FContext.Free;
-  FList.Free;
+  FContext.free;
+  FList.free;
   inherited;
 end;
 
@@ -127,7 +127,7 @@ end;
 
 procedure TResourceNewForm.SetContext(const Value: TFHIRNppContext);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
@@ -149,10 +149,10 @@ begin
     try
       Flist.add(f.Factory.wrapStructureDefinition(r.link));
     finally
-      r.Free;
+      r.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -180,14 +180,14 @@ begin
   end
   else
   begin
-    pl := TFslList<TNpmPackage>.create;
+    pl := TFslList<TNpmPackage>.Create;
     try
       FContext.Cache.ListPackages([fpkCore, fpkIG], pl);
       for p in pl do
         if p.version = FHIR_VERSIONS[TFHIRVersion(cbxVersion.Items.Objects[cbxVersion.ItemIndex])] then
           cbxPackage.Items.AddObject(p.summary, p);
     finally
-      pl.Free;
+      pl.free;
     end;
     cbxPackage.ItemIndex := 0;
   end;
@@ -200,7 +200,7 @@ var
   li : TPackageLoadingInformation;
 begin
   if FList = nil then
-    FList := TFslList<TFhirStructureDefinitionW>.create;
+    FList := TFslList<TFhirStructureDefinitionW>.Create;
   FList.Clear;
   lbProfiles.Items.Clear;
   lbProfiles.ItemIndex := -1;

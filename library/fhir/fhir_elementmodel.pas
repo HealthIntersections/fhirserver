@@ -58,7 +58,7 @@ begin
     composeV(context, e, ss, outputFormat, style, base);
     result := ss.DataString;
   finally
-    ss.Free;
+    ss.free;
   end;
 end;
 

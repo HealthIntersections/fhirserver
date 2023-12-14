@@ -53,7 +53,7 @@ type
     procedure saveCache;
     procedure checkSaveCache;
   public
-    constructor create(url, log, cache : String);
+    constructor Create(url, log, cache : String);
     destructor Destroy; override;
 
     function lookupCode(system_, code : String) : String; override;
@@ -102,20 +102,20 @@ begin
     saveCache;
 end;
 
-constructor TToolkitTerminologyService.create(url, log, cache: String);
+constructor TToolkitTerminologyService.Create(url, log, cache: String);
 var
   factory : TFHIRFactoryR4;
 begin
-  inherited create;
-  FCache := TFslStringDictionary.create;
+  inherited Create;
+  FCache := TFslStringDictionary.Create;
   FCacheFile := cache;
   loadCache;
 
-  factory := TFHIRFactoryR4.create;
+  factory := TFHIRFactoryR4.Create;
   try
     FClient := factory.makeClient(nil, url, fctCrossPlatform, ffJson, 5000);
     if (log <> '') then
-      FClient.Logger := TTextFileLogger.create(log);
+      FClient.Logger := TTextFileLogger.Create(log);
   finally
     factory.free;
   end;
@@ -124,8 +124,8 @@ end;
 destructor TToolkitTerminologyService.Destroy;
 begin
   saveCache;
-  FCache.Free;
-  FClient.Free;
+  FCache.free;
+  FClient.free;
   inherited Destroy;
 end;
 
@@ -136,7 +136,7 @@ begin
   if (FCache.containsKey(system_+'|'+code)) then
     exit(FCache[system_+'|'+code]);
 
-  pin := TFhirParameters.create;
+  pin := TFhirParameters.Create;
   try
     pin.AddParameter('url', system_);
     pin.AddParameter('code', code);

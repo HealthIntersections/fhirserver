@@ -182,7 +182,7 @@ End;
 
 Destructor TWPAddictSpeller.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   Inherited;
 End;
 
@@ -209,7 +209,7 @@ Begin
     For iLoop := 0 To oWords.Count - 1 Do
       oList.Add(oWords[iLoop]);
   Finally
-    oWords.Free;
+    oWords.free;
   End;
 End;
 
@@ -241,7 +241,7 @@ End;
 
 Procedure TWPAddictSpeller.SetDictionary(Value: TWPAddictDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -293,7 +293,7 @@ End;
 
 Destructor TWPAddictDictionary.Destroy;
 Begin
-  FAddict.Free;
+  FAddict.free;
   Inherited;
 End;
 
@@ -434,7 +434,7 @@ Begin
         Inherited AddIgnore(oWords[iLoop]);
     End;
   Finally
-    oWords.Free;
+    oWords.free;
   End;
 End;
 

@@ -79,7 +79,7 @@ end;
 
 procedure TFHIRUserProvider.processRequest(context: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session: TFHIRSession; prefix : String);
 begin
-  raise EFHIRException.create('User Management is not supported on this endpoint');
+  raise EFHIRException.Create('User Management is not supported on this endpoint');
 end;
 
 end.

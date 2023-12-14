@@ -73,7 +73,7 @@ implementation
 
 function checkModifiedFileAction(owner : TComponent; filename : String; saved, loaded : TDateTime) : TModifiedFileAction;
 begin
-  ModifiedFileActionForm := TModifiedFileActionForm.create(owner);
+  ModifiedFileActionForm := TModifiedFileActionForm.Create(owner);
   try
     ModifiedFileActionForm.lblDetails.Caption := 'The content at '+filename+' has been modified behind the scenes. '+
       'The loaded time is '+FormatDateTime('c', loaded)+', and the saved time is '+FormatDateTime('c', saved)+'. What do you want to do?';

@@ -712,7 +712,7 @@ End;
 
 destructor TJSONWriter.Destroy;
 Begin
-  FBuilder.Free;
+  FBuilder.free;
   Inherited;
 End;
 
@@ -803,7 +803,7 @@ Begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 End;
 
@@ -883,7 +883,7 @@ begin
     this.writeObjectInner(obj);
     this.Finish(true);
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -967,7 +967,7 @@ begin
     s.Stream := stream;
     writeArray(s, arr, pretty);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -984,7 +984,7 @@ begin
     this.WriteArray('', arr);
     this.Finish(false);
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -1073,7 +1073,7 @@ begin
     s.Stream := stream;
     writeObject(s, obj, pretty);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1120,7 +1120,7 @@ end;
 procedure TJsonWriterDirect.Start;
 begin
   if not HasStream then
-    Stream := TFslStringStream.create;
+    Stream := TFslStringStream.Create;
   if obj then
     ProduceLine('{');
   LevelDown;
@@ -1449,12 +1449,12 @@ begin
   FLocation := TSourceLocation.Create;
   FPrevLocation := FLocation;
   FStates := TStringList.Create;
-  FValue := TStringBuilder.create;
+  FValue := TStringBuilder.Create;
 end;
 
 destructor TJSONLexer.Destroy;
 begin
-  FStates.Free;
+  FStates.free;
   FValue.free;
   inherited;
 end;
@@ -1513,7 +1513,7 @@ begin
     oVCLStream.Stream := oStream;
     FLex := TJSONLexer.Create(oVCLStream.Link, loose);
   Finally
-    oVCLStream.Free;
+    oVCLStream.free;
   End;
   FLex.Start;
 end;
@@ -1642,10 +1642,10 @@ begin
       p.readObject(result, true);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1670,10 +1670,10 @@ begin
       p.readObject(result, true);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1690,7 +1690,7 @@ begin
   try
     result := parse(f, 0, loose);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -1703,7 +1703,7 @@ begin
     p.FtimeToAbort := timeToAbort;
     result := p.readNode;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1716,7 +1716,7 @@ begin
     p.FtimeToAbort := timeToAbort;
     result := p.readNode;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1733,7 +1733,7 @@ begin
   try
     result := ParseNode(s, timeToAbort, loose);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1851,7 +1851,7 @@ begin
           readObject(result as TJsonObject, true);
           result.link;
         finally
-          result.Free;
+          result.free;
         end;
       end;
     jltString : raise EJsonTodo.Create('Not implemented yet');
@@ -1867,7 +1867,7 @@ begin
           readArray(result as TJsonArray, true);
           result.link;
         finally
-          result.Free;
+          result.free;
         end;
       end;
     jltNull : raise EJsonTodo.Create('Not implemented yet');
@@ -1968,7 +1968,7 @@ begin
   try
     result := Parse(s, timeToAbort, loose);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1992,12 +1992,12 @@ end;
 
 function TJsonNode.findLocation(loc: TSourceLocation): TFslList<TJsonPointerMatch>;
 begin
-  result := TFslList<TJsonPointerMatch>.create;
+  result := TFslList<TJsonPointerMatch>.Create;
   try
     findLocation(loc, '$', result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2076,13 +2076,13 @@ function TJsonArray.asObjects: TFslList<TJsonObject>;
 var
   i : integer;
 begin
-  result := TFslList<TJsonObject>.create;
+  result := TFslList<TJsonObject>.Create;
   try
     for I := 0 to count - 1 do
       result.Add(obj[i].Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2126,7 +2126,7 @@ end;
 
 destructor TJsonArray.Destroy;
 begin
-  FItems.Free;
+  FItems.free;
   inherited;
 end;
 
@@ -2376,7 +2376,7 @@ end;
 
 destructor TJsonObject.Destroy;
 begin
-  FProperties.Free;
+  FProperties.free;
   inherited;
 end;
 
@@ -2611,7 +2611,7 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -2623,7 +2623,7 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -2648,7 +2648,7 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -2668,7 +2668,7 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -2683,7 +2683,7 @@ end;
 
 constructor TJsonBoolean.Create(path: String; value: boolean);
 begin
-  create('path');
+  Create('path');
   FValue := value;
 end;
 
@@ -2697,7 +2697,7 @@ end;
 
 constructor TJsonBoolean.Create(path: String; locStart, locEnd: TSourceLocation; value: boolean);
 begin
-  create('path');
+  Create('path');
   FValue := value;
   LocationStart := locStart;
   LocationEnd := locEnd;
@@ -2757,7 +2757,7 @@ end;
 
 destructor TJsonArrayEnumerator.Destroy;
 begin
-  FArray.Free;
+  FArray.free;
   inherited;
 end;
 
@@ -2806,7 +2806,7 @@ end;
 destructor TJsonPatchEngine.Destroy;
 begin
   FPatch.free;
-  FTarget.Free;
+  FTarget.free;
   inherited;
 end;
 
@@ -2818,7 +2818,7 @@ end;
 
 procedure TJsonPatchEngine.SetTarget(const Value: TJsonNode);
 begin
-  FTarget.Free;
+  FTarget.free;
   FTarget := Value;
 end;
 
@@ -2834,7 +2834,7 @@ begin
   begin
     ok := true;
     try
-      applyPatch(test.obj['doc'], test.arr['patch']).Free;
+      applyPatch(test.obj['doc'], test.arr['patch']).free;
       ok := false;
     except
     end;
@@ -2848,7 +2848,7 @@ begin
       if not TJsonNode.compare(outcome, test.obj['expected']) then
         raise EJsonException.Create('Test failed: '+cmt);
     finally
-      outcome.Free;
+      outcome.free;
     end;
   end;
 end;
@@ -2921,7 +2921,7 @@ procedure TJsonPatchEngine.applyAddInner(path : String; value : TJsonNode);
 var
   query : TJsonPointerQuery;
 begin
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, true);
     case query.terminalState of
@@ -2956,7 +2956,7 @@ procedure TJsonPatchEngine.applyRemove(patchOp: TJsonObject; path : String);
 var
   query : TJsonPointerQuery;
 begin
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, false);
     if (query.secondLast is TJsonArray) and StringIsInteger32(query.lastName) then
@@ -2978,7 +2978,7 @@ begin
   value := patchOp.properties['value'];
   if value = nil then
     raise EJsonException.Create('No patch value parameter found in add');
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, false);
     if (query.secondLast is TJsonArray) and StringIsInteger32(query.lastName) then
@@ -3001,7 +3001,7 @@ begin
   if value = nil then
     raise EJsonException.Create('No patch value parameter found in add');
 
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, false);
     if not TJsonNode.compare(query.last, value) then
@@ -3020,7 +3020,7 @@ begin
   if from = '' then
     raise EJsonException.Create('No patch from parameter found');
 
-  qFrom := TJsonPointerQuery.create;
+  qFrom := TJsonPointerQuery.Create;
   try
     qFrom.execute(target, from, false);
     applyAddInner(path, qFrom.last);
@@ -3039,7 +3039,7 @@ begin
   if from = '' then
     raise EJsonException.Create('No patch from parameter found');
 
-  qFrom := TJsonPointerQuery.create;
+  qFrom := TJsonPointerQuery.Create;
   try
     qFrom.execute(target, from, false);
     focus := qFrom.last.Link;
@@ -3066,20 +3066,20 @@ end;
 
 constructor TJsonPointerMatch.Create(name: String; node: TJsonNode);
 begin
-  inherited create;
+  inherited Create;
   self.Name := name;
   self.Node := node;
 end;
 
 destructor TJsonPointerMatch.Destroy;
 begin
-  FNode.Free;
+  FNode.free;
   inherited;
 end;
 
 procedure TJsonPointerMatch.SetNode(const Value: TJsonNode);
 begin
-  FNode.Free;
+  FNode.free;
   FNode := Value;
 end;
 
@@ -3112,12 +3112,12 @@ end;
 constructor TJsonPointerQuery.Create;
 begin
   inherited Create;
-  FMatches := TFslList<TJsonPointerMatch>.create;
+  FMatches := TFslList<TJsonPointerMatch>.Create;
 end;
 
 destructor TJsonPointerQuery.Destroy;
 begin
-  FMatches.Free;
+  FMatches.free;
   inherited;
 end;
 
@@ -3222,7 +3222,7 @@ begin
     s.Stream := stream;
     canonicaliseObject(s, obj);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -3238,7 +3238,7 @@ begin
     this.writeObjectInner(obj);
     this.Finish(true);
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -3306,7 +3306,7 @@ begin
         end;
     end;
   finally
-    ts.Free;
+    ts.free;
   end;
   Produce('}');
 end;
@@ -3321,15 +3321,15 @@ begin
     node.FValue := value;
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
 procedure TJsonWriterCanonical.Finish;
 begin
   commitObject(FObject);
-  FStack.Free;
-  FObject.Free;
+  FStack.free;
+  FObject.free;
 end;
 
 procedure TJsonWriterCanonical.FinishArray;
@@ -3355,7 +3355,7 @@ end;
 procedure TJsonWriterCanonical.Start;
 begin
   FObject := TCanonicalJsonNode.Create(jntObject);
-  FStack := TFslList<TCanonicalJsonNode>.create;
+  FStack := TFslList<TCanonicalJsonNode>.Create;
   FStack.Add(FObject.Link);
 end;
 
@@ -3369,7 +3369,7 @@ begin
     FStack[FStack.Count - 1].FChildren.add(node.Link);
     FStack.Add(node.link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3382,7 +3382,7 @@ begin
     node.FValue := value;
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3395,7 +3395,7 @@ begin
     node.FValue := 'null';
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3408,7 +3408,7 @@ begin
     FStack[FStack.Count - 1].FChildren.add(node.Link);
     FStack.Add(node.link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3422,7 +3422,7 @@ begin
     FStack[FStack.Count - 1].FChildren.add(node.Link);
     FStack.Add(node.link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3439,12 +3439,12 @@ constructor TCanonicalJsonNode.Create(aType : TCanonicalJsonNodeType);
 begin
   inherited Create;
   FType := aType;
-  FChildren := TFslList<TCanonicalJsonNode>.create;
+  FChildren := TFslList<TCanonicalJsonNode>.Create;
 end;
 
 destructor TCanonicalJsonNode.Destroy;
 begin
-  FChildren.Free;
+  FChildren.free;
   inherited;
 end;
 
@@ -3485,7 +3485,7 @@ end;
 
 constructor TJWT.Create;
 begin
-  inherited create;
+  inherited Create;
   FHeader := TJsonObject.Create('header');
   FPayload := TJsonObject.Create('payload');
 end;
@@ -3493,14 +3493,14 @@ end;
 destructor TJWT.Destroy;
 begin
   FHeader.free;
-  FPayload.Free;
+  FPayload.free;
   inherited;
 end;
 
 procedure TJWT.setHeader(const Value: TJsonObject);
 begin
   assert(value <> nil);
-  FHeader.Free;
+  FHeader.free;
   FHeader := value;
 end;
 
@@ -3517,7 +3517,7 @@ end;
 procedure TJWT.setPayload(const Value: TJsonObject);
 begin
   assert(value <> nil);
-  FPayload.Free;
+  FPayload.free;
   FPayload := value;
 end;
 

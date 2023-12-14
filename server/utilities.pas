@@ -157,7 +157,7 @@ type
   end;
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
-function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
+function LoadBinaryResource(factory : TFHIRFactory; langList : THTTPLanguageList; b: TBytes): TFhirResourceV;
 function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
 function describeDatabase(details : TFHIRServerConfigSection) : String;
 function checkDatabaseInstall(cfg : TFHIRServerConfigSection) : String;
@@ -167,7 +167,7 @@ procedure sendSMS(settings : TFHIRServerSettings; Dest, Msg: String);
 
 implementation
 
-function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
+function LoadBinaryResource(factory : TFHIRFactory; langList : THTTPLanguageList; b: TBytes): TFhirResourceV;
 var
 //  s : TBytes;
 //  i, j : integer;
@@ -181,11 +181,11 @@ begin
 //  move(s[4+i], j, 4);
 //
 //  result := factory.makeBinary(copy(s, 8+i, j), String(ct));
-  p := factory.makeParser(nil, ffXml, lang);
+  p := factory.makeParser(nil, ffXml, langList);
   try
     result := p.parseResource(b);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -264,9 +264,9 @@ end;
 
 destructor TFHIRServerSettings.Destroy;
 begin
-  FIni.Free;
+  FIni.free;
   FBases.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -330,17 +330,17 @@ begin
     Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFDBOdbcManager.create(details.name, kdbSQLServer, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
+    result := TFDBOdbcManager.Create(details.name, kdbSQLServer, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
   else if sameText(details['db-type'].value, 'mysql') then
   begin
     Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
-    result := TFDBOdbcManager.create(details.name, kdbMySql, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
+    result := TFDBOdbcManager.Create(details.name, kdbMySql, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
   else if sameText(details['db-type'].value, 'SQLite') then
   begin
     Logging.log('Connect to SQLite3 database '+details['db-file'].value);
-    result := TFDBSQLiteManager.create(details.name, details['db-file'].value, details['db-auto-create'].value = 'true');
+    result := TFDBSQLiteManager.Create(details.name, details['db-file'].value, details['db-auto-create'].value = 'true');
   end
   else
     raise ELibraryException.Create('Unknown database type '+details['db-type'].value);
@@ -427,7 +427,7 @@ begin
       sender.Password := settings.SMTPPassword;
       if settings.SMTPUseTLS then
       begin
-        ssl := TIdOpenSSLIOHandlerClient.create;
+        ssl := TIdOpenSSLIOHandlerClient.Create;
         sender.IOHandler := ssl;
         sender.UseTLS := utUseExplicitTLS;
         ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
@@ -447,12 +447,12 @@ begin
         Logging.log('Send '+msg.MsgId+' to '+dest);
         sender.Send(msg);
       Finally
-        msg.Free;
+        msg.free;
       End;
       sender.Disconnect;
     Finally
       sender.IOHandler.free;
-      sender.Free;
+      sender.free;
     End;
   end;
 end;
@@ -476,7 +476,7 @@ begin
           client.send;
         end;
       finally
-        client.Free;
+        client.free;
       end;
     except
     end;

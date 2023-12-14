@@ -1105,7 +1105,7 @@ Begin
   If Assigned(FBalloon) Then
     FBalloon.Hide;
 
-  FBalloon.Free;
+  FBalloon.free;
   FBalloon := Nil;
 End;
 

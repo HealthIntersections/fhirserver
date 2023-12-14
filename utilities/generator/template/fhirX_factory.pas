@@ -51,15 +51,15 @@ type
     function resourceNames : TArray<String>; override;
     function resCategory(name: String) : TTokenCategory; override;
     function canonicalResources : TArray<String>; override;
-    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages) : TFHIRParser; override;
-    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; const lang : THTTPLanguages; style: TFHIROutputStyle) : TFHIRComposer; override;
+    function makeParser(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList) : TFHIRParser; override;
+    function makeComposer(worker : TFHIRWorkerContextV; format : TFHIRFormat; langList : THTTPLanguageList; style: TFHIROutputStyle) : TFHIRComposer; override;
     function makeValidator(worker : TFHIRWorkerContextV) : TFHIRValidatorV; override;
     function makeGenerator(worker : TFHIRWorkerContextV) : TFHIRNarrativeGeneratorBase; override;
     function makePathEngine(worker : TFHIRWorkerContextV; ucum : TUcumServiceInterface) : TFHIRPathEngineV; override;
     function createFromProfile(worker : TFHIRWorkerContextV; profile : TFhirStructureDefinitionW) : TFHIRResourceV; override;
     function makeClient(worker : TFHIRWorkerContextV; url : String; kind : TFHIRClientType; fmt : TFHIRFormat; timeout : cardinal; proxy : String) : TFhirClientV; overload; override;
     function makeClientThreaded(worker : TFHIRWorkerContextV; internal : TFhirClientV; event : TThreadManagementEvent) : TFhirClientV; overload; override;
-    function makeClientInt(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
+    function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -67,7 +67,7 @@ type
     function getContained(r : TFHIRResourceV) : TFslList<TFHIRResourceV>; override;
 
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = []); override;
-    function buildOperationOutcome(const lang : THTTPLanguages; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    function buildOperationOutcome(langList : THTTPLanguageList; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(lang, message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
 
     function makeByName(const name : String) : TFHIRObject; override;
@@ -166,11 +166,11 @@ function TFHIRFactoryR{{v}}.createFromProfile(worker: TFHIRWorkerContextV; profi
 var
   pu : TProfileUtilities;
 begin
-  pu := TProfileUtilities.create(worker.Link as TFHIRWorkerContext, nil);
+  pu := TProfileUtilities.Create(worker.Link as TFHIRWorkerContext, nil);
   try
     result := pu.populateByProfile(profile.Resource as TFhirStructureDefinition);
   finally
-    pu.Free;
+    pu.free;
   end;
 end;
 
@@ -183,7 +183,7 @@ function TFHIRFactoryR{{v}}.getContained(r: TFHIRResourceV): TFslList<TFHIRResou
 var
   res : TFHIRResource;
 begin
-  result := TFslList<TFHIRResourceV>.create;
+  result := TFslList<TFHIRResourceV>.Create;
   if (r is TFHIRDomainResource) then
   begin
     for res in (r as TFHIRDomainResource).containedList do
@@ -216,12 +216,12 @@ begin
       http.UseIndy := true;
     http.timeout := timeout;
     http.proxy := proxy;
-    result := TFhirClient{{v}}.create(worker, THTTPLanguages.create('en'), http.link);
+    result := TFhirClient{{v}}.Create(worker, nil, http.link);
     try
       result.format := fmt;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     http.free;
@@ -230,7 +230,7 @@ end;
 
 function TFHIRFactoryR{{v}}.makeClientInt(worker: TFHIRWorkerContextV; lang: String; comm: TFHIRClientCommunicator): TFhirClientV;
 begin
-  result := TFhirClient{{v}}.create(worker, THTTPLanguages.create('en'), comm);
+  result := TFhirClient{{v}}.Create(worker, nil, comm);
 end;
 
 function TFHIRFactoryR{{v}}.makeClientThreaded(worker: TFHIRWorkerContextV; internal: TFhirClientV; event: TThreadManagementEvent): TFhirClientV;
@@ -239,12 +239,12 @@ var
 begin
   c := TFhirThreadedCommunicator.Create(internal, event);
   try
-    result := TFhirClient{{v}}.create(worker, THTTPLanguages.create('en'), c.link);
+    result := TFhirClient{{v}}.Create(worker, nil, c.link);
     try
       result.format := internal.format;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     c.free;
@@ -258,7 +258,7 @@ end;
 
 function TFHIRFactoryR{{v}}.makeCoding(system, version, code, display: String): TFHIRObject;
 begin
-  result := TFHIRCoding.create(system, code);
+  result := TFHIRCoding.Create(system, code);
   if version <> '' then
     TFHIRCoding(result).version := version;
   if display <> '' then
@@ -282,12 +282,12 @@ begin
   else if type_ = 'CodeableConcept' then
     result := wrapCodeableConcept(LoadDTFromFormParam(nil, part, lang, name, TFhirCodeableConcept))
   else
-    raise EFHIRException.create('Unknown Supported Data Type '+type_);
+    raise EFHIRException.Create('Unknown Supported Data Type '+type_);
 end;
 
 function TFHIRFactoryR{{v}}.makeGenerator(worker: TFHIRWorkerContextV): TFHIRNarrativeGeneratorBase;
 begin
-  result := TFHIRNarrativeGenerator.create(worker);
+  result := TFHIRNarrativeGenerator.Create(worker);
 end;
 
 function TFHIRFactoryR{{v}}.makeInteger(s: string): TFHIRObject;
@@ -299,22 +299,22 @@ function TFHIRFactoryR{{v}}.makeIssue(level : TIssueSeverity; issue: TFhirIssueT
 var
   iss : TFhirOperationOutcomeIssue;
 begin
-  iss := TFhirOperationOutcomeIssue.create;
+  iss := TFhirOperationOutcomeIssue.Create;
   try
     iss.severity := ISSUE_SEVERITY_MAP2[level];
     iss.code := ExceptionTypeTranslations[issue];
     iss.details := TFhirCodeableConcept.Create;
     iss.details.text := message;
     iss.locationList.add(location);
-    result := TFhirOperationOutcomeIssue{{v}}.create(iss.Link);
+    result := TFhirOperationOutcomeIssue{{v}}.Create(iss.Link);
   finally
-    iss.Free;
+    iss.free;
   end;
 end;
 
 function TFHIRFactoryR{{v}}.makeOpReqLookup: TFHIRLookupOpRequestW;
 begin
-  result := TFHIRLookupOpRequest{{v}}.create(TFHIRLookupOpRequest.create);
+  result := TFHIRLookupOpRequest{{v}}.Create(TFHIRLookupOpRequest.create);
 end;
 
 function TFHIRFactoryR{{v}}.makeOpReqSubsumes: TFHIRSubsumesOpRequestW;
@@ -324,7 +324,7 @@ end;
 
 function TFHIRFactoryR{{v}}.makeOpRespLookup: TFHIRLookupOpResponseW;
 begin
-  result := TFHIRLookupOpResponse{{v}}.create(TFHIRLookupOpResponse.create);
+  result := TFHIRLookupOpResponse{{v}}.Create(TFHIRLookupOpResponse.create);
 end;
 
 function TFHIRFactoryR{{v}}.makeOpRespSubsumes: TFHIRSubsumesOpResponseW;
@@ -359,7 +359,7 @@ end;
 
 function TFHIRFactoryR{{v}}.makeTerminologyCapablities: TFhirTerminologyCapabilitiesW;
 begin
-  result := TFhirTerminologyCapabilities{{v}}.create(TFhirTerminologyCapabilities.create);
+  result := TFhirTerminologyCapabilities{{v}}.Create(TFhirTerminologyCapabilities.create);
 end;
 
 function TFHIRFactoryR{{v}}.makeValidator(worker: TFHIRWorkerContextV): TFHIRValidatorV;
@@ -409,17 +409,17 @@ begin
   if res = nil then
   begin
     x.free;
-    raise EFHIRException.create('Unable to set xhtml on nil resource');
+    raise EFHIRException.Create('Unable to set xhtml on nil resource');
   end;
   if not (res is TFHIRDomainResource) then
   begin
     x.free;
-    raise EFHIRException.create('Unable to set xhtml on non-domain resource');
+    raise EFHIRException.Create('Unable to set xhtml on non-domain resource');
   end;
   r := res as TFHIRDomainResource;
   if (r.text = nil) then
   begin
-    r.text := TFHIRNarrative.create;
+    r.text := TFHIRNarrative.Create;
     r.text.status := NarrativeStatusGenerated;
   end;
   r.text.div_ := x;
@@ -477,7 +477,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRCapabilityStatement{{v}}.create(r);
+    result := TFHIRCapabilityStatement{{v}}.Create(r);
 end;
 
 function TFHIRFactoryR{{v}}.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;
@@ -485,7 +485,7 @@ begin
   if o = nil then
     result := nil
   else
-    result := TFhirCodeableConcept{{v}}.create(o);
+    result := TFhirCodeableConcept{{v}}.Create(o);
 end;
 
 function TFHIRFactoryR{{v}}.wrapCodeSystem(r: TFHIRResourceV): TFhirCodeSystemW;
@@ -493,7 +493,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRCodeSystem{{v}}.create(r);
+    result := TFHIRCodeSystem{{v}}.Create(r);
 end;
 
 function TFHIRFactoryR{{v}}.wrapCoding(o: TFHIRObject): TFhirCodingW;
@@ -501,7 +501,7 @@ begin
   if o = nil then
     result := nil
   else
-  result := TFhirCoding{{v}}.create(o);
+  result := TFhirCoding{{v}}.Create(o);
 end;
 
 function TFHIRFactoryR{{v}}.wrapConceptMap(r: TFHIRResourceV): TFhirConceptMapW;
@@ -522,7 +522,7 @@ end;
 
 function TFHIRFactoryR{{v}}.wrapExtension(o: TFHIRObject): TFhirExtensionW;
 begin
-  result := TFhirExtension{{v}}.create(o);
+  result := TFhirExtension{{v}}.Create(o);
 end;
 
 function TFHIRFactoryR{{v}}.wrapGroup(r: TFHIRResourceV): TFhirGroupW;
@@ -539,11 +539,11 @@ begin
     result := nil
   else if r.isResource then
   begin
-    result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
+    result := TFHIRMeta4.Create((r as TFHIRResource).meta.link);
     TFHIRMeta4(result).resource := (r as TFHIRResource).link;
   end
   else
-    result := TFHIRMeta{{v}}.create((r as TFhirMeta))
+    result := TFHIRMeta{{v}}.Create((r as TFhirMeta))
 end;
 
 function TFHIRFactoryR{{v}}.wrapNamingSystem(o: TFHIRResourceV): TFHIRNamingSystemW;
@@ -556,7 +556,7 @@ end;
 
 function TFHIRFactoryR{{v}}.wrapMeta(r: TFHIRResourceV): TFhirMetaW;
 begin
-  result := TFHIRMeta4.create((r as TFHIRResource).meta.link);
+  result := TFHIRMeta4.Create((r as TFHIRResource).meta.link);
   TFHIRMeta4(result).resource := (r as TFHIRResource).link;
 end;
 
@@ -605,7 +605,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRStructureDefinition{{v}}.create(r);
+    result := TFHIRStructureDefinition{{v}}.Create(r);
 end;
 
 function TFHIRFactoryR{{v}}.wrapStructureMap(o: TFHIRResourceV): TFHIRStructureMapW;
@@ -629,7 +629,7 @@ begin
   if r = nil then
     result := nil
   else
-    result := TFHIRValueSet{{v}}.create(r);
+    result := TFHIRValueSet{{v}}.Create(r);
 end;
 
 function TFHIRFactoryR{{v}}.makeBase64Binary(s: string): TFHIRObject;
@@ -645,7 +645,7 @@ begin
     TFhirBinary(result).contentType := contentType;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

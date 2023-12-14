@@ -137,13 +137,13 @@ implementation
 
 destructor TFHIRObsNode.Destroy;
 begin
-  FResource.Free;
+  FResource.free;
   inherited;
 end;
 
 procedure TFHIRObsNode.SetResource(const Value: TFhirObservation);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 
@@ -229,7 +229,7 @@ var
   i, j : integer;
   n : TFHIRObsNode;
 begin
-  FObervations.Free;
+  FObervations.free;
   FObervations := (response as TFslList<TFHIRObsNode>).Link;
 
   FDataCount := 0;
@@ -299,8 +299,8 @@ var
 begin
   if (FClient = nil) or (FClient.address <> details.address) then
   begin
-    FClient.Free;
-    FClient := TFhirClient.create(nil, THTTPLanguages.create('en'), TFHIRHTTPCommunicator.Create(details.address));
+    FClient.free;
+    FClient := TFhirClient.Create(nil, nil, TFHIRHTTPCommunicator.Create(details.address));
     FClient.format := ffJson;
     FClient.onProgress := clientProgress;
 //    FClient.smartToken := todo.........
@@ -310,7 +310,7 @@ begin
   try
     bnd := FClient.search(frtObservation, true, details.params);
     try
-      proc := TFslList<TFHIRObsNode>.create;
+      proc := TFslList<TFHIRObsNode>.Create;
       try
         writeln('.. found : '+inttostr(bnd.entryList.Count));
         for be in bnd.entryList do
@@ -324,10 +324,10 @@ begin
 
         Response := proc.link;
       finally
-        proc.Free;
+        proc.free;
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
   except
     on e : exception do
@@ -389,7 +389,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -408,9 +408,9 @@ end;
 
 { TObservationGraphingContext }
 
-constructor TObservationGraphingContext.create(address, params: string);
+constructor TObservationGraphingContext.Create(address, params: string);
 begin
-  inherited create;
+  inherited Create;
   FAddress := address;
   FParams := params;
 end;

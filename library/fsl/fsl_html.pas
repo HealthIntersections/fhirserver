@@ -1620,7 +1620,7 @@ End;
 
 Destructor TFslHTMLParser.Destroy;
 Begin
-  FAttributes.Free;
+  FAttributes.free;
 
   Inherited;
 End;
@@ -2068,7 +2068,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2083,7 +2083,7 @@ Begin
   Try
     ConsumeSection(sTag, oSection);
   Finally
-    oSection.Free;
+    oSection.free;
   End;
 End;
 
@@ -2238,7 +2238,7 @@ Begin
 
         oTableRow.Cells.Add(oCell.Link);
       Finally
-        oCell.Free;
+        oCell.free;
       End;
     End
     Else
@@ -2276,7 +2276,7 @@ Begin
 
         oTable.Rows.Add(oRow.Link);
       Finally
-        oRow.Free;
+        oRow.free;
       End;
     End
     Else If NextIsTagOpen Then
@@ -2539,7 +2539,7 @@ Begin
 
       oStyles.Add(oStyle.Link);
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 
@@ -2562,7 +2562,7 @@ Begin
 
     oEntries.Add(oMetaEntry.Link);
   Finally
-    oMetaEntry.Free;
+    oMetaEntry.free;
   End;
 
   If NextTagClose('META') Then
@@ -2716,7 +2716,7 @@ Begin
         ConsumeHead(oHead);
     End;
   Finally
-    oDocument.Free;
+    oDocument.free;
   End;
 End;
 
@@ -2747,7 +2747,7 @@ End;
 
 Destructor TFslCSSFragment.Destroy;
 Begin
-  FValues.Free;
+  FValues.free;
 
   Inherited;
 End;
@@ -2932,8 +2932,8 @@ End;
 
 Destructor TFslHTMLItem.Destroy;
 Begin
-  FClasses.Free;
-  FStyle.Free;
+  FClasses.free;
+  FStyle.free;
 
   Inherited;
 End;
@@ -2954,13 +2954,13 @@ End;
 
 Procedure TFslHTMLItem.SetClasses(Const oValue: TFslCSSClasses);
 Begin
-  FClasses.Free;
+  FClasses.free;
   FClasses := oValue;
 End;
 
 Procedure TFslHTMLItem.SetStyle(Const oValue: TFslCSSFragment);
 Begin
-  FStyle.Free;
+  FStyle.free;
   FStyle := oValue;
 End;
 
@@ -3199,7 +3199,7 @@ End;
 
 Destructor TFslHTMLSection.Destroy;
 Begin
-  FItems.Free;
+  FItems.free;
   Inherited;
 End;
 
@@ -3215,7 +3215,7 @@ End;
 
 Procedure TFslHTMLSection.SetItems(Const oValue: TFslHTMLItems);
 Begin
-  FItems.Free;
+  FItems.free;
   FItems := oValue;
 End;
 
@@ -3791,7 +3791,7 @@ End;
 
 Destructor TFslHTMLListElement.Destroy;
 Begin
-  FList.Free;
+  FList.free;
   Inherited;
 End;
 
@@ -3807,7 +3807,7 @@ End;
 
 Procedure TFslHTMLListElement.SetList(Const oValue: TFslHTMLListItems);
 Begin
-  FList.Free;
+  FList.free;
   FList := oValue;
 End;
 
@@ -3882,7 +3882,7 @@ End;
 
 Destructor TFslHTMLDefinitionListItem.Destroy;
 Begin
-  FTerm.Free;
+  FTerm.free;
   Inherited;
 End;
 
@@ -3898,7 +3898,7 @@ End;
 
 Procedure TFslHTMLDefinitionListItem.SetTerm(Const oValue: TFslHTMLItem);
 Begin
-  FTerm.Free;
+  FTerm.free;
   FTerm := oValue;
 End;
 
@@ -3939,7 +3939,7 @@ End;
 
 Destructor TFslHTMLDefinitionList.Destroy;
 Begin
-  FListItems.Free;
+  FListItems.free;
   Inherited;
 End;
 
@@ -3955,7 +3955,7 @@ End;
 
 Procedure TFslHTMLDefinitionList.SetListItems(Const oValue: TFslHTMLDefinitionListItems);
 Begin
-  FListItems.Free;
+  FListItems.free;
   FListItems := oValue;
 End;
 
@@ -4038,7 +4038,7 @@ End;
 
 Destructor TFslHTMLTableRow.Destroy;
 Begin
-  FCells.Free;
+  FCells.free;
   Inherited;
 End;
 
@@ -4054,7 +4054,7 @@ End;
 
 Procedure TFslHTMLTableRow.SetCells(Const oValue: TFslHTMLTableCells);
 Begin
-  FCells.Free;
+  FCells.free;
   FCells := oValue;
 End;
 
@@ -4096,7 +4096,7 @@ End;
 
 Destructor TFslHTMLTableSection.Destroy;
 Begin
-  FRows.Free;
+  FRows.free;
 
   Inherited;
 End;
@@ -4116,7 +4116,7 @@ End;
 
 Procedure TFslHTMLTableSection.SetRows(Const oValue: TFslHTMLTableRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := oValue;
 End;
 
@@ -4204,9 +4204,9 @@ End;
 
 Destructor TFslHTMLTable.Destroy;
 Begin
-  FCaption.Free;
-  FRows.Free;
-  FSections.Free;
+  FCaption.free;
+  FRows.free;
+  FSections.free;
   Inherited;
 End;
 
@@ -4225,21 +4225,21 @@ End;
 
 Procedure TFslHTMLTable.SetCaption(Const oValue: TFslHTMLTableCaption);
 Begin
-  FCaption.Free;
+  FCaption.free;
   FCaption := oValue;
 End;
 
 
 Procedure TFslHTMLTable.SetRows(Const oValue: TFslHTMLTableRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := oValue;
 End;
 
 
 Procedure TFslHTMLTable.SetSections(Const oValue: TFslHTMLTableSections);
 Begin
-  FSections.Free;
+  FSections.free;
   FSections := oValue;
 End;
 
@@ -4442,7 +4442,7 @@ End;
 
 Destructor TFslHTMLOptGroup.Destroy;
 Begin
-  FOptions.Free;
+  FOptions.free;
 
   Inherited;
 End;
@@ -4462,7 +4462,7 @@ End;
 
 Procedure TFslHTMLOptGroup.SetOptions(Const oValue: TFslHTMLOptionItems);
 Begin
-  FOptions.Free;
+  FOptions.free;
   FOptions := oValue;
 End;
 
@@ -4534,8 +4534,8 @@ End;
 
 Destructor TFslHTMLSelect.Destroy;
 Begin
-  FAllOptions.Free;
-  FOptions.Free;
+  FAllOptions.free;
+  FOptions.free;
 
   Inherited;
 End;
@@ -4555,14 +4555,14 @@ End;
 
 Procedure TFslHTMLSelect.SetAllOptions(Const oValue: TFslHTMLOptionItems);
 Begin
-  FAllOptions.Free;
+  FAllOptions.free;
   FAllOptions := oValue;
 End;
 
 
 Procedure TFslHTMLSelect.SetOptions(Const oValue: TFslHTMLOptionItems);
 Begin
-  FOptions.Free;
+  FOptions.free;
   FOptions := oValue;
 End;
 
@@ -4754,7 +4754,7 @@ end;
 
 Procedure TFslHtmlHead.SetStyles(Const oValue: TFslCSSStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := oValue;
 End;
 
@@ -4776,8 +4776,8 @@ End;
 
 Destructor TFslHTMLHead.Destroy;
 Begin
-  FMeta.Free;
-  FStyles.Free;
+  FMeta.free;
+  FStyles.free;
 
   Inherited;
 End;
@@ -4791,7 +4791,7 @@ End;
 
 Procedure TFslHTMLHead.SetMeta(Const oValue: TFslHTMLMetaEntries);
 Begin
-  FMeta.Free;
+  FMeta.free;
   FMeta := oValue;
 End;
 
@@ -4841,9 +4841,9 @@ End;
 
 Destructor TFslHtmlDocument.Destroy;
 Begin
-  FStyles.Free;
-  FBody.Free;
-  FHead.Free;
+  FStyles.free;
+  FBody.free;
+  FHead.free;
 
   Inherited;
 End;
@@ -4857,21 +4857,21 @@ End;
 
 Procedure TFslHtmlDocument.SetBody(Const oValue: TFslHTMLBody);
 Begin
-  FBody.Free;
+  FBody.free;
   FBody := oValue;
 End;
 
 
 Procedure TFslHtmlDocument.SetHead(Const oValue: TFslHTMLHead);
 Begin
-  FHead.Free;
+  FHead.free;
   FHead := oValue;
 End;
 
 
 Procedure TFslHtmlDocument.SetStyles(Const oValue: TFslCSSStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := oValue;
 End;
 
@@ -5150,7 +5150,7 @@ End;
 
 Destructor TFslHTMLFormatter.Destroy;
 Begin
-  FAdapter.Free;
+  FAdapter.free;
 
   Inherited;
 End;

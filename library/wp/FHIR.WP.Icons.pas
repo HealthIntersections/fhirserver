@@ -270,11 +270,11 @@ End;
 
 Destructor TWPIconModule.Destroy;
 Begin
-  FCheck_Checked.Free;
-  FCheck_UnChecked.Free;
-  FCheck_Checked_High.Free;
-  FCheck_UnChecked_High.Free;
-  FImages.Free;
+  FCheck_Checked.free;
+  FCheck_UnChecked.free;
+  FCheck_Checked_High.free;
+  FCheck_UnChecked_High.free;
+  FImages.free;
 
   Inherited;
 End;
@@ -782,6 +782,6 @@ end;
 
 Initialization
 Finalization
-  gWPIconModule.Free;
+  gWPIconModule.free;
   gWPIconModule := Nil;
 End.

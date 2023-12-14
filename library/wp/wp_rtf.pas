@@ -635,10 +635,10 @@ End;
 
 Destructor TWPRTFReader.Destroy;
 Begin
-  FFonts.Free;
-  FColours.Free;
-  FLists.Free;
-  FListOverrides.Free;
+  FFonts.free;
+  FColours.free;
+  FLists.free;
+  FListOverrides.free;
   Inherited;
 End;
 
@@ -715,10 +715,10 @@ Begin
     Try
       Read(oDocument, oRTF, oContext, [WPRTFReaderAllowedItemSection, WPRTFReaderAllowedItemParagraph, WPRTFReaderAllowedItemTable]);
     Finally
-      oContext.Free;
+      oContext.free;
     End;
   Finally
-    oRTF.Free;
+    oRTF.free;
   End;
 
   If FLastWasText And MustCloseWithPara Then
@@ -863,7 +863,7 @@ Begin
     Try
       oDocument.Pieces.Add(oTable.Link);
     Finally
-      oTable.Free;
+      oTable.free;
     End;
   End;
 
@@ -883,7 +883,7 @@ Begin
   Try
     oDocument.Pieces.Add(oTable.Link);
   Finally
-    oTable.Free;
+    oTable.free;
   End;
   InitTable;
 End;
@@ -897,7 +897,7 @@ Begin
     FTable.LastRowPiece := oTableRow;
     oDocument.Pieces.Add(oTableRow.Link);
   Finally
-    oTableRow.Free;
+    oTableRow.free;
   End;
   FTable.RowNeeded := False;
 End;
@@ -918,7 +918,7 @@ Begin
   Try
     oDocument.Pieces.Add(oTableRow.Link);
   Finally
-    oTableRow.Free;
+    oTableRow.free;
   End;
   FTable.RowNeeded := True;
   InitRow;
@@ -936,7 +936,7 @@ Begin
     FTable.LastCellPiece := oTableCell;
     oDocument.Pieces.Add(oTableCell.Link);
   Finally
-    oTableCell.Free;
+    oTableCell.free;
   End;
   FTable.CellNeeded := False;
   FLastWasText := True;
@@ -993,7 +993,7 @@ Begin
     Try
       oDocument.Pieces.Add(oTableCell.Link);
     Finally
-      oTableCell.Free;
+      oTableCell.free;
     End;
     FTable.CellNeeded := True;
   End;
@@ -1021,7 +1021,7 @@ Begin
       Try
         Read(oDocument, oRTF, oNew, aAllowed);
       Finally
-        oNew.Free;
+        oNew.free;
       End;
     End
     Else If oRTF.PeekIsControl Then
@@ -1060,7 +1060,7 @@ Begin
     oDocument.Pieces.Add(oPara.Link);
     FLastPara := oPara;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
   FLastWasText := False;
 End;
@@ -1090,7 +1090,7 @@ Begin
 //    debug(' '+oText.Content, 0);
     oDocument.Pieces.Add(oText.Link);
   Finally
-    oText.Free;
+    oText.free;
   End;
   FLastWasText := True;
 End;
@@ -1237,7 +1237,7 @@ Begin
     End;
     oList.Levels.Add(oLevel.Link);
   Finally
-    oLevel.Free;
+    oLevel.free;
   End;
   oRTF.ConsumeGroupClose;
 End;
@@ -1276,7 +1276,7 @@ Begin
     End;
     FLists.Add(oList.Link);
   Finally
-    oList.Free;
+    oList.free;
   End;
   oRTF.ConsumeGroupClose;
 End;
@@ -1319,7 +1319,7 @@ Begin
     End;
     oList.Levels.Add(oLevelOverride.Link);
   Finally
-    oLevelOverride.Free;
+    oLevelOverride.free;
   End;
   oRTF.ConsumeGroupClose;
 End;
@@ -1353,7 +1353,7 @@ Begin
     End;
     FListOverrides.Add(oListOverride.Link);
   Finally
-    oListOverride.Free;
+    oListOverride.free;
   End;
   oRTF.ConsumeGroupClose;
 End;
@@ -1423,7 +1423,7 @@ Begin
 //    oBuffer.SaveToFileName('e:\Temp\image.png');
     LoadImage(oImage, oBuffer, aFormat, False);
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -1485,7 +1485,7 @@ Begin
       If oImage.hasImage Then
         oDocument.Pieces.Add(oImage.Link);
     Finally
-      oImage.Free;
+      oImage.free;
     End;
   End;
   oRTF.ConsumeGroupClose;
@@ -1727,7 +1727,7 @@ Begin
   End
   Else If (FLists <> Nil) Then
   Begin
-    FLists.Free;
+    FLists.free;
     FLists := Nil;
   End;
 End;
@@ -1748,7 +1748,7 @@ Begin
   End
   Else If (FListOverrides <> Nil) Then
   Begin
-    FListOverrides.Free;
+    FListOverrides.free;
     FListOverrides := Nil;
   End;
 End;
@@ -1908,7 +1908,7 @@ Begin
     oBreak.EndStyle := apesRound;
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 End;
 
@@ -1945,10 +1945,10 @@ end;
 
 Destructor TWPRTFWriter.Destroy;
 Begin
-  FFonts.Free;
-  FContexts.Free;
-  FRTF.Free;
-  FColours.Free;
+  FFonts.free;
+  FContexts.free;
+  FRTF.free;
+  FColours.free;
   Inherited;
 End;
 
@@ -2006,21 +2006,21 @@ End;
 
 Procedure TWPRTFWriter.Finalise;
 Begin
-  FContexts.Free;
+  FContexts.free;
   FContexts := Nil;
 
   SaveRTF;
 
-  FColours.Free;
+  FColours.free;
   FColours := Nil;
-  FRTF.Free;
+  FRTF.free;
   FRTF := Nil;
-  FFonts.Free;
+  FFonts.free;
   FFonts := Nil;
 
-  FListsIndexer.Free;
+  FListsIndexer.free;
   FListsIndexer := Nil;
-  FLists.Free;
+  FLists.free;
   FLists := Nil;
 End;
 
@@ -2038,7 +2038,7 @@ Begin
     oRTF.ProduceInline(String(TFslStringStream(RTF.Stream).Data));
     oRTF.CloseGroup;
   Finally
-    oRTF.Free;
+    oRTF.free;
   End;
 End;
 
@@ -2570,7 +2570,7 @@ Begin
     RTF.Text(WrapLines(String(EncodeHexadecimal(oStream.Bytes))));
   {$ENDIF}
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -2589,7 +2589,7 @@ Begin
     RTF.Text(WrapLines(String(EncodeHexadecimal(oStream.Bytes))));
   {$ENDIF}
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -2619,7 +2619,7 @@ Begin
     try
       SavePNG(oTemp);
     finally
-      otemp.Free;
+      otemp.free;
     end;
   end
   else If TFslVCLGraphic(oImg).Handle Is TJPEGImage Then
@@ -2918,7 +2918,7 @@ Begin
     Result.FStyle := sDefaultStyle;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2990,7 +2990,7 @@ End;
 
 Destructor TWPRTFListDefinition.Destroy;
 Begin
-  FLevels.Free;
+  FLevels.free;
   Inherited;
 End;
 
@@ -3255,7 +3255,7 @@ End;
 
 Destructor TWPRTFListOverrideDefinition.Destroy;
 Begin
-  FLevels.Free;
+  FLevels.free;
   Inherited;
 End;
 

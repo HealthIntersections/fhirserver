@@ -245,7 +245,7 @@ begin
   pnlPackageManagerLink.color := clWhite;
   pnlCombineSnomed.color := clWhite;
   pnlProcessUMLS.color := clWhite;
-  PackageCacheForm := TPackageCacheForm.create(self);
+  PackageCacheForm := TPackageCacheForm.Create(self);
   PackageCacheForm.Parent := pnlPackageManager;
   PackageCacheForm.Align := alClient;
   PackageCacheForm.Visible := True;
@@ -259,7 +259,7 @@ end;
 
 procedure TForm4.FormDestroy(Sender: TObject);
 begin
-  ini.Free;
+  ini.free;
 end;
 
 
@@ -563,7 +563,7 @@ begin
         combiner.international.Load(edtInternational.Text);
         for i := 0 to lbEditions.Items.Count - 1 do
         begin
-          svc := TSnomedServices.create;
+          svc := TSnomedServices.Create;
           combiner.others.Add(svc);
           svc.load(lbEditions.Items[i]);
         end;
@@ -716,7 +716,7 @@ begin
     btnUMLSClose.enabled := false;
     try
 
-      db := TFDBOdbcManager.create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
+      db := TFDBOdbcManager.Create('umls', 4, 0, cbUMLSDriver.Text, edtUMLSServer.text, edtUMLSDatabase.Text, edtUMLSUsername.Text, edtUMLSPassword.Text);
       generateRxStems(db, umlsCallback);
     finally
       cursor := crDefault;
@@ -779,10 +779,10 @@ Begin
     OpenKey('Software\ODBC\ODBCINST.INI\ODBC Drivers',False);
     GetValueNames(aStringlist);
   End;
-  aRegistry.Free;
+  aRegistry.free;
   aStringlist.Sort;
   result.AddStrings(aStringlist);
-  aStringlist.Free;
+  aStringlist.free;
 End;
 
 

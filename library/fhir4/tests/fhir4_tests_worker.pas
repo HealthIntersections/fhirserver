@@ -72,13 +72,13 @@ var
 
 class procedure TTestingWorkerContext4.closeUp;
 begin
-  GWorkerContext.Free;
+  GWorkerContext.free;
   GWorkerContext := nil;
 end;
 
 function TTestingWorkerContext4.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext4.expand');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext4.expand');
 end;
 
 function TTestingWorkerContext4.getSearchParameter(resourceType, name: String): TFHIRResourceV;
@@ -88,7 +88,7 @@ end;
 
 function TTestingWorkerContext4.supportsSystem(system, version: string): boolean;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext4.supportsSystem');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext4.supportsSystem');
 end;
 
 
@@ -99,16 +99,16 @@ var
 begin
   if GWorkerContext = nil then
   begin
-    GWorkerContext := TTestingWorkerContext4.create(TFHIRFactoryR4.create, TFHIRPackageManager.Create(npmModeUser));
+    GWorkerContext := TTestingWorkerContext4.Create(TFHIRFactoryR4.create, TFHIRPackageManager.Create(npmModeUser));
     pcm := TFHIRPackageManager.Create(npmModeUser);
-    li := TPackageLoadingInformation.create(fhir4_constants.FHIR_GENERATED_VERSION);
+    li := TPackageLoadingInformation.Create(fhir4_constants.FHIR_GENERATED_VERSION);
     try
       li.OnLoadEvent := GWorkerContext.loadResourceJson;
       pcm.loadPackage('hl7.fhir.r4.core', fhir4_constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
         li);
     finally
-      li.Free;
-      pcm.Free;
+      li.free;
+      pcm.free;
     end;
   end;
   result := GWorkerContext.link;
@@ -116,22 +116,22 @@ end;
 
 function TTestingWorkerContext4.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext4.validateCode');
 end;
 
 function TTestingWorkerContext4.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext4.validateCode');
 end;
 
 function TTestingWorkerContext4.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext4.validateCode');
 end;
 
 function TTestingWorkerContext4.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext4.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext4.validateCode');
 end;
 
 initialization

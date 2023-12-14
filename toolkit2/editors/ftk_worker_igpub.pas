@@ -67,7 +67,7 @@ end;
 
 destructor TIgPubPageWorker.Destroy;
 begin
-  FTempStore.Free;
+  FTempStore.free;
   inherited Destroy;
 end;
 
@@ -78,13 +78,13 @@ end;
 
 procedure TIgPubPageWorker.SetTempStore(AValue: TFHIRToolkitTemporaryStorage);
 begin
-  FTempStore.Free;
+  FTempStore.free;
   FTempStore := AValue;
 end;
 
 function TIgPubPageWorker.makeFrame(owner: TComponent): TBaseWorkerFrame;
 begin
-  result := TIGPubPageFrame.create(owner);
+  result := TIGPubPageFrame.Create(owner);
   (result as TIGPubPageFrame).TempStore := FTempStore.link;
 end;
 

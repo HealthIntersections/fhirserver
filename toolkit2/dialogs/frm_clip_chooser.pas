@@ -75,14 +75,14 @@ implementation
 
 function chooseClipboardContent(owner : TForm) : String;
 begin
-  ClipboardChooserForm := TClipboardChooserForm.create(owner);
+  ClipboardChooserForm := TClipboardChooserForm.Create(owner);
   try
     if ClipboardChooserForm.ShowModal = mrOk then
       result := ClipboardChooserForm.mSource.text
     else
       result := '';
   finally
-    ClipboardChooserForm.Free;
+    ClipboardChooserForm.free;
   end;
 end;
 
@@ -140,14 +140,14 @@ begin
     else
       result := '';
   finally
-    Stream.Free;
+    Stream.free;
   end;
 end;
 
 procedure TClipboardChooserForm.FormCreate(Sender: TObject);
 begin
   setForOs(btnOk, btnCancel);
-  FFormats := TFslStringDictionary.create;
+  FFormats := TFslStringDictionary.Create;
 end;
 
 procedure TClipboardChooserForm.FormActivate(Sender: TObject);
@@ -156,7 +156,7 @@ var
   n, v : String;
 begin
   FFormats.Clear;
-  fmts := TStringList.create;
+  fmts := TStringList.Create;
   try
     Clipboard.SupportedFormats(fmts);
     for n in fmts do
@@ -182,7 +182,7 @@ end;
 
 procedure TClipboardChooserForm.FormDestroy(Sender: TObject);
 begin
-  FFormats.Free;
+  FFormats.free;
 end;
 
 end.

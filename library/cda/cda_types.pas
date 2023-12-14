@@ -2741,13 +2741,13 @@ end;
 
 destructor Tv3ED.Destroy;
 begin
-  Fdata.Free;
-  FintegrityCheck.Free;
+  Fdata.free;
+  FintegrityCheck.free;
   Fxml := nil;
-  Fthumbnail.Free;
-  Ftranslation.Free;
-  Fdescription.Free;
-  Freference.Free;
+  Fthumbnail.free;
+  Ftranslation.free;
+  Fdescription.free;
+  Freference.free;
   inherited;
 end;
 
@@ -2778,40 +2778,40 @@ end;
 
 procedure Tv3ED.Setdata(const Value: TFslBuffer);
 begin
-  Fdata.Free;
+  Fdata.free;
   Fdata := Value;
 end;
 
 procedure Tv3ED.Setdescription(const Value: Tv3ST);
 begin
-  Fdescription.Free;
+  Fdescription.free;
   Fdescription := Value;
   Fdescription.Parent := self;
 end;
 
 procedure Tv3ED.SetintegrityCheck(const Value: TFslBuffer);
 begin
-  FintegrityCheck.Free;
+  FintegrityCheck.free;
   FintegrityCheck := Value;
 end;
 
 procedure Tv3ED.Setreference(const Value: Tv3TEL);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   Freference.Parent := self;
 end;
 
 procedure Tv3ED.Setthumbnail(const Value: Tv3ED);
 begin
-  Fthumbnail.Free;
+  Fthumbnail.free;
   Fthumbnail := Value;
   Fthumbnail.Parent := self;
 end;
 
 procedure Tv3ED.Settranslation(const Value: Tv3SetED);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   Ftranslation.Parent := self;
 end;
@@ -2873,7 +2873,7 @@ end;
 function Tv3ED.AddTranslation: Tv3ED;
 begin
   if translation = nil Then
-    translation := Tv3SetED.create(self);
+    translation := Tv3SetED.Create(self);
   Result := translation.Add;
 end;
 
@@ -2980,7 +2980,7 @@ begin
     result := TEncoding.UTF8.GetBytes(xml.text)
     {$ENDIF}
   else if reference <> nil Then
-    raise ECDAException.create('Reference resolution is not yet handled');
+    raise ECDAException.Create('Reference resolution is not yet handled');
 end;
 
 procedure Tv3ED.DoClear;
@@ -3041,7 +3041,7 @@ end;
 
 destructor Tv3ST.Destroy;
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   inherited;
 end;
 
@@ -3061,7 +3061,7 @@ end;
 
 procedure Tv3ST.Settranslation(const Value: Tv3SetST);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   Ftranslation.Parent := self;
 end;
@@ -3165,7 +3165,7 @@ end;
 
 destructor Tv3SC.Destroy;
 begin
-  Fcode.Free;
+  Fcode.free;
   inherited;
 end;
 
@@ -3183,7 +3183,7 @@ end;
 
 procedure Tv3SC.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if FCode <> nil then
     Fcode.Parent := self;
@@ -3240,10 +3240,10 @@ end;
 
 destructor Tv3CD.Destroy;
 begin
-  ForiginalText.Free;
-  FdisplayName.Free;
-  Ftranslation.Free;
-  Fqualifier.Free;
+  ForiginalText.free;
+  FdisplayName.free;
+  Ftranslation.free;
+  Fqualifier.free;
   inherited;
 end;
 
@@ -3271,7 +3271,7 @@ end;
 
 procedure Tv3CD.SetdisplayName(const Value: Tv3ST);
 begin
-  FdisplayName.Free;
+  FdisplayName.free;
   FdisplayName := Value;
   if FdisplayName <> nil then
     displayName.Parent := self;
@@ -3279,7 +3279,7 @@ end;
 
 procedure Tv3CD.SetoriginalText(const Value: Tv3ED);
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   ForiginalText := Value;
   if ForiginalText <> nil then  originalText.parent := self;
 
@@ -3287,7 +3287,7 @@ end;
 
 procedure Tv3CD.Setqualifier(const Value: Tv3ListCR);
 begin
-  Fqualifier.Free;
+  Fqualifier.free;
   Fqualifier := Value;
   if Fqualifier <> nil then  qualifier.parent := self;
 
@@ -3295,7 +3295,7 @@ end;
 
 procedure Tv3CD.Settranslation(const Value: Tv3SetCD);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   if Ftranslation <> nil then  translation.parent := self;
 
@@ -3332,7 +3332,7 @@ end;
 function Tv3CD.AddTranslation(code, codeSystem: String): Tv3CD;
 begin
   if translation = nil then
-    translation := Tv3SetCD.create(self);
+    translation := Tv3SetCD.Create(self);
   result := translation.Add;
   result.code := code;
   result.codeSystem := codeSystem;
@@ -3492,7 +3492,7 @@ end;
 
 destructor Tv3TEL.Destroy;
 begin
-  FuseablePeriod.Free;
+  FuseablePeriod.free;
   inherited;
 end;
 
@@ -3513,7 +3513,7 @@ end;
 
 procedure Tv3TEL.SetuseablePeriod(const Value: Tv3QSET);
 begin
-  FuseablePeriod.Free;
+  FuseablePeriod.free;
   FuseablePeriod := Value;
   if FuseablePeriod <> nil then  useablePeriod.parent := self;
 
@@ -3886,8 +3886,8 @@ end;
 
 destructor Tv3AD.Destroy;
 begin
-  Fpart.Free;
-  FuseablePeriod.Free;
+  Fpart.free;
+  FuseablePeriod.free;
   inherited;
 end;
 
@@ -3908,7 +3908,7 @@ end;
 
 procedure Tv3AD.Setpart(const Value: Tv3ListADXP);
 begin
-  Fpart.Free;
+  Fpart.free;
   Fpart := Value;
   if Fpart <> nil then  part.parent := self;
 
@@ -3916,7 +3916,7 @@ end;
 
 procedure Tv3AD.SetuseablePeriod(const Value: Tv3QSET);
 begin
-  FuseablePeriod.Free;
+  FuseablePeriod.free;
   FuseablePeriod := Value;
   if FuseablePeriod <> nil then  useablePeriod.parent := self;
 
@@ -4077,7 +4077,7 @@ end;
 
 destructor Tv3EN.Destroy;
 begin
-  Fpart.Free;
+  Fpart.free;
   inherited;
 end;
 
@@ -4182,8 +4182,8 @@ begin
         if not o2.part[iLoop].EqualsV(o1.part[iLoop]) Then
           result := false;
     Finally
-      o2.Free;
-      o1.Free;
+      o2.free;
+      o1.free;
     End;
   End;
 end;
@@ -4224,7 +4224,7 @@ begin
 
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -4236,7 +4236,7 @@ end;
 
 procedure Tv3EN.Setpart(const Value: Tv3ListENXP);
 begin
-  FPart.Free;
+  FPart.free;
   Fpart := Value;
   if Fpart <> nil then  part.parent := self;
 
@@ -4285,10 +4285,10 @@ end;
 
 destructor Tv3QTY.Destroy;
 begin
-  ForiginalText.Free;
-  Fexpression.Free;
-  FuncertainRange.Free;
-  Funcertainty.Free;
+  ForiginalText.free;
+  Fexpression.free;
+  FuncertainRange.free;
+  Funcertainty.free;
   inherited;
 end;
 
@@ -4324,7 +4324,7 @@ end;
 
 procedure Tv3QTY.Setexpression(const Value: Tv3ED);
 begin
-  Fexpression.Free;
+  Fexpression.free;
   Fexpression := Value;
   if Fexpression <> nil then  expression.parent := self;
 
@@ -4332,7 +4332,7 @@ end;
 
 procedure Tv3QTY.SetoriginalText(const Value: Tv3ED);
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   ForiginalText := Value;
   if ForiginalText <> nil then  originalText.parent := self;
 
@@ -4340,7 +4340,7 @@ end;
 
 procedure Tv3QTY.SetuncertainRange(const Value: Tv3IVL);
 begin
-  FuncertainRange.Free;
+  FuncertainRange.free;
   FuncertainRange := Value;
   if FuncertainRange <> nil then  uncertainRange.parent := self;
 
@@ -4348,7 +4348,7 @@ end;
 
 procedure Tv3QTY.Setuncertainty(const Value: Tv3QTY);
 begin
-  Funcertainty.Free;
+  Funcertainty.free;
   Funcertainty := Value;
   if Funcertainty <> nil then  uncertainty.parent := self;
 
@@ -4479,7 +4479,7 @@ end;
 
 destructor Tv3CO.Destroy;
 begin
-  Fcode.Free;
+  Fcode.free;
   inherited;
 end;
 
@@ -4509,7 +4509,7 @@ end;
 
 procedure Tv3CO.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -4639,8 +4639,8 @@ end;
 
 destructor Tv3RTO.Destroy;
 begin
-  Fdenominator.Free;
-  Fnumerator.Free;
+  Fdenominator.free;
+  Fnumerator.free;
   inherited;
 end;
 
@@ -4675,7 +4675,7 @@ end;
 
 procedure Tv3RTO.Setdenominator(const Value: Tv3QTY);
 begin
-  Fdenominator.Free;
+  Fdenominator.free;
   Fdenominator := Value;
   if Fdenominator <> nil then  denominator.parent := self;
 
@@ -4683,7 +4683,7 @@ end;
 
 procedure Tv3RTO.Setnumerator(const Value: Tv3QTY);
 begin
-  Fnumerator.Free;
+  Fnumerator.free;
   Fnumerator := Value;
   if Fnumerator <> nil then  numerator.parent := self;
 
@@ -4736,7 +4736,7 @@ end;
 
 destructor Tv3PQ.Destroy;
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   inherited;
 end;
 
@@ -4769,7 +4769,7 @@ end;
 
 procedure Tv3PQ.Settranslation(const Value: Tv3SetPQR);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   if Ftranslation <> nil then  translation.parent := self;
 
@@ -4801,7 +4801,7 @@ begin
       Try
         result := o1.isNonNull and o2.isNonNull and TFslDecimal.Equals(o1.value, o2.value) and (o1.unit_ = o2.unit_);
       Finally
-        o2.Free;
+        o2.free;
       End;
     Finally
       o1.free;
@@ -4841,17 +4841,17 @@ begin
             result.unit_ := oPair2.UnitCode;
             result.translation.Add(self.Link);
           Finally
-            oPair2.Free;
+            oPair2.free;
           End;
         Finally
-          oPair1.Free;
+          oPair1.free;
         End;
       Except
         result.nullFlavor := nfUNK;
       End;
     End;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -4865,7 +4865,7 @@ begin
       result.value := false; // GUcums.DefaultDefinition.getCanonicalUnits(unit_) = GUcums.DefaultDefinition.getCanonicalUnits(TV3PQ(other).unit_);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -5178,7 +5178,7 @@ end;
 
 destructor Tv3QSET.Destroy;
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   inherited;
 end;
 
@@ -5199,7 +5199,7 @@ end;
 
 procedure Tv3QSET.SetoriginalText(const Value: Tv3ED);
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   ForiginalText := Value;
   if ForiginalText <> nil then  originalText.parent := self;
 
@@ -5266,7 +5266,7 @@ end;
 
 destructor Tv3QSU.Destroy;
 begin
-  Fterms.Free;
+  Fterms.free;
   inherited;
 end;
 
@@ -5284,7 +5284,7 @@ end;
 
 procedure Tv3QSU.Setterms(const Value: Tv3SetQSET);
 begin
-  Fterms.Free;
+  Fterms.free;
   Fterms := Value;
   if Fterms <> nil then  terms.parent := self;
 
@@ -5347,7 +5347,7 @@ end;
 
 destructor Tv3QSI.Destroy;
 begin
-  Fterms.Free;
+  Fterms.free;
   inherited;
 end;
 
@@ -5365,7 +5365,7 @@ end;
 
 procedure Tv3QSI.Setterms(const Value: Tv3SetQSET);
 begin
-  Fterms.Free;
+  Fterms.free;
   Fterms := Value;
   if Fterms <> nil then  terms.parent := self;
 
@@ -5431,8 +5431,8 @@ end;
 
 destructor Tv3QSD.Destroy;
 begin
-  Fsubtrahend.Free;
-  Fminuend.Free;
+  Fsubtrahend.free;
+  Fminuend.free;
   inherited;
 end;
 
@@ -5451,7 +5451,7 @@ end;
 
 procedure Tv3QSD.Setminuend(const Value: Tv3QSET);
 begin
-  Fminuend.Free;
+  Fminuend.free;
   Fminuend := Value;
   if Fminuend <> nil then  minuend.parent := self;
 
@@ -5459,7 +5459,7 @@ end;
 
 procedure Tv3QSD.Setsubtrahend(const Value: Tv3QSET);
 begin
-  Fsubtrahend.Free;
+  Fsubtrahend.free;
   Fsubtrahend := Value;
   if Fsubtrahend <> nil then  subtrahend.parent := self;
 
@@ -5528,8 +5528,8 @@ end;
 
 destructor Tv3QSP.Destroy;
 begin
-  Fhigh.Free;
-  Flow.Free;
+  Fhigh.free;
+  Flow.free;
   inherited;
 end;
 
@@ -5548,7 +5548,7 @@ end;
 
 procedure Tv3QSP.Sethigh(const Value: Tv3QSET);
 begin
-  Fhigh.Free;
+  Fhigh.free;
   Fhigh := Value;
   if Fhigh <> nil then  high.parent := self;
 
@@ -5556,7 +5556,7 @@ end;
 
 procedure Tv3QSP.Setlow(const Value: Tv3QSET);
 begin
-  Flow.Free;
+  Flow.free;
   Flow := Value;
   if Flow <> nil then  low.parent := self;
 
@@ -5613,7 +5613,7 @@ end;
 
 destructor Tv3QSS.Destroy;
 begin
-  Fterms.Free;
+  Fterms.free;
   inherited;
 end;
 
@@ -5631,7 +5631,7 @@ end;
 
 procedure Tv3QSS.Setterms(const Value: Tv3SetQTY);
 begin
-  Fterms.Free;
+  Fterms.free;
   Fterms := Value;
   if Fterms <> nil then  terms.parent := self;
 
@@ -5685,7 +5685,7 @@ end;
 
 destructor Tv3QSC.Destroy;
 begin
-  Fcode.Free;
+  Fcode.free;
   inherited;
 end;
 
@@ -5703,7 +5703,7 @@ end;
 
 procedure Tv3QSC.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -5764,10 +5764,10 @@ end;
 
 destructor Tv3IVL.Destroy;
 begin
-  Flow.Free;
-  Fany.Free;
-  Fwidth.Free;
-  Fhigh.Free;
+  Flow.free;
+  Fany.free;
+  Fwidth.free;
+  Fhigh.free;
   inherited;
 end;
 
@@ -5791,7 +5791,7 @@ end;
 
 procedure Tv3IVL.Setany(const Value: Tv3QTY);
 begin
-  Fany.Free;
+  Fany.free;
   Fany := Value;
   if Fany <> nil then  any.parent := self;
 
@@ -5799,7 +5799,7 @@ end;
 
 procedure Tv3IVL.Sethigh(const Value: Tv3QTY);
 begin
-  Fhigh.Free;
+  Fhigh.free;
   Fhigh := Value;
   if Fhigh <> nil then  high.parent := self;
 
@@ -5813,7 +5813,7 @@ end;
 
 procedure Tv3IVL.Setlow(const Value: Tv3QTY);
 begin
-  Flow.Free;
+  Flow.free;
   Flow := Value;
   if Flow <> nil then  low.parent := self;
 
@@ -5847,7 +5847,7 @@ end;
 
 procedure Tv3IVL.Setwidth(const Value: Tv3QTY);
 begin
-  Fwidth.Free;
+  Fwidth.free;
   Fwidth := Value;
   if Fwidth <> nil then  width.parent := self;
 
@@ -5926,10 +5926,10 @@ end;
 
 destructor Tv3PIVL.Destroy;
 begin
-  Fcount.Free;
-  Fphase.Free;
-  Fperiod.Free;
-  Ffrequency.Free;
+  Fcount.free;
+  Fphase.free;
+  Fperiod.free;
+  Ffrequency.free;
   inherited;
 end;
 
@@ -5952,7 +5952,7 @@ end;
 
 procedure Tv3PIVL.Setcount(const Value: Tv3INT);
 begin
-  Fcount.Free;
+  Fcount.free;
   Fcount := Value;
   if Fcount <> nil then  count.parent := self;
 
@@ -5960,7 +5960,7 @@ end;
 
 procedure Tv3PIVL.Setfrequency(const Value: Tv3RTO);
 begin
-  Ffrequency.Free;
+  Ffrequency.free;
   Ffrequency := Value;
   if Ffrequency <> nil then  frequency.parent := self;
 
@@ -5974,7 +5974,7 @@ end;
 
 procedure Tv3PIVL.Setperiod(const Value: Tv3PQ);
 begin
-  Fperiod.Free;
+  Fperiod.free;
   Fperiod := Value;
   if Fperiod <> nil then  period.parent := self;
 
@@ -5982,7 +5982,7 @@ end;
 
 procedure Tv3PIVL.Setphase(const Value: Tv3IVL);
 begin
-  Fphase.Free;
+  Fphase.free;
   Fphase := Value;
   if Fphase <> nil then  phase.parent := self;
 
@@ -6055,7 +6055,7 @@ end;
 
 destructor Tv3EIVL.Destroy;
 begin
-  Foffset.Free;
+  Foffset.free;
   inherited;
 end;
 
@@ -6074,7 +6074,7 @@ end;
 
 procedure Tv3EIVL.Setoffset(const Value: Tv3IVL);
 begin
-  Foffset.Free;
+  Foffset.free;
   Foffset := Value;
   if Foffset <> nil then  offset.parent := self;
 
@@ -6131,7 +6131,7 @@ end;
 
 destructor Tv3UVP.Destroy;
 begin
-  Fvalue.Free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -6150,7 +6150,7 @@ end;
 
 procedure Tv3UVP.Setvalue(const Value: Tv3ANY);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then  value.parent := self;
 
@@ -6205,7 +6205,7 @@ end;
 
 destructor Tv3NPPD.Destroy;
 begin
-  Fitem.Free;
+  Fitem.free;
   inherited;
 end;
 
@@ -6223,7 +6223,7 @@ end;
 
 procedure Tv3NPPD.Setitem(const Value: Tv3SetUVP);
 begin
-  Fitem.Free;
+  Fitem.free;
   Fitem := Value;
   if Fitem <> nil then  item.parent := self;
 
@@ -6278,7 +6278,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6298,7 +6298,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetED.SetItemByIndex(iIndex: Integer; value: Tv3ED);
@@ -6354,7 +6354,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6374,7 +6374,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetST.SetItemByIndex(iIndex: Integer; value: Tv3ST);
@@ -6430,7 +6430,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6450,7 +6450,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetCD.SetItemByIndex(iIndex: Integer; value: Tv3CD);
@@ -6506,7 +6506,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6516,7 +6516,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6594,7 +6594,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6604,7 +6604,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6683,7 +6683,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6703,7 +6703,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetPQR.SetItemByIndex(iIndex: Integer; value: Tv3PQR);
@@ -6759,7 +6759,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6779,7 +6779,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetQSET.SetItemByIndex(iIndex: Integer; value: Tv3QSET);
@@ -6841,7 +6841,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6861,7 +6861,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetQTY.SetItemByIndex(iIndex: Integer; value: Tv3QTY);
@@ -6919,7 +6919,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6939,7 +6939,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetUVP.SetItemByIndex(iIndex: Integer; value: Tv3UVP);
@@ -6994,7 +6994,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7004,7 +7004,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7082,7 +7082,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7092,7 +7092,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7169,7 +7169,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7179,7 +7179,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7256,7 +7256,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7266,7 +7266,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7343,7 +7343,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7353,7 +7353,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7431,7 +7431,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7441,7 +7441,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7518,7 +7518,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7528,7 +7528,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7605,7 +7605,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7615,7 +7615,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7694,7 +7694,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7704,7 +7704,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7782,8 +7782,8 @@ end;
 
 destructor Tv3CR.Destroy;
 begin
-  Fname.Free;
-  Fvalue.Free;
+  Fname.free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -7809,13 +7809,13 @@ end;
 
 procedure Tv3CR.Setname(const Value: Tv3CD);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
 end;
 
 procedure Tv3CR.Setvalue(const Value: Tv3CD);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
 end;
 

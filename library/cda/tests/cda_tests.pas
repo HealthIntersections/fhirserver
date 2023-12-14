@@ -71,7 +71,7 @@ begin
     try
       result := p.Parse(x);
     finally
-      p.Free;
+      p.free;
     end;
   finally
     x.free;
@@ -90,12 +90,12 @@ begin
     try
       w.WriteCDA(x, doc);
     finally
-      w.Free;
+      w.free;
     end;
     x.Finish;
     StringToFile(x.Build, filename, TEncoding.UTF8);
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -128,15 +128,15 @@ begin
 
         lCDAWriter.WriteCDA(lFslXmlBuilder, lcdaClinicalDocument);
       finally
-        lcdaClinicalDocument.Free;
+        lcdaClinicalDocument.free;
       end;
     finally
-      lCDAWriter.Free;
+      lCDAWriter.free;
     end;
     lFslXmlBuilder.Finish;
     lFslXmlBuilder.Build;
   finally
-    lFslXmlBuilder.Free;
+    lFslXmlBuilder.free;
   end;
 
   assertEqual(c1, TFslObject.classInstanceCount('TcdaClinicalDocument'), 'TcdaClinicalDocument');

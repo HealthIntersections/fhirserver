@@ -2240,6 +2240,8 @@ procedure GetFastMMCpuUserModeMonitorLineSizes(var Smallest, Largest: Word);
 procedure FastMMDisableWaitPKG;
 {$ENDIF}
 
+var
+  noFMMLeakMessageBox : boolean = false;
 
 implementation
 
@@ -18117,9 +18119,12 @@ begin
   {$ENDIF}
   {$IFNDEF NoMessageBoxes}
       {Show the message}
-      FillChar(LMessageTitleBuffer, SizeOf(LMessageTitleBuffer), 0);
-      AppendStringToModuleName(LeakMessageTitle, LMessageTitleBuffer, Length(LeakMessageTitle), (SizeOf(LMessageTitleBuffer) div SizeOf(LMessageTitleBuffer[0]))-1);
-      ShowMessageBox(LLeakMessage, LMessageTitleBuffer);
+      if not noFMMLeakMessageBox then
+      begin
+        FillChar(LMessageTitleBuffer, SizeOf(LMessageTitleBuffer), 0);
+        AppendStringToModuleName(LeakMessageTitle, LMessageTitleBuffer, Length(LeakMessageTitle), (SizeOf(LMessageTitleBuffer) div SizeOf(LMessageTitleBuffer[0]))-1);
+        ShowMessageBox(LLeakMessage, LMessageTitleBuffer);
+      end;
   {$ENDIF}
     end;
   end;

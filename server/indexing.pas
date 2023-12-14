@@ -246,7 +246,7 @@ begin
   result := -1;
 
   if (Index.Key = 0) then
-    raise EFHIRException.create('unknown index '+index.Name);
+    raise EFHIRException.Create('unknown index '+index.Name);
 
   case type_ of
     sptNumber, sptQuantity :
@@ -270,7 +270,7 @@ begin
     sptReference : ; // nothing
   else
     // null, Composite
-    raise EFHIRException.create('Unhandled type generating index');
+    raise EFHIRException.Create('Unhandled type generating index');
   end;
 
   for i := 0 to count - 1 do
@@ -281,7 +281,7 @@ begin
   end;
 
 
-  entry := TFhirIndexEntry.create;
+  entry := TFhirIndexEntry.Create;
   try
     entry.FName := index.Name;
     entry.EntryKey := KeyEvent(connection, ktEntries, '', dummy);
@@ -310,9 +310,9 @@ var
   dummy : string;
 begin
   if (Index.Key = 0) then
-    raise EFHIRException.create('unknown index '+index.Name);
+    raise EFHIRException.Create('unknown index '+index.Name);
 
-  entry := TFhirIndexEntry.create;
+  entry := TFhirIndexEntry.Create;
   try
     entry.EntryKey := KeyEvent(connection, ktEntries, '', dummy);
     result := entry.EntryKey;
@@ -338,24 +338,24 @@ end;
 
 constructor TFhirIndexSpaces.Create();
 begin
-  inherited create;
+  inherited Create;
   FSpaces := TStringList.Create;
   FSpaces.Sorted := true;
   FLock := TFslLock.Create('Spaces');
 end;
 
 
-destructor TFhirIndexSpaces.destroy;
+destructor TFhirIndexSpaces.Destroy;
 begin
   FSpaces.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
 procedure TFhirIndexSpaces.RecordSpace(space: String; key: integer);
 begin
   if space.trim <> space then
-    raise EFHIRException.create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
+    raise EFHIRException.Create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
   FLock.Lock;
   try
     FSpaces.AddObject(space, TObject(key));
@@ -372,7 +372,7 @@ var
   i : integer;
 begin
   if space.trim <> space then
-    raise EFHIRException.create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
+    raise EFHIRException.Create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
   FLock.Lock;
   try
     result := FSpaces.Find(space, i);
@@ -395,7 +395,7 @@ procedure TFhirCompartmentEntryList.add(key, tkey, ckey: integer; enum : String;
 var
   item : TFhirCompartmentEntry;
 begin
-  item := TFhirCompartmentEntry.create;
+  item := TFhirCompartmentEntry.Create;
   try
     item.key := key;
     item.typekey := tkey;
@@ -423,18 +423,18 @@ constructor TFHIRIndexInformation.Create(factory : TFHIRFactory; serverFactory :
 begin
   inherited Create;
   FServerFactory := serverFactory;
-  FIndexes := TFhirIndexList.create(factory);
-  FComposites := TFhirCompositeList.create;
+  FIndexes := TFhirIndexList.Create(factory);
+  FComposites := TFhirCompositeList.Create;
   FCompartments := TFHIRCompartmentList.Create;
   buildIndexes;
 end;
 
 destructor TFHIRIndexInformation.Destroy;
 begin
-  FServerFactory.Free;
-  FIndexes.Free;
-  FComposites.Free;
-  FCompartments.Free;
+  FServerFactory.free;
+  FIndexes.free;
+  FComposites.free;
+  FCompartments.free;
   inherited;
 end;
 
@@ -446,7 +446,7 @@ begin
   try
      builder.registerIndexes(FIndexes, FCompartments);
   finally
-    builder.Free;
+    builder.free;
   end;
 
   // manual additions:
@@ -533,7 +533,7 @@ begin
       end;
     result := res.ToStringArray;
   finally
-    res.Free;
+    res.free;
     end;
 end;
 
@@ -565,7 +565,7 @@ begin
         ok := ok or (s = FIndexes[i].ResourceType);
       if ok then
         if (result <> sptNull) and (result <> FIndexes[i].SearchType) And ((FIndexes[i].SearchType in [sptDate, sptToken]) or (result in [sptDate, sptToken])) then
-          raise EFHIRException.create('Chained Parameters cross resource joins that create disparate index handling requirements')
+          raise EFHIRException.Create('Chained Parameters cross resource joins that create disparate index handling requirements')
         else
           result := FIndexes[i].SearchType;
     end;
@@ -592,10 +592,10 @@ begin
         if result = nil then
         begin
           result := FComposites.item[i];
-          oTypes := TArray<String>.create(FComposites.item[i].ResourceType);
+          oTypes := TArray<String>.Create(FComposites.item[i].ResourceType);
         end
         else
-          raise EFHIRException.create('Ambiguous composite reference "'+name+'"');
+          raise EFHIRException.Create('Ambiguous composite reference "'+name+'"');
     end;
     inc(i);
   end;
@@ -607,22 +607,22 @@ end;
 constructor TFhirIndexManager.Create();
 begin
   inherited Create;
-  FCompartments := TFhirCompartmentEntryList.create;
+  FCompartments := TFhirCompartmentEntryList.Create;
   FEntries := TFhirIndexEntryList.Create;
 end;
 
 destructor TFhirIndexManager.Destroy;
 begin
-  FUcum.Free;
-  FEngine.Free;
-  FContext.Free;
+  FUcum.free;
+  FEngine.free;
+  FContext.free;
   FTerminologyServer.free;
-  FCompartments.Free;
-  FSpaces.Free;
-  FEntries.Free;
-  FInfo.Free;
-  FConnection.Free;
-  FResConfig.Free;
+  FCompartments.free;
+  FSpaces.free;
+  FEntries.free;
+  FInfo.free;
+  FConnection.free;
+  FResConfig.free;
   inherited;
 end;
 
@@ -636,13 +636,13 @@ end;
 
 procedure TFhirIndexManager.SetConnection(const Value: TFDBConnection);
 begin
-  FConnection.Free;
+  FConnection.free;
   FConnection := Value;
 end;
 
 procedure TFhirIndexManager.SetContext(const Value: TFHIRWorkerContextWithFactory);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
@@ -653,31 +653,31 @@ end;
 
 procedure TFhirIndexManager.SetInfo(const Value: TFHIRIndexInformation);
 begin
-  FInfo.Free;
+  FInfo.free;
   FInfo := Value;
 end;
 
 procedure TFhirIndexManager.SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
 begin
-  FResConfig.Free;
+  FResConfig.free;
   FResConfig := Value;
 end;
 
 procedure TFhirIndexManager.SetSpaces(const Value: TFhirIndexSpaces);
 begin
-  FSpaces.Free;
+  FSpaces.free;
   FSpaces := Value;
 end;
 
 procedure TFhirIndexManager.SetTerminologyServer(const Value: TTerminologyServer);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
 end;
 
 procedure TFhirIndexManager.SetUcum(const Value: TUcumServices);
 begin
-  FUcum.Free;
+  FUcum.free;
   FUcum := Value;
 end;
 

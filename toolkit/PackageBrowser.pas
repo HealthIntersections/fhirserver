@@ -123,14 +123,14 @@ end;
 
 procedure TPackageFinderForm.FormCreate(Sender: TObject);
 begin
-  FList := TFslList<TPackageDefinition>.create;
-  FFiltered := TFslList<TPackageDefinition>.create;
+  FList := TFslList<TPackageDefinition>.Create;
+  FFiltered := TFslList<TPackageDefinition>.Create;
 end;
 
 procedure TPackageFinderForm.FormDestroy(Sender: TObject);
 begin
-  FFiltered.Free;
-  FList.Free;
+  FFiltered.free;
+  FList.free;
 end;
 
 procedure TPackageFinderForm.gridCellClick(const Column: TColumn; const Row: Integer);
@@ -186,12 +186,12 @@ begin
           p.Url := 'https://build.fhir.org/ig/'+j.str['repo'];
           FList.Add(p.Link);
         finally
-          p.Free;
+          p.free;
         end;
       end;
     end;
   finally
-    a.Free;
+    a.free;
   end;
   FLoaded := true;
   applyFilter;

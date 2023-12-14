@@ -262,7 +262,7 @@ var
   session : TFhirSession;
   list : TFslList<TFhirSession>;
 begin
-  list := TFslList<TFhirSession>.create;
+  list := TFslList<TFhirSession>.Create;
   try
     FLock.Lock('sweep2');
     try
@@ -275,7 +275,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 
 end;
@@ -384,7 +384,7 @@ begin
       TFHIRServerContext(serverContext).Storage.RegisterAuditEvent(result, 'Subscription.Hook');
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
     TFHIRServerContext(serverContext).Storage.RecordFhirSession(result);
   end;
@@ -650,7 +650,7 @@ var
   Id, Name, Email: String;
 begin
   if not TFHIRServerContext(serverContext).Storage.RetrieveSession(pastSessionKey, UserKey, Provider, Id, Name, Email) then
-    raise EFHIRException.create('Unable to retrieve past session '+inttostr(pastSessionKey));
+    raise EFHIRException.Create('Unable to retrieve past session '+inttostr(pastSessionKey));
 
   session := TFhirSession.Create(TFHIRServerContext(serverContext).ValidatorContext.Link, true);
   try
@@ -699,7 +699,7 @@ var
   list : TFslList<TFhirSession>;
   d: TDateTime;
 begin
-  list := TFslList<TFhirSession>.create;
+  list := TFslList<TFhirSession>.Create;
   try
     d := TFslDateTime.makeUTC.DateTime;
     FLock.Lock('sweep2');
@@ -717,7 +717,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -755,7 +755,7 @@ begin
     b.Append('</table>'#13#10);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 

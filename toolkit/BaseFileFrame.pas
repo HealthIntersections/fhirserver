@@ -115,8 +115,8 @@ end;
 
 destructor TBaseFileFrame.Destroy;
 begin
-  FResource.Free;
-  FOriginal.Free;
+  FResource.free;
+  FOriginal.free;
   inherited;
 end;
 
@@ -173,7 +173,7 @@ end;
 
 procedure TBaseFileFrame.SetResource(const Value: TFHIRResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
   FOriginal := FResource.Clone;
 end;

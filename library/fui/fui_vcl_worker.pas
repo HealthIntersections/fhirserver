@@ -95,7 +95,7 @@ begin
     Application.ProcessMessages;
     execute;
   finally
-    FForm.Free;
+    FForm.free;
   end;
 end;
 

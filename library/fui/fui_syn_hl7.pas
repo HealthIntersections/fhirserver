@@ -205,19 +205,19 @@ end;
 constructor TSynHL7Syn.Create(AOwner: TComponent);
 begin
   inherited;
-  FSegmentCodeAttri := TSynHighlighterAttributes.create('Segment Code');
-  FBadSegmentCodeAttri := TSynHighlighterAttributes.create('Unknown Segment Code');
-  FControlAttri := TSynHighlighterAttributes.create('Control Code');
-  FEscapeAttri := TSynHighlighterAttributes.create('Escape Sequence');
-  FRabbitsEarsAttri := TSynHighlighterAttributes.create('Null Characters');
-  FTextAttri := TSynHighlighterAttributes.create('Text');
-  FIDAttri := TSynHighlighterAttributes.create('ID Field');
-  FIDInvalidAttri := TSynHighlighterAttributes.create('ID Field (Invalid Code)');
-  FInvalidAttri := TSynHighlighterAttributes.create('Invalid Structure');
-  FUnknownAttri := TSynHighlighterAttributes.create('Unknown Content');
-  FMissingAttri := TSynHighlighterAttributes.create('Missing Content');
-  FTooLongAttri := TSynHighlighterAttributes.create('Content exceeding allowable length');
-  FDefAttr := TSynHighlighterAttributes.create('Default Background');
+  FSegmentCodeAttri := TSynHighlighterAttributes.Create('Segment Code');
+  FBadSegmentCodeAttri := TSynHighlighterAttributes.Create('Unknown Segment Code');
+  FControlAttri := TSynHighlighterAttributes.Create('Control Code');
+  FEscapeAttri := TSynHighlighterAttributes.Create('Escape Sequence');
+  FRabbitsEarsAttri := TSynHighlighterAttributes.Create('Null Characters');
+  FTextAttri := TSynHighlighterAttributes.Create('Text');
+  FIDAttri := TSynHighlighterAttributes.Create('ID Field');
+  FIDInvalidAttri := TSynHighlighterAttributes.Create('ID Field (Invalid Code)');
+  FInvalidAttri := TSynHighlighterAttributes.Create('Invalid Structure');
+  FUnknownAttri := TSynHighlighterAttributes.Create('Unknown Content');
+  FMissingAttri := TSynHighlighterAttributes.Create('Missing Content');
+  FTooLongAttri := TSynHighlighterAttributes.Create('Content exceeding allowable length');
+  FDefAttr := TSynHighlighterAttributes.Create('Default Background');
 
   FSegmentCodeAttri.Foreground := clBlack;
   FSegmentCodeAttri.Background := clWhite;
@@ -265,7 +265,7 @@ end;
 
 destructor TSynHL7Syn.Destroy;
 begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited Destroy;
 end;
 
@@ -587,7 +587,7 @@ end;
 
 procedure TSynHL7Syn.SetDictionary(AValue: THL7V2Dictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := AValue;
 end;
 

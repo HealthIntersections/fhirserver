@@ -76,7 +76,7 @@ end;
 
 constructor TFHIRTagManager.Create(factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FLock := TFslLock.Create('session-manager');
   FTags := TFHIRTagList.Create(factory.link);
   FTagsByKey := TFslMap<TFHIRTag>.Create('tags');
@@ -98,10 +98,10 @@ end;
 
 destructor TFHIRTagManager.Destroy;
 begin
-  FFactory.Free;
+  FFactory.free;
   FTagsByKey.free;
   FTags.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 

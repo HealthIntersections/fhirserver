@@ -128,7 +128,7 @@ begin
 
   btnExecute.Enabled := false;
   btnCancel.Enabled := true;
-  FAsync := TFHIRClientAsyncTask.create(server.link);
+  FAsync := TFHIRClientAsyncTask.Create(server.link);
   FAsync.format := ffNDJson;
   if (id = '') then
     FAsync.query := CODES_TFhirResourceType[rType]+'/$export'
@@ -161,8 +161,8 @@ end;
 destructor TBulkDataDialog.Destroy;
 begin
   FSettings.free;
-  FServer.Free;
-  FAsync.Free;
+  FServer.free;
+  FAsync.free;
   inherited;
 end;
 
@@ -211,7 +211,7 @@ begin
       if (be.search = nil) or (be.search.mode = SearchEntryModeMatch) then
         combo.Items.Add(be.resource.id+': '+be.resource.textSummary);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -225,7 +225,7 @@ end;
 
 procedure TBulkDataDialog.SetServer(const Value: TFHIRClient);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := Value;
 end;
 

@@ -65,7 +65,7 @@ implementation
 
 { TFHIRAnnotation }
 
-constructor TFHIRAnnotation.create(level: TFHIRAnnotationLevel; line, start, stop: integer; message, description: String);
+constructor TFHIRAnnotation.Create(level: TFHIRAnnotationLevel; line, start, stop: integer; message, description: String);
 begin
   Create;
   self.level := level;

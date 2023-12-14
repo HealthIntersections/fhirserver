@@ -399,7 +399,7 @@ begin
   FPcm := pcm;
   FServerFactory := serverFactory;
   FQuestionnaireCache := TQuestionnaireCache.Create;
-  FResConfig := TFslMap<TFHIRResourceConfig>.create('res.config');
+  FResConfig := TFslMap<TFHIRResourceConfig>.Create('res.config');
   for a in Factory.ResourceNames do
   begin
     cfg := TFHIRResourceConfig.Create;
@@ -413,14 +413,14 @@ begin
   FResConfig.Add(cfg.name, cfg);
   FValidator := serverFactory.makeValidator(pcm);
   FValidatorContext := FValidator.Context.link;
-  FIndexes := TFHIRIndexInformation.create(FValidatorContext.factory.link, ServerFactory.link);
+  FIndexes := TFHIRIndexInformation.Create(FValidatorContext.factory.link, ServerFactory.link);
   FSessionManager := TFHIRSessionManager.Create(Globals.link, self);
-  FTagManager := TFHIRTagManager.create(storage.Factory.link);
-  FNamingSystems := TFslMap<TFHIRNamingSystemW>.create('naming');
+  FTagManager := TFHIRTagManager.Create(storage.Factory.link);
+  FNamingSystems := TFslMap<TFHIRNamingSystemW>.Create('naming');
   FConsentEngine := TFHIRNullConsentEngine.Create(storage.Factory.link);
   FClientCacheManager := TClientCacheManager.Create;
 
-  FMaps := TFslMap<TFHIRStructureMapW>.create('tx.maps');
+  FMaps := TFslMap<TFHIRStructureMapW>.Create('tx.maps');
   FTaskFolder := FilePath(['[tmp]', 'fhir-server-tasks']);
   ForceFolder(FTaskFolder);
 end;
@@ -428,29 +428,29 @@ end;
 destructor TFHIRServerContext.Destroy;
 begin
   FPcm.free;
-  FConsentEngine.Free;
-  FGlobals.Free;
-  FMaps.Free;
-  FJWTServices.Free;
-  FNamingSystems.Free;
-  FTagManager.Free;
+  FConsentEngine.free;
+  FGlobals.free;
+  FMaps.free;
+  FJWTServices.free;
+  FNamingSystems.free;
+  FTagManager.free;
   FSessionManager.CloseAll;
-  FSessionManager.Free;
-  FSubscriptionManager.Free;
+  FSessionManager.free;
+  FSubscriptionManager.free;
   FIndexes.free;
-  FStorage.Free;
+  FStorage.free;
   FQuestionnaireCache.free;
-  UserProvider.Free;
-  FServerFactory.Free;
-  FTerminologyServer.Free;
-  FClientCacheManager.Free;
+  UserProvider.free;
+  FServerFactory.free;
+  FTerminologyServer.free;
+  FClientCacheManager.free;
   FI18nSupport.free;
 
-  FValidatorContext.Free;
+  FValidatorContext.free;
   FValidator.free;
 
   FResConfig.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -469,7 +469,8 @@ end;
 
 procedure TFHIRServerContext.UnLoad;
 begin
-  FStorage.UnLoad;
+  if FStorage <> nil then
+    FStorage.UnLoad;
   FQuestionnaireCache.clearCache;
   FValidatorContext.UnLoad;
   FValidator.Unload;
@@ -524,7 +525,7 @@ end;
 
 procedure TFHIRServerContext.SetUserProvider(const Value: TFHIRUserProvider);
 begin
-  FUserProvider.Free;
+  FUserProvider.free;
   FUserProvider := Value;
 end;
 
@@ -543,13 +544,13 @@ end;
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin
-  FJWTServices.Free;
+  FJWTServices.free;
   FJWTServices := Value;
 end;
 
 procedure TFHIRServerContext.SetPcm(const Value: TFHIRPackageManager);
 begin
-  FPcm.Free;
+  FPcm.free;
   FPcm := Value;
 end;
 
@@ -562,33 +563,33 @@ end;
 
 procedure TFHIRServerContext.SetClientCacheManager(const Value: TClientCacheManager);
 begin
-  FClientCacheManager.Free;
+  FClientCacheManager.free;
   FClientCacheManager := Value;
   updateSettings;
 end;
 
 procedure TFHIRServerContext.SetConsentEngine(const Value: TFHIRConsentEngine);
 begin
-  FConsentEngine.Free;
+  FConsentEngine.free;
   FConsentEngine := Value;
 end;
 
 procedure TFHIRServerContext.SetGlobals(const Value: TFHIRServerSettings);
 begin
-  FGlobals.Free;
+  FGlobals.free;
   FGlobals := Value;
   updateSettings;
 end;
 
 procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionManager);
 begin
-  FSubscriptionManager.Free;
+  FSubscriptionManager.free;
   FSubscriptionManager := Value;
 end;
 
 procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServer);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
   ServerFactory.setTerminologyServer(FValidatorContext, value.link);
   updateSettings;
@@ -600,7 +601,7 @@ var
 begin
   FLock.Lock;
   try
-    result := TFslMap<TFHIRStructureMapW>.create('maps');
+    result := TFslMap<TFHIRStructureMapW>.Create('maps');
     for s in FMaps.Keys do
       result.Add(s, FMaps[s].Link);
   finally

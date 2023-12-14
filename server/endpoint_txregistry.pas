@@ -130,10 +130,10 @@ type
 
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
     procedure Load; override;
     Procedure Unload; override;
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
@@ -156,7 +156,7 @@ constructor TTxRegistryServerEndPoint.Create(config : TFHIRServerConfigSection; 
 var
   s : String;
 begin
-  inherited create(config, settings, nil, common, nil, i18n);
+  inherited Create(config, settings, nil, common, nil, i18n);
   s := config.clone['folder'].value;
   FAddress := s;
   if (FAddress = '') then
@@ -165,7 +165,7 @@ end;
 
 destructor TTxRegistryServerEndPoint.Destroy;
 begin
-  FTxRegistryServer.Free;
+  FTxRegistryServer.free;
 
   inherited;
 end;
@@ -204,7 +204,7 @@ end;
 procedure TTxRegistryServerEndPoint.Unload;
 begin
   FUpdater.StopAndWait(50);
-  FUpdater.Free;
+  FUpdater.free;
   FUpdater := nil;
 end;
 
@@ -224,7 +224,7 @@ begin
   // todo: health check on spider
 end;
 
-procedure TTxRegistryServerEndPoint.LoadPackages(plist: String);
+procedure TTxRegistryServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
   raise EFslException.Create('This is not applicable to this endpoint');
 end;
@@ -248,7 +248,7 @@ begin
     end;
   end
   else
-    FTxRegistryServer.FInfo := TServerRegistries.create;
+    FTxRegistryServer.FInfo := TServerRegistries.Create;
   FTxRegistryServer.FInfo.Address := FAddress;
   FUpdater.Start;
   result := FTxRegistryServer.link;
@@ -273,7 +273,7 @@ end;
 
 constructor TTxRegistryUpdaterThread.Create(endPoint : TTxRegistryServerEndPoint);
 begin
-  inherited create;
+  inherited Create;
   FEndPoint := endPoint;
   FNextRun := now + 1/(24 * 60);
   FZulip := TZulipTracker.Create('https://fhir.zulipchat.com/api/v1/messages',
@@ -282,7 +282,7 @@ end;
 
 destructor TTxRegistryUpdaterThread.Destroy;
 begin
-  FZulip.Free;
+  FZulip.free;
   inherited;
 end;
 
@@ -313,12 +313,12 @@ var
   upd : TTxRegistryScanner;
   info : TServerRegistries;
 begin
-  upd := TTxRegistryScanner.create(FZulip.link);
+  upd := TTxRegistryScanner.Create(FZulip.link);
   try
     upd.address := FEndPoint.FAddress;
     upd.OnSendEmail := doSendEmail;
     try
-      info := TServerRegistries.create;
+      info := TServerRegistries.Create;
       try
         upd.update(FEndPoint.FTxRegistryServer.code, info);
         FEndPoint.FTxRegistryServer.FInfo.update(info);
@@ -373,7 +373,7 @@ end;
 
 destructor TFHIRTxRegistryWebServer.Destroy;
 begin
-  FInfo.Free;
+  FInfo.free;
   inherited;
 end;
 
@@ -400,7 +400,7 @@ var
   i : integer;
   arr : TJsonArray;
 begin
-  b := TFslStringBuilder.create;
+  b := TFslStringBuilder.Create;
   try
     b.append('<table class="grid">'#13#10);
     b.append('<tr>'#13#10);
@@ -409,7 +409,7 @@ begin
     if (srvr = '') then
       b.append('<td><b>Server</b></td>'#13#10);
     if (ver = '') then
-      b.append('<td><b>Version</b></td>'#13#10);
+      b.append('<td><b>FHIR Version</b></td>'#13#10);
     b.append('<td><b>Url</b></td>'#13#10);
     b.append('<td><b>Status</b></td>'#13#10);
     b.append('<td><b>Content</b></td>'#13#10);
@@ -425,7 +425,7 @@ begin
       if (srvr = '') then
         b.append('<td><a href="'+path+'&server='+row.str['server-code']+'">'+FormatTextToHTML(row.str['server-name'])+'</a></td>'#13#10);
       if (ver = '') then
-        b.append('<td><a href="'+path+'&version='+row.str['version']+'">'+row.str['version']+'</a></td>'#13#10);
+        b.append('<td><a href="'+path+'&fhirVersion='+row.str['fhirVersion']+'">'+row.str['fhirVersion']+'</a></td>'#13#10);
       b.append('<td><a href="'+FormatTextToHTML(row.str['url'])+'">'+FormatTextToHTML(row.str['url'])+'</a></td>'#13#10);
       if (row.str['error']) <> '' then
         b.append('<td>>span style="color: maroon">Error: '+FormatTextToHTML(row.str['error'])+'</span>Last OK '+DurationToSecondsString(row.int['last-success'])+' ago</td>'#13#10)
@@ -475,20 +475,20 @@ begin
   if (srvr <> '') then
     path := path+'&server='+srvr;
   if (ver <> '') then
-    path := path+'&version='+ver;
+    path := path+'&fhirVersion='+ver;
   if (tx <> '') then
     path := path+'&url='+tx;
 
-  vars := TFslMap<TFHIRObject>.create('vars');
+  vars := TFslMap<TFHIRObject>.Create('vars');
   try
-    vars.add('path', TFHIRObjectText.create(path));
-    vars.add('matches', TFHIRObjectText.create(renderJson(json, path, reg, srvr, ver)));
-    vars.add('count', TFHIRObjectText.create(json.forceArr['results'].Count));
-    vars.add('registry', TFHIRObjectText.create(reg));
-    vars.add('server', TFHIRObjectText.create(srvr));
-    vars.add('version', TFHIRObjectText.create(ver));
-    vars.add('url', TFHIRObjectText.create(tx));
-    vars.add('status', TFHIRObjectText.create(status));
+    vars.add('path', TFHIRObjectText.Create(path));
+    vars.add('matches', TFHIRObjectText.Create(renderJson(json, path, reg, srvr, ver)));
+    vars.add('count', TFHIRObjectText.Create(json.forceArr['results'].Count));
+    vars.add('registry', TFHIRObjectText.Create(reg));
+    vars.add('server', TFHIRObjectText.Create(srvr));
+    vars.add('fhirVersion', TFHIRObjectText.Create(ver));
+    vars.add('url', TFHIRObjectText.Create(tx));
+    vars.add('status', TFHIRObjectText.Create(status));
     returnFile(request, response, nil, request.Document, 'tx-registry.html', false, vars);
   finally
     vars.free;
@@ -500,7 +500,7 @@ var
   rows :TFslList<TServerRow>;
   row : TServerRow;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.str['last-update'] := FInfo.LastRun.toXML;
     result.str['master-url'] := FInfo.Address;
@@ -539,11 +539,11 @@ var
   ver : TServerVersionInformation;
 begin
   if (version = '') then
-    raise EFslException.create('A version is required');
+    raise EFslException.Create('A version is required');
   if (tx = '') then
-    raise EFslException.create('A code system url is required');
+    raise EFslException.Create('A code system url is required');
 
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     for reg in FInfo.Registries do
       for srvr in reg.Servers do
@@ -604,7 +604,7 @@ type
 
 constructor TFHIRTxRegistryWebServerSorter.Create(sort: TMatchTableSort; factor: integer);
 begin
-  inherited create;
+  inherited Create;
   self.sort := sort;
   self.factor := factor;
 end;
@@ -649,7 +649,7 @@ var
   //sId : string;
   json : TJsonObject;
 begin
-  pm := THTTPParameters.create(request.UnparsedParams);
+  pm := THTTPParameters.Create(request.UnparsedParams);
   try
     if (request.CommandType <> hcGET) then
       raise EFslException.Create('The operation '+request.Command+' '+request.Document+' is not supported');
@@ -657,11 +657,11 @@ begin
     begin
       reg := pm.Value['registry'];
       srvr := pm.Value['server'];
-      ver := pm.Value['version'];
+      ver := pm.Value['fhirVersion'];
       tx := pm.Value['url'];
       json := listRows(reg, srvr, ver, tx);
       try
-        result := 'Tx servers (registry='+reg+', server='+srvr+', version='+ver+', url='+tx+')';
+        result := 'Tx servers (registry='+reg+', server='+srvr+', fhirVersion='+ver+', url='+tx+')';
         if (pm.has('sort')) then
           sortJson(json, pm.Value['sort']);
         if request.Accept.Contains('json') then
@@ -673,7 +673,7 @@ begin
         else
           sendHtml(request, response, secure, json, reg, srvr, ver, tx);
       finally
-        json.Free;
+        json.free;
       end;
     end
     else if request.document = PathWithSlash+'resolve' then
@@ -685,7 +685,7 @@ begin
         response.ContentType := 'application/json';
         response.ContentText := TJSONWriter.writeObjectStr(json, true);
       finally
-        json.Free;
+        json.free;
       end;
     end
     else

@@ -65,7 +65,7 @@ end;
 
 destructor TTimeTracker.Destroy;
 begin
-//  FPoints.Free;
+//  FPoints.free;
   inherited;
 end;
 

@@ -218,15 +218,15 @@ end;
 
 constructor TFHIRServersView.Create(settings : TIniFile);
 begin
-  inherited create;
-  FManager := TServerListManager.create;
+  inherited Create;
+  FManager := TServerListManager.Create;
   FManager.Settings := Settings;
   FManager.FView := self;
 end;
 
 destructor TFHIRServersView.Destroy;
 begin
-  FManager.Free;
+  FManager.free;
   inherited Destroy;
 end;
 
@@ -270,12 +270,12 @@ var
   server : TFHIRServerEntry;
   stream : TFileStream;
 begin
-  json := TJsonObject.create;
+  json := TJsonObject.Create;
   try
     arr := json.forceArr['servers'];
     for server in FManager.Data do
       arr.add(server.toJson);
-    stream := TFileStream.create(FControlFile, fmCreate);
+    stream := TFileStream.Create(FControlFile, fmCreate);
     try
       TJSONWriter.writeObject(stream, json, true);
     finally

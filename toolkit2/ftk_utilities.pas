@@ -97,10 +97,10 @@ uses
 function makeFactory(version : TFHIRVersion) : TFHIRFactory;
 begin
   case version of
-    fhirVersionRelease3 : result := TFHIRFactoryR3.create;
-    fhirVersionRelease4 : result := TFHIRFactoryR4.create;
+    fhirVersionRelease3 : result := TFHIRFactoryR3.Create;
+    fhirVersionRelease4 : result := TFHIRFactoryR4.Create;
   else
-    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
+    raise EFHIRException.Create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
   end;
 end;
 
@@ -123,7 +123,7 @@ end;
 procedure check(test : boolean; message : String);
 begin
   if not test then
-    raise EFHIRClientException.create(message);
+    raise EFHIRClientException.Create(message);
 end;
 
 procedure checkJsonMetadata(server : TFHIRServerEntry; bytes : TBytes);
@@ -170,7 +170,7 @@ begin
     check(fv <> nil, 'No fhirVersion found in Metadata');
     server.version := TFHIRVersions.readVersion(fv.attribute['value']);
     r := e.element('rest');
-    list := TFslList<TMXmlElement>.create;
+    list := TFslList<TMXmlElement>.Create;
     try
       e.listElements('format', list);
       for f in list do
@@ -195,7 +195,7 @@ var
 begin
   msg := '';
   try
-    fetcher := TInternetFetcher.create;
+    fetcher := TInternetFetcher.Create;
     try
       fetcher.Accept := 'application/json, application/xml';
       fetcher.URL := UrlPath([url, 'metadata']);
@@ -227,7 +227,7 @@ end;
 
 procedure TFHIRServerEntry.SetClient(AValue: TFHIRClientV);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := AValue;
 end;
 
@@ -244,21 +244,21 @@ end;
 
 procedure TFHIRServerEntry.SetToken(AValue: TClientAccessToken);
 begin
-  FToken.Free;
+  FToken.free;
   FToken := AValue;
 end;
 
 constructor TFHIRServerEntry.Create;
 begin
   inherited Create;
-  FInstantiates := TStringList.create;
+  FInstantiates := TStringList.Create;
 end;
 
 destructor TFHIRServerEntry.Destroy;
 begin
-  FToken.Free;
-  FClient.Free;
-  FInstantiates.Free;
+  FToken.free;
+  FClient.free;
+  FInstantiates.free;
   inherited Destroy;
 end;
 
@@ -292,7 +292,7 @@ class function TFHIRServerEntry.fromJson(json: TJsonObject): TFHIRServerEntry;
 var
   i : integer;
 begin
-  result := TFHIRServerEntry.create;
+  result := TFHIRServerEntry.Create;
   try
     result.id := json.str['id'];
     result.pinned := json.bool['pinned'];
@@ -323,7 +323,7 @@ function TFHIRServerEntry.toJson: TJsonObject;
 var
   s : String;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.bool['pinned'] := pinned;
     result.str['id'] := id;
@@ -354,7 +354,7 @@ function TFHIRServerEntry.makeOAuthDetails: TRegisteredFHIRServer;
 var
   uri : TIdUri;
 begin
-  result := TRegisteredFHIRServer.create;
+  result := TRegisteredFHIRServer.Create;
   try
     result.name := name;
     result.fhirEndpoint := URL;
@@ -365,7 +365,7 @@ begin
     result.tokenEndpoint := smartConfig.str['token_endpoint'];
     result.clientid := ClientId;
     result.clientsecret := ClientSecret;
-    uri := TIdURI.create(Redirect);
+    uri := TIdURI.Create(Redirect);
     try
       result.thisHost := uri.Host;
       result.redirectport := StrToIntDef(uri.Port, 80);
@@ -426,10 +426,10 @@ end;
 //function makeClient(version : TFHIRVersion; url : String) : TFhirClientV;
 //begin
 //  case version of
-//    fhirVersionRelease3 : result := TFhirClient3.create(nil, defLang, TFHIRHTTPCommunicator.create(url));
-//    fhirVersionRelease4 : result := TFhirClient4.create(nil, defLang, TFHIRHTTPCommunicator.create(url));
+//    fhirVersionRelease3 : result := TFhirClient3.Create(nil, defLang, TFHIRHTTPCommunicator.Create(url));
+//    fhirVersionRelease4 : result := TFhirClient4.Create(nil, defLang, TFHIRHTTPCommunicator.Create(url));
 //  else
-//    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
+//    raise EFHIRException.Create('The version '+CODES_TFHIRVersion[version]+' is not supported at this time');
 //  end;
 //end;
 

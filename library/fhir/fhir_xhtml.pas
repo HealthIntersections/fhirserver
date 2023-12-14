@@ -110,6 +110,9 @@ Type
     An xhtml node. Has a type - is either an element, with a name and children,
     or a different type of node with text (usually text or comment)
   }
+
+  { TFhirXHtmlNode }
+
   TFhirXHtmlNode = class (TFHIRObject)
   private
     FLocation : TSourceLocation;
@@ -150,7 +153,8 @@ Type
     function fhirType : String; override;
     function NsDecl : String; virtual;
     function hasAttribute(name : String): boolean;
-    procedure attribute(name, value : String);
+    function attribute(name: String) : String; overload;
+    procedure attribute(name, value : String); overload;
     property Location : TSourceLocation read FLocation write FLocation;
 
     {
@@ -229,6 +233,17 @@ Type
       Note that namespaces are not supported in FHIR xhtml
     }
     function SetAttribute(name, value : String) : TFhirXHtmlNode;
+
+    // helper methods
+    function tx(text : String) : TFhirXHtmlNode;
+    function sep(text : String) : TFhirXHtmlNode;
+    function ah(link : String) : TFhirXHtmlNode;
+    function li : TFhirXHtmlNode;
+    function ul : TFhirXHtmlNode;
+    function p : TFhirXHtmlNode;
+    function b : TFhirXHtmlNode;
+    function br : TFhirXHtmlNode;
+    function code : TFhirXHtmlNode;
   end;
 
   TFHIRXhtmlNodeListEnumerator = class (TFslObject)
@@ -307,10 +322,10 @@ Type
   private
     class Function checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
     class procedure doCompose(node: TFhirXHtmlNode; xml : TXmlBuilder);
-    class function doParse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode; static;
+    class function doParse(langList : THTTPLanguageList; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode; static;
   public
-    class Function parse(const lang : THTTPLanguages; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; node : TMXmlElement; path : String; defaultNS : String) : TFhirXHtmlNode; overload;
-    class Function parse(const lang : THTTPLanguages; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode; Overload;
+    class Function parse(langList : THTTPLanguageList; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; node : TMXmlElement; path : String; defaultNS : String) : TFhirXHtmlNode; overload;
+    class Function parse(langList : THTTPLanguageList; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode; Overload;
 
     class procedure compose(node: TFhirXHtmlNode; xml : TXmlBuilder); overload;
     class procedure compose(node: TFhirXHtmlNode; s : TFslStringBuilder; canonicalise : boolean; indent : integer = 0; relativeReferenceAdjustment : integer = 0); overload;
@@ -442,7 +457,7 @@ begin
     end;
   if not b then
   begin
-    attr := TFHIRAttribute.create;
+    attr := TFHIRAttribute.Create;
     try
       attr.name := name;
       attr.value := value;
@@ -476,7 +491,7 @@ end;
 
 function TFHIRAttribute.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.createPropertyValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.equals(other : TObject): boolean;
@@ -486,7 +501,7 @@ end;
 
 function TFHIRAttribute.fhirType: String;
 begin
-  raise EFHIRException.create('TFHIRAttribute.fhirType: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.fhirType: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.getId: String;
@@ -496,7 +511,7 @@ end;
 
 function TFHIRAttribute.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRException.create('TFHIRAttribute.getTypesForProperty: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.getTypesForProperty: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.hasExtensions: boolean;
@@ -518,23 +533,23 @@ procedure TFHIRAttribute.ListProperties(oList: TFHIRPropertyList; bInheritedProp
 begin
   if (bInheritedProperties) Then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, nil, FName));
-  oList.add(TFHIRProperty.create(self, 'value', 'string', false, nil, FValue));
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, nil, FName));
+  oList.add(TFHIRProperty.Create(self, 'value', 'string', false, nil, FValue));
 end;
 
 function TFHIRAttribute.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.makeCodeValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.makeCodeValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.makeIntValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.makeIntValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.makeIntValue: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.makeStringValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.makeStringValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.makeStringValue: not sure how to implement this?');
 end;
 
 procedure TFHIRAttribute.setIdValue(id: String);
@@ -543,7 +558,7 @@ end;
 
 function TFHIRAttribute.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.setProperty: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.setProperty: not sure how to implement this?');
 end;
 
 function TFHIRAttribute.sizeInBytesV(magic : integer) : cardinal;
@@ -564,7 +579,7 @@ end;
 
 Destructor TFhirAttributeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -589,7 +604,7 @@ end;
 
 function TFHIRXHtmlNodeList.Append: TFHIRXHtmlNode;
 begin
-  result := TFhirXHtmlNode.create;
+  result := TFhirXHtmlNode.Create;
   try
     add(result.Link);
   finally
@@ -629,7 +644,7 @@ end;
 
 function TFHIRXHtmlNodeList.Insert(index: Integer): TFHIRXHtmlNode;
 begin
-  result := TFhirXHtmlNode.create;
+  result := TFhirXHtmlNode.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -673,7 +688,7 @@ function TFhirXHtmlNode.AddChild(name: String): TFhirXHtmlNode;
 var
   node : TFhirXHtmlNode;
 begin
-  node := TFhirXHtmlNode.create;
+  node := TFhirXHtmlNode.Create;
   try
     node.NodeType := fhntElement;
     node.FName := name;
@@ -688,7 +703,7 @@ function TFhirXHtmlNode.AddComment(content: String): TFhirXHtmlNode;
 var
   node : TFhirXHtmlNode;
 begin
-  node := TFhirXHtmlNode.create;
+  node := TFhirXHtmlNode.Create;
   try
     node.NodeType := fhntComment;
     node.FContent := content;
@@ -712,7 +727,7 @@ begin
     result := nil
   else
   begin
-    node := TFhirXHtmlNode.create;
+    node := TFhirXHtmlNode.Create;
     try
       node.NodeType := fhntText;
       node.FContent := content;
@@ -810,7 +825,7 @@ end;
 
 function TFhirXHtmlNode.createPropertyValue(propName: string): TFHIRObject;
 begin
-  raise EFHIRException.create('TFhirXHtmlNode.createPropertyValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFhirXHtmlNode.createPropertyValue: not sure how to implement this?');
 end;
 
 constructor TFhirXHtmlNode.Create;
@@ -820,12 +835,12 @@ end;
 
 destructor TFhirXHtmlNode.Destroy;
 begin
-  FChildNodes.Free;
-  FAttributes.Free;
+  FChildNodes.free;
+  FAttributes.free;
   inherited;
 end;
 
-function TFhirXHtmlNode.equals(other : TObject): boolean;
+function TFhirXHtmlNode.Equals(other: TObject): boolean;
 var
   o : TFhirXHtmlNode;
   i : integer;
@@ -864,7 +879,7 @@ begin
   end;
 end;
 
-function TFhirXHtmlNode.FhirType: String;
+function TFhirXHtmlNode.fhirType: String;
 begin
   result := 'xhtml';
 end;
@@ -885,14 +900,14 @@ end;
 function TFhirXHtmlNode.GetAttributes: TFHIRAttributeList;
 begin
   if FAttributes = nil then
-    FAttributes := TFHIRAttributeList.create;
+    FAttributes := TFHIRAttributeList.Create;
   result := FAttributes;
 end;
 
 function TFhirXHtmlNode.GetChildNodes: TFhirXHtmlNodeList;
 begin
   if FChildNodes = nil then
-    FChildNodes := TFhirXHtmlNodeList.create;
+    FChildNodes := TFhirXHtmlNodeList.Create;
   result := FChildNodes;
 end;
 
@@ -910,7 +925,7 @@ begin
       if name = FChildNodes[i].FName then
         list.add(FChildNodes[i].Link);
   if name = 'text()' then
-    list.add(TFHIRObjectText.create(FContent));
+    list.add(TFHIRObjectText.Create(FContent));
 end;
 
 function TFhirXHtmlNode.getId: String;
@@ -920,7 +935,7 @@ end;
 
 function TFhirXHtmlNode.getTypesForProperty(propName : string): String;
 begin
-  raise EFHIRException.create('TFHIRAttribute.getTypesForProperty: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.getTypesForProperty: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.hasAttribute(name: String): boolean;
@@ -932,6 +947,17 @@ begin
     for attr in FAttributes do
       if attr.Name = name then
         exit(true);
+end;
+
+function TFhirXHtmlNode.attribute(name: String): String;
+var
+  attr : TFHIRAttribute;
+begin
+  result := '';
+  if FAttributes <> nil then
+    for attr in FAttributes do
+      if attr.Name = name then
+        exit(attr.Value);
 end;
 
 function TFhirXHtmlNode.HasAttributes: boolean;
@@ -965,27 +991,27 @@ begin
     inherited;
   if (bPrimitiveValues) then
   begin
-    oList.add(TFHIRProperty.create(self, 'type', 'string', false, nil, CODES_TFHIRHtmlNodeType[FNodeType]));
-    oList.add(TFHIRProperty.create(self, 'name', 'string', false, nil, FName));
-    oList.add(TFHIRProperty.create(self, 'attribute', 'Attribute', true, nil, FAttributes.Link));
-    oList.add(TFHIRProperty.create(self, 'childNode', 'Node', true, nil, FChildNodes.Link));
-    oList.add(TFHIRProperty.create(self, 'content', 'string', false, nil, FContent));
+    oList.add(TFHIRProperty.Create(self, 'type', 'string', false, nil, CODES_TFHIRHtmlNodeType[FNodeType]));
+    oList.add(TFHIRProperty.Create(self, 'name', 'string', false, nil, FName));
+    oList.add(TFHIRProperty.Create(self, 'attribute', 'Attribute', true, nil, FAttributes.Link));
+    oList.add(TFHIRProperty.Create(self, 'childNode', 'Node', true, nil, FChildNodes.Link));
+    oList.add(TFHIRProperty.Create(self, 'content', 'string', false, nil, FContent));
   end;
 end;
 
 function TFhirXHtmlNode.makeCodeValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.makeCodeValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.makeCodeValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.makeIntValue(v: String): TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.makeIntValue: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.makeIntValue: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.makeStringValue(v: String): TFHIRObject;
 begin
-   result := TFHIRObjectText.create(TFHIRXhtmlParser.Compose(self));
+   result := TFHIRObjectText.Create(TFHIRXhtmlParser.Compose(self));
 end;
 
 function TFhirXHtmlNode.NsDecl: String;
@@ -1015,7 +1041,54 @@ begin
       FAttributes[i].Value := value;
       exit;
     end;
-  FAttributes.add(TFHIRAttribute.create(name, value));
+  FAttributes.add(TFHIRAttribute.Create(name, value));
+end;
+
+function TFhirXHtmlNode.tx(text: String): TFhirXHtmlNode;
+begin
+  result := AddText(text);
+end;
+
+function TFhirXHtmlNode.sep(text: String): TFhirXHtmlNode;
+begin
+  if (childNodes.Count > 0) and (ChildNodes[ChildNodes.count-1].NodeType = fhntText) then
+    result := AddText(text);
+end;
+
+function TFhirXHtmlNode.ah(link: String): TFhirXHtmlNode;
+begin
+  result := addTag('a');
+  result.attribute('href', link);
+end;
+
+function TFhirXHtmlNode.li: TFhirXHtmlNode;
+begin
+  result := addTag('li');
+end;
+
+function TFhirXHtmlNode.ul: TFhirXHtmlNode;
+begin
+  result := addTag('ul');
+end;
+
+function TFhirXHtmlNode.p: TFhirXHtmlNode;
+begin
+  result := addTag('p');
+end;
+
+function TFhirXHtmlNode.b: TFhirXHtmlNode;
+begin
+  result := addTag('b');
+end;
+
+function TFhirXHtmlNode.br: TFhirXHtmlNode;
+begin
+  result := addTag('br');
+end;
+
+function TFhirXHtmlNode.code: TFhirXHtmlNode;
+begin
+  result := addTag('code');
 end;
 
 procedure TFhirXHtmlNode.setIdValue(id: String);
@@ -1027,14 +1100,14 @@ begin
   FNodeType := Value;
   if FNodeType = fhntElement then
   begin
-    FChildNodes := TFhirXHtmlNodeList.create;
-    FAttributes := TFHIRAttributeList.create;
+    FChildNodes := TFhirXHtmlNodeList.Create;
+    FAttributes := TFHIRAttributeList.Create;
   end;
 end;
 
 function TFhirXHtmlNode.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
-  raise EFHIRException.create('TFHIRAttribute.setProperty: not sure how to implement this?');
+  raise EFHIRException.Create('TFHIRAttribute.setProperty: not sure how to implement this?');
 end;
 
 function TFhirXHtmlNode.sizeInBytesV(magic : integer) : cardinal;
@@ -1057,7 +1130,7 @@ end;
 
 Destructor TFhirXhtmlNodeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1074,31 +1147,31 @@ end;
 
 { TFHIRXhtmlParser }
 
-class Function TFHIRXhtmlParser.parse(const lang : THTTPLanguages; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode;
+class Function TFHIRXhtmlParser.parse(langList : THTTPLanguageList; policy : TFHIRXhtmlParserPolicy; options : TFHIRXhtmlParserOptions; content : String) : TFhirXHtmlNode;
 var
   doc : TMXmlDocument;
 begin
   doc := TMXmlParser.Parse(content, [xpResolveNamespaces, xpHTMLEntities]);
   try
-    result := parse(lang, policy, options, doc.document, '', '');
+    result := parse(langList, policy, options, doc.document, '', '');
   finally
-    doc.Free;
+    doc.free;
   end;
 end;
 
-class function TFHIRXhtmlParser.parse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
+class function TFHIRXhtmlParser.parse(langList : THTTPLanguageList; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
 begin
-  result := doParse(lang, policy, options, node, path, defaultNS);
+  result := doParse(langList, policy, options, node, path, defaultNS);
   if (result.NsDecl = '') and not (xopValidatorMode in options) then
     result.Attributes.Add('xmlns', XHTML_NS);
 end;
 
-class function TFHIRXhtmlParser.doParse(const lang : THTTPLanguages; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
+class function TFHIRXhtmlParser.doParse(langList : THTTPLanguageList; policy: TFHIRXhtmlParserPolicy; options: TFHIRXhtmlParserOptions; node: TMXmlElement; path, defaultNS: String): TFhirXHtmlNode;
 var
   attr : TMXmlAttribute;
   child : TMXmlElement;
 begin
-  result := TFhirXHtmlNode.create(fhntElement);
+  result := TFhirXHtmlNode.Create(fhntElement);
   try
     result.Location := node.Start;
     result.Name := node.localName;
@@ -1122,10 +1195,10 @@ begin
       else if (child.NodeType = ntElement) then
       begin
         if (elementIsOk(policy, options, child.localName)) then
-          result.ChildNodes.add(doParse(lang, policy, options, child as TMXmlElement, path, defaultNS));
+          result.ChildNodes.add(doParse(langList, policy, options, child as TMXmlElement, path, defaultNS));
       end
       else
-        raise EFHIRException.create('Unhandled XHTML feature: '+inttostr(ord(child.NodeType))+path);
+        raise EFHIRException.Create('Unhandled XHTML feature: '+inttostr(ord(child.NodeType))+path);
       child := child.Next;
     end;
     result.link;
@@ -1144,7 +1217,7 @@ begin
     'ul', 'ol', 'li', 'dl', 'dt', 'dd', 'pre', 'table', 'caption', 'colgroup', 'col', 'thead', 'tr', 'tfoot', 'tbody', 'th', 'td',
     'code', 'samp', 'img', 'map', 'area'], name);
   if (not result) and (policy = xppReject) then
-    raise EFHIRException.create('Illegal HTML element '+name);
+    raise EFHIRException.Create('Illegal HTML element '+name);
 end;
 
 
@@ -1169,7 +1242,7 @@ begin
     result := (policy = xppAllow) or (StringStartsWith(value, '#') or StringStartsWith(value, 'data:') or StringStartsWith(value, 'http:') or StringStartsWith(value, 'https:'));
 
   if (not result) and (policy = xppReject) then
-    raise EFHIRException.create('Illegal Attribute name '+name+'.'+attr);
+    raise EFHIRException.Create('Illegal Attribute name '+name+'.'+attr);
 end;
 
 class Function TFHIRXhtmlParser.checkNS(options: TFHIRXhtmlParserOptions; focus : TFhirXHtmlNode; node : TMXmlElement; defaultNS : String)  : String;
@@ -1199,7 +1272,7 @@ begin
     compose(node, b, canonicalise);
     result := b.AsString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1253,7 +1326,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1299,7 +1372,7 @@ begin
       for i := 0 to node.ChildNodes.count - 1 do
         compose(node.ChildNodes[i], s, canonicalise, indent, relativeReferenceAdjustment);
   else
-    raise EFHIRException.create('not supported');
+    raise EFHIRException.Create('not supported');
   End;
 end;
 
@@ -1324,7 +1397,7 @@ begin
       for i := 0 to node.ChildNodes.count - 1 do
         docompose(node.ChildNodes[i], xml);
   else
-    raise EFHIRException.create('not supported: '+CODES_TFHIRHtmlNodeType[node.NodeType]);
+    raise EFHIRException.Create('not supported: '+CODES_TFHIRHtmlNodeType[node.NodeType]);
   end;
 end;
 
@@ -1348,7 +1421,7 @@ begin
   else
   begin
 //    result := false; //div1.equals(div2);
-    raise EFHIRTodo.create('compareDeep');
+    raise EFHIRTodo.Create('compareDeep');
   end;
 end;
 
@@ -1367,11 +1440,11 @@ begin
   case n.NodeType of
     ntText: if not StringIsWhitespace(n.Text) then xn.AddText(n.Text);
     ntComment: xn.AddComment(n.Text);
-    ntDocument: raise ELibraryException.create('Not supported yet');
-    ntAttribute: raise ELibraryException.create('Not supported yet'); // should never happen
-    ntProcessingInstruction: raise ELibraryException.create('Not supported yet');
-    ntDocumentDeclaration: raise ELibraryException.create('Not supported yet');
-    ntCData: raise ELibraryException.create('Not supported yet');
+    ntDocument: raise ELibraryException.Create('Not supported yet');
+    ntAttribute: raise ELibraryException.Create('Not supported yet'); // should never happen
+    ntProcessingInstruction: raise ELibraryException.Create('Not supported yet');
+    ntDocumentDeclaration: raise ELibraryException.Create('Not supported yet');
+    ntCData: raise ELibraryException.Create('Not supported yet');
     ntElement:
       begin
       if (n.Name = 'br') then
@@ -1466,12 +1539,12 @@ end;
 
 class procedure TCDANarrativeParser.processFootNote(n : TMXmlElement; xn : TFHIRXhtmlNode);
 begin
-  raise ELibraryException.create('element '+n.name+' not handled yet');
+  raise ELibraryException.Create('element '+n.name+' not handled yet');
 end;
 
 class procedure TCDANarrativeParser.processFootNodeRef(n : TMXmlElement; xn : TFHIRXhtmlNode);
 begin
-  raise ELibraryException.create('element '+n.name+' not handled yet');
+  raise ELibraryException.Create('element '+n.name+' not handled yet');
 end;
 
 class procedure TCDANarrativeParser.processItem(n : TMXmlElement; xn : TFHIRXhtmlNode);
@@ -1572,7 +1645,7 @@ end;
 
 class procedure TCDANarrativeParser.processTFoot(n : TMXmlElement; xn : TFHIRXhtmlNode);
 begin
-  raise ELibraryException.create('element '+n.name+' not handled yet');
+  raise ELibraryException.Create('element '+n.name+' not handled yet');
 end;
 
 class procedure TCDANarrativeParser.processTh(n : TMXmlElement; xn : TFHIRXhtmlNode);
@@ -1627,7 +1700,7 @@ begin
     processChildren(element, result);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1689,7 +1762,7 @@ begin
       else if (x.name = 'tr') then
         processTr(xml, x)
       else
-        raise EFHIRException.create('Unknown element '+x.name);
+        raise EFHIRException.Create('Unknown element '+x.name);
   end;
 end;
 
@@ -1733,12 +1806,12 @@ end;
 
 class procedure TCDANarrativeParser.processFootNote(xml : TXmlBuilder; x : TFHIRXhtmlNode);
 begin
-  raise ELibraryException.create('element '+x.name+' not handled yet');
+  raise ELibraryException.Create('element '+x.name+' not handled yet');
 end;
 
 class procedure TCDANarrativeParser.processFootNodeRef(xml : TXmlBuilder; x : TFHIRXhtmlNode);
 begin
-  raise ELibraryException.create('element '+x.name+' not handled yet');
+  raise ELibraryException.Create('element '+x.name+' not handled yet');
 end;
 
 class procedure TCDANarrativeParser.processItem(xml : TXmlBuilder; x : TFHIRXhtmlNode);
@@ -1833,7 +1906,7 @@ end;
 
 class procedure TCDANarrativeParser.processTFoot(xml : TXmlBuilder; x : TFHIRXhtmlNode);
 begin
-  raise ELibraryException.create('element '+x.name+' not handled yet');
+  raise ELibraryException.Create('element '+x.name+' not handled yet');
 end;
 
 class procedure TCDANarrativeParser.processTh(xml : TXmlBuilder; x : TFHIRXhtmlNode);

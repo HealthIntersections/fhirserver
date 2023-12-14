@@ -155,16 +155,16 @@ begin
         try
           writeResource(res, mDest);
         finally
-          res.Free;
+          res.free;
         end;
       finally
-        engine.Free;
+        engine.free;
       end;
     finally
       diff.free;
     end;
   finally
-    src.Free;
+    src.free;
   end;
 end;
 
@@ -185,16 +185,16 @@ begin
         try
           writeResource(diff.Resource as TFhirResource, mDiff);
         finally
-          diff.Free;
+          diff.free;
         end;
       finally
-        engine.Free;
+        engine.free;
       end;
     finally
       res.free;
     end;
   finally
-    src.Free;
+    src.free;
   end;
 end;
 
@@ -247,11 +247,11 @@ function TDiffEngineEngineFrame.parseResource(memo: TMemo; desc: String): TFhirR
 var
   x : TFHIRXmlParser;
 begin
-  x := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'));
+  x := TFHIRXmlParser.Create(nil, nil);
   try
     result := x.parseResource(memo.Text) as TFhirResource;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -282,11 +282,11 @@ procedure TDiffEngineEngineFrame.writeResource(src: TFhirResource; memo: TMemo);
 var
   x : TFHIRXmlComposer;
 begin
-  x := TFHIRXmlComposer.Create(nil, OutputStylePretty, THTTPLanguages.create('en'));
+  x := TFHIRXmlComposer.Create(nil, OutputStylePretty, nil);
   try
     memo.Text := x.Compose(src);
   finally
-    x.Free;
+    x.free;
   end;
 end;
 

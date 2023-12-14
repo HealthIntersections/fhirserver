@@ -138,8 +138,8 @@ Begin
       oResourceStream.Close;
     End;
   Finally
-    oVCLStream.Free;
-    oResourceStream.Free;
+    oVCLStream.free;
+    oResourceStream.free;
   End;
 End;
 
@@ -200,8 +200,8 @@ Begin
       oResourceStream.Close;
     End;
   Finally
-    oVCLStream.Free;
-    oResourceStream.Free;
+    oVCLStream.free;
+    oResourceStream.free;
   End;
 End;
 

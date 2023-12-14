@@ -803,7 +803,7 @@ Begin
         DeleteObject(hRegion);
       End;
     Finally
-      oGraphics.Free;
+      oGraphics.free;
     End;
   End;
 End;
@@ -889,7 +889,7 @@ Begin
 
     oGraphics.DrawPath(oPen, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -904,7 +904,7 @@ Begin
 
     oGraphics.FillPath(oBrush, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -1500,7 +1500,7 @@ End;
 
 Destructor TGdiPlusBitmapImage.Destroy;
 Begin
-  FBitmap.Free;
+  FBitmap.free;
 
   Inherited;
 End;
@@ -1531,7 +1531,7 @@ End;
 
 Procedure TGdiPlusBitmapImage.SetBitmap(Const Value: TGPBitmap);
 Begin
-  FBitmap.Free;
+  FBitmap.free;
   FBitmap := Value;
 End;
 
@@ -1576,13 +1576,13 @@ Begin
       Try
         oGraphics.DrawImage(oResourceBitmap, 0, 0, iResourceBitmapWidth, iResourceBitmapHeight);
       Finally
-        oGraphics.Free;
+        oGraphics.free;
       End;
     Finally
-      oResourceBitmap.Free;
+      oResourceBitmap.free;
     End;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 
   CheckBitmapStatus;
@@ -1648,7 +1648,7 @@ Begin
     oMem.Buffer := oBuffer.Link;
     LoadFromMemoryStream(oMem);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 End;
 
@@ -1666,7 +1666,7 @@ Begin
 //
 //    CheckBitmapStatus;
 //  Finally
-//    oIStreamAdapter.Free;
+//    oIStreamAdapter.free;
 //  End;
 End;
 
@@ -1693,7 +1693,7 @@ Begin
 //
 //    RaiseGdiPlusStatusException('SaveToMemoryStream', Bitmap, 'Bitmap');
 //  Finally
-//    oIStreamAdapter.Free;
+//    oIStreamAdapter.free;
 //  End;
 End;
 
@@ -1719,7 +1719,7 @@ Begin
 //
 //    RaiseGdiPlusStatusException('SaveJPEGToMemoryStream', Bitmap, 'Bitmap');
 //  Finally
-//    oIStreamAdapter.Free;
+//    oIStreamAdapter.free;
 //  End;
 End;
 
@@ -1815,7 +1815,7 @@ Begin
 
     oJpeg.Handle.Assign(oBitmapGraphic.Handle);
   Finally
-    oBitmapGraphic.Free;
+    oBitmapGraphic.free;
   End;
 End;
 
@@ -2008,7 +2008,7 @@ Begin
 
     Result := DrawPath(oPen, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -2029,7 +2029,7 @@ Begin
 
     Result := FillPath(oBrush, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -2181,8 +2181,8 @@ End;
 
 Destructor TGdiPlusHotSpot.Destroy;
 Begin
-  FHintStringList.Free;
-  FRegion.Free;
+  FHintStringList.free;
+  FRegion.free;
   FRegion := Nil;
 
   Inherited;
@@ -2320,7 +2320,7 @@ Begin
         If PaintChildControls Then
           PaintControls(hMemoryDC, Nil);
       Finally
-        oMemoryGraphics.Free;
+        oMemoryGraphics.free;
       End;
 
       BitBlt(pInputDC, 0, 0, ClientRect.Right, ClientRect.Bottom, hMemoryDC, 0, 0, SRCCOPY);
@@ -2346,7 +2346,7 @@ Begin
       If PaintChildControls Then
         PaintControls(pInputDC, Nil);
     Finally
-      oMemoryGraphics.Free;
+      oMemoryGraphics.free;
     End;
 
     FHasCompletedInitialPaint := True;
@@ -2678,7 +2678,7 @@ End;
 
 Destructor TGdiPlusStringFormat.Destroy;
 Begin
-  FStringFormat.Free;
+  FStringFormat.free;
 
   Inherited;
 End;
@@ -2835,7 +2835,7 @@ End;
 
 Destructor TGdiPlusFont.Destroy;
 Begin
-  FFont.Free;
+  FFont.free;
 
   Inherited;
 End;
@@ -2853,7 +2853,7 @@ Begin
   Assert(CheckCondition(FSize >= 0, 'Font', 'Font size can not be negative.'));
 
   If Assigned(FFont) Then
-    FFont.Free;
+    FFont.free;
 
   FFont := TGPFont.Create(FFontFamily, FSize, FontStyle);
 
@@ -2921,13 +2921,13 @@ End;
         oBrush := TGPSolidBrush.Create(argbGold);
         Try
         Finally
-          oBrush.Free;
+          oBrush.free;
         End;
       Finally
-        oFont.Free;
+        oFont.free;
       End;
     Finally
-      oGDI.Free;
+      oGDI.free;
     End;
     *)
 
@@ -2942,7 +2942,7 @@ end;
 destructor TGdiPlusImageAnnotator.Destroy;
 begin
   Closeup;
-  FImage.Free;
+  FImage.free;
   inherited;
 end;
 
@@ -2959,11 +2959,11 @@ end;
 
 procedure TGdiPlusImageAnnotator.Closeup;
 begin
-  FBrush.Free;
+  FBrush.free;
   FBrush := nil;
-  FFont .Free;
+  FFont .free;
   FFont  := nil;
-  FGDI.Free;
+  FGDI.free;
   FGDI := nil;
 end;
 
@@ -2988,7 +2988,7 @@ end;
 procedure TGdiPlusImageAnnotator.SetImage(const Value: TGdiPlusBitmapImage);
 begin
   Closeup;
-  FImage.Free;
+  FImage.free;
   FImage := Value;
 end;
 

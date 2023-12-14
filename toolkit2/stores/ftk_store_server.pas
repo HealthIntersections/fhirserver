@@ -85,7 +85,7 @@ begin
     begin
       p := url.subString(e.url.length).split(['/']);
       if (length(p) < 2) then
-        raise EFHIRException.create('Unable to understand '+url+' for server '+e.url);
+        raise EFHIRException.Create('Unable to understand '+url+' for server '+e.url);
       if e.client = nil then
         OnConnectToServer(self, e);
       server := e;
@@ -94,12 +94,12 @@ begin
       exit;
     end;
   end;
-  raise EFHIRException.create('No registered server for address "'+url+'"');
+  raise EFHIRException.Create('No registered server for address "'+url+'"');
 end;
 
 constructor TServerStorageService.Create(serverList: TFslList<TFHIRServerEntry>);
 begin
-  inherited create;
+  inherited Create;
   FServerList := serverList;
 end;
 
@@ -188,7 +188,7 @@ end;
 
 function TServerStorageService.save(address: String; bytes: TBytes) : TDateTime;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRException.Create('Not done yet');
 end;
 
 function TServerStorageService.CaptionForAddress(address: String): String;
@@ -211,15 +211,15 @@ end;
 
 procedure TServerStorageService.delete(address: String);
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRException.Create('Not done yet');
 end;
 
 function TServerStorageService.openDlg(out newName : String) : boolean;
 //var
 //  dlg : TOpenDialog;
 begin
-  raise EFHIRException.create('Not done yet');
-  //dlg := TOpenDialog.create(handle);
+  raise EFHIRException.Create('Not done yet');
+  //dlg := TOpenDialog.Create(handle);
   //try
   //  dlg.Filter := 'All Known Files|*.xml; *.json; *.ini; *.txt; *.v2; *.msg; *.hl7; *.template; *.liquid; *.js; *.md; *.htm; *.html|'+
   //    'XML|*.xml|'+
@@ -250,7 +250,7 @@ function TServerStorageService.saveDlg(existing : String; suggestedExtension : S
 //  dlg : TSaveDialog;
 //  fn : String;
 begin
-  //dlg := TSaveDialog.create(Handle);
+  //dlg := TSaveDialog.Create(Handle);
   //try
   //  dlg.Options := [ofOverwritePrompt, ofEnableSizing, ofViewDetail];
   //  if (existing <> '') and existing.startsWith('file:') then
@@ -277,7 +277,7 @@ end;
 
 function TServerStorageService.MakeFilename(address: String): String;
 begin
-  raise EFHIRException.create('Not done yet');
+  raise EFHIRException.Create('Not done yet');
 //  result := ExtractFileName(address.Substring(5));
 end;
 

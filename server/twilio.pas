@@ -75,8 +75,8 @@ end;
 
 destructor TTwilioServer.Destroy;
 begin
-  FDB.Free;
-  FLock.Free;
+  FDB.free;
+  FLock.free;
   inherited;
 end;
 
@@ -136,10 +136,10 @@ begin
       response.ContentType := 'application/json';
       response.ContentText := TJsonWriterDirect.writeObjectStr(json);
     finally
-      json.Free;
+      json.free;
     end;
   finally
-    pm.Free;
+    pm.free;
   end;
 
 end;
@@ -188,7 +188,7 @@ begin
     response.ContentType := 'application/xml';
     response.ContentText := '<?xml version="1.0" encoding="UTF-8" ?><Response><Message>'+FResponse+'</Message></Response>';
   finally
-    pm.Free;
+    pm.free;
   end;
 end;
 

@@ -6658,7 +6658,7 @@ $.extend($.ui.dialog, {
 	},
 
 	overlay: function(dialog) {
-		this.$el = $.ui.dialog.overlay.create(dialog);
+		this.$el = $.ui.dialog.overlay.Create(dialog);
 	}
 });
 

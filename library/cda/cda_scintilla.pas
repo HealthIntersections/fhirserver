@@ -163,7 +163,7 @@ end;
 
 destructor TCDAStyler.Destroy;
 begin
-  FDoc.Free;
+  FDoc.free;
   inherited;
 end;
 
@@ -200,7 +200,7 @@ begin
 //        iter.next;
       end;
     finally
-      iter.Free;
+      iter.free;
     end;
     if result = nil then
       result := base;
@@ -361,7 +361,7 @@ end;
 
 procedure TCDAStyler.SetDoc(const Value: TCDADocument);
 begin
-  FDoc.Free;
+  FDoc.free;
   FDoc := Value;
 end;
 
@@ -389,7 +389,7 @@ begin
     stInstruction: scanInstruction;
     stPCData: scanPCData;
   else
-    raise ELibraryException.create('Error Message');
+    raise ELibraryException.Create('Error Message');
   end;
 end;
 

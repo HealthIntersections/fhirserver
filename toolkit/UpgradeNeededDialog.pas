@@ -62,7 +62,7 @@ implementation
 procedure TUpgradeNeededForm.FormDestroy(Sender: TObject);
 begin
   Settings.CheckForUpgradesOnStart := CheckBox1.IsChecked;
-  FSettings.Free;
+  FSettings.free;
 end;
 
 procedure TUpgradeNeededForm.FormShow(Sender: TObject);
@@ -77,7 +77,7 @@ end;
 
 procedure TUpgradeNeededForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

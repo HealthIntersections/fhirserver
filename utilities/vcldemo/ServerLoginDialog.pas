@@ -221,7 +221,7 @@ end;
 
 destructor TServerLoginForm.Destroy;
 begin
-  FClient.Free;
+  FClient.free;
   inherited;
 end;
 
@@ -235,11 +235,11 @@ var
   form : TSmartOnFhirLoginForm;
 begin
   if not isAbsoluteUrl(cbxServer.Text) then
-    raise EFHIRException.create('Invalid Server Address');
+    raise EFHIRException.Create('Invalid Server Address');
   if not StringIsInteger16(edtRedirectPort.Text) then
-    raise EFHIRException.create('Invalid Port Number');
+    raise EFHIRException.Create('Invalid Port Number');
   if not IsId(edtPatientId.Text) then
-    raise EFHIRException.create('Invalid Patient Id');
+    raise EFHIRException.Create('Invalid Patient Id');
 
   ini.WriteString('Server', 'URL', cbxServer.Text);
   ini.WriteString('Server', 'ClientId', cbClientId.Text);
@@ -249,9 +249,9 @@ begin
   ini.WriteBool('Server', 'InProcess', chkInProgress.Checked);
   ini.WriteString('Server','AuthScope',cbAuthScope.Text);
 
-  FClient := TFhirClient2.Create(nil, THTTPLanguages.create('en'), TFHIRHTTPCommunicator.create(cbxServer.Text));
+  FClient := TFhirClient2.Create(nil, nil, TFHIRHTTPCommunicator.Create(cbxServer.Text));
   FClient.Logger := TDemoHttpLogger.Create;
-  server := TRegisteredFHIRServer.create;
+  server := TRegisteredFHIRServer.Create;
   try
     server.fhirEndPoint := cbxServer.Text;
     server.format := ffJson;
@@ -282,10 +282,10 @@ begin
           server.tokenEndpoint := t;
         end
         else
-          raise EFHIRException.create('This server does not support Smart on FHIR');
+          raise EFHIRException.Create('This server does not support Smart on FHIR');
         if chkInProgress.Checked and (cbAuthScope.Text <> 'System') then
         begin
-          form := TSmartOnFhirLoginForm.create(self);
+          form := TSmartOnFhirLoginForm.Create(self);
           try
             form.logoPath := path([ExtractFilePath(paramstr(0)), ChangeFileExt(executableDirectory(), '.png')]);
             form.server := server.link;
@@ -308,7 +308,7 @@ begin
         end
         else
         begin
-          login := TSmartAppLaunchLogin.create;
+          login := TSmartAppLaunchLogin.Create;
           try
             login.server := server.Link;
             if cbAuthScope.Text = 'System' then
@@ -334,11 +334,11 @@ begin
               ModalResult := mrOk;
             end;
           finally
-            login.Free;
+            login.free;
           end;
         end;
       finally
-        conf.Free;
+        conf.free;
       end;
     finally
       cursor := crDefault;
@@ -361,7 +361,7 @@ end;
 
 procedure TServerLoginForm.SetClient(const Value: TFhirClient2);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 

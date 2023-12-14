@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_threads,
+  fsl_base, fsl_threads, fsl_logging,
   fhir_common,
   server_constants, server_stats;
 
@@ -81,7 +81,7 @@ constructor TClientCacheManagerEntry.Create;
 begin
   inherited;
   FLastTouched := now;
-  FList := TFslMetadataResourceList.create;
+  FList := TFslMetadataResourceList.Create;
 end;
 
 destructor TClientCacheManagerEntry.Destroy;
@@ -103,7 +103,7 @@ var
   magic : integer;
 begin
   magic := nextMagic;
-  remove := TFslMetadataResourceList.create;
+  remove := TFslMetadataResourceList.Create;
   try
     for i in list do
     begin
@@ -115,6 +115,7 @@ begin
             FSize := 0
           else
             FSize := FSize - c;
+          //Logging.log('Cache '+FCacheId+': remove '+j.vurl);
           remove.Add(j.link);
         end;
     end;
@@ -123,12 +124,13 @@ begin
     begin
       if (i.url <> '') then
       begin
+        //Logging.log('Cache '+FCacheId+': add '+i.vurl);
         FSize := FSize + i.sizeInBytes(magic);
         FList.Add(i.link);
       end;
     end;
   finally
-    remove.Free;
+    remove.free;
   end;
 end;
 
@@ -162,14 +164,14 @@ constructor TClientCacheManager.Create;
 begin
   inherited;
   FLock := TFslLock.Create('ClientCacheManager');
-  FList := TFslList<TClientCacheManagerEntry>.create;
+  FList := TFslList<TClientCacheManagerEntry>.Create;
   FCacheDwellTime := DEFAULT_DWELL_TIME;
 end;
 
 destructor TClientCacheManager.Destroy;
 begin
-  FList.Free;
-  FLock.Free;
+  FList.free;
+  FLock.free;
   inherited;
 end;
 
@@ -185,7 +187,7 @@ var
   i : TClientCacheManagerEntry;
 begin
   n := now;
-  list := TFslList<TClientCacheManagerEntry>.create;
+  list := TFslList<TClientCacheManagerEntry>.Create;
   try
     FLock.Lock('sweep');
     try
@@ -200,7 +202,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -209,7 +211,7 @@ var
   i, f : TClientCacheManagerEntry;
   o : TFHIRMetadataResourceW;
 begin
-  result := TFslMetadataResourceList.create;
+  result := TFslMetadataResourceList.Create;
   try
     FLock.Lock('cache='+cacheId);
     try
@@ -237,7 +239,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

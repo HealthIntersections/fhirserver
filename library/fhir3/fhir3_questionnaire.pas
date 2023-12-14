@@ -49,7 +49,7 @@ Const
 
 
 Type
-  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : string; const lang : THTTPLanguages; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
+  TGetValueSetExpansion = function(vs : TFHIRValueSetW; ref : string; langList : THTTPLanguageList; limit, count, offset : integer; allowIncomplete : Boolean; dependencies : TStringList) : TFhirValueSetW of object;
   TLookupCodeEvent = function(system, version, code : String) : String of object;
   TLookupReferenceEvent = function(Context : TFslObject; uri : String) : TResourceWithReference of object;
 
@@ -85,7 +85,7 @@ Type
     FOnLookupReference : TLookupReferenceEvent;
     FContext : TFslObject;
     FDependencies: TList<String>;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
 
     function nextId(prefix : string) : String;
 
@@ -151,7 +151,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(const lang : THTTPLanguages);
+    constructor Create(langList : THTTPLanguageList);
     destructor Destroy; override;
 
     Property Profiles : TProfileManager read FProfiles write SetProfiles;
@@ -195,11 +195,11 @@ var
   item : TFHIRQuestionnaireItem;
 begin
   if profile = nil then
-    raise EFHIRException.create('FHIR.Version.Questionnaire.build: No Profile provided');
+    raise EFHIRException.Create('FHIR.Version.Questionnaire.build: No Profile provided');
 
   if resource <> nil then
     if profile.snapshot.elementList[0].path <> CODES_TFhirResourceType[resource.ResourceType] then
-      raise EFHIRException.create('Wrong Type');
+      raise EFHIRException.Create('Wrong Type');
 
   if FPrebuiltQuestionnaire <> nil then
     FQuestionnaire := FPrebuiltQuestionnaire.Link
@@ -211,7 +211,7 @@ begin
 
 
   list := TFhirElementDefinitionList.Create;
-  answerGroups := TFhirQuestionnaireResponseItemList.create;
+  answerGroups := TFhirQuestionnaireResponseItemList.Create;
   try
     if resource <> nil then
       answerGroups.AddAll(FAnswers.itemList);
@@ -229,8 +229,8 @@ begin
       for item in FQuestionnaire.itemList do
         buildGroup(item, profile, profile.snapshot.elementList[0], list, answerGroups);
   finally
-    list.Free;
-    answerGroups.Free;
+    list.free;
+    answerGroups.free;
   end;
 
   if FAnswers <> nil then
@@ -258,21 +258,22 @@ begin
           nAnswers.add(ans.link);
         end;
     finally
-      children.Free;
+      children.free;
     end;
   end;
 end;
 
 destructor TQuestionnaireBuilder.Destroy;
 begin
-  FDependencies.Free;
-  vsCache.Free;
-  FResource.Free;
-  FProfile.Free;
-  FQuestionnaire.Free;
-  FAnswers.Free;
-  FProfiles.Free;
-  FPrebuiltQuestionnaire.Free;
+  FLangList.free;
+  FDependencies.free;
+  vsCache.free;
+  FResource.free;
+  FProfile.free;
+  FQuestionnaire.free;
+  FAnswers.free;
+  FProfiles.free;
+  FPrebuiltQuestionnaire.free;
   FContext.free;
   inherited;
 end;
@@ -324,11 +325,11 @@ begin
   else
   begin
     ref := TFhirReference.Create;
-    dependencies := TStringList.create;
+    dependencies := TStringList.Create;
     try
       ref.reference := url;
       try
-        vs := OnExpand(nil, ref.reference, FLang, MaxListboxCodings, 0, 0, false, dependencies);
+        vs := OnExpand(nil, ref.reference, FLangList, MaxListboxCodings, 0, 0, false, dependencies);
         try
         for s in dependencies do
           if not FDependencies.Contains(s) then
@@ -345,7 +346,7 @@ begin
             result.url := ref.reference;
             result.link;
           finally
-            result.Free;
+            result.free;
           end;
         end;
         on e : Exception do
@@ -355,8 +356,8 @@ begin
         end;
       end;
     finally
-      dependencies.Free;
-      ref.Free;
+      dependencies.free;
+      ref.free;
     end;
   end;
 end;
@@ -376,7 +377,7 @@ begin
   if (binding = nil) or not (binding.Valueset is TFhirReference) then
     exit;
 
-  dependencies := TStringList.create;
+  dependencies := TStringList.Create;
   try
     ref := binding.valueset as TFhirReference;
     if ref.reference.StartsWith('#') then
@@ -385,17 +386,17 @@ begin
       try
         v := FFactory.wrapValueSet(vs.Link);
         try
-          vsw := OnExpand(v, '', FLang, MaxListboxCodings, 0, 0, false, dependencies);
+          vsw := OnExpand(v, '', FLangList, MaxListboxCodings, 0, 0, false, dependencies);
           try
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
             result := vsw.Resource.link as TFhirValueSet;
           finally
-            vsw.Free;
+            vsw.free;
           end;
         finally
-          v.Free;
+          v.free;
         end;
       except
         on e: ETooCostly do
@@ -405,7 +406,7 @@ begin
             result.url := ref.reference;
             result.link;
           finally
-            result.Free;
+            result.free;
           end;
         end;
         on e : Exception do
@@ -420,14 +421,14 @@ begin
       result := FQuestionnaire.contained[vsCache.GetValueByKey(ref.reference)].link as TFhirValueSet
     else
       try
-        vsw := OnExpand(nil, ref.reference, FLang, MaxListboxCodings, 0, 0,false, dependencies);
+        vsw := OnExpand(nil, ref.reference, FLangList, MaxListboxCodings, 0, 0,false, dependencies);
         try
         for s in dependencies do
           if not FDependencies.Contains(s) then
             FDependencies.Add(s);
           result := vsw.Resource.link as TFhirValueSet;
         finally
-          vsw.Free;
+          vsw.free;
         end;
       except
         on e: ETooCostly do
@@ -437,7 +438,7 @@ begin
             result.url := ref.reference;
             result.link;
           finally
-            result.Free;
+            result.free;
           end;
         end;
         on e : Exception do
@@ -447,43 +448,43 @@ begin
         end;
       end;
   finally
-    dependencies.Free;
+    dependencies.free;
   end;
 end;
 
 procedure TQuestionnaireBuilder.SetAnswers(const Value: TFhirQuestionnaireResponse);
 begin
-  FAnswers.Free;
+  FAnswers.free;
   FAnswers := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetContext(const Value: TFslObject);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetPrebuiltQuestionnaire(const Value: TFhirQuestionnaire);
 begin
-  FPrebuiltQuestionnaire.Free;
+  FPrebuiltQuestionnaire.free;
   FPrebuiltQuestionnaire := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetProfile(const Value: TFHirStructureDefinition);
 begin
-  FProfile.Free;
+  FProfile.free;
   FProfile := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetProfiles(const Value: TProfileManager);
 begin
-  FProfiles.Free;
+  FProfiles.free;
   FProfiles := Value;
 end;
 
 procedure TQuestionnaireBuilder.SetResource(const Value: TFhirDomainResource);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := Value;
 end;
 
@@ -493,15 +494,15 @@ var
   gen : TNarrativeGenerator;
 begin
   if Profile = nil then
-    raise EFHIRException.create('A Profile is required');
+    raise EFHIRException.Create('A Profile is required');
 
   if Answers = nil then
-    raise EFHIRException.create('A set of answers is required');
+    raise EFHIRException.Create('A set of answers is required');
 
 
   Resource := FFactory.makeByName(profile.snapshot.elementList[0].path) as TFhirDomainResource;
 
-  defn := TProfileDefinition.create(profiles.Link, profile.link);
+  defn := TProfileDefinition.Create(profiles.Link, profile.link);
   try
     processAnswerGroup(Answers.itemList[0], resource, defn);
   finally
@@ -512,7 +513,7 @@ begin
   try
     gen.generate(Resource, profile);
   finally
-    gen.Free;
+    gen.free;
   end;
 end;
 
@@ -532,7 +533,7 @@ begin
   else if ((s = 'dateTime') and (t = 'date')) then
     result := TFhirDate.Create(TFhirDateTime(v).value)
   else
-    raise EFHIRException.create('Unable to convert from '+s+' to '+t+' at path = '+path);
+    raise EFHIRException.Create('Unable to convert from '+s+' to '+t+' at path = '+path);
 end;
 
 function isPrimitive(t : TFhirElementDefinitionType) : Boolean; overload;
@@ -582,7 +583,7 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -630,9 +631,9 @@ begin
           if (isPrimitive(t)) then
           begin
             if (g.itemList.Count <> 1) then
-              raise EFHIRException.create('Unexpected Condition: a group for a primitive type with more than one question @ '+g.linkId);
+              raise EFHIRException.Create('Unexpected Condition: a group for a primitive type with more than one question @ '+g.linkId);
             if (g.itemList.Count > 0) then
-              raise EFHIRException.create('Unexpected Condition: a group for a primitive type with groups @ '+g.linkId);
+              raise EFHIRException.Create('Unexpected Condition: a group for a primitive type with groups @ '+g.linkId);
             q := g.itemList[0];
             for a in q.answerList do
             begin
@@ -642,7 +643,7 @@ begin
                 result := true;
               end
               else
-                raise EFHIRException.create('Empty answer for '+g.linkId);
+                raise EFHIRException.Create('Empty answer for '+g.linkId);
             end;
           end
           else
@@ -658,12 +659,12 @@ begin
                 result := true;
               end;
             finally
-              o.Free;
+              o.free;
             end;
           end;
         end;
       finally
-        t.Free;
+        t.free;
       end;
     finally
       d.free;
@@ -675,7 +676,7 @@ begin
     d := defn.getById(q.linkId);
     try
       if d.hasTypeChoice then
-        raise ETodo.create('- shouldn''t get here??');
+        raise ETodo.Create('- shouldn''t get here??');
       for a in q.answerList do
       begin
         context.setProperty(d.name, convertType(a.value, d.statedType.code, q.linkId));
@@ -731,15 +732,15 @@ begin
             else
               buildQuestion(childGroup, profile, child, child.path, nAnswers);
           finally
-            nAnswers.Free;
+            nAnswers.free;
           end;
         finally
-          nparents.Free;
+          nparents.free;
         end;
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -756,7 +757,7 @@ begin
 
       if (e.contentReference <> '') and path.startsWith(p) then
       begin
-        result.Free;
+        result.free;
         if (path.length > p.length) then
           result := getChildList(profile, e.contentReference+'.'+path.substring(p.length+1))
         else
@@ -771,7 +772,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -801,11 +802,11 @@ begin
                 if result = '' then
                   result := cc.system
                  else
-                  raise EFHIRException.create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
+                  raise EFHIRException.Create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
           end;
         end;
     end;
-    raise EFHIRException.create('Logic error'+' at path = '+path);
+    raise EFHIRException.Create('Logic error'+' at path = '+path);
   end;
   result := '';
   for cc in vs.expansion.containsList Do
@@ -814,10 +815,10 @@ begin
       if result = '' then
         result := cc.system
       else
-        raise EFHIRException.create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
+        raise EFHIRException.Create('Multiple matches in '+vs.url+' for code '+code+' at path = '+path);
   end;
   if result = '' then
-    raise EFHIRException.create('Unable to resolve code '+code+' at path = '+path);
+    raise EFHIRException.Create('Unable to resolve code '+code+' at path = '+path);
 end;
 
 function TQuestionnaireBuilder.isExempt(element, child: TFhirElementDefinition) : boolean;
@@ -848,7 +849,7 @@ function TQuestionnaireBuilder.expandTypeList(types: TFhirElementDefinitionTypeL
 var
   t : TFhirElementDefinitionType;
 begin
-  result := TFhirElementDefinitionTypeList.create;
+  result := TFhirElementDefinitionTypeList.Create;
   try
     for t in types do
     begin
@@ -896,7 +897,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -912,11 +913,11 @@ begin
       result.name := 'All codes known to the system';
       result.description := 'All codes known to the system';
       result.status := PublicationStatusActive;
-      result.compose := TFhirValueSetCompose.create;
+      result.compose := TFhirValueSetCompose.Create;
       result.compose.includeList.Append.system := ANY_CODE_VS;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 
@@ -961,7 +962,7 @@ begin
     end;
     result := vs.Link;
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -996,7 +997,7 @@ begin
   else if t.code = 'Quantity' then
     result := obj is TFHIRQuantity
   else
-    raise EFHIRTodo.create('TQuestionnaireBuilder.instanceOf');
+    raise EFHIRTodo.Create('TQuestionnaireBuilder.instanceOf');
 end;
 
 procedure TQuestionnaireBuilder.selectTypes(profile : TFHirStructureDefinition; sub : TFHIRQuestionnaireItem; t : TFhirElementDefinitionType; source, dest : TFhirQuestionnaireResponseItemList);
@@ -1049,7 +1050,7 @@ begin
 
     end;
   finally
-    temp.Free;
+    temp.free;
   end;
 end;
 
@@ -1094,7 +1095,7 @@ begin
         sub.Text := t.tags['type'];
         // always optional, never repeats
 
-        selected := TFhirQuestionnaireResponseItemList.create;
+        selected := TFhirQuestionnaireResponseItemList.Create;
         try
           selectTypes(profile, sub, t, answerGroups, selected);
           processDataType(profile, sub, element, element.Path+'._'+t.tags['type'], t, group.required, selected);
@@ -1168,7 +1169,7 @@ begin
   else if (t.code = 'Extension') then
     addExtensionQuestions(profile, group, element, path, required, t.profile, answerGroups)
   else if (t.Code <> 'Meta') and (t.Code <> 'Narrative') and (t.Code <> 'Resource') then
-    raise EFHIRException.create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
+    raise EFHIRException.Create('Unhandled Data Type: '+t.Code+' on element '+element.Path);
 end;
 
 function isPrimitive(obj : TFslObject) : boolean; overload;
@@ -1204,13 +1205,13 @@ begin
         result := value.link as TFhirType
       else if value is TFHIREnum then
       begin
-        result := TFhirCoding.create;
+        result := TFhirCoding.Create;
         TFhirCoding(result).code := TFHIREnum(value).value;
         TFhirCoding(result).system := getSystemForCode(vs, TFHIREnum(value).value, path);
       end
       else if value is TFHIRString then
       begin
-        result := TFhirCoding.create;
+        result := TFhirCoding.Create;
         TFhirCoding(result).code := TFHIRString(value).value;
         TFhirCoding(result).system := getSystemForCode(vs, TFHIRString(value).value, path);
       end;
@@ -1226,17 +1227,17 @@ begin
   end;
 
   if (result = nil) then
-    raise EFHIRException.create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRitemTypeEnum[af]+', path = '+path);
+    raise EFHIRException.Create('Unable to convert from "'+value.className+'" for Answer Format '+CODES_TFHIRitemTypeEnum[af]+', path = '+path);
 end;
 
 
 
-constructor TQuestionnaireBuilder.create(const lang : THTTPLanguages);
+constructor TQuestionnaireBuilder.Create(langList : THTTPLanguageList);
 begin
-  inherited create;
-  vsCache := TFslStringMatch.create;
-  FDependencies := TList<String>.create;
-  FLang := lang;
+  inherited Create;
+  vsCache := TFslStringMatch.Create;
+  FDependencies := TList<String>.Create;
+  FLangList := langList;
 end;
 
 function TQuestionnaireBuilder.addQuestion(group : TFHIRQuestionnaireItem; af : TFhirItemTypeEnum; path, id, name : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList; vs : TFHIRValueSet) : TFHIRQuestionnaireItem;
@@ -1273,7 +1274,7 @@ begin
             questionnaire.containedList.Add(vse.Link);
             result.options.reference := '#'+vse.xmlId;
           finally
-            vse.Free;
+            vse.free;
           end;
         end
         else
@@ -1301,7 +1302,7 @@ begin
           if isPrimitive(ag.Tag) then
             children.add(ag.Tag.Link as TFHIRObject)
           else if ag.Tag is TFHIREnum then
-            children.add(TFHIRString.create(TFHIREnum(ag.Tag).value))
+            children.add(TFHIRString.Create(TFHIREnum(ag.Tag).value))
           else
             TFHIRObject(ag.Tag).ListChildrenByName(id, children);
 
@@ -1317,12 +1318,12 @@ begin
               aq.answerList.append.value := convertType(child.value, af, vs, result.linkId);
             end;
         finally
-          children.Free;
+          children.free;
         end;
       end;
     end;
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -1558,7 +1559,7 @@ end;
 procedure TQuestionnaireBuilder.addAttachmentQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Attachment');
-//  raise EFHIRException.create('addAttachmentQuestions not Done Yet');
+//  raise EFHIRException.Create('addAttachmentQuestions not Done Yet');
 end;
 
 procedure TQuestionnaireBuilder.addRangeQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1577,7 +1578,7 @@ end;
 procedure TQuestionnaireBuilder.addScheduleQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
   group.setExtensionString(TYPE_EXTENSION, 'Schedule');
-//  raise EFHIRException.create('addScheduleQuestions not Done Yet');
+//  raise EFHIRException.Create('addScheduleQuestions not Done Yet');
 end;
 
 // Special Types ---------------------------------------------------------------
@@ -1606,7 +1607,7 @@ end;
 
 procedure TQuestionnaireBuilder.addIdRefQuestions(group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; answerGroups : TFhirQuestionnaireResponseItemList);
 begin
-//  raise EFHIRTodo.create();
+//  raise EFHIRTodo.Create();
 end;
 
 procedure TQuestionnaireBuilder.addExtensionQuestions(profile : TFHirStructureDefinition; group : TFHIRQuestionnaireItem; element : TFhirElementDefinition; path : String; required : boolean; profileURL : String; answerGroups : TFhirQuestionnaireResponseItemList);
@@ -1617,11 +1618,11 @@ begin
   if (profileURL <> '') and profiles.getExtensionDefn(profile, profileURL, profile, extension) then
   begin
     if answerGroups.count > 0 then
-      raise EFHIRException.create('Debug this');
+      raise EFHIRException.Create('Debug this');
     if extension.snapshot.elementList.Count = 1 then
       buildQuestion(group, profile, extension.snapshot.elementList[0], path+'.extension['+profileURL+']', answerGroups)
     else
-      raise EFHIRTodo.create('TQuestionnaireBuilder.addExtensionQuestions');
+      raise EFHIRTodo.Create('TQuestionnaireBuilder.addExtensionQuestions');
   end;
 end;
 
@@ -1639,7 +1640,7 @@ begin
   inc(result, FPrebuiltQuestionnaire.sizeInBytes(magic));
   inc(result, FContext.sizeInBytes(magic));
 //  inc(result, FDependencies.sizeInBytes(magic));
-  inc(result, FLang.sizeInBytes(magic));
+  inc(result, FLangList.sizeInBytes(magic));
 end;
 
 end.

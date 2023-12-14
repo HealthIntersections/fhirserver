@@ -87,18 +87,18 @@ constructor TFHIRServerWorkerContextR2.Create(factory : TFHIRFactory; pc : TFHIR
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r2');
-  FProfile := TFhirExpansionParams.create;
+  FProfile := TFhirExpansionParams.Create;
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('questionnaires');
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('questionnaires');
 end;
 
 destructor TFHIRServerWorkerContextR2.Destroy;
 begin
-  FQuestionnaires.Free;
-  FProfile.Free;
-  FTerminologyServer.Free;
-  FLock.Free;
+  FQuestionnaires.free;
+  FProfile.free;
+  FTerminologyServer.free;
+  FLock.free;
   inherited;
 end;
 
@@ -168,10 +168,10 @@ begin
           result.free;
         end;
       finally
-        p.Free;
+        p.free;
       end;
     finally
-      c.Free;
+      c.free;
     end;
   finally
     vsw.free;
@@ -180,7 +180,7 @@ end;
 
 procedure TFHIRServerWorkerContextR2.SetTerminologyServer(const Value: TTerminologyServer);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
 end;
 
@@ -244,10 +244,10 @@ begin
     try
       result := res.Resource as TFhirValueSet;
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 
@@ -264,7 +264,7 @@ begin
   try
     result := TValidationResult.Create;
     try
-      if FTerminologyServer.checkCode(op, lang, '', code, system, version, display) then
+      if FTerminologyServer.checkCode(op, langList, '', code, system, version, display) then
         result.Severity := isNull
       else if op.issueCount = 1 then
       begin
@@ -274,14 +274,14 @@ begin
       else
       begin
         result.Severity := isError;
-        result.Message := '??';
+        result.Message := '??val2';
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    op.Free;
+    op.free;
   end;
 end;
 
@@ -307,17 +307,17 @@ begin
           else
             result.Severity := isError;
         finally
-          p.Free;
+          p.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 
@@ -343,17 +343,17 @@ begin
           else
             result.Severity := isError;
         finally
-          p.Free;
+          p.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 

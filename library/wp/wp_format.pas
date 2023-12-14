@@ -225,11 +225,11 @@ End;
 
 Destructor TWPReader.Destroy;
 Begin
-  FDicomDictionary.Free;
-  FSplitter.Free;
-  FStyles.Free;
-  FFont.Free;
-  FStream.Free;
+  FDicomDictionary.free;
+  FSplitter.free;
+  FStyles.free;
+  FFont.free;
+  FStream.free;
 
   Inherited;
 End;
@@ -256,7 +256,7 @@ Begin
 
       oDocument.Pieces.Add(oPara.Link);
     Finally
-      oPara.Free;
+      oPara.free;
     End;
   End;
 End;
@@ -288,7 +288,7 @@ Begin
 
     oImage.Image := oImg.Link;
   Finally
-    oImg.Free;
+    oImg.free;
   End;
 End;
 
@@ -300,12 +300,12 @@ Var
 Begin
   if (aFormat = ifPDF) or ((aFormat = ifUnknown) and SameText(ExtractFileExt(oImage.Name), '.pdf')) then
   begin
-    oAttach := TWPWorkingAttachment.create;
+    oAttach := TWPWorkingAttachment.Create;
     Try
       oAttach.LoadFromBuffer(oBuffer);
 //      oImage.Image := TWPPDFGraphic.Create(oAttach.Link);
     Finally
-      oAttach.Free;
+      oAttach.free;
     End;
   end
   else
@@ -322,7 +322,7 @@ Begin
       Else
         oImage.Image := oLoader.Load;
     Finally
-      oLoader.Free;
+      oLoader.free;
     End;
   end;
 End;
@@ -338,7 +338,7 @@ End;
 
 Procedure TWPReader.SetStyles(Const Value: TWPStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := Value;
 End;
 
@@ -365,13 +365,13 @@ End;
 
 procedure TWPReader.SetDicomDictionary(const Value: TDicomDictionary);
 begin
-  FDicomDictionary.Free;
+  FDicomDictionary.free;
   FDicomDictionary := Value;
 end;
 
 Procedure TWPReader.SetFont(Const Value: TWPSFontDetails);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := Value;
 End;
 
@@ -412,8 +412,8 @@ Begin
 
     oWPDocumentTranslator.TranslateToDocument;
   Finally
-    oWPDocumentTranslator.Free;
-    oWorkingDocument.Free;
+    oWPDocumentTranslator.free;
+    oWorkingDocument.free;
   End;
 End;
 
@@ -428,7 +428,7 @@ End;
 
 Procedure TWPReader.SetStream(Const Value: TFslStream);
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Value;
 End;
 
@@ -458,9 +458,9 @@ End;
 
 Destructor TWPWriter.Destroy;
 Begin
-  FStyles.Free;
-  FStream.Free;
-  FImageContext.Free;
+  FStyles.free;
+  FStream.free;
+  FImageContext.free;
 
   Inherited;
 End;
@@ -491,7 +491,7 @@ Begin
 
     IterateDocument(oIterator, oDocument);
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 
   Finalise;
@@ -848,10 +848,10 @@ Begin
 
       Write(oWorking);
     Finally
-      oTranslator.Free;
+      oTranslator.free;
     End;
   Finally
-    oWorking.Free;
+    oWorking.free;
   End;
 End;
 
@@ -867,7 +867,7 @@ Procedure TWPWriter.SetStyles(Const Value : TWPStyles);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetStyles', Value, TWPStyles, 'Value'));
 
-  FStyles.Free;
+  FStyles.free;
   FStyles := Value;
 End;
 
@@ -882,7 +882,7 @@ End;
 
 procedure TWPWriter.SetImageContext(const Value: TFslObject);
 begin
-  FImageContext.Free;
+  FImageContext.free;
   FImageContext := Value;
 end;
 
@@ -890,7 +890,7 @@ Procedure TWPWriter.SetStream(Const Value : TFslStream);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetStream', Value, TFslStream, 'Value'));
 
-  FStream.Free;
+  FStream.free;
   FStream := Value;
 End;
 

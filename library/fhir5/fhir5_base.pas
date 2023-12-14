@@ -97,11 +97,11 @@ function TFHIRObject5.asJson: String;
 var
   j : TFHIRJsonComposer;
 begin
-  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
   try
     result := j.Compose(fhirType, self);
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -136,11 +136,11 @@ function TFHIRResource5.asJson: String;
 var
   j : TFHIRJsonComposer;
 begin
-  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, deflang);
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
   try
     result := j.Compose(self);
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -174,7 +174,7 @@ end;
 constructor TFHIRTuple5.Create;
 begin
   inherited;
-  FProperties := TFslMap<TFHIRSelectionList>.create('tuple');
+  FProperties := TFslMap<TFHIRSelectionList>.Create('tuple');
 end;
 
 destructor TFHIRTuple5.Destroy;

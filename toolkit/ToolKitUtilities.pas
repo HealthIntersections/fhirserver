@@ -145,7 +145,7 @@ begin
       except
       end;
     Finally
-      ssl.Free;
+      ssl.free;
     End;
   finally
     http.free;
@@ -175,7 +175,7 @@ begin
       inc := inc.substring(0, inc.indexof('</td>'));
       result := inc;
     Finally
-      ssl.Free;
+      ssl.free;
     End;
   finally
     http.free;
@@ -439,7 +439,7 @@ begin
       e.value := value;
       src.extensionList.Add(e.Link);
     finally
-      e.Free;
+      e.free;
     end;
   end;
 end;
@@ -464,7 +464,7 @@ begin
       e.value := clss.Create(value);
       src.extensionList.Add(e.Link);
     finally
-      e.Free;
+      e.free;
     end;
   end;
 end;
@@ -489,7 +489,7 @@ begin
       e.value := clss.Create(value);
       src.extensionList.Add(e.Link);
     finally
-      e.Free;
+      e.free;
     end;
   end;
 end;
@@ -498,7 +498,7 @@ end;
 
 constructor TCodeableConceptLookup.Create(edit: TEdit; list: TListBox; labl : TLabel; txServer : TFHIRClient);
 begin
-  inherited create;
+  inherited Create;
   FEdit := edit;
   FList := list;
   FLabel := labl;
@@ -511,8 +511,8 @@ end;
 
 destructor TCodeableConceptLookup.Destroy;
 begin
-  FServer.Free;
-  FExpansion.Free;
+  FServer.free;
+  FExpansion.free;
   inherited;
 end;
 
@@ -528,7 +528,7 @@ begin
 
   if FExpansion <> nil then
   begin
-    FExpansion.Free;
+    FExpansion.free;
     FExpansion := nil;
   end;
 
@@ -544,7 +544,7 @@ begin
         for ec in FExpansion.expansion.containsList do
           FList.Items.Add(ec.display);
       finally
-        params.Free;
+        params.free;
       end;
     end;
   except
@@ -661,7 +661,7 @@ end;
 
 constructor TBackgroundContextLoadingInformation.Create(packageMgr: TFHIRPackageManager; package, version: string; context : TToolkitWorkerContext);
 begin
-  inherited create;
+  inherited Create;
   FPackageManager := packageMgr;
   FPackage := package;
   Fversion := version;
@@ -670,8 +670,8 @@ end;
 
 destructor TBackgroundContextLoadingInformation.Destroy;
 begin
-  FPackageManager.Free;
-  FContext.Free;
+  FPackageManager.free;
+  FContext.free;
   inherited;
 end;
 
@@ -684,7 +684,7 @@ end;
 
 destructor TBackgroundContextLoader.Destroy;
 begin
-  FLoadInfo.Free;
+  FLoadInfo.free;
   inherited;
 end;
 
@@ -695,7 +695,7 @@ end;
 
 procedure TBackgroundContextLoader.execute;
 begin
-  response := TFslList<TFHIRStructureDefinition>.create;
+  response := TFslList<TFHIRStructureDefinition>.Create;
   if FLoadInfo = nil then
   begin
     FLoadInfo := TPackageLoadingInformation.Create(details.version);
@@ -714,7 +714,7 @@ begin
     p.Parse;
     collection.Add((p.resource as TFHIRStructureDefinition).Link);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 

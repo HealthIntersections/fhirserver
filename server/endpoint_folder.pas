@@ -91,7 +91,7 @@ implementation
 
 constructor TFolderWebEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; i18n : TI18nSupport);
 begin
-  inherited create(config, settings, nil, nil, nil, i18n);
+  inherited Create(config, settings, nil, nil, nil, i18n);
 end;
 
 destructor TFolderWebEndPoint.Destroy;
@@ -165,7 +165,7 @@ end;
 
 destructor TFolderWebServer.Destroy;
 begin
-  FLog.Free;
+  FLog.free;
   inherited;
 end;
 

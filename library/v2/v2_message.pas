@@ -309,41 +309,41 @@ implementation
 
 destructor TV2Location.Destroy;
 begin
-  FComponent.Free;
-  FElement.Free;
-  FField.Free;
-  FSegment.Free;
-  FSubComponent.Free;
+  FComponent.free;
+  FElement.free;
+  FField.free;
+  FSegment.free;
+  FSubComponent.free;
   inherited Destroy;
 end;
 
 procedure TV2Location.SetComponent(AValue: TV2Cell);
 begin
-  FComponent.Free;
+  FComponent.free;
   FComponent := AValue;
 end;
 
 procedure TV2Location.SetElement(AValue: TV2Cell);
 begin
-  FElement.Free;
+  FElement.free;
   FElement := AValue;
 end;
 
 procedure TV2Location.SetField(AValue: TV2Field);
 begin
-  FField.Free;
+  FField.free;
   FField := AValue;
 end;
 
 procedure TV2Location.SetSegment(AValue: TV2Segment);
 begin
-  FSegment.Free;
+  FSegment.free;
   FSegment := AValue;
 end;
 
 procedure TV2Location.SetSubComponent(AValue: TV2Cell);
 begin
-  FSubComponent.Free;
+  FSubComponent.free;
   FSubComponent := AValue;
 end;
 
@@ -369,7 +369,7 @@ begin
   inherited;
   if (name = 'id') Then
     if id <> '' then
-      list.add(self.link, 'id', TFHIRObjectText.create(id))
+      list.add(self.link, 'id', TFHIRObjectText.Create(id))
     else
       list.add(self.link, 'id', nil)
 end;
@@ -393,7 +393,7 @@ procedure TV2Object.ListProperties(oList: TFHIRPropertyList; bInheritedPropertie
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFHIRObjectText, TFHIRObjectText.Create(FId)));
+  oList.add(TFHIRProperty.Create(self, 'id', 'id', false, TFHIRObjectText, TFHIRObjectText.Create(FId)));
 end;
 
 function TV2Object.makeCodeValue(v: String): TFHIRObject;
@@ -453,7 +453,7 @@ begin
      list.add(self.link, 'kind', TFHIRObjectText.Create(CODES_TV2ContentKind[kind]));
   if (name = 'value') Then
     if id <> '' then
-      list.add(self.link, 'value', TFHIRObjectText.create(value))
+      list.add(self.link, 'value', TFHIRObjectText.Create(value))
     else
       list.add(self.link, 'value', nil)
 end;
@@ -472,8 +472,8 @@ procedure TV2Content.ListProperties(oList: TFHIRPropertyList; bInheritedProperti
 begin
   if bInheritedProperties then
     inherited;
-  oList.add(TFHIRProperty.create(self, 'value', 'string', false, TFHIRObjectText, TFHIRObjectText.Create(FValue)));
-  oList.add(TFHIRProperty.create(self, 'kind', 'code', false, TFHIRObjectText, TFHIRObjectText.Create(CODES_TV2ContentKind[FKind])));
+  oList.add(TFHIRProperty.Create(self, 'value', 'string', false, TFHIRObjectText, TFHIRObjectText.Create(FValue)));
+  oList.add(TFHIRProperty.Create(self, 'kind', 'code', false, TFHIRObjectText, TFHIRObjectText.Create(CODES_TV2ContentKind[FKind])));
 end;
 
 function TV2Content.sizeInBytesV(magic : integer) : cardinal;
@@ -487,13 +487,13 @@ end;
 constructor TV2Cell.Create;
 begin
   inherited;
-  FContentList := TFSLList<TV2Content>.create;
-  FComponentList := TFSLList<TV2Cell>.create;
+  FContentList := TFSLList<TV2Content>.Create;
+  FComponentList := TFSLList<TV2Cell>.Create;
 end;
 
 destructor TV2Cell.Destroy;
 begin
-  FComponentList.Free;
+  FComponentList.free;
   FContentList.free;
   inherited;
 end;
@@ -580,10 +580,10 @@ var
 begin
   if bInheritedProperties then
     inherited;
-  p := TFHIRProperty.create(self, 'content', 'Content', true, TV2Content);
+  p := TFHIRProperty.Create(self, 'content', 'Content', true, TV2Content);
   for v in FContentList do
     p.Values.add(v.link);
-  p := TFHIRProperty.create(self, 'component', 'Cell', true, TV2Cell);
+  p := TFHIRProperty.Create(self, 'component', 'Cell', true, TV2Cell);
   for v in FComponentList do
     p.Values.add(v.link);
 end;
@@ -611,12 +611,12 @@ end;
 constructor TV2Field.Create;
 begin
   inherited;
-  FElementList := TFSLList<TV2Cell>.create;
+  FElementList := TFSLList<TV2Cell>.Create;
 end;
 
 destructor TV2Field.Destroy;
 begin
-  FElementList.Free;
+  FElementList.free;
   inherited;
 end;
 
@@ -665,7 +665,7 @@ var
 begin
   if bInheritedProperties then
     inherited;
-  p := TFHIRProperty.create(self, 'element', 'Cell', true, TV2Cell);
+  p := TFHIRProperty.Create(self, 'element', 'Cell', true, TV2Cell);
   for v in FElementList do
     p.Values.add(v.link);
 end;
@@ -681,7 +681,7 @@ end;
 constructor TV2Segment.Create;
 begin
   inherited;
-  FFieldList := TFSLList<TV2Field>.create;
+  FFieldList := TFSLList<TV2Field>.Create;
 end;
 
 constructor TV2Segment.Create(code: String);
@@ -692,7 +692,7 @@ end;
 
 destructor TV2Segment.Destroy;
 begin
-  FFieldList.Free;
+  FFieldList.free;
   inherited;
 end;
 
@@ -718,7 +718,7 @@ var
 begin
   inherited;
   if (name = 'code') Then
-    list.add(self.link, 'code', TFHIRObjectText.create(code));
+    list.add(self.link, 'code', TFHIRObjectText.Create(code));
   if (name = 'field') Then
   begin
     list.OneBased :=  true;
@@ -749,7 +749,7 @@ var
 begin
   if bInheritedProperties then
     inherited;
-  p := TFHIRProperty.create(self, 'field', 'Field', true, TV2Field);
+  p := TFHIRProperty.Create(self, 'field', 'Field', true, TV2Field);
   for v in FFieldList do
     p.Values.add(v.link);
 end;
@@ -766,12 +766,12 @@ end;
 constructor TV2Message.Create;
 begin
   inherited;
-  FSegmentList := TFSLList<TV2Segment>.create;
+  FSegmentList := TFSLList<TV2Segment>.Create;
 end;
 
 destructor TV2Message.Destroy;
 begin
-  FSegmentList.Free;
+  FSegmentList.free;
   inherited;
 end;
 
@@ -786,7 +786,7 @@ var
   field : TV2Field;
   cell : TV2Cell;
 begin
-  result := TV2Location.create;
+  result := TV2Location.Create;
   try
     for seg in FSegmentList do
     begin
@@ -882,7 +882,7 @@ var
 begin
   if bInheritedProperties then
     inherited;
-  p := TFHIRProperty.create(self, 'segment', 'Segment', true, TV2Segment);
+  p := TFHIRProperty.Create(self, 'segment', 'Segment', true, TV2Segment);
   for v in FSegmentList do
     p.Values.add(v.link);
 end;
@@ -928,7 +928,7 @@ begin
       this.decodeMessage(result, options);
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     this.free;
@@ -953,7 +953,7 @@ begin
   try
     result := parse(StreamToBytes(s));
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -983,9 +983,9 @@ begin
   // basics: this checks that the MSH appears to be valid, records the delimiters,
   // and checks the version
   if Not SameBytes(copy(FSource, 0, 3), 'MSH') then
-    raise EER7Exception.create('Packet "' + BytesAsMime(copy(FSource, 0, 12)) + '"does not appear to be valid HL7/ER7: starting MSH not found');
+    raise EER7Exception.Create('Packet "' + BytesAsMime(copy(FSource, 0, 12)) + '"does not appear to be valid HL7/ER7: starting MSH not found');
   if not BytesContains(FSource, Tbyte(13)) then
-    raise EER7Exception.create('Packet does not appear to be valid HL7/ER7: Segment Delimiter not found');
+    raise EER7Exception.Create('Packet does not appear to be valid HL7/ER7: Segment Delimiter not found');
 
   FFieldDelimiter := Char(FSource[3]);
   StringSplit(BytesAsString(FSource), FFieldDelimiter, sLeft, sRight);
@@ -1000,25 +1000,25 @@ begin
     FSubComponentDelimiter := DEFAULT_DELIMITER_SUBCOMPONENT;
 
   if FComponentDelimiter = FFieldDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FComponentDelimiter+'" is used for both Component and Field');
+    raise EER7Exception.Create('Delimiter Error: "'+FComponentDelimiter+'" is used for both Component and Field');
   if FSubComponentDelimiter = FFieldDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FSubComponentDelimiter+'" is used for both SubComponent and Field');
+    raise EER7Exception.Create('Delimiter Error: "'+FSubComponentDelimiter+'" is used for both SubComponent and Field');
   if FSubComponentDelimiter = FComponentDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FSubComponentDelimiter+'" is used for both SubComponent and Component');
+    raise EER7Exception.Create('Delimiter Error: "'+FSubComponentDelimiter+'" is used for both SubComponent and Component');
   if FRepetitionDelimiter = FFieldDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and Field');
+    raise EER7Exception.Create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and Field');
   if FRepetitionDelimiter = FComponentDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and Component');
+    raise EER7Exception.Create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and Component');
   if FRepetitionDelimiter = FSubComponentDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and SubComponent');
+    raise EER7Exception.Create('Delimiter Error: "'+FRepetitionDelimiter+'" is used for both Repetition and SubComponent');
   if FEscapeCharacter = FFieldDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Field');
+    raise EER7Exception.Create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Field');
   if FEscapeCharacter = FComponentDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Component');
+    raise EER7Exception.Create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Component');
   if FEscapeCharacter = FSubComponentDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and SubComponent');
+    raise EER7Exception.Create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and SubComponent');
   if FEscapeCharacter = FRepetitionDelimiter then
-    raise EER7Exception.create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Repetition');
+    raise EER7Exception.Create('Delimiter Error: "'+FEscapeCharacter+'" is used for both Escape and Repetition');
 end;
 
 procedure TV2Parser.DecodeMessage(msg : TV2Message; options: TV2ParserOptions);
@@ -1054,7 +1054,7 @@ begin
   loc := TSourceLocation.Create(FLine, 0);
   iStart :=  iCursor;
   if (iCursor + 3 > length(FSource)) then //we are either missing a #13 or have an invalid segment code
-    raise EER7Exception.create('Remaining length in message too short for a valid segment.' + #13 +
+    raise EER7Exception.Create('Remaining length in message too short for a valid segment.' + #13 +
                          'Remainder of packet: ' + StringReplace(copy(BytesAsString(FSource), iCursor, length(FSource)), #13, '<CR>'));
 
   //recognise segment
@@ -1062,7 +1062,7 @@ begin
   inc(iCursor, 3);
 
   if not (CharInSet(sSegCode[1], ['A'..'Z']) and CharInSet(sSegCode[2], ['A'..'Z', '0'..'9']) and CharInSet(sSegCode[3], ['A'..'Z', '0'..'9'])) then
-    raise EER7Exception.create('Segment code too short or contains invalid content: ' + String(sSegCode));
+    raise EER7Exception.Create('Segment code too short or contains invalid content: ' + String(sSegCode));
 
   if not StringArrayExists(['MSH', 'FHS', 'BHS'], String(sSegCode)) and (FSource[iCursor] <> 13) then
       inc(iCursor); // special case: field is it's own delimiter for first MSH field
@@ -1077,7 +1077,7 @@ begin
     if v2LocationData in FOptions then
       oSegment.LocationData.parseFinish := TSourceLocation.Create(FLine, iCursor - iStart);
   finally
-    oSegment.Free;
+    oSegment.free;
   end;
   inc(FLine);
 end;
@@ -1089,7 +1089,7 @@ var
 begin
   while FSource[iCursor] <> 13 do
   begin
-    oField := TV2Field.create;
+    oField := TV2Field.Create;
     try
       if v2LocationData in FOptions then
         oField.LocationData.ParseStart := TSourceLocation.Create(FLine, iCursor - iStart);
@@ -1098,7 +1098,7 @@ begin
       if v2LocationData in FOptions then
         oField.LocationData.ParseFinish := TSourceLocation.Create(FLine, iCursor - iStart - 1);
     finally
-      oField.Free;
+      oField.free;
     end;
   end;
 
@@ -1106,7 +1106,7 @@ begin
   while (iCursor < Length(FSource)) and (FSource[iCursor] = 13) do
   begin
     if not first and (v2Validating in FOptions) then
-      raise EParserException.create('Unexpected line break', TSourceLocation.Create(FLine+2, 0))
+      raise EParserException.Create('Unexpected line break', TSourceLocation.Create(FLine+2, 0))
     else
     begin
       inc(iCursor);
@@ -1205,7 +1205,7 @@ begin
       parseCell(cell, BytesAsString(BytesSlice(FSource, iStart, iCursor-1)), not bEscape, FComponentDelimiter, FSubComponentDelimiter);
       ofield.elementList.Add(cell.link);
     finally
-      cell.Free;
+      cell.free;
     end;
     if (iCursor < length(FSource)) and (FSource[iCursor] = ord(FRepetitionDelimiter)) then
       inc(iCursor);
@@ -1240,7 +1240,7 @@ begin
         parseCell(child, sLeft, bNoEscape, cSubBreak, #0);
         inc(i);
       finally
-        child.Free;
+        child.free;
       end;
     end;
   end
@@ -1261,20 +1261,20 @@ var
   Begin
     if buf.Length > 0 Then
       Begin
-      cell.ContentList.Add(TV2Content.create(ckString, buf.ToString));
+      cell.ContentList.Add(TV2Content.Create(ckString, buf.ToString));
       buf.Clear;
       End;
   End;
 Begin
   cell.contentList.Clear;
   if (cnt = FEscapeCharacter) Then
-    cell.ContentList.Add(TV2Content.create(ckString, cnt))
+    cell.ContentList.Add(TV2Content.Create(ckString, cnt))
   Else If (cnt = '""') then
-    cell.ContentList.add(TV2Content.create(ckNull, '""'))
+    cell.ContentList.add(TV2Content.Create(ckNull, '""'))
   Else If bNoEscape or (pos(FEscapeCharacter, cnt) = 0) Then
   Begin
     If cnt <> '' Then
-      cell.ContentList.Add(TV2Content.create(ckString, cnt));
+      cell.ContentList.Add(TV2Content.Create(ckString, cnt));
   End
   Else
   Begin
@@ -1310,7 +1310,7 @@ Begin
         End;
       Commit;
     finally
-      buf.Free;
+      buf.free;
     end;
   End;
 End;
@@ -1333,7 +1333,7 @@ Begin
     Else
       raise EER7Exception.Create('Odd length of binary escape in "'+cnt+'"');
 
-  cell.ContentList.add(TV2Content.create(ckBinary, HexDecode(sBuffer)));
+  cell.ContentList.add(TV2Content.Create(ckBinary, HexDecode(sBuffer)));
 End;
 
 Procedure TV2Parser.ReadEscape(cell : TV2Cell; Const cnt : String; var iCursor : integer);
@@ -1348,10 +1348,10 @@ Begin
     // very often turkeys sending us the escape character do not escape.
     // rather than raising the error, we are going to treat the escape as an escape
     iCursor := iStart - 1;
-    cell.ContentList.add(TV2Content.create(ckString, FEscapeCharacter));
+    cell.ContentList.add(TV2Content.Create(ckString, FEscapeCharacter));
   End
   Else
-    cell.ContentList.add(TV2Content.create(ckEscape, copy(cnt, iStart, iCursor - iStart)));
+    cell.ContentList.add(TV2Content.Create(ckEscape, copy(cnt, iStart, iCursor - iStart)));
 End;
 
 Function TV2Parser.isDelimiterEscape(ch : Char) : Boolean;
@@ -1382,7 +1382,7 @@ begin
       generateIds(seg);
     end;
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -1488,7 +1488,7 @@ begin
         this.composeContent(b, obj as TV2Content);
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
   finally
     this.free;
@@ -1605,7 +1605,7 @@ begin
       this.composeMessage(b, msg);
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
   finally
     this.free;
@@ -1731,7 +1731,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

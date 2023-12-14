@@ -52,7 +52,7 @@ uses
   fsl_tests, fsl_tests_web, fsl_tests_scrypt, fsl_tests_npm, fsl_tests_iduri,
   fcomp_tests_graph,
   v2_tests, cda_tests, fdb_tests,
-  ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
+  ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct, tests_cpt,
   fhir_tools_settings,
 
   fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_diff,
@@ -66,7 +66,7 @@ uses
 
   tests_search_syntax, test_server_config;
 
-procedure registerTests;
+procedure registerTests(params : TCommandLineParameters);
 
 implementation
 
@@ -114,15 +114,15 @@ begin
     ini.WriteString('mysql', 'username', 'test');
     ini.WriteString('mysql', 'password', 'test');
   finally
-    ini.Free;
+    ini.free;
   end;
 end;
 
-procedure registerTests;
+procedure registerTests(params : TCommandLineParameters);
 var
   iniName : String;
 begin
-  if not getCommandLineParam('test-settings', iniName) then
+  if not params.get('test-settings', iniName) then
     iniName := partnerFile('test-settings.ini');
 
   Logging.log('Test Settings from '+iniName);
@@ -159,6 +159,7 @@ begin
   fhir4b_tests_Parser.registerTests;
   fhir5_tests_Parser.registerTests;
 
+  tests_cpt.registerTests;
   fxver_tests.registerTests;
   tests_search_syntax.registerTests;
   test_server_config.registerTests;

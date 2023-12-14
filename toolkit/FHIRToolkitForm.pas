@@ -320,7 +320,7 @@ begin
       lbServersClick(nil);
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -366,7 +366,7 @@ begin
             if ok then
               http.smartToken := Smart.token.Link;
           finally
-            Smart.Free;
+            Smart.free;
           end;
         end);
     end
@@ -411,13 +411,13 @@ begin
           end;
         end;
       finally
-        cs.Free;
+        cs.free;
       end;
     finally
-      Client.Free;
+      Client.free;
     end;
   finally
-    http.Free;
+    http.free;
   end;
 end;
 
@@ -449,7 +449,7 @@ begin
       lbServersClick(nil);
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -496,11 +496,11 @@ begin
             else
               MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
           finally
-            res.Free;
+            res.free;
           end;
 
         finally
-          Fetcher.Free;
+          Fetcher.free;
         end;
       end;
     end);
@@ -546,7 +546,7 @@ begin
 {$ENDIF}
       end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -608,7 +608,7 @@ begin
           else
             MessageDlg('Unsupported Resource Type: ' + res.fhirType, TMsgDlgType.mtError, [TMsgDlgBtn.mbOK], 0);
         finally
-          res.Free;
+          res.free;
         end;
       end;  
     except
@@ -657,7 +657,7 @@ begin
     try
       openResourceFromFile(fn, res, format, frameForResource(res));
     finally
-      res.Free;
+      res.free;
     end;
   except
     on e: Exception do
@@ -679,7 +679,7 @@ begin
         if tbMain.tabs[i].TagObject is TBaseFrame then
           TBaseFrame(tbMain.tabs[i].TagObject).SettingsChanged;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -728,7 +728,7 @@ begin
       form.Factory := FFactory.Link;
       ShowModalHack(form);
     finally
-      form.Free;
+      form.free;
     end;
   end;
 end;
@@ -759,7 +759,7 @@ var
       FPackageMgrTab := nil;
     if tbMain.ActiveTab = FTransformationTab then
       FTransformationTab := nil;
-    tbMain.ActiveTab.Free;
+    tbMain.ActiveTab.free;
     if i > 0 then
       tbMain.TabIndex := i - 1
     else
@@ -918,7 +918,7 @@ begin
       form.proc := proc;
       ShowModalHack(form);
     finally
-      form.Free;
+      form.free;
     end;
   finally
     if Assigned(fcs) then
@@ -996,7 +996,7 @@ begin
         if FSettings.CheckForUpgradesOnStart then
           GBackgroundTasks.queueTask(FVerCheckTaskId, TFslObject.Create);
       finally
-        Factory.Free;
+        Factory.free;
       end
     end;
   except
@@ -1039,7 +1039,7 @@ begin
           exit;
         end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -1102,12 +1102,12 @@ begin
     FSettings.save;
   except
   end;
-  FSettings.Free;
-  FIndexes.Free;
-  FContext.Free;
-  FServers.Free;
-  FCache.Free;
-  ToolkitLogger.Free;
+  FSettings.free;
+  FIndexes.free;
+  FContext.free;
+  FServers.free;
+  FCache.free;
+  ToolkitLogger.free;
   if UpgradeOnClose then
   begin
     dowork(self, 'Checking Version', true,
@@ -1256,7 +1256,7 @@ begin
       if ShowModalHack(ResourceLanguageForm) = mrOk then
         frame.reload;
     finally
-      ResourceLanguageForm.Free;
+      ResourceLanguageForm.free;
     end;
   end;
 end;
@@ -1397,7 +1397,7 @@ begin
           end;
       end;
     finally
-      upg.Free;
+      upg.free;
     end;
   end
   else if reportIfCurrent then
@@ -1412,7 +1412,7 @@ begin
   try
     ShowModalHack(form);
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -1468,7 +1468,7 @@ begin
 
 {
 // Opening the publisher from code
-        PublisherForm := TPublisherForm.create(self);
+        PublisherForm := TPublisherForm.Create(self);
         PublisherForm.IGtoPublish := IGRootFolder;
         PublisherForm.ShowModal;
         PublisherForm.Destroy;
@@ -1747,8 +1747,8 @@ begin
     try
       builder.registerIndexes(FIndexes, comps);
     finally
-      builder.Free;
-      comps.Free;
+      builder.free;
+      comps.free;
     end;
   end;
   result := '';
@@ -1858,7 +1858,7 @@ begin
         b.Append('<p>Unknown context ' + s + '</p>');
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1875,7 +1875,7 @@ end;
 
 destructor TToolkitLogger.Destroy;
 begin
-  FLog.Free;
+  FLog.free;
   inherited;
 end;
 

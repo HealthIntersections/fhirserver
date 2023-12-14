@@ -110,7 +110,7 @@ type
   private
     FContext : TToolkitContext; // no ownership
   public
-    constructor create(context : TToolkitContext); virtual;
+    constructor Create(context : TToolkitContext); virtual;
     property Context : TToolkitContext read FContext write FContext;
   end;
 
@@ -195,7 +195,7 @@ type
     procedure validationWarning(loc : TSourceLocation; msg: String);
     procedure finishValidating(validating : boolean; start : QWord);
   public
-    constructor create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); virtual;
+    constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); virtual;
     destructor Destroy; override;
     function link : TToolkitEditor; overload;
 
@@ -486,7 +486,7 @@ end;
 
 function TToolkitContextTerminologyServer.copy: TToolkitContextTerminologyServer;
 begin
-  result := TToolkitContextTerminologyServer.create;
+  result := TToolkitContextTerminologyServer.Create;
   try
     result.id := id;
     result.name := name;
@@ -510,7 +510,7 @@ end;
 constructor TToolkitContextTerminologyServers.Create;
 begin
   inherited Create;
-  FList := TFslList<TToolkitContextTerminologyServer>.create;
+  FList := TFslList<TToolkitContextTerminologyServer>.Create;
 end;
 
 destructor TToolkitContextTerminologyServers.Destroy;
@@ -529,7 +529,7 @@ begin
 
   for i := 1 to t do
   begin
-    srvr := TToolkitContextTerminologyServer.create;
+    srvr := TToolkitContextTerminologyServer.Create;
     try
       srvr.Name := ini.readString('tx', 'server'+inttostr(i), '');
       srvr.Address := ini.readString('tx', 'server'+inttostr(i)+'-address', '');
@@ -540,7 +540,7 @@ begin
   end;
   if (FList.Count = 0) then
   begin
-    srvr := TToolkitContextTerminologyServer.create;
+    srvr := TToolkitContextTerminologyServer.Create;
     try
       srvr.Name := 'tx.fhir.org';
       srvr.Address := 'http://tx.fhir.org';
@@ -624,7 +624,7 @@ end;
 
 destructor TToolkitEditorInspectorView.Destroy;
 begin
-  FSource.Free;
+  FSource.free;
   inherited Destroy;
 end;
 
@@ -689,12 +689,12 @@ end;
 constructor TToolkitMessagesView.Create;
 begin
   inherited Create;
-  FMessages := TFslList<TToolkitMessage>.create;
+  FMessages := TFslList<TToolkitMessage>.Create;
 end;
 
 destructor TToolkitMessagesView.Destroy;
 begin
-  FMessages.Free;
+  FMessages.free;
   inherited Destroy;
 end;
 
@@ -726,7 +726,7 @@ end;
 constructor TToolkitEditSession.Create;
 begin
   inherited Create;
-  FInfo := TStringList.create;
+  FInfo := TStringList.Create;
 end;
 
 constructor TToolkitEditSession.Create(kind: TSourceEditorKind);
@@ -747,7 +747,7 @@ end;
 
 destructor TToolkitEditSession.Destroy;
 begin
-  FInfo.Free;
+  FInfo.free;
   inherited Destroy;
 end;
 
@@ -803,7 +803,7 @@ end;
 
 procedure TToolkitEditor.SetStore(AValue: TStorageService);
 begin
-  FStore.Free;
+  FStore.free;
   FStore := AValue;
 end;
 
@@ -814,18 +814,18 @@ end;
 
 function TToolkitEditor.StartValidating : QWord;
 begin
-  FValidationIssues := TFslList<TToolkitMessage>.create;
+  FValidationIssues := TFslList<TToolkitMessage>.Create;
   result := GetTickCount64;
 end;
 
 procedure TToolkitEditor.validationError(loc : TSourceLocation; msg: String);
 begin
-  FValidationIssues.add(TToolkitMessage.create(self, loc, msgError, msg));
+  FValidationIssues.add(TToolkitMessage.Create(self, loc, msgError, msg));
 end;
 
 procedure TToolkitEditor.validationWarning(loc : TSourceLocation; msg: String);
 begin
-  FValidationIssues.add(TToolkitMessage.create(self, loc, msgWarning, msg));
+  FValidationIssues.add(TToolkitMessage.Create(self, loc, msgWarning, msg));
 end;
 
 procedure TToolkitEditor.finishValidating(validating: boolean; start: QWord);
@@ -835,17 +835,17 @@ begin
     Logging.log('Validate '+describe+' in '+inttostr(GetTickCount64 - start)+'ms');
     Context.MessageView.SetMessagesForEditor(self, FValidationIssues);
   end;
-  FValidationIssues.Free;
+  FValidationIssues.free;
   FValidationIssues := nil;
 end;
 
-constructor TToolkitEditor.create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService);
+constructor TToolkitEditor.Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService);
 var
   ss : TToolkitEditSession;
   i : integer;
   ok : boolean;
 begin
-  inherited create(context);
+  inherited Create(context);
   FPause := 1000;
   FSession := session;
   FStore := store;
@@ -874,8 +874,8 @@ end;
 
 destructor TToolkitEditor.Destroy;
 begin
-  FSession.Free;
-  FStore.Free;
+  FSession.free;
+  FStore.free;
   inherited Destroy;
 end;
 
@@ -904,13 +904,13 @@ end;
 
 function TToolkitEditor.makeRootPanel(tab: TTabSheet): TPanel;
 begin
-  result := TPanel.create(tab);
+  result := TPanel.Create(tab);
   result.Parent := tab;
   result.align := alClient;
   result.BevelInner := bvNone;
   result.BevelOuter := bvNone;
   result.BorderWidth := 0;
-  result.PopupMenu := TPopupMenu.create(tab);
+  result.PopupMenu := TPopupMenu.Create(tab);
   result.ShowHint := true;
   result.Hint := '';
   result.ParentShowHint := false;
@@ -944,9 +944,9 @@ end;
 
 { TToolkitContextObject }
 
-constructor TToolkitContextObject.create(context: TToolkitContext);
+constructor TToolkitContextObject.Create(context: TToolkitContext);
 begin
-  inherited create;
+  inherited Create;
   FContext := context;
 end;
 
@@ -964,7 +964,7 @@ end;
 
 procedure TToolkitContext.SetContext(version : TFHIRVersion; AValue: TFHIRWorkerContextWithFactory);
 begin
-  FContexts[version].Free;
+  FContexts[version].free;
   FContexts[version] := AValue;
 end;
 
@@ -1022,17 +1022,17 @@ end;
 constructor TToolkitContext.Create(images: TImageList; actions : TActionList);
 begin
   inherited Create;
-  FEditorSessions := TFslList<TToolkitEditSession>.create;
-  FEditors := TFslList<TToolkitEditor>.create;
-  FStorages := TFslList<TStorageService>.create;
-  FMessageView := TToolkitMessagesView.create;
-  FInspector := TToolkitEditorInspectorView.create;
-  FConsole := TToolkitConsole.create;
+  FEditorSessions := TFslList<TToolkitEditSession>.Create;
+  FEditors := TFslList<TToolkitEditor>.Create;
+  FStorages := TFslList<TStorageService>.Create;
+  FMessageView := TToolkitMessagesView.Create;
+  FInspector := TToolkitEditorInspectorView.Create;
+  FConsole := TToolkitConsole.Create;
   Logging.addListener(FConsole);
   FImages := images;
   FActions := actions;
-  FPcm := TFHIRPackageManager.create(npmModeUser);
-  FTxServers := TToolkitContextTerminologyServers.create;
+  FPcm := TFHIRPackageManager.Create(npmModeUser);
+  FTxServers := TToolkitContextTerminologyServers.Create;
 end;
 
 destructor TToolkitContext.Destroy;
@@ -1041,15 +1041,15 @@ var
 begin
   FPcm.free;
   for a in TFHIRVersion do
-    FContexts[a].Free;
-  FTxServers.Free;
-  FInspector.Free;
-  FMessageView.Free;
+    FContexts[a].free;
+  FTxServers.free;
+  FInspector.free;
+  FMessageView.free;
   Logging.removeListener(FConsole);
-  FConsole.Free;
-  FStorages.Free;
-  FEditors.Free;
-  FEditorSessions.Free;
+  FConsole.free;
+  FStorages.free;
+  FEditors.free;
+  FEditorSessions.free;
   FLanguages.free;
   inherited Destroy;
 end;
@@ -1143,10 +1143,10 @@ end;
 function TToolkitContext.factory(version: TFHIRVersion): TFHIRFactory;
 begin
   case version of
-    fhirVersionRelease3 : result := TFHIRFactoryR3.create;
-    fhirVersionRelease4 : result := TFHIRFactoryR4.create;
+    fhirVersionRelease3 : result := TFHIRFactoryR3.Create;
+    fhirVersionRelease4 : result := TFHIRFactoryR4.Create;
   else
-    raise EFHIRException.create('The version '+CODES_TFHIRVersion[version]+' is not supported by the FHI Toolkit');
+    raise EFHIRException.Create('The version '+CODES_TFHIRVersion[version]+' is not supported by the FHI Toolkit');
   end;
 end;
 
@@ -1162,9 +1162,9 @@ var
   f : TFileStream;
 begin
   ctxt := context[r.fhirObjectVersion];
-  parser := ctxt.factory.makeComposer(ctxt.link, ffJson, defLang, OutputStylePretty);
+  parser := ctxt.factory.makeComposer(ctxt, ffJson, nil, OutputStylePretty);
   try
-    f := TFileStream.create(FilePath(['[tmp]', filename+'.json']), fmCreate);
+    f := TFileStream.Create(FilePath(['[tmp]', filename+'.json']), fmCreate);
     try
       parser.compose(f, r);
     finally

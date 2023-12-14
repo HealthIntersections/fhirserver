@@ -133,7 +133,7 @@ var
 begin
   inherited Create;
   FName := name;
-  FData := TList<TFGraphDataPoint>.create;
+  FData := TList<TFGraphDataPoint>.Create;
   for i := 0 to 10 do
     FData.Add(pointFactory(i));
   checkLimits;
@@ -146,7 +146,7 @@ end;
 
 destructor TRandomData.Destroy;
 begin
-  FData.Free;
+  FData.free;
   inherited;
 end;
 
@@ -218,7 +218,7 @@ begin
   if graph.Series.Count > 0 then
     n := 'Second test Data';
 
-  graph.Series.Add(graph.createSeries(TRandomData.create(n)));
+  graph.Series.Add(graph.createSeries(TRandomData.Create(n)));
   graph.Series.last.RegressionType := rg_passingBablok;
   graph.Series.last.LegendStatus := lsAll;
   graph.Series.last.DrawPoints := true;
@@ -268,7 +268,7 @@ begin
 
     graph.Bands.Add(band.link);
   finally
-    band.Free;
+    band.free;
   end;
 end;
 
@@ -276,7 +276,7 @@ procedure TFGraphTester.TestGraph;
 var
   graph : TFGraph;
 begin
-  graph := TFGraph.create(nil);
+  graph := TFGraph.Create(nil);
   try
     configure(graph);
     addMarks(graph);

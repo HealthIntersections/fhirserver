@@ -124,9 +124,9 @@ begin
   result := s+'s';
 end;
 
-Constructor TNarrativeGenerator.create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
+Constructor TNarrativeGenerator.Create(prefix : String; profiles : TProfileManager; onLookpuCode : TLookupCodeEvent; onLookpuReference : TLookupReferenceEvent; context : TFslObject);
 begin
-  inherited create;
+  inherited Create;
   Fprefix := prefix;
   FProfiles := profiles;
   FOnLookupCode := onLookpuCode;
@@ -139,9 +139,9 @@ var
   x : TFHIRXhtmlNode;
 begin
   if (r.modifierExtensionList.Count > 0) then
-    raise EFHIRException.create('Unable to generate narrative for resource of type '+CODES_TFHIRResourceType[r.ResourceType]+' because it has modifier extensions');
+    raise EFHIRException.Create('Unable to generate narrative for resource of type '+CODES_TFHIRResourceType[r.ResourceType]+' because it has modifier extensions');
 
-  x := TFHIRXhtmlNode.create;
+  x := TFHIRXhtmlNode.Create;
   try
     x.Name := 'div';
     x.NodeType := fhntElement;
@@ -170,7 +170,7 @@ var
   name : String;
   first : boolean;
 begin
-  displayHints := TFslStringDictionary.create;
+  displayHints := TFslStringDictionary.Create;
   try
     if (children.isEmpty) then
     begin
@@ -252,7 +252,7 @@ begin
           iter.Next;
         end;
       finally
-        iter.Free;
+        iter.free;
       end;
     end;
   finally
@@ -328,7 +328,7 @@ begin
       else
         renderLeaf(res, list[0].value as TFhirElement, e, tr.addTag('td'), false, showCodeDetails, displayHints);
     finally
-      list.Free;
+      list.free;
     end;
   end;
 end;
@@ -356,7 +356,7 @@ begin
         result := false;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -378,7 +378,7 @@ begin
         iter.Next;
       end;
     finally
-      iter.Free;
+      iter.free;
     end;
   end;
 end;
@@ -518,11 +518,11 @@ begin
       else
         c.addText(r.Reference);
     finally
-      tr.Free;
+      tr.free;
     end;
   end
   else if (not (e is TFHIRAttachment)) then
-    raise EFHIRException.create('type '+e.ClassName+' not handled yet');
+    raise EFHIRException.Create('type '+e.ClassName+' not handled yet');
 end;
 
 function TNarrativeGenerator.displayLeaf(res : TFHIRResource; e : TFHIRElement; defn : TFhirElementDefinition; x : TFHIRXhtmlNode; name : String; showCodeDetails : boolean) : boolean;
@@ -535,7 +535,7 @@ begin
   if (e = nil) then
     exit;
 
-  displayHints := TFslStringDictionary.create;
+  displayHints := TFslStringDictionary.Create;
   try
     readDisplayHints(defn, displayHints);
     if (name.endsWith('[x]')) then
@@ -673,7 +673,7 @@ begin
   //      try
           x.addText(r.Reference);
   //      finally
-  //        tr.Free;
+  //        tr.free;
   //      end;
       end
       else
@@ -681,9 +681,9 @@ begin
       result := true;
     end
     else if (not (e is TFHIRAttachment)) then
-      raise EFHIRException.create('type '+e.ClassName+' not handled yet');
+      raise EFHIRException.Create('type '+e.ClassName+' not handled yet');
   finally
-    displayHints.Free;
+    displayHints.free;
   end;
 end;
 
@@ -722,7 +722,7 @@ var
   dres :  TFhirDomainResource;
 begin
   if not (res is TFHIRDomainResource) then
-    raise EFHIRException.create('Not handled yet');
+    raise EFHIRException.Create('Not handled yet');
   dres := TFHIRDomainResource(res);
 
   if (not textAlready) then
@@ -773,7 +773,7 @@ begin
         end;
       end;
     finally
-      iter.Free;
+      iter.free;
     end;
   end;
 end;
@@ -1114,8 +1114,8 @@ end;
 
 destructor TNarrativeGenerator.Destroy;
 begin
-  FProfiles.Free;
-  FContext.Free;
+  FProfiles.free;
+  FContext.free;
   inherited;
 end;
 
@@ -1156,7 +1156,7 @@ begin
         if name = '#'+elements[j].id then
           t := elements[j];
       if (t <> nil) then
-        raise EFHIRException.create('Unable to resolve name reference '+name+' trying to resolve '+path);
+        raise EFHIRException.Create('Unable to resolve name reference '+name+' trying to resolve '+path);
       path := t.Path;
       break;
     end;
@@ -1183,7 +1183,7 @@ begin
   if not x.hasAttribute('xmlns') then
     x.attribute('xmlns', XHTML_NS);
   if (res.Text = nil) then
-    res.Text := TFHIRNarrative.create;
+    res.Text := TFHIRNarrative.Create;
   if (res.Text.div_ = nil) or (res.Text.Div_.ChildNodes.isEmpty) then
   begin
     res.Text.Div_ := x.Link;

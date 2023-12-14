@@ -125,8 +125,8 @@ implementation
 constructor TFHIRDeIdentifier.Create;
 begin
   inherited;
-  FDataCache := TFslMap<TPseudoData>.create;
-  FLock := TFslLock.create('DeIdentifier');
+  FDataCache := TFslMap<TPseudoData>.Create;
+  FLock := TFslLock.Create('DeIdentifier');
 end;
 
 procedure TFHIRDeIdentifier.DeIdentify(res : TFHIRResource);
@@ -142,9 +142,9 @@ end;
 
 destructor TFHIRDeIdentifier.Destroy;
 begin
-  FDatabase.Free;
-  FDataCache.Free;
-  FLock.Free;
+  FDatabase.free;
+  FDataCache.free;
+  FLock.free;
   inherited;
 end;
 
@@ -185,7 +185,7 @@ begin
     end;
     result := pd.Link;
   finally
-    pd.Free;
+    pd.free;
   end;
 end;
 
@@ -232,7 +232,7 @@ begin
       result.photo.contentType := 'image/png';
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -463,18 +463,18 @@ end;
 constructor TPseudoData.Create;
 begin
   inherited;
-  FName := TFHIRHumanName.create;
-  FTelecom := TFHIRContactPoint.create;
-  FAddress := TFHIRAddress.create;
-  FPhoto := TFhirAttachment.create;
+  FName := TFHIRHumanName.Create;
+  FTelecom := TFHIRContactPoint.Create;
+  FAddress := TFHIRAddress.Create;
+  FPhoto := TFhirAttachment.Create;
 end;
 
 destructor TPseudoData.Destroy;
 begin
-  FName.Free;
-  FTelecom.Free;
-  FAddress.Free;
-  FPhoto.Free;
+  FName.free;
+  FTelecom.free;
+  FAddress.free;
+  FPhoto.free;
   inherited;
 end;
 
@@ -485,25 +485,25 @@ end;
 
 procedure TPseudoData.SetAddress(const Value: TFHIRAddress);
 begin
-  FAddress.Free;
+  FAddress.free;
   FAddress := Value;
 end;
 
 procedure TPseudoData.SetName(const Value: TFHIRHumanName);
 begin
-  FName.Free;
+  FName.free;
   FName := Value;
 end;
 
 procedure TPseudoData.SetPhoto(const Value: TFhirAttachment);
 begin
-  FPhoto.Free;
+  FPhoto.free;
   FPhoto := Value;
 end;
 
 procedure TPseudoData.SetTelecom(const Value: TFHIRContactPoint);
 begin
-  FTelecom.Free;
+  FTelecom.free;
   FTelecom := Value;
 end;
 
@@ -521,14 +521,14 @@ end;
 constructor TFakeDataRepository.Create;
 begin
   inherited;
-  FMale := TFslList<TPseudoData>.create;
-  FFemale := TFslList<TPseudoData>.create;
+  FMale := TFslList<TPseudoData>.Create;
+  FFemale := TFslList<TPseudoData>.Create;
 end;
 
 destructor TFakeDataRepository.Destroy;
 begin
-  FMale.Free;
-  FFemale.Free;
+  FMale.free;
+  FFemale.free;
   inherited;
 end;
 
@@ -563,11 +563,11 @@ begin
           else
             FFemale.Add(pd.link);
         finally
-          pd.Free;
+          pd.free;
         end;
       end;
     finally
-      csv.Free;
+      csv.free;
     end;
   finally
     line.free;

@@ -118,16 +118,16 @@ implementation
 
 procedure TInteractiveClientForm.FormCreate(Sender: TObject);
 begin
-  FRequestHeaders := TStringList.create;
-  FResponseHeaders := TStringList.create;
+  FRequestHeaders := TStringList.Create;
+  FResponseHeaders := TStringList.Create;
 end;
 
 procedure TInteractiveClientForm.FormDestroy(Sender: TObject);
 begin
-  FPackage.Free;
+  FPackage.free;
   FClient.free;
-  FRequestHeaders.Free;
-  FResponseHeaders.Free;
+  FRequestHeaders.free;
+  FResponseHeaders.free;
 end;
 
 procedure TInteractiveClientForm.FormShow(Sender: TObject);
@@ -209,7 +209,7 @@ begin
     try
       memBodyReq.text := cmp.Compose(package.resource);
     finally
-      cmp.Free;
+      cmp.free;
     end;
   end;
 end;
@@ -241,7 +241,7 @@ end;
 
 procedure TInteractiveClientForm.SetPackage(const Value: TFhirThreadedClientPackage);
 begin
-  FPackage.Free;
+  FPackage.free;
   FPackage := Value;
 end;
 

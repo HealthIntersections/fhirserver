@@ -206,9 +206,9 @@ begin
     begin
       FHSMatches.Clear;
       gridHsMatches.RowCount := FHSMatches.Count;
-      FHSBundle.Free;
+      FHSBundle.free;
       FHSBundle := nil;
-      params := TStringList.create;
+      params := TStringList.Create;
       try
 
         param('_summary', 'true', '');
@@ -263,7 +263,7 @@ begin
         lblOutcome.Text := 'Fetched '+inttostr(FHSMatches.Count)+' of '+FHSBundle.total+' resources in '+describePeriod(now - start)+'. search String = '+FMXescape(FClient.lastURL);
         btnFetchMore.Visible := FHSBundle.Links['next'] <> '';
       finally
-        params.Free;
+        params.free;
       end;
     end);
 end;
@@ -304,9 +304,9 @@ begin
     begin
       FPrMatches.Clear;
       gridPrMatches.RowCount := FPRMatches.Count;
-      FPrBundle.Free;
+      FPrBundle.free;
       FPrBundle := nil;
-      params := TStringList.create;
+      params := TStringList.Create;
       try
         param('_summary', 'true', '');
         param('_include', 'PractitionerRole:practitioner', '');
@@ -369,7 +369,7 @@ begin
         lblOutcome.Text := 'Fetched '+inttostr(FPrMatches.Count)+' of '+FPrBundle.total+' resources in '+describePeriod(now - start)+'. search String = '+FMXescape(FClient.lastURL);
         btnFetchMore.Visible := FPrBundle.Links['next'] <> '';
       finally
-        params.Free;
+        params.free;
       end;
     end);
 end;
@@ -389,7 +389,7 @@ begin
     begin
       btnFetchMore.Visible := false;
       url := FHSBundle.Links['next'];
-      FHSBundle.Free;
+      FHSBundle.free;
       FHSBundle := nil;
       start := now;
       FHSBundle := Client.searchAgain(url);
@@ -726,12 +726,12 @@ end;
 destructor TProviderDirectoryFrame.Destroy;
 begin
   FClient.free;
-  FHSBundle.Free;
-  FHSMatches.Free;
-  FPrBundle.Free;
-  FPrMatches.Free;
-  FOtherResources.Free;
-  FRows.Free;
+  FHSBundle.free;
+  FHSMatches.free;
+  FPrBundle.free;
+  FPrMatches.free;
+  FOtherResources.free;
+  FRows.free;
 
   inherited;
 end;
@@ -763,7 +763,7 @@ begin
     if ref.tagObject = nil then
       ref.TagObject := resolve(ref);
 
-  cs := TCommaBuilder.create;
+  cs := TCommaBuilder.Create;
   try
     cs.ignoreDuplicates := true;
     case ACol of
@@ -888,7 +888,7 @@ begin
     if ref.tagObject = nil then
       ref.TagObject := resolve(ref);
 
-  cs := TCommaBuilder.create;
+  cs := TCommaBuilder.Create;
   try
     cs.ignoreDuplicates := true;
     case ACol of
@@ -1034,9 +1034,9 @@ begin
   cbxPayload.ItemIndex := Settings.getValue('Provider-Directory-search', 'Category', -1);
 
   btnFetchMore.Visible := false;
-  FHSMatches := TFslList<TFhirHealthcareService>.create;
-  FPrMatches := TFslList<TFhirPractitionerRole>.create;
-  FOtherResources := TFslMap<TFHIRResource>.create('other resources');
+  FHSMatches := TFslList<TFhirHealthcareService>.Create;
+  FPrMatches := TFslList<TFhirPractitionerRole>.Create;
+  FOtherResources := TFslMap<TFHIRResource>.Create('other resources');
   FRows := TStringList.Create;
 end;
 
@@ -1055,7 +1055,7 @@ end;
 
 procedure TProviderDirectoryFrame.SetClient(const Value: TFHIRClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 

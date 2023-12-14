@@ -64,7 +64,7 @@ begin
     TextPresentationDialog.Memo1.Text := text;
     TextPresentationDialog.ShowModal;
   finally
-    TextPresentationDialog.Free;
+    TextPresentationDialog.free;
   end;
 end;
 

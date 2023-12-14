@@ -49,7 +49,7 @@ type
     FCombo: TComboBox;
     FLbl: TLabel;
   public
-    constructor create(lbl : TLabel; combo : TComboBox; btn : TButton);
+    constructor Create(lbl : TLabel; combo : TComboBox; btn : TButton);
     function link : TToolkitTextViewTriple; overload;
 
     property lbl : TLabel read FLbl write FLbl;
@@ -88,9 +88,9 @@ implementation
 
 { TToolkitTextViewTriple }
 
-constructor TToolkitTextViewTriple.create(lbl: TLabel; combo: TComboBox; btn: TButton);
+constructor TToolkitTextViewTriple.Create(lbl: TLabel; combo: TComboBox; btn: TButton);
 begin
-  inherited create;
+  inherited Create;
   self.lbl := lbl;
   self.combo := combo;
   self.btn := btn;
@@ -106,7 +106,7 @@ end;
 constructor TToolkitTextViewManager.Create;
 begin
   inherited Create;
-  FTriples := TFslList<TToolkitTextViewTriple>.create;
+  FTriples := TFslList<TToolkitTextViewTriple>.Create;
 end;
 
 destructor TToolkitTextViewManager.Destroy;
@@ -141,7 +141,7 @@ end;
 procedure TToolkitTextViewManager.registerBase(panel: TPanel; lbl: TLabel; cbx: TComboBox; btn: TButton);
 begin
   FPanel := panel;
-  FTriples.add(TToolkitTextViewTriple.create(lbl, cbx, btn));
+  FTriples.add(TToolkitTextViewTriple.Create(lbl, cbx, btn));
 end;
 
 procedure TToolkitTextViewManager.add(index: integer);
@@ -155,14 +155,14 @@ begin
   FPanel.Height := FPanel.Height + STEP_HEIGHT;
 
   lblo := FTriples[0].lbl;
-  lbl := TLabel.create(lblo.Owner);
+  lbl := TLabel.Create(lblo.Owner);
   lbl.Parent := lblo.Parent;
   lbl.top := lblo.top + STEP_HEIGHT * FTriples.count;
   lbl.left := lblo.left;
   lbl.caption := lblo.caption;
 
   cbxo := FTriples[0].combo;
-  cbx := TComboBox.create(cbxo.Owner);
+  cbx := TComboBox.Create(cbxo.Owner);
   cbx.Parent := cbxo.Parent;
   cbx.top := cbxo.top + STEP_HEIGHT * FTriples.count;
   cbx.left := cbxo.left;
@@ -172,7 +172,7 @@ begin
   cbx.itemIndex := 0;
 
   btno := FTriples[0].btn;
-  btn := TButton.create(btno.Owner);
+  btn := TButton.Create(btno.Owner);
   btn.Parent := btno.Parent;
   btn.top := btno.top + STEP_HEIGHT * FTriples.count;
   btn.left := btno.left;
@@ -183,7 +183,7 @@ begin
   btn.OnClick := btno.OnClick;
   btn.tag := FTriples.count;
 
-  FTriples.add(TToolkitTextViewTriple.create(lbl, cbx, btn));
+  FTriples.add(TToolkitTextViewTriple.Create(lbl, cbx, btn));
   for i := FTriples.count - 1 downto index + 1 do
     FTriples[i].combo.itemIndex := FTriples[i-1].combo.itemIndex;
 end;

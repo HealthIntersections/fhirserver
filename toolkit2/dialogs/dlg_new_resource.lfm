@@ -12,7 +12,7 @@ object NewResourceDialog: TNewResourceDialog
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '2.2.7.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
@@ -51,6 +51,7 @@ object NewResourceDialog: TNewResourceDialog
     Top = 18
     Width = 55
     Caption = 'Version:'
+    ParentColor = False
   end
   object cbxVersion: TComboBox
     Left = 72
@@ -69,6 +70,7 @@ object NewResourceDialog: TNewResourceDialog
     Top = 48
     Width = 66
     Caption = 'Resource:'
+    ParentColor = False
   end
   object cbxResource: TComboBox
     Left = 72
@@ -87,6 +89,7 @@ object NewResourceDialog: TNewResourceDialog
     Top = 78
     Width = 49
     Caption = 'Profile:'
+    ParentColor = False
   end
   object cbxProfile: TComboBox
     Left = 72
@@ -105,6 +108,7 @@ object NewResourceDialog: TNewResourceDialog
     Top = 108
     Width = 54
     Caption = 'Format:'
+    ParentColor = False
   end
   object cbxFormat: TComboBox
     Left = 72

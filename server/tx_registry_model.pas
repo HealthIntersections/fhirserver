@@ -180,7 +180,7 @@ implementation
 constructor TServerRow.Create;
 begin
   inherited Create;
-  FAuthlist := TStringList.create;
+  FAuthlist := TStringList.Create;
 end;
 
 destructor TServerRow.Destroy;
@@ -221,7 +221,7 @@ class function TServerRegistryUtilities.toJson(v: TServerVersionInformation): TJ
 var
   s : String;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try              
     result.str['address'] := v.Address;
     result.str['version'] := v.Version;
@@ -240,7 +240,7 @@ class function TServerRegistryUtilities.readVersion(fv : String; json: TJsonObje
 var
   s : String;
 begin
-  result := TServerVersionInformation.create;
+  result := TServerVersionInformation.Create;
   try                             
     result.Address := json.str['address'];
     result.Version := json.str['version'];
@@ -259,7 +259,7 @@ class function TServerRegistryUtilities.toJson(s: TServerInformation): TJsonObje
 var
   v : TServerVersionInformation;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.str['code'] := s.Code;
     result.str['name'] := s.Name;
@@ -279,7 +279,7 @@ class function TServerRegistryUtilities.readServer(fv : String; json: TJsonObjec
 var
   obj : TJsonObject;
 begin
-  result := TServerInformation.create;
+  result := TServerInformation.Create;
   try                                
     result.Code := json.str['code'];
     result.Name := json.str['name'];
@@ -299,7 +299,7 @@ class function TServerRegistryUtilities.toJson(r: TServerRegistry): TJsonObject;
 var
   s : TServerInformation;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try                
     result.str['code'] := s.Code;
     result.str['name'] := r.Name;
@@ -318,7 +318,7 @@ class function TServerRegistryUtilities.readRegistry(fv : String; json: TJsonObj
 var
   obj : TJsonObject;
 begin
-  result := TServerRegistry.create;
+  result := TServerRegistry.Create;
   try
     result.Code := json.str['code'];
     result.Name := json.str['name'];
@@ -337,7 +337,7 @@ class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg:
 var
   row : TServerRow;
 begin
-  row := TServerRow.create;
+  row := TServerRow.Create;
   try
     row.ServerName := srvr.Name;
     row.ServerCode := srvr.Code;
@@ -394,7 +394,7 @@ class function TServerRegistryUtilities.toJson(reg: TServerRegistries): TJsonObj
 var
   sr : TServerRegistry;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.str['version'] := '1';
     result.str['address'] := reg.Address;
@@ -412,7 +412,7 @@ class function TServerRegistryUtilities.toJson(row: TServerRow): TJsonObject;
 var
   s : String;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.str['server-name'] := row.ServerName;
     result.str['server-code'] := row.ServerCode;
@@ -444,7 +444,7 @@ end;
 
 class function TServerRegistryUtilities.buildRows(info: TServerRegistries; regCode, srvrCode, version, tx: String): TFslList<TServerRow>;
 begin
-  result := TFslList<TServerRow>.create;
+  result := TFslList<TServerRow>.Create;
   try
     buildRows(info, regCode, srvrCode, version, tx, result);
     result.link;
@@ -460,9 +460,9 @@ var
 begin
   fv := json.str['version'];
   if (fv <> '1') then
-    raise EFslException.create('Unsupported version '+fv);
+    raise EFslException.Create('Unsupported version '+fv);
 
-  result := TServerRegistries.create;
+  result := TServerRegistries.Create;
   try
     result.Address := json.str['address'];
     result.LastRun :=  TFslDateTime.fromXML(json.str['last-run']);
@@ -480,7 +480,7 @@ end;
 constructor TServerRegistries.Create;
 begin
   inherited Create;
-  FRegistries := TFslList<TServerRegistry>.create;
+  FRegistries := TFslList<TServerRegistry>.Create;
 end;
 
 destructor TServerRegistries.Destroy;
@@ -524,8 +524,8 @@ end;
 
 constructor TServerRegistry.Create;
 begin
-  inherited create;
-  FServers := TFslList<TServerInformation>.create;
+  inherited Create;
+  FServers := TFslList<TServerInformation>.Create;
 end;
 
 destructor TServerRegistry.Destroy;
@@ -571,9 +571,9 @@ end;
 
 constructor TServerInformation.Create;
 begin
-  inherited create;  
-  FVersions := TFslList<TServerVersionInformation>.create;
-  FAuthlist := TStringList.create;
+  inherited Create;  
+  FVersions := TFslList<TServerVersionInformation>.Create;
+  FAuthlist := TStringList.Create;
 end;
 
 destructor TServerInformation.Destroy;
@@ -638,7 +638,7 @@ end;
 constructor TServerVersionInformation.Create;
 begin
   inherited Create;   
-  FTerminologies := TStringList.create;
+  FTerminologies := TStringList.Create;
 end;
 
 destructor TServerVersionInformation.Destroy;

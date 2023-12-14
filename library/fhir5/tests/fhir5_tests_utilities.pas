@@ -64,7 +64,7 @@ begin
     ResourceToFile(bnd, filePath(['[tmp]', 'signed.xml']), ffXml, OutputStylePretty);
     Assert.IsTrue(bnd <> nil);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -84,7 +84,7 @@ begin
     ResourceToFile(bnd, filePath(['[tmp]', 'signed.json']), ffJson, OutputStylePretty);
     Assert.IsTrue(bnd <> nil);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -99,7 +99,7 @@ begin
     Assert.IsTrue(ref.getType = 'Patient');
     Assert.IsTrue(ref.getId = 'example');
   finally
-    ref.Free;
+    ref.free;
   end;
   ref := TFhirReference.Create;
   try
@@ -108,7 +108,7 @@ begin
     Assert.IsTrue(ref.getType = 'Patient');
     Assert.IsTrue(ref.getId = 'example');
   finally
-    ref.Free;
+    ref.free;
   end;
   ref := TFhirReference.Create;
   try
@@ -117,7 +117,7 @@ begin
     Assert.IsTrue(ref.getType = 'Patient');
     Assert.IsTrue(ref.getId = 'example');
   finally
-    ref.Free;
+    ref.free;
   end;
 end;
 
@@ -128,23 +128,23 @@ var
   f : TFileStream;
   s : TStream;
 begin
-  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, THTTPLanguages.create('en'), 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
+  dr := TFhirDocumentReference(TFHIRParsers.ParseFile(nil, ffJson, nil, 'C:\Users\Grahame Grieve\AppData\Roaming\Skype\My Skype Received Files\DocWithTwoJPGs.json'));//PUB_HOME+'\documentreference-example.xml'));
   try
     s := dr.asZip(fn);
     try
       s.Position := 0;
-      f := TFIleStream.create(filePath(['[tmp]', 'test.zip']), fmCreate);
+      f := TFIleStream.Create(filePath(['[tmp]', 'test.zip']), fmCreate);
       try
         f.CopyFrom(s, s.Size)
       finally
-        f.Free;
+        f.free;
       end;
     finally
-     s.Free;
+     s.free;
     end;
     Assert.IsTrue(fn <> '');
   finally
-    dr.Free;
+    dr.free;
   end;
 end;
 
@@ -153,7 +153,7 @@ var
   att : TFhirAttachment;
   p : TFslZipPart;
 begin
-  att := TFHIRAttachment.create;
+  att := TFHIRAttachment.Create;
   try
     att.title := 'test';
     att.data := TEncoding.UTF8.GetBytes('Some test text');
@@ -164,10 +164,10 @@ begin
       Assert.IsTrue(p.Size > 0);
       Assert.IsTrue(p.Comment = 'text/plain');
     finally
-      p.Free;
+      p.free;
     end;
   finally
-    att.Free;
+    att.free;
   end;
 end;
 

@@ -1,7 +1,7 @@
 object ToolkitAboutForm: TToolkitAboutForm
   Left = 474
   Height = 223
-  Top = 228
+  Top = 472
   Width = 530
   BorderIcons = []
   BorderStyle = bsNone
@@ -10,7 +10,7 @@ object ToolkitAboutForm: TToolkitAboutForm
   ClientWidth = 530
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.0.0.2'
   object Panel1: TPanel
     Left = 0
     Height = 223
@@ -21,6 +21,7 @@ object ToolkitAboutForm: TToolkitAboutForm
     ClientHeight = 223
     ClientWidth = 530
     Color = clWhite
+    ParentBackground = False
     ParentColor = False
     TabOrder = 0
     object Bevel2: TBevel
@@ -576,9 +577,9 @@ object ToolkitAboutForm: TToolkitAboutForm
     object Label1: TLabel
       Cursor = crHandPoint
       Left = 216
-      Height = 15
+      Height = 16
       Top = 152
-      Width = 263
+      Width = 295
       Caption = 'https://github.com/HealthIntersections/fhirserver'
       Font.Color = 10485760
       Font.Style = [fsUnderline]
@@ -588,9 +589,9 @@ object ToolkitAboutForm: TToolkitAboutForm
     object Label2: TLabel
       Cursor = crHandPoint
       Left = 216
-      Height = 15
+      Height = 16
       Top = 187
-      Width = 77
+      Width = 94
       Caption = 'License: BSD-3'
       Font.Color = 10485760
       Font.Style = [fsUnderline]
@@ -599,9 +600,9 @@ object ToolkitAboutForm: TToolkitAboutForm
     end
     object Label3: TLabel
       Left = 216
-      Height = 15
+      Height = 16
       Top = 168
-      Width = 218
+      Width = 252
       Caption = 'Copyright (c) Health Intersections Pty Ltd'
     end
   end

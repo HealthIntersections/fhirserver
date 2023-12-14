@@ -93,7 +93,7 @@ implementation
 
 destructor TFHIRToolkitSettings.Destroy;
 begin
-  FVersions.Free;
+  FVersions.free;
   FCacheManager.free;
   inherited;
 end;
@@ -202,7 +202,7 @@ end;
 
 procedure TFHIRToolkitSettings.SetCacheManager(const Value: TFHIRPackageManager);
 begin
-  FCacheManager.Free;
+  FCacheManager.free;
   FCacheManager := Value;
 end;
 
@@ -260,7 +260,7 @@ end;
 
 procedure TFHIRToolkitSettings.SetVersions(const Value: TFHIRVersionFactories);
 begin
-  FVersions.Free;
+  FVersions.free;
   FVersions := Value;
 end;
 

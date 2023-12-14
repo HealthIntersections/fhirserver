@@ -202,11 +202,11 @@ Implementation
 
 Destructor TWPPaginator.Destroy;
 Begin
-  FOperator.Free;
-  FDocument.Free;
-  FPrinter.Free;
-  FPageLayoutController.Free;
-  FStyles.Free;
+  FOperator.free;
+  FDocument.free;
+  FPrinter.free;
+  FPageLayoutController.free;
+  FStyles.free;
   Inherited;
 End;
 
@@ -250,10 +250,10 @@ Begin
           End;
         End;
       Finally
-        oPrinter.Free;
+        oPrinter.free;
       End;
     Finally
-      oJob.Free;
+      oJob.free;
     End;
   End;
 End;
@@ -265,32 +265,32 @@ End;
 
 Procedure TWPPaginator.SetOperator(Const Value: TWPOperator);
 Begin
-  FOperator.Free;
+  FOperator.free;
   FOperator := Value;
   FVersionTimestamp := FOperator.LastAction;
 End;
 
 Procedure TWPPaginator.SetDocument(Const Value: TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
 Procedure TWPPaginator.SetStyles(Const Value: TWPStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := Value;
 End;
 
 Procedure TWPPaginator.SetPageLayoutController(Const Value: TWPPageLayoutController);
 Begin
-  FPageLayoutController.Free;
+  FPageLayoutController.free;
   FPageLayoutController := Value;
 End;
 
 Procedure TWPPaginator.SetPrinter(Const Value: TFslPrinter);
 Begin
-  FPrinter.Free;
+  FPrinter.free;
   FPrinter := Value;
 End;
 
@@ -360,9 +360,9 @@ End;
 
 Destructor TWPPrintRenderer.Destroy;
 Begin
-  FPageLayoutController.Free;
-  FPages.Free;
-  FPrinterCanvas.Free;
+  FPageLayoutController.free;
+  FPages.free;
+  FPrinterCanvas.free;
 
   Inherited;
 End;
@@ -386,7 +386,7 @@ End;
 
 Procedure TWPPrintRenderer.SetPageLayoutController(Const Value : TWPPageLayoutController);
 Begin
-  FPageLayoutController.Free;
+  FPageLayoutController.free;
   FPageLayoutController := Value;
 End;
 
@@ -406,7 +406,7 @@ End;
 
 Procedure TWPPrintRenderer.SetPrinterCanvas(oValue : TFslPrinterCanvas);
 Begin
-  FPrinterCanvas.Free;
+  FPrinterCanvas.free;
   FPrinterCanvas := oValue;
 
   Canvas := TWPPrintCanvas.Create(FPrinterCanvas.Link);
@@ -427,7 +427,7 @@ End;
 
 Procedure TWPPrintRenderer.SetPages(oPages : TWPPages);
 Begin
-  FPages.Free;
+  FPages.free;
   FPages := oPages;
 End;
 
@@ -455,7 +455,7 @@ Begin
 
       FPages.Add(Result.Link);
     Finally
-      Result.Free;
+      Result.free;
     End;
   End;
 End;
@@ -487,7 +487,7 @@ Begin
     oPage.Cursor := oPage.Cursor + Result.Height;
     Result.Cursor := Result.Top;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -518,7 +518,7 @@ Begin
     oParent.Children.Add(Result.Link);
     Result.Cursor := Result.Top;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -540,7 +540,7 @@ Begin
     oContainer.Rows.Add(Result.Link);
     oContainer.Cursor := oContainer.Cursor + Result.Height;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -618,7 +618,7 @@ Begin
     oNew.Parent := oRow;
     oRow.Items.Add(oNew.Link);
   Finally
-    oNew.Free;
+    oNew.free;
   End;
 End;
 
@@ -1000,7 +1000,7 @@ End;
 
 Destructor TWPPrintCanvas.Destroy;
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   Inherited;
 End;
 
@@ -1014,7 +1014,7 @@ End;
 
 Procedure TWPPrintCanvas.SetCanvas(Const Value : TFslPrinterCanvas);
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Value;
 End;
 

@@ -87,7 +87,7 @@ uses
 
 constructor TSystemService.Create(const ASystemName, ADisplayName: String);
 begin
-  inherited create;
+  inherited Create;
   FStartTime := now;
   FSystemName := ASystemName;
   FDisplayName := ADisplayName;

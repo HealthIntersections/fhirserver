@@ -914,7 +914,7 @@ begin
     end;
 
   finally
-    SL.Free;
+    SL.free;
   end;
 
   filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
@@ -967,7 +967,7 @@ begin
       end;
 
     finally
-      SL.Free;
+      SL.free;
     end;
 
     filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
@@ -1059,7 +1059,7 @@ begin
 
     contentImport.Edit1.text := edtPageNameURL.text;
     contentImport.ShowModal;
-    contentImport.Free;
+    contentImport.free;
 
   end;
 
@@ -1100,7 +1100,7 @@ begin
         restype := extResource.fhirType;
 
       finally
-        extResource.Free;
+        extResource.free;
 
       end;
 
@@ -1516,11 +1516,11 @@ begin
       try
         OutStream.CopyFrom(InStream, InStream.Size);
       finally
-        InStream.Free;
+        InStream.free;
       end;
     end;
   finally
-    OutStream.Free;
+    OutStream.free;
   end;
 end;
 

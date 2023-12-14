@@ -184,7 +184,7 @@ begin
   try
     result := vl[0].ToString = 'true';
   finally
-    vl.Free;
+    vl.free;
   end;
 end;
 
@@ -233,39 +233,39 @@ constructor TFHIRGraphQLEngine.Create(factory : TFHIRFactory);
 begin
   inherited Create;
   FFactory := Factory.link;
-  FWorkingVariables := TFslMap<TGraphQLArgument>.create('graphql');
+  FWorkingVariables := TFslMap<TGraphQLArgument>.Create('graphql');
   FPathEngine := factory.makePathEngine(nil, nil);
   FMagicExpression := FPathEngine.parseV('0');
 end;
 
 destructor TFHIRGraphQLEngine.Destroy;
 begin
-  FMagicExpression.Free;
-  FPathEngine.Free;
-  FAppinfo.Free;
-  FFocus.Free;
-  FOutput.Free;
-  FGraphQL.Free;
-  FWorkingVariables.Free;
-  FFactory.Free;
+  FMagicExpression.free;
+  FPathEngine.free;
+  FAppinfo.free;
+  FFocus.free;
+  FOutput.free;
+  FGraphQL.free;
+  FWorkingVariables.free;
+  FFactory.free;
   inherited;
 end;
 
 procedure TFHIRGraphQLEngine.SetAppInfo(const Value: TFslObject);
 begin
-  FAppinfo.Free;
+  FAppinfo.free;
   FAppinfo := Value;
 end;
 
 procedure TFHIRGraphQLEngine.SetGraphQL(const Value: TGraphQLPackage);
 begin
-  FGraphQL.Free;
+  FGraphQL.free;
   FGraphQL := Value;
 end;
 
 procedure TFHIRGraphQLEngine.SetFocus(const Value: TFHIRResourceV);
 begin
-  FFocus.Free;
+  FFocus.free;
   FFocus := Value;
 end;
 
@@ -296,7 +296,7 @@ begin
           for v in vl do
             list.Add(v.ToString);
         finally
-          vl.Free;
+          vl.free;
         end;
       end;
     if list.Count = 0 then
@@ -304,7 +304,7 @@ begin
     else
       result := list.IndexOf(dest.fhirType) > -1;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -313,9 +313,9 @@ var
   op : TGraphQLOperation;
 begin
   if FGraphQL = nil then
-    raise EFHIRException.create('Unable to process graphql - graphql document missing');
+    raise EFHIRException.Create('Unable to process graphql - graphql document missing');
 
-  FOutput.Free;
+  FOutput.free;
   FOutput := TGraphQLObjectValue.Create;
 
   // todo: initial conditions
@@ -363,7 +363,7 @@ begin
   offset := 0;
   count := MAXINT;
 
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     if values.Count > 0 then
     begin
@@ -374,9 +374,9 @@ begin
           vl := resolveValues(arg);
           try
             if (vl.Count <> 1) then
-              raise EFHIRException.create('Incorrect number of arguments');
+              raise EFHIRException.Create('Incorrect number of arguments');
             if values[0].isPrimitive then
-              raise EFHIRException.create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
+              raise EFHIRException.Create('Attempt to use a filter ('+arg.Name+') on a primtive type ('+prop.Type_+')');
             if (arg.Name = 'fhirpath') then
               fp.Append(' and '+vl[0].ToString)
             else if (arg.Name = '_offset') then
@@ -387,12 +387,12 @@ begin
             begin
               p := values[0].getPropertyValue(arg.Name);
               if p = nil then
-                raise EFHIRException.create('Attempt to use an unknown filter ('+arg.Name+') on a type ('+prop.Type_+')');
-              p.Free;
+                raise EFHIRException.Create('Attempt to use an unknown filter ('+arg.Name+') on a type ('+prop.Type_+')');
+              p.free;
               fp.Append(' and '+arg.Name+' = '''+vl[0].ToString+'''');
             end;
           finally
-            vl.Free;
+            vl.free;
           end;
         end;
         if fp.Length = 0 then
@@ -429,16 +429,16 @@ begin
               inc(i);
             end;
           finally
-            node.Free;
+            node.free;
           end;
         end;
       finally
-        fp.Free;
+        fp.free;
       end;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -448,7 +448,7 @@ end;
 //  node : TFHIRPathExpressionNodeV;
 //  bel : TFslList<TFHIRBundleEntryW>;
 //begin
-//  result := TFslList<TFHIRResourceV>.create;
+//  result := TFslList<TFHIRResourceV>.Create;
 //  try
 //    bel := bnd.entries;
 //    try
@@ -465,16 +465,16 @@ end;
 //              if FPathEngine.evaluateToBoolean(nil, be.resource, be.resource, node) then
 //                result.Add(be.resource.Link)
 //          finally
-//            node.Free;
+//            node.free;
 //          end;
 //        end;
 //      end;
 //    finally
-//      bel.Free;
+//      bel.free;
 //    end;
 //    result.link;
 //  finally
-//    result.Free;
+//    result.free;
 //  end;
 //end;
 
@@ -483,7 +483,7 @@ var
   v : TFHIRResourceV;
   node : TFHIRPathExpressionNodeV;
 begin
-  result := TFslList<TFHIRResourceV>.create;
+  result := TFslList<TFHIRResourceV>.Create;
   try
     if list.Count > 0 then
     begin
@@ -498,13 +498,13 @@ begin
             if FPathEngine.evaluateToBoolean(nil, v, v, node) then
               result.Add(v.Link)
         finally
-          node.Free;
+          node.free;
         end;
       end;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -549,7 +549,7 @@ begin
     else if sel.field.hasDirective('first') {or sel.field.hasDirective('last')} then
     begin
       if expression <> nil then
-        raise EFHIRException.create('You cannot mix @slice and @first');
+        raise EFHIRException.Create('You cannot mix @slice and @first');
       arg := target.addField(sel.field.Alias+suffix, listStatus(sel.field, inheritedList))
     end
     else if expression = nil then
@@ -586,7 +586,7 @@ begin
             arg.addValue(new.Link);
             processObject(context, value, new, sel.field.SelectionSet, il, ss);
           finally
-            new.Free;
+            new.free;
           end;
         end;
       end;
@@ -595,7 +595,7 @@ begin
       inc(index);
     end;
   finally
-    expression.Free;
+    expression.free;
   end;
 end;
 
@@ -675,10 +675,10 @@ begin
              if not vl.Empty then
                processValues(context, sel, prop, target, vl, sel.field.Name.startsWith('_'), inheritedList, suffix);
             finally
-              vl.Free;
+              vl.free;
             end;
           finally
-            prop.Free;
+            prop.free;
           end;
         end;
       end;
@@ -730,7 +730,7 @@ var
   prop : TFHIRProperty;
 begin
   if not (source.fhirType = 'Reference') then
-    raise EJsonTodo.create('TFHIRGraphQLEngine.processReference');
+    raise EJsonTodo.Create('TFHIRGraphQLEngine.processReference');
   if not assigned(FOnFollowReference) then
     raise EJsonException.Create('Resource Referencing services not provided');
 
@@ -747,17 +747,17 @@ begin
             arg.addValue(new.Link);
             processObject(ctxt, dest, new, field.SelectionSet, inheritedList, suffix);
           finally
-            new.Free;
+            new.free;
           end;
         end;
       finally
-        ctxt.Free;
-        dest.Free;
+        ctxt.free;
+        dest.free;
       end
     else if not hasArgument(field.Arguments, 'optional', 'true') then
       raise EJsonException.Create('Unable to resolve reference to '+prop.Values[0].primitiveValue);
   finally
-    prop.Free;
+    prop.free;
   end;
 end;
 
@@ -771,9 +771,9 @@ var
 begin
   if not assigned(FOnListResources) then
     raise EJsonException.Create('Resource Referencing services not provided');
-  list := TFslList<TFHIRResourceV>.create;
+  list := TFslList<TFHIRResourceV>.Create;
   try
-    params := TFslList<TGraphQLArgument>.create;
+    params := TFslList<TGraphQLArgument>.Create;
     try
       parg := nil;
       for a in field.Arguments do
@@ -791,7 +791,7 @@ begin
       arg.addValue(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
       FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), params, list);
     finally
-      params.Free;
+      params.free;
     end;
 
     vl := filterResources(field.argument('FHIRPathEngine'), list);
@@ -806,15 +806,15 @@ begin
             arg.addValue(new.Link);
             processObject(v, v, new, field.SelectionSet, inheritedList, suffix);
           finally
-            new.Free;
+            new.free;
           end;
         end;
       end;
     finally
-      vl.Free;
+      vl.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -828,7 +828,7 @@ var
 begin
   if not assigned(FOnSearch) then
     raise EJsonException.Create('Resource Referencing services not provided');
-  params := TFslList<TGraphQLArgument>.create;
+  params := TFslList<TGraphQLArgument>.Create;
   try
     parg := nil;
     for a in field.Arguments do
@@ -846,20 +846,20 @@ begin
     arg.addValue(TGraphQLStringValue.Create(source.fhirType+'/'+source.id));
     bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
     try
-      bndWrapper := TFHIRGraphQLSearchWrapper.create(FFactory.link, bnd.link);
+      bndWrapper := TFHIRGraphQLSearchWrapper.Create(FFactory.link, bnd.link);
       try
         arg := target.addField(field.Alias, listStatus(field, false));
         new := TGraphQLObjectValue.Create;
         arg.addValue(new);
         processObject(nil, bndWrapper, new, field.SelectionSet, inheritedList, suffix);
       finally
-        bndWrapper.Free;
+        bndWrapper.free;
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -908,10 +908,10 @@ begin
       arg.addValue(new.Link);
       processObject(res, res, new, field.SelectionSet, inheritedList, suffix);
     finally
-      new.Free;
+      new.free;
     end;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -924,7 +924,7 @@ var
 begin
   if not assigned(FOnListResources) then
     raise EJsonException.Create('Resource Referencing services not provided');
-  list := TFslList<TFHIRResourceV>.create;
+  list := TFslList<TFHIRResourceV>.Create;
   try
     FOnListResources(FAppinfo, field.Name.Substring(0, field.Name.Length - 4), field.Arguments, list);
 
@@ -940,15 +940,15 @@ begin
             arg.addValue(new.Link);
             processObject(v, v, new, field.SelectionSet, inheritedList, suffix);
           finally
-            new.Free;
+            new.free;
           end;
         end;
       end;
     finally
-      vl.Free;
+      vl.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -963,7 +963,7 @@ var
 begin
   if not assigned(FOnSearch) then
     raise EJsonException.Create('Resource Referencing services not provided');
-  params := TFslList<TGraphQLArgument>.create;
+  params := TFslList<TGraphQLArgument>.Create;
   try
     carg := nil;
     for arg in field.Arguments do
@@ -981,20 +981,20 @@ begin
 
     bnd := FOnSearch(FAppinfo, field.Name.Substring(0, field.Name.Length-10), params);
     try
-      bndWrapper := TFHIRGraphQLSearchWrapper.create(FFactory.link, bnd.link);
+      bndWrapper := TFHIRGraphQLSearchWrapper.Create(FFactory.link, bnd.link);
       try
         arg := target.addField(field.Alias, listStatus(field, false));
         new := TGraphQLObjectValue.Create;
         arg.addValue(new);
         processObject(nil, bndWrapper, new, field.SelectionSet, inheritedList, suffix);
       finally
-        bndWrapper.Free;
+        bndWrapper.free;
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -1021,7 +1021,7 @@ begin
   FFactory := factory;
   FBundle := bundle;
   s := bundle.links['self'];
-  FParseMap := THTTPParameters.create(s.Substring(s.IndexOf('?')+1));
+  FParseMap := THTTPParameters.Create(s.Substring(s.IndexOf('?')+1));
 end;
 
 function TFHIRGraphQLSearchWrapper.createPropertyValue(propName: string): TFHIRObject;
@@ -1032,8 +1032,8 @@ end;
 destructor TFHIRGraphQLSearchWrapper.Destroy;
 begin
   FParseMap.free;
-  FBundle.Free;
-  FFactory.Free;
+  FBundle.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -1047,11 +1047,11 @@ begin
     result := nil
   else
   begin
-    pm := THTTPParameters.create(s.Substring(s.IndexOf('?')+1));
+    pm := THTTPParameters.Create(s.Substring(s.IndexOf('?')+1));
     try
       result := FBundle.makeStringValue(pm['search-id']+':'+pm['search-offset']);
     finally
-      pm.Free;
+      pm.free;
     end;
   end;
 end;
@@ -1103,18 +1103,18 @@ begin
     result := TFHIRProperty.Create(self, propname, 'integer', false, nil, extractParam('_count', true))
   else if propName = 'edges' then
   begin
-    list := TFslList<TFslObject>.create;
+    list := TFslList<TFslObject>.Create;
     try
       bel := FBundle.entries;
       try
         for be in bel do
-          list.Add(TFHIRGraphQLSearchEdge.create(ffactory.link, be.Link));
+          list.Add(TFHIRGraphQLSearchEdge.Create(ffactory.link, be.Link));
         result := TFHIRProperty.Create(self, propname, 'edge', true, nil, list);
       finally
-        bel.Free;
+        bel.free;
       end;
     finally
-      list.Free;
+      list.free;
     end;
   end
   else
@@ -1143,7 +1143,7 @@ end;
 
 procedure TFHIRGraphQLSearchWrapper.SetBundle(const Value: TFHIRBundleW);
 begin
-  FBundle.Free;
+  FBundle.free;
   FBundle := Value;
 end;
 
@@ -1180,8 +1180,8 @@ end;
 
 destructor TFHIRGraphQLSearchEdge.Destroy;
 begin
-  FEntry.Free;
-  FFactory.Free;
+  FEntry.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -1239,7 +1239,7 @@ end;
 
 procedure TFHIRGraphQLSearchEdge.SetEntry(const Value: TFHIRBundleEntryW);
 begin
-  FEntry.Free;
+  FEntry.free;
   FEntry := value;
 end;
 
@@ -1269,7 +1269,7 @@ begin
       exit('');
     result := vl[0].ToString;
   finally
-    vl.Free;
+    vl.free;
   end;
 end;
 
@@ -1279,7 +1279,7 @@ var
   a : TGraphQLArgument;
   vl : TFslList<TGraphQLValue>;
 begin
-  result := TFslList<TGraphQLValue>.create;
+  result := TFslList<TGraphQLValue>.Create;
   try
     for v in arg.Values do
       if not (v is TGraphQLVariableValue) then
@@ -1294,7 +1294,7 @@ begin
           try
             result.AddAll(vl);
           finally
-            vl.Free;
+            vl.free;
           end;
         end
         else

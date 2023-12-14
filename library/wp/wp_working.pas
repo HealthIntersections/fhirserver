@@ -2003,12 +2003,12 @@ end;
 
 Destructor TWPWorkingDocumentPiece.Destroy;
 Begin
-  FSourceObject.Free;
-  FMaps.Free;
-  FMetrics.Free;
-  FFont.Free;
+  FSourceObject.free;
+  FMaps.free;
+  FMetrics.free;
+  FFont.free;
   FHotspot.UnHook(Change);
-  FHotspot.Free;
+  FHotspot.free;
   Inherited;
 End;
 
@@ -2048,19 +2048,19 @@ End;
 
 Procedure TWPWorkingDocumentPiece.SetFont(Const Value: TWPSFontDetails);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := Value;
 End;
 
 Procedure TWPWorkingDocumentPiece.SetMetrics(Const Value: TWPMetrics);
 Begin
-  FMetrics.Free;
+  FMetrics.free;
   FMetrics := Value;
 End;
 
 procedure TWPWorkingDocumentPiece.SetSourceObject(const Value: TFslObject);
 begin
-  FSourceObject.Free;
+  FSourceObject.free;
   FSourceObject := Value;
 end;
 
@@ -2240,7 +2240,7 @@ End;
 Procedure TWPWorkingDocumentPiece.SetHotspot(Const Value: TWPHotspot);
 Begin
   FHotspot.UnHook(Change);
-  FHotspot.Free;
+  FHotspot.free;
   FHotSpot := Value;
   FHotSpot.Hook(Change);
   Change(ctLayout, Value);
@@ -2394,7 +2394,7 @@ End;
 
 Destructor TWPMapObject.Destroy;
 Begin
-  FBackHotspot.Free;
+  FBackHotspot.free;
   Inherited;
 End;
 
@@ -2579,11 +2579,11 @@ Begin
   If (FBackHotspot <> Value) Then
     Begin
     WantPainting;
-    FBackHotspot.Free;
+    FBackHotspot.free;
     FBackHotspot := Value;
     End
   Else
-    FBackHotspot.Free;
+    FBackHotspot.free;
 End;
 
 
@@ -2638,7 +2638,7 @@ begin
   if oFocus.FPiece is TWPWorkingDocument Then
     result := TWPWorkingDocument(oFocus.FPiece).FAllAnnotations[iId-1]
   Else
-    raise EWPException.create('root element doesn''t point to document');
+    raise EWPException.Create('root element doesn''t point to document');
 end;
 
 function TWPMapObject.sizeInBytesV(magic : integer) : cardinal;
@@ -2665,7 +2665,7 @@ End;
 Destructor TWPMapItem.Destroy;
 Begin
   Inherited;
-  FForeHotspot.Free;
+  FForeHotspot.free;
 End;
 
 Procedure TWPMapItem.Assign(oSource: TFslObject);
@@ -2777,11 +2777,11 @@ Begin
   If (FForeHotspot <> Value) Then
     Begin
     WantPainting;
-    FForeHotspot.Free;
+    FForeHotspot.free;
     FForeHotspot := Value;
     End
   Else
-    FForeHotspot.Free;
+    FForeHotspot.free;
 End;
 
 procedure TWPMapItem.SetAnnotationColour(const Value: TColour);
@@ -2960,23 +2960,23 @@ Begin
   FAllAnnotations := TWPWorkingAnnotationList.Create;
   FDrawnAnnotations := TWPWorkingAnnotationList.Create;
   FAllowedWords := TFslStringList.Create;
-  FAttachments := TWPWorkingAttachmentList.create;
+  FAttachments := TWPWorkingAttachmentList.Create;
   FAttachments.SortedBy(FAttachments.CompareById);
 End;
 
 
 Destructor TWPWorkingDocument.Destroy;
 Begin
-  FAttachments.Free;
-  FSourceBytes.Free;
-  FSourceObjectModel.Free;
+  FAttachments.free;
+  FSourceBytes.free;
+  FSourceObjectModel.free;
   FPieces.UnHook(Change);
-  FPieces.Free;
-  FAllowedWords.Free;
-  FFieldDefinitionProviders.Free;
-  FAnnotationDefinitionProviders.Free;
-  FAllAnnotations.Free;
-  FDrawnAnnotations.Free;
+  FPieces.free;
+  FAllowedWords.free;
+  FFieldDefinitionProviders.free;
+  FAnnotationDefinitionProviders.free;
+  FAllAnnotations.free;
+  FDrawnAnnotations.free;
   Inherited;
 End;
 
@@ -3022,7 +3022,7 @@ Begin
 
     Pieces.Add(oPara.Link);
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -3038,7 +3038,7 @@ Begin
       End;
     Pieces.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3057,7 +3057,7 @@ Begin
       End;
     Pieces.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3074,7 +3074,7 @@ Begin
       End;
     Pieces.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3380,7 +3380,7 @@ Begin
           begin
             i := FAttachments.IndexByReference(TWPPDFGraphic(oImage.Image).Attachment);
             if i = -1 then
-              raise EWPException.create('Attachment mis-allocation')
+              raise EWPException.Create('Attachment mis-allocation')
             else
               FAttachments[i].InUse := true;
           end;*)
@@ -3499,7 +3499,7 @@ Begin
       End;
       Assert(CheckCondition(FWorking Or (oStartList.Count = 0), 'Regenerate Metrics', 'imbalance in start list '+IntegerToString(oStartList.Count)));
     Finally
-      oStartList.Free;
+      oStartList.free;
     End;
 
     If Assigned(oLast) Then
@@ -3920,7 +3920,7 @@ Begin
       Result := (iNew <> iCurrent) And (iNew <> -1);
       End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3950,7 +3950,7 @@ Begin
       Result := (iNew <> iCurrent) And (iNew <> -1);
       End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -4199,25 +4199,25 @@ End;
 
 Procedure TWPWorkingDocument.SetFieldDefinitionProviders(Const Value: TWPFieldDefinitionProviderList);
 Begin
-  FFieldDefinitionProviders.Free;
+  FFieldDefinitionProviders.free;
   FFieldDefinitionProviders := Value;
 End;
 
 procedure TWPWorkingDocument.SetSourceBytes(const Value: TFslBuffer);
 begin
-  FSourceBytes.Free;
+  FSourceBytes.free;
   FSourceBytes := Value;
 end;
 
 procedure TWPWorkingDocument.SetSourceObjectModel(const Value: TFslObject);
 begin
-  FSourceObjectModel.Free;
+  FSourceObjectModel.free;
   FSourceObjectModel := Value;
 end;
 
 Procedure TWPWorkingDocument.SetAnnotationDefinitionProviders(Const Value: TWPAnnotationDefinitionProviderList);
 Begin
-  FAnnotationDefinitionProviders.Free;
+  FAnnotationDefinitionProviders.free;
   FAnnotationDefinitionProviders := Value;
 End;
 
@@ -4238,7 +4238,7 @@ begin
       begin
         att := FAttachments.GetById(TWPPDFGraphic(oImage.Image).Attachment.Id);
         if att = nil then
-          raise EWPException.create('Attachment mis-allocation for id = '+TWPPDFGraphic(oImage.Image).Attachment.Id);
+          raise EWPException.Create('Attachment mis-allocation for id = '+TWPPDFGraphic(oImage.Image).Attachment.Id);
         TWPPDFGraphic(oImage.Image).Attachment := att.Link;
       end;*)
     end;
@@ -4316,7 +4316,7 @@ Begin
     result.AnnotationId := AnnotationId;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4332,7 +4332,7 @@ Begin
     Result.DrawnFont := DrawnFont;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4348,7 +4348,7 @@ Begin
     result.AnnotationId := AnnotationId;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4489,12 +4489,12 @@ end;
 
 Destructor TWPWorkingDocumentImagePiece.Destroy;
 Begin
-  FAdornments.Free;
-  FImage.Free;
-  FSelectionImage.Free;
+  FAdornments.free;
+  FImage.free;
+  FSelectionImage.free;
   FImageMap.UnHook(ImageMapChange);
-  FImageMap.Free;
-  FWorkingImage.Free;
+  FImageMap.free;
+  FWorkingImage.free;
   Inherited;
 End;
 
@@ -4516,10 +4516,10 @@ Begin
 
   // There is no set on the imagemap property
   FImageMap.UnHook(ImageMapChange);
-  FImageMap.Free;
+  FImageMap.free;
   FImageMap := TWPWorkingDocumentImagePiece(oSource).FImageMap.Clone;
   FImageMap.Hook(ImageMapChange);
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
 
   FAdornments.Assign(TWPWorkingDocumentImagePiece(oSource).FAdornments);
@@ -4544,10 +4544,10 @@ Begin
 
   // There is no set on the imagemap property
   FImageMap.UnHook(ImageMapChange);
-  FImageMap.Free;
+  FImageMap.free;
   FImageMap := TWPWorkingDocumentImagePiece(oSource).FImageMap.Clone;
   FImageMap.Hook(ImageMapChange);
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
 
   VerticalAlignment := TWPWorkingDocumentImagePiece(oSource).VerticalAlignment;
@@ -4639,16 +4639,16 @@ End;
 Procedure TWPWorkingDocumentImagePiece.SetHeight(Const Value: Integer);
 Begin
   FHeight := Value;
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   Change(ctLayout, Self);
 End;
 
 Procedure TWPWorkingDocumentImagePiece.SetImage(Const Value: TFslGraphic);
 Begin
-  FImage.Free;
+  FImage.free;
   FImage := Value;
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   FImage.FrameIndex := FFrameIndex;
   ApplyTransparency;
@@ -4670,9 +4670,9 @@ end;
 
 Procedure TWPWorkingDocumentImagePiece.SetSelectionImage(Const Value: TFslGraphic);
 Begin
-  FSelectionImage.Free;
+  FSelectionImage.free;
   FSelectionImage := Value;
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   ApplyTransparency;
   Change(ctPresentation, Self);
@@ -4681,7 +4681,7 @@ End;
 procedure TWPWorkingDocumentImagePiece.SetSizePolicy(const Value: TWordProcessorImageSizePolicy);
 begin
   FSizePolicy := Value;
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   Change(ctLayout, Self);
 end;
@@ -4689,7 +4689,7 @@ end;
 Procedure TWPWorkingDocumentImagePiece.SetWidth(Const Value: Integer);
 Begin
   FWidth := Value;
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   Change(ctLayout, Self);
 End;
@@ -4738,7 +4738,7 @@ Procedure TWPWorkingDocumentImagePiece.SetHasImageMap(bValue : Boolean);
 Begin
   If Not bValue Then
   Begin
-    FImageMap.Free;
+    FImageMap.free;
     FImageMap := Nil;
   End
   Else If Not Assigned(FImageMap) Then
@@ -4832,7 +4832,7 @@ Begin
         DrawSection(oMask);
         Transfer(oTemp, oMask);
       Finally
-        oMask.Free;
+        oMask.free;
       End;
     End;
     // draw any annotations
@@ -4840,7 +4840,7 @@ Begin
       DrawAdornment(oTemp, FAdornments[iLoop]);
     FWorkingImage := oTemp.Link;
   Finally
-    oTemp.Free;
+    oTemp.free;
   End;
 End;
 
@@ -4854,7 +4854,7 @@ Begin
     Result.Handle.HandleType := bmDIB;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4905,7 +4905,7 @@ End;
 
 Procedure TWPWorkingDocumentImagePiece.ImageMapChange;
 Begin
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   Change(aType, oSource);
 End;
@@ -5126,7 +5126,7 @@ End;
 
 Procedure TWPWorkingDocumentImagePiece.ChangeAdornments;
 Begin
-  FWorkingImage.Free;
+  FWorkingImage.free;
   FWorkingImage := Nil;
   Change(ctTextContents, Self);
 End;
@@ -5674,13 +5674,13 @@ End;
 
 Procedure TWPWorkingDocumentFieldStartPiece.SetDefinitionProvider(Const Value: TWPFieldDefinitionProvider);
 Begin
-  FDefinitionProvider.Free;
+  FDefinitionProvider.free;
   FDefinitionProvider := Value;
 End;
 
 Procedure TWPWorkingDocumentFieldStartPiece.SetDocField(Const Value: TWPDocumentField);
 Begin
-  FDocField.Free;
+  FDocField.free;
   FDocField := Value;
 End;
 
@@ -5708,10 +5708,10 @@ end;
 
 Destructor TWPWorkingDocumentFieldStartPiece.Destroy;
 Begin
-  FCheckables.Free;
-  FDocField.Free;
-  FDefinitionProvider.Free;
-  FData.Free;
+  FCheckables.free;
+  FDocField.free;
+  FDefinitionProvider.free;
+  FData.free;
   Inherited;
 End;
 
@@ -5723,7 +5723,7 @@ Begin
   Try
     DocField := oTran.CreateField(Self);
   Finally
-    oTran.Free;
+    oTran.free;
   End;
 End;
 
@@ -5810,7 +5810,7 @@ End;
 
 Destructor TWPWorkingDocumentFieldStopPiece.Destroy;
 Begin
-  FMatchingStart.Free;
+  FMatchingStart.free;
   Inherited;
 End;
 
@@ -5836,7 +5836,7 @@ End;
 
 Procedure TWPWorkingDocumentFieldStopPiece.SetMatchingStart(Const Value: TWPWorkingDocumentFieldStartPiece);
 Begin
-  FMatchingStart.Free;
+  FMatchingStart.free;
   FMatchingStart := Value;
 End;
 
@@ -5920,13 +5920,13 @@ End;
 
 Destructor TWPWorkingDocumentStopPiece.Destroy;
 Begin
-  FMatchingStart.Free;
+  FMatchingStart.free;
   Inherited;
 End;
 
 Procedure TWPWorkingDocumentStopPiece.SetMatchingStart(Const Value: TWPWorkingDocumentPiece);
 Begin
-  FMatchingStart.Free;
+  FMatchingStart.free;
   FMatchingStart := Value;
 End;
 
@@ -5953,7 +5953,7 @@ end;
 
 Destructor TWPWorkingDocumentContainerPiece.Destroy;
 Begin
-  FContainer.Free;
+  FContainer.free;
   Inherited;
 End;
 
@@ -5965,7 +5965,7 @@ End;
 
 Procedure TWPWorkingDocumentContainerPiece.SetContainer(Const Value: TWPMapContainer);
 Begin
-  FContainer.Free;
+  FContainer.free;
   FContainer := Value;
 End;
 
@@ -6059,7 +6059,7 @@ end;
 
 Destructor TWPWorkingDocumentParaPiece.Destroy;
 Begin
-  FFormat.Free;
+  FFormat.free;
   Inherited;
 End;
 
@@ -6080,7 +6080,7 @@ End;
 
 Procedure TWPWorkingDocumentParaPiece.SetFormat(Const Value: TWPSParagraphDetails);
 Begin
-  FFormat.Free;
+  FFormat.free;
   FFormat := Value;
 End;
 
@@ -6259,9 +6259,9 @@ end;
 
 Destructor TWPWorkingDocumentSectionStartPiece.Destroy;
 Begin
-  FDocSection.Free;
-  FDefinitionProvider.Free;
-  FData.Free;
+  FDocSection.free;
+  FDefinitionProvider.free;
+  FData.free;
   Inherited;
 End;
 
@@ -6372,13 +6372,13 @@ End;
 
 Procedure TWPWorkingDocumentSectionStartPiece.SetDefinitionProvider(Const Value: TWPFieldDefinitionProvider);
 Begin
-  FDefinitionProvider.Free;
+  FDefinitionProvider.free;
   FDefinitionProvider := Value;
 End;
 
 Procedure TWPWorkingDocumentSectionStartPiece.SetDocSection(Const Value: TWPDocumentSection);
 Begin
-  FDocSection.Free;
+  FDocSection.free;
   FDocSection := Value;
 End;
 
@@ -6390,7 +6390,7 @@ Begin
   Try
     DocSection := oTran.CreateSection(Self);
   Finally
-    oTran.Free;
+    oTran.free;
   End;
 End;
 
@@ -6450,17 +6450,17 @@ End;
 Destructor TWPWorkingDocumentTableItemPiece.Destroy;
 Begin
   FLeftBorder.Unhook(Change);
-  FLeftBorder.Free;
+  FLeftBorder.free;
   FRightBorder.UnHook(Change);
-  FRightBorder.Free;
+  FRightBorder.free;
   FTopBorder.UnHook(Change);
-  FTopBorder.Free;
+  FTopBorder.free;
   FBottomBorder.UnHook(Change);
-  FBottomBorder.Free;
-  FWorkingLeftBorder.Free;
-  FWorkingRightBorder.Free;
-  FWorkingTopBorder.Free;
-  FWorkingBottomBorder.Free;
+  FBottomBorder.free;
+  FWorkingLeftBorder.free;
+  FWorkingRightBorder.free;
+  FWorkingTopBorder.free;
+  FWorkingBottomBorder.free;
   Inherited;
 End;
 
@@ -6491,7 +6491,7 @@ End;
 Procedure TWPWorkingDocumentTableItemPiece.SetLeftBorder(Const Value : TWPBorder);
 Begin
   FLeftBorder.UnHook(Change);
-  FLeftBorder.Free;
+  FLeftBorder.free;
   FLeftBorder := Value;
   FLeftBorder.Hook(Change);
 End;
@@ -6500,7 +6500,7 @@ End;
 Procedure TWPWorkingDocumentTableItemPiece.SetRightBorder(Const Value : TWPBorder);
 Begin
   FRightBorder.UnHook(Change);
-  FRightBorder.Free;
+  FRightBorder.free;
   FRightBorder := Value;
   FRightBorder.Hook(Change);
 End;
@@ -6509,7 +6509,7 @@ End;
 Procedure TWPWorkingDocumentTableItemPiece.SetTopBorder(Const Value : TWPBorder);
 Begin
   FTopBorder.UnHook(Change);
-  FTopBorder.Free;
+  FTopBorder.free;
   FTopBorder := Value;
   FTopBorder.Hook(Change);
 End;
@@ -6518,7 +6518,7 @@ End;
 Procedure TWPWorkingDocumentTableItemPiece.SetBottomBorder(Const Value : TWPBorder);
 Begin
   FBottomBorder.UnHook(Change);
-  FBottomBorder.Free;
+  FBottomBorder.free;
   FBottomBorder := Value;
   FBottomBorder.Hook(Change);
 End;
@@ -6526,28 +6526,28 @@ End;
 
 Procedure TWPWorkingDocumentTableItemPiece.SetWorkingLeftBorder(Const Value : TWPBorder);
 Begin
-  FWorkingLeftBorder.Free;
+  FWorkingLeftBorder.free;
   FWorkingLeftBorder := Value;
 End;
 
 
 Procedure TWPWorkingDocumentTableItemPiece.SetWorkingRightBorder(Const Value : TWPBorder);
 Begin
-  FWorkingRightBorder.Free;
+  FWorkingRightBorder.free;
   FWorkingRightBorder := Value;
 End;
 
 
 Procedure TWPWorkingDocumentTableItemPiece.SetWorkingTopBorder(Const Value : TWPBorder);
 Begin
-  FWorkingTopBorder.Free;
+  FWorkingTopBorder.free;
   FWorkingTopBorder := Value;
 End;
 
 
 Procedure TWPWorkingDocumentTableItemPiece.SetWorkingBottomBorder(Const Value : TWPBorder);
 Begin
-  FWorkingBottomBorder.Free;
+  FWorkingBottomBorder.free;
   FWorkingBottomBorder := Value;
 End;
 
@@ -7021,7 +7021,7 @@ end;
 
 Destructor TWPWorkingDocumentTableRowStartPiece.Destroy;
 Begin
-  FCells.Free;
+  FCells.free;
   Inherited;
 End;
 
@@ -7260,10 +7260,10 @@ end;
 Destructor TWPWorkingDocumentTableStartPiece.Destroy;
 Begin
   FCenterVerticalBorder.UnHook(Change);
-  FCenterVerticalBorder.Free;
+  FCenterVerticalBorder.free;
   FCenterHorizontalBorder.UnHook(Change);
-  FCenterHorizontalBorder.Free;
-  FRows.Free;
+  FCenterHorizontalBorder.free;
+  FRows.free;
   Inherited;
 End;
 
@@ -7328,7 +7328,7 @@ End;
 Procedure TWPWorkingDocumentTableStartPiece.SetCenterHorizontalBorder(Const Value : TWPBorder);
 Begin
   FCenterHorizontalBorder.UnHook(Change);
-  FCenterHorizontalBorder.Free;
+  FCenterHorizontalBorder.free;
   FCenterHorizontalBorder := Value;
   FCenterHorizontalBorder.Hook(Change);
 End;
@@ -7337,7 +7337,7 @@ End;
 Procedure TWPWorkingDocumentTableStartPiece.SetCenterVerticalBorder(Const Value : TWPBorder);
 Begin
   FCenterVerticalBorder.UnHook(Change);
-  FCenterVerticalBorder.Free;
+  FCenterVerticalBorder.free;
   FCenterVerticalBorder := Value;
   FCenterVerticalBorder.Hook(Change);
 End;
@@ -7758,8 +7758,8 @@ End;
 
 Destructor TWPMapContainer.Destroy;
 Begin
-  FChildren.Free;
-  FRows.Free;
+  FChildren.free;
+  FRows.free;
   Inherited;
 End;
 
@@ -7777,13 +7777,13 @@ End;
 
 Procedure TWPMapContainer.SetChildren(Const Value: TWPMapContainers);
 Begin
-  FChildren.Free;
+  FChildren.free;
   FChildren := Value;
 End;
 
 Procedure TWPMapContainer.SetRows(Const Value: TWPMapRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := Value;
 End;
 
@@ -7982,7 +7982,7 @@ End;
 
 Destructor TWPMapRow.Destroy;
 Begin
-  FItems.Free;
+  FItems.free;
 
   Inherited;
 End;
@@ -8000,7 +8000,7 @@ End;
 
 Procedure TWPMapRow.SetItems(Const Value: TWPMapItems);
 Begin
-  FItems.Free;
+  FItems.free;
   FItems := Value;
 End;
 
@@ -8236,7 +8236,7 @@ End;
 
 Destructor TWPIterator.Destroy;
 Begin
-  FDocument.Free;
+  FDocument.free;
   Inherited;
 End;
 
@@ -8256,7 +8256,7 @@ End;
 
 Procedure TWPIterator.SetDocument(Const Value: TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 
   If HasDocument Then
@@ -8335,11 +8335,11 @@ End;
 
 Destructor TWPDocumentTranslator.Destroy;
 Begin
-  FSplitter.Free;
-  FRowMap.Free;
-  FWorkingDocument.Free;
-  FWorkingStyles.Free;
-  FDocument.Free;
+  FSplitter.free;
+  FRowMap.free;
+  FWorkingDocument.free;
+  FWorkingStyles.free;
+  FDocument.free;
   Inherited;
 End;
 
@@ -8353,7 +8353,7 @@ End;
 
 Procedure TWPDocumentTranslator.SetDocument(Const Value : TWPDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
@@ -8373,7 +8373,7 @@ End;
 
 Procedure TWPDocumentTranslator.SetWorkingDocument(Const Value : TWPWorkingDocument);
 Begin
-  FWorkingDocument.Free;
+  FWorkingDocument.free;
   FWorkingDocument := Value;
 End;
 
@@ -8393,7 +8393,7 @@ End;
 
 Procedure TWPDocumentTranslator.SetWorkingStyles(Const Value : TWPStyles);
 Begin
-  FWorkingStyles.Free;
+  FWorkingStyles.free;
   FWorkingStyles := Value;
 End;
 
@@ -8467,7 +8467,7 @@ Begin
     Result.Hotspot := oSection.Hotspot.Clone;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -8490,7 +8490,7 @@ Begin
   Try
     WorkingDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -8510,7 +8510,7 @@ Begin
     oPiece.EndStyle := oBreak.EndStyle;
     WorkingDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -8541,7 +8541,7 @@ Begin
     oStart.ExpandLastColumn := oTable.ExpandLastColumn;
     WorkingDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   For iLoop := 0 To oTable.Rows.Count - 1 Do
@@ -8552,7 +8552,7 @@ Begin
   Try
     WorkingDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -8582,7 +8582,7 @@ Begin
     oStart.Owner := oOwner;
     WorkingDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   For iLoop := 0 To oTableRow.Cells.Count - 1 Do
@@ -8593,7 +8593,7 @@ Begin
   Try
     WorkingDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   For iLoop := 0 To oTableRow.Rows.Count - 1 Do
@@ -8626,7 +8626,7 @@ Begin
     oStart.ReadOnly := TriStateForDocumentObjectReadOnly[oTableCell.ReadOnly];
     WorkingDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   If oTableCell.Paragraphs.Count = 0 Then
@@ -8640,7 +8640,7 @@ Begin
   Try
     WorkingDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -8661,7 +8661,7 @@ Begin
 
     WorkingDocument.Pieces.Add(oPara.Link);
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -8674,7 +8674,7 @@ Begin
   Try
     WorkingDocument.Pieces.Add(oPara.Link);
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -8716,7 +8716,7 @@ Begin
 
     WorkingDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -8732,7 +8732,7 @@ Begin
 
     WorkingDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -8774,7 +8774,7 @@ Begin
 
     WorkingDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -8798,7 +8798,7 @@ Begin
     Result.Font.Assign(oField.Font);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -8835,7 +8835,7 @@ Begin
     result.Font.Assign(oImage.Font);
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -8850,7 +8850,7 @@ Begin
   Try
     WorkingDocument.Pieces.Add(oStart.Link);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   For iLoop := 0 To oField.Contents.Count - 1 Do
@@ -8863,7 +8863,7 @@ Begin
 
     WorkingDocument.Pieces.Add(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -8889,7 +8889,7 @@ Begin
       oAnnot.Text := WorkingDocument.AllAnnotations[i].Text;
       Document.Annotations.add(oAnnot.Link);
     Finally
-      oAnnot.Free;
+      oAnnot.free;
     End;
   End;
 
@@ -8903,7 +8903,7 @@ Begin
     While oIter.More Do
       TranslateBlock(oIter, Document.Blocks);
   Finally
-    oIter.Free;
+    oIter.free;
   End;
 End;
 
@@ -8941,7 +8941,7 @@ Begin
 
     oBlocks.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 
   oIter.Next;
@@ -8964,7 +8964,7 @@ Begin
     Result.Hotspot := oPiece.Hotspot.Clone;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -8985,7 +8985,7 @@ Begin
 
     oBlocks.Add(oSection.Link);
   Finally
-    oSection.Free;
+    oSection.free;
   End;
 
   oIter.Next;
@@ -9014,7 +9014,7 @@ Begin
 
     oBlocks.Add(oParagraph.Link);
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 
   oIter.Next;
@@ -9051,7 +9051,7 @@ Begin
 
     oBlocks.Add(oTable.Link);
   Finally
-    oTable.Free;
+    oTable.free;
   End;
 
   oIter.Next;
@@ -9091,7 +9091,7 @@ Begin
 
     FRowMap.Add(oPiece.Link, oTableRow.Link);
   Finally
-    oTableRow.Free;
+    oTableRow.free;
   End;
 
   oIter.Next;
@@ -9132,7 +9132,7 @@ Begin
 
     oCells.Add(oTableCell.Link);
   Finally
-    oTableCell.Free;
+    oTableCell.free;
   End;
 
   oIter.Next;
@@ -9169,7 +9169,7 @@ Begin
 
     oContents.Add(oLineBreak.Link);
   Finally
-    oLinebreak.Free;
+    oLinebreak.free;
   End;
   oIter.Next;
 End;
@@ -9216,7 +9216,7 @@ Begin
 
     oContents.Add(oImage.Link);
   Finally
-    oImage.Free;
+    oImage.free;
   End;
   oIter.Next;
 End;
@@ -9241,7 +9241,7 @@ Begin
     Result.Font.Assign(oField.Font);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -9265,7 +9265,7 @@ Begin
 
     oContents.Add(oField.Link);
   Finally
-    oField.Free;
+    oField.free;
   End;
   oIter.Next;
 End;
@@ -9297,7 +9297,7 @@ Begin
     End;
     oContents.Add(oText.Link);
   Finally
-    oText.Free;
+    oText.free;
   End;
 End;
 
@@ -9429,13 +9429,13 @@ end;
 
 Destructor TWPWorkingDocumentPieceTracker.Destroy;
 Begin
-  FPiece.Free;
+  FPiece.free;
   Inherited;
 End;
 
 Procedure TWPWorkingDocumentPieceTracker.SetPiece(Const Value: TWPWorkingDocumentPiece);
 Begin
-  FPiece.Free;
+  FPiece.free;
   FPiece := Value;
 End;
 
@@ -9492,7 +9492,7 @@ end;
 
 destructor TWPWorkingAnnotation.Destroy;
 begin
-  FDefinitionProvider.Free;
+  FDefinitionProvider.free;
   inherited;
 end;
 
@@ -9593,7 +9593,7 @@ end;
 
 procedure TWPWorkingAnnotation.SetDefinitionProvider(const Value: TWPAnnotationDefinitionProvider);
 begin
-  FDefinitionProvider.Free;
+  FDefinitionProvider.free;
   FDefinitionProvider := Value;
 end;
 
@@ -9671,7 +9671,7 @@ begin
     result.Text := sValue;
     Add(result.Link);
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -9714,7 +9714,7 @@ begin
     else
       result := nil;
   finally
-    oAttachment.Free;
+    oAttachment.free;
   end;
 end;
 
@@ -9747,15 +9747,15 @@ end;
 constructor TWPWorkingAttachment.Create;
 begin
   inherited;
-  FContent := TFslBuffer.create;
+  FContent := TFslBuffer.Create;
   FExtension := '.bin';
   FMimeType := 'application/binary';
 end;
 
 destructor TWPWorkingAttachment.Destroy;
 begin
-  FContent.Free;
-//  FPDF.Free;
+  FContent.free;
+//  FPDF.free;
   inherited;
 end;
 
@@ -9816,7 +9816,7 @@ end;
 
 function TWPDocumentTranslator.TranslateAttachment(oSource: TWPWorkingAttachment): TWPDocumentAttachment;
 begin
-  result := TWPDocumentAttachment.create;
+  result := TWPDocumentAttachment.Create;
   try
     result.id := oSource.id;
     result.MimeType := oSource.MimeType;
@@ -9830,7 +9830,7 @@ end;
 
 function TWPDocumentTranslator.TranslateAttachment(oSource: TWPDocumentAttachment): TWPWorkingAttachment;
 begin
-  result := TWPWorkingAttachment.create;
+  result := TWPWorkingAttachment.Create;
   try
     result.id := oSource.id;
     result.MimeType := oSource.MimeType;
@@ -9848,15 +9848,15 @@ var
 begin
   Extension := '.pdf';
   MimeType := 'application/pdf';
-//  FPDF.Free;
-//  FPDF := TgtExProPDFDocument.create(nil);
+//  FPDF.free;
+//  FPDF := TgtExProPDFDocument.Create(nil);
 //  mem := TMemoryStream.Create;
 //  try
 //    mem.Write(Content.Data^, Content.Capacity);
 //    mem.Position := 0;
 //    FPDF.LoadFromStream(mem);
 //  finally
-//    mem.Free;
+//    mem.free;
 //  end;
 end;
 
@@ -9870,7 +9870,7 @@ End;
 
 Destructor TWPWorkingDocumentValidator.Destroy;
 Begin
-  FDocument.Free;
+  FDocument.free;
   Inherited;
 End;
 
@@ -9889,7 +9889,7 @@ Begin
   Try
     oThis.Validate;
   Finally
-    oThis.Free;
+    oThis.free;
   End;
 End;
 
@@ -9902,7 +9902,7 @@ End;
 
 Procedure TWPWorkingDocumentValidator.SetDocument(Const Value : TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
@@ -9925,7 +9925,7 @@ Begin
       oIterator.First;
       Validate(oIterator,  [ptText, ptImage, ptFieldStart, ptLineBreak, ptBreak, ptPara, ptTableStart, ptSectionStart]);
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
   End;
 End;

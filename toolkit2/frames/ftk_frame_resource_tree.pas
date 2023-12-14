@@ -62,13 +62,13 @@ implementation
 
 procedure TResourceTreeFrame.initialize;
 begin
-  FMemo := TMemo.create(self);
+  FMemo := TMemo.Create(self);
   FMemo.parent := self;
   FMemo.align := alBottom;
   FMemo.ReadOnly := true;
   FMemo.Height := 300;
 
-  FTree := TTreeView.create(self);
+  FTree := TTreeView.Create(self);
   FTree.parent := self;
   FTree.align := alClient;
   FTree.ReadOnly := true;
@@ -103,7 +103,7 @@ begin
       OnSelectSourceRange(self, loc.parseStart.toPoint, loc.parseFinish.toPoint);
   end;
 
-  //c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
+  //c := FFactory.makeComposer(nil, FFormat, nil, TFHIROutputStyle.OutputStylePretty);
   //try
   //  FMemo.text := c.composeBase(o);
   //finally

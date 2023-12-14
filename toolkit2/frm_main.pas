@@ -50,7 +50,7 @@ uses
 
   fui_lcl_cache, fui_lcl_utilities, frm_file_format, frm_settings, frm_about, dlg_edit_changes, frm_server_settings, frm_oauth,
   frm_format_chooser, frm_clip_chooser, frm_file_deleted, frm_file_changed, frm_project_editor, frm_view_manager, Types,
-  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade;
+  dlg_new_resource, dlg_open_url, dlg_scanner, dlg_upgrade, frm_home;
 
 type
   {$IFDEF WINDOWS}
@@ -183,6 +183,7 @@ type
     lvMessages: TListView;
     MainMenu1: TMainMenu;
     mConsole: TMemo;
+    MenuItem57: TMenuItem;
     mnuInspectorCopyAll: TMenuItem;
     mnuInspectorCopyValue: TMenuItem;
     mnuTextDown: TMenuItem;
@@ -521,6 +522,7 @@ type
     procedure MenuItem118Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem40Click(Sender: TObject);
+    procedure MenuItem57Click(Sender: TObject);
     procedure mnuInspectorCopyAllClick(Sender: TObject);
     procedure mnuInspectorCopyValueClick(Sender: TObject);
     procedure mnuTextAddClick(Sender: TObject);
@@ -700,7 +702,7 @@ begin
           StretchBlt(DC, R.Right - btnSize - 4, R.Top + 6, btnSize, btnSize, bm.Canvas.Handle, 0, 0, 16, 16, cmSrcCopy);
       end;
     finally
-      bm.Free;
+      bm.free;
     end;
   end;
 end;
@@ -724,7 +726,7 @@ begin
   {$ENDIF}
   {$IFNDEF STATICLOAD_OPENSSL}
   {$IFDEF WINDOWS}
-  GetOpenSSLLoader.OpenSSLPath := executableDirectory();
+  GetOpenSSLLoader.OpenSSLPath := TCommandLineParameters.execDir();
   {$ENDIF}
   {$ENDIF}
   try
@@ -736,11 +738,11 @@ begin
 
   GBackgroundTasks.start;
   FSearchTask := GBackgroundTasks.registerTaskEngine(TToolkitSearchTaskEngine.create);
-  FIni := TIniFile.create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
+  FIni := TIniFile.Create(IncludeTrailingPathDelimiter(GetAppConfigDir(false))+'fhir-toolkit.ini');
   FScale := 100;
-  FLeftStack := TPanelStack.create(pnlLeftSpace);
-  FRightStack := TPanelStack.create(pnlRightSpace);
-  FViewManager := TViewManager.create;
+  FLeftStack := TPanelStack.Create(pnlLeftSpace);
+  FRightStack := TPanelStack.Create(pnlRightSpace);
+  FViewManager := TViewManager.Create;
   FViewManager.IniFile := FIni;
   if FIni.readBool('main-form', 'maximised', false) then
     WindowState := wsMaximized
@@ -754,13 +756,13 @@ begin
   loadFonts;
   loadSearch;
   Caption := 'FHIR Toolkit '+TOOLKIT_VERSION;
-  FTextViewManager := TToolkitTextViewManager.create;
+  FTextViewManager := TToolkitTextViewManager.Create;
   FTextViewManager.registerBase(pnlTextHeader, lblTextHeader, cbxTextTransform, btnTextHeader);
   FTextViewManager.ini := FIni;
 
-  FTempStore := TFHIRToolkitTemporaryStorage.create;
+  FTempStore := TFHIRToolkitTemporaryStorage.Create;
 
-  FContext := TToolkitContext.create(imgMain, actList);
+  FContext := TToolkitContext.Create(imgMain, actList);
   FContext.OnUpdateActions := updateActionStatus;
   FContext.OnLocate := locateOnTab;
   FContext.OnChangeFocus := onChangeFocus;
@@ -777,7 +779,7 @@ begin
   FContext.OnConnectToServer := DoConnectToServer;
   FContext.Settings := FIni;
   FContext.TxServers.load(FIni);
-  FServerView := TFHIRServersView.create(FIni);
+  FServerView := TFHIRServersView.Create(FIni);
   FServerView.ControlFile := FilePath([ExtractFileDir(FIni.FileName), 'servers.json']);
   FServerView.Images := imgMain;
   FServerView.List := lvServers;
@@ -786,7 +788,7 @@ begin
   FServerView.load;
   FContext.OnFetchServer := FServerView.FetchServer;
 
-  FProjectsView := TFHIRProjectsView.create(FIni);
+  FProjectsView := TFHIRProjectsView.Create(FIni);
   FProjectsView.ControlFile := FilePath([ExtractFileDir(FIni.FileName), 'projects.json']);
   FProjectsView.Images := imgMain;
   FProjectsView.Tree := tvProjects;
@@ -797,21 +799,21 @@ begin
   FContext.ToolbarCaptions := FIni.readBool('Settings', 'ToolbarCaptions', false);
   actionToolsSideBySideMode.Checked := FContext.SideBySide;
 
-  FFileSystem := TFileStorageService.create(self, FIni);
+  FFileSystem := TFileStorageService.Create(self, FIni);
   FContext.storages.add(FFileSystem.link);
-  FInternalStorage := TInternalStorageService.create(self, FIni);
+  FInternalStorage := TInternalStorageService.Create(self, FIni);
   FContext.storages.add(FInternalStorage.link);
   FContext.storages.add(THTTPStorageService.create); // must be before the next line
-  ss := TServerStorageService.create(FServerView.ServerList.link);
+  ss := TServerStorageService.Create(FServerView.ServerList.link);
   FContext.storages.add(ss);
   ss.OnConnectToServer := DoConnectToServer;
-  FSearch := TFslList<TToolkitSearchMatch>.create;
-  FFactory := TToolkitFactory.create(FContext.link, self);
+  FSearch := TFslList<TToolkitSearchMatch>.Create;
+  FFactory := TToolkitFactory.Create(FContext.link, self);
   actionViewsClearLog.enabled := false;
   actionViewsOpenLog.enabled := false;
   actionViewsCopyLog.enabled := false;
   updateActionStatus(nil);
-  FContext.Languages := TIETFLanguageDefinitions.create(FileToString(partnerFile('lang.dat'), TEncoding.UTF8));
+  FContext.Languages := TIETFLanguageDefinitions.Create(FileToString(partnerFile('lang.dat'), TEncoding.UTF8));
   startLoadingContexts;
   Logging.Log('FHIR Toolkit Started: '+TFslDateTime.makeLocal.toString);
 end;
@@ -828,16 +830,16 @@ begin
   FProjectsView.saveStatus;
   FShuttingDown := true;
   Timer1.Enabled := false;
-  FServerView.Free;
-  FProjectsView.Free;
-  FSearch.Free;
+  FServerView.free;
+  FProjectsView.free;
+  FSearch.free;
   FFactory.free;
-  FFileSystem.Free;
-  FInternalStorage.Free;
-  FTempStore.Free;
-  FContext.Free;
+  FFileSystem.free;
+  FInternalStorage.free;
+  FTempStore.free;
+  FContext.free;
   FTextViewManager.free;
-  FViewManager.Free;
+  FViewManager.free;
 
   FIni.WriteBool('main-form', 'maximised', WindowState = wsMaximized);
   if WindowState <> wsMaximized then
@@ -847,7 +849,7 @@ begin
     FIni.WriteInteger('main-form', 'height', Height);
     FIni.WriteInteger('main-form', 'width', Width);
   end;
-  FIni.Free;
+  FIni.free;
 end;
 
 procedure TMainToolkitForm.FormShow(Sender: TObject);
@@ -863,7 +865,7 @@ begin
   ApplyViewLayout;
 
   empty := true;
-  sessions := TFslList<TToolkitEditSession>.create;
+  sessions := TFslList<TToolkitEditSession>.Create;
   try
     FTempStore.fetchOpenList(sessions);
     for session in sessions do
@@ -940,6 +942,16 @@ end;
 procedure TMainToolkitForm.MenuItem40Click(Sender: TObject);
 begin
   AddServer('hapi.fhir.org', 'http://hapi.fhir.org/baseR4');
+end;
+
+procedure TMainToolkitForm.MenuItem57Click(Sender: TObject);
+begin
+  IPSManagerForm := TIPSManagerForm.create(self);
+  try
+    IPSManagerForm.ShowModal;
+  finally
+    FreeAndNil(IPSManagerForm)
+  end;
 end;
 
 procedure TMainToolkitForm.mnuInspectorCopyAllClick(Sender: TObject);
@@ -1182,7 +1194,7 @@ begin
   if FLastTaskUpdate + 500 > GetTickCount64 then
     exit;
   FLastTaskUpdate := GetTickCount64;
-  list := TFslList<TBackgroundTaskStatusInfo>.create;
+  list := TFslList<TBackgroundTaskStatusInfo>.Create;
   try
     if chkTaskEngines.checked then
       GBackgroundTasks.report(list, tvtEngines)
@@ -1233,7 +1245,7 @@ var
   ts : TStringList;
   s : String;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     Context.Console.GetIncoming(ts);
     if (ts.count > 0) then
@@ -1391,7 +1403,7 @@ begin
   kind := onlySourceKind(kinds);
   if (kind = sekNull) then
   begin
-    FileFormatChooser := TFileFormatChooser.create(self);
+    FileFormatChooser := TFileFormatChooser.Create(self);
     try
       FileFormatChooser.filter := kinds;
       if FileFormatChooser.ShowModal = mrOK then
@@ -1414,11 +1426,11 @@ var
   tab : TTabSheet;
   info : TStringList;
 begin
-  info := TStringList.create;
+  info := TStringList.Create;
   try
     if (kind = sekNull) then
     begin
-      FileFormatChooser := TFileFormatChooser.create(self);
+      FileFormatChooser := TFileFormatChooser.Create(self);
       try
         FileFormatChooser.ImageList := imgMain;
         if FileFormatChooser.ShowModal = mrOK then
@@ -1435,7 +1447,7 @@ begin
       begin
         if (length(bytes) = 0) then
         begin
-          NewResourceDialog := TNewResourceDialog.create(self);
+          NewResourceDialog := TNewResourceDialog.Create(self);
           try
             NewResourceDialog.IniFile := FIni;
             NewResourceDialog.Context := FContext.link;
@@ -1445,7 +1457,7 @@ begin
             session.Info.AddPair('fhir-format', NewResourceDialog.format);
             bytes := NewResourceDialog.generate;
           finally
-            NewResourceDialog.Free;
+            NewResourceDialog.free;
           end;
         end
         else // (length(bytes) > 0
@@ -1788,7 +1800,7 @@ begin
       cbxSearchScope.items.insert(0, cbxSearchScope.text);
     end;
     saveSearch;
-    spec := TToolkitSearchSpecification.create;
+    spec := TToolkitSearchSpecification.Create;
     try
       spec.text := cbxSearch.text;
       spec.caseSensitive := chkCase.checked;
@@ -1807,12 +1819,12 @@ begin
       lvSearch.items.clear;
       if spec.kind = tskCurrent then // we do this one in thread
       begin
-        spec.sources.add(TToolkitSearchSource.create( Context.Focus.Session.Caption, context.focus.Session.Guid, Context.Focus.getSource));
-        engine := TToolkitSearchEngine.create;
+        spec.sources.add(TToolkitSearchSource.Create( Context.Focus.Session.Caption, context.focus.Session.Guid, Context.Focus.getSource));
+        engine := TToolkitSearchEngine.Create;
         try
           engine.context := context.link;
           engine.spec := spec.link;
-          engine.results := TFslList<TToolkitSearchMatch>.create;
+          engine.results := TFslList<TToolkitSearchMatch>.Create;
           engine.go;
           processSearchResults(engine.results, true);
         finally
@@ -1823,11 +1835,11 @@ begin
       begin
         if spec.kind = tskAllOpen then
           for editor in Context.Editors do
-            spec.sources.add(TToolkitSearchSource.create(editor.Session.Caption, editor.Session.Guid, editor.getSource));
-        GBackgroundTasks.queueTask(FSearchTask, TToolkitSearchTaskRequest.create(spec.link, context.link), TToolkitSearchTaskResponse.create, doProcessSearchResults);
+            spec.sources.add(TToolkitSearchSource.Create(editor.Session.Caption, editor.Session.Guid, editor.getSource));
+        GBackgroundTasks.queueTask(FSearchTask, TToolkitSearchTaskRequest.Create(spec.link, context.link), TToolkitSearchTaskResponse.create, doProcessSearchResults);
       end;
     finally
-      spec.Free;
+      spec.free;
     end;
   end;
 end;
@@ -1912,7 +1924,7 @@ var
 begin
   srvr := server.clone;
   try
-    ServerSettingsForm := TServerSettingsForm.create(self);
+    ServerSettingsForm := TServerSettingsForm.Create(self);
     try
       ServerSettingsForm.Server := srvr.link;
       ServerSettingsForm.ServerList := FServerView.ServerList.link;
@@ -2044,7 +2056,7 @@ var
 begin
   fact := FContext.factory(obj.fhirObjectVersion);
   try
-    json := fact.makeComposer(nil, ffJson, defLang, OutputStylePretty);
+    json := fact.makeComposer(nil, ffJson, nil, OutputStylePretty);
     try
       doOpenResourceSrc(sender, json.ComposeBytes(obj), ffJson, obj.fhirObjectVersion);
     finally
@@ -2063,14 +2075,14 @@ begin
     salmNone : {nothing} ;
     salmOAuthClient : if not DoSmartLogin(server) then
       Abort;
-    salmBackendClient : raise ETodo.create('ConnectToServer/salmBackendClient');
+    salmBackendClient : raise ETodo.Create('ConnectToServer/salmBackendClient');
   end;
   factory := Context.factory(server.version);
   try
     server.client := factory.makeClient(nil, server.URL, fctCrossPlatform, server.format);
     server.client.smartToken := server.token.link;
     if server.logFileName <> '' then
-      server.client.Logger := TTextFileLogger.create(server.logFileName);
+      server.client.Logger := TTextFileLogger.Create(server.logFileName);
   finally
     factory.free;
   end;
@@ -2080,7 +2092,7 @@ function TMainToolkitForm.DoSmartLogin(server: TFHIRServerEntry): boolean;
 var
   form : TOAuthForm;
 begin
-  form := TOAuthForm.create(self);
+  form := TOAuthForm.Create(self);
   try
     form.server := server.makeOAuthDetails;
     form.scopes := server.scopes.split([' ']);
@@ -2244,13 +2256,13 @@ end;
 
 procedure TMainToolkitForm.actionViewManagerExecute(Sender: TObject);
 begin
-  ViewManagerForm := TViewManagerForm.create(self);
+  ViewManagerForm := TViewManagerForm.Create(self);
   try
     ViewManagerForm.Manager := FViewManager.link;
     if ViewManagerForm.showModal = mrOk then
       ApplyViewLayout;
   finally
-    ViewManagerForm.Free;
+    ViewManagerForm.free;
   end;
 end;
 
@@ -2378,7 +2390,7 @@ procedure TMainToolkitForm.btnTextPasteClick(Sender: TObject);
 var
   engine : TTextEngine;
 begin
-  engine := TTextEngine.create;
+  engine := TTextEngine.Create;
   try
     FTextViewManager.configureEngine(engine);
     mTextSource.Text := engine.execute(clipboard.asText);
@@ -2474,14 +2486,14 @@ procedure TMainToolkitForm.actionEditReviewExecute(Sender: TObject);
 var
   frm : TEditChangeReviewForm;
 begin
-  frm := TEditChangeReviewForm.create(self);
+  frm := TEditChangeReviewForm.Create(self);
   try
     frm.editor := Context.Focus.link;
     frm.DiffTool := FIni.ReadString('Tools', 'Diff', '');
     if frm.ShowModal = mrOK then
       Context.Focus.loadBytes(TEncoding.UTF8.getBytes(frm.mEditorSource.Lines.Text));
   finally
-    frm.Free;
+    frm.free;
   end;
 end;
 
@@ -2524,12 +2536,12 @@ procedure TMainToolkitForm.newProject(name, src : String);
 var
   proj : TFHIRProjectNode;
 begin
-  proj := TFHIRProjectNode.create;
+  proj := TFHIRProjectNode.Create;
   try
     proj.id := NewGuidId;
     proj.name := name;
     proj.address := src;
-    ProjectSettingsForm := TProjectSettingsForm.create(self);
+    ProjectSettingsForm := TProjectSettingsForm.Create(self);
     try
       ProjectSettingsForm.Projects := FProjectsView.Projects.link;
       ProjectSettingsForm.Project := proj.link;
@@ -2539,7 +2551,7 @@ begin
         FProjectsView.addProject(proj);
       end;
     finally
-      ProjectSettingsForm.Free;
+      ProjectSettingsForm.free;
     end;
   finally
     proj.free;
@@ -2591,7 +2603,7 @@ var
 begin
   if Context.HasFocus and Context.focus.canEscape then
   begin
-    clip := TClipboard.create;
+    clip := TClipboard.Create;
     try
       Context.focus.insertText(clip.AsText, true);
     finally
@@ -2617,7 +2629,7 @@ var
   s : TBytesStream;
   fmts : TSourceEditorKindSet;
 begin
-  clip := TClipboard.create;
+  clip := TClipboard.Create;
   try
     if clip.AsText <> '' then
     begin
@@ -2638,7 +2650,7 @@ begin
     end;
     for i := 0 to clip.FormatCount - 1 do
     begin
-      s := TBytesStream.create;
+      s := TBytesStream.Create;
       try
         f := clip.Formats[i];
         clip.GetFormat(f, s);
@@ -2659,9 +2671,9 @@ procedure TMainToolkitForm.AddServer(name, url: String);
 var
   server : TFHIRServerEntry;
 begin
-  server := TFHIRServerEntry.create;
+  server := TFHIRServerEntry.Create;
   try
-    ServerSettingsForm := TServerSettingsForm.create(self);
+    ServerSettingsForm := TServerSettingsForm.Create(self);
     try
       ServerSettingsForm.Server := server.link;
       ServerSettingsForm.edtName.text := name;
@@ -2758,7 +2770,7 @@ procedure TMainToolkitForm.actionFileOpenUrlExecute(Sender: TObject);
 var
   mr : TModalResult;
 begin
-  OpenURLForm := TOpenURLForm.create(self);
+  OpenURLForm := TOpenURLForm.Create(self);
   try
     FTempStore.getURLList(OpenURLForm.cbxURL.items);
     OpenURLForm.cbxURL.Text := '';
@@ -2786,7 +2798,7 @@ var
   cnt : TBytes;
   fmt : TSourceEditorKindSet;
 begin
-  QRCodeScannerForm := TQRCodeScannerForm.create(nil);
+  QRCodeScannerForm := TQRCodeScannerForm.Create(nil);
   try
     if QRCodeScannerForm.ShowModal = mrOk then
     begin
@@ -2854,11 +2866,11 @@ procedure TMainToolkitForm.actionhelpAboutExecute(Sender: TObject);
 var
   frm : TToolkitAboutForm;
 begin
-  frm := TToolkitAboutForm.create(self);
+  frm := TToolkitAboutForm.Create(self);
   try
     frm.ShowModal;
   finally
-    frm.Free;
+    frm.free;
   end;
 end;
 
@@ -3028,7 +3040,7 @@ end;
 
 procedure TMainToolkitForm.actionToolsOptionsExecute(Sender: TObject);
 begin
-  ToolkitSettingsForm := TToolkitSettingsForm.create(self);
+  ToolkitSettingsForm := TToolkitSettingsForm.Create(self);
   try
     ToolkitSettingsForm.lblEditorFont.Font.assign(SynEdit1.font);
     ToolkitSettingsForm.lblLogFont.Font.assign(mConsole.font);
@@ -3064,13 +3076,13 @@ begin
       end;
     end;
   finally
-    ToolkitSettingsForm.Free;
+    ToolkitSettingsForm.free;
   end;
 end;
 
 procedure TMainToolkitForm.actionToolsPackageManagerExecute(Sender: TObject);
 begin
-  PackageCacheForm := TPackageCacheForm.create(self);
+  PackageCacheForm := TPackageCacheForm.Create(self);
   try
     PackageCacheForm.Ini := FIni;
     PackageCacheForm.showModal;
@@ -3107,7 +3119,7 @@ var
   msg : TToolkitMessage;
   b : TStringBuilder;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     for i := 0 to lvMessages.items.count - 1 do
     begin
@@ -3116,7 +3128,7 @@ begin
       b.append(EOLN);
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3143,13 +3155,13 @@ var
   i : integer;
   item : TMenuItem;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     FTempStore.getMRUList(ts);
     mnuRecent.Clear;
     for i := 0 to ts.count - 1 do
     begin
-      item := TMenuItem.create(nil);
+      item := TMenuItem.Create(nil);
       item.Caption := ts[i];
       item.Tag := i;
       item.OnClick := openMRUItem;
@@ -3157,7 +3169,7 @@ begin
     end;
     if (ts.count = 0) then
     begin
-      item := TMenuItem.create(nil);
+      item := TMenuItem.Create(nil);
       item.Caption := '(none)';
       item.Enabled := false;
       mnuRecent.Add(item);
@@ -3391,12 +3403,12 @@ procedure TMainToolkitForm.startLoadingContexts;
     req : TFHIRLoadContextTaskRequest;
     resp : TFHIRLoadContextTaskResponse;
   begin
-    req := TFHIRLoadContextTaskRequest.create;
+    req := TFHIRLoadContextTaskRequest.Create;
     try
       req.context := context;
       req.packages.add(pid);
       req.userMode := true;
-      resp := TFHIRLoadContextTaskResponse.create;
+      resp := TFHIRLoadContextTaskResponse.Create;
       try
         resp.context := context.link;
         GBackgroundTasks.queueTask(GContextLoaderTaskId, req.link, resp.link, doContextLoaded);
@@ -3408,8 +3420,8 @@ procedure TMainToolkitForm.startLoadingContexts;
     end;
   end;
 begin
-  //SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease3), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r3'), FContext.pcm), 'hl7.fhir.r3.core');
-  SetLoadContext(TToolkitValidatorContext.create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'), FContext.pcm), 'hl7.fhir.r4.core');
+  //SetLoadContext(TToolkitValidatorContext.Create(FContext.Languages.link, makeFactory(fhirVersionRelease3), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r3'), FContext.pcm), 'hl7.fhir.r3.core');
+  SetLoadContext(TToolkitValidatorContext.Create(FContext.Languages.link, makeFactory(fhirVersionRelease4), FIni.ReadString('tx', 'server', 'http://tx.fhir.org/r4'), FContext.pcm), 'hl7.fhir.r4.core');
 end;
 
 procedure TMainToolkitForm.doContextLoaded(id: integer; response: TBackgroundTaskResponsePackage);

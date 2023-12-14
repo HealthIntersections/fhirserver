@@ -141,7 +141,7 @@ begin
       printers.free;
     end;
   finally
-    config.Free;
+    config.free;
   end;
 end;
 
@@ -185,7 +185,7 @@ begin
       WP.Printer := FPrinters[cbxPrinters.ItemIndex-1].Link;
     end;
   finally
-    config.Free;
+    config.free;
   end;
   ModalResult := mrOk;
 end;
@@ -200,7 +200,7 @@ end;
 
 destructor TCDEOptionsForm.Destroy;
 begin
-  FPrinters.Free;
+  FPrinters.free;
   inherited;
 end;
 

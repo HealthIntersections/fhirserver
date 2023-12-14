@@ -1564,7 +1564,7 @@ end;
 
 destructor TsnBase.Destroy;
 begin
-  FstyleCode.Free; //TFslStringList
+  FstyleCode.free; //TFslStringList
   inherited;
 end;
 
@@ -1681,8 +1681,8 @@ end;
 
 destructor TsnText.Destroy;
 begin
-  FstyleCode.Free; //TFslStringList
-  Fparts.Free; //TsnCMGeneralList
+  FstyleCode.free; //TFslStringList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -1771,8 +1771,8 @@ end;
 
 destructor TsnTitle.Destroy;
 begin
-  FstyleCode.Free; //TFslStringList
-  Fparts.Free; //TsnCMTitleList
+  FstyleCode.free; //TFslStringList
+  Fparts.free; //TsnCMTitleList
   inherited;
 end;
 
@@ -1816,9 +1816,9 @@ end;
 
 destructor TsnCMFootnotes.Destroy;
 begin
-  Ftext.Free;
-  Fentity.Free;
-  Ffootnote.Free;
+  Ftext.free;
+  Fentity.free;
+  Ffootnote.free;
   inherited;
 end;
 
@@ -1839,7 +1839,7 @@ end;
 
 procedure TsnCMFootnotes.Setentity(const Value: TsnString);
 begin
-  Fentity.Free;
+  Fentity.free;
   Fentity := Value;
   if Fentity <> nil then  entity.parent := self;
 
@@ -1847,7 +1847,7 @@ end;
 
 procedure TsnCMFootnotes.SetFootnote(const Value: TsnFootNote);
 begin
-  Ffootnote.Free;
+  Ffootnote.free;
   Ffootnote := Value;
   if FFootnote <> nil then  Footnote.parent := self;
 
@@ -1856,7 +1856,7 @@ end;
 procedure TsnCMFootnotes.SetfootnoteRef(const Value: TsnFootNoteRef);
 begin
   FfootnoteRef := Value;
-  FfootnoteRef.Free;
+  FfootnoteRef.free;
   if FfootnoteRef <> nil then  footnoteRef.parent := self;
 
 end;
@@ -1877,7 +1877,7 @@ end;
 
 procedure TsnCMFootnotes.Settext(const Value: TsnString);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
@@ -1956,9 +1956,9 @@ end;
 
 destructor TsnCMInline.Destroy;
 begin
-  FSub.Free;
-  FSup.Free;
-  FlinkHtml.Free; //TsnLinkHtml
+  FSub.free;
+  FSup.free;
+  FlinkHtml.free; //TsnLinkHtml
   inherited;
 end;
 
@@ -1991,7 +1991,7 @@ end;
 
 procedure TsnCMInline.Setsub(const Value: TsnString);
 begin
-  FSub.Free;
+  FSub.free;
   Fsub := Value;
   if Fsub <> nil then  sub.parent := self;
 
@@ -1999,7 +1999,7 @@ end;
 
 procedure TsnCMInline.Setsup(const Value: TsnString);
 begin
-  FSup.Free;
+  FSup.free;
   Fsup := Value;
   if Fsup <> nil then  sup.parent := self;
 
@@ -2007,7 +2007,7 @@ end;
 
 procedure TsnCMInline.SetlinkHtml(const Value: TsnLinkHtml);
 begin
-  FlinkHtml.Free;
+  FlinkHtml.free;
   FlinkHtml := Value;
   if FlinkHtml <> nil then  linkHtml.parent := self;
 
@@ -2055,8 +2055,8 @@ end;
 
 destructor TsnCMTitle.Destroy;
 begin
-  Fbr.Free;
-  Ftext.Free;
+  Fbr.free;
+  Ftext.free;
   FfootnoteRef.free;
   Fsup.free;
   Fsub.free;
@@ -2090,7 +2090,7 @@ end;
 
 procedure TsnCMTitle.SetBr(const Value: TsnBr);
 begin
-  FBr.Free;
+  FBr.free;
   Fbr := Value;
   if FBr <> nil then  Br.parent := self;
 
@@ -2098,7 +2098,7 @@ end;
 
 procedure TsnCMTitle.Setcontent(const Value: TsnCMTitle);
 begin
-  Fcontent.Free;
+  Fcontent.free;
   Fcontent := Value;
   if Fcontent <> nil then  content.parent := self;
 
@@ -2114,7 +2114,7 @@ end;
 
 procedure TsnCMTitle.SetfootNote(const Value: TsnCMTitleList);
 begin
-  FfootNote.Free;
+  FfootNote.free;
   FfootNote := Value;
   if FfootNote <> nil then  footNote.parent := self;
 
@@ -2130,7 +2130,7 @@ end;
 
 procedure TsnCMTitle.SetlinkHtml(const Value: TsnLinkHtml);
 begin
-  FlinkHtml.Free;
+  FlinkHtml.free;
   FlinkHtml := Value;
 end;
 
@@ -2160,7 +2160,7 @@ end;
 
 procedure TsnCMTitle.Setsub(const Value: TsnString);
 begin
-  FSub.Free;
+  FSub.free;
   Fsub := Value;
   if Fsub <> nil then  sub.parent := self;
 
@@ -2168,7 +2168,7 @@ end;
 
 procedure TsnCMTitle.Setsup(const Value: TsnString);
 begin
-  FSup.Free;
+  FSup.free;
   Fsup := Value;
   if Fsup <> nil then  sup.parent := self;
 
@@ -2176,7 +2176,7 @@ end;
 
 procedure TsnCMTitle.Settext(const Value: TsnString);
 begin
-  FText.Free;
+  FText.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
@@ -2277,8 +2277,8 @@ end;
 destructor TsnCMContent.Destroy;
 begin
   FBr.free;
-  Fcontent.Free; //TsnContent
-  FrenderMultiMedia.Free; //TsnRenderMultiMedia
+  Fcontent.free; //TsnContent
+  FrenderMultiMedia.free; //TsnRenderMultiMedia
   inherited;
 end;
 
@@ -2306,7 +2306,7 @@ end;
 
 procedure TsnCMContent.Setcontent(const Value: TsnContent);
 begin
-  Fcontent.Free;
+  Fcontent.free;
   Fcontent := Value;
   if Fcontent <> nil then  content.parent := self;
 
@@ -2326,7 +2326,7 @@ end;
 
 procedure TsnCMContent.SetrenderMultiMedia(const Value: TsnRenderMultiMedia);
 begin
-  FrenderMultiMedia.Free;
+  FrenderMultiMedia.free;
   FrenderMultiMedia := Value;
   if FrenderMultiMedia <> nil then  renderMultiMedia.parent := self;
 
@@ -2388,9 +2388,9 @@ end;
 
 destructor TsnCMGeneral.Destroy;
 begin
-  Fparagraph.Free; //TsnParagraph
-  Flist.Free; //TsnList
-  Ftable.Free; //TsnTable
+  Fparagraph.free; //TsnParagraph
+  Flist.free; //TsnList
+  Ftable.free; //TsnTable
   inherited;
 end;
 
@@ -2411,7 +2411,7 @@ end;
 
 procedure TsnCMGeneral.Setlist(const Value: TsnList);
 begin
-  Flist.Free;
+  Flist.free;
   Flist := Value;
   if Flist <> nil then  list.parent := self;
 
@@ -2419,7 +2419,7 @@ end;
 
 procedure TsnCMGeneral.Setparagraph(const Value: TsnParagraph);
 begin
-  Fparagraph.Free;
+  Fparagraph.free;
   Fparagraph := Value;
   if Fparagraph <> nil then  paragraph.parent := self;
 
@@ -2439,7 +2439,7 @@ end;
 
 procedure TsnCMGeneral.Settable(const Value: TsnTable);
 begin
-  Ftable.Free;
+  Ftable.free;
   Ftable := Value;
   if Ftable <> nil then  table.parent := self;
 
@@ -2481,8 +2481,8 @@ end;
 
 destructor TsnRenderMultiMedia.Destroy;
 begin
-  Fcaption.Free; //TsnCaption
-  FreferencedObject.Free; //TFslStringList
+  Fcaption.free; //TsnCaption
+  FreferencedObject.free; //TFslStringList
   inherited;
 end;
 
@@ -2501,7 +2501,7 @@ end;
 
 procedure TsnRenderMultiMedia.Setcaption(const Value: TsnCaption);
 begin
-  Fcaption.Free;
+  Fcaption.free;
   Fcaption := Value;
   if Fcaption <> nil then  caption.parent := self;
 
@@ -2624,7 +2624,7 @@ end;
 
 destructor TsnLinkHtml.Destroy;
 begin
-  Fparts.Free; //TsnCMFootnotesList
+  Fparts.free; //TsnCMFootnotesList
   inherited;
 end;
 
@@ -2696,7 +2696,7 @@ end;
 
 destructor TsnFootnote.Destroy;
 begin
-  Fparts.Free; //TsnCMGeneralList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -2768,7 +2768,7 @@ end;
 
 destructor TsnTitleFootnote.Destroy;
 begin
-  Fparts.Free; //TsnCMTitleList
+  Fparts.free; //TsnCMTitleList
   inherited;
 end;
 
@@ -2867,7 +2867,7 @@ end;
 
 destructor TsnCaption.Destroy;
 begin
-  Fparts.Free; //TsnCMInlineList
+  Fparts.free; //TsnCMInlineList
   inherited;
 end;
 
@@ -2944,7 +2944,7 @@ end;
 
 destructor TsnContent.Destroy;
 begin
-  Fparts.Free; //TsnCMContentList
+  Fparts.free; //TsnCMContentList
   inherited;
 end;
 
@@ -3007,7 +3007,7 @@ end;
 
 destructor TsnCaptioned.Destroy;
 begin
-  Fcaption.Free; //TsnCaption
+  Fcaption.free; //TsnCaption
   inherited;
 end;
 
@@ -3025,7 +3025,7 @@ end;
 
 procedure TsnCaptioned.Setcaption(const Value: TsnCaption);
 begin
-  Fcaption.Free;
+  Fcaption.free;
   Fcaption := Value;
   if Fcaption <> nil then  caption.parent := self;
 
@@ -3124,7 +3124,7 @@ end;
 
 destructor TsnParagraph.Destroy;
 begin
-  Fparts.Free; //TsnCMContentList
+  Fparts.free; //TsnCMContentList
   inherited;
 end;
 
@@ -3199,7 +3199,7 @@ end;
 
 destructor TsnItem.Destroy;
 begin
-  Fparts.Free; //TsnCMGeneralList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -3276,7 +3276,7 @@ end;
 
 destructor TsnList.Destroy;
 begin
-  Fitem.Free; //TsnItemList
+  Fitem.free; //TsnItemList
   inherited;
 end;
 
@@ -3471,7 +3471,7 @@ end;
 
 destructor TsnColGroup.Destroy;
 begin
-  Fcol.Free; //TsnColList
+  Fcol.free; //TsnColList
   inherited;
 end;
 
@@ -3555,8 +3555,8 @@ end;
 
 destructor TsnTCell.Destroy;
 begin
-  Fheaders.Free; //TFslStringList
-  Fparts.Free; //TsnCMGeneralList
+  Fheaders.free; //TFslStringList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -3615,8 +3615,8 @@ end;
 
 destructor TsnTRowPart.Destroy;
 begin
-  Fth.Free; //TsnTCell
-  Ftd.Free; //TsnTCell
+  Fth.free; //TsnTCell
+  Ftd.free; //TsnTCell
   inherited;
 end;
 
@@ -3646,7 +3646,7 @@ end;
 
 procedure TsnTRowPart.Settd(const Value: TsnTCell);
 begin
-  Ftd.Free;
+  Ftd.free;
   Ftd := Value;
   if Ftd <> nil then  td.parent := self;
 
@@ -3654,7 +3654,7 @@ end;
 
 procedure TsnTRowPart.Setth(const Value: TsnTCell);
 begin
-  Fth.Free;
+  Fth.free;
   Fth := Value;
   if Fth <> nil then  th.parent := self;
 
@@ -3774,7 +3774,7 @@ end;
 
 destructor TsnTRow.Destroy;
 begin
-  Fparts.Free; //TsnTRowPartList
+  Fparts.free; //TsnTRowPartList
   inherited;
 end;
 
@@ -3847,7 +3847,7 @@ end;
 
 destructor TsnTRowGroup.Destroy;
 begin
-  Ftr.Free; //TsnTRowList
+  Ftr.free; //TsnTRowList
   inherited;
 
 end;
@@ -3903,11 +3903,11 @@ end;
 
 destructor TsnTable.Destroy;
 begin
-  Fcol.Free; //TsnColList
-  Fcolgroup.Free; //TsnColGroupList
-  Fthead.Free; //TsnTRowGroup
-  Ftfoot.Free; //TsnTRowGroup
-  Ftbody.Free; //TsnTRowGroupList
+  Fcol.free; //TsnColList
+  Fcolgroup.free; //TsnColGroupList
+  Fthead.free; //TsnTRowGroup
+  Ftfoot.free; //TsnTRowGroup
+  Ftbody.free; //TsnTRowGroupList
   inherited;
 end;
 
@@ -3995,7 +3995,7 @@ end;
 
 procedure TsnTable.Settfoot(const Value: TsnTRowGroup);
 begin
-  Ftfoot.Free;
+  Ftfoot.free;
   Ftfoot := Value;
   if Ftfoot <> nil then  tfoot.parent := self;
 
@@ -4003,7 +4003,7 @@ end;
 
 procedure TsnTable.Setthead(const Value: TsnTRowGroup);
 begin
-  Fthead.Free;
+  Fthead.free;
   Fthead := Value;
   if Fthead <> nil then  thead.parent := self;
 
@@ -4070,7 +4070,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4080,7 +4080,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4192,7 +4192,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4202,7 +4202,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4247,7 +4247,7 @@ begin
   try
     add(Result.Link);
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -4257,7 +4257,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4335,7 +4335,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4345,7 +4345,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4423,7 +4423,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4433,7 +4433,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4544,7 +4544,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4554,7 +4554,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4632,7 +4632,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4642,7 +4642,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4688,7 +4688,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4698,7 +4698,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4810,7 +4810,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4820,7 +4820,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4898,7 +4898,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4908,7 +4908,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4954,7 +4954,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4964,7 +4964,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5014,7 +5014,7 @@ begin
       GetText(b);
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
   end;
 end;

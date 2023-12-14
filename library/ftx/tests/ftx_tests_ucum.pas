@@ -220,13 +220,13 @@ begin
       try
         assertTrue((o3.Value.compares(TFslDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
       finally
-        o3.Free;
+        o3.free;
       end;
     finally
-      o2.Free;
+      o2.free;
     end;
   finally
-    o1.Free;
+    o1.free;
   end;
 end;
 
@@ -266,6 +266,6 @@ end;
 
 initialization
 finalization
-  testList.Free;
-  svc.Free;
+  testList.free;
+  svc.free;
 end.

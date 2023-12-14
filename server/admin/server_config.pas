@@ -251,14 +251,14 @@ end;
 constructor TFHIRServerConfigProperty.Create;
 begin
   inherited Create;
-  FComments := TStringList.create;
-  FValues := TStringList.create;
+  FComments := TStringList.Create;
+  FValues := TStringList.Create;
 end;
 
 destructor TFHIRServerConfigProperty.Destroy;
 begin
-  FValues.Free;
-  FComments.Free;
+  FValues.free;
+  FComments.free;
   inherited Destroy;
 end;
 
@@ -347,7 +347,7 @@ class function TFHIRServerConfigProperty.fromLine(line: String; comments: TStrin
 var
   n, v, c : String;
 begin
-  result := TFHIRServerConfigProperty.create;
+  result := TFHIRServerConfigProperty.Create;
   try
     stringSplit(line, ':', n, line);
     stringSplit(line, '# ', v, c);
@@ -368,25 +368,25 @@ constructor TFHIRServerConfigSection.Create(name : String);
 begin
   inherited Create;
   FName := name;
-  FComments := TStringList.create;
-  FProperties := TFslList<TFHIRServerConfigProperty>.create;
-  FSections := TFslList<TFHIRServerConfigSection>.create;
+  FComments := TStringList.Create;
+  FProperties := TFslList<TFHIRServerConfigProperty>.Create;
+  FSections := TFslList<TFHIRServerConfigSection>.Create;
 end;
 
 constructor TFHIRServerConfigSection.Create;
 begin
   inherited Create;
   FName := '';
-  FComments := TStringList.create;
-  FProperties := TFslList<TFHIRServerConfigProperty>.create;
-  FSections := TFslList<TFHIRServerConfigSection>.create;
+  FComments := TStringList.Create;
+  FProperties := TFslList<TFHIRServerConfigProperty>.Create;
+  FSections := TFslList<TFHIRServerConfigSection>.Create;
 end;
 
 destructor TFHIRServerConfigSection.Destroy;
 begin
-  FSections.Free;
-  FProperties.Free;
-  FComments.Free;
+  FSections.free;
+  FProperties.free;
+  FComments.free;
   inherited Destroy;
 end;
 
@@ -430,7 +430,7 @@ var
   n, c : String;
 begin
   stringSplit(line, '#', n, c);
-  result := TFHIRServerConfigSection.create(n.trim);
+  result := TFHIRServerConfigSection.Create(n.trim);
   try
     result.comment := c.trim();
     result.comments.assign(comments);
@@ -454,7 +454,7 @@ begin
   for p in FProperties do
     if p.name = name then
       exit(p);
-  result := TFHIRServerConfigProperty.create;
+  result := TFHIRServerConfigProperty.Create;
   result.name := name;
   FProperties.add(result);
 end;
@@ -466,7 +466,7 @@ begin
   for p in FSections do
     if p.name = name then
       exit(p);
-  result := TFHIRServerConfigSection.create(name);
+  result := TFHIRServerConfigSection.Create(name);
   FSections.add(result);
 end;
 
@@ -507,17 +507,17 @@ var
   section : TFHIRServerConfigSection;
 begin
   inherited Create;
-  FComments := TStringList.create;
-  FSections := TFslList<TFHIRServerConfigSection>.create;
+  FComments := TStringList.Create;
+  FSections := TFslList<TFHIRServerConfigSection>.Create;
   FFilename := filename;
 
   if FileExists(filename) and not FileToString(filename, TEncoding.UTF8).startsWith('[') then
   begin
-    sections := TFslList<TFHIRServerConfigSection>.create;
+    sections := TFslList<TFHIRServerConfigSection>.Create;
     prop := nil;
     propIndent := 0;
-    comments := TStringList.create;
-    ts := TStringList.create;
+    comments := TStringList.Create;
+    ts := TStringList.Create;
     try
       ts.LoadFromFile(filename);
       for l in ts do
@@ -564,8 +564,8 @@ end;
 
 destructor TFHIRServerConfigFile.Destroy;
 begin
-  FSections.Free;
-  FComments.Free;
+  FSections.free;
+  FComments.free;
   inherited Destroy;
 end;
 
@@ -579,7 +579,7 @@ var
   ts : TStringList;
   section : TFHIRServerConfigSection;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     ts.add('## FHIRServer Config File');
     ts.add('');
@@ -613,7 +613,7 @@ begin
   for p in FSections do
     if p.name = name then
       exit(p);
-  result := TFHIRServerConfigSection.create(name);
+  result := TFHIRServerConfigSection.Create(name);
   FSections.add(result);
 end;
 
@@ -634,12 +634,12 @@ end;
 //constructor TFHIRServerIniComplex.Create;
 //begin
 //  inherited Create;
-//  FSection := TFHIRServerConfigSection.create('');
+//  FSection := TFHIRServerConfigSection.Create('');
 //end;
 //
 //destructor TFHIRServerIniComplex.Destroy;
 //begin
-//  FSection.Free;
+//  FSection.free;
 //  inherited;
 //end;
 //
@@ -686,14 +686,14 @@ end;
 //
 //constructor TFHIRServerIniFile.Create(const FileName: string);
 //begin
-//  inherited create;
-//  FTerminologies := TFslMap<TFHIRServerIniComplex>.create('Ini.Terminologies');
-//  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create('Ini.IDProviders');
-//  FDatabases := TFslMap<TFHIRServerIniComplex>.create('Ini.Databases');
-//  FEndPoints := TFslMap<TFHIRServerIniComplex>.create('Ini.EndPoints');
-//  FDestinations := TFslMap<TFHIRServerIniComplex>.create('Ini.Destinations');
+//  inherited Create;
+//  FTerminologies := TFslMap<TFHIRServerIniComplex>.Create('Ini.Terminologies');
+//  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.Create('Ini.IDProviders');
+//  FDatabases := TFslMap<TFHIRServerIniComplex>.Create('Ini.Databases');
+//  FEndPoints := TFslMap<TFHIRServerIniComplex>.Create('Ini.EndPoints');
+//  FDestinations := TFslMap<TFHIRServerIniComplex>.Create('Ini.Destinations');
 //
-//  FFile := TFHIRServerConfigFile.create(filename);
+//  FFile := TFHIRServerConfigFile.Create(filename);
 //  if FileExists(filename) and FileToString(filename, TEncoding.UTF8).startsWith('[') then
 //    importFromIni(filename)
 //  else
@@ -710,27 +710,27 @@ end;
 //begin
 //  if map = FTerminologies then
 //  begin
-//    item := TFHIRServerIniComplex.create(FFile.section['terminologies'].section[key]);
+//    item := TFHIRServerIniComplex.Create(FFile.section['terminologies'].section[key]);
 //    map.add(key, item);
 //  end
 //  else if map = FIdentityProviders then
 //  begin
-//    item := TFHIRServerIniComplex.create(FFile.section['identity-providers'].section[key]);
+//    item := TFHIRServerIniComplex.Create(FFile.section['identity-providers'].section[key]);
 //    map.add(key, item);
 //  end
 //  else if map = FEndPoints then
 //  begin
-//    item := TFHIRServerIniComplex.create(FFile.section['endpoints'].section[key]);
+//    item := TFHIRServerIniComplex.Create(FFile.section['endpoints'].section[key]);
 //    map.add(key, item);
 //  end
 //  else if map = FDatabases then
 //  begin
-//    item := TFHIRServerIniComplex.create(FFile.section['databases'].section[key]);
+//    item := TFHIRServerIniComplex.Create(FFile.section['databases'].section[key]);
 //    map.add(key, item);
 //  end
 //  else if map = FDestinations then
 //  begin
-//    item := TFHIRServerIniComplex.create(FFile.section['destinations'].section[key]);
+//    item := TFHIRServerIniComplex.Create(FFile.section['destinations'].section[key]);
 //    map.add(key, item);
 //  end
 //  else
@@ -739,12 +739,12 @@ end;
 //
 //destructor TFHIRServerIniFile.Destroy;
 //begin
-//  FTerminologies.Free;
-//  FIdentityProviders.Free;
-//  FDatabases.Free;
-//  FEndPoints.Free;
-//  FDestinations.Free;
-//  FFile.Free;
+//  FTerminologies.free;
+//  FIdentityProviders.free;
+//  FDatabases.free;
+//  FEndPoints.free;
+//  FDestinations.free;
+//  FFile.free;
 //  inherited;
 //end;
 //
@@ -784,7 +784,7 @@ end;
 //  sect : TFHIRServerConfigSection;
 //begin
 //  for sect in section.sections do
-//    map.Add(sect.name, TFHIRServerIniComplex.create(sect.link));
+//    map.Add(sect.name, TFHIRServerIniComplex.Create(sect.link));
 //  map.onNoMatch := CreateSection;
 //end;
 //
@@ -795,31 +795,31 @@ end;
 //
 //function TFHIRServerIniFile.addTerminology(name: String): TFHIRServerIniComplex;
 //begin
-//  result := TFHIRServerIniComplex.create(FFile.section['terminologies'].section[name].link);
+//  result := TFHIRServerIniComplex.Create(FFile.section['terminologies'].section[name].link);
 //  terminologies.add(name, result);
 //end;
 //
 //function TFHIRServerIniFile.addDatabase(name: String): TFHIRServerIniComplex;
 //begin
-//  result := TFHIRServerIniComplex.create(FFile.section['databases'].section[name].link);
+//  result := TFHIRServerIniComplex.Create(FFile.section['databases'].section[name].link);
 //  databases.add(name, result);
 //end;
 //
 //function TFHIRServerIniFile.addEndpoint(name: String): TFHIRServerIniComplex;
 //begin
-//  result := TFHIRServerIniComplex.create(FFile.section['endpoints'].section[name].link);
+//  result := TFHIRServerIniComplex.Create(FFile.section['endpoints'].section[name].link);
 //  endpoints.add(name, result);
 //end;
 //
 //function TFHIRServerIniFile.addIdentityProvider(name: String): TFHIRServerIniComplex;
 //begin
-//  result := TFHIRServerIniComplex.create(FFile.section['identity-providers'].section[name].link);
+//  result := TFHIRServerIniComplex.Create(FFile.section['identity-providers'].section[name].link);
 //  identityProviders.add(name, result);
 //end;
 //
 //function TFHIRServerIniFile.addDestination(name: String): TFHIRServerIniComplex;
 //begin
-//  result := TFHIRServerIniComplex.create(FFile.section['destinations'].section[name].link);
+//  result := TFHIRServerIniComplex.Create(FFile.section['destinations'].section[name].link);
 //  destinations.add(name, result);
 //end;
 //
@@ -847,7 +847,7 @@ end;
 //var
 //  ini : TIniFile;
 //begin
-//  ini := TIniFile.create(filename);
+//  ini := TIniFile.Create(filename);
 //  try
 //    readSectionFromIni(ini, 'databases', FDatabases, FFile.section['databases']);
 //    readSectionFromIni(ini, 'terminologies', FTerminologies, FFile.section['terminologies']);
@@ -869,7 +869,7 @@ end;
 //  ts : TStringList;
 //  s : String;
 //begin
-//  ts := TStringList.create;
+//  ts := TStringList.Create;
 //  try
 //    ini.ReadSection(name, ts);
 //    for s in ts do
@@ -891,7 +891,7 @@ end;
 //    for s in ts do
 //    begin
 //      sect := section.section[s];
-//      map.Add(s, TFHIRServerIniComplex.create(sect.link));
+//      map.Add(s, TFHIRServerIniComplex.Create(sect.link));
 //      for v in ini.ReadString(name, s, '').split([';']) do
 //      begin
 //        StringSplit(v, ':', l, r);

@@ -285,8 +285,8 @@ End;
 
 Destructor TWPHL7FTReader.Destroy;
 Begin
-  FHL7Font.Free;
-  FHL7Para.Free;
+  FHL7Font.free;
+  FHL7Para.free;
 
   Inherited;
 End;
@@ -316,7 +316,7 @@ Begin
     oDocument.Pieces.Add(oPara.Link);
     FLastWasPara := True;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 
 End;
@@ -342,7 +342,7 @@ Begin
     oDocument.Pieces.Add(oText.Link);
     FLastWasPara := False;
   Finally
-    oText.Free;
+    oText.free;
   End;
 End;
 
@@ -415,7 +415,7 @@ Begin
   Try
     FText := oReader.ConsumeRestStream;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 
   FLoop := 0;

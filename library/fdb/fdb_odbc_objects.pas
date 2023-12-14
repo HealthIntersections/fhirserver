@@ -2902,7 +2902,7 @@ Begin
   { Terminate Self }
   TerminateHandle;
 
-  FError.Free;
+  FError.free;
 End;
 
 Function TOdbcEnv.Init: Boolean;
@@ -3136,9 +3136,9 @@ Begin
   Inherited Destroy;
 
   { Terminate Self }
-  FAttributes.Free;
+  FAttributes.free;
   ClearDrivers;
-  FDrivers.Free;
+  FDrivers.free;
   TerminateHandle;
 End;
 
@@ -3644,14 +3644,14 @@ Begin
 
     If FCols^.FBlob Then
       Begin
-      FCols^.FMemory.Free;
+      FCols^.FMemory.free;
       FCols^.FMemory := Nil;
       End
     Else
     Begin
       If FCols^.FMemory <> Nil Then
         Begin
-        FCols^.FMemory.Free;
+        FCols^.FMemory.free;
         FCols^.FMemory := Nil;
         End;
 
@@ -4445,20 +4445,20 @@ Begin
   { Terminate Self }
   Terminate;
 
-  FParamNames.Free;
+  FParamNames.free;
   SetLength(FParamIndexes, 0);
 
-  FColNames.Free;
+  FColNames.free;
   SetLength(FColIndexes, 0);
 
   If FHstmtInsert <> Nil Then
-    FHstmtInsert.Free;
+    FHstmtInsert.free;
   If FHstmtUpdate <> Nil Then
-    FHstmtUpdate.Free;
+    FHstmtUpdate.free;
   If FHstmtDelete <>  Nil Then
-    FHstmtDelete.Free;
+    FHstmtDelete.free;
   If FHstmtRefresh <> Nil Then
-    FHstmtRefresh.Free;
+    FHstmtRefresh.free;
 End;
 
 Function TOdbcStatement.Init: Boolean;
@@ -4666,7 +4666,7 @@ Begin
       Inc(Result);
 
   Finally
-    tempHstmt.Free;
+    tempHstmt.free;
   End;
 End;
 
@@ -6489,7 +6489,7 @@ Begin
     End;
 
   Finally
-    tempHstmt.Free;
+    tempHstmt.free;
   End;
 End;
 
@@ -8753,7 +8753,7 @@ end;
 destructor TSchemaColumns.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -8776,7 +8776,7 @@ end;
 
 procedure TSchemaColumns.DeleteItem(Index: Integer);
 begin
-  TSchemaColumn(FList[Index]).Free;
+  TSchemaColumn(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -8795,7 +8795,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TSchemaColumn(FList[i]).Free;
+    TSchemaColumn(FList[i]).free;
   FList.Clear;
 end;
 
@@ -8814,7 +8814,7 @@ end;
 
 destructor TSchemaIndex.Destroy;
 begin
-  FColumns.Free;
+  FColumns.free;
 
   inherited Destroy;
 end;
@@ -8896,7 +8896,7 @@ end;
 destructor TSchemaIndexes.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -8921,7 +8921,7 @@ end;
 
 procedure TSchemaIndexes.DeleteItem(Index: Integer);
 begin
-  TSchemaIndex(FList[Index]).Free;
+  TSchemaIndex(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -8940,7 +8940,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TSchemaIndex(FList[i]).Free;
+    TSchemaIndex(FList[i]).free;
   FList.Clear;
 end;
 
@@ -8965,8 +8965,8 @@ end;
 
 destructor TSchemaTable.Destroy;
 begin
-  FColumns.Free;
-  FIndexes.Free;
+  FColumns.free;
+  FIndexes.free;
 
   inherited Destroy;
 end;
@@ -9229,7 +9229,7 @@ end;
 destructor TSchemaTables.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -9254,7 +9254,7 @@ end;
 
 procedure TSchemaTables.DeleteItem(Index: Integer);
 begin
-  TSchemaTable(FList[Index]).Free;
+  TSchemaTable(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -9273,7 +9273,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TSchemaTable(FList[i]).Free;
+    TSchemaTable(FList[i]).free;
   FList.Clear;
 end;
 
@@ -9293,7 +9293,7 @@ end;
 
 destructor TSchemaView.Destroy;
 begin
-  FColumns.Free;
+  FColumns.free;
 
   inherited Destroy;
 end;
@@ -9435,7 +9435,7 @@ end;
 destructor TSchemaViews.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -9460,7 +9460,7 @@ end;
 
 procedure TSchemaViews.DeleteItem(Index: Integer);
 begin
-  TSchemaView(FList[Index]).Free;
+  TSchemaView(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -9479,7 +9479,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TSchemaView(FList[i]).Free;
+    TSchemaView(FList[i]).free;
   FList.Clear;
 end;
 
@@ -9536,9 +9536,9 @@ end;
 
 destructor TOdbcSchema.Destroy;
 begin
-  FHstmt.Free;
-  FTables.Free;
-  FViews.Free;
+  FHstmt.free;
+  FTables.free;
+  FViews.free;
 
   inherited Destroy;
 end;
@@ -9931,10 +9931,10 @@ end;
 
 destructor TOdbcAdministrator.Destroy;
 begin
-  FAttributes.Free;
-  FDataSourceNames.Free;
-  FDataSourceDrivers.Free;
-  FDriverNames.Free;
+  FAttributes.free;
+  FDataSourceNames.free;
+  FDataSourceDrivers.free;
+  FDriverNames.free;
 
   inherited Destroy;
 end;
@@ -10022,7 +10022,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TCatalogColumn(FList[i]).Free;
+    TCatalogColumn(FList[i]).free;
   FList.Clear;
 end;
 
@@ -10056,7 +10056,7 @@ end;
 destructor TCatalogColumns.Destroy;
 begin
   FreeItems;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -10340,12 +10340,12 @@ end;
 
 destructor TCatalogTable.Destroy;
 begin
-  FColumns.Free;
-  FColumnNames.Free;
-  FPrimaryKeys.Free;
-  FForeignKeys.Free;
-  FForeignReferences.Free;
-  FIndexes.Free;
+  FColumns.free;
+  FColumnNames.free;
+  FPrimaryKeys.free;
+  FForeignKeys.free;
+  FForeignReferences.free;
+  FIndexes.free;
 
   inherited Destroy;
 end;
@@ -10381,7 +10381,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TCatalogTable(FList[i]).Free;
+    TCatalogTable(FList[i]).free;
   FList.Clear;
 end;
 
@@ -10417,7 +10417,7 @@ end;
 destructor TCatalogTables.Destroy;
 begin
   FreeItems;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -10491,8 +10491,8 @@ end;
 
 destructor TCatalogProcedure.Destroy;
 begin
-  FColumns.Free;
-  FColumnNames.Free;
+  FColumns.free;
+  FColumnNames.free;
 
   inherited Destroy;
 end;
@@ -10523,7 +10523,7 @@ var
   i: Integer;
 begin
   for i := 0 to FList.Count-1 do
-    TCatalogProcedure(FList[i]).Free;
+    TCatalogProcedure(FList[i]).free;
   FList.Clear;
 end;
 
@@ -10559,7 +10559,7 @@ end;
 destructor TCatalogProcedures.Destroy;
 begin
   FreeItems;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -10823,11 +10823,11 @@ end;
 
 destructor TOdbcCatalog.Destroy;
 begin
-  FHstmt.Free;
-  FTables.Free;
-  FProcedures.Free;
-  FTableNames.Free;
-  FProcedureNames.Free;
+  FHstmt.free;
+  FTables.free;
+  FProcedures.free;
+  FTableNames.free;
+  FProcedureNames.free;
 
   inherited Destroy;
 end;

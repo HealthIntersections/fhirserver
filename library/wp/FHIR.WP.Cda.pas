@@ -135,7 +135,7 @@ Begin
   Try
     ReadCDA(oDocument);
   Finally
-    FDoc.Free;
+    FDoc.free;
   End;
 
   CheckForEmpty(oDocument);
@@ -214,7 +214,7 @@ Begin
       //ReadParagraphAttributes(oParagraph.Format);
       oDocument.Pieces.Add(oParagraph.Link);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
   End;
 End;
@@ -230,7 +230,7 @@ Begin
     oText.Content := sContent;
     oDocument.Pieces.Add(oText.Link);
   Finally
-    oText.Free;
+    oText.free;
   End;
 End;
 
@@ -294,7 +294,7 @@ Begin
   try
     Inherited;
   Finally
-    FDoc.Free;
+    FDoc.free;
     FDoc := Nil;
   End;
 End;

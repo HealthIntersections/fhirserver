@@ -34,7 +34,7 @@ interface
 
 uses
   fhir_common,
-  fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other;
+  fhir2_resources_base;
 
 // categories for web login
 // tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcOther

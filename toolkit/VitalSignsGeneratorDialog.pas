@@ -112,10 +112,10 @@ end;
 
 destructor TVitalSignsGeneratorForm.Destroy;
 begin
-  FObservations.Free;
-  FSettings.Free;
-  FClient.Free;
-  FData.Free;
+  FObservations.free;
+  FSettings.free;
+  FClient.free;
+  FData.free;
   inherited;
 end;
 
@@ -141,7 +141,7 @@ procedure TVitalSignsGeneratorForm.loadData;
     d.HeartRate := hr;
   end;
 begin
-  FData := TFslList<TDataPoint>.create;
+  FData := TFslList<TDataPoint>.Create;
   dp(0, '80', '120', '95', '37.1', 72);
   dp(1, '80.23134274', '121.3510661', '95.12530267', '37.09470397', 72);
   dp(2, '80.46225173', '122.6983105', '95.25041128', '37.0894059', 73);
@@ -305,7 +305,7 @@ begin
     resource := result;
     fullUrl := FClient.address+'/Observation/'+result.id;
   end;
-  result.Subject := TFHIRReference.create('Patient/'+edtPatientId.Text);
+  result.Subject := TFHIRReference.Create('Patient/'+edtPatientId.Text);
   result.Status := ObservationStatusFinal;
   result.Effective := TFhirDateTime.Create(TFslDateTime.makeLocal(when));
   with result.categoryList.Append do
@@ -373,7 +373,7 @@ begin
       showMessage('too many data points (150 limit)')
     else
     begin
-      FObservations := TFhirBundle.create;
+      FObservations := TFhirBundle.Create;
       FObservations.type_ := BundleTypeTransaction;
       start := now;
 
@@ -392,13 +392,13 @@ end;
 
 procedure TVitalSignsGeneratorForm.SetClient(const Value: TFHIRClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 
 procedure TVitalSignsGeneratorForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

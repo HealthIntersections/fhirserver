@@ -190,7 +190,7 @@ end;
 procedure TWelcomeScreenForm.FormDestroy(Sender: TObject);
 begin
   FContext.free;
-  FCache.Free;
+  FCache.free;
 end;
 
 procedure TWelcomeScreenForm.FormShow(Sender: TObject);

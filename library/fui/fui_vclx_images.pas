@@ -199,7 +199,7 @@ Begin
       // VCL doesn't take ownership of the reference.
       Bitmap := oBitmap;
     Finally
-      oBitmap.Free;
+      oBitmap.free;
     End;
   End
   Else
@@ -223,7 +223,7 @@ Begin
   Try
     Result := AddBitmapGraphic(oBitmapGraphic);
   Finally
-    oBitmapGraphic.Free;
+    oBitmapGraphic.free;
   End;
 End;
 
@@ -275,14 +275,14 @@ Begin
             oIndividualBitmap.Canvas.Unlock;          
           End;
         Finally
-          oIndividualBitmap.Free;
+          oIndividualBitmap.free;
         End;
       End;
     Finally
       oMasterBitmap.Canvas.Unlock;
     End;
   Finally
-    oMasterBitmap.Free;
+    oMasterBitmap.free;
   End;
 End;
 

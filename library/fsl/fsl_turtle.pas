@@ -257,7 +257,7 @@ begin
     sort.Sort;
     result := sort.ToStringArray;
   finally
-    sort.Free;
+    sort.free;
   end;
 end;
 
@@ -426,19 +426,19 @@ end;
 constructor TTurtleList.Create(start : TSourceLocation; obj: TTurtleObject);
 begin
   Inherited Create(start);
-  FList := TFslList<TTurtleObject>.create;
+  FList := TFslList<TTurtleObject>.Create;
   FList.Add(obj.Link);
 end;
 
 constructor TTurtleList.Create(start : TSourceLocation);
 begin
   Inherited Create(start);
-  FList := TFslList<TTurtleObject>.create;
+  FList := TFslList<TTurtleObject>.Create;
 end;
 
 destructor TTurtleList.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -516,8 +516,8 @@ end;
 
 destructor TTurtleComplex.Destroy;
 begin
-  FNames.Free;
-  FPredicates.Free;
+  FNames.free;
+  FPredicates.free;
   inherited;
 end;
 
@@ -889,7 +889,7 @@ begin
           raise EWebException.create('unexpected lexer char '+ch);
       end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -944,7 +944,7 @@ begin
     end;
     result := b.toString();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1036,11 +1036,11 @@ begin
     try
       parse(lexer, result);
     finally
-      lexer.Free;
+      lexer.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1054,11 +1054,11 @@ begin
     try
       parse(lexer, result);
     finally
-      lexer.Free;
+      lexer.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1072,11 +1072,11 @@ begin
     try
       parse(lexer, result);
     finally
-      lexer.Free;
+      lexer.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1138,7 +1138,7 @@ begin
         complex := parseComplex(lexer, doc);
         doc.Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
       finally
-        uri.Free;
+        uri.free;
       end;
       lexer.token('.');
     end
@@ -1171,7 +1171,7 @@ begin
         complex := parseComplex(lexer, doc);
         doc.Fobjects.add(TTurtlePredicate.Create(uri.Link, complex));
       finally
-        uri.Free;
+        uri.free;
       end;
       lexer.token('.');
     end
@@ -1189,13 +1189,13 @@ begin
             // at this point, we collapse bnode and complex, and give bnode a fictional identity
             bnode.addPredicates(complex.predicates);
           finally
-            complex.Free;
+            complex.free;
           end;
         end;
 
         doc.Fobjects.add(TTurtlePredicate.Create(anonymousId(), bnode.Link));
       finally
-        bnode.Free;
+        bnode.free;
       end;
       lexer.token('.');
     end
@@ -1266,7 +1266,7 @@ begin
             u.Uri := lexer.uri();
             result.addPredicate(uri, u.Link);
           finally
-            u.Free;
+            u.free;
           end;
         end
         else if (lexer.peekType() = lttLITERAL) then
@@ -1311,7 +1311,7 @@ begin
               ul.value := pfx;
               result.addPredicate(uri, ul.Link);
             finally
-              ul.Free;
+              ul.free;
             end;
           end
           else if (('false'.equals(pfx)) or ('true'.equals(pfx))) and (not lexer.peek(lttTOKEN, ':')) then
@@ -1321,7 +1321,7 @@ begin
               ul.value := pfx;
               result.addPredicate(uri, ul.Link);
             finally
-              ul.Free;
+              ul.free;
             end;
           end
           else
@@ -1334,7 +1334,7 @@ begin
               u.setUri(doc.prefixes[pfx]+lexer.word());
               result.addPredicate(uri, u.Link);
             finally
-              u.Free;
+              u.free;
             end;
           end;
         end
@@ -1386,8 +1386,8 @@ end;
 
 destructor TTurtlePredicate.Destroy;
 begin
-  FURL.Free;
-  FValue.Free;
+  FURL.free;
+  FValue.free;
   inherited;
 end;
 
@@ -1420,16 +1420,16 @@ end;
 constructor TTurtleDocument.Create;
 begin
   inherited;
-  FObjects := TFslList<TTurtlePredicate>.create;
-  FPrefixes := TFslStringDictionary.create;
+  FObjects := TFslList<TTurtlePredicate>.Create;
+  FPrefixes := TFslStringDictionary.Create;
   FPrefixes.clear();
   FPrefixes.add('_', 'urn:uuid:4425b440-2c33-4488-b9fc-cf9456139995#');
 end;
 
 destructor TTurtleDocument.Destroy;
 begin
-  FPrefixes.Free;
-  FObjects.Free;
+  FPrefixes.free;
+  FObjects.free;
   inherited;
 end;
 
@@ -1494,14 +1494,14 @@ var
   b : TStringBuilder;
   pred :  TTurtlePredicate;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     writePrefixes(b, doc);
     for pred in doc.objects do
       pred.write(b, doc, 0);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 

@@ -86,8 +86,8 @@ begin
   try
     s := base64.EncodeBytes(hash.HashString(s, IndyTextEncoding_ASCII));
   finally
-    hash.Free;
-    base64.Free;
+    hash.free;
+    base64.free;
   end;
 
   response.ResponseNo := 101;

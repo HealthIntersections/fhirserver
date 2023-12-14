@@ -316,7 +316,7 @@ begin
     tester.SelfTestC;
     tester.SelfTestD;
    finally
-    tester.Free;
+    tester.free;
    end;
 end;
 
@@ -687,7 +687,7 @@ begin
     t.OfficialVectors;
     t.UnofficialVectors;
   finally
-    t.Free;
+    t.free;
   end;
 end;
 

@@ -26,7 +26,7 @@ begin
   if (propName = 'value') then
   begin
     StringValue := propValue.primitiveValue;
-    propValue.Free;
+    propValue.free;
     result := self;
   end
   else

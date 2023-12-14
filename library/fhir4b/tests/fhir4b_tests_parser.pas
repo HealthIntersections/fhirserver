@@ -68,21 +68,21 @@ var
   ctxt : TFHIRWorkerContext;
 begin
 //  AllocConsole;
-  r := TFHIRParsers4B.parseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+  r := TFHIRParsers4B.parseFile(nil, ffXml, nil, filename);
   try
     assertTrue(r <> nil, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers4B.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
+      TFHIRParsers4B.composeFile(nil, ffXml, r, nil, fn, OutputStylePretty);
       b := CheckXMLIsSame(filename, fn, msg);
       assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     j1 := MakeTempFilename();
-    TFHIRParsers4B.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), j1, OutputStylePretty);
+    TFHIRParsers4B.composeFile(nil, ffJson, r, nil, j1, OutputStylePretty);
   finally
-    r.Free;
+    r.free;
   end;
 
   ctxt := TTestingWorkerContext4B.Use;
@@ -101,7 +101,7 @@ begin
       j2 := MakeTempFilename();
       TFHIRMMManager.composeFile(ctxt, re, j2, ffJson, OutputStylePretty);
     finally
-      re.Free;
+      re.free;
     end;
   finally
     ctxt.free;
@@ -112,21 +112,21 @@ begin
 
   // ok, we've produced equivalent JSON by both methods.
   // now, we're going to reverse the process
-  r := TFHIRParsers4B.parseFile(nil, ffJson, THTTPLanguages.create('en'), j2); // crossover too
+  r := TFHIRParsers4B.parseFile(nil, ffJson, nil, j2); // crossover too
   try
     assertTrue(r <> nil, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers4B.composeFile(nil, ffJson, r, THTTPLanguages.create('en'), fn, OutputStyleNormal);
+      TFHIRParsers4B.composeFile(nil, ffJson, r, nil, fn, OutputStyleNormal);
       b := CheckJsonIsSame(j2, fn, msg);
       assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRParsers4B.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
+    TFHIRParsers4B.composeFile(nil, ffXml, r, nil, x1, OutputStyleNormal);
   finally
-    r.Free;
+    r.free;
   end;
 
   ctxt := TTestingWorkerContext4B.Use;
@@ -145,7 +145,7 @@ begin
       x2 := MakeTempFilename();
       TFHIRMMManager.composeFile(ctxt, re, x2, ffXml, OutputStylePretty);
     finally
-      re.Free;
+      re.free;
     end;
   finally
     ctxt.free;
@@ -157,21 +157,21 @@ begin
   b := CheckXMLIsSame(filename, x1, msg);
   assertTrue(b, msg);
 
-(*  r := TFHIRParsers.parseFile(nil, ffTurtle, THTTPLanguages.create('en'), filename);
+(*  r := TFHIRParsers.parseFile(nil, ffTurtle, nil, filename);
   try
     Assert.IsNotNull(r, 'Resource could not be loaded');
     fn := MakeTempFilename();
     try
-      TFHIRParsers.composeFile(nil, ffTurtle, r, THTTPLanguages.create('en'), fn, OutputStylePretty);
+      TFHIRParsers.composeFile(nil, ffTurtle, r, nil, fn, OutputStylePretty);
       b := CheckTurtleIsSame(filename, fn, msg);
       assertTrue(b, msg);
     finally
       DeleteFile(fn);
     end;
     x1 := MakeTempFilename();
-    TFHIRParsers.composeFile(nil, ffXml, r, THTTPLanguages.create('en'), x1, OutputStyleNormal);
+    TFHIRParsers.composeFile(nil, ffXml, r, nil, x1, OutputStyleNormal);
   finally
-    r.Free;
+    r.free;
   end;
 
   b := CheckXMLIsSame(x1, x2, msg);
@@ -193,18 +193,18 @@ begin
   if FileExists(src) then
     TFile.Delete(src);
   TFile.Copy(TestSettings.fhirTestFile(['r4', 'examples', 'observation-decimal.xml']), src, false);
-  obs := TFHIRParsers4B.ParseFile(nil, ffXml, THTTPLanguages.create('en'), src) as TFhirObservation;
+  obs := TFHIRParsers4B.ParseFile(nil, ffXml, nil, src) as TFhirObservation;
   try
-    TFHIRParsers4B.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json, OutputStylePretty);
+    TFHIRParsers4B.composeFile(nil, ffJson, obs, nil, json, OutputStylePretty);
   finally
-    obs.Free;
+    obs.free;
   end;
-  obs := TFHIRParsers4B.ParseFile(nil, ffJson, THTTPLanguages.create('en'), json) as TFhirObservation;
+  obs := TFHIRParsers4B.ParseFile(nil, ffJson, nil, json) as TFhirObservation;
   try
-    TFHIRParsers4B.composeFile(nil, ffJson, obs, THTTPLanguages.create('en'), json2, OutputStylePretty);
-    TFHIRParsers4B.composeFile(nil, ffXml, obs, THTTPLanguages.create('en'), xml, OutputStylePretty);
+    TFHIRParsers4B.composeFile(nil, ffJson, obs, nil, json2, OutputStylePretty);
+    TFHIRParsers4B.composeFile(nil, ffXml, obs, nil, xml, OutputStylePretty);
   finally
-    obs.Free;
+    obs.free;
   end;
   assertTrue(true);
 end;

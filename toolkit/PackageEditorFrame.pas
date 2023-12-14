@@ -101,7 +101,7 @@ implementation
 
 destructor TPackageEditorFrame.Destroy;
 begin
-  FPackage.Free;
+  FPackage.free;
   inherited;
 end;
 
@@ -116,7 +116,7 @@ var
   fi : TNpmPackageResource;
   i : integer;
 begin
-  fl := TFslList<TNpmPackageResource>.create;
+  fl := TFslList<TNpmPackageResource>.Create;
   try
     for fi in FPackage.Folders['package'].Resources do
       if (edtFilter.Text = '') or fi.matches(edtFilter.Text) then
@@ -136,7 +136,7 @@ begin
       grid.Cells[7, i] := fi.typeV;
     end;
   finally
-    fl.Free;
+    fl.free;
   end;
 end;
 

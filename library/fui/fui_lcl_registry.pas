@@ -104,12 +104,12 @@ implementation
 constructor TPackageRegistryManager.Create;
 begin
   inherited Create;
-  FClient := TFHIRPackageClient.create('http://packages.fhir.org');
+  FClient := TFHIRPackageClient.Create('http://packages.fhir.org');
 end;
 
 destructor TPackageRegistryManager.Destroy;
 begin
-  FClient.Free;
+  FClient.free;
   inherited Destroy;
 end;
 
@@ -185,7 +185,7 @@ end;
 
 procedure TPackageRegistryForm.FormCreate(Sender: TObject);
 begin
-  FManager := TPackageRegistryManager.create;
+  FManager := TPackageRegistryManager.Create;
   FManager.Settings := ini;
   FManager.List := ListView1;
   FManager.Filter := edtFilter;
@@ -195,9 +195,9 @@ end;
 procedure TPackageRegistryForm.cbxServerChange(Sender: TObject);
 begin
   case cbxServer.ItemIndex of
-    0: FManager.FClient := TFHIRPackageClient.create('http://packages.fhir.org');
-    1: FManager.FClient := TFHIRPackageClient.create('http://packages2.fhir.org/packages');
-    2: FManager.FClient := TFHIRPackageClient.create('http://packages.fhir.org');
+    0: FManager.FClient := TFHIRPackageClient.Create('http://packages.fhir.org');
+    1: FManager.FClient := TFHIRPackageClient.Create('http://packages2.fhir.org/packages');
+    2: FManager.FClient := TFHIRPackageClient.Create('http://packages.fhir.org');
   end;
   FManager.doLoad;
 end;
@@ -223,7 +223,7 @@ begin
   ini.writeInteger('package-browser-view', 'width-canonical', ListView1.Columns[5].width);
   ini.writeInteger('package-browser-view', 'width', width);
   ini.writeInteger('package-browser-view', 'height', height);
-  FManager.Free;
+  FManager.free;
 end;
 
 procedure TPackageRegistryForm.FormShow(Sender: TObject);

@@ -74,8 +74,8 @@ end;
 
 procedure TTransformerExecConfigForm.FormDestroy(Sender: TObject);
 begin
-  FConfig.Free;
-  FWorkspace.Free;
+  FConfig.free;
+  FWorkspace.free;
 end;
 
 procedure TTransformerExecConfigForm.FormShow(Sender: TObject);
@@ -97,13 +97,13 @@ end;
 
 procedure TTransformerExecConfigForm.SetConfig(const Value: TWorkspaceExecConfig);
 begin
-  FConfig.Free;
+  FConfig.free;
   FConfig := Value;
 end;
 
 procedure TTransformerExecConfigForm.SetWorkspace(const Value: TWorkspace);
 begin
-  FWorkspace.Free;
+  FWorkspace.free;
   FWorkspace := Value;
 end;
 

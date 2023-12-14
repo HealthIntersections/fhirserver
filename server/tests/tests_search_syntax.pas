@@ -70,7 +70,7 @@ begin
     if (filter <> nil) then
       assertTrue(filter.ToString = expression, 'Expression mismatch: found "'+filter.ToString+'" expecting "'+expression+'"');
   finally
-    filter.Free;
+    filter.free;
   end;
 end;
 

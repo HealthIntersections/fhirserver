@@ -2039,7 +2039,7 @@ End;
 
 Destructor TFslIntegerListIterator.Destroy;
 Begin
-  FIntegerList.Free;
+  FIntegerList.free;
 
   Inherited;
 End;
@@ -2091,7 +2091,7 @@ End;
 
 Procedure TFslIntegerListIterator.SetIntegerList(Const Value : TFslIntegerList);
 Begin
-  FIntegerList.Free;
+  FIntegerList.free;
   FIntegerList := Value;
 End;
 
@@ -2214,7 +2214,7 @@ End;
 
 Destructor TFslClassListIterator.Destroy;
 Begin
-  FClassList.Free;
+  FClassList.free;
 
   Inherited;
 End;
@@ -2266,7 +2266,7 @@ End;
 
 Procedure TFslClassListIterator.SetClassList(Const Value : TFslClassList);
 Begin
-  FClassList.Free;
+  FClassList.free;
   FClassList := Value;
 End;
 
@@ -2294,7 +2294,7 @@ End;
 
 Destructor TFslObjectClassHashTableIterator.Destroy;
 Begin 
-  FInternal.Free;
+  FInternal.free;
 
   Inherited;
 End;  
@@ -2420,7 +2420,7 @@ Begin
   Begin
     oValue := FMatchArray^[iLoop].Value;
     FMatchArray^[iLoop].Value := Nil;
-    oValue.Free;
+    oValue.free;
   End;
 End;
 
@@ -2496,7 +2496,7 @@ Begin
 
   If Not IsAllowDuplicates And Find(aKey, aValue, Result) Then
   Begin
-    aValue.Free; // free ignored object
+    aValue.free; // free ignored object
 
     If IsPreventDuplicates Then
       RaiseError('Add', StringFormat('Item already exists in list (%s=%x)', [aKey, Integer(aValue)]));
@@ -2538,7 +2538,7 @@ Begin
   Inherited;
 
   Finalize(FMatchArray^[iIndex].Key);
-  FMatchArray^[iIndex].Value.Free;
+  FMatchArray^[iIndex].Value.free;
   FMatchArray^[iIndex].Value := Nil;
 End;  
 
@@ -2603,7 +2603,7 @@ Begin
   Assert(ValidateIndex('SetValueByIndex', iIndex));
   Assert(ValidateItem('SetValueByIndex', aValue, 'aValue'));
 
-  FMatchArray^[iIndex].Value.Free;
+  FMatchArray^[iIndex].Value.free;
   FMatchArray^[iIndex].Value := aValue;
 End;
 
@@ -3773,7 +3773,7 @@ End;
 
 Destructor TFslStringListIterator.Destroy;
 Begin
-  FStringList.Free;
+  FStringList.free;
 
   Inherited;
 End;
@@ -3825,7 +3825,7 @@ End;
 
 Procedure TFslStringListIterator.SetStringList(Const Value : TFslStringList);
 Begin
-  FStringList.Free;
+  FStringList.free;
   FStringList := Value;
 End;
 
@@ -3849,12 +3849,12 @@ Begin
 
       oFormatter.ProduceEntryStringList(Self);
     Finally
-      oFormatter.Free;
+      oFormatter.free;
     End;
 
     result := TEncoding.UTF8.GetString(oStream.Bytes);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3871,10 +3871,10 @@ Begin
     Try
       oExtractor.ConsumeEntries(Self);
     Finally
-      oExtractor.Free;
+      oExtractor.free;
     End;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -4737,7 +4737,7 @@ End;
 
 Destructor TFslOrdinalSetIterator.Destroy;
 Begin 
-  FOrdinalSet.Free;
+  FOrdinalSet.free;
 
   Inherited;
 End;  
@@ -4745,7 +4745,7 @@ End;
 
 Procedure TFslOrdinalSetIterator.SetOrdinalSet(Const Value: TFslOrdinalSet);
 Begin
-  FOrdinalSet.Free;
+  FOrdinalSet.free;
   FOrdinalSet := Value;
 End;  
 
@@ -4847,8 +4847,8 @@ Begin
     FMatchArray^[iLoop].Key := Nil;
     FMatchArray^[iLoop].Value := Nil;
 
-    oKey.Free;
-    oValue.Free;
+    oKey.free;
+    oValue.free;
   End;
 End;
 
@@ -4902,8 +4902,8 @@ Begin
 
   If Not IsAllowDuplicates And Find(aKey, aValue, Result) Then
   Begin 
-    aKey.Free;
-    aValue.Free;
+    aKey.free;
+    aValue.free;
 
     If IsPreventDuplicates Then
       RaiseError('Add', StringFormat('Item already exists in match (%x=%x)', [Integer(aKey), Integer(aValue)]));
@@ -4945,10 +4945,10 @@ Procedure TFslObjectMatch.InternalDelete(iIndex : Integer);
 Begin
   Inherited;
 
-  FMatchArray^[iIndex].Key.Free;
+  FMatchArray^[iIndex].Key.free;
   FMatchArray^[iIndex].Key := Nil;
 
-  FMatchArray^[iIndex].Value.Free;
+  FMatchArray^[iIndex].Value.free;
   FMatchArray^[iIndex].Value := Nil;
 End;
 
@@ -5008,7 +5008,7 @@ Begin
   Assert(ValidateIndex('SetKeyByIndex', iIndex));
   Assert(ValidateKey('SetKeyByIndex', aKey, 'aKey'));
 
-  FMatchArray^[iIndex].Key.Free;
+  FMatchArray^[iIndex].Key.free;
   FMatchArray^[iIndex].Key := aKey;
 End;  
 
@@ -5026,7 +5026,7 @@ Begin
   Assert(ValidateIndex('SetValueByIndex', iIndex));
   Assert(ValidateValue('SetValueByIndex', aValue, 'aValue'));
 
-  FMatchArray^[iIndex].Value.Free;
+  FMatchArray^[iIndex].Value.free;
   FMatchArray^[iIndex].Value := aValue;
 End;
 
@@ -5066,7 +5066,7 @@ Begin
     Add(aKey.Link, aValue)
   Else
   Begin 
-    aValue.Free;
+    aValue.free;
     RaiseError('SetValueByKey', 'Unable to set the value for the specified key.');
   End;  
 End;
@@ -5286,7 +5286,7 @@ begin
     Assert(not Assigned(oValue) or Invariants('InternalResize', oValue,
       FItemClass, 'oValue'));
 
-    oValue.Free;
+    oValue.free;
   end;
 end;
 
@@ -5335,7 +5335,7 @@ begin
 
   InternalBeforeExclude(iIndex, oValue);
 
-  FObjectArray^[iIndex].Free;
+  FObjectArray^[iIndex].free;
   FObjectArray^[iIndex] := nil;
 end;
 
@@ -5473,7 +5473,7 @@ begin
   try
     Result := IndexByClass(oValue);
   finally
-    oValue.Free;
+    oValue.free;
   end;
 end;
 
@@ -5534,7 +5534,7 @@ begin
 
   if not IsAllowDuplicates and Find(oValue, Result) then
   begin
-    oValue.Free; // free ignored object
+    oValue.free; // free ignored object
 
     if IsPreventDuplicates then
       RaiseError('Add', 'Object already exists in list.');
@@ -5621,7 +5621,7 @@ begin
     try
       DeleteByIndex(0);
     except
-      Result.Free;
+      Result.free;
 
       raise;
     end;
@@ -5652,7 +5652,7 @@ begin
     DeleteByIndex(iSource);
     Insert(iTarget, oObject.Link);
   finally
-    oObject.Free;
+    oObject.free;
   end;
 end;
 
@@ -5725,7 +5725,7 @@ begin
 
   InternalBeforeExclude(iIndex, oExclude);
 
-  FObjectArray^[iIndex].Free;
+  FObjectArray^[iIndex].free;
   FObjectArray^[iIndex] := oValue;
 
   InternalAfterInclude(iIndex, oValue);
@@ -5886,7 +5886,7 @@ begin
   Assert(CheckCondition(oIterator.List = Self, 'ConsumeIterator',
     'Iterator was not produced by this list.'));
 
-  oIterator.Free;
+  oIterator.free;
 end;
 
 
@@ -5920,7 +5920,7 @@ end;
 
 destructor TFslObjectListIterator.Destroy;
 begin
-  FList.Free;
+  FList.free;
 
   inherited;
 end;
@@ -6007,7 +6007,7 @@ procedure TFslObjectListIterator.SetList(const Value: TFslObjectList);
 begin
   Assert(not Assigned(FList) or Invariants('SetList', Value, TFslObjectList, 'Value'));
 
-  FList.Free;
+  FList.free;
   FList := Value;
 end;
 
@@ -6897,7 +6897,7 @@ End;
 
 Destructor TFslPointerListIterator.Destroy;
 Begin
-  FPointerArray.Free;
+  FPointerArray.free;
 
   Inherited;
 End;
@@ -6949,7 +6949,7 @@ End;
 
 Procedure TFslPointerListIterator.SetPointers(Const Value: TFslPointerList);
 Begin
-  FPointerArray.Free;
+  FPointerArray.free;
   FPointerArray := Value;
 End;
 
@@ -7044,7 +7044,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -7081,7 +7081,7 @@ Begin
         Assert(Invariants('Clear', oHashEntry, ItemClass, 'oHashEntry'));
 
         oNext := oHashEntry.FNextHashEntry;
-        oHashEntry.Free;
+        oHashEntry.free;
         oHashEntry := oNext;
       End;
     End;
@@ -7180,7 +7180,7 @@ Begin
 
     Insert(Resolve(oHashEntry), oHashEntry.Link);
   Finally
-    oHashEntry.Free;
+    oHashEntry.free;
   End;
 End;
 
@@ -7270,7 +7270,7 @@ Begin
     If (Equal(oLast, oHashEntry) = 0) Then
     Begin
       pFirst^ := oLast.FNextHashEntry;
-      oLast.Free;
+      oLast.free;
     End
     Else
     Begin
@@ -7286,7 +7286,7 @@ Begin
       If Result Then
       Begin
         oLast.FNextHashEntry := oNext.FNextHashEntry;
-        oNext.Free;
+        oNext.free;
       End
     End;
 
@@ -7379,7 +7379,7 @@ End;
 
 Destructor TFslHashTableIterator.Destroy;
 Begin
-  FHashTable.Free;
+  FHashTable.free;
 
   Inherited;
 End;
@@ -7441,7 +7441,7 @@ End;
 
 Procedure TFslHashTableIterator.SetHashTable(Const Value: TFslHashTable);
 Begin
-  FHashTable.Free;
+  FHashTable.free;
   FHashTable := Value;
 End;
 
@@ -7462,7 +7462,7 @@ End;
 
 Procedure TFslHashTable.ConsumeHashEntry(oHashEntry : TFslHashEntry);
 Begin
-  oHashEntry.Free;
+  oHashEntry.free;
 End;
 
 
@@ -7723,7 +7723,7 @@ Begin
 
     Result := FindByName(oName, iIndex);
   Finally
-    oName.Free;
+    oName.free;
   End;
 End;
 
@@ -7788,7 +7788,7 @@ Begin
       Result := oName;
     End;
   Finally
-    oName.Free;
+    oName.free;
   End;
 End;
 
@@ -7825,7 +7825,7 @@ Begin
 
     Result := Add(oItem.Link);
   Finally
-    oItem.Free;
+    oItem.free;
   End;
 End;
 
@@ -7867,7 +7867,7 @@ Begin
 
     Result := oStrings.AsText;
   Finally
-    oStrings.Free;
+    oStrings.free;
   End;
 End;
 
@@ -7894,11 +7894,11 @@ Begin
 
         Add(oItem.Link);
       Finally
-        oItem.Free;
+        oItem.free;
       End;
     End;
   Finally
-    oStrings.Free;
+    oStrings.free;
   End;
 End;
 
@@ -7946,7 +7946,7 @@ Begin
 
     Result := ExistsBy(oCharacter, CompareByValue);
   Finally
-    oCharacter.Free;
+    oCharacter.free;
   End;
 End;
 
@@ -7961,7 +7961,7 @@ Begin
 
     Add(oCharacter.Link);
   Finally
-    oCharacter.Free;
+    oCharacter.free;
   End;
 End;
 
@@ -7994,7 +7994,7 @@ End;
 
 Destructor TFslObjectChoice.Destroy;
 Begin
-  FObject.Free;
+  FObject.free;
 
   Inherited;
 End;
@@ -8021,7 +8021,7 @@ Begin
   Begin
     If Not Assigned(FObject) Or (FObject.ClassType <> aObjectClass) Then
     Begin
-      FObject.Free;
+      FObject.free;
       FObject := Nil;
       FObject := aObjectClass.Create;
     End;
@@ -8036,7 +8036,7 @@ Begin
       Invariant('StoreIsObjectClass', StringFormat('Cannot unstore ''%s'' as choice is ''%s''.', [aObjectClass.ClassName, FObject.ClassName]));
   {$ENDIF}
 
-    FObject.Free;
+    FObject.free;
     FObject := Nil;
   End;
 End;
@@ -8056,7 +8056,7 @@ Begin
   Assert(Invariants('RetrieveObject', aObjectClass, TFslObject, 'aObjectClass'));
   Assert(Not Assigned(oObject) Or Invariants('StoreObject', oObject, aObjectClass, 'oObject'));
 
-  FObject.Free;
+  FObject.free;
   FObject := oObject;
 End;
 
@@ -8071,7 +8071,7 @@ Procedure TFslObjectChoice.StoreIsNull;
 Begin
   Assert(Not Assigned(FObject) Or Invariants('StoreIsNull', FObject, TFslObject, 'FObject'));
 
-  FObject.Free;
+  FObject.free;
   FObject := Nil;
 End;
 
@@ -8278,7 +8278,7 @@ End;
 
 Destructor TFslBooleanListIterator.Destroy;
 Begin
-  FBooleanList.Free;
+  FBooleanList.free;
 
   Inherited;
 End;
@@ -8338,7 +8338,7 @@ End;
 
 Procedure TFslBooleanListIterator.SetBooleanList(Const Value: TFslBooleanList);
 Begin
-  FBooleanList.Free;
+  FBooleanList.free;
   FBooleanList := Value;
 End;
 
@@ -8435,7 +8435,7 @@ Begin
       End;
     End;
   Finally
-    oStrings.Free;
+    oStrings.free;
   End;
 End;
 
@@ -8453,7 +8453,7 @@ End;
 
 Destructor TFslTree.Destroy;
 Begin
-  FChildren.Free;
+  FChildren.free;
 
   Inherited;
 End;
@@ -8543,7 +8543,7 @@ Procedure TFslTree.SetChildren(Const Value: TFslTreeList);
 Begin
   Assert(Invariants('SetChildren', Value, ChildrenClass, 'Value'));
 
-  FChildren.Free;
+  FChildren.free;
   FChildren := Value;
 
   Reparent;

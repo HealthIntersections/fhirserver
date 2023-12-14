@@ -212,19 +212,19 @@ end;
 
 constructor TObservationStatsEvaluator.Create(factory : TFHIRFactory; conn: TFDBConnection; resp : TFHIRStatsOpResponseW);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
   FConn := conn;
-  FConcepts := TFslList<TFHIRCodingW>.create;
+  FConcepts := TFslList<TFHIRCodingW>.Create;
   FResp := resp;
-  FObservations := TList<Integer>.create;
+  FObservations := TList<Integer>.Create;
 end;
 
 destructor TObservationStatsEvaluator.Destroy;
 begin
-  FFactory.Free;
-  FObservations.Free;
-  FResp.Free;
+  FFactory.free;
+  FObservations.free;
+  FResp.free;
   FConcepts.free;
   inherited;
 end;
@@ -254,8 +254,8 @@ begin
     obs.setCode(c);
     obs.subject := subject;
     obs.setPeriod(start, finish);
-    FAllData := TFslList<TObservation>.create;
-    FValidData := TFslList<TObservation>.create;
+    FAllData := TFslList<TObservation>.Create;
+    FValidData := TFslList<TObservation>.Create;
     try
       loadData(c);
       comp := obs.addComp('http://hl7.org/fhir/observation-paramcode', 'totalcount');
@@ -385,7 +385,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -625,7 +625,7 @@ begin
   else
   begin
     if FMode = osmInconsistent then
-      raise EFHIRException.create('The stat '+CODES_TObservationStatsParameter[p]+' cannot be generated when some of the canonical units differ');
+      raise EFHIRException.Create('The stat '+CODES_TObservationStatsParameter[p]+' cannot be generated when some of the canonical units differ');
     case p of
       osp_average: d := genAverage();
       osp_maximum: d := genMaximum();
@@ -671,7 +671,7 @@ begin
         end;
         result.Link;
       finally
-        result.Free;
+        result.free;
       end;
     end;
   end;
@@ -788,27 +788,27 @@ end;
 
 constructor TObservationLastNEvaluator.Create(conn: TFDBConnection);
 begin
-  inherited create;
+  inherited Create;
   FConn := conn;
   FCount := 1;
-  FObservations := TStringList.create;
+  FObservations := TStringList.Create;
   FObservations.Sorted := true;
   FObservations.Duplicates := dupIgnore;
   FSubjectKey := 0;
-  FConcepts := TFslList<TFHIRCodingW>.create;
+  FConcepts := TFslList<TFHIRCodingW>.Create;
 end;
 
 destructor TObservationLastNEvaluator.Destroy;
 begin
-  FObservations.Free;
-  FConcepts.Free;
-  FCategory.Free;
+  FObservations.free;
+  FConcepts.free;
+  FCategory.free;
   inherited;
 end;
 
 procedure TObservationLastNEvaluator.SetCategory(const Value: TFHIRCodingW);
 begin
-  FCategory.Free;
+  FCategory.free;
   FCategory := Value;
 end;
 
@@ -823,14 +823,14 @@ var
   i : integer;
 begin
   FObservations.Clear;
-  cks := TStringList.create;
+  cks := TStringList.Create;
   try
     listConcepts(cks);
     cks.Sort;
     for i := 0 to cks.Count - 1 do
       addMostRecentObservations(integer(cks.Objects[i]));
   finally
-    cks.Free;
+    cks.free;
   end;
 end;
 

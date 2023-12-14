@@ -66,7 +66,7 @@ begin
     ResourceToFile(bnd, filePath(['[tmp]', 'signed.xml']), ffXml, OutputStylePretty);
     assertTrue(bnd <> nil);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -97,10 +97,10 @@ begin
     try
       assertTrue(card.isValid, 'Card isn''t valid: '+card.validationMessage);
     finally
-      card.Free;
+      card.free;
     end;
   finally
-    utils.Free;
+    utils.free;
   end;
 end;
 
@@ -114,7 +114,7 @@ begin
     ResourceToFile(bnd, filePath(['[tmp]', 'signed.json']), ffJson, OutputStylePretty);
     assertTrue(bnd <> nil);
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -129,7 +129,7 @@ begin
     assertTrue(ref.getType = 'Patient');
     assertTrue(ref.getId = 'example');
   finally
-    ref.Free;
+    ref.free;
   end;
   ref := TFhirReference.Create;
   try
@@ -138,7 +138,7 @@ begin
     assertTrue(ref.getType = 'Patient');
     assertTrue(ref.getId = 'example');
   finally
-    ref.Free;
+    ref.free;
   end;
   ref := TFhirReference.Create;
   try
@@ -147,7 +147,7 @@ begin
     assertTrue(ref.getType = 'Patient');
     assertTrue(ref.getId = 'example');
   finally
-    ref.Free;
+    ref.free;
   end;
 end;
 
@@ -156,7 +156,7 @@ var
   att : TFhirAttachment;
   p : TFslZipPart;
 begin
-  att := TFHIRAttachment.create;
+  att := TFHIRAttachment.Create;
   try
     att.title := 'test';
     att.data := TEncoding.UTF8.GetBytes('Some test text');
@@ -167,10 +167,10 @@ begin
       assertTrue(p.Size > 0);
       assertTrue(p.Comment = 'text/plain');
     finally
-      p.Free;
+      p.free;
     end;
   finally
-    att.Free;
+    att.free;
   end;
 end;
 

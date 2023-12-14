@@ -87,8 +87,8 @@ implementation
 destructor TV2ConversionEngine.Destroy;
 begin
   FClient.free;
-  FMessage.Free;
-  FFactory.Free;
+  FMessage.free;
+  FFactory.free;
 
   inherited;
 end;
@@ -106,13 +106,13 @@ end;
 
 procedure TV2ConversionEngine.SetFactory(const Value: TFHIRFactory);
 begin
-  FFactory.Free;
+  FFactory.free;
   FFactory := Value;
 end;
 
 procedure TV2ConversionEngine.SetMessage(const Value: TV2Message);
 begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := Value;
 end;
 
@@ -133,7 +133,7 @@ begin
       try
         js.executeObj(script.content, '', script.name, [message, client, factory]);
       finally
-        script.Free;
+        script.free;
       end;
     finally
       js.free;

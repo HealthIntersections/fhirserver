@@ -68,7 +68,7 @@ uses
 
 procedure ShowUpgradePrompt(owner : TNppPlugin; link, notes : String);
 begin
-  UpgradePromptForm := TUpgradePromptForm.create(owner);
+  UpgradePromptForm := TUpgradePromptForm.Create(owner);
   try
     UpgradePromptForm.Memo1.text := notes;
     UpgradePromptForm.FLink := link;
