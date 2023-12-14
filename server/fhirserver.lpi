@@ -814,7 +814,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="50">
+    <Exceptions Count="51">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -975,6 +975,7 @@
       </Item46>
       <Item47>
         <Name Value="Edecompressionerror"/>
+        <Enabled Value="False"/>
       </Item47>
       <Item48>
         <Name Value="EJsonParserException"/>
@@ -985,6 +986,9 @@
       <Item50>
         <Name Value="EPackageCrawlerException"/>
       </Item50>
+      <Item51>
+        <Name Value="&lt;Unknown Class>"/>
+      </Item51>
     </Exceptions>
   </Debugging>
 </CONFIG>
