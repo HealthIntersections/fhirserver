@@ -121,13 +121,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\FHIRConsole"/>
+            <Filename Value="../exec/64/FHIRConsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="admin;tx"/>
-            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);../library"/>
+            <Libraries Value="/usr/local/lib64"/>
+            <OtherUnitFiles Value="admin;tx;../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+            <UnitOutputDirectory Value="lib/console/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -138,14 +138,14 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R .\"/>
+              <LinkerOptions Value="-R ./"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-k--verbose -k--library-path=/home/grahame/work/fhirserver/dependencies/openssl/linux-x86_64/"/>
+            <CustomOptions Value="-k--verbose -k--library-path=/usr/local/lib64"/>
           </Other>
         </CompilerOptions>
       </Item4>
@@ -274,13 +274,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\FHIRConsole"/>
+            <Filename Value="../exec/64/FHIRConsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="admin;tx"/>
-            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);../library"/>
+            <Libraries Value="/usr/local/lib64"/>
+            <OtherUnitFiles Value="admin;tx;../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+            <UnitOutputDirectory Value="lib/console/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>

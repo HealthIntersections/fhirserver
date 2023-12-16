@@ -1,6 +1,24 @@
-FROM ubuntu:20.04 as builder
+FROM ubuntu:22.04 as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
+
+
+RUN apt update && apt install -y tzdata wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev build-essential
+
+# Download and build OpenSSL 1.1.1w
+WORKDIR /tmp
+RUN wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz \
+    && tar -xf openssl-1.1.1w.tar.gz \
+    && cd openssl-1.1.1w \
+    && ./config \
+    && make \
+    && make test \
+    && make install
+
+RUN ls -la /usr/local/lib/
+
+# Set the timezone
+RUN echo "UTC" > /etc/timezone
 
 RUN apt update && apt install -y wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev && \
     cd /tmp && \
@@ -20,7 +38,7 @@ WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
 RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
-RUN cp exec/pack/linux/*.so /usr/lib/
+RUN cp /usr/local/lib/*.so* /usr/lib/
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 RUN cp exec/pack/*.properties exec/64
 
@@ -28,6 +46,8 @@ ENV DISPLAY :99
 ENV PORT 80
 ENV TERMINOLOGY_CACHE /terminology
 VOLUME /terminology
+
+ENV DEBIAN_FRONTEND=
 
 RUN printf '#!/bin/bash \n\
 Xvfb  :99 -screen 0 1024x768x8 -nolisten tcp & \n\
