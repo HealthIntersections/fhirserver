@@ -733,7 +733,6 @@ var
   fn : String;
   b : TBytes;
 begin
-  BytesToFile(content, '/Users/grahamegrieve/temp/package.tgz');
   Logging.log('Loading Package ('+DescribeBytes(length(content))+')');
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
