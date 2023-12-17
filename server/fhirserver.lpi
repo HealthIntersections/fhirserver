@@ -34,10 +34,10 @@
             <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
-            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
-            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+            <IncludeFiles Value="$(ProjOutDir);../dependencies/jcl;../library"/>
+            <Libraries Value="../dependencies/openssl/$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;../dependencies/jcl;tests;admin;../library/fcomp/tests;tx;../dependencies/FMM"/>
+            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -83,13 +83,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\fhirserver"/>
+            <Filename Value="../exec/64/fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);../library"/>
+            <Libraries Value="/usr/local/lib64"/>
+            <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+            <UnitOutputDirectory Value="lib/$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -118,7 +118,7 @@
             <LinkSmart Value="True"/>
             <Options>
               <PassLinkerOptions Value="True"/>
-              <LinkerOptions Value="-R .\"/>
+              <LinkerOptions Value="-R ./"/>
             </Options>
           </Linking>
           <Other>
@@ -129,7 +129,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-k--library-path=/home/grahame/work/fhirserver/dependencies/openssl/linux-x86_64/"/>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -269,15 +269,15 @@
         </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
-          <PathDelim Value="\"/>
+          <PathDelim Value="/"/>
           <Target>
-            <Filename Value="..\exec\64\fhirserver"/>
+            <Filename Value="../exec/64/fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);../library"/>
+            <Libraries Value="/usr/local/lib64"/>
+            <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+            <UnitOutputDirectory Value="lib/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
@@ -295,7 +295,7 @@
             <LinkSmart Value="True"/>
             <Options>
               <PassLinkerOptions Value="True"/>
-              <LinkerOptions Value="-R .\"/>
+              <LinkerOptions Value="-R ./"/>
             </Options>
           </Linking>
           <Other>
@@ -615,11 +615,11 @@
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="tests\tests_search_syntax.pas"/>
+        <Filename Value="tests/tests_search_syntax.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
-        <Filename Value="admin\server_config.pas"/>
+        <Filename Value="admin/server_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
       <Unit60>
@@ -663,47 +663,47 @@
         <IsPartOfProject Value="True"/>
       </Unit69>
       <Unit70>
-        <Filename Value="tx\tx_acir.pas"/>
+        <Filename Value="tx/tx_acir.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit70>
       <Unit71>
-        <Filename Value="tx\tx_areacode.pas"/>
+        <Filename Value="tx/tx_areacode.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit71>
       <Unit72>
-        <Filename Value="tx\tx_countrycode.pas"/>
+        <Filename Value="tx/tx_countrycode.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
       <Unit73>
-        <Filename Value="tx\tx_hgvs.pas"/>
+        <Filename Value="tx/tx_hgvs.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit73>
       <Unit74>
-        <Filename Value="tx\tx_iso_4217.pas"/>
+        <Filename Value="tx/tx_iso_4217.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit74>
       <Unit75>
-        <Filename Value="tx\tx_mimetypes.pas"/>
+        <Filename Value="tx/tx_mimetypes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit75>
       <Unit76>
-        <Filename Value="tx\tx_ndc.pas"/>
+        <Filename Value="tx/tx_ndc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit76>
       <Unit77>
-        <Filename Value="tx\tx_rxnorm.pas"/>
+        <Filename Value="tx/tx_rxnorm.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit77>
       <Unit78>
-        <Filename Value="tx\tx_unii.pas"/>
+        <Filename Value="tx/tx_unii.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit78>
       <Unit79>
-        <Filename Value="tx\tx_uri.pas"/>
+        <Filename Value="tx/tx_uri.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit79>
       <Unit80>
-        <Filename Value="tx\tx_us_states.pas"/>
+        <Filename Value="tx/tx_us_states.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
       <Unit81>
@@ -727,7 +727,7 @@
         <IsPartOfProject Value="True"/>
       </Unit85>
       <Unit86>
-        <Filename Value="tx\tx_omop.pas"/>
+        <Filename Value="tx/tx_omop.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit86>
       <Unit87>
@@ -751,11 +751,11 @@
         <IsPartOfProject Value="True"/>
       </Unit91>
       <Unit92>
-        <Filename Value="tx\tx_cpt.pas"/>
+        <Filename Value="tx/tx_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit92>
       <Unit93>
-        <Filename Value="tests\tests_cpt.pas"/>
+        <Filename Value="tests/tests_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit93>
       <Unit94>
@@ -774,15 +774,15 @@
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
-    <PathDelim Value="\"/>
+    <PathDelim Value="/"/>
     <Target>
-      <Filename Value="..\exec\64\fhirserver"/>
+      <Filename Value="../exec/64/fhirserver"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-      <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
-      <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+      <IncludeFiles Value="$(ProjOutDir);../library"/>
+      <Libraries Value="/usr/local/lib64"/>
+      <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+      <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
     <CodeGeneration>
       <Optimizations>

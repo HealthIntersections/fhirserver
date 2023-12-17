@@ -82,37 +82,37 @@ cd ..
 # ---- register the source with lazarus ----------
 
 echo "## compile package source/tzdb/dist/tzdb_fpc.lpk"
-tools/lazarus/lazbuild source/tzdb/dist/tzdb_fpc.lpk -q
+tools/lazarus/lazbuild source/tzdb/dist/tzdb_fpc.lpk -q --build-all
 
 echo "## compile package source/extrasyn/extrahighlighters.lpk"
-tools/lazarus/lazbuild source/extrasyn/extrahighlighters.lpk -q 
+tools/lazarus/lazbuild source/extrasyn/extrahighlighters.lpk -q --build-all
 
 echo "## compile package source/extrasyn/extrahighlighters_dsgn.lpk"
-tools/lazarus/lazbuild source/extrasyn/extrahighlighters_dsgn.lpk -q --add-package
+tools/lazarus/lazbuild source/extrasyn/extrahighlighters_dsgn.lpk -q --add-package --build-all
 
 echo "## compile package source/ZXing.Delphi/Lazarus/Package/zxing.lpk"
-tools/lazarus/lazbuild source/ZXing.Delphi/Lazarus/Package/zxing.lpk -q --add-package --build-ide=
+tools/lazarus/lazbuild source/ZXing.Delphi/Lazarus/Package/zxing.lpk -q --add-package --build-all --build-ide= 
 
 echo "## compile package source/lazarus-ide-tester/package/idetester.lpk"
-tools/lazarus/lazbuild source/lazarus-ide-tester/package/idetester.lpk -q  --add-package
+tools/lazarus/lazbuild source/lazarus-ide-tester/package/idetester.lpk -q  --add-package --build-all
 
 echo "## compile package source/lazarus-ide-tester/ide/idetester_dsgn.lpk"
-tools/lazarus/lazbuild source/lazarus-ide-tester/ide/idetester_dsgn.lpk -q --add-package
+tools/lazarus/lazbuild source/lazarus-ide-tester/ide/idetester_dsgn.lpk -q --add-package --build-all
 
 echo "## compile package source/HtmlViewer/package/FrameViewer09.lpk"
-tools/lazarus/lazbuild source/HtmlViewer/package/FrameViewer09.lpk -q --add-package
+tools/lazarus/lazbuild source/HtmlViewer/package/FrameViewer09.lpk -q --add-package --build-all
 
 echo "## compile package source/delphi-markdown/packages/markdownengine.lpk"
-tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk -q
+tools/lazarus/lazbuild source/delphi-markdown/packages/markdownengine.lpk -q --build-all
 
 echo "## compile package source/PdfiumLib/Package/Pdfium.lpk"
-tools/lazarus/lazbuild source/PdfiumLib/Package/Pdfium.lpk -q --add-package
+tools/lazarus/lazbuild source/PdfiumLib/Package/Pdfium.lpk -q --add-package --build-all
 
 echo "## compile package source/delphi-markdown/tests/markdowntests.lpk"
-tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk -q
+tools/lazarus/lazbuild source/delphi-markdown/tests/markdowntests.lpk -q --build-all
 
 echo "## compile package source/DelphiAST/Package/pascalast.lpk"
-tools/lazarus/lazbuild source/DelphiAST/Package/pascalast.lpk --quiet 
+tools/lazarus/lazbuild source/DelphiAST/Package/pascalast.lpk --quiet  --build-all
 
 # ----  back to the server ----------
 
