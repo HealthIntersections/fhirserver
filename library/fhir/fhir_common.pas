@@ -889,7 +889,12 @@ type
     function getTotal : integer; virtual; abstract;
     procedure setTotal(value : integer) ; virtual; abstract;
 
+    function getOffset : integer; virtual; abstract;
+    procedure setOffset(value : integer) ; virtual; abstract;
+
     property total : integer read getTotal write setTotal;
+    property offset : integer read getOffset write setOffset;
+
     procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject {link if needed}); virtual; abstract;
   end;
 

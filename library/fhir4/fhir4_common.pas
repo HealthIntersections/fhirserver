@@ -504,6 +504,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     function getTotal : integer; override;
     procedure setTotal(value : integer) ; override;
+    function getOffset : integer; override;
+    procedure setOffset(value : integer) ; override;
     procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject); override;
   end;
 
@@ -4172,6 +4174,16 @@ end;
 procedure TFhirValueSetExpansion4.setTotal(value: integer);
 begin
   exp.total := inttostr(value);
+end;
+
+function TFhirValueSetExpansion4.getOffset: integer;
+begin
+  result := StrToIntDef(exp.offset, 0);
+end;
+
+procedure TFhirValueSetExpansion4.setOffset(value: integer);
+begin
+  exp.offset := inttostr(value);
 end;
 
 procedure TFhirValueSetExpansion4.defineProperty(focus: TFhirValueSetExpansionContainsW; url, code: String; value: TFHIRObject);

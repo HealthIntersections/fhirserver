@@ -814,7 +814,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="51">
+    <Exceptions Count="53">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -989,6 +989,12 @@
       <Item51>
         <Name Value="&lt;Unknown Class>"/>
       </Item51>
+      <Item52>
+        <Name Value="EDateFormatError"/>
+      </Item52>
+      <Item53>
+        <Name Value="ESQLite3Error"/>
+      </Item53>
     </Exceptions>
   </Debugging>
 </CONFIG>

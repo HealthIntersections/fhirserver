@@ -226,7 +226,7 @@ begin
         End;
       End
       Else
-        raise EWebException.create('Protocol '+oUri.Protocol+' not supported');
+        raise EWebException.create('Protocol '+oUri.Protocol+' not supported for URL '+url);
     Finally
       oUri.free;
     End;
