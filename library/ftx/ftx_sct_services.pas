@@ -5420,15 +5420,18 @@ begin
     try
       result := TSnomedExpressionContext.Create(code, FSct.parseExpression(code))
     except
-      Message := 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')';
-      result := nil;
+      on e : Exception do
+      begin
+        Message := 'Code '+code+' is not a SNOMED CT Term, and neither could it be parsed as an expression ('+e.message+')';
+        result := nil;
+      end;
     end
   end
   else if FSct.Concept.FindConcept(iId, index) Then
     result := TSnomedExpressionContext.create(code, index)
   else
   begin
-    Message := 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')';
+    Message := ''; // 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')'; it's not useful to say anything more
     result := nil;
   end;
 end;
