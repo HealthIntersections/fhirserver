@@ -1399,7 +1399,7 @@ begin
         result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link);
         issuePath := 'CodeableConcept';
       end
-      else if isValueSet and (params.has('code') and (params.has('system') or params.bool('inferSystem') or params.bool('implySystem'))) then
+      else if (params.has('code') and (params.has('system')) or (isValueSet and (params.has('code') and (params.bool('inferSystem') or params.bool('implySystem'))))) then
       begin
         issuePath := '';
         mode := vcmCode;
