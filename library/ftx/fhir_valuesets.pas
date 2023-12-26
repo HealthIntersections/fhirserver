@@ -1858,7 +1858,7 @@ begin
                    begin
                      if (message <> '') then
                      begin
-                       msg(message);
+                       // msg(message); we just add this as an issue, but don't put it in the base message
                        op.addIssue(isInformation, cause, path, message);
                      end;
                      vcc.removeCoding(prov.systemUri(nil), prov.version(nil), c.code);
