@@ -5422,7 +5422,7 @@ begin
     except
       on e : Exception do
       begin
-        Message := 'Code '+code+' is not a SNOMED CT Term, and neither could it be parsed as an expression ('+e.message+')';
+        Message := 'Code '+code+' is not a valid SNOMED CT Term, and neither could it be parsed as an expression ('+e.message+')';
         result := nil;
       end;
     end

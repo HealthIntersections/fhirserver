@@ -1153,27 +1153,28 @@ begin
           checkCanonicalStatus(path, op, cs, FValueSet);
           ver := cs.version(nil);
           contentMode := cs.contentMode;
-          ctxt := cs.locate(code, nil, message);
+          ctxt := cs.locate(code, nil, msg);
           if (ctxt = nil) then
           begin
+            msg := '';
             unkCodes.add(cs.systemUri(nil)+'|'+cs.version(nil)+'#'+code);
             if cs.contentMode <> cscmComplete then
             begin
               result := bTrue; // we can't say it isn't valid. Need a third status?
-              cause := itNotFound;
+              cause := itCodeInvalid;
               FLog := 'Not found in Incomplete Code System';
-              msg := FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.languages, [code, vurl(cs.systemUri(nil), cs.version(nil))]);
+              msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]);
               messages.add(msg);
-              op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), msg);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg);
             end
             else
             begin
               result := bFalse;
               cause := itCodeInvalid;
               FLog := 'Unknown code';
-              msg := FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(cs.systemUri(nil), cs.version(nil))]);
+              msg := FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]);
               messages.add(msg);
-              op.addIssue(isError, itNotFound, addToPath(path, 'code'), msg);
+              op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), msg);
             end;
           end
           else
@@ -1256,20 +1257,20 @@ begin
             if cs.contentMode <> cscmComplete then
             begin
               result := bTrue; // we can't say it isn't valid. Need a third status?
-              cause := itNotFound;
+              cause := itCodeInvalid;
               FLog := 'Not found in Incomplete Code System';
-              msg := FI18n.translate('UNKNOWN_CODE__IN_FRAGMENT', FParams.languages, [code, vurl(system, version)]);
+              msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.languages, [code, system, version]);
               messages.add(msg);
-              op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), msg);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg);
             end
             else
             begin
               result := bFalse;
               cause := itCodeInvalid;
               FLog := 'Unknown code';
-              msg := FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(system, version)]);
+              msg := FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, system, version]);
               messages.add(msg);
-              op.addIssue(isWarning, itNotFound, addToPath(path, 'code'), msg);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg);
             end;
           end
           else
@@ -1860,13 +1861,14 @@ begin
                      begin
                        // msg(message); we just add this as an issue, but don't put it in the base message
                        op.addIssue(isInformation, cause, path, message);
+                       message := '';
                      end;
                      vcc.removeCoding(prov.systemUri(nil), prov.version(nil), c.code);
                      vs := ws+'|'+prov.version(nil)+'#'+c.code;
                      if ts.indexOf(vs) = -1 then
                      begin
                        ts.add(vs);
-                       m := FI18N.translate('Unknown_Code__in_', FParams.languages, [c.code, vurl(ws, prov.version(nil))]);
+                       m := FI18N.translate('Unknown_Code_in_Version', FParams.languages, [c.code, ws, prov.version(nil)]);
                        cause := itCodeInvalid;
                        msg(m);
                        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m);
@@ -2111,7 +2113,7 @@ begin
       if loc = nil then
       begin
         if (FParams.valueSetMode <> vsvmMembershipOnly) then
-          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(cs.systemUri(nil), cs.version(nil))]))
+          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]))
       end
       else if not (abstractOk or not cs.IsAbstract(loc)) then
       begin
@@ -2370,7 +2372,7 @@ begin
     if loc = nil then
     begin
       if (FParams.valueSetMode <> vsvmMembershipOnly) then
-        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code__in_', FParams.languages, [code, vurl(cs.systemUri(nil), cs.version(nil))]))
+        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]))
     end
     else if not (abstractOk or not cs.IsAbstract(loc)) then
     begin
