@@ -6113,7 +6113,7 @@ begin
     else FBytesToGo := DirRec.Size;
   // zipslip prevention: .. in file names are *never* allowed anywhere
   path := DirRec.name;
-  If path.contains('..') then
+  If path.contains('../') or path.contains('/..') then
     raise EIOException.create('Illegal Filename in compressed archive: '+path);
 end;
 

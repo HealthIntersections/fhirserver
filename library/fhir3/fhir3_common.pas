@@ -178,7 +178,7 @@ type
     function text : String; override;
     function code : TFhirIssueType; override;
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); override;
-    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; addIfDuplicate : boolean); override;
+    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
     function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
@@ -558,6 +558,8 @@ type
     function makeContains : TFhirValueSetExpansionContainsW; override;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     function getTotal : integer; override;
+    function getOffset : integer; override;
+    procedure setOffset(value : integer) ; override;
     procedure setTotal(value : integer) ; override;
     procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject); override;
   end;
@@ -1392,7 +1394,7 @@ begin
     issue.free;
 end;
 
-procedure TFhirOperationOutcome3.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message: String; addIfDuplicate : boolean);
+procedure TFhirOperationOutcome3.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean);
 var
   iss : TFhirOperationOutcomeIssue;
 begin
@@ -1406,9 +1408,12 @@ begin
   iss := (Fres as TFhirOperationOutcome).issueList.Append;
   iss.code:= ExceptionTypeTranslations[cause];
   iss.severity := ISSUE_SEVERITY_MAP2[level];
-  iss.details := TFHIRCodeableConcept.Create;
+  iss.details := TFHIRCodeableConcept.Create; 
+  if (code <> oicVoid) then
+    iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[code], '');
   iss.details.text := message;
   iss.locationList.Add(path);
+  iss.expressionList.Add(path);
 end;
 
 function TFhirOperationOutcome3.code: TFhirIssueType;
@@ -4483,6 +4488,16 @@ end;
 procedure TFhirValueSetExpansion3.setTotal(value: integer);
 begin
   exp.total := inttostr(value);
+end;
+
+function TFhirValueSetExpansion3.getOffset: integer;
+begin
+  result := StrToIntDef(exp.offset, 0);
+end;
+
+procedure TFhirValueSetExpansion3.setOffset(value: integer);
+begin
+  exp.offset := inttostr(value);
 end;
 
 procedure TFhirValueSetExpansion3.defineProperty(focus: TFhirValueSetExpansionContainsW; url, code: String; value: TFHIRObject);

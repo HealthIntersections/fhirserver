@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - lastbuilt
 #  pull_request:
 jobs:
   Build-Docker-Image:
@@ -74,15 +73,15 @@ jobs:
           -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
           fhirserver -tests
 
-    - name: Tag and push Docker image
-      run: |
-        # Extract the FHIR server version from the library/version.inc file
-        FHIR_VERSION=$(grep -oP "FHIR_CODE_FULL_VERSION = '\K[^']+" library/version.inc)
-
-        # Tag the Docker image with the extracted version and "latest"
-        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
-        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
-
-        # Push both tagged images to Docker Hub
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+#    - name: Tag and push Docker image
+#      run: |
+#        # Extract the FHIR server version from the library/version.inc file
+#        FHIR_VERSION=$(grep -oP "FHIR_CODE_FULL_VERSION = '\K[^']+" library/version.inc)
+#
+#        # Tag the Docker image with the extracted version and "latest"
+#        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
+#        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+#
+#        # Push both tagged images to Docker Hub
+#        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
+#        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest

@@ -178,7 +178,7 @@ type
     function text : String; override;
     function code : TFhirIssueType; override;
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; owns : boolean); override;
-    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; addIfDuplicate : boolean); override;
+    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
     function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
@@ -496,6 +496,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     function getTotal : integer; override;
     procedure setTotal(value : integer) ; override;
+    function getOffset : integer; override;
+    procedure setOffset(value : integer) ; override;
     procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject); override;
   end;
 
@@ -1250,7 +1252,7 @@ begin
     issue.free;
 end;
 
-procedure TFhirOperationOutcome2.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message: String; addIfDuplicate : boolean);
+procedure TFhirOperationOutcome2.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean);
 var
   iss : TFhirOperationOutcomeIssue;
 begin
@@ -1265,6 +1267,8 @@ begin
   iss.code:= ExceptionTypeTranslations[cause];
   iss.severity := ISSUE_SEVERITY_MAP2[level];
   iss.details := TFHIRCodeableConcept.Create;
+  if (code <> oicVoid) then
+    iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[code], '');
   iss.details.text := message;
   iss.locationList.Add(path);
 end;
@@ -3953,6 +3957,16 @@ end;
 procedure TFhirValueSetExpansion2.setTotal(value: integer);
 begin
   exp.total := inttostr(value);
+end;
+
+function TFhirValueSetExpansion2.getOffset: integer;
+begin
+  result := StrToIntDef(exp.offset, 0);
+end;
+
+procedure TFhirValueSetExpansion2.setOffset(value: integer);
+begin
+  exp.offset := inttostr(value);
 end;
 
 procedure TFhirValueSetExpansion2.defineProperty(focus: TFhirValueSetExpansionContainsW; url, code: String; value: TFHIRObject);
