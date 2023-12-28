@@ -178,7 +178,7 @@ type
     function text : String; override;
     function code : TFhirIssueType; override;
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; owns : boolean); override;
-    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; addIfDuplicate : boolean); override;
+    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
     function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
@@ -1252,7 +1252,7 @@ begin
     issue.free;
 end;
 
-procedure TFhirOperationOutcome2.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message: String; addIfDuplicate : boolean);
+procedure TFhirOperationOutcome2.addIssue(level: TIssueSeverity; cause: TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean);
 var
   iss : TFhirOperationOutcomeIssue;
 begin
@@ -1267,6 +1267,8 @@ begin
   iss.code:= ExceptionTypeTranslations[cause];
   iss.severity := ISSUE_SEVERITY_MAP2[level];
   iss.details := TFHIRCodeableConcept.Create;
+  if (code <> oicVoid) then
+    iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[code], '');
   iss.details.text := message;
   iss.locationList.Add(path);
 end;

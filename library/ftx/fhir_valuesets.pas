@@ -723,18 +723,18 @@ begin
   if op <> nil then
   begin
     if standardsStatus = 'deprecated' then
-      op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_DEPRECATED', FParams.languages, [vurl, '', rtype]), false)
+      op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_DEPRECATED', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
     else if standardsStatus = 'withdrawn' then
-      op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_WITHDRAWN', FParams.languages, [vurl, '', rtype]), false)
+      op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_WITHDRAWN', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
     else if status = psRetired then
-      op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_RETIRED', FParams.languages, [vurl, '', rtype]), false)
+      op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_RETIRED', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
     else if (source <> nil) then
     begin
       if experimental and not source.experimental then
-        op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_EXPERIMENTAL', FParams.languages, [vurl, '', rtype]), false)
+        op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_EXPERIMENTAL', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
       else if ((status = psDraft) or (standardsStatus = 'draft')) and
           not ((source.status = psDraft) or (source.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status') = 'draft')) then
-        op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_DRAFT', FParams.languages, [vurl, '', rtype]), false)
+        op.addIssue(isInformation, itBusinessRule, '', FI18n.translate('MSG_DRAFT', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
     end;
   end;
 end;
@@ -903,7 +903,7 @@ begin
   else
   begin
     message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
-    op.addIssue(isError, itNotFound, addToPath(path, 'version'), message);
+    op.addIssue(isError, itNotFound, addToPath(path, 'version'), message, oicVSProcessing);
     exit('');
   end;
   if result = '' then
@@ -1137,14 +1137,14 @@ begin
           begin
             msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [system, version]);
             messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg);
+            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
             unknownSystems.add(system+'|'+version);
           end
           else
           begin
             msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg);
+            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
             unknownSystems.add(system);
           end;
         end
@@ -1165,7 +1165,7 @@ begin
               FLog := 'Not found in Incomplete Code System';
               msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]);
               messages.add(msg);
-              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end
             else
             begin
@@ -1174,7 +1174,7 @@ begin
               FLog := 'Unknown code';
               msg := FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]);
               messages.add(msg);
-              op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), msg);
+              op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end;
           end
           else
@@ -1190,7 +1190,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [system, code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
               else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
               begin
@@ -1199,7 +1199,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.languages, [system, code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
               else
               begin
@@ -1234,14 +1234,14 @@ begin
           begin
             msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [system, version]);
             messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg);
+            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
             unknownSystems.add(system+'|'+version);
           end
           else
           begin
             msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [system]);
             messages.add(msg);
-            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg);
+            op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
             unknownSystems.add(system);
           end;
         end
@@ -1261,7 +1261,7 @@ begin
               FLog := 'Not found in Incomplete Code System';
               msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.languages, [code, system, version]);
               messages.add(msg);
-              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end
             else
             begin
@@ -1270,7 +1270,7 @@ begin
               FLog := 'Unknown code';
               msg := FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, system, version]);
               messages.add(msg);
-              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg);
+              op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end;
           end
           else
@@ -1284,7 +1284,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [system, code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
               else if ((FParams <> nil) and FParams.activeOnly and cs.isInactive(ctxt)) then
               begin
@@ -1293,7 +1293,7 @@ begin
                 cause := itBusinessRule;
                 msg := FI18n.translate('INACTIVE_CODE_NOT_ALLOWED', FParams.languages, [system, code]);
                 messages.add(msg);
-                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg);
+                op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
               else
               begin
@@ -1319,7 +1319,7 @@ begin
         begin
           message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.languages, [code, FValueSet.url]);
           messages.add(message);
-          op.addIssue(isError, itNotFound, path, message);
+          op.addIssue(isError, itNotFound, path, message, oicInferFailed);
           exit(bFalse);
         end
         else
@@ -1393,7 +1393,7 @@ begin
                   unknownSystems.add(system+'|'+v);
                 end;
                 messages.add(message);
-                op.addIssue(isError, itNotFound, addToPath(path, 'system'), message);
+                op.addIssue(isError, itNotFound, addToPath(path, 'system'), message, oicNotFound);
                 exit(bUnknown);
               end
               else
@@ -1472,7 +1472,7 @@ begin
             begin
               message := 'The code system "'+ccc.systemUri+'" version "'+ccc.version+'" in the ValueSet expansion is different to the one in the value ("'+version+'")';
               messages.add(message);
-              op.addIssue(isError, itNotFound, addToPath(path, 'version'), message);
+              op.addIssue(isError, itNotFound, addToPath(path, 'version'), message, oicVSProcessing);
               exit(bFalse);
             end;
             if (v = '') then
@@ -1497,7 +1497,7 @@ begin
                 end;
                 messages.add(message);
 
-                op.addIssue(isError, itNotFound, addToPath(path, 'system'), message);
+                op.addIssue(isError, itNotFound, addToPath(path, 'system'), message, oicNotFound);
                 exit(bUnknown);
               end
               else
@@ -1765,7 +1765,7 @@ begin
               m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.languages, ['', FValueSet.vurl, ''''+cc+'''']);
               msg(m);
               p := issuePath + '.coding['+inttostr(i)+'].code';
-              op.addIssue(isWarning, itCodeInvalid, p, m);
+              op.addIssue(isInformation, itCodeInvalid, p, m, oicThisNotInVS);
               if cause = itNull then
                 cause := itUnknown;
             end;
@@ -1780,7 +1780,7 @@ begin
               begin
                 m := 'The system '+c.systemUri+' was found but did not contain enough information to properly validate the code "'+c.code+'" ("'+c.display+'") (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
                 msg(m);
-                op.addIssue(isWarning, itNotFound, path, m);
+                op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
               end
               else
               if (c.display <> '') and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
@@ -1804,7 +1804,7 @@ begin
                   m := FI18n.translate(baseMsg+'_other', FParams.languages,
                     [inttostr(dc), c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary]);
                 msg(m);
-                op.addIssue(severity, itInvalid, addToPath(path, 'display'), m);
+                op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
               end;
               psys := c.systemUri;
               pcode := c.code;
@@ -1836,12 +1836,12 @@ begin
                      //if (valueSetDependsOnCodeSystem(ws, c.version)) then
                        unknownSystems.add(ws+'|'+c.version);
                    end;
-                   op.addIssue(isError, itNotFound, addToPath(path, 'system'), m);
+                   op.addIssue(isError, itNotFound, addToPath(path, 'system'), m, oicNotFound);
                    if (valueSetDependsOnCodeSystem(ws, c.version)) then
                    begin
                      m := 'Unable to check whether the code is in the value set '+FValueSet.vurl;
                      msg(m);
-                     op.addIssue(isWarning, itNotFound, issuepath, m);
+                     op.addIssue(isWarning, itNotFound, issuepath, m, oicVSProcessing);
                    end
                    else
                      msg(m);
@@ -1860,7 +1860,7 @@ begin
                      if (message <> '') then
                      begin
                        // msg(message); we just add this as an issue, but don't put it in the base message
-                       op.addIssue(isInformation, cause, path, message);
+                       op.addIssue(isInformation, cause, path, message, oicInvalidCode);
                        message := '';
                      end;
                      vcc.removeCoding(prov.systemUri(nil), prov.version(nil), c.code);
@@ -1871,7 +1871,7 @@ begin
                        m := FI18N.translate('Unknown_Code_in_Version', FParams.languages, [c.code, ws, prov.version(nil)]);
                        cause := itCodeInvalid;
                        msg(m);
-                       op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m);
+                       op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
                      end;
                    end
                    else
@@ -1899,7 +1899,7 @@ begin
                          m := FI18n.translate(baseMsg+'_other', FParams.languages,
                           [inttostr(dc), prov.systemUri(ctxt), c.code, list.present(FParams.languages, true), c.display, FParams.langSummary]);
                        msg(m);
-                       op.addIssue(severity, itInvalid, addToPath(path, 'display'), m);
+                       op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
                      end;
                      if (prov.version(nil) <> '') then
                        result.addParamStr('version', prov.version(nil));
@@ -1933,7 +1933,7 @@ begin
             else
               p := issuePath;
 
-            op.addIssue(isError, itCodeInvalid, p, m);
+            op.addIssue(isError, itCodeInvalid, p, m, oicNotInVS);
             if cause = itNull then
               cause := itUnknown;
           end;
@@ -2043,7 +2043,7 @@ begin
           begin
             result.AddParamBool('result', false);
             result.AddParamStr('message', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name);
-            op.addIssue(isError, cause, 'code', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name);
+            op.addIssue(isError, cause, 'code', 'The system "'+system+'" is unknown so the /"'+code+'" cannot be confirmed to be in the value set '+FValueSet.name, oicNotFound);
             //result.AddParamCode('cause', CODES_TFhirIssueType[itNotFound]);
             for us in unknownSystems do
               result.addParamCanonical('x-caused-by-unknown-system', us);
@@ -2052,7 +2052,7 @@ begin
           begin
             result.AddParamBool('result', false);
             result.AddParamStr('message', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
-            op.addIssue(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name);
+            op.addIssue(isError, cause, 'code', 'The system/code "'+system+'"/"'+code+'" is not in the value set '+FValueSet.name, oicNotInVS);
             if (message <> '') then
               result.AddParamStr('message', message);
             if cause <> itNull then
@@ -2113,12 +2113,12 @@ begin
       if loc = nil then
       begin
         if (FParams.valueSetMode <> vsvmMembershipOnly) then
-          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]))
+          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]), oicInvalidCode)
       end
       else if not (abstractOk or not cs.IsAbstract(loc)) then
       begin
         if (FParams.valueSetMode <> vsvmMembershipOnly) then
-          op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+          op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
       end
       else if FValueSet.excludeInactives and cs.IsInactive(loc) then
       begin
@@ -2161,7 +2161,7 @@ begin
           if not (abstractOk or not cs.IsAbstract(loc)) then
           begin
             if (FParams.valueSetMode <> vsvmMembershipOnly) then
-              op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+              op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
           end
           else if FValueSet.excludeInactives and cs.IsInactive(loc) then
           begin
@@ -2214,7 +2214,7 @@ begin
               if not (abstractOk or not cs.IsAbstract(loc)) then
               begin
                 if (FParams.valueSetMode <> vsvmMembershipOnly) then
-                  op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+                  op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
               end
               else if FValueSet.excludeInactives and cs.IsInactive(loc) then
               begin
@@ -2253,7 +2253,7 @@ begin
                   if not (abstractOk or not cs.IsAbstract(loc)) then
                   begin
                     if (FParams.valueSetMode <> vsvmMembershipOnly) then
-                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
                   end
                   else
                   begin    
@@ -2283,7 +2283,7 @@ begin
                     if not (abstractOk or not cs.IsAbstract(loc)) then
                     begin
                       if (FParams.valueSetMode <> vsvmMembershipOnly) then
-                        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+                        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
                     end
                     else if FValueSet.excludeInactives and cs.IsInactive(loc) then
                     begin
@@ -2321,7 +2321,7 @@ begin
                   if not (abstractOk or not cs.IsAbstract(loc)) then
                   begin
                     if (FParams.valueSetMode <> vsvmMembershipOnly) then
-                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
                   end
                   else if FValueSet.excludeInactives and cs.IsInactive(loc) then
                   begin
@@ -2372,12 +2372,12 @@ begin
     if loc = nil then
     begin
       if (FParams.valueSetMode <> vsvmMembershipOnly) then
-        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]))
+        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]), oicInvalidCode)
     end
     else if not (abstractOk or not cs.IsAbstract(loc)) then
     begin
       if (FParams.valueSetMode <> vsvmMembershipOnly) then
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]))
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
     end
     else
     begin

@@ -61,11 +61,13 @@ Type
   TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
   TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
+  TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicDisplay, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck);
 
 const
   CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf');
   CODES_TPublicationStatus: Array[TPublicationStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
+  CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check');
 
 type
 
@@ -383,7 +385,7 @@ type
     function code :  TFhirIssueType; virtual; abstract;
 
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); overload; virtual; abstract;
-    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; addIfDuplicate : boolean = false); overload; virtual; abstract;
+    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
     function hasIssues : boolean; virtual; abstract;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; virtual; abstract;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; virtual; abstract;
