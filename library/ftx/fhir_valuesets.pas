@@ -1860,7 +1860,9 @@ begin
                      if (message <> '') then
                      begin
                        // msg(message); we just add this as an issue, but don't put it in the base message
-                       op.addIssue(isInformation, cause, path, message, oicInvalidCode);
+                       if mode <> vcmCode then
+                         p := path + '.code';
+                       op.addIssue(isInformation, cause, p, message, oicInvalidCode);
                        message := '';
                      end;
                      vcc.removeCoding(prov.systemUri(nil), prov.version(nil), c.code);
