@@ -58,7 +58,6 @@ Type
   TTrueFalseUnknown = (bTrue, bFalse, bUnknown);
 
   TFhirExpansionParamsVersionRuleMode = (fvmDefault, fvmCheck, fvmOverride);
-  TValueSetValidationMode = (vsvmAllChecks, vsvmMembershipOnly, vsvmNoMembership);
 
   { TFhirExpansionParamsVersionRule }
 
@@ -94,7 +93,7 @@ Type
     FincludeDesignations: boolean;
     FincludeDefinition: boolean;
     FUid: String;
-    FValueSetMode: TValueSetValidationMode;
+    FMembershipOnly : boolean;
     FDefaultToLatestVersion : boolean;
     FIncompleteOK: boolean;
     FProperties : TStringList;
@@ -114,7 +113,7 @@ Type
     FHasDefaultToLatestVersion : boolean;
     FHasIncompleteOK : boolean;
     FHasexcludeNotForUI : boolean;
-    FHasValueSetMode : boolean;
+    FHasMembershipOnly : boolean;
     FHasDisplayWarning : boolean;
     FAltCodeRules : TAlternateCodeOptions;
 
@@ -132,7 +131,7 @@ Type
     procedure SetDefaultToLatestVersion(value : boolean);
     procedure SetIncompleteOK(value : boolean);
     procedure SetDisplayWarning(value : boolean);
-    procedure SetValueSetMode(value : TValueSetValidationMode);
+    procedure SetMembershipOnly(value : boolean);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -159,7 +158,7 @@ Type
     property excludeNested : boolean read FexcludeNested write SetexcludeNested;
     property excludeNotForUI : boolean read FexcludeNotForUI write SetexcludeNotForUI;
     property excludePostCoordinated : boolean read FexcludePostCoordinated write SetexcludePostCoordinated;
-    property valueSetMode : TValueSetValidationMode read FValueSetMode write SetValueSetMode;
+    property membershipOnly : boolean read FMembershipOnly write SetMembershipOnly;
     property uid : String read FUid write FUid;
     property defaultToLatestVersion : boolean read FDefaultToLatestVersion write SetDefaultToLatestVersion;
     property incompleteOK : boolean read FIncompleteOK write SetIncompleteOK;
@@ -177,7 +176,7 @@ Type
     property hasExcludeNested : boolean read FHasexcludeNested;
     property hasExcludeNotForUI : boolean read FHasexcludeNotForUI;
     property hasExcludePostCoordinated : boolean read FHasexcludePostCoordinated;
-    property hasValueSetMode : boolean read FHasValueSetMode;
+    property hasMembershipOnly : boolean read FHasMembershipOnly;
     property hasDefaultToLatestVersion : boolean read FHasDefaultToLatestVersion;
     property hasIncompleteOK : boolean read FHasIncompleteOK;
     property hasDisplayWarning : boolean read FHasDisplayWarning;
@@ -1220,7 +1219,7 @@ begin
         cs.free;
       end;
     end
-    else if (FParams.valueSetMode = vsvmNoMembership) then
+    else if (false) then
     begin
       // anyhow, we ignore the value set (at least for now)
       cs := findCodeSystem(system, version, FParams, true);
@@ -1312,6 +1311,7 @@ begin
     end
     else
     begin
+      // todo: we can never get here?
       if (system = '') and inferSystem then
       begin
         system := determineSystem(code);
@@ -1380,7 +1380,7 @@ begin
               cs := findCodeSystem(system, v, FParams, true);
             if (cs = nil) then
             begin
-              if (FParams.valueSetMode <> vsvmMembershipOnly) then
+              if (not FParams.membershipOnly) then
               begin
                 if (v = '') then
                 begin
@@ -1483,7 +1483,7 @@ begin
               cs := findCodeSystem(system, v, FParams, true);
             if (cs = nil) then
             begin
-              if (FParams.valueSetMode <> vsvmMembershipOnly) then
+              if (not FParams.membershipOnly) then
               begin
                 if (v = '') then
                 begin
@@ -1816,7 +1816,7 @@ begin
               if (pdisp = '') then
                 pdisp := list.preferredDisplay;
             end
-            else if (FParams.valueSetMode <> vsvmMembershipOnly) then
+            else if (not FParams.membershipOnly) then
             begin
               prov := findCodeSystem(ws, c.version, FParams, true);
               try
@@ -2112,18 +2112,18 @@ begin
       result := false;
       if loc = nil then
       begin
-        if (FParams.valueSetMode <> vsvmMembershipOnly) then
+        if (not FParams.membershipOnly) then
           op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]), oicInvalidCode)
       end
       else if not (abstractOk or not cs.IsAbstract(loc)) then
       begin
-        if (FParams.valueSetMode <> vsvmMembershipOnly) then
+        if (not FParams.membershipOnly) then
           op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
       end
       else if FValueSet.excludeInactives and cs.IsInactive(loc) then
       begin
         result := false;
-        if (FParams.valueSetMode <> vsvmMembershipOnly) then
+        if (not FParams.membershipOnly) then
         begin
           inactive := true;
           if (inactive) then
@@ -2160,13 +2160,13 @@ begin
           listDisplays(displays, cc, vs);
           if not (abstractOk or not cs.IsAbstract(loc)) then
           begin
-            if (FParams.valueSetMode <> vsvmMembershipOnly) then
+            if (not FParams.membershipOnly) then
               op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
           end
           else if FValueSet.excludeInactives and cs.IsInactive(loc) then
           begin
             result := false;
-            if (FParams.valueSetMode <> vsvmMembershipOnly) then
+            if (not FParams.membershipOnly) then
             begin
               inactive := true;
               vstatus := cs.getCodeStatus(loc);
@@ -2213,13 +2213,13 @@ begin
               listDisplays(displays, cs, loc);
               if not (abstractOk or not cs.IsAbstract(loc)) then
               begin
-                if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                if (not FParams.membershipOnly) then
                   op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
               end
               else if FValueSet.excludeInactives and cs.IsInactive(loc) then
               begin
                 result := false;
-                if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                if (not FParams.membershipOnly) then
                 begin
                   inactive := true;
                   vstatus := cs.getCodeStatus(loc);
@@ -2252,7 +2252,7 @@ begin
                   listDisplays(displays, cs, loc);
                   if not (abstractOk or not cs.IsAbstract(loc)) then
                   begin
-                    if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                    if (not FParams.membershipOnly) then
                       op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
                   end
                   else
@@ -2282,13 +2282,13 @@ begin
                     listDisplays(displays, cs, loc);
                     if not (abstractOk or not cs.IsAbstract(loc)) then
                     begin
-                      if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                      if (not FParams.membershipOnly) then
                         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
                     end
                     else if FValueSet.excludeInactives and cs.IsInactive(loc) then
                     begin
                       result := false;
-                      if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                      if (not FParams.membershipOnly) then
                       begin
                         inactive := true;
                         vstatus := cs.getCodeStatus(loc);
@@ -2320,13 +2320,13 @@ begin
                   listDisplays(displays, cs, loc);
                   if not (abstractOk or not cs.IsAbstract(loc)) then
                   begin
-                    if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                    if (not FParams.membershipOnly) then
                       op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
                   end
                   else if FValueSet.excludeInactives and cs.IsInactive(loc) then
                   begin
                     result := false;
-                    if (FParams.valueSetMode <> vsvmMembershipOnly) then
+                    if (not FParams.membershipOnly) then
                     begin
                       inactive := true;
                       vstatus := cs.getCodeStatus(loc);
@@ -2371,12 +2371,12 @@ begin
     result := false;
     if loc = nil then
     begin
-      if (FParams.valueSetMode <> vsvmMembershipOnly) then
+      if (not FParams.membershipOnly) then
         op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri(nil), cs.version(nil)]), oicInvalidCode)
     end
     else if not (abstractOk or not cs.IsAbstract(loc)) then
     begin
-      if (FParams.valueSetMode <> vsvmMembershipOnly) then
+      if (not FParams.membershipOnly) then
         op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri(nil), code]), oicCodeRule)
     end
     else
@@ -3803,10 +3803,10 @@ begin
   FHasDisplayWarning := true;
 end;
 
-procedure TFHIRExpansionParams.SetValueSetMode(value : TValueSetValidationMode);
+procedure TFHIRExpansionParams.SetMembershipOnly(value : boolean);
 begin
-  FValueSetMode := value;
-  FHasValueSetMode := true;
+  FMembershipOnly := value;
+  FHasMembershipOnly := true;
 end;
 
 function TFHIRExpansionParams.sizeInBytesV(magic : integer) : cardinal;
@@ -3888,11 +3888,11 @@ var
       result := '0|';
   end;
 begin
-  s := FUid+'|'+ inttostr(ord(FValueSetMode)) + '|' + FProperties.CommaText+'|'+
+  s := FUid+'|'+ b(FMembershipOnly) + '|' + FProperties.CommaText+'|'+
     b(FactiveOnly)+b(FIncompleteOK)+b(FDisplayWarning)+b(FexcludeNested)+b(FGenerateNarrative)+b(FlimitedExpansion)+b(FexcludeNotForUI)+b(FexcludePostCoordinated)+
     b(FincludeDesignations)+b(FincludeDefinition)+b(FHasactiveOnly)+b(FHasExcludeNested)+b(FHasGenerateNarrative)+
     b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+
-    b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasDisplayWarning)+b(FHasexcludeNotForUI)+b(FHasValueSetMode)+b(FDefaultToLatestVersion);
+    b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasDisplayWarning)+b(FHasexcludeNotForUI)+b(FHasMembershipOnly)+b(FDefaultToLatestVersion);
 
   if hasLanguages then
     s := s + FLanguages.AsString(true)+'|';

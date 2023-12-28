@@ -1264,8 +1264,10 @@ begin
       result.languages := THTTPLanguageList.create(p.valueString, not isValidation)
     else if (p.name = 'property') then
       result.properties.add(p.valueString)
-    else if (p.name = 'mode') and (p.valueString = 'lenient-display-validation') then
-      result.displayWarning := true                
+    else if (p.name = 'lenient-display-validation') and (p.valueString = 'true') then
+      result.displayWarning := true
+    else if (p.name = 'valueset-membership-only') and (p.valueString = 'true') then
+      result.membershipOnly := true
     else if (p.name = 'includeAlternateCodes') then
       result.altCodeRules.seeParam(p.valueString)
     else if (p.name = 'designation') then
@@ -1284,14 +1286,7 @@ begin
       end;
     end
   end;
-  result.valueSetMode := vsvmAllChecks;
-  if (params.has('valueSetMode')) then
-  begin
-    if (params.str('valueSetMode') = 'CHECK_MEMBERSHIP_ONLY') then
-      result.valueSetMode := vsvmMembershipOnly
-    else if (params.str('valueSetMode') = 'NO_MEMBERSHIP_CHECK') then
-      result.valueSetMode := vsvmNoMembership
-  end;
+
   if not result.hasLanguages and (request.ContentLanguage <> '') then
     result.languages := THTTPLanguageList.create(request.ContentLanguage, not isValidation);;
   if not result.hasLanguages and (request.LangList <> nil) and (request.LangList.source <> '') then

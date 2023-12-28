@@ -849,7 +849,7 @@ begin
       exit(false);
     profile := TFHIRExpansionParams.Create;
     try
-      profile.valueSetMode := vsvmMembershipOnly;
+      profile.membershipOnly := true;
       p := validate(vs, c, profile, true, false, nil, summary);
       try
         result := p.bool('result');
