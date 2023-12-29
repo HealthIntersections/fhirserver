@@ -11,6 +11,7 @@ cp exec/pack/*.cfg exec/pack/*.dat exec/64/
 echo compile libraries
 
 echo "## compile packages/fhir_fsl.lpk"
+
 $BUILD/tools/lazarus/lazbuild packages/fhir_fsl.lpk -q -q --build-all
 
 echo "## compile packages/fhir_indy.lpk"
@@ -45,6 +46,7 @@ $BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk -q -q --build-all
 
 echo "## compile codescanner"
 $BUILD/tools/lazarus/lazbuild utilities/codescan/codescan.lpi --build-mode=linux -q -q --build-all
+
 
 echo "## compile console"
 $BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --build-mode=linux -q -q --build-all

@@ -311,6 +311,7 @@ Type
     FVersion: TFHIRVersion;
     FTransactionResource: TFhirResourceV;
     FSecureURL: String;
+    FContentLanguage : String;
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -490,6 +491,7 @@ Type
     Property IfNoneMatch : String read FIfNoneMatch write FIfNoneMatch;
     Property IfModifiedSince : TDateTime read FIfModifiedSince write FIfModifiedSince;
     Property IfNoneExist : String read FIfNoneExist write FIfNoneExist;
+    Property ContentLanguage : String read FContentLanguage write FContentLanguage;
 
     Property Provenance : TFhirProvenanceW read FProvenance write SetProvenance;
     Property Origin : TFHIRRequestOrigin read FOrigin;
