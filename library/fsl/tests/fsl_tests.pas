@@ -33,7 +33,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs, zlib,
+  {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
+  zlib, zstream,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} fsl_testing,
   IdGlobalProtocols,
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions,
@@ -41,7 +42,7 @@ Uses
   {$IFNDEF FPC}
   fsl_msxml,
   {$ENDIF}
-  fsl_json, fsl_turtle, fsl_comparisons;
+  fsl_json, fsl_turtle, fsl_comparisons, fsl_npm;
 
 Type
   TFslTestString = class (TFslObject)
@@ -5264,39 +5265,44 @@ end;
 
 function TTarGZParserTests.load(filename : String) : TFslList<TFslNameBuffer>;
 var
+  bs : TBytesStream;
   z : TZDecompressionStream;
   tar : TTarArchive;
   entry : TTarDirRec;
-  mem : TMemoryStream;
+  n : String;
+  b : TBytes;
+  bi : TBytesStream; 
   item : TFslNameBuffer;
-  stream : TFileStream;
-begin
+begin      
   result := TFslList<TFslNameBuffer>.Create;
   try
-    stream := TFileStream.Create(filename, fmOpenRead);
+    bs := TBytesStream.create(readZLibHeader(TFileStream.create(filename, fmOpenRead)));
     try
-      z := TZDecompressionStream.Create(stream, false); // 15+16);
+      z := TZDecompressionStream.Create(bs, true); // 15+16);
       try
         tar := TTarArchive.Create(z);
         try
+          tar.Reset;
           while tar.FindNext(entry) do
           begin
+            n := String(entry.Name);
+            if (n.contains('..')) then
+              raise EFSLException.create('The package contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
+            bi := TBytesStream.Create;
+            try
+              tar.ReadFile(bi);
+              b := copy(bi.Bytes, 0, bi.size);
+            finally
+              bi.free;
+            end;
             item := TFslNameBuffer.Create;
             try
-              item.Name := String(entry.Name);
-              mem := TMemoryStream.Create;
-              try
-                tar.ReadFile(mem);
-                mem.position := 0;
-                item.loadFromStream(mem);
-              finally
-                mem.free;
-              end;
+              item.Name := n;
+              item.AsBytes := b;
               result.Add(item.link)
             finally
               item.free;
             end;
-            //break;
           end;
         finally
           tar.free;
@@ -5305,8 +5311,8 @@ begin
         z.free;
       end;
     finally
-      stream.free;
-    end;
+      bs.free;
+    end; 
     result.link;
   finally
     result.free;
