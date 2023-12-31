@@ -180,7 +180,10 @@ begin
     begin
       list.addDesignation(true, true, '', FLanguages.present(c.FInfo).Trim);
       if (c.FInfo.isLangRegion) then
+      begin
         list.addDesignation(false, true, '', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
+        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, '{{lang}} (Region={{region}})').Trim);
+      end;
     end;
   end;
 end;

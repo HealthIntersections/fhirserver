@@ -605,7 +605,6 @@ procedure TOpenSSLTests.testWebServer_110;
 begin
   assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
   assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
-  assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
   assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
 
   assertTrue(FileExists(TestSettings.SSLCertFile), 'SSL Certificate not found at '+TestSettings.SSLCertFile);
