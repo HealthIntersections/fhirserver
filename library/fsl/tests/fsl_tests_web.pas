@@ -284,8 +284,6 @@ var
   s : String;
   jwt : TJWT;
 begin
-  raise EFslException.create('fix me');
-
   jwk := TJWK.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
   try
     // this test is from the spec

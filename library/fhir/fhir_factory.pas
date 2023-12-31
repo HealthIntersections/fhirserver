@@ -404,6 +404,90 @@ type
 
 implementation
 
+type
+
+  { TFhirSystemCoding }
+
+  TFhirSystemCoding = class (TFHIRCodingW)
+  private
+    function tuple : TFHIRSystemTuple;
+  protected
+    function getCode: String; override;
+    function getDisplay: String; override;
+    function getSystem: String; override;
+    function getVersion: String; override;
+    procedure setCode(Value: String); override;
+    procedure setDisplay(Value: String); override;
+    procedure setSystem(Value: String); override;
+    procedure setVersion(Value: String); override;
+  public
+    destructor Destroy; override;
+  end;
+
+{ TFhirSystemCoding }
+
+function TFhirSystemCoding.tuple: TFHIRSystemTuple;
+begin
+  result := Element as TFhirSystemTuple;
+end;
+
+function TFhirSystemCoding.getCode: String;
+begin
+  if tuple.Fields['code'] = nil then
+    result := ''
+  else
+    result := (tuple.Fields['code'] as TFHIRObject).ToString;
+end;
+
+function TFhirSystemCoding.getDisplay: String;
+begin
+  if tuple.Fields['display'] = nil then
+    result := ''
+  else
+    result := (tuple.Fields['display'] as TFHIRObject).ToString;
+end;
+
+function TFhirSystemCoding.getSystem: String;
+begin
+  if tuple.Fields['system'] = nil then
+    result := ''
+  else
+    result := (tuple.Fields['system'] as TFHIRObject).ToString;
+end;
+
+function TFhirSystemCoding.getVersion: String;
+begin
+  if tuple.Fields['version'] = nil then
+    result := ''
+  else
+    result := (tuple.Fields['version'] as TFHIRObject).ToString;
+end;
+
+procedure TFhirSystemCoding.setCode(Value: String);
+begin
+  raise EFSLException.create('TFhirSystemCoding.setCode is Not supported');
+end;
+
+procedure TFhirSystemCoding.setDisplay(Value: String);
+begin
+  raise EFSLException.create('TFhirSystemCoding.setDisplay is Not supported');
+end;
+
+procedure TFhirSystemCoding.setSystem(Value: String);
+begin
+  raise EFSLException.create('TFhirSystemCoding.setSystem is Not supported');
+end;
+
+procedure TFhirSystemCoding.setVersion(Value: String);
+begin
+  raise EFSLException.create('TFhirSystemCoding.setVersion is Not supported');
+end;
+
+destructor TFhirSystemCoding.Destroy;
+begin
+  inherited Destroy;
+end;
+
 { TFHIRFactoryX }
 
 function TFHIRFactoryX.versionName: String;
@@ -597,8 +681,31 @@ begin
 end;
 
 function TFHIRFactoryX.makeCoding(systemUri, version, code, display: String): TFHIRObject;
+var
+  t : TFHIRSystemTuple;
 begin
-  raise EFslException.Create('makeCoding is not implemented in the non-versioned FHIRFactory');
+  t := TFHIRSystemTuple.create;
+  try
+    if (systemUri <> '') then
+      t.Fields.add('system', TFHIRSystemString.Create(systemUri))
+    else
+      t.Fields.add('system', nil);
+    if (version <> '') then
+      t.Fields.add('version', TFHIRSystemString.Create(version))
+    else
+      t.Fields.add('version', nil);
+    if (code <> '') then
+      t.Fields.add('code', TFHIRSystemString.Create(code))
+    else
+      t.Fields.add('code', nil);
+    if (display <> '') then
+      t.Fields.add('display', TFHIRSystemString.Create(display))
+    else
+      t.Fields.add('display', nil);
+    result := t.link;
+  finally
+    t.free;
+  end;
 end;
 
 function TFHIRFactoryX.makeString(s: string): TFHIRObject;
@@ -721,7 +828,10 @@ end;
 
 function TFHIRFactoryX.wrapCoding(o: TFHIRObject): TFhirCodingW;
 begin
-  raise EFslException.Create('wrapCoding is not implemented in the non-versioned FHIRFactory');
+  if o = nil then
+    result := nil
+  else
+  result := TFhirSystemCoding.create(o);
 end;
 
 function TFHIRFactoryX.wrapCodeableConcept(o: TFHIRObject): TFhirCodeableConceptW;
