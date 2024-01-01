@@ -1569,7 +1569,7 @@ class function TJWTUtils.Sign_ES256(input: TBytes; key: TJWK): TBytes;
 var
   ctx : PEVP_MD_CTX;
   keysize : integer;
-  len, l : Cardinal;
+  len, l : QWord;
   p : System.PByte;
   pkey: PEVP_PKEY;
   PkeyCtx: PEVP_PKEY_CTX;
@@ -1598,6 +1598,7 @@ begin
 
       // 2. do the signing
       keysize := EVP_PKEY_size(pkey);
+      len := keysize;
       SetLength(result, keysize);
       ctx := EVP_MD_CTX_new;
       try
@@ -1672,7 +1673,7 @@ class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; key: TJWK): TBytes;
 var
   ctx : PEVP_MD_CTX;
   keysize : integer;
-  len : Cardinal;
+  len : QWord;
   pkey: PEVP_PKEY;
   rkey: PRSA;
   keys : TJWKList;
