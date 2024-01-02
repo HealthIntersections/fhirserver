@@ -46,7 +46,7 @@ Uses
   {$ENDIF}
 
   {$IFDEF FPC}
-  base64,
+  base64, LazUTF8,
   {$ELSE}
   System.TimeSpan, System.NetEncoding, EncdDecd, UIConsts, ZLib,
   {$ENDIF}
@@ -15872,7 +15872,10 @@ begin
 end;
 
 function removeAccentFromChar(ch : UnicodeChar) : String;
+var
+  v : Cardinal;
 begin
+  v := ord(ch);
   case ch of
     //' '
     #$00A0 : result := ' ';
@@ -16917,9 +16920,11 @@ begin
     #$2C6C : result := 'z';
     #$A763 : result := 'z';
 
-    #$0439 : result := #$0438;
+    #$0439 : result := UnicodeToUTF8($0438);
+  else if ch < #$FE then
+    result := ch
   else
-    result := ch;
+    result := UnicodeToUTF8(v);
   end;
 end;
 
@@ -17470,6 +17475,8 @@ begin
       b.append(':00');
     if (b.length = 19) then
       b.append('.000');
+    if (tz = '') and (precision >= 10) then
+      tz := '+14:00';
     result := applyDatePrecision(b.toString(), precision)+tz;
   finally
     b.free;
@@ -17515,6 +17522,8 @@ begin
       b.append(':59');
     if (b.length = 19) then
       b.append('.999');
+    if (tz = '') and (precision >= 10) then
+      tz := '-12:00';
     result := applyDatePrecision(b.toString(), precision)+tz;
   finally
     b.free;

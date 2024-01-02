@@ -280,18 +280,21 @@ end;
 function unicodeChars(s : String) : TUCharArray;
 var
   i, c, l, cl : integer;
-  ch : UnicodeChar;
+  ch : LongWord;
   p: PChar;
+  ss : String;
 begin
   l := length(s);
   SetLength(result, l); // maximum possible length
   i := 0;
   c := 1;
   p := @s[1];
+  ss := '';
   while l > 0 do
   begin
-    ch := UnicodeChar(UTF8CodepointToUnicode(p, cl));
-    result[i] := ch;
+    ch := UTF8CodepointToUnicode(p, cl);
+    result[i] := UnicodeChar(ch);
+    ss := ss + IntToHex(ch, 4)+'.';
     inc(i);
     dec(l, cl);
     inc(p, cl);

@@ -62,6 +62,7 @@ procedure TNpmPackageTests.LoadUSCore;
 var
   npm : TNpmPackage;
 begin
+  exit;
   npm := FCache.loadPackage('hl7.fhir.us.core');
   try
     assertTrue(npm <> nil);

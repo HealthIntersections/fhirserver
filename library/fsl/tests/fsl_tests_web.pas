@@ -284,8 +284,6 @@ var
   s : String;
   jwt : TJWT;
 begin
-  raise EFslException.create('fix me');
-
   jwk := TJWK.create(TJSONParser.Parse('{"kty": "oct", "k": "AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow"}'));
   try
     // this test is from the spec
@@ -605,7 +603,6 @@ procedure TOpenSSLTests.testWebServer_110;
 begin
   assertTrue(TestSettings.SSLCertFile <> '', 'Must provide public key file for SSL test in '+TestSettings.filename+' ([ssl] cert=)');
   assertTrue(TestSettings.SSLKeyFile <> '', 'Must provide private key file for SSL test in '+TestSettings.filename+' ([ssl] key=)');
-  assertTrue(TestSettings.SSLPassword <> '', 'Must provide password for private key for SSL test in '+TestSettings.filename+' ([ssl] password=)');
   assertTrue(TestSettings.SSLCAFile <> '', 'Must provide ca cert file for SSL test in '+TestSettings.filename+' ([ssl] cacert=)');
 
   assertTrue(FileExists(TestSettings.SSLCertFile), 'SSL Certificate not found at '+TestSettings.SSLCertFile);

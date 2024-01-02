@@ -80,7 +80,7 @@ uses
   IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
   IdOpenSSLHeaders_x509, IdOpenSSLHeaders_x509v3, IdOpenSSLHeaders_x509_vfy,
   IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml, fsl_fpc, fsl_npm,
   fsl_openssl, fsl_fetcher;
 
 Type
@@ -1396,13 +1396,14 @@ var
   b1, b2 : TBytesStream;
   z : TZDecompressionStream;
 begin
-  b1 := TBytesStream.create(b);
+  b1 := TBytesStream.create(b);// readZLibHeader(b));
   try
-    z := TZDecompressionStream.create(b1, false); // -15);
+    z := TZDecompressionStream.create(b1, true); // -15);
     try
+      z.position := 0;
       b2  := TBytesStream.Create;
       try
-        b2.CopyFrom(z, z.Size);
+        b2.CopyFrom(z, 2);
         result := b2.Bytes;
         setLength(result, b2.size);
       finally
@@ -1569,7 +1570,7 @@ class function TJWTUtils.Sign_ES256(input: TBytes; key: TJWK): TBytes;
 var
   ctx : PEVP_MD_CTX;
   keysize : integer;
-  len, l : Cardinal;
+  len, l : QWord;
   p : System.PByte;
   pkey: PEVP_PKEY;
   PkeyCtx: PEVP_PKEY_CTX;
@@ -1598,6 +1599,7 @@ begin
 
       // 2. do the signing
       keysize := EVP_PKEY_size(pkey);
+      len := keysize;
       SetLength(result, keysize);
       ctx := EVP_MD_CTX_new;
       try
@@ -1672,7 +1674,7 @@ class function TJWTUtils.Sign_Hmac_RSA256(input: TBytes; key: TJWK): TBytes;
 var
   ctx : PEVP_MD_CTX;
   keysize : integer;
-  len : Cardinal;
+  len : QWord;
   pkey: PEVP_PKEY;
   rkey: PRSA;
   keys : TJWKList;
@@ -1689,6 +1691,7 @@ begin
       // 2. do the signing
       keysize := EVP_PKEY_size(pkey);
       SetLength(result, keysize);
+      len := keysize;
       ctx := EVP_MD_CTX_new;
       try
         check(EVP_DigestSignInit(ctx, nil, EVP_sha256, nil, pKey) = 1, 'openSSL EVP_DigestInit_ex failed');
