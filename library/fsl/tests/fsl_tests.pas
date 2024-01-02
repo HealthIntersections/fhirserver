@@ -1105,11 +1105,14 @@ const
 
 procedure TFslUtilitiesTestCases.testUnicode;
 var
-  s : String;
+  s, sc : String;
   b : TBytes;
 begin
-  s := TEncoding.UTF8.GetString(bu2);
-  AssertTrue(s = 'EKG PB R'''' 波持续时间（持续时长、时长、时间长度、时间、时间长短、为时、为期、历时、延续时间、持久时间、持续期） AVR 导联');
+  sc := 'EKG PB R'''' 波持续时间（持续时长、时长、时间长度、时间、时间长短、为时、为期、历时、延续时间、持久时间、持续期） AVR 导联';
+  b := TEncoding.UTF8.GetBytes(sc);
+  s := TEncoding.UTF8.GetString(bu2); 
+  AssertEqual(b, bu2);
+  AssertEqual(s, sc);
 
   s := '背景 发现是一个原子型临床观察指标';
   b := TEncoding.UTF8.GetBytes(s);

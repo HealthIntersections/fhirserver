@@ -282,6 +282,8 @@ Type
     Property Definition[iIndex : Integer] : TUcumServices read GetDefinition; Default;
   End;
 
+  { TUcumServiceImplementation }
+
   TUcumServiceImplementation = class (TUcumServiceInterface)
   private
     FSvc : TUcumServices;
@@ -293,6 +295,8 @@ Type
     Function multiply(o1, o2 : TUcumPair) : TUcumPair; override;
     Function divideBy(o1, o2 : TUcumPair) : TUcumPair; override;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; override;
+    function getCanonicalUnits(units : string) : string; override;
+    function isComparable(u1, u2 : String) : boolean; override;
     Function isConfigured : boolean; override;
   end;
 
@@ -1265,6 +1269,37 @@ end;
 function TUcumServiceImplementation.getCanonicalForm(value: TUcumPair): TUcumPair;
 begin
   result := FSvc.getCanonicalForm(value);
+end;
+
+function TUcumServiceImplementation.getCanonicalUnits(units: string): string;
+var
+  p1, p2 : TUcumPair;
+begin
+  if units = '' then
+    result := ''
+  else
+  begin
+    p1 := TUcumPair.create(TFslDecimal.makeOne, units);
+    try
+      p2 := getCanonicalForm(p1);
+      try
+        result := p2.UnitCode;
+      finally
+        p2.free;
+      end;
+    finally
+      p1.free;
+    end;
+  end;
+
+end;
+
+function TUcumServiceImplementation.isComparable(u1, u2: String): boolean;
+begin
+  if (u1 = '') or (u2 = '') then
+    result := false
+  else
+    result := getCanonicalUnits(u1) = getCanonicalUnits(u2);
 end;
 
 function TUcumServiceImplementation.isConfigured: boolean;
