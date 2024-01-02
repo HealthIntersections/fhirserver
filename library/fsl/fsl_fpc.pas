@@ -292,7 +292,7 @@ begin
   ss := '';
   while l > 0 do
   begin
-    ch := UTF8PCharToUnicode(p, cl);
+    ch := UTF8CodepointToUnicode(p, cl);
     result[i] := UnicodeChar(ch);
     ss := ss + IntToHex(ch, 4)+'.';
     inc(i);
