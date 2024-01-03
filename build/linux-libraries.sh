@@ -8,11 +8,10 @@ BUILDDIR=${1:-"/tmp/fsbuild"}
 OPENSSL_DIR=${OPENSSL_DIR:-"/tmp/openssl"}
 
 mkdir -p $BUILDDIR
-pushd $BUILDDIR
 mkdir -p $OPENSSL_DIR
 
+pushd $BUILDDIR
 mkdir source
-cd source
 
 # Download and build OpenSSL 1.1.1w
 cd /tmp
@@ -24,7 +23,7 @@ make
 make test 
 make install
 
-
+cd source
 
 echo "## git tzdb"
 
