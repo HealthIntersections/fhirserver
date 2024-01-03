@@ -10,9 +10,6 @@ OPENSSL_DIR=${OPENSSL_DIR:-"/tmp/openssl"}
 mkdir -p $BUILDDIR
 mkdir -p $OPENSSL_DIR
 
-pushd $BUILDDIR
-mkdir source
-
 # Download and build OpenSSL 1.1.1w
 cd /tmp
 wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz
@@ -22,6 +19,9 @@ cd openssl-1.1.1w
 make 
 make test 
 make install
+
+pushd $BUILDDIR
+mkdir source
 
 cd source
 
