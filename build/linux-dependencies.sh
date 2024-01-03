@@ -21,5 +21,3 @@ make test
 make install
 
 export PATH="$OPENSSL_DIR/bin:$PATH"
-
-cp $OPENSSL_DIR/lib/*.so* /usr/lib/
