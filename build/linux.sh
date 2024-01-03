@@ -4,7 +4,7 @@
 
 BASEDIR=$(dirname "$0")
 BUILDDIR=${1:-"/tmp/fsbuild"}
-$OPENSSL_DIR=${OPENSSL_DIR:-"/tmp/openssl"}
+OPENSSL_DIR=${OPENSSL_DIR:-"/tmp/openssl"}
 
 export OPENSSL_DIR
 
