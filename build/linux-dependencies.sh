@@ -10,18 +10,18 @@ OPENSSL_DIR="$BUILDDIR/openssl"
 mkdir -p $OPENSSL_DIR
 sudo mkdir /7Zip
 sudo chmod 777 /7Zip
+sudo export PATH=$OPENSSL_DIR/bin:$PATH
+sudo export LD_LIBRARY_PATH=$OPENSSL_DIR/lib:$LD_LIBRARY_PATH
+sudo export PKG_CONFIG_PATH=$OPENSSL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 pushd $BUILDDIR
 
 # Download and build OpenSSL 1.1.1w
 cd /tmp
-wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz 
-tar -xf openssl-1.1.1w.tar.gz 
-cd openssl-1.1.1w 
-./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR" 
+wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz
+tar -xf openssl-1.1.1w.tar.gz
+cd openssl-1.1.1w
+./config --prefix="$OPENSSL_DIR" --openssldir="$OPENSSL_DIR"
 make 
 make test 
 make install
 
-sudo export PATH=$OPENSSL_DIR/bin:$PATH
-sudo export LD_LIBRARY_PATH=$OPENSSL_DIR/lib:$LD_LIBRARY_PATH
-sudo export PKG_CONFIG_PATH=$OPENSSL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
