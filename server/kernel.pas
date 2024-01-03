@@ -768,6 +768,8 @@ procedure initLogging(params : TCommandLineParameters; cfg : TCustomIniFile);
 begin
   if cfg.valueExists('config', 'log') then
     logFilename := cfg.readString('config', 'log', '')
+  else if params.has('-tests') then
+    logFilename := filePath(['[tmp]', 'fhirserver-tests.log'])
   else
     logFilename := filePath(['[tmp]', 'fhirserver.log']);
   Logging.logToFile(logFilename);
