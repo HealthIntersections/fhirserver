@@ -6,8 +6,6 @@ echo "Preparing dependencies for linux"
 
 BUILDDIR=${1:-"/tmp/fsbuild"}
 mkdir -p $BUILDDIR
-mkdir -p /7Zip
-chmod 777 /7Zip
 pushd $BUILDDIR
 
 # ---- install the compiler ----------

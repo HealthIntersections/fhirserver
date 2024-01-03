@@ -8,6 +8,8 @@ BUILDDIR=${1:-"/tmp/fsbuild"}
 mkdir -p $BUILDDIR
 OPENSSL_DIR="$BUILDDIR/openssl"
 mkdir -p $OPENSSL_DIR
+mkdir /7Zip
+chmod 777 /7Zip
 pushd $BUILDDIR
 
 # Download and build OpenSSL 1.1.1w
