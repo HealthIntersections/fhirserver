@@ -5,6 +5,8 @@ echo "Preparing dependencies for linux"
 # ---- initial set up ----------
 
 BUILDDIR=${1:-"/tmp/fsbuild"}
+$OPENSSL_DIR=${OPENSSL_DIR:-"/tmp/openssl"}
+
 mkdir -p $BUILDDIR
 pushd $BUILDDIR
 

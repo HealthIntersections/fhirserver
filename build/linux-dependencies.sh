@@ -5,15 +5,11 @@ echo "Updating dependencies for linux"
 # ---- initial set up ----------
 
 BUILDDIR=${1:-"/tmp/fsbuild"}
+$OPENSSL_DIR=${OPENSSL_DIR:-"/tmp/openssl"}
+
 mkdir -p $BUILDDIR
 mkdir -p $OPENSSL_DIR
 pushd $BUILDDIR
-
-echo "Build folder:"
-echo $BUILDDIR
-
-echo "OpenSSL folder:"
-echo $OPENSSL_DIR
 
 # Download and build OpenSSL 1.1.1w
 cd /tmp
