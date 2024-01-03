@@ -23,3 +23,5 @@ make test
 make install
 
 export PATH="$OPENSSL_DIR/bin:$PATH"
+export LD_LIBRARY_PATH="$OPENSSL_DIR/lib:$LD_LIBRARY_PATH"
+export PKG_CONFIG_PATH="$OPENSSL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH"
