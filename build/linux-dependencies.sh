@@ -7,7 +7,7 @@ echo "Updating dependencies for linux"
 BUILDDIR=${1:-"/tmp/fsbuild"}
 mkdir -p $BUILDDIR
 OPENSSL_DIR="$BUILDDIR/openssl"
-mkdir -p "OPENSSL_DIR"
+mkdir -p $OPENSSL_DIR
 pushd $BUILDDIR
 
 # Download and build OpenSSL 1.1.1w
