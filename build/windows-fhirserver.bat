@@ -81,6 +81,13 @@ echo ## compile server
 echo ## compile toolkit
 %tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64-release -q -q
     
-copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\executables\win64"
-	
+IF EXIST "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64" (    
+  copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
+}
+
+IF EXIST exec\64\fhirserver.exe (
+    echo Sucess!
+) ELSE (
+    echo Failed (no server executable found)
+)
 chdir /d %FSDIR% 
