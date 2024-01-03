@@ -1125,7 +1125,7 @@ begin
   begin
     msg := FI18n.translate('Coding_has_no_system__cannot_validate', FParams.languages, []);
     messages.add(msg);
-    op.addIssue(isError, itInvalid, path, msg, oicInvalidData);
+    op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
     exit(bFalse);
   end;
 
