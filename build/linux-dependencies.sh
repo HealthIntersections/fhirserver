@@ -9,6 +9,12 @@ mkdir -p $BUILDDIR
 mkdir -p $OPENSSL_DIR
 pushd $BUILDDIR
 
+echo "Build folder:"
+echo $BUILDDIR
+
+echo "OpenSSL folder:"
+echo $OPENSSL_DIR
+
 # Download and build OpenSSL 1.1.1w
 cd /tmp
 wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz
