@@ -561,7 +561,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
+      <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=$(OPENSSL_DIR)/lib"/>
     </Other>
   </CompilerOptions>
   <Debugging>
