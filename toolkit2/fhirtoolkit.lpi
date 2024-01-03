@@ -124,6 +124,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
       </Item>
@@ -419,6 +420,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
       </Item>
