@@ -4,6 +4,14 @@
 
 BASEDIR=$(dirname "$0")
 BUILDDIR=${1:-"/tmp/fsbuild"}
+OPENSSL_DIR="$BUILDDIR/openssl"
+
+mkdir -p $OPENSSL_DIR
+sudo mkdir /7Zip
+sudo chmod 777 /7Zip
+export PATH=$OPENSSL_DIR/bin:$PATH
+export LD_LIBRARY_PATH=$OPENSSL_DIR/lib:$LD_LIBRARY_PATH
+export PKG_CONFIG_PATH=$OPENSSL_DIR/lib/pkgconfig:$PKG_CONFIG_PATH
 
 $BASEDIR/linux-dependencies.sh $BUILDDIR;
 $BASEDIR/linux-toolchain.sh $BUILDDIR;
