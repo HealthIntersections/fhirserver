@@ -989,7 +989,7 @@ begin
     kdbInterbase: Result := 'Intersolv Interbase ODBC Driver (*.gdb)'; // not that we would actually ever use this
     kdbDB2: Result := 'IBM DB2 ODBC DRIVER';
     kdbOracle8: Result := 'Oracle ODBC Driver';
-    kdbMySQL : result := 'MySQL ODBC 8.0 Unicode Driver';
+    kdbMySQL : result := 'MySQL ODBC 8.2 Unicode Driver';
   else
     Result := 'Unknown Platform ' + inttostr(ord(APlatform));
   end;
