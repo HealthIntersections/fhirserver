@@ -1848,10 +1848,6 @@ type
     function sizeInBytes(magic : integer) : cardinal;
   end;
 
-function ZCompressBytes(const s: TBytes): TBytes;
-function ZDecompressBytes(const s: TBytes): TBytes;
-function TryZDecompressBytes(const s: TBytes): TBytes;
-
 type
   TCacheInformation = class (TFslObject)
   private
@@ -17144,70 +17140,6 @@ begin
   for i := 1 to length(s) do
     Result := Result and ((Upcase(s[i]) >= '0') and (Upcase(s[i]) <= '9')) or ((s[i] >= 'A') and (s[i] <= 'F'));
 end;
-
-function ZCompressBytes(const s: TBytes): TBytes;
-begin
-  {$IFDEF FPC}
-  result := nil;
-  raise ETodo.create('Not done yet');
-  {$ELSE}
-  ZCompress(s, result);
-  {$ENDIF}
-end;
-
-function TryZDecompressBytes(const s: TBytes): TBytes;
-begin
-  try
-    result := ZDecompressBytes(s);
-  except
-    result := s;
-  end;
-end;
-
-function ZDecompressBytes(const s: TBytes): TBytes;
-{$IFDEF FPC}
-var
-  b1, b2 : TBytesStream;
-  z : TZDecompressionStream;
-begin
-  b1 := TBytesStream.create(s);
-  try
-    z := TZDecompressionStream.create(b1);
-    try
-      b2  := TBytesStream.Create;
-      try
-        b2.CopyFrom(z, z.Size);
-        result := b2.Bytes;
-        setLength(result, b2.size);
-      finally
-        b2.free;
-      end;
-    finally
-      z.free;
-    end;
-  finally
-    b1.free;
-  end;
-end;
-
-{$ELSE}
-{$IFNDEF WIN64}
-var
-  buffer: Pointer;
-  size  : Integer;
-{$ENDIF}
-begin
-  {$IFDEF WIN64}
-  ZDecompress(s, result);
-  {$ELSE}
-  ZDecompress(@s[0],Length(s),buffer,size);
-  SetLength(result,size);
-  Move(buffer^,result[0],size);
-  FreeMem(buffer);
-  {$ENDIF}
-end;
-{$ENDIF}
-
 
 { TStringListHelper }
 

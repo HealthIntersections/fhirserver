@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, zflate,
-  fsl_base, fsl_stream;
+  fsl_base;
 
 {
   for FPC, we use the zflate units by fibonacci.
