@@ -32,7 +32,7 @@ unit zflate;
 interface
 
 uses
-  SysUtils, ZBase, ZInflate, ZDeflate;
+  ZBase, ZInflate, ZDeflate;
 
 type
   tzflate = record
@@ -56,7 +56,7 @@ type
     footerlen: dword;
   end;
 
-  Tristate = (tNull, tTrue, tFalse);
+  TBytes = array of byte;
 
 const
   ZFLATE_ZLIB = 1;
@@ -107,10 +107,14 @@ function zfindstream(data: pointer; size: dword; var streamtype: dword; var star
 function gzdeflate(data: pointer; size: dword; var output: pointer; var outputsize: dword; level: dword=9): boolean;
 //compress whole string to DEFLATE at once
 function gzdeflate(str: string; level: dword=9): string;
+//compress whole bytes to DEFLATE at once
+function gzdeflate(bytes : TBytes; level: dword=9): TBytes;
 //decompress whole DEFLATE buffer at once
 function gzinflate(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
 //decompress whole DEFLATE string at once
 function gzinflate(str: string): string;
+//decompress whole DEFLATE bytes at once
+function gzinflate(bytes : TBytes): TBytes;
 
 //make ZLIB header
 function makezlibheader(compressionlevel: integer): string;
@@ -120,14 +124,14 @@ function makezlibfooter(adler: dword): string;
 function gzcompress(data: pointer; size: dword; var output: pointer; var outputsize: dword; level: dword=9): boolean;
 //compress whole string to ZLIB at once
 function gzcompress(str: string; level: dword=9): string;
-//dempress whole ZLIB buffer at once    !
-function gzuncompress(data: pointer; size: dword; readHeader : Tristate; var output: pointer; var outputsize: dword): boolean;
-//dempress whole ZLIB string at once
-function gzuncompress(str: string): string;
 //compress whole buffer to ZLIB at once
 function gzcompress(bytes : TBytes; level: dword=9) : TBytes;
+//dempress whole ZLIB buffer at once    !
+function gzuncompress(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
+//dempress whole ZLIB string at once
+function gzuncompress(str: string): string;
 //dempress whole ZLIB buffer at once
-function gzuncompress(bytes : TBytes; readHeader : Tristate = tNull) : TBytes;
+function gzuncompress(bytes : TBytes) : TBytes;
 
 //make GZIP header
 function makegzipheader(compressionlevel: integer; filename: string=''; comment: string=''): string;
@@ -137,15 +141,21 @@ function makegzipfooter(originalsize: dword; crc: dword): string;
 function gzencode(data: pointer; size: dword; var output: pointer; var outputsize: dword; level: dword=9; filename: string=''; comment: string=''): boolean;
 //compress whole string to GZIP at once
 function gzencode(str: string; level: dword=9; filename: string=''; comment: string=''): string;
+//compress whole string to GZIP at once
+function gzencode(bytes: TBytes; level: dword=9; filename: string=''; comment: string=''): TBytes;
 //decompress whole GZIP buffer at once
 function gzdecode(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
 //decompress whole GZIP string at once
 function gzdecode(str: string): string;
+//decompress whole GZIP string at once
+function gzdecode(bytes: TBytes): TBytes;
 
 //try to detect buffer format and decompress it at once
 function zdecompress(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
 //try to detect string format and decompress it at once
 function zdecompress(str: string): string;
+//try to detect bytes format and decompress it at once
+function zdecompress(bytes: TBytes): TBytes;
 
 //transalte error code to message
 function zflatetranslatecode(code: integer): string;
@@ -412,6 +422,18 @@ begin
   freemem(p);
 end;
 
+function gzdeflate(bytes: TBytes; level: dword=9): TBytes;
+var
+  p: pointer;
+  d: dword;
+begin
+  result := nil;
+  if not gzdeflate(@bytes[0], length(bytes), p, d, level) then exit;
+  setlength(result, d);
+  move(p^, result[0], d);
+  freemem(p);
+end;
+
 // -- inflate -----------------------------
 
 function gzinflate(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
@@ -458,7 +480,19 @@ begin
   result := '';
   if not gzinflate(@str[1], length(str), p, d) then exit;
   setlength(result, d);
-  move(p^, result[1], d); 
+  move(p^, result[1], d);
+  freemem(p);
+end;
+
+function gzinflate(bytes: TBytes): TBytes;
+var
+  p: pointer;
+  d: dword;
+begin
+  result := nil;
+  if not gzinflate(@bytes[0], length(bytes), p, d) then exit;
+  setlength(result, d);
+  move(p^, result[0], d);
   freemem(p);
 end;
 
@@ -544,20 +578,14 @@ end;
 
 // -- ZLIB decompress ---------------------
 
-function gzuncompress(data: pointer; size: dword; readHeader : Tristate; var output: pointer; var outputsize: dword): boolean;
+function gzuncompress(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
 var
   zlib: tzlibinfo;
   z: tzflate;
   checksum: dword;
-  header : boolean;
 begin
   result := false;
-  header := false;
-  if readHeader <> tFalse then
-    if zreadzlibheader(data, zlib) then
-      header := true
-    else if readHeader = tTrue then
-      exit(zerror(z, ZFLATE_EZLIBINVALID));
+  if not zreadzlibheader(data, zlib) then exit(zerror(z, ZFLATE_EZLIBINVALID));
 
   checksum := swapendian(pdword(data+size-4)^);
 
@@ -565,8 +593,7 @@ begin
   size -= zlib.streamat+zlib.footerlen;
   if not gzinflate(data, size, output, outputsize) then exit;
 
-  if header and (adler32(adler32(0, nil, 0), output, outputsize) <> checksum) then
-    exit(zerror(z, ZFLATE_ECHECKSUM));
+  if (adler32(adler32(0, nil, 0), output, outputsize) <> checksum) then exit(zerror(z, ZFLATE_ECHECKSUM));
 
   result := true;
 end;
@@ -577,19 +604,19 @@ var
   d: dword;
 begin
   result := '';
-  if not gzuncompress(@str[1], length(str), tTrue, p, d) then exit;
+  if not gzuncompress(@str[1], length(str), p, d) then exit;
   setlength(result, d);
   move(p^, result[1], d);
   freemem(p);
 end;
 
-function gzuncompress(bytes : TBytes; readHeader : Tristate = tNull) : TBytes;
+function gzuncompress(bytes : TBytes) : TBytes;
 var
   p: pointer;
   d: dword;
 begin
   result := nil;
-  if not gzuncompress(@bytes[0], length(bytes), readHeader, p, d) then exit;
+  if not gzuncompress(@bytes[0], length(bytes), p, d) then exit;
   try
     setlength(result, d);
     move(p^, result[0], d);
@@ -686,6 +713,18 @@ begin
   freemem(p);
 end;
 
+function gzencode(bytes: TBytes; level: dword=9; filename: string=''; comment: string=''): TBytes;
+var
+  p: pointer;
+  d: dword;
+begin
+  result := nil;
+  if not gzencode(@bytes[0], length(bytes), p, d, level, filename, comment) then exit;
+  setlength(result, d);
+  move(p^, result[0], d);
+  freemem(p);
+end;
+
 // -- GZIP decompress ---------------------
 
 function gzdecode(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
@@ -722,6 +761,18 @@ begin
   freemem(p);
 end;
 
+function gzdecode(bytes: TBytes): TBytes;
+var
+  p: pointer;
+  d: dword;
+begin
+  result := nil;
+  if not gzdecode(@bytes[0], length(bytes), p, d) then exit;
+  setlength(result, d);
+  move(p^, result[0], d);
+  freemem(p);
+end;
+
 // -- decompress anything -----------------
 
 function zdecompress(data: pointer; size: dword; var output: pointer; var outputsize: dword): boolean;
@@ -750,6 +801,18 @@ begin
   if not zdecompress(@str[1], length(str), p, d) then exit;
   setlength(result, d);
   move(p^, result[1], d);
+  freemem(p);
+end;
+
+function zdecompress(bytes: TBytes): TBytes;
+var
+  p: pointer;
+  d: dword;
+begin
+  result := nil;
+  if not zdecompress(@bytes[0], length(bytes), p, d) then exit;
+  setlength(result, d);
+  move(p^, result[0], d);
   freemem(p);
 end;
 

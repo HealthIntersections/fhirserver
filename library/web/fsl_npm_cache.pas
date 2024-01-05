@@ -736,7 +736,7 @@ begin
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
-    bo := TBytesStream.create(gzuncompress(content));
+    bo := TBytesStream.create(ungzip(content));
     try
       work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
       tar := TTarArchive.Create(bo);
