@@ -47,7 +47,7 @@ end;
 
 function gzuncompress(bytes : TBytes) : TBytes;
 begin
-  result := zflate.gzuncompress(bytes);
+  result := zflate.gzuncompress(readZLibHeader(bytes));
   if length(result) = 0 then
     raise EFslException.create('Failed to read compressed content: '+zflatetranslatecode(zlasterror));
   //BytesToFile(bytes, '/Users/grahamegrieve/temp/test.tgz');

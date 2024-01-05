@@ -733,7 +733,6 @@ var
   b : TBytes;
 begin
   Logging.log('Loading Package ('+DescribeBytes(length(content))+')');
-  BytesToFile(content, '/Users/grahamegrieve/temp/package.bin');
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
