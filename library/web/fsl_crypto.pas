@@ -1130,7 +1130,7 @@ begin
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
   if zip = 'DEF' then
-    input := BytesAdd(input, JWTBase64URL(gzcompress(TJSONWriter.writeObject(jwt.payload), false)))
+    input := BytesAdd(input, JWTBase64URL(gzip(TJSONWriter.writeObject(jwt.payload), false)))
   else
     input := BytesAdd(input, JWTBase64URL(TJSONWriter.writeObject(jwt.payload)));
   case method of
@@ -1410,7 +1410,7 @@ begin
 
     result.payloadBytes := JWTDeBase64URL(payload);
     if result.header['zip'] = 'DEF' then
-      result.payloadBytes := gzuncompress(result.payloadBytes);
+      result.payloadBytes := ungzip(result.payloadBytes);
     result.payload := TJSONParser.Parse(result.payloadBytes);
 
     result.link;

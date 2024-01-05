@@ -1086,7 +1086,7 @@ var
   b : TBytes;
   bi : TBytesStream;
 begin
-  bs := TBytesStream.create(gzuncompress(streamToBytes(tgz)));
+  bs := TBytesStream.create(ungzip(streamToBytes(tgz)));
   try
     tar := TTarArchive.Create(bs);
     try
