@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - linuxscripts
   pull_request:
 jobs:
   Build-Docker-Image:
