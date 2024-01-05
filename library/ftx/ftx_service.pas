@@ -226,6 +226,7 @@ Type
     function expandLimitation : Integer; virtual;
     function description : String; virtual; abstract;
     function TotalCount : integer; virtual; abstract;
+    function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; virtual;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri(context : TCodeSystemProviderContext) : String; virtual; abstract;
@@ -833,6 +834,11 @@ end;
 function TCodeSystemProvider.expandLimitation: Integer;
 begin
   result := 0; // no limit
+end;
+
+function TCodeSystemProvider.getPropertyDefinitions: TFslList<TFhirCodeSystemPropertyW>;
+begin
+  result := nil;
 end;
 
 function TCodeSystemProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
