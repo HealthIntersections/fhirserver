@@ -9,7 +9,7 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
-        <OtherUnitFiles Value="..\library\fsl"/>
+        <OtherUnitFiles Value="..\library\fsl;..\dependencies\zflate"/>
         <UnitOutputDirectory Value="lib\fsl\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Parsing>
@@ -143,6 +143,10 @@
       <Item>
         <Filename Value="..\library\fsl\fsl_regex.pas"/>
         <UnitName Value="fsl_regex"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_gzip.pas"/>
+        <UnitName Value="fsl_gzip"/>
       </Item>
     </Files>
     <RequiredPkgs>

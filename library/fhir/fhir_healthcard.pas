@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, DateUtils, Graphics,  {$IFDEF FPC} FPImage, FPWritePNG, {$ELSE} Vcl.Imaging.pngimage, {$ENDIF}
   IdGlobal, IdHash, IdHashSHA,
-  fsl_base, fsl_utilities, fsl_http, fsl_crypto, fsl_json, fsl_fetcher, fsl_openssl,
+  fsl_base, fsl_utilities, fsl_http, fsl_crypto, fsl_json, fsl_fetcher, fsl_openssl, fsl_gzip,
   fhir_objects, fhir_factory, fhir_parser, fhir_utilities;
 
 type
@@ -231,7 +231,7 @@ begin
   finally
     j.free;
   end;
-  bytes := DeflateRfc1951(TEncoding.UTF8.GetBytes(payload));
+  bytes := gzcompress(TEncoding.UTF8.GetBytes(payload), false);
   card.jws := TJWTUtils.encodeJWT('{"alg":"ES256","zip":"DEF","kid":"'+jwk.id+'"}', bytes, jwt_es256, jwk);
 end;
 

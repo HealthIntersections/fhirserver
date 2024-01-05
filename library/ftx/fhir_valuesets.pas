@@ -3064,6 +3064,23 @@ begin
   result := false;
 end;
 
+function getPropUrl(cs : TCodeSystemProvider; pcode : String) : String;
+var
+  pl : TFslList<TFhirCodeSystemPropertyW>;
+  p : TFhirCodeSystemPropertyW;
+begin
+  result := '';
+  pl := cs.getPropertyDefinitions;
+  try
+    if pl <> nil then
+      for p in pl do
+        if p.code = pcode then
+          exit(p.uri);
+  finally
+    pl.free;
+  end;
+end;
+
 function TFHIRValueSetExpander.processCode(cs : TCodeSystemProvider; parent : TFhirValueSetExpansionContainsW; doDelete : boolean; system, version, code : String;
     isAbstract, isInactive, deprecated : boolean; displays : TConceptDesignations; definition, itemWeight: string; expansion : TFhirValueSetExpansionW; imports : TFslList<TFHIRImportedValueSet>;
     csExtList, vsExtList : TFslList<TFhirExtensionW>; csProps : TFslList<TFhirCodeSystemConceptPropertyW>; expProps : TFslList<TFhirValueSetExpansionContainsPropertyW>; excludeInactive : boolean; srcURL : string) : TFhirValueSetExpansionContainsW;
@@ -3191,7 +3208,7 @@ begin
             begin
               vstr := FFactory.makeString(definition);
               try
-                n.addProperty(pn, vstr);
+                expansion.defineProperty(n, 'http://hl7.org/fhir/concept-properties#definition', pn, vstr.link);
               finally
                 vstr.free;
               end;
@@ -3202,7 +3219,10 @@ begin
             for cp in csprops do
             begin
               if cp.code = pn then
-                n.addProperty(pn, cp);
+              begin
+                expansion.defineProperty(n, getPropUrl(cs, pn), pn, cp.value.link);
+                // n.addProperty(pn, cp);
+              end;
             end;
           end;
         end;
