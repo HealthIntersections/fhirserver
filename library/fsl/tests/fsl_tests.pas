@@ -37,7 +37,7 @@ Uses
   zlib, zstream,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} fsl_testing,
   IdGlobalProtocols,
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions, fsl_gzip,
   fsl_xml,
   {$IFNDEF FPC}
   fsl_msxml,
@@ -5269,7 +5269,6 @@ end;
 function TTarGZParserTests.load(filename : String) : TFslList<TFslNameBuffer>;
 var
   bs : TBytesStream;
-  z : TZDecompressionStream;
   tar : TTarArchive;
   entry : TTarDirRec;
   n : String;
@@ -5279,39 +5278,34 @@ var
 begin      
   result := TFslList<TFslNameBuffer>.Create;
   try
-    bs := TBytesStream.create(readZLibHeader(TFileStream.create(filename, fmOpenRead)));
+    bs := TBytesStream.create(gzuncompress(fileToBytes(filename)));
     try
-      z := TZDecompressionStream.Create(bs, true); // 15+16);
+      tar := TTarArchive.Create(bs);
       try
-        tar := TTarArchive.Create(z);
-        try
-          tar.Reset;
-          while tar.FindNext(entry) do
-          begin
-            n := String(entry.Name);
-            if (n.contains('..')) then
-              raise EFSLException.create('The package contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
-            bi := TBytesStream.Create;
-            try
-              tar.ReadFile(bi);
-              b := copy(bi.Bytes, 0, bi.size);
-            finally
-              bi.free;
-            end;
-            item := TFslNameBuffer.Create;
-            try
-              item.Name := n;
-              item.AsBytes := b;
-              result.Add(item.link)
-            finally
-              item.free;
-            end;
+        tar.Reset;
+        while tar.FindNext(entry) do
+        begin
+          n := String(entry.Name);
+          if (n.contains('..')) then
+            raise EFSLException.create('The package contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
+          bi := TBytesStream.Create;
+          try
+            tar.ReadFile(bi);
+            b := copy(bi.Bytes, 0, bi.size);
+          finally
+            bi.free;
           end;
-        finally
-          tar.free;
+          item := TFslNameBuffer.Create;
+          try
+            item.Name := n;
+            item.AsBytes := b;
+            result.Add(item.link)
+          finally
+            item.free;
+          end;
         end;
       finally
-        z.free;
+        tar.free;
       end;
     finally
       bs.free;

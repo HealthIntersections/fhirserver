@@ -34,9 +34,9 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ELSE} LazFileUtils, {$ENDIF}
-  SysUtils, Classes, IniFiles, zlib, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
+  SysUtils, Classes, IniFiles, Generics.Collections, Types, {$IFDEF DELPHI} IOUtils, {$ENDIF}
   fsl_base,  fsl_utilities, fsl_json, fsl_fpc, fsl_threads, fsl_logging, fsl_stream, fsl_fetcher, fsl_versions,
-  fsl_npm, fsl_npm_client;
+  fsl_npm, fsl_npm_client, fsl_gzip;
 
 type
   TCheckEvent = function(sender : TObject; msg : String):boolean of object;
@@ -729,53 +729,49 @@ var
   bo, bi : TBytesStream;
   tar : TTarArchive;
   DirRec : TTarDirRec;
-  z : TZDecompressionStream;
   fn : String;
   b : TBytes;
 begin
   Logging.log('Loading Package ('+DescribeBytes(length(content))+')');
+  BytesToFile(content, '/Users/grahamegrieve/temp/package.bin');
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
-    bo := TBytesStream.Create(readZLibHeader(content));
+    bo := TBytesStream.create(gzuncompress(content));
     try
-      z := TZDecompressionStream.Create(bo, true); //  15+16);
+      work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
+      tar := TTarArchive.Create(bo);
       try
-        work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
-        tar := TTarArchive.Create(z);
-        try
-          tar.Reset;
-          while tar.FindNext(DirRec) do
+        tar.Reset;
+        while tar.FindNext(DirRec) do
+        begin
+          fn := String(DirRec.Name);
+          fn := fn.replace('/', '\');
+          if not fn.contains('@') then
           begin
-            fn := String(DirRec.Name);
-            fn := fn.replace('/', '\');
-            if not fn.contains('@') then
-            begin
-              bi := TBytesStream.Create;
-              try
-                tar.ReadFile(bi);
-                b := bi.Bytes;
-                if not result.ContainsKey(fn) then
-                  result.Add(fn, copy(b, 0, bi.Size));
+            bi := TBytesStream.Create;
+            try
+              tar.ReadFile(bi);
+              b := bi.Bytes;
+              if not result.ContainsKey(fn) then
+                result.Add(fn, copy(b, 0, bi.Size));
 //                else
 //                  raise EFSLException.Create('Duplicate Entry: '+fn);
-              finally
-                bi.free;
-              end;
+            finally
+              bi.free;
             end;
           end;
-        finally
-          tar.free;
         end;
       finally
-        z.free;
+        tar.free;
       end;
     finally
       bo.free;
     end;
   finally
     work(100, true, '');
-  end;
+  end;                   
+  Logging.log('Loaded Package ('+inttostr(result.Count)+' files)');
 end;
 
 procedure TFHIRPackageManager.loadPackage(id, ver: String;
