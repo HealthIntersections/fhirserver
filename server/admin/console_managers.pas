@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Graphics, UITypes,
+  SysUtils, Classes, Graphics, System.UITypes,
   Dialogs,
   fsl_base, fsl_threads, fsl_utilities,
   fdb_manager,

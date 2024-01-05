@@ -231,7 +231,7 @@ begin
   finally
     j.free;
   end;
-  bytes := gzcompress(TEncoding.UTF8.GetBytes(payload), false);
+  bytes := gzip(TEncoding.UTF8.GetBytes(payload), false);
   card.jws := TJWTUtils.encodeJWT('{"alg":"ES256","zip":"DEF","kid":"'+jwk.id+'"}', bytes, jwt_es256, jwk);
 end;
 
