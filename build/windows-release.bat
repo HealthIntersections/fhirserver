@@ -65,7 +65,7 @@ del release-notes-old.md 1>nul
 echo ## build FHIRConsole ## 
 call clean 1>nul
 utilities\codescan\codescan.exe -proj-version c:\work\fhirserver\server\fhirconsole.lpi -version %1 -debug false || goto :error
-%tmp%\tools\lazarus\lazbuild.exe -B server\fhirconsole.lpi --build-mode=win64-release -q -q
+%tmp%\tools\lazarus\lazbuild.exe -B server\fhirconsole.lpi --build-mode=win64-release -q -q --build-all
 utilities\codescan\codescan.exe -check exec\64\fhirconsole.exe -message "Building the console failed" || goto :error
 
 :: =========================================================================================
@@ -96,7 +96,7 @@ utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building
 echo ## build FHIRToolkit ##
 call clean 1>nul
 utilities\codescan\codescan.exe -proj-version toolkit2\fhirtoolkit.lpi -version %1 -debug false || goto :error
-%tmp%\tools\lazarus\lazbuild.exe -B toolkit2\fhirtoolkit.lpi --build-mode=win64-release -q -q
+%tmp%\tools\lazarus\lazbuild.exe -B toolkit2\fhirtoolkit.lpi --build-mode=win64-release -q -q --build-all
 utilities\codescan\codescan.exe -check exec\64\fhirtoolkit.exe -message "Building the toolkit failed" || goto :error
 
 echo All compile done
