@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Types, {$IFDEF DELPHI}IOUtils, {$ENDIF} zlib,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads, fsl_versions;
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_threads, fsl_versions, fsl_gzip;
 
 Type
   TFHIRPackageKind = (fpkNull, fpkCore, fpkIG, fpkIGTemplate, fpkTool, fpkToolGen, fpkGroup, fpkExamples);
@@ -225,9 +225,6 @@ const
 function isValidPackageId(id : String) : boolean;
 function isMoreRecentVersion(test, base : String) : boolean;
 
-
-function readZLibHeader(stream : TStream) : TBytes; overload;
-function readZLibHeader(b : TBytes) : TBytes; overload;
 
 implementation
 
@@ -1080,74 +1077,38 @@ begin
   end;
 end;
 
-function readZLibHeader(stream : TStream) : TBytes;
-begin
-  result := readZLibHeader(StreamToBytes(stream));
-
-end;
-
-function readZLibHeader(b : TBytes) : TBytes;
-var
-  p : int64;
-  i : integer;
-begin
-  if (length(b) < 10) or (b[0] <> $1F) or (b[1] <> $8B) then
-    result := b
-  else
-  begin
-    i := 10;
-    if ((b[3] and $08) > 0) then
-    begin
-      repeat
-        inc(i);
-      until (i = length(b)) or (b[i] = 0);
-      inc(i);
-    end;
-    if i >= length(b) then
-      result := b
-    else
-       result := copy(b, i, length(b)-i-8);
-  end;
-end;
-
 procedure TNpmPackage.readStream(tgz: TStream; desc: String; progress: TWorkProgressEvent);
 var
   bs : TBytesStream;
-  z : TZDecompressionStream;
   tar : TTarArchive;
   entry : TTarDirRec;
   n : String;
   b : TBytes;
   bi : TBytesStream;
 begin
-  bs := TBytesStream.create(readZLibHeader(tgz));
+  bs := TBytesStream.create(ungzip(streamToBytes(tgz)));
   try
-    z := TZDecompressionStream.Create(bs, true); // 15+16);
+    tar := TTarArchive.Create(bs);
     try
-      tar := TTarArchive.Create(z);
-      try
-        tar.Reset;
-        while tar.FindNext(entry) do
-        begin
-          n := String(entry.Name);
-          if (n.contains('..')) then
-            raise EFSLException.create('The package "'+desc+'" contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
-          bi := TBytesStream.Create;
-          try
-            tar.ReadFile(bi);
-            b := copy(bi.Bytes, 0, bi.size);
-          finally
-            bi.free;
-          end;
-          loadFile(n, b);
-          if assigned(progress) then
-            progress(self, -1, false, 'Loading '+n);
+      tar.Reset;
+      while tar.FindNext(entry) do
+      begin
+        n := String(entry.Name);
+        if (n.contains('..')) then
+          raise EFSLException.create('The package "'+desc+'" contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
+        bi := TBytesStream.Create;
+        try
+          tar.ReadFile(bi);
+          b := copy(bi.Bytes, 0, bi.size);
+        finally
+          bi.free;
         end;
-      finally
-        tar.free;
+        loadFile(n, b);
+        if assigned(progress) then
+          progress(self, -1, false, 'Loading '+n);
       end;
     finally
-      z.free;
+      tar.free;
     end;
   finally
     bs.free;

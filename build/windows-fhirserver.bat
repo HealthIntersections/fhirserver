@@ -12,6 +12,8 @@ copy ..\exec\pack\*.cfg ..\exec\64\
 copy ..\exec\pack\*.dat ..\exec\64\
 copy ..\exec\pack\w64\*.dll ..\exec\64\
 
+del ..\exec\64\*.exe 
+
 IF %1.==. GOTO No1
 set "tmp=%1"
 
@@ -79,6 +81,13 @@ echo ## compile server
 echo ## compile toolkit
 %tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64-release -q -q --build-all
     
-copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\executables\win64"
-	
+IF EXIST "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64" (    
+  copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
+}
+
+IF EXIST exec\64\fhirserver.exe (
+    echo Sucess!
+) ELSE (
+    echo Failed (no server executable found)
+)
 chdir /d %FSDIR% 

@@ -80,7 +80,7 @@ uses
   IdOpenSSLHeaders_pem, IdOpenSSLHeaders_err, IdOpenSSLHeaders_evp, IdOpenSSLHeaders_ec, IdOpenSSLHeaders_obj_mac,
   IdOpenSSLHeaders_x509, IdOpenSSLHeaders_x509v3, IdOpenSSLHeaders_x509_vfy,
   IdOpenSSLX509,
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml, fsl_fpc, fsl_npm,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_json, fsl_xml, fsl_fpc, fsl_npm, fsl_gzip,
   fsl_openssl, fsl_fetcher;
 
 Type
@@ -430,9 +430,6 @@ Type
     function signExternal(references : TDigitalSignatureReferenceList; method : TSignatureMethod; keyinfo : boolean) : TBytes;
     function verifySignature(xml : TBytes) : boolean;
   end;
-
-function InflateRfc1951(b : TBytes) : TBytes;
-function DeflateRfc1951(b : TBytes) : TBytes;
 
 function Base64URL(s : TBytes) : String;
 function unBase64URL(s : String) : TBytes;
@@ -1133,7 +1130,7 @@ begin
   input := JWTBase64URL(TJSONWriter.writeObject(jwt.header));
   input := BytesAdd(input, Byte('.'));
   if zip = 'DEF' then
-    input := BytesAdd(input, JWTBase64URL(DeflateRfc1951(TJSONWriter.writeObject(jwt.payload))))
+    input := BytesAdd(input, JWTBase64URL(gzip(TJSONWriter.writeObject(jwt.payload), false)))
   else
     input := BytesAdd(input, JWTBase64URL(TJSONWriter.writeObject(jwt.payload)));
   case method of
@@ -1391,52 +1388,6 @@ begin
   result := BytesAsString(input)+'.'+BytesAsString(JWTBase64URL(sig));
 end;
 
-function InflateRfc1951(b : TBytes) : TBytes;
-var
-  b1, b2 : TBytesStream;
-  z : TZDecompressionStream;
-begin
-  b1 := TBytesStream.create(b);// readZLibHeader(b));
-  try
-    z := TZDecompressionStream.create(b1, true); // -15);
-    try
-      z.position := 0;
-      b2  := TBytesStream.Create;
-      try
-        b2.CopyFrom(z, 2);
-        result := b2.Bytes;
-        setLength(result, b2.size);
-      finally
-        b2.free;
-      end;
-    finally
-      z.free;
-    end;
-  finally
-    b1.free;
-  end;
-end;
-
-function DeflateRfc1951(b : TBytes) : TBytes;
-var
-  s : TBytesStream;
-  z : TZCompressionStream;
-begin
-  s := TBytesStream.create();
-  try
-    z := TZCompressionStream.create(clMax, s); // , -15);
-    try
-      z.Write(b, length(b));
-    finally
-      z.free;
-    end;
-    result := s.Bytes;
-    setLength(result, s.size);
-  finally
-    s.free;
-  end;
-end;
-
 class function TJWTUtils.decodeJWT(token: string): TJWT;
 var
   header, payload, sig : String;
@@ -1459,7 +1410,7 @@ begin
 
     result.payloadBytes := JWTDeBase64URL(payload);
     if result.header['zip'] = 'DEF' then
-      result.payloadBytes := InflateRfc1951(result.payloadBytes);
+      result.payloadBytes := ungzip(result.payloadBytes);
     result.payload := TJSONParser.Parse(result.payloadBytes);
 
     result.link;
