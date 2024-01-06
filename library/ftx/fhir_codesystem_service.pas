@@ -214,6 +214,7 @@ type
     function name(context: TCodeSystemProviderContext): String; override;
     function version(context: TCodeSystemProviderContext): String; override;
     function TotalCount : integer; override;
+    function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
@@ -1225,6 +1226,11 @@ begin
   result := 0;
   for i := 0 to FCs.CodeSystem.conceptList.count - 1 do
     inc(result, count(FCs.CodeSystem.conceptList[i]));
+end;
+
+function TFhirCodeSystemProvider.getPropertyDefinitions: TFslList<TFhirCodeSystemPropertyW>;
+begin
+  Result := FCs.CodeSystem.properties;
 end;
 
 function TFhirCodeSystemProvider.version(context: TCodeSystemProviderContext): String;

@@ -56,7 +56,7 @@ type
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
     pfAbs, pfCeiling, pfExp, pfFloor, pfLn, pfLog, pfPower, pfTruncate, pfRound, pfSqrt,
     pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin, pfIndexOf,
-    pfLowBoundary, pfHighBoundary, pfPrecision,
+    pfLowBoundary, pfHighBoundary, pfPrecision, pfComparable,
     pfCustom);
 
   TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in fhir4_pathengine, but is in CQL
@@ -78,7 +78,7 @@ const
     'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
     'abs', 'ceiling', 'exp', 'floor', 'ln', 'log', 'power', 'truncate', 'round', 'sqrt',
     'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join', 'indexOf',
-    'lowBoundary', 'highBoundary', 'precision',
+    'lowBoundary', 'highBoundary', 'precision', 'comparable',
     'xx-custom-xx');
 
   FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';

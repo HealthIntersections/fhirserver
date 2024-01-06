@@ -37,7 +37,7 @@ Uses
   zlib, zstream,
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} fsl_testing,
   IdGlobalProtocols,
-  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions,
+  fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions, fsl_gzip,
   fsl_xml,
   {$IFNDEF FPC}
   fsl_msxml,
@@ -1105,11 +1105,14 @@ const
 
 procedure TFslUtilitiesTestCases.testUnicode;
 var
-  s : String;
+  s, sc : String;
   b : TBytes;
 begin
-  s := TEncoding.UTF8.GetString(bu2);
-  AssertTrue(s = 'EKG PB R'''' 波持续时间（持续时长、时长、时间长度、时间、时间长短、为时、为期、历时、延续时间、持久时间、持续期） AVR 导联');
+  sc := 'EKG PB R'''' 波持续时间（持续时长、时长、时间长度、时间、时间长短、为时、为期、历时、延续时间、持久时间、持续期） AVR 导联';
+  b := TEncoding.UTF8.GetBytes(sc);
+  s := TEncoding.UTF8.GetString(bu2); 
+  AssertEqual(b, bu2);
+  AssertEqual(s, sc);
 
   s := '背景 发现是一个原子型临床观察指标';
   b := TEncoding.UTF8.GetBytes(s);
@@ -5266,7 +5269,6 @@ end;
 function TTarGZParserTests.load(filename : String) : TFslList<TFslNameBuffer>;
 var
   bs : TBytesStream;
-  z : TZDecompressionStream;
   tar : TTarArchive;
   entry : TTarDirRec;
   n : String;
@@ -5276,39 +5278,34 @@ var
 begin      
   result := TFslList<TFslNameBuffer>.Create;
   try
-    bs := TBytesStream.create(readZLibHeader(TFileStream.create(filename, fmOpenRead)));
+    bs := TBytesStream.create(ungzip(fileToBytes(filename)));
     try
-      z := TZDecompressionStream.Create(bs, true); // 15+16);
+      tar := TTarArchive.Create(bs);
       try
-        tar := TTarArchive.Create(z);
-        try
-          tar.Reset;
-          while tar.FindNext(entry) do
-          begin
-            n := String(entry.Name);
-            if (n.contains('..')) then
-              raise EFSLException.create('The package contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
-            bi := TBytesStream.Create;
-            try
-              tar.ReadFile(bi);
-              b := copy(bi.Bytes, 0, bi.size);
-            finally
-              bi.free;
-            end;
-            item := TFslNameBuffer.Create;
-            try
-              item.Name := n;
-              item.AsBytes := b;
-              result.Add(item.link)
-            finally
-              item.free;
-            end;
+        tar.Reset;
+        while tar.FindNext(entry) do
+        begin
+          n := String(entry.Name);
+          if (n.contains('..')) then
+            raise EFSLException.create('The package contains the file "'+n+'". Packages are not allowed to contain files with ".." in the name');
+          bi := TBytesStream.Create;
+          try
+            tar.ReadFile(bi);
+            b := copy(bi.Bytes, 0, bi.size);
+          finally
+            bi.free;
           end;
-        finally
-          tar.free;
+          item := TFslNameBuffer.Create;
+          try
+            item.Name := n;
+            item.AsBytes := b;
+            result.Add(item.link)
+          finally
+            item.free;
+          end;
         end;
       finally
-        z.free;
+        tar.free;
       end;
     finally
       bs.free;

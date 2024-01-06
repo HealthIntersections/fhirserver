@@ -64,6 +64,8 @@ type
     procedure assertEqual(left, right : String); overload;
     procedure assertEqual(left, right : integer; message : String); overload;
     procedure assertEqual(left, right : integer); overload;
+    procedure assertEqual(const left, right : TBytes; message : String); overload;
+    procedure assertEqual(const left, right : TBytes); overload;
     procedure assertWillRaise(AMethod: TTestMethodWithContext; context : TObject; AExceptionClass: ExceptClass; AExceptionMessage : String);
     procedure thread(proc : TTestMethodWithContext; context : TObject);
   public
@@ -277,6 +279,36 @@ begin
   TAssert.AssertEquals(left, right);
   {$ELSE}
   checkEquals(left, right);
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(const left, right: TBytes; message: String);
+var
+  i : integer;
+begin
+  {$IFDEF FPC}
+  for i := 0 to IntegerMin(length(left), length(right)) - 1 do
+    if (left[i] <> right[i]) then
+      raise EFslException.create('Byte Arrays differ at position '+inttostr(i)+': '+inttostr(ord(left[i]))+'/'+inttostr(ord(right[i])));
+  if length(left) <> length(right) then
+      raise EFslException.create('Byte Arrays differ in length: '+inttostr(length(left))+'/'+inttostr(length(right)));
+  {$ELSE}
+  todo
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(const left, right: TBytes);
+var
+  i : integer;
+begin
+  {$IFDEF FPC}
+  for i := 0 to IntegerMin(length(left), length(right)) - 1 do
+    if (left[i] <> right[i]) then
+      raise EFslException.create('Byte Arrays differ at position '+inttostr(i)+': '+inttostr(ord(left[i]))+'/'+inttostr(ord(right[i])));
+  if length(left) <> length(right) then
+      raise EFslException.create('Byte Arrays differ in length: '+inttostr(length(left))+'/'+inttostr(length(right)));
+  {$ELSE}
+  todo
   {$ENDIF}
 end;
 

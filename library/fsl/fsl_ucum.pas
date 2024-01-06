@@ -57,6 +57,8 @@ Type
     function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
     function divideBy(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; virtual; abstract;
+    function getCanonicalUnits(units : string) : string; virtual; abstract;
+    function isComparable(u1, u2 : String) : boolean; virtual; abstract;
     function isConfigured : boolean; virtual; abstract;
   end;
 
