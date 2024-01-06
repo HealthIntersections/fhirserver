@@ -79,7 +79,7 @@ const
 
 var
   zchunkmaxsize: dword = 1024*128; //128 KB default max chunk size
-  zbuffersize: dword = 1024*1024*4; //4 MB default buffer size
+  zbuffersize: dword = 1024*1024*16; //4 MB default buffer size
 
 threadvar
   zlasterror: integer;
