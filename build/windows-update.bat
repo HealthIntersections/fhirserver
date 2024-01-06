@@ -12,8 +12,8 @@ set "tmp=%1"
 
 :No1
 
-call windows-libraries.bat %tmp%
+call build\windows-libraries.bat %tmp%
 pause
 
-call windows-fhirserver.bat %tmp%
+call build\windows-fhirserver.bat %tmp%
 pause
