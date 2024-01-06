@@ -145,7 +145,7 @@
             </Options>
           </Linking>
           <Other>
-            <CustomOptions Value="-k--verbose -k--library-path=/usr/local/lib64"/>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--verbose -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
       </Item4>
