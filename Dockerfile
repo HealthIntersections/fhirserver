@@ -42,6 +42,14 @@ RUN cp /usr/local/lib/*.so* /usr/lib/
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 RUN cp exec/pack/*.properties exec/64
 
+# Install curl for the health check
+RUN apt-get update && apt-get install -y curl
+
+# Set the health check
+HEALTHCHECK --interval=1m --timeout=10s --retries=5 \
+  CMD curl -f http://localhost:${PORT}/fhir/metadata || exit 1
+
+# Set the environment variables
 ENV DISPLAY :99
 ENV PORT 80
 ENV TERMINOLOGY_CACHE /terminology
