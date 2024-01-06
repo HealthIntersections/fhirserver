@@ -56,7 +56,7 @@ end;
 function ungzip(bytes : TBytes) : TBytes;
 begin
   result := zflate.zdecompress(bytes);
-  if length(result) = 0 then
+  if zlastError <> 0 then
     raise EFslException.create('Failed to read compressed content: '+zflatetranslatecode(zlasterror));
 end;
 
