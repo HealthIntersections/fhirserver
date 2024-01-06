@@ -37,7 +37,7 @@ uses
   fsl_base;
 
 {
-  for FPC, we use the zflate units by fibonacci.
+  for FPC, we use the zflate units by fibodevy (thanks).
   for delphi, we use delphi's inbuilt ZLib support
 
   this unit is to handle the $IFDEF between the two (tbd)
