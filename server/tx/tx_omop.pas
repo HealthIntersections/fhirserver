@@ -433,6 +433,4 @@ procedure TOMOPServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
   raise ETerminologyError.Create('not done yet: defineFeatures');
 end;
-
 end.
-
