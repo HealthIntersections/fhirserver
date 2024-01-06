@@ -81,15 +81,15 @@ implementation
 const
 {$IFDEF WINDOWS}
   DefaultMSSQLDriver = 'SQL Server';
-  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+  DefaultMySQLDriver = 'MySQL ODBC 8.2 Unicode Driver';
 {$ENDIF}
 {$IFDEF LINUX}
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
-  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+  DefaultMySQLDriver = 'MySQL ODBC 8.2 Unicode Driver';
 {$ENDIF}
 {$IFDEF OSX}
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
-  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+  DefaultMySQLDriver = 'MySQL ODBC 8.2 Unicode Driver';
 {$ENDIF}
 
 Procedure SetUpDefaultTestSettings(filename : String);

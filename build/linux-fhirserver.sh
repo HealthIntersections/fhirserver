@@ -44,7 +44,7 @@ echo "## compile packages/fhir_fui.lpk"
 $BUILD/tools/lazarus/lazbuild packages/fhir_fui.lpk -q -q --build-all
 
 echo "## compile codescanner"
-$BUILD/tools/lazarus/lazbuild utilities/codescan/codescan.lpi --build-mode=linux -q -q --build-all
+echo $BUILD/tools/lazarus/lazbuild utilities/codescan/codescan.lpi --build-mode=linux -q -q --build-all
 
 echo "## compile console"
 $BUILD/tools/lazarus/lazbuild server/fhirconsole.lpi --build-mode=linux -q -q --build-all

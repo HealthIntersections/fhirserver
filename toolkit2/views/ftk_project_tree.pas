@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Graphics, IniFiles,
-  Controls, ComCtrls, Dialogs, UITypes, Menus,
+  Controls, ComCtrls, Dialogs, System.UITypes, Menus,
   fsl_base, fsl_utilities, fsl_json, fsl_fpc, fsl_stream,
   fui_lcl_managers,
   fhir_client,

@@ -663,7 +663,4 @@ begin
     FTerminologies.assign(source.Terminologies);
   end;
 end;
-
-
 end.
-

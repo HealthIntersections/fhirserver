@@ -44,11 +44,11 @@ type
 
   TFHIRICAOTests = Class (TFslTestCase)
   public
-  published
     {$IFDEF WINDOWS}
     // this is labelled as windows only in order to prevent the ci-build failing because the certificate - a real one - isn't in git (todo: sort this out)
     Procedure TestIcaoCertAu;
     {$ENDIF}
+  published
     Procedure TestIcaoCertAuBroken;
     Procedure TestIcaoCertNoStore;
   end;

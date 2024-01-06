@@ -1296,6 +1296,7 @@ Begin
                   oRequest.IfNoneExist := request.RawHeaders.Values['If-None-Exist'];
                   oRequest.IfModifiedSince := processIfModifiedSince(request.RawHeaders.Values['If-Modified-Since']);
                   oRequest.strictSearch := request.RawHeaders.Values['Prefer'] = 'handling=strict';
+                  oRequest.ContentLanguage := request.ContentLanguage;
 
                   noErrCode := StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['nohttperr']) or
                     StringArrayExistsInsensitive(['yes', 'true', '1'], oRequest.Parameters['_nohttperr']);

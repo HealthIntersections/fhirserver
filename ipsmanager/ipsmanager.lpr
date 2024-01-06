@@ -30,4 +30,3 @@ begin
   Application.CreateForm(TIPSManagerForm, IPSManagerForm);
   Application.Run;
 end.
-

@@ -51,7 +51,7 @@ type
     function isValidation : boolean; virtual;
     procedure processExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW; result : TFHIRExpansionParams);
     function buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params : TFhirParametersW) : TFHIRExpansionParams;
-    function loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string; var addCodeable : boolean) : TFhirCodeableConceptW;
+    function loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string; var mode : TValidationCheckMode) : TFhirCodeableConceptW;
     function processAdditionalResources(context : TOperationContext; manager: TFHIROperationEngine; mr : TFHIRMetadataResourceW; params : TFHIRParametersW) : TFslMetadataResourceList;
   public
     constructor Create(factory : TFHIRFactory; server : TTerminologyServer; languages : TIETFLanguageDefinitions);
@@ -315,13 +315,15 @@ begin
           profile := buildExpansionParams(request, manager, params);
           try
             filter := params.str('filter');
-            count := StrToIntDef(params.str('count'), 0);
-            offset := StrToIntDef(params.str('offset'), 0);
-            limit := StrToIntDef(params.str('_limit'), 0);
-            if (limit < 0) then
-              limit := 0
+            count := StrToIntDef(params.str('count'), -1);
+            offset := StrToIntDef(params.str('offset'), -1);
+            limit := StrToIntDef(params.str('_limit'), -1);
+            if (limit < -1) then
+              limit := -1
             else if limit > UPPER_LIMIT_TEXT then
               limit := UPPER_LIMIT_TEXT; // can't ask for more than this externally, though you can internally
+            if (count > 0) and (offset = -1) then
+              offset := 0;
 
             if (txResources = nil) then
               txResources := processAdditionalResources(context, manager, nil, params);
@@ -427,7 +429,8 @@ var
 //  coding : TFhirCodingW;
   abstractOk, inferSystem : boolean;
   params, pout : TFhirParametersW;
-  needSecure, isValueSet, addCodeable : boolean;
+  needSecure, isValueSet : boolean;
+  mode : TValidationCheckMode;
   profile : TFhirExpansionParams;
   txResources : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;
@@ -448,7 +451,7 @@ begin
           txResources := nil;
           profile := nil;
           try
-            coded := loadCoded(request, isValueSet, issuePath, addCodeable);
+            coded := loadCoded(request, isValueSet, issuePath, mode);
             try
               result := 'Validate Code '+coded.renderText;
               if isValueSet then
@@ -517,7 +520,7 @@ begin
                 txResources := processAdditionalResources(context, manager, nil, params);
 
               profile := buildExpansionParams(request, manager, params);
-              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, inferSystem, addCodeable, txResources, summary);
+              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, inferSystem, mode, txResources, summary);
               try
                 if summary <> '' then
                   result := result + ': '+summary;
@@ -687,7 +690,7 @@ var
 //  resourceKey : integer;
   coded : TFhirCodeableConceptW;
   coding : TFslList<TFhirCodingW>;
-  dummy : boolean;
+  dummy : TValidationCheckMode;
   params, pOut : TFhirParametersW;
   issuePath : String;
 begin
@@ -1261,8 +1264,10 @@ begin
       result.languages := THTTPLanguageList.create(p.valueString, not isValidation)
     else if (p.name = 'property') then
       result.properties.add(p.valueString)
-    else if (p.name = 'mode') and (p.valueString = 'lenient-display-validation') then
-      result.displayWarning := true                
+    else if (p.name = 'lenient-display-validation') and (p.valueString = 'true') then
+      result.displayWarning := true
+    else if (p.name = 'valueset-membership-only') and (p.valueString = 'true') then
+      result.membershipOnly := true
     else if (p.name = 'includeAlternateCodes') then
       result.altCodeRules.seeParam(p.valueString)
     else if (p.name = 'designation') then
@@ -1281,14 +1286,9 @@ begin
       end;
     end
   end;
-  result.valueSetMode := vsvmAllChecks;
-  if (params.has('valueSetMode')) then
-  begin
-    if (params.str('valueSetMode') = 'CHECK_MEMBERSHIP_ONLY') then
-      result.valueSetMode := vsvmMembershipOnly
-    else if (params.str('valueSetMode') = 'NO_MEMBERSHIP_CHECK') then
-      result.valueSetMode := vsvmNoMembership
-  end;
+
+  if not result.hasLanguages and (request.ContentLanguage <> '') then
+    result.languages := THTTPLanguageList.create(request.ContentLanguage, not isValidation);;
   if not result.hasLanguages and (request.LangList <> nil) and (request.LangList.source <> '') then
     result.languages := THTTPLanguageList.create(request.LangList.source, not isValidation);
 end;
@@ -1316,13 +1316,11 @@ begin
   inherited;
 end;
 
-function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string; var addCodeable : boolean): TFhirCodeableConceptW;
+function TFhirTerminologyOperation.loadCoded(request : TFHIRRequest; isValueSet : boolean; var issuePath : string; var mode : TValidationCheckMode): TFhirCodeableConceptW;
 var
   coding : TFhirCodingW;
   params : TFhirParametersW;
 begin
-  addCodeable := false;
-
   // ok, now we need to find the source code to validate
   if (request.form <> nil) and request.form.hasParam('coding') then
   begin
@@ -1334,16 +1332,18 @@ begin
       coding.free;
     end;
     issuePath := 'Coding';
+    mode := vcmCoding;
   end
   else if (request.form <> nil) and request.form.hasParam('codeableConcept') then
   begin
-    addCodeable := true;
+    mode := vcmCodeableConcept;
     result := FFactory.makeDtFromForm(request.form.getParam('codeableConcept'), request.langList, 'codeableConcept', 'CodeableConcept') as TFhirCodeableConceptW;
     issuePath := 'CodeableConcept';
   end
   else if request.Parameters.has('code') and (request.Parameters.has('system') or request.Parameters.has('inferSystem') or request.Parameters.has('implySystem')) then
   begin
     issuePath := '';
+    mode := vcmCode;
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
     try
@@ -1360,6 +1360,7 @@ begin
   else if not isValueSet and request.Parameters.has('code') and request.Parameters.has('url') then
   begin
     issuePath := '';
+    mode := vcmCode;
     result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
     coding := result.addCoding;
     try
@@ -1377,6 +1378,7 @@ begin
     try
       if params.obj('coding') <> nil then
       begin
+        mode := vcmCoding;
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         issuePath := 'Coding';
         coding := FFactory.wrapCoding(params.obj('coding').Link);
@@ -1388,13 +1390,14 @@ begin
       end
       else if params.has('codeableConcept') then
       begin
-        addCodeable := true;
+        mode := vcmCodeableConcept;
         result := FFactory.wrapCodeableConcept(params.obj('codeableConcept').Link);
         issuePath := 'CodeableConcept';
       end
-      else if isValueSet and (params.has('code') and (params.has('system') or params.bool('inferSystem') or params.bool('implySystem'))) then
+      else if (params.has('code') and (params.has('system')) or (isValueSet and (params.has('code') and (params.bool('inferSystem') or params.bool('implySystem'))))) then
       begin
         issuePath := '';
+        mode := vcmCode;
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try
@@ -1414,6 +1417,7 @@ begin
       else if not isValueSet and (params.has('code') and params.has('url')) then
       begin
         issuePath := '';
+        mode := vcmCode;
         result := FFactory.wrapCodeableConcept(fFactory.makeByName('CodeableConcept'));
         coding := result.addCoding;
         try

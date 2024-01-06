@@ -37,7 +37,7 @@ Uses
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
   {$IFDEF FPC} ZStream, {$ELSE} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging;
+  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging, fsl_gzip;
 
 type
   EParserException = class;
@@ -5302,34 +5302,16 @@ End;
 
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
-  oSrc : TStream;
-  oDecompressor : TZDecompressionStream;
-
+  src : TBytes;
 {$IFOPT C+}
   iRead : Integer;
 {$ENDIF}
 Begin
   If iSizeDecomp > 0 Then
   Begin
-    oSrc := TPointerMemoryStream.Create(pIn, iSizeComp);
-    Try
-      oDecompressor := TZDecompressionStream.Create(oSrc);
-      Try
-        oBuffer.Capacity := iSizeDecomp;
-
-      {$IFOPT C+}
-        iRead := oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
-        Assert(CheckCondition(iRead = iSizeDecomp, 'ReadKnownDeflate', partName+': Expected to read '+IntegerToString(iSizeDecomp)+
-            ' bytes, but actually found '+IntegerToString(iRead)+' bytes'));
-      {$ELSE}
-        oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
-      {$ENDIF}
-      Finally
-        oDecompressor.free;
-      End;
-    Finally
-      oSrc.free;
-    End;
+    setLength(src, iSizeComp);
+    move(pIn^, src[0], iSizeComp);
+    oBuffer.AsBytes := ungzip(src);
   End;
 End;
 
@@ -6113,7 +6095,7 @@ begin
     else FBytesToGo := DirRec.Size;
   // zipslip prevention: .. in file names are *never* allowed anywhere
   path := DirRec.name;
-  If path.contains('..') then
+  If path.contains('../') or path.contains('/..') then
     raise EIOException.create('Illegal Filename in compressed archive: '+path);
 end;
 

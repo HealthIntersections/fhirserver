@@ -32,7 +32,7 @@ Interface
 
 Uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_stream, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_gzip,
   dicom_dictionary, dicom_objects, dicom_writer;
 
   
@@ -1569,7 +1569,7 @@ begin
       SetLength(sComp, oInput.Size);
       oInput.Position := 0;
       oInput.Read(sComp[1], oInput.Size);
-      sDecomp := ZcompressBytes(sComp);
+      sDecomp := ungzip(sComp);
       oInput.Position := 0;
 
       oPDU := TDicomPDUDecoder.Create(oInput.Size);

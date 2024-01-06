@@ -1569,8 +1569,11 @@ end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
-  FServerContext.Unload;
-  FServerContext.free;
+  if FServerContext <> nil then
+  begin
+    FServerContext.Unload;
+    FServerContext.free;
+  end;
   FServerContext := nil;
   FStore.free;
   FStore := nil;
