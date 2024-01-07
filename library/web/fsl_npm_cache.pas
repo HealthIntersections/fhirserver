@@ -100,7 +100,7 @@ type
     FCaching : boolean;
     function PathForPackage(id, ver : String) : String;
 
-    function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
+    function loadArchive(content : TBytes; description : String) : TDictionary<String, TBytes>;
     procedure clearCache;
     function checkPackageSize(dir : String) : integer;
     procedure work(pct : integer; done : boolean; desc : String);
@@ -146,7 +146,7 @@ type
     procedure clear;
     procedure UnLoad;
 
-    function import(content : TBytes) : TNpmPackage; overload;
+    function import(content : TBytes; description : String) : TNpmPackage; overload;
     function install(url : String) : boolean;
 
     procedure remove(id : String); overload;
@@ -476,7 +476,7 @@ begin
 end;
 
 
-function TFHIRPackageManager.import(content : TBytes) : TNpmPackage;
+function TFHIRPackageManager.import(content : TBytes; description : String) : TNpmPackage;
 var
   npm : TJsonObject;
   id, ver, dir, fn, fver, s : String;
@@ -484,7 +484,7 @@ var
   size,c : integer;
   indexer : TNpmPackageIndexBuilder;
 begin
-  files := loadArchive(content);
+  files := loadArchive(content, description);
   try
     npm := TJSONParser.Parse(files['package\package.json']);
     try
@@ -579,7 +579,7 @@ begin
       raise EIOException.create('Unable to find package for '+url+': '+s);
     if result then
     begin
-      Import(fetch.Buffer.AsBytes).free;
+      Import(fetch.Buffer.AsBytes, url).free;
     end;
   finally
     fetch.free;
@@ -724,7 +724,7 @@ begin
       list.Add(s);
 end;
 
-function TFHIRPackageManager.loadArchive(content: TBytes): TDictionary<String, TBytes>;
+function TFHIRPackageManager.loadArchive(content: TBytes; description : String): TDictionary<String, TBytes>;
 var
   bo, bi : TBytesStream;
   tar : TTarArchive;
@@ -736,7 +736,7 @@ begin
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
-    bo := TBytesStream.create(ungzip(content));
+    bo := TBytesStream.create(ungzip(content, description));
     try
       work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
       tar := TTarArchive.Create(bo);

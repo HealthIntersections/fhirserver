@@ -39,7 +39,7 @@ uses
   {$IFDEF LINUX}
   baseunix, unix,
   {$ENDIF}
-  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, Types
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, ZStream, Types
   {$IFDEF FPC},
   {$IFDEF OSX}
   MacOSAll, CFBase, CFString,
@@ -128,6 +128,8 @@ procedure FileSetModified(const FileName : String; dateTime : TDateTime);
 
 {$IFDEF FPC}
 type
+   TZDecompressionStream = TDecompressionStream;
+   TZCompressionStream = TCompressionStream;
 
 
   { TDirectory }

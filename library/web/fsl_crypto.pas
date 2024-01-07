@@ -1410,7 +1410,7 @@ begin
 
     result.payloadBytes := JWTDeBase64URL(payload);
     if result.header['zip'] = 'DEF' then
-      result.payloadBytes := ungzip(result.payloadBytes);
+      result.payloadBytes := ungzip(result.payloadBytes, 'jwt payload');
     result.payload := TJSONParser.Parse(result.payloadBytes);
 
     result.link;

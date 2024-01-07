@@ -44,7 +44,7 @@ uses
 }
 
 function gzip(bytes : TBytes; header : boolean; level: dword=9) : TBytes;
-function ungzip(bytes : TBytes) : TBytes;
+function ungzip(bytes : TBytes; description : String) : TBytes;
 
 implementation
 
@@ -53,11 +53,11 @@ begin
   result := zflate.gzcompress(bytes, level);
 end;
 
-function ungzip(bytes : TBytes) : TBytes;
+function ungzip(bytes : TBytes; description : String) : TBytes;
 begin
   result := zflate.zdecompress(bytes);
   if zlastError <> 0 then
-    raise EFslException.create('Failed to read compressed content: '+zflatetranslatecode(zlasterror));
+    raise EFslException.create('Failed to uncompress '+description+': '+zflatetranslatecode(zlasterror));
 end;
 
 

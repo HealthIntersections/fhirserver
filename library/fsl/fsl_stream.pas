@@ -5302,16 +5302,33 @@ End;
 
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
-  src : TBytes;
+  oSrc : TStream;
+  oDecompressor : TZDecompressionStream;
 {$IFOPT C+}
   iRead : Integer;
 {$ENDIF}
 Begin
   If iSizeDecomp > 0 Then
   Begin
-    setLength(src, iSizeComp);
-    move(pIn^, src[0], iSizeComp);
-    oBuffer.AsBytes := ungzip(src);
+    oSrc := TPointerMemoryStream.Create(pIn, iSizeComp);
+    Try
+      oDecompressor := TZDecompressionStream.Create(oSrc);
+      Try
+        oBuffer.Capacity := iSizeDecomp;
+
+      {$IFOPT C+}
+        iRead := oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
+        Assert(CheckCondition(iRead = iSizeDecomp, 'ReadKnownDeflate', partName+': Expected to read '+IntegerToString(iSizeDecomp)+
+            ' bytes, but actually found '+IntegerToString(iRead)+' bytes'));
+      {$ELSE}
+        oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
+      {$ENDIF}
+      Finally
+        oDecompressor.free;
+      End;
+    Finally
+      oSrc.free;
+    End;
   End;
 End;
 

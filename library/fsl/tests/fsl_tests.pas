@@ -5278,7 +5278,7 @@ var
 begin      
   result := TFslList<TFslNameBuffer>.Create;
   try
-    bs := TBytesStream.create(ungzip(fileToBytes(filename)));
+    bs := TBytesStream.create(ungzip(fileToBytes(filename), filename));
     try
       tar := TTarArchive.Create(bs);
       try

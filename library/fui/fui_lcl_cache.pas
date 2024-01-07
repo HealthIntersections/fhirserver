@@ -206,7 +206,7 @@ begin
       PackageCacheForm.Cursor := crHourGlass;
       try
         FCache.OnWork := PackageCacheForm.packageWork;
-        result := FCache.Import(fileToBytes(PackageCacheForm.dlgOpen.FileName));
+        result := FCache.Import(fileToBytes(PackageCacheForm.dlgOpen.FileName), PackageCacheForm.dlgOpen.FileName);
       finally
         PackageCacheForm.Cursor := crDefault;
       end;
@@ -216,7 +216,7 @@ begin
   begin
     FCache.OnWork := PackageCacheForm.packageWork;
     if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
-      result := FCache.Import(TInternetFetcher.fetchUrl(url));
+      result := FCache.Import(TInternetFetcher.fetchUrl(url), url);
   end
   else if not FCache.packageExists(mode, '') then
   begin
