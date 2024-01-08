@@ -3880,7 +3880,7 @@ var
 begin
   s := ToXml(pretty, xmlheader);
   b := TEncoding.UTF8.GetBytes(s);
-  stream.Write(b, length(b));
+  stream.Write(b[0], length(b));
 end;
 
 procedure TMXmlDocument.ToXml(stream: TStream; pretty, xmlHeader: boolean);
@@ -3890,7 +3890,7 @@ var
 begin
   s := ToXml(pretty, xmlheader);
   b := TEncoding.UTF8.GetBytes(s);
-  stream.Write(b, length(b));
+  stream.Write(b[0], length(b));
 end;
 
 function TMXmlDocument.ToXml(pretty, xmlHeader: boolean): String;
