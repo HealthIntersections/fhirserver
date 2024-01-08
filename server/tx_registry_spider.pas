@@ -178,6 +178,7 @@ var
   arr : TJsonArray;
   i : integer;
   reg : TServerRegistry;
+  s : String;
 begin
   FIni := TIniFile.Create(tempFile('tx-registry-'+name+'.ini'));
   try
@@ -189,7 +190,8 @@ begin
       log('Fetch '+FAddress, '', false);
       json := fetchJson(FAddress);
       try
-        if json.str['formatVersion'] <> '1' then
+        s := json.str['formatVersion'];
+        if s <> '1' then
           raise EFslException.Create('Unable to proceed: registries version is '+json.str['formatVersion']+' not "1"');
 
         arr := json.arr['registries'];
@@ -227,6 +229,7 @@ var
   json : TJsonObject;
   arr : TJsonArray;
   i : integer;
+  s : String;
   srvr : TServerInformation;
 begin
   try
@@ -243,7 +246,8 @@ begin
     FRegistryErrors := '';
     json := fetchJson(reg.Address);
     try
-      if json.str['formatVersion'] <> '1' then
+      s := json.str['formatVersion'];
+      if s <> '1' then
         raise EFslException.Create('Unable to proceed: registry version @'+reg.Address+' is '+json.str['formatVersion']+' not "1"');
       
       arr := json.arr['servers'];

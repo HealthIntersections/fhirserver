@@ -545,6 +545,8 @@ begin
 
   result := TJsonObject.Create;
   try
+    result.str['formatVersion'] := '1';
+    result.str['registry-url'] := FInfo.address;
     for reg in FInfo.Registries do
       for srvr in reg.Servers do
       begin
@@ -678,8 +680,8 @@ begin
     end
     else if request.document = PathWithSlash+'resolve' then
     begin
-      result := 'Resolve '+pm.Value['version']+' server for '+pm.Value['url'];
-      json := resolve(pm.Value['version'], pm.Value['url']);
+      result := 'Resolve '+pm.Value['fhirVersion']+' server for '+pm.Value['url'];
+      json := resolve(pm.Value['fhirVersion'], pm.Value['url']);
       try
         response.ResponseNo := 200;
         response.ContentType := 'application/json';
