@@ -718,7 +718,7 @@
         <IsPartOfProject Value="True"/>
       </Unit83>
       <Unit84>
-        <Filename Value="remote_config.pas"/>
+        <Filename Value="zero_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit84>
       <Unit85>

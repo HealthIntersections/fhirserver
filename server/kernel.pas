@@ -50,7 +50,7 @@ Uses
   {$ENDIF}
 
   server_constants, server_config, utilities, server_context,
-  tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
+  tx_manager, telnet_server, web_source, web_server, web_cache, zero_config,
   server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
   endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao,

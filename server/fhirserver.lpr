@@ -47,7 +47,8 @@ uses
   Classes, SysUtils,
   fsl_fpc_memory, fsl_utilities,
 
-  kernel, server_testing, server_stats, remote_config, telnet_server, package_spider,
+  kernel, server_testing, server_stats, 
+zero_config, telnet_server, package_spider,
   tx_registry_spider, tx_omop, tx_registry_model, endpoint_txregistry,
   endpoint_icao, tests_cpt, tx_cpt, xig_provider, endpoint_xig, web_server;
 
