@@ -435,7 +435,7 @@ begin
     r := '';
     for s in FContexts do
       CommaAdd(r, s);
-    raise ETerminologyError.create(FI18n.translate('VALUESET_CIRCULAR_REFERENCE', FLangList, [vurl, '['+r+']']), itBusinessRule);
+    raise ETerminologyError.create(FI18n.translate('VALUESET_CIRCULAR_REFERENCE', FLangList, [vurl, '['+r+']']), itProcessing);
   end
   else
     FContexts.add(vurl);
