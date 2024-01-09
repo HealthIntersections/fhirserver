@@ -1916,7 +1916,7 @@ begin
                      begin
                        m := 'Unable to check whether the code is in the value set '+FValueSet.vurl+' because the code system '+ws+'|'+c.version+' was not found';
                        msg(m);
-                       op.addIssue(isWarning, itNotFound, issuepath, m, oicVSProcessing);
+                       op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
                      end
                      else
                        msg(m);
@@ -2044,7 +2044,7 @@ begin
         else if (tver <> '') and (mode <> vcmCodeableConcept) then
           result.addParamStr('version', tver);
 
-        if pdisp <> '' then
+        if (pdisp <> '') and ((pcode <>'') or ((tcode <> '') and (mode <> vcmCodeableConcept))) then
           result.AddParamStr('display', pdisp);
         //else if tdisp <> '' then
         //  result.AddParamStr('display', tdisp);
