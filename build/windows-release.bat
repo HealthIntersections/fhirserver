@@ -42,7 +42,7 @@ exit /b 1
 :OK
 
 call load-password.bat
-echo %HI_PASSWORD%
+echo password=%HI_PASSWORD%
 
 
 :: write version and date to source code 
@@ -53,7 +53,6 @@ utilities\codescan\codescan.exe -version %1
 utilities\codescan\codescan.exe -check library\version.inc -message "saving the version failed" || goto :error
 
 utilities\codescan\codescan.exe -check release-notes.md -message "Please provide some release notes" || goto :error
-utilities\codescan\codescan.exe -check install\healthintersections.pfx -message "Code signing Certificate is missing" || goto :error
 
 del exec\64\*.exe /q /s 1>nul
 del install\build\*.exe 1>nul
@@ -61,42 +60,16 @@ del release-notes-old.md 1>nul
 
 :: ok. we're good to go...
 
-:: =========================================================================================
-echo ## build FHIRConsole ## 
-call clean 1>nul
 utilities\codescan\codescan.exe -proj-version c:\work\fhirserver\server\fhirconsole.lpi -version %1 -debug false || goto :error
-%tmp%\tools\lazarus\lazbuild.exe -B server\fhirconsole.lpi --build-mode=win64-release -q -q --build-all
-utilities\codescan\codescan.exe -check exec\64\fhirconsole.exe -message "Building the console failed" || goto :error
-
-:: =========================================================================================
-echo ## build FHIRServer (debug) ## 
-call clean 1>nul
-del server\FHIRServer.cfg
-copy server\FHIRServer.debug.cfg server\FHIRServer.cfg
-utilities\codescan\codescan.exe -proj-version server\fhirserver.dpr -version %1 -debug true || goto :error
-cd server
-..\install\tools\dcc64.exe FHIRServer.dpr -Q
-cd ..
-utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building the Debug server failed" || goto :error
-copy exec\64\fhirserver.exe exec\64\FHIRServer.debug.exe
-del exec\64\fhirserver.exe 
-
-:: =========================================================================================
-echo ## build FHIRServer (release) ## 
-call clean 1>nul
-del server\FHIRServer.cfg
-copy server\FHIRServer.release.cfg server\FHIRServer.cfg
-utilities\codescan\codescan.exe -proj-version server\fhirserver.dpr -version %1 -debug false || goto :error
-cd server
-..\install\tools\dcc64 FHIRServer.dpr -Q
-cd ..
-utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building the server failed" || goto :error
-
-:: =========================================================================================
-echo ## build FHIRToolkit ##
-call clean 1>nul
+utilities\codescan\codescan.exe -proj-version server\fhirserver.lpi -version %1 -debug true || goto :error
+utilities\codescan\codescan.exe -proj-version server\fhirserver.lpi -version %1 -debug false || goto :error
 utilities\codescan\codescan.exe -proj-version toolkit2\fhirtoolkit.lpi -version %1 -debug false || goto :error
-%tmp%\tools\lazarus\lazbuild.exe -B toolkit2\fhirtoolkit.lpi --build-mode=win64-release -q -q --build-all
+
+call build\windows-fhirserver.bat %2
+
+utilities\codescan\codescan.exe -check exec\64\fhirconsole.exe -message "Building the console failed" || goto :error
+utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building the Debug server failed" || goto :error
+utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building the server failed" || goto :error
 utilities\codescan\codescan.exe -check exec\64\fhirtoolkit.exe -message "Building the toolkit failed" || goto :error
 
 echo All compile done
@@ -109,10 +82,10 @@ echo All compile done
 :: setlocal
 :: set HI_PASSWORD="...."
 
-install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRConsole.exe
-install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.debug.exe
-install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.exe
-install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRToolkit.exe
+rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRConsole.exe
+rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.debug.exe
+rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.exe
+rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRToolkit.exe
 
 :: =========================================================================================
 :: build the web file
@@ -143,7 +116,7 @@ set HI_PASSWORD=null
 :: now time to do the github release
 
 echo ## GitHub Release ##
-git commit library\version.inc -m "Release Version"
+git commit library\version.inc -m "Release Version %1"
 git push 
 install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
 rename release-notes.md release-notes-old.md
