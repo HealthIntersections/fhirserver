@@ -141,8 +141,7 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-WM11.0
--XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+      <CustomOptions Value="-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 -gw2
 -gw3"/>
     </Other>

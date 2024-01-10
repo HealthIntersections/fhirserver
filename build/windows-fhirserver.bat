@@ -7,18 +7,17 @@ set FSDIR=%CD%
 setlocal
 set "tmp=r:\fsbuild"
 
-md ..\exec\64
-copy ..\exec\pack\*.cfg ..\exec\64\
-copy ..\exec\pack\*.dat ..\exec\64\
-copy ..\exec\pack\w64\*.dll ..\exec\64\
+md exec\64
+copy exec\pack\*.cfg exec\64\
+copy exec\pack\*.dat exec\64\
+copy exec\pack\w64\*.dll exec\64\
 
-del ..\exec\64\*.exe 
+del exec\64\*.exe 
 
 IF %1.==. GOTO No1
 set "tmp=%1"
 
 :No1
-
 
 echo ## compile packages/fhir_indy.lpk
 %tmp%\tools\lazarus\lazbuild.exe packages/fhir_indy.lpk -q -q --build-all
