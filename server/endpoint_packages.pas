@@ -922,6 +922,7 @@ var
     filter, src : String;
     vars : TFslMap<TFHIRObject>;
     list : TFslList<TJsonObject>;
+    dt : TFslDateTime;
 begin
   conn := FDB.getConnection('Package.server.search');
   try
@@ -960,7 +961,9 @@ begin
           json.add(v);
           list.Add(v.Link);
           v['name'] := conn.ColStringByName['Id'];
-          v['date'] := conn.ColDateTimeExByName['PubDate'].toXML;
+          dt := conn.ColDateTimeExByName['PubDate'];
+          if (dt.year > 0) then
+            v['date'] := dt.toXML;
           v['version'] := conn.ColStringByName['Version'];
           v['fhirVersion'] := interpretVersion(conn.ColStringByName['FhirVersions']);
             v['count'] := conn.ColStringByName['DownloadCount'];
