@@ -359,6 +359,11 @@ begin
     Logging.log('Web source from /Users/grahamegrieve/work/server/server/web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('/Users/grahamegrieve/work/server/server/web')
   end
+  else if FolderExists(FilePath([TCommandLineParameters.execDir(), '.\web'])) then
+  begin
+    Logging.log('Web source from ./web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([TCommandLineParameters.execDir(), '.\web']))
+  end
   else if FolderExists(FilePath([TCommandLineParameters.execDir(), '..\..\server\web'])) then
   begin
     Logging.log('Web source from ../../server/web');
