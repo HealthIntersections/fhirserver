@@ -93,7 +93,7 @@ type
     function link  : TFHIRTxRegistryWebServer; overload;
     function description : String; override;
 
-    property NextScan : TDateTIme read FNextScan write FNextScan;
+    property NextScan : TDateTime read FNextScan write FNextScan;
     property scanning : boolean read FScanning write SetScanning;
 
     function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
@@ -280,12 +280,12 @@ begin
   finally
     FEndPoint.FTxRegistryServer.scanning := false;
   end;
-  FEndPoint.FTxRegistryServer.NextScan := now + 1/24;
+  FEndPoint.FTxRegistryServer.NextScan := ((1/24) / 12); // every five minutes
 end;
 
 procedure TTxRegistryUpdaterThread.Initialise;
 begin
-  TimePeriod := 60 * 60 * 1000;
+  TimePeriod := 5 * 60 * 1000;
 end;
 
 procedure TTxRegistryUpdaterThread.doSendEmail(dest, subj, body : String);

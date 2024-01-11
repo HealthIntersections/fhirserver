@@ -314,9 +314,10 @@ end;
 procedure TTxRegistryScanner.processServerVersion(source: String; srvr: TServerInformation; obj: TJsonObject; ver: TServerVersionInformation);
 var
   v : TSemanticVersion;
-begin   
+begin
   try
     ver.Address := obj.str['url']; 
+    Logging.log('Check on server '+ver.Address);
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
     try

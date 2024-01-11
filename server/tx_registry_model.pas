@@ -556,7 +556,7 @@ begin
   FDoco := source.doco;
   for t in source.Registries do
   begin
-    sr := registry(t.Name);
+    sr := registry(t.Code);
     if (sr = nil) then
       FRegistries.add(t.link)
     else
@@ -603,7 +603,7 @@ begin
   FError := source.FError;
   for t in source.Servers do
   begin
-    s := server(t.Name);
+    s := server(t.Code);
     if (s = nil) then
       FServers.add(t.link)
     else
