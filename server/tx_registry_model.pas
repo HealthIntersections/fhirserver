@@ -37,6 +37,9 @@ type
     property LastSuccess : TFslDateTime read FLastSuccess write FLastSuccess;
     property Terminologies : TStringList read FTerminologies;     
     procedure update(source : TServerVersionInformation);
+
+    function Details : String;
+    function cslist : String;
   end;
 
   { TServerInformation }
@@ -62,7 +65,9 @@ type
     function version(ver : String) : TServerVersionInformation;
     procedure update(source : TServerInformation);
 
-    function isAuth(tx : String) : boolean;
+    function Details : String;
+    function isAuth(tx : String) : boolean;  
+    function csAuth : String;
   end;
 
   { TServerRegistry }
@@ -95,6 +100,7 @@ type
   TServerRegistries = class (TFslObject)
   private
     FAddress : String;
+    FDoco: String;
     FLastRun : TFslDateTime;
     FOutcome : String;
     FRegistries: TFslList<TServerRegistry>;
@@ -103,6 +109,7 @@ type
     destructor Destroy; override;
     function Link : TServerRegistries; overload;
     property Address : String read FAddress write FAddress;
+    property doco : String read FDoco write FDoco;
     property LastRun : TFslDateTime read FLastRun write FLastRun;
     property Outcome : String read FOutcome write FOutcome;
     property Registries : TFslList<TServerRegistry> read FRegistries;
@@ -362,13 +369,30 @@ begin
   end;
 end;
 
+function hasMatchingCodeSystem(cs : String; list : TStringList) : boolean;
+var
+  s, r : String;
+begin
+  r := cs;
+  if r.contains('|') then
+    r := r.subString(0, r.indexOf('|'));
+  result := false;
+  for s in list do
+  begin
+    if (s = cs) or (r = cs) then
+      exit(true);
+  end;
+end;
+
 class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvr: TServerInformation; version, tx: String; rows: TFslList<TServerRow>);
 var
   ver : TServerVersionInformation;
+  auth : boolean;
 begin
+  auth := hasMatchingCodeSystem(tx, srvr.AuthList);
   for ver in srvr.Versions do
     if (version = '') or (TSemanticVersion.matches(version, ver.version, semverAuto)) then
-      if (tx = '') or (ver.Terminologies.IndexOf(tx) > -1) then
+      if auth or (tx = '') or hasMatchingCodeSystem(tx, ver.Terminologies) then
         addRow(rows, reg, srvr, ver);
 end;
 
@@ -510,6 +534,7 @@ var
 begin
   FLastRun := source.FLastRun;
   FOutcome := source.FOutcome;
+  FDoco := source.doco;
   for t in source.Registries do
   begin
     sr := registry(t.Name);
@@ -615,6 +640,11 @@ begin
   end;
 end;
 
+function TServerInformation.Details: String;
+begin
+  result := FAccessInfo;
+end;
+
 function passesMask(mask, tx : string) : Boolean;
 begin
   if mask.EndsWith('*') then
@@ -631,6 +661,16 @@ begin
   for mask in AuthList do
     if passesMask(mask, tx) then
       exit(true);
+end;
+
+function TServerInformation.csAuth: String;
+var
+  s : String;
+begin
+  result := '<ul>';
+  for s in FAuthlist do
+    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+  result := result + '</ul>';
 end;
 
 { TServerVersionInformation }
@@ -662,6 +702,25 @@ begin
     FLastSuccess := source.FLastSuccess;
     FTerminologies.assign(source.Terminologies);
   end;
+end;
+
+function TServerVersionInformation.Details: String;
+begin
+  if FError = '' then
+    result := 'All Ok'
+  else
+    result := FError;
+  result := result + ' (last seen '+LastSuccess.toXML()+')';
+end;
+
+function TServerVersionInformation.cslist: String;
+var
+  s : String;
+begin
+  result := '<ul>';
+  for s in FTerminologies do
+    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+  result := result + '</ul>';
 end;
 
 
