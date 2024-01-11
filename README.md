@@ -112,7 +112,6 @@ Delphi:
 * **library**: the pascal reference implementation with supporting code
 * **exec**: files needed by the server at run time
 
-* **1-ClickServer**: Not sure what this is
 * **.github**: ci-build setup
 * **exec**: files required at execution time, and target for the compiled applications (e.g. exec/64)
 * **build**: build scripts for windows and linux. Will install the entire pascal toolchain from scratch  - see below
