@@ -3,7 +3,7 @@ FROM ubuntu:22.04 as builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-RUN apt update && apt install -y tzdata wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev build-essential curl
+RUN apt update && apt install -y tzdata wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev build-essential curl binutils
 
 # Download and build OpenSSL 1.1.1w
 WORKDIR /tmp
