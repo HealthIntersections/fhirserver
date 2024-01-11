@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_json, fsl_utilities, fsl_versions, fsl_logging, fsl_stream;
+  fsl_base, fsl_json, fsl_utilities, fsl_versions;
 
 Type
   TServerSecurity = (ssOpen, ssPassword, ssToken, ssOAuth, ssSmart, ssCert);
@@ -392,8 +392,6 @@ begin
   result := false;
   for s in list do
   begin
-    if (s.startsWith('http://snomed')) then
-      Logging.Log('what?');
     if mask and passesMask(s, cs) then
       exit(true);
     if not mask and ((s = cs) or (r = s)) then
@@ -410,7 +408,6 @@ begin
   for ver in srvr.Versions do
     if (version = '') or (TSemanticVersion.matches(version, ver.version, semverAuto)) then
       begin
-        StringToFile(ver.Terminologies.Text, '/Users/grahamegrieve/temp/tx.txt', TEncoding.UTF8);
         if auth or (tx = '') or hasMatchingCodeSystem(tx, ver.Terminologies, false) then
           addRow(rows, reg, srvr, ver, auth);
       end;

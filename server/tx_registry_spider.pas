@@ -319,12 +319,16 @@ begin
     ver.Address := obj.str['url']; 
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
-    case v.Major of
-      3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
-      4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
-      5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
-    else
-      log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
+    try
+      case v.Major of
+        3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
+        4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
+        5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
+      else
+        log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
+      end;
+    finally
+      v.free;
     end;
     ver.Terminologies.sort;
     ver.LastSuccess := TFslDateTime.makeUTC;
