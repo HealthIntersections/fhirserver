@@ -78,21 +78,6 @@ type
     procedure populate(json: TJsonObject; srvr: TServerInformation; ver: TServerVersionInformation);
     function status : String;
 
-    //function getVersion(v : String) : String;
-    //function interpretVersion(v : String) : String;
-    //
-    //function genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch, secure, packageLevel: boolean): String;
-    //
-    //function serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
-    //
-    //procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
-    //procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
-    //procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    //procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    //procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
-    //procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
-    //procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
-    //procedure processProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id, pword : String);
     procedure SetScanning(const Value: boolean);
 
     procedure sortJson(json : TJsonObject; sort : String);
@@ -100,6 +85,7 @@ type
     procedure sendHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json : TJsonObject; reg, srvr, ver, tx : String);
     function listRows(reg, srvr, ver, tx : String) : TJsonObject;
     function resolve(version, tx : String) : TJsonObject;
+    function renderInfo : String;
 
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
   public
@@ -107,7 +93,7 @@ type
     function link  : TFHIRTxRegistryWebServer; overload;
     function description : String; override;
 
-    property NextScan : TDateTIme read FNextScan write FNextScan;
+    property NextScan : TDateTime read FNextScan write FNextScan;
     property scanning : boolean read FScanning write SetScanning;
 
     function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
@@ -294,12 +280,12 @@ begin
   finally
     FEndPoint.FTxRegistryServer.scanning := false;
   end;
-  FEndPoint.FTxRegistryServer.NextScan := now + 1/24;
+  FEndPoint.FTxRegistryServer.NextScan := ((1/24) / 12); // every five minutes
 end;
 
 procedure TTxRegistryUpdaterThread.Initialise;
 begin
-  TimePeriod := 60 * 60 * 1000;
+  TimePeriod := 5 * 60 * 1000;
 end;
 
 procedure TTxRegistryUpdaterThread.doSendEmail(dest, subj, body : String);
@@ -433,12 +419,14 @@ begin
         b.append('<td>Last OK '+DurationToSecondsString(row.int['last-success'])+' ago</td>'#13#10);
       b.append('<td>'+inttostr(row.int['systems'])+' systems</td>'#13#10);
       b.append('<td>');
-      arr := row.forceArr['authoritative'];
-      for i := 0 to arr.Count - 1 do
-      begin
-        if i > 0 then b.append(', ');
-        b.append('<code>'+FormatTextToHTML(arr.Value[i])+'</code>');
-      end;
+      if (row.bool['is-authoritative']) then
+        b.append('true');
+      //arr := row.forceArr['authoritative'];
+      //for i := 0 to arr.Count - 1 do
+      //begin
+      //  if i > 0 then b.append(', ');
+      //  b.append('<code>'+FormatTextToHTML(arr.Value[i])+'</code>');
+      //end;
       b.append('</td>'#13#10);
       b.append('<td>');
       if (row.bool[CODES_TServerSecurity[ssOpen]]) then
@@ -489,6 +477,8 @@ begin
     vars.add('fhirVersion', TFHIRObjectText.Create(ver));
     vars.add('url', TFHIRObjectText.Create(tx));
     vars.add('status', TFHIRObjectText.Create(status));
+    vars.add('tx-reg-doco', TFHIRObjectText.Create(FInfo.doco));
+    vars.add('tx-reg-view', TFHIRObjectText.Create(renderInfo));
     returnFile(request, response, nil, request.Document, 'tx-registry.html', false, vars);
   finally
     vars.free;
@@ -553,19 +543,57 @@ begin
         if (srvr.isAuth(tx)) then
         begin
           for ver in srvr.Versions do
-            if TSemanticVersion.matches(version, ver.version, semverAuto) and (ver.Terminologies.IndexOf(tx) > -1) then
-              populate(result.forceArr['authoritative'].addObject, srvr, ver);
+          begin
+            if TSemanticVersion.matches(version, ver.version, semverAuto) then
+              if TServerRegistryUtilities.hasMatchingCodeSystem(tx, ver.Terminologies, false) then
+                populate(result.forceArr['authoritative'].addObject, srvr, ver);
+          end;
         end
         else
         begin
           for ver in srvr.Versions do
-            if TSemanticVersion.matches(version, ver.version, semverAuto) and (ver.Terminologies.IndexOf(tx) > -1) then
-              populate(result.forceArr['candidates'].addObject, srvr, ver);
+            if TSemanticVersion.matches(version, ver.version, semverAuto) then
+              if TServerRegistryUtilities.hasMatchingCodeSystem(tx, ver.Terminologies, false) then
+                populate(result.forceArr['candidates'].addObject, srvr, ver);
         end;
       end;
     result.link;
   finally
     result.free;
+  end;
+end;
+
+function TFHIRTxRegistryWebServer.renderInfo: String;
+var
+  b : TFslStringBuilder;
+  r : TServerRegistry;
+  s : TServerInformation;
+  v : TServerVersionInformation;
+begin
+  b := TFslStringBuilder.create();
+  try
+    b.Append('<table class="grid">');
+    b.append('<tr><td width="130px"><img src="/assets/images/tx-registry-root.gif">&nbsp;Registries</td><td>'+FInfo.Address+' ('+FormatTextToHTML(FInfo.Outcome)+')</td></tr>');
+    for r in FInfo.Registries do
+    begin
+      if (r.error <> '') then
+        b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td>'+FormatTextToHTML(r.Address)+'. Error: '+FormatTextToHTML(r.Error)+'</td></tr>')
+      else
+        b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td>'+FormatTextToHTML(r.Address)+'</td></tr>');
+      for s in r.Servers do
+      begin
+        if (s.AuthList.Count > 0) then
+          b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td>'+FormatTextToHTML(s.Address)+'. Authoritative for:'+s.csAuth+'</td></tr>')
+        else
+          b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td>'+FormatTextToHTML(s.Address)+'</td></tr>');
+        for v in s.Versions do
+          b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td>'+FormatTextToHTML(v.Address)+'. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.Terminologies.Count)+' Items</td></tr>');
+      end;
+    end;
+    b.Append('</table>');
+    result := b.ToString;
+  finally
+    b.free;
   end;
 end;
 

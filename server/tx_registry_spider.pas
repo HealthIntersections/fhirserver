@@ -194,6 +194,8 @@ begin
         if s <> '1' then
           raise EFslException.Create('Unable to proceed: registries version is '+json.str['formatVersion']+' not "1"');
 
+        info.doco := json.str['documentation'];
+        info.Address := FAddress;
         arr := json.arr['registries'];
         for i := 0 to arr.Count - 1 do
         begin
@@ -293,6 +295,7 @@ begin
   if (srvr.Address = '') then
     raise EFslException.Create('No url provided for '+srvr.Name);
   obj.forceArr['authoritative'].readStrings(srvr.AuthList);
+  srvr.AuthList.sort;
 
   arr := obj.arr['fhirVersions'];
   for i := 0 to arr.Count - 1 do
@@ -311,18 +314,24 @@ end;
 procedure TTxRegistryScanner.processServerVersion(source: String; srvr: TServerInformation; obj: TJsonObject; ver: TServerVersionInformation);
 var
   v : TSemanticVersion;
-begin   
+begin
   try
     ver.Address := obj.str['url']; 
+    Logging.log('Check on server '+ver.Address);
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
-    case v.Major of
-      3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
-      4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
-      5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
-    else
-      log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
+    try
+      case v.Major of
+        3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
+        4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
+        5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
+      else
+        log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
+      end;
+    finally
+      v.free;
     end;
+    ver.Terminologies.sort;
     ver.LastSuccess := TFslDateTime.makeUTC;
   except
     on e : Exception do
@@ -340,48 +349,53 @@ var
   tcs : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
 begin
-  client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try
-    client.format := ffJson;
-    cs := client.conformance(true);
+    client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
     try
-      ver.Version := cs.fhirVersionElement.ToString;
-      for csr in cs.restList do
-        if (csr.mode = fhir4_types.RestfulCapabilityModeServer) then
+      client.format := ffJson;
+      cs := client.conformance(true);
+      try
+        ver.Version := cs.fhirVersionElement.ToString;
+        for csr in cs.restList do
+          if (csr.mode = fhir4_types.RestfulCapabilityModeServer) then
+          begin
+            if csr.security <> nil then
+              for cc in csr.security.serviceList do
+              begin
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'OAuth')) then
+                  ver.Security := ver.Security + [ssOAuth]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR')) then
+                  ver.Security := ver.Security + [ssSmart]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Basic')) then
+                  ver.Security := ver.Security + [ssPassword]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Certificates')) then
+                  ver.Security := ver.Security + [ssCert]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Token')) then
+                  ver.Security := ver.Security + [ssToken]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Open')) then
+                  ver.Security := ver.Security + [ssOpen];
+              end;
+          end;
+      finally
+        cs.free;
+      end;
+      tc := client. terminologyCaps;
+      try
+        for tcs in tc.codeSystemList do
         begin
-          if csr.security <> nil then
-            for cc in csr.security.serviceList do
-            begin
-              if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'OAuth')) then
-                ver.Security := ver.Security + [ssOAuth]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR')) then
-                ver.Security := ver.Security + [ssSmart]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Basic')) then
-                ver.Security := ver.Security + [ssPassword]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Certificates')) then
-                ver.Security := ver.Security + [ssCert]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Token')) then
-                ver.Security := ver.Security + [ssToken]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Open')) then
-                ver.Security := ver.Security + [ssOpen];
-            end;
+          ver.Terminologies.add(tcs.uri);
+          for tcsv in tcs.versionList do
+            ver.Terminologies.add(tcs.uri+'|'+tcsv.code);
         end;
-    finally
-      cs.free;
-    end;
-    tc := client. terminologyCaps;
-    try
-      for tcs in tc.codeSystemList do
-      begin
-        ver.Terminologies.add(tcs.uri);
-        for tcsv in tcs.versionList do
-          ver.Terminologies.add(tcs.uri+'|'+tcsv.code);
+      finally
+        tc.free;
       end;
     finally
-      tc.free;
+      client.free;
     end;
-  finally
-    client.free;
+  except
+    on e : Exception do
+      raise EFslException.create('Error getting server details from "'+url+': '+e.message);
   end;
 end;
 

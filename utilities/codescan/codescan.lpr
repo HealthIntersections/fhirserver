@@ -599,7 +599,7 @@ begin
 
   cmd := TCommandLineParameters.create;
   try
-    //output(commandLineAsString);
+//    output(cmd.asString);
     try
       FProjectDir := paramstr(0);
       FProjectDir := FProjectDir.Substring(0, FProjectDir.IndexOf('utilities')-1);

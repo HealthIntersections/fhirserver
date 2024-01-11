@@ -37,6 +37,9 @@ type
     property LastSuccess : TFslDateTime read FLastSuccess write FLastSuccess;
     property Terminologies : TStringList read FTerminologies;     
     procedure update(source : TServerVersionInformation);
+
+    function Details : String;
+    function cslist : String;
   end;
 
   { TServerInformation }
@@ -62,7 +65,9 @@ type
     function version(ver : String) : TServerVersionInformation;
     procedure update(source : TServerInformation);
 
-    function isAuth(tx : String) : boolean;
+    function Details : String;
+    function isAuth(tx : String) : boolean;  
+    function csAuth : String;
   end;
 
   { TServerRegistry }
@@ -95,6 +100,7 @@ type
   TServerRegistries = class (TFslObject)
   private
     FAddress : String;
+    FDoco: String;
     FLastRun : TFslDateTime;
     FOutcome : String;
     FRegistries: TFslList<TServerRegistry>;
@@ -103,6 +109,7 @@ type
     destructor Destroy; override;
     function Link : TServerRegistries; overload;
     property Address : String read FAddress write FAddress;
+    property doco : String read FDoco write FDoco;
     property LastRun : TFslDateTime read FLastRun write FLastRun;
     property Outcome : String read FOutcome write FOutcome;
     property Registries : TFslList<TServerRegistry> read FRegistries;
@@ -127,6 +134,7 @@ type
     FURL: String;
     FVersion: String;
     FAuthlist : TStringList;
+    FAuthoritative : boolean;
   public             
     constructor Create; override;
     destructor Destroy; override;
@@ -144,6 +152,7 @@ type
     property Security : TServerSecuritySet read FSecurity write FSecurity;
     property LastSuccess : cardinal read FLastSuccess write FLastSuccess; // ms
     property systems : integer read FSystems write FSystems;
+    property Authoritative : boolean read FAuthoritative write FAuthoritative;
   end;
 
   { TServerRegistryUtilities }
@@ -160,7 +169,7 @@ type
     class function readServer(fv : String; json : TJsonObject): TServerInformation;
     class function readRegistry(fv : String; json : TJsonObject): TServerRegistry;
 
-    class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation);
+    class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation; auth : boolean);
     class procedure buildRows(reg: TServerRegistry; srvr : TServerInformation; version, tx : String; rows : TFslList<TServerRow>); overload;
     class procedure buildRows(reg : TServerRegistry; srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
     class procedure buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
@@ -171,6 +180,7 @@ type
     class function toJson(row : TServerRow) : TJsonObject; overload;
 
     class function buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String) : TFslList<TServerRow>; overload;
+    class function hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
   end;
 
 implementation
@@ -333,12 +343,13 @@ begin
   end;
 end;
 
-class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg: TServerRegistry; srvr: TServerInformation; version: TServerVersionInformation);
+class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg: TServerRegistry; srvr: TServerInformation; version: TServerVersionInformation; auth : boolean);
 var
   row : TServerRow;
 begin
   row := TServerRow.Create;
   try
+    row.Authoritative := auth;
     row.ServerName := srvr.Name;
     row.ServerCode := srvr.Code;
     row.RegistryName := reg.Name;
@@ -362,14 +373,44 @@ begin
   end;
 end;
 
+function passesMask(mask, tx : string) : Boolean;
+begin
+  if mask.EndsWith('*') then
+    result := tx.StartsWith(mask.Substring(0, mask.length-1))
+  else
+    result := tx = mask;
+end;
+
+
+class function TServerRegistryUtilities.hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
+var
+  s, r : String;
+begin
+  r := cs;
+  if r.contains('|') then
+    r := r.subString(0, r.indexOf('|'));
+  result := false;
+  for s in list do
+  begin
+    if mask and passesMask(s, cs) then
+      exit(true);
+    if not mask and ((s = cs) or (r = s)) then
+      exit(true);
+  end;
+end;
+
 class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvr: TServerInformation; version, tx: String; rows: TFslList<TServerRow>);
 var
   ver : TServerVersionInformation;
+  auth : boolean;
 begin
+  auth := hasMatchingCodeSystem(tx, srvr.AuthList, true);
   for ver in srvr.Versions do
     if (version = '') or (TSemanticVersion.matches(version, ver.version, semverAuto)) then
-      if (tx = '') or (ver.Terminologies.IndexOf(tx) > -1) then
-        addRow(rows, reg, srvr, ver);
+      begin
+        if auth or (tx = '') or hasMatchingCodeSystem(tx, ver.Terminologies, false) then
+          addRow(rows, reg, srvr, ver, auth);
+      end;
 end;
 
 class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvrCode, version, tx: String; rows: TFslList<TServerRow>);
@@ -414,6 +455,8 @@ var
 begin
   result := TJsonObject.Create;
   try
+    if (row.Authoritative) then
+      result.bool['is-authoritative'] := true;
     result.str['server-name'] := row.ServerName;
     result.str['server-code'] := row.ServerCode;
 
@@ -510,9 +553,10 @@ var
 begin
   FLastRun := source.FLastRun;
   FOutcome := source.FOutcome;
+  FDoco := source.doco;
   for t in source.Registries do
   begin
-    sr := registry(t.Name);
+    sr := registry(t.Code);
     if (sr = nil) then
       FRegistries.add(t.link)
     else
@@ -559,7 +603,7 @@ begin
   FError := source.FError;
   for t in source.Servers do
   begin
-    s := server(t.Name);
+    s := server(t.Code);
     if (s = nil) then
       FServers.add(t.link)
     else
@@ -615,12 +659,9 @@ begin
   end;
 end;
 
-function passesMask(mask, tx : string) : Boolean;
+function TServerInformation.Details: String;
 begin
-  if mask.EndsWith('*') then
-    result := tx.StartsWith(mask.Substring(0, mask.length-1))
-  else
-    result := tx = mask;
+  result := FAccessInfo;
 end;
 
 function TServerInformation.isAuth(tx: String): boolean;
@@ -631,6 +672,16 @@ begin
   for mask in AuthList do
     if passesMask(mask, tx) then
       exit(true);
+end;
+
+function TServerInformation.csAuth: String;
+var
+  s : String;
+begin
+  result := '<ul>';
+  for s in FAuthlist do
+    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+  result := result + '</ul>';
 end;
 
 { TServerVersionInformation }
@@ -662,6 +713,25 @@ begin
     FLastSuccess := source.FLastSuccess;
     FTerminologies.assign(source.Terminologies);
   end;
+end;
+
+function TServerVersionInformation.Details: String;
+begin
+  if FError = '' then
+    result := 'All Ok'
+  else
+    result := FError;
+  result := result + ' (last seen '+LastSuccess.toXML()+')';
+end;
+
+function TServerVersionInformation.cslist: String;
+var
+  s : String;
+begin
+  result := '<ul>';
+  for s in FTerminologies do
+    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+  result := result + '</ul>';
 end;
 
 
