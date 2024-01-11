@@ -296,6 +296,8 @@ begin
     raise EFslException.Create('No url provided for '+srvr.Name);
   obj.forceArr['authoritative'].readStrings(srvr.AuthList);
   srvr.AuthList.sort;
+  obj.forceArr['usage'].readStrings(srvr.UsageList);
+  srvr.UsageList.sort;
 
   arr := obj.arr['fhirVersions'];
   for i := 0 to arr.Count - 1 do

@@ -51,6 +51,7 @@ type
     FAddress : String;
     FAccessInfo : String;
     FAuthlist : TStringList;
+    FUsageList : TStringList;
     FVersions : TFslList<TServerVersionInformation>;
   public
     constructor Create; override;
@@ -61,13 +62,14 @@ type
     property Address : String read FAddress write FAddress;
     property AccessInfo : String read FAccessInfo write FAccessInfo;
     property AuthList : TStringList read FAuthList;
+    property UsageList : TStringList read FUsageList;
     property Versions : TFslList<TServerVersionInformation> read FVersions;
     function version(ver : String) : TServerVersionInformation;
     procedure update(source : TServerInformation);
 
     function Details : String;
     function isAuth(tx : String) : boolean;  
-    function csAuth : String;
+    function Description : String;
   end;
 
   { TServerRegistry }
@@ -618,10 +620,12 @@ begin
   inherited Create;  
   FVersions := TFslList<TServerVersionInformation>.Create;
   FAuthlist := TStringList.Create;
+  FUsageList := TStringList.create;
 end;
 
 destructor TServerInformation.Destroy;
 begin
+  FUsageList.free;
   FAuthlist.free;
   FVersions.free;
   inherited Destroy;
@@ -649,6 +653,8 @@ begin
   FName := source.FName;
   FAddress := source.FAddress;
   FAccessInfo := source.FAccessInfo;
+  FAuthlist.Assign(source.FAuthlist);
+  FUsagelist.Assign(source.FUsagelist);
   for t in source.Versions do
   begin
     v := version(t.Version);
@@ -674,14 +680,22 @@ begin
       exit(true);
 end;
 
-function TServerInformation.csAuth: String;
+function TServerInformation.description: String;
 var
   s : String;
 begin
-  result := '<ul>';
-  for s in FAuthlist do
-    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
-  result := result + '</ul>';
+  result := '';
+  if (FusageList.count > 0) then
+    result := 'Usage Tags: '+FUsageList.CommaText;
+  if (FAuthList.count > 0) then
+  begin
+    if (result <> '') then
+      result := result+'. ';
+    result := result + 'Authoritative for: <ul>';
+    for s in FAuthlist do
+      result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+    result := result + '</ul>';
+  end;
 end;
 
 { TServerVersionInformation }
