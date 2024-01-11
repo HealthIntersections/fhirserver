@@ -419,12 +419,14 @@ begin
         b.append('<td>Last OK '+DurationToSecondsString(row.int['last-success'])+' ago</td>'#13#10);
       b.append('<td>'+inttostr(row.int['systems'])+' systems</td>'#13#10);
       b.append('<td>');
-      arr := row.forceArr['authoritative'];
-      for i := 0 to arr.Count - 1 do
-      begin
-        if i > 0 then b.append(', ');
-        b.append('<code>'+FormatTextToHTML(arr.Value[i])+'</code>');
-      end;
+      if (row.bool['is-authoritative']) then
+        b.append('true');
+      //arr := row.forceArr['authoritative'];
+      //for i := 0 to arr.Count - 1 do
+      //begin
+      //  if i > 0 then b.append(', ');
+      //  b.append('<code>'+FormatTextToHTML(arr.Value[i])+'</code>');
+      //end;
       b.append('</td>'#13#10);
       b.append('<td>');
       if (row.bool[CODES_TServerSecurity[ssOpen]]) then
@@ -541,14 +543,18 @@ begin
         if (srvr.isAuth(tx)) then
         begin
           for ver in srvr.Versions do
-            if TSemanticVersion.matches(version, ver.version, semverAuto) and (ver.Terminologies.IndexOf(tx) > -1) then
-              populate(result.forceArr['authoritative'].addObject, srvr, ver);
+          begin
+            if TSemanticVersion.matches(version, ver.version, semverAuto) then
+              if TServerRegistryUtilities.hasMatchingCodeSystem(tx, ver.Terminologies, false) then
+                populate(result.forceArr['authoritative'].addObject, srvr, ver);
+          end;
         end
         else
         begin
           for ver in srvr.Versions do
-            if TSemanticVersion.matches(version, ver.version, semverAuto) and (ver.Terminologies.IndexOf(tx) > -1) then
-              populate(result.forceArr['candidates'].addObject, srvr, ver);
+            if TSemanticVersion.matches(version, ver.version, semverAuto) then
+              if TServerRegistryUtilities.hasMatchingCodeSystem(tx, ver.Terminologies, false) then
+                populate(result.forceArr['candidates'].addObject, srvr, ver);
         end;
       end;
     result.link;

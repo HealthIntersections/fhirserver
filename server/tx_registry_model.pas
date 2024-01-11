@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_json, fsl_utilities, fsl_versions;
+  fsl_base, fsl_json, fsl_utilities, fsl_versions, fsl_logging, fsl_stream;
 
 Type
   TServerSecurity = (ssOpen, ssPassword, ssToken, ssOAuth, ssSmart, ssCert);
@@ -134,6 +134,7 @@ type
     FURL: String;
     FVersion: String;
     FAuthlist : TStringList;
+    FAuthoritative : boolean;
   public             
     constructor Create; override;
     destructor Destroy; override;
@@ -151,6 +152,7 @@ type
     property Security : TServerSecuritySet read FSecurity write FSecurity;
     property LastSuccess : cardinal read FLastSuccess write FLastSuccess; // ms
     property systems : integer read FSystems write FSystems;
+    property Authoritative : boolean read FAuthoritative write FAuthoritative;
   end;
 
   { TServerRegistryUtilities }
@@ -167,7 +169,7 @@ type
     class function readServer(fv : String; json : TJsonObject): TServerInformation;
     class function readRegistry(fv : String; json : TJsonObject): TServerRegistry;
 
-    class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation);
+    class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation; auth : boolean);
     class procedure buildRows(reg: TServerRegistry; srvr : TServerInformation; version, tx : String; rows : TFslList<TServerRow>); overload;
     class procedure buildRows(reg : TServerRegistry; srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
     class procedure buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
@@ -178,6 +180,7 @@ type
     class function toJson(row : TServerRow) : TJsonObject; overload;
 
     class function buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String) : TFslList<TServerRow>; overload;
+    class function hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
   end;
 
 implementation
@@ -340,12 +343,13 @@ begin
   end;
 end;
 
-class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg: TServerRegistry; srvr: TServerInformation; version: TServerVersionInformation);
+class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg: TServerRegistry; srvr: TServerInformation; version: TServerVersionInformation; auth : boolean);
 var
   row : TServerRow;
 begin
   row := TServerRow.Create;
   try
+    row.Authoritative := auth;
     row.ServerName := srvr.Name;
     row.ServerCode := srvr.Code;
     row.RegistryName := reg.Name;
@@ -369,7 +373,16 @@ begin
   end;
 end;
 
-function hasMatchingCodeSystem(cs : String; list : TStringList) : boolean;
+function passesMask(mask, tx : string) : Boolean;
+begin
+  if mask.EndsWith('*') then
+    result := tx.StartsWith(mask.Substring(0, mask.length-1))
+  else
+    result := tx = mask;
+end;
+
+
+class function TServerRegistryUtilities.hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
 var
   s, r : String;
 begin
@@ -379,7 +392,11 @@ begin
   result := false;
   for s in list do
   begin
-    if (s = cs) or (r = cs) then
+    if (s.startsWith('http://snomed')) then
+      Logging.Log('what?');
+    if mask and passesMask(s, cs) then
+      exit(true);
+    if not mask and ((s = cs) or (r = s)) then
       exit(true);
   end;
 end;
@@ -389,11 +406,14 @@ var
   ver : TServerVersionInformation;
   auth : boolean;
 begin
-  auth := hasMatchingCodeSystem(tx, srvr.AuthList);
+  auth := hasMatchingCodeSystem(tx, srvr.AuthList, true);
   for ver in srvr.Versions do
     if (version = '') or (TSemanticVersion.matches(version, ver.version, semverAuto)) then
-      if auth or (tx = '') or hasMatchingCodeSystem(tx, ver.Terminologies) then
-        addRow(rows, reg, srvr, ver);
+      begin
+        StringToFile(ver.Terminologies.Text, '/Users/grahamegrieve/temp/tx.txt', TEncoding.UTF8);
+        if auth or (tx = '') or hasMatchingCodeSystem(tx, ver.Terminologies, false) then
+          addRow(rows, reg, srvr, ver, auth);
+      end;
 end;
 
 class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvrCode, version, tx: String; rows: TFslList<TServerRow>);
@@ -438,6 +458,8 @@ var
 begin
   result := TJsonObject.Create;
   try
+    if (row.Authoritative) then
+      result.bool['is-authoritative'] := true;
     result.str['server-name'] := row.ServerName;
     result.str['server-code'] := row.ServerCode;
 
@@ -643,14 +665,6 @@ end;
 function TServerInformation.Details: String;
 begin
   result := FAccessInfo;
-end;
-
-function passesMask(mask, tx : string) : Boolean;
-begin
-  if mask.EndsWith('*') then
-    result := tx.StartsWith(mask.Substring(0, mask.length-1))
-  else
-    result := tx = mask;
 end;
 
 function TServerInformation.isAuth(tx: String): boolean;
