@@ -49,9 +49,11 @@ RUN mkdir -p /work/fhirserver/exec/install/config
 RUN mkdir -p /work/fhirserver/exec/install/web
 
 RUN cd /work/fhirserver
-RUN cp /work/fhirserver/exec/64/fhir* /work/fhirserver/exec/install/bin
-RUN cp /work/fhirserver/exec/64/FHIR* /work/fhirserver/exec/install/bin
+RUN cp /work/fhirserver/exec/64/fhirserver /work/fhirserver/exec/install/bin
+RUN cp /work/fhirserver/exec/64/FHIRToolkit /work/fhirserver/exec/install/bin
+RUN cp /work/fhirserver/exec/64/FHIRConsole /work/fhirserver/exec/install/bin
 RUN cp /work/fhirserver/exec/pack/linux/* /work/fhirserver/exec/install/x86_64
+RUN cp /work/fhirserver/exec/pack/linux/*.sh /work/fhirserver/exec/install
 RUN cp /tmp/openssl-1.1.1w/*.so* /work/fhirserver/exec/install/x86_64
 RUN cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content
 RUN cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content
@@ -61,8 +63,7 @@ RUN cp /work/fhirserver/config/config.ini /work/fhirserver/exec/install/config
 RUN mkdir -p /work/fhirserver/exec/install/web
 RUN cp -r /work/fhirserver/server/web/* /work/fhirserver/exec/install/web
 
-RUN cd /work/fhirserver/exec
-RUN tar -czvf install.tgz install/
+RUN cd /work/fhirserver/exec && tar -czvf ./install.tgz ./install/  && ls -la /work/fhirserver/exec
 
 
 # Set the health check
@@ -124,10 +125,24 @@ RUN mkdir -p $HOME/fhirserver/config $TERMINOLOGY_CACHE /fhirserver \
 # Copy necessary files from the builder stage
 COPY --from=builder /work/fhirserver/exec/install.tgz /fhirserver/install.tgz
 
-RUN cd /fhirserver \
-    && tar -xzvf install.tgz \
-    && cd install \
-    && ./install.sh > install.log 2>&1
+# RUN cd /fhirserver \
+#     && tar -xzvf install.tgz \
+#     && cd ./install \
+#     && ./install.sh > install.log 2>&1
+
+# Assuming /fhirserver is your working directory
+WORKDIR /fhirserver
+
+# Extract the contents of the tar file
+RUN tar -xzvf install.tgz
+
+# Change working directory to the extracted folder
+WORKDIR /fhirserver/install
+
+# ERun the installation script and
+RUN ./install.sh
+
+
 
 
 # Define entrypoint and command
