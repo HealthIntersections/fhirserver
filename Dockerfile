@@ -40,6 +40,30 @@ RUN /work/bootstrap/linux-libraries.sh /work/bootstrap
 RUN cp /usr/local/lib/*.so* /usr/lib/
 RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
 RUN cp exec/pack/*.properties exec/64
+# RUN cp exec/install/* exec/64
+
+RUN mkdir -p /work/fhirserver/exec/install/bin
+RUN mkdir -p /work/fhirserver/exec/install/x86_64
+RUN mkdir -p /work/fhirserver/exec/install/content
+RUN mkdir -p /work/fhirserver/exec/install/config
+RUN mkdir -p /work/fhirserver/exec/install/web
+
+RUN cd /work/fhirserver
+RUN cp /work/fhirserver/exec/64/fhir* /work/fhirserver/exec/install/bin
+RUN cp /work/fhirserver/exec/64/FHIR* /work/fhirserver/exec/install/bin
+RUN cp /work/fhirserver/exec/pack/linux/* /work/fhirserver/exec/install/x86_64
+RUN cp /tmp/openssl-1.1.1w/*.so* /work/fhirserver/exec/install/x86_64
+RUN cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content
+RUN cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content
+RUN cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/config
+RUN cp /work/fhirserver/exec/64/web.ini /work/fhirserver/exec/install/config
+RUN cp /work/fhirserver/config/config.ini /work/fhirserver/exec/install/config
+RUN mkdir -p /work/fhirserver/exec/install/web
+RUN cp -r /work/fhirserver/server/web/* /work/fhirserver/exec/install/web
+
+RUN cd /work/fhirserver/exec
+RUN tar -czvf install.tgz install/
+
 
 # Set the health check
 HEALTHCHECK --interval=1m --timeout=10s --retries=5 \
@@ -70,6 +94,44 @@ RUN printf '#!/bin/bash \n\
     chmod +x /bin/entrypoint.sh
 
 
-ENTRYPOINT ["/bin/entrypoint.sh"]
+# ENTRYPOINT ["/bin/entrypoint.sh"]
 
-CMD ["-cmd",  "exec",  "-cfg", "/config/config.ini", "-local", "$TERMINOLOGY_CACHE"]
+# CMD ["-cmd",  "exec",  "-cfg", "/config/config.ini", "-local", "$TERMINOLOGY_CACHE"]
+
+
+
+# Runtime stage
+FROM ubuntu:22.04 as runtime
+
+ENV DEBIAN_FRONTEND=noninteractive
+ENV TZ=UTC
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Set up environment variables
+# ENV HOME=~/
+ENV DISPLAY=:99
+ENV PORT=80
+ENV TERMINOLOGY_CACHE=/terminology
+
+# Create necessary directories and set permissions
+RUN mkdir -p $HOME/fhirserver/config $TERMINOLOGY_CACHE /fhirserver \
+    && chmod -R 777 $TERMINOLOGY_CACHE \
+    && chmod -R 777 /fhirserver
+
+# Copy necessary files from the builder stage
+COPY --from=builder /work/fhirserver/exec/install.tgz /fhirserver/install.tgz
+
+RUN cd /fhirserver \
+    && tar -xzvf install.tgz \
+    && cd install \
+    && ./install.sh > install.log 2>&1
+
+
+# Define entrypoint and command
+CMD ["bash", "-c", "cd ~/fhirserver/ && ./start.sh"]
+
+# Expose the necessary port
+EXPOSE 80
