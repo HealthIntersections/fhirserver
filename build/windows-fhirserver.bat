@@ -80,13 +80,26 @@ echo ## compile server
 echo ## compile toolkit
 %tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64-release -q -q --build-all
     
-IF EXIST "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64" (    
-  copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
-}
+:: =========================================================================================
+:: build the web file
+del exec\pack\fhirserver.web 
+utilities\codescan\codescan.exe -check !exec\pack\fhirserver.web -message "Deleting the web file failed" || goto :error
+cd server
+cd web
+..\..\install\tools\7z a -r -tzip ..\..\exec\pack\fhirserver.web *.*
+cd ..
+cd ..
+utilities\codescan\codescan.exe -check exec\pack\fhirserver.web -message "Creating the web file failed" || goto :error
 
-IF EXIST exec\64\fhirserver.exe (
-    echo Sucess!
-) ELSE (
-    echo Failed (no server executable found)
-)
+	
+rem IF EXIST "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64" (    
+copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
+copy exec\pack\fhirserver.web "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
+rem }
+
+IF EXIST exec\64\fhirserver.exe echo Sucess!
+rem 
+rem echo Failed (no server executable found)
+rem 
+
 chdir /d %FSDIR% 
