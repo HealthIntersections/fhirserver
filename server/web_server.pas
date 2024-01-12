@@ -1274,6 +1274,10 @@ begin
     result := WebDesc(secure)
   else if n = 'admin' then
     result := Common.AdminEmail
+  else if n = 'server-ver' then
+    result := FHIR_CODE_FULL_VERSION
+  else if n = 'os' then
+    result := SERVER_OS
   else if n = 'logout' then
     result := 'User: [n/a]'
   else if n = 'endpoints' then
