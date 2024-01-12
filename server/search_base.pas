@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_http,
   fhir_objects, fhir_common,
   fhir_indexing, indexing;{,
@@ -81,12 +81,16 @@ Type
 
   TSearchParser = class (TFslObject)
   private
+    FElements : TStringList;
     FSearchControls : TFHIRSearchControlParameterSet;
     function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
     constructor Create(searchControls : TFHIRSearchControlParameterSet);
+    destructor Destroy; override;
+
     function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
     function buildUrl(base : String; search : TFslList<TSearchParameter>): String;
+    property Elements : TStringList read FElements;
   end;
 
 const
@@ -382,6 +386,8 @@ begin
       result := TSearchParameter.Create;
       result.control := cp;
       result.value := value;
+      if (cp = scpElements) then
+        FElements.CommaText := value;
     end;
   end;
 end;
@@ -390,6 +396,13 @@ constructor TSearchParser.Create(searchControls: TFHIRSearchControlParameterSet)
 begin
   inherited Create;
   FSearchControls := searchControls;
+  FElements := TStringList.create;
+end;
+
+destructor TSearchParser.Destroy;
+begin
+  FElements.free;
+  inherited Destroy;
 end;
 
 end.

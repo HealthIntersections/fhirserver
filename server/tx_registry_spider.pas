@@ -38,9 +38,9 @@ uses
   fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_versions, fsl_http,
   fsl_fetcher, fsl_zulip,
   fhir_objects, fhir_client_http,
-  fhir3_client, fhir3_types, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
-  fhir4_client, fhir4_types, fhir4_resources_canonical, fhir4_utilities,
-  fhir5_client, fhir5_types, fhir5_resources_canonical, fhir5_enums, fhir5_utilities,
+  fhir3_client, fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
+  fhir4_client, fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_resources_canonical, fhir4_utilities,
+  fhir5_client, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_resources_canonical, fhir5_enums, fhir5_utilities,
   tx_registry_model;
 
 const                                                        
@@ -210,7 +210,7 @@ begin
       finally
         json.free;
       end;
-      info.Outcome := 'All OK';
+      info.Outcome := 'Processed OK';
     except
       on e : Exception do
       begin
@@ -294,8 +294,11 @@ begin
   srvr.Address := obj.str['url'];
   if (srvr.Address = '') then
     raise EFslException.Create('No url provided for '+srvr.Name);
-  obj.forceArr['authoritative'].readStrings(srvr.AuthList);
-  srvr.AuthList.sort;
+  obj.forceArr['authoritative'].readStrings(srvr.AuthCSList);
+  obj.forceArr['authoritative-valuesets'].readStrings(srvr.AuthVSList);
+  srvr.AuthCSList.sort;
+  srvr.AuthVSList.sort;
+
   obj.forceArr['usage'].readStrings(srvr.UsageList);
   srvr.UsageList.sort;
 
@@ -333,7 +336,8 @@ begin
     finally
       v.free;
     end;
-    ver.Terminologies.sort;
+    ver.CodeSystems.sort;
+    ver.ValueSets.sort;
     ver.LastSuccess := TFslDateTime.makeUTC;
   except
     on e : Exception do
@@ -350,6 +354,9 @@ var
   tc :  fhir4_resources_canonical.TFhirTerminologyCapabilities;
   tcs : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
+  bnd : fhir4_resources.TFhirBundle;
+  be : fhir4_resources.TFhirBundleEntry;
+  vs : fhir4_resources.TFHIRValueSet;
 begin
   try
     client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
@@ -385,19 +392,31 @@ begin
       try
         for tcs in tc.codeSystemList do
         begin
-          ver.Terminologies.add(tcs.uri);
+          ver.CodeSystems.add(tcs.uri);
           for tcsv in tcs.versionList do
-            ver.Terminologies.add(tcs.uri+'|'+tcsv.code);
+            ver.CodeSystems.add(tcs.uri+'|'+tcsv.code);
         end;
       finally
         tc.free;
+      end;
+      bnd := client.search(fhir4_resources_base.frtValueSet, true, '_elements=url,version');
+      try
+        for be in bnd.entryList do
+        begin
+          vs := be.resource as fhir4_resources.TFHIRValueSet;
+          ver.ValueSets.add(vs.url);
+          if vs.version <> '' then
+            ver.valueSets.add(vs.url+'|'+vs.version);
+        end;
+      finally
+        bnd.free;
       end;
     finally
       client.free;
     end;
   except
     on e : Exception do
-      raise EFslException.create('Error getting server details from "'+url+': '+e.message);
+      raise EFslException.create('Error getting server details: '+e.message);
   end;
 end;
 
@@ -410,6 +429,9 @@ var
   tc :  fhir5_resources_canonical.TFhirTerminologyCapabilities;
   tcs : fhir5_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir5_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
+  bnd : fhir5_resources.TFhirBundle;
+  be : fhir5_resources.TFhirBundleEntry;
+  vs : fhir5_resources.TFHIRValueSet;
 begin
   client := TFhirClient5.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try                    
@@ -444,12 +466,24 @@ begin
     try
       for tcs in tc.codeSystemList do
       begin
-        ver.Terminologies.add(tcs.uri);
+        ver.CodeSystems.add(tcs.uri);
         for tcsv in tcs.versionList do
-          ver.Terminologies.add(tcs.uri+'|'+tcsv.code);
+          ver.CodeSystems.add(tcs.uri+'|'+tcsv.code);
       end;
     finally
       tc.free;
+    end;  
+    bnd := client.search(fhir5_resources_base.frtValueSet, true, '_elements=url,version');
+    try
+      for be in bnd.entryList do
+      begin
+        vs := be.resource as fhir5_resources.TFHIRValueSet;
+        ver.ValueSets.add(vs.url);
+        if vs.version <> '' then
+          ver.valueSets.add(vs.url+'|'+vs.version);
+      end;
+    finally
+      bnd.free;
     end;
   finally
     client.free;
@@ -465,6 +499,9 @@ var
   tc :  fhir3_resources.TFhirParameters;
   tcs : fhir3_resources.TFhirParametersParameter;
   tcsv : fhir3_resources.TFhirParametersParameter;
+  bnd : fhir3_resources.TFhirBundle;
+  be : fhir3_resources.TFhirBundleEntry;
+  vs : fhir3_resources.TFHIRValueSet;
   n : String;
 begin
   client := TFhirClient3.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
@@ -503,17 +540,29 @@ begin
         n := tcs.name;
         if (n = 'system') then
         begin
-          ver.Terminologies.add(tcs.value.primitiveValue);
+          ver.CodeSystems.add(tcs.value.primitiveValue);
           for tcsv in tcs.partList do
           begin
             n := tcsv.name;
             if (n = 'version') then
-              ver.Terminologies.add(tcs.value.primitiveValue+'|'+tcsv.value.primitiveValue);
+              ver.CodeSystems.add(tcs.value.primitiveValue+'|'+tcsv.value.primitiveValue);
           end;
         end;
       end;
     finally
       tc.free;
+    end;
+    bnd := client.search(fhir3_resources_base.frtValueSet, true, '_elements=url,version');
+    try
+      for be in bnd.entryList do
+      begin
+        vs := be.resource as fhir3_resources.TFHIRValueSet;
+        ver.ValueSets.add(vs.url);
+        if vs.version <> '' then
+          ver.valueSets.add(vs.url+'|'+vs.version);
+      end;
+    finally
+      bnd.free;
     end;
   finally
     client.free;
