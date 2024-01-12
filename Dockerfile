@@ -52,8 +52,10 @@ RUN cd /work/fhirserver
 RUN cp /work/fhirserver/exec/64/fhirserver /work/fhirserver/exec/install/bin
 RUN cp /work/fhirserver/exec/64/FHIRToolkit /work/fhirserver/exec/install/bin
 RUN cp /work/fhirserver/exec/64/FHIRConsole /work/fhirserver/exec/install/bin
-RUN cp /work/fhirserver/exec/pack/linux/* /work/fhirserver/exec/install/x86_64
-RUN cp /work/fhirserver/exec/pack/linux/*.sh /work/fhirserver/exec/install
+RUN cp /work/fhirserver/exec/pack/linux/*so* /work/fhirserver/exec/install/x86_64
+RUN cp /work/fhirserver/exec/pack/linux/start.sh /work/fhirserver/exec/install/bin
+RUN cp /work/fhirserver/exec/pack/linux/install.sh /work/fhirserver/exec/install
+RUN cp /work/fhirserver/exec/pack/linux/get-openssl.sh /work/fhirserver/exec/install
 RUN cp /tmp/openssl-1.1.1w/*.so* /work/fhirserver/exec/install/x86_64
 RUN cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content
 RUN cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content
