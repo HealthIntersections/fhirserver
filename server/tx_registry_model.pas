@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_json, fsl_utilities, fsl_versions;
+  fsl_base, fsl_json, fsl_utilities, fsl_versions, fsl_threads;
 
 Type
   TServerSecurity = (ssOpen, ssPassword, ssToken, ssOAuth, ssSmart, ssCert);
@@ -112,6 +112,7 @@ type
     FLastRun : TFslDateTime;
     FOutcome : String;
     FRegistries: TFslList<TServerRegistry>;
+    FLock : TFslLock;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -121,7 +122,9 @@ type
     property LastRun : TFslDateTime read FLastRun write FLastRun;
     property Outcome : String read FOutcome write FOutcome;
     property Registries : TFslList<TServerRegistry> read FRegistries;
-                                               
+    procedure Lock(name : String);
+    procedure UnLock;
+
     function registry(code : String) : TServerRegistry;
     procedure update(source : TServerRegistries);
   end;
@@ -528,12 +531,17 @@ end;
 
 class function TServerRegistryUtilities.buildRows(info: TServerRegistries; regCode, srvrCode, version, tx: String): TFslList<TServerRow>;
 begin
-  result := TFslList<TServerRow>.Create;
+  info.Lock('build');
   try
-    buildRows(info, regCode, srvrCode, version, tx, result);
-    result.link;
+    result := TFslList<TServerRow>.Create;
+    try
+      buildRows(info, regCode, srvrCode, version, tx, result);
+      result.link;
+    finally
+      result.free;
+    end;
   finally
-    result.free;
+    info.unlock;
   end;
 end;
 
@@ -569,6 +577,7 @@ end;
 
 destructor TServerRegistries.Destroy;
 begin
+  FLock.Free;
   FRegistries.free;
   inherited Destroy;
 end;
@@ -576,6 +585,18 @@ end;
 function TServerRegistries.Link: TServerRegistries;
 begin
   result := TServerRegistries(inherited link);
+end;
+
+procedure TServerRegistries.Lock(name: String);
+begin
+  if (FLock = nil) then
+    FLock := TFslLock.create('ServerRegistries');
+  FLock.Lock(name);
+end;
+
+procedure TServerRegistries.UnLock;
+begin
+  FLock.unlock;
 end;
 
 function TServerRegistries.registry(code: String): TServerRegistry;

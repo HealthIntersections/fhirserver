@@ -298,19 +298,31 @@ end;
 procedure TTxRegistryUpdaterThread.RunUpdater;
 var
   upd : TTxRegistryScanner;
-  info : TServerRegistries;
+  new, existing : TServerRegistries;
 begin
   upd := TTxRegistryScanner.Create(FZulip.link);
   try
     upd.address := FEndPoint.FAddress;
     upd.OnSendEmail := doSendEmail;
     try
-      info := TServerRegistries.Create;
+      existing := FEndPoint.FTxRegistryServer.FInfo;
+      new := TServerRegistries.Create;
       try
-        upd.update(FEndPoint.FTxRegistryServer.code, info);
-        FEndPoint.FTxRegistryServer.FInfo.update(info);
+        existing.Lock('start');
+        try
+          existing.Outcome := 'Processing Now';
+        finally
+          existing.Unlock;
+        end;
+        upd.update(FEndPoint.FTxRegistryServer.code, new);
+        existing.Lock('merge');
+        try
+          existing.update(new);
+        finally
+          existing.Unlock;
+        end;
       finally
-        info.free;
+        new.free;
       end;
       if (TFslDateTime.makeToday.DateTime <> FLastEmail) then
       begin
@@ -540,37 +552,42 @@ begin
   try
     result.str['formatVersion'] := '1';
     result.str['registry-url'] := FInfo.address;
-    for reg in FInfo.Registries do
-      for srvr in reg.Servers do
-      begin
-        added := false;
-        if (srvr.UsageList.Count = 0) or (srvr.UsageList.IndexOf(usage) > -1) then
+    FInfo.Lock('search');
+    try
+      for reg in FInfo.Registries do
+        for srvr in reg.Servers do
         begin
-          if (srvr.isAuthCS(cs)) then
+          added := false;
+          if (srvr.UsageList.Count = 0) or (srvr.UsageList.IndexOf(usage) > -1) then
           begin
-            for ver in srvr.Versions do
+            if (srvr.isAuthCS(cs)) then
             begin
-              if TSemanticVersion.matches(version, ver.version, semverAuto) then
-                if TServerRegistryUtilities.hasMatchingCodeSystem(cs, ver.CodeSystems, false) then
-                begin
-                  populate(result.forceArr['authoritative'].addObject, srvr, ver);
-                  added := true;
-                end;
+              for ver in srvr.Versions do
+              begin
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingCodeSystem(cs, ver.CodeSystems, false) then
+                  begin
+                    populate(result.forceArr['authoritative'].addObject, srvr, ver);
+                    added := true;
+                  end;
+              end;
+            end
+            else
+            begin
+              for ver in srvr.Versions do
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingCodeSystem(cs, ver.CodeSystems, false) then
+                  begin
+                    populate(result.forceArr['candidates'].addObject, srvr, ver);
+                    added := true;
+                  end;
             end;
-          end
-          else
-          begin
-            for ver in srvr.Versions do
-              if TSemanticVersion.matches(version, ver.version, semverAuto) then
-                if TServerRegistryUtilities.hasMatchingCodeSystem(cs, ver.CodeSystems, false) then
-                begin
-                  populate(result.forceArr['candidates'].addObject, srvr, ver);
-                  added := true;
-                end;
+            if (added) then
+              CommaAdd(matches, srvr.Code);
           end;
-          if (added) then
-            CommaAdd(matches, srvr.Code);
         end;
+      finally
+        FInfo.Unlock;
       end;
     result.link;
   finally
@@ -598,38 +615,43 @@ begin
   try
     result.str['formatVersion'] := '1';
     result.str['registry-url'] := FInfo.address;
-    for reg in FInfo.Registries do
-      for srvr in reg.Servers do
-      begin
-        added := false;
-        if (srvr.UsageList.Count = 0) or (srvr.UsageList.IndexOf(usage) > -1) then
+    FInfo.Lock('search');
+    try
+      for reg in FInfo.Registries do
+        for srvr in reg.Servers do
         begin
-          if (srvr.isAuthVS(vs)) then
+          added := false;
+          if (srvr.UsageList.Count = 0) or (srvr.UsageList.IndexOf(usage) > -1) then
           begin
-            for ver in srvr.Versions do
+            if (srvr.isAuthVS(vs)) then
             begin
-              if TSemanticVersion.matches(version, ver.version, semverAuto) then
-                if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
-                begin
-                  populate(result.forceArr['authoritative'].addObject, srvr, ver);
-                  added := true;
-                end;
+              for ver in srvr.Versions do
+              begin
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
+                  begin
+                    populate(result.forceArr['authoritative'].addObject, srvr, ver);
+                    added := true;
+                  end;
+              end;
+            end
+            else
+            begin
+              for ver in srvr.Versions do
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
+                  begin
+                    populate(result.forceArr['candidates'].addObject, srvr, ver);
+                    added := true;
+                  end;
             end;
-          end
-          else
-          begin
-            for ver in srvr.Versions do
-              if TSemanticVersion.matches(version, ver.version, semverAuto) then
-                if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
-                begin
-                  populate(result.forceArr['candidates'].addObject, srvr, ver);
-                  added := true;
-                end;
+            if (added) then
+              CommaAdd(matches, srvr.Code);
           end;
-          if (added) then
-            CommaAdd(matches, srvr.Code);
         end;
-      end;
+    finally
+      FInfo.Unlock;
+    end;
     result.link;
   finally
     result.free;
@@ -645,30 +667,35 @@ var
   s : TServerInformation;
   v : TServerVersionInformation;
 begin
-  b := TFslStringBuilder.create();
+  FInfo.Lock('render');
   try
-    b.Append('<table class="grid">');
-    b.append('<tr><td width="130px"><img src="/assets/images/tx-registry-root.gif">&nbsp;Registries</td><td>'+FInfo.Address+' ('+FormatTextToHTML(FInfo.Outcome)+')</td></tr>');
-    for r in FInfo.Registries do
-    begin
-      if (r.error <> '') then
-        b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td><a href="'+FormatTextToHTML(r.Address)+'">'+FormatTextToHTML(r.Address)+'</a>. Error: '+FormatTextToHTML(r.Error)+'</td></tr>')
-      else
-        b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td><a href="'+FormatTextToHTML(r.Address)+'">'+FormatTextToHTML(r.Address)+'</a></td></tr>');
-      for s in r.Servers do
+    b := TFslStringBuilder.create();
+    try
+      b.Append('<table class="grid">');
+      b.append('<tr><td width="130px"><img src="/assets/images/tx-registry-root.gif">&nbsp;Registries</td><td>'+FInfo.Address+' ('+FormatTextToHTML(FInfo.Outcome)+')</td></tr>');
+      for r in FInfo.Registries do
       begin
-        if (s.AuthCSList.Count > 0) or (s.AuthVSList.Count > 0) or (s.UsageList.count > 0) then
-          b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.details+'</td></tr>')
+        if (r.error <> '') then
+          b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td><a href="'+FormatTextToHTML(r.Address)+'">'+FormatTextToHTML(r.Address)+'</a>. Error: '+FormatTextToHTML(r.Error)+'</td></tr>')
         else
-          b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a></td></tr>');
-        for v in s.Versions do
-          b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' Items</td></tr>');
+          b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td><a href="'+FormatTextToHTML(r.Address)+'">'+FormatTextToHTML(r.Address)+'</a></td></tr>');
+        for s in r.Servers do
+        begin
+          if (s.AuthCSList.Count > 0) or (s.AuthVSList.Count > 0) or (s.UsageList.count > 0) then
+            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.details+'</td></tr>')
+          else
+            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a></td></tr>');
+          for v in s.Versions do
+            b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' Items</td></tr>');
+        end;
       end;
+      b.Append('</table>');
+      result := b.ToString;
+    finally
+      b.free;
     end;
-    b.Append('</table>');
-    result := b.ToString;
   finally
-    b.free;
+    FInfo.Unlock;
   end;
 end;
 

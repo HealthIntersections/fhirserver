@@ -319,10 +319,12 @@ end;
 procedure TTxRegistryScanner.processServerVersion(source: String; srvr: TServerInformation; obj: TJsonObject; ver: TServerVersionInformation);
 var
   v : TSemanticVersion;
+  d : TDateTime;
 begin
   try
-    ver.Address := obj.str['url']; 
+    ver.Address := obj.str['url'];
     Logging.log('Check on server '+ver.Address);
+    d := now;
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
     try
@@ -339,6 +341,7 @@ begin
     ver.CodeSystems.sort;
     ver.ValueSets.sort;
     ver.LastSuccess := TFslDateTime.makeUTC;
+    Logging.log('Server '+ver.Address+': '+DescribePeriod(now - d)+' for '+inttostr(ver.CodeSystems.count)+' CodeSystems and '+inttostr(ver.ValueSets.count)+' ValueSets');
   except
     on e : Exception do
       ver.Error := e.message;
