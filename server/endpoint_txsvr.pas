@@ -117,6 +117,7 @@ type
     function tokenMatchesCoding(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
     function tokenMatchesCoding(c: TFhirCodingW; sp: TSearchParameter): boolean; overload;
     function tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
+    function makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
   protected
     function context : TFHIRServerContext;
     procedure StartTransaction; override;
@@ -579,6 +580,24 @@ begin
   result := (request.ResourceName = name) or ((request.ResourceName = '') and request.Parameters['_type'].Contains(name));
 end;
 
+function onlyHasElements(ts : TStringList; names : array of String) : boolean;
+var
+  s : String;
+begin
+  result := true;
+  for s in ts do
+    if not StringArrayExists(names, s) then
+      exit(false);
+end;
+
+function TTerminologyServerOperationEngine.makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
+begin
+  result := factory.wrapResource(factory.makeResource(rn)) as TFHIRMetadataResourceW;
+  result.id := p.id;
+  result.url := p.url;
+  result.version := p.version;
+end;
+
 procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
   search : TFslList<TSearchParameter>;
@@ -589,21 +608,26 @@ var
   bundle : TFHIRBundleBuilder;
   op : TFHIROperationOutcomeW;
   base : String;
-  isMatch : boolean;
+  isMatch, defCount : boolean;
   i, t, offset, count : integer;
   be : TFhirBundleEntryW;
   p : TFHIRResourceProxyV;
+  useProxy : boolean;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
 
   offset := 0;
   count := 50;
+  defCount := true;
   for i := 0 to request.Parameters.Count - 1 do
     if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
       offset := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0)
     else if request.Parameters.Name[i] = '_count' then
+    begin
       count := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0);
+      defCount := false;
+    end;
   if (count < 2) then
     count := TX_SEARCH_PAGE_DEFAULT
   else if (Count > TX_SEARCH_PAGE_LIMIT) then
@@ -630,18 +654,39 @@ begin
 
           list := TFslMetadataResourceList.create;
           try
+            useProxy := false;
+            if spp.elements.count > 0 then
+              if onlyHasElements(spp.elements, ['id', 'url' ,'version']) then
+              begin
+                useProxy := true;
+                if (defCount) then
+                  count := 100000;
+              end;
+
             if (hasScope(request, 'CodeSystem')) then
               for p in FData.CodeSystems.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+                if useProxy then
+                  list.add(makeWrapper('CodeSystem', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
             if (hasScope(request, 'ValueSet')) then
               for p in FData.ValueSets.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+                if useProxy then
+                  list.add(makeWrapper('ValueSet', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
             if (hasScope(request, 'ConceptMap')) then
               for p in FData.ConceptMaps.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+                if useProxy then
+                  list.add(makeWrapper('ConceptMap', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
             if (hasScope(request, 'NamingSystem')) then
               for p in FData.NamingSystems.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+                if useProxy then
+                  list.add(makeWrapper('NamingSystem', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
 
             filtered := TFslMetadataResourceList.create;
             try
@@ -659,6 +704,8 @@ begin
                 if isMatch then
                   filtered.add(res.link);
               end;
+
+              bundle.setTotal(filtered.count);
 
               if (offset > 0) or (Count < filtered.count) then
               begin
@@ -681,7 +728,7 @@ begin
                   be := bundle.makeEntry;
                   try
                     bundle.addEntry(be, false);
-                    be.Url := res.url;
+                    be.Url := URLPath([context.FormalURLPlain, res.fhirType, res.id]);
                     be.resource := res.Resource.Link;
                   finally
                     be.free;

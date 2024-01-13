@@ -41,9 +41,6 @@ exit /b 1
 
 :OK
 
-call load-password.bat
-echo password=%HI_PASSWORD%
-
 
 :: write version and date to source code 
 utilities\codescan\codescan.exe -check library\version.inc -message "Not run from the right directory - run in the root directory of the repo" || goto :error
@@ -82,21 +79,10 @@ echo All compile done
 :: setlocal
 :: set HI_PASSWORD="...."
 
-rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRConsole.exe
-rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.debug.exe
-rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.exe
-rem install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRToolkit.exe
-
-:: =========================================================================================
-:: build the web file
-del exec\pack\fhirserver.web 
-utilities\codescan\codescan.exe -check !exec\pack\fhirserver.web -message "Deleting the web file failed" || goto :error
-cd server
-cd web
-..\..\install\tools\7z a -r -tzip ..\..\exec\pack\fhirserver.web *.*
-cd ..
-cd ..
-utilities\codescan\codescan.exe -check exec\pack\fhirserver.web -message "Creating the web file failed" || goto :error
+signtool sign /f install\cert\healthintersections.cer /d "FHIRServer" /fd SHA256 /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRConsole.exe
+signtool sign /f install\cert\healthintersections.cer /d "FHIRServer" /fd SHA256 /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.debug.exe
+signtool sign /f install\cert\healthintersections.cer /d "FHIRServer" /fd SHA256 /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRServer.exe
+signtool sign /f install\cert\healthintersections.cer /d "FHIRServer" /fd SHA256 /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com exec\64\FHIRToolkit.exe
 
 :: =========================================================================================
 :: OK, now build the installers 
@@ -108,10 +94,9 @@ install\tools\iscc.exe install\install-tk.iss -q
 utilities\codescan\codescan.exe -check install\build\fhirserver-win64-%1.exe -message "Creating the server install failed" || goto :error
 utilities\codescan\codescan.exe -check install\build\fhirtoolkit-win64-%1.exe -message "Creating the toolkit install failed" || goto :error
 
-install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirserver-win64-%1.exe
-install\tools\signtool sign /f install\healthintersections.pfx /p %HI_PASSWORD% /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirtoolkit-win64-%1.exe
+signtool sign /f install\cert\healthintersections.cer /fd SHA256 /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirserver-win64-%1.exe
+signtool sign /f install\cert\healthintersections.cer /fd SHA256 /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirtoolkit-win64-%1.exe
 
-set HI_PASSWORD=null
 :: =========================================================================================
 :: now time to do the github release
 
