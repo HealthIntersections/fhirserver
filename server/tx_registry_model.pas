@@ -22,6 +22,7 @@ type
   private
     FError: String;
     FAddress : String;
+    FLastTat: String;
     FVersion : String;
     FCodeSystems : TStringList;
     FValueSets : TStringList;
@@ -36,6 +37,7 @@ type
     property Security : TServerSecuritySet read FSecurity write FSecurity;
     property Error : String read FError write FError;
     property LastSuccess : TFslDateTime read FLastSuccess write FLastSuccess;
+    property lastTat : String read FLastTat write FLastTat;
     property CodeSystems : TStringList read FCodeSystems;
     property ValueSets : TStringList read FValueSets;
     procedure update(source : TServerVersionInformation);
@@ -825,7 +827,7 @@ begin
     result := 'Server Processed Ok'
   else
     result := FError;
-  result := result + ' (last seen '+LastSuccess.toXML()+')';
+  result := result + ' (last seen '+LastSuccess.toXML()+', last tat = '+FLastTat+')';
 end;
 
 function TServerVersionInformation.cslist: String;
