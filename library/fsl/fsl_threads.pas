@@ -61,7 +61,7 @@ procedure ThreadPing;
 procedure SetThreadName(name : String);
 procedure SetThreadStatus(status : String);
 function GetThreadInfo : String;
-function GetThreadReport : String;
+function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
 procedure closeThread;
@@ -695,7 +695,7 @@ begin
   end;
 end;
 
-function GetThreadReport : String;
+function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 var
   i : integer;
   s : String;
@@ -708,8 +708,8 @@ begin
     begin
       p := GThreadList[i];
       if (s <> '') then
-        s := s + '|';
-      s := s + info(p, true);
+        s := s + sep;
+      s := s + info(p, ids);
     end;
   finally
     LeaveCriticalSection(GCritSct);

@@ -87,8 +87,12 @@ type
   { TFakeConsoleForm }
 
   TFakeConsoleForm = class(TForm)
+    Button1: TButton;
+    Button2: TButton;
+    Button3: TButton;
     MainMenu1: TMainMenu;
     Memo1: TMemo;
+    mThreads: TMemo;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
@@ -99,16 +103,26 @@ type
     mnuApple: TMenuItem;
     MenuItem7: TMenuItem;
     mnuPreferences: TMenuItem;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Splitter1: TSplitter;
     Timer1: TTimer;
     FLogger : TFakeConsoleListener;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure Memo1Change(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure mnuPreferencesClick(Sender: TObject);
     procedure mnuStopClick(Sender: TObject);
+    procedure Panel3Resize(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
     FListener: TFakeConsoleListener;
@@ -121,11 +135,12 @@ type
     FCache : TStringList;
     FWorkingLine : integer;
     FMaxLines : integer;
+    procedure SetOnStop(AValue: TNotifyEvent);
     procedure start;
   public
     property Listener : TFakeConsoleListener read FListener;
     property Op : TWorkProcedure read FOp write FOp;
-    property OnStop : TNotifyEvent read FOnStop write FOnStop;
+    property OnStop : TNotifyEvent read FOnStop write SetOnStop;
   end;
 
 var
@@ -245,12 +260,36 @@ begin
   FAutoClose := FIni.ReadBool('settings', 'autoclose', false);
   FForwards := FIni.ReadBool('settings', 'forwards', true);
   FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
+  Height := FIni.ReadInteger('settings', 'height', Height);
+  Width := FIni.ReadInteger('settings', 'width', Width);
+  Top := FIni.ReadInteger('settings', 'top', Top);
+  Left := FIni.ReadInteger('settings', 'left', Left);
+  panel3.Width := FIni.ReadInteger('settings', 'pwidth', panel3.Width);
+
   FCache := TStringList.Create;
 end;
 
 procedure TFakeConsoleForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CanClose := GFinished;
+end;
+
+procedure TFakeConsoleForm.Button1Click(Sender: TObject);
+begin
+  Memo1.SelectAll;
+  Memo1.CopyToClipboard;
+  memo1.Cursor := length(memo1.Text);
+end;
+
+procedure TFakeConsoleForm.Button2Click(Sender: TObject);
+begin
+  Memo1.Clear;
+end;
+
+procedure TFakeConsoleForm.Button3Click(Sender: TObject);
+begin
+  if assigned(FOnStop) then
+    FOnStop(self);
 end;
 
 procedure TFakeConsoleForm.FormDestroy(Sender: TObject);
@@ -260,9 +299,19 @@ begin
   FCache.free;
 end;
 
+procedure TFakeConsoleForm.FormResize(Sender: TObject);
+begin
+  FIni.WriteInteger('settings', 'height', Height);
+  FIni.WriteInteger('settings', 'width', Width);
+  FIni.WriteInteger('settings', 'top', Top);
+  FIni.WriteInteger('settings', 'left', Left);
+end;
+
 procedure TFakeConsoleForm.FormShow(Sender: TObject);
 begin
   Timer1.Enabled := true;
+  button3.Enabled := assigned(FOnStop);
+  mnuStop.Enabled := assigned(FOnStop);
 end;
 
 procedure TFakeConsoleForm.Memo1Change(Sender: TObject);
@@ -301,6 +350,11 @@ procedure TFakeConsoleForm.mnuStopClick(Sender: TObject);
 begin
   if assigned(FOnStop) then
     FOnStop(self);
+end;
+
+procedure TFakeConsoleForm.Panel3Resize(Sender: TObject);
+begin
+  FIni.WriteInteger('settings', 'pwidth', panel3.Width);
 end;
 
 procedure TFakeConsoleForm.Timer1Timer(Sender: TObject);
@@ -367,6 +421,8 @@ begin
   if f then
     FWorkingLine := -1;
 
+  mThreads.text := GetThreadReport(false, #13#10);
+
   mnuStop.enabled := not GFinished;
   if GFinished and FAutoClose then
     Close;
@@ -377,6 +433,13 @@ begin
   FStarted := true;
   mnuStop.enabled := Assigned(FOnStop);
   TWorkerThread.Create(FOp);
+end;
+
+procedure TFakeConsoleForm.SetOnStop(AValue: TNotifyEvent);
+begin
+  FOnStop:=AValue;
+  button3.Enabled := assigned(FOnStop);
+  mnuStop.Enabled := assigned(FOnStop);
 end;
 
 end.
