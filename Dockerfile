@@ -108,19 +108,16 @@ FROM ubuntu:22.04 as runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
-
-# Install runtime dependencies
-RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev \
-    && rm -rf /var/lib/apt/lists/*
-
 # Set up environment variables
 # ENV HOME=~/
 ENV DISPLAY=:99
 ENV PORT=80
 ENV TERMINOLOGY_CACHE=/terminology
 
-# Create necessary directories and set permissions
-RUN mkdir -p $HOME/fhirserver/config $TERMINOLOGY_CACHE /fhirserver \
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    && mkdir -p $HOME/fhirserver/config $TERMINOLOGY_CACHE /fhirserver \
     && chmod -R 777 $TERMINOLOGY_CACHE \
     && chmod -R 777 /fhirserver
 
@@ -141,11 +138,8 @@ RUN tar -xzvf install.tgz
 # Change working directory to the extracted folder
 WORKDIR /fhirserver/install
 
-# ERun the installation script and
+# Run the installation script
 RUN ./install.sh
-
-
-
 
 # Define entrypoint and command
 CMD ["bash", "-c", "cd ~/fhirserver/ && ./start.sh"]
