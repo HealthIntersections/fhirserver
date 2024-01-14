@@ -317,7 +317,7 @@ Type
     property id : String read FId;
     property name : String read getName;
 
-    function prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams) : TFhirParametersW;
+    procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams);
 
     function check(issuePath, system, version, code : String; abstractOk, inferSystem : boolean; op : TFhirOperationOutcomeW) : TTrueFalseUnknown; overload;
     function check(issuePath, system, version, code : String; inferSystem : boolean) : TFhirParametersW; overload;
@@ -912,7 +912,7 @@ begin
     result := FParams.getVersionForRule(systemURI, fvmDefault);
 end;
 
-function TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams) : TFhirParametersW;
+procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
 var
   cc : TFhirValueSetComposeIncludeW;
   other : TFHIRValueSetW;
@@ -923,10 +923,9 @@ var
   op : TFhirOperationOutcomeW;
   ext : TFHIRExtensionW;
 begin
-  result := nil;
   FParams := params.Link;
   if (vs = nil) then
-    raise EFslException.Create('Error Error: vs = nil')
+    raise EFHIROperationException.Create(isError, itNotFound, oicNotFound, '', 'Error Error: vs = nil')
   else
   begin
     seeValueSet(vs);
@@ -963,7 +962,7 @@ begin
         other := findValueSet(s, '');
         try
           if other = nil then
-            raise ETerminologyError.create('Unable to find value set '+s, itUnknown);
+            raise EFHIROperationException.CreateMsg(isError, itNotFound, oicNotFound, '', 'Unable_to_resolve_value_Set_', [s]);
           checker := TValueSetChecker.create(FFactory.link, FopContext.copy, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
           try
             checker.prepare(other, params);
@@ -1003,7 +1002,7 @@ begin
       other := findValueSet(s, '');
       try
         if other = nil then
-          raise ETerminologyError.create('Unable to find value set ' + s, itUnknown);
+          raise EFHIROperationException.CreateMsg(isError, itNotFound, oicNotFound, '', 'Unable_to_resolve_value_Set_', [s]);
         checker := TValueSetChecker.create(FFactory.link, FOpContext.copy, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
         try
           checker.prepare(other, FParams);

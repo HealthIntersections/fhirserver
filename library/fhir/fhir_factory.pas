@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache, fsl_i18n,
   fsl_ucum, fsl_npm, fsl_threads, fsl_web_stream,
   fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml,
   fhir_elementmodel, fhir_client, fhir_uris;
@@ -168,6 +168,7 @@ type
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); virtual; abstract;
     function buildOperationOutcome(langList : THTTPLanguageList; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
     Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    function buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV; overload; virtual; abstract;
 
     function makeByName(const name : String) : TFHIRObject; virtual; abstract;
     function makeResource(const name : String) : TFHIRResourceV;

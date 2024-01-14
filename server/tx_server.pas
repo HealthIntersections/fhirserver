@@ -659,9 +659,33 @@ begin
   try
     check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, profile.languages.link), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
-      result := check.prepare(vs, profile);
-      if result = nil then
-        result := check.check('Coding', coding, abstractOk, inferSystem);
+      try
+        check.prepare(vs, profile);
+      except
+        on e : EFHIROperationException do
+        begin
+          result := factory.makeParameters;
+          try
+            result.addParam('issues').resource := Factory.buildOperationOutcome(i18n, profile.languages, e);
+            result.addParamBool('result', false);
+            result.addParamStr('message', e.Message);
+            if coding.systemUri <> '' then
+              result.addParamUri('system', coding.systemUri);
+            if coding.version <> '' then
+              result.addParamStr('version', coding.version);
+            if coding.code <> '' then
+              result.addParamCode('code', coding.code);
+            if coding.display <> '' then
+              result.addParamStr('display', coding.display);
+            exit(result.link);
+          finally
+            result.free;
+          end;
+        end;
+        on e : Exception do
+          raise;
+      end;
+      result := check.check('Coding', coding, abstractOk, inferSystem);
       summary := check.log;
     finally
       check.free;
@@ -675,6 +699,7 @@ end;
 function TTerminologyServer.validate(issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
+  coding : TFhirCodingW;
 begin
   if vs = nil then
     vs := makeAnyValueSet
@@ -684,9 +709,41 @@ begin
   try
     check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, profile.languages.link), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
-      result := check.prepare(vs, profile);
-      if result = nil then
-        result := check.check(issuePath, coded, abstractOk, inferSystem, mode);
+      try
+        check.prepare(vs, profile);
+      except
+        on e : EFHIROperationException do
+        begin
+          result := factory.makeParameters;
+          try
+            result.addParamBool('result', false);
+            result.addParam('issues').resource := Factory.buildOperationOutcome(i18n, profile.languages, e);
+            if mode = vcmCodeableConcept then
+              result.addParam('codeableConcept').value := coded.Element.link
+            else
+            begin
+              for coding in coded.codings.forEnum do
+              begin
+                if coding.systemUri <> '' then
+                  result.addParamUri('system', coding.systemUri);
+                if coding.version <> '' then
+                  result.addParamStr('version', coding.version);
+                if coding.code <> '' then
+                  result.addParamCode('code', coding.code);
+                if coding.display <> '' then
+                  result.addParamStr('display', coding.display);
+              end;
+            end;
+            result.addParamStr('message', e.Message);
+            exit(result.link);
+          finally
+            result.free;
+          end;
+        end;
+        on e : Exception do
+          raise;
+      end;
+      result := check.check(issuePath, coded, abstractOk, inferSystem, mode);
       summary := check.log;
     finally
       check.free;

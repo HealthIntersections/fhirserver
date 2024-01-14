@@ -70,6 +70,25 @@ const
   CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data');
 
 type
+  EFHIROperationException = class (EFslException)
+  private
+    FMsgId : String;
+    FParams : TStringArray;
+    FLevel : TIssueSeverity;
+    FCause : TFHIRIssueType;
+    FCode : TOpIssueCode;
+    FPath : String;
+  public
+    constructor create(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, message : String);
+    constructor createMsg(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, messageId : String; params : TStringArray);
+
+    property MsgId : String read FMsgId;
+    property Params : TStringArray read FParams;
+    property Level : TIssueSeverity read FLevel;
+    property Cause : TFHIRIssueType read FCause;
+    property Code : TOpIssueCode read FCode;
+    property Path : String read FPath;
+  end;
 
   // base wrappers.....
   TFhirExtensionW = class;
@@ -3157,6 +3176,28 @@ end;
 function TFHIRPrimitiveX.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
 begin
   raise EFSLException.Create('Extensions are not supported in a version-less context');
+end;
+
+{ EFHIROperationException }
+
+constructor EFHIROperationException.create(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, message : String);
+begin
+  inherited create(message);
+  FLevel := level;
+  FCause := cause;
+  FCode := code;
+  FPath := path;
+end;
+
+constructor EFHIROperationException.createMsg(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, messageId : String; params : TStringArray);
+begin
+  inherited create(messageId);
+  FLevel := level;
+  FCause := cause;
+  FCode := code;
+  FPath := path;
+  FMsgId := messageId;
+  FParams := params;
 end;
 
 end.
