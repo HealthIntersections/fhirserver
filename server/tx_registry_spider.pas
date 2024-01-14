@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   IdHashSHA,
-  fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_versions, fsl_http,
+  fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_versions, fsl_http, fsl_threads,
   fsl_fetcher, fsl_zulip,
   fhir_objects, fhir_client_http,
   fhir3_client, fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
@@ -243,6 +243,7 @@ begin
     reg.Address := obj.str['url'];
     if (reg.Address = '') then
       raise EFslException.Create('No url provided for '+reg.Name);
+    SetThreadStatus(reg.Address);
 
     log('Fetch '+reg.Address, FAddress, false);
     FRegistryErrors := '';
@@ -292,6 +293,7 @@ begin
     raise EFslException.Create('No name provided');
   srvr.AccessInfo := obj.str['access_info'];
   srvr.Address := obj.str['url'];
+  SetThreadStatus(srvr.Address);
   if (srvr.Address = '') then
     raise EFslException.Create('No url provided for '+srvr.Name);
   obj.forceArr['authoritative'].readStrings(srvr.AuthCSList);
@@ -322,9 +324,12 @@ var
   d : TDateTime;
 begin
   try
-    ver.Address := obj.str['url'];
-    Logging.log('Check on server '+ver.Address);
     d := now;
+    ver.CodeSystems.clear;
+    ver.ValueSets.clear;
+    ver.Address := obj.str['url'];
+    SetThreadStatus(ver.Address);
+    Logging.log('Check on server '+ver.Address);
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
     try
@@ -341,10 +346,15 @@ begin
     ver.CodeSystems.sort;
     ver.ValueSets.sort;
     ver.LastSuccess := TFslDateTime.makeUTC;
+    ver.lastTAT := DescribePeriod(now - d);
     Logging.log('Server '+ver.Address+': '+DescribePeriod(now - d)+' for '+inttostr(ver.CodeSystems.count)+' CodeSystems and '+inttostr(ver.ValueSets.count)+' ValueSets');
   except
     on e : Exception do
+    begin
+      Logging.log('Server '+ver.Address+': Error after '+DescribePeriod(now - d)+': '+e.message);
       ver.Error := e.message;
+      ver.lastTAT := DescribePeriod(now - d);
+    end;
   end;
 end;
 

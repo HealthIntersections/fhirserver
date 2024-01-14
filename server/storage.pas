@@ -73,6 +73,7 @@ Type
 const
   OP_MODES_CHECK = [opmRestful, opmInternal];
   OP_CODES_NO_SEC_ON_INSERT = [opmSweep];
+  DEAD_CHECK_LIMIT = 60000;
 
 type
   TFHIRStorageService = class;
@@ -236,6 +237,7 @@ type
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
+    procedure deadCheck(start : QWord);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
@@ -705,6 +707,17 @@ begin
     response.Body := message;
     response.Resource := factory.BuildOperationOutcome(langList, message, issueCode);
   end;
+end;
+
+procedure TFHIROperationEngine.deadCheck(start : QWord);
+var
+  now : QWord;
+  delta : UInt64;
+begin
+  now := GetTickCount64;
+  delta := now - start;
+  if (delta > DEAD_CHECK_LIMIT) then
+    raise EWebServerException.create(500, 'Request took too long to process ('+inttostr(DEAD_CHECK_LIMIT div 1000)+'sec)');
 end;
 
 

@@ -1897,10 +1897,11 @@ begin
                    prov2 := findCodeSystem(ws, '', FParams, true);
                    try
                      bAdd := true;
-                     if (prov2 = nil) then
+                     if (prov2 = nil) and (c.version = '') then
                      begin
                        m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [ws]);
-                       //if (valueSetDependsOnCodeSystem(ws, '')) then
+                       badd := unknownSystems.IndexOf(ws) = -1;
+                       if (bAdd) then
                          unknownSystems.add(ws);
                      end
                      else

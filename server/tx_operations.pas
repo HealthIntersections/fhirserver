@@ -424,7 +424,7 @@ function TFhirValueSetValidationOperation.Execute(context : TOperationContext; m
 var
   vs : TFHIRValueSetW;
   resourceKey, versionKey : integer;
-  cacheId, url, summary, issuePath, version : String;
+  cacheId, url, summary, issuePath, version, msg : String;
   coded : TFhirCodeableConceptW;
 //  coding : TFhirCodingW;
   abstractOk, inferSystem : boolean;
@@ -433,7 +433,8 @@ var
   mode : TValidationCheckMode;
   profile : TFhirExpansionParams;
   txResources : TFslMetadataResourceList;
-  mr : TFHIRMetadataResourceW;
+  mr : TFHIRMetadataResourceW;        
+  op : TFhirOperationOutcomeW;
 begin
   isValueSet := request.ResourceName = 'ValueSet';
 
@@ -449,79 +450,97 @@ begin
         try
           vs := nil;
           txResources := nil;
+          pout := nil;
           profile := nil;
           try
+            profile := buildExpansionParams(request, manager, params);
             coded := loadCoded(request, isValueSet, issuePath, mode);
             try
               result := 'Validate Code '+coded.renderText;
-              if isValueSet then
-              begin
-                // first, we have to identify the value set.
-                if request.Id <> '' then // and it must exist, because of the check above
-                begin
-                  vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
-                  cacheId := vs.url;
-                  result := result+' in vs '+request.id;
-                end
-                else if params.has('url')  then
-                begin
-                  url := params.str('url');
-                  version := params.str('valueSetVersion');
-                  if (version = '') then
-                    result := result+' in vs '+url+'|'+version+' (ref)'
-                  else
-                    result := result+' in vs '+url+' (ref)';
-                  txResources := processAdditionalResources(context, manager, nil, params);
-                  for mr in txResources do
-                    if (canonicalMatches(mr, url, version)) and (mr is TFHIRValueSetW) then
-                    begin
-                      vs := (mr as TFHIRValueSetW).link;
-                      break;
-                    end;
-                  if vs = nil then
-                    vs := FServer.getValueSetByUrl(url, version);
-                  if vs = nil then
-                    if not FServer.isKnownValueSet(url, vs) then
-                      vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
-                  if vs = nil then
-                    raise ETerminologySetup.Create('Unable to resolve value set "'+url+'"');
-                  cacheId := vs.vurl;
-                end
-                else if params.has('valueSet') then
-                begin
-                  if not (params.obj('valueSet') is TFHIRResourceV) then
-                    raise ETerminologyError.Create('Error with valueSet parameter - must be a value set', itInvalid);
-                  vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
-                  result := result+' in vs '+vs.url+' (param)';
-                  txResources := processAdditionalResources(context, manager, vs, params);
-                end
-                else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
-                begin
-                  vs := FFactory.wrapValueSet(request.Resource.Link);
-                  result := result+' in vs '+vs.url+' (res)';
-                  txResources := processAdditionalResources(context, manager, vs, params);
-                end
-                // else
-                // raise ETerminologyError.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
-              end;
-
-              abstractOk := params.str('abstract') = 'true';
-              inferSystem := (params.str('inferSystem') = 'true') or (params.str('implySystem') = 'true');
-
-              if (coded = nil) then
-                raise ETerminologyError.Create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
-
-              if vs <> nil then
-              begin
-                vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
-                FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
-              end;
-              if txResources = nil then
-                txResources := processAdditionalResources(context, manager, nil, params);
-
-              profile := buildExpansionParams(request, manager, params);
-              pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, inferSystem, mode, txResources, summary);
               try
+                if isValueSet then
+                begin
+                  // first, we have to identify the value set.
+                  if request.Id <> '' then // and it must exist, because of the check above
+                  begin
+                    vs := FFactory.wrapValueSet(manager.GetResourceById(request, 'ValueSet', request.Id, request.baseUrl, needSecure));
+                    cacheId := vs.url;
+                    result := result+' in vs '+request.id;
+                  end
+                  else if params.has('url')  then
+                  begin
+                    url := params.str('url');
+                    version := params.str('valueSetVersion');
+                    if (version = '') then
+                      result := result+' in vs '+url+'|'+version+' (ref)'
+                    else
+                      result := result+' in vs '+url+' (ref)';
+                    txResources := processAdditionalResources(context, manager, nil, params);
+                    for mr in txResources do
+                      if (canonicalMatches(mr, url, version)) and (mr is TFHIRValueSetW) then
+                      begin
+                        vs := (mr as TFHIRValueSetW).link;
+                        break;
+                      end;
+                    if vs = nil then
+                      vs := FServer.getValueSetByUrl(url, version);
+                    if vs = nil then
+                      if not FServer.isKnownValueSet(url, vs) then
+                        vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
+                    if vs = nil then
+                    begin
+                      pOut := FFactory.makeParameters;
+                      pOut.AddParamBool('result', false);
+                      msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.languages, [url]);
+                      pOut.AddParamStr('message', msg);
+                      op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
+                      try
+                        pOut.addParam('issues').resource := op.Resource.link;
+                        op.addIssue(isError, itNotFound, '', msg, oicNotFound);
+                      finally
+                        op.free;
+                      end;
+
+                    end
+                    else
+                      cacheId := vs.vurl;
+                  end
+                  else if params.has('valueSet') then
+                  begin
+                    if not (params.obj('valueSet') is TFHIRResourceV) then
+                      raise ETerminologyError.Create('Error with valueSet parameter - must be a value set', itInvalid);
+                    vs := FFactory.wrapValueSet(params.obj('valueSet').Link as TFHIRResourceV);
+                    result := result+' in vs '+vs.url+' (param)';
+                    txResources := processAdditionalResources(context, manager, vs, params);
+                  end
+                  else if (request.Resource <> nil) and (request.Resource.fhirType = 'ValueSet') then
+                  begin
+                    vs := FFactory.wrapValueSet(request.Resource.Link);
+                    result := result+' in vs '+vs.url+' (res)';
+                    txResources := processAdditionalResources(context, manager, vs, params);
+                  end
+                  // else
+                  // raise ETerminologyError.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
+                end;
+
+                abstractOk := params.str('abstract') = 'true';
+                inferSystem := (params.str('inferSystem') = 'true') or (params.str('implySystem') = 'true');
+
+                if (pout = nil) then
+                begin
+                  if (coded = nil) then
+                    raise ETerminologyError.Create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
+
+                  if vs <> nil then
+                  begin
+                    vs.checkNoImplicitRules('ValueSetValidation', 'ValueSet');
+                    FFactory.checkNoModifiers(vs.Resource, 'ValueSetValidation', 'ValueSet');
+                  end;
+                  if txResources = nil then
+                    txResources := processAdditionalResources(context, manager, nil, params);
+
+                  pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, inferSystem, mode, txResources, summary);
+                end;
                 if summary <> '' then
                   result := result + ': '+summary;
                 response.resource := pout.Resource.link;

@@ -613,6 +613,7 @@ var
   be : TFhirBundleEntryW;
   p : TFHIRResourceProxyV;
   useProxy : boolean;
+  start : QWord;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
@@ -635,6 +636,7 @@ begin
   if offset < 0 then
     offset := 0;
 
+  start := GetTickCount64;
   if (request.Parameters.Count = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
     BuildSearchForm(request, response)
   else
@@ -664,34 +666,47 @@ begin
               end;
 
             if (hasScope(request, 'CodeSystem')) then
+            begin
+              deadCheck(start);
               for p in FData.CodeSystems.Values do
                 if useProxy then
                   list.add(makeWrapper('CodeSystem', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
             if (hasScope(request, 'ValueSet')) then
+            begin
+              deadCheck(start);
               for p in FData.ValueSets.Values do
                 if useProxy then
                   list.add(makeWrapper('ValueSet', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
             if (hasScope(request, 'ConceptMap')) then
+            begin
+              deadCheck(start);
               for p in FData.ConceptMaps.Values do
                 if useProxy then
                   list.add(makeWrapper('ConceptMap', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
             if (hasScope(request, 'NamingSystem')) then
+            begin
+              deadCheck(start);
               for p in FData.NamingSystems.Values do
                 if useProxy then
                   list.add(makeWrapper('NamingSystem', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
 
             filtered := TFslMetadataResourceList.create;
             try
               for res in list do
               begin
+                deadCheck(start);
                 isMatch := true;
                 for sp in search do
                 begin
@@ -722,6 +737,7 @@ begin
               t := 0;
               for res in filtered do
               begin
+                deadCheck(start);
                 inc(i);
                 if (i > offset) then
                 begin
@@ -771,7 +787,10 @@ var
   s : String;
   i : integer;
   tt : TTimeTracker;
+  start : QWord;
 begin
+  start := GetTickCount64;
+
   opList := TStringList.create;
   try
     // since we're not making any changes, this is pretty straight forward
@@ -786,6 +805,7 @@ begin
           resp.id := NewGuidId;
           for src in req.entries.forEnum do
           begin
+            deadCheck(start);
             dest := resp.addEntry;
             try
               try
