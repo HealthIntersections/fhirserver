@@ -682,11 +682,11 @@ begin
         for s in r.Servers do
         begin
           if (s.AuthCSList.Count > 0) or (s.AuthVSList.Count > 0) or (s.UsageList.count > 0) then
-            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.details+'</td></tr>')
+            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.description+'</td></tr>')
           else
             b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a></td></tr>');
           for v in s.Versions do
-            b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' Items</td></tr>');
+            b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' CodeSystems, '+inttostr(v.ValueSets.Count)+' ValueSets</td></tr>');
         end;
       end;
       b.Append('</table>');
