@@ -202,6 +202,8 @@ begin
     LoadTerminologies;
     LoadEndPoints;
     StartWebServer();
+    for ep in FEndPoints do
+      ep.Started;
 
     recordStats(nil);
     FMaintenanceThread := TFhirServerMaintenanceThread.Create;
@@ -235,7 +237,9 @@ begin
   end;
 end;
 
-procedure TFHIRServiceKernel.DoStop;
+procedure TFHIRServiceKernel.DoStop; 
+var
+  ep : TFhirServerEndpoint;
 begin
   try
     Logging.log('stopping: '+StopReason);
@@ -250,6 +254,9 @@ begin
       FMaintenanceThread.StopAndWait(21000); // see comments in FMaintenanceThread.finalise
       FMaintenanceThread.free;
     end;
+    for ep in FEndPoints do
+      ep.Stopping;
+
     Logging.log('stop web server');
     StopWebServer;
     Logging.log('closing');
@@ -934,7 +941,7 @@ begin
     SuppressLeakDialog := true;
   end;
 
-  if params.has('fake-console') then
+  if params.has('console') or params.has('fake-console') then
   begin
     RequireDerivedFormResource := True;
     Application.Title := 'FHIRServer';

@@ -256,7 +256,7 @@ begin
   finally
     p.free;
   end;
-   try
+  try
     FResourceV := r;
   finally
     FLock.unlock;

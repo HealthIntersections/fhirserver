@@ -769,6 +769,7 @@ type
   protected
     function getURL: String; virtual; abstract;
     function getName: String; virtual; abstract;
+    function getTitle: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getVersion: String; virtual; abstract;
     function getDescription: String; virtual; abstract;
@@ -780,6 +781,7 @@ type
     procedure setUrl(Value: String); virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    procedure setTitle(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
@@ -789,6 +791,7 @@ type
 
     property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property vurl : String read GetVUrl;
     property status : TPublicationStatus read GetStatus write SetStatus;
@@ -1443,12 +1446,14 @@ type
   protected
     function getDate: TFslDateTime; virtual; abstract;
     function getDescription: String; virtual; abstract;
-    function getName: String; virtual; abstract;
+    function getName: String; virtual; abstract;          
+    function getTitle: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getURL: String; virtual; abstract;
     procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    procedure setTitle(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setUrl(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
@@ -1461,7 +1466,8 @@ type
     function link : TFhirTerminologyCapabilitiesW; overload;
 
     property url : String read getURL write SetUrl;
-    property name : String read GetName write SetName;
+    property name : String read GetName write SetName;      
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
