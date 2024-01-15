@@ -206,7 +206,7 @@ end;
 //  stream : TFileStream;
 //  json : TFHIRJsonParser;
 //begin
-//  stream := TFileStream.Create(filename, fmOpenRead);
+//  stream := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
 //  try
 //    json := TFHIRJsonParser.Create(nil);
 //    try

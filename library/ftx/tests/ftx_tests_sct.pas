@@ -78,7 +78,7 @@ var
 begin
   hash := TIdHashSHA256.Create;
   try
-    f := TFileStream.create(fn, fmOpenRead);
+    f := TFileStream.create(fn, fmOpenRead + fmShareDenyWrite);
     try
       result := hash.HashStreamAsHex(f);
     finally

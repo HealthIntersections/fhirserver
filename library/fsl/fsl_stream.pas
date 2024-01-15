@@ -2092,7 +2092,7 @@ procedure TFslBuffer.LoadFromFileName(const sFilename: String);
 Var
   oFile : TFslFile;
 Begin
-  oFile := TFslFile.Create(sFilename, fmOpenRead);
+  oFile := TFslFile.Create(sFilename, fmOpenRead + fmShareDenyWrite);
   Try
     LoadFromFile(oFile);
   Finally
@@ -4363,7 +4363,7 @@ constructor TFslStreamReader.Create(const Filename: string; Encoding: TEncoding;
 var
   oFile : TFslFile;
 begin
-  oFile := TFslFile.Create(FileName, fmOpenRead);
+  oFile := TFslFile.Create(FileName, fmOpenRead + fmShareDenyWrite);
   Try
     Create(oFile.Link, Encoding, DetectBOM, BufferSize);
   Finally

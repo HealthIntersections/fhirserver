@@ -2241,7 +2241,7 @@ procedure TDicomDictionaryParser.LoadFromFile(const sSource: String);
 var
   oFile : TFslFile;
 begin
-  oFile :=  TFslFile.Create(sSource, fmOpenRead);
+  oFile :=  TFslFile.Create(sSource, fmOpenRead + fmShareDenyWrite);
   Try
     Source := oFile.Link;
   Finally

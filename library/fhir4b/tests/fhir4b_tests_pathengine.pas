@@ -177,7 +177,7 @@ begin
           begin
             p := TFHIRXmlParser.Create(TTestingWorkerContext4.Use, nil);
             try
-              f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead);
+              f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead + fmShareDenyWrite);
               try
                 p.source := f;
                 p.parse;

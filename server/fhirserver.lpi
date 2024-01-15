@@ -19,9 +19,6 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
-      <RevisionNr Value="3"/>
-      <MinorVersionNr Value="0"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="7">
       <Item1 Name="default" Default="True"/>
@@ -815,7 +812,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="53">
+    <Exceptions Count="54">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -995,6 +992,9 @@
       <Item53>
         <Name Value="ESQLite3Error"/>
       </Item53>
+      <Item54>
+        <Name Value="EFHIROperationException"/>
+      </Item54>
     </Exceptions>
   </Debugging>
 </CONFIG>

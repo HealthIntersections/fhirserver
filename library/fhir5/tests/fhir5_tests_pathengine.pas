@@ -183,7 +183,7 @@ begin
           begin
             p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
             try
-              f := TFileStream.Create(FHIR_PUB_FILE(input), fmOpenRead);
+              f := TFileStream.Create(FHIR_PUB_FILE(input), fmOpenRead + fmShareDenyWrite);
               try
                 p.source := f;
                 p.parse;

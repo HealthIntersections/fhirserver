@@ -720,7 +720,7 @@ var
   csv : TFslCSVExtractor;
   items : TFslStringList;
 begin
-  csv := TFslCSVExtractor.create(TFslFile.create(TestSettings.serverTestFile(['testcases', 'csv', 'test.csv']), fmOpenRead));
+  csv := TFslCSVExtractor.create(TFslFile.create(TestSettings.serverTestFile(['testcases', 'csv', 'test.csv']), fmOpenRead + fmShareDenyWrite));
   try
     csv.IgnoreWhitespace := true;
     items := TFslStringList.Create;
@@ -4384,7 +4384,7 @@ begin
   end;
   assertTrue(FileExists(filename), 'FileExists(filename) #2');
   assertTrue(FileSize(filename) = 27, 'FileSize(filename) = 27');
-  f := TFslFile.Create(filename, fmOpenRead);
+  f := TFslFile.Create(filename, fmOpenRead + fmShareDenyWrite);
   try
     SetLength(s, f.Size);
     f.Read(s[1], f.Size);
@@ -4951,7 +4951,7 @@ var
   f : TFileStream;
   sig : TDigitalSigner;
 begin
-  f := TFileStream.Create(filename, fmOpenRead);
+  f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
   try
     setLength(bytes, f.Size);
     f.Read(bytes[0], length(bytes));

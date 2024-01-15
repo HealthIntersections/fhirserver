@@ -438,7 +438,12 @@ begin
     if Stopped then
       exit;
     SetThreadStatus(name+': '+inttostr((100 * i) div c)+'% of '+inttostr(c)+' ('+p.url+')');
-    t := p.resourceV; // prompt to load
+    try
+      t := p.resourceV; // prompt to load
+    except
+      on e : Exception do
+        Logging.log('Error loading '+p.url+'|'+p.version+': '+e.message);
+    end;
     inc(i);
     SetThreadStatus(name+': '+inttostr((100 * i) div c)+'% of '+inttostr(c));
     sleep(15);   // if this goes too low, bang on OSX
