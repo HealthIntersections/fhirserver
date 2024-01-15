@@ -16,7 +16,7 @@ set "tmp=c:\temp"
 IF %2.==. GOTO No2
 set "tmp=%2"
 
-:No1
+:No2
 
 call build\windows-libraries.bat %tmp%
 rem pause
