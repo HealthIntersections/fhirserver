@@ -112,7 +112,7 @@ ENV TZ=UTC
 # ENV HOME=~/
 ENV DISPLAY=:99
 ENV PORT=80
-ENV TERMINOLOGY_CACHE=/terminology
+ENV TERMINOLOGY_CACHE=/var/cache/txcache
 
 # Install runtime dependencies
 RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev \
