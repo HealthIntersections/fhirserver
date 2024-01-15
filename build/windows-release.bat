@@ -97,13 +97,19 @@ utilities\codescan\codescan.exe -check install\build\fhirtoolkit-win64-%1.exe -m
 signtool sign /f install\cert\healthintersections.cer /fd SHA256 /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirserver-win64-%1.exe
 signtool sign /f install\cert\healthintersections.cer /fd SHA256 /d "FHIRServer" /du "https://github.com/HealthIntersections/fhirserver" /t http://timestamp.sectigo.com install\build\fhirtoolkit-win64-%1.exe
 
+cd install
+cd build
+..\..\install\tools\7z a -r -tzip fhirserver-win64-%1.zip fhirserver-win64-%1.exe
+cd ..
+cd ..
+
 :: =========================================================================================
 :: now time to do the github release
 
 echo ## GitHub Release ##
 git commit library\version.inc -m "Release Version %1"
 git push 
-install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
+install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirserver-win64-%1.zip#Windows Server Installer Zip" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
 rename release-notes.md release-notes-old.md
 
 utilities\codescan\codescan.exe -next-version %1
