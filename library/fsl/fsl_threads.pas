@@ -85,7 +85,7 @@ type
 
     FOwnID: Integer;                 // unique serial number assigned to all critical sections
     FName: String;                   // Name of the critical section object
-    FLockName: Array of String;      // Name of the current Lock (first one to grab)
+    FLastLocker: String;             // Name of the last to grab the Lock
     FDelayCount: Integer;            // Number of times there has been a failed attempt to lock a critical section
     FUseCount: Integer;              // The amount of times there has been a succesful attempt to lock a critical section
     FCurrLockTime: UInt64;           // Time which the owning thread obtained the lock for the thread
@@ -176,6 +176,7 @@ Type
 
     function Terminated : boolean;
     Property Running : Boolean read FRunning;
+    Property Stopped : Boolean read FStopped;
 
     Property AutoFree : boolean read FAutoFree write FAutoFree;
     Property TimePeriod : cardinal read FTimePeriod write FTimePeriod; // milliseconds. If this is >0, execute will called after TimePeriod delay until Stopped
@@ -965,8 +966,8 @@ constructor TFslLock.Create;
 begin
   inherited Create;
   FName := ClassName;
-  SetLength(FLockName, 0);
   FDelayCount := 0;
+  FLastLocker := '';
   FUseCount := 0;
   FCurrLockTime := 0;
   FTimeLocked := 0;
@@ -1058,14 +1059,12 @@ begin
     inc(FUseCount);
     FCurrLockTime := GetTickCount64;
   end;
-  SetLength(FLockName, FEntryCount);
 end;
 
 procedure TFslLock.MarkLeft;
 begin
   assert(FLockThread = GetCurrentThreadID);
   dec(FEntryCount);
-  SetLength(FLockName, FEntryCount);
   if FEntryCount = 0 then
     begin
     FLockThread := NO_THREAD;
@@ -1098,7 +1097,7 @@ end;
 procedure TFslLock.Lock(const Name: String);
 begin
   Lock;
-  FLockName[FEntryCount - 1] := Name;
+  FLastLocker := Name;
 end;
 
 function TFslLock.Trylock: Boolean;
@@ -1172,13 +1171,8 @@ begin
     Col(IntToStr(FCurrLockTime), 9)+
     Col(IntToStr(FTimeLocked), 10)+
     Col(IntToStr(FDelayTime), 10)+
-    Col(threadToString(FLockThread), 9);
-
-  for i := 0 to High(FLockName) do
-    if (i > 0) then
-      result := result + '|' + FLockName[i]
-    else
-      result := result + FLockName[i];
+    Col(threadToString(FLockThread), 9)+
+    Col(FLastLocker, 20);
 end;
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;

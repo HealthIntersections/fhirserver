@@ -1,7 +1,7 @@
 object FakeConsoleForm: TFakeConsoleForm
   Left = 17
   Height = 804
-  Top = 428
+  Top = 253
   Width = 1220
   Caption = 'Fake Console Form'
   ClientHeight = 804
@@ -25,55 +25,59 @@ object FakeConsoleForm: TFakeConsoleForm
     TabOrder = 0
     object Panel1: TPanel
       Left = 1
-      Height = 32
+      Height = 23
       Top = 1
       Width = 990
       Align = alTop
+      Alignment = taLeftJustify
       BevelOuter = bvNone
-      ClientHeight = 32
+      Caption = '  Log'
+      ClientHeight = 23
       ClientWidth = 990
       TabOrder = 0
-      object Button1: TButton
-        Left = 0
+      object btnCopy: TButton
+        Left = 64
         Height = 25
-        Top = 0
+        Top = -1
         Width = 75
         Caption = 'Copy'
         TabOrder = 0
-        OnClick = Button1Click
+        OnClick = btnCopyClick
       end
-      object Button2: TButton
-        Left = 80
+      object btnClear: TButton
+        Left = 144
         Height = 25
-        Top = 0
+        Top = -1
         Width = 75
         Caption = 'Clear'
         TabOrder = 1
-        OnClick = Button2Click
+        OnClick = btnClearClick
       end
-      object Button3: TButton
-        Left = 160
+      object btnStop: TButton
+        Left = 224
         Height = 25
-        Top = 0
+        Top = -1
         Width = 104
         Caption = 'Close down'
         TabOrder = 2
-        OnClick = Button3Click
+        OnClick = btnStopClick
       end
     end
-    object Memo1: TMemo
+    object mLog: TMemo
       Left = 1
-      Height = 770
-      Top = 33
+      Height = 779
+      Top = 24
       Width = 990
       Align = alClient
       Font.CharSet = ANSI_CHARSET
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = '.SF NS'
+      Font.Pitch = fpFixed
       ParentFont = False
       ReadOnly = True
       TabOrder = 1
-      OnChange = Memo1Change
+      WordWrap = False
+      OnChange = mLogChange
     end
   end
   object Panel3: TPanel
@@ -88,7 +92,7 @@ object FakeConsoleForm: TFakeConsoleForm
     OnResize = Panel3Resize
     object Panel4: TPanel
       Left = 1
-      Height = 32
+      Height = 24
       Top = 1
       Width = 221
       Align = alTop
@@ -99,11 +103,43 @@ object FakeConsoleForm: TFakeConsoleForm
     end
     object mThreads: TMemo
       Left = 1
-      Height = 770
-      Top = 33
+      Height = 575
+      Top = 25
       Width = 221
       Align = alClient
       TabOrder = 1
+      WordWrap = False
+    end
+    object Panel5: TPanel
+      Left = 1
+      Height = 203
+      Top = 600
+      Width = 221
+      Align = alBottom
+      ClientHeight = 203
+      ClientWidth = 221
+      TabOrder = 2
+      object Panel6: TPanel
+        Left = 1
+        Height = 23
+        Top = 1
+        Width = 219
+        Align = alTop
+        Alignment = taLeftJustify
+        Caption = '   Locks'
+        TabOrder = 0
+      end
+      object mLocks: TMemo
+        Left = 1
+        Height = 178
+        Top = 24
+        Width = 219
+        Align = alClient
+        Lines.Strings = (
+          'mLocks'
+        )
+        TabOrder = 1
+      end
     end
   end
   object Splitter1: TSplitter
