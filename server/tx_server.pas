@@ -112,6 +112,8 @@ Type
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
     function workerGetExpansion(sender : TObject; opContext : TTerminologyOperationContext; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW;
     procedure workerGetVersions(sender : TObject; url : String; list : TStringList);
+    function handlePrepareException(e : EFHIROperationException; profile : TFHIRExpansionParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
+    procedure processCoding(coding : TFHIRCodingW; params : TFhirParametersW);
   protected
     procedure invalidateVS(id : String); override;
   public
@@ -637,7 +639,7 @@ begin
   try
     vs := getValueSetByUrl(uri, version);
     try
-      result.prepare(vs, profile);
+      result.prepare(vs, profile, nil);
     finally
       vs.free;
     end;
@@ -647,9 +649,48 @@ begin
   end;
 end;
 
+function TTerminologyServer.handlePrepareException(e : EFHIROperationException; profile : TFHIRExpansionParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
+var
+  op : TFhirOperationOutcomeW;
+  msg : String;
+begin
+  result := factory.makeParameters;
+  try
+    op := Factory.wrapOperationOutcome(Factory.buildOperationOutcome(i18n, profile.languages, e));
+    try
+      if unknownValueSets.Count > 0 then
+        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_VS', profile.languages, [url, unknownValueSets.CommaText])
+      else
+        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET', profile.languages, [url]);
+      op.addIssue(isWarning, itNotFound, '', msg, oicVSProcessing);
+      result.addParam('issues').resource := op.Resource.link;
+      result.addParamBool('result', false);
+      result.addParamStr('message', e.message+'; '+msg);
+    finally
+      op.free;
+    end;
+    exit(result.link);
+  finally
+    result.free;
+  end;
+end;
+
+procedure TTerminologyServer.processCoding(coding : TFHIRCodingW; params : TFhirParametersW);
+begin
+  if coding.systemUri <> '' then
+    params.addParamUri('system', coding.systemUri);
+  if coding.version <> '' then
+    params.addParamStr('version', coding.version);
+  if coding.code <> '' then
+    params.addParamCode('code', coding.code);
+  if coding.display <> '' then
+    params.addParamStr('display', coding.display);
+end;
+
 function TTerminologyServer.validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
+  unknownValueSets : TStringList;
 begin
   if vs = nil then
     vs := makeAnyValueSet
@@ -657,26 +698,19 @@ begin
     vs.Link;
 
   try
+    unknownValueSets := TStringList.create;
     check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, profile.languages.link), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
+      unknownValueSets.Sorted := true;
+      unknownValueSets.Duplicates := dupIgnore;
       try
-        check.prepare(vs, profile);
+        check.prepare(vs, profile, unknownValueSets);
       except
         on e : EFHIROperationException do
         begin
-          result := factory.makeParameters;
+          result := handlePrepareException(e, profile, unknownValueSets, vs.vurl);
           try
-            result.addParam('issues').resource := Factory.buildOperationOutcome(i18n, profile.languages, e);
-            result.addParamBool('result', false);
-            result.addParamStr('message', e.Message);
-            if coding.systemUri <> '' then
-              result.addParamUri('system', coding.systemUri);
-            if coding.version <> '' then
-              result.addParamStr('version', coding.version);
-            if coding.code <> '' then
-              result.addParamCode('code', coding.code);
-            if coding.display <> '' then
-              result.addParamStr('display', coding.display);
+            processCoding(coding, result);
             exit(result.link);
           finally
             result.free;
@@ -689,6 +723,7 @@ begin
       summary := check.log;
     finally
       check.free;
+      unknownValueSets.free;
     end;
   finally
     vs.free;
@@ -699,7 +734,10 @@ end;
 function TTerminologyServer.validate(issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
-  coding : TFhirCodingW;
+  coding : TFhirCodingW; 
+  unknownValueSets : TStringList;
+  op : TFhirOperationOutcomeW;
+  msg : String;
 begin
   if vs = nil then
     vs := makeAnyValueSet
@@ -707,34 +745,23 @@ begin
     vs.Link;
 
   try
+    unknownValueSets := TStringList.create;
     check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, profile.languages.link), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
+      unknownValueSets.Sorted := true;
+      unknownValueSets.Duplicates := dupIgnore;
       try
-        check.prepare(vs, profile);
+        check.prepare(vs, profile, unknownValueSets);
       except
         on e : EFHIROperationException do
         begin
-          result := factory.makeParameters;
+          result := handlePrepareException(e, profile, unknownValueSets, vs.vurl);
           try
-            result.addParamBool('result', false);
-            result.addParam('issues').resource := Factory.buildOperationOutcome(i18n, profile.languages, e);
             if mode = vcmCodeableConcept then
-              result.addParam('codeableConcept').value := coded.Element.link
+                result.addParam('codeableConcept').value := coded.Element.link
             else
-            begin
-              for coding in coded.codings.forEnum do
-              begin
-                if coding.systemUri <> '' then
-                  result.addParamUri('system', coding.systemUri);
-                if coding.version <> '' then
-                  result.addParamStr('version', coding.version);
-                if coding.code <> '' then
-                  result.addParamCode('code', coding.code);
-                if coding.display <> '' then
-                  result.addParamStr('display', coding.display);
-              end;
-            end;
-            result.addParamStr('message', e.Message);
+              for coding in coded.codings.forEnum do // there'll only be one, but this handles freeing the object
+                processCoding(coding, result);
             exit(result.link);
           finally
             result.free;
@@ -1507,7 +1534,7 @@ begin
           try
             val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, profile.languages.link), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
             try
-              val.prepare(vs, profile);
+              val.prepare(vs, profile, nil);
               if val.check('code', URL, version, code, true, false, nil) <> bTrue then
                 conn3.ExecSQL('Delete from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey))
               else if conn3.CountSQL('select Count(*) from ValueSetMembers where ValueSetKey = '+conn2.ColStringByName['ValueSetKey']+' and ConceptKey = '+inttostr(ConceptKey)) = 0 then
@@ -1549,7 +1576,7 @@ begin
         try
           val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, profile.languages.link), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
           try
-            val.prepare(vs, profile);
+            val.prepare(vs, profile, nil);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
             conn2.Prepare;
             try

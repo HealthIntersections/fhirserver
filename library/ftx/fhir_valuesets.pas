@@ -304,7 +304,7 @@ Type
     function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var vstatus : String; op : TFHIROperationOutcomeW) : boolean;
     function fixedSystemFromValueSet: String;
-    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
+    procedure prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; unknownValueSets : TStringList);
     function getName: String;
     function valueSetDependsOnCodeSystem(url, version: String): boolean;
   protected
@@ -317,7 +317,7 @@ Type
     property id : String read FId;
     property name : String read getName;
 
-    procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams);
+    procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams; unknownValueSets : TStringList);
 
     function check(issuePath, system, version, code : String; abstractOk, inferSystem : boolean; op : TFhirOperationOutcomeW) : TTrueFalseUnknown; overload;
     function check(issuePath, system, version, code : String; inferSystem : boolean) : TFhirParametersW; overload;
@@ -912,7 +912,7 @@ begin
     result := FParams.getVersionForRule(systemURI, fvmDefault);
 end;
 
-procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams);
+procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams; unknownValueSets : TStringList);
 var
   cc : TFhirValueSetComposeIncludeW;
   other : TFHIRValueSetW;
@@ -965,7 +965,7 @@ begin
             raise EFHIROperationException.CreateMsg(isError, itNotFound, oicNotFound, '', 'Unable_to_resolve_value_Set_', [s]);
           checker := TValueSetChecker.create(FFactory.link, FopContext.copy, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
           try
-            checker.prepare(other, params);
+            checker.prepare(other, params, unknownValueSets);
             FOthers.Add(s, checker.Link);
           finally
             checker.free;
@@ -976,16 +976,16 @@ begin
       end;
 
       for cc in FValueSet.includes.forEnum do
-        prepareConceptSet('include', cc);
+        prepareConceptSet('include', cc, unknownValueSets);
       for cc in FValueSet.excludes.forEnum do
-        prepareConceptSet('exclude', cc);
+        prepareConceptSet('exclude', cc, unknownValueSets);
     end;
   end;
   if (FRequiredSupplements.count > 0) then
     raise ETerminologyError.create(FI18n.translatePlural(FRequiredSupplements.Count, 'VALUESET_SUPPLEMENT_MISSING', FParams.languages, [FRequiredSupplements.commaText]), itNotFound);
 end;
 
-procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW);
+procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; unknownValueSets : TStringList);
 var
   other: TFhirValueSetW;
   checker: TValueSetChecker;
@@ -993,6 +993,7 @@ var
   ccf: TFhirValueSetComposeIncludeFilterW;
   cs: TCodeSystemProvider;
   i : integer;
+  unknownSystems : TStringList;
 begin
   FFactory.checkNoModifiers(cc, 'ValueSetChecker.prepare', desc);
   for s in cc.valueSets do
@@ -1002,10 +1003,14 @@ begin
       other := findValueSet(s, '');
       try
         if other = nil then
+        begin
+          if unknownValueSets <> nil then
+            unknownValueSets.add(s);
           raise EFHIROperationException.CreateMsg(isError, itNotFound, oicNotFound, '', 'Unable_to_resolve_value_Set_', [s]);
+        end;
         checker := TValueSetChecker.create(FFactory.link, FOpContext.copy, FOnGetValueSet, FOnGetCSProvider, FOnListCodeSystemVersions, FOnGetExpansion, FAdditionalResources.link, FLanguages.link, other.url, FI18n.link);
         try
-          checker.prepare(other, FParams);
+          checker.prepare(other, FParams, nil);
           FOthers.Add(s, checker.Link);
         finally
           checker.free;
@@ -1914,9 +1919,9 @@ begin
                        op.addIssue(isError, itNotFound, addToPath(path, 'system'), m, oicNotFound);
                      if (valueSetDependsOnCodeSystem(ws, c.version)) then
                      begin
-                       m := 'Unable to check whether the code is in the value set '+FValueSet.vurl+' because the code system '+ws+'|'+c.version+' was not found';
+                       m := FI18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', FParams.languages, [FValueSet.vurl, ws+'|'+c.version]);
                        msg(m);
-                       op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
+                       op.addIssue(isWarning, itNotFound, '', m, oicVSProcessing);
                      end
                      else
                        msg(m);

@@ -82,6 +82,7 @@ Type
   TSearchParser = class (TFslObject)
   private
     FElements : TStringList;
+    FAllowedParams : TStringList;
     FSearchControls : TFHIRSearchControlParameterSet;
     function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
@@ -91,6 +92,7 @@ Type
     function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
     function buildUrl(base : String; search : TFslList<TSearchParameter>): String;
     property Elements : TStringList read FElements;
+    property allowedParams : TStringList read FAllowedParams;
   end;
 
 const
@@ -309,7 +311,7 @@ begin
     n := l;
 
   index := indexes.Indexes.getByName(resourceType, n);
-  if index <> nil then
+  if (index <> nil) and ((FAllowedParams.Count = 0) or (FAllowedParams.indexOf(n) > -1)) then
     begin
     result := TSearchParameter.Create;
     try
@@ -396,11 +398,13 @@ constructor TSearchParser.Create(searchControls: TFHIRSearchControlParameterSet)
 begin
   inherited Create;
   FSearchControls := searchControls;
+  FAllowedParams := TStringList.create;
   FElements := TStringList.create;
 end;
 
 destructor TSearchParser.Destroy;
 begin
+  FAllowedParams.free;
   FElements.free;
   inherited Destroy;
 end;
