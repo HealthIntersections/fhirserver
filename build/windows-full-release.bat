@@ -2,7 +2,6 @@
 git pull
 
 if errorlevel 1 goto Quit
-pause
 
 Rem ---- initial set up ----------
 
@@ -19,16 +18,13 @@ set "tmp=%2"
 :No2
 
 call build\windows-libraries.bat %tmp%
-rem pause
+
 
 call build\windows-fhirserver.bat %tmp%
-rem pause
 
 exec\64\fhirserver.exe -tests -test-settings exec\64\fhir-tests.ini
 
 if errorlevel 1 goto Quit
-pause
-
 
 call build\windows-release %1 %tmp%
 
