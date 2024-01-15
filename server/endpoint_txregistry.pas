@@ -144,7 +144,7 @@ var
   s : String;
 begin
   inherited Create(config, settings, nil, common, nil, i18n);
-  s := config.clone['folder'].value;
+  s := config['folder'].value;
   FAddress := s;
   if (FAddress = '') then
     FAddress := MASTER_URL;
