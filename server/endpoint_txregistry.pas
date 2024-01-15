@@ -809,7 +809,10 @@ begin
     else if request.document = PathWithSlash+'resolve' then
     begin
       result := 'Resolve '+pm.Value['fhirVersion']+' server for '+pm.Value['url']+' (usage = '+pm.Value['usage']+')';
-      json := resolveCS(pm.Value['fhirVersion'], pm.Value['url'], pm.Value['usage'], desc);
+      if (pm.has('valueSet')) then
+        json := resolveVS(pm.Value['fhirVersion'], pm.Value['valueSet'], pm.Value['usage'], desc)
+      else
+        json := resolveCS(pm.Value['fhirVersion'], pm.Value['url'], pm.Value['usage'], desc);
       try
         response.ResponseNo := 200;
         response.ContentType := 'application/json';
