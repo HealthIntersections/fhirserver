@@ -43,6 +43,9 @@ uses
   tx_manager, time_tracker, kernel_thread, server_stats,
   web_event, web_base, endpoint, session;
 
+const
+  SCAN_FREQUENCY = ((1/24) / 4); // 15 min
+
 type
   TTxRegistryServerEndPoint = class;
 
@@ -281,7 +284,7 @@ begin
   finally
     FEndPoint.FTxRegistryServer.scanning := false;
   end;
-  FEndPoint.FTxRegistryServer.NextScan := ((1/24) / 4); // every ten minutes
+  FEndPoint.FTxRegistryServer.NextScan := SCAN_FREQUENCY; // every 15 minutes
 end;
 
 procedure TTxRegistryUpdaterThread.Initialise;
