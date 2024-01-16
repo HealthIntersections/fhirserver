@@ -495,44 +495,37 @@ begin
       for cd in FDesignations do
         if (cd.base) and langMatches(lang, cd.language, true) then
         begin
-          Logging.log('cd: '+langList.asString(true)+' * '+summary+' = '+cd.present);
           exit(cd);
         end;
       for cd in FDesignations do
         if isDisplay(cd) and langMatches(lang, cd.language, true) then
         begin
-          Logging.log('cd: '+langList.asString(true)+' -4- '+summary+' = '+cd.present);
           exit(cd);
         end;
 
       for cd in FDesignations do
         if (cd.base) and langMatches(lang, cd.language, false) then
         begin
-          Logging.log('cd: '+langList.asString(true)+' * '+summary+' = '+cd.present);
           exit(cd);
         end;
       for cd in FDesignations do
         if isDisplay(cd) and langMatches(lang, cd.language, false) then
         begin
-          Logging.log('cd: '+langList.asString(true)+' * '+summary+' = '+cd.present);
           exit(cd);
         end;
 
       for cd in FDesignations do
         if langMatches(lang, cd.language, true) then
         begin
-          Logging.log('cd: '+langList.asString(true)+' * '+summary+' = '+cd.present);
           exit(cd);
         end;
       for cd in FDesignations do
         if langMatches(lang, cd.language, false) then
         begin
-          Logging.log('cd: '+langList.asString(true)+' * '+summary+' = '+cd.present);
           exit(cd);
         end;
     end;
   end;
-  Logging.log('cd: '+langList.asString(true)+' * '+summary+' = -> nil');
 end;
            
 function TConceptDesignations.preferredDisplay(langList : THTTPLanguageList): String;
