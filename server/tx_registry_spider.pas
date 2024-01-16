@@ -183,7 +183,7 @@ var
   reg : TServerRegistry;
   s : String;
 begin
-  DeleteFile(logFileName);
+  DeleteFile(FLogFileName);
 
   FIni := TIniFile.Create(tempFile('tx-registry-'+name+'.ini'));
   try
@@ -379,7 +379,7 @@ begin
   try
     client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
     try
-      client.Logger := TTextFileLogger.create(logFileName);
+      client.Logger := TTextFileLogger.create(FLogFileName);
       client.format := ffJson;
       cs := client.conformance(true);
       try
