@@ -281,7 +281,7 @@ begin
   finally
     FEndPoint.FTxRegistryServer.scanning := false;
   end;
-  FEndPoint.FTxRegistryServer.NextScan := ((1/24) / 12); // every five minutes
+  FEndPoint.FTxRegistryServer.NextScan := ((1/24) / 4); // every ten minutes
 end;
 
 procedure TTxRegistryUpdaterThread.Initialise;

@@ -36,7 +36,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   {$IFDEF FPC}LazUTF8, {$ENDIF}
   Classes, Generics.Collections, Generics.Defaults,
-  fsl_base, fsl_utilities, fsl_lang;
+  fsl_base, fsl_utilities, fsl_lang, fsl_logging;
 
 const
   HTTPUtilAnonymousItemName = 'ANONYMOUS';
@@ -738,6 +738,7 @@ var
   v : Double;
   wc : boolean;
 begin
+  Logging.log('Lang: '+FSource);
   i := 0;
   for s in FSource.Split([',']) do
   begin
