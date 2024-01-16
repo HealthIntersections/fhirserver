@@ -43,10 +43,13 @@ type
   TFakeConsoleSettingsForm = class(TForm)
     btnCancel: TButton;
     btnOk: TButton;
+    chkWordWrap: TCheckBox;
     chkForwards: TCheckBox;
     chkAutoClose: TCheckBox;
     eLines: TEdit;
+    eSize: TEdit;
     Label1: TLabel;
+    Label2: TLabel;
     Panel1: TPanel;
   private
 

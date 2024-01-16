@@ -176,7 +176,7 @@ begin
         begin
           p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
           try
-            f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead);
+            f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead + fmShareDenyWrite);
             try
               p.source := f;
               p.parse;

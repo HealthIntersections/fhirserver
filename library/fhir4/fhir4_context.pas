@@ -242,7 +242,7 @@ begin
 
   p := FFactory.makeParser(FWorker, ffJson, nil);
   try
-    stream := TFileStream.Create(FInfo.filename, fmOpenRead);
+    stream := TFileStream.Create(FInfo.filename, fmOpenRead + fmShareDenyWrite);
     try
       try
         r := p.parseResource(stream);
@@ -256,7 +256,7 @@ begin
   finally
     p.free;
   end;
-   try
+  try
     FResourceV := r;
   finally
     FLock.unlock;

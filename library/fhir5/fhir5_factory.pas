@@ -37,7 +37,7 @@ interface
 
 uses
   SysUtils, Classes, System.NetEncoding,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_i18n,
   fsl_ucum, fsl_npm, fsl_threads, fsl_web_stream,
   fhir_objects, fhir_parser, fhir_validator, fhir_narrative, fhir_factory, fhir_pathengine, fhir_xhtml, fhir_common,  fhir_elementmodel,
   fhir_client, fhir_client_threaded, fhir_uris;
@@ -85,6 +85,7 @@ type
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(langList : THTTPLanguageList; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    function buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV; overload; override;
 
     function makeByName(const name : String) : TFHIRObject; override;
     function makeBoolean(b : boolean): TFHIRObject; override;
@@ -160,6 +161,34 @@ uses
 function TFHIRFactoryR5.buildOperationOutcome(langList : THTTPLanguageList; message: String; issueCode: TFhirIssueType): TFhirResourceV;
 begin
   result := fhir5_utilities.BuildOperationOutcome(langList, message, ExceptionTypeTranslations[issueCode]);
+end;
+
+function TFHIRFactoryR5.buildOperationOutcome(i18n: TI18nSupport; langList: THTTPLanguageList; exception: EFHIROperationException): TFhirResourceV;
+var
+  op : TFHIROperationOutcome;
+  iss : TFHIROperationOutcomeIssue;
+begin
+  op := TFHIROperationOutcome.create;
+  try
+    iss := TFHIROperationOutcomeIssue.create;
+    try
+      iss.severity := ISSUE_SEVERITY_MAP2[exception.level];
+      iss.code := ExceptionTypeTranslations[exception.Cause];
+      iss.expressionList.Add(exception.Path);
+      iss.details := TFHIRCodeableConcept.create;
+      iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[exception.Code], '');
+      if (exception.MsgId <> '') then
+        iss.details.text := i18n.translate(exception.msgId, langlist, exception.Params)
+      else
+        iss.details.text := exception.message;
+      op.issueList.add(iss.link);
+    finally
+      iss.free;
+    end;
+    op.link;
+  finally
+    op.free;
+  end;
 end;
 
 function TFHIRFactoryR5.buildOperationOutcome(langList : THTTPLanguageList; e: Exception; issueCode: TFhirIssueType): TFhirResourceV;

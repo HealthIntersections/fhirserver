@@ -642,6 +642,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function valueSet : String; override;
     function supplements : String; override;
     function getExperimental : boolean; override;
@@ -690,6 +692,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function source : String; override;
     function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
     function getExperimental : boolean; override;
@@ -811,6 +815,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
     function getExperimental : boolean; override;
@@ -1109,6 +1115,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
     function getExperimental : boolean; override;
@@ -1138,6 +1146,8 @@ type
     procedure setContext(Value: String); override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
   public
@@ -1166,6 +1176,8 @@ type
     function getDate: TFslDateTime; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     procedure setDate(Value: TFslDateTime); override;
     procedure setUrl(Value: String); override;
     procedure setVersion(Value: String); override;
@@ -2952,6 +2964,16 @@ begin
   vs.publisher := value;
 end;
 
+function TFHIRValueSet2.getTitle: String;
+begin
+  result := vs.name;
+end;
+
+procedure TFHIRValueSet2.setTitle(value: String);
+begin
+  // nothing
+end;
+
 procedure TFHIRValueSet2.setStatus(Value: TPublicationStatus);
 begin
   vs.status := MAP_TPublicationStatus[value];
@@ -3853,6 +3875,16 @@ begin
   vs.publisher := value;
 end;
 
+function TFhirCodeSystem2.getTitle: String;
+begin
+  result := vs.name;
+end;
+
+procedure TFhirCodeSystem2.setTitle(value: String);
+begin
+  // nothing
+end;
+
 procedure TFhirCodeSystem2.setStatus(Value: TPublicationStatus);
 begin
   vs.status := MAP_TPublicationStatus[status];
@@ -4308,6 +4340,16 @@ end;
 procedure TFhirConceptMap2.setPublisher(Value: String);
 begin
   cm.publisher := value;
+end;
+
+function TFhirConceptMap2.getTitle: String;
+begin
+  result := cm.name;
+end;
+
+procedure TFhirConceptMap2.setTitle(value: String);
+begin
+  // nothing
 end;
 
 function TFhirConceptMap2.getContext: String;
@@ -5754,6 +5796,17 @@ begin
   nm.publisher := value;
 end;
 
+function TFHIRNamingSystem2.getTitle: String;
+begin
+  result := nm.name;
+end;
+
+procedure TFHIRNamingSystem2.setTitle(value: String);
+begin
+  // nothing
+
+end;
+
 procedure TFHIRNamingSystem2.setStatus(Value: TPublicationStatus);
 begin
   nm.status := MAP_TPublicationStatus[value];
@@ -6034,6 +6087,16 @@ procedure TFhirTerminologyCapabilities2.setPublisher(Value: String);
 begin
 end;
 
+function TFhirTerminologyCapabilities2.getTitle: String;
+begin
+  result := '';
+end;
+
+procedure TFhirTerminologyCapabilities2.setTitle(value: String);
+begin
+  // nothing
+end;
+
 
 procedure TFhirTerminologyCapabilities2.setStatus(Value: TPublicationStatus);
 begin
@@ -6214,6 +6277,16 @@ end;
 procedure TFHIRTestScript2.setPublisher(Value: String);
 begin
   ts.publisher := value;
+end;
+
+function TFHIRTestScript2.getTitle: String;
+begin
+  result := ts.name;
+end;
+
+procedure TFHIRTestScript2.setTitle(value: String);
+begin
+  // nothing
 end;
 
 

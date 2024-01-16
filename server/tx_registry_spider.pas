@@ -37,7 +37,7 @@ uses
   IdHashSHA,
   fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_versions, fsl_http, fsl_threads,
   fsl_fetcher, fsl_zulip,
-  fhir_objects, fhir_client_http,
+  fhir_objects, fhir_client, fhir_client_http,
   fhir3_client, fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
   fhir4_client, fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_resources_canonical, fhir4_utilities,
   fhir5_client, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_resources_canonical, fhir5_enums, fhir5_utilities,
@@ -80,6 +80,8 @@ Type
     FOnSendEmail : TSendEmailEvent;
     FIni : TIniFile;
     FZulip : TZulipTracker;
+    FLogFileName : String;
+
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
@@ -118,6 +120,7 @@ begin
   inherited Create;
   FZulip := zulip;
   FAddress := MASTER_URL;
+  FLogFileName := FilePath(['[tmp]', 'tx-registry-spider.log']);
 end;
 
 destructor TTxRegistryScanner.Destroy;
@@ -180,6 +183,8 @@ var
   reg : TServerRegistry;
   s : String;
 begin
+  DeleteFile(FLogFileName);
+
   FIni := TIniFile.Create(tempFile('tx-registry-'+name+'.ini'));
   try
     info.LastRun := TFslDateTime.makeUTC;
@@ -374,6 +379,7 @@ begin
   try
     client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
     try
+      client.Logger := TTextFileLogger.create(FLogFileName);
       client.format := ffJson;
       cs := client.conformance(true);
       try
@@ -448,6 +454,7 @@ var
 begin
   client := TFhirClient5.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try                    
+    client.Logger := TTextFileLogger.create(FilePath(['[tmp]', 'tx-registry-spider.log']));
     client.format := ffJson;
     cs := client.conformance(true);
     try                            
@@ -519,6 +526,7 @@ var
 begin
   client := TFhirClient3.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try     
+    client.Logger := TTextFileLogger.create(FilePath(['[tmp]', 'tx-registry-spider.log']));
     client.format := ffJson;
     cs := client.conformance(true);
     try      

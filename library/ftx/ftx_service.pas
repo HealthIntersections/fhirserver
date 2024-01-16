@@ -161,6 +161,7 @@ Type
     function include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
     function preferredDesignation(langList : THTTPLanguageList = nil) : TConceptDesignation;
     function preferredDisplay(langList : THTTPLanguageList = nil) : String;
+    function summary : String;
 
     property factory : TFHIRFactory read FFactory;
     property baseLang : TIETFLang read FBaseLang write SetBaseLang;
@@ -493,24 +494,36 @@ begin
     begin
       for cd in FDesignations do
         if (cd.base) and langMatches(lang, cd.language, true) then
+        begin
           exit(cd);
+        end;
       for cd in FDesignations do
         if isDisplay(cd) and langMatches(lang, cd.language, true) then
+        begin
           exit(cd);
+        end;
 
       for cd in FDesignations do
         if (cd.base) and langMatches(lang, cd.language, false) then
+        begin
           exit(cd);
+        end;
       for cd in FDesignations do
         if isDisplay(cd) and langMatches(lang, cd.language, false) then
+        begin
           exit(cd);
+        end;
 
       for cd in FDesignations do
         if langMatches(lang, cd.language, true) then
+        begin
           exit(cd);
+        end;
       for cd in FDesignations do
         if langMatches(lang, cd.language, false) then
+        begin
           exit(cd);
+        end;
     end;
   end;
 end;
@@ -524,6 +537,15 @@ begin
     result := ''
   else
     result := cd.display;
+end;
+
+function TConceptDesignations.summary: String;
+var
+  cd : TConceptDesignation;
+begin
+  result := '';
+  for cd in FDesignations do
+    CommaAdd(result, cd.present);
 end;
 
 

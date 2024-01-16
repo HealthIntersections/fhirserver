@@ -339,7 +339,7 @@ begin
       try
         params := TFHIRExpansionParams.Create;
         try
-          validator.prepare(vsw, params);
+          validator.prepare(vsw, params, nil);
           p := validator.check('code', system, version, code, false);
           try
             res := TValidationResult.Create;

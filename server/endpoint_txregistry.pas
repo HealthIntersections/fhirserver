@@ -43,6 +43,9 @@ uses
   tx_manager, time_tracker, kernel_thread, server_stats,
   web_event, web_base, endpoint, session;
 
+const
+  SCAN_FREQUENCY = ((1/24) / 4); // 15 min
+
 type
   TTxRegistryServerEndPoint = class;
 
@@ -144,7 +147,7 @@ var
   s : String;
 begin
   inherited Create(config, settings, nil, common, nil, i18n);
-  s := config.clone['folder'].value;
+  s := config['folder'].value;
   FAddress := s;
   if (FAddress = '') then
     FAddress := MASTER_URL;
@@ -281,7 +284,7 @@ begin
   finally
     FEndPoint.FTxRegistryServer.scanning := false;
   end;
-  FEndPoint.FTxRegistryServer.NextScan := ((1/24) / 12); // every five minutes
+  FEndPoint.FTxRegistryServer.NextScan := SCAN_FREQUENCY; // every 15 minutes
 end;
 
 procedure TTxRegistryUpdaterThread.Initialise;
@@ -682,11 +685,11 @@ begin
         for s in r.Servers do
         begin
           if (s.AuthCSList.Count > 0) or (s.AuthVSList.Count > 0) or (s.UsageList.count > 0) then
-            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.details+'</td></tr>')
+            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.description+'</td></tr>')
           else
             b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a></td></tr>');
           for v in s.Versions do
-            b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' Items</td></tr>');
+            b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' CodeSystems, '+inttostr(v.ValueSets.Count)+' ValueSets</td></tr>');
         end;
       end;
       b.Append('</table>');
@@ -809,7 +812,10 @@ begin
     else if request.document = PathWithSlash+'resolve' then
     begin
       result := 'Resolve '+pm.Value['fhirVersion']+' server for '+pm.Value['url']+' (usage = '+pm.Value['usage']+')';
-      json := resolveCS(pm.Value['fhirVersion'], pm.Value['url'], pm.Value['usage'], desc);
+      if (pm.has('valueSet')) then
+        json := resolveVS(pm.Value['fhirVersion'], pm.Value['valueSet'], pm.Value['usage'], desc)
+      else
+        json := resolveCS(pm.Value['fhirVersion'], pm.Value['url'], pm.Value['usage'], desc);
       try
         response.ResponseNo := 200;
         response.ContentType := 'application/json';

@@ -2874,7 +2874,7 @@ End;
 var
   f : TFileStream;
 begin
-  f := TFileStream.create(sFileName, fmOpenRead);
+  f := TFileStream.create(sFileName, fmOpenRead + fmShareDenyWrite);
   try
     result := f.size;
   finally
