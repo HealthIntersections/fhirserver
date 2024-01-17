@@ -123,7 +123,7 @@ begin
     fn := TestSettings.fhirTestFile(['r4', 'examples', test.str['focus'].replace('/', '-').toLower+'.xml']);
     p := TFHIRXmlParser.Create(TTestingWorkerContext4.Use, engine.engine.context.langList.link);
     try
-      f := TFileStream.Create(fn, fmOpenRead);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
         p.source := f;
         p.parse;

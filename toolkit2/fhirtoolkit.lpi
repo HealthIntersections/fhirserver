@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -17,8 +18,6 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
       <RevisionNr Value="3"/>
-      <MinorVersionNr Value="0"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
@@ -83,11 +82,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="../exec/64/FHIRToolkit"/>
+            <Filename Value="..\exec\64\FHIRToolkit"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="/usr/local/lib64"/>
+            <Libraries Value="\usr\local\lib64\"/>
             <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -115,7 +114,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R .\"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -232,7 +231,10 @@
             <CompilerMessages>
               <IgnoredMessages idx6058="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
+            <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
           </Other>
         </CompilerOptions>
       </Item>
@@ -391,7 +393,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="/usr/local/lib64"/>
+            <Libraries Value="\usr\local\lib64\"/>
             <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -408,7 +410,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R .\"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -834,12 +836,10 @@
       <Unit>
         <Filename Value="..\ipsmanager\views\mvbase.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mvBase"/>
       </Unit>
       <Unit>
         <Filename Value="..\ipsmanager\views\mvdatasources.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mvDataSources"/>
       </Unit>
     </Units>
   </ProjectOptions>

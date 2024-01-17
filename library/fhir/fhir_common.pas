@@ -70,6 +70,25 @@ const
   CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data');
 
 type
+  EFHIROperationException = class (EFslException)
+  private
+    FMsgId : String;
+    FParams : TStringArray;
+    FLevel : TIssueSeverity;
+    FCause : TFHIRIssueType;
+    FCode : TOpIssueCode;
+    FPath : String;
+  public
+    constructor create(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, message : String);
+    constructor createMsg(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, messageId : String; params : TStringArray);
+
+    property MsgId : String read FMsgId;
+    property Params : TStringArray read FParams;
+    property Level : TIssueSeverity read FLevel;
+    property Cause : TFHIRIssueType read FCause;
+    property Code : TOpIssueCode read FCode;
+    property Path : String read FPath;
+  end;
 
   // base wrappers.....
   TFhirExtensionW = class;
@@ -750,6 +769,7 @@ type
   protected
     function getURL: String; virtual; abstract;
     function getName: String; virtual; abstract;
+    function getTitle: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getVersion: String; virtual; abstract;
     function getDescription: String; virtual; abstract;
@@ -761,6 +781,7 @@ type
     procedure setUrl(Value: String); virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    procedure setTitle(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
@@ -770,6 +791,7 @@ type
 
     property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property vurl : String read GetVUrl;
     property status : TPublicationStatus read GetStatus write SetStatus;
@@ -1424,12 +1446,14 @@ type
   protected
     function getDate: TFslDateTime; virtual; abstract;
     function getDescription: String; virtual; abstract;
-    function getName: String; virtual; abstract;
+    function getName: String; virtual; abstract;          
+    function getTitle: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getURL: String; virtual; abstract;
     procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    procedure setTitle(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setUrl(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
@@ -1442,7 +1466,8 @@ type
     function link : TFhirTerminologyCapabilitiesW; overload;
 
     property url : String read getURL write SetUrl;
-    property name : String read GetName write SetName;
+    property name : String read GetName write SetName;      
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
@@ -3157,6 +3182,28 @@ end;
 function TFHIRPrimitiveX.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
 begin
   raise EFSLException.Create('Extensions are not supported in a version-less context');
+end;
+
+{ EFHIROperationException }
+
+constructor EFHIROperationException.create(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, message : String);
+begin
+  inherited create(message);
+  FLevel := level;
+  FCause := cause;
+  FCode := code;
+  FPath := path;
+end;
+
+constructor EFHIROperationException.createMsg(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, messageId : String; params : TStringArray);
+begin
+  inherited create(messageId);
+  FLevel := level;
+  FCause := cause;
+  FCode := code;
+  FPath := path;
+  FMsgId := messageId;
+  FParams := params;
 end;
 
 end.

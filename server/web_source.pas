@@ -166,7 +166,7 @@ begin
   FZip := TFslMap<TFslBuffer>.Create('web.source');
   zip := TFslZipReader.Create;
   try
-    zip.Stream := TFslFile.Create(path, fmOpenRead);
+    zip.Stream := TFslFile.Create(path, fmOpenRead + fmShareDenyWrite);
     zip.ReadZip;
     Logging.log(inttostr(zip.Parts.Count)+' files loaded');
     for i := 0 to zip.Parts.Count - 1 do

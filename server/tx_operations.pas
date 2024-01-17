@@ -429,12 +429,12 @@ var
 //  coding : TFhirCodingW;
   abstractOk, inferSystem : boolean;
   params, pout : TFhirParametersW;
+  oOut : TFHIROperationOutcomeW;
   needSecure, isValueSet : boolean;
   mode : TValidationCheckMode;
   profile : TFhirExpansionParams;
   txResources : TFslMetadataResourceList;
   mr : TFHIRMetadataResourceW;        
-  op : TFhirOperationOutcomeW;
 begin
   isValueSet := request.ResourceName = 'ValueSet';
 
@@ -451,6 +451,7 @@ begin
           vs := nil;
           txResources := nil;
           pout := nil;
+          oOut := nil;
           profile := nil;
           try
             profile := buildExpansionParams(request, manager, params);
@@ -489,18 +490,9 @@ begin
                         vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
                     if vs = nil then
                     begin
-                      pOut := FFactory.makeParameters;
-                      pOut.AddParamBool('result', false);
                       msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.languages, [url]);
-                      pOut.AddParamStr('message', msg);
-                      op := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
-                      try
-                        pOut.addParam('issues').resource := op.Resource.link;
-                        op.addIssue(isError, itNotFound, '', msg, oicNotFound);
-                      finally
-                        op.free;
-                      end;
-
+                      oOut := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
+                      oOut.addIssue(isError, itNotFound, '', msg, oicNotFound);
                     end
                     else
                       cacheId := vs.vurl;
@@ -526,7 +518,7 @@ begin
                 abstractOk := params.str('abstract') = 'true';
                 inferSystem := (params.str('inferSystem') = 'true') or (params.str('implySystem') = 'true');
 
-                if (pout = nil) then
+                if (oOut = nil) and (pout = nil) then
                 begin
                   if (coded = nil) then
                     raise ETerminologyError.Create('Unable to find code to validate (looked for coding | codeableConcept | code in parameters ='+params.names+')', itNotFound);
@@ -543,9 +535,13 @@ begin
                 end;
                 if summary <> '' then
                   result := result + ': '+summary;
-                response.resource := pout.Resource.link;
+                if (oOut <> nil) then
+                  response.resource := oOut.Resource.link
+                else
+                  response.resource := pout.Resource.link;
               finally
                 pOut.free;
+                oOut.free;
               end;
               response.HTTPCode := 200;
               response.Message := 'OK';

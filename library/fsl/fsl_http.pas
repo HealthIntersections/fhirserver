@@ -739,6 +739,7 @@ var
   wc : boolean;
 begin
   i := 0;
+  wc := false;
   for s in FSource.Split([',']) do
   begin
     if (s.trim() <> '') then

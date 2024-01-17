@@ -252,7 +252,7 @@ begin
     map := TFslStringIntegerMatch.Create;
     try
       map.forced := true;
-      f := TFslFile.Create(filename, fmOpenRead);
+      f := TFslFile.Create(filename, fmOpenRead + fmShareDenyWrite);
       try
         size := f.Size;
         t := 0;

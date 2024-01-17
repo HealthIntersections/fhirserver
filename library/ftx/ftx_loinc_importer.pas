@@ -548,7 +548,7 @@ begin
     iCount := 0;
     Progress(0, 0, 'Loading Concepts');
     items := TFslStringList.Create;
-    f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead);
+    f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead + fmShareDenyWrite);
     try
       csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
       Try
@@ -995,7 +995,7 @@ var
   i : integer;
 begin
   items := TFslStringList.Create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead);
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead + fmShareDenyWrite);
   try
     csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
     Try
@@ -1355,7 +1355,7 @@ var
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
   items := TFslStringList.Create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead);
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead + fmShareDenyWrite);
   try
     fs := f.size;
     csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, fs);

@@ -164,6 +164,8 @@ type
     procedure updateAdminPassword(pw : String); virtual;
     procedure Load; virtual;
     Procedure Unload; virtual;
+    Procedure Started; virtual;  // notification
+    Procedure Stopping; virtual; // notification
     procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); virtual;
   end;
 
@@ -492,6 +494,16 @@ end;
 procedure TFHIRServerEndPoint.Unload;
 begin
  // nothing
+end;
+
+procedure TFHIRServerEndPoint.Started;
+begin
+  // nothing
+end;
+
+procedure TFHIRServerEndPoint.Stopping;
+begin
+  // nothing
 end;
 
 function TFHIRServerEndPoint.nonDefPort(port, def : word) : String;
