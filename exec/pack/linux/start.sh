@@ -16,4 +16,4 @@ rm -f /tmp/.X99-lock
 start_xvfb
 export DISPLAY=:99
 
-./fhirserver -cmd exec -cfg $HOME/fhirserver/config.ini
+./fhirserver -cmd exec -cfg $HOME/fhirserver/config/config.ini

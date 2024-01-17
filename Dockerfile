@@ -46,6 +46,7 @@ RUN mkdir -p /work/fhirserver/exec/install/bin
 RUN mkdir -p /work/fhirserver/exec/install/x86_64
 RUN mkdir -p /work/fhirserver/exec/install/content
 RUN mkdir -p /work/fhirserver/exec/install/config
+RUN mkdir -p /work/fhirserver/exec/install/config/config
 RUN mkdir -p /work/fhirserver/exec/install/web
 
 RUN cd /work/fhirserver
@@ -61,7 +62,7 @@ RUN cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/con
 RUN cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content
 RUN cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/config
 RUN cp /work/fhirserver/exec/64/web.ini /work/fhirserver/exec/install/config
-RUN cp /work/fhirserver/config/config.ini /work/fhirserver/exec/install/config
+RUN cp /work/fhirserver/config/config.ini /work/fhirserver/exec/install/config/config
 RUN mkdir -p /work/fhirserver/exec/install/web
 RUN cp -r /work/fhirserver/server/web/* /work/fhirserver/exec/install/web
 
@@ -139,7 +140,7 @@ RUN tar -xzvf install.tgz
 WORKDIR /fhirserver/install
 
 # Run the installation script
-RUN ./install.sh
+RUN ./install.sh -nodaemon
 
 # Define entrypoint and command
 CMD ["bash", "-c", "cd ~/fhirserver/ && ./start.sh"]

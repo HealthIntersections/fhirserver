@@ -19,6 +19,14 @@ run_as_root() {
     fi
 }
 
+INSTALL_AS_DAEMON=1
+for arg in "$@"; do
+    if [ "$arg" == "-nodaemon" ]; then
+        INSTALL_AS_DAEMON=0
+        break
+    fi
+done
+
 run_as_root apt update && run_as_root apt install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev
 
 mkdir -p $INSTALL_PATH
@@ -28,7 +36,7 @@ run_as_root chmod 1777 $CACHE_FOLDER
 
 cp bin/* $INSTALL_PATH 
 cp content/* $INSTALL_PATH 
-cp config/* $INSTALL_PATH 
+cp -r config/* $INSTALL_PATH 
 cp -r web $INSTALL_PATH
 
 # Define paths
@@ -48,6 +56,29 @@ case $ARCH in
 esac
 
 # Create a symlink to the executable
-# ln -s $INSTALL_PATH/fhirserver/start.sh /usr/local/bin/fhirserver
+ln -s $INSTALL_PATH/fhirserver/start.sh /usr/local/bin/fhirserver
+
+# Install as a daemon if not contained
+if [ "$INSTALL_AS_DAEMON" -eq 1 ]; then
+    # Create a systemd service file or equivalent
+    echo "Installing as a daemon..."
+    SERVICE_FILE="/etc/systemd/system/fhirserver.service"
+    echo "[Unit]
+Description=FHIR Server
+
+[Service]
+ExecStart=$INSTALL_PATH/fhirserver
+# Add other service configurations as needed
+
+[Install]
+WantedBy=multi-user.target" > $SERVICE_FILE
+
+    systemctl enable fhirserver.service
+    systemctl start fhirserver.service
+else
+    echo "Skipping daemon installation."
+fi
 
 echo "Installation to $INSTALL_PATH completed."
+
+
