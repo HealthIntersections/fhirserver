@@ -47,7 +47,7 @@ uses
 const
   UPPER_LIMIT_NO_TEXT = 1000;
   UPPER_LIMIT_TEXT = 1000;// won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
-  INTERNAL_LIMIT = 5000; // won't make an internal buffer bigger than this. This might need to be expanded if there's a big exclusion?
+  INTERNAL_LIMIT = 10000; // won't make an internal buffer bigger than this. This might need to be expanded if there's a big exclusion?
 
   FHIR_VERSION_CANONICAL_SPLIT_2 = '?version=';
   FHIR_VERSION_CANONICAL_SPLIT_3p = '|';
