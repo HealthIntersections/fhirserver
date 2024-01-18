@@ -47,6 +47,7 @@ uses
 const
   UPPER_LIMIT_NO_TEXT = 1000;
   UPPER_LIMIT_TEXT = 1000;// won't expand a value set bigger than this - just takes too long, and no one's going to do anything with it anyway
+  INTERNAL_LIMIT = 5000; // won't make an internal buffer bigger than this. This might need to be expanded if there's a big exclusion?
 
   FHIR_VERSION_CANONICAL_SPLIT_2 = '?version=';
   FHIR_VERSION_CANONICAL_SPLIT_3p = '|';
@@ -341,12 +342,11 @@ Type
 
   TFHIRValueSetExpander = class (TValueSetWorker)
   private
-    FHasCount : boolean;
-    FCount : integer;
-    FHasOffset : boolean;
     FOffset : integer;
+    FCount : integer;
     FLimitCount : integer;
     FCanBeHierarchy : boolean;
+    FHasExclusions : boolean;
     FRootList : TFslList<TFhirValueSetExpansionContainsW>;
     FFullList : TFslList<TFhirValueSetExpansionContainsW>;
     FMap : TFslMap<TFhirValueSetExpansionContainsW>;
@@ -1141,6 +1141,13 @@ begin
     s := FValueSet.url;
     if (s = ANY_CODE_VS) then
     begin
+      if system = '' then
+      begin
+        msg := FI18n.translate('Coding_has_no_system__cannot_validate_NO_INFER', FParams.languages, []);
+        messages.add(msg);
+        op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
+        exit(bFalse);
+      end;
       cs := findCodeSystem(system, version, FParams, true);
       try
         if cs = nil then
@@ -2578,16 +2585,18 @@ begin
   FCanBeHierarchy := not FParams.excludeNested;
 
   try
-    if limit > 0 then
-      FLimitCount := limit
-    else if not filter.null then
-      FLimitCount := UPPER_LIMIT_TEXT
-    else
-      FLimitCount := UPPER_LIMIT_NO_TEXT;
-
-    FCount := count;
+    FLimitCount := INTERNAL_LIMIT;
+    if limit <= 0 then
+    begin
+      if not filter.null then
+        limit := UPPER_LIMIT_TEXT
+      else
+        limit := UPPER_LIMIT_NO_TEXT;
+    end;
     FOffset := offset;
-    if (FOffset > 0) or (FCount > 0) then
+    FCount := count;
+
+    if (offset > 0) or (count > 0) then
       FCanBeHierarchy := false;
 
     exp := result.forceExpansion;
@@ -2617,17 +2626,21 @@ begin
     if FParams.hasExcludePostCoordinated then
       exp.addParamBool('excludePostCoordinated', FParams.excludePostCoordinated);
     checkCanonicalStatus(exp, source, source);
-    if FOffset > -1 then
+    if offset > -1 then
     begin
-      exp.addParamInt('offset', FOffset);
-      exp.offset := FOffset;
+      exp.addParamInt('offset', offset);
+      exp.offset := offset;
     end;
-    if FCount > -1 then
-      exp.addParamInt('count', FCount);
+    if count > -1 then
+    begin
+      exp.addParamInt('count', count);
+    end;
+    if (count > 0) and (offset = -1) then
+      offset := 0;
 
     DeadCheck('expand');
     try
-;      ics := source.inlineCS;
+      ics := source.inlineCS;
       try
         if (ics <> nil) then
         begin
@@ -2703,24 +2716,31 @@ begin
       end;
     end;
 
-    t := 0;
-    o := 0;
-    for i := 0 to list.count - 1 do
+    if (offset + count < 0) and (FFullList.count > limit) then
     begin
-      c := list[i];
-      if FMap.containsKey(key(c)) then
+      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.languages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)]));
+    end
+    else
+    begin
+      t := 0;
+      o := 0;
+      for i := 0 to list.count - 1 do
       begin
-        inc(o);
-        if FCanBeHierarchy or (o > offset) and ((count <= 0) or (t < count)) then
+        c := list[i];
+        if FMap.containsKey(key(c)) then
         begin
-          inc(t);
-          exp.addContains(c);
-          if (table <> nil) then
+          inc(o);
+          if FCanBeHierarchy or (o > offset) and ((count <= 0) or (t < count)) then
           begin
-            tr := table.AddChild('tr');
-            tr.AddChild('td').AddText(c.systemUri);
-            tr.AddChild('td').AddText(c.code);
-            tr.AddChild('td').AddText(c.display);
+            inc(t);
+            exp.addContains(c);
+            if (table <> nil) then
+            begin
+              tr := table.AddChild('tr');
+              tr.AddChild('td').AddText(c.systemUri);
+              tr.AddChild('td').AddText(c.code);
+              tr.AddChild('td').AddText(c.display);
+            end;
           end;
         end;
       end;
@@ -2843,7 +2863,10 @@ begin
   for c in source.includes.forEnum do
     checkSource(c, expansion, filter, source.url);
   for c in source.excludes.forEnum do
+  begin
+    FHasExclusions := true;
     checkSource(c, expansion, filter, source.url);
+  end;
 
   for c in source.includes.forEnum do
     processCodes(false, c, source, filter, dependencies, expansion, source.excludeInactives, notClosed);
@@ -2932,7 +2955,7 @@ begin
       comp.free;
     end;
     logging.log('Expansion took too long @ '+place+': value set '+FValueSet.vurl+' stored at '+fn+'.json');
-    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [FValueSet.vurl, inttostr(EXPANSION_DEAD_TIME_SECS)]));
+    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.languages, [FValueSet.vurl, inttostr(EXPANSION_DEAD_TIME_SECS)]));
   end;
 end;
 
@@ -3116,13 +3139,16 @@ begin
     if (cs.expandLimitation > 0) and (cnt.count > cs.expandLimitation) then
       exit;
 
-
-    if (FLimitCount > 0) and (FFullList.Count >= FLimitCount) and not doDelete then
+    if (FLimitCount > 0) and (FFullList.Count >= FLimitCount) and not doDelete and not FHasExclusions then
     begin
-      if (FCount > -1) and (FOffset > -1) and (FCount + FOffset > 0) and (FFullList.count > FCount + FOffset) then
+      if (FCount > -1) and (FOffset > -1) and (FCount + FOffset > 0) and (FFullList.count >= FCount + FOffset) then
         raise EFinished.create('.')
       else
+      begin
+        if (srcUrl = '') then
+          srcUrl := '??';
         raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [srcUrl, '>'+inttostr(FLimitCount)]));
+      end;
     end;
 
     if (expansion <> nil) then
@@ -3195,7 +3221,7 @@ begin
 
         // display and designations
         pref := displays.preferredDesignation(FParams.languages);
-        if (pref <> nil) then
+        if (pref <> nil) and (pref.value <> nil) then
           n.display := pref.value.AsString;
 
         if FParams.includeDesignations then
@@ -3438,7 +3464,7 @@ begin
             else
               raise ETooCostly.create('The code System "'+cs.systemUri(nil)+'" has a grammar, and cannot be enumerated directly');
 
-          if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) and (FOffset+FCount <= 0) then
+          if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
             raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [srcUrl, '>'+inttostr(FLimitCount)]));
         end
       end;
@@ -3588,7 +3614,7 @@ begin
 
               iter := cs.getIterator(nil);
               try
-                if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) and not doDelete and (FOffset + Fcount < 0) then
+                if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) and not doDelete then
                   raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
                 while iter.more do
                 begin                
@@ -3705,7 +3731,7 @@ begin
 
                 inner := cs.prepare(prep);
                 count := 0;
-                While cs.FilterMore(filters[0]) and (((FOffset <= 0) and (FCount <= 0)) or (count < FOffset + FCount)) do
+                While cs.FilterMore(filters[0]) do
                 begin
                   deadCheck('processCodes#5');
                   c := cs.FilterConcept(filters[0]);
@@ -3714,27 +3740,24 @@ begin
                     if ok then
                     begin
                       inc(count);
-                      if count > FOffset then
-                      begin
-                        cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
-                        try
-                          if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
+                      cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
+                      try
+                        if passesImports(valueSets, cs.systemUri(nil), cs.code(c), 0) then
+                        begin
+                          listDisplays(cds, cs, c);
+                          if cs.canParent then
+                            parent := FMap[key(cs.systemUri(c), cs.parent(c))]
+                          else
                           begin
-                            listDisplays(cds, cs, c);
-                            if cs.canParent then
-                              parent := FMap[key(cs.systemUri(c), cs.parent(c))]
-                            else
-                            begin
-                              FCanBeHierarchy := false;
-                              parent := nil;
-                            end;
-                            for code in cs.listCodes(c, FParams.altCodeRules) do
-                              processCode(cs, parent, doDelete, cs.systemUri(nil), cs.version(nil), code, cs.isAbstract(c), cs.IsInactive(c),
-                                cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, excludeInactive, vsSrc.url);
+                            FCanBeHierarchy := false;
+                            parent := nil;
                           end;
-                        finally
-                          cds.free;
+                          for code in cs.listCodes(c, FParams.altCodeRules) do
+                            processCode(cs, parent, doDelete, cs.systemUri(nil), cs.version(nil), code, cs.isAbstract(c), cs.IsInactive(c),
+                              cs.deprecated(c), cds, cs.definition(c), cs.itemWeight(c), expansion, nil, cs.getExtensions(c), nil, cs.getProperties(c), nil, excludeInactive, vsSrc.url);
                         end;
+                      finally
+                        cds.free;
                       end;
                     end;
                   finally
