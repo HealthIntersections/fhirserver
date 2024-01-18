@@ -1209,8 +1209,15 @@ Begin
   if (sep = '') then
     sep := #13#10;
 
-  Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
-  Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+  if (all) then
+  begin
+    Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
+    Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+  end
+  else
+  begin
+    Result := 'ID Name (of '+StringPadRight(inttostr(TFslLock.CurrentCount)+')', ' ', 6)+'           Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+  end;
   oCrit := GFirst;
   While oCrit <> nil Do
   Begin
