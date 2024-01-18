@@ -2596,7 +2596,7 @@ begin
     FOffset := offset;
     FCount := count;
 
-    if (offset > 0) or (count > 0) then
+    if (offset > 0) then
       FCanBeHierarchy := false;
 
     exp := result.forceExpansion;
@@ -2704,9 +2704,11 @@ begin
     end
     else
     begin
-      if not noTotal then
+      if noTotal then
+        FCanBeHierarchy := false
+      else
         exp.Total := FFullList.count;
-      if (FCanBeHierarchy) then
+      if (FCanBeHierarchy) and ((count <= 0) or (count > FFullList.count)) then // no need to consider offset - it must be 0 if FCanBeHierarchy
         list := FRootList
       else
       begin
@@ -2730,7 +2732,7 @@ begin
         if FMap.containsKey(key(c)) then
         begin
           inc(o);
-          if FCanBeHierarchy or (o > offset) and ((count <= 0) or (t < count)) then
+          if (o > offset) and ((count <= 0) or (t < count)) then
           begin
             inc(t);
             exp.addContains(c);
@@ -3305,13 +3307,10 @@ begin
         begin
           FFullList.add(n.link);
           FMap.add(s, n.link);
-          if (FCanBeHierarchy) then
-          begin
-            if (parent <> nil) then
-              parent.addContains(n)
-            else
-              FRootList.add(n.link);
-          end;
+          if (parent <> nil) then
+            parent.addContains(n)
+          else
+            FRootList.add(n.link);
         end
         else
           FCanBeHierarchy := false;
@@ -3389,7 +3388,7 @@ begin
   if passesImports(imports, c.systemUri, c.code, offset) and not FMap.containsKey(s) then
   begin
     FFullList.add(c.link);
-    if FCanBeHierarchy and (p <> nil) then
+    if (p <> nil) then
       p.addContains(c)
     else
       FRootList.add(c.link);
