@@ -86,23 +86,6 @@ VOLUME /terminology
 
 ENV DEBIAN_FRONTEND=
 
-# RUN printf '#!/bin/bash \n\
-#     set -e \n\
-#     start_xvfb() { \n\
-#         Xvfb :99 -screen 0 1024x768x8 -nolisten tcp & \n\
-#     } \n\
-#     stop_xvfb() { \n\
-#         killall Xvfb || true \n\
-#     } \n\
-#     trap stop_xvfb SIGTERM \n\
-#     rm -f /tmp/.X99-lock \n\
-#     start_xvfb \n\
-#     echo "[web]" > /work/fhirserver/exec/64/web.ini; \n\
-#     echo "http=${PORT}" >> /work/fhirserver/exec/64/web.ini; \n\
-#     /work/fhirserver/exec/64/fhirserver $(eval echo "$@")' > /bin/entrypoint.sh && \
-#     chmod +x /bin/entrypoint.sh
-
-
 # ENTRYPOINT ["/bin/entrypoint.sh"]
 
 # CMD ["-cmd",  "exec",  "-cfg", "/config/config.ini", "-local", "$TERMINOLOGY_CACHE"]
