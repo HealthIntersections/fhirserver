@@ -322,8 +322,6 @@ begin
               limit := -1
             else if limit > UPPER_LIMIT_TEXT then
               limit := UPPER_LIMIT_TEXT; // can't ask for more than this externally, though you can internally
-            if (count > 0) and (offset = -1) then
-              offset := 0;
 
             if (txResources = nil) then
               txResources := processAdditionalResources(context, manager, nil, params);
