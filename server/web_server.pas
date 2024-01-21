@@ -501,6 +501,7 @@ Begin
   if Common.WorkingPort > 0 then
   begin
     FPlainServer := TFHIRHTTPServer.Create(Nil);
+    FPlainServer.Name := 'http';
 //    FPlainServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
 //    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).PoolSize := 20;
 //    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).RetainThreads := false;
@@ -531,6 +532,7 @@ Begin
     If (FRootCertFile <> '') and (Not FileExists(FRootCertFile)) Then
       raise EIOException.Create('SSL Certificate "' + FRootCertFile + ' could not be found');
     FSSLServer := TFHIRHTTPServer.Create(Nil);
+    FSSLServer.Name := 'https';
 //    FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
 //    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
     FSSLServer.ServerSoftware := 'Health Intersections FHIR Server';

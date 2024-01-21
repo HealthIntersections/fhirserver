@@ -114,7 +114,8 @@ begin
 
   FLog := TStringList.Create;
 
-  FServer := TidTelnetServer.Create(NIL);
+  FServer := TIdTelnetServer.Create(NIL);
+  FServer.Name := 'Telnet';
   FServer.DefaultPort := port;
   FServer.LoginMessage := 'FHIRServer';
   FServer.OnAuthentication := TelnetLogin;

@@ -1,7 +1,7 @@
 object FakeConsoleForm: TFakeConsoleForm
-  Left = 17
+  Left = 127
   Height = 804
-  Top = 253
+  Top = 204
   Width = 1220
   Caption = 'Fake Console Form'
   ClientHeight = 804
@@ -135,9 +135,11 @@ object FakeConsoleForm: TFakeConsoleForm
         Top = 24
         Width = 219
         Align = alClient
+        Font.Pitch = fpFixed
         Lines.Strings = (
           'mLocks'
         )
+        ParentFont = False
         TabOrder = 1
       end
     end

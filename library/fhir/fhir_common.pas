@@ -2738,7 +2738,7 @@ constructor TFHIRMetadataResourceManagerW<T>.Create;
 begin
   inherited;
   FMap := TFslMap<TFHIRResourceProxyV>.Create('Metadata Resource Manager ('+T.className+')');
-  FMap.defaultValue := nil;
+//  FMap.defaultValue := nil;
   FList := TFslList<TFHIRResourceProxyV>.Create;
 end;
 
@@ -2773,6 +2773,8 @@ end;
 
 procedure TFHIRMetadataResourceManagerW<T>.see(res : TFHIRResourceProxyV);
 begin
+  if (res = nil) then
+    exit;
   if (res.id = '') then
     res.id := newGUIDId;
   if (FMap.containsKey(res.id)) then
@@ -2809,7 +2811,7 @@ begin
   try
     for tt in FList do
     begin
-      if (url = tt.url) and not rl.contains(tt) then
+      if (tt <> nil) and (url = tt.url) and not rl.contains(tt) then
         rl.add(tt.link);
     end;
 
@@ -2867,8 +2869,16 @@ begin
 end;
 
 function TFHIRMetadataResourceManagerW<T>.get(url : String) : T;
+var
+  p : TFHIRResourceProxyV;
 begin
-  result := FMap[url].resourceW as T;
+  result := T(nil);
+  if (FMap.containsKey(url)) then
+  begin
+    p := FMap[url];
+    if p <> nil then
+      result := p.resourceW as T
+  end
 end;
 
 function TFHIRMetadataResourceManagerW<T>.getP(url : String) : TFHIRResourceProxyV;
@@ -2879,16 +2889,22 @@ end;
 function TFHIRMetadataResourceManagerW<T>.get(url, version : string) : T;
 var
   mm : String;
+  p : TFHIRResourceProxyV;
 begin
+  result := T(nil);
   if (FMap.containsKey(url+'|'+version)) then
-    result := FMap[url+'|'+version].resourceW as T
+  begin
+    p := FMap[url+'|'+version];
+    result := p.resourceW as T
+  end
   else
   begin
     mm := TFHIRVersions.getMajMin(version, false);
-    if (mm <> '') then
-      result := FMap[url+'|'+mm].resourceW as T
-    else
-      result := nil;
+    if (mm <> '') and FMap.containsKey(url+'|'+mm) then
+    begin
+      p := FMap[url+'|'+mm];
+      result := p.resourceW as T
+    end;
   end;
 end;
 
@@ -2932,14 +2948,18 @@ var
 begin
   res := T(nil);
   if (FMap.containsKey(url+'|'+version)) then
-    res := FMap[url+'|'+version].resourceW as T
+  begin
+    r := FMap[url+'|'+version];
+    if (r <> nil) then
+      res := r.resourceW as T
+  end
   else
   begin
     mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
     begin
       result := FMap.TryGetValue(url+'|'+mm, r)  ;
-      if result then
+      if result and (r <> nil) then
         res := r.resourceW as T;
     end
     else
@@ -3157,6 +3177,9 @@ end;
 
 function TFHIRResourceProxyV.GetResourceW : TFHIRXVersionResourceWrapper;
 begin
+  if self = nil then
+    exit(nil);
+
   if FResourceW = nil then
     FResourceW := wrapResource;
   result := FResourceW;
