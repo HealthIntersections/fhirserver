@@ -1,4 +1,5 @@
 #!/bin/bash
+cd "$(dirname "$0")"
 
 # Detect architecture
 ARCH=$(uname -m)
@@ -20,16 +21,16 @@ run_as_root() {
 }
 
 INSTALL_AS_DAEMON=1
+CONFIG_URL=""
 for arg in "$@"; do
-    if [ "$arg" == "-nodaemon" ]; then
-        INSTALL_AS_DAEMON=0
-        break
-    fi
+    case $arg in
+        -nodaemon ) INSTALL_AS_DAEMON=0 ;;
+        -zero=*   ) CONFIG_URL="${arg#*=}" ;;
+    esac
 done
 
 run_as_root apt update && run_as_root apt install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev
 
-mkdir -p $INSTALL_PATH
 mkdir -p $INSTALL_PATH
 run_as_root mkdir -p $CACHE_FOLDER
 run_as_root chmod 1777 $CACHE_FOLDER
@@ -39,7 +40,10 @@ cp content/* $INSTALL_PATH
 cp -r config/* $INSTALL_PATH 
 cp -r web $INSTALL_PATH
 
-# Define paths
+# Download and place the configuration file
+if [ -n "$CONFIG_URL" ]; then
+    wget "$CONFIG_URL" -O $INSTALL_PATH/config/config.json
+fi
 
 # Copy files based on architecture
 case $ARCH in
@@ -80,5 +84,3 @@ else
 fi
 
 echo "Installation to $INSTALL_PATH completed."
-
-
