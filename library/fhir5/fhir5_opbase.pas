@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -44,7 +45,7 @@ type
     FValue : TFHIRDataType;
     procedure SetValue(const Value: TFHIRDataType);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -63,7 +64,7 @@ type
     procedure loadExtensions(params : TFhirParametersParameter); overload;
     procedure writeExtensions(params : TFHIRParameters); overload;
     procedure writeExtensions(params : TFhirParametersParameter); overload;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     property extensions : TFslList<TFHIROpExtension> read GetExtensions;
@@ -100,7 +101,7 @@ implementation
 
 { TFHIROperationRequest }
 
-constructor TFHIROperationRequest.create;
+constructor TFHIROperationRequest.Create;
 begin
   inherited Create;
 end;
@@ -108,7 +109,7 @@ end;
 
 { TFHIROperationResponse }
 
-constructor TFHIROperationResponse.create;
+constructor TFHIROperationResponse.Create;
 begin
   inherited Create;
 end;
@@ -121,7 +122,7 @@ begin
   result := nil;
 end;
 
-constructor TFHIROperationObject.create;
+constructor TFHIROperationObject.Create;
 begin
   inherited;
 
@@ -129,7 +130,7 @@ end;
 
 constructor TFHIROperationObject.Create(params: TFhirParametersParameter);
 begin
-  inherited create;
+  inherited Create;
 end;
 
 
@@ -167,14 +168,14 @@ end;
 
 destructor TFHIROperationBaseObject.Destroy;
 begin
-  FExtensions.Free;
+  FExtensions.free;
   inherited;
 end;
 
 function TFHIROperationBaseObject.GetExtensions: TFslList<TFHIROpExtension>;
 begin
   if FExtensions = nil then
-    FExtensions := TFslList<TFHIROpExtension>.create;
+    FExtensions := TFslList<TFHIROpExtension>.Create;
   result := FExtensions;
 end;
 
@@ -236,31 +237,31 @@ begin
       end;
 end;
 
-function TFHIROperationBaseObject.sizeInBytesV : cardinal;
+function TFHIROperationBaseObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensions.sizeInBytes(magic));
 end;
 
 { TFHIROpExtension }
 
 destructor TFHIROpExtension.Destroy;
 begin
-  FValue.Free;
+  FValue.free;
   inherited;
 end;
 
 procedure TFHIROpExtension.SetValue(const Value: TFHIRDataType);
 begin
-  FValue.Free;
+  FValue.free;
   FValue := Value;
 end;
 
-function TFHIROpExtension.sizeInBytesV : cardinal;
+function TFHIROpExtension.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FValue.sizeInBytes);
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 end.

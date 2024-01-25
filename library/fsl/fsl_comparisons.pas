@@ -34,8 +34,7 @@ interface
 
 Uses
   SysUtils,
-  IdGlobalProtocols,
-  fsl_utilities, fsl_xml, fsl_json, fsl_turtle, fsl_stream
+  fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_turtle, fsl_stream
   {$IFDEF WINDOWS}, fsl_shell{$ENDIF};
 
 function CheckXMLIsSame(filename1, filename2 : String; var msg : string) : boolean;
@@ -269,7 +268,7 @@ begin
       msg := CompareElements('', src.document, tgt.document);
       result := msg = '';
     finally
-      tgt.Free;
+      tgt.free;
     end;
   finally
     src.free;
@@ -291,15 +290,15 @@ begin
     x1 := x1.Replace('&#39;', '''').Replace('&quot;', '"');
     x2 := x2.Replace('&#39;', '''').Replace('&quot;', '"');
 
-    f1 := MakeTempFilename +'-source.xml';
-    f2 := MakeTempFilename +'-dest.xml';
+    f1 := TempFilename('test') +'-source.xml';
+    f2 := TempFilename('test') +'-dest.xml';
     StringToFile(x1, f1, TEncoding.UTF8);
     StringToFile(x2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
     {$IFDEF WINDOWS}
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', cmd, true);
     {$ELSE}
-    raise Exception.create('to do');
+    raise EFslException.Create('to do');
     {$ENDIF}
   end;
 end;
@@ -397,7 +396,7 @@ begin
       j2.free;
     end;
   finally
-    j1.Free;
+    j1.free;
   end;
 end;
 
@@ -414,19 +413,19 @@ begin
     j2 := TJSONParser.ParseFile(filename2);
     try
 
-      f1 := MakeTempFilename +'-source.xml';
-      f2 := MakeTempFilename +'-dest.xml';
+      f1 := TempFilename('test') +'-source.xml';
+      f2 := TempFilename('test') +'-dest.xml';
       StringToFile(TJsonWriter.writeObjectStr(j1, true), f1, TEncoding.UTF8);
       StringToFile(TJsonWriter.writeObjectStr(j2, true), f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
       {$IFDEF WINDOWS}
       ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
       {$ELSE}
-      raise Exception.create('to do');
+      raise EFslException.Create('to do');
       {$ENDIF}
     finally
-      j2.Free;
-      j1.Free;
+      j2.free;
+      j1.free;
     end;
   end;
 end;
@@ -530,8 +529,8 @@ begin
         result := compareTurtle(t1, t2, msg);
         if not result then
         begin
-          f1 := MakeTempFilename +'-source.xml';
-          f2 := MakeTempFilename +'-dest.xml';
+          f1 := TempFilename('test') +'-source.xml';
+          f2 := TempFilename('test') +'-dest.xml';
       StringToFile(src1, f1, TEncoding.UTF8);
       StringToFile(src2, f2, TEncoding.UTF8);
 
@@ -541,7 +540,7 @@ begin
           {$IFDEF WINDOWS}
           ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
           {$ELSE}
-          raise Exception.create('to do');
+          raise EFslException.Create('to do');
           {$ENDIF}
         end;
       finally
@@ -554,15 +553,15 @@ begin
     on e : Exception do
     begin
       msg := e.Message;
-      f1 := MakeTempFilename +'-source.xml';
-      f2 := MakeTempFilename +'-dest.xml';
+      f1 := TempFilename('test') +'-source.xml';
+      f2 := TempFilename('test') +'-dest.xml';
       StringToFile(src1, f1, TEncoding.UTF8);
       StringToFile(src2, f2, TEncoding.UTF8);
       cmd := f1+' '+f2;
       {$IFDEF WINDOWS}
       ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
       {$ELSE}
-      raise Exception.create('to do');
+      raise EFslException.Create('to do');
       {$ENDIF}
     end;
   end;
@@ -593,15 +592,15 @@ begin
   result := compareText(src1, src2, msg);
   if not result then
   begin
-    f1 := MakeTempFilename +'-source.txt';
-    f2 := MakeTempFilename +'-dest.txt';
+    f1 := TempFilename('test') +'-source.txt';
+    f2 := TempFilename('test') +'-dest.txt';
     StringToFile(src1, f1, TEncoding.UTF8);
     StringToFile(src2, f2, TEncoding.UTF8);
     cmd := f1+' '+f2;
     {$IFDEF WINDOWS}
     ExecuteLaunch('open', '"C:\Program Files (x86)\WinMerge\WinMergeU.exe"', PChar(cmd), true);
     {$ELSE}
-    raise Exception.create('to do');
+    raise EFslException.Create('to do');
     {$ENDIF}
   end;
 end;

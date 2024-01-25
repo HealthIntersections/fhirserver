@@ -1,7 +1,7 @@
 Unit dicom_dictionary;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -46,7 +46,7 @@ Type
   Private
     FUID: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Clone : TDicomDictionaryEntity; Overload;
     Function Link : TDicomDictionaryEntity; Overload;
@@ -151,7 +151,7 @@ Type
 
     FProperties: TFslStringMatch;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     constructor Create(Const sName: String; Const sUID: String = '1.2.840.10008.1.2';
@@ -270,7 +270,7 @@ Type
 
     FTransferSyntaxList: TDicomDictionaryTransferSyntaxList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(Const sAbstractSyntaxUID: String; contextType: TDicomPresContextType = dpcProposed); Overload;
 
@@ -351,7 +351,7 @@ Type
     FType: TDicomVRType;
     FRepeatable: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(aType : TDicomVRType; sCode : String; iLength: Cardinal; bFixed, bRepeatable: Boolean; sDescription, sDoco: String); Overload; Virtual;
 
@@ -452,7 +452,7 @@ Type
     FMax: integer;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -639,7 +639,7 @@ Type
 
     Procedure SetElement(oValue: TDicomDictionaryElement);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -726,7 +726,7 @@ Type
     FParams : TDicomDimseParamList;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -843,7 +843,7 @@ Type
 
     FComment: String; // for any text that's are not yet used
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -917,7 +917,7 @@ Type
     Procedure SetRefId(sValue: String);
     Procedure SetRefEntry(sValue: TDicomInfoGroup);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -970,7 +970,7 @@ Type
 
     Procedure SetRefElement(oValue: TDicomDictionaryElement);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1011,7 +1011,7 @@ Type
 
     Procedure SetKey(sValue: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -1150,7 +1150,7 @@ Type
 
     Procedure SetRefEntry(sValue: TDicomModule);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1233,7 +1233,7 @@ Type
 
     FModules: TDicomModuleReferenceList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -1315,7 +1315,7 @@ Type
     FIOD: TDicomIOD;
     procedure SetIOD(const Value: TDicomIOD);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1401,7 +1401,7 @@ Type
     Procedure ResolveMacroEntry(oEntry: TDicomInfoEntry; Const sSelfId: String; oMissingRefs: TFslStringList);
     Function UnlinkCircularRefs(oEntry: TDicomInfoEntry; oPreviousRefs: TFslStringList): Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1576,7 +1576,7 @@ Type
     procedure SetSource(const Value: TFslStream);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1661,7 +1661,7 @@ Begin
       End;
     result := oBuilder.AsString;      
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 End;
 
@@ -1724,14 +1724,14 @@ End;
 
 destructor TDicomDictionaryParser.Destroy;
 begin
-  FDictionary.Free;
-  FSource.Free;
+  FDictionary.free;
+  FSource.free;
   inherited;
 end;
 
 procedure TDicomDictionaryParser.SetDictionary(const Value: TDicomDictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 end;
 
@@ -1742,7 +1742,7 @@ var
 begin
   assert(invariants('Execute', FDictionary, TDicomDictionary, 'Dictionary'));
   if FSource = nil Then
-    raise EDicomException.create('A source must be provided loading Dicom Dictionary');
+    raise EDicomException.Create('A source must be provided loading Dicom Dictionary');
 
   oParser := TMXmlParser.Create;
   Try
@@ -1750,20 +1750,20 @@ begin
       oDoc := oParser.Parse(FSource, [xpDropWhitespace, xpDropComments]);
     Except
       on E:exception do
-        raise EDicomException.create('Error loading Dicom Dictionary: '+e.message);
+        raise EDicomException.Create('Error loading Dicom Dictionary: '+e.message);
     End;
     try
       Try
         Parse(oDoc.docElement);
       Except
         on E:exception do
-          raise EDicomException.create('Error parsing Dicom Dictionary: '+e.message);
+          raise EDicomException.Create('Error parsing Dicom Dictionary: '+e.message);
       End;
     finally
-      oDoc.Free;
+      oDoc.free;
     end;
   Finally
-    oParser.Free;
+    oParser.free;
   End;
   FDictionary.FinishLoading;
 end;
@@ -1793,12 +1793,12 @@ Begin
       Else If oChild.name = 'SOP' Then
         ParseSOP(oChild)
       Else
-        raise EDicomException.create('Unknown element name '+oChild.Name);
+        raise EDicomException.Create('Unknown element name '+oChild.Name);
 
      oChild := oChild.nextElement;
     End;
   Finally
-    FCmdElementCache.Free;
+    FCmdElementCache.free;
     FCmdElementCache := Nil;
   End;
 End;
@@ -1813,7 +1813,7 @@ Begin
         encapsulated="false" lossy="false" deflate="false" /> }
   sUID := ReadUID(oElement);
   If FDictionary.TransferSyntaxes.ExistsByUID(sUID) Then
-    raise EDicomException.create('The transfer syntax '+sUid+' is already defined');
+    raise EDicomException.Create('The transfer syntax '+sUid+' is already defined');
   oTransferSyntax := TDicomDictionaryTransferSyntax.Create;
   Try
     oTransferSyntax.Name := oElement.Attribute['name'];
@@ -1825,7 +1825,7 @@ Begin
     oTransferSyntax.IsDeflated := ReadBoolean(oElement, 'deflate');
     FDictionary.TransferSyntaxes.Add(oTransferSyntax.Link);
   Finally
-    oTransferSyntax.Free;
+    oTransferSyntax.free;
   End;
 End;
 
@@ -1872,7 +1872,7 @@ Begin
     // assume the group is already created
     FDictionary.FElementGroups[sGroupName].Add(oElement.Link);
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1892,7 +1892,7 @@ Begin
     Try
       FDictionary.ElementGroups.Add(sGroup, oGroupList.Link);
     Finally
-      oGroupList.Free;
+      oGroupList.free;
     End;
   End;
 
@@ -1903,7 +1903,7 @@ Begin
       If oChild.name = 'element' Then
         ParseDataElement(sGroup, oChild)
       Else
-        raise EDicomException.create('Unknown element name ' + oChild.Name);
+        raise EDicomException.Create('Unknown element name ' + oChild.Name);
 
      oChild := oChild.nextElement;
     End;
@@ -1913,7 +1913,7 @@ Function TDicomDictionaryParser.ReadUID(oElement: TMXmlElement): String;
 Begin
   result := oElement.attribute['uid'];
   If result = '' Then
-    raise EDicomException.create('No UID defined on element '+oElement.name);
+    raise EDicomException.Create('No UID defined on element '+oElement.name);
 End;
 
 Function TDicomDictionaryParser.ReadBoolean(oElement: TMXmlElement; sName: String): Boolean;
@@ -1926,7 +1926,7 @@ Begin
   else if SameText(s, 'true') or (s = '1') then
     result := true
   Else
-    raise EDicomException.create('Invalid boolean value "'+s+'" on element '+oElement.name);
+    raise EDicomException.Create('Invalid boolean value "'+s+'" on element '+oElement.name);
 End;
 
 
@@ -1951,7 +1951,7 @@ Begin
     Try
       FDictionary.Dimses.Add(sDimseType, oDimseService.Link);
     Finally
-      oDimseService.Free;
+      oDimseService.free;
     End;
   End;
   oDimseService := FDictionary.Dimses[sDimseType];
@@ -1968,14 +1968,14 @@ Begin
         oDimseMsg.Params.Add(ReadDimseParam(oChild));
       End
       Else
-        raise EDicomException.create('Unknown element name '+oChild.name);
+        raise EDicomException.Create('Unknown element name '+oChild.name);
 
       oChild := oChild.NextElement;
     End;
 
     oDimseService.Add(oDimseMsg.Link);
   Finally
-    oDimseMsg.Free;
+    oDimseMsg.free;
   End;
 
 End;
@@ -2005,7 +2005,7 @@ Begin
       If FCmdElementCache.ExistsByKey(oParam.ElementId) Then
         oParam.Element := TDicomDictionaryElement(FCmdElementCache.GetValueByKey(oParam.ElementId)).Link
       Else
-        raise EDicomException.create('Invalid DIMSE param: ' + oParam.Name + '. Parameter type not found for element ID ' + oParam.ElementId);
+        raise EDicomException.Create('Invalid DIMSE param: ' + oParam.Name + '. Parameter type not found for element ID ' + oParam.ElementId);
     End;
 
     // based on fixed value & element id to determined param type
@@ -2018,7 +2018,7 @@ Begin
 
     Result := oParam.Link;
   Finally
-    oParam.Free;
+    oParam.free;
   End;
 End;
 
@@ -2048,14 +2048,14 @@ Begin
     oResult.Comment := oNode.Text;
 
     If (oResult.Key = '') Then
-      raise EDicomException.create('Invalid Macro, macro key not found')
+      raise EDicomException.Create('Invalid Macro, macro key not found')
     Else
     Begin
       ReadDicomInfoEntries(oNode, oResult.Children);
       FDictionary.Macros.Add(oResult.Key, oResult.Link);
     End;
   Finally
-    oResult.Free;
+    oResult.free;
   End;
 End;
 
@@ -2075,14 +2075,14 @@ Begin
     oResult.Name := StringTrimWhitespace(oResult.Name);
 
     If (oResult.Key = '') Then
-      raise EDicomException.create('Invalid Module, Module Key not found')
+      raise EDicomException.Create('Invalid Module, Module Key not found')
     Else
     Begin
       ReadDicomInfoEntries(oNode, oResult.Children);
       FDictionary.Modules.Add(oResult.Key, oResult.Link);
     End;
   Finally
-    oResult.Free;
+    oResult.free;
   End;
 End;
 
@@ -2099,13 +2099,13 @@ Begin
     Else If oChild.name = 'attribute' Then
       oEntry := ReadDicomInfoEntryAttr(oChild)
     Else
-      raise EDicomException.create('Unexpected entry: ' + oChild.name + '. Expected <reference> or <attribute> node.');
+      raise EDicomException.Create('Unexpected entry: ' + oChild.name + '. Expected <reference> or <attribute> node.');
 
     Try
       If oEntry <> Nil Then
         oEntries.Add(oEntry.Link);
     Finally
-      oEntry.Free;
+      oEntry.free;
     End;
 
     oChild := oChild.NextElement;
@@ -2124,12 +2124,12 @@ Begin
     oAttr.RequiredType := ParseInfoRequiredTypeValue(oNode.Attribute['type']);
 
     If oAttr.Tag = '' Then
-      raise EDicomException.create('Attribute entry without specified tag');
+      raise EDicomException.Create('Attribute entry without specified tag');
 
     ReadDicomInfoEntries(oNode, oAttr.Children);
     Result := oAttr.Link;
   Finally
-    oAttr.Free;
+    oAttr.free;
   End;
 End;
 
@@ -2148,12 +2148,12 @@ Begin
     oRef.BaselineTemplateId := StringTrimWhitespace(oNode.Attribute['baselineTemplateID']);
 
     If oRef.RefId = '' Then
-      raise EDicomException.create('Reference entry without reference');
+      raise EDicomException.Create('Reference entry without reference');
 
     ReadDicomInfoEntries(oNode, oRef.Children);
     Result := oRef.Link;
   Finally
-    oRef.Free;
+    oRef.free;
   End;
 End;
 
@@ -2168,14 +2168,14 @@ Begin
     oResult.Name := oNode.Attribute['name'];
 
     If (oResult.Key = '') Then
-      raise EDicomException.create('Invalid IOD, key not found')
+      raise EDicomException.Create('Invalid IOD, key not found')
     Else
     Begin
       ReadIODModules(oNode, oResult.Modules);
       FDictionary.IODs.Add(oResult.Key, oResult.Link);
     End;
   Finally
-    oResult.Free;
+    oResult.free;
   End;
 End;
 
@@ -2192,7 +2192,7 @@ Begin
 
     FDictionary.SOPs.Add(oResult.Link);
   Finally
-    oResult.Free;
+    oResult.free;
   End;
 End;
 
@@ -2205,7 +2205,7 @@ Begin
   While (oChild <> Nil) Do
   Begin
     If oChild.name <> 'reference' Then
-      raise EDicomException.create('Unexpected entry: ' + oChild.name + '. Expected <reference> node.')
+      raise EDicomException.Create('Unexpected entry: ' + oChild.name + '. Expected <reference> node.')
     Else
     Begin
       oRef := TDicomModuleReference.Create;
@@ -2222,7 +2222,7 @@ Begin
 
         oReferences.Add(oRef.Link);
       Finally
-        oRef.Free;
+        oRef.free;
       End;
     End;
 
@@ -2233,7 +2233,7 @@ End;
 
 procedure TDicomDictionaryParser.SetSource(const Value: TFslStream);
 begin
-  FSource.Free;
+  FSource.free;
   FSource := Value;
 end;
 
@@ -2241,11 +2241,11 @@ procedure TDicomDictionaryParser.LoadFromFile(const sSource: String);
 var
   oFile : TFslFile;
 begin
-  oFile :=  TFslFile.Create(sSource, fmOpenRead);
+  oFile :=  TFslFile.Create(sSource, fmOpenRead + fmShareDenyWrite);
   Try
     Source := oFile.Link;
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 end;
 
@@ -2260,17 +2260,17 @@ Begin
       If oChild.name = 'section' Then
         FDictionary.FSectionReferences.Add(oChild.Attribute['name'], oChild.Attribute['ref'])
       Else
-        raise EDicomException.create('Unknown element name ' + oChild.name);
+        raise EDicomException.Create('Unknown element name ' + oChild.name);
      oChild := oChild.NextElement;
     End;
 end;
 
-function TDicomDictionaryParser.sizeInBytesV : cardinal;
+function TDicomDictionaryParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSource.sizeInBytes);
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FCmdElementCache.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FCmdElementCache.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryEntity }
@@ -2291,9 +2291,9 @@ begin
   result := TDicomDictionaryEntity(Inherited Link);
 end;
 
-function TDicomDictionaryEntity.sizeInBytesV : cardinal;
+function TDicomDictionaryEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUID.length * sizeof(char)) + 12);
 end;
 
@@ -2344,7 +2344,7 @@ Begin
 
     Result := Find(oUID, iIndex, CompareByUID);
   Finally
-    oUID.Free;
+    oUID.free;
   End;
 End;
 
@@ -2466,7 +2466,7 @@ End;
 
 Destructor TDicomDictionaryTransferSyntax.Destroy;
 Begin
-  FProperties.Free;
+  FProperties.free;
 
   Inherited;
 End;
@@ -2491,15 +2491,15 @@ Begin
 
     Result := oKeys.Link;
   Finally
-    oKeys.Free;
+    oKeys.free;
   End;
 End;
 
-function TDicomDictionaryTransferSyntax.sizeInBytesV : cardinal;
+function TDicomDictionaryTransferSyntax.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FProperties.sizeInBytes);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryTransferSyntaxList }
@@ -2581,19 +2581,19 @@ Destructor TDicomDictionary.Destroy;
 Var
   i : TDicomVRType;
 Begin
-  FSectionReferences.Free;
-  FElements.Free;
-  FElementGroups.Free;
-  FWildcardElements.Free;
-  FTransferSyntaxes.Free;
-  FSOPs.Free;
-  FDimses.Free;
+  FSectionReferences.free;
+  FElements.free;
+  FElementGroups.free;
+  FWildcardElements.free;
+  FTransferSyntaxes.free;
+  FSOPs.free;
+  FDimses.free;
 
-  FMacros.Free;
-  FModules.Free;
-  FIODs.Free;
+  FMacros.free;
+  FModules.free;
+  FIODs.free;
   For i := Low(TDicomVRType) to High(TDicomVRType) Do
-    FVRSet[i].Free;
+    FVRSet[i].free;
     
   Inherited;
 End;
@@ -2703,7 +2703,7 @@ Begin
   else if sCode = 'UN' Then
     result := dvtUN
   else
-    raise EDicomException.create('Unknown VR Type "'+sCode+'"');
+    raise EDicomException.Create('Unknown VR Type "'+sCode+'"');
 End;
 
 {$IFDEF DELPHI}
@@ -2762,7 +2762,7 @@ Begin
   else if sCode = 'UN' Then
     result := dvtUN
   else
-    raise EDicomException.create('Unknown VR Type "'+String(sCode)+'"');
+    raise EDicomException.Create('Unknown VR Type "'+String(sCode)+'"');
 End;
 {$ENDIF}
 
@@ -3027,7 +3027,7 @@ Begin
       End;
     End;
   Finally
-    oTemp.Free;
+    oTemp.free;
   End;
 End;
 
@@ -3066,7 +3066,7 @@ Begin
 
     Result := oCodes.Link;
   Finally
-    oCodes.Free;
+    oCodes.free;
   End;
 End;
 
@@ -3117,20 +3117,20 @@ Begin
       RaiseError('FindMatchingElementForTag', 'The dictionary "'+Name+'" does not contain a definition for the element ('+sGroup+'/'+sElement+')');
 end;
 
-function TDicomDictionary.sizeInBytesV : cardinal;
+function TDicomDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSectionReferences.sizeInBytes);
-  inc(result, FTransferSyntaxes.sizeInBytes);
-  inc(result, FElements.sizeInBytes);
-  inc(result, FElementGroups.sizeInBytes);
-  inc(result, FWildcardElements.sizeInBytes);
-  inc(result, FDimses.sizeInBytes);
-  inc(result, FMacros.sizeInBytes);
-  inc(result, FModules.sizeInBytes);
-  inc(result, FIODs.sizeInBytes);
-  inc(result, FSOPs.sizeInBytes);
+  inc(result, FSectionReferences.sizeInBytes(magic));
+  inc(result, FTransferSyntaxes.sizeInBytes(magic));
+  inc(result, FElements.sizeInBytes(magic));
+  inc(result, FElementGroups.sizeInBytes(magic));
+  inc(result, FWildcardElements.sizeInBytes(magic));
+  inc(result, FDimses.sizeInBytes(magic));
+  inc(result, FMacros.sizeInBytes(magic));
+  inc(result, FModules.sizeInBytes(magic));
+  inc(result, FIODs.sizeInBytes(magic));
+  inc(result, FSOPs.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryVR }
@@ -3174,9 +3174,9 @@ Begin
 End;
 
 
-function TDicomDictionaryVR.sizeInBytesV : cardinal;
+function TDicomDictionaryVR.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FDoco.length * sizeof(char)) + 12);
@@ -3223,7 +3223,7 @@ Begin
 
     Result := Find(oElement, iIndex, CompareByTags);
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 end;
 
@@ -3329,7 +3329,7 @@ End;
 
 Destructor TDicomDictionaryElement.Destroy;
 Begin
-  FVRs.Free;
+  FVRs.free;
   Inherited;
 End;
 
@@ -3354,15 +3354,15 @@ Begin
     result := result + [VRs[i].VRType];
 End;
 
-function TDicomDictionaryElement.sizeInBytesV : cardinal;
+function TDicomDictionaryElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FGroupId.length * sizeof(char)) + 12);
   inc(result, (FElementId.length * sizeof(char)) + 12);
   inc(result, (FGroupName.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FCode.length * sizeof(char)) + 12);
-  inc(result, FVRs.sizeInBytes);
+  inc(result, FVRs.sizeInBytes(magic));
 end;
 
 { TDicomPresentationContext }
@@ -3399,16 +3399,16 @@ End;
 
 Destructor TDicomPresentationContext.Destroy;
 Begin
-  FTransferSyntaxList.Free;
+  FTransferSyntaxList.free;
   
   Inherited;
 End;
 
-function TDicomPresentationContext.sizeInBytesV : cardinal;
+function TDicomPresentationContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FAbstractSyntaxUID.length * sizeof(char)) + 12);
-  inc(result, FTransferSyntaxList.sizeInBytes);
+  inc(result, FTransferSyntaxList.sizeInBytes(magic));
 end;
 
 { TDicomPresentationContextList }
@@ -3467,16 +3467,16 @@ End;
 
 Destructor TDicomDimseMessage.Destroy;
 Begin
-  FParams.Free;
+  FParams.free;
 
   Inherited;
 End;
 
-function TDicomDimseMessage.sizeInBytesV : cardinal;
+function TDicomDimseMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FParams.sizeInBytes);
+  inc(result, FParams.sizeInBytes(magic));
 end;
 
 { TDicomDictionaryVRList }
@@ -3568,7 +3568,7 @@ End;
 
 Destructor TDicomInfoEntry.Destroy;
 Begin
-  FChildren.Free;
+  FChildren.free;
 
   Inherited;
 End;
@@ -3593,11 +3593,11 @@ Begin
   Result := TDicomInfoEntry(Inherited Link);
 End;
 
-function TDicomInfoEntry.sizeInBytesV : cardinal;
+function TDicomInfoEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -3650,7 +3650,7 @@ End;
 
 Destructor TDicomInfoEntryReference.Destroy;
 Begin
-  FRefEntry.Free;
+  FRefEntry.free;
   FRefEntry := Nil;
 
   Inherited;
@@ -3663,7 +3663,7 @@ End;
 
 Procedure TDicomInfoEntryReference.SetRefEntry(sValue: TDicomInfoGroup);
 Begin
-  FRefEntry.Free;
+  FRefEntry.free;
   FRefEntry := sValue;
 End;
 
@@ -3672,11 +3672,11 @@ Begin
   FRefId := StringUpper(StringTrimWhitespace(sValue));
 End;
 
-function TDicomInfoEntryReference.sizeInBytesV : cardinal;
+function TDicomInfoEntryReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FRefId.length * sizeof(char)) + 12);
-  inc(result, FRefEntry.sizeInBytes);
+  inc(result, FRefEntry.sizeInBytes(magic));
   inc(result, (FContextId.length * sizeof(char)) + 12);
   inc(result, (FBaselineContextId.length * sizeof(char)) + 12);
   inc(result, (FDefinedTemplateId.length * sizeof(char)) + 12);
@@ -3708,22 +3708,22 @@ End;
 
 Destructor TDicomInfoEntryAttr.Destroy;
 Begin
-  FRefElement.Free;
+  FRefElement.free;
 
   Inherited;
 End;
 
 Procedure TDicomInfoEntryAttr.SetRefElement(oValue: TDicomDictionaryElement);
 Begin
-  FRefElement.Free;
+  FRefElement.free;
   FRefElement := oValue;
 End;
 
-function TDicomInfoEntryAttr.sizeInBytesV : cardinal;
+function TDicomInfoEntryAttr.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTag.length * sizeof(char)) + 12);
-  inc(result, FRefElement.sizeInBytes);
+  inc(result, FRefElement.sizeInBytes(magic));
 end;
 
 { TDicomInfoGroup }
@@ -3737,7 +3737,7 @@ End;
 
 Destructor TDicomInfoGroup.Destroy;
 Begin
-  FChildren.Free;
+  FChildren.free;
 
   Inherited;
 End;
@@ -3767,13 +3767,13 @@ Begin
   FKey := StringUpper(StringTrimWhitespace(sValue));
 End;
 
-function TDicomInfoGroup.sizeInBytesV : cardinal;
+function TDicomInfoGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FKey.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FComment.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 { TDicomMacroDict }
@@ -3870,7 +3870,7 @@ End;
 
 Destructor TDicomModuleReference.Destroy;
 Begin
-  FRefEntry.Free;
+  FRefEntry.free;
 
   Inherited;
 End;
@@ -3882,16 +3882,16 @@ End;
 
 Procedure TDicomModuleReference.SetRefEntry(sValue: TDicomModule);
 Begin
-  FRefEntry.Free;
+  FRefEntry.free;
   FRefEntry := sValue;
 End;
 
-function TDicomModuleReference.sizeInBytesV : cardinal;
+function TDicomModuleReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
-  inc(result, FRefEntry.sizeInBytes);
+  inc(result, FRefEntry.sizeInBytes(magic));
   inc(result, (FSectionReference.length * sizeof(char)) + 12);
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
@@ -3934,7 +3934,7 @@ End;
 
 Destructor TDicomIOD.Destroy;
 Begin
-  FModules.Free;
+  FModules.free;
   FModules := Nil;
 
   Inherited;
@@ -3960,12 +3960,12 @@ Begin
   Result := TDicomIOD(Inherited Link);
 End;
 
-function TDicomIOD.sizeInBytesV : cardinal;
+function TDicomIOD.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FKey.length * sizeof(char)) + 12);
-  inc(result, FModules.sizeInBytes);
+  inc(result, FModules.sizeInBytes(magic));
 end;
 
 { TDicomIODDict }
@@ -4054,7 +4054,7 @@ end;
 
 destructor TDicomDictionarySOP.Destroy;
 begin
-  FIOD.Free;
+  FIOD.free;
   inherited;
 end;
 
@@ -4065,18 +4065,18 @@ end;
 
 procedure TDicomDictionarySOP.SetIOD(const Value: TDicomIOD);
 begin
-  FIOD.Free;
+  FIOD.free;
   FIOD := Value;
 end;
 
 
-function TDicomDictionarySOP.sizeInBytesV : cardinal;
+function TDicomDictionarySOP.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FStatedIOD.length * sizeof(char)) + 12);
   inc(result, (FIODRef.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FIOD.sizeInBytes);
+  inc(result, FIOD.sizeInBytes(magic));
 end;
 
 { TDicomDictionarySOPList }
@@ -4188,7 +4188,7 @@ End;
 
 Destructor TDicomDimseParam.Destroy;
 Begin
-  FElement.Free;
+  FElement.free;
   
   Inherited;
 End;
@@ -4200,17 +4200,17 @@ End;
 
 Procedure TDicomDimseParam.SetElement(oValue: TDicomDictionaryElement);
 Begin
-  FElement.Free;
+  FElement.free;
   FElement := oValue;
 End;
 
-function TDicomDimseParam.sizeInBytesV : cardinal;
+function TDicomDimseParam.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFixedValue.length * sizeof(char)) + 12);
   inc(result, (FElementId.length * sizeof(char)) + 12);
-  inc(result, FElement.sizeInBytes);
+  inc(result, FElement.sizeInBytes(magic));
 end;
 
 { TDicomDimseParamList }
@@ -4290,12 +4290,12 @@ var
   i : integer;
 Begin
   if length(sTag) <> 4 Then
-    raise EDicomException.create('Error in '+sLocation+':'+ sValue+' is not valid tag');
+    raise EDicomException.Create('Error in '+sLocation+':'+ sValue+' is not valid tag');
   for i := 1 to 4 do
     if bWantInteger and not CharInSet(sTag[i], ['0'..'9', 'A'..'F', 'a'..'f']) Then
-      raise EDicomException.create('Error in '+sLocation+':'+ sValue+' is not valid tag')
+      raise EDicomException.Create('Error in '+sLocation+':'+ sValue+' is not valid tag')
     Else if not CharInSet(sTag[i], ['0'..'9', 'A'..'F', 'a'..'f', 'x']) Then
-      raise EDicomException.create('Error in '+sLocation+':'+ sValue+' is not valid tag');
+      raise EDicomException.Create('Error in '+sLocation+':'+ sValue+' is not valid tag');
 End;
 
 

@@ -95,7 +95,7 @@ begin
   try
     assertTrue(doc <> nil);
   finally
-    doc.Free;
+    doc.free;
   end;
 end;
 
@@ -114,7 +114,7 @@ begin
     if (test.Trim <> '') then
     begin
       StringSplit(test, #13#10, name, body);
-      AddTest(TFHIRGraphQLParserTest.create(name, body));
+      AddTest(TFHIRGraphQLParserTest.Create(name, body));
     end;
   end;
 end;
@@ -124,7 +124,7 @@ end;
 
 constructor TFHIRGraphQLTest.Create(name, source, output, context, resource, opName: string);
 begin
-  inherited create(name);
+  inherited Create(name);
   self.source := source;
   self.output := output;
   self.context := context;
@@ -135,11 +135,11 @@ end;
 procedure TFHIRGraphQLTest.ListResources(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>; list: TFslList<TFHIRResourceV>);
 begin
   if requestType = 'Condition' then
-    list.add(TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'condition-example.xml'])))
+    list.add(TFHIRParsers4.ParseFile(nil, ffXml, nil, TestSettings.fhirTestFile(['r4', 'examples', 'condition-example.xml'])))
   else if requestType = 'Patient' then
   begin
-    list.Add(TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.xml'])));
-    list.Add(TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example-xds.xml'])));
+    list.Add(TFHIRParsers4.ParseFile(nil, ffXml, nil, TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.xml'])));
+    list.Add(TFHIRParsers4.ParseFile(nil, ffXml, nil, TestSettings.fhirTestFile(['r4', 'examples', 'patient-example-xds.xml'])));
   end;
 end;
 
@@ -147,10 +147,10 @@ function TFHIRGraphQLTest.LookupResource(appInfo: TFslObject; requestType, id: S
 var
   filename : String;
 begin
-  filename := TestSettings.fhirTestFile(['r4', 'examples', requestType+'-'+id+'.xml']);
+  filename := TestSettings.fhirTestFile(['r4', 'examples', requestType.toLower+'-'+id+'.xml']);
   result := FileExists(filename);
   if result then
-    res := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+    res := TFHIRParsers4.ParseFile(nil, ffXml, nil, filename);
 end;
 
 function TFHIRGraphQLTest.ResolveReference(appInfo : TFslObject; context: TFHIRResourceV; reference: TFHIRObject; out targetContext, target: TFHIRResourceV): boolean;
@@ -180,7 +180,7 @@ begin
     filename := TestSettings.fhirTestFile(['r4', 'examples', parts[0].ToLower+'-'+parts[1].ToLower+'.xml']);
     result := FileExists(filename);
     if result then
-      target := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+      target := TFHIRParsers4.ParseFile(nil, ffXml, nil, filename);
   end;
 end;
 
@@ -204,12 +204,12 @@ begin
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.xml']));
+      resource := TFHIRParsers4.ParseFile(nil, ffXml, nil, TestSettings.fhirTestFile(['r4', 'examples', 'patient-example.xml']));
     end;
     with bnd.entryList.Append do
     begin
       fullUrl := 'http://hl7.org/fhir/Patient/example';
-      resource := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), TestSettings.fhirTestFile(['r4', 'examples', 'patient-example-xds.xml']));
+      resource := TFHIRParsers4.ParseFile(nil, ffXml, nil, TestSettings.fhirTestFile(['r4', 'examples', 'patient-example-xds.xml']));
       search := TFhirBundleEntrySearch.Create;
       search.score := '0.5';
       search.mode := SearchEntryModeMatch;
@@ -219,10 +219,10 @@ begin
     try
       result := f.wrapBundle(bnd.Link);
     finally
-      f.Free;
+      f.free;
     end;
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
@@ -240,7 +240,7 @@ begin
   begin
     parts := context.Split(['/']);
     if length(parts) <> 3 then
-      raise ETestCase.create('not done yet '+source+' '+output+' '+context);
+      raise ETestCase.Create('not done yet '+source+' '+output+' '+context);
     if resource <> '' then
       filename := TestSettings.fhirTestFile(['r4', 'examples', resource+'.xml'])
     else
@@ -254,7 +254,7 @@ begin
     gql.OnListResources := ListResources;
     gql.OnSearch := Search;
     if (filename <> '') then
-      gql.Focus := TFHIRParsers4.ParseFile(nil, ffXml, THTTPLanguages.create('en'), filename);
+      gql.Focus := TFHIRParsers4.ParseFile(nil, ffXml, nil, filename);
     gql.GraphQL := TGraphQLParser.parseFile(TestSettings.fhirTestFile(['r4', 'graphql', source]));
     gql.GraphQL.OperationName := opName;
     gql.GraphQL.variables.Add(TGraphQLArgument.Create('var', TGraphQLNameValue.Create('true')));
@@ -265,13 +265,13 @@ begin
       on e : Exception do
       begin
         ok := false;
-        msg:= e.Message;
+        msg := e.Message;
       end;
     end;
     if ok then
     begin
       assertTrue(output <> '$error', 'Expected to fail, but didn''t');
-      str := TStringBuilder.create;
+      str := TStringBuilder.Create;
       try
         gql.output.write(str, 0);
         StringToFile(str.ToString, TestSettings.fhirTestFile(['r4', 'graphql', output+'.out']), TEncoding.UTF8);
@@ -285,7 +285,7 @@ begin
     else
       assertTrue(output = '$error', 'Error, but proper output was expected ('+msg+')');
   finally
-    gql.Free;
+    gql.free;
   end;
 end;
 
@@ -304,11 +304,11 @@ begin
 
     while (test <> nil) and (test.Name = 'test') do
     begin
-      AddTest(TFHIRGraphQLTest.create(test.attribute['name'], test.attribute['source'], test.attribute['output'], test.attribute['context'], test.attribute['resource'], test.attribute['operation']));
+      AddTest(TFHIRGraphQLTest.Create(test.attribute['name'], test.attribute['source'], test.attribute['output'], test.attribute['context'], test.attribute['resource'], test.attribute['operation']));
       test := test.Next;
     end;
   finally
-    tests.Free;
+    tests.free;
   end;
 end;
 

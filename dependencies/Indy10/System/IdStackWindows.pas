@@ -313,13 +313,14 @@ type
 
 var
 //This is for the Win32-only package (SuperCore)
-  GWindowsStack : TIdStackWindows = nil;
+  GWindowsStack : TIdStackWindows = nil{$IFDEF HAS_DEPRECATED}{$IFDEF USE_SEMICOLON_BEFORE_DEPRECATED};{$ENDIF} deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use GStack or GBSDStack instead'{$ENDIF}{$ENDIF};
 
 implementation
 
 {$DEFINE USE_IPHLPAPI}
 
 {$IFDEF USE_IPHLPAPI}
+  // TODO: Move this to IdCompilerDefines.inc
   {$IFDEF VCL_XE2_OR_ABOVE}
     {$DEFINE HAS_UNIT_IpTypes}
     {$DEFINE HAS_UNIT_IpHlpApi}
@@ -330,10 +331,10 @@ uses
   IdIDN, IdResourceStrings, IdWship6
   {$IFDEF USE_IPHLPAPI}
     {$IFDEF HAS_UNIT_IpTypes}
-  , IpTypes
+  , Winapi.IpTypes
     {$ENDIF}
     {$IFDEF HAS_UNIT_IpHlpApi}
-  , IpHlpApi
+  , Winapi.IpHlpApi
     {$ENDIF}
   {$ENDIF}
   ;
@@ -845,7 +846,9 @@ begin
     end;
     GStarted := True;
   end;
+  {$I IdSymbolDeprecatedOff.inc}
   GWindowsStack := Self;
+  {$I IdSymbolDeprecatedOn.inc}
 end;
 
 destructor TIdStackWindows.Destroy;
@@ -1175,7 +1178,8 @@ begin
     nil);
   if ps <> nil then begin
     Result := ntohs(ps^.s_port);
-  end else begin
+  end else
+  begin
     // TODO: use TryStrToInt() instead...
     try
       LPort := IndyStrToInt(AServiceName);
@@ -1428,8 +1432,11 @@ procedure TIdStackWindows.GetLocalAddressList(AAddresses: TIdStackLocalAddressLi
                     case UnicastAddr^.Address.lpSockaddr.sin_family of
                       AF_INET: begin
                         IPAddr := TranslateTInAddrToString(PSockAddrIn(UnicastAddr^.Address.lpSockaddr)^.sin_addr, Id_IPv4);
-                        // The OnLinkPrefixLength member is only available on Windows Vista and later
+                        // TODO: use the UnicastAddr^.Length field to determine which version of
+                        // IP_ADAPTER_UNICAST_ADDRESS is being provided, rather than checking the
+                        // OS version number...
                         if IndyCheckWindowsVersion(6) then begin
+                          // The OnLinkPrefixLength member is only available on Windows Vista and later
                           SubNetStr := IPv4MaskLengthToString(UnicastAddr^.OnLinkPrefixLength);
                         end else
                         begin
@@ -1797,6 +1804,7 @@ begin
     if (AIndex >= 0) and (u_int(AIndex) < FFDSet.fd_count) then begin
       Result := FFDSet.fd_array[AIndex];
     end else begin
+      // TODO: just return 0/invalid, like most of the other Stack classes do?
       raise EIdStackSetSizeExceeded.Create(RSSetSizeExceeded);
     end;
   finally

@@ -193,7 +193,7 @@ begin
   LI := AItem as TIdMPiXFTPListItem;
   LCols := TStringList.Create;
   try
-    //According to "HP ARPA File Transfer Protocol, User’s Guide, HP 3000 MPE/iX Computer Systems,Edition 6"
+    //According to "HP ARPA File Transfer Protocol, Users Guide, HP 3000 MPE/iX Computer Systems,Edition 6"
     //the filename here can be 8 chars long
     LI.FileName := Trim(Copy(AItem.Data, 1, 8));
     LBuf := Copy(AItem.Data, 8, MaxInt);

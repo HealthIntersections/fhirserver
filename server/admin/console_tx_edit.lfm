@@ -1,28 +1,27 @@
 object EditTxForm: TEditTxForm
   Left = 690
-  Height = 412
+  Height = 462
   Top = -803
-  Width = 497
+  Width = 639
   Caption = 'Edit Terminology'
-  ClientHeight = 412
-  ClientWidth = 497
+  ClientHeight = 462
+  ClientWidth = 639
   OnCloseQuery = FormCloseQuery
   OnDestroy = FormDestroy
   OnResize = FormResize
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 44
-    Top = 368
-    Width = 497
+    Top = 418
+    Width = 639
     Align = alBottom
     ClientHeight = 44
-    ClientWidth = 497
+    ClientWidth = 639
     TabOrder = 0
     object btnDBTest1: TBitBtn
-      Left = 328
+      Left = 470
       Height = 26
       Top = 8
       Width = 75
@@ -69,7 +68,7 @@ object EditTxForm: TEditTxForm
       TabOrder = 0
     end
     object btnDBTest3: TBitBtn
-      Left = 408
+      Left = 550
       Height = 26
       Top = 8
       Width = 75
@@ -160,67 +159,24 @@ object EditTxForm: TEditTxForm
       OnClick = btnDBTestClick
       TabOrder = 2
     end
-    object btnTxImport: TBitBtn
-      Left = 90
-      Height = 26
-      Top = 8
-      Width = 75
-      Caption = 'Import'
-      Glyph.Data = {
-        36040000424D3604000000000000360000002800000010000000100000000100
-        2000000000000004000064000000640000000000000000000000000000000000
-        0000707070968A8A8ADA70707094C6AA7109CDA6714DCDA77171CDA77171CDA4
-        724CC6AA7109707070968A8A8ADA707070940000000000000000000000000000
-        00008C8C8CD9E6E6E5FFAB9980EACEA671EECEA671FFCEA671FFCEA671FFCEA6
-        71FFCEA671EDAB977EEAE6E6E5FF8C8C8CD90000000000000000000000000000
-        000074747296B89D79F2CEA671FFCEA671FFD5B58CFFDAC3A6FFD8C1A4FFD2B3
-        89FFCEA671FFCEA671FFB79D79F1727270960000000000000000000000000000
-        0000CEA67272CEA671FFD0AA78FFE5D9CAFFE9E9E9FFE3E3E3FFDEDEDEFFDCDC
-        DCFFD8CCBCFFCFA977FFCEA671FFCEA7726E000000000000000000000000CCB3
-        660ACEA671EFCEA671FFEADECEFFEDEDEDFFE6E6E6FFDFDFDFFFD9D9D9FFD4D4
-        D4FFD7D7D7FFD8CCBCFFCEA671FFCEA671EDC6AA71090000000000000000CDA6
-        714DCEA671FFD8B98FFFF4F4F4FFEDEDEDFFE5E5E5FFDEDEDEFFD7D7D7FFD0D0
-        D0FFD4D4D4FFDCDCDCFFD2B389FFCEA671FFCFA7704B0000000000000000CEA6
-        7173CEA671FFE3CDB0FFF5F5F5FFEEEEEEFFE7E7E7FF4D4D4DFF4D4D4DFF4D4D
-        4DFFD9D9D9FFDEDEDEFFD8C2A4FFCEA671FFCEA672720000000000000000CEA6
-        7173CEA671FFE4CEB1FFF7F7F7FFF1F1F1FFEAEAEAFF4D4D4DFFE0E0E0FFDEDE
-        DEFFDFDFDFFFE3E3E3FFDAC4A6FFCEA671FFCEA671730000000000000000CEA7
-        724ECEA671FFD9BA91FFFBFBFBFFF5F5F5FFEFEFEFFF4D4D4DFFE7E7E7FFE5E5
-        E5FFE6E6E6FFE9E9E9FFD5B58CFFCEA671FFCDA4724C0000000000000000CCB3
-        660ACEA671EFCEA671FFF1E6D6FFFAFAFAFFF5F5F5FF4D4D4DFFEEEEEEFFEDED
-        EDFFEDEDEDFFE5D9CAFFCEA671FFCEA671EEC6AA710900000000000000000000
-        0000BFA47778CEA671FFD1AC7AFFF1E6D6FFFBFBFBFFF7F7F7FFF5F5F5FFF4F4
-        F4FFEADECFFFD0AA78FFCEA671FFBEA378750000000000000000000000001595
-        CD2435A7D3DE73A4A2C9CEA671FFCEA671FFD9BA91FFE4CEB0FFE3CDAFFFD8B9
-        8FFFCEA671FFCEA671FF73A2A1C935A7D3DE1595CD24000000000000000031A2
-        D06891E0F6FF3BC7F0F42AA1C5D9B8A47CF1CEA671FFCEA671FFCEA671FFCEA6
-        71FFB8A47BF02AA1C5D93BC7F0F490E0F6FF32A1D06700000000000000001793
-        CC2D71C9E9EE68E1FFFF4DD9FDFF43B5DEDE64A5B496CEA67272CEA6727264A5
-        B49643B5DEDE4DD9FDFF68E1FFFF70CAE7ED1797CB2C00000000000000000000
-        00003BA6D38665C3E4E485D8F1FD5CBADDDB38A6D14D000000000000000038A3
-        D14E5DBADEDB85D8F1FD64C3E4E43BA6D3860000000000000000000000000000
-        0000000000000B95CA181493C740108FBF100000000000000000000000000000
-        0000108FBF101493C7400B95CA18000000000000000000000000
-      }
-      TabOrder = 3
-    end
   end
   object edtIdentity: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 8
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 1
     Text = 'edtIdentity'
   end
   object cbxType: TComboBox
     Left = 80
-    Height = 23
+    Height = 20
     Top = 36
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 26
+    ItemIndex = 0
     Items.Strings = (
       'snomed'
       'loinc'
@@ -229,82 +185,83 @@ object EditTxForm: TEditTxForm
       'icd10'
       'ndc'
       'unii'
-      'lang'
       'ndfrt'
       'nci'
+      'cpt'
     )
     OnChange = cbxTypeChange
     Style = csDropDownList
     TabOrder = 2
+    Text = 'snomed'
   end
   object edtFile: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 160
-    Width = 320
+    Width = 462
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 3
     Text = 'edtFile'
   end
   object edtVersion: TEdit
     Left = 80
-    Height = 23
+    Height = 22
     Top = 90
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
     Text = 'edtVersion'
   end
   object Label1: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 8
-    Width = 40
+    Width = 46
     Caption = 'Identity'
     ParentColor = False
   end
   object Label2: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 36
-    Width = 24
+    Width = 30
     Caption = 'Type'
     ParentColor = False
   end
   object Label4: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 162
-    Width = 18
+    Width = 21
     Caption = 'File'
     ParentColor = False
   end
   object Label5: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 94
-    Width = 38
+    Width = 45
     Caption = 'Version'
     ParentColor = False
   end
   object Label6: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 66
-    Width = 38
+    Width = 44
     Caption = 'Default'
     ParentColor = False
   end
   object chkDefault: TCheckBox
     Left = 80
-    Height = 19
+    Height = 18
     Top = 66
-    Width = 178
+    Width = 211
     Caption = 'This is the default for this type'
     TabOrder = 5
   end
   object btnSource: TBitBtn
-    Left = 409
+    Left = 551
     Height = 24
     Top = 160
     Width = 75
@@ -351,95 +308,95 @@ object EditTxForm: TEditTxForm
   end
   object cbxDriver: TComboBox
     Left = 82
-    Height = 23
+    Height = 20
     Top = 216
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
+    ItemHeight = 19
     TabOrder = 7
     Text = 'cbxDriver'
   end
   object edtServer: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 246
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 8
     Text = 'edtServer'
   end
   object edtDBName: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 274
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 9
     Text = 'edtDBName'
   end
   object edtUsername: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 302
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 10
     Text = 'edtUsername'
   end
   object edtPassword: TEdit
     Left = 82
-    Height = 23
+    Height = 22
     Top = 330
-    Width = 402
+    Width = 544
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 11
     Text = 'edtPassword'
   end
   object Label3: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 190
-    Width = 48
+    Width = 57
     Caption = 'Database'
     ParentColor = False
   end
   object Label7: TLabel
     Left = 17
-    Height = 15
+    Height = 16
     Top = 220
-    Width = 31
+    Width = 36
     Caption = 'Driver'
     ParentColor = False
   end
   object Label8: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 246
-    Width = 32
+    Width = 39
     Caption = 'Server'
     ParentColor = False
   end
   object Label9: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 274
-    Width = 50
+    Width = 57
     Caption = 'DB Name'
     ParentColor = False
   end
   object Label10: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 302
-    Width = 53
+    Width = 62
     Caption = 'Username'
     ParentColor = False
   end
   object Label11: TLabel
-    Left = 18
-    Height = 15
-    Top = 330
-    Width = 50
+    Left = 16
+    Height = 16
+    Top = 332
+    Width = 58
     Caption = 'Password'
     ParentColor = False
   end
@@ -451,42 +408,126 @@ object EditTxForm: TEditTxForm
     AutoSize = False
     Caption = 'Microsoft SQL Server'
     OnChange = rbMSSQLClick
+    OnClick = rbMSSQLClick
     TabOrder = 12
   end
   object rbMySQL: TRadioButton
-    Left = 268
+    Left = 256
     Height = 19
     Top = 190
     Width = 58
     AutoSize = False
     Caption = 'MySQL'
     OnChange = rbMSSQLClick
+    OnClick = rbMSSQLClick
     TabOrder = 13
   end
   object Bevel1: TBevel
     Left = 8
     Height = 14
     Top = 134
-    Width = 482
+    Width = 624
     Anchors = [akTop, akLeft, akRight]
     Shape = bsBottomLine
   end
   object chkActive: TCheckBox
     Left = 80
-    Height = 19
+    Height = 18
     Top = 120
-    Width = 198
+    Width = 234
     Caption = 'Load this when starting the Server'
     TabOrder = 14
   end
   object Label12: TLabel
     Left = 18
-    Height = 15
+    Height = 16
     Top = 122
-    Width = 33
+    Width = 37
     Caption = 'Active'
     ParentColor = False
     ParentFont = False
+  end
+  object rbSQLite: TRadioButton
+    Left = 356
+    Height = 19
+    Top = 190
+    Width = 58
+    AutoSize = False
+    Caption = 'SQLite3'
+    OnChange = rbMSSQLClick
+    OnClick = rbMSSQLClick
+    TabOrder = 15
+  end
+  object Label13: TLabel
+    Left = 17
+    Height = 16
+    Top = 360
+    Width = 65
+    Caption = 'SQLite File'
+    ParentColor = False
+  end
+  object edtSQLiteFile: TEdit
+    Left = 82
+    Height = 22
+    Top = 358
+    Width = 464
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 16
+    Text = 'edtSQLiteFile'
+  end
+  object cbAutocreate: TCheckBox
+    Left = 82
+    Height = 18
+    Top = 388
+    Width = 278
+    Caption = 'Automatically create File if it doesn''t exist'
+    TabOrder = 17
+  end
+  object btnSource1: TBitBtn
+    Left = 551
+    Height = 24
+    Top = 358
+    Width = 75
+    Anchors = [akTop, akRight]
+    Caption = 'Choose'
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000064000000640000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000002060
+      9F0828689F2028689F2028689F2028689F2028689F2028689F2028689F202868
+      9F2020609F080000000000000000000000000000000000000000000000002867
+      9EC627669FFF2D6FA5FD2E6FA5F92E6FA5F62D6EA5F32D6EA6F32D6EA6F32D6E
+      A6F32D6FA5EF2E6FA7A62B6A9F18000000000000000000000000000000002A6A
+      A4FF2D6DA3FF6DBAE3FF83D5F8FF84D5F8FF85D5F8FF86D6F8FF87D6F8FF88D6
+      F8FF89D7F8FF70BBE2FC2D6EA4F228659D530000000000000000000000002C70
+      A9FF73BCE3FF3070A6FF79BFE3FF93DBF8FF93DBF8FF94DBF8FF95DCF8FF96DC
+      F8FF97DCF8FF98DDF8FF7DC1E3FF2B6BA1F828659D5300000000000000002D73
+      AEFF95DCF8FF7BC0E3FF3171A6FF84C3E3FFA2E1F8FFA2E1F8FFA3E1F8FFA4E2
+      F8FFA5E2F8FFA6E2F8FFA7E3F8FF89C6E3FF2C6BA1F828659D53000000002F77
+      B2FFA0E0F8FFA0E0F8FF83C3E3FF3D7BAEFF85BFDCFFA0D7EDFFA1D7EDFFA1D7
+      EDFFA2D8EDFFA2D8EDFFA3D8EDFFA4D9EDFF84BAD7FF27679FFD00000000317B
+      B7FFABE4F8FFABE4F8FFABE4F8FFA7E0F5FF6CA8CCFF3A79ABFF3876A9FF3876
+      A9FF3876A9FF3876A9FF2F6EA4FF2F6DA3EB2F6DA3EB2C6AA1E700000000337E
+      BBFFB6E9F8FFB6E9F8FFB6E9F8FFB6E9F8FFB6E9F8FFB6E9F8FFB6E9F8FFB6E9
+      F8FFB6E9F8FFB6E9F8FF337EBBFF000000000000000000000000000000003582
+      C0FFA1D4EBFFADDFF1FFB7E2F3FFB0DEF1FFA9DBF0FFA6D8EEFFB0DFF1FFB0DF
+      F1FFB0DFF1FFB0DFF1FF3582C0FF000000000000000000000000000000003E8A
+      C6D23685C4FF91D5EEFFD7EAF6FFA6D2EDFF75B8E3FF5EA2D6FF3D8AC7EB3D8A
+      C7EB3D8AC7EB3D89C6EA3C89C6A9000000000000000000000000000000000000
+      00004583BDF1DBECF7FFEBF7FDFFEBF7FDFFCDE2F1FF4986C0E1000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      00004D8CC628558FC7F14E8AC4FF4E8AC4FF558FC7F14D8CC628000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000000000000000
+      0000000000000000000000000000000000000000000000000000
+    }
+    OnClick = btnSource1Click
+    TabOrder = 18
   end
   object dlgOpen: TOpenDialog
     Title = 'Choose Source'

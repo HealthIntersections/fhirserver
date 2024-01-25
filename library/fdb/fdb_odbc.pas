@@ -119,7 +119,7 @@ type
     function GetDBDetails: String; Override;
     function GetDriver: String; Override;
     procedure init; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String); overload;
     constructor Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; settings : TFslStringMap); overload;
@@ -137,16 +137,16 @@ function StandardODBCDriverName(APlatform: TFDBPlatform): String;
 implementation
 
 
-constructor TFDBOdbcConnection.create(AOwner : TFDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
+constructor TFDBOdbcConnection.Create(AOwner : TFDBManager; Env : TOdbcEnv; AHdbc : TOdbcConnection; AStmt : TOdbcStatement);
 begin
-  inherited create(AOwner);
+  inherited Create(AOwner);
   FEnv := Env;
   FHdbc := AHdbc;
   FStmt := AStmt;
   FASAMode := -1; // transaction isolation level unknown
 end;
 
-destructor TFDBOdbcConnection.destroy;
+destructor TFDBOdbcConnection.Destroy;
 begin
   FStmt.free;
   FStmt := Nil;
@@ -322,13 +322,14 @@ var
 begin
   tz := TFslDateTime.makeLocal.toString('Z');
   ExecSQL('SET time_zone = '''+tz+'''');
+  ExecSQL('SET collation_connection = ''utf8mb3_general_ci''');
 end;
 
 procedure TFDBOdbcConnection.RenameTableV(AOldTableName, ANewTableName: String);
 begin
   if Owner.Platform = kdbASA then
     FStmt.SQL := 'ALTER TABLE ' + AOldTableName + ' RENAME ' + ANewTableName
-  else if Owner.Platform in [kdbDB2, kdbCtree] then
+  else if Owner.Platform in [kdbDB2] then
     FStmt.SQL := 'RENAME TABLE ' + AOldTableName + ' TO ' + ANewTableName
   else
     FStmt.SQL := 'sp_rename ' + AOldTableName + ', ' + ANewTableName;
@@ -374,7 +375,7 @@ begin
     LCat.TableType := [ttTable];
     AList.Assign(LCat.TableNames);
   finally
-    LCat.Free;
+    LCat.free;
     end;
 end;
 
@@ -475,21 +476,21 @@ type
   private
     FString: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TOdbcBoundInt = class (TFDBBoundParam)
   private
     FInt: Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TOdbcBoundInt64 = class (TFDBBoundParam)
   private
     FInt64: Int64;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
   TOdbcBoundDate = class (TFDBBoundParam)
@@ -506,7 +507,7 @@ type
   private
     FBytes: TManagedMemoryStream;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
   end;
@@ -609,7 +610,7 @@ Begin
     result := trunc(strToFloat(v)*1024*1024)
   else if sameText(u, 'GB') Then
     result := trunc(strToFloat(v)*1024*1024*1024)
-  else raise EDBException.create('unknown unit ' +u);
+  else raise EDBException.Create('unknown unit ' +u);
 End;
 
 
@@ -647,7 +648,7 @@ Begin
   try
     Execute;
     if not FetchNext Then
-      raise EDBException.create('Table "'+sName+'" not found checking size');
+      raise EDBException.Create('Table "'+sName+'" not found checking size');
     result := ReadBytes(ColStringByName['reserved']);
   Finally
     Terminate;
@@ -672,8 +673,8 @@ Begin
   case Owner.Platform of
     kdbSQLServer  :
       result := DatabaseSizeMSSQL;
-  else // kdbUnknown, kdbSybase11, kdbCtree, kdbAccess, kdbDBIsam, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
-    raise EDBException.create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
+  else // kdbUnknown, kdbSybase11, kdbAccess, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
+    raise EDBException.Create('This operation (database size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
 
@@ -683,8 +684,8 @@ Begin
   case Owner.Platform of
     kdbSQLServer  :
       result := TableSizeMSSQL(sName);
-  else // kdbUnknown, kdbSybase11, kdbCtree, kdbAccess, kdbDBIsam, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
-    raise EDBException.create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
+  else // kdbUnknown, kdbSybase11, kdbAccess, kdbInterbase, kdbDB2, kdbGenericODBC, kdbOracle8, kdbMySQL, kdbASA, kdbSybase12
+    raise EDBException.Create('This operation (table size) is not supported on this platform ('+DescribePlatform(Owner.Platform) +')');
   End;
 End;
 
@@ -696,7 +697,7 @@ End;
 
 function TFDBOdbcConnection.FetchColumnMetaData(ASrc : TCatalogColumn) : TFDBColumn;
 begin
-  result := TFDBColumn.create;
+  result := TFDBColumn.Create;
   try
     result.Name := ASrc.ColumnName;
     result.DataType := ConvertColType(ASrc.DataType);
@@ -719,9 +720,9 @@ var
   LIndexUnique : Boolean;
   i : Integer;
 begin
-  result := TFDBIndex.create;
+  result := TFDBIndex.Create;
   try
-    LFields := TStringList.create;
+    LFields := TStringList.Create;
     try
       ACat.ParseIndex(AName, LName, LIndexUnique, LFields);
       result.Name := LName;
@@ -731,7 +732,7 @@ begin
         result.Columns.add(TFDBColumn.Create(LFields[i]));
         end;
     finally
-      LFields.Free;
+      LFields.free;
     end;
   except
     on e:exception do
@@ -747,7 +748,7 @@ function TFDBOdbcConnection.FetchRelationshipMetaData(ACat: TOdbcCatalog; aDetai
 var
   ColumnName, ForeignOwner, ForeignTable, ForeignColumn : String;
 begin
-  result := TFDBRelationship.create;
+  result := TFDBRelationship.Create;
   try
     ACat.ParseForeignKey(aDetails, ColumnName, ForeignOwner, ForeignTable, ForeignColumn);
     result.Column := columnName;
@@ -767,7 +768,7 @@ function TFDBOdbcConnection.FetchTableMetaData(ACat: TOdbcCatalog; ASrc : TCatal
 var
   i : integer;
 begin
-  result := TFDBTable.create;
+  result := TFDBTable.Create;
   try
     result.Name := ASrc.TableName;
     result.Owner := ASrc.TableOwner;
@@ -803,7 +804,7 @@ begin
   LCat := TOdbcCatalog.Create(FEnv, FHdbc);
   try
     LCat.hDbc := FHdbc;
-    LRes := TFDBMetaData.create;
+    LRes := TFDBMetaData.Create;
     try
       for i := 0 to LCat.Tables.ItemCount - 1 do
         begin
@@ -821,23 +822,23 @@ begin
       result := LRes;
       LRes := nil;
     finally
-      LRes.Free;
+      LRes.free;
     end;
   finally
-    LCat.Free;
+    LCat.free;
     end;
 end;
 
 { TFDBOdbcManager }
 
-constructor TFDBOdbcManager.create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFDBOdbcManager.Create(AName : String; platform : TFDBPlatform; AMaxConnCount, ATimeout: Integer; ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
   {$IFDEF FPC}
-  if @SQLAllocHandle = nil then
+  if not isODBCLoaded then
     InitialiseODBC;
   {$ENDIF}
-  inherited create(Aname, AMaxConnCount);
-  FAttributes := TStringList.create;
+  inherited Create(Aname, AMaxConnCount);
+  FAttributes := TStringList.Create;
   FDriver := ADriver;
   FServer := AServer;
   FDatabase := ADatabase;
@@ -856,11 +857,7 @@ begin
     end
   else
     begin
-    if FPlatform = kdbCtree then
-      begin
-      FAttributes.add('Host=' + FServer)
-      end
-    else if (FPlatform = kdbSybase11) or (FPlatform = kdbSybase12) then
+    if (FPlatform = kdbSybase11) or (FPlatform = kdbSybase12) then
       begin
       FAttributes.add('ServerName=' + FServer)
       end
@@ -892,12 +889,12 @@ destructor TFDBOdbcManager.Destroy;
 begin
   FAttributes.free;
   inherited;
-  FEnv.Free;
+  FEnv.free;
 end;
 
 procedure TFDBOdbcManager.init;
 begin
-  FEnv := TOdbcEnv.create;
+  FEnv := TOdbcEnv.Create;
 end;
 
 function TFDBOdbcManager.ConnectionFactory: TFDBConnection;
@@ -933,8 +930,13 @@ begin
     LStmt.CursorType := SQL_CURSOR_FORWARD_ONLY;
     if FTimeout <> 0 then
       LStmt.QueryTimeOut := FTimeout;
-    result := TFDBOdbcConnection.create(self, FEnv, LHdbc, LStmt);
-    result.Initialise;
+    result := TFDBOdbcConnection.Create(self, FEnv, LHdbc, LStmt);
+    try
+      result.Initialise;
+      result.link;
+    finally
+      result.free;
+    end;
   except
     on e:exception do
       begin
@@ -957,15 +959,15 @@ begin
   Result := '\\' + FDriver + '\' + FServer + '\' + FDatabase + ' [' + FUsername + ']';
 end;
 
-function TFDBOdbcManager.sizeInBytesV : cardinal;
+function TFDBOdbcManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDriver.length * sizeof(char)) + 12);
   inc(result, (FServer.length * sizeof(char)) + 12);
   inc(result, (FDatabase.length * sizeof(char)) + 12);
   inc(result, (FUsername.length * sizeof(char)) + 12);
   inc(result, (FPassword.length * sizeof(char)) + 12);
-  inc(result, FAttributes.sizeInBytes);
+  inc(result, FAttributes.sizeInBytes(magic));
 end;
 
 class function TFDBOdbcManager.IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean;
@@ -983,13 +985,11 @@ begin
     kdbSQLServer: Result := 'SQL Server Native Client 11.0';
     kdbSybase11: Result := 'Sybase System 11';
     kdbSybase12: Result := 'Sybase ASE ODBC Driver';
-    kdbCtree: Result := 'Faircom Ctree';
     kdbAccess: Result := 'Microsoft Access Driver (*.mdb)';
-    kdbDBIsam: Result := '---';
     kdbInterbase: Result := 'Intersolv Interbase ODBC Driver (*.gdb)'; // not that we would actually ever use this
     kdbDB2: Result := 'IBM DB2 ODBC DRIVER';
     kdbOracle8: Result := 'Oracle ODBC Driver';
-    kdbMySQL : result := 'MySQL ODBC 8.0 Unicode Driver';
+    kdbMySQL : result := 'MySQL ODBC 8.2 Unicode Driver';
   else
     Result := 'Unknown Platform ' + inttostr(ord(APlatform));
   end;
@@ -997,7 +997,7 @@ end;
 
 { TFDBOdbcExpress }
                            {
-constructor TFDBOdbcExpress.create(AName : String; AIniFile : TIniFile; ASection : String; AIdent : String = '');
+constructor TFDBOdbcExpress.Create(AName : String; AIniFile : TIniFile; ASection : String; AIdent : String = '');
 begin
   Create(AName, AIniFile.ReadInteger(ASection, 'MaxConnections', 20), AIniFile.ReadString(ASection, 'DSN', ''),
       AIniFile.ReadString(ASection, 'ODBCDriver', ''), AIniFile.ReadString(ASection, 'Server', ''),
@@ -1005,10 +1005,10 @@ begin
       AIniFile.ReadString(ASection, 'Password', ''));
 end;
 
-constructor TFDBOdbcExpress.create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
+constructor TFDBOdbcExpress.Create(AName : String; AMaxConnCount: Integer; ADSN, ADriver, AServer, ADatabase, AUsername, APassword: String);
 begin
-  inherited create(Aname, AMaxConnCount);
-  FAttributes := TIdStringList.create;
+  inherited Create(Aname, AMaxConnCount);
+  FAttributes := TIdStringList.Create;
   FDsn := ADSN;
   FDriver := ADriver;
   FServer := AServer;
@@ -1040,30 +1040,30 @@ end;
 
 destructor TOdbcBoundBytes.Destroy;
 begin
-  FBytes.Free;
+  FBytes.free;
   inherited;
 end;
 
-function TOdbcBoundBytes.sizeInBytesV : cardinal;
+function TOdbcBoundBytes.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, FBytes.Size);
 end;
 
-function TOdbcBoundString.sizeInBytesV : cardinal;
+function TOdbcBoundString.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FString.length * sizeof(char)) + 12);
 end;
 
-function TOdbcBoundInt.sizeInBytesV : cardinal;
+function TOdbcBoundInt.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
-function TOdbcBoundInt64.sizeInBytesV : cardinal;
+function TOdbcBoundInt64.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, sizeof(FInt64));
 end;
 

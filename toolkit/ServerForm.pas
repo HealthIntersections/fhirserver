@@ -192,7 +192,7 @@ procedure TServerFrame.btnBulkDataClick(Sender: TObject);
 var
   form : TBulkDataDialog;
 begin
-  form := TBulkDataDialog.create(self.form);
+  form := TBulkDataDialog.Create(self.form);
   try
     form.server := client.link;
     form.settings := settings.link;
@@ -252,7 +252,7 @@ begin
     FCSTab := Tabs.Add(TTabItem);
     Tabs.ActiveTab := FCSTab;
     FCSTab.Text := 'Capability Statement for '+FClient.address;
-    FcsForm := TCapabilityStatementEditorFrame.create(tab);
+    FcsForm := TCapabilityStatementEditorFrame.Create(tab);
     FCSTab.TagObject := FCsForm;
     FCsForm.TagObject := FCSTab;
     FcsForm.Parent := FCSTab;
@@ -272,7 +272,7 @@ procedure TServerFrame.Button2Click(Sender: TObject);
 var
   form : TVitalSignsGeneratorForm;
 begin
-  form := TVitalSignsGeneratorForm.create(self);
+  form := TVitalSignsGeneratorForm.Create(self);
   try
     form.Client := FClient.Link;
     form.Settings := Settings.Link;
@@ -294,7 +294,7 @@ begin
     FPDTab := Tabs.Add(TTabItem);
     Tabs.ActiveTab := FPDTab;
     FPDTab.Text := 'Provider Directory on '+FClient.address;
-    FpdForm := TProviderDirectoryFrame.create(tab);
+    FpdForm := TProviderDirectoryFrame.Create(tab);
     FPDTab.TagObject := FPDForm;
     FPDForm.TagObject := FPDTab;
     FPDForm.Parent := FPDTab;
@@ -426,10 +426,10 @@ begin
     begin
       FConfMatches.Clear;
       gridConfMatches.RowCount := FConfMatches.Count;
-      FConfBundle.Free;
+      FConfBundle.free;
       FConfBundle := nil;
 
-      params := TStringList.create;
+      params := TStringList.Create;
       try
         params.AddPair('_type', 'CapabilityStatement,StructureDefinition,ImplementationGuide,SearchParameter,MessageDefinition,OperationDefinition,CompartmentDefinition,StructureMap,GraphDefinition,CodeSystem,ValueSet,ConceptMap,NamingSystem');
         params.AddPair('_summary', 'true');
@@ -468,7 +468,7 @@ begin
         lblOutcome.Text := 'Fetched '+inttostr(FConfMatches.Count)+' of '+FConfBundle.total+' resources in '+describePeriod(now - start);
         btnFetchMore.Visible := FConfBundle.Links['next'] <> '';
       finally
-        params.Free;
+        params.free;
       end;
     end);
 end;
@@ -489,7 +489,7 @@ begin
         0:
           begin
           url := FPatBundle.Links['next'];
-          FPatBundle.Free;
+          FPatBundle.free;
           FPatBundle := nil;
           start := now;
           FPatBundle := FClient.searchAgain(url);
@@ -507,7 +507,7 @@ begin
         1:
           begin
           url := FConfBundle.Links['next'];
-          FConfBundle.Free;
+          FConfBundle.free;
           FConfBundle := nil;
           start := now;
           FConfBundle := FClient.searchAgain(url);
@@ -536,7 +536,7 @@ begin
       be : TFhirBundleEntry;
       start : TDateTime;
     begin
-      pat := TFHIRPatient.create;
+      pat := TFHIRPatient.Create;
       try
         if edtPName.text <> '' then
           pat.nameList.add(TFhirHumanName.FromEdit(edtPName.text));
@@ -562,7 +562,7 @@ begin
             lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
             btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
         finally
-          params.Free;
+          params.free;
         end;
       finally
         pat.free;
@@ -582,10 +582,10 @@ begin
     begin
       FPatMatches.Clear;
       gridPMatches.RowCount := FConfMatches.Count;
-      FPatBundle.Free;
+      FPatBundle.free;
       FPatBundle := nil;
 
-      params := TStringList.create;
+      params := TStringList.Create;
       try
         params.AddPair('_summary', 'true');
         if edtPName.Text <> '' then
@@ -643,7 +643,7 @@ begin
         lblOutcome.Text := 'Fetched '+inttostr(FPatMatches.Count)+' of '+FPatBundle.total+' patients in '+describePeriod(now - start);
         btnFetchMore.Visible := FPatBundle.Links['next'] <> '';
       finally
-        params.Free;
+        params.free;
       end;
     end);
 end;
@@ -652,10 +652,10 @@ destructor TServerFrame.Destroy;
 begin
   FClient.free;
   FCapabilityStatement.free;
-  FConfBundle.Free;
-  FPatBundle.Free;
-  FConfMatches.Free;
-  FPatMatches.Free;
+  FConfBundle.free;
+  FPatBundle.free;
+  FConfMatches.free;
+  FPatMatches.free;
 
   inherited;
 end;
@@ -678,7 +678,7 @@ begin
     else
       OnOpenResource(self, client, client.format, res);
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -717,7 +717,7 @@ begin
   try
     openPatient(res as TFhirPatient)
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -774,8 +774,8 @@ begin
   btnFetchMore.Visible := false;
   btnMatch.enabled := FCapabilityStatement.supportsOperation('Patient', 'match');
   btnMatch.visible := btnMatch.enabled;
-  FConfMatches := TFslList<TFHIRResource>.create;
-  FPatMatches := TFslList<TFHIRPatient>.create;
+  FConfMatches := TFslList<TFHIRResource>.Create;
+  FPatMatches := TFslList<TFHIRPatient>.Create;
   cbxSearchTypeChange(nil);
   cbxPDobChange(nil);
   cbxPDeceasedChange(nil);
@@ -792,7 +792,7 @@ begin
   tab := Tabs.Add(TTabItem);
   Tabs.ActiveTab := tab;
   tab.Text := 'Patient '+pat.id+' on '+FClient.address;
-  frm := TPatientHomeFrame.create(tab);
+  frm := TPatientHomeFrame.Create(tab);
   tab.TagObject := frm;
   frm.TagObject := tab;
   frm.Parent := tab;

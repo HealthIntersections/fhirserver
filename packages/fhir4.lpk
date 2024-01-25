@@ -10,8 +10,13 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fhir4"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\fhir4\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>
@@ -59,10 +64,6 @@
         <UnitName Value="fhir4_indexinfo"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fhir4\fhir4_javascript.pas"/>
-        <UnitName Value="fhir4_javascript"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fhir4\fhir4_json.pas"/>
         <UnitName Value="fhir4_json"/>
       </Item>
@@ -92,7 +93,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\fhir4\fhir4_parserbase.pas"/>
-        <UnitName Value="fhir4_parserBase"/>
+        <UnitName Value="fhir4_parserbase"/>
       </Item>
       <Item>
         <Filename Value="..\library\fhir4\fhir4_patch.pas"/>
@@ -165,6 +166,10 @@
       <Item>
         <Filename Value="..\library\fhir4\fhir4_questionnaire.pas"/>
         <UnitName Value="fhir4_questionnaire"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir4\fhir4_ips.pas"/>
+        <UnitName Value="fhir4_ips"/>
       </Item>
     </Files>
     <RequiredPkgs>

@@ -99,7 +99,7 @@ end;
 
 { TFHIRSecurityRights }
 
-constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContextWithFactory; user: TSCIMUser; secure : boolean);
+constructor TFHIRSecurityRights.Create(worker : TFHIRWorkerContextWithFactory; user: TSCIMUser; secure : boolean);
 var
   list : TStringList;
   i : integer;
@@ -117,38 +117,38 @@ begin
         list.add(user.entitlement[i]);
     processScopes(list, nil, secure);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
-constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContextWithFactory; base: TSCIMUser; choice: String; secure : boolean);
+constructor TFHIRSecurityRights.Create(worker : TFHIRWorkerContextWithFactory; base: TSCIMUser; choice: String; secure : boolean);
 var
   user : TFHIRSecurityRights;
   list : TStringList;
 begin
   inherited Create;
   init(worker);
-  user := TFHIRSecurityRights.create(FWorker.link, base, secure);
+  user := TFHIRSecurityRights.Create(FWorker.link, base, secure);
   try
     list := TStringList.Create;
     try
       list.CommaText := choice.Replace(' ', ',');
       processScopes(list, user, false);
     finally
-      list.Free;
+      list.free;
     end;
   finally
     user.free;
   end;
 end;
 
-constructor TFHIRSecurityRights.create(worker : TFHIRWorkerContextWithFactory; base: TSCIMUser; choice: TStringList; secure : boolean);
+constructor TFHIRSecurityRights.Create(worker : TFHIRWorkerContextWithFactory; base: TSCIMUser; choice: TStringList; secure : boolean);
 var
   user : TFHIRSecurityRights;
 begin
   inherited Create;
   init(worker);
-  user := TFHIRSecurityRights.create(FWorker.link, base, secure);
+  user := TFHIRSecurityRights.Create(FWorker.link, base, secure);
   try
     processScopes(choice, user, false);
   finally
@@ -156,11 +156,11 @@ begin
   end;
 end;
 
-destructor TFHIRSecurityRights.destroy;
+destructor TFHIRSecurityRights.Destroy;
 begin
-  FReadAllowed.Free;
-  FWriteAllowed.Free;
-  Fworker.Free;
+  FReadAllowed.free;
+  FWriteAllowed.free;
+  Fworker.free;
   inherited;
 end;
 
@@ -170,8 +170,8 @@ begin
   id := gid;
   FWorker := worker;
 
-  FReadAllowed := TFslStringSet.create;
-  FWriteAllowed := TFslStringSet.create;
+  FReadAllowed := TFslStringSet.Create;
+  FWriteAllowed := TFslStringSet.Create;
 end;
 
 function TFHIRSecurityRights.isNonSecure(name: String): boolean;
@@ -193,7 +193,7 @@ begin
     list.CommaText := allScopes.Replace(' ', ',');
     processScopes(list, nil, true);
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -204,7 +204,7 @@ end;
 
 class function TFHIRSecurityRights.allScopesAsUris: TStringList;
 begin
-  result := TStringList.create;
+  result := TStringList.Create;
   result.add(SCIM_SMART_PREFIX+'openid');
   result.add(SCIM_SMART_PREFIX+'profile');
   result.add(SCIM_SMART_PREFIX+'user/*.*');
@@ -213,7 +213,7 @@ end;
 function TFHIRSecurityRights.canRead(resourceName : String): boolean;
 begin
   if (self = nil) or (FReadAllowed = nil) then
-    raise EFHIRException.create('Error Message');
+    raise EFHIRException.Create('Error Message');
   result := FReadAllowed.contains(resourceName);
 end;
 

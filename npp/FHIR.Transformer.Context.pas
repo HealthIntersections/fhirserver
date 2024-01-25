@@ -80,18 +80,18 @@ end;
 constructor TFHIRTransformerContext.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.create('Value Sets');
-  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.create('Code Systems');
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('Questionnaires');
-  FConceptMaps := TFslMap<fhir4_resources.TFHIRConceptMap>.create('Concept Maps');
+  FValueSets := TFslMap<fhir4_resources.TFHIRValueSet>.Create('Value Sets');
+  FCodeSystems := TFslMap<fhir4_resources.TFHIRCodeSystem>.Create('Code Systems');
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('Questionnaires');
+  FConceptMaps := TFslMap<fhir4_resources.TFHIRConceptMap>.Create('Concept Maps');
 end;
 
 destructor TFHIRTransformerContext.Destroy;
 begin
-  FValueSets.Free;
-  FCodeSystems.Free;
-  FQuestionnaires.Free;
-  FConceptMaps.Free;
+  FValueSets.free;
+  FCodeSystems.free;
+  FQuestionnaires.free;
+  FConceptMaps.free;
   inherited;
 end;
 
@@ -122,7 +122,7 @@ function TFHIRTransformerContext.validateCode(system, version, code: String; vs:
 //  p : TFHIRParametersW;
 //  vsw : TFHIRValueSetW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    c := factory.wrapCoding(factory.makeByName('Coding'));
@@ -144,10 +144,10 @@ begin
 //          result.free;
 //        end;
 //      finally
-//        p.Free;
+//        p.free;
 //      end;
 //    finally
-//      c.Free;
+//      c.free;
 //    end;
 //  finally
 //    vsw.free;
@@ -172,7 +172,7 @@ function TFHIRTransformerContext.getQuestionnaire(url: string): TFhirQuestionnai
 //var
 //  q : TFhirQuestionnaire;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  result := nil;
 //  if url.StartsWith('Questionnaire/') then
 //    url := url.Substring(14);
@@ -197,7 +197,7 @@ function TFHIRTransformerContext.expand(vs : TFhirValueSet; options : TExpansion
 //  vsw, res : TFHIRValueSetW;
 //  limit : integer;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    limit := 0;
@@ -207,16 +207,16 @@ begin
 //    try
 //      result := res.Resource as TFhirValueSet;
 //    finally
-//      res.Free;
+//      res.free;
 //    end;
 //  finally
-//    vsw.Free;
+//    vsw.free;
 //  end;
 end;
 
 function TFHIRTransformerContext.supportsSystem(system, version : string) : boolean;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  result := FTerminologyServer.supportsSystem(system, version);
 end;
 
@@ -224,12 +224,12 @@ function TFHIRTransformerContext.validateCode(system, version, code, display : S
 //var
 //  op : TFHIROperationOutcomeW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
 //  try
 //    result := TValidationResult.Create;
 //    try
-//      if FTerminologyServer.checkCode(op, THTTPLanguages.create('en'), '', code, system, version, display) then
+//      if FTerminologyServer.checkCode(op, nil, '', code, system, version, display) then
 //        result.Severity := isNull
 //      else if op.issueCount = 1 then
 //      begin
@@ -243,10 +243,10 @@ begin
 //      end;
 //      result.Link;
 //    finally
-//      result.Free;
+//      result.free;
 //    end;
 //  finally
-//    op.Free;
+//    op.free;
 //  end;
 end;
 
@@ -257,7 +257,7 @@ function TFHIRTransformerContext.validateCode(code: TFHIRCoding; vs: TFhirValueS
 //  vsw : TFHIRValueSetW;
 //  c : TFhirCodingW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    result := TValidationResult.Create;
@@ -272,17 +272,17 @@ begin
 //          else
 //            result.Severity := isError;
 //        finally
-//          p.Free;
+//          p.free;
 //        end;
 //      finally
-//        c.Free;
+//        c.free;
 //      end;
 //      result.Link;
 //    finally
-//      result.Free;
+//      result.free;
 //    end;
 //  finally
-//    vsw.Free;
+//    vsw.free;
 //  end;
 end;
 
@@ -293,7 +293,7 @@ function TFHIRTransformerContext.validateCode(code: TFHIRCodeableConcept; vs: TF
 //  vsw : TFHIRValueSetW;
 //  c : TFhirCodeableConceptW;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 //  vsw := factory.wrapValueSet(vs.Link);
 //  try
 //    result := TValidationResult.Create;
@@ -308,17 +308,17 @@ begin
 //          else
 //            result.Severity := isError;
 //        finally
-//          p.Free;
+//          p.free;
 //        end;
 //      finally
-//        c.Free;
+//        c.free;
 //      end;
 //      result.Link;
 //    finally
-//      result.Free;
+//      result.free;
 //    end;
 //  finally
-//    vsw.Free;
+//    vsw.free;
 //  end;
 end;
 

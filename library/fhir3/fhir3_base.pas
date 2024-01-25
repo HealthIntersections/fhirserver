@@ -34,7 +34,7 @@ unit fhir3_base;
 interface
 
 uses
-  fsl_base,
+  fsl_base, fsl_http,
   fhir_objects;
 
 type
@@ -45,6 +45,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
 
   TFHIRObjectX = TFHIRObject3;
@@ -56,6 +57,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
 
   TFHIRResourceX = TFHIRResource3;
@@ -65,7 +67,7 @@ type
   private
     FProperties : TFslMap<TFHIRSelectionList>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -85,10 +87,22 @@ type
 implementation
 
 uses
-  fhir3_types;
+  fhir3_types, fhir3_json;
 
 
 { TFHIRObject3 }
+
+function TFHIRObject3.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
+  try
+    result := j.Compose(fhirType, self);
+  finally
+    j.free;
+  end;
+end;
 
 function TFHIRObject3.GetFhirObjectVersion: TFHIRVersion;
 begin
@@ -116,6 +130,18 @@ begin
 end;
 
 { TFHIRResource3 }
+
+function TFHIRResource3.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
+  try
+    result := j.Compose(self);
+  finally
+    j.free;
+  end;
+end;
 
 function TFHIRResource3.GetFhirObjectVersion: TFHIRVersion;
 begin
@@ -147,7 +173,7 @@ end;
 constructor TFHIRTuple3.Create;
 begin
   inherited;
-  FProperties := TFslMap<TFHIRSelectionList>.create('tuple');
+  FProperties := TFslMap<TFHIRSelectionList>.Create('tuple');
 end;
 
 destructor TFHIRTuple3.Destroy;
@@ -202,10 +228,10 @@ begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
-function TFHIRTuple3.sizeInBytesV : cardinal;
+function TFHIRTuple3.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProperties.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 end.

@@ -1,7 +1,7 @@
 Unit fui_vclx_forms;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -1105,7 +1105,7 @@ Begin
   If Assigned(FBalloon) Then
     FBalloon.Hide;
 
-  FBalloon.Free;
+  FBalloon.free;
   FBalloon := Nil;
 End;
 

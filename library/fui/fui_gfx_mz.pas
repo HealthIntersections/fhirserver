@@ -1,6 +1,6 @@
 Unit fui_gfx_mz;
 
-// Original copyright of the creators:
+// Original copyright (c) of the creators:
 //
 // zlib.H -- interface of the 'zlib' general purpose compression library version 1.1.0, Feb 24th, 1998
 //

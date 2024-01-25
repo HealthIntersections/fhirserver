@@ -210,7 +210,7 @@ Type
       slicer : TFHIRElementDefinition; unsupportedSlicing : boolean; problematicPaths : TStringList; sliceOffset, i : integer; ed : TFHIRElementDefinition;
       childUnsupportedSlicing : boolean; ei : TElementInfo) : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function getContext() : TFHIRWorkerContext; virtual;
     Property Context : TFHIRWorkerContext read GetContext;
@@ -303,7 +303,7 @@ var
 begin
   repeat
     processedResource := false;
-    keys := TFslList<TFHIRObject>.create();
+    keys := TFslList<TFHIRObject>.Create();
     try
 //      keys.addAll(resourceProfilesMap.keySet());
       for resource in keys do
@@ -417,13 +417,13 @@ begin
       else
         exit(rule(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, s = nil, s.Message));
     finally
-      s.Free;
+      s.free;
     end;
     exit(true);
   end
   else if (system.startsWith('http://hl7.org/fhir')) then
   begin
-    if (StringArrayExistsSensitive(['http://hl7.org/fhir/sid/icd-10', 'http://hl7.org/fhir/sid/cvx', 'http://hl7.org/fhir/sid/icd-10-cm', 'http://hl7.org/fhir/sid/icd-9', 'http://hl7.org/fhir/sid/ndc', 'http://hl7.org/fhir/sid/srt'], system)) then
+    if (StringArrayExistsSensitive([URI_ICD10, URI_CVX, 'http://hl7.org/fhir/sid/icd-10-cm', URI_ICD9, URI_NDC, 'http://hl7.org/fhir/sid/srt'], system)) then
       exit(true)
     else
     begin
@@ -437,7 +437,7 @@ begin
       exit(false);
     end
   end
-  else if (startsWithButIsNot(system, ['http://snomed.info/sct', 'http://loinc.org', 'http://unitsofmeasure.org', 'http://www.nlm.nih.gov/research/umls/rxnorm'])) then
+  else if (startsWithButIsNot(system, [URI_SNOMED, URI_LOINC, URI_UCUM, URI_RXNORM])) then
   begin
     rule(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'Invalid System URI: ' + system);
     exit(false);
@@ -494,7 +494,7 @@ begin
     c.display := item.getNamedChildValue('display');
     result := c.Link;
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -516,8 +516,8 @@ begin
     cc.text := element.getNamedChildValue('text');
     result := cc.Link;
   finally
-    cc.Free;
-    list.Free;
+    cc.free;
+    list.free;
   end;
 End;
 
@@ -593,7 +593,7 @@ begin
                       hint(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'Could not confirm that the codes provided are in the value set ' + describeReference(binding.valueSet) + ' and a code is recommended to come from this value set');
                   end;
                 finally
-                  vr.Free;
+                  vr.free;
                 end;
               end;
               // to validate, we'll validate that the codes actually exist
@@ -610,7 +610,7 @@ begin
                           if (not vr.isOk()) then
                             warning(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'Code "'+nextCode+'" is not a valid code in code system "'+nextSystem+'"');
                         finally
-                          vr.Free;
+                          vr.free;
                         end;
                       end;
                   end;
@@ -649,7 +649,7 @@ begin
         rule(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'None of the codes provided are in the maximum value set ' + describeReference(maxVSUrl) + ' (' + valueset.url + ', and a code from this value set is required) (codes := ' + ccSummary(cc) + ')');
       end;
     finally
-      vr.Free;
+      vr.free;
     end;
   except
     on e : Exception do
@@ -675,7 +675,7 @@ begin
         rule(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'The code provided is not in the maximum value set ' + describeReference(maxVSUrl) + ' (' + valueset.url + ', and a code from this value set is required) (code := ' + c.system + '#' + c.code + ')');
       end;
     finally
-      vr.Free;
+      vr.free;
     end;
   except
     on e : exception do
@@ -696,7 +696,7 @@ begin
     end;
     exit(b.toString().Substring(1));
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -760,7 +760,7 @@ begin
                        hint(errors, itCODEINVALID, element.LocationStart.line, element.LocationStart.col, path, false, 'Could not confirm that the codes provided are in the value set ' + describeReference(binding.valueSet) + ' (' + valueset.url + ', and a code is recommended to come from this value set)')
                    end;
                  finally
-                   vr.Free;
+                   vr.free;
                  end;
               except
                 on e : Exception do
@@ -789,7 +789,7 @@ begin
     try
       result := vs <> nil;
     finally
-      vs.Free;
+      vs.free;
     end;
   except
     result := false;
@@ -833,7 +833,7 @@ begin
         end;
       end;
     finally
-      profiles.Free;
+      profiles.free;
     end;
   end;
 end;
@@ -865,7 +865,7 @@ begin
       else
          rule(errors, itSTRUCTURE, element.LocationStart.line, element.LocationStart.col, path + '[url = ''' + url + ''']', not ex.snapshot.elementList[0].isModifier, 'Extension modifier mismatch: the extension element is not labelled as a modifier, but the underlying extension is');
   finally
-    ex.Free;
+    ex.free;
   end;
 
   checkExtensionContext(errors, element, ex, stack, ex.url);
@@ -927,7 +927,7 @@ begin
         result.add(tr.code);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1023,7 +1023,7 @@ begin
           end;
       end;
     finally
-      extensions.Free;
+      extensions.free;
     end;
   end;
 end;
@@ -1334,7 +1334,7 @@ begin
           end;
         end;
       finally
-        vr.Free;
+        vr.free;
       end;
     end
   end
@@ -1376,7 +1376,7 @@ begin
     c.value := item.getNamedChildValue('value');
     result := c.Link;
   finally
-    c.Free;
+    c.free;
   end;
 
 end;
@@ -1393,7 +1393,7 @@ begin
     c.type_ := item.getNamedChildValue('type');
     result := c.Link;
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -1449,7 +1449,7 @@ begin
       if (we = nil) then
       begin
         if (fetcher = nil) and (refType <> 'contained') then
-          raise EFHIRException.create('Resource resolution services not provided')
+          raise EFHIRException.Create('Resource resolution services not provided')
         else
         begin
           we := fetcher.fetch(nil {hostContext.appContext}, ref);
@@ -1639,7 +1639,7 @@ begin
       for i := 0 to events.count - 1 do
         checkFixedValue(errors, path + '.event', events[i], fixed.eventList[i], 'event', focus);
   finally
-    events.Free;
+    events.free;
   end;
 end;
 
@@ -1691,7 +1691,7 @@ begin
       b.append(','+t.code);
     exit(b.toString().Substring(1));
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1716,7 +1716,7 @@ begin
     else
       exit(p.type_);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1766,7 +1766,7 @@ begin
     end;
     exit(nil);
   finally
-    contained.Free;
+    contained.free;
   end;
 end;
 
@@ -1943,29 +1943,29 @@ begin
     begin
       url :=  focus.getChildValue('reference');
       if (url = '') then
-        raise EFHIRException.create('No reference resolving discriminator ' + discriminator + ' from ' + element.prop.name);
+        raise EFHIRException.Create('No reference resolving discriminator ' + discriminator + ' from ' + element.prop.name);
 
       target :=  resolve(appContext, url, stack, errors, p);
       if (target = nil) then
-        raise EFHIRException.create('Unable to find resource ' + url + ' at ' + d + ' resolving discriminator ' + discriminator + ' from ' + element.prop.Name);
+        raise EFHIRException.Create('Unable to find resource ' + url + ' at ' + d + ' resolving discriminator ' + discriminator + ' from ' + element.prop.Name);
       focus := target;
     end
     else if (d = 'value') and focus.isPrimitive() then
       exit(focus)
     else
     begin
-      children := TFHIRSelectionList.create;
+      children := TFHIRSelectionList.Create;
       try
         focus.GetChildrenByName(d, children);
         if (children.Empty) then
-          raise EFHIRException.create('Unable to find ' + d + ' resolving discriminator ' + discriminator + ' from ' + element.Prop.Name);
+          raise EFHIRException.Create('Unable to find ' + d + ' resolving discriminator ' + discriminator + ' from ' + element.Prop.Name);
         if (children.count > 1) then
-          raise EFHIRException.create('Found ' + Integer.toString(children.count) + ' items for ' + d + ' resolving discriminator ' + discriminator + ' from ' + element.Prop.Name);
+          raise EFHIRException.Create('Found ' + Integer.toString(children.count) + ' items for ' + d + ' resolving discriminator ' + discriminator + ' from ' + element.Prop.Name);
 
         focus := children[0].value.Link as TFHIRMMElement;
         p := p + '.' + d;
       finally
-        children.Free;
+        children.free;
       end;
     end;
   end;
@@ -1998,7 +1998,7 @@ function TInstanceValidator.hint(errors: TFslList<TFhirValidationMessage>;
   invalid: TFhirIssueType; line, col: integer; literalPath: String;
   test: boolean; message: String): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 end;
 
 function TInstanceValidator.isAbsolute(uri : String) : boolean;
@@ -2036,18 +2036,18 @@ begin
   result := (length(parts) > 2) and (parts[length(parts) - 1] = 'outcome') and pathEntryHasName(parts[length(parts) - 2], 'response');
 end;
 
-function TInstanceValidator.sizeInBytesV : cardinal;
+function TInstanceValidator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, extensionDomains.sizeInBytes);
-  inc(result, bpWarnings.sizeInBytes);
-  inc(result, txTime.sizeInBytes);
-  inc(result,  sdTime.sizeInBytes);
-  inc(result,  fpeTime.sizeInBytes);
-  inc(result,  overall.sizeInBytes);
-  inc(result,  loadTime.sizeInBytes);
-  inc(result, fetcher.sizeInBytes);
-  inc(result, fpe.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, extensionDomains.sizeInBytes(magic));
+  inc(result, bpWarnings.sizeInBytes(magic));
+  inc(result, txTime.sizeInBytes(magic));
+  inc(result,  sdTime.sizeInBytes(magic));
+  inc(result,  fpeTime.sizeInBytes(magic));
+  inc(result,  overall.sizeInBytes(magic));
+  inc(result,  loadTime.sizeInBytes(magic));
+  inc(result, fetcher.sizeInBytes(magic));
+  inc(result, fpe.sizeInBytes(magic));
 end;
 
 class function TInstanceValidator.pathEntryHasName(thePathEntry : String; theName : String) : boolean;
@@ -2068,7 +2068,7 @@ begin
   try
     result := (sd <> nil) and (sd.kind = StructureDefinitionKindPrimitiveType);
   finally
-    sd.Free;
+    sd.free;
   end;
 end;
 
@@ -2164,7 +2164,7 @@ function TInstanceValidator.matchSlice(hostContext: TFhirValidatorHostContext;
   i: integer; ed: TFHIRElementDefinition; childUnsupportedSlicing: boolean;
   ei: TElementInfo): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 
 end;
 
@@ -2237,7 +2237,7 @@ begin
       b.append(ref);
       exit(b.toString());
     finally
-      b.Free;
+      b.free;
     end;
   end
   else
@@ -2363,7 +2363,7 @@ function TInstanceValidator.rule(errors: TFslList<TFhirValidationMessage>;
   invalid: TFhirIssueType; line, col: integer; literalPath: String;
   test: boolean; message: String): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 end;
 
 function TInstanceValidator.sliceMatches(hostContext : TFhirValidatorHostContext; element : TFhirMMElement; path : String; slicer : TFhirElementDefinition; ed : TFhirElementDefinition; profile : TFhirStructureDefinition; errors : TFslList<TFhirValidationMessage>; stack : TNodeStack) : boolean;
@@ -2409,7 +2409,7 @@ begin
           type_ := criteriaElement.type_List[0].code;
         end;
         if (type_ = '') then
-          raise EDefinitionException.create('Discriminator (' + discriminator + ') is based on type_, but slice ' + ed.id + ' does not declare a type_');
+          raise EDefinitionException.Create('Discriminator (' + discriminator + ') is based on type_, but slice ' + ed.id + ' does not declare a type_');
         if (discriminator.isEmpty()) then
           expression.append(' and this is ' + type_)
         else
@@ -2418,17 +2418,17 @@ begin
       else if (s.type_ = DiscriminatorTypePROFILE) then
       begin
         if (criteriaElement.type_List.count = 0) then
-          raise EDefinitionException.create('Profile based discriminators nust have a type_ (' + criteriaElement.id + ')');
+          raise EDefinitionException.Create('Profile based discriminators nust have a type_ (' + criteriaElement.id + ')');
         if (criteriaElement.type_List.count <> 1) then
-          raise EDefinitionException.create('Profile based discriminators nust have only one type_ (' + criteriaElement.id + ')');
+          raise EDefinitionException.Create('Profile based discriminators nust have only one type_ (' + criteriaElement.id + ')');
         if discriminator.endsWith('.resolve()') or (discriminator= 'resolve()') then
           list := criteriaElement.type_List[0].targetProfileList
         else
           list := criteriaElement.type_List[0].profileList;
         if (list.count = 0) then
-          raise EDefinitionException.create('Profile based discriminators nust have a type_ with a profile (' + criteriaElement.id + ')');
+          raise EDefinitionException.Create('Profile based discriminators nust have a type_ with a profile (' + criteriaElement.id + ')');
         if (list.count > 1) then
-         raise EDefinitionException.create('Profile based discriminators nust have a type_ with only one profile (' + criteriaElement.id + ')');
+         raise EDefinitionException.Create('Profile based discriminators nust have a type_ with only one profile (' + criteriaElement.id + ')');
         expression.append(' and ' + discriminator + '.conformsTo(''' + list[0].value + ''')');
       end
       else if (s.type_ = DiscriminatorTypeEXISTS) then
@@ -2438,7 +2438,7 @@ begin
         else if (criteriaElement.maxElement <> nil) and (criteriaElement.max = '0') then
           expression.append(' and (' + discriminator + '.exists().not())')
         else
-          raise EDefinitionException.create('Discriminator (' + discriminator + ') is based on element existence, but slice ' + ed.id + ' neither sets min>:=1 or max:=0');
+          raise EDefinitionException.Create('Discriminator (' + discriminator + ') is based on element existence, but slice ' + ed.id + ' neither sets min> := 1 or max := 0');
       end
       else if (criteriaElement.fixed <> nil) then
         buildFixedExpression(ed, expression, discriminator, criteriaElement)
@@ -2448,13 +2448,13 @@ begin
          (criteriaElement.binding.strength = BindingStrengthREQUIRED) and (criteriaElement.binding.valueSet <> '') then
         expression.append(' and (' + discriminator + ' memberOf ''' + criteriaElement.binding.valueSet + ''')')
       else
-        raise EDefinitionException.create('Could not match discriminator (' + discriminator + ') for slice ' + ed.id + ' in profile ' + profile.url + ' - does not have fixed value, binding or existence assertions');
+        raise EDefinitionException.Create('Could not match discriminator (' + discriminator + ') for slice ' + ed.id + ' in profile ' + profile.url + ' - does not have fixed value, binding or existence assertions');
     end;
     try
       n := fpe.parse(expression.toString());
     except
        on e : Exception do
-        raise EFHIRException.create('Problem processing expression ' + expression.ToString + ' in profile ' + profile.url + ' path ' + path + ': ' + e.Message);
+        raise EFHIRException.Create('Problem processing expression ' + expression.ToString + ' in profile ' + profile.url + ' path ' + path + ': ' + e.Message);
     end;
     fpeTime := fpeTime + (getTickCount - t);
     ed.Tag := n;
@@ -2475,7 +2475,7 @@ begin
     msg := fpe.UseLog;
   except
     on ex : Exception do
-      raise EFHIRException.create('Problem evaluating slicing expression for element in profile ' + profile.Url + ' path "' + path + ' (fhirPath = '+expression.toString+'): ' + ex.Message);
+      raise EFHIRException.Create('Problem evaluating slicing expression for element in profile ' + profile.Url + ' path "' + path + ' (fhirPath = '+expression.toString+'): ' + ex.Message);
   end;
   result := ok;
 end;
@@ -2492,7 +2492,7 @@ begin
     buildCodeableConceptExpression(ed, expression, discriminator, cc);
   end
   else
-    raise EDefinitionException.create('Unsupported fixed pattern type_ for discriminator(' + discriminator + ') for slice ' + ed.id + ': ' + pattern.fhirType);
+    raise EDefinitionException.Create('Unsupported fixed pattern type_ for discriminator(' + discriminator + ') for slice ' + ed.id + ': ' + pattern.fhirType);
 end;
 
 procedure TInstanceValidator.buildCodeableConceptExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; cc : TFhirCodeableConcept);
@@ -2501,14 +2501,14 @@ var
   first : boolean;
 begin
   if (cc.text <> '') then
-    raise EDefinitionException.create('Unsupported CodeableConcept pattern - using text - for discriminator(' + discriminator + ') for slice ' + ed.id);
+    raise EDefinitionException.Create('Unsupported CodeableConcept pattern - using text - for discriminator(' + discriminator + ') for slice ' + ed.id);
 
   if (not cc.hasCoding()) or (cc.CodingList.count > 1) then
-    raise EDefinitionException.create('Unsupported CodeableConcept pattern - must be just one coding - for discriminator(' + discriminator + ') for slice ' + ed.id);
+    raise EDefinitionException.Create('Unsupported CodeableConcept pattern - must be just one coding - for discriminator(' + discriminator + ') for slice ' + ed.id);
 
   c := cc.codingList[0];
   if (c.hasExtensions) or (cc.hasExtensions) then
-    raise EDefinitionException.create('Unsupported CodeableConcept pattern - extensions are not allowed - for discriminator(' + discriminator + ') for slice ' + ed.id);
+    raise EDefinitionException.Create('Unsupported CodeableConcept pattern - extensions are not allowed - for discriminator(' + discriminator + ') for slice ' + ed.id);
 
   expression.append(' and ' + discriminator + '.coding.where(');
   first := true;
@@ -2562,7 +2562,7 @@ begin
     else if (fixed is TFHIRBoolean) then
       expression.append(fixed.primitiveValue)
     else
-      raise EDefinitionException.create('Unsupported fixed value type_ for discriminator(' + discriminator + ') for slice ' + ed.id + ': ' + fixed.fhirType);
+      raise EDefinitionException.Create('Unsupported fixed value type_ for discriminator(' + discriminator + ') for slice ' + ed.id + ': ' + fixed.fhirType);
     expression.append(')');
   end;
 end;
@@ -2831,7 +2831,7 @@ begin
 //                 rule(errors, itNOTFOUND, item.LocationStart.line, item.LocationStart.col, stack.getLiteralPath(), index > -1, 'LinkId \''' + linkId + '\' not found in questionnaire');
 //
 //else
-//               rule(errors, itSTRUCTURE, item.LocationStart.line, item.LocationStart.col, stack.getLiteralPath(), index >:= lastIndex, 'Structural Error: items are out of order');
+//               rule(errors, itSTRUCTURE, item.LocationStart.line, item.LocationStart.col, stack.getLiteralPath(), index > := lastIndex, 'Structural Error: items are out of order');
 //              lastIndex := index;
 //              mapItem :=  map.get(linkId);
 //              if (mapItem = nil) then
@@ -3603,11 +3603,11 @@ begin
 
       dt :=  self.context.fetchStructureDefinition('http://hl7.org/fhir/StructureDefinition/' + actualType);
       if (dt = nil) then
-       raise EDefinitionException.create('Unable to resolve actual type_ ' + actualType);
+       raise EDefinitionException.Create('Unable to resolve actual type_ ' + actualType);
       try
         childDefinitions := self.Context.getChildMap(dt, dt.snapshot.elementList[0]);
       finally
-        dt.Free;
+        dt.free;
       end;
     end;
 
@@ -3618,9 +3618,9 @@ begin
       iter := TFhirChildIterator.Create(stack.getLiteralPath, element);
       try
         while (iter.next()) do
-          children.add(TElementInfo.create(iter.name, iter.element, iter.path, iter.count));
+          children.add(TElementInfo.Create(iter.name, iter.element, iter.path, iter.count));
       finally
-        iter.Free;
+        iter.free;
       end;
 
       // 2. assign children to a definition
@@ -3648,7 +3648,7 @@ begin
             errorContext := 'profile ' + profile.url;
             if (not resource.getChildValue('id').isEmpty()) then
               errorContext := errorContext +'; instance ' + resource.getChildValue('id');
-            raise EDefinitionException.create('Slice encountered midway through path on ' + slicer.path + '; ' + errorContext);
+            raise EDefinitionException.Create('Slice encountered midway through path on ' + slicer.path + '; ' + errorContext);
           end;
           slicer := ed;
           process := false;
@@ -3741,12 +3741,12 @@ begin
                  rule(errors, itSTRUCTURE, element.LocationStart.line, element.LocationStart.col, stack.getLiteralPath(), count <= ed.maxInt, location + ': max allowed := ' + ed.max + ', but found ' + Integer.toString(count));
             end;
           finally
-            slices.Free;
+            slices.free;
           end;
         end;
       end;
     finally
-      problematicPaths.Free;
+      problematicPaths.free;
     end;
 
     // 5. inspect each child for validity
@@ -3904,7 +3904,7 @@ begin
                   // end;
                   rule(errors, itSTRUCTURE, ei.LocationStart.line, ei.LocationStart.col, ei.path, p <> nil, 'Unknown type_ ' + type_);
                 finally
-                  p.Free;
+                  p.free;
                 end;
               end
             end
@@ -3920,7 +3920,7 @@ begin
               try
                 rule(errors, itSTRUCTURE, ei.LocationStart.line, ei.LocationStart.col, ei.path, p <> nil, 'Unknown profile ' + profiles[0]);
               finally
-                p.Free;
+                p.free;
               end;
             end
             else
@@ -3974,8 +3974,8 @@ begin
                     errors.addAll(messages);
                 end;
               finally
-                goodProfiles.Free;
-                badProfiles.Free;
+                goodProfiles.free;
+                badProfiles.free;
               end;
             end;
 
@@ -3992,7 +3992,7 @@ begin
               end;
             end;
           finally
-            localStack.Free;
+            localStack.free;
           end;
         end;
       finally
@@ -4000,7 +4000,7 @@ begin
       end;
     end;
   finally
-    childDefinitions.Free;
+    childDefinitions.free;
   end;
 end;
 
@@ -4164,7 +4164,7 @@ begin
     begin
       p := context.fetchStructureDefinition(profile);
       if (p = nil) then
-        raise EDefinitionException.create('StructureDefinition ''' + profile + ''' not found');
+        raise EDefinitionException.Create('StructureDefinition ''' + profile + ''' not found');
       profiles.definitions.add(p);
     end;
   end;
@@ -4182,7 +4182,7 @@ begin
       exit(nil);
     result := list[0].getNamedChild('resource');
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -4205,11 +4205,11 @@ begin
         validateSections(errors, entries, section, localStack, fullUrl, id);
         inc(i);
       finally
-        localStack.Free;
+        localStack.free;
       end;
     end;
   finally
-    sections.Free;
+    sections.free;
   end;
 end;
 
@@ -4228,16 +4228,16 @@ begin
     end;
   end
   else if (criteria.binding <> nil) and (criteria.binding.strength = BindingStrengthREQUIRED) and (criteria.binding.valueSet <> '') then
-    raise EFHIRException.create('Unable to resolve slice matching - slice matching by value set not done')
+    raise EFHIRException.Create('Unable to resolve slice matching - slice matching by value set not done')
   else
-    raise EFHIRException.create('Unable to resolve slice matching - no fixed value or required value set');
+    raise EFHIRException.Create('Unable to resolve slice matching - no fixed value or required value set');
 end;
 
 function TInstanceValidator.warning(errors: TFslList<TFhirValidationMessage>;
   invalid: TFhirIssueType; line, col: integer; literalPath: String;
   test: boolean; message: String): boolean;
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 end;
 
 function TInstanceValidator.yearIsValid(v : String) : boolean;
@@ -4423,7 +4423,7 @@ begin
     n := fpe.parse(inv.expression);
   except
     on e : exception do
-      raise EDefinitionException.create('Problem processing expression ' + inv.expression + ' in profile ' + profile.url + ' path ' + path + ': ' + e.Message);
+      raise EDefinitionException.Create('Problem processing expression ' + inv.expression + ' in profile ' + profile.url + ' path ' + path + ': ' + e.Message);
   end;
   fpeTime := fpeTime + (getTickCount - t);
   inv.Tag := n;
@@ -4592,7 +4592,7 @@ end;
 
 constructor TFhirChildIterator.Create(path: String; element: TFHIRMMElement);
 begin
-  inherited create;
+  inherited Create;
 end;
 
 function TFhirChildIterator.getCount: integer;
@@ -4625,7 +4625,7 @@ procedure TInstanceValidator.checkMaxValueSet(
   element: TFhirMMElement; profile: TFhirStructureDefinition; maxVSUrl,
   c: String);
 begin
-   raise Exception.Create('Error Message');
+   raise EFslException.Create('Error Message');
 
 end;
 

@@ -1,7 +1,7 @@
 unit fsl_http;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -34,8 +34,9 @@ interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
+  {$IFDEF FPC}LazUTF8, {$ENDIF}
   Classes, Generics.Collections, Generics.Defaults,
-  fsl_base, fsl_utilities;
+  fsl_base, fsl_utilities, fsl_lang;
 
 const
   HTTPUtilAnonymousItemName = 'ANONYMOUS';
@@ -56,7 +57,7 @@ type
     FSource: String;
     function getItemCount: Integer;
     function VarName(index: Integer): String;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -74,6 +75,7 @@ type
     function Link : THTTPParameters; overload;
 
     function has(const n: String): Boolean;
+    function values(const n: String): TArray<String>;
 
     property Count : Integer read getItemCount;
     property Value[Name: String]: String Read GetVar; default;
@@ -92,7 +94,7 @@ type
     procedure SetMain(const Value: String);
     procedure SetSub(const Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -114,25 +116,66 @@ type
   end;
 
 
-  THTTPLanguages = record
+  { THTTPLanguageEntry }
+
+  THTTPLanguageEntry = class (TFslObject)
   private
-    FSource: String;
-    FCodes : TArray<String>;
+    FAuto: boolean;
+    FIetf: TIETFLang;
+    FIndex : integer;
+    FLang : String;
+    FValue : double;
+    procedure SetIetf(AValue: TIETFLang);
+    function asString : String;
+  public                          
+    constructor Create(index : integer; lang : string; value : double; auto : boolean);
+    destructor Destroy; override;
+    function sizeInBytes(magic : integer) : cardinal;
 
-    function GetCodes: TArray<String>;
-    function codeMatches(code, spec : String) : boolean;
-  public
-    constructor Create(hdr : String);
-
-    property codes : TArray<String> read GetCodes; // in order...
-    property header : String read FSource;
-
-    function matches(code: String): boolean;
-    function prefLang : String;
-    function sizeInBytes : cardinal;
+    property index : integer read FIndex write FIndex;
+    property lang : String read FLang write FLang;
+    property value : double read FValue write FValue;
+    property ietf : TIETFLang read FIetf write SetIetf;
+    property auto : boolean read FAuto write FAuto;
   end;
 
-  //end;
+  { THTTPLanguageEntrySorter }
+
+  THTTPLanguageEntrySorter = class (TFslComparer<THTTPLanguageEntry>)
+  protected
+    function Compare(const l, r : THTTPLanguageEntry) : integer; override;
+  end;
+
+  { THTTPLanguageList }
+
+  { THTTPLanguageList }
+
+  THTTPLanguageList = class (TFslObject)
+  private
+    FWildCard : boolean;
+    FSource: String;
+    FLangs : TFslList<THTTPLanguageEntry>;
+
+    //function codeMatches(code, spec : String) : boolean;
+    procedure process;
+  public
+    constructor Create(source : String; wildcard : boolean);
+    destructor Destroy; override;
+    function link : THTTPLanguageList; overload;
+
+    class function defaultLocal : THTTPLanguageList;
+    class function defaultWeb : THTTPLanguageList;
+
+    property langs : TFslList<THTTPLanguageEntry> read FLangs;
+    property source : String read FSource;
+    procedure addCode(code : String);
+
+    function asString(incWildcard : boolean) : String;
+    function prefLang : String;
+    function matches(definitions : TIETFLanguageDefinitions; code: String): boolean;
+    //function prefLang : String;
+    function sizeInBytes(magic : integer) : cardinal;
+  end;
 
 implementation
 
@@ -161,9 +204,9 @@ begin
       begin
       vallist := FItemList.Objects[i] as TStringList;
       if vallist <> NIL then
-        vallist.Free;
+        vallist.free;
       end;
-    FItemList.Free;
+    FItemList.free;
     FItemList := NIL;
     end;
   inherited Destroy;
@@ -342,9 +385,12 @@ begin
         { this signals the end of the item name;
           compute its length. The value starts at
           the *next* character }
-      itemnamelen := cursor - itemnamestart;
+      if (itemnamelen = 0) then
+      begin
+        itemnamelen := cursor - itemnamestart;
+        itemvalstart := cursor+1;
+      end;
       cursor := cursor + 1;
-      itemvalstart := cursor;
       end
     else
       begin
@@ -374,10 +420,10 @@ end;
 
 {-----------------------------------------------------------------------------}
 
-function TMultiValList.sizeInBytesV : cardinal;
+function TMultiValList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, fItemList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, fItemList.sizeInBytes(magic));
   inc(result, (FSource.length * sizeof(char)) + 12);
 end;
 
@@ -396,7 +442,7 @@ function THTTPParameters.has(const n: String): Boolean;
 var
   i: Integer;
 begin
-  Result := retrieveNameIndex(n, i);
+  Result := retrieveNameIndex(n, i) and (getVar(n) <> '');
 end;
 
 // only return first variable
@@ -425,6 +471,19 @@ begin
   result := THTTPParameters(inherited Link);
 end;
 
+function THTTPParameters.values(const n: String): TArray<String>;
+var
+  i : Integer;
+begin
+  SetLength(result, 0);
+  if retrieveNameIndex(n, i) then
+  begin
+    SetLength(result, getValueCount(i));
+    for i := 0 to length(result) - 1 do
+      retrieveitem(n, i, result[i]);
+  end;
+end;
+
 function TMultiValList.list(index: integer): TStringList;
 begin
   result := TStringList(FItemList.Objects[index]);
@@ -435,12 +494,12 @@ end;
 constructor TMimeContentType.Create;
 begin
   inherited;
-  FParams := TFslStringDictionary.create;
+  FParams := TFslStringDictionary.Create;
 end;
 
 destructor TMimeContentType.Destroy;
 begin
-  FParams.Free;
+  FParams.free;
   inherited;
 end;
 
@@ -492,11 +551,11 @@ begin
     FBase := 'application/'+Value;
 end;
 
-function TMimeContentType.sizeInBytesV : cardinal;
+function TMimeContentType.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSource.length * sizeof(char)) + 12);
-  inc(result, FParams.sizeInBytes);
+  inc(result, FParams.sizeInBytes(magic));
   inc(result, (FBase.length * sizeof(char)) + 12);
 end;
 
@@ -504,13 +563,13 @@ class function TMimeContentType.parseList(s : String): TFslList<TMimeContentType
 var
   e : String;
 begin
-  result := TFslList<TMimeContentType>.create;
+  result := TFslList<TMimeContentType>.Create;
   try
     for e in s.Split([',']) do
       result.add(parseSingle(e));
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -540,150 +599,257 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 
+{ THTTPLanguageEntry }
 
+procedure THTTPLanguageEntry.SetIetf(AValue: TIETFLang);
+begin
+  FIetf.free;
+  FIetf:=AValue;
+end;
 
-//       StringSplit(lang, [';', ','], l, lang);
+function THTTPLanguageEntry.asString: String;
+begin
+  result := FLang;
+  if (FValue < 1) then
+    result := result + '; q='+FloatToStr(value);
+end;
 
-type
-  TLanguageSpec = class (TFslObject)
-  private
-    FCode : String;
-    FValue : Double;
-  protected
-    function sizeInBytesV : cardinal; override;
-  public
-    constructor create(code : String; value : Double);
-  end;
-
-{ TLanguageSpec }
-
-constructor TLanguageSpec.create(code: String; value: Double);
+constructor THTTPLanguageEntry.Create(index: integer; lang: string; value: double; auto : boolean);
 begin
   inherited Create;
-  FCode := code;
+  FIndex := index;
+  FLang := lang;
   FValue := value;
+  FAuto := auto;
 end;
 
-type
-  TLanguageSpecComparer = class (TFslComparer<TLanguageSpec>)
-  public
-    function Compare(const l, r: TLanguageSpec): Integer; override;
-  end;
-
-function TLanguageSpec.sizeInBytesV : cardinal;
+destructor THTTPLanguageEntry.Destroy;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, (FCode.length * sizeof(char)) + 12);
+  FIetf.free;
+  inherited Destroy;
 end;
 
-function TLanguageSpecComparer.Compare(const l, r : TLanguageSpec) : integer;
+function THTTPLanguageEntry.sizeInBytes(magic: integer): cardinal;
 begin
-  if l.FValue > r.FValue then
-    result := 1
-  else if r.FValue > l.FValue then
+  result := inherited sizeInBytesV(magic);
+  inc(result, (FLang.length * sizeof(char)) + 12);
+end;
+
+
+{ THTTPLanguageEntrySorter }
+
+function THTTPLanguageEntrySorter.Compare(const l, r: THTTPLanguageEntry): integer;
+begin
+  if (l.value = r.value) then
+    result := l.index - r.index
+  else if (l.value > r.value) then
     result := -1
   else
-    result := 0;
+    result := 1;
 end;
 
-{ THTTPLanguages }
+{ THTTPLanguageList }
 
-constructor THTTPLanguages.Create(hdr: String);
-var
-  list : TFslList<TLanguageSpec>;
-  i : integer;
-  s, l, r : String;
+constructor THTTPLanguageList.Create(source : String; wildcard : boolean);
 begin
-  FSource := hdr;
-  list := TFslList<TLanguageSpec>.create;
-  try
-    for s in hdr.Split([',']) do
+  inherited Create;
+  FLangs := TFslList<THTTPLanguageEntry>.Create;
+  FSource := source;
+  FWildcard := wildcard;
+  process;
+end;
+
+destructor THTTPLanguageList.Destroy;
+begin
+  FLangs.free;
+  inherited Destroy;
+end;
+
+function THTTPLanguageList.link: THTTPLanguageList;
+begin
+  result := THTTPLanguageList(inherited Link);
+end;
+
+class function THTTPLanguageList.defaultLocal: THTTPLanguageList;
+{$IFDEF FPC}
+var
+  Lang: String;
+begin
+  LazGetShortLanguageID(Lang);
+{$ELSE}
+var
+  szLang: Array [0..254] of Char;
+  Lang : String;
+begin
+  VerLanguageName(GetSystemDefaultLCID, szLang, SizeOf(szLang));
+  Lang := StrPas(szLang);
+{$ENDIF}
+  result := THTTPLanguageList.create(Lowercase(Lang), false);
+end;
+
+class function THTTPLanguageList.defaultWeb: THTTPLanguageList;
+begin
+  result := THTTPLanguageList.create('', true);
+end;
+
+procedure THTTPLanguageList.addCode(code: String);
+begin
+  FLangs.Add(THTTPLanguageEntry.create(FLangs.Count, code.trim, 1.0, false));
+  FLangs.Sort(THTTPLanguageEntrySorter.create);
+end;
+
+function THTTPLanguageList.asString(incWildcard : boolean): String;
+var
+  e : THTTPLanguageEntry;
+begin
+  result := '';
+  for e in langs do
+    if (incWildcard or not e.auto) then
+      CommaAdd(result, e.asString);
+end;
+
+function THTTPLanguageList.prefLang: String;
+var
+  e : THTTPLanguageEntry;
+begin
+  result := '';
+  for e in langs do
+    if (e.value > 0)  and (e.lang <> '*') then
+      exit(e.lang);
+end;
+
+function THTTPLanguageList.matches(definitions: TIETFLanguageDefinitions; code: String): boolean;
+begin
+  if (self = nil) then
+    exit(false);
+
+  RESULT := false;
+end;
+
+procedure THTTPLanguageList.process;
+var
+  i : integer;
+  s, l, r, w : String;
+  v : Double;
+  wc : boolean;
+begin
+  i := 0;
+  wc := false;
+  for s in FSource.Split([',']) do
+  begin
+    if (s.trim() <> '') then
     begin
       if s.Contains(';') then
       begin
-        StringSplit(s, ';', l, r);
-        list.Add(TLanguageSpec.Create(l, StrToFloatDef(r, 0.5)));
+        StringSplit(s.trim, ';', l, r);
+        if (r.contains('=')) then
+          r := r.substring(r.indexOf('=')+1);
+        v := StrToFloatDef(r, 0.5);
       end
       else
-        list.Add(TLanguageSpec.Create(s, 1));
+      begin
+        l := s;
+        v := 1;
+      end;
+      FLangs.Add(THTTPLanguageEntry.create(i, l.trim, v, false));
+      wc := wc or (l.trim = '*');
+      inc(i);
     end;
-    if (list.count > 1) then
-    begin
-      list.Sort(TLanguageSpecComparer.create);
-    end;
-    SetLength(FCodes, list.Count);
-    for i := 0 to list.Count - 1 do
-      FCodes[i] := list[i].FCode;
-  finally
-    list.Free;
   end;
-end;
-
-function THTTPLanguages.GetCodes: TArray<String>;
-begin
-  result := FCodes;
-end;
-
-function THTTPLanguages.codeMatches(code, spec : String) : boolean;
-var
-  c, s : TArray<String>;
-  i, j : integer;
-  ok : boolean;
-begin
-  if (code = '') then
-    exit(false);
-  if (code = spec) then
-    exit(true);
-  c := code.split(['-']);
-  s := spec.split(['-']);
-  result := true;
-  if c[0] <> s[0] then
-    exit(false);
-  if length(c) < length(s) then
-    exit(false);
-  for i := 1 to length(s) - 1 do
-  begin
-    ok := false;
-    for j := 1 to length(c) - 1 do
-      if s[i] = c[j] then
-        ok := true;
-    if (not ok) then
-      exit(false);
-  end;
-end;
-
-function THTTPLanguages.matches(code : String) : boolean;
-var
-  s : String;
-begin
-  result := false;
-  for s in FCodes do
-    if codeMatches(code, s) then
-      exit(true);
+  if FWildCard and not wc then
+    FLangs.Add(THTTPLanguageEntry.create(i, '*', 0.01, true));
+  FLangs.Sort(THTTPLanguageEntrySorter.create);
 end;
 
 
-function THTTPLanguages.prefLang: String;
-begin
-  if (Length(FCodes) = 0) then
-    result := 'en'
-  else
-    result := FCodes[0];
-end;
 
-function THTTPLanguages.sizeInBytes: cardinal;
+//
+//procedure THTTPLanguageList.addCode(s: String);
+//begin
+//  SetLength(FCodes, length(FCodes)+1);
+//  FCodes[length(FCodes) - 1] := s;
+//end;
+//
+//function defLang : THTTPLanguageList;
+//{$IFDEF FPC}
+//var
+//  Lang: String;
+//begin
+//  LazGetShortLanguageID(Lang);
+//{$ELSE}
+//var
+//  szLang: Array [0..254] of Char;
+//  Lang : String;
+//begin
+//  VerLanguageName(GetSystemDefaultLCID, szLang, SizeOf(szLang));
+//  Lang := StrPas(szLang);
+//{$ENDIF}
+//  result := THTTPLanguageList.create(Lowercase(Lang));
+//end;
+//
+//function THTTPLanguageList.GetCodes: TArray<String>;
+//begin
+//  result := FCodes;
+//end;
+//
+//function THTTPLanguageList.codeMatches(code, spec : String) : boolean;
+//var
+//  c, s : TArray<String>;
+//  i, j : integer;
+//  ok : boolean;
+//begin
+//  if (code = '') then
+//    exit(false);
+//  if (code = spec) then
+//    exit(true);
+//  c := code.split(['-']);
+//  s := spec.split(['-']);
+//  result := true;
+//  if c[0] <> s[0] then
+//    exit(false);
+//  if length(c) < length(s) then
+//    exit(false);
+//  for i := 1 to length(s) - 1 do
+//  begin
+//    ok := false;
+//    for j := 1 to length(c) - 1 do
+//      if s[i] = c[j] then
+//        ok := true;
+//    if (not ok) then
+//      exit(false);
+//  end;
+//end;
+//
+//function THTTPLanguageList.matches(code : String) : boolean;
+//var
+//  s : String;
+//begin
+//  result := false;
+//  for s in FCodes do
+//    if codeMatches(code, s) then
+//      exit(true);
+//end;
+//
+//
+//function THTTPLanguageList.prefLang: String;
+//begin
+//  if (Length(FCodes) = 0) then
+//    result := 'en'
+//  else
+//    result := FCodes[0];
+//end;
+
+function THTTPLanguageList.sizeInBytes(magic : integer): cardinal;
 var
   s : String;
 begin
   result := sizeof(self);
   inc(result, (FSource.Length * SizeOf(char)) + 12);
-  for s in FCodes do
-    inc(result, (s.Length * SizeOf(char)) + 12);
 end;
 
 end.

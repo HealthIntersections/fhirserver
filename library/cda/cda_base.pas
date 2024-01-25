@@ -129,7 +129,7 @@ Type
     FCursor : Integer;
     Function GetCurrent : Tv3PropertyDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(oFocus : Tv3Base; bInheritedProperties : Boolean);
     destructor Destroy; Override;
@@ -180,7 +180,7 @@ Type
     Function RIMClassNameV: String; Virtual;
     Function CDAClassNameV: String; Virtual;
     Function CDAClassTypeV: TCDAClassType; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     sourcelocation : TSourceLocation;
@@ -282,7 +282,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3Base);
+    Function AddItem(value : Tv3Base): Tv3Base;
     {
       Get the iIndexth ANY (0 = first item)
     }
@@ -334,7 +334,7 @@ Type
     Function RIMClassNameV: String; Override;
     Function CDAClassNameV: String; Override;
     Function CDAClassTypeV : TCDAClassType; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -380,7 +380,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3Extension);
+    Function AddItem(value : Tv3Extension): Tv3Extension;
     {
       Get the iIndexth ANY (0 = first item)
     }
@@ -473,7 +473,7 @@ end;
 
 destructor Tv3PropertyValueStringCollection.Destroy;
 begin
-  FValue.Free;
+  FValue.free;
   inherited;
 end;
 
@@ -505,7 +505,7 @@ end;
 
 destructor Tv3DataTypePropertyIterator.Destroy;
 begin
-  FProperties.Free;
+  FProperties.free;
   inherited;
 end;
 
@@ -524,18 +524,18 @@ begin
   FCursor := 0;
 end;
 
-function Tv3DataTypePropertyIterator.sizeInBytesV : cardinal;
+function Tv3DataTypePropertyIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFocus.sizeInBytes);
-  inc(result, FProperties.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFocus.sizeInBytes(magic));
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { Tv3Base }
 
 function Tv3Base.createIterator(bInheritedProperties : Boolean): Tv3DataTypePropertyIterator;
 begin
-  Result := Tv3DataTypePropertyIterator.create(self, bInheritedProperties);
+  Result := Tv3DataTypePropertyIterator.Create(self, bInheritedProperties);
 end;
 
 procedure Tv3Base.ListProperties(oList: Tv3PropertyDefinitionList; bInheritedProperties : Boolean);
@@ -554,7 +554,7 @@ end;
 
 procedure Tv3Base.SetTag(const Value: TFslObject);
 begin
-  FTag.Free;
+  FTag.free;
   FTag := Value;
 end;
 
@@ -596,7 +596,7 @@ end;
 destructor Tv3Base.Destroy;
 begin
   FTag.free;
-  Fcomments.Free;
+  Fcomments.free;
   FExtensions.free;
   inherited;
 end;
@@ -676,14 +676,14 @@ begin
   Result := FExtensions;
 end;
 
-function Tv3Base.sizeInBytesV : cardinal;
+function Tv3Base.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcomments.sizeInBytes);
-  inc(result, FElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcomments.sizeInBytes(magic));
+  inc(result, FElement.sizeInBytes(magic));
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FExtensions.sizeInBytes);
-  inc(result, FTag.sizeInBytes);
+  inc(result, FExtensions.sizeInBytes(magic));
+  inc(result, FTag.sizeInBytes(magic));
   inc(result, (FTagId.length * sizeof(char)) + 12);
 end;
 
@@ -824,11 +824,11 @@ end;
 
 destructor Tv3PropertyDefinition.Destroy;
 begin
-  FPossibles.Free;
-  FValueBase.Free;
-  FValueCollection.Free;
+  FPossibles.free;
+  FValueBase.free;
+  FValueCollection.free;
   FValueString := '';
-  FValueStrings.Free;
+  FValueStrings.free;
   inherited;
 end;
 
@@ -905,10 +905,10 @@ begin
         oIterator.Next;
       End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -927,19 +927,19 @@ begin
 end;
 
 (*
-function Tv3PropertyDefinition.sizeInBytesV : cardinal;
+function Tv3PropertyDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FValueType.sizeInBytes);
-  inc(result, FCollectionState.sizeInBytes);
-  inc(result, FPossibles.sizeInBytes);
+  inc(result, FOwner.sizeInBytes(magic));
+  inc(result, FValueType.sizeInBytes(magic));
+  inc(result, FCollectionState.sizeInBytes(magic));
+  inc(result, FPossibles.sizeInBytes(magic));
   inc(result, (FClassName.length * sizeof(char)) + 12);
-  inc(result, FValueBase.sizeInBytes);
-  inc(result, FValueCollection.sizeInBytes);
-  inc(result, FValueString.sizeInBytes);
-  inc(result, FValueStrings.sizeInBytes);
+  inc(result, FValueBase.sizeInBytes(magic));
+  inc(result, FValueCollection.sizeInBytes(magic));
+  inc(result, FValueString.sizeInBytes(magic));
+  inc(result, FValueStrings.sizeInBytes(magic));
 end;
 
 function Tv3Base.CheckType(aValue: Tv3BaseCollection; aType: Tv3BaseCollectionType): Tv3BaseCollection;
@@ -1007,13 +1007,13 @@ begin
 
         Result := oBuilder.AsString;
       Finally
-        oBuilder.Free;
+        oBuilder.free;
       End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1035,7 +1035,7 @@ begin
     End;
     oSet.Unhook;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1079,7 +1079,7 @@ begin
     End;
     oSet.Unhook;
   Finally
-    oSet.Free;
+    oSet.free;
   End;
 end;
 
@@ -1181,7 +1181,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1191,7 +1191,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1219,9 +1219,10 @@ Begin
 End;
 
 
-Procedure Tv3BaseList.AddItem(value : Tv3Base);
+function Tv3BaseList.AddItem(value : Tv3Base): Tv3Base;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3BaseList.SetItemByIndex(iIndex: Integer; value: Tv3Base);
@@ -1322,9 +1323,9 @@ begin
   inherited;
 end;
 
-function Tv3Extension.sizeInBytesV : cardinal;
+function Tv3Extension.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FNamespace.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FText.length * sizeof(char)) + 12);
@@ -1354,7 +1355,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1364,7 +1365,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1383,9 +1384,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ExtensionList.AddItem(value : Tv3Extension);
+function Tv3ExtensionList.AddItem(value : Tv3Extension): Tv3Extension;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ExtensionList.SetItemByIndex(iIndex: Integer; value: Tv3Extension);

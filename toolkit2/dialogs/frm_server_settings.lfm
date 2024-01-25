@@ -1,0 +1,427 @@
+object ServerSettingsForm: TServerSettingsForm
+  Left = 739
+  Height = 437
+  Top = 287
+  Width = 737
+  BorderIcons = [biSystemMenu]
+  Caption = 'Server Details'
+  ClientHeight = 437
+  ClientWidth = 737
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 396
+    Width = 737
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 737
+    TabOrder = 1
+    object btnOk: TButton
+      Left = 572
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      ModalResult = 1
+      OnClick = btnOkClick
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 653
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object pgSettings: TPageControl
+    Left = 0
+    Height = 396
+    Top = 0
+    Width = 737
+    ActivePage = TabSheet1
+    Align = alClient
+    TabIndex = 0
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Server Identity'
+      ClientHeight = 365
+      ClientWidth = 727
+      object Panel3: TPanel
+        Left = 0
+        Height = 365
+        Top = 0
+        Width = 727
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 365
+        ClientWidth = 727
+        ParentBackground = False
+        TabOrder = 0
+        object Label3: TLabel
+          Left = 14
+          Height = 17
+          Top = 16
+          Width = 44
+          Caption = 'Name:'
+        end
+        object Label1: TLabel
+          Left = 14
+          Height = 17
+          Top = 46
+          Width = 31
+          Caption = 'URL:'
+        end
+        object Label2: TLabel
+          Left = 72
+          Height = 17
+          Top = 80
+          Width = 276
+          Caption = 'The URL must be a FHIR server [base] URL'
+          WordWrap = True
+        end
+        object Formt: TLabel
+          Left = 14
+          Height = 17
+          Top = 160
+          Width = 54
+          Caption = 'Format:'
+        end
+        object Label20: TLabel
+          Left = 14
+          Height = 17
+          Top = 130
+          Width = 55
+          Caption = 'Version:'
+        end
+        object edtName: TEdit
+          Left = 72
+          Height = 33
+          Top = 8
+          Width = 641
+          Anchors = [akTop, akLeft, akRight]
+          TabOrder = 0
+        end
+        object edtUrl: TEdit
+          Left = 72
+          Height = 33
+          Top = 43
+          Width = 643
+          Anchors = [akTop, akLeft, akRight]
+          OnChange = edtUrlChange
+          TabOrder = 1
+        end
+        object cbxFormat: TComboBox
+          Left = 72
+          Height = 29
+          Top = 156
+          Width = 639
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 0
+          Items.Strings = (
+            'JSON'
+            'XML'
+          )
+          Style = csDropDownList
+          TabOrder = 4
+        end
+        object Button3: TButton
+          Left = 72
+          Height = 25
+          Top = 96
+          Width = 105
+          Caption = 'Check Server'
+          OnClick = Button3Click
+          TabOrder = 2
+        end
+        object cbxVersion: TComboBox
+          Left = 72
+          Height = 29
+          Top = 128
+          Width = 640
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 0
+          Items.Strings = (
+            'R2 (1.0.2)'
+            'R3 (3.0.1)'
+            'R4 (4.0.1)'
+          )
+          Style = csDropDownList
+          TabOrder = 3
+        end
+        object Label14: TLabel
+          Left = 14
+          Height = 17
+          Top = 192
+          Width = 42
+          Anchors = [akLeft, akRight, akBottom]
+          Caption = 'Info:'
+        end
+        object mInfo: TMemo
+          Left = 70
+          Height = 125
+          Top = 192
+          Width = 642
+          Anchors = [akTop, akLeft, akRight, akBottom]
+          ReadOnly = True
+          TabOrder = 5
+        end
+        object Label21: TLabel
+          Left = 14
+          Height = 17
+          Top = 325
+          Width = 55
+          Caption = 'Log File:'
+        end
+        object edtLogFile: TEdit
+          Left = 72
+          Height = 33
+          Top = 322
+          Width = 602
+          Anchors = [akTop, akLeft, akRight]
+          OnChange = edtUrlChange
+          TabOrder = 6
+        end
+        object btnCert: TSpeedButton
+          Left = 687
+          Height = 24
+          Top = 322
+          Width = 23
+          Anchors = [akTop, akRight]
+          Glyph.Data = {
+            36040000424D3604000000000000360000002800000010000000100000000100
+            2000000000000004000064000000640000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000003591
+            DBFA439FDDFA439FDDFA429FDDFA429EDDFA419EDCFA419EDCFA419EDCFA419E
+            DCFA419EDCFA419EDCFA419EDCFA3792DAFB3080DF100000000000000000429C
+            DEF76EC7EBFF6DC7EAFF6BC6EAFF6AC5E9FF68C4E9FF67C3E8FF65C2E8FF64C1
+            E7FF63C0E7FF61BFE6FF60BEE5FF51AFE3FE308CD6450000000000000000409A
+            DDF47CD0F1FF7BD0F0FF7ACFEFFF79CEEFFF77CDEEFF76CCEEFF74CBEDFF73CA
+            EDFF71C9ECFF70C8ECFF6EC7EBFF6AC3E9FF3993DB8E00000000000000003E99
+            DCEC7ECEF1FF8AD9F6FF89D8F5FF87D7F4FF86D6F4FF84D5F3FF83D5F3FF81D4
+            F2FF80D3F2FF7ED2F1FF7DD1F1FF7BD0F0FF439ADEB40000000000000000409B
+            DDE470C1EDFF99E2FBFF97E2FBFF96E1FAFF94E0F9FF93DFF9FF91DEF8FF90DD
+            F8FF8EDCF7FF8DDBF7FF8CDAF6FF8AD9F6FF4EA4E2CD00000000000000004AA5
+            E0DF61B3E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA2E8FEFFA0E7FEFF9FE6
+            FDFF9DE5FDFF9CE4FCFF9AE3FCFF99E2FBFF5FB3E9E33080DF100000000051A8
+            E2DF5EB2E8FFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9
+            FFFFA3E9FFFFA3E9FFFFA3E9FFFFA3E9FFFF84CFF5FB348CDA450000000058AD
+            E5DF60B3E8FF61B3E9FF61B3E9FF60B2E9FF60B2E8FF60B2E8FF5FB1E8FF5FB1
+            E8FF5EB1E8FF5EB1E8FF5EB1E7FF59ADE7FB55A9E5E33B94DC85000000005FB0
+            E8DF9DE4FBFF9AE3FAFF97E1F9FF94DFF8FF91DDF7FF8EDBF5FF8BD9F4FF88D8
+            F3FF85D6F2FF82D4F1FF7FD2F0FF4FA7E1DF00000000000000000000000061B1
+            E8DFA6EAFFFFA6EAFFFFA6EAFFFFA3E8FEFF7AC6F1ED59ACE6DF58AAE5DF57AA
+            E5DF56AAE5DF53A9E4DF53A8E4DF3C94DCE20000000000000000000000004096
+            DEE25DAEE7DF5DAEE7DF5DAEE7DF57A9E6DF4399DF6E00000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000000000000000
+            0000000000000000000000000000000000000000000000000000
+          }
+          OnClick = btnCertClick
+          ParentFont = False
+        end
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Smart App Launch'
+      ClientHeight = 365
+      ClientWidth = 727
+      ImageIndex = 1
+      object Panel5: TPanel
+        Left = 0
+        Height = 38
+        Top = 0
+        Width = 727
+        Align = alTop
+        BevelOuter = bvNone
+        Caption = 'Panel5'
+        ClientHeight = 38
+        ClientWidth = 727
+        TabOrder = 0
+        object Label15: TLabel
+          Left = 8
+          Height = 17
+          Top = 8
+          Width = 137
+          Caption = 'Smart Launch Mode:'
+        end
+        object cbxSmartMode: TComboBox
+          Left = 128
+          Height = 29
+          Top = 6
+          Width = 588
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 0
+          Items.Strings = (
+            'No Smart App Launch'
+            'OAuth Client'
+            'Backend Services Client'
+          )
+          OnChange = cbxSmartModeChange
+          Style = csDropDownList
+          TabOrder = 0
+        end
+      end
+      object Panel4: TPanel
+        Left = 0
+        Height = 47
+        Top = 318
+        Width = 727
+        Align = alBottom
+        BevelOuter = bvNone
+        BorderWidth = 5
+        ClientHeight = 47
+        ClientWidth = 727
+        TabOrder = 1
+        object Label13: TLabel
+          Left = 5
+          Height = 37
+          Top = 5
+          Width = 717
+          Align = alClient
+          AutoSize = False
+          Caption = 'Note: You must register the toolkit as a client with each Smart App Launch Server yourself'
+          WordWrap = True
+        end
+      end
+      object nbSmartDetails: TNotebook
+        Left = 0
+        Height = 280
+        Top = 38
+        Width = 727
+        PageIndex = 0
+        Align = alClient
+        TabOrder = 2
+        object pgNoSmart: TPage
+        end
+        object pgSmart: TPage
+          object Label4: TLabel
+            Left = 10
+            Height = 15
+            Top = 12
+            Width = 45
+            Caption = 'Client ID'
+          end
+          object Label5: TLabel
+            Left = 8
+            Height = 15
+            Top = 45
+            Width = 66
+            Caption = 'Client Secret'
+          end
+          object Label6: TLabel
+            Left = 88
+            Height = 39
+            Top = 72
+            Width = 576
+            AutoSize = False
+            Caption = 'The client secret is optional. Note: this toolkit is not actually a confidential app, but the client secret can be provided to help test SMART App Launch Servers'
+            WordWrap = True
+          end
+          object Label7: TLabel
+            Left = 8
+            Height = 15
+            Top = 126
+            Width = 71
+            Caption = 'Redirect Port:'
+          end
+          object Label8: TLabel
+            Left = 86
+            Height = 15
+            Top = 156
+            Width = 283
+            Caption = 'The redirect URL must be http://localhost:[port]/done'
+          end
+          object edtClientId: TEdit
+            Left = 84
+            Height = 23
+            Top = 8
+            Width = 632
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 0
+          end
+          object edtClientSecret: TEdit
+            Left = 84
+            Height = 23
+            Top = 42
+            Width = 632
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 1
+          end
+          object edtRedirect: TEdit
+            Left = 84
+            Height = 23
+            Top = 122
+            Width = 631
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 2
+          end
+          object Label9: TLabel
+            Left = 8
+            Height = 15
+            Top = 202
+            Width = 40
+            Caption = 'Scopes:'
+          end
+          object edtScopes: TEdit
+            Left = 84
+            Height = 23
+            Top = 198
+            Width = 583
+            Anchors = [akTop, akLeft, akRight]
+            TabOrder = 3
+          end
+          object btnAddAll: TButton
+            Left = 84
+            Height = 25
+            Hint = 'Add all Patient scopes server claims to support'
+            Top = 224
+            Width = 66
+            Caption = 'Patient'
+            OnClick = btnAddAllClick
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 4
+          end
+          object btnAddAll1: TButton
+            Left = 152
+            Height = 25
+            Hint = 'Add all User scopes server claims to support'
+            Top = 224
+            Width = 66
+            Caption = 'User'
+            OnClick = btnAddAll1Click
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 5
+          end
+        end
+        object pgBackend: TPage
+        end
+      end
+    end
+  end
+  object dlgLog: TOpenDialog
+    Title = 'Choose Log File'
+    Filter = 'Test Files|*.txt|All Files|*.*'
+    Left = 10
+    Top = 382
+  end
+end

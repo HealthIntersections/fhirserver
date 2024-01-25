@@ -38,15 +38,18 @@ uses
 
 Type
 
+  { THtmlPublisher }
+
   THtmlPublisher = class (TFslObject)
   private
     FBuilder : TFslStringBuilder;
     FBaseURL: String;
-    FLang: THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FVersion: String;
     FLogId: String;
+    procedure SetLangList(AValue: THTTPLanguageList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -105,7 +108,7 @@ Type
 
     function output : String;
     Property BaseURL : String read FBaseURL write FBaseURL;
-    Property Lang : THTTPLanguages read FLang write FLang;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
     Property Version : String read FVersion write FVersion;
     Property LogId : String read FLogId write FLogid;
   end;
@@ -197,12 +200,13 @@ end;
 constructor THtmlPublisher.Create();
 begin
   inherited Create;
-  FBuilder := TFslStringBuilder.create;
+  FBuilder := TFslStringBuilder.Create;
 end;
 
 destructor THtmlPublisher.Destroy;
 begin
-  FBuilder.Free;
+  FLangList.free;
+  FBuilder.free;
   inherited;
 end;
 
@@ -357,7 +361,7 @@ begin
     FBuilder.Append('<table border="0"'+clss+'>');
 end;
 
-procedure THtmlPublisher.StartTableCell;
+procedure THtmlPublisher.StartTableCell(span: integer);
 begin
   if (span <> 1) then
     FBuilder.Append('<td colspan="'+inttostr(span)+'">')
@@ -385,7 +389,7 @@ begin
   FBuilder.Append('<input type="text" name="'+name+'" size="'+inttostr(length)+'"/>');
 end;
 
-procedure THtmlPublisher.URL(text, url, hint: String);
+procedure THtmlPublisher.URL(text, url: String; hint: string);
 begin
   if (hint <> '') then
     FBuilder.Append('<a href="'+url+'" title="'+FormatTextToXml(hint, xmlAttribute)+'">')
@@ -428,12 +432,18 @@ begin
   FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
 end;
 
-function THtmlPublisher.sizeInBytesV : cardinal;
+procedure THtmlPublisher.SetLangList(AValue: THTTPLanguageList);
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuilder.sizeInBytes);
+  FLangList.free;
+  FLangList := AValue;
+end;
+
+function THtmlPublisher.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuilder.sizeInBytes(magic));
   inc(result, (FBaseURL.length * sizeof(char)) + 12);
-  inc(result, FLang.sizeInBytes);
+  inc(result, FLangList.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FLogId.length * sizeof(char)) + 12);
 end;

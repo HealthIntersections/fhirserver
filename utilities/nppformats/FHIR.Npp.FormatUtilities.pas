@@ -279,7 +279,7 @@ begin
   try
     SelectedBytes := TEncoding.UTF8.GetBytes(x.ToXml(false, false));
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -300,7 +300,7 @@ begin
   try
     SelectedBytes := TEncoding.UTF8.GetBytes(x.ToXml(true, true));
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -320,7 +320,7 @@ var
 begin
   ok := false;
   try
-    TJSONParser.Parse(CurrentBytes).Free;
+    TJSONParser.Parse(CurrentBytes).free;
     ok := true;
   except
     on e : EParserException do
@@ -349,7 +349,7 @@ begin
   try
     SelectedBytes := TEncoding.UTF8.GetBytes(TJsonWriter.writeObjectStr(j, false));
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -404,7 +404,7 @@ begin
     s := md.process(s);
     SelectedBytes := TEncoding.UTF8.GetBytes(s);
   finally
-    md.Free;
+    md.free;
   end;
 end;
 
@@ -444,7 +444,7 @@ begin
   try
     SelectedBytes := TEncoding.UTF8.GetBytes(TJsonWriter.writeObjectStr(j, true));
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -474,7 +474,7 @@ begin
     end;
     SelectedBytes := TEncoding.UTF8.GetBytes(sl.Text);
   finally
-    sl.Free;
+    sl.free;
   end;
 end;
 

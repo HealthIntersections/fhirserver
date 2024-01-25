@@ -32,37 +32,75 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
+{
+
+Using the Common Layer
+
+This is a version independent interface to the FHIR version specific objects.
+This is pretty useful, but like all good things, it comes with a price: you
+have to be super careful how you use this layer.
+
+This layer is a facade over the actual underlying objects.
+
+
+
+}
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities,
-  fsl_http,
-  fhir_objects, fhir_utilities;
+  fsl_base, fsl_utilities, fsl_versions, fsl_http, fsl_logging, fsl_lang,
+  fhir_objects, fhir_utilities, fhir_features, fhir_uris, fhir_parser;
 
 Type
-  TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists);
+  TFilterOperator = (foNull, foEqual, foIsA, foDescendentOf, foIsNotA, foRegex, foIn, foNotIn, foGeneralizes, foExists, foChildOf, foDescendentLeaf);
   TPublicationStatus = (psNull, psDraft, psActive, psRetired);
   TBundleType = (btNull, btDocument, btMessage, btTransaction, btTransactionResponse, btBatch, btBatchResponse, btHistory, btSearchset, btCollection);
   TTriggerType = (ttNull, ttNamedEvent, ttPeriodic, ttDataChanged, ttDataAdded, ttDataModified, ttDataRemoved, ttDataAccessed, ttDataAccessEnded);
   TContactType = (cpsNull, cpsPhone, cpsFax, cpsEmail, cpsPager, cpsUrl, cpsSms, cpsOther);
-  TSubscriptionStatus = (ssNull, ssRequested, ssActive, ssError, ssOff);
+  TSubscriptionStatus = (ssNull, ssRequested, ssActive, ssError, ssOff, ssEnteredInError);
   TSubscriptionMethod = (smNull, smRestHook, smEmail, smSms, smWebsocket, smChangeScript);
   TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
+  TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
+  TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicDisplay, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck, oicInvalidData);
 
 const
-  CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists');
+  CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf');
   CODES_TPublicationStatus: Array[TPublicationStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
+  CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data');
 
 type
+  EFHIROperationException = class (EFslException)
+  private
+    FMsgId : String;
+    FParams : TStringArray;
+    FLevel : TIssueSeverity;
+    FCause : TFHIRIssueType;
+    FCode : TOpIssueCode;
+    FPath : String;
+  public
+    constructor create(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, message : String);
+    constructor createMsg(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, messageId : String; params : TStringArray);
+
+    property MsgId : String read FMsgId;
+    property Params : TStringArray read FParams;
+    property Level : TIssueSeverity read FLevel;
+    property Cause : TFHIRIssueType read FCause;
+    property Code : TOpIssueCode read FCode;
+    property Path : String read FPath;
+  end;
+
   // base wrappers.....
   TFhirExtensionW = class;
+
+  { TFHIRXVersionElementWrapper }
 
   TFHIRXVersionElementWrapper = class abstract (TFHIRObject)
   protected
     FElement : TFHIRObject;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function NoElementOk : boolean; virtual;
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; virtual; abstract; // this must be overridden in *every concrete subclass*
   public
     constructor Create(elem : TFHIRObject);
     destructor Destroy; override;
@@ -80,21 +118,45 @@ type
 
     property Element : TFHIRObject read FElement;
 
+    function AsJson : String; override;
+
     // extensions:
     function hasExtension(url : String) : boolean; override;
     function getExtensionString(url : String) : String; override;
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); overload; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; overload; override;
+    function getExtensionsV : TFslList<TFHIRObject>; overload; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); overload; override;
+    procedure addExtensionV(extension : TFHIRObject); overload; override;
+    function getExtensionsW(url : String) : TFslList<TFhirExtensionW>;
+    function getAllExtensionsW : TFslList<TFhirExtensionW>;
+    function getExtensionW(url : String) : TFhirExtensionW;
+    procedure addExtensionW(url : String; value : TFHIRXVersionElementWrapper);
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionW(extension : TFHIRExtensionW);
+    procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); override;
   end;
   TFHIRXVersionElementWrapperClass = class of TFHIRXVersionElementWrapper;
 
-  TFhirDatTypeW = class (TFHIRXVersionElementWrapper)
+  TFhirDataTypeW = class (TFHIRXVersionElementWrapper)
   public
     function renderText : String; virtual; abstract;
   end;
 
-  TFhirCodingW = class (TFhirDatTypeW)
+  { TFHIRPrimitiveW }
+
+  TFHIRPrimitiveW = class (TFHIRXVersionElementWrapper)
+  public
+    function link : TFHIRPrimitiveW; overload;
+    function GetAsString : String; virtual; abstract;
+    procedure SetAsString(value : String); virtual; abstract;
+    property AsString : String read GetAsString write SetAsString;
+  end;
+
+  TFhirCodingW = class (TFhirDataTypeW)
   protected
     function getCode: String; virtual; abstract;
     function getDisplay: String; virtual; abstract;
@@ -112,7 +174,7 @@ type
     property display : String read GetDisplay write SetDisplay;
   end;
 
-  TFhirQuantityW = class (TFhirDatTypeW)
+  TFhirQuantityW = class (TFhirDataTypeW)
   protected
     function getCode: String; virtual; abstract;
     function getSystem: String; virtual; abstract;
@@ -131,7 +193,7 @@ type
     function asDuration : TDateTime; virtual; abstract;
   end;
 
-  TFHIRPeriodW = class (TFhirDatTypeW)
+  TFHIRPeriodW = class (TFhirDataTypeW)
   protected
     function GetEnd: TFslDateTime; virtual; abstract;
     function GetStart: TFslDateTime; virtual; abstract;
@@ -141,6 +203,15 @@ type
     function link : TFHIRPeriodW; overload;
     property start : TFslDateTime read GetStart write SetStart;
     property end_ : TFslDateTime read GetEnd write SetEnd;
+  end;
+
+  TFHIRAttachmentW = class abstract (TFhirDataTypeW)
+  protected
+    function GetContentType: String; virtual; abstract;
+    function GetData: TBytes; virtual; abstract;
+  public
+    property data : TBytes read GetData;
+    property contentType : String read GetContentType;
   end;
 
   TFhirMetaW = class (TFHIRXVersionElementWrapper)
@@ -169,15 +240,22 @@ type
     procedure removeProfile(uri : String); virtual; abstract;
   end;
 
+  { TFHIRXVersionResourceWrapper }
+
   TFHIRXVersionResourceWrapper = class (TFHIRObject)
   protected
     FRes : TFHIRResourceV;
     function GetFhirObjectVersion: TFHIRVersion; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+    function GetLanguage: String;  virtual; abstract;
+    procedure SetLanguage(const Value: String); virtual; abstract;
+
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; virtual; abstract; // this must be overridden in *every concrete subclass*
   public
     constructor Create(res : TFHIRResourceV);
     destructor Destroy; override;
 
+    function link : TFHIRXVersionResourceWrapper; overload;
     function makeStringValue(v : String) : TFHIRObject; override;
     function makeCodeValue(v : String) : TFHIRObject; override;
     function makeIntValue(v : String) : TFHIRObject; override;
@@ -189,24 +267,50 @@ type
     procedure setIdValue(id : String); override;
     procedure checkNoImplicitRules(place, role : String); virtual;
     function hasExtensions : boolean; override;
+    property language : String read GetLanguage write SetLanguage;
+
+    function AsJson : String; override;
+
+    // extensions:
+    function hasExtension(url : String) : boolean; override;
+    function getExtensionString(url : String) : String; override;
+    function getExtensionValue(url : String) : TFHIRObject; override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
+    function extensionCount(url : String) : integer; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); overload; override;
+    function getExtensionsW(url : String) : TFslList<TFhirExtensionW>;
+    function getExtensionW(url : String) : TFhirExtensionW;
+    procedure addExtensionW(url : String; value : TFHIRXVersionElementWrapper);
 
     property Resource : TFHIRResourceV read FRes;
   end;
 
+  { TFHIRXVersionOperationObjectWrapper }
+
   TFHIRXVersionOperationObjectWrapper = class (TFslObject)
+  private
+     FList : TFslList<TFslObject>;
   protected
     FObj : TFslObject;
-    function sizeInBytesV : cardinal; override;
+
+    function sizeInBytesV(magic : integer) : cardinal; override;
+    function List : TFslList<TFslObject>;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
     property Obj : TFslObject read FObj;
   end;
 
+  { TFHIRXVersionOperationWrapper }
+
   TFHIRXVersionOperationWrapper = class (TFslObject)
+  private
+     FList : TFslList<TFslObject>;
   protected
     FOp : TFslObject;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
+    function List : TFslList<TFslObject>;
   public
     constructor Create(res : TFslObject);
     destructor Destroy; override;
@@ -217,15 +321,7 @@ type
     property Op : TFslObject read FOp;
   end;
 
-  // types....
-  TFhirExtensionW = class (TFhirDatTypeW)
-  public
-    function link : TFhirExtensionW; overload;
-    function url : String; virtual; abstract;
-    function value : TFHIRObject; virtual; abstract;
-  end;
-
-  TFhirCodeableConceptW = class (TFhirDatTypeW)
+  TFhirCodeableConceptW = class (TFhirDataTypeW)
   protected
     function GetText: String; virtual; abstract;
     procedure SetText(const Value: String); virtual; abstract;
@@ -233,12 +329,57 @@ type
     function link : TFhirCodeableConceptW; overload;
     function codingCount : integer; virtual; abstract;
     function codings : TFslList<TFhirCodingW>; virtual; abstract;
+    procedure clearCodings; virtual; abstract;
     procedure addCoding(coding : TFHIRCodingW); overload; virtual; abstract;
     function addCoding : TFHIRCodingW; overload; virtual; abstract;
+    procedure addCoding(systemUri, version, code, display : String); overload; virtual; abstract;
+    procedure removeCoding(systemUri, version, code : String); virtual; abstract;
     function summary : String; virtual; abstract;
+    function hasCode(systemUri, code : String) : boolean; overload; virtual; abstract;
+    function hasCode(systemUri, version, code : String) : boolean; overload; virtual; abstract;
     function fromSystem(systemUri : String; required : boolean = false) : String; overload; virtual; abstract;
     function fromSystem(systems : TArray<String>; required : boolean = false) : String; overload; virtual; abstract;
     property text : String read GetText write SetText;
+  end;
+
+  TFhirIdentifierW = class (TFhirDataTypeW)
+  private
+    FType: TFhirCodeableConceptW;
+    function GetType: TFhirCodeableConceptW;
+    procedure SetType(const Value: TFhirCodeableConceptW);
+  protected
+    function GetSystem: String; virtual; abstract;
+    function GetUse: TIdentifierUse; virtual; abstract;
+    function GetValue: String; virtual; abstract;
+    procedure SetSystem(const Value: String); virtual; abstract;
+    procedure SetUse(const Value: TIdentifierUse); virtual; abstract;
+    procedure SetValue(const Value: String); virtual; abstract;
+    function GetTypeV: TFhirCodeableConceptW; virtual; abstract;
+    procedure SetTypeV(const Value: TFhirCodeableConceptW); virtual; abstract;
+  public
+    destructor Destroy; override;
+    function link : TFhirIdentifierW; overload;
+    property type_ : TFhirCodeableConceptW read GetType write SetType;
+    property use : TIdentifierUse read GetUse write SetUse;
+    property systemUri : String read GetSystem write SetSystem;
+    property value : String read GetValue write SetValue;
+  end;
+
+  TFhirExtensionW = class (TFhirDataTypeW)
+  public
+    function link : TFhirExtensionW; overload;
+    function url : String; virtual; abstract;
+    function value : TFHIRObject; virtual; abstract;
+
+    procedure setValueW(value : TFhirDataTypeW); virtual; abstract;
+    procedure setValueV(value : TFhirObject); virtual; abstract;
+    function valueAsCodeableConcept : TFhirCodeableConceptW; virtual; abstract;
+    function valueAsCoding : TFhirCodingW; virtual; abstract;
+    function valueAsPeriod : TFhirPeriodW; virtual; abstract;
+    function valueAsQuantity : TFhirQuantityW; virtual; abstract;
+    function valueAsIdentifier : TFhirIdentifierW; virtual; abstract;
+    function valueAsAttachment : TFhirAttachmentW; virtual; abstract;
+    function valueAsString : string; virtual; abstract;
   end;
 
   TFhirOperationOutcomeIssueW = class (TFHIRXVersionElementWrapper)
@@ -262,7 +403,9 @@ type
     function severity : TIssueSeverity; virtual; abstract;
     function code :  TFhirIssueType; virtual; abstract;
 
-    procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); virtual; abstract;
+    procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); overload; virtual; abstract;
+    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, message : String; issueCode : TOpIssueCode; addIfDuplicate : boolean = false); overload; virtual; abstract;
+    function hasIssues : boolean; virtual; abstract;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; virtual; abstract;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; virtual; abstract;
     function error(source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean;
@@ -357,6 +500,7 @@ type
     procedure addEntry(url : String; bnd : TFhirResourceV); overload; virtual; abstract;
     function addEntry : TFhirBundleEntryW; overload; virtual; abstract;
     function moveToFirst(res : TFhirResourceV) : TFhirBundleEntryW; virtual; abstract;
+    function count(rtype : String = '') : Integer; virtual; abstract;
     procedure clearLinks; virtual; abstract;
     function entries : TFslList<TFhirBundleEntryW>; virtual; abstract;
     procedure listLinks(links : TFslStringDictionary); virtual; abstract;
@@ -478,6 +622,7 @@ type
     procedure impl(url, desc : String); virtual; abstract;
     procedure fmt(mt : String); virtual; abstract;
     procedure standardServer(ts, ws, pv, cv, iv : String; transactions, search, history : boolean); virtual; abstract;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual; abstract;
     function addResource(code : String) : TFhirCapabilityStatementRestResourceW; virtual; abstract;
     procedure addOperation(name, url : String); virtual; abstract;
 
@@ -490,6 +635,7 @@ type
   TFhirParametersParameterW = class (TFHIRXVersionElementWrapper)
   protected
     FList : TFslList<TFhirParametersParameterW>;
+
     function getValue: TFHIRObject; virtual; abstract;
     procedure setValue(Value: TFHIRObject); virtual; abstract;
     function getResource: TFHIRResourceV; virtual; abstract;
@@ -498,7 +644,7 @@ type
     function getParameterParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     function getResourceParameter(name: String): TFHIRResourceV;  virtual; abstract;
     function getStringParameter(name: String): String;  virtual; abstract;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFhirParametersParameterW; overload;
@@ -521,6 +667,8 @@ type
     procedure addParam(name : String; value : TFHIRObject); overload; virtual; abstract;
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
+    procedure addParamUri(name : String; value : string); virtual; abstract;
+    procedure addParamCanonical(name : String; value : string); virtual; abstract;
   end;
 
   TFHIRParametersW = class (TFHIRXVersionResourceWrapper)
@@ -528,11 +676,12 @@ type
     FList : TFslList<TFhirParametersParameterW>;
     function getParameter(name: String): TFhirParametersParameterW;  virtual; abstract;
     procedure populateList; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFHIRParametersW; overload;
 
+    function names : String; virtual; abstract;
     function has(name : String) : boolean; virtual; abstract;
     function bool(name : String) : boolean; virtual; abstract;
     function str(name : String) : String; virtual; abstract;
@@ -544,6 +693,8 @@ type
     procedure addParam(name : String; value : TFHIRObject); overload; virtual; abstract;
     procedure addParamStr(name : String; value : string); virtual; abstract;
     procedure addParamCode(name : String; value : string); virtual; abstract;
+    procedure addParamUri(name : String; value : string); virtual; abstract;
+    procedure addParamCanonical(name : String; value : string); virtual; abstract;
 
     function parameterList : TFslList<TFhirParametersParameterW>;
   end;
@@ -560,8 +711,9 @@ type
     function link : TFhirCodeSystemConceptDesignationW; overload;
     function language : String; virtual; abstract;
     function useGen : String; virtual; abstract;
-    function use : TFHIRObject; virtual; abstract;
+    function use : TFHIRCodingW; virtual; abstract;
     function value : String; virtual; abstract;
+    function valueElement : TFHIRPrimitiveW; virtual; abstract;
   end;
 
   TFhirCodeSystemConceptW = class;
@@ -570,14 +722,16 @@ type
   TFhirCodeSystemConceptW = class (TFHIRXVersionElementWrapper)
   protected
     FConceptList : TFhirCodeSystemConceptListW;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
   public
     function link : TFhirCodeSystemConceptW; overload;
     function code : String; virtual; abstract;
     function display : String; virtual; abstract;
+    function displayElement : TFHIRPrimitiveW; virtual; abstract;
     function definition : String; virtual; abstract;
+    function itemWeight : String; virtual; abstract;
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
@@ -596,6 +750,7 @@ type
   public
     function link : TFhirCodeSystemPropertyW; overload;
     function code : String; virtual; abstract;
+    function uri : String; virtual; abstract;
     function type_ : TFhirCodeSystemPropertyType; virtual; abstract;
   end;
 
@@ -614,24 +769,29 @@ type
   protected
     function getURL: String; virtual; abstract;
     function getName: String; virtual; abstract;
+    function getTitle: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getVersion: String; virtual; abstract;
     function getDescription: String; virtual; abstract;
     function getDate: TFslDateTime; virtual; abstract;
     function getPublisher: String; virtual; abstract;
+    function getExperimental : boolean; virtual; abstract;
     procedure setPublisher(Value: String); virtual; abstract;
     procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setUrl(Value: String); virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    procedure setTitle(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
+    procedure setExperimental(value : boolean); virtual; abstract;
   public
     function link : TFHIRMetadataResourceW; overload;
 
     property url : String read getURL write SetUrl;
     property name : String read GetName write SetName;
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property vurl : String read GetVUrl;
     property status : TPublicationStatus read GetStatus write SetStatus;
@@ -639,12 +799,14 @@ type
     property date : TFslDateTime read GetDate write SetDate;
     property context : String read getContext;
     property publisher : String read GetPublisher write SetPublisher;
+    property experimental : boolean read getExperimental write setExperimental;
   end;
 
   TFslMetadataResourceList = class (TFslList<TFHIRMetadataResourceW>)
   public
     function link : TFslMetadataResourceList; overload;
   end;
+
   TFhirCodeSystemW = class (TFHIRMetadataResourceW)
   protected
     FConceptList : TFhirCodeSystemConceptListW;
@@ -652,7 +814,7 @@ type
     procedure setContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
     function getCount: integer; virtual; abstract;
     procedure setCount(Value: integer); virtual; abstract;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFhirCodeSystemW; overload;
@@ -665,6 +827,8 @@ type
     function language : String; virtual; abstract;
 
     function properties : TFslList<TFhirCodeSystemPropertyW>;  virtual; abstract;
+    function propertyCode(uri : String) : String;
+
     // this is special because it's owned
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
@@ -673,34 +837,71 @@ type
     function getCode(code : String) : TFhirCodeSystemConceptW; virtual; abstract;
 
     function isAbstract(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
+    function isInactive(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
+    function codeStatus(c : TFhirCodeSystemConceptW) : String; virtual; abstract;
+    function isDeprecated(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function getParents(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; virtual; abstract;
     function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; virtual; abstract;
 
     function buildImplicitValueSet : TFHIRValueSetW; virtual; abstract;
   end;
 
+  { TFhirValueSetExpansionContainsPropertyW }
+
+  TFhirValueSetExpansionContainsPropertyW = class (TFHIRXVersionElementWrapper)
+  public
+    function link : TFhirValueSetExpansionContainsPropertyW; overload;
+    function code : String; virtual; abstract;
+    function value : TFHIRObject; virtual; abstract;
+  end;
+
+
   TFhirValueSetExpansionContainsW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionContainsW; overload;
     function getSystem : String; virtual; abstract;
+    function getVersion: String; virtual; abstract;
     function getCode : String; virtual; abstract;
     function getDisplay : String; virtual; abstract;
+    function GetItemWeight : String; virtual; abstract;
+    function GetAbstract : boolean; virtual; abstract;
+    function GetInactive : boolean; virtual; abstract;
     procedure setCode(Value: String); virtual; abstract;
     procedure setDisplay(Value: String); virtual; abstract;
     procedure setSystem(Value: String); virtual; abstract;
+    procedure setVersion(Value: String); virtual; abstract;
+    procedure SetItemWeight(Value: String); virtual; abstract;
+    procedure SetAbstract(Value: boolean); virtual; abstract;
+    procedure SetInactive(Value: boolean); virtual; abstract;
 
     property systemUri : String read GetSystem write SetSystem;
+    property version : String read GetVersion write SetVersion;
     property code : String read GetCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
+    property abstract_ : boolean read GetAbstract write SetAbstract;
+    property inactive : boolean read GetInactive write SetInactive;
+    property itemWeight : String read GetItemWeight write SetItemWeight;
 
+    procedure addDesignation(lang, use, value : String); overload; virtual; abstract;
+    procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); overload; virtual; abstract;
+    procedure addProperty(code : String; value : TFHIRObject); virtual; abstract; overload;
+    procedure addProperty(code : String; value : TFhirCodeSystemConceptPropertyW); virtual; abstract; overload;
+    procedure addContains(contained : TFhirValueSetExpansionContainsW); virtual; abstract;
+    procedure clearContains(); virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
+    function properties : TFslList<TFhirCodeSystemConceptPropertyW>; virtual; abstract;
   end;
 
   TFhirValueSetExpansionW = class (TFHIRXVersionElementWrapper)
   public
     function link : TFhirValueSetExpansionW; overload;
-    procedure addParam(name, value : String); overload; virtual; abstract;
-    procedure addParam(name : String; value : boolean); overload; virtual; abstract;
+    // todo: decimal and datetime
+    procedure addParamStr(name, value : String); overload; virtual; abstract;
+    procedure addParamCode(name, value : String); overload; virtual; abstract;
+    procedure addParamUri(name, value : String); overload; virtual; abstract;
+    procedure addParamBool(name : String; value : boolean); overload; virtual; abstract;
+    procedure addParamInt(name : String; value : integer); overload; virtual; abstract;
+
     function hasParam(name : string) : boolean; overload; virtual; abstract;
     function hasParam(name, value : string) : boolean; overload; virtual; abstract;
     procedure copyParams(source : TFhirValueSetExpansionW); virtual; abstract;
@@ -708,6 +909,17 @@ type
     function makeContains : TFhirValueSetExpansionContainsW; overload; virtual; abstract;
     function addContains : TFhirValueSetExpansionContainsW; overload; virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;
+
+    function getTotal : integer; virtual; abstract;
+    procedure setTotal(value : integer) ; virtual; abstract;
+
+    function getOffset : integer; virtual; abstract;
+    procedure setOffset(value : integer) ; virtual; abstract;
+
+    property total : integer read getTotal write setTotal;
+    property offset : integer read getOffset write setOffset;
+
+    procedure defineProperty(focus : TFhirValueSetExpansionContainsW; url, code : String; value : TFHIRObject {link if needed}); virtual; abstract;
   end;
 
   TFhirValueSetComposeIncludeFilterW = class (TFHIRXVersionElementWrapper)
@@ -729,19 +941,25 @@ type
   public
     function link : TFhirValueSetComposeIncludeConceptDesignationW; overload;
     function language : String; virtual; abstract;
+    function use : TFHIRCodingW; virtual; abstract;
     function value : String; virtual; abstract;
+    function valueElement : TFHIRPrimitiveW; virtual; abstract;
   end;
 
   TFhirValueSetComposeIncludeConceptW = class (TFHIRXVersionElementWrapper)
   protected
     function getCode : String; virtual; abstract;
     function getDisplay : String; virtual; abstract;
+    function GetItemWeight : String; virtual; abstract;
     procedure setCode(Value: String); virtual; abstract;
     procedure setDisplay(Value: String); virtual; abstract;
+    procedure SetItemWeight(Value: String); virtual; abstract;
   public
     function link : TFhirValueSetComposeIncludeConceptW; overload;
     property code : String read getCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
+    function displayElement : TFHIRPrimitiveW; virtual; abstract;
+    property itemWeight : String read GetItemWeight write SetItemWeight;
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; virtual; abstract;
   end;
 
@@ -756,11 +974,14 @@ type
 
     property systemUri : String read GetSystem write SetSystem;
     property version : String read GetVersion write SetVersion;
+    function hasValueSets : boolean; virtual; abstract;
     function valueSets : TArray<String>; virtual; abstract;
     function hasConcepts : boolean; virtual; abstract;
     function concepts : TFslList<TFhirValueSetComposeIncludeConceptW>; virtual; abstract;
     function addConcept : TFhirValueSetComposeIncludeConceptW; virtual; abstract;
     function hasFilters : boolean; virtual; abstract;
+    function filterCount : integer; virtual; abstract;
+    function conceptCount : integer; virtual; abstract;
     function filters : TFslList<TFhirValueSetComposeIncludeFilterW>; virtual; abstract;
     function addFilter : TFhirValueSetComposeIncludeFilterW; virtual; abstract;
   end;
@@ -778,7 +999,10 @@ type
     function source : String; virtual; abstract;
 
     function checkCompose(place, role : String) : boolean; virtual; abstract;
+    function getComposeExtensions : TFslList<TFHIRExtensionW>; virtual; abstract;
+    function checkExpansion(place, role : String) : boolean; virtual; abstract;
     function imports : TArray<String>; virtual; abstract; // only in R2
+    function excludeInactives : boolean; virtual; abstract;
     function hasInlineCS : boolean; virtual; abstract;
     function inlineCS : TFHIRValueSetCodeSystemW; virtual; abstract;
     function includes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
@@ -786,9 +1010,11 @@ type
     function excludes : TFslList<TFhirValueSetComposeIncludeW>; virtual; abstract;
 
     procedure clearDefinition; virtual; abstract;
+    procedure clearDefinitionExtensions(exemptUrls : TStringArray); virtual; abstract;
     function hasExpansion : boolean; virtual; abstract;
     function expansion : TFhirValueSetExpansionW; virtual; abstract;
     function forceExpansion : TFhirValueSetExpansionW; virtual; abstract;
+    function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; virtual; abstract;
   end;
 
   TElementDefinitionBinding = (edbNone, edbRequired, edbExtensible, edbPreferred, edpExample);
@@ -838,9 +1064,29 @@ type
   end;
 
   TFhirPatientW = class (TFHIRXVersionResourceWrapper)
+  protected
+    function GetActive: boolean; virtual; abstract;
+    procedure SetActive(const Value: boolean); virtual; abstract;
+    function GetFamily: String; virtual; abstract;
+    procedure SetFamily(const Value: String); virtual; abstract;
+    function GetDob: String; virtual; abstract;
+    procedure SetDob(const Value: String); virtual; abstract;
+    function GetIdentifier(systemUri: String): String; virtual; abstract;
+    procedure SetIdentifier(systemUri: String; const Value: String); virtual; abstract;
   public
     function Link : TFhirPatientW; overload;
+    property family : String read GetFamily write SetFamily;
+    procedure addGiven(name : String); virtual; abstract;
     function nameSummary : String; virtual; abstract;
+    property active : boolean read GetActive write SetActive;
+    function activeStr : String; virtual; abstract;
+    function gender : String; virtual; abstract;
+    function genderPlus : String; virtual; abstract;
+    property dob : String read GetDob write SetDob;
+    property identifier[systemUri : String] : String read GetIdentifier write SetIdentifier;
+
+    function identifierSummary : String; virtual; abstract;
+    function contactSummary : String; virtual; abstract;
   end;
 
   TFhirEncounterW = class (TFHIRXVersionResourceWrapper)
@@ -848,6 +1094,20 @@ type
     function Link : TFhirEncounterW; overload;
     function patientId : String; virtual; abstract;
     function summary : String; virtual; abstract;
+  end;
+
+  { TFHIRLookupOpRespSubPropertyW }
+
+  TFHIRLookupOpRespSubPropertyW = class (TFHIRXVersionOperationObjectWrapper)
+  public
+    function link : TFHIRLookupOpRespSubPropertyW; overload;
+    function getDescription: string; virtual; abstract;
+    procedure setDescription(Value: string); virtual; abstract;
+    function getValue: String; virtual; abstract;
+    procedure setValue(Value: String); virtual; abstract;
+
+    property description : string read GetDescription write SetDescription;
+    property value : String read GetValue write SetValue;
   end;
 
   TFHIRLookupOpRespPropertyW = class (TFHIRXVersionOperationObjectWrapper)
@@ -860,6 +1120,8 @@ type
 
     property description : string read GetDescription write SetDescription;
     property value : TFHIRObject read GetValue write SetValue;
+
+    function addSubProp(name : String) : TFHIRLookupOpRespSubPropertyW; virtual; abstract;
   end;
 
   TFHIRLookupOpRespDesignationW = class (TFHIRXVersionOperationObjectWrapper)
@@ -889,7 +1151,7 @@ type
   public
     function link : TFHIRLookupOpResponseW; overload;
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; virtual; abstract;
-    function addDesignation(systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
+    function addDesignation(lang, systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function getVersion: String; virtual; abstract;
     procedure setVersion(Value: String); virtual; abstract;
@@ -1184,12 +1446,14 @@ type
   protected
     function getDate: TFslDateTime; virtual; abstract;
     function getDescription: String; virtual; abstract;
-    function getName: String; virtual; abstract;
+    function getName: String; virtual; abstract;          
+    function getTitle: String; virtual; abstract;
     function getStatus: TPublicationStatus; virtual; abstract;
     function getURL: String; virtual; abstract;
     procedure setDate(Value: TFslDateTime); virtual; abstract;
     procedure setDescription(Value: String); virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    procedure setTitle(Value: String); virtual; abstract;
     procedure setStatus(Value: TPublicationStatus); virtual; abstract;
     procedure setUrl(Value: String); virtual; abstract;
     function getContext: String; virtual; abstract;
@@ -1202,7 +1466,8 @@ type
     function link : TFhirTerminologyCapabilitiesW; overload;
 
     property url : String read getURL write SetUrl;
-    property name : String read GetName write SetName;
+    property name : String read GetName write SetName;      
+    property title : String read GetTitle write SetTitle;
     property version : String read GetVersion write SetVersion;
     property status : TPublicationStatus read GetStatus write SetStatus;
     property description : String read GetDescription write SetDescription;
@@ -1258,16 +1523,65 @@ type
     function listProvisions : TFslList<TFhirConsentProvisionW>; virtual; abstract;
   end;
 
- TFHIRMetadataResourceManagerW<T : TFHIRMetadataResourceW> = class (TFslObject)
+  { TFHIRResourceProxyV }
+
+  TFHIRResourceProxyV = class abstract (TFslObject)
   private
-    FMap : TFslMap<T>;
-    FList : TFslList<T>;
+    FContent: String;
+    FFhirObjectVersion : TFHIRVersion;
+    FFhirType : String;
+    FId  : String;
+    FSupplements: String;
+    FUrl : String;
+    FVersion : String;
+    FValueSet : String;
+    FResourceW : TFHIRXVersionResourceWrapper;
+    function GetResourceV : TFHIRResourceV;
+    function GetResourceW : TFHIRXVersionResourceWrapper;
+  protected
+    FResourceV : TFHIRResourceV;
+    procedure loadResource; virtual; abstract;
+    function wrapResource : TFHIRXVersionResourceWrapper; virtual; abstract;
+    procedure SetResourceV(value : TFHIRResourceV);
+  public
+    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String); overload;
+    constructor Create(resource : TFHIRResourceV; url, version : String); overload;
+    destructor Destroy; override;
+    function link : TFHIRResourceProxyV; overload;
+
+    property fhirObjectVersion : TFHIRVersion read FFhirObjectVersion;
+    property fhirType : String read FFhirType;
+    property id  : String read FId write FId;
+    property url : String read FUrl;
+    property version : String read FVersion;
+    property supplements : String read FSupplements;
+    property content : String read FContent;
+    property valueSet : String read FValueSet;
+
+    property resourceV : TFHIRResourceV read GetResourceV;
+    property resourceW : TFHIRXVersionResourceWrapper read getResourceW;
+  end;
+
+  { TFHIRResourceProxyW }
+
+  TFHIRResourceProxyW = class (TFHIRResourceProxyV)
+  protected
+    procedure loadResource; override;
+    function wrapResource : TFHIRXVersionResourceWrapper; override;
+  public
+    constructor Create(resource : TFHIRXVersionResourceWrapper; url, version : String); overload;
+  end;
+
+  TFHIRMetadataResourceManagerW<T : TFHIRMetadataResourceW> = class (TFslObject)
+  private
+    FMap : TFslMap<TFHIRResourceProxyV>;
+    FList : TFslList<TFHIRResourceProxyV>;
     procedure updateList(url, version: String);
     {$IFDEF FPC}
-    function Compare(sender : TObject; const l, r : T) : integer;
+    function Compare(sender : TObject; const l, r : TFHIRResourceProxyV) : integer;
     {$ENDIF}
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1276,9 +1590,10 @@ type
     function clone : TFHIRMetadataResourceManagerW<T>; overload;
     procedure Assign(oSource : TFslObject); override;
 
-    procedure see(r: T);
+    procedure see(res: TFHIRResourceProxyV);
     procedure drop(id : String);
     function get(url: String): T; overload;
+    function getP(url: String): TFHIRResourceProxyV; overload;
     function get(url, version: String): T; overload;
     function has(url: String): boolean; overload;
     function has(url, version: String): boolean; overload;
@@ -1290,7 +1605,98 @@ type
     procedure listAllM(list: TFslMetadataResourceList);
   end;
 
+  TFHIRImmunizationW = class abstract (TFHIRXVersionResourceWrapper)
+  private
+    function  GetCvxCode: String;
+    procedure SetCvxCode(const Value: String);
+    function  GetIcd11Code: String;
+    procedure SetIcd11Code(const Value: String);
+    function  GetSctCode: String;
+    procedure SetSctCode(const Value: String);
+  protected
+    function GetLotNumber: String; virtual; abstract;
+    function GetPatient: String; virtual; abstract;
+    function GetPerformerDisplay: String; virtual; abstract;
+    function GetStatus: string; virtual; abstract;
+    procedure SetLotNumber(const Value: String); virtual; abstract;
+    procedure SetPatient(const Value: String); virtual; abstract;
+    procedure SetPerformerDisplay(const Value: String); virtual; abstract;
+    procedure SetStatus(const Value: string); virtual; abstract;
+    function GetManufacturerIdSystem: String; virtual; abstract;
+    function GetManufacturerIdValue: String; virtual; abstract;
+    procedure SetManufacturerIdSystem(const Value: String); virtual; abstract;
+    procedure SetManufacturerIdValue(const Value: String); virtual; abstract;
+    function GetDate: TFslDateTime; virtual; abstract;
+    procedure SetDate(const Value: TFslDateTime); virtual; abstract;
+  public
+    property status : string read GetStatus write SetStatus;
+    function code(systemUri : String) : String; virtual; abstract;
+    function hasCode(systemUri, code : String) : boolean; virtual; abstract;
+    procedure setCodeBySystem(systemUri : String; code : String); virtual; abstract;
+
+    property cvxCode : String read GetCvxCode write SetCvxCode;
+    property sctCode : String read GetCvxCode write SetSctCode;
+    property icd11Code : String read GetIcd11Code write SetIcd11Code;
+
+    property date : TFslDateTime read GetDate write SetDate;
+    property patient : String read GetPatient write SetPatient;
+    property manufacturerIdSystem : String read GetManufacturerIdSystem write SetManufacturerIdSystem;
+    property manufacturerIdValue : String read GetManufacturerIdValue write SetManufacturerIdValue;
+
+    property lotNumber : String read GetLotNumber write SetLotNumber;
+    property performerDisplay : String read GetPerformerDisplay write SetPerformerDisplay;
+
+
+  end;
+
+  TFHIRPrimitiveX = class (TFHIRPrimitiveW)
+   public
+     function GetAsString : String; override;
+     procedure SetAsString(value : String); override;
+     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
+   end;
+
 implementation
+
+{ TFHIRResourceProxyW }
+
+procedure TFHIRResourceProxyW.loadResource;
+begin
+  // nothing
+end;
+
+function TFHIRResourceProxyW.wrapResource: TFHIRXVersionResourceWrapper;
+begin
+  // nothing
+
+end;
+
+constructor TFHIRResourceProxyW.Create(resource: TFHIRXVersionResourceWrapper; url, version: String);
+begin
+  inherited create(resource.Resource.link, url, version);
+  FResourceW := resource.link;
+end;
+
+{ TFHIRLookupOpRespSubPropertyW }
+
+function TFHIRLookupOpRespSubPropertyW.link: TFHIRLookupOpRespSubPropertyW;
+begin
+  result := TFHIRLookupOpRespSubPropertyW(inherited Link);
+end;
+
+{ TFhirValueSetExpansionContainsPropertyW }
+
+function TFhirValueSetExpansionContainsPropertyW.link: TFhirValueSetExpansionContainsPropertyW;
+begin
+  result := TFhirValueSetExpansionContainsPropertyW(inherited link);
+end;
+
+{ TFHIRPrimitiveW }
+
+function TFHIRPrimitiveW.link: TFHIRPrimitiveW;
+begin
+  result := TFHIRPrimitiveW(inherited link);
+end;
 
 { TFHIRXVersionResourceWrapper }
 
@@ -1299,18 +1705,23 @@ begin
   FRes.checkNoImplicitRules(place, role);
 end;
 
-constructor TFHIRXVersionResourceWrapper.create(res: TFHIRResourceV);
+constructor TFHIRXVersionResourceWrapper.Create(res: TFHIRResourceV);
 begin
-  inherited create;
+  inherited Create;
   if (res = nil) then
-    raise EFHIRException.create('A value must be provided');
+    raise EFHIRException.Create('A value must be provided');
   FRes := res;
 end;
 
 destructor TFHIRXVersionResourceWrapper.Destroy;
 begin
-  FRes.Free;
+  FRes.free;
   inherited;
+end;
+
+function TFHIRXVersionResourceWrapper.link: TFHIRXVersionResourceWrapper;
+begin
+  result := TFHIRXVersionResourceWrapper(inherited Link);
 end;
 
 function TFHIRXVersionResourceWrapper.createPropertyValue(propName: string): TFHIRObject;
@@ -1336,6 +1747,88 @@ end;
 function TFHIRXVersionResourceWrapper.hasExtensions: boolean;
 begin
   result := FRes.hasExtensions;
+end;
+
+function TFHIRXVersionResourceWrapper.AsJson: String;
+begin
+  Result := FRes.asJson;
+end;
+
+function TFHIRXVersionResourceWrapper.hasExtension(url: String): boolean;
+begin
+  Result:= FRes.hasExtension(url);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionString(url: String): String;
+begin
+  Result:= FRes.getExtensionString(url);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionValue(url: String): TFHIRObject;
+begin
+  Result:= FRes.getExtensionValue(url);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionsV: TFslList<TFHIRObject>;
+begin
+  Result:= FRes.getExtensionsV();
+end;
+
+function TFHIRXVersionResourceWrapper.extensionCount(url: String): integer;
+begin
+  Result:= FRes.extensionCount(url);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionsV(url: String): TFslList<TFHIRObject>;
+begin
+  Result:= FRes.getExtensionsV(url);
+end;
+
+procedure TFHIRXVersionResourceWrapper.addExtensionV(url: String; value: TFHIRObject);
+begin
+  FRes.addExtensionV(url, value);
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionsW(url: String): TFslList<TFhirExtensionW>;
+var
+  list : TFslList<TFHIRObject>;
+  o : TFHIRObject;
+begin
+  result := TFslList<TFhirExtensionW>.Create;
+  try
+    list := getExtensionsV(url);
+    try
+      for o in list do
+        result.add(wrapExtension(o));
+    finally
+      list.free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXVersionResourceWrapper.getExtensionW(url: String): TFhirExtensionW;
+var
+  list : TFslList<TFhirExtensionW>;
+begin
+  list := getExtensionsW(url);
+  try
+    if list.count > 1 then
+      raise EFHIRException.Create('Multiple matches for extension "'+url+'"')
+    else if list.count = 1 then
+      result := list[0].link
+    else
+      result := nil;
+  finally
+    list.free;
+  end;
+end;
+
+procedure TFHIRXVersionResourceWrapper.addExtensionW(url: String; value: TFHIRXVersionElementWrapper);
+begin
+  AddExtensionV(url, value.Element);
 end;
 
 function TFHIRXVersionResourceWrapper.GetFhirObjectVersion: TFHIRVersion;
@@ -1369,10 +1862,10 @@ begin
 end;
 
 
-function TFHIRXVersionResourceWrapper.sizeInBytesV : cardinal;
+function TFHIRXVersionResourceWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRes.sizeInBytes(magic));
 end;
 
 { TFhirOperationOutcomeW }
@@ -1426,7 +1919,7 @@ end;
 
 destructor TFhirParametersParameterW.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1446,34 +1939,126 @@ end;
 procedure TFhirParametersParameterW.populateList;
 begin
   if FList = nil then
-    FList := TFslList<TFhirParametersParameterW>.create;
+    FList := TFslList<TFhirParametersParameterW>.Create;
   FList.Clear;
 end;
 
-function TFhirParametersParameterW.sizeInBytesV : cardinal;
+function TFhirParametersParameterW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFHIRXVersionElementWrapper }
 
-procedure TFHIRXVersionElementWrapper.addExtension(url: String; value: TFHIRObject);
+procedure TFHIRXVersionElementWrapper.addExtensionV(url: String; value: TFHIRObject);
 begin
-  FElement.addExtension(url, value);
+  FElement.addExtensionV(url, value);
+end;
+
+procedure TFHIRXVersionElementWrapper.addExtensionV(extension: TFHIRObject);
+begin
+  FElement.addExtensionV(extension);
+end;
+
+function TFHIRXVersionElementWrapper.getExtensionsW(url: String): TFslList<TFhirExtensionW>;
+var
+  list : TFslList<TFHIRObject>;
+  o : TFHIRObject;
+begin
+  result := TFslList<TFhirExtensionW>.Create;
+  try
+    list := getExtensionsV(url);
+    try
+      for o in list do
+        result.add(wrapExtension(o));
+    finally
+      list.free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXVersionElementWrapper.getAllExtensionsW: TFslList<TFhirExtensionW>;
+var
+  list : TFslList<TFHIRObject>;
+  o : TFHIRObject;
+begin
+  result := TFslList<TFhirExtensionW>.Create;
+  try
+    list := getExtensionsV;
+    try
+      for o in list do
+        result.add(wrapExtension(o));
+    finally
+      list.free;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFHIRXVersionElementWrapper.getExtensionW(url: String): TFhirExtensionW;
+var
+  list : TFslList<TFhirExtensionW>;
+begin
+  list := getExtensionsW(url);
+  try
+    if list.count > 1 then
+      raise EFHIRException.Create('Multiple matches for extension "'+url+'"')
+    else if list.count = 1 then
+      result := list[0].link
+    else
+      result := nil;
+  finally
+    list.free;
+  end;
+end;
+
+procedure TFHIRXVersionElementWrapper.addExtensionW(url: String; value: TFHIRXVersionElementWrapper);
+begin
+  addExtensionV(url, value.Element);
+end;
+
+procedure TFHIRXVersionElementWrapper.deleteExtensionV(extension: TFHIRObject);
+begin
+  FElement.deleteExtensionV(extension);
+end;
+
+procedure TFHIRXVersionElementWrapper.deleteExtensionW(extension: TFHIRExtensionW);
+begin
+  FElement.deleteExtensionV(extension.Element);
+end;
+
+procedure TFHIRXVersionElementWrapper.deleteExtensionByUrl(url: String);
+begin
+  FElement.deleteExtensionByUrl(url);
+end;
+
+procedure TFHIRXVersionElementWrapper.stripExtensions(exemptUrls: TStringArray);
+begin
+  FElement.stripExtensions(exemptUrls);
+end;
+
+procedure TFHIRXVersionElementWrapper.copyExtensions(src: TFHIRObject; exemptUrls: TStringArray);
+begin
+  FElement.copyExtensions(src, exemptUrls);
 end;
 
 constructor TFHIRXVersionElementWrapper.Create(elem : TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   if (elem = nil) and not NoElementOk then
-    raise EFHIRException.create('A value must be provided');
+    raise EFHIRException.Create('A value must be provided');
   FElement := elem;
 end;
 
 destructor TFHIRXVersionElementWrapper.Destroy;
 begin
-  FElement.Free;
+  FElement.free;
   inherited;
 end;
 
@@ -1482,9 +2067,14 @@ begin
   result := FElement.extensionCount(url);
 end;
 
-function TFHIRXVersionElementWrapper.extensions(url: String): TFslList<TFHIRObject>;
+function TFHIRXVersionElementWrapper.getExtensionsV(url: String): TFslList<TFHIRObject>;
 begin
-  result := FElement.extensions(url);
+  result := FElement.getExtensionsV(url);
+end;
+
+function TFHIRXVersionElementWrapper.getExtensionsV: TFslList<TFHIRObject>;
+begin
+  result := FElement.getExtensionsV();
 end;
 
 function TFHIRXVersionElementWrapper.createPropertyValue(propName: string): TFHIRObject;
@@ -1500,6 +2090,11 @@ end;
 function TFHIRXVersionElementWrapper.getExtensionString(url: String): String;
 begin
   result := FElement.getExtensionString(url);
+end;
+
+function TFHIRXVersionElementWrapper.getExtensionValue(url: String): TFHIRObject;
+begin
+  Result := FElement.getExtensionValue(url);
 end;
 
 function TFHIRXVersionElementWrapper.getId: String;
@@ -1525,6 +2120,11 @@ end;
 function TFHIRXVersionElementWrapper.hasExtensions: boolean;
 begin
   result := FElement.hasExtensions;
+end;
+
+function TFHIRXVersionElementWrapper.AsJson: String;
+begin
+  Result := FElement.asJson;
 end;
 
 function TFHIRXVersionElementWrapper.makeCodeValue(v: String): TFHIRObject;
@@ -1561,7 +2161,7 @@ end;
 
 destructor TFHIRParametersW.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1580,14 +2180,14 @@ end;
 procedure TFHIRParametersW.populateList;
 begin
   if FList = nil then
-    FList := TFslList<TFhirParametersParameterW>.create;
+    FList := TFslList<TFhirParametersParameterW>.Create;
   FList.Clear;
 end;
 
-function TFHIRParametersW.sizeInBytesV : cardinal;
+function TFHIRParametersW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 function TFHIRSearchParamDefinitionW.link: TFHIRSearchParamDefinitionW;
@@ -1645,7 +2245,7 @@ end;
 
 destructor TFhirCodeSystemW.Destroy;
 begin
-  FConceptList.Free;
+  FConceptList.free;
   inherited;
 end;
 
@@ -1654,17 +2254,27 @@ begin
   result := TFhirCodeSystemW(inherited link);
 end;
 
-function TFhirCodeSystemW.sizeInBytesV : cardinal;
+function TFhirCodeSystemW.propertyCode(uri : String): String;
+var
+  p : TFhirCodeSystemPropertyW;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConceptList.sizeInBytes);
+  result := '';
+  for p in properties.forEnum do
+    if p.uri = uri then
+      exit(p.code);
+end;
+
+function TFhirCodeSystemW.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConceptList.sizeInBytes(magic));
 end;
 
 { TFhirCodeSystemConceptW }
 
 destructor TFhirCodeSystemConceptW.Destroy;
 begin
-  FConceptList.Free;
+  FConceptList.free;
   inherited;
 end;
 
@@ -1673,10 +2283,10 @@ begin
   result := TFhirCodeSystemConceptW(inherited link);
 end;
 
-function TFhirCodeSystemConceptW.sizeInBytesV : cardinal;
+function TFhirCodeSystemConceptW.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConceptList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConceptList.sizeInBytes(magic));
 end;
 
 { TFHIRValueSetCodeSystemW }
@@ -1699,22 +2309,30 @@ end;
 
 constructor TFHIRXVersionOperationWrapper.Create(res: TFslObject);
 begin
-  inherited create;
+  inherited Create;
   if (res = nil) then
-    raise EFHIRException.create('A value must be provided');
+    raise EFHIRException.Create('A value must be provided');
   FOp := res;
 end;
 
 destructor TFHIRXVersionOperationWrapper.Destroy;
 begin
-  FOp.Free;
+  FList.free;
+  FOp.free;
   inherited;
 end;
 
-function TFHIRXVersionOperationWrapper.sizeInBytesV : cardinal;
+function TFHIRXVersionOperationWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOp.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOp.sizeInBytes(magic));
+end;
+
+function TFHIRXVersionOperationWrapper.List: TFslList<TFslObject>;
+begin
+  if FList = nil then
+    FList := TFslList<TFslObject>.Create;
+  result := FList;
 end;
 
 { TFHIRLookupOpResponseW }
@@ -1967,23 +2585,30 @@ end;
 
 constructor TFHIRXVersionOperationObjectWrapper.Create(res: TFslObject);
 begin
-  inherited create;
+  inherited Create;
   if (res = nil) then
-    raise EFHIRException.create('An object must be provided');
+    raise EFHIRException.Create('An object must be provided');
   FObj := res;
 end;
 
 destructor TFHIRXVersionOperationObjectWrapper.Destroy;
 begin
-  FObj.Free;
+  FList.free;
+  FObj.free;
   inherited;
 end;
 
-
-function TFHIRXVersionOperationObjectWrapper.sizeInBytesV : cardinal;
+function TFHIRXVersionOperationObjectWrapper.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FObj.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FObj.sizeInBytes(magic));
+end;
+
+function TFHIRXVersionOperationObjectWrapper.List: TFslList<TFslObject>;
+begin
+  if FList = nil then
+    FList := TFslList<TFslObject>.Create;
+  result := FList;
 end;
 
 { TFHIRGroupW }
@@ -2005,9 +2630,10 @@ end;
 
 function TFHIRMetadataResourceW.GetVUrl: String;
 begin
-  result := url;
-  if version <> '' then
-    result := result + '|'+version;
+  if version = '' then
+    result := url
+  else
+    result := url + '|'+version;
 end;
 
 function TFHIRMetadataResourceW.link: TFHIRMetadataResourceW;
@@ -2111,15 +2737,15 @@ end;
 constructor TFHIRMetadataResourceManagerW<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create('Metadata Resource Manager ('+T.className+')');
-  FMap.defaultValue := T(nil);
-  FList := TFslList<T>.create;
+  FMap := TFslMap<TFHIRResourceProxyV>.Create('Metadata Resource Manager ('+T.className+')');
+//  FMap.defaultValue := nil;
+  FList := TFslList<TFHIRResourceProxyV>.Create;
 end;
 
 destructor TFHIRMetadataResourceManagerW<T>.Destroy;
 begin
-  FMap.Free;
-  FList.Free;
+  FMap.free;
+  FList.free;
   inherited;
 end;
 
@@ -2145,45 +2771,47 @@ begin
   result := TFHIRMetadataResourceManagerW<T>(inherited link);
 end;
 
-procedure TFHIRMetadataResourceManagerW<T>.see(r : T);
+procedure TFHIRMetadataResourceManagerW<T>.see(res : TFHIRResourceProxyV);
 begin
-  if (r.id = '') then
-    r.id := newGUIDId;
-  if (FMap.containsKey(r.id)) then
-    drop(r.id);
+  if (res = nil) then
+    exit;
+  if (res.id = '') then
+    res.id := newGUIDId;
+  if (FMap.containsKey(res.id)) then
+    drop(res.id);
 
-  FList.add(r.link);
-  FMap.addOrSetValue(r.id, r.link); // we do this so we can drop by id
+  FList.add(res.link);
+  FMap.addOrSetValue(res.id, res.link); // we do this so we can drop by id
 
-  if (r.url <> '') then
+  if (res.url <> '') then
   begin
     // first, this is the correct resource for this version (if it has a version)
-    if (r.version <> '') then
+    if (res.version <> '') then
     begin
-      FMap.addOrSetValue(r.url+'|'+r.version, r.link);
+      FMap.addOrSetValue(res.url+'|'+res.version, res.link);
     end;
-    updateList(r.url, r.version);
+    updateList(res.url, res.version);
   end;
 end;
 
-function TFHIRMetadataResourceManagerW<T>.sizeInBytesV: cardinal;
+function TFHIRMetadataResourceManagerW<T>.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.updateList(url, version : String);
 var
-  rl : TFslList<T>;
-  tt, latest : T;
+  rl : TFslList<TFHIRResourceProxyV>;
+  tt, latest : TFHIRResourceProxyV;
   lv : String;
 begin
-  rl := TFslList<T>.create;
+  rl := TFslList<TFHIRResourceProxyV>.Create;
   try
     for tt in FList do
     begin
-      if (url = tt.url) and not rl.contains(tt) then
+      if (tt <> nil) and (url = tt.url) and not rl.contains(tt) then
         rl.add(tt.link);
     end;
 
@@ -2193,7 +2821,7 @@ begin
       {$IFDEF FPC}
       rl.sortE(self.compare);
       {$ELSE}
-      rl.sortF(function (const L, R: T): Integer
+      rl.sortF(function (const L, R: TFHIRResourceProxyV): Integer
         var v1, v2, mm1, mm2 : string;
         begin
           v1 := l.version;
@@ -2206,8 +2834,8 @@ begin
             result := 1
           else
           begin
-            mm1 := TFHIRVersions.getMajMin(v1);
-            mm2 := TFHIRVersions.getMajMin(v2);
+            mm1 := TFHIRVersions.getMajMin(v1, false);
+            mm2 := TFHIRVersions.getMajMin(v2, false);
             if (mm1 = '') or (mm2 = '') then
               result := v1.compareTo(v2)
             else
@@ -2221,15 +2849,15 @@ begin
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
-        latest := T(nil);
+        latest := nil;
         for tt in rl do
         begin
-          if (TFHIRVersions.matches(tt.version, version)) then
+          if (TFHIRVersions.matches(tt.version, version, semverMinor)) then
             latest := tt;
         end;
-        if (latest <> T(nil)) then // might be null if it's not using semver
+        if (latest <> nil) then // might be null if it's not using semver
         begin
-          lv := TFHIRVersions.getMajMin(latest.version);
+          lv := TSemanticVersion.getMajMin(latest.version, false);
           if (lv <> version) then
             FMap.addOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
@@ -2241,6 +2869,19 @@ begin
 end;
 
 function TFHIRMetadataResourceManagerW<T>.get(url : String) : T;
+var
+  p : TFHIRResourceProxyV;
+begin
+  result := T(nil);
+  if (FMap.containsKey(url)) then
+  begin
+    p := FMap[url];
+    if p <> nil then
+      result := p.resourceW as T
+  end
+end;
+
+function TFHIRMetadataResourceManagerW<T>.getP(url : String) : TFHIRResourceProxyV;
 begin
   result := FMap[url];
 end;
@@ -2248,16 +2889,22 @@ end;
 function TFHIRMetadataResourceManagerW<T>.get(url, version : string) : T;
 var
   mm : String;
+  p : TFHIRResourceProxyV;
 begin
+  result := T(nil);
   if (FMap.containsKey(url+'|'+version)) then
-    result := FMap[url+'|'+version]
+  begin
+    p := FMap[url+'|'+version];
+    result := p.resourceW as T
+  end
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
-    if (mm <> '') then
-      result := FMap[url+'|'+mm]
-    else
-      result := T(nil);
+    mm := TFHIRVersions.getMajMin(version, false);
+    if (mm <> '') and FMap.containsKey(url+'|'+mm) then
+    begin
+      p := FMap[url+'|'+mm];
+      result := p.resourceW as T
+    end;
   end;
 end;
 
@@ -2274,7 +2921,7 @@ begin
     result := true
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
+    mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
       result := FMap.containsKey(url+'|'+mm)
     else
@@ -2283,26 +2930,42 @@ begin
 end;
 
 function TFHIRMetadataResourceManagerW<T>.has(url : String; var res : T) : boolean;
+var
+  r : TFHIRResourceProxyV;
 begin
-  result := FMap.TryGetValue(url, res);
+  r := nil;
+  result := FMap.TryGetValue(url, r);
+  if result and (r <> nil) then
+    res := r.resourceW as T
+  else
+    res := nil;
 end;
 
 function TFHIRMetadataResourceManagerW<T>.has(url, version : string; var res : T) : boolean;
 var
   mm : String;
+  r : TFHIRResourceProxyV;
 begin
   res := T(nil);
   if (FMap.containsKey(url+'|'+version)) then
-    res := FMap[url+'|'+version]
+  begin
+    r := FMap[url+'|'+version];
+    if (r <> nil) then
+      res := r.resourceW as T
+  end
   else
   begin
-    mm := TFHIRVersions.getMajMin(version);
+    mm := TFHIRVersions.getMajMin(version, false);
     if (mm <> '') then
-      result := FMap.TryGetValue(url+'|'+mm, res)
+    begin
+      result := FMap.TryGetValue(url+'|'+mm, r)  ;
+      if result and (r <> nil) then
+        res := r.resourceW as T;
+    end
     else
      result := false;
   end;
-  result := res <> T(nil);
+  result := res <> nil;
 end;
 
 function TFHIRMetadataResourceManagerW<T>.count : integer;
@@ -2312,11 +2975,11 @@ end;
 
 procedure TFHIRMetadataResourceManagerW<T>.drop(id : String);
 var
-  res : T;
+  res : TFHIRResourceProxyV;
   mm : String;
 begin
   res := FMap[id];
-  if (res <> T(nil)) then
+  if (res <> nil) then
   begin
     FList.remove(res);
     FMap.remove(id);
@@ -2324,7 +2987,7 @@ begin
     if (res.version <> '') then
     begin
       FMap.remove(res.url+'|'+res.version);
-      mm := TFHIRVersions.getMajMin(res.version);
+      mm := TFHIRVersions.getMajMin(res.version, false);
       if (mm <> '') then
         FMap.remove(res.url+'|'+mm);
     end;
@@ -2333,16 +2996,19 @@ begin
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.listAll(list : TFslList<T>);
+var
+  tt : TFHIRResourceProxyV;
 begin
-  list.addAll(Flist);
+  for tt in FList do
+    list.add((tt.resourceW as T).link);
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.listAllM(list : TFslMetadataResourceList);
 var
-  tt : T;
+  tt : TFHIRResourceProxyV;
 begin
   for tt in FList do
-    list.add(tt.link);
+    list.add((tt.resourceW as T).link);
 end;
 
 procedure TFHIRMetadataResourceManagerW<T>.clear();
@@ -2352,7 +3018,7 @@ begin
 end;
 
 {$IFDEF FPC}
-function TFHIRMetadataResourceManagerW<T>.Compare(sender : TObject; const l, r : T) : integer;
+function TFHIRMetadataResourceManagerW<T>.Compare(sender : TObject; const l, r : TFHIRResourceProxyV) : integer;
 var
   v1, v2, mm1, mm2 : string;
 begin
@@ -2366,8 +3032,8 @@ begin
     result := 1
   else
   begin
-    mm1 := TFHIRVersions.getMajMin(v1);
-    mm2 := TFHIRVersions.getMajMin(v2);
+    mm1 := TFHIRVersions.getMajMin(v1, false);
+    mm2 := TFHIRVersions.getMajMin(v2, false);
     if (mm1 = '') or (mm2 = '') then
       result := v1.compareTo(v2)
     else
@@ -2404,7 +3070,165 @@ begin
   result := TFslMetadataResourceList(inherited link);
 end;
 
-end.
+{ TFHIRImmunizationW }
 
+function TFHIRImmunizationW.GetCvxCode: String;
+begin
+  result := code(URI_CVX);
+end;
+
+function TFHIRImmunizationW.GetIcd11Code: String;
+begin
+  result := code('http://id.who.int/icd/release/11/mms');
+end;
+
+function TFHIRImmunizationW.GetSctCode: String;
+begin
+  result := code(URI_SNOMED);
+end;
+
+procedure TFHIRImmunizationW.SetCvxCode(const Value: String);
+begin
+  setCodeBySystem(URI_CVX, Value);
+end;
+
+procedure TFHIRImmunizationW.SetIcd11Code(const Value: String);
+begin
+  setCodeBySystem('http://id.who.int/icd/release/11/mms', Value);
+end;
+
+procedure TFHIRImmunizationW.SetSctCode(const Value: String);
+begin
+  setCodeBySystem(URI_SNOMED, Value);
+end;
+
+
+{ TFhirIdentifierW }
+
+destructor TFhirIdentifierW.Destroy;
+begin
+  FType.free;
+  inherited;
+end;
+
+function TFhirIdentifierW.GetType: TFhirCodeableConceptW;
+begin
+  if FType = nil then
+    FType := GetTypeV;
+  result := FType;
+end;
+
+function TFhirIdentifierW.link: TFhirIdentifierW;
+begin
+  result := TFhirIdentifierW(inherited Link);
+end;
+
+procedure TFhirIdentifierW.SetType(const Value: TFhirCodeableConceptW);
+begin
+  FType.free;
+  FType := Value;
+  SetTypeV(value);
+end;
+
+{ TFHIRResourceProxyV }
+
+constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String);
+begin
+  inherited Create;
+  FFhirObjectVersion := fhirObjectVersion;
+  FFhirType := fhirType;
+  FId := id;
+  FUrl := url;
+  FVersion := version;
+  FSupplements := supplements;
+  FContent := content;
+  FValueSet := valueSet;
+end;
+
+constructor TFHIRResourceProxyV.Create(resource : TFHIRResourceV; url, version : String);
+begin
+  inherited Create;
+  FFhirObjectVersion := resource.fhirObjectVersion;
+  FFhirType := resource.fhirType;
+  FId := resource.id;
+  FResourceV := resource;
+  FUrl := url;
+  FVersion := version;
+end;
+
+destructor TFHIRResourceProxyV.Destroy;
+begin
+  FResourceV.free;
+  FResourceW.free;
+  inherited;
+end;
+
+function TFHIRResourceProxyV.link : TFHIRResourceProxyV;
+begin
+  result := TFHIRResourceProxyV(inherited link);
+end;
+
+function TFHIRResourceProxyV.GetResourceV : TFHIRResourceV;
+begin
+  if FResourceV = nil then
+    loadResource;
+  result := FResourceV;
+end;
+
+function TFHIRResourceProxyV.GetResourceW : TFHIRXVersionResourceWrapper;
+begin
+  if self = nil then
+    exit(nil);
+
+  if FResourceW = nil then
+    FResourceW := wrapResource;
+  result := FResourceW;
+end;
+
+procedure TFHIRResourceProxyV.SetResourceV(value: TFHIRResourceV);
+begin
+  FResourceV := value;
+end;
+
+{ TFHIRPrimitiveX }
+
+function TFHIRPrimitiveX.GetAsString: String;
+begin
+  result := FElement.primitiveValue;
+end;
+
+procedure TFHIRPrimitiveX.SetAsString(value: String);
+begin
+  raise EFSLException.Create('SetAsString is not supported in a version-less context');
+end;
+
+function TFHIRPrimitiveX.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  raise EFSLException.Create('Extensions are not supported in a version-less context');
+end;
+
+{ EFHIROperationException }
+
+constructor EFHIROperationException.create(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, message : String);
+begin
+  inherited create(message);
+  FLevel := level;
+  FCause := cause;
+  FCode := code;
+  FPath := path;
+end;
+
+constructor EFHIROperationException.createMsg(level : TIssueSeverity; cause : TFHIRIssueType; code : TOpIssueCode; path, messageId : String; params : TStringArray);
+begin
+  inherited create(messageId);
+  FLevel := level;
+  FCause := cause;
+  FCode := code;
+  FPath := path;
+  FMsgId := messageId;
+  FParams := params;
+end;
+
+end.
 
 

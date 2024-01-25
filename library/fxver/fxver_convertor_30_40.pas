@@ -1,4 +1,4 @@
-﻿unit fxver_convertor_30_40;
+unit fxver_convertor_30_40;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -7356,17 +7356,17 @@ begin
   end;
   if (tgt = nil) then
   begin
-    tgt := TFhirElementDefinitionType.create();
+    tgt := TFhirElementDefinitionType.Create();
     list.add(tgt);
     copyElement3(src, tgt);
     tgt.code := src.code;
   end;
 
   if (src.profile <> '') then
-    tgt.profileList.add(fhir4_types.TFHIRCanonical.create(src.profile));
+    tgt.profileList.add(fhir4_types.TFHIRCanonical.Create(src.profile));
 
   if (src.targetProfile <> '') then
-    tgt.targetProfileList.add(fhir4_types.TFHIRCanonical.create(src.targetProfile));
+    tgt.targetProfileList.add(fhir4_types.TFHIRCanonical.Create(src.targetProfile));
 
   a := tgt.aggregation;
   for t := low(fhir3_types.TFhirResourceAggregationModeEnum) to high(fhir3_types.TFhirResourceAggregationModeEnum) do
@@ -7397,7 +7397,7 @@ begin
     begin
       if (tgt.targetProfile <> '') then
       begin
-        tgt := fhir3_types.TFhirElementDefinitionType.create();
+        tgt := fhir3_types.TFhirElementDefinitionType.Create();
         list.add(tgt);
         copyElement4(src, tgt);
         tgt.code := src.code;
@@ -7413,7 +7413,7 @@ begin
     begin
       if (tgt.profile <> '') then
       begin
-        tgt := fhir3_types.TFhirElementDefinitionType.create();
+        tgt := fhir3_types.TFhirElementDefinitionType.Create();
         list.add(tgt);
         copyElement4(src, tgt);
         tgt.code := src.code;
@@ -7560,7 +7560,7 @@ begin
         tgt.ValueSet := vs.primitiveValue;
       tgt.ValueSet := refToVS(tgt.valueSet);
     finally
-      vs.Free;
+      vs.free;
     end;
   end;
 
@@ -7589,9 +7589,9 @@ begin
   begin
     s := vsToRef(src.valueSet);
     if s <> '' then
-      tgt.ValueSet := fhir3_types.TFHIRUri.create(s)
+      tgt.ValueSet := fhir3_types.TFHIRUri.Create(s)
     else
-      tgt.ValueSet := fhir3_types.TFHIRReference.create(src.ValueSet);
+      tgt.ValueSet := fhir3_types.TFHIRReference.Create(src.ValueSet);
   end;
 
   exit(tgt.link);
@@ -8318,7 +8318,7 @@ begin
         tgt.ValueSet := vs.primitiveValue;
       tgt.ValueSet := refToVS(tgt.valueSet);
     finally
-      vs.Free;
+      vs.free;
     end;
   end;
 
@@ -8358,9 +8358,9 @@ begin
   begin
     s := vsToRef(src.valueSet);
     if s <> '' then
-      tgt.ValueSet := fhir3_types.TFHIRUri.create(s)
+      tgt.ValueSet := fhir3_types.TFHIRUri.Create(s)
     else
-      tgt.ValueSet := fhir3_types.TFHIRReference.create(src.ValueSet);
+      tgt.ValueSet := fhir3_types.TFHIRReference.Create(src.ValueSet);
   end;
 
   for t in src.codeList do
@@ -8520,7 +8520,7 @@ begin
     exit(convertElementDefinition3(src as fhir3_types.TFhirElementDefinition));
   if (src is fhir3_types.TFhirDataRequirement) then
     exit(convertDataRequirement3(src as fhir3_types.TFhirDataRequirement));
-  raise EFHIRException.create('Unknown type ' + src.fhirType());
+  raise EFHIRException.Create('Unknown type ' + src.fhirType());
 end;
 
 class function TVersionConvertor_30_40.convertType4(src : fhir4_types.TFhirType) : fhir3_types.TFhirType;
@@ -8628,7 +8628,7 @@ begin
     exit(convertElementDefinition4(src as fhir4_types.TFhirElementDefinition));
   if (src is fhir4_types.TFhirDataRequirement) then
     exit(convertDataRequirement4(src as fhir4_types.TFhirDataRequirement));
-  raise EFHIRException.create('Unknown type_ ' + src.fhirType()+' for '+src.className);
+  raise EFHIRException.Create('Unknown type_ ' + src.fhirType()+' for '+src.className);
 end;
 
 class function TVersionConvertor_30_40.convertParameters3(src : fhir3_resources.TFhirParameters) : fhir4_resources.TFhirParameters;
@@ -9959,7 +9959,7 @@ begin
   begin
     if tgt.what = nil then
     begin
-      tgt.what := fhir4_types.TFhirReference.create;
+      tgt.what := fhir4_types.TFhirReference.Create;
       tgt.what.identifier := convertIdentifier3(src.identifier);
     end;
   end;
@@ -10053,7 +10053,7 @@ begin
     tgt.type_ := src.type_;
 
   if (src.value <> nil) then
-    tgt.Value := fhir4_types.TFHirBase64Binary.create(src.Value);
+    tgt.Value := fhir4_types.TFHirBase64Binary.Create(src.Value);
 
   exit(tgt.link);
   finally
@@ -12561,7 +12561,7 @@ begin
   end;
   for t2 in src.instantiatesCanonicalList do
   begin
-    tgt.definitionList.add(fhir3_types.TFhirReference.create(t2.Value));
+    tgt.definitionList.add(fhir3_types.TFhirReference.Create(t2.Value));
   end;
   for t3 in src.basedOnList do
   begin
@@ -13256,8 +13256,8 @@ begin
     t4 := convertType3(src.Source);
     if (t4 is fhir4_types.TFhirReference) then
     begin
-      tgt.Source := fhir4_types.TFhirCanonical.create((t4 as fhir4_types.TFhirReference).Reference);
-      t4.Free;
+      tgt.Source := fhir4_types.TFhirCanonical.Create((t4 as fhir4_types.TFhirReference).Reference);
+      t4.free;
     end
     else
       tgt.Source := t4;
@@ -13268,8 +13268,8 @@ begin
     t5 := convertType3(src.Target);
     if (t5 is fhir4_types.TFhirReference) then
     begin
-      tgt.Source := fhir4_types.TFhirCanonical.create((t5 as fhir4_types.TFhirReference).Reference);
-      t5.Free;
+      tgt.Source := fhir4_types.TFhirCanonical.Create((t5 as fhir4_types.TFhirReference).Reference);
+      t5.free;
     end
     else
       tgt.Source := t5;
@@ -16495,7 +16495,7 @@ begin
   end;
   for t2 in src.instantiatesCanonicalList do
   begin
-    tgt.definitionList.add(fhir3_types.TFhirReference.create(t2.Value));
+    tgt.definitionList.add(fhir3_types.TFhirReference.Create(t2.Value));
   end;
   tgt.status := convertFamilyHistoryStatus4(src.status);
 
@@ -17827,7 +17827,7 @@ begin
   for t4 in src.reasonCodeList do
   begin
     if tgt.Explanation = nil then
-      tgt.Explanation := TFhirImmunizationExplanation.create;
+      tgt.Explanation := TFhirImmunizationExplanation.Create;
     tgt.Explanation.reasonList.add(convertCodeableConcept4(t4));
   end;
   exit(tgt.link);
@@ -17938,7 +17938,7 @@ begin
   for t5 in src.packageList do
   begin
     if tgt.definition = nil then
-      tgt.definition := fhir4_resources.TFhirImplementationGuideDefinition.create;
+      tgt.definition := fhir4_resources.TFhirImplementationGuideDefinition.Create;
 
     tgt.Definition.groupingList.add(convertImplementationGuidePackageComponent3(tgt.Definition, t5));
   end;
@@ -18140,14 +18140,14 @@ begin
     t := convertType3(src.ExampleFor);
     if t is fhir4_types.TFhirReference then
     begin
-      tgt.Example := fhir4_types.TFhirCanonical.create((t as fhir4_types.TFhirReference).Reference);
-      t.Free;
+      tgt.Example := fhir4_types.TFhirCanonical.Create((t as fhir4_types.TFhirReference).Reference);
+      t.free;
     end
     else
       tgt.Example := t;
   end
   else if (src.example) then
-    tgt.Example := fhir4_types.TFHIRBoolean.create(src.Example);
+    tgt.Example := fhir4_types.TFHIRBoolean.Create(src.Example);
 
   if (src.name <> '') then
     tgt.name := src.name;
@@ -18159,7 +18159,7 @@ begin
     tgt.reference := convertReference3(src.source as fhir3_types.TFHIRReference)
   else
     if (src.source is fhir3_types.TFHIRUri) then
-      tgt.Reference := fhir4_types.TFhirReference.create((src.Source as fhir3_types.TFHIRUri).value);
+      tgt.Reference := fhir4_types.TFhirReference.Create((src.Source as fhir3_types.TFHIRUri).value);
 
   exit(tgt.link);
   finally
@@ -20046,7 +20046,7 @@ var
   i : integer;
 begin
   i := uri.lastIndexOf('/');
-  exit(fhir3_types.TFHIRCoding.create(uri.substring(0, i), uri.substring(i + 1)));
+  exit(fhir3_types.TFHIRCoding.Create(uri.substring(0, i), uri.substring(i + 1)));
 end;
 
 class function TVersionConvertor_30_40.convertMessageDefinitionFocusComponent3(src : fhir3_resources.TFhirMessageDefinitionFocus) : fhir4_resources.TFhirMessageDefinitionFocus;
@@ -21144,7 +21144,7 @@ begin
 
   for t1 in src.targetProfileList do
   begin
-    tgt.Profile := fhir3_types.TFhirReference.create(t1.value);
+    tgt.Profile := fhir3_types.TFhirReference.Create(t1.value);
   end;
   if (src.binding <> nil) then
     tgt.binding := convertOperationDefinitionParameterBindingComponent4(src.binding);
@@ -21181,7 +21181,7 @@ begin
         tgt.ValueSet := vs.primitiveValue;
       tgt.ValueSet := refToVS(tgt.valueSet);
     finally
-      vs.Free;
+      vs.free;
     end;
   end;
 
@@ -21207,9 +21207,9 @@ begin
   begin
     s := vsToRef(src.valueSet);
     if s <> '' then
-      tgt.ValueSet := fhir3_types.TFHIRUri.create(s)
+      tgt.ValueSet := fhir3_types.TFHIRUri.Create(s)
     else
-      tgt.ValueSet := fhir3_types.TFHIRReference.create(src.ValueSet);
+      tgt.ValueSet := fhir3_types.TFHIRReference.Create(src.ValueSet);
   end;
 
   exit(tgt.link);
@@ -24801,7 +24801,7 @@ begin
     begin
       if (ed.Base = nil) then
       begin
-        ed.base := fhir4_types.TFhirElementDefinitionBase.create;
+        ed.base := fhir4_types.TFhirElementDefinitionBase.Create;
         ed.Base.Path := ed.Path;
         ed.Base.Min := ed.Min;
         ed.Base.max := ed.max;
@@ -27719,7 +27719,7 @@ begin
     exit(convertSupplyDelivery3(src as fhir3_resources.TFhirSupplyDelivery));
   if (src is fhir3_resources.TFhirValueSet) then
     exit(convertValueSet3(src as fhir3_resources.TFhirValueSet));
-  raise EFHIRException.create('Unknown resource converting 3 -> 4' + src.fhirType);
+  raise EFHIRException.Create('Unknown resource converting 3 -> 4' + src.fhirType);
 end;
 
 class function TVersionConvertor_30_40.convertResource4(src : fhir4_resources.TFhirResource) : fhir3_resources.TFhirResource;
@@ -27872,7 +27872,7 @@ begin
     exit(convertSupplyDelivery4(src as fhir4_resources.TFhirSupplyDelivery));
   if (src is fhir4_resources.TFhirValueSet) then
     exit(convertValueSet4(src as fhir4_resources.TFhirValueSet));
-  raise EFHIRException.create('Unknown resource converting 4 -> 3' + src.fhirType);
+  raise EFHIRException.Create('Unknown resource converting 4 -> 3' + src.fhirType);
 end;
 
 end.

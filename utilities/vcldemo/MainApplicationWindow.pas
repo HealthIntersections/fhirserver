@@ -185,19 +185,19 @@ procedure TMainWindowForm.FormCreate(Sender: TObject);
 begin
   if not LoadOpenSSLLibrary then
     raise EIdOSSLCouldNotLoadSSLLibrary.Create(RSOSSLCouldNotLoadSSLLibrary+' ('+WhichFailedToLoad+')');
-  FLogService := TFileLoggingService.create(path([AppExePath, 'fhir-vcl-demo.log']));
+  FLogService := TFileLoggingService.Create(FilePath([AppExePath, 'fhir-vcl-demo.log']));
   FProgressForm := TProgressWindow.Create(self);
-  FIni := TIniFile.Create(Path([SystemTemp, 'fhir-vcl-demo.ini']));
-  FAllergies := TFslList<TFHIRAllergyIntolerance>.create;
-  FAllergiesComparer := TAllergiesComparer.create;
+  FIni := TIniFile.Create(FilePath([SystemTemp, 'fhir-vcl-demo.ini']));
+  FAllergies := TFslList<TFHIRAllergyIntolerance>.Create;
+  FAllergiesComparer := TAllergiesComparer.Create;
   FAllergiesComparer.FWindow := self;
   FAllergiesComparer.FColumn := 0;
-  FMedicationsComparer := TMedicationsComparer.create;
+  FMedicationsComparer := TMedicationsComparer.Create;
   FMedicationsComparer.FWindow := self;
   FMedicationsComparer.FColumn := 0;
-  FMedications := TFslList<TFHIRResource>.create;
+  FMedications := TFslList<TFHIRResource>.Create;
 
-  FValues := TFslList<TValueNode>.create;
+  FValues := TFslList<TValueNode>.Create;
 end;
 
 procedure TMainWindowForm.FormActivate(Sender: TObject);
@@ -231,7 +231,7 @@ begin
         FProgressForm.Close;
       end;
     finally
-      ServerLoginForm.Free;
+      ServerLoginForm.free;
     end;
   end;
 end;
@@ -268,15 +268,15 @@ procedure TMainWindowForm.FormDestroy(Sender: TObject);
 begin
   if FLogService <> nil then
     FLogService.recordLogout;
-  FIni.Free;
-  FMedications.Free;
-  FAllergies.Free;
-  FAllergiesComparer.Free;
-  FMedicationsComparer.Free;
-  FValues.Free;
+  FIni.free;
+  FMedications.free;
+  FAllergies.free;
+  FAllergiesComparer.free;
+  FMedicationsComparer.free;
+  FValues.free;
   FreeAndNil(FProgressForm);
-  FClient.Free;
-  FLogService.Free;
+  FClient.free;
+  FLogService.free;
 end;
 
 procedure TMainWindowForm.FormResize(Sender: TObject);
@@ -421,7 +421,7 @@ begin
     Doc.Write(b.AsString);
     Doc.Close;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -433,7 +433,7 @@ var
   msg : String;
 begin
   FProgressForm.Message := 'Loading Patient Allergies';
-  params := TStringList.create;
+  params := TStringList.Create;
   try
     params.AddPair('patient', FPatientId);
     try
@@ -465,10 +465,10 @@ begin
       lblAllergiesMessage.hint := lblAllergiesMessage.Caption;
       FAllergies.Sort(FAllergiesComparer.link);
     finally
-      bnd.Free;
+      bnd.free;
     end;
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -480,7 +480,7 @@ var
   msg : String;
 begin
   FProgressForm.Message := 'Loading Patient Medications';
-  params := TStringList.create;
+  params := TStringList.Create;
   try
     params.AddPair('patient', FPatientId);
     try
@@ -502,7 +502,7 @@ begin
           msg := (be.resource as TFhirOperationOutcome).asExceptionMessage;
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
     try
       bnd := FClient.search(frtMedicationStatement, true, params);
@@ -523,7 +523,7 @@ begin
           msg := (be.resource as TFhirOperationOutcome).asExceptionMessage;
       end;
     finally
-      bnd.Free;
+      bnd.free;
     end;
 
     vtMedications.RootNodeCount := FAllergies.Count;
@@ -537,7 +537,7 @@ begin
     lblMedicationsMessage.hint := lblMedicationsMessage.Caption;
     FMedications.Sort(FMedicationsComparer.link);
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -586,7 +586,7 @@ begin
           bmp := TBitmap.Create;
           bmp.LoadFromStream(m);
           imgPatient.Picture.Assign(bmp);
-          bmp.Free;
+          bmp.free;
         except
           // just ignore; this is not always populated correctly in the sample data
         end;
@@ -598,7 +598,7 @@ begin
     LoadAllergies;
     LoadMedications;
   finally
-    pat.Free;
+    pat.free;
   end;
 end;
 
@@ -864,13 +864,13 @@ begin
   inherited Create;
   FName := name;
   FValue := element;
-  FChildren := TFslList<TValueNode>.create;
+  FChildren := TFslList<TValueNode>.Create;
 end;
 
 destructor TValueNode.Destroy;
 begin
-  FChildren.Free;
-  FValue.Free;
+  FChildren.free;
+  FValue.free;
   inherited;
 end;
 

@@ -35,7 +35,8 @@ Interface
 uses
   SysUtils, Generics.Defaults,
   fsl_base, fsl_utilities, fsl_fpc,
-  ftx_ucum_handlers, ftx_ucum_base;
+  fhir_objects,
+  ftx_ucum_handlers, ftx_ucum_base, ftx_service;
 
 Type
   TUcumComponent = class (TFslObject)
@@ -48,7 +49,7 @@ Type
     FFactor: Integer;
     FAnnotation : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(iFactor : integer); overload;
     constructor Create(iFactor : integer; Annotation : String); overload;
@@ -68,7 +69,7 @@ Type
     procedure SetUnit_(const Value: TUcumUnit);
     procedure SetExponent(const Value: Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(oUnit_ : TUcumUnit; oPrefix : TUcumPrefix; iExponent : Integer); Overload;
     destructor Destroy; Override;
@@ -88,7 +89,7 @@ Type
     procedure SetComponent(const Value: TUcumComponent);
     procedure SetTerm(const Value: TUcumTerm);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -120,7 +121,7 @@ Type
     function nextChar() : UnicodeChar;
     function peekChar() : UnicodeChar;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(sSource : String);
 
@@ -137,7 +138,7 @@ Type
     FExponent : integer;
     procedure SetBase(value : TUcumBaseUnit);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(base : TUcumBaseUnit; exponent : integer); overload;
     destructor Destroy; Override;
@@ -151,7 +152,7 @@ Type
     FValue : TFslDecimal;
     FUnits : TFslList<TUcumCanonicalUnit>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -176,7 +177,7 @@ Type
      function normalise(indent : String; term : TUcumTerm) : TUcumCanonical; overload;
      function normalise(indent : String; sym : TUcumSymbol) : TUcumCanonical; overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(oModel : TUcumModel; oHandlers : TUcumRegistry);
     destructor Destroy; Override;
@@ -191,7 +192,7 @@ Type
     function parseComp : TUcumComponent;
     function ParseTerm(bFirst : Boolean) : TUcumTerm;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
     class function Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
@@ -250,9 +251,9 @@ begin
   result := TUcumFactor(Inherited Link);
 end;
 
-function TUcumFactor.sizeInBytesV : cardinal;
+function TUcumFactor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FAnnotation.length * sizeof(char)) + 12);
 end;
 
@@ -268,8 +269,8 @@ end;
 
 destructor TUcumSymbol.Destroy;
 begin
-  FPrefix.Free;
-  FUnit_.Free;
+  FPrefix.free;
+  FUnit_.free;
   inherited;
 end;
 
@@ -290,21 +291,21 @@ end;
 
 procedure TUcumSymbol.SetPrefix(const Value: TUcumPrefix);
 begin
-  FPrefix.Free;
+  FPrefix.free;
   FPrefix := Value;
 end;
 
 procedure TUcumSymbol.SetUnit_(const Value: TUcumUnit);
 begin
-  FUnit_.Free;
+  FUnit_.free;
   FUnit_ := Value;
 end;
 
-function TUcumSymbol.sizeInBytesV : cardinal;
+function TUcumSymbol.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPrefix.sizeInBytes);
-  inc(result, FUnit_.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPrefix.sizeInBytes(magic));
+  inc(result, FUnit_.sizeInBytes(magic));
 end;
 
 { TUcumTerm }
@@ -317,8 +318,8 @@ end;
 
 destructor TUcumTerm.Destroy;
 begin
-  FTerm.Free;
-  FComponent.Free;
+  FTerm.free;
+  FComponent.free;
   inherited;
 end;
 
@@ -329,13 +330,13 @@ end;
 
 procedure TUcumTerm.SetComponent(const Value: TUcumComponent);
 begin
-  FComponent.Free;
+  FComponent.free;
   FComponent := Value;
 end;
 
 procedure TUcumTerm.SetTerm(const Value: TUcumTerm);
 begin
-  FTerm.Free;
+  FTerm.free;
   FTerm := Value;
 end;
 
@@ -347,20 +348,20 @@ begin
     Operator := NOOP;
 end;
 
-function TUcumTerm.sizeInBytesV : cardinal;
+function TUcumTerm.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FComponent.sizeInBytes);
-  inc(result, FTerm.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FComponent.sizeInBytes(magic));
+  inc(result, FTerm.sizeInBytes(magic));
 end;
 
 { TUcumExpressionParser }
 
-function TUcumExpressionParser.sizeInBytesV : cardinal;
+function TUcumExpressionParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FModel.sizeInBytes);
-  inc(result, FLexer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModel.sizeInBytes(magic));
+  inc(result, FLexer.sizeInBytes(magic));
 end;
 
 class function TUcumExpressionParser.Parse(oModel : TUcumModel; sExpression : String): TUcumTerm;
@@ -373,15 +374,15 @@ Begin
     oSelf.FLexer := TUcumLexer.Create(sExpression);
     result := oSelf.ParseTerm(true);
   Finally
-    oSelf.Free;
+    oSelf.free;
   End;
 End;
 
 
 Destructor TUcumExpressionParser.Destroy;
 Begin
-  FLexer.Free;
-  FModel.Free;
+  FLexer.free;
+  FModel.free;
   Inherited;
 End;
 
@@ -423,7 +424,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -509,7 +510,7 @@ Begin
 
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -544,7 +545,7 @@ Begin
         checkAnnotation(ch) or
         checkNumber(ch) or
         checkNumberOrSymbol(ch))) Then
-      raise ETerminologyError.create('Error processing Unit_ "'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart));
+      raise ETerminologyError.create('Error processing Unit_ "'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart), itInvalid);
   End;
 End;
 
@@ -561,7 +562,7 @@ Begin
       ch := peekChar();
     End;
     if (Length(FToken) = 1) Then
-      raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit');
+      raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unexpected character "'+ch+'" at position '+IntToStr(FStart)+': a + or - must be followed by at least one digit', itInvalid);
     Ftype := NUMBER;
     result := true;
   End
@@ -636,9 +637,9 @@ Begin
     Begin
       ch := nextChar();
       if ord(ch) > 255 then
-        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": annotation contains non-ascii characters');
+        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": annotation contains non-ascii characters', itInvalid);
       if (ch = #0) Then
-        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unterminated annotation');
+        raise ETerminologyError.create('Error processing Unit_"'+FSourceString+'": unterminated annotation', itInvalid);
       if (ch <> '}') then
         s := s + ch;
     End;
@@ -683,7 +684,7 @@ End;
 
 Procedure TUcumLexer.error(errMsg : String);
 Begin
-  raise ETerminologyError.Create('Error processing Unit: '''+FSourceString+''': '+ errMsg +' at character '+IntToStr(FStart));
+  raise ETerminologyError.Create('Error processing Unit: '''+FSourceString+''': '+ errMsg +' at character '+IntToStr(FStart), itInvalid);
 End;
 
 Function TUcumLexer.getTokenAsInt() : Integer;
@@ -695,9 +696,9 @@ Begin
 End;
 
 
-function TUcumLexer.sizeInBytesV : cardinal;
+function TUcumLexer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSourceString.length * sizeof(char)) + 12);
   inc(result, length(Fsource) * Sizeof(UnicodeChar));
   inc(result, (Ftoken.length * sizeof(char)) + 12);
@@ -716,7 +717,7 @@ begin
       composeTerm(oBuilder, Term);
       result := oBuilder.AsString;
     Finally
-      oBuilder.Free;
+      oBuilder.free;
     End;
   End;
 End;
@@ -823,9 +824,9 @@ end;
 
 destructor TUcumConverter.Destroy;
 begin
-  Fmodel.Free;
-  Fhandlers.Free;
-  FOne.Free;
+  Fmodel.free;
+  Fhandlers.free;
+  FOne.free;
   inherited;
 end;
 
@@ -867,7 +868,7 @@ begin
           end;
           result.Units.addAll(temp.Units);
         finally
-          temp.Free;
+          temp.free;
         end;
       end
       else if (t.Component is TUcumFactor) then
@@ -894,7 +895,7 @@ begin
           end;
           result.Units.addAll(temp.Units);
         finally
-          temp.Free;
+          temp.free;
         end;
       end;
       divb := t.Operator = DIVISION;
@@ -930,7 +931,7 @@ begin
     debug(indent, 'done', result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -985,7 +986,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1000,7 +1001,7 @@ begin
   begin
     h := Fhandlers.HandlerByCode[unit_.code];
     if (h = nil) then
-      raise ETerminologyError.create('Not handled yet (special unit)')
+      raise ETerminologyError.create('Not handled yet (special unit)', itInvalid)
     else
        u := h.Units;
   end;
@@ -1013,20 +1014,20 @@ begin
       result.multiplyValue(unit_.Value.Value);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    t.Free;
+    t.free;
   end;
 end;
 
 
-function TUcumConverter.sizeInBytesV : cardinal;
+function TUcumConverter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fmodel.sizeInBytes);
-  inc(result, Fhandlers.sizeInBytes);
-  inc(result, Fone.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fmodel.sizeInBytes(magic));
+  inc(result, Fhandlers.sizeInBytes(magic));
+  inc(result, Fone.sizeInBytes(magic));
 end;
 
 { TUcumComponent }
@@ -1041,12 +1042,12 @@ end;
 constructor TUcumCanonical.Create;
 begin
   inherited;
-  FUnits := TFslList<TUcumCanonicalUnit>.create;
+  FUnits := TFslList<TUcumCanonicalUnit>.Create;
 end;
 
 destructor TUcumCanonical.Destroy;
 begin
-  FUnits.Free;
+  FUnits.free;
   inherited;
 end;
 
@@ -1070,10 +1071,10 @@ begin
   Value := FValue.Multiply(i);
 end;
 
-function TUcumCanonical.sizeInBytesV : cardinal;
+function TUcumCanonical.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUnits.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUnits.sizeInBytes(magic));
 end;
 
 class Function TUcumFormalStructureComposer.compose(oTerm : TUcumTerm) : String;
@@ -1085,7 +1086,7 @@ Begin
     composeTerm(oBldr, oTerm);
     result := obldr.AsString;
   Finally
-    oBldr.Free;
+    oBldr.free;
   End;
 End;
 
@@ -1160,21 +1161,21 @@ end;
 
 destructor TUcumCanonicalUnit.Destroy;
 begin
-  FBase.Free;
+  FBase.free;
   inherited;
 end;
 
 procedure TUcumCanonicalUnit.SetBase(value : TUcumBaseUnit);
 begin
-  FBase.Free;
+  FBase.free;
   FBase := value;
 end;
 
 
-function TUcumCanonicalUnit.sizeInBytesV : cardinal;
+function TUcumCanonicalUnit.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBase.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBase.sizeInBytes(magic));
 end;
 
 End.

@@ -1,7 +1,7 @@
 unit wp_factory;
 
 {
-Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2010+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -74,7 +74,7 @@ type
       Function MakeReader : TWPReader;
       Function MakeWriter : TWPWriter;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -165,7 +165,7 @@ Begin
     oVCLStream.Position := 0;
     Result.LoadFromStream(oVCLStream.Stream);
   Finally
-    oVCLStream.Free;
+    oVCLStream.free;
   End;
 End;
 
@@ -233,7 +233,7 @@ Begin
 
     Convert(oSourceStream, aSourceFormat, oDestination, aOptions);
   Finally
-    oSourceStream.Free;
+    oSourceStream.free;
   End;
 End;
 
@@ -255,7 +255,7 @@ Begin
     Result := oDestinationStream.Bytes;
 {$ENDIF}
   Finally
-    oDestinationStream.Free;
+    oDestinationStream.free;
   End;
 End;
 
@@ -286,10 +286,10 @@ Begin
       Result := oDestinationStream.Bytes;
 {$ENDIF}
     Finally
-      oDestinationStream.Free;
+      oDestinationStream.free;
     End;
   Finally
-    oSourceStream.Free;
+    oSourceStream.free;
   End;
 End;
 
@@ -308,7 +308,7 @@ Begin
 
     oConvertor.Convert;
   Finally
-    oConvertor.Free;
+    oConvertor.free;
   End;
 End;
 
@@ -326,7 +326,7 @@ Begin
 
     oConvertor.Convert;
   Finally
-    oConvertor.Free;
+    oConvertor.free;
   End;
 End;
 
@@ -344,7 +344,7 @@ Begin
 
     oConvertor.Convert;
   Finally
-    oConvertor.Free;
+    oConvertor.free;
   End;
 End;
 
@@ -362,10 +362,10 @@ End;
 
 Destructor TWPFormatConvertor.Destroy;
 Begin
-  FSourceDocument.Free;
-  FSourceStream.Free;
-  FDestinationDocument.Free;
-  FDestinationStream.Free;
+  FSourceDocument.free;
+  FSourceStream.free;
+  FDestinationDocument.free;
+  FDestinationStream.free;
 
   Inherited;
 End;
@@ -383,7 +383,7 @@ Procedure TWPFormatConvertor.SetSourceDocument(Const Value : TWPDocument);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetSourceDocument', Value, TWPDocument, 'Value'));
 
-  FSourceDocument.Free;
+  FSourceDocument.free;
   FSourceDocument := Value;
 End;
 
@@ -400,7 +400,7 @@ Procedure TWPFormatConvertor.SetSourceStream(Const Value : TFslStream);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetSourceStream', Value, TFslStream, 'Value'));
 
-  FSourceStream.Free;
+  FSourceStream.free;
   FSourceStream := Value;
 End;
 
@@ -417,7 +417,7 @@ Procedure TWPFormatConvertor.SetDestinationDocument(Const Value : TWPDocument);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetDestinationDocument', Value, TWPDocument, 'Value'));
 
-  FDestinationDocument.Free;
+  FDestinationDocument.free;
   FDestinationDocument := Value;
 End;
 
@@ -434,7 +434,7 @@ Procedure TWPFormatConvertor.SetDestinationStream(Const Value : TFslStream);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetDestinationStream', Value, TFslStream, 'Value'));
 
-  FDestinationStream.Free;
+  FDestinationStream.free;
   FDestinationStream := Value;
 End;
 
@@ -453,7 +453,7 @@ Begin
       oTrans.WorkingStyles := oStyles.Link;
       oTrans.TranslateToWorking;
     Finally
-      oTrans.Free;
+      oTrans.free;
     End;
   End
   Else
@@ -465,7 +465,7 @@ Begin
 
       oReader.Read(oDocument);
     Finally
-      oReader.Free;
+      oReader.free;
     End;
   End;
 End;
@@ -485,7 +485,7 @@ Begin
       oTrans.WorkingStyles := oStyles.Link;
       oTrans.TranslateToDocument;
     Finally
-      oTrans.Free;
+      oTrans.free;
     End;
   End
   Else
@@ -497,7 +497,7 @@ Begin
 
       oWriter.Write(oDocument);
     Finally
-      oWriter.Free;
+      oWriter.free;
     End;
   End;
 End;
@@ -517,10 +517,10 @@ Begin
 
       Write(oDocument, oStyles);
     Finally
-      oStyles.Free;
+      oStyles.free;
     End;
   Finally
-    oDocument.Free;
+    oDocument.free;
   End;
 End;
 
@@ -583,13 +583,13 @@ End;
 
 
 
-function TWPFormatConvertor.sizeInBytesV : cardinal;
+function TWPFormatConvertor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSourceDocument.sizeInBytes);
-  inc(result, FSourceStream.sizeInBytes);
-  inc(result, FDestinationDocument.sizeInBytes);
-  inc(result, FDestinationStream.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSourceDocument.sizeInBytes(magic));
+  inc(result, FSourceStream.sizeInBytes(magic));
+  inc(result, FDestinationDocument.sizeInBytes(magic));
+  inc(result, FDestinationStream.sizeInBytes(magic));
 end;
 
 end.

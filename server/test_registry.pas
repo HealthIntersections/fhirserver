@@ -35,8 +35,8 @@ interface
 (*
 Tests Still to restore:
 
-* fui_tests_graph
-* fhir_tests_smart
+*
+*
 * fhir4_tests_graphdefinition
 * fhir4_tests_Maps
 * tests_java_bridge
@@ -48,16 +48,25 @@ uses
   SysUtils, IniFiles,
   fsl_testing, fsl_utilities,
   MarkdownDaringFireballTests, MarkdownCommonMarkTests,
+  fsl_logging,
   fsl_tests, fsl_tests_web, fsl_tests_scrypt, fsl_tests_npm, fsl_tests_iduri,
+  fcomp_tests_graph,
   v2_tests, cda_tests, fdb_tests,
-  ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct,
-  {$IFNDEF NO_JS} fhir_tests_javascript, {$ENDIF}
-  fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_pathengine, fhir4_tests_graphql,
-  fxver_tests,
+  ftx_tests_lang, ftx_tests_ucum, ftx_tests_sct, tests_cpt,
+  fhir_tools_settings,
+
+  fhir4_tests_parser, fhir4_tests_context, fhir4_tests_utilities, fhir4_tests_client, fhir4_tests_liquid, fhir4_tests_diff,
+  fhir4_tests_pathengine, fhir4_tests_graphql, {fhir4_tests_graphdefinition,}
+
+  fhir4b_tests_parser,
+
+  fhir5_tests_parser,
+
+  fxver_tests, fhir_tests_icao,
 
   tests_search_syntax, test_server_config;
 
-procedure registerTests;
+procedure registerTests(params : TCommandLineParameters);
 
 implementation
 
@@ -66,28 +75,21 @@ implementation
   // * the official tests github repo (local root)
   // * the github repo for the server (local root)
   // the tests don't clone these repos - this must be done first
-
+  //
+  // use the file fhir-tool-settings.conf to set these.
+  // see https://confluence.hl7.org/display/FHIR/Using+fhir-tool-settings.conf
 const
 {$IFDEF WINDOWS}
-  DefaultMDTestRoot =      'c:\work\markdown';
-  DefaultServerTestsRoot = 'c:\work\fhirserver';
-  DefaultFHIRTestsRoot =   'c:\work\org.hl7.fhir\fhir-test-cases';
   DefaultMSSQLDriver = 'SQL Server';
-  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+  DefaultMySQLDriver = 'MySQL ODBC 8.2 Unicode Driver';
 {$ENDIF}
 {$IFDEF LINUX}
-  DefaultMDTestRoot =      '/home/gg/markdown';
-  DefaultServerTestsRoot = '/home/gg/fhirserver';
-  DefaultFHIRTestsRoot =   '/home/gg/fhir-test-cases';
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
-  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+  DefaultMySQLDriver = 'MySQL ODBC 8.2 Unicode Driver';
 {$ENDIF}
 {$IFDEF OSX}
-  DefaultServerTestsRoot = '/users/grahamegrieve/work/fhirserver';
-  DefaultMDTestRoot =      '/users/grahamegrieve/work/markdown';
-  DefaultFHIRTestsRoot =   '/users/grahamegrieve/work/fhir-test-cases';
   DefaultMSSQLDriver = 'ODBC Driver 17 for SQL Server';
-  DefaultMySQLDriver = 'MySQL ODBC 8.0 Unicode Driver';
+  DefaultMySQLDriver = 'MySQL ODBC 8.2 Unicode Driver';
 {$ENDIF}
 
 Procedure SetUpDefaultTestSettings(filename : String);
@@ -96,9 +98,9 @@ var
 begin
   ini := TIniFile.Create(filename);
   try
-    ini.WriteString('locations', 'fhirserver', DefaultServerTestsRoot);
-    ini.WriteString('locations', 'fhir-test-cases', DefaultFHIRTestsRoot);
-    ini.WriteString('locations', 'markdown', DefaultMDTestRoot);
+    ini.WriteString('locations', 'fhirserver', ToolsGlobalSettings.fhirServerPath);
+    ini.WriteString('locations', 'fhir-test-cases', ToolsGlobalSettings.testsPath);
+    ini.WriteString('locations', 'markdown', ToolsGlobalSettings.markdownPath);
 
     // database tests:
     ini.WriteString('mssql', 'driver', DefaultMSSQLDriver);
@@ -112,16 +114,18 @@ begin
     ini.WriteString('mysql', 'username', 'test');
     ini.WriteString('mysql', 'password', 'test');
   finally
-    ini.Free;
+    ini.free;
   end;
 end;
 
-procedure registerTests;
+procedure registerTests(params : TCommandLineParameters);
 var
   iniName : String;
 begin
-  if not getCommandLineParam('test-settings', iniName) then
+  if not params.get('test-settings', iniName) then
     iniName := partnerFile('test-settings.ini');
+
+  Logging.log('Test Settings from '+iniName);
 
   if not FileExists(iniName) then
      setupDefaultTestSettings(iniName);
@@ -141,10 +145,8 @@ begin
   ftx_tests_ucum.registerTests;
   ftx_tests_sct.registerTests;
   v2_tests.registerTests;
-  {$IFNDEF NO_JS}
-  fhir_tests_javascript.registerTests;
-  {$ENDIF}
   fsl_tests_npm.registerTests;
+  fcomp_tests_graph.registerTests;
   fhir4_tests_Parser.registerTests;
   fhir4_tests_context.registerTests;
   fhir4_tests_utilities.registerTests;
@@ -152,9 +154,16 @@ begin
   fhir4_tests_liquid.registerTests;
   fhir4_tests_pathengine.registerTests;
   fhir4_tests_graphql.registerTests;
+  fhir4_tests_diff.registerTests;
+
+  fhir4b_tests_Parser.registerTests;
+  fhir5_tests_Parser.registerTests;
+
+  tests_cpt.registerTests;
   fxver_tests.registerTests;
   tests_search_syntax.registerTests;
   test_server_config.registerTests;
+  fhir_tests_icao.registerTests;
 end;
 
 end.

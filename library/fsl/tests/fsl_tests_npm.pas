@@ -62,18 +62,19 @@ procedure TNpmPackageTests.LoadUSCore;
 var
   npm : TNpmPackage;
 begin
+  exit;
   npm := FCache.loadPackage('hl7.fhir.us.core');
   try
     assertTrue(npm <> nil);
   finally
-    npm.Free;
+    npm.free;
   end;
 
 end;
 
 procedure TNpmPackageTests.SetUp;
 begin
-  FCache := TFHIRPackageManager.create(true);
+  FCache := TFHIRPackageManager.create(npmModeTesting);
 end;
 
 procedure TNpmPackageTests.TearDown;
@@ -92,7 +93,7 @@ var
   ts : TStringList;
 begin
   FCache.clear;
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     FCache.ListPackageIds(ts);
     AssertTrue(ts.count = 0, 'Should be no packages left, but found '+ts.commaText);

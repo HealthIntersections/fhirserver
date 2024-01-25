@@ -1,4 +1,4 @@
-unit FHIR.R2.Tests.Worker;
+unit fhir2_tests_worker;
 
 {.$.DEFINE DIFF}
 
@@ -68,7 +68,7 @@ Type
     class function Use : TFHIRWorkerContext;
     class procedure closeUp;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
 
@@ -83,25 +83,24 @@ uses
 var
   GWorkerContext : TBaseWorkerContext;
 
-function TTestingWorkerContext.sizeInBytesV : cardinal;
+function TTestingWorkerContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, class function Use.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
 end;
 
 class procedure TTestingWorkerContext.closeUp;
 begin
-  GWorkerContext.Free;
+  GWorkerContext.free;
 end;
 
 function TTestingWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
-  raise EFHIRTodo.create('Not done for testing');
+  raise EFHIRTodo.Create('Not done for testing');
 end;
 
 function TTestingWorkerContext.supportsSystem(system, version: string): boolean;
 begin
-  raise EFHIRTodo.create('Not done for testing');
+  raise EFHIRTodo.Create('Not done for testing');
 end;
 
 
@@ -109,7 +108,7 @@ class function TTestingWorkerContext.Use: TFHIRWorkerContext;
 begin
   if GWorkerContext = nil then
   begin
-    GWorkerContext := TTestingWorkerContext.create;
+    GWorkerContext := TTestingWorkerContext.Create;
 //    GWorkerContext.LoadFromDefinitions(IncludeTrailingBackslash(PUB_HOME)+'build\\publish\\validation-min.xml.zip');
     GWorkerContext.LoadFromFile(IncludeTrailingBackslash(PUB_HOME)+'build\\publish\\profiles-types.xml');
     GWorkerContext.LoadFromFile(IncludeTrailingBackslash(PUB_HOME)+'build\\publish\\profiles-resources.xml');
@@ -119,22 +118,22 @@ end;
 
 function TTestingWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRTodo.create('Not done for testing');
+  raise EFHIRTodo.Create('Not done for testing');
 end;
 
 function TTestingWorkerContext.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRTodo.create('Not done for testing');
+  raise EFHIRTodo.Create('Not done for testing');
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRTodo.create('Not done for testing');
+  raise EFHIRTodo.Create('Not done for testing');
 end;
 
 function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRTodo.create('Not done for testing');
+  raise EFHIRTodo.Create('Not done for testing');
 end;
 
 { FHIRFolderBasedTestCaseAttribute }
@@ -153,7 +152,7 @@ var
   s : String;
   i : integer;
 begin
-  sl := TStringList.create;
+  sl := TStringList.Create;
   try
     if FindFirst(FFolder+'\*.*', faAnyFile, SR) = 0 then
     repeat
@@ -169,7 +168,7 @@ begin
       result[i].Values[0] := IncludeTrailingPathDelimiter(FFolder) + sl[i];
     end;
   finally
-    sl.Free;
+    sl.free;
   end;
 end;
 

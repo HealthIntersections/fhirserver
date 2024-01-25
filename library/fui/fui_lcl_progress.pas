@@ -1,5 +1,33 @@
 unit fui_lcl_progress;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -10,7 +38,7 @@ uses
   fsl_threads;
 
 type
-  TPerformTaskEvent = procedure (sender : TObject; progress : TWorkProgressEvent) of object;
+  TPerformTaskEvent = procedure (sender : TObject; context : TObject; progress : TWorkProgressEvent) of object;
 
   { TProgressForm }
 
@@ -28,6 +56,7 @@ type
     started : boolean;
     stopped : boolean;
     event : TPerformTaskEvent;
+    FContext : TObject;
     procedure start;
     procedure progress(sender : TObject; pct : integer; done : boolean; desc : String);
     procedure done(id : integer; response : TBackgroundTaskResponsePackage);
@@ -38,7 +67,7 @@ var
   ProgressForm: TProgressForm;
 
 function DoBackgroundTask(owner : TComponent; taskid : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage) : boolean;
-function DoForegroundTask(owner : TComponent; event : TPerformTaskEvent) : boolean;
+function DoForegroundTask(owner : TComponent; context : TObject; event : TPerformTaskEvent) : boolean;
 
 implementation
 
@@ -46,9 +75,9 @@ implementation
 
 function DoBackgroundTask(owner : TComponent; taskid : integer; request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage) : boolean;
 begin
-  ProgressForm := TProgressForm.create(owner);
+  ProgressForm := TProgressForm.Create(owner);
   try
-    ProgressForm.taskId:= taskId;
+    ProgressForm.taskId := taskId;
     GBackgroundTasks.queueTask(taskId, request, response, ProgressForm.done);
     ProgressForm.showModal;
     result := ProgressForm.finished;
@@ -57,11 +86,13 @@ begin
   end;
 end;
 
-function DoForegroundTask(owner : TComponent; event : TPerformTaskEvent) : boolean;
+function DoForegroundTask(owner : TComponent; context : TObject; event : TPerformTaskEvent) : boolean;
 begin
-  ProgressForm := TProgressForm.create(owner);
+  ProgressForm := TProgressForm.Create(owner);
   try
     ProgressForm.event := event;
+    ProgressForm.FContext := context;
+
     ProgressForm.showModal;
     result := ProgressForm.finished;
   finally
@@ -80,7 +111,7 @@ begin
     info := GBackgroundTasks.report(taskId);
     try
       Caption := info.name;
-      Label1.Caption:= info.message;
+      Label1.Caption := info.message;
       if info.pct < 0 then
         ProgressBar1.Enabled := false
       else
@@ -106,7 +137,7 @@ begin
   stopped := false;
   started := true;
   Label1.caption := 'Starting';
-  event(self, progress);
+  event(self, FContext, progress);
 end;
 
 procedure TProgressForm.progress(sender: TObject; pct: integer; done: boolean; desc: String);

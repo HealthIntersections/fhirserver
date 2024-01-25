@@ -39,8 +39,8 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_stream,
-  fhir_objects, fhir_utilities, 
-  fhir2_base, fhir2_types, fhir2_resources_base;
+  fhir_objects,
+  fhir2_types, fhir2_resources_base;
 
 Type
 {$IFDEF FHIR_ACCOUNT}
@@ -388,7 +388,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -468,7 +468,7 @@ Type
     FList : TFhirAccountList;
     function GetCurrent : TFhirAccount;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAccountList);
     destructor Destroy; override;
@@ -493,7 +493,7 @@ Type
     function Append : TFhirAccount;
 
     // Add an already existing FhirAccount to the end of the list.
-    procedure AddItem(value : TFhirAccount); overload;
+function AddItem(value : TFhirAccount): TFhirAccount; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAccount) : Integer;
@@ -558,7 +558,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -621,7 +621,7 @@ Type
     FList : TFhirAllergyIntoleranceReactionList;
     function GetCurrent : TFhirAllergyIntoleranceReaction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAllergyIntoleranceReactionList);
     destructor Destroy; override;
@@ -646,7 +646,7 @@ Type
     function Append : TFhirAllergyIntoleranceReaction;
 
     // Add an already existing FhirAllergyIntoleranceReaction to the end of the list.
-    procedure AddItem(value : TFhirAllergyIntoleranceReaction); overload;
+function AddItem(value : TFhirAllergyIntoleranceReaction): TFhirAllergyIntoleranceReaction; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAllergyIntoleranceReaction) : Integer;
@@ -727,7 +727,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -817,7 +817,7 @@ Type
     FList : TFhirAllergyIntoleranceList;
     function GetCurrent : TFhirAllergyIntolerance;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAllergyIntoleranceList);
     destructor Destroy; override;
@@ -842,7 +842,7 @@ Type
     function Append : TFhirAllergyIntolerance;
 
     // Add an already existing FhirAllergyIntolerance to the end of the list.
-    procedure AddItem(value : TFhirAllergyIntolerance); overload;
+function AddItem(value : TFhirAllergyIntolerance): TFhirAllergyIntolerance; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAllergyIntolerance) : Integer;
@@ -895,7 +895,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -938,7 +938,7 @@ Type
     FList : TFhirAppointmentParticipantList;
     function GetCurrent : TFhirAppointmentParticipant;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAppointmentParticipantList);
     destructor Destroy; override;
@@ -963,7 +963,7 @@ Type
     function Append : TFhirAppointmentParticipant;
 
     // Add an already existing FhirAppointmentParticipant to the end of the list.
-    procedure AddItem(value : TFhirAppointmentParticipant); overload;
+function AddItem(value : TFhirAppointmentParticipant): TFhirAppointmentParticipant; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAppointmentParticipant) : Integer;
@@ -1041,7 +1041,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1123,7 +1123,7 @@ Type
     FList : TFhirAppointmentList;
     function GetCurrent : TFhirAppointment;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAppointmentList);
     destructor Destroy; override;
@@ -1148,7 +1148,7 @@ Type
     function Append : TFhirAppointment;
 
     // Add an already existing FhirAppointment to the end of the list.
-    procedure AddItem(value : TFhirAppointment); overload;
+function AddItem(value : TFhirAppointment): TFhirAppointment; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAppointment) : Integer;
@@ -1215,7 +1215,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1278,7 +1278,7 @@ Type
     FList : TFhirAppointmentResponseList;
     function GetCurrent : TFhirAppointmentResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirAppointmentResponseList);
     destructor Destroy; override;
@@ -1303,7 +1303,7 @@ Type
     function Append : TFhirAppointmentResponse;
 
     // Add an already existing FhirAppointmentResponse to the end of the list.
-    procedure AddItem(value : TFhirAppointmentResponse); overload;
+function AddItem(value : TFhirAppointmentResponse): TFhirAppointmentResponse; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirAppointmentResponse) : Integer;
@@ -1357,7 +1357,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1407,7 +1407,7 @@ Type
     FList : TFhirBasicList;
     function GetCurrent : TFhirBasic;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBasicList);
     destructor Destroy; override;
@@ -1432,7 +1432,7 @@ Type
     function Append : TFhirBasic;
 
     // Add an already existing FhirBasic to the end of the list.
-    procedure AddItem(value : TFhirBasic); overload;
+function AddItem(value : TFhirBasic): TFhirBasic; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirBasic) : Integer;
@@ -1490,7 +1490,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1543,7 +1543,7 @@ Type
     FList : TFhirBodySiteList;
     function GetCurrent : TFhirBodySite;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirBodySiteList);
     destructor Destroy; override;
@@ -1568,7 +1568,7 @@ Type
     function Append : TFhirBodySite;
 
     // Add an already existing FhirBodySite to the end of the list.
-    procedure AddItem(value : TFhirBodySite); overload;
+function AddItem(value : TFhirBodySite): TFhirBodySite; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirBodySite) : Integer;
@@ -1614,7 +1614,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1649,7 +1649,7 @@ Type
     FList : TFhirCarePlanRelatedPlanList;
     function GetCurrent : TFhirCarePlanRelatedPlan;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCarePlanRelatedPlanList);
     destructor Destroy; override;
@@ -1674,7 +1674,7 @@ Type
     function Append : TFhirCarePlanRelatedPlan;
 
     // Add an already existing FhirCarePlanRelatedPlan to the end of the list.
-    procedure AddItem(value : TFhirCarePlanRelatedPlan); overload;
+function AddItem(value : TFhirCarePlanRelatedPlan): TFhirCarePlanRelatedPlan; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCarePlanRelatedPlan) : Integer;
@@ -1714,7 +1714,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1750,7 +1750,7 @@ Type
     FList : TFhirCarePlanParticipantList;
     function GetCurrent : TFhirCarePlanParticipant;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCarePlanParticipantList);
     destructor Destroy; override;
@@ -1775,7 +1775,7 @@ Type
     function Append : TFhirCarePlanParticipant;
 
     // Add an already existing FhirCarePlanParticipant to the end of the list.
-    procedure AddItem(value : TFhirCarePlanParticipant); overload;
+function AddItem(value : TFhirCarePlanParticipant): TFhirCarePlanParticipant; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCarePlanParticipant) : Integer;
@@ -1821,7 +1821,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1865,7 +1865,7 @@ Type
     FList : TFhirCarePlanActivityList;
     function GetCurrent : TFhirCarePlanActivity;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCarePlanActivityList);
     destructor Destroy; override;
@@ -1890,7 +1890,7 @@ Type
     function Append : TFhirCarePlanActivity;
 
     // Add an already existing FhirCarePlanActivity to the end of the list.
-    procedure AddItem(value : TFhirCarePlanActivity); overload;
+function AddItem(value : TFhirCarePlanActivity): TFhirCarePlanActivity; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCarePlanActivity) : Integer;
@@ -1966,7 +1966,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2062,7 +2062,7 @@ Type
     FList : TFhirCarePlanActivityDetailList;
     function GetCurrent : TFhirCarePlanActivityDetail;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCarePlanActivityDetailList);
     destructor Destroy; override;
@@ -2087,7 +2087,7 @@ Type
     function Append : TFhirCarePlanActivityDetail;
 
     // Add an already existing FhirCarePlanActivityDetail to the end of the list.
-    procedure AddItem(value : TFhirCarePlanActivityDetail); overload;
+function AddItem(value : TFhirCarePlanActivityDetail): TFhirCarePlanActivityDetail; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCarePlanActivityDetail) : Integer;
@@ -2171,7 +2171,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2267,7 +2267,7 @@ Type
     FList : TFhirCarePlanList;
     function GetCurrent : TFhirCarePlan;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCarePlanList);
     destructor Destroy; override;
@@ -2292,7 +2292,7 @@ Type
     function Append : TFhirCarePlan;
 
     // Add an already existing FhirCarePlan to the end of the list.
-    procedure AddItem(value : TFhirCarePlan); overload;
+function AddItem(value : TFhirCarePlan): TFhirCarePlan; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCarePlan) : Integer;
@@ -2337,7 +2337,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2372,7 +2372,7 @@ Type
     FList : TFhirClinicalImpressionInvestigationsList;
     function GetCurrent : TFhirClinicalImpressionInvestigations;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClinicalImpressionInvestigationsList);
     destructor Destroy; override;
@@ -2397,7 +2397,7 @@ Type
     function Append : TFhirClinicalImpressionInvestigations;
 
     // Add an already existing FhirClinicalImpressionInvestigations to the end of the list.
-    procedure AddItem(value : TFhirClinicalImpressionInvestigations); overload;
+function AddItem(value : TFhirClinicalImpressionInvestigations): TFhirClinicalImpressionInvestigations; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClinicalImpressionInvestigations) : Integer;
@@ -2439,7 +2439,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2475,7 +2475,7 @@ Type
     FList : TFhirClinicalImpressionFindingList;
     function GetCurrent : TFhirClinicalImpressionFinding;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClinicalImpressionFindingList);
     destructor Destroy; override;
@@ -2500,7 +2500,7 @@ Type
     function Append : TFhirClinicalImpressionFinding;
 
     // Add an already existing FhirClinicalImpressionFinding to the end of the list.
-    procedure AddItem(value : TFhirClinicalImpressionFinding); overload;
+function AddItem(value : TFhirClinicalImpressionFinding): TFhirClinicalImpressionFinding; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClinicalImpressionFinding) : Integer;
@@ -2542,7 +2542,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2578,7 +2578,7 @@ Type
     FList : TFhirClinicalImpressionRuledOutList;
     function GetCurrent : TFhirClinicalImpressionRuledOut;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClinicalImpressionRuledOutList);
     destructor Destroy; override;
@@ -2603,7 +2603,7 @@ Type
     function Append : TFhirClinicalImpressionRuledOut;
 
     // Add an already existing FhirClinicalImpressionRuledOut to the end of the list.
-    procedure AddItem(value : TFhirClinicalImpressionRuledOut); overload;
+function AddItem(value : TFhirClinicalImpressionRuledOut): TFhirClinicalImpressionRuledOut; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClinicalImpressionRuledOut) : Integer;
@@ -2693,7 +2693,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2796,7 +2796,7 @@ Type
     FList : TFhirClinicalImpressionList;
     function GetCurrent : TFhirClinicalImpression;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirClinicalImpressionList);
     destructor Destroy; override;
@@ -2821,7 +2821,7 @@ Type
     function Append : TFhirClinicalImpression;
 
     // Add an already existing FhirClinicalImpression to the end of the list.
-    procedure AddItem(value : TFhirClinicalImpression); overload;
+function AddItem(value : TFhirClinicalImpression): TFhirClinicalImpression; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirClinicalImpression) : Integer;
@@ -2863,7 +2863,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2894,7 +2894,7 @@ Type
     FList : TFhirCommunicationPayloadList;
     function GetCurrent : TFhirCommunicationPayload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCommunicationPayloadList);
     destructor Destroy; override;
@@ -2919,7 +2919,7 @@ Type
     function Append : TFhirCommunicationPayload;
 
     // Add an already existing FhirCommunicationPayload to the end of the list.
-    procedure AddItem(value : TFhirCommunicationPayload); overload;
+function AddItem(value : TFhirCommunicationPayload): TFhirCommunicationPayload; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCommunicationPayload) : Integer;
@@ -2993,7 +2993,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3078,7 +3078,7 @@ Type
     FList : TFhirCommunicationList;
     function GetCurrent : TFhirCommunication;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCommunicationList);
     destructor Destroy; override;
@@ -3103,7 +3103,7 @@ Type
     function Append : TFhirCommunication;
 
     // Add an already existing FhirCommunication to the end of the list.
-    procedure AddItem(value : TFhirCommunication); overload;
+function AddItem(value : TFhirCommunication): TFhirCommunication; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCommunication) : Integer;
@@ -3145,7 +3145,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3176,7 +3176,7 @@ Type
     FList : TFhirCommunicationRequestPayloadList;
     function GetCurrent : TFhirCommunicationRequestPayload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCommunicationRequestPayloadList);
     destructor Destroy; override;
@@ -3201,7 +3201,7 @@ Type
     function Append : TFhirCommunicationRequestPayload;
 
     // Add an already existing FhirCommunicationRequestPayload to the end of the list.
-    procedure AddItem(value : TFhirCommunicationRequestPayload); overload;
+function AddItem(value : TFhirCommunicationRequestPayload): TFhirCommunicationRequestPayload; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCommunicationRequestPayload) : Integer;
@@ -3275,7 +3275,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3365,7 +3365,7 @@ Type
     FList : TFhirCommunicationRequestList;
     function GetCurrent : TFhirCommunicationRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCommunicationRequestList);
     destructor Destroy; override;
@@ -3390,7 +3390,7 @@ Type
     function Append : TFhirCommunicationRequest;
 
     // Add an already existing FhirCommunicationRequest to the end of the list.
-    procedure AddItem(value : TFhirCommunicationRequest); overload;
+function AddItem(value : TFhirCommunicationRequest): TFhirCommunicationRequest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCommunicationRequest) : Integer;
@@ -3441,7 +3441,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3481,7 +3481,7 @@ Type
     FList : TFhirCompositionAttesterList;
     function GetCurrent : TFhirCompositionAttester;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCompositionAttesterList);
     destructor Destroy; override;
@@ -3506,7 +3506,7 @@ Type
     function Append : TFhirCompositionAttester;
 
     // Add an already existing FhirCompositionAttester to the end of the list.
-    procedure AddItem(value : TFhirCompositionAttester); overload;
+function AddItem(value : TFhirCompositionAttester): TFhirCompositionAttester; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCompositionAttester) : Integer;
@@ -3550,7 +3550,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3589,7 +3589,7 @@ Type
     FList : TFhirCompositionEventList;
     function GetCurrent : TFhirCompositionEvent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCompositionEventList);
     destructor Destroy; override;
@@ -3614,7 +3614,7 @@ Type
     function Append : TFhirCompositionEvent;
 
     // Add an already existing FhirCompositionEvent to the end of the list.
-    procedure AddItem(value : TFhirCompositionEvent); overload;
+function AddItem(value : TFhirCompositionEvent): TFhirCompositionEvent; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCompositionEvent) : Integer;
@@ -3672,7 +3672,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3735,7 +3735,7 @@ Type
     FList : TFhirCompositionSectionList;
     function GetCurrent : TFhirCompositionSection;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCompositionSectionList);
     destructor Destroy; override;
@@ -3760,7 +3760,7 @@ Type
     function Append : TFhirCompositionSection;
 
     // Add an already existing FhirCompositionSection to the end of the list.
-    procedure AddItem(value : TFhirCompositionSection); overload;
+function AddItem(value : TFhirCompositionSection): TFhirCompositionSection; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCompositionSection) : Integer;
@@ -3837,7 +3837,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3927,7 +3927,7 @@ Type
     FList : TFhirCompositionList;
     function GetCurrent : TFhirComposition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCompositionList);
     destructor Destroy; override;
@@ -3952,7 +3952,7 @@ Type
     function Append : TFhirComposition;
 
     // Add an already existing FhirComposition to the end of the list.
-    procedure AddItem(value : TFhirComposition); overload;
+function AddItem(value : TFhirComposition): TFhirComposition; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirComposition) : Integer;
@@ -3997,7 +3997,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4032,7 +4032,7 @@ Type
     FList : TFhirConditionStageList;
     function GetCurrent : TFhirConditionStage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConditionStageList);
     destructor Destroy; override;
@@ -4057,7 +4057,7 @@ Type
     function Append : TFhirConditionStage;
 
     // Add an already existing FhirConditionStage to the end of the list.
-    procedure AddItem(value : TFhirConditionStage); overload;
+function AddItem(value : TFhirConditionStage): TFhirConditionStage; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionStage) : Integer;
@@ -4098,7 +4098,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4133,7 +4133,7 @@ Type
     FList : TFhirConditionEvidenceList;
     function GetCurrent : TFhirConditionEvidence;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConditionEvidenceList);
     destructor Destroy; override;
@@ -4158,7 +4158,7 @@ Type
     function Append : TFhirConditionEvidence;
 
     // Add an already existing FhirConditionEvidence to the end of the list.
-    procedure AddItem(value : TFhirConditionEvidence); overload;
+function AddItem(value : TFhirConditionEvidence): TFhirConditionEvidence; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirConditionEvidence) : Integer;
@@ -4238,7 +4238,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4340,7 +4340,7 @@ Type
     FList : TFhirConditionList;
     function GetCurrent : TFhirCondition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConditionList);
     destructor Destroy; override;
@@ -4365,7 +4365,7 @@ Type
     function Append : TFhirCondition;
 
     // Add an already existing FhirCondition to the end of the list.
-    procedure AddItem(value : TFhirCondition); overload;
+function AddItem(value : TFhirCondition): TFhirCondition; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCondition) : Integer;
@@ -4446,7 +4446,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4540,7 +4540,7 @@ Type
     FList : TFhirCoverageList;
     function GetCurrent : TFhirCoverage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirCoverageList);
     destructor Destroy; override;
@@ -4565,7 +4565,7 @@ Type
     function Append : TFhirCoverage;
 
     // Add an already existing FhirCoverage to the end of the list.
-    procedure AddItem(value : TFhirCoverage); overload;
+function AddItem(value : TFhirCoverage): TFhirCoverage; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirCoverage) : Integer;
@@ -4613,7 +4613,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4654,7 +4654,7 @@ Type
     FList : TFhirDetectedIssueMitigationList;
     function GetCurrent : TFhirDetectedIssueMitigation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDetectedIssueMitigationList);
     destructor Destroy; override;
@@ -4679,7 +4679,7 @@ Type
     function Append : TFhirDetectedIssueMitigation;
 
     // Add an already existing FhirDetectedIssueMitigation to the end of the list.
-    procedure AddItem(value : TFhirDetectedIssueMitigation); overload;
+function AddItem(value : TFhirDetectedIssueMitigation): TFhirDetectedIssueMitigation; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDetectedIssueMitigation) : Integer;
@@ -4746,7 +4746,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4819,7 +4819,7 @@ Type
     FList : TFhirDetectedIssueList;
     function GetCurrent : TFhirDetectedIssue;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDetectedIssueList);
     destructor Destroy; override;
@@ -4844,7 +4844,7 @@ Type
     function Append : TFhirDetectedIssue;
 
     // Add an already existing FhirDetectedIssue to the end of the list.
-    procedure AddItem(value : TFhirDetectedIssue); overload;
+function AddItem(value : TFhirDetectedIssue): TFhirDetectedIssue; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDetectedIssue) : Integer;
@@ -4923,7 +4923,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5008,7 +5008,7 @@ Type
     FList : TFhirDeviceUseRequestList;
     function GetCurrent : TFhirDeviceUseRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDeviceUseRequestList);
     destructor Destroy; override;
@@ -5033,7 +5033,7 @@ Type
     function Append : TFhirDeviceUseRequest;
 
     // Add an already existing FhirDeviceUseRequest to the end of the list.
-    procedure AddItem(value : TFhirDeviceUseRequest); overload;
+function AddItem(value : TFhirDeviceUseRequest): TFhirDeviceUseRequest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDeviceUseRequest) : Integer;
@@ -5097,7 +5097,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5165,7 +5165,7 @@ Type
     FList : TFhirDeviceUseStatementList;
     function GetCurrent : TFhirDeviceUseStatement;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDeviceUseStatementList);
     destructor Destroy; override;
@@ -5190,7 +5190,7 @@ Type
     function Append : TFhirDeviceUseStatement;
 
     // Add an already existing FhirDeviceUseStatement to the end of the list.
-    procedure AddItem(value : TFhirDeviceUseStatement); overload;
+function AddItem(value : TFhirDeviceUseStatement): TFhirDeviceUseStatement; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDeviceUseStatement) : Integer;
@@ -5242,7 +5242,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5287,7 +5287,7 @@ Type
     FList : TFhirDiagnosticOrderEventList;
     function GetCurrent : TFhirDiagnosticOrderEvent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDiagnosticOrderEventList);
     destructor Destroy; override;
@@ -5312,7 +5312,7 @@ Type
     function Append : TFhirDiagnosticOrderEvent;
 
     // Add an already existing FhirDiagnosticOrderEvent to the end of the list.
-    procedure AddItem(value : TFhirDiagnosticOrderEvent); overload;
+function AddItem(value : TFhirDiagnosticOrderEvent): TFhirDiagnosticOrderEvent; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDiagnosticOrderEvent) : Integer;
@@ -5362,7 +5362,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5410,7 +5410,7 @@ Type
     FList : TFhirDiagnosticOrderItemList;
     function GetCurrent : TFhirDiagnosticOrderItem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDiagnosticOrderItemList);
     destructor Destroy; override;
@@ -5435,7 +5435,7 @@ Type
     function Append : TFhirDiagnosticOrderItem;
 
     // Add an already existing FhirDiagnosticOrderItem to the end of the list.
-    procedure AddItem(value : TFhirDiagnosticOrderItem); overload;
+function AddItem(value : TFhirDiagnosticOrderItem): TFhirDiagnosticOrderItem; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDiagnosticOrderItem) : Integer;
@@ -5507,7 +5507,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5584,7 +5584,7 @@ Type
     FList : TFhirDiagnosticOrderList;
     function GetCurrent : TFhirDiagnosticOrder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDiagnosticOrderList);
     destructor Destroy; override;
@@ -5609,7 +5609,7 @@ Type
     function Append : TFhirDiagnosticOrder;
 
     // Add an already existing FhirDiagnosticOrder to the end of the list.
-    procedure AddItem(value : TFhirDiagnosticOrder); overload;
+function AddItem(value : TFhirDiagnosticOrder): TFhirDiagnosticOrder; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDiagnosticOrder) : Integer;
@@ -5655,7 +5655,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5691,7 +5691,7 @@ Type
     FList : TFhirDiagnosticReportImageList;
     function GetCurrent : TFhirDiagnosticReportImage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDiagnosticReportImageList);
     destructor Destroy; override;
@@ -5716,7 +5716,7 @@ Type
     function Append : TFhirDiagnosticReportImage;
 
     // Add an already existing FhirDiagnosticReportImage to the end of the list.
-    procedure AddItem(value : TFhirDiagnosticReportImage); overload;
+function AddItem(value : TFhirDiagnosticReportImage): TFhirDiagnosticReportImage; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDiagnosticReportImage) : Integer;
@@ -5801,7 +5801,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5903,7 +5903,7 @@ Type
     FList : TFhirDiagnosticReportList;
     function GetCurrent : TFhirDiagnosticReport;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDiagnosticReportList);
     destructor Destroy; override;
@@ -5928,7 +5928,7 @@ Type
     function Append : TFhirDiagnosticReport;
 
     // Add an already existing FhirDiagnosticReport to the end of the list.
-    procedure AddItem(value : TFhirDiagnosticReport); overload;
+function AddItem(value : TFhirDiagnosticReport): TFhirDiagnosticReport; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDiagnosticReport) : Integer;
@@ -5970,7 +5970,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6001,7 +6001,7 @@ Type
     FList : TFhirDocumentManifestContentList;
     function GetCurrent : TFhirDocumentManifestContent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentManifestContentList);
     destructor Destroy; override;
@@ -6026,7 +6026,7 @@ Type
     function Append : TFhirDocumentManifestContent;
 
     // Add an already existing FhirDocumentManifestContent to the end of the list.
-    procedure AddItem(value : TFhirDocumentManifestContent); overload;
+function AddItem(value : TFhirDocumentManifestContent): TFhirDocumentManifestContent; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentManifestContent) : Integer;
@@ -6066,7 +6066,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6102,7 +6102,7 @@ Type
     FList : TFhirDocumentManifestRelatedList;
     function GetCurrent : TFhirDocumentManifestRelated;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentManifestRelatedList);
     destructor Destroy; override;
@@ -6127,7 +6127,7 @@ Type
     function Append : TFhirDocumentManifestRelated;
 
     // Add an already existing FhirDocumentManifestRelated to the end of the list.
-    procedure AddItem(value : TFhirDocumentManifestRelated); overload;
+function AddItem(value : TFhirDocumentManifestRelated): TFhirDocumentManifestRelated; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentManifestRelated) : Integer;
@@ -6201,7 +6201,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6281,7 +6281,7 @@ Type
     FList : TFhirDocumentManifestList;
     function GetCurrent : TFhirDocumentManifest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentManifestList);
     destructor Destroy; override;
@@ -6306,7 +6306,7 @@ Type
     function Append : TFhirDocumentManifest;
 
     // Add an already existing FhirDocumentManifest to the end of the list.
-    procedure AddItem(value : TFhirDocumentManifest); overload;
+function AddItem(value : TFhirDocumentManifest): TFhirDocumentManifest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentManifest) : Integer;
@@ -6352,7 +6352,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6387,7 +6387,7 @@ Type
     FList : TFhirDocumentReferenceRelatesToList;
     function GetCurrent : TFhirDocumentReferenceRelatesTo;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentReferenceRelatesToList);
     destructor Destroy; override;
@@ -6412,7 +6412,7 @@ Type
     function Append : TFhirDocumentReferenceRelatesTo;
 
     // Add an already existing FhirDocumentReferenceRelatesTo to the end of the list.
-    procedure AddItem(value : TFhirDocumentReferenceRelatesTo); overload;
+function AddItem(value : TFhirDocumentReferenceRelatesTo): TFhirDocumentReferenceRelatesTo; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentReferenceRelatesTo) : Integer;
@@ -6453,7 +6453,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6488,7 +6488,7 @@ Type
     FList : TFhirDocumentReferenceContentList;
     function GetCurrent : TFhirDocumentReferenceContent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentReferenceContentList);
     destructor Destroy; override;
@@ -6513,7 +6513,7 @@ Type
     function Append : TFhirDocumentReferenceContent;
 
     // Add an already existing FhirDocumentReferenceContent to the end of the list.
-    procedure AddItem(value : TFhirDocumentReferenceContent); overload;
+function AddItem(value : TFhirDocumentReferenceContent): TFhirDocumentReferenceContent; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentReferenceContent) : Integer;
@@ -6565,7 +6565,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6624,7 +6624,7 @@ Type
     FList : TFhirDocumentReferenceContextList;
     function GetCurrent : TFhirDocumentReferenceContext;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentReferenceContextList);
     destructor Destroy; override;
@@ -6649,7 +6649,7 @@ Type
     function Append : TFhirDocumentReferenceContext;
 
     // Add an already existing FhirDocumentReferenceContext to the end of the list.
-    procedure AddItem(value : TFhirDocumentReferenceContext); overload;
+function AddItem(value : TFhirDocumentReferenceContext): TFhirDocumentReferenceContext; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentReferenceContext) : Integer;
@@ -6689,7 +6689,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6725,7 +6725,7 @@ Type
     FList : TFhirDocumentReferenceContextRelatedList;
     function GetCurrent : TFhirDocumentReferenceContextRelated;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentReferenceContextRelatedList);
     destructor Destroy; override;
@@ -6750,7 +6750,7 @@ Type
     function Append : TFhirDocumentReferenceContextRelated;
 
     // Add an already existing FhirDocumentReferenceContextRelated to the end of the list.
-    procedure AddItem(value : TFhirDocumentReferenceContextRelated); overload;
+function AddItem(value : TFhirDocumentReferenceContextRelated): TFhirDocumentReferenceContextRelated; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentReferenceContextRelated) : Integer;
@@ -6834,7 +6834,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6939,7 +6939,7 @@ Type
     FList : TFhirDocumentReferenceList;
     function GetCurrent : TFhirDocumentReference;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDocumentReferenceList);
     destructor Destroy; override;
@@ -6964,7 +6964,7 @@ Type
     function Append : TFhirDocumentReference;
 
     // Add an already existing FhirDocumentReference to the end of the list.
-    procedure AddItem(value : TFhirDocumentReference); overload;
+function AddItem(value : TFhirDocumentReference): TFhirDocumentReference; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDocumentReference) : Integer;
@@ -7012,7 +7012,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7058,7 +7058,7 @@ Type
     FList : TFhirFamilyMemberHistoryConditionList;
     function GetCurrent : TFhirFamilyMemberHistoryCondition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirFamilyMemberHistoryConditionList);
     destructor Destroy; override;
@@ -7083,7 +7083,7 @@ Type
     function Append : TFhirFamilyMemberHistoryCondition;
 
     // Add an already existing FhirFamilyMemberHistoryCondition to the end of the list.
-    procedure AddItem(value : TFhirFamilyMemberHistoryCondition); overload;
+function AddItem(value : TFhirFamilyMemberHistoryCondition): TFhirFamilyMemberHistoryCondition; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirFamilyMemberHistoryCondition) : Integer;
@@ -7154,7 +7154,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7236,7 +7236,7 @@ Type
     FList : TFhirFamilyMemberHistoryList;
     function GetCurrent : TFhirFamilyMemberHistory;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirFamilyMemberHistoryList);
     destructor Destroy; override;
@@ -7261,7 +7261,7 @@ Type
     function Append : TFhirFamilyMemberHistory;
 
     // Add an already existing FhirFamilyMemberHistory to the end of the list.
-    procedure AddItem(value : TFhirFamilyMemberHistory); overload;
+function AddItem(value : TFhirFamilyMemberHistory): TFhirFamilyMemberHistory; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirFamilyMemberHistory) : Integer;
@@ -7321,7 +7321,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7385,7 +7385,7 @@ Type
     FList : TFhirFlagList;
     function GetCurrent : TFhirFlag;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirFlagList);
     destructor Destroy; override;
@@ -7410,7 +7410,7 @@ Type
     function Append : TFhirFlag;
 
     // Add an already existing FhirFlag to the end of the list.
-    procedure AddItem(value : TFhirFlag); overload;
+function AddItem(value : TFhirFlag): TFhirFlag; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirFlag) : Integer;
@@ -7452,7 +7452,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7483,7 +7483,7 @@ Type
     FList : TFhirGoalOutcomeList;
     function GetCurrent : TFhirGoalOutcome;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirGoalOutcomeList);
     destructor Destroy; override;
@@ -7508,7 +7508,7 @@ Type
     function Append : TFhirGoalOutcome;
 
     // Add an already existing FhirGoalOutcome to the end of the list.
-    procedure AddItem(value : TFhirGoalOutcome); overload;
+function AddItem(value : TFhirGoalOutcome): TFhirGoalOutcome; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirGoalOutcome) : Integer;
@@ -7584,7 +7584,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7674,7 +7674,7 @@ Type
     FList : TFhirGoalList;
     function GetCurrent : TFhirGoal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirGoalList);
     destructor Destroy; override;
@@ -7699,7 +7699,7 @@ Type
     function Append : TFhirGoal;
 
     // Add an already existing FhirGoal to the end of the list.
-    procedure AddItem(value : TFhirGoal); overload;
+function AddItem(value : TFhirGoal): TFhirGoal; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirGoal) : Integer;
@@ -7752,7 +7752,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7797,7 +7797,7 @@ Type
     FList : TFhirImagingObjectSelectionStudyList;
     function GetCurrent : TFhirImagingObjectSelectionStudy;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingObjectSelectionStudyList);
     destructor Destroy; override;
@@ -7822,7 +7822,7 @@ Type
     function Append : TFhirImagingObjectSelectionStudy;
 
     // Add an already existing FhirImagingObjectSelectionStudy to the end of the list.
-    procedure AddItem(value : TFhirImagingObjectSelectionStudy); overload;
+function AddItem(value : TFhirImagingObjectSelectionStudy): TFhirImagingObjectSelectionStudy; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingObjectSelectionStudy) : Integer;
@@ -7869,7 +7869,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7909,7 +7909,7 @@ Type
     FList : TFhirImagingObjectSelectionStudySeriesList;
     function GetCurrent : TFhirImagingObjectSelectionStudySeries;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingObjectSelectionStudySeriesList);
     destructor Destroy; override;
@@ -7934,7 +7934,7 @@ Type
     function Append : TFhirImagingObjectSelectionStudySeries;
 
     // Add an already existing FhirImagingObjectSelectionStudySeries to the end of the list.
-    procedure AddItem(value : TFhirImagingObjectSelectionStudySeries); overload;
+function AddItem(value : TFhirImagingObjectSelectionStudySeries): TFhirImagingObjectSelectionStudySeries; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingObjectSelectionStudySeries) : Integer;
@@ -7985,7 +7985,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8030,7 +8030,7 @@ Type
     FList : TFhirImagingObjectSelectionStudySeriesInstanceList;
     function GetCurrent : TFhirImagingObjectSelectionStudySeriesInstance;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingObjectSelectionStudySeriesInstanceList);
     destructor Destroy; override;
@@ -8055,7 +8055,7 @@ Type
     function Append : TFhirImagingObjectSelectionStudySeriesInstance;
 
     // Add an already existing FhirImagingObjectSelectionStudySeriesInstance to the end of the list.
-    procedure AddItem(value : TFhirImagingObjectSelectionStudySeriesInstance); overload;
+function AddItem(value : TFhirImagingObjectSelectionStudySeriesInstance): TFhirImagingObjectSelectionStudySeriesInstance; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingObjectSelectionStudySeriesInstance) : Integer;
@@ -8098,7 +8098,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8133,7 +8133,7 @@ Type
     FList : TFhirImagingObjectSelectionStudySeriesInstanceFramesList;
     function GetCurrent : TFhirImagingObjectSelectionStudySeriesInstanceFrames;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingObjectSelectionStudySeriesInstanceFramesList);
     destructor Destroy; override;
@@ -8158,7 +8158,7 @@ Type
     function Append : TFhirImagingObjectSelectionStudySeriesInstanceFrames;
 
     // Add an already existing FhirImagingObjectSelectionStudySeriesInstanceFrames to the end of the list.
-    procedure AddItem(value : TFhirImagingObjectSelectionStudySeriesInstanceFrames); overload;
+function AddItem(value : TFhirImagingObjectSelectionStudySeriesInstanceFrames): TFhirImagingObjectSelectionStudySeriesInstanceFrames; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingObjectSelectionStudySeriesInstanceFrames) : Integer;
@@ -8216,7 +8216,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8276,7 +8276,7 @@ Type
     FList : TFhirImagingObjectSelectionList;
     function GetCurrent : TFhirImagingObjectSelection;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingObjectSelectionList);
     destructor Destroy; override;
@@ -8301,7 +8301,7 @@ Type
     function Append : TFhirImagingObjectSelection;
 
     // Add an already existing FhirImagingObjectSelection to the end of the list.
-    procedure AddItem(value : TFhirImagingObjectSelection); overload;
+function AddItem(value : TFhirImagingObjectSelection): TFhirImagingObjectSelection; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingObjectSelection) : Integer;
@@ -8378,7 +8378,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8457,7 +8457,7 @@ Type
     FList : TFhirImagingStudySeriesList;
     function GetCurrent : TFhirImagingStudySeries;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingStudySeriesList);
     destructor Destroy; override;
@@ -8482,7 +8482,7 @@ Type
     function Append : TFhirImagingStudySeries;
 
     // Add an already existing FhirImagingStudySeries to the end of the list.
-    procedure AddItem(value : TFhirImagingStudySeries); overload;
+function AddItem(value : TFhirImagingStudySeries): TFhirImagingStudySeries; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingStudySeries) : Integer;
@@ -8541,7 +8541,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8596,7 +8596,7 @@ Type
     FList : TFhirImagingStudySeriesInstanceList;
     function GetCurrent : TFhirImagingStudySeriesInstance;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingStudySeriesInstanceList);
     destructor Destroy; override;
@@ -8621,7 +8621,7 @@ Type
     function Append : TFhirImagingStudySeriesInstance;
 
     // Add an already existing FhirImagingStudySeriesInstance to the end of the list.
-    procedure AddItem(value : TFhirImagingStudySeriesInstance); overload;
+function AddItem(value : TFhirImagingStudySeriesInstance): TFhirImagingStudySeriesInstance; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingStudySeriesInstance) : Integer;
@@ -8709,7 +8709,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8809,7 +8809,7 @@ Type
     FList : TFhirImagingStudyList;
     function GetCurrent : TFhirImagingStudy;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImagingStudyList);
     destructor Destroy; override;
@@ -8834,7 +8834,7 @@ Type
     function Append : TFhirImagingStudy;
 
     // Add an already existing FhirImagingStudy to the end of the list.
-    procedure AddItem(value : TFhirImagingStudy); overload;
+function AddItem(value : TFhirImagingStudy): TFhirImagingStudy; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImagingStudy) : Integer;
@@ -8880,7 +8880,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8914,7 +8914,7 @@ Type
     FList : TFhirImmunizationExplanationList;
     function GetCurrent : TFhirImmunizationExplanation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationExplanationList);
     destructor Destroy; override;
@@ -8939,7 +8939,7 @@ Type
     function Append : TFhirImmunizationExplanation;
 
     // Add an already existing FhirImmunizationExplanation to the end of the list.
-    procedure AddItem(value : TFhirImmunizationExplanation); overload;
+function AddItem(value : TFhirImmunizationExplanation): TFhirImmunizationExplanation; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationExplanation) : Integer;
@@ -8985,7 +8985,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9026,7 +9026,7 @@ Type
     FList : TFhirImmunizationReactionList;
     function GetCurrent : TFhirImmunizationReaction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationReactionList);
     destructor Destroy; override;
@@ -9051,7 +9051,7 @@ Type
     function Append : TFhirImmunizationReaction;
 
     // Add an already existing FhirImmunizationReaction to the end of the list.
-    procedure AddItem(value : TFhirImmunizationReaction); overload;
+function AddItem(value : TFhirImmunizationReaction): TFhirImmunizationReaction; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationReaction) : Integer;
@@ -9112,7 +9112,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9177,7 +9177,7 @@ Type
     FList : TFhirImmunizationVaccinationProtocolList;
     function GetCurrent : TFhirImmunizationVaccinationProtocol;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationVaccinationProtocolList);
     destructor Destroy; override;
@@ -9202,7 +9202,7 @@ Type
     function Append : TFhirImmunizationVaccinationProtocol;
 
     // Add an already existing FhirImmunizationVaccinationProtocol to the end of the list.
-    procedure AddItem(value : TFhirImmunizationVaccinationProtocol); overload;
+function AddItem(value : TFhirImmunizationVaccinationProtocol): TFhirImmunizationVaccinationProtocol; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationVaccinationProtocol) : Integer;
@@ -9297,7 +9297,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9423,7 +9423,7 @@ Type
     FList : TFhirImmunizationList;
     function GetCurrent : TFhirImmunization;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationList);
     destructor Destroy; override;
@@ -9448,7 +9448,7 @@ Type
     function Append : TFhirImmunization;
 
     // Add an already existing FhirImmunization to the end of the list.
-    procedure AddItem(value : TFhirImmunization); overload;
+function AddItem(value : TFhirImmunization): TFhirImmunization; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunization) : Integer;
@@ -9511,7 +9511,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9574,7 +9574,7 @@ Type
     FList : TFhirImmunizationRecommendationRecommendationList;
     function GetCurrent : TFhirImmunizationRecommendationRecommendation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationRecommendationRecommendationList);
     destructor Destroy; override;
@@ -9599,7 +9599,7 @@ Type
     function Append : TFhirImmunizationRecommendationRecommendation;
 
     // Add an already existing FhirImmunizationRecommendationRecommendation to the end of the list.
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendation); overload;
+function AddItem(value : TFhirImmunizationRecommendationRecommendation): TFhirImmunizationRecommendationRecommendation; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationRecommendationRecommendation) : Integer;
@@ -9641,7 +9641,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9677,7 +9677,7 @@ Type
     FList : TFhirImmunizationRecommendationRecommendationDateCriterionList;
     function GetCurrent : TFhirImmunizationRecommendationRecommendationDateCriterion;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationRecommendationRecommendationDateCriterionList);
     destructor Destroy; override;
@@ -9702,7 +9702,7 @@ Type
     function Append : TFhirImmunizationRecommendationRecommendationDateCriterion;
 
     // Add an already existing FhirImmunizationRecommendationRecommendationDateCriterion to the end of the list.
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationDateCriterion); overload;
+function AddItem(value : TFhirImmunizationRecommendationRecommendationDateCriterion): TFhirImmunizationRecommendationRecommendationDateCriterion; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationRecommendationRecommendationDateCriterion) : Integer;
@@ -9752,7 +9752,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9798,7 +9798,7 @@ Type
     FList : TFhirImmunizationRecommendationRecommendationProtocolList;
     function GetCurrent : TFhirImmunizationRecommendationRecommendationProtocol;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationRecommendationRecommendationProtocolList);
     destructor Destroy; override;
@@ -9823,7 +9823,7 @@ Type
     function Append : TFhirImmunizationRecommendationRecommendationProtocol;
 
     // Add an already existing FhirImmunizationRecommendationRecommendationProtocol to the end of the list.
-    procedure AddItem(value : TFhirImmunizationRecommendationRecommendationProtocol); overload;
+function AddItem(value : TFhirImmunizationRecommendationRecommendationProtocol): TFhirImmunizationRecommendationRecommendationProtocol; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationRecommendationRecommendationProtocol) : Integer;
@@ -9868,7 +9868,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9907,7 +9907,7 @@ Type
     FList : TFhirImmunizationRecommendationList;
     function GetCurrent : TFhirImmunizationRecommendation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImmunizationRecommendationList);
     destructor Destroy; override;
@@ -9932,7 +9932,7 @@ Type
     function Append : TFhirImmunizationRecommendation;
 
     // Add an already existing FhirImmunizationRecommendation to the end of the list.
-    procedure AddItem(value : TFhirImmunizationRecommendation); overload;
+function AddItem(value : TFhirImmunizationRecommendation): TFhirImmunizationRecommendation; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirImmunizationRecommendation) : Integer;
@@ -10010,7 +10010,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10094,7 +10094,7 @@ Type
     FList : TFhirMediaList;
     function GetCurrent : TFhirMedia;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMediaList);
     destructor Destroy; override;
@@ -10119,7 +10119,7 @@ Type
     function Append : TFhirMedia;
 
     // Add an already existing FhirMedia to the end of the list.
-    procedure AddItem(value : TFhirMedia); overload;
+function AddItem(value : TFhirMedia): TFhirMedia; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedia) : Integer;
@@ -10173,7 +10173,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10229,7 +10229,7 @@ Type
     FList : TFhirMedicationAdministrationDosageList;
     function GetCurrent : TFhirMedicationAdministrationDosage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationAdministrationDosageList);
     destructor Destroy; override;
@@ -10254,7 +10254,7 @@ Type
     function Append : TFhirMedicationAdministrationDosage;
 
     // Add an already existing FhirMedicationAdministrationDosage to the end of the list.
-    procedure AddItem(value : TFhirMedicationAdministrationDosage); overload;
+function AddItem(value : TFhirMedicationAdministrationDosage): TFhirMedicationAdministrationDosage; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationAdministrationDosage) : Integer;
@@ -10329,7 +10329,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10420,7 +10420,7 @@ Type
     FList : TFhirMedicationAdministrationList;
     function GetCurrent : TFhirMedicationAdministration;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationAdministrationList);
     destructor Destroy; override;
@@ -10445,7 +10445,7 @@ Type
     function Append : TFhirMedicationAdministration;
 
     // Add an already existing FhirMedicationAdministration to the end of the list.
-    procedure AddItem(value : TFhirMedicationAdministration); overload;
+function AddItem(value : TFhirMedicationAdministration): TFhirMedicationAdministration; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationAdministration) : Integer;
@@ -10507,7 +10507,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10583,7 +10583,7 @@ Type
     FList : TFhirMedicationDispenseDosageInstructionList;
     function GetCurrent : TFhirMedicationDispenseDosageInstruction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationDispenseDosageInstructionList);
     destructor Destroy; override;
@@ -10608,7 +10608,7 @@ Type
     function Append : TFhirMedicationDispenseDosageInstruction;
 
     // Add an already existing FhirMedicationDispenseDosageInstruction to the end of the list.
-    procedure AddItem(value : TFhirMedicationDispenseDosageInstruction); overload;
+function AddItem(value : TFhirMedicationDispenseDosageInstruction): TFhirMedicationDispenseDosageInstruction; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationDispenseDosageInstruction) : Integer;
@@ -10652,7 +10652,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10691,7 +10691,7 @@ Type
     FList : TFhirMedicationDispenseSubstitutionList;
     function GetCurrent : TFhirMedicationDispenseSubstitution;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationDispenseSubstitutionList);
     destructor Destroy; override;
@@ -10716,7 +10716,7 @@ Type
     function Append : TFhirMedicationDispenseSubstitution;
 
     // Add an already existing FhirMedicationDispenseSubstitution to the end of the list.
-    procedure AddItem(value : TFhirMedicationDispenseSubstitution); overload;
+function AddItem(value : TFhirMedicationDispenseSubstitution): TFhirMedicationDispenseSubstitution; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationDispenseSubstitution) : Integer;
@@ -10796,7 +10796,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10898,7 +10898,7 @@ Type
     FList : TFhirMedicationDispenseList;
     function GetCurrent : TFhirMedicationDispense;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationDispenseList);
     destructor Destroy; override;
@@ -10923,7 +10923,7 @@ Type
     function Append : TFhirMedicationDispense;
 
     // Add an already existing FhirMedicationDispense to the end of the list.
-    procedure AddItem(value : TFhirMedicationDispense); overload;
+function AddItem(value : TFhirMedicationDispense): TFhirMedicationDispense; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationDispense) : Integer;
@@ -10985,7 +10985,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11061,7 +11061,7 @@ Type
     FList : TFhirMedicationOrderDosageInstructionList;
     function GetCurrent : TFhirMedicationOrderDosageInstruction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationOrderDosageInstructionList);
     destructor Destroy; override;
@@ -11086,7 +11086,7 @@ Type
     function Append : TFhirMedicationOrderDosageInstruction;
 
     // Add an already existing FhirMedicationOrderDosageInstruction to the end of the list.
-    procedure AddItem(value : TFhirMedicationOrderDosageInstruction); overload;
+function AddItem(value : TFhirMedicationOrderDosageInstruction): TFhirMedicationOrderDosageInstruction; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationOrderDosageInstruction) : Integer;
@@ -11134,7 +11134,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11185,7 +11185,7 @@ Type
     FList : TFhirMedicationOrderDispenseRequestList;
     function GetCurrent : TFhirMedicationOrderDispenseRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationOrderDispenseRequestList);
     destructor Destroy; override;
@@ -11210,7 +11210,7 @@ Type
     function Append : TFhirMedicationOrderDispenseRequest;
 
     // Add an already existing FhirMedicationOrderDispenseRequest to the end of the list.
-    procedure AddItem(value : TFhirMedicationOrderDispenseRequest); overload;
+function AddItem(value : TFhirMedicationOrderDispenseRequest): TFhirMedicationOrderDispenseRequest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationOrderDispenseRequest) : Integer;
@@ -11250,7 +11250,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11286,7 +11286,7 @@ Type
     FList : TFhirMedicationOrderSubstitutionList;
     function GetCurrent : TFhirMedicationOrderSubstitution;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationOrderSubstitutionList);
     destructor Destroy; override;
@@ -11311,7 +11311,7 @@ Type
     function Append : TFhirMedicationOrderSubstitution;
 
     // Add an already existing FhirMedicationOrderSubstitution to the end of the list.
-    procedure AddItem(value : TFhirMedicationOrderSubstitution); overload;
+function AddItem(value : TFhirMedicationOrderSubstitution): TFhirMedicationOrderSubstitution; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationOrderSubstitution) : Integer;
@@ -11388,7 +11388,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11486,7 +11486,7 @@ Type
     FList : TFhirMedicationOrderList;
     function GetCurrent : TFhirMedicationOrder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationOrderList);
     destructor Destroy; override;
@@ -11511,7 +11511,7 @@ Type
     function Append : TFhirMedicationOrder;
 
     // Add an already existing FhirMedicationOrder to the end of the list.
-    procedure AddItem(value : TFhirMedicationOrder); overload;
+function AddItem(value : TFhirMedicationOrder): TFhirMedicationOrder; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationOrder) : Integer;
@@ -11571,7 +11571,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11642,7 +11642,7 @@ Type
     FList : TFhirMedicationStatementDosageList;
     function GetCurrent : TFhirMedicationStatementDosage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationStatementDosageList);
     destructor Destroy; override;
@@ -11667,7 +11667,7 @@ Type
     function Append : TFhirMedicationStatementDosage;
 
     // Add an already existing FhirMedicationStatementDosage to the end of the list.
-    procedure AddItem(value : TFhirMedicationStatementDosage); overload;
+function AddItem(value : TFhirMedicationStatementDosage): TFhirMedicationStatementDosage; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationStatementDosage) : Integer;
@@ -11743,7 +11743,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11829,7 +11829,7 @@ Type
     FList : TFhirMedicationStatementList;
     function GetCurrent : TFhirMedicationStatement;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirMedicationStatementList);
     destructor Destroy; override;
@@ -11854,7 +11854,7 @@ Type
     function Append : TFhirMedicationStatement;
 
     // Add an already existing FhirMedicationStatement to the end of the list.
-    procedure AddItem(value : TFhirMedicationStatement); overload;
+function AddItem(value : TFhirMedicationStatement): TFhirMedicationStatement; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirMedicationStatement) : Integer;
@@ -11913,7 +11913,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -11964,7 +11964,7 @@ Type
     FList : TFhirNutritionOrderOralDietList;
     function GetCurrent : TFhirNutritionOrderOralDiet;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderOralDietList);
     destructor Destroy; override;
@@ -11989,7 +11989,7 @@ Type
     function Append : TFhirNutritionOrderOralDiet;
 
     // Add an already existing FhirNutritionOrderOralDiet to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrderOralDiet); overload;
+function AddItem(value : TFhirNutritionOrderOralDiet): TFhirNutritionOrderOralDiet; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrderOralDiet) : Integer;
@@ -12029,7 +12029,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12065,7 +12065,7 @@ Type
     FList : TFhirNutritionOrderOralDietNutrientList;
     function GetCurrent : TFhirNutritionOrderOralDietNutrient;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderOralDietNutrientList);
     destructor Destroy; override;
@@ -12090,7 +12090,7 @@ Type
     function Append : TFhirNutritionOrderOralDietNutrient;
 
     // Add an already existing FhirNutritionOrderOralDietNutrient to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrderOralDietNutrient); overload;
+function AddItem(value : TFhirNutritionOrderOralDietNutrient): TFhirNutritionOrderOralDietNutrient; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrderOralDietNutrient) : Integer;
@@ -12130,7 +12130,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12166,7 +12166,7 @@ Type
     FList : TFhirNutritionOrderOralDietTextureList;
     function GetCurrent : TFhirNutritionOrderOralDietTexture;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderOralDietTextureList);
     destructor Destroy; override;
@@ -12191,7 +12191,7 @@ Type
     function Append : TFhirNutritionOrderOralDietTexture;
 
     // Add an already existing FhirNutritionOrderOralDietTexture to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrderOralDietTexture); overload;
+function AddItem(value : TFhirNutritionOrderOralDietTexture): TFhirNutritionOrderOralDietTexture; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrderOralDietTexture) : Integer;
@@ -12242,7 +12242,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12292,7 +12292,7 @@ Type
     FList : TFhirNutritionOrderSupplementList;
     function GetCurrent : TFhirNutritionOrderSupplement;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderSupplementList);
     destructor Destroy; override;
@@ -12317,7 +12317,7 @@ Type
     function Append : TFhirNutritionOrderSupplement;
 
     // Add an already existing FhirNutritionOrderSupplement to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrderSupplement); overload;
+function AddItem(value : TFhirNutritionOrderSupplement): TFhirNutritionOrderSupplement; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrderSupplement) : Integer;
@@ -12378,7 +12378,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12448,7 +12448,7 @@ Type
     FList : TFhirNutritionOrderEnteralFormulaList;
     function GetCurrent : TFhirNutritionOrderEnteralFormula;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderEnteralFormulaList);
     destructor Destroy; override;
@@ -12473,7 +12473,7 @@ Type
     function Append : TFhirNutritionOrderEnteralFormula;
 
     // Add an already existing FhirNutritionOrderEnteralFormula to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrderEnteralFormula); overload;
+function AddItem(value : TFhirNutritionOrderEnteralFormula): TFhirNutritionOrderEnteralFormula; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrderEnteralFormula) : Integer;
@@ -12515,7 +12515,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12556,7 +12556,7 @@ Type
     FList : TFhirNutritionOrderEnteralFormulaAdministrationList;
     function GetCurrent : TFhirNutritionOrderEnteralFormulaAdministration;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderEnteralFormulaAdministrationList);
     destructor Destroy; override;
@@ -12581,7 +12581,7 @@ Type
     function Append : TFhirNutritionOrderEnteralFormulaAdministration;
 
     // Add an already existing FhirNutritionOrderEnteralFormulaAdministration to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrderEnteralFormulaAdministration); overload;
+function AddItem(value : TFhirNutritionOrderEnteralFormulaAdministration): TFhirNutritionOrderEnteralFormulaAdministration; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrderEnteralFormulaAdministration) : Integer;
@@ -12651,7 +12651,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12731,7 +12731,7 @@ Type
     FList : TFhirNutritionOrderList;
     function GetCurrent : TFhirNutritionOrder;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNutritionOrderList);
     destructor Destroy; override;
@@ -12756,7 +12756,7 @@ Type
     function Append : TFhirNutritionOrder;
 
     // Add an already existing FhirNutritionOrder to the end of the list.
-    procedure AddItem(value : TFhirNutritionOrder); overload;
+function AddItem(value : TFhirNutritionOrder): TFhirNutritionOrder; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirNutritionOrder) : Integer;
@@ -12808,7 +12808,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12859,7 +12859,7 @@ Type
     FList : TFhirObservationReferenceRangeList;
     function GetCurrent : TFhirObservationReferenceRange;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirObservationReferenceRangeList);
     destructor Destroy; override;
@@ -12884,7 +12884,7 @@ Type
     function Append : TFhirObservationReferenceRange;
 
     // Add an already existing FhirObservationReferenceRange to the end of the list.
-    procedure AddItem(value : TFhirObservationReferenceRange); overload;
+function AddItem(value : TFhirObservationReferenceRange): TFhirObservationReferenceRange; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationReferenceRange) : Integer;
@@ -12926,7 +12926,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -12961,7 +12961,7 @@ Type
     FList : TFhirObservationRelatedList;
     function GetCurrent : TFhirObservationRelated;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirObservationRelatedList);
     destructor Destroy; override;
@@ -12986,7 +12986,7 @@ Type
     function Append : TFhirObservationRelated;
 
     // Add an already existing FhirObservationRelated to the end of the list.
-    procedure AddItem(value : TFhirObservationRelated); overload;
+function AddItem(value : TFhirObservationRelated): TFhirObservationRelated; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationRelated) : Integer;
@@ -13031,7 +13031,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -13076,7 +13076,7 @@ Type
     FList : TFhirObservationComponentList;
     function GetCurrent : TFhirObservationComponent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirObservationComponentList);
     destructor Destroy; override;
@@ -13101,7 +13101,7 @@ Type
     function Append : TFhirObservationComponent;
 
     // Add an already existing FhirObservationComponent to the end of the list.
-    procedure AddItem(value : TFhirObservationComponent); overload;
+function AddItem(value : TFhirObservationComponent): TFhirObservationComponent; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservationComponent) : Integer;
@@ -13189,7 +13189,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -13309,7 +13309,7 @@ Type
     FList : TFhirObservationList;
     function GetCurrent : TFhirObservation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirObservationList);
     destructor Destroy; override;
@@ -13334,7 +13334,7 @@ Type
     function Append : TFhirObservation;
 
     // Add an already existing FhirObservation to the end of the list.
-    procedure AddItem(value : TFhirObservation); overload;
+function AddItem(value : TFhirObservation): TFhirObservation; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirObservation) : Integer;
@@ -13378,7 +13378,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -13414,7 +13414,7 @@ Type
     FList : TFhirProcedurePerformerList;
     function GetCurrent : TFhirProcedurePerformer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcedurePerformerList);
     destructor Destroy; override;
@@ -13439,7 +13439,7 @@ Type
     function Append : TFhirProcedurePerformer;
 
     // Add an already existing FhirProcedurePerformer to the end of the list.
-    procedure AddItem(value : TFhirProcedurePerformer); overload;
+function AddItem(value : TFhirProcedurePerformer): TFhirProcedurePerformer; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirProcedurePerformer) : Integer;
@@ -13479,7 +13479,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -13515,7 +13515,7 @@ Type
     FList : TFhirProcedureFocalDeviceList;
     function GetCurrent : TFhirProcedureFocalDevice;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcedureFocalDeviceList);
     destructor Destroy; override;
@@ -13540,7 +13540,7 @@ Type
     function Append : TFhirProcedureFocalDevice;
 
     // Add an already existing FhirProcedureFocalDevice to the end of the list.
-    procedure AddItem(value : TFhirProcedureFocalDevice); overload;
+function AddItem(value : TFhirProcedureFocalDevice): TFhirProcedureFocalDevice; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirProcedureFocalDevice) : Integer;
@@ -13633,7 +13633,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -13753,7 +13753,7 @@ Type
     FList : TFhirProcedureList;
     function GetCurrent : TFhirProcedure;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcedureList);
     destructor Destroy; override;
@@ -13778,7 +13778,7 @@ Type
     function Append : TFhirProcedure;
 
     // Add an already existing FhirProcedure to the end of the list.
-    procedure AddItem(value : TFhirProcedure); overload;
+function AddItem(value : TFhirProcedure): TFhirProcedure; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirProcedure) : Integer;
@@ -13856,7 +13856,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -13947,7 +13947,7 @@ Type
     FList : TFhirProcedureRequestList;
     function GetCurrent : TFhirProcedureRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirProcedureRequestList);
     destructor Destroy; override;
@@ -13972,7 +13972,7 @@ Type
     function Append : TFhirProcedureRequest;
 
     // Add an already existing FhirProcedureRequest to the end of the list.
-    procedure AddItem(value : TFhirProcedureRequest); overload;
+function AddItem(value : TFhirProcedureRequest): TFhirProcedureRequest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirProcedureRequest) : Integer;
@@ -14032,7 +14032,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14086,7 +14086,7 @@ Type
     FList : TFhirQuestionnaireResponseGroupList;
     function GetCurrent : TFhirQuestionnaireResponseGroup;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireResponseGroupList);
     destructor Destroy; override;
@@ -14111,7 +14111,7 @@ Type
     function Append : TFhirQuestionnaireResponseGroup;
 
     // Add an already existing FhirQuestionnaireResponseGroup to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaireResponseGroup); overload;
+function AddItem(value : TFhirQuestionnaireResponseGroup): TFhirQuestionnaireResponseGroup; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireResponseGroup) : Integer;
@@ -14158,7 +14158,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14198,7 +14198,7 @@ Type
     FList : TFhirQuestionnaireResponseGroupQuestionList;
     function GetCurrent : TFhirQuestionnaireResponseGroupQuestion;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireResponseGroupQuestionList);
     destructor Destroy; override;
@@ -14223,7 +14223,7 @@ Type
     function Append : TFhirQuestionnaireResponseGroupQuestion;
 
     // Add an already existing FhirQuestionnaireResponseGroupQuestion to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaireResponseGroupQuestion); overload;
+function AddItem(value : TFhirQuestionnaireResponseGroupQuestion): TFhirQuestionnaireResponseGroupQuestion; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireResponseGroupQuestion) : Integer;
@@ -14264,7 +14264,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14299,7 +14299,7 @@ Type
     FList : TFhirQuestionnaireResponseGroupQuestionAnswerList;
     function GetCurrent : TFhirQuestionnaireResponseGroupQuestionAnswer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireResponseGroupQuestionAnswerList);
     destructor Destroy; override;
@@ -14324,7 +14324,7 @@ Type
     function Append : TFhirQuestionnaireResponseGroupQuestionAnswer;
 
     // Add an already existing FhirQuestionnaireResponseGroupQuestionAnswer to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaireResponseGroupQuestionAnswer); overload;
+function AddItem(value : TFhirQuestionnaireResponseGroupQuestionAnswer): TFhirQuestionnaireResponseGroupQuestionAnswer; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireResponseGroupQuestionAnswer) : Integer;
@@ -14383,7 +14383,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14453,7 +14453,7 @@ Type
     FList : TFhirQuestionnaireResponseList;
     function GetCurrent : TFhirQuestionnaireResponse;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireResponseList);
     destructor Destroy; override;
@@ -14478,7 +14478,7 @@ Type
     function Append : TFhirQuestionnaireResponse;
 
     // Add an already existing FhirQuestionnaireResponse to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaireResponse); overload;
+function AddItem(value : TFhirQuestionnaireResponse): TFhirQuestionnaireResponse; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirQuestionnaireResponse) : Integer;
@@ -14563,7 +14563,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14664,7 +14664,7 @@ Type
     FList : TFhirReferralRequestList;
     function GetCurrent : TFhirReferralRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirReferralRequestList);
     destructor Destroy; override;
@@ -14689,7 +14689,7 @@ Type
     function Append : TFhirReferralRequest;
 
     // Add an already existing FhirReferralRequest to the end of the list.
-    procedure AddItem(value : TFhirReferralRequest); overload;
+function AddItem(value : TFhirReferralRequest): TFhirReferralRequest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirReferralRequest) : Integer;
@@ -14743,7 +14743,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14794,7 +14794,7 @@ Type
     FList : TFhirRiskAssessmentPredictionList;
     function GetCurrent : TFhirRiskAssessmentPrediction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirRiskAssessmentPredictionList);
     destructor Destroy; override;
@@ -14819,7 +14819,7 @@ Type
     function Append : TFhirRiskAssessmentPrediction;
 
     // Add an already existing FhirRiskAssessmentPrediction to the end of the list.
-    procedure AddItem(value : TFhirRiskAssessmentPrediction); overload;
+function AddItem(value : TFhirRiskAssessmentPrediction): TFhirRiskAssessmentPrediction; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirRiskAssessmentPrediction) : Integer;
@@ -14882,7 +14882,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -14956,7 +14956,7 @@ Type
     FList : TFhirRiskAssessmentList;
     function GetCurrent : TFhirRiskAssessment;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirRiskAssessmentList);
     destructor Destroy; override;
@@ -14981,7 +14981,7 @@ Type
     function Append : TFhirRiskAssessment;
 
     // Add an already existing FhirRiskAssessment to the end of the list.
-    procedure AddItem(value : TFhirRiskAssessment); overload;
+function AddItem(value : TFhirRiskAssessment): TFhirRiskAssessment; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirRiskAssessment) : Integer;
@@ -15034,7 +15034,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15089,7 +15089,7 @@ Type
     FList : TFhirSpecimenCollectionList;
     function GetCurrent : TFhirSpecimenCollection;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSpecimenCollectionList);
     destructor Destroy; override;
@@ -15114,7 +15114,7 @@ Type
     function Append : TFhirSpecimenCollection;
 
     // Add an already existing FhirSpecimenCollection to the end of the list.
-    procedure AddItem(value : TFhirSpecimenCollection); overload;
+function AddItem(value : TFhirSpecimenCollection): TFhirSpecimenCollection; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenCollection) : Integer;
@@ -15159,7 +15159,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15199,7 +15199,7 @@ Type
     FList : TFhirSpecimenTreatmentList;
     function GetCurrent : TFhirSpecimenTreatment;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSpecimenTreatmentList);
     destructor Destroy; override;
@@ -15224,7 +15224,7 @@ Type
     function Append : TFhirSpecimenTreatment;
 
     // Add an already existing FhirSpecimenTreatment to the end of the list.
-    procedure AddItem(value : TFhirSpecimenTreatment); overload;
+function AddItem(value : TFhirSpecimenTreatment): TFhirSpecimenTreatment; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenTreatment) : Integer;
@@ -15275,7 +15275,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15330,7 +15330,7 @@ Type
     FList : TFhirSpecimenContainerList;
     function GetCurrent : TFhirSpecimenContainer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSpecimenContainerList);
     destructor Destroy; override;
@@ -15355,7 +15355,7 @@ Type
     function Append : TFhirSpecimenContainer;
 
     // Add an already existing FhirSpecimenContainer to the end of the list.
-    procedure AddItem(value : TFhirSpecimenContainer); overload;
+function AddItem(value : TFhirSpecimenContainer): TFhirSpecimenContainer; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimenContainer) : Integer;
@@ -15420,7 +15420,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15491,7 +15491,7 @@ Type
     FList : TFhirSpecimenList;
     function GetCurrent : TFhirSpecimen;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSpecimenList);
     destructor Destroy; override;
@@ -15516,7 +15516,7 @@ Type
     function Append : TFhirSpecimen;
 
     // Add an already existing FhirSpecimen to the end of the list.
-    procedure AddItem(value : TFhirSpecimen); overload;
+function AddItem(value : TFhirSpecimen): TFhirSpecimen; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSpecimen) : Integer;
@@ -15584,7 +15584,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15663,7 +15663,7 @@ Type
     FList : TFhirSupplyDeliveryList;
     function GetCurrent : TFhirSupplyDelivery;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSupplyDeliveryList);
     destructor Destroy; override;
@@ -15688,7 +15688,7 @@ Type
     function Append : TFhirSupplyDelivery;
 
     // Add an already existing FhirSupplyDelivery to the end of the list.
-    procedure AddItem(value : TFhirSupplyDelivery); overload;
+function AddItem(value : TFhirSupplyDelivery): TFhirSupplyDelivery; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSupplyDelivery) : Integer;
@@ -15732,7 +15732,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15768,7 +15768,7 @@ Type
     FList : TFhirSupplyRequestWhenList;
     function GetCurrent : TFhirSupplyRequestWhen;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSupplyRequestWhenList);
     destructor Destroy; override;
@@ -15793,7 +15793,7 @@ Type
     function Append : TFhirSupplyRequestWhen;
 
     // Add an already existing FhirSupplyRequestWhen to the end of the list.
-    procedure AddItem(value : TFhirSupplyRequestWhen); overload;
+function AddItem(value : TFhirSupplyRequestWhen): TFhirSupplyRequestWhen; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSupplyRequestWhen) : Integer;
@@ -15855,7 +15855,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -15929,7 +15929,7 @@ Type
     FList : TFhirSupplyRequestList;
     function GetCurrent : TFhirSupplyRequest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSupplyRequestList);
     destructor Destroy; override;
@@ -15954,7 +15954,7 @@ Type
     function Append : TFhirSupplyRequest;
 
     // Add an already existing FhirSupplyRequest to the end of the list.
-    procedure AddItem(value : TFhirSupplyRequest); overload;
+function AddItem(value : TFhirSupplyRequest): TFhirSupplyRequest; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirSupplyRequest) : Integer;
@@ -16050,7 +16050,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -16149,7 +16149,7 @@ Type
     FList : TFhirVisionPrescriptionDispenseList;
     function GetCurrent : TFhirVisionPrescriptionDispense;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirVisionPrescriptionDispenseList);
     destructor Destroy; override;
@@ -16174,7 +16174,7 @@ Type
     function Append : TFhirVisionPrescriptionDispense;
 
     // Add an already existing FhirVisionPrescriptionDispense to the end of the list.
-    procedure AddItem(value : TFhirVisionPrescriptionDispense); overload;
+function AddItem(value : TFhirVisionPrescriptionDispense): TFhirVisionPrescriptionDispense; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirVisionPrescriptionDispense) : Integer;
@@ -16229,7 +16229,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -16288,7 +16288,7 @@ Type
     FList : TFhirVisionPrescriptionList;
     function GetCurrent : TFhirVisionPrescription;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirVisionPrescriptionList);
     destructor Destroy; override;
@@ -16313,7 +16313,7 @@ Type
     function Append : TFhirVisionPrescription;
 
     // Add an already existing FhirVisionPrescription to the end of the list.
-    procedure AddItem(value : TFhirVisionPrescription); overload;
+function AddItem(value : TFhirVisionPrescription): TFhirVisionPrescription; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirVisionPrescription) : Integer;
@@ -16360,7 +16360,7 @@ end;
 
 destructor TFhirAccount.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FName.free;
   FType_.free;
   FStatus.free;
@@ -16435,17 +16435,17 @@ end;
 procedure TFhirAccount.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFhirCode, FStatus.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'activePeriod', 'Period', false, TFhirPeriod, FActivePeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'currency', 'Coding', false, TFhirCoding, FCurrency.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'balance', 'Quantity', false, TFhirQuantity, FBalance.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'coveragePeriod', 'Period', false, TFhirPeriod, FCoveragePeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Device|Practitioner|Location|HealthcareService|Organization)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'owner', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FOwner.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFhirCode, FStatus.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'activePeriod', 'Period', false, TFhirPeriod, FActivePeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'currency', 'Coding', false, TFhirCoding, FCurrency.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'balance', 'Quantity', false, TFhirQuantity, FBalance.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'coveragePeriod', 'Period', false, TFhirPeriod, FCoveragePeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Device|Practitioner|Location|HealthcareService|Organization)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'owner', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FOwner.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
 end;
 
 function TFhirAccount.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -16517,16 +16517,16 @@ end;
 function TFhirAccount.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'name') then result := TFhirString.create() {5b}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'status') then result := TFhirCode.create() {5b}
-  else if (propName = 'activePeriod') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'currency') then result := TFhirCoding.create(){4b}
-  else if (propName = 'balance') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'coveragePeriod') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'owner') then result := TFhirReference{TFhirOrganization}.create(){4b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'name') then result := TFhirString.Create() {5b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'status') then result := TFhirCode.Create() {5b}
+  else if (propName = 'activePeriod') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'currency') then result := TFhirCoding.Create(){4b}
+  else if (propName = 'balance') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'coveragePeriod') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'owner') then result := TFhirReference{TFhirOrganization}.Create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -16676,7 +16676,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -16708,7 +16708,7 @@ begin
   if value <> '' then
   begin
     if FStatus = nil then
-      FStatus := TFhirCode.create;
+      FStatus := TFhirCode.Create;
     FStatus.value := value
   end
   else if FStatus <> nil then
@@ -16770,27 +16770,27 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
     FDescription.value := '';
 end;
 
-function TFhirAccount.sizeInBytesV : cardinal;
+function TFhirAccount.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FActivePeriod.sizeInBytes);
-  inc(result, FCurrency.sizeInBytes);
-  inc(result, FBalance.sizeInBytes);
-  inc(result, FCoveragePeriod.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FActivePeriod.sizeInBytes(magic));
+  inc(result, FCurrency.sizeInBytes(magic));
+  inc(result, FBalance.sizeInBytes(magic));
+  inc(result, FCoveragePeriod.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FOwner.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
 end;
 
 { TFhirAccountListEnumerator }
@@ -16804,7 +16804,7 @@ end;
 
 destructor TFhirAccountListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16819,22 +16819,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAccountListEnumerator.sizeInBytesV : cardinal;
+function TFhirAccountListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAccountList }
-procedure TFhirAccountList.AddItem(value: TFhirAccount);
+function TFhirAccountList.AddItem(value: TFhirAccount): TFhirAccount;
 begin
-  assert(value.ClassName = 'TFhirAccount', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAccount');
   add(value);
+  result := value;
 end;
 
 function TFhirAccountList.Append: TFhirAccount;
 begin
-  result := TFhirAccount.create;
+  result := TFhirAccount.Create;
   try
     add(result.Link);
   finally
@@ -16878,7 +16878,7 @@ end;
 
 function TFhirAccountList.Insert(index: Integer): TFhirAccount;
 begin
-  result := TFhirAccount.create;
+  result := TFhirAccount.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16934,7 +16934,7 @@ destructor TFhirAllergyIntoleranceReaction.Destroy;
 begin
   FSubstance.free;
   FCertainty.free;
-  FManifestationList.Free;
+  FManifestationList.free;
   FDescription.free;
   FOnset.free;
   FSeverity.free;
@@ -16990,14 +16990,14 @@ end;
 procedure TFhirAllergyIntoleranceReaction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'certainty', 'code', false, TFHIREnum, FCertainty.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'manifestation', 'CodeableConcept', true, TFhirCodeableConcept, FManifestationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'onset', 'dateTime', false, TFhirDateTime, FOnset.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'severity', 'code', false, TFHIREnum, FSeverity.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'exposureRoute', 'CodeableConcept', false, TFhirCodeableConcept, FExposureRoute.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'certainty', 'code', false, TFHIREnum, FCertainty.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'manifestation', 'CodeableConcept', true, TFhirCodeableConcept, FManifestationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'onset', 'dateTime', false, TFhirDateTime, FOnset.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'severity', 'code', false, TFHIREnum, FSeverity.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'exposureRoute', 'CodeableConcept', false, TFhirCodeableConcept, FExposureRoute.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
 end;
 
 function TFhirAllergyIntoleranceReaction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -17053,12 +17053,12 @@ end;
 
 function TFhirAllergyIntoleranceReaction.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'substance') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'substance') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'manifestation') then result := ManifestationList.new(){2}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'onset') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'exposureRoute') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'note') then result := TFhirAnnotation.create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'onset') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'exposureRoute') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'note') then result := TFhirAnnotation.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -17188,7 +17188,7 @@ begin
   if ord(value) = 0 then
     CertaintyElement := nil
   else
-    CertaintyElement := TFhirEnum.create(SYSTEMS_TFhirReactionEventCertaintyEnum[value], CODES_TFhirReactionEventCertaintyEnum[value]);
+    CertaintyElement := TFhirEnum.Create(SYSTEMS_TFhirReactionEventCertaintyEnum[value], CODES_TFhirReactionEventCertaintyEnum[value]);
 end;
 
 Function TFhirAllergyIntoleranceReaction.GetManifestationList : TFhirCodeableConceptList;
@@ -17222,7 +17222,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -17246,7 +17246,7 @@ end;
 Procedure TFhirAllergyIntoleranceReaction.SetOnsetST(value : TFslDateTime);
 begin
   if FOnset = nil then
-    FOnset := TFhirDateTime.create;
+    FOnset := TFhirDateTime.Create;
   FOnset.value := value
 end;
 
@@ -17269,7 +17269,7 @@ begin
   if ord(value) = 0 then
     SeverityElement := nil
   else
-    SeverityElement := TFhirEnum.create(SYSTEMS_TFhirReactionEventSeverityEnum[value], CODES_TFhirReactionEventSeverityEnum[value]);
+    SeverityElement := TFhirEnum.Create(SYSTEMS_TFhirReactionEventSeverityEnum[value], CODES_TFhirReactionEventSeverityEnum[value]);
 end;
 
 Procedure TFhirAllergyIntoleranceReaction.SetExposureRoute(value : TFhirCodeableConcept);
@@ -17284,17 +17284,17 @@ begin
   FNote := value;
 end;
 
-function TFhirAllergyIntoleranceReaction.sizeInBytesV : cardinal;
+function TFhirAllergyIntoleranceReaction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSubstance.sizeInBytes);
-  inc(result, FCertainty.sizeInBytes);
-  inc(result, FmanifestationList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FOnset.sizeInBytes);
-  inc(result, FSeverity.sizeInBytes);
-  inc(result, FExposureRoute.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSubstance.sizeInBytes(magic));
+  inc(result, FCertainty.sizeInBytes(magic));
+  inc(result, FmanifestationList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FOnset.sizeInBytes(magic));
+  inc(result, FSeverity.sizeInBytes(magic));
+  inc(result, FExposureRoute.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
 end;
 
 { TFhirAllergyIntoleranceReactionListEnumerator }
@@ -17308,7 +17308,7 @@ end;
 
 destructor TFhirAllergyIntoleranceReactionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17323,22 +17323,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAllergyIntoleranceReactionListEnumerator.sizeInBytesV : cardinal;
+function TFhirAllergyIntoleranceReactionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAllergyIntoleranceReactionList }
-procedure TFhirAllergyIntoleranceReactionList.AddItem(value: TFhirAllergyIntoleranceReaction);
+function TFhirAllergyIntoleranceReactionList.AddItem(value: TFhirAllergyIntoleranceReaction): TFhirAllergyIntoleranceReaction;
 begin
-  assert(value.ClassName = 'TFhirAllergyIntoleranceReaction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAllergyIntoleranceReaction');
   add(value);
+  result := value;
 end;
 
 function TFhirAllergyIntoleranceReactionList.Append: TFhirAllergyIntoleranceReaction;
 begin
-  result := TFhirAllergyIntoleranceReaction.create;
+  result := TFhirAllergyIntoleranceReaction.Create;
   try
     add(result.Link);
   finally
@@ -17382,7 +17382,7 @@ end;
 
 function TFhirAllergyIntoleranceReactionList.Insert(index: Integer): TFhirAllergyIntoleranceReaction;
 begin
-  result := TFhirAllergyIntoleranceReaction.create;
+  result := TFhirAllergyIntoleranceReaction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17432,7 +17432,7 @@ end;
 
 destructor TFhirAllergyIntolerance.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FOnset.free;
   FRecordedDate.free;
   FRecorder.free;
@@ -17445,7 +17445,7 @@ begin
   FCategory.free;
   FLastOccurence.free;
   FNote.free;
-  FReactionList.Free;
+  FReactionList.free;
   inherited;
 end;
 
@@ -17529,20 +17529,20 @@ end;
 procedure TFhirAllergyIntolerance.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'onset', 'dateTime', false, TFhirDateTime, FOnset.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recordedDate', 'dateTime', false, TFhirDateTime, FRecordedDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recorder', 'Reference(Practitioner|Patient)', false, TFhirReference{Resource}, FRecorder.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reporter', 'Reference(Patient|RelatedPerson|Practitioner)', false, TFhirReference{Resource}, FReporter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'criticality', 'code', false, TFHIREnum, FCriticality.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'category', 'code', false, TFHIREnum, FCategory.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'lastOccurence', 'dateTime', false, TFhirDateTime, FLastOccurence.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reaction', '', true, TFhirAllergyIntoleranceReaction, FReactionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'onset', 'dateTime', false, TFhirDateTime, FOnset.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recordedDate', 'dateTime', false, TFhirDateTime, FRecordedDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recorder', 'Reference(Practitioner|Patient)', false, TFhirReference{Resource}, FRecorder.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reporter', 'Reference(Patient|RelatedPerson|Practitioner)', false, TFhirReference{Resource}, FReporter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'substance', 'CodeableConcept', false, TFhirCodeableConcept, FSubstance.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'criticality', 'code', false, TFHIREnum, FCriticality.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'category', 'code', false, TFHIREnum, FCategory.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'lastOccurence', 'dateTime', false, TFhirDateTime, FLastOccurence.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reaction', '', true, TFhirAllergyIntoleranceReaction, FReactionList.Link)){3};
 end;
 
 function TFhirAllergyIntolerance.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -17630,14 +17630,14 @@ end;
 function TFhirAllergyIntolerance.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'onset') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'recordedDate') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'recorder') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'reporter') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'substance') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'lastOccurence') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'note') then result := TFhirAnnotation.create(){4b}
+  else if (propName = 'onset') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'recordedDate') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'recorder') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'reporter') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'substance') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'lastOccurence') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'note') then result := TFhirAnnotation.Create(){4b}
   else if (propName = 'reaction') then result := ReactionList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -17800,7 +17800,7 @@ end;
 Procedure TFhirAllergyIntolerance.SetOnsetST(value : TFslDateTime);
 begin
   if FOnset = nil then
-    FOnset := TFhirDateTime.create;
+    FOnset := TFhirDateTime.Create;
   FOnset.value := value
 end;
 
@@ -17821,7 +17821,7 @@ end;
 Procedure TFhirAllergyIntolerance.SetRecordedDateST(value : TFslDateTime);
 begin
   if FRecordedDate = nil then
-    FRecordedDate := TFhirDateTime.create;
+    FRecordedDate := TFhirDateTime.Create;
   FRecordedDate.value := value
 end;
 
@@ -17868,7 +17868,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirAllergyIntoleranceStatusEnum[value], CODES_TFhirAllergyIntoleranceStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirAllergyIntoleranceStatusEnum[value], CODES_TFhirAllergyIntoleranceStatusEnum[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetCriticality(value : TFhirEnum);
@@ -17890,7 +17890,7 @@ begin
   if ord(value) = 0 then
     CriticalityElement := nil
   else
-    CriticalityElement := TFhirEnum.create(SYSTEMS_TFhirAllergyIntoleranceCriticalityEnum[value], CODES_TFhirAllergyIntoleranceCriticalityEnum[value]);
+    CriticalityElement := TFhirEnum.Create(SYSTEMS_TFhirAllergyIntoleranceCriticalityEnum[value], CODES_TFhirAllergyIntoleranceCriticalityEnum[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetType_(value : TFhirEnum);
@@ -17912,7 +17912,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirAllergyIntoleranceTypeEnum[value], CODES_TFhirAllergyIntoleranceTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirAllergyIntoleranceTypeEnum[value], CODES_TFhirAllergyIntoleranceTypeEnum[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetCategory(value : TFhirEnum);
@@ -17934,7 +17934,7 @@ begin
   if ord(value) = 0 then
     CategoryElement := nil
   else
-    CategoryElement := TFhirEnum.create(SYSTEMS_TFhirAllergyIntoleranceCategoryEnum[value], CODES_TFhirAllergyIntoleranceCategoryEnum[value]);
+    CategoryElement := TFhirEnum.Create(SYSTEMS_TFhirAllergyIntoleranceCategoryEnum[value], CODES_TFhirAllergyIntoleranceCategoryEnum[value]);
 end;
 
 Procedure TFhirAllergyIntolerance.SetLastOccurence(value : TFhirDateTime);
@@ -17954,7 +17954,7 @@ end;
 Procedure TFhirAllergyIntolerance.SetLastOccurenceST(value : TFslDateTime);
 begin
   if FLastOccurence = nil then
-    FLastOccurence := TFhirDateTime.create;
+    FLastOccurence := TFhirDateTime.Create;
   FLastOccurence.value := value
 end;
 
@@ -17976,23 +17976,23 @@ begin
   result := (FReactionList <> nil) and (FReactionList.count > 0);
 end;
 
-function TFhirAllergyIntolerance.sizeInBytesV : cardinal;
+function TFhirAllergyIntolerance.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FOnset.sizeInBytes);
-  inc(result, FRecordedDate.sizeInBytes);
-  inc(result, FRecorder.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FReporter.sizeInBytes);
-  inc(result, FSubstance.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FCriticality.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FLastOccurence.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FreactionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FOnset.sizeInBytes(magic));
+  inc(result, FRecordedDate.sizeInBytes(magic));
+  inc(result, FRecorder.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FReporter.sizeInBytes(magic));
+  inc(result, FSubstance.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FCriticality.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FLastOccurence.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FreactionList.sizeInBytes(magic));
 end;
 
 { TFhirAllergyIntoleranceListEnumerator }
@@ -18006,7 +18006,7 @@ end;
 
 destructor TFhirAllergyIntoleranceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18021,22 +18021,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAllergyIntoleranceListEnumerator.sizeInBytesV : cardinal;
+function TFhirAllergyIntoleranceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAllergyIntoleranceList }
-procedure TFhirAllergyIntoleranceList.AddItem(value: TFhirAllergyIntolerance);
+function TFhirAllergyIntoleranceList.AddItem(value: TFhirAllergyIntolerance): TFhirAllergyIntolerance;
 begin
-  assert(value.ClassName = 'TFhirAllergyIntolerance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAllergyIntolerance');
   add(value);
+  result := value;
 end;
 
 function TFhirAllergyIntoleranceList.Append: TFhirAllergyIntolerance;
 begin
-  result := TFhirAllergyIntolerance.create;
+  result := TFhirAllergyIntolerance.Create;
   try
     add(result.Link);
   finally
@@ -18080,7 +18080,7 @@ end;
 
 function TFhirAllergyIntoleranceList.Insert(index: Integer): TFhirAllergyIntolerance;
 begin
-  result := TFhirAllergyIntolerance.create;
+  result := TFhirAllergyIntolerance.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18134,7 +18134,7 @@ end;
 
 destructor TFhirAppointmentParticipant.Destroy;
 begin
-  FType_List.Free;
+  FType_List.free;
   FActor.free;
   FRequired.free;
   FStatus.free;
@@ -18176,10 +18176,10 @@ end;
 procedure TFhirAppointmentParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'actor', 'Reference(Patient|Practitioner|RelatedPerson|Device|HealthcareService|Location)', false, TFhirReference{Resource}, FActor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'required', 'code', false, TFHIREnum, FRequired.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'actor', 'Reference(Patient|Practitioner|RelatedPerson|Device|HealthcareService|Location)', false, TFhirReference{Resource}, FActor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'required', 'code', false, TFHIREnum, FRequired.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
 end;
 
 function TFhirAppointmentParticipant.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -18216,7 +18216,7 @@ end;
 function TFhirAppointmentParticipant.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'type') then result := Type_List.new(){2}
-  else if (propName = 'actor') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'actor') then result := TFhirReference{Resource}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -18340,7 +18340,7 @@ begin
   if ord(value) = 0 then
     RequiredElement := nil
   else
-    RequiredElement := TFhirEnum.create(SYSTEMS_TFhirParticipantrequiredEnum[value], CODES_TFhirParticipantrequiredEnum[value]);
+    RequiredElement := TFhirEnum.Create(SYSTEMS_TFhirParticipantrequiredEnum[value], CODES_TFhirParticipantrequiredEnum[value]);
 end;
 
 Procedure TFhirAppointmentParticipant.SetStatus(value : TFhirEnum);
@@ -18362,16 +18362,16 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirParticipationstatusEnum[value], CODES_TFhirParticipationstatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirParticipationstatusEnum[value], CODES_TFhirParticipationstatusEnum[value]);
 end;
 
-function TFhirAppointmentParticipant.sizeInBytesV : cardinal;
+function TFhirAppointmentParticipant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FActor.sizeInBytes);
-  inc(result, FRequired.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Ftype_List.sizeInBytes(magic));
+  inc(result, FActor.sizeInBytes(magic));
+  inc(result, FRequired.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
 end;
 
 { TFhirAppointmentParticipantListEnumerator }
@@ -18385,7 +18385,7 @@ end;
 
 destructor TFhirAppointmentParticipantListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18400,22 +18400,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAppointmentParticipantListEnumerator.sizeInBytesV : cardinal;
+function TFhirAppointmentParticipantListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAppointmentParticipantList }
-procedure TFhirAppointmentParticipantList.AddItem(value: TFhirAppointmentParticipant);
+function TFhirAppointmentParticipantList.AddItem(value: TFhirAppointmentParticipant): TFhirAppointmentParticipant;
 begin
-  assert(value.ClassName = 'TFhirAppointmentParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAppointmentParticipant');
   add(value);
+  result := value;
 end;
 
 function TFhirAppointmentParticipantList.Append: TFhirAppointmentParticipant;
 begin
-  result := TFhirAppointmentParticipant.create;
+  result := TFhirAppointmentParticipant.Create;
   try
     add(result.Link);
   finally
@@ -18459,7 +18459,7 @@ end;
 
 function TFhirAppointmentParticipantList.Insert(index: Integer): TFhirAppointmentParticipant;
 begin
-  result := TFhirAppointmentParticipant.create;
+  result := TFhirAppointmentParticipant.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18509,7 +18509,7 @@ end;
 
 destructor TFhirAppointment.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FType_.free;
   FReason.free;
@@ -18518,9 +18518,9 @@ begin
   FStart.free;
   FEnd_.free;
   FMinutesDuration.free;
-  FSlotList.Free;
+  FSlotList.free;
   FComment.free;
-  FParticipantList.Free;
+  FParticipantList.free;
   inherited;
 end;
 
@@ -18608,18 +18608,18 @@ end;
 procedure TFhirAppointment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', false, TFhirCodeableConcept, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priority', 'unsignedInt', false, TFhirUnsignedInt, FPriority.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'minutesDuration', 'positiveInt', false, TFhirPositiveInt, FMinutesDuration.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'slot', 'Reference(Slot)', true, TFhirReference{TFhirSlot}, FSlotList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'participant', '', true, TFhirAppointmentParticipant, FParticipantList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', false, TFhirCodeableConcept, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'unsignedInt', false, TFhirUnsignedInt, FPriority.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'minutesDuration', 'positiveInt', false, TFhirPositiveInt, FMinutesDuration.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'slot', 'Reference(Slot)', true, TFhirReference{TFhirSlot}, FSlotList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', false, TFhirString, FComment.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'participant', '', true, TFhirAppointmentParticipant, FParticipantList.Link)){3};
 end;
 
 function TFhirAppointment.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -18698,15 +18698,15 @@ end;
 function TFhirAppointment.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'reason') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'priority') then result := TFhirUnsignedInt.create() {5b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'start') then result := TFhirInstant.create() {5b}
-  else if (propName = 'end') then result := TFhirInstant.create() {5b}
-  else if (propName = 'minutesDuration') then result := TFhirPositiveInt.create() {5b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'reason') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'priority') then result := TFhirUnsignedInt.Create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'start') then result := TFhirInstant.Create() {5b}
+  else if (propName = 'end') then result := TFhirInstant.Create() {5b}
+  else if (propName = 'minutesDuration') then result := TFhirPositiveInt.Create() {5b}
   else if (propName = 'slot') then result := SlotList.new(){2}
-  else if (propName = 'comment') then result := TFhirString.create() {5b}
+  else if (propName = 'comment') then result := TFhirString.Create() {5b}
   else if (propName = 'participant') then result := ParticipantList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -18863,7 +18863,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirAppointmentstatusEnum[value], CODES_TFhirAppointmentstatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirAppointmentstatusEnum[value], CODES_TFhirAppointmentstatusEnum[value]);
 end;
 
 Procedure TFhirAppointment.SetType_(value : TFhirCodeableConcept);
@@ -18897,7 +18897,7 @@ begin
   if value <> '' then
   begin
     if FPriority = nil then
-      FPriority := TFhirUnsignedInt.create;
+      FPriority := TFhirUnsignedInt.Create;
     FPriority.value := value
   end
   else if FPriority <> nil then
@@ -18923,7 +18923,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -18947,7 +18947,7 @@ end;
 Procedure TFhirAppointment.SetStartST(value : TFslDateTime);
 begin
   if FStart = nil then
-    FStart := TFhirInstant.create;
+    FStart := TFhirInstant.Create;
   FStart.value := value
 end;
 
@@ -18968,7 +18968,7 @@ end;
 Procedure TFhirAppointment.SetEnd_ST(value : TFslDateTime);
 begin
   if FEnd_ = nil then
-    FEnd_ := TFhirInstant.create;
+    FEnd_ := TFhirInstant.Create;
   FEnd_.value := value
 end;
 
@@ -18991,7 +18991,7 @@ begin
   if value <> '' then
   begin
     if FMinutesDuration = nil then
-      FMinutesDuration := TFhirPositiveInt.create;
+      FMinutesDuration := TFhirPositiveInt.Create;
     FMinutesDuration.value := value
   end
   else if FMinutesDuration <> nil then
@@ -19029,7 +19029,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirString.create;
+      FComment := TFhirString.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -19048,21 +19048,21 @@ begin
   result := (FParticipantList <> nil) and (FParticipantList.count > 0);
 end;
 
-function TFhirAppointment.sizeInBytesV : cardinal;
+function TFhirAppointment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FStart.sizeInBytes);
-  inc(result, FEnd_.sizeInBytes);
-  inc(result, FMinutesDuration.sizeInBytes);
-  inc(result, FslotList.sizeInBytes);
-  inc(result, FComment.sizeInBytes);
-  inc(result, FparticipantList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FStart.sizeInBytes(magic));
+  inc(result, FEnd_.sizeInBytes(magic));
+  inc(result, FMinutesDuration.sizeInBytes(magic));
+  inc(result, FslotList.sizeInBytes(magic));
+  inc(result, FComment.sizeInBytes(magic));
+  inc(result, FparticipantList.sizeInBytes(magic));
 end;
 
 { TFhirAppointmentListEnumerator }
@@ -19076,7 +19076,7 @@ end;
 
 destructor TFhirAppointmentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19091,22 +19091,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAppointmentListEnumerator.sizeInBytesV : cardinal;
+function TFhirAppointmentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAppointmentList }
-procedure TFhirAppointmentList.AddItem(value: TFhirAppointment);
+function TFhirAppointmentList.AddItem(value: TFhirAppointment): TFhirAppointment;
 begin
-  assert(value.ClassName = 'TFhirAppointment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAppointment');
   add(value);
+  result := value;
 end;
 
 function TFhirAppointmentList.Append: TFhirAppointment;
 begin
-  result := TFhirAppointment.create;
+  result := TFhirAppointment.Create;
   try
     add(result.Link);
   finally
@@ -19150,7 +19150,7 @@ end;
 
 function TFhirAppointmentList.Insert(index: Integer): TFhirAppointment;
 begin
-  result := TFhirAppointment.create;
+  result := TFhirAppointment.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19204,11 +19204,11 @@ end;
 
 destructor TFhirAppointmentResponse.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FAppointment.free;
   FStart.free;
   FEnd_.free;
-  FParticipantTypeList.Free;
+  FParticipantTypeList.free;
   FActor.free;
   FParticipantStatus.free;
   FComment.free;
@@ -19277,14 +19277,14 @@ end;
 procedure TFhirAppointmentResponse.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'appointment', 'Reference(Appointment)', false, TFhirReference{TFhirAppointment}, FAppointment.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'participantType', 'CodeableConcept', true, TFhirCodeableConcept, FParticipantTypeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'actor', 'Reference(Patient|Practitioner|RelatedPerson|Device|HealthcareService|Location)', false, TFhirReference{Resource}, FActor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'participantStatus', 'code', false, TFHIREnum, FParticipantStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'appointment', 'Reference(Appointment)', false, TFhirReference{TFhirAppointment}, FAppointment.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'start', 'instant', false, TFhirInstant, FStart.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'end', 'instant', false, TFhirInstant, FEnd_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'participantType', 'CodeableConcept', true, TFhirCodeableConcept, FParticipantTypeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'actor', 'Reference(Patient|Practitioner|RelatedPerson|Device|HealthcareService|Location)', false, TFhirReference{Resource}, FActor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'participantStatus', 'code', false, TFHIREnum, FParticipantStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', false, TFhirString, FComment.Link));{2}
 end;
 
 function TFhirAppointmentResponse.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -19342,12 +19342,12 @@ end;
 function TFhirAppointmentResponse.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'appointment') then result := TFhirReference{TFhirAppointment}.create(){4b}
-  else if (propName = 'start') then result := TFhirInstant.create() {5b}
-  else if (propName = 'end') then result := TFhirInstant.create() {5b}
+  else if (propName = 'appointment') then result := TFhirReference{TFhirAppointment}.Create(){4b}
+  else if (propName = 'start') then result := TFhirInstant.Create() {5b}
+  else if (propName = 'end') then result := TFhirInstant.Create() {5b}
   else if (propName = 'participantType') then result := ParticipantTypeList.new(){2}
-  else if (propName = 'actor') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'comment') then result := TFhirString.create() {5b}
+  else if (propName = 'actor') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'comment') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -19488,7 +19488,7 @@ end;
 Procedure TFhirAppointmentResponse.SetStartST(value : TFslDateTime);
 begin
   if FStart = nil then
-    FStart := TFhirInstant.create;
+    FStart := TFhirInstant.Create;
   FStart.value := value
 end;
 
@@ -19509,7 +19509,7 @@ end;
 Procedure TFhirAppointmentResponse.SetEnd_ST(value : TFslDateTime);
 begin
   if FEnd_ = nil then
-    FEnd_ := TFhirInstant.create;
+    FEnd_ := TFhirInstant.Create;
   FEnd_.value := value
 end;
 
@@ -19550,7 +19550,7 @@ begin
   if ord(value) = 0 then
     ParticipantStatusElement := nil
   else
-    ParticipantStatusElement := TFhirEnum.create(SYSTEMS_TFhirParticipantstatusEnum[value], CODES_TFhirParticipantstatusEnum[value]);
+    ParticipantStatusElement := TFhirEnum.Create(SYSTEMS_TFhirParticipantstatusEnum[value], CODES_TFhirParticipantstatusEnum[value]);
 end;
 
 Procedure TFhirAppointmentResponse.SetComment(value : TFhirString);
@@ -19572,24 +19572,24 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirString.create;
+      FComment := TFhirString.Create;
     FComment.value := value
   end
   else if FComment <> nil then
     FComment.value := '';
 end;
 
-function TFhirAppointmentResponse.sizeInBytesV : cardinal;
+function TFhirAppointmentResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FAppointment.sizeInBytes);
-  inc(result, FStart.sizeInBytes);
-  inc(result, FEnd_.sizeInBytes);
-  inc(result, FparticipantTypeList.sizeInBytes);
-  inc(result, FActor.sizeInBytes);
-  inc(result, FParticipantStatus.sizeInBytes);
-  inc(result, FComment.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FAppointment.sizeInBytes(magic));
+  inc(result, FStart.sizeInBytes(magic));
+  inc(result, FEnd_.sizeInBytes(magic));
+  inc(result, FparticipantTypeList.sizeInBytes(magic));
+  inc(result, FActor.sizeInBytes(magic));
+  inc(result, FParticipantStatus.sizeInBytes(magic));
+  inc(result, FComment.sizeInBytes(magic));
 end;
 
 { TFhirAppointmentResponseListEnumerator }
@@ -19603,7 +19603,7 @@ end;
 
 destructor TFhirAppointmentResponseListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19618,22 +19618,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirAppointmentResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirAppointmentResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirAppointmentResponseList }
-procedure TFhirAppointmentResponseList.AddItem(value: TFhirAppointmentResponse);
+function TFhirAppointmentResponseList.AddItem(value: TFhirAppointmentResponse): TFhirAppointmentResponse;
 begin
-  assert(value.ClassName = 'TFhirAppointmentResponse', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirAppointmentResponse');
   add(value);
+  result := value;
 end;
 
 function TFhirAppointmentResponseList.Append: TFhirAppointmentResponse;
 begin
-  result := TFhirAppointmentResponse.create;
+  result := TFhirAppointmentResponse.Create;
   try
     add(result.Link);
   finally
@@ -19677,7 +19677,7 @@ end;
 
 function TFhirAppointmentResponseList.Insert(index: Integer): TFhirAppointmentResponse;
 begin
-  result := TFhirAppointmentResponse.create;
+  result := TFhirAppointmentResponse.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19731,7 +19731,7 @@ end;
 
 destructor TFhirBasic.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FCode.free;
   FSubject.free;
   FAuthor.free;
@@ -19782,11 +19782,11 @@ end;
 procedure TFhirBasic.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'created', 'date', false, TFhirDate, FCreated.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'created', 'date', false, TFhirDate, FCreated.Link));{2}
 end;
 
 function TFhirBasic.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -19828,10 +19828,10 @@ end;
 function TFhirBasic.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.create(){4b}
-  else if (propName = 'author') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'created') then result := TFhirDate.create() {5b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.Create(){4b}
+  else if (propName = 'author') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'created') then result := TFhirDate.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -19970,18 +19970,18 @@ end;
 Procedure TFhirBasic.SetCreatedST(value : TFslDateTime);
 begin
   if FCreated = nil then
-    FCreated := TFhirDate.create;
+    FCreated := TFhirDate.Create;
   FCreated.value := value
 end;
 
-function TFhirBasic.sizeInBytesV : cardinal;
+function TFhirBasic.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
 end;
 
 { TFhirBasicListEnumerator }
@@ -19995,7 +19995,7 @@ end;
 
 destructor TFhirBasicListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20010,22 +20010,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBasicListEnumerator.sizeInBytesV : cardinal;
+function TFhirBasicListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBasicList }
-procedure TFhirBasicList.AddItem(value: TFhirBasic);
+function TFhirBasicList.AddItem(value: TFhirBasic): TFhirBasic;
 begin
-  assert(value.ClassName = 'TFhirBasic', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBasic');
   add(value);
+  result := value;
 end;
 
 function TFhirBasicList.Append: TFhirBasic;
 begin
-  result := TFhirBasic.create;
+  result := TFhirBasic.Create;
   try
     add(result.Link);
   finally
@@ -20069,7 +20069,7 @@ end;
 
 function TFhirBasicList.Insert(index: Integer): TFhirBasic;
 begin
-  result := TFhirBasic.create;
+  result := TFhirBasic.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20124,11 +20124,11 @@ end;
 destructor TFhirBodySite.Destroy;
 begin
   FPatient.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FCode.free;
-  FModifierList.Free;
+  FModifierList.free;
   FDescription.free;
-  FImageList.Free;
+  FImageList.free;
   inherited;
 end;
 
@@ -20198,12 +20198,12 @@ end;
 procedure TFhirBodySite.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'modifier', 'CodeableConcept', true, TFhirCodeableConcept, FModifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'image', 'Attachment', true, TFhirAttachment, FImageList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'modifier', 'CodeableConcept', true, TFhirCodeableConcept, FModifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'image', 'Attachment', true, TFhirAttachment, FImageList.Link)){3};
 end;
 
 function TFhirBodySite.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -20251,11 +20251,11 @@ end;
 
 function TFhirBodySite.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
+  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'modifier') then result := ModifierList.new(){2}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else if (propName = 'image') then result := ImageList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -20409,7 +20409,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -20428,15 +20428,15 @@ begin
   result := (FImageList <> nil) and (FImageList.count > 0);
 end;
 
-function TFhirBodySite.sizeInBytesV : cardinal;
+function TFhirBodySite.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FmodifierList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FimageList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FmodifierList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FimageList.sizeInBytes(magic));
 end;
 
 { TFhirBodySiteListEnumerator }
@@ -20450,7 +20450,7 @@ end;
 
 destructor TFhirBodySiteListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20465,22 +20465,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirBodySiteListEnumerator.sizeInBytesV : cardinal;
+function TFhirBodySiteListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirBodySiteList }
-procedure TFhirBodySiteList.AddItem(value: TFhirBodySite);
+function TFhirBodySiteList.AddItem(value: TFhirBodySite): TFhirBodySite;
 begin
-  assert(value.ClassName = 'TFhirBodySite', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirBodySite');
   add(value);
+  result := value;
 end;
 
 function TFhirBodySiteList.Append: TFhirBodySite;
 begin
-  result := TFhirBodySite.create;
+  result := TFhirBodySite.Create;
   try
     add(result.Link);
   finally
@@ -20524,7 +20524,7 @@ end;
 
 function TFhirBodySiteList.Insert(index: Integer): TFhirBodySite;
 begin
-  result := TFhirBodySite.create;
+  result := TFhirBodySite.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20602,8 +20602,8 @@ end;
 procedure TFhirCarePlanRelatedPlan.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFHIREnum, FCode.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'plan', 'Reference(CarePlan)', false, TFhirReference{TFhirCarePlan}, FPlan.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'code', false, TFHIREnum, FCode.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'plan', 'Reference(CarePlan)', false, TFhirReference{TFhirCarePlan}, FPlan.Link));{2}
 end;
 
 function TFhirCarePlanRelatedPlan.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -20628,7 +20628,7 @@ end;
 
 function TFhirCarePlanRelatedPlan.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'plan') then result := TFhirReference{TFhirCarePlan}.create(){4b}
+  if (propName = 'plan') then result := TFhirReference{TFhirCarePlan}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -20723,7 +20723,7 @@ begin
   if ord(value) = 0 then
     CodeElement := nil
   else
-    CodeElement := TFhirEnum.create(SYSTEMS_TFhirCarePlanRelationshipEnum[value], CODES_TFhirCarePlanRelationshipEnum[value]);
+    CodeElement := TFhirEnum.Create(SYSTEMS_TFhirCarePlanRelationshipEnum[value], CODES_TFhirCarePlanRelationshipEnum[value]);
 end;
 
 Procedure TFhirCarePlanRelatedPlan.SetPlan(value : TFhirReference{TFhirCarePlan});
@@ -20732,11 +20732,11 @@ begin
   FPlan := value;
 end;
 
-function TFhirCarePlanRelatedPlan.sizeInBytesV : cardinal;
+function TFhirCarePlanRelatedPlan.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FPlan.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FPlan.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanRelatedPlanListEnumerator }
@@ -20750,7 +20750,7 @@ end;
 
 destructor TFhirCarePlanRelatedPlanListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20765,22 +20765,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCarePlanRelatedPlanListEnumerator.sizeInBytesV : cardinal;
+function TFhirCarePlanRelatedPlanListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanRelatedPlanList }
-procedure TFhirCarePlanRelatedPlanList.AddItem(value: TFhirCarePlanRelatedPlan);
+function TFhirCarePlanRelatedPlanList.AddItem(value: TFhirCarePlanRelatedPlan): TFhirCarePlanRelatedPlan;
 begin
-  assert(value.ClassName = 'TFhirCarePlanRelatedPlan', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCarePlanRelatedPlan');
   add(value);
+  result := value;
 end;
 
 function TFhirCarePlanRelatedPlanList.Append: TFhirCarePlanRelatedPlan;
 begin
-  result := TFhirCarePlanRelatedPlan.create;
+  result := TFhirCarePlanRelatedPlan.Create;
   try
     add(result.Link);
   finally
@@ -20824,7 +20824,7 @@ end;
 
 function TFhirCarePlanRelatedPlanList.Insert(index: Integer): TFhirCarePlanRelatedPlan;
 begin
-  result := TFhirCarePlanRelatedPlan.create;
+  result := TFhirCarePlanRelatedPlan.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20898,8 +20898,8 @@ end;
 procedure TFhirCarePlanParticipant.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'member', 'Reference(Practitioner|RelatedPerson|Patient|Organization)', false, TFhirReference{Resource}, FMember.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'member', 'Reference(Practitioner|RelatedPerson|Patient|Organization)', false, TFhirReference{Resource}, FMember.Link));{2}
 end;
 
 function TFhirCarePlanParticipant.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -20924,8 +20924,8 @@ end;
 
 function TFhirCarePlanParticipant.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'role') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'member') then result := TFhirReference{Resource}.create(){4b}
+  if (propName = 'role') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'member') then result := TFhirReference{Resource}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21013,11 +21013,11 @@ begin
   FMember := value;
 end;
 
-function TFhirCarePlanParticipant.sizeInBytesV : cardinal;
+function TFhirCarePlanParticipant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRole.sizeInBytes);
-  inc(result, FMember.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRole.sizeInBytes(magic));
+  inc(result, FMember.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanParticipantListEnumerator }
@@ -21031,7 +21031,7 @@ end;
 
 destructor TFhirCarePlanParticipantListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21046,22 +21046,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCarePlanParticipantListEnumerator.sizeInBytesV : cardinal;
+function TFhirCarePlanParticipantListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanParticipantList }
-procedure TFhirCarePlanParticipantList.AddItem(value: TFhirCarePlanParticipant);
+function TFhirCarePlanParticipantList.AddItem(value: TFhirCarePlanParticipant): TFhirCarePlanParticipant;
 begin
-  assert(value.ClassName = 'TFhirCarePlanParticipant', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCarePlanParticipant');
   add(value);
+  result := value;
 end;
 
 function TFhirCarePlanParticipantList.Append: TFhirCarePlanParticipant;
 begin
-  result := TFhirCarePlanParticipant.create;
+  result := TFhirCarePlanParticipant.Create;
   try
     add(result.Link);
   finally
@@ -21105,7 +21105,7 @@ end;
 
 function TFhirCarePlanParticipantList.Insert(index: Integer): TFhirCarePlanParticipant;
 begin
-  result := TFhirCarePlanParticipant.create;
+  result := TFhirCarePlanParticipant.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21155,8 +21155,8 @@ end;
 
 destructor TFhirCarePlanActivity.Destroy;
 begin
-  FActionResultingList.Free;
-  FProgressList.Free;
+  FActionResultingList.free;
+  FProgressList.free;
   FReference.free;
   FDetail.free;
   inherited;
@@ -21207,10 +21207,10 @@ end;
 procedure TFhirCarePlanActivity.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'actionResulting', 'Reference(Any)', true, TFhirReference{TFhirReference}, FActionResultingList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'progress', 'Annotation', true, TFhirAnnotation, FProgressList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reference', 'Reference(Appointment|CommunicationRequest|DeviceUseRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)', false, TFhirReference{Resource}, FReference.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'detail', '', false, TFhirCarePlanActivityDetail, FDetail.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'actionResulting', 'Reference(Any)', true, TFhirReference{TFhirReference}, FActionResultingList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'progress', 'Annotation', true, TFhirAnnotation, FProgressList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reference', 'Reference(Appointment|CommunicationRequest|DeviceUseRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)', false, TFhirReference{Resource}, FReference.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'detail', '', false, TFhirCarePlanActivityDetail, FDetail.Link));{2}
 end;
 
 function TFhirCarePlanActivity.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -21249,8 +21249,8 @@ function TFhirCarePlanActivity.createPropertyValue(propName : string) : TFHIRObj
 begin
   if (propName = 'actionResulting') then result := ActionResultingList.new(){2}
   else if (propName = 'progress') then result := ProgressList.new(){2}
-  else if (propName = 'reference') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'detail') then result := TFhirCarePlanActivityDetail.create(){4b}
+  else if (propName = 'reference') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'detail') then result := TFhirCarePlanActivityDetail.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21375,13 +21375,13 @@ begin
   FDetail := value;
 end;
 
-function TFhirCarePlanActivity.sizeInBytesV : cardinal;
+function TFhirCarePlanActivity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FactionResultingList.sizeInBytes);
-  inc(result, FprogressList.sizeInBytes);
-  inc(result, FReference.sizeInBytes);
-  inc(result, FDetail.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FactionResultingList.sizeInBytes(magic));
+  inc(result, FprogressList.sizeInBytes(magic));
+  inc(result, FReference.sizeInBytes(magic));
+  inc(result, FDetail.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanActivityListEnumerator }
@@ -21395,7 +21395,7 @@ end;
 
 destructor TFhirCarePlanActivityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21410,22 +21410,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCarePlanActivityListEnumerator.sizeInBytesV : cardinal;
+function TFhirCarePlanActivityListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanActivityList }
-procedure TFhirCarePlanActivityList.AddItem(value: TFhirCarePlanActivity);
+function TFhirCarePlanActivityList.AddItem(value: TFhirCarePlanActivity): TFhirCarePlanActivity;
 begin
-  assert(value.ClassName = 'TFhirCarePlanActivity', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCarePlanActivity');
   add(value);
+  result := value;
 end;
 
 function TFhirCarePlanActivityList.Append: TFhirCarePlanActivity;
 begin
-  result := TFhirCarePlanActivity.create;
+  result := TFhirCarePlanActivity.Create;
   try
     add(result.Link);
   finally
@@ -21469,7 +21469,7 @@ end;
 
 function TFhirCarePlanActivityList.Insert(index: Integer): TFhirCarePlanActivity;
 begin
-  result := TFhirCarePlanActivity.create;
+  result := TFhirCarePlanActivity.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21521,15 +21521,15 @@ destructor TFhirCarePlanActivityDetail.Destroy;
 begin
   FCategory.free;
   FCode.free;
-  FReasonCodeList.Free;
-  FReasonReferenceList.Free;
-  FGoalList.Free;
+  FReasonCodeList.free;
+  FReasonReferenceList.free;
+  FGoalList.free;
   FStatus.free;
   FStatusReason.free;
   FProhibited.free;
   FScheduled.free;
   FLocation.free;
-  FPerformerList.Free;
+  FPerformerList.free;
   FProduct.free;
   FDailyAmount.free;
   FQuantity.free;
@@ -21635,21 +21635,21 @@ end;
 procedure TFhirCarePlanActivityDetail.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reasonCode', 'CodeableConcept', true, TFhirCodeableConcept, FReasonCodeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reasonReference', 'Reference(Condition)', true, TFhirReference{TFhirCondition}, FReasonReferenceList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'goal', 'Reference(Goal)', true, TFhirReference{TFhirGoal}, FGoalList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'statusReason', 'CodeableConcept', false, TFhirCodeableConcept, FStatusReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'prohibited', 'boolean', false, TFhirBoolean, FProhibited.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'scheduled[x]', 'Timing|Period|string', false, TFhirType, FScheduled.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FLocation.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Reference(Practitioner|Organization|RelatedPerson|Patient)', true, TFhirReference{Resource}, FPerformerList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'product[x]', 'CodeableConcept|Reference(Medication|Substance)', false, TFhirType, FProduct.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dailyAmount', 'Quantity', false, TFhirQuantity, FDailyAmount.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reasonCode', 'CodeableConcept', true, TFhirCodeableConcept, FReasonCodeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reasonReference', 'Reference(Condition)', true, TFhirReference{TFhirCondition}, FReasonReferenceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'goal', 'Reference(Goal)', true, TFhirReference{TFhirGoal}, FGoalList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'statusReason', 'CodeableConcept', false, TFhirCodeableConcept, FStatusReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'prohibited', 'boolean', false, TFhirBoolean, FProhibited.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'scheduled[x]', 'Timing|Period|string', false, TFhirType, FScheduled.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FLocation.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', 'Reference(Practitioner|Organization|RelatedPerson|Patient)', true, TFhirReference{Resource}, FPerformerList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'product[x]', 'CodeableConcept|Reference(Medication|Substance)', false, TFhirType, FProduct.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dailyAmount', 'Quantity', false, TFhirQuantity, FDailyAmount.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
 end;
 
 function TFhirCarePlanActivityDetail.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -21743,20 +21743,20 @@ end;
 
 function TFhirCarePlanActivityDetail.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'reasonCode') then result := ReasonCodeList.new(){2}
   else if (propName = 'reasonReference') then result := ReasonReferenceList.new(){2}
   else if (propName = 'goal') then result := GoalList.new(){2}
-  else if (propName = 'statusReason') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'prohibited') then result := TFhirBoolean.create() {5b}
-  else if (isMatchingName(propName, 'scheduled', ['Timing', 'Period', 'String'])) then raise EFHIRException.create('Cannot make property Scheduled'){4x}
-  else if (propName = 'location') then result := TFhirReference{TFhirLocation}.create(){4b}
+  else if (propName = 'statusReason') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'prohibited') then result := TFhirBoolean.Create() {5b}
+  else if (isMatchingName(propName, 'scheduled', ['Timing', 'Period', 'String'])) then raise EFHIRException.Create('Cannot make property Scheduled'){4x}
+  else if (propName = 'location') then result := TFhirReference{TFhirLocation}.Create(){4b}
   else if (propName = 'performer') then result := PerformerList.new(){2}
-  else if (isMatchingName(propName, 'product', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Product'){4x}
-  else if (propName = 'dailyAmount') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (isMatchingName(propName, 'product', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Product'){4x}
+  else if (propName = 'dailyAmount') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -21963,7 +21963,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirCarePlanActivityStatusEnum[value], CODES_TFhirCarePlanActivityStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirCarePlanActivityStatusEnum[value], CODES_TFhirCarePlanActivityStatusEnum[value]);
 end;
 
 Procedure TFhirCarePlanActivityDetail.SetStatusReason(value : TFhirCodeableConcept);
@@ -21989,7 +21989,7 @@ end;
 Procedure TFhirCarePlanActivityDetail.SetProhibitedST(value : Boolean);
 begin
   if FProhibited = nil then
-    FProhibited := TFhirBoolean.create;
+    FProhibited := TFhirBoolean.Create;
   FProhibited.value := value
 end;
 
@@ -22054,31 +22054,31 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
     FDescription.value := '';
 end;
 
-function TFhirCarePlanActivityDetail.sizeInBytesV : cardinal;
+function TFhirCarePlanActivityDetail.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FreasonCodeList.sizeInBytes);
-  inc(result, FreasonReferenceList.sizeInBytes);
-  inc(result, FgoalList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FStatusReason.sizeInBytes);
-  inc(result, FProhibited.sizeInBytes);
-  inc(result, FScheduled.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FperformerList.sizeInBytes);
-  inc(result, FProduct.sizeInBytes);
-  inc(result, FDailyAmount.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FreasonCodeList.sizeInBytes(magic));
+  inc(result, FreasonReferenceList.sizeInBytes(magic));
+  inc(result, FgoalList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FStatusReason.sizeInBytes(magic));
+  inc(result, FProhibited.sizeInBytes(magic));
+  inc(result, FScheduled.sizeInBytes(magic));
+  inc(result, FLocation.sizeInBytes(magic));
+  inc(result, FperformerList.sizeInBytes(magic));
+  inc(result, FProduct.sizeInBytes(magic));
+  inc(result, FDailyAmount.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanActivityDetailListEnumerator }
@@ -22092,7 +22092,7 @@ end;
 
 destructor TFhirCarePlanActivityDetailListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22107,22 +22107,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCarePlanActivityDetailListEnumerator.sizeInBytesV : cardinal;
+function TFhirCarePlanActivityDetailListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanActivityDetailList }
-procedure TFhirCarePlanActivityDetailList.AddItem(value: TFhirCarePlanActivityDetail);
+function TFhirCarePlanActivityDetailList.AddItem(value: TFhirCarePlanActivityDetail): TFhirCarePlanActivityDetail;
 begin
-  assert(value.ClassName = 'TFhirCarePlanActivityDetail', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCarePlanActivityDetail');
   add(value);
+  result := value;
 end;
 
 function TFhirCarePlanActivityDetailList.Append: TFhirCarePlanActivityDetail;
 begin
-  result := TFhirCarePlanActivityDetail.create;
+  result := TFhirCarePlanActivityDetail.Create;
   try
     add(result.Link);
   finally
@@ -22166,7 +22166,7 @@ end;
 
 function TFhirCarePlanActivityDetailList.Insert(index: Integer): TFhirCarePlanActivityDetail;
 begin
-  result := TFhirCarePlanActivityDetail.create;
+  result := TFhirCarePlanActivityDetail.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22216,21 +22216,21 @@ end;
 
 destructor TFhirCarePlan.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
   FStatus.free;
   FContext.free;
   FPeriod.free;
-  FAuthorList.Free;
+  FAuthorList.free;
   FModified.free;
-  FCategoryList.Free;
+  FCategoryList.free;
   FDescription.free;
-  FAddressesList.Free;
-  FSupportList.Free;
-  FRelatedPlanList.Free;
-  FParticipantList.Free;
-  FGoalList.Free;
-  FActivityList.Free;
+  FAddressesList.free;
+  FSupportList.free;
+  FRelatedPlanList.free;
+  FParticipantList.free;
+  FGoalList.free;
+  FActivityList.free;
   FNote.free;
   inherited;
 end;
@@ -22391,22 +22391,22 @@ end;
 procedure TFhirCarePlan.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'context', 'Reference(Encounter|EpisodeOfCare)', false, TFhirReference{Resource}, FContext.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Patient|Practitioner|RelatedPerson|Organization)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'modified', 'dateTime', false, TFhirDateTime, FModified.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'addresses', 'Reference(Condition)', true, TFhirReference{TFhirCondition}, FAddressesList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'support', 'Reference(Any)', true, TFhirReference{TFhirReference}, FSupportList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'relatedPlan', '', true, TFhirCarePlanRelatedPlan, FRelatedPlanList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'participant', '', true, TFhirCarePlanParticipant, FParticipantList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'goal', 'Reference(Goal)', true, TFhirReference{TFhirGoal}, FGoalList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'activity', '', true, TFhirCarePlanActivity, FActivityList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'context', 'Reference(Encounter|EpisodeOfCare)', false, TFhirReference{Resource}, FContext.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Patient|Practitioner|RelatedPerson|Organization)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'modified', 'dateTime', false, TFhirDateTime, FModified.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'addresses', 'Reference(Condition)', true, TFhirReference{TFhirCondition}, FAddressesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'support', 'Reference(Any)', true, TFhirReference{TFhirReference}, FSupportList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'relatedPlan', '', true, TFhirCarePlanRelatedPlan, FRelatedPlanList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'participant', '', true, TFhirCarePlanParticipant, FParticipantList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'goal', 'Reference(Goal)', true, TFhirReference{TFhirGoal}, FGoalList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'activity', '', true, TFhirCarePlanActivity, FActivityList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
 end;
 
 function TFhirCarePlan.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -22511,20 +22511,20 @@ end;
 function TFhirCarePlan.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'context') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'context') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'period') then result := TFhirPeriod.Create(){4b}
   else if (propName = 'author') then result := AuthorList.new(){2}
-  else if (propName = 'modified') then result := TFhirDateTime.create() {5b}
+  else if (propName = 'modified') then result := TFhirDateTime.Create() {5b}
   else if (propName = 'category') then result := CategoryList.new(){2}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else if (propName = 'addresses') then result := AddressesList.new(){2}
   else if (propName = 'support') then result := SupportList.new(){2}
   else if (propName = 'relatedPlan') then result := RelatedPlanList.new(){2}
   else if (propName = 'participant') then result := ParticipantList.new(){2}
   else if (propName = 'goal') then result := GoalList.new(){2}
   else if (propName = 'activity') then result := ActivityList.new(){2}
-  else if (propName = 'note') then result := TFhirAnnotation.create(){4b}
+  else if (propName = 'note') then result := TFhirAnnotation.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -22710,7 +22710,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirCarePlanStatusEnum[value], CODES_TFhirCarePlanStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirCarePlanStatusEnum[value], CODES_TFhirCarePlanStatusEnum[value]);
 end;
 
 Procedure TFhirCarePlan.SetContext(value : TFhirReference{Resource});
@@ -22754,7 +22754,7 @@ end;
 Procedure TFhirCarePlan.SetModifiedST(value : TFslDateTime);
 begin
   if FModified = nil then
-    FModified := TFhirDateTime.create;
+    FModified := TFhirDateTime.Create;
   FModified.value := value
 end;
 
@@ -22789,7 +22789,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -22874,25 +22874,25 @@ begin
   FNote := value;
 end;
 
-function TFhirCarePlan.sizeInBytesV : cardinal;
+function TFhirCarePlan.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FauthorList.sizeInBytes);
-  inc(result, FModified.sizeInBytes);
-  inc(result, FcategoryList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FaddressesList.sizeInBytes);
-  inc(result, FsupportList.sizeInBytes);
-  inc(result, FrelatedPlanList.sizeInBytes);
-  inc(result, FparticipantList.sizeInBytes);
-  inc(result, FgoalList.sizeInBytes);
-  inc(result, FactivityList.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FauthorList.sizeInBytes(magic));
+  inc(result, FModified.sizeInBytes(magic));
+  inc(result, FcategoryList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FaddressesList.sizeInBytes(magic));
+  inc(result, FsupportList.sizeInBytes(magic));
+  inc(result, FrelatedPlanList.sizeInBytes(magic));
+  inc(result, FparticipantList.sizeInBytes(magic));
+  inc(result, FgoalList.sizeInBytes(magic));
+  inc(result, FactivityList.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanListEnumerator }
@@ -22906,7 +22906,7 @@ end;
 
 destructor TFhirCarePlanListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22921,22 +22921,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCarePlanListEnumerator.sizeInBytesV : cardinal;
+function TFhirCarePlanListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCarePlanList }
-procedure TFhirCarePlanList.AddItem(value: TFhirCarePlan);
+function TFhirCarePlanList.AddItem(value: TFhirCarePlan): TFhirCarePlan;
 begin
-  assert(value.ClassName = 'TFhirCarePlan', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCarePlan');
   add(value);
+  result := value;
 end;
 
 function TFhirCarePlanList.Append: TFhirCarePlan;
 begin
-  result := TFhirCarePlan.create;
+  result := TFhirCarePlan.Create;
   try
     add(result.Link);
   finally
@@ -22980,7 +22980,7 @@ end;
 
 function TFhirCarePlanList.Insert(index: Integer): TFhirCarePlan;
 begin
-  result := TFhirCarePlan.create;
+  result := TFhirCarePlan.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23035,7 +23035,7 @@ end;
 destructor TFhirClinicalImpressionInvestigations.Destroy;
 begin
   FCode.free;
-  FItemList.Free;
+  FItemList.free;
   inherited;
 end;
 
@@ -23068,8 +23068,8 @@ end;
 procedure TFhirClinicalImpressionInvestigations.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'item', 'Reference(Observation|QuestionnaireResponse|FamilyMemberHistory|DiagnosticReport)', true, TFhirReference{Resource}, FItemList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'item', 'Reference(Observation|QuestionnaireResponse|FamilyMemberHistory|DiagnosticReport)', true, TFhirReference{Resource}, FItemList.Link)){3};
 end;
 
 function TFhirClinicalImpressionInvestigations.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -23095,7 +23095,7 @@ end;
 
 function TFhirClinicalImpressionInvestigations.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'item') then result := ItemList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -23192,11 +23192,11 @@ begin
   result := (FItemList <> nil) and (FItemList.count > 0);
 end;
 
-function TFhirClinicalImpressionInvestigations.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionInvestigations.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FitemList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FitemList.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionInvestigationsListEnumerator }
@@ -23210,7 +23210,7 @@ end;
 
 destructor TFhirClinicalImpressionInvestigationsListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23225,22 +23225,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClinicalImpressionInvestigationsListEnumerator.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionInvestigationsListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionInvestigationsList }
-procedure TFhirClinicalImpressionInvestigationsList.AddItem(value: TFhirClinicalImpressionInvestigations);
+function TFhirClinicalImpressionInvestigationsList.AddItem(value: TFhirClinicalImpressionInvestigations): TFhirClinicalImpressionInvestigations;
 begin
-  assert(value.ClassName = 'TFhirClinicalImpressionInvestigations', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClinicalImpressionInvestigations');
   add(value);
+  result := value;
 end;
 
 function TFhirClinicalImpressionInvestigationsList.Append: TFhirClinicalImpressionInvestigations;
 begin
-  result := TFhirClinicalImpressionInvestigations.create;
+  result := TFhirClinicalImpressionInvestigations.Create;
   try
     add(result.Link);
   finally
@@ -23284,7 +23284,7 @@ end;
 
 function TFhirClinicalImpressionInvestigationsList.Insert(index: Integer): TFhirClinicalImpressionInvestigations;
 begin
-  result := TFhirClinicalImpressionInvestigations.create;
+  result := TFhirClinicalImpressionInvestigations.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23358,8 +23358,8 @@ end;
 procedure TFhirClinicalImpressionFinding.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'item', 'CodeableConcept', false, TFhirCodeableConcept, FItem.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'cause', 'string', false, TFhirString, FCause.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'item', 'CodeableConcept', false, TFhirCodeableConcept, FItem.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'cause', 'string', false, TFhirString, FCause.Link));{2}
 end;
 
 function TFhirClinicalImpressionFinding.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -23384,8 +23384,8 @@ end;
 
 function TFhirClinicalImpressionFinding.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'item') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'cause') then result := TFhirString.create() {5b}
+  if (propName = 'item') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'cause') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -23486,18 +23486,18 @@ begin
   if value <> '' then
   begin
     if FCause = nil then
-      FCause := TFhirString.create;
+      FCause := TFhirString.Create;
     FCause.value := value
   end
   else if FCause <> nil then
     FCause.value := '';
 end;
 
-function TFhirClinicalImpressionFinding.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionFinding.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
-  inc(result, FCause.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
+  inc(result, FCause.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionFindingListEnumerator }
@@ -23511,7 +23511,7 @@ end;
 
 destructor TFhirClinicalImpressionFindingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23526,22 +23526,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClinicalImpressionFindingListEnumerator.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionFindingListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionFindingList }
-procedure TFhirClinicalImpressionFindingList.AddItem(value: TFhirClinicalImpressionFinding);
+function TFhirClinicalImpressionFindingList.AddItem(value: TFhirClinicalImpressionFinding): TFhirClinicalImpressionFinding;
 begin
-  assert(value.ClassName = 'TFhirClinicalImpressionFinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClinicalImpressionFinding');
   add(value);
+  result := value;
 end;
 
 function TFhirClinicalImpressionFindingList.Append: TFhirClinicalImpressionFinding;
 begin
-  result := TFhirClinicalImpressionFinding.create;
+  result := TFhirClinicalImpressionFinding.Create;
   try
     add(result.Link);
   finally
@@ -23585,7 +23585,7 @@ end;
 
 function TFhirClinicalImpressionFindingList.Insert(index: Integer): TFhirClinicalImpressionFinding;
 begin
-  result := TFhirClinicalImpressionFinding.create;
+  result := TFhirClinicalImpressionFinding.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23659,8 +23659,8 @@ end;
 procedure TFhirClinicalImpressionRuledOut.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'item', 'CodeableConcept', false, TFhirCodeableConcept, FItem.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'string', false, TFhirString, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'item', 'CodeableConcept', false, TFhirCodeableConcept, FItem.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'string', false, TFhirString, FReason.Link));{2}
 end;
 
 function TFhirClinicalImpressionRuledOut.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -23685,8 +23685,8 @@ end;
 
 function TFhirClinicalImpressionRuledOut.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'item') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'reason') then result := TFhirString.create() {5b}
+  if (propName = 'item') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'reason') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -23787,18 +23787,18 @@ begin
   if value <> '' then
   begin
     if FReason = nil then
-      FReason := TFhirString.create;
+      FReason := TFhirString.Create;
     FReason.value := value
   end
   else if FReason <> nil then
     FReason.value := '';
 end;
 
-function TFhirClinicalImpressionRuledOut.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionRuledOut.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionRuledOutListEnumerator }
@@ -23812,7 +23812,7 @@ end;
 
 destructor TFhirClinicalImpressionRuledOutListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23827,22 +23827,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClinicalImpressionRuledOutListEnumerator.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionRuledOutListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionRuledOutList }
-procedure TFhirClinicalImpressionRuledOutList.AddItem(value: TFhirClinicalImpressionRuledOut);
+function TFhirClinicalImpressionRuledOutList.AddItem(value: TFhirClinicalImpressionRuledOut): TFhirClinicalImpressionRuledOut;
 begin
-  assert(value.ClassName = 'TFhirClinicalImpressionRuledOut', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClinicalImpressionRuledOut');
   add(value);
+  result := value;
 end;
 
 function TFhirClinicalImpressionRuledOutList.Append: TFhirClinicalImpressionRuledOut;
 begin
-  result := TFhirClinicalImpressionRuledOut.create;
+  result := TFhirClinicalImpressionRuledOut.Create;
   try
     add(result.Link);
   finally
@@ -23886,7 +23886,7 @@ end;
 
 function TFhirClinicalImpressionRuledOutList.Insert(index: Integer): TFhirClinicalImpressionRuledOut;
 begin
-  result := TFhirClinicalImpressionRuledOut.create;
+  result := TFhirClinicalImpressionRuledOut.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23942,17 +23942,17 @@ begin
   FDate.free;
   FDescription.free;
   FPrevious.free;
-  FProblemList.Free;
+  FProblemList.free;
   FTrigger.free;
-  FInvestigationsList.Free;
+  FInvestigationsList.free;
   FProtocol.free;
   FSummary.free;
-  FFindingList.Free;
-  FResolvedList.Free;
-  FRuledOutList.Free;
+  FFindingList.free;
+  FResolvedList.free;
+  FRuledOutList.free;
   FPrognosis.free;
-  FPlanList.Free;
-  FActionList.Free;
+  FPlanList.free;
+  FActionList.free;
   inherited;
 end;
 
@@ -24095,23 +24095,23 @@ end;
 procedure TFhirClinicalImpression.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'assessor', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FAssessor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'previous', 'Reference(ClinicalImpression)', false, TFhirReference{TFhirClinicalImpression}, FPrevious.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'problem', 'Reference(Condition|AllergyIntolerance)', true, TFhirReference{Resource}, FProblemList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'trigger[x]', 'CodeableConcept|Reference(Any)', false, TFhirType, FTrigger.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'investigations', '', true, TFhirClinicalImpressionInvestigations, FInvestigationsList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'protocol', 'uri', false, TFhirUri, FProtocol.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'summary', 'string', false, TFhirString, FSummary.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'finding', '', true, TFhirClinicalImpressionFinding, FFindingList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'resolved', 'CodeableConcept', true, TFhirCodeableConcept, FResolvedList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'ruledOut', '', true, TFhirClinicalImpressionRuledOut, FRuledOutList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'prognosis', 'string', false, TFhirString, FPrognosis.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'plan', 'Reference(CarePlan|Appointment|CommunicationRequest|DeviceUseRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)', true, TFhirReference{Resource}, FPlanList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'action', 'Reference(ReferralRequest|ProcedureRequest|Procedure|MedicationOrder|DiagnosticOrder|NutritionOrder|SupplyRequest|Appointment)', true, TFhirReference{Resource}, FActionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'assessor', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FAssessor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'previous', 'Reference(ClinicalImpression)', false, TFhirReference{TFhirClinicalImpression}, FPrevious.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'problem', 'Reference(Condition|AllergyIntolerance)', true, TFhirReference{Resource}, FProblemList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'trigger[x]', 'CodeableConcept|Reference(Any)', false, TFhirType, FTrigger.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'investigations', '', true, TFhirClinicalImpressionInvestigations, FInvestigationsList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'protocol', 'uri', false, TFhirUri, FProtocol.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'summary', 'string', false, TFhirString, FSummary.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'finding', '', true, TFhirClinicalImpressionFinding, FFindingList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'resolved', 'CodeableConcept', true, TFhirCodeableConcept, FResolvedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'ruledOut', '', true, TFhirClinicalImpressionRuledOut, FRuledOutList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'prognosis', 'string', false, TFhirString, FPrognosis.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'plan', 'Reference(CarePlan|Appointment|CommunicationRequest|DeviceUseRequest|DiagnosticOrder|MedicationOrder|NutritionOrder|Order|ProcedureRequest|ProcessRequest|ReferralRequest|SupplyRequest|VisionPrescription)', true, TFhirReference{Resource}, FPlanList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'action', 'Reference(ReferralRequest|ProcedureRequest|Procedure|MedicationOrder|DiagnosticOrder|NutritionOrder|SupplyRequest|Appointment)', true, TFhirReference{Resource}, FActionList.Link)){3};
 end;
 
 function TFhirClinicalImpression.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -24218,20 +24218,20 @@ end;
 
 function TFhirClinicalImpression.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'assessor') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'previous') then result := TFhirReference{TFhirClinicalImpression}.create(){4b}
+  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'assessor') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'previous') then result := TFhirReference{TFhirClinicalImpression}.Create(){4b}
   else if (propName = 'problem') then result := ProblemList.new(){2}
-  else if (isMatchingName(propName, 'trigger', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Trigger'){4x}
+  else if (isMatchingName(propName, 'trigger', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Trigger'){4x}
   else if (propName = 'investigations') then result := InvestigationsList.new(){2}
-  else if (propName = 'protocol') then result := TFhirUri.create() {5b}
-  else if (propName = 'summary') then result := TFhirString.create() {5b}
+  else if (propName = 'protocol') then result := TFhirUri.Create() {5b}
+  else if (propName = 'summary') then result := TFhirString.Create() {5b}
   else if (propName = 'finding') then result := FindingList.new(){2}
   else if (propName = 'resolved') then result := ResolvedList.new(){2}
   else if (propName = 'ruledOut') then result := RuledOutList.new(){2}
-  else if (propName = 'prognosis') then result := TFhirString.create() {5b}
+  else if (propName = 'prognosis') then result := TFhirString.Create() {5b}
   else if (propName = 'plan') then result := PlanList.new(){2}
   else if (propName = 'action') then result := ActionList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -24416,7 +24416,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirClinicalImpressionStatusEnum[value], CODES_TFhirClinicalImpressionStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirClinicalImpressionStatusEnum[value], CODES_TFhirClinicalImpressionStatusEnum[value]);
 end;
 
 Procedure TFhirClinicalImpression.SetDate(value : TFhirDateTime);
@@ -24436,7 +24436,7 @@ end;
 Procedure TFhirClinicalImpression.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -24459,7 +24459,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -24521,7 +24521,7 @@ begin
   if value <> '' then
   begin
     if FProtocol = nil then
-      FProtocol := TFhirUri.create;
+      FProtocol := TFhirUri.Create;
     FProtocol.value := value
   end
   else if FProtocol <> nil then
@@ -24547,7 +24547,7 @@ begin
   if value <> '' then
   begin
     if FSummary = nil then
-      FSummary := TFhirString.create;
+      FSummary := TFhirString.Create;
     FSummary.value := value
   end
   else if FSummary <> nil then
@@ -24609,7 +24609,7 @@ begin
   if value <> '' then
   begin
     if FPrognosis = nil then
-      FPrognosis := TFhirString.create;
+      FPrognosis := TFhirString.Create;
     FPrognosis.value := value
   end
   else if FPrognosis <> nil then
@@ -24640,26 +24640,26 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
-function TFhirClinicalImpression.sizeInBytesV : cardinal;
+function TFhirClinicalImpression.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FAssessor.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FPrevious.sizeInBytes);
-  inc(result, FproblemList.sizeInBytes);
-  inc(result, FTrigger.sizeInBytes);
-  inc(result, FinvestigationsList.sizeInBytes);
-  inc(result, FProtocol.sizeInBytes);
-  inc(result, FSummary.sizeInBytes);
-  inc(result, FfindingList.sizeInBytes);
-  inc(result, FresolvedList.sizeInBytes);
-  inc(result, FruledOutList.sizeInBytes);
-  inc(result, FPrognosis.sizeInBytes);
-  inc(result, FplanList.sizeInBytes);
-  inc(result, FactionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FAssessor.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FPrevious.sizeInBytes(magic));
+  inc(result, FproblemList.sizeInBytes(magic));
+  inc(result, FTrigger.sizeInBytes(magic));
+  inc(result, FinvestigationsList.sizeInBytes(magic));
+  inc(result, FProtocol.sizeInBytes(magic));
+  inc(result, FSummary.sizeInBytes(magic));
+  inc(result, FfindingList.sizeInBytes(magic));
+  inc(result, FresolvedList.sizeInBytes(magic));
+  inc(result, FruledOutList.sizeInBytes(magic));
+  inc(result, FPrognosis.sizeInBytes(magic));
+  inc(result, FplanList.sizeInBytes(magic));
+  inc(result, FactionList.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionListEnumerator }
@@ -24673,7 +24673,7 @@ end;
 
 destructor TFhirClinicalImpressionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24688,22 +24688,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirClinicalImpressionListEnumerator.sizeInBytesV : cardinal;
+function TFhirClinicalImpressionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirClinicalImpressionList }
-procedure TFhirClinicalImpressionList.AddItem(value: TFhirClinicalImpression);
+function TFhirClinicalImpressionList.AddItem(value: TFhirClinicalImpression): TFhirClinicalImpression;
 begin
-  assert(value.ClassName = 'TFhirClinicalImpression', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirClinicalImpression');
   add(value);
+  result := value;
 end;
 
 function TFhirClinicalImpressionList.Append: TFhirClinicalImpression;
 begin
-  result := TFhirClinicalImpression.create;
+  result := TFhirClinicalImpression.Create;
   try
     add(result.Link);
   finally
@@ -24747,7 +24747,7 @@ end;
 
 function TFhirClinicalImpressionList.Insert(index: Integer): TFhirClinicalImpression;
 begin
-  result := TFhirClinicalImpression.create;
+  result := TFhirClinicalImpression.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -24821,7 +24821,7 @@ end;
 procedure TFhirCommunicationPayload.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'content[x]', 'string|Attachment|Reference(Any)', false, TFhirType, FContent.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'content[x]', 'string|Attachment|Reference(Any)', false, TFhirType, FContent.Link));{2}
 end;
 
 function TFhirCommunicationPayload.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -24841,7 +24841,7 @@ end;
 
 function TFhirCommunicationPayload.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'content', ['String', 'Attachment', 'Reference'])) then raise EFHIRException.create('Cannot make property Content'){4x}
+  if (isMatchingName(propName, 'content', ['String', 'Attachment', 'Reference'])) then raise EFHIRException.Create('Cannot make property Content'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -24919,10 +24919,10 @@ begin
   FContent := value;
 end;
 
-function TFhirCommunicationPayload.sizeInBytesV : cardinal;
+function TFhirCommunicationPayload.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationPayloadListEnumerator }
@@ -24936,7 +24936,7 @@ end;
 
 destructor TFhirCommunicationPayloadListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24951,22 +24951,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCommunicationPayloadListEnumerator.sizeInBytesV : cardinal;
+function TFhirCommunicationPayloadListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationPayloadList }
-procedure TFhirCommunicationPayloadList.AddItem(value: TFhirCommunicationPayload);
+function TFhirCommunicationPayloadList.AddItem(value: TFhirCommunicationPayload): TFhirCommunicationPayload;
 begin
-  assert(value.ClassName = 'TFhirCommunicationPayload', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCommunicationPayload');
   add(value);
+  result := value;
 end;
 
 function TFhirCommunicationPayloadList.Append: TFhirCommunicationPayload;
 begin
-  result := TFhirCommunicationPayload.create;
+  result := TFhirCommunicationPayload.Create;
   try
     add(result.Link);
   finally
@@ -25010,7 +25010,7 @@ end;
 
 function TFhirCommunicationPayloadList.Insert(index: Integer): TFhirCommunicationPayload;
 begin
-  result := TFhirCommunicationPayload.create;
+  result := TFhirCommunicationPayload.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25060,17 +25060,17 @@ end;
 
 destructor TFhirCommunication.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FCategory.free;
   FSender.free;
-  FRecipientList.Free;
-  FPayloadList.Free;
-  FMediumList.Free;
+  FRecipientList.free;
+  FPayloadList.free;
+  FMediumList.free;
   FStatus.free;
   FEncounter.free;
   FSent.free;
   FReceived.free;
-  FReasonList.Free;
+  FReasonList.free;
   FSubject.free;
   FRequestDetail.free;
   inherited;
@@ -25183,19 +25183,19 @@ end;
 procedure TFhirCommunication.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'sender', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FSender.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recipient', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson|Group)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'payload', '', true, TFhirCommunicationPayload, FPayloadList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'medium', 'CodeableConcept', true, TFhirCodeableConcept, FMediumList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'sent', 'dateTime', false, TFhirDateTime, FSent.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'received', 'dateTime', false, TFhirDateTime, FReceived.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requestDetail', 'Reference(CommunicationRequest)', false, TFhirReference{TFhirCommunicationRequest}, FRequestDetail.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'sender', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FSender.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recipient', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson|Group)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'payload', '', true, TFhirCommunicationPayload, FPayloadList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'medium', 'CodeableConcept', true, TFhirCodeableConcept, FMediumList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'sent', 'dateTime', false, TFhirDateTime, FSent.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'received', 'dateTime', false, TFhirDateTime, FReceived.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'requestDetail', 'Reference(CommunicationRequest)', false, TFhirReference{TFhirCommunicationRequest}, FRequestDetail.Link));{2}
 end;
 
 function TFhirCommunication.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -25281,17 +25281,17 @@ end;
 function TFhirCommunication.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'sender') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'sender') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'recipient') then result := RecipientList.new(){2}
   else if (propName = 'payload') then result := PayloadList.new(){2}
   else if (propName = 'medium') then result := MediumList.new(){2}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'sent') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'received') then result := TFhirDateTime.create() {5b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'sent') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'received') then result := TFhirDateTime.Create() {5b}
   else if (propName = 'reason') then result := ReasonList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'requestDetail') then result := TFhirReference{TFhirCommunicationRequest}.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'requestDetail') then result := TFhirReference{TFhirCommunicationRequest}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -25502,7 +25502,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirCommunicationStatusEnum[value], CODES_TFhirCommunicationStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirCommunicationStatusEnum[value], CODES_TFhirCommunicationStatusEnum[value]);
 end;
 
 Procedure TFhirCommunication.SetEncounter(value : TFhirReference{TFhirEncounter});
@@ -25528,7 +25528,7 @@ end;
 Procedure TFhirCommunication.SetSentST(value : TFslDateTime);
 begin
   if FSent = nil then
-    FSent := TFhirDateTime.create;
+    FSent := TFhirDateTime.Create;
   FSent.value := value
 end;
 
@@ -25549,7 +25549,7 @@ end;
 Procedure TFhirCommunication.SetReceivedST(value : TFslDateTime);
 begin
   if FReceived = nil then
-    FReceived := TFhirDateTime.create;
+    FReceived := TFhirDateTime.Create;
   FReceived.value := value
 end;
 
@@ -25577,22 +25577,22 @@ begin
   FRequestDetail := value;
 end;
 
-function TFhirCommunication.sizeInBytesV : cardinal;
+function TFhirCommunication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FSender.sizeInBytes);
-  inc(result, FrecipientList.sizeInBytes);
-  inc(result, FpayloadList.sizeInBytes);
-  inc(result, FmediumList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FSent.sizeInBytes);
-  inc(result, FReceived.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FRequestDetail.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FSender.sizeInBytes(magic));
+  inc(result, FrecipientList.sizeInBytes(magic));
+  inc(result, FpayloadList.sizeInBytes(magic));
+  inc(result, FmediumList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FSent.sizeInBytes(magic));
+  inc(result, FReceived.sizeInBytes(magic));
+  inc(result, FreasonList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FRequestDetail.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationListEnumerator }
@@ -25606,7 +25606,7 @@ end;
 
 destructor TFhirCommunicationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25621,22 +25621,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCommunicationListEnumerator.sizeInBytesV : cardinal;
+function TFhirCommunicationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationList }
-procedure TFhirCommunicationList.AddItem(value: TFhirCommunication);
+function TFhirCommunicationList.AddItem(value: TFhirCommunication): TFhirCommunication;
 begin
-  assert(value.ClassName = 'TFhirCommunication', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCommunication');
   add(value);
+  result := value;
 end;
 
 function TFhirCommunicationList.Append: TFhirCommunication;
 begin
-  result := TFhirCommunication.create;
+  result := TFhirCommunication.Create;
   try
     add(result.Link);
   finally
@@ -25680,7 +25680,7 @@ end;
 
 function TFhirCommunicationList.Insert(index: Integer): TFhirCommunication;
 begin
-  result := TFhirCommunication.create;
+  result := TFhirCommunication.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25754,7 +25754,7 @@ end;
 procedure TFhirCommunicationRequestPayload.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'content[x]', 'string|Attachment|Reference(Any)', false, TFhirType, FContent.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'content[x]', 'string|Attachment|Reference(Any)', false, TFhirType, FContent.Link));{2}
 end;
 
 function TFhirCommunicationRequestPayload.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -25774,7 +25774,7 @@ end;
 
 function TFhirCommunicationRequestPayload.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'content', ['String', 'Attachment', 'Reference'])) then raise EFHIRException.create('Cannot make property Content'){4x}
+  if (isMatchingName(propName, 'content', ['String', 'Attachment', 'Reference'])) then raise EFHIRException.Create('Cannot make property Content'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -25852,10 +25852,10 @@ begin
   FContent := value;
 end;
 
-function TFhirCommunicationRequestPayload.sizeInBytesV : cardinal;
+function TFhirCommunicationRequestPayload.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationRequestPayloadListEnumerator }
@@ -25869,7 +25869,7 @@ end;
 
 destructor TFhirCommunicationRequestPayloadListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25884,22 +25884,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCommunicationRequestPayloadListEnumerator.sizeInBytesV : cardinal;
+function TFhirCommunicationRequestPayloadListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationRequestPayloadList }
-procedure TFhirCommunicationRequestPayloadList.AddItem(value: TFhirCommunicationRequestPayload);
+function TFhirCommunicationRequestPayloadList.AddItem(value: TFhirCommunicationRequestPayload): TFhirCommunicationRequestPayload;
 begin
-  assert(value.ClassName = 'TFhirCommunicationRequestPayload', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCommunicationRequestPayload');
   add(value);
+  result := value;
 end;
 
 function TFhirCommunicationRequestPayloadList.Append: TFhirCommunicationRequestPayload;
 begin
-  result := TFhirCommunicationRequestPayload.create;
+  result := TFhirCommunicationRequestPayload.Create;
   try
     add(result.Link);
   finally
@@ -25943,7 +25943,7 @@ end;
 
 function TFhirCommunicationRequestPayloadList.Insert(index: Integer): TFhirCommunicationRequestPayload;
 begin
-  result := TFhirCommunicationRequestPayload.create;
+  result := TFhirCommunicationRequestPayload.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25993,17 +25993,17 @@ end;
 
 destructor TFhirCommunicationRequest.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FCategory.free;
   FSender.free;
-  FRecipientList.Free;
-  FPayloadList.Free;
-  FMediumList.Free;
+  FRecipientList.free;
+  FPayloadList.free;
+  FMediumList.free;
   FRequester.free;
   FStatus.free;
   FEncounter.free;
   FScheduled.free;
-  FReasonList.Free;
+  FReasonList.free;
   FRequestedOn.free;
   FSubject.free;
   FPriority.free;
@@ -26120,20 +26120,20 @@ end;
 procedure TFhirCommunicationRequest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'sender', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FSender.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recipient', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'payload', '', true, TFhirCommunicationRequestPayload, FPayloadList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'medium', 'CodeableConcept', true, TFhirCodeableConcept, FMediumList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'requester', 'Reference(Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FRequester.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'scheduled[x]', 'dateTime|Period', false, TFhirType, FScheduled.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'requestedOn', 'dateTime', false, TFhirDateTime, FRequestedOn.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'sender', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FSender.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recipient', 'Reference(Device|Organization|Patient|Practitioner|RelatedPerson)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'payload', '', true, TFhirCommunicationRequestPayload, FPayloadList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'medium', 'CodeableConcept', true, TFhirCodeableConcept, FMediumList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'requester', 'Reference(Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FRequester.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'scheduled[x]', 'dateTime|Period', false, TFhirType, FScheduled.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'requestedOn', 'dateTime', false, TFhirDateTime, FRequestedOn.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));{2}
 end;
 
 function TFhirCommunicationRequest.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -26224,18 +26224,18 @@ end;
 function TFhirCommunicationRequest.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'sender') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'sender') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'recipient') then result := RecipientList.new(){2}
   else if (propName = 'payload') then result := PayloadList.new(){2}
   else if (propName = 'medium') then result := MediumList.new(){2}
-  else if (propName = 'requester') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (isMatchingName(propName, 'scheduled', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Scheduled'){4x}
+  else if (propName = 'requester') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (isMatchingName(propName, 'scheduled', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Scheduled'){4x}
   else if (propName = 'reason') then result := ReasonList.new(){2}
-  else if (propName = 'requestedOn') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'priority') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'requestedOn') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'priority') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -26456,7 +26456,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirCommunicationRequestStatusEnum[value], CODES_TFhirCommunicationRequestStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirCommunicationRequestStatusEnum[value], CODES_TFhirCommunicationRequestStatusEnum[value]);
 end;
 
 Procedure TFhirCommunicationRequest.SetEncounter(value : TFhirReference{TFhirEncounter});
@@ -26500,7 +26500,7 @@ end;
 Procedure TFhirCommunicationRequest.SetRequestedOnST(value : TFslDateTime);
 begin
   if FRequestedOn = nil then
-    FRequestedOn := TFhirDateTime.create;
+    FRequestedOn := TFhirDateTime.Create;
   FRequestedOn.value := value
 end;
 
@@ -26516,23 +26516,23 @@ begin
   FPriority := value;
 end;
 
-function TFhirCommunicationRequest.sizeInBytesV : cardinal;
+function TFhirCommunicationRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FSender.sizeInBytes);
-  inc(result, FrecipientList.sizeInBytes);
-  inc(result, FpayloadList.sizeInBytes);
-  inc(result, FmediumList.sizeInBytes);
-  inc(result, FRequester.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FScheduled.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FRequestedOn.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FSender.sizeInBytes(magic));
+  inc(result, FrecipientList.sizeInBytes(magic));
+  inc(result, FpayloadList.sizeInBytes(magic));
+  inc(result, FmediumList.sizeInBytes(magic));
+  inc(result, FRequester.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FScheduled.sizeInBytes(magic));
+  inc(result, FreasonList.sizeInBytes(magic));
+  inc(result, FRequestedOn.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationRequestListEnumerator }
@@ -26546,7 +26546,7 @@ end;
 
 destructor TFhirCommunicationRequestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26561,22 +26561,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCommunicationRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirCommunicationRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCommunicationRequestList }
-procedure TFhirCommunicationRequestList.AddItem(value: TFhirCommunicationRequest);
+function TFhirCommunicationRequestList.AddItem(value: TFhirCommunicationRequest): TFhirCommunicationRequest;
 begin
-  assert(value.ClassName = 'TFhirCommunicationRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCommunicationRequest');
   add(value);
+  result := value;
 end;
 
 function TFhirCommunicationRequestList.Append: TFhirCommunicationRequest;
 begin
-  result := TFhirCommunicationRequest.create;
+  result := TFhirCommunicationRequest.Create;
   try
     add(result.Link);
   finally
@@ -26620,7 +26620,7 @@ end;
 
 function TFhirCommunicationRequestList.Insert(index: Integer): TFhirCommunicationRequest;
 begin
-  result := TFhirCommunicationRequest.create;
+  result := TFhirCommunicationRequest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26674,7 +26674,7 @@ end;
 
 destructor TFhirCompositionAttester.Destroy;
 begin
-  FMode.Free;
+  FMode.free;
   FTime.free;
   FParty.free;
   inherited;
@@ -26711,9 +26711,9 @@ end;
 procedure TFhirCompositionAttester.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'mode', 'code', true, TFHIREnum, FMode.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'time', 'dateTime', false, TFhirDateTime, FTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'party', 'Reference(Patient|Practitioner|Organization)', false, TFhirReference{Resource}, FParty.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'mode', 'code', true, TFHIREnum, FMode.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'time', 'dateTime', false, TFhirDateTime, FTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'party', 'Reference(Patient|Practitioner|Organization)', false, TFhirReference{Resource}, FParty.Link));{2}
 end;
 
 function TFhirCompositionAttester.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -26744,8 +26744,8 @@ end;
 
 function TFhirCompositionAttester.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'time') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'party') then result := TFhirReference{Resource}.create(){4b}
+  if (propName = 'time') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'party') then result := TFhirReference{Resource}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -26851,14 +26851,14 @@ Procedure TFhirCompositionAttester.SetModeST(value : TFhirCompositionAttestation
 var a : TFhirCompositionAttestationModeEnum;
 begin
   if Fmode = nil then
-    Fmode := TFhirEnumList.create(SYSTEMS_TFhirCompositionAttestationModeEnum, CODES_TFhirCompositionAttestationModeEnum);
+    Fmode := TFhirEnumList.Create(SYSTEMS_TFhirCompositionAttestationModeEnum, CODES_TFhirCompositionAttestationModeEnum);
   Fmode.clear;
   for a := low(TFhirCompositionAttestationModeEnum) to high(TFhirCompositionAttestationModeEnum) do
     if a in value then
       begin
          if Fmode = nil then
-           Fmode := TFhirEnumList.create(SYSTEMS_TFhirCompositionAttestationModeEnum, CODES_TFhirCompositionAttestationModeEnum);
-         Fmode.add(TFhirEnum.create(SYSTEMS_TFhirCompositionAttestationModeEnum[a], CODES_TFhirCompositionAttestationModeEnum[a]));
+           Fmode := TFhirEnumList.Create(SYSTEMS_TFhirCompositionAttestationModeEnum, CODES_TFhirCompositionAttestationModeEnum);
+         Fmode.add(TFhirEnum.Create(SYSTEMS_TFhirCompositionAttestationModeEnum[a], CODES_TFhirCompositionAttestationModeEnum[a]));
       end;
 end;
 
@@ -26879,7 +26879,7 @@ end;
 Procedure TFhirCompositionAttester.SetTimeST(value : TFslDateTime);
 begin
   if FTime = nil then
-    FTime := TFhirDateTime.create;
+    FTime := TFhirDateTime.Create;
   FTime.value := value
 end;
 
@@ -26889,12 +26889,12 @@ begin
   FParty := value;
 end;
 
-function TFhirCompositionAttester.sizeInBytesV : cardinal;
+function TFhirCompositionAttester.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMode.sizeInBytes);
-  inc(result, FTime.sizeInBytes);
-  inc(result, FParty.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FTime.sizeInBytes(magic));
+  inc(result, FParty.sizeInBytes(magic));
 end;
 
 { TFhirCompositionAttesterListEnumerator }
@@ -26908,7 +26908,7 @@ end;
 
 destructor TFhirCompositionAttesterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26923,22 +26923,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCompositionAttesterListEnumerator.sizeInBytesV : cardinal;
+function TFhirCompositionAttesterListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionAttesterList }
-procedure TFhirCompositionAttesterList.AddItem(value: TFhirCompositionAttester);
+function TFhirCompositionAttesterList.AddItem(value: TFhirCompositionAttester): TFhirCompositionAttester;
 begin
-  assert(value.ClassName = 'TFhirCompositionAttester', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCompositionAttester');
   add(value);
+  result := value;
 end;
 
 function TFhirCompositionAttesterList.Append: TFhirCompositionAttester;
 begin
-  result := TFhirCompositionAttester.create;
+  result := TFhirCompositionAttester.Create;
   try
     add(result.Link);
   finally
@@ -26982,7 +26982,7 @@ end;
 
 function TFhirCompositionAttesterList.Insert(index: Integer): TFhirCompositionAttester;
 begin
-  result := TFhirCompositionAttester.create;
+  result := TFhirCompositionAttester.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27032,9 +27032,9 @@ end;
 
 destructor TFhirCompositionEvent.Destroy;
 begin
-  FCodeList.Free;
+  FCodeList.free;
   FPeriod.free;
-  FDetailList.Free;
+  FDetailList.free;
   inherited;
 end;
 
@@ -27080,9 +27080,9 @@ end;
 procedure TFhirCompositionEvent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'detail', 'Reference(Any)', true, TFhirReference{TFhirReference}, FDetailList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', true, TFhirCodeableConcept, FCodeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'detail', 'Reference(Any)', true, TFhirReference{TFhirReference}, FDetailList.Link)){3};
 end;
 
 function TFhirCompositionEvent.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -27115,7 +27115,7 @@ end;
 function TFhirCompositionEvent.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'code') then result := CodeList.new(){2}
-  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
+  else if (propName = 'period') then result := TFhirPeriod.Create(){4b}
   else if (propName = 'detail') then result := DetailList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -27230,12 +27230,12 @@ begin
   result := (FDetailList <> nil) and (FDetailList.count > 0);
 end;
 
-function TFhirCompositionEvent.sizeInBytesV : cardinal;
+function TFhirCompositionEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FcodeList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FcodeList.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionEventListEnumerator }
@@ -27249,7 +27249,7 @@ end;
 
 destructor TFhirCompositionEventListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27264,22 +27264,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCompositionEventListEnumerator.sizeInBytesV : cardinal;
+function TFhirCompositionEventListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionEventList }
-procedure TFhirCompositionEventList.AddItem(value: TFhirCompositionEvent);
+function TFhirCompositionEventList.AddItem(value: TFhirCompositionEvent): TFhirCompositionEvent;
 begin
-  assert(value.ClassName = 'TFhirCompositionEvent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCompositionEvent');
   add(value);
+  result := value;
 end;
 
 function TFhirCompositionEventList.Append: TFhirCompositionEvent;
 begin
-  result := TFhirCompositionEvent.create;
+  result := TFhirCompositionEvent.Create;
   try
     add(result.Link);
   finally
@@ -27323,7 +27323,7 @@ end;
 
 function TFhirCompositionEventList.Insert(index: Integer): TFhirCompositionEvent;
 begin
-  result := TFhirCompositionEvent.create;
+  result := TFhirCompositionEvent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27378,9 +27378,9 @@ begin
   FText.free;
   FMode.free;
   FOrderedBy.free;
-  FEntryList.Free;
+  FEntryList.free;
   FEmptyReason.free;
-  FSectionList.Free;
+  FSectionList.free;
   inherited;
 end;
 
@@ -27441,14 +27441,14 @@ end;
 procedure TFhirCompositionSection.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'text', 'Narrative', false, TFhirNarrative, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'mode', 'code', false, TFHIREnum, FMode.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'orderedBy', 'CodeableConcept', false, TFhirCodeableConcept, FOrderedBy.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'entry', 'Reference(Any)', true, TFhirReference{TFhirReference}, FEntryList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'emptyReason', 'CodeableConcept', false, TFhirCodeableConcept, FEmptyReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'section', '@Composition.section', true, TFhirCompositionSection, FSectionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'Narrative', false, TFhirNarrative, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'mode', 'code', false, TFHIREnum, FMode.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'orderedBy', 'CodeableConcept', false, TFhirCodeableConcept, FOrderedBy.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'entry', 'Reference(Any)', true, TFhirReference{TFhirReference}, FEntryList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'emptyReason', 'CodeableConcept', false, TFhirCodeableConcept, FEmptyReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'section', '@Composition.section', true, TFhirCompositionSection, FSectionList.Link)){3};
 end;
 
 function TFhirCompositionSection.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -27505,12 +27505,12 @@ end;
 
 function TFhirCompositionSection.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'title') then result := TFhirString.create() {5b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'text') then result := TFhirNarrative.create(){4b}
-  else if (propName = 'orderedBy') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'title') then result := TFhirString.Create() {5b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'text') then result := TFhirNarrative.Create(){4b}
+  else if (propName = 'orderedBy') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'entry') then result := EntryList.new(){2}
-  else if (propName = 'emptyReason') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'emptyReason') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'section') then result := SectionList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -27636,7 +27636,7 @@ begin
   if value <> '' then
   begin
     if FTitle = nil then
-      FTitle := TFhirString.create;
+      FTitle := TFhirString.Create;
     FTitle.value := value
   end
   else if FTitle <> nil then
@@ -27674,7 +27674,7 @@ begin
   if ord(value) = 0 then
     ModeElement := nil
   else
-    ModeElement := TFhirEnum.create(SYSTEMS_TFhirListModeEnum[value], CODES_TFhirListModeEnum[value]);
+    ModeElement := TFhirEnum.Create(SYSTEMS_TFhirListModeEnum[value], CODES_TFhirListModeEnum[value]);
 end;
 
 Procedure TFhirCompositionSection.SetOrderedBy(value : TFhirCodeableConcept);
@@ -27713,17 +27713,17 @@ begin
   result := (FSectionList <> nil) and (FSectionList.count > 0);
 end;
 
-function TFhirCompositionSection.sizeInBytesV : cardinal;
+function TFhirCompositionSection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FText.sizeInBytes);
-  inc(result, FMode.sizeInBytes);
-  inc(result, FOrderedBy.sizeInBytes);
-  inc(result, FentryList.sizeInBytes);
-  inc(result, FEmptyReason.sizeInBytes);
-  inc(result, FsectionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FOrderedBy.sizeInBytes(magic));
+  inc(result, FentryList.sizeInBytes(magic));
+  inc(result, FEmptyReason.sizeInBytes(magic));
+  inc(result, FsectionList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionSectionListEnumerator }
@@ -27737,7 +27737,7 @@ end;
 
 destructor TFhirCompositionSectionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27752,22 +27752,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCompositionSectionListEnumerator.sizeInBytesV : cardinal;
+function TFhirCompositionSectionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionSectionList }
-procedure TFhirCompositionSectionList.AddItem(value: TFhirCompositionSection);
+function TFhirCompositionSectionList.AddItem(value: TFhirCompositionSection): TFhirCompositionSection;
 begin
-  assert(value.ClassName = 'TFhirCompositionSection', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCompositionSection');
   add(value);
+  result := value;
 end;
 
 function TFhirCompositionSectionList.Append: TFhirCompositionSection;
 begin
-  result := TFhirCompositionSection.create;
+  result := TFhirCompositionSection.Create;
   try
     add(result.Link);
   finally
@@ -27811,7 +27811,7 @@ end;
 
 function TFhirCompositionSectionList.Insert(index: Integer): TFhirCompositionSection;
 begin
-  result := TFhirCompositionSection.create;
+  result := TFhirCompositionSection.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27869,12 +27869,12 @@ begin
   FStatus.free;
   FConfidentiality.free;
   FSubject.free;
-  FAuthorList.Free;
-  FAttesterList.Free;
+  FAuthorList.free;
+  FAttesterList.free;
   FCustodian.free;
-  FEventList.Free;
+  FEventList.free;
   FEncounter.free;
-  FSectionList.Free;
+  FSectionList.free;
   inherited;
 end;
 
@@ -27978,20 +27978,20 @@ end;
 procedure TFhirComposition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'class', 'CodeableConcept', false, TFhirCodeableConcept, FClass_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'confidentiality', 'code', false, TFHIREnum, FConfidentiality.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner|Device|Patient|RelatedPerson)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'attester', '', true, TFhirCompositionAttester, FAttesterList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'custodian', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FCustodian.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'event', '', true, TFhirCompositionEvent, FEventList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'section', '', true, TFhirCompositionSection, FSectionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'class', 'CodeableConcept', false, TFhirCodeableConcept, FClass_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'confidentiality', 'code', false, TFHIREnum, FConfidentiality.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner|Device|Patient|RelatedPerson)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'attester', '', true, TFhirCompositionAttester, FAttesterList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'custodian', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FCustodian.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'event', '', true, TFhirCompositionEvent, FEventList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'section', '', true, TFhirCompositionSection, FSectionList.Link)){3};
 end;
 
 function TFhirComposition.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -28080,17 +28080,17 @@ end;
 
 function TFhirComposition.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'class') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'title') then result := TFhirString.create() {5b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.create(){4b}
+  if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'class') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'title') then result := TFhirString.Create() {5b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.Create(){4b}
   else if (propName = 'author') then result := AuthorList.new(){2}
   else if (propName = 'attester') then result := AttesterList.new(){2}
-  else if (propName = 'custodian') then result := TFhirReference{TFhirOrganization}.create(){4b}
+  else if (propName = 'custodian') then result := TFhirReference{TFhirOrganization}.Create(){4b}
   else if (propName = 'event') then result := EventList.new(){2}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
   else if (propName = 'section') then result := SectionList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -28249,7 +28249,7 @@ end;
 Procedure TFhirComposition.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -28284,7 +28284,7 @@ begin
   if value <> '' then
   begin
     if FTitle = nil then
-      FTitle := TFhirString.create;
+      FTitle := TFhirString.Create;
     FTitle.value := value
   end
   else if FTitle <> nil then
@@ -28310,7 +28310,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirCompositionStatusEnum[value], CODES_TFhirCompositionStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirCompositionStatusEnum[value], CODES_TFhirCompositionStatusEnum[value]);
 end;
 
 Procedure TFhirComposition.SetConfidentiality(value : TFhirEnum);
@@ -28332,7 +28332,7 @@ begin
   if ord(value) = 0 then
     ConfidentialityElement := nil
   else
-    ConfidentialityElement := TFhirEnum.create(SYSTEMS_TFhirV3ConfidentialityEnum[value], CODES_TFhirV3ConfidentialityEnum[value]);
+    ConfidentialityElement := TFhirEnum.Create(SYSTEMS_TFhirV3ConfidentialityEnum[value], CODES_TFhirV3ConfidentialityEnum[value]);
 end;
 
 Procedure TFhirComposition.SetSubject(value : TFhirReference{TFhirReference});
@@ -28401,23 +28401,23 @@ begin
   result := (FSectionList <> nil) and (FSectionList.count > 0);
 end;
 
-function TFhirComposition.sizeInBytesV : cardinal;
+function TFhirComposition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FClass_.sizeInBytes);
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FConfidentiality.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FauthorList.sizeInBytes);
-  inc(result, FattesterList.sizeInBytes);
-  inc(result, FCustodian.sizeInBytes);
-  inc(result, FeventList.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FsectionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FClass_.sizeInBytes(magic));
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FConfidentiality.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FauthorList.sizeInBytes(magic));
+  inc(result, FattesterList.sizeInBytes(magic));
+  inc(result, FCustodian.sizeInBytes(magic));
+  inc(result, FeventList.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FsectionList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionListEnumerator }
@@ -28431,7 +28431,7 @@ end;
 
 destructor TFhirCompositionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28446,22 +28446,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCompositionListEnumerator.sizeInBytesV : cardinal;
+function TFhirCompositionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCompositionList }
-procedure TFhirCompositionList.AddItem(value: TFhirComposition);
+function TFhirCompositionList.AddItem(value: TFhirComposition): TFhirComposition;
 begin
-  assert(value.ClassName = 'TFhirComposition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirComposition');
   add(value);
+  result := value;
 end;
 
 function TFhirCompositionList.Append: TFhirComposition;
 begin
-  result := TFhirComposition.create;
+  result := TFhirComposition.Create;
   try
     add(result.Link);
   finally
@@ -28505,7 +28505,7 @@ end;
 
 function TFhirCompositionList.Insert(index: Integer): TFhirComposition;
 begin
-  result := TFhirComposition.create;
+  result := TFhirComposition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -28560,7 +28560,7 @@ end;
 destructor TFhirConditionStage.Destroy;
 begin
   FSummary.free;
-  FAssessmentList.Free;
+  FAssessmentList.free;
   inherited;
 end;
 
@@ -28593,8 +28593,8 @@ end;
 procedure TFhirConditionStage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'summary', 'CodeableConcept', false, TFhirCodeableConcept, FSummary.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'assessment', 'Reference(ClinicalImpression|DiagnosticReport|Observation)', true, TFhirReference{Resource}, FAssessmentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'summary', 'CodeableConcept', false, TFhirCodeableConcept, FSummary.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'assessment', 'Reference(ClinicalImpression|DiagnosticReport|Observation)', true, TFhirReference{Resource}, FAssessmentList.Link)){3};
 end;
 
 function TFhirConditionStage.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -28620,7 +28620,7 @@ end;
 
 function TFhirConditionStage.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'summary') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'summary') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'assessment') then result := AssessmentList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -28717,11 +28717,11 @@ begin
   result := (FAssessmentList <> nil) and (FAssessmentList.count > 0);
 end;
 
-function TFhirConditionStage.sizeInBytesV : cardinal;
+function TFhirConditionStage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSummary.sizeInBytes);
-  inc(result, FassessmentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSummary.sizeInBytes(magic));
+  inc(result, FassessmentList.sizeInBytes(magic));
 end;
 
 { TFhirConditionStageListEnumerator }
@@ -28735,7 +28735,7 @@ end;
 
 destructor TFhirConditionStageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28750,22 +28750,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConditionStageListEnumerator.sizeInBytesV : cardinal;
+function TFhirConditionStageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConditionStageList }
-procedure TFhirConditionStageList.AddItem(value: TFhirConditionStage);
+function TFhirConditionStageList.AddItem(value: TFhirConditionStage): TFhirConditionStage;
 begin
-  assert(value.ClassName = 'TFhirConditionStage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionStage');
   add(value);
+  result := value;
 end;
 
 function TFhirConditionStageList.Append: TFhirConditionStage;
 begin
-  result := TFhirConditionStage.create;
+  result := TFhirConditionStage.Create;
   try
     add(result.Link);
   finally
@@ -28809,7 +28809,7 @@ end;
 
 function TFhirConditionStageList.Insert(index: Integer): TFhirConditionStage;
 begin
-  result := TFhirConditionStage.create;
+  result := TFhirConditionStage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -28860,7 +28860,7 @@ end;
 destructor TFhirConditionEvidence.Destroy;
 begin
   FCode.free;
-  FDetailList.Free;
+  FDetailList.free;
   inherited;
 end;
 
@@ -28893,8 +28893,8 @@ end;
 procedure TFhirConditionEvidence.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'detail', 'Reference(Any)', true, TFhirReference{TFhirReference}, FDetailList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'detail', 'Reference(Any)', true, TFhirReference{TFhirReference}, FDetailList.Link)){3};
 end;
 
 function TFhirConditionEvidence.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -28920,7 +28920,7 @@ end;
 
 function TFhirConditionEvidence.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'detail') then result := DetailList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -29017,11 +29017,11 @@ begin
   result := (FDetailList <> nil) and (FDetailList.count > 0);
 end;
 
-function TFhirConditionEvidence.sizeInBytesV : cardinal;
+function TFhirConditionEvidence.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FdetailList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FdetailList.sizeInBytes(magic));
 end;
 
 { TFhirConditionEvidenceListEnumerator }
@@ -29035,7 +29035,7 @@ end;
 
 destructor TFhirConditionEvidenceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29050,22 +29050,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConditionEvidenceListEnumerator.sizeInBytesV : cardinal;
+function TFhirConditionEvidenceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConditionEvidenceList }
-procedure TFhirConditionEvidenceList.AddItem(value: TFhirConditionEvidence);
+function TFhirConditionEvidenceList.AddItem(value: TFhirConditionEvidence): TFhirConditionEvidence;
 begin
-  assert(value.ClassName = 'TFhirConditionEvidence', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConditionEvidence');
   add(value);
+  result := value;
 end;
 
 function TFhirConditionEvidenceList.Append: TFhirConditionEvidence;
 begin
-  result := TFhirConditionEvidence.create;
+  result := TFhirConditionEvidence.Create;
   try
     add(result.Link);
   finally
@@ -29109,7 +29109,7 @@ end;
 
 function TFhirConditionEvidenceList.Insert(index: Integer): TFhirConditionEvidence;
 begin
-  result := TFhirConditionEvidence.create;
+  result := TFhirConditionEvidence.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29159,7 +29159,7 @@ end;
 
 destructor TFhirCondition.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FPatient.free;
   FEncounter.free;
   FAsserter.free;
@@ -29172,8 +29172,8 @@ begin
   FOnset.free;
   FAbatement.free;
   FStage.free;
-  FEvidenceList.Free;
-  FBodySiteList.Free;
+  FEvidenceList.free;
+  FBodySiteList.free;
   FNotes.free;
   inherited;
 end;
@@ -29274,22 +29274,22 @@ end;
 procedure TFhirCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'asserter', 'Reference(Practitioner|Patient)', false, TFhirReference{Resource}, FAsserter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dateRecorded', 'date', false, TFhirDate, FDateRecorded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'clinicalStatus', 'code', false, TFhirCode, FClinicalStatus.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'verificationStatus', 'code', false, TFHIREnum, FVerificationStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'severity', 'CodeableConcept', false, TFhirCodeableConcept, FSeverity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'onset[x]', 'dateTime|Quantity|Period|Range|string', false, TFhirType, FOnset.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'abatement[x]', 'dateTime|Quantity|boolean|Period|Range|string', false, TFhirType, FAbatement.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'stage', '', false, TFhirConditionStage, FStage.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'evidence', '', true, TFhirConditionEvidence, FEvidenceList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'notes', 'string', false, TFhirString, FNotes.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'asserter', 'Reference(Practitioner|Patient)', false, TFhirReference{Resource}, FAsserter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dateRecorded', 'date', false, TFhirDate, FDateRecorded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'clinicalStatus', 'code', false, TFhirCode, FClinicalStatus.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'verificationStatus', 'code', false, TFHIREnum, FVerificationStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'severity', 'CodeableConcept', false, TFhirCodeableConcept, FSeverity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'onset[x]', 'dateTime|Quantity|Period|Range|string', false, TFhirType, FOnset.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'abatement[x]', 'dateTime|Quantity|boolean|Period|Range|string', false, TFhirType, FAbatement.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'stage', '', false, TFhirConditionStage, FStage.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'evidence', '', true, TFhirConditionEvidence, FEvidenceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'notes', 'string', false, TFhirString, FNotes.Link));{2}
 end;
 
 function TFhirCondition.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -29388,20 +29388,20 @@ end;
 function TFhirCondition.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'asserter') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'dateRecorded') then result := TFhirDate.create() {5b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'clinicalStatus') then result := TFhirCode.create() {5b}
-  else if (propName = 'severity') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'onset', ['DateTime', 'Quantity', 'Period', 'Range', 'String'])) then raise EFHIRException.create('Cannot make property Onset'){4x}
-  else if (isMatchingName(propName, 'abatement', ['DateTime', 'Quantity', 'Boolean', 'Period', 'Range', 'String'])) then raise EFHIRException.create('Cannot make property Abatement'){4x}
-  else if (propName = 'stage') then result := TFhirConditionStage.create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'asserter') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'dateRecorded') then result := TFhirDate.Create() {5b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'clinicalStatus') then result := TFhirCode.Create() {5b}
+  else if (propName = 'severity') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'onset', ['DateTime', 'Quantity', 'Period', 'Range', 'String'])) then raise EFHIRException.Create('Cannot make property Onset'){4x}
+  else if (isMatchingName(propName, 'abatement', ['DateTime', 'Quantity', 'Boolean', 'Period', 'Range', 'String'])) then raise EFHIRException.Create('Cannot make property Abatement'){4x}
+  else if (propName = 'stage') then result := TFhirConditionStage.Create(){4b}
   else if (propName = 'evidence') then result := EvidenceList.new(){2}
   else if (propName = 'bodySite') then result := BodySiteList.new(){2}
-  else if (propName = 'notes') then result := TFhirString.create() {5b}
+  else if (propName = 'notes') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -29592,7 +29592,7 @@ end;
 Procedure TFhirCondition.SetDateRecordedST(value : TFslDateTime);
 begin
   if FDateRecorded = nil then
-    FDateRecorded := TFhirDate.create;
+    FDateRecorded := TFhirDate.Create;
   FDateRecorded.value := value
 end;
 
@@ -29627,7 +29627,7 @@ begin
   if value <> '' then
   begin
     if FClinicalStatus = nil then
-      FClinicalStatus := TFhirCode.create;
+      FClinicalStatus := TFhirCode.Create;
     FClinicalStatus.value := value
   end
   else if FClinicalStatus <> nil then
@@ -29653,7 +29653,7 @@ begin
   if ord(value) = 0 then
     VerificationStatusElement := nil
   else
-    VerificationStatusElement := TFhirEnum.create(SYSTEMS_TFhirConditionVerStatusEnum[value], CODES_TFhirConditionVerStatusEnum[value]);
+    VerificationStatusElement := TFhirEnum.Create(SYSTEMS_TFhirConditionVerStatusEnum[value], CODES_TFhirConditionVerStatusEnum[value]);
 end;
 
 Procedure TFhirCondition.SetSeverity(value : TFhirCodeableConcept);
@@ -29723,32 +29723,32 @@ begin
   if value <> '' then
   begin
     if FNotes = nil then
-      FNotes := TFhirString.create;
+      FNotes := TFhirString.Create;
     FNotes.value := value
   end
   else if FNotes <> nil then
     FNotes.value := '';
 end;
 
-function TFhirCondition.sizeInBytesV : cardinal;
+function TFhirCondition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FAsserter.sizeInBytes);
-  inc(result, FDateRecorded.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FClinicalStatus.sizeInBytes);
-  inc(result, FVerificationStatus.sizeInBytes);
-  inc(result, FSeverity.sizeInBytes);
-  inc(result, FOnset.sizeInBytes);
-  inc(result, FAbatement.sizeInBytes);
-  inc(result, FStage.sizeInBytes);
-  inc(result, FevidenceList.sizeInBytes);
-  inc(result, FbodySiteList.sizeInBytes);
-  inc(result, FNotes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FAsserter.sizeInBytes(magic));
+  inc(result, FDateRecorded.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FClinicalStatus.sizeInBytes(magic));
+  inc(result, FVerificationStatus.sizeInBytes(magic));
+  inc(result, FSeverity.sizeInBytes(magic));
+  inc(result, FOnset.sizeInBytes(magic));
+  inc(result, FAbatement.sizeInBytes(magic));
+  inc(result, FStage.sizeInBytes(magic));
+  inc(result, FevidenceList.sizeInBytes(magic));
+  inc(result, FbodySiteList.sizeInBytes(magic));
+  inc(result, FNotes.sizeInBytes(magic));
 end;
 
 { TFhirConditionListEnumerator }
@@ -29762,7 +29762,7 @@ end;
 
 destructor TFhirConditionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29777,22 +29777,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConditionListEnumerator.sizeInBytesV : cardinal;
+function TFhirConditionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConditionList }
-procedure TFhirConditionList.AddItem(value: TFhirCondition);
+function TFhirConditionList.AddItem(value: TFhirCondition): TFhirCondition;
 begin
-  assert(value.ClassName = 'TFhirCondition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCondition');
   add(value);
+  result := value;
 end;
 
 function TFhirConditionList.Append: TFhirCondition;
 begin
-  result := TFhirCondition.create;
+  result := TFhirCondition.Create;
   try
     add(result.Link);
   finally
@@ -29836,7 +29836,7 @@ end;
 
 function TFhirConditionList.Insert(index: Integer): TFhirCondition;
 begin
-  result := TFhirCondition.create;
+  result := TFhirCondition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29895,7 +29895,7 @@ begin
   FPeriod.free;
   FType_.free;
   FSubscriberId.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FGroup.free;
   FPlan.free;
   FSubPlan.free;
@@ -29903,7 +29903,7 @@ begin
   FSequence.free;
   FSubscriber.free;
   FNetwork.free;
-  FContractList.Free;
+  FContractList.free;
   inherited;
 end;
 
@@ -29987,20 +29987,20 @@ end;
 procedure TFhirCoverage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'issuer', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FIssuer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'bin', 'Identifier', false, TFhirIdentifier, FBin.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'Coding', false, TFhirCoding, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subscriberId', 'Identifier', false, TFhirIdentifier, FSubscriberId.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'group', 'string', false, TFhirString, FGroup.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'plan', 'string', false, TFhirString, FPlan.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subPlan', 'string', false, TFhirString, FSubPlan.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dependent', 'positiveInt', false, TFhirPositiveInt, FDependent.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'sequence', 'positiveInt', false, TFhirPositiveInt, FSequence.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subscriber', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubscriber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'network', 'Identifier', false, TFhirIdentifier, FNetwork.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'contract', 'Reference(Contract)', true, TFhirReference{TFhirContract}, FContractList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'issuer', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FIssuer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'bin', 'Identifier', false, TFhirIdentifier, FBin.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'Coding', false, TFhirCoding, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subscriberId', 'Identifier', false, TFhirIdentifier, FSubscriberId.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'group', 'string', false, TFhirString, FGroup.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'plan', 'string', false, TFhirString, FPlan.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subPlan', 'string', false, TFhirString, FSubPlan.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dependent', 'positiveInt', false, TFhirPositiveInt, FDependent.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'sequence', 'positiveInt', false, TFhirPositiveInt, FSequence.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subscriber', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubscriber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'network', 'Identifier', false, TFhirIdentifier, FNetwork.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'contract', 'Reference(Contract)', true, TFhirReference{TFhirContract}, FContractList.Link)){3};
 end;
 
 function TFhirCoverage.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -30087,19 +30087,19 @@ end;
 
 function TFhirCoverage.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'issuer') then result := TFhirReference{TFhirOrganization}.create(){4b}
-  else if (propName = 'bin') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'type') then result := TFhirCoding.create(){4b}
-  else if (propName = 'subscriberId') then result := TFhirIdentifier.create(){4b}
+  if (propName = 'issuer') then result := TFhirReference{TFhirOrganization}.Create(){4b}
+  else if (propName = 'bin') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'period') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'type') then result := TFhirCoding.Create(){4b}
+  else if (propName = 'subscriberId') then result := TFhirIdentifier.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'group') then result := TFhirString.create() {5b}
-  else if (propName = 'plan') then result := TFhirString.create() {5b}
-  else if (propName = 'subPlan') then result := TFhirString.create() {5b}
-  else if (propName = 'dependent') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'sequence') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'subscriber') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'network') then result := TFhirIdentifier.create(){4b}
+  else if (propName = 'group') then result := TFhirString.Create() {5b}
+  else if (propName = 'plan') then result := TFhirString.Create() {5b}
+  else if (propName = 'subPlan') then result := TFhirString.Create() {5b}
+  else if (propName = 'dependent') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'sequence') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'subscriber') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'network') then result := TFhirIdentifier.Create(){4b}
   else if (propName = 'contract') then result := ContractList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -30294,7 +30294,7 @@ begin
   if value <> '' then
   begin
     if FGroup = nil then
-      FGroup := TFhirString.create;
+      FGroup := TFhirString.Create;
     FGroup.value := value
   end
   else if FGroup <> nil then
@@ -30320,7 +30320,7 @@ begin
   if value <> '' then
   begin
     if FPlan = nil then
-      FPlan := TFhirString.create;
+      FPlan := TFhirString.Create;
     FPlan.value := value
   end
   else if FPlan <> nil then
@@ -30346,7 +30346,7 @@ begin
   if value <> '' then
   begin
     if FSubPlan = nil then
-      FSubPlan := TFhirString.create;
+      FSubPlan := TFhirString.Create;
     FSubPlan.value := value
   end
   else if FSubPlan <> nil then
@@ -30372,7 +30372,7 @@ begin
   if value <> '' then
   begin
     if FDependent = nil then
-      FDependent := TFhirPositiveInt.create;
+      FDependent := TFhirPositiveInt.Create;
     FDependent.value := value
   end
   else if FDependent <> nil then
@@ -30398,7 +30398,7 @@ begin
   if value <> '' then
   begin
     if FSequence = nil then
-      FSequence := TFhirPositiveInt.create;
+      FSequence := TFhirPositiveInt.Create;
     FSequence.value := value
   end
   else if FSequence <> nil then
@@ -30429,23 +30429,23 @@ begin
   result := (FContractList <> nil) and (FContractList.count > 0);
 end;
 
-function TFhirCoverage.sizeInBytesV : cardinal;
+function TFhirCoverage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIssuer.sizeInBytes);
-  inc(result, FBin.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FSubscriberId.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FGroup.sizeInBytes);
-  inc(result, FPlan.sizeInBytes);
-  inc(result, FSubPlan.sizeInBytes);
-  inc(result, FDependent.sizeInBytes);
-  inc(result, FSequence.sizeInBytes);
-  inc(result, FSubscriber.sizeInBytes);
-  inc(result, FNetwork.sizeInBytes);
-  inc(result, FcontractList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIssuer.sizeInBytes(magic));
+  inc(result, FBin.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FSubscriberId.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FGroup.sizeInBytes(magic));
+  inc(result, FPlan.sizeInBytes(magic));
+  inc(result, FSubPlan.sizeInBytes(magic));
+  inc(result, FDependent.sizeInBytes(magic));
+  inc(result, FSequence.sizeInBytes(magic));
+  inc(result, FSubscriber.sizeInBytes(magic));
+  inc(result, FNetwork.sizeInBytes(magic));
+  inc(result, FcontractList.sizeInBytes(magic));
 end;
 
 { TFhirCoverageListEnumerator }
@@ -30459,7 +30459,7 @@ end;
 
 destructor TFhirCoverageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30474,22 +30474,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirCoverageListEnumerator.sizeInBytesV : cardinal;
+function TFhirCoverageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirCoverageList }
-procedure TFhirCoverageList.AddItem(value: TFhirCoverage);
+function TFhirCoverageList.AddItem(value: TFhirCoverage): TFhirCoverage;
 begin
-  assert(value.ClassName = 'TFhirCoverage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirCoverage');
   add(value);
+  result := value;
 end;
 
 function TFhirCoverageList.Append: TFhirCoverage;
 begin
-  result := TFhirCoverage.create;
+  result := TFhirCoverage.Create;
   try
     add(result.Link);
   finally
@@ -30533,7 +30533,7 @@ end;
 
 function TFhirCoverageList.Insert(index: Integer): TFhirCoverage;
 begin
-  result := TFhirCoverage.create;
+  result := TFhirCoverage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30615,9 +30615,9 @@ end;
 procedure TFhirDetectedIssueMitigation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'action', 'CodeableConcept', false, TFhirCodeableConcept, FAction.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'action', 'CodeableConcept', false, TFhirCodeableConcept, FAction.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FAuthor.Link));{2}
 end;
 
 function TFhirDetectedIssueMitigation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -30647,9 +30647,9 @@ end;
 
 function TFhirDetectedIssueMitigation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'action') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'author') then result := TFhirReference{TFhirPractitioner}.create(){4b}
+  if (propName = 'action') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'author') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -30753,7 +30753,7 @@ end;
 Procedure TFhirDetectedIssueMitigation.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -30763,12 +30763,12 @@ begin
   FAuthor := value;
 end;
 
-function TFhirDetectedIssueMitigation.sizeInBytesV : cardinal;
+function TFhirDetectedIssueMitigation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAction.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAction.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
 end;
 
 { TFhirDetectedIssueMitigationListEnumerator }
@@ -30782,7 +30782,7 @@ end;
 
 destructor TFhirDetectedIssueMitigationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30797,22 +30797,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDetectedIssueMitigationListEnumerator.sizeInBytesV : cardinal;
+function TFhirDetectedIssueMitigationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDetectedIssueMitigationList }
-procedure TFhirDetectedIssueMitigationList.AddItem(value: TFhirDetectedIssueMitigation);
+function TFhirDetectedIssueMitigationList.AddItem(value: TFhirDetectedIssueMitigation): TFhirDetectedIssueMitigation;
 begin
-  assert(value.ClassName = 'TFhirDetectedIssueMitigation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDetectedIssueMitigation');
   add(value);
+  result := value;
 end;
 
 function TFhirDetectedIssueMitigationList.Append: TFhirDetectedIssueMitigation;
 begin
-  result := TFhirDetectedIssueMitigation.create;
+  result := TFhirDetectedIssueMitigation.Create;
   try
     add(result.Link);
   finally
@@ -30856,7 +30856,7 @@ end;
 
 function TFhirDetectedIssueMitigationList.Insert(index: Integer): TFhirDetectedIssueMitigation;
 begin
-  result := TFhirDetectedIssueMitigation.create;
+  result := TFhirDetectedIssueMitigation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30909,13 +30909,13 @@ begin
   FPatient.free;
   FCategory.free;
   FSeverity.free;
-  FImplicatedList.Free;
+  FImplicatedList.free;
   FDetail.free;
   FDate.free;
   FAuthor.free;
   FIdentifier.free;
   FReference.free;
-  FMitigationList.Free;
+  FMitigationList.free;
   inherited;
 end;
 
@@ -30987,16 +30987,16 @@ end;
 procedure TFhirDetectedIssue.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'severity', 'code', false, TFHIREnum, FSeverity.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'implicated', 'Reference(Any)', true, TFhirReference{TFhirReference}, FImplicatedList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'detail', 'string', false, TFhirString, FDetail.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner|Device)', false, TFhirReference{Resource}, FAuthor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reference', 'uri', false, TFhirUri, FReference.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'mitigation', '', true, TFhirDetectedIssueMitigation, FMitigationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'severity', 'code', false, TFHIREnum, FSeverity.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'implicated', 'Reference(Any)', true, TFhirReference{TFhirReference}, FImplicatedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'detail', 'string', false, TFhirString, FDetail.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner|Device)', false, TFhirReference{Resource}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reference', 'uri', false, TFhirUri, FReference.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'mitigation', '', true, TFhirDetectedIssueMitigation, FMitigationList.Link)){3};
 end;
 
 function TFhirDetectedIssue.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -31063,14 +31063,14 @@ end;
 
 function TFhirDetectedIssue.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'implicated') then result := ImplicatedList.new(){2}
-  else if (propName = 'detail') then result := TFhirString.create() {5b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'author') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'reference') then result := TFhirUri.create() {5b}
+  else if (propName = 'detail') then result := TFhirString.Create() {5b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'author') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'reference') then result := TFhirUri.Create() {5b}
   else if (propName = 'mitigation') then result := MitigationList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -31217,7 +31217,7 @@ begin
   if ord(value) = 0 then
     SeverityElement := nil
   else
-    SeverityElement := TFhirEnum.create(SYSTEMS_TFhirDetectedissueSeverityEnum[value], CODES_TFhirDetectedissueSeverityEnum[value]);
+    SeverityElement := TFhirEnum.Create(SYSTEMS_TFhirDetectedissueSeverityEnum[value], CODES_TFhirDetectedissueSeverityEnum[value]);
 end;
 
 Function TFhirDetectedIssue.GetImplicatedList : TFhirReferenceList{TFhirReference};
@@ -31251,7 +31251,7 @@ begin
   if value <> '' then
   begin
     if FDetail = nil then
-      FDetail := TFhirString.create;
+      FDetail := TFhirString.Create;
     FDetail.value := value
   end
   else if FDetail <> nil then
@@ -31275,7 +31275,7 @@ end;
 Procedure TFhirDetectedIssue.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -31310,7 +31310,7 @@ begin
   if value <> '' then
   begin
     if FReference = nil then
-      FReference := TFhirUri.create;
+      FReference := TFhirUri.Create;
     FReference.value := value
   end
   else if FReference <> nil then
@@ -31329,19 +31329,19 @@ begin
   result := (FMitigationList <> nil) and (FMitigationList.count > 0);
 end;
 
-function TFhirDetectedIssue.sizeInBytesV : cardinal;
+function TFhirDetectedIssue.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FSeverity.sizeInBytes);
-  inc(result, FimplicatedList.sizeInBytes);
-  inc(result, FDetail.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FReference.sizeInBytes);
-  inc(result, FmitigationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FSeverity.sizeInBytes(magic));
+  inc(result, FimplicatedList.sizeInBytes(magic));
+  inc(result, FDetail.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FReference.sizeInBytes(magic));
+  inc(result, FmitigationList.sizeInBytes(magic));
 end;
 
 { TFhirDetectedIssueListEnumerator }
@@ -31355,7 +31355,7 @@ end;
 
 destructor TFhirDetectedIssueListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -31370,22 +31370,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDetectedIssueListEnumerator.sizeInBytesV : cardinal;
+function TFhirDetectedIssueListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDetectedIssueList }
-procedure TFhirDetectedIssueList.AddItem(value: TFhirDetectedIssue);
+function TFhirDetectedIssueList.AddItem(value: TFhirDetectedIssue): TFhirDetectedIssue;
 begin
-  assert(value.ClassName = 'TFhirDetectedIssue', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDetectedIssue');
   add(value);
+  result := value;
 end;
 
 function TFhirDetectedIssueList.Append: TFhirDetectedIssue;
 begin
-  result := TFhirDetectedIssue.create;
+  result := TFhirDetectedIssue.Create;
   try
     add(result.Link);
   finally
@@ -31429,7 +31429,7 @@ end;
 
 function TFhirDetectedIssueList.Insert(index: Integer): TFhirDetectedIssue;
 begin
-  result := TFhirDetectedIssue.create;
+  result := TFhirDetectedIssue.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31487,10 +31487,10 @@ begin
   FStatus.free;
   FDevice.free;
   FEncounter.free;
-  FIdentifierList.Free;
-  FIndicationList.Free;
-  FNotesList.Free;
-  FPrnReasonList.Free;
+  FIdentifierList.free;
+  FIndicationList.free;
+  FNotesList.free;
+  FPrnReasonList.free;
   FOrderedOn.free;
   FRecordedOn.free;
   FSubject.free;
@@ -31596,19 +31596,19 @@ end;
 procedure TFhirDeviceUseRequest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'bodySite[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FBodySite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'device', 'Reference(Device)', false, TFhirReference{TFhirDevice}, FDevice.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'indication', 'CodeableConcept', true, TFhirCodeableConcept, FIndicationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'notes', 'string', true, TFhirString, FNotesList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'prnReason', 'CodeableConcept', true, TFhirCodeableConcept, FPrnReasonList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'orderedOn', 'dateTime', false, TFhirDateTime, FOrderedOn.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recordedOn', 'dateTime', false, TFhirDateTime, FRecordedOn.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'timing[x]', 'Timing|Period|dateTime', false, TFhirType, FTiming.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFHIREnum, FPriority.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'bodySite[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FBodySite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'device', 'Reference(Device)', false, TFhirReference{TFhirDevice}, FDevice.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'indication', 'CodeableConcept', true, TFhirCodeableConcept, FIndicationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'notes', 'string', true, TFhirString, FNotesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'prnReason', 'CodeableConcept', true, TFhirCodeableConcept, FPrnReasonList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'orderedOn', 'dateTime', false, TFhirDateTime, FOrderedOn.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recordedOn', 'dateTime', false, TFhirDateTime, FRecordedOn.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'timing[x]', 'Timing|Period|dateTime', false, TFhirType, FTiming.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'code', false, TFHIREnum, FPriority.Link));{1}
 end;
 
 function TFhirDeviceUseRequest.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -31692,17 +31692,17 @@ end;
 
 function TFhirDeviceUseRequest.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'bodySite', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property BodySite'){4x}
-  else if (propName = 'device') then result := TFhirReference{TFhirDevice}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
+  if (isMatchingName(propName, 'bodySite', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property BodySite'){4x}
+  else if (propName = 'device') then result := TFhirReference{TFhirDevice}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
   else if (propName = 'indication') then result := IndicationList.new(){2}
   else if (propName = 'notes') then result := NotesList.new(){2}
   else if (propName = 'prnReason') then result := PrnReasonList.new(){2}
-  else if (propName = 'orderedOn') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'recordedOn') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (isMatchingName(propName, 'timing', ['Timing', 'Period', 'DateTime'])) then raise EFHIRException.create('Cannot make property Timing'){4x}
+  else if (propName = 'orderedOn') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'recordedOn') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'Period', 'DateTime'])) then raise EFHIRException.Create('Cannot make property Timing'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -31858,7 +31858,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDeviceUseRequestStatusEnum[value], CODES_TFhirDeviceUseRequestStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDeviceUseRequestStatusEnum[value], CODES_TFhirDeviceUseRequestStatusEnum[value]);
 end;
 
 Procedure TFhirDeviceUseRequest.SetDevice(value : TFhirReference{TFhirDevice});
@@ -31938,7 +31938,7 @@ end;
 Procedure TFhirDeviceUseRequest.SetOrderedOnST(value : TFslDateTime);
 begin
   if FOrderedOn = nil then
-    FOrderedOn := TFhirDateTime.create;
+    FOrderedOn := TFhirDateTime.Create;
   FOrderedOn.value := value
 end;
 
@@ -31959,7 +31959,7 @@ end;
 Procedure TFhirDeviceUseRequest.SetRecordedOnST(value : TFslDateTime);
 begin
   if FRecordedOn = nil then
-    FRecordedOn := TFhirDateTime.create;
+    FRecordedOn := TFhirDateTime.Create;
   FRecordedOn.value := value
 end;
 
@@ -31994,25 +31994,25 @@ begin
   if ord(value) = 0 then
     PriorityElement := nil
   else
-    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirDeviceUseRequestPriorityEnum[value], CODES_TFhirDeviceUseRequestPriorityEnum[value]);
+    PriorityElement := TFhirEnum.Create(SYSTEMS_TFhirDeviceUseRequestPriorityEnum[value], CODES_TFhirDeviceUseRequestPriorityEnum[value]);
 end;
 
-function TFhirDeviceUseRequest.sizeInBytesV : cardinal;
+function TFhirDeviceUseRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBodySite.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDevice.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FindicationList.sizeInBytes);
-  inc(result, FnotesList.sizeInBytes);
-  inc(result, FprnReasonList.sizeInBytes);
-  inc(result, FOrderedOn.sizeInBytes);
-  inc(result, FRecordedOn.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FTiming.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBodySite.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDevice.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FindicationList.sizeInBytes(magic));
+  inc(result, FnotesList.sizeInBytes(magic));
+  inc(result, FprnReasonList.sizeInBytes(magic));
+  inc(result, FOrderedOn.sizeInBytes(magic));
+  inc(result, FRecordedOn.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FTiming.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
 end;
 
 { TFhirDeviceUseRequestListEnumerator }
@@ -32026,7 +32026,7 @@ end;
 
 destructor TFhirDeviceUseRequestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32041,22 +32041,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDeviceUseRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirDeviceUseRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDeviceUseRequestList }
-procedure TFhirDeviceUseRequestList.AddItem(value: TFhirDeviceUseRequest);
+function TFhirDeviceUseRequestList.AddItem(value: TFhirDeviceUseRequest): TFhirDeviceUseRequest;
 begin
-  assert(value.ClassName = 'TFhirDeviceUseRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceUseRequest');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceUseRequestList.Append: TFhirDeviceUseRequest;
 begin
-  result := TFhirDeviceUseRequest.create;
+  result := TFhirDeviceUseRequest.Create;
   try
     add(result.Link);
   finally
@@ -32100,7 +32100,7 @@ end;
 
 function TFhirDeviceUseRequestList.Insert(index: Integer): TFhirDeviceUseRequest;
 begin
-  result := TFhirDeviceUseRequest.create;
+  result := TFhirDeviceUseRequest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32157,9 +32157,9 @@ begin
   FBodySite.free;
   FWhenUsed.free;
   FDevice.free;
-  FIdentifierList.Free;
-  FIndicationList.Free;
-  FNotesList.Free;
+  FIdentifierList.free;
+  FIndicationList.free;
+  FNotesList.free;
   FRecordedOn.free;
   FSubject.free;
   FTiming.free;
@@ -32241,15 +32241,15 @@ end;
 procedure TFhirDeviceUseStatement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'bodySite[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FBodySite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'whenUsed', 'Period', false, TFhirPeriod, FWhenUsed.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'device', 'Reference(Device)', false, TFhirReference{TFhirDevice}, FDevice.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'indication', 'CodeableConcept', true, TFhirCodeableConcept, FIndicationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'notes', 'string', true, TFhirString, FNotesList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'recordedOn', 'dateTime', false, TFhirDateTime, FRecordedOn.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'timing[x]', 'Timing|Period|dateTime', false, TFhirType, FTiming.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'bodySite[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FBodySite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'whenUsed', 'Period', false, TFhirPeriod, FWhenUsed.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'device', 'Reference(Device)', false, TFhirReference{TFhirDevice}, FDevice.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'indication', 'CodeableConcept', true, TFhirCodeableConcept, FIndicationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'notes', 'string', true, TFhirString, FNotesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'recordedOn', 'dateTime', false, TFhirDateTime, FRecordedOn.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'timing[x]', 'Timing|Period|dateTime', false, TFhirType, FTiming.Link));{2}
 end;
 
 function TFhirDeviceUseStatement.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -32312,15 +32312,15 @@ end;
 
 function TFhirDeviceUseStatement.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'bodySite', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property BodySite'){4x}
-  else if (propName = 'whenUsed') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'device') then result := TFhirReference{TFhirDevice}.create(){4b}
+  if (isMatchingName(propName, 'bodySite', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property BodySite'){4x}
+  else if (propName = 'whenUsed') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'device') then result := TFhirReference{TFhirDevice}.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
   else if (propName = 'indication') then result := IndicationList.new(){2}
   else if (propName = 'notes') then result := NotesList.new(){2}
-  else if (propName = 'recordedOn') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (isMatchingName(propName, 'timing', ['Timing', 'Period', 'DateTime'])) then raise EFHIRException.create('Cannot make property Timing'){4x}
+  else if (propName = 'recordedOn') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (isMatchingName(propName, 'timing', ['Timing', 'Period', 'DateTime'])) then raise EFHIRException.Create('Cannot make property Timing'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -32503,7 +32503,7 @@ end;
 Procedure TFhirDeviceUseStatement.SetRecordedOnST(value : TFslDateTime);
 begin
   if FRecordedOn = nil then
-    FRecordedOn := TFhirDateTime.create;
+    FRecordedOn := TFhirDateTime.Create;
   FRecordedOn.value := value
 end;
 
@@ -32519,18 +32519,18 @@ begin
   FTiming := value;
 end;
 
-function TFhirDeviceUseStatement.sizeInBytesV : cardinal;
+function TFhirDeviceUseStatement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBodySite.sizeInBytes);
-  inc(result, FWhenUsed.sizeInBytes);
-  inc(result, FDevice.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FindicationList.sizeInBytes);
-  inc(result, FnotesList.sizeInBytes);
-  inc(result, FRecordedOn.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FTiming.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBodySite.sizeInBytes(magic));
+  inc(result, FWhenUsed.sizeInBytes(magic));
+  inc(result, FDevice.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FindicationList.sizeInBytes(magic));
+  inc(result, FnotesList.sizeInBytes(magic));
+  inc(result, FRecordedOn.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FTiming.sizeInBytes(magic));
 end;
 
 { TFhirDeviceUseStatementListEnumerator }
@@ -32544,7 +32544,7 @@ end;
 
 destructor TFhirDeviceUseStatementListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32559,22 +32559,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDeviceUseStatementListEnumerator.sizeInBytesV : cardinal;
+function TFhirDeviceUseStatementListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDeviceUseStatementList }
-procedure TFhirDeviceUseStatementList.AddItem(value: TFhirDeviceUseStatement);
+function TFhirDeviceUseStatementList.AddItem(value: TFhirDeviceUseStatement): TFhirDeviceUseStatement;
 begin
-  assert(value.ClassName = 'TFhirDeviceUseStatement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDeviceUseStatement');
   add(value);
+  result := value;
 end;
 
 function TFhirDeviceUseStatementList.Append: TFhirDeviceUseStatement;
 begin
-  result := TFhirDeviceUseStatement.create;
+  result := TFhirDeviceUseStatement.Create;
   try
     add(result.Link);
   finally
@@ -32618,7 +32618,7 @@ end;
 
 function TFhirDeviceUseStatementList.Insert(index: Integer): TFhirDeviceUseStatement;
 begin
-  result := TFhirDeviceUseStatement.create;
+  result := TFhirDeviceUseStatement.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32704,10 +32704,10 @@ end;
 procedure TFhirDiagnosticOrderEvent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'description', 'CodeableConcept', false, TFhirCodeableConcept, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dateTime', 'dateTime', false, TFhirDateTime, FDateTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'actor', 'Reference(Practitioner|Device)', false, TFhirReference{Resource}, FActor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'description', 'CodeableConcept', false, TFhirCodeableConcept, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dateTime', 'dateTime', false, TFhirDateTime, FDateTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'actor', 'Reference(Practitioner|Device)', false, TFhirReference{Resource}, FActor.Link));{2}
 end;
 
 function TFhirDiagnosticOrderEvent.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -32742,9 +32742,9 @@ end;
 
 function TFhirDiagnosticOrderEvent.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'description') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'dateTime') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'actor') then result := TFhirReference{Resource}.create(){4b}
+  if (propName = 'description') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'dateTime') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'actor') then result := TFhirReference{Resource}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -32848,7 +32848,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDiagnosticOrderStatusEnum[value], CODES_TFhirDiagnosticOrderStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDiagnosticOrderStatusEnum[value], CODES_TFhirDiagnosticOrderStatusEnum[value]);
 end;
 
 Procedure TFhirDiagnosticOrderEvent.SetDescription(value : TFhirCodeableConcept);
@@ -32874,7 +32874,7 @@ end;
 Procedure TFhirDiagnosticOrderEvent.SetDateTimeST(value : TFslDateTime);
 begin
   if FDateTime = nil then
-    FDateTime := TFhirDateTime.create;
+    FDateTime := TFhirDateTime.Create;
   FDateTime.value := value
 end;
 
@@ -32884,13 +32884,13 @@ begin
   FActor := value;
 end;
 
-function TFhirDiagnosticOrderEvent.sizeInBytesV : cardinal;
+function TFhirDiagnosticOrderEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FDateTime.sizeInBytes);
-  inc(result, FActor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FDateTime.sizeInBytes(magic));
+  inc(result, FActor.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticOrderEventListEnumerator }
@@ -32904,7 +32904,7 @@ end;
 
 destructor TFhirDiagnosticOrderEventListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32919,22 +32919,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDiagnosticOrderEventListEnumerator.sizeInBytesV : cardinal;
+function TFhirDiagnosticOrderEventListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticOrderEventList }
-procedure TFhirDiagnosticOrderEventList.AddItem(value: TFhirDiagnosticOrderEvent);
+function TFhirDiagnosticOrderEventList.AddItem(value: TFhirDiagnosticOrderEvent): TFhirDiagnosticOrderEvent;
 begin
-  assert(value.ClassName = 'TFhirDiagnosticOrderEvent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticOrderEvent');
   add(value);
+  result := value;
 end;
 
 function TFhirDiagnosticOrderEventList.Append: TFhirDiagnosticOrderEvent;
 begin
-  result := TFhirDiagnosticOrderEvent.create;
+  result := TFhirDiagnosticOrderEvent.Create;
   try
     add(result.Link);
   finally
@@ -32978,7 +32978,7 @@ end;
 
 function TFhirDiagnosticOrderEventList.Insert(index: Integer): TFhirDiagnosticOrderEvent;
 begin
-  result := TFhirDiagnosticOrderEvent.create;
+  result := TFhirDiagnosticOrderEvent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -33029,10 +33029,10 @@ end;
 destructor TFhirDiagnosticOrderItem.Destroy;
 begin
   FCode.free;
-  FSpecimenList.Free;
+  FSpecimenList.free;
   FBodySite.free;
   FStatus.free;
-  FEventList.Free;
+  FEventList.free;
   inherited;
 end;
 
@@ -33084,11 +33084,11 @@ end;
 procedure TFhirDiagnosticOrderItem.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'specimen', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FSpecimenList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'event', '@DiagnosticOrder.event', true, TFhirDiagnosticOrderEvent, FEventList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'specimen', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FSpecimenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'event', '@DiagnosticOrder.event', true, TFhirDiagnosticOrderEvent, FEventList.Link)){3};
 end;
 
 function TFhirDiagnosticOrderItem.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -33130,9 +33130,9 @@ end;
 
 function TFhirDiagnosticOrderItem.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'specimen') then result := SpecimenList.new(){2}
-  else if (propName = 'bodySite') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'bodySite') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'event') then result := EventList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -33269,7 +33269,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDiagnosticOrderStatusEnum[value], CODES_TFhirDiagnosticOrderStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDiagnosticOrderStatusEnum[value], CODES_TFhirDiagnosticOrderStatusEnum[value]);
 end;
 
 Function TFhirDiagnosticOrderItem.GetEventList : TFhirDiagnosticOrderEventList;
@@ -33284,14 +33284,14 @@ begin
   result := (FEventList <> nil) and (FEventList.count > 0);
 end;
 
-function TFhirDiagnosticOrderItem.sizeInBytesV : cardinal;
+function TFhirDiagnosticOrderItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FspecimenList.sizeInBytes);
-  inc(result, FBodySite.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FeventList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FspecimenList.sizeInBytes(magic));
+  inc(result, FBodySite.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FeventList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticOrderItemListEnumerator }
@@ -33305,7 +33305,7 @@ end;
 
 destructor TFhirDiagnosticOrderItemListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33320,22 +33320,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDiagnosticOrderItemListEnumerator.sizeInBytesV : cardinal;
+function TFhirDiagnosticOrderItemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticOrderItemList }
-procedure TFhirDiagnosticOrderItemList.AddItem(value: TFhirDiagnosticOrderItem);
+function TFhirDiagnosticOrderItemList.AddItem(value: TFhirDiagnosticOrderItem): TFhirDiagnosticOrderItem;
 begin
-  assert(value.ClassName = 'TFhirDiagnosticOrderItem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticOrderItem');
   add(value);
+  result := value;
 end;
 
 function TFhirDiagnosticOrderItemList.Append: TFhirDiagnosticOrderItem;
 begin
-  result := TFhirDiagnosticOrderItem.create;
+  result := TFhirDiagnosticOrderItem.Create;
   try
     add(result.Link);
   finally
@@ -33379,7 +33379,7 @@ end;
 
 function TFhirDiagnosticOrderItemList.Insert(index: Integer): TFhirDiagnosticOrderItem;
 begin
-  result := TFhirDiagnosticOrderItem.create;
+  result := TFhirDiagnosticOrderItem.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -33431,16 +33431,16 @@ destructor TFhirDiagnosticOrder.Destroy;
 begin
   FSubject.free;
   FOrderer.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FEncounter.free;
-  FReasonList.Free;
-  FSupportingInformationList.Free;
-  FSpecimenList.Free;
+  FReasonList.free;
+  FSupportingInformationList.free;
+  FSpecimenList.free;
   FStatus.free;
   FPriority.free;
-  FEventList.Free;
-  FItemList.Free;
-  FNoteList.Free;
+  FEventList.free;
+  FItemList.free;
+  FNoteList.free;
   inherited;
 end;
 
@@ -33568,18 +33568,18 @@ end;
 procedure TFhirDiagnosticOrder.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group|Location|Device)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'orderer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FOrderer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'supportingInformation', 'Reference(Observation|Condition|DocumentReference)', true, TFhirReference{Resource}, FSupportingInformationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'specimen', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FSpecimenList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFHIREnum, FPriority.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'event', '', true, TFhirDiagnosticOrderEvent, FEventList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'item', '', true, TFhirDiagnosticOrderItem, FItemList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group|Location|Device)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'orderer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FOrderer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'supportingInformation', 'Reference(Observation|Condition|DocumentReference)', true, TFhirReference{Resource}, FSupportingInformationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'specimen', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FSpecimenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'code', false, TFHIREnum, FPriority.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'event', '', true, TFhirDiagnosticOrderEvent, FEventList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'item', '', true, TFhirDiagnosticOrderItem, FItemList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)){3};
 end;
 
 function TFhirDiagnosticOrder.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -33661,10 +33661,10 @@ end;
 
 function TFhirDiagnosticOrder.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'orderer') then result := TFhirReference{TFhirPractitioner}.create(){4b}
+  if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'orderer') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
   else if (propName = 'reason') then result := ReasonList.new(){2}
   else if (propName = 'supportingInformation') then result := SupportingInformationList.new(){2}
   else if (propName = 'specimen') then result := SpecimenList.new(){2}
@@ -33884,7 +33884,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDiagnosticOrderStatusEnum[value], CODES_TFhirDiagnosticOrderStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDiagnosticOrderStatusEnum[value], CODES_TFhirDiagnosticOrderStatusEnum[value]);
 end;
 
 Procedure TFhirDiagnosticOrder.SetPriority(value : TFhirEnum);
@@ -33906,7 +33906,7 @@ begin
   if ord(value) = 0 then
     PriorityElement := nil
   else
-    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirDiagnosticOrderPriorityEnum[value], CODES_TFhirDiagnosticOrderPriorityEnum[value]);
+    PriorityElement := TFhirEnum.Create(SYSTEMS_TFhirDiagnosticOrderPriorityEnum[value], CODES_TFhirDiagnosticOrderPriorityEnum[value]);
 end;
 
 Function TFhirDiagnosticOrder.GetEventList : TFhirDiagnosticOrderEventList;
@@ -33945,21 +33945,21 @@ begin
   result := (FNoteList <> nil) and (FNoteList.count > 0);
 end;
 
-function TFhirDiagnosticOrder.sizeInBytesV : cardinal;
+function TFhirDiagnosticOrder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FOrderer.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FsupportingInformationList.sizeInBytes);
-  inc(result, FspecimenList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
-  inc(result, FeventList.sizeInBytes);
-  inc(result, FitemList.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FOrderer.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FreasonList.sizeInBytes(magic));
+  inc(result, FsupportingInformationList.sizeInBytes(magic));
+  inc(result, FspecimenList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
+  inc(result, FeventList.sizeInBytes(magic));
+  inc(result, FitemList.sizeInBytes(magic));
+  inc(result, FnoteList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticOrderListEnumerator }
@@ -33973,7 +33973,7 @@ end;
 
 destructor TFhirDiagnosticOrderListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33988,22 +33988,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDiagnosticOrderListEnumerator.sizeInBytesV : cardinal;
+function TFhirDiagnosticOrderListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticOrderList }
-procedure TFhirDiagnosticOrderList.AddItem(value: TFhirDiagnosticOrder);
+function TFhirDiagnosticOrderList.AddItem(value: TFhirDiagnosticOrder): TFhirDiagnosticOrder;
 begin
-  assert(value.ClassName = 'TFhirDiagnosticOrder', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticOrder');
   add(value);
+  result := value;
 end;
 
 function TFhirDiagnosticOrderList.Append: TFhirDiagnosticOrder;
 begin
-  result := TFhirDiagnosticOrder.create;
+  result := TFhirDiagnosticOrder.Create;
   try
     add(result.Link);
   finally
@@ -34047,7 +34047,7 @@ end;
 
 function TFhirDiagnosticOrderList.Insert(index: Integer): TFhirDiagnosticOrder;
 begin
-  result := TFhirDiagnosticOrder.create;
+  result := TFhirDiagnosticOrder.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34125,8 +34125,8 @@ end;
 procedure TFhirDiagnosticReportImage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', false, TFhirString, FComment.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'link', 'Reference(Media)', false, TFhirReference{TFhirMedia}, FLink_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', false, TFhirString, FComment.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'link', 'Reference(Media)', false, TFhirReference{TFhirMedia}, FLink_.Link));{2}
 end;
 
 function TFhirDiagnosticReportImage.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -34151,8 +34151,8 @@ end;
 
 function TFhirDiagnosticReportImage.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'comment') then result := TFhirString.create() {5b}
-  else if (propName = 'link') then result := TFhirReference{TFhirMedia}.create(){4b}
+  if (propName = 'comment') then result := TFhirString.Create() {5b}
+  else if (propName = 'link') then result := TFhirReference{TFhirMedia}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -34247,7 +34247,7 @@ begin
   if value <> '' then
   begin
     if FComment = nil then
-      FComment := TFhirString.create;
+      FComment := TFhirString.Create;
     FComment.value := value
   end
   else if FComment <> nil then
@@ -34260,11 +34260,11 @@ begin
   FLink_ := value;
 end;
 
-function TFhirDiagnosticReportImage.sizeInBytesV : cardinal;
+function TFhirDiagnosticReportImage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FComment.sizeInBytes);
-  inc(result, FLink_.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FComment.sizeInBytes(magic));
+  inc(result, FLink_.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticReportImageListEnumerator }
@@ -34278,7 +34278,7 @@ end;
 
 destructor TFhirDiagnosticReportImageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34293,22 +34293,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDiagnosticReportImageListEnumerator.sizeInBytesV : cardinal;
+function TFhirDiagnosticReportImageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticReportImageList }
-procedure TFhirDiagnosticReportImageList.AddItem(value: TFhirDiagnosticReportImage);
+function TFhirDiagnosticReportImageList.AddItem(value: TFhirDiagnosticReportImage): TFhirDiagnosticReportImage;
 begin
-  assert(value.ClassName = 'TFhirDiagnosticReportImage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticReportImage');
   add(value);
+  result := value;
 end;
 
 function TFhirDiagnosticReportImageList.Append: TFhirDiagnosticReportImage;
 begin
-  result := TFhirDiagnosticReportImage.create;
+  result := TFhirDiagnosticReportImage.Create;
   try
     add(result.Link);
   finally
@@ -34352,7 +34352,7 @@ end;
 
 function TFhirDiagnosticReportImageList.Insert(index: Integer): TFhirDiagnosticReportImage;
 begin
-  result := TFhirDiagnosticReportImage.create;
+  result := TFhirDiagnosticReportImage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34402,7 +34402,7 @@ end;
 
 destructor TFhirDiagnosticReport.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FCategory.free;
   FCode.free;
@@ -34411,14 +34411,14 @@ begin
   FEffective.free;
   FIssued.free;
   FPerformer.free;
-  FRequestList.Free;
-  FSpecimenList.Free;
-  FResultList.Free;
-  FImagingStudyList.Free;
-  FImageList.Free;
+  FRequestList.free;
+  FSpecimenList.free;
+  FResultList.free;
+  FImagingStudyList.free;
+  FImageList.free;
   FConclusion.free;
-  FCodedDiagnosisList.Free;
-  FPresentedFormList.Free;
+  FCodedDiagnosisList.free;
+  FPresentedFormList.free;
   inherited;
 end;
 
@@ -34571,23 +34571,23 @@ end;
 procedure TFhirDiagnosticReport.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group|Device|Location)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'effective[x]', 'dateTime|Period', false, TFhirType, FEffective.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'issued', 'instant', false, TFhirInstant, FIssued.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Reference(Practitioner|Organization)', false, TFhirReference{Resource}, FPerformer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'request', 'Reference(DiagnosticOrder|ProcedureRequest|ReferralRequest)', true, TFhirReference{Resource}, FRequestList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'specimen', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FSpecimenList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'result', 'Reference(Observation)', true, TFhirReference{TFhirObservation}, FResultList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'imagingStudy', 'Reference(ImagingStudy|ImagingObjectSelection)', true, TFhirReference{Resource}, FImagingStudyList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'image', '', true, TFhirDiagnosticReportImage, FImageList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'conclusion', 'string', false, TFhirString, FConclusion.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'codedDiagnosis', 'CodeableConcept', true, TFhirCodeableConcept, FCodedDiagnosisList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'presentedForm', 'Attachment', true, TFhirAttachment, FPresentedFormList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group|Device|Location)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'effective[x]', 'dateTime|Period', false, TFhirType, FEffective.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'issued', 'instant', false, TFhirInstant, FIssued.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', 'Reference(Practitioner|Organization)', false, TFhirReference{Resource}, FPerformer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'request', 'Reference(DiagnosticOrder|ProcedureRequest|ReferralRequest)', true, TFhirReference{Resource}, FRequestList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'specimen', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FSpecimenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'result', 'Reference(Observation)', true, TFhirReference{TFhirObservation}, FResultList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'imagingStudy', 'Reference(ImagingStudy|ImagingObjectSelection)', true, TFhirReference{Resource}, FImagingStudyList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'image', '', true, TFhirDiagnosticReportImage, FImageList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'conclusion', 'string', false, TFhirString, FConclusion.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'codedDiagnosis', 'CodeableConcept', true, TFhirCodeableConcept, FCodedDiagnosisList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'presentedForm', 'Attachment', true, TFhirAttachment, FPresentedFormList.Link)){3};
 end;
 
 function TFhirDiagnosticReport.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -34696,19 +34696,19 @@ end;
 function TFhirDiagnosticReport.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (isMatchingName(propName, 'effective', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Effective'){4x}
-  else if (propName = 'issued') then result := TFhirInstant.create() {5b}
-  else if (propName = 'performer') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (isMatchingName(propName, 'effective', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Effective'){4x}
+  else if (propName = 'issued') then result := TFhirInstant.Create() {5b}
+  else if (propName = 'performer') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'request') then result := RequestList.new(){2}
   else if (propName = 'specimen') then result := SpecimenList.new(){2}
   else if (propName = 'result') then result := ResultList.new(){2}
   else if (propName = 'imagingStudy') then result := ImagingStudyList.new(){2}
   else if (propName = 'image') then result := ImageList.new(){2}
-  else if (propName = 'conclusion') then result := TFhirString.create() {5b}
+  else if (propName = 'conclusion') then result := TFhirString.Create() {5b}
   else if (propName = 'codedDiagnosis') then result := CodedDiagnosisList.new(){2}
   else if (propName = 'presentedForm') then result := PresentedFormList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -34894,7 +34894,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDiagnosticReportStatusEnum[value], CODES_TFhirDiagnosticReportStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDiagnosticReportStatusEnum[value], CODES_TFhirDiagnosticReportStatusEnum[value]);
 end;
 
 Procedure TFhirDiagnosticReport.SetCategory(value : TFhirCodeableConcept);
@@ -34944,7 +34944,7 @@ end;
 Procedure TFhirDiagnosticReport.SetIssuedST(value : TFslDateTime);
 begin
   if FIssued = nil then
-    FIssued := TFhirInstant.create;
+    FIssued := TFhirInstant.Create;
   FIssued.value := value
 end;
 
@@ -35033,7 +35033,7 @@ begin
   if value <> '' then
   begin
     if FConclusion = nil then
-      FConclusion := TFhirString.create;
+      FConclusion := TFhirString.Create;
     FConclusion.value := value
   end
   else if FConclusion <> nil then
@@ -35064,26 +35064,26 @@ begin
   result := (FPresentedFormList <> nil) and (FPresentedFormList.count > 0);
 end;
 
-function TFhirDiagnosticReport.sizeInBytesV : cardinal;
+function TFhirDiagnosticReport.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FEffective.sizeInBytes);
-  inc(result, FIssued.sizeInBytes);
-  inc(result, FPerformer.sizeInBytes);
-  inc(result, FrequestList.sizeInBytes);
-  inc(result, FspecimenList.sizeInBytes);
-  inc(result, FresultList.sizeInBytes);
-  inc(result, FimagingStudyList.sizeInBytes);
-  inc(result, FimageList.sizeInBytes);
-  inc(result, FConclusion.sizeInBytes);
-  inc(result, FcodedDiagnosisList.sizeInBytes);
-  inc(result, FpresentedFormList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FEffective.sizeInBytes(magic));
+  inc(result, FIssued.sizeInBytes(magic));
+  inc(result, FPerformer.sizeInBytes(magic));
+  inc(result, FrequestList.sizeInBytes(magic));
+  inc(result, FspecimenList.sizeInBytes(magic));
+  inc(result, FresultList.sizeInBytes(magic));
+  inc(result, FimagingStudyList.sizeInBytes(magic));
+  inc(result, FimageList.sizeInBytes(magic));
+  inc(result, FConclusion.sizeInBytes(magic));
+  inc(result, FcodedDiagnosisList.sizeInBytes(magic));
+  inc(result, FpresentedFormList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticReportListEnumerator }
@@ -35097,7 +35097,7 @@ end;
 
 destructor TFhirDiagnosticReportListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -35112,22 +35112,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDiagnosticReportListEnumerator.sizeInBytesV : cardinal;
+function TFhirDiagnosticReportListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDiagnosticReportList }
-procedure TFhirDiagnosticReportList.AddItem(value: TFhirDiagnosticReport);
+function TFhirDiagnosticReportList.AddItem(value: TFhirDiagnosticReport): TFhirDiagnosticReport;
 begin
-  assert(value.ClassName = 'TFhirDiagnosticReport', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDiagnosticReport');
   add(value);
+  result := value;
 end;
 
 function TFhirDiagnosticReportList.Append: TFhirDiagnosticReport;
 begin
-  result := TFhirDiagnosticReport.create;
+  result := TFhirDiagnosticReport.Create;
   try
     add(result.Link);
   finally
@@ -35171,7 +35171,7 @@ end;
 
 function TFhirDiagnosticReportList.Insert(index: Integer): TFhirDiagnosticReport;
 begin
-  result := TFhirDiagnosticReport.create;
+  result := TFhirDiagnosticReport.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35245,7 +35245,7 @@ end;
 procedure TFhirDocumentManifestContent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'p[x]', 'Attachment|Reference(Any)', false, TFhirType, FP.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'p[x]', 'Attachment|Reference(Any)', false, TFhirType, FP.Link));{2}
 end;
 
 function TFhirDocumentManifestContent.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -35265,7 +35265,7 @@ end;
 
 function TFhirDocumentManifestContent.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'p', ['Attachment', 'Reference'])) then raise EFHIRException.create('Cannot make property P'){4x}
+  if (isMatchingName(propName, 'p', ['Attachment', 'Reference'])) then raise EFHIRException.Create('Cannot make property P'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -35343,10 +35343,10 @@ begin
   FP := value;
 end;
 
-function TFhirDocumentManifestContent.sizeInBytesV : cardinal;
+function TFhirDocumentManifestContent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FP.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FP.sizeInBytes(magic));
 end;
 
 { TFhirDocumentManifestContentListEnumerator }
@@ -35360,7 +35360,7 @@ end;
 
 destructor TFhirDocumentManifestContentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -35375,22 +35375,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentManifestContentListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentManifestContentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentManifestContentList }
-procedure TFhirDocumentManifestContentList.AddItem(value: TFhirDocumentManifestContent);
+function TFhirDocumentManifestContentList.AddItem(value: TFhirDocumentManifestContent): TFhirDocumentManifestContent;
 begin
-  assert(value.ClassName = 'TFhirDocumentManifestContent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentManifestContent');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentManifestContentList.Append: TFhirDocumentManifestContent;
 begin
-  result := TFhirDocumentManifestContent.create;
+  result := TFhirDocumentManifestContent.Create;
   try
     add(result.Link);
   finally
@@ -35434,7 +35434,7 @@ end;
 
 function TFhirDocumentManifestContentList.Insert(index: Integer): TFhirDocumentManifestContent;
 begin
-  result := TFhirDocumentManifestContent.create;
+  result := TFhirDocumentManifestContent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35508,8 +35508,8 @@ end;
 procedure TFhirDocumentManifestRelated.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'ref', 'Reference(Any)', false, TFhirReference{TFhirReference}, FRef.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'ref', 'Reference(Any)', false, TFhirReference{TFhirReference}, FRef.Link));{2}
 end;
 
 function TFhirDocumentManifestRelated.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -35534,8 +35534,8 @@ end;
 
 function TFhirDocumentManifestRelated.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'ref') then result := TFhirReference{TFhirReference}.create(){4b}
+  if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'ref') then result := TFhirReference{TFhirReference}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -35623,11 +35623,11 @@ begin
   FRef := value;
 end;
 
-function TFhirDocumentManifestRelated.sizeInBytesV : cardinal;
+function TFhirDocumentManifestRelated.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FRef.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FRef.sizeInBytes(magic));
 end;
 
 { TFhirDocumentManifestRelatedListEnumerator }
@@ -35641,7 +35641,7 @@ end;
 
 destructor TFhirDocumentManifestRelatedListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -35656,22 +35656,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentManifestRelatedListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentManifestRelatedListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentManifestRelatedList }
-procedure TFhirDocumentManifestRelatedList.AddItem(value: TFhirDocumentManifestRelated);
+function TFhirDocumentManifestRelatedList.AddItem(value: TFhirDocumentManifestRelated): TFhirDocumentManifestRelated;
 begin
-  assert(value.ClassName = 'TFhirDocumentManifestRelated', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentManifestRelated');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentManifestRelatedList.Append: TFhirDocumentManifestRelated;
 begin
-  result := TFhirDocumentManifestRelated.create;
+  result := TFhirDocumentManifestRelated.Create;
   try
     add(result.Link);
   finally
@@ -35715,7 +35715,7 @@ end;
 
 function TFhirDocumentManifestRelatedList.Insert(index: Integer): TFhirDocumentManifestRelated;
 begin
-  result := TFhirDocumentManifestRelated.create;
+  result := TFhirDocumentManifestRelated.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35766,17 +35766,17 @@ end;
 destructor TFhirDocumentManifest.Destroy;
 begin
   FMasterIdentifier.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
-  FRecipientList.Free;
+  FRecipientList.free;
   FType_.free;
-  FAuthorList.Free;
+  FAuthorList.free;
   FCreated.free;
   FSource.free;
   FStatus.free;
   FDescription.free;
-  FContentList.Free;
-  FRelatedList.Free;
+  FContentList.free;
+  FRelatedList.free;
   inherited;
 end;
 
@@ -35884,18 +35884,18 @@ end;
 procedure TFhirDocumentManifest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'masterIdentifier', 'Identifier', false, TFhirIdentifier, FMasterIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Practitioner|Group|Device)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recipient', 'Reference(Patient|Practitioner|RelatedPerson|Organization)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner|Organization|Device|Patient|RelatedPerson)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'created', 'dateTime', false, TFhirDateTime, FCreated.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'source', 'uri', false, TFhirUri, FSource.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'content', '', true, TFhirDocumentManifestContent, FContentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'related', '', true, TFhirDocumentManifestRelated, FRelatedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'masterIdentifier', 'Identifier', false, TFhirIdentifier, FMasterIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Practitioner|Group|Device)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recipient', 'Reference(Patient|Practitioner|RelatedPerson|Organization)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner|Organization|Device|Patient|RelatedPerson)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'created', 'dateTime', false, TFhirDateTime, FCreated.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'source', 'uri', false, TFhirUri, FSource.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'content', '', true, TFhirDocumentManifestContent, FContentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'related', '', true, TFhirDocumentManifestRelated, FRelatedList.Link)){3};
 end;
 
 function TFhirDocumentManifest.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -35975,15 +35975,15 @@ end;
 
 function TFhirDocumentManifest.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'masterIdentifier') then result := TFhirIdentifier.create(){4b}
+  if (propName = 'masterIdentifier') then result := TFhirIdentifier.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'recipient') then result := RecipientList.new(){2}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'author') then result := AuthorList.new(){2}
-  else if (propName = 'created') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'source') then result := TFhirUri.create() {5b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'created') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'source') then result := TFhirUri.Create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else if (propName = 'content') then result := ContentList.new(){2}
   else if (propName = 'related') then result := RelatedList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -36184,7 +36184,7 @@ end;
 Procedure TFhirDocumentManifest.SetCreatedST(value : TFslDateTime);
 begin
   if FCreated = nil then
-    FCreated := TFhirDateTime.create;
+    FCreated := TFhirDateTime.Create;
   FCreated.value := value
 end;
 
@@ -36207,7 +36207,7 @@ begin
   if value <> '' then
   begin
     if FSource = nil then
-      FSource := TFhirUri.create;
+      FSource := TFhirUri.Create;
     FSource.value := value
   end
   else if FSource <> nil then
@@ -36233,7 +36233,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDocumentReferenceStatusEnum[value], CODES_TFhirDocumentReferenceStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDocumentReferenceStatusEnum[value], CODES_TFhirDocumentReferenceStatusEnum[value]);
 end;
 
 Procedure TFhirDocumentManifest.SetDescription(value : TFhirString);
@@ -36255,7 +36255,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -36286,21 +36286,21 @@ begin
   result := (FRelatedList <> nil) and (FRelatedList.count > 0);
 end;
 
-function TFhirDocumentManifest.sizeInBytesV : cardinal;
+function TFhirDocumentManifest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMasterIdentifier.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FrecipientList.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FauthorList.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FcontentList.sizeInBytes);
-  inc(result, FrelatedList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMasterIdentifier.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FrecipientList.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FauthorList.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FcontentList.sizeInBytes(magic));
+  inc(result, FrelatedList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentManifestListEnumerator }
@@ -36314,7 +36314,7 @@ end;
 
 destructor TFhirDocumentManifestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36329,22 +36329,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentManifestListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentManifestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentManifestList }
-procedure TFhirDocumentManifestList.AddItem(value: TFhirDocumentManifest);
+function TFhirDocumentManifestList.AddItem(value: TFhirDocumentManifest): TFhirDocumentManifest;
 begin
-  assert(value.ClassName = 'TFhirDocumentManifest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentManifest');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentManifestList.Append: TFhirDocumentManifest;
 begin
-  result := TFhirDocumentManifest.create;
+  result := TFhirDocumentManifest.Create;
   try
     add(result.Link);
   finally
@@ -36388,7 +36388,7 @@ end;
 
 function TFhirDocumentManifestList.Insert(index: Integer): TFhirDocumentManifest;
 begin
-  result := TFhirDocumentManifest.create;
+  result := TFhirDocumentManifest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -36466,8 +36466,8 @@ end;
 procedure TFhirDocumentReferenceRelatesTo.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'code', false, TFHIREnum, FCode.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'target', 'Reference(DocumentReference)', false, TFhirReference{TFhirDocumentReference}, FTarget.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'code', false, TFHIREnum, FCode.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'target', 'Reference(DocumentReference)', false, TFhirReference{TFhirDocumentReference}, FTarget.Link));{2}
 end;
 
 function TFhirDocumentReferenceRelatesTo.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -36492,7 +36492,7 @@ end;
 
 function TFhirDocumentReferenceRelatesTo.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'target') then result := TFhirReference{TFhirDocumentReference}.create(){4b}
+  if (propName = 'target') then result := TFhirReference{TFhirDocumentReference}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -36587,7 +36587,7 @@ begin
   if ord(value) = 0 then
     CodeElement := nil
   else
-    CodeElement := TFhirEnum.create(SYSTEMS_TFhirDocumentRelationshipTypeEnum[value], CODES_TFhirDocumentRelationshipTypeEnum[value]);
+    CodeElement := TFhirEnum.Create(SYSTEMS_TFhirDocumentRelationshipTypeEnum[value], CODES_TFhirDocumentRelationshipTypeEnum[value]);
 end;
 
 Procedure TFhirDocumentReferenceRelatesTo.SetTarget(value : TFhirReference{TFhirDocumentReference});
@@ -36596,11 +36596,11 @@ begin
   FTarget := value;
 end;
 
-function TFhirDocumentReferenceRelatesTo.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceRelatesTo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceRelatesToListEnumerator }
@@ -36614,7 +36614,7 @@ end;
 
 destructor TFhirDocumentReferenceRelatesToListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36629,22 +36629,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentReferenceRelatesToListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceRelatesToListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceRelatesToList }
-procedure TFhirDocumentReferenceRelatesToList.AddItem(value: TFhirDocumentReferenceRelatesTo);
+function TFhirDocumentReferenceRelatesToList.AddItem(value: TFhirDocumentReferenceRelatesTo): TFhirDocumentReferenceRelatesTo;
 begin
-  assert(value.ClassName = 'TFhirDocumentReferenceRelatesTo', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentReferenceRelatesTo');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentReferenceRelatesToList.Append: TFhirDocumentReferenceRelatesTo;
 begin
-  result := TFhirDocumentReferenceRelatesTo.create;
+  result := TFhirDocumentReferenceRelatesTo.Create;
   try
     add(result.Link);
   finally
@@ -36688,7 +36688,7 @@ end;
 
 function TFhirDocumentReferenceRelatesToList.Insert(index: Integer): TFhirDocumentReferenceRelatesTo;
 begin
-  result := TFhirDocumentReferenceRelatesTo.create;
+  result := TFhirDocumentReferenceRelatesTo.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -36739,7 +36739,7 @@ end;
 destructor TFhirDocumentReferenceContent.Destroy;
 begin
   FAttachment.free;
-  FFormatList.Free;
+  FFormatList.free;
   inherited;
 end;
 
@@ -36772,8 +36772,8 @@ end;
 procedure TFhirDocumentReferenceContent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'attachment', 'Attachment', false, TFhirAttachment, FAttachment.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'format', 'Coding', true, TFhirCoding, FFormatList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'attachment', 'Attachment', false, TFhirAttachment, FAttachment.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'format', 'Coding', true, TFhirCoding, FFormatList.Link)){3};
 end;
 
 function TFhirDocumentReferenceContent.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -36799,7 +36799,7 @@ end;
 
 function TFhirDocumentReferenceContent.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'attachment') then result := TFhirAttachment.create(){4b}
+  if (propName = 'attachment') then result := TFhirAttachment.Create(){4b}
   else if (propName = 'format') then result := FormatList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -36896,11 +36896,11 @@ begin
   result := (FFormatList <> nil) and (FFormatList.count > 0);
 end;
 
-function TFhirDocumentReferenceContent.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceContent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAttachment.sizeInBytes);
-  inc(result, FformatList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAttachment.sizeInBytes(magic));
+  inc(result, FformatList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceContentListEnumerator }
@@ -36914,7 +36914,7 @@ end;
 
 destructor TFhirDocumentReferenceContentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36929,22 +36929,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentReferenceContentListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceContentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceContentList }
-procedure TFhirDocumentReferenceContentList.AddItem(value: TFhirDocumentReferenceContent);
+function TFhirDocumentReferenceContentList.AddItem(value: TFhirDocumentReferenceContent): TFhirDocumentReferenceContent;
 begin
-  assert(value.ClassName = 'TFhirDocumentReferenceContent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentReferenceContent');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentReferenceContentList.Append: TFhirDocumentReferenceContent;
 begin
-  result := TFhirDocumentReferenceContent.create;
+  result := TFhirDocumentReferenceContent.Create;
   try
     add(result.Link);
   finally
@@ -36988,7 +36988,7 @@ end;
 
 function TFhirDocumentReferenceContentList.Insert(index: Integer): TFhirDocumentReferenceContent;
 begin
-  result := TFhirDocumentReferenceContent.create;
+  result := TFhirDocumentReferenceContent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37039,12 +37039,12 @@ end;
 destructor TFhirDocumentReferenceContext.Destroy;
 begin
   FEncounter.free;
-  FEventList.Free;
+  FEventList.free;
   FPeriod.free;
   FFacilityType.free;
   FPracticeSetting.free;
   FSourcePatientInfo.free;
-  FRelatedList.Free;
+  FRelatedList.free;
   inherited;
 end;
 
@@ -37102,13 +37102,13 @@ end;
 procedure TFhirDocumentReferenceContext.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'event', 'CodeableConcept', true, TFhirCodeableConcept, FEventList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'facilityType', 'CodeableConcept', false, TFhirCodeableConcept, FFacilityType.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'practiceSetting', 'CodeableConcept', false, TFhirCodeableConcept, FPracticeSetting.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'sourcePatientInfo', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSourcePatientInfo.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'related', '', true, TFhirDocumentReferenceContextRelated, FRelatedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'event', 'CodeableConcept', true, TFhirCodeableConcept, FEventList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'facilityType', 'CodeableConcept', false, TFhirCodeableConcept, FFacilityType.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'practiceSetting', 'CodeableConcept', false, TFhirCodeableConcept, FPracticeSetting.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'sourcePatientInfo', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FSourcePatientInfo.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'related', '', true, TFhirDocumentReferenceContextRelated, FRelatedList.Link)){3};
 end;
 
 function TFhirDocumentReferenceContext.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -37160,12 +37160,12 @@ end;
 
 function TFhirDocumentReferenceContext.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
+  if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
   else if (propName = 'event') then result := EventList.new(){2}
-  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'facilityType') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'practiceSetting') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'sourcePatientInfo') then result := TFhirReference{TFhirPatient}.create(){4b}
+  else if (propName = 'period') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'facilityType') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'practiceSetting') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'sourcePatientInfo') then result := TFhirReference{TFhirPatient}.Create(){4b}
   else if (propName = 'related') then result := RelatedList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -37322,16 +37322,16 @@ begin
   result := (FRelatedList <> nil) and (FRelatedList.count > 0);
 end;
 
-function TFhirDocumentReferenceContext.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FeventList.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FFacilityType.sizeInBytes);
-  inc(result, FPracticeSetting.sizeInBytes);
-  inc(result, FSourcePatientInfo.sizeInBytes);
-  inc(result, FrelatedList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FeventList.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FFacilityType.sizeInBytes(magic));
+  inc(result, FPracticeSetting.sizeInBytes(magic));
+  inc(result, FSourcePatientInfo.sizeInBytes(magic));
+  inc(result, FrelatedList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceContextListEnumerator }
@@ -37345,7 +37345,7 @@ end;
 
 destructor TFhirDocumentReferenceContextListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37360,22 +37360,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentReferenceContextListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceContextListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceContextList }
-procedure TFhirDocumentReferenceContextList.AddItem(value: TFhirDocumentReferenceContext);
+function TFhirDocumentReferenceContextList.AddItem(value: TFhirDocumentReferenceContext): TFhirDocumentReferenceContext;
 begin
-  assert(value.ClassName = 'TFhirDocumentReferenceContext', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentReferenceContext');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentReferenceContextList.Append: TFhirDocumentReferenceContext;
 begin
-  result := TFhirDocumentReferenceContext.create;
+  result := TFhirDocumentReferenceContext.Create;
   try
     add(result.Link);
   finally
@@ -37419,7 +37419,7 @@ end;
 
 function TFhirDocumentReferenceContextList.Insert(index: Integer): TFhirDocumentReferenceContext;
 begin
-  result := TFhirDocumentReferenceContext.create;
+  result := TFhirDocumentReferenceContext.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37493,8 +37493,8 @@ end;
 procedure TFhirDocumentReferenceContextRelated.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'ref', 'Reference(Any)', false, TFhirReference{TFhirReference}, FRef.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'ref', 'Reference(Any)', false, TFhirReference{TFhirReference}, FRef.Link));{2}
 end;
 
 function TFhirDocumentReferenceContextRelated.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -37519,8 +37519,8 @@ end;
 
 function TFhirDocumentReferenceContextRelated.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'ref') then result := TFhirReference{TFhirReference}.create(){4b}
+  if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'ref') then result := TFhirReference{TFhirReference}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -37608,11 +37608,11 @@ begin
   FRef := value;
 end;
 
-function TFhirDocumentReferenceContextRelated.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceContextRelated.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FRef.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FRef.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceContextRelatedListEnumerator }
@@ -37626,7 +37626,7 @@ end;
 
 destructor TFhirDocumentReferenceContextRelatedListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37641,22 +37641,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentReferenceContextRelatedListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceContextRelatedListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceContextRelatedList }
-procedure TFhirDocumentReferenceContextRelatedList.AddItem(value: TFhirDocumentReferenceContextRelated);
+function TFhirDocumentReferenceContextRelatedList.AddItem(value: TFhirDocumentReferenceContextRelated): TFhirDocumentReferenceContextRelated;
 begin
-  assert(value.ClassName = 'TFhirDocumentReferenceContextRelated', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentReferenceContextRelated');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentReferenceContextRelatedList.Append: TFhirDocumentReferenceContextRelated;
 begin
-  result := TFhirDocumentReferenceContextRelated.create;
+  result := TFhirDocumentReferenceContextRelated.Create;
   try
     add(result.Link);
   finally
@@ -37700,7 +37700,7 @@ end;
 
 function TFhirDocumentReferenceContextRelatedList.Insert(index: Integer): TFhirDocumentReferenceContextRelated;
 begin
-  result := TFhirDocumentReferenceContextRelated.create;
+  result := TFhirDocumentReferenceContextRelated.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37751,21 +37751,21 @@ end;
 destructor TFhirDocumentReference.Destroy;
 begin
   FMasterIdentifier.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
   FType_.free;
   FClass_.free;
-  FAuthorList.Free;
+  FAuthorList.free;
   FCustodian.free;
   FAuthenticator.free;
   FCreated.free;
   FIndexed.free;
   FStatus.free;
   FDocStatus.free;
-  FRelatesToList.Free;
+  FRelatesToList.free;
   FDescription.free;
-  FSecurityLabelList.Free;
-  FContentList.Free;
+  FSecurityLabelList.free;
+  FContentList.free;
   FContext.free;
   inherited;
 end;
@@ -37889,23 +37889,23 @@ end;
 procedure TFhirDocumentReference.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'masterIdentifier', 'Identifier', false, TFhirIdentifier, FMasterIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Practitioner|Group|Device)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'class', 'CodeableConcept', false, TFhirCodeableConcept, FClass_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner|Organization|Device|Patient|RelatedPerson)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'custodian', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FCustodian.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'authenticator', 'Reference(Practitioner|Organization)', false, TFhirReference{Resource}, FAuthenticator.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'created', 'dateTime', false, TFhirDateTime, FCreated.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'indexed', 'instant', false, TFhirInstant, FIndexed.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'docStatus', 'CodeableConcept', false, TFhirCodeableConcept, FDocStatus.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'relatesTo', '', true, TFhirDocumentReferenceRelatesTo, FRelatesToList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'securityLabel', 'CodeableConcept', true, TFhirCodeableConcept, FSecurityLabelList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'content', '', true, TFhirDocumentReferenceContent, FContentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'context', '', false, TFhirDocumentReferenceContext, FContext.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'masterIdentifier', 'Identifier', false, TFhirIdentifier, FMasterIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Practitioner|Group|Device)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'class', 'CodeableConcept', false, TFhirCodeableConcept, FClass_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner|Organization|Device|Patient|RelatedPerson)', true, TFhirReference{Resource}, FAuthorList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'custodian', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FCustodian.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'authenticator', 'Reference(Practitioner|Organization)', false, TFhirReference{Resource}, FAuthenticator.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'created', 'dateTime', false, TFhirDateTime, FCreated.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'indexed', 'instant', false, TFhirInstant, FIndexed.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'docStatus', 'CodeableConcept', false, TFhirCodeableConcept, FDocStatus.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'relatesTo', '', true, TFhirDocumentReferenceRelatesTo, FRelatesToList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'securityLabel', 'CodeableConcept', true, TFhirCodeableConcept, FSecurityLabelList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'content', '', true, TFhirDocumentReferenceContent, FContentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'context', '', false, TFhirDocumentReferenceContext, FContext.Link));{2}
 end;
 
 function TFhirDocumentReference.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -38010,22 +38010,22 @@ end;
 
 function TFhirDocumentReference.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'masterIdentifier') then result := TFhirIdentifier.create(){4b}
+  if (propName = 'masterIdentifier') then result := TFhirIdentifier.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'class') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'class') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'author') then result := AuthorList.new(){2}
-  else if (propName = 'custodian') then result := TFhirReference{TFhirOrganization}.create(){4b}
-  else if (propName = 'authenticator') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'created') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'indexed') then result := TFhirInstant.create() {5b}
-  else if (propName = 'docStatus') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'custodian') then result := TFhirReference{TFhirOrganization}.Create(){4b}
+  else if (propName = 'authenticator') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'created') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'indexed') then result := TFhirInstant.Create() {5b}
+  else if (propName = 'docStatus') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'relatesTo') then result := RelatesToList.new(){2}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else if (propName = 'securityLabel') then result := SecurityLabelList.new(){2}
   else if (propName = 'content') then result := ContentList.new(){2}
-  else if (propName = 'context') then result := TFhirDocumentReferenceContext.create(){4b}
+  else if (propName = 'context') then result := TFhirDocumentReferenceContext.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -38252,7 +38252,7 @@ end;
 Procedure TFhirDocumentReference.SetCreatedST(value : TFslDateTime);
 begin
   if FCreated = nil then
-    FCreated := TFhirDateTime.create;
+    FCreated := TFhirDateTime.Create;
   FCreated.value := value
 end;
 
@@ -38273,7 +38273,7 @@ end;
 Procedure TFhirDocumentReference.SetIndexedST(value : TFslDateTime);
 begin
   if FIndexed = nil then
-    FIndexed := TFhirInstant.create;
+    FIndexed := TFhirInstant.Create;
   FIndexed.value := value
 end;
 
@@ -38296,7 +38296,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirDocumentReferenceStatusEnum[value], CODES_TFhirDocumentReferenceStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirDocumentReferenceStatusEnum[value], CODES_TFhirDocumentReferenceStatusEnum[value]);
 end;
 
 Procedure TFhirDocumentReference.SetDocStatus(value : TFhirCodeableConcept);
@@ -38336,7 +38336,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -38373,26 +38373,26 @@ begin
   FContext := value;
 end;
 
-function TFhirDocumentReference.sizeInBytesV : cardinal;
+function TFhirDocumentReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMasterIdentifier.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FClass_.sizeInBytes);
-  inc(result, FauthorList.sizeInBytes);
-  inc(result, FCustodian.sizeInBytes);
-  inc(result, FAuthenticator.sizeInBytes);
-  inc(result, FCreated.sizeInBytes);
-  inc(result, FIndexed.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDocStatus.sizeInBytes);
-  inc(result, FrelatesToList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FsecurityLabelList.sizeInBytes);
-  inc(result, FcontentList.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMasterIdentifier.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FClass_.sizeInBytes(magic));
+  inc(result, FauthorList.sizeInBytes(magic));
+  inc(result, FCustodian.sizeInBytes(magic));
+  inc(result, FAuthenticator.sizeInBytes(magic));
+  inc(result, FCreated.sizeInBytes(magic));
+  inc(result, FIndexed.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDocStatus.sizeInBytes(magic));
+  inc(result, FrelatesToList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FsecurityLabelList.sizeInBytes(magic));
+  inc(result, FcontentList.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceListEnumerator }
@@ -38406,7 +38406,7 @@ end;
 
 destructor TFhirDocumentReferenceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -38421,22 +38421,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDocumentReferenceListEnumerator.sizeInBytesV : cardinal;
+function TFhirDocumentReferenceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDocumentReferenceList }
-procedure TFhirDocumentReferenceList.AddItem(value: TFhirDocumentReference);
+function TFhirDocumentReferenceList.AddItem(value: TFhirDocumentReference): TFhirDocumentReference;
 begin
-  assert(value.ClassName = 'TFhirDocumentReference', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDocumentReference');
   add(value);
+  result := value;
 end;
 
 function TFhirDocumentReferenceList.Append: TFhirDocumentReference;
 begin
-  result := TFhirDocumentReference.create;
+  result := TFhirDocumentReference.Create;
   try
     add(result.Link);
   finally
@@ -38480,7 +38480,7 @@ end;
 
 function TFhirDocumentReferenceList.Insert(index: Integer): TFhirDocumentReference;
 begin
-  result := TFhirDocumentReference.create;
+  result := TFhirDocumentReference.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -38566,10 +38566,10 @@ end;
 procedure TFhirFamilyMemberHistoryCondition.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'outcome', 'CodeableConcept', false, TFhirCodeableConcept, FOutcome.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'onset[x]', 'Quantity|Range|Period|string', false, TFhirType, FOnset.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'outcome', 'CodeableConcept', false, TFhirCodeableConcept, FOutcome.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'onset[x]', 'Quantity|Range|Period|string', false, TFhirType, FOnset.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
 end;
 
 function TFhirFamilyMemberHistoryCondition.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -38604,10 +38604,10 @@ end;
 
 function TFhirFamilyMemberHistoryCondition.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'outcome') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'onset', ['Quantity', 'Range', 'Period', 'String'])) then raise EFHIRException.create('Cannot make property Onset'){4x}
-  else if (propName = 'note') then result := TFhirAnnotation.create(){4b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'outcome') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'onset', ['Quantity', 'Range', 'Period', 'String'])) then raise EFHIRException.Create('Cannot make property Onset'){4x}
+  else if (propName = 'note') then result := TFhirAnnotation.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -38716,13 +38716,13 @@ begin
   FNote := value;
 end;
 
-function TFhirFamilyMemberHistoryCondition.sizeInBytesV : cardinal;
+function TFhirFamilyMemberHistoryCondition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FOnset.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FOnset.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
 end;
 
 { TFhirFamilyMemberHistoryConditionListEnumerator }
@@ -38736,7 +38736,7 @@ end;
 
 destructor TFhirFamilyMemberHistoryConditionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -38751,22 +38751,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirFamilyMemberHistoryConditionListEnumerator.sizeInBytesV : cardinal;
+function TFhirFamilyMemberHistoryConditionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirFamilyMemberHistoryConditionList }
-procedure TFhirFamilyMemberHistoryConditionList.AddItem(value: TFhirFamilyMemberHistoryCondition);
+function TFhirFamilyMemberHistoryConditionList.AddItem(value: TFhirFamilyMemberHistoryCondition): TFhirFamilyMemberHistoryCondition;
 begin
-  assert(value.ClassName = 'TFhirFamilyMemberHistoryCondition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirFamilyMemberHistoryCondition');
   add(value);
+  result := value;
 end;
 
 function TFhirFamilyMemberHistoryConditionList.Append: TFhirFamilyMemberHistoryCondition;
 begin
-  result := TFhirFamilyMemberHistoryCondition.create;
+  result := TFhirFamilyMemberHistoryCondition.Create;
   try
     add(result.Link);
   finally
@@ -38810,7 +38810,7 @@ end;
 
 function TFhirFamilyMemberHistoryConditionList.Insert(index: Integer): TFhirFamilyMemberHistoryCondition;
 begin
-  result := TFhirFamilyMemberHistoryCondition.create;
+  result := TFhirFamilyMemberHistoryCondition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -38860,7 +38860,7 @@ end;
 
 destructor TFhirFamilyMemberHistory.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FPatient.free;
   FDate.free;
   FStatus.free;
@@ -38871,7 +38871,7 @@ begin
   FAge.free;
   FDeceased.free;
   FNote.free;
-  FConditionList.Free;
+  FConditionList.free;
   inherited;
 end;
 
@@ -38949,18 +38949,18 @@ end;
 procedure TFhirFamilyMemberHistory.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'name', 'string', false, TFhirString, FName.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'relationship', 'CodeableConcept', false, TFhirCodeableConcept, FRelationship.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'gender', 'code', false, TFHIREnum, FGender.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'born[x]', 'Period|date|string', false, TFhirType, FBorn.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'age[x]', 'Quantity|Range|string', false, TFhirType, FAge.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'deceased[x]', 'boolean|Quantity|Range|date|string', false, TFhirType, FDeceased.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'condition', '', true, TFhirFamilyMemberHistoryCondition, FConditionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'name', 'string', false, TFhirString, FName.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'relationship', 'CodeableConcept', false, TFhirCodeableConcept, FRelationship.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'gender', 'code', false, TFHIREnum, FGender.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'born[x]', 'Period|date|string', false, TFhirType, FBorn.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'age[x]', 'Quantity|Range|string', false, TFhirType, FAge.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'deceased[x]', 'boolean|Quantity|Range|date|string', false, TFhirType, FDeceased.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', false, TFhirAnnotation, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'condition', '', true, TFhirFamilyMemberHistoryCondition, FConditionList.Link)){3};
 end;
 
 function TFhirFamilyMemberHistory.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -39038,14 +39038,14 @@ end;
 function TFhirFamilyMemberHistory.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'name') then result := TFhirString.create() {5b}
-  else if (propName = 'relationship') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'born', ['Period', 'Date', 'String'])) then raise EFHIRException.create('Cannot make property Born'){4x}
-  else if (isMatchingName(propName, 'age', ['Quantity', 'Range', 'String'])) then raise EFHIRException.create('Cannot make property Age'){4x}
-  else if (isMatchingName(propName, 'deceased', ['Boolean', 'Quantity', 'Range', 'Date', 'String'])) then raise EFHIRException.create('Cannot make property Deceased'){4x}
-  else if (propName = 'note') then result := TFhirAnnotation.create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'name') then result := TFhirString.Create() {5b}
+  else if (propName = 'relationship') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'born', ['Period', 'Date', 'String'])) then raise EFHIRException.Create('Cannot make property Born'){4x}
+  else if (isMatchingName(propName, 'age', ['Quantity', 'Range', 'String'])) then raise EFHIRException.Create('Cannot make property Age'){4x}
+  else if (isMatchingName(propName, 'deceased', ['Boolean', 'Quantity', 'Range', 'Date', 'String'])) then raise EFHIRException.Create('Cannot make property Deceased'){4x}
+  else if (propName = 'note') then result := TFhirAnnotation.Create(){4b}
   else if (propName = 'condition') then result := ConditionList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -39205,7 +39205,7 @@ end;
 Procedure TFhirFamilyMemberHistory.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -39228,7 +39228,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirHistoryStatusEnum[value], CODES_TFhirHistoryStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirHistoryStatusEnum[value], CODES_TFhirHistoryStatusEnum[value]);
 end;
 
 Procedure TFhirFamilyMemberHistory.SetName(value : TFhirString);
@@ -39250,7 +39250,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -39282,7 +39282,7 @@ begin
   if ord(value) = 0 then
     GenderElement := nil
   else
-    GenderElement := TFhirEnum.create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
+    GenderElement := TFhirEnum.Create(SYSTEMS_TFhirAdministrativeGenderEnum[value], CODES_TFhirAdministrativeGenderEnum[value]);
 end;
 
 Procedure TFhirFamilyMemberHistory.SetBorn(value : TFhirType);
@@ -39321,21 +39321,21 @@ begin
   result := (FConditionList <> nil) and (FConditionList.count > 0);
 end;
 
-function TFhirFamilyMemberHistory.sizeInBytesV : cardinal;
+function TFhirFamilyMemberHistory.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FRelationship.sizeInBytes);
-  inc(result, FGender.sizeInBytes);
-  inc(result, FBorn.sizeInBytes);
-  inc(result, FAge.sizeInBytes);
-  inc(result, FDeceased.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FconditionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FRelationship.sizeInBytes(magic));
+  inc(result, FGender.sizeInBytes(magic));
+  inc(result, FBorn.sizeInBytes(magic));
+  inc(result, FAge.sizeInBytes(magic));
+  inc(result, FDeceased.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FconditionList.sizeInBytes(magic));
 end;
 
 { TFhirFamilyMemberHistoryListEnumerator }
@@ -39349,7 +39349,7 @@ end;
 
 destructor TFhirFamilyMemberHistoryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -39364,22 +39364,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirFamilyMemberHistoryListEnumerator.sizeInBytesV : cardinal;
+function TFhirFamilyMemberHistoryListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirFamilyMemberHistoryList }
-procedure TFhirFamilyMemberHistoryList.AddItem(value: TFhirFamilyMemberHistory);
+function TFhirFamilyMemberHistoryList.AddItem(value: TFhirFamilyMemberHistory): TFhirFamilyMemberHistory;
 begin
-  assert(value.ClassName = 'TFhirFamilyMemberHistory', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirFamilyMemberHistory');
   add(value);
+  result := value;
 end;
 
 function TFhirFamilyMemberHistoryList.Append: TFhirFamilyMemberHistory;
 begin
-  result := TFhirFamilyMemberHistory.create;
+  result := TFhirFamilyMemberHistory.Create;
   try
     add(result.Link);
   finally
@@ -39423,7 +39423,7 @@ end;
 
 function TFhirFamilyMemberHistoryList.Insert(index: Integer): TFhirFamilyMemberHistory;
 begin
-  result := TFhirFamilyMemberHistory.create;
+  result := TFhirFamilyMemberHistory.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -39477,7 +39477,7 @@ end;
 
 destructor TFhirFlag.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FCategory.free;
   FStatus.free;
   FPeriod.free;
@@ -39540,14 +39540,14 @@ end;
 procedure TFhirFlag.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Location|Group|Organization|Practitioner)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Device|Organization|Patient|Practitioner)', false, TFhirReference{Resource}, FAuthor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'period', 'Period', false, TFhirPeriod, FPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Location|Group|Organization|Practitioner)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Device|Organization|Patient|Practitioner)', false, TFhirReference{Resource}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
 end;
 
 function TFhirFlag.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -39604,12 +39604,12 @@ end;
 function TFhirFlag.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'period') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'author') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'period') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'author') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -39751,7 +39751,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirFlagStatusEnum[value], CODES_TFhirFlagStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirFlagStatusEnum[value], CODES_TFhirFlagStatusEnum[value]);
 end;
 
 Procedure TFhirFlag.SetPeriod(value : TFhirPeriod);
@@ -39784,17 +39784,17 @@ begin
   FCode := value;
 end;
 
-function TFhirFlag.sizeInBytesV : cardinal;
+function TFhirFlag.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
 end;
 
 { TFhirFlagListEnumerator }
@@ -39808,7 +39808,7 @@ end;
 
 destructor TFhirFlagListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -39823,22 +39823,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirFlagListEnumerator.sizeInBytesV : cardinal;
+function TFhirFlagListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirFlagList }
-procedure TFhirFlagList.AddItem(value: TFhirFlag);
+function TFhirFlagList.AddItem(value: TFhirFlag): TFhirFlag;
 begin
-  assert(value.ClassName = 'TFhirFlag', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirFlag');
   add(value);
+  result := value;
 end;
 
 function TFhirFlagList.Append: TFhirFlag;
 begin
-  result := TFhirFlag.create;
+  result := TFhirFlag.Create;
   try
     add(result.Link);
   finally
@@ -39882,7 +39882,7 @@ end;
 
 function TFhirFlagList.Insert(index: Integer): TFhirFlag;
 begin
-  result := TFhirFlag.create;
+  result := TFhirFlag.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -39956,7 +39956,7 @@ end;
 procedure TFhirGoalOutcome.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'result[x]', 'CodeableConcept|Reference(Observation)', false, TFhirType, FResult.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'result[x]', 'CodeableConcept|Reference(Observation)', false, TFhirType, FResult.Link));{2}
 end;
 
 function TFhirGoalOutcome.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -39975,7 +39975,7 @@ end;
 
 function TFhirGoalOutcome.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'result', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Result'){4x}
+  if (isMatchingName(propName, 'result', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Result'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -40053,10 +40053,10 @@ begin
   FResult := value;
 end;
 
-function TFhirGoalOutcome.sizeInBytesV : cardinal;
+function TFhirGoalOutcome.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResult.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResult.sizeInBytes(magic));
 end;
 
 { TFhirGoalOutcomeListEnumerator }
@@ -40070,7 +40070,7 @@ end;
 
 destructor TFhirGoalOutcomeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -40085,22 +40085,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirGoalOutcomeListEnumerator.sizeInBytesV : cardinal;
+function TFhirGoalOutcomeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirGoalOutcomeList }
-procedure TFhirGoalOutcomeList.AddItem(value: TFhirGoalOutcome);
+function TFhirGoalOutcomeList.AddItem(value: TFhirGoalOutcome): TFhirGoalOutcome;
 begin
-  assert(value.ClassName = 'TFhirGoalOutcome', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGoalOutcome');
   add(value);
+  result := value;
 end;
 
 function TFhirGoalOutcomeList.Append: TFhirGoalOutcome;
 begin
-  result := TFhirGoalOutcome.create;
+  result := TFhirGoalOutcome.Create;
   try
     add(result.Link);
   finally
@@ -40144,7 +40144,7 @@ end;
 
 function TFhirGoalOutcomeList.Insert(index: Integer): TFhirGoalOutcome;
 begin
-  result := TFhirGoalOutcome.create;
+  result := TFhirGoalOutcome.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -40194,20 +40194,20 @@ end;
 
 destructor TFhirGoal.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
   FStart.free;
   FTarget.free;
-  FCategoryList.Free;
+  FCategoryList.free;
   FDescription.free;
   FStatus.free;
   FStatusDate.free;
   FStatusReason.free;
   FAuthor.free;
   FPriority.free;
-  FAddressesList.Free;
-  FNoteList.Free;
-  FOutcomeList.Free;
+  FAddressesList.free;
+  FNoteList.free;
+  FOutcomeList.free;
   inherited;
 end;
 
@@ -40321,20 +40321,20 @@ end;
 procedure TFhirGoal.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group|Organization)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'start[x]', 'date|CodeableConcept', false, TFhirType, FStart.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'target[x]', 'date|Quantity', false, TFhirType, FTarget.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'statusDate', 'date', false, TFhirDate, FStatusDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'statusReason', 'CodeableConcept', false, TFhirCodeableConcept, FStatusReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'addresses', 'Reference(Condition|Observation|MedicationStatement|NutritionOrder|ProcedureRequest|RiskAssessment)', true, TFhirReference{Resource}, FAddressesList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'outcome', '', true, TFhirGoalOutcome, FOutcomeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group|Organization)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'start[x]', 'date|CodeableConcept', false, TFhirType, FStart.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'target[x]', 'date|Quantity', false, TFhirType, FTarget.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', true, TFhirCodeableConcept, FCategoryList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'statusDate', 'date', false, TFhirDate, FStatusDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'statusReason', 'CodeableConcept', false, TFhirCodeableConcept, FStatusReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'addresses', 'Reference(Condition|Observation|MedicationStatement|NutritionOrder|ProcedureRequest|RiskAssessment)', true, TFhirReference{Resource}, FAddressesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'outcome', '', true, TFhirGoalOutcome, FOutcomeList.Link)){3};
 end;
 
 function TFhirGoal.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -40425,15 +40425,15 @@ end;
 function TFhirGoal.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (isMatchingName(propName, 'start', ['Date', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Start'){4x}
-  else if (isMatchingName(propName, 'target', ['Date', 'Quantity'])) then raise EFHIRException.create('Cannot make property Target'){4x}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (isMatchingName(propName, 'start', ['Date', 'CodeableConcept'])) then raise EFHIRException.Create('Cannot make property Start'){4x}
+  else if (isMatchingName(propName, 'target', ['Date', 'Quantity'])) then raise EFHIRException.Create('Cannot make property Target'){4x}
   else if (propName = 'category') then result := CategoryList.new(){2}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'statusDate') then result := TFhirDate.create() {5b}
-  else if (propName = 'statusReason') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'author') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'priority') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'statusDate') then result := TFhirDate.Create() {5b}
+  else if (propName = 'statusReason') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'author') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'priority') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'addresses') then result := AddressesList.new(){2}
   else if (propName = 'note') then result := NoteList.new(){2}
   else if (propName = 'outcome') then result := OutcomeList.new(){2}
@@ -40633,7 +40633,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -40659,7 +40659,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirGoalStatusEnum[value], CODES_TFhirGoalStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirGoalStatusEnum[value], CODES_TFhirGoalStatusEnum[value]);
 end;
 
 Procedure TFhirGoal.SetStatusDate(value : TFhirDate);
@@ -40679,7 +40679,7 @@ end;
 Procedure TFhirGoal.SetStatusDateST(value : TFslDateTime);
 begin
   if FStatusDate = nil then
-    FStatusDate := TFhirDate.create;
+    FStatusDate := TFhirDate.Create;
   FStatusDate.value := value
 end;
 
@@ -40737,23 +40737,23 @@ begin
   result := (FOutcomeList <> nil) and (FOutcomeList.count > 0);
 end;
 
-function TFhirGoal.sizeInBytesV : cardinal;
+function TFhirGoal.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FStart.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FcategoryList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FStatusDate.sizeInBytes);
-  inc(result, FStatusReason.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
-  inc(result, FaddressesList.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
-  inc(result, FoutcomeList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FStart.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FcategoryList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FStatusDate.sizeInBytes(magic));
+  inc(result, FStatusReason.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
+  inc(result, FaddressesList.sizeInBytes(magic));
+  inc(result, FnoteList.sizeInBytes(magic));
+  inc(result, FoutcomeList.sizeInBytes(magic));
 end;
 
 { TFhirGoalListEnumerator }
@@ -40767,7 +40767,7 @@ end;
 
 destructor TFhirGoalListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -40782,22 +40782,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirGoalListEnumerator.sizeInBytesV : cardinal;
+function TFhirGoalListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirGoalList }
-procedure TFhirGoalList.AddItem(value: TFhirGoal);
+function TFhirGoalList.AddItem(value: TFhirGoal): TFhirGoal;
 begin
-  assert(value.ClassName = 'TFhirGoal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirGoal');
   add(value);
+  result := value;
 end;
 
 function TFhirGoalList.Append: TFhirGoal;
 begin
-  result := TFhirGoal.create;
+  result := TFhirGoal.Create;
   try
     add(result.Link);
   finally
@@ -40841,7 +40841,7 @@ end;
 
 function TFhirGoalList.Insert(index: Integer): TFhirGoal;
 begin
-  result := TFhirGoal.create;
+  result := TFhirGoal.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -40898,7 +40898,7 @@ begin
   FUid.free;
   FUrl.free;
   FImagingStudy.free;
-  FSeriesList.Free;
+  FSeriesList.free;
   inherited;
 end;
 
@@ -40937,10 +40937,10 @@ end;
 procedure TFhirImagingObjectSelectionStudy.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'imagingStudy', 'Reference(ImagingStudy)', false, TFhirReference{TFhirImagingStudy}, FImagingStudy.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'series', '', true, TFhirImagingObjectSelectionStudySeries, FSeriesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'imagingStudy', 'Reference(ImagingStudy)', false, TFhirReference{TFhirImagingStudy}, FImagingStudy.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'series', '', true, TFhirImagingObjectSelectionStudySeries, FSeriesList.Link)){3};
 end;
 
 function TFhirImagingObjectSelectionStudy.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -40976,9 +40976,9 @@ end;
 
 function TFhirImagingObjectSelectionStudy.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'url') then result := TFhirUri.create() {5b}
-  else if (propName = 'imagingStudy') then result := TFhirReference{TFhirImagingStudy}.create(){4b}
+  if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'url') then result := TFhirUri.Create() {5b}
+  else if (propName = 'imagingStudy') then result := TFhirReference{TFhirImagingStudy}.Create(){4b}
   else if (propName = 'series') then result := SeriesList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -41085,7 +41085,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -41111,7 +41111,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -41136,13 +41136,13 @@ begin
   result := (FSeriesList <> nil) and (FSeriesList.count > 0);
 end;
 
-function TFhirImagingObjectSelectionStudy.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudy.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUid.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FImagingStudy.sizeInBytes);
-  inc(result, FseriesList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FImagingStudy.sizeInBytes(magic));
+  inc(result, FseriesList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudyListEnumerator }
@@ -41156,7 +41156,7 @@ end;
 
 destructor TFhirImagingObjectSelectionStudyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -41171,22 +41171,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingObjectSelectionStudyListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudyListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudyList }
-procedure TFhirImagingObjectSelectionStudyList.AddItem(value: TFhirImagingObjectSelectionStudy);
+function TFhirImagingObjectSelectionStudyList.AddItem(value: TFhirImagingObjectSelectionStudy): TFhirImagingObjectSelectionStudy;
 begin
-  assert(value.ClassName = 'TFhirImagingObjectSelectionStudy', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingObjectSelectionStudy');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingObjectSelectionStudyList.Append: TFhirImagingObjectSelectionStudy;
 begin
-  result := TFhirImagingObjectSelectionStudy.create;
+  result := TFhirImagingObjectSelectionStudy.Create;
   try
     add(result.Link);
   finally
@@ -41230,7 +41230,7 @@ end;
 
 function TFhirImagingObjectSelectionStudyList.Insert(index: Integer): TFhirImagingObjectSelectionStudy;
 begin
-  result := TFhirImagingObjectSelectionStudy.create;
+  result := TFhirImagingObjectSelectionStudy.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -41282,7 +41282,7 @@ destructor TFhirImagingObjectSelectionStudySeries.Destroy;
 begin
   FUid.free;
   FUrl.free;
-  FInstanceList.Free;
+  FInstanceList.free;
   inherited;
 end;
 
@@ -41318,9 +41318,9 @@ end;
 procedure TFhirImagingObjectSelectionStudySeries.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'instance', '', true, TFhirImagingObjectSelectionStudySeriesInstance, FInstanceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'instance', '', true, TFhirImagingObjectSelectionStudySeriesInstance, FInstanceList.Link)){3};
 end;
 
 function TFhirImagingObjectSelectionStudySeries.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -41351,8 +41351,8 @@ end;
 
 function TFhirImagingObjectSelectionStudySeries.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'url') then result := TFhirUri.create() {5b}
+  if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'url') then result := TFhirUri.Create() {5b}
   else if (propName = 'instance') then result := InstanceList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -41455,7 +41455,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -41481,7 +41481,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -41500,12 +41500,12 @@ begin
   result := (FInstanceList <> nil) and (FInstanceList.count > 0);
 end;
 
-function TFhirImagingObjectSelectionStudySeries.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudySeries.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUid.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FinstanceList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FinstanceList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudySeriesListEnumerator }
@@ -41519,7 +41519,7 @@ end;
 
 destructor TFhirImagingObjectSelectionStudySeriesListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -41534,22 +41534,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingObjectSelectionStudySeriesListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudySeriesListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudySeriesList }
-procedure TFhirImagingObjectSelectionStudySeriesList.AddItem(value: TFhirImagingObjectSelectionStudySeries);
+function TFhirImagingObjectSelectionStudySeriesList.AddItem(value: TFhirImagingObjectSelectionStudySeries): TFhirImagingObjectSelectionStudySeries;
 begin
-  assert(value.ClassName = 'TFhirImagingObjectSelectionStudySeries', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingObjectSelectionStudySeries');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingObjectSelectionStudySeriesList.Append: TFhirImagingObjectSelectionStudySeries;
 begin
-  result := TFhirImagingObjectSelectionStudySeries.create;
+  result := TFhirImagingObjectSelectionStudySeries.Create;
   try
     add(result.Link);
   finally
@@ -41593,7 +41593,7 @@ end;
 
 function TFhirImagingObjectSelectionStudySeriesList.Insert(index: Integer): TFhirImagingObjectSelectionStudySeries;
 begin
-  result := TFhirImagingObjectSelectionStudySeries.create;
+  result := TFhirImagingObjectSelectionStudySeries.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -41646,7 +41646,7 @@ begin
   FSopClass.free;
   FUid.free;
   FUrl.free;
-  FFramesList.Free;
+  FFramesList.free;
   inherited;
 end;
 
@@ -41685,10 +41685,10 @@ end;
 procedure TFhirImagingObjectSelectionStudySeriesInstance.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'sopClass', 'oid', false, TFhirOid, FSopClass.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'frames', '', true, TFhirImagingObjectSelectionStudySeriesInstanceFrames, FFramesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'sopClass', 'oid', false, TFhirOid, FSopClass.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'frames', '', true, TFhirImagingObjectSelectionStudySeriesInstanceFrames, FFramesList.Link)){3};
 end;
 
 function TFhirImagingObjectSelectionStudySeriesInstance.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -41724,9 +41724,9 @@ end;
 
 function TFhirImagingObjectSelectionStudySeriesInstance.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'sopClass') then result := TFhirOid.create() {5b}
-  else if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'url') then result := TFhirUri.create() {5b}
+  if (propName = 'sopClass') then result := TFhirOid.Create() {5b}
+  else if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'url') then result := TFhirUri.Create() {5b}
   else if (propName = 'frames') then result := FramesList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -41833,7 +41833,7 @@ begin
   if value <> '' then
   begin
     if FSopClass = nil then
-      FSopClass := TFhirOid.create;
+      FSopClass := TFhirOid.Create;
     FSopClass.value := value
   end
   else if FSopClass <> nil then
@@ -41859,7 +41859,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -41885,7 +41885,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -41904,13 +41904,13 @@ begin
   result := (FFramesList <> nil) and (FFramesList.count > 0);
 end;
 
-function TFhirImagingObjectSelectionStudySeriesInstance.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudySeriesInstance.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSopClass.sizeInBytes);
-  inc(result, FUid.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FframesList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSopClass.sizeInBytes(magic));
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FframesList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudySeriesInstanceListEnumerator }
@@ -41924,7 +41924,7 @@ end;
 
 destructor TFhirImagingObjectSelectionStudySeriesInstanceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -41939,22 +41939,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingObjectSelectionStudySeriesInstanceListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudySeriesInstanceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudySeriesInstanceList }
-procedure TFhirImagingObjectSelectionStudySeriesInstanceList.AddItem(value: TFhirImagingObjectSelectionStudySeriesInstance);
+function TFhirImagingObjectSelectionStudySeriesInstanceList.AddItem(value: TFhirImagingObjectSelectionStudySeriesInstance): TFhirImagingObjectSelectionStudySeriesInstance;
 begin
-  assert(value.ClassName = 'TFhirImagingObjectSelectionStudySeriesInstance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingObjectSelectionStudySeriesInstance');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingObjectSelectionStudySeriesInstanceList.Append: TFhirImagingObjectSelectionStudySeriesInstance;
 begin
-  result := TFhirImagingObjectSelectionStudySeriesInstance.create;
+  result := TFhirImagingObjectSelectionStudySeriesInstance.Create;
   try
     add(result.Link);
   finally
@@ -41998,7 +41998,7 @@ end;
 
 function TFhirImagingObjectSelectionStudySeriesInstanceList.Insert(index: Integer): TFhirImagingObjectSelectionStudySeriesInstance;
 begin
-  result := TFhirImagingObjectSelectionStudySeriesInstance.create;
+  result := TFhirImagingObjectSelectionStudySeriesInstance.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -42048,7 +42048,7 @@ end;
 
 destructor TFhirImagingObjectSelectionStudySeriesInstanceFrames.Destroy;
 begin
-  FFrameNumbersList.Free;
+  FFrameNumbersList.free;
   FUrl.free;
   inherited;
 end;
@@ -42082,8 +42082,8 @@ end;
 procedure TFhirImagingObjectSelectionStudySeriesInstanceFrames.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'frameNumbers', 'unsignedInt', true, TFhirUnsignedInt, FFrameNumbersList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'frameNumbers', 'unsignedInt', true, TFhirUnsignedInt, FFrameNumbersList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
 end;
 
 function TFhirImagingObjectSelectionStudySeriesInstanceFrames.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -42110,7 +42110,7 @@ end;
 function TFhirImagingObjectSelectionStudySeriesInstanceFrames.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'frameNumbers') then result := FrameNumbersList.new(){2}
-  else if (propName = 'url') then result := TFhirUri.create() {5b}
+  else if (propName = 'url') then result := TFhirUri.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -42219,18 +42219,18 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
     FUrl.value := '';
 end;
 
-function TFhirImagingObjectSelectionStudySeriesInstanceFrames.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudySeriesInstanceFrames.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FframeNumbersList.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FframeNumbersList.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudySeriesInstanceFramesListEnumerator }
@@ -42244,7 +42244,7 @@ end;
 
 destructor TFhirImagingObjectSelectionStudySeriesInstanceFramesListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -42259,22 +42259,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingObjectSelectionStudySeriesInstanceFramesListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionStudySeriesInstanceFramesListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionStudySeriesInstanceFramesList }
-procedure TFhirImagingObjectSelectionStudySeriesInstanceFramesList.AddItem(value: TFhirImagingObjectSelectionStudySeriesInstanceFrames);
+function TFhirImagingObjectSelectionStudySeriesInstanceFramesList.AddItem(value: TFhirImagingObjectSelectionStudySeriesInstanceFrames): TFhirImagingObjectSelectionStudySeriesInstanceFrames;
 begin
-  assert(value.ClassName = 'TFhirImagingObjectSelectionStudySeriesInstanceFrames', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingObjectSelectionStudySeriesInstanceFrames');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingObjectSelectionStudySeriesInstanceFramesList.Append: TFhirImagingObjectSelectionStudySeriesInstanceFrames;
 begin
-  result := TFhirImagingObjectSelectionStudySeriesInstanceFrames.create;
+  result := TFhirImagingObjectSelectionStudySeriesInstanceFrames.Create;
   try
     add(result.Link);
   finally
@@ -42318,7 +42318,7 @@ end;
 
 function TFhirImagingObjectSelectionStudySeriesInstanceFramesList.Insert(index: Integer): TFhirImagingObjectSelectionStudySeriesInstanceFrames;
 begin
-  result := TFhirImagingObjectSelectionStudySeriesInstanceFrames.create;
+  result := TFhirImagingObjectSelectionStudySeriesInstanceFrames.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -42374,7 +42374,7 @@ begin
   FDescription.free;
   FAuthor.free;
   FAuthoringTime.free;
-  FStudyList.Free;
+  FStudyList.free;
   inherited;
 end;
 
@@ -42427,13 +42427,13 @@ end;
 procedure TFhirImagingObjectSelection.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'title', 'CodeableConcept', false, TFhirCodeableConcept, FTitle.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Practitioner|Device|Organization|Patient|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'authoringTime', 'dateTime', false, TFhirDateTime, FAuthoringTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'study', '', true, TFhirImagingObjectSelectionStudy, FStudyList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'title', 'CodeableConcept', false, TFhirCodeableConcept, FTitle.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Practitioner|Device|Organization|Patient|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'authoringTime', 'dateTime', false, TFhirDateTime, FAuthoringTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'study', '', true, TFhirImagingObjectSelectionStudy, FStudyList.Link)){3};
 end;
 
 function TFhirImagingObjectSelection.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -42484,12 +42484,12 @@ end;
 
 function TFhirImagingObjectSelection.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'title') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'author') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'authoringTime') then result := TFhirDateTime.create() {5b}
+  if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'title') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'author') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'authoringTime') then result := TFhirDateTime.Create() {5b}
   else if (propName = 'study') then result := StudyList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -42610,7 +42610,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -42648,7 +42648,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -42678,7 +42678,7 @@ end;
 Procedure TFhirImagingObjectSelection.SetAuthoringTimeST(value : TFslDateTime);
 begin
   if FAuthoringTime = nil then
-    FAuthoringTime := TFhirDateTime.create;
+    FAuthoringTime := TFhirDateTime.Create;
   FAuthoringTime.value := value
 end;
 
@@ -42694,16 +42694,16 @@ begin
   result := (FStudyList <> nil) and (FStudyList.count > 0);
 end;
 
-function TFhirImagingObjectSelection.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUid.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FAuthoringTime.sizeInBytes);
-  inc(result, FstudyList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FAuthoringTime.sizeInBytes(magic));
+  inc(result, FstudyList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionListEnumerator }
@@ -42717,7 +42717,7 @@ end;
 
 destructor TFhirImagingObjectSelectionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -42732,22 +42732,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingObjectSelectionListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingObjectSelectionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingObjectSelectionList }
-procedure TFhirImagingObjectSelectionList.AddItem(value: TFhirImagingObjectSelection);
+function TFhirImagingObjectSelectionList.AddItem(value: TFhirImagingObjectSelection): TFhirImagingObjectSelection;
 begin
-  assert(value.ClassName = 'TFhirImagingObjectSelection', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingObjectSelection');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingObjectSelectionList.Append: TFhirImagingObjectSelection;
 begin
-  result := TFhirImagingObjectSelection.create;
+  result := TFhirImagingObjectSelection.Create;
   try
     add(result.Link);
   finally
@@ -42791,7 +42791,7 @@ end;
 
 function TFhirImagingObjectSelectionList.Insert(index: Integer): TFhirImagingObjectSelection;
 begin
-  result := TFhirImagingObjectSelection.create;
+  result := TFhirImagingObjectSelection.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -42855,7 +42855,7 @@ begin
   FBodySite.free;
   FLaterality.free;
   FStarted.free;
-  FInstanceList.Free;
+  FInstanceList.free;
   inherited;
 end;
 
@@ -42915,17 +42915,17 @@ end;
 procedure TFhirImagingStudySeries.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'number', 'unsignedInt', false, TFhirUnsignedInt, FNumber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'modality', 'Coding', false, TFhirCoding, FModality.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'numberOfInstances', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfInstances.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'availability', 'code', false, TFHIREnum, FAvailability.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'Coding', false, TFhirCoding, FBodySite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'laterality', 'Coding', false, TFhirCoding, FLaterality.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'started', 'dateTime', false, TFhirDateTime, FStarted.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'instance', '', true, TFhirImagingStudySeriesInstance, FInstanceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'number', 'unsignedInt', false, TFhirUnsignedInt, FNumber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'modality', 'Coding', false, TFhirCoding, FModality.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'numberOfInstances', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfInstances.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'availability', 'code', false, TFHIREnum, FAvailability.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'Coding', false, TFhirCoding, FBodySite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'laterality', 'Coding', false, TFhirCoding, FLaterality.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'started', 'dateTime', false, TFhirDateTime, FStarted.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'instance', '', true, TFhirImagingStudySeriesInstance, FInstanceList.Link)){3};
 end;
 
 function TFhirImagingStudySeries.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -42996,15 +42996,15 @@ end;
 
 function TFhirImagingStudySeries.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'number') then result := TFhirUnsignedInt.create() {5b}
-  else if (propName = 'modality') then result := TFhirCoding.create(){4b}
-  else if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'numberOfInstances') then result := TFhirUnsignedInt.create() {5b}
-  else if (propName = 'url') then result := TFhirUri.create() {5b}
-  else if (propName = 'bodySite') then result := TFhirCoding.create(){4b}
-  else if (propName = 'laterality') then result := TFhirCoding.create(){4b}
-  else if (propName = 'started') then result := TFhirDateTime.create() {5b}
+  if (propName = 'number') then result := TFhirUnsignedInt.Create() {5b}
+  else if (propName = 'modality') then result := TFhirCoding.Create(){4b}
+  else if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'numberOfInstances') then result := TFhirUnsignedInt.Create() {5b}
+  else if (propName = 'url') then result := TFhirUri.Create() {5b}
+  else if (propName = 'bodySite') then result := TFhirCoding.Create(){4b}
+  else if (propName = 'laterality') then result := TFhirCoding.Create(){4b}
+  else if (propName = 'started') then result := TFhirDateTime.Create() {5b}
   else if (propName = 'instance') then result := InstanceList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -43143,7 +43143,7 @@ begin
   if value <> '' then
   begin
     if FNumber = nil then
-      FNumber := TFhirUnsignedInt.create;
+      FNumber := TFhirUnsignedInt.Create;
     FNumber.value := value
   end
   else if FNumber <> nil then
@@ -43175,7 +43175,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -43201,7 +43201,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -43227,7 +43227,7 @@ begin
   if value <> '' then
   begin
     if FNumberOfInstances = nil then
-      FNumberOfInstances := TFhirUnsignedInt.create;
+      FNumberOfInstances := TFhirUnsignedInt.Create;
     FNumberOfInstances.value := value
   end
   else if FNumberOfInstances <> nil then
@@ -43253,7 +43253,7 @@ begin
   if ord(value) = 0 then
     AvailabilityElement := nil
   else
-    AvailabilityElement := TFhirEnum.create(SYSTEMS_TFhirInstanceAvailabilityEnum[value], CODES_TFhirInstanceAvailabilityEnum[value]);
+    AvailabilityElement := TFhirEnum.Create(SYSTEMS_TFhirInstanceAvailabilityEnum[value], CODES_TFhirInstanceAvailabilityEnum[value]);
 end;
 
 Procedure TFhirImagingStudySeries.SetUrl(value : TFhirUri);
@@ -43275,7 +43275,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -43311,7 +43311,7 @@ end;
 Procedure TFhirImagingStudySeries.SetStartedST(value : TFslDateTime);
 begin
   if FStarted = nil then
-    FStarted := TFhirDateTime.create;
+    FStarted := TFhirDateTime.Create;
   FStarted.value := value
 end;
 
@@ -43327,20 +43327,20 @@ begin
   result := (FInstanceList <> nil) and (FInstanceList.count > 0);
 end;
 
-function TFhirImagingStudySeries.sizeInBytesV : cardinal;
+function TFhirImagingStudySeries.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FNumber.sizeInBytes);
-  inc(result, FModality.sizeInBytes);
-  inc(result, FUid.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FNumberOfInstances.sizeInBytes);
-  inc(result, FAvailability.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FBodySite.sizeInBytes);
-  inc(result, FLaterality.sizeInBytes);
-  inc(result, FStarted.sizeInBytes);
-  inc(result, FinstanceList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FNumber.sizeInBytes(magic));
+  inc(result, FModality.sizeInBytes(magic));
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FNumberOfInstances.sizeInBytes(magic));
+  inc(result, FAvailability.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FBodySite.sizeInBytes(magic));
+  inc(result, FLaterality.sizeInBytes(magic));
+  inc(result, FStarted.sizeInBytes(magic));
+  inc(result, FinstanceList.sizeInBytes(magic));
 end;
 
 { TFhirImagingStudySeriesListEnumerator }
@@ -43354,7 +43354,7 @@ end;
 
 destructor TFhirImagingStudySeriesListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -43369,22 +43369,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingStudySeriesListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingStudySeriesListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingStudySeriesList }
-procedure TFhirImagingStudySeriesList.AddItem(value: TFhirImagingStudySeries);
+function TFhirImagingStudySeriesList.AddItem(value: TFhirImagingStudySeries): TFhirImagingStudySeries;
 begin
-  assert(value.ClassName = 'TFhirImagingStudySeries', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingStudySeries');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingStudySeriesList.Append: TFhirImagingStudySeries;
 begin
-  result := TFhirImagingStudySeries.create;
+  result := TFhirImagingStudySeries.Create;
   try
     add(result.Link);
   finally
@@ -43428,7 +43428,7 @@ end;
 
 function TFhirImagingStudySeriesList.Insert(index: Integer): TFhirImagingStudySeries;
 begin
-  result := TFhirImagingStudySeries.create;
+  result := TFhirImagingStudySeries.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -43483,7 +43483,7 @@ begin
   FSopClass.free;
   FType_.free;
   FTitle.free;
-  FContentList.Free;
+  FContentList.free;
   inherited;
 end;
 
@@ -43528,12 +43528,12 @@ end;
 procedure TFhirImagingStudySeriesInstance.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'number', 'unsignedInt', false, TFhirUnsignedInt, FNumber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'sopClass', 'oid', false, TFhirOid, FSopClass.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'string', false, TFhirString, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'content', 'Attachment', true, TFhirAttachment, FContentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'number', 'unsignedInt', false, TFhirUnsignedInt, FNumber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'sopClass', 'oid', false, TFhirOid, FSopClass.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'string', false, TFhirString, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'content', 'Attachment', true, TFhirAttachment, FContentList.Link)){3};
 end;
 
 function TFhirImagingStudySeriesInstance.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -43579,11 +43579,11 @@ end;
 
 function TFhirImagingStudySeriesInstance.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'number') then result := TFhirUnsignedInt.create() {5b}
-  else if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'sopClass') then result := TFhirOid.create() {5b}
-  else if (propName = 'type') then result := TFhirString.create() {5b}
-  else if (propName = 'title') then result := TFhirString.create() {5b}
+  if (propName = 'number') then result := TFhirUnsignedInt.Create() {5b}
+  else if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'sopClass') then result := TFhirOid.Create() {5b}
+  else if (propName = 'type') then result := TFhirString.Create() {5b}
+  else if (propName = 'title') then result := TFhirString.Create() {5b}
   else if (propName = 'content') then result := ContentList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -43699,7 +43699,7 @@ begin
   if value <> '' then
   begin
     if FNumber = nil then
-      FNumber := TFhirUnsignedInt.create;
+      FNumber := TFhirUnsignedInt.Create;
     FNumber.value := value
   end
   else if FNumber <> nil then
@@ -43725,7 +43725,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -43751,7 +43751,7 @@ begin
   if value <> '' then
   begin
     if FSopClass = nil then
-      FSopClass := TFhirOid.create;
+      FSopClass := TFhirOid.Create;
     FSopClass.value := value
   end
   else if FSopClass <> nil then
@@ -43777,7 +43777,7 @@ begin
   if value <> '' then
   begin
     if FType_ = nil then
-      FType_ := TFhirString.create;
+      FType_ := TFhirString.Create;
     FType_.value := value
   end
   else if FType_ <> nil then
@@ -43803,7 +43803,7 @@ begin
   if value <> '' then
   begin
     if FTitle = nil then
-      FTitle := TFhirString.create;
+      FTitle := TFhirString.Create;
     FTitle.value := value
   end
   else if FTitle <> nil then
@@ -43822,15 +43822,15 @@ begin
   result := (FContentList <> nil) and (FContentList.count > 0);
 end;
 
-function TFhirImagingStudySeriesInstance.sizeInBytesV : cardinal;
+function TFhirImagingStudySeriesInstance.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FNumber.sizeInBytes);
-  inc(result, FUid.sizeInBytes);
-  inc(result, FSopClass.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FcontentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FNumber.sizeInBytes(magic));
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FSopClass.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FcontentList.sizeInBytes(magic));
 end;
 
 { TFhirImagingStudySeriesInstanceListEnumerator }
@@ -43844,7 +43844,7 @@ end;
 
 destructor TFhirImagingStudySeriesInstanceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -43859,22 +43859,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingStudySeriesInstanceListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingStudySeriesInstanceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingStudySeriesInstanceList }
-procedure TFhirImagingStudySeriesInstanceList.AddItem(value: TFhirImagingStudySeriesInstance);
+function TFhirImagingStudySeriesInstanceList.AddItem(value: TFhirImagingStudySeriesInstance): TFhirImagingStudySeriesInstance;
 begin
-  assert(value.ClassName = 'TFhirImagingStudySeriesInstance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingStudySeriesInstance');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingStudySeriesInstanceList.Append: TFhirImagingStudySeriesInstance;
 begin
-  result := TFhirImagingStudySeriesInstance.create;
+  result := TFhirImagingStudySeriesInstance.Create;
   try
     add(result.Link);
   finally
@@ -43918,7 +43918,7 @@ end;
 
 function TFhirImagingStudySeriesInstanceList.Insert(index: Integer): TFhirImagingStudySeriesInstance;
 begin
-  result := TFhirImagingStudySeriesInstance.create;
+  result := TFhirImagingStudySeriesInstance.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -43972,18 +43972,18 @@ begin
   FPatient.free;
   FUid.free;
   FAccession.free;
-  FIdentifierList.Free;
-  FOrderList.Free;
-  FModalityListList.Free;
+  FIdentifierList.free;
+  FOrderList.free;
+  FModalityListList.free;
   FReferrer.free;
   FAvailability.free;
   FUrl.free;
   FNumberOfSeries.free;
   FNumberOfInstances.free;
-  FProcedure_List.Free;
+  FProcedure_List.free;
   FInterpreter.free;
   FDescription.free;
-  FSeriesList.Free;
+  FSeriesList.free;
   inherited;
 end;
 
@@ -44103,22 +44103,22 @@ end;
 procedure TFhirImagingStudy.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'started', 'dateTime', false, TFhirDateTime, FStarted.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'accession', 'Identifier', false, TFhirIdentifier, FAccession.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'order', 'Reference(DiagnosticOrder)', true, TFhirReference{TFhirDiagnosticOrder}, FOrderList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'modalityList', 'Coding', true, TFhirCoding, FModalityListList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'referrer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FReferrer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'availability', 'code', false, TFHIREnum, FAvailability.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'numberOfSeries', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfSeries.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'numberOfInstances', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfInstances.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'procedure', 'Reference(Procedure)', true, TFhirReference{TFhirProcedure}, FProcedure_List.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'interpreter', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FInterpreter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'series', '', true, TFhirImagingStudySeries, FSeriesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'started', 'dateTime', false, TFhirDateTime, FStarted.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'uid', 'oid', false, TFhirOid, FUid.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'accession', 'Identifier', false, TFhirIdentifier, FAccession.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'order', 'Reference(DiagnosticOrder)', true, TFhirReference{TFhirDiagnosticOrder}, FOrderList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'modalityList', 'Coding', true, TFhirCoding, FModalityListList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'referrer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FReferrer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'availability', 'code', false, TFHIREnum, FAvailability.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'url', 'uri', false, TFhirUri, FUrl.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'numberOfSeries', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfSeries.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'numberOfInstances', 'unsignedInt', false, TFhirUnsignedInt, FNumberOfInstances.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'procedure', 'Reference(Procedure)', true, TFhirReference{TFhirProcedure}, FProcedure_List.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'interpreter', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FInterpreter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'series', '', true, TFhirImagingStudySeries, FSeriesList.Link)){3};
 end;
 
 function TFhirImagingStudy.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -44218,20 +44218,20 @@ end;
 
 function TFhirImagingStudy.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'started') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'uid') then result := TFhirOid.create() {5b}
-  else if (propName = 'accession') then result := TFhirIdentifier.create(){4b}
+  if (propName = 'started') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'uid') then result := TFhirOid.Create() {5b}
+  else if (propName = 'accession') then result := TFhirIdentifier.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
   else if (propName = 'order') then result := OrderList.new(){2}
   else if (propName = 'modalityList') then result := ModalityListList.new(){2}
-  else if (propName = 'referrer') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'url') then result := TFhirUri.create() {5b}
-  else if (propName = 'numberOfSeries') then result := TFhirUnsignedInt.create() {5b}
-  else if (propName = 'numberOfInstances') then result := TFhirUnsignedInt.create() {5b}
+  else if (propName = 'referrer') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'url') then result := TFhirUri.Create() {5b}
+  else if (propName = 'numberOfSeries') then result := TFhirUnsignedInt.Create() {5b}
+  else if (propName = 'numberOfInstances') then result := TFhirUnsignedInt.Create() {5b}
   else if (propName = 'procedure') then result := Procedure_List.new(){2}
-  else if (propName = 'interpreter') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'interpreter') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else if (propName = 'series') then result := SeriesList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -44394,7 +44394,7 @@ end;
 Procedure TFhirImagingStudy.SetStartedST(value : TFslDateTime);
 begin
   if FStarted = nil then
-    FStarted := TFhirDateTime.create;
+    FStarted := TFhirDateTime.Create;
   FStarted.value := value
 end;
 
@@ -44423,7 +44423,7 @@ begin
   if value <> '' then
   begin
     if FUid = nil then
-      FUid := TFhirOid.create;
+      FUid := TFhirOid.Create;
     FUid.value := value
   end
   else if FUid <> nil then
@@ -44497,7 +44497,7 @@ begin
   if ord(value) = 0 then
     AvailabilityElement := nil
   else
-    AvailabilityElement := TFhirEnum.create(SYSTEMS_TFhirInstanceAvailabilityEnum[value], CODES_TFhirInstanceAvailabilityEnum[value]);
+    AvailabilityElement := TFhirEnum.Create(SYSTEMS_TFhirInstanceAvailabilityEnum[value], CODES_TFhirInstanceAvailabilityEnum[value]);
 end;
 
 Procedure TFhirImagingStudy.SetUrl(value : TFhirUri);
@@ -44519,7 +44519,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -44545,7 +44545,7 @@ begin
   if value <> '' then
   begin
     if FNumberOfSeries = nil then
-      FNumberOfSeries := TFhirUnsignedInt.create;
+      FNumberOfSeries := TFhirUnsignedInt.Create;
     FNumberOfSeries.value := value
   end
   else if FNumberOfSeries <> nil then
@@ -44571,7 +44571,7 @@ begin
   if value <> '' then
   begin
     if FNumberOfInstances = nil then
-      FNumberOfInstances := TFhirUnsignedInt.create;
+      FNumberOfInstances := TFhirUnsignedInt.Create;
     FNumberOfInstances.value := value
   end
   else if FNumberOfInstances <> nil then
@@ -44615,7 +44615,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -44634,25 +44634,25 @@ begin
   result := (FSeriesList <> nil) and (FSeriesList.count > 0);
 end;
 
-function TFhirImagingStudy.sizeInBytesV : cardinal;
+function TFhirImagingStudy.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStarted.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FUid.sizeInBytes);
-  inc(result, FAccession.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, ForderList.sizeInBytes);
-  inc(result, FmodalityListList.sizeInBytes);
-  inc(result, FReferrer.sizeInBytes);
-  inc(result, FAvailability.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FNumberOfSeries.sizeInBytes);
-  inc(result, FNumberOfInstances.sizeInBytes);
-  inc(result, Fprocedure_List.sizeInBytes);
-  inc(result, FInterpreter.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FseriesList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStarted.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FUid.sizeInBytes(magic));
+  inc(result, FAccession.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, ForderList.sizeInBytes(magic));
+  inc(result, FmodalityListList.sizeInBytes(magic));
+  inc(result, FReferrer.sizeInBytes(magic));
+  inc(result, FAvailability.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FNumberOfSeries.sizeInBytes(magic));
+  inc(result, FNumberOfInstances.sizeInBytes(magic));
+  inc(result, Fprocedure_List.sizeInBytes(magic));
+  inc(result, FInterpreter.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FseriesList.sizeInBytes(magic));
 end;
 
 { TFhirImagingStudyListEnumerator }
@@ -44666,7 +44666,7 @@ end;
 
 destructor TFhirImagingStudyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -44681,22 +44681,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImagingStudyListEnumerator.sizeInBytesV : cardinal;
+function TFhirImagingStudyListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImagingStudyList }
-procedure TFhirImagingStudyList.AddItem(value: TFhirImagingStudy);
+function TFhirImagingStudyList.AddItem(value: TFhirImagingStudy): TFhirImagingStudy;
 begin
-  assert(value.ClassName = 'TFhirImagingStudy', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImagingStudy');
   add(value);
+  result := value;
 end;
 
 function TFhirImagingStudyList.Append: TFhirImagingStudy;
 begin
-  result := TFhirImagingStudy.create;
+  result := TFhirImagingStudy.Create;
   try
     add(result.Link);
   finally
@@ -44740,7 +44740,7 @@ end;
 
 function TFhirImagingStudyList.Insert(index: Integer): TFhirImagingStudy;
 begin
-  result := TFhirImagingStudy.create;
+  result := TFhirImagingStudy.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -44794,8 +44794,8 @@ end;
 
 destructor TFhirImmunizationExplanation.Destroy;
 begin
-  FReasonList.Free;
-  FReasonNotGivenList.Free;
+  FReasonList.free;
+  FReasonNotGivenList.free;
   inherited;
 end;
 
@@ -44838,8 +44838,8 @@ end;
 procedure TFhirImmunizationExplanation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reasonNotGiven', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotGivenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reasonNotGiven', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotGivenList.Link)){3};
 end;
 
 function TFhirImmunizationExplanation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -44970,11 +44970,11 @@ begin
   result := (FReasonNotGivenList <> nil) and (FReasonNotGivenList.count > 0);
 end;
 
-function TFhirImmunizationExplanation.sizeInBytesV : cardinal;
+function TFhirImmunizationExplanation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FreasonNotGivenList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FreasonList.sizeInBytes(magic));
+  inc(result, FreasonNotGivenList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationExplanationListEnumerator }
@@ -44988,7 +44988,7 @@ end;
 
 destructor TFhirImmunizationExplanationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -45003,22 +45003,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationExplanationListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationExplanationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationExplanationList }
-procedure TFhirImmunizationExplanationList.AddItem(value: TFhirImmunizationExplanation);
+function TFhirImmunizationExplanationList.AddItem(value: TFhirImmunizationExplanation): TFhirImmunizationExplanation;
 begin
-  assert(value.ClassName = 'TFhirImmunizationExplanation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationExplanation');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationExplanationList.Append: TFhirImmunizationExplanation;
 begin
-  result := TFhirImmunizationExplanation.create;
+  result := TFhirImmunizationExplanation.Create;
   try
     add(result.Link);
   finally
@@ -45062,7 +45062,7 @@ end;
 
 function TFhirImmunizationExplanationList.Insert(index: Integer): TFhirImmunizationExplanation;
 begin
-  result := TFhirImmunizationExplanation.create;
+  result := TFhirImmunizationExplanation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -45140,9 +45140,9 @@ end;
 procedure TFhirImmunizationReaction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'detail', 'Reference(Observation)', false, TFhirReference{TFhirObservation}, FDetail.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reported', 'boolean', false, TFhirBoolean, FReported.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'detail', 'Reference(Observation)', false, TFhirReference{TFhirObservation}, FDetail.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reported', 'boolean', false, TFhirBoolean, FReported.Link));{2}
 end;
 
 function TFhirImmunizationReaction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -45172,9 +45172,9 @@ end;
 
 function TFhirImmunizationReaction.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'detail') then result := TFhirReference{TFhirObservation}.create(){4b}
-  else if (propName = 'reported') then result := TFhirBoolean.create() {5b}
+  if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'detail') then result := TFhirReference{TFhirObservation}.Create(){4b}
+  else if (propName = 'reported') then result := TFhirBoolean.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -45272,7 +45272,7 @@ end;
 Procedure TFhirImmunizationReaction.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -45299,16 +45299,16 @@ end;
 Procedure TFhirImmunizationReaction.SetReportedST(value : Boolean);
 begin
   if FReported = nil then
-    FReported := TFhirBoolean.create;
+    FReported := TFhirBoolean.Create;
   FReported.value := value
 end;
 
-function TFhirImmunizationReaction.sizeInBytesV : cardinal;
+function TFhirImmunizationReaction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDetail.sizeInBytes);
-  inc(result, FReported.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDetail.sizeInBytes(magic));
+  inc(result, FReported.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationReactionListEnumerator }
@@ -45322,7 +45322,7 @@ end;
 
 destructor TFhirImmunizationReactionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -45337,22 +45337,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationReactionListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationReactionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationReactionList }
-procedure TFhirImmunizationReactionList.AddItem(value: TFhirImmunizationReaction);
+function TFhirImmunizationReactionList.AddItem(value: TFhirImmunizationReaction): TFhirImmunizationReaction;
 begin
-  assert(value.ClassName = 'TFhirImmunizationReaction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationReaction');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationReactionList.Append: TFhirImmunizationReaction;
 begin
-  result := TFhirImmunizationReaction.create;
+  result := TFhirImmunizationReaction.Create;
   try
     add(result.Link);
   finally
@@ -45396,7 +45396,7 @@ end;
 
 function TFhirImmunizationReactionList.Insert(index: Integer): TFhirImmunizationReaction;
 begin
-  result := TFhirImmunizationReaction.create;
+  result := TFhirImmunizationReaction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -45451,7 +45451,7 @@ begin
   FAuthority.free;
   FSeries.free;
   FSeriesDoses.free;
-  FTargetDiseaseList.Free;
+  FTargetDiseaseList.free;
   FDoseStatus.free;
   FDoseStatusReason.free;
   inherited;
@@ -45504,14 +45504,14 @@ end;
 procedure TFhirImmunizationVaccinationProtocol.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'doseSequence', 'positiveInt', false, TFhirPositiveInt, FDoseSequence.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'authority', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FAuthority.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'series', 'string', false, TFhirString, FSeries.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'seriesDoses', 'positiveInt', false, TFhirPositiveInt, FSeriesDoses.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'targetDisease', 'CodeableConcept', true, TFhirCodeableConcept, FTargetDiseaseList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'doseStatus', 'CodeableConcept', false, TFhirCodeableConcept, FDoseStatus.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'doseStatusReason', 'CodeableConcept', false, TFhirCodeableConcept, FDoseStatusReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'doseSequence', 'positiveInt', false, TFhirPositiveInt, FDoseSequence.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'authority', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FAuthority.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'series', 'string', false, TFhirString, FSeries.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'seriesDoses', 'positiveInt', false, TFhirPositiveInt, FSeriesDoses.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'targetDisease', 'CodeableConcept', true, TFhirCodeableConcept, FTargetDiseaseList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'doseStatus', 'CodeableConcept', false, TFhirCodeableConcept, FDoseStatus.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'doseStatusReason', 'CodeableConcept', false, TFhirCodeableConcept, FDoseStatusReason.Link));{2}
 end;
 
 function TFhirImmunizationVaccinationProtocol.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -45567,14 +45567,14 @@ end;
 
 function TFhirImmunizationVaccinationProtocol.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'doseSequence') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'authority') then result := TFhirReference{TFhirOrganization}.create(){4b}
-  else if (propName = 'series') then result := TFhirString.create() {5b}
-  else if (propName = 'seriesDoses') then result := TFhirPositiveInt.create() {5b}
+  if (propName = 'doseSequence') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'authority') then result := TFhirReference{TFhirOrganization}.Create(){4b}
+  else if (propName = 'series') then result := TFhirString.Create() {5b}
+  else if (propName = 'seriesDoses') then result := TFhirPositiveInt.Create() {5b}
   else if (propName = 'targetDisease') then result := TargetDiseaseList.new(){2}
-  else if (propName = 'doseStatus') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'doseStatusReason') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'doseStatus') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'doseStatusReason') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -45699,7 +45699,7 @@ begin
   if value <> '' then
   begin
     if FDoseSequence = nil then
-      FDoseSequence := TFhirPositiveInt.create;
+      FDoseSequence := TFhirPositiveInt.Create;
     FDoseSequence.value := value
   end
   else if FDoseSequence <> nil then
@@ -45725,7 +45725,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -45757,7 +45757,7 @@ begin
   if value <> '' then
   begin
     if FSeries = nil then
-      FSeries := TFhirString.create;
+      FSeries := TFhirString.Create;
     FSeries.value := value
   end
   else if FSeries <> nil then
@@ -45783,7 +45783,7 @@ begin
   if value <> '' then
   begin
     if FSeriesDoses = nil then
-      FSeriesDoses := TFhirPositiveInt.create;
+      FSeriesDoses := TFhirPositiveInt.Create;
     FSeriesDoses.value := value
   end
   else if FSeriesDoses <> nil then
@@ -45814,17 +45814,17 @@ begin
   FDoseStatusReason := value;
 end;
 
-function TFhirImmunizationVaccinationProtocol.sizeInBytesV : cardinal;
+function TFhirImmunizationVaccinationProtocol.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDoseSequence.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FAuthority.sizeInBytes);
-  inc(result, FSeries.sizeInBytes);
-  inc(result, FSeriesDoses.sizeInBytes);
-  inc(result, FtargetDiseaseList.sizeInBytes);
-  inc(result, FDoseStatus.sizeInBytes);
-  inc(result, FDoseStatusReason.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDoseSequence.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FAuthority.sizeInBytes(magic));
+  inc(result, FSeries.sizeInBytes(magic));
+  inc(result, FSeriesDoses.sizeInBytes(magic));
+  inc(result, FtargetDiseaseList.sizeInBytes(magic));
+  inc(result, FDoseStatus.sizeInBytes(magic));
+  inc(result, FDoseStatusReason.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationVaccinationProtocolListEnumerator }
@@ -45838,7 +45838,7 @@ end;
 
 destructor TFhirImmunizationVaccinationProtocolListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -45853,22 +45853,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationVaccinationProtocolListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationVaccinationProtocolListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationVaccinationProtocolList }
-procedure TFhirImmunizationVaccinationProtocolList.AddItem(value: TFhirImmunizationVaccinationProtocol);
+function TFhirImmunizationVaccinationProtocolList.AddItem(value: TFhirImmunizationVaccinationProtocol): TFhirImmunizationVaccinationProtocol;
 begin
-  assert(value.ClassName = 'TFhirImmunizationVaccinationProtocol', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationVaccinationProtocol');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationVaccinationProtocolList.Append: TFhirImmunizationVaccinationProtocol;
 begin
-  result := TFhirImmunizationVaccinationProtocol.create;
+  result := TFhirImmunizationVaccinationProtocol.Create;
   try
     add(result.Link);
   finally
@@ -45912,7 +45912,7 @@ end;
 
 function TFhirImmunizationVaccinationProtocolList.Insert(index: Integer): TFhirImmunizationVaccinationProtocol;
 begin
-  result := TFhirImmunizationVaccinationProtocol.create;
+  result := TFhirImmunizationVaccinationProtocol.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -45962,7 +45962,7 @@ end;
 
 destructor TFhirImmunization.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FDate.free;
   FVaccineCode.free;
@@ -45979,10 +45979,10 @@ begin
   FSite.free;
   FRoute.free;
   FDoseQuantity.free;
-  FNoteList.Free;
+  FNoteList.free;
   FExplanation.free;
-  FReactionList.Free;
-  FVaccinationProtocolList.Free;
+  FReactionList.free;
+  FVaccinationProtocolList.free;
   inherited;
 end;
 
@@ -46107,27 +46107,27 @@ end;
 procedure TFhirImmunization.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'vaccineCode', 'CodeableConcept', false, TFhirCodeableConcept, FVaccineCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'wasNotGiven', 'boolean', false, TFhirBoolean, FWasNotGiven.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reported', 'boolean', false, TFhirBoolean, FReported.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FPerformer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requester', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FRequester.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'manufacturer', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FManufacturer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FLocation.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'lotNumber', 'string', false, TFhirString, FLotNumber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'expirationDate', 'date', false, TFhirDate, FExpirationDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'site', 'CodeableConcept', false, TFhirCodeableConcept, FSite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'doseQuantity', 'Quantity', false, TFhirQuantity, FDoseQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'explanation', '', false, TFhirImmunizationExplanation, FExplanation.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reaction', '', true, TFhirImmunizationReaction, FReactionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'vaccinationProtocol', '', true, TFhirImmunizationVaccinationProtocol, FVaccinationProtocolList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'vaccineCode', 'CodeableConcept', false, TFhirCodeableConcept, FVaccineCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'wasNotGiven', 'boolean', false, TFhirBoolean, FWasNotGiven.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reported', 'boolean', false, TFhirBoolean, FReported.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FPerformer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'requester', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FRequester.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'manufacturer', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FManufacturer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FLocation.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'lotNumber', 'string', false, TFhirString, FLotNumber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'expirationDate', 'date', false, TFhirDate, FExpirationDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'site', 'CodeableConcept', false, TFhirCodeableConcept, FSite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'doseQuantity', 'Quantity', false, TFhirQuantity, FDoseQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'Annotation', true, TFhirAnnotation, FNoteList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'explanation', '', false, TFhirImmunizationExplanation, FExplanation.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reaction', '', true, TFhirImmunizationReaction, FReactionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'vaccinationProtocol', '', true, TFhirImmunizationVaccinationProtocol, FVaccinationProtocolList.Link)){3};
 end;
 
 function TFhirImmunization.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -46252,23 +46252,23 @@ end;
 function TFhirImmunization.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'vaccineCode') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'wasNotGiven') then result := TFhirBoolean.create() {5b}
-  else if (propName = 'reported') then result := TFhirBoolean.create() {5b}
-  else if (propName = 'performer') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'requester') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'manufacturer') then result := TFhirReference{TFhirOrganization}.create(){4b}
-  else if (propName = 'location') then result := TFhirReference{TFhirLocation}.create(){4b}
-  else if (propName = 'lotNumber') then result := TFhirString.create() {5b}
-  else if (propName = 'expirationDate') then result := TFhirDate.create() {5b}
-  else if (propName = 'site') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'doseQuantity') then result := TFhirQuantity.create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'vaccineCode') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'wasNotGiven') then result := TFhirBoolean.Create() {5b}
+  else if (propName = 'reported') then result := TFhirBoolean.Create() {5b}
+  else if (propName = 'performer') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'requester') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'manufacturer') then result := TFhirReference{TFhirOrganization}.Create(){4b}
+  else if (propName = 'location') then result := TFhirReference{TFhirLocation}.Create(){4b}
+  else if (propName = 'lotNumber') then result := TFhirString.Create() {5b}
+  else if (propName = 'expirationDate') then result := TFhirDate.Create() {5b}
+  else if (propName = 'site') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'route') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'doseQuantity') then result := TFhirQuantity.Create(){4b}
   else if (propName = 'note') then result := NoteList.new(){2}
-  else if (propName = 'explanation') then result := TFhirImmunizationExplanation.create(){4b}
+  else if (propName = 'explanation') then result := TFhirImmunizationExplanation.Create(){4b}
   else if (propName = 'reaction') then result := ReactionList.new(){2}
   else if (propName = 'vaccinationProtocol') then result := VaccinationProtocolList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -46468,7 +46468,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirMedicationAdminStatusEnum[value], CODES_TFhirMedicationAdminStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirMedicationAdminStatusEnum[value], CODES_TFhirMedicationAdminStatusEnum[value]);
 end;
 
 Procedure TFhirImmunization.SetDate(value : TFhirDateTime);
@@ -46488,7 +46488,7 @@ end;
 Procedure TFhirImmunization.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -46521,7 +46521,7 @@ end;
 Procedure TFhirImmunization.SetWasNotGivenST(value : Boolean);
 begin
   if FWasNotGiven = nil then
-    FWasNotGiven := TFhirBoolean.create;
+    FWasNotGiven := TFhirBoolean.Create;
   FWasNotGiven.value := value
 end;
 
@@ -46542,7 +46542,7 @@ end;
 Procedure TFhirImmunization.SetReportedST(value : Boolean);
 begin
   if FReported = nil then
-    FReported := TFhirBoolean.create;
+    FReported := TFhirBoolean.Create;
   FReported.value := value
 end;
 
@@ -46595,7 +46595,7 @@ begin
   if value <> '' then
   begin
     if FLotNumber = nil then
-      FLotNumber := TFhirString.create;
+      FLotNumber := TFhirString.Create;
     FLotNumber.value := value
   end
   else if FLotNumber <> nil then
@@ -46619,7 +46619,7 @@ end;
 Procedure TFhirImmunization.SetExpirationDateST(value : TFslDateTime);
 begin
   if FExpirationDate = nil then
-    FExpirationDate := TFhirDate.create;
+    FExpirationDate := TFhirDate.Create;
   FExpirationDate.value := value
 end;
 
@@ -46683,30 +46683,30 @@ begin
   result := (FVaccinationProtocolList <> nil) and (FVaccinationProtocolList.count > 0);
 end;
 
-function TFhirImmunization.sizeInBytesV : cardinal;
+function TFhirImmunization.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FVaccineCode.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FWasNotGiven.sizeInBytes);
-  inc(result, FReported.sizeInBytes);
-  inc(result, FPerformer.sizeInBytes);
-  inc(result, FRequester.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FManufacturer.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FLotNumber.sizeInBytes);
-  inc(result, FExpirationDate.sizeInBytes);
-  inc(result, FSite.sizeInBytes);
-  inc(result, FRoute.sizeInBytes);
-  inc(result, FDoseQuantity.sizeInBytes);
-  inc(result, FnoteList.sizeInBytes);
-  inc(result, FExplanation.sizeInBytes);
-  inc(result, FreactionList.sizeInBytes);
-  inc(result, FvaccinationProtocolList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FVaccineCode.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FWasNotGiven.sizeInBytes(magic));
+  inc(result, FReported.sizeInBytes(magic));
+  inc(result, FPerformer.sizeInBytes(magic));
+  inc(result, FRequester.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FManufacturer.sizeInBytes(magic));
+  inc(result, FLocation.sizeInBytes(magic));
+  inc(result, FLotNumber.sizeInBytes(magic));
+  inc(result, FExpirationDate.sizeInBytes(magic));
+  inc(result, FSite.sizeInBytes(magic));
+  inc(result, FRoute.sizeInBytes(magic));
+  inc(result, FDoseQuantity.sizeInBytes(magic));
+  inc(result, FnoteList.sizeInBytes(magic));
+  inc(result, FExplanation.sizeInBytes(magic));
+  inc(result, FreactionList.sizeInBytes(magic));
+  inc(result, FvaccinationProtocolList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationListEnumerator }
@@ -46720,7 +46720,7 @@ end;
 
 destructor TFhirImmunizationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -46735,22 +46735,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationList }
-procedure TFhirImmunizationList.AddItem(value: TFhirImmunization);
+function TFhirImmunizationList.AddItem(value: TFhirImmunization): TFhirImmunization;
 begin
-  assert(value.ClassName = 'TFhirImmunization', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunization');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationList.Append: TFhirImmunization;
 begin
-  result := TFhirImmunization.create;
+  result := TFhirImmunization.Create;
   try
     add(result.Link);
   finally
@@ -46794,7 +46794,7 @@ end;
 
 function TFhirImmunizationList.Insert(index: Integer): TFhirImmunization;
 begin
-  result := TFhirImmunization.create;
+  result := TFhirImmunization.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -46852,10 +46852,10 @@ begin
   FVaccineCode.free;
   FDoseNumber.free;
   FForecastStatus.free;
-  FDateCriterionList.Free;
+  FDateCriterionList.free;
   FProtocol.free;
-  FSupportingImmunizationList.Free;
-  FSupportingPatientInformationList.Free;
+  FSupportingImmunizationList.free;
+  FSupportingPatientInformationList.free;
   inherited;
 end;
 
@@ -46926,14 +46926,14 @@ end;
 procedure TFhirImmunizationRecommendationRecommendation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'vaccineCode', 'CodeableConcept', false, TFhirCodeableConcept, FVaccineCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'doseNumber', 'positiveInt', false, TFhirPositiveInt, FDoseNumber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'forecastStatus', 'CodeableConcept', false, TFhirCodeableConcept, FForecastStatus.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dateCriterion', '', true, TFhirImmunizationRecommendationRecommendationDateCriterion, FDateCriterionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'protocol', '', false, TFhirImmunizationRecommendationRecommendationProtocol, FProtocol.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'supportingImmunization', 'Reference(Immunization)', true, TFhirReference{TFhirImmunization}, FSupportingImmunizationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'supportingPatientInformation', 'Reference(Observation|AllergyIntolerance)', true, TFhirReference{Resource}, FSupportingPatientInformationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'vaccineCode', 'CodeableConcept', false, TFhirCodeableConcept, FVaccineCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'doseNumber', 'positiveInt', false, TFhirPositiveInt, FDoseNumber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'forecastStatus', 'CodeableConcept', false, TFhirCodeableConcept, FForecastStatus.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dateCriterion', '', true, TFhirImmunizationRecommendationRecommendationDateCriterion, FDateCriterionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'protocol', '', false, TFhirImmunizationRecommendationRecommendationProtocol, FProtocol.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'supportingImmunization', 'Reference(Immunization)', true, TFhirReference{TFhirImmunization}, FSupportingImmunizationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'supportingPatientInformation', 'Reference(Observation|AllergyIntolerance)', true, TFhirReference{Resource}, FSupportingPatientInformationList.Link)){3};
 end;
 
 function TFhirImmunizationRecommendationRecommendation.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -46991,12 +46991,12 @@ end;
 
 function TFhirImmunizationRecommendationRecommendation.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'vaccineCode') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'doseNumber') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'forecastStatus') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'vaccineCode') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'doseNumber') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'forecastStatus') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'dateCriterion') then result := DateCriterionList.new(){2}
-  else if (propName = 'protocol') then result := TFhirImmunizationRecommendationRecommendationProtocol.create(){4b}
+  else if (propName = 'protocol') then result := TFhirImmunizationRecommendationRecommendationProtocol.Create(){4b}
   else if (propName = 'supportingImmunization') then result := SupportingImmunizationList.new(){2}
   else if (propName = 'supportingPatientInformation') then result := SupportingPatientInformationList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -47123,7 +47123,7 @@ end;
 Procedure TFhirImmunizationRecommendationRecommendation.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -47152,7 +47152,7 @@ begin
   if value <> '' then
   begin
     if FDoseNumber = nil then
-      FDoseNumber := TFhirPositiveInt.create;
+      FDoseNumber := TFhirPositiveInt.Create;
     FDoseNumber.value := value
   end
   else if FDoseNumber <> nil then
@@ -47207,17 +47207,17 @@ begin
   result := (FSupportingPatientInformationList <> nil) and (FSupportingPatientInformationList.count > 0);
 end;
 
-function TFhirImmunizationRecommendationRecommendation.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationRecommendation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDate.sizeInBytes);
-  inc(result, FVaccineCode.sizeInBytes);
-  inc(result, FDoseNumber.sizeInBytes);
-  inc(result, FForecastStatus.sizeInBytes);
-  inc(result, FdateCriterionList.sizeInBytes);
-  inc(result, FProtocol.sizeInBytes);
-  inc(result, FsupportingImmunizationList.sizeInBytes);
-  inc(result, FsupportingPatientInformationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FVaccineCode.sizeInBytes(magic));
+  inc(result, FDoseNumber.sizeInBytes(magic));
+  inc(result, FForecastStatus.sizeInBytes(magic));
+  inc(result, FdateCriterionList.sizeInBytes(magic));
+  inc(result, FProtocol.sizeInBytes(magic));
+  inc(result, FsupportingImmunizationList.sizeInBytes(magic));
+  inc(result, FsupportingPatientInformationList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationRecommendationListEnumerator }
@@ -47231,7 +47231,7 @@ end;
 
 destructor TFhirImmunizationRecommendationRecommendationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -47246,22 +47246,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationRecommendationRecommendationListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationRecommendationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationRecommendationList }
-procedure TFhirImmunizationRecommendationRecommendationList.AddItem(value: TFhirImmunizationRecommendationRecommendation);
+function TFhirImmunizationRecommendationRecommendationList.AddItem(value: TFhirImmunizationRecommendationRecommendation): TFhirImmunizationRecommendationRecommendation;
 begin
-  assert(value.ClassName = 'TFhirImmunizationRecommendationRecommendation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationRecommendationRecommendation');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationRecommendationRecommendationList.Append: TFhirImmunizationRecommendationRecommendation;
 begin
-  result := TFhirImmunizationRecommendationRecommendation.create;
+  result := TFhirImmunizationRecommendationRecommendation.Create;
   try
     add(result.Link);
   finally
@@ -47305,7 +47305,7 @@ end;
 
 function TFhirImmunizationRecommendationRecommendationList.Insert(index: Integer): TFhirImmunizationRecommendationRecommendation;
 begin
-  result := TFhirImmunizationRecommendationRecommendation.create;
+  result := TFhirImmunizationRecommendationRecommendation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -47379,8 +47379,8 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationDateCriterion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'value', 'dateTime', false, TFhirDateTime, FValue.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'value', 'dateTime', false, TFhirDateTime, FValue.Link));{2}
 end;
 
 function TFhirImmunizationRecommendationRecommendationDateCriterion.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -47405,8 +47405,8 @@ end;
 
 function TFhirImmunizationRecommendationRecommendationDateCriterion.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'value') then result := TFhirDateTime.create() {5b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'value') then result := TFhirDateTime.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -47505,15 +47505,15 @@ end;
 Procedure TFhirImmunizationRecommendationRecommendationDateCriterion.SetValueST(value : TFslDateTime);
 begin
   if FValue = nil then
-    FValue := TFhirDateTime.create;
+    FValue := TFhirDateTime.Create;
   FValue.value := value
 end;
 
-function TFhirImmunizationRecommendationRecommendationDateCriterion.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationRecommendationDateCriterion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator }
@@ -47527,7 +47527,7 @@ end;
 
 destructor TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -47542,22 +47542,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationRecommendationDateCriterionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationRecommendationDateCriterionList }
-procedure TFhirImmunizationRecommendationRecommendationDateCriterionList.AddItem(value: TFhirImmunizationRecommendationRecommendationDateCriterion);
+function TFhirImmunizationRecommendationRecommendationDateCriterionList.AddItem(value: TFhirImmunizationRecommendationRecommendationDateCriterion): TFhirImmunizationRecommendationRecommendationDateCriterion;
 begin
-  assert(value.ClassName = 'TFhirImmunizationRecommendationRecommendationDateCriterion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationRecommendationRecommendationDateCriterion');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationRecommendationRecommendationDateCriterionList.Append: TFhirImmunizationRecommendationRecommendationDateCriterion;
 begin
-  result := TFhirImmunizationRecommendationRecommendationDateCriterion.create;
+  result := TFhirImmunizationRecommendationRecommendationDateCriterion.Create;
   try
     add(result.Link);
   finally
@@ -47601,7 +47601,7 @@ end;
 
 function TFhirImmunizationRecommendationRecommendationDateCriterionList.Insert(index: Integer): TFhirImmunizationRecommendationRecommendationDateCriterion;
 begin
-  result := TFhirImmunizationRecommendationRecommendationDateCriterion.create;
+  result := TFhirImmunizationRecommendationRecommendationDateCriterion.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -47683,10 +47683,10 @@ end;
 procedure TFhirImmunizationRecommendationRecommendationProtocol.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'doseSequence', 'integer', false, TFhirInteger, FDoseSequence.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'authority', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FAuthority.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'series', 'string', false, TFhirString, FSeries.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'doseSequence', 'integer', false, TFhirInteger, FDoseSequence.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'authority', 'Reference(Organization)', false, TFhirReference{TFhirOrganization}, FAuthority.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'series', 'string', false, TFhirString, FSeries.Link));{2}
 end;
 
 function TFhirImmunizationRecommendationRecommendationProtocol.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -47721,10 +47721,10 @@ end;
 
 function TFhirImmunizationRecommendationRecommendationProtocol.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'doseSequence') then result := TFhirInteger.create() {5b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'authority') then result := TFhirReference{TFhirOrganization}.create(){4b}
-  else if (propName = 'series') then result := TFhirString.create() {5b}
+  if (propName = 'doseSequence') then result := TFhirInteger.Create() {5b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'authority') then result := TFhirReference{TFhirOrganization}.Create(){4b}
+  else if (propName = 'series') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -47829,7 +47829,7 @@ begin
   if value <> '' then
   begin
     if FDoseSequence = nil then
-      FDoseSequence := TFhirInteger.create;
+      FDoseSequence := TFhirInteger.Create;
     FDoseSequence.value := value
   end
   else if FDoseSequence <> nil then
@@ -47855,7 +47855,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -47887,20 +47887,20 @@ begin
   if value <> '' then
   begin
     if FSeries = nil then
-      FSeries := TFhirString.create;
+      FSeries := TFhirString.Create;
     FSeries.value := value
   end
   else if FSeries <> nil then
     FSeries.value := '';
 end;
 
-function TFhirImmunizationRecommendationRecommendationProtocol.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationRecommendationProtocol.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDoseSequence.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FAuthority.sizeInBytes);
-  inc(result, FSeries.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDoseSequence.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FAuthority.sizeInBytes(magic));
+  inc(result, FSeries.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationRecommendationProtocolListEnumerator }
@@ -47914,7 +47914,7 @@ end;
 
 destructor TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -47929,22 +47929,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationRecommendationProtocolListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationRecommendationProtocolList }
-procedure TFhirImmunizationRecommendationRecommendationProtocolList.AddItem(value: TFhirImmunizationRecommendationRecommendationProtocol);
+function TFhirImmunizationRecommendationRecommendationProtocolList.AddItem(value: TFhirImmunizationRecommendationRecommendationProtocol): TFhirImmunizationRecommendationRecommendationProtocol;
 begin
-  assert(value.ClassName = 'TFhirImmunizationRecommendationRecommendationProtocol', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationRecommendationRecommendationProtocol');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationRecommendationRecommendationProtocolList.Append: TFhirImmunizationRecommendationRecommendationProtocol;
 begin
-  result := TFhirImmunizationRecommendationRecommendationProtocol.create;
+  result := TFhirImmunizationRecommendationRecommendationProtocol.Create;
   try
     add(result.Link);
   finally
@@ -47988,7 +47988,7 @@ end;
 
 function TFhirImmunizationRecommendationRecommendationProtocolList.Insert(index: Integer): TFhirImmunizationRecommendationRecommendationProtocol;
 begin
-  result := TFhirImmunizationRecommendationRecommendationProtocol.create;
+  result := TFhirImmunizationRecommendationRecommendationProtocol.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -48038,9 +48038,9 @@ end;
 
 destructor TFhirImmunizationRecommendation.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FPatient.free;
-  FRecommendationList.Free;
+  FRecommendationList.free;
   inherited;
 end;
 
@@ -48091,9 +48091,9 @@ end;
 procedure TFhirImmunizationRecommendation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recommendation', '', true, TFhirImmunizationRecommendationRecommendation, FRecommendationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recommendation', '', true, TFhirImmunizationRecommendationRecommendation, FRecommendationList.Link)){3};
 end;
 
 function TFhirImmunizationRecommendation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -48126,7 +48126,7 @@ end;
 function TFhirImmunizationRecommendation.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
   else if (propName = 'recommendation') then result := RecommendationList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -48241,12 +48241,12 @@ begin
   result := (FRecommendationList <> nil) and (FRecommendationList.count > 0);
 end;
 
-function TFhirImmunizationRecommendation.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FrecommendationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FrecommendationList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationListEnumerator }
@@ -48260,7 +48260,7 @@ end;
 
 destructor TFhirImmunizationRecommendationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -48275,22 +48275,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImmunizationRecommendationListEnumerator.sizeInBytesV : cardinal;
+function TFhirImmunizationRecommendationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImmunizationRecommendationList }
-procedure TFhirImmunizationRecommendationList.AddItem(value: TFhirImmunizationRecommendation);
+function TFhirImmunizationRecommendationList.AddItem(value: TFhirImmunizationRecommendation): TFhirImmunizationRecommendation;
 begin
-  assert(value.ClassName = 'TFhirImmunizationRecommendation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImmunizationRecommendation');
   add(value);
+  result := value;
 end;
 
 function TFhirImmunizationRecommendationList.Append: TFhirImmunizationRecommendation;
 begin
-  result := TFhirImmunizationRecommendation.create;
+  result := TFhirImmunizationRecommendation.Create;
   try
     add(result.Link);
   finally
@@ -48334,7 +48334,7 @@ end;
 
 function TFhirImmunizationRecommendationList.Insert(index: Integer): TFhirImmunizationRecommendation;
 begin
-  result := TFhirImmunizationRecommendation.create;
+  result := TFhirImmunizationRecommendation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -48390,7 +48390,7 @@ destructor TFhirMedia.Destroy;
 begin
   FType_.free;
   FSubtype.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
   FOperator.free;
   FView.free;
@@ -48467,18 +48467,18 @@ end;
 procedure TFhirMedia.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'subtype', 'CodeableConcept', false, TFhirCodeableConcept, FSubtype.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Practitioner|Group|Device|Specimen)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'operator', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FOperator.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'view', 'CodeableConcept', false, TFhirCodeableConcept, FView.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'deviceName', 'string', false, TFhirString, FDeviceName.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'height', 'positiveInt', false, TFhirPositiveInt, FHeight.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'width', 'positiveInt', false, TFhirPositiveInt, FWidth.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'frames', 'positiveInt', false, TFhirPositiveInt, FFrames.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'duration', 'unsignedInt', false, TFhirUnsignedInt, FDuration.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'content', 'Attachment', false, TFhirAttachment, FContent.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'subtype', 'CodeableConcept', false, TFhirCodeableConcept, FSubtype.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Practitioner|Group|Device|Specimen)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'operator', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FOperator.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'view', 'CodeableConcept', false, TFhirCodeableConcept, FView.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'deviceName', 'string', false, TFhirString, FDeviceName.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'height', 'positiveInt', false, TFhirPositiveInt, FHeight.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'width', 'positiveInt', false, TFhirPositiveInt, FWidth.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'frames', 'positiveInt', false, TFhirPositiveInt, FFrames.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'duration', 'unsignedInt', false, TFhirUnsignedInt, FDuration.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'content', 'Attachment', false, TFhirAttachment, FContent.Link));{2}
 end;
 
 function TFhirMedia.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -48554,17 +48554,17 @@ end;
 
 function TFhirMedia.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'subtype') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'subtype') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'operator') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'view') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'deviceName') then result := TFhirString.create() {5b}
-  else if (propName = 'height') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'width') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'frames') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'duration') then result := TFhirUnsignedInt.create() {5b}
-  else if (propName = 'content') then result := TFhirAttachment.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'operator') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'view') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'deviceName') then result := TFhirString.Create() {5b}
+  else if (propName = 'height') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'width') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'frames') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'duration') then result := TFhirUnsignedInt.Create() {5b}
+  else if (propName = 'content') then result := TFhirAttachment.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -48706,7 +48706,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirDigitalMediaTypeEnum[value], CODES_TFhirDigitalMediaTypeEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirDigitalMediaTypeEnum[value], CODES_TFhirDigitalMediaTypeEnum[value]);
 end;
 
 Procedure TFhirMedia.SetSubtype(value : TFhirCodeableConcept);
@@ -48764,7 +48764,7 @@ begin
   if value <> '' then
   begin
     if FDeviceName = nil then
-      FDeviceName := TFhirString.create;
+      FDeviceName := TFhirString.Create;
     FDeviceName.value := value
   end
   else if FDeviceName <> nil then
@@ -48790,7 +48790,7 @@ begin
   if value <> '' then
   begin
     if FHeight = nil then
-      FHeight := TFhirPositiveInt.create;
+      FHeight := TFhirPositiveInt.Create;
     FHeight.value := value
   end
   else if FHeight <> nil then
@@ -48816,7 +48816,7 @@ begin
   if value <> '' then
   begin
     if FWidth = nil then
-      FWidth := TFhirPositiveInt.create;
+      FWidth := TFhirPositiveInt.Create;
     FWidth.value := value
   end
   else if FWidth <> nil then
@@ -48842,7 +48842,7 @@ begin
   if value <> '' then
   begin
     if FFrames = nil then
-      FFrames := TFhirPositiveInt.create;
+      FFrames := TFhirPositiveInt.Create;
     FFrames.value := value
   end
   else if FFrames <> nil then
@@ -48868,7 +48868,7 @@ begin
   if value <> '' then
   begin
     if FDuration = nil then
-      FDuration := TFhirUnsignedInt.create;
+      FDuration := TFhirUnsignedInt.Create;
     FDuration.value := value
   end
   else if FDuration <> nil then
@@ -48881,21 +48881,21 @@ begin
   FContent := value;
 end;
 
-function TFhirMedia.sizeInBytesV : cardinal;
+function TFhirMedia.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FSubtype.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FOperator.sizeInBytes);
-  inc(result, FView.sizeInBytes);
-  inc(result, FDeviceName.sizeInBytes);
-  inc(result, FHeight.sizeInBytes);
-  inc(result, FWidth.sizeInBytes);
-  inc(result, FFrames.sizeInBytes);
-  inc(result, FDuration.sizeInBytes);
-  inc(result, FContent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FSubtype.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FOperator.sizeInBytes(magic));
+  inc(result, FView.sizeInBytes(magic));
+  inc(result, FDeviceName.sizeInBytes(magic));
+  inc(result, FHeight.sizeInBytes(magic));
+  inc(result, FWidth.sizeInBytes(magic));
+  inc(result, FFrames.sizeInBytes(magic));
+  inc(result, FDuration.sizeInBytes(magic));
+  inc(result, FContent.sizeInBytes(magic));
 end;
 
 { TFhirMediaListEnumerator }
@@ -48909,7 +48909,7 @@ end;
 
 destructor TFhirMediaListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -48924,22 +48924,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMediaListEnumerator.sizeInBytesV : cardinal;
+function TFhirMediaListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMediaList }
-procedure TFhirMediaList.AddItem(value: TFhirMedia);
+function TFhirMediaList.AddItem(value: TFhirMedia): TFhirMedia;
 begin
-  assert(value.ClassName = 'TFhirMedia', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedia');
   add(value);
+  result := value;
 end;
 
 function TFhirMediaList.Append: TFhirMedia;
 begin
-  result := TFhirMedia.create;
+  result := TFhirMedia.Create;
   try
     add(result.Link);
   finally
@@ -48983,7 +48983,7 @@ end;
 
 function TFhirMediaList.Insert(index: Integer): TFhirMedia;
 begin
-  result := TFhirMedia.create;
+  result := TFhirMedia.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -49077,12 +49077,12 @@ end;
 procedure TFhirMedicationAdministrationDosage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
 end;
 
 function TFhirMedicationAdministrationDosage.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -49127,12 +49127,12 @@ end;
 
 function TFhirMedicationAdministrationDosage.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'text') then result := TFhirString.create() {5b}
-  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Site'){4x}
-  else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.create('Cannot make property Rate'){4x}
+  if (propName = 'text') then result := TFhirString.Create() {5b}
+  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Site'){4x}
+  else if (propName = 'route') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.Create('Cannot make property Rate'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -49245,7 +49245,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -49282,15 +49282,15 @@ begin
   FRate := value;
 end;
 
-function TFhirMedicationAdministrationDosage.sizeInBytesV : cardinal;
+function TFhirMedicationAdministrationDosage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FText.sizeInBytes);
-  inc(result, FSite.sizeInBytes);
-  inc(result, FRoute.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FRate.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FSite.sizeInBytes(magic));
+  inc(result, FRoute.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FRate.sizeInBytes(magic));
 end;
 
 { TFhirMedicationAdministrationDosageListEnumerator }
@@ -49304,7 +49304,7 @@ end;
 
 destructor TFhirMedicationAdministrationDosageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -49319,22 +49319,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationAdministrationDosageListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationAdministrationDosageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationAdministrationDosageList }
-procedure TFhirMedicationAdministrationDosageList.AddItem(value: TFhirMedicationAdministrationDosage);
+function TFhirMedicationAdministrationDosageList.AddItem(value: TFhirMedicationAdministrationDosage): TFhirMedicationAdministrationDosage;
 begin
-  assert(value.ClassName = 'TFhirMedicationAdministrationDosage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationAdministrationDosage');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationAdministrationDosageList.Append: TFhirMedicationAdministrationDosage;
 begin
-  result := TFhirMedicationAdministrationDosage.create;
+  result := TFhirMedicationAdministrationDosage.Create;
   try
     add(result.Link);
   finally
@@ -49378,7 +49378,7 @@ end;
 
 function TFhirMedicationAdministrationDosageList.Insert(index: Integer): TFhirMedicationAdministrationDosage;
 begin
-  result := TFhirMedicationAdministrationDosage.create;
+  result := TFhirMedicationAdministrationDosage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -49428,18 +49428,18 @@ end;
 
 destructor TFhirMedicationAdministration.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FPatient.free;
   FPractitioner.free;
   FEncounter.free;
   FPrescription.free;
   FWasNotGiven.free;
-  FReasonNotGivenList.Free;
-  FReasonGivenList.Free;
+  FReasonNotGivenList.free;
+  FReasonGivenList.free;
   FEffectiveTime.free;
   FMedication.free;
-  FDeviceList.Free;
+  FDeviceList.free;
   FNote.free;
   FDosage.free;
   inherited;
@@ -49545,20 +49545,20 @@ end;
 procedure TFhirMedicationAdministration.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'practitioner', 'Reference(Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FPractitioner.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'prescription', 'Reference(MedicationOrder)', false, TFhirReference{TFhirMedicationOrder}, FPrescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'wasNotGiven', 'boolean', false, TFhirBoolean, FWasNotGiven.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reasonNotGiven', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotGivenList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reasonGiven', 'CodeableConcept', true, TFhirCodeableConcept, FReasonGivenList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'effectiveTime[x]', 'dateTime|Period', false, TFhirType, FEffectiveTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'device', 'Reference(Device)', true, TFhirReference{TFhirDevice}, FDeviceList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dosage', '', false, TFhirMedicationAdministrationDosage, FDosage.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'practitioner', 'Reference(Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FPractitioner.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'prescription', 'Reference(MedicationOrder)', false, TFhirReference{TFhirMedicationOrder}, FPrescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'wasNotGiven', 'boolean', false, TFhirBoolean, FWasNotGiven.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reasonNotGiven', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotGivenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reasonGiven', 'CodeableConcept', true, TFhirCodeableConcept, FReasonGivenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'effectiveTime[x]', 'dateTime|Period', false, TFhirType, FEffectiveTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'device', 'Reference(Device)', true, TFhirReference{TFhirDevice}, FDeviceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dosage', '', false, TFhirMedicationAdministrationDosage, FDosage.Link));{2}
 end;
 
 function TFhirMedicationAdministration.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -49648,18 +49648,18 @@ end;
 function TFhirMedicationAdministration.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'practitioner') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'prescription') then result := TFhirReference{TFhirMedicationOrder}.create(){4b}
-  else if (propName = 'wasNotGiven') then result := TFhirBoolean.create() {5b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'practitioner') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'prescription') then result := TFhirReference{TFhirMedicationOrder}.Create(){4b}
+  else if (propName = 'wasNotGiven') then result := TFhirBoolean.Create() {5b}
   else if (propName = 'reasonNotGiven') then result := ReasonNotGivenList.new(){2}
   else if (propName = 'reasonGiven') then result := ReasonGivenList.new(){2}
-  else if (isMatchingName(propName, 'effectiveTime', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property EffectiveTime'){4x}
-  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Medication'){4x}
+  else if (isMatchingName(propName, 'effectiveTime', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property EffectiveTime'){4x}
+  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Medication'){4x}
   else if (propName = 'device') then result := DeviceList.new(){2}
-  else if (propName = 'note') then result := TFhirString.create() {5b}
-  else if (propName = 'dosage') then result := TFhirMedicationAdministrationDosage.create(){4b}
+  else if (propName = 'note') then result := TFhirString.Create() {5b}
+  else if (propName = 'dosage') then result := TFhirMedicationAdministrationDosage.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -49825,7 +49825,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirMedicationAdminStatusEnum[value], CODES_TFhirMedicationAdminStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirMedicationAdminStatusEnum[value], CODES_TFhirMedicationAdminStatusEnum[value]);
 end;
 
 Procedure TFhirMedicationAdministration.SetPatient(value : TFhirReference{TFhirPatient});
@@ -49869,7 +49869,7 @@ end;
 Procedure TFhirMedicationAdministration.SetWasNotGivenST(value : Boolean);
 begin
   if FWasNotGiven = nil then
-    FWasNotGiven := TFhirBoolean.create;
+    FWasNotGiven := TFhirBoolean.Create;
   FWasNotGiven.value := value
 end;
 
@@ -49940,7 +49940,7 @@ begin
   if value <> '' then
   begin
     if FNote = nil then
-      FNote := TFhirString.create;
+      FNote := TFhirString.Create;
     FNote.value := value
   end
   else if FNote <> nil then
@@ -49953,23 +49953,23 @@ begin
   FDosage := value;
 end;
 
-function TFhirMedicationAdministration.sizeInBytesV : cardinal;
+function TFhirMedicationAdministration.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FPractitioner.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FPrescription.sizeInBytes);
-  inc(result, FWasNotGiven.sizeInBytes);
-  inc(result, FreasonNotGivenList.sizeInBytes);
-  inc(result, FreasonGivenList.sizeInBytes);
-  inc(result, FEffectiveTime.sizeInBytes);
-  inc(result, FMedication.sizeInBytes);
-  inc(result, FdeviceList.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FDosage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FPractitioner.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FPrescription.sizeInBytes(magic));
+  inc(result, FWasNotGiven.sizeInBytes(magic));
+  inc(result, FreasonNotGivenList.sizeInBytes(magic));
+  inc(result, FreasonGivenList.sizeInBytes(magic));
+  inc(result, FEffectiveTime.sizeInBytes(magic));
+  inc(result, FMedication.sizeInBytes(magic));
+  inc(result, FdeviceList.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FDosage.sizeInBytes(magic));
 end;
 
 { TFhirMedicationAdministrationListEnumerator }
@@ -49983,7 +49983,7 @@ end;
 
 destructor TFhirMedicationAdministrationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -49998,22 +49998,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationAdministrationListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationAdministrationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationAdministrationList }
-procedure TFhirMedicationAdministrationList.AddItem(value: TFhirMedicationAdministration);
+function TFhirMedicationAdministrationList.AddItem(value: TFhirMedicationAdministration): TFhirMedicationAdministration;
 begin
-  assert(value.ClassName = 'TFhirMedicationAdministration', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationAdministration');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationAdministrationList.Append: TFhirMedicationAdministration;
 begin
-  result := TFhirMedicationAdministration.create;
+  result := TFhirMedicationAdministration.Create;
   try
     add(result.Link);
   finally
@@ -50057,7 +50057,7 @@ end;
 
 function TFhirMedicationAdministrationList.Insert(index: Integer): TFhirMedicationAdministration;
 begin
-  result := TFhirMedicationAdministration.create;
+  result := TFhirMedicationAdministration.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -50167,16 +50167,16 @@ end;
 procedure TFhirMedicationDispenseDosageInstruction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'additionalInstructions', 'CodeableConcept', false, TFhirCodeableConcept, FAdditionalInstructions.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'timing', 'Timing', false, TFhirTiming, FTiming.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dose[x]', 'Range|Quantity', false, TFhirType, FDose.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'maxDosePerPeriod', 'Ratio', false, TFhirRatio, FMaxDosePerPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'additionalInstructions', 'CodeableConcept', false, TFhirCodeableConcept, FAdditionalInstructions.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'timing', 'Timing', false, TFhirTiming, FTiming.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dose[x]', 'Range|Quantity', false, TFhirType, FDose.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'maxDosePerPeriod', 'Ratio', false, TFhirRatio, FMaxDosePerPeriod.Link));{2}
 end;
 
 function TFhirMedicationDispenseDosageInstruction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -50241,16 +50241,16 @@ end;
 
 function TFhirMedicationDispenseDosageInstruction.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'text') then result := TFhirString.create() {5b}
-  else if (propName = 'additionalInstructions') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'timing') then result := TFhirTiming.create(){4b}
-  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
-  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Site'){4x}
-  else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then raise EFHIRException.create('Cannot make property Dose'){4x}
-  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.create('Cannot make property Rate'){4x}
-  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.create(){4b}
+  if (propName = 'text') then result := TFhirString.Create() {5b}
+  else if (propName = 'additionalInstructions') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'timing') then result := TFhirTiming.Create(){4b}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.Create('Cannot make property AsNeeded'){4x}
+  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Site'){4x}
+  else if (propName = 'route') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then raise EFHIRException.Create('Cannot make property Dose'){4x}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.Create('Cannot make property Rate'){4x}
+  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -50381,7 +50381,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -50442,19 +50442,19 @@ begin
   FMaxDosePerPeriod := value;
 end;
 
-function TFhirMedicationDispenseDosageInstruction.sizeInBytesV : cardinal;
+function TFhirMedicationDispenseDosageInstruction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FText.sizeInBytes);
-  inc(result, FAdditionalInstructions.sizeInBytes);
-  inc(result, FTiming.sizeInBytes);
-  inc(result, FAsNeeded.sizeInBytes);
-  inc(result, FSite.sizeInBytes);
-  inc(result, FRoute.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FDose.sizeInBytes);
-  inc(result, FRate.sizeInBytes);
-  inc(result, FMaxDosePerPeriod.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FAdditionalInstructions.sizeInBytes(magic));
+  inc(result, FTiming.sizeInBytes(magic));
+  inc(result, FAsNeeded.sizeInBytes(magic));
+  inc(result, FSite.sizeInBytes(magic));
+  inc(result, FRoute.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FDose.sizeInBytes(magic));
+  inc(result, FRate.sizeInBytes(magic));
+  inc(result, FMaxDosePerPeriod.sizeInBytes(magic));
 end;
 
 { TFhirMedicationDispenseDosageInstructionListEnumerator }
@@ -50468,7 +50468,7 @@ end;
 
 destructor TFhirMedicationDispenseDosageInstructionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -50483,22 +50483,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationDispenseDosageInstructionListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationDispenseDosageInstructionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationDispenseDosageInstructionList }
-procedure TFhirMedicationDispenseDosageInstructionList.AddItem(value: TFhirMedicationDispenseDosageInstruction);
+function TFhirMedicationDispenseDosageInstructionList.AddItem(value: TFhirMedicationDispenseDosageInstruction): TFhirMedicationDispenseDosageInstruction;
 begin
-  assert(value.ClassName = 'TFhirMedicationDispenseDosageInstruction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationDispenseDosageInstruction');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationDispenseDosageInstructionList.Append: TFhirMedicationDispenseDosageInstruction;
 begin
-  result := TFhirMedicationDispenseDosageInstruction.create;
+  result := TFhirMedicationDispenseDosageInstruction.Create;
   try
     add(result.Link);
   finally
@@ -50542,7 +50542,7 @@ end;
 
 function TFhirMedicationDispenseDosageInstructionList.Insert(index: Integer): TFhirMedicationDispenseDosageInstruction;
 begin
-  result := TFhirMedicationDispenseDosageInstruction.create;
+  result := TFhirMedicationDispenseDosageInstruction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -50593,8 +50593,8 @@ end;
 destructor TFhirMedicationDispenseSubstitution.Destroy;
 begin
   FType_.free;
-  FReasonList.Free;
-  FResponsiblePartyList.Free;
+  FReasonList.free;
+  FResponsiblePartyList.free;
   inherited;
 end;
 
@@ -50640,9 +50640,9 @@ end;
 procedure TFhirMedicationDispenseSubstitution.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'responsibleParty', 'Reference(Practitioner)', true, TFhirReference{TFhirPractitioner}, FResponsiblePartyList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', true, TFhirCodeableConcept, FReasonList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'responsibleParty', 'Reference(Practitioner)', true, TFhirReference{TFhirPractitioner}, FResponsiblePartyList.Link)){3};
 end;
 
 function TFhirMedicationDispenseSubstitution.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -50674,7 +50674,7 @@ end;
 
 function TFhirMedicationDispenseSubstitution.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'reason') then result := ReasonList.new(){2}
   else if (propName = 'responsibleParty') then result := ResponsiblePartyList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -50790,12 +50790,12 @@ begin
   result := (FResponsiblePartyList <> nil) and (FResponsiblePartyList.count > 0);
 end;
 
-function TFhirMedicationDispenseSubstitution.sizeInBytesV : cardinal;
+function TFhirMedicationDispenseSubstitution.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FreasonList.sizeInBytes);
-  inc(result, FresponsiblePartyList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FreasonList.sizeInBytes(magic));
+  inc(result, FresponsiblePartyList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationDispenseSubstitutionListEnumerator }
@@ -50809,7 +50809,7 @@ end;
 
 destructor TFhirMedicationDispenseSubstitutionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -50824,22 +50824,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationDispenseSubstitutionListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationDispenseSubstitutionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationDispenseSubstitutionList }
-procedure TFhirMedicationDispenseSubstitutionList.AddItem(value: TFhirMedicationDispenseSubstitution);
+function TFhirMedicationDispenseSubstitutionList.AddItem(value: TFhirMedicationDispenseSubstitution): TFhirMedicationDispenseSubstitution;
 begin
-  assert(value.ClassName = 'TFhirMedicationDispenseSubstitution', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationDispenseSubstitution');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationDispenseSubstitutionList.Append: TFhirMedicationDispenseSubstitution;
 begin
-  result := TFhirMedicationDispenseSubstitution.create;
+  result := TFhirMedicationDispenseSubstitution.Create;
   try
     add(result.Link);
   finally
@@ -50883,7 +50883,7 @@ end;
 
 function TFhirMedicationDispenseSubstitutionList.Insert(index: Integer): TFhirMedicationDispenseSubstitution;
 begin
-  result := TFhirMedicationDispenseSubstitution.create;
+  result := TFhirMedicationDispenseSubstitution.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -50937,7 +50937,7 @@ begin
   FStatus.free;
   FPatient.free;
   FDispenser.free;
-  FAuthorizingPrescriptionList.Free;
+  FAuthorizingPrescriptionList.free;
   FType_.free;
   FQuantity.free;
   FDaysSupply.free;
@@ -50945,9 +50945,9 @@ begin
   FWhenPrepared.free;
   FWhenHandedOver.free;
   FDestination.free;
-  FReceiverList.Free;
+  FReceiverList.free;
   FNote.free;
-  FDosageInstructionList.Free;
+  FDosageInstructionList.free;
   FSubstitution.free;
   inherited;
 end;
@@ -51048,22 +51048,22 @@ end;
 procedure TFhirMedicationDispense.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dispenser', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FDispenser.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'authorizingPrescription', 'Reference(MedicationOrder)', true, TFhirReference{TFhirMedicationOrder}, FAuthorizingPrescriptionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'daysSupply', 'Quantity', false, TFhirQuantity, FDaysSupply.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'whenPrepared', 'dateTime', false, TFhirDateTime, FWhenPrepared.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'whenHandedOver', 'dateTime', false, TFhirDateTime, FWhenHandedOver.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'destination', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FDestination.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'receiver', 'Reference(Patient|Practitioner)', true, TFhirReference{Resource}, FReceiverList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dosageInstruction', '', true, TFhirMedicationDispenseDosageInstruction, FDosageInstructionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'substitution', '', false, TFhirMedicationDispenseSubstitution, FSubstitution.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dispenser', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FDispenser.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'authorizingPrescription', 'Reference(MedicationOrder)', true, TFhirReference{TFhirMedicationOrder}, FAuthorizingPrescriptionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'daysSupply', 'Quantity', false, TFhirQuantity, FDaysSupply.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'whenPrepared', 'dateTime', false, TFhirDateTime, FWhenPrepared.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'whenHandedOver', 'dateTime', false, TFhirDateTime, FWhenHandedOver.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'destination', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FDestination.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'receiver', 'Reference(Patient|Practitioner)', true, TFhirReference{Resource}, FReceiverList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dosageInstruction', '', true, TFhirMedicationDispenseDosageInstruction, FDosageInstructionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'substitution', '', false, TFhirMedicationDispenseSubstitution, FSubstitution.Link));{2}
 end;
 
 function TFhirMedicationDispense.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -51161,21 +51161,21 @@ end;
 
 function TFhirMedicationDispense.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'dispenser') then result := TFhirReference{TFhirPractitioner}.create(){4b}
+  if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'dispenser') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
   else if (propName = 'authorizingPrescription') then result := AuthorizingPrescriptionList.new(){2}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'daysSupply') then result := TFhirQuantity.create(){4b}
-  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Medication'){4x}
-  else if (propName = 'whenPrepared') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'whenHandedOver') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'destination') then result := TFhirReference{TFhirLocation}.create(){4b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'daysSupply') then result := TFhirQuantity.Create(){4b}
+  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Medication'){4x}
+  else if (propName = 'whenPrepared') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'whenHandedOver') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'destination') then result := TFhirReference{TFhirLocation}.Create(){4b}
   else if (propName = 'receiver') then result := ReceiverList.new(){2}
-  else if (propName = 'note') then result := TFhirString.create() {5b}
+  else if (propName = 'note') then result := TFhirString.Create() {5b}
   else if (propName = 'dosageInstruction') then result := DosageInstructionList.new(){2}
-  else if (propName = 'substitution') then result := TFhirMedicationDispenseSubstitution.create(){4b}
+  else if (propName = 'substitution') then result := TFhirMedicationDispenseSubstitution.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -51344,7 +51344,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirMedicationDispenseStatusEnum[value], CODES_TFhirMedicationDispenseStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirMedicationDispenseStatusEnum[value], CODES_TFhirMedicationDispenseStatusEnum[value]);
 end;
 
 Procedure TFhirMedicationDispense.SetPatient(value : TFhirReference{TFhirPatient});
@@ -51412,7 +51412,7 @@ end;
 Procedure TFhirMedicationDispense.SetWhenPreparedST(value : TFslDateTime);
 begin
   if FWhenPrepared = nil then
-    FWhenPrepared := TFhirDateTime.create;
+    FWhenPrepared := TFhirDateTime.Create;
   FWhenPrepared.value := value
 end;
 
@@ -51433,7 +51433,7 @@ end;
 Procedure TFhirMedicationDispense.SetWhenHandedOverST(value : TFslDateTime);
 begin
   if FWhenHandedOver = nil then
-    FWhenHandedOver := TFhirDateTime.create;
+    FWhenHandedOver := TFhirDateTime.Create;
   FWhenHandedOver.value := value
 end;
 
@@ -51474,7 +51474,7 @@ begin
   if value <> '' then
   begin
     if FNote = nil then
-      FNote := TFhirString.create;
+      FNote := TFhirString.Create;
     FNote.value := value
   end
   else if FNote <> nil then
@@ -51499,25 +51499,25 @@ begin
   FSubstitution := value;
 end;
 
-function TFhirMedicationDispense.sizeInBytesV : cardinal;
+function TFhirMedicationDispense.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FDispenser.sizeInBytes);
-  inc(result, FauthorizingPrescriptionList.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FDaysSupply.sizeInBytes);
-  inc(result, FMedication.sizeInBytes);
-  inc(result, FWhenPrepared.sizeInBytes);
-  inc(result, FWhenHandedOver.sizeInBytes);
-  inc(result, FDestination.sizeInBytes);
-  inc(result, FreceiverList.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FdosageInstructionList.sizeInBytes);
-  inc(result, FSubstitution.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FDispenser.sizeInBytes(magic));
+  inc(result, FauthorizingPrescriptionList.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FDaysSupply.sizeInBytes(magic));
+  inc(result, FMedication.sizeInBytes(magic));
+  inc(result, FWhenPrepared.sizeInBytes(magic));
+  inc(result, FWhenHandedOver.sizeInBytes(magic));
+  inc(result, FDestination.sizeInBytes(magic));
+  inc(result, FreceiverList.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FdosageInstructionList.sizeInBytes(magic));
+  inc(result, FSubstitution.sizeInBytes(magic));
 end;
 
 { TFhirMedicationDispenseListEnumerator }
@@ -51531,7 +51531,7 @@ end;
 
 destructor TFhirMedicationDispenseListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -51546,22 +51546,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationDispenseListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationDispenseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationDispenseList }
-procedure TFhirMedicationDispenseList.AddItem(value: TFhirMedicationDispense);
+function TFhirMedicationDispenseList.AddItem(value: TFhirMedicationDispense): TFhirMedicationDispense;
 begin
-  assert(value.ClassName = 'TFhirMedicationDispense', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationDispense');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationDispenseList.Append: TFhirMedicationDispense;
 begin
-  result := TFhirMedicationDispense.create;
+  result := TFhirMedicationDispense.Create;
   try
     add(result.Link);
   finally
@@ -51605,7 +51605,7 @@ end;
 
 function TFhirMedicationDispenseList.Insert(index: Integer): TFhirMedicationDispense;
 begin
-  result := TFhirMedicationDispense.create;
+  result := TFhirMedicationDispense.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -51715,16 +51715,16 @@ end;
 procedure TFhirMedicationOrderDosageInstruction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'additionalInstructions', 'CodeableConcept', false, TFhirCodeableConcept, FAdditionalInstructions.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'timing', 'Timing', false, TFhirTiming, FTiming.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dose[x]', 'Range|Quantity', false, TFhirType, FDose.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'maxDosePerPeriod', 'Ratio', false, TFhirRatio, FMaxDosePerPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'additionalInstructions', 'CodeableConcept', false, TFhirCodeableConcept, FAdditionalInstructions.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'timing', 'Timing', false, TFhirTiming, FTiming.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dose[x]', 'Range|Quantity', false, TFhirType, FDose.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'maxDosePerPeriod', 'Ratio', false, TFhirRatio, FMaxDosePerPeriod.Link));{2}
 end;
 
 function TFhirMedicationOrderDosageInstruction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -51789,16 +51789,16 @@ end;
 
 function TFhirMedicationOrderDosageInstruction.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'text') then result := TFhirString.create() {5b}
-  else if (propName = 'additionalInstructions') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'timing') then result := TFhirTiming.create(){4b}
-  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
-  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Site'){4x}
-  else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then raise EFHIRException.create('Cannot make property Dose'){4x}
-  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.create('Cannot make property Rate'){4x}
-  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.create(){4b}
+  if (propName = 'text') then result := TFhirString.Create() {5b}
+  else if (propName = 'additionalInstructions') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'timing') then result := TFhirTiming.Create(){4b}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.Create('Cannot make property AsNeeded'){4x}
+  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Site'){4x}
+  else if (propName = 'route') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'dose', ['Range', 'Quantity'])) then raise EFHIRException.Create('Cannot make property Dose'){4x}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.Create('Cannot make property Rate'){4x}
+  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -51929,7 +51929,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -51990,19 +51990,19 @@ begin
   FMaxDosePerPeriod := value;
 end;
 
-function TFhirMedicationOrderDosageInstruction.sizeInBytesV : cardinal;
+function TFhirMedicationOrderDosageInstruction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FText.sizeInBytes);
-  inc(result, FAdditionalInstructions.sizeInBytes);
-  inc(result, FTiming.sizeInBytes);
-  inc(result, FAsNeeded.sizeInBytes);
-  inc(result, FSite.sizeInBytes);
-  inc(result, FRoute.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FDose.sizeInBytes);
-  inc(result, FRate.sizeInBytes);
-  inc(result, FMaxDosePerPeriod.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FAdditionalInstructions.sizeInBytes(magic));
+  inc(result, FTiming.sizeInBytes(magic));
+  inc(result, FAsNeeded.sizeInBytes(magic));
+  inc(result, FSite.sizeInBytes(magic));
+  inc(result, FRoute.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FDose.sizeInBytes(magic));
+  inc(result, FRate.sizeInBytes(magic));
+  inc(result, FMaxDosePerPeriod.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderDosageInstructionListEnumerator }
@@ -52016,7 +52016,7 @@ end;
 
 destructor TFhirMedicationOrderDosageInstructionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -52031,22 +52031,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationOrderDosageInstructionListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationOrderDosageInstructionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderDosageInstructionList }
-procedure TFhirMedicationOrderDosageInstructionList.AddItem(value: TFhirMedicationOrderDosageInstruction);
+function TFhirMedicationOrderDosageInstructionList.AddItem(value: TFhirMedicationOrderDosageInstruction): TFhirMedicationOrderDosageInstruction;
 begin
-  assert(value.ClassName = 'TFhirMedicationOrderDosageInstruction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationOrderDosageInstruction');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationOrderDosageInstructionList.Append: TFhirMedicationOrderDosageInstruction;
 begin
-  result := TFhirMedicationOrderDosageInstruction.create;
+  result := TFhirMedicationOrderDosageInstruction.Create;
   try
     add(result.Link);
   finally
@@ -52090,7 +52090,7 @@ end;
 
 function TFhirMedicationOrderDosageInstructionList.Insert(index: Integer): TFhirMedicationOrderDosageInstruction;
 begin
-  result := TFhirMedicationOrderDosageInstruction.create;
+  result := TFhirMedicationOrderDosageInstruction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -52176,11 +52176,11 @@ end;
 procedure TFhirMedicationOrderDispenseRequest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'validityPeriod', 'Period', false, TFhirPeriod, FValidityPeriod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'numberOfRepeatsAllowed', 'positiveInt', false, TFhirPositiveInt, FNumberOfRepeatsAllowed.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'expectedSupplyDuration', 'Quantity', false, TFhirQuantity, FExpectedSupplyDuration.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'validityPeriod', 'Period', false, TFhirPeriod, FValidityPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'numberOfRepeatsAllowed', 'positiveInt', false, TFhirPositiveInt, FNumberOfRepeatsAllowed.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'expectedSupplyDuration', 'Quantity', false, TFhirQuantity, FExpectedSupplyDuration.Link));{2}
 end;
 
 function TFhirMedicationOrderDispenseRequest.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -52220,11 +52220,11 @@ end;
 
 function TFhirMedicationOrderDispenseRequest.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Medication'){4x}
-  else if (propName = 'validityPeriod') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'numberOfRepeatsAllowed') then result := TFhirPositiveInt.create() {5b}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'expectedSupplyDuration') then result := TFhirQuantity.create(){4b}
+  if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Medication'){4x}
+  else if (propName = 'validityPeriod') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'numberOfRepeatsAllowed') then result := TFhirPositiveInt.Create() {5b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'expectedSupplyDuration') then result := TFhirQuantity.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -52345,7 +52345,7 @@ begin
   if value <> '' then
   begin
     if FNumberOfRepeatsAllowed = nil then
-      FNumberOfRepeatsAllowed := TFhirPositiveInt.create;
+      FNumberOfRepeatsAllowed := TFhirPositiveInt.Create;
     FNumberOfRepeatsAllowed.value := value
   end
   else if FNumberOfRepeatsAllowed <> nil then
@@ -52364,14 +52364,14 @@ begin
   FExpectedSupplyDuration := value;
 end;
 
-function TFhirMedicationOrderDispenseRequest.sizeInBytesV : cardinal;
+function TFhirMedicationOrderDispenseRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMedication.sizeInBytes);
-  inc(result, FValidityPeriod.sizeInBytes);
-  inc(result, FNumberOfRepeatsAllowed.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FExpectedSupplyDuration.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMedication.sizeInBytes(magic));
+  inc(result, FValidityPeriod.sizeInBytes(magic));
+  inc(result, FNumberOfRepeatsAllowed.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FExpectedSupplyDuration.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderDispenseRequestListEnumerator }
@@ -52385,7 +52385,7 @@ end;
 
 destructor TFhirMedicationOrderDispenseRequestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -52400,22 +52400,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationOrderDispenseRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationOrderDispenseRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderDispenseRequestList }
-procedure TFhirMedicationOrderDispenseRequestList.AddItem(value: TFhirMedicationOrderDispenseRequest);
+function TFhirMedicationOrderDispenseRequestList.AddItem(value: TFhirMedicationOrderDispenseRequest): TFhirMedicationOrderDispenseRequest;
 begin
-  assert(value.ClassName = 'TFhirMedicationOrderDispenseRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationOrderDispenseRequest');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationOrderDispenseRequestList.Append: TFhirMedicationOrderDispenseRequest;
 begin
-  result := TFhirMedicationOrderDispenseRequest.create;
+  result := TFhirMedicationOrderDispenseRequest.Create;
   try
     add(result.Link);
   finally
@@ -52459,7 +52459,7 @@ end;
 
 function TFhirMedicationOrderDispenseRequestList.Insert(index: Integer): TFhirMedicationOrderDispenseRequest;
 begin
-  result := TFhirMedicationOrderDispenseRequest.create;
+  result := TFhirMedicationOrderDispenseRequest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -52533,8 +52533,8 @@ end;
 procedure TFhirMedicationOrderSubstitution.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', false, TFhirCodeableConcept, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', false, TFhirCodeableConcept, FReason.Link));{2}
 end;
 
 function TFhirMedicationOrderSubstitution.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -52559,8 +52559,8 @@ end;
 
 function TFhirMedicationOrderSubstitution.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'reason') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'reason') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -52648,11 +52648,11 @@ begin
   FReason := value;
 end;
 
-function TFhirMedicationOrderSubstitution.sizeInBytesV : cardinal;
+function TFhirMedicationOrderSubstitution.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderSubstitutionListEnumerator }
@@ -52666,7 +52666,7 @@ end;
 
 destructor TFhirMedicationOrderSubstitutionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -52681,22 +52681,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationOrderSubstitutionListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationOrderSubstitutionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderSubstitutionList }
-procedure TFhirMedicationOrderSubstitutionList.AddItem(value: TFhirMedicationOrderSubstitution);
+function TFhirMedicationOrderSubstitutionList.AddItem(value: TFhirMedicationOrderSubstitution): TFhirMedicationOrderSubstitution;
 begin
-  assert(value.ClassName = 'TFhirMedicationOrderSubstitution', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationOrderSubstitution');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationOrderSubstitutionList.Append: TFhirMedicationOrderSubstitution;
 begin
-  result := TFhirMedicationOrderSubstitution.create;
+  result := TFhirMedicationOrderSubstitution.Create;
   try
     add(result.Link);
   finally
@@ -52740,7 +52740,7 @@ end;
 
 function TFhirMedicationOrderSubstitutionList.Insert(index: Integer): TFhirMedicationOrderSubstitution;
 begin
-  result := TFhirMedicationOrderSubstitution.create;
+  result := TFhirMedicationOrderSubstitution.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -52790,7 +52790,7 @@ end;
 
 destructor TFhirMedicationOrder.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FDateWritten.free;
   FStatus.free;
   FDateEnded.free;
@@ -52801,7 +52801,7 @@ begin
   FReason.free;
   FNote.free;
   FMedication.free;
-  FDosageInstructionList.Free;
+  FDosageInstructionList.free;
   FDispenseRequest.free;
   FSubstitution.free;
   FPriorPrescription.free;
@@ -52891,21 +52891,21 @@ end;
 procedure TFhirMedicationOrder.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'dateWritten', 'dateTime', false, TFhirDateTime, FDateWritten.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'dateEnded', 'dateTime', false, TFhirDateTime, FDateEnded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reasonEnded', 'CodeableConcept', false, TFhirCodeableConcept, FReasonEnded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'prescriber', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FPrescriber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dosageInstruction', '', true, TFhirMedicationOrderDosageInstruction, FDosageInstructionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'dispenseRequest', '', false, TFhirMedicationOrderDispenseRequest, FDispenseRequest.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'substitution', '', false, TFhirMedicationOrderSubstitution, FSubstitution.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priorPrescription', 'Reference(MedicationOrder)', false, TFhirReference{TFhirMedicationOrder}, FPriorPrescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'dateWritten', 'dateTime', false, TFhirDateTime, FDateWritten.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'dateEnded', 'dateTime', false, TFhirDateTime, FDateEnded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reasonEnded', 'CodeableConcept', false, TFhirCodeableConcept, FReasonEnded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'prescriber', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FPrescriber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dosageInstruction', '', true, TFhirMedicationOrderDosageInstruction, FDosageInstructionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'dispenseRequest', '', false, TFhirMedicationOrderDispenseRequest, FDispenseRequest.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'substitution', '', false, TFhirMedicationOrderSubstitution, FSubstitution.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priorPrescription', 'Reference(MedicationOrder)', false, TFhirReference{TFhirMedicationOrder}, FPriorPrescription.Link));{2}
 end;
 
 function TFhirMedicationOrder.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -52998,19 +52998,19 @@ end;
 function TFhirMedicationOrder.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'dateWritten') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'dateEnded') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'reasonEnded') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'prescriber') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Reason'){4x}
-  else if (propName = 'note') then result := TFhirString.create() {5b}
-  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Medication'){4x}
+  else if (propName = 'dateWritten') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'dateEnded') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'reasonEnded') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'prescriber') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Reason'){4x}
+  else if (propName = 'note') then result := TFhirString.Create() {5b}
+  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Medication'){4x}
   else if (propName = 'dosageInstruction') then result := DosageInstructionList.new(){2}
-  else if (propName = 'dispenseRequest') then result := TFhirMedicationOrderDispenseRequest.create(){4b}
-  else if (propName = 'substitution') then result := TFhirMedicationOrderSubstitution.create(){4b}
-  else if (propName = 'priorPrescription') then result := TFhirReference{TFhirMedicationOrder}.create(){4b}
+  else if (propName = 'dispenseRequest') then result := TFhirMedicationOrderDispenseRequest.Create(){4b}
+  else if (propName = 'substitution') then result := TFhirMedicationOrderSubstitution.Create(){4b}
+  else if (propName = 'priorPrescription') then result := TFhirReference{TFhirMedicationOrder}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -53177,7 +53177,7 @@ end;
 Procedure TFhirMedicationOrder.SetDateWrittenST(value : TFslDateTime);
 begin
   if FDateWritten = nil then
-    FDateWritten := TFhirDateTime.create;
+    FDateWritten := TFhirDateTime.Create;
   FDateWritten.value := value
 end;
 
@@ -53200,7 +53200,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirMedicationOrderStatusEnum[value], CODES_TFhirMedicationOrderStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirMedicationOrderStatusEnum[value], CODES_TFhirMedicationOrderStatusEnum[value]);
 end;
 
 Procedure TFhirMedicationOrder.SetDateEnded(value : TFhirDateTime);
@@ -53220,7 +53220,7 @@ end;
 Procedure TFhirMedicationOrder.SetDateEndedST(value : TFslDateTime);
 begin
   if FDateEnded = nil then
-    FDateEnded := TFhirDateTime.create;
+    FDateEnded := TFhirDateTime.Create;
   FDateEnded.value := value
 end;
 
@@ -53273,7 +53273,7 @@ begin
   if value <> '' then
   begin
     if FNote = nil then
-      FNote := TFhirString.create;
+      FNote := TFhirString.Create;
     FNote.value := value
   end
   else if FNote <> nil then
@@ -53316,24 +53316,24 @@ begin
   FPriorPrescription := value;
 end;
 
-function TFhirMedicationOrder.sizeInBytesV : cardinal;
+function TFhirMedicationOrder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FDateWritten.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDateEnded.sizeInBytes);
-  inc(result, FReasonEnded.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FPrescriber.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FMedication.sizeInBytes);
-  inc(result, FdosageInstructionList.sizeInBytes);
-  inc(result, FDispenseRequest.sizeInBytes);
-  inc(result, FSubstitution.sizeInBytes);
-  inc(result, FPriorPrescription.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FDateWritten.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDateEnded.sizeInBytes(magic));
+  inc(result, FReasonEnded.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FPrescriber.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FMedication.sizeInBytes(magic));
+  inc(result, FdosageInstructionList.sizeInBytes(magic));
+  inc(result, FDispenseRequest.sizeInBytes(magic));
+  inc(result, FSubstitution.sizeInBytes(magic));
+  inc(result, FPriorPrescription.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderListEnumerator }
@@ -53347,7 +53347,7 @@ end;
 
 destructor TFhirMedicationOrderListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -53362,22 +53362,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationOrderListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationOrderListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationOrderList }
-procedure TFhirMedicationOrderList.AddItem(value: TFhirMedicationOrder);
+function TFhirMedicationOrderList.AddItem(value: TFhirMedicationOrder): TFhirMedicationOrder;
 begin
-  assert(value.ClassName = 'TFhirMedicationOrder', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationOrder');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationOrderList.Append: TFhirMedicationOrder;
 begin
-  result := TFhirMedicationOrder.create;
+  result := TFhirMedicationOrder.Create;
   try
     add(result.Link);
   finally
@@ -53421,7 +53421,7 @@ end;
 
 function TFhirMedicationOrderList.Insert(index: Integer): TFhirMedicationOrder;
 begin
-  result := TFhirMedicationOrder.create;
+  result := TFhirMedicationOrder.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -53527,15 +53527,15 @@ end;
 procedure TFhirMedicationStatementDosage.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'timing', 'Timing', false, TFhirTiming, FTiming.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity[x]', 'Quantity|Range', false, TFhirType, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'maxDosePerPeriod', 'Ratio', false, TFhirRatio, FMaxDosePerPeriod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'timing', 'Timing', false, TFhirTiming, FTiming.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'site[x]', 'CodeableConcept|Reference(BodySite)', false, TFhirType, FSite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'route', 'CodeableConcept', false, TFhirCodeableConcept, FRoute.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity[x]', 'Quantity|Range', false, TFhirType, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'rate[x]', 'Ratio|Range', false, TFhirType, FRate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'maxDosePerPeriod', 'Ratio', false, TFhirRatio, FMaxDosePerPeriod.Link));{2}
 end;
 
 function TFhirMedicationStatementDosage.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -53595,15 +53595,15 @@ end;
 
 function TFhirMedicationStatementDosage.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'text') then result := TFhirString.create() {5b}
-  else if (propName = 'timing') then result := TFhirTiming.create(){4b}
-  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
-  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Site'){4x}
-  else if (propName = 'route') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'quantity', ['Quantity', 'Range'])) then raise EFHIRException.create('Cannot make property Quantity'){4x}
-  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.create('Cannot make property Rate'){4x}
-  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.create(){4b}
+  if (propName = 'text') then result := TFhirString.Create() {5b}
+  else if (propName = 'timing') then result := TFhirTiming.Create(){4b}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.Create('Cannot make property AsNeeded'){4x}
+  else if (isMatchingName(propName, 'site', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Site'){4x}
+  else if (propName = 'route') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'quantity', ['Quantity', 'Range'])) then raise EFHIRException.Create('Cannot make property Quantity'){4x}
+  else if (isMatchingName(propName, 'rate', ['Ratio', 'Range'])) then raise EFHIRException.Create('Cannot make property Rate'){4x}
+  else if (propName = 'maxDosePerPeriod') then result := TFhirRatio.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -53730,7 +53730,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -53785,18 +53785,18 @@ begin
   FMaxDosePerPeriod := value;
 end;
 
-function TFhirMedicationStatementDosage.sizeInBytesV : cardinal;
+function TFhirMedicationStatementDosage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FText.sizeInBytes);
-  inc(result, FTiming.sizeInBytes);
-  inc(result, FAsNeeded.sizeInBytes);
-  inc(result, FSite.sizeInBytes);
-  inc(result, FRoute.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FRate.sizeInBytes);
-  inc(result, FMaxDosePerPeriod.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FTiming.sizeInBytes(magic));
+  inc(result, FAsNeeded.sizeInBytes(magic));
+  inc(result, FSite.sizeInBytes(magic));
+  inc(result, FRoute.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FRate.sizeInBytes(magic));
+  inc(result, FMaxDosePerPeriod.sizeInBytes(magic));
 end;
 
 { TFhirMedicationStatementDosageListEnumerator }
@@ -53810,7 +53810,7 @@ end;
 
 destructor TFhirMedicationStatementDosageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -53825,22 +53825,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationStatementDosageListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationStatementDosageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationStatementDosageList }
-procedure TFhirMedicationStatementDosageList.AddItem(value: TFhirMedicationStatementDosage);
+function TFhirMedicationStatementDosageList.AddItem(value: TFhirMedicationStatementDosage): TFhirMedicationStatementDosage;
 begin
-  assert(value.ClassName = 'TFhirMedicationStatementDosage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationStatementDosage');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationStatementDosageList.Append: TFhirMedicationStatementDosage;
 begin
-  result := TFhirMedicationStatementDosage.create;
+  result := TFhirMedicationStatementDosage.Create;
   try
     add(result.Link);
   finally
@@ -53884,7 +53884,7 @@ end;
 
 function TFhirMedicationStatementDosageList.Insert(index: Integer): TFhirMedicationStatementDosage;
 begin
-  result := TFhirMedicationStatementDosage.create;
+  result := TFhirMedicationStatementDosage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -53934,19 +53934,19 @@ end;
 
 destructor TFhirMedicationStatement.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FPatient.free;
   FInformationSource.free;
   FDateAsserted.free;
   FStatus.free;
   FWasNotTaken.free;
-  FReasonNotTakenList.Free;
+  FReasonNotTakenList.free;
   FReasonForUse.free;
   FEffective.free;
   FNote.free;
-  FSupportingInformationList.Free;
+  FSupportingInformationList.free;
   FMedication.free;
-  FDosageList.Free;
+  FDosageList.free;
   inherited;
 end;
 
@@ -54047,19 +54047,19 @@ end;
 procedure TFhirMedicationStatement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'informationSource', 'Reference(Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FInformationSource.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dateAsserted', 'dateTime', false, TFhirDateTime, FDateAsserted.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'wasNotTaken', 'boolean', false, TFhirBoolean, FWasNotTaken.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reasonNotTaken', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotTakenList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reasonForUse[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReasonForUse.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'effective[x]', 'dateTime|Period', false, TFhirType, FEffective.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'supportingInformation', 'Reference(Any)', true, TFhirReference{TFhirReference}, FSupportingInformationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dosage', '', true, TFhirMedicationStatementDosage, FDosageList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'informationSource', 'Reference(Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FInformationSource.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dateAsserted', 'dateTime', false, TFhirDateTime, FDateAsserted.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'wasNotTaken', 'boolean', false, TFhirBoolean, FWasNotTaken.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reasonNotTaken', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotTakenList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reasonForUse[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReasonForUse.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'effective[x]', 'dateTime|Period', false, TFhirType, FEffective.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'note', 'string', false, TFhirString, FNote.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'supportingInformation', 'Reference(Any)', true, TFhirReference{TFhirReference}, FSupportingInformationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'medication[x]', 'CodeableConcept|Reference(Medication)', false, TFhirType, FMedication.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dosage', '', true, TFhirMedicationStatementDosage, FDosageList.Link)){3};
 end;
 
 function TFhirMedicationStatement.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -54144,16 +54144,16 @@ end;
 function TFhirMedicationStatement.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'informationSource') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'dateAsserted') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'wasNotTaken') then result := TFhirBoolean.create() {5b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'informationSource') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'dateAsserted') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'wasNotTaken') then result := TFhirBoolean.Create() {5b}
   else if (propName = 'reasonNotTaken') then result := ReasonNotTakenList.new(){2}
-  else if (isMatchingName(propName, 'reasonForUse', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property ReasonForUse'){4x}
-  else if (isMatchingName(propName, 'effective', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Effective'){4x}
-  else if (propName = 'note') then result := TFhirString.create() {5b}
+  else if (isMatchingName(propName, 'reasonForUse', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property ReasonForUse'){4x}
+  else if (isMatchingName(propName, 'effective', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Effective'){4x}
+  else if (propName = 'note') then result := TFhirString.Create() {5b}
   else if (propName = 'supportingInformation') then result := SupportingInformationList.new(){2}
-  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Medication'){4x}
+  else if (isMatchingName(propName, 'medication', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Medication'){4x}
   else if (propName = 'dosage') then result := DosageList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -54326,7 +54326,7 @@ end;
 Procedure TFhirMedicationStatement.SetDateAssertedST(value : TFslDateTime);
 begin
   if FDateAsserted = nil then
-    FDateAsserted := TFhirDateTime.create;
+    FDateAsserted := TFhirDateTime.Create;
   FDateAsserted.value := value
 end;
 
@@ -54349,7 +54349,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirMedicationStatementStatusEnum[value], CODES_TFhirMedicationStatementStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirMedicationStatementStatusEnum[value], CODES_TFhirMedicationStatementStatusEnum[value]);
 end;
 
 Procedure TFhirMedicationStatement.SetWasNotTaken(value : TFhirBoolean);
@@ -54369,7 +54369,7 @@ end;
 Procedure TFhirMedicationStatement.SetWasNotTakenST(value : Boolean);
 begin
   if FWasNotTaken = nil then
-    FWasNotTaken := TFhirBoolean.create;
+    FWasNotTaken := TFhirBoolean.Create;
   FWasNotTaken.value := value
 end;
 
@@ -54416,7 +54416,7 @@ begin
   if value <> '' then
   begin
     if FNote = nil then
-      FNote := TFhirString.create;
+      FNote := TFhirString.Create;
     FNote.value := value
   end
   else if FNote <> nil then
@@ -54453,22 +54453,22 @@ begin
   result := (FDosageList <> nil) and (FDosageList.count > 0);
 end;
 
-function TFhirMedicationStatement.sizeInBytesV : cardinal;
+function TFhirMedicationStatement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FInformationSource.sizeInBytes);
-  inc(result, FDateAsserted.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FWasNotTaken.sizeInBytes);
-  inc(result, FreasonNotTakenList.sizeInBytes);
-  inc(result, FReasonForUse.sizeInBytes);
-  inc(result, FEffective.sizeInBytes);
-  inc(result, FNote.sizeInBytes);
-  inc(result, FsupportingInformationList.sizeInBytes);
-  inc(result, FMedication.sizeInBytes);
-  inc(result, FdosageList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FInformationSource.sizeInBytes(magic));
+  inc(result, FDateAsserted.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FWasNotTaken.sizeInBytes(magic));
+  inc(result, FreasonNotTakenList.sizeInBytes(magic));
+  inc(result, FReasonForUse.sizeInBytes(magic));
+  inc(result, FEffective.sizeInBytes(magic));
+  inc(result, FNote.sizeInBytes(magic));
+  inc(result, FsupportingInformationList.sizeInBytes(magic));
+  inc(result, FMedication.sizeInBytes(magic));
+  inc(result, FdosageList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationStatementListEnumerator }
@@ -54482,7 +54482,7 @@ end;
 
 destructor TFhirMedicationStatementListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -54497,22 +54497,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirMedicationStatementListEnumerator.sizeInBytesV : cardinal;
+function TFhirMedicationStatementListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirMedicationStatementList }
-procedure TFhirMedicationStatementList.AddItem(value: TFhirMedicationStatement);
+function TFhirMedicationStatementList.AddItem(value: TFhirMedicationStatement): TFhirMedicationStatement;
 begin
-  assert(value.ClassName = 'TFhirMedicationStatement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirMedicationStatement');
   add(value);
+  result := value;
 end;
 
 function TFhirMedicationStatementList.Append: TFhirMedicationStatement;
 begin
-  result := TFhirMedicationStatement.create;
+  result := TFhirMedicationStatement.Create;
   try
     add(result.Link);
   finally
@@ -54556,7 +54556,7 @@ end;
 
 function TFhirMedicationStatementList.Insert(index: Integer): TFhirMedicationStatement;
 begin
-  result := TFhirMedicationStatement.create;
+  result := TFhirMedicationStatement.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -54610,11 +54610,11 @@ end;
 
 destructor TFhirNutritionOrderOralDiet.Destroy;
 begin
-  FType_List.Free;
-  FScheduleList.Free;
-  FNutrientList.Free;
-  FTextureList.Free;
-  FFluidConsistencyTypeList.Free;
+  FType_List.free;
+  FScheduleList.free;
+  FNutrientList.free;
+  FTextureList.free;
+  FFluidConsistencyTypeList.free;
   FInstruction.free;
   inherited;
 end;
@@ -54700,12 +54700,12 @@ end;
 procedure TFhirNutritionOrderOralDiet.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'schedule', 'Timing', true, TFhirTiming, FScheduleList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'nutrient', '', true, TFhirNutritionOrderOralDietNutrient, FNutrientList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'texture', '', true, TFhirNutritionOrderOralDietTexture, FTextureList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'fluidConsistencyType', 'CodeableConcept', true, TFhirCodeableConcept, FFluidConsistencyTypeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'instruction', 'string', false, TFhirString, FInstruction.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', true, TFhirCodeableConcept, FType_List.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'schedule', 'Timing', true, TFhirTiming, FScheduleList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'nutrient', '', true, TFhirNutritionOrderOralDietNutrient, FNutrientList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'texture', '', true, TFhirNutritionOrderOralDietTexture, FTextureList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'fluidConsistencyType', 'CodeableConcept', true, TFhirCodeableConcept, FFluidConsistencyTypeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'instruction', 'string', false, TFhirString, FInstruction.Link));{2}
 end;
 
 function TFhirNutritionOrderOralDiet.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -54760,7 +54760,7 @@ begin
   else if (propName = 'nutrient') then result := NutrientList.new(){2}
   else if (propName = 'texture') then result := TextureList.new(){2}
   else if (propName = 'fluidConsistencyType') then result := FluidConsistencyTypeList.new(){2}
-  else if (propName = 'instruction') then result := TFhirString.create() {5b}
+  else if (propName = 'instruction') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -54939,22 +54939,22 @@ begin
   if value <> '' then
   begin
     if FInstruction = nil then
-      FInstruction := TFhirString.create;
+      FInstruction := TFhirString.Create;
     FInstruction.value := value
   end
   else if FInstruction <> nil then
     FInstruction.value := '';
 end;
 
-function TFhirNutritionOrderOralDiet.sizeInBytesV : cardinal;
+function TFhirNutritionOrderOralDiet.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftype_List.sizeInBytes);
-  inc(result, FscheduleList.sizeInBytes);
-  inc(result, FnutrientList.sizeInBytes);
-  inc(result, FtextureList.sizeInBytes);
-  inc(result, FfluidConsistencyTypeList.sizeInBytes);
-  inc(result, FInstruction.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Ftype_List.sizeInBytes(magic));
+  inc(result, FscheduleList.sizeInBytes(magic));
+  inc(result, FnutrientList.sizeInBytes(magic));
+  inc(result, FtextureList.sizeInBytes(magic));
+  inc(result, FfluidConsistencyTypeList.sizeInBytes(magic));
+  inc(result, FInstruction.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderOralDietListEnumerator }
@@ -54968,7 +54968,7 @@ end;
 
 destructor TFhirNutritionOrderOralDietListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -54983,22 +54983,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderOralDietListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderOralDietListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderOralDietList }
-procedure TFhirNutritionOrderOralDietList.AddItem(value: TFhirNutritionOrderOralDiet);
+function TFhirNutritionOrderOralDietList.AddItem(value: TFhirNutritionOrderOralDiet): TFhirNutritionOrderOralDiet;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrderOralDiet', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrderOralDiet');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderOralDietList.Append: TFhirNutritionOrderOralDiet;
 begin
-  result := TFhirNutritionOrderOralDiet.create;
+  result := TFhirNutritionOrderOralDiet.Create;
   try
     add(result.Link);
   finally
@@ -55042,7 +55042,7 @@ end;
 
 function TFhirNutritionOrderOralDietList.Insert(index: Integer): TFhirNutritionOrderOralDiet;
 begin
-  result := TFhirNutritionOrderOralDiet.create;
+  result := TFhirNutritionOrderOralDiet.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -55116,8 +55116,8 @@ end;
 procedure TFhirNutritionOrderOralDietNutrient.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'modifier', 'CodeableConcept', false, TFhirCodeableConcept, FModifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'amount', 'Quantity', false, TFhirQuantity, FAmount.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'modifier', 'CodeableConcept', false, TFhirCodeableConcept, FModifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'amount', 'Quantity', false, TFhirQuantity, FAmount.Link));{2}
 end;
 
 function TFhirNutritionOrderOralDietNutrient.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -55142,8 +55142,8 @@ end;
 
 function TFhirNutritionOrderOralDietNutrient.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'modifier') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'amount') then result := TFhirQuantity.create(){4b}
+  if (propName = 'modifier') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'amount') then result := TFhirQuantity.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -55231,11 +55231,11 @@ begin
   FAmount := value;
 end;
 
-function TFhirNutritionOrderOralDietNutrient.sizeInBytesV : cardinal;
+function TFhirNutritionOrderOralDietNutrient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FModifier.sizeInBytes);
-  inc(result, FAmount.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModifier.sizeInBytes(magic));
+  inc(result, FAmount.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderOralDietNutrientListEnumerator }
@@ -55249,7 +55249,7 @@ end;
 
 destructor TFhirNutritionOrderOralDietNutrientListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -55264,22 +55264,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderOralDietNutrientListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderOralDietNutrientListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderOralDietNutrientList }
-procedure TFhirNutritionOrderOralDietNutrientList.AddItem(value: TFhirNutritionOrderOralDietNutrient);
+function TFhirNutritionOrderOralDietNutrientList.AddItem(value: TFhirNutritionOrderOralDietNutrient): TFhirNutritionOrderOralDietNutrient;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrderOralDietNutrient', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrderOralDietNutrient');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderOralDietNutrientList.Append: TFhirNutritionOrderOralDietNutrient;
 begin
-  result := TFhirNutritionOrderOralDietNutrient.create;
+  result := TFhirNutritionOrderOralDietNutrient.Create;
   try
     add(result.Link);
   finally
@@ -55323,7 +55323,7 @@ end;
 
 function TFhirNutritionOrderOralDietNutrientList.Insert(index: Integer): TFhirNutritionOrderOralDietNutrient;
 begin
-  result := TFhirNutritionOrderOralDietNutrient.create;
+  result := TFhirNutritionOrderOralDietNutrient.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -55397,8 +55397,8 @@ end;
 procedure TFhirNutritionOrderOralDietTexture.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'modifier', 'CodeableConcept', false, TFhirCodeableConcept, FModifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'foodType', 'CodeableConcept', false, TFhirCodeableConcept, FFoodType.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'modifier', 'CodeableConcept', false, TFhirCodeableConcept, FModifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'foodType', 'CodeableConcept', false, TFhirCodeableConcept, FFoodType.Link));{2}
 end;
 
 function TFhirNutritionOrderOralDietTexture.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -55423,8 +55423,8 @@ end;
 
 function TFhirNutritionOrderOralDietTexture.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'modifier') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'foodType') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'modifier') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'foodType') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -55512,11 +55512,11 @@ begin
   FFoodType := value;
 end;
 
-function TFhirNutritionOrderOralDietTexture.sizeInBytesV : cardinal;
+function TFhirNutritionOrderOralDietTexture.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FModifier.sizeInBytes);
-  inc(result, FFoodType.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModifier.sizeInBytes(magic));
+  inc(result, FFoodType.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderOralDietTextureListEnumerator }
@@ -55530,7 +55530,7 @@ end;
 
 destructor TFhirNutritionOrderOralDietTextureListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -55545,22 +55545,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderOralDietTextureListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderOralDietTextureListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderOralDietTextureList }
-procedure TFhirNutritionOrderOralDietTextureList.AddItem(value: TFhirNutritionOrderOralDietTexture);
+function TFhirNutritionOrderOralDietTextureList.AddItem(value: TFhirNutritionOrderOralDietTexture): TFhirNutritionOrderOralDietTexture;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrderOralDietTexture', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrderOralDietTexture');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderOralDietTextureList.Append: TFhirNutritionOrderOralDietTexture;
 begin
-  result := TFhirNutritionOrderOralDietTexture.create;
+  result := TFhirNutritionOrderOralDietTexture.Create;
   try
     add(result.Link);
   finally
@@ -55604,7 +55604,7 @@ end;
 
 function TFhirNutritionOrderOralDietTextureList.Insert(index: Integer): TFhirNutritionOrderOralDietTexture;
 begin
-  result := TFhirNutritionOrderOralDietTexture.create;
+  result := TFhirNutritionOrderOralDietTexture.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -55656,7 +55656,7 @@ destructor TFhirNutritionOrderSupplement.Destroy;
 begin
   FType_.free;
   FProductName.free;
-  FScheduleList.Free;
+  FScheduleList.free;
   FQuantity.free;
   FInstruction.free;
   inherited;
@@ -55700,11 +55700,11 @@ end;
 procedure TFhirNutritionOrderSupplement.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'productName', 'string', false, TFhirString, FProductName.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'schedule', 'Timing', true, TFhirTiming, FScheduleList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'instruction', 'string', false, TFhirString, FInstruction.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'productName', 'string', false, TFhirString, FProductName.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'schedule', 'Timing', true, TFhirTiming, FScheduleList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'instruction', 'string', false, TFhirString, FInstruction.Link));{2}
 end;
 
 function TFhirNutritionOrderSupplement.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -55745,11 +55745,11 @@ end;
 
 function TFhirNutritionOrderSupplement.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'productName') then result := TFhirString.create() {5b}
+  if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'productName') then result := TFhirString.Create() {5b}
   else if (propName = 'schedule') then result := ScheduleList.new(){2}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'instruction') then result := TFhirString.create() {5b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'instruction') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -55866,7 +55866,7 @@ begin
   if value <> '' then
   begin
     if FProductName = nil then
-      FProductName := TFhirString.create;
+      FProductName := TFhirString.Create;
     FProductName.value := value
   end
   else if FProductName <> nil then
@@ -55910,21 +55910,21 @@ begin
   if value <> '' then
   begin
     if FInstruction = nil then
-      FInstruction := TFhirString.create;
+      FInstruction := TFhirString.Create;
     FInstruction.value := value
   end
   else if FInstruction <> nil then
     FInstruction.value := '';
 end;
 
-function TFhirNutritionOrderSupplement.sizeInBytesV : cardinal;
+function TFhirNutritionOrderSupplement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FProductName.sizeInBytes);
-  inc(result, FscheduleList.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FInstruction.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FProductName.sizeInBytes(magic));
+  inc(result, FscheduleList.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FInstruction.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderSupplementListEnumerator }
@@ -55938,7 +55938,7 @@ end;
 
 destructor TFhirNutritionOrderSupplementListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -55953,22 +55953,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderSupplementListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderSupplementListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderSupplementList }
-procedure TFhirNutritionOrderSupplementList.AddItem(value: TFhirNutritionOrderSupplement);
+function TFhirNutritionOrderSupplementList.AddItem(value: TFhirNutritionOrderSupplement): TFhirNutritionOrderSupplement;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrderSupplement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrderSupplement');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderSupplementList.Append: TFhirNutritionOrderSupplement;
 begin
-  result := TFhirNutritionOrderSupplement.create;
+  result := TFhirNutritionOrderSupplement.Create;
   try
     add(result.Link);
   finally
@@ -56012,7 +56012,7 @@ end;
 
 function TFhirNutritionOrderSupplementList.Insert(index: Integer): TFhirNutritionOrderSupplement;
 begin
-  result := TFhirNutritionOrderSupplement.create;
+  result := TFhirNutritionOrderSupplement.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -56068,7 +56068,7 @@ begin
   FAdditiveProductName.free;
   FCaloricDensity.free;
   FRouteofAdministration.free;
-  FAdministrationList.Free;
+  FAdministrationList.free;
   FMaxVolumeToDeliver.free;
   FAdministrationInstruction.free;
   inherited;
@@ -56124,15 +56124,15 @@ end;
 procedure TFhirNutritionOrderEnteralFormula.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'baseFormulaType', 'CodeableConcept', false, TFhirCodeableConcept, FBaseFormulaType.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'baseFormulaProductName', 'string', false, TFhirString, FBaseFormulaProductName.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'additiveType', 'CodeableConcept', false, TFhirCodeableConcept, FAdditiveType.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'additiveProductName', 'string', false, TFhirString, FAdditiveProductName.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'caloricDensity', 'Quantity', false, TFhirQuantity, FCaloricDensity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'routeofAdministration', 'CodeableConcept', false, TFhirCodeableConcept, FRouteofAdministration.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'administration', '', true, TFhirNutritionOrderEnteralFormulaAdministration, FAdministrationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'maxVolumeToDeliver', 'Quantity', false, TFhirQuantity, FMaxVolumeToDeliver.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'administrationInstruction', 'string', false, TFhirString, FAdministrationInstruction.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'baseFormulaType', 'CodeableConcept', false, TFhirCodeableConcept, FBaseFormulaType.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'baseFormulaProductName', 'string', false, TFhirString, FBaseFormulaProductName.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'additiveType', 'CodeableConcept', false, TFhirCodeableConcept, FAdditiveType.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'additiveProductName', 'string', false, TFhirString, FAdditiveProductName.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'caloricDensity', 'Quantity', false, TFhirQuantity, FCaloricDensity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'routeofAdministration', 'CodeableConcept', false, TFhirCodeableConcept, FRouteofAdministration.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'administration', '', true, TFhirNutritionOrderEnteralFormulaAdministration, FAdministrationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'maxVolumeToDeliver', 'Quantity', false, TFhirQuantity, FMaxVolumeToDeliver.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'administrationInstruction', 'string', false, TFhirString, FAdministrationInstruction.Link));{2}
 end;
 
 function TFhirNutritionOrderEnteralFormula.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -56193,15 +56193,15 @@ end;
 
 function TFhirNutritionOrderEnteralFormula.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'baseFormulaType') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'baseFormulaProductName') then result := TFhirString.create() {5b}
-  else if (propName = 'additiveType') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'additiveProductName') then result := TFhirString.create() {5b}
-  else if (propName = 'caloricDensity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'routeofAdministration') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'baseFormulaType') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'baseFormulaProductName') then result := TFhirString.Create() {5b}
+  else if (propName = 'additiveType') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'additiveProductName') then result := TFhirString.Create() {5b}
+  else if (propName = 'caloricDensity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'routeofAdministration') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'administration') then result := AdministrationList.new(){2}
-  else if (propName = 'maxVolumeToDeliver') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'administrationInstruction') then result := TFhirString.create() {5b}
+  else if (propName = 'maxVolumeToDeliver') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'administrationInstruction') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -56337,7 +56337,7 @@ begin
   if value <> '' then
   begin
     if FBaseFormulaProductName = nil then
-      FBaseFormulaProductName := TFhirString.create;
+      FBaseFormulaProductName := TFhirString.Create;
     FBaseFormulaProductName.value := value
   end
   else if FBaseFormulaProductName <> nil then
@@ -56369,7 +56369,7 @@ begin
   if value <> '' then
   begin
     if FAdditiveProductName = nil then
-      FAdditiveProductName := TFhirString.create;
+      FAdditiveProductName := TFhirString.Create;
     FAdditiveProductName.value := value
   end
   else if FAdditiveProductName <> nil then
@@ -56425,25 +56425,25 @@ begin
   if value <> '' then
   begin
     if FAdministrationInstruction = nil then
-      FAdministrationInstruction := TFhirString.create;
+      FAdministrationInstruction := TFhirString.Create;
     FAdministrationInstruction.value := value
   end
   else if FAdministrationInstruction <> nil then
     FAdministrationInstruction.value := '';
 end;
 
-function TFhirNutritionOrderEnteralFormula.sizeInBytesV : cardinal;
+function TFhirNutritionOrderEnteralFormula.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBaseFormulaType.sizeInBytes);
-  inc(result, FBaseFormulaProductName.sizeInBytes);
-  inc(result, FAdditiveType.sizeInBytes);
-  inc(result, FAdditiveProductName.sizeInBytes);
-  inc(result, FCaloricDensity.sizeInBytes);
-  inc(result, FRouteofAdministration.sizeInBytes);
-  inc(result, FadministrationList.sizeInBytes);
-  inc(result, FMaxVolumeToDeliver.sizeInBytes);
-  inc(result, FAdministrationInstruction.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBaseFormulaType.sizeInBytes(magic));
+  inc(result, FBaseFormulaProductName.sizeInBytes(magic));
+  inc(result, FAdditiveType.sizeInBytes(magic));
+  inc(result, FAdditiveProductName.sizeInBytes(magic));
+  inc(result, FCaloricDensity.sizeInBytes(magic));
+  inc(result, FRouteofAdministration.sizeInBytes(magic));
+  inc(result, FadministrationList.sizeInBytes(magic));
+  inc(result, FMaxVolumeToDeliver.sizeInBytes(magic));
+  inc(result, FAdministrationInstruction.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderEnteralFormulaListEnumerator }
@@ -56457,7 +56457,7 @@ end;
 
 destructor TFhirNutritionOrderEnteralFormulaListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -56472,22 +56472,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderEnteralFormulaListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderEnteralFormulaListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderEnteralFormulaList }
-procedure TFhirNutritionOrderEnteralFormulaList.AddItem(value: TFhirNutritionOrderEnteralFormula);
+function TFhirNutritionOrderEnteralFormulaList.AddItem(value: TFhirNutritionOrderEnteralFormula): TFhirNutritionOrderEnteralFormula;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrderEnteralFormula', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrderEnteralFormula');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderEnteralFormulaList.Append: TFhirNutritionOrderEnteralFormula;
 begin
-  result := TFhirNutritionOrderEnteralFormula.create;
+  result := TFhirNutritionOrderEnteralFormula.Create;
   try
     add(result.Link);
   finally
@@ -56531,7 +56531,7 @@ end;
 
 function TFhirNutritionOrderEnteralFormulaList.Insert(index: Integer): TFhirNutritionOrderEnteralFormula;
 begin
-  result := TFhirNutritionOrderEnteralFormula.create;
+  result := TFhirNutritionOrderEnteralFormula.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -56609,9 +56609,9 @@ end;
 procedure TFhirNutritionOrderEnteralFormulaAdministration.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'schedule', 'Timing', false, TFhirTiming, FSchedule.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'rate[x]', 'Quantity|Ratio', false, TFhirType, FRate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'schedule', 'Timing', false, TFhirTiming, FSchedule.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'rate[x]', 'Quantity|Ratio', false, TFhirType, FRate.Link));{2}
 end;
 
 function TFhirNutritionOrderEnteralFormulaAdministration.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -56641,9 +56641,9 @@ end;
 
 function TFhirNutritionOrderEnteralFormulaAdministration.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'schedule') then result := TFhirTiming.create(){4b}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (isMatchingName(propName, 'rate', ['Quantity', 'Ratio'])) then raise EFHIRException.create('Cannot make property Rate'){4x}
+  if (propName = 'schedule') then result := TFhirTiming.Create(){4b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (isMatchingName(propName, 'rate', ['Quantity', 'Ratio'])) then raise EFHIRException.Create('Cannot make property Rate'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -56742,12 +56742,12 @@ begin
   FRate := value;
 end;
 
-function TFhirNutritionOrderEnteralFormulaAdministration.sizeInBytesV : cardinal;
+function TFhirNutritionOrderEnteralFormulaAdministration.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSchedule.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FRate.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSchedule.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FRate.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderEnteralFormulaAdministrationListEnumerator }
@@ -56761,7 +56761,7 @@ end;
 
 destructor TFhirNutritionOrderEnteralFormulaAdministrationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -56776,22 +56776,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderEnteralFormulaAdministrationListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderEnteralFormulaAdministrationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderEnteralFormulaAdministrationList }
-procedure TFhirNutritionOrderEnteralFormulaAdministrationList.AddItem(value: TFhirNutritionOrderEnteralFormulaAdministration);
+function TFhirNutritionOrderEnteralFormulaAdministrationList.AddItem(value: TFhirNutritionOrderEnteralFormulaAdministration): TFhirNutritionOrderEnteralFormulaAdministration;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrderEnteralFormulaAdministration', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrderEnteralFormulaAdministration');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderEnteralFormulaAdministrationList.Append: TFhirNutritionOrderEnteralFormulaAdministration;
 begin
-  result := TFhirNutritionOrderEnteralFormulaAdministration.create;
+  result := TFhirNutritionOrderEnteralFormulaAdministration.Create;
   try
     add(result.Link);
   finally
@@ -56835,7 +56835,7 @@ end;
 
 function TFhirNutritionOrderEnteralFormulaAdministrationList.Insert(index: Integer): TFhirNutritionOrderEnteralFormulaAdministration;
 begin
-  result := TFhirNutritionOrderEnteralFormulaAdministration.create;
+  result := TFhirNutritionOrderEnteralFormulaAdministration.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -56887,15 +56887,15 @@ destructor TFhirNutritionOrder.Destroy;
 begin
   FPatient.free;
   FOrderer.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FEncounter.free;
   FDateTime.free;
   FStatus.free;
-  FAllergyIntoleranceList.Free;
-  FFoodPreferenceModifierList.Free;
-  FExcludeFoodModifierList.Free;
+  FAllergyIntoleranceList.free;
+  FFoodPreferenceModifierList.free;
+  FExcludeFoodModifierList.free;
   FOralDiet.free;
-  FSupplementList.Free;
+  FSupplementList.free;
   FEnteralFormula.free;
   inherited;
 end;
@@ -57004,18 +57004,18 @@ end;
 procedure TFhirNutritionOrder.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'orderer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FOrderer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dateTime', 'dateTime', false, TFhirDateTime, FDateTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'allergyIntolerance', 'Reference(AllergyIntolerance)', true, TFhirReference{TFhirAllergyIntolerance}, FAllergyIntoleranceList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'foodPreferenceModifier', 'CodeableConcept', true, TFhirCodeableConcept, FFoodPreferenceModifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'excludeFoodModifier', 'CodeableConcept', true, TFhirCodeableConcept, FExcludeFoodModifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'oralDiet', '', false, TFhirNutritionOrderOralDiet, FOralDiet.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'supplement', '', true, TFhirNutritionOrderSupplement, FSupplementList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'enteralFormula', '', false, TFhirNutritionOrderEnteralFormula, FEnteralFormula.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'orderer', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FOrderer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dateTime', 'dateTime', false, TFhirDateTime, FDateTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'allergyIntolerance', 'Reference(AllergyIntolerance)', true, TFhirReference{TFhirAllergyIntolerance}, FAllergyIntoleranceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'foodPreferenceModifier', 'CodeableConcept', true, TFhirCodeableConcept, FFoodPreferenceModifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'excludeFoodModifier', 'CodeableConcept', true, TFhirCodeableConcept, FExcludeFoodModifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'oralDiet', '', false, TFhirNutritionOrderOralDiet, FOralDiet.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'supplement', '', true, TFhirNutritionOrderSupplement, FSupplementList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'enteralFormula', '', false, TFhirNutritionOrderEnteralFormula, FEnteralFormula.Link));{2}
 end;
 
 function TFhirNutritionOrder.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -57095,17 +57095,17 @@ end;
 
 function TFhirNutritionOrder.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'orderer') then result := TFhirReference{TFhirPractitioner}.create(){4b}
+  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'orderer') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
   else if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'dateTime') then result := TFhirDateTime.create() {5b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'dateTime') then result := TFhirDateTime.Create() {5b}
   else if (propName = 'allergyIntolerance') then result := AllergyIntoleranceList.new(){2}
   else if (propName = 'foodPreferenceModifier') then result := FoodPreferenceModifierList.new(){2}
   else if (propName = 'excludeFoodModifier') then result := ExcludeFoodModifierList.new(){2}
-  else if (propName = 'oralDiet') then result := TFhirNutritionOrderOralDiet.create(){4b}
+  else if (propName = 'oralDiet') then result := TFhirNutritionOrderOralDiet.Create(){4b}
   else if (propName = 'supplement') then result := SupplementList.new(){2}
-  else if (propName = 'enteralFormula') then result := TFhirNutritionOrderEnteralFormula.create(){4b}
+  else if (propName = 'enteralFormula') then result := TFhirNutritionOrderEnteralFormula.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -57279,7 +57279,7 @@ end;
 Procedure TFhirNutritionOrder.SetDateTimeST(value : TFslDateTime);
 begin
   if FDateTime = nil then
-    FDateTime := TFhirDateTime.create;
+    FDateTime := TFhirDateTime.Create;
   FDateTime.value := value
 end;
 
@@ -57302,7 +57302,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirNutritionOrderStatusEnum[value], CODES_TFhirNutritionOrderStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirNutritionOrderStatusEnum[value], CODES_TFhirNutritionOrderStatusEnum[value]);
 end;
 
 Function TFhirNutritionOrder.GetAllergyIntoleranceList : TFhirReferenceList{TFhirAllergyIntolerance};
@@ -57365,21 +57365,21 @@ begin
   FEnteralFormula := value;
 end;
 
-function TFhirNutritionOrder.sizeInBytesV : cardinal;
+function TFhirNutritionOrder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FOrderer.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FDateTime.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FallergyIntoleranceList.sizeInBytes);
-  inc(result, FfoodPreferenceModifierList.sizeInBytes);
-  inc(result, FexcludeFoodModifierList.sizeInBytes);
-  inc(result, FOralDiet.sizeInBytes);
-  inc(result, FsupplementList.sizeInBytes);
-  inc(result, FEnteralFormula.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FOrderer.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FDateTime.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FallergyIntoleranceList.sizeInBytes(magic));
+  inc(result, FfoodPreferenceModifierList.sizeInBytes(magic));
+  inc(result, FexcludeFoodModifierList.sizeInBytes(magic));
+  inc(result, FOralDiet.sizeInBytes(magic));
+  inc(result, FsupplementList.sizeInBytes(magic));
+  inc(result, FEnteralFormula.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderListEnumerator }
@@ -57393,7 +57393,7 @@ end;
 
 destructor TFhirNutritionOrderListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -57408,22 +57408,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNutritionOrderListEnumerator.sizeInBytesV : cardinal;
+function TFhirNutritionOrderListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNutritionOrderList }
-procedure TFhirNutritionOrderList.AddItem(value: TFhirNutritionOrder);
+function TFhirNutritionOrderList.AddItem(value: TFhirNutritionOrder): TFhirNutritionOrder;
 begin
-  assert(value.ClassName = 'TFhirNutritionOrder', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNutritionOrder');
   add(value);
+  result := value;
 end;
 
 function TFhirNutritionOrderList.Append: TFhirNutritionOrder;
 begin
-  result := TFhirNutritionOrder.create;
+  result := TFhirNutritionOrder.Create;
   try
     add(result.Link);
   finally
@@ -57467,7 +57467,7 @@ end;
 
 function TFhirNutritionOrderList.Insert(index: Integer): TFhirNutritionOrder;
 begin
-  result := TFhirNutritionOrder.create;
+  result := TFhirNutritionOrder.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -57557,11 +57557,11 @@ end;
 procedure TFhirObservationReferenceRange.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'low', 'Quantity', false, TFhirQuantity, FLow.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'high', 'Quantity', false, TFhirQuantity, FHigh.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'meaning', 'CodeableConcept', false, TFhirCodeableConcept, FMeaning.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'age', 'Range', false, TFhirRange, FAge.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'low', 'Quantity', false, TFhirQuantity, FLow.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'high', 'Quantity', false, TFhirQuantity, FHigh.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'meaning', 'CodeableConcept', false, TFhirCodeableConcept, FMeaning.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'age', 'Range', false, TFhirRange, FAge.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
 end;
 
 function TFhirObservationReferenceRange.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -57601,11 +57601,11 @@ end;
 
 function TFhirObservationReferenceRange.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'low') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'high') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'meaning') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'age') then result := TFhirRange.create(){4b}
-  else if (propName = 'text') then result := TFhirString.create() {5b}
+  if (propName = 'low') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'high') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'meaning') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'age') then result := TFhirRange.Create(){4b}
+  else if (propName = 'text') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -57738,21 +57738,21 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
     FText.value := '';
 end;
 
-function TFhirObservationReferenceRange.sizeInBytesV : cardinal;
+function TFhirObservationReferenceRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLow.sizeInBytes);
-  inc(result, FHigh.sizeInBytes);
-  inc(result, FMeaning.sizeInBytes);
-  inc(result, FAge.sizeInBytes);
-  inc(result, FText.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLow.sizeInBytes(magic));
+  inc(result, FHigh.sizeInBytes(magic));
+  inc(result, FMeaning.sizeInBytes(magic));
+  inc(result, FAge.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
 end;
 
 { TFhirObservationReferenceRangeListEnumerator }
@@ -57766,7 +57766,7 @@ end;
 
 destructor TFhirObservationReferenceRangeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -57781,22 +57781,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirObservationReferenceRangeListEnumerator.sizeInBytesV : cardinal;
+function TFhirObservationReferenceRangeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirObservationReferenceRangeList }
-procedure TFhirObservationReferenceRangeList.AddItem(value: TFhirObservationReferenceRange);
+function TFhirObservationReferenceRangeList.AddItem(value: TFhirObservationReferenceRange): TFhirObservationReferenceRange;
 begin
-  assert(value.ClassName = 'TFhirObservationReferenceRange', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationReferenceRange');
   add(value);
+  result := value;
 end;
 
 function TFhirObservationReferenceRangeList.Append: TFhirObservationReferenceRange;
 begin
-  result := TFhirObservationReferenceRange.create;
+  result := TFhirObservationReferenceRange.Create;
   try
     add(result.Link);
   finally
@@ -57840,7 +57840,7 @@ end;
 
 function TFhirObservationReferenceRangeList.Insert(index: Integer): TFhirObservationReferenceRange;
 begin
-  result := TFhirObservationReferenceRange.create;
+  result := TFhirObservationReferenceRange.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -57914,8 +57914,8 @@ end;
 procedure TFhirObservationRelated.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'target', 'Reference(Observation|QuestionnaireResponse)', false, TFhirReference{Resource}, FTarget.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'code', false, TFHIREnum, FType_.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'target', 'Reference(Observation|QuestionnaireResponse)', false, TFhirReference{Resource}, FTarget.Link));{2}
 end;
 
 function TFhirObservationRelated.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -57940,7 +57940,7 @@ end;
 
 function TFhirObservationRelated.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'target') then result := TFhirReference{Resource}.create(){4b}
+  if (propName = 'target') then result := TFhirReference{Resource}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -58035,7 +58035,7 @@ begin
   if ord(value) = 0 then
     Type_Element := nil
   else
-    Type_Element := TFhirEnum.create(SYSTEMS_TFhirObservationRelationshiptypesEnum[value], CODES_TFhirObservationRelationshiptypesEnum[value]);
+    Type_Element := TFhirEnum.Create(SYSTEMS_TFhirObservationRelationshiptypesEnum[value], CODES_TFhirObservationRelationshiptypesEnum[value]);
 end;
 
 Procedure TFhirObservationRelated.SetTarget(value : TFhirReference{Resource});
@@ -58044,11 +58044,11 @@ begin
   FTarget := value;
 end;
 
-function TFhirObservationRelated.sizeInBytesV : cardinal;
+function TFhirObservationRelated.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
 end;
 
 { TFhirObservationRelatedListEnumerator }
@@ -58062,7 +58062,7 @@ end;
 
 destructor TFhirObservationRelatedListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -58077,22 +58077,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirObservationRelatedListEnumerator.sizeInBytesV : cardinal;
+function TFhirObservationRelatedListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirObservationRelatedList }
-procedure TFhirObservationRelatedList.AddItem(value: TFhirObservationRelated);
+function TFhirObservationRelatedList.AddItem(value: TFhirObservationRelated): TFhirObservationRelated;
 begin
-  assert(value.ClassName = 'TFhirObservationRelated', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationRelated');
   add(value);
+  result := value;
 end;
 
 function TFhirObservationRelatedList.Append: TFhirObservationRelated;
 begin
-  result := TFhirObservationRelated.create;
+  result := TFhirObservationRelated.Create;
   try
     add(result.Link);
   finally
@@ -58136,7 +58136,7 @@ end;
 
 function TFhirObservationRelatedList.Insert(index: Integer): TFhirObservationRelated;
 begin
-  result := TFhirObservationRelated.create;
+  result := TFhirObservationRelated.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -58189,7 +58189,7 @@ begin
   FCode.free;
   FValue.free;
   FDataAbsentReason.free;
-  FReferenceRangeList.Free;
+  FReferenceRangeList.free;
   inherited;
 end;
 
@@ -58228,10 +58228,10 @@ end;
 procedure TFhirObservationComponent.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'Quantity|CodeableConcept|string|Range|Ratio|SampledData|Attachment|time|dateTime|Period', false, TFhirType, FValue.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dataAbsentReason', 'CodeableConcept', false, TFhirCodeableConcept, FDataAbsentReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'referenceRange', '@Observation.referenceRange', true, TFhirObservationReferenceRange, FReferenceRangeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'value[x]', 'Quantity|CodeableConcept|string|Range|Ratio|SampledData|Attachment|time|dateTime|Period', false, TFhirType, FValue.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dataAbsentReason', 'CodeableConcept', false, TFhirCodeableConcept, FDataAbsentReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'referenceRange', '@Observation.referenceRange', true, TFhirObservationReferenceRange, FReferenceRangeList.Link)){3};
 end;
 
 function TFhirObservationComponent.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -58267,9 +58267,9 @@ end;
 
 function TFhirObservationComponent.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept', 'String', 'Range', 'Ratio', 'SampledData', 'Attachment', 'Time', 'DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Value'){4x}
-  else if (propName = 'dataAbsentReason') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept', 'String', 'Range', 'Ratio', 'SampledData', 'Attachment', 'Time', 'DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Value'){4x}
+  else if (propName = 'dataAbsentReason') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'referenceRange') then result := ReferenceRangeList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -58387,13 +58387,13 @@ begin
   result := (FReferenceRangeList <> nil) and (FReferenceRangeList.count > 0);
 end;
 
-function TFhirObservationComponent.sizeInBytesV : cardinal;
+function TFhirObservationComponent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
-  inc(result, FDataAbsentReason.sizeInBytes);
-  inc(result, FreferenceRangeList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
+  inc(result, FDataAbsentReason.sizeInBytes(magic));
+  inc(result, FreferenceRangeList.sizeInBytes(magic));
 end;
 
 { TFhirObservationComponentListEnumerator }
@@ -58407,7 +58407,7 @@ end;
 
 destructor TFhirObservationComponentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -58422,22 +58422,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirObservationComponentListEnumerator.sizeInBytesV : cardinal;
+function TFhirObservationComponentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirObservationComponentList }
-procedure TFhirObservationComponentList.AddItem(value: TFhirObservationComponent);
+function TFhirObservationComponentList.AddItem(value: TFhirObservationComponent): TFhirObservationComponent;
 begin
-  assert(value.ClassName = 'TFhirObservationComponent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservationComponent');
   add(value);
+  result := value;
 end;
 
 function TFhirObservationComponentList.Append: TFhirObservationComponent;
 begin
-  result := TFhirObservationComponent.create;
+  result := TFhirObservationComponent.Create;
   try
     add(result.Link);
   finally
@@ -58481,7 +58481,7 @@ end;
 
 function TFhirObservationComponentList.Insert(index: Integer): TFhirObservationComponent;
 begin
-  result := TFhirObservationComponent.create;
+  result := TFhirObservationComponent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -58531,7 +58531,7 @@ end;
 
 destructor TFhirObservation.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FCategory.free;
   FCode.free;
@@ -58539,7 +58539,7 @@ begin
   FEncounter.free;
   FEffective.free;
   FIssued.free;
-  FPerformerList.Free;
+  FPerformerList.free;
   FValue.free;
   FDataAbsentReason.free;
   FInterpretation.free;
@@ -58548,9 +58548,9 @@ begin
   FMethod.free;
   FSpecimen.free;
   FDevice.free;
-  FReferenceRangeList.Free;
-  FRelatedList.Free;
-  FComponentList.Free;
+  FReferenceRangeList.free;
+  FRelatedList.free;
+  FComponentList.free;
   inherited;
 end;
 
@@ -58682,26 +58682,26 @@ end;
 procedure TFhirObservation.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group|Device|Location)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'effective[x]', 'dateTime|Period', false, TFhirType, FEffective.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'issued', 'instant', false, TFhirInstant, FIssued.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Reference(Practitioner|Organization|Patient|RelatedPerson)', true, TFhirReference{Resource}, FPerformerList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'Quantity|CodeableConcept|string|Range|Ratio|SampledData|Attachment|time|dateTime|Period', false, TFhirType, FValue.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dataAbsentReason', 'CodeableConcept', false, TFhirCodeableConcept, FDataAbsentReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'interpretation', 'CodeableConcept', false, TFhirCodeableConcept, FInterpretation.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'comments', 'string', false, TFhirString, FComments.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'specimen', 'Reference(Specimen)', false, TFhirReference{TFhirSpecimen}, FSpecimen.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'device', 'Reference(Device|DeviceMetric)', false, TFhirReference{Resource}, FDevice.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'referenceRange', '', true, TFhirObservationReferenceRange, FReferenceRangeList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'related', '', true, TFhirObservationRelated, FRelatedList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'component', '', true, TFhirObservationComponent, FComponentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group|Device|Location)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'effective[x]', 'dateTime|Period', false, TFhirType, FEffective.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'issued', 'instant', false, TFhirInstant, FIssued.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', 'Reference(Practitioner|Organization|Patient|RelatedPerson)', true, TFhirReference{Resource}, FPerformerList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'value[x]', 'Quantity|CodeableConcept|string|Range|Ratio|SampledData|Attachment|time|dateTime|Period', false, TFhirType, FValue.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dataAbsentReason', 'CodeableConcept', false, TFhirCodeableConcept, FDataAbsentReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'interpretation', 'CodeableConcept', false, TFhirCodeableConcept, FInterpretation.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'comments', 'string', false, TFhirString, FComments.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'specimen', 'Reference(Specimen)', false, TFhirReference{TFhirSpecimen}, FSpecimen.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'device', 'Reference(Device|DeviceMetric)', false, TFhirReference{Resource}, FDevice.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'referenceRange', '', true, TFhirObservationReferenceRange, FReferenceRangeList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'related', '', true, TFhirObservationRelated, FRelatedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'component', '', true, TFhirObservationComponent, FComponentList.Link)){3};
 end;
 
 function TFhirObservation.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -58822,21 +58822,21 @@ end;
 function TFhirObservation.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (isMatchingName(propName, 'effective', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Effective'){4x}
-  else if (propName = 'issued') then result := TFhirInstant.create() {5b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (isMatchingName(propName, 'effective', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Effective'){4x}
+  else if (propName = 'issued') then result := TFhirInstant.Create() {5b}
   else if (propName = 'performer') then result := PerformerList.new(){2}
-  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept', 'String', 'Range', 'Ratio', 'SampledData', 'Attachment', 'Time', 'DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Value'){4x}
-  else if (propName = 'dataAbsentReason') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'interpretation') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'comments') then result := TFhirString.create() {5b}
-  else if (propName = 'bodySite') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'specimen') then result := TFhirReference{TFhirSpecimen}.create(){4b}
-  else if (propName = 'device') then result := TFhirReference{Resource}.create(){4b}
+  else if (isMatchingName(propName, 'value', ['Quantity', 'CodeableConcept', 'String', 'Range', 'Ratio', 'SampledData', 'Attachment', 'Time', 'DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Value'){4x}
+  else if (propName = 'dataAbsentReason') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'interpretation') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'comments') then result := TFhirString.Create() {5b}
+  else if (propName = 'bodySite') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'specimen') then result := TFhirReference{TFhirSpecimen}.Create(){4b}
+  else if (propName = 'device') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'referenceRange') then result := ReferenceRangeList.new(){2}
   else if (propName = 'related') then result := RelatedList.new(){2}
   else if (propName = 'component') then result := ComponentList.new(){2}
@@ -59033,7 +59033,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirObservationStatusEnum[value], CODES_TFhirObservationStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirObservationStatusEnum[value], CODES_TFhirObservationStatusEnum[value]);
 end;
 
 Procedure TFhirObservation.SetCategory(value : TFhirCodeableConcept);
@@ -59083,7 +59083,7 @@ end;
 Procedure TFhirObservation.SetIssuedST(value : TFslDateTime);
 begin
   if FIssued = nil then
-    FIssued := TFhirInstant.create;
+    FIssued := TFhirInstant.Create;
   FIssued.value := value
 end;
 
@@ -59136,7 +59136,7 @@ begin
   if value <> '' then
   begin
     if FComments = nil then
-      FComments := TFhirString.create;
+      FComments := TFhirString.Create;
     FComments.value := value
   end
   else if FComments <> nil then
@@ -59203,29 +59203,29 @@ begin
   result := (FComponentList <> nil) and (FComponentList.count > 0);
 end;
 
-function TFhirObservation.sizeInBytesV : cardinal;
+function TFhirObservation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FEffective.sizeInBytes);
-  inc(result, FIssued.sizeInBytes);
-  inc(result, FperformerList.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
-  inc(result, FDataAbsentReason.sizeInBytes);
-  inc(result, FInterpretation.sizeInBytes);
-  inc(result, FComments.sizeInBytes);
-  inc(result, FBodySite.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FSpecimen.sizeInBytes);
-  inc(result, FDevice.sizeInBytes);
-  inc(result, FreferenceRangeList.sizeInBytes);
-  inc(result, FrelatedList.sizeInBytes);
-  inc(result, FcomponentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FEffective.sizeInBytes(magic));
+  inc(result, FIssued.sizeInBytes(magic));
+  inc(result, FperformerList.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
+  inc(result, FDataAbsentReason.sizeInBytes(magic));
+  inc(result, FInterpretation.sizeInBytes(magic));
+  inc(result, FComments.sizeInBytes(magic));
+  inc(result, FBodySite.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FSpecimen.sizeInBytes(magic));
+  inc(result, FDevice.sizeInBytes(magic));
+  inc(result, FreferenceRangeList.sizeInBytes(magic));
+  inc(result, FrelatedList.sizeInBytes(magic));
+  inc(result, FcomponentList.sizeInBytes(magic));
 end;
 
 { TFhirObservationListEnumerator }
@@ -59239,7 +59239,7 @@ end;
 
 destructor TFhirObservationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -59254,22 +59254,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirObservationListEnumerator.sizeInBytesV : cardinal;
+function TFhirObservationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirObservationList }
-procedure TFhirObservationList.AddItem(value: TFhirObservation);
+function TFhirObservationList.AddItem(value: TFhirObservation): TFhirObservation;
 begin
-  assert(value.ClassName = 'TFhirObservation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirObservation');
   add(value);
+  result := value;
 end;
 
 function TFhirObservationList.Append: TFhirObservation;
 begin
-  result := TFhirObservation.create;
+  result := TFhirObservation.Create;
   try
     add(result.Link);
   finally
@@ -59313,7 +59313,7 @@ end;
 
 function TFhirObservationList.Insert(index: Integer): TFhirObservation;
 begin
-  result := TFhirObservation.create;
+  result := TFhirObservation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -59391,8 +59391,8 @@ end;
 procedure TFhirProcedurePerformer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'actor', 'Reference(Practitioner|Organization|Patient|RelatedPerson)', false, TFhirReference{Resource}, FActor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'actor', 'Reference(Practitioner|Organization|Patient|RelatedPerson)', false, TFhirReference{Resource}, FActor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'role', 'CodeableConcept', false, TFhirCodeableConcept, FRole.Link));{2}
 end;
 
 function TFhirProcedurePerformer.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -59417,8 +59417,8 @@ end;
 
 function TFhirProcedurePerformer.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'actor') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'role') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'actor') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'role') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -59506,11 +59506,11 @@ begin
   FRole := value;
 end;
 
-function TFhirProcedurePerformer.sizeInBytesV : cardinal;
+function TFhirProcedurePerformer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FActor.sizeInBytes);
-  inc(result, FRole.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FActor.sizeInBytes(magic));
+  inc(result, FRole.sizeInBytes(magic));
 end;
 
 { TFhirProcedurePerformerListEnumerator }
@@ -59524,7 +59524,7 @@ end;
 
 destructor TFhirProcedurePerformerListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -59539,22 +59539,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcedurePerformerListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcedurePerformerListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcedurePerformerList }
-procedure TFhirProcedurePerformerList.AddItem(value: TFhirProcedurePerformer);
+function TFhirProcedurePerformerList.AddItem(value: TFhirProcedurePerformer): TFhirProcedurePerformer;
 begin
-  assert(value.ClassName = 'TFhirProcedurePerformer', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProcedurePerformer');
   add(value);
+  result := value;
 end;
 
 function TFhirProcedurePerformerList.Append: TFhirProcedurePerformer;
 begin
-  result := TFhirProcedurePerformer.create;
+  result := TFhirProcedurePerformer.Create;
   try
     add(result.Link);
   finally
@@ -59598,7 +59598,7 @@ end;
 
 function TFhirProcedurePerformerList.Insert(index: Integer): TFhirProcedurePerformer;
 begin
-  result := TFhirProcedurePerformer.create;
+  result := TFhirProcedurePerformer.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -59672,8 +59672,8 @@ end;
 procedure TFhirProcedureFocalDevice.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'action', 'CodeableConcept', false, TFhirCodeableConcept, FAction.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'manipulated', 'Reference(Device)', false, TFhirReference{TFhirDevice}, FManipulated.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'action', 'CodeableConcept', false, TFhirCodeableConcept, FAction.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'manipulated', 'Reference(Device)', false, TFhirReference{TFhirDevice}, FManipulated.Link));{2}
 end;
 
 function TFhirProcedureFocalDevice.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -59698,8 +59698,8 @@ end;
 
 function TFhirProcedureFocalDevice.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'action') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'manipulated') then result := TFhirReference{TFhirDevice}.create(){4b}
+  if (propName = 'action') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'manipulated') then result := TFhirReference{TFhirDevice}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -59787,11 +59787,11 @@ begin
   FManipulated := value;
 end;
 
-function TFhirProcedureFocalDevice.sizeInBytesV : cardinal;
+function TFhirProcedureFocalDevice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAction.sizeInBytes);
-  inc(result, FManipulated.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAction.sizeInBytes(magic));
+  inc(result, FManipulated.sizeInBytes(magic));
 end;
 
 { TFhirProcedureFocalDeviceListEnumerator }
@@ -59805,7 +59805,7 @@ end;
 
 destructor TFhirProcedureFocalDeviceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -59820,22 +59820,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcedureFocalDeviceListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcedureFocalDeviceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcedureFocalDeviceList }
-procedure TFhirProcedureFocalDeviceList.AddItem(value: TFhirProcedureFocalDevice);
+function TFhirProcedureFocalDeviceList.AddItem(value: TFhirProcedureFocalDevice): TFhirProcedureFocalDevice;
 begin
-  assert(value.ClassName = 'TFhirProcedureFocalDevice', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProcedureFocalDevice');
   add(value);
+  result := value;
 end;
 
 function TFhirProcedureFocalDeviceList.Append: TFhirProcedureFocalDevice;
 begin
-  result := TFhirProcedureFocalDevice.create;
+  result := TFhirProcedureFocalDevice.Create;
   try
     add(result.Link);
   finally
@@ -59879,7 +59879,7 @@ end;
 
 function TFhirProcedureFocalDeviceList.Insert(index: Integer): TFhirProcedureFocalDevice;
 begin
-  result := TFhirProcedureFocalDevice.create;
+  result := TFhirProcedureFocalDevice.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -59929,27 +59929,27 @@ end;
 
 destructor TFhirProcedure.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
   FStatus.free;
   FCategory.free;
   FCode.free;
   FNotPerformed.free;
-  FReasonNotPerformedList.Free;
-  FBodySiteList.Free;
+  FReasonNotPerformedList.free;
+  FBodySiteList.free;
   FReason.free;
-  FPerformerList.Free;
+  FPerformerList.free;
   FPerformed.free;
   FEncounter.free;
   FLocation.free;
   FOutcome.free;
-  FReportList.Free;
-  FComplicationList.Free;
-  FFollowUpList.Free;
+  FReportList.free;
+  FComplicationList.free;
+  FFollowUpList.free;
   FRequest.free;
-  FNotesList.Free;
-  FFocalDeviceList.Free;
-  FUsedList.Free;
+  FNotesList.free;
+  FFocalDeviceList.free;
+  FUsedList.free;
   inherited;
 end;
 
@@ -60134,27 +60134,27 @@ end;
 procedure TFhirProcedure.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'notPerformed', 'boolean', false, TFhirBoolean, FNotPerformed.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reasonNotPerformed', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotPerformedList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', '', true, TFhirProcedurePerformer, FPerformerList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'performed[x]', 'dateTime|Period', false, TFhirType, FPerformed.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'location', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FLocation.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'outcome', 'CodeableConcept', false, TFhirCodeableConcept, FOutcome.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'report', 'Reference(DiagnosticReport)', true, TFhirReference{TFhirDiagnosticReport}, FReportList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'complication', 'CodeableConcept', true, TFhirCodeableConcept, FComplicationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'followUp', 'CodeableConcept', true, TFhirCodeableConcept, FFollowUpList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'request', 'Reference(CarePlan|DiagnosticOrder|ProcedureRequest|ReferralRequest)', false, TFhirReference{Resource}, FRequest.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'notes', 'Annotation', true, TFhirAnnotation, FNotesList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'focalDevice', '', true, TFhirProcedureFocalDevice, FFocalDeviceList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'used', 'Reference(Device|Medication|Substance)', true, TFhirReference{Resource}, FUsedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'category', 'CodeableConcept', false, TFhirCodeableConcept, FCategory.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'notPerformed', 'boolean', false, TFhirBoolean, FNotPerformed.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reasonNotPerformed', 'CodeableConcept', true, TFhirCodeableConcept, FReasonNotPerformedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', '', true, TFhirProcedurePerformer, FPerformerList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'performed[x]', 'dateTime|Period', false, TFhirType, FPerformed.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'location', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FLocation.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'outcome', 'CodeableConcept', false, TFhirCodeableConcept, FOutcome.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'report', 'Reference(DiagnosticReport)', true, TFhirReference{TFhirDiagnosticReport}, FReportList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'complication', 'CodeableConcept', true, TFhirCodeableConcept, FComplicationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'followUp', 'CodeableConcept', true, TFhirCodeableConcept, FFollowUpList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'request', 'Reference(CarePlan|DiagnosticOrder|ProcedureRequest|ReferralRequest)', false, TFhirReference{Resource}, FRequest.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'notes', 'Annotation', true, TFhirAnnotation, FNotesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'focalDevice', '', true, TFhirProcedureFocalDevice, FFocalDeviceList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'used', 'Reference(Device|Medication|Substance)', true, TFhirReference{Resource}, FUsedList.Link)){3};
 end;
 
 function TFhirProcedure.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -60285,22 +60285,22 @@ end;
 function TFhirProcedure.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'category') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'notPerformed') then result := TFhirBoolean.create() {5b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'category') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'notPerformed') then result := TFhirBoolean.Create() {5b}
   else if (propName = 'reasonNotPerformed') then result := ReasonNotPerformedList.new(){2}
   else if (propName = 'bodySite') then result := BodySiteList.new(){2}
-  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Reason'){4x}
+  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Reason'){4x}
   else if (propName = 'performer') then result := PerformerList.new(){2}
-  else if (isMatchingName(propName, 'performed', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Performed'){4x}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'location') then result := TFhirReference{TFhirLocation}.create(){4b}
-  else if (propName = 'outcome') then result := TFhirCodeableConcept.create(){4b}
+  else if (isMatchingName(propName, 'performed', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Performed'){4x}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'location') then result := TFhirReference{TFhirLocation}.Create(){4b}
+  else if (propName = 'outcome') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'report') then result := ReportList.new(){2}
   else if (propName = 'complication') then result := ComplicationList.new(){2}
   else if (propName = 'followUp') then result := FollowUpList.new(){2}
-  else if (propName = 'request') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'request') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'notes') then result := NotesList.new(){2}
   else if (propName = 'focalDevice') then result := FocalDeviceList.new(){2}
   else if (propName = 'used') then result := UsedList.new(){2}
@@ -60513,7 +60513,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirProcedureStatusEnum[value], CODES_TFhirProcedureStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirProcedureStatusEnum[value], CODES_TFhirProcedureStatusEnum[value]);
 end;
 
 Procedure TFhirProcedure.SetCategory(value : TFhirCodeableConcept);
@@ -60545,7 +60545,7 @@ end;
 Procedure TFhirProcedure.SetNotPerformedST(value : Boolean);
 begin
   if FNotPerformed = nil then
-    FNotPerformed := TFhirBoolean.create;
+    FNotPerformed := TFhirBoolean.Create;
   FNotPerformed.value := value
 end;
 
@@ -60693,30 +60693,30 @@ begin
   result := (FUsedList <> nil) and (FUsedList.count > 0);
 end;
 
-function TFhirProcedure.sizeInBytesV : cardinal;
+function TFhirProcedure.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FNotPerformed.sizeInBytes);
-  inc(result, FreasonNotPerformedList.sizeInBytes);
-  inc(result, FbodySiteList.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FperformerList.sizeInBytes);
-  inc(result, FPerformed.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FLocation.sizeInBytes);
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FreportList.sizeInBytes);
-  inc(result, FcomplicationList.sizeInBytes);
-  inc(result, FfollowUpList.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FnotesList.sizeInBytes);
-  inc(result, FfocalDeviceList.sizeInBytes);
-  inc(result, FusedList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FNotPerformed.sizeInBytes(magic));
+  inc(result, FreasonNotPerformedList.sizeInBytes(magic));
+  inc(result, FbodySiteList.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FperformerList.sizeInBytes(magic));
+  inc(result, FPerformed.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FLocation.sizeInBytes(magic));
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FreportList.sizeInBytes(magic));
+  inc(result, FcomplicationList.sizeInBytes(magic));
+  inc(result, FfollowUpList.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FnotesList.sizeInBytes(magic));
+  inc(result, FfocalDeviceList.sizeInBytes(magic));
+  inc(result, FusedList.sizeInBytes(magic));
 end;
 
 { TFhirProcedureListEnumerator }
@@ -60730,7 +60730,7 @@ end;
 
 destructor TFhirProcedureListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -60745,22 +60745,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcedureListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcedureListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcedureList }
-procedure TFhirProcedureList.AddItem(value: TFhirProcedure);
+function TFhirProcedureList.AddItem(value: TFhirProcedure): TFhirProcedure;
 begin
-  assert(value.ClassName = 'TFhirProcedure', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProcedure');
   add(value);
+  result := value;
 end;
 
 function TFhirProcedureList.Append: TFhirProcedure;
 begin
-  result := TFhirProcedure.create;
+  result := TFhirProcedure.Create;
   try
     add(result.Link);
   finally
@@ -60804,7 +60804,7 @@ end;
 
 function TFhirProcedureList.Insert(index: Integer): TFhirProcedure;
 begin
-  result := TFhirProcedure.create;
+  result := TFhirProcedure.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -60858,16 +60858,16 @@ end;
 
 destructor TFhirProcedureRequest.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FSubject.free;
   FCode.free;
-  FBodySiteList.Free;
+  FBodySiteList.free;
   FReason.free;
   FScheduled.free;
   FEncounter.free;
   FPerformer.free;
   FStatus.free;
-  FNotesList.Free;
+  FNotesList.free;
   FAsNeeded.free;
   FOrderedOn.free;
   FOrderer.free;
@@ -60965,20 +60965,20 @@ end;
 procedure TFhirProcedureRequest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'scheduled[x]', 'dateTime|Period|Timing', false, TFhirType, FScheduled.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Reference(Practitioner|Organization|Patient|RelatedPerson)', false, TFhirReference{Resource}, FPerformer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'notes', 'Annotation', true, TFhirAnnotation, FNotesList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'orderedOn', 'dateTime', false, TFhirDateTime, FOrderedOn.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'orderer', 'Reference(Practitioner|Patient|RelatedPerson|Device)', false, TFhirReference{Resource}, FOrderer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priority', 'code', false, TFHIREnum, FPriority.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', true, TFhirCodeableConcept, FBodySiteList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'scheduled[x]', 'dateTime|Period|Timing', false, TFhirType, FScheduled.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', 'Reference(Practitioner|Organization|Patient|RelatedPerson)', false, TFhirReference{Resource}, FPerformer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'notes', 'Annotation', true, TFhirAnnotation, FNotesList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'asNeeded[x]', 'boolean|CodeableConcept', false, TFhirType, FAsNeeded.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'orderedOn', 'dateTime', false, TFhirDateTime, FOrderedOn.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'orderer', 'Reference(Practitioner|Patient|RelatedPerson|Device)', false, TFhirReference{Resource}, FOrderer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'code', false, TFHIREnum, FPriority.Link));{1}
 end;
 
 function TFhirProcedureRequest.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -61067,17 +61067,17 @@ end;
 function TFhirProcedureRequest.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'bodySite') then result := BodySiteList.new(){2}
-  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Reason'){4x}
-  else if (isMatchingName(propName, 'scheduled', ['DateTime', 'Period', 'Timing'])) then raise EFHIRException.create('Cannot make property Scheduled'){4x}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'performer') then result := TFhirReference{Resource}.create(){4b}
+  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Reason'){4x}
+  else if (isMatchingName(propName, 'scheduled', ['DateTime', 'Period', 'Timing'])) then raise EFHIRException.Create('Cannot make property Scheduled'){4x}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'performer') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'notes') then result := NotesList.new(){2}
-  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property AsNeeded'){4x}
-  else if (propName = 'orderedOn') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'orderer') then result := TFhirReference{Resource}.create(){4b}
+  else if (isMatchingName(propName, 'asNeeded', ['Boolean', 'CodeableConcept'])) then raise EFHIRException.Create('Cannot make property AsNeeded'){4x}
+  else if (propName = 'orderedOn') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'orderer') then result := TFhirReference{Resource}.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -61290,7 +61290,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirProcedureRequestStatusEnum[value], CODES_TFhirProcedureRequestStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirProcedureRequestStatusEnum[value], CODES_TFhirProcedureRequestStatusEnum[value]);
 end;
 
 Function TFhirProcedureRequest.GetNotesList : TFhirAnnotationList;
@@ -61328,7 +61328,7 @@ end;
 Procedure TFhirProcedureRequest.SetOrderedOnST(value : TFslDateTime);
 begin
   if FOrderedOn = nil then
-    FOrderedOn := TFhirDateTime.create;
+    FOrderedOn := TFhirDateTime.Create;
   FOrderedOn.value := value
 end;
 
@@ -61357,26 +61357,26 @@ begin
   if ord(value) = 0 then
     PriorityElement := nil
   else
-    PriorityElement := TFhirEnum.create(SYSTEMS_TFhirProcedureRequestPriorityEnum[value], CODES_TFhirProcedureRequestPriorityEnum[value]);
+    PriorityElement := TFhirEnum.Create(SYSTEMS_TFhirProcedureRequestPriorityEnum[value], CODES_TFhirProcedureRequestPriorityEnum[value]);
 end;
 
-function TFhirProcedureRequest.sizeInBytesV : cardinal;
+function TFhirProcedureRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FbodySiteList.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FScheduled.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FPerformer.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FnotesList.sizeInBytes);
-  inc(result, FAsNeeded.sizeInBytes);
-  inc(result, FOrderedOn.sizeInBytes);
-  inc(result, FOrderer.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FbodySiteList.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FScheduled.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FPerformer.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FnotesList.sizeInBytes(magic));
+  inc(result, FAsNeeded.sizeInBytes(magic));
+  inc(result, FOrderedOn.sizeInBytes(magic));
+  inc(result, FOrderer.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
 end;
 
 { TFhirProcedureRequestListEnumerator }
@@ -61390,7 +61390,7 @@ end;
 
 destructor TFhirProcedureRequestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -61405,22 +61405,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirProcedureRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirProcedureRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirProcedureRequestList }
-procedure TFhirProcedureRequestList.AddItem(value: TFhirProcedureRequest);
+function TFhirProcedureRequestList.AddItem(value: TFhirProcedureRequest): TFhirProcedureRequest;
 begin
-  assert(value.ClassName = 'TFhirProcedureRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirProcedureRequest');
   add(value);
+  result := value;
 end;
 
 function TFhirProcedureRequestList.Append: TFhirProcedureRequest;
 begin
-  result := TFhirProcedureRequest.create;
+  result := TFhirProcedureRequest.Create;
   try
     add(result.Link);
   finally
@@ -61464,7 +61464,7 @@ end;
 
 function TFhirProcedureRequestList.Insert(index: Integer): TFhirProcedureRequest;
 begin
-  result := TFhirProcedureRequest.create;
+  result := TFhirProcedureRequest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -61522,8 +61522,8 @@ begin
   FTitle.free;
   FText.free;
   FSubject.free;
-  FGroupList.Free;
-  FQuestionList.Free;
+  FGroupList.free;
+  FQuestionList.free;
   inherited;
 end;
 
@@ -61578,12 +61578,12 @@ end;
 procedure TFhirQuestionnaireResponseGroup.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'linkId', 'string', false, TFhirString, FLinkId.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'group', '@QuestionnaireResponse.group', true, TFhirQuestionnaireResponseGroup, FGroupList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'question', '', true, TFhirQuestionnaireResponseGroupQuestion, FQuestionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'linkId', 'string', false, TFhirString, FLinkId.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'title', 'string', false, TFhirString, FTitle.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'group', '@QuestionnaireResponse.group', true, TFhirQuestionnaireResponseGroup, FGroupList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'question', '', true, TFhirQuestionnaireResponseGroupQuestion, FQuestionList.Link)){3};
 end;
 
 function TFhirQuestionnaireResponseGroup.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -61630,10 +61630,10 @@ end;
 
 function TFhirQuestionnaireResponseGroup.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'linkId') then result := TFhirString.create() {5b}
-  else if (propName = 'title') then result := TFhirString.create() {5b}
-  else if (propName = 'text') then result := TFhirString.create() {5b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.create(){4b}
+  if (propName = 'linkId') then result := TFhirString.Create() {5b}
+  else if (propName = 'title') then result := TFhirString.Create() {5b}
+  else if (propName = 'text') then result := TFhirString.Create() {5b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.Create(){4b}
   else if (propName = 'group') then result := GroupList.new(){2}
   else if (propName = 'question') then result := QuestionList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -61751,7 +61751,7 @@ begin
   if value <> '' then
   begin
     if FLinkId = nil then
-      FLinkId := TFhirString.create;
+      FLinkId := TFhirString.Create;
     FLinkId.value := value
   end
   else if FLinkId <> nil then
@@ -61777,7 +61777,7 @@ begin
   if value <> '' then
   begin
     if FTitle = nil then
-      FTitle := TFhirString.create;
+      FTitle := TFhirString.Create;
     FTitle.value := value
   end
   else if FTitle <> nil then
@@ -61803,7 +61803,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -61840,15 +61840,15 @@ begin
   result := (FQuestionList <> nil) and (FQuestionList.count > 0);
 end;
 
-function TFhirQuestionnaireResponseGroup.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLinkId.sizeInBytes);
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FText.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FgroupList.sizeInBytes);
-  inc(result, FquestionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLinkId.sizeInBytes(magic));
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FgroupList.sizeInBytes(magic));
+  inc(result, FquestionList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseGroupListEnumerator }
@@ -61862,7 +61862,7 @@ end;
 
 destructor TFhirQuestionnaireResponseGroupListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -61877,22 +61877,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireResponseGroupListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseGroupListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseGroupList }
-procedure TFhirQuestionnaireResponseGroupList.AddItem(value: TFhirQuestionnaireResponseGroup);
+function TFhirQuestionnaireResponseGroupList.AddItem(value: TFhirQuestionnaireResponseGroup): TFhirQuestionnaireResponseGroup;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaireResponseGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireResponseGroup');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireResponseGroupList.Append: TFhirQuestionnaireResponseGroup;
 begin
-  result := TFhirQuestionnaireResponseGroup.create;
+  result := TFhirQuestionnaireResponseGroup.Create;
   try
     add(result.Link);
   finally
@@ -61936,7 +61936,7 @@ end;
 
 function TFhirQuestionnaireResponseGroupList.Insert(index: Integer): TFhirQuestionnaireResponseGroup;
 begin
-  result := TFhirQuestionnaireResponseGroup.create;
+  result := TFhirQuestionnaireResponseGroup.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -61988,7 +61988,7 @@ destructor TFhirQuestionnaireResponseGroupQuestion.Destroy;
 begin
   FLinkId.free;
   FText.free;
-  FAnswerList.Free;
+  FAnswerList.free;
   inherited;
 end;
 
@@ -62024,9 +62024,9 @@ end;
 procedure TFhirQuestionnaireResponseGroupQuestion.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'linkId', 'string', false, TFhirString, FLinkId.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'answer', '', true, TFhirQuestionnaireResponseGroupQuestionAnswer, FAnswerList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'linkId', 'string', false, TFhirString, FLinkId.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'text', 'string', false, TFhirString, FText.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'answer', '', true, TFhirQuestionnaireResponseGroupQuestionAnswer, FAnswerList.Link)){3};
 end;
 
 function TFhirQuestionnaireResponseGroupQuestion.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -62057,8 +62057,8 @@ end;
 
 function TFhirQuestionnaireResponseGroupQuestion.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'linkId') then result := TFhirString.create() {5b}
-  else if (propName = 'text') then result := TFhirString.create() {5b}
+  if (propName = 'linkId') then result := TFhirString.Create() {5b}
+  else if (propName = 'text') then result := TFhirString.Create() {5b}
   else if (propName = 'answer') then result := AnswerList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -62161,7 +62161,7 @@ begin
   if value <> '' then
   begin
     if FLinkId = nil then
-      FLinkId := TFhirString.create;
+      FLinkId := TFhirString.Create;
     FLinkId.value := value
   end
   else if FLinkId <> nil then
@@ -62187,7 +62187,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -62206,12 +62206,12 @@ begin
   result := (FAnswerList <> nil) and (FAnswerList.count > 0);
 end;
 
-function TFhirQuestionnaireResponseGroupQuestion.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseGroupQuestion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLinkId.sizeInBytes);
-  inc(result, FText.sizeInBytes);
-  inc(result, FanswerList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLinkId.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FanswerList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseGroupQuestionListEnumerator }
@@ -62225,7 +62225,7 @@ end;
 
 destructor TFhirQuestionnaireResponseGroupQuestionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -62240,22 +62240,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireResponseGroupQuestionListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseGroupQuestionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseGroupQuestionList }
-procedure TFhirQuestionnaireResponseGroupQuestionList.AddItem(value: TFhirQuestionnaireResponseGroupQuestion);
+function TFhirQuestionnaireResponseGroupQuestionList.AddItem(value: TFhirQuestionnaireResponseGroupQuestion): TFhirQuestionnaireResponseGroupQuestion;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaireResponseGroupQuestion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireResponseGroupQuestion');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireResponseGroupQuestionList.Append: TFhirQuestionnaireResponseGroupQuestion;
 begin
-  result := TFhirQuestionnaireResponseGroupQuestion.create;
+  result := TFhirQuestionnaireResponseGroupQuestion.Create;
   try
     add(result.Link);
   finally
@@ -62299,7 +62299,7 @@ end;
 
 function TFhirQuestionnaireResponseGroupQuestionList.Insert(index: Integer): TFhirQuestionnaireResponseGroupQuestion;
 begin
-  result := TFhirQuestionnaireResponseGroupQuestion.create;
+  result := TFhirQuestionnaireResponseGroupQuestion.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -62350,7 +62350,7 @@ end;
 destructor TFhirQuestionnaireResponseGroupQuestionAnswer.Destroy;
 begin
   FValue.free;
-  FGroupList.Free;
+  FGroupList.free;
   inherited;
 end;
 
@@ -62383,8 +62383,8 @@ end;
 procedure TFhirQuestionnaireResponseGroupQuestionAnswer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'value[x]', 'boolean|decimal|integer|date|dateTime|instant|time|string|uri|Attachment|Coding|Quantity|Reference(Any)', false, TFhirType, FValue.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'group', '@QuestionnaireResponse.group', true, TFhirQuestionnaireResponseGroup, FGroupList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'value[x]', 'boolean|decimal|integer|date|dateTime|instant|time|string|uri|Attachment|Coding|Quantity|Reference(Any)', false, TFhirType, FValue.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'group', '@QuestionnaireResponse.group', true, TFhirQuestionnaireResponseGroup, FGroupList.Link)){3};
 end;
 
 function TFhirQuestionnaireResponseGroupQuestionAnswer.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -62410,7 +62410,7 @@ end;
 
 function TFhirQuestionnaireResponseGroupQuestionAnswer.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (isMatchingName(propName, 'value', ['Boolean', 'Decimal', 'Integer', 'Date', 'DateTime', 'Instant', 'Time', 'String', 'Uri', 'Attachment', 'Coding', 'Quantity', 'Reference'])) then raise EFHIRException.create('Cannot make property Value'){4x}
+  if (isMatchingName(propName, 'value', ['Boolean', 'Decimal', 'Integer', 'Date', 'DateTime', 'Instant', 'Time', 'String', 'Uri', 'Attachment', 'Coding', 'Quantity', 'Reference'])) then raise EFHIRException.Create('Cannot make property Value'){4x}
   else if (propName = 'group') then result := GroupList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -62507,11 +62507,11 @@ begin
   result := (FGroupList <> nil) and (FGroupList.count > 0);
 end;
 
-function TFhirQuestionnaireResponseGroupQuestionAnswer.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseGroupQuestionAnswer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FValue.sizeInBytes);
-  inc(result, FgroupList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FValue.sizeInBytes(magic));
+  inc(result, FgroupList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseGroupQuestionAnswerListEnumerator }
@@ -62525,7 +62525,7 @@ end;
 
 destructor TFhirQuestionnaireResponseGroupQuestionAnswerListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -62540,22 +62540,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireResponseGroupQuestionAnswerListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseGroupQuestionAnswerListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseGroupQuestionAnswerList }
-procedure TFhirQuestionnaireResponseGroupQuestionAnswerList.AddItem(value: TFhirQuestionnaireResponseGroupQuestionAnswer);
+function TFhirQuestionnaireResponseGroupQuestionAnswerList.AddItem(value: TFhirQuestionnaireResponseGroupQuestionAnswer): TFhirQuestionnaireResponseGroupQuestionAnswer;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaireResponseGroupQuestionAnswer', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireResponseGroupQuestionAnswer');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireResponseGroupQuestionAnswerList.Append: TFhirQuestionnaireResponseGroupQuestionAnswer;
 begin
-  result := TFhirQuestionnaireResponseGroupQuestionAnswer.create;
+  result := TFhirQuestionnaireResponseGroupQuestionAnswer.Create;
   try
     add(result.Link);
   finally
@@ -62599,7 +62599,7 @@ end;
 
 function TFhirQuestionnaireResponseGroupQuestionAnswerList.Insert(index: Integer): TFhirQuestionnaireResponseGroupQuestionAnswer;
 begin
-  result := TFhirQuestionnaireResponseGroupQuestionAnswer.create;
+  result := TFhirQuestionnaireResponseGroupQuestionAnswer.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -62706,15 +62706,15 @@ end;
 procedure TFhirQuestionnaireResponse.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'questionnaire', 'Reference(Questionnaire)', false, TFhirReference{TFhirQuestionnaire}, FQuestionnaire.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'author', 'Reference(Device|Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'authored', 'dateTime', false, TFhirDateTime, FAuthored.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'source', 'Reference(Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FSource.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'group', '', false, TFhirQuestionnaireResponseGroup, FGroup.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'questionnaire', 'Reference(Questionnaire)', false, TFhirReference{TFhirQuestionnaire}, FQuestionnaire.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Any)', false, TFhirReference{TFhirReference}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'author', 'Reference(Device|Practitioner|Patient|RelatedPerson)', false, TFhirReference{Resource}, FAuthor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'authored', 'dateTime', false, TFhirDateTime, FAuthored.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'source', 'Reference(Patient|Practitioner|RelatedPerson)', false, TFhirReference{Resource}, FSource.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'group', '', false, TFhirQuestionnaireResponseGroup, FGroup.Link));{2}
 end;
 
 function TFhirQuestionnaireResponse.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -62774,14 +62774,14 @@ end;
 
 function TFhirQuestionnaireResponse.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'questionnaire') then result := TFhirReference{TFhirQuestionnaire}.create(){4b}
-  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.create(){4b}
-  else if (propName = 'author') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'authored') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'source') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'group') then result := TFhirQuestionnaireResponseGroup.create(){4b}
+  if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'questionnaire') then result := TFhirReference{TFhirQuestionnaire}.Create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{TFhirReference}.Create(){4b}
+  else if (propName = 'author') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'authored') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'source') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'group') then result := TFhirQuestionnaireResponseGroup.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -62920,7 +62920,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirQuestionnaireAnswersStatusEnum[value], CODES_TFhirQuestionnaireAnswersStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirQuestionnaireAnswersStatusEnum[value], CODES_TFhirQuestionnaireAnswersStatusEnum[value]);
 end;
 
 Procedure TFhirQuestionnaireResponse.SetSubject(value : TFhirReference{TFhirReference});
@@ -62952,7 +62952,7 @@ end;
 Procedure TFhirQuestionnaireResponse.SetAuthoredST(value : TFslDateTime);
 begin
   if FAuthored = nil then
-    FAuthored := TFhirDateTime.create;
+    FAuthored := TFhirDateTime.Create;
   FAuthored.value := value
 end;
 
@@ -62974,18 +62974,18 @@ begin
   FGroup := value;
 end;
 
-function TFhirQuestionnaireResponse.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FQuestionnaire.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FAuthor.sizeInBytes);
-  inc(result, FAuthored.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FGroup.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FQuestionnaire.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FAuthor.sizeInBytes(magic));
+  inc(result, FAuthored.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FGroup.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseListEnumerator }
@@ -62999,7 +62999,7 @@ end;
 
 destructor TFhirQuestionnaireResponseListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -63014,22 +63014,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireResponseListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireResponseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireResponseList }
-procedure TFhirQuestionnaireResponseList.AddItem(value: TFhirQuestionnaireResponse);
+function TFhirQuestionnaireResponseList.AddItem(value: TFhirQuestionnaireResponse): TFhirQuestionnaireResponse;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaireResponse', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireResponse');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireResponseList.Append: TFhirQuestionnaireResponse;
 begin
-  result := TFhirQuestionnaireResponse.create;
+  result := TFhirQuestionnaireResponse.Create;
   try
     add(result.Link);
   finally
@@ -63073,7 +63073,7 @@ end;
 
 function TFhirQuestionnaireResponseList.Insert(index: Integer): TFhirQuestionnaireResponse;
 begin
-  result := TFhirQuestionnaireResponse.create;
+  result := TFhirQuestionnaireResponse.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -63128,20 +63128,20 @@ end;
 destructor TFhirReferralRequest.Destroy;
 begin
   FStatus.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FDate.free;
   FType_.free;
   FSpecialty.free;
   FPriority.free;
   FPatient.free;
   FRequester.free;
-  FRecipientList.Free;
+  FRecipientList.free;
   FEncounter.free;
   FDateSent.free;
   FReason.free;
   FDescription.free;
-  FServiceRequestedList.Free;
-  FSupportingInformationList.Free;
+  FServiceRequestedList.free;
+  FSupportingInformationList.free;
   FFulfillmentTime.free;
   inherited;
 end;
@@ -63252,22 +63252,22 @@ end;
 procedure TFhirReferralRequest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'specialty', 'CodeableConcept', false, TFhirCodeableConcept, FSpecialty.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'requester', 'Reference(Practitioner|Organization|Patient)', false, TFhirReference{Resource}, FRequester.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'recipient', 'Reference(Practitioner|Organization)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dateSent', 'dateTime', false, TFhirDateTime, FDateSent.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason', 'CodeableConcept', false, TFhirCodeableConcept, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'serviceRequested', 'CodeableConcept', true, TFhirCodeableConcept, FServiceRequestedList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'supportingInformation', 'Reference(Any)', true, TFhirReference{TFhirReference}, FSupportingInformationList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'fulfillmentTime', 'Period', false, TFhirPeriod, FFulfillmentTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'specialty', 'CodeableConcept', false, TFhirCodeableConcept, FSpecialty.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'priority', 'CodeableConcept', false, TFhirCodeableConcept, FPriority.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'requester', 'Reference(Practitioner|Organization|Patient)', false, TFhirReference{Resource}, FRequester.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'recipient', 'Reference(Practitioner|Organization)', true, TFhirReference{Resource}, FRecipientList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dateSent', 'dateTime', false, TFhirDateTime, FDateSent.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason', 'CodeableConcept', false, TFhirCodeableConcept, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'serviceRequested', 'CodeableConcept', true, TFhirCodeableConcept, FServiceRequestedList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'supportingInformation', 'Reference(Any)', true, TFhirReference{TFhirReference}, FSupportingInformationList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'fulfillmentTime', 'Period', false, TFhirPeriod, FFulfillmentTime.Link));{2}
 end;
 
 function TFhirReferralRequest.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -63367,20 +63367,20 @@ end;
 function TFhirReferralRequest.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'specialty') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'priority') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'requester') then result := TFhirReference{Resource}.create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'specialty') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'priority') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'requester') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'recipient') then result := RecipientList.new(){2}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'dateSent') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'reason') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'dateSent') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'reason') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
   else if (propName = 'serviceRequested') then result := ServiceRequestedList.new(){2}
   else if (propName = 'supportingInformation') then result := SupportingInformationList.new(){2}
-  else if (propName = 'fulfillmentTime') then result := TFhirPeriod.create(){4b}
+  else if (propName = 'fulfillmentTime') then result := TFhirPeriod.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -63544,7 +63544,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirReferralstatusEnum[value], CODES_TFhirReferralstatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirReferralstatusEnum[value], CODES_TFhirReferralstatusEnum[value]);
 end;
 
 Function TFhirReferralRequest.GetIdentifierList : TFhirIdentifierList;
@@ -63576,7 +63576,7 @@ end;
 Procedure TFhirReferralRequest.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -63645,7 +63645,7 @@ end;
 Procedure TFhirReferralRequest.SetDateSentST(value : TFslDateTime);
 begin
   if FDateSent = nil then
-    FDateSent := TFhirDateTime.create;
+    FDateSent := TFhirDateTime.Create;
   FDateSent.value := value
 end;
 
@@ -63674,7 +63674,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -63711,25 +63711,25 @@ begin
   FFulfillmentTime := value;
 end;
 
-function TFhirReferralRequest.sizeInBytesV : cardinal;
+function TFhirReferralRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FSpecialty.sizeInBytes);
-  inc(result, FPriority.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FRequester.sizeInBytes);
-  inc(result, FrecipientList.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FDateSent.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FserviceRequestedList.sizeInBytes);
-  inc(result, FsupportingInformationList.sizeInBytes);
-  inc(result, FFulfillmentTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FSpecialty.sizeInBytes(magic));
+  inc(result, FPriority.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FRequester.sizeInBytes(magic));
+  inc(result, FrecipientList.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FDateSent.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FserviceRequestedList.sizeInBytes(magic));
+  inc(result, FsupportingInformationList.sizeInBytes(magic));
+  inc(result, FFulfillmentTime.sizeInBytes(magic));
 end;
 
 { TFhirReferralRequestListEnumerator }
@@ -63743,7 +63743,7 @@ end;
 
 destructor TFhirReferralRequestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -63758,22 +63758,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirReferralRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirReferralRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirReferralRequestList }
-procedure TFhirReferralRequestList.AddItem(value: TFhirReferralRequest);
+function TFhirReferralRequestList.AddItem(value: TFhirReferralRequest): TFhirReferralRequest;
 begin
-  assert(value.ClassName = 'TFhirReferralRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirReferralRequest');
   add(value);
+  result := value;
 end;
 
 function TFhirReferralRequestList.Append: TFhirReferralRequest;
 begin
-  result := TFhirReferralRequest.create;
+  result := TFhirReferralRequest.Create;
   try
     add(result.Link);
   finally
@@ -63817,7 +63817,7 @@ end;
 
 function TFhirReferralRequestList.Insert(index: Integer): TFhirReferralRequest;
 begin
-  result := TFhirReferralRequest.create;
+  result := TFhirReferralRequest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -63907,11 +63907,11 @@ end;
 procedure TFhirRiskAssessmentPrediction.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'outcome', 'CodeableConcept', false, TFhirCodeableConcept, FOutcome.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'probability[x]', 'decimal|Range|CodeableConcept', false, TFhirType, FProbability.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'relativeRisk', 'decimal', false, TFhirDecimal, FRelativeRisk.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'when[x]', 'Period|Range', false, TFhirType, FWhen.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'rationale', 'string', false, TFhirString, FRationale.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'outcome', 'CodeableConcept', false, TFhirCodeableConcept, FOutcome.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'probability[x]', 'decimal|Range|CodeableConcept', false, TFhirType, FProbability.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'relativeRisk', 'decimal', false, TFhirDecimal, FRelativeRisk.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'when[x]', 'Period|Range', false, TFhirType, FWhen.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'rationale', 'string', false, TFhirString, FRationale.Link));{2}
 end;
 
 function TFhirRiskAssessmentPrediction.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -63951,11 +63951,11 @@ end;
 
 function TFhirRiskAssessmentPrediction.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'outcome') then result := TFhirCodeableConcept.create(){4b}
-  else if (isMatchingName(propName, 'probability', ['Decimal', 'Range', 'CodeableConcept'])) then raise EFHIRException.create('Cannot make property Probability'){4x}
-  else if (propName = 'relativeRisk') then result := TFhirDecimal.create() {5b}
-  else if (isMatchingName(propName, 'when', ['Period', 'Range'])) then raise EFHIRException.create('Cannot make property When'){4x}
-  else if (propName = 'rationale') then result := TFhirString.create() {5b}
+  if (propName = 'outcome') then result := TFhirCodeableConcept.Create(){4b}
+  else if (isMatchingName(propName, 'probability', ['Decimal', 'Range', 'CodeableConcept'])) then raise EFHIRException.Create('Cannot make property Probability'){4x}
+  else if (propName = 'relativeRisk') then result := TFhirDecimal.Create() {5b}
+  else if (isMatchingName(propName, 'when', ['Period', 'Range'])) then raise EFHIRException.Create('Cannot make property When'){4x}
+  else if (propName = 'rationale') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -64076,7 +64076,7 @@ begin
   if value <> '' then
   begin
     if FRelativeRisk = nil then
-      FRelativeRisk := TFhirDecimal.create;
+      FRelativeRisk := TFhirDecimal.Create;
     FRelativeRisk.value := value
   end
   else if FRelativeRisk <> nil then
@@ -64108,21 +64108,21 @@ begin
   if value <> '' then
   begin
     if FRationale = nil then
-      FRationale := TFhirString.create;
+      FRationale := TFhirString.Create;
     FRationale.value := value
   end
   else if FRationale <> nil then
     FRationale.value := '';
 end;
 
-function TFhirRiskAssessmentPrediction.sizeInBytesV : cardinal;
+function TFhirRiskAssessmentPrediction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOutcome.sizeInBytes);
-  inc(result, FProbability.sizeInBytes);
-  inc(result, FRelativeRisk.sizeInBytes);
-  inc(result, FWhen.sizeInBytes);
-  inc(result, FRationale.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOutcome.sizeInBytes(magic));
+  inc(result, FProbability.sizeInBytes(magic));
+  inc(result, FRelativeRisk.sizeInBytes(magic));
+  inc(result, FWhen.sizeInBytes(magic));
+  inc(result, FRationale.sizeInBytes(magic));
 end;
 
 { TFhirRiskAssessmentPredictionListEnumerator }
@@ -64136,7 +64136,7 @@ end;
 
 destructor TFhirRiskAssessmentPredictionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -64151,22 +64151,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirRiskAssessmentPredictionListEnumerator.sizeInBytesV : cardinal;
+function TFhirRiskAssessmentPredictionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirRiskAssessmentPredictionList }
-procedure TFhirRiskAssessmentPredictionList.AddItem(value: TFhirRiskAssessmentPrediction);
+function TFhirRiskAssessmentPredictionList.AddItem(value: TFhirRiskAssessmentPrediction): TFhirRiskAssessmentPrediction;
 begin
-  assert(value.ClassName = 'TFhirRiskAssessmentPrediction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRiskAssessmentPrediction');
   add(value);
+  result := value;
 end;
 
 function TFhirRiskAssessmentPredictionList.Append: TFhirRiskAssessmentPrediction;
 begin
-  result := TFhirRiskAssessmentPrediction.create;
+  result := TFhirRiskAssessmentPrediction.Create;
   try
     add(result.Link);
   finally
@@ -64210,7 +64210,7 @@ end;
 
 function TFhirRiskAssessmentPredictionList.Insert(index: Integer): TFhirRiskAssessmentPrediction;
 begin
-  result := TFhirRiskAssessmentPrediction.create;
+  result := TFhirRiskAssessmentPrediction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -64267,8 +64267,8 @@ begin
   FPerformer.free;
   FIdentifier.free;
   FMethod.free;
-  FBasisList.Free;
-  FPredictionList.Free;
+  FBasisList.free;
+  FPredictionList.free;
   FMitigation.free;
   inherited;
 end;
@@ -64341,16 +64341,16 @@ end;
 procedure TFhirRiskAssessment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'condition', 'Reference(Condition)', false, TFhirReference{TFhirCondition}, FCondition.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'performer', 'Reference(Practitioner|Device)', false, TFhirReference{Resource}, FPerformer.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'basis', 'Reference(Any)', true, TFhirReference{TFhirReference}, FBasisList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'prediction', '', true, TFhirRiskAssessmentPrediction, FPredictionList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'mitigation', 'string', false, TFhirString, FMitigation.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'condition', 'Reference(Condition)', false, TFhirReference{TFhirCondition}, FCondition.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'performer', 'Reference(Practitioner|Device)', false, TFhirReference{Resource}, FPerformer.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'basis', 'Reference(Any)', true, TFhirReference{TFhirReference}, FBasisList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'prediction', '', true, TFhirRiskAssessmentPrediction, FPredictionList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'mitigation', 'string', false, TFhirString, FMitigation.Link));{2}
 end;
 
 function TFhirRiskAssessment.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -64417,16 +64417,16 @@ end;
 
 function TFhirRiskAssessment.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'condition') then result := TFhirReference{TFhirCondition}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (propName = 'performer') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'condition') then result := TFhirReference{TFhirCondition}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (propName = 'performer') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'basis') then result := BasisList.new(){2}
   else if (propName = 'prediction') then result := PredictionList.new(){2}
-  else if (propName = 'mitigation') then result := TFhirString.create() {5b}
+  else if (propName = 'mitigation') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -64564,7 +64564,7 @@ end;
 Procedure TFhirRiskAssessment.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -64641,26 +64641,26 @@ begin
   if value <> '' then
   begin
     if FMitigation = nil then
-      FMitigation := TFhirString.create;
+      FMitigation := TFhirString.Create;
     FMitigation.value := value
   end
   else if FMitigation <> nil then
     FMitigation.value := '';
 end;
 
-function TFhirRiskAssessment.sizeInBytesV : cardinal;
+function TFhirRiskAssessment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FCondition.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FPerformer.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FbasisList.sizeInBytes);
-  inc(result, FpredictionList.sizeInBytes);
-  inc(result, FMitigation.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FCondition.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FPerformer.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FbasisList.sizeInBytes(magic));
+  inc(result, FpredictionList.sizeInBytes(magic));
+  inc(result, FMitigation.sizeInBytes(magic));
 end;
 
 { TFhirRiskAssessmentListEnumerator }
@@ -64674,7 +64674,7 @@ end;
 
 destructor TFhirRiskAssessmentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -64689,22 +64689,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirRiskAssessmentListEnumerator.sizeInBytesV : cardinal;
+function TFhirRiskAssessmentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirRiskAssessmentList }
-procedure TFhirRiskAssessmentList.AddItem(value: TFhirRiskAssessment);
+function TFhirRiskAssessmentList.AddItem(value: TFhirRiskAssessment): TFhirRiskAssessment;
 begin
-  assert(value.ClassName = 'TFhirRiskAssessment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirRiskAssessment');
   add(value);
+  result := value;
 end;
 
 function TFhirRiskAssessmentList.Append: TFhirRiskAssessment;
 begin
-  result := TFhirRiskAssessment.create;
+  result := TFhirRiskAssessment.Create;
   try
     add(result.Link);
   finally
@@ -64748,7 +64748,7 @@ end;
 
 function TFhirRiskAssessmentList.Insert(index: Integer): TFhirRiskAssessment;
 begin
-  result := TFhirRiskAssessment.create;
+  result := TFhirRiskAssessment.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -64803,7 +64803,7 @@ end;
 destructor TFhirSpecimenCollection.Destroy;
 begin
   FCollector.free;
-  FCommentList.Free;
+  FCommentList.free;
   FCollected.free;
   FQuantity.free;
   FMethod.free;
@@ -64852,12 +64852,12 @@ end;
 procedure TFhirSpecimenCollection.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'collector', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FCollector.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'comment', 'string', true, TFhirString, FCommentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'collected[x]', 'dateTime|Period', false, TFhirType, FCollected.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'collector', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FCollector.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'comment', 'string', true, TFhirString, FCommentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'collected[x]', 'dateTime|Period', false, TFhirType, FCollected.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'method', 'CodeableConcept', false, TFhirCodeableConcept, FMethod.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'bodySite', 'CodeableConcept', false, TFhirCodeableConcept, FBodySite.Link));{2}
 end;
 
 function TFhirSpecimenCollection.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -64903,12 +64903,12 @@ end;
 
 function TFhirSpecimenCollection.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'collector') then result := TFhirReference{TFhirPractitioner}.create(){4b}
+  if (propName = 'collector') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
   else if (propName = 'comment') then result := CommentList.new(){2}
-  else if (isMatchingName(propName, 'collected', ['DateTime', 'Period'])) then raise EFHIRException.create('Cannot make property Collected'){4x}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'method') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'bodySite') then result := TFhirCodeableConcept.create(){4b}
+  else if (isMatchingName(propName, 'collected', ['DateTime', 'Period'])) then raise EFHIRException.Create('Cannot make property Collected'){4x}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'method') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'bodySite') then result := TFhirCodeableConcept.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -65046,15 +65046,15 @@ begin
   FBodySite := value;
 end;
 
-function TFhirSpecimenCollection.sizeInBytesV : cardinal;
+function TFhirSpecimenCollection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCollector.sizeInBytes);
-  inc(result, FcommentList.sizeInBytes);
-  inc(result, FCollected.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FMethod.sizeInBytes);
-  inc(result, FBodySite.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCollector.sizeInBytes(magic));
+  inc(result, FcommentList.sizeInBytes(magic));
+  inc(result, FCollected.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FMethod.sizeInBytes(magic));
+  inc(result, FBodySite.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenCollectionListEnumerator }
@@ -65068,7 +65068,7 @@ end;
 
 destructor TFhirSpecimenCollectionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -65083,22 +65083,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSpecimenCollectionListEnumerator.sizeInBytesV : cardinal;
+function TFhirSpecimenCollectionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenCollectionList }
-procedure TFhirSpecimenCollectionList.AddItem(value: TFhirSpecimenCollection);
+function TFhirSpecimenCollectionList.AddItem(value: TFhirSpecimenCollection): TFhirSpecimenCollection;
 begin
-  assert(value.ClassName = 'TFhirSpecimenCollection', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenCollection');
   add(value);
+  result := value;
 end;
 
 function TFhirSpecimenCollectionList.Append: TFhirSpecimenCollection;
 begin
-  result := TFhirSpecimenCollection.create;
+  result := TFhirSpecimenCollection.Create;
   try
     add(result.Link);
   finally
@@ -65142,7 +65142,7 @@ end;
 
 function TFhirSpecimenCollectionList.Insert(index: Integer): TFhirSpecimenCollection;
 begin
-  result := TFhirSpecimenCollection.create;
+  result := TFhirSpecimenCollection.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -65194,7 +65194,7 @@ destructor TFhirSpecimenTreatment.Destroy;
 begin
   FDescription.free;
   FProcedure_.free;
-  FAdditiveList.Free;
+  FAdditiveList.free;
   inherited;
 end;
 
@@ -65230,9 +65230,9 @@ end;
 procedure TFhirSpecimenTreatment.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'procedure', 'CodeableConcept', false, TFhirCodeableConcept, FProcedure_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'additive', 'Reference(Substance)', true, TFhirReference{TFhirSubstance}, FAdditiveList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'procedure', 'CodeableConcept', false, TFhirCodeableConcept, FProcedure_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'additive', 'Reference(Substance)', true, TFhirReference{TFhirSubstance}, FAdditiveList.Link)){3};
 end;
 
 function TFhirSpecimenTreatment.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -65263,8 +65263,8 @@ end;
 
 function TFhirSpecimenTreatment.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'procedure') then result := TFhirCodeableConcept.create(){4b}
+  if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'procedure') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'additive') then result := AdditiveList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -65367,7 +65367,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -65392,12 +65392,12 @@ begin
   result := (FAdditiveList <> nil) and (FAdditiveList.count > 0);
 end;
 
-function TFhirSpecimenTreatment.sizeInBytesV : cardinal;
+function TFhirSpecimenTreatment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FProcedure_.sizeInBytes);
-  inc(result, FadditiveList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FProcedure_.sizeInBytes(magic));
+  inc(result, FadditiveList.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenTreatmentListEnumerator }
@@ -65411,7 +65411,7 @@ end;
 
 destructor TFhirSpecimenTreatmentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -65426,22 +65426,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSpecimenTreatmentListEnumerator.sizeInBytesV : cardinal;
+function TFhirSpecimenTreatmentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenTreatmentList }
-procedure TFhirSpecimenTreatmentList.AddItem(value: TFhirSpecimenTreatment);
+function TFhirSpecimenTreatmentList.AddItem(value: TFhirSpecimenTreatment): TFhirSpecimenTreatment;
 begin
-  assert(value.ClassName = 'TFhirSpecimenTreatment', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenTreatment');
   add(value);
+  result := value;
 end;
 
 function TFhirSpecimenTreatmentList.Append: TFhirSpecimenTreatment;
 begin
-  result := TFhirSpecimenTreatment.create;
+  result := TFhirSpecimenTreatment.Create;
   try
     add(result.Link);
   finally
@@ -65485,7 +65485,7 @@ end;
 
 function TFhirSpecimenTreatmentList.Insert(index: Integer): TFhirSpecimenTreatment;
 begin
-  result := TFhirSpecimenTreatment.create;
+  result := TFhirSpecimenTreatment.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -65535,7 +65535,7 @@ end;
 
 destructor TFhirSpecimenContainer.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FDescription.free;
   FType_.free;
   FCapacity.free;
@@ -65585,12 +65585,12 @@ end;
 procedure TFhirSpecimenContainer.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'capacity', 'Quantity', false, TFhirQuantity, FCapacity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'specimenQuantity', 'Quantity', false, TFhirQuantity, FSpecimenQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'additive[x]', 'CodeableConcept|Reference(Substance)', false, TFhirType, FAdditive.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'description', 'string', false, TFhirString, FDescription.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'capacity', 'Quantity', false, TFhirQuantity, FCapacity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'specimenQuantity', 'Quantity', false, TFhirQuantity, FSpecimenQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'additive[x]', 'CodeableConcept|Reference(Substance)', false, TFhirType, FAdditive.Link));{2}
 end;
 
 function TFhirSpecimenContainer.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -65637,11 +65637,11 @@ end;
 function TFhirSpecimenContainer.createPropertyValue(propName : string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'description') then result := TFhirString.create() {5b}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'capacity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'specimenQuantity') then result := TFhirQuantity.create(){4b}
-  else if (isMatchingName(propName, 'additive', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Additive'){4x}
+  else if (propName = 'description') then result := TFhirString.Create() {5b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'capacity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'specimenQuantity') then result := TFhirQuantity.Create(){4b}
+  else if (isMatchingName(propName, 'additive', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Additive'){4x}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -65768,7 +65768,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -65799,15 +65799,15 @@ begin
   FAdditive := value;
 end;
 
-function TFhirSpecimenContainer.sizeInBytesV : cardinal;
+function TFhirSpecimenContainer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FCapacity.sizeInBytes);
-  inc(result, FSpecimenQuantity.sizeInBytes);
-  inc(result, FAdditive.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FCapacity.sizeInBytes(magic));
+  inc(result, FSpecimenQuantity.sizeInBytes(magic));
+  inc(result, FAdditive.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenContainerListEnumerator }
@@ -65821,7 +65821,7 @@ end;
 
 destructor TFhirSpecimenContainerListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -65836,22 +65836,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSpecimenContainerListEnumerator.sizeInBytesV : cardinal;
+function TFhirSpecimenContainerListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenContainerList }
-procedure TFhirSpecimenContainerList.AddItem(value: TFhirSpecimenContainer);
+function TFhirSpecimenContainerList.AddItem(value: TFhirSpecimenContainer): TFhirSpecimenContainer;
 begin
-  assert(value.ClassName = 'TFhirSpecimenContainer', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimenContainer');
   add(value);
+  result := value;
 end;
 
 function TFhirSpecimenContainerList.Append: TFhirSpecimenContainer;
 begin
-  result := TFhirSpecimenContainer.create;
+  result := TFhirSpecimenContainer.Create;
   try
     add(result.Link);
   finally
@@ -65895,7 +65895,7 @@ end;
 
 function TFhirSpecimenContainerList.Insert(index: Integer): TFhirSpecimenContainer;
 begin
-  result := TFhirSpecimenContainer.create;
+  result := TFhirSpecimenContainer.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -65945,16 +65945,16 @@ end;
 
 destructor TFhirSpecimen.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FStatus.free;
   FType_.free;
-  FParentList.Free;
+  FParentList.free;
   FSubject.free;
   FAccessionIdentifier.free;
   FReceivedTime.free;
   FCollection.free;
-  FTreatmentList.Free;
-  FContainerList.Free;
+  FTreatmentList.free;
+  FContainerList.free;
   inherited;
 end;
 
@@ -66046,16 +66046,16 @@ end;
 procedure TFhirSpecimen.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'parent', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FParentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'subject', 'Reference(Patient|Group|Device|Substance)', false, TFhirReference{Resource}, FSubject.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'accessionIdentifier', 'Identifier', false, TFhirIdentifier, FAccessionIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'receivedTime', 'dateTime', false, TFhirDateTime, FReceivedTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'collection', '', false, TFhirSpecimenCollection, FCollection.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'treatment', '', true, TFhirSpecimenTreatment, FTreatmentList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'container', '', true, TFhirSpecimenContainer, FContainerList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'parent', 'Reference(Specimen)', true, TFhirReference{TFhirSpecimen}, FParentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'subject', 'Reference(Patient|Group|Device|Substance)', false, TFhirReference{Resource}, FSubject.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'accessionIdentifier', 'Identifier', false, TFhirIdentifier, FAccessionIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'receivedTime', 'dateTime', false, TFhirDateTime, FReceivedTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'collection', '', false, TFhirSpecimenCollection, FCollection.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'treatment', '', true, TFhirSpecimenTreatment, FTreatmentList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'container', '', true, TFhirSpecimenContainer, FContainerList.Link)){3};
 end;
 
 function TFhirSpecimen.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -66125,12 +66125,12 @@ end;
 function TFhirSpecimen.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
   else if (propName = 'parent') then result := ParentList.new(){2}
-  else if (propName = 'subject') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'accessionIdentifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'receivedTime') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'collection') then result := TFhirSpecimenCollection.create(){4b}
+  else if (propName = 'subject') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'accessionIdentifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'receivedTime') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'collection') then result := TFhirSpecimenCollection.Create(){4b}
   else if (propName = 'treatment') then result := TreatmentList.new(){2}
   else if (propName = 'container') then result := ContainerList.new(){2}
   else result := inherited createPropertyValue(propName);
@@ -66280,7 +66280,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirSpecimenStatusEnum[value], CODES_TFhirSpecimenStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirSpecimenStatusEnum[value], CODES_TFhirSpecimenStatusEnum[value]);
 end;
 
 Procedure TFhirSpecimen.SetType_(value : TFhirCodeableConcept);
@@ -66330,7 +66330,7 @@ end;
 Procedure TFhirSpecimen.SetReceivedTimeST(value : TFslDateTime);
 begin
   if FReceivedTime = nil then
-    FReceivedTime := TFhirDateTime.create;
+    FReceivedTime := TFhirDateTime.Create;
   FReceivedTime.value := value
 end;
 
@@ -66364,19 +66364,19 @@ begin
   result := (FContainerList <> nil) and (FContainerList.count > 0);
 end;
 
-function TFhirSpecimen.sizeInBytesV : cardinal;
+function TFhirSpecimen.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FparentList.sizeInBytes);
-  inc(result, FSubject.sizeInBytes);
-  inc(result, FAccessionIdentifier.sizeInBytes);
-  inc(result, FReceivedTime.sizeInBytes);
-  inc(result, FCollection.sizeInBytes);
-  inc(result, FtreatmentList.sizeInBytes);
-  inc(result, FcontainerList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FparentList.sizeInBytes(magic));
+  inc(result, FSubject.sizeInBytes(magic));
+  inc(result, FAccessionIdentifier.sizeInBytes(magic));
+  inc(result, FReceivedTime.sizeInBytes(magic));
+  inc(result, FCollection.sizeInBytes(magic));
+  inc(result, FtreatmentList.sizeInBytes(magic));
+  inc(result, FcontainerList.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenListEnumerator }
@@ -66390,7 +66390,7 @@ end;
 
 destructor TFhirSpecimenListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -66405,22 +66405,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSpecimenListEnumerator.sizeInBytesV : cardinal;
+function TFhirSpecimenListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSpecimenList }
-procedure TFhirSpecimenList.AddItem(value: TFhirSpecimen);
+function TFhirSpecimenList.AddItem(value: TFhirSpecimen): TFhirSpecimen;
 begin
-  assert(value.ClassName = 'TFhirSpecimen', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSpecimen');
   add(value);
+  result := value;
 end;
 
 function TFhirSpecimenList.Append: TFhirSpecimen;
 begin
-  result := TFhirSpecimen.create;
+  result := TFhirSpecimen.Create;
   try
     add(result.Link);
   finally
@@ -66464,7 +66464,7 @@ end;
 
 function TFhirSpecimenList.Insert(index: Integer): TFhirSpecimen;
 begin
-  result := TFhirSpecimen.create;
+  result := TFhirSpecimen.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -66528,7 +66528,7 @@ begin
   FWhenPrepared.free;
   FTime.free;
   FDestination.free;
-  FReceiverList.Free;
+  FReceiverList.free;
   inherited;
 end;
 
@@ -66593,17 +66593,17 @@ end;
 procedure TFhirSupplyDelivery.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'suppliedItem', 'Reference(Medication|Substance|Device)', false, TFhirReference{Resource}, FSuppliedItem.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'supplier', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FSupplier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'whenPrepared', 'Period', false, TFhirPeriod, FWhenPrepared.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'time', 'dateTime', false, TFhirDateTime, FTime.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'destination', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FDestination.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'receiver', 'Reference(Practitioner)', true, TFhirReference{TFhirPractitioner}, FReceiverList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'type', 'CodeableConcept', false, TFhirCodeableConcept, FType_.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'quantity', 'Quantity', false, TFhirQuantity, FQuantity.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'suppliedItem', 'Reference(Medication|Substance|Device)', false, TFhirReference{Resource}, FSuppliedItem.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'supplier', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FSupplier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'whenPrepared', 'Period', false, TFhirPeriod, FWhenPrepared.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'time', 'dateTime', false, TFhirDateTime, FTime.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'destination', 'Reference(Location)', false, TFhirReference{TFhirLocation}, FDestination.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'receiver', 'Reference(Practitioner)', true, TFhirReference{TFhirPractitioner}, FReceiverList.Link)){3};
 end;
 
 function TFhirSupplyDelivery.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -66674,15 +66674,15 @@ end;
 
 function TFhirSupplyDelivery.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'type') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'quantity') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'suppliedItem') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'supplier') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'whenPrepared') then result := TFhirPeriod.create(){4b}
-  else if (propName = 'time') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'destination') then result := TFhirReference{TFhirLocation}.create(){4b}
+  if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'type') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'quantity') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'suppliedItem') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'supplier') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'whenPrepared') then result := TFhirPeriod.Create(){4b}
+  else if (propName = 'time') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'destination') then result := TFhirReference{TFhirLocation}.Create(){4b}
   else if (propName = 'receiver') then result := ReceiverList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -66827,7 +66827,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirSupplydeliveryStatusEnum[value], CODES_TFhirSupplydeliveryStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirSupplydeliveryStatusEnum[value], CODES_TFhirSupplydeliveryStatusEnum[value]);
 end;
 
 Procedure TFhirSupplyDelivery.SetPatient(value : TFhirReference{TFhirPatient});
@@ -66883,7 +66883,7 @@ end;
 Procedure TFhirSupplyDelivery.SetTimeST(value : TFslDateTime);
 begin
   if FTime = nil then
-    FTime := TFhirDateTime.create;
+    FTime := TFhirDateTime.Create;
   FTime.value := value
 end;
 
@@ -66905,20 +66905,20 @@ begin
   result := (FReceiverList <> nil) and (FReceiverList.count > 0);
 end;
 
-function TFhirSupplyDelivery.sizeInBytesV : cardinal;
+function TFhirSupplyDelivery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FQuantity.sizeInBytes);
-  inc(result, FSuppliedItem.sizeInBytes);
-  inc(result, FSupplier.sizeInBytes);
-  inc(result, FWhenPrepared.sizeInBytes);
-  inc(result, FTime.sizeInBytes);
-  inc(result, FDestination.sizeInBytes);
-  inc(result, FreceiverList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FQuantity.sizeInBytes(magic));
+  inc(result, FSuppliedItem.sizeInBytes(magic));
+  inc(result, FSupplier.sizeInBytes(magic));
+  inc(result, FWhenPrepared.sizeInBytes(magic));
+  inc(result, FTime.sizeInBytes(magic));
+  inc(result, FDestination.sizeInBytes(magic));
+  inc(result, FreceiverList.sizeInBytes(magic));
 end;
 
 { TFhirSupplyDeliveryListEnumerator }
@@ -66932,7 +66932,7 @@ end;
 
 destructor TFhirSupplyDeliveryListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -66947,22 +66947,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSupplyDeliveryListEnumerator.sizeInBytesV : cardinal;
+function TFhirSupplyDeliveryListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSupplyDeliveryList }
-procedure TFhirSupplyDeliveryList.AddItem(value: TFhirSupplyDelivery);
+function TFhirSupplyDeliveryList.AddItem(value: TFhirSupplyDelivery): TFhirSupplyDelivery;
 begin
-  assert(value.ClassName = 'TFhirSupplyDelivery', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSupplyDelivery');
   add(value);
+  result := value;
 end;
 
 function TFhirSupplyDeliveryList.Append: TFhirSupplyDelivery;
 begin
-  result := TFhirSupplyDelivery.create;
+  result := TFhirSupplyDelivery.Create;
   try
     add(result.Link);
   finally
@@ -67006,7 +67006,7 @@ end;
 
 function TFhirSupplyDeliveryList.Insert(index: Integer): TFhirSupplyDelivery;
 begin
-  result := TFhirSupplyDelivery.create;
+  result := TFhirSupplyDelivery.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -67084,8 +67084,8 @@ end;
 procedure TFhirSupplyRequestWhen.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'schedule', 'Timing', false, TFhirTiming, FSchedule.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'code', 'CodeableConcept', false, TFhirCodeableConcept, FCode.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'schedule', 'Timing', false, TFhirTiming, FSchedule.Link));{2}
 end;
 
 function TFhirSupplyRequestWhen.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -67110,8 +67110,8 @@ end;
 
 function TFhirSupplyRequestWhen.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'code') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'schedule') then result := TFhirTiming.create(){4b}
+  if (propName = 'code') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'schedule') then result := TFhirTiming.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -67199,11 +67199,11 @@ begin
   FSchedule := value;
 end;
 
-function TFhirSupplyRequestWhen.sizeInBytesV : cardinal;
+function TFhirSupplyRequestWhen.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FSchedule.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FSchedule.sizeInBytes(magic));
 end;
 
 { TFhirSupplyRequestWhenListEnumerator }
@@ -67217,7 +67217,7 @@ end;
 
 destructor TFhirSupplyRequestWhenListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -67232,22 +67232,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSupplyRequestWhenListEnumerator.sizeInBytesV : cardinal;
+function TFhirSupplyRequestWhenListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSupplyRequestWhenList }
-procedure TFhirSupplyRequestWhenList.AddItem(value: TFhirSupplyRequestWhen);
+function TFhirSupplyRequestWhenList.AddItem(value: TFhirSupplyRequestWhen): TFhirSupplyRequestWhen;
 begin
-  assert(value.ClassName = 'TFhirSupplyRequestWhen', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSupplyRequestWhen');
   add(value);
+  result := value;
 end;
 
 function TFhirSupplyRequestWhenList.Append: TFhirSupplyRequestWhen;
 begin
-  result := TFhirSupplyRequestWhen.create;
+  result := TFhirSupplyRequestWhen.Create;
   try
     add(result.Link);
   finally
@@ -67291,7 +67291,7 @@ end;
 
 function TFhirSupplyRequestWhenList.Insert(index: Integer): TFhirSupplyRequestWhen;
 begin
-  result := TFhirSupplyRequestWhen.create;
+  result := TFhirSupplyRequestWhen.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -67348,7 +67348,7 @@ begin
   FStatus.free;
   FKind.free;
   FOrderedItem.free;
-  FSupplierList.Free;
+  FSupplierList.free;
   FReason.free;
   FWhen.free;
   inherited;
@@ -67412,16 +67412,16 @@ end;
 procedure TFhirSupplyRequest.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'source', 'Reference(Practitioner|Organization|Patient)', false, TFhirReference{Resource}, FSource.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'kind', 'CodeableConcept', false, TFhirCodeableConcept, FKind.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'orderedItem', 'Reference(Medication|Substance|Device)', false, TFhirReference{Resource}, FOrderedItem.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'supplier', 'Reference(Organization)', true, TFhirReference{TFhirOrganization}, FSupplierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'reason[x]', 'CodeableConcept|Reference(Any)', false, TFhirType, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'when', '', false, TFhirSupplyRequestWhen, FWhen.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'source', 'Reference(Practitioner|Organization|Patient)', false, TFhirReference{Resource}, FSource.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'date', 'dateTime', false, TFhirDateTime, FDate.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', false, TFhirIdentifier, FIdentifier.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'status', 'code', false, TFHIREnum, FStatus.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'kind', 'CodeableConcept', false, TFhirCodeableConcept, FKind.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'orderedItem', 'Reference(Medication|Substance|Device)', false, TFhirReference{Resource}, FOrderedItem.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'supplier', 'Reference(Organization)', true, TFhirReference{TFhirOrganization}, FSupplierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'reason[x]', 'CodeableConcept|Reference(Any)', false, TFhirType, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'when', '', false, TFhirSupplyRequestWhen, FWhen.Link));{2}
 end;
 
 function TFhirSupplyRequest.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -67487,15 +67487,15 @@ end;
 
 function TFhirSupplyRequest.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'source') then result := TFhirReference{Resource}.create(){4b}
-  else if (propName = 'date') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'identifier') then result := TFhirIdentifier.create(){4b}
-  else if (propName = 'kind') then result := TFhirCodeableConcept.create(){4b}
-  else if (propName = 'orderedItem') then result := TFhirReference{Resource}.create(){4b}
+  if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'source') then result := TFhirReference{Resource}.Create(){4b}
+  else if (propName = 'date') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'identifier') then result := TFhirIdentifier.Create(){4b}
+  else if (propName = 'kind') then result := TFhirCodeableConcept.Create(){4b}
+  else if (propName = 'orderedItem') then result := TFhirReference{Resource}.Create(){4b}
   else if (propName = 'supplier') then result := SupplierList.new(){2}
-  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Reason'){4x}
-  else if (propName = 'when') then result := TFhirSupplyRequestWhen.create(){4b}
+  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Reason'){4x}
+  else if (propName = 'when') then result := TFhirSupplyRequestWhen.Create(){4b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -67638,7 +67638,7 @@ end;
 Procedure TFhirSupplyRequest.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -67667,7 +67667,7 @@ begin
   if ord(value) = 0 then
     StatusElement := nil
   else
-    StatusElement := TFhirEnum.create(SYSTEMS_TFhirSupplyrequestStatusEnum[value], CODES_TFhirSupplyrequestStatusEnum[value]);
+    StatusElement := TFhirEnum.Create(SYSTEMS_TFhirSupplyrequestStatusEnum[value], CODES_TFhirSupplyrequestStatusEnum[value]);
 end;
 
 Procedure TFhirSupplyRequest.SetKind(value : TFhirCodeableConcept);
@@ -67706,19 +67706,19 @@ begin
   FWhen := value;
 end;
 
-function TFhirSupplyRequest.sizeInBytesV : cardinal;
+function TFhirSupplyRequest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FKind.sizeInBytes);
-  inc(result, FOrderedItem.sizeInBytes);
-  inc(result, FsupplierList.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FWhen.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FKind.sizeInBytes(magic));
+  inc(result, FOrderedItem.sizeInBytes(magic));
+  inc(result, FsupplierList.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FWhen.sizeInBytes(magic));
 end;
 
 { TFhirSupplyRequestListEnumerator }
@@ -67732,7 +67732,7 @@ end;
 
 destructor TFhirSupplyRequestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -67747,22 +67747,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSupplyRequestListEnumerator.sizeInBytesV : cardinal;
+function TFhirSupplyRequestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSupplyRequestList }
-procedure TFhirSupplyRequestList.AddItem(value: TFhirSupplyRequest);
+function TFhirSupplyRequestList.AddItem(value: TFhirSupplyRequest): TFhirSupplyRequest;
 begin
-  assert(value.ClassName = 'TFhirSupplyRequest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSupplyRequest');
   add(value);
+  result := value;
 end;
 
 function TFhirSupplyRequestList.Append: TFhirSupplyRequest;
 begin
-  result := TFhirSupplyRequest.create;
+  result := TFhirSupplyRequest.Create;
   try
     add(result.Link);
   finally
@@ -67806,7 +67806,7 @@ end;
 
 function TFhirSupplyRequestList.Insert(index: Integer): TFhirSupplyRequest;
 begin
-  result := TFhirSupplyRequest.create;
+  result := TFhirSupplyRequest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -67936,21 +67936,21 @@ end;
 procedure TFhirVisionPrescriptionDispense.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'product', 'Coding', false, TFhirCoding, FProduct.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'eye', 'code', false, TFHIREnum, FEye.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'sphere', 'decimal', false, TFhirDecimal, FSphere.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'cylinder', 'decimal', false, TFhirDecimal, FCylinder.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'axis', 'integer', false, TFhirInteger, FAxis.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'prism', 'decimal', false, TFhirDecimal, FPrism.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'base', 'code', false, TFHIREnum, FBase.Link));{1}
-  oList.add(TFHIRProperty.create(self, 'add', 'decimal', false, TFhirDecimal, FAdd.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'power', 'decimal', false, TFhirDecimal, FPower.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'backCurve', 'decimal', false, TFhirDecimal, FBackCurve.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'diameter', 'decimal', false, TFhirDecimal, FDiameter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'duration', 'Quantity', false, TFhirQuantity, FDuration.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'color', 'string', false, TFhirString, FColor.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'brand', 'string', false, TFhirString, FBrand.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'notes', 'string', false, TFhirString, FNotes.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'product', 'Coding', false, TFhirCoding, FProduct.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'eye', 'code', false, TFHIREnum, FEye.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'sphere', 'decimal', false, TFhirDecimal, FSphere.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'cylinder', 'decimal', false, TFhirDecimal, FCylinder.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'axis', 'integer', false, TFhirInteger, FAxis.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'prism', 'decimal', false, TFhirDecimal, FPrism.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'base', 'code', false, TFHIREnum, FBase.Link));{1}
+  oList.add(TFHIRProperty.Create(self, 'add', 'decimal', false, TFhirDecimal, FAdd.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'power', 'decimal', false, TFhirDecimal, FPower.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'backCurve', 'decimal', false, TFhirDecimal, FBackCurve.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'diameter', 'decimal', false, TFhirDecimal, FDiameter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'duration', 'Quantity', false, TFhirQuantity, FDuration.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'color', 'string', false, TFhirString, FColor.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'brand', 'string', false, TFhirString, FBrand.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'notes', 'string', false, TFhirString, FNotes.Link));{2}
 end;
 
 function TFhirVisionPrescriptionDispense.setProperty(propName : string; propValue: TFHIRObject) : TFHIRObject;
@@ -68040,19 +68040,19 @@ end;
 
 function TFhirVisionPrescriptionDispense.createPropertyValue(propName : string) : TFHIRObject;
 begin
-  if (propName = 'product') then result := TFhirCoding.create(){4b}
-  else if (propName = 'sphere') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'cylinder') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'axis') then result := TFhirInteger.create() {5b}
-  else if (propName = 'prism') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'add') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'power') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'backCurve') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'diameter') then result := TFhirDecimal.create() {5b}
-  else if (propName = 'duration') then result := TFhirQuantity.create(){4b}
-  else if (propName = 'color') then result := TFhirString.create() {5b}
-  else if (propName = 'brand') then result := TFhirString.create() {5b}
-  else if (propName = 'notes') then result := TFhirString.create() {5b}
+  if (propName = 'product') then result := TFhirCoding.Create(){4b}
+  else if (propName = 'sphere') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'cylinder') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'axis') then result := TFhirInteger.Create() {5b}
+  else if (propName = 'prism') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'add') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'power') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'backCurve') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'diameter') then result := TFhirDecimal.Create() {5b}
+  else if (propName = 'duration') then result := TFhirQuantity.Create(){4b}
+  else if (propName = 'color') then result := TFhirString.Create() {5b}
+  else if (propName = 'brand') then result := TFhirString.Create() {5b}
+  else if (propName = 'notes') then result := TFhirString.Create() {5b}
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -68212,7 +68212,7 @@ begin
   if ord(value) = 0 then
     EyeElement := nil
   else
-    EyeElement := TFhirEnum.create(SYSTEMS_TFhirVisionEyeCodesEnum[value], CODES_TFhirVisionEyeCodesEnum[value]);
+    EyeElement := TFhirEnum.Create(SYSTEMS_TFhirVisionEyeCodesEnum[value], CODES_TFhirVisionEyeCodesEnum[value]);
 end;
 
 Procedure TFhirVisionPrescriptionDispense.SetSphere(value : TFhirDecimal);
@@ -68234,7 +68234,7 @@ begin
   if value <> '' then
   begin
     if FSphere = nil then
-      FSphere := TFhirDecimal.create;
+      FSphere := TFhirDecimal.Create;
     FSphere.value := value
   end
   else if FSphere <> nil then
@@ -68260,7 +68260,7 @@ begin
   if value <> '' then
   begin
     if FCylinder = nil then
-      FCylinder := TFhirDecimal.create;
+      FCylinder := TFhirDecimal.Create;
     FCylinder.value := value
   end
   else if FCylinder <> nil then
@@ -68286,7 +68286,7 @@ begin
   if value <> '' then
   begin
     if FAxis = nil then
-      FAxis := TFhirInteger.create;
+      FAxis := TFhirInteger.Create;
     FAxis.value := value
   end
   else if FAxis <> nil then
@@ -68312,7 +68312,7 @@ begin
   if value <> '' then
   begin
     if FPrism = nil then
-      FPrism := TFhirDecimal.create;
+      FPrism := TFhirDecimal.Create;
     FPrism.value := value
   end
   else if FPrism <> nil then
@@ -68338,7 +68338,7 @@ begin
   if ord(value) = 0 then
     BaseElement := nil
   else
-    BaseElement := TFhirEnum.create(SYSTEMS_TFhirVisionBaseCodesEnum[value], CODES_TFhirVisionBaseCodesEnum[value]);
+    BaseElement := TFhirEnum.Create(SYSTEMS_TFhirVisionBaseCodesEnum[value], CODES_TFhirVisionBaseCodesEnum[value]);
 end;
 
 Procedure TFhirVisionPrescriptionDispense.SetAdd(value : TFhirDecimal);
@@ -68360,7 +68360,7 @@ begin
   if value <> '' then
   begin
     if FAdd = nil then
-      FAdd := TFhirDecimal.create;
+      FAdd := TFhirDecimal.Create;
     FAdd.value := value
   end
   else if FAdd <> nil then
@@ -68386,7 +68386,7 @@ begin
   if value <> '' then
   begin
     if FPower = nil then
-      FPower := TFhirDecimal.create;
+      FPower := TFhirDecimal.Create;
     FPower.value := value
   end
   else if FPower <> nil then
@@ -68412,7 +68412,7 @@ begin
   if value <> '' then
   begin
     if FBackCurve = nil then
-      FBackCurve := TFhirDecimal.create;
+      FBackCurve := TFhirDecimal.Create;
     FBackCurve.value := value
   end
   else if FBackCurve <> nil then
@@ -68438,7 +68438,7 @@ begin
   if value <> '' then
   begin
     if FDiameter = nil then
-      FDiameter := TFhirDecimal.create;
+      FDiameter := TFhirDecimal.Create;
     FDiameter.value := value
   end
   else if FDiameter <> nil then
@@ -68470,7 +68470,7 @@ begin
   if value <> '' then
   begin
     if FColor = nil then
-      FColor := TFhirString.create;
+      FColor := TFhirString.Create;
     FColor.value := value
   end
   else if FColor <> nil then
@@ -68496,7 +68496,7 @@ begin
   if value <> '' then
   begin
     if FBrand = nil then
-      FBrand := TFhirString.create;
+      FBrand := TFhirString.Create;
     FBrand.value := value
   end
   else if FBrand <> nil then
@@ -68522,31 +68522,31 @@ begin
   if value <> '' then
   begin
     if FNotes = nil then
-      FNotes := TFhirString.create;
+      FNotes := TFhirString.Create;
     FNotes.value := value
   end
   else if FNotes <> nil then
     FNotes.value := '';
 end;
 
-function TFhirVisionPrescriptionDispense.sizeInBytesV : cardinal;
+function TFhirVisionPrescriptionDispense.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProduct.sizeInBytes);
-  inc(result, FEye.sizeInBytes);
-  inc(result, FSphere.sizeInBytes);
-  inc(result, FCylinder.sizeInBytes);
-  inc(result, FAxis.sizeInBytes);
-  inc(result, FPrism.sizeInBytes);
-  inc(result, FBase.sizeInBytes);
-  inc(result, FAdd.sizeInBytes);
-  inc(result, FPower.sizeInBytes);
-  inc(result, FBackCurve.sizeInBytes);
-  inc(result, FDiameter.sizeInBytes);
-  inc(result, FDuration.sizeInBytes);
-  inc(result, FColor.sizeInBytes);
-  inc(result, FBrand.sizeInBytes);
-  inc(result, FNotes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProduct.sizeInBytes(magic));
+  inc(result, FEye.sizeInBytes(magic));
+  inc(result, FSphere.sizeInBytes(magic));
+  inc(result, FCylinder.sizeInBytes(magic));
+  inc(result, FAxis.sizeInBytes(magic));
+  inc(result, FPrism.sizeInBytes(magic));
+  inc(result, FBase.sizeInBytes(magic));
+  inc(result, FAdd.sizeInBytes(magic));
+  inc(result, FPower.sizeInBytes(magic));
+  inc(result, FBackCurve.sizeInBytes(magic));
+  inc(result, FDiameter.sizeInBytes(magic));
+  inc(result, FDuration.sizeInBytes(magic));
+  inc(result, FColor.sizeInBytes(magic));
+  inc(result, FBrand.sizeInBytes(magic));
+  inc(result, FNotes.sizeInBytes(magic));
 end;
 
 { TFhirVisionPrescriptionDispenseListEnumerator }
@@ -68560,7 +68560,7 @@ end;
 
 destructor TFhirVisionPrescriptionDispenseListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -68575,22 +68575,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirVisionPrescriptionDispenseListEnumerator.sizeInBytesV : cardinal;
+function TFhirVisionPrescriptionDispenseListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirVisionPrescriptionDispenseList }
-procedure TFhirVisionPrescriptionDispenseList.AddItem(value: TFhirVisionPrescriptionDispense);
+function TFhirVisionPrescriptionDispenseList.AddItem(value: TFhirVisionPrescriptionDispense): TFhirVisionPrescriptionDispense;
 begin
-  assert(value.ClassName = 'TFhirVisionPrescriptionDispense', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirVisionPrescriptionDispense');
   add(value);
+  result := value;
 end;
 
 function TFhirVisionPrescriptionDispenseList.Append: TFhirVisionPrescriptionDispense;
 begin
-  result := TFhirVisionPrescriptionDispense.create;
+  result := TFhirVisionPrescriptionDispense.Create;
   try
     add(result.Link);
   finally
@@ -68634,7 +68634,7 @@ end;
 
 function TFhirVisionPrescriptionDispenseList.Insert(index: Integer): TFhirVisionPrescriptionDispense;
 begin
-  result := TFhirVisionPrescriptionDispense.create;
+  result := TFhirVisionPrescriptionDispense.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -68684,13 +68684,13 @@ end;
 
 destructor TFhirVisionPrescription.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FDateWritten.free;
   FPatient.free;
   FPrescriber.free;
   FEncounter.free;
   FReason.free;
-  FDispenseList.Free;
+  FDispenseList.free;
   inherited;
 end;
 
@@ -68753,13 +68753,13 @@ end;
 procedure TFhirVisionPrescription.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
-  oList.add(TFHIRProperty.create(self, 'dateWritten', 'dateTime', false, TFhirDateTime, FDateWritten.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'prescriber', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FPrescriber.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
-  oList.add(TFHIRProperty.create(self, 'dispense', '', true, TFhirVisionPrescriptionDispense, FDispenseList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'identifier', 'Identifier', true, TFhirIdentifier, FIdentifierList.Link)){3};
+  oList.add(TFHIRProperty.Create(self, 'dateWritten', 'dateTime', false, TFhirDateTime, FDateWritten.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'patient', 'Reference(Patient)', false, TFhirReference{TFhirPatient}, FPatient.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'prescriber', 'Reference(Practitioner)', false, TFhirReference{TFhirPractitioner}, FPrescriber.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'encounter', 'Reference(Encounter)', false, TFhirReference{TFhirEncounter}, FEncounter.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'reason[x]', 'CodeableConcept|Reference(Condition)', false, TFhirType, FReason.Link));{2}
+  oList.add(TFHIRProperty.Create(self, 'dispense', '', true, TFhirVisionPrescriptionDispense, FDispenseList.Link)){3};
 end;
 
 function TFhirVisionPrescription.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
@@ -68812,11 +68812,11 @@ end;
 function TFhirVisionPrescription.createPropertyValue(propName: string) : TFHIRObject;
 begin
   if (propName = 'identifier') then result := IdentifierList.new(){2}
-  else if (propName = 'dateWritten') then result := TFhirDateTime.create() {5b}
-  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.create(){4b}
-  else if (propName = 'prescriber') then result := TFhirReference{TFhirPractitioner}.create(){4b}
-  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.create(){4b}
-  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.create('Cannot make property Reason'){4x}
+  else if (propName = 'dateWritten') then result := TFhirDateTime.Create() {5b}
+  else if (propName = 'patient') then result := TFhirReference{TFhirPatient}.Create(){4b}
+  else if (propName = 'prescriber') then result := TFhirReference{TFhirPractitioner}.Create(){4b}
+  else if (propName = 'encounter') then result := TFhirReference{TFhirEncounter}.Create(){4b}
+  else if (isMatchingName(propName, 'reason', ['CodeableConcept', 'Reference'])) then raise EFHIRException.Create('Cannot make property Reason'){4x}
   else if (propName = 'dispense') then result := DispenseList.new(){2}
   else result := inherited createPropertyValue(propName);
 end;
@@ -68948,7 +68948,7 @@ end;
 Procedure TFhirVisionPrescription.SetDateWrittenST(value : TFslDateTime);
 begin
   if FDateWritten = nil then
-    FDateWritten := TFhirDateTime.create;
+    FDateWritten := TFhirDateTime.Create;
   FDateWritten.value := value
 end;
 
@@ -68988,16 +68988,16 @@ begin
   result := (FDispenseList <> nil) and (FDispenseList.count > 0);
 end;
 
-function TFhirVisionPrescription.sizeInBytesV : cardinal;
+function TFhirVisionPrescription.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FDateWritten.sizeInBytes);
-  inc(result, FPatient.sizeInBytes);
-  inc(result, FPrescriber.sizeInBytes);
-  inc(result, FEncounter.sizeInBytes);
-  inc(result, FReason.sizeInBytes);
-  inc(result, FdispenseList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FDateWritten.sizeInBytes(magic));
+  inc(result, FPatient.sizeInBytes(magic));
+  inc(result, FPrescriber.sizeInBytes(magic));
+  inc(result, FEncounter.sizeInBytes(magic));
+  inc(result, FReason.sizeInBytes(magic));
+  inc(result, FdispenseList.sizeInBytes(magic));
 end;
 
 { TFhirVisionPrescriptionListEnumerator }
@@ -69011,7 +69011,7 @@ end;
 
 destructor TFhirVisionPrescriptionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -69026,22 +69026,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirVisionPrescriptionListEnumerator.sizeInBytesV : cardinal;
+function TFhirVisionPrescriptionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirVisionPrescriptionList }
-procedure TFhirVisionPrescriptionList.AddItem(value: TFhirVisionPrescription);
+function TFhirVisionPrescriptionList.AddItem(value: TFhirVisionPrescription): TFhirVisionPrescription;
 begin
-  assert(value.ClassName = 'TFhirVisionPrescription', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirVisionPrescription');
   add(value);
+  result := value;
 end;
 
 function TFhirVisionPrescriptionList.Append: TFhirVisionPrescription;
 begin
-  result := TFhirVisionPrescription.create;
+  result := TFhirVisionPrescription.Create;
   try
     add(result.Link);
   finally
@@ -69085,7 +69085,7 @@ end;
 
 function TFhirVisionPrescriptionList.Insert(index: Integer): TFhirVisionPrescription;
 begin
-  result := TFhirVisionPrescription.create;
+  result := TFhirVisionPrescription.Create;
   try
     inherited insert(index, result.Link);
   finally

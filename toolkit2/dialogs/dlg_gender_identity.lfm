@@ -1,0 +1,183 @@
+object GenderIdentityDialog: TGenderIdentityDialog
+  Left = 901
+  Height = 212
+  Top = 516
+  Width = 480
+  Caption = 'Gender Identity'
+  ClientHeight = 212
+  ClientWidth = 480
+  FormStyle = fsStayOnTop
+  OnCloseQuery = FormCloseQuery
+  OnCreate = FormCreate
+  LCLVersion = '2.2.7.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 171
+    Width = 480
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 480
+    TabOrder = 0
+    object btnOk: TButton
+      Left = 315
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 396
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+    object lblErr: TLabel
+      Left = 16
+      Height = 16
+      Top = 8
+      Width = 32
+      Caption = 'lblErr'
+      Font.CharSet = ANSI_CHARSET
+      Font.Color = 5314452
+      Font.Height = -13
+      Font.Name = '.SF NS'
+      ParentColor = False
+      ParentFont = False
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 72
+    Top = 0
+    Width = 480
+    Align = alTop
+    ClientHeight = 72
+    ClientWidth = 480
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 16
+      Height = 16
+      Top = 8
+      Width = 52
+      Caption = 'Gender: '
+      ParentColor = False
+    end
+    object edtOther: TEdit
+      Left = 80
+      Height = 22
+      Top = 40
+      Width = 390
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+      Text = 'edtOther'
+    end
+    object cbxGenderId: TComboBox
+      Left = 80
+      Height = 20
+      Top = 9
+      Width = 390
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 26
+      ItemIndex = 0
+      Items.Strings = (
+        'Female'
+        'Male'
+        'Non-Binary'
+        'Unknown'
+        'Other...'
+      )
+      OnChange = cbxGenderIdChange
+      Style = csDropDownList
+      TabOrder = 1
+      Text = 'Female'
+    end
+  end
+  object Panel3: TPanel
+    Left = 0
+    Height = 64
+    Top = 72
+    Width = 480
+    Align = alTop
+    ClientHeight = 64
+    ClientWidth = 480
+    TabOrder = 2
+    object Label2: TLabel
+      Left = 16
+      Height = 16
+      Top = 8
+      Width = 43
+      Caption = 'Period:'
+      ParentColor = False
+    end
+    object dtStart: TDateEdit
+      Left = 80
+      Height = 22
+      Top = 8
+      Width = 390
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      DateOrder = doNone
+      DateFormat = 'YYYY-MM-DD'
+      ButtonWidth = 23
+      Anchors = [akTop, akLeft, akRight]
+      NumGlyphs = 1
+      MaxLength = 0
+      OnChange = dtStartChange
+      TabOrder = 0
+      Text = 'dtStart'
+    end
+    object dtEnd: TDateEdit
+      Left = 80
+      Height = 22
+      Top = 35
+      Width = 390
+      CalendarDisplaySettings = [dsShowHeadings, dsShowDayNames]
+      DateOrder = doNone
+      DateFormat = 'YYYY-MM-DD'
+      ButtonWidth = 23
+      Anchors = [akTop, akLeft, akRight]
+      NumGlyphs = 1
+      MaxLength = 0
+      OnChange = dtEndChange
+      TabOrder = 1
+      Text = 'dtEnd'
+    end
+  end
+  object Panel4: TPanel
+    Left = 0
+    Height = 34
+    Top = 136
+    Width = 480
+    Align = alTop
+    ClientHeight = 34
+    ClientWidth = 480
+    TabOrder = 3
+    object Label3: TLabel
+      Left = 16
+      Height = 16
+      Top = 8
+      Width = 63
+      Caption = 'Comment:'
+      ParentColor = False
+    end
+    object edtComment: TEdit
+      Left = 80
+      Height = 22
+      Top = 6
+      Width = 390
+      Anchors = [akTop, akLeft, akRight]
+      OnChange = edtCommentChange
+      TabOrder = 0
+      Text = 'edtComment'
+    end
+  end
+end

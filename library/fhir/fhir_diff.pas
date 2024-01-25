@@ -55,7 +55,7 @@ type
     FIndex : integer;
     FIndex2 : integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -81,7 +81,7 @@ type
     FSourceIndex : integer;
     FTargetIndex : integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(sourceIndex, targetIndex : integer);
   end;
@@ -98,7 +98,7 @@ type
     FInserted : boolean;
     FIndex: integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     property index : integer read FIndex;
   end;
@@ -112,12 +112,15 @@ type
     function adjust(index : integer) : integer;
   end;
 
+  { TDifferenceEngine }
+
   TDifferenceEngine = class (TFslObject)
   private
     FFactory : TFHIRFactory;
     FContext : TFHIRWorkerContextV;
     fpe : TFHIRPathEngineV;
 
+    function identifyingWeightFactor(name: String): integer;
     function matchRating(obj1, obj2 : TFHIRObject) : Double;
     procedure findCertainMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
     procedure findPossibleMatches(matches : TDifferenceMatchList; bl, ml : TFHIRObjectList);
@@ -138,7 +141,7 @@ type
     function applyOperation(res : TFHIRObject; op : TFhirParametersParameterW) : boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextV; factory : TFHIRFactory);
     destructor Destroy; override;
@@ -152,16 +155,16 @@ implementation
 
 destructor TDifference.Destroy;
 begin
-  FValue.Free;
+  FValue.free;
   inherited;
 end;
 
-function TDifference.sizeInBytesV : cardinal;
+function TDifference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPath.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FValue.sizeInBytes);
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TDifferenceList }
@@ -170,7 +173,7 @@ procedure TDifferenceList.replace(path: String; value: TFHIRObject);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffReplace;
@@ -181,7 +184,7 @@ procedure TDifferenceList.add(path, name: String; value: TFHIRObject);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffAdd;
@@ -193,7 +196,7 @@ procedure TDifferenceList.delete(path: String);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffDelete;
@@ -204,7 +207,7 @@ procedure TDifferenceList.insert(path: String; index: integer; value: TFHIRObjec
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffInsert;
@@ -216,7 +219,7 @@ procedure TDifferenceList.move(path: String; source, target: integer);
 var
   d : TDifference;
 begin
-  d := TDifference.create;
+  d := TDifference.Create;
   inherited add(d);
   d.FPath := path;
   d.FOp := diffMove;
@@ -233,9 +236,9 @@ begin
   FTargetIndex := targetIndex;
 end;
 
-function TDifferenceMatch.sizeInBytesV : cardinal;
+function TDifferenceMatch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TDifferenceMatchList }
@@ -282,9 +285,9 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when adding');
+      raise EFHIRException.Create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.Create('Multiple locations found at '+path+' when adding');
 
     if value.hasValue then
       dest[0].value.setProperty(name, value.value.Link)
@@ -299,7 +302,7 @@ begin
       end;
     end;
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -310,14 +313,14 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when adding');
+      raise EFHIRException.Create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.Create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
-      raise EFHIRException.create('Content returned from Path is not part of Resource');
+      raise EFHIRException.Create('Content returned from Path is not part of Resource');
     dest[0].parent.deleteProperty(dest[0].name, dest[0].value);
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -335,7 +338,7 @@ begin
       result.dropEmpty;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -343,7 +346,7 @@ function TDifferenceEngine.generateDifference(base, modified: TFHIRObject; var h
 var
   list : TDifferenceList;
 begin
-  list := TDifferenceList.create;
+  list := TDifferenceList.Create;
   try
     generate(base.fhirType, base, modified, list);
     result := asParams(list);
@@ -353,12 +356,24 @@ begin
   end;
 end;
 
+function TDifferenceEngine.identifyingWeightFactor(name : String): integer;
+begin
+  if name = 'identifier' then
+    result := 10
+  else if name = 'name' then
+    result := 4
+  else if name = 'code' then
+    result := 4
+  else
+    result := 0;
+end;
+
 function TDifferenceEngine.matchRating(obj1, obj2: TFHIRObject): Double;
 var
   ol1, ol2 : TFHIRPropertyList;
   o1, o2 : TFHIRProperty;
   ov1, ov2 : TFHIRObject;
-  t, c, i1, i2 : integer;
+  t, c, i1, i2, w : integer;
   m : boolean;
 begin
   ol1 := obj1.createPropertyList(true);
@@ -398,14 +413,22 @@ begin
             ov1 := o1.Values[0] as TFHIRObject;
             ov2 := o2.Values[0] as TFHIRObject;
             if (ov1.fhirType = ov2.fhirType) and ((ov1.getid = ov2.getid) or compareDeep(ov1, ov2, false)) then
+            begin
               inc(c);
+              for w := 1 to identifyingWeightFactor(o1.Name) do
+              begin
+                // increase weight
+                inc(c);
+                inc(t)
+              end;
+            end;
           end;
         end;
       end;
     end;
   finally
-    ol1.Free;
-    ol2.Free;
+    ol1.free;
+    ol2.free;
   end;
   if (t = 0) then
     result := 0
@@ -429,7 +452,7 @@ begin
         res.setProperty(pp.name, v);
         populateObject(v, pp);
       finally
-        v.Free;
+        v.free;
       end;
     end;
   end;
@@ -455,11 +478,14 @@ begin
       end
       else
       begin
-        // if the next target does not exists in the base list, create it
+        // if the next target does not exist in the base list, create it
         dm := matches.matchedTarget(cm);
         if dm = nil then
         begin
-          differences.insert(path+'.'+name, cm, ml[cm].Link as TFHIRObject);
+          if (cm >= bl.count) then
+            differences.add(path, name, ml[cm].Link as TFHIRObject)
+          else
+            differences.insert(path+'.'+name, cm, ml[cm].Link as TFHIRObject);
           ol.Ins(cm);
         end
         else
@@ -471,7 +497,7 @@ begin
           end
           else if dm.FSourceIndex < cb then
           begin
-            raise ETodo.create('TDifferenceEngine.makeListChanges (<)');
+            raise ETodo.Create('TDifferenceEngine.makeListChanges (<)');
             // actually, this can't happen (https://xkcd.com/2200/); a move forwards will become a series of moves backwards?
           end
           else
@@ -498,7 +524,7 @@ begin
       end;
     end;
   finally
-    ol.Free;
+    ol.free;
   end;
 end;
 
@@ -510,7 +536,7 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when inserting');
+      raise EFHIRException.Create('No content found at '+path+' when inserting');
 
     if value.value <> nil then
       dest[0].parent.insertProperty(dest[0].name, value.value.Link, index)
@@ -525,7 +551,7 @@ begin
       end;
     end;
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -536,14 +562,14 @@ begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when moving');
+      raise EFHIRException.Create('No content found at '+path+' when moving');
     if dest.Count < 2 then
-      raise EFHIRException.create('Only a single location found at '+path+' when moving');
+      raise EFHIRException.Create('Only a single location found at '+path+' when moving');
     if dest[0].parent = nil then
-      raise EFHIRException.create('Content returned from Path is not part of Resource');
+      raise EFHIRException.Create('Content returned from Path is not part of Resource');
     dest[0].parent.reorderProperty(dest[0].name, source, destination);
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -561,7 +587,7 @@ begin
     diffReplace : applyReplace(res, op.str['path'], op.param['value']);
     diffMove :    applyMove(res, op.str['path'], StrToInt(op.str['source']), StrToInt(op.str['destination']));
   else
-    raise EFHIRException.create('Unknown Operation '+t);
+    raise EFHIRException.Create('Unknown Operation '+t);
   end;
   result := d = diffDelete;
 end;
@@ -569,30 +595,32 @@ end;
 procedure TDifferenceEngine.applyReplace(res : TFHIRObject; path: String; value: TFhirParametersParameterW);
 var
   dest : TFHIRSelectionList;
+  d : TFHIRSelection;
   v : TFHIRObject;
 begin
   dest := fpe.evaluate(nil, res, path);
   try
     if dest.Count = 0 then
-      raise EFHIRException.create('No content found at '+path+' when adding');
+      raise EFHIRException.Create('No content found at '+path+' when adding');
     if dest.Count > 1 then
-      raise EFHIRException.create('Multiple locations found at '+path+' when adding');
+      raise EFHIRException.Create('Multiple locations found at '+path+' when adding');
     if dest[0].parent = nil then
-      raise EFHIRException.create('Content returned from Path is not part of Resource');
+      raise EFHIRException.Create('Content returned from Path is not part of Resource');
+    d := dest[0];
     if value.value <> nil then
-      dest[0].parent.replaceProperty(dest[0].name, dest[0].value, value.value.Link)
+      d.parent.replaceProperty(d.name, d.value, value.value.Link)
     else
     begin
-      v := dest[0].parent.createPropertyValue(dest[0].name);
+      v := d.parent.createPropertyValue(d.name);
       try
-        dest[0].parent.replaceProperty(dest[0].name, dest[0].value, v.Link);
+        d.parent.replaceProperty(d.name, d.value, v.Link);
         populateObject(v, value);
       finally
-        v.Free;
+        v.free;
       end;
     end;
   finally
-    dest.Free;
+    dest.free;
   end;
 end;
 
@@ -645,7 +673,7 @@ begin
     b.append('</table>'#13#10);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -701,7 +729,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -719,11 +747,11 @@ begin
     result := FormatTextToXml(Value.primitiveValue, xmlText)
   else if (value.isType) and StringArrayExistsSensitive(['Annotation', 'Attachment', 'Identifier', 'CodeableConcept', 'Coding', 'Quantity', 'Range', 'Period', 'Ratio', 'SampledData', 'Signature', 'HumanName', 'Address', 'ContactPoint', 'Timing', 'Reference', 'Meta'], Value.fhirType) then
   begin
-    c := FFactory.makeComposer(FContext.link, ffJson, FContext.lang, OutputStyleNormal);
+    c := FFactory.makeComposer(FContext, ffJson, FContext.LangList, OutputStyleNormal);
     try
       result := c.Compose('value', value);
     finally
-      c.Free;
+      c.free;
     end;
   end
   else
@@ -759,7 +787,7 @@ end;
 
 constructor TDifferenceEngine.Create(context: TFHIRWorkerContextV; factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
   FContext := context;
   fpe := FFactory.makePathEngine(context.link, nil);
@@ -767,8 +795,8 @@ end;
 
 destructor TDifferenceEngine.Destroy;
 begin
-  fpe.Free;
-  FContext.Free;
+  fpe.free;
+  FContext.free;
   FFactory.free;
   inherited;
 end;
@@ -870,7 +898,7 @@ var
   n : String;
 begin
   if base.fhirType <> modified.fhirType then
-    raise EFHIRException.create('Unable to generate difference for different types ('+base.fhirType+'/'+modified.fhirType+')');
+    raise EFHIRException.Create('Unable to generate difference for different types ('+base.fhirType+'/'+modified.fhirType+')');
   bl := base.createPropertyList(true);
   ml := modified.createPropertyList(true);
   try
@@ -881,7 +909,7 @@ begin
       m.forceValues;
       if b.IsList and ((b.Values.Count > 1) or (m.Values.Count > 1)) then
       begin
-        matches := TDifferenceMatchList.create;
+        matches := TDifferenceMatchList.Create;
         try
           // map the certain matches between lists
           findCertainMatches(matches, b.Values, m.Values);
@@ -893,7 +921,7 @@ begin
           else
             makeListChanges(path, b.Name, matches, b.Values, m.Values, differences);
         finally
-          matches.Free;
+          matches.free;
         end;
       end
       else
@@ -933,17 +961,17 @@ begin
       end;
     end;
   finally
-    bl.Free;
-    ml.Free;
+    bl.free;
+    ml.free;
   end;
 end;
 
-function TDifferenceEngine.sizeInBytesV : cardinal;
+function TDifferenceEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, fpe.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, fpe.sizeInBytes(magic));
 end;
 
 { TOffSetList }
@@ -1000,9 +1028,9 @@ begin
   o.FInserted := false;
 end;
 
-function TOffset.sizeInBytesV : cardinal;
+function TOffset.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 end.

@@ -1,4 +1,4 @@
-unit FHIR.Client.ClientDialog;
+unit fui_vcl_client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -94,7 +94,7 @@ var
   s : String;
 begin
   try
-    post := TBytesStream.create(TEncoding.UTF8.getBytes(request));
+    post := TBytesStream.Create(TEncoding.UTF8.getBytes(request));
     try
       http := TIdHTTP.Create(nil);
       Try
@@ -112,7 +112,7 @@ begin
           http.Request.ContentType := 'application/json';
 //          if edtAuth.text <> '' then
 //            http.Request.CustomHeaders.values['Authorization'] := edtAuth.text;
-          resp := TBytesStream.create;
+          resp := TBytesStream.Create;
           try
             try
               http.Post(FServer, post, resp);
@@ -126,7 +126,7 @@ begin
               end;
             except
               on e : EIdHTTPProtocolException do
-                raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
+                raise EFHIRException.Create(e.message+' : '+e.ErrorMessage);
               on e:Exception do
                 raise;
             end;
@@ -191,12 +191,12 @@ begin
     end
     else
     begin
-      jwks := TJWKList.create();
+      jwks := TJWKList.Create();
       try
 //        jwks.add(TJWTUtils.loadKeyFromRSACert(edtPublicKey.Text));
         jwks.writeToJson(json.forceObj['jwks']);
       finally
-        jwks.Free;
+        jwks.free;
       end;
       json.str['token_endpoint_auth_method'] := 'private_key_jwt';
   //    json.str['issuer'] := edtIssuer.Text;
@@ -205,7 +205,7 @@ begin
     end;
     result := TJSONWriter.writeObjectStr(json, true)
   finally
-    json.Free;
+    json.free;
   end;
 end;
 

@@ -9,19 +9,16 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import org.fhir.delphi.DefinedCode;
-import org.fhir.delphi.ElementDefn;
 import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.analysis.TypeInfo;
 import org.fhir.pascal.generator.codegen.ClassGenerator.ClassGeneratorCategory;
-import org.fhir.pascal.generator.codegen.FormatsGenerator.StructureDefinitionSorter;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.model.ElementDefinition;
 import org.hl7.fhir.r5.model.ElementDefinition.PropertyRepresentation;
 import org.hl7.fhir.r5.model.ElementDefinition.TypeRefComponent;
-import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.r5.model.StructureDefinition;
+import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.utilities.Utilities;
 
 /*
@@ -136,7 +133,7 @@ public class FormatsGenerator extends BaseGenerator {
   }
 
   public void generateXml(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.Xml");
+	  String template = config.getTemplate("fhir{N}_xml");
 	  template = template.replace("{{mark}}", startVMarkValue());
 	  template = template.replace("{{types.abstract.parser.intf}}", xta.parser.toString());
 	  template = template.replace("{{types.concrete.parser.intf}}", xtc.parser.toString());
@@ -164,7 +161,7 @@ public class FormatsGenerator extends BaseGenerator {
 	
 
   public void generateJson(String filename) throws Exception {
-    String template = config.getTemplate("FHIR.R5.Json");
+    String template = config.getTemplate("fhir{N}_json");
     
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{abstract.types.intf.parser}}", jta.parser.toString());
@@ -190,7 +187,7 @@ public class FormatsGenerator extends BaseGenerator {
   
 
   public void generateTurtle(String filename) throws Exception {
-    String template = config.getTemplate("FHIR.R5.Turtle");
+    String template = config.getTemplate("fhir{N}_turtle");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{parse.types.abstract.intf}}", tta.parser.toString());
     template = template.replace("{{parse.types.concrete.intf}}", ttc.parser.toString());
@@ -454,11 +451,11 @@ public class FormatsGenerator extends BaseGenerator {
     xml.composer.append("    procedure Compose"+tn.substring(5)+"(xml : TXmlBuilder; name : string; value : "+tn+");\r\n");
 //    if (!e.getName().equals("Element") && !e.getName().equals("BackboneElement"))
       xml.composer.append("    procedure Compose"+tn.substring(5)+"Children(xml : TXmlBuilder; value : "+tn+");\r\n");
-    json.parser.append("    function Parse"+tn.substring(5)+"(jsn : TJsonObject) : "+tn+"; overload; {b\\}\r\n");
-    ttl.parser.append("    function Parse"+tn.substring(5)+"(obj : TTurtleComplex) : "+tn+"; overload; {b\\}\r\n");
+    json.parser.append("    function Parse"+tn.substring(5)+"(jsn : TJsonObject) : "+tn+"; overload; \r\n");
+    ttl.parser.append("    function Parse"+tn.substring(5)+"(obj : TTurtleComplex) : "+tn+"; overload; \r\n");
 //    if (!e.getName().equals("Element") && !e.getName().equals("BackboneElement")) {
-      json.parser.append("    procedure Parse"+tn.substring(5)+"Properties(jsn : TJsonObject; value : "+tn+"); overload; {b\\}\r\n");
-      ttl.parser.append("    procedure Parse"+tn.substring(5)+"Properties(obj : TTurtleComplex; value : "+tn+"); overload; {b\\}\r\n");
+      json.parser.append("    procedure Parse"+tn.substring(5)+"Properties(jsn : TJsonObject; value : "+tn+"); overload;\r\n");
+      ttl.parser.append("    procedure Parse"+tn.substring(5)+"Properties(obj : TTurtleComplex; value : "+tn+"); overload; \r\n");
 //   }
     json.composer.append("    procedure Compose"+tn.substring(5)+"(json : TJSONWriter; name : string; value : "+tn+"; noObj : boolean = false);\r\n");
     ttl.composer.append("    procedure Compose"+tn.substring(5)+"(parent :  TTurtleComplex; parentType, name : String; value : "+tn+"; useType : boolean; index : integer);\r\n");
@@ -592,17 +589,17 @@ public class FormatsGenerator extends BaseGenerator {
                 "    end;\r\n"+
                 "    if val then\r\n"+
                 "    begin\r\n"+
-                "      json.valueArray('"+e.getName()+"');\r\n"+
+                "      startArray(json, '"+e.getName()+"', value."+s+obj+", true);\r\n"+
                 "      for i := 0 to value."+s+obj+".Count - 1 do\r\n"+
                 "        ComposeEnumValue(json, '', value."+s+obj+"[i], CODES_"+tn+", true);\r\n"+
-                "      json.FinishArray;\r\n"+
+                "      finishArray(json, value."+s+obj+");\r\n"+
                 "    end;\r\n"+
                 "    if ext then\r\n"+
                 "    begin\r\n"+
-                "      json.valueArray('_"+e.getName()+"');\r\n"+
+                "      startArray(json, '_"+e.getName()+"', value."+s+obj+", false);\r\n"+
                 "      for i := 0 to value."+s+obj+".Count - 1 do\r\n"+
                 "        ComposeEnumProps(json, '', value."+s+obj+"[i], CODES_"+tn+", true);\r\n"+
-                "      json.FinishArray;\r\n"+
+                "      finishArray(json, value."+s+obj+");\r\n"+
                 "    end;\r\n"+
             "  end;\r\n");
 
@@ -629,8 +626,14 @@ public class FormatsGenerator extends BaseGenerator {
         };
         workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n"+
             "        value."+s+".Add("+parse+")"+marker()+"\r\n");
-        workingComposerX.append("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")+"for i := 0 to value."+s+".Count - 1 do\r\n"+
+        if (e.getPath().equals("Meta.tag")) {
+        	workingComposerX.append("  for i := 0 to value.tagList.Count - 1 do\r\n");	
+        	workingComposerX.append("    if (SummaryOption in [soFull, soSummary, soData]) or isSubsettedTag(value.tagList[i]) then\r\n");	
+        	workingComposerX.append("      ComposeCoding(xml, 'tag', value.tagList[i]);\r\n");	
+        } else {
+          workingComposerX.append("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")+"for i := 0 to value."+s+".Count - 1 do\r\n"+
             "      "+srlsd+"(xml, '"+e.getName()+"', "+getParam3(tn)+srls.replace("#", "value."+s+"[i]")+");\r\n");
+        }
         if (srlsr.equals("ComposeResource")) 
           workingComposerR.append("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")+"for i := 0 to value."+s+".Count - 1 do\r\n"+
               "      ComposeInnerResource(this, '%%%%', '"+e.getName()+"', "+srls.replace("#", "value."+s+"[i]")+", false, i);"+marker()+"\r\n");
@@ -648,7 +651,7 @@ public class FormatsGenerator extends BaseGenerator {
         workingParserT.append("    for item in obj.complexes('http://hl7.org/fhir/"+e.getPath()+"') do\r\n"+
             "      value."+s+".Add(parse"+parseName(tn)+"(item));\r\n");
 
-        workingComposerJ.append("  if "+(e.getMin() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(value."+s+".Count > 0) then\r\n");
+        workingComposerJ.append(e.getPath().equals("Meta.tag") ? "  if "+(e.getMin() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(value."+s+".Count > 0) or (hasSubsettedTag(value.tagList)) then\r\n" : "  if "+(e.getMin() == 0 ? "(SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" and ":"")+"(value."+s+".Count > 0) then\r\n");        
         if (typeIsPrimitive(e.typeSummary())) 
           workingComposerJ.append(
               "  begin\r\n"+
@@ -661,28 +664,28 @@ public class FormatsGenerator extends BaseGenerator {
                   "    end;\r\n"+
                   "    if val then\r\n"+
                   "    begin\r\n"+
-                  "      json.valueArray('"+e.getName()+"');\r\n"+
+                  "      startArray(json, '"+e.getName()+"', "+srls.replace("#", "value."+s)+", true);\r\n"+
                   "      for i := 0 to value."+s+".Count - 1 do\r\n"+
-                  "        "+srlsdJ+"Value(json, '',"+srls.replace("#", "value."+s+"[i]")+", true);\r\n"+
-                  "      json.FinishArray;\r\n"+
+                  "        "+srlsdJ+"Value(json, '', "+srls.replace("#", "value."+s+"[i]")+", true);\r\n"+
+                  "      finishArray(json, "+srls.replace("#", "value."+s)+");\r\n"+
                   "    end;\r\n"+
                   "    if ext then\r\n"+
                   "    begin\r\n"+
-                  "      json.valueArray('_"+e.getName()+"');\r\n"+
+                  "      startArray(json, '_"+e.getName()+"', "+srls.replace("#", "value."+s)+", false);\r\n"+
                   "      for i := 0 to value."+s+".Count - 1 do\r\n"+
-                  "        "+srlsdJ+"Props(json, '',"+srls.replace("#", "value."+s+"[i]")+", true);\r\n"+
-                  "      json.FinishArray;\r\n"+
+                  "        "+srlsdJ+"Props(json, '', "+srls.replace("#", "value."+s+"[i]")+", true);\r\n"+
+                  "      finishArray(json, "+srls.replace("#", "value."+s)+");\r\n"+
                   "    end;\r\n"+
               "  end;\r\n");
         else
           workingComposerJ.append(
               "  begin\r\n"+
-                  "    json.valueArray('"+e.getName()+"');\r\n"+
+                  "    startArray(json, '"+e.getName()+"', "+srls.replace("#", "value."+s)+", false);\r\n"+
                   "    for i := 0 to value."+s+".Count - 1 do\r\n"+
+                  (e.getPath().equals("Meta.tag") ? "      if (SummaryOption in [soFull, soSummary, soText, soData]) or (isSubsettedTag(value.tagList[i])) then\r\n" : "")+
                   "      "+srlsdJ+"(json, '', "+getParam3(tn)+srls.replace("#", "value."+s+"[i]")+");"+marker()+"\r\n"+
-                  "    json.FinishArray;\r\n"+
-              "  end;\r\n");
-      }
+                  "    finishArray(json, "+srls.replace("#", "value."+s)+");\r\n"+
+              "  end;\r\n"); }
     } else {
       if (typeIsSimple(tn) && !tn.equals("TFhirXHtmlNode")) {
         if (e.hasRepresentation(PropertyRepresentation.XMLATTR))
@@ -729,6 +732,9 @@ public class FormatsGenerator extends BaseGenerator {
           if (e.hasRepresentation(PropertyRepresentation.XMLATTR)) {
             workingParserXA.append("    "+(!analysis.isAbstract() ? "result" : "value")+"."+s+" := GetAttribute(element, '"+e.getName()+"');"+marker()+"\r\n");
             workingComposerXA.append("  Attribute(xml, '"+e.getName()+"', value."+s+"  );\r\n");
+          } else if (e.getPath().equals("Resource.meta")) {
+              workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n        value."+s+" := Parse"+parseName(tn)+"(child, path+'/"+e.getName()+"')"+marker()+"\r\n");
+              workingComposerX.append("  Compose"+parseName(tn)+"(xml, '"+e.getName()+"', "+getParam3(tn)+"value."+s+");"+marker()+"\r\n");
           } else {
             if (e.hasUserData("pascal.enum")) {
               workingParserX.append("      else if (child.localName = '"+e.getName()+"') then\r\n        value."+s+"Element := ParseEnum(CODES_"+tn+", SYSTEMS_"+tn+", child, path+'/"+e.getName()+"')"+marker()+"\r\n");
@@ -769,7 +775,7 @@ public class FormatsGenerator extends BaseGenerator {
             workingComposerJ.append("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")+"Compose"+parseName(tn)+"Value(json, '"+e.getName()+"', value."+s+"Element, false);"+marker()+"\r\n");
             workingComposerJ.append("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")+"Compose"+parseName(tn)+"Props(json, '"+e.getName()+"', value."+s+"Element, false);"+marker()+"\r\n");
           } else
-            workingComposerJ.append("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")+"Compose"+parseName(tn)+"(json, '"+e.getName()+"', "+getParam3(tn)+"value."+s+");"+marker()+"\r\n");
+            workingComposerJ.append((e.getPath().equals("Resource.meta") ? "  // we always compose meta - special case. if (SummaryOption in [soFull, soSummary, soData]) then\r\n    " : ("  "+(e.getMin() == 0 ? "if (SummaryOption in ["+sumSet+"])"+defaultValueTest+dc+" then\r\n    ":"")))+"Compose"+parseName(tn)+"(json, '"+e.getName()+"', "+getParam3(tn)+"value."+s+");"+marker()+"\r\n");
           
         } else {
           String pfx = e.getName().contains("[x]") ? e.getName().replace("[x]", "") : "";
@@ -915,7 +921,7 @@ public class FormatsGenerator extends BaseGenerator {
 
     xml.impl.append(
         "begin\r\n"+
-            "  result := "+tn+".create;\r\n"+
+            "  result := "+tn+".Create;\r\n"+
         "  try\r\n");
     if (isElement)
       if (category == ClassGeneratorCategory.Resource)
@@ -981,12 +987,12 @@ public class FormatsGenerator extends BaseGenerator {
         xml.impl.append("  composeElementAttributes(xml, value);\r\n");
     xml.impl.append(workingComposerXA.toString());        
     xml.impl.append(
-        "  xml.open(name);\r\n");
+        "  if KeepLocationData then value.LocationData.ComposeStart := xml.SourceLocation;\r\n  xml.open(name);\r\n");
     xml.impl.append("  compose"+tn.substring(5)+"Children(xml, value);\r\n");
     if (isElement)
       xml.impl.append("  closeOutElement(xml, value);\r\n");
     xml.impl.append(
-        "  xml.close(name);\r\n"+
+        "  xml.close(name);\r\n  if KeepLocationData then value.LocationData.ComposeFinish := xml.SourceLocation;\r\n"+
             "end;\r\n\r\n"
         );
 
@@ -1031,7 +1037,7 @@ public class FormatsGenerator extends BaseGenerator {
     json.impl.append(
         "function TFHIRJsonParser"+".Parse"+tn.substring(5)+"(jsn : TJsonObject) : "+tn+";\r\n"+
             "begin\r\n"+
-            "  result := "+tn+".create;\r\n"+
+            "  result := "+tn+".Create;\r\n"+
             "  try\r\n"+
             "    Parse"+tn.substring(5)+"Properties(jsn, result);\r\n"+ 
             "    result.link;\r\n"+
@@ -1045,7 +1051,7 @@ public class FormatsGenerator extends BaseGenerator {
             "begin\r\n"+
             "  if (obj = nil) then\r\n"+
             "    exit(nil);\r\n"+      
-            "  result := "+tn+".create;\r\n"+
+            "  result := "+tn+".Create;\r\n"+
             "  try\r\n"+
             "    Parse"+tn.substring(5)+"Properties(obj, result);\r\n"+ 
             "    result.link;\r\n"+
@@ -1100,7 +1106,7 @@ public class FormatsGenerator extends BaseGenerator {
       json.impl.append(
           "begin\r\n"+
               "  if (value = nil) then\r\n    exit;\r\n"+
-          "  if not noObj then json.valueObject(name);\r\n");
+          "  startElement(json, name, value, noObj);\r\n");
     if (definitions.getType(parent).getAbstract())
       json.impl.append("  Compose"+parent+"Properties(json, value);"+marker()+"\r\n");
     else
@@ -1112,7 +1118,7 @@ public class FormatsGenerator extends BaseGenerator {
           "end;\r\n\r\n");
     else
       json.impl.append(
-          "  if not noObj then json.finishObject;\r\n"+
+          "  finishElement(json, name, value, noObj);\r\n"+
           "end;\r\n\r\n");
 
     s = workingComposerR.toString().replace("%%%%", ti.getDefn().getPath());

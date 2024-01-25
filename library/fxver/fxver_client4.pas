@@ -1,4 +1,4 @@
-unit FHIR.XVersion.Client;
+unit fxver_client4;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -46,7 +46,7 @@ uses
 type
   TFhirXVersionClient = class (TFhirClientV)
   public
-    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
+    constructor Create(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 

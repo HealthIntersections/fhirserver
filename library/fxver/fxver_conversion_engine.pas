@@ -34,8 +34,8 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_http, fsl_javascript,
-  fhir_objects, fhir_factory, fhir_client, fhir_javascript,
+  fsl_base, fsl_utilities, fsl_http,
+  fhir_objects, fhir_factory, fhir_client,
   fhir4_client, fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_utilities; // Terminology Layer
 
 (*
@@ -66,12 +66,12 @@ type
     FTerminologyServer : TFhirClient4;
     FAPI : TFhirClientV;
 
-    function svcLookup(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+    //function svcLookup(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
   public
     constructor Create(worker : TFHIRWorkerContextWithFactory; txServer : TFhirClient4; api : TFhirClientV);
     destructor Destroy; override;
 
-    class procedure registerConversionEngine(js : TJavascript; worker : TFHIRWorkerContextWithFactory);
+    //class procedure registerConversionEngine(js : TJavascript; worker : TFHIRWorkerContextWithFactory);
   end;
 
 implementation
@@ -88,77 +88,77 @@ end;
 
 destructor TFHIRConversionEngine.Destroy;
 begin
-  FTerminologyServer.Free;
-  FAPI.Free;
-  FWorker.Free;
+  FTerminologyServer.free;
+  FAPI.free;
+  FWorker.free;
   inherited;
 end;
 
-class procedure TFHIRConversionEngine.registerConversionEngine(js: TJavascript; worker: TFHIRWorkerContextWithFactory);
-begin
-  // nothing yet
-end;
-
-function TFHIRConversionEngine.svcLookup(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
-var
-  coding : TFHIRCoding;
-  params, s : String;
-  pIn, pOut : TFhirParameters;
-  p : TFhirParametersParameter;
-  pm : THTTPParameters;
-begin
-  coding := nil;
-  try
-  //function lookup(coding, params) : Parameters;
-  //function lookup(system, code, params) : Parameters;
-  //function lookup(system, version, code, params) : Parameters;
-    case Length(Parameters) of
-      2: begin
-         coding := js.getWrapped<TFHIRCoding>(parameters[0]);
-         params := js.asString(parameters[1]);
-         end;
-      3: begin
-         coding := TFhirCoding.Create;
-         coding.system := js.asString(parameters[0]);
-         coding.code := js.asString(parameters[1]);
-         params := js.asString(parameters[2]);
-         end;
-      4: begin
-         coding := TFhirCoding.Create;
-         coding.system := js.asString(parameters[0]);
-         coding.code := js.asString(parameters[1]);
-         params := js.asString(parameters[2]);
-         end;
-    else
-      raise EJavascriptSource.Create('Wrong number of parameters to lookup - must be 2 - 4');
-    end;
-    pIn := TFhirParameters.Create;
-    try
-      pIn.AddParameter('coding', coding.Link);
-      pm := THTTPParameters.Create(params);
-      try
-        if pm.has('date') then
-          pIn.AddParameter('date', TFhirDateTime.Create(TFslDateTime.fromXML(pm['date'])));
-        if pm.has('displayLanguage') then
-          pIn.AddParameter('displayLanguage', TFhirCode.Create(pm['displayLanguage']));
-        if pm.has('property') then
-          for s in pm['property'].Split([';']) do
-            pIn.AddParameter('displayLanguage', TFhirCode.Create(s));
-        pOut := FTerminologyServer.operation(frtCodeSystem, 'lookup', pIn) as TFhirParameters;
-        try
-          result := js.wrap(pOut.Link, true);
-        finally
-          pOut.Free;
-        end;
-      finally
-        pm.Free;
-      end;
-    finally
-      pIn.Free;
-    end;
-  finally
-    coding.free;
-  end;
-end;
-
+//class procedure TFHIRConversionEngine.registerConversionEngine(js: TJavascript; worker: TFHIRWorkerContextWithFactory);
+//begin
+//  // nothing yet
+//end;
+//
+//function TFHIRConversionEngine.svcLookup(js: TJavascript; propDef: TJavascriptRegisteredProperty; this: TObject; parameters: TJsValues): JsValueRef;
+//var
+//  coding : TFHIRCoding;
+//  params, s : String;
+//  pIn, pOut : TFhirParameters;
+//  p : TFhirParametersParameter;
+//  pm : THTTPParameters;
+//begin
+//  coding := nil;
+//  try
+//  //function lookup(coding, params) : Parameters;
+//  //function lookup(system, code, params) : Parameters;
+//  //function lookup(system, version, code, params) : Parameters;
+//    case Length(Parameters) of
+//      2: begin
+//         coding := js.getWrapped<TFHIRCoding>(parameters[0]);
+//         params := js.asString(parameters[1]);
+//         end;
+//      3: begin
+//         coding := TFhirCoding.Create;
+//         coding.system := js.asString(parameters[0]);
+//         coding.code := js.asString(parameters[1]);
+//         params := js.asString(parameters[2]);
+//         end;
+//      4: begin
+//         coding := TFhirCoding.Create;
+//         coding.system := js.asString(parameters[0]);
+//         coding.code := js.asString(parameters[1]);
+//         params := js.asString(parameters[2]);
+//         end;
+//    else
+//      raise EJavascriptSource.Create('Wrong number of parameters to lookup - must be 2 - 4');
+//    end;
+//    pIn := TFhirParameters.Create;
+//    try
+//      pIn.AddParameter('coding', coding.Link);
+//      pm := THTTPParameters.Create(params);
+//      try
+//        if pm.has('date') then
+//          pIn.AddParameter('date', TFhirDateTime.Create(TFslDateTime.fromXML(pm['date'])));
+//        if pm.has('displayLanguage') then
+//          pIn.AddParameter('displayLanguage', TFhirCode.Create(pm['displayLanguage']));
+//        if pm.has('property') then
+//          for s in pm['property'].Split([';']) do
+//            pIn.AddParameter('displayLanguage', TFhirCode.Create(s));
+//        pOut := FTerminologyServer.operation(frtCodeSystem, 'lookup', pIn) as TFhirParameters;
+//        try
+//          result := js.wrap(pOut.Link, true);
+//        finally
+//          pOut.free;
+//        end;
+//      finally
+//        pm.free;
+//      end;
+//    finally
+//      pIn.free;
+//    end;
+//  finally
+//    coding.free;
+//  end;
+//end;
+//
 end.

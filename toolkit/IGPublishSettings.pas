@@ -160,12 +160,12 @@ begin
   begin
     TDialogService.MessageDialog('IG Publisher folder not defined.'#13#10'Set the location of the IG Publisher', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk],
       System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
-    lblPubFolder.TextSettings.FontColor:= TAlphaColorRec.Maroon;
-    lblPubFolder.Text:='Not found';
+    lblPubFolder.TextSettings.FontColor := TAlphaColorRec.Maroon;
+    lblPubFolder.Text := 'Not found';
     exit;
   end else begin
-    lblPubFolder.TextSettings.FontColor:= TAlphaColorRec.Green;
-    lblPubFolder.Text:='Present';
+    lblPubFolder.TextSettings.FontColor := TAlphaColorRec.Green;
+    lblPubFolder.Text := 'Present';
 
   end;
 
@@ -174,13 +174,13 @@ begin
   begin
     TDialogService.MessageDialog('IG Publisher not found in folder.'#13#10'Please download the IG Publisher.', System.UITypes.TMsgDlgType.mtInformation, [System.UITypes.TMsgDlgBtn.mbOk],
       System.UITypes.TMsgDlgBtn.mbOk, 0, nil, nil);
-    lblPubPresent.TextSettings.FontColor:= TAlphaColorRec.Maroon;
-    lblPubPresent.Text:='Not found';
+    lblPubPresent.TextSettings.FontColor := TAlphaColorRec.Maroon;
+    lblPubPresent.Text := 'Not found';
     exit;
   end
   else begin
-    lblPubPresent.TextSettings.FontColor:= TAlphaColorRec.Green;
-    lblPubPresent.Text:='Present';
+    lblPubPresent.TextSettings.FontColor := TAlphaColorRec.Green;
+    lblPubPresent.Text := 'Present';
     btnLocalBuild.enabled := true;
   end;
 
@@ -493,7 +493,7 @@ begin
     DownloadForm.Destroy;
 
     createFolders(igRootFolder);
-    edit1.Text:=IGPublisherFolder;
+    edit1.Text := IGPublisherFolder;
 
     if checkFolder(self) then
     begin

@@ -73,7 +73,7 @@ Type
   protected
     function hasSchema(s : String) : boolean;
     procedure checkSchema(s : String);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(json : TJsonObject); virtual;
     destructor Destroy; override;
@@ -100,7 +100,7 @@ Type
     function GetPrimary: Boolean;
     procedure SetPrimary(const Value: Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(FJson : TJsonObject);
     destructor Destroy; override;
@@ -139,7 +139,7 @@ Type
     procedure SetRegion(const Value: String);
     procedure SetStreetAddress(const Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(FJson : TJsonObject);
     destructor Destroy; override;
@@ -211,7 +211,7 @@ Type
     function GetEntitlement(i: integer): String;
     function GetEntitlementCount: integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(FJson : TJsonObject); override;
     constructor CreateNew;
@@ -266,13 +266,13 @@ implementation
 
 constructor TSCIMObject.Create(json: TJsonObject);
 begin
-  inherited create;
+  inherited Create;
   self.FJson := json;
 end;
 
 destructor TSCIMObject.Destroy;
 begin
-  FJson.Free;
+  FJson.free;
   inherited;
 end;
 
@@ -462,10 +462,10 @@ begin
 end;
 
 
-function TSCIMObject.sizeInBytesV : cardinal;
+function TSCIMObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FJson.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FJson.sizeInBytes(magic));
 end;
 
 { TSCIMUser }
@@ -540,6 +540,9 @@ end;
 destructor TSCIMUser.Destroy;
 begin
   FEmails.free;
+  FPhoneNums.free;
+  FIMs.free;
+  FAddresses.free;
   inherited;
 end;
 
@@ -916,13 +919,13 @@ begin
     FJson.clear('userType');
 end;
 
-function TSCIMUser.sizeInBytesV : cardinal;
+function TSCIMUser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEmails.sizeInBytes);
-  inc(result, FPhoneNums.sizeInBytes);
-  inc(result, FIMs.sizeInBytes);
-  inc(result, FAddresses.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEmails.sizeInBytes(magic));
+  inc(result, FPhoneNums.sizeInBytes(magic));
+  inc(result, FIMs.sizeInBytes(magic));
+  inc(result, FAddresses.sizeInBytes(magic));
   inc(result, (FHash.length * sizeof(char)) + 12);
 end;
 
@@ -930,7 +933,7 @@ end;
 
 constructor TSCIMContact.Create(FJson: TJsonObject);
 begin
-  inherited create;
+  inherited Create;
   self.FJson := FJson;
 end;
 
@@ -973,10 +976,10 @@ begin
   FJson['value'] := value;
 end;
 
-function TSCIMContact.sizeInBytesV : cardinal;
+function TSCIMContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FJson.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FJson.sizeInBytes(magic));
 end;
 
 { TSCIMContactList }
@@ -995,7 +998,7 @@ end;
 
 constructor TSCIMAddress.Create(FJson: TJsonObject);
 begin
-  inherited create;
+  inherited Create;
   self.FJson := FJson;
 end;
 
@@ -1085,10 +1088,10 @@ begin
   FJson['type'] := value;
 end;
 
-function TSCIMAddress.sizeInBytesV : cardinal;
+function TSCIMAddress.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FJson.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FJson.sizeInBytes(magic));
 end;
 
 { TSCIMAddressList }

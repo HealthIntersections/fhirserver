@@ -1,7 +1,7 @@
 Unit fui_vclx_base;
 
 {
-Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2010+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -33,13 +33,14 @@ Interface
 Uses
   Windows, Graphics, Math, StdCtrls, ExtCtrls, Dialogs, SysUtils, Controls, Forms, Classes, Menus,
   fsl_utilities, fsl_collections,
+  fhir_colour_utils,
   wp_graphics;
 
 
 Type
   TRect = wp_graphics.TRect;
   TPoint = wp_graphics.TPoint;
-  TColour = fsl_utilities.TColour;
+  TColour = fhir_colour_utils.TColour;
   TUixIdentifier = Integer;
   TUixEvent = Procedure (oSender : TObject) Of Object;
 

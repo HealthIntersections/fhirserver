@@ -436,7 +436,7 @@ begin
   TabControl1.TabHeight := 1;
   TabControl2.TabHeight := 1;
 
-  // form1.Caption:= inttostr(trunc(double(now)));
+  // form1.Caption := inttostr(trunc(double(now)));
   // if trunc(double(now)) > 43275 then begin
   // ShowMessage('This is a preview. Please check the FHIR toolkit for official release and updates.');
   // close;
@@ -537,7 +537,7 @@ begin
       tvStructure.EndUpdate;
       // tvStructure.Repaint;
     end;
-    // webbrowser1.Enabled:=false;
+    // webbrowser1.Enabled := false;
   end;
 
   tfhirImplementationGuide(resource).id := extractfilename(changefileext(filename, ''));
@@ -664,7 +664,7 @@ var
   resref: tfhirReference;
 begin
 
-  // opendialog3.Options:=[TOpenOption.ofAllowMultiSelect, TOpenOption.ofHideReadOnly];
+  // opendialog3.Options := [TOpenOption.ofAllowMultiSelect, TOpenOption.ofHideReadOnly];
   OpenDialog3.Options := [TOpenOption.ofAllowMultiSelect];
 
   if OpenDialog3.Execute then
@@ -914,7 +914,7 @@ begin
     end;
 
   finally
-    SL.Free;
+    SL.free;
   end;
 
   filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
@@ -967,7 +967,7 @@ begin
       end;
 
     finally
-      SL.Free;
+      SL.free;
     end;
 
     filestr := stringreplace(filestr, '\', '/', [rfReplaceAll, rfIgnoreCase]);
@@ -1059,7 +1059,7 @@ begin
 
     contentImport.Edit1.text := edtPageNameURL.text;
     contentImport.ShowModal;
-    contentImport.Free;
+    contentImport.free;
 
   end;
 
@@ -1078,7 +1078,7 @@ var
   restype: string;
   resFileName: string;
 begin
-  // opendialog3.Options:=[TOpenOption.ofHideReadOnly];
+  // opendialog3.Options := [TOpenOption.ofHideReadOnly];
   OpenDialog3.Options := [];
 
   if OpenDialog3.Execute then
@@ -1100,7 +1100,7 @@ begin
         restype := extResource.fhirType;
 
       finally
-        extResource.Free;
+        extResource.free;
 
       end;
 
@@ -1176,7 +1176,7 @@ var
 
 begin
   selIndex := 0;
-  // webbrowser1.Enabled:=false;
+  // webbrowser1.Enabled := false;
 
   if obj is tfhirImplementationGuide then
   begin
@@ -1299,7 +1299,7 @@ begin
     end
     else
       edtPageNameURL.text := '';
-    // webbrowser1.Enabled:=true;
+    // webbrowser1.Enabled := true;
     edtPageTitle.text := tfhirImplementationGuideDefinitionPage(obj).title;
     cbPageGeneration.ItemIndex := integer(tfhirImplementationGuideDefinitionPage(obj).generation);
     if AutoPreview.IsChecked then
@@ -1512,15 +1512,15 @@ begin
   try
     for i := 0 to high(InFileNames) do
     begin
-      InStream := TFileStream.Create(InFileNames[i], fmOpenRead);
+      InStream := TFileStream.Create(InFileNames[i], fmOpenRead + fmShareDenyWrite);
       try
         OutStream.CopyFrom(InStream, InStream.Size);
       finally
-        InStream.Free;
+        InStream.free;
       end;
     end;
   finally
-    OutStream.Free;
+    OutStream.free;
   end;
 end;
 

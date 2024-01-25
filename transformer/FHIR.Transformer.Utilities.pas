@@ -67,7 +67,7 @@ type
     Fcaption: String;
     FlineEnd: integer;
   public
-    constructor create(caption : String; lineStart, colStart, lineEnd, colEnd : integer);
+    constructor Create(caption : String; lineStart, colStart, lineEnd, colEnd : integer);
     property caption : String read Fcaption write Fcaption;
     property lineStart : integer read FlineStart write FlineStart;
     property colStart : integer read FcolStart write FcolStart;

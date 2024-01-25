@@ -306,7 +306,7 @@ var
 begin
   rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
 
-  form := TAddRestOperationForm.create(self);
+  form := TAddRestOperationForm.Create(self);
   try
     form.cbRead.enabled := false;
     form.cbVRead.enabled := false;
@@ -379,7 +379,7 @@ begin
     rs := rs - [r];
   end;
 
-  form := TAddRestResourceForm.create(self);
+  form := TAddRestResourceForm.Create(self);
   try
     for r in rs do
       if r <> frtCustom then
@@ -416,14 +416,14 @@ begin
           if form.cbRefLiteral.IsChecked then res.referencePolicy := res.referencePolicy + [ReferenceHandlingPolicyLiteral];
           if form.cbStandardSearch.isChecked then
           begin
-            compartments := TFHIRCompartmentList.create;
+            compartments := TFHIRCompartmentList.Create;
             indexes := TFhirIndexList.Create(TFHIRFactoryX.create);
             try
               builder := TFHIRIndexBuilderX.Create;
               try
                 builder.registerIndexes(indexes, compartments);
               finally
-                builder.Free;
+                builder.free;
               end;
               list := indexes.listByType(CODES_TFhirResourceTypesEnum[res.type_]);
               try
@@ -437,15 +437,15 @@ begin
                     p.documentation := index.Description;
                     res.searchParamList.Add(p.Link);
                   finally
-                    p.Free;
+                    p.free;
                   end;
                 end;
               finally
                 list.free;
               end;
             finally
-              indexes.Free;
-              compartments.Free;
+              indexes.free;
+              compartments.free;
             end;
 
           end;
@@ -515,7 +515,7 @@ var
   i : integer;
 begin
   rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
-  form := TListSelectorForm.create(self);
+  form := TListSelectorForm.Create(self);
   try
     form.Caption := 'Choose Resources to Delete';
     for r in rest.resourceList do
@@ -548,7 +548,7 @@ begin
   res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
   p := TFhirCapabilityStatementRestResourceSearchParam.Create;
   try
-    form := TSearchParameterEditorForm.create(self);
+    form := TSearchParameterEditorForm.Create(self);
     try
       form.param := p.link;
       if showModalHack(form) = mrOk then
@@ -563,7 +563,7 @@ begin
     end;
     lbSearchClick(nil);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -581,17 +581,17 @@ var
   i : integer;
 begin
   res := tvStructure.Selected.TagObject as TFhirCapabilityStatementRestResource;
-  form := TListSelectorForm.create(self);
+  form := TListSelectorForm.Create(self);
   try
     form.Caption := 'Choose Standard Parameters';
-    compartments := TFHIRCompartmentList.create;
+    compartments := TFHIRCompartmentList.Create;
     indexes := TFhirIndexList.Create(TFHIRFactoryX.Create);
     try
       builder := TFHIRIndexBuilderX.Create;
       try
         builder.registerIndexes(indexes, compartments);
       finally
-        builder.Free;
+        builder.free;
       end;
       list := indexes.listByType(CODES_TFhirResourceTypesEnum[res.type_]);
       try
@@ -620,7 +620,7 @@ begin
                 p.documentation := index.Description;
                 res.searchParamList.Add(p.Link);
               finally
-                p.Free;
+                p.free;
               end;
             end;
           gridSearch.RowCount := res.searchParamList.Count;
@@ -630,8 +630,8 @@ begin
         list.free;
       end;
     finally
-      indexes.Free;
-      compartments.Free;
+      indexes.free;
+      compartments.free;
     end;
   finally
     form.free;
@@ -665,7 +665,7 @@ begin
 
   sp := gridSearch.TagObject as TFhirCapabilityStatementRestResourceSearchParamList;
   p := sp[gridSearch.Selected];
-  form := TSearchParameterEditorForm.create(self);
+  form := TSearchParameterEditorForm.Create(self);
   try
     form.param := p.link;
     if showModalHack(form) = mrOk then
@@ -688,7 +688,7 @@ var
 begin
   rest := tvStructure.Selected.TagObject as TFhirCapabilityStatementRest;
 
-  form := TAddRestOperationForm.create(self);
+  form := TAddRestOperationForm.Create(self);
   try
     form.cbRead.enabled := false;
     form.cbVRead.enabled := false;
@@ -807,7 +807,7 @@ begin
   exl := p.listExtensions('http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination');
   try
     ex := exl[gridSearch.Selected];
-    form := TSearchParameterCombinationEditorForm.create(self);
+    form := TSearchParameterCombinationEditorForm.Create(self);
     try
       form.Parameters := p.searchParamList.Link;
       form.extension := ex.link;
@@ -821,7 +821,7 @@ begin
       form.free;
     end;
   finally
-    exl.Free;
+    exl.free;
   end;
   lbSearchClick(nil);
 end;
@@ -836,7 +836,7 @@ begin
   ex := TFhirExtension.Create;
   try
     ex.url := 'http://hl7.org/fhir/StructureDefinition/capabilitystatement-search-parameter-combination';
-    form := TSearchParameterCombinationEditorForm.create(self);
+    form := TSearchParameterCombinationEditorForm.Create(self);
     try
       form.extension := ex.link;
       form.Parameters := res.searchParamList.Link;
@@ -852,7 +852,7 @@ begin
     end;
     lbSearchClick(nil);
   finally
-    ex.Free;
+    ex.free;
   end;
 end;
 
@@ -874,7 +874,7 @@ begin
     gridSearchCombinations.RowCount := exl.Count-1;
     ResourceIsDirty := true;
   finally
-    exl.Free;
+    exl.free;
   end;
 end;
 
@@ -1122,10 +1122,10 @@ begin
   {$ENDIF}
 
   case cbxResourceConformance.ItemIndex of
-    1: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL'));
-    2: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHOULD'));
-    3: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('MAY'));
-    4: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.create('SHALL NOT'));
+    1: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('SHALL'));
+    2: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('SHOULD'));
+    3: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('MAY'));
+    4: res.setExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation', TFHIRCode.Create('SHALL NOT'));
   else
     res.removeExtension('http://hl7.org/fhir/StructureDefinition/capabilitystatement-expectation')
   end;
@@ -1276,12 +1276,12 @@ begin
                ts.Add(ex.extensionList[i].value.primitiveValue);
            value := ts.CommaText;
          finally
-           ts.Free;
+           ts.free;
          end;
       end;
     end;
   finally
-    exl.Free;
+    exl.free;
   end;
 end;
 
@@ -1307,12 +1307,12 @@ begin
            for i := 0 to ts.Count - 1 do
              ex.addExtension('required', ts[i]);
          finally
-           ts.Free;
+           ts.free;
          end;
       end;
     end;
   finally
-    exl.Free;
+    exl.free;
   end;
   ResourceIsDirty := true;
 end;

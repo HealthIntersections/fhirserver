@@ -1,0 +1,108 @@
+object ModifiedFileActionForm: TModifiedFileActionForm
+  Left = 837
+  Height = 147
+  Top = 354
+  Width = 576
+  BorderIcons = [biSystemMenu]
+  Caption = 'File Modified'
+  ClientHeight = 147
+  ClientWidth = 576
+  OnCreate = FormCreate
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object Panel4: TPanel
+    Left = 0
+    Height = 35
+    Top = 112
+    Width = 576
+    Align = alBottom
+    BevelOuter = bvNone
+    Caption = ' '
+    ClientHeight = 35
+    ClientWidth = 576
+    TabOrder = 0
+    object Button3: TButton
+      Left = 364
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = '&Ignore'
+      OnClick = Button3Click
+      TabOrder = 3
+    end
+    object ModifiedFileActionForm: TButton
+      Left = 282
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = '&Reload'
+      OnClick = ModifiedFileActionFormClick
+      TabOrder = 2
+    end
+    object Button5: TButton
+      Left = 200
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = '&Save'
+      OnClick = Button5Click
+      TabOrder = 1
+    end
+    object Button6: TButton
+      Left = 118
+      Height = 25
+      Top = 0
+      Width = 75
+      Caption = 'See &Diff'
+      OnClick = Button6Click
+      TabOrder = 0
+    end
+    object Button4: TButton
+      Left = 442
+      Height = 25
+      Top = 0
+      Width = 114
+      Caption = 'Stop &Checking'
+      OnClick = Button4Click
+      TabOrder = 4
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 112
+    Top = 0
+    Width = 576
+    Align = alClient
+    BevelInner = bvLowered
+    BevelOuter = bvNone
+    BorderWidth = 8
+    Caption = ' '
+    ClientHeight = 112
+    ClientWidth = 576
+    TabOrder = 1
+    object Panel3: TPanel
+      Left = 9
+      Height = 94
+      Top = 9
+      Width = 558
+      Align = alClient
+      BevelOuter = bvNone
+      BorderWidth = 10
+      Caption = ' '
+      ClientHeight = 94
+      ClientWidth = 558
+      Color = clWhite
+      ParentColor = False
+      TabOrder = 0
+      object lblDetails: TLabel
+        Left = 10
+        Height = 74
+        Top = 10
+        Width = 538
+        Align = alClient
+        Caption = 'sasd'
+        WordWrap = True
+      end
+    end
+  end
+end

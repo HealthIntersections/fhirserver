@@ -219,7 +219,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     function Link : Tv3HXIT; Overload;
@@ -244,7 +244,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -283,7 +283,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Overload; Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
 
@@ -331,7 +331,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -399,7 +399,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -428,7 +428,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -454,7 +454,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -507,7 +507,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -549,7 +549,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     procedure Assign(oSource : TFslObject); Override;
@@ -574,7 +574,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -611,7 +611,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     procedure Assign(oSource : TFslObject); Override;
@@ -646,7 +646,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     function Link : Tv3XP; Overload;
@@ -700,7 +700,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -764,7 +764,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -836,7 +836,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -892,7 +892,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -943,7 +943,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -973,7 +973,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1008,7 +1008,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -1032,7 +1032,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -1056,7 +1056,7 @@ Type
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function LiteralV : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     function Link : Tv3TS; Overload;
@@ -1084,7 +1084,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Virtual;
     destructor Destroy; Override;
@@ -1115,7 +1115,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1138,7 +1138,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1163,7 +1163,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1189,7 +1189,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1213,7 +1213,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1235,7 +1235,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1270,7 +1270,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1329,7 +1329,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1361,7 +1361,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aParamType : Tv3QTYDatatype); Override;
     destructor Destroy; Override;
@@ -1386,7 +1386,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -1408,7 +1408,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue : Tv3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1586,7 +1586,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3ADXP);
+    Function AddItem(value : Tv3ADXP): Tv3ADXP;
     {
       Get the iIndexth ADXP (0 = first item)
     }
@@ -1640,7 +1640,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3ENXP);
+    Function AddItem(value : Tv3ENXP): Tv3ENXP;
     {
       Get the iIndexth ENXP (0 = first item)
     }
@@ -1880,7 +1880,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3CS);
+    Function AddItem(value : Tv3CS): Tv3CS;
     {
       Get the iIndexth CS (0 = first item)
     }
@@ -1934,7 +1934,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3II);
+    Function AddItem(value : Tv3II): Tv3II;
     {
       Get the iIndexth II (0 = first item)
     }
@@ -1988,7 +1988,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3AD);
+    Function AddItem(value : Tv3AD): Tv3AD;
     {
       Get the iIndexth AD (0 = first item)
     }
@@ -2042,7 +2042,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3TEL);
+    Function AddItem(value : Tv3TEL): Tv3TEL;
     {
       Get the iIndexth TEL (0 = first item)
     }
@@ -2096,7 +2096,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3ANY);
+    Function AddItem(value : Tv3ANY): Tv3ANY;
     {
       Get the iIndexth ANY (0 = first item)
     }
@@ -2150,7 +2150,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3CD);
+    Function AddItem(value : Tv3CD): Tv3CD;
     {
       Get the iIndexth CD (0 = first item)
     }
@@ -2204,7 +2204,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3EN);
+    Function AddItem(value : Tv3EN): Tv3EN;
     {
       Get the iIndexth EN (0 = first item)
     }
@@ -2258,7 +2258,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3CR);
+    Function AddItem(value : Tv3CR): Tv3CR;
     {
       Get the iIndexth CR (0 = first item)
     }
@@ -2312,7 +2312,7 @@ Type
     {
       Add an existing ED to the list
     }
-    Procedure AddItem(value : Tv3PQ);
+    Function AddItem(value : Tv3PQ): Tv3PQ;
     {
       Get the iIndexth PQ (0 = first item)
     }
@@ -2531,9 +2531,9 @@ begin
   FcontrolInformationRoot := '';
 end;
 
-function Tv3HXIT.sizeInBytesV : cardinal;
+function Tv3HXIT.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FvalidTimeHigh.length * sizeof(char)) + 12);
   inc(result, (FvalidTimeLow.length * sizeof(char)) + 12);
   inc(result, (FcontrolInformationExtension.length * sizeof(char)) + 12);
@@ -2627,9 +2627,9 @@ begin
   FupdateMode := umNull;
 end;
 
-function Tv3ANY.sizeInBytesV : cardinal;
+function Tv3ANY.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FflavorId.length * sizeof(char)) + 12);
 end;
 
@@ -2703,9 +2703,9 @@ begin
   FHasValue := false;
 end;
 
-function Tv3BL.sizeInBytesV : cardinal;
+function Tv3BL.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { Tv3ED }
@@ -2741,13 +2741,13 @@ end;
 
 destructor Tv3ED.Destroy;
 begin
-  Fdata.Free;
-  FintegrityCheck.Free;
+  Fdata.free;
+  FintegrityCheck.free;
   Fxml := nil;
-  Fthumbnail.Free;
-  Ftranslation.Free;
-  Fdescription.Free;
-  Freference.Free;
+  Fthumbnail.free;
+  Ftranslation.free;
+  Fdescription.free;
+  Freference.free;
   inherited;
 end;
 
@@ -2778,40 +2778,40 @@ end;
 
 procedure Tv3ED.Setdata(const Value: TFslBuffer);
 begin
-  Fdata.Free;
+  Fdata.free;
   Fdata := Value;
 end;
 
 procedure Tv3ED.Setdescription(const Value: Tv3ST);
 begin
-  Fdescription.Free;
+  Fdescription.free;
   Fdescription := Value;
   Fdescription.Parent := self;
 end;
 
 procedure Tv3ED.SetintegrityCheck(const Value: TFslBuffer);
 begin
-  FintegrityCheck.Free;
+  FintegrityCheck.free;
   FintegrityCheck := Value;
 end;
 
 procedure Tv3ED.Setreference(const Value: Tv3TEL);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   Freference.Parent := self;
 end;
 
 procedure Tv3ED.Setthumbnail(const Value: Tv3ED);
 begin
-  Fthumbnail.Free;
+  Fthumbnail.free;
   Fthumbnail := Value;
   Fthumbnail.Parent := self;
 end;
 
 procedure Tv3ED.Settranslation(const Value: Tv3SetED);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   Ftranslation.Parent := self;
 end;
@@ -2873,7 +2873,7 @@ end;
 function Tv3ED.AddTranslation: Tv3ED;
 begin
   if translation = nil Then
-    translation := Tv3SetED.create(self);
+    translation := Tv3SetED.Create(self);
   Result := translation.Add;
 end;
 
@@ -2980,7 +2980,7 @@ begin
     result := TEncoding.UTF8.GetBytes(xml.text)
     {$ENDIF}
   else if reference <> nil Then
-    raise ECDAException.create('Reference resolution is not yet handled');
+    raise ECDAException.Create('Reference resolution is not yet handled');
 end;
 
 procedure Tv3ED.DoClear;
@@ -3001,19 +3001,19 @@ begin
   value := '';
 end;
 
-function Tv3ED.sizeInBytesV : cardinal;
+function Tv3ED.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FmediaType.length * sizeof(char)) + 12);
   inc(result, (Fcharset.length * sizeof(char)) + 12);
   inc(result, (Flanguage.length * sizeof(char)) + 12);
-  inc(result, Fdata.sizeInBytes);
-  inc(result, FintegrityCheck.sizeInBytes);
-  inc(result, Fxml.sizeInBytes);
-  inc(result, Fthumbnail.sizeInBytes);
-  inc(result, Ftranslation.sizeInBytes);
-  inc(result, Fdescription.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
+  inc(result, Fdata.sizeInBytes(magic));
+  inc(result, FintegrityCheck.sizeInBytes(magic));
+  inc(result, Fxml.sizeInBytes(magic));
+  inc(result, Fthumbnail.sizeInBytes(magic));
+  inc(result, Ftranslation.sizeInBytes(magic));
+  inc(result, Fdescription.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
   inc(result, (Fvalue.length * sizeof(char)) + 12);
   inc(result, (FRepresentation.length * sizeof(char)) + 12);
 end;
@@ -3041,7 +3041,7 @@ end;
 
 destructor Tv3ST.Destroy;
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   inherited;
 end;
 
@@ -3061,7 +3061,7 @@ end;
 
 procedure Tv3ST.Settranslation(const Value: Tv3SetST);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   Ftranslation.Parent := self;
 end;
@@ -3088,7 +3088,7 @@ end;
 function Tv3ST.EqualsV(oOther: Tv3Base): Boolean;
 begin
   // TODO: access data by reference
-  result :=
+  result := 
     (
       (oOther is Tv3ED) and
       (
@@ -3136,11 +3136,11 @@ begin
   Fvalue := '';
 end;
 
-function Tv3ST.sizeInBytesV : cardinal;
+function Tv3ST.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Flanguage.length * sizeof(char)) + 12);
-  inc(result, Ftranslation.sizeInBytes);
+  inc(result, Ftranslation.sizeInBytes(magic));
   inc(result, (Fvalue.length * sizeof(char)) + 12);
 end;
 
@@ -3165,7 +3165,7 @@ end;
 
 destructor Tv3SC.Destroy;
 begin
-  Fcode.Free;
+  Fcode.free;
   inherited;
 end;
 
@@ -3183,7 +3183,7 @@ end;
 
 procedure Tv3SC.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if FCode <> nil then
     Fcode.Parent := self;
@@ -3203,10 +3203,10 @@ begin
   Code := nil;
 end;
 
-function Tv3SC.sizeInBytesV : cardinal;
+function Tv3SC.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
 end;
 
 { Tv3CD }
@@ -3240,10 +3240,10 @@ end;
 
 destructor Tv3CD.Destroy;
 begin
-  ForiginalText.Free;
-  FdisplayName.Free;
-  Ftranslation.Free;
-  Fqualifier.Free;
+  ForiginalText.free;
+  FdisplayName.free;
+  Ftranslation.free;
+  Fqualifier.free;
   inherited;
 end;
 
@@ -3271,7 +3271,7 @@ end;
 
 procedure Tv3CD.SetdisplayName(const Value: Tv3ST);
 begin
-  FdisplayName.Free;
+  FdisplayName.free;
   FdisplayName := Value;
   if FdisplayName <> nil then
     displayName.Parent := self;
@@ -3279,7 +3279,7 @@ end;
 
 procedure Tv3CD.SetoriginalText(const Value: Tv3ED);
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   ForiginalText := Value;
   if ForiginalText <> nil then  originalText.parent := self;
 
@@ -3287,7 +3287,7 @@ end;
 
 procedure Tv3CD.Setqualifier(const Value: Tv3ListCR);
 begin
-  Fqualifier.Free;
+  Fqualifier.free;
   Fqualifier := Value;
   if Fqualifier <> nil then  qualifier.parent := self;
 
@@ -3295,7 +3295,7 @@ end;
 
 procedure Tv3CD.Settranslation(const Value: Tv3SetCD);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   if Ftranslation <> nil then  translation.parent := self;
 
@@ -3332,7 +3332,7 @@ end;
 function Tv3CD.AddTranslation(code, codeSystem: String): Tv3CD;
 begin
   if translation = nil then
-    translation := Tv3SetCD.create(self);
+    translation := Tv3SetCD.Create(self);
   result := translation.Add;
   result.code := code;
   result.codeSystem := codeSystem;
@@ -3388,19 +3388,19 @@ begin
   qualifier.ClearItems;
 end;
 
-function Tv3CD.sizeInBytesV : cardinal;
+function Tv3CD.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ForiginalText.sizeInBytes);
-  inc(result, FdisplayName.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ForiginalText.sizeInBytes(magic));
+  inc(result, FdisplayName.sizeInBytes(magic));
   inc(result, (FvalueSetVersion.length * sizeof(char)) + 12);
   inc(result, (FvalueSet.length * sizeof(char)) + 12);
   inc(result, (FcodeSystem.length * sizeof(char)) + 12);
   inc(result, (FcodeSystemName.length * sizeof(char)) + 12);
   inc(result, (Fcode.length * sizeof(char)) + 12);
   inc(result, (FcodeSystemVersion.length * sizeof(char)) + 12);
-  inc(result, Ftranslation.sizeInBytes);
-  inc(result, Fqualifier.sizeInBytes);
+  inc(result, Ftranslation.sizeInBytes(magic));
+  inc(result, Fqualifier.sizeInBytes(magic));
 end;
 
 { Tv3CS }
@@ -3462,9 +3462,9 @@ begin
   code := '';
 end;
 
-function Tv3CS.sizeInBytesV : cardinal;
+function Tv3CS.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fcode.length * sizeof(char)) + 12);
 end;
 
@@ -3492,7 +3492,7 @@ end;
 
 destructor Tv3TEL.Destroy;
 begin
-  FuseablePeriod.Free;
+  FuseablePeriod.free;
   inherited;
 end;
 
@@ -3513,7 +3513,7 @@ end;
 
 procedure Tv3TEL.SetuseablePeriod(const Value: Tv3QSET);
 begin
-  FuseablePeriod.Free;
+  FuseablePeriod.free;
   FuseablePeriod := Value;
   if FuseablePeriod <> nil then  useablePeriod.parent := self;
 
@@ -3582,11 +3582,11 @@ begin
   capabilities := [];
 end;
 
-function Tv3TEL.sizeInBytesV : cardinal;
+function Tv3TEL.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fvalue.length * sizeof(char)) + 12);
-  inc(result, FuseablePeriod.sizeInBytes);
+  inc(result, FuseablePeriod.sizeInBytes(magic));
 end;
 
 { Tv3II }
@@ -3718,9 +3718,9 @@ begin
   FHasDisplayable := false;
 end;
 
-function Tv3II.sizeInBytesV : cardinal;
+function Tv3II.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fextension.length * sizeof(char)) + 12);
   inc(result, (FidentifierName.length * sizeof(char)) + 12);
   inc(result, (Froot.length * sizeof(char)) + 12);
@@ -3801,9 +3801,9 @@ begin
   value := '';
 end;
 
-function Tv3XP.sizeInBytesV : cardinal;
+function Tv3XP.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FcodeSystem.length * sizeof(char)) + 12);
   inc(result, (FcodeSystemVersion.length * sizeof(char)) + 12);
   inc(result, (Fcode.length * sizeof(char)) + 12);
@@ -3886,8 +3886,8 @@ end;
 
 destructor Tv3AD.Destroy;
 begin
-  Fpart.Free;
-  FuseablePeriod.Free;
+  Fpart.free;
+  FuseablePeriod.free;
   inherited;
 end;
 
@@ -3908,7 +3908,7 @@ end;
 
 procedure Tv3AD.Setpart(const Value: Tv3ListADXP);
 begin
-  Fpart.Free;
+  Fpart.free;
   Fpart := Value;
   if Fpart <> nil then  part.parent := self;
 
@@ -3916,7 +3916,7 @@ end;
 
 procedure Tv3AD.SetuseablePeriod(const Value: Tv3QSET);
 begin
-  FuseablePeriod.Free;
+  FuseablePeriod.free;
   FuseablePeriod := Value;
   if FuseablePeriod <> nil then  useablePeriod.parent := self;
 
@@ -3993,11 +3993,11 @@ begin
   use := [];
 end;
 
-function Tv3AD.sizeInBytesV : cardinal;
+function Tv3AD.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fpart.sizeInBytes);
-  inc(result, FuseablePeriod.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fpart.sizeInBytes(magic));
+  inc(result, FuseablePeriod.sizeInBytes(magic));
 end;
 
 { Tv3ENXP }
@@ -4077,7 +4077,7 @@ end;
 
 destructor Tv3EN.Destroy;
 begin
-  Fpart.Free;
+  Fpart.free;
   inherited;
 end;
 
@@ -4182,8 +4182,8 @@ begin
         if not o2.part[iLoop].EqualsV(o1.part[iLoop]) Then
           result := false;
     Finally
-      o2.Free;
-      o1.Free;
+      o2.free;
+      o1.free;
     End;
   End;
 end;
@@ -4224,7 +4224,7 @@ begin
 
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -4236,7 +4236,7 @@ end;
 
 procedure Tv3EN.Setpart(const Value: Tv3ListENXP);
 begin
-  FPart.Free;
+  FPart.free;
   Fpart := Value;
   if Fpart <> nil then  part.parent := self;
 
@@ -4254,10 +4254,10 @@ begin
   use := [];
 end;
 
-function Tv3EN.sizeInBytesV : cardinal;
+function Tv3EN.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fpart.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fpart.sizeInBytes(magic));
 end;
 
 { Tv3QTY }
@@ -4285,20 +4285,20 @@ end;
 
 destructor Tv3QTY.Destroy;
 begin
-  ForiginalText.Free;
-  Fexpression.Free;
-  FuncertainRange.Free;
-  Funcertainty.Free;
+  ForiginalText.free;
+  Fexpression.free;
+  FuncertainRange.free;
+  Funcertainty.free;
   inherited;
 end;
 
-function Tv3QTY.sizeInBytesV : cardinal;
+function Tv3QTY.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ForiginalText.sizeInBytes);
-  inc(result, Fexpression.sizeInBytes);
-  inc(result, FuncertainRange.sizeInBytes);
-  inc(result, Funcertainty.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ForiginalText.sizeInBytes(magic));
+  inc(result, Fexpression.sizeInBytes(magic));
+  inc(result, FuncertainRange.sizeInBytes(magic));
+  inc(result, Funcertainty.sizeInBytes(magic));
 end;
 
 class function Tv3QTY.DiffType: Tv3QTYDatatype;
@@ -4324,7 +4324,7 @@ end;
 
 procedure Tv3QTY.Setexpression(const Value: Tv3ED);
 begin
-  Fexpression.Free;
+  Fexpression.free;
   Fexpression := Value;
   if Fexpression <> nil then  expression.parent := self;
 
@@ -4332,7 +4332,7 @@ end;
 
 procedure Tv3QTY.SetoriginalText(const Value: Tv3ED);
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   ForiginalText := Value;
   if ForiginalText <> nil then  originalText.parent := self;
 
@@ -4340,7 +4340,7 @@ end;
 
 procedure Tv3QTY.SetuncertainRange(const Value: Tv3IVL);
 begin
-  FuncertainRange.Free;
+  FuncertainRange.free;
   FuncertainRange := Value;
   if FuncertainRange <> nil then  uncertainRange.parent := self;
 
@@ -4348,7 +4348,7 @@ end;
 
 procedure Tv3QTY.Setuncertainty(const Value: Tv3QTY);
 begin
-  Funcertainty.Free;
+  Funcertainty.free;
   Funcertainty := Value;
   if Funcertainty <> nil then  uncertainty.parent := self;
 
@@ -4479,14 +4479,14 @@ end;
 
 destructor Tv3CO.Destroy;
 begin
-  Fcode.Free;
+  Fcode.free;
   inherited;
 end;
 
-function Tv3CO.sizeInBytesV : cardinal;
+function Tv3CO.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
 end;
 
 class function Tv3CO.DiffType: Tv3QTYDatatype;
@@ -4509,7 +4509,7 @@ end;
 
 procedure Tv3CO.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -4639,16 +4639,16 @@ end;
 
 destructor Tv3RTO.Destroy;
 begin
-  Fdenominator.Free;
-  Fnumerator.Free;
+  Fdenominator.free;
+  Fnumerator.free;
   inherited;
 end;
 
-function Tv3RTO.sizeInBytesV : cardinal;
+function Tv3RTO.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fdenominator.sizeInBytes);
-  inc(result, Fnumerator.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fdenominator.sizeInBytes(magic));
+  inc(result, Fnumerator.sizeInBytes(magic));
 end;
 
 class function Tv3RTO.DiffType: Tv3QTYDatatype;
@@ -4675,7 +4675,7 @@ end;
 
 procedure Tv3RTO.Setdenominator(const Value: Tv3QTY);
 begin
-  Fdenominator.Free;
+  Fdenominator.free;
   Fdenominator := Value;
   if Fdenominator <> nil then  denominator.parent := self;
 
@@ -4683,7 +4683,7 @@ end;
 
 procedure Tv3RTO.Setnumerator(const Value: Tv3QTY);
 begin
-  Fnumerator.Free;
+  Fnumerator.free;
   Fnumerator := Value;
   if Fnumerator <> nil then  numerator.parent := self;
 
@@ -4736,15 +4736,15 @@ end;
 
 destructor Tv3PQ.Destroy;
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   inherited;
 end;
 
-function Tv3PQ.sizeInBytesV : cardinal;
+function Tv3PQ.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Funit.length * sizeof(char)) + 12);
-  inc(result, Ftranslation.sizeInBytes);
+  inc(result, Ftranslation.sizeInBytes(magic));
 end;
 
 class function Tv3PQ.DiffType: Tv3QTYDatatype;
@@ -4769,7 +4769,7 @@ end;
 
 procedure Tv3PQ.Settranslation(const Value: Tv3SetPQR);
 begin
-  Ftranslation.Free;
+  Ftranslation.free;
   Ftranslation := Value;
   if Ftranslation <> nil then  translation.parent := self;
 
@@ -4801,7 +4801,7 @@ begin
       Try
         result := o1.isNonNull and o2.isNonNull and TFslDecimal.Equals(o1.value, o2.value) and (o1.unit_ = o2.unit_);
       Finally
-        o2.Free;
+        o2.free;
       End;
     Finally
       o1.free;
@@ -4841,17 +4841,17 @@ begin
             result.unit_ := oPair2.UnitCode;
             result.translation.Add(self.Link);
           Finally
-            oPair2.Free;
+            oPair2.free;
           End;
         Finally
-          oPair1.Free;
+          oPair1.free;
         End;
       Except
         result.nullFlavor := nfUNK;
       End;
     End;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -4865,7 +4865,7 @@ begin
       result.value := false; // GUcums.DefaultDefinition.getCanonicalUnits(unit_) = GUcums.DefaultDefinition.getCanonicalUnits(TV3PQ(other).unit_);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -4946,9 +4946,9 @@ begin
   value := TFslDecimal.makeNull;
 end;
 
-function Tv3PQR.sizeInBytesV : cardinal;
+function Tv3PQR.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { Tv3MO }
@@ -4971,9 +4971,9 @@ begin
 end;
 
 
-function Tv3MO.sizeInBytesV : cardinal;
+function Tv3MO.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fcurrency.length * sizeof(char)) + 12);
 end;
 
@@ -5054,9 +5054,9 @@ begin
 end;
 
 
-function Tv3TS.sizeInBytesV : cardinal;
+function Tv3TS.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fvalue.length * sizeof(char)) + 12);
 end;
 
@@ -5178,7 +5178,7 @@ end;
 
 destructor Tv3QSET.Destroy;
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   inherited;
 end;
 
@@ -5199,7 +5199,7 @@ end;
 
 procedure Tv3QSET.SetoriginalText(const Value: Tv3ED);
 begin
-  ForiginalText.Free;
+  ForiginalText.free;
   ForiginalText := Value;
   if ForiginalText <> nil then  originalText.parent := self;
 
@@ -5231,10 +5231,10 @@ begin
   Flat := false;
 end;
 
-function Tv3QSET.sizeInBytesV : cardinal;
+function Tv3QSET.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ForiginalText.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ForiginalText.sizeInBytes(magic));
 end;
 
 { Tv3QSU }
@@ -5266,7 +5266,7 @@ end;
 
 destructor Tv3QSU.Destroy;
 begin
-  Fterms.Free;
+  Fterms.free;
   inherited;
 end;
 
@@ -5284,7 +5284,7 @@ end;
 
 procedure Tv3QSU.Setterms(const Value: Tv3SetQSET);
 begin
-  Fterms.Free;
+  Fterms.free;
   Fterms := Value;
   if Fterms <> nil then  terms.parent := self;
 
@@ -5311,10 +5311,10 @@ begin
   terms.clearItems;
 end;
 
-function Tv3QSU.sizeInBytesV : cardinal;
+function Tv3QSU.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fterms.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fterms.sizeInBytes(magic));
 end;
 
 { Tv3QSI }
@@ -5347,7 +5347,7 @@ end;
 
 destructor Tv3QSI.Destroy;
 begin
-  Fterms.Free;
+  Fterms.free;
   inherited;
 end;
 
@@ -5365,7 +5365,7 @@ end;
 
 procedure Tv3QSI.Setterms(const Value: Tv3SetQSET);
 begin
-  Fterms.Free;
+  Fterms.free;
   Fterms := Value;
   if Fterms <> nil then  terms.parent := self;
 
@@ -5392,10 +5392,10 @@ begin
   terms.ClearItems;
 end;
 
-function Tv3QSI.sizeInBytesV : cardinal;
+function Tv3QSI.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fterms.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fterms.sizeInBytes(magic));
 end;
 
 { Tv3QSD }
@@ -5431,8 +5431,8 @@ end;
 
 destructor Tv3QSD.Destroy;
 begin
-  Fsubtrahend.Free;
-  Fminuend.Free;
+  Fsubtrahend.free;
+  Fminuend.free;
   inherited;
 end;
 
@@ -5451,7 +5451,7 @@ end;
 
 procedure Tv3QSD.Setminuend(const Value: Tv3QSET);
 begin
-  Fminuend.Free;
+  Fminuend.free;
   Fminuend := Value;
   if Fminuend <> nil then  minuend.parent := self;
 
@@ -5459,7 +5459,7 @@ end;
 
 procedure Tv3QSD.Setsubtrahend(const Value: Tv3QSET);
 begin
-  Fsubtrahend.Free;
+  Fsubtrahend.free;
   Fsubtrahend := Value;
   if Fsubtrahend <> nil then  subtrahend.parent := self;
 
@@ -5488,11 +5488,11 @@ begin
   minuend := nil;
 end;
 
-function Tv3QSD.sizeInBytesV : cardinal;
+function Tv3QSD.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fsubtrahend.sizeInBytes);
-  inc(result, Fminuend.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fsubtrahend.sizeInBytes(magic));
+  inc(result, Fminuend.sizeInBytes(magic));
 end;
 
 { Tv3QSP }
@@ -5528,8 +5528,8 @@ end;
 
 destructor Tv3QSP.Destroy;
 begin
-  Fhigh.Free;
-  Flow.Free;
+  Fhigh.free;
+  Flow.free;
   inherited;
 end;
 
@@ -5548,7 +5548,7 @@ end;
 
 procedure Tv3QSP.Sethigh(const Value: Tv3QSET);
 begin
-  Fhigh.Free;
+  Fhigh.free;
   Fhigh := Value;
   if Fhigh <> nil then  high.parent := self;
 
@@ -5556,7 +5556,7 @@ end;
 
 procedure Tv3QSP.Setlow(const Value: Tv3QSET);
 begin
-  Flow.Free;
+  Flow.free;
   Flow := Value;
   if Flow <> nil then  low.parent := self;
 
@@ -5585,11 +5585,11 @@ begin
   low := nil;
 end;
 
-function Tv3QSP.sizeInBytesV : cardinal;
+function Tv3QSP.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fhigh.sizeInBytes);
-  inc(result, Flow.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fhigh.sizeInBytes(magic));
+  inc(result, Flow.sizeInBytes(magic));
 end;
 
 { Tv3QSS }
@@ -5613,7 +5613,7 @@ end;
 
 destructor Tv3QSS.Destroy;
 begin
-  Fterms.Free;
+  Fterms.free;
   inherited;
 end;
 
@@ -5631,7 +5631,7 @@ end;
 
 procedure Tv3QSS.Setterms(const Value: Tv3SetQTY);
 begin
-  Fterms.Free;
+  Fterms.free;
   Fterms := Value;
   if Fterms <> nil then  terms.parent := self;
 
@@ -5658,10 +5658,10 @@ begin
   Terms.ClearItems;
 end;
 
-function Tv3QSS.sizeInBytesV : cardinal;
+function Tv3QSS.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fterms.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fterms.sizeInBytes(magic));
 end;
 
 { Tv3QSC }
@@ -5685,7 +5685,7 @@ end;
 
 destructor Tv3QSC.Destroy;
 begin
-  Fcode.Free;
+  Fcode.free;
   inherited;
 end;
 
@@ -5703,7 +5703,7 @@ end;
 
 procedure Tv3QSC.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -5729,10 +5729,10 @@ begin
   code := nil;
 end;
 
-function Tv3QSC.sizeInBytesV : cardinal;
+function Tv3QSC.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
 end;
 
 { Tv3IVL }
@@ -5764,10 +5764,10 @@ end;
 
 destructor Tv3IVL.Destroy;
 begin
-  Flow.Free;
-  Fany.Free;
-  Fwidth.Free;
-  Fhigh.Free;
+  Flow.free;
+  Fany.free;
+  Fwidth.free;
+  Fhigh.free;
   inherited;
 end;
 
@@ -5791,7 +5791,7 @@ end;
 
 procedure Tv3IVL.Setany(const Value: Tv3QTY);
 begin
-  Fany.Free;
+  Fany.free;
   Fany := Value;
   if Fany <> nil then  any.parent := self;
 
@@ -5799,7 +5799,7 @@ end;
 
 procedure Tv3IVL.Sethigh(const Value: Tv3QTY);
 begin
-  Fhigh.Free;
+  Fhigh.free;
   Fhigh := Value;
   if Fhigh <> nil then  high.parent := self;
 
@@ -5813,7 +5813,7 @@ end;
 
 procedure Tv3IVL.Setlow(const Value: Tv3QTY);
 begin
-  Flow.Free;
+  Flow.free;
   Flow := Value;
   if Flow <> nil then  low.parent := self;
 
@@ -5847,7 +5847,7 @@ end;
 
 procedure Tv3IVL.Setwidth(const Value: Tv3QTY);
 begin
-  Fwidth.Free;
+  Fwidth.free;
   Fwidth := Value;
   if Fwidth <> nil then  width.parent := self;
 
@@ -5890,13 +5890,13 @@ begin
   anyIsValue := false;
 end;
 
-function Tv3IVL.sizeInBytesV : cardinal;
+function Tv3IVL.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flow.sizeInBytes);
-  inc(result, Fany.sizeInBytes);
-  inc(result, Fwidth.sizeInBytes);
-  inc(result, Fhigh.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flow.sizeInBytes(magic));
+  inc(result, Fany.sizeInBytes(magic));
+  inc(result, Fwidth.sizeInBytes(magic));
+  inc(result, Fhigh.sizeInBytes(magic));
 end;
 
 { Tv3PIVL }
@@ -5926,10 +5926,10 @@ end;
 
 destructor Tv3PIVL.Destroy;
 begin
-  Fcount.Free;
-  Fphase.Free;
-  Fperiod.Free;
-  Ffrequency.Free;
+  Fcount.free;
+  Fphase.free;
+  Fperiod.free;
+  Ffrequency.free;
   inherited;
 end;
 
@@ -5952,7 +5952,7 @@ end;
 
 procedure Tv3PIVL.Setcount(const Value: Tv3INT);
 begin
-  Fcount.Free;
+  Fcount.free;
   Fcount := Value;
   if Fcount <> nil then  count.parent := self;
 
@@ -5960,7 +5960,7 @@ end;
 
 procedure Tv3PIVL.Setfrequency(const Value: Tv3RTO);
 begin
-  Ffrequency.Free;
+  Ffrequency.free;
   Ffrequency := Value;
   if Ffrequency <> nil then  frequency.parent := self;
 
@@ -5974,7 +5974,7 @@ end;
 
 procedure Tv3PIVL.Setperiod(const Value: Tv3PQ);
 begin
-  Fperiod.Free;
+  Fperiod.free;
   Fperiod := Value;
   if Fperiod <> nil then  period.parent := self;
 
@@ -5982,7 +5982,7 @@ end;
 
 procedure Tv3PIVL.Setphase(const Value: Tv3IVL);
 begin
-  Fphase.Free;
+  Fphase.free;
   Fphase := Value;
   if Fphase <> nil then  phase.parent := self;
 
@@ -6024,13 +6024,13 @@ begin
   HasisFlexible := False;
 end;
 
-function Tv3PIVL.sizeInBytesV : cardinal;
+function Tv3PIVL.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcount.sizeInBytes);
-  inc(result, Fphase.sizeInBytes);
-  inc(result, Fperiod.sizeInBytes);
-  inc(result, Ffrequency.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcount.sizeInBytes(magic));
+  inc(result, Fphase.sizeInBytes(magic));
+  inc(result, Fperiod.sizeInBytes(magic));
+  inc(result, Ffrequency.sizeInBytes(magic));
 end;
 
 { Tv3EIVL }
@@ -6055,7 +6055,7 @@ end;
 
 destructor Tv3EIVL.Destroy;
 begin
-  Foffset.Free;
+  Foffset.free;
   inherited;
 end;
 
@@ -6074,7 +6074,7 @@ end;
 
 procedure Tv3EIVL.Setoffset(const Value: Tv3IVL);
 begin
-  Foffset.Free;
+  Foffset.free;
   Foffset := Value;
   if Foffset <> nil then  offset.parent := self;
 
@@ -6103,10 +6103,10 @@ begin
   event := teNull;
 end;
 
-function Tv3EIVL.sizeInBytesV : cardinal;
+function Tv3EIVL.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Foffset.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Foffset.sizeInBytes(magic));
 end;
 
 { Tv3UVP }
@@ -6131,7 +6131,7 @@ end;
 
 destructor Tv3UVP.Destroy;
 begin
-  Fvalue.Free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -6150,7 +6150,7 @@ end;
 
 procedure Tv3UVP.Setvalue(const Value: Tv3ANY);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then  value.parent := self;
 
@@ -6178,10 +6178,10 @@ begin
   value := nil;
 end;
 
-function Tv3UVP.sizeInBytesV : cardinal;
+function Tv3UVP.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fvalue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fvalue.sizeInBytes(magic));
 end;
 
 { Tv3NPPD }
@@ -6205,7 +6205,7 @@ end;
 
 destructor Tv3NPPD.Destroy;
 begin
-  Fitem.Free;
+  Fitem.free;
   inherited;
 end;
 
@@ -6223,7 +6223,7 @@ end;
 
 procedure Tv3NPPD.Setitem(const Value: Tv3SetUVP);
 begin
-  Fitem.Free;
+  Fitem.free;
   Fitem := Value;
   if Fitem <> nil then  item.parent := self;
 
@@ -6249,10 +6249,10 @@ begin
   item := nil;
 end;
 
-function Tv3NPPD.sizeInBytesV : cardinal;
+function Tv3NPPD.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fitem.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fitem.sizeInBytes(magic));
 end;
 
 { Tv3SetED }
@@ -6278,7 +6278,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6298,7 +6298,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetED.SetItemByIndex(iIndex: Integer; value: Tv3ED);
@@ -6354,7 +6354,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6374,7 +6374,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetST.SetItemByIndex(iIndex: Integer; value: Tv3ST);
@@ -6430,7 +6430,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6450,7 +6450,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetCD.SetItemByIndex(iIndex: Integer; value: Tv3CD);
@@ -6506,7 +6506,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6516,7 +6516,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6535,9 +6535,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListADXP.AddItem(value : Tv3ADXP);
+function Tv3ListADXP.AddItem(value : Tv3ADXP): Tv3ADXP;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListADXP.SetItemByIndex(iIndex: Integer; value: Tv3ADXP);
@@ -6593,7 +6594,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6603,7 +6604,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6622,9 +6623,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListENXP.AddItem(value : Tv3ENXP);
+function Tv3ListENXP.AddItem(value : Tv3ENXP): Tv3ENXP;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListENXP.SetItemByIndex(iIndex: Integer; value: Tv3ENXP);
@@ -6681,7 +6683,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6701,7 +6703,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetPQR.SetItemByIndex(iIndex: Integer; value: Tv3PQR);
@@ -6757,7 +6759,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6777,7 +6779,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetQSET.SetItemByIndex(iIndex: Integer; value: Tv3QSET);
@@ -6839,7 +6841,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6859,7 +6861,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetQTY.SetItemByIndex(iIndex: Integer; value: Tv3QTY);
@@ -6917,7 +6919,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -6937,7 +6939,7 @@ begin
   if Result Then
     Add(value)
   Else
-    value.Free;
+    value.free;
 end;
 
 Procedure Tv3SetUVP.SetItemByIndex(iIndex: Integer; value: Tv3UVP);
@@ -6992,7 +6994,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7002,7 +7004,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7021,9 +7023,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListCS.AddItem(value : Tv3CS);
+function Tv3ListCS.AddItem(value : Tv3CS): Tv3CS;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListCS.SetItemByIndex(iIndex: Integer; value: Tv3CS);
@@ -7079,7 +7082,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7089,7 +7092,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7108,9 +7111,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListII.AddItem(value : Tv3II);
+function Tv3ListII.AddItem(value : Tv3II): Tv3II;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListII.SetItemByIndex(iIndex: Integer; value: Tv3II);
@@ -7165,7 +7169,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7175,7 +7179,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7194,9 +7198,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListAD.AddItem(value : Tv3AD);
+function Tv3ListAD.AddItem(value : Tv3AD): Tv3AD;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListAD.SetItemByIndex(iIndex: Integer; value: Tv3AD);
@@ -7251,7 +7256,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7261,7 +7266,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7280,9 +7285,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListTEL.AddItem(value : Tv3TEL);
+function Tv3ListTEL.AddItem(value : Tv3TEL): Tv3TEL;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListTEL.SetItemByIndex(iIndex: Integer; value: Tv3TEL);
@@ -7337,7 +7343,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7347,7 +7353,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7366,9 +7372,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListANY.AddItem(value : Tv3ANY);
+function Tv3ListANY.AddItem(value : Tv3ANY): Tv3ANY;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListANY.SetItemByIndex(iIndex: Integer; value: Tv3ANY);
@@ -7424,7 +7431,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7434,7 +7441,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7453,9 +7460,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListCD.AddItem(value : Tv3CD);
+function Tv3ListCD.AddItem(value : Tv3CD): Tv3CD;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListCD.SetItemByIndex(iIndex: Integer; value: Tv3CD);
@@ -7510,7 +7518,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7520,7 +7528,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7539,9 +7547,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListEN.AddItem(value : Tv3EN);
+function Tv3ListEN.AddItem(value : Tv3EN): Tv3EN;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListEN.SetItemByIndex(iIndex: Integer; value: Tv3EN);
@@ -7596,7 +7605,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7606,7 +7615,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7625,9 +7634,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListCR.AddItem(value : Tv3CR);
+function Tv3ListCR.AddItem(value : Tv3CR): Tv3CR;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListCR.SetItemByIndex(iIndex: Integer; value: Tv3CR);
@@ -7684,7 +7694,7 @@ begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7694,7 +7704,7 @@ begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -7713,9 +7723,10 @@ Begin
   result := IndexByReference(value);
 End;
 
-Procedure Tv3ListPQ.AddItem(value : Tv3PQ);
+function Tv3ListPQ.AddItem(value : Tv3PQ): Tv3PQ;
 begin
   Add(value);
+  result := value;
 end;
 
 Procedure Tv3ListPQ.SetItemByIndex(iIndex: Integer; value: Tv3PQ);
@@ -7771,8 +7782,8 @@ end;
 
 destructor Tv3CR.Destroy;
 begin
-  Fname.Free;
-  Fvalue.Free;
+  Fname.free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -7798,21 +7809,21 @@ end;
 
 procedure Tv3CR.Setname(const Value: Tv3CD);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
 end;
 
 procedure Tv3CR.Setvalue(const Value: Tv3CD);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
 end;
 
-function Tv3CR.sizeInBytesV : cardinal;
+function Tv3CR.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fvalue.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fvalue.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
 end;
 
 { Tv3PropertyDefinition }

@@ -35,15 +35,15 @@ Interface
 Uses
   SysUtils, Contnrs, Classes,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_fpc,
-  ftx_loinc_services;
+  ftx_loinc_services, ftx_service;
 
 Const
   FLAG_LONG_COMMON = 1;
   FLAG_LONG_RELATED = 2;
   STEP_COUNT = 100;
-  ESTIMATED_CONCEPTS = 83000;
-  ESTIMATED_HEIRACHY = 85000;
-  ESTIMATED_ANSWERS = 47000;
+  ESTIMATED_CONCEPTS = 100000;
+  ESTIMATED_HEIRACHY = 100000;
+  ESTIMATED_ANSWERS = 50000;
 
 
 Type
@@ -65,7 +65,7 @@ Type
 
   TConceptArray = Array of TConcept;
 
-  TConceptManager = class (TFslNameList)
+  TConceptManager = class (TFslMap<TConcept>)
   public
     Function See(lang: byte; sName : String; oCode : TObject) : TConcept;
     Function Store(langCount, lang: byte; sName : String; oImp : TLOINCImporter) : Cardinal;
@@ -123,6 +123,7 @@ Type
   Private
     Code : String;
     Display : String;
+    QuestionText : String;
     Names : Cardinal;
     Comps : TConceptArray;
     Props : TConceptArray;
@@ -258,7 +259,6 @@ Type
     FLangs : TLoincLanguages;
 
     FStrings : TStringList;
-    FUnits : TStringList;
     FVersion: String;
     FWordList : TStringList;
     FStemList : TStringList;
@@ -333,7 +333,7 @@ begin
     imp.ImportLOINC;
     imp.progress(16, 0, 'Done '+inttostr(imp.TotalConcepts)+' Concepts');
   finally
-    imp.Free;
+    imp.free;
   end;
 end;
 
@@ -449,25 +449,25 @@ Const
   FLD_CONSUMER_NAME =                         FLD_STATUS + 1;
   FLD_CLASSTYPE =                             FLD_CONSUMER_NAME + 1;
   FLD_FORMULA =                               FLD_CLASSTYPE + 1;
-  FLD_SPECIES =                               FLD_FORMULA + 1;
-  FLD_EXMPL_ANSWERS =                         FLD_SPECIES + 1;
+//  FLD_SPECIES =                               FLD_FORMULA + 1;
+  FLD_EXMPL_ANSWERS =                         FLD_FORMULA + 1;
   FLD_SURVEY_QUEST_TEXT =                     FLD_EXMPL_ANSWERS + 1;
   FLD_SURVEY_QUEST_SRC =                      FLD_SURVEY_QUEST_TEXT + 1;
   FLD_UNITSREQUIRED =                         FLD_SURVEY_QUEST_SRC + 1;
-  FLD_SUBMITTED_UNITS =                       FLD_UNITSREQUIRED + 1;
-  FLD_RELATEDNAMES2 =                         FLD_SUBMITTED_UNITS + 1;
+  //FLD_SUBMITTED_UNITS =                       FLD_UNITSREQUIRED + 1;
+  FLD_RELATEDNAMES2 =                         FLD_UNITSREQUIRED + 1;
   FLD_SHORTNAME =                             FLD_RELATEDNAMES2 + 1;
   FLD_ORDER_OBS =                             FLD_SHORTNAME + 1;
-  FLD_CDISC_COMMON_TESTS =                    FLD_ORDER_OBS + 1;
-  FLD_HL7_FIELD_SUBFIELD_ID =                 FLD_CDISC_COMMON_TESTS + 1;
+  //FLD_CDISC_COMMON_TESTS =                    FLD_ORDER_OBS + 1;
+  FLD_HL7_FIELD_SUBFIELD_ID =                 FLD_ORDER_OBS + 1;
   FLD_EXTERNAL_COPYRIGHT_NOTICE =             FLD_HL7_FIELD_SUBFIELD_ID + 1;
   FLD_EXAMPLE_UNITS =                         FLD_EXTERNAL_COPYRIGHT_NOTICE + 1;
   FLD_LONG_COMMON_NAME =                      FLD_EXAMPLE_UNITS + 1;
-  FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
-  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
-  FLD_EXAMPLE_UCUM_UNITS =                    FLD_DOCUMENT_SECTION + 1;
-  FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
-  FLD_STATUS_REASON =                         FLD_EXAMPLE_SI_UCUM_UNITS + 1;
+  //FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
+//  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
+  FLD_EXAMPLE_UCUM_UNITS =                    FLD_LONG_COMMON_NAME + 1;
+  //FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
+  FLD_STATUS_REASON =                         FLD_EXAMPLE_UCUM_UNITS + 1;
   FLD_STATUS_TEXT =                           FLD_STATUS_REASON + 1;
   FLD_CHANGE_REASON_PUBLIC =                  FLD_STATUS_TEXT + 1;
   FLD_COMMON_TEST_RANK =                      FLD_CHANGE_REASON_PUBLIC + 1;
@@ -478,6 +478,9 @@ Const
   FLD_PanelType =                             FLD_EXTERNAL_COPYRIGHT_LINK + 1;
   FLD_AskAtOrderEntry =                       FLD_PanelType + 1;
   FLD_AssociatedObservations =                FLD_AskAtOrderEntry + 1;
+  FLD_VersionFirstReleased =                  FLD_AssociatedObservations + 1;
+  FLD_ValidHL7AttachmentRequest =             FLD_VersionFirstReleased + 1;
+  FLD_DisplayName =                           FLD_ValidHL7AttachmentRequest + 1;
 
 
 Function TLoincImporter.LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Cardinal;
@@ -532,16 +535,9 @@ begin
   FAnswerMap := TFslMap<TAnswer>.create('loinc.answers2');
   oHeirarchy := THeirarchyEntryList.Create;
   Try
-    oComps.SortedByName;
-    oProps.sortedByName;
-    oTime.sortedByName;
-    oSystem.sortedByName;
-    oScale.sortedByName;
-    oMethod.sortedByName;
-    oClass.sortedByName;
     for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
     begin
-      oSubsets[a] := TCodeList.create;
+      oSubsets[a] := TCodeList.Create;
       oSubsets[a].SortedByCode;
     end;
     Progress(0, 24, 'Loading Languages');
@@ -551,8 +547,8 @@ begin
 
     iCount := 0;
     Progress(0, 0, 'Loading Concepts');
-    items := TFslStringList.create;
-    f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead);
+    items := TFslStringList.Create;
+    f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead + fmShareDenyWrite);
     try
       csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
       Try
@@ -561,7 +557,6 @@ begin
 
         while csv.More do
         begin
-          items.Clear;
           csv.ConsumeEntries(items);
           if items.count > 0 then
           begin
@@ -571,6 +566,7 @@ begin
             oCode.Names := 0;
             oCode.Code := Trim(items[FLD_LOINC_NUM]);
             oCode.Display := Trim(items[FLD_LONG_COMMON_NAME]);
+            oCode.QuestionText := Trim(items[FLD_SURVEY_QUEST_TEXT]);
             if Length(oCode.Code) > iLength Then
               iLength := Length(oCode.Code);
 
@@ -668,6 +664,8 @@ begin
             Try
               if items[FLD_SHORTNAME] <> '' Then
                 oNames.AddObject(items[FLD_SHORTNAME], TObject(0));
+              if oCode.QuestionText <> '' then
+                oNames.AddObject(oCode.QuestionText, TObject(0));
               for s in items[FLD_RELATEDNAMES2].Split([';']) do
                 if oNames.IndexOf(items[FLD_SHORTNAME]) = -1 then
                   oNames.AddObject(items[FLD_SHORTNAME], TObject(0));
@@ -700,7 +698,7 @@ begin
                 oCode.Names := FRefs.AddRefs(aNames);
               End;
             Finally
-              oNames.Free;
+              oNames.free;
             End;
 
             // properties
@@ -712,7 +710,7 @@ begin
         End;
       Finally
         csv.free;
-        items.Free;
+        items.free;
       End;
     finally
       f.free;
@@ -721,11 +719,11 @@ begin
     oCodes.SortedByCode;
 
     // now, process the multi-axial file
-    if FileExists(IncludeTrailingPathDelimiter(folder) + 'MultiAxialHierarchy.csv') then
+    if FileExists(IncludeTrailingPathDelimiter(folder) + 'ComponentHierarchyBySystem.csv') then
     begin
       Progress(3,0,'Loading Multi-Axial Source');
       oHeirarchy.SortedByCode;
-      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'MultiAxialHierarchy.csv');
+      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'ComponentHierarchyBySystem.csv');
       Reset(ma);
       Readln(ma, ln); // skip header
 
@@ -893,8 +891,8 @@ begin
           raise ETerminologySetup.create('Error Message');
       end;
     finally
-      st.Free;
-      st2.Free;
+      st.free;
+      st2.free;
     end;
     FAnswers.DoneBuild;
 
@@ -922,7 +920,7 @@ begin
       FStems.AddStem(iStem);
       for j := 0 to oTemp.Count - 1 Do
         TDescribed(oTemp[j]).Stems.Add(iStem);
-      oTemp.Free;
+      oTemp.free;
       FStemList.Objects[i] := nil;
     End;
     FStems.DoneBuild;
@@ -973,17 +971,17 @@ begin
   Finally
     for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
       osubsets[a].free;
-    oHeirarchy.Free;
-    oCodes.Free;
-    oComps.Free;
-    oProps.Free;
-    oTime.Free;
-    oSystem.Free;
-    oScale.Free;
-    oMethod.Free;
-    oClass.Free;
-    FAnswerLists.Free;
-    FAnswerMap.Free;
+    oHeirarchy.free;
+    oCodes.free;
+    oComps.free;
+    oProps.free;
+    oTime.free;
+    oSystem.free;
+    oScale.free;
+    oMethod.free;
+    oClass.free;
+    FAnswerLists.free;
+    FAnswerMap.free;
 
   End;
 End;
@@ -996,8 +994,8 @@ var
   lang : TLoincLanguage;
   i : integer;
 begin
-  items := TFslStringList.create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead);
+  items := TFslStringList.Create;
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead + fmShareDenyWrite);
   try
     csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
     Try
@@ -1005,7 +1003,6 @@ begin
       i := 0;
       while csv.More do
       begin
-        items.Clear;
         csv.ConsumeEntries(items);
         if items.count > 0 then
         begin
@@ -1014,7 +1011,7 @@ begin
             readLanguage(i, items[0], lang);
             FLanguages.Add(lang.Link);
           finally
-            lang.Free;
+            lang.free;
           end;
         end;
         inc(i);
@@ -1024,7 +1021,7 @@ begin
     End;
   finally
     f.free;
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1032,13 +1029,10 @@ Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds; out roo
 Begin
   FStrings := TStringList.Create;
   FStrings.Sorted := True;
-  FUnits := TStringList.Create;
-  FUnits.Sorted := true;
   try
     result := LoadLOINCFiles(folder, props, roots, subsets);
   Finally
-    FUnits.Free;
-    FStrings.Free;
+    FStrings.free;
   End;
 End;
 
@@ -1055,11 +1049,11 @@ var
   oLang : TLoincLanguage;
 begin
   FStart := now;
-  FLanguages := TFslList<TLoincLanguage>.create;
+  FLanguages := TFslList<TLoincLanguage>.Create;
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
   FStemmer := TFslWordStemmer.create('english');
-  oSvc := TLOINCServices.Create;
+  oSvc := TLOINCServices.Create(nil);
   Try
     Flanguages.add(TLoincLanguage.create('en', 'US'));
     FWordList.Sorted := true;
@@ -1100,7 +1094,7 @@ begin
     begin
       FAnswers.GetEntry(i, code, desc, refs);
       s := FDesc.GetEntry(code, lang);
-      if not((ls = '') or (AnsiCompareText(ls, s) < 0)) then
+      if not((ls = '') or (CompareStr(ls, s) < 0)) then
         raise ETerminologySetup.create('out of order');
       ls := s;
     end;
@@ -1110,15 +1104,15 @@ begin
 
     Progress(15, 0.5, 'Cleanup');
   Finally
-    oSvc.Free;
-    FWordList.Free;
+    oSvc.free;
+    FWordList.free;
     For i := 0 to FStemList.Count - 1 do
-      FStemList.Objects[i].Free;
-    FStemList.Free;
-    FStemmer.Free;
-    FLanguages.Free;
+      FStemList.Objects[i].free;
+    FStemList.free;
+    FStemmer.free;
+    FLanguages.free;
   End;
-  TLoincServices.Create.Load(FOutputFile);
+  TLoincServices.Create(nil).Load(FOutputFile);
 End;
 
 function TLoincImporter.listConcepts(arr: TConceptArray): TCardinalArray;
@@ -1237,7 +1231,7 @@ begin
           answer.Parents.Add(list.Link as TAnswerList);
           FAnswerMap.Add(AnswerStringID, answer.Link as TAnswer);
         finally
-          answer.Free;
+          answer.free;
         end;
       end;
     end;
@@ -1289,6 +1283,12 @@ begin
   StringSplit(ln, ',', SEQUENCE, ln);
   StringSplit(ln, ',', IMMEDIATE_PARENT, ln);
   StringSplit(ln, ',', CODE, CODE_TEXT);
+
+  PATH_TO_ROOT := RemoveQuotes(PATH_TO_ROOT);
+  SEQUENCE := RemoveQuotes(SEQUENCE);
+  IMMEDIATE_PARENT := RemoveQuotes(IMMEDIATE_PARENT);
+  CODE := RemoveQuotes(CODE);
+  CODE_TEXT := RemoveQuotes(CODE_TEXT);
 
   if (CODE.StartsWith('LP')) then
   begin
@@ -1343,29 +1343,33 @@ begin
     write('.');
 end;
 
-procedure TLoincImporter.readLanguage(i : integer; index: String; lang: TLoincLanguage);
+procedure TLoincImporter.readLanguage(i : integer; index: String; lang : TLoincLanguage);
 var
   f : TFslFile;
   items : TFslStringList;
   csv : TFslCSVExtractor;
   code : TLoincLanguageCodes;
   s, p : String;
-  j : integer;
+  j, fp, fs : integer;
+
 begin
   Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
-  items := TFslStringList.create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead);
+  items := TFslStringList.Create;
+  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead + fmShareDenyWrite);
   try
-    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, f.Size);
+    fs := f.size;
+    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, fs);
     Try
       csv.ConsumeEntries(items);
       j := 0;
       while csv.More do
       begin
         inc(j);
-        if j mod 100 = 0 then
-          Progress(i, f.Position / f.Size, 'Loading Language '+lang.Lang+'-'+lang.Country+' '+pct(f.Position, f.Size));
-        items.Clear;
+        if j mod 1000 = 0 then
+        begin
+          fp := csv.progress;
+          Progress(i, fp / fs, 'Loading Language '+lang.Lang+'-'+lang.Country+' '+pct(fp, fs));
+        end;
         csv.ConsumeEntries(items);
         if items.count > 0 then
         begin
@@ -1386,7 +1390,7 @@ begin
                 code.RelatedNames.add(p.trim());
             lang.Codes.Add(items[0], code.Link);
           finally
-            code.Free;
+            code.free;
           end;
         end;
       End;
@@ -1395,7 +1399,7 @@ begin
     End;
   finally
     f.free;
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1411,7 +1415,7 @@ end;
 
 destructor TConcept.Destroy;
 begin
-  Codes.Free;
+  Codes.free;
   inherited;
 end;
 
@@ -1420,22 +1424,26 @@ end;
 function TConceptManager.See(lang: byte; sName: String; oCode: TObject): TConcept;
 var
   i : Integer;
+  key : String;
 begin
   if sname = '' Then
     result := nil
   else
   begin
-    i := IndexByName(char(lang+1)+sName);
-    if existsByIndex(i) Then
-      result := TConcept(ObjectByIndex[i])
-    Else
+    key := char(lang+1)+sName;
+    if not tryGetValue(key, result) then
     Begin
       result := TConcept.Create(lang);
       result.Name := char(lang+1)+sName;
-      Add(result);
+      Add(key, result);
     End;
     result.Codes.Add(oCode);
   End;
+end;
+
+function nameSort(List: TStringList; Index1, Index2: Integer): Integer;
+begin
+  result := CompareStr(list[Index1], list[index2]);
 end;
 
 function TConceptManager.Store(langCount, lang: byte; sName : String; oImp : TLoincImporter): Cardinal;
@@ -1447,6 +1455,8 @@ var
   aConcepts : TCardinalArray;
   oConcept : TConcept;
   byLang : boolean;
+  ts : TStringList;
+  s : String;
 begin
   SetLength(aChildren, langCount);
   SetLength(counter, langCount);
@@ -1457,16 +1467,25 @@ begin
     SetLength(aChildren[i], Count);
   end;
 
-  For i := 0 to Count - 1 Do
-  Begin
-    oConcept := TConcept(ObjectByIndex[i]);
-    SetLength(aConcepts, oConcept.Codes.Count);
-    For j := 0 to oConcept.Codes.Count - 1 do
-      aConcepts[j] := TCode(oConcept.Codes[j]).Index;
-    oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddRefs(aConcepts));
-    aChildren[oConcept.Flang, counter[oConcept.Flang]] := oConcept.Index;
-    inc(counter[oConcept.Flang]);
-  End;
+  ts := TStringList.Create;
+  try
+    for s in keys do
+      ts.add(s);
+    ts.CustomSort(nameSort);
+    for s in ts do
+    begin
+      oConcept := Items[s];
+      SetLength(aConcepts, oConcept.Codes.Count);
+      For j := 0 to oConcept.Codes.Count - 1 do
+        aConcepts[j] := TCode(oConcept.Codes[j]).Index;
+      oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddRefs(aConcepts));
+      aChildren[oConcept.Flang, counter[oConcept.Flang]] := oConcept.Index;
+      inc(counter[oConcept.Flang]);
+    End;
+  finally
+    ts.free;
+  end;
+
   byLang := false;
   for i := 1 to langCount - 1 do
     if counter[i] > 0 then
@@ -1506,18 +1525,18 @@ end;
 constructor THeirarchyEntry.Create;
 begin
   inherited;
-  FChildren := THeirarchyEntryList.create;
-  FParents := THeirarchyEntryList.create;
+  FChildren := THeirarchyEntryList.Create;
+  FParents := THeirarchyEntryList.Create;
   FConcepts := TCodeList.Create;
   FDescendentConcepts := TCodeList.Create;
 end;
 
 destructor THeirarchyEntry.Destroy;
 begin
-  FConcepts.Free;
+  FConcepts.free;
   FChildren.free;
   FDescendentConcepts.free;
-  FParents.Free;
+  FParents.free;
   inherited;
 end;
 
@@ -1530,12 +1549,12 @@ end;
 
 function THeirarchyEntryList.CompareByCode(pA, pB: Pointer): Integer;
 begin
-  Result := StringCompare(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
+  Result := CompareStr(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
 end;
 
 function THeirarchyEntryList.CompareByText(pA, pB: Pointer): Integer;
 begin
-  Result := StringCompare(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
+  Result := CompareStr(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
 end;
 
 function THeirarchyEntryList.FindByCode(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
@@ -1553,7 +1572,7 @@ Begin
 
     Result := FindByCode(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -1582,7 +1601,7 @@ Begin
 
     Result := FindByText(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -1621,7 +1640,7 @@ end;
 
 function TCodeList.CompareByCode(pA, pB: Pointer): Integer;
 begin
-  Result := StringCompare(TCode(pA).Code, TCode(pB).Code);
+  Result := CompareStr(TCode(pA).Code, TCode(pB).Code);
 end;
 
 function TCodeList.FindByCode(entry: TCode; out iIndex: Integer): Boolean;
@@ -1639,7 +1658,7 @@ Begin
 
     Result := FindByCode(entry, iIndex);
   Finally
-    entry.Free;
+    entry.free;
   End;
 end;
 
@@ -1679,7 +1698,7 @@ end;
 
 destructor TDescribed.Destroy;
 begin
-  Stems.Free;
+  Stems.free;
   inherited;
 end;
 
@@ -1694,21 +1713,21 @@ end;
 
 destructor TAnswerList.Destroy;
 begin
-  FAnswers.Free;
+  FAnswers.free;
   inherited;
 end;
 
 { TAnswer }
 
-constructor TAnswer.create;
+constructor TAnswer.Create;
 begin
-  inherited create;
-  FParents := TFslList<TAnswerList>.create;
+  inherited Create;
+  FParents := TFslList<TAnswerList>.Create;
 end;
 
-destructor TAnswer.destroy;
+destructor TAnswer.Destroy;
 begin
-  FParents.Free;
+  FParents.free;
   inherited;
 end;
 
@@ -1717,12 +1736,12 @@ end;
 constructor TLoincLanguageCodes.Create;
 begin
   inherited;
-  FRelatedNames := TStringList.create;
+  FRelatedNames := TStringList.Create;
 end;
 
 destructor TLoincLanguageCodes.Destroy;
 begin
-  FRelatedNames.Free;
+  FRelatedNames.free;
   inherited;
 end;
 
@@ -1761,7 +1780,7 @@ end;
 
 destructor TLoincLanguage.Destroy;
 begin
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
@@ -1773,7 +1792,7 @@ end;
 constructor TCode.Create(langCount: integer);
 begin
   inherited Create;
-  entries := TFslList<THeirarchyEntry>.create;
+  entries := TFslList<THeirarchyEntry>.Create;
   SetLength(Comps, langCount);
   SetLength(Props, langCount);
   SetLength(Time, langCount);

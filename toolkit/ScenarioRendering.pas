@@ -84,12 +84,12 @@ var
 {$ENDIF}
 begin
 
-//  if edit1.text='' then edit1.Text:=extractfilepath(appDir)+'\Rendering\ExampleScenario';
+//  if edit1.text='' then edit1.Text := extractfilepath(appDir)+'\Rendering\ExampleScenario';
 {$IFDEF WINDOWS}
-  appDir:=GetCurrentDir;
-if directoryexists(edit1.text) then ESPublisherFolder:=edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
+  appDir := GetCurrentDir;
+if directoryexists(edit1.text) then ESPublisherFolder := edit1.text else ESPublisherFolder := getCurrentDir+'\Rendering\ExampleScenario';
   SetCurrentDir(ESPublisherFolder+'');
-  resource:=filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
+  resource := filetoresource(ESRootFolder+'\'+ESFileName) as TFHIRExampleScenario;
   resourceToFile(resource, ESPublisherFolder+'\current.xml', ffXml, OutputStylePretty);
   ExecuteFile := 'BUILD.bat';
 
@@ -156,7 +156,7 @@ end;
 
 
 {$ELSE}
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 {$ENDIF}
 
 
@@ -181,7 +181,7 @@ var
   DownloadForm: TDownloadForm;
 begin
 {
-  DownloadForm := TDownloadForm.create(self);
+  DownloadForm := TDownloadForm.Create(self);
   DownloadForm.SourceURL := 'https://bitbucket.org/costateixeira/ig-builder/downloads/simpleESRender.zip';
   DownloadForm.localFileName := ESRenderFolder + '\render.zip';
   DownloadForm.UnzipLocation := ESRenderFolder;
@@ -224,7 +224,7 @@ begin
     DownloadForm.Destroy;
 
 //    createFolders(igRootFolder);
-    edit1.Text:=ESPublisherFolder;
+    edit1.Text := ESPublisherFolder;
 
 
   end;

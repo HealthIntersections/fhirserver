@@ -1,0 +1,127 @@
+object ClipboardChooserForm: TClipboardChooserForm
+  Left = 72
+  Height = 549
+  Top = 118
+  Width = 728
+  BorderIcons = [biSystemMenu]
+  Caption = 'Choose Clipboard Format'
+  ClientHeight = 549
+  ClientWidth = 728
+  OnActivate = FormActivate
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
+  OnShow = FormShow
+  Position = poOwnerFormCenter
+  LCLVersion = '2.3.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 508
+    Width = 728
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 728
+    TabOrder = 3
+    object btnOk: TButton
+      Left = 563
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      Enabled = False
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 644
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Cancel = True
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Height = 508
+    Top = 0
+    Width = 198
+    Align = alLeft
+    BevelOuter = bvNone
+    BorderWidth = 4
+    Caption = 'Panel2'
+    ClientHeight = 508
+    ClientWidth = 198
+    TabOrder = 0
+    object lbFormats: TListBox
+      Left = 4
+      Height = 476
+      Top = 28
+      Width = 190
+      Align = alClient
+      ItemHeight = 0
+      OnClick = lbFormatsClick
+      OnDblClick = lbFormatsDblClick
+      TabOrder = 0
+      TopIndex = -1
+    end
+    object Panel5: TPanel
+      Left = 4
+      Height = 24
+      Top = 4
+      Width = 190
+      Align = alTop
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      Caption = '  Clipboard Formats'
+      TabOrder = 1
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 198
+    Height = 508
+    Top = 0
+    Width = 5
+  end
+  object Panel3: TPanel
+    Left = 203
+    Height = 508
+    Top = 0
+    Width = 525
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 4
+    Caption = 'Panel3'
+    ClientHeight = 508
+    ClientWidth = 525
+    TabOrder = 2
+    object Panel6: TPanel
+      Left = 4
+      Height = 24
+      Top = 4
+      Width = 517
+      Align = alTop
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      Caption = '  Content'
+      TabOrder = 0
+    end
+    object mSource: TMemo
+      Left = 4
+      Height = 476
+      Top = 28
+      Width = 517
+      Align = alClient
+      Lines.Strings = (
+        'mSource'
+      )
+      ReadOnly = True
+      TabOrder = 1
+    end
+  end
+end

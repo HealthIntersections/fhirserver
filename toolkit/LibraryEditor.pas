@@ -304,9 +304,9 @@ begin
     else if c.Params['charset'] = 'ascii' then
       result := TEncoding.ASCII
     else
-      raise EFHIRException.create('Unknown character set '+c.Params['charset']);
+      raise EFHIRException.Create('Unknown character set '+c.Params['charset']);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 

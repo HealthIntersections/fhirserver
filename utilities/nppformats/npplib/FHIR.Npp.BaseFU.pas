@@ -811,7 +811,7 @@ end;
 destructor TNppPlugin.Destroy;
 var i: Integer;
 begin
-  for i:=0 to Length(self.FuncArray)-1 do
+  for i := 0 to Length(self.FuncArray)-1 do
   begin
     if (self.FuncArray[i].ShortcutKey <> nil) then
     begin
@@ -965,7 +965,7 @@ begin
   begin
     // Change - to separator items
     hm := GetMenu(self.NppData.NppHandle);
-    for i:=0 to Length(self.FuncArray)-1 do
+    for i := 0 to Length(self.FuncArray)-1 do
       if (self.FuncArray[i].ItemName[0] = '-') then
         ModifyMenu(hm, self.FuncArray[i].CmdID, MF_BYCOMMAND or MF_SEPARATOR, 0, nil);
   end;

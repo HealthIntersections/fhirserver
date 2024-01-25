@@ -128,7 +128,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -154,7 +154,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -202,7 +202,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -289,7 +289,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -324,7 +324,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -363,7 +363,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -412,7 +412,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -439,7 +439,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -464,7 +464,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -490,7 +490,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -524,7 +524,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -547,7 +547,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -588,7 +588,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -612,7 +612,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -637,7 +637,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -657,7 +657,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -680,7 +680,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -704,7 +704,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -781,7 +781,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -811,7 +811,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -843,7 +843,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -864,7 +864,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -888,7 +888,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -921,7 +921,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     procedure GetText(builder : TFslStringBuilder); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -976,7 +976,7 @@ Type
     {
       Add an already existing CMGeneral to the end of the list
     }
-    Procedure AddItem(value : TsnCMGeneral);
+    Function AddItem(value : TsnCMGeneral): TsnCMGeneral;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1028,7 +1028,7 @@ Type
     {
       Add an already existing CMTitle to the end of the list
     }
-    Procedure AddItem(value : TsnCMTitle);
+    Function AddItem(value : TsnCMTitle): TsnCMTitle;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1080,7 +1080,7 @@ Type
     {
       Add an already existing CMFootnotes to the end of the list
     }
-    Procedure AddItem(value : TsnCMFootnotes);
+    Function AddItem(value : TsnCMFootnotes): TsnCMFootnotes;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1132,7 +1132,7 @@ Type
     {
       Add an already existing CMInline to the end of the list
     }
-    Procedure AddItem(value : TsnCMInline);
+    Function AddItem(value : TsnCMInline): TsnCMInline;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1184,7 +1184,7 @@ Type
     {
       Add an already existing CMContent to the end of the list
     }
-    Procedure AddItem(value : TsnCMContent);
+    Function AddItem(value : TsnCMContent): TsnCMContent;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1236,7 +1236,7 @@ Type
     {
       Add an already existing Item to the end of the list
     }
-    Procedure AddItem(value : TsnItem);
+    Function AddItem(value : TsnItem): TsnItem;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1288,7 +1288,7 @@ Type
     {
       Add an already existing Col to the end of the list
     }
-    Procedure AddItem(value : TsnCol);
+    Function AddItem(value : TsnCol): TsnCol;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1340,7 +1340,7 @@ Type
     {
       Add an already existing TRowPart to the end of the list
     }
-    Procedure AddItem(value : TsnTRowPart);
+    Function AddItem(value : TsnTRowPart): TsnTRowPart;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1392,7 +1392,7 @@ Type
     {
       Add an already existing TRow to the end of the list
     }
-    Procedure AddItem(value : TsnTRow);
+    Function AddItem(value : TsnTRow): TsnTRow;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1444,7 +1444,7 @@ Type
     {
       Add an already existing ColGroup to the end of the list
     }
-    Procedure AddItem(value : TsnColGroup);
+    Function AddItem(value : TsnColGroup): TsnColGroup;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1496,7 +1496,7 @@ Type
     {
       Add an already existing TRowGroup to the end of the list
     }
-    Procedure AddItem(value : TsnTRowGroup);
+    Function AddItem(value : TsnTRowGroup): TsnTRowGroup;
     {
       See if an item is already in the list. Returns -1 if not in the list
     }
@@ -1564,7 +1564,7 @@ end;
 
 destructor TsnBase.Destroy;
 begin
-  FstyleCode.Free; //TFslStringList
+  FstyleCode.free; //TFslStringList
   inherited;
 end;
 
@@ -1602,10 +1602,10 @@ begin
   ID := '';
 end;
 
-function TsnBase.sizeInBytesV : cardinal;
+function TsnBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FstyleCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FstyleCode.sizeInBytes(magic));
 end;
 
 { TsnText }
@@ -1681,8 +1681,8 @@ end;
 
 destructor TsnText.Destroy;
 begin
-  FstyleCode.Free; //TFslStringList
-  Fparts.Free; //TsnCMGeneralList
+  FstyleCode.free; //TFslStringList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -1691,11 +1691,11 @@ begin
   Result := TsnText(Inherited Link);
 end;
 
-function TsnText.sizeInBytesV : cardinal;
+function TsnText.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FstyleCode.sizeInBytes);
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FstyleCode.sizeInBytes(magic));
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnTitle }
@@ -1771,8 +1771,8 @@ end;
 
 destructor TsnTitle.Destroy;
 begin
-  FstyleCode.Free; //TFslStringList
-  Fparts.Free; //TsnCMTitleList
+  FstyleCode.free; //TFslStringList
+  Fparts.free; //TsnCMTitleList
   inherited;
 end;
 
@@ -1781,11 +1781,11 @@ begin
   Result := TsnTitle(Inherited Link);
 end;
 
-function TsnTitle.sizeInBytesV : cardinal;
+function TsnTitle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FstyleCode.sizeInBytes);
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FstyleCode.sizeInBytes(magic));
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnCMFootnotes }
@@ -1816,9 +1816,9 @@ end;
 
 destructor TsnCMFootnotes.Destroy;
 begin
-  Ftext.Free;
-  Fentity.Free;
-  Ffootnote.Free;
+  Ftext.free;
+  Fentity.free;
+  Ffootnote.free;
   inherited;
 end;
 
@@ -1839,7 +1839,7 @@ end;
 
 procedure TsnCMFootnotes.Setentity(const Value: TsnString);
 begin
-  Fentity.Free;
+  Fentity.free;
   Fentity := Value;
   if Fentity <> nil then  entity.parent := self;
 
@@ -1847,7 +1847,7 @@ end;
 
 procedure TsnCMFootnotes.SetFootnote(const Value: TsnFootNote);
 begin
-  Ffootnote.Free;
+  Ffootnote.free;
   Ffootnote := Value;
   if FFootnote <> nil then  Footnote.parent := self;
 
@@ -1856,7 +1856,7 @@ end;
 procedure TsnCMFootnotes.SetfootnoteRef(const Value: TsnFootNoteRef);
 begin
   FfootnoteRef := Value;
-  FfootnoteRef.Free;
+  FfootnoteRef.free;
   if FfootnoteRef <> nil then  footnoteRef.parent := self;
 
 end;
@@ -1877,7 +1877,7 @@ end;
 
 procedure TsnCMFootnotes.Settext(const Value: TsnString);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
@@ -1898,13 +1898,13 @@ begin
     builder.Append(FText.value);
 end;
 
-function TsnCMFootnotes.sizeInBytesV : cardinal;
+function TsnCMFootnotes.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftext.sizeInBytes);
-  inc(result, Fentity.sizeInBytes);
-  inc(result, Ffootnote.sizeInBytes);
-  inc(result, FfootnoteRef.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, Fentity.sizeInBytes(magic));
+  inc(result, Ffootnote.sizeInBytes(magic));
+  inc(result, FfootnoteRef.sizeInBytes(magic));
 end;
 
 { TsnCMInline }
@@ -1956,9 +1956,9 @@ end;
 
 destructor TsnCMInline.Destroy;
 begin
-  FSub.Free;
-  FSup.Free;
-  FlinkHtml.Free; //TsnLinkHtml
+  FSub.free;
+  FSup.free;
+  FlinkHtml.free; //TsnLinkHtml
   inherited;
 end;
 
@@ -1991,7 +1991,7 @@ end;
 
 procedure TsnCMInline.Setsub(const Value: TsnString);
 begin
-  FSub.Free;
+  FSub.free;
   Fsub := Value;
   if Fsub <> nil then  sub.parent := self;
 
@@ -1999,7 +1999,7 @@ end;
 
 procedure TsnCMInline.Setsup(const Value: TsnString);
 begin
-  FSup.Free;
+  FSup.free;
   Fsup := Value;
   if Fsup <> nil then  sup.parent := self;
 
@@ -2007,18 +2007,18 @@ end;
 
 procedure TsnCMInline.SetlinkHtml(const Value: TsnLinkHtml);
 begin
-  FlinkHtml.Free;
+  FlinkHtml.free;
   FlinkHtml := Value;
   if FlinkHtml <> nil then  linkHtml.parent := self;
 
 end;
 
-function TsnCMInline.sizeInBytesV : cardinal;
+function TsnCMInline.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fsub.sizeInBytes);
-  inc(result, Fsup.sizeInBytes);
-  inc(result, FlinkHtml.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fsub.sizeInBytes(magic));
+  inc(result, Fsup.sizeInBytes(magic));
+  inc(result, FlinkHtml.sizeInBytes(magic));
 end;
 
 { TsnCMTitle }
@@ -2055,8 +2055,8 @@ end;
 
 destructor TsnCMTitle.Destroy;
 begin
-  Fbr.Free;
-  Ftext.Free;
+  Fbr.free;
+  Ftext.free;
   FfootnoteRef.free;
   Fsup.free;
   Fsub.free;
@@ -2090,7 +2090,7 @@ end;
 
 procedure TsnCMTitle.SetBr(const Value: TsnBr);
 begin
-  FBr.Free;
+  FBr.free;
   Fbr := Value;
   if FBr <> nil then  Br.parent := self;
 
@@ -2098,7 +2098,7 @@ end;
 
 procedure TsnCMTitle.Setcontent(const Value: TsnCMTitle);
 begin
-  Fcontent.Free;
+  Fcontent.free;
   Fcontent := Value;
   if Fcontent <> nil then  content.parent := self;
 
@@ -2114,7 +2114,7 @@ end;
 
 procedure TsnCMTitle.SetfootNote(const Value: TsnCMTitleList);
 begin
-  FfootNote.Free;
+  FfootNote.free;
   FfootNote := Value;
   if FfootNote <> nil then  footNote.parent := self;
 
@@ -2130,7 +2130,7 @@ end;
 
 procedure TsnCMTitle.SetlinkHtml(const Value: TsnLinkHtml);
 begin
-  FlinkHtml.Free;
+  FlinkHtml.free;
   FlinkHtml := Value;
 end;
 
@@ -2160,7 +2160,7 @@ end;
 
 procedure TsnCMTitle.Setsub(const Value: TsnString);
 begin
-  FSub.Free;
+  FSub.free;
   Fsub := Value;
   if Fsub <> nil then  sub.parent := self;
 
@@ -2168,7 +2168,7 @@ end;
 
 procedure TsnCMTitle.Setsup(const Value: TsnString);
 begin
-  FSup.Free;
+  FSup.free;
   Fsup := Value;
   if Fsup <> nil then  sup.parent := self;
 
@@ -2176,7 +2176,7 @@ end;
 
 procedure TsnCMTitle.Settext(const Value: TsnString);
 begin
-  FText.Free;
+  FText.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
@@ -2214,18 +2214,18 @@ begin
     inherited;
 end;
 
-function TsnCMTitle.sizeInBytesV : cardinal;
+function TsnCMTitle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fbr.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FfootnoteRef.sizeInBytes);
-  inc(result, Fsup.sizeInBytes);
-  inc(result, Fsub.sizeInBytes);
-  inc(result, Fcontent.sizeInBytes);
-  inc(result, Ffootnote.sizeInBytes);
-  inc(result, FlinkHtml.sizeInBytes);
-  inc(result, Fentity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fbr.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FfootnoteRef.sizeInBytes(magic));
+  inc(result, Fsup.sizeInBytes(magic));
+  inc(result, Fsub.sizeInBytes(magic));
+  inc(result, Fcontent.sizeInBytes(magic));
+  inc(result, Ffootnote.sizeInBytes(magic));
+  inc(result, FlinkHtml.sizeInBytes(magic));
+  inc(result, Fentity.sizeInBytes(magic));
 end;
 
 { TsnCMContent }
@@ -2277,8 +2277,8 @@ end;
 destructor TsnCMContent.Destroy;
 begin
   FBr.free;
-  Fcontent.Free; //TsnContent
-  FrenderMultiMedia.Free; //TsnRenderMultiMedia
+  Fcontent.free; //TsnContent
+  FrenderMultiMedia.free; //TsnRenderMultiMedia
   inherited;
 end;
 
@@ -2306,7 +2306,7 @@ end;
 
 procedure TsnCMContent.Setcontent(const Value: TsnContent);
 begin
-  Fcontent.Free;
+  Fcontent.free;
   Fcontent := Value;
   if Fcontent <> nil then  content.parent := self;
 
@@ -2326,18 +2326,18 @@ end;
 
 procedure TsnCMContent.SetrenderMultiMedia(const Value: TsnRenderMultiMedia);
 begin
-  FrenderMultiMedia.Free;
+  FrenderMultiMedia.free;
   FrenderMultiMedia := Value;
   if FrenderMultiMedia <> nil then  renderMultiMedia.parent := self;
 
 end;
 
-function TsnCMContent.sizeInBytesV : cardinal;
+function TsnCMContent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fbr.sizeInBytes);
-  inc(result, Fcontent.sizeInBytes);
-  inc(result, FrenderMultiMedia.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fbr.sizeInBytes(magic));
+  inc(result, Fcontent.sizeInBytes(magic));
+  inc(result, FrenderMultiMedia.sizeInBytes(magic));
 end;
 
 { TsnCMGeneral }
@@ -2388,9 +2388,9 @@ end;
 
 destructor TsnCMGeneral.Destroy;
 begin
-  Fparagraph.Free; //TsnParagraph
-  Flist.Free; //TsnList
-  Ftable.Free; //TsnTable
+  Fparagraph.free; //TsnParagraph
+  Flist.free; //TsnList
+  Ftable.free; //TsnTable
   inherited;
 end;
 
@@ -2411,7 +2411,7 @@ end;
 
 procedure TsnCMGeneral.Setlist(const Value: TsnList);
 begin
-  Flist.Free;
+  Flist.free;
   Flist := Value;
   if Flist <> nil then  list.parent := self;
 
@@ -2419,7 +2419,7 @@ end;
 
 procedure TsnCMGeneral.Setparagraph(const Value: TsnParagraph);
 begin
-  Fparagraph.Free;
+  Fparagraph.free;
   Fparagraph := Value;
   if Fparagraph <> nil then  paragraph.parent := self;
 
@@ -2439,18 +2439,18 @@ end;
 
 procedure TsnCMGeneral.Settable(const Value: TsnTable);
 begin
-  Ftable.Free;
+  Ftable.free;
   Ftable := Value;
   if Ftable <> nil then  table.parent := self;
 
 end;
 
-function TsnCMGeneral.sizeInBytesV : cardinal;
+function TsnCMGeneral.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flist.sizeInBytes);
-  inc(result, Fparagraph.sizeInBytes);
-  inc(result, Ftable.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flist.sizeInBytes(magic));
+  inc(result, Fparagraph.sizeInBytes(magic));
+  inc(result, Ftable.sizeInBytes(magic));
 end;
 
 { TsnRenderMultiMedia }
@@ -2481,8 +2481,8 @@ end;
 
 destructor TsnRenderMultiMedia.Destroy;
 begin
-  Fcaption.Free; //TsnCaption
-  FreferencedObject.Free; //TFslStringList
+  Fcaption.free; //TsnCaption
+  FreferencedObject.free; //TFslStringList
   inherited;
 end;
 
@@ -2501,7 +2501,7 @@ end;
 
 procedure TsnRenderMultiMedia.Setcaption(const Value: TsnCaption);
 begin
-  Fcaption.Free;
+  Fcaption.free;
   Fcaption := Value;
   if Fcaption <> nil then  caption.parent := self;
 
@@ -2532,11 +2532,11 @@ begin
     Fcaption.GetText(builder);
 end;
 
-function TsnRenderMultiMedia.sizeInBytesV : cardinal;
+function TsnRenderMultiMedia.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FreferencedObject.sizeInBytes);
-  inc(result, Fcaption.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FreferencedObject.sizeInBytes(magic));
+  inc(result, Fcaption.sizeInBytes(magic));
 end;
 
 { TsnLinkHtml }
@@ -2624,7 +2624,7 @@ end;
 
 destructor TsnLinkHtml.Destroy;
 begin
-  Fparts.Free; //TsnCMFootnotesList
+  Fparts.free; //TsnCMFootnotesList
   inherited;
 end;
 
@@ -2633,10 +2633,10 @@ begin
   Result := TsnLinkHtml(Inherited Link);
 end;
 
-function TsnLinkHtml.sizeInBytesV : cardinal;
+function TsnLinkHtml.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnFootnote }
@@ -2696,7 +2696,7 @@ end;
 
 destructor TsnFootnote.Destroy;
 begin
-  Fparts.Free; //TsnCMGeneralList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -2705,10 +2705,10 @@ begin
   Result := TsnFootnote(Inherited Link);
 end;
 
-function TsnFootnote.sizeInBytesV : cardinal;
+function TsnFootnote.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnTitleFootnote }
@@ -2768,7 +2768,7 @@ end;
 
 destructor TsnTitleFootnote.Destroy;
 begin
-  Fparts.Free; //TsnCMTitleList
+  Fparts.free; //TsnCMTitleList
   inherited;
 end;
 
@@ -2777,10 +2777,10 @@ begin
   Result := TsnTitleFootnote(Inherited Link);
 end;
 
-function TsnTitleFootnote.sizeInBytesV : cardinal;
+function TsnTitleFootnote.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnFootnoteRef }
@@ -2867,7 +2867,7 @@ end;
 
 destructor TsnCaption.Destroy;
 begin
-  Fparts.Free; //TsnCMInlineList
+  Fparts.free; //TsnCMInlineList
   inherited;
 end;
 
@@ -2876,10 +2876,10 @@ begin
   Result := TsnCaption(Inherited Link);
 end;
 
-function TsnCaption.sizeInBytesV : cardinal;
+function TsnCaption.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnContent }
@@ -2944,7 +2944,7 @@ end;
 
 destructor TsnContent.Destroy;
 begin
-  Fparts.Free; //TsnCMContentList
+  Fparts.free; //TsnCMContentList
   inherited;
 end;
 
@@ -2953,10 +2953,10 @@ begin
   Result := TsnContent(Inherited Link);
 end;
 
-function TsnContent.sizeInBytesV : cardinal;
+function TsnContent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnCaptioned }
@@ -3007,7 +3007,7 @@ end;
 
 destructor TsnCaptioned.Destroy;
 begin
-  Fcaption.Free; //TsnCaption
+  Fcaption.free; //TsnCaption
   inherited;
 end;
 
@@ -3025,16 +3025,16 @@ end;
 
 procedure TsnCaptioned.Setcaption(const Value: TsnCaption);
 begin
-  Fcaption.Free;
+  Fcaption.free;
   Fcaption := Value;
   if Fcaption <> nil then  caption.parent := self;
 
 end;
 
-function TsnCaptioned.sizeInBytesV : cardinal;
+function TsnCaptioned.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcaption.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcaption.sizeInBytes(magic));
 end;
 
 procedure TsnCaption.ListProperties(oList: Tv3PropertyDefinitionList; bInheritedProperties : Boolean);
@@ -3124,7 +3124,7 @@ end;
 
 destructor TsnParagraph.Destroy;
 begin
-  Fparts.Free; //TsnCMContentList
+  Fparts.free; //TsnCMContentList
   inherited;
 end;
 
@@ -3133,10 +3133,10 @@ begin
   Result := TsnParagraph(Inherited Link);
 end;
 
-function TsnParagraph.sizeInBytesV : cardinal;
+function TsnParagraph.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnItem }
@@ -3199,7 +3199,7 @@ end;
 
 destructor TsnItem.Destroy;
 begin
-  Fparts.Free; //TsnCMGeneralList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -3209,10 +3209,10 @@ begin
 end;
 
 
-function TsnItem.sizeInBytesV : cardinal;
+function TsnItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnList }
@@ -3276,7 +3276,7 @@ end;
 
 destructor TsnList.Destroy;
 begin
-  Fitem.Free; //TsnItemList
+  Fitem.free; //TsnItemList
   inherited;
 end;
 
@@ -3285,10 +3285,10 @@ begin
   Result := TsnList(Inherited Link);
 end;
 
-function TsnList.sizeInBytesV : cardinal;
+function TsnList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fitem.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fitem.sizeInBytes(magic));
 end;
 
 { TsnTableItem }
@@ -3471,7 +3471,7 @@ end;
 
 destructor TsnColGroup.Destroy;
 begin
-  Fcol.Free; //TsnColList
+  Fcol.free; //TsnColList
   inherited;
 end;
 
@@ -3480,10 +3480,10 @@ begin
   Result := TsnColGroup(Inherited Link);
 end;
 
-function TsnColGroup.sizeInBytesV : cardinal;
+function TsnColGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcol.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcol.sizeInBytes(magic));
 end;
 
 { TsnCol }
@@ -3555,8 +3555,8 @@ end;
 
 destructor TsnTCell.Destroy;
 begin
-  Fheaders.Free; //TFslStringList
-  Fparts.Free; //TsnCMGeneralList
+  Fheaders.free; //TFslStringList
+  Fparts.free; //TsnCMGeneralList
   inherited;
 end;
 
@@ -3565,11 +3565,11 @@ begin
   Result := TsnTCell(Inherited Link);
 end;
 
-function TsnTCell.sizeInBytesV : cardinal;
+function TsnTCell.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fheaders.sizeInBytes);
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fheaders.sizeInBytes(magic));
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnTRowPart }
@@ -3615,8 +3615,8 @@ end;
 
 destructor TsnTRowPart.Destroy;
 begin
-  Fth.Free; //TsnTCell
-  Ftd.Free; //TsnTCell
+  Fth.free; //TsnTCell
+  Ftd.free; //TsnTCell
   inherited;
 end;
 
@@ -3646,7 +3646,7 @@ end;
 
 procedure TsnTRowPart.Settd(const Value: TsnTCell);
 begin
-  Ftd.Free;
+  Ftd.free;
   Ftd := Value;
   if Ftd <> nil then  td.parent := self;
 
@@ -3654,7 +3654,7 @@ end;
 
 procedure TsnTRowPart.Setth(const Value: TsnTCell);
 begin
-  Fth.Free;
+  Fth.free;
   Fth := Value;
   if Fth <> nil then  th.parent := self;
 
@@ -3774,7 +3774,7 @@ end;
 
 destructor TsnTRow.Destroy;
 begin
-  Fparts.Free; //TsnTRowPartList
+  Fparts.free; //TsnTRowPartList
   inherited;
 end;
 
@@ -3783,10 +3783,10 @@ begin
   Result := TsnTRow(Inherited Link);
 end;
 
-function TsnTRow.sizeInBytesV : cardinal;
+function TsnTRow.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fparts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fparts.sizeInBytes(magic));
 end;
 
 { TsnTRowGroup }
@@ -3847,7 +3847,7 @@ end;
 
 destructor TsnTRowGroup.Destroy;
 begin
-  Ftr.Free; //TsnTRowList
+  Ftr.free; //TsnTRowList
   inherited;
 
 end;
@@ -3857,10 +3857,10 @@ begin
   Result := TsnTRowGroup(Inherited Link);
 end;
 
-function TsnTRowGroup.sizeInBytesV : cardinal;
+function TsnTRowGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftr.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Ftr.sizeInBytes(magic));
 end;
 
 { TsnTable }
@@ -3903,11 +3903,11 @@ end;
 
 destructor TsnTable.Destroy;
 begin
-  Fcol.Free; //TsnColList
-  Fcolgroup.Free; //TsnColGroupList
-  Fthead.Free; //TsnTRowGroup
-  Ftfoot.Free; //TsnTRowGroup
-  Ftbody.Free; //TsnTRowGroupList
+  Fcol.free; //TsnColList
+  Fcolgroup.free; //TsnColGroupList
+  Fthead.free; //TsnTRowGroup
+  Ftfoot.free; //TsnTRowGroup
+  Ftbody.free; //TsnTRowGroupList
   inherited;
 end;
 
@@ -3995,7 +3995,7 @@ end;
 
 procedure TsnTable.Settfoot(const Value: TsnTRowGroup);
 begin
-  Ftfoot.Free;
+  Ftfoot.free;
   Ftfoot := Value;
   if Ftfoot <> nil then  tfoot.parent := self;
 
@@ -4003,7 +4003,7 @@ end;
 
 procedure TsnTable.Setthead(const Value: TsnTRowGroup);
 begin
-  Fthead.Free;
+  Fthead.free;
   Fthead := Value;
   if Fthead <> nil then  thead.parent := self;
 
@@ -4011,14 +4011,14 @@ end;
 
 
 
-function TsnTable.sizeInBytesV : cardinal;
+function TsnTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Ftfoot.sizeInBytes);
-  inc(result, Fthead.sizeInBytes);
-  inc(result, Fcolgroup.sizeInBytes);
-  inc(result, Fcol.sizeInBytes);
-  inc(result, Ftbody.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Ftfoot.sizeInBytes(magic));
+  inc(result, Fthead.sizeInBytes(magic));
+  inc(result, Fcolgroup.sizeInBytes(magic));
+  inc(result, Fcol.sizeInBytes(magic));
+  inc(result, Ftbody.sizeInBytes(magic));
 end;
 
 function TsnTRowGroupList.Count: Integer;
@@ -4036,9 +4036,10 @@ begin
   Result := TsnTRowGroup;
 end;
 
-procedure TsnTRowGroupList.AddItem(value: TsnTRowGroup);
+function TsnTRowGroupList.AddItem(value: TsnTRowGroup): TsnTRowGroup;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnTRowGroupList.IndexOf(Value: TsnTRowGroup): Integer;
@@ -4069,7 +4070,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4079,7 +4080,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4124,9 +4125,10 @@ begin
   result := TsnCMGeneral;
 end;
 
-procedure TsnCMGeneralList.AddItem(value: TsnCMGeneral);
+function TsnCMGeneralList.AddItem(value: TsnCMGeneral): TsnCMGeneral;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMGeneralList.IndexOf(Value: TsnCMGeneral): Integer;
@@ -4166,9 +4168,10 @@ begin
   Result := TsnCMTitle;
 end;
 
-procedure TsnCMTitleList.AddItem(value: TsnCMTitle);
+function TsnCMTitleList.AddItem(value: TsnCMTitle): TsnCMTitle;
 begin
-  Add(value.Link)
+  Add(value.Link);
+  result := value;
 end;
 
 function TsnCMTitleList.IndexOf(Value: TsnCMTitle): Integer;
@@ -4189,7 +4192,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4199,7 +4202,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4244,7 +4247,7 @@ begin
   try
     add(Result.Link);
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -4254,7 +4257,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4298,9 +4301,10 @@ begin
   Result := TsnCMFootnotes;
 end;
 
-procedure TsnCMFootnotesList.AddItem(value: TsnCMFootnotes);
+function TsnCMFootnotesList.AddItem(value: TsnCMFootnotes): TsnCMFootnotes;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMFootnotesList.IndexOf(Value: TsnCMFootnotes): Integer;
@@ -4331,7 +4335,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4341,7 +4345,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4385,9 +4389,10 @@ begin
   Result := TsnCMInline;
 end;
 
-procedure TsnCMInlineList.AddItem(value: TsnCMInline);
+function TsnCMInlineList.AddItem(value: TsnCMInline): TsnCMInline;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMInlineList.IndexOf(Value: TsnCMInline): Integer;
@@ -4418,7 +4423,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4428,7 +4433,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4472,9 +4477,10 @@ begin
   Result := TsnCMContent;
 end;
 
-procedure TsnCMContentList.AddItem(value: TsnCMContent);
+function TsnCMContentList.AddItem(value: TsnCMContent): TsnCMContent;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnCMContentList.IndexOf(Value: TsnCMContent): Integer;
@@ -4514,9 +4520,10 @@ begin
   Result := TsnItem;
 end;
 
-procedure TsnItemList.AddItem(value: TsnItem);
+function TsnItemList.AddItem(value: TsnItem): TsnItem;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnItemList.IndexOf(Value: TsnItem): Integer;
@@ -4537,7 +4544,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4547,7 +4554,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4601,9 +4608,10 @@ begin
   Result := TsnCol;
 end;
 
-procedure TsnColList.AddItem(value: TsnCol);
+function TsnColList.AddItem(value: TsnCol): TsnCol;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnColList.IndexOf(Value: TsnCol): Integer;
@@ -4624,7 +4632,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4634,7 +4642,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4680,7 +4688,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4690,7 +4698,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4735,9 +4743,10 @@ begin
   Result := TsnTRowPart;
 end;
 
-procedure TsnTRowPartList.AddItem(value: TsnTRowPart);
+function TsnTRowPartList.AddItem(value: TsnTRowPart): TsnTRowPart;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnTRowPartList.IndexOf(Value: TsnTRowPart): Integer;
@@ -4777,9 +4786,10 @@ begin
   Result := TsnTRow;
 end;
 
-procedure TsnTRowList.AddItem(value: TsnTRow);
+function TsnTRowList.AddItem(value: TsnTRow): TsnTRow;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnTRowList.IndexOf(Value: TsnTRow): Integer;
@@ -4800,7 +4810,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4810,7 +4820,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4864,9 +4874,10 @@ begin
   Result := TsnColGroup;
 end;
 
-procedure TsnColGroupList.AddItem(value: TsnColGroup);
+function TsnColGroupList.AddItem(value: TsnColGroup): TsnColGroup;
 begin
-  Add(value.Link);
+  add(value);
+  result := value;
 end;
 
 function TsnColGroupList.IndexOf(Value: TsnColGroup): Integer;
@@ -4887,7 +4898,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4897,7 +4908,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4943,7 +4954,7 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4953,7 +4964,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5003,7 +5014,7 @@ begin
       GetText(b);
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
   end;
 end;
@@ -5110,11 +5121,11 @@ begin
   result := 'Br';
 end;
 
-function TsnTRowPart {Choice}.sizeInBytesV : cardinal;
+function TsnTRowPart {Choice}.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fth.sizeInBytes);
-  inc(result, Ftd.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fth.sizeInBytes(magic));
+  inc(result, Ftd.sizeInBytes(magic));
 end;
 
 End.

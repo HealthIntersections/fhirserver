@@ -46,8 +46,12 @@ type
     FJWKAddress : String;
     FDatabaseId : String;
     FHost: String;
+    FCardKey: TJWK;
+    FCardJWKSFile: String;
     function jwk : TJWK;
+    procedure SetCardKey(const Value: TJWK);
   public
+    destructor Destroy; override;
     function Link : TJWTServices; overload;
 
     property JWKAddress : String read FJWKAddress write FJWKAddress;
@@ -56,10 +60,12 @@ type
     property DatabaseId : String read FDatabaseId write FDatabaseId;
     property Host : String read FHost write FHost;
 
+    property cardKey : TJWK read FCardKey write SetCardKey;
     function jwkList : TJWKList;
     function makeJWK : String;
     function makeJWT(name : string = '') : String;
     function pack(jwt : TJWT) : String;
+    property cardJWKSFile : String read FCardJWKSFile write FCardJWKSFile;
   end;
 
 implementation
@@ -68,18 +74,24 @@ implementation
 
 function TJWTServices.jwkList: TJWKList;
 begin
-  result := TJWKList.create;
+  result := TJWKList.Create;
   try
     result.Add(jwk);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TJWTServices.Link: TJWTServices;
 begin
   result := TJWTServices(inherited Link);
+end;
+
+destructor TJWTServices.Destroy;
+begin
+  FCardKey.free;
+  inherited;
 end;
 
 function TJWTServices.JWK : TJWK;
@@ -127,7 +139,7 @@ begin
       jwt.issuer := FDatabaseId;
       jwt.issuedAt := now;
 
-      result := TJWTUtils.pack(jwt, jwt_hmac_rsa256, jwk, ChangeFileExt(FCert, '.key'), FPassword);
+      result := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, jwk, ChangeFileExt(FCert, '.key'), FPassword);
     finally
       jwt.free;
     end;
@@ -138,7 +150,15 @@ end;
 
 function TJWTServices.pack(jwt: TJWT): String;
 begin
-  result := TJWTUtils.rsa_pack(jwt, jwt_hmac_rsa256, ChangeFileExt(FCert, '.key'), FPassword);
+  result := TJWTUtils.encodeJWT(jwt, jwt_hmac_rsa256, ChangeFileExt(FCert, '.key'), FPassword);
+end;
+
+procedure TJWTServices.SetCardKey(const Value: TJWK);
+begin
+  FCardKey.free;
+  FCardKey := Value;
+  if FCardKey <> nil then
+    FCardKey.checkThumbprintIsSHA256Hash;
 end;
 
 end.

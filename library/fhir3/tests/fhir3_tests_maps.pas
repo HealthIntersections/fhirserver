@@ -1,4 +1,4 @@
-unit FHIR.R3.Tests.Maps;
+unit fhir3_tests_maps;
 
 
 {
@@ -72,7 +72,7 @@ type
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
@@ -113,7 +113,7 @@ begin
       // Assert.AreEqual(normalise(source), normalise(output), 'input and output do not match');
       Assert.IsTrue(true);
     finally
-      utils.Free;
+      utils.free;
     end;
   finally
     ctxt.free;
@@ -158,7 +158,7 @@ end;
 
 procedure TMapTransformTests.TearDown;
 begin
-  utils.Free;
+  utils.free;
   ctxt.free;
 end;
 
@@ -169,7 +169,7 @@ var
   s : TStringStream;
   cd : TFhirCodeableConcept;
 begin
-  x := TFHIRXmlParser.Create(ctxt.link, THTTPLanguages.create('en'));
+  x := TFHIRXmlParser.Create(ctxt.link, nil);
   try
     s := TStringStream.Create('<CD xmlns="urn:hl7-org:v3" code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>');
     try
@@ -180,23 +180,23 @@ begin
         utils.transform(nil, x.resource, utils.Lib['http://hl7.org/fhir/StructureMap/cda-cd'], cd);
         assert.AreEqual(cd.codingList.count, 1);
         assert.AreEqual(cd.codingList[0].code, '34133-9');
-        assert.AreEqual(cd.codingList[0].system, 'http://loinc.org');
+        assert.AreEqual(cd.codingList[0].system, URI_LOINC);
       finally
-        cd.Free;
+        cd.free;
       end;
     finally
-      s.Free;
+      s.free;
     end;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
-function TMapTransformTests.sizeInBytesV : cardinal;
+function TMapTransformTests.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ctxt.sizeInBytes);
-  inc(result, utils.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ctxt.sizeInBytes(magic));
+  inc(result, utils.sizeInBytes(magic));
 end;
 
 { TTestTransformerServices }
@@ -209,14 +209,14 @@ end;
 function TTestTransformerServices.oid2Uri(oid: String): String;
 begin
   if oid = '2.16.840.1.113883.6.1' then
-    result := 'http://loinc.org'
+    result := URI_LOINC
   else
     result := 'http://unknown.com/what?';
 end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise ETestCase.create('Not done yet');
+  raise ETestCase.Create('Not done yet');
 end;
 
 initialization

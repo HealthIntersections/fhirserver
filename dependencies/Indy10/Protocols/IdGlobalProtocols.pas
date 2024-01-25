@@ -477,6 +477,7 @@ type
   function GetMIMETypeFromFile(const AFile: TIdFileName): string;
   function GetMIMEDefaultFileExt(const MIMEType: string): TIdFileName;
   function GetGMTDateByName(const AFileName : TIdFileName) : TDateTime;
+  function GetGMTOffsetStr(const S: string): string;
   function GmtOffsetStrToDateTime(const S: string): TDateTime;
   function GMTToLocalDateTime(S: string): TDateTime;
   function CookieStrToLocalDateTime(S: string): TDateTime;
@@ -522,7 +523,7 @@ type
   function StrToDay(const ADay: string): Byte;
   function StrToMonth(const AMonth: string): Byte;
   function StrToWord(const Value: String): Word;
-  function TimeZoneBias: TDateTime;
+  function TimeZoneBias: TDateTime; {$IFDEF HAS_DEPRECATED}deprecated{$IFDEF HAS_DEPRECATED_MSG} 'Use IdGlobal.LocalTimeToUTCTime() or IdGlobal.UTCTimeToLocalTime()'{$ENDIF};{$ENDIF}
    //these are for FSP but may also help with MySQL
   function UnixDateTimeToDelphiDateTime(UnixDateTime: UInt32): TDateTime;
   function DateTimeToUnix(ADateTime: TDateTime): UInt32;
@@ -592,14 +593,8 @@ uses
     {$ENDIF}
   {$ENDIF}
   IdIPAddress,
-  {$IFDEF HAS_GetLocalTimeOffset}
-  DateUtils,
-  {$ENDIF}
   {$IFDEF UNIX}
     {$IFDEF USE_VCL_POSIX}
-      {$IFNDEF HAS_GetLocalTimeOffset}
-  DateUtils,
-      {$ENDIF}
   Posix.SysStat, Posix.SysTime, Posix.Time, Posix.Unistd,
     {$ELSE}
       {$IFDEF KYLIXCOMPAT}
@@ -607,12 +602,12 @@ uses
       {$ELSE}
         {$IFDEF USE_BASEUNIX}
   BaseUnix, Unix,
-          {$IFNDEF HAS_GetLocalTimeOffset}
-  DateUtils,
           {$ENDIF}
         {$ENDIF}
       {$ENDIF}
     {$ENDIF}
+  {$IFDEF HAS_UNIT_DateUtils}
+  DateUtils,
   {$ENDIF}
   {$IFDEF WINDOWS}
   Messages,
@@ -1351,7 +1346,7 @@ begin
   if ATimeStamp <> '' then begin
     Result := FTPMLSToGMTDateTime(ATimeStamp);
     // Apply local offset
-    Result := {$IFDEF HAS_UniversalTimeToLocal}UniversalTimeToLocal(Result){$ELSE}Result + OffsetFromUTC{$ENDIF};
+    Result := UTCTimeToLocalTime(Result);
   end;
 end;
 
@@ -1377,13 +1372,7 @@ stamps based on GMT)
 function FTPLocalDateTimeToMLS(const ATimeStamp : TDateTime; const AIncludeMSecs : Boolean=True): String;
 {$IFDEF USE_INLINE} inline; {$ENDIF}
 begin
-  Result := FTPGMTDateTimeToMLS(
-    {$IFDEF HAS_LocalTimeToUniversal}
-    LocalTimeToUniversal(ATimeStamp)
-    {$ELSE}
-    ATimeStamp - OffsetFromUTC
-    {$ENDIF}
-    , AIncludeMSecs);
+  Result := FTPGMTDateTimeToMLS(LocalTimeToUTCTime(ATimeStamp), AIncludeMSecs);
 end;
 
 
@@ -1480,6 +1469,7 @@ begin
   {$ENDIF}
   {$IFDEF WINDOWS}
     {$IFDEF WIN32_OR_WIN64}
+  // TODO: use SetThreadErrorMode() instead, when available...
   LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
   try
     {$ENDIF}
@@ -1777,6 +1767,7 @@ begin
     ready or there's some other critical I/O error.
     }
     {$IFDEF WIN32_OR_WIN64}
+    // TODO: use SetThreadErrorMode() instead, when available...
     LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
     {$ENDIF}
@@ -1892,9 +1883,11 @@ begin
 
   if not IsVolume(AFileName) then begin
       {$IFDEF WIN32_OR_WIN64}
+    // TODO: use SetThreadErrorMode() instead, when available...
     LOldErrorMode := SetErrorMode(SEM_FAILCRITICALERRORS);
     try
       {$ENDIF}
+      // TODO: use GetFileAttributesEx() on systems that support it
       LHandle := Windows.FindFirstFile(PIdFileNameChar(AFileName), LRec);
       {$IFDEF WIN32_OR_WIN64}
     finally
@@ -1976,36 +1969,12 @@ begin
   end;
 end;
 
+{$I IdDeprecatedImplBugOff.inc}
 function TimeZoneBias: TDateTime;
-{$IFNDEF FPC}
-  {$IFDEF UNIX}
-var
-  T: Time_T;
-  TV: TimeVal;
-  UT: {$IFDEF USE_VCL_POSIX}tm{$ELSE}TUnixTime{$ENDIF};
-  {$ELSE}
-    {$IFDEF USE_INLINE} inline; {$ENDIF}
-  {$ENDIF}
-{$ELSE}
+{$I IdDeprecatedImplBugOn.inc}
   {$IFDEF USE_INLINE} inline; {$ENDIF}
-{$ENDIF}
 begin
-{$IFNDEF FPC}
-  {$IFDEF UNIX}
-  // TODO: use -OffsetFromUTC here. It has this same Unix logic in it
-  {from http://edn.embarcadero.com/article/27890 }
-  gettimeofday(TV, nil);
-  T := TV.tv_sec;
-  localtime_r({$IFNDEF USE_VCL_POSIX}@{$ENDIF}T, UT);
-// __tm_gmtoff is the bias in seconds from the UTC to the current time.
-// so I multiply by -1 to compensate for this.
-  Result := (UT.{$IFNDEF USE_VCL_POSIX}__tm_gmtoff{$ELSE}tm_gmtoff{$ENDIF} / 60 / 60 / 24);
-  {$ELSE}
   Result := -OffsetFromUTC;
-  {$ENDIF}
-{$ELSE}
-  Result := -OffsetFromUTC;
-{$ENDIF}
 end;
 
 function IndyStrToBool(const AString : String) : Boolean;
@@ -2591,16 +2560,16 @@ const
     (TimeZone:'GST';  Offset:'+0400'), // Gulf Standard Time                                     {do not localize}
     (TimeZone:'GYT';  Offset:'-0400'), // Guyana Time                                            {do not localize}
     (TimeZone:'H';    Offset:'+0800'), // Hotel Time Zone - Military                             {do not localize}
-    (TimeZone:'HAA';  Offset:'-0300'), // Heure Avancée de l'Atlantique - North America          {do not localize}
-    (TimeZone:'HAC';  Offset:'-0500'), // Heure Avancée du Centre - North America                {do not localize}
+    (TimeZone:'HAA';  Offset:'-0300'), // Heure Avancie de l'Atlantique - North America          {do not localize}
+    (TimeZone:'HAC';  Offset:'-0500'), // Heure Avancie du Centre - North America                {do not localize}
     (TimeZone:'HADT'; Offset:'-0900'), // Hawaii-Aleutian Daylight Time - North America          {do not localize}
-    (TimeZone:'HAE';  Offset:'-0400'), // Heure Avancée de l'Est - North America                 {do not localize}
-    (TimeZone:'HAEC'; Offset:'+0200'), // Heure Avancée d'Europe Centrale francised name for CEST {do not localize}
-    (TimeZone:'HAP';  Offset:'-0700'), // Heure Avancée du Pacifique - North America             {do not localize}
-    (TimeZone:'HAR';  Offset:'-0600'), // Heure Avancée des Rocheuses - North America            {do not localize}
+    (TimeZone:'HAE';  Offset:'-0400'), // Heure Avancie de l'Est - North America                 {do not localize}
+    (TimeZone:'HAEC'; Offset:'+0200'), // Heure Avancie d'Europe Centrale francised name for CEST {do not localize}
+    (TimeZone:'HAP';  Offset:'-0700'), // Heure Avancie du Pacifique - North America             {do not localize}
+    (TimeZone:'HAR';  Offset:'-0600'), // Heure Avancie des Rocheuses - North America            {do not localize}
     (TimeZone:'HAST'; Offset:'-1000'), // Hawaii-Aleutian Standard Time - North America          {do not localize}
-    (TimeZone:'HAT';  Offset:'-0230'), // Heure Avancée de Terre-Neuve - North America           {do not localize}
-    (TimeZone:'HAY';  Offset:'-0800'), // Heure Avancée du Yukon - North America                 {do not localize}
+    (TimeZone:'HAT';  Offset:'-0230'), // Heure Avancie de Terre-Neuve - North America           {do not localize}
+    (TimeZone:'HAY';  Offset:'-0800'), // Heure Avancie du Yukon - North America                 {do not localize}
     (TimeZone:'HKT';  Offset:'+0800'), // Hong Kong Time                                         {do not localize}
     (TimeZone:'HMT';  Offset:'+0500'), // Heard and McDonald Islands Time                        {do not localize}
     (TimeZone:'HNA';  Offset:'-0400'), // Heure Normale de l'Atlantique - North America          {do not localize}
@@ -2637,11 +2606,11 @@ const
     (TimeZone:'MART'; Offset:'-0930'), // Marquesas Islands Time                                 {do not localize}
     (TimeZone:'MAWT'; Offset:'+0500'), // Mawson Station Time                                    {do not localize}
     (TimeZone:'MDT';  Offset:'-0600'), // Mountain Daylight Time - North America                 {do not localize}
-    (TimeZone:'MEHSZ';Offset:'+0300'), // Mitteleuropäische Hochsommerzeit - Europe              {do not localize}
+    (TimeZone:'MEHSZ';Offset:'+0300'), // Mitteleuropdische Hochsommerzeit - Europe              {do not localize}
     (TimeZone:'MEST'; Offset:'+0200'), // Middle European Saving Time Same zone as CEST          {do not localize}
-    (TimeZone:'MESZ'; Offset:'+0200'), // Mitteleuroäische Sommerzeit - Europe                   {do not localize}
+    (TimeZone:'MESZ'; Offset:'+0200'), // Mitteleurodische Sommerzeit - Europe                   {do not localize}
     (TimeZone:'MET';  Offset:'+0100'), // Middle European Time Same zone as CET                  {do not localize}
-    (TimeZone:'MEZ';  Offset:'+0100'), // Mitteleuropäische Zeit - Europe                        {do not localize}
+    (TimeZone:'MEZ';  Offset:'+0100'), // Mitteleuropdische Zeit - Europe                        {do not localize}
     (TimeZone:'MHT';  Offset:'+1200'), // Marshall Islands                                       {do not localize}
     (TimeZone:'MIST'; Offset:'+1100'), // Macquarie Island Station Time                          {do not localize}
     (TimeZone:'MIT';  Offset:'-0930'), // Marquesas Islands Time                                 {do not localize}
@@ -2683,7 +2652,7 @@ const
     (TimeZone:'PYT';  Offset:'-0400'), // Paraguay Time (South America)                          {do not localize}
     (TimeZone:'Q';    Offset:'-0400'), // Quebec Time Zone - Military                            {do not localize}
     (TimeZone:'R';    Offset:'-0500'), // Romeo Time Zone - Military                             {do not localize}
-    (TimeZone:'RET';  Offset:'+0400'), // Réunion Time                                           {do not localize}
+    (TimeZone:'RET';  Offset:'+0400'), // Riunion Time                                           {do not localize}
     (TimeZone:'ROTT'; Offset:'-0300'), // Rothera Research Station Time                          {do not localize}
     (TimeZone:'S';    Offset:'-0600'), // Sierra Time Zone - Military                            {do not localize}
     (TimeZone:'SAKT'; Offset:'+1100'), // Sakhalin Island time                                   {do not localize}
@@ -2750,6 +2719,16 @@ begin
   Result := '-0000' {do not localize}
 end;
 
+function GetGMTOffsetStr(const S: string): string;
+var
+  Ignored: TDateTime;
+begin
+  Result := S;
+  if not RawStrInternetToDateTime(Result, Ignored) then begin
+    Result := '';
+  end;
+end;
+
 function GmtOffsetStrToDateTime(const S: string): TDateTime;
 var
   sTmp: String;
@@ -2795,8 +2774,7 @@ begin
   if RawStrInternetToDateTime(S, Result) then begin
     DateTimeOffset := GmtOffsetStrToDateTime(S);
     {-Apply GMT and local offsets}
-    Result := Result - DateTimeOffset;
-    Result := {$IFDEF HAS_UniversalTimeToLocal}UniversalTimeToLocal(Result){$ELSE}Result + OffsetFromUTC{$ENDIF};
+    Result := UTCTimeToLocalTime(Result - DateTimeOffset);
   end;
 end;
 
@@ -3051,7 +3029,7 @@ begin
     end;
 
     Result := EncodeDate(LYear, LMonth, LDayOfMonth) + EncodeTime(LHour, LMinute, LSecond, 0);
-    Result := {$IFDEF HAS_UniversalTimeToLocal}UniversalTimeToLocal(Result){$ELSE}Result + OffsetFromUTC{$ENDIF};
+    Result := UTCTimeToLocalTime(Result);
   except
     Result := 0.0;
   end;
@@ -4904,6 +4882,9 @@ end;
 {$ENDIF}
 {$IFDEF OSX} // !!! ADDED OSX BY EMBT
   {$IFDEF CPUX64}
+    {$DEFINE NO_NATIVE_ASM}
+  {$ENDIF}
+  {$IFDEF CPUARM64}
     {$DEFINE NO_NATIVE_ASM}
   {$ENDIF}
 {$ENDIF}

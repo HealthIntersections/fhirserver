@@ -64,7 +64,7 @@ type
     FValue : String;
     FType : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(value : String);
   end;
@@ -74,7 +74,7 @@ type
     FGen : TRDFGenerator;
     FPredicates : TFslList<TRDFPredicate>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
@@ -92,7 +92,7 @@ type
     FObj : TRDFTriple;
     FComment : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TRDFPredicate; overload;
@@ -102,7 +102,7 @@ type
   private
     id : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
@@ -119,7 +119,7 @@ type
     FName : String;
     FSubjects : TFslList<TRDFSubject>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
@@ -158,7 +158,7 @@ type
     procedure writeNTriple(b: TStringBuilder; url1, url2, url3: String);
     function fullUrl(s: String): String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -205,7 +205,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -224,9 +224,9 @@ begin
   FValue := value;
 end;
 
-function TRDFString.sizeInBytesV : cardinal;
+function TRDFString.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
 end;
@@ -241,13 +241,13 @@ end;
 constructor TRDFComplex.Create(gen : TRDFGenerator);
 begin
   inherited Create;
-  FPredicates := TFslList<TRDFPredicate>.create;
+  FPredicates := TFslList<TRDFPredicate>.Create;
   FGen := gen;
 end;
 
 destructor TRDFComplex.Destroy;
 begin
-  FPredicates.Free;
+  FPredicates.free;
   inherited;
 end;
 
@@ -272,7 +272,7 @@ begin
     p.FObj := obj;
     FPredicates.Add(p.Link);
   finally
-    p.Free;
+    p.free;
   end;
   result := self;
 end;
@@ -337,18 +337,18 @@ begin
   s.FType := xtype;
 end;
 
-function TRDFComplex.sizeInBytesV : cardinal;
+function TRDFComplex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FGen.sizeInBytes);
-  inc(result, FPredicates.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FGen.sizeInBytes(magic));
+  inc(result, FPredicates.sizeInBytes(magic));
 end;
 
 { TRDFPredicate }
 
 destructor TRDFPredicate.Destroy;
 begin
-  FObj.Free;
+  FObj.free;
   inherited;
 end;
 
@@ -357,11 +357,11 @@ begin
   result := TRDFPredicate(inherited Link);
 end;
 
-function TRDFPredicate.sizeInBytesV : cardinal;
+function TRDFPredicate.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPredicate.length * sizeof(char)) + 12);
-  inc(result, FObj.sizeInBytes);
+  inc(result, FObj.sizeInBytes(magic));
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -401,7 +401,7 @@ begin
     FPredicates.Add(p.Link);
     result := p;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -424,9 +424,9 @@ begin
 end;
 
 
-function TRDFSubject.sizeInBytesV : cardinal;
+function TRDFSubject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (id.length * sizeof(char)) + 12);
 end;
 
@@ -434,14 +434,14 @@ end;
 
 constructor TRDFSection.Create(gen: TRDFGenerator);
 begin
-  inherited create;
+  inherited Create;
   FGen := gen;
-  FSubjects := TFslList<TRDFSubject>.create;
+  FSubjects := TFslList<TRDFSubject>.Create;
 end;
 
 destructor TRDFSection.Destroy;
 begin
-  FSubjects.Free;
+  FSubjects.free;
   inherited;
 end;
 
@@ -502,12 +502,12 @@ begin
   end;
 end;
 
-function TRDFSection.sizeInBytesV : cardinal;
+function TRDFSection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FGen.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FGen.sizeInBytes(magic));
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSubjects.sizeInBytes);
+  inc(result, FSubjects.sizeInBytes(magic));
 end;
 
 { TRDFGenerator }
@@ -515,20 +515,20 @@ end;
 constructor TRDFGenerator.Create();
 begin
   inherited Create;
-  FSections := TFslList<TRDFSection>.create;
-  FSubjectSet := TList<String>.create;
-  FPredicateSet := TList<String>.create;
-  FObjectSet := TList<String>.create;
-  FPrefixes := TFslStringDictionary.create;
+  FSections := TFslList<TRDFSection>.Create;
+  FSubjectSet := TList<String>.Create;
+  FPredicateSet := TList<String>.Create;
+  FObjectSet := TList<String>.Create;
+  FPrefixes := TFslStringDictionary.Create;
 end;
 
 destructor TRDFGenerator.Destroy;
 begin
-  FSections.Free;
-  FSubjectSet.Free;
-  FPredicateSet.Free;
-  FObjectSet.Free;
-  FPrefixes.Free;
+  FSections.free;
+  FSubjectSet.free;
+  FPredicateSet.free;
+  FObjectSet.free;
+  FPrefixes.free;
   inherited;
 end;
 
@@ -576,7 +576,7 @@ begin
     sort.Sort;
     result := sort.ToStringArray;
   finally
-    sort.Free;
+    sort.free;
   end;
 end;
 
@@ -768,11 +768,11 @@ begin
   end;
 end;
 
-function TRDFGenerator.sizeInBytesV : cardinal;
+function TRDFGenerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSections.sizeInBytes);
-  inc(result, FPrefixes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSections.sizeInBytes(magic));
+  inc(result, FPrefixes.sizeInBytes(magic));
 end;
 
 end.

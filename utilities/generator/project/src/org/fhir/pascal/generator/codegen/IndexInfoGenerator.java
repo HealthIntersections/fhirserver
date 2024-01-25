@@ -3,12 +3,8 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.engine.Configuration;
@@ -42,7 +38,7 @@ public class IndexInfoGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.IndexInfo");
+	  String template = config.getTemplate("fhir{N}_indexinfo");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{index-intf}}", indexHeaders.toString());
     template = template.replace("{{index-impl}}", indexMethods.toString());
@@ -67,7 +63,7 @@ public class IndexInfoGenerator extends BaseGenerator {
 	      int llen = getLastLineLength(s);
 	      b.append(s);
 	      b.append(breakStringConstIntoLines(escape(sp.getExpression()), llen));
-	      b.append("', sxp"+(sp.getXpathUsage() == null ? "Null" : Utilities.capitalize(sp.getXpathUsage().toCode()))+");\r\n");
+	      b.append("', sxp"+(sp.getProcessingMode() == null ? "Normal" : Utilities.capitalize(sp.getProcessingMode().toCode()))+");\r\n");
 	    }
 	    b.append("  indexes.add('"+analysis.getName()+"', '_text', 'Search on the narrative of the resource', sptSTRING, [], '', sxpNormal);\r\n");
 
@@ -153,7 +149,7 @@ public class IndexInfoGenerator extends BaseGenerator {
 
   private boolean hasAllResources(List<CodeType> list) {
     for (String name : allResourceNames) {
-      if (!Utilities.existsInList(name, "Parameters")) {
+      if (!Utilities.existsInList(name, "Parameters", "CanonicalResource", "MetadataResource", "RequestGroup")) {
         boolean found = false;
         for (CodeType c : list) {
           found = found || (c.getValue().equals(name));

@@ -1,0 +1,96 @@
+object FakeConsoleSettingsForm: TFakeConsoleSettingsForm
+  Left = 690
+  Height = 219
+  Top = 222
+  Width = 219
+  Caption = 'Console Preferences'
+  ClientHeight = 219
+  ClientWidth = 219
+  LCLVersion = '3.1.0.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 178
+    Width = 219
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 219
+    TabOrder = 0
+    object btnOk: TButton
+      Left = 54
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 135
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+  end
+  object chkForwards: TCheckBox
+    Left = 16
+    Height = 18
+    Top = 15
+    Width = 137
+    Caption = 'Log works forwards'
+    TabOrder = 1
+  end
+  object chkAutoClose: TCheckBox
+    Left = 16
+    Height = 18
+    Top = 66
+    Width = 164
+    Caption = 'Autoclose when finished'
+    TabOrder = 2
+  end
+  object eLines: TEdit
+    Left = 124
+    Height = 21
+    Top = 37
+    Width = 56
+    TabOrder = 3
+    Text = 'eLines'
+  end
+  object Label1: TLabel
+    Left = 18
+    Height = 16
+    Top = 40
+    Width = 94
+    Caption = 'Max Line Count'
+    ParentColor = False
+  end
+  object chkWordWrap: TCheckBox
+    Left = 16
+    Height = 18
+    Top = 94
+    Width = 124
+    Caption = 'Word Wrap in log'
+    TabOrder = 4
+  end
+  object Label2: TLabel
+    Left = 20
+    Height = 16
+    Top = 126
+    Width = 60
+    Caption = 'Font Size:'
+  end
+  object eSize: TEdit
+    Left = 88
+    Height = 21
+    Top = 124
+    Width = 56
+    TabOrder = 5
+    Text = 'eSize'
+  end
+end

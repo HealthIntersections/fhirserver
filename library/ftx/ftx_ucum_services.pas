@@ -34,10 +34,9 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum,
-  fsl_http,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
-  fhir_common,
+  fhir_common, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
 
@@ -49,7 +48,7 @@ Type
     FConcept: TFhirValueSetComposeIncludeConceptW;
     procedure SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(concept : TFhirValueSetComposeIncludeConceptW); overload;
     constructor Create(code : String); overload;
@@ -62,7 +61,7 @@ Type
     FCursor : integer; // used on the first
     FCanonical: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(canonical : String);
     property canonical : String read FCanonical write FCanonical;
@@ -87,9 +86,9 @@ Type
     Function ParseUnit(oElem : TMXmlElement):TUcumDefinedUnit;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create; Override;
+    constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
 
@@ -228,7 +227,7 @@ Type
     Function divideBy(o1, o2 : TUcumPair) : TUcumPair;
 
 
-    // load from ucum-essence.xml
+    // load from ucum.dat
     Procedure Import(sFilename : String);
     class function checkFile(sFilename : String) : String;
 
@@ -236,23 +235,20 @@ Type
 
     function description : String; override;
     function TotalCount : integer; override;
-    function ChildCount(context : TCodeSystemProviderContext) : integer; override;
-    function getcontext(context : TCodeSystemProviderContext; ndx : integer) : TCodeSystemProviderContext; override;
+    function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
+    function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function systemUri(context : TCodeSystemProviderContext) : String; override;
     function version(context : TCodeSystemProviderContext) : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function getDisplay(code : String; const lang : THTTPLanguages):String; override;
-    function locate(code : String; var message : String) : TCodeSystemProviderContext; override;
+    function getDisplay(code : String; langList : THTTPLanguageList):String; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function Code(context : TCodeSystemProviderContext) : string; override;
-    function Display(context : TCodeSystemProviderContext; const lang : THTTPLanguages) : string; override;
-    procedure Displays(code : String; list : TStringList; const lang : THTTPLanguages); override;
-    procedure Displays(context : TCodeSystemProviderContext; list : TStringList; const lang : THTTPLanguages); override;
-    function filter(prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
+    procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
+    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); override;
-    procedure Close(ctxt : TCodeSystemProviderContext); override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -263,7 +259,8 @@ Type
     function Definition(context : TCodeSystemProviderContext) : string; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
     function SpecialEnumeration : String; override;
-    procedure getCDSInfo(card : TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display : String); override;
+    procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
     //function subsumes(codeA, codeB : String) : String; override;
   End;
 
@@ -274,7 +271,7 @@ Type
     procedure SetDefinition(Value: TUcumServices);
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -285,17 +282,21 @@ Type
     Property Definition[iIndex : Integer] : TUcumServices read GetDefinition; Default;
   End;
 
+  { TUcumServiceImplementation }
+
   TUcumServiceImplementation = class (TUcumServiceInterface)
   private
     FSvc : TUcumServices;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(svc : TUcumServices);
     destructor Destroy; override;
     Function multiply(o1, o2 : TUcumPair) : TUcumPair; override;
     Function divideBy(o1, o2 : TUcumPair) : TUcumPair; override;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; override;
+    function getCanonicalUnits(units : string) : string; override;
+    function isComparable(u1, u2 : String) : boolean; override;
     Function isConfigured : boolean; override;
   end;
 
@@ -309,17 +310,27 @@ type
   private
     FCode : String;
   protected
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function getCode : String; override;
     function getDisplay : String; override;
     procedure setCode(Value: String); override;
     procedure setDisplay(Value: String); override;
+    function GetItemWeight : String; override;
+    procedure SetItemWeight(Value: String); override;
+    function displayElement : TFHIRPrimitiveW; override;
+
     function designations : TFslList<TFhirValueSetComposeIncludeConceptDesignationW>; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   end;
 
 { TFhirValueSetComposeIncludeConceptLocal }
 
 function TFhirValueSetComposeIncludeConceptLocal.designations: TFslList<TFhirValueSetComposeIncludeConceptDesignationW>;
+begin
+  result := nil;
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.displayElement: TFHIRPrimitiveW;
 begin
   result := nil;
 end;
@@ -334,6 +345,11 @@ begin
   result := '';
 end;
 
+function TFhirValueSetComposeIncludeConceptLocal.GetItemWeight: String;
+begin
+  result := '';
+end;
+
 procedure TFhirValueSetComposeIncludeConceptLocal.SetCode(Value: String);
 begin
   FCode := value;
@@ -341,12 +357,24 @@ end;
 
 procedure TFhirValueSetComposeIncludeConceptLocal.SetDisplay(Value: String);
 begin
+  // not implemented
 end;
 
-function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV : cardinal;
+procedure TFhirValueSetComposeIncludeConceptLocal.SetItemWeight(Value: String);
 begin
-  result := inherited sizeInBytesV;
+  inherited;
+
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
+end;
+
+function TFhirValueSetComposeIncludeConceptLocal.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  result := nil; // not supported here
 end;
 
 { TUcumServices }
@@ -363,7 +391,7 @@ begin
     Try
       result := TUcumFormalStructureComposer.Compose(oTerm);
     Finally
-      oTerm.Free;
+      oTerm.free;
     End;
   End;
 end;
@@ -392,30 +420,35 @@ begin
     try
       Term := TUcumExpressionParser.Parse(FModel, sourceUnit);
       src := oConv.convert(term);
-      term.Free;
+      term.free;
       term := TUcumExpressionParser.Parse(FModel, destUnit);
       dst := oConv.convert(term);
       s := TUcumExpressionComposer.compose(src, false);
       d := TUcumExpressionComposer.compose(dst, false);
       if s <> d then
-        raise ETerminologyError.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)');
+        raise ETerminologyError.Create('Unable to convert between units '+sourceUnit+' and '+destUnit+' as they do not have matching canonical forms ('+s+' and '+d+' respectively)', itInvalid);
       t := value.Multiply(src.Value);
       result := t.Divide(dst.Value);
     Finally
-      term.Free;
-      src.Free;
-      dst.Free;
-      oConv.Free;
+      term.free;
+      src.free;
+      dst.free;
+      oConv.free;
     End;
   End;
 end;
 
-constructor TUcumServices.Create;
+constructor TUcumServices.Create(languages : TIETFLanguageDefinitions);
 begin
   inherited;
   FModel := TUcumModel.Create;
   FHandlers := TUcumRegistry.Create;
   FHandlers.Register;
+end;
+
+procedure TUcumServices.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'canonical:equals'));
 end;
 
 function TUcumServices.Definition(context: TCodeSystemProviderContext): string;
@@ -430,10 +463,10 @@ end;
 
 destructor TUcumServices.Destroy;
 begin
-  FCommonUnits.Free;
-  FCommonUnitList.Free;
-  FHandlers.Free;
-  FModel.Free;
+  FCommonUnits.free;
+  FCommonUnitList.free;
+  FHandlers.free;
+  FModel.free;
   inherited;
 end;
 
@@ -455,13 +488,13 @@ begin
       Try
         result := TUcumPair.Create(value.Value.Multiply(c.Value), TUcumExpressionComposer.Compose(c, false))
       Finally
-        c.Free;
+        c.free;
       End;
     Finally
       conv.free;
     End;
   Finally
-    t.Free;
+    t.free;
   End;
 end;
 
@@ -481,17 +514,17 @@ begin
       Try
         result := TUcumExpressionComposer.Compose(c, false);
       Finally
-        c.Free;
+        c.free;
       End;
     Finally
       conv.free;
     End;
   Finally
-    t.Free;
+    t.free;
   End;
 end;
 
-procedure TUcumServices.getCDSInfo(card: TCDSHookCard; const slang : THTTPLanguages; baseURL, code, display: String);
+procedure TUcumServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   s : String;
   b : TStringBuilder;
@@ -506,7 +539,7 @@ begin
     b.Append(#13#10+'Copyright: UCUM is Copyright &copy; 1999+ Regenstrief Institute, Inc. and The UCUM Organization, Indianapolis, IN. See [Terms Of Use](http://unitsofmeasure.org/trac//wiki/TermsOfUse)'+#13#10);
     card.detail := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -572,7 +605,7 @@ begin
     res.UnitCode := o1.UnitCode +'.'+o2.UnitCode;
     result := getCanonicalForm(res);
   Finally
-    res.Free;
+    res.free;
   End;
 end;
 
@@ -586,27 +619,27 @@ var
   oSearch : TUcumSearch;
 begin
   if text = '' Then
-    raise ETerminologyError.Create('A text to search for is required');
+    raise ETerminologyError.Create('A text to search for is required', itInvalid);
   oSearch := TUcumSearch.Create;
   Try
     result := oSearch.DoSearch(model, kind, text, isRegex);
   Finally
-    oSearch.Free;
+    oSearch.free;
   End;
 end;
 
 function TUcumServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('to do');
+  raise ETerminologyError.Create('to do', itException);
 end;
 
 procedure TUcumServices.SetCommonUnits(vs: TFHIRValueSetW);
 var
   inc : TFhirValueSetComposeIncludeW;
 begin
-  FCommonUnits.Free;
+  FCommonUnits.free;
   FCommonUnits := vs;
-  FCommonUnitList.Free;
+  FCommonUnitList.free;
   FCommonUnitList := nil;
   for inc in FCommonUnits.includes.forEnum do
     if FCommonUnitList = nil then
@@ -625,7 +658,7 @@ function TUcumServices.validate(code: String): String;
 begin
   if (code <> '') Then
   Try
-    TUcumExpressionParser.parse(Fmodel, code).Free;
+    TUcumExpressionParser.parse(Fmodel, code).free;
     result := '';
   Except
     on E:Exception do
@@ -641,7 +674,7 @@ begin
   Try
     oValidator.validate(oErrors);
   Finally
-    oValidator.Free;
+    oValidator.free;
   End;
 end;
 
@@ -669,13 +702,13 @@ begin
           if cu <> canonical then
             result := 'unit '+code+' has the canonical units '+cu+', not '+canonical+' as required.';
         Finally
-          c.Free;
+          c.free;
         End;
       Finally
         conv.free;
       End;
     Finally
-      t.Free;
+      t.free;
     End;
   Except
     on e:exception do
@@ -717,13 +750,13 @@ begin
             exit('');
            exit('unit '+code+' has the base units '+cu+', and is not from the property '+propertyType+' as required.');
         Finally
-          c.Free;
+          c.free;
         End;
       Finally
         conv.free;
       End;
     Finally
-      t.Free;
+      t.free;
     End;
   Except
     on e:exception do
@@ -748,22 +781,22 @@ end;
 
 
 
-function TUcumServices.sizeInBytesV : cardinal;
+function TUcumServices.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FModel.sizeInBytes);
-  inc(result, FHandlers.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FModel.sizeInBytes(magic));
+  inc(result, FHandlers.sizeInBytes(magic));
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FCommonUnits.sizeInBytes);
-  inc(result, FCommonUnitList.sizeInBytes);
+  inc(result, FCommonUnits.sizeInBytes(magic));
+  inc(result, FCommonUnitList.sizeInBytes(magic));
 end;
 
 { TUcumServiceList }
 
 destructor TUcumServiceList.Destroy;
 begin
-  FDefinition.Free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -815,25 +848,20 @@ end;
 
 procedure TUcumServiceList.SetDefinition(Value: TUcumServices);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Value;
 end;
 
 
-function TUcumServiceList.sizeInBytesV : cardinal;
+function TUcumServiceList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
-function TUcumServices.ChildCount(context: TCodeSystemProviderContext): integer;
+function TUcumServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 begin
-  result := 0;
-end;
-
-procedure TUcumServices.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.Free;
+  result := TCodeSystemIteratorContext.Create(nil, 0);
 end;
 
 function TUcumServices.Code(context: TCodeSystemProviderContext): string;
@@ -844,22 +872,23 @@ begin
     result := TUCUMContext(context).concept.code;
 end;
 
-function TUcumServices.getcontext(context: TCodeSystemProviderContext; ndx: integer): TCodeSystemProviderContext;
+function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  result := nil;
+  raise ETerminologyError.Create('not safe');
+//  result := nil;
 end;
 
-function TUcumServices.Display(context: TCodeSystemProviderContext; const lang : THTTPLanguages): string;
+function TUcumServices.Display(context: TCodeSystemProviderContext; langList : THTTPLanguageList): string;
 begin
   if context = nil then
     result := ''
   else
-    result := getDisplay(TUCUMContext(context).concept.code, lang);
+    result := getDisplay(TUCUMContext(context).concept.code, langList);
 end;
 
-procedure TUcumServices.Displays(context: TCodeSystemProviderContext; list: TStringList; const lang : THTTPLanguages);
+procedure TUcumServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
 begin
-  list.Add(Code(context).Trim);
+  list.addDesignation(true, true, '', Code(context).Trim);
 end;
 
 function TUcumServices.divideBy(o1, o2: TUcumPair): TUcumPair;
@@ -881,16 +910,11 @@ begin
     res.UnitCode := s;
     result := getCanonicalForm(res);
   Finally
-    res.Free;
+    res.free;
   End;
 end;
 
-procedure TUcumServices.Displays(code: String; list: TStringList; const lang : THTTPLanguages);
-begin
-  list.Add(getDisplay(code, lang));
-end;
-
-function TUcumServices.getDisplay(code: String; const lang : THTTPLanguages): String;
+function TUcumServices.getDisplay(code: String; langList : THTTPLanguageList): String;
 var
   inc : TFhirValueSetComposeIncludeW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -944,10 +968,10 @@ begin
       if oErrors.Count > 0 then
         raise ETerminologySetup.create(oErrors.asText);
     Finally
-      oErrors.Free;
+      oErrors.free;
     End;
   finally
-    oXml.Free;
+    oXml.free;
   end;
 end;
 
@@ -968,7 +992,7 @@ begin
         result := 'Ok (version = '+oXml.document.attribute['version']+', date = '+rd+')';
       end;
     finally
-      oXml.Free;
+      oXml.free;
     end;
   except
     on e : Exception do
@@ -996,11 +1020,11 @@ begin
   result := true;
 end;
 
-function TUcumServices.locate(code: String; var message : String): TCodeSystemProviderContext;
+function TUcumServices.locate(code: String; altOpt : TAlternateCodeOptions; var message : String): TCodeSystemProviderContext;
 var
   s : String;
 begin
-  s:= validate(code);
+  s := validate(code);
   if s = '' then
     result := TUCUMContext.Create(code)
   else
@@ -1017,7 +1041,7 @@ end;
 
 function TUcumServices.systemUri(context : TCodeSystemProviderContext): String;
 begin
-  result := 'http://unitsofmeasure.org';
+  result := URI_UCUM;
 end;
 
 function TUcumServices.TotalCount: integer;
@@ -1026,12 +1050,7 @@ begin
   result := 0;
 end;
 
-procedure TUcumServices.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  ctxt.Free;
-end;
-
-function TUcumServices.filter(prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TUcumServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 begin
   if (prop = 'canonical') and (op in [foEqual]) then
     result := TUcumFilterContext.create(value)
@@ -1106,7 +1125,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1132,12 +1151,12 @@ Begin
       else if oChild.Name = 'property' Then
         result.PropertyType := oChild.allText
       else
-        raise ETerminologyError.Create('unknown element in base unit: '+oChild.Name);
+        raise ETerminologyError.Create('unknown element in base unit: '+oChild.Name, itInvalid);
       oChild := oChild.nextElement;
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1176,7 +1195,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -1189,9 +1208,9 @@ begin
   FCanonical := canonical;
 end;
 
-function TUcumFilterContext.sizeInBytesV : cardinal;
+function TUcumFilterContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCanonical.length * sizeof(char)) + 12);
 end;
 
@@ -1212,33 +1231,33 @@ end;
 
 destructor TUCUMContext.Destroy;
 begin
-  FConcept.Free;
+  FConcept.free;
   inherited;
 end;
 
 procedure TUCUMContext.SetConcept(Value: TFhirValueSetComposeIncludeConceptW);
 begin
-  FConcept.Free;
+  FConcept.free;
   FConcept := Value;
 end;
 
-function TUCUMContext.sizeInBytesV : cardinal;
+function TUCUMContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConcept.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConcept.sizeInBytes(magic));
 end;
 
 { TUcumServiceImplementation }
 
 constructor TUcumServiceImplementation.Create(svc: TUcumServices);
 begin
-  inherited create;
+  inherited Create;
   FSvc := svc;
 end;
 
 destructor TUcumServiceImplementation.Destroy;
 begin
-  FSvc.Free;
+  FSvc.free;
   inherited;
 end;
 
@@ -1252,6 +1271,37 @@ begin
   result := FSvc.getCanonicalForm(value);
 end;
 
+function TUcumServiceImplementation.getCanonicalUnits(units: string): string;
+var
+  p1, p2 : TUcumPair;
+begin
+  if units = '' then
+    result := ''
+  else
+  begin
+    p1 := TUcumPair.create(TFslDecimal.makeOne, units);
+    try
+      p2 := getCanonicalForm(p1);
+      try
+        result := p2.UnitCode;
+      finally
+        p2.free;
+      end;
+    finally
+      p1.free;
+    end;
+  end;
+
+end;
+
+function TUcumServiceImplementation.isComparable(u1, u2: String): boolean;
+begin
+  if (u1 = '') or (u2 = '') then
+    result := false
+  else
+    result := getCanonicalUnits(u1) = getCanonicalUnits(u2);
+end;
+
 function TUcumServiceImplementation.isConfigured: boolean;
 begin
   result :=  FSvc <> nil;
@@ -1262,10 +1312,10 @@ begin
   result := FSvc.multiply(o1, o2);
 end;
 
-function TUcumServiceImplementation.sizeInBytesV : cardinal;
+function TUcumServiceImplementation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSvc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSvc.sizeInBytes(magic));
 end;
 
 End.

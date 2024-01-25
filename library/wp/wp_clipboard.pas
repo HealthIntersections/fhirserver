@@ -1,7 +1,7 @@
 unit wp_clipboard;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -248,7 +248,7 @@ Begin
     oNames.Sorted;
     Result := oNames.AsCSV;
   Finally
-    oNames.Free;
+    oNames.free;
   End;
 End;
 
@@ -773,7 +773,7 @@ Begin
     Result := oBuffer.AsText;
 {$ENDIF}
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -787,7 +787,7 @@ begin
     oBuffer.AsText := sContent;
     CopyText(oBuffer);
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 end;
 
@@ -798,14 +798,14 @@ var
   oAdaptor : TVCLStream;
   oMem : TFslMemoryStream;
 begin
-  oImage := TFslBitmapGraphic.create;
+  oImage := TFslBitmapGraphic.Create;
   try
     PasteBitmap(oImage);
     oPNG := TPngObject.Create;
     Try
       oPNG.Assign(oImage.Handle);
 
-      oMem := TFslMemoryStream.create;
+      oMem := TFslMemoryStream.Create;
       try
         oMem.Buffer := oBuffer.Link;
         oAdaptor := TVCLStream.Create;
@@ -814,13 +814,13 @@ begin
 
           oPNG.SaveToStream(oAdaptor);
         Finally
-         oAdaptor.Free;
+         oAdaptor.free;
         End;
       finally
-        oMem.Free;
+        oMem.free;
       end;
     Finally
-      oPng.Free;
+      oPng.free;
     End;
 
   finally
@@ -832,7 +832,7 @@ end;
 Initialization
   RegisterFormats;
 Finalization
-  gClipboard.Free;
+  gClipboard.free;
   gClipboard := Nil;
 end.
 

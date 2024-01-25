@@ -1,7 +1,7 @@
 Unit wp_printing_win;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +44,7 @@ Type
       FIsDefault : Boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -83,7 +83,7 @@ Type
       FTypes : TFslFontTypeSet;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Assign(oObject : TFslObject); Override;
 
@@ -741,7 +741,7 @@ Type
       FName : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslPrinterTray;
 
@@ -817,7 +817,7 @@ Type
       Function GetUseColour : Boolean; Virtual;
       Procedure SetUseColour(Const bValue: Boolean); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslJobSettings;
       Function Clone : TFslJobSettings;
@@ -921,7 +921,7 @@ Type
       function GetHandle: TFslGraphicHandle;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1035,7 +1035,7 @@ Type
       Function GetUseColour : Boolean; Override;
       Procedure SetUseColour(Const bValue: Boolean); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1115,7 +1115,7 @@ Type
 
       Function CanvasClass : TFslPrinterCanvasClass; Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1252,7 +1252,7 @@ Type
 
       Property ActivePage : TFslPrinterPreviewPage Read GetActivePage Write SetActivePage;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1304,7 +1304,7 @@ Type
       Procedure ProduceDriverInfo2(Out aInfoPointer : PDriverInfo2; Out iInfoLength : Cardinal);
       Procedure ConsumeDriverInfo2(Var aInfoPointer : PDriverInfo2; Const iInfoLength : Cardinal);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1422,7 +1422,7 @@ Type
       Function GetDefaultDefinition: TFslPrinterDefinition;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1492,11 +1492,11 @@ End;
 
 Destructor TFslPrinter.Destroy;
 Begin
-  FFontList.Free;
-  FPaperSizeList.Free;
-  FDefinition.Free;
-  FSettings.Free;
-  FTrayList.Free;
+  FFontList.free;
+  FPaperSizeList.free;
+  FDefinition.free;
+  FSettings.free;
+  FTrayList.free;
 
   Inherited;
 End;
@@ -1697,7 +1697,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1709,7 +1709,7 @@ Begin
   Try
     oJob.Close;
   Finally
-    oJob.Free;
+    oJob.free;
   End;
 End;
 
@@ -1723,7 +1723,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1735,7 +1735,7 @@ Begin
   Try
 //  oJob.Close; // Don't close because preview jobs are interactive.
   Finally
-    oJob.Free;
+    oJob.free;
   End;
 End;
 
@@ -1759,7 +1759,7 @@ Begin
   Assert(Not Assigned(oValue) Or Invariants('SetDefinition', oValue, TFslPrinterDefinition, 'oValue'));
   Assert(CheckCondition(Not FOpened, 'SetDefinition', 'Cannot change the printer definition while it is open.'));
 
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 End;
 
@@ -1810,7 +1810,7 @@ Begin
   If (Value.Definition.Name <> Definition.Name) Then
     RaiseError('SetSettings', StringFormat('Attempted to attach settings for %s to printer %s.', [Value.Definition.Name, Definition.Name]));
 
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 End;
 
@@ -1939,14 +1939,14 @@ Begin
 End;
 
 
-function TFslPrinter.sizeInBytesV : cardinal;
+function TFslPrinter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FFontList.sizeInBytes);
-  inc(result, FPaperSizeList.sizeInBytes);
-  inc(result, FTrayList.sizeInBytes);
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FFontList.sizeInBytes(magic));
+  inc(result, FPaperSizeList.sizeInBytes(magic));
+  inc(result, FTrayList.sizeInBytes(magic));
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 Function TFslPrinterList.GetPrinter(iIndex: Integer): TFslPrinter;
@@ -2006,10 +2006,10 @@ Begin
       If Not Find(oPrinter, Result, CompareByDefault) Then
         Result := -1;
     Finally
-      oPrinter.Free;
+      oPrinter.free;
     End;
   Finally
-    oDefinition.Free;
+    oDefinition.free;
   End;
 End;
 
@@ -2029,10 +2029,10 @@ Begin
       If Not Find(oPrinter, Result, CompareByName) Then
         Result := -1;
     Finally
-      oPrinter.Free;
+      oPrinter.free;
     End;
   Finally
-    oDefinition.Free;
+    oDefinition.free;
   End;
 End;
 
@@ -2052,10 +2052,10 @@ Begin
       If Not Find(oPrinter, Result, CompareByPort) Then
         Result := -1;
     Finally
-      oPrinter.Free;
+      oPrinter.free;
     End;
   Finally
-    oDefinition.Free;
+    oDefinition.free;
   End;
 End;
 
@@ -2179,9 +2179,9 @@ Begin
 End;
 
 
-function TFslPrinterDefinition.sizeInBytesV : cardinal;
+function TFslPrinterDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPort.length * sizeof(char)) + 12);
   inc(result, (FDriver.length * sizeof(char)) + 12);
 end;
@@ -2261,9 +2261,9 @@ Begin
 End;
 
 
-function TFslPrinterFont.sizeInBytesV : cardinal;
+function TFslPrinterFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslPrinterFontList.Add(Const sName : String; aPitch : TFslFontPitch; aTypes : TFslFontTypeSet);
@@ -2278,7 +2278,7 @@ Begin
 
     Add(oFont.Link);
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2445,7 +2445,7 @@ Begin
 
     Result := Add(oSize.Link);
   Finally
-    oSize.Free;
+    oSize.free;
   End;
 End;
 
@@ -2496,9 +2496,9 @@ Begin
 End;
 
 
-function TFslPrinterTray.sizeInBytesV : cardinal;
+function TFslPrinterTray.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2549,7 +2549,7 @@ Begin
     If Not Find(oPrinterTray, Result, CompareByID) Then
       Result := -1;
   Finally
-    oPrinterTray.Free;
+    oPrinterTray.free;
   End;
 End;
 
@@ -2565,7 +2565,7 @@ Begin
     If Not Find(oPrinterTray, Result, CompareByName) Then
       Result := -1;
   Finally
-    oPrinterTray.Free;
+    oPrinterTray.free;
   End;
 End;
 
@@ -2593,7 +2593,7 @@ Begin
 
     Add(oTray.Link);
   Finally
-    oTray.Free;
+    oTray.free;
   End;
 End;
 
@@ -2620,7 +2620,7 @@ End;
 Destructor TFslPrinterSettings.Destroy;
 Begin
   Close;
-  FDefinition.Free;
+  FDefinition.free;
 
   Inherited;
 End;
@@ -3011,15 +3011,15 @@ Procedure TFslPrinterSettings.SetDefinition(oValue : TFslPrinterDefinition);
 Begin
   Assert(Not Assigned(oValue) Or Invariants('SetDefinition', oValue, TFslPrinterDefinition, 'oValue'));
 
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 End;
 
 
-function TFslPrinterSettings.sizeInBytesV : cardinal;
+function TFslPrinterSettings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 Procedure TFslJobSettings.Open;
@@ -3129,9 +3129,9 @@ Begin
 End;
 
 
-function TFslJobSettings.sizeInBytesV : cardinal;
+function TFslJobSettings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslPrinterJob.InitialiseDC;
@@ -3264,8 +3264,8 @@ End;
 
 Destructor TFslRenderJob.Destroy;
 Begin
-  FSettings.Free;
-  FCanvas.Free;
+  FSettings.free;
+  FCanvas.free;
 
   Inherited;
 End;
@@ -3375,7 +3375,7 @@ End;
 
 Procedure TFslRenderJob.RecreateCanvas;
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Nil;
   FCanvas := CanvasClass.Create;
 End;
@@ -3423,11 +3423,11 @@ End;
 
 
 
-function TFslRenderJob.sizeInBytesV : cardinal;
+function TFslRenderJob.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCanvas.sizeInBytes);
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCanvas.sizeInBytes(magic));
+  inc(result, FSettings.sizeInBytes(magic));
   inc(result, (FTitle.length * sizeof(char)) + 12);
   inc(result, (FDestinationFileName.length * sizeof(char)) + 12);
 end;
@@ -3573,10 +3573,10 @@ End;
 
 Destructor TFslPrinterCanvas.Destroy;
 Begin
-  FPen.Free;
-  FBrush.Free;
-  FFont.Free;
-  FCanvas.Free;
+  FPen.free;
+  FBrush.free;
+  FFont.free;
+  FCanvas.free;
 
   Inherited;
 End;
@@ -3600,7 +3600,7 @@ End;
 
 Procedure TFslPrinterCanvas.SetBrush(oBrush: TFslBrush);
 Begin
-  FBrush.Free;
+  FBrush.free;
   FBrush := oBrush;
 
   FBrush.Capability := Self;
@@ -3610,7 +3610,7 @@ End;
 
 Procedure TFslPrinterCanvas.SetFont(oFont: TFslFont);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := oFont;
 
   FFont.Capability := Self;
@@ -3620,7 +3620,7 @@ End;
 
 Procedure TFslPrinterCanvas.SetPen(oPen: TFslPen);
 Begin
-  FPen.Free;
+  FPen.free;
   FPen := oPen;
 
   FPen.Capability := Self;
@@ -3630,7 +3630,7 @@ End;
 
 Procedure TFslPrinterCanvas.AttachToPrinter(aHandle : TFslGraphicHandle);
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Nil;
 
   Handle := aHandle;
@@ -3663,7 +3663,7 @@ End;
 
 Procedure TFslPrinterCanvas.AttachToPreview(aHandle: TFslGraphicHandle; iPixelWidth, iPixelHeight: Integer; iLogicalWidth, iLogicalHeight: TFslGraphicMetre);
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Nil;
 
   Handle := aHandle;
@@ -4109,8 +4109,8 @@ Begin
 
     oGpGraphics.DrawImage(oGpBitmap, MakeRectF(iX, iY, iWidth, iHeight), 0, 0, oGpBitmap.GetWidth, oGpBitmap.GetHeight, UnitPixel);
   Finally
-    oGpGraphics.Free;
-    oGpBitmap.Free;
+    oGpGraphics.free;
+    oGpBitmap.free;
   End;
 End;
 
@@ -4153,7 +4153,7 @@ Begin
           oBitmap.Canvas.Unlock;
         End;
       Finally
-        oBitmap.Free;
+        oBitmap.free;
       End;
     End;
   End;
@@ -4199,7 +4199,7 @@ Begin
           oBitmap.Canvas.Unlock;
         End;
       Finally
-        oBitmap.Free;
+        oBitmap.free;
       End;
     End;
   End
@@ -4308,12 +4308,12 @@ Begin
 End;
 
 
-function TFslPrinterCanvas.sizeInBytesV : cardinal;
+function TFslPrinterCanvas.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPen.sizeInBytes);
-  inc(result, FBrush.sizeInBytes);
-  inc(result, FFont.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPen.sizeInBytes(magic));
+  inc(result, FBrush.sizeInBytes(magic));
+  inc(result, FFont.sizeInBytes(magic));
 end;
 
 Function TFslPrinterDelphiCanvas.GetOwnerCanvas: TFslPrinterCanvas;
@@ -4590,9 +4590,9 @@ End;
 
 Destructor TFslPrinterPreviewJob.Destroy;
 Begin
-  FMeta.Free;
-  FActivePage.Free;
-  FPages.Free;
+  FMeta.free;
+  FActivePage.free;
+  FPages.free;
 
   Inherited;
 End;
@@ -4622,7 +4622,7 @@ Begin
 
   FPages.Add(ActivePage.Link);
 
-  FMeta.Free;
+  FMeta.free;
   FMeta := Nil;
   FMeta := TMetafileCanvas.Create(ActivePage.Handle, FHandle);
 
@@ -4646,7 +4646,7 @@ Procedure TFslPrinterPreviewJob.InternalFinish;
 Begin
   DeleteDC(FHandle);
   ActivePage := Nil;
-  FMeta.Free;
+  FMeta.free;
   FMeta := Nil;
 End;
 
@@ -4667,7 +4667,7 @@ End;
 
 Procedure TFslPrinterPreviewJob.SetActivePage(Const Value: TFslPrinterPreviewPage);
 Begin
-  FActivePage.Free;
+  FActivePage.free;
   FActivePage := Value;
 End;
 
@@ -4695,11 +4695,11 @@ Begin
   Inherited;
 End;
 
-function TFslPrinterPreviewJob.sizeInBytesV : cardinal;
+function TFslPrinterPreviewJob.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPages.sizeInBytes);
-  inc(result, FActivePage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPages.sizeInBytes(magic));
+  inc(result, FActivePage.sizeInBytes(magic));
 end;
 
 Function TFslPrinterPreviewPageList.GetPage(iIndex: Integer): TFslPrinterPreviewPage;
@@ -4726,7 +4726,7 @@ End;
 Destructor TFslPrinterManager.Destroy;
 Begin
   FDefaultDefinition := Nil;
-  FDefinitionList.Free;
+  FDefinitionList.free;
 
   Inherited;
 End;
@@ -4844,7 +4844,7 @@ Begin
 
               FDefinitionList.Add(oDefinition.Link);
             Finally
-              oDefinition.Free;
+              oDefinition.free;
             End;
 
             Inc(pPrinterInfo, SizeOf(TPrinterInfo4));
@@ -4868,7 +4868,7 @@ Begin
 
                 FDefinitionList.Add(oDefinition.Link);
               Finally
-                oDefinition.Free;
+                oDefinition.free;
               End;
 
               pPort := ExtractNextString(pLineCur);
@@ -4922,11 +4922,11 @@ Begin
 End;
 
 
-function TFslPrinterManager.sizeInBytesV : cardinal;
+function TFslPrinterManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinitionList.sizeInBytes);
-  inc(result, FDefaultDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinitionList.sizeInBytes(magic));
+  inc(result, FDefaultDefinition.sizeInBytes(magic));
 end;
 
 Function TFslMetafile.HandleClass : TGraphicClass;
@@ -4968,6 +4968,6 @@ End;
 Initialization
   GSynchroniseLock := TFslLock.Create;
 Finalization
-  GSynchroniseLock.Free;
+  GSynchroniseLock.free;
   GSynchroniseLock := Nil;
 End.

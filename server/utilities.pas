@@ -116,7 +116,9 @@ type
     FSMSFrom: String;
     FSMSToken: String;
     FSMSAccount: String;
-    FHostSms: String; // for status update messages
+    FHostSms: String;
+    FLangFile: String;
+    FZulipPassword: String; // for status update messages
 
   public
     constructor Create; override;
@@ -146,14 +148,16 @@ type
     Property SMSAccount : String read FSMSAccount;// write FSMSAccount;
     Property SMSToken : String read FSMSToken;// write FSMSToken;
     Property SMSFrom : String read FSMSFrom;// write FSMSFrom;
+    Property ZulipPassword : String read FZulipPassword;
     property DirectPopHost : String read FDirectPopHost;// write FDirectPopHost;
     property DirectPopPort : String read FDirectPopPort;// write FDirectPopPort;
     property HostSms : String read FHostSms write FHostSms;
+    property LangFile : String read FLangFile write FLangFile;
 
   end;
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
-function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
+function LoadBinaryResource(factory : TFHIRFactory; langList : THTTPLanguageList; b: TBytes): TFhirResourceV;
 function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
 function describeDatabase(details : TFHIRServerConfigSection) : String;
 function checkDatabaseInstall(cfg : TFHIRServerConfigSection) : String;
@@ -163,7 +167,7 @@ procedure sendSMS(settings : TFHIRServerSettings; Dest, Msg: String);
 
 implementation
 
-function LoadBinaryResource(factory : TFHIRFactory; const lang : THTTPLanguages; b: TBytes): TFhirResourceV;
+function LoadBinaryResource(factory : TFHIRFactory; langList : THTTPLanguageList; b: TBytes): TFhirResourceV;
 var
 //  s : TBytes;
 //  i, j : integer;
@@ -177,11 +181,11 @@ begin
 //  move(s[4+i], j, 4);
 //
 //  result := factory.makeBinary(copy(s, 8+i, j), String(ct));
-  p := factory.makeParser(nil, ffXml, lang);
+  p := factory.makeParser(nil, ffXml, langList);
   try
     result := p.parseResource(b);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -230,6 +234,7 @@ begin
   cmdSearch := true;
   cmdCreate := true;
   cmdOperation := true;
+  cmdVRead := true;
   versionUpdates := false;
   lastResourceId  := 0;
 end;
@@ -259,9 +264,9 @@ end;
 
 destructor TFHIRServerSettings.Destroy;
 begin
-  FIni.Free;
+  FIni.free;
   FBases.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -301,6 +306,9 @@ begin
   FSMSFrom := ini['destinations'].section['sms']['from'].value;
   FSMSToken := ini['destinations'].section['sms']['token'].value;
   FSMSAccount := ini['destinations'].section['sms']['account'].value;
+  FZulipPassword := ini['destinations'].section['zulip']['password'].value;
+
+  FLangFile := ini.service['langfile'].value;
 end;
 
 function TFHIRServerSettings.nextRequestId: string;
@@ -322,17 +330,17 @@ begin
     Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFDBOdbcManager.create(details.name, kdbSQLServer, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
+    result := TFDBOdbcManager.Create(details.name, kdbSQLServer, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
-  else if sameText(details['type'].value, 'mysql') then
+  else if sameText(details['db-type'].value, 'mysql') then
   begin
     Logging.log('Connect to '+details.name+' ('+details['db-type'].value+'://'+details['db-server'].value+'/'+dbn+')');
-    result := TFDBOdbcManager.create(details.name, kdbMySql, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
+    result := TFDBOdbcManager.Create(details.name, kdbMySql, 100, 0, ddr, details['db-server'].value, dbn, details['db-username'].value, details['db-password'].value);
   end
   else if sameText(details['db-type'].value, 'SQLite') then
   begin
-    Logging.log('Connect to '+details.name+' ('+details['db-type'].value+':'+dbn+')');
-    result := TFDBSQLiteManager.create(details.name, dbn, details['db-auto-create'].value = 'true');
+    Logging.log('Connect to SQLite3 database '+details['db-file'].value);
+    result := TFDBSQLiteManager.Create(details.name, details['db-file'].value, details['db-auto-create'].value = 'true');
   end
   else
     raise ELibraryException.Create('Unknown database type '+details['db-type'].value);
@@ -341,11 +349,11 @@ end;
 function describeDatabase(details: TFHIRServerConfigSection): String;
 begin
   if sameText(details['db-type'].value, 'mssql') then
-    result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
-  else if sameText(details['type'].value, 'mysql') then
-    result := details['db-type'].value+'://'+details['db-server'].value+'/'+details['db-database'].value
+    result := 'mssql://'+details['db-server'].value+'/'+details['db-database'].value
+  else if sameText(details['db-type'].value, 'mysql') then
+    result := 'mysql://'+details['db-server'].value+'/'+details['db-database'].value
   else if sameText(details['db-type'].value, 'SQLite') then
-    result := details['db-type'].value+':'+details['db-database'].value
+    result := 'sqlite:'+details['db-file'].value
   else
     result := 'Unknown database type '+details['db-type'].value
 end;
@@ -409,41 +417,44 @@ var
   msg : TIdMessage;
   ssl : TIdOpenSSLIOHandlerClient;
 begin
-  sender := TIdSMTP.Create(Nil);
-  try
-    sender.Host := settings.SMTPHost;
-    sender.port := StrToInt(settings.SMTPPort);
-    sender.Username := settings.SMTPUsername;
-    sender.Password := settings.SMTPPassword;
-    if settings.SMTPUseTLS then
-    begin
-      ssl := TIdOpenSSLIOHandlerClient.create;
-      sender.IOHandler := ssl;
-      sender.UseTLS := utUseExplicitTLS;
-      ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
-      ssl.Host := settings.SMTPHost;
-      ssl.MaxLineAction := maException;
-      ssl.Port := StrToInt(settings.SMTPPort);
-      ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
-      ssl.Options.VerifyServerCertificate := false;
-    end;
-    sender.Connect;
-    msg := TIdMessage.Create(Nil);
+  if (settings.SMTPHost <> '') and (settings.SMTPPort <> '') then
+  begin
+    sender := TIdSMTP.Create(Nil);
     try
-      msg.Subject := subj;
-      msg.Recipients.Add.Address := dest;
-      msg.From.Text := settings.SMTPSender;
-      msg.Body.Text := body;
-      Logging.log('Send '+msg.MsgId+' to '+dest);
-      sender.Send(msg);
+      sender.Host := settings.SMTPHost;
+      sender.port := StrToInt(settings.SMTPPort);
+      sender.Username := settings.SMTPUsername;
+      sender.Password := settings.SMTPPassword;
+      if settings.SMTPUseTLS then
+      begin
+        ssl := TIdOpenSSLIOHandlerClient.Create;
+        sender.IOHandler := ssl;
+        sender.UseTLS := utUseExplicitTLS;
+        ssl.Destination := settings.SMTPHost+':'+settings.SMTPPort;
+        ssl.Host := settings.SMTPHost;
+        ssl.MaxLineAction := maException;
+        ssl.Port := StrToInt(settings.SMTPPort);
+        ssl.Options.TLSVersionMinimum := TIdOpenSSLVersion.TLSv1_3;
+        ssl.Options.VerifyServerCertificate := false;
+      end;
+      sender.Connect;
+      msg := TIdMessage.Create(Nil);
+      try
+        msg.Subject := subj;
+        msg.Recipients.Add.Address := dest;
+        msg.From.Text := settings.SMTPSender;
+        msg.Body.Text := body;
+        Logging.log('Send '+msg.MsgId+' to '+dest);
+        sender.Send(msg);
+      Finally
+        msg.free;
+      End;
+      sender.Disconnect;
     Finally
-      msg.Free;
+      sender.IOHandler.free;
+      sender.free;
     End;
-    sender.Disconnect;
-  Finally
-    sender.IOHandler.free;
-    sender.Free;
-  End;
+  end;
 end;
 
 procedure sendSMS(settings : TFHIRServerSettings; Dest,Msg: String);
@@ -465,7 +476,7 @@ begin
           client.send;
         end;
       finally
-        client.Free;
+        client.free;
       end;
     except
     end;

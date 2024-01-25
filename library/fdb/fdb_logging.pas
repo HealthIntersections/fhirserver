@@ -70,7 +70,7 @@ type
     FLock : TFslLock;
     function GetLogEntry(AUsage : String) : TFDBLogEntry;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -86,34 +86,35 @@ implementation
 
 uses
   fsl_utilities,
-  Math,
-  IdGlobal;
+  Math;
 
 const
   ASSERT_UNIT = 'KDBLogger';
   MAX_EXCEPTION_LIST = 20;
   MILLI_SECOND_LENGTH = DATETIME_SECOND_ONE / 1000;
+  CR = #13;
+  LF = #10;
   EOL_WINDOWS = CR + LF;
   EOL_PLATFORM = EOL_WINDOWS;
 
 { TFDBLogger }
 
-constructor TFDBLogger.create;
+constructor TFDBLogger.Create;
 begin
   inherited;
-  FLock := TFslLock.Create;
+  FLock := TFslLock.Create('database.log');
   FTotal := 0;
-  FList := TStringList.create;
+  FList := TStringList.Create;
   FList.OwnsObjects := true;
   FList.Sorted := true;
   FList.Duplicates := dupError;
 end;
 
-destructor TFDBLogger.destroy;
+destructor TFDBLogger.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogger.destroy';
 begin
   FList.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -180,7 +181,7 @@ begin
     end
   else
     begin
-    result := TFDBLogEntry.create(AUsage);
+    result := TFDBLogEntry.Create(AUsage);
     FList.AddObject(AUsage, result);
     end;
 end;
@@ -210,17 +211,17 @@ begin
   end;
 end;
 
-function TFDBLogger.sizeInBytesV : cardinal;
+function TFDBLogger.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFDBLogEntry }
 
-constructor TFDBLogEntry.create(AUsage : String);
+constructor TFDBLogEntry.Create(AUsage : String);
 begin
-  inherited create;
+  inherited Create;
   FUsage := AUsage;
   FTotalCount := 0;
   FErrorCount := 0;
@@ -230,10 +231,10 @@ begin
   FTotalRows := 0;
   FTotalPreps := 0;
   FRunningAvg := 0;
-  FExceptions := TStringList.create;
+  FExceptions := TStringList.Create;
 end;
 
-destructor TFDBLogEntry.destroy;
+destructor TFDBLogEntry.Destroy;
 const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogEntry.destroy';
 begin
   FExceptions.free;
@@ -286,7 +287,7 @@ end;
 
 class function TFDBLogEntry.HTMLDoco : String;
 begin
-  result :=
+  result := 
   '<p><b>In use</b></p>'+#13#10+
   ''+#13#10+
   '<p>Lists the actual current usage of connections. Typically, a few connections'+#13#10+
@@ -339,7 +340,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogEntry.Header';
 begin
   case AFormat of
     krfText :
-        result :=
+        result := 
           MakeLength('Usage', 20)+
           MakeLength('Count', 8)+
           MakeLength('Error', 6)+
@@ -394,7 +395,7 @@ begin
     case AFormat of
       krfText :
         begin
-        result :=
+        result := 
             MakeLength(FUsage, 20)+
             MakeLength(inttostr(FTotalCount), 8)+
             MakeLength(inttostr(FErrorCount), 8)+
@@ -436,7 +437,7 @@ begin
         end;
       krfXML  :
         begin
-        result :=
+        result := 
             '<Usage id="'+FUsage+'">'+
             '<TotalCount>'+inttostr(FTotalCount)+'</TotalCount>'+
             '<ErrorCount>'+inttostr(FErrorCount)+'</ErrorCount>'+

@@ -1,7 +1,7 @@
 unit fsl_threads;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -30,13 +30,17 @@ POSSIBILITY OF SUCH DAMAGE.
 
 {$I fhir.inc}
 
+{.$.DEFINE DEBUG_TASKS}
+
 interface
 
 {$OVERFLOWCHECKS OFF}
 
 uses
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC} JwaTlHelp32, {$ELSE} TlHelp32, {$ENDIF}  {$ENDIF}
-  SysUtils, SyncObjs, Classes, Generics.Collections, IdThread,
+  {$IFDEF FPC} process, {$ENDIF}
+
+  SysUtils, SyncObjs, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_fpc;
 
 const
@@ -53,20 +57,24 @@ Function ThreadHandle : TThreadHandle; Overload;
 Procedure ThreadYield; Overload;
 Procedure ThreadBreakpoint; Overload;
 
+procedure ThreadPing;
 procedure SetThreadName(name : String);
 procedure SetThreadStatus(status : String);
 function GetThreadInfo : String;
-function GetThreadReport : String;
+function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
 procedure closeThread;
+procedure CloseThreadInternal(name : String);
 
 type
   {$IFNDEF FPC}
   TCriticalSectionProcedure = reference to procedure;
   {$ENDIF}
 
-  TFslLock = class(TObject)
+  { TFslLock }
+
+  TFslLock = class(TFslObject)
   Private
     FCritSect: TRTLCriticalSection;
 
@@ -76,9 +84,8 @@ type
     FNext, FPrev: TFslLock;
 
     FOwnID: Integer;                 // unique serial number assigned to all critical sections
-    FCategory: String;               // category in the lock list
     FName: String;                   // Name of the critical section object
-    FLockName: Array of String;      // Name of the current Lock (first one to grab)
+    FLastLocker: String;             // Name of the last to grab the Lock
     FDelayCount: Integer;            // Number of times there has been a failed attempt to lock a critical section
     FUseCount: Integer;              // The amount of times there has been a succesful attempt to lock a critical section
     FCurrLockTime: UInt64;           // Time which the owning thread obtained the lock for the thread
@@ -94,6 +101,7 @@ type
     constructor Create; Overload;
     constructor Create(AName: String); Overload;
     destructor Destroy; Override;
+    function link : TFslLock; overload;
 
     // core functionality
     procedure Lock; Overload;
@@ -112,11 +120,10 @@ type
     {$ENDIF}
 
     // debugging support
-    property Category: String Read FCategory Write FCategory;
     class function CurrentCount: Integer;
     // use with caution - not thread safe
     property OwnID: Integer Read FOwnID;
-    property Name: String Read FName;
+    property Name: String Read FName write FName;
 //    property LockName: String Read FLockName;
     property DelayCount: Integer Read FDelayCount;
     property UseCount: Integer Read FUseCount;
@@ -129,13 +136,11 @@ type
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 
-function DumpLocks : String;
+function DumpLocks(all : boolean; sep : String = '') : String;
 
 Type
   TFslThreadHandle = TThreadHandle;
   TFslThreadID = TThreadID;
-
-  TFslThreadDelegate = Procedure Of Object;
 
   { TFslThread }
 
@@ -144,11 +149,13 @@ Type
     FAutoFree: boolean;
     FInternal : TThread;
     FRunning : Boolean;
+    FStopped : Boolean;
     FTimePeriod: cardinal;
 
     procedure InternalExecute;
   Protected
     function ThreadName : String; Virtual;
+    function logThread : boolean; virtual;
     procedure Initialise; Virtual;
     Procedure Execute; Virtual; Abstract;
     procedure Finalise; Virtual;
@@ -169,12 +176,58 @@ Type
 
     function Terminated : boolean;
     Property Running : Boolean read FRunning;
+    Property Stopped : Boolean read FStopped;
 
     Property AutoFree : boolean read FAutoFree write FAutoFree;
     Property TimePeriod : cardinal read FTimePeriod write FTimePeriod; // milliseconds. If this is >0, execute will called after TimePeriod delay until Stopped
   End;
 
   TFslThreadClass = Class Of TFslThread;
+
+  TFslExternalProcessThread = class;
+  TFslExternalProcessLineEvent = procedure (sender : TFslExternalProcessThread; line : String; replLast : boolean) of object;
+  TFslExternalProcessStatus = (epsInitialising, epsRunning, epsFinished, epsTerminated);
+
+  { TFslExternalProcessThread }
+
+  TFslExternalProcessThread = class (TFslThread)
+  private
+    FCommand: String;
+    FEnvironmentVars : boolean;
+    FExitCode: integer;
+    FFolder: String;
+    FLines: TStringList;
+    FOnEmitLine: TFslExternalProcessLineEvent;
+    FParameters: TStringList;
+    FSecondsSinceLastOutput: Integer;
+    FStatus: TFslExternalProcessStatus;
+
+    FLock : TFslLock;
+    {$IFDEF FPC}
+    FProcess : TProcess;
+    {$ENDIF}
+    FBuffer : String;
+    FUseCmd: boolean;
+    procedure processOutput(s : String);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+
+    property useCmd : boolean read FUseCmd write FUseCmd;
+    property command : String read FCommand write FCommand;
+    property parameters : TStringList read FParameters;
+    property folder : String read FFolder write FFolder;
+    property environmentVars : boolean read FEnvironmentVars write FEnvironmentVars;
+
+    procedure execute; override; // will return an exception if the process couldn't be started, otherwise the process has been started
+    procedure terminate; // terminate is different to kill - it uses the system to halt the external process rather than just killing the thread
+
+    property status : TFslExternalProcessStatus read FStatus write FStatus;
+    property exitCode : integer read FExitCode;
+    property secondsSinceLastOutput : Integer read FSecondsSinceLastOutput write FSecondsSinceLastOutput;
+    property lines : TStringList read FLines;
+    property OnEmitLine : TFslExternalProcessLineEvent read FOnEmitLine write FOnEmitLine;
+  end;
 
   TBackgroundTaskPackage = class;
   TBackgroundTaskEngine = class;
@@ -199,9 +252,10 @@ Type
 
   { TBackgroundTaskRequestPackage }
 
-  TBackgroundTaskRequestPackage = class (TBackgroundTaskPackage)
+  TBackgroundTaskRequestPackage = class abstract (TBackgroundTaskPackage)
   public
     function link : TBackgroundTaskRequestPackage; overload;
+    function description : String; virtual; abstract;
   end;
 
   { TBackgroundTaskResponsePackage }
@@ -211,7 +265,7 @@ Type
     FException : String;
     FExceptionClass : ExceptClass;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TBackgroundTaskResponsePackage; overload;
     property Exception : String read FException write FException;
@@ -225,11 +279,12 @@ Type
 
   TBackgroundTaskPackagePair = class (TFslObject)
   private
+    FUniqueID : Integer;
     FOnNotify: TBackgroundTaskEvent;
     FRequest: TBackgroundTaskRequestPackage;
     FResponse: TBackgroundTaskResponsePackage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage);
     destructor Destroy; override;
@@ -256,24 +311,33 @@ Type
 
   TBackgroundTaskStatusInfo = class (TFslObject)
   private
+    FCanCancel: boolean;
+    FInfo: String;
     FName: String;
     FId: integer;
     FStatus: TBackgroundTaskStatus;
     FPct: integer;
     FMessage: String;
+    FTime: Cardinal;
+    FUniqueID: integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TBackgroundTaskStatusInfo; overload;
 
+    property UniqueID : integer read FUniqueID write FUniqueID;
     property id : integer read FId write FId;
-    property name : String read FName write FName;
+    property name : String read FName write FName; // name of the engine
+    property info : String read FInfo write FInfo; // description of the task
     property status : TBackgroundTaskStatus read FStatus write FStatus;
     property message : String read FMessage write FMessage;
     property pct : integer read FPct write FPct;
+    property canCancel : boolean read FCanCancel write FCanCancel;
+    property time : Cardinal read FTime write FTime; // millseconds
 
     function StatusDisplay : string;
     function PctDisplay : String;
+    function timeDisplay : String;
   end;
 
   { TBackgroundTaskEngine }
@@ -284,6 +348,7 @@ Type
   private
     { private thread management section }
     FId : integer;
+    FUniqueID : integer;
     FThread : TBackgroundTaskThread; // owned...
     FWantBreak : boolean;
     FWantStop : boolean;
@@ -294,6 +359,9 @@ Type
     FUIResponse : TBackgroundTaskUIResponse;
     FState : String;
     FPct : Integer;
+    FStartTime : UInt64;
+    FDesc : String;
+    FCurrentTask : TBackgroundTaskPackagePair;
     procedure break;
     procedure stop;
     procedure terminate;
@@ -306,6 +374,8 @@ Type
     FUIExceptionClass : ExceptClass;
 
     function reportStatus : TBackgroundTaskStatusInfo;
+    procedure listTasks(list: TFslList<TBackgroundTaskStatusInfo>);
+    function canCancel : boolean; virtual; abstract;
   public
     constructor Create; overload; override;
     constructor Create(notify : TBackgroundTaskEvent); overload;
@@ -316,7 +386,7 @@ Type
 
     // properties of interest to subclasses:
     // execute is called. There is a request, create a response, calling
-    // progress regularly (which allows the task to get killed
+    // progress regularly (which allows the task to get killed)
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); virtual; abstract;
     procedure progress(state : String; pct : integer); // -1 for no pct. may throw EAbort
 
@@ -332,21 +402,26 @@ Type
 
   TNullTaskEngine = class (TBackgroundTaskEngine)
   private
+  protected
+    function canCancel : boolean; override;
   public
     function name : String; override;
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
   end;
+
+  TBackgroundTaskManagerTaskViewType = (tvtEngines, tvtTasks);
 
   { TBackgroundTaskManager }
 
   TBackgroundTaskManager = class (TFslObject)
   private
     FStart : TDateTime;
+    FStarted : boolean;
     FLock : TFslLock;
     FEngines : TFslList<TBackgroundTaskEngine>;
     procedure log(s : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -366,7 +441,7 @@ Type
     procedure primaryThreadCheck;
     function TasksAreWorking : boolean;
 
-    procedure report(list : TFslList<TBackgroundTaskStatusInfo>); overload;
+    procedure report(list : TFslList<TBackgroundTaskStatusInfo>; view : TBackgroundTaskManagerTaskViewType); overload;
     function report(taskId : integer) : TBackgroundTaskStatusInfo; overload;
   end;
 
@@ -385,6 +460,7 @@ var
   GFirst: TFslLock = NIL;
   GCount: Integer = 0;
   GTotal: Integer = 0;
+  GBackgroundTaskUniqueID : integer = 0;
 
 var
   GThreadList : TList;
@@ -398,13 +474,13 @@ type
     state : String;
     stateTick : UInt64;
   end;
-  PTheadRecord = ^TTheadRecord;
+  PThreadRecord = ^TTheadRecord;
 
 procedure closeThread;
 var
   id : TThreadID;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   id := GetCurrentThreadId;
   EnterCriticalSection(GCritSct);
@@ -423,11 +499,31 @@ begin
   end;
 end;
 
+procedure ThreadPing;
+var
+  id : TThreadID;
+  i : integer;
+  p : PThreadRecord;
+begin
+  id := GetCurrentThreadId;
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = id) then
+        exit;
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
+
 procedure SetThreadName(name : String);
 var
   id : TThreadID;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   id := GetCurrentThreadId;
   EnterCriticalSection(GCritSct);
@@ -451,7 +547,6 @@ begin
     {$IFDEF FPC}
     TThread.NameThreadForDebugging(name, p.id);
     {$ENDIF}
-
     GThreadList.Add(p);
   finally
     LeaveCriticalSection(GCritSct);
@@ -462,7 +557,7 @@ procedure SetThreadStatus(status : String);
 var
   id : TThreadID;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   id := GetCurrentThreadId;
   if not GHaveCritSect then
@@ -482,7 +577,7 @@ begin
     new(p);
     p.startTick := GetTickCount64;
     p.id := id;
-    p.name := 'Unknown';
+    p.name := 'Unnamed';
     p.state := status;
     p.stateTick := GetTickCount64;
     GThreadList.Add(p);
@@ -523,7 +618,7 @@ begin
   end;
 end;
 
-function info(p : PTheadRecord; id : boolean) : String;
+function info(p : PThreadRecord; id : boolean) : String;
 begin
   if (id) then
     result := inttohex(NativeUInt(p.id), 8)+': '
@@ -543,7 +638,7 @@ function GetThreadNameStatus : String;
 var
   id : TThreadId;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
   s : String;
 begin
   s := 'Unknown thread';
@@ -569,7 +664,7 @@ function GetThreadInfo : String;
 var
   id : TThreadId;
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
   s : String;
 begin
   s := 'Unknown thread';
@@ -601,11 +696,11 @@ begin
   end;
 end;
 
-function GetThreadReport : String;
+function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 var
   i : integer;
   s : String;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   s := '';
   EnterCriticalSection(GCritSct);
@@ -614,8 +709,8 @@ begin
     begin
       p := GThreadList[i];
       if (s <> '') then
-        s := s + '|';
-      s := s + info(p, true);
+        s := s + sep;
+      s := s + info(p, ids);
     end;
   finally
     LeaveCriticalSection(GCritSct);
@@ -630,34 +725,166 @@ end;
 
 procedure InitUnit;
 begin
-  InitializeCriticalSection(GCritSct);
-  GHaveCritSect := true;
-  GBackgroundTasks := TBackgroundTaskManager.Create;
-  GThreadList := TList.Create;
-  IdThread.fsThreadName := SetThreadName;
-  IdThread.fsThreadStatus := SetThreadStatus;
-  IdThread.fsThreadClose := CloseThreadInternal;
-  GetThreadNameStatusDelegate := GetThreadNameStatus;
+  if not GHaveCritSect then
+  begin
+    InitializeCriticalSection(GCritSct);
+    GHaveCritSect := true;
+    GBackgroundTasks := TBackgroundTaskManager.Create;
+    GThreadList := TList.Create;
+    GetThreadNameStatusDelegate := GetThreadNameStatus;
+  end;
 end;
 
 procedure DoneUnit;
 var
   i : integer;
-  p : PTheadRecord;
+  p : PThreadRecord;
 begin
   GHaveCritSect := false;
-  IdThread.fsThreadName := nil;
-  IdThread.fsThreadStatus := nil;
-  IdThread.fsThreadClose := nil;
   for i := GThreadList.Count - 1 downto 0 do
   begin
     p := GThreadList[i];
     Dispose(p);
     GThreadList.Delete(i);
   end;
-  GThreadList.Free;
-  GBackgroundTasks.Free;
+  GThreadList.free;
+  GBackgroundTasks.free;
   DeleteCriticalSection(GCritSct);
+end;
+
+{ TFslExternalProcessThread }
+
+constructor TFslExternalProcessThread.Create;
+begin
+  inherited Create;
+  FLines := TStringList.Create;
+  FParameters := TStringList.Create;
+  FLock := TFslLock.create('ProcessThreadLock');
+  FStatus := epsInitialising;
+end;
+
+destructor TFslExternalProcessThread.Destroy;
+begin
+  FLock.free;
+  FLines.free;
+  FParameters.free;
+  inherited Destroy;
+end;
+
+procedure TFslExternalProcessThread.processOutput(s: String);
+var
+  l, r : String;
+  ch1, ch2 : String;
+  i : integer;
+  repl : boolean;
+begin
+  FBuffer := FBuffer + s;
+  while FBuffer.contains(#10) or FBuffer.contains(#13) do
+  begin
+    i := FBuffer.indexOf(#13)+1;
+    if (i > 0) then
+    begin
+      ch1 := FBuffer[i];
+      ch2 := FBuffer[i+1];
+    end;
+    repl := false;
+    if (i > 0) and (i < FBuffer.length) and (FBuffer[i+1] = #10) then
+      StringSplit(FBuffer, #13#10, l, r)
+    else if (i > 0) then
+    begin
+      StringSplit(FBuffer, #13, l, r);
+      repl := true;
+    end
+    else
+      StringSplit(FBuffer, #10, l, r);
+    FBuffer := r;
+    if (repl) and (FLines.count > 0) then
+      FLines[FLines.count - 1] := l
+    else
+      FLines.add(l);
+    if assigned(FOnEmitLine) then
+      FOnEmitLine(self, l, repl);
+  end;
+end;
+
+procedure TFslExternalProcessThread.execute;
+const
+  BUF_SIZE = 2048; // Buffer size for reading the output in chunks
+var
+  BytesRead    : longint;
+  Buffer       : TBytes;
+  s : String;
+  i : integer;
+begin
+  {$IFDEF FPC}
+  FLock.Lock;
+  try
+    FStatus := epsRunning;
+    FProcess := TProcess.create(nil);
+  finally
+    FLock.Unlock;
+  end;
+  try
+    {$IFDEF WINDOWS}
+    if useCmd then
+    begin
+      FProcess.Executable := 'cmd';
+      FProcess.Parameters.add('/c');
+      FProcess.Parameters.add(command);
+    end
+    else
+      FProcess.Executable := command;
+    {$ELSE}
+    FProcess.Executable := command;
+    {$ENDIF}
+    if (FEnvironmentVars) then
+    begin
+      for i := 1 to GetEnvironmentVariableCount do
+        begin
+        s := GetEnvironmentString(i);
+        FProcess.Environment.Add(s+'=' + GetEnvironmentVariable(s));
+      end;
+    end;
+    FProcess.CurrentDirectory := FFolder;
+    for s in FParameters do
+      FProcess.Parameters.add(s);
+    FProcess.Options := [poNoConsole, poStderrToOutPut, poUsePipes];
+    FProcess.ShowWindow := swoHIDE;
+    FProcess.PipeBufferSize := 1024;
+    FProcess.Execute;
+    repeat
+      SetLength(Buffer, BUF_SIZE);
+      BytesRead := FProcess.Output.Read(Buffer[0], BUF_SIZE);
+      processOutput(TEncoding.UTF8.GetString(Buffer, 0, BytesRead));
+    until BytesRead = 0;
+    FExitCode := FProcess.ExitCode;
+  finally
+    FLock.Lock;
+    try
+      FProcess.free;
+      FProcess := nil;
+      if FStatus = epsTerminated then
+        FExitCode := $FFFF
+      else
+        FStatus := epsFinished
+
+    finally
+      FLock.Unlock;
+    end;
+  end;
+  {$ELSE}
+  raise EFslException.Create('Not done for Delphi yet');
+  {$ENDIF}
+end;
+
+procedure TFslExternalProcessThread.terminate;
+begin
+  {$IFDEF FPC}
+  if not FProcess.Terminate(1) then
+    raise EFslException.create('unable to terminate');
+  {$ELSE}
+  raise EFslException.Create('Not done for Delphi yet');
+  {$ENDIF}
 end;
 
 { TNullTaskEngine }
@@ -665,6 +892,11 @@ end;
 function TNullTaskEngine.name: String;
 begin
   result := 'Idle Task';
+end;
+
+function TNullTaskEngine.canCancel: boolean;
+begin
+  result := false;
 end;
 
 procedure TNullTaskEngine.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
@@ -679,12 +911,13 @@ begin
   inherited Create;
   FRequest := request;
   FResponse := response;
+  FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
 
 destructor TBackgroundTaskPackagePair.Destroy;
 begin
-  FRequest.Free;
-  FResponse.Free;
+  FRequest.free;
+  FResponse.free;
   inherited Destroy;
 end;
 
@@ -693,11 +926,11 @@ begin
   result := TBackgroundTaskPackagePair(inherited link);
 end;
 
-function TBackgroundTaskPackagePair.sizeInBytesV : cardinal;
+function TBackgroundTaskPackagePair.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
 end;
 
 { TBackgroundTaskResponsePackage }
@@ -707,9 +940,9 @@ begin
   result := TBackgroundTaskResponsePackage(inherited link);
 end;
 
-function TBackgroundTaskResponsePackage.sizeInBytesV : cardinal;
+function TBackgroundTaskResponsePackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FException.length * sizeof(char)) + 12);
 end;
 
@@ -732,10 +965,9 @@ end;
 constructor TFslLock.Create;
 begin
   inherited Create;
-  FCategory := '';
   FName := ClassName;
-  SetLength(FLockName, 0);
   FDelayCount := 0;
+  FLastLocker := '';
   FUseCount := 0;
   FCurrLockTime := 0;
   FTimeLocked := 0;
@@ -799,13 +1031,18 @@ begin
   inherited;
 end;
 
+function TFslLock.link: TFslLock;
+begin
+  result := TFslLock(Inherited link);
+end;
+
 
 function threadToString(id : TThreadId) : String;
 begin
   {$IFDEF OSX}
-  result := inttostr(UInt64(id));
+  result := inttohex(UInt64(id), sizeof(pointer) * 2);
   {$ELSE}
-  result := inttostr(id);
+  result := inttohex(id, sizeof(TThreadId)*2);
   {$ENDIF}
 end;
 
@@ -822,14 +1059,12 @@ begin
     inc(FUseCount);
     FCurrLockTime := GetTickCount64;
   end;
-  SetLength(FLockName, FEntryCount);
 end;
 
 procedure TFslLock.MarkLeft;
 begin
   assert(FLockThread = GetCurrentThreadID);
   dec(FEntryCount);
-  SetLength(FLockName, FEntryCount);
   if FEntryCount = 0 then
     begin
     FLockThread := NO_THREAD;
@@ -862,10 +1097,10 @@ end;
 procedure TFslLock.Lock(const Name: String);
 begin
   Lock;
-  FLockName[FEntryCount - 1] := Name;
+  FLastLocker := Name;
 end;
 
-function TFslLock.TryLock: Boolean;
+function TFslLock.Trylock: Boolean;
 begin
   Result := TryEnterCriticalSection(FCritSect);
   if Result then
@@ -922,12 +1157,22 @@ end;
 function TFslLock.DebugSummary: String;
 var
   i : integer;
+  function Col(s : String; width : integer): String;
+  begin
+    result := copy(s, 1, width - 1);
+    result := StringPadRight(result, ' ', width);
+  end;
 begin
-  Result := IntToStr(FOwnID)+' "'+FCategory+'" "'+FName+'" '+IntToStr(FDelayCount)+' '+
-     IntToStr(FUseCount)+' ' +IntToStr(FCurrLockTime)+' '+IntToStr(FTimeLocked)+' '+IntToStr(FDelayTime)+' '+
-     IntToStr(FEntryCount)+' '+threadToString(FLockThread)+' ';
-  for i := 0 to High(FLockName) do
-    result := result + '/' + FLockName[i];
+  Result := 
+    Col(IntToStr(FOwnID), 3)+
+    Col(FName, 26)+
+    Col(IntToStr(FUseCount), 7)+
+    Col(IntToStr(FDelayCount), 7)+
+    Col(IntToStr(FCurrLockTime), 9)+
+    Col(IntToStr(FTimeLocked), 10)+
+    Col(IntToStr(FDelayTime), 10)+
+    Col(threadToString(FLockThread), 9)+
+    Col(FLastLocker, 20);
 end;
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
@@ -957,16 +1202,27 @@ Begin
   End;
 End;
 
-function DumpLocks : String;
+function DumpLocks(all : boolean; sep : String = '') : String;
 var
   oCrit : TFslLock;
 Begin
-  Result := IntToStr(TFslLock.CurrentCount) + ' Locked Critical Sections (@'+InttoStr(GetTickCount64)+')'+#13#10;
+  if (sep = '') then
+    sep := #13#10;
+
+  if (all) then
+  begin
+    Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
+    Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+  end
+  else
+  begin
+    Result := 'ID Name (of '+StringPadRight(inttostr(TFslLock.CurrentCount)+')', ' ', 6)+'           Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+  end;
   oCrit := GFirst;
   While oCrit <> nil Do
   Begin
-    if oCrit.EntryCount > 0 Then
-      Result := Result + oCrit.DebugSummary + #13#10;
+    if all or (oCrit.EntryCount > 0) Then
+      Result := Result + oCrit.DebugSummary + sep;
     oCrit := oCrit.FNext;
   End;
 End;
@@ -993,7 +1249,7 @@ End;
 destructor TFslThread.Destroy;
 Begin
   if not FAutoFree then
-    FInternal.Free;
+    FInternal.free;
   Inherited;
 End;
 
@@ -1013,7 +1269,8 @@ var
 begin
   SetThreadName(ThreadName);
   setThreadStatus('Initialising');
-  Logging.log('Start thread '+threadName);
+  if logThread then
+    Logging.log('Thread start  '+threadName+ ' '+threadToString(threadid));
   initialise;
   try
     if FTimePeriod > 0 then
@@ -1027,7 +1284,7 @@ begin
         et := GetTickCount64 + TimePeriod;
         repeat
           sleep(50);
-        until GetTickCount64 >= et;
+        until (GetTickCount64 >= et) or (FStopped);
       end;
     end
     else
@@ -1046,7 +1303,8 @@ begin
     on e : Exception do
       Logging.log('Unhandled Exception closing '+threadName+': '+e.message);
   end;
-  Logging.log('Finish '+threadName);
+  if logThread then
+    Logging.log('Thread Finish '+threadName);
   SetThreadStatus('Done');
   closeThread;
 end;
@@ -1056,25 +1314,35 @@ Begin
   Result := TFslThread(Inherited Link);
 End;
 
+function TFslThread.logThread: boolean;
+begin
+  result := true;
+end;
+
 procedure TFslThread.Start;
 Begin
   If FRunning Then
     RaiseError('Open', 'Thread is already running.');
   FRunning := True;
+  FStopped := False;
   FInternal := TInternalThread.create(self);
 End;
 
 procedure TFslThread.Stop;
 Begin
+  FStopped := true;
   FInternal.Terminate;
 End;
 
-procedure TFslThread.StopAndWait;
+procedure TFslThread.StopAndWait(ms : Cardinal);
+var
+  t : int64;
 begin
   if Running then
   begin
     Stop;
-    while FRunning do
+    t := GetTickCount64 + ms;
+    while (FRunning) and (GetTickCount64 < t) do
       sleep(20);
   end;
 end;
@@ -1086,7 +1354,7 @@ Begin
   TerminateThread(FInternal.Handle, 0);
   {$ENDIF}
   FRunning := False;
-  FInternal.Free;
+  FInternal.free;
   FInternal := nil;
 End;
 
@@ -1118,7 +1386,7 @@ End;
 constructor TInternalThread.Create(thread: TFslThread);
 begin
   FOwner := thread;
-  inherited create(false);
+  inherited Create(false);
 end;
 
 procedure TInternalThread.execute;
@@ -1130,11 +1398,13 @@ begin
     // ignore any further exceptions
   End;
   FOwner.FRunning := False;
-  SetThreadName('');
   if FOwner.AutoFree then
   begin
-    FOwner.Free;
-    Free;
+    FOwner.free;
+    try
+      Destroy;
+    except
+    end;
   end;
 end;
 
@@ -1143,9 +1413,10 @@ end;
 constructor TBackgroundTaskEngine.Create;
 begin
   inherited Create;
-  FWaiting := TFslList<TBackgroundTaskPackagePair>.create;
-  FDone := TFslList<TBackgroundTaskPackagePair>.create;
+  FWaiting := TFslList<TBackgroundTaskPackagePair>.Create;
+  FDone := TFslList<TBackgroundTaskPackagePair>.Create;
   FStatus := btsWaiting;
+  FUniqueID := InterLockedIncrement(GBackgroundTaskUniqueID);
 end;
 
 constructor TBackgroundTaskEngine.Create(notify : TBackgroundTaskEvent);
@@ -1156,33 +1427,52 @@ end;
 
 destructor TBackgroundTaskEngine.Destroy;
 begin
-  FWaiting.Free;
-  FDone.Free;
+  FWaiting.free;
+  FDone.free;
   inherited;
 end;
 
 procedure TBackgroundTaskEngine.doExec(pck: TBackgroundTaskPackagePair);
 begin
+  GBackgroundTasks.FLock.Lock;
   try
-    SetStatus(btsProcessing);
-    GBackgroundTasks.log('Task '+name+' go');
-    execute(pck.request, pck.response);
-    GBackgroundTasks.log('Task '+name+' done');
-    setStatus(btsWaiting);
-  except
-    on e : Exception do
-    begin
-      GBackgroundTasks.log('Task '+name+' error: '+e.Message);
-      SetStatus(btsWaiting);
-      pck.response.ExceptionClass := ExceptClass(e.ClassType);
-      pck.response.Exception := e.message;
+    FCurrentTask := pck.link;
+  finally
+    GBackgroundTasks.FLock.UnLock;
+  end;
+  try
+    try
+      SetStatus(btsProcessing);
+      FStartTime := GetTickCount64;
+      FDesc := pck.request.description;
+      GBackgroundTasks.log('Task '+name+' go ('+pck.request.ClassName+','+pck.response.ClassName+')');
+      execute(pck.request, pck.response);
+      GBackgroundTasks.log('Task '+name+' done');
+      setStatus(btsWaiting);
+    except
+      on e : Exception do
+      begin
+        GBackgroundTasks.log('Task '+name+' error: '+e.Message);
+        SetStatus(btsWaiting);
+        pck.response.ExceptionClass := ExceptClass(e.ClassType);
+        pck.response.Exception := e.message;
+      end;
+    end;
+  finally
+    GBackgroundTasks.FLock.Lock;
+    try
+      SetStatus(btsProcessing);
+      FCurrentTask.free;
+      FCurrentTask := nil;
+    finally
+      GBackgroundTasks.FLock.UnLock;
     end;
   end;
 end;
 
 procedure TBackgroundTaskEngine.performUIInteraction(request: TBackgroundTaskUIRequest; response: TBackgroundTaskUIResponse);
 begin
-  raise Exception.Create('The method '+className+'.performUIInteraction needs to be overridden');
+  raise EFslException.Create('The method '+className+'.performUIInteraction needs to be overridden');
 end;
 
 procedure TBackgroundTaskEngine.progress(state: String; pct: integer);
@@ -1197,10 +1487,55 @@ function TBackgroundTaskEngine.reportStatus: TBackgroundTaskStatusInfo;
 begin
   result := TBackgroundTaskStatusInfo.Create;
   result.id := FId;
+  result.UniqueID := FUniqueID;
   result.name := name;
+  result.info := FDesc;
   result.status := FStatus;
   result.message := FState;
   result.pct := FPct;
+  result.time := GetTickCount64 - FStartTime;
+  result.canCancel := canCancel;
+end;
+
+procedure TBackgroundTaskEngine.listTasks(list: TFslList<TBackgroundTaskStatusInfo>);
+  function reportForTask(tp : TBackgroundTaskPackagePair) : TBackgroundTaskStatusInfo;
+  begin
+    result := TBackgroundTaskStatusInfo.Create;
+    result.id := FId;
+    result.UniqueID := tp.FUniqueID;
+    result.name := name;
+    result.info := tp.request.Description;
+    result.status := btsWaiting;
+    result.message := 'Waiting for another task';
+    result.pct := 0;
+    result.time := 0;
+    result.canCancel := canCancel;
+  end;
+var
+  tp : TBackgroundTaskPackagePair;
+  info : TBackgroundTaskStatusInfo;
+begin
+  GBackgroundTasks.FLock.Lock;
+  try
+    if FCurrentTask <> nil then
+    begin
+      info := TBackgroundTaskStatusInfo.Create;
+      list.add(info);
+      info.id := FId;
+      info.UniqueID := FCurrentTask.FUniqueID;
+      info.name := name;
+      info.info := FDesc;
+      info.status := FStatus;
+      info.message := FState;
+      info.pct := FPct;
+      info.time := GetTickCount64 - FStartTime;
+      info.canCancel := canCancel;
+    end;
+    for tp in FWaiting do
+      list.add(reportForTask(tp));
+  finally
+    GBackgroundTasks.FLock.Unlock;
+  end;
 end;
 
 procedure TBackgroundTaskEngine.setStatus(v: TBackgroundTaskStatus);
@@ -1259,7 +1594,7 @@ begin
           doExec(pck);
           FDone.add(pck.link);
         finally
-          pck.Free;
+          pck.free;
         end;
         SetThreadStatus('Sleeping');
       end;
@@ -1313,7 +1648,7 @@ constructor TBackgroundTaskManager.Create;
 begin
   inherited;
   FLock := TFslLock.create('BackgroundTaskManager');
-  FEngines := TFslList<TBackgroundTaskEngine>.create;
+  FEngines := TFslList<TBackgroundTaskEngine>.Create;
   FStart := now;
   registerTaskEngine(TNullTaskEngine.create); // the main reason for this is so that no real engine has a task id of 0
 end;
@@ -1322,8 +1657,8 @@ destructor TBackgroundTaskManager.Destroy;
 begin
   StopAll;
   sleep(200);
-  FEngines.Free;
-  FLock.Free;
+  FEngines.free;
+  FLock.free;
   inherited;
 end;
 
@@ -1338,16 +1673,26 @@ begin
   finally
     FLock.Unlock;
   end;
+  if FStarted then
+    engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
-procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>);
+procedure TBackgroundTaskManager.report(list: TFslList<TBackgroundTaskStatusInfo>; view : TBackgroundTaskManagerTaskViewType);
 var
   engine : TBackgroundTaskEngine;
 begin
   FLock.Lock;
   try
-    for engine in FEngines do
-      list.Add(engine.reportStatus);
+    if view = tvtEngines then
+    begin
+      for engine in FEngines do
+        list.Add(engine.reportStatus);
+    end
+    else
+    begin
+      for engine in FEngines do
+        engine.listTasks(list);
+    end;
   finally
     FLock.Unlock;
   end;
@@ -1367,6 +1712,7 @@ procedure TBackgroundTaskManager.stopAll;
 var
   e : TBackgroundTaskEngine;
 begin
+  FStarted := false;
   for e in FEngines do
     e.stop;
 end;
@@ -1400,14 +1746,25 @@ procedure TBackgroundTaskManager.start;
 var
   engine : TBackgroundTaskEngine;
 begin
+  FStarted := true;
+  Log('Start engine');
   for engine in FEngines do
     engine.FThread := TBackgroundTaskThread.Create(engine);
 end;
 
 procedure TBackgroundTaskManager.log(s : String);
 begin
-//  AllocConsole;
-//  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
+  {$IFDEF DEBUG_TASKS}
+  AllocConsole;
+  {$ifdef FPC}
+  IsConsole := True;
+  StdInputHandle  := 0;
+  StdOutputHandle := 0;
+  StdErrorHandle  := 0;
+  SysInitStdIO;
+  {$endif FPC}
+  writeln(DescribePeriod(now - FStart)+' '+IntToHex(GetCurrentThreadId)+' '+s);
+  {$ENDIF}
 end;
 
 procedure TBackgroundTaskManager.primaryThreadCheck;
@@ -1442,7 +1799,7 @@ begin
           e.OnNotify(e.FId, pck.response);
         log('notified response for '+e.name);
       finally
-        pck.Free;
+        pck.free;
       end;
       exit; // only one outcome per iteration - don't tie up the pimary thread
     end;
@@ -1492,8 +1849,8 @@ begin
   //      end;
   //      log('finished getting UI Response for '+e.name);
   //    finally
-  //      uReq.Free;
-  //      uResp.Free;
+  //      uReq.free;
+  //      uResp.free;
   //    end;
   //    exit; // only one outcome per iteration - don't tie up the pimary thread
   //  end;
@@ -1593,10 +1950,10 @@ End;
 
 
 
-function TBackgroundTaskManager.sizeInBytesV : cardinal;
+function TBackgroundTaskManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEngines.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEngines.sizeInBytes(magic));
 end;
 
 { TBackgroundTaskUIRequest }
@@ -1641,9 +1998,19 @@ begin
     result := inttostr(pct);
 end;
 
-function TBackgroundTaskStatusInfo.sizeInBytesV : cardinal;
+function TBackgroundTaskStatusInfo.timeDisplay: String;
 begin
-  result := inherited sizeInBytesV;
+  if FTime = 0 then
+    result := ''
+  //else if (FTime < 2000) then
+  //  result := inttostr(FTime)+'ms'
+  else
+    result := inttostr(FTime div 1000)+'s';
+end;
+
+function TBackgroundTaskStatusInfo.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FMessage.length * sizeof(char)) + 12);
 end;

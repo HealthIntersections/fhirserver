@@ -1,4 +1,4 @@
-unit FHIR.Tests.FullServer;
+unit tests_server_full;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -141,7 +141,7 @@ end;
 
 function TFullTestServerFactory.makeIndexes: TFHIRIndexBuilder;
 begin
-  result := TFHIRIndexBuilderR4.create;
+  result := TFHIRIndexBuilderR4.Create;
 end;
 
 function TFullTestServerFactory.makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager;
@@ -183,16 +183,16 @@ begin
         ver := conn.CountSQL('Select Value from Config where ConfigKey = 5');
         if (ver <> ServerDBVersion) then
         begin
-          dbi := TFHIRDatabaseInstaller.create(conn, factory.link, serverfactory.link);
+          dbi := TFHIRDatabaseInstaller.Create(conn, factory.link, serverfactory.link);
           try
             dbi.upgrade(ver);
           finally
-            dbi.Free;
+            dbi.free;
           end;
         end;
       end;
     finally
-      meta.Free;
+      meta.free;
     end;
     conn.Release;
   except
@@ -214,15 +214,15 @@ begin
   begin
     if ddr = '' then
       ddr := 'SQL Server Native Client 11.0';
-    result := TFDBOdbcManager.create(s, kdbSqlServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.Create(s, kdbSqlServer, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'mysql' then
   begin
-    result := TFDBOdbcManager.create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
+    result := TFDBOdbcManager.Create(s, kdbMySql, 100, 0, ddr, details['server'], dbn, details['username'], details['password']);
   end
   else if details['type'] = 'SQLite' then
   begin
-    result := TFDBSQLiteManager.create(s, dbn, false);
+    result := TFDBSQLiteManager.Create(s, dbn, false);
   end
   else
     raise ELibraryException.Create('Unknown database type '+s);
@@ -248,7 +248,7 @@ var
   s : String;
   details : TFHIRServerIniComplex;
 begin
-  FWebServer := TFhirWebServer.create(FSettings.Link, TFHIRTelnetServer.create(44122, 'test'), 'Test-Server');
+  FWebServer := TFhirWebServer.Create(FSettings.Link, TFHIRTelnetServer.Create(44122, 'test'), 'Test-Server');
   FWebServer.OnRegisterJs := registerJs;
   FWebServer.loadConfiguration(FIni);
   FWebServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(ProcessPath(ExtractFilePath(FIni.FileName), FIni.web['folder']));
@@ -260,7 +260,7 @@ begin
     begin
       if details['version'] = 'r4' then
       begin
-        store := TFHIRNativeStorageServiceR4.create(FDatabases[details['database']].link, TFHIRFactoryR4.Create);
+        store := TFHIRNativeStorageServiceR4.Create(FDatabases[details['database']].link, TFHIRFactoryR4.Create);
       end
       else
         raise EFslException.Create('Cannot load end-point '+s+' version '+details['version']);
@@ -278,10 +278,10 @@ begin
           ctxt.userProvider := TSCIMServer.Create(store.db.link, FIni.admin['scim-salt'], FWebServer.host, FIni.admin['default-rights'], false);
           FEndPoint := FWebServer.registerEndPoint(s, details['path'], ctxt.Link, FIni);
         finally
-          ctxt.Free;
+          ctxt.free;
         end;
       finally
-        store.Free;
+        store.free;
       end;
     end;
   end;
@@ -303,17 +303,17 @@ function TFullServerTests.parseJson(s: String): TFHIRResource;
 var
   p : TFHIRJsonParser;
 begin
-  p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+  p := TFHIRJsonParser.Create(nil, nil);
   try
     p.source := TStringStream.Create(s);
     try
       p.parse;
       result := p.resource.link as TFhirResource;
     finally
-      p.source.Free;
+      p.source.free;
     end;
   finally
-    p.Free;
+    p.free;
   end; 
 end;
 
@@ -323,7 +323,7 @@ begin
   FSettings := TFHIRServerSettings.Create;
   FSettings.ForLoad := not FindCmdLineSwitch('noload');
   FSettings.load(FIni);
-  FDatabases := TFslMap<TFDBManager>.create('databases');
+  FDatabases := TFslMap<TFDBManager>.Create('databases');
 
   ConnectToDatabases;
   LoadTerminologies;
@@ -333,14 +333,14 @@ end;
 
 procedure TFullServerTests.TearDown;
 begin
-  FClientJson.Free;
+  FClientJson.free;
   if FWebServer <> nil then
     FWebServer.Stop;
-  FWebServer.Free;
-  FTerminologies.Free;
-  FDatabases.Free;
-  FSettings.Free;
-  FIni.Free;
+  FWebServer.free;
+  FTerminologies.free;
+  FDatabases.free;
+  FSettings.free;
+  FIni.free;
 end;
 
 procedure TFullServerTests.TestCapabilityStatement;
@@ -351,7 +351,7 @@ begin
   try
     Assert.IsTrue(r <> nil);
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -367,10 +367,10 @@ begin
       Assert.IsTrue(r.effective is TFHIRDateTime, 'Wrong type');
       Assert.IsTrue((r.effective as TFHIRDateTime).StringValue = '2019-01-23', 'Wrong value');      
     finally
-      r.Free;
+      r.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -398,10 +398,10 @@ begin
       Assert.IsTrue(r.effective is TFHIRDateTime, 'Wrong type');
       Assert.IsTrue((r.effective as TFHIRDateTime).StringValue = '2019-01-23', 'Wrong value');      
     finally
-      r.Free;
+      r.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -421,7 +421,7 @@ begin
       ra.free;
     end;
   finally
-    rb.Free;
+    rb.free;
   end;
 end;
 
@@ -440,7 +440,7 @@ begin
       FClientJson.readResource(frtPatient, id);
     end);
   finally
-    rb.Free;
+    rb.free;
   end;
 end;
 
@@ -452,7 +452,7 @@ begin
   try
     Assert.IsTrue(r.entryList.Count > 0);
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -464,7 +464,7 @@ begin
   try
     Assert.IsTrue(r.entryList.Count > 0);
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -476,7 +476,7 @@ begin
   try
     Assert.IsTrue(r.id = 'example');
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -495,7 +495,7 @@ begin
   try
     Assert.IsTrue(r.entryList.Count > 0);
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -517,7 +517,7 @@ begin
       ra.free;
     end;
   finally
-    rb.Free;
+    rb.free;
   end;
 end;
 
@@ -529,7 +529,7 @@ begin
   try
     Assert.IsTrue(r.id = 'example');
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -546,7 +546,7 @@ begin
   try
     Assert.IsTrue(r.entryList.Count > 0);
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -558,7 +558,7 @@ begin
   try
     Assert.IsTrue(r.entryList.Count = 50);
   finally
-    r.Free;
+    r.free;
   end;
 end;
 
@@ -570,7 +570,7 @@ begin
   try
     Assert.IsTrue(vs.expansion <> nil);
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -582,7 +582,7 @@ begin
   try
     Assert.IsTrue(vs.expansion <> nil);
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -600,10 +600,10 @@ begin
       assert.IsTrue(pOut.bool['result']);
       assert.IsTrue(pOut.str['message'] <> '');
     finally
-      pOut.Free;
+      pOut.free;
     end;
   finally
-    pIn.Free;
+    pIn.free;
   end;
 end;
 

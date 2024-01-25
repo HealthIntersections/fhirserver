@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, SyncObjs, Classes, Contnrs, IniFiles, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_threads,  fsl_fpc,
+  fsl_base, fsl_utilities, fsl_threads,  fsl_fpc, fsl_logging,
   fdb_logging, fdb_dialects;
 
 const
@@ -52,7 +52,8 @@ type
   // mean that the provider is supported by all 3 of compiler, application, and system
   // access is odbc but settings are done differently
   TFDBProvider = (kdbpUnknown,    kdbpDSN,        kdbpODBC,     kdbpFirebird,    kdbpDBIsam,
-                  kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess,      kdbpSQLite);
+                  kdbpDBXpress,   kdbpSoapClient, kdbpMySQL,    kdbpAccess,      kdbpSQLite
+                  {$IFDEF FPC}, kdbpSQLDB {$ENDIF});
 
   TFDBProviderSet = set of TFDBProvider;
 
@@ -77,7 +78,7 @@ type
     FDataType: TFDBColumnType;
     FNullable: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name : String); overload;
     function Link : TFDBColumn; overload;
@@ -94,7 +95,7 @@ type
     FName: String;
     FColumns: TFslList<TFDBColumn>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -110,7 +111,7 @@ type
     FDestTable : String;
     FDestColumn : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Property Column : String read FColumn write FColumn;
     Property DestTable : String read FDestTable write FDestTable;
@@ -130,7 +131,7 @@ type
     FOrderMatters : Boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -153,7 +154,7 @@ type
     FProcedures : TStringList;
     FSupportsProcedures : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -177,6 +178,9 @@ type
     to get a connection. The connection must always be returned using
     TDBConnPool.YieldConnection otherwise the connection will leak.
   }
+
+  { TFDBConnection }
+
   TFDBConnection = class (TFslObject)
   Private
     FOwner: TFDBManager;
@@ -184,6 +188,7 @@ type
     FBoundItems : TFslMap<TFDBBoundParam>;
     FUsage : String;
     FUsed : TDateTime;
+    FCurrentlyInUse : boolean;
     FTables : TStringList;
     FRowCount : integer;
     FPrepareCount : integer;
@@ -198,6 +203,7 @@ type
     FTerminated: Boolean;
     FPrepared : boolean;
     FTransactionId: String;
+    function GetDialect: TFDBPlatform;
     function GetTables : TStrings;
     function LookupInternal(ATableName, AKeyField, AKeyValue, AValueField, ADefault: String; bAsString: Boolean): String;
     function GetColBlobAsString(ACol: Integer): String;
@@ -249,7 +255,7 @@ type
     function SupportsSizingV : Boolean; virtual; abstract;
 
     procedure CheckRelease;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(AOwner: TFDBManager);
     destructor Destroy; Override;
@@ -286,6 +292,7 @@ type
     property Holder: TObject Read FHolder Write FHolder;
     property Tag: Integer Read FTag Write FTag;
     property Owner: TFDBManager Read FOwner;
+    Property Dialect : TFDBPlatform read GetDialect;
     property Prepared : boolean read FPrepared;
 
     // when the application finishes with the connection, it should use one of these to free the connection
@@ -681,7 +688,7 @@ type
     function GetDBDetails: String; Virtual; Abstract;
     function GetDriver: String; Virtual; Abstract;
     procedure init; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(AName : String; AMaxConnCount: Integer); overload;
     destructor Destroy; Override;
@@ -713,6 +720,7 @@ type
     Function ServerErrorStatus : String;
     property Name : string read FName;
 
+    function debugInfo : String; override;
     property OnChangeConnectionCount : TOnChangeConnectionCount Read FOnChangeConnectionCount Write FOnChangeConnectionCount;
     class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; virtual; abstract;
   end;
@@ -726,7 +734,7 @@ type
     FHook : TFDBManagerEvent;
     FName : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(Name : String; Hook : TFDBManagerEvent);
   end;
@@ -741,7 +749,7 @@ type
     function GetConnMan(i : Integer):TFDBManager;
     function GetConnManByName(s : String):TFDBManager;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -781,7 +789,7 @@ var
 
 constructor TFDBConnection.Create(AOwner: TFDBManager);
 begin
-  inherited create;
+  inherited Create;
   FNoFree := false;
   FOwner := AOwner;
   FUsage := '';
@@ -790,8 +798,8 @@ begin
   FSQL := '';
   FTerminated := true;
   FInTransaction := false;
-  FBoundItems := TFslMap<TFDBBoundParam>.create('KDB.Parameters');
-  FTables := TStringList.create;
+  FBoundItems := TFslMap<TFDBBoundParam>.Create('KDB.Parameters');
+  FTables := TStringList.Create;
 end;
 
 destructor TFDBConnection.Destroy;
@@ -809,7 +817,8 @@ begin
     BindBlobV(AParamName, AParamValue);
 end;
 
-procedure TFDBConnection.BindBlobFromString(AParamName, AParamValue: String);
+procedure TFDBConnection.BindBlobFromString(AParamName: String;
+  AParamValue: String);
 var
   b : TBytes;
 begin
@@ -859,13 +868,13 @@ begin
     Execute;
     result := GetRowsAffected;
     if (result <> rows) then
-      raise EDBException.create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
+      raise EDBException.Create('Error running sql - wrong row count (expected '+inttostr(rows)+', affected '+inttostr(result)+' for sql '+asql+')');
   finally
     Terminate;
     end;
 end;
 
-Function TFDBConnection.ExecSQL(ASql: String) : integer;
+function TFDBConnection.ExecSQL(ASql: String): integer;
 begin
   if asql = '' then
     exit(0);
@@ -1091,6 +1100,11 @@ begin
   result := FTables;
 end;
 
+function TFDBConnection.GetDialect: TFDBPlatform;
+begin
+  result := Owner.Platform;
+end;
+
 
 procedure TFDBConnection.Initialise;
 begin
@@ -1122,12 +1136,13 @@ begin
   BindNullV(AParamName);
 end;
 
-procedure TFDBConnection.BindString(AParamName, AParamValue: String);
+procedure TFDBConnection.BindString(AParamName: String; AParamValue: String);
 begin
   BindStringV(AParamName, AParamValue);
 end;
 
-procedure TFDBConnection.BindStringOrNull(AParamName, AParamValue: String);
+procedure TFDBConnection.BindStringOrNull(AParamName: String;
+  AParamValue: String);
 begin
   if AParamValue = '' then
     BindNull(aParamName)
@@ -1135,13 +1150,16 @@ begin
     BindString(aParamName, AParamValue);
 end;
 
-procedure TFDBConnection.BindTimeStamp(AParamName: String; AParamValue: TTimeStamp);
+procedure TFDBConnection.BindTimeStamp(AParamName: String;
+  AParamValue: fsl_utilities.TTimeStamp);
 begin
   BindTimeStampV(AParamName, AParamValue);
 end;
 
 procedure TFDBConnection.CheckRelease;
 begin
+  if not FCurrentlyInUse then
+    raise EDBException.Create('Attempt to release ODBC connection twice');
   {$IFOPT C+}
   if FPrepared then
     raise EDBException.Create('Attempt to release ODBC connection "'+FUsage+'" before it is terminated');
@@ -1168,7 +1186,8 @@ begin
   ExecuteV;
 end;
 
-procedure TFDBConnection.RenameColumn(ATableName, AOldColumnName, ANewColumnName, AColumnDetails: String);
+procedure TFDBConnection.RenameColumn(ATableName, AOldColumnName,
+  ANewColumnName: String; AColumnDetails: String);
 begin
   RenameColumnV(ATableName, AOldColumnName, ANewColumnName, AColumnDetails);
 end;
@@ -1239,7 +1258,8 @@ begin
   result := GetColStringV(ACol);
 end;
 
-function TFDBConnection.GetColTimestamp(ACol: Integer): TTimestamp;
+function TFDBConnection.GetColTimestamp(ACol: Integer
+  ): fsl_utilities.TTimestamp;
 begin
   result := GetColTimestampV(ACol);
 end;
@@ -1289,7 +1309,7 @@ Begin
   result := DatabaseSizeV;
 End;
 
-Function TFDBConnection.TableSize(sName : String):int64;
+function TFDBConnection.TableSize(sName: String): int64;
 Begin
   result := TableSizeV(sName);
 End;
@@ -1300,13 +1320,13 @@ Begin
 End;
 
 
-function TFDBConnection.sizeInBytesV : cardinal;
+function TFDBConnection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOwner.sizeInBytes);
-  inc(result, FBoundItems.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOwner.sizeInBytes(magic));
+  inc(result, FBoundItems.sizeInBytes(magic));
   inc(result, (FUsage.length * sizeof(char)) + 12);
-  inc(result, FTables.sizeInBytes);
+  inc(result, FTables.sizeInBytes(magic));
   inc(result, (FSQL.length * sizeof(char)) + 12);
   inc(result, (FTransactionId.length * sizeof(char)) + 12);
 end;
@@ -1315,19 +1335,19 @@ end;
 
 constructor TFDBManager.Create(AName : String; AMaxConnCount: Integer);
 begin
-  inherited create;
+  inherited Create;
 
   FName := AName;
   FMaxConnCount := AMaxConnCount;
 
-  FLock := TFslLock.create;
-  FDBLogger := TFDBLogger.create;
+  FLock := TFslLock.Create('db manager: '+aName);
+  FDBLogger := TFDBLogger.Create;
   FSemaphore := TSemaphore.Create(nil, 0, $FFFF, '');
   FWaitCreate := false;
 
-  FConnections := TFslList<TFDBConnection>.create;
-  FAvail := TFslList<TFDBConnection>.create;
-  FInUse := TFslList<TFDBConnection>.create;
+  FConnections := TFslList<TFDBConnection>.Create;
+  FAvail := TFslList<TFDBConnection>.Create;
+  FInUse := TFslList<TFDBConnection>.Create;
 
   FClosing := false;
   GManagers.AddConnMan(self);
@@ -1346,10 +1366,10 @@ begin
 
   FAvail.free;
   FInUse.free;
-  FConnections.Free;
+  FConnections.free;
   FSemaphore.free;
   FDBLogger.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -1437,13 +1457,14 @@ begin
       end
     else
       begin
-      raise EDBException.create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
+      raise EDBException.Create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
       end;
     end;
   FLock.Enter; // lock this because of debugger
   try
     result.FUsage := AUsage;
     result.FUsed := now;
+    result.FCurrentlyInUse := true;
     result.FRowCount := 0;
     result.FPrepareCount := 0;
     result.Sql := '';
@@ -1459,7 +1480,7 @@ var
 begin
   conn := GetConnection('check');
   try
-    conn.FetchMetaData.Free;
+    conn.FetchMetaData.free;
     conn.Release;
   except
     on e : Exception do
@@ -1477,7 +1498,9 @@ var
   LIndex : integer;
   s : String;
 begin
-
+  if not AConn.FCurrentlyInUse then
+    raise EDBException.Create('Attempt to release ODBC connection twice');
+  AConn.FCurrentlyInUse := false;
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, nil, '');
   FLock.Enter; // must lock because of the debugger
   try
@@ -1525,6 +1548,17 @@ procedure TFDBManager.Error(AConn : TFDBConnection; AException: Exception; AErrM
 var
   LIndex : integer;
 begin
+  if not AConn.FCurrentlyInUse then
+    raise EDBException.Create('Attempt to release ODBC connection twice (error)');
+  if AConn.Prepared then
+  begin
+    try
+      AConn.Terminate;
+    except
+    end;
+  end;
+  AConn.FCurrentlyInUse := false;
+
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 
   FLock.Enter; // must lock because of the debugger
@@ -1546,7 +1580,7 @@ begin
         FSemaphore.Release;
     except
       on e : exception do
-        raise EDBException.create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
+        raise EDBException.Create('Error (2) releasing semaphore for '+AConn.Usage+': '+e.message+'. please report this error to grahameg@gmail.com (original error = "'+AException.Message+'"');
     end;
   finally
     FLock.Leave;
@@ -1729,32 +1763,32 @@ begin
   end;
 end;
 
-function TFDBManager.sizeInBytesV : cardinal;
+function TFDBManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConnections.sizeInBytes);
-  inc(result, FAvail.sizeInBytes);
-  inc(result, FInUse.sizeInBytes);
-  inc(result, FDBLogger.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConnections.sizeInBytes(magic));
+  inc(result, FAvail.sizeInBytes(magic));
+  inc(result, FInUse.sizeInBytes(magic));
+  inc(result, FDBLogger.sizeInBytes(magic));
   inc(result, (FLastServerError.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
 { TFDBManagerList }
 
-constructor TFDBManagerList.create;
+constructor TFDBManagerList.Create;
 begin
-  inherited create;
-  FLock := TFslLock.create;
-  FHooks := TFslList<TFDBHook>.create;
-  FList := TList<TFDBManager>.create;
+  inherited Create;
+  FLock := TFslLock.Create('database managers');
+  FHooks := TFslList<TFDBHook>.Create;
+  FList := TList<TFDBManager>.Create;
 end;
 
-destructor TFDBManagerList.destroy;
+destructor TFDBManagerList.Destroy;
 begin
   FLock.free;
   FHooks.free;
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1830,7 +1864,7 @@ end;
 
 procedure TFDBManagerList.RegisterHook(AName : String; AHook : TFDBManagerEvent);
 begin
-  FHooks.Add(TFDBHook.create(AName, AHook));
+  FHooks.Add(TFDBHook.Create(AName, AHook));
 end;
 
 procedure TFDBManagerList.UnRegisterHook(AName : String);
@@ -1842,24 +1876,24 @@ begin
       FHooks.Delete(i);
 end;
 
-function TFDBManagerList.sizeInBytesV : cardinal;
+function TFDBManagerList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHooks.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHooks.sizeInBytes(magic));
 end;
 
 { TFDBHook }
 
-constructor TFDBHook.create(Name : String; Hook : TFDBManagerEvent);
+constructor TFDBHook.Create(Name : String; Hook : TFDBManagerEvent);
 begin
-  inherited create;
+  inherited Create;
   FName := name;
   FHook := Hook;
 end;
 
-function TFDBHook.sizeInBytesV : cardinal;
+function TFDBHook.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -1867,7 +1901,7 @@ end;
 
 constructor TFDBColumn.Create(name: String);
 begin
-  inherited create;
+  inherited Create;
   self.Name := name;
 end;
 
@@ -1915,27 +1949,27 @@ begin
       s.Append(C.Name);
     end;
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
-function TFDBColumn.sizeInBytesV : cardinal;
+function TFDBColumn.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
 { TFDBIndex }
 
-constructor TFDBIndex.create;
+constructor TFDBIndex.Create;
 begin
   inherited;
-  FColumns := TFslList<TFDBColumn>.create;
+  FColumns := TFslList<TFDBColumn>.Create;
 end;
 
-destructor TFDBIndex.destroy;
+destructor TFDBIndex.Destroy;
 begin
-  FColumns.Free;
+  FColumns.free;
   inherited;
 end;
 
@@ -1954,11 +1988,11 @@ begin
   Result := Result + 'INDEX ' + FName + ' ON (' + CommaText(FColumns) + ')';
 end;
 
-function TFDBIndex.sizeInBytesV : cardinal;
+function TFDBIndex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FColumns.sizeInBytes);
+  inc(result, FColumns.sizeInBytes(magic));
 end;
 
 function TFDBRelationship.Describe : String;
@@ -1966,9 +2000,9 @@ Begin
   result := FColumn + ' -> '+FDestTable+'.'+FDestColumn;
 End;
 
-function TFDBRelationship.sizeInBytesV : cardinal;
+function TFDBRelationship.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FColumn.length * sizeof(char)) + 12);
   inc(result, (FDestTable.length * sizeof(char)) + 12);
   inc(result, (FDestColumn.length * sizeof(char)) + 12);
@@ -1976,19 +2010,19 @@ end;
 
 { TFDBTable }
 
-constructor TFDBTable.create;
+constructor TFDBTable.Create;
 begin
   inherited;
   FColumns := TFslList<TFDBColumn>.CREATE;
-  FIndexes := TFslList<TFDBIndex>.create;
-  FRelationships := TFslList<TFDBRelationship>.create;
+  FIndexes := TFslList<TFDBIndex>.Create;
+  FRelationships := TFslList<TFDBRelationship>.Create;
 end;
 
-destructor TFDBTable.destroy;
+destructor TFDBTable.Destroy;
 begin
-  FRelationships.Free;
-  FColumns.Free;
-  FIndexes.Free;
+  FRelationships.free;
+  FColumns.free;
+  FIndexes.free;
   inherited;
 end;
 
@@ -2006,30 +2040,30 @@ begin
   result := TFDBTable(inherited link);
 end;
 
-function TFDBTable.sizeInBytesV : cardinal;
+function TFDBTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FColumns.sizeInBytes);
-  inc(result, FIndexes.sizeInBytes);
-  inc(result, FRelationships.sizeInBytes);
+  inc(result, FColumns.sizeInBytes(magic));
+  inc(result, FIndexes.sizeInBytes(magic));
+  inc(result, FRelationships.sizeInBytes(magic));
   inc(result, (FOwner.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
 end;
 
 { TFDBMetaData }
 
-constructor TFDBMetaData.create;
+constructor TFDBMetaData.Create;
 begin
   inherited;
-  FTables := TFslList<TFDBTable>.create;
-  FProcedures := TStringList.create;
+  FTables := TFslList<TFDBTable>.Create;
+  FProcedures := TStringList.Create;
 end;
 
-destructor TFDBMetaData.destroy;
+destructor TFDBMetaData.Destroy;
 begin
-  FTables.Free;
-  FProcedures.Free;
+  FTables.free;
+  FProcedures.free;
   inherited;
 end;
 
@@ -2055,11 +2089,11 @@ begin
 end;
 
 
-function TFDBMetaData.sizeInBytesV : cardinal;
+function TFDBMetaData.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTables.sizeInBytes);
-  inc(result, FProcedures.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTables.sizeInBytes(magic));
+  inc(result, FProcedures.sizeInBytes(magic));
 end;
 
 function TFDBManager.ServerErrorStatus: String;
@@ -2075,6 +2109,11 @@ Begin
   End;
 End;
 
+function TFDBManager.debugInfo: String;
+begin
+  Result := FName;
+end;
+
 procedure CloseUPGManagers;
 var
   m : TFDBManagerList;
@@ -2085,7 +2124,7 @@ begin
 end;
 
 initialization
-  GManagers := TFDBManagerList.create;
+  GManagers := TFDBManagerList.Create;
 finalization
   CloseUPGManagers;
 end.

@@ -36,7 +36,7 @@ uses
   SysUtils, Classes, Generics.Collections, Character,
   fsl_http,
   fsl_base, fsl_utilities, fsl_fpc,
-  fhir_objects,  fhir_utilities, fhir_common, fhir_factory, fhir_client,
+  fhir_objects,  fhir_utilities, fhir_common, fhir_factory, fhir_client, fhir_uris,
   fdb_manager, fdb_dialects,
   fhir_indexing,
   indexing, search_syntax, session, utilities, server_context, server_constants,
@@ -44,11 +44,13 @@ uses
 
 type
   TQuantityOperation = (qopEqual, qopNotEqual, qopLess, qopLessEqual, qopGreater, qopGreaterEqual, qopStartsAfter, qopEndsBefore, qopApproximate);
+  TSearchSortStatus = (sssNotUsed, sssAscending, sssDescending);
+
+  { TSearchProcessor }
 
   TSearchProcessor = class (TFHIRServerWorker)
   private
     FLink: String;
-    FSort: String;
     FFilter: String;
     FTypeKey: integer;
     FCompartment: TFHIRCompartmentId;
@@ -57,15 +59,20 @@ type
     FType: String;
     FBaseURL: String;
     FIndexes: TFhirIndexInformation;
-    FLang: THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FSession : TFhirSession;
 //    FLeftOpen: boolean;
     FcountAllowed: boolean;
-    FReverse: boolean;
     FStrict : boolean;
     FConnection: TFDBConnection;
     FWarnings : TFslList<TFhirOperationOutcomeIssueW>;
     FResConfig : TFslMap<TFHIRResourceConfig>;
+    FSort1: String;
+    FSortStatus1: TSearchSortStatus;
+    FSort2: String;
+    FSortStatus2: TSearchSortStatus;
+    FSort3: String;
+    FSortStatus3: TSearchSortStatus;
 
     function factory : TFHIRFactory;
     function order(s : String) : String;
@@ -87,7 +94,7 @@ type
     function buildParameterReference(index: Integer; n: Char; j: string; name : String; op : TFSCompareOperation; value: string) : String;
     procedure replaceNames(paramPath : TFSFilterParameterPath; components : TFslStringDictionary); overload;
     procedure replaceNames(filter : TFSFilter; components : TFslStringDictionary); overload;
-    procedure processQuantityValue(name : String; const lang : THTTPLanguages; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
+    procedure processQuantityValue(name : String; langList : THTTPLanguageList; parts: TArray<string>; op: TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC: String);
     procedure processNumberValue(value : TFslDecimal; op : TQuantityOperation; var minv, maxv : String);
     procedure SetSession(const Value: TFhirSession);
     function filterTypes(types: TArray<String>): TArray<String>;
@@ -102,6 +109,8 @@ type
     procedure SetCompartment(const Value: TFHIRCompartmentId);
     procedure SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
     procedure SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
+    function processSortParam(s : String; var sort : string; var status : TSearchSortStatus) : String;
+    procedure SetLang(value : THTTPLanguageList);
   public
     constructor Create(serverContext : TFslObject);
     destructor Destroy; override;
@@ -115,7 +124,7 @@ type
     property compartment : TFHIRCompartmentId read FCompartment write SetCompartment;
     property sessionCompartments : TFslList<TFHIRCompartmentId> read FSessionCompartments write SetSessionCompartments;
     property baseURL : String read FBaseURL write FBaseURL;
-    property lang : THTTPLanguages read FLang write FLang;
+    property langList : THTTPLanguageList read FLangList write SetLang;
     property params : THTTPParameters read FParams write FParams;
     property indexes : TFhirIndexInformation read FIndexes write SetIndexes;
     property session : TFhirSession read FSession write SetSession;
@@ -124,9 +133,13 @@ type
 
     // outbound
     property link_ : String read FLink write FLink;
-    property sort : String read FSort write FSort;
     property filter : String read FFilter write FFilter;
-    property reverse : boolean read FReverse write FReverse;
+    property sort1 : String read FSort1 write FSort1;
+    property sortStatus1 : TSearchSortStatus read FSortStatus1 write FSortStatus1;
+    property sort2 : String read FSort2 write FSort2;
+    property sortStatus2 : TSearchSortStatus read FSortStatus2 write FSortStatus2;
+    property sort3 : String read FSort3 write FSort3;
+    property sortStatus3 : TSearchSortStatus read FSortStatus3 write FSortStatus3;
     property strict : boolean read FStrict write FStrict;
     property Warnings : TFslList<TFhirOperationOutcomeIssueW> read FWarnings;
   end;
@@ -182,6 +195,8 @@ var
   i, j : integer;
   ix : TFhirIndex;
   ts : TStringList;
+  sn : TArray<String>;
+  s : String;
 begin
   if typekey = 0 then
   begin
@@ -195,7 +210,7 @@ begin
 
   link_ := '';
   first := false;
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     i := 0;
     while i < params.Count do
@@ -208,11 +223,11 @@ begin
       for j := 0 to ts.count - 1 do
       begin
         handled := false;
-        filter := filter + processParam(TArray<String>.create(type_), params.Name[i], ts[j], false, first, handled);
+        filter := filter + processParam(TArray<String>.Create(type_), params.Name[i], ts[j], false, first, handled);
         if handled then
           link_ := link_ + '&'+params.Name[i]+'='+EncodeMIME(ts[j])
         else if strict and not (knownParam(params.Name[i])) then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [params.Name[i]]));
+          raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [params.Name[i]]));
       end;
       inc(i);
     end;
@@ -220,36 +235,88 @@ begin
     ts.free;
   end;
 
-  if params.has(SEARCH_PARAM_NAME_SORT) and (params.Value[SEARCH_PARAM_NAME_SORT] <> '_id') then
+  FSortStatus1 := sssAscending; // always used
+  FSortStatus2 := sssNotUsed;
+  FSortStatus3 := sssNotUsed; // always used
+  sort1 := 'Id';
+  sort2 := 'null';
+  sort3 := 'null';
+
+
+  if Factory.version = fhirVersionRelease2 then
   begin
-    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
-    if (ix = nil) then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
-  end
-  else if params.has(SEARCH_PARAM_NAME_SORT+':asc') and (params.Value[SEARCH_PARAM_NAME_SORT+':asc'] <> '_id') then
-  begin
-    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':asc']);
-    if (ix = nil) then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort :='(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
-  end
-  else if params.has(SEARCH_PARAM_NAME_SORT+':desc') and (params.Value[SEARCH_PARAM_NAME_SORT+':desc'] <> '_id') then
-  begin
-    ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':desc']);
-    if (ix = nil) then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', lang), [params.Value[SEARCH_PARAM_NAME_SORT]]));
-    sort :='(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':desc='+ix.Name;
-    FReverse := true;
+    if params.has(SEARCH_PARAM_NAME_SORT) and (params.Value[SEARCH_PARAM_NAME_SORT] <> '_id') then
+    begin
+      ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT]);
+      if (ix = nil) then
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', langList), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      sort1 := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
+    end
+    else if params.has(SEARCH_PARAM_NAME_SORT+':asc') and (params.Value[SEARCH_PARAM_NAME_SORT+':asc'] <> '_id') then
+    begin
+      ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':asc']);
+      if (ix = nil) then
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', langList), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      sort1 := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':asc='+ix.Name;
+    end
+    else if params.has(SEARCH_PARAM_NAME_SORT+':desc') and (params.Value[SEARCH_PARAM_NAME_SORT+':desc'] <> '_id') then
+    begin
+      ix := FIndexes.Indexes.getByName(type_, params.Value[SEARCH_PARAM_NAME_SORT+':desc']);
+      if (ix = nil) then
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', langList), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      sort1 := '(SELECT Max(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+':desc='+ix.Name;
+      FSortStatus1 := sssDescending;
+    end
+    else
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
   end
   else
   begin
-    sort := 'Id';
-    link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
+    if params.has(SEARCH_PARAM_NAME_SORT) then
+    begin
+      sn := params.Value[SEARCH_PARAM_NAME_SORT].Split([',']);
+      if length(sn) > 3 then
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_SORT_TOO_MANY', langList), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+      s := processSortParam(sn[0], FSort1, FSortStatus1);
+      if length(sn) > 1 then
+        s := s+','+processSortParam(sn[1], FSort2, FSortStatus2);
+      if length(sn) > 2 then
+        s := s+','+processSortParam(sn[2], FSort3, FSortStatus3);
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'='+s;
+    end
+    else
+      link_ := link_+'&'+SEARCH_PARAM_NAME_SORT+'=_id';
   end;
+end;
+
+function TSearchProcessor.processSortParam(s : String; var sort : string; var status : TSearchSortStatus) : String;
+var
+  ix : TFhirIndex;
+begin
+  if s.StartsWith('-') then
+  begin
+    status := sssDescending;
+    delete(s, 1, 1);
+  end
+  else
+    status := sssAscending;
+  ix := FIndexes.Indexes.getByName(type_, s);
+  if (ix = nil) then
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_SORT_UNKNOWN', langList), [params.Value[SEARCH_PARAM_NAME_SORT]]));
+  sort := '(SELECT Min(Value) FROM IndexEntries WHERE Flag <> 2 and IndexEntries.ResourceKey = Ids.ResourceKey and IndexKey = '+inttostr(ix.Key)+')';
+  if status = sssDescending then
+    result := '-'+ix.Name
+  else
+    result := ix.Name;
+end;
+
+procedure TSearchProcessor.SetLang(value: THTTPLanguageList);
+begin
+  FLangList.free;
+  FLangList := value;
 end;
 
 procedure TSearchProcessor.ProcessQuantityParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
@@ -263,7 +330,7 @@ var
   spC: string;
 begin
   if modifier <> '' then
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name + ':' + modifier]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [name + ':' + modifier]));
   qop := qopEqual;
   if findPrefix(value, 'eq')      then qop := qopEqual
   else if findPrefix(value, 'ne') then qop := qopNotEqual
@@ -275,7 +342,7 @@ begin
   else if findPrefix(value, 'eb') then qop := qopEndsBefore
   else if findPrefix(value, 'ap') then qop := qopApproximate;
 
-  processQuantityValue(name, lang, value.Split(['|']), qop, v1, v2, sp, v1C, v2C, spC);
+  processQuantityValue(name, langList, value.Split(['|']), qop, v1, v2, sp, v1C, v2C, spC);
   if spc <> '' then
   begin
     case qop of
@@ -333,7 +400,7 @@ begin
         // special case for bug in R4...
         index := StringArrayIndexOfInsensitive(targets, name);
         if index = -1 then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', lang), [name, i]))
+          raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID_TARGETTYPE', langList), [name, i]))
         else
           result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
       end
@@ -352,7 +419,7 @@ begin
       else if value.startsWith('http:') or value.startsWith('https:') then
         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value = ''' + sqlwrapString(value) + ''')'
       else
-        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', lang), [name]));
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', langList), [name]));
     end
   end
   else if StringArrayExistsSensitive(factory.ResourceNames, modifier) then
@@ -365,17 +432,17 @@ begin
       if Length(parts) = 2 then
       begin
         if modifier <> parts[0] then
-          raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [name]));
+          raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [name]));
         result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(parts[0]) + ''') and SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(modifier) + ''')  and Value = ''' + sqlwrapString(parts[1]) + ''')';
       end
       else
-        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', lang), [name]));
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_INVALID', langList), [name]));
     end
     else
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
+      raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]));
   end
   else
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]));
 end;
 
 procedure TSearchProcessor.ProcessTokenParam(var Result: string; name, modifier, value: string; key: Integer; types : TArray<String>);
@@ -432,11 +499,11 @@ begin
         result := result + 'not (IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and (SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(system) + ''') and Value = ''' + sqlwrapString(code) + '''))';
     end
     else if modifier = 'above' then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]))
+      raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]))
     else if modifier = 'below' then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]))
+      raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]))
     else
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
+      raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]));
   end;
 end;
 
@@ -461,7 +528,7 @@ begin
     sfx := '%''';
   end
   else
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]));
   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value ' + pfx + sqlwrapString(value) + sfx + ')';
 end;
 
@@ -510,7 +577,7 @@ begin
     v := value;
   end
   else
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', lang), [modifier]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_MODIFIER_INVALID', langList), [modifier]));
   result := result + '(IndexKey = ' + inttostr(Key) + ' /*' + name + '*/ and Value ' + pfx + sqlwrapString(v) + sfx + ')';
 end;
 
@@ -519,7 +586,7 @@ var
   qop: TQuantityOperation;
 begin
   if modifier <> '' then
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name + ':' + modifier]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [name + ':' + modifier]));
   qop := qopEqual;
   if findPrefix(value, 'eq')      then qop := qopEqual
   else if findPrefix(value, 'ne') then qop := qopNotEqual
@@ -552,7 +619,7 @@ var
   v2: string;
 begin
   if modifier <> '' then
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name + ':' + modifier]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [name + ':' + modifier]));
 
   qop := qopEqual;
   if findPrefix(value, 'eq')      then qop := qopEqual
@@ -613,7 +680,7 @@ begin
       end;
   else
     //
-    raise EFHIRException.create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of reference');
+    raise EFHIRException.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of reference');
   end;
 end;
 
@@ -629,13 +696,13 @@ begin
       if (ref = '') then
         ref := n + '.SpaceKey is null and '
       else if (ref = 'loinc') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://loinc.org'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_LOINC+') and '
       else if (ref = 'snomed') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://snomed.info/sct'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_SNOMED+') and '
       else if (ref = 'rxnorm') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://www.nlm.nih.gov/research/umls/rxnorm'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_RXNORM+') and '
       else if (ref = 'ucum') then
-        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''http://unitsofmeasure.org'') and '
+        ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = '+URI_UCUM+') and '
       else
         ref := n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(ref) + ''') and ';
     end
@@ -654,11 +721,11 @@ begin
         else
           result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' /*' + name + '*/ and ' + ref + ' not (' + n + '.Value like ''' + sqlwrapString(value) + '''%))';
       fscoSS:
-        raise EFHIRException.create('Not implemented yet');
+        raise EFHIRException.Create('Not implemented yet');
       fscoSB:
-        raise EFHIRException.create('Not implemented yet');
+        raise EFHIRException.Create('Not implemented yet');
       fscoIN:
-        raise EFHIRException.create('Not implemented yet');
+        raise EFHIRException.Create('Not implemented yet');
       fscoCO:
         result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''%' + SQLWrapString(value) + '%''' + j + ')';
       fscoSW:
@@ -667,7 +734,7 @@ begin
         result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value2 like ''%' + SQLWrapString(value) + '''' + j + ')';
     else
       // fscoGT, fscoLT, fscoGE, fscoLE, fscoPO, fscoRE
-      raise EFHIRException.create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of token');
+      raise EFHIRException.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of token');
     end;
   end;
 end;
@@ -695,7 +762,7 @@ begin
         result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and (' + n + '.Value >= ''' + date.Max.UTC.toHL7 + ''' or ' + n + '.Value2 <= ''' + date.Min.UTC.toHL7 + ''')' + j + ')';
     else
       // fscoSS, fscoSB, fscoIN, fscoRE, fscoCO, fscoSW, fscoEW
-      raise EFHIRException.create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of date');
+      raise EFHIRException.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of date');
     end;
   end;
 end;
@@ -723,7 +790,7 @@ begin
       result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and ' + n + '.Value <= ''' + SQLWrapString(RemoveAccents(Value)) + '''' + j + ')';
   else
     // fscoPO, fscoSS, fscoSB, fscoIN, fscoRE
-    raise EFHIRException.create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of string');
+    raise EFHIRException.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of string');
   end;
 end;
 
@@ -733,7 +800,7 @@ function TSearchProcessor.BuildParameterNumber(index: Integer; n: Char; j: strin
     if StringIsInteger32(s) then
       result := s
     else
-      raise EFHIRException.create('not a valid number');
+      raise EFHIRException.Create('not a valid number');
   end;
 begin
   case op of
@@ -751,7 +818,7 @@ begin
       result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index) + ' and Cast(' + n + '.Value as int) <= ' + CheckInteger(Value) + j + ')';
   else
     // fscoCO, fscoSW, fscoEW, fscoPO, fscoSS, fscoSB, fscoIN, fscoRE
-    raise EFHIRException.create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of number');
+    raise EFHIRException.Create('The operation ''' + CODES_CompareOperation[op] + ''' is not supported for parameter types of number');
   end;
 end;
 
@@ -789,7 +856,7 @@ begin
 end;
 
 
-procedure TSearchProcessor.processQuantityValue(name : String; const lang : THTTPLanguages; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
+procedure TSearchProcessor.processQuantityValue(name : String; langList : THTTPLanguageList; parts : TArray<string>; op : TQuantityOperation; var minv, maxv, space, mincv, maxcv, spaceC : String);
 var
   value : TFslDecimal;
   ns, s : String;
@@ -806,7 +873,7 @@ begin
 
   // [number]|[namespace]|[code]
   if Length(parts) = 0 then
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [name]));
   if TFslDecimal.CheckValue(parts[0]) then
     v := parts[0]
   else
@@ -816,7 +883,7 @@ begin
     while (i <= length(s)) and CharInSet(s[i], ['0'..'9', '.', '-']) do
       inc(i);
     if i = 1 then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]));
+      raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [name]));
     v := parts[0].Substring(0, i-1);
     u := parts[0].Substring(i-1);
   end;
@@ -865,7 +932,7 @@ begin
     end;
   end
   else if (length(parts) > 3) or (u <> '') then
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', lang), [name]))
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_UNKNOWN', langList), [name]))
   else
   begin
     if (parts[2] = 'ucum') or (parts[2] = 'snomed') or (parts[2].StartsWith('http:')) then
@@ -883,13 +950,13 @@ begin
   end;
 
   if (ns = 'ucum') then
-    ns := 'http://unitsofmeasure.org'
+    ns := URI_UCUM
   else if ns  = 'snomed' then
-    ns := 'http://snomed.info/sct';
+    ns := URI_SNOMED;
 
-  if (ns = 'http://unitsofmeasure.org') then
+  if (ns = URI_UCUM) then
   begin
-    specified := TUcumPair.create;
+    specified := TUcumPair.Create;
     try
       specified.Value := value;
       specified.UnitCode := space;
@@ -919,17 +986,17 @@ function TSearchProcessor.fetchGroup(id: String): TFHIRResourceV;
 var
   client : TFhirClientV;
 begin
-  client := TFHIRServerContext(ServerContext).Storage.createClient(lang, ServerContext, TFHIRServerContext(ServerContext).ValidatorContext.link, FSession.link);
+  client := TFHIRServerContext(ServerContext).Storage.createClient(langList, ServerContext, TFHIRServerContext(ServerContext).ValidatorContext.link, FSession.link);
   try
     result := client.readResourceV('Group', id);
     if result = nil then
-      raise EFHIRException.create('Unable to find group '+id);
+      raise EFHIRException.Create('Unable to find group '+id);
   finally
-    client.Free;
+    client.free;
   end;
 end;
 
-Function TSearchProcessor.filterTypes(types : TArray<String>) : TArray<String>;
+function TSearchProcessor.filterTypes(types: TArray<String>): TArray<String>;
 var
   a : string;
   res : TStringList;
@@ -950,7 +1017,9 @@ begin
   result := StringArrayExistsSensitive(['_id', '_lastUpdated', '_tag', '_profile', '_security', '_text', '_content', '_list', '_query'], name);
 end;
 
-Function TSearchProcessor.processParam(types : TArray<String>; name : String; value : String; nested : boolean; var bFirst : Boolean; var bHandled : Boolean) : String;
+function TSearchProcessor.ProcessParam(types: TArray<String>; name: String;
+  value: String; nested: boolean; var bFirst: Boolean; var bHandled: Boolean
+  ): String;
 var
   key, i : integer;
   left, right, op, modifier, tl : String;
@@ -980,7 +1049,7 @@ begin
   else if (name = '_filter') and not nested then
   begin
     bHandled := true;
-    result:= processSearchFilter(value);
+    result := processSearchFilter(value);
   end
   else if (name = '_type') then
   begin
@@ -996,7 +1065,7 @@ begin
   begin
     result := result + '(IndexKey = '+inttostr(FIndexes.ListItemIndex)+' /*'+left+'*/ and ResourceKey in (select ResourceKey from Ids where ResourceTypeKey = '+inttostr(TFHIRServerContext(ServerContext).ResConfig['List'].key)+' and Id = '''+SQLWrapString(value)+'''))';
     bHandled := true;
-    isReverse :=true;
+    isReverse := true;
   end
   else if (name = '_group') then
   begin
@@ -1018,9 +1087,9 @@ begin
         end;
       end
       else
-        raise EFHIRException.create('Unable to process group "'+group.name+'": it has no members or characteristics');
+        raise EFHIRException.Create('Unable to process group "'+group.name+'": it has no members or characteristics');
     finally
-      group.Free;
+      group.free;
     end;
   end
   else if (name = '_text') then
@@ -1037,8 +1106,8 @@ begin
     begin
       StringSplit(left, ':', left, modifier);
       if not StringArrayExistsInSensitive(factory.ResourceNames, modifier) then
-        raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [modifier]));
-      types := filterTypes(TArray<String>.create(modifier));
+        raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', langList), [modifier]));
+      types := filterTypes(TArray<String>.Create(modifier));
     end
     else
     begin
@@ -1046,7 +1115,7 @@ begin
     end;
     key := FIndexes.GetKeyByName(left);
     if key = 0 then
-      raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_PARAM_CHAINED', lang), [left]));
+      raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_PARAM_CHAINED', langList), [left]));
     f := true;
     tl := '';
     for a in types do
@@ -1075,7 +1144,7 @@ begin
     begin
       bHandled := true;
       if modifier <> '' then
-        raise EFHIRException.create('modifier "'+modifier+'" not handled on originalId');
+        raise EFHIRException.Create('modifier "'+modifier+'" not handled on originalId');
       result :=  '(originalId = '''+sqlwrapString(value)+''')';
     end
     else
@@ -1097,7 +1166,7 @@ begin
         end
         else
         begin
-          ts := TStringlist.create;
+          ts := TStringlist.Create;
           try
             SplitByCommas(value, ts);
             if (ts.count > 1) then
@@ -1121,7 +1190,7 @@ begin
                 sptNull : if (name = '_id') then
                   ProcessTokenParam(Result, name, modifier, value, key, types);
               else if type_ <> sptNull then
-                raise EFHIRTodo.create('type = '+CODES_TFhirSearchParamType[type_]);
+                raise EFHIRTodo.Create('type = '+CODES_TFhirSearchParamType[type_]);
               end;
             end;
           if ts.count > 1 then
@@ -1159,12 +1228,12 @@ begin
   try
     filter := TFSFilterParser.parse(value);
     try
-      result := '('+BuildFilter(filter, ' ', issuer, TArray<String>.create(FType))+')';
+      result := '('+BuildFilter(filter, ' ', issuer, TArray<String>.Create(FType))+')';
     finally
-      filter.Free;
+      filter.free;
     end;
   finally
-    issuer.Free;
+    issuer.free;
   end;
 end;
 
@@ -1176,14 +1245,14 @@ begin
   // firstly, the vs can be a logical reference or a literal reference
   if (vs.StartsWith('valueset/')) then
   begin
-    vso := TFHIRServerContext(ServerContext).TerminologyServer.getValueSetByUrl(vs);
+    vso := TFHIRServerContext(ServerContext).TerminologyServer.getValueSetByUrl(vs, '');
     try
       if vso = nil then
         vs := 'not-found'
       else
         vs := vso.url;
     finally
-      vso.Free;
+      vso.free;
     end;
   end;
   key := FConnection.CountSQL('select ValueSetKey from ValueSets where URL = '''+sqlWrapString(vs)+'''');
@@ -1197,7 +1266,7 @@ begin
   if components.ContainsKey(paramPath.Name) then
     paramPath.Name := components[paramPath.Name]
   else
-    raise EFHIRException.create('Unknown Search Parameter Name "'+paramPath.Name+'"');
+    raise EFHIRException.Create('Unknown Search Parameter Name "'+paramPath.Name+'"');
 end;
 
 procedure TSearchProcessor.replaceNames(filter: TFSFilter; components: TFslStringDictionary);
@@ -1215,38 +1284,38 @@ end;
 
 procedure TSearchProcessor.SetCompartment(const Value: TFHIRCompartmentId);
 begin
-  FCompartment.Free;
+  FCompartment.free;
   FCompartment := Value;
 end;
 
 procedure TSearchProcessor.SetConnection(const Value: TFDBConnection);
 begin
-  FConnection.Free;
+  FConnection.free;
   FConnection := Value;
 end;
 
 procedure TSearchProcessor.SetIndexes(const Value: TFhirIndexInformation);
 begin
-  FIndexes.Free;
+  FIndexes.free;
   FIndexes := Value;
 end;
 
 
 procedure TSearchProcessor.SetResConfig(const Value: TFslMap<TFHIRResourceConfig>);
 begin
-  FResConfig.Free;
+  FResConfig.free;
   FResConfig := Value;
 end;
 
 procedure TSearchProcessor.SetSession(const Value: TFhirSession);
 begin
-  FSession.Free;
+  FSession.free;
   FSession := Value;
 end;
 
 procedure TSearchProcessor.SetSessionCompartments(const Value: TFslList<TFHIRCompartmentId>);
 begin
-  FSessionCompartments.Free;
+  FSessionCompartments.free;
   FSessionCompartments := Value;
 end;
 
@@ -1279,7 +1348,7 @@ begin
     fsitParameter : result := BuildFilterParameter(filter as TFSFilterParameter, TFSFilterParameter(filter).ParamPath, parent, issuer, types);
     fsitLogical :   result := BuildFilterLogical(filter as TFSFilterLogical, parent, issuer, types);
   else
-    raise EFHIRException.create('Unknown type');
+    raise EFHIRException.Create('Unknown type');
   end;
 end;
 
@@ -1316,7 +1385,7 @@ begin
     if (comp <> nil) then
     begin
       if (filter = nil) then
-        raise EFHIRException.create('Parameter ("'+path.Name+'") is missing a filter - it is required');
+        raise EFHIRException.Create('Parameter ("'+path.Name+'") is missing a filter - it is required');
       // first, scan the filter - there must be one - and rename them. They must match
       replaceNames(path.Filter, comp.Components);
       replaceNames(path.next, comp.components);
@@ -1329,7 +1398,7 @@ begin
     begin
       result := 'ResourceKey in (select ResourceKey from IndexEntries as ' + n + ' where Flag <> 2 and ' + n + '.IndexKey = ' + inttostr(index);
       if path.filter <> nil then
-        raise EFHIRException.create('Not handled yet');
+        raise EFHIRException.Create('Not handled yet');
      //   + ' and ' + n + '.SpaceKey = (Select SpaceKey from Spaces where Space = ''' + sqlwrapstring(parts[0]) + ''')'
     // result := result +'  and ' + n + '.target in ()' + j + ')';
       result := result + ' and '+n+'.target in (select ResourceKey from IndexEntries where Flag <> 2 and ('+BuildFilterParameter(filter, path.Next, parent, issuer, FIndexes.GetTargetsByName(types, path.name))+')))'+j;
@@ -1349,14 +1418,14 @@ begin
         result := 'not (ResourceKey in (select ResourceKey from IndexEntries as '+n+' where Flag <> 2 and '+n+'.IndexKey = '+inttostr(index)+j+'))';
     end
     else case stype of
-      sptNull: raise EFHIRException.create('The search type could not be determined for '+path.Name);
+      sptNull: raise EFHIRException.Create('The search type could not be determined for '+path.Name);
       sptNumber:    result := BuildParameterNumber(index, n, j, path.Name, filter.Operation, filter.Value);
       sptString :   result := BuildParameterString(index, n, j, path.Name, filter.Operation, filter.Value);
       sptDate:      result := buildParameterDate(index, n, j, path.Name, filter.Operation, filter.Value);
       sptToken:     result := buildParameterToken(index, n, j, path.Name, filter.Operation, filter.Value);
       sptReference: result := buildParameterReference(index, n, j, path.Name, filter.Operation, filter.Value);
-      sptComposite: raise EFHIRException.create('Composite indexes cannot the direct target of an operation criteria (except for operation "pr")');
-      sptQuantity:  raise EFHIRException.create('Quantity searching is not handled yet');
+      sptComposite: raise EFHIRException.Create('Composite indexes cannot the direct target of an operation criteria (except for operation "pr")');
+      sptQuantity:  raise EFHIRException.Create('Quantity searching is not handled yet');
     end;
   end;
 end;
@@ -1393,7 +1462,7 @@ begin
     end;
     if (tz <> '') then
      if (tz.Length <> 6) or (tz[4] <> ':') or not StringIsCardinal16(copy(tz, 2, 2)) or not StringIsCardinal16(copy(tz, 5, 2)) then
-       raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
+       raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', langList), [s]));
 
     if (length(s) = 16) and (s[14] = ':') and StringIsCardinal16(copy(s, 12, 2)) and StringIsCardinal16(copy(s, 15, 2)) then
       ok := true
@@ -1404,25 +1473,26 @@ begin
       ok := (s[14] = ':') and (s[17] = ':') and (s[20] = '.') and StringisNumeric(copy(s, 21, 9));
   end;
   if not ok then
-    raise EFHIRException.create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', lang), [s]));
+    raise EFHIRException.Create(StringFormat(GetFhirMessage('MSG_DATE_FORMAT', langList), [s]));
 end;
 
-constructor TSearchProcessor.create(serverContext : TFslObject);
+constructor TSearchProcessor.Create(serverContext: TFslObject);
 begin
   Inherited Create(serverContext);
   FStrict := false;
-  FWarnings := TFslList<TFhirOperationOutcomeIssueW>.create;
+  FWarnings := TFslList<TFhirOperationOutcomeIssueW>.Create;
 end;
 
 destructor TSearchProcessor.Destroy;
 begin
-  FResConfig.Free;
-  FSessionCompartments.Free;
-  FCompartment.Free;
-  FWarnings.Free;
-  FConnection.Free;
-  FSession.Free;
-  FIndexes.Free;
+  FLangList.free;
+  FResConfig.free;
+  FSessionCompartments.free;
+  FCompartment.free;
+  FWarnings.free;
+  FConnection.free;
+  FSession.free;
+  FIndexes.free;
   inherited;
 end;
 

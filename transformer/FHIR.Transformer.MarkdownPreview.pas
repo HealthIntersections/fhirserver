@@ -93,7 +93,7 @@ begin
   try
     (browser.Document as IPersistStreamInit).Load(TStreamAdapter.Create(stream));
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 

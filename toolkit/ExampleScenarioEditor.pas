@@ -517,7 +517,7 @@ end;
 constructor TExampleScenarioEditorFrame.Create(owner: TComponent);
 begin
   inherited;
-  // flatItems := TFslList<TFhirQuestionnaireItem>.create;
+  // flatItems := TFslList<TFhirQuestionnaireItem>.Create;
 
   // show;
   // ReloadTreeview(tvStructure.Selected);
@@ -525,7 +525,7 @@ end;
 
 destructor TExampleScenarioEditorFrame.Destroy;
 begin
-  // flatItems.Free;
+  // flatItems.free;
   inherited;
 end;
 
@@ -881,7 +881,7 @@ begin
   // edit5.OnChange(edit5);
 
 
-  // button5.text:=
+  // button5.text := 
   // edit5.FhirProperty.value;
 
   Button5.text := tfhirexamplescenario(resource).nameElement.value;
@@ -956,8 +956,8 @@ begin
     TabControl2.tabindex := 2;
     UpdateActor.enabled := true;
     Edit3.text := tfhirexamplescenarioActor(obj).name;
-    // Edit3.FhirProperty:=tfhirProperty(TFHIRExampleScenarioActor(obj).name);
-    // edit3.FHIRProperty:= TFHIRExampleScenarioActor(obj).nameElement;
+    // Edit3.FhirProperty := tfhirProperty(TFHIRExampleScenarioActor(obj).name);
+    // edit3.FHIRProperty := TFHIRExampleScenarioActor(obj).nameElement;
     // edit3.load;
 
     ComboBox1.ItemIndex := integer(tfhirexamplescenarioActor(obj).type_);
@@ -1325,7 +1325,7 @@ begin
   if ComboBox5.ItemIndex <> -1 then
     (obj).receiver := ComboBox5.Items[ComboBox5.ItemIndex];
 
-  // obj.request.Free;
+  // obj.request.free;
   if ComboBox6.ItemIndex <> -1 then
   begin
     if obj.request = nil then

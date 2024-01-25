@@ -1,0 +1,279 @@
+object ServerWorkerFrame: TServerWorkerFrame
+  Left = 0
+  Height = 364
+  Top = 0
+  Width = 1177
+  ClientHeight = 364
+  ClientWidth = 1177
+  OnClick = FrameClick
+  TabOrder = 0
+  DesignLeft = 551
+  DesignTop = 38
+  object PageControl1: TPageControl
+    Left = 0
+    Height = 364
+    Top = 0
+    Width = 1177
+    ActivePage = TabSheet2
+    Align = alClient
+    TabIndex = 1
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Metadata'
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Search'
+      ClientHeight = 334
+      ClientWidth = 1171
+      object Panel2: TPanel
+        Left = 0
+        Height = 32
+        Top = 0
+        Width = 1171
+        Align = alTop
+        ClientHeight = 32
+        ClientWidth = 1171
+        TabOrder = 0
+        object Label1: TLabel
+          Left = 8
+          Height = 16
+          Top = 6
+          Width = 66
+          Caption = 'Search for:'
+          ParentColor = False
+        end
+        object cbxSearchType: TComboBox
+          Left = 70
+          Height = 20
+          Top = 4
+          Width = 1018
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 26
+          ItemIndex = 0
+          Items.Strings = (
+            'Patients'
+          )
+          Style = csDropDownList
+          TabOrder = 0
+          Text = 'Patients'
+        end
+        object btnSearch: TButton
+          Left = 1092
+          Height = 26
+          Top = 2
+          Width = 75
+          Anchors = [akTop, akRight]
+          Caption = 'Search'
+          OnClick = btnSearchClick
+          TabOrder = 1
+        end
+      end
+      object PageControl2: TPageControl
+        Left = 0
+        Height = 302
+        Top = 32
+        Width = 1171
+        ActivePage = tbSearch
+        Align = alClient
+        ShowTabs = False
+        TabIndex = 1
+        TabOrder = 1
+        object TabSheet4: TTabSheet
+          Caption = 'TabSheet4'
+        end
+        object tbSearch: TTabSheet
+          Caption = 'Search'
+          ClientHeight = 302
+          ClientWidth = 1171
+          OnResize = tbSearchResize
+          object Panel1: TPanel
+            Left = 0
+            Height = 42
+            Top = 0
+            Width = 1171
+            Align = alTop
+            ClientHeight = 42
+            ClientWidth = 1171
+            TabOrder = 0
+            object Label2: TLabel
+              Left = 10
+              Height = 16
+              Top = 10
+              Width = 39
+              Caption = 'Name:'
+              ParentColor = False
+            end
+            object edtName: TEdit
+              Left = 54
+              Height = 21
+              Top = 8
+              Width = 184
+              OnChange = edtNameChange
+              TabOrder = 0
+            end
+            object Label3: TLabel
+              Left = 260
+              Height = 16
+              Top = 10
+              Width = 48
+              Caption = 'Gender:'
+              ParentColor = False
+            end
+            object cbxGender: TComboBox
+              Left = 306
+              Height = 20
+              Top = 8
+              Width = 76
+              ItemHeight = 26
+              ItemIndex = 0
+              Items.Strings = (
+                ''
+                'Male'
+                'Female'
+              )
+              OnChange = cbxGenderChange
+              Style = csDropDownList
+              TabOrder = 1
+            end
+            object Label4: TLabel
+              Left = 413
+              Height = 16
+              Top = 12
+              Width = 29
+              Caption = 'DoB:'
+              ParentColor = False
+            end
+            object edtDob: TEdit
+              Left = 448
+              Height = 21
+              Top = 8
+              Width = 80
+              OnChange = edtDobChange
+              TabOrder = 2
+              TextHint = 'YYYY-MM(-DD)'
+            end
+            object Label5: TLabel
+              Left = 542
+              Height = 16
+              Top = 12
+              Width = 15
+              Caption = 'Id:'
+              ParentColor = False
+            end
+            object edtId: TEdit
+              Left = 566
+              Height = 21
+              Top = 8
+              Width = 80
+              OnChange = edtIdChange
+              TabOrder = 3
+            end
+          end
+          object lvPatients: TListView
+            Left = 0
+            Height = 182
+            Top = 92
+            Width = 1171
+            Align = alClient
+            Columns = <            
+              item
+                Caption = 'ID'
+                Width = 70
+              end            
+              item
+                Caption = 'Active'
+                Width = 80
+              end            
+              item
+                Caption = 'Name'
+                Width = 120
+              end            
+              item
+                Caption = 'Gender'
+                Width = 70
+              end            
+              item
+                Caption = 'DoB'
+                Width = 80
+              end            
+              item
+                Caption = 'Identifier'
+                Width = 150
+              end            
+              item
+                Caption = 'Contacts'
+                Width = 200
+              end>
+            ReadOnly = True
+            RowSelect = True
+            TabOrder = 1
+            ViewStyle = vsReport
+          end
+          object pnlSearchOutcome: TPanel
+            Left = 0
+            Height = 28
+            Top = 274
+            Width = 1171
+            Align = alBottom
+            Alignment = taLeftJustify
+            Caption = '  No search performed'
+            ClientHeight = 28
+            ClientWidth = 1171
+            TabOrder = 2
+            object cbAll: TCheckBox
+              Left = 960
+              Height = 18
+              Top = 4
+              Width = 183
+              Anchors = [akTop, akRight]
+              Caption = 'Iterate and load all matches'
+              TabOrder = 0
+            end
+          end
+          object pnlOutcomes: TPanel
+            Left = 0
+            Height = 50
+            Top = 42
+            Width = 1171
+            Align = alTop
+            BevelWidth = 2
+            ClientHeight = 50
+            ClientWidth = 1171
+            TabOrder = 3
+            object htOutcomes: THtmlViewer
+              Left = 2
+              Height = 46
+              Top = 2
+              Width = 1167
+              BorderStyle = htFocused
+              HistoryMaxCount = 0
+              NoSelect = False
+              PrintMarginBottom = 2
+              PrintMarginLeft = 2
+              PrintMarginRight = 2
+              PrintMarginTop = 2
+              PrintScale = 1
+              ScrollBars = ssVertical
+              Align = alClient
+              TabOrder = 0
+            end
+          end
+        end
+      end
+    end
+    object TabSheet3: TTabSheet
+      Caption = 'Content Management'
+      ClientHeight = 334
+      ClientWidth = 1171
+      object Button1: TButton
+        Left = 8
+        Height = 25
+        Top = 8
+        Width = 104
+        Caption = 'Upload Package'
+        OnClick = Button1Click
+        TabOrder = 0
+      end
+    end
+  end
+end

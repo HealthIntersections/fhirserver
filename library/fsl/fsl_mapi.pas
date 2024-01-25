@@ -1,7 +1,7 @@
 Unit fsl_mapi;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -63,7 +63,7 @@ Type
 
       Procedure Check(Const sMethod : String; iError : Cardinal);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -172,11 +172,11 @@ Destructor TFslMAPI.Destroy;
 Begin
   Logoff;
 
-  FTos.Free;
-  FCcs.Free;
-  FBccs.Free;
-  FBody.Free;
-  FAttachments.Free;
+  FTos.free;
+  FCcs.free;
+  FBccs.free;
+  FBody.free;
+  FAttachments.free;
 
   Inherited;
 End;
@@ -299,14 +299,14 @@ Begin
 End;
 
 
-function TFslMAPI.sizeInBytesV : cardinal;
+function TFslMAPI.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBody.sizeInBytes);
-  inc(result, FTos.sizeInBytes);
-  inc(result, FCcs.sizeInBytes);
-  inc(result, FBccs.sizeInBytes);
-  inc(result, FAttachments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBody.sizeInBytes(magic));
+  inc(result, FTos.sizeInBytes(magic));
+  inc(result, FCcs.sizeInBytes(magic));
+  inc(result, FBccs.sizeInBytes(magic));
+  inc(result, FAttachments.sizeInBytes(magic));
 end;
 
 End.

@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -11,30 +10,78 @@
         <CompatibilityMode Value="True"/>
       </Flags>
       <SessionStorage Value="InProjectDir"/>
-      <Title Value="fhirconsole"/>
+      <Title Value="FHIRConsole"/>
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <Icon Value="0"/>
     </General>
-    <MacroValues Count="1">
-      <Macro3 Name="LCLWidgetType" Value="win32"/>
-    </MacroValues>
-    <BuildModes Count="6">
-      <Item1 Name="win32" Default="True"/>
-      <Item2 Name="win64">
+    <VersionInfo>
+      <MajorVersionNr Value="3"/>
+      <RevisionNr Value="3"/>
+      <MinorVersionNr Value="0"/>
+      <Attributes pvaDebug="False"/>
+    </VersionInfo>
+    <BuildModes Count="8">
+      <Item1 Name="default" Default="True"/>
+      <Item2 Name="win32">
         <MacroValues Count="1">
-          <Macro3 Name="LCLWidgetType" Value="win32"/>
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
         </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\fhirconsole.exe"/>
+            <Filename Value="..\..\exec\64\FHIRConsole.exe"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx;..\dependencies\FMM"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
+          </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
+          <CodeGeneration>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="i386"/>
+            <TargetOS Value="win32"/>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+        </CompilerOptions>
+      </Item2>
+      <Item3 Name="win64">
+        <MacroValues Count="1">
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\FHIRConsole.exe"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx;..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;..\library\fcomp\tests;modules;tests;..\dependencies\FMM"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -66,8 +113,8 @@
             </Options>
           </Linking>
         </CompilerOptions>
-      </Item2>
-      <Item3 Name="linux">
+      </Item3>
+      <Item4 Name="linux">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -75,12 +122,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\fhirconsole"/>
+            <Filename Value="../exec/64/FHIRConsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="..\library\fdb;admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);../library"/>
+            <Libraries Value="/usr/local/lib64"/>
+            <OtherUnitFiles Value="admin;tx;../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+            <UnitOutputDirectory Value="lib/console/$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -91,14 +139,18 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
+              <LinkerOptions Value="-R ./"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
             </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--verbose -k--library-path=/tmp/openssl/lib"/>
+          </Other>
         </CompilerOptions>
-      </Item3>
-      <Item4 Name="osx">
+      </Item4>
+      <Item5 Name="osx">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="cocoa"/>
         </MacroValues>
@@ -106,12 +158,13 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\exec\64\fhirconsole"/>
+            <Filename Value="..\exec\64\FHIRConsole"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <OtherUnitFiles Value="admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -123,49 +176,68 @@
             </Debugging>
           </Linking>
         </CompilerOptions>
-      </Item4>
-      <Item5 Name="win32-release">
+      </Item5>
+      <Item6 Name="osx-m1">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="cocoa"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
+            <Filename Value="..\exec\64\FHIRConsole"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx;..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;..\library\fcomp\tests;modules;tests"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
+          <Parsing>
+            <SyntaxOptions>
+              <IncludeAssertionCode Value="True"/>
+            </SyntaxOptions>
+          </Parsing>
           <CodeGeneration>
-            <TargetCPU Value="i386"/>
-            <TargetOS Value="win32"/>
+            <Checks>
+              <IOChecks Value="True"/>
+              <RangeChecks Value="True"/>
+              <OverflowChecks Value="True"/>
+              <StackChecks Value="True"/>
+            </Checks>
+            <VerifyObjMethodCallValidity Value="True"/>
+            <TargetCPU Value="aarch64"/>
+            <TargetOS Value="darwin"/>
             <Optimizations>
-              <OptimizationLevel Value="3"/>
+              <OptimizationLevel Value="0"/>
             </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsDwarf2Set"/>
+              <UseExternalDbgSyms Value="True"/>
             </Debugging>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
           </Linking>
+          <Other>
+            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
+          </Other>
         </CompilerOptions>
-      </Item5>
-      <Item6 Name="win64-release">
+      </Item6>
+      <Item7 Name="win64-release">
+        <MacroValues Count="1">
+          <Macro4 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\exec\64\fhirconsole.exe"/>
+            <Filename Value="..\exec\64\FHIRConsole.exe"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\..\library"/>
-            <OtherUnitFiles Value="..\..\dependencies\Indy10\Protocols;..\..\dependencies\Indy10\System;..\..\dependencies\Indy10\Core;..\..\library\support;..\..\dependencies\FMMAVX;..\library\base;..\library\ucum;..\library\npm;..\library\client;..\library\smart;..\library\fdb;admin"/>
-            <UnitOutputDirectory Value="lib\$(BuildMode)"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="admin;tx;..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;..\library\fcomp\tests;modules;tests;..\dependencies\FMM"/>
+            <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
             <TargetCPU Value="x86_64"/>
@@ -176,6 +248,48 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowWarn Value="False"/>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <WriteFPCLogo Value="False"/>
+          </Other>
+        </CompilerOptions>
+      </Item7>
+      <Item8 Name="linux-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="../exec/64/FHIRConsole"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);../library"/>
+            <Libraries Value="/usr/local/lib64"/>
+            <OtherUnitFiles Value="admin;tx;../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
+            <UnitOutputDirectory Value="lib/console/$(BuildMode)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="linux"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
@@ -185,11 +299,12 @@
             </Options>
           </Linking>
         </CompilerOptions>
-      </Item6>
-      <SharedMatrixOptions Count="3">
+      </Item8>
+      <SharedMatrixOptions Count="4">
         <Item1 ID="348441424249" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item2 ID="601568390877" Modes="osx" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
-        <Item3 ID="116515061841" Modes="win32,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="601568390877" Modes="osx,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
+        <Item3 ID="986226565548" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
+        <Item4 ID="116515061841" Modes="win32,win64,win64-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -199,30 +314,63 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="7">
+    <RequiredPackages Count="18">
       <Item1>
-        <PackageName Value="fhir_fsl"/>
+        <PackageName Value="Pdfium"/>
       </Item1>
       <Item2>
-        <PackageName Value="fhir"/>
+        <PackageName Value="markdowntests"/>
       </Item2>
       <Item3>
-        <PackageName Value="fhir_fui"/>
+        <PackageName Value="idetester"/>
       </Item3>
       <Item4>
-        <PackageName Value="MarkdownEngine"/>
+        <PackageName Value="fhir4b"/>
       </Item4>
       <Item5>
-        <PackageName Value="DateTimeCtrls"/>
+        <PackageName Value="fhir5"/>
       </Item5>
       <Item6>
-        <PackageName Value="PascalTZ"/>
+        <PackageName Value="fhir3"/>
       </Item6>
       <Item7>
-        <PackageName Value="LCL"/>
+        <PackageName Value="fhir2"/>
       </Item7>
+      <Item8>
+        <PackageName Value="fhir_xver"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="fhir4"/>
+      </Item9>
+      <Item10>
+        <PackageName Value="fcomp"/>
+      </Item10>
+      <Item11>
+        <PackageName Value="laz.virtualtreeview_package"/>
+      </Item11>
+      <Item12>
+        <PackageName Value="LazControls"/>
+      </Item12>
+      <Item13>
+        <PackageName Value="fhir_fsl"/>
+      </Item13>
+      <Item14>
+        <PackageName Value="fhir"/>
+      </Item14>
+      <Item15>
+        <PackageName Value="fhir_fui"/>
+      </Item15>
+      <Item16>
+        <PackageName Value="MarkdownEngine"/>
+      </Item16>
+      <Item17>
+        <PackageName Value="DateTimeCtrls"/>
+      </Item17>
+      <Item18>
+        <PackageName Value="LCL"/>
+      </Item18>
     </RequiredPackages>
-    <Units Count="12">
+    <Units Count="14">
       <Unit0>
         <Filename Value="fhirconsole.pas"/>
         <IsPartOfProject Value="True"/>
@@ -293,17 +441,32 @@
         <Filename Value="installer.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit11>
+      <Unit12>
+        <Filename Value="admin\frm_about.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConsoleAboutForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit12>
+      <Unit13>
+        <Filename Value="test_form.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TestForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit13>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\..\exec\64\fhirconsole.exe"/>
+      <Filename Value="..\exec\64\FHIRConsole.exe"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);..\library"/>
-      <OtherUnitFiles Value="admin"/>
+      <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+      <OtherUnitFiles Value="admin;tx;..\dependencies\FMM"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
     <Parsing>
@@ -319,8 +482,6 @@
         <StackChecks Value="True"/>
       </Checks>
       <VerifyObjMethodCallValidity Value="True"/>
-      <TargetCPU Value="i386"/>
-      <TargetOS Value="win32"/>
     </CodeGeneration>
     <Linking>
       <Debugging>
@@ -334,7 +495,7 @@
     </Linking>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="3">
+    <Exceptions Count="6">
       <Item1>
         <Name Value="EIdSocketError"/>
       </Item1>
@@ -344,6 +505,15 @@
       <Item3>
         <Name Value="ELibraryException"/>
       </Item3>
+      <Item4>
+        <Name Value="&lt;Unknown Class&gt;"/>
+      </Item4>
+      <Item5>
+        <Name Value="0000000eEIdSocketError"/>
+      </Item5>
+      <Item6>
+        <Name Value="00000017EIdConnClosedGracefully\U00000014EIdSocketHandleError"/>
+      </Item6>
     </Exceptions>
   </Debugging>
 </CONFIG>

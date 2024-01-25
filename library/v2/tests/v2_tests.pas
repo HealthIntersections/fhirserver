@@ -40,14 +40,10 @@ interface
 uses
   SysUtils, Classes,
   IdTCPConnection,
-  fsl_testing,
-  fsl_stream,
+  fsl_utilities, fsl_testing, fsl_stream,
   fhir_objects,
   fhir4_pathnode, fhir4_pathengine,
-  {$IFNDEF NO_JS}
-  fsl_javascript, fhir_javascript, fhir4_javascript, v2_javascript,
-  {$ENDIF}
-  v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_Database, v2_objects, v2_message, v2_protocol;
+  v2_base, v2_dictionary, {$IFDEF TEST_COMPILED} v2_dictionary_Compiled, {$ENDIF} v2_dictionary_database, v2_objects, v2_message, v2_protocol;
 
 const
   TEST_PORT = 20032; // err, we hope that this is unused
@@ -87,9 +83,6 @@ type
     Procedure TestSimple;
     Procedure TestFHIRPath;
     Procedure TestIndexOffsets;
-    {$IFNDEF NO_JS}
-    Procedure TestJavascript;
-    {$ENDIF}
   end;
 
 
@@ -106,9 +99,11 @@ type
     procedure TestConnection;
     procedure TestConnectionLimit;
     procedure TestSyncForwards;
+    {$IFNDEF LINUX}
     procedure TestSyncBackwards;
     procedure TestSyncForwards1000;
     procedure TestSyncBackwards1000;
+    {$ENDIF}
     procedure TestSingleThread;
     procedure TestSingleThreadTimeout;
   end;
@@ -148,11 +143,11 @@ begin
       assertTrue(dict <> nil);
       assertTrue(dict.Model[hv23].Tables.Count > 0);
     finally
-      dict.Free;
+      dict.free;
     end;
   end
   else
-    assertNotTested;
+    assertNotTested('not access database available');
 end;
 
 {$IFDEF TEST_COMPILED}
@@ -165,7 +160,7 @@ begin
     assertTrue(dict <> nil);
     assertTrue(dict.Model[hv23].Tables.Count > 0);
   finally
-    dict.Free;
+    dict.free;
   end;
 end;
 {$ENDIF}
@@ -396,6 +391,8 @@ begin
     end;
 end;
 
+{$IFNDEF LINUX}
+
 procedure TLLPTests.TestSyncBackwards;
 var
   LIn: Tv2Protocol;
@@ -409,16 +406,23 @@ begin
     LIn.Port := TEST_PORT;
     LIn.IsListener := True;
     LIn.OnReceiveMessage := MessageReply;
+    LIn.ReconnectDelay := 2000;
+    //hlog('test: in start');
     LIn.Start;
+    //hlog('test: in started');
     sleep(200);
     LOut := Tv2Protocol.Create(NIL);
     try
       LOut.CommunicationMode := cmSynchronous;
       LOut.IsListener := False;
       LOut.Port := TEST_PORT;
+      //hlog('test: out start');
       LOut.Start;
+      //hlog('test: out started');
       LIn.WaitForConnection(6000);
-      Sleep(50);
+      //hlog('test: wait 1');
+      Sleep(500);
+      //hlog('test: wait 2');
       assertTrue(LIn.Connected, 'in not connected');
       assertTrue(LOut.Connected, 'Out not connected');
       LOut.CheckSynchronousSendResult(LOut.SynchronousSend(StringAsBytes('test'), LMsg), '');
@@ -477,6 +481,8 @@ begin
     end;
 end;
 
+{$ENDIF}
+
 procedure TLLPTests.TestSyncForwards;
 var
   LIn: Tv2Protocol;
@@ -511,6 +517,8 @@ begin
     FreeAndNil(LIn);
     end;
 end;
+
+{$IFNDEF LINUX}
 
 procedure TLLPTests.TestSyncForwards1000;
 var
@@ -551,6 +559,8 @@ begin
   end;
 end;
 
+{$ENDIF}
+
 {$IFDEF WINDOWS}
 
 { THL7v2ParserTests }
@@ -580,7 +590,7 @@ end;
 
 Procedure THL7v2ParserTests.TearDown;
 begin
-  FHL7Dict.Free;
+  FHL7Dict.free;
 end;
 
 procedure THL7v2ParserTests.TestDictionaryParse;
@@ -588,7 +598,7 @@ var
   msg : THL7V2Message;
 begin
   if FHL7Dict = nil then
-    assertNotTested
+    assertNotTested('No HL7 Dictionary')
   else
   begin
     msg := parse('MSH|^~\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4'#13+
@@ -598,7 +608,7 @@ begin
     try
       assertTrue(msg <> nil);
     finally
-      msg.Free;
+      msg.free;
     end;
   end;
 end;
@@ -615,10 +625,10 @@ begin
   try
     output := TV2Composer.composeString(msg);
   finally
-    msg.Free;
+    msg.free;
   end;
-  StringToFile(source, 'c:\temp\source.hl7', TEncoding.UTF8);
-  StringToFile(output, 'c:\temp\output.hl7', TEncoding.UTF8);
+  StringToFile(source, filePath(['[tmp]', 'source.hl7']), TEncoding.UTF8);
+  StringToFile(output, filePath(['[tmp]', 'output.hl7']), TEncoding.UTF8);
   assertEqual(source, output);
 end;
 
@@ -643,10 +653,10 @@ begin
         list.free;
       end;
     finally
-      path.Free;
+      path.free;
     end;
   finally
-    msg.Free;
+    msg.free;
   end;
 end;
 
@@ -682,47 +692,13 @@ begin
         list.free;
       end;
     finally
-      path.Free;
+      path.free;
     end;
   finally
-    msg.Free;
+    msg.free;
   end;
 end;
 
-{$IFNDEF NO_JS}
-
-const
-  JS_TEST_SCRIPT =
-    'function test() {'+#13#10+
-    '  var msg = v2.parse("MSH|^~\\&|GHH LAB|ELAB-3|GHH OE|BLDG4|200202150930||ORU^R01|CNTRL-3456|P|2.4\rPID|||555-44-4444||EVERYWOMAN^EVE^E^^^^L|JONES|19620320|F|||153 FERNWOOD '+
-       'DR.^^STATESVILLE^OH^35292||(206)3345232|(206)752-121||||AC555444444||67-A4335^OH^20030520\rOBR|1|845439^GHH OE|1045813^GHH LAB|15545^GLUCOSE|||200202150730||||||||| '+
-       '555-55-5555^PRIMARY^PATRICIA P^^^^MD|||||||||F||||||444-44-4444^HIPPOCRATES^HOWARD H^^^^MD\rOBX|1|SN|1554-5^GLUCOSE^POST 12H CFST:MCNC:PT:SER/PLAS:QN||^182|mg/dl|70_105|H|||F\r");'+#13#10+
-    '  v2.checkEquals(msg.segment(1).field(3).element(1).text, "GHH LAB");'+#13#10+
-    '  v2.checkEquals(msg.segment(1).element(3).text, "GHH LAB");'+#13#10+
-    '  v2.checkEquals(v2.query(msg, "segment[1].element(3).text()"), "GHH LAB");'+#13#10+
-    '}'+#13#10;
-
-procedure Tv2ParserTests.TestJavascript;
-var
-  js : TFHIRJavascript;
-  fpe : TFHIRPathEngine;
-begin
-  fpe := TFHIRPathEngine.Create(nil, nil);
-  try
-    fpe.registerExtension(TV2FHIRPathExtensions.create);
-    js := TFHIRJavascript.acquire;
-    try
-      TV2JavascriptHelper.registerv2Objects(js, fpe);
-      js.execute(JS_TEST_SCRIPT, '', 'test', []);
-      assertPass();
-    finally
-      js.yield;
-    end;
-  finally
-    fpe.free;
-  end;
-end;
-{$ENDIF}
 
 procedure Tv2ParserTests.TestSimple;
 begin

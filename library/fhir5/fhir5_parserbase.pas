@@ -1,4 +1,4 @@
-unit fhir5_parserBase;
+unit fhir5_parserbase;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -135,7 +136,8 @@ end;
 
 function TFHIRXmlParserBase5.ParseResource(element: TMXmlElement; path: String): TFhirResource;
 begin
-  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  result := nil;
+  raise EFHIRException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRXmlParserBase5.ParseResourceV(element: TMXmlElement; path: String): TFhirResourceV;
@@ -145,7 +147,8 @@ end;
 
 function TFHIRXmlParserBase5.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRDataTypeClass): TFHIRDataType;
 begin
-  raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+  result := nil;
+  raise EFHIRException.Create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 
@@ -156,7 +159,7 @@ end;
 
 procedure TFHIRXmlComposerBase5.ComposeResource(xml: TXmlBuilder; resource: TFhirResource);
 begin
-  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRXmlComposerBase5.ComposeResourceV(xml: TXmlBuilder; resource: TFhirResourceV);
@@ -169,12 +172,14 @@ end;
 
 function TFHIRJsonParserBase5.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRDataTypeClass): TFHIRDataType;
 begin
-  raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+  result := nil;
+  raise EFHIRException.Create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 function TFHIRJsonParserBase5.ParseResource(jsn: TJsonObject): TFhirResource;
 begin
-  raise EFHIRException.create('don''t use TFHIRJsonParserBase5 directly - use TFHIRXmlComposer');
+  result := nil;
+  raise EFHIRException.Create('don''t use TFHIRJsonParserBase5 directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRJsonParserBase5.ParseResourceV(jsn: TJsonObject): TFhirResourceV;
@@ -201,7 +206,7 @@ end;
 
 procedure TFHIRJsonComposerBase5.ComposeResource(json: TJSONWriter; resource: TFhirResource);
 begin
-  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRJsonComposerBase5.ComposeResourceV(json: TJSONWriter; resource: TFhirResourceV);
@@ -213,7 +218,8 @@ end;
 
 function TFHIRTurtleParserBase5.ParseDataType(obj: TTurtleComplex; name: String; type_: TFHIRDataTypeClass): TFHIRDataType;
 begin
-  raise EFHIRException.create('don''t use TFHIRTurtleParserBase5 directly - use TFHIRXmlParser');
+  result := nil;
+  raise EFHIRException.Create('don''t use TFHIRTurtleParserBase5 directly - use TFHIRXmlParser');
 end;
 
 function TFHIRTurtleParserBase5.ParseInnerResource(obj: TTurtleObject): TFHIRResource;
@@ -230,17 +236,18 @@ begin
     begin
       c := FDoc.getObject(TTurtleURL(obj).uri);
       if c = nil then
-        raise ERdfException.create('Unable to resolve internal resource reference in RDF - to '+TTurtleURL(obj).uri)
+        raise ERdfException.Create('Unable to resolve internal resource reference in RDF - to '+TTurtleURL(obj).uri)
     end
     else
-      raise ERdfException.create('Unable to process internal resource reference in RDF');
+      raise ERdfException.Create('Unable to process internal resource reference in RDF');
     result := ParseResourceV(c) as TFHIRResource;
   end;
 end;
 
 function TFHIRTurtleParserBase5.ParseResource(obj: TTurtleComplex): TFhirResource;
 begin
-  raise ERdfException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  result := nil;
+  raise ERdfException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRTurtleParserBase5.ParseResourceV(obj: TTurtleComplex): TFhirResourceV;
@@ -252,7 +259,7 @@ end;
 
 procedure TFHIRTurtleComposerBase5.ComposeResource(parent: TTurtleComplex; resource: TFhirResource);
 begin
-  raise ERdfException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise ERdfException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRTurtleComposerBase5.ComposeResourceV(parent: TTurtleComplex; resource: TFhirResourceV);

@@ -35,7 +35,7 @@ interface
 
 Uses
   SysUtils, Classes, {$IFDEF FPC} fdb_odbc_fpc {$ELSE} fdb_odbc_headers {$ENDIF},
-  fsl_utilities, fsl_fpc,
+  fsl_base, fsl_utilities, fsl_fpc,
   fdb_dialects;
 
 const
@@ -69,7 +69,7 @@ type
 {$ENDIF}
 
 Type
-  EODBCExpress = Class(Exception);
+  EODBCExpress = Class(EFslException);
 
   SQLINTEGERPtr=^SQLINTEGER;
   SQLUSMALLINTPtr=^SQLUSMALLINT;
@@ -177,14 +177,6 @@ Type
   TOdbcConnection = Class;
   TOdbcStatement = Class;
 
-  { TErrorPtr }
-  TErrorPtr = ^TErrorRec;
-  TErrorRec = Record
-    FState: String;
-    FNative: SQLINTEGER;
-    FMessage: String;
-  End;
-
   TManagedMemoryStream = class (TMemoryStream)
   public
     property Capacity;
@@ -200,36 +192,19 @@ Type
     { Private declarations }
     FOwner: TODBCObject;
     FRetCode: SQLRETURN;
-    FCursor: Integer;
-    FErrors: TList;
-
-    Function GetState: String;
-    Function GetNative: SQLINTEGER;
-    Function GetMessage: String;
-    Procedure SetMessage(AMessage: String);
   Public
     { Public declarations }
-    Property Owner: TODBCObject Read FOwner;
-    Property RetCode: SQLRETURN Read FRetCode;
-    Property State: String Read GetState;
-    Property Native: SQLINTEGER Read GetNative;
-    Property Message: String Read GetMessage Write SetMessage;
-
     constructor Create(AOwner: TODBCObject;
                        ARetCode: SQLRETURN;
-                       AErrors: TList);
-    destructor Destroy; Override;
-    Procedure First;
-    Procedure Last;
-    Function Next: Boolean;
-    Function Prev: Boolean;
+                       Message : String);
+    property RetCode : SQLRETURN read FRetCode;
   End;
 
   { TODBCErrorHandler }
 
   TODBCErrorHandler = Class
   Private
-    Function Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): TList;
+    Function Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): string;
   Public
     { Public declarations }
     Procedure RaiseError(AOwner: TODBCObject; ARetCode: SQLRETURN);
@@ -2078,9 +2053,9 @@ Function LeadingZeros(Num: Integer;
 Var
   i: Integer;
 Begin
-  Result:= IntToStr(Num);
-  For i:= Length(Result) To Zeros Do
-    Result:= '0'+Result;
+  Result := IntToStr(Num);
+  For i := Length(Result) To Zeros Do
+    Result := '0'+Result;
 End;
 
 Function IndexOf(S: String;
@@ -2088,13 +2063,13 @@ Function IndexOf(S: String;
 Var
   i: Integer;
 Begin
-  S:= UpperCase(S);
+  S := UpperCase(S);
 
-  Result:= -1;
-  For i:= 0 To List.Count-1 Do
+  Result := -1;
+  For i := 0 To List.Count-1 Do
     If S = UpperCase(List[i]) Then
     Begin
-      Result:= i;
+      Result := i;
       Break;
     End;
 End;
@@ -2110,24 +2085,24 @@ Begin
     Val(S2, V2, ErrCode);
     If ErrCode = 0 Then
     Begin
-      Result:= V1 = V2;
+      Result := V1 = V2;
       Exit;
     End;
   End;
 
-  S1:= UpperCase(TrimRight(S1));
-  S2:= UpperCase(TrimRight(S2));
-  Result:= S1 = S2;
+  S1 := UpperCase(TrimRight(S1));
+  S2 := UpperCase(TrimRight(S2));
+  Result := S1 = S2;
 End;
 
 Procedure InsertNulls(Var S: String);
 Var
   i, Count: Integer;
 Begin
-  Count:= Length(S);
-  For i:= 1 To Count Do
+  Count := Length(S);
+  For i := 1 To Count Do
     If S[i] = #1 Then
-      S[i]:= #0;
+      S[i] := #0;
 End;
 
 Function Quoted(S: String): String;
@@ -2135,30 +2110,30 @@ Begin
   If (Pos(' AS ', UpperCase(S)) > 0) Or  //already renamed
      (Pos('{FN ', UpperCase(S)) > 0) Or  //function call
      (Pos('"', S) > 0) Then              //already quoted
-    Result:= S
+    Result := S
   Else If (Pos(' ', S) > 0) Or   //spaced table name
           (Pos('$', S) > 0) Then  //for excel
-    Result:= '"'+S+'"'
+    Result := '"'+S+'"'
   Else
-    Result:= S;
+    Result := S;
 End;
 
 Function MemoryStreamToString(M: TManagedMemoryStream): String;
 Var
-  NewCapacity: {$IFDEF FPC} {$IFDEF CPU64} Int64 {$ELSE} Longint {$ENDIF} {$ELSE} LongInt {$ENDIF};
+  NewCapacity: {$IFDEF FPC} NativeInt {$ELSE} {$IFDEF VER350} NativeInt {$ELSE} LongInt {$ENDIF} {$ENDIF};
 Begin
   If (M.Size = 0) Or (M.Memory = Nil) Then
-    Result:= ''
+    Result := ''
   Else
   Begin
     If M.Capacity = M.Size Then
     Begin
-      NewCapacity:= M.Size+1;
+      NewCapacity := M.Size+1;
       M.Realloc(NewCapacity);
     End;
-    pchar(M.Memory)[M.Size]:= #0;
+    pchar(M.Memory)[M.Size] := #0;
     {$IFNDEF UNICODE}
-    Result:= StrPas(M.Memory);
+    Result := StrPas(M.Memory);
     {$ENDIF}
   End;
 End;
@@ -2169,13 +2144,13 @@ Var
   Loc: Integer;
 Begin
   Strings.Clear;
-  Loc:= Pos(Separator, S);
+  Loc := Pos(Separator, S);
   While Loc > 0 Do
   Begin
     Strings.Add(Copy(S, 1, Loc-1));
     Delete(S, 1, Loc);
 
-    Loc:= Pos(Separator, S);
+    Loc := Pos(Separator, S);
   End;
   Strings.Add(S);
 End;
@@ -2223,42 +2198,42 @@ Function PhysSize(CType: SQLSMALLINT): Word;
 Begin
   Case CType Of
     SQL_C_CHAR:
-      Result:= DefaultStringSize; // SizeOf(NullString);
+      Result := DefaultStringSize; // SizeOf(NullString);
 
     SQL_C_BINARY:
-      Result:= DefaultStringSize; // SizeOf(NullString);
+      Result := DefaultStringSize; // SizeOf(NullString);
 
     SQL_C_FLOAT:
-      Result:= SizeOf(Single);
+      Result := SizeOf(Single);
     SQL_C_DOUBLE:
-      Result:= SizeOf(Double);
+      Result := SizeOf(Double);
 
     SQL_C_BIT:
-      Result:= SizeOf(Byte);
+      Result := SizeOf(Byte);
     SQL_C_STINYINT:
-      Result:= SizeOf(ShortInt);
+      Result := SizeOf(ShortInt);
     SQL_C_UTINYINT:
-      Result:= SizeOf(Byte);
+      Result := SizeOf(Byte);
     SQL_C_SSHORT:
-      Result:= SizeOf(SmallInt);
+      Result := SizeOf(SmallInt);
     SQL_C_USHORT:
-      Result:= SizeOf(Word);
+      Result := SizeOf(Word);
     SQL_C_SLONG:
-      Result:= SizeOf(NativeInt);
+      Result := SizeOf(NativeInt);
     SQL_C_ULONG:
-      Result:= SizeOf(NativeUInt);
+      Result := SizeOf(NativeUInt);
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
-      Result:= SizeOf(Int64);
+      Result := SizeOf(Int64);
 
     SQL_C_TYPE_DATE:
-      Result:= SizeOf(TDate);
+      Result := SizeOf(TDate);
     SQL_C_TYPE_TIME:
-      Result:= SizeOf(TTime);
+      Result := SizeOf(TTime);
     SQL_C_TYPE_TIMESTAMP:
-      Result:= SizeOf(TTimeStamp);
+      Result := SizeOf(TTimeStamp);
     Else
-      Result:= 0;
+      Result := 0;
   End;
 End;
 
@@ -2268,40 +2243,40 @@ Begin
     SQL_CHAR,
     SQL_VARCHAR,
     SQL_LONGVARCHAR:
-      Result:= SQL_C_CHAR;
+      Result := SQL_C_CHAR;
 
     SQL_BINARY,
     SQL_VARBINARY,
     SQL_LONGVARBINARY:
-      Result:= SQL_C_BINARY;
+      Result := SQL_C_BINARY;
 
     SQL_REAL:
-      Result:= SQL_C_FLOAT;
+      Result := SQL_C_FLOAT;
     SQL_DOUBLE,
     SQL_FLOAT,
     SQL_DECIMAL,
     SQL_NUMERIC:
-      Result:= SQL_C_DOUBLE;
+      Result := SQL_C_DOUBLE;
 
     SQL_BIT:
-      Result:= SQL_C_BIT;
+      Result := SQL_C_BIT;
     SQL_TINYINT:
-      Result:= SQL_C_STINYINT;
+      Result := SQL_C_STINYINT;
     SQL_SMALLINT:
-      Result:= SQL_C_SSHORT;
+      Result := SQL_C_SSHORT;
     SQL_INTEGER:
-      Result:= SQL_C_SLONG;
+      Result := SQL_C_SLONG;
     SQL_BIGINT:
-      Result:= SQL_C_SBIGINT;
+      Result := SQL_C_SBIGINT;
 
     SQL_TYPE_DATE:
-      Result:= SQL_C_TYPE_DATE;
+      Result := SQL_C_TYPE_DATE;
     SQL_TYPE_TIME:
-      Result:= SQL_C_TYPE_TIME;
+      Result := SQL_C_TYPE_TIME;
     SQL_TYPE_TIMESTAMP:
-      Result:= SQL_C_TYPE_TIMESTAMP;
+      Result := SQL_C_TYPE_TIMESTAMP;
     Else
-      Result:= SQL_C_DEFAULT;
+      Result := SQL_C_DEFAULT;
   End;
 End;
 
@@ -2309,42 +2284,42 @@ Function ColTypeToSqlType(ColType: SQLSMALLINT): SQLSMALLINT;
 Begin
   Case ColType Of
     SQL_C_CHAR:
-      Result:= SQL_CHAR;
+      Result := SQL_CHAR;
 
     SQL_C_WCHAR:
-      Result:= SQL_WCHAR;
+      Result := SQL_WCHAR;
 
     SQL_C_BINARY:
-      Result:= SQL_BINARY;
+      Result := SQL_BINARY;
 
     SQL_C_FLOAT:
-      Result:= SQL_REAL;
+      Result := SQL_REAL;
     SQL_C_DOUBLE:
-      Result:= SQL_DOUBLE;
+      Result := SQL_DOUBLE;
 
     SQL_C_BIT:
-      Result:= SQL_BIT;
+      Result := SQL_BIT;
     SQL_C_STINYINT,
     SQL_C_UTINYINT:
-      Result:= SQL_TINYINT;
+      Result := SQL_TINYINT;
     SQL_C_SSHORT,
     SQL_C_USHORT:
-      Result:= SQL_SMALLINT;
+      Result := SQL_SMALLINT;
     SQL_C_SLONG,
     SQL_C_ULONG:
-      Result:= SQL_INTEGER;
+      Result := SQL_INTEGER;
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
-      Result:= SQL_BIGINT;
+      Result := SQL_BIGINT;
 
     SQL_C_TYPE_DATE:
-      Result:= SQL_TYPE_DATE;
+      Result := SQL_TYPE_DATE;
     SQL_C_TYPE_TIME:
-      Result:= SQL_TYPE_TIME;
+      Result := SQL_TYPE_TIME;
     SQL_C_TYPE_TIMESTAMP:
-      Result:= SQL_TYPE_TIMESTAMP;
+      Result := SQL_TYPE_TIMESTAMP;
     Else
-      Result:= SQL_DEFAULT;
+      Result := SQL_DEFAULT;
   End;
 End;
 
@@ -2355,77 +2330,77 @@ Function ToValue(SValue: String;
 Var
   Code: Integer;
 Begin
-  SValue:= TrimString(SValue, StringTrimming);
+  SValue := TrimString(SValue, StringTrimming);
 
   Case CType Of
     SQL_C_CHAR:
     Begin
       Move(PChar(SValue)^, CValue^, Length(SValue)+1);
-      Result:= True;
+      Result := True;
     End;
 
     SQL_C_BINARY:
     Begin
       Move(PChar(SValue)^, CValue^, Length(SValue));
-      Result:= True;
+      Result := True;
     End;
 
     SQL_C_FLOAT:
     Begin
       Val(SValue, Single(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_DOUBLE:
     Begin
       Val(SValue, Double(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
 
     SQL_C_BIT:
     Begin
       Val(SValue, Byte(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_STINYINT:
     Begin
       Val(SValue, ShortInt(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_UTINYINT:
     Begin
       Val(SValue, Byte(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_SSHORT:
     Begin
       Val(SValue, SmallInt(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_USHORT:
     Begin
       Val(SValue, Word(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_SLONG:
     Begin
       Val(SValue, Integer(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_ULONG:
     Begin
       Val(SValue, Cardinal(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
     Begin
       Val(SValue, Int64(CValue^), Code);
-      Result:= Code = 0;
+      Result := Code = 0;
     End;
 
     SQL_C_TYPE_DATE:
     Begin
-      Result:= False;
+      Result := False;
       If Length(SValue) >= 10 Then
         With TDate(CValue^) Do
         Begin
@@ -2436,14 +2411,14 @@ Begin
             If Code = 0 Then
             Begin
               Val(SValue[9]+SValue[10], Day, Code);
-              Result:= Code = 0;
+              Result := Code = 0;
             End;
           End;
         End;
     End;
     SQL_C_TYPE_TIME:
     Begin
-      Result:= False;
+      Result := False;
       If Length(SValue) >= 8 Then
         With TTime(CValue^) Do
         Begin
@@ -2454,14 +2429,14 @@ Begin
             If Code = 0 Then
             Begin
               Val(SValue[7]+SValue[8], Second, Code);
-              Result:= Code = 0;
+              Result := Code = 0;
             End;
           End;
         End;
     End;
     SQL_C_TYPE_TIMESTAMP:
     Begin
-      Result:= False;
+      Result := False;
       If Length(SValue) >= 21 Then
         With fsl_utilities.TTimeStamp(CValue^) Do
         Begin
@@ -2483,9 +2458,9 @@ Begin
                     Val(SValue[18]+SValue[19], Second, Code);
                     If Code = 0 Then
                     Begin
-                      SValue:= Copy(SValue, 21, Length(SValue)-20);
+                      SValue := Copy(SValue, 21, Length(SValue)-20);
                       Val(SValue, Fraction, Code);
-                      Result:= Code = 0;
+                      Result := Code = 0;
                     End;
                   End;
                 End;
@@ -2495,7 +2470,7 @@ Begin
         End;
     End;
     Else
-      Result:= False;
+      Result := False;
   End;
 End;
 
@@ -2507,12 +2482,12 @@ Function ToString(CValue: SQLPOINTER;
 Begin
   Case CType Of
     SQL_C_CHAR:
-      Result:= StrPas(PAnsiChar(CValue));
+      Result := StrPas(PAnsiChar(CValue));
     SQL_C_WCHAR:
-      Result:= StrPas(PWideChar(CValue));
+      Result := StrPas(PWideChar(CValue));
 
     SQL_C_BINARY:
-      Result:= '';
+      Result := '';
 
     SQL_C_FLOAT:
       Str(Single(CValue^), Result);
@@ -2539,20 +2514,20 @@ Begin
 
     SQL_C_TYPE_DATE:
       With TDate(CValue^) Do
-        Result:= LeadingZeros(Year, 1)+'-'+LeadingZeros(Month, 1)+'-'+LeadingZeros(Day, 1);
+        Result := LeadingZeros(Year, 1)+'-'+LeadingZeros(Month, 1)+'-'+LeadingZeros(Day, 1);
     SQL_C_TYPE_TIME:
       With TTime(CValue^) Do
-        Result:= LeadingZeros(Hour, 1)+':'+LeadingZeros(Minute, 1)+':'+LeadingZeros(Second, 1);
+        Result := LeadingZeros(Hour, 1)+':'+LeadingZeros(Minute, 1)+':'+LeadingZeros(Second, 1);
     SQL_C_TYPE_TIMESTAMP:
       With fsl_utilities.TTimeStamp(CValue^) Do
-        Result:= LeadingZeros(Year, 1)+'-'+LeadingZeros(Month, 1)+'-'+LeadingZeros(Day, 1)+' '+
+        Result := LeadingZeros(Year, 1)+'-'+LeadingZeros(Month, 1)+'-'+LeadingZeros(Day, 1)+' '+
           LeadingZeros(Hour, 1)+':'+LeadingZeros(Minute, 1)+':'+LeadingZeros(Second, 1)+'.'+
           LeadingZeros(Fraction, Fractional-1);
     Else
-      Result:= '';
+      Result := '';
   End;
 
-  Result:= TrimString(Result, StringTrimming);
+  Result := TrimString(Result, StringTrimming);
 End;
 
 Function ToDouble(CValue: SQLPOINTER;
@@ -2565,41 +2540,41 @@ Begin
     Begin
       Val(ToString(CValue, CType, stTrimBoth), Result, Code);
       If Code <> 0 Then
-        Result:= 0;
+        Result := 0;
     End;
 
     SQL_C_BINARY:
-      Result:= 0;
+      Result := 0;
 
     SQL_C_FLOAT:
-      Result:= Single(CValue^);
+      Result := Single(CValue^);
     SQL_C_DOUBLE:
-      Result:= Double(CValue^);
+      Result := Double(CValue^);
 
     SQL_C_BIT:
-      Result:= Byte(CValue^);
+      Result := Byte(CValue^);
     SQL_C_STINYINT:
-      Result:= ShortInt(CValue^);
+      Result := ShortInt(CValue^);
     SQL_C_UTINYINT:
-      Result:= Byte(CValue^);
+      Result := Byte(CValue^);
     SQL_C_SSHORT:
-      Result:= SmallInt(CValue^);
+      Result := SmallInt(CValue^);
     SQL_C_USHORT:
-      Result:= Word(CValue^);
+      Result := Word(CValue^);
     SQL_C_SLONG:
-      Result:= Integer(CValue^);
+      Result := Integer(CValue^);
     SQL_C_ULONG:
-      Result:= Cardinal(CValue^);
+      Result := Cardinal(CValue^);
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
-      Result:= Int64(CValue^);
+      Result := Int64(CValue^);
 
     SQL_C_TYPE_DATE,
     SQL_C_TYPE_TIME,
     SQL_C_TYPE_TIMESTAMP:
-      Result:= 0;
+      Result := 0;
     Else
-      Result:= 0;
+      Result := 0;
   End;
 End;
 
@@ -2613,41 +2588,41 @@ Begin
     Begin
       Val(ToString(CValue, CType, stTrimBoth), Result, Code);
       If Code <> 0 Then
-        Result:= 0;
+        Result := 0;
     End;
 
     SQL_C_BINARY:
-      Result:= 0;
+      Result := 0;
 
     SQL_C_FLOAT:
-      Result:= Round(Single(CValue^));
+      Result := Round(Single(CValue^));
     SQL_C_DOUBLE:
-      Result:= Round(Double(CValue^));
+      Result := Round(Double(CValue^));
 
     SQL_C_BIT:
-      Result:= Byte(CValue^);
+      Result := Byte(CValue^);
     SQL_C_STINYINT:
-      Result:= ShortInt(CValue^);
+      Result := ShortInt(CValue^);
     SQL_C_UTINYINT:
-      Result:= Byte(CValue^);
+      Result := Byte(CValue^);
     SQL_C_SSHORT:
-      Result:= SmallInt(CValue^);
+      Result := SmallInt(CValue^);
     SQL_C_USHORT:
-      Result:= Word(CValue^);
+      Result := Word(CValue^);
     SQL_C_SLONG:
-      Result:= Integer(CValue^);
+      Result := Integer(CValue^);
     SQL_C_ULONG:
-      Result:= Cardinal(CValue^);
+      Result := Cardinal(CValue^);
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
-      Result:= Int64(CValue^);
+      Result := Int64(CValue^);
 
     SQL_C_TYPE_DATE,
     SQL_C_TYPE_TIME,
     SQL_C_TYPE_TIMESTAMP:
-      Result:= 0;
+      Result := 0;
     Else
-      Result:= 0;
+      Result := 0;
   End;
 End;
 
@@ -2657,32 +2632,32 @@ Begin
   Case CType Of
     SQL_C_SBIGINT,
     SQL_C_UBIGINT:
-      Result:= Int64(CValue^);
+      Result := Int64(CValue^);
     Else
-      Result:= ToInteger(CValue, CType);
+      Result := ToInteger(CValue, CType);
   End;
 End;
 
 Function ToTimeStamp(CValue: SQLPOINTER;
                      CType: SQLSMALLINT): fsl_utilities.TTimeStamp;
 Begin
-  Result:= NullTS;
+  Result := NullTS;
   Case CType Of
     SQL_C_TYPE_DATE:
     Begin
-      Result.Year:= TDate(CValue^).Year;
-      Result.Month:= TDate(CValue^).Month;
-      Result.Day:= TDate(CValue^).Day;
+      Result.Year := TDate(CValue^).Year;
+      Result.Month := TDate(CValue^).Month;
+      Result.Day := TDate(CValue^).Day;
     End;
     SQL_C_TYPE_TIME:
     Begin
-      Result.Hour:= TTime(CValue^).Hour;
-      Result.Minute:= TTime(CValue^).Minute;
-      Result.Second:= TTime(CValue^).Second;
+      Result.Hour := TTime(CValue^).Hour;
+      Result.Minute := TTime(CValue^).Minute;
+      Result.Second := TTime(CValue^).Second;
     End;
     SQL_C_TYPE_TIMESTAMP:
     Begin
-      Result:= fsl_utilities.TTimeStamp(CValue^);
+      Result := fsl_utilities.TTimeStamp(CValue^);
     End;
   End;
 End;
@@ -2691,57 +2666,57 @@ function TableTypeToString(TableType: TTableType): String;
 begin
   case TableType of
     ttTable:
-      Result:= TableStr;
+      Result := TableStr;
     ttView:
-      Result:= ViewStr;
+      Result := ViewStr;
     ttSystem:
-      Result:= SystemStr;
+      Result := SystemStr;
   end;
 end;
 
 function StringToTableType(S: String): TTableType;
 begin
-  S:= UpperCase(Trim(S));
+  S := UpperCase(Trim(S));
   if S = TableStr then
-    Result:= ttTable
+    Result := ttTable
   else if S = ViewStr then
-    Result:= ttView
+    Result := ttView
   else if S = SystemStr then
-    Result:= ttSystem
+    Result := ttSystem
   else
-    Result:= ttTable;
+    Result := ttTable;
 end;
 
 function ExtractTable(SQL, Locator: String): String;
 var
   Loc: Integer;
 begin
-  SQL:= StringReplace(SQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
-  Locator:= ' '+Locator+' ';
-  Loc:= Pos(Locator, UpperCase(SQL));
+  SQL := StringReplace(SQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
+  Locator := ' '+Locator+' ';
+  Loc := Pos(Locator, UpperCase(SQL));
   if Loc > 0 then
   begin
-    Result:= Trim(Copy(SQL, Loc+Length(Locator), Length(SQL)-Loc-Length(Locator)+1));
-    Loc:= Pos(' ', Result);
+    Result := Trim(Copy(SQL, Loc+Length(Locator), Length(SQL)-Loc-Length(Locator)+1));
+    Loc := Pos(' ', Result);
     if Loc > 0 then
-      Result:= Copy(Result, 1, Loc-1);  //can include table owner
+      Result := Copy(Result, 1, Loc-1);  //can include table owner
   end
   else
-    Result:= '';
+    Result := '';
 end;
 
 
 Function OffsetPointer(P: Pointer;
                        Ofs: LongInt): Pointer;
 Begin
-  Result:= Pointer(NativeUInt(P)+NativeUInt(Ofs));
+  Result := Pointer(NativeUInt(P)+NativeUInt(Ofs));
 End;
 
 Function OffsetRow(P: Pointer;
                    Row: SQLUSMALLINT;
                    Size: Word): Pointer;
 Begin
-  Result:= OffsetPointer(P, (Row-1)*Size);
+  Result := OffsetPointer(P, (Row-1)*Size);
 End;
 
 Function TrimString(S: String;
@@ -2749,91 +2724,25 @@ Function TrimString(S: String;
 Begin
   Case StringTrimming Of
     stTrimNone:
-      Result:= S;
+      Result := S;
     stTrimTrailing:
-      Result:= TrimRight(S);
+      Result := TrimRight(S);
     stTrimLeading:
-      Result:= TrimLeft(S);
+      Result := TrimLeft(S);
     stTrimBoth:
-      Result:= Trim(S);
+      Result := Trim(S);
   End;
 End;
 
 { EODBC }
 
-Constructor EODBC.Create(AOwner: TODBCObject;
-                         ARetCode: SQLRETURN;
-                         AErrors: TList);
-Begin
-  FOwner:= AOwner;
-  FRetCode:= ARetCode;
-  FCursor:= 0;
-  FErrors:= AErrors;
+constructor EODBC.Create(AOwner: TODBCObject; ARetCode: SQLRETURN; Message: String);
+begin
+  inherited Create(Message);
+  FRetCode := ARetCode;
+  FOwner := AOwner;
+end;
 
-  Inherited Create(Message);
-End;
-
-Destructor EODBC.Destroy;
-Var
-  i: Integer;
-Begin
-  For i:= 0 To FErrors.Count-1 Do
-    Dispose(TErrorPtr(FErrors[i]));
-  FErrors.Free;
-
-  Inherited Destroy;
-End;
-
-
-Procedure EODBC.First;
-Begin
-  FCursor:= 0;
-End;
-
-Procedure EODBC.Last;
-Begin
-  FCursor:= FErrors.Count-1;
-End;
-
-Function EODBC.Next: Boolean;
-Begin
-  Result:= False;
-  If FCursor < FErrors.Count Then
-  Begin
-    Inc(FCursor);
-    Result:= FCursor < FErrors.Count;
-  End;
-End;
-
-Function EODBC.Prev: Boolean;
-Begin
-  Result:= False;
-  If FCursor > -1 Then
-  Begin
-    Dec(FCursor);
-    Result:= FCursor > -1;
-  End;
-End;
-
-Function EODBC.GetState: String;
-Begin
-  Result:= TErrorPtr(FErrors[FCursor]).FState;
-End;
-
-Function EODBC.GetNative: SQLINTEGER;
-Begin
-  Result:= TErrorPtr(FErrors[FCursor]).FNative;
-End;
-
-Function EODBC.GetMessage: String;
-Begin
-  Result:= TErrorPtr(FErrors[FCursor]).FMessage;
-End;
-
-Procedure EODBC.SetMessage(AMessage: String);
-Begin
-  Inherited Message:= AMessage;
-End;
 
 function fromOdbcPChar(p : PChar; length : integer) : String;
   {$IFDEF OSX}
@@ -2844,7 +2753,7 @@ begin
   {$IFDEF OSX}
   SetLength(result, length);
   for i := 1 to length do
-    result[i] := p[(i-1)*2];
+    result[i] := p[(i-1)];
   {$ELSE}
   result := p;
   {$ENDIF}
@@ -2875,75 +2784,59 @@ end;
 
 function odbcPChar(count : integer) : PChar; overload;
 begin
-  {$IFDEF OSX}
+  {$IFDEF FPC}
   getMem(result, count);
   {$ELSE}
-  getMem(result, count);
+  {$IFDEF OSX}
+  getMem(result, count * 4);
+  {$ELSE}
+  getMem(result, count * 2);
+  {$ENDIF}
   {$ENDIF}
 end;
 
 { TODBCErrorHandler }
 
-Function TODBCErrorHandler.Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): TList;
+Function TODBCErrorHandler.Errors(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): string;
 Var
-  ErrorNum: Integer;
-  ErrorPtr: TErrorPtr;
-
   RetCode: SQLRETURN;
   State: PChar;
   Native: SQLINTEGER;
   Message: PChar;
   StringLength: SQLSMALLINT;
+  errorNum : integer;
 Begin
   State := odbcPChar(DefaultStringSize);
   Message := odbcPChar(DefaultStringSize);
   try
-    Result:= TList.Create;
-    Result.Clear;
+    Result := '';
 
     Case ARetCode Of
       SQL_ERROR, -24238,
       SQL_SUCCESS_WITH_INFO:
       Begin
-        ErrorNum:= 0;
+        ErrorNum := 0;
         Repeat
-          Inc(ErrorNum);
-
-          //depreciated RetCode:= _SQLError(FErrHenv, FErrHdbc, FErrHstmt, SqlState, NativeError, ErrorMsg);
-          RetCode:= SQLGetDiagRec(aHandleType, aHandle, ErrorNum, State, Native, Message, DefaultStringSize, StringLength);
+          inc(ErrorNum);
+          //depreciated RetCode := _SQLError(FErrHenv, FErrHdbc, FErrHstmt, SqlState, NativeError, ErrorMsg);
+          RetCode := SQLGetDiagRec(aHandleType, aHandle, ErrorNum, State, Native, Message, DefaultStringSize, StringLength);
 
           If Success(RetCode) Then
-          Begin
-            New(ErrorPtr);
-            ErrorPtr.FState:= fromOdbcPChar(State, 5);
-            ErrorPtr.FNative:= Native;
-            ErrorPtr.FMessage:= fromOdbcPChar(Message, StringLength);
-            Result.Add(ErrorPtr);
-          End;
+            CommaAdd(result, fromOdbcPChar(State, 5) + ':'+fromOdbcPChar(Message, StringLength));
         Until Not Success(RetCode);
-        If (Result.Count = 0) Or (RetCode <> SQL_NO_DATA) Then
-        Begin
-          New(ErrorPtr);
-          ErrorPtr.FState:= '';
-          ErrorPtr.FNative:= 0;
-          ErrorPtr.FMessage:= 'Unable to Retrieve ODBC Error';
-          Result.Add(ErrorPtr);
-        End;
+        If (Result = '') Then
+          result := 'Unable to Retrieve ODBC Error';
       End;
       Else
       Begin
-        New(ErrorPtr);
-        ErrorPtr.FState:= '';
-        ErrorPtr.FNative:= 0;
         Case ARetCode Of
           SQL_INVALID_HANDLE:
-            ErrorPtr.FMessage:= 'Invalid ODBC Handle';
+            result := 'Invalid ODBC Handle';
           SQL_NO_DATA:
-            ErrorPtr.FMessage:= 'No Data Found';
+            result := 'No Data Found';
           Else
-            ErrorPtr.FMessage:= 'ODBC Return Code '+IntToStr(ARetCode);
+            result := 'ODBC Return Code '+IntToStr(ARetCode);
         End;
-        Result.Add(ErrorPtr);
       End;
     End;
   finally
@@ -2960,17 +2853,17 @@ Begin
   If AOwner Is TOdbcEnv Then
   Begin
     aHandleType := SQL_HANDLE_ENV;
-    aHandle:= TOdbcEnv(AOwner).Handle
+    aHandle := TOdbcEnv(AOwner).Handle
   End
   Else If AOwner Is TOdbcConnection Then
   Begin
-    aHandleType:= SQL_HANDLE_DBC;
-    aHandle:= TOdbcConnection(AOwner).Handle
+    aHandleType := SQL_HANDLE_DBC;
+    aHandle := TOdbcConnection(AOwner).Handle
     End
   Else // If AOwner Is TOdbcStatement Then
     Begin
-    aHandleType:= SQL_HANDLE_STMT;
-    aHandle:= TOdbcStatement(AOwner).Handle;
+    aHandleType := SQL_HANDLE_STMT;
+    aHandle := TOdbcStatement(AOwner).Handle;
   end;
 
   raise EODBC.Create(AOwner, ARetCode, Errors(ARetCode, aHandleType, aHandle));
@@ -2979,12 +2872,12 @@ End;
 
 Function TODBCErrorHandler.Success(RetCode: SQLRETURN): Boolean;
 Begin
-    Result:= (RetCode = SQL_SUCCESS) Or (RetCode = SQL_SUCCESS_WITH_INFO);
+    Result := (RetCode = SQL_SUCCESS) Or (RetCode = SQL_SUCCESS_WITH_INFO);
 End;
 
 Function TODBCErrorHandler.SuccessOnly(RetCode: SQLRETURN): Boolean;
 Begin
-  Result:= RetCode = SQL_SUCCESS;
+  Result := RetCode = SQL_SUCCESS;
 End;
 
 
@@ -2997,7 +2890,7 @@ Begin
   { Create Error Object }
   FError := TODBCErrorHandler.Create;
 
-  FActive:= False;
+  FActive := False;
 
   Init;
 End;
@@ -3009,7 +2902,7 @@ Begin
   { Terminate Self }
   TerminateHandle;
 
-  FError.Free;
+  FError.free;
 End;
 
 Function TOdbcEnv.Init: Boolean;
@@ -3018,12 +2911,12 @@ Begin
 
   If FActive Then
   Begin
-    Init:= FActive;
+    Init := FActive;
     Exit;
   End;
 
   { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), FHenv);
+  FRetCode := SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), FHenv);
   If Not FError.Success(FRetCode) Then
 Begin
     FHenv := Nil;
@@ -3031,14 +2924,14 @@ Begin
   End;
 
   { Set ODBC Version }
-  FRetCode:= SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
+  FRetCode := SQLSetEnvAttr(FHenv, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0);
   If Not FError.Success(FRetCode) Then
     FError.RaiseError(Self, FRetCode);
 
   { Set Active Field }
-  FActive:= True;
+  FActive := True;
 
-  Result:= FActive;
+  Result := FActive;
 End;
 
 Function TOdbcEnv.TerminateHandle: Boolean;
@@ -3047,7 +2940,7 @@ Begin
   If FActive Then
   Begin
     { Free Handle }
-    FRetCode:= SQLFreeHandle(SQL_HANDLE_ENV, FHenv);
+    FRetCode := SQLFreeHandle(SQL_HANDLE_ENV, FHenv);
     try
       If Not FError.Success(FRetCode) Then
         FError.RaiseError(Self, FRetCode);
@@ -3057,10 +2950,10 @@ Begin
     FHenv := Nil;
 
     { Set Active Field }
-    FActive:= False;
+    FActive := False;
   End;
 
-  Result:= Not FActive;
+  Result := Not FActive;
 End;
 
 { TOdbcConnection }
@@ -3069,14 +2962,14 @@ Function TOdbcConnection.GetCore: Boolean;
 Begin
   Connect;
 
-  Result:= FCore;
+  Result := FCore;
 End;
 
 Procedure TOdbcConnection.SetCore(ACore: Boolean);
 Begin
   Connect;
 
-  FCore:= ACore;
+  FCore := ACore;
 End;
 
 Function TOdbcConnection.GetLoginTimeOut: SQLUINTEGER;
@@ -3085,7 +2978,7 @@ var
 Begin
   Init;
 
-  FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, @Result, SizeOf(Result), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode := SQLGetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, @Result, SizeOf(Result), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -3094,7 +2987,7 @@ Procedure TOdbcConnection.SetLoginTimeOut(ALoginTimeOut: SQLUINTEGER);
 Begin
   Init;
 
-  FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, Pointer(ALoginTimeOut), SizeOf(ALoginTimeOut));
+  FRetCode := SQLSetConnectAttr(FHdbc, SQL_ATTR_LOGIN_TIMEOUT, Pointer(ALoginTimeOut), SizeOf(ALoginTimeOut));
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -3110,14 +3003,14 @@ Begin
     Disconnect;
 
   { Set Cursor Library }
-  FCursorLib:= ACursorLib;
+  FCursorLib := ACursorLib;
 
   If FActive Then
   Begin
-    FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, @LCursorLib, SizeOf(LCursorLib), {$IFDEF FPC}@{$ENDIF}len);
+    FRetCode := SQLGetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, @LCursorLib, SizeOf(LCursorLib), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LCursorLib <> FCursorLib) Then
     Begin
-      FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, Pointer(FCursorLib), SizeOf(FCursorLib));
+      FRetCode := SQLSetConnectAttr(FHdbc, SQL_ATTR_ODBC_CURSORS, Pointer(FCursorLib), SizeOf(FCursorLib));
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
@@ -3129,35 +3022,35 @@ Var
   LInTransaction: SQLUINTEGER;
   len : integer;
 Begin
-  FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, @LInTransaction, SizeOf(LInTransaction), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode := SQLGetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, @LInTransaction, SizeOf(LInTransaction), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
-    Result:= False
+    Result := False
   Else
-    Result:= LInTransaction = SQL_AUTOCOMMIT_OFF;
+    Result := LInTransaction = SQL_AUTOCOMMIT_OFF;
 End;
 
 Procedure TOdbcConnection.SetDriver(ADriver: String);
 Begin
 
-  FDriver:= ADriver;
+  FDriver := ADriver;
 End;
 
 Procedure TOdbcConnection.SetDataSource(ADataSource: String);
 Begin
 
-  FDataSource:= ADataSource;
+  FDataSource := ADataSource;
 End;
 
 Procedure TOdbcConnection.SetUserName(AUserName: String);
 Begin
 
-  FUserName:= AUserName;
+  FUserName := AUserName;
 End;
 
 Procedure TOdbcConnection.SetPassword(APassword: String);
 Begin
 
-  FPassword:= APassword;
+  FPassword := APassword;
 End;
 
 Procedure TOdbcConnection.SetAttributes(AAttributes: TStrings);
@@ -3174,14 +3067,14 @@ Begin
   Log(1, 'TOdbcConnection.SetIsolationLevel');
 
   { Set Isolation Level }
-  FIsolationLevel:= AIsolationLevel;
+  FIsolationLevel := AIsolationLevel;
 
   If FActive Then
   Begin
-    FRetCode:= SQLGetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, @LIsolationLevel, SizeOf(LIsolationLevel), {$IFDEF FPC}@{$ENDIF}len);
+    FRetCode := SQLGetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, @LIsolationLevel, SizeOf(LIsolationLevel), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LIsolationLevel <> FIsolationLevel) Then
     Begin
-      FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, Pointer(FIsolationLevel), 0);
+      FRetCode := SQLSetConnectAttr(FHdbc, SQL_ATTR_TXN_ISOLATION, Pointer(FIsolationLevel), 0);
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
@@ -3219,20 +3112,20 @@ Begin
 
 
   { Set Defaults }
-  FActive:= False;
-  FConnected:= DefConnected;
-  FStreamedConnected:= DefConnected;
-  FDriver:= '';
-  FDataSource:= '';
-  FUserName:= '';
-  FPassword:= '';
+  FActive := False;
+  FConnected := DefConnected;
+  FStreamedConnected := DefConnected;
+  FDriver := '';
+  FDataSource := '';
+  FUserName := '';
+  FPassword := '';
   ForceEmptyPasswordsIntoConnectionString := True;
-  FAttributes:= TStringList.Create;
-  FIsolationLevel:= DefIsolationLevel;
-  FInfoPrompt:= DefInfoPrompt;
-  FCursorLib:= DefCursorLib;
-  FCore:= DefCore;
-  FDrivers:= TList.Create;
+  FAttributes := TStringList.Create;
+  FIsolationLevel := DefIsolationLevel;
+  FInfoPrompt := DefInfoPrompt;
+  FCursorLib := DefCursorLib;
+  FCore := DefCore;
+  FDrivers := TList.Create;
   RefreshDrivers;
 
   Init;
@@ -3243,9 +3136,9 @@ Begin
   Inherited Destroy;
 
   { Terminate Self }
-  FAttributes.Free;
+  FAttributes.free;
   ClearDrivers;
-  FDrivers.Free;
+  FDrivers.free;
   TerminateHandle;
 End;
 
@@ -3255,12 +3148,12 @@ Begin
 
   If FActive Then
   Begin
-    Init:= FActive;
+    Init := FActive;
     Exit;
   End;
 
   { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_DBC, FEnv.Handle, FHdbc);
+  FRetCode := SQLAllocHandle(SQL_HANDLE_DBC, FEnv.Handle, FHdbc);
   If Not FEnv.Error.Success(FRetCode) Then
   Begin
     FHdbc := Nil;
@@ -3268,12 +3161,12 @@ Begin
   End;
 
   { Set Active Field }
-  FActive:= True;
+  FActive := True;
 
   { Set ODBC Properties }
-  CursorLib:= FCursorLib;
+  CursorLib := FCursorLib;
 
-  Result:= FActive;
+  Result := FActive;
 
 End;
 
@@ -3282,12 +3175,12 @@ Begin
   Init;
 
   { Retrieve Handle }
-  Result:= FHdbc;
+  Result := FHdbc;
 End;
 
 Function TOdbcConnection.GetConnected: Boolean;
 Begin
-  Result:= FConnected;
+  Result := FConnected;
 End;
 
 Procedure TOdbcConnection.SetConnected(AConnected: Boolean);
@@ -3308,17 +3201,17 @@ Var
   Var
     i: Integer;
   Begin
-    Result:= '';
+    Result := '';
     If FDataSource <> '' Then
-      Result:= Result+'DSN='+FDataSource+';';
+      Result := Result+'DSN='+FDataSource+';';
     If FUserName <> '' Then
-      Result:= Result+'UID='+FUserName+';';
+      Result := Result+'UID='+FUserName+';';
     If ForceEmptyPasswordsIntoConnectionString Or (FPassword <> '')  Then
-      Result:= Result+'PWD='+FPassword+';';
+      Result := Result+'PWD='+FPassword+';';
     If FDriver <> '' Then
-      Result:= Result+'DRIVER='+FDriver+';';
-    For i:= 0 To FAttributes.Count-1 Do
-      Result:= Result+FAttributes[i]+';';
+      Result := Result+'DRIVER='+FDriver+';';
+    For i := 0 To FAttributes.Count-1 Do
+      Result := Result+FAttributes[i]+';';
   End;
 
 Begin
@@ -3331,11 +3224,11 @@ Begin
     DoBeforeConnect;
 
     { Set ODBC Properties }
-    CursorLib:= FCursorLib;
+    CursorLib := FCursorLib;
 
     { Establish Connection }
     If (FInfoPrompt = SQL_DRIVER_NOPROMPT) And (FDriver = '') And (FAttributes.Count = 0) Then
-      FRetCode:= SQLConnect(FHdbc, Pointer(PChar(FDataSource)), SQL_NTS,
+      FRetCode := SQLConnect(FHdbc, Pointer(PChar(FDataSource)), SQL_NTS,
                                    Pointer(PChar(FUserName)), SQL_NTS,
                                    Pointer(PChar(FPassword)), SQL_NTS)
     Else
@@ -3343,7 +3236,7 @@ Begin
       ConnectStrOut := odbcPChar(DefaultStringSize);
       ConnectStrIn := odbcPChar(ConnectStr);
       try
-        FRetCode:= SQLDriverConnect(FHdbc, 0, ConnectStrIn, SQL_NTS,
+        FRetCode := SQLDriverConnect(FHdbc, 0, ConnectStrIn, SQL_NTS,
                                                                  ConnectStrOut, DefaultStringSize, StringLength,
                                                                  FInfoPrompt);
       finally
@@ -3355,14 +3248,14 @@ Begin
       FEnv.Error.RaiseError(Self, FRetCode);
 
     { Set Connected Field }
-    FConnected:= True;
+    FConnected := True;
 
     { Set ODBC Properties }
-    IsolationLevel:= FIsolationLevel;
+    IsolationLevel := FIsolationLevel;
 
     { Set Core Level }
     If FConnected Then
-      FCore:= Not GetFunction(SQL_API_SQLDESCRIBEPARAM);
+      FCore := Not GetFunction(SQL_API_SQLDESCRIBEPARAM);
 
     If FConnected Then
       DoAfterConnect;
@@ -3379,12 +3272,12 @@ Begin
     DoBeforeDisconnect;
 
     { Remove Connection }
-    FRetCode:= SQLDisconnect(FHdbc);
+    FRetCode := SQLDisconnect(FHdbc);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
     { Set Connected Field }
-    FConnected:= False;
+    FConnected := False;
 
     If Not FConnected Then
       DoAfterDisconnect;
@@ -3395,16 +3288,20 @@ Procedure TOdbcConnection.StartTransact;
 Begin
   Connect;
 
-  FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, Pointer(SQL_AUTOCOMMIT_OFF), SizeOf(SQLUINTEGER));
+  FRetCode := SQLSetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, Pointer(SQL_AUTOCOMMIT_OFF), SizeOf(SQLUINTEGER));
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
 
 procedure TOdbcConnection.TerminateHandle;
 begin
-  FRetCode:= SQLFreeHandle(SQL_HANDLE_DBC, FHdbc);
-  If Not FEnv.FError.Success(FRetCode) Then
-    FEnv.FError.RaiseError(Self, FRetCode);
+  FRetCode := SQLFreeHandle(SQL_HANDLE_DBC, FHdbc);
+  try
+    If Not FEnv.FError.Success(FRetCode) Then
+      FEnv.FError.RaiseError(Self, FRetCode);
+  except
+    // nothing - we don't this one to hide anything else going on
+  end;
   FHdbc := Nil;
 end;
 
@@ -3412,7 +3309,7 @@ Procedure TOdbcConnection.EndTransact;
 Begin
   Commit;
 
-  FRetCode:= SQLSetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, Pointer(SQL_AUTOCOMMIT_ON), SizeOf(SQLUINTEGER));
+  FRetCode := SQLSetConnectAttr(FHdbc, SQL_ATTR_AUTOCOMMIT, Pointer(SQL_AUTOCOMMIT_ON), SizeOf(SQLUINTEGER));
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -3421,7 +3318,7 @@ Procedure TOdbcConnection.Commit;
 Begin
   Connect;
 
-  FRetCode:= SQLEndTran(SQL_HANDLE_DBC, FHdbc, SQL_COMMIT);
+  FRetCode := SQLEndTran(SQL_HANDLE_DBC, FHdbc, SQL_COMMIT);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -3430,7 +3327,7 @@ Procedure TOdbcConnection.Rollback;
 Begin
   Connect;
 
-  FRetCode:= SQLEndTran(SQL_HANDLE_DBC, FHdbc, SQL_ROLLBACK);
+  FRetCode := SQLEndTran(SQL_HANDLE_DBC, FHdbc, SQL_ROLLBACK);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -3445,9 +3342,9 @@ Begin
 
   Connect;
 
-  FRetCode:= SQLGetFunctions(FHdbc, FunctionID, {$IFDEF FPC}@{$ENDIF}Supported);
+  FRetCode := SQLGetFunctions(FHdbc, FunctionID, {$IFDEF FPC}@{$ENDIF}Supported);
   If Not FEnv.Error.Success(FRetCode) Then
-    Supported:= 0;
+    Supported := 0;
 
   Result := Supported <> 0;
 End;
@@ -3461,11 +3358,11 @@ Begin
 
   Supported := odbcPChar(DefaultStringSize);
   try
-    FRetCode:= SQLGetInfo(FHdbc, InfoType, Supported, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength);
+    FRetCode := SQLGetInfo(FHdbc, InfoType, Supported, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength);
     If Not FEnv.Error.Success(FRetCode) Then
-      Result:= ''
+      Result := ''
     Else
-      Result:= fromOdbcPChar(Supported, StringLength);
+      Result := fromOdbcPChar(Supported, StringLength);
   finally
     FreeMem(supported);
   end;
@@ -3478,11 +3375,11 @@ Var
 Begin
   Connect;
 
-  FRetCode:= SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode := SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= Supported;
+    Result := Supported;
 End;
 
 Function TOdbcConnection.GetInfoInteger(InfoType: SQLUSMALLINT): SQLUINTEGER;
@@ -3492,16 +3389,16 @@ Var
 Begin
   Connect;
 
-  FRetCode:= SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode := SQLGetInfo(FHdbc, InfoType, @Supported, SizeOf(Supported), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= Supported;
+    Result := Supported;
 End;
 
 Function TOdbcConnection.GetVersion: String;
 Begin
-  Result:= '1.0';
+  Result := '1.0';
 End;
 
 Procedure TOdbcConnection.SetVersion(AVersion: String);
@@ -3517,113 +3414,113 @@ Begin
   With AddDriver('Microsoft SQL Server;sqlsrv32.dll')^ Do
   Begin
     //not core
-    PS_SQL_TYPE_TIMESTAMP:= 23;
-    DD_SQL_TYPE_TIMESTAMP:= 3;
+    PS_SQL_TYPE_TIMESTAMP := 23;
+    DD_SQL_TYPE_TIMESTAMP := 3;
   End;
 
   With AddDriver('Microsoft SQL Server;sqlncli.dll')^ Do
   Begin
     //not core
-    PS_SQL_TYPE_TIMESTAMP:= 23;
-    DD_SQL_TYPE_TIMESTAMP:= 3;
+    PS_SQL_TYPE_TIMESTAMP := 23;
+    DD_SQL_TYPE_TIMESTAMP := 3;
   End;
 
   With AddDriver('Microsoft SQL Server;sqlncli10.dll')^ Do
   Begin
     //not core
-    PS_SQL_TYPE_TIMESTAMP:= 23;
-    DD_SQL_TYPE_TIMESTAMP:= 3;
+    PS_SQL_TYPE_TIMESTAMP := 23;
+    DD_SQL_TYPE_TIMESTAMP := 3;
   End;
 
   With AddDriver('Oracle;msorcl32.dll')^ Do
   Begin
     //not core
-    PS_SQL_VARCHAR:= 2000;
+    PS_SQL_VARCHAR := 2000;
   End;
 
   With AddDriver('Oracle8;sqoci32.dll')^ Do
   Begin
     //core
-    PS_SQL_VARCHAR:= 2000;
+    PS_SQL_VARCHAR := 2000;
   End;
 
   With AddDriver('SQL Server;sysybnt.dll')^ Do
   Begin
     //core
-    PS_SQL_VARCHAR:= 30;
-    PS_SQL_VARBINARY:= 8;
-    PS_SQL_TYPE_TIMESTAMP:= 23;
-    DD_SQL_TYPE_TIMESTAMP:= 3;
+    PS_SQL_VARCHAR := 30;
+    PS_SQL_VARBINARY := 8;
+    PS_SQL_TYPE_TIMESTAMP := 23;
+    DD_SQL_TYPE_TIMESTAMP := 3;
   End;
 
   With AddDriver('Adaptive Server Anywhere;dbodbc6w.dll')^ Do
   Begin
     //not core
-    PS_SQL_CHAR:= 32767;
-    PS_SQL_VARCHAR:= 32767;
-    PS_SQL_BINARY:= 32767;
-    PS_SQL_VARBINARY:= 32767;
-    PS_SQL_TYPE_TIMESTAMP:= 26;
-    DD_SQL_TYPE_TIMESTAMP:= 6;
+    PS_SQL_CHAR := 32767;
+    PS_SQL_VARCHAR := 32767;
+    PS_SQL_BINARY := 32767;
+    PS_SQL_VARBINARY := 32767;
+    PS_SQL_TYPE_TIMESTAMP := 26;
+    DD_SQL_TYPE_TIMESTAMP := 6;
   End;
 
   With AddDriver('Informix;iclit09a.dll')^ Do
   Begin
     //core
-    PS_SQL_CHAR:= 32767;
-    PS_SQL_TYPE_TIMESTAMP:= 25;
-    DD_SQL_TYPE_TIMESTAMP:= 5;
+    PS_SQL_CHAR := 32767;
+    PS_SQL_TYPE_TIMESTAMP := 25;
+    DD_SQL_TYPE_TIMESTAMP := 5;
   End;
 
   With AddDriver('InterBase;iscdrv32.dll')^ Do
   Begin
     //core
-    PS_SQL_CHAR:= 32767;
-    PS_SQL_VARCHAR:= 32765;
+    PS_SQL_CHAR := 32767;
+    PS_SQL_VARCHAR := 32765;
   End;
 
   With AddDriver('Access;odbcjt32.dll')^ Do
   Begin
     //core
-    PS_SQL_LONGVARBINARY:= MaxLongint Div 2;
+    PS_SQL_LONGVARBINARY := MaxLongint Div 2;
   End;
 
   With AddDriver('dBase;odbcjt32.dll')^ Do
   Begin
     //core
-    PS_SQL_CHAR:= 254;
-    PS_SQL_VARCHAR:= 254;
-    PS_SQL_LONGVARCHAR:= MaxLongint Div 2;
-    PS_SQL_BINARY:= 254;
-    PS_SQL_VARBINARY:= 254;
-    PS_SQL_LONGVARBINARY:= MaxLongint Div 2;
+    PS_SQL_CHAR := 254;
+    PS_SQL_VARCHAR := 254;
+    PS_SQL_LONGVARCHAR := MaxLongint Div 2;
+    PS_SQL_BINARY := 254;
+    PS_SQL_VARBINARY := 254;
+    PS_SQL_LONGVARBINARY := MaxLongint Div 2;
   End;
 
   With AddDriver('Paradox;odbcjt32.dll')^ Do
   Begin
     //core
-    PS_SQL_LONGVARCHAR:= MaxLongint Div 2;
-    PS_SQL_BINARY:= 254;
-    PS_SQL_VARBINARY:= 254;
-    PS_SQL_LONGVARBINARY:= MaxLongint Div 2;
+    PS_SQL_LONGVARCHAR := MaxLongint Div 2;
+    PS_SQL_BINARY := 254;
+    PS_SQL_VARBINARY := 254;
+    PS_SQL_LONGVARBINARY := MaxLongint Div 2;
   End;
 
   With AddDriver('Visual FoxPro;vfpodbc.dll')^ Do
   Begin
     //core
-    PS_SQL_CHAR:= 254;
-    PS_SQL_VARCHAR:= 254;
-    PS_SQL_BINARY:= 254;
-    PS_SQL_VARBINARY:= 254;
+    PS_SQL_CHAR := 254;
+    PS_SQL_VARCHAR := 254;
+    PS_SQL_BINARY := 254;
+    PS_SQL_VARBINARY := 254;
   End;
 
   With AddDriver('FoxPro;odbcjt32.dll')^ Do
   Begin
     //core
-    PS_SQL_CHAR:= 254;
-    PS_SQL_VARCHAR:= 254;
-    PS_SQL_BINARY:= 254;
-    PS_SQL_VARBINARY:= 254;
+    PS_SQL_CHAR := 254;
+    PS_SQL_VARCHAR := 254;
+    PS_SQL_BINARY := 254;
+    PS_SQL_VARBINARY := 254;
   End;
 End;
 
@@ -3631,7 +3528,7 @@ Procedure TOdbcConnection.ClearDrivers;
 Var
   i: Integer;
 Begin
-  For i:= 0 To FDrivers.Count-1 Do
+  For i := 0 To FDrivers.Count-1 Do
     Dispose(TDriverPtr(FDrivers[i]));
   FDrivers.Clear;
 End;
@@ -3643,19 +3540,19 @@ Begin
 
   With Result^ Do
   Begin
-    Desc:= ADriver;
-    PS_SQL_CHAR:= DefaultStringSize;
-    PS_SQL_VARCHAR:= DefaultStringSize;
-    PS_SQL_LONGVARCHAR:= MaxLongint;
-    PS_SQL_BINARY:= DefaultStringSize;
-    PS_SQL_VARBINARY:= DefaultStringSize;
-    PS_SQL_LONGVARBINARY:= MaxLongint;
-    PS_SQL_DECIMAL:= 15;
-    PS_SQL_NUMERIC:= 15;
-    PS_SQL_TYPE_TIMESTAMP:= 19;
-    DD_SQL_DECIMAL:= 15;
-    DD_SQL_NUMERIC:= 15;
-    DD_SQL_TYPE_TIMESTAMP:= 0;
+    Desc := ADriver;
+    PS_SQL_CHAR := DefaultStringSize;
+    PS_SQL_VARCHAR := DefaultStringSize;
+    PS_SQL_LONGVARCHAR := MaxLongint;
+    PS_SQL_BINARY := DefaultStringSize;
+    PS_SQL_VARBINARY := DefaultStringSize;
+    PS_SQL_LONGVARBINARY := MaxLongint;
+    PS_SQL_DECIMAL := 15;
+    PS_SQL_NUMERIC := 15;
+    PS_SQL_TYPE_TIMESTAMP := 19;
+    DD_SQL_DECIMAL := 15;
+    DD_SQL_NUMERIC := 15;
+    DD_SQL_TYPE_TIMESTAMP := 0;
   End;
 End;
 
@@ -3663,8 +3560,8 @@ Procedure TOdbcConnection.RemoveDriver(ADriver: String);
 Var
   i: Integer;
 Begin
-  ADriver:= UpperCase(ADriver);
-  For i:= 0 To FDrivers.Count-1 Do
+  ADriver := UpperCase(ADriver);
+  For i := 0 To FDrivers.Count-1 Do
     If UpperCase(TDriverPtr(FDrivers[i]).Desc) = ADriver Then
     Begin
       Dispose(TDriverPtr(FDrivers[i]));
@@ -3677,19 +3574,19 @@ Function TOdbcConnection.GetDriver(ADriver: String): TDriverPtr;
 Var
   i: Integer;
 Begin
-  Result:= Nil;
-  ADriver:= UpperCase(ADriver);
-  For i:= 0 To FDrivers.Count-1 Do
+  Result := Nil;
+  ADriver := UpperCase(ADriver);
+  For i := 0 To FDrivers.Count-1 Do
     If UpperCase(TDriverPtr(FDrivers[i]).Desc) = ADriver Then
     Begin
-      Result:= FDrivers[i];
+      Result := FDrivers[i];
       Break;
     End;
 End;
 
 Function TOdbcConnection.CurrentDriver: String;
 Begin
-  Result:= GetInfoString(SQL_DBMS_NAME)+';'+GetInfoString(SQL_DRIVER_NAME);
+  Result := GetInfoString(SQL_DBMS_NAME)+';'+GetInfoString(SQL_DRIVER_NAME);
 End;
 
 Function TOdbcConnection.IsDriver(Const ADrivers: Array Of String): Boolean;
@@ -3697,13 +3594,13 @@ Var
   i: Integer;
   ADriver: String;
 Begin
-  ADriver:= UpperCase(CurrentDriver);
+  ADriver := UpperCase(CurrentDriver);
 
-  Result:= False;
-  For i:= Low(ADrivers) To High(ADrivers) Do
+  Result := False;
+  For i := Low(ADrivers) To High(ADrivers) Do
     If UpperCase(ADrivers[i]) = ADriver Then
     Begin
-      Result:= True;
+      Result := True;
       Break;
     End;
 End;
@@ -3716,22 +3613,22 @@ Var
 Begin
   While FParams <> Nil Do
   Begin
-    temp:= FParams^.Next;
+    temp := FParams^.Next;
     FreeMem(FParams^.FSize); // , FParams^.FCount*SizeOf(SQLINTEGER));
     Dispose(FParams);
-    FParams:= temp;
+    FParams := temp;
   End;
-  FParams:= Nil;
+  FParams := Nil;
   SetLength(FParamIndexes, 0);
-  FNumParams:= 0;
-  FHdesc:= Nil;
+  FNumParams := 0;
+  FHdesc := Nil;
 
   FParamNames.Clear;
 
   { Release Parameter Buffers }
   If FActive Then
   Begin
-    FRetCode:= SQLFreeStmt(FHstmt, SQL_RESET_PARAMS);
+    FRetCode := SQLFreeStmt(FHstmt, SQL_RESET_PARAMS);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
   End;
@@ -3743,19 +3640,19 @@ Var
 Begin
   While FCols <> Nil Do
   Begin
-    temp:= FCols^.Next;
+    temp := FCols^.Next;
 
     If FCols^.FBlob Then
       Begin
-      FCols^.FMemory.Free;
-      FCols^.FMemory:= Nil;
+      FCols^.FMemory.free;
+      FCols^.FMemory := Nil;
       End
     Else
     Begin
       If FCols^.FMemory <> Nil Then
         Begin
-        FCols^.FMemory.Free;
-        FCols^.FMemory:= Nil;
+        FCols^.FMemory.free;
+        FCols^.FMemory := Nil;
         End;
 
       If (FCols^.FSql = SQL_CHAR) Or (FCols^.FSql = SQL_VARCHAR) Then
@@ -3772,26 +3669,26 @@ Begin
     End;
     FreeMem(FCols^.FSize, PhysSize(SQL_C_SLONG));
     Dispose(FCols);
-    FCols:= temp;
+    FCols := temp;
   End;
-  FCols:= Nil;
+  FCols := Nil;
   SetLength(FColIndexes, 0);
-  FNumCols:= 0;
-  FNumRows:= 0;
+  FNumCols := 0;
+  FNumRows := 0;
 
   FColNames.Clear;
 
   { Release Column Buffers }
   If FActive Then
   Begin
-    FRetCode:= SQLFreeStmt(FHstmt, SQL_UNBIND);
+    FRetCode := SQLFreeStmt(FHstmt, SQL_UNBIND);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
   End;
 
   FreeColBinds;
-  FBlobs:= False;
-  FColumnsBound:= False;
+  FBlobs := False;
+  FColumnsBound := False;
 End;
 
 Procedure TOdbcStatement.FreeColBinds;
@@ -3800,23 +3697,23 @@ Var
 Begin
   While FColBinds <> Nil Do
   Begin
-    temp:= FColBinds^.Next;
+    temp := FColBinds^.Next;
     Dispose(FColBinds);
-    FColBinds:= temp;
+    FColBinds := temp;
   End;
-  FColBinds:= Nil;
+  FColBinds := Nil;
 End;
 
 Procedure TOdbcStatement.UnPrepareHstmts;
 Begin
   If FHstmtInsert <> Nil Then
-    FHstmtInsert.Prepared:= False;
+    FHstmtInsert.Prepared := False;
   If FHstmtUpdate <> Nil Then
-    FHstmtUpdate.Prepared:= False;
+    FHstmtUpdate.Prepared := False;
   If FHstmtDelete <>  Nil Then
-    FHstmtDelete.Prepared:= False;
+    FHstmtDelete.Prepared := False;
   If FHstmtRefresh <> Nil Then
-    FHstmtRefresh.Prepared:= False;
+    FHstmtRefresh.Prepared := False;
 End;
 
 Procedure TOdbcStatement.InsertHead(FParam: SQLUSMALLINT;
@@ -3827,19 +3724,19 @@ Var
   temp: TParamPtr;
 Begin
   New(temp);
-  temp^.FParam:= FParam;
-  temp^.FType:= FType;
-  temp^.FSql:= FSql;
-  temp^.FValue:= FValue;
-  temp^.FSize:= Nil;
-  temp^.FCount:= 0;
+  temp^.FParam := FParam;
+  temp^.FType := FType;
+  temp^.FSql := FSql;
+  temp^.FValue := FValue;
+  temp^.FSize := Nil;
+  temp^.FCount := 0;
 
-  temp^.FParameterSize:= 0;
-  temp^.FDecimalDigits:= 0;
-  temp^.FNullable:= SQL_NULLABLE_UNKNOWN;
+  temp^.FParameterSize := 0;
+  temp^.FDecimalDigits := 0;
+  temp^.FNullable := SQL_NULLABLE_UNKNOWN;
 
-  temp^.Next:= FParams;
-  FParams:= temp;
+  temp^.Next := FParams;
+  FParams := temp;
   if (FParam >= length(FParamIndexes)) then
     SetLength(FParamIndexes, FParam+1);
 
@@ -3854,32 +3751,32 @@ Var
   temp: TColPtr;
 Begin
   New(temp);
-  temp^.FType:= FType;
-  temp^.FSql:= FSql;
-  temp^.FValue:= FValue;
+  temp^.FType := FType;
+  temp^.FSql := FSql;
+  temp^.FValue := FValue;
   GetMem(temp^.FSize, PhysSize(SQL_C_SLONG));
-  temp^.FSize^:= SQL_NULL_DATA;
-  temp^.FBlob:= (FSql = SQL_LONGVARCHAR) Or (FSql = SQL_LONGVARBINARY) Or (FSql = SQL_VARBINARY);
-  temp^.FBlobFetched:= False;
-  temp^.FMemory:= Nil;
+  temp^.FSize^ := SQL_NULL_DATA;
+  temp^.FBlob := (FSql = SQL_LONGVARCHAR) Or (FSql = SQL_LONGVARBINARY) Or (FSql = SQL_VARBINARY);
+  temp^.FBlobFetched := False;
+  temp^.FMemory := Nil;
   If temp^.FBlob Then
-    temp^.FMemory:= TManagedMemoryStream.Create;
+    temp^.FMemory := TManagedMemoryStream.Create;
 
 
-  temp^.FFormatStyle:= DefFormatStyle;
-  temp^.FFormatMask:= DefFormatMask;
-  temp^.FPrimary:= DefPrimary;
+  temp^.FFormatStyle := DefFormatStyle;
+  temp^.FFormatMask := DefFormatMask;
+  temp^.FPrimary := DefPrimary;
   
-  temp^.FColumnSize:= 0;
-  temp^.FDecimalDigits:= 0;
-  temp^.FNullable:= SQL_NULLABLE_UNKNOWN;
+  temp^.FColumnSize := 0;
+  temp^.FDecimalDigits := 0;
+  temp^.FNullable := SQL_NULLABLE_UNKNOWN;
 
-  temp^.Next:= Nil;
+  temp^.Next := Nil;
   If FTail = Nil Then
-    FCols:= temp
+    FCols := temp
   Else
-    FTail^.Next:= temp;
-  FTail:= temp;
+    FTail^.Next := temp;
+  FTail := temp;
   SetLength(FColIndexes, Length(FColIndexes)+1);
   FColIndexes[Length(FColIndexes)-1] := temp;
 End;
@@ -3890,11 +3787,11 @@ Var
   temp: TColBindPtr;
 Begin
   New(temp);
-  temp^.FCol:= FCol;
-  temp^.FSql:= FSql;
+  temp^.FCol := FCol;
+  temp^.FSql := FSql;
 
-  temp^.Next:= FColBinds;
-  FColBinds:= temp;
+  temp^.Next := FColBinds;
+  FColBinds := temp;
 End;
 
 Procedure TOdbcStatement.SeTOdbcConnection(AHdbc: TOdbcConnection);
@@ -3903,7 +3800,7 @@ Begin
 
   Terminate;
 
-  FHdbc:= AHdbc;
+  FHdbc := AHdbc;
 End;
 
 Procedure TOdbcStatement.SetSQL(ASQL: String);
@@ -3914,10 +3811,10 @@ Begin
   If FActive Then
     Close;
 
-  FPrepared:= False;
-  FExecuted:= False;
+  FPrepared := False;
+  FExecuted := False;
 
-  FSQL:= ASQL;
+  FSQL := ASQL;
 End;
 
 Procedure TOdbcStatement.SetPrepared(APrepared: Boolean);
@@ -3925,7 +3822,7 @@ Begin
   If APrepared Then
     Prepare
   Else
-    FPrepared:= False;
+    FPrepared := False;
 End;
 
 Procedure TOdbcStatement.SetExecuted(AExecuted: Boolean);
@@ -3933,7 +3830,7 @@ Begin
   If AExecuted Then
     Execute
   Else
-    FExecuted:= False;
+    FExecuted := False;
 End;
 
 Function TOdbcStatement.GetParamSize(Param: SQLUSMALLINT): SQLINTEGER;
@@ -3942,15 +3839,15 @@ Var
 Begin
   Log(1, 'TOdbcStatement.GetParamSize');
 
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
   Begin
     If temp^.FSize^ <= SQL_LEN_DATA_AT_EXEC_OFFSET Then
-      Result:= SQL_LEN_DATA_AT_EXEC_OFFSET-temp^.FSize^
+      Result := SQL_LEN_DATA_AT_EXEC_OFFSET-temp^.FSize^
     Else
-      Result:= temp^.FSize^;
+      Result := temp^.FSize^;
   End;
 End;
 
@@ -3961,13 +3858,13 @@ Var
 Begin
   Log(1, 'TOdbcStatement.SetParamSize');
 
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
   If temp <> Nil Then
   Begin
     If (temp^.FSize^ <= SQL_LEN_DATA_AT_EXEC_OFFSET) And (AParamSize >= 0) Then
-      temp^.FSize^:= SQL_LEN_DATA_AT_EXEC_OFFSET-AParamSize
+      temp^.FSize^ := SQL_LEN_DATA_AT_EXEC_OFFSET-AParamSize
     Else
-      temp^.FSize^:= AParamSize;
+      temp^.FSize^ := AParamSize;
   End;
 End;
 
@@ -3976,7 +3873,7 @@ Begin
   Log(1, 'TOdbcStatement.SetParamType');
 
   If AParamType In [SQL_PARAM_INPUT, SQL_PARAM_OUTPUT, SQL_PARAM_INPUT_OUTPUT] Then
-    FParamType:= AParamType;
+    FParamType := AParamType;
 End;
 
 Procedure TOdbcStatement.SetBulkSize(ABulkSize: SQLUINTEGER);
@@ -3984,7 +3881,7 @@ Begin
   Log(1, 'TOdbcStatement.SetBulkSize');
 
   If ABulkSize > 0 Then
-    FNumParams:= ABulkSize;
+    FNumParams := ABulkSize;
 End;
 
 Function TOdbcStatement.GetBulkParamSize(Param: SQLUSMALLINT;
@@ -3992,12 +3889,12 @@ Function TOdbcStatement.GetBulkParamSize(Param: SQLUSMALLINT;
 Var
   temp: TParamPtr;
 Begin
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
 
   If (temp <> Nil) And (Row > 0) And (Row <= temp^.FCount) Then
-    Result:= SQLINTEGER(OffsetPointer(temp^.FSize, (Row-1)*SizeOf(SQLINTEGER))^)
+    Result := SQLINTEGER(OffsetPointer(temp^.FSize, (Row-1)*SizeOf(SQLINTEGER))^)
   Else
-    Result:= 0;
+    Result := 0;
 End;
 
 Procedure TOdbcStatement.SetBulkParamSize(Param: SQLUSMALLINT;
@@ -4006,22 +3903,22 @@ Procedure TOdbcStatement.SetBulkParamSize(Param: SQLUSMALLINT;
 Var
   temp: TParamPtr;
 Begin
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
 
   If (temp <> Nil) And (Row > 0) And (Row <= temp^.FCount) Then
-    SQLINTEGER(OffsetPointer(temp^.FSize, (Row-1)*SizeOf(SQLINTEGER))^):= AParamSize;
+    SQLINTEGER(OffsetPointer(temp^.FSize, (Row-1)*SizeOf(SQLINTEGER))^) := AParamSize;
 End;
 
 Procedure TOdbcStatement.SetTargetTable(ATargetTable: String);
 Begin
   Log(1, 'TOdbcStatement.SetTargetTable');
 
-  FTargetTable:= ATargetTable;
+  FTargetTable := ATargetTable;
 End;
 
 Function TOdbcStatement.GetColSize(Col: SQLUSMALLINT): SQLINTEGER;
 Begin
-  Result:= GetCellSize(Col, 1);
+  Result := GetCellSize(Col, 1);
 End;
 
 Procedure TOdbcStatement.SetColSize(Col: SQLUSMALLINT;
@@ -4036,7 +3933,7 @@ Var
 //  temp: TRowPtr;
 //  LrRowRec : TRowRec;
 Begin
-  tempCol:= ColRec(Col);
+  tempCol := ColRec(Col);
 
   If (tempCol <> Nil) And
      (Row > 0) And (Row <= 1) Then
@@ -4045,11 +3942,11 @@ Begin
       Begin
       If tempCol^.FSize^ < 0 Then
         Begin
-        Result:= tempCol^.FSize^;
+        Result := tempCol^.FSize^;
         End
       Else
         Begin
-        Result:= tempCol^.FMemory.Size;
+        Result := tempCol^.FMemory.Size;
         End;
       End
     Else
@@ -4059,7 +3956,7 @@ Begin
     End
   Else
     Begin
-    Result:= 0;
+    Result := 0;
     End;
 
 {
@@ -4069,48 +3966,48 @@ Alternative Semi-Optimal implementation
     begin
     if LrRowRec.FBlob then
       begin
-      tempCol:= ColRec(Col);  //if blob deferral then don't fetch blob
+      tempCol := ColRec(Col);  //if blob deferral then don't fetch blob
 
       if tempCol^.FSize^ < 0 then
         begin
-        Result:= tempCol^.FSize^
+        Result := tempCol^.FSize^
         end
       else
         begin
-        Result:= tempCol^.FMemory.Size;
+        Result := tempCol^.FMemory.Size;
         end;
       end
     else
       begin
-      Result:= LrRowRec.FSize^;
+      Result := LrRowRec.FSize^;
       end;
     end
   else
     begin
-    Result:= 0
+    Result := 0
     end;
 }
 
 {
 Previous Non-Optimal implementation
 
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
 
   if temp = nil then
-    Result:= 0
+    Result := 0
   else
   begin
     if temp^.FBlob then
     begin
-      tempCol:= ColRec(Col);  //if blob deferral then don't fetch blob
+      tempCol := ColRec(Col);  //if blob deferral then don't fetch blob
 
       if tempCol^.FSize^ < 0 then
-        Result:= tempCol^.FSize^
+        Result := tempCol^.FSize^
       else
-        Result:= tempCol^.FMemory.Size;
+        Result := tempCol^.FMemory.Size;
     end
     else
-      Result:= temp^.FSize^;
+      Result := temp^.FSize^;
     Dispose(temp);
   end;
 }
@@ -4122,57 +4019,57 @@ Var
   tempCol: TColPtr;
   temp: TRowPtr;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
 
   If temp <> Nil Then
   Begin
     If temp^.FBlob Then
     Begin
-      tempCol:= ColRec(Col);
+      tempCol := ColRec(Col);
       If AColSize >= 0 Then
         tempCol^.FMemory.SetSize(AColSize);
-      tempCol^.FSize^:= AColSize;
+      tempCol^.FSize^ := AColSize;
     End
     Else
-      temp^.FSize^:= AColSize;
+      temp^.FSize^ := AColSize;
     Dispose(temp);
   End;
 End;
 
 Function TOdbcStatement.GetColNull(Col: SQLUSMALLINT): Boolean;
 Begin
-  Result:= ColSize[Col] = SQL_NULL_DATA;
+  Result := ColSize[Col] = SQL_NULL_DATA;
 End;
 
 Procedure TOdbcStatement.SetColNull(Col: SQLUSMALLINT;
                             AColNull: Boolean);
 Begin
   If AColNull Then
-    ColSize[Col]:= SQL_NULL_DATA;
+    ColSize[Col] := SQL_NULL_DATA;
 End;
 
 Function TOdbcStatement.GetCellNull(Col, Row: SQLUSMALLINT): Boolean;
 Begin
-  Result:= CellSize[Col,Row] = SQL_NULL_DATA;
+  Result := CellSize[Col,Row] = SQL_NULL_DATA;
 End;
 
 Procedure TOdbcStatement.SetCellNull(Col, Row: SQLUSMALLINT;
                              ACellNull: Boolean);
 Begin
   If ACellNull Then
-    CellSize[Col,Row]:= SQL_NULL_DATA;
+    CellSize[Col,Row] := SQL_NULL_DATA;
 End;
 
 Function TOdbcStatement.GetFormatStyle(Col: SQLUSMALLINT): TFormatStyle;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= fsNone
+    Result := fsNone
   Else
-    Result:= temp^.FFormatStyle;
+    Result := temp^.FFormatStyle;
 End;
 
 Procedure TOdbcStatement.SetFormatStyle(Col: SQLUSMALLINT;
@@ -4180,22 +4077,22 @@ Procedure TOdbcStatement.SetFormatStyle(Col: SQLUSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp <> Nil Then
-    temp^.FFormatStyle:= AFormatStyle;
+    temp^.FFormatStyle := AFormatStyle;
 End;
 
 Function TOdbcStatement.GetFormatMask(Col: SQLUSMALLINT): String;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= ''
+    Result := ''
   Else
-    Result:= temp^.FFormatMask;
+    Result := temp^.FFormatMask;
 End;
 
 Procedure TOdbcStatement.SetFormatMask(Col: SQLUSMALLINT;
@@ -4203,22 +4100,22 @@ Procedure TOdbcStatement.SetFormatMask(Col: SQLUSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp <> Nil Then
-    temp^.FFormatMask:= AFormatMask;
+    temp^.FFormatMask := AFormatMask;
 End;
 
 Function TOdbcStatement.GetColPrimary(Col: SQLUSMALLINT): Boolean;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= False
+    Result := False
   Else
-    Result:= temp^.FPrimary;
+    Result := temp^.FPrimary;
 End;
 
 Procedure TOdbcStatement.SetColPrimary(Col: SQLUSMALLINT;
@@ -4226,101 +4123,101 @@ Procedure TOdbcStatement.SetColPrimary(Col: SQLUSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp <> Nil Then
-    temp^.FPrimary:= AColPrimary;
+    temp^.FPrimary := AColPrimary;
 End;
 
 Function TOdbcStatement.GetColPrecision(Col: SQLUSMALLINT): SQLUINTEGER;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= temp^.FColumnSize;
+    Result := temp^.FColumnSize;
 End;
 
 Function TOdbcStatement.GetColScale(Col: SQLUSMALLINT): SQLSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= temp^.FDecimalDigits;
+    Result := temp^.FDecimalDigits;
 End;
 
 Function TOdbcStatement.GetColNullable(Col: SQLUSMALLINT): SQLSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= SQL_NULLABLE_UNKNOWN
+    Result := SQL_NULLABLE_UNKNOWN
   Else
-    Result:= temp^.FNullable;
+    Result := temp^.FNullable;
 End;
 
 Function TOdbcStatement.GetParamPrecision(Param: SQLUSMALLINT): SQLUINTEGER;
 Var
   temp: TParamPtr;
 Begin
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
 
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= temp^.FParameterSize;
+    Result := temp^.FParameterSize;
 End;
 
 Function TOdbcStatement.GetParamScale(Param: SQLUSMALLINT): SQLSMALLINT;
 Var
   temp: TParamPtr;
 Begin
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
 
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= temp^.FDecimalDigits;
+    Result := temp^.FDecimalDigits;
 End;
 
 Function TOdbcStatement.GetParamNullable(Param: SQLUSMALLINT): SQLSMALLINT;
 Var
   temp: TParamPtr;
 Begin
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
 
   If temp = Nil Then
-    Result:= SQL_NULLABLE_UNKNOWN
+    Result := SQL_NULLABLE_UNKNOWN
   Else
-    Result:= temp^.FNullable;
+    Result := temp^.FNullable;
 End;
 
 Function TOdbcStatement.GetRowStatus(Row: SQLUSMALLINT): SQLUSMALLINT;
 Begin
   If (Row > 0) And (Row <= 1) Then
-    Result:= SQLUSMALLINT(OffsetRow(FRowStatus^.FValue, Row, PhysSize(SQL_C_USHORT))^)
+    Result := SQLUSMALLINT(OffsetRow(FRowStatus^.FValue, Row, PhysSize(SQL_C_USHORT))^)
   Else
-    Result:= SQL_ROW_NOROW;
+    Result := SQL_ROW_NOROW;
 End;
 
 Function TOdbcStatement.GetRowFlag(Row: SQLUSMALLINT): SQLUSMALLINT;
 Var
   Flags: SQLUSMALLINTPtr;
 Begin
-  Flags:= RowFlags(Row);
+  Flags := RowFlags(Row);
   If Flags = Nil Then
-    Result:= rfNone
+    Result := rfNone
   Else
-    Result:= Flags^ And rfOps;
+    Result := Flags^ And rfOps;
 End;
 
 Procedure TOdbcStatement.SetRowFlag(Row: SQLUSMALLINT;
@@ -4328,13 +4225,13 @@ Procedure TOdbcStatement.SetRowFlag(Row: SQLUSMALLINT;
 Var
   Flags: SQLUSMALLINTPtr;
 Begin
-  Flags:= RowFlags(Row);
+  Flags := RowFlags(Row);
   If Flags <> Nil Then
   Begin
     If (rfOps And ARowFlag) = rfNone Then
-      Flags^:= Flags^ And (Not rfOps)
+      Flags^ := Flags^ And (Not rfOps)
     Else
-      Flags^:= (Flags^ And (Not rfOps)) Or ARowFlag;
+      Flags^ := (Flags^ And (Not rfOps)) Or ARowFlag;
   End;
 End;
 
@@ -4345,18 +4242,18 @@ Begin
     ParseSQL;
     End;
 
-  Result:= FParamNames;
+  Result := FParamNames;
 End;
 
 Function TOdbcStatement.GetColNames: TStringList;
 Begin
-  Result:= FColNames;
+  Result := FColNames;
 End;
 
 
 Function TOdbcStatement.GetRowValid(Row: SQLUSMALLINT): Boolean;
 Begin
-  Result:= RowStatus[Row] In [SQL_ROW_SUCCESS, SQL_ROW_SUCCESS_WITH_INFO,
+  Result := RowStatus[Row] In [SQL_ROW_SUCCESS, SQL_ROW_SUCCESS_WITH_INFO,
                               SQL_ROW_ADDED, SQL_ROW_UPDATED];
 End;
 
@@ -4367,7 +4264,7 @@ var
 Begin
   Init;
 
-  FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, @res, SizeOf(res), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode := SQLGetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, @res, SizeOf(res), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
   result := res;
@@ -4377,7 +4274,7 @@ Procedure TOdbcStatement.SetQueryTimeOut(AQueryTimeOut: SQLUINTEGER);
 Begin
   Init;
 
-  FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, Pointer(AQueryTimeOut), SizeOf(AQueryTimeOut));
+  FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_QUERY_TIMEOUT, Pointer(AQueryTimeOut), SizeOf(AQueryTimeOut));
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -4386,7 +4283,7 @@ Procedure TOdbcStatement.SetSpecialSQLStatementAttribute(AAttribute: SQLINTEGER;
 Begin
   Init;
 
-  FRetCode:= SQLSetStmtAttr(FHstmt, AAttribute, AValue, AStringLength);
+  FRetCode := SQLSetStmtAttr(FHstmt, AAttribute, AValue, AStringLength);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -4398,7 +4295,7 @@ var
 Begin
   Init;
 
-  FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, @Res, SizeOf(Res), {$IFDEF FPC}@{$ENDIF}len);
+  FRetCode := SQLGetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, @Res, SizeOf(Res), {$IFDEF FPC}@{$ENDIF}len);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
   result := res;
@@ -4408,7 +4305,7 @@ Procedure TOdbcStatement.SetMaxRows(AMaxRows: SQLUINTEGER);
 Begin
   Init;
 
-  FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, Pointer(AMaxRows), SizeOf(AMaxRows));
+  FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_MAX_ROWS, Pointer(AMaxRows), SizeOf(AMaxRows));
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -4420,16 +4317,16 @@ Var
 Begin
   Log(1, 'TOdbcStatement.SetConcurrencyType');
 
-  FConcurrencyType:= AConcurrencyType;
+  FConcurrencyType := AConcurrencyType;
 
   If FActive Then
   Begin
     Close;
 
-    FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, @LConcurrencyType, SizeOf(LConcurrencyType), {$IFDEF FPC}@{$ENDIF}len);
+    FRetCode := SQLGetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, @LConcurrencyType, SizeOf(LConcurrencyType), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LConcurrencyType <> FConcurrencyType) Then
     Begin
-      FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, pointer(FConcurrencyType), SizeOf(FConcurrencyType));
+      FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_CONCURRENCY, pointer(FConcurrencyType), SizeOf(FConcurrencyType));
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
@@ -4446,13 +4343,13 @@ Var
     //depreciated GetInfo(SQL_POSITIONED_STATEMENTS);
     Case FCursorType Of
       SQL_CURSOR_FORWARD_ONLY:
-        FCursorAttr:= Hdbc.GetInfoInteger(SQL_FORWARD_ONLY_CURSOR_ATTRIBUTES1);
+        FCursorAttr := Hdbc.GetInfoInteger(SQL_FORWARD_ONLY_CURSOR_ATTRIBUTES1);
       SQL_CURSOR_STATIC:
-        FCursorAttr:= Hdbc.GetInfoInteger(SQL_STATIC_CURSOR_ATTRIBUTES1);
+        FCursorAttr := Hdbc.GetInfoInteger(SQL_STATIC_CURSOR_ATTRIBUTES1);
       SQL_CURSOR_KEYSET_DRIVEN:
-        FCursorAttr:= Hdbc.GetInfoInteger(SQL_KEYSET_CURSOR_ATTRIBUTES1);
+        FCursorAttr := Hdbc.GetInfoInteger(SQL_KEYSET_CURSOR_ATTRIBUTES1);
       SQL_CURSOR_DYNAMIC:
-        FCursorAttr:= Hdbc.GetInfoInteger(SQL_DYNAMIC_CURSOR_ATTRIBUTES1);
+        FCursorAttr := Hdbc.GetInfoInteger(SQL_DYNAMIC_CURSOR_ATTRIBUTES1);
     End;
   End;
 var
@@ -4460,17 +4357,17 @@ var
 Begin
   Log(1, 'TOdbcStatement.SetCursorType');
 
-  FCursorType:= ACursorType;
+  FCursorType := ACursorType;
 
   If FActive Then
   Begin
     Close;
     GetCursorAttr;
 
-    FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_CURSOR_TYPE, @LCursorType, SizeOf(LCursorType), {$IFDEF FPC}@{$ENDIF}len);
+    FRetCode := SQLGetStmtAttr(FHstmt, SQL_ATTR_CURSOR_TYPE, @LCursorType, SizeOf(LCursorType), {$IFDEF FPC}@{$ENDIF}len);
     If FEnv.Error.Success(FRetCode) And (LCursorType <> FCursorType) Then
     Begin
-      FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_CURSOR_TYPE, Pointer(FCursorType), SizeOf(FCursorType));
+      FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_CURSOR_TYPE, Pointer(FCursorType), SizeOf(FCursorType));
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
@@ -4482,7 +4379,7 @@ Begin
   Log(1, 'TOdbcStatement.SetBlobSize');
 
   If (ABlobSize <> FBlobSize) And (ABlobSize > MinBlobSize) Then
-    FBlobSize:= ABlobSize;
+    FBlobSize := ABlobSize;
 End;
 
 Constructor TOdbcStatement.Create(Env : TOdbcEnv; dbc : TOdbcConnection);
@@ -4490,55 +4387,55 @@ Begin
   Inherited Create(Env);
 
   { Set Defaults }
-  FHdbc:= dbc;
-  FHdesc:= Nil;
-  FActive:= False;
-  FRetCode:= SQL_SUCCESS;
+  FHdbc := dbc;
+  FHdesc := Nil;
+  FActive := False;
+  FRetCode := SQL_SUCCESS;
 
-  FColBinds:= Nil;
+  FColBinds := Nil;
 
-  FCols:= Nil;
+  FCols := Nil;
 
-  FParams:= Nil;
+  FParams := Nil;
 
-  FRowStatus:= Nil;
-  FRowFlags:= Nil;
-  FNumCols:= 0;
-  FNumRows:= 0;
-  FNumParams:= 0;
-  FBulkData:= DefBulkData;
-  FBlobs:= False;
-  FColumnsBound:= False;
+  FRowStatus := Nil;
+  FRowFlags := Nil;
+  FNumCols := 0;
+  FNumRows := 0;
+  FNumParams := 0;
+  FBulkData := DefBulkData;
+  FBlobs := False;
+  FColumnsBound := False;
 
-  FPrepared:= DefPrepared;
-  FExecuted:= DefExecuted;
-  FParamType:= DefParamType;
-  FTargetTable:= '';
-  FTableOwner:= '';
-  FTableName:= '';
-  FSkipByPosition:= DefSkipByMethod;
-  FSkipByCursor:= DefSkipByMethod;
-  FParamNames:= TStringList.Create;
-  FColNames:= TStringList.Create;
-  FHstmtInsert:= Nil;
-  FHstmtUpdate:= Nil;
-  FHstmtDelete:=  Nil;
-  FHstmtRefresh:= Nil;
+  FPrepared := DefPrepared;
+  FExecuted := DefExecuted;
+  FParamType := DefParamType;
+  FTargetTable := '';
+  FTableOwner := '';
+  FTableName := '';
+  FSkipByPosition := DefSkipByMethod;
+  FSkipByCursor := DefSkipByMethod;
+  FParamNames := TStringList.Create;
+  FColNames := TStringList.Create;
+  FHstmtInsert := Nil;
+  FHstmtUpdate := Nil;
+  FHstmtDelete :=  Nil;
+  FHstmtRefresh := Nil;
 
-  FSQL:= '';
-  FSQLParsing:= DefSQLParsing;
-  FCursorAttr:= 0;
-  FConcurrencyType:= DefConcurrencyType;
-  FCursorType:= DefCursorType;
-  FBlobSize:= DefBlobSize;
-  FBlobDeferral:= DefBlobDeferral;
-  FBlobPlacement:= DefBlobPlacement;
-  FEmptyToNull:= DefEmptyToNull;
-  FStringTrimming:= DefStringTrimming;
-  FBindByName:= DefBindByName;
-  FRowCountMethod:= DefRowCountMethod;
-  FNoRowsAffected:= DefNoRowsAffected;
-  FAborted:= False;
+  FSQL := '';
+  FSQLParsing := DefSQLParsing;
+  FCursorAttr := 0;
+  FConcurrencyType := DefConcurrencyType;
+  FCursorType := DefCursorType;
+  FBlobSize := DefBlobSize;
+  FBlobDeferral := DefBlobDeferral;
+  FBlobPlacement := DefBlobPlacement;
+  FEmptyToNull := DefEmptyToNull;
+  FStringTrimming := DefStringTrimming;
+  FBindByName := DefBindByName;
+  FRowCountMethod := DefRowCountMethod;
+  FNoRowsAffected := DefNoRowsAffected;
+  FAborted := False;
 End;
 
 Destructor TOdbcStatement.Destroy;
@@ -4548,20 +4445,20 @@ Begin
   { Terminate Self }
   Terminate;
 
-  FParamNames.Free;
+  FParamNames.free;
   SetLength(FParamIndexes, 0);
 
-  FColNames.Free;
+  FColNames.free;
   SetLength(FColIndexes, 0);
 
   If FHstmtInsert <> Nil Then
-    FHstmtInsert.Free;
+    FHstmtInsert.free;
   If FHstmtUpdate <> Nil Then
-    FHstmtUpdate.Free;
+    FHstmtUpdate.free;
   If FHstmtDelete <>  Nil Then
-    FHstmtDelete.Free;
+    FHstmtDelete.free;
   If FHstmtRefresh <> Nil Then
-    FHstmtRefresh.Free;
+    FHstmtRefresh.free;
 End;
 
 Function TOdbcStatement.Init: Boolean;
@@ -4570,14 +4467,14 @@ Begin
 
   If FActive Then
   Begin
-    Init:= FActive;
+    Init := FActive;
     Exit;
   End;
 
   Hdbc.Connect;
 
   { Create Handle }
-  FRetCode:= SQLAllocHandle(SQL_HANDLE_STMT, Hdbc.Handle, FHstmt);
+  FRetCode := SQLAllocHandle(SQL_HANDLE_STMT, Hdbc.Handle, FHstmt);
   If Not FEnv.Error.Success(FRetCode) Then
   Begin
     FHstmt := Nil;
@@ -4585,13 +4482,13 @@ Begin
   End;
 
   { Set Active Field }
-  FActive:= True;
+  FActive := True;
 
   { Set ODBC Properties }
-  ConcurrencyType:= FConcurrencyType;
-  CursorType:= FCursorType;
+  ConcurrencyType := FConcurrencyType;
+  CursorType := FCursorType;
 
-  Result:= FActive;
+  Result := FActive;
 End;
 
 Function TOdbcStatement.Terminate: Boolean;
@@ -4607,16 +4504,16 @@ Begin
     Close;
 
     { Free Handle }
-    FRetCode:= SQLFreeHandle(SQL_HANDLE_STMT, FHstmt);
+    FRetCode := SQLFreeHandle(SQL_HANDLE_STMT, FHstmt);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
     FHstmt := Nil;
 
     { Set Active Field }
-    FActive:= False;
+    FActive := False;
   End;
 
-  Result:= Not FActive;
+  Result := Not FActive;
 End;
 
 Procedure TOdbcStatement.CloseCursor;
@@ -4624,7 +4521,7 @@ Begin
   Init;
 
   { Reset Statement Handle }
-  FRetCode:= SQLFreeStmt(FHstmt, SQL_CLOSE);
+  FRetCode := SQLFreeStmt(FHstmt, SQL_CLOSE);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 End;
@@ -4641,8 +4538,8 @@ Begin
 
   UnPrepareHstmts;
 
-  FPrepared:= False;
-  FExecuted:= False;
+  FPrepared := False;
+  FExecuted := False;
 End;
 
 Function TOdbcStatement.GetHandle: SQLHSTMT;
@@ -4650,7 +4547,7 @@ Begin
   Init;
 
   { Retrieve Handle }
-  Result:= FHstmt;
+  Result := FHstmt;
 End;
 
 Function TOdbcStatement.GetColCount: SQLSMALLINT;
@@ -4662,7 +4559,7 @@ Begin
   { Bind Columns }
   BindCols;
 
-  Result:= FNumCols;
+  Result := FNumCols;
 End;
 
 Function TOdbcStatement.GetRowCount: SQLINTEGER;
@@ -4675,51 +4572,51 @@ Var
 Begin
   If FRowCountMethod = rcFunction Then
   Begin
-    FRetCode:= SQLGetDiagField(SQL_HANDLE_STMT, FHstmt, 0, SQL_DIAG_CURSOR_ROW_COUNT, @Result, SizeOf(Result), len);
+    FRetCode := SQLGetDiagField(SQL_HANDLE_STMT, FHstmt, 0, SQL_DIAG_CURSOR_ROW_COUNT, @Result, SizeOf(Result), len);
     If FEnv.Error.Success(FRetCode) And (Result >= 0) Then
       Exit;
   End;
 
   If FRowCountMethod = rcCustom Then
   Begin
-    Result:= DoRowCount;
+    Result := DoRowCount;
     If Result >= 0 Then
       Exit;
   End;
 
-  Result:= 0;
+  Result := 0;
 
-  tempHstmt:= TOdbcStatement.Create(FEnv, FHdbc);
-  tempHstmt.MaxRows:= MaxRows;
+  tempHstmt := TOdbcStatement.Create(FEnv, FHdbc);
+  tempHstmt.MaxRows := MaxRows;
 
   Try
 
     If FRowCountMethod <> rcTraverse Then
     Begin
-      ASQL:= StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
-      UpperSQL:= UpperCase(ASQL);
-      UpperSQL:= StringReplace(UpperSQL, ',', ' ', [rfReplaceAll, rfIgnoreCase]);
-      UpperSQL:= StringReplace(UpperSQL, '(', ' ', [rfReplaceAll, rfIgnoreCase]);
-      UpperSQL:= StringReplace(UpperSQL, ')', ' ', [rfReplaceAll, rfIgnoreCase]);
-      UpperSQL:= fsl_utilities.StringReplace(UpperSQL, fsl_utilities.setControls, ' ');
+      ASQL := StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
+      UpperSQL := UpperCase(ASQL);
+      UpperSQL := StringReplace(UpperSQL, ',', ' ', [rfReplaceAll, rfIgnoreCase]);
+      UpperSQL := StringReplace(UpperSQL, '(', ' ', [rfReplaceAll, rfIgnoreCase]);
+      UpperSQL := StringReplace(UpperSQL, ')', ' ', [rfReplaceAll, rfIgnoreCase]);
+      UpperSQL := fsl_utilities.StringReplace(UpperSQL, fsl_utilities.setControls, ' ');
 
-      FromLoc:= Pos(' FROM ', UpperSQL);
+      FromLoc := Pos(' FROM ', UpperSQL);
       If (FromLoc > 0) And
          (Pos(' DISTINCT ', UpperSQL) = 0) And
          (Pos(' HAVING ', UpperSQL) = 0) And
          (Pos(' UNION ', UpperSQL) = 0) Then
       Begin
-        Loc:= Pos(' GROUP ', UpperSQL);
+        Loc := Pos(' GROUP ', UpperSQL);
         If Loc > 0 Then
-          ASQL:= Copy(ASQL, 1, Loc-1);
-        Loc:= Pos(' ORDER ', UpperSQL);
+          ASQL := Copy(ASQL, 1, Loc-1);
+        Loc := Pos(' ORDER ', UpperSQL);
         If Loc > 0 Then
-          ASQL:= Copy(ASQL, 1, Loc-1);
+          ASQL := Copy(ASQL, 1, Loc-1);
 
-        tempHstmt.SQL:= 'SELECT Count(*)'+Copy(ASQL, FromLoc, Length(ASQL)-FromLoc+1);
+        tempHstmt.SQL := 'SELECT Count(*)'+Copy(ASQL, FromLoc, Length(ASQL)-FromLoc+1);
         tempHstmt.Prepare;
 
-        temp:= FParams;
+        temp := FParams;
         While temp <> Nil Do
         Begin
           tempHstmt.BindParam(temp^.FParam, temp^.FType, temp^.FValue, temp^.FSql);
@@ -4730,14 +4627,14 @@ Begin
             TempHstmt.ParamSize[temp^.FParam] := temp^.FSize^;
             End;
 
-          temp:= temp^.Next;
+          temp := temp^.Next;
         End;
 
         Try
 
           tempHstmt.Execute;
           If tempHstmt.FetchNext Then
-            Result:= tempHstmt.ColCardinal[1];
+            Result := tempHstmt.ColCardinal[1];
           Exit;
 
         Except
@@ -4747,10 +4644,10 @@ Begin
       End;
     End;
 
-    tempHstmt.SQL:= FSQL;
+    tempHstmt.SQL := FSQL;
     tempHstmt.Prepare;
 
-    temp:= FParams;
+    temp := FParams;
     While temp <> Nil Do
     Begin
       tempHstmt.BindParam(temp^.FParam, temp^.FType, temp^.FValue, temp^.FSql);
@@ -4761,7 +4658,7 @@ Begin
         TempHstmt.ParamSize[temp^.FParam] := temp^.FSize^;
         End;
 
-      temp:= temp^.Next;
+      temp := temp^.Next;
     End;
 
     tempHstmt.Execute;
@@ -4769,7 +4666,7 @@ Begin
       Inc(Result);
 
   Finally
-    tempHstmt.Free;
+    tempHstmt.free;
   End;
 End;
 
@@ -4777,14 +4674,14 @@ Function TOdbcStatement.GetRowsFetched: SQLUINTEGER;
 Begin
   Log(1, 'TOdbcStatement.NumRowsFetched');
 
-  Result:= FNumRows;
+  Result := FNumRows;
 End;
 
 Function TOdbcStatement.GetRowsAffected: SQLLEN;
 Begin
   Log(1, 'TOdbcStatement.NumRowsAffected');
 
-  FRetCode:= SQLRowCount(FHstmt, Result);
+  FRetCode := SQLRowCount(FHstmt, Result);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
   {$IFDEF WIN64}
@@ -4815,18 +4712,18 @@ Var
 Begin
   If Not FSQLParsing Then
   Begin
-    Result:= FSQL;
+    Result := FSQL;
     Exit;
   End;
 
   FParamNames.Clear;
 
-  Literal:= False;
+  Literal := False;
 
-  LiResultLength:= 0;
+  LiResultLength := 0;
   SetLength(LsResult,Length(FSQL));
 
-  Loc:= 1;
+  Loc := 1;
   While Loc <= Length(FSQL) Do
   Begin
     If FSQL[Loc] = '''' Then
@@ -4838,7 +4735,7 @@ Begin
         Inc(Loc);
       End
       Else
-        Literal:= Not Literal;
+        Literal := Not Literal;
       AppendToLocalResult('''');
     End
     Else If (Not Literal) And (FSQL[Loc] = ':') Then
@@ -4850,7 +4747,7 @@ Begin
 
       AppendToLocalResult('?');
 
-      Token:= '';
+      Token := '';
 
       If FSQL[Loc] = '[' Then
         Begin
@@ -4878,13 +4775,13 @@ Begin
         //This parameter has been escaped
         //  - token is composed of entire escaped block (including the escape chars)
 
-        Token:= FSQL[Loc];
+        Token := FSQL[Loc];
         Inc(Loc);
 
         LiSubEscapeCount := 0;
         While (Loc <= Length(FSQL)) And (LiSubEscapeCount >= 0) Do
           Begin
-          Token:= Token+FSQL[Loc];
+          Token := Token+FSQL[Loc];
 
           If FSQL[Loc] = LcOpenEscapeChar Then
             Begin
@@ -4907,7 +4804,7 @@ Begin
         Begin
         While (Loc <= Length(FSQL)) And CharInSet(FSQL[Loc], ParamCharSet) Do
           Begin
-          Token:= Token+FSQL[Loc];
+          Token := Token+FSQL[Loc];
           Inc(Loc);
           End;
         End;
@@ -4951,7 +4848,7 @@ Begin
   ParsedSQL := odbcPChar(ParseSQL);
   try
     { Prepare SQL Statement }
-    FRetCode:= SQLPrepare(FHstmt, ParsedSQL, SQL_NTS);
+    FRetCode := SQLPrepare(FHstmt, ParsedSQL, SQL_NTS);
   finally
     freeMem(ParsedSQL);
   end;
@@ -4960,12 +4857,12 @@ Begin
 
   DoAfterPrepare;
 
-  FPrepared:= True;
+  FPrepared := True;
 End;
 
 Function TOdbcStatement.BindCore: Boolean;
 Begin
-  Result:= Hdbc.Core Or (Not FPrepared) Or FBindByName;
+  Result := Hdbc.Core Or (Not FPrepared) Or FBindByName;
 End;
 
 Procedure TOdbcStatement.BindParamMain(Param: SQLUSMALLINT;
@@ -4989,13 +4886,13 @@ Var
   Begin
     Case FBlobPlacement Of
       bpByParts:
-        Result:= True;
+        Result := True;
       bpByExec:
-        Result:= False;
+        Result := False;
       Else
       Begin
-        LongDataLen:= Hdbc.GetInfoString(SQL_NEED_LONG_DATA_LEN);
-        Result:= (LongDataLen <> '') And (LongDataLen[1] = 'Y');
+        LongDataLen := Hdbc.GetInfoString(SQL_NEED_LONG_DATA_LEN);
+        Result := (LongDataLen <> '') And (LongDataLen[1] = 'Y');
       End;
     End;
   End;
@@ -5003,75 +4900,75 @@ Var
 Begin
   Log(1, 'TOdbcStatement.BindParamMain');
 
-  temp:= ParamRec(Param);
+  temp := ParamRec(Param);
   If temp = Nil Then
   Begin
     InsertHead(Param, ParamType, SqlType, ParamValue);
-    temp:= FParams;
-    temp.FParameterSize:= ParameterSize;
-    temp.FDecimalDigits:= DecimalDigits;
-    temp.FNullable:= Nullable;
+    temp := FParams;
+    temp.FParameterSize := ParameterSize;
+    temp.FDecimalDigits := DecimalDigits;
+    temp.FNullable := Nullable;
 
     If Bulk = 0 Then
     Begin
-      temp^.FCount:= 1;
+      temp^.FCount := 1;
       New(temp^.FSize);
     End
     Else
     Begin
-      temp^.FCount:= Bulk;
+      temp^.FCount := Bulk;
       GetMem(temp^.FSize, temp^.FCount*SizeOf(SQLINTEGER));
     End;
   End
   Else
   Begin
-    temp^.FType:= ParamType;
-    temp^.FSql:= SqlType;
-    temp^.FValue:= ParamValue;
+    temp^.FType := ParamType;
+    temp^.FSql := SqlType;
+    temp^.FValue := ParamValue;
   End;
 
   If FNumParams < temp^.FCount Then
-    FNumParams:= temp^.FCount;
+    FNumParams := temp^.FCount;
 
-  BufferLength:= 0;
-  temp^.FSize^:= 0;
+  BufferLength := 0;
+  temp^.FSize^ := 0;
 
   { Create Storage }
   Case SqlType Of
     SQL_CHAR, SQL_WCHAR:
     Begin
       If Bulk = 0 Then
-        BufferLength:= ParameterSize+1
+        BufferLength := ParameterSize+1
       Else
-        BufferLength:= DefaultStringSize+1;
-      temp^.FSize^:= SQL_NTS;
+        BufferLength := DefaultStringSize+1;
+      temp^.FSize^ := SQL_NTS;
     End;
     SQL_VARCHAR:
     Begin
       If Bulk = 0 Then
-        BufferLength:= ParameterSize+1
+        BufferLength := ParameterSize+1
       Else
-        BufferLength:= DefaultStringSize+1;
-      temp^.FSize^:= SQL_NTS;
+        BufferLength := DefaultStringSize+1;
+      temp^.FSize^ := SQL_NTS;
     End;
     SQL_LONGVARCHAR:
     Begin
       If (Not FBulkData) And (Bulk <> 0) Then
         Raise EODBCExpress.Create('Cannot insert bulk blobs.');
 
-      BufferLength:= MaxLongint;
+      BufferLength := MaxLongint;
       If BlobPlacementByParts Then
-        temp^.FSize^:= SQL_LEN_DATA_AT_EXEC_OFFSET
+        temp^.FSize^ := SQL_LEN_DATA_AT_EXEC_OFFSET
       Else
-        temp^.FSize^:= 0;
+        temp^.FSize^ := 0;
     End;
 
     SQL_BINARY:
     Begin
       If Bulk = 0 Then
-        BufferLength:= ParameterSize
+        BufferLength := ParameterSize
       Else
-        BufferLength:= DefaultStringSize+1;
+        BufferLength := DefaultStringSize+1;
     End;
     SQL_VARBINARY:
     Begin
@@ -5080,11 +4977,11 @@ Begin
       If (Not FBulkData) And (Bulk <> 0) Then
         Raise EODBCExpress.Create('Cannot insert bulk blobs.');
 
-      BufferLength:= MaxLongint;
+      BufferLength := MaxLongint;
       If BlobPlacementByParts Then
-        temp^.FSize^:= SQL_LEN_DATA_AT_EXEC_OFFSET
+        temp^.FSize^ := SQL_LEN_DATA_AT_EXEC_OFFSET
       Else
-        temp^.FSize^:= 0;
+        temp^.FSize^ := 0;
 
     End;
     SQL_LONGVARBINARY:
@@ -5092,26 +4989,26 @@ Begin
       If (Not FBulkData) And (Bulk <> 0) Then
         Raise EODBCExpress.Create('Cannot insert bulk blobs.');
 
-      BufferLength:= MaxLongint;
+      BufferLength := MaxLongint;
       If BlobPlacementByParts Then
-        temp^.FSize^:= SQL_LEN_DATA_AT_EXEC_OFFSET
+        temp^.FSize^ := SQL_LEN_DATA_AT_EXEC_OFFSET
       Else
-        temp^.FSize^:= 0;
+        temp^.FSize^ := 0;
     End;
   End;
 
   { Null Data }
   If ParamValue = Nil Then
-    temp^.FSize^:= SQL_NULL_DATA;
+    temp^.FSize^ := SQL_NULL_DATA;
 
   If (Bulk <> 0) Then
-    For i:= 1 To temp^.FCount-1 Do
-      SQLINTEGER(OffsetPointer(temp^.FSize, i*SizeOf(SQLINTEGER))^):= temp^.FSize^;
+    For i := 1 To temp^.FCount-1 Do
+      SQLINTEGER(OffsetPointer(temp^.FSize, i*SizeOf(SQLINTEGER))^) := temp^.FSize^;
 
   { Bind Parameter }
-  FRetCode:= SQLBindParameter(FHstmt, Param, FParamType, ParamType, SqlType,
+  FRetCode := SQLBindParameter(FHstmt, Param, FParamType, ParamType, SqlType,
     ParameterSize, DecimalDigits, ParamValue, BufferLength, temp^.FSize);
-  FParamType:= DefParamType;
+  FParamType := DefParamType;
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 
@@ -5119,11 +5016,11 @@ Begin
   Begin
     If FHdesc = Nil Then
     Begin
-      FRetCode:= SQLGetStmtAttr(FHstmt, SQL_ATTR_IMP_PARAM_DESC, @FHdesc, SizeOf(FHdesc), {$IFDEF FPC}@{$ENDIF}len);
+      FRetCode := SQLGetStmtAttr(FHstmt, SQL_ATTR_IMP_PARAM_DESC, @FHdesc, SizeOf(FHdesc), {$IFDEF FPC}@{$ENDIF}len);
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
-    ParamName:= FParamNames[Param-1];
+    ParamName := FParamNames[Param-1];
     SQLSetDescField(FHdesc, Param, SQL_DESC_NAME, Pointer(PChar(ParamName)), SQL_NTS);
     SQLSetDescField(FHdesc, Param, SQL_DESC_UNNAMED, Pointer(SQL_NAMED), 0);
   End;
@@ -5140,50 +5037,54 @@ Var
 Begin
   If Core Then
   Begin
-    ParameterSize:= 0;
-    DecimalDigits:= 0;
-    Nullable:= SQL_NULLABLE_UNKNOWN;
+    ParameterSize := 0;
+    DecimalDigits := 0;
+    Nullable := SQL_NULLABLE_UNKNOWN;
 
-    DriverPtr:= Hdbc.GetDriver(Hdbc.CurrentDriver);
+    DriverPtr := Hdbc.GetDriver(Hdbc.CurrentDriver);
     If DriverPtr = Nil Then
-      DriverPtr:= Hdbc.GetDriver('Default');
+      DriverPtr := Hdbc.GetDriver('Default');
 
     Case SqlType Of
       SQL_CHAR:
-        ParameterSize:= DriverPtr.PS_SQL_CHAR;
+        ParameterSize := DriverPtr.PS_SQL_CHAR;
       SQL_VARCHAR:
-        ParameterSize:= DriverPtr.PS_SQL_VARCHAR;
+        ParameterSize := DriverPtr.PS_SQL_VARCHAR;
       SQL_LONGVARCHAR:
-        ParameterSize:= DriverPtr.PS_SQL_LONGVARCHAR;
+        ParameterSize := DriverPtr.PS_SQL_LONGVARCHAR;
 
       SQL_BINARY:
-        ParameterSize:= DriverPtr.PS_SQL_BINARY;
+        ParameterSize := DriverPtr.PS_SQL_BINARY;
       SQL_VARBINARY:
-        ParameterSize:= DriverPtr.PS_SQL_VARBINARY;
+        ParameterSize := DriverPtr.PS_SQL_VARBINARY;
       SQL_LONGVARBINARY:
-        ParameterSize:= DriverPtr.PS_SQL_LONGVARBINARY;
+        ParameterSize := DriverPtr.PS_SQL_LONGVARBINARY;
 
       SQL_DECIMAL:
       Begin
-        ParameterSize:= DriverPtr.PS_SQL_DECIMAL;
-        DecimalDigits:= DriverPtr.DD_SQL_DECIMAL;
+        ParameterSize := DriverPtr.PS_SQL_DECIMAL;
+        DecimalDigits := DriverPtr.DD_SQL_DECIMAL;
       End;
       SQL_NUMERIC:
       Begin
-        ParameterSize:= DriverPtr.PS_SQL_NUMERIC;
-        DecimalDigits:= DriverPtr.DD_SQL_NUMERIC;
+        ParameterSize := DriverPtr.PS_SQL_NUMERIC;
+        DecimalDigits := DriverPtr.DD_SQL_NUMERIC;
       End;
 
       SQL_TYPE_TIMESTAMP:
       Begin
-        ParameterSize:= DriverPtr.PS_SQL_TYPE_TIMESTAMP;
-        DecimalDigits:= DriverPtr.DD_SQL_TYPE_TIMESTAMP;
+        ParameterSize := DriverPtr.PS_SQL_TYPE_TIMESTAMP;
+        DecimalDigits := DriverPtr.DD_SQL_TYPE_TIMESTAMP;
       End;
     End;
   End
   Else
   Begin
-    FRetCode:= SQLDescribeParam(FHstmt, Param, SqlType, ParameterSize, DecimalDigits, Nullable);
+    {$IFDEF DELPHI}
+    FRetCode := SQLDescribeParam(FHstmt, Param, SqlType, ParameterSize, DecimalDigits, Nullable);
+    {$ELSE}
+    FRetCode := SQLDescribeParam(FHstmt, Param, @SqlType, @ParameterSize, @DecimalDigits, @Nullable);
+    {$ENDIF}
     If Not FEnv.Error.Success(FRetCode) Then
       DescribeParam(Param, SqlType, ParameterSize, DecimalDigits, Nullable, True);
   End;
@@ -5200,7 +5101,7 @@ Var
 Begin
   Init;
 
-  SqlType:= SQL_CHAR;
+  SqlType := SQL_CHAR;
   DescribeParam(Param, SqlType, ParameterSize, DecimalDigits, Nullable, False);
 
   BindParamMain(Param, ParamType, ParamValue, SqlType, ParameterSize, DecimalDigits, Nullable, 0);
@@ -5259,7 +5160,7 @@ Procedure TOdbcStatement.BindNull(Param: SQLUSMALLINT);
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_DEFAULT;
+  ParamType := SQL_C_DEFAULT;
   BindParam(Param, ParamType, Nil, SQL_CHAR);
 End;
 
@@ -5269,12 +5170,12 @@ Var
   ParamType: SQLSMALLINT;
 Begin
   {$IFDEF FPC}
-  ParamType:= SQL_C_CHAR;
+  ParamType := SQL_C_CHAR;
   {$ELSE}
-  ParamType:= SQL_C_WCHAR;
+  ParamType := SQL_C_WCHAR;
   {$ENDIF}
   BindParam(Param, ParamType, PChar(ParamValue), ColTypeToSqlType(ParamType));
-  ParamSize[Param]:= Length(ParamValue){$IFNDEF FPC} * 2{$ENDIF};  //to allow binding memos, but causes re-exec problems
+  ParamSize[Param] := Length(ParamValue){$IFNDEF FPC} * 2{$ENDIF};  //to allow binding memos, but causes re-exec problems
 End;
 
 Procedure TOdbcStatement.BindSingle(Param: SQLUSMALLINT;
@@ -5282,7 +5183,7 @@ Procedure TOdbcStatement.BindSingle(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_FLOAT;
+  ParamType := SQL_C_FLOAT;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5291,7 +5192,7 @@ Procedure TOdbcStatement.BindDouble(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_DOUBLE;
+  ParamType := SQL_C_DOUBLE;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5300,7 +5201,7 @@ Procedure TOdbcStatement.BindShortint(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_STINYINT;
+  ParamType := SQL_C_STINYINT;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5309,7 +5210,7 @@ Procedure TOdbcStatement.BindByte(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_UTINYINT;
+  ParamType := SQL_C_UTINYINT;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5318,7 +5219,7 @@ Procedure TOdbcStatement.BindSmallint(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_SSHORT;
+  ParamType := SQL_C_SSHORT;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5327,7 +5228,7 @@ Procedure TOdbcStatement.BindWord(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_USHORT;
+  ParamType := SQL_C_USHORT;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5336,7 +5237,7 @@ Procedure TOdbcStatement.BindInteger(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_SLONG;
+  ParamType := SQL_C_SLONG;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5345,7 +5246,7 @@ Procedure TOdbcStatement.BindCardinal(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_ULONG;
+  ParamType := SQL_C_ULONG;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5366,7 +5267,7 @@ Procedure TOdbcStatement.BindInt64(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_SBIGINT;
+  ParamType := SQL_C_SBIGINT;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5375,7 +5276,7 @@ Procedure TOdbcStatement.BindDate(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_TYPE_DATE;
+  ParamType := SQL_C_TYPE_DATE;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5384,7 +5285,7 @@ Procedure TOdbcStatement.BindTime(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_TYPE_TIME;
+  ParamType := SQL_C_TYPE_TIME;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5393,7 +5294,7 @@ Procedure TOdbcStatement.BindTimeStamp(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_TYPE_TIMESTAMP;
+  ParamType := SQL_C_TYPE_TIMESTAMP;
   BindParam(Param, ParamType, @ParamValue, ColTypeToSqlType(ParamType));
 End;
 
@@ -5406,9 +5307,9 @@ Begin
   Else
     BindParam(Param, SQL_C_CHAR, ParamValue.Memory, SQL_LONGVARCHAR);
   If ParamValue.Size = 0 Then  //ParamValue.Memory should be nil
-    ParamSize[Param]:= SQL_NULL_DATA
+    ParamSize[Param] := SQL_NULL_DATA
   Else
-    ParamSize[Param]:= ParamValue.Size;
+    ParamSize[Param] := ParamValue.Size;
 End;
 
 Procedure TOdbcStatement.BindBinary(Param: SQLUSMALLINT;
@@ -5541,7 +5442,7 @@ Procedure TOdbcStatement.BindNulls(Param: SQLUSMALLINT);
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_DEFAULT;
+  ParamType := SQL_C_DEFAULT;
   BindParams(Param, ParamType, Nil, FNumParams);
 End;
 
@@ -5550,7 +5451,7 @@ Procedure TOdbcStatement.BindSingles(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_FLOAT;
+  ParamType := SQL_C_FLOAT;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5559,7 +5460,7 @@ Procedure TOdbcStatement.BindDoubles(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_DOUBLE;
+  ParamType := SQL_C_DOUBLE;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5568,7 +5469,7 @@ Procedure TOdbcStatement.BindShortints(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_STINYINT;
+  ParamType := SQL_C_STINYINT;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5577,7 +5478,7 @@ Procedure TOdbcStatement.BindBytes(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_UTINYINT;
+  ParamType := SQL_C_UTINYINT;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5586,7 +5487,7 @@ Procedure TOdbcStatement.BindSmallints(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_SSHORT;
+  ParamType := SQL_C_SSHORT;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5595,7 +5496,7 @@ Procedure TOdbcStatement.BindWords(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_USHORT;
+  ParamType := SQL_C_USHORT;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5604,7 +5505,7 @@ Procedure TOdbcStatement.BindIntegers(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_SLONG;
+  ParamType := SQL_C_SLONG;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5613,7 +5514,7 @@ Procedure TOdbcStatement.BindCardinals(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_ULONG;
+  ParamType := SQL_C_ULONG;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5623,7 +5524,7 @@ Var
   ParamType: SQLSMALLINT;
 Begin
   //BindIntegers(Param, ParamValue);
-  ParamType:= SQL_C_SLONG;
+  ParamType := SQL_C_SLONG;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5633,7 +5534,7 @@ Var
   ParamType: SQLSMALLINT;
 Begin
   //BindCardinals(Param, ParamValue);
-  ParamType:= SQL_C_ULONG;
+  ParamType := SQL_C_ULONG;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5642,7 +5543,7 @@ Procedure TOdbcStatement.BindInt64s(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_SBIGINT;
+  ParamType := SQL_C_SBIGINT;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5651,7 +5552,7 @@ Procedure TOdbcStatement.BindDates(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_TYPE_DATE;
+  ParamType := SQL_C_TYPE_DATE;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5660,7 +5561,7 @@ Procedure TOdbcStatement.BindTimes(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_TYPE_TIME;
+  ParamType := SQL_C_TYPE_TIME;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5669,7 +5570,7 @@ Procedure TOdbcStatement.BindTimeStamps(Param: SQLUSMALLINT;
 Var
   ParamType: SQLSMALLINT;
 Begin
-  ParamType:= SQL_C_TYPE_TIMESTAMP;
+  ParamType := SQL_C_TYPE_TIMESTAMP;
   BindParams(Param, ParamType, @ParamValue, High(ParamValue)+1);
 End;
 
@@ -5773,17 +5674,20 @@ Begin
   DoBeforeExecute;
 
   { Set Bulk Size }
-  //deprecated FRetCode:= SQLParamOptions(FHstmt, FNumParams, @irow);
-  FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_PARAMSET_SIZE, Pointer(FNumParams), SizeOf(FNumParams));
-  If (Not FEnv.Error.Success(FRetCode)) And (FNumParams > 1) Then
-    FEnv.Error.RaiseError(Self, FRetCode);
+  if FNumParams > 0 then
+  begin
+    //deprecated FRetCode := SQLParamOptions(FHstmt, FNumParams, @irow);
+    FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_PARAMSET_SIZE, Pointer(FNumParams), SizeOf(FNumParams));
+    If (Not FEnv.Error.Success(FRetCode)) Then
+      FEnv.Error.RaiseError(Self, FRetCode);
+  end;
 
-  FExecuted:= False;
-  FAborted:= False;
+  FExecuted := False;
+  FAborted := False;
   If not FPrepared Then
   Begin
     { Execute SQL Statement }
-    FRetCode:= SQLExecute(FHstmt);
+    FRetCode := SQLExecute(FHstmt);
   End
   Else
   Begin
@@ -5795,14 +5699,14 @@ Begin
     ParsedSQL := odbcPChar(ParseSQL);
     try
       { Execute SQL Statement }
-      FRetCode:= SQLExecDirect(FHstmt, ParsedSQL, SQL_NTS);
+      FRetCode := SQLExecDirect(FHstmt, ParsedSQL, SQL_NTS);
     finally
       FreeMem(ParsedSQL);
     end;
   End;
   If FAborted Then
   Begin
-    FExecuted:= True;
+    FExecuted := True;
     Abort;
   End;
   If (FRetCode <> SQL_NEED_DATA) And
@@ -5818,9 +5722,9 @@ Begin
     DoAfterExecute;
 
   { Bind NumRowsFetched }
-  FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ROWS_FETCHED_PTR, @FNumRows, SizeOf(FNumRows));
+  FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_ROWS_FETCHED_PTR, @FNumRows, SizeOf(FNumRows));
 
-  FExecuted:= True;
+  FExecuted := True;
 End;
 
 Function TOdbcStatement.ColAttrString(Col: SQLUSMALLINT;
@@ -5832,7 +5736,7 @@ Var
 Begin
   CharAttr := odbcPChar(DefaultStringSize);
   try
-    FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
+    FRetCode := SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
@@ -5851,11 +5755,11 @@ Var
 Begin
   CharAttr := odbcPChar(DefaultStringSize);
   try
-    FRetCode:= SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
+    FRetCode := SQLColAttribute(FHstmt, Col, FieldIdentifier, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
-    Result:= NumAttr;
+    Result := NumAttr;
   finally
     freemem(CharAttr);
   end;
@@ -5866,12 +5770,12 @@ Procedure TOdbcStatement.BindCol(Col: SQLUSMALLINT;
 Var
   temp: TColBindPtr;
 Begin
-  temp:= ColBindRec(Col);
+  temp := ColBindRec(Col);
 
   If temp = Nil Then
     InsertColBind(Col, SqlType)
   Else
-    temp^.FSql:= SqlType;
+    temp^.FSql := SqlType;
 End;
 
 Procedure TOdbcStatement.BindCols;
@@ -5889,6 +5793,7 @@ Var
   ColumnSize: SQLULEN;
   DecimalDigits: SQLSMALLINT;
   Nullable: SQLSMALLINT;
+  name : String;
 Begin
   Log(1, 'TOdbcStatement.BindCols');
 
@@ -5896,17 +5801,17 @@ Begin
   Begin
     { Get Number of Columns in Result Set }
     if FHdbc.FPlatform = kdbMySQL then
-      FNumCols:= ColAttrInteger(1, SQL_DESC_COUNT) // weird requirement?
+      FNumCols := ColAttrInteger(1, SQL_DESC_COUNT) // weird requirement?
     else
-      FNumCols:= ColAttrInteger(0, SQL_DESC_COUNT);
+      FNumCols := ColAttrInteger(0, SQL_DESC_COUNT);
 
     { Create Data Structure and Bind Columns }
-    FTail:= Nil;
-    For icol:= 1 To FNumCols Do
+    FTail := Nil;
+    For icol := 1 To FNumCols Do
     Begin
       ColumnName := odbcPChar(DefaultStringSize);
       try
-        FRetCode:= SQLDescribeCol(FHstmt, icol, ColumnName, DefaultStringSize, NameLength, SqlType, ColumnSize, DecimalDigits, Nullable);
+        FRetCode := SQLDescribeCol(FHstmt, icol, ColumnName, DefaultStringSize, NameLength, SqlType, ColumnSize, DecimalDigits, Nullable);
         If Not FEnv.Error.Success(FRetCode) Then
           FEnv.Error.RaiseError(Self, FRetCode);
 
@@ -5917,194 +5822,194 @@ Begin
       end;
 
       { Set Column Type }
-      temp:= ColBindRec(icol);
+      temp := ColBindRec(icol);
       If temp <> Nil Then
-        SqlType:= temp^.FSql;
+        SqlType := temp^.FSql;
 
       { Driver Translation Done }
       Case SqlType Of
         SQL_WCHAR:
-          SqlType:= SQL_CHAR;
+          SqlType := SQL_CHAR;
         SQL_WVARCHAR:
-          SqlType:= SQL_VARCHAR;
+          SqlType := SQL_VARCHAR;
         SQL_WLONGVARCHAR:
-          SqlType:= SQL_LONGVARCHAR;
+          SqlType := SQL_LONGVARCHAR;
         SQL_GUID:
-          SqlType:= SQL_BINARY;
+          SqlType := SQL_BINARY;
       End;
 
-      BufferLength:= 0;
+      BufferLength := 0;
 
       { Create Storage }
       Case SqlType Of
         SQL_CHAR:
         Begin
-          CType:= SQL_C_CHAR;
+          CType := SQL_C_CHAR;
           If FBulkData Then
-            BufferLength:= DefaultStringSize+1
+            BufferLength := DefaultStringSize+1
           Else
-            BufferLength:= ColumnSize+1;
+            BufferLength := ColumnSize+1;
           GetMem(SqlValue, BufferLength);
         End;
         SQL_VARCHAR:
         Begin
-          CType:= SQL_C_CHAR;
+          CType := SQL_C_CHAR;
           If FBulkData Or (ColumnSize = 0) Then
-            BufferLength:= DefaultStringSize+1
+            BufferLength := DefaultStringSize+1
           Else
-            BufferLength:= ColumnSize+1;
+            BufferLength := ColumnSize+1;
           GetMem(SqlValue, BufferLength);
         End;
         SQL_LONGVARCHAR:
         Begin
-          CType:= SQL_C_CHAR;
-          SqlValue:= Nil;
+          CType := SQL_C_CHAR;
+          SqlValue := Nil;
         End;
 
         SQL_BINARY:
         Begin
-          CType:= SQL_C_BINARY;
-          BufferLength:= ColumnSize;
+          CType := SQL_C_BINARY;
+          BufferLength := ColumnSize;
           GetMem(SqlValue, BufferLength);
         End;
         SQL_VARBINARY:
         Begin
-          CType:= SQL_C_BINARY;
-          SqlValue:= Nil;
+          CType := SQL_C_BINARY;
+          SqlValue := Nil;
 
-          //BufferLength:= ColumnSize;
+          //BufferLength := ColumnSize;
           //GetMem(SqlValue, BufferLength);
         End;
         SQL_LONGVARBINARY:
         Begin
-          CType:= SQL_C_BINARY;
-          SqlValue:= Nil;
+          CType := SQL_C_BINARY;
+          SqlValue := Nil;
         End;
 
         SQL_REAL:
         Begin
-          CType:= SQL_C_FLOAT;
+          CType := SQL_C_FLOAT;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_DOUBLE:
         Begin
-          CType:= SQL_C_DOUBLE;
+          CType := SQL_C_DOUBLE;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_FLOAT:
         Begin
-          CType:= SQL_C_DOUBLE;
+          CType := SQL_C_DOUBLE;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_DECIMAL:
         Begin
-          CType:= SQL_C_DOUBLE;
+          CType := SQL_C_DOUBLE;
           BufferLength := 8; // (GM) work around bug in sql 2008 driver 2007.100.1600.22
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_NUMERIC:
         Begin
-          CType:= SQL_C_DOUBLE;
+          CType := SQL_C_DOUBLE;
           GetMem(SqlValue, PhysSize(CType));
         End;
 
         SQL_BIT:
         Begin
-          CType:= SQL_C_BIT;
+          CType := SQL_C_BIT;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_TINYINT:
         Begin
           If ColAttrInteger(icol, SQL_DESC_UNSIGNED) = SQL_FALSE Then
-            CType:= SQL_C_STINYINT
+            CType := SQL_C_STINYINT
           Else
-            CType:= SQL_C_UTINYINT;
+            CType := SQL_C_UTINYINT;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_SMALLINT:
         Begin
           If ColAttrInteger(icol, SQL_DESC_UNSIGNED) = SQL_FALSE Then
-            CType:= SQL_C_SSHORT
+            CType := SQL_C_SSHORT
           Else
-            CType:= SQL_C_USHORT;
+            CType := SQL_C_USHORT;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_INTEGER:
         Begin
           If ColAttrInteger(icol, SQL_DESC_UNSIGNED) = SQL_FALSE Then
-            CType:= SQL_C_SLONG
+            CType := SQL_C_SLONG
           Else
-            CType:= SQL_C_ULONG;
+            CType := SQL_C_ULONG;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_BIGINT:
         Begin
           If ColAttrInteger(icol, SQL_DESC_UNSIGNED) = SQL_FALSE Then
-            CType:= SQL_C_SBIGINT
+            CType := SQL_C_SBIGINT
           Else
-            CType:= SQL_C_UBIGINT;
+            CType := SQL_C_UBIGINT;
           GetMem(SqlValue, PhysSize(CType));
         End;
 
         SQL_TYPE_DATE:
         Begin
-          CType:= SQL_C_TYPE_DATE;
+          CType := SQL_C_TYPE_DATE;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_TYPE_TIME:
         Begin
-          CType:= SQL_C_TYPE_TIME;
+          CType := SQL_C_TYPE_TIME;
           GetMem(SqlValue, PhysSize(CType));
         End;
         SQL_TYPE_TIMESTAMP:
         Begin
-          CType:= SQL_C_TYPE_TIMESTAMP;
+          CType := SQL_C_TYPE_TIMESTAMP;
           GetMem(SqlValue, PhysSize(CType));
         End;
         Else
         Begin
-          CType:= SQL_C_BINARY;
-          SqlValue:= Nil;
+          CType := SQL_C_BINARY;
+          SqlValue := Nil;
         End;
       End;
 
       { Update Structure }
       InsertTail(FTail, CType, SqlType, SqlValue);
-      FTail.FColumnSize:= ColumnSize;
-      FTail.FDecimalDigits:= DecimalDigits;
-      FTail.FNullable:= Nullable;
+      FTail.FColumnSize := ColumnSize;
+      FTail.FDecimalDigits := DecimalDigits;
+      FTail.FNullable := Nullable;
 
       { Bind Column }
       If (SqlType = SQL_LONGVARCHAR) Or (SqlType = SQL_LONGVARBINARY) Or (SqlType = SQL_VARBINARY) Then
-        FBlobs:= True
+        FBlobs := True
       Else
       Begin
-        FRetCode:= SQLBindCol(FHstmt, icol, CType, SqlValue, BufferLength, FTail^.FSize);
+        FRetCode := SQLBindCol(FHstmt, icol, CType, SqlValue, BufferLength, FTail^.FSize);
         If Not FEnv.Error.Success(FRetCode) Then
           FEnv.Error.RaiseError(Self, FRetCode);
       End;
     End;
 
     { Add RowStatus Column }
-    CType:= SQL_C_USHORT;
+    CType := SQL_C_USHORT;
     GetMem(SqlValue, PhysSize(CType));
     InsertTail(FTail, CType, ColTypeToSqlType(CType), SqlValue);
-    SQLUSMALLINT(SqlValue^):= SQL_ROW_SUCCESS;
-    FRowStatus:= FTail;
+    SQLUSMALLINT(SqlValue^) := SQL_ROW_SUCCESS;
+    FRowStatus := FTail;
 
     { Add RowFlags Column }
-    CType:= SQL_C_USHORT;
+    CType := SQL_C_USHORT;
     GetMem(SqlValue, PhysSize(CType));
     InsertTail(FTail, CType, ColTypeToSqlType(CType), SqlValue);
     FillChar(SqlValue^, PhysSize(CType), rfNone);
-    FRowFlags:= FTail;
+    FRowFlags := FTail;
 
     { Bind RowStatus }
-    //depreciated FRetCode:= SQLExtendedFetch(FHstmt, FetchType, Row, @FNumRows, FRowStatus^.FValue);
-    FRetCode:= SQLSetStmtAttr(FHstmt, SQL_ATTR_ROW_STATUS_PTR, FRowStatus^.FValue, 0);
+    //depreciated FRetCode := SQLExtendedFetch(FHstmt, FetchType, Row, @FNumRows, FRowStatus^.FValue);
+    FRetCode := SQLSetStmtAttr(FHstmt, SQL_ATTR_ROW_STATUS_PTR, FRowStatus^.FValue, 0);
   End;
 
-  FColumnsBound:= True;
+  FColumnsBound := True;
 End;
 
 Procedure TOdbcStatement.BindBlobCols(Bind: Boolean);
@@ -6114,36 +6019,36 @@ Var
   LongDataLen: String;
   BufferLength: SQLLEN;
 Begin
-  tempCol:= ColRec(1);
-  For icol:= 1 To ColCount Do
+  tempCol := ColRec(1);
+  For icol := 1 To ColCount Do
   Begin
     If tempCol^.FBlob Then
     Begin
       If Bind Then
-        tempCol^.FSize^:= ColSize[icol];  //synchronize sizes
+        tempCol^.FSize^ := ColSize[icol];  //synchronize sizes
 
-      BufferLength:= 0;
-      LongDataLen:= Hdbc.GetInfoString(SQL_NEED_LONG_DATA_LEN);
+      BufferLength := 0;
+      LongDataLen := Hdbc.GetInfoString(SQL_NEED_LONG_DATA_LEN);
       If (LongDataLen <> '') And (LongDataLen[1] = 'Y') Then
-        tempCol^.FSize^:= SQL_LEN_DATA_AT_EXEC_OFFSET-tempCol^.FSize^
+        tempCol^.FSize^ := SQL_LEN_DATA_AT_EXEC_OFFSET-tempCol^.FSize^
       Else If Bind Then
       Begin
         If tempCol^.FType = SQL_C_BINARY Then
-          BufferLength:= tempCol^.FSize^
+          BufferLength := tempCol^.FSize^
         Else
-          BufferLength:= tempCol^.FSize^+1;
+          BufferLength := tempCol^.FSize^+1;
       End;
 
       If Bind Then
-        tempCol^.FValue:= tempCol^.FMemory.Memory
+        tempCol^.FValue := tempCol^.FMemory.Memory
       Else
-        tempCol^.FValue:= Nil;
-      FRetCode:= SQLBindCol(FHstmt, icol, tempCol^.FType, tempCol^.FValue, BufferLength, tempCol^.FSize);
+        tempCol^.FValue := Nil;
+      FRetCode := SQLBindCol(FHstmt, icol, tempCol^.FType, tempCol^.FValue, BufferLength, tempCol^.FSize);
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(Self, FRetCode);
     End;
 
-    tempCol:= tempCol^.Next;
+    tempCol := tempCol^.Next;
   End;
 End;
 
@@ -6163,13 +6068,13 @@ Begin
   Try
 
   { Determine Total Size }
-  BSize:= FBlobSize;
+  BSize := FBlobSize;
   If ColType = SQL_CHAR Then
-    TotalSize:= BSize+1
+    TotalSize := BSize+1
   Else
-    TotalSize:= BSize;
+    TotalSize := BSize;
 
-  FRetCode:= SQLGetData(FHstmt, Col, ColType, Buffer, TotalSize, @ColSize);
+  FRetCode := SQLGetData(FHstmt, Col, ColType, Buffer, TotalSize, @ColSize);
   If Not FEnv.Error.Success(FRetCode) Then
     FEnv.Error.RaiseError(Self, FRetCode);
   If ColStream Is TManagedMemoryStream Then
@@ -6187,23 +6092,23 @@ Begin
     { Retrieve Blob }
     If FRetCode = SQL_SUCCESS_WITH_INFO Then
     Begin
-      GCursor:= BSize;
+      GCursor := BSize;
       While FRetCode = SQL_SUCCESS_WITH_INFO Do
       Begin
         If (ColSize - GCursor) > FBlobSize Then
-          BSize:= FBlobSize
+          BSize := FBlobSize
         Else
-          BSize:= ColSize - GCursor;
+          BSize := ColSize - GCursor;
 
         { Determine Total Size }
         If ColType = SQL_CHAR Then
-          TotalSize:= BSize+1
+          TotalSize := BSize+1
         Else
-          TotalSize:= BSize;
+          TotalSize := BSize;
 
-        FRetCode:= SQLGetData(FHstmt, Col, ColType, Buffer, TotalSize, @temp);
+        FRetCode := SQLGetData(FHstmt, Col, ColType, Buffer, TotalSize, @temp);
         ColStream.Write(Buffer^, BSize);
-        GCursor:= GCursor + BSize;
+        GCursor := GCursor + BSize;
       End;
     End;
     If Not FEnv.Error.Success(FRetCode) Then
@@ -6214,7 +6119,7 @@ Begin
     FreeMem(Buffer, FBlobSize+1);
   End;
 
-  Result:= ColSize;
+  Result := ColSize;
 End;
 
 Function TOdbcStatement.FetchCell(Col, Row: SQLUSMALLINT;
@@ -6223,18 +6128,18 @@ Function TOdbcStatement.FetchCell(Col, Row: SQLUSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  Result:= CellSize[Col,Row];
+  Result := CellSize[Col,Row];
   If Not RowValid[1] Then
   Begin
-    Result:= SQL_NULL_DATA;
+    Result := SQL_NULL_DATA;
     Exit;
   End;
 
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
   If (temp <> Nil) And (Not temp^.FBlobFetched) Then
   Begin
-    Result:= FetchCol(Col, ColType, ColStream);
-    temp^.FBlobFetched:= True;
+    Result := FetchCol(Col, ColType, ColStream);
+    temp^.FBlobFetched := True;
   End;
 End;
 
@@ -6247,32 +6152,32 @@ Var
   PCursor: LongInt;
   OffsetPtr: Pointer;
 Begin
-  FRetCode:= SQLParamData(FHstmt, @PValue);
+  FRetCode := SQLParamData(FHstmt, @PValue);
   If (FRetCode <> SQL_NEED_DATA) And (Not FEnv.Error.Success(FRetCode)) Then
     FEnv.Error.RaiseError(Self, FRetCode);
 
   Repeat
     { Retrieve Blob Information }
-    temp:= FList;
+    temp := FList;
     While temp^.FValue <> PValue Do
-      temp:= temp^.Next;
-    PSize:= SQL_LEN_DATA_AT_EXEC_OFFSET-temp^.FSize^;
+      temp := temp^.Next;
+    PSize := SQL_LEN_DATA_AT_EXEC_OFFSET-temp^.FSize^;
 
     { Write Blob }
-    PCursor:= 0;
+    PCursor := 0;
     Repeat
       If (PSize - PCursor) > FBlobSize Then
-        BSize:= FBlobSize
+        BSize := FBlobSize
       Else
-        BSize:= PSize - PCursor;
-      OffsetPtr:= OffsetPointer(PValue, PCursor);
-      FRetCode:= SQLPutData(FHstmt, OffsetPtr, BSize);
-      PCursor:= PCursor + BSize;
+        BSize := PSize - PCursor;
+      OffsetPtr := OffsetPointer(PValue, PCursor);
+      FRetCode := SQLPutData(FHstmt, OffsetPtr, BSize);
+      PCursor := PCursor + BSize;
     Until (PCursor = PSize) Or (Not FEnv.Error.Success(FRetCode));
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
-    FRetCode:= SQLParamData(FHstmt, @PValue);
+    FRetCode := SQLParamData(FHstmt, @PValue);
     If (FRetCode <> SQL_NEED_DATA) And
        (FRetCode <> SQL_NO_DATA)   And  //no rows affected by operation
        (Not FEnv.Error.Success(FRetCode)) Then
@@ -6298,15 +6203,15 @@ Begin
 
   { Fetch Next Row in Result Set }
   If (FetchType = SQL_FETCH_NEXT) And (Hdbc.CursorLib = SQL_CUR_USE_DRIVER) Then
-    FRetCode:= SQLFetch(FHstmt)
+    FRetCode := SQLFetch(FHstmt)
   Else
-    FRetCode:= SQLFetchScroll(FHstmt, FetchType, Row);
+    FRetCode := SQLFetchScroll(FHstmt, FetchType, Row);
 
   FillChar(FRowFlags^.FValue^, PhysSize(SQL_C_USHORT), rfNone);
   If FRetCode = SQL_NO_DATA Then
   Begin
-    Result:= False;
-    FNumRows:= 0;
+    Result := False;
+    FNumRows := 0;
 
     Exit;
   End;
@@ -6316,56 +6221,56 @@ Begin
   { Fetch Unbound Columns in Result Set }
   If FBlobs Then
   Begin
-    icol:= 0;
-    temp:= ColRec(1);
+    icol := 0;
+    temp := ColRec(1);
     While temp <> Nil Do
     Begin
       Inc(icol);
       If temp^.FBlob Then
       Begin
-        temp^.FBlobFetched:= False;
+        temp^.FBlobFetched := False;
         If FBlobDeferral Then
-          temp^.FSize^:= SQL_NULL_DATA
+          temp^.FSize^ := SQL_NULL_DATA
         Else
-          temp^.FSize^:= FetchCell(icol, 1, temp^.FType, temp^.FMemory);
+          temp^.FSize^ := FetchCell(icol, 1, temp^.FType, temp^.FMemory);
       End;
-      temp:= temp^.Next;
+      temp := temp^.Next;
     End;
   End;
 
   DoAfterFetch;
 
-  Result:= True;
+  Result := True;
 End;
 
 Function TOdbcStatement.FetchFirst: Boolean;
 Begin
-  Result:= Fetch(SQL_FETCH_FIRST, 0);
+  Result := Fetch(SQL_FETCH_FIRST, 0);
 End;
 
 Function TOdbcStatement.FetchNext: Boolean;
 Begin
-  Result:= Fetch(SQL_FETCH_NEXT, 0);
+  Result := Fetch(SQL_FETCH_NEXT, 0);
 End;
 
 Function TOdbcStatement.FetchLast: Boolean;
 Begin
-  Result:= Fetch(SQL_FETCH_LAST, 0);
+  Result := Fetch(SQL_FETCH_LAST, 0);
 End;
 
 Function TOdbcStatement.FetchPrev: Boolean;
 Begin
-  Result:= Fetch(SQL_FETCH_PRIOR, 0);
+  Result := Fetch(SQL_FETCH_PRIOR, 0);
 End;
 
 Function TOdbcStatement.FetchAbsolute(Row: SQLINTEGER): Boolean;
 Begin
-  Result:= Fetch(SQL_FETCH_ABSOLUTE, Row);
+  Result := Fetch(SQL_FETCH_ABSOLUTE, Row);
 End;
 
 Function TOdbcStatement.FetchRelative(Row: SQLINTEGER): Boolean;
 Begin
-  Result:= Fetch(SQL_FETCH_RELATIVE, Row);
+  Result := Fetch(SQL_FETCH_RELATIVE, Row);
 End;
 
 Procedure TOdbcStatement.ColStream(Col: SQLUSMALLINT;
@@ -6373,11 +6278,11 @@ Procedure TOdbcStatement.ColStream(Col: SQLUSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
   If (temp <> Nil) And temp^.FBlob Then
   Begin
     If FBlobDeferral Then
-      temp^.FSize^:= FetchCell(Col, 1, temp^.FType, Stream)
+      temp^.FSize^ := FetchCell(Col, 1, temp^.FType, Stream)
     Else
       temp^.FMemory.SaveToStream(Stream);
   End;
@@ -6396,20 +6301,20 @@ Begin
     Begin
     If LrRowRec.FBlob Then
       Begin
-      tempCol:= ColRec(Col);
-      tempCol^.FSize^:= FetchCell(Col, Row, LrRowRec.FType, Stream);
+      tempCol := ColRec(Col);
+      tempCol^.FSize^ := FetchCell(Col, Row, LrRowRec.FType, Stream);
       End;
     End;
 
 {
 Previous Non-Optimal implementation
-  temp:= RowRec(Col,Row);
+  temp := RowRec(Col,Row);
   if temp <> nil then
   begin
     if temp^.FBlob then
     begin
-      tempCol:= ColRec(Col);
-      tempCol^.FSize^:= FetchCell(Col, Row, temp^.FType, Stream);
+      tempCol := ColRec(Col);
+      tempCol^.FSize^ := FetchCell(Col, Row, temp^.FType, Stream);
     end;
     Dispose(temp);
   end;
@@ -6454,27 +6359,27 @@ End;
 
 Function TOdbcStatement.DoRowCount: Integer;
 Begin
-  Result:= -1;
+  Result := -1;
   If Assigned(FOnRowCount) Then
-    Result:= FOnRowCount(Self);
+    Result := FOnRowCount(Self);
 End;
 
 Function TOdbcStatement.GetPosOpts: SQLINTEGER;
 Begin
   If SkipByPosition Then
-    Result:= 0
+    Result := 0
   Else
-    //depreciated Result:= Hdbc.FPosOpts;
-    Result:= FCursorAttr;
+    //depreciated Result := Hdbc.FPosOpts;
+    Result := FCursorAttr;
 End;
 
 Function TOdbcStatement.GetPosStmts: SQLINTEGER;
 Begin
   If SkipByCursor Then
-    Result:= 0
+    Result := 0
   Else
-    //depreciated Result:= Hdbc.FPosStmts;
-    Result:= FCursorAttr;
+    //depreciated Result := Hdbc.FPosStmts;
+    Result := FCursorAttr;
 End;
 
 Procedure TOdbcStatement.DetermineTargetTable;
@@ -6489,34 +6394,34 @@ Begin
     { Determine Target Table }
     If Trim(FTargetTable) = '' Then
     Begin
-      FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_SCHEMA_NAME, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
-      FTableOwner:= Trim(fromOdbcPChar(CharAttr, StringLength));
+      FRetCode := SQLColAttribute(FHstmt, 1, SQL_DESC_SCHEMA_NAME, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
+      FTableOwner := Trim(fromOdbcPChar(CharAttr, StringLength));
       If Not FEnv.Error.Success(FRetCode) Then
-        FTableOwner:= '';
+        FTableOwner := '';
 
-      FRetCode:= SQLColAttribute(FHstmt, 1, SQL_DESC_TABLE_NAME, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
-      FTableName:= Trim(fromOdbcPChar(CharAttr, StringLength));
+      FRetCode := SQLColAttribute(FHstmt, 1, SQL_DESC_TABLE_NAME, CharAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength, {$IFDEF FPC}@{$ENDIF}NumAttr);
+      FTableName := Trim(fromOdbcPChar(CharAttr, StringLength));
       If FTableName = '' Then
       Begin
-        FTableName:= StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
-        Loc:= Pos(' FROM ', UpperCase(FTableName));
+        FTableName := StringReplace(FSQL, EnterString, ' ', [rfReplaceAll, rfIgnoreCase]);
+        Loc := Pos(' FROM ', UpperCase(FTableName));
         If Loc > 0 Then
         Begin
-          FTableName:= Trim(Copy(FTableName, Loc+6, Length(FTableName)-Loc-5));
-          Loc:= Pos(' ', FTableName);
+          FTableName := Trim(Copy(FTableName, Loc+6, Length(FTableName)-Loc-5));
+          Loc := Pos(' ', FTableName);
           If Loc > 0 Then
-            FTableName:= Copy(FTableName, 1, Loc-1);  //can include table owner
+            FTableName := Copy(FTableName, 1, Loc-1);  //can include table owner
         End
         Else
-          FTableName:= '';
+          FTableName := '';
       End;
       If (Not FEnv.Error.Success(FRetCode)) Or (FTableName = '') Then
         Raise EODBCExpress.Create('Unable to determine table name:  set TargetTable property.');
     End
     Else
     Begin
-      FTableOwner:= '';
-      FTableName:= Trim(FTargetTable);
+      FTableOwner := '';
+      FTableName := Trim(FTargetTable);
     End;
   finally
     freemem(CharAttr);
@@ -6532,59 +6437,59 @@ Var
   Found: Boolean;
 Begin
   { Determine Primary Columns }
-  tempCol:= ColRec(1);
-  For icol:= 1 To ColCount Do
+  tempCol := ColRec(1);
+  For icol := 1 To ColCount Do
   Begin
     If tempCol^.FPrimary Then
       Exit;
 
-    tempCol:= tempCol^.Next;
+    tempCol := tempCol^.Next;
   End;
 
   DetermineTargetTable;
 
-  tempHstmt:= TOdbcStatement.Create(FEnv, FHdbc);
+  tempHstmt := TOdbcStatement.Create(FEnv, FHdbc);
 
   Try
 
     If FTableOwner = '' Then
-      ATableOwner:= Nil
+      ATableOwner := Nil
     Else
-      ATableOwner:= PChar(FTableOwner);
+      ATableOwner := PChar(FTableOwner);
 
     If FTableName = '' Then
-      ATableName:= Nil
+      ATableName := Nil
     Else
-      ATableName:= PChar(FTableName);
+      ATableName := PChar(FTableName);
 
-    FRetCode:= SQLSpecialColumns(tempHstmt.Handle, SQL_BEST_ROWID, Nil, 0, ATableOwner, Length(FTableOwner),
+    FRetCode := SQLSpecialColumns(tempHstmt.Handle, SQL_BEST_ROWID, Nil, 0, ATableOwner, Length(FTableOwner),
       ATableName, Length(FTableName), SQL_SCOPE_CURROW, SQL_NULLABLE);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(tempHstmt, FRetCode);
 
-    Found:= False;
+    Found := False;
     While tempHstmt.FetchNext Do
       If tempHstmt.ColSmallint[8] <> SQL_PC_PSEUDO Then
       Begin
-        ColPrimary[ColByName(tempHstmt.ColString[2])]:= True;
-        Found:= True;
+        ColPrimary[ColByName(tempHstmt.ColString[2])] := True;
+        Found := True;
       End;
 
     If Not Found Then
     Begin
       tempHstmt.Close;
 
-      FRetCode:= SQLPrimaryKeys(tempHstmt.Handle, Nil, 0, ATableOwner, Length(FTableOwner),
+      FRetCode := SQLPrimaryKeys(tempHstmt.Handle, Nil, 0, ATableOwner, Length(FTableOwner),
         ATableName, Length(FTableName));
       If Not FEnv.Error.Success(FRetCode) Then
         FEnv.Error.RaiseError(tempHstmt, FRetCode);
 
       While tempHstmt.FetchNext Do
-        ColPrimary[ColByName(tempHstmt.ColString[4])]:= True;
+        ColPrimary[ColByName(tempHstmt.ColString[4])] := True;
     End;
 
   Finally
-    tempHstmt.Free;
+    tempHstmt.free;
   End;
 End;
 
@@ -6592,14 +6497,14 @@ Function TOdbcStatement.GetTableOwner: String;
 Begin
   DetermineTargetTable;
 
-  Result:= FTableOwner;
+  Result := FTableOwner;
 End;
 
 Function TOdbcStatement.GetTableName: String;
 Begin
   DetermineTargetTable;
 
-  Result:= FTableName;
+  Result := FTableName;
 End;
 
 Function TOdbcStatement.GetPrimaryColNames: String;
@@ -6609,14 +6514,14 @@ Var
 Begin
   DeterminePrimaryCols;
 
-  Result:= '';
-  tempCol:= ColRec(1);
-  For icol:= 1 To ColCount Do
+  Result := '';
+  tempCol := ColRec(1);
+  For icol := 1 To ColCount Do
   Begin
     If tempCol^.FPrimary Then
-      Result:= Result+ColNames[icol-1]+';';
+      Result := Result+ColNames[icol-1]+';';
 
-    tempCol:= tempCol^.Next;
+    tempCol := tempCol^.Next;
   End;
 End;
 
@@ -6629,7 +6534,7 @@ Begin
   { Determine Cursor Name }
   CurName := odbcPChar(DefaultStringSize);
   try
-    FRetCode:= SQLGetCursorName(FHstmt, CurName, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength);
+    FRetCode := SQLGetCursorName(FHstmt, CurName, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength);
     If Not FEnv.Error.Success(FRetCode) Then
       FEnv.Error.RaiseError(Self, FRetCode);
 
@@ -6646,14 +6551,14 @@ Var
 Begin
   DeterminePrimaryCols;
 
-  Result:= '';
-  tempCol:= ColRec(1);
-  For icol:= 1 To ColCount Do
+  Result := '';
+  tempCol := ColRec(1);
+  For icol := 1 To ColCount Do
   Begin
     If tempCol^.FPrimary Then
-      Result:= Result+Quoted(FColNames[icol-1])+' = ? AND ';
+      Result := Result+Quoted(FColNames[icol-1])+' = ? AND ';
 
-    tempCol:= tempCol^.Next;
+    tempCol := tempCol^.Next;
   End;
 
   If Result = '' Then
@@ -6674,20 +6579,20 @@ Var
   Begin
     //to avoid "invalid string or buffer length" error caused by SQL_IGNORE
     If tempCol^.FSize^ >= 0 Then
-      Result:= tempCol^.FSize^
+      Result := tempCol^.FSize^
     Else If tempCol^.FSize^ = SQL_NULL_DATA Then
-      Result:= SQL_NULL_DATA
+      Result := SQL_NULL_DATA
     Else If tempCol^.FType = SQL_C_CHAR Then
-      Result:= SQL_NTS
+      Result := SQL_NTS
     Else If tempCol^.FType = SQL_C_BINARY Then
-      Result:= 0  //unable to determine actual size
+      Result := 0  //unable to determine actual size
     Else
-      Result:= 0;
+      Result := 0;
   End;
 
 Begin
-  tempCol:= ColRec(1);
-  For icol:= 1 To ColCount Do
+  tempCol := ColRec(1);
+  For icol := 1 To ColCount Do
   Begin
     If (PrimaryClause And tempCol^.FPrimary) Or
        ((Not PrimaryClause) And (tempCol^.FSize^ <> SQL_IGNORE)) Then
@@ -6701,16 +6606,16 @@ Begin
         If Not AssignOnly Then
           AHstmt.BindParam(Param, tempCol^.FType, tempCol^.FValue, tempCol^.FSql);
         If PrimaryClause Then
-          AHstmt.ParamSize[Param]:= PrimaryParamSize
+          AHstmt.ParamSize[Param] := PrimaryParamSize
         Else
-          AHstmt.ParamSize[Param]:= tempCol^.FSize^;
+          AHstmt.ParamSize[Param] := tempCol^.FSize^;
       End;
 
       If tempCol^.FSize^ = SQL_NULL_DATA Then
-        AHstmt.ParamSize[Param]:= SQL_NULL_DATA;
+        AHstmt.ParamSize[Param] := SQL_NULL_DATA;
     End;
 
-    tempCol:= tempCol^.Next;
+    tempCol := tempCol^.Next;
   End;
 End;
 
@@ -6723,45 +6628,45 @@ Var
 Begin
   If FHstmtInsert = Nil Then
   Begin
-    FHstmtInsert:= TOdbcStatement.Create(FEnv, FHdbc);
-    FHstmtInsert.BlobSize:= BlobSize;
+    FHstmtInsert := TOdbcStatement.Create(FEnv, FHdbc);
+    FHstmtInsert.BlobSize := BlobSize;
   End;
 
   If Not FHstmtInsert.Prepared Then
   Begin
-    ASQL:= '';
-    temp:= '';
-    tempCol:= ColRec(1);
-    For icol:= 1 To ColCount Do
+    ASQL := '';
+    temp := '';
+    tempCol := ColRec(1);
+    For icol := 1 To ColCount Do
     Begin
       If tempCol^.FSize^ <> SQL_IGNORE Then
       Begin
-        ASQL:= ASQL+Quoted(FColNames[icol-1])+', ';
-        temp:= temp+'?, ';
+        ASQL := ASQL+Quoted(FColNames[icol-1])+', ';
+        temp := temp+'?, ';
       End;
 
-      tempCol:= tempCol^.Next;
+      tempCol := tempCol^.Next;
     End;
 
     If ASQL <> '' Then
     Begin
       SetLength(ASQL, Length(ASQL)-2);
       SetLength(temp, Length(temp)-2);
-      ASQL:= 'INSERT INTO '+Quoted(TableName)+' ('+ASQL+') VALUES ('+temp+')';
+      ASQL := 'INSERT INTO '+Quoted(TableName)+' ('+ASQL+') VALUES ('+temp+')';
 
       If Assigned(FOnStatement) Then
         FOnStatement(Self, rfInsert, ASQL);
 
-      FHstmtInsert.SQL:= ASQL;
+      FHstmtInsert.SQL := ASQL;
       FHstmtInsert.Prepare;
 
-      ParamNum:= 0;
+      ParamNum := 0;
       BindClause(ParamNum, FHstmtInsert, False, False);
     End;
   End
   Else
   Begin
-    ParamNum:= 0;
+    ParamNum := 0;
     BindClause(ParamNum, FHstmtInsert, False, True);
   End;
 
@@ -6781,34 +6686,34 @@ Var
 Begin
   If FHstmtUpdate = Nil Then
   Begin
-    FHstmtUpdate:= TOdbcStatement.Create(FEnv, FHdbc);
-    FHstmtUpdate.BlobSize:= BlobSize;
+    FHstmtUpdate := TOdbcStatement.Create(FEnv, FHdbc);
+    FHstmtUpdate.BlobSize := BlobSize;
   End;
 
   If Not FHstmtUpdate.Prepared Then
   Begin
-    ASQL:= '';
-    tempCol:= ColRec(1);
-    For icol:= 1 To ColCount Do
+    ASQL := '';
+    tempCol := ColRec(1);
+    For icol := 1 To ColCount Do
     Begin
       If tempCol^.FSize^ <> SQL_IGNORE Then
-        ASQL:= ASQL+Quoted(FColNames[icol-1])+' = ?, ';
+        ASQL := ASQL+Quoted(FColNames[icol-1])+' = ?, ';
 
-      tempCol:= tempCol^.Next;
+      tempCol := tempCol^.Next;
     End;
 
     If ASQL <> '' Then
     Begin
       SetLength(ASQL, Length(ASQL)-2);
-      ASQL:= 'UPDATE '+Quoted(TableName)+' SET '+ASQL+' '+WhereClause;
+      ASQL := 'UPDATE '+Quoted(TableName)+' SET '+ASQL+' '+WhereClause;
 
       If Assigned(FOnStatement) Then
         FOnStatement(Self, rfUpdate, ASQL);
 
-      FHstmtUpdate.SQL:= ASQL;
+      FHstmtUpdate.SQL := ASQL;
       FHstmtUpdate.Prepare;
 
-      ParamNum:= 0;
+      ParamNum := 0;
       BindClause(ParamNum, FHstmtUpdate, False, False);
       If BindWhere Then
         BindClause(ParamNum, FHstmtUpdate, True, False);
@@ -6816,7 +6721,7 @@ Begin
   End
   Else
   Begin
-    ParamNum:= 0;
+    ParamNum := 0;
     BindClause(ParamNum, FHstmtUpdate, False, True);
     If BindWhere Then
       BindClause(ParamNum, FHstmtUpdate, True, True);
@@ -6836,27 +6741,27 @@ Var
 Begin
   If FHstmtDelete = Nil Then
   Begin
-    FHstmtDelete:= TOdbcStatement.Create(FEnv, FHdbc);
-    FHstmtDelete.BlobSize:= BlobSize;
+    FHstmtDelete := TOdbcStatement.Create(FEnv, FHdbc);
+    FHstmtDelete.BlobSize := BlobSize;
   End;
 
   If Not FHstmtDelete.Prepared Then
   Begin
-    ASQL:= 'DELETE FROM '+Quoted(TableName)+' '+WhereClause;
+    ASQL := 'DELETE FROM '+Quoted(TableName)+' '+WhereClause;
 
     If Assigned(FOnStatement) Then
       FOnStatement(Self, rfDelete, ASQL);
 
-    FHstmtDelete.SQL:= ASQL;
+    FHstmtDelete.SQL := ASQL;
     FHstmtDelete.Prepare;
 
-    ParamNum:= 0;
+    ParamNum := 0;
     If BindWhere Then
       BindClause(ParamNum, FHstmtDelete, True, False);
   End
   Else
   Begin
-    ParamNum:= 0;
+    ParamNum := 0;
     If BindWhere Then
       BindClause(ParamNum, FHstmtDelete, True, True);
   End;
@@ -6877,39 +6782,39 @@ Var
 Begin
   If FHstmtRefresh = Nil Then
   Begin
-    FHstmtRefresh:= TOdbcStatement.Create(FEnv, FHdbc);
-    FHstmtRefresh.BlobSize:= BlobSize;
+    FHstmtRefresh := TOdbcStatement.Create(FEnv, FHdbc);
+    FHstmtRefresh.BlobSize := BlobSize;
   End;
 
   If Not FHstmtRefresh.Prepared Then
   Begin
-    ASQL:= '';
-    tempCol:= ColRec(1);
-    For icol:= 1 To ColCount Do
+    ASQL := '';
+    tempCol := ColRec(1);
+    For icol := 1 To ColCount Do
     Begin
-      ASQL:= ASQL+Quoted(FColNames[icol-1])+', ';
+      ASQL := ASQL+Quoted(FColNames[icol-1])+', ';
 
-      tempCol:= tempCol^.Next;
+      tempCol := tempCol^.Next;
     End;
 
     If ASQL <> '' Then
     Begin
       SetLength(ASQL, Length(ASQL)-2);
-      ASQL:= 'SELECT '+ASQL+' FROM '+Quoted(TableName)+' '+WhereClause;
+      ASQL := 'SELECT '+ASQL+' FROM '+Quoted(TableName)+' '+WhereClause;
 
       If Assigned(FOnStatement) Then
         FOnStatement(Self, rfRefresh, ASQL);
 
-      FHstmtRefresh.SQL:= ASQL;
+      FHstmtRefresh.SQL := ASQL;
       FHstmtRefresh.Prepare;
 
-      ParamNum:= 0;
+      ParamNum := 0;
       BindClause(ParamNum, FHstmtRefresh, True, False);
     End;
   End
   Else
   Begin
-    ParamNum:= 0;
+    ParamNum := 0;
     BindClause(ParamNum, FHstmtRefresh, True, True);
   End;
 
@@ -6917,26 +6822,26 @@ Begin
 
   If FHstmtRefresh.FetchNext Then
   Begin
-    tempCol:= ColRec(1);
-    For icol:= 1 To ColCount Do
+    tempCol := ColRec(1);
+    For icol := 1 To ColCount Do
     Begin
       If tempCol^.FBlob Then
         tempCol^.FMemory.LoadFromStream(FHstmtRefresh.ColMemory[icol])
       Else
       Begin
         If (tempCol^.FSql = SQL_CHAR) Or (tempCol^.FSql = SQL_VARCHAR) Then
-          Size:= tempCol^.FColumnSize+1
+          Size := tempCol^.FColumnSize+1
         Else If (tempCol^.FSql = SQL_BINARY) Or (tempCol^.FSql = SQL_VARBINARY) Then
-          Size:= tempCol^.FColumnSize
+          Size := tempCol^.FColumnSize
         Else
-          Size:= PhysSize(tempCol^.FType);
+          Size := PhysSize(tempCol^.FType);
 
         Move(FHstmtRefresh.ColValue[icol]^, tempCol^.FValue^, Size);
       End;
 
-      tempCol^.FSize^:= FHstmtRefresh.ColSize[icol];
+      tempCol^.FSize^ := FHstmtRefresh.ColSize[icol];
 
-      tempCol:= tempCol^.Next;
+      tempCol := tempCol^.Next;
     End;
   End
   Else If nrByRefresh In NoRowsAffected Then
@@ -6951,7 +6856,7 @@ Begin
   Begin
     BindBlobCols(True);
 
-    FRetCode:= SQLBulkOperations(FHstmt, SQL_ADD);
+    FRetCode := SQLBulkOperations(FHstmt, SQL_ADD);
     If (Not FEnv.Error.Success(FRetCode)) And
        (FRetCode <> SQL_NEED_DATA) And
        ((FRetCode <> SQL_NO_DATA) Or ((FRetCode = SQL_NO_DATA) And (nrByInsert In NoRowsAffected))) Then
@@ -6973,11 +6878,11 @@ Var
 
   Function WhereClause: String;
   Begin
-    BindWhere:= Not ((GetPosStmts And SQL_CA1_POSITIONED_UPDATE) = SQL_CA1_POSITIONED_UPDATE);
+    BindWhere := Not ((GetPosStmts And SQL_CA1_POSITIONED_UPDATE) = SQL_CA1_POSITIONED_UPDATE);
     If BindWhere Then
-      Result:= 'WHERE '+PrimaryClause
+      Result := 'WHERE '+PrimaryClause
     Else
-      Result:= 'WHERE CURRENT OF '+CursorName;
+      Result := 'WHERE CURRENT OF '+CursorName;
   End;
 
 Begin
@@ -6990,11 +6895,11 @@ Var
 
   Function WhereClause: String;
   Begin
-    BindWhere:= Not ((GetPosStmts And SQL_CA1_POSITIONED_DELETE) = SQL_CA1_POSITIONED_DELETE);
+    BindWhere := Not ((GetPosStmts And SQL_CA1_POSITIONED_DELETE) = SQL_CA1_POSITIONED_DELETE);
     If BindWhere Then
-      Result:= 'WHERE '+PrimaryClause
+      Result := 'WHERE '+PrimaryClause
     Else
-      Result:= 'WHERE CURRENT OF '+CursorName;
+      Result := 'WHERE CURRENT OF '+CursorName;
   End;
 
 Begin
@@ -7005,7 +6910,7 @@ Procedure TOdbcStatement.RefreshRow(Row: SQLUSMALLINT);
 
   Function WhereClause: String;
   Begin
-    Result:= 'WHERE '+PrimaryClause;
+    Result := 'WHERE '+PrimaryClause;
   End;
 
 Begin
@@ -7060,7 +6965,7 @@ End;
 
 Function TOdbcStatement.GetColValue(Col: SQLUSMALLINT): SQLPOINTER;
 Begin
-  Result:= GetCellValue(Col, 1);
+  Result := GetCellValue(Col, 1);
 End;
 
 Function TOdbcStatement.GetCellValue(Col, Row: SQLUSMALLINT): SQLPOINTER;
@@ -7074,29 +6979,29 @@ Begin
     Begin
     If LrRowRec.FBlob Then
       Begin
-      Result:= GetCellMemory(Col, Row).Memory
+      Result := GetCellMemory(Col, Row).Memory
       End
     Else
       Begin
-      Result:= LrRowRec.FValue;
+      Result := LrRowRec.FValue;
       End;
     End
   Else
     Begin
-    Result:= Nil;
+    Result := Nil;
     End;
 
 {
 Previous Non-Optimal implementation
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   if temp = nil then
-    Result:= nil
+    Result := nil
   else
   begin
     if temp^.FBlob then
-      Result:= GetCellMemory(Col, Row).Memory
+      Result := GetCellMemory(Col, Row).Memory
     else
-      Result:= temp^.FValue;
+      Result := temp^.FValue;
     Dispose(temp);
   end;
 }
@@ -7107,12 +7012,12 @@ Var
   temp: TColPtr;
 Begin
   { Retrieve Type }
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= temp^.FType;
+    Result := temp^.FType;
 End;
 
 Function TOdbcStatement.GetSqlType(Col: SQLUSMALLINT): SQLSMALLINT;
@@ -7120,20 +7025,20 @@ Var
   temp: TColPtr;
 Begin
   { Retrieve Type }
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
 
   If temp = Nil Then
-    Result:= 0
+    Result := 0
   Else
-    Result:= temp^.FSql;
+    Result := temp^.FSql;
 End;
 
 Function TOdbcStatement.GetBlobCol(Col: SQLUSMALLINT): Boolean;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
-  Result:= (temp <> Nil) And temp^.FBlob;
+  temp := ColRec(Col);
+  Result := (temp <> Nil) And temp^.FBlob;
 End;
 
 Function TOdbcStatement.ParamRec(Param: SQLUSMALLINT): TParamPtr;
@@ -7147,13 +7052,13 @@ End;
 Function TOdbcStatement.ColBindRec(Col: SQLUSMALLINT): TColBindPtr;
 Begin
 
-  Result:= FColBinds;
+  Result := FColBinds;
 
   While Result <> Nil Do
   Begin
     If Result^.FCol = Col Then
       Break;
-    Result:= Result^.Next;
+    Result := Result^.Next;
   End;
 End;
 
@@ -7176,12 +7081,12 @@ Begin
 {
 //Obsolete linear search
 
-  Result:= nil;
+  Result := nil;
   if (Col > 0) and (Col <= SQLUSMALLINT(FNumCols)) then
   begin
-    Result:= FCols;
-    for i:= 2 to Col do
-      Result:= Result^.Next;
+    Result := FCols;
+    for i := 2 to Col do
+      Result := Result^.Next;
   end;
 }
 End;
@@ -7192,31 +7097,31 @@ Var
   tempRow: TRowPtr;
   Size: Word;
 Begin
-  tempCol:= ColRec(Col);
+  tempCol := ColRec(Col);
 
-  tempRow:= Nil;
+  tempRow := Nil;
   If (tempCol <> Nil) And
      (Row > 0) And (Row <= 1) Then
   Begin
     New(tempRow);
-    tempRow^.FType:= tempCol^.FType;
-    tempRow^.FBlob:= tempCol^.FBlob;
+    tempRow^.FType := tempCol^.FType;
+    tempRow^.FBlob := tempCol^.FBlob;
     If tempCol^.FBlob Then
-      tempRow^.FValue:= Nil
+      tempRow^.FValue := Nil
     Else
     Begin
       If (tempCol^.FSql = SQL_CHAR) Or (tempCol^.FSql = SQL_VARCHAR) Then
-        Size:= tempCol^.FColumnSize+1
+        Size := tempCol^.FColumnSize+1
       Else If (tempCol^.FSql = SQL_BINARY) Or (tempCol^.FSql = SQL_VARBINARY) Then
-        Size:= tempCol^.FColumnSize
+        Size := tempCol^.FColumnSize
       Else
-        Size:= PhysSize(tempCol^.FType);
-      tempRow^.FValue:= OffsetRow(tempCol^.FValue, Row, Size);
+        Size := PhysSize(tempCol^.FType);
+      tempRow^.FValue := OffsetRow(tempCol^.FValue, Row, Size);
     End;
-    tempRow^.FSize:= OffsetRow(tempCol^.FSize, Row, PhysSize(SQL_C_SLONG));
+    tempRow^.FSize := OffsetRow(tempCol^.FSize, Row, PhysSize(SQL_C_SLONG));
   End;
 
-  Result:= tempRow;
+  Result := tempRow;
 End;
 
 Function TOdbcStatement.RowRecEx(Col, Row: SQLUSMALLINT; Out VrRowRec : TRowRec): Boolean;
@@ -7224,38 +7129,38 @@ Var
   Size: Word;
   tempCol: TColPtr;
 Begin
-  tempCol:= ColRec(Col);
+  tempCol := ColRec(Col);
 
   If (tempCol <> Nil) And
      (Row > 0) And (Row <= 1) Then
     Begin
-    VrRowRec.FType:= tempCol^.FType;
+    VrRowRec.FType := tempCol^.FType;
 
-    VrRowRec.FBlob:= tempCol^.FBlob;
+    VrRowRec.FBlob := tempCol^.FBlob;
 
     If tempCol^.FBlob Then
       Begin
-      VrRowRec.FValue:= Nil
+      VrRowRec.FValue := Nil
       End
     Else
       Begin
       If (tempCol^.FSql = SQL_CHAR) Or (tempCol^.FSql = SQL_VARCHAR) Then
         Begin
-        Size:= tempCol^.FColumnSize+1;
+        Size := tempCol^.FColumnSize+1;
         End
       Else If (tempCol^.FSql = SQL_BINARY) Or (tempCol^.FSql = SQL_VARBINARY) Then
         Begin
-        Size:= tempCol^.FColumnSize;
+        Size := tempCol^.FColumnSize;
         End
       Else
         Begin
-        Size:= PhysSize(tempCol^.FType);
+        Size := PhysSize(tempCol^.FType);
         End;
 
-      VrRowRec.FValue:= OffsetRow(tempCol^.FValue, Row, Size);
+      VrRowRec.FValue := OffsetRow(tempCol^.FValue, Row, Size);
       End;
 
-    VrRowRec.FSize:= OffsetRow(tempCol^.FSize, Row, SizeOf(Integer));
+    VrRowRec.FSize := OffsetRow(tempCol^.FSize, Row, SizeOf(Integer));
 
     Result := True;
     End
@@ -7270,114 +7175,114 @@ Begin
   Log(1, 'TOdbcStatement.RowFlags');
 
   If (Row > 0) And (Row <= 1) Then
-    Result:= SQLUSMALLINTPtr(OffsetRow(FRowFlags^.FValue, Row, PhysSize(SQL_C_USHORT)))
+    Result := SQLUSMALLINTPtr(OffsetRow(FRowFlags^.FValue, Row, PhysSize(SQL_C_USHORT)))
   Else
-    Result:= Nil;
+    Result := Nil;
 End;
 
 Function TOdbcStatement.GetColString(Col: SQLUSMALLINT): String;
 Begin
-  Result:= GetCellString(Col, 1);
+  Result := GetCellString(Col, 1);
 End;
 
 Function TOdbcStatement.GetColSingle(Col: SQLUSMALLINT): Single;
 Begin
-  Result:= GetCellDouble(Col, 1);
+  Result := GetCellDouble(Col, 1);
 End;
 
 Function TOdbcStatement.GetColDouble(Col: SQLUSMALLINT): Double;
 Begin
-  Result:= GetCellDouble(Col, 1);
+  Result := GetCellDouble(Col, 1);
 End;
 
 Function TOdbcStatement.GetColBoolean(Col: SQLUSMALLINT): Boolean;
 Begin
-  Result:= GetCellBoolean(Col, 1);
+  Result := GetCellBoolean(Col, 1);
 End;
 
 Function TOdbcStatement.GetColShortint(Col: SQLUSMALLINT): ShortInt;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColByte(Col: SQLUSMALLINT): Byte;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColSmallint(Col: SQLUSMALLINT): SmallInt;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColWord(Col: SQLUSMALLINT): Word;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColInteger(Col: SQLUSMALLINT): Integer;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColCardinal(Col: SQLUSMALLINT): Cardinal;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColLongint(Col: SQLUSMALLINT): LongInt;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColLongword(Col: SQLUSMALLINT): LongWord;
 Begin
-  Result:= GetCellInteger(Col, 1);
+  Result := GetCellInteger(Col, 1);
 End;
 
 Function TOdbcStatement.GetColInt64(Col: SQLUSMALLINT): Int64;
 Begin
-  Result:= GetCellInt64(Col, 1);
+  Result := GetCellInt64(Col, 1);
 End;
 
 Function TOdbcStatement.GetColDate(Col: SQLUSMALLINT): TDate;
 Begin
-  Result:= GetCellDate(Col, 1);
+  Result := GetCellDate(Col, 1);
 End;
 
 Function TOdbcStatement.GetColTime(Col: SQLUSMALLINT): TTime;
 Begin
-  Result:= GetCellTime(Col, 1);
+  Result := GetCellTime(Col, 1);
 End;
 
 Function TOdbcStatement.GetColTimeStamp(Col: SQLUSMALLINT): fsl_utilities.TTimeStamp;
 Begin
-  Result:= GetCellTimeStamp(Col, 1);
+  Result := GetCellTimeStamp(Col, 1);
 End;
 
 Function TOdbcStatement.GetColMemory(Col: SQLUSMALLINT): TManagedMemoryStream;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
   If temp = Nil Then
-    Result:= Nil
+    Result := Nil
   Else
   Begin
     If temp^.FBlob Then
     Begin
       If FBlobDeferral Then
-        temp^.FSize^:= FetchCell(Col, 1, temp^.FType, temp^.FMemory);
-      Result:= temp^.FMemory
+        temp^.FSize^ := FetchCell(Col, 1, temp^.FType, temp^.FMemory);
+      Result := temp^.FMemory
     End
     Else
-      Result:= Nil;
+      Result := Nil;
   End;
 End;
 
 Function TOdbcStatement.GetColVariant(Col: SQLUSMALLINT): Variant;
 Begin
-  Result:= GetCellVariant(Col, 1);
+  Result := GetCellVariant(Col, 1);
 End;
 
 Procedure TOdbcStatement.SetColString(Col: SQLUSMALLINT;
@@ -7481,12 +7386,12 @@ Procedure TOdbcStatement.SetColMemory(Col: SQLUSMALLINT;
 Var
   temp: TColPtr;
 Begin
-  temp:= ColRec(Col);
+  temp := ColRec(Col);
   If (temp <> Nil) And temp^.FBlob Then
   Begin
     temp^.FMemory.Clear;
     temp^.FMemory.LoadFromStream(AValue);
-    temp^.FSize^:= temp^.FMemory.Size;
+    temp^.FSize^ := temp^.FMemory.Size;
   End;
 End;
 
@@ -7498,92 +7403,92 @@ End;
 
 Function TOdbcStatement.GetColStringByName(ColName: String): String;
 Begin
-  Result:= GetColString(ColByName(ColName));
+  Result := GetColString(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColSingleByName(ColName: String): Single;
 Begin
-  Result:= GetColSingle(ColByName(ColName));
+  Result := GetColSingle(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColDoubleByName(ColName: String): Double;
 Begin
-  Result:= GetColDouble(ColByName(ColName));
+  Result := GetColDouble(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColBooleanByName(ColName: String): Boolean;
 Begin
-  Result:= GetColBoolean(ColByName(ColName));
+  Result := GetColBoolean(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColShortintByName(ColName: String): ShortInt;
 Begin
-  Result:= GetColShortint(ColByName(ColName));
+  Result := GetColShortint(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColByteByName(ColName: String): Byte;
 Begin
-  Result:= GetColByte(ColByName(ColName));
+  Result := GetColByte(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColSmallintByName(ColName: String): SmallInt;
 Begin
-  Result:= GetColSmallint(ColByName(ColName));
+  Result := GetColSmallint(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColWordByName(ColName: String): Word;
 Begin
-  Result:= GetColWord(ColByName(ColName));
+  Result := GetColWord(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColIntegerByName(ColName: String): Integer;
 Begin
-  Result:= GetColInteger(ColByName(ColName));
+  Result := GetColInteger(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColCardinalByName(ColName: String): Cardinal;
 Begin
-  Result:= GetColCardinal(ColByName(ColName));
+  Result := GetColCardinal(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColLongintByName(ColName: String): LongInt;
 Begin
-  Result:= GetColLongint(ColByName(ColName));
+  Result := GetColLongint(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColLongwordByName(ColName: String): LongWord;
 Begin
-  Result:= GetColLongword(ColByName(ColName));
+  Result := GetColLongword(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColInt64ByName(ColName: String): Int64;
 Begin
-  Result:= GetColInt64(ColByName(ColName));
+  Result := GetColInt64(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColDateByName(ColName: String): TDate;
 Begin
-  Result:= GetColDate(ColByName(ColName));
+  Result := GetColDate(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColTimeByName(ColName: String): TTime;
 Begin
-  Result:= GetColTime(ColByName(ColName));
+  Result := GetColTime(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColTimeStampByName(ColName: String): fsl_utilities.TTimeStamp;
 Begin
-  Result:= GetColTimeStamp(ColByName(ColName));
+  Result := GetColTimeStamp(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColMemoryByName(ColName: String): TManagedMemoryStream;
 Begin
-  Result:= GetColMemory(ColByName(ColName));
+  Result := GetColMemory(ColByName(ColName));
 End;
 
 Function TOdbcStatement.GetColVariantByName(ColName: String): Variant;
 Begin
-  Result:= GetColVariant(ColByName(ColName));
+  Result := GetColVariant(ColByName(ColName));
 End;
 
 Procedure TOdbcStatement.SetColStringByName(ColName: String;
@@ -7704,8 +7609,8 @@ Var
   Var
     fm: String;
   Begin
-    Result:= fdb_odbc_objects.ToString(CValue, CType, StringTrimming);
-    fm:= ColFormatMask[Col];
+    Result := fdb_odbc_objects.ToString(CValue, CType, StringTrimming);
+    fm := ColFormatMask[Col];
 
     Case ColFormatStyle[Col] Of
       fsFloat:
@@ -7713,7 +7618,7 @@ Var
         Case CType Of
           SQL_C_FLOAT,
           SQL_C_DOUBLE:
-            Result:= FormatFloat(fm, CellDouble[Col, Row]);
+            Result := FormatFloat(fm, CellDouble[Col, Row]);
 
           SQL_C_BIT,
           SQL_C_STINYINT,
@@ -7722,7 +7627,7 @@ Var
           SQL_C_USHORT,
           SQL_C_SLONG,
           SQL_C_ULONG:
-            Result:= FormatFloat(fm, CellInteger[Col, Row]);
+            Result := FormatFloat(fm, CellInteger[Col, Row]);
         End;
       End;
       fsDateTime:
@@ -7731,7 +7636,7 @@ Var
           SQL_C_TYPE_DATE,
           SQL_C_TYPE_TIME,
           SQL_C_TYPE_TIMESTAMP:
-            Result:= FormatDateTime(fm, TSToDateTime(CellTimeStamp[Col, Row]));
+            Result := FormatDateTime(fm, TSToDateTime(CellTimeStamp[Col, Row]));
         End;
       End;
       fsCustom:
@@ -7739,7 +7644,7 @@ Var
         Case CType Of
           SQL_C_FLOAT,
           SQL_C_DOUBLE:
-            Result:= Format(fm, [CellDouble[Col, Row]]);
+            Result := Format(fm, [CellDouble[Col, Row]]);
 
           SQL_C_BIT,
           SQL_C_STINYINT,
@@ -7748,9 +7653,9 @@ Var
           SQL_C_USHORT,
           SQL_C_SLONG,
           SQL_C_ULONG:
-            Result:= Format(fm, [CellInteger[Col, Row]]);
+            Result := Format(fm, [CellInteger[Col, Row]]);
           Else
-            Result:= Format(fm, [Result]);
+            Result := Format(fm, [Result]);
         End;
       End;
     End;
@@ -7765,32 +7670,32 @@ Begin
     Begin
     If LrRowRec.FBlob Then
       Begin
-      Result:= MemoryStreamToString(GetCellMemory(Col, Row));
+      Result := MemoryStreamToString(GetCellMemory(Col, Row));
       End;
     If LrRowRec.FSize^ = SQL_NULL_DATA Then
       Begin
-      Result:= NullData;
+      Result := NullData;
       End
     Else If (Not LrRowRec.FBlob) And (LrRowRec.FSize^ > 0) And ((LrRowRec.FType = SQL_C_CHAR) Or (LrRowRec.FType = SQL_C_BINARY)) Then
       Begin
       SetLength(Res, LrRowRec.FSize^);
       Move(LrRowRec.FValue^, Res[1], LrRowRec.FSize^);
-      Result:= TrimString(Res, StringTrimming);
+      Result := TrimString(Res, StringTrimming);
       End
     Else If Not LrRowRec.FBlob Then
       Begin
-      Result:= FormatString(LrRowRec.FValue, LrRowRec.FType);
+      Result := FormatString(LrRowRec.FValue, LrRowRec.FType);
       End;
     End
   Else
     Begin
-    Result:= '';
+    Result := '';
     End;
 End;
 
 Function TOdbcStatement.GetCellSingle(Col, Row: SQLUSMALLINT): Single;
 Begin
-  Result:= GetCellDouble(Col, Row);
+  Result := GetCellDouble(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellDouble(Col, Row: SQLUSMALLINT): Double;
@@ -7804,30 +7709,30 @@ Begin
     Begin
     If (LrRowRec.FSize^ = SQL_NULL_DATA) Or LrRowRec.FBlob Then
       Begin
-      Result:= 0
+      Result := 0
       End
     Else
       Begin
-      Result:= ToDouble(LrRowRec.FValue, LrRowRec.FType);
+      Result := ToDouble(LrRowRec.FValue, LrRowRec.FType);
       End;
     End
   Else
     Begin
-    Result:= 0;
+    Result := 0;
     End;
 
 {
 Previous Non-Optimal implementation
 
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   if temp = nil then
-    Result:= 0
+    Result := 0
   else
   begin
     if (temp^.FSize^ = SQL_NULL_DATA) or temp^.FBlob then
-      Result:= 0
+      Result := 0
     else
-      Result:= ToDouble(temp^.FValue, temp^.FType);
+      Result := ToDouble(temp^.FValue, temp^.FType);
     Dispose(temp);
   end;
 }
@@ -7835,27 +7740,27 @@ End;
 
 Function TOdbcStatement.GetCellBoolean(Col, Row: SQLUSMALLINT): Boolean;
 Begin
-  Result:= GetCellInteger(Col, Row) <> 0;
+  Result := GetCellInteger(Col, Row) <> 0;
 End;
 
 Function TOdbcStatement.GetCellShortint(Col, Row: SQLUSMALLINT): ShortInt;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellByte(Col, Row: SQLUSMALLINT): Byte;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellSmallint(Col, Row: SQLUSMALLINT): SmallInt;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellWord(Col, Row: SQLUSMALLINT): Word;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellInteger(Col, Row: SQLUSMALLINT): Integer;
@@ -7868,27 +7773,27 @@ Begin
   If RowRecEx(Col, Row, LrRowRec) Then
     Begin
     If (LrRowRec.FSize^ = SQL_NULL_DATA) Or LrRowRec.FBlob Then
-      Result:= 0
+      Result := 0
     Else
-      Result:= ToInteger(LrRowRec.FValue, LrRowRec.FType);
+      Result := ToInteger(LrRowRec.FValue, LrRowRec.FType);
     End
   Else
     Begin
-    Result:= 0
+    Result := 0
     End;
 
 {
 Previous Non-Optimal implementation
 
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   if temp = nil then
-    Result:= 0
+    Result := 0
   else
   begin
     if (temp^.FSize^ = SQL_NULL_DATA) or temp^.FBlob then
-      Result:= 0
+      Result := 0
     else
-      Result:= ToInteger(temp^.FValue, temp^.FType);
+      Result := ToInteger(temp^.FValue, temp^.FType);
     Dispose(temp);
   end;
 }
@@ -7896,17 +7801,17 @@ End;
 
 Function TOdbcStatement.GetCellCardinal(Col, Row: SQLUSMALLINT): Cardinal;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellLongint(Col, Row: SQLUSMALLINT): LongInt;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellLongword(Col, Row: SQLUSMALLINT): LongWord;
 Begin
-  Result:= GetCellInteger(Col, Row);
+  Result := GetCellInteger(Col, Row);
 End;
 
 Function TOdbcStatement.GetCellInt64(Col, Row: SQLUSMALLINT): Int64;
@@ -7920,30 +7825,30 @@ Begin
     Begin
     If (LrRowRec.FSize^ = SQL_NULL_DATA) Or LrRowRec.FBlob Then
       Begin
-      Result:= 0;
+      Result := 0;
       End
     Else
       Begin
-      Result:= ToInt64(LrRowRec.FValue, LrRowRec.FType);
+      Result := ToInt64(LrRowRec.FValue, LrRowRec.FType);
       End;
     End
   Else
     Begin
-    Result:= 0;
+    Result := 0;
     End;
 
 {
 Previous Non-Optimal implementation
 
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   if temp = nil then
-    Result:= 0
+    Result := 0
   else
   begin
     if (temp^.FSize^ = SQL_NULL_DATA) or temp^.FBlob then
-      Result:= 0
+      Result := 0
     else
-      Result:= ToInt64(temp^.FValue, temp^.FType);
+      Result := ToInt64(temp^.FValue, temp^.FType);
     Dispose(temp);
   end;
 }
@@ -7953,12 +7858,12 @@ Function TOdbcStatement.GetCellDate(Col, Row: SQLUSMALLINT): TDate;
 Var
   TS: fsl_utilities.TTimeStamp;
 Begin
-  TS:= GetCellTimeStamp(Col, Row);
+  TS := GetCellTimeStamp(Col, Row);
   With Result Do
   Begin
-    Year:= TS.Year;
-    Month:= TS.Month;
-    Day:= TS.Day;
+    Year := TS.Year;
+    Month := TS.Month;
+    Day := TS.Day;
   End;
 End;
 
@@ -7966,12 +7871,12 @@ Function TOdbcStatement.GetCellTime(Col, Row: SQLUSMALLINT): TTime;
 Var
   TS: fsl_utilities.TTimeStamp;
 Begin
-  TS:= GetCellTimeStamp(Col, Row);
+  TS := GetCellTimeStamp(Col, Row);
   With Result Do
   Begin
-    Hour:= TS.Hour;
-    Minute:= TS.Minute;
-    Second:= TS.Second;
+    Hour := TS.Hour;
+    Minute := TS.Minute;
+    Second := TS.Second;
   End;
 End;
 
@@ -7986,30 +7891,30 @@ Begin
     Begin
     If (LrRowRec.FSize^ = SQL_NULL_DATA) Or LrRowRec.FBlob Then
       Begin
-      Result:= NullTS;
+      Result := NullTS;
       End
     Else
       Begin
-      Result:= ToTimeStamp(LrRowRec.FValue, LrRowRec.FType);
+      Result := ToTimeStamp(LrRowRec.FValue, LrRowRec.FType);
       End;
     End
   Else
     Begin
-    Result:= NullTS;
+    Result := NullTS;
     End;
 
 {
 Previous Non-Optimal implementation
 
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   if temp = nil then
-    Result:= NullTS
+    Result := NullTS
   else
   begin
     if (temp^.FSize^ = SQL_NULL_DATA) or temp^.FBlob then
-      Result:= NullTS
+      Result := NullTS
     else
-      Result:= ToTimeStamp(temp^.FValue, temp^.FType);
+      Result := ToTimeStamp(temp^.FValue, temp^.FType);
     Dispose(temp);
   end;
 }
@@ -8020,16 +7925,16 @@ Var
   tempCol: TColPtr;
   temp: TRowPtr;
 Begin
-  temp:= RowRec(Col,Row);
+  temp := RowRec(Col,Row);
   If temp = Nil Then
-    Result:= Nil
+    Result := Nil
   Else
   Begin
     If temp^.FBlob Then
     Begin
-      tempCol:= ColRec(Col);
-      tempCol^.FSize^:= FetchCell(Col, Row, temp^.FType, tempCol^.FMemory);
-      Result:= tempCol^.FMemory;
+      tempCol := ColRec(Col);
+      tempCol^.FSize^ := FetchCell(Col, Row, temp^.FType, tempCol^.FMemory);
+      Result := tempCol^.FMemory;
     End
     Else
       Begin
@@ -8037,11 +7942,11 @@ Begin
       //Need to be able to read other datatypes as memory aswell
       If temp^.FSize^ = SQL_NULL_DATA Then
         Begin
-        Result:= Nil;
+        Result := Nil;
         End
       Else
         Begin
-        tempCol:= ColRec(Col);
+        tempCol := ColRec(Col);
 
         If tempCol^.FMemory = Nil Then
           Begin
@@ -8056,7 +7961,7 @@ Begin
           tempCol^.FMemory.Write(temp^.FValue^, temp^.FSize^);
           End;
 
-        Result:= tempCol^.FMemory;
+        Result := tempCol^.FMemory;
         End;
       End;
 
@@ -8067,46 +7972,46 @@ End;
 Function TOdbcStatement.GetCellVariant(Col, Row: SQLUSMALLINT): Variant;
 Begin
   If CellNull[Col, Row] Then
-    Result:= Unassigned
+    Result := Unassigned
   Else
     Case ColType[Col] Of
       SQL_C_CHAR:
-        Result:= CellString[Col, Row];
+        Result := CellString[Col, Row];
 
       SQL_C_BINARY:
-        Result:= Unassigned;
+        Result := Unassigned;
 
       SQL_C_FLOAT:
-        Result:= CellSingle[Col, Row];
+        Result := CellSingle[Col, Row];
       SQL_C_DOUBLE:
-        Result:= CellDouble[Col, Row];
+        Result := CellDouble[Col, Row];
 
       SQL_C_BIT:
-        Result:= CellBoolean[Col, Row];
+        Result := CellBoolean[Col, Row];
       SQL_C_STINYINT:
-        Result:= CellShortint[Col, Row];
+        Result := CellShortint[Col, Row];
       SQL_C_UTINYINT:
-        Result:= CellByte[Col, Row];
+        Result := CellByte[Col, Row];
       SQL_C_SSHORT:
-        Result:= CellSmallint[Col, Row];
+        Result := CellSmallint[Col, Row];
       SQL_C_USHORT:
-        Result:= CellWord[Col, Row];
+        Result := CellWord[Col, Row];
       SQL_C_SLONG:
-        Result:= CellInteger[Col, Row];
+        Result := CellInteger[Col, Row];
       SQL_C_ULONG:
-        Result:= CellInteger[Col, Row];
+        Result := CellInteger[Col, Row];
       SQL_C_SBIGINT,
       SQL_C_UBIGINT:
-        Result:= CellInteger[Col, Row];
+        Result := CellInteger[Col, Row];
 
       SQL_C_TYPE_DATE:
-        Result:= TSToDateTime(DateAsTS(CellDate[Col, Row]));
+        Result := TSToDateTime(DateAsTS(CellDate[Col, Row]));
       SQL_C_TYPE_TIME:
-        Result:= TSToDateTime(TimeAsTS(CellTime[Col, Row]));
+        Result := TSToDateTime(TimeAsTS(CellTime[Col, Row]));
       SQL_C_TYPE_TIMESTAMP:
-        Result:= TSToDateTime(CellTimeStamp[Col, Row]);
+        Result := TSToDateTime(CellTimeStamp[Col, Row]);
       Else
-        Result:= Unassigned;
+        Result := Unassigned;
     End;
 End;
 
@@ -8119,40 +8024,40 @@ Var
 
   Function EmptyToNull: Boolean;
   Begin
-    Result:= False;
+    Result := False;
     Case FEmptyToNull Of
       enNever:
-        Result:= False;
+        Result := False;
       enAlways:
-        Result:= True;
+        Result := True;
       enIfNullable:
-        Result:= ColNullable[Col] = SQL_NULLABLE;
+        Result := ColNullable[Col] = SQL_NULLABLE;
     End;
   End;
 
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
-    s:= AValue;
+    s := AValue;
     If temp^.FBlob Then
     Begin
-      tempCol:= ColRec(Col);
+      tempCol := ColRec(Col);
       tempCol^.FMemory.SetSize(Length(s)+1);
-      tempCol^.FSize^:= Length(s);
+      tempCol^.FSize^ := Length(s);
       ToValue(s, tempCol^.FMemory.Memory, tempCol^.FType, StringTrimming);
     End
     Else
     Begin
       ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
       If (temp^.FType = SQL_C_CHAR) Or (temp^.FType = SQL_C_BINARY) Then
-        temp^.FSize^:= Length(s)
+        temp^.FSize^ := Length(s)
       Else
-        temp^.FSize^:= PhysSize(temp^.FType);
+        temp^.FSize^ := PhysSize(temp^.FType);
     End;
 
     If (AValue = '') And EmptyToNull Then
-      temp^.FSize^:= SQL_NULL_DATA;
+      temp^.FSize^ := SQL_NULL_DATA;
 
     Dispose(temp);
   End;
@@ -8170,7 +8075,7 @@ Var
   temp: TRowPtr;
   s: String;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
     If Not temp^.FBlob Then
@@ -8178,9 +8083,9 @@ Begin
       Str(AValue, s);
       ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
       If temp^.FType = SQL_C_CHAR Then
-        temp^.FSize^:= Length(s)
+        temp^.FSize^ := Length(s)
       Else
-        temp^.FSize^:= PhysSize(temp^.FType);
+        temp^.FSize^ := PhysSize(temp^.FType);
     End;
 
     Dispose(temp);
@@ -8226,7 +8131,7 @@ Var
   temp: TRowPtr;
   s: String;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
     If Not temp^.FBlob Then
@@ -8234,9 +8139,9 @@ Begin
       Str(AValue, s);
       ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
       If temp^.FType = SQL_C_CHAR Then
-        temp^.FSize^:= Length(s)
+        temp^.FSize^ := Length(s)
       Else
-        temp^.FSize^:= PhysSize(temp^.FType);
+        temp^.FSize^ := PhysSize(temp^.FType);
     End;
 
     Dispose(temp);
@@ -8267,7 +8172,7 @@ Var
   temp: TRowPtr;
   s: String;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
     If Not temp^.FBlob Then
@@ -8275,9 +8180,9 @@ Begin
       Str(AValue, s);
       ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
       If temp^.FType = SQL_C_CHAR Then
-        temp^.FSize^:= Length(s)
+        temp^.FSize^ := Length(s)
       Else
-        temp^.FSize^:= PhysSize(temp^.FType);
+        temp^.FSize^ := PhysSize(temp^.FType);
     End;
 
     Dispose(temp);
@@ -8291,7 +8196,7 @@ Var
   s: String;
   ts: fsl_utilities.TTimeStamp;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
     If Not temp^.FBlob Then
@@ -8300,21 +8205,21 @@ Begin
       Begin
         With AValue Do
         Begin
-          ts:= NullTS;
-          ts.Year:= Year;
-          ts.Month:= Month;
-          ts.Day:= Day;
+          ts := NullTS;
+          ts.Year := Year;
+          ts.Month := Month;
+          ts.Day := Day;
           SetCellTimeStamp(Col, Row, ts);
         End;
       End
       Else
       Begin
-        s:= fdb_odbc_objects.ToString(@AValue, SQL_C_TYPE_DATE, stTrimBoth);
+        s := fdb_odbc_objects.ToString(@AValue, SQL_C_TYPE_DATE, stTrimBoth);
         ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
         If temp^.FType = SQL_C_CHAR Then
-          temp^.FSize^:= Length(s)
+          temp^.FSize^ := Length(s)
         Else
-          temp^.FSize^:= PhysSize(temp^.FType);
+          temp^.FSize^ := PhysSize(temp^.FType);
       End;
     End;
 
@@ -8329,7 +8234,7 @@ Var
   s: String;
   ts: fsl_utilities.TTimeStamp;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
     If Not temp^.FBlob Then
@@ -8338,21 +8243,21 @@ Begin
       Begin
         With AValue Do
         Begin
-          ts:= NullTS;
-          ts.Hour:= Hour;
-          ts.Minute:= Minute;
-          ts.Second:= Second;
+          ts := NullTS;
+          ts.Hour := Hour;
+          ts.Minute := Minute;
+          ts.Second := Second;
           SetCellTimeStamp(Col, Row, ts);
         End;
       End
       Else
       Begin
-        s:= fdb_odbc_objects.ToString(@AValue, SQL_C_TYPE_TIME, stTrimBoth);
+        s := fdb_odbc_objects.ToString(@AValue, SQL_C_TYPE_TIME, stTrimBoth);
         ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
         If temp^.FType = SQL_C_CHAR Then
-          temp^.FSize^:= Length(s)
+          temp^.FSize^ := Length(s)
         Else
-          temp^.FSize^:= PhysSize(temp^.FType);
+          temp^.FSize^ := PhysSize(temp^.FType);
       End;
     End;
 
@@ -8368,7 +8273,7 @@ Var
   Date: TDate;
   Time: TTime;
 Begin
-  temp:= RowRec(Col, Row);
+  temp := RowRec(Col, Row);
   If temp <> Nil Then
   Begin
     If Not temp^.FBlob Then
@@ -8378,31 +8283,31 @@ Begin
         Begin
           With AValue Do
           Begin
-            Date.Year:= Year;
-            Date.Month:= Month;
-            Date.Day:= Day;
+            Date.Year := Year;
+            Date.Month := Month;
+            Date.Day := Day;
           End;
-          s:= fdb_odbc_objects.ToString(@Date, SQL_C_TYPE_DATE, stTrimBoth);
+          s := fdb_odbc_objects.ToString(@Date, SQL_C_TYPE_DATE, stTrimBoth);
         End;
         SQL_C_TYPE_TIME:
         Begin
           With AValue Do
           Begin
-            Time.Hour:= Hour;
-            Time.Minute:= Minute;
-            Time.Second:= Second;
+            Time.Hour := Hour;
+            Time.Minute := Minute;
+            Time.Second := Second;
           End;
-          s:= fdb_odbc_objects.ToString(@Time, SQL_C_TYPE_TIME, stTrimBoth);
+          s := fdb_odbc_objects.ToString(@Time, SQL_C_TYPE_TIME, stTrimBoth);
         End;
         Else
-          s:= fdb_odbc_objects.ToString(@AValue, SQL_C_TYPE_TIMESTAMP, stTrimBoth);
+          s := fdb_odbc_objects.ToString(@AValue, SQL_C_TYPE_TIMESTAMP, stTrimBoth);
       End;
 
       ToValue(s, temp^.FValue, temp^.FType, StringTrimming);
       If temp^.FType = SQL_C_CHAR Then
-        temp^.FSize^:= Length(s)
+        temp^.FSize^ := Length(s)
       Else
-        temp^.FSize^:= PhysSize(temp^.FType);
+        temp^.FSize^ := PhysSize(temp^.FType);
     End;
 
     Dispose(temp);
@@ -8420,133 +8325,133 @@ Procedure TOdbcStatement.SetCellVariant(Col, Row: SQLUSMALLINT;
 Begin
   Case VarType(AValue) Of
     varEmpty, varNull:
-      CellNull[Col, Row]:= True;
+      CellNull[Col, Row] := True;
     varSmallint:
-      CellSmallint[Col, Row]:= AValue;
+      CellSmallint[Col, Row] := AValue;
     varInteger:
-      CellInteger[Col, Row]:= AValue;
+      CellInteger[Col, Row] := AValue;
     varSingle:
-      CellSingle[Col, Row]:= AValue;
+      CellSingle[Col, Row] := AValue;
     varDouble,
     varCurrency:
-      CellDouble[Col, Row]:= AValue;
+      CellDouble[Col, Row] := AValue;
     varDate:
-      CellTimeStamp[Col, Row]:= DateTimeToTS(AValue);
+      CellTimeStamp[Col, Row] := DateTimeToTS(AValue);
     varOleStr, varString:
-      CellString[Col, Row]:= AValue;
+      CellString[Col, Row] := AValue;
     varBoolean, varByte:
-      CellByte[Col, Row]:= AValue;
+      CellByte[Col, Row] := AValue;
     Else
-      CellNull[Col, Row]:= True;
+      CellNull[Col, Row] := True;
   End;
 End;
 
 Function TOdbcStatement.GetCellStringByName(ColName: String;
                                     Row: SQLUSMALLINT): String;
 Begin
-  Result:= GetCellString(ColByName(ColName), Row);
+  Result := GetCellString(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellSingleByName(ColName: String;
                                     Row: SQLUSMALLINT): Single;
 Begin
-  Result:= GetCellSingle(ColByName(ColName), Row);
+  Result := GetCellSingle(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellDoubleByName(ColName: String;
                                     Row: SQLUSMALLINT): Double;
 Begin
-  Result:= GetCellDouble(ColByName(ColName), Row);
+  Result := GetCellDouble(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellBooleanByName(ColName: String;
                                      Row: SQLUSMALLINT): Boolean;
 Begin
-  Result:= GetCellBoolean(ColByName(ColName), Row);
+  Result := GetCellBoolean(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellShortintByName(ColName: String;
                                       Row: SQLUSMALLINT): ShortInt;
 Begin
-  Result:= GetCellShortint(ColByName(ColName), Row);
+  Result := GetCellShortint(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellByteByName(ColName: String;
                                   Row: SQLUSMALLINT): Byte;
 Begin
-  Result:= GetCellByte(ColByName(ColName), Row);
+  Result := GetCellByte(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellSmallintByName(ColName: String;
                                       Row: SQLUSMALLINT): SmallInt;
 Begin
-  Result:= GetCellSmallint(ColByName(ColName), Row);
+  Result := GetCellSmallint(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellWordByName(ColName: String;
                                   Row: SQLUSMALLINT): Word;
 Begin
-  Result:= GetCellWord(ColByName(ColName), Row);
+  Result := GetCellWord(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellIntegerByName(ColName: String;
                                      Row: SQLUSMALLINT): Integer;
 Begin
-  Result:= GetCellInteger(ColByName(ColName), Row);
+  Result := GetCellInteger(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellCardinalByName(ColName: String;
                                       Row: SQLUSMALLINT): Cardinal;
 Begin
-  Result:= GetCellCardinal(ColByName(ColName), Row);
+  Result := GetCellCardinal(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellLongintByName(ColName: String;
                                      Row: SQLUSMALLINT): LongInt;
 Begin
-  Result:= GetCellLongint(ColByName(ColName), Row);
+  Result := GetCellLongint(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellLongwordByName(ColName: String;
                                       Row: SQLUSMALLINT): LongWord;
 Begin
-  Result:= GetCellLongword(ColByName(ColName), Row);
+  Result := GetCellLongword(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellInt64ByName(ColName: String;
                                    Row: SQLUSMALLINT): Int64;
 Begin
-  Result:= GetCellInt64(ColByName(ColName), Row);
+  Result := GetCellInt64(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellDateByName(ColName: String;
                                   Row: SQLUSMALLINT): TDate;
 Begin
-  Result:= GetCellDate(ColByName(ColName), Row);
+  Result := GetCellDate(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellTimeByName(ColName: String;
                                   Row: SQLUSMALLINT): TTime;
 Begin
-  Result:= GetCellTime(ColByName(ColName), Row);
+  Result := GetCellTime(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellTimeStampByName(ColName: String;
                                        Row: SQLUSMALLINT): fsl_utilities.TTimeStamp;
 Begin
-  Result:= GetCellTimeStamp(ColByName(ColName), Row);
+  Result := GetCellTimeStamp(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellMemoryByName(ColName: String;
                                     Row: SQLUSMALLINT): TManagedMemoryStream;
 Begin
-  Result:= GetCellMemory(ColByName(ColName), Row);
+  Result := GetCellMemory(ColByName(ColName), Row);
 End;
 
 Function TOdbcStatement.GetCellVariantByName(ColName: String;
                                      Row: SQLUSMALLINT): Variant;
 Begin
-  Result:= GetCellVariant(ColByName(ColName), Row);
+  Result := GetCellVariant(ColByName(ColName), Row);
 End;
 
 Procedure TOdbcStatement.SetCellStringByName(ColName: String;
@@ -8681,13 +8586,13 @@ Var
 Begin
   Log(1, 'TOdbcStatement.ParamByName');
 
-  ParamName:= UpperCase(ParamName);
-  Count:= 0;
+  ParamName := UpperCase(ParamName);
+  Count := 0;
   While (Count < FParamNames.Count) And (UpperCase(FParamNames[Count]) <> ParamName) Do
     Inc(Count);
 
   If Count < FParamNames.Count Then
-    Result:= Count+1
+    Result := Count+1
   Else
     Raise EODBCExpress.Create('Token '+ParamName+' not found in SQL statement.');
 End;
@@ -8701,27 +8606,27 @@ Begin
   { Bind Columns }
   BindCols;
 
-  Index:= IndexOf(ColName, FColNames);
+  Index := IndexOf(ColName, FColNames);
   If Index > -1 Then
-    Result:= Index+1
+    Result := Index+1
   Else
-    Raise EODBCExpress.Create('Identifier '+ColName+' not found in result set.');
+    Raise EODBCExpress.Create('Identifier '+ColName+' not found in result set. ('+FColNames.CommaText+')');
 End;
 
 Procedure TOdbcStatement.NullCols(Const Cols: Array Of String);
 Var
   i: Integer;
 Begin
-  For i:= 0 To High(Cols) Do
-    ColNull[ColByName(Cols[i])]:= True;
+  For i := 0 To High(Cols) Do
+    ColNull[ColByName(Cols[i])] := True;
 End;
 
 Procedure TOdbcStatement.PrimaryCols(Const Cols: Array Of String);
 Var
   i: Integer;
 Begin
-  For i:= 0 To High(Cols) Do
-    ColPrimary[ColByName(Cols[i])]:= True;
+  For i := 0 To High(Cols) Do
+    ColPrimary[ColByName(Cols[i])] := True;
 End;
 
 Function TOdbcStatement.TypeString(SqlType: SQLSMALLINT;
@@ -8731,37 +8636,37 @@ Var
 Begin
   Close;
 
-  FRetCode:= SQLGetTypeInfo(FHstmt, SqlType);
+  FRetCode := SQLGetTypeInfo(FHstmt, SqlType);
   If FEnv.Error.Success(FRetCode) And FetchNext Then
   Begin
-    Result:= ColString[1];
+    Result := ColString[1];
     Log(0, ColString[3]+' '+ColString[15]);  //max precision and scale
   End
   Else
-    Result:= '';
+    Result := '';
 
   If (SqlSize > 0) And (Result <> '') And
      ((SqlType = SQL_CHAR) Or (SqlType = SQL_VARCHAR) Or
       (SqlType = SQL_BINARY) Or (SqlType = SQL_VARBINARY)) Then
   Begin
-    Loc:= Pos('(', Result);
+    Loc := Pos('(', Result);
     If Loc > 0 Then
       Insert(IntToStr(SqlSize), Result, Loc+1)
     Else
-      Result:= Result+'('+IntToStr(SqlSize)+')';
+      Result := Result+'('+IntToStr(SqlSize)+')';
   End;
 End;
 
 Procedure TOdbcStatement.SetSkipByCursor(ASkipByCursor: Boolean);
 Begin
-  FSkipByCursor:= ASkipByCursor;
+  FSkipByCursor := ASkipByCursor;
 
   UnPrepareHstmts;
 End;
 
 Procedure TOdbcStatement.SetSkipByPosition(ASkipByPosition: Boolean);
 Begin
-  FSkipByPosition:= ASkipByPosition;
+  FSkipByPosition := ASkipByPosition;
 
   UnPrepareHstmts;
 End;
@@ -8784,15 +8689,15 @@ end;
 procedure TSchemaColumn.SetPrecision(APrecision: Integer);
 begin
   if (APrecision <> FPrecision) and (APrecision >= 0) then
-    FPrecision:= APrecision;
+    FPrecision := APrecision;
 end;
 
 procedure TSchemaColumn.SetForeignTable(AForeignTable: String);
 begin
   if AForeignTable <> FForeignTable then
   begin
-    FForeignTable:= AForeignTable;
-    FForeignColumn:= '';
+    FForeignTable := AForeignTable;
+    FForeignColumn := '';
   end;
 end;
 
@@ -8801,19 +8706,19 @@ begin
   if AForeignColumn <> FForeignColumn then
   begin
     if FForeignTable <> '' then
-      FForeignColumn:= AForeignColumn;
+      FForeignColumn := AForeignColumn;
   end;
 end;
 
 constructor TSchemaColumn.Create;
 begin
-  FColumnName:= '';
-  FDataType:= SQL_CHAR;
-  FPrecision:= 0;
-  FFlags:= 0;
-  FDefault:= '';
-  FForeignTable:= '';
-  FForeignColumn:= '';
+  FColumnName := '';
+  FDataType := SQL_CHAR;
+  FPrecision := 0;
+  FFlags := 0;
+  FDefault := '';
+  FForeignTable := '';
+  FForeignColumn := '';
 end;
 
 destructor TSchemaColumn.Destroy;
@@ -8826,7 +8731,7 @@ end;
 
 function TSchemaColumns.GetItem(Index: Integer): TSchemaColumn;
 begin
-  Result:= TSchemaColumn(FList[Index]);
+  Result := TSchemaColumn(FList[Index]);
 end;
 
 procedure TSchemaColumns.SetItem(Index: Integer;
@@ -8836,19 +8741,19 @@ end;
 
 function TSchemaColumns.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 constructor TSchemaColumns.Create;
 begin
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TSchemaColumns.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -8857,7 +8762,7 @@ procedure TSchemaColumns.AddItem;
 var
   temp: TSchemaColumn;
 begin
-  temp:= TSchemaColumn.Create;
+  temp := TSchemaColumn.Create;
   FList.Add(temp);
 end;
 
@@ -8865,13 +8770,13 @@ procedure TSchemaColumns.InsertItem(Index: Integer);
 var
   temp: TSchemaColumn;
 begin
-  temp:= TSchemaColumn.Create;
+  temp := TSchemaColumn.Create;
   FList.Insert(Index, temp);
 end;
 
 procedure TSchemaColumns.DeleteItem(Index: Integer);
 begin
-  TSchemaColumn(FList[Index]).Free;
+  TSchemaColumn(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -8889,8 +8794,8 @@ procedure TSchemaColumns.Clear;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TSchemaColumn(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TSchemaColumn(FList[i]).free;
   FList.Clear;
 end;
 
@@ -8902,14 +8807,14 @@ end;
 
 constructor TSchemaIndex.Create;
 begin
-  FIndexName:= '';
-  FUnique:= DefUnique;
-  FColumns:= TStringList.Create;
+  FIndexName := '';
+  FUnique := DefUnique;
+  FColumns := TStringList.Create;
 end;
 
 destructor TSchemaIndex.Destroy;
 begin
-  FColumns.Free;
+  FColumns.free;
 
   inherited Destroy;
 end;
@@ -8923,23 +8828,23 @@ begin
     Exit;
 
   if Unique then
-    ctSQL:= 'CREATE UNIQUE INDEX '+Quoted(IndexName)+' ON '
+    ctSQL := 'CREATE UNIQUE INDEX '+Quoted(IndexName)+' ON '
   else
-    ctSQL:= 'CREATE INDEX '+Quoted(IndexName)+ ' ON ';
+    ctSQL := 'CREATE INDEX '+Quoted(IndexName)+ ' ON ';
   with FIndexes.FTable do
-    ctSQL:= ctSQL+FTables.FSchema.Prefix(TableOwner, TableName)+' (';
+    ctSQL := ctSQL+FTables.FSchema.Prefix(TableOwner, TableName)+' (';
 
-  for k:= 0 to Columns.Count-1 do
-    ctSQL:= ctSQL+Quoted(Columns[k])+', ';
+  for k := 0 to Columns.Count-1 do
+    ctSQL := ctSQL+Quoted(Columns[k])+', ';
   SetLength(ctSQL, Length(ctSQL)-2);
-  ctSQL:= ctSQL+')';
+  ctSQL := ctSQL+')';
 
   if FIndexes.FTable.FTables.FSchema.FToFile then
     FIndexes.FTable.FTables.FSchema.WriteLine(ctSQL)
   else
     with FIndexes.FTable.FTables.FSchema.FHstmt do
     begin
-      SQL:= ctSQL;
+      SQL := ctSQL;
       Prepare;
       Execute;
     end;
@@ -8952,13 +8857,13 @@ begin
   if IndexName <> '' then
   begin
     with FIndexes.FTable do
-      ctSQL:= 'DROP INDEX '+FTables.FSchema.Prefix(TableOwner, TableName)+'.'+Quoted(IndexName);
+      ctSQL := 'DROP INDEX '+FTables.FSchema.Prefix(TableOwner, TableName)+'.'+Quoted(IndexName);
     if FIndexes.FTable.FTables.FSchema.FToFile then
       FIndexes.FTable.FTables.FSchema.WriteLine(ctSQL)
     else
       with FIndexes.FTable.FTables.FSchema.FHstmt do
       begin
-        SQL:= ctSQL;
+        SQL := ctSQL;
         Prepare;
         Execute;
       end;
@@ -8969,7 +8874,7 @@ end;
 
 function TSchemaIndexes.GetItem(Index: Integer): TSchemaIndex;
 begin
-  Result:= TSchemaIndex(FList[Index]);
+  Result := TSchemaIndex(FList[Index]);
 end;
 
 procedure TSchemaIndexes.SetItem(Index: Integer;
@@ -8979,19 +8884,19 @@ end;
 
 function TSchemaIndexes.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 constructor TSchemaIndexes.Create;
 begin
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TSchemaIndexes.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -9000,8 +8905,8 @@ procedure TSchemaIndexes.AddItem;
 var
   temp: TSchemaIndex;
 begin
-  temp:= TSchemaIndex.Create;
-  temp.FIndexes:= Self;
+  temp := TSchemaIndex.Create;
+  temp.FIndexes := Self;
   FList.Add(temp);
 end;
 
@@ -9009,14 +8914,14 @@ procedure TSchemaIndexes.InsertItem(Index: Integer);
 var
   temp: TSchemaIndex;
 begin
-  temp:= TSchemaIndex.Create;
-  temp.FIndexes:= Self;
+  temp := TSchemaIndex.Create;
+  temp.FIndexes := Self;
   FList.Insert(Index, temp);
 end;
 
 procedure TSchemaIndexes.DeleteItem(Index: Integer);
 begin
-  TSchemaIndex(FList[Index]).Free;
+  TSchemaIndex(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -9034,8 +8939,8 @@ procedure TSchemaIndexes.Clear;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TSchemaIndex(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TSchemaIndex(FList[i]).free;
   FList.Clear;
 end;
 
@@ -9051,17 +8956,17 @@ end;
 
 constructor TSchemaTable.Create;
 begin
-  FTableOwner:= '';
-  FTableName:= '';
-  FColumns:= TSchemaColumns.Create;
-  FIndexes:= TSchemaIndexes.Create;
-  FIndexes.FTable:= Self;
+  FTableOwner := '';
+  FTableName := '';
+  FColumns := TSchemaColumns.Create;
+  FIndexes := TSchemaIndexes.Create;
+  FIndexes.FTable := Self;
 end;
 
 destructor TSchemaTable.Destroy;
 begin
-  FColumns.Free;
-  FIndexes.Free;
+  FColumns.free;
+  FIndexes.free;
 
   inherited Destroy;
 end;
@@ -9080,7 +8985,7 @@ var
     if FTables.FSchema.FNameConstraints then
     begin
       Inc(ConstraintCount);
-      ctSQL:= ctSQL+' CONSTRAINT '+Constraint+IntToStr(ConstraintCount);
+      ctSQL := ctSQL+' CONSTRAINT '+Constraint+IntToStr(ConstraintCount);
     end;
   end;
 
@@ -9088,70 +8993,70 @@ begin
   if (Trim(TableName) = '') or (Columns.ItemCount = 0) then
     Exit;
 
-  Constraint:= StringReplace(TableName, ' ', '_', [rfReplaceAll, rfIgnoreCase])+'Constraint';
-  ConstraintCount:= 0;
+  Constraint := StringReplace(TableName, ' ', '_', [rfReplaceAll, rfIgnoreCase])+'Constraint';
+  ConstraintCount := 0;
 
-  ctSQL:= 'CREATE TABLE '+FTables.FSchema.Prefix(TableOwner, TableName)+' (';
+  ctSQL := 'CREATE TABLE '+FTables.FSchema.Prefix(TableOwner, TableName)+' (';
 
-  for j:= 0 to Columns.ItemCount-1 do
+  for j := 0 to Columns.ItemCount-1 do
     with Columns[j] do
     begin
-      ColTypeString:= FTables.FSchema.FHstmt.TypeString(DataType, Precision);
+      ColTypeString := FTables.FSchema.FHstmt.TypeString(DataType, Precision);
       if Trim(ColTypeString) = '' then
         raise EODBCExpress.Create('Data type for column "'+ColumnName+'" in table "'+TableName+'" not supported.');
       FTables.FSchema.FHstmt.Close;
 
-      ctSQL:= ctSQL+Quoted(ColumnName)+' '+ColTypeString;
+      ctSQL := ctSQL+Quoted(ColumnName)+' '+ColTypeString;
       if Trim(Default) <> '' then
-        ctSQL:= ctSQL+' DEFAULT '+Default;
+        ctSQL := ctSQL+' DEFAULT '+Default;
       if (Flags and cfNotNull) = cfNotNull then
       begin
         NameConstraint;
-        ctSQL:= ctSQL+' NOT NULL';
+        ctSQL := ctSQL+' NOT NULL';
       end;
       if (Flags and cfUnique) = cfUnique then
       begin
         NameConstraint;
-        ctSQL:= ctSQL+' UNIQUE';
+        ctSQL := ctSQL+' UNIQUE';
       end;
-      ctSQL:= ctSQL+', ';
+      ctSQL := ctSQL+', ';
     end;
 
-  Found:= False;
-  for j:= 0 to Columns.ItemCount-1 do
+  Found := False;
+  for j := 0 to Columns.ItemCount-1 do
     with Columns[j] do
       if (Flags and cfPrimaryKey) = cfPrimaryKey then
       begin
         if Found then
-          ctSQL:= ctSQL+', '+Quoted(ColumnName)
+          ctSQL := ctSQL+', '+Quoted(ColumnName)
         else
         begin
           NameConstraint;
-          ctSQL:= ctSQL+' PRIMARY KEY ('+Quoted(ColumnName);
-          Found:= True;
+          ctSQL := ctSQL+' PRIMARY KEY ('+Quoted(ColumnName);
+          Found := True;
         end;
       end;
   if Found then
-    ctSQL:= ctSQL+'), ';
+    ctSQL := ctSQL+'), ';
 
-  for j:= 0 to Columns.ItemCount-1 do
+  for j := 0 to Columns.ItemCount-1 do
     with Columns[j] do
       if ForeignTable <> '' then
       begin
         NameConstraint;
-        ctSQL:= ctSQL+' FOREIGN KEY ('+Quoted(ColumnName)+') REFERENCES '+
+        ctSQL := ctSQL+' FOREIGN KEY ('+Quoted(ColumnName)+') REFERENCES '+
           ForeignTable+' ('+Quoted(ForeignColumn)+'), ';
       end;
 
   SetLength(ctSQL, Length(ctSQL)-2);
-  ctSQL:= ctSQL+')';
+  ctSQL := ctSQL+')';
 
   if FTables.FSchema.FToFile then
     FTables.FSchema.WriteLine(ctSQL)
   else
     with FTables.FSchema.FHstmt do
     begin
-      SQL:= ctSQL;
+      SQL := ctSQL;
       Prepare;
       Execute;
     end;
@@ -9163,13 +9068,13 @@ var
 begin
   if TableName <> '' then
   begin
-    ctSQL:= 'DROP TABLE '+FTables.FSchema.Prefix(TableOwner, TableName);
+    ctSQL := 'DROP TABLE '+FTables.FSchema.Prefix(TableOwner, TableName);
     if FTables.FSchema.FToFile then
       FTables.FSchema.WriteLine(ctSQL)
     else
       with FTables.FSchema.FHstmt do
       begin
-        SQL:= ctSQL;
+        SQL := ctSQL;
         Prepare;
         Execute;
       end;
@@ -9180,7 +9085,7 @@ procedure TSchemaTable.LoadIndexes;
 var
   i: Integer;
 begin
-  for i:= 0 to Indexes.ItemCount-1 do
+  for i := 0 to Indexes.ItemCount-1 do
     Indexes[i].LoadIndex;
 end;
 
@@ -9188,7 +9093,7 @@ procedure TSchemaTable.DropIndexes(IgnoreErrors: Boolean);
 var
   i: Integer;
 begin
-  for i:= Indexes.ItemCount-1 downto 0 do
+  for i := Indexes.ItemCount-1 downto 0 do
   try
     Indexes[i].DropIndex;
   except
@@ -9201,7 +9106,7 @@ end;
 
 function TSchemaTables.GetItem(Index: Integer): TSchemaTable;
 begin
-  Result:= TSchemaTable(FList[Index]);
+  Result := TSchemaTable(FList[Index]);
 end;
 
 procedure TSchemaTables.SetItem(Index: Integer;
@@ -9211,7 +9116,7 @@ end;
 
 function TSchemaTables.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 procedure TSchemaTables.ReadProperties(Reader: TReader);
@@ -9220,8 +9125,8 @@ var
   temp: String;
 begin
   Reader.ReadListBegin;
-  temp:= Reader.ReadString;
-  //CurVer:= temp = 'OE'+OEVER;
+  temp := Reader.ReadString;
+  //CurVer := temp = 'OE'+OEVER;
 
   Reader.ReadListBegin;
   while not Reader.EndOfList do
@@ -9229,21 +9134,21 @@ begin
     AddItem;
     with Items[ItemCount-1] do
     begin
-      TableOwner:= Reader.ReadString;
-      TableName:= Reader.ReadString;
+      TableOwner := Reader.ReadString;
+      TableName := Reader.ReadString;
       Reader.ReadListBegin;
       while not Reader.EndOfList do
       begin
         Columns.AddItem;
         with Columns[Columns.ItemCount-1] do
         begin
-          ColumnName:= Reader.ReadString;
-          DataType:= Reader.ReadInteger;
-          Precision:= Reader.ReadInteger;
-          Flags:= Reader.ReadInteger;
-          Default:= Reader.ReadString;
-          ForeignTable:= Reader.ReadString;
-          ForeignColumn:= Reader.ReadString;
+          ColumnName := Reader.ReadString;
+          DataType := Reader.ReadInteger;
+          Precision := Reader.ReadInteger;
+          Flags := Reader.ReadInteger;
+          Default := Reader.ReadString;
+          ForeignTable := Reader.ReadString;
+          ForeignColumn := Reader.ReadString;
         end;
       end;
       Reader.ReadListEnd;
@@ -9251,8 +9156,8 @@ begin
       while not Reader.EndOfList do
       begin
         Indexes.AddItem;
-        Indexes[Indexes.ItemCount-1].IndexName:= Reader.ReadString;
-        Indexes[Indexes.ItemCount-1].Unique:= Reader.ReadBoolean;
+        Indexes[Indexes.ItemCount-1].IndexName := Reader.ReadString;
+        Indexes[Indexes.ItemCount-1].Unique := Reader.ReadBoolean;
         Reader.ReadListBegin;
         Indexes[Indexes.ItemCount-1].Columns.Clear;
         while not Reader.EndOfList do
@@ -9275,13 +9180,13 @@ begin
   Writer.WriteString('OO1.0');
 
   Writer.WriteListBegin;
-  for i:= 0 to ItemCount-1 do
+  for i := 0 to ItemCount-1 do
     with Items[i] do
     begin
       Writer.WriteString(TableOwner);
       Writer.WriteString(TableName);
       Writer.WriteListBegin;
-      for j:= 0 to Columns.ItemCount-1 do
+      for j := 0 to Columns.ItemCount-1 do
         with Columns[j] do
         begin
           Writer.WriteString(ColumnName);
@@ -9294,12 +9199,12 @@ begin
         end;
       Writer.WriteListEnd;
       Writer.WriteListBegin;
-      for j:= 0 to Indexes.ItemCount-1 do
+      for j := 0 to Indexes.ItemCount-1 do
       begin
         Writer.WriteString(Indexes[j].IndexName);
         Writer.WriteBoolean(Indexes[j].Unique);
         Writer.WriteListBegin;
-        for k:= 0 to Indexes[j].Columns.Count-1 do
+        for k := 0 to Indexes[j].Columns.Count-1 do
           Writer.WriteString(Indexes[j].Columns[k]);
         Writer.WriteListEnd;
       end;
@@ -9317,14 +9222,14 @@ end;
 
 constructor TSchemaTables.Create;
 begin
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TSchemaTables.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -9333,8 +9238,8 @@ procedure TSchemaTables.AddItem;
 var
   temp: TSchemaTable;
 begin
-  temp:= TSchemaTable.Create;
-  temp.FTables:= Self;
+  temp := TSchemaTable.Create;
+  temp.FTables := Self;
   FList.Add(temp);
 end;
 
@@ -9342,14 +9247,14 @@ procedure TSchemaTables.InsertItem(Index: Integer);
 var
   temp: TSchemaTable;
 begin
-  temp:= TSchemaTable.Create;
-  temp.FTables:= Self;
+  temp := TSchemaTable.Create;
+  temp.FTables := Self;
   FList.Insert(Index, temp);
 end;
 
 procedure TSchemaTables.DeleteItem(Index: Integer);
 begin
-  TSchemaTable(FList[Index]).Free;
+  TSchemaTable(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -9367,8 +9272,8 @@ procedure TSchemaTables.Clear;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TSchemaTable(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TSchemaTable(FList[i]).free;
   FList.Clear;
 end;
 
@@ -9380,15 +9285,15 @@ end;
 
 constructor TSchemaView.Create;
 begin
-  FViewOwner:= '';
-  FViewName:= '';
-  FColumns:= TStringList.Create;
-  FSelectSQL:= '';
+  FViewOwner := '';
+  FViewName := '';
+  FColumns := TStringList.Create;
+  FSelectSQL := '';
 end;
 
 destructor TSchemaView.Destroy;
 begin
-  FColumns.Free;
+  FColumns.free;
 
   inherited Destroy;
 end;
@@ -9401,26 +9306,26 @@ begin
   if Trim(ViewName) = '' then
     Exit;
 
-  ctSQL:= 'CREATE VIEW '+FViews.FSchema.Prefix(ViewOwner, ViewName);
+  ctSQL := 'CREATE VIEW '+FViews.FSchema.Prefix(ViewOwner, ViewName);
 
   if (Columns.Count > 0) and (Trim(Columns[0]) <> '') then
   begin
-    ctSQL:= ctSQL+' (';
+    ctSQL := ctSQL+' (';
 
-    for j:= 0 to Columns.Count-1 do
-      ctSQL:= ctSQL+Quoted(Columns[j])+', ';
+    for j := 0 to Columns.Count-1 do
+      ctSQL := ctSQL+Quoted(Columns[j])+', ';
     SetLength(ctSQL, Length(ctSQL)-2);
-    ctSQL:= ctSQL+')';
+    ctSQL := ctSQL+')';
   end;
 
-  ctSQl:= ctSQL+' AS '+SelectSQL;
+  ctSQl := ctSQL+' AS '+SelectSQL;
 
   if FViews.FSchema.FToFile then
     FViews.FSchema.WriteLine(ctSQL)
   else
     with FViews.FSchema.FHstmt do
     begin
-      SQL:= ctSQL;
+      SQL := ctSQL;
       Prepare;
       Execute;
     end;
@@ -9432,13 +9337,13 @@ var
 begin
   if Trim(ViewName) <> '' then
   begin
-    ctSQL:= 'DROP VIEW '+FViews.FSchema.Prefix(ViewOwner, ViewName);
+    ctSQL := 'DROP VIEW '+FViews.FSchema.Prefix(ViewOwner, ViewName);
     if FViews.FSchema.FToFile then
       FViews.FSchema.WriteLine(ctSQL)
     else
       with FViews.FSchema.FHstmt do
       begin
-        SQL:= ctSQL;
+        SQL := ctSQL;
         Prepare;
         Execute;
       end;
@@ -9449,7 +9354,7 @@ end;
 
 function TSchemaViews.GetItem(Index: Integer): TSchemaView;
 begin
-  Result:= TSchemaView(FList[Index]);
+  Result := TSchemaView(FList[Index]);
 end;
 
 procedure TSchemaViews.SetItem(Index: Integer;
@@ -9459,7 +9364,7 @@ end;
 
 function TSchemaViews.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 procedure TSchemaViews.ReadProperties(Reader: TReader);
@@ -9468,8 +9373,8 @@ var
   temp: String;
 begin
   Reader.ReadListBegin;
-  temp:= Reader.ReadString;
-  //CurVer:= temp = 'OE'+OEVER;
+  temp := Reader.ReadString;
+  //CurVer := temp = 'OE'+OEVER;
 
   Reader.ReadListBegin;
   while not Reader.EndOfList do
@@ -9477,14 +9382,14 @@ begin
     AddItem;
     with Items[ItemCount-1] do
     begin
-      ViewOwner:= Reader.ReadString;
-      ViewName:= Reader.ReadString;
+      ViewOwner := Reader.ReadString;
+      ViewName := Reader.ReadString;
       Reader.ReadListBegin;
       Columns.Clear;
       while not Reader.EndOfList do
         Columns.Add(Reader.ReadString);
       Reader.ReadListEnd;
-      SelectSQL:= Reader.ReadString;
+      SelectSQL := Reader.ReadString;
     end;
   end;
   Reader.ReadListEnd;
@@ -9500,13 +9405,13 @@ begin
   Writer.WriteString('OO1.0');
 
   Writer.WriteListBegin;
-  for i:= 0 to ItemCount-1 do
+  for i := 0 to ItemCount-1 do
     with Items[i] do
     begin
       Writer.WriteString(ViewOwner);
       Writer.WriteString(ViewName);
       Writer.WriteListBegin;
-      for j:= 0 to Columns.Count-1 do
+      for j := 0 to Columns.Count-1 do
         Writer.WriteString(Columns[j]);
       Writer.WriteListEnd;
       Writer.WriteString(SelectSQL);
@@ -9523,14 +9428,14 @@ end;
 
 constructor TSchemaViews.Create;
 begin
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TSchemaViews.Destroy;
 begin
   Clear;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -9539,8 +9444,8 @@ procedure TSchemaViews.AddItem;
 var
   temp: TSchemaView;
 begin
-  temp:= TSchemaView.Create;
-  temp.FViews:= Self;
+  temp := TSchemaView.Create;
+  temp.FViews := Self;
   FList.Add(temp);
 end;
 
@@ -9548,14 +9453,14 @@ procedure TSchemaViews.InsertItem(Index: Integer);
 var
   temp: TSchemaView;
 begin
-  temp:= TSchemaView.Create;
-  temp.FViews:= Self;
+  temp := TSchemaView.Create;
+  temp.FViews := Self;
   FList.Insert(Index, temp);
 end;
 
 procedure TSchemaViews.DeleteItem(Index: Integer);
 begin
-  TSchemaView(FList[Index]).Free;
+  TSchemaView(FList[Index]).free;
   FList.Delete(Index);
 end;
 
@@ -9573,8 +9478,8 @@ procedure TSchemaViews.Clear;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TSchemaView(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TSchemaView(FList[i]).free;
   FList.Clear;
 end;
 
@@ -9582,8 +9487,8 @@ end;
 
 procedure TOdbcSchema.SeTOdbcConnection(AHdbc: TOdbcConnection);
 begin
-  FHdbc:= AHdbc;
-  FHstmt.Hdbc:= FHdbc;
+  FHdbc := AHdbc;
+  FHstmt.Hdbc := FHdbc;
 end;
 
 procedure TOdbcSchema.SetTables(ATables: TSchemaTables);
@@ -9597,43 +9502,43 @@ end;
 procedure TOdbcSchema.SetExecMarker(AExecMarker: String);
 begin
   if (AExecMarker <> FExecMarker) and (Trim(AExecmarker) <> '') then
-    FExecMarker:= Trim(AExecMarker);
+    FExecMarker := Trim(AExecMarker);
 end;
 
 function TOdbcSchema.Prefix(AOwner, ATable: String): String;
 begin
-  AOwner:= Quoted(AOwner);
-  ATable:= Quoted(ATable);
+  AOwner := Quoted(AOwner);
+  ATable := Quoted(ATable);
 
   if AOwner = '' then
-    Result:= ATable
+    Result := ATable
   else
-    Result:= AOwner+'.'+ATable;
+    Result := AOwner+'.'+ATable;
 end;
 
 constructor TOdbcSchema.Create(Env : TOdbcEnv);
 begin
   inherited Create(Env);
 
-  FHdbc:= nil;
+  FHdbc := nil;
 
-  FHstmt:= TOdbcStatement.Create(FEnv, FHdbc);
-  FTables:= TSchemaTables.Create;
-  FTables.FSchema:= Self;
-  FViews:= TSchemaViews.Create;
-  FViews.FSchema:= Self;
+  FHstmt := TOdbcStatement.Create(FEnv, FHdbc);
+  FTables := TSchemaTables.Create;
+  FTables.FSchema := Self;
+  FViews := TSchemaViews.Create;
+  FViews.FSchema := Self;
 
-  FToFile:= False;
-  FExecMarker:= DefExecMarker;
-  FNameConstraints:= DefNameConstraints;
-  FAborted:= False;
+  FToFile := False;
+  FExecMarker := DefExecMarker;
+  FNameConstraints := DefNameConstraints;
+  FAborted := False;
 end;
 
 destructor TOdbcSchema.Destroy;
 begin
-  FHstmt.Free;
-  FTables.Free;
-  FViews.Free;
+  FHstmt.free;
+  FTables.free;
+  FViews.free;
 
   inherited Destroy;
 end;
@@ -9642,18 +9547,18 @@ procedure TOdbcSchema.SplitColumn(AIndexColumn: string;
                                 var AColumn: String;
                                 var AType: String);
 begin
-  AColumn:= TrimRight(AIndexColumn);
-  AType:= '0';
+  AColumn := TrimRight(AIndexColumn);
+  AType := '0';
 
   if (Length(AIndexColumn) > 4) and (Copy(AIndexColumn, Length(AIndexColumn)-3, 4) = ' ASC') then
   begin
-    AColumn:= TrimRight(Copy(AIndexColumn, 1, Length(AIndexColumn)-4));
-    AType:= '1';
+    AColumn := TrimRight(Copy(AIndexColumn, 1, Length(AIndexColumn)-4));
+    AType := '1';
   end
   else if (Length(AIndexColumn) > 5) and (Copy(AIndexColumn, Length(AIndexColumn)-4, 5) = ' DESC') then
   begin
-    AColumn:= TrimRight(Copy(AIndexColumn, 1, Length(AIndexColumn)-5));
-    AType:= '2';
+    AColumn := TrimRight(Copy(AIndexColumn, 1, Length(AIndexColumn)-5));
+    AType := '2';
   end;
 end;
 
@@ -9667,8 +9572,8 @@ procedure TOdbcSchema.LoadTables;
 var
   i: Integer;
 begin
-  FAborted:= False;
-  for i:= 0 to Tables.ItemCount-1 do
+  FAborted := False;
+  for i := 0 to Tables.ItemCount-1 do
   begin
     if FAborted then
       Break;
@@ -9683,8 +9588,8 @@ procedure TOdbcSchema.DropTables(IgnoreErrors: Boolean);
 var
   i: Integer;
 begin
-  FAborted:= False;
-  for i:= Tables.ItemCount-1 downto 0 do
+  FAborted := False;
+  for i := Tables.ItemCount-1 downto 0 do
   begin
     if FAborted then
       Break;
@@ -9706,8 +9611,8 @@ procedure TOdbcSchema.LoadViews;
 var
   i: Integer;
 begin
-  FAborted:= False;
-  for i:= 0 to Views.ItemCount-1 do
+  FAborted := False;
+  for i := 0 to Views.ItemCount-1 do
   begin
     if FAborted then
       Break;
@@ -9721,8 +9626,8 @@ procedure TOdbcSchema.DropViews(IgnoreErrors: Boolean);
 var
   i: Integer;
 begin
-  FAborted:= False;
-  for i:= Views.ItemCount-1 downto 0 do
+  FAborted := False;
+  for i := Views.ItemCount-1 downto 0 do
   begin
     if FAborted then
       Break;
@@ -9750,16 +9655,16 @@ var
 begin
   Readln(FText, ctSQL);
   if UpperCase(Trim(ctSQL)) = UpperCase(ExecMarker) then
-    Result:= DefExecMarker
+    Result := DefExecMarker
   else
-    Result:= ctSQL;
+    Result := ctSQL;
 end;
 
 procedure TOdbcSchema.GenScript(FileName: String);
 begin
-  FToFile:= True;
+  FToFile := True;
   if FileName = '' then
-    FileName:= 'SCRIPT'+DefScriptExt;
+    FileName := 'SCRIPT'+DefScriptExt;
 
   AssignFile(FText, FileName);
   Rewrite(FText);
@@ -9773,7 +9678,7 @@ begin
     if not FAborted then
       DropTables(False);
   finally
-    FToFile:= False;
+    FToFile := False;
     CloseFile(FText);
   end;
 end;
@@ -9787,49 +9692,49 @@ var
   var
     Loc: Integer;
   begin
-    Loc:= Pos(' DROP ', UpperCase(' '+ctSQL));
+    Loc := Pos(' DROP ', UpperCase(' '+ctSQL));
     if Loc > 0 then
     begin
-      Result:= ExtractTable(ctSQL, 'TABLE');
+      Result := ExtractTable(ctSQL, 'TABLE');
       if Result <> '' then
       begin
-        Result:= 'DROP TABLE '+Result;
+        Result := 'DROP TABLE '+Result;
         Exit;
       end;
-      Result:= ExtractTable(ctSQL, 'VIEW');
+      Result := ExtractTable(ctSQL, 'VIEW');
       if Result <> '' then
       begin
-        Result:= 'DROP VIEW '+Result;
+        Result := 'DROP VIEW '+Result;
         Exit;
       end;
       Exit;
     end;
 
-    Loc:= Pos(' CREATE ', UpperCase(' '+ctSQL));
+    Loc := Pos(' CREATE ', UpperCase(' '+ctSQL));
     if Loc > 0 then
     begin
-      Result:= ExtractTable(ctSQL, 'TABLE');
+      Result := ExtractTable(ctSQL, 'TABLE');
       if Result <> '' then
       begin
-        Result:= 'CREATE TABLE '+Result;
+        Result := 'CREATE TABLE '+Result;
         Exit;
       end;
-      Result:= ExtractTable(ctSQL, 'VIEW');
+      Result := ExtractTable(ctSQL, 'VIEW');
       if Result <> '' then
       begin
-        Result:= 'CREATE VIEW '+Result;
+        Result := 'CREATE VIEW '+Result;
         Exit;
       end;
       Exit;
     end;
 
-    Result:= '';
+    Result := '';
   end;
 
 begin
-  FAborted:= False;
+  FAborted := False;
   if FileName = '' then
-    FileName:= 'SCRIPT'+DefScriptExt;
+    FileName := 'SCRIPT'+DefScriptExt;
 
   AssignFile(FText, FileName);
   Reset(FText);
@@ -9841,21 +9746,21 @@ begin
     if FAborted then
       Break;
 
-    ctSQL:= '';
-    Line:= ReadLine;
+    ctSQL := '';
+    Line := ReadLine;
     while Line <> DefExecMarker do
     begin
-      ctSQL:= ctSQL+Line+' ';
+      ctSQL := ctSQL+Line+' ';
       if SeekEOF(FText) then
         Break;
-      Line:= ReadLine;
+      Line := ReadLine;
     end;
 
     if Trim(ctSQL) <> '' then
       with FHstmt do
       begin
-        Info:= ExtractInfo;
-        SQL:= ctSQL;
+        Info := ExtractInfo;
+        SQL := ctSQL;
         Prepare;
         Execute;
         if Info <> '' then
@@ -9882,7 +9787,7 @@ end;
 
 procedure TOdbcSchema.Abort;
 begin
-  FAborted:= True;
+  FAborted := True;
 end;
 
 { TOdbcAdministrator }
@@ -9899,11 +9804,11 @@ begin
 
   case FDataSourceType of
     dsUser:
-      Direction:= SQL_FETCH_FIRST_USER;
+      Direction := SQL_FETCH_FIRST_USER;
     dsSystem:
-      Direction:= SQL_FETCH_FIRST_SYSTEM;
+      Direction := SQL_FETCH_FIRST_SYSTEM;
     else
-      Direction:= SQL_FETCH_FIRST;
+      Direction := SQL_FETCH_FIRST;
   end;
 
   DSName := odbcPChar(DefaultStringSize);
@@ -9913,7 +9818,7 @@ begin
     begin
       FDataSourceNames.Add(fromOdbcPChar(DSName, StringLength1));
       FDataSourceDrivers.Add(fromOdbcPChar(DSDriver, StringLength2));
-      Direction:= SQL_FETCH_NEXT;
+      Direction := SQL_FETCH_NEXT;
     end;
   finally
     freeMem(DSName);
@@ -9930,7 +9835,7 @@ begin
   { Retrieve Drivers }
   FDriverNames.Clear;
 
-  Direction:= SQL_FETCH_FIRST;
+  Direction := SQL_FETCH_FIRST;
 
   DName := odbcPChar(DefaultStringSize);
   DAttr := odbcPChar(DefaultStringSize);
@@ -9938,7 +9843,7 @@ begin
     while FEnv.Error.Success(SQLDrivers(FEnv.Handle, Direction, DName, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength1, DAttr, DefaultStringSize, {$IFDEF FPC}@{$ENDIF}StringLength2)) do
     begin
       FDriverNames.Add(fromOdbcPChar(DName, StringLength1));
-      Direction:= SQL_FETCH_NEXT;
+      Direction := SQL_FETCH_NEXT;
     end;
   finally
     freeMem(DName);
@@ -9948,15 +9853,15 @@ end;
 
 procedure TOdbcAdministrator.SetDataSourceType(ADataSourceType: TDataSourceType);
 begin
-  FDataSourceType:= ADataSourceType;
+  FDataSourceType := ADataSourceType;
   Refresh;
 end;
 
 //procedure TOdbcAdministrator.SetDataSource(ADataSource: String);
 //begin
-//  ADataSource:= Trim(ADataSource);
+//  ADataSource := Trim(ADataSource);
 //  if (ADataSource = '') or Valid(ADataSource) then
-//    FDataSource:= ADataSource;
+//    FDataSource := ADataSource;
 //end;
 //
 procedure TOdbcAdministrator.SetAttributes(AAttributes: TStrings);
@@ -9973,63 +9878,63 @@ end;
 //  if FDriver = '' then
 //    raise EODBCExpress.Create('No Driver Value Specified');
 //
-//  hwndParent:= 0;
+//  hwndParent := 0;
 //
-//  LAttributes:= '';
+//  LAttributes := '';
 //  if FDataSource <> '' then
-//    LAttributes:= LAttributes+'DSN='+FDataSource+#1;
+//    LAttributes := LAttributes+'DSN='+FDataSource+#1;
 //  if FUserName <> '' then
-//    LAttributes:= LAttributes+'UID='+FUserName+#1;
+//    LAttributes := LAttributes+'UID='+FUserName+#1;
 //  if FPassword <> '' then
-//    LAttributes:= LAttributes+'PWD='+FPassword+#1;
-//  for i:= 0 to FAttributes.Count-1 do
-//    LAttributes:= LAttributes+FAttributes[i]+#1;
+//    LAttributes := LAttributes+'PWD='+FPassword+#1;
+//  for i := 0 to FAttributes.Count-1 do
+//    LAttributes := LAttributes+FAttributes[i]+#1;
 //
 //  InsertNulls(LAttributes);
 //
-//  Result:= SQLConfigDataSource(hwndParent, Request, PChar(FDriver), PChar(LAttributes));
+//  Result := SQLConfigDataSource(hwndParent, Request, PChar(FDriver), PChar(LAttributes));
 //end;
 
 function TOdbcAdministrator.GetDataSources: TStrings;
 begin
   if FGetDataSources then
     RetrieveDataSources;
-  FGetDataSources:= False;
-  Result:= FDataSourceNames;
+  FGetDataSources := False;
+  Result := FDataSourceNames;
 end;
 
 function TOdbcAdministrator.GetDrivers: TStrings;
 begin
   if FGetDrivers then
     RetrieveDrivers;
-  FGetDrivers:= False;
-  Result:= FDriverNames;
+  FGetDrivers := False;
+  Result := FDriverNames;
 end;
 
 constructor TOdbcAdministrator.Create(Env : TOdbcEnv);
 begin
   inherited Create(Env);
 
-  FPrompt:= DefPrompt;
-  FDataSourceType:= DefDataSourceType;
-  FDriver:= '';
-  FDataSource:= '';
-  FUserName:= '';
-  FPassword:= '';
-  FAttributes:= TStringList.Create;
-  FDataSourceNames:= TStringList.Create;
-  FDataSourceDrivers:= TStringList.Create;
-  FDriverNames:= TStringList.Create;
-  FGetDataSources:= True;
-  FGetDrivers:= True;
+  FPrompt := DefPrompt;
+  FDataSourceType := DefDataSourceType;
+  FDriver := '';
+  FDataSource := '';
+  FUserName := '';
+  FPassword := '';
+  FAttributes := TStringList.Create;
+  FDataSourceNames := TStringList.Create;
+  FDataSourceDrivers := TStringList.Create;
+  FDriverNames := TStringList.Create;
+  FGetDataSources := True;
+  FGetDrivers := True;
 end;
 
 destructor TOdbcAdministrator.Destroy;
 begin
-  FAttributes.Free;
-  FDataSourceNames.Free;
-  FDataSourceDrivers.Free;
-  FDriverNames.Free;
+  FAttributes.free;
+  FDataSourceNames.free;
+  FDataSourceDrivers.free;
+  FDriverNames.free;
 
   inherited Destroy;
 end;
@@ -10037,53 +9942,53 @@ end;
 //function TOdbcAdministrator.Add: Boolean;
 //begin
 //  if FDataSourceType = dsSystem then
-//    Result:= Configure(ODBC_ADD_SYS_DSN)
+//    Result := Configure(ODBC_ADD_SYS_DSN)
 //  else
-//    Result:= Configure(ODBC_ADD_DSN);
+//    Result := Configure(ODBC_ADD_DSN);
 //end;
 //
 //function TOdbcAdministrator.Modify: Boolean;
 //begin
 //  if FDataSourceType = dsSystem then
-//    Result:= Configure(ODBC_CONFIG_SYS_DSN)
+//    Result := Configure(ODBC_CONFIG_SYS_DSN)
 //  else
-//    Result:= Configure(ODBC_CONFIG_DSN);
+//    Result := Configure(ODBC_CONFIG_DSN);
 //end;
 //
 //function TOdbcAdministrator.Remove: Boolean;
 //begin
-//  Result:= False;
+//  Result := False;
 //  case FDataSourceType of
 //    dsDefault:
-//      Result:= Configure(ODBC_REMOVE_DEFAULT_DSN);
+//      Result := Configure(ODBC_REMOVE_DEFAULT_DSN);
 //    dsUser:
-//      Result:= Configure(ODBC_REMOVE_DSN);
+//      Result := Configure(ODBC_REMOVE_DSN);
 //    dsSystem:
-//      Result:= Configure(ODBC_REMOVE_SYS_DSN)
+//      Result := Configure(ODBC_REMOVE_SYS_DSN)
 //  end;
 //end;
 
 //function TOdbcAdministrator.Valid(ADataSource: String): Boolean;
 //begin
-//  Result:= SQLValidDSN(PChar(ADataSource));
+//  Result := SQLValidDSN(PChar(ADataSource));
 //end;
 
 procedure TOdbcAdministrator.Refresh;
 begin
-  FGetDataSources:= True;
-  FGetDrivers:= True;
+  FGetDataSources := True;
+  FGetDrivers := True;
 end;
 
 function TOdbcAdministrator.DataSourceDriver(ADataSource: String): String;
 var
   i: Integer;
 begin
-  Result:= '';
-  ADataSource:= UpperCase(ADataSource);
-  for i:= 0 to DataSources.Count-1 do
+  Result := '';
+  ADataSource := UpperCase(ADataSource);
+  for i := 0 to DataSources.Count-1 do
     if UpperCase(DataSources[i]) = ADataSource then
     begin
-      Result:= FDataSourceDrivers[i];
+      Result := FDataSourceDrivers[i];
       Break;
     end;
 end;
@@ -10092,16 +9997,16 @@ end;
 
 constructor TCatalogColumn.Create;
 begin
-  FColumnName:= '';
-  FColumnType:= 0;
-  FDataType:= 0;
-  FDataTypeName:= '';
-  FPrecision:= 0;
-  FScale:= 0;
-  FRadix:= 0;
-  FNullable:= 0;
-  FDefault:= '';
-  FDescription:= '';
+  FColumnName := '';
+  FColumnType := 0;
+  FDataType := 0;
+  FDataTypeName := '';
+  FPrecision := 0;
+  FScale := 0;
+  FRadix := 0;
+  FNullable := 0;
+  FDefault := '';
+  FDescription := '';
 end;
 
 destructor TCatalogColumn.Destroy;
@@ -10116,20 +10021,20 @@ procedure TCatalogColumns.FreeItems;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TCatalogColumn(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TCatalogColumn(FList[i]).free;
   FList.Clear;
 end;
 
 function TCatalogColumns.AddItem: TCatalogColumn;
 begin
-  Result:= TCatalogColumn.Create;
+  Result := TCatalogColumn.Create;
   FList.Add(Result);
 end;
 
 function TCatalogColumns.GetItem(Index: Integer): TCatalogColumn;
 begin
-  Result:= TCatalogColumn(FList[Index]);
+  Result := TCatalogColumn(FList[Index]);
 end;
 
 procedure TCatalogColumns.SetItem(Index: Integer;
@@ -10139,19 +10044,19 @@ end;
 
 function TCatalogColumns.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 constructor TCatalogColumns.Create;
 begin
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TCatalogColumns.Destroy;
 begin
   FreeItems;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -10164,9 +10069,9 @@ var
   temp: TCatalogColumn;
 begin
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
   SQLColumns(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
@@ -10175,18 +10080,18 @@ begin
   FColumns.FreeItems;
   while FCatalog.FHstmt.FetchNext do
   begin
-    temp:= FColumns.AddItem;
+    temp := FColumns.AddItem;
 
-    temp.FColumnName:= FCatalog.FHstmt.ColString[4];
-    temp.FColumnType:= SQL_RESULT_COL;
-    temp.FDataType:= FCatalog.FHstmt.ColSmallint[5];
-    temp.FDataTypeName:= FCatalog.FHstmt.ColString[6];
-    temp.FPrecision:= FCatalog.FHstmt.ColInteger[7];
-    temp.FScale:= FCatalog.FHstmt.ColSmallint[9];
-    temp.FRadix:= FCatalog.FHstmt.ColSmallint[10];
-    temp.FNullable:= FCatalog.FHstmt.ColSmallint[11];
-    temp.FDefault:= FCatalog.FHstmt.ColString[13];
-    temp.FDescription:= FCatalog.FHstmt.ColString[12];
+    temp.FColumnName := FCatalog.FHstmt.ColString[4];
+    temp.FColumnType := SQL_RESULT_COL;
+    temp.FDataType := FCatalog.FHstmt.ColSmallint[5];
+    temp.FDataTypeName := FCatalog.FHstmt.ColString[6];
+    temp.FPrecision := FCatalog.FHstmt.ColInteger[7];
+    temp.FScale := FCatalog.FHstmt.ColSmallint[9];
+    temp.FRadix := FCatalog.FHstmt.ColSmallint[10];
+    temp.FNullable := FCatalog.FHstmt.ColSmallint[11];
+    temp.FDefault := FCatalog.FHstmt.ColString[13];
+    temp.FDescription := FCatalog.FHstmt.ColString[12];
   end;
 end;
 
@@ -10196,12 +10101,12 @@ var
   ATableOwner: Pointer;
 begin
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLPrimaryKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
+  RetCode := SQLPrimaryKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName));
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
@@ -10219,18 +10124,18 @@ var
   function Prefix(AOwner, ATable: String): String;
   begin
     if AOwner = '' then
-      Result:= ATable
+      Result := ATable
     else
-      Result:= AOwner+'.'+ATable;
+      Result := AOwner+'.'+ATable;
   end;
 begin
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, nil, 0, nil, 0,
+  RetCode := SQLForeignKeysW(FCatalog.FHstmt.Handle, nil, 0, nil, 0, nil, 0,
                                                    nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName));
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
@@ -10250,19 +10155,19 @@ var
   function Prefix(AOwner, ATable: String): String;
   begin
     if AOwner = '' then
-      Result:= ATable
+      Result := ATable
     else
-      Result:= AOwner+'.'+ATable;
+      Result := AOwner+'.'+ATable;
   end;
 
 begin
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLForeignKeys(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName),
+  RetCode := SQLForeignKeysW(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner), Pointer(PChar(FTableName)), Length(FTableName),
                                                    nil, 0, nil, 0, nil, 0);
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
@@ -10283,47 +10188,47 @@ var
   AUnique: Boolean;
 begin
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLStatistics(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
+  RetCode := SQLStatistics(FCatalog.FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName), SQL_INDEX_ALL, SQL_ENSURE);
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
   FIndexes.Clear;
-  AIndex:= '';
-  ACols:= '';
-  AUnique:= False;
+  AIndex := '';
+  ACols := '';
+  AUnique := False;
 
   with FCatalog.FHstmt do
   repeat
 
-    Fetched:= FetchNext;
+    Fetched := FetchNext;
 
     if (AIndex <> '') and
        ((not Fetched) or (ColSmallint[7] = SQL_TABLE_STAT) or (ColSmallint[8] = 1)) then
     begin
       //<INDEX NAME>;U|N;<COLUMN NAME>[,<COLUMN NAME>]...
       if AUnique then
-        AIndex:= AIndex+';U;'+ACols
+        AIndex := AIndex+';U;'+ACols
       else
-        AIndex:= AIndex+';N;'+ACols;
+        AIndex := AIndex+';N;'+ACols;
       FIndexes.Add(AIndex);
 
-      AIndex:= '';
+      AIndex := '';
     end;
 
     if ColSmallint[8] = 1 then
     begin
-      AIndex:= ColString[6];
-      AUnique:= ColSmallint[4] = SQL_FALSE;
-      ACols:= ColString[9];
+      AIndex := ColString[6];
+      AUnique := ColSmallint[4] = SQL_FALSE;
+      ACols := ColString[9];
     end
     else
-      ACols:= ACols+','+ColString[9];
+      ACols := ACols+','+ColString[9];
 
   until not Fetched;
 end;
@@ -10334,21 +10239,21 @@ var
   ATableOwner: Pointer;
 begin
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLSpecialColumns(FCatalog.FHstmt.Handle, SQL_BEST_ROWID, nil, 0, ATableOwner, Length(FTableOwner),
+  RetCode := SQLSpecialColumns(FCatalog.FHstmt.Handle, SQL_BEST_ROWID, nil, 0, ATableOwner, Length(FTableOwner),
     Pointer(PChar(FTableName)), Length(FTableName), SQL_SCOPE_CURROW, SQL_NULLABLE);
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
 
-  FUniqueKey:= '';
+  FUniqueKey := '';
   while FCatalog.FHstmt.FetchNext do
     if FCatalog.FHstmt.ColSmallint[8] <> SQL_PC_PSEUDO then
       //<COLUMN NAME>[,<COLUMN NAME>]...
-      FUniqueKey:= FUniqueKey+FCatalog.FHstmt.ColString[2]+',';
+      FUniqueKey := FUniqueKey+FCatalog.FHstmt.ColString[2]+',';
   if Length(FUniqueKey) > 0 then
     SetLength(FUniqueKey, Length(FUniqueKey)-1);
 end;
@@ -10357,8 +10262,8 @@ function TCatalogTable.GetColumns: TCatalogColumns;
 begin
   if FGetColumns then
     RetrieveColumns;
-  FGetColumns:= False;
-  Result:= FColumns;
+  FGetColumns := False;
+  Result := FColumns;
 end;
 
 function TCatalogTable.GetColumnNames: TStrings;
@@ -10366,105 +10271,105 @@ var
   i: Integer;
 begin
   FColumnNames.Clear;
-  for i:= 0 to Columns.ItemCount-1 do
+  for i := 0 to Columns.ItemCount-1 do
     FColumnNames.Add(Columns[i].ColumnName);
-  Result:= FColumnNames;
+  Result := FColumnNames;
 end;
 
 function TCatalogTable.GetPrimaryKeys: TStrings;
 begin
   if FGetPrimaryKeys then
     RetrievePrimaryKeys;
-  FGetPrimaryKeys:= False;
-  Result:= FPrimaryKeys;
+  FGetPrimaryKeys := False;
+  Result := FPrimaryKeys;
 end;
 
 function TCatalogTable.GetForeignKeys: TStrings;
 begin
   if FGetForeignKeys then
     RetrieveForeignKeys;
-  FGetForeignKeys:= False;
-  Result:= FForeignKeys;
+  FGetForeignKeys := False;
+  Result := FForeignKeys;
 end;
 
 function TCatalogTable.GetForeignReferences: TStrings;
 begin
   if FGetForeignReferences then
     RetrieveForeignReferences;
-  FGetForeignReferences:= False;
-  Result:= FForeignReferences;
+  FGetForeignReferences := False;
+  Result := FForeignReferences;
 end;
 
 function TCatalogTable.GetIndexes: TStrings;
 begin
   if FGetIndexes then
     RetrieveIndexes;
-  FGetIndexes:= False;
-  Result:= FIndexes;
+  FGetIndexes := False;
+  Result := FIndexes;
 end;
 
 function TCatalogTable.GetUniqueKey: String;
 begin
   if FGetUniqueKey then
     RetrieveUniqueKey;
-  FGetUniqueKey:= False;
-  Result:= FUniqueKey;
+  FGetUniqueKey := False;
+  Result := FUniqueKey;
 end;
 
 constructor TCatalogTable.Create;
 begin
   inherited Create(Env);
-  FTableOwner:= '';
-  FTableName:= '';
-  FTableType:= ttTable;
-  FDescription:= '';
-  FColumns:= TCatalogColumns.Create;
-  FColumnNames:= TStringList.Create;
-  FPrimaryKeys:= TStringList.Create;
-  FForeignKeys:= TStringList.Create;
-  FForeignReferences:= TStringList.Create;
-  FIndexes:= TStringList.Create;
-  FUniqueKey:= '';
-  FGetColumns:= True;
-  FGetPrimaryKeys:= True;
-  FGetForeignKeys:= True;
-  FGetForeignReferences:= True;
-  FGetIndexes:= True;
-  FGetUniqueKey:= True;
+  FTableOwner := '';
+  FTableName := '';
+  FTableType := ttTable;
+  FDescription := '';
+  FColumns := TCatalogColumns.Create;
+  FColumnNames := TStringList.Create;
+  FPrimaryKeys := TStringList.Create;
+  FForeignKeys := TStringList.Create;
+  FForeignReferences := TStringList.Create;
+  FIndexes := TStringList.Create;
+  FUniqueKey := '';
+  FGetColumns := True;
+  FGetPrimaryKeys := True;
+  FGetForeignKeys := True;
+  FGetForeignReferences := True;
+  FGetIndexes := True;
+  FGetUniqueKey := True;
 end;
 
 destructor TCatalogTable.Destroy;
 begin
-  FColumns.Free;
-  FColumnNames.Free;
-  FPrimaryKeys.Free;
-  FForeignKeys.Free;
-  FForeignReferences.Free;
-  FIndexes.Free;
+  FColumns.free;
+  FColumnNames.free;
+  FPrimaryKeys.free;
+  FForeignKeys.free;
+  FForeignReferences.free;
+  FIndexes.free;
 
   inherited Destroy;
 end;
 
 procedure TCatalogTable.Refresh;
 begin
-  FGetColumns:= True;
-  FGetPrimaryKeys:= True;
-  FGetForeignKeys:= True;
-  FGetForeignReferences:= True;
-  FGetIndexes:= True;
-  FGetUniqueKey:= True;
+  FGetColumns := True;
+  FGetPrimaryKeys := True;
+  FGetForeignKeys := True;
+  FGetForeignReferences := True;
+  FGetIndexes := True;
+  FGetUniqueKey := True;
 end;
 
 function TCatalogTable.ColumnByName(AColumnName: String): TCatalogColumn;
 var
   i: Integer;
 begin
-  Result:= nil;
-  AColumnName:= UpperCase(Trim(AColumnName));
-  for i:= 0 to Columns.ItemCount-1 do
+  Result := nil;
+  AColumnName := UpperCase(Trim(AColumnName));
+  for i := 0 to Columns.ItemCount-1 do
     if UpperCase(Columns[i].ColumnName) = AColumnName then
     begin
-      Result:= Columns[i];
+      Result := Columns[i];
       Break;
     end;
 end;
@@ -10475,21 +10380,21 @@ procedure TCatalogTables.FreeItems;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TCatalogTable(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TCatalogTable(FList[i]).free;
   FList.Clear;
 end;
 
 function TCatalogTables.AddItem: TCatalogTable;
 begin
-  Result:= TCatalogTable.Create(FEnv);
-  Result.FCatalog:= FCatalog;
+  Result := TCatalogTable.Create(FEnv);
+  Result.FCatalog := FCatalog;
   FList.Add(Result);
 end;
 
 function TCatalogTables.GetItem(Index: Integer): TCatalogTable;
 begin
-  Result:= TCatalogTable(FList[Index]);
+  Result := TCatalogTable(FList[Index]);
 end;
 
 procedure TCatalogTables.SetItem(Index: Integer;
@@ -10499,20 +10404,20 @@ end;
 
 function TCatalogTables.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 constructor TCatalogTables.Create;
 begin
   inherited Create(Env);
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TCatalogTables.Destroy;
 begin
   FreeItems;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -10526,12 +10431,12 @@ var
   temp: TCatalogColumn;
 begin
   if FProcedureOwner = '' then
-    AProcedureOwner:= nil
+    AProcedureOwner := nil
   else
-    AProcedureOwner:= PChar(FProcedureOwner);
+    AProcedureOwner := PChar(FProcedureOwner);
 
   FCatalog.FHstmt.Terminate;
-  RetCode:= SQLProcedureColumns(FCatalog.FHstmt.Handle, nil, 0, AProcedureOwner, Length(FProcedureOwner),
+  RetCode := SQLProcedureColumns(FCatalog.FHstmt.Handle, nil, 0, AProcedureOwner, Length(FProcedureOwner),
     Pointer(PChar(FProcedureName)), Length(FProcedureName), nil, 0);
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FCatalog.FHstmt, RetCode);
@@ -10539,18 +10444,18 @@ begin
   FColumns.FreeItems;
   while FCatalog.FHstmt.FetchNext do
   begin
-    temp:= FColumns.AddItem;
+    temp := FColumns.AddItem;
 
-    temp.FColumnName:= FCatalog.FHstmt.ColString[4];
-    temp.FColumnType:= FCatalog.FHstmt.ColSmallint[5];
-    temp.FDataType:= FCatalog.FHstmt.ColSmallint[6];
-    temp.FDataTypeName:= FCatalog.FHstmt.ColString[7];
-    temp.FPrecision:= FCatalog.FHstmt.ColInteger[8];
-    temp.FScale:= FCatalog.FHstmt.ColSmallint[10];
-    temp.FRadix:= FCatalog.FHstmt.ColSmallint[11];
-    temp.FNullable:= FCatalog.FHstmt.ColSmallint[12];
-    temp.FDefault:= FCatalog.FHstmt.ColString[14];
-    temp.FDescription:= FCatalog.FHstmt.ColString[13];
+    temp.FColumnName := FCatalog.FHstmt.ColString[4];
+    temp.FColumnType := FCatalog.FHstmt.ColSmallint[5];
+    temp.FDataType := FCatalog.FHstmt.ColSmallint[6];
+    temp.FDataTypeName := FCatalog.FHstmt.ColString[7];
+    temp.FPrecision := FCatalog.FHstmt.ColInteger[8];
+    temp.FScale := FCatalog.FHstmt.ColSmallint[10];
+    temp.FRadix := FCatalog.FHstmt.ColSmallint[11];
+    temp.FNullable := FCatalog.FHstmt.ColSmallint[12];
+    temp.FDefault := FCatalog.FHstmt.ColString[14];
+    temp.FDescription := FCatalog.FHstmt.ColString[13];
   end;
 end;
 
@@ -10558,8 +10463,8 @@ function TCatalogProcedure.GetColumns: TCatalogColumns;
 begin
   if FGetColumns then
     RetrieveColumns;
-  FGetColumns:= False;
-  Result:= FColumns;
+  FGetColumns := False;
+  Result := FColumns;
 end;
 
 function TCatalogProcedure.GetColumnNames: TStrings;
@@ -10567,46 +10472,46 @@ var
   i: Integer;
 begin
   FColumnNames.Clear;
-  for i:= 0 to Columns.ItemCount-1 do
+  for i := 0 to Columns.ItemCount-1 do
     FColumnNames.Add(Columns[i].ColumnName);
-  Result:= FColumnNames;
+  Result := FColumnNames;
 end;
 
 constructor TCatalogProcedure.Create;
 begin
   inherited Create(Env);
-  FProcedureOwner:= '';
-  FProcedureName:= '';
-  FProcedureType:= 0;
-  FDescription:= '';
-  FColumns:= TCatalogColumns.Create;
-  FColumnNames:= TStringList.Create;
-  FGetColumns:= True;
+  FProcedureOwner := '';
+  FProcedureName := '';
+  FProcedureType := 0;
+  FDescription := '';
+  FColumns := TCatalogColumns.Create;
+  FColumnNames := TStringList.Create;
+  FGetColumns := True;
 end;
 
 destructor TCatalogProcedure.Destroy;
 begin
-  FColumns.Free;
-  FColumnNames.Free;
+  FColumns.free;
+  FColumnNames.free;
 
   inherited Destroy;
 end;
 
 procedure TCatalogProcedure.Refresh;
 begin
-  FGetColumns:= True;
+  FGetColumns := True;
 end;
 
 function TCatalogProcedure.ColumnByName(AColumnName: String): TCatalogColumn;
 var
   i: Integer;
 begin
-  Result:= nil;
-  AColumnName:= UpperCase(Trim(AColumnName));
-  for i:= 0 to Columns.ItemCount-1 do
+  Result := nil;
+  AColumnName := UpperCase(Trim(AColumnName));
+  for i := 0 to Columns.ItemCount-1 do
     if UpperCase(Columns[i].ColumnName) = AColumnName then
     begin
-      Result:= Columns[i];
+      Result := Columns[i];
       Break;
     end;
 end;
@@ -10617,21 +10522,21 @@ procedure TCatalogProcedures.FreeItems;
 var
   i: Integer;
 begin
-  for i:= 0 to FList.Count-1 do
-    TCatalogProcedure(FList[i]).Free;
+  for i := 0 to FList.Count-1 do
+    TCatalogProcedure(FList[i]).free;
   FList.Clear;
 end;
 
 function TCatalogProcedures.AddItem: TCatalogProcedure;
 begin
-  Result:= TCatalogProcedure.Create(FEnv);
-  Result.FCatalog:= FCatalog;
+  Result := TCatalogProcedure.Create(FEnv);
+  Result.FCatalog := FCatalog;
   FList.Add(Result);
 end;
 
 function TCatalogProcedures.GetItem(Index: Integer): TCatalogProcedure;
 begin
-  Result:= TCatalogProcedure(FList[Index]);
+  Result := TCatalogProcedure(FList[Index]);
 end;
 
 procedure TCatalogProcedures.SetItem(Index: Integer;
@@ -10641,20 +10546,20 @@ end;
 
 function TCatalogProcedures.GetCount: Integer;
 begin
-  Result:= FList.Count;
+  Result := FList.Count;
 end;
 
 constructor TCatalogProcedures.Create;
 begin
   inherited Create(Env);
-  FList:= TList.Create;
+  FList := TList.Create;
   FList.Clear;
 end;
 
 destructor TCatalogProcedures.Destroy;
 begin
   FreeItems;
-  FList.Free;
+  FList.free;
 
   inherited Destroy;
 end;
@@ -10673,67 +10578,67 @@ var
     Empty: String;
     temp: TTableTypeSet;
   begin
-    Empty:= '';
-    ATableType:= SQL_ALL_TABLE_TYPES;
+    Empty := '';
+    ATableType := SQL_ALL_TABLE_TYPES;
     FHstmt.Terminate;
-    RetCode:= SQLTables(FHstmt.Handle, Pointer(PChar(Empty)), 0, Pointer(PChar(Empty)), 0, Pointer(PChar(Empty)), 0,
+    RetCode := SQLTables(FHstmt.Handle, Pointer(PChar(Empty)), 0, Pointer(PChar(Empty)), 0, Pointer(PChar(Empty)), 0,
       Pointer(PChar(ATableType)), Length(ATableType));
-    temp:= [];
+    temp := [];
     if FEnv.Error.Success(RetCode) then
       while FHstmt.FetchNext do
       begin
         if (FHstmt.ColString[4] = TableStr) and (ttTable in FTableType) then
-          temp:= temp+[ttTable];
+          temp := temp+[ttTable];
         if (FHstmt.ColString[4] = ViewStr) and (ttView in FTableType) then
-          temp:= temp+[ttView];
+          temp := temp+[ttView];
         if (FHstmt.ColString[4] = SystemStr) and (ttSystem in FTableType) then
-          temp:= temp+[ttSystem];
+          temp := temp+[ttSystem];
       end;
 
-    FTableType:= temp;
+    FTableType := temp;
   end;
 
 begin
 
-  FTableOwner:= Trim(FTableOwner);
+  FTableOwner := Trim(FTableOwner);
   if FTableOwner = '' then
-    ATableOwner:= nil
+    ATableOwner := nil
   else
-    ATableOwner:= PChar(FTableOwner);
+    ATableOwner := PChar(FTableOwner);
 
-  FTableName:= Trim(FTableName);
+  FTableName := Trim(FTableName);
   if FTableName = '' then
-    ATableName:= nil
+    ATableName := nil
   else
-    ATableName:= PChar(FTableName);
+    ATableName := PChar(FTableName);
 
   //CheckTableTypes;
   FHdbc.Connect;
   if FHdbc.IsDriver(['Excel;odbcjt32.dll']) then
-    FTableType:= [];
+    FTableType := [];
 
-  ATableType:= '';
+  ATableType := '';
   if (ttTable in FTableType) then
-    ATableType:= ''''+TableStr+'''';
+    ATableType := ''''+TableStr+'''';
   if (ttView in FTableType) then
   begin
     if ATableType <> '' then
-      ATableType:= ATableType+', ';
-    ATableType:= ATableType+''''+ViewStr+'''';
+      ATableType := ATableType+', ';
+    ATableType := ATableType+''''+ViewStr+'''';
   end;
   if (ttSystem in FTableType) then
   begin
     if ATableType <> '' then
-      ATableType:= ATableType+', ';
-    ATableType:= ATableType+''''+SystemStr+'''';
+      ATableType := ATableType+', ';
+    ATableType := ATableType+''''+SystemStr+'''';
   end;
 
   FHstmt.Terminate;
   if ATableType = '' then
-    RetCode:= SQLTables(FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
+    RetCode := SQLTables(FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
       ATableName, Length(FTableName), nil, 0)
   else
-    RetCode:= SQLTables(FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
+    RetCode := SQLTables(FHstmt.Handle, nil, 0, ATableOwner, Length(FTableOwner),
       ATableName, Length(FTableName), Pointer(PChar(ATableType)), Length(ATableType));
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FHstmt, RetCode);
@@ -10741,12 +10646,12 @@ begin
   FTables.FreeItems;
   while FHstmt.FetchNext do
   begin
-    temp:= FTables.AddItem;
+    temp := FTables.AddItem;
 
-    temp.FTableOwner:= FHstmt.ColString[2];
-    temp.FTableName:= FHstmt.ColString[3];
-    temp.FTableType:= StringToTableType(FHstmt.ColString[4]);
-    temp.FDescription:= FHstmt.ColString[5];
+    temp.FTableOwner := FHstmt.ColString[2];
+    temp.FTableName := FHstmt.ColString[3];
+    temp.FTableType := StringToTableType(FHstmt.ColString[4]);
+    temp.FDescription := FHstmt.ColString[5];
   end;
 end;
 
@@ -10760,29 +10665,29 @@ var
   var
     Loc: Integer;
   begin
-    Loc:= Pos(';', AProcName);
+    Loc := Pos(';', AProcName);
     if Loc > 0 then
-      AProcName:= Copy(AProcName, 1, Loc-1);
+      AProcName := Copy(AProcName, 1, Loc-1);
 
-    Result:= Trim(AProcName);
+    Result := Trim(AProcName);
   end;
 
 begin
 
-  FProcedureOwner:= Trim(FProcedureOwner);
+  FProcedureOwner := Trim(FProcedureOwner);
   if FProcedureOwner = '' then
-    AProcedureOwner:= nil
+    AProcedureOwner := nil
   else
-    AProcedureOwner:= PChar(FProcedureOwner);
+    AProcedureOwner := PChar(FProcedureOwner);
 
-  FProcedureName:= Trim(FProcedureName);
+  FProcedureName := Trim(FProcedureName);
   if FProcedureName = '' then
-    AProcedureName:= nil
+    AProcedureName := nil
   else
-    AProcedureName:= PChar(FProcedureName);
+    AProcedureName := PChar(FProcedureName);
 
   FHstmt.Terminate;
-  RetCode:= SQLProcedures(FHstmt.Handle, nil, 0, AProcedureOwner, Length(FProcedureOwner),
+  RetCode := SQLProcedures(FHstmt.Handle, nil, 0, AProcedureOwner, Length(FProcedureOwner),
     AProcedureName, Length(FProcedureName));
   if not FEnv.Error.Success(RetCode) then
     FEnv.Error.RaiseError(FHstmt, RetCode);
@@ -10790,12 +10695,12 @@ begin
   FProcedures.FreeItems;
   while FHstmt.FetchNext do
   begin
-    temp:= FProcedures.AddItem;
+    temp := FProcedures.AddItem;
 
-    temp.FProcedureOwner:= FHstmt.ColString[2];
-    temp.FProcedureName:= ProcName(FHstmt.ColString[3]);
-    temp.FProcedureType:= FHstmt.ColSmallint[8];
-    temp.FDescription:= FHstmt.COlString[7];
+    temp.FProcedureOwner := FHstmt.ColString[2];
+    temp.FProcedureName := ProcName(FHstmt.ColString[3]);
+    temp.FProcedureType := FHstmt.ColSmallint[8];
+    temp.FDescription := FHstmt.COlString[7];
   end;
 end;
 
@@ -10803,16 +10708,16 @@ function TOdbcCatalog.GetTables: TCatalogTables;
 begin
   if FGetTables then
     RetrieveTables;
-  FGetTables:= False;
-  Result:= FTables;
+  FGetTables := False;
+  Result := FTables;
 end;
 
 function TOdbcCatalog.GetProcedures: TCatalogProcedures;
 begin
   if FGetProcedures then
     RetrieveProcedures;
-  FGetProcedures:= False;
-  Result:= FProcedures;
+  FGetProcedures := False;
+  Result := FProcedures;
 end;
 
 function TOdbcCatalog.GetTableNames: TStrings;
@@ -10820,9 +10725,9 @@ var
   i: Integer;
 begin
   FTableNames.Clear;
-  for i:= 0 to Tables.ItemCount-1 do
+  for i := 0 to Tables.ItemCount-1 do
     FTableNames.Add(Tables[i].TableName);
-  Result:= FTableNames;
+  Result := FTableNames;
 end;
 
 function TOdbcCatalog.GetProcedureNames: TStrings;
@@ -10830,15 +10735,15 @@ var
   i: Integer;
 begin
   FProcedureNames.Clear;
-  for i:= 0 to Procedures.ItemCount-1 do
+  for i := 0 to Procedures.ItemCount-1 do
     FProcedureNames.Add(Procedures[i].ProcedureName);
-  Result:= FProcedureNames;
+  Result := FProcedureNames;
 end;
 
 procedure TOdbcCatalog.SeTOdbcConnection(AHdbc: TOdbcConnection);
 begin
-  FHdbc:= AHdbc;
-  FHstmt.Hdbc:= FHdbc;
+  FHdbc := AHdbc;
+  FHstmt.Hdbc := FHdbc;
 
   Refresh;
 end;
@@ -10847,8 +10752,8 @@ procedure TOdbcCatalog.SetTableOwner(ATableOwner: String);
 begin
   if ATableOwner <> FTableOwner then
   begin
-    FTableOwner:= ATableOwner;
-    FGetTables:= True;
+    FTableOwner := ATableOwner;
+    FGetTables := True;
   end;
 end;
 
@@ -10856,8 +10761,8 @@ procedure TOdbcCatalog.SetTableName(ATableName: String);
 begin
   if ATableName <> FTableName then
   begin
-    FTableName:= ATableName;
-    FGetTables:= True;
+    FTableName := ATableName;
+    FGetTables := True;
   end;
 end;
 
@@ -10865,8 +10770,8 @@ procedure TOdbcCatalog.SetTableType(ATableType: TTableTypeSet);
 begin
   if ATableType <> FTableType then
   begin
-    FTableType:= ATableType;
-    FGetTables:= True;
+    FTableType := ATableType;
+    FGetTables := True;
   end;
 end;
 
@@ -10874,8 +10779,8 @@ procedure TOdbcCatalog.SetProcedureOwner(AProcedureOwner: String);
 begin
   if AProcedureOwner <> FProcedureOwner then
   begin
-    FProcedureOwner:= AProcedureOwner;
-    FGetProcedures:= True;
+    FProcedureOwner := AProcedureOwner;
+    FGetProcedures := True;
   end;
 end;
 
@@ -10883,8 +10788,8 @@ procedure TOdbcCatalog.SetProcedureName(AProcedureName: String);
 begin
   if AProcedureName <> FProcedureName then
   begin
-    FProcedureName:= AProcedureName;
-    FGetProcedures:= True;
+    FProcedureName := AProcedureName;
+    FGetProcedures := True;
   end;
 end;
 
@@ -10893,36 +10798,36 @@ constructor TOdbcCatalog.Create(Env : TOdbcEnv; dbc : TOdbcConnection);
 begin
   inherited Create(Env);
 
-  FHdbc:= dbc;
+  FHdbc := dbc;
 
-  FHstmt:= TOdbcStatement.Create(env, dbc);
+  FHstmt := TOdbcStatement.Create(env, dbc);
 
-  FTables:= TCatalogTables.Create(env);
-  FTables.FCatalog:= Self;
-  FProcedures:= TCatalogProcedures.Create(env);
-  FProcedures.FCatalog:= Self;
+  FTables := TCatalogTables.Create(env);
+  FTables.FCatalog := Self;
+  FProcedures := TCatalogProcedures.Create(env);
+  FProcedures.FCatalog := Self;
 
-  FTableNames:= TStringList.Create;
-  FProcedureNames:= TStringList.Create;
+  FTableNames := TStringList.Create;
+  FProcedureNames := TStringList.Create;
 
-  FTableOwner:= '';
-  FTableName:= '%';
-  FTableType:= DefTableType;
+  FTableOwner := '';
+  FTableName := '%';
+  FTableType := DefTableType;
 
-  FProcedureOwner:= '';
-  FProcedureName:= '%';
+  FProcedureOwner := '';
+  FProcedureName := '%';
 
-  FGetTables:= True;
-  FGetProcedures:= True;
+  FGetTables := True;
+  FGetProcedures := True;
 end;
 
 destructor TOdbcCatalog.Destroy;
 begin
-  FHstmt.Free;
-  FTables.Free;
-  FProcedures.Free;
-  FTableNames.Free;
-  FProcedureNames.Free;
+  FHstmt.free;
+  FTables.free;
+  FProcedures.free;
+  FTableNames.free;
+  FProcedureNames.free;
 
   inherited Destroy;
 end;
@@ -10931,14 +10836,14 @@ function TOdbcCatalog.TableByName(ATableOwner, ATableName: String): TCatalogTabl
 var
   i: Integer;
 begin
-  Result:= nil;
-  ATableOwner:= UpperCase(Trim(ATableOwner));
-  ATableName:= UpperCase(Trim(ATableName));
-  for i:= 0 to Tables.ItemCount-1 do
+  Result := nil;
+  ATableOwner := UpperCase(Trim(ATableOwner));
+  ATableName := UpperCase(Trim(ATableName));
+  for i := 0 to Tables.ItemCount-1 do
     if (UpperCase(Tables[i].TableName) = ATableName) and
        ((ATableOwner = '') or (UpperCase(Tables[i].TableOwner) = ATableOwner)) then
     begin
-      Result:= Tables[i];
+      Result := Tables[i];
       Break;
     end;
 end;
@@ -10947,22 +10852,22 @@ function TOdbcCatalog.ProcedureByName(AProcedureOwner, AProcedureName: String): 
 var
   i: Integer;
 begin
-  Result:= nil;
-  AProcedureOwner:= UpperCase(Trim(AProcedureOwner));
-  AProcedureName:= UpperCase(Trim(AProcedureName));
-  for i:= 0 to Procedures.ItemCount-1 do
+  Result := nil;
+  AProcedureOwner := UpperCase(Trim(AProcedureOwner));
+  AProcedureName := UpperCase(Trim(AProcedureName));
+  for i := 0 to Procedures.ItemCount-1 do
     if (UpperCase(Procedures[i].ProcedureName) = AProcedureName) and
        ((AProcedureOwner = '') or (UpperCase(Procedures[i].ProcedureOwner) = AProcedureOwner)) then
     begin
-      Result:= Procedures[i];
+      Result := Procedures[i];
       Break;
     end;
 end;
 
 procedure TOdbcCatalog.Refresh;
 begin
-  FGetTables:= True;
-  FGetProcedures:= True;
+  FGetTables := True;
+  FGetProcedures := True;
 end;
 
 procedure TOdbcCatalog.Terminate;
@@ -10975,34 +10880,34 @@ procedure TOdbcCatalog.ParseForeignKey(ForeignKey: String;
 var
   Loc: Integer;
 begin
-  Loc:= Pos(';', ForeignKey);
+  Loc := Pos(';', ForeignKey);
   if Loc <= 0 then
     raise EODBCExpress.Create('Invalid foreign key format.');
 
-  ColumnName:= Trim(Copy(ForeignKey, 1, Loc-1));
+  ColumnName := Trim(Copy(ForeignKey, 1, Loc-1));
   Delete(ForeignKey, 1, Loc);
 
-  Loc:= Pos(';', ForeignKey);
+  Loc := Pos(';', ForeignKey);
   if Loc <= 0 then
     raise EODBCExpress.Create('Invalid foreign key format.');
 
-  ForeignTable:= Trim(Copy(ForeignKey, 1, Loc-1));
+  ForeignTable := Trim(Copy(ForeignKey, 1, Loc-1));
   Delete(ForeignKey, 1, Loc);
 
-  Loc:= Pos(';', ForeignKey);
+  Loc := Pos(';', ForeignKey);
   if Loc > 0 then
     raise EODBCExpress.Create('Invalid foreign key format.');
 
-  ForeignColumn:= Trim(ForeignKey);
+  ForeignColumn := Trim(ForeignKey);
 
-  Loc:= Pos('.', ForeignTable);
+  Loc := Pos('.', ForeignTable);
   if Loc > 0 then
   begin
-    ForeignOwner:= Trim(Copy(ForeignTable, 1, Loc-1));
+    ForeignOwner := Trim(Copy(ForeignTable, 1, Loc-1));
     Delete(ForeignTable, 1, Loc);
   end
   else
-    ForeignOwner:= '';
+    ForeignOwner := '';
 end;
 
 procedure TOdbcCatalog.ParseIndex(Index: String;
@@ -11012,21 +10917,21 @@ procedure TOdbcCatalog.ParseIndex(Index: String;
 var
   Loc: Integer;
 begin
-  Loc:= Pos(';', Index);
+  Loc := Pos(';', Index);
   if Loc <= 0 then
     raise EODBCExpress.Create('Invalid index format.');
 
-  IndexName:= Trim(Copy(Index, 1, Loc-1));
+  IndexName := Trim(Copy(Index, 1, Loc-1));
   Delete(Index, 1, Loc);
 
-  Loc:= Pos(';', Index);
+  Loc := Pos(';', Index);
   if Loc <= 0 then
     raise EODBCExpress.Create('Invalid index format.');
 
-  Unique:= Trim(Copy(Index, 1, Loc-1)) = 'U';
+  Unique := Trim(Copy(Index, 1, Loc-1)) = 'U';
   Delete(Index, 1, Loc);
 
-  Loc:= Pos(';', Index);
+  Loc := Pos(';', Index);
   if Loc > 0 then
     raise EODBCExpress.Create('Invalid index format.');
 

@@ -86,7 +86,7 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -96,7 +96,7 @@ var
 begin
   if not Settings.NoPathSummary or (mode = pomError) then
   begin
-    PathDialogForm := TPathDialogForm.create(owner);
+    PathDialogForm := TPathDialogForm.Create(owner);
     try
       PathDialogForm.CheckBox1.Checked := Settings.NoPathSummary;
       if types = nil then

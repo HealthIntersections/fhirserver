@@ -34,9 +34,9 @@ Interface
 
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
-  SysUtils, Classes, Inifiles, Generics.Collections,
+  SysUtils, Classes, Inifiles, Generics.Collections, DateUtils,
   fsl_base, fsl_stream, fsl_utilities, fsl_collections, fsl_fpc,
-  ftx_loinc_services, ftx_sct_services, ftx_sct_expressions;
+  ftx_loinc_services, ftx_sct_services, ftx_sct_expressions, ftx_service;
 
 //Const
 //  TrackConceptDuplicates = false; // much slower, but only if you aren't reading a snapshot
@@ -65,6 +65,8 @@ Const
   STEP_NORMAL_FORMS = 17;
   STEP_END = 18;
   STEP_TOTAL = 18;
+  DEF_ARRAY_DELTA = 16;
+
 
 Type
 
@@ -98,6 +100,8 @@ Type
     function GetRefset(id : String) : TRefset;
   end;
 
+  { TConcept }
+
   TConcept = class (TFslObject)
   Private
     Index : Cardinal;
@@ -106,16 +110,26 @@ Type
     FStatus : UInt64;
     Flag : Byte;
     FDate : TSnomedDate;
-    FInBounds : TRelationshipArray;
-    FOutbounds : TRelationshipArray;
+    FInBounds : TCardinalArray;
+    FInBoundsLength : cardinal;
+    FOutbounds : TCardinalArray;
+    FOutboundsLength : cardinal;
     FActiveParents : TCardinalArray;
+    FActiveParentsLength : cardinal;
     FInActiveParents : TCardinalArray;
+    FInActiveParentsLength : cardinal;
     descCount : integer;
     FDescriptions : TCardinalArray;
     Active : boolean;
 //    FClosed : Boolean;
 //    FClosure : TCardinalArray;
     Stems : TFslIntegerList;
+
+    procedure addInBound(index : cardinal);
+    procedure addOutBound(index : cardinal);
+    procedure addActiveParent(index : cardinal);
+    procedure addInActiveParent(index : cardinal);
+    procedure closeArrays;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -147,6 +161,7 @@ Type
 
     FSvc : TSnomedServices;
     FRefSetTypes : TDictionary<String, System.cardinal>;
+    FConceptIndex : TDictionary<Uint64, integer>;
 
     FConceptFiles : TStringList;
     FRelationshipFiles : TStringList;
@@ -340,7 +355,7 @@ begin
     imp.Go;
     result := imp.outputFile;
   finally
-    imp.Free;
+    imp.free;
   end;
 end;
 
@@ -358,7 +373,7 @@ End;
 
 constructor TStemCache.Create(stem: String);
 begin
-  inherited create;
+  inherited Create;
   values := TFslIntegerList.Create;
   values.SortAscending;
 end;
@@ -371,16 +386,58 @@ end;
 
 { TConcept }
 
+procedure TConcept.addInBound(index: cardinal);
+begin
+  if (FInboundsLength = Length(FInbounds)) then
+    SetLength(FInbounds, Length(FInbounds)*2);
+  FInbounds[FInboundsLength] := index;
+  inc(FInboundsLength);
+end;
+
+procedure TConcept.addOutBound(index: cardinal);
+begin
+  if (FOutboundsLength = Length(FOutbounds)) then
+    SetLength(FOutbounds, Length(FOutbounds)*2);
+  FOutbounds[FOutboundsLength] := index;
+  inc(FOutboundsLength);
+end;
+
+procedure TConcept.addActiveParent(index: cardinal);
+begin
+  if (FActiveParentsLength = Length(FActiveParents)) then
+    SetLength(FActiveParents, Length(FActiveParents)+DEF_ARRAY_DELTA);
+  FActiveParents[FActiveParentsLength] := index;
+  inc(FActiveParentsLength);
+end;
+
+procedure TConcept.addInActiveParent(index: cardinal);
+begin
+  if (FInActiveParentsLength = Length(FInActiveParents)) then
+    SetLength(FInActiveParents, Length(FInActiveParents)+DEF_ARRAY_DELTA);
+  FInActiveParents[FInActiveParentsLength] := index;
+  inc(FInActiveParentsLength);
+end;
+
+procedure TConcept.closeArrays;
+begin
+  SetLength(FInbounds, FInboundsLength);
+  SetLength(FOutbounds, FOutboundsLength);
+  SetLength(FActiveParents, FActiveParentsLength);
+  SetLength(FInActiveParents, FInActiveParentsLength);
+end;
+
 constructor TConcept.Create;
 begin
   inherited;
   Stems := TFslIntegerList.Create;
   Stems.SortAscending;
+  SetLength(FOutbounds, DEF_ARRAY_DELTA);
+  SetLength(FInbounds, DEF_ARRAY_DELTA);
 end;
 
 destructor TConcept.Destroy;
 begin
-  Stems.Free;
+  Stems.free;
   inherited;
 end;
 
@@ -388,7 +445,7 @@ end;
 
 constructor TWordCache.create(word, aStem: String);
 begin
-  inherited create;
+  inherited Create;
   self.word := word;
   Stem := aStem;
 end;
@@ -405,24 +462,26 @@ End;
 constructor TSnomedImporter.Create;
 begin
   inherited;
-  FConceptFiles := TStringList.create;
-  FRelationshipFiles := TStringList.create;
-  FDescriptionFiles := TStringList.create;
-  FDirectoryReferenceSets := TStringList.create;
-  FRels := TDictionary<UInt64,cardinal>.create;
-  FDuplicateRelationships := TStringList.create;
-  FRefSetTypes := TDictionary<String, cardinal>.create;
+  FConceptFiles := TStringList.Create;
+  FRelationshipFiles := TStringList.Create;
+  FDescriptionFiles := TStringList.Create;
+  FDirectoryReferenceSets := TStringList.Create;
+  FRels := TDictionary<UInt64,cardinal>.Create;
+  FDuplicateRelationships := TStringList.Create;
+  FRefSetTypes := TDictionary<String, cardinal>.Create;
+  FConceptIndex := TDictionary<Uint64, integer>.Create;
 end;
 
 destructor TSnomedImporter.Destroy;
 begin
+  FConceptIndex.free;
   FRefSetTypes.free;
-  FDuplicateRelationships.Free;
+  FDuplicateRelationships.free;
   FDirectoryReferenceSets.free;
-  FRels.Free;
-  FConceptFiles.Free;
-  FRelationshipFiles.Free;
-  FDescriptionFiles.Free;
+  FRels.free;
+  FConceptFiles.free;
+  FRelationshipFiles.free;
+  FDescriptionFiles.free;
   inherited;
 end;
 
@@ -463,7 +522,7 @@ var
 begin
   FStart := now;
 
-  FSvc := TSnomedServices.Create;
+  FSvc := TSnomedServices.Create(nil);
   FWordList := TFslMap<TWordCache>.Create('wordmap');
   FStemList := TFslMap<TStemCache>.Create('stemmap');
   FStringsTemp := TDictionary<String, Cardinal>.Create;
@@ -523,12 +582,12 @@ begin
     // SetFileReadOnly(sFilename, true);
   Finally
     Frefsets.free;
-    FWordList.Free;
-    FStemList.Free;
-    FStringsTemp.Free;
-    FConcepts.Free;
-    FSvc.Free;
-    FStemmer.Free;
+    FWordList.free;
+    FStemList.free;
+    FStringsTemp.free;
+    FConcepts.free;
+    FSvc.free;
+    FStemmer.free;
   End;
 End;
 
@@ -546,7 +605,7 @@ begin
     SetLength(result, f.Size);
     f.Read(result[0], f.Size);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -565,6 +624,9 @@ var
   iLast : UInt64;
   iModule : integer;
   iTerm : Uint64;
+  cIndex : integer;
+  dSnomedDate : TSnomedDate;
+  bCreateOrUpdate : boolean;
 
   oConcept : TConcept;
   iLoop : Integer;
@@ -591,22 +653,45 @@ Begin
       iStatus := Next(9);
       iModule := Next(9);
       iCursor := Next(13); // also is status
+      bCreateOrUpdate := false;
 //      iDesc := 0;
 //      iId := 0;
 
       iTerm := StrToUInt64(memU8toString(s, iStart, iConcept - iStart));
-      oConcept := TConcept.Create;
-      FConcepts.Add(oConcept);
-      oConcept.Identity := iTerm;
+      dSnomedDate := readDate(memU8toString(s, iConcept+1, iDate - iConcept -1));
+      if FConceptIndex.ContainsKey(iTerm) then
+      begin
+         // the concept already exists - so retrieve it
+         cIndex := FConceptIndex[iTerm];
+         oConcept := TConcept(FConcepts[cIndex]);
+         if (CompareDateTime(dSnomedDate, oConcept.FDate) > 0) then
+         begin
+           // the new row has a later effectiveTime than the previous row for this concept, so will update the existing row data
+           bCreateOrUpdate := true;
+         end;
+      end
+      else
+      begin
+        // the concept doesn't exist - so create it
+        oConcept := TConcept.Create;
+        cIndex := FConcepts.Add(oConcept);
+        FConceptIndex.Add(iTerm, cIndex);
+        oConcept.Identity := iTerm;
+        bCreateOrUpdate := true;
+      end;
 
-      oConcept.FDate := readDate(memU8toString(s, iConcept+1, iDate - iConcept -1));
-      if memU8toString(s, iDate+1, iStatus - iDate -1) <> '1' then
-        oConcept.Flag := 1;
-      oConcept.FModuleId := StrToUInt64(memU8toString(s, iStatus+1, iModule - iStatus-1));
-      oConcept.FStatus := StrToUInt64(memU8toString(s, iModule+1, iCursor - iModule-1));
-      if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
-        oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
-      oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
+      if bCreateOrUpdate then
+      begin
+        // add or update the additional concept details
+        oConcept.FDate := dSnomedDate;
+        if memU8toString(s, iDate+1, iStatus - iDate -1) <> '1' then
+          oConcept.Flag := 1;
+        oConcept.FModuleId := StrToUInt64(memU8toString(s, iStatus+1, iModule - iStatus-1));
+        oConcept.FStatus := StrToUInt64(memU8toString(s, iModule+1, iCursor - iModule-1));
+        if oConcept.FStatus = RF2_MAGIC_PRIMITIVE then
+          oConcept.Flag := oConcept.Flag + MASK_CONCEPT_PRIMITIVE;
+        oConcept.Active := oConcept.Flag and MASK_CONCEPT_STATUS = 0;
+      end;
 
       inc(iCursor, 2);
       inc(OverallCount);
@@ -907,7 +992,7 @@ var
   active, defining : boolean;
 
   iRel : UInt64;
-  line : integer;
+  line, i : integer;
   Function Next(ch : byte) : integer;
   begin
     inc(iCursor);
@@ -952,7 +1037,6 @@ Begin
       iCursor := Next(13);  // modifierId
       iRef := iCursor;
 
-
       iRel := StrToUInt64(memU8toString(s, iStart, iRelid - iStart));
       date := ReadDate(memU8toString(s, iRelId+1, (iDate - iRelId) - 1));
       active := memU8toString(s, iDate+1, iStatus - iDate-1) = '1';
@@ -979,25 +1063,20 @@ Begin
         if (oRelType.Index = Findex_is_a) and (defining) Then
         Begin
           if (active) then
-          begin
-            SetLength(oSource.FActiveParents, Length(oSource.FActiveParents)+1);
-            oSource.FActiveParents[Length(oSource.FActiveParents)-1] := oTarget.Index;
-          end
+            oSource.addActiveParent(oTarget.Index)
           else
-          begin
-            SetLength(oSource.FInActiveParents, Length(oSource.FInActiveParents)+1);
-            oSource.FInActiveParents[Length(oSource.FInActiveParents)-1] := oTarget.Index;
-          end;
+            oSource.addInActiveParent(oTarget.Index);
         end;
         i_c := 0; // todo
         i_r := 0; // todo
-        SetLength(oSource.FOutbounds, Length(oSource.FOutbounds)+1);
-        oSource.FOutbounds[Length(oSource.FOutbounds)-1].relationship := iIndex;
+        oSource.addOutBound(iIndex);
+
         //oSource.FOutbounds[Length(oSource.FOutbounds)-1].characteristic := i_c; // for sorting
         //oSource.FOutbounds[Length(oSource.FOutbounds)-1].Refinability := i_r; // for sorting
         //oSource.FOutbounds[Length(oSource.FOutbounds)-1].Group := group;
-        SetLength(oTarget.FInbounds, Length(oTarget.FInbounds)+1);
-        oTarget.FInbounds[Length(oTarget.FInbounds)-1].relationship := iIndex;
+
+        oTarget.addInBound(iIndex);
+
         //oTarget.FInbounds[Length(oTarget.FInbounds)-1].characteristic := i_c;
         //oTarget.FInbounds[Length(oTarget.FInbounds)-1].Refinability := i_r;
         //oTarget.FInbounds[Length(oTarget.FInbounds)-1].Group := group;
@@ -1014,6 +1093,8 @@ Begin
     // see https://confluence.ihtsdotools.org/display/DOCTSG/3.1+Generating+Dynamic+Snapshot+Views
     FDuplicateRelationships.add('more');
   end;
+  for i := 0 to FConcepts.count - 1 do
+    (FConcepts[i] as TConcept).closeArrays;
 End;
 
 
@@ -1026,7 +1107,7 @@ begin
     oConcept.Identity := aId;
     iIndex := FConcepts.IndexBy(oConcept, Compare);
   Finally
-    oConcept.Free;
+    oConcept.free;
   End;
   if iIndex >= 0 Then
     result := TConcept(FConcepts[iIndex])
@@ -1034,8 +1115,8 @@ begin
     result := nil;
 end;
 
-Function SortRelationshipArray(a : TRelationshipArray):TCardinalArray;
-  Function Compare(const a, b: TRelationship) : Integer;
+Function SortRelationshipArray(a : TCardinalArray):TCardinalArray;
+  Function Compare(const a, b: Cardinal) : Integer;
   Begin
     //rf.f  result := a.characteristic - b.characteristic;
     //if result = 0 then
@@ -1043,13 +1124,13 @@ Function SortRelationshipArray(a : TRelationshipArray):TCardinalArray;
     //if result = 0 then
     //  result := a.Refinability - b.Refinability;
     //if result = 0 then
-      result := integer(a.relationship) - integer(b.relationship)
+      result := a-b;// integer(a{.relationship}) - integer(b{.relationship})
   End;
 
   Procedure QuickSort(L, R: Integer);
   Var
     I, J, K : Integer;
-    t : TRelationship;
+    t : cardinal;
   Begin
     // QuickSort routine (Recursive)
     // * Items is the default indexed property that returns a pointer, subclasses
@@ -1099,7 +1180,7 @@ Begin
     QuickSort(0, length(a) - 1);
   SetLength(result, length(a));
   For i := 0 to length(result) - 1 do
-    result[i] := a[i].relationship;
+    result[i] := a[i]{.relationship};
 End;
 
 Procedure TSnomedImporter.SaveConceptLinks(var active, inactive : UInt64Array);
@@ -1183,10 +1264,10 @@ begin
         if e <> inttostr(TConcept(FConcepts[i]).Identity) then
           FConcept.SetNormalForm(TConcept(FConcepts[i]).Index, FStrings.AddString(e));
       finally
-        n.Free;
+        n.free;
       end;
     finally
-      exp.Free;
+      exp.free;
     end;
   end;
 end;
@@ -1372,7 +1453,7 @@ var
 begin
   for s in sDesc.Split([',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '-', '+', '=']) do
   begin
-    if (s <> '') And not StringIsInteger32(s) and (s.length > 2) Then
+    if (s <> '') And not StringIsInteger64(s) and (s.length > 2) Then
     begin
       stem := FStemmer.Stem(s);
       //if (stem <> '') then
@@ -1911,7 +1992,7 @@ begin
         break;
 
       sModule := memU8toString(s, iActive+1, iModule - (iActive + 1));
-      sDate:= memU8toString(s, iDate+1, iTime - (iDate + 1));
+      sDate := memU8toString(s, iDate+1, iTime - (iDate + 1));
       sActive := memU8toString(s, iTime+1, iActive - (iTime + 1));
       sRefSetId := memU8toString(s, iModule+1, iRefSetId - (iModule + 1));
       sRefComp := memU8toString(s, iRefSetId+1, iRefComp - (iRefSetId + 1));
@@ -2014,7 +2095,7 @@ begin
       inc(iCursor, 1);
     End;
   finally
-    fieldnames.Free;
+    fieldnames.free;
   end;
 end;
 
@@ -2076,7 +2157,7 @@ begin
       result.index := MAGIC_NO_CHILDREN;
       add(result.Link);
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -2136,7 +2217,14 @@ end;
 
 function needsBaseForImport(moduleId : String): boolean;
 begin
-  result := moduleId = '11000172109';
+  if (moduleId = '11000172109') // Belgium
+  or (moduleId = '554471000005108') // Denmark
+  or (moduleId = '45991000052106') // Sweden
+  or (moduleId = '2011000195101') // Switzerland
+  then
+    result := True
+  else
+    result := False;
 end;
 
 End.

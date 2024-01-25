@@ -260,6 +260,7 @@ type
   X509 = x509_st;
   PX509 = ^X509;
   PPX509 = ^PX509;
+  PSTACK_OFX509 = Pointer;
   X509_crl_st = type Pointer;
   X509_CRL = X509_crl_st;
   PX509_CRL = ^X509_CRL;

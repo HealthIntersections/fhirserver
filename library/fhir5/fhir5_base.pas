@@ -29,11 +29,12 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
 uses
-  fsl_base,
+  fsl_base, fsl_http,
   fhir_objects;
 
 type
@@ -44,6 +45,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
   TFhirBase = TFhirObject5;
 
@@ -56,6 +58,7 @@ type
     function makeIntValue(v : String) : TFHIRObject; override;
     function GetFhirObjectVersion: TFHIRVersion; override;
     function JSType : String; override;
+    function asJson : String; override;
   end;
 
   TFHIRResourceX = TFHIRResource5;
@@ -65,7 +68,7 @@ type
   private
     FProperties : TFslMap<TFHIRSelectionList>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -85,10 +88,22 @@ type
 implementation
 
 uses
-  fhir5_types, fhir5_utilities;
+  fhir5_types, fhir5_utilities, fhir5_json;
 
 
 { TFHIRObject5 }
+
+function TFHIRObject5.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
+  try
+    result := j.Compose(fhirType, self);
+  finally
+    j.free;
+  end;
+end;
 
 function TFHIRObject5.GetFhirObjectVersion: TFHIRVersion;
 begin
@@ -116,6 +131,18 @@ begin
 end;
 
 { TFHIRResource5 }
+
+function TFHIRResource5.asJson: String;
+var
+  j : TFHIRJsonComposer;
+begin
+  j := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
+  try
+    result := j.Compose(self);
+  finally
+    j.free;
+  end;
+end;
 
 function TFHIRResource5.GetFhirObjectVersion: TFHIRVersion;
 begin
@@ -147,7 +174,7 @@ end;
 constructor TFHIRTuple5.Create;
 begin
   inherited;
-  FProperties := TFslMap<TFHIRSelectionList>.create('tuple');
+  FProperties := TFslMap<TFHIRSelectionList>.Create('tuple');
 end;
 
 destructor TFHIRTuple5.Destroy;
@@ -202,10 +229,10 @@ begin
   raise EFHIRException.Create('Operation not supported on Tuple');
 end;
 
-function TFHIRTuple5.sizeInBytesV : cardinal;
+function TFHIRTuple5.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProperties.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 end.

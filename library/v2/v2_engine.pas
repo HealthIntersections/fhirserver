@@ -44,7 +44,7 @@ type
     FName: String;
     FContent: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     property name : String read FName write FName;
     property content : String read FContent write FContent;
@@ -65,7 +65,7 @@ type
     procedure SetMessage(const Value: TV2Message);
     procedure SetFactory(const Value: TFHIRFactory);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TV2ConversionEngine; overload;
@@ -87,8 +87,8 @@ implementation
 destructor TV2ConversionEngine.Destroy;
 begin
   FClient.free;
-  FMessage.Free;
-  FFactory.Free;
+  FMessage.free;
+  FFactory.free;
 
   inherited;
 end;
@@ -106,13 +106,13 @@ end;
 
 procedure TV2ConversionEngine.SetFactory(const Value: TFHIRFactory);
 begin
-  FFactory.Free;
+  FFactory.free;
   FFactory := Value;
 end;
 
 procedure TV2ConversionEngine.SetMessage(const Value: TV2Message);
 begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := Value;
 end;
 
@@ -133,7 +133,7 @@ begin
       try
         js.executeObj(script.content, '', script.name, [message, client, factory]);
       finally
-        script.Free;
+        script.free;
       end;
     finally
       js.free;
@@ -143,20 +143,20 @@ begin
   end;
 end;
 
-function TV2ConversionEngine.sizeInBytesV : cardinal;
+function TV2ConversionEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMessage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMessage.sizeInBytes(magic));
   inc(result, (FScriptName.length * sizeof(char)) + 12);
-  inc(result, FClient.sizeInBytes);
-  inc(result, FFactory.sizeInBytes);
-  inc(result, FJSFactory.sizeInBytes);
-  inc(result, FOnGetScript.sizeInBytes);
+  inc(result, FClient.sizeInBytes(magic));
+  inc(result, FFactory.sizeInBytes(magic));
+  inc(result, FJSFactory.sizeInBytes(magic));
+  inc(result, FOnGetScript.sizeInBytes(magic));
 end;
 
-function TV2ConversionEngineScript.sizeInBytesV : cardinal;
+function TV2ConversionEngineScript.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;

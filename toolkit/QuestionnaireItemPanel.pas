@@ -369,12 +369,12 @@ end;
 
 destructor TQuestionnaireItemPanel.Destroy;
 begin
-  FQuestionnaire.Free;
-  FSettings.Free;
-  FParent.Free;
-  FItem.Free;
-  FPrevious.Free;
-  FNext.Free;
+  FQuestionnaire.free;
+  FSettings.free;
+  FParent.free;
+  FItem.free;
+  FPrevious.free;
+  FNext.free;
   inherited;
 end;
 
@@ -400,7 +400,7 @@ begin
       TQuestionnairePanel(Owner).markChange(item);
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -510,37 +510,37 @@ end;
 
 procedure TQuestionnaireItemPanel.SetItem(const Value: TFhirQuestionnaireItem);
 begin
-  FItem.Free;
+  FItem.free;
   FItem := Value;
 end;
 
 procedure TQuestionnaireItemPanel.SetNext(const Value: TFhirQuestionnaireItem);
 begin
-  FNext.Free;
+  FNext.free;
   FNext := Value;
 end;
 
 procedure TQuestionnaireItemPanel.SetParentItem(const Value: TFhirQuestionnaireItem);
 begin
-  FParent.Free;
+  FParent.free;
   FParent := Value;
 end;
 
 procedure TQuestionnaireItemPanel.SetPrevious(const Value: TFhirQuestionnaireItem);
 begin
-  FPrevious.Free;
+  FPrevious.free;
   FPrevious := Value;
 end;
 
 procedure TQuestionnaireItemPanel.SetQuestionnaire(const Value: TFhirQuestionnaire);
 begin
-  FQuestionnaire.Free;
+  FQuestionnaire.free;
   FQuestionnaire := Value;
 end;
 
 procedure TQuestionnaireItemPanel.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

@@ -1,17 +1,46 @@
 unit console_managers;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
-  SysUtils, Classes, Graphics, UITypes,
+  SysUtils, Classes, Graphics, System.UITypes,
   Dialogs,
   fsl_base, fsl_threads, fsl_utilities,
   fdb_manager,
+  fhir_colour_utils,
   ftx_sct_services, ftx_loinc_services, ftx_ucum_services, ftx_lang,
   fui_lcl_managers, fui_lcl_progress,
-  tx_icd10, tx_ndc, tx_rxnorm, tx_unii,
+  tx_ndc, tx_rxnorm, tx_unii,
   server_config, database_installer, utilities,
   console_tx_edit, console_ep_edit, console_id_edit, install_form;
 
@@ -25,7 +54,7 @@ type
     procedure SetFile(value : TFHIRServerConfigFile);
   public
     destructor Destroy; override;
-    property ConfigFile : TFHIRServerConfigFile read FFile write SetFile;
+    property configFile : TFHIRServerConfigFile read FFile write SetFile;
   end;
 
   { TTXStatusCheckRequest }
@@ -36,6 +65,7 @@ type
   public
     constructor Create(item : TFHIRServerConfigSection);
     destructor Destroy; override;
+    function description : String; override;
   end;
 
   { TTXStatusCheckResponse }
@@ -53,6 +83,8 @@ type
   { TTXStatusChecker }
 
   TTXStatusChecker = class (TBackgroundTaskEngine)
+  protected
+    function canCancel : boolean; override;
   public
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
     function name : String; override;
@@ -83,10 +115,10 @@ type
 
     procedure buildMenu; override;
 
-    function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure DeleteItem(item : TFHIRServerConfigSection); override;
-    function ExecuteItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function addItem(mode : String) : TFHIRServerConfigSection; override;
+    function deleteItem(item : TFHIRServerConfigSection) : boolean; override;
+    function executeItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
   { TEPStatusCheckRequest }
@@ -97,6 +129,7 @@ type
   public
     constructor Create(item : TFHIRServerConfigSection);
     destructor Destroy; override;
+    function description : String; override;
   end;
 
   { TEPStatusCheckResponse }
@@ -115,6 +148,8 @@ type
   { TEPStatusChecker }
 
   TEPStatusChecker = class (TBackgroundTaskEngine)
+  protected
+    function canCancel : boolean; override;
   public
     procedure execute(request : TBackgroundTaskRequestPackage; response : TBackgroundTaskResponsePackage); override;
     function name : String; override;
@@ -141,10 +176,10 @@ type
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
-    function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure DeleteItem(item : TFHIRServerConfigSection); override;
-    function ExecuteItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function addItem(mode : String) : TFHIRServerConfigSection; override;
+    function deleteItem(item : TFHIRServerConfigSection) : boolean; override;
+    function executeItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
   end;
 
   { TIdentityProviderManager }
@@ -159,9 +194,9 @@ type
     function getSummaryText(item : TFHIRServerConfigSection) : String; override;
     function compareItem(left, right : TFHIRServerConfigSection; col : integer) : integer; override;
 
-    function EditItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
-    function AddItem(mode : String) : TFHIRServerConfigSection; override;
-    procedure DeleteItem(item : TFHIRServerConfigSection); override;
+    function editItem(item : TFHIRServerConfigSection; mode : String) : boolean; override;
+    function addItem(mode : String) : TFHIRServerConfigSection; override;
+    function deleteItem(item : TFHIRServerConfigSection) : boolean; override;
   end;
 
 
@@ -171,6 +206,11 @@ uses
   console_form;
 
 { TEPStatusChecker }
+
+function TEPStatusChecker.canCancel: boolean;
+begin
+  result := false;
+end;
 
 procedure TEPStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 begin
@@ -192,11 +232,16 @@ end;
 
 destructor TEPStatusCheckResponse.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited Destroy;
 end;
 
 { TTXStatusChecker }
+
+function TTXStatusChecker.canCancel: boolean;
+begin
+  result := false;
+end;
 
 procedure TTXStatusChecker.execute(request: TBackgroundTaskRequestPackage; response: TBackgroundTaskResponsePackage);
 var
@@ -218,8 +263,6 @@ begin
       s := TUcumServices.checkFile(item['source'].value)
     else if item['type'].value = 'lang' then
       s := TIETFLanguageCodeServices.checkFile(item['source'].value)
-    else if item['type'].value = 'icd10' then
-      s := TICD10Provider.checkFile(item['source'].value)
     else
       s := 'to do';
   end
@@ -272,7 +315,7 @@ end;
 
 destructor TTXStatusCheckResponse.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited Destroy;
 end;
 
@@ -286,8 +329,13 @@ end;
 
 destructor TTXStatusCheckRequest.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited Destroy;
+end;
+
+function TTXStatusCheckRequest.description: String;
+begin
+  result := '';
 end;
 
 { TEPStatusCheckRequest }
@@ -300,22 +348,27 @@ end;
 
 destructor TEPStatusCheckRequest.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited;
+end;
+
+function TEPStatusCheckRequest.description: String;
+begin
+  result := '';
 end;
 
 { TAdminManager }
 
 procedure TAdminManager.SetFile(value: TFHIRServerConfigFile);
 begin
-  FFile.Free;
+  FFile.free;
   FFile := value;
   Enabled := FFile <> nil
 end;
 
 destructor TAdminManager.Destroy;
 begin
-  FFile.Free;
+  FFile.free;
   inherited Destroy;
 end;
 
@@ -370,11 +423,11 @@ begin
   end;
 end;
 
-function TIdentityProviderManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
+function TIdentityProviderManager.editItem(item: TFHIRServerConfigSection; mode: String): boolean;
 var
   frm : TEditIdForm;
 begin
-  frm := TEditIdForm.create(List.Owner);
+  frm := TEditIdForm.Create(List.Owner);
   try
     frm.ID := item.clone;
     result := frm.ShowModal = mrOK;
@@ -386,14 +439,14 @@ begin
   end;
 end;
 
-function TIdentityProviderManager.AddItem(mode: String): TFHIRServerConfigSection;
+function TIdentityProviderManager.addItem(mode: String): TFHIRServerConfigSection;
 var
   frm : TEditIdForm;
 begin
   Result := nil;
-  frm := TEditIdForm.create(List.Owner);
+  frm := TEditIdForm.Create(List.Owner);
   try
-    frm.Id := TFHIRServerConfigSection.create('id'+inttostr(FFile['identity-providers'].sections.Count));
+    frm.Id := TFHIRServerConfigSection.Create('id'+inttostr(FFile['identity-providers'].sections.Count));
     if frm.ShowModal = mrOK then
     begin
       result := FFile['identity-providers'].section[frm.Id.Name].link;
@@ -405,10 +458,11 @@ begin
   end;
 end;
 
-procedure TIdentityProviderManager.DeleteItem(item: TFHIRServerConfigSection);
+function TIdentityProviderManager.deleteItem(item: TFHIRServerConfigSection) : boolean;
 begin
   FFile['identity-providers'].remove(item.name);
   FFile.Save;
+  result := false;
 end;
 
 { TEndPointManager }
@@ -420,7 +474,7 @@ begin
   else if (item.status = '') then
   begin
     item.status := 'Checking...';
-    GBackgroundTasks.queueTask(FStatusTask, TEPStatusCheckRequest.create(item.clone), TEPStatusCheckResponse.create(item.link), doStatusCallback);
+    GBackgroundTasks.queueTask(FStatusTask, TEPStatusCheckRequest.Create(item.clone), TEPStatusCheckResponse.Create(item.link), doStatusCallback);
   end;
   result := item.status;
 end;
@@ -483,8 +537,8 @@ begin
     4: result := item['path'].value;
     5: if hasDatabase(item['type'].value) then
          result := describeDatabase(item)
-       else
-         result := '';
+       else if hasSrcFolder(item['type'].value) then
+         result := item['folder'].value;
     6: result := status(item);
   end;
 end;
@@ -522,11 +576,11 @@ begin
   end;
 end;
 
-function TEndPointManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
+function TEndPointManager.editItem(item: TFHIRServerConfigSection; mode: String): boolean;
 var
   frm : TEditEPForm;
 begin
-  frm := TEditEPForm.create(List.Owner);
+  frm := TEditEPForm.Create(List.Owner);
   try
     frm.EP := item.clone;
     frm.Cfg := FFile.link;
@@ -539,15 +593,16 @@ begin
   end;
 end;
 
-function TEndPointManager.AddItem(mode: String): TFHIRServerConfigSection;
+function TEndPointManager.addItem(mode: String): TFHIRServerConfigSection;
 var
   frm : TEditEPForm;
 begin
   Result := nil;
-  frm := TEditEPForm.create(List.Owner);
+  frm := TEditEPForm.Create(List.Owner);
   try
-    frm.EP := TFHIRServerConfigSection.create('EP'+inttostr(FFile['endpoints'].sections.Count));
+    frm.EP := TFHIRServerConfigSection.Create('EP'+inttostr(FFile['endpoints'].sections.Count));
     frm.EP['path'].value := '/path';
+    frm.Cfg := FFile.link;
     if frm.ShowModal = mrOK then
     begin
       result := FFile['endpoints'].section[frm.EP.Name].link;
@@ -559,13 +614,14 @@ begin
   end;
 end;
 
-procedure TEndPointManager.DeleteItem(item: TFHIRServerConfigSection);
+function TEndPointManager.deleteItem(item: TFHIRServerConfigSection) : boolean;
 begin
   FFile['endpoints'].remove(item.name);
   FFile.Save;
+  result := true;
 end;
 
-function TEndPointManager.ExecuteItem(item: TFHIRServerConfigSection; mode : String) : boolean;
+function TEndPointManager.executeItem(item: TFHIRServerConfigSection; mode : String) : boolean;
 begin
   result := InstallEndPoint(list.Owner, FFile, item);
   if result then
@@ -612,7 +668,7 @@ begin
   if (item.status = '') then
   begin
     item.status := 'Checking ...';
-    GBackgroundTasks.queueTask(FStatusTask, TTXStatusCheckRequest.create(item.clone), TTXStatusCheckResponse.create(item.link), doStatusCallback);
+    GBackgroundTasks.queueTask(FStatusTask, TTXStatusCheckRequest.Create(item.clone), TTXStatusCheckResponse.Create(item.link), doStatusCallback);
   end;
   result := item.status;
 end;
@@ -633,7 +689,7 @@ var
   dlg : TSelectDirectoryDialog;
   ndc : TNdcImporter;
 begin
-  dlg := TSelectDirectoryDialog.create(List.Owner);
+  dlg := TSelectDirectoryDialog.Create(List.Owner);
   try
     dlg.Filename := Settings.readString('ndc', 'source', '');
     if dlg.execute then
@@ -643,9 +699,9 @@ begin
       try
         conn := db.GetConnection('check');
         try
-          ndc := TNdcImporter.create(dlg.FileName, conn.link);
+          ndc := TNdcImporter.Create(dlg.FileName, conn.link);
           try
-            DoForegroundTask(List.Owner, ndc.Doinstall);
+            DoForegroundTask(List.Owner, nil, ndc.Doinstall);
           finally
             ndc.free;
           end;
@@ -664,7 +720,7 @@ begin
       end;
     end;
   finally
-    dlg.Free;
+    dlg.free;
   end;
 end;
 
@@ -675,7 +731,7 @@ var
   dlg : TSelectDirectoryDialog;
   umls : TUMLSImporter;
 begin
-  dlg := TSelectDirectoryDialog.create(List.Owner);
+  dlg := TSelectDirectoryDialog.Create(List.Owner);
   try
     dlg.Filename := Settings.readString('rxnorm', 'source', '');
     if dlg.execute then
@@ -685,9 +741,9 @@ begin
       try
         conn := db.GetConnection('check');
         try
-          umls := TUMLSImporter.create(dlg.FileName, conn.link);
+          umls := TUMLSImporter.Create(dlg.FileName, conn.link);
           try
-            DoForegroundTask(List.Owner, umls.Doinstall);
+            DoForegroundTask(List.Owner, nil, umls.Doinstall);
           finally
             umls.free;
           end;
@@ -706,7 +762,7 @@ begin
       end;
     end;
   finally
-    dlg.Free;
+    dlg.free;
   end;
 end;
 
@@ -770,11 +826,11 @@ begin
   registerMenuEntry('Import', 13, copExecute);
 end;
 
-function TTXManager.EditItem(item: TFHIRServerConfigSection; mode: String): boolean;
+function TTXManager.editItem(item: TFHIRServerConfigSection; mode: String): boolean;
 var
   frm : TEditTxForm;
 begin
-  frm := TEditTxForm.create(List.Owner);
+  frm := TEditTxForm.Create(List.Owner);
   try
     frm.Tx := item.clone;
     result := frm.ShowModal = mrOK;
@@ -786,14 +842,14 @@ begin
   end;
 end;
 
-function TTXManager.AddItem(mode: String): TFHIRServerConfigSection;
+function TTXManager.addItem(mode: String): TFHIRServerConfigSection;
 var
   frm : TEditTxForm;
 begin
   Result := nil;
-  frm := TEditTxForm.create(List.Owner);
+  frm := TEditTxForm.Create(List.Owner);
   try
-    frm.Tx := TFHIRServerConfigSection.create('tx'+inttostr(FFile['terminologies'].sections.Count));
+    frm.Tx := TFHIRServerConfigSection.Create('tx'+inttostr(FFile['terminologies'].sections.Count));
     if frm.ShowModal = mrOK then
     begin
       result := FFile['terminologies'].section[frm.Tx.Name].link;
@@ -805,14 +861,14 @@ begin
   end;
 end;
 
-
-procedure TTXManager.DeleteItem(item: TFHIRServerConfigSection);
+function TTXManager.deleteItem(item: TFHIRServerConfigSection) : boolean;
 begin
   FFile['terminologies'].remove(item.name);
   FFile.Save;
+  result := true;
 end;
 
-function TTXManager.ExecuteItem(item: TFHIRServerConfigSection; mode: String) : boolean;
+function TTXManager.executeItem(item: TFHIRServerConfigSection; mode: String) : boolean;
 begin
   result := true;
   if (item['type'].value = 'ndc') then
@@ -820,7 +876,7 @@ begin
   else if (item['type'].value = 'rxnorm') then
     importRxNorm(item)
   else
-    raise Exception.create('Not done yet');
+    raise EFslException.Create('Not done yet');
 end;
 
 

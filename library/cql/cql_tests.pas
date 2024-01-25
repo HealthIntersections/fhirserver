@@ -1,4 +1,4 @@
-unit FHIR.Cql.Tests;
+unit cql_tests;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -73,7 +73,7 @@ var
   s : String;
   i : integer;
 begin
-  sl := TStringList.create;
+  sl := TStringList.Create;
   try
     if FindFirst('C:\work\fhirserver\Libraries\cql\samples\*.Cql', faAnyFile, SR) = 0 then
     repeat
@@ -88,7 +88,7 @@ begin
       result[i].Values[0] := 'C:\work\fhirserver\Libraries\cql\samples\' + sl[i];
     end;
   finally
-    sl.Free;
+    sl.free;
   end;
 end;
 
@@ -100,16 +100,16 @@ var
   Cql : TCqlElement;
   parser : TCQLParser;
 begin
-  parser := TCQLParser.create;
+  parser := TCQLParser.Create;
   try
     Cql := parser.parseCql(FileToString(name, TEncoding.UTF8));
     try
       assertTrue(cql <> nil);
     finally
-      Cql.Free;
+      Cql.free;
     end;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 

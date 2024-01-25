@@ -36,16 +36,17 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Registry,
   IdContext, IdCustomHTTPServer,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_threads, fsl_web_stream,
   fhir_objects,
-  session, {$IFNDEF NO_JS} server_javascript, {$ENDIF}
+  session,
   storage,
   web_source, web_event, web_cache, analytics;
 
 Const
   OWIN_TOKEN_PATH = 'oauth/token';
-  PLAIN_KEEP_ALIVE = true;
+  PLAIN_KEEP_ALIVE = false;
   SECURE_KEEP_ALIVE = false;
+  DEF_SERVER_CONN_LIMIT = 30;
 
 type
   TFHIRWebServerStats = class (TFslObject)
@@ -85,18 +86,20 @@ type
   private
     FSourceProvider : TFHIRWebServerSourceProvider;
     FHost : String;
-    FActualPort: integer;
-    FActualSSLPort: integer;
+    FConnLimit : Integer;
     FAdminEmail: String; // stated administrator
     FName: String; // name of this server
     FOwnerName: String; // name of the org that administers the service
     FGoogle : TGoogleAnalyticsProvider;
     FStats : TFHIRWebServerStats;
     FLock: TFslLock;
-    {$IFNDEF NO_JS}
-    FOnRegisterJs: TRegisterJavascriptEvent;
-    {$ENDIF}
     FCache: THTTPCacheManager;
+    FStatedPort: word;
+    FWorkingSSLPort: word;
+    FWorkingPort: word;
+    FStatedSSLPort: word;
+    FCertHeader: String;
+    FSSLHeaderValue: String;
     procedure SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
     procedure SetCache(const Value: THTTPCacheManager);
   public
@@ -108,18 +111,20 @@ type
     property OwnerName : String read FOwnerName write FOwnerName;
     property Name : String read FName write FName;
     property AdminEmail: String read FAdminEmail write FAdminEmail;
-    property ActualSSLPort: integer read FActualSSLPort write FActualSSLPort;
+
     property host: String read FHost write FHost;
-    property SSLPort: integer read FActualSSLPort;
-    property ActualPort: integer read FActualPort write FActualPort;
+    property statedPort : word read FStatedPort write FStatedPort;
+    property statedSSLPort : word read FStatedSSLPort write FStatedSSLPort;
+    property workingPort : word read FWorkingPort write FWorkingPort;
+    property workingSSLPort : word read FWorkingSSLPort write FWorkingSSLPort;
+    property CertHeader : String read FCertHeader write FCertHeader;
+    property SSLHeaderValue : String read FSSLHeaderValue write FSSLHeaderValue;
+
+    property ConnLimit : Integer read FConnLimit write FConnLimit;
     property Google : TGoogleAnalyticsProvider read FGoogle;
     Property Stats : TFHIRWebServerStats read FStats;
     property Lock : TFslLock read FLock;
     property cache : THTTPCacheManager read FCache write SetCache;
-
-    {$IFNDEF NO_JS}
-    property OnRegisterJs : TRegisterJavascriptEvent read FOnRegisterJs write FOnRegisterJs;
-    {$ENDIF}
   end;
 
   TFHIRWebServerBase = class (TFslObject)
@@ -142,14 +147,14 @@ type
 
     function GetSourceProvider: TFHIRWebServerSourceProvider;
   protected
-    function HTTPPort : String;
-    function SSLPort : String;
+    function HTTPPort(actual : boolean) : String;
+    function SSLPort(actual : boolean) : String;
   public
     constructor Create(common : TFHIRWebServerCommon);
     destructor Destroy; override;
 
-    function loadMultipartForm(const request: TStream; const contentType: String; var mode : TOperationMode): TMimeMessage;
-    function extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
+    function loadMultipartForm(const request: TStream; const contentType: String; out mode : TOperationMode): TMimeMessage;
+    function extractFileData(langList : THTTPLanguageList; form: TMimeMessage; const name: String; var sContentType: String): TStream;
     function port(actual, default: integer): String;
 
     property Common : TFHIRWebServerCommon read FCommon;
@@ -182,7 +187,7 @@ implementation
 constructor TFHIRWebServerStats.Create;
 begin
   inherited;
-  FLock := TFslLock.create;
+  FLock := TFslLock.Create('web.stats');
   FRestCount := 0;
   FRestTime := 0;
   FStartTime := 0;
@@ -314,18 +319,18 @@ begin
   FCertificateIdList := TStringList.Create;
   FCommon := common;
   if FCommon = nil then
-    FCommon := TFHIRWebServerCommon.create;
+    FCommon := TFHIRWebServerCommon.Create;
 end;
 
 destructor TFHIRWebServerBase.Destroy;
 begin
-  FPatientViewServers.Free;
-  FCertificateIdList.Free;
-  FCommon.Free;
+  FPatientViewServers.free;
+  FCertificateIdList.free;
+  FCommon.free;
   inherited;
 end;
 
-function TFHIRWebServerBase.loadMultipartForm(const request: TStream; const contentType: String; var mode: TOperationMode): TMimeMessage;
+function TFHIRWebServerBase.loadMultipartForm(const request: TStream; const contentType: String; out mode: TOperationMode): TMimeMessage;
 var
   m: TMimeMessage;
   mp: TMimePart;
@@ -335,19 +340,22 @@ begin
     m.ReadFromStream(request, contentType);
     result := m;
     for mp in m.Parts do
+    begin
       if SameText(mp.FileName, 'cda.zip') then
         mode := opmUpload;
+
+    end;
   Except
     on e: exception do
     begin
-      m.Free;
+      m.free;
       recordStack(e);
       raise;
     end;
   End;
 end;
 
-function TFHIRWebServerBase.extractFileData(const lang : THTTPLanguages; form: TMimeMessage; const name: String; var sContentType: String): TStream;
+function TFHIRWebServerBase.extractFileData(langList : THTTPLanguageList; form: TMimeMessage; const name: String; var sContentType: String): TStream;
 var
   sLeft, sRight: String;
   iLoop: integer;
@@ -386,7 +394,7 @@ begin
         else if StringStartsWith(sContent, '{', false) then
           sContentType := 'application/fhir+json'
         else
-          raise EFHIRException.CreateLang('FORMAT_UNRECOGNIZED', lang, [sContent]);
+          raise EFHIRException.CreateLang('FORMAT_UNRECOGNIZED', langList, [sContent]);
       end;
     End
   End;
@@ -438,7 +446,7 @@ Begin
         result := fReg.ReadString('Content Type');
         fReg.CloseKey;
       Finally
-        fReg.Free;
+        fReg.free;
       End;
     Except
     End;
@@ -453,20 +461,32 @@ begin
   result := Common.SourceProvider;
 end;
 
-function TFHIRWebServerBase.SSLPort: String;
+function TFHIRWebServerBase.SSLPort(actual : boolean): String;
+var
+  p : word;
 begin
-  if Common.SSLPort = 443 then
+  if actual then
+    p := common.workingSSLPort
+  else
+    p := common.statedSSLPort;
+  if p = 443 then
     result := ''
   else
-    result := ':'+inttostr(Common.SSLPort);
+    result := ':'+inttostr(p);
 end;
 
-function TFHIRWebServerBase.HTTPPort: String;
+function TFHIRWebServerBase.HTTPPort(actual : boolean): String;
+var
+  p : word;
 begin
-  if Common.ActualPort = 80 then
+  if actual then
+    p := common.workingPort
+  else
+    p := common.statedPort;
+  if p = 80 then
     result := ''
   else
-    result := ':'+inttostr(Common.ActualPort);
+    result := ':'+inttostr(p);
 end;
 
 
@@ -476,17 +496,17 @@ constructor TFHIRWebServerCommon.Create;
 begin
   inherited Create;
   FGoogle := TGoogleAnalyticsProvider.Create;
-  FStats := TFHIRWebServerStats.create;
-  FLock := TFslLock.Create('fhir-rest');
+  FStats := TFHIRWebServerStats.Create;
+  FLock := TFslLock.Create('web.common');
 end;
 
 destructor TFHIRWebServerCommon.Destroy;
 begin
-  FCache.Free;
-  FLock.Free;
-  FStats.Free;
-  FSourceProvider.Free;
-  FGoogle.Free;
+  FCache.free;
+  FLock.free;
+  FStats.free;
+  FSourceProvider.free;
+  FGoogle.free;
   inherited;
 end;
 
@@ -497,13 +517,13 @@ end;
 
 procedure TFHIRWebServerCommon.SetCache(const Value: THTTPCacheManager);
 begin
-  FCache.Free;
+  FCache.free;
   FCache := Value;
 end;
 
 procedure TFHIRWebServerCommon.SetSourceProvider(const Value: TFHIRWebServerSourceProvider);
 begin
-  FSourceProvider.Free;
+  FSourceProvider.free;
   FSourceProvider := Value;
 end;
 

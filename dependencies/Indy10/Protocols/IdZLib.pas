@@ -936,6 +936,7 @@ begin
     FillChar(FGZHeader.name^, FGZHeader.name_max, 0);
     TMarshal.Copy(TBytesPtr(@LBytes)^, 0, TPtrWrapper.Create(FGZHeader.name), IndyMin(Length(LBytes), FGZHeader.name_max));
     {$ELSE}
+    // TODO: use Move() instead...
     SetString(LName, PAnsiChar(LBytes), Length(LBytes));
     {$IFDEF HAS_AnsiStrings_StrPLCopy}AnsiStrings.{$ENDIF}StrPLCopy(FGZHeader.name, LName, FGZHeader.name_max);
     {$ENDIF}
@@ -984,6 +985,7 @@ end;
 
 function TCompressionStream.IdRead(var VBuffer: TIdBytes; AOffset, ACount: Longint): Longint;
 begin
+  result := 0;
   raise ECompressionError.Create(sInvalidStreamOp);
 end;
 
@@ -1103,6 +1105,7 @@ end;
 
 function TDecompressionStream.IdWrite(const ABuffer: TIdBytes; AOffset, ACount: Longint): Longint;
 begin
+  result := 0;
   raise EDecompressionError.Create(sInvalidStreamOp);
 end;
 

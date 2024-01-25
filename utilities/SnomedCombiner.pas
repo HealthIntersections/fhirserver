@@ -73,7 +73,7 @@ Type
     FKind : TSnomedCombinedConcept; // not linked
     FCaps : TSnomedCombinedConcept; // not linked
     FActive : boolean;
-    FLang : byte;
+    FLLang : byte;
     FValue : String;
   public
     function link : TSnomedCombinedDescription; overload;
@@ -258,14 +258,14 @@ implementation
 
 constructor TTabWriter.Create(filename: String);
 begin
-  inherited create;
+  inherited Create;
   FStream := TFileStream.Create(filename, fmCreate);
   FDiv := false;
 end;
 
-destructor TTabWriter.destroy;
+destructor TTabWriter.Destroy;
 begin
-  FStream.Free;
+  FStream.free;
   inherited;
 end;
 
@@ -327,12 +327,12 @@ constructor TSnomedCombinedRelationshipGroup.Create(source : TSnomedServices);
 begin
   inherited Create;
   self.source := source;
-  FRelationships := TFslList<TSnomedCombinedRelationship>.create;
+  FRelationships := TFslList<TSnomedCombinedRelationship>.Create;
 end;
 
 destructor TSnomedCombinedRelationshipGroup.Destroy;
 begin
-  FRelationships.Free;
+  FRelationships.free;
   inherited;
 end;
 
@@ -345,7 +345,7 @@ function TSnomedCombinedRelationshipGroup.copy: TSnomedCombinedRelationshipGroup
 var
   t : TSnomedCombinedRelationship;
 begin
-  result := TSnomedCombinedRelationshipGroup.create(source);
+  result := TSnomedCombinedRelationshipGroup.Create(source);
   for t in FRelationships do
     result.FRelationships.add(t.copy);
   result.FGroup := FGroup;
@@ -356,16 +356,16 @@ end;
 constructor TSnomedCombinedConcept.Create;
 begin
   inherited;
-  FDescriptions := TFslList<TSnomedCombinedDescription>.create;
-  FGroups := TFslList<TSnomedCombinedRelationshipGroup>.create;
-  FChildren := TFslList<TSnomedCombinedConcept>.create;
+  FDescriptions := TFslList<TSnomedCombinedDescription>.Create;
+  FGroups := TFslList<TSnomedCombinedRelationshipGroup>.Create;
+  FChildren := TFslList<TSnomedCombinedConcept>.Create;
 end;
 
 destructor TSnomedCombinedConcept.Destroy;
 begin
-  FChildren.Free;
-  FGroups.Free;
-  FDescriptions.Free;
+  FChildren.free;
+  FGroups.free;
+  FDescriptions.free;
   inherited;
 end;
 
@@ -391,27 +391,27 @@ end;
 constructor TSnomedCombiner.Create;
 begin
   inherited;
-  FStore := TFslMap<TSnomedCombinedStoreEntry>.create;
-  FOthers := TFslList<TSnomedServices>.create;
-  FConcepts := TFslMap<TSnomedCombinedConcept>.create(500000);
+  FStore := TFslMap<TSnomedCombinedStoreEntry>.Create;
+  FOthers := TFslList<TSnomedServices>.Create;
+  FConcepts := TFslMap<TSnomedCombinedConcept>.Create(500000);
   FDependencies := TFslMap<TSnomedCombinedDependency>.Create;
-  FDescriptions := TFslMap<TSnomedCombinedDescription>.create(1500000);
-  FRelationships := TFslMap<TSnomedCombinedRelationship>.create(3000000);
-  FRefSets := TFslMap<TSnomedCombinedReferenceSet>.create(1000);
-  FSummary := TStringList.create;
-  FIssues := TStringList.create;
+  FDescriptions := TFslMap<TSnomedCombinedDescription>.Create(1500000);
+  FRelationships := TFslMap<TSnomedCombinedRelationship>.Create(3000000);
+  FRefSets := TFslMap<TSnomedCombinedReferenceSet>.Create(1000);
+  FSummary := TStringList.Create;
+  FIssues := TStringList.Create;
 end;
 
 destructor TSnomedCombiner.Destroy;
 begin
-  FStore.Free;
-  FRefSets.Free;
-  FDescriptions.Free;
-  FDependencies.Free;
-  FRelationships.Free;
+  FStore.free;
+  FRefSets.free;
+  FDescriptions.free;
+  FDependencies.free;
+  FRelationships.free;
   FSummary.free;
   FIssues.free;
-  FConcepts.Free;
+  FConcepts.free;
   FInternational.free;
   FOthers.free;
   inherited;
@@ -517,7 +517,7 @@ begin
     fsm.date := dep.FDate;
     fsm.module := dep.source;
     fsm.FItem := FConcepts[inttostr(dep.target)];
-    fsm.FValues := TStringList.create;
+    fsm.FValues := TStringList.Create;
     fsm.FValues.Add(formatDateTime('yyyymmdd', dep.startDate));
     fsm.FValues.Add(formatDateTime('yyyymmdd', dep.endDate));
   end;
@@ -620,7 +620,7 @@ begin
     else
       FDependencies.Add(dep.key, dep.Link as TSnomedCombinedDependency);
   finally
-    dep.Free;
+    dep.free;
   end;
 end;
 
@@ -638,7 +638,7 @@ begin
   svc.Desc.getDescription(i, iDesc, id, date, concept, module, kind, caps, refsets, valueses, active, lang);
   cid := svc.Concept.getConceptId(concept);
   if not FConcepts.TryGetValue(inttostr(cid), c) then
-    raise ETerminologySetup.create('no find concept '+inttostr(cid))
+    raise ETerminologySetup.Create('no find concept '+inttostr(cid))
   else
   begin
     d := nil;
@@ -656,7 +656,7 @@ begin
     end
     else
     begin
-      d := TSnomedCombinedDescription.create;
+      d := TSnomedCombinedDescription.Create;
       c.FDescriptions.Add(d);
       FDescriptions.Add(inttostr(id), d.Link);
       d.FId := id;
@@ -665,7 +665,7 @@ begin
       d.FKind := FConcepts[inttostr(svc.Concept.getConceptId(kind))];
       d.FCaps := FConcepts[inttostr(svc.Concept.getConceptId(caps))];
       d.FActive := active;
-      d.FLang := lang;
+      d.FLLang := lang;
       d.FValue := svc.Strings.GetEntry(iDesc);
     end;
   end;
@@ -796,7 +796,7 @@ begin
             4 {integer} : rm.FValues.add(inttostr(vl[j*2]));
             5 {string}  : rm.FValues.add(svc.Strings.GetEntry(vl[j*2]));
           else
-            raise ETerminologySetup.create('Unknown Cell Type '+inttostr(vl[j*2+1]));
+            raise ETerminologySetup.Create('Unknown Cell Type '+inttostr(vl[j*2+1]));
           end;
       end;
     end
@@ -855,16 +855,16 @@ begin
 //  // these are handled differently (in reverse, so we can iterate the children)
 //  begin
 //    if group <> 0 then
-//      raise ETerminologySetup.create('is_a in a group - '+inttostr(identity));
+//      raise ETerminologySetup.Create('is_a in a group - '+inttostr(identity));
 //    cid := svc.Concept.getConceptId(target);
 //    if not FConcepts.TryGetValue(inttostr(cid), c) then
-//      raise ETerminologySetup.create('no find concept '+inttostr(cid));
+//      raise ETerminologySetup.Create('no find concept '+inttostr(cid));
 //    cid := svc.Concept.getConceptId(source);
 //    if not FConcepts.TryGetValue(inttostr(cid), ct) then
-//      raise ETerminologySetup.create('no find concept '+inttostr(cid));
+//      raise ETerminologySetup.Create('no find concept '+inttostr(cid));
 //    cid := svc.Concept.getConceptId(reltype);
 //    if not FConcepts.TryGetValue(inttostr(cid), cr) then
-//      raise ETerminologySetup.create('no find concept '+inttostr(cid));
+//      raise ETerminologySetup.Create('no find concept '+inttostr(cid));
 //
 //    r := nil;
 //    for t in c.FNoGroup.FRelationships do
@@ -896,13 +896,13 @@ begin
 //  begin
     cid := svc.Concept.getConceptId(source);
     if not FConcepts.TryGetValue(inttostr(cid), c) then
-      raise ETerminologySetup.create('no find concept '+inttostr(cid));
+      raise ETerminologySetup.Create('no find concept '+inttostr(cid));
     cid := svc.Concept.getConceptId(target);
     if not FConcepts.TryGetValue(inttostr(cid), ct) then
-      raise ETerminologySetup.create('no find concept '+inttostr(cid));
+      raise ETerminologySetup.Create('no find concept '+inttostr(cid));
     cid := svc.Concept.getConceptId(RelType);
     if not FConcepts.TryGetValue(inttostr(cid), cr) then
-      raise ETerminologySetup.create('no find concept '+inttostr(cid));
+      raise ETerminologySetup.Create('no find concept '+inttostr(cid));
 
     if group = 0 then
       g := c.FNoGroup
@@ -946,7 +946,7 @@ begin
     end
     else
     begin
-      r := TSnomedCombinedRelationship.create(svc);
+      r := TSnomedCombinedRelationship.Create(svc);
       g.FRelationships.Add(r);
       FRelationships.add(inttostr(identity), r.link);
       r.FId := identity;
@@ -1015,7 +1015,7 @@ begin
         FStore.Add(r, TSnomedCombinedStoreEntry.Create(l));
       end;
     finally
-      sl.Free;
+      sl.free;
     end;
   end;
   FModuleId := generateId(1, 0);
@@ -1083,7 +1083,7 @@ begin
         s := inttostr(c.FID)
       else
         s := s+','+inttostr(c.FID);
-    raise ETerminologySetup.create('Circular Dependency found: SCT concept '+inttostr(focus.FId)+' has itself as a parent ('+s+')');
+    raise ETerminologySetup.Create('Circular Dependency found: SCT concept '+inttostr(focus.FId)+' has itself as a parent ('+s+')');
   end;
   SetLength(np, length(parents)+1);
   for i := 0 to length(parents) - 1 do
@@ -1240,11 +1240,11 @@ begin
       end;
     finally
       c.free;
-      d.Free;
-      r.Free;
+      d.free;
+      r.free;
     end;
   finally
-    st.Free;
+    st.free;
   end;
   for rs in FRefSets.Values do
   begin
@@ -1284,7 +1284,7 @@ begin
         r.endRecord;
       end;
     finally
-      r.Free;
+      r.free;
     end;
   end;
 end;
@@ -1369,7 +1369,7 @@ begin
   begin
     inc(nextDescription);
     result := generateId(nextDescription, 1);
-    FStore.Add(d, TSnomedCombinedStoreEntry.create(result));
+    FStore.Add(d, TSnomedCombinedStoreEntry.Create(result));
   end;
 end;
 
@@ -1385,7 +1385,7 @@ begin
   begin
     inc(nextRelationship);
     result := generateId(nextRelationship, 2);
-    FStore.Add(id, TSnomedCombinedStoreEntry.create(result));
+    FStore.Add(id, TSnomedCombinedStoreEntry.Create(result));
   end;
 end;
 
@@ -1411,7 +1411,7 @@ procedure TSnomedCombiner.identify;
     desc.FKind := FConcepts[inttostr(RF2_MAGIC_FSN)];
     desc.FCaps := FConcepts[inttostr(900000000000448009)];
     desc.FActive := true;
-    desc.Flang := 1;
+    desc.FLlang := 1;
     desc.FValue := FSN;
 
     desc := TSnomedCombinedDescription.Create;
@@ -1422,10 +1422,10 @@ procedure TSnomedCombiner.identify;
     desc.FKind := FConcepts[inttostr(900000000000013009)];
     desc.FCaps := FConcepts[inttostr(900000000000448009)];
     desc.FActive := true;
-    desc.Flang := 1;
+    desc.FLlang := 1;
     desc.FValue := pn;
 
-    relationship := TSnomedCombinedRelationship.create(nil);
+    relationship := TSnomedCombinedRelationship.Create(nil);
     concept.group(nil, 0).FRelationships.add(relationship);
     relationship.id := getRelationshipId(concept.id, IS_A_MAGIC, parent, 0);
     relationship.FTarget := FConcepts[inttostr(parent)];
@@ -1445,7 +1445,7 @@ procedure TSnomedCombiner.identify;
   begin
     concept := FConcepts[inttostr(source)];
 
-    relationship := TSnomedCombinedRelationship.create(nil);
+    relationship := TSnomedCombinedRelationship.Create(nil);
     concept.group(nil, 0).FRelationships.add(relationship);
     relationship.id := getRelationshipId(source, reltype, target, 0);
     relationship.FTarget := FConcepts[inttostr(target)];
@@ -1487,11 +1487,11 @@ begin
         dep.endDate := trunc(now);
         FDependencies.Add(dep.key, dep.Link as TSnomedCombinedDependency);
       finally
-        dep.Free;
+        dep.free;
       end;
     end;
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -1549,7 +1549,7 @@ end;
 
 destructor TSnomedCombinedReferenceSetEntry.Destroy;
 begin
-  FValues.Free;
+  FValues.free;
   inherited;
 end;
 
@@ -1567,16 +1567,16 @@ end;
 constructor TSnomedCombinedReferenceSet.Create;
 begin
   inherited;
-  FTypes := TStringList.create;
-  FFields := TStringList.create;
-  FMembers := TFslMap<TSnomedCombinedReferenceSetEntry>.create;
+  FTypes := TStringList.Create;
+  FFields := TStringList.Create;
+  FMembers := TFslMap<TSnomedCombinedReferenceSetEntry>.Create;
 end;
 
 destructor TSnomedCombinedReferenceSet.Destroy;
 begin
-  FTypes.Free;
-  FFields.Free;
-  FMembers.Free;
+  FTypes.free;
+  FFields.free;
+  FMembers.free;
   inherited;
 end;
 
@@ -1613,15 +1613,15 @@ end;
 
 { TSnomedCombinedStoreEntry }
 
-constructor TSnomedCombinedStoreEntry.create(s: String);
+constructor TSnomedCombinedStoreEntry.Create(s: String);
 begin
-  inherited create;
+  inherited Create;
   id := Strtoint64(s);
 end;
 
-constructor TSnomedCombinedStoreEntry.create(i: int64);
+constructor TSnomedCombinedStoreEntry.Create(i: int64);
 begin
-  inherited create;
+  inherited Create;
   id := i;
 end;
 

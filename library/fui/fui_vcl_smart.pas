@@ -132,7 +132,7 @@ begin
   if ARequestInfo.Document = '/done' then
   begin
     s := ARequestInfo.RawHTTPCommand.Split([' ']);
-    pm := THTTPParameters.create(s[1].Substring(6));
+    pm := THTTPParameters.Create(s[1].Substring(6));
     try
       FServerError := pm['error'];
       FAuthCode := pm['code'];
@@ -158,14 +158,14 @@ end;
 procedure TSmartOnFhirLoginForm.FormDestroy(Sender: TObject);
 begin
   inherited;
-  FToken.Free;
-  FServer.Free;
+  FToken.free;
+  FServer.free;
 end;
 
 procedure TSmartOnFhirLoginForm.FormHide(Sender: TObject);
 begin
   webserver.Active := false;
-  webserver.Free;
+  webserver.free;
 end;
 
 procedure TSmartOnFhirLoginForm.FormShow(Sender: TObject);
@@ -188,13 +188,13 @@ end;
 
 procedure TSmartOnFhirLoginForm.SetServer(const Value: TRegisteredFHIRServer);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := Value;
 end;
 
 procedure TSmartOnFhirLoginForm.SetToken(const Value: TClientAccessToken);
 begin
-  FToken.Free;
+  FToken.free;
   FToken := Value;
 end;
 

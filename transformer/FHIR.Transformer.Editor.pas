@@ -95,7 +95,7 @@ begin
   FInfo := f;
 end;
 
-destructor TEditorInformation.destroy;
+destructor TEditorInformation.Destroy;
 begin
   FInfo.free;
   inherited;
@@ -155,7 +155,7 @@ begin
   try
     result := TFHIRMMManager.parse(context, ss, ffXml);
   finally
-    ss.Free;
+    ss.free;
   end;
 end;
 
@@ -170,7 +170,7 @@ begin
   try
     result := p.parseResource(memo.RawText);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 

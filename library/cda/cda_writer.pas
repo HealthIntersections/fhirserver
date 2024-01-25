@@ -213,7 +213,7 @@ Type
     Procedure WriteSubstanceAdministration(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSubstanceAdministration; bOptional : Boolean);
     Procedure WriteSupply(Const sPath: string; oXml : TXmlBuilder; Const sName : string; oFocus : TcdaSupply; bOptional : Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure WriteCDA(oXml : TXmlBuilder; oDoc : TcdaClinicalDocument);
     Procedure WritePiece(oXml: TXmlBuilder; oPart : Tv3Base);
@@ -761,7 +761,7 @@ Begin
       oEvent.code := CODES_Tv3TimingEvent[oDT.event];
       WriteCD(sPath+'\event', oXml, 'event', oEvent, false, false);
     Finally
-      oEvent.Free;
+      oEvent.free;
     End;
   End;
   oXml.Close(sName);
@@ -5059,13 +5059,13 @@ begin
   Else if oPart.RimClassName = 'Supply' Then
     WriteSupply('Supply', oXml, 'Supply', oPart as TcdaSupply, false)
   Else
-    raise ECDAException.create('Unknown type '+oPart.ClassName);
+    raise ECDAException.Create('Unknown type '+oPart.ClassName);
 
 end;
 
-function TCDAWriter.sizeInBytesV : cardinal;
+function TCDAWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 End.

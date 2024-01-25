@@ -5,21 +5,16 @@ import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-import org.fhir.delphi.GeneratorUtils;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
-import org.hl7.fhir.r5.model.Enumerations.FHIRAllTypes;
+import org.hl7.fhir.r5.model.Enumerations.FHIRTypes;
 import org.hl7.fhir.r5.model.Enumerations.OperationParameterUse;
 import org.hl7.fhir.r5.model.OperationDefinition;
 import org.hl7.fhir.r5.model.OperationDefinition.OperationDefinitionParameterComponent;
-import org.hl7.fhir.r5.model.StructureDefinition;
-import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.utilities.Utilities;
 
 
@@ -34,17 +29,17 @@ public class OperationsGenerator extends BaseGenerator {
     super(definitions, configuration, version, genDate);
   }
 
-	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.Operations");
+  public void generate(String filename) throws Exception {
+    String template = config.getTemplate("fhir{N}_operations");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{op.intf}}", o1.toString());
     template = template.replace("{{op.impl}}", o2.toString());
 
     OutputStreamWriter w = new OutputStreamWriter(new FileOutputStream(filename));
     w.write(template);
-		w.flush();
-		w.close();
-	}
+    w.flush();
+    w.close();
+  }
 
   public void genOperation(OperationDefinition op) throws IOException {
     String name = Utilities.capitalize(getPascalName(op.getCode()));
@@ -52,17 +47,21 @@ public class OperationsGenerator extends BaseGenerator {
       return;
     opNames.add(name);
 
-    line(o1, "  //Operation "+op.getCode()+" ("+op.getName()+")");
+    line(o1, "  //Operation "+op.getCode()+" ("+op.present()+")");
 
     genOp(op, op.getParameter(), OperationParameterUse.IN, "Request", "Req");
     genOp(op, op.getParameter(), OperationParameterUse.OUT, "Response", "Resp");
-    
+
   }
-	
+
 
   private void genOp(OperationDefinition op, List<OperationDefinitionParameterComponent> plist, OperationParameterUse use, String suffix, String prefix) throws IOException {
+    if (op.getId().equals("NamingSystem-translate-id")) {
+      return;
+    }
     String name = Utilities.capitalize(getPascalName(op.getCode()));
     StringBuilder fields = new StringBuilder();
+    StringBuilder sizers = new StringBuilder();
     StringBuilder accessors = new StringBuilder();
     StringBuilder properties = new StringBuilder();
     StringBuilder destroy = new StringBuilder();
@@ -99,10 +98,12 @@ public class OperationsGenerator extends BaseGenerator {
 
         if (list) {
           if (!obj) {
-            fields.append("    F"+Utilities.capitalize(pn)+"List : TList<"+pt+">;\r\n");
-            gencreate.append("  F"+Utilities.capitalize(pn)+"List := TList<"+pt+">.create;\r\n");
+            String tn =pt.equals("String") ? "TStringList" : "TList<"+pt+">";
+            fields.append("    F"+Utilities.capitalize(pn)+"List : "+tn+";\r\n");
+            sizers.append("  inc(result, F"+Utilities.capitalize(pn)+"List.sizeInBytes(magic));\r\n");
+            gencreate.append("  F"+Utilities.capitalize(pn)+"List := "+tn+".Create;\r\n");
             destroy.append("  F"+Utilities.capitalize(pn)+"List.free;\r\n");
-            properties.append("    property "+pn+"List : TList<"+pt+"> read F"+Utilities.capitalize(pn)+"List;\r\n");
+            properties.append("    property "+pn+"List : "+tn+" read F"+Utilities.capitalize(pn)+"List;\r\n");
 
             vars.add(pt);
             String v = "v"+Integer.toString(vars.size());
@@ -110,14 +111,15 @@ public class OperationsGenerator extends BaseGenerator {
                 "    if p.name = '"+p.getName()+"' then\r\n");
             params.append("    for "+v+" in F"+Utilities.capitalize(pn)+"List do\r\n");
             create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as TFhir"+Utilities.capitalize(p.getType().toCode())+").value);"+marker()+"\r\n");
-            params.append("      result.AddParameter('"+p.getName()+"', TFhir"+Utilities.capitalize(p.getType().toCode())+".create("+v+"));\r\n");
+            params.append("      result.AddParameter('"+p.getName()+"', TFhir"+Utilities.capitalize(p.getType().toCode())+".Create("+v+"));\r\n");
             screate.append("  for s in params['"+p.getName()+"'].Split([';']) do\r\n");
             screate.append("    F"+Utilities.capitalize(pn)+"List.add(s); \r\n");
             usesS = true;
 
           } else {
             fields.append("    F"+Utilities.capitalize(pn)+"List : TFslList<"+pt+">;\r\n");
-            gencreate.append("  F"+Utilities.capitalize(pn)+"List := TFslList<"+pt+">.create;\r\n");
+            sizers.append("  inc(result, F"+Utilities.capitalize(pn)+"List.sizeInBytes(magic));\r\n");
+            gencreate.append("  F"+Utilities.capitalize(pn)+"List := TFslList<"+pt+">.Create;\r\n");
             destroy.append("  F"+Utilities.capitalize(pn)+"List.free;\r\n");
             properties.append("    property "+pn+"List : TFslList<"+pt+"> read F"+Utilities.capitalize(pn)+"List;\r\n");
 
@@ -134,7 +136,7 @@ public class OperationsGenerator extends BaseGenerator {
               params.append("      result.AddParameter('"+p.getName()+"', "+v+".Link);\r\n");
               screate.append("  !F"+Utilities.capitalize(pn)+" := StrToBoolDef(params['"+p.getName()+"'], false); - 3\r\n");
             } else if (complex) {
-              create.append("      F"+Utilities.capitalize(pn)+"List.Add("+pt+".create(p));"+marker()+"\r\n");
+              create.append("      F"+Utilities.capitalize(pn)+"List.Add("+pt+".Create(p));"+marker()+"\r\n");
               params.append("      result.AddParameter("+v+".asParams('"+p.getName()+"'));\r\n");
             } else {
               create.append("      F"+Utilities.capitalize(pn)+"List.Add((p.value as "+pt+").Link);"+marker()+"\r\n");
@@ -144,6 +146,9 @@ public class OperationsGenerator extends BaseGenerator {
         } else {
           fields.append("    F"+Utilities.capitalize(pn)+" : "+pt+";\r\n");
           if (obj) {
+            sizers.append("  inc(result, F"+Utilities.capitalize(pn)+".sizeInBytes(magic));\r\n");
+          } 
+          if (obj) {
             accessors.append("    procedure Set"+Utilities.capitalize(pn)+"(value : "+pt+");\r\n");
             destroy.append("  F"+Utilities.capitalize(pn)+".free;\r\n");
             line(o2, "procedure TFHIR"+name+"Op"+suffix+".Set"+Utilities.capitalize(pn)+"(value : "+pt+");\r\nbegin\r\n  F"+Utilities.capitalize(pn)+".free;\r\n  F"+Utilities.capitalize(pn)+" := value;\r\nend;");
@@ -151,38 +156,39 @@ public class OperationsGenerator extends BaseGenerator {
           properties.append("    property "+pn+" : "+pt+" read F"+Utilities.capitalize(pn)+" write "+(obj ? "Set" : "F")+Utilities.capitalize(pn)+";\r\n");
 
           if (!pt.equals("Boolean")) {
-            if (pt.equals("String"))
+            if (pt.equals("String")) {
               params.append("    if (F"+Utilities.capitalize(pn)+" <> '') then\r\n");
-            else if (pt.equals("TFslDateTime"))
+              sizers.append("  inc(result, (F"+Utilities.capitalize(pn)+".length * sizeof(char))+12);\r\n");
+            } else if (pt.equals("TFslDateTime"))
               params.append("    if (F"+Utilities.capitalize(pn)+".notNull) then\r\n");
             else
               params.append("    if (F"+Utilities.capitalize(pn)+" <> nil) then\r\n");
           }
           if (!isPrimitive(p.getType()) && !"token".equals(p.getType().toCode())) {
-            if (isResource(p.getType().toCode()) || p.getType() == FHIRAllTypes.ANY) {
+            if (isResource(p.getType().toCode()) || p.getType() == FHIRTypes.BASE) {
               params.append("      result.addParameter('"+p.getName()+"', F"+Utilities.capitalize(pn)+".Link);"+marker()+"\r\n");
               create.append("  F"+Utilities.capitalize(pn)+" := (params.res['"+p.getName()+"'] as "+pt+").Link;"+marker()+"\r\n");
             } else if (pt.equals("String")) {
-              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
+              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".Create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
               create.append("  if params.param['"+p.getName()+"'] <> nil then\r\n    F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+Utilities.capitalize(p.getType().toCode())+").Value; "+marker()+"\r\n");
             } else if (pt.equals("Boolean")) {
-              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
+              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".Create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
               create.append("  if params.param['"+p.getName()+"'] <> nil then\r\n    F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+pt+").Value; "+marker()+"\r\n");
             } else if (pt.equals("TFslDateTime")) {
-              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
+              params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".Create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
               create.append("  if params.param['"+p.getName()+"'] <> nil then\r\n    F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIRDateTime).Value; "+marker()+"\r\n");
             } else if (complex) {
               params.append("      result.addParameter(F"+Utilities.capitalize(pn)+".asParams('"+p.getName()+"'));"+marker()+"\r\n");
-              create.append("  F"+Utilities.capitalize(pn)+" := "+pt+".create(params.param['"+p.getName()+"']); "+marker()+"\r\n");
+              create.append("  F"+Utilities.capitalize(pn)+" := "+pt+".Create(params.param['"+p.getName()+"']); "+marker()+"\r\n");
             } else {
               params.append("      result.addParameter('"+p.getName()+"', F"+Utilities.capitalize(pn)+".Link);"+marker()+"\r\n");
               create.append("  if params.param['"+p.getName()+"'] <> nil then\r\n    F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as "+pt+").Link;"+marker()+"\r\n");
             }
           } else if (obj) {
-            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
+            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".Create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
             create.append("  F"+Utilities.capitalize(pn)+" := (params.param['"+p.getName()+"'].value as TFHIR"+Utilities.capitalize(p.getType().toCode())+").value;\r\n");
           } else {
-            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
+            params.append("      result.addParameter('"+p.getName()+"', TFHIR"+Utilities.capitalize(p.getType().toCode())+".Create(F"+Utilities.capitalize(pn)+"));"+marker()+"\r\n");
             if (pt.equals("Boolean")) {
               create.append("  F"+Utilities.capitalize(pn)+" := params.bool['"+p.getName()+"'];\r\n");
               screate.append("  F"+Utilities.capitalize(pn)+" := StrToBoolDef(params['"+p.getName()+"'], false);\r\n");
@@ -205,6 +211,7 @@ public class OperationsGenerator extends BaseGenerator {
               accessors.toString()+
               "  protected\r\n"+
               "    function isKnownName(name : String) : boolean; override;\r\n"+
+              "    function sizeInBytesV(magic : integer) : cardinal; override;\r\n"+
               "  public\r\n"+
               "    constructor Create; overload; override;\r\n"+
               "    constructor Create(params : TFhirParametersParameter"+"); overload; override;\r\n"+
@@ -219,6 +226,7 @@ public class OperationsGenerator extends BaseGenerator {
               accessors.toString()+
               "  protected\r\n"+
               "    function isKnownName(name : String) : boolean; override;\r\n"+
+              "    function sizeInBytesV(magic : integer) : cardinal; override;\r\n"+
               "  public\r\n"+
               "    constructor Create; overload; override;\r\n"+
               "    destructor Destroy; override;\r\n"+
@@ -227,16 +235,16 @@ public class OperationsGenerator extends BaseGenerator {
               "    function asParams : TFHIRParameters"+"; override;\r\n"+
               properties.toString()+
           "  end;\r\n");
-    o2.append("constructor TFHIR"+name+"Op"+suffix+".create;\r\n"+
+    o2.append("constructor TFHIR"+name+"Op"+suffix+".Create;\r\n"+
         "begin\r\n"+
-        "  inherited create();\r\n"+
+        "  inherited Create();\r\n"+
         gencreate.toString()+
         "end;\r\n");
     if (use == null)
-      o2.append("constructor TFHIR"+name+"Op"+suffix+".create(params : TFhirParametersParameter"+");\r\n"+
+      o2.append("constructor TFHIR"+name+"Op"+suffix+".Create(params : TFhirParametersParameter"+");\r\n"+
           (gencreate.length() > 0 ? "var\r\n  p : TFhirParametersParameter"+";\r\n" : "")+
           "begin\r\n"+
-          "  inherited create();\r\n"+
+          "  inherited Create();\r\n"+
           gencreate.toString()+
           create.toString()+
           "  loadExtensions(params);\r\n"+
@@ -269,7 +277,7 @@ public class OperationsGenerator extends BaseGenerator {
     if (use == null) 
       o2.append(
           "begin\r\n"+
-              "  result := TFHIRParametersParameter"+".create;\r\n"+
+              "  result := TFHIRParametersParameter"+".Create;\r\n"+
               "  try\r\n"+
               "    result.name := name;\r\n"+
               params.toString()+
@@ -278,7 +286,7 @@ public class OperationsGenerator extends BaseGenerator {
     else
       o2.append(
           "begin\r\n"+
-              "  result := TFHIRParameters"+".create;\r\n"+
+              "  result := TFHIRParameters"+".Create;\r\n"+
               "  try\r\n"+
               params.toString()+
               "    writeExtensions(result);\r\n"+
@@ -294,10 +302,15 @@ public class OperationsGenerator extends BaseGenerator {
           "begin\r\n"+
               "  result := StringArrayExists(["+names.substring(2)+"], name);\r\n"+
           "end;\r\n");
+    o2.append("\r\nfunction TFHIR"+name+"Op"+suffix+".sizeInBytesV(magic : integer) : cardinal;\r\n");
+    o2.append("begin\r\n");
+    o2.append("  result := inherited sizeInBytesV(magic);\r\n");
+    o2.append(sizers.toString());
+    o2.append("end;\r\n\r\n");
   }
 
 
-  private boolean isPrimitive(FHIRAllTypes type) {
+  private boolean isPrimitive(FHIRTypes type) {
     return type == null ? false : simpleTypes.containsKey(type.toCode());
   }
 

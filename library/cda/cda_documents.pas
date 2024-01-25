@@ -57,7 +57,7 @@ Type
     procedure SetText(const Value: String);
     procedure SetBuffer(const Value: TFslBuffer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -112,7 +112,7 @@ Type
     {
       Add an already existing Attachment to the end of the list.
     }
-    Procedure AddItem(value : TcdaAttachment);
+    Function AddItem(value : TcdaAttachment): TcdaAttachment;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -175,7 +175,7 @@ Type
     Procedure Decode(Const sSource : TStream); Overload;
     function GetCDAPatientID(const sOid: String): TIdentity;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(Const sSource : TBytes); Overload;
     constructor Create(Const sSource : TStream); Overload;
@@ -286,7 +286,7 @@ end;
 constructor TCDADocument.Create(const sSource: TBytes);
 begin
   Inherited Create;
-  FAttachments := TcdaAttachmentList.create;
+  FAttachments := TcdaAttachmentList.Create;
   Decode(sSource);
 end;
 
@@ -305,7 +305,7 @@ Begin
     ss := TFslStringStream.Create;
     try
       ss.Bytes := sSource;
-      zip := TFslZipPartList.create;
+      zip := TFslZipPartList.Create;
       reader := TFslZipReader.Create;
       try
         reader.Stream := ss.Link;
@@ -328,7 +328,7 @@ Begin
               att.DateTime := zip[i].Timestamp;
               FAttachments.Add(att.link);
             finally
-              att.Free;
+              att.free;
             end;
           end;
         end;
@@ -349,7 +349,7 @@ Begin
       buffer.AsBytes := sSource;
       doParse(buffer);
     finally
-      buffer.Free;
+      buffer.free;
     end;
   End;
 end;
@@ -372,21 +372,21 @@ begin
       FIdentifiedObjects := oCda.IdentifiedObjects.Link;
       FRoot := oCda.Parse(FDom);
     finally
-      oCda.Free;
+      oCda.free;
     end;
   Finally
-    oXml.Free;
+    oXml.free;
   End;
 end;
 
 
 destructor TCDADocument.Destroy;
 begin
-  FAttachments.Free;
-  FIdentifiedObjects.Free;
+  FAttachments.free;
+  FIdentifiedObjects.free;
   FSource := Bytes([]);
   FDom := nil;
-  FRoot.Free;
+  FRoot.free;
   FRoot := nil;
   inherited;
 end;
@@ -401,12 +401,12 @@ var
 begin
   if FSourceFormat = csfXDM then
   begin
-    zip := TFslZipPartList.create;
+    zip := TFslZipPartList.Create;
     try
       zip.Add(FCDAName, WriteCDA(FRoot, pretty));
       for i := 0 to FAttachments.Count - 1 Do
         zip.Add(FAttachments[i].Name, FAttachments[i].Buffer.AsBytes);
-      writer := TFslZipWriter.create;
+      writer := TFslZipWriter.Create;
       try
         writer.Parts := zip.Link;
         ss := TFslStringStream.Create;
@@ -460,7 +460,7 @@ Begin
   End
   Else if oId.extension <> '' Then
   Begin
-    result.Space:= oId.root;
+    result.Space := oId.root;
     result.Value := oId.extension;
   End
   Else
@@ -524,7 +524,7 @@ begin
     else
       result := '??multiple matches';
   finally
-    nodes.Free;
+    nodes.free;
   end;
 end;
 
@@ -553,7 +553,7 @@ begin
         result := result + Tv3II(nodes[i]).root;
     end;
   finally
-    nodes.Free;
+    nodes.free;
   end;
 end;
 
@@ -587,7 +587,7 @@ End;
 
 procedure TCDADocument.SetRoot(const Value: TcdaClinicalDocument);
 begin
-  FRoot.Free;
+  FRoot.free;
   FRoot := Value;
 end;
 
@@ -602,7 +602,7 @@ begin
     For iLoop := 0 to oList.Count -1 Do
       MineForSnomedCodes(oList[iLoop], oCodes);
   Finally
-    oList.Free;
+    oList.free;
   End;
 End;
 
@@ -673,7 +673,7 @@ begin
         oIter.Next;
       End;
     Finally
-      oIter.Free;
+      oIter.free;
     End;
   End;
 end;
@@ -758,7 +758,7 @@ begin
     end;
     result := copy(s.toString(), 3, $FFFF);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -786,7 +786,7 @@ end;
 
 function TCDADocument.XPath(oRoot: TV3Base; sExpression: String): Tv3BaseList;
 begin
-  result := Tv3BaseList.create(nil);
+  result := Tv3BaseList.Create(nil);
   try
     doXpath(oRoot, sExpression, result);
     result.Link;
@@ -798,7 +798,7 @@ end;
 constructor TCDADocument.Create(const sSource: TStream);
 begin
   Inherited Create;
-  FAttachments := TcdaAttachmentList.create;
+  FAttachments := TcdaAttachmentList.Create;
   Decode(sSource);
 end;
 
@@ -841,14 +841,14 @@ begin
   end;
 end;
 
-function TCDADocument.sizeInBytesV : cardinal;
+function TCDADocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDom.sizeInBytes);
-  inc(result, FRoot.sizeInBytes);
-  inc(result, FAttachments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDom.sizeInBytes(magic));
+  inc(result, FRoot.sizeInBytes(magic));
+  inc(result, FAttachments.sizeInBytes(magic));
   inc(result, (FCDAName.length * sizeof(char)) + 12);
-  inc(result, FIdentifiedObjects.sizeInBytes);
+  inc(result, FIdentifiedObjects.sizeInBytes(magic));
 end;
 
 { TCDAAttachment }
@@ -861,7 +861,7 @@ end;
 
 destructor TCDAAttachment.Destroy;
 begin
-  FBuffer.Free;
+  FBuffer.free;
   inherited;
 end;
 
@@ -894,11 +894,11 @@ begin
   FBuffer.AsText := value;
 end;
 
-function TCDAAttachment.sizeInBytesV : cardinal;
+function TCDAAttachment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FBuffer.sizeInBytes);
+  inc(result, FBuffer.sizeInBytes(magic));
 end;
 
 { TcdaAttachmentList }
@@ -924,13 +924,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaAttachmentList.AddItem(value : TcdaAttachment);
+function TcdaAttachmentList.AddItem(value : TcdaAttachment): TcdaAttachment;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAttachmentList.IndexOf(value : TcdaAttachment) : Integer;
@@ -944,7 +945,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1017,16 +1018,16 @@ Begin
         try
           result := oCda.Parse(doc);
         finally
-          doc.Free;
+          doc.free;
         end;
       Finally
-        oCda.Free;
+        oCda.free;
       End;
     Finally
-      oXml.Free;
+      oXml.free;
     End;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1046,13 +1047,13 @@ Begin
       try
         result := oCda.Parse(doc);
       finally
-        doc.Free;
+        doc.free;
       end;
     Finally
-      oCda.Free;
+      oCda.free;
     End;
   Finally
-    oXml.Free;
+    oXml.free;
   End;
 End;
 
@@ -1072,13 +1073,13 @@ Begin
       try
         result := oCda.Parse(doc);
       finally
-        doc.Free;
+        doc.free;
       end;
     Finally
-      oCda.Free;
+      oCda.free;
     End;
   Finally
-    oXml.Free;
+    oXml.free;
   End;
 End;
 
@@ -1100,16 +1101,16 @@ Begin
         oCda.Errors := False;
         oCda.WriteCDA(oXml, oDoc);
       Finally
-        oCda.Free;
+        oCda.free;
       End;
       oXml.Finish;
       oXml.Build(oStream);
     Finally
-      oXml.Free;
+      oXml.free;
     End;
     result := oStream.Bytes;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 

@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -36,7 +37,7 @@ interface
 uses
   SysUtils, Generics.Collections,
   fsl_base, fsl_utilities,
-  fhir_objects, fhir_xhtml, fhir_narrative, 
+  fhir_objects, fhir_xhtml, fhir_narrative, fhir_uris,
   fhir5_resources, fhir5_resources_base, fhir5_enums, fhir5_types, fhir5_constants, fhir5_context, fhir5_utilities;
 
 Const
@@ -85,7 +86,7 @@ Type
     FChildren : TFslList<TFHIRElementDefinition>;
     FList : TFslList<TPropertyWrapper>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     public
     constructor Create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
     end;
@@ -101,7 +102,7 @@ Type
     FWrapped: TFHIRProperty;
     FList: TFslList<TBaseWrapper>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(wrapped: TFHIRProperty);
     destructor Destroy; override;
@@ -120,7 +121,7 @@ Type
   private
     FWrapped: TFHIRResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(wrapped: TFHIRResource);
     destructor Destroy; override;
@@ -137,7 +138,7 @@ Type
     FList: TFslList<TPropertyWrapper>;
     FOtherList: TFslList<TPropertyWrapper>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(wrapped: TFHIRObject);
     destructor Destroy; override;
@@ -240,11 +241,11 @@ begin
   result := path.substring(path.lastIndexOf('.') + 1);
 end;
 
-Constructor TPropertyWrapperDirect.create(wrapped: TFHIRProperty);
+Constructor TPropertyWrapperDirect.Create(wrapped: TFHIRProperty);
 begin
-  inherited create;
+  inherited Create;
   if (wrapped = nil) then
-    raise EFHIRException.create('wrapped = nil');
+    raise EFHIRException.Create('wrapped = nil');
   self.FWrapped := wrapped;
 end;
 
@@ -269,12 +270,12 @@ var
 begin
   if (FList = nil) then
   begin
-    FList := TFslList<TBaseWrapper>.create();
+    FList := TFslList<TBaseWrapper>.Create();
     for b in FWrapped.Values do
       if b = nil then
         FList.add(nil)
       else
-        FList.add(TBaseWrapperDirect.create(b.link));
+        FList.add(TBaseWrapperDirect.Create(b.link));
   end;
   result := FList;
 end;
@@ -286,8 +287,8 @@ end;
 
 destructor TPropertyWrapperDirect.Destroy;
 begin
-  FList.Free;
-  FWrapped.Free;
+  FList.free;
+  FWrapped.free;
   inherited;
 end;
 
@@ -311,27 +312,27 @@ begin
   result := nil; // FWrapped.getStructure();
 end;
 
-function TPropertyWrapperDirect.sizeInBytesV : cardinal;
+function TPropertyWrapperDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWrapped.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWrapped.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
-Constructor TBaseWrapperDirect.create(wrapped: TFHIRObject);
+Constructor TBaseWrapperDirect.Create(wrapped: TFHIRObject);
 begin
-  inherited create;
+  inherited Create;
   if (wrapped = nil) then
-    raise EFHIRException.create('wrapped = nil');
+    raise EFHIRException.Create('wrapped = nil');
   self.FWrapped := wrapped;
 end;
 
 destructor TBaseWrapperDirect.Destroy;
 begin
-  FWrapped.Free;
+  FWrapped.free;
   if FOtherList <> nil then
     FOtherList.free;
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -347,13 +348,13 @@ var
 begin
   if (FList = nil) then
   begin
-    FList := TFslList<TPropertyWrapper>.create();
+    FList := TFslList<TPropertyWrapper>.Create();
     list := FWrapped.createPropertyList(false);
     try
       for p in list do
-        FList.add(TPropertyWrapperDirect.create(p.link as TFHIRProperty));
+        FList.add(TPropertyWrapperDirect.Create(p.link as TFHIRProperty));
     finally
-      list.Free;
+      list.free;
     end;
   end;
   result := FList;
@@ -375,35 +376,35 @@ begin
       result := nil
     else
     begin
-      result := TPropertyWrapperDirect.create(pl.link);
+      result := TPropertyWrapperDirect.Create(pl.link);
       if FOtherList = nil then
-        FOtherList := TFslList<TPropertyWrapper>.create;
+        FOtherList := TFslList<TPropertyWrapper>.Create;
       FOtherList.Add(result);
     end;
     finally
-      list.Free;
+      list.free;
     end;
   end;
 
-function TBaseWrapperDirect.sizeInBytesV : cardinal;
+function TBaseWrapperDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWrapped.sizeInBytes);
-  inc(result, FList.sizeInBytes);
-  inc(result, FOtherList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWrapped.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
+  inc(result, FOtherList.sizeInBytes(magic));
 end;
 
-Constructor TResourceWrapperDirect.create(wrapped: TFHIRResource);
+Constructor TResourceWrapperDirect.Create(wrapped: TFHIRResource);
 begin
-  inherited create;
+  inherited Create;
   if (wrapped = nil) then
-    raise EFHIRException.create('wrapped = nil');
+    raise EFHIRException.Create('wrapped = nil');
   self.FWrapped := wrapped;
 end;
 
 destructor TResourceWrapperDirect.Destroy;
 begin
-  FWrapped.Free;
+  FWrapped.free;
   inherited;
 end;
 
@@ -413,17 +414,17 @@ var
   c: TFHIRResource;
   list: TFslList<TResourceWrapper>;
 begin
-  list := TFslList<TResourceWrapper>.create();
+  list := TFslList<TResourceWrapper>.Create();
   try
     if (FWrapped is TFHIRDomainResource) then
     begin
       dr := TFHIRDomainResource(FWrapped);
       for c in dr.containedList do
-        list.add(TResourceWrapperDirect.create(c.link));
+        list.add(TResourceWrapperDirect.Create(c.link));
     end;
     result := list.Link;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -458,23 +459,23 @@ var
 begin
   pList := FWrapped.createPropertyList(false);
   try
-    list := TFslList<TPropertyWrapper>.create();
+    list := TFslList<TPropertyWrapper>.Create();
     try
       for p in pList do
-        list.add(TPropertyWrapperDirect.create(p.link));
+        list.add(TPropertyWrapperDirect.Create(p.link));
       result := list.Link;
     finally
-      list.Free;
+      list.free;
     end;
   finally
-    pList.Free;
+    pList.free;
   end;
 end;
 
-function TResourceWrapperDirect.sizeInBytesV : cardinal;
+function TResourceWrapperDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FWrapped.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FWrapped.sizeInBytes(magic));
 end;
 
 { TFHIRNarrativeGenerator }
@@ -508,7 +509,7 @@ begin
       if (p <> nil) then
         generateByProfile(r, p, true);
     finally
-      p.Free;
+      p.free;
     end;
   end;
 end;
@@ -521,7 +522,7 @@ var
   issue : TFhirOperationOutcomeIssue;
   s : TFhirString;
 begin
-  x := TFhirXHtmlNode.create;
+  x := TFhirXHtmlNode.Create;
   try
     x.NodeType := fhntElement;
     x.Name := 'div';
@@ -573,7 +574,7 @@ begin
       end;
     end;
     if (op.Text = nil) then
-      op.Text := TFhirNarrative.create;
+      op.Text := TFhirNarrative.Create;
     op.Text.div_ := x.link;
     if hasSource then
       op.Text.status := NarrativeStatusExtensions
@@ -586,22 +587,22 @@ end;
 
 //procedure TFHIRNarrativeGenerator.generateVS(vs: TFHIRValueSet; b: boolean);
 //begin
-//  // raise EFHIRTodo.create();
+//  // raise EFHIRTodo.Create();
 //end;
 //
 //procedure TFHIRNarrativeGenerator.generateCM(cm: TFHIRConceptMap);
 //begin
-//  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generateCM');
+//  raise EFHIRTodo.Create('TFHIRNarrativeGenerator.generateCM');
 //end;
 //
 //procedure TFHIRNarrativeGenerator.generateOD(od: TFHIROperationDefinition);
 //begin
-//  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generateOD');
+//  raise EFHIRTodo.Create('TFHIRNarrativeGenerator.generateOD');
 //end;
 //
 //procedure TFHIRNarrativeGenerator.generateCS(conf: TFhirCapabilityStatement);
 //begin
-//  raise EFHIRTodo.create('TFHIRNarrativeGenerator.generateCS');
+//  raise EFHIRTodo.Create('TFHIRNarrativeGenerator.generateCS');
 //end;
 
 procedure TFHIRNarrativeGenerator.generate(res: TFHIRResourceV);
@@ -615,7 +616,7 @@ var
   x: TFHIRXhtmlNode;
   c: TFslList<TFHIRElementDefinition>;
 begin
-  x := TFHIRXhtmlNode.create('div');
+  x := TFHIRXhtmlNode.Create('div');
   try
   if showCodeDetails then
     x.addTag('p').addTag('b').addText('Generated Narrative with Details')
@@ -626,7 +627,7 @@ begin
     try
       generateByProfile(r, profile, r, profile.snapshot.ElementList, profile.snapshot.ElementList[0], c, x, CODES_TFHIRREsourceType[r.ResourceType], showCodeDetails);
     finally
-      c.Free;
+      c.free;
     end;
   except
     on e: Exception do
@@ -646,9 +647,9 @@ var
   r: TResourceWrapperDirect;
   b : TBaseWrapperDirect;
 begin
-  r := TResourceWrapperDirect.create(res.link);
+  r := TResourceWrapperDirect.Create(res.link);
   try
-    b := TBaseWrapperDirect.create(e.link);
+    b := TBaseWrapperDirect.Create(e.link);
     try
       generateByProfile(r, profile, b, allElements, defn, children, x, path, showCodeDetails);
     finally
@@ -689,7 +690,7 @@ begin
     try
       renderLeaf(res, e, defn, x, false, showCodeDetails, displayHints);
     finally
-      displayHints.Free;
+      displayHints.free;
     end;
   end
   else
@@ -775,13 +776,13 @@ begin
                 end;
               end;
             finally
-              displayHints.Free;
+              displayHints.free;
             end;
           end;
         end;
       end;
     finally
-      pList.Free;
+      pList.free;
     end;
 
   end;
@@ -795,12 +796,12 @@ var
   ed: TFHIRElementDefinition;
   p: TPropertyWrapper;
 begin
-  toRemove := TFslList<TFHIRElementDefinition>.create();
+  toRemove := TFslList<TFHIRElementDefinition>.Create();
   try
     toRemove.addAll(grandChildren);
     for b in prop.getValues do
     begin
-      list := TFslList<TFHIRElementDefinition>.create;
+      list := TFslList<TFHIRElementDefinition>.Create;
       try
         for ed in toRemove do
         begin
@@ -810,12 +811,12 @@ begin
         end;
         toRemove.removeAll(list);
       finally
-        list.Free;
+        list.free;
       end;
     end;
     grandChildren.removeAll(toRemove);
   finally
-    toRemove.Free;
+    toRemove.free;
   end;
 end;
 
@@ -830,9 +831,9 @@ var
   ed: TFHIRStructureDefinition;
 //  def: TFHIRElementDefinition;
 begin
-  results := TFslList<TPropertyWrapper>.create;
+  results := TFslList<TPropertyWrapper>.Create;
   try
-    map := TFslMap<TPropertyWrapper>.create('ngen');
+    map := TFslMap<TPropertyWrapper>.Create('ngen');
     try
       map.defaultValue := nil;
       for p in children do
@@ -848,22 +849,22 @@ begin
               ed := context.fetchStructureDefinition(url);
               try
                 if (p.getName() = 'modifierExtension') and (ed = nil) then
-                  raise EFHIRException.create('Unknown modifier extension ' + url);
+                  raise EFHIRException.Create('Unknown modifier extension ' + url);
                 pe := map[p.getName() + '[' + url + ']'];
                 if (pe = nil) then
                 begin
                   if (ed = nil) then
                   begin
                     if (url.startsWith('http://hl7.org/fhir')) then
-                      raise EFHIRException.create('unknown extension ' + url);
+                      raise EFHIRException.Create('unknown extension ' + url);
                     // writeln('unknown extension '+url);
-                    pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', p.getTypeCode(), true, TFHIRExtension,
+                    pe := TPropertyWrapperDirect.Create(TFHIRProperty.Create(p.getOwner(), p.getName() + '[' + url + ']', p.getTypeCode(), true, TFHIRExtension,
                       { p.getDefinition(), p.getMinCardinality(), p.getMaxCardinality(), } ex));
                   end
                   else
                   begin
 //                    def := ed.snapshot.ElementList[0];
-                    pe := TPropertyWrapperDirect.create(TFHIRProperty.create(p.getOwner(), p.getName() + '[' + url + ']', 'Extension', true, TFHIRExtension,
+                    pe := TPropertyWrapperDirect.Create(TFHIRProperty.Create(p.getOwner(), p.getName() + '[' + url + ']', 'Extension', true, TFHIRExtension,
                       { def.getDefinition(), def.getMin(), def.getMax().equals('*') ? Integer.MAX_VALUE : Integer.parseInt(def.getMax()), } ex));
                     // TPropertyWrapperDirect(pe).Fwrapped.Structure := ed;
                   end;
@@ -872,7 +873,7 @@ begin
                 else
                   pe.getValues().add(v.link);
               finally
-                ed.Free;
+                ed.free;
               end;
             end;
           end;
@@ -880,11 +881,11 @@ begin
         else
           results.add(p.link);
     finally
-      map.Free;
+      map.free;
     end;
     result := results.Link;
   finally
-    results.Free;
+    results.free;
   end;
 end;
 
@@ -971,14 +972,14 @@ begin
         exit;
       end;
     finally
-      values.Free;
+      values.free;
     end;
   end;
 end;
 
-constructor TFHIRNarrativeGenerator.create(cc: TFHIRWorkerContextV);
+constructor TFHIRNarrativeGenerator.Create(cc: TFHIRWorkerContextV);
 begin
-  inherited create(cc);
+  inherited Create(cc);
   context := cc as TFHIRWorkerContext;
 end;
 
@@ -988,7 +989,7 @@ var
   v: TBaseWrapper;
   g: TPropertyWrapper;
 begin
-  res := TFslList<TPropertyWrapper>.create();
+  res := TFslList<TPropertyWrapper>.Create();
   try
     for v in p.getValues do
     begin
@@ -1000,7 +1001,7 @@ begin
     end;
     result := res.Link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -1176,7 +1177,7 @@ begin
   else if (e is TFHIRElementDefinition) then
     x.addText('todo-bundle')
   else if (e <> nil) and not((e is TFHIRAttachment) or (e is TFHIRNarrative) or (e is TFHIRMeta)) then
-    raise EFHIRException.create('type ' + e.ClassName + ' not handled yet');
+    raise EFHIRException.Create('type ' + e.ClassName + ' not handled yet');
 end;
 
 procedure TFHIRNarrativeGenerator.renderMoney(c: TFHIRMoney; x: TFHIRXhtmlNode);
@@ -1299,10 +1300,10 @@ begin
     else if (e is TFHIRResource) then
       result := false
     else if (not(e is TFHIRAttachment)) then
-      raise EFHIRException.create('type ' + e.ClassName + ' not handled yet');
+      raise EFHIRException.Create('type ' + e.ClassName + ' not handled yet');
 
   finally
-    displayHints.Free;
+    displayHints.free;
   end;
 end;
 
@@ -1311,7 +1312,7 @@ var
   displayHint, item: String;
   list, parts: TArray<String>;
 begin
-  result := TFslStringDictionary.create();
+  result := TFslStringDictionary.Create();
   if (defn <> nil) then
   begin
     displayHint := defn.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-display-hint');
@@ -1322,7 +1323,7 @@ begin
       begin
         parts := item.split([':']);
         if (length(parts) <> 2) then
-          raise EFHIRException.create('error reading display hint: "' + displayHint + '"');
+          raise EFHIRException.Create('error reading display hint: "' + displayHint + '"');
         result.add(parts[0].trim(), parts[1].trim());
       end;
     end;
@@ -1389,7 +1390,7 @@ begin
       end;
     end;
   finally
-    profile.Free;
+    profile.free;
   end;
 end;
 
@@ -1418,7 +1419,7 @@ begin
     x.attribute('xmlns', XHTML_NS);
   if (r.Text = nil) or (r.Text.div_ = nil) or (r.Text.div_.ChildNodes.isEmpty) then
   begin
-    r.Text := TFHIRNarrative.create;
+    r.Text := TFHIRNarrative.Create;
     r.Text.div_ := x.Link;
     r.Text.status := status;
   end
@@ -1454,12 +1455,12 @@ begin
     end;
   end;
 
-  ae := context.fetchResource(frtNull, url);
+  ae := context.fetchResource(frtNull, url, '');
   try
     if (ae <> nil) then
     begin
       result.reference := url;
-      result.resource := TResourceWrapperDirect.create(ae.link);
+      result.resource := TResourceWrapperDirect.Create(ae.link);
     end;
   finally
     ae.free;
@@ -1550,7 +1551,7 @@ procedure TFHIRNarrativeGenerator.renderAnnotation(o: TFHIRAnnotation; x: TFHIRX
 var
   s: TStringBuilder;
 begin
-  s := TStringBuilder.create();
+  s := TStringBuilder.Create();
   try
     if (o.author <> nil) then
     begin
@@ -1580,7 +1581,7 @@ begin
 
     x.addText(s.toString());
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1604,9 +1605,9 @@ begin
     x.addTag('span').setAttribute('title', 'begin' + c.system + ' ' + c.code + 'end;').addText(s);
 end;
 
-destructor TFHIRNarrativeGenerator.destroy;
+destructor TFHIRNarrativeGenerator.Destroy;
 begin
-  context.Free;
+  context.free;
   inherited;
 end;
 
@@ -1614,13 +1615,13 @@ function TFHIRNarrativeGenerator.describeSystem(system: String): String;
 begin
   if (system = '') then
     result := '[not stated]'
-  else if (system.equals('http://loinc.org')) then
+  else if (system.equals(URI_LOINC)) then
     result := 'LOINC'
   else if (system.startsWith('http://snomed.info')) then
     result := 'SNOMED CT'
-  else if (system.equals('http://www.nlm.nih.gov/research/umls/rxnorm')) then
+  else if (system.equals(URI_RXNORM)) then
     result := 'RxNorm'
-  else if (system.equals('http://hl7.org/fhir/sid/icd-9')) then
+  else if (system.equals(URI_ICD9)) then
     result := 'ICD-9'
   else
     result := system;
@@ -1637,7 +1638,7 @@ begin
     else
       result := code;
   finally
-    t.Free;
+    t.free;
   end;
 end;
 
@@ -1770,8 +1771,8 @@ begin
   if (sd.Origin <> nil) then
     CommaAdd(s, 'Origin: ' + displayQuantity(sd.Origin));
 
-  if (sd.Period <> '') then
-    CommaAdd(s, 'Period: ' + sd.Period);
+  if (sd.Interval <> '') then
+    CommaAdd(s, ': Interval' + sd.Interval);
 
   if (sd.Factor <> '') then
     CommaAdd(s, 'Factor: ' + sd.Factor);
@@ -1795,7 +1796,7 @@ function TFHIRNarrativeGenerator.displayQuantity(q: TFHIRQuantity): String;
 var
   s: TStringBuilder;
 begin
-  s := TStringBuilder.create();
+  s := TStringBuilder.Create();
   try
 
     s.append('(system := "');
@@ -1807,7 +1808,7 @@ begin
 
     result := s.toString();
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1943,7 +1944,7 @@ var
   s: TStringBuilder;
   p: TFHIRString;
 begin
-  s := TStringBuilder.create();
+  s := TStringBuilder.Create();
   try
     if (name.Text <> '') then
       s.append(name.Text)
@@ -1964,7 +1965,7 @@ begin
       s.append('(' + name.useElement.value + ')');
     result := s.toString();
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1973,7 +1974,7 @@ var
   s: TStringBuilder;
   p: TFHIRString;
 begin
-  s := TStringBuilder.create();
+  s := TStringBuilder.Create();
   try
     if (address.Text <> '') then
       s.append(address.Text)
@@ -2011,7 +2012,7 @@ begin
       s.append('(' + address.useElement.value + ')');
     result := s.toString();
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -2019,7 +2020,7 @@ function TFHIRNarrativeGenerator.displayContactPoint(contact: TFHIRContactPoint)
 var
   s: TStringBuilder;
 begin
-  s := TStringBuilder.create();
+  s := TStringBuilder.Create();
   try
     s.append(describeSystem(contact.system));
     if (contact.value = '') then
@@ -2030,7 +2031,7 @@ begin
       s.append('(' + contact.useElement.value + ')');
     result := s.toString();
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -2089,13 +2090,13 @@ begin
           t := e1;
       end;
       if (t = nil) then
-        raise EFHIRException.create('Unable to resolve name reference ' + name + ' trying to resolve ' + path);
+        raise EFHIRException.Create('Unable to resolve name reference ' + name + ' trying to resolve ' + path);
       path := t.path;
       break;
     end;
   end;
 
-  results := TFslList<TFHIRElementDefinition>.create();
+  results := TFslList<TFHIRElementDefinition>.Create();
   try
     for e in elements do
     begin
@@ -2104,7 +2105,7 @@ begin
     end;
     result := results.Link;
   finally
-    results.Free;
+    results.free;
   end;
 end;
 
@@ -2427,7 +2428,7 @@ end;
   //    if (!vs.hasCodeSystem()) and (!vs.hasCompose()) then
   //    generateExpansion(x, vs, src, header);
   //    else
-  //    raise EFHIRException.create('Error: should not encounter value set expansion at this point');
+  //    raise EFHIRException.Create('Error: should not encounter value set expansion at this point');
   end;
 
   boolean hasExtensions := false;
@@ -2450,7 +2451,7 @@ end;
   try begin
   ValueSetExpansionOutcome vse := context.expandVS(vs, true);
   count := 0;
-  count +:= conceptCount(vse.getValueset().getExpansion().getContains());
+  count + := conceptCount(vse.getValueset().getExpansion().getContains());
   return count;
   end; catch (Exception e) begin
   return nil;
@@ -2882,7 +2883,7 @@ end;
 
   private String makeAnchor(String codeSystem, String code) begin
   String s := codeSystem+"-"+code;
-  StringBuilder b := TStringBuilder.create();
+  StringBuilder b := TStringBuilder.Create();
   for (char c : s.toCharArray()) begin
   if (Character.isAlphabetic(c)) or (Character.isDigit(c)) or (c = ".") then
   b.append(c);
@@ -2895,9 +2896,9 @@ end;
   private String getCodingReference(TFHIRCoding cc, String system) begin
   if (cc.system.equals(system)) then
   return '#'+cc.code;
-  if (cc.system.equals('http://snomed.info/sct')) then
+  if (cc.system.equals(URI_SNOMED)) then
   return 'http://snomed.info/sct/'+cc.code;
-  if (cc.system.equals('http://loinc.org')) then
+  if (cc.system.equals(URI_LOINC)) then
   return 'http://s.details.loinc.org/LOINC/'+cc.code+'.html';
   return nil;
   end;
@@ -2906,7 +2907,7 @@ end;
   if (!mapping.hasEquivalence()) then
   return '';
   switch (mapping.getEquivalence()) begin
-  case EQUAL : return ':=';
+  case EQUAL : return ' := ';
   case EQUIVALENT : return '~';
   case WIDER : return '<';
   case NARROWER : return '>';
@@ -2972,7 +2973,7 @@ end;
   TFHIRXhtmlNode a := li.addTag('a');
   a.setAttribute('href', ref = nil ? '??' : ref.replace('\\', '/'));
   a.addText(value);
-  else if (value.equals('http://snomed.info/sct')) or (value.equals('http://snomed.info/id')) then begin
+  else if (value.equals(URI_SNOMED)) or (value.equals('http://snomed.info/id')) then begin
   TFHIRXhtmlNode a := li.addTag('a');
   a.setAttribute('href', value);
   a.addText('SNOMED-CT');
@@ -3205,7 +3206,7 @@ end;
   if (extension.value is TFHIRCoding) then
   return gen((TFHIRCoding) extension.value);
 
-  raise EFHIRException.create('Unhandled type '+extension.value.getClass().getName());
+  raise EFHIRException.Create('Unhandled type '+extension.value.getClass().getName());
   end;
 
   private String gen(TFHIRCodeableConcept code) begin
@@ -3300,7 +3301,7 @@ end;
   if (url = nil) then
   url := p.getUserString('filename');
   end; else
-  raise EFHIRException.create('Unable to resolve markdown link '+link);
+  raise EFHIRException.Create('Unable to resolve markdown link '+link);
 
   text := left+'['+link+']('+url+')'+right;
   end;
@@ -3426,16 +3427,16 @@ end;
 *)
 
 (*
-function TFHIRNarrativeGenerator.sizeInBytesV : cardinal;
+function TFHIRNarrativeGenerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPrefix.length * sizeof(char)) + 12);
-  inc(result, context.sizeInBytes);
+  inc(result, context.sizeInBytes(magic));
   inc(result, (FBasePath.length * sizeof(char)) + 12);
   inc(result, (FTooCostlyNote.length * sizeof(char)) + 12);
 end;
 
-  Constructor TBaseWrapperElement.create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
+  Constructor TBaseWrapperElement.Create(element : TIdSoapXmlElement; type_ : String; structure : TFHIRStructureDefinition; definition : TFHIRElementDefinition);
   begin
   inherited Create;
   self.FElement := element;
@@ -3533,23 +3534,23 @@ end;
 
   @Override
   public String getTypeCode() begin
-  raise EFHIRException.create('todo');
+  raise EFHIRException.Create('todo');
   end;
 
   @Override
   public String getDefinition() begin
-  raise EFHIRException.create('todo');
+  raise EFHIRException.Create('todo');
   end;
 
   @Override
   public Integer getMinCardinality() begin
-  raise EFHIRException.create('todo');
+  raise EFHIRException.Create('todo');
   //    return definition.getMin();
   end;
 
   @Override
   public Integer getMaxCardinality() begin
-  raise EFHIRException.create('todo');
+  raise EFHIRException.Create('todo');
   end;
 
   @Override

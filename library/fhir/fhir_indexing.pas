@@ -56,7 +56,7 @@ type
     procedure SetExpression(const Value: TFHIRPathExpressionNodeV);
     procedure SetKey(const Value: Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -87,7 +87,7 @@ type
     function GetItemN(iIndex: integer): TFhirIndex;
   protected
     function ItemClass : TFslObjectClass; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(factory : TFHIRFactory);
     destructor Destroy; override;
@@ -109,7 +109,7 @@ type
     FName: String;
     FComponents : TFslStringDictionary;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -146,7 +146,7 @@ type
     FRelatedPersonCompartment : TFslMap<TFslStringSet>;
     FDeviceCompartment : TFslMap<TFslStringSet>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -184,14 +184,14 @@ end;
 
 constructor TFhirIndex.Create(factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
 end;
 
 destructor TFhirIndex.Destroy;
 begin
-  FFactory.Free;
-  FExpression.Free;
+  FFactory.free;
+  FExpression.free;
   inherited;
 end;
 
@@ -202,7 +202,7 @@ end;
 
 procedure TFhirIndex.SetExpression(const Value: TFHIRPathExpressionNodeV);
 begin
-  FExpression.Free;
+  FExpression.free;
   FExpression := Value;
 end;
 
@@ -231,17 +231,17 @@ begin
   result := name+' : '+CODES_TFHIRSearchParamType[SearchType];
 end;
 
-function TFhirIndex.sizeInBytesV : cardinal;
+function TFhirIndex.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FURI.length * sizeof(char)) + 12);
   inc(result, (FPath.length * sizeof(char)) + 12);
   inc(result, (FMapping.length * sizeof(char)) + 12);
-  inc(result, FExpression.sizeInBytes);
+  inc(result, FExpression.sizeInBytes(magic));
 end;
 
 { TFhirIndexList }
@@ -269,7 +269,7 @@ begin
     ndx.description := description;
     ndx.FPath := path;
     ndx.FUsage := usage;
-    inherited add(ndx.Link);
+    add(ndx.Link);
     result := ndx;
   finally
     ndx.free;
@@ -289,7 +289,7 @@ end;
 
 destructor TFhirIndexList.Destroy;
 begin
-  FFactory.Free;
+  FFactory.free;
   inherited;
 end;
 
@@ -326,21 +326,21 @@ function TFhirIndexList.listByType(aType: String): TFslList<TFhirIndex>;
 var
   i : integer;
 begin
-  result := TFslList<TFhirIndex>.create;
+  result := TFslList<TFhirIndex>.Create;
   try
     for i := 0 to Count - 1 do
       if (Item[i].ResourceType = aType) then
         result.Add(Item[i].Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
-function TFhirIndexList.sizeInBytesV : cardinal;
+function TFhirIndexList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFactory.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFactory.sizeInBytes(magic));
 end;
 
 { TFhirComposite }
@@ -365,12 +365,12 @@ end;
 constructor TFhirComposite.Create;
 begin
   inherited;
-  FComponents := TFslStringDictionary.create;
+  FComponents := TFslStringDictionary.Create;
 end;
 
 destructor TFhirComposite.Destroy;
 begin
-  FComponents.Free;
+  FComponents.free;
   inherited;
 end;
 
@@ -379,12 +379,12 @@ begin
   result := TFhirComposite(inherited Link);
 end;
 
-function TFhirComposite.sizeInBytesV : cardinal;
+function TFhirComposite.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FComponents.sizeInBytes);
+  inc(result, FComponents.sizeInBytes(magic));
 end;
 
 { TFhirCompositeList }
@@ -448,11 +448,11 @@ end;
 constructor TFHIRCompartmentList.Create;
 begin
   inherited;
-  FPatientCompartment := TFslMap<TFslStringSet>.create('Patient Compartment');
-  FPractitionerCompartment := TFslMap<TFslStringSet>.create('Practitioner Compartment');
-  FEncounterCompartment := TFslMap<TFslStringSet>.create('Encounter Compartment');
-  FRelatedPersonCompartment := TFslMap<TFslStringSet>.create('RelatedPerson Compartment');
-  FDeviceCompartment := TFslMap<TFslStringSet>.create('Device Compartment');
+  FPatientCompartment := TFslMap<TFslStringSet>.Create('Patient Compartment');
+  FPractitionerCompartment := TFslMap<TFslStringSet>.Create('Practitioner Compartment');
+  FEncounterCompartment := TFslMap<TFslStringSet>.Create('Encounter Compartment');
+  FRelatedPersonCompartment := TFslMap<TFslStringSet>.Create('RelatedPerson Compartment');
+  FDeviceCompartment := TFslMap<TFslStringSet>.Create('Device Compartment');
 end;
 
 destructor TFHIRCompartmentList.Destroy;
@@ -505,34 +505,34 @@ end;
 
 //procedure TFHIRCompartmentList.registerComp(comp: TFHIRResourceType; resource, list: String);
 //begin
-//  raise EFHIRTodo.create();
+//  raise EFHIRTodo.Create();
 //end;
 //
 procedure TFHIRCompartmentList.register(comp: String; resource : String; indexes : array of String);
 begin
   if comp = 'Patient' then
-    FPatientCompartment.add(resource, TFslStringSet.create(indexes))
+    FPatientCompartment.add(resource, TFslStringSet.Create(indexes))
   else if comp = 'Practitioner' then
-    FPractitionerCompartment.Add(resource, TFslStringSet.create(indexes))
+    FPractitionerCompartment.Add(resource, TFslStringSet.Create(indexes))
   else if comp = 'Encounter' then
-    FEncounterCompartment.add(resource, TFslStringSet.create(indexes))
+    FEncounterCompartment.add(resource, TFslStringSet.Create(indexes))
   else if comp = 'RelatedPerson' then
-    FRelatedPersonCompartment.add(resource, TFslStringSet.create(indexes))
+    FRelatedPersonCompartment.add(resource, TFslStringSet.Create(indexes))
   else if comp = 'Device' then
-    FDeviceCompartment.add(resource, TFslStringSet.create(indexes))
+    FDeviceCompartment.add(resource, TFslStringSet.Create(indexes))
   else
-    raise EFHIRException.create('Unknown compartment');
+    raise EFHIRException.Create('Unknown compartment');
 end;
 
 
-function TFHIRCompartmentList.sizeInBytesV : cardinal;
+function TFHIRCompartmentList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatientCompartment.sizeInBytes);
-  inc(result, FPractitionerCompartment.sizeInBytes);
-  inc(result, FEncounterCompartment.sizeInBytes);
-  inc(result, FRelatedPersonCompartment.sizeInBytes);
-  inc(result, FDeviceCompartment.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatientCompartment.sizeInBytes(magic));
+  inc(result, FPractitionerCompartment.sizeInBytes(magic));
+  inc(result, FEncounterCompartment.sizeInBytes(magic));
+  inc(result, FRelatedPersonCompartment.sizeInBytes(magic));
+  inc(result, FDeviceCompartment.sizeInBytes(magic));
 end;
 
 end.

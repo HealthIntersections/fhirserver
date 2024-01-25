@@ -158,12 +158,12 @@ end;
 
 procedure TPackageManagerFrame.btnFindClick(Sender: TObject);
 begin
-  PackageFinderForm := TPackageFinderForm.create(self);
+  PackageFinderForm := TPackageFinderForm.Create(self);
   try
     PackageFinderForm.OnLoadUrl := importUrl;
     ShowModalHack(PackageFinderForm);
   finally
-    PackageFinderForm.Free;
+    PackageFinderForm.free;
   end;
 end;
 
@@ -222,7 +222,7 @@ end;
 procedure TPackageManagerFrame.changePackageManagerMode(mode: boolean);
 begin
   if (FPcm <> nil) then
-    FPcm.Free;
+    FPcm.free;
   FPcm := TFHIRPackageManager.Create(mode);
   FPcm.OnCheck := checkImp;
   lblFolder.Text := FPcm.Folder;
@@ -231,8 +231,8 @@ end;
 
 destructor TPackageManagerFrame.Destroy;
 begin
-  FPackages.Free;
-  FPcm.Free;
+  FPackages.free;
+  FPcm.free;
   inherited;
 end;
 
@@ -262,7 +262,7 @@ begin
     try
       fetch.onProgress := fetchProgress;
       fetch.TagObject := pbar;
-      fetch.Buffer := TFslBuffer.create;
+      fetch.Buffer := TFslBuffer.Create;
       aborted := false;
       s := '';
       ok := false;
@@ -292,14 +292,14 @@ begin
         end;
       end;
       if not ok  and not aborted then
-        raise EIOException.create('Unable to find package for '+url+': '+s);
+        raise EIOException.Create('Unable to find package for '+url+': '+s);
       if ok then
       begin
         FPcm.Import(fetch.Buffer.AsBytes);
         reloadPackages;
       end;
     finally
-      fetch.Free;
+      fetch.free;
     end;
   finally
     pbar.Visible := false;
@@ -324,7 +324,7 @@ begin
   finally
     FLoading := false;
   end;
-  FPackages := TFslList<TNpmPackage>.create;
+  FPackages := TFslList<TNpmPackage>.Create;
   if (FPcm = nil) or (rbUser.IsChecked <> FPcm.UserMode) then
     changePackageManagerMode(rbUser.IsChecked);
 end;

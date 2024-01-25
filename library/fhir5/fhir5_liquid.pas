@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -60,7 +61,7 @@ type
     FNode : TFHIRLiquidNode;
     FStatus: TFHIRLiquidEngineDebuggingStatus;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(parent : TFHIRLiquidEngineContext; node : TFHIRLiquidNode);
     destructor Destroy; override;
@@ -86,7 +87,7 @@ type
   protected
     procedure closeUp; override;
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -101,7 +102,7 @@ type
     FCompiled : TFHIRPathExpressionNode;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function link : TFHIRLiquidStatement; overload;
@@ -118,7 +119,7 @@ type
     FElseBody : TFSLList<TFHIRLiquidNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -138,7 +139,7 @@ type
     FBody : TFSLList<TFHIRLiquidNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -156,7 +157,7 @@ type
     FBody : TFSLList<TFHIRLiquidNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -172,7 +173,7 @@ type
     FParams : TFslMap<TFHIRPathExpressionNode>;
   protected
     procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -188,7 +189,7 @@ type
     FBody : TFSLList<TFHIRLiquidNode>;
     FSource: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -219,7 +220,7 @@ type
     function parseList(list : TFslList<TFHIRLiquidNode>; terminators : Array of String) : String;
     function parse : TFHIRLiquidDocument;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(source : String);
     property sourceName : String read FSourceName  write FSourceName ;
@@ -237,7 +238,7 @@ type
     function resolveConstant(source : TFHIRPathEngine; appInfo : TFslObject; name : String; beforeContext : boolean) : TFHIRObject;
     function findInclude(page, source : String) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(fpe : TFHIRPathEngine);
     destructor Destroy; override;
@@ -254,8 +255,8 @@ implementation
 
 constructor TFHIRLiquidEngineContext.Create(parent : TFHIRLiquidEngineContext; node : TFHIRLiquidNode);
 begin
-  inherited create;
-  FVars := TFslMap<TFHIRObject>.create('liquid.context');
+  inherited Create;
+  FVars := TFslMap<TFHIRObject>.Create('liquid.context');
 
   FParent := parent.link;
   FNode := node.Link;
@@ -279,8 +280,8 @@ end;
 
 destructor TFHIRLiquidEngineContext.Destroy;
 begin
-  FVars.Free;
-  FExternalContext.Free;
+  FVars.free;
+  FExternalContext.free;
   inherited;
 end;
 
@@ -289,14 +290,14 @@ begin
   result := TFHIRLiquidEngineContext(inherited Link);
 end;
 
-function TFHIRLiquidEngineContext.sizeInBytesV : cardinal;
+function TFHIRLiquidEngineContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExternalContext.sizeInBytes);
-  inc(result, FVars.sizeInBytes);
-  inc(result, FEngine.sizeInBytes);
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FNode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExternalContext.sizeInBytes(magic));
+  inc(result, FVars.sizeInBytes(magic));
+  inc(result, FEngine.sizeInBytes(magic));
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FNode.sizeInBytes(magic));
 end;
 
 { TFHIRLiquidNode }
@@ -320,19 +321,19 @@ end;
 procedure TFHIRLiquidConstant.closeUp;
 begin
   FConstant := b.ToString();
-  b.Free;
+  b.free;
   b := nil;
 end;
 
 constructor TFHIRLiquidConstant.Create;
 begin
   inherited;
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
 end;
 
 destructor TFHIRLiquidConstant.Destroy;
 begin
-  b.Free;
+  b.free;
   inherited;
 end;
 
@@ -351,9 +352,9 @@ begin
   result := FConstant;
 end;
 
-function TFHIRLiquidConstant.sizeInBytesV : cardinal;
+function TFHIRLiquidConstant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FConstant.length * sizeof(char)) + 12);
 end;
 
@@ -361,7 +362,7 @@ end;
 
 destructor TFHIRLiquidStatement.Destroy;
 begin
-  FCompiled.Free;
+  FCompiled.free;
   inherited;
 end;
 
@@ -387,11 +388,11 @@ begin
   result := '{{ '+FStatement+' }}';
 end;
 
-function TFHIRLiquidStatement.sizeInBytesV : cardinal;
+function TFHIRLiquidStatement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FStatement.length * sizeof(char)) + 12);
-  inc(result, FCompiled.sizeInBytes);
+  inc(result, FCompiled.sizeInBytes(magic));
 end;
 
 { TFHIRLiquidIf }
@@ -399,15 +400,15 @@ end;
 constructor TFHIRLiquidIf.Create;
 begin
   inherited;
-  FThenBody := TFSLList<TFHIRLiquidNode>.create;
-  FElseBody := TFSLList<TFHIRLiquidNode>.create;
+  FThenBody := TFSLList<TFHIRLiquidNode>.Create;
+  FElseBody := TFSLList<TFHIRLiquidNode>.Create;
 end;
 
 destructor TFHIRLiquidIf.Destroy;
 begin
-  FThenBody.Free;
-  FElseBody.Free;
-  FCompiled.Free;
+  FThenBody.free;
+  FElseBody.free;
+  FCompiled.free;
   inherited;
 end;
 
@@ -428,7 +429,7 @@ begin
     for n in list do
       n.evaluate(b, resource, ctxt);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -456,17 +457,17 @@ begin
     b.Append('{% endif %}');
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TFHIRLiquidIf.sizeInBytesV : cardinal;
+function TFHIRLiquidIf.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCondition.length * sizeof(char)) + 12);
-  inc(result, FCompiled.sizeInBytes);
-  inc(result, FThenBody.sizeInBytes);
-  inc(result, FElseBody.sizeInBytes);
+  inc(result, FCompiled.sizeInBytes(magic));
+  inc(result, FThenBody.sizeInBytes(magic));
+  inc(result, FElseBody.sizeInBytes(magic));
 end;
 
 { TFHIRLiquidLoop }
@@ -474,13 +475,13 @@ end;
 constructor TFHIRLiquidLoop.Create;
 begin
   inherited;
-  FBody := TFSLList<TFHIRLiquidNode>.create;
+  FBody := TFSLList<TFHIRLiquidNode>.Create;
 end;
 
 destructor TFHIRLiquidLoop.Destroy;
 begin
-  FBody.Free;
-  FCompiled.Free;
+  FBody.free;
+  FCompiled.free;
   inherited;
 end;
 
@@ -500,11 +501,11 @@ begin
         for n in FBody do
           n.evaluate(b, resource, c);
       finally
-        c.Free;
+        c.free;
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -526,17 +527,17 @@ begin
     b.Append('{% endloop %}');
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TFHIRLiquidLoop.sizeInBytesV : cardinal;
+function TFHIRLiquidLoop.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVarName.length * sizeof(char)) + 12);
   inc(result, (FCondition.length * sizeof(char)) + 12);
-  inc(result, FCompiled.sizeInBytes);
-  inc(result, FBody.sizeInBytes);
+  inc(result, FCompiled.sizeInBytes(magic));
+  inc(result, FBody.sizeInBytes(magic));
 end;
 
 { TFHIRLiquidDocument }
@@ -544,12 +545,12 @@ end;
 constructor TFHIRLiquidDocument.Create;
 begin
   inherited;
-  FBody := TFSLList<TFHIRLiquidNode>.create;
+  FBody := TFSLList<TFHIRLiquidNode>.Create;
 end;
 
 destructor TFHIRLiquidDocument.Destroy;
 begin
-  FBody.Free;
+  FBody.free;
   inherited;
 end;
 
@@ -569,14 +570,14 @@ begin
       b.Append(n.ToString);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TFHIRLiquidDocument.sizeInBytesV : cardinal;
+function TFHIRLiquidDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBody.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBody.sizeInBytes(magic));
   inc(result, (FSource.length * sizeof(char)) + 12);
 end;
 
@@ -627,7 +628,7 @@ begin
     parseList(result.body, []);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -635,12 +636,12 @@ function TFHIRLiquidParser.parseComment(cnt: String): TFHIRLiquidNode;
 var
   res : TFHIRLiquidComment;
 begin
-  res := TFHIRLiquidComment.create();
+  res := TFHIRLiquidComment.Create();
   try
     parseList(res.body, ['endcomment']);
     result := res.Link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -671,7 +672,7 @@ begin
         else if (cnt.Trim= 'comment') then
           list.add(parseComment(cnt.substring(7).trim()))
         else
-          raise EParserException.create(sourceName+': Unknown flow control statement '+cnt, FLast);
+          raise EParserException.Create(sourceName+': Unknown flow control statement '+cnt, FLast);
       end
       else // next2() == '{'
       begin
@@ -681,7 +682,7 @@ begin
     else
     begin
       if (list.count = 0) or (not (list[list.count-1] is TFHIRLiquidConstant)) then
-        list.add(TFHIRLiquidConstant.create());
+        list.add(TFHIRLiquidConstant.Create());
       TFHIRLiquidConstant(list[list.count-1]).addChar(grab());
     end
   end;
@@ -689,7 +690,7 @@ begin
     n.closeUp();
   if (length(terminators) > 0) then
     if not StringArrayExistsSensitive(terminators, result) then
-      raise EFHIRException.create(sourceName+': Found end of script looking for '+StringArrayToString(terminators));
+      raise EFHIRException.Create(sourceName+': Found end of script looking for '+StringArrayToString(terminators));
 end;
 
 function TFHIRLiquidParser.parseIf(cnt: String): TFHIRLiquidNode;
@@ -706,7 +707,7 @@ begin
       term := parseList(res.elseBody, ['endif']);
     result := res.link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -720,8 +721,8 @@ begin
   while (i <= cnt.length) and (not cnt[i].isWhitespace) do
     inc(i);
   if (i > cnt.Length) or (i = 0) then
-    raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast);
-  res := TFHIRLiquidInclude.create();
+    raise EParserException.Create(sourceName+': Error reading include: '+cnt, FLast);
+  res := TFHIRLiquidInclude.Create();
   try
     res.page := cnt.substring(0, i-1);
     while (i <= cnt.length) and (cnt[i].isWhitespace) do
@@ -732,10 +733,10 @@ begin
       while (i <= cnt.length) and (cnt[i] <> '=') do
         inc(i);
       if (i > cnt.Length) or (j = i) then
-        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast);
+        raise EParserException.Create(sourceName+': Error reading include: '+cnt, FLast);
       n := cnt.substring(j-1, i-j);
       if (res.params.ContainsKey(n)) then
-        raise EParserException.create(sourceName+': Error reading include: '+cnt, FLast);
+        raise EParserException.Create(sourceName+': Error reading include: '+cnt, FLast);
       inc(i);
       res.params.AddOrSetValue(n, fpe.parse(cnt, i));
       while (i <= cnt.length) and (cnt[i].isWhitespace) do
@@ -743,7 +744,7 @@ begin
     end;
     result := res.Link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -756,7 +757,7 @@ begin
   i := 1;
   while (i <= cnt.length) and (not cnt[i].isWhitespace) do
     inc(i);
-  res := TFHIRLiquidLoop.create();
+  res := TFHIRLiquidLoop.Create();
   try
     res.varName := cnt.substring(0, i-1);
     while (i <= cnt.length) and (cnt[i].isWhitespace) do
@@ -766,13 +767,13 @@ begin
       inc(i);
     s := cnt.substring(j-1, i-j);
     if ('in' <> s) then
-      raise EParserException.create(sourceName+': Error reading loop: '+cnt, FLast);
+      raise EParserException.Create(sourceName+': Error reading loop: '+cnt, FLast);
     res.condition := cnt.substring(i).trim();
     res.FCompiled := fpe.parse(res.condition);
     parseList(res.body, ['endloop']);
     result := res.Link;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -783,24 +784,24 @@ var
 begin
   grab();
   grab();
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
     while (cursor <= source.length) and not ((next1() = '}') and (next2() = '}')) do
       b.append(grab());
     if not ((next1() = '}') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {{ '+b.ToString(), FCurrent);
+      raise EParserException.Create(sourceName+': Unterminated Liquid statement {{ '+b.ToString(), FCurrent);
     grab();
     grab();
-    res := TFHIRLiquidStatement.create();
+    res := TFHIRLiquidStatement.Create();
     try
       res.statement := b.ToString().trim();
       res.FCompiled := fpe.parse(res.Statement);
       result := res.link;
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -811,25 +812,25 @@ begin
   FLast := FCurrent;
   grab();
   grab();
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
     while (cursor <= source.length) and not ((next1() = '%') and(next2() = '}')) do
       b.append(grab());
     if not ((next1() = '%') and (next2() = '}')) then
-      raise EParserException.create(sourceName+': Unterminated Liquid statement {% '+b.ToString(), FCurrent);
+      raise EParserException.Create(sourceName+': Unterminated Liquid statement {% '+b.ToString(), FCurrent);
     grab();
     grab();
     result := b.ToString().trim();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TFHIRLiquidParser.sizeInBytesV : cardinal;
+function TFHIRLiquidParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (source.length * sizeof(char)) + 12);
-  inc(result, fpe.sizeInBytes);
+  inc(result, fpe.sizeInBytes(magic));
   inc(result, (FSourceName.length * sizeof(char)) + 12);
 end;
 
@@ -844,32 +845,32 @@ end;
 
 function TFHIRLiquidEngine.debug(dbgContext: TFHIRLiquidEngineContext; node: TFHIRLiquidNode; name: String; value: TFHIRObject): TFHIRLiquidEngineContext;
 begin
-  result := TFHIRLiquidEngineContext.create(dbgContext, node);
+  result := TFHIRLiquidEngineContext.Create(dbgContext, node);
   try
     result.vars.Add(name, value.Link);
     if assigned(result.FOnDebug) then
       result.FOnDebug(self, result);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 function TFHIRLiquidEngine.debug(dbgContext: TFHIRLiquidEngineContext; node: TFHIRLiquidNode): TFHIRLiquidEngineContext;
 begin
-  result := TFHIRLiquidEngineContext.create(dbgContext, node);
+  result := TFHIRLiquidEngineContext.Create(dbgContext, node);
   try
     if assigned(result.FOnDebug) then
       result.FOnDebug(self, result);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 destructor TFHIRLiquidEngine.Destroy;
 begin
-  fpe.Free;
+  fpe.free;
   inherited;
 end;
 
@@ -879,9 +880,9 @@ var
   ctxt : TFHIRLiquidEngineContext;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
-    ctxt := TFHIRLiquidEngineContext.create(nil, nil);
+    ctxt := TFHIRLiquidEngineContext.Create(nil, nil);
     try
       ctxt.FExternalContext := appContext.Link;
       ctxt.FEngine := self;
@@ -904,9 +905,9 @@ var
   ctxt : TFHIRLiquidEngineContext;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
-    ctxt := TFHIRLiquidEngineContext.create(nil, nil);
+    ctxt := TFHIRLiquidEngineContext.Create(nil, nil);
     try
       ctxt.FExternalContext := appContext.Link;
       ctxt.FEngine := self;
@@ -925,9 +926,9 @@ end;
 function TFHIRLiquidEngine.findInclude(page, source: String): String;
 begin
   if not assigned(FOnFetchInclude) then
-    raise Exception.Create('Liquid Engine does not support includes (including "'+page+'" from '+source);
+    raise EFslException.Create('Liquid Engine does not support includes (including "'+page+'" from '+source);
   if not FOnFetchInclude(self, page, result) then
-    raise Exception.Create('Unable to find file "'+page+'" included from '+source);
+    raise EFslException.Create('Unable to find file "'+page+'" included from '+source);
 end;
 
 function TFHIRLiquidEngine.parse(source: String; sourceName : String): TFHIRLiquidDocument;
@@ -941,7 +942,7 @@ begin
     result := parser.parse;
     result.source := sourceName;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -960,10 +961,10 @@ begin
 
 end;
 
-function TFHIRLiquidEngine.sizeInBytesV : cardinal;
+function TFHIRLiquidEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, fpe.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, fpe.sizeInBytes(magic));
 end;
 
 { TFHIRLiquidInclude }
@@ -971,12 +972,12 @@ end;
 constructor TFHIRLiquidInclude.Create;
 begin
   inherited;
-  FParams := TFslMap<TFHIRPathExpressionNode>.create('liquid.include');
+  FParams := TFslMap<TFHIRPathExpressionNode>.Create('liquid.include');
 end;
 
 destructor TFHIRLiquidInclude.Destroy;
 begin
-  FParams.Free;
+  FParams.free;
   inherited;
 end;
 
@@ -992,7 +993,7 @@ begin
   src := ctxt.FEngine.findInclude(page, ctxt.FDocument.source);
   doc := ctxt.FEngine.parse(src, page);
   try
-    incl := TFHIRTuple.create;
+    incl := TFHIRTuple.Create;
     try
       for s in FParams.Keys do
         incl.addProperty(s, ctxt.Fengine.fpe.evaluate(ctxt, resource, resource, FParams[s]));
@@ -1001,13 +1002,13 @@ begin
         for n in doc.body do
           n.evaluate(b, resource, c);
       finally
-        c.Free;
+        c.free;
       end;
     finally
       incl.free;
     end;
   finally
-    doc.Free;
+    doc.free;
   end;
 end;
 
@@ -1029,15 +1030,15 @@ begin
     b.Append('{% endloop %}');
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TFHIRLiquidInclude.sizeInBytesV : cardinal;
+function TFHIRLiquidInclude.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPage.length * sizeof(char)) + 12);
-  inc(result, FParams.sizeInBytes);
+  inc(result, FParams.sizeInBytes(magic));
 end;
 
 { TFHIRLiquidComment }
@@ -1045,12 +1046,12 @@ end;
 constructor TFHIRLiquidComment.Create;
 begin
   inherited;
-  FBody := TFSLList<TFHIRLiquidNode>.create;
+  FBody := TFSLList<TFHIRLiquidNode>.Create;
 end;
 
 destructor TFHIRLiquidComment.Destroy;
 begin
-  FBody.Free;
+  FBody.free;
   inherited;
 end;
 
@@ -1062,7 +1063,7 @@ begin
   try
     // nothing
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -1084,14 +1085,14 @@ begin
     b.Append('{% endcomment %}');
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TFHIRLiquidComment.sizeInBytesV : cardinal;
+function TFHIRLiquidComment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBody.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBody.sizeInBytes(magic));
 end;
 
 end.

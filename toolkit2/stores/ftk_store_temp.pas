@@ -1,5 +1,33 @@
 unit ftk_store_temp;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
@@ -23,10 +51,13 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    function link : TFHIRToolkitTemporaryStorage; overload;
 
     // this is called immediately after opening a file, to save the current list of open files
     // it aims to be reliable storage based on a normal file system
-    procedure storeOpenFileList(sessions : TFslList<TToolkitEditSession>);
+    function startOpenFileList() : TJsonArray;
+    procedure storeOpenFile(list : TJsonArray; session : TToolkitEditSession);
+    procedure finishOpenFileList(list : TJsonArray);
 
     // this is called regularly on any open file
     procedure storeContent(guid : String; original : boolean; bytes : TBytes);
@@ -36,10 +67,13 @@ type
     function fetchContent(guid : String) : TBytes;
 
     procedure getMRUList(list : TStrings);
+    procedure getMRUListRaw(list : TStrings);
     function getMRU(index : integer) : String;
     procedure addToMru(address, description : String);
     procedure removeFromMRU(address : String);
 
+    procedure getURLList(list : TStrings);
+    procedure addURL(url : String);
   end;
 
 implementation
@@ -57,21 +91,28 @@ begin
   inherited Destroy;
 end;
 
-procedure TFHIRToolkitTemporaryStorage.storeOpenFileList(sessions: TFslList<TToolkitEditSession>);
+function TFHIRToolkitTemporaryStorage.link: TFHIRToolkitTemporaryStorage;
+begin
+  result := TFHIRToolkitTemporaryStorage(inherited link);
+end;
+
+function TFHIRToolkitTemporaryStorage.startOpenFileList() : TJsonArray;
+begin
+  result := TJsonArray.Create;
+end;
+
+procedure TFHIRToolkitTemporaryStorage.storeOpenFile(list : TJsonArray; session : TToolkitEditSession);
+begin
+  list.add(sessionTOJson(session));
+end;
+
+procedure TFHIRToolkitTemporaryStorage.finishOpenFileList(list : TJsonArray);
 var
-  arr : TJsonArray;
-  session : TToolkitEditSession;
   cnt : TBytes;
   fn, fnn : String;
 begin
-  arr := TJsonArray.create;
-  try
-    for session in sessions do
-      arr.add(sessionTOJson(session));
-    cnt := TJSONWriter.writeArray(arr, true);
-  finally
-    arr.free;
-  end;
+  cnt := TJSONWriter.writeArray(list, true);
+  list.free;
 
   fn := FFolder+'editor-sessions.json';
   fnn := FFolder+'editor-sessions-new.json';
@@ -151,7 +192,7 @@ var
   params : TJsonObject;
   i : integer;
 begin
-  result := TJsonObject.create;
+  result := TJsonObject.Create;
   try
     result.str['guid'] := session.guid;
     if session.Address <> '' then
@@ -172,6 +213,10 @@ begin
       for i := 0 to session.Info.count - 1 do
         params.str[session.info.Names[i]] := session.info.ValueFromIndex[i];
     end;
+    if session.KnownToBeDeleted then
+      result.bool['is-deleted'] := session.KnownToBeDeleted;
+    if session.NoCheckCurrency then
+      result.bool['no-check'] := session.NoCheckCurrency;
     result.link;
   finally
     result.free;
@@ -182,7 +227,7 @@ function TFHIRToolkitTemporaryStorage.jsonToSession(json: TJsonObject): TToolkit
 var
   n : String;
 begin
-  result := TToolkitEditSession.create;
+  result := TToolkitEditSession.Create;
   try
     result.guid := json.str['guid'];
     result.Address := json.str['address'];
@@ -199,6 +244,8 @@ begin
       for n in json.obj['params'].properties.Keys do
         result.info.AddPair(n, json.obj['params'].str[n]);
     end;
+    result.KnownToBeDeleted := json.bool['is-deleted'];
+    result.NoCheckCurrency := json.bool['no-check'];
     result.link;
   finally
     result.free;
@@ -221,7 +268,7 @@ var
   ts : TStringList;
   s : String;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -232,12 +279,19 @@ begin
   end;
 end;
 
+procedure TFHIRToolkitTemporaryStorage.getMRUListRaw(list: TStrings);
+begin
+  list.clear;
+  if FileExists(FFolder+'mrulist.cfg') then
+    list.LoadFromFile(FFolder+'mrulist.cfg');
+end;
+
 function TFHIRToolkitTemporaryStorage.getMRU(index: integer): String;
 var
   ts : TStringList;
   s : String;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -253,7 +307,7 @@ var
   ts : TStringList;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -272,7 +326,7 @@ var
   ts : TStringList;
   i : integer;
 begin
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     if FileExists(FFolder+'mrulist.cfg') then
       ts.LoadFromFile(FFolder+'mrulist.cfg');
@@ -280,6 +334,32 @@ begin
       if ts[i].startsWith(address+'|') then
         ts.delete(i);
     ts.SaveTOFile(FFolder+'mrulist.cfg');
+  finally
+    ts.free;
+  end;
+end;
+
+procedure TFHIRToolkitTemporaryStorage.getURLList(list: TStrings);
+begin
+  if FileExists(FFolder+'urllist.cfg') then
+    list.LoadFromFile(FFolder+'urllist.cfg');
+end;
+
+procedure TFHIRToolkitTemporaryStorage.addURL(url : String);
+var
+  ts : TStringList;
+  s : String;
+  i : integer;
+begin
+  ts := TStringList.Create;
+  try
+    if FileExists(FFolder+'urllist.cfg') then
+      ts.LoadFromFile(FFolder+'urllist.cfg');
+    i := ts.IndexOf(url);
+    if (i > -1) then
+      ts.Delete(i);
+    ts.Insert(0, url);
+    ts.SaveToFile(FFolder+'urllist.cfg');
   finally
     ts.free;
   end;

@@ -28,23 +28,44 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$I fhir.inc}
+{$i fhir.inc}
 
-uses
+uses             
+  {$IFDEF WINDOWS}
+  FastMM4,
+  {$ELSE}
+  cmem,
+  cthreads,
+  {$ENDIF}
+
   {$IFDEF WINDOWS}
   Windows,
   {$ENDIF}
-  {$IFDEF LINUX}
-  cmem, cthreads,
+  {$IFDEF OSX}
+  forms, Interfaces,
   {$ENDIF}
   Classes, SysUtils,
-  Interfaces,
-  kernel, server_testing;
+  fsl_fpc_memory, fsl_utilities,
+
+  kernel, server_testing, server_stats, 
+zero_config, telnet_server, package_spider,
+  tx_registry_spider, tx_omop, tx_registry_model, endpoint_txregistry,
+  endpoint_icao, tests_cpt, tx_cpt, xig_provider, endpoint_xig, web_server;
 
 {$R *.res}
 
+var
+  cp : TCommandLineParameters;
 begin
   isMultiThread := true;
-  ExecuteFhirServer;
+  {$IFDEF FPC}
+  TFPCMemoryManagerTracker.install;
+  {$ENDIF}
+  cp := TCommandLineParameters.create;
+  try
+    ExecuteFhirServer(cp);
+  finally
+    cp.free;
+  end;
 end.
 

@@ -1,4 +1,4 @@
-﻿unit fsl_testing;
+unit fsl_testing;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -38,14 +38,12 @@ Uses
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF}
   IdGlobalProtocols,
   CommonTestBase,
-  fsl_base, fsl_utilities;
+  fsl_base, fsl_utilities, fsl_logging;
 
 // *** General Testing Infrastructure ******************************************
 
 type
-  {$IFNDEF FPC}
-  TRunMethod = TTestMethod;
-  {$ENDIF}
+  TTestMethodWithContext = procedure (context : TObject) of object;
   TFslTestThread = class;
 
   {
@@ -55,7 +53,7 @@ type
   TFslTestCase = class (TTestCase)
   protected
     procedure Status(const Msg: string);
-    procedure assertNotTested;
+    procedure assertNotTested(reason : String);
     procedure assertPass;
     procedure assertFail(message : String);
     procedure assertTrue(test : boolean; message : String); overload;
@@ -66,8 +64,10 @@ type
     procedure assertEqual(left, right : String); overload;
     procedure assertEqual(left, right : integer; message : String); overload;
     procedure assertEqual(left, right : integer); overload;
-    procedure assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
-    procedure thread(proc : TRunMethod);
+    procedure assertEqual(const left, right : TBytes; message : String); overload;
+    procedure assertEqual(const left, right : TBytes); overload;
+    procedure assertWillRaise(AMethod: TTestMethodWithContext; context : TObject; AExceptionClass: ExceptClass; AExceptionMessage : String);
+    procedure thread(proc : TTestMethodWithContext; context : TObject);
   public
   end;
 
@@ -85,6 +85,7 @@ type
 
     {$IFNDEF FPC}
     function GetName: string; override;
+    property TestName : String read GetName;
     {$ENDIF}
     procedure TestCase(name : String); virtual;
   published
@@ -103,15 +104,17 @@ type
     constructor Create(folder, filter : String; count : integer; clss : TFslTestSuiteCaseClass); overload;
   end;
 
-
   TFslTestThread = class (TThread)
   private
-    FProc : TRunMethod;
+    FProc : TTestMethodWithContext;
+    FContext  : TObject;
   protected
     procedure Execute; override;
   public
-    constructor Create(proc : TRunMethod);
+    constructor Create(proc : TTestMethodWithContext; context : TObject);
   end;
+
+  { TFslTestSettings }
 
   TFslTestSettings = class (TFslObject)
   private
@@ -119,11 +122,14 @@ type
     FFilename : String;
     FServerTestsRoot : String;
     FFHIRTestsRoot : String;
+    function GetValue(section, name : String): String;
     function testFile(root : String; parts : array of String) : String;
   public
-    constructor Create(filename : String);
+    constructor Create(filename : String); overload;
+    constructor Create(folder, filename : String); overload;
     destructor Destroy; override;
     property filename : String read FFilename;
+    property value[section, name : String] : String read GetValue; default;
 
     function serverTestFile(parts : array of String) : String;
     function fhirTestFile(parts : array of String) : String;
@@ -139,14 +145,19 @@ type
     function SSLKeyFile : String;
     function SSLPassword : String;
     function SSLCAFile : String;
+
+    function ZulipPassword : String;
   end;
 
 var
   TestSettings : TFslTestSettings;
+  GSnomedDataFile : string = '';
+  GCPTDataFile : string = '';
+
 
 {$IFDEF FPC}
-procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
-procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
+//procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
+procedure RegisterTest(ASuitePath: String; ATest: TTest);
 {$ELSE}
 procedure RegisterTest(SuitePath: string; test: ITest);
 {$ENDIF}
@@ -154,12 +165,12 @@ procedure RegisterTest(SuitePath: string; test: ITest);
 implementation
 
 {$IFDEF FPC}
-procedure RegisterTest(ASuitePath: String; ATestClass: TTestCaseClass); overload;
+procedure RegisterTestClass(ASuitePath: String; ATestClass: TTestCaseClass); overload;
 begin
   TestRegistry.RegisterTest(ASuitePath, ATestClass);
 end;
 
-procedure RegisterTest(ASuitePath: String; ATest: TTest); overload;
+procedure RegisterTest(ASuitePath: String; ATest: TTest);
 begin
   TestRegistry.RegisterTest(ASuitePath, ATest);
 end;
@@ -226,10 +237,10 @@ begin
   {$ENDIF}
 end;
 
-procedure TFslTestCase.assertNotTested;
+procedure TFslTestCase.assertNotTested(reason : String);
 begin
   {$IFDEF FPC}
-  TAssert.Fail('Not Tested');
+  Ignore('Not Tested: '+reason);
   {$ELSE}
   Fail('Not Tested');
   {$ENDIF}
@@ -271,13 +282,40 @@ begin
   {$ENDIF}
 end;
 
-procedure TFslTestCase.assertWillRaise(AMethod: TRunMethod; AExceptionClass: ExceptClass; AExceptionMessage : String);
+procedure TFslTestCase.assertEqual(const left, right: TBytes; message: String);
+var
+  i : integer;
 begin
   {$IFDEF FPC}
-  TAssert.AssertException(AExceptionMessage, AExceptionClass, AMethod);
+  for i := 0 to IntegerMin(length(left), length(right)) - 1 do
+    if (left[i] <> right[i]) then
+      raise EFslException.create('Byte Arrays differ at position '+inttostr(i)+': '+inttostr(ord(left[i]))+'/'+inttostr(ord(right[i])));
+  if length(left) <> length(right) then
+      raise EFslException.create('Byte Arrays differ in length: '+inttostr(length(left))+'/'+inttostr(length(right)));
   {$ELSE}
+  todo
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertEqual(const left, right: TBytes);
+var
+  i : integer;
+begin
+  {$IFDEF FPC}
+  for i := 0 to IntegerMin(length(left), length(right)) - 1 do
+    if (left[i] <> right[i]) then
+      raise EFslException.create('Byte Arrays differ at position '+inttostr(i)+': '+inttostr(ord(left[i]))+'/'+inttostr(ord(right[i])));
+  if length(left) <> length(right) then
+      raise EFslException.create('Byte Arrays differ in length: '+inttostr(length(left))+'/'+inttostr(length(right)));
+  {$ELSE}
+  todo
+  {$ENDIF}
+end;
+
+procedure TFslTestCase.assertWillRaise(AMethod: TTestMethodWithContext; context : TObject; AExceptionClass: ExceptClass; AExceptionMessage : String);
+begin
   try
-    AMethod;
+    AMethod(context);
     if (AExceptionMessage = '') then
       fail('Expected '+AExceptionClass.ClassName+', but it did not occur')
     else
@@ -290,7 +328,6 @@ begin
         assertEqual(AExceptionMessage, e.Message);
     end;
   end;
-  {$ENDIF}
 end;
 
 procedure TFslTestCase.Status(const Msg: string);
@@ -298,9 +335,9 @@ begin
  // nothing, for now
 end;
 
-procedure TFslTestCase.thread(proc: TRunMethod);
+procedure TFslTestCase.thread(proc : TTestMethodWithContext; context : TObject);
 begin
-  TFSLTestThread.Create(proc);
+  TFSLTestThread.Create(proc, context);
 end;
 
 { TFslTestSuiteCase }
@@ -387,16 +424,17 @@ end;
 
 { TFslTestThread }
 
-constructor TFslTestThread.Create(proc: TRunMethod);
+constructor TFslTestThread.Create(proc: TTestMethodWithContext; context : TObject);
 begin
   FProc := proc;
+  FContext := context;
   FreeOnTerminate := true;
   inherited Create(false);
 end;
 
 procedure TFslTestThread.execute;
 begin
-  Fproc;
+  FProc(FContext);
 end;
 
 { TFslTestSettings }
@@ -404,19 +442,60 @@ end;
 const
   psc = {$IFDEF WINDOWS} '\' {$ELSE} '/' {$ENDIF};
 
+constructor TFslTestSettings.Create(folder, filename: String);
+begin
+  inherited Create;
+  if (folder = '') then
+    folder := TCommandLineParameters.execDir;
+  FFilename := FilePath([folder, filename]);
+  FIni := TIniFile.create(filename);
+  if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
+    FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  if not getCommandLineParam('fhir-test-cases', FFHIRTestsRoot) then
+    FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  if not getCommandLineParam('md-test-root', MDTestRoot) then
+    MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('snomed-data', GSnomedDataFile) then
+    GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  if not getCommandLineParam('cpt-data', GCPTDataFile) then
+    GCPTDataFile := FIni.ReadString('locations', 'cpt', '');
+  Logging.log('Test Locations: ');
+  Logging.log('  fhirserver='+FServerTestsRoot);
+  Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
+  Logging.log('  markdown='+MDTestRoot);
+  Logging.log('  snomed='+GSnomedDataFile);
+  Logging.log('  cpt='+GCPTDataFile);
+end;
+
 constructor TFslTestSettings.Create(filename: String);
 begin
-  inherited create;
+  inherited Create;
+  if (not FileExists(filename)) then
+    raise EFslException.create('Test Settings File '+filename+' not found');
   FFilename := filename;
   FIni := TIniFile.create(filename);
-  FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
-  FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
-  MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('fhir-server-root', FServerTestsRoot) then
+    FServerTestsRoot := FIni.ReadString('locations', 'fhirserver', '');
+  if not getCommandLineParam('fhir-test-cases', FFHIRTestsRoot) then
+    FFHIRTestsRoot := FIni.ReadString('locations', 'fhir-test-cases', '');
+  if not getCommandLineParam('md-test-root', MDTestRoot) then
+    MDTestRoot := FIni.ReadString('locations', 'markdown', '');
+  if not getCommandLineParam('snomed-data', GSnomedDataFile) then
+    GSnomedDataFile := FIni.ReadString('locations', 'snomed', '');
+  if not getCommandLineParam('cpt-data', GCPTDataFile) then
+    GCPTDataFile := FIni.ReadString('locations', 'cpt', '');
+
+  Logging.log('Test Locations: ');
+  Logging.log('  fhirserver='+FServerTestsRoot);
+  Logging.log('  fhir-test-cases='+FFHIRTestsRoot);
+  Logging.log('  markdown='+MDTestRoot);
+  Logging.log('  snomed='+GSnomedDataFile);
+  Logging.log('  cpt='+GCPTDataFile);
 end;
 
 destructor TFslTestSettings.Destroy;
 begin
-  FIni.Free;
+  FIni.free;
   inherited;
 end;
 
@@ -485,6 +564,16 @@ begin
   end;
 end;
 
+function TFslTestSettings.ZulipPassword: String;
+begin
+  result := Fini.ReadString('zulip', 'password', '');
+end;
+
+function TFslTestSettings.GetValue(section, name : String): String;
+begin
+  result := FIni.ReadString(section, name, '');
+end;
+
 function TFslTestSettings.section(name: String): TFslStringMap;
 var
   list : TStringList;
@@ -498,11 +587,11 @@ begin
       for s in list do
         result.Items[s] := FIni.ReadString(name, s, '');
     finally
-      list.Free;
+      list.free;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -512,9 +601,9 @@ begin
 end;
 
 initialization
-  TestSettings := TFslTestSettings.Create('fhir-tests.ini');
+  TestSettings := TFslTestSettings.Create('', 'fhir-tests.ini');
 finalization
-  TestSettings.Free;
+  TestSettings.free;
 end.
 
 

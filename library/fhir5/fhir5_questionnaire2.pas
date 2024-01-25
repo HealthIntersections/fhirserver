@@ -1,4 +1,4 @@
-unit fhir5_resources_admin;
+unit fhir5_questionnaire2;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -27,6 +27,10 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
+
+{$I fhir.inc}
+{$I fhir5.inc}
+
 interface
 
 uses
@@ -51,7 +55,7 @@ type
     procedure footer(html : THtmlPublisher);
     procedure generate(html : THtmlPublisher);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -68,7 +72,7 @@ implementation
 destructor TQuestionnaireRenderer.Destroy;
 begin
   FQuestionnaire.free;
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
 
   inherited;
 end;
@@ -158,7 +162,7 @@ function TQuestionnaireRenderer.render: String;
 var
   html : THtmlPublisher;
 begin
-  html := THtmlPublisher.create(TFHIRFactoryR5.create);
+  html := THtmlPublisher.Create(TFHIRFactoryR5.create);
   try
     generate(html);
     result := html.output;
@@ -175,15 +179,15 @@ end;
 
 procedure TQuestionnaireRenderer.SetTerminologyServer(const Value: TFHIRClient);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
 end;
 
-function TQuestionnaireRenderer.sizeInBytesV : cardinal;
+function TQuestionnaireRenderer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTerminologyServer.sizeInBytes);
-  inc(result, FQuestionnaire.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTerminologyServer.sizeInBytes(magic));
+  inc(result, FQuestionnaire.sizeInBytes(magic));
 end;
 
 end.

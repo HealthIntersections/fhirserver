@@ -128,7 +128,7 @@ begin
     ///
 
 
-    imagefiles:= TDirectory.GetFiles(pandocfolder + '\media');
+    imagefiles := TDirectory.GetFiles(pandocfolder + '\media');
     for imgfile in imageFiles do
       TFile.copy(imgfile, tempfolder + '\'+edit1.text+'-'+extractfilename(imgfile));
 
@@ -151,7 +151,7 @@ begin
         SL.SaveToFile(tempfolder + '\tmp.html');
       end;
     finally
-      SL.Free;
+      SL.free;
     end;
 
     TFile.copy(tempfolder + '\tmp.html', tempfolder + '\tmp_display.html');
@@ -196,7 +196,7 @@ begin
   strList.LoadFromFile(FileName);
   strList.text := stringreplace(strList.text, searchstring, replacestring, [rfReplaceAll, rfIgnoreCase]);
   strList.SaveToFile(FileName);
-  strList.Free;
+  strList.free;
 
 end;
 

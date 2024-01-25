@@ -29,13 +29,14 @@ Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthinte
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
 
 Uses
-  SysUtils, Classes, Character, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_fpc,
+  SysUtils, Classes, Character, 
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_xml, fsl_json, fsl_fpc, fsl_regex,
   fhir_objects,  fhir_xhtml, fhir_factory, fhir_common, fhir_pathengine,
   fhir5_pathnode, fhir5_context, fhir5_resources, fhir5_resources_base, fhir5_enums, fhir5_types, fhir5_pathengine, fhir5_elementmodel;
 
@@ -56,7 +57,7 @@ Type
     type_: TFHIRElementDefinition;
     // extension : TFHIRElementDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(element : TFHIRMMElement); Overload;
@@ -82,7 +83,7 @@ Type
     FadditionalSlice : boolean;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name: String; element: TFHIRMMElement; path: String; count: integer);
     property additionalSlice : boolean read FadditionalSlice write FadditionalSlice;
@@ -105,7 +106,7 @@ Type
     cursor, lastCount: integer;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path: String; element: TFHIRMMElement);
     destructor Destroy; override;
@@ -121,7 +122,7 @@ Type
     FChecked : boolean;
     Fprofile : TFhirStructureDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function uncheckedProfiles : TFhirStructureDefinitionList;
     property Checked : boolean read FChecked write FChecked;
@@ -136,7 +137,7 @@ Type
     FUncheckedProfiles : TFslList<TFhirProfileUsage>;
     function GetHasProfiles : boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(profile : String); overload;
@@ -149,6 +150,8 @@ Type
     procedure addProfiles(errors : TFslList<TFhirValidationMessage>; profiles : TValidationProfileSet; path : String; element : TFHIRMMElement; isEntry : boolean);
     function canonicalUrls : TArray<String>;
   end;
+
+  { TFHIRValidator5 }
 
   TFHIRValidator5 = class(TFHIRValidatorV)
   private
@@ -250,10 +253,11 @@ Type
     function FHIRPathResolveReference(source : TFHIRPathEngineV; appInfo : TFslObject; url : String) : TFHIRObject;
     function GetContext : TFHIRWorkerContext;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context: TFHIRWorkerContextWithFactory); override;
     destructor Destroy; Override;
+    procedure Unload; override;
 
     Property Context : TFHIRWorkerContext read GetContext;
     Property ValContext : TFHIRWorkerContext read GetContext;
@@ -362,14 +366,14 @@ begin
   result := false;
 end;
 
-function TElementInfo.sizeInBytesV : cardinal;
+function TElementInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fname.length * sizeof(char)) + 12);
-  inc(result, Felement.sizeInBytes);
+  inc(result, Felement.sizeInBytes(magic));
   inc(result, (Fpath.length * sizeof(char)) + 12);
-  inc(result, Fdefinition.sizeInBytes);
-  inc(result, Fslice.sizeInBytes);
+  inc(result, Fdefinition.sizeInBytes(magic));
+  inc(result, Fslice.sizeInBytes(magic));
 end;
 
 { TNodeStack }
@@ -391,7 +395,7 @@ end;
 
 destructor TNodeStack.Destroy;
 begin
-  logicalPaths.Free;
+  logicalPaths.free;
   inherited;
 end;
 
@@ -452,7 +456,7 @@ begin
       result.logicalPaths.AddStrings(logicalPaths);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -480,18 +484,18 @@ begin
     end;
     result := b.toString();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
-function TNodeStack.sizeInBytesV : cardinal;
+function TNodeStack.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (literalPath.length * sizeof(char)) + 12);
-  inc(result, logicalPaths.sizeInBytes);
-  inc(result, FElement.sizeInBytes);
-  inc(result, definition.sizeInBytes);
-  inc(result, type_.sizeInBytes);
+  inc(result, logicalPaths.sizeInBytes(magic));
+  inc(result, FElement.sizeInBytes(magic));
+  inc(result, definition.sizeInBytes(magic));
+  inc(result, type_.sizeInBytes(magic));
 end;
 
 { TFHIRValidator }
@@ -505,12 +509,18 @@ end;
 
 destructor TFHIRValidator5.Destroy;
 begin
-  FPathEngine.Free;
+  FPathEngine.free;
   // FContext don't free- just a copy of what parent owns
   inherited;
 end;
 
-function TFHIRValidator5.ResolveInBundle(bundle : TFHIRObject; url : String) : TFHIRObject;
+procedure TFHIRValidator5.Unload;
+begin
+  inherited Unload;
+end;
+
+function TFHIRValidator5.resolveInBundle(bundle: TFHIRObject; url: String
+  ): TFHIRObject;
 var
   propE, propFU, propR : TFHIRProperty;
   item : TFHIRObject;
@@ -527,7 +537,7 @@ begin
         if propFU.hasValue then
           u := propFU.Values[0].primitiveValue;
       finally
-        propFU.Free;
+        propFU.free;
       end;
       if (u = url) then
       begin
@@ -536,12 +546,12 @@ begin
           if propR.hasValue then
             exit(propR.Values[0].Link);
         finally
-          propR.Free;
+          propR.free;
         end;
       end;
     end;
   finally
-    propE.Free;
+    propE.free;
   end;
 end;
 
@@ -560,7 +570,7 @@ procedure TFHIRValidator5.validate(ctxt : TFHIRValidatorContext; element: TMXmlE
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, element, profiles);
   finally
@@ -572,7 +582,7 @@ procedure TFHIRValidator5.validate(ctxt : TFHIRValidatorContext; obj: TJsonObjec
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, obj, profiles);
   finally
@@ -646,7 +656,7 @@ procedure TFHIRValidator5.validate(ctxt : TFHIRValidatorContext; document: TMXml
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, document, profiles);
   finally
@@ -713,7 +723,7 @@ begin
     c.display := item.getNamedChildValue('display');
     result := c.Link;
   finally
-    c.Free;
+    c.free;
   end;
 end;
 {$IFDEF DSTU21}
@@ -777,7 +787,7 @@ begin
           res.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
     except
       on e: Exception do
@@ -837,7 +847,7 @@ begin
   text := element.getNamedChildValue('text');
   rule(ctxt, IssueTypeInvalid, element.locStart, element.locEnd, stack.literalPath, (text = '') or (text = qItem.text), 'If text exists, it must match the questionnaire definition for linkId '+qItem.linkId);
 
-  answers := TFslList<TFHIRMMElement>.create;
+  answers := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildren('answer', answers);
     if inProgress then
@@ -880,13 +890,13 @@ begin
       end;
     end;
   finally
-    answers.Free;
+    answers.free;
   end;
   if qitem.type_ = ItemTypeGroup then
     validateQuestionannaireResponseItems(qsrc, qitem.itemList, errors, element, stack, inProgress)
   else
   begin
-    items := TFslList<TFHIRMMElement>.create;
+    items := TFslList<TFHIRMMElement>.Create;
     try
       element.getNamedChildren('item', items);
       for item in items do
@@ -899,7 +909,7 @@ begin
         end;
       end;
     finally
-      answers.Free;
+      answers.free;
     end;
   end;
 end;
@@ -941,11 +951,11 @@ var
         exit(i);
   end;
 begin
-  items := TFslList<TFHIRMMElement>.create;
+  items := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildren('item', items);
     // now, sort into stacks
-    map := TFslMap<TFslList<TFHIRMMElement>>.create;
+    map := TFslMap<TFslList<TFHIRMMElement>>.Create;
     try
       lastIndex := -1;
       for item in items do
@@ -975,7 +985,7 @@ begin
             lastIndex := index;
             if not map.TryGetValue(linkId, mapItem) then
             begin
-              mapItem := TFslList<TFHIRMMElement>.create;
+              mapItem := TFslList<TFHIRMMElement>.Create;
               map.Add(linkId, mapitem);
             end;
             mapItem.Add(item.Link);
@@ -992,10 +1002,10 @@ begin
           rule(ctxt, IssueTypeRequired, element.locStart, element.locEnd, stack.literalPath, not qItem.required, 'No response found for required item '+qItem.linkId);
       end;
     finally
-      map.Free;
+      map.free;
     end;
   finally
-    items.Free;
+    items.free;
   end;
 end;
 
@@ -1011,7 +1021,7 @@ var
   s, l : String;
 begin
   result := '';
-  values := TFslList<TFHIRMMElement>.create;
+  values := TFslList<TFHIRMMElement>.Create;
   try
     element.getNamedChildrenWithWildcard('value[x]', values);
     if values.Count > 0 then
@@ -1037,7 +1047,7 @@ begin
       end;
     end;
   finally
-    values.Free;
+    values.free;
   end;
 end;
 {$ENDIF}
@@ -1061,7 +1071,7 @@ begin
         result := resource.children[0];
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -1085,7 +1095,7 @@ begin
     defn := element.prop.Structure;
     if (defn = nil) then
     begin
-      defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+      defn := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName, ''));
       ctxt.owned.Add(defn);
     end;
     rule(ctxt, IssueTypeINVALID, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.addToLiteralPath(resourceName), defn <> nil, 'No definition found for resource type "' + resourceName + '"');
@@ -1093,13 +1103,13 @@ begin
   if (profiles <> nil) then
     for p in profiles.FCanonical do
     begin
-      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, p));
+      sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, p, ''));
       try
         if (warning(ctxt, IssueTypeINVALID, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+p+'" could not be resolved')) then
           if (rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
             resource.profiles.addProfile(sd.link);
       finally
-        sd.Free;
+        sd.free;
       end;
     end;
 
@@ -1187,13 +1197,13 @@ begin
         p := stack.addToLiteralPath(['meta', 'profile', ':' + inttostr(i)]);
         if (rule(ctxt, IssueTypeINVALID, element.LocationData.ParseStart, element.LocationData.ParseFinish, p, ref <> '', 'StructureDefinition reference invalid')) then
         begin
-          sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref));
+          sd := TFHIRStructureDefinition(context.fetchResource(frtStructureDefinition, ref, ''));
           try
             if (warning(ctxt, IssueTypeINVALID, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, sd <> nil, 'StructureDefinition reference "'+ref+'" could not be resolved')) then
               if (rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, sd.Snapshot <> nil, 'StructureDefinition has no snapshot - validation is against the snapshot, so it must be provided')) then
                 resource.profiles.addProfile(sd.Link);
           finally
-            sd.Free;
+            sd.free;
           end;
           inc(i);
         end;
@@ -1245,7 +1255,7 @@ begin
         if (type_ = 'message') then
           validateMessage(ctxt, bundle);
       finally
-        firstStack.Free;
+        firstStack.free;
       end;
     end;
   finally
@@ -1274,7 +1284,7 @@ begin
     try
       validateBundleReference(ctxt, entries, composition.getNamedChild('subject'), 'Composition Subject', ns, fullUrl, 'Composition', id);
     finally
-      ns.Free;
+      ns.free;
     end;
     validateSections(ctxt, entries, composition, stack, fullUrl, id);
   end;
@@ -1303,7 +1313,7 @@ begin
         validateBundleReference(ctxt, entries, section.getNamedChild('content'), 'Section Content', localStack, fullUrl, 'Composition', id);
         validateSections(ctxt, entries, section, localStack, fullUrl, id);
       finally
-        localStack.Free;
+        localStack.free;
       end;
     end;
   finally
@@ -1324,7 +1334,8 @@ begin
   end;
 end;
 
-Function TFHIRValidator5.resolveInBundle(entries: TFslList<TFHIRMMElement>; ref, fullUrl, type_, id: String): TFHIRMMElement;
+function TFHIRValidator5.resolveInBundle(entries: TFslList<TFHIRMMElement>;
+  ref, fullUrl, type_, id: String): TFHIRMMElement;
 var
   entry, res : TFHIRMMElement;
   fu, u, t, i, et, eid: String;
@@ -1382,7 +1393,7 @@ end;
 
 function TFHIRValidator5.getProfileForType(ctxt : TFHIRValidatorContext; type_: String): TFHIRStructureDefinition;
 begin
-  result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_));
+  result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + type_, ''));
   ctxt.Owned.add(result);
 end;
 
@@ -1459,7 +1470,7 @@ var
   sd: TFHIRStructureDefinition;
 begin
   url := 'http://hl7.org/fhir/StructureDefinition/' + t;
-  sd := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
+  sd := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url, ''));
   ctxt.Owned.add(sd);
   if (sd = nil) or (sd.Snapshot = nil) then
     result := nil
@@ -1561,14 +1572,14 @@ begin
     begin
       if (actualType = '') then
         exit; // there'll be an error elsewhere in this case, and we're going to stop.
-      dt := TFHIRStructureDefinition(self.context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + actualType));
+      dt := TFHIRStructureDefinition(self.context.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + actualType, ''));
       try
         if (dt = nil) then
           raise EDefinitionException.create('Unable to resolve actual type ' + actualType);
         childDefinitions.free;
         childDefinitions := getChildMap(dt, dt.snapshot.ElementList[0]);
       finally
-        dt.Free;
+        dt.free;
       end;
     end;
 
@@ -1578,7 +1589,7 @@ begin
       while (iter.next()) do
         children.Add(TElementInfo.Create(iter.name(), iter.element(), iter.path(), iter.count()));
     finally
-      iter.Free;
+      iter.free;
     end;
 
     // 2. assign children to a definition
@@ -1587,7 +1598,7 @@ begin
     unsupportedSlicing := false;
     slicingPath := '';
     sliceOffset := 0;
-    problematicPaths := TStringList.create;
+    problematicPaths := TStringList.Create;
     try
       for i := 0 to childDefinitions.count - 1 do
       begin
@@ -1823,13 +1834,13 @@ begin
               validateElement(ctxt, profile, ei.definition, nil, nil, resource, ei.element, t, localStack, false);
           end;
         finally
-          localStack.Free;
+          localStack.free;
         end;
       end;
     end;
   finally
-    childDefinitions.Free;
-    children.Free;
+    childDefinitions.free;
+    children.free;
   end;
 end;
 
@@ -1901,7 +1912,7 @@ begin
       vm.details.text := msg;
       ctxt.Issues.Add(TFHIROperationOutcomeIssue5.Create(vm.Link));
     finally
-      vm.Free;
+      vm.free;
     end;
   end;
   result := thePass;
@@ -1931,7 +1942,7 @@ begin
       vm.details.text := msg;
       ctxt.issues.Add(TFHIROperationOutcomeIssue5.Create(vm.Link));
     finally
-      vm.Free;
+      vm.free;
     end;
   end;
   result := thePass;
@@ -1997,10 +2008,10 @@ begin
         // need to do some special processing for reference here...
         if (ed.Type_List[0].code = 'Reference') then
           discriminator := discriminator.substring(discriminator.indexOf('.') + 1);
-        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profile));
+        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, ed.Type_List[0].profile, ''));
       end
       else
-        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code));
+        ty := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ed.Type_List[0].code, ''));
       ctxt.Owned.add(ty);
       Snapshot := ty.Snapshot.ElementList;
       ed := Snapshot[0];
@@ -2026,7 +2037,7 @@ begin
     end;
     raise EFHIRException.Create('Unable to find discriminator definition for ' + goal + ' in ' + discriminator + ' at ' + path);
   finally
-    childDefinitions.Free;
+    childDefinitions.free;
   end;
 end;
 
@@ -2034,7 +2045,7 @@ function TFHIRValidator5.checkResourceType(ctxt : TFHIRValidatorContext; ty: Str
 var
   t : TFHIRResource;
 begin
-  t := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty));
+  t := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + ty, ''));
   ctxt.Owned.add(t);
   if (t <> nil) then
     result := ty
@@ -2263,7 +2274,7 @@ begin
   end
   else
   begin
-    result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, pr));
+    result := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, pr, ''));
     ctxt.Owned.add(result);
   end;
 end;
@@ -2278,7 +2289,7 @@ begin
   url := element.getNamedChildValue('url');
   isModifier := element.name = 'modifierExtension';
 
-  ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url));
+  ex := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, url, ''));
   if (ex = nil) then
   begin
     if (not rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path, allowUnknownExtension(ctxt, url), 'The extension ' + url + ' is unknown, and not allowed here'))
@@ -2289,21 +2300,21 @@ begin
   begin
     ctxt.Owned.add(ex);
     if (def.isModifier) then
-      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url := "' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is labelled as a modifier, but the underlying extension is not')
     else
-      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url := "' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
         'Extension modifier mismatch: the extension element is not labelled as a modifier, but the underlying extension is');
 
     // two questions
     // 1. can this extension be used here?
-    checkExtensionContext(ctxt, element, { path+'[url:="'+url+'"]', } ex, stack, ex.url);
+    checkExtensionContext(ctxt, element, { path+'[url := "'+url+'"]', } ex, stack, ex.url);
 
     if (isModifier) then
-      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url:="' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url := "' + url + '"]', ex.Snapshot.ElementList[0].isModifier,
         'The Extension "' + url + '" must be used as a modifierExtension')
     else
-      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url:="' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
+      rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, path + '[url := "' + url + '"]', not ex.Snapshot.ElementList[0].isModifier,
         'The Extension "' + url + '" must not be used as an extension (it"s a modifierExtension)');
 
     // 2. is the content of the extension valid?
@@ -2382,7 +2393,7 @@ begin
         ok := true;
     end;
     result := rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, ok,
-      'The extension ' + extUrl + ' is not allowed to be used on the logical path set [' + p + '] (allowed: datatype:=' + b + ')');
+      'The extension ' + extUrl + ' is not allowed to be used on the logical path set [' + p + '] (allowed: datatype := ' + b + ')');
   end
   else if (definition.ContextType = ExtensionContextEXTENSION) then
   begin
@@ -2414,7 +2425,7 @@ begin
         ok := true;
     end;
     result := rule(ctxt, IssueTypeSTRUCTURE, element.LocationData.ParseStart, element.LocationData.ParseFinish, stack.literalPath, ok,
-      'The extension ' + extUrl + ' is not allowed to be used on the logical path set ' + p + ' (allowed: resource:=' + b + ')');
+      'The extension ' + extUrl + ' is not allowed to be used on the logical path set ' + p + ' (allowed: resource := ' + b + ')');
   end
   else
     raise EDefinitionException.create('Unknown context type');
@@ -2474,7 +2485,7 @@ var
   profile: TFHIRStructureDefinition;
 begin
   resourceName := element.Type_;
-  profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName));
+  profile := TFHIRStructureDefinition(ValContext.fetchResource(frtStructureDefinition, 'http://hl7.org/fhir/StructureDefinition/' + resourceName, ''));
   ctxt.Owned.add(profile);
   if (element.Special in [fsecBUNDLE_ENTRY, fsecBUNDLE_OUTCOME, fsecPARAMETER]) then
     resource := element;
@@ -2539,9 +2550,11 @@ begin
   result := fmt.contains('T');
 end;
 
-procedure TFHIRValidator5.checkPrimitive(ctxt : TFHIRValidatorContext; path: String; ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement; profile : TFhirStructureDefinition);
+procedure TFHIRValidator5.checkPrimitive(ctxt: TFHIRValidatorContext; path,
+  ty: String; context: TFHIRElementDefinition; e: TFHIRMMElement;
+  profile: TFhirStructureDefinition);
 var
-  regex: TRegEx;
+  regex: TRegularExpression;
   xhtml : TFhirXHtmlNode;
   ns : String;
 begin
@@ -2561,16 +2574,24 @@ begin
   if (ty = 'dateTime') then
   begin
     rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
-    regex := TRegEx.Create('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
-      'if a date has a time, it must have a timezone');
+    regex := TRegularExpression.Create('-?[0-9]{4}(-(0[1-9]|1[0-2])(-(0[0-9]|[1-2][0-9]|3[0-1])(T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))?)?)?)?', [roCompiled]);
+    try
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'Not a valid date time');
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, not hasTime(e.primitiveValue) or hasTimeZone(e.primitiveValue),
+        'if a date has a time, it must have a timezone');
+    finally
+      regex.free;
+    end;
   end;
   if (ty = 'instant') then
   begin
-    regex := TRegEx.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
-    rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    regex := TRegularExpression.Create('-?[0-9]{4}-(0[1-9]|1[0-2])-(0[0-9]|[1-2][0-9]|3[0-1])T([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9](\.[0-9]+)?(Z|(\+|-)((0[0-9]|1[0-3]):[0-5][0-9]|14:00))', [roCompiled]);
+    try
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, regex.isMatch(e.primitiveValue), 'The instant "' + e.primitiveValue + '" is not valid (by regex)');
+      rule(ctxt, IssueTypeINVALID, e.LocationData.ParseStart, e.LocationData.ParseFinish, path, yearIsValid(e.primitiveValue), 'The value "' + e.primitiveValue + '" does not have a valid year');
+    finally
+      regex.free;
+    end;
   end;
 
   if (ty = 'code') then
@@ -2766,7 +2787,7 @@ begin
                     res.free;
                   end;
                 finally
-                  c.Free;
+                  c.free;
                 end;
               except
                 on e: Exception do
@@ -2794,7 +2815,7 @@ begin
   end
   else
   begin
-    result := ValContext.fetchResource(frtValueSet, reference) as TFHIRValueSet;
+    result := ValContext.fetchResource(frtValueSet, reference, '') as TFHIRValueSet;
     if result <> nil then
       ctxt.Owned.add(result);
   end;
@@ -2815,8 +2836,8 @@ begin
     cc.text := element.getNamedChildValue('text');
     result := cc.Link;
   finally
-    cc.Free;
-    list.Free;
+    cc.free;
+    list.free;
   end;
 End;
 
@@ -2903,12 +2924,12 @@ begin
       else
         result := rule(ctxt, IssueTypeCODEINVALID, element.LocationData.ParseStart, element.LocationData.ParseFinish, path, s = nil, s.message);
     finally
-      s.Free;
+      s.free;
     end;
   end
   // else if (system.startsWith('http://hl7.org/fhir')) then
   // begin
-  // if (system = 'http://hl7.org/fhir/sid/icd-10') then
+  // if (system = URI_ICD10) then
   // result := true // else don"t check ICD-10 (for now)
   // else
   // begin
@@ -2923,9 +2944,9 @@ begin
   // end;
   // return false;
   // end;
-  // end; else if (system.startsWith('http://loinc.org')) begin
+  // end; else if (system.startsWith(URI_LOINC)) begin
   // return true;
-  // end; else if (system.startsWith('http://unitsofmeasure.org')) begin
+  // end; else if (system.startsWith(URI_UCUM)) begin
   // return true;
   // end;
   else
@@ -3469,7 +3490,7 @@ end;
 procedure TFHIRValidator5.checkSampledDataValue(ctxt : TFHIRValidatorContext; path: String; focus: TFHIRMMElement; fixed: TFHIRSampledData);
 begin
   checkFixedValue(ctxt, path + '.origin', focus.getNamedChild('origin'), fixed.Origin, 'origin');
-  checkFixedValue(ctxt, path + '.period', focus.getNamedChild('period'), fixed.PeriodElement, 'period');
+  checkFixedValue(ctxt, path + '.interval', focus.getNamedChild('interval'), fixed.intervalElement, 'interval');
   checkFixedValue(ctxt, path + '.factor', focus.getNamedChild('factor'), fixed.FactorElement, 'factor');
   checkFixedValue(ctxt, path + '.lowerLimit', focus.getNamedChild('lowerLimit'), fixed.LowerLimitElement, 'lowerLimit');
   checkFixedValue(ctxt, path + '.upperLimit', focus.getNamedChild('upperLimit'), fixed.UpperLimitElement, 'upperLimit');
@@ -3513,10 +3534,10 @@ begin
       if (element <> nil) then
         validate(ctxt, element, profiles);
     finally
-      element.Free;
+      element.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -3534,7 +3555,7 @@ begin
       gen.description := ctxt.OperationDescription;
       gen.generate(result.Resource);
     finally
-      gen.Free;
+      gen.free;
     end;
     result.Link;
   finally
@@ -3559,7 +3580,7 @@ procedure TFHIRValidator5.validate(ctxt: TFHIRValidatorContext; source: TFslBuff
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, source, format, profiles);
   finally
@@ -3571,7 +3592,7 @@ procedure TFHIRValidator5.validate(ctxt: TFHIRValidatorContext; resource: TFhirR
 var
   profiles : TValidationProfileSet;
 begin
-  profiles := TValidationProfileSet.create;
+  profiles := TValidationProfileSet.Create;
   try
     validate(ctxt, resource, profiles);
   finally
@@ -3614,19 +3635,19 @@ begin
   result := (inherited Context) as TFHIRWorkerContext;
 end;
 
-function TFHIRValidator5.sizeInBytesV : cardinal;
+function TFHIRValidator5.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensionDomains.sizeInBytes);
-  inc(result, FPathEngine.sizeInBytes);
-  inc(result, FEntryElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensionDomains.sizeInBytes(magic));
+  inc(result, FPathEngine.sizeInBytes(magic));
+  inc(result, FEntryElement.sizeInBytes(magic));
 end;
 
 { TChildIterator }
 
 constructor TChildIterator.Create(path: String; element: TFHIRMMElement);
 begin
-  inherited create;
+  inherited Create;
   parent := element;
   basePath := path;
   cursor := -1;
@@ -3700,20 +3721,20 @@ begin
   result := basePath + '.' + name + sfx;
 end;
 
-function TChildIterator.sizeInBytesV : cardinal;
+function TChildIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, parent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, parent.sizeInBytes(magic));
   inc(result, (basePath.length * sizeof(char)) + 12);
 end;
 
 { TValidationProfileSet }
 
-constructor TValidationProfileSet.create;
+constructor TValidationProfileSet.Create;
 begin
   inherited;
-  FCanonical := TStringList.create;
-  FDefinitions := TFHIRStructureDefinitionList.create;
+  FCanonical := TStringList.Create;
+  FDefinitions := TFHIRStructureDefinitionList.Create;
 
 end;
 
@@ -3725,12 +3746,12 @@ end;
 
 procedure TValidationProfileSet.addProfiles(errors : TFslList<TFhirValidationMessage>; profiles : TValidationProfileSet; path : String; element : TFHIRMMElement; isEntry : boolean);
 begin
-  raise Exception.Create('Error Message');
+  raise EFslException.Create('Error Message');
 end;
 
 function TValidationProfileSet.canonicalUrls: TArray<String>;
 begin
-  raise Exception.Create('Error Message');
+  raise EFslException.Create('Error Message');
 end;
 
 constructor TValidationProfileSet.create(profile: TFHIRStructureDefinition);
@@ -3741,8 +3762,8 @@ end;
 
 destructor TValidationProfileSet.Destroy;
 begin
-  FCanonical.Free;
-  FDefinitions.Free;
+  FCanonical.free;
+  FDefinitions.free;
   inherited;
 end;
 
@@ -3751,12 +3772,12 @@ begin
   result := false; // todo
 end;
 
-function TValidationProfileSet.sizeInBytesV : cardinal;
+function TValidationProfileSet.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCanonical.sizeInBytes);
-  inc(result, FDefinitions.sizeInBytes);
-  inc(result, FUncheckedProfiles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCanonical.sizeInBytes(magic));
+  inc(result, FDefinitions.sizeInBytes(magic));
+  inc(result, FUncheckedProfiles.sizeInBytes(magic));
 end;
 
 { TFhirProfileUsage }
@@ -3766,10 +3787,10 @@ begin
   result := nil;
 end;
 
-function TFhirProfileUsage.sizeInBytesV : cardinal;
+function TFhirProfileUsage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fprofile.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fprofile.sizeInBytes(magic));
 end;
 
 end.

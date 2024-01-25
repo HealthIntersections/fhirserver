@@ -29,24 +29,50 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir4.inc}
 
 interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_versions,
   fsl_npm, fsl_npm_cache,
-  fhir_objects, fhir_factory, fhir_common, 
+  fhir_objects, fhir_factory, fhir_common, fhir_parser,
   fhir4_types, fhir4_resources, fhir4_resources_base;
 
 type
+  { TFHIRResourceProxy }
+
+  TFHIRResourceProxy = class (TFHIRResourceProxyV)
+  private
+    // always available
+    FFactory : TFHIRFactory;
+
+    // for lazy loading
+    FWorker : TFHIRWorkerContextV;
+    FInfo : TNpmPackageResource;
+    FLock : TFslLock;
+
+    function GetResource : TFHIRResource;
+  protected
+    procedure loadResource;  override;
+    function wrapResource : TFHIRXVersionResourceWrapper; override;
+  public
+    constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
+    constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+    destructor Destroy; override;
+
+    function link : TFHIRResourceProxy; overload;
+    property resource : TFHIRResource read GetResource;
+  end;
+
   TFHIRCustomResourceInformation = class (TFslObject)
   private
     FName: String;
     FSearchParameters: TFslList<TFHIRSearchParameter>;
     FDefinition: TFHIRStructureDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(definition : TFHIRStructureDefinition);
     destructor Destroy; override;
@@ -65,7 +91,7 @@ type
     function doSort(sender : TObject; const L, R: T): Integer;
     {$ENDIF}
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -97,10 +123,11 @@ type
     function link : TFHIRWorkerContext; overload;
 
     procedure listStructures(list : TFslList<TFHIRStructureDefinition>); overload; virtual; abstract;
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; overload; virtual; abstract;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; overload; virtual; abstract;
     function fetchCodeSystem(url : String ) : TFhirCodeSystem;
     function fetchValueSet(url : String ) : TFhirValueSet;
     function fetchConceptMap(url : String ) : TFhirConceptMap;
+    function fetchTypeDefinition(typeName : String ) : TFhirStructureDefinition; virtual; abstract;
     function fetchStructureDefinition(url : String ) : TFhirStructureDefinition;
     function fetchStructureMap(url : String ) : TFhirStructureMap;
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; overload; virtual; abstract;
@@ -116,7 +143,7 @@ type
     function hasCustomResource(name : String) : boolean; virtual; abstract;
 
     // override version independent variants:
-    function fetchResource(rType : String; url : String) : TFhirResourceV; overload; override;
+    function fetchResource(rType : String; url, version : String) : TFhirResourceV; overload; override;
     function expand(vs : TFhirValueSetW; options : TExpansionOperationOptionSet = []) : TFHIRValueSetW; overload; override;
     function validateCode(systemUri, version, code : String; vs : TFhirValueSetW) : TValidationResult; overload; override;
     procedure listStructures(list : TFslList<TFhirStructureDefinitionW>); overload; override;
@@ -135,7 +162,7 @@ type
     FOnLog: TWorkProgressEvent;
     FLoadPackage : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -147,7 +174,7 @@ type
     property ResourceTypes : TArray<String> read FResourceTypes write FResourceTypes;
     property OnLog : TWorkProgressEvent read FOnLog write FOnLog;
 
-    procedure checkLoaded;
+    procedure checkLoaded(pc : TFHIRPackageManager);
   end;
 
 
@@ -155,6 +182,91 @@ implementation
 
 uses
   fhir4_utilities, fhir4_json, fhir_utilities;
+
+{ TFHIRResourceProxy }
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
+begin
+  if resource is TFHIRMetadataResource then
+    inherited Create(resource, TFHIRMetadataResource(resource).url, TFHIRMetadataResource(resource).version)
+  else
+    inherited Create(resource, '', '');
+  FFactory := factory;
+end;
+
+constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+begin
+  inherited Create(fhirVersionRelease4, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
+  FFactory := factory;
+  FWorker := worker;
+  FInfo := pi;
+  FLock := lock;
+end;
+
+destructor TFHIRResourceProxy.Destroy;
+begin
+  FFactory.free;
+  FWorker.free;
+  FInfo.free;
+  FLock.free;
+  inherited Destroy;
+end;
+
+function TFHIRResourceProxy.link : TFHIRResourceProxy;
+begin
+  result := TFHIRResourceProxy(inherited link);
+end;
+
+function TFHIRResourceProxy.GetResource: TFHIRResource;
+begin
+  result := ResourceV as TFHIRResource;
+end;
+
+procedure TFHIRResourceProxy.loadResource;
+var
+  p : TFHIRParser;
+  stream : TStream;
+  r : TFHIRResourceV;
+begin
+  if FInfo = nil then
+    exit; // not lazy loading
+
+  FLock.lock;
+  try
+    if FResourceV <> nil then
+      exit;
+  finally
+    FLock.unlock;
+  end;
+  r := nil;
+
+  p := FFactory.makeParser(FWorker, ffJson, nil);
+  try
+    stream := TFileStream.Create(FInfo.filename, fmOpenRead + fmShareDenyWrite);
+    try
+      try
+        r := p.parseResource(stream);
+      except
+        on e : Exception do
+          raise EFHIRException.Create('Error reading '+fInfo.filename+': '+e.message);
+      end;
+    finally
+      stream.free;
+    end;
+  finally
+    p.free;
+  end;
+  try
+    FResourceV := r;
+  finally
+    FLock.unlock;
+  end;
+end;
+
+function TFHIRResourceProxy.wrapResource : TFHIRXVersionResourceWrapper;
+begin
+  result := FFactory.wrapResource(resource.link);
+end;
 
 { TFHIRWorkerContext }
 
@@ -180,42 +292,43 @@ end;
 
 function TFHIRWorkerContext.fetchCodeSystem(url: String): TFhirCodeSystem;
 begin
-  result := fetchResource(frtCodeSystem, url) as TFHIRCodeSystem;
+  result := fetchResource(frtCodeSystem, url, '') as TFHIRCodeSystem;
 end;
 
 function TFHIRWorkerContext.fetchConceptMap(url: String): TFhirConceptMap;
 begin
-  result := fetchResource(frtConceptMap, url) as TFHIRConceptMap;
+  result := fetchResource(frtConceptMap, url, '') as TFHIRConceptMap;
 end;
 
-function TFHIRWorkerContext.fetchResource(rType, url: String): TFhirResourceV;
+function TFHIRWorkerContext.fetchResource(rType, url, version: String): TFhirResourceV;
 var
   t : TFhirResourceType;
 begin
   if RecogniseFHIRResourceName(rType, t) then
-    result := fetchResource(t, url)
+    result := fetchResource(t, url, version)
   else
-    raise EFHIRException.create('Unknown type '+rType+' in '+versionString);
+    raise EFHIRException.Create('Unknown type '+rType+' in '+versionString);
 end;
 
 function TFHIRWorkerContext.fetchStructureDefinition(url: String): TFhirStructureDefinition;
 begin
-  result := fetchResource(frtStructureDefinition, url) as TFHIRStructureDefinition;
+  result := fetchResource(frtStructureDefinition, url, '') as TFHIRStructureDefinition;
 end;
 
 function TFHIRWorkerContext.fetchStructureMap(url: String): TFhirStructureMap;
 begin
-  result := fetchResource(frtStructureMap, url) as TFHIRStructureMap;
+  result := fetchResource(frtStructureMap, url, '') as TFHIRStructureMap;
 end;
 
 function TFHIRWorkerContext.fetchValueSet(url: String): TFhirValueSet;
 begin
-  result := fetchResource(frtValueSet, url) as TFHIRValueSet;
+  result := fetchResource(frtValueSet, url, '') as TFHIRValueSet;
 end;
 
 function TFHIRWorkerContext.getSliceList(profile: TFHIRStructureDefinition; element: TFhirElementDefinition): TFHIRElementDefinitionList;
 begin
-  raise Exception.Create('Error Message');
+  result := nil;
+  raise EFslException.Create('Error Message');
 end;
 
 procedure TFHIRWorkerContext.listStructures(list: TFslList<TFhirStructureDefinitionW>);
@@ -223,13 +336,13 @@ var
   l : TFslList<TFHIRStructureDefinition>;
   sd : TFHIRStructureDefinition;
 begin
-  l := TFslList<TFHIRStructureDefinition>.create;
+  l := TFslList<TFHIRStructureDefinition>.Create;
   try
     listStructures(l);
     for sd in l do
       list.add(factory.wrapStructureDefinition(sd.link));
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -238,7 +351,7 @@ procedure TFHIRWorkerContext.loadFromCache(cache: TResourceMemoryCache);
 var
   r : TFhirResource;
 begin
-  cache.checkLoaded;
+  cache.checkLoaded(pcm);
   for r in cache.List do
     SeeResource(r);
 end;
@@ -250,13 +363,13 @@ begin
   inherited Create;
   FDefinition := definition;
   FName := definition.snapshot.elementList[0].path;
-  FSearchParameters := TFslList<TFHIRSearchParameter>.create;
+  FSearchParameters := TFslList<TFHIRSearchParameter>.Create;
 end;
 
 destructor TFHIRCustomResourceInformation.Destroy;
 begin
-  FSearchParameters.Free;
-  FDefinition.Free;
+  FSearchParameters.free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -266,50 +379,44 @@ begin
 end;
 
 
-function TFHIRCustomResourceInformation.sizeInBytesV : cardinal;
+function TFHIRCustomResourceInformation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSearchParameters.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
+  inc(result, FSearchParameters.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { TResourceMemoryCache }
 
-procedure TResourceMemoryCache.checkLoaded;
+procedure TResourceMemoryCache.checkLoaded(pc : TFHIRPackageManager);
 var
-  cache : TFHIRPackageManager;
   s, l, r : String;
 begin
   if FList.Empty then
   begin
-    cache := TFHIRPackageManager.Create(true);
-    try
-      cache.onWork := FOnLog;
-      for s in FPackages do
-      begin
-        FLoadPackage := s;
-        StringSplit(s, '#', l, r);
-        cache.loadPackage(l, r, FResourceTypes, FLoadInfo);
-      end;
-    finally
-      cache.Free;
+    pc.onWork := FOnLog;
+    for s in FPackages do
+    begin
+      FLoadPackage := s;
+      StringSplit(s, '#', l, r);
+      pc.loadPackage(l, r, FResourceTypes, FLoadInfo);
     end;
   end;
 end;
 
 constructor TResourceMemoryCache.Create;
 begin
-  inherited;
-  Flist := TFslList<TFhirResource>.create;
+  inherited Create;
+  Flist := TFslList<TFhirResource>.Create;
   FLoadInfo := TPackageLoadingInformation.Create('4.0');
   FLoadInfo.OnLoadEvent := load;
 end;
 
 destructor TResourceMemoryCache.Destroy;
 begin
-  FLoadInfo.Free;
-  FList.Free;
+  FLoadInfo.free;
+  FList.free;
   inherited;
 end;
 
@@ -322,13 +429,13 @@ procedure TResourceMemoryCache.load(rType, id: String; stream: TStream);
 var
   p : TFHIRJsonParser;
 begin
-  p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+  p := TFHIRJsonParser.Create(nil, nil);
   try
     p.source := stream;
     p.Parse;
     FList.add(p.resource.link as TFhirResource);
   finally
-    p.Free;
+    p.free;
   end;
 
 end;
@@ -338,15 +445,15 @@ end;
 constructor TFHIRMetadataResourceManager<T>.Create;
 begin
   inherited;
-  FMap := TFslMap<T>.create('metadate resource manager '+t.className);
+  FMap := TFslMap<T>.Create('metadata resource manager '+t.className);
   FMap.defaultValue := T(nil);
-  FList := TFslList<T>.create;
+  FList := TFslList<T>.Create;
 end;
 
 destructor TFHIRMetadataResourceManager<T>.Destroy;
 begin
-  FMap.Free;
-  FList.Free;
+  FMap.free;
+  FList.free;
   inherited;
 end;
 
@@ -395,7 +502,8 @@ end;
 
 {$IFDEF FPC}
 function TFHIRMetadataResourceManager<T>.doSort(sender : TObject; const L, R: T): Integer;
-var v1, v2, mm1, mm2 : string;
+var 
+  v1, v2, mm1, mm2 : string;
 begin
   v1 := l.version;
   v2 := r.version;
@@ -423,7 +531,7 @@ var
   tt, latest : T;
   lv : String;
 begin
-  rl := TFslList<T>.create;
+  rl := TFslList<T>.Create;
   try
     for tt in FList do
     begin
@@ -461,21 +569,21 @@ begin
       {$ENDIF}
 
       // the current is the latest
-      FMap.add(url, rl[rl.count-1].link);
+      FMap.AddOrSetValue(url, rl[rl.count-1].link);
       // now, also, the latest for major/minor
       if (version <> '') then
       begin
         latest := T(nil);
         for tt in rl do
         begin
-          if (TFHIRVersions.matches(tt.version, version)) then
+          if (TFHIRVersions.matches(tt.version, version, semverMinor)) then
             latest := tt;
         end;
         if (latest <> T(nil)) then // might be null if it's not using semver
         begin
           lv := TFHIRVersions.getMajMin(latest.version);
           if (lv <> version) then
-            FMap.add(url+'|'+lv, rl[rl.count-1].link);
+            FMap.AddOrSetValue(url+'|'+lv, rl[rl.count-1].link);
         end;
       end;
     end;
@@ -572,20 +680,20 @@ begin
   FMap.clear();
 end;
 
-function TFHIRMetadataResourceManager<T>.sizeInBytesV : cardinal;
+function TFHIRMetadataResourceManager<T>.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FList.sizeInBytes(magic));
 end;
 
-function TResourceMemoryCache.sizeInBytesV : cardinal;
+function TResourceMemoryCache.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flist.sizeInBytes);
-  inc(result, FLoadInfo.sizeInBytes);
-//  inc(result, FResourceTypes.sizeInBytes);
-//  inc(result, FPackages.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flist.sizeInBytes(magic));
+  inc(result, FLoadInfo.sizeInBytes(magic));
+//  inc(result, FResourceTypes.sizeInBytes(magic));
+//  inc(result, FPackages.sizeInBytes(magic));
   inc(result, (FLoadPackage.length * sizeof(char)) + 12);
 end;
 

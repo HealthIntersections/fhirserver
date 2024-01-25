@@ -33,15 +33,18 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_utilities, fsl_collections, fsl_fpc,
+  
+  fsl_utilities, fsl_collections, fsl_fpc, fsl_regex,
   fsl_base,
   ftx_ucum_base;
 
 Type
+
+  { TUcumSearch }
+
   TUcumSearch = class (TFslObject)
   Private
-    FRegex : TRegEx;
+    FRegex : TRegularExpression;
     Procedure searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumBaseUnit>; text : String; isRegex : boolean); overload;
     Procedure searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumDefinedUnit>; text : String; isRegex : boolean); overload;
     function matchesUnit(model : TUcumModel; oUnit : TUcumUnit; text : String; isRegex : boolean) : boolean;
@@ -49,6 +52,8 @@ Type
     function matchesConcept(concept : TUcumConcept; text : String; isRegex : boolean) : boolean;
     function matches(value : String; text : String; isRegex : boolean) : boolean;
   Public
+    destructor Destroy; override;
+
     Function doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TFslList<TUcumConcept>;
   End;
 
@@ -56,11 +61,12 @@ Type
 Implementation
 
 
-Function TUcumSearch.doSearch(model : TUcumModel; aKind : TConceptKind; text : String; isRegex : Boolean) : TFslList<TUcumConcept>;
+function TUcumSearch.doSearch(model: TUcumModel; aKind: TConceptKind;
+  text: String; isRegex: Boolean): TFslList<TUcumConcept>;
 begin
   if isRegex Then
   begin
-    FRegex := TRegEx.Create(text, [roCompiled]);
+    FRegex := TRegularExpression.Create(text, [roCompiled]);
   End;
 
 
@@ -74,11 +80,12 @@ begin
       searchUnits(model, result, model.DefinedUnits, text, isRegex);
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
-Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumBaseUnit>; text : String; isRegex : boolean);
+procedure TUcumSearch.searchUnits(model: TUcumModel; concepts: TFslList<
+  TUcumConcept>; units: TFslMap<TUcumBaseUnit>; text: String; isRegex: boolean);
 var
   bu : TUcumBaseUnit;
 begin
@@ -87,7 +94,9 @@ begin
       concepts.add(bu.Link);
 end;
 
-Procedure TUcumSearch.searchUnits(model : TUcumModel; concepts : TFslList<TUcumConcept>; units : TFslMap<TUcumDefinedUnit>; text : String; isRegex : boolean);
+procedure TUcumSearch.searchUnits(model: TUcumModel; concepts: TFslList<
+  TUcumConcept>; units: TFslMap<TUcumDefinedUnit>; text: String;
+  isRegex: boolean);
 var
   bu : TUcumDefinedUnit;
 begin
@@ -102,7 +111,8 @@ begin
 end;
 
 
-Procedure TUcumSearch.searchPrefixes(concepts : TFslList<TUcumConcept>; prefixes : TFslList<TUcumPrefix>; text : String; isRegex : boolean);
+procedure TUcumSearch.searchPrefixes(concepts: TFslList<TUcumConcept>;
+  prefixes: TFslList<TUcumPrefix>; text: String; isRegex: boolean);
 var
   i : integer;
 begin
@@ -132,5 +142,11 @@ begin
   else
     result := StringExistsInsensitive(value, text);
 End;
+
+destructor TUcumSearch.Destroy;
+begin
+  FRegex.free;
+  inherited Destroy;
+end;
 
 End.

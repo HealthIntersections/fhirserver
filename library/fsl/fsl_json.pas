@@ -1,7 +1,7 @@
 Unit fsl_json;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -81,7 +81,7 @@ Type
     cursor : integer;
     function GetCurrent: TJsonNode;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
     function MoveNext() : boolean;
@@ -105,7 +105,7 @@ Type
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
     function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -125,6 +125,7 @@ Type
     procedure move(index, delta : integer);
     procedure clear;
 
+    procedure readStrings(ts : TStrings);
     function asObjects : TFslList<TJsonObject>;
     function GetEnumerator : TJsonArrayEnumerator; // can only use this when the array members are objects
   end;
@@ -143,7 +144,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path : String; value : boolean); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : boolean); overload;
@@ -158,7 +159,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path : String; value : string); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
@@ -173,7 +174,7 @@ Type
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(path : String; value : string); overload;
     constructor Create(path : String; locStart, locEnd : TSourceLocation; value : string); overload;
@@ -202,15 +203,16 @@ Type
     function GetForcedArray(name: String): TJsonArray;
     function GetNode(name: String): TJsonNode;
     procedure setNode(name: String; const Value: TJsonNode);
-    function GetInteger(name: String): Integer;
+    function GetInteger(name: String): Int64;
 
-    procedure SetInteger(name: String; const Value: Integer);
+    procedure SetInteger(name: String; const Value: Int64);
+    function GetRequiredObject(name: String): TJsonObject;
   protected
     function nodeType : String; override;
     function compare(other : TJsonNode) : boolean; override;
     function evaluatePointer(path : String) : TJsonNode; override;
     function findLocation(loc: TSourceLocation; name : String; path : TFslList<TJsonPointerMatch>) : boolean; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -223,7 +225,7 @@ Type
     property node[name : String] : TJsonNode read GetNode write setNode;
     Property str[name : String] : String read GetString write SetString; default;
     Property num[name : String] : String read GetNumber write SetNumber;
-    Property int[name : String] : Integer read GetInteger write SetInteger;
+    Property int[name : String] : Int64 read GetInteger write SetInteger;
     Property bool[name : String] : boolean read GetBool write SetBool;
     Property arr[name : String] : TJsonArray read GetArray write SetArray;
     Property obj[name : String] : TJsonObject read GetObject write SetObject;
@@ -236,6 +238,7 @@ Type
 
     Property forceObj[name : String] : TJsonObject read GetForcedObject;
     Property forceArr[name : String] : TJsonArray read GetForcedArray;
+    Property objReq[name : String] : TJsonObject read GetRequiredObject;
     procedure clear(name : String = '');
 
     function str2(n1, n2 : String) : String;
@@ -251,7 +254,7 @@ Type
     FNode: TJsonNode;
     procedure SetNode(const Value: TJsonNode);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(name : String; node : TJsonNode);
     destructor Destroy; Override;
@@ -269,7 +272,7 @@ Type
 
     function unescape(s : String) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -291,7 +294,7 @@ Type
     function GetSourceLocation: TSourceLocation; virtual; abstract;
 
     Function JSONString(const value : String) : String;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; Override;
@@ -355,7 +358,7 @@ Type
     procedure DoName(const name : String);
   protected
     procedure doValue(name, value : String); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link: TJsonWriterDirect; overload;
     function canInject : boolean; override;
@@ -383,7 +386,7 @@ Type
     FValue : String;
     FChildren : TFslList<TCanonicalJsonNode>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aType : TCanonicalJsonNodeType);
     destructor Destroy; override;
@@ -399,7 +402,7 @@ Type
     procedure commitArray(node : TCanonicalJsonNode);
   protected
     procedure doValue(name, value : String); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Function Link: TJsonWriterCanonical; overload;
     function GetSourceLocation : TSourceLocation; override;
@@ -412,6 +415,10 @@ Type
     Procedure FinishArray; override;
     Procedure ValueInArray(Const value : String); overload; override;
     procedure ValueNullInArray; override;
+
+    class Function canonicaliseObject(obj : TJsonObject) : TBytes; overload;
+    class Procedure canonicaliseObject(stream : TStream; obj : TJsonObject); overload;
+    class Procedure canonicaliseObject(stream : TFslStream; obj : TJsonObject); overload;
   end;
 
   TJSONLexType = (jltOpen, jltClose, jltString, jltNumber, jltColon, jltComma, jltOpenArray, jltCloseArray, jltEof, jltNull, jltBoolean);
@@ -435,7 +442,7 @@ Type
     Function Path : String;
     function GetValue: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oStream : TFslStream; loose : boolean = false); Overload;
     destructor Destroy; Override;
@@ -466,7 +473,7 @@ Type
     procedure readObject(obj : TJsonObject; root : boolean);
     procedure readArray(arr : TJsonArray; root : boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oStream : TStream; loose : boolean); Overload;
     constructor Create(oStream : TFslStream; loose : boolean);  Overload;
@@ -509,7 +516,7 @@ Type
 
     class procedure runtest(test : TJsonObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -533,13 +540,26 @@ function JsonBoolToString(b : boolean) : String;
 function JsonStringToBool(s : String; def : boolean = false) : boolean;
 
 type
+
+ { TJWT }
+
  TJWT = class (TFslObject)
   private
     FHeader : TJsonObject;
+    FHeaderBytes: TBytes;
+    FHeaderSource: String;
     FPayLoad : TJsonObject;
     FOriginalSource: String;
+    FPayloadBytes: TBytes;
+    FPayloadSource: String;
+    FSig: String;
+    FValid: boolean;
+    FValidated: boolean;
+    FValidationMessage: String;
 
+    function GetKid: String;
     procedure setHeader(const Value: TJsonObject);
+    procedure SetKid(AValue: String);
     procedure setPayload(const Value: TJsonObject);
 
     function GetaddressCountry: string;
@@ -605,7 +625,7 @@ type
     Procedure SetUpdatedAt(Value: TDateTime);
     procedure Setwebsite(Value: string);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     constructor Create(header, payload : TJsonObject); overload;
@@ -615,6 +635,12 @@ type
     destructor Destroy; override;
 
     property originalSource : String read FOriginalSource write FOriginalSource;
+    property headerSource : String read FHeaderSource write FHeaderSource;
+    property headerBytes : TBytes read FHeaderBytes write FHeaderBytes;
+    property payloadSource : String read FPayloadSource write FPayloadSource;
+    property payloadBytes : TBytes read FPayloadBytes write FPayloadBytes;
+
+    property sig : String read FSig write FSig;
 
     // the header is provided to get/set extra properties beyond those used in packing/unpacking.
     // you don't need to do anything with it if you don't use extra properties
@@ -630,6 +656,7 @@ type
     property notBefore : TDateTime read GetnotBefore write SetnotBefore; // 'nbf'
     property issuedAt : TDateTime read GetissuedAt write SetissuedAt; // 'ist'
     property id : string read Getid write Setid; // 'jti'
+    property kid : String read GetKid write SetKid;
 
     function desc : String;
 
@@ -660,6 +687,11 @@ type
     property addressPostCode : string read GetaddressPostCode write SetaddressPostCode; // 'address.postal_code'  Zip code or postal code component.
     property addressCountry : string read GetaddressCountry write SetaddressCountry; // 'address.country'  Country name component.
 
+    // validation outcomes
+    property validated : boolean read FValidated write FValidated;
+    property valid : boolean read FValid write FValid;
+    property validationMessage : String read FValidationMessage write FValidationMessage;
+
     function userName : String;
   end;
 
@@ -680,7 +712,7 @@ End;
 
 destructor TJSONWriter.Destroy;
 Begin
-  FBuilder.Free;
+  FBuilder.free;
   Inherited;
 End;
 
@@ -771,7 +803,7 @@ Begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 End;
 
@@ -833,10 +865,10 @@ begin
 end;
 
 
-function TJSONWriter.sizeInBytesV : cardinal;
+function TJSONWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuilder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 class procedure TJSONWriter.writeObject(stream: TFslStream; obj: TJsonObject; pretty : boolean = false);
@@ -851,7 +883,7 @@ begin
     this.writeObjectInner(obj);
     this.Finish(true);
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -935,7 +967,7 @@ begin
     s.Stream := stream;
     writeArray(s, arr, pretty);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -952,7 +984,7 @@ begin
     this.WriteArray('', arr);
     this.Finish(false);
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -1041,7 +1073,7 @@ begin
     s.Stream := stream;
     writeObject(s, obj, pretty);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1088,7 +1120,7 @@ end;
 procedure TJsonWriterDirect.Start;
 begin
   if not HasStream then
-    Stream := TFslStringStream.create;
+    Stream := TFslStringStream.Create;
   if obj then
     ProduceLine('{');
   LevelDown;
@@ -1247,9 +1279,9 @@ begin
   FCache := '';
 end;
 
-function TJsonWriterDirect.sizeInBytesV : cardinal;
+function TJsonWriterDirect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FCache.length * sizeof(char)) + 12);
 end;
@@ -1301,7 +1333,7 @@ begin
   FLastLocationAWS := FPrevLocation;
 
   FValue.Clear;
-  If (CharInSet(ch, [#0, ' ', #13, #10, #9]) and Not More) Then
+  If (ch = #0) or (CharInSet(ch, [' ', #13, #10, #9]) and Not More) Then
     FLexType := jltEof
   Else case ch of
     '{' : FLexType := jltOpen;
@@ -1417,12 +1449,12 @@ begin
   FLocation := TSourceLocation.Create;
   FPrevLocation := FLocation;
   FStates := TStringList.Create;
-  FValue := TStringBuilder.create;
+  FValue := TStringBuilder.Create;
 end;
 
 destructor TJSONLexer.Destroy;
 begin
-  FStates.Free;
+  FStates.free;
   FValue.free;
   inherited;
 end;
@@ -1462,11 +1494,11 @@ begin
   end;
 end;
 
-function TJSONLexer.sizeInBytesV : cardinal;
+function TJSONLexer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPeek.length * sizeof(char)) + 12);
-  inc(result, FStates.sizeInBytes);
+  inc(result, FStates.sizeInBytes(magic));
 end;
 
 { TJSONParser }
@@ -1481,7 +1513,7 @@ begin
     oVCLStream.Stream := oStream;
     FLex := TJSONLexer.Create(oVCLStream.Link, loose);
   Finally
-    oVCLStream.Free;
+    oVCLStream.free;
   End;
   FLex.Start;
 end;
@@ -1581,10 +1613,10 @@ begin
   End;
 end;
 
-function TJSONParser.sizeInBytesV : cardinal;
+function TJSONParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLex.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLex.sizeInBytes(magic));
   inc(result, (FItemName.length * sizeof(char)) + 12);
   inc(result, (FItemValue.length * sizeof(char)) + 12);
 end;
@@ -1610,10 +1642,10 @@ begin
       p.readObject(result, true);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1638,10 +1670,10 @@ begin
       p.readObject(result, true);
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1658,7 +1690,7 @@ begin
   try
     result := parse(f, 0, loose);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -1671,7 +1703,7 @@ begin
     p.FtimeToAbort := timeToAbort;
     result := p.readNode;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1684,7 +1716,7 @@ begin
     p.FtimeToAbort := timeToAbort;
     result := p.readNode;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1701,7 +1733,7 @@ begin
   try
     result := ParseNode(s, timeToAbort, loose);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1819,7 +1851,7 @@ begin
           readObject(result as TJsonObject, true);
           result.link;
         finally
-          result.Free;
+          result.free;
         end;
       end;
     jltString : raise EJsonTodo.Create('Not implemented yet');
@@ -1835,7 +1867,7 @@ begin
           readArray(result as TJsonArray, true);
           result.link;
         finally
-          result.Free;
+          result.free;
         end;
       end;
     jltNull : raise EJsonTodo.Create('Not implemented yet');
@@ -1936,7 +1968,7 @@ begin
   try
     result := Parse(s, timeToAbort, loose);
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -1960,12 +1992,12 @@ end;
 
 function TJsonNode.findLocation(loc: TSourceLocation): TFslList<TJsonPointerMatch>;
 begin
-  result := TFslList<TJsonPointerMatch>.create;
+  result := TFslList<TJsonPointerMatch>.Create;
   try
     findLocation(loc, '$', result);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -2044,19 +2076,27 @@ function TJsonArray.asObjects: TFslList<TJsonObject>;
 var
   i : integer;
 begin
-  result := TFslList<TJsonObject>.create;
+  result := TFslList<TJsonObject>.Create;
   try
     for I := 0 to count - 1 do
       result.Add(obj[i].Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
 procedure TJsonArray.clear;
 begin
   FItems.Clear;
+end;
+
+procedure TJsonArray.readStrings(ts: TStrings);
+var
+  i : integer;
+begin
+  for I := 0 to count - 1 do
+    ts.Add(Value[i]);
 end;
 
 function TJsonArray.compare(other: TJsonNode): boolean;
@@ -2086,7 +2126,7 @@ end;
 
 destructor TJsonArray.Destroy;
 begin
-  FItems.Free;
+  FItems.free;
   inherited;
 end;
 
@@ -2202,10 +2242,10 @@ begin
   FItems[i] := TJsonString.Create(Path+'['+inttostr(i)+']', Value);
 end;
 
-function TJsonArray.sizeInBytesV : cardinal;
+function TJsonArray.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItems.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItems.sizeInBytes(magic));
 end;
 
 { TJsonString }
@@ -2247,9 +2287,9 @@ begin
   result := 'string';
 end;
 
-function TJsonString.sizeInBytesV : cardinal;
+function TJsonString.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2292,9 +2332,9 @@ begin
   result := 'number';
 end;
 
-function TJsonNumber.sizeInBytesV : cardinal;
+function TJsonNumber.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -2336,7 +2376,7 @@ end;
 
 destructor TJsonObject.Destroy;
 begin
-  FProperties.Free;
+  FProperties.free;
   inherited;
 end;
 
@@ -2411,7 +2451,7 @@ begin
   result := obj[name];
 end;
 
-function TJsonObject.GetInteger(name: String): Integer;
+function TJsonObject.GetInteger(name: String): Int64;
 var
   n : TJsonNode;
   s : String;
@@ -2430,7 +2470,7 @@ begin
     else if (n is TJsonNumber) then
     begin
       s := (n as TJsonNumber).FValue;
-      result := StrToIntDef(s, 0);
+      result := trunc(StrToFloatDef(s, 0));
     end
     else if (n is TJsonString) then
     begin
@@ -2494,6 +2534,13 @@ begin
   end
   else
     result := nil;
+end;
+
+function TJsonObject.GetRequiredObject(name: String): TJsonObject;
+begin
+  result := obj[name];
+  if result = nil then
+    raise EJsonException.Create('Unable to find '+name+' in JsonObject');
 end;
 
 function TJsonObject.GetString(name: String): String;
@@ -2564,11 +2611,11 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
-procedure TJsonObject.SetInteger(name: String; const Value: Integer);
+procedure TJsonObject.SetInteger(name: String; const Value: Int64);
 var
   v : TJsonNumber;
 begin
@@ -2576,7 +2623,7 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -2592,13 +2639,16 @@ end;
 
 procedure TJsonObject.SetString(name: String; const Value: String);
 var
-  v : TJsonString;
+  v : TJsonNode;
 begin
-  v := TJsonString.Create(path+'/'+name, Value);
+  if value = '' then
+    v := TJsonNull.Create(path+'/'+name)
+  else
+    v := TJsonString.Create(path+'/'+name, Value);
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
@@ -2618,22 +2668,22 @@ begin
   try
     properties.AddOrSetValue(name, v.Link);
   finally
-    v.Free;
+    v.free;
   end;
 end;
 
-function TJsonObject.sizeInBytesV : cardinal;
+function TJsonObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FProperties.sizeInBytes);
+  inc(result, FProperties.sizeInBytes(magic));
 end;
 
 { TJsonBoolean }
 
 constructor TJsonBoolean.Create(path: String; value: boolean);
 begin
-  create('path');
+  Create('path');
   FValue := value;
 end;
 
@@ -2647,7 +2697,7 @@ end;
 
 constructor TJsonBoolean.Create(path: String; locStart, locEnd: TSourceLocation; value: boolean);
 begin
-  create('path');
+  Create('path');
   FValue := value;
   LocationStart := locStart;
   LocationEnd := locEnd;
@@ -2693,9 +2743,9 @@ begin
     result := def;
 end;
 
-function TJsonBoolean.sizeInBytesV : cardinal;
+function TJsonBoolean.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TJsonArrayEnumerator }
@@ -2707,7 +2757,7 @@ end;
 
 destructor TJsonArrayEnumerator.Destroy;
 begin
-  FArray.Free;
+  FArray.free;
   inherited;
 end;
 
@@ -2718,19 +2768,19 @@ begin
 end;
 
 
-function TJsonArrayEnumerator.sizeInBytesV : cardinal;
+function TJsonArrayEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FArray.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FArray.sizeInBytes(magic));
 end;
 
 { TJsonPatchEngine }
 
-function TJsonPatchEngine.sizeInBytesV : cardinal;
+function TJsonPatchEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPatch.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPatch.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
 end;
 
 class function TJsonPatchEngine.applyPatch(target: TJsonObject; patch: TJsonArray) : TJsonObject;
@@ -2756,7 +2806,7 @@ end;
 destructor TJsonPatchEngine.Destroy;
 begin
   FPatch.free;
-  FTarget.Free;
+  FTarget.free;
   inherited;
 end;
 
@@ -2768,7 +2818,7 @@ end;
 
 procedure TJsonPatchEngine.SetTarget(const Value: TJsonNode);
 begin
-  FTarget.Free;
+  FTarget.free;
   FTarget := Value;
 end;
 
@@ -2784,7 +2834,7 @@ begin
   begin
     ok := true;
     try
-      applyPatch(test.obj['doc'], test.arr['patch']).Free;
+      applyPatch(test.obj['doc'], test.arr['patch']).free;
       ok := false;
     except
     end;
@@ -2798,7 +2848,7 @@ begin
       if not TJsonNode.compare(outcome, test.obj['expected']) then
         raise EJsonException.Create('Test failed: '+cmt);
     finally
-      outcome.Free;
+      outcome.free;
     end;
   end;
 end;
@@ -2871,7 +2921,7 @@ procedure TJsonPatchEngine.applyAddInner(path : String; value : TJsonNode);
 var
   query : TJsonPointerQuery;
 begin
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, true);
     case query.terminalState of
@@ -2906,7 +2956,7 @@ procedure TJsonPatchEngine.applyRemove(patchOp: TJsonObject; path : String);
 var
   query : TJsonPointerQuery;
 begin
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, false);
     if (query.secondLast is TJsonArray) and StringIsInteger32(query.lastName) then
@@ -2928,7 +2978,7 @@ begin
   value := patchOp.properties['value'];
   if value = nil then
     raise EJsonException.Create('No patch value parameter found in add');
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, false);
     if (query.secondLast is TJsonArray) and StringIsInteger32(query.lastName) then
@@ -2951,7 +3001,7 @@ begin
   if value = nil then
     raise EJsonException.Create('No patch value parameter found in add');
 
-  query := TJsonPointerQuery.create;
+  query := TJsonPointerQuery.Create;
   try
     query.execute(target, path, false);
     if not TJsonNode.compare(query.last, value) then
@@ -2970,7 +3020,7 @@ begin
   if from = '' then
     raise EJsonException.Create('No patch from parameter found');
 
-  qFrom := TJsonPointerQuery.create;
+  qFrom := TJsonPointerQuery.Create;
   try
     qFrom.execute(target, from, false);
     applyAddInner(path, qFrom.last);
@@ -2989,7 +3039,7 @@ begin
   if from = '' then
     raise EJsonException.Create('No patch from parameter found');
 
-  qFrom := TJsonPointerQuery.create;
+  qFrom := TJsonPointerQuery.Create;
   try
     qFrom.execute(target, from, false);
     focus := qFrom.last.Link;
@@ -3016,28 +3066,28 @@ end;
 
 constructor TJsonPointerMatch.Create(name: String; node: TJsonNode);
 begin
-  inherited create;
+  inherited Create;
   self.Name := name;
   self.Node := node;
 end;
 
 destructor TJsonPointerMatch.Destroy;
 begin
-  FNode.Free;
+  FNode.free;
   inherited;
 end;
 
 procedure TJsonPointerMatch.SetNode(const Value: TJsonNode);
 begin
-  FNode.Free;
+  FNode.free;
   FNode := Value;
 end;
 
-function TJsonPointerMatch.sizeInBytesV : cardinal;
+function TJsonPointerMatch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FNode.sizeInBytes);
+  inc(result, FNode.sizeInBytes(magic));
 end;
 
 { TJsonNull }
@@ -3062,12 +3112,12 @@ end;
 constructor TJsonPointerQuery.Create;
 begin
   inherited Create;
-  FMatches := TFslList<TJsonPointerMatch>.create;
+  FMatches := TFslList<TJsonPointerMatch>.Create;
 end;
 
 destructor TJsonPointerQuery.Destroy;
 begin
-  FMatches.Free;
+  FMatches.free;
   inherited;
 end;
 
@@ -3141,13 +3191,56 @@ begin
   result := s.Replace('~1', '/').Replace('~0', '~');
 end;
 
-function TJsonPointerQuery.sizeInBytesV : cardinal;
+function TJsonPointerQuery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMatches.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMatches.sizeInBytes(magic));
 end;
 
 { TJsonWriterCanonical }
+
+class function TJsonWriterCanonical.canonicaliseObject(obj: TJsonObject): TBytes;
+var
+  mem : TBytesStream;
+begin
+  mem := TBytesStream.Create;
+  try
+    canonicaliseObject(mem, obj);
+    result := mem.Bytes;
+    SetLength(result, mem.size);
+  finally
+    mem.Free
+  end;
+end;
+
+class procedure TJsonWriterCanonical.canonicaliseObject(stream: TStream; obj: TJsonObject);
+var
+  s : TFslVCLStream;
+begin
+  s := TFslVCLStream.Create;
+  try
+    s.Stream := stream;
+    canonicaliseObject(s, obj);
+  finally
+    s.free;
+  end;
+end;
+
+class procedure TJsonWriterCanonical.canonicaliseObject(stream: TFslStream; obj: TJsonObject);
+var
+  this : TJsonWriterCanonical;
+begin
+  this := TJsonWriterCanonical.Create;
+  try
+    this.HasWhitespace := false;
+    this.Stream := stream.Link;
+    this.Start(true);
+    this.writeObjectInner(obj);
+    this.Finish(true);
+  finally
+    this.free;
+  end;
+end;
 
 procedure TJsonWriterCanonical.commitArray(node: TCanonicalJsonNode);
 var
@@ -3213,7 +3306,7 @@ begin
         end;
     end;
   finally
-    ts.Free;
+    ts.free;
   end;
   Produce('}');
 end;
@@ -3228,15 +3321,15 @@ begin
     node.FValue := value;
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
 procedure TJsonWriterCanonical.Finish;
 begin
   commitObject(FObject);
-  FStack.Free;
-  FObject.Free;
+  FStack.free;
+  FObject.free;
 end;
 
 procedure TJsonWriterCanonical.FinishArray;
@@ -3262,7 +3355,7 @@ end;
 procedure TJsonWriterCanonical.Start;
 begin
   FObject := TCanonicalJsonNode.Create(jntObject);
-  FStack := TFslList<TCanonicalJsonNode>.create;
+  FStack := TFslList<TCanonicalJsonNode>.Create;
   FStack.Add(FObject.Link);
 end;
 
@@ -3276,7 +3369,7 @@ begin
     FStack[FStack.Count - 1].FChildren.add(node.Link);
     FStack.Add(node.link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3289,7 +3382,7 @@ begin
     node.FValue := value;
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3302,7 +3395,7 @@ begin
     node.FValue := 'null';
     FStack[FStack.Count - 1].FChildren.add(node.Link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3315,7 +3408,7 @@ begin
     FStack[FStack.Count - 1].FChildren.add(node.Link);
     FStack.Add(node.link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -3329,15 +3422,15 @@ begin
     FStack[FStack.Count - 1].FChildren.add(node.Link);
     FStack.Add(node.link);
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
-function TJsonWriterCanonical.sizeInBytesV : cardinal;
+function TJsonWriterCanonical.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FObject.sizeInBytes);
-  inc(result, FStack.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FObject.sizeInBytes(magic));
+  inc(result, FStack.sizeInBytes(magic));
 end;
 
 { TCanonicalJsonNode }
@@ -3346,12 +3439,12 @@ constructor TCanonicalJsonNode.Create(aType : TCanonicalJsonNodeType);
 begin
   inherited Create;
   FType := aType;
-  FChildren := TFslList<TCanonicalJsonNode>.create;
+  FChildren := TFslList<TCanonicalJsonNode>.Create;
 end;
 
 destructor TCanonicalJsonNode.Destroy;
 begin
-  FChildren.Free;
+  FChildren.free;
   inherited;
 end;
 
@@ -3361,17 +3454,17 @@ begin
 end;
 
 
-function TCanonicalJsonNode.sizeInBytesV : cardinal;
+function TCanonicalJsonNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 { TJWT }
 
-constructor TJWT.create(header, payload: TJsonObject);
+constructor TJWT.Create(header, payload: TJsonObject);
 begin
   Create;
   self.Header := header;
@@ -3390,9 +3483,9 @@ begin
     result := '??';
 end;
 
-constructor TJWT.create;
+constructor TJWT.Create;
 begin
-  inherited create;
+  inherited Create;
   FHeader := TJsonObject.Create('header');
   FPayload := TJsonObject.Create('payload');
 end;
@@ -3400,50 +3493,60 @@ end;
 destructor TJWT.Destroy;
 begin
   FHeader.free;
-  FPayload.Free;
+  FPayload.free;
   inherited;
 end;
 
 procedure TJWT.setHeader(const Value: TJsonObject);
 begin
   assert(value <> nil);
-  FHeader.Free;
+  FHeader.free;
   FHeader := value;
+end;
+
+function TJWT.GetKid: String;
+begin
+  result := header['kid'];
+end;
+
+procedure TJWT.SetKid(AValue: String);
+begin
+  header['kid'] := Avalue;
 end;
 
 procedure TJWT.setPayload(const Value: TJsonObject);
 begin
   assert(value <> nil);
-  FPayload.Free;
+  FPayload.free;
   FPayload := value;
 end;
 
-function TJWT.Getissuer : String;
+function TJWT.Getissuer: string;
 begin
   result := payload['iss'];
 end;
 
-procedure TJWT.Setissuer(value : String);
+procedure TJWT.Setissuer(Value: string);
 begin
   payload['iss'] := value;
 end;
 
-function TJWT.Getsubject : String;
+function TJWT.Getsubject: string;
 begin
   result := payload['sub'];
 end;
 
-procedure TJWT.Setsubject(value : String);
+procedure TJWT.Setsubject(Value: string);
 begin
   payload['sub'] := value;
 end;
 
-function TJWT.Getaudience : String;
+function TJWT.Getaudience: string;
 begin
   result := payload['aud'];
 end;
 
-procedure TJWT.Setaudience(value : String);
+procedure TJWT.Setaudience(Value: string);
 begin
   payload['aud'] := value;
 end;
@@ -3453,17 +3556,17 @@ begin
   result := UnixToDateTime(trunc(StrToFloat(payload.num['exp'])));
 end;
 
-procedure TJWT.Setexpires(value : TDateTime);
+procedure TJWT.Setexpires(Value: TDateTime);
 begin
   payload.num['exp'] := IntToStr(DateTimeToUnix(value));
 end;
 
 function TJWT.GetnotBefore : TDateTime;
 begin
-  result := UnixToDateTime(StrToIntDef(payload['nbf'], 0));
+  result := UnixToDateTime(payload.int['nbf']);
 end;
 
-procedure TJWT.SetnotBefore(value : TDateTime);
+procedure TJWT.SetnotBefore(Value: TDateTime);
 begin
   payload['nbf'] := IntToStr(DateTimeToUnix(value));
 end;
@@ -3473,17 +3576,17 @@ begin
   result := UnixToDateTime(StrToIntDef(payload['iat'], 0));
 end;
 
-procedure TJWT.SetissuedAt(value : TDateTime);
+procedure TJWT.SetissuedAt(Value: TDateTime);
 begin
   payload['iat'] := IntToStr(DateTimeToUnix(value));
 end;
 
-function TJWT.Getid : String;
+function TJWT.Getid: string;
 begin
   result := payload['jti'];
 end;
 
-procedure TJWT.Setid(value : String);
+procedure TJWT.Setid(Value: string);
 begin
   if payload = nil then
     payload := TJsonObject.Create('payload');
@@ -3496,7 +3599,7 @@ begin
   result := payload['name'];
 end;
 
-procedure TJWT.Setname(value : string);
+procedure TJWT.Setname(Value: string);
 begin
   payload['name'] := value;
 end;
@@ -3506,7 +3609,7 @@ begin
   result := payload['given_name'];
 end;
 
-procedure TJWT.SetgivenName(value : string);
+procedure TJWT.SetgivenName(Value: string);
 begin
   payload['given_name'] := value;
 end;
@@ -3516,7 +3619,7 @@ begin
   result := payload['family_name'];
 end;
 
-procedure TJWT.SetfamilyName(value : string);
+procedure TJWT.SetfamilyName(Value: string);
 begin
   payload['family_name'] := value;
 end;
@@ -3526,7 +3629,7 @@ begin
   result := payload['middle_name'];
 end;
 
-procedure TJWT.SetmiddleName(value : string);
+procedure TJWT.SetmiddleName(Value: string);
 begin
   payload['middle_name'] := value;
 end;
@@ -3536,7 +3639,7 @@ begin
   result := payload['nickname'];
 end;
 
-procedure TJWT.SetnickName(value : string);
+procedure TJWT.SetnickName(Value: string);
 begin
   payload['nickname'] := value;
 end;
@@ -3546,7 +3649,7 @@ begin
   result := payload['preferred_username'];
 end;
 
-procedure TJWT.SetpreferredName(value : string);
+procedure TJWT.SetpreferredName(Value: string);
 begin
     payload['preferred_username'] := value;
   end;
@@ -3556,7 +3659,7 @@ begin
   result := payload['profile'];
 end;
 
-procedure TJWT.Setprofile(value : string);
+procedure TJWT.Setprofile(Value: string);
 begin
   payload['profile'] := value;
 end;
@@ -3566,7 +3669,7 @@ begin
   result := payload['picture'];
 end;
 
-procedure TJWT.Setpicture(value : string);
+procedure TJWT.Setpicture(Value: string);
 begin
   payload['picture'] := value;
 end;
@@ -3581,7 +3684,7 @@ begin
   result := TJWT(inherited Link);
 end;
 
-procedure TJWT.Setwebsite(value : string);
+procedure TJWT.Setwebsite(Value: string);
 begin
   payload['website'] := value;
 end;
@@ -3601,7 +3704,7 @@ begin
   result := payload['email'];
 end;
 
-procedure TJWT.Setemail(value : string);
+procedure TJWT.Setemail(Value: string);
 begin
   payload['email'] := value;
 end;
@@ -3611,7 +3714,7 @@ begin
   result := payload.bool['email_verified'];
 end;
 
-procedure TJWT.SetemailVerified(value : boolean );
+procedure TJWT.SetemailVerified(Value: boolean);
 begin
   payload.bool['email_verified'] := value;
 end;
@@ -3621,7 +3724,7 @@ begin
   result := payload['gender'];
 end;
 
-procedure TJWT.Setgender(value : string);
+procedure TJWT.Setgender(Value: string);
 begin
   payload['gender'] := value;
 end;
@@ -3631,7 +3734,7 @@ begin
   result := payload['birthdate'];
 end;
 
-procedure TJWT.Setbirthdate(value : string);
+procedure TJWT.Setbirthdate(Value: string);
 begin
   payload['birthdate'] := value;
 end;
@@ -3641,7 +3744,7 @@ begin
   result := payload['zoneinfo'];
 end;
 
-procedure TJWT.SettimeZone(value : string);
+procedure TJWT.SettimeZone(Value: string);
 begin
   payload['zoneinfo'] := value;
 end;
@@ -3651,7 +3754,7 @@ begin
   result := payload['locale'];
 end;
 
-procedure TJWT.Setlocale(value : string);
+procedure TJWT.Setlocale(Value: string);
 begin
   payload['locale'] := value;
 end;
@@ -3661,7 +3764,7 @@ begin
   result := payload['phone_number'];
 end;
 
-procedure TJWT.Setphone(value : string);
+procedure TJWT.Setphone(Value: string);
 begin
   payload['phone_number'] := value;
 end;
@@ -3671,7 +3774,7 @@ begin
   result := payload.bool['phone_number_verified'];
 end;
 
-procedure TJWT.Setphone_verified(value : boolean );
+procedure TJWT.Setphone_verified(Value: boolean);
 begin
   payload.bool['phone_number_verified'] := value;
 end;
@@ -3681,7 +3784,7 @@ begin
   result := UnixToDateTime(StrToIntDef(payload['updated_at'], 0));
 end;
 
-procedure TJWT.SetupdatedAt(value : TDateTime);
+procedure TJWT.SetUpdatedAt(Value: TDateTime);
 begin
   payload['updated_at'] := IntToStr(DateTimeToUnix(value));
 end;
@@ -3691,7 +3794,7 @@ begin
   result := payload.forceObj['address']['formatted'];
 end;
 
-procedure TJWT.SetaddressFormatted(value : string);
+procedure TJWT.SetaddressFormatted(Value: string);
 begin
   payload.forceObj['address']['formatted'] := value;
 end;
@@ -3701,7 +3804,7 @@ begin
   result := payload.forceObj['address']['street_address'];
 end;
 
-procedure TJWT.SetaddressStreet(value : string);
+procedure TJWT.SetaddressStreet(Value: string);
 begin
   payload.forceObj['address']['street_address'] := value;
 end;
@@ -3711,7 +3814,7 @@ begin
   result := payload.forceObj['address']['locality'];
 end;
 
-procedure TJWT.SetaddressLocality(value : string);
+procedure TJWT.SetaddressLocality(Value: string);
 begin
   payload.forceObj['address']['locality'] := value;
 end;
@@ -3721,7 +3824,7 @@ begin
   result := payload.forceObj['address']['region'];
 end;
 
-procedure TJWT.SetaddressRegion(value : string);
+procedure TJWT.SetaddressRegion(Value: string);
 begin
   payload.forceObj['address']['region'] := value;
 end;
@@ -3731,7 +3834,7 @@ begin
   result := payload.forceObj['address']['postal_code'];
 end;
 
-procedure TJWT.SetaddressPostCode(value : string);
+procedure TJWT.SetaddressPostCode(Value: string);
 begin
   payload.forceObj['address']['postal_code'] := value;
 end;
@@ -3741,16 +3844,16 @@ begin
   result := payload.forceObj['address']['country'];
 end;
 
-procedure TJWT.SetaddressCountry(value : string);
+procedure TJWT.SetaddressCountry(Value: string);
 begin
   payload.forceObj['address']['country'] := value;
 end;
 
-function TJWT.sizeInBytesV : cardinal;
+function TJWT.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHeader.sizeInBytes);
-  inc(result, FPayLoad.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHeader.sizeInBytes(magic));
+  inc(result, FPayLoad.sizeInBytes(magic));
   inc(result, (FOriginalSource.length * sizeof(char)) + 12);
 end;
 

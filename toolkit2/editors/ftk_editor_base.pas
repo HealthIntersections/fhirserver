@@ -1,12 +1,40 @@
 unit ftk_editor_base;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils, Math,
-  Graphics, Controls, ExtCtrls, ComCtrls, Menus,
+  Graphics, Controls, ExtCtrls, ComCtrls, Menus, Forms,
   SynEdit, SynEditHighlighter, SynEditTypes,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_logging,
   ftk_context, ftk_store;
@@ -24,11 +52,13 @@ type
     FMenuItemP: TMenuItem;
     FMenuItem: TMenuItem;
     function GetCaption: String;
+    function GetChecked: boolean;
     function GetEnabled: boolean;
     function GetEvent: TNotifyEvent;
     function GetImageIndex: integer;
     function GetTag: integer;
     procedure SetCaption(AValue: String);
+    procedure SetChecked(AValue: boolean);
     procedure SetEnabled(AValue: boolean);
     procedure SetEvent(AValue: TNotifyEvent);
     procedure SetImageIndex(AValue: integer);
@@ -43,6 +73,7 @@ type
     property imageIndex : integer read GetImageIndex write SetImageIndex;
     property tag : integer read GetTag write SetTag;
     property enabled : boolean read GetEnabled write SetEnabled;
+    property checked : boolean read GetChecked write SetChecked;
     property event : TNotifyEvent read GetEvent write SetEvent;
   end;
 
@@ -70,7 +101,7 @@ type
     procedure SetTag(AValue: integer);
   public
     constructor Create; override;
-    Destructor destroy; override;
+    Destructor Destroy; override;
     function link : TContentAction; overload;
 
     property menuItem : TMenuItem read FMenuItem;
@@ -98,8 +129,18 @@ type
     actViewTextTab : TContentAction;
     actNavigate : TContentAction;
     actEncoding : TContentAction;
+    actEncodingAscii : TContentSubAction;
+    actEncodingUTf8 : TContentSubAction;
+    actEncodingUTF16B : TContentSubAction;
+    actEncodingUTF16L : TContentSubAction;
     actLineMarkers : TContentAction;
+    actLineMarkersWindows : TContentSubAction;
+    actLineMarkersUnix : TContentSubAction;
+    actLineMarkersMac : TContentSubAction;
+
     actBOM : TContentAction;
+    actBOMNo : TContentSubAction;
+    actBOMYes : TContentSubAction;
     FTextPanelBase : TPanel;
     FDesignerPanelBase : TPanel;
 
@@ -124,6 +165,8 @@ type
     procedure DoShowDesigner(sender : TObject);
     procedure DoShowTextTab(sender : TObject);
     procedure DoMnuFormat(sender : TObject);
+    procedure DoEditorMouseDown(sender : TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure DoEditorMouseUp(sender : TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
   protected
     // if hasText
     FContent : TStringList;
@@ -132,7 +175,7 @@ type
     FDesignerPanelWork : TPanel;
     FMode : TCurrentViewMode;
     actFormat : TContentAction;
-
+    FMouseDownInTextEditor : boolean;
 
     TextToolbar : TToolBar;
     DesignerToolbar : TToolbar;
@@ -168,11 +211,16 @@ type
     procedure doResize(sender : TObject); virtual;
 
     function hasFormatCommands : boolean; virtual;
+    function getFixedEncoding : TSourceEncoding; virtual;
     procedure updateFormatMenu; virtual;
     procedure makeDesigner; virtual;
     procedure updateDesigner; virtual;
     procedure commitDesigner; virtual;
 
+    function preEditSource(src : String) : string; virtual;
+
+    function escapeText(text : String): String; virtual;
+    function sourceHasFocus : boolean;
     procedure SetContentUndoable(src : string);
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
@@ -180,7 +228,7 @@ type
 
     function GetBytes: TBytes; override;
     procedure LoadBytes(bytes: TBytes); override;
-    procedure bindToTab(tab : TTabSheet); override;
+    procedure bindToTab(tab : TTabSheet; pnl : TPanel); override;
     procedure locate(location : TSourceLocation); override;
     function location : String; override;
     procedure redo; override;
@@ -196,9 +244,10 @@ type
     procedure showDesigner; override;
     procedure showTextTab; override;
     procedure BeginEndSelect; override;
-    procedure updateFont; override;
+    procedure updateSettings; override;
     function getSource : String; override;
     procedure resizeControls; override;
+    procedure insertText(text : String; escape : boolean); override;
   end;
 
 implementation
@@ -208,12 +257,12 @@ implementation
 constructor TContentAction.Create;
 begin
   inherited Create;
-  FSubItems := TFslList<TContentSubAction>.create;
+  FSubItems := TFslList<TContentSubAction>.Create;
 end;
 
-destructor TContentAction.destroy;
+destructor TContentAction.Destroy;
 begin
-  FSubItems.Free;
+  FSubItems.free;
   inherited Destroy;
 end;
 
@@ -292,6 +341,11 @@ begin
   result := FMenuItemP.Caption;
 end;
 
+function TContentSubAction.GetChecked: boolean;
+begin
+  result := FMenuItemP.checked;
+end;
+
 function TContentSubAction.GetEnabled: boolean;
 begin
   result := FMenuItemP.Enabled;
@@ -317,6 +371,13 @@ begin
   FMenuItemP.Caption := AValue;
   if (FMenuItem <> nil) then
     FMenuItem.Caption := AValue;
+end;
+
+procedure TContentSubAction.SetChecked(AValue: boolean);
+begin
+  FMenuItemP.Checked := AValue;
+  if (FMenuItem <> nil) then
+    FMenuItem.Checked := AValue;
 end;
 
 procedure TContentSubAction.SetEnabled(AValue: boolean);
@@ -357,15 +418,15 @@ end;
 constructor TBaseEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FActions := TFslList<TContentAction>.create;
-  FContent := TStringList.create;
+  FActions := TFslList<TContentAction>.Create;
+  FContent := TStringList.Create;
   FSelectCursor := -1;
 end;
 
 destructor TBaseEditor.Destroy;
 begin
   FContent.free;
-  FActions.Free;
+  FActions.free;
   inherited Destroy;
 end;
 
@@ -383,7 +444,7 @@ begin
   if (assigned(action.OnShow)) then
     action.OnShow(self);
   pt := Context.locateOnScreen(action.FButton.Left, action.FButton.top + action.FButton.Height);
-  action.FPopup.PopUp(pt.x, pt.y);
+  action.FPopup.PopUp(pt.x+6, pt.y+26); // why needs adjustment?
 end;
 
 procedure TBaseEditor.bindToContentMenu(content: TMenuItem);
@@ -396,7 +457,7 @@ begin
   begin
     if not a.noContextMenu then
     begin
-      a.FmenuItem := TMenuItem.create(tab);
+      a.FmenuItem := TMenuItem.Create(tab);
       content.Add(a.FMenuItem);
       a.FmenuItem.Caption := a.Caption;
       a.FmenuItem.Tag := a.Tag;
@@ -404,7 +465,7 @@ begin
       a.FmenuItem.Enabled := a.Enabled;
       for sa in a.FSubItems do
       begin
-        sa.FMenuItem := TMenuItem.create(tab);
+        sa.FMenuItem := TMenuItem.Create(tab);
         a.FmenuItem.Add(sa.FMenuItem);
         sa.FmenuItem.Caption := sa.Caption;
         sa.FmenuItem.Tag := sa.Tag;
@@ -449,7 +510,7 @@ begin
   act.OnPopulate(self);
   for sa in act.subItems do
   begin
-    sa.FMenuItem := TMenuItem.create(tab);
+    sa.FMenuItem := TMenuItem.Create(tab);
     act.FmenuItem.Add(sa.FMenuItem);
     sa.FmenuItem.Caption := sa.Caption;
     sa.FmenuItem.Tag := sa.Tag;
@@ -470,10 +531,10 @@ end;
 
 function TBaseEditor.makeAction(bar: TToolBar; caption: String; imageIndex: integer): TContentAction;
 begin
-  result := TContentAction.create;
+  result := TContentAction.Create;
   try
     result.FButton := addButtonToToolbar(bar);
-    result.FPopup := TPopupMenu.create(tab);
+    result.FPopup := TPopupMenu.Create(tab);
     result.FPopup.Images := Context.images;
     result.caption := caption;
     result.imageIndex := imageIndex;
@@ -488,7 +549,7 @@ end;
 
 function TBaseEditor.makeAction(bar: TToolBar; caption: String; imageIndex, tag: integer; event: TNotifyEvent; dontAddToContextMenu : boolean = false): TContentAction;
 begin
-  result := TContentAction.create;
+  result := TContentAction.Create;
   try
     result.FButton := addButtonToToolbar(bar);
     result.caption := caption;
@@ -504,9 +565,9 @@ end;
 
 function TBaseEditor.makeSubAction(action : TContentAction; caption: String; imageIndex, tag : integer; event : TNotifyEvent): TContentSubAction;
 begin
-  result := TContentSubAction.create;
+  result := TContentSubAction.Create;
   try
-    result.FMenuItemP := TMenuItem.create(tab);
+    result.FMenuItemP := TMenuItem.Create(tab);
     result.caption := caption;
     result.imageIndex := imageIndex;
     result.tag := tag;
@@ -522,7 +583,7 @@ procedure TBaseEditor.makeDivider(bar: TToolBar);
 var
   act : TContentAction;
 begin
-  act := TContentAction.create;
+  act := TContentAction.Create;
   try
     act.FButton := addButtonToToolbar(bar);
     act.FButton.Style := tbsDivider;
@@ -545,13 +606,14 @@ begin
   if HasTextTab then
     FContent.assign(TextEditor.lines)
   else
-    raise Exception.create('Not supported yet');
+    raise EFslException.Create('Not supported yet');
 end;
 
 procedure TBaseEditor.updateFromContent;
 begin
   if HasTextTab then
     TextEditor.lines.assign(FContent);
+  ContentChanged;
 end;
 
 { TBaseEditor }
@@ -561,9 +623,10 @@ var
   b : TStringBuilder;
   s : String;
   first : boolean;
+  encoding : TSourceEncoding;
 begin
   updateToContent;
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     first := true;
     for s in FContent do
@@ -579,7 +642,10 @@ begin
       b.append(s);
     end;
     s := b.toString;
-    case Session.Encoding of
+    encoding := getFixedEncoding;
+    if encoding = senUnknown then
+      encoding := Session.Encoding;
+    case encoding of
       senASCII : result := TEncoding.ASCII.GetBytes(s);
       senUTF16BE : result := TEncoding.BigEndianUnicode.GetBytes(s);
       senUTF16LE : result := TEncoding.Unicode.GetBytes(s);
@@ -724,6 +790,8 @@ begin
 
     src := encoding.GetString(bytes, start, length(bytes) - start);
 
+    src := preEditSource(src);
+
     lf := false;
     cr := false;
     crlf := false;
@@ -786,32 +854,45 @@ end;
 
 procedure TBaseEditor.updateToolbarButtons;
 begin
+  actLineMarkersWindows.checked := Session.EndOfLines = slCRLF;
+  actLineMarkersUnix.checked := Session.EndOfLines = slLF;
+  actLineMarkersMac.checked := Session.EndOfLines = slCR;
+
   case Session.EndOfLines of
     slUnknown : actLineMarkers.ImageIndex := 51;
     slCRLF: actLineMarkers.ImageIndex := 51;
     slLF : actLineMarkers.ImageIndex := 53;
-    slCR : actLineMarkers.ImageIndex := 54;
+    slCR : actLineMarkers.ImageIndex := 52;
   end;
-  case Session.Encoding of
-    senUnknown: actEncoding.ImageIndex := 55;
-    senBinary: actEncoding.ImageIndex := 56;
-    senUTF8: actEncoding.ImageIndex := 58;
-    senASCII: actEncoding.ImageIndex := 57;
-    senUTF16BE: actEncoding.ImageIndex := 59;
-    senUTF16LE: actEncoding.ImageIndex := 60;
-  end;
-  if Session.Encoding in [senUnknown, senBinary, senASCII] then
+  if getFixedEncoding = senUnknown then
   begin
-    actBOM.Enabled := false;
-    actBOM.ImageIndex := 61;
-  end
-  else
-  begin
-    actBOM.Enabled := true;
-    if Session.HasBOM then
-      actBOM.ImageIndex := 62
-    else
+    case Session.Encoding of
+      senUnknown: actEncoding.ImageIndex := 55;
+      senBinary: actEncoding.ImageIndex := 56;
+      senUTF8: actEncoding.ImageIndex := 58;
+      senASCII: actEncoding.ImageIndex := 57;
+      senUTF16BE: actEncoding.ImageIndex := 59;
+      senUTF16LE: actEncoding.ImageIndex := 60;
+    end;
+    actEncodingAscii.checked := Session.Encoding = senASCII;
+    actEncodingUTf8.checked := Session.Encoding = senUTF8;
+    actEncodingUTF16B.checked := Session.Encoding = senUTF16BE;
+    actEncodingUTF16L.checked := Session.Encoding = senUTF16LE;
+    if Session.Encoding in [senUnknown, senBinary, senASCII] then
+    begin
+      actBOM.Enabled := false;
       actBOM.ImageIndex := 61;
+    end
+    else
+    begin
+      actBOM.Enabled := true;
+      actBOMYes.checked := Session.HasBOM;
+      actBOMNo.checked := not Session.HasBOM;
+      if Session.HasBOM then
+        actBOM.ImageIndex := 62
+      else
+        actBOM.ImageIndex := 61;
+    end;
   end;
 end;
 
@@ -819,9 +900,14 @@ procedure TBaseEditor.getFocus(content: TMenuItem);
 begin
   inc(FFocusCount);
   if FFocusCount = 1 then
+  begin
     bindToContentMenu(content);
+    CanPaste := true;
+  end;
   EditPause;
-  TextEditor.SetFocus;
+  if not IsShowingDesigner then
+    TextEditor.SetFocus;
+  Context.OnUpdateActions(self);
 end;
 
 procedure TBaseEditor.loseFocus();
@@ -832,6 +918,7 @@ begin
   dec(FFocusCount);
   if FFocusCount = 0 then
   begin
+    CanPaste := false;
     for a in FActions do
     begin
       a.FmenuItem := nil;
@@ -839,6 +926,8 @@ begin
         sa.FMenuItem := nil;
     end;
   end;
+  if Context <> nil then
+    Context.OnUpdateActions(self);
 end;
 
 procedure TBaseEditor.EditPause;
@@ -847,6 +936,8 @@ var
   loc : TSourceLocation;
   t : QWord;
 begin
+  if FMouseDownInTextEditor then
+    exit;
   t := GetTickCount64;
   LastChangeChecked := true;
   LastMoveChecked := true;
@@ -860,7 +951,7 @@ begin
   end;
 
   loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     validate(true, true, loc, ts);
     if (Context.Focus = self) then
@@ -876,12 +967,14 @@ var
   ts : TStringList;
   loc : TSourceLocation;
 begin
-  LastMoveChecked := true;
+  if FMouseDownInTextEditor then
+    exit;
 
+  LastMoveChecked := true;
   if (Context.Focus = self) then
   begin
     loc := TSourceLocation.fromPoint(TextEditor.CaretXY);
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       validate(false, true, loc, ts);
         Context.Inspector.Populate(ts);
@@ -981,30 +1074,30 @@ begin
 
 end;
 
-procedure TBaseEditor.bindToTab(tab: TTabSheet);
+procedure TBaseEditor.bindToTab(tab: TTabSheet; pnl : TPanel);
 begin
-  inherited bindToTab(tab);
+  inherited bindToTab(tab, pnl);
 
   // create the pages
-  FPageControl := TPageControl.create(tab);
+  FPageControl := TPageControl.Create(pnl);
   FPageControl.ShowTabs := false;
   FPageControl.Align := alClient;
   FTextTab := FPageControl.AddTabSheet;
   FDesignTab := FPageControl.AddTabSheet;
 
   // create the side by side
-  FTextPanelBase := TPanel.create(tab);
+  FTextPanelBase := TPanel.Create(pnl);
   FTextPanelBase.BevelWidth := 1;
   FTextPanelBase.BorderWidth := 2;
   FTextPanelBase.Align := alLeft;
   FTextPanelBase.Width := (tab.width div 2) - 4;
   FTextPanelBase.Color := clLime;
   FTextPanelBase.ShowHint := false;
-  FSplitter := TSplitter.create(tab);
+  FSplitter := TSplitter.Create(pnl);
   FSplitter.Width := 8;
   FSplitter.Align := alLeft;
   FSplitter.ResizeControl := FTextPanelBase;
-  FDesignerPanelBase := TPanel.create(tab);
+  FDesignerPanelBase := TPanel.Create(pnl);
   FDesignerPanelBase.BevelWidth := 1;
   FDesignerPanelBase.BorderWidth := 2;
   FDesignerPanelBase.Align := alClient;
@@ -1015,14 +1108,14 @@ begin
   // create the panels
   if hasTextTab then
   begin
-    FTextPanelWork := TPanel.create(tab);
+    FTextPanelWork := TPanel.Create(pnl);
     FTextPanelWork.BevelWidth := 1;
     FTextPanelWork.Align := alClient;
     FTextPanelWork.Color := clBtnFace;
   end;
   if hasDesigner then
   begin
-    FDesignerPanelWork := TPanel.create(tab);
+    FDesignerPanelWork := TPanel.Create(pnl);
     FDesignerPanelWork.BevelWidth := 1;
     FDesignerPanelWork.Align := alClient;
     FDesignerPanelWork.Color := clBtnFace;
@@ -1032,16 +1125,16 @@ begin
   // bind mode
   if (Context.SideBySide and hasTextTab and hasDesigner) then
   begin
-    FTextPanelBase.parent := Tab;
-    FSplitter.parent := Tab;
-    FDesignerPanelBase.parent := Tab;
+    FTextPanelBase.parent := pnl;
+    FSplitter.parent := pnl;
+    FDesignerPanelBase.parent := pnl;
     FTextPanelWork.parent := FTextPanelBase;
     FDesignerPanelWork.parent := FDesignerPanelBase;
     FPageControl.Parent := nil;
   end
   else
   begin
-    FPageControl.Parent := tab;
+    FPageControl.Parent := pnl;
     FTextPanelBase.parent := nil;
     FSplitter.parent := nil;
     FDesignerPanelBase.parent := nil;
@@ -1070,26 +1163,26 @@ procedure TBaseEditor.makeTextTab;
 var
   mnu : TMenuItem;
 begin
-  FEditorPopup := TPopupMenu.create(tab);
+  FEditorPopup := TPopupMenu.Create(tab);
   FEditorPopup.Images := Context.images;
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditUndo');
   FEditorPopup.Items.Add(mnu);
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditCut');
   FEditorPopup.Items.Add(mnu);
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditCopy');
   FEditorPopup.Items.Add(mnu);
 
-  mnu := TMenuItem.create(tab);
+  mnu := TMenuItem.Create(tab);
   mnu.Action := Context.actions.ActionByName('actionEditPaste');
   FEditorPopup.Items.Add(mnu);
 
-  TextToolbar := TToolBar.create(tab);
+  TextToolbar := TToolBar.Create(tab);
   TextToolbar.parent := FTextPanelWork;
   TextToolbar.align := alTop;
   TextToolbar.Images := Context.Images;
@@ -1112,36 +1205,41 @@ begin
     actFormat.OnShow := DoMnuFormat;
   end;
 
-  actEncoding := makeAction(TextToolbar, 'Encoding', 0);
-  makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
-  makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
-  makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
-  makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
+  if getFixedEncoding = senUnknown then
+  begin
+    actEncoding := makeAction(TextToolbar, 'Encoding', 0);
+    actEncodingAscii := makeSubAction(actEncoding, 'ASCII', 57, 0, DoMnuEncoding);
+    actEncodingUTf8 := makeSubAction(actEncoding, 'UTF8 (Unicode)', 58, 1, DoMnuEncoding);
+    actEncodingUTF16B := makeSubAction(actEncoding, 'UTF16 BE', 59, 2, DoMnuEncoding);
+    actEncodingUTF16L := makeSubAction(actEncoding, 'UTF16 LE', 60, 3, DoMnuEncoding);
+
+    actBOM := makeAction(TextToolbar, 'Byte Order Mark', 10);
+    actBOMNo := makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
+    actBOMYes := makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
+  end;
 
   actLineMarkers := makeAction(TextToolbar, 'End of Lines', 4);
-  makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
-  makeSubAction(actLineMarkers, 'Unix (LF)', {$IFDEF OSX}52{$ELSE}53{$ENDIF}, 1, DoMnuLineMarkers);
-  makeSubAction(actLineMarkers, 'Macintosh (CR)', 54, 3, DoMnuLineMarkers);
-
-  actBOM := makeAction(TextToolbar, 'Byte Order Mark', 10);
-  makeSubAction(actBOM, 'No BOM', 61, 0, DoMnuBOM);
-  makeSubAction(actBOM, 'BOM', 62, 1, DoMnuBOM);
+  actLineMarkersWindows := makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
+  actLineMarkersUnix := makeSubAction(actLineMarkers, 'Unix (LF)', 53, 1, DoMnuLineMarkers);
+  actLineMarkersMac := makeSubAction(actLineMarkers, 'Macintosh (CR)', 52, 2, DoMnuLineMarkers);
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
-  TextEditor := TSynEdit.create(tab);
+  TextEditor := TSynEdit.Create(tab);
   TextEditor.parent := FTextPanelWork;
   TextEditor.align := alClient;
   TextEditor.Font.Size := 10;
   TextEditor.Highlighter := HighLighter;
   TextEditor.OnChange := DoTextEditorChange;
   TextEditor.OnStatusChange := DoTextEditorStatusChange;
+  TextEditor.OnMouseDown := DoEditorMouseDown;
+  TextEditor.OnMouseUp := DoEditorMouseUp;;
   TextEditor.PopupMenu := FEditorPopup;
 end;
 
 procedure TBaseEditor.makeDesigner;
 begin
-  DesignerToolbar := TToolBar.create(tab);
+  DesignerToolbar := TToolBar.Create(tab);
   DesignerToolbar.parent := FDesignerPanelWork;
   DesignerToolbar.align := alTop;
   DesignerToolbar.Images := Context.Images;
@@ -1162,6 +1260,21 @@ end;
 procedure TBaseEditor.commitDesigner;
 begin
   // nothing here
+end;
+
+function TBaseEditor.preEditSource(src: String): string;
+begin
+  result := src;
+end;
+
+function TBaseEditor.escapeText(text: String): String;
+begin
+  result := text;
+end;
+
+function TBaseEditor.sourceHasFocus: boolean;
+begin
+  result := not IsShowingDesigner and (Screen.ActiveControl = TextEditor);
 end;
 
 procedure TBaseEditor.SetContentUndoable(src : string);
@@ -1188,6 +1301,11 @@ begin
   result := false;
 end;
 
+function TBaseEditor.getFixedEncoding: TSourceEncoding;
+begin
+  result := senUnknown;
+end;
+
 procedure TBaseEditor.updateFormatMenu;
 begin
 
@@ -1210,7 +1328,8 @@ begin
   begin
     lastMove := GetTickCount64;
     lastMoveChecked := false;
-    Context.Inspector.Active := false;
+    if not FMouseDownInTextEditor then
+      Context.Inspector.Active := false;
   end;
 end;
 
@@ -1229,6 +1348,16 @@ begin
   updateFormatMenu;
 end;
 
+procedure TBaseEditor.DoEditorMouseDown(sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  FMouseDownInTextEditor := true;
+end;
+
+procedure TBaseEditor.DoEditorMouseUp(sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  FMouseDownInTextEditor := false;
+end;
+
 procedure TBaseEditor.MakeNavigationItems(sender: TObject);
 var
   ts : TStringList;
@@ -1236,7 +1365,7 @@ var
 begin
   actNavigate.subItems.clear;
   makeSubAction(actNavigate, 'Start', -1, 0, DoMnuNavigate);
-  ts := TStringList.create;
+  ts := TStringList.Create;
   try
     getNavigationList(ts);
     for i := 0 to ts.count - 1 do
@@ -1265,8 +1394,7 @@ begin
   case (Sender as TMenuItem).Tag of
     0: Session.EndOfLines := slCRLF;
     1: Session.EndOfLines := slLF;
-    2: Session.EndOfLines := slLF;
-    3: Session.EndOfLines := slCR;
+    2: Session.EndOfLines := slCR;
   end;
   updateToolbarButtons;
 end;
@@ -1362,10 +1490,10 @@ begin
   end;
 end;
 
-procedure TBaseEditor.updateFont;
+procedure TBaseEditor.updateSettings;
 begin
   if TextEditor <> nil then
-    TextEditor.font.assign(Context.Font);
+    TextEditor.font.assign(Context.EditorFont);
 end;
 
 function TBaseEditor.getSource: String;
@@ -1378,6 +1506,13 @@ begin
   TextToolbar.Height := Context.ToolBarHeight;
   if DesignerToolbar <> nil then
     DesignerToolbar.Height := Context.ToolBarHeight;
+end;
+
+procedure TBaseEditor.insertText(text: String; escape: boolean);
+begin
+  if escape then
+    text := escapeText(text);
+  TextEditor.InsertTextAtCaret(text);
 end;
 
 

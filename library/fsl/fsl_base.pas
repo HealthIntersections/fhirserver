@@ -1,7 +1,7 @@
 Unit fsl_base;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -35,8 +35,6 @@ interface
 uses
   {$IFDEF WINDOWS}
   Windows,
-  {$ELSE}
-  LCLType, Dialogs,
   {$ENDIF}
   SysUtils, Classes, Types, RTLConsts, Generics.Defaults, Generics.Collections, fsl_fpc;
 
@@ -45,6 +43,19 @@ const
   SArgumentOutOfRange : AnsiString = 'index out of range';
   {$ENDIF}
   EMPTY_HASH = -1;
+
+{.$.DEFINE TRACK_CLASSES }
+
+{$IFDEF TRACK_CLASSES}
+const
+  CLASS_NAME_OF_INTEREST = 'TFhirString';
+  ID_OF_INTEREST = -1;
+{$ENDIF}
+
+
+var
+  UnderDebugger : boolean = false; // this doesn't automatically detect whether debugging; you have to set this through a command line parameter
+  SuppressLeakDialog : boolean = false;
 
 threadvar
   gExceptionStack : String;
@@ -103,12 +114,6 @@ Type
   public
     Constructor Create(place : String);
   End;
-  ETerminologySetup = class (EFslException); // problem in the terminology configuration or loaded terminologies
-  ETerminologyError = class (EFslException); // problem in terminology operation
-  ETerminologyTodo = Class(ETerminologyError)
-  public
-    Constructor Create(place : String);
-  End;
   ETestCase = class (EFslException); // Failing test case
   EJavascriptException = class (EFslException); // exception thrown in javscript library
   EJavascriptScript = class (EJavascriptException); // error thrown by script
@@ -122,6 +127,14 @@ Type
     Constructor Create(place : String);
   End;
 
+  EWebServerException = Class(EFslException)
+  Private
+    FCode : Integer;
+  Public
+    constructor Create(code : integer; message : String);
+    property Code : Integer read FCode;
+  End;
+
 Function ExceptObject : Exception;
 Function HasExceptObject : Boolean;
 
@@ -132,30 +145,49 @@ var
   GetThreadNameStatusDelegate : TGetThreadNameStatus = nil;
   ShowObjectLeaks : boolean;
 
+const
+  NULL_THREAD = {$IFDEF OSX} nil {$ELSE} 0 {$ENDIF};
+
 Type
+  {$IFDEF DELPHI}
+  TStringArray = Array of String;
+  {$ENDIF}
+
   TFslObjectClass = Class Of TFslObject;
   TFslClass = TFslObjectClass;
 
   TFslReferenceCount = Integer;
+  TNameString = String[16];
 
   {$M+}
+
+  { TFslObject }
+
   TFslObject = Class(TObject)
   Private
     // Reference counted using Interlocked* Windows API functions.
     FFslObjectReferenceCount : TFslReferenceCount;
     FTagObject : TObject;
+    FOwningThread : TThreadId;
+    FMagic : integer;
+    {$IFDEF TRACK_CLASSES}
+    FNamedInstance : string;
+    {$ENDIF}
     {$IFOPT D+}
     // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
-    FNamedClass : String;
+    FNamedClass : TNameString;
+    FDebugInfo : String;
     {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
-    FTracked : boolean;
     FSerial : integer;
     FNext, FPrev : TFslObject; // same class type
     FThreadName : String;
     {$ENDIF}
 
+    function ObjectCrossesThreads : boolean;
+    function dumpSummary : String;
+    function updatedDebugInfo : String;
   Protected
     // Declared here for ease of implementing interfaces.
     Function _AddRef : Integer; Stdcall;
@@ -180,7 +212,10 @@ Type
 
     Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
-    function sizeInBytesV : cardinal; virtual;
+    function sizeInBytesV(magic : integer) : cardinal; virtual;
+    {$IFDEF TRACK_CLASSES}
+    procedure freeNotification(done : boolean); virtual;
+    {$ENDIF}
   Public
     constructor Create; Overload; Virtual;
     destructor Destroy; Override;
@@ -190,6 +225,7 @@ Type
 
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
     Procedure Free; Overload;
+    procedure freeForReal; // debugging use only
     Function Link : TFslObject; Overload;
     Function Unlink : TFslObject; Overload;
     Function Clone : TFslObject; Overload;
@@ -199,21 +235,28 @@ Type
     Function Assignable : Boolean; Overload; Virtual;
     Function Duplicate : TFslObject; Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Virtual;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
+    class function nextMagic : integer;
 
     // Determine if self is a valid reference of the specified class.
     Function Invariants(Const sLocation : String; aClass : TClass) : Boolean; Overload;
 
     Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
+    {$IFDEF TRACK_CLASSES}
+    property NamedInstance : string read FNamedInstance write FNamedInstance;
+    {$ENDIF}
     {$IFOPT D+}
-    property NamedClass : String read FNamedClass;
+    property NamedClass : TNameString read FNamedClass;
     {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
     property SerialNumber : integer read FSerial;
     {$ENDIF}
+    function debugInfo : String; virtual; // what's visible to the debugger
+    procedure updateDebugInfo;
 
     class function getReport(sep : String; full : boolean) : String;
+    class function classInstanceCount(namedClass : String) : integer;
   End;
   {$M-}
 
@@ -227,9 +270,7 @@ Type
 Type
   TFslEnumerable<T : class> = class (TFslObject)
   private
-  {$HINTS OFF}
     function ToArrayImpl(Count: Integer): TArray<T>; // used by descendants
-  {$HINTS ON}
   protected
     function DoGetEnumerator: TEnumerator<T>; virtual; abstract;
   public
@@ -319,7 +360,7 @@ Type
   protected
     function DoGetEnumerator: TEnumerator<T>; override;
     procedure NotifyChange(const Item: T; Action: TCollectionNotification);
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     constructor Create; Overload; Override;
@@ -465,6 +506,7 @@ Type
       TItemArray = array of TItem;
   private
     FFslObjectReferenceCount : TFslReferenceCount;
+    FOwningThread : TThreadId;
     FItems: TItemArray;
     FCount: Integer;
     FGrowThreshold: Integer;
@@ -473,6 +515,7 @@ Type
     FDefault : T;
     FHasDefault : boolean;
     FName : String;
+    FMagic : integer;
 
     procedure SetCapacity(ACapacity: Integer);
     procedure Rehash(NewCapPow2: Integer);
@@ -486,6 +529,7 @@ Type
     procedure DoSetValue(Index: Integer; const Value: T);
     function DoRemove(const Key: String; HashCode: Integer; Notification: TCollectionNotification): T;
     function InCircularRange(Bottom, Item, TopInc: Integer): Boolean;
+    function ObjectCrossesThreads : boolean;
   private
     function GetEmpty: Boolean;
   private
@@ -524,7 +568,7 @@ Type
     property IsEmpty : Boolean read GetEmpty;
     property defaultValue : T read FDefault write SetDefault;
     property hasDefault : Boolean read FHasDefault write SetHasDefault;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
 
     type
       TFslPairEnumerator = class(TEnumerator<TFslPair<T>>)
@@ -629,15 +673,20 @@ Type
   TFslStringDictionary = class (TDictionary<String, String>)
   private
     FFslObjectReferenceCount : TFslReferenceCount;
+    FOwningThread : TThreadId;
+    FMagic : integer;
     function GetValue(const Key: String): String;
     procedure SetValue(const Key, Value: String);
+    function ObjectCrossesThreads : boolean;
   public
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
+    constructor Create;
+
     Procedure Free; Overload;
     Function Link : TFslStringDictionary; Overload;
     procedure assign(source : TFslStringDictionary);
     property Values[const Key: String]: String read GetValue write SetValue; default;
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
   end;
 
   TFslStringSet = class (TFslObject)
@@ -645,7 +694,7 @@ Type
     // not sorted - this doesn't get long enough to make it worth sorting
     FItems : TArray<String>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(initial : String); overload;
     constructor Create(initial : array of String); overload;
@@ -686,7 +735,7 @@ Type
     function GetItem(const Key: String): String;
     procedure SetItem(const Key, Value: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -696,28 +745,47 @@ Type
     property Items[const Key: String]: String read GetItem write SetItem; default;
   end;
 
-implementation
+function classCount(name : String) : integer;
 
 type
+  TDoubleFreeCallBack = procedure(name1, name2 : String) of object;
+
+var
+  GDumpFile : String;
+  DoubleFreeCallBack : TDoubleFreeCallBack;
+
+implementation
+
+var
+  GLastMagic : integer = 0;
+
+type
+
+  { TClassTrackingType }
+
   TClassTrackingType = class (TObject)
   private
-    first, last : TFslObject;
+    firstObject, lastObject : TFslObject;
     count : integer;
-    dcount : integer;
+    deltaCount : integer;
     serial : integer;
+
+    function objectSummary : String;
+    procedure check(msg : String; condition : boolean);
   end;
 
 var
   GInited : boolean;
   GLock : TRTLCriticalSection;
   GClassTracker : TDictionary<String, TClassTrackingType>;
+  GCounter : integer = 0;
 
 procedure initUnit;
 begin
   if not GInited then
   begin
     InitializeCriticalSection(GLock);
-    GClassTracker := TDictionary<String, TClassTrackingType>.create;
+    GClassTracker := TDictionary<String, TClassTrackingType>.Create;
     GInited := true;
     ShowObjectLeaks := true;
   end;
@@ -728,33 +796,77 @@ var
   t : TClassTrackingType;
   n, s : String;
   i : integer;
+  f : System.text;
+  ts : TStringList;
 begin
   if ShowObjectLeaks then
   begin
-    s := '';
+    s := 'Memory Leak Report at '+formatDateTime('c', now)+#13#10;
     i := 0;
-    for n in GClassTracker.Keys do
-    begin
-      t := GClassTracker[n];
-      i := i + t.count;
-      if t.count > 0 then
-        s := s + n+': '+inttostr(t.count)+#13#10;
-      t.Free;
+    EnterCriticalSection(GLock);
+    try
+      ts := TStringList.Create;
+      try
+        for n in GClassTracker.Keys do
+          ts.add(n);
+        ts.Sort;
+        for n in ts do
+        begin
+          t := GClassTracker[n];
+          i := i + t.count;
+          if t.count > 0 then
+            s := s + n+': '+inttostr(t.count)+' of '+inttostr(t.serial)+t.objectSummary+#13#10;
+          t.free;
+        end;
+      finally
+        ts.free;
+      end;
+    finally
+      LeaveCriticalSection(GLock);
     end;
-    if i > 0 then
+    if (GDumpFile <> '') then
+    begin
+      assignFile(f, GDumpFile);
+      Rewrite(f);
+      writeln(f, s);
+      closeFile(f);
+    end;
+    if (i > 0) and not SuppressLeakDialog then
     begin
       {$IFDEF WINDOWS}
       messagebox(0, pchar(s), 'Object Leaks', MB_OK);
       {$ELSE}
-      DefaultMessageBox('Object Leaks', pchar(s), MB_OK);
+      // DefaultMessageBox(pchar(s), 'Object Leaks', MB_OK);
       {$ENDIF}
+
     end;
   end;
-  GClassTracker.Free;
+  GClassTracker.free;
   DeleteCriticalSection(GLock);
   GInited := false;
 end;
 
+
+function classCount(name : String) : integer;
+var
+  t : TClassTrackingType;
+begin
+  result := 0;
+  EnterCriticalSection(GLock);
+  try
+    if GClassTracker.TryGetValue(name, t) then
+    begin
+      result := t.count;
+      if (t.count = 0) then
+      begin
+        assert(t.firstObject = nil);
+        assert(t.lastObject = nil);
+      end;
+    end;
+  finally
+    LeaveCriticalSection(GLock);
+  end;
+end;
 
 Function ExceptObject : Exception;
 Begin
@@ -829,6 +941,33 @@ begin
   gException := nil;
 end;
 
+{ TClassTrackingType }
+
+function TClassTrackingType.objectSummary: String;
+var
+  t : TFslObject;
+begin
+  result := '';
+  {$IFDEF OBJECT_TRACKING}
+  if (count > 0) and (count <= 80) then
+  begin
+    result := '; '+firstObject.dumpSummary;
+    t := firstObject.FNext;
+    while (t <> nil) do
+    begin
+      result := result + ',' + t.dumpSummary;
+      t := t.FNext;
+    end;
+  end
+  {$ENDIF}
+end;
+
+procedure TClassTrackingType.check(msg: String; condition: boolean);
+begin
+  if not condition then
+    raise EFslException(msg);
+end;
+
 { EFslException }
 
 Constructor EFslException.Create(Const sSender, sMethod, sReason : String);
@@ -875,14 +1014,21 @@ End;
 
 { TFslObject }
 
-Constructor TFslObject.Create;
+constructor TFslObject.Create;
 var
   t : TClassTrackingType;
 Begin
   Inherited;
   {$IFOPT D+}
-  FNamedClass := ClassName;
+  FNamedClass := copy(ClassName, 1, 16);
   {$ENDIF}
+  FOwningThread := GetCurrentThreadId;
+
+  {$IFDEF TRACK_CLASSES}
+  if (className = CLASS_NAME_OF_INTEREST) then
+    freeNotification(false);
+  {$ENDIF}
+
   {$IFDEF OBJECT_TRACKING}
   if not GInited then
     initUnit;
@@ -890,26 +1036,33 @@ Begin
     FThreadName := GetThreadNameStatusDelegate;
   EnterCriticalSection(GLock);
   try
-    if not GClassTracker.TryGetValue(FNamedClass, t) then
+    if not GClassTracker.TryGetValue(ClassName, t) then
     begin
       t := TClassTrackingType.Create;
-      GClassTracker.Add(FNamedClass, t);
+      GClassTracker.Add(ClassName, t);
     end;
-    FTracked := true;
     inc(t.count);
-    inc(t.dcount);
+    inc(t.deltaCount);
     inc(t.serial);
     FSerial := t.serial;
-    if t.first = nil then
+    {$IFDEF TRACK_CLASSES}
+    if (t.serial = ID_OF_INTEREST) and (className = CLASS_NAME_OF_INTEREST) then
+      NamedInstance := '!';
+    {$ENDIF}
+    if t.firstObject = nil then
     begin
-      t.first := self;
-      t.last := self;
+      assert(t.count = 1);
+      t.firstObject := self;
+      t.lastObject := self;
+      FPrev := nil;
+      FNext := nil;
     end
     else
     begin
-      t.last.FNext := self;
-      FPrev := t.last;
-      t.last := self;
+      t.lastObject.FNext := self;
+      FPrev := t.lastObject;
+      FNext := nil;
+      t.lastObject := self;
     end;
   finally
     LeaveCriticalSection(GLock);
@@ -917,7 +1070,7 @@ Begin
   {$ENDIF}
 End;
 
-Destructor TFslObject.Destroy;
+destructor TFslObject.Destroy;
 var
   t : TClassTrackingType;
 Begin
@@ -926,37 +1079,35 @@ Begin
   begin
     EnterCriticalSection(GLock);
     try
-      if GClassTracker.TryGetValue(FNamedClass, t) then // this will succeed
+      if GClassTracker.TryGetValue(ClassName, t) then // this will succeed
       begin
         dec(t.Count);
-        dec(t.dCount);
-        if FTracked then
+        assert(t.count >= 0);
+        dec(t.deltaCount);
+        if FPrev = nil then
         begin
-          if FPrev = nil then
-          begin
-            t.first := self.FNext;
-            if self.FNext <> nil then
-              self.FNext.FPrev := nil;
-          end
-          else
-          begin
-            if self.FNext <> nil then
-              self.FNext.FPrev := self.FPrev;
-            self.FPrev.FNext := self.FNext;
-          end;
-
-          if FNext = nil then
-          begin
-            t.last := self.FPrev;
-            if self.FPrev <> nil then
-              self.FPrev.FNext := nil;
-          end
-          else
-          begin
-            if self.FPrev <> nil then
-              self.FPrev.FNext := self.FNext;
+          t.firstObject := self.FNext;
+          if self.FNext <> nil then
+            self.FNext.FPrev := nil;
+        end
+        else
+        begin
+          if self.FNext <> nil then
             self.FNext.FPrev := self.FPrev;
-          end;
+          self.FPrev.FNext := self.FNext;
+        end;
+
+        if FNext = nil then
+        begin
+          t.lastObject := self.FPrev;
+          if self.FPrev <> nil then
+            self.FPrev.FNext := nil;
+        end
+        else
+        begin
+          if self.FPrev <> nil then
+            self.FPrev.FNext := self.FNext;
+          self.FNext.FPrev := self.FPrev;
         end;
       end;
     finally
@@ -967,31 +1118,80 @@ Begin
   Inherited;
 End;
 
-Procedure TFslObject.AfterConstruction;
+procedure TFslObject.AfterConstruction;
 Begin
   Inherited;
+  updateDebugInfo;
 End;
 
-Procedure TFslObject.BeforeDestruction;
+procedure TFslObject.BeforeDestruction;
 Begin
-  // TODO: really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
+  // Really should always be -1, but SysUtils.FreeAndNil may bypass the correct Free method.
   Assert(CheckCondition(FFslObjectReferenceCount <= 0, 'BeforeDestruction', 'Attempted to destroy object before all references are released (possibly freed while cast as a TObject).'));
 
   Inherited;
 End;
 
-Procedure TFslObject.Free;
+procedure TFslObject.Free;
+var
+  done : boolean;
+  second : boolean;
+  clsName, nmCls : String;
 Begin
   If Assigned(Self) Then
   Begin
+    try
+      second := FFslObjectReferenceCount = -1;
+    except
+      second := false;
+    end;
+
+    if second then
+    begin
+      clsName := 'n/a';
+      nmCls  := 'n/a';
+      try
+        nmCls := FNamedClass;
+      except
+        nmCls := '??';
+      end;
+      try
+        clsName := className;
+      except
+        clsName := '??';
+      end;
+      if assigned(DoubleFreeCallBack) then
+      try
+        DoubleFreeCallBack(clsName, nmCls);
+      except
+      end;
+      raise EFslException.Create('Attempt to free a class again (of type '+clsName+' or '+nmCls+' (?))');
+    end;
+
     Assert(Invariants('Free', TFslObject));
 
-    if FFslObjectReferenceCount = -1 then
-      raise EFslException.Create('Attempt to free a class a second time (of type '+className+'?)');
-    If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
+    if ObjectCrossesThreads then
+      done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
+    else
+    begin
+      dec(FFslObjectReferenceCount);
+      done := FFslObjectReferenceCount < 0;
+    end;
+    {$IFDEF TRACK_CLASSES}
+    if (classname = CLASS_NAME_OF_INTEREST) then
+      self.freeNotification(done);
+    {$ENDIF}
+    If done Then
       Destroy;
   End;
 End;
+
+procedure TFslObject.freeForReal;
+begin
+  while FFslObjectReferenceCount > 0 do
+    Free;
+  Free;
+end;
 
 class function TFslObject.getReport(sep : String; full : boolean): String;
 var
@@ -1012,33 +1212,30 @@ begin
       begin
         ts := TStringList.Create;
         try
-          if t.dcount <> 0 then
+          if t.deltaCount <> 0 then
           begin
-            o := t.first;
+            o := t.firstObject;
             while o <> nil do
             begin
               i := ts.IndexOf(o.FThreadName);
               if i = -1 then
                 i := ts.Add(o.FThreadName);
               ts.Objects[i] := TObject(integer(ts.Objects[i])+1);
-              o.FTracked := false;
               o.FThreadName := '';
               o := o.FNext;
             end;
-            t.first := nil;
-            t.last := nil;
-            result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+'. Delta = '+inttostr(t.dcount);
+            result := result + cn + ': '+inttostr(t.count)+' of '+inttostr(t.serial)+'. Delta = '+inttostr(t.deltaCount);
             if ts.Count <> 0 then
             begin
               result := result + ': ';
               for i := 0 to ts.Count - 1 do
                 result := result + ts[i]+': '+inttostr(integer(ts.objects[i]))+',';
             end;
-            t.dcount := 0;
+            t.deltaCount := 0;
             result := result + sep;
           end;
         finally
-          ts.Free;
+          ts.free;
         end;
       end
       else
@@ -1050,16 +1247,18 @@ begin
   if result = '' then
     result := 'Nothing to report';
   {$ELSE}
-  result := 'Object Tracking is not enable';
+  result := 'Object Tracking is not enabled';
   {$ENDIF}
 end;
 
-Function TFslObject.ClassType : TFslObjectClass;
+function TFslObject.ClassType: TFslObjectClass;
 Begin
   Result := TFslObjectClass(Inherited ClassType);
 End;
 
-Function TFslObject.Unlink : TFslObject;
+function TFslObject.Unlink: TFslObject;
+var
+  done : boolean;
 Begin
   Result := Self;
 
@@ -1067,7 +1266,14 @@ Begin
   Begin
     Assert(Invariants('Unlink', TFslObject));
 
-    If (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
+    if ObjectCrossesThreads then
+      done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
+    else
+    begin
+      dec(FFslObjectReferenceCount);
+      done := FFslObjectReferenceCount < 0;
+    end;
+    If done Then
     Begin
       Destroy;
       Result := Nil;
@@ -1075,7 +1281,8 @@ Begin
   End;
 End;
 
-Function TFslObject.Link : TFslObject;
+
+function TFslObject.Link: TFslObject;
 Begin
   Result := Self;
 
@@ -1083,16 +1290,29 @@ Begin
   Begin
     Assert(Invariants('Link', TFslObject));
 
-    InterlockedIncrement(FFslObjectReferenceCount);
+    if ObjectCrossesThreads then
+      InterlockedIncrement(FFslObjectReferenceCount)
+    else
+      inc(FFslObjectReferenceCount);
+    {$IFDEF TRACK_CLASSES}
+    if self.classname = CLASS_NAME_OF_INTEREST then
+      freeNotification(false);
+    {$ENDIF}
   End;
 End;
 
-Function TFslObject.Duplicate : TFslObject;
+class function TFslObject.nextMagic: integer;
+begin
+  inc(GLastMagic);
+  result := GLastMagic;
+end;
+
+function TFslObject.Duplicate: TFslObject;
 Begin
   Result := ClassType.Create;
 End;
 
-Function TFslObject.Clone : TFslObject;
+function TFslObject.Clone: TFslObject;
 Begin
   If Assigned(Self) Then
   Begin
@@ -1109,12 +1329,13 @@ Begin
   End;
 End;
 
-Function TFslObject._AddRef : Integer; stdcall;
+function TFslObject._AddRef: Integer; Stdcall;
 Begin
   If Assigned(Self) Then
   Begin
     Assert(Invariants('_AddRef', TFslObject));
 
+    FOwningThread := NULL_THREAD;
     Result := InterlockedIncrement(FFslObjectReferenceCount);
   End
   Else
@@ -1123,12 +1344,13 @@ Begin
   End;
 End;
 
-Function TFslObject._Release: Integer; stdcall;
+function TFslObject._Release: Integer; Stdcall;
 Begin
   If Assigned(Self) Then
   Begin
     Assert(Invariants('_Release', TFslObject));
 
+    FOwningThread := NULL_THREAD;
     Result := InterlockedDecrement(FFslObjectReferenceCount);
 
     If Result < 0 Then
@@ -1140,7 +1362,7 @@ Begin
   End;
 End;
 
-Function TFslObject.QueryInterface(const IID: TGUID; Out Obj): HResult; stdcall;
+function TFslObject.QueryInterface(const IID: TGUID; out Obj): HResult; Stdcall;
 //Const
 //  // Extra typecast to longint prevents a warning about subrange bounds
 //  SUPPORT_INTERFACE : Array[Boolean] Of HResult = (Longint($80004002), 0);
@@ -1152,27 +1374,29 @@ Begin
     Result := E_NOINTERFACE;
 End;
 
-Function TFslObject.Assignable : Boolean;
+function TFslObject.Assignable: Boolean;
 Begin
   Result := True;
 End;
 
-Function TFslObject.ErrorClass : EFslExceptionClass;
+function TFslObject.ErrorClass: EFslExceptionClass;
 Begin
   Result := EFslException;
 End;
 
-Procedure TFslObject.RaiseError(aException : EFslExceptionClass; Const sMethod, sMessage : String);
+procedure TFslObject.RaiseError(aException: EFslExceptionClass; const sMethod,
+  sMessage: String);
 Begin
   Raise aException.Create(Self, sMethod, sMessage);
 End;
 
-Procedure TFslObject.RaiseError(Const sMethod, sMessage : String);
+procedure TFslObject.RaiseError(const sMethod, sMessage: String);
 Begin
   RaiseError(ErrorClass, sMethod, sMessage);
 End;
 
-Function TFslObject.Assignable(Const sLocation : String; oObject : TFslObject; Const sObject : String) : Boolean;
+function TFslObject.Assignable(const sLocation: String; oObject: TFslObject;
+  const sObject: String): Boolean;
 Begin
   Invariants(sLocation, oObject, ClassType, sObject);
 
@@ -1182,7 +1406,7 @@ Begin
   Result := Alterable(sLocation);
 End;
 
-Procedure TFslObject.Assign(oObject : TFslObject);
+procedure TFslObject.Assign(oObject: TFslObject);
 Begin
   Assert(CheckCondition(Assignable, 'Assign', 'Object is not marked as assignable.'));
   Assert(Assignable('Assign', oObject, 'oObject'));
@@ -1190,7 +1414,8 @@ Begin
   // Override and inherit to assign the properties of your class.
 End;
 
-Function TFslObject.Invariants(Const sLocation: String; aReference, aClass: TClass; Const sReference : String): Boolean;
+function TFslObject.Invariants(const sLocation: String; aReference,
+  aClass: TClass; const sReference: String): Boolean;
 Begin
   // Ensure class is assigned.
   If Not Assigned(aReference) Then
@@ -1203,12 +1428,13 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Invariants(Const sLocation : String; oObject : TObject; aClass: TClass; Const sObject : String) : Boolean;
+function TFslObject.Invariants(const sLocation: String; oObject: TObject;
+  aClass: TClass; const sObject: String): Boolean;
 Begin
   If Not Assigned(aClass) Then
     Invariant('Invariants', 'aClass was not assigned.');
 
-  // Ensure object is assigned.                            se
+  // Ensure object is assigned.
   If Not Assigned(oObject) Then
     Invariant(sLocation, sObject + ' was not assigned and was expected to have been of class ' + aClass.ClassName);
 
@@ -1218,21 +1444,76 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Invariants(Const sLocation : String; oObject: TFslObject; aClass: TClass; Const sObject : String) : Boolean;
+function TFslObject.Invariants(const sLocation: String; oObject: TFslObject;
+  aClass: TClass; const sObject: String): Boolean;
 Begin
   Invariants(sLocation, TObject(oObject), aClass, sObject);
 
   Result := True;
 End;
 
-Function TFslObject.Invariants(Const sLocation: String; aClass: TClass) : Boolean;
+function TFslObject.Invariants(const sLocation: String; aClass: TClass
+  ): Boolean;
 Begin
   Invariants(sLocation, TObject(Self), aClass, 'Self');
 
   Result := True;
 End;
 
-Function TFslObject.CheckCondition(bCorrect: Boolean; Const sMethod, sMessage: String): Boolean;
+function TFslObject.debugInfo: String;
+begin
+  result := '?';
+end;
+
+procedure TFslObject.updateDebugInfo;
+begin
+  FDebugInfo := debugInfo;
+end;
+
+function TFslObject.ObjectCrossesThreads: boolean;
+var
+  t : TThreadID;
+begin
+  if FOwningThread = NULL_THREAD then
+    result := true
+  else
+  begin
+    t := GetCurrentThreadId;
+    result := t <> FOwningThread;
+    if result then
+      FOwningThread := NULL_THREAD;
+  end;
+end;
+
+function TFslObject.dumpSummary: String;
+begin
+  result := inttostr(FFslObjectReferenceCount+1);
+  {$IFDEF TRACK_CLASSES}
+  if FNamedInstance <> '' then
+    result := result + FNamedInstance
+  {$ELSE}
+  if false then
+  {$ENDIF}
+  {$IFDEF OBJECT_TRACKING}
+  else if (updatedDebugInfo <> '?') then
+    result := result +'(^'+FDebugInfo+')'
+  else if (FSerial > 0) then
+    result := result +'(#'+inttostr(FSerial)+')'
+  {$ENDIF}
+  else if FMagic <> 0 then
+    result := result +'($'+inttostr(FMagic)+')';
+end;
+
+function TFslObject.updatedDebugInfo: String;
+begin
+  try
+    updateDebugInfo;
+  except
+  end;
+  result := FDebugInfo;
+end;
+
+function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -1242,7 +1523,7 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.CheckCondition(bCorrect : Boolean; aException : EFslExceptionClass; Const sMethod, sMessage : String) : Boolean;
+function TFslObject.CheckCondition(bCorrect: Boolean; aException: EFslExceptionClass; const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Assert procedure to raise an exception if bCorrect is False.
 
@@ -1252,7 +1533,7 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Invariant(Const sMethod, sMessage: String): Boolean;
+function TFslObject.Invariant(const sMethod, sMessage: String): Boolean;
 Begin
   // Call this method as you would the Error method to raise an exception.
   // Use this when you are not sure if self is valid as it is a non-virtual method.
@@ -1262,34 +1543,74 @@ Begin
   Result := True;
 End;
 
-Function TFslObject.Alterable(Const sMethod: String): Boolean;
+function TFslObject.Alterable(const sMethod: String): Boolean;
 Begin
   Result := True;
 End;
 
-Class Procedure TFslObject.ClassError(Const sMethod, sMessage: String);
+class procedure TFslObject.ClassError(const sMethod, sMessage: String);
 Begin
   Raise EFslException.Create(Nil, sMethod, sMessage);
 End;
 
-function TFslObject.sizeInBytes : cardinal;
+class function TFslObject.classInstanceCount(namedClass : String): integer;
+var
+  t : TClassTrackingType;
+begin
+  {$IFDEF OBJECT_TRACKING}
+  if not GInited then
+    initUnit;
+  EnterCriticalSection(GLock);
+  try
+    if not GClassTracker.TryGetValue(namedClass, t) then
+    begin
+      t := TClassTrackingType.Create;
+      GClassTracker.Add(namedClass, t);
+    end;
+    result := t.count;
+  finally
+    LeaveCriticalSection(GLock);
+  end;
+  {$ELSE}
+  result := 0;
+  {$ENDIF}
+end;
+
+function TFslObject.sizeInBytes(magic : integer) : cardinal;
 begin
   if self = nil then
     result := 0
+  else if FMagic = magic then
+    result := 0
   else
-    result := sizeInBytesV;
+  begin
+    FMagic := magic;
+    result := sizeInBytesV(magic);
+  end;
 end;
 
-function TFslObject.sizeInBytesV : cardinal;
+function TFslObject.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := sizeof(self);
   {$IFOPT D+}
-  inc(result, (FNamedClass.length*2)+12);
+  inc(result, (length(FNamedClass))+2);
   {$ENDIF}
   {$IFDEF OBJECT_TRACKING}
   inc(result, length(FThreadName)+12);
   {$ENDIF}
 end;
+
+{$IFDEF TRACK_CLASSES}
+procedure noop(done : boolean);
+begin
+  // nothing;
+end;
+
+procedure TFslObject.freeNotification(done: boolean);
+begin
+  noop(done);
+end;
+{$ENDIF}
 
 { TFslEnumerable<T> }
 
@@ -1309,7 +1630,7 @@ begin
       buf.Add(T(TFslObject(x).Link));
     Result := buf.ToArray; // relies on TList<T>.ToArray override
   finally
-    buf.Free;
+    buf.free;
   end;
 end;
 
@@ -1565,7 +1886,7 @@ end;
 constructor TFslList<T>.Create;
 begin
   inherited Create;
-  FComparer := TDefaultComparer.create;
+  FComparer := TDefaultComparer.Create;
   FArrayManager := TMoveArrayManager<T>.Create;
 end;
 
@@ -1579,7 +1900,7 @@ end;
 constructor TFslList<T>.Create(const Collection: TEnumerable<T>);
 begin
   inherited Create;
-  FComparer := TDefaultComparer.create;
+  FComparer := TDefaultComparer.Create;
   FArrayManager := TMoveArrayManager<T>.Create;
   InsertRange(0, Collection);
 end;
@@ -1587,7 +1908,7 @@ end;
 constructor TFslList<T>.Create(capacity: integer);
 begin
   inherited Create;
-  FComparer := TDefaultComparer.create;
+  FComparer := TDefaultComparer.Create;
   FArrayManager := TMoveArrayManager<T>.Create;
   self.Capacity := capacity;
 end;
@@ -1597,8 +1918,8 @@ begin
 // Clear method only sets lenght to 0, does not destroy any objects, does it?
 // Is the sequence below ok?
   Clear;
-  FArrayManager.Free;
-  FComparer.Free;
+  FArrayManager.free;
+  FComparer.free;
   inherited;
 end;
 
@@ -1654,7 +1975,7 @@ function TFslList<T>.asBase: TFslList<TFslObject>;
 var
   item : T;
 begin
-  result := TFslList<TFslObject>.create;
+  result := TFslList<TFslObject>.Create;
   try
     for item in self do
       result.add(TFslObject(item).link);
@@ -2123,7 +2444,7 @@ begin
     If (FCount > 1) Then
       QuickSort(0, FCount - 1, comparer); // call the quicksort routine
   finally
-    comparer.Free;
+    comparer.free;
   end;
 end;
 
@@ -2152,16 +2473,16 @@ begin
   Result := TFslEnumerator.Create(Self);
 end;
 
-function TFslList<T>.sizeInBytesV : cardinal;
+function TFslList<T>.sizeInBytesV(magic : integer) : cardinal;
 var
   i : T;
 begin
   result := sizeof(self);
   inc(result, length(FItems) * sizeof(Pointer));
-  inc(result, FComparer.sizeInBytes);
+  inc(result, FComparer.sizeInBytes(magic));
   inc(result, sizeof(FArrayManager));
   for i in FItems do
-    inc(result, TFslObject(t).sizeInBytes);
+    inc(result, TFslObject(i).sizeInBytes(magic));
 end;
 
 { TFslList<T>.TFslEnumerator }
@@ -2176,7 +2497,7 @@ end;
 destructor TFslList<T>.TFslEnumerator.Destroy;
 begin
   if FList.FEnumFree then
-    FList.Free;
+    FList.free;
   inherited;
 end;
 
@@ -2365,7 +2686,10 @@ begin
   Result := Self;
 
   If Assigned(Self) Then
-    InterlockedIncrement(FFslObjectReferenceCount);
+    if ObjectCrossesThreads then
+      InterlockedIncrement(FFslObjectReferenceCount)
+    else
+      inc(FFslObjectReferenceCount);
 end;
 
 procedure TFslMap<T>.listAll(other: TFslList<T>);
@@ -2374,6 +2698,21 @@ var
 begin
   for item in Values do
     other.Add(T(TFslObject(item).link));
+end;
+
+function TFslMap<T>.ObjectCrossesThreads: boolean;
+var
+  t : TThreadID;
+begin
+  if FOwningThread = NULL_THREAD then
+    result := true
+  else
+  begin
+    t := GetCurrentThreadId;
+    result := t <> FOwningThread;
+    if result then
+      FOwningThread := NULL_THREAD;
+  end;
 end;
 
 procedure TFslMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);
@@ -2385,6 +2724,7 @@ end;
 constructor TFslMap<T>.Create(name : String = ''; ACapacity: Integer = 0);
 begin
   inherited Create;
+  FOwningThread := GetCurrentThreadId;
   FName := name;
   if ACapacity < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
@@ -2404,10 +2744,10 @@ destructor TFslMap<T>.Destroy;
 begin
   Clear;
   FDefault.free;
-  FKeyCollection.Free;
-  FValueCollection.Free;
-  FSortedKeys.Free;
-  FAsAddedKeys.Free;
+  FKeyCollection.free;
+  FValueCollection.free;
+  FSortedKeys.free;
+  FAsAddedKeys.free;
   inherited;
 end;
 
@@ -2495,7 +2835,7 @@ end;
 
 procedure TFslMap<T>.Remove(const Key: String);
 begin
-  TFslObject(DoRemove(Key, Hash(Key), cnRemoved)).Free;
+  TFslObject(DoRemove(Key, Hash(Key), cnRemoved)).free;
 end;
 
 procedure TFslMap<T>.RemoveKeys(const keyList: TStringList);
@@ -2539,7 +2879,7 @@ begin
     raise EFSLException.Create('Map '+FName+' is already tracking order');
   if Count > 0 then
     raise EFSLException.Create('Map '+FName+' already contains content');
-  FAsAddedKeys := TStringList.create;
+  FAsAddedKeys := TStringList.Create;
 end;
 
 procedure TFslMap<T>.TrimExcess;
@@ -2607,13 +2947,29 @@ begin
 
   ValueNotify(oldValue, cnRemoved);
   ValueNotify(Value, cnAdded);
-  TFslObject(oldValue).Free;
+  TFslObject(oldValue).free;
 end;
 
-procedure TFslMap<T>.Free;
-begin
-  If Assigned(Self) and (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
-    Destroy;
+procedure TFslMap<T>.free;
+var
+  done : boolean;
+Begin
+  If Assigned(Self) Then
+  Begin
+
+    if FFslObjectReferenceCount = -1 then
+      raise EFslException.Create('Attempt to free a class a second time (of type '+className+'?)');
+
+    if ObjectCrossesThreads then
+      done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
+    else
+    begin
+      dec(FFslObjectReferenceCount);
+      done := FFslObjectReferenceCount < 0;
+    end;
+    If done Then
+      Destroy;
+  End;
 end;
 
 procedure TFslMap<T>.addAll(other: TFslMap<T>);
@@ -2695,14 +3051,17 @@ begin
   Result := FValueCollection;
 end;
 
-function TFslMap<T>.sizeInBytes : cardinal;
+function TFslMap<T>.sizeInBytes(magic : integer) : cardinal;
 var
   p : TFslPair<T>;
 begin
   if self = nil then
     result := 0
+  else if FMagic = magic then
+    result := 0
   else
   begin
+    FMagic := magic;
     result := sizeOf(self);
     inc(result, length(FItems) * Sizeof(TItem));
     if FSortedKeys <> nil then
@@ -2710,12 +3069,12 @@ begin
     if FAsAddedKeys <> nil then
       inc(result, sizeof(FAsAddedKeys) + FAsAddedKeys.Count * 2 * sizeof(pointer));
     if FDefault <> nil then
-      inc(result, TFslObject(FDefault).sizeInBytes);
+      inc(result, TFslObject(FDefault).sizeInBytes(magic));
     inc(result, (length(FName) * sizeof(char))+12);
     for p in self do
     begin
       inc(result, (length(p.Key) * sizeof(char))+12);
-      inc(result, p.Value.sizeInBytes);
+      inc(result, p.Value.sizeInBytes(magic));
     end;
   end;
 end;
@@ -2901,10 +3260,31 @@ end;
 
 { TFslStringDictionary }
 
-procedure TFslStringDictionary.Free;
+constructor TFslStringDictionary.Create;
 begin
-  If Assigned(Self) and (InterlockedDecrement(FFslObjectReferenceCount) < 0) Then
-    Destroy;
+  inherited Create;
+  FOwningThread := GetCurrentThreadId;
+end;
+
+procedure TFslStringDictionary.free;
+var
+  done : boolean;
+Begin
+  If Assigned(Self) Then
+  Begin
+    if FFslObjectReferenceCount = -1 then
+      raise EFslException.Create('Attempt to free a class a second time (of type '+className+'?)');
+
+    if ObjectCrossesThreads then
+      done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
+    else
+    begin
+      dec(FFslObjectReferenceCount);
+      done := FFslObjectReferenceCount < 0;
+    end;
+    If done Then
+      Destroy;
+  End;
 end;
 
 function TFslStringDictionary.GetValue(const Key: String): String;
@@ -2917,7 +3297,25 @@ function TFslStringDictionary.Link: TFslStringDictionary;
 begin
   Result := Self;
   If Assigned(Self) Then
-    InterlockedIncrement(FFslObjectReferenceCount);
+    if ObjectCrossesThreads then
+      InterlockedIncrement(FFslObjectReferenceCount)
+    else
+      inc(FFslObjectReferenceCount);
+end;
+
+function TFslStringDictionary.ObjectCrossesThreads: boolean;
+var
+  t : TThreadID;
+begin
+  if FOwningThread = NULL_THREAD then
+    result := true
+  else
+  begin
+    t := GetCurrentThreadId;
+    result := t <> FOwningThread;
+    if result then
+      FOwningThread := NULL_THREAD;
+  end;
 end;
 
 procedure TFslStringDictionary.SetValue(const Key, Value: String);
@@ -2925,12 +3323,17 @@ begin
   Items[key] := value;
 end;
 
-function TFslStringDictionary.sizeInBytes : cardinal;
+function TFslStringDictionary.sizeInBytes(magic : integer) : cardinal;
 begin
   if self = nil then
     result := 0
+  else if FMagic = magic then
+    result := 0
   else
+  begin
+    FMagic := magic;
     result := sizeOf(self);
+  end;
 end;
 
 procedure TFslStringDictionary.assign(source : TFslStringDictionary);
@@ -3012,7 +3415,7 @@ end;
 
 constructor TFslStringSet.Create(c1, c2: TFslStringSet);
 begin
-  create;
+  Create;
   addAll(c1);
   addAll(c2);
 end;
@@ -3021,7 +3424,7 @@ constructor TFslStringSet.Create(initial: array of String);
 var
   s : String;
 begin
-  create;
+  Create;
   for s in initial do
     add(s);
 end;
@@ -3043,7 +3446,7 @@ end;
 
 constructor TFslStringSet.Create(initial: String);
 begin
-  create;
+  Create;
   add(initial);
 end;
 
@@ -3077,7 +3480,7 @@ begin
     end;
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3117,7 +3520,7 @@ begin
     end;
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -3132,11 +3535,11 @@ begin
   result := false;
 end;
 
-function TFslStringSet.sizeInBytesV : cardinal;
+function TFslStringSet.sizeInBytesV(magic : integer) : cardinal;
 var
   s : String;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FItems) * sizeof(pointer));
   for s in FItems do
     inc(result, (length(s) * 2) + 12);
@@ -3185,12 +3588,12 @@ end;
 constructor TFslStringMap.Create;
 begin
   inherited;
-  FDict := TFslStringDictionary.create;
+  FDict := TFslStringDictionary.Create;
 end;
 
 destructor TFslStringMap.Destroy;
 begin
-  FDict.Free;
+  FDict.free;
   inherited;
 end;
 
@@ -3210,45 +3613,39 @@ begin
   FDict.AddOrSetValue(key, value);
 end;
 
-function TFslStringMap.sizeInBytesV : cardinal;
+function TFslStringMap.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDict.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDict.sizeInBytes(magic));
 end;
 
 { ETodo }
 
 constructor ETodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
 { EXmlTodo }
 
 constructor EXmlTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
 { EDBTodo }
 
 constructor EDBTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
-{ ETerminologyTodo }
-
-constructor ETerminologyTodo.Create(place: String);
-begin
-  inherited create('Not done yet @ '+place);
-end;
 
 { EJsonTodo }
 
 constructor EJsonTodo.Create(place: String);
 begin
-  inherited create('Not done yet @ '+place);
+  inherited Create('Not done yet @ '+place);
 end;
 
 { TFslList<T>.TDefaultComparer }
@@ -3272,6 +3669,14 @@ end;
 function TFslComparer<T>.link: TFslComparer<T>;
 begin
   result  := TFslComparer<T>(inherited link);
+end;
+
+{ EWebServerException }
+
+constructor EWebServerException.Create(code: integer; message: String);
+begin
+  inherited Create(message);
+  FCode := code;
 end;
 
 Initialization

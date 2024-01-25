@@ -230,7 +230,7 @@ begin
       FCDSManager.listInProgress(ts);
       webFocus.Navigate('http://localhost:45654/'+postToWeb(presentAsHtml(FCards, ts, FCDSErrors)));
     finally
-      ts.Free;
+      ts.free;
     end;
   finally
     FLock.Unlock;
@@ -243,19 +243,19 @@ var
 begin
   inherited;
   VisualiserMode := TVisualiserMode(PageControl1.TabIndex+1);
-  FCards := TFslList<TCDSHookCard>.create;
+  FCards := TFslList<TCDSHookCard>.Create;
   FCDSErrors := TStringList.Create;
-  FFocusObjects := TFslList<TFHIRObject>.create;
+  FFocusObjects := TFslList<TFHIRObject>.Create;
 
   FLock := TFslLock.Create('vis.web');
-  FWebCache := TFslMap<TWebBuffer>.create('web.cache');
+  FWebCache := TFslMap<TWebBuffer>.Create('web.cache');
   FWebserver := TIdHTTPServer.Create(nil);
   SHandle := FWebserver.Bindings.Add;
   SHandle.IP := '127.0.0.1';
   SHandle.Port := 45654;
   FWebserver.OnCommandGet := DoCommandGet;
   FWebserver.Active := true;
-  FCDSManager := TCDSHooksManager.create;
+  FCDSManager := TCDSHooksManager.Create;
   reregisterAllCDSServers;
 end;
 
@@ -266,7 +266,7 @@ var
   l : TFslList<TRegisteredFHIRServer>;
 begin
   FCDSManager.clearServers;
-  l := TFslList<TRegisteredFHIRServer>.create;
+  l := TFslList<TRegisteredFHIRServer>.Create;
   try
     for server in l do
     begin
@@ -274,25 +274,25 @@ begin
         FCDSManager.registerServer(server);
     end;
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
 procedure TFHIRVisualizer.FormDestroy(Sender: TObject);
 begin
   lstValidation.Items.clear;
-  FValList.Free;
+  FValList.free;
   lstMatches.Items.Clear;
-  FMatchList.Free;
-  FExpression.Free;
+  FMatchList.free;
+  FExpression.free;
   FExpression := nil;
-  FFocusObjects.Free;
+  FFocusObjects.free;
   FFocusObjects := nil;
-  FCDSManager.Free;
-  FCDSErrors.Free;
-  FCards.Free;
+  FCDSManager.free;
+  FCDSErrors.free;
+  FCards.free;
   FWebCache.free;
-  FWebServer.Free;
+  FWebServer.free;
 end;
 
 procedure TFHIRVisualizer.FormDock(Sender: TObject);
@@ -381,7 +381,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    wb.Free;
+    wb.free;
   end;
 end;
 
@@ -401,7 +401,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    wb.Free;
+    wb.free;
   end;
 end;
 
@@ -419,7 +419,7 @@ begin
       req.patient := TFHIRPatient(context).id;
     FCDSManager.makeRequest(req, OnCDSResponse, nil);
   finally
-    req.Free;
+    req.free;
   end;*)
 end;
 
@@ -439,7 +439,7 @@ begin
 //    entry.resource := patient.Link;
 //    FCDSManager.makeRequest(req, OnCDSResponse, nil);
 //  finally
-//    req.Free;
+//    req.free;
 //  end;
 end;
 
@@ -452,7 +452,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -483,7 +483,7 @@ begin
 //       p.AddParameter('code', focus.Link as TFHIRType);
 //       queryCDS(TCDSHooks.codeView, p);
 //    finally
-//      p.Free;
+//      p.free;
 //    end;
 //  end;
 //
@@ -494,7 +494,7 @@ begin
 //       p.AddParameter('identifier', focus.Link as TFHIRType);
 //       queryCDS(TCDSHooks.identifierView, p);
 //    finally
-//      p.Free;
+//      p.free;
 //    end;
 //  end;
 //
@@ -591,7 +591,7 @@ begin
       if matches.matches(FMatchList, true, comp) then
         exit;
     finally
-      comp.Free;
+      comp.free;
     end;
   end;
 
@@ -611,7 +611,7 @@ begin
       li.Data := a;
     end;
   end;
-  FExpression.Free;
+  FExpression.free;
   FExpression := expression.Link;
   vtExpressions.RootNodeCount := 0;
   if (assigned(FExpression)) then
@@ -701,7 +701,7 @@ begin
          end;
       1: p.expr := pe.nodeOpNext;
     else if node.index - offset > 0 then
-      raise EFHIRTodo.create('TFHIRVisualizer.vtExpressionsInitNode');
+      raise EFHIRTodo.Create('TFHIRVisualizer.vtExpressionsInitNode');
     end;
   end;
   if p.expr.tag = 1 then

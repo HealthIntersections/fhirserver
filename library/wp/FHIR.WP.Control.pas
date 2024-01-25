@@ -1,7 +1,7 @@
 Unit FHIR.WP.Control;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -909,8 +909,8 @@ Begin
     FWordProcessor.PrimaryRange.ApplyImageAdornment(FImage, FMark);
     FWordProcessor.ImageTool := itSelect;
   End;
-  FLocals.Free;
-  FMark.Free;
+  FLocals.free;
+  FMark.free;
   FMark := Nil;
   FImage := Nil;
 End;
@@ -1011,7 +1011,7 @@ Begin
     FWordProcessor.PrimaryRange.ApplyImageAdornment(FImage, FMark);
     FWordProcessor.ImageTool := itSelect;
   End;
-  FMark.Free;
+  FMark.free;
   FMark := Nil;
   FImage := Nil;
 End;
@@ -1108,7 +1108,7 @@ Begin
     Try
       // uh, self will likely disappear underneath us....
       oDialog.Adornment := FMark.Clone;
-      FMark.Free;
+      FMark.free;
       FMark := Nil;
       oImage := FImage;
       FImage := Nil;
@@ -1119,7 +1119,7 @@ Begin
         FWordProcessor.ImageTool := itSelect;
       End;
     Finally
-      oDialog.Free;
+      oDialog.free;
     End;
   End;
 End;
@@ -1299,7 +1299,7 @@ Begin
       FWordProcessor.ImageTool := itSelect;
     End;
   End;
-  FMark.Free;
+  FMark.free;
   FMark := Nil;
   FImage := Nil;
 End;
@@ -1484,7 +1484,7 @@ Begin
         If oDialog.Execute Then
           FWordProcessor.PrimaryRange.ApplyImageAdornment(TWPWorkingDocumentImagePiece(oInfo.Subject), oDialog.Adornment);
       Finally
-        oDialog.Free;
+        oDialog.free;
       End;
     End
     Else If (FCurrentX - FStartX <> 0) Or (FCurrentY - FStartY <> 0) Then
@@ -1626,7 +1626,7 @@ Type
 
 Destructor TWPActorDragEdge.Destroy;
 Begin
-  FButton.Free;
+  FButton.free;
   Inherited;
 End;
 
@@ -1810,7 +1810,7 @@ Begin
       oImage.Height := WorkingBottom(iX, iY) - WorkingTop(iX, iY);
       FWordProcessor.PrimaryRange.SetImageProperties(oImage);
     Finally
-      oImage.Free;
+      oImage.free;
     End;
   End
   Else if FButton is TWPWorkingAnnotationList Then
@@ -1834,7 +1834,7 @@ Type
 
 Destructor TWPActorButton.Destroy;
 Begin
-  FButton.Free;
+  FButton.free;
   Inherited;
 End;
 
@@ -1898,8 +1898,8 @@ Destructor TWPActorHotspot.Destroy;
 Begin
   If Assigned(FWordProcessor) And (FWordProcessor.Renderer.CurrentHotspot <> Nil) Then
     FWordProcessor.Renderer.CurrentHotspot := Nil;
-  FHotspot.Free;
-  FSubject.Free;
+  FHotspot.free;
+  FSubject.free;
   Inherited;
 End;
 
@@ -1972,8 +1972,8 @@ Type
 
 Destructor TWPActorHover.Destroy;
 Begin
-  FHotspot.Free;
-  FSubject.Free;
+  FHotspot.free;
+  FSubject.free;
   Inherited;
 End;
 
@@ -2004,7 +2004,7 @@ Begin
     If oInfo.Hotspot <> Nil Then
     Begin
      FWordProcessor.DoHotspotHover(False, FBox, FHotspot);
-     FHotspot.Free;
+     FHotspot.free;
      FHotspot := Nil;
      FWordProcessor.Renderer.CurrentHotspot := oInfo.Hotspot.Link;
      FHotspot := oInfo.Hotspot.Link;
@@ -2042,7 +2042,7 @@ Constructor TWordProcessor.Create(oOwner: TComponent);
 Begin
   Inherited Create(oOwner);
   {$IFDEF UNICODE}
-  FTouch := TWPTouchManager.create(self);
+  FTouch := TWPTouchManager.Create(self);
   {$ENDIF}
   FMacro := TWPMacro.Create;
   FSettings := TWPSettings.Create;
@@ -2120,7 +2120,7 @@ function TWordProcessor.CreateTouchMenu: TUixPanel;
 begin
   if FTouchMenu <> nil then
   begin
-    FTouchMenu.Free;
+    FTouchMenu.free;
     FTouchMenu := nil;
   end;
   FTouchMenu := TUixPanel.Create(self);
@@ -2148,54 +2148,54 @@ Begin
   Begin
     FPaginator.Stop;
     FPaginator.Wait;
-    FPaginator.Free;
+    FPaginator.free;
   End;
 
-  FMacro.Free;
+  FMacro.free;
   ConsumeRange(PrimaryRange);
   FPrimaryRange := Nil;
 
-  FRangeManager.Free;
+  FRangeManager.free;
 
   If Assigned(FMouseActor) Then
     FMouseActor.Disconnect;
-  FMouseActor.Free;
-  FPropertyServer.Free;
+  FMouseActor.free;
+  FPropertyServer.free;
 
-  FPrinter.Free;
-  FPageLayoutController.Free;
+  FPrinter.free;
+  FPageLayoutController.free;
 
   Try
-    // NOTE: TWinControlProxy.DestroyWnd may raise EWPException.create('Failed to Unregister '+ Parent.name);
+    // NOTE: TWinControlProxy.DestroyWnd may raise EWPException.Create('Failed to Unregister '+ Parent.name);
     FDropBMP.UnregisterAll;
   Except
     // NOTE: suppressing is bad, but allowing an exception out of a destructor is worse [CH2011-11-28]
   End;
 
-  FDropBMP.Free;
+  FDropBMP.free;
 
-  FExistingSearch.Free;
-  FExistingReplace.Free;
-  FSpeller.Free;
-  FObservers.Free;
-  FPopup.Free;
-  FTimer.Free;
-  FCursorDetails.Free;
-  FRenderer.Free;
-  FDocument.Free;
-  FConfiguredStyles.Free;
-  FWorkingStyles.Free;
-  FOperator.Free;
-  FFontsAllowed.Free;
-  FPlaybackManager.Free;
-  FDocumentHandler.Free;
-  FDefaultFieldDefinition.Free;
-  FTranslator.Free;
-  FCheckor.Free;
-  FSettings.Free;
-  FInspectors.Free;
+  FExistingSearch.free;
+  FExistingReplace.free;
+  FSpeller.free;
+  FObservers.free;
+  FPopup.free;
+  FTimer.free;
+  FCursorDetails.free;
+  FRenderer.free;
+  FDocument.free;
+  FConfiguredStyles.free;
+  FWorkingStyles.free;
+  FOperator.free;
+  FFontsAllowed.free;
+  FPlaybackManager.free;
+  FDocumentHandler.free;
+  FDefaultFieldDefinition.free;
+  FTranslator.free;
+  FCheckor.free;
+  FSettings.free;
+  FInspectors.free;
   {$IFDEF UNICODE}
-  FTouch.Free;
+  FTouch.free;
   {$ENDIF}
   Inherited;
 End;
@@ -2228,7 +2228,7 @@ Begin
     FRangeManager.Add(oRange);
     Result := oRange; // no link: the function result is not owned
   Finally
-    oRange.Free;
+    oRange.free;
   End;
 End;
 
@@ -2316,7 +2316,7 @@ begin
           (y >= FCursorDetails.FSelStartTop - 5) and (y <= FCursorDetails.FSelStartTop+ 35) then
   begin
     result := true;
-    oActor := TWPActorDragSelection.create(self);
+    oActor := TWPActorDragSelection.Create(self);
     TWPActorDragSelection(oActor).Start := true;
     TWPActorDragSelection(oActor).XOffset := 30;
     TWPActorDragSelection(oActor).YOffset := -30;
@@ -2325,7 +2325,7 @@ begin
           (y >= FCursorDetails.FSelEndTop-5) and (y <= FCursorDetails.FSelEndTop + 35) then
   begin
     result := true;
-    oActor := TWPActorDragSelection.create(self);
+    oActor := TWPActorDragSelection.Create(self);
     TWPActorDragSelection(oActor).Start := false;
     TWPActorDragSelection(oActor).XOffset := 30;
     TWPActorDragSelection(oActor).YOffset := 30;
@@ -2343,12 +2343,12 @@ Begin
 
   If FCodeCompletionListBox <> nil Then
   Begin
-    FCodeCompletionListBox.Free;
+    FCodeCompletionListBox.free;
     FCodeCompletionListBox := nil;
   End;
   if FTouchMenu <> nil then
   Begin
-    FTouchMenu.Free;
+    FTouchMenu.free;
     FTouchMenu := nil;
   End;
 
@@ -2375,7 +2375,7 @@ Begin
           If (FMouseActor <> Nil) Then
           Begin
             FMouseActor.Close(oActor);
-            FMouseActor.Free;
+            FMouseActor.free;
             FMouseActor := Nil;
           End;
 
@@ -2395,16 +2395,16 @@ Begin
           SetCapture(Handle);
           SetFocus;
         Finally
-          oActor.Free;
+          oActor.free;
         End;
       Finally
-        oInfo.Free;
+        oInfo.free;
       End;
     End
     Else If (FMouseActor <> Nil) Then
     Begin
       FMouseActor.Close(Nil);
-      FMouseActor.Free;
+      FMouseActor.free;
       FMouseActor := Nil;
     End;
   End;
@@ -2423,7 +2423,7 @@ Begin
   Begin
     If Not (ssLeft In Shift) And Assigned(FMouseActor) And FMouseActor.RequiresDown Then
     Begin
-      FMouseActor.Free;
+      FMouseActor.free;
       FMouseActor := Nil;
     End;
 
@@ -2449,11 +2449,11 @@ Begin
         Try
           ApplyCursorState(oActor.Cursor(oInfo, False), False);
         Finally
-          oActor.Free;
+          oActor.free;
         End;
       End
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -2494,7 +2494,7 @@ Begin
         bContinue := Assigned(FMouseActor) And Assigned(FMouseActor.FWordProcessor);
 
         If bContinue Then
-          FMouseActor.Free;
+          FMouseActor.free;
 
         FMouseActor := Nil;
       End;
@@ -2507,7 +2507,7 @@ Begin
       Cursor := Screen.Cursor;
       Screen.Cursor := crDefault;
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -2552,11 +2552,11 @@ Begin
           Try
             ApplyCursorState(oActor.Cursor(oInfo, False), False);
           Finally
-            oActor.Free;
+            oActor.free;
           End;
         End;
       Finally
-        oInfo.Free;
+        oInfo.free;
       End;
     End;
   End;
@@ -2844,7 +2844,7 @@ Procedure TWordProcessor.SetConfiguredStyles(Const Value: TWPStyles);
 Begin
   Assert(Value <> Nil, 'Cannot set nil styles');
 
-  FConfiguredStyles.Free;
+  FConfiguredStyles.free;
   FConfiguredStyles := Value;
 End;
 
@@ -2866,7 +2866,7 @@ Procedure TWordProcessor.SetWorkingStyles(Const Value: TWPStyles);
 Begin
   Assert(Value <> Nil, 'Cannot set nil styles');
 
-  FWorkingStyles.Free;
+  FWorkingStyles.free;
   FWorkingStyles := Value;
 End;
 
@@ -2895,7 +2895,7 @@ Begin
     hnd := GetFocus;
     if (hnd <> self.Handle) And (hnd <> FCodeCompletionListBox.Handle) Then
     begin
-      FCodeCompletionListBox.Free;
+      FCodeCompletionListBox.free;
       FCodeCompletionListBox := nil;
     end;
   End;
@@ -2904,7 +2904,7 @@ Begin
     hnd := GetFocus;
     if (hnd <> self.Handle) And (hnd <> FTouchMenu.Handle) Then
     begin
-      FTouchMenu.Free;
+      FTouchMenu.free;
       FTouchMenu := nil;
     end;
   End;
@@ -2990,12 +2990,12 @@ Begin
   Inherited;
   If FCodeCompletionListBox <> nil Then
   Begin
-    FCodeCompletionListBox.Free;
+    FCodeCompletionListBox.free;
     FCodeCompletionListBox := nil;
   End;
   if FTouchMenu <> nil then
   Begin
-    FTouchMenu.Free;
+    FTouchMenu.free;
     FTouchMenu := nil;
   End;
 
@@ -3062,7 +3062,7 @@ Begin
     aBytes := TEncoding.UTF8.GetBytes(sContent);
     oFile.Write(aBytes[0], Length(aBytes));
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -3425,7 +3425,7 @@ begin
       end;
     end
   finally
-    oInfo.Free;
+    oInfo.free;
   end;
 end;
 
@@ -3448,7 +3448,7 @@ End;
 
 procedure TWordProcessor.CloseTouchMenu(var Message: TMessage);
 begin
-  FTouchMenu.Free;
+  FTouchMenu.free;
   FTouchMenu := nil;
 end;
 
@@ -3482,7 +3482,7 @@ End;
 
 Procedure TWordProcessor.SetFontsAllowed(Const Value: TFslStringList);
 Begin
-  FFontsAllowed.Free;
+  FFontsAllowed.free;
   FFontsAllowed := Value;
 End;
 
@@ -3633,7 +3633,7 @@ Begin
       PrimaryRange.ApplyFont(oDialog.Font);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3650,7 +3650,7 @@ Begin
       If Not PrimaryRange.PasteSpecial(oDialog.Format, sError) Then
         DialogError(sError);
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3671,7 +3671,7 @@ Begin
       PrimaryRange.ApplyParagraph(PrimaryRange.Paragraph);
       End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3688,7 +3688,7 @@ Begin
     If oDialog.Execute Then
       PrimaryRange.WorkingStyle.Assign(oDialog.Style);
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3704,7 +3704,7 @@ Begin
       PrimaryRange.ApplyChangeCase(oDialog.ChangeCaseType);
       End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3736,7 +3736,7 @@ Begin
       End;
     End;
   Finally
-    oInfo.Free;
+    oInfo.free;
   End;
 End;
 
@@ -3754,7 +3754,7 @@ Begin
       PrimaryRange.InsertImage(oDialog.FileName);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3772,7 +3772,7 @@ Begin
       PrimaryRange.InsertPDF(oDialog.FileName);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3796,7 +3796,7 @@ Begin
       PrimaryRange.SetImageProperties( oDialog.Image);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3820,7 +3820,7 @@ Begin
       PrimaryRange.SetImageProperties(oDialog.Image);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -3848,7 +3848,7 @@ Begin
     Try
       bOk := PrimaryRange.ReplaceCurrentWord(oStream, aFormat, sMessage)
     Finally
-      oStream.Free;
+      oStream.free;
     End;
   End;
   If Not bOk Then
@@ -3907,7 +3907,7 @@ Begin
         Else
           SoundBeepExclamation;
       Finally
-        oList.Free;
+        oList.free;
       End;
     End;
   End;
@@ -4000,7 +4000,7 @@ Begin
       PrimaryRange.InsertSymbol(oDialog.InsertChar, oDialog.DrawnFontName);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -4013,7 +4013,7 @@ End;
 
 Procedure TWordProcessor.SetSpeller(Const Value: TWPSpeller);
 Begin
-  FSpeller.Free;
+  FSpeller.free;
   FSpeller := Value;
   FOperator.Speller := FSpeller.Link;
   FSpeller.Settings := FSettings.Link;
@@ -4221,7 +4221,7 @@ Begin
       PrimaryRange.InsertTable(oDialog.Rows, oDialog.Columns);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -4247,7 +4247,7 @@ Begin
       PrimaryRange.SetTableProperties(oDialog.Table, oDialog.Row, oDialog.Cell);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -4271,7 +4271,7 @@ Begin
       PrimaryRange.SetLineProperties(oDialog.Line);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -4362,7 +4362,7 @@ End;
 
 Procedure TWordProcessor.SetExistingSearch(Const Value : TWPSearchDetails);
 Begin
-  FExistingSearch.Free;
+  FExistingSearch.free;
   FExistingSearch := Value;
 End;
 
@@ -4390,7 +4390,7 @@ begin
       oIter.Next;
     end;
   finally
-    oIter.Free;
+    oIter.free;
   end;
 end;
 
@@ -4407,7 +4407,7 @@ Begin
     If oDialog.Execute Then
       ExistingSearch := oDialog.SearchDetails.Link;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -4420,7 +4420,7 @@ End;
 
 Procedure TWordProcessor.SetExistingReplace(Const Value : TWPReplaceDetails);
 Begin
-  FExistingReplace.Free;
+  FExistingReplace.free;
   FExistingReplace := Value;
 End;
 
@@ -4444,7 +4444,7 @@ Begin
     If oDialog.Execute Then
       ExistingReplace := oDialog.ReplaceDetails.Link;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -4459,7 +4459,7 @@ begin
   while (iend < oDocument.Pieces.Count) and (oDocument.Pieces[iend].PieceType <> ptFieldStop) do
     inc(iend);
   if (iEnd = oDocument.Pieces.Count) then
-    raise EWPException.create('Unable to find end of field');
+    raise EWPException.Create('Unable to find end of field');
   if (iEnd > cursor) then
     oDocument.Pieces.DeleteRange(cursor, iEnd-1);
   if (txt <> '') then
@@ -4581,11 +4581,11 @@ Begin
         oImage.Handle.Assign(FDropBMP.Bitmap);
         PrimaryRange.DropImage(oInfo.Offset, oImage);
       Finally
-        oImage.Free;
+        oImage.free;
       End;
     End;
   Finally
-    oInfo.Free;
+    oInfo.free;
   End;
 End;
 
@@ -4714,7 +4714,7 @@ Begin
       oinfo.Handled := False;
       FOnHotSpotHover(Self, bActive, oInfo);
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -4737,7 +4737,7 @@ Begin
       FOnHotSpot(Self, oInfo);
       Result := oInfo.Handled;
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End
   Else
@@ -4860,18 +4860,18 @@ Begin
 
   If Assigned(FMouseActor) Then
     FMouseActor.Disconnect;
-  FMouseActor.Free;
+  FMouseActor.free;
   FMouseActor := Nil;
 
   If Not oStyles.HasDefaultStyle Then
     oStyles.UseSystemDefaultStyle;
 
   Renderer.Working := False;
-  FDocument.Free;
+  FDocument.free;
   FDocument := Nil;
   FScrollPoint.y := 0;
   FScrollPoint.x := 0;
-  FWorkingStyles.Free;
+  FWorkingStyles.free;
   FWorkingStyles := oStyles.Link;
   FOperator.Styles := FWorkingStyles.Link;
   FRenderer.Styles := FWorkingStyles.Link;
@@ -4936,7 +4936,7 @@ end;
 Procedure TWordProcessor.SetSettings(Const Value : TWPSettings);
 Begin
   FSettings.OnChange := Nil;
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value.Link;
   FSettings.OnChange := SettingsChange;
   If Settings.FieldWrappers = wpfpNone Then
@@ -4985,7 +4985,7 @@ Procedure TWordProcessor.SetPlaybackManager(Const Value : TDragonPlaybackManager
 Begin
   Assert(Not Assigned(Value) Or FCheckor.Invariants('SetPlaybackManager', Value, TDragonPlaybackManager, 'Value'));
 
-  FPlaybackManager.Free;
+  FPlaybackManager.free;
   FPlaybackManager := Value;
 End;
 
@@ -5047,7 +5047,7 @@ End;
 
 Procedure TWordProcessor.SetPageLayoutController(Const Value : TWPPageLayoutController);
 Begin
-  FPageLayoutController.Free;
+  FPageLayoutController.free;
   FPageLayoutController := Value;
 End;
 
@@ -5060,7 +5060,7 @@ End;
 
 Procedure TWordProcessor.SetPrinter(Const Value : TFslPrinter);
 Begin
-  FPrinter.Free;
+  FPrinter.free;
   FPrinter := Value;
 End;
 
@@ -5083,7 +5083,7 @@ Begin
       FPaginator := oPaginator.Link;
       oPaginator.Start;
     Finally
-      oPaginator.Free;
+      oPaginator.free;
     End;
   End;
 End;
@@ -5099,7 +5099,7 @@ Begin
         FOnSelectionChanged(Self);
       Invalidate;
     End;
-    FPaginator.Free;
+    FPaginator.free;
     FPaginator := Nil;
   End;
 End;
@@ -5263,13 +5263,13 @@ End;
 
 Destructor TWPHotspotInformation.Destroy;
 Begin
-  FHotspot.Free;
+  FHotspot.free;
   Inherited;
 End;
 
 Procedure TWPHotspotInformation.SetHotspot(Const Value: TWPHotspot);
 Begin
-  FHotspot.Free;
+  FHotspot.free;
   FHotspot := Value;
 End;
 
@@ -5401,7 +5401,7 @@ Begin
       PrimaryRange.ReorderTableRows(aSortedPos);
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -5500,7 +5500,7 @@ Begin
       If Assigned(oBuffer) Then
         PrimaryRange.InsertTemplate(oBuffer);
     Finally
-      oBuffer.Free;
+      oBuffer.free;
     End;
   End;
 End;
@@ -5527,10 +5527,10 @@ Begin
       oStream.Buffer := oBuffer.Link;
       Result := oStream.Link;
     Finally
-      oStream.Free;
+      oStream.free;
     End;
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -5569,10 +5569,10 @@ Begin
               oPieceS.Namespace := oDefn.GetNamespace;
               PrimaryRange.InsertFieldSection(oPieceS, oSection.Blocks.AsText);
             Finally
-              oPieceS.Free;
+              oPieceS.free;
             End;
           Finally
-            oSection.Free;
+            oSection.free;
           End;
         End
         Else
@@ -5582,12 +5582,12 @@ Begin
             oPiece.Namespace := oDefn.GetNamespace;
             PrimaryRange.InsertField(oPiece, True, bAcceptExistingContent, oField.Contents.AsText);
           Finally
-            oPiece.Free;
+            oPiece.free;
           End;
         End;
       End;
     Finally
-      oField.Free;
+      oField.free;
     End;
   End;
 End;
@@ -5612,10 +5612,10 @@ Begin
       Try
         PrimaryRange.SetFieldProperties(oField);
       Finally
-        oField.Free;
+        oField.free;
       End;
     Finally
-      oTran.Free;
+      oTran.free;
     End;
   End;
 End;
@@ -5638,10 +5638,10 @@ Begin
       Try
         PrimaryRange.SetSectionProperties(oSection);
       Finally
-        oSection.Free;
+        oSection.free;
       End;
     Finally
-      oTran.Free;
+      oTran.free;
     End;
   End;
 End;
@@ -5733,7 +5733,7 @@ End;
 
 Procedure TWordProcessor.SetDefaultFieldDefinition(Const Value: TWPFieldDefinitionProvider);
 Begin
-  FDefaultFieldDefinition.Free;
+  FDefaultFieldDefinition.free;
   FDefaultFieldDefinition := Value;
 End;
 
@@ -5787,7 +5787,7 @@ Begin
       oMapi.Preview := True;
       oMapi.Send;
     Finally
-      oMapi.Free;
+      oMapi.free;
     End;
   End;
 End;
@@ -5822,10 +5822,10 @@ Begin
         DoSnapShot(oWriter);
         oWriter.Stop;
       Finally
-        oWriter.Free;
+        oWriter.free;
       End;
     Finally
-      oFile.Free;
+      oFile.free;
     End;
   Except
     On E:Exception Do
@@ -6129,7 +6129,7 @@ Begin
             Abort;
             End;
         Else
-          raise EWPException.create('Unknown action type '+FMacro.Actions[i].ClassName);
+          raise EWPException.Create('Unknown action type '+FMacro.Actions[i].ClassName);
         End;
       End;
     Except
@@ -6146,14 +6146,14 @@ Begin
 Procedure TWordProcessor.StartRecordingMacro;
 Begin
   If FMacro.State <> msIdle Then
-    raise EWPException.create('Connect record a macro');
+    raise EWPException.Create('Connect record a macro');
   ToggleMacro;
 End;
 
 Procedure TWordProcessor.StopRecordingMacro;
 Begin
   If FMacro.State <> msRecording Then
-    raise EWPException.create('Not recording a macro');
+    raise EWPException.Create('Not recording a macro');
   ToggleMacro;
 End;
 
@@ -6184,7 +6184,7 @@ Begin
       Invalidate;
     End;
   Finally
-    oDlg.Free;
+    oDlg.free;
   End;
 End;
 
@@ -6285,7 +6285,7 @@ Begin
   PrimaryRange.SelectTo(oAnnotation.OffsetEnd, true);
   oProvider := Settings.AnnotationDefinitions.GetByName(oAnnotation.Owner, nil);
   if oProvider = nil then
-    raise EWPException.create('Unknown Annotation Type')
+    raise EWPException.Create('Unknown Annotation Type')
   else
   begin
     sText := oAnnotation.Text;
@@ -6340,7 +6340,7 @@ begin
   begin
     oPiece := FDocument.Pieces[iLoop];
     if (oPiece.PieceType = ptFieldStart) and (TWPWorkingDocumentFieldStartPiece(oPiece).Checkables.Count > 0) then
-      raise EWPException.create('Unable to start dicatation as the content includes a field with buttons - this is not supported in voice mode');
+      raise EWPException.Create('Unable to start dicatation as the content includes a field with buttons - this is not supported in voice mode');
   End;
 end;
 
@@ -6367,7 +6367,7 @@ begin
       oIter.Next;
     end;
   finally
-    oIter.Free;
+    oIter.free;
   end;
 end;
 
@@ -6375,7 +6375,7 @@ function TWordProcessor.ListAllFields(Namespace: String): TWPDocumentFields;
 var
   oIter : TWPPieceIterator;
 begin
-  result := TWPDocumentFields.create;
+  result := TWPDocumentFields.Create;
   try
     oIter := TWPPieceIterator.Create;
     try
@@ -6389,7 +6389,7 @@ begin
         oIter.Next;
       end;
     finally
-      oIter.Free;
+      oIter.free;
     end;
     result.link;
   finally
@@ -6425,7 +6425,7 @@ begin
       oIter.Next;
     end;
   finally
-    oIter.Free;
+    oIter.free;
   end;
 end;
 
@@ -6525,7 +6525,7 @@ Begin
     oDefn.OnCommit := CommitField;
     FDisplay.DefineFieldProvider(oDefn.Link, False);
   Finally
-    oDefn.Free;
+    oDefn.free;
   End;
   FDisplay.ShowHint := False;
   FDisplay.Settings.Hold;
@@ -6648,13 +6648,13 @@ Begin
     Try
       ProcessList(oBuilder, oProps, Nil);
     Finally
-      oProps.Free;
+      oProps.free;
     End;
     oBuilder.EndTable;
     oBuilder.Stop;
     FDisplay.DocumentHandler.LoadDocument(oBuilder.Document);
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
   If sName <> '' Then
     FDisplay.GotoFieldByName(NS_FIELD_PROPERTY, sName);
@@ -6687,7 +6687,7 @@ End;
 
 Procedure TWPPropertyInspector.Finalise;
 Begin
-  FAllProperties.Free;
+  FAllProperties.free;
   Inherited;
 End;
 
@@ -6734,17 +6734,17 @@ End;
 
 { TWPTouchManager }
 
-constructor TWPTouchManager.create(owner: TWordProcessor);
+constructor TWPTouchManager.Create(owner: TWordProcessor);
 begin
   inherited Create;
   FLoaded := false;
   FOwner := owner;
 end;
 
-destructor TWPTouchManager.destroy;
+destructor TWPTouchManager.Destroy;
 begin
   Unload;
-  FGestures.Free;
+  FGestures.free;
   inherited;
 end;
 
@@ -6755,7 +6755,7 @@ function flagsToString(flags: TInteractiveGestureFlags):String;
 var
   a : TInteractiveGestureFlag;
 begin
-  result:= '';
+  result := '';
   for a := Low(TInteractiveGestureFlag) to High(TInteractiveGestureFlag) do
     if (a in flags)then
       result := result + ',' + FLAGNAMES[a];
@@ -6795,7 +6795,7 @@ begin
   if not FLoaded then
   begin
     FLoaded := true;
-   // FGestures := TGestureManager.create(FOwner);
+   // FGestures := TGestureManager.Create(FOwner);
     FOwner.OnGesture := DoGesture;
    // FOwner.Touch.GestureManager := FGestures;
     //FGestures.StandardGestures[FOwner] := [sgLeft];

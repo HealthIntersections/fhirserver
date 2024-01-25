@@ -71,7 +71,7 @@ Type
     Function GetPropertyIndex(const sName : String):Integer;
     Procedure LoadCommonUnits(oIni : TIniFile);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     procedure Go;                                                          Override;
     function  PreTitle:string;                                             Override;
@@ -120,7 +120,7 @@ var
   iStatus : integer;
 begin
   FDB := CreateConnectionPoolManager(nil, nil, 'import');
-  FContext := TFslDecimalContext.create;
+  FContext := TFslDecimalContext.Create;
   FConn := FDb.GetConnection('snomed');
   Try
     if Key <> 0 Then
@@ -149,7 +149,7 @@ begin
       try
         oXml := oParser.Parse(FFilename);
       Finally
-        oParser.Free;
+        oParser.free;
       End;
       if oXml.documentElement.nodeName <> 'root' Then
         raise ETerminologySetup.create('Invalid ucum essence file');
@@ -185,7 +185,7 @@ begin
           if oErrors.Count > 0 then
             raise ETerminologySetup.create(oErrors.asText);
         Finally
-          oErrors.Free;
+          oErrors.free;
         End;
         oIni := nil;
         If FileExists(AppendSlash(ExtractFilePath(FFilename))+'ucum-extensions.txt') Then
@@ -197,13 +197,13 @@ begin
           Try
             LoadCommonUnits(oIni);
           Finally
-            oIni.Free;
+            oIni.free;
           End;
         End;
         GUcum.Save(sFilename);
         SetFileReadOnly(sFilename, true);
       Finally
-        GUcum.Free;
+        GUcum.free;
       End;
       if iStatus = 1 Then
         FConn.ExecSQL('Update gwDefinitions Set Status = 2 where Status = 1 and Type = 2');
@@ -233,12 +233,12 @@ begin
 
       Reg.SetSetting('\Manager\Import\Ucum', 'Count', inttostr(iCount));
     Finally
-      Reg.Free;
+      Reg.free;
     End;
   Finally
     FConn.Release;
     FContext.free;
-    FDb.Free;
+    FDb.free;
   End;
 end;
 
@@ -279,7 +279,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -310,7 +310,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -347,7 +347,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -385,10 +385,10 @@ Begin
         FUcum.Properties[GetPropertyIndex(oList[i])].CommonUnits.Assign(oUnits);
       End;
     Finally
-      oUnits.Free;
+      oUnits.free;
     End;
   Finally
-    oList.Free;
+    oList.free;
   End;
 End;
 
@@ -400,17 +400,17 @@ begin
     result := FUcum.Properties.AddByName(sName);
 end;
 
-function TUcumImportAction.sizeInBytesV : cardinal;
+function TUcumImportAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FUcum.sizeInBytes);
+  inc(result, FUcum.sizeInBytes(magic));
   inc(result, (Fname.length * sizeof(char)) + 12);
   inc(result, (FPath.length * sizeof(char)) + 12);
-  inc(result, FDb.sizeInBytes);
-  inc(result, FConn.sizeInBytes);
+  inc(result, FDb.sizeInBytes(magic));
+  inc(result, FConn.sizeInBytes(magic));
   inc(result, (FOldSource.length * sizeof(char)) + 12);
-  inc(result, FContext.sizeInBytes);
+  inc(result, FContext.sizeInBytes(magic));
 end;
 
 End.

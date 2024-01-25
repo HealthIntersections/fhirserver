@@ -132,7 +132,7 @@ end;
 
 destructor TClosureManager.Destroy;
 begin
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -197,7 +197,7 @@ var
   target, t : TFhirConceptMapGroupElementTargetW;
 begin
   group := nil;
-  matches := TFslList<TSubsumptionMatch>.create;
+  matches := TFslList<TSubsumptionMatch>.Create;
   try
     conn.SQL := 'select ConceptKey, URL, Code from Concepts where ConceptKey in (select SubsumesKey from ClosureEntries where ClosureKey = '+inttostr(FKey)+' and ClosureEntryKey <> '+inttostr(ClosureEntryKey)+')';
     conn.prepare;
@@ -249,7 +249,7 @@ begin
       end;
     end;
   finally
-    matches.Free;
+    matches.free;
   end;
 end;
 
@@ -269,7 +269,7 @@ var
   elements : TFslMap<TFhirConceptMapGroupElementW>;
   element : TFhirConceptMapGroupElementW;
 begin
-  elements := TFslMap<TFhirConceptMapGroupElementW>.create('tx.closure.run');
+  elements := TFslMap<TFhirConceptMapGroupElementW>.Create('tx.closure.run');
   try
     conn.SQL := 'Select ClosureEntryKey, src.URL as UrlSrc, src.Code as CodeSrc, tgt.URL as UrlTgt, tgt.Code as CodeTgt '+
        'from ClosureEntries, Concepts as src, Concepts as tgt '+
@@ -285,14 +285,14 @@ begin
         element := getGroup(map, conn.ColStringByName['UrlSrc'], conn.ColStringByName['UrlTgt']).addElement(conn.ColStringByName['CodeSrc']);
       try
         elements.Add(key, element.link);
-        element.addTarget(conn.ColStringByName['CodeTgt'], cmeSubsumes).Free;
+        element.addTarget(conn.ColStringByName['CodeTgt'], cmeSubsumes).free;
       finally
-        element.Free;
+        element.free;
       end;
     end;
     conn.terminate;
   finally
-    elements.Free;
+    elements.free;
   end;
 end;
 
@@ -300,7 +300,7 @@ end;
 
 constructor TSubsumptionMatch.Create(keysrc : integer; urisrc, codesrc : String; keytgt : integer; uritgt, codetgt : String);
 begin
-   inherited create;
+   inherited Create;
    FKeysrc := keysrc;
    FUrisrc := urisrc;
    FCodesrc := codesrc;

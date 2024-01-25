@@ -1,4 +1,4 @@
-unit FHIR.Client.ServerDialog;
+unit fui_vcl_server;
 
 
 {
@@ -179,7 +179,7 @@ begin
         cds.hook := c;
         list.Add(cds.link);
       finally
-        cds.Free;
+        cds.free;
       end;
     end;
 end;
@@ -196,7 +196,7 @@ begin
       try
         FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
       finally
-        client.Free;
+        client.free;
       end;
       // loadHooks;
     except
@@ -207,13 +207,13 @@ begin
         try
           FCapabilityStatement := FVersions[readServerVersion].wrapCapabilityStatement(client.conformanceV(false));
         finally
-          client.Free;
+          client.free;
         end;
       end;
     end;
   except
     on e : Exception do
-      raise EFHIRException.create('Error reading Server conformance statement: "'+msg+'" and "'+e.message+'" - tried both xml and json for '+FVersions[readServerVersion].description);
+      raise EFHIRException.Create('Error reading Server conformance statement: "'+msg+'" and "'+e.message+'" - tried both xml and json for '+FVersions[readServerVersion].description);
   end;
 end;
 
@@ -245,7 +245,7 @@ begin
     else
       Settings.updateServerInfo('', server);
   finally
-    server.Free;
+    server.free;
   end;
 end;
 
@@ -254,7 +254,7 @@ procedure TEditRegisteredServerForm.Button1Click(Sender: TObject);
 //  ext : TFHIRExtension;
 //  i : integer;
 begin
-  raise EFHIRTodo.create('TEditRegisteredServerForm.Button1Click');
+  raise EFHIRTodo.Create('TEditRegisteredServerForm.Button1Click');
 //  if FCapabilityStatement = nil then
 //    loadCapabilityStatement;
 //  for i := 0 to clHooks.Items.Count - 1 do
@@ -286,7 +286,7 @@ begin
   else if FCapabilityStatement.hasFormat('xml') then
     cbxFormat.ItemIndex := 1
   else
-    ShowMessage('This end point doens''t have any compatible formats in it''s conformance statement');
+    ShowMessage('This end point doens''t have any compatible formats in its conformance statement');
 end;
 
 procedure TEditRegisteredServerForm.Button4Click(Sender: TObject);
@@ -317,7 +317,7 @@ begin
       end;
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -334,7 +334,7 @@ begin
 //    2: btnOk.Enabled := (edtName.text <> '') and (edtServer.text <> '') and (edtAuthorize.Text <> '') and (edtToken.Text <> '') and (edtClientId1.Text <> '') and (edtIssuerURL.Text <> '');
 //  end;
 //  if (edtAuthorize.Text <> '') then
-//    btnOk.Enabled :=
+//    btnOk.Enabled := 
 //  else
 
   btnOk.Enabled := edtServer.text <> '';
@@ -348,9 +348,9 @@ end;
 
 procedure TEditRegisteredServerForm.FormDestroy(Sender: TObject);
 begin
-  FVersions.Free;
-  FCapabilityStatement.Free;
-  FServer.Free;
+  FVersions.free;
+  FCapabilityStatement.free;
+  FServer.free;
   inherited;
 end;
 
@@ -385,7 +385,7 @@ end;
 
 procedure TEditRegisteredServerForm.SetVersions(const Value: TFHIRVersionFactories);
 begin
-  FVersions.Free;
+  FVersions.free;
   FVersions := Value;
 end;
 
@@ -397,7 +397,7 @@ procedure TEditRegisteredServerForm.loadHooks;
   c : String;
   err : String; *)
 begin
- // raise EFHIRTodo.create();
+ // raise EFHIRTodo.Create();
   (*
   clHooks.items.Clear;
 

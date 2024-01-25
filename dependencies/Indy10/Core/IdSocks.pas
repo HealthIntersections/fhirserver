@@ -445,6 +445,7 @@ begin
     SetLength(LResponse, 8);
     TIdIOHandlerSocket(AIOHandler).TransparentProxy := nil;
     LClient.IOHandler := AIOHandler;
+    try
     LClient.Host := Host;
     LClient.Port := Port;
     LClient.Connect;
@@ -468,6 +469,8 @@ begin
     end;
   finally
     LClient.IOHandler := nil;
+    end;
+  finally
     FreeAndNil(LClient);
   end;
 end;
@@ -582,6 +585,7 @@ begin
     SetLength(LBuf, 255);
     TIdIOHandlerSocket(AIOHandler).TransparentProxy := nil;
     LClient.IOHandler := AIOHandler;
+    try
     LClient.Host := Host;
     LClient.IPVersion := IPVersion;
     LClient.Port := Port;
@@ -644,6 +648,8 @@ begin
     end;
   finally
     LClient.IOHandler := nil;
+    end;
+  finally
     FreeAndNil(LClient);
   end;
 end;
@@ -774,11 +780,14 @@ begin
     // Associate process
     //For SOCKS5 Associate, the IP address and port is the client's IP address and port which may
     //not be known
-    if LIPVersion = Id_IPv4 then begin
-      MakeSocks5Request(FUDPSocksAssociation, '0.0.0.0', 0, $03, LBuf, LPos); //associate request
+    // TODO: if the passed TIdSocketHandle is already bound locally, send its IP/Port...
+    {
+    if (AHandle.IP <> '') and (AHandle.Port <> 0) then begin
+      MakeSocks5Request(FUDPSocksAssociation, AHandle.IP, AHandle.Port, $03, LBuf, LPos); //associate request
     end else begin
-      MakeSocks5Request(FUDPSocksAssociation, '::0', 0, $03, LBuf, LPos); //associate request
-    end;
+    }
+      MakeSocks5Request(FUDPSocksAssociation, iif(LIPVersion = Id_IPv4, '0.0.0.0', '::0'), 0, $03, LBuf, LPos); //associate request
+    //end;
     //
     FUDPSocksAssociation.Write(LBuf, LPos); // send the connection packet
     try
@@ -800,7 +809,7 @@ begin
       else
         raise EIdSocksUnknownError.Create(RSSocksUnknownError);
     end;
-    FUDPSocksAssociation.ReadBytes(LBuf, 2, False); //Now get RSVD and ATYPE feilds
+    FUDPSocksAssociation.ReadBytes(LBuf, 2, False); //Now get RSVD and ATYPE fields
     // type of destination address is domain name
     case LBuf[1] of
       // IP V4
@@ -809,7 +818,9 @@ begin
             LIPVersion := Id_IPv4;
           end;
       // FQDN
-      3: Lpos := LBuf[4] + 2; // 2 is for port length
+      3: begin
+           Lpos := LBuf[4] + 2; // 2 is for port length
+         end;
       // IP V6
       4: begin
            LPos := 16 + 2; // 16 is for address and 2 is for port length
@@ -994,7 +1005,6 @@ begin
   case Version of
     svSocks4, svSocks4A: raise EIdSocksUDPNotSupportedBySOCKSVersion.Create(RSSocksUDPNotSupported);
   end;
-  SetLength(LBuf, Length(ABuffer)+200);
 
   if not AHandle.Readable(AMSec) then begin
     Result := 0;
@@ -1003,6 +1013,8 @@ begin
     VIPVersion := ID_DEFAULT_IP_VERSION;
     Exit;
   end;
+
+  SetLength(LBuf, Length(ABuffer)+200);
   Result := AHandle.RecvFrom(LBuf, VPeerIP, VPeerPort, VIPVersion);
   SetLength(LBuf, Result);
   LBuf := DisasmUDPReplyPacket(LBuf, VPeerIP, VPeerPort, VIPVersion);

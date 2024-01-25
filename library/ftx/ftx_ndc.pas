@@ -44,7 +44,7 @@ type
     FDatabase: TFDBManager;
     procedure SetDatabase(const Value: TFDBManager);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(source : String);
     destructor Destroy; override;
@@ -59,13 +59,13 @@ implementation
 
 constructor TNdcImporter.Create(source: String);
 begin
-  inherited create;
+  inherited Create;
   FSource := source;
 end;
 
 destructor TNdcImporter.Destroy;
 begin
-  FDatabase.Free;
+  FDatabase.free;
   inherited;
 end;
 
@@ -74,11 +74,11 @@ begin
   FDatabase := Value;
 end;
 
-function TNdcImporter.sizeInBytesV : cardinal;
+function TNdcImporter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSource.length * sizeof(char)) + 12);
-  inc(result, FDatabase.sizeInBytes);
+  inc(result, FDatabase.sizeInBytes(magic));
 end;
 
 end.

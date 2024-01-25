@@ -34,13 +34,12 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_collections,
-  fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager,
+  fsl_base, fsl_threads, fsl_utilities, fsl_collections, fsl_logging, fsl_npm_cache, fsl_i18n,
+  fhir_objects, fhir_factory, fhir_common, fhir_validator, fdb_manager, fhir_uris,
   fhir_indexing,
   indexing, user_manager, storage, utilities, tx_server,
-  subscriptions, session_manager, tag_manager, jwt, server_factory, consent_engine,
-  client_cache_manager
-  {$IFNDEF NO_JS}, server_javascript {$ENDIF};
+  subscriptions, session_manager, tag_manager, jwt, server_factory, consent_engine, server_constants,
+  client_cache_manager;
 
 Const
   OAUTH_LOGIN_PREFIX = 'os9z4tw9HdmR-';
@@ -53,6 +52,7 @@ Type
     FQuestionnaires: TFslMap<TFhirQuestionnaireW>;
     FForms: TFslStringMatch;
     FValueSetDependencies: TDictionary<String, TList<string>>;
+    FCaching: boolean;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -66,16 +66,20 @@ Type
     procedure clear(rtype: string; id: String); overload;
     procedure clearVS(id: string);
     procedure clear; overload;
-    function cacheSize : UInt64;
+    function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
+    property caching : boolean read FCaching write FCaching;
   end;
 
   TFHIRServerContext = class;
 
   TGetNamedContextEvent = function (Sender : TObject; name : String) : TFHIRServerContext of object;
 
+  { TFHIRServerContext }
+
   TFHIRServerContext = class (TFslObject)
   private
+    FI18nSupport: TI18nSupport;
     FLock: TFslLock;
     FName : string;
     FStorage : TFHIRStorageService;
@@ -90,9 +94,6 @@ Type
     FSessionManager : TFHIRSessionManager;
     FTagManager : TFHIRTagManager;
     FNamingSystems : TFslMap<TFHIRNamingSystemW>;
-    {$IFNDEF NO_JS}
-    FEventScriptRegistry : TEventScriptRegistry;
-    {$ENDIF}
     FMaps : TFslMap<TFHIRStructureMapW>;
     FSystemId: String;
 
@@ -110,7 +111,10 @@ Type
     FConsentEngine: TFHIRConsentEngine;
     FClientCacheManager: TClientCacheManager;
     FOnGetNamedContext : TGetNamedContextEvent;
+    FPcm: TFHIRPackageManager;
 
+    procedure updateSettings;
+    procedure SetI18nSupport(AValue: TI18nSupport);
     procedure SetUserProvider(const Value: TFHIRUserProvider);
     procedure SetTerminologyServer(const Value: TTerminologyServer);
     procedure SetSubscriptionManager(const Value: TSubscriptionManager);
@@ -122,12 +126,14 @@ Type
     procedure SetValidate(const Value: Boolean);
 
     procedure SetClientCacheManager(const Value: TClientCacheManager);
+    procedure SetPcm(const Value: TFHIRPackageManager);
   public
-    constructor Create(name : String; storage : TFHIRStorageService; serverFactory : TFHIRServerFactory);
+    constructor Create(name : String; storage : TFHIRStorageService; serverFactory : TFHIRServerFactory; pcm : TFHIRPackageManager);
     destructor Destroy; override;
     Function Link : TFHIRServerContext; overload;
 
     property Name : string read FName;
+    property pcm : TFHIRPackageManager read FPcm;
     property Globals : TFHIRServerSettings read FGlobals write SetGlobals;
     property DatabaseId: String read FSystemId write FSystemId;
     property QuestionnaireCache: TQuestionnaireCache read FQuestionnaireCache;
@@ -142,12 +148,10 @@ Type
     property ConsentEngine : TFHIRConsentEngine read FConsentEngine write SetConsentEngine;
     property TagManager : TFHIRTagManager read FTagManager;
     property UserProvider : TFHIRUserProvider read FUserProvider write SetUserProvider;
-    {$IFNDEF NO_JS}
-    property EventScriptRegistry : TEventScriptRegistry read FEventScriptRegistry;
-    {$ENDIF}
     property Factory : TFHIRFactory read GetFactory;
     property ServerFactory : TFHIRServerFactory read FServerFactory;
     property ClientCacheManager: TClientCacheManager read FClientCacheManager write SetClientCacheManager;
+    property i18nSupport : TI18nSupport read FI18nSupport write SetI18nSupport;
 
     property JWTServices : TJWTServices read FJWTServices write SetJWTServices;
 
@@ -166,8 +170,12 @@ Type
 
     procedure DoneLoading(conn : TFDBConnection);
 
-    function cacheSize : UInt64;
+    function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
+    procedure sweepCache;
+    procedure SetCacheStatus(status : boolean);
+    procedure getCacheInfo(ci: TCacheInformation);
+    procedure UnLoad;
 
     property OnGetNamedContext : TGetNamedContextEvent read FOnGetNamedContext write FOnGetNamedContext;
   end;
@@ -195,11 +203,11 @@ begin
   inherited;
 end;
 
-function TQuestionnaireCache.cacheSize : UInt64;
+function TQuestionnaireCache.cacheSize(magic : integer) : UInt64;
 begin
   FLock.Lock;
   try
-    result := FQuestionnaires.sizeInBytes + FForms.sizeInBytes;
+    result := FQuestionnaires.sizeInBytes(magic) + FForms.sizeInBytes(magic);
   finally
     FLock.Unlock;
   end;
@@ -270,26 +278,35 @@ end;
 function TQuestionnaireCache.getForm(rtype: String;
   id: String): String;
 begin
-  FLock.Lock('getForm');
-  try
-    result := FForms[rtype + '/' + id];
-  finally
-    FLock.Unlock;
-  end;
-
+  if FCaching then
+  begin
+    FLock.Lock('getForm');
+    try
+      result := FForms[rtype + '/' + id];
+    finally
+      FLock.Unlock;
+    end;
+  end
+  else
+    result := '';
 end;
 
 function TQuestionnaireCache.getQuestionnaire(rtype: String;
   id: String): TFhirQuestionnaireW;
 begin
-  FLock.Lock('getQuestionnaire');
-  try
-    result := FQuestionnaires[rtype + '/' + id]
-      .Link as TFhirQuestionnaireW;
-    // comes off linked - must happen inside the lock
-  finally
-    FLock.Unlock;
-  end;
+  if FCaching then
+  begin
+    FLock.Lock('getQuestionnaire');
+    try
+      result := FQuestionnaires[rtype + '/' + id]
+        .Link as TFhirQuestionnaireW;
+      // comes off linked - must happen inside the lock
+    finally
+      FLock.Unlock;
+    end;
+  end
+  else
+    result := nil;
 end;
 
 procedure TQuestionnaireCache.putForm(rtype: String;
@@ -298,21 +315,24 @@ var
   s: String;
   l: TList<String>;
 begin
-  FLock.Lock('putForm');
-  try
-    FForms[rtype + '/' + id] := form;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
+  if FCaching then
+  begin
+    FLock.Lock('putForm');
+    try
+      FForms[rtype + '/' + id] := form;
+      for s in dependencies do
       begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
+        if not FValueSetDependencies.TryGetValue(id, l) then
+        begin
+          l := TList<String>.Create;
+          FValueSetDependencies.add(s, l);
+        end;
+        if not l.Contains(id) then
+          l.add(id);
       end;
-      if not l.Contains(id) then
-        l.add(id);
+    finally
+      FLock.Unlock;
     end;
-  finally
-    FLock.Unlock;
   end;
 end;
 
@@ -322,31 +342,34 @@ var
   s: String;
   l: TList<String>;
 begin
-  FLock.Lock('putQuestionnaire');
-  try
-    FQuestionnaires[rtype + '/' + id] := q.Link;
-    for s in dependencies do
-    begin
-      if not FValueSetDependencies.TryGetValue(id, l) then
+  if FCaching then
+  begin
+    FLock.Lock('putQuestionnaire');
+    try
+      FQuestionnaires[rtype + '/' + id] := q.Link;
+      for s in dependencies do
       begin
-        l := TList<String>.Create;
-        FValueSetDependencies.add(s, l);
+        if not FValueSetDependencies.TryGetValue(id, l) then
+        begin
+          l := TList<String>.Create;
+          FValueSetDependencies.add(s, l);
+        end;
+        if not l.Contains(id) then
+          l.add(id);
       end;
-      if not l.Contains(id) then
-        l.add(id);
+    finally
+      FLock.Unlock;
     end;
-  finally
-    FLock.Unlock;
   end;
 end;
 
 { TFHIRServerContext }
 
-function TFHIRServerContext.cacheSize: UInt64;
+function TFHIRServerContext.cacheSize(magic : integer): UInt64;
 begin
-  result := FQuestionnaireCache.cacheSize + FClientCacheManager.cacheSize;
+  result := FQuestionnaireCache.cacheSize(magic) + FClientCacheManager.cacheSize(magic);
   if FTerminologyServer <> nil then
-    result := result + FTerminologyServer.cacheSize;
+    result := result + FTerminologyServer.cacheSize(magic);
 end;
 
 procedure TFHIRServerContext.clearCache;
@@ -357,7 +380,14 @@ begin
   FClientCacheManager.clearCache;
 end;
 
-constructor TFHIRServerContext.Create(name : String; storage: TFHIRStorageService; serverFactory : TFHIRServerFactory);
+procedure TFHIRServerContext.sweepCache;
+begin
+  if FTerminologyServer <> nil then
+    FTerminologyServer.sweep;
+  FClientCacheManager.sweep;
+end;
+
+constructor TFHIRServerContext.Create(name : String; storage: TFHIRStorageService; serverFactory : TFHIRServerFactory; pcm : TFHIRPackageManager);
 var
   a: String;
   cfg : TFHIRResourceConfig;
@@ -366,9 +396,10 @@ begin
   FName := name;
   FLock := TFslLock.Create('ServerContext');
   FStorage := storage;
+  FPcm := pcm;
   FServerFactory := serverFactory;
   FQuestionnaireCache := TQuestionnaireCache.Create;
-  FResConfig := TFslMap<TFHIRResourceConfig>.create('res.config');
+  FResConfig := TFslMap<TFHIRResourceConfig>.Create('res.config');
   for a in Factory.ResourceNames do
   begin
     cfg := TFHIRResourceConfig.Create;
@@ -380,53 +411,46 @@ begin
   cfg.name := '';
   cfg.Supported := false;
   FResConfig.Add(cfg.name, cfg);
-  FValidator := serverFactory.makeValidator;
+  FValidator := serverFactory.makeValidator(pcm);
   FValidatorContext := FValidator.Context.link;
-  FIndexes := TFHIRIndexInformation.create(FValidatorContext.factory.link, ServerFactory.link);
+  FIndexes := TFHIRIndexInformation.Create(FValidatorContext.factory.link, ServerFactory.link);
   FSessionManager := TFHIRSessionManager.Create(Globals.link, self);
-  FTagManager := TFHIRTagManager.create(storage.Factory.link);
-  FNamingSystems := TFslMap<TFHIRNamingSystemW>.create('naming');
-  {$IFNDEF NO_JS}
-  FEventScriptRegistry := TEventScriptRegistry.Create(storage.Factory.link);
-  {$ENDIF}
+  FTagManager := TFHIRTagManager.Create(storage.Factory.link);
+  FNamingSystems := TFslMap<TFHIRNamingSystemW>.Create('naming');
   FConsentEngine := TFHIRNullConsentEngine.Create(storage.Factory.link);
   FClientCacheManager := TClientCacheManager.Create;
 
-  FMaps := TFslMap<TFHIRStructureMapW>.create('tx.maps');
-  if DirectoryExists('c:\temp') then
-    FTaskFolder := 'c:\temp\fhir-server-tasks'
-  else
-    FTaskFolder := path([SystemTemp, 'fhir-server-tasks']);
+  FMaps := TFslMap<TFHIRStructureMapW>.Create('tx.maps');
+  FTaskFolder := FilePath(['[tmp]', 'fhir-server-tasks']);
   ForceFolder(FTaskFolder);
 end;
 
 destructor TFHIRServerContext.Destroy;
 begin
-  FConsentEngine.Free;
-  FGlobals.Free;
-  FMaps.Free;
-  {$IFNDEF NO_JS}
-  FEventScriptRegistry.Free;
-  {$ENDIF}
-  FJWTServices.Free;
-  FNamingSystems.Free;
-  FTagManager.Free;
+  FPcm.free;
+  FConsentEngine.free;
+  FGlobals.free;
+  FMaps.free;
+  FJWTServices.free;
+  FNamingSystems.free;
+  FTagManager.free;
   FSessionManager.CloseAll;
-  FSessionManager.Free;
-  FSubscriptionManager.Free;
+  FSessionManager.free;
+  FSubscriptionManager.free;
   FIndexes.free;
-  FStorage.Free;
+  FStorage.free;
   FQuestionnaireCache.free;
-  UserProvider.Free;
-  FServerFactory.Free;
-  FTerminologyServer.Free;
-  FClientCacheManager.Free;
+  UserProvider.free;
+  FServerFactory.free;
+  FTerminologyServer.free;
+  FClientCacheManager.free;
+  FI18nSupport.free;
 
-  FValidatorContext.Free;
+  FValidatorContext.free;
   FValidator.free;
 
   FResConfig.free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -434,6 +458,31 @@ end;
 procedure TFHIRServerContext.DoneLoading(conn : TFDBConnection);
 begin
   FSubscriptionManager.DoneLoading(conn);
+end;
+
+procedure TFHIRServerContext.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  ci.Add('FQuestionnaireCache', FQuestionnaireCache.sizeInBytes(ci.magic));
+  ci.Add('FClientCacheManager', FClientCacheManager.sizeInBytes(ci.magic));
+end;
+
+procedure TFHIRServerContext.UnLoad;
+begin
+  if FStorage <> nil then
+    FStorage.UnLoad;
+  FQuestionnaireCache.clearCache;
+  FValidatorContext.UnLoad;
+  FValidator.Unload;
+  FTerminologyServer.UnLoad;
+  if FSubscriptionManager <> nil then
+    FSubscriptionManager.UnLoad;
+  FSessionManager.Clear;
+  FNamingSystems.Clear;
+  FMaps.Clear;
+  FConsentEngine.UnLoad;
+  FClientCacheManager.clearCache;
+  FPcm.UnLoad;
 end;
 
 function TFHIRServerContext.GetFactory: TFHIRFactory;
@@ -444,6 +493,14 @@ end;
 function TFHIRServerContext.Link: TFHIRServerContext;
 begin
   result := TFHIRServerContext(inherited Link);
+end;
+
+procedure TFHIRServerContext.updateSettings;
+begin
+  if (FGlobals <> nil) and (FClientCacheManager <> nil) then
+    FClientCacheManager.cacheDwellTime := FGlobals.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+  if (FGlobals <> nil) and (FTerminologyServer <> nil) then
+    FTerminologyServer.cacheDwellTime := FGlobals.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
 end;
 
 procedure TFHIRServerContext.seeMap(map: TFHIRStructureMapW);
@@ -468,52 +525,74 @@ end;
 
 procedure TFHIRServerContext.SetUserProvider(const Value: TFHIRUserProvider);
 begin
-  FUserProvider.Free;
+  FUserProvider.free;
   FUserProvider := Value;
+end;
+
+procedure TFHIRServerContext.SetI18nSupport(AValue: TI18nSupport);
+begin
+  FI18nSupport.free;
+  FI18nSupport := AValue;
 end;
 
 procedure TFHIRServerContext.SetValidate(const Value: Boolean);
 begin
   if (Value <> false) then
-    raise Exception.Create('Validation is not currently supported');
+    raise EFslException.Create('Validation is not currently supported');
   FValidate := Value;
 end;
 
 procedure TFHIRServerContext.SetJWTServices(const Value: TJWTServices);
 begin
-  FJWTServices.Free;
+  FJWTServices.free;
   FJWTServices := Value;
+end;
+
+procedure TFHIRServerContext.SetPcm(const Value: TFHIRPackageManager);
+begin
+  FPcm.free;
+  FPcm := Value;
+end;
+
+procedure TFHIRServerContext.SetCacheStatus(status: boolean);
+begin
+  FQuestionnaireCache.caching := status;
+  if FTerminologyServer <> nil then
+    FTerminologyServer.SetCacheStatus(status);
 end;
 
 procedure TFHIRServerContext.SetClientCacheManager(const Value: TClientCacheManager);
 begin
-  FClientCacheManager.Free;
+  FClientCacheManager.free;
   FClientCacheManager := Value;
+  updateSettings;
 end;
 
 procedure TFHIRServerContext.SetConsentEngine(const Value: TFHIRConsentEngine);
 begin
-  FConsentEngine.Free;
+  FConsentEngine.free;
   FConsentEngine := Value;
 end;
 
 procedure TFHIRServerContext.SetGlobals(const Value: TFHIRServerSettings);
 begin
-  FGlobals.Free;
+  FGlobals.free;
   FGlobals := Value;
+  updateSettings;
 end;
 
 procedure TFHIRServerContext.SetSubscriptionManager(const Value: TSubscriptionManager);
 begin
-  FSubscriptionManager.Free;
+  FSubscriptionManager.free;
   FSubscriptionManager := Value;
 end;
 
 procedure TFHIRServerContext.SetTerminologyServer(const Value: TTerminologyServer);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
   ServerFactory.setTerminologyServer(FValidatorContext, value.link);
+  updateSettings;
 end;
 
 function TFHIRServerContext.getMaps: TFslMap<TFHIRStructureMapW>;
@@ -522,7 +601,7 @@ var
 begin
   FLock.Lock;
   try
-    result := TFslMap<TFHIRStructureMapW>.create('maps');
+    result := TFslMap<TFHIRStructureMapW>.Create('maps');
     for s in FMaps.Keys do
       result.Add(s, FMaps[s].Link);
   finally

@@ -54,7 +54,7 @@ type
   protected
     function getElementDefinition(sd : TFhirStructureDefinitionW; path : String) : TFhirElementDefinitionW;
     function enumify(code : String) : String;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -75,7 +75,7 @@ type
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -98,7 +98,7 @@ type
     procedure processObject(indent: integer; name, path : String; sd : TFhirStructureDefinitionW; obj: TFHIRObject; inScope : TArray<String>);
     procedure processResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -125,7 +125,7 @@ begin
   else if (StringArrayExistsSensitive(['pascal', 'delphi'], lang)) then
     result := TFHIRCodeGeneratorPascal.Create
   else
-    raise EFHIRException.create('Unknown code generation language '+lang);
+    raise EFHIRException.Create('Unknown code generation language '+lang);
 end;
 
 const
@@ -174,7 +174,7 @@ end;
 constructor TFHIRCodeGenerator.Create;
 begin
   inherited;
-  lines := TStringList.create;
+  lines := TStringList.Create;
   vars := TStringList.Create;
   vars.NameValueSeparator := ':';
 end;
@@ -182,9 +182,9 @@ end;
 destructor TFHIRCodeGenerator.Destroy;
 begin
   FResource.free;
-  FContext.Free;
-  lines.Free;
-  vars.Free;
+  FContext.free;
+  lines.free;
+  vars.free;
   inherited;
 end;
 
@@ -230,7 +230,7 @@ begin
         end;
       result := b.ToString;
     finally
-      b.Free;
+      b.free;
     end;
     result := result.replace('>=', 'greaterOrEquals').replace('<=', 'lessOrEquals').replace('<', 'lessThan').replace('>', 'greaterThan').replace('=', 'equal');
   end;
@@ -265,7 +265,7 @@ end;
 
 procedure TFHIRCodeGenerator.SetContext(const Value: TFHIRWorkerContextWithFactory);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
@@ -280,13 +280,13 @@ begin
   lines.Add(StringPadLeft('', ' ', indent)+ s);
 end;
 
-function TFHIRCodeGenerator.sizeInBytesV : cardinal;
+function TFHIRCodeGenerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResource.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, lines.sizeInBytes);
-  inc(result, vars.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, lines.sizeInBytes(magic));
+  inc(result, vars.sizeInBytes(magic));
 end;
 
 { TFHIRCodeGeneratorJavaRI }
@@ -294,7 +294,7 @@ end;
 constructor TFHIRCodeGeneratorJavaRI.Create;
 begin
   inherited;
-  imports := TStringList.create;
+  imports := TStringList.Create;
   imports.Duplicates := dupIgnore;
 end;
 
@@ -330,7 +330,7 @@ begin
     b.AppendLine;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -348,7 +348,7 @@ begin
   imports.Add('org.hl7.fhir.'+verPack+'.model.'+resource.fhirType+'.*');
   vars.Values['res'] := resource.fhirType;
   line(4, resource.fhirType + ' res = new '+resource.fhirType+'();');
-  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType));
+  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType, ''));
   try
     processObject(4, 'res', resource.fhirType, sd, resource, addVar([], ' res'));
   finally
@@ -398,7 +398,7 @@ begin
         end;
       end;
   finally
-    props.Free;
+    props.free;
   end;
 end;
 
@@ -421,14 +421,14 @@ begin
   begin
     vs := nil;
     if (defn <> nil) and (defn.binding = edbRequired) and (defn.valueSet <> '') then
-      vs := FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet));
+      vs := FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet, ''));
     try
       if (vs <> nil) then
         line(indent, an+'('+vs.name+'.'+enumify(value.primitiveValue).ToUpper+');')
       else
         line(indent, an+'("'+value.primitiveValue+'");')
     finally
-      vs.Free;
+      vs.free;
     end;
   end
   else if StringArrayExistsSensitive(['integer', 'decimal', 'unsignedInt', 'positiveInt', 'boolean'], t) then
@@ -444,7 +444,7 @@ begin
   // we assume this is an object
   else
   begin
-    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType));
+    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType, ''));
     if (tsd <> nil) then
     begin
       try
@@ -458,7 +458,7 @@ begin
           processObject(indent+2, vn, tsd.type_, tsd, value, addVar(inScope, vn));
         end;
       finally
-        tsd.Free;
+        tsd.free;
       end;
     end
     else if varIsSelf then
@@ -560,10 +560,10 @@ begin
   end;
 end;
 
-function TFHIRCodeGeneratorJavaRI.sizeInBytesV : cardinal;
+function TFHIRCodeGeneratorJavaRI.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, imports.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, imports.sizeInBytes(magic));
 end;
 
 { TFHIRCodeGeneratorJavaHapi }
@@ -584,7 +584,7 @@ end;
 
 destructor TFHIRCodeGeneratorPascal.Destroy;
 begin
-  units.Free;
+  units.free;
   inherited;
 end;
 
@@ -632,7 +632,7 @@ begin
     b.AppendLine;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -660,14 +660,14 @@ begin
   begin
     vs := nil;
     if (defn <> nil) and (defn.binding = edbRequired) and (defn.valueSet <> '') then
-      vs :=  FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet));
+      vs :=  FContext.Factory.wrapValueSet(FContext.fetchResource('ValueSet', defn.valueSet, ''));
     try
       if (vs <> nil) then
         line(indent, an+' := '+vs.name+capitalize(enumify(value.primitiveValue))+';')
       else
         line(indent, an+' := '''+value.primitiveValue+''';')
     finally
-      vs.Free;
+      vs.free;
     end;
   end
   else if StringArrayExistsSensitive(['integer', 'decimal', 'unsignedInt', 'positiveInt', 'boolean'], t) then
@@ -680,7 +680,7 @@ begin
   // we assume this is an object
   else
   begin
-    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType));
+    tsd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+value.fhirType, ''));
     if (tsd <> nil) then
     begin
       try
@@ -689,7 +689,7 @@ begin
         else
         begin
           vn := varName(value.fhirType, defn, inScope);
-          line(indent, vn +' := '+vars.values[vn]+'.create;');
+          line(indent, vn +' := '+vars.values[vn]+'.Create;');
           line(indent, 'try');
           processObject(indent+2, vn, tsd.type_, tsd, value, addVar(inScope, vn));
           line(indent, '  '+variableName+'.'+prop.Name.Replace('[x]', '')+' := '+vn+'.Link;');
@@ -698,7 +698,7 @@ begin
           line(indent, 'end;');
         end;
       finally
-        tsd.Free;
+        tsd.free;
       end;
     end
     else if varIsSelf then
@@ -706,7 +706,7 @@ begin
     else
     begin
       vn := varName(path+'.'+prop.Name, defn, inScope);
-      line(indent, vn +' := '+vars.values[vn]+'.create;');
+      line(indent, vn +' := '+vars.values[vn]+'.Create;');
       line(indent, 'try');
       processObject(indent+2, vn, tsd.type_, tsd, value, addVar(inScope, vn));
       line(indent, '  '+variableName+'.'+prop.Name.Replace('[x]', '')+' := '+vn+'.Link;');
@@ -753,7 +753,7 @@ begin
         end;
       end;
   finally
-    props.Free;
+    props.free;
   end;
 end;
 
@@ -765,9 +765,9 @@ begin
   units.Add('FHIR.Version.Resources');
   units.Add('FHIR.Version.Utilities');
   vars.Values['res'] := 'TFHIR'+resource.fhirType;
-  line(2, 'res := TFHIR'+resource.fhirType+'.create;');
+  line(2, 'res := TFHIR'+resource.fhirType+'.Create;');
   line(2, 'try');
-  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType));
+  sd := FContext.Factory.wrapStructureDefinition(FContext.fetchResource('StructureDefinition', 'http://hl7.org/fhir/StructureDefinition/'+resource.fhirType, ''));
   try
     processObject(4, 'res', resource.fhirType, sd, resource, addVar([], 'res'));
   finally
@@ -795,7 +795,7 @@ end;
 procedure TFHIRCodeGeneratorPascal.processXhtml(indent: integer; variableName: String; value: TFHIRObject);
 begin
   units.add('fhir_xhtml');
-  line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(THTTPLanguages.create(''en''), xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
+  line(indent, variableName+'.div_ := TFHIRXhtmlParser.parse(nil, xppReject, [], '+delphiStringWrap(indent, TFHIRXhtmlParser.compose(value as TFhirXHtmlNode))+'); // (lang, policy, options, html)');
 end;
 
 function TFHIRCodeGeneratorPascal.varName(fhirType: String; defn : TFhirElementDefinitionW; inScope: TArray<String>): string;
@@ -844,10 +844,10 @@ procedure TFHIRCodeGeneratorPascal.test;
 begin
 end;
 
-function TFHIRCodeGeneratorPascal.sizeInBytesV : cardinal;
+function TFHIRCodeGeneratorPascal.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, units.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, units.sizeInBytes(magic));
 end;
 
 { TFHIRCodeGeneratorDotNet }

@@ -250,16 +250,16 @@ end;
 
 procedure TFHIRPathDebuggerForm.FormDestroy(Sender: TObject);
 begin
-  FTypes.Free;
-  FOutcome.Free;
-  FResource.Free;
-  FContext.Free;
-  FExpression.Free;
-  FEngine.Free;
-  FServices.Free;
-  FFactory.Free;
-  FSkip.Free;
-  FDone.Free;
+  FTypes.free;
+  FOutcome.free;
+  FResource.free;
+  FContext.free;
+  FExpression.free;
+  FEngine.free;
+  FServices.free;
+  FFactory.free;
+  FSkip.free;
+  FDone.free;
   inherited;
 end;
 
@@ -369,7 +369,7 @@ end;
 
 procedure TFHIRPathDebuggerForm.SetEngine(const Value: TFHIRPathEngineV);
 begin
-  FEngine.Free;
+  FEngine.free;
   FEngine := Value;
 end;
 
@@ -494,7 +494,7 @@ begin
     try
       compose(memo, ol, name, def);
     finally
-      ol.Free;
+      ol.free;
     end;
   end;
 end;
@@ -539,7 +539,7 @@ begin
     try
       memo.Text := comp.Compose(name, obj)
     finally
-      comp.Free;
+      comp.free;
     end;
   end;
 end;
@@ -557,7 +557,7 @@ begin
     try
       memo.Text := mgr.composeV(FServices, obj, FFormat, OutputStylePretty);
     finally
-      mgr.Free;
+      mgr.free;
     end;
   end
   else
@@ -569,7 +569,7 @@ begin
       else
         memo.Text := comp.Compose(name, obj)
     finally
-      comp.Free;
+      comp.free;
     end;
   end;
 end;
@@ -719,7 +719,7 @@ begin
          end;
       1: p.expr := pe.nodeOpNext;
     else if node.index - offset > 0 then
-      raise EFHIRTodo.create('TFHIRPathDebuggerForm.vtExpressionsInitNode');
+      raise EFHIRTodo.Create('TFHIRPathDebuggerForm.vtExpressionsInitNode');
     end;
   end;
   if p.expr.tag = 1 then

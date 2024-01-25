@@ -2,7 +2,7 @@ Unit wp_imaging;
 
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -61,7 +61,7 @@ Type
     Procedure WriteIcon(oIcon : TIcon; oBmp : TBitmap);
     procedure SetDicomDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -91,8 +91,8 @@ Uses
 
 Destructor TWPImageLoader.Destroy;
 Begin
-  FDicomDictionary.Free;
-  FSource.Free;
+  FDicomDictionary.free;
+  FSource.free;
   Inherited Destroy;
 End;
 
@@ -106,14 +106,14 @@ End;
 
 procedure TWPImageLoader.SetDicomDictionary(const Value: TDicomDictionary);
 begin
-  FDicomDictionary.Free;
+  FDicomDictionary.free;
   FDicomDictionary := Value;
 end;
 
 
 Procedure TWPImageLoader.SetSource(Const Value : TFslAccessStream);
 Begin
-  FSource.Free;
+  FSource.free;
   FSource := Value;
 End;
 
@@ -173,28 +173,28 @@ begin
         imp.ScaleContrast := true;
         imp.Open(dicom);
         if imp.ImageCount > 1 then
-          raise EWPException.create('Multiple images not supported');
-        image := TGdiPlusBitmapImage.create;
+          raise EWPException.Create('Multiple images not supported');
+        image := TGdiPlusBitmapImage.Create;
         try
           imp.LoadImage(0, false, image);
-          result := TFslBitmapGraphic.create;
+          result := TFslBitmapGraphic.Create;
           try
             image.PopulateBitmapGraphic(result);
             result.Link;
           finally
-            result.Free;
+            result.free;
           end;
         finally
-          image.Free;
+          image.free;
         end;
       finally
-        imp.Free;
+        imp.free;
       end;
     finally
-      dicom.Free;
+      dicom.free;
     end;
   finally
-    parser.Free;
+    parser.free;
   end;
 end;
 
@@ -215,10 +215,10 @@ Begin
       WriteIcon(oIcon.Icon, Result.Handle);
       Result.Link;
     Finally
-      Result.Free;
+      Result.free;
     End;
   Finally
-    oIcon.Free;
+    oIcon.free;
   End;
 End;
 
@@ -257,7 +257,7 @@ Begin
         oImage.Canvas.Unlock;
       End;
     Finally
-      oImage.Free;
+      oImage.free;
     End;
   Finally
     oBmp.Canvas.Unlock;
@@ -287,7 +287,7 @@ Begin
 
       aGraphicClass := FileFormatList.GraphicFromContent(oVCLStream);
     Finally
-      oVCLStream.Free;
+      oVCLStream.free;
     End;
 
     If Not Assigned(aGraphicClass) Then
@@ -343,7 +343,7 @@ Begin
       Result.LoadFromStream(Source);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -356,12 +356,12 @@ Begin
 End;
 
 
-function TWPImageLoader.sizeInBytesV : cardinal;
+function TWPImageLoader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FDicomDictionary.sizeInBytes);
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FDicomDictionary.sizeInBytes(magic));
 end;
 
 Class Function TWPImageLoader.Wrap(oImage : TFslGraphic) : TWPDocumentImage;
@@ -385,7 +385,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -412,7 +412,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 

@@ -35,15 +35,15 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json,
+  fsl_base, fsl_threads, fsl_utilities, fsl_stream, fsl_collections, fsl_logging, fsl_json, fsl_lang,
   fsl_http,
   fdb_dialects, fsl_graphql,
-  fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine,
+  fhir_objects,  fhir_common, fhir_xhtml, fhir_parser, fhir_factory, fhir_utilities, fhir_pathengine, fsl_npm_cache,
   fhir_client, fhir_cdshooks,
   session,
-  fhir_indexing, fhir_graphql,
-  html_builder, subscriptions, utilities, server_constants, indexing, bundlebuilder,
-  client_cache_manager;
+  fhir_indexing, fhir_graphql, fhir_features,
+  html_builder, subscriptions, utilities, server_constants, indexing, bundlebuilder, time_tracker,
+  client_cache_manager, tx_version;
 
 Type
   TAsyncTaskStatus = (atsCreated, atsWaiting, atsProcessing, atsComplete, atsAborted, atsTerminated, atsError, atsDeleted);
@@ -73,6 +73,7 @@ Type
 const
   OP_MODES_CHECK = [opmRestful, opmInternal];
   OP_CODES_NO_SEC_ON_INSERT = [opmSweep];
+  DEAD_CHECK_LIMIT = 60000;
 
 type
   TFHIRStorageService = class;
@@ -82,6 +83,7 @@ type
   TFhirOperation = class abstract (TFslObject)
   protected
     FFactory : TFHIRFactory;
+    FLanguages : TIETFLanguageDefinitions;
     function resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref : String) : integer;
     function CreateBaseDefinition(base : String) : TFHIROperationDefinitionW;
     function isWrite : boolean; virtual;
@@ -89,13 +91,13 @@ type
     function makeParams(request : TFHIRRequest) : TFhirParametersW;
 
   public
-    constructor Create(factory : TFHIRFactory);
+    constructor Create(factory : TFHIRFactory; languages : TIETFLanguageDefinitions);
     destructor Destroy; override;
     function Name : String; virtual;
     function Types : TArray<String>; virtual;
     function HandlesRequest(request : TFHIRRequest) : boolean; virtual;
     function CreateDefinition(base : String) : TFHIROperationDefinitionW; virtual;
-    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; virtual;
     function formalURL : String; virtual;
   end;
 
@@ -177,6 +179,7 @@ type
   end;
 
   TFindResourceOption = (froFindDeletedResource, froForCommit);
+  TSmartHealthCardSource = (shcSrcUnknown, shcSrcFromResources);
 
   TFindResourceOptions = set of TFindResourceOption;
 
@@ -185,11 +188,15 @@ type
   private
   end;
 
+  { TFHIROperationEngine }
+
   TFHIROperationEngine = class (TFslObject)
   private
     FOnPopulateConformance : TPopulateConformanceEvent;
-    FLang : THTTPLanguages;
+    FOnCreateBuilder: TCreateBundleBuilderEvent;
+    FLangList : THTTPLanguageList;
     function GetClientCacheManager: TClientCacheManager;
+    procedure SetLangList(AValue: THTTPLanguageList);
   protected
     FServerContext : TFslObject;
     FOperations : TFslList<TFhirOperation>;
@@ -202,8 +209,8 @@ type
     procedure CommitTransaction; virtual; abstract;
     procedure RollbackTransaction; virtual; abstract;
 
-    procedure ExecuteCapabilityStatement(request: TFHIRRequest; response : TFHIRResponse; full : boolean); virtual;
-    procedure ExecuteTerminologyCapabilities(request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteCapabilityStatement(request: TFHIRRequest; response : TFHIRResponse; full : boolean) : String; virtual;
+    function ExecuteTerminologyCapabilities(request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
 
     function ExecuteRead(request: TFHIRRequest; response : TFHIRResponse; ignoreHeaders : boolean) : boolean; virtual;
     function  ExecuteUpdate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : Boolean; virtual;
@@ -213,28 +220,33 @@ type
     procedure ExecuteHistory(request: TFHIRRequest; response : TFHIRResponse); virtual;
     procedure ExecuteSearch(request: TFHIRRequest; response : TFHIRResponse); virtual;
     Function  ExecuteCreate(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; idState : TCreateIdState; iAssignedKey : Integer) : String; virtual;
-    procedure ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
+    function ExecuteMetadata(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure ExecuteUpload(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
     function  ExecuteValidation(request: TFHIRRequest; response : TFHIRResponse; opDesc : String) : boolean; virtual;
     function ExecuteTransaction(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
     procedure ExecuteBatch(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse); virtual;
-    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String; virtual;
+    function ExecuteOperation(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; virtual;
     procedure BuildSearchForm(request: TFHIRRequest; response: TFHIRResponse);
   public
-    constructor Create(Storage : TFHIRStorageService; ServerContext : TFslObject; const lang : THTTPLanguages);
+    constructor Create(Storage : TFHIRStorageService; ServerContext : TFslObject; langList : THTTPLanguageList);
     destructor Destroy; override;
+
+    function link : TFHIROperationEngine; overload;
 
     procedure NoMatch(request: TFHIRRequest; response: TFHIRResponse);
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
+    procedure deadCheck(start : QWord);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
-    property lang : THTTPLanguages read FLang write FLang;
+    property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
+    property Storage : TFHIRStorageService read FStorage;
 
     function opAllowed(resource : string; command : TFHIRCommandType) : Boolean; virtual;
-    function check(response : TFHIRResponse; test : boolean; code : Integer; const lang : THTTPLanguages; message : String; issueCode : TFhirIssueType) : Boolean; virtual;
-    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse) : String;  virtual;
+    function check(response : TFHIRResponse; test : boolean; code : Integer; langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType) : Boolean; virtual;
+    Function Execute(context : TOperationContext; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String;  virtual;
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; virtual; abstract;
     function getResourcesByParam(aType : string; name, value : string; var needSecure : boolean): TFslList<TFHIRResourceV>; virtual;
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; virtual;
@@ -245,11 +257,16 @@ type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
+    function DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW; virtual;
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
     property Operations : TFslList<TFhirOperation> read FOperations;
-    function createClient(const lang : THTTPLanguages; session: TFHIRSession) : TFhirClientV; virtual;
+    function createClient(langList : THTTPLanguageList; session: TFHIRSession) : TFhirClientV; virtual;
+    procedure defineFeatures(features : TFslList<TFHIRFeature>); overload;
+    property ServerContextObject : TFslObject read FServerContext;
   end;
+
+  { TFHIRInternalCommunicator }
 
   TFHIRInternalCommunicator = class (TFHIRClientCommunicator)
   private
@@ -270,7 +287,8 @@ type
     function address : String; override;
     procedure doGetBundleBuilder(request: TFHIRRequest; context: TFHIRResponse; aType: TBundleType; out builder: TFhirBundleBuilder);
 
-    function conformanceV(summary : boolean) : TFHIRResourceV; override;
+    function conformanceV(summary : boolean) : TFHIRResourceV; override; 
+    function conformanceModeV(mode : string) : TFHIRResourceV; override;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; override;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; override;
     function readResourceV(atype : string; id : String) : TFHIRResourceV; override;
@@ -284,26 +302,34 @@ type
     function operationV(atype : string; id, opName : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function historyTypeV(atype : string; allRecords : boolean; params : string) : TFHIRResourceV; override;
     function historyInstanceV(atype : string; id : String; allRecords : boolean; params : string) : TFHIRResourceV; override;
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; override;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; override;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; override;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; override;
     function patchResourceV(atype : TFhirResourceTypeV; id : String; params : TFHIRResourceV) : TFHIRResourceV; overload; override;
     function patchResourceV(atype : TFhirResourceTypeV; id : String; patch : TJsonArray) : TFHIRResourceV; overload; override;
     procedure terminate; override;
   end;
 
+  { TFHIRStorageService }
+
   TFHIRStorageService = class (TFslObject)
   protected
     FFactory : TFHIRFactory;
+    FFeatures : TFHIRFeatureEngine;
     function GetTotalResourceCount: integer; virtual; abstract;
     function SupportsSubscriptions : boolean; virtual;
     function SupportsTransactions : boolean; virtual;
     function SupportsSearch : boolean; virtual;
     function SupportsHistory : boolean; virtual;
+    procedure defineFeatures; overload; virtual;
   public
     constructor Create(factory : TFHIRFactory); virtual;
     destructor Destroy; override;
     function Link : TFHIRStorageService; overload;
     property Factory : TFHIRFactory read FFactory;
+    property Features : TFHIRFeatureEngine read FFeatures;
+
+    procedure Initialise(); virtual;
+    procedure UnLoad; virtual;
 
     // OAuth Support
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); virtual;
@@ -337,11 +363,11 @@ type
     procedure RunValidation; virtual; abstract;
 
 
-    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; virtual; abstract;
+    function createOperationContext(langList : THTTPLanguageList) : TFHIROperationEngine; virtual; abstract;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); overload; virtual; abstract;
-    function createClient(const lang : THTTPLanguages; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession) : TFHIRClientV; virtual;
+    function createClient(langList : THTTPLanguageList; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession) : TFHIRClientV; virtual;
     Procedure Yield(client : TFHIRClientV; exception : Exception); overload; virtual;
-    function ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; virtual;
+    function ExpandVS(vs: TFHIRValueSetW; ref: string; langList : THTTPLanguageList; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW; virtual;
     function LookupCode(system, version, code: String): String; virtual;
     function FetchResource(key : integer) : TFHIRResourceV; virtual; abstract;
 
@@ -366,8 +392,14 @@ type
     function loadPackages : TFslMap<TLoadedPackageInformation>; virtual; abstract;
     function fetchLoadedPackage(id : String) : TBytes; virtual; abstract;
     procedure recordPackageLoaded(id, ver : String; count : integer; blob : TBytes); virtual; abstract;
-    function cacheSize : UInt64; virtual;
+    function cacheSize(magic : integer) : UInt64; virtual;
     procedure clearCache; virtual;
+    procedure SetCacheStatus(status : boolean); virtual;
+    procedure getCacheInfo(ci: TCacheInformation); virtual;
+
+    // Smart Health Cards support
+    function issueHealthCardKey : integer; virtual; abstract;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); virtual; abstract;
   end;
 
 
@@ -378,7 +410,7 @@ uses
 
 { TFHIRStorageService }
 
-function TFHIRStorageService.cacheSize: UInt64;
+function TFHIRStorageService.cacheSize(magic : integer): UInt64;
 begin
   result := 0;
 end;
@@ -390,25 +422,31 @@ end;
 
 constructor TFHIRStorageService.Create(factory : TFHIRFactory);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
+  FFeatures := TFHIRFeatureEngine.Create;
 end;
 
 destructor TFHIRStorageService.Destroy;
 begin
-  FFactory.Free;
+  FFeatures.free;
+  FFactory.free;
   inherited;
 end;
 
-function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; const lang : THTTPLanguages; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
+function TFHIRStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; langList : THTTPLanguageList; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList): TFHIRValueSetW;
 begin
-  raise EFHIRException.create('Expanding valuesets is not implemented in this server');
+  result := nil;
+  raise EFHIRException.Create('Expanding valuesets is not implemented in this server');
 end;
 
 
-function TFHIRStorageService.FetchAuthorization(hash: string; var PatientId : string; var ConsentKey, SessionKey: Integer; var Expiry: TDateTime; var jwt: String): boolean;
+function TFHIRStorageService.FetchAuthorization(hash: String;
+  var PatientId: String; var ConsentKey, SessionKey: Integer;
+  var Expiry: TDateTime; var jwt: String): boolean;
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  result := false;
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.fetchExpiredTasks(tasks: TFslList<TAsyncTaskInformation>);
@@ -418,27 +456,47 @@ end;
 
 function TFHIRStorageService.fetchOAuthDetails(id: String; var client_id, redirect, state, scope, launch: String): boolean;
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  result := false;
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.fetchOAuthDetails(key, status: integer; var client_id, name, redirect, state, scope, launch: String): boolean;
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  result := false;
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.fetchTaskDetails(id : String; var key : integer; var status: TAsyncTaskStatus; var fmt : TFHIRFormat; var secure : boolean; var message, originalRequest: String; var transactionTime, expires: TFslDateTime; names : TStringList; var outcome: TBytes): boolean;
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  result := false;
+  raise EFHIRException.Create('This server does not support Async tasks');
+end;
+
+procedure TFHIRStorageService.getCacheInfo(ci: TCacheInformation);
+begin
+  // nothing
 end;
 
 function TFHIRStorageService.hasOAuthSession(id: String; status : integer): boolean;
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  result := false;
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 function TFHIRStorageService.hasOAuthSessionByKey(key, status: integer): boolean;
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  result := false;
+  raise EFHIRException.Create('This server does not support OAuth');
+end;
+
+procedure TFHIRStorageService.Initialise;
+begin
+  defineFeatures;
+end;
+
+procedure TFHIRStorageService.UnLoad;
+begin
+  // nothing
 end;
 
 function TFHIRStorageService.Link: TFHIRStorageService;
@@ -448,42 +506,49 @@ end;
 
 function TFHIRStorageService.LookupCode(system, version, code: String): String;
 begin
-  raise EFHIRException.create('Looking up codes is not implemented in this server');
+  result := '';
+  raise EFHIRException.Create('Looking up codes is not implemented in this server');
 end;
 
 procedure TFHIRStorageService.MarkTaskDeleted(key: integer);
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  raise EFHIRException.Create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.MarkTaskForDownload(key: integer; names : TStringList);
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  raise EFHIRException.Create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.recordDownload(key: integer; name: String);
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  raise EFHIRException.Create('This server does not support Async tasks');
 end;
 
-procedure TFHIRStorageService.recordOAuthChoice(id, scopes, jwt, patient: String);
+procedure TFHIRStorageService.recordOAuthChoice(id: String; scopes, jwt,
+  patient: String);
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch: String);
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.RegisterConsentRecord(session: TFhirSession);
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 procedure TFHIRStorageService.setAsyncTaskDetails(key: integer; transactionTime: TFslDateTime; request: String);
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  raise EFHIRException.Create('This server does not support Async tasks');
+end;
+
+procedure TFHIRStorageService.SetCacheStatus(status: boolean);
+begin
+  // nothing
 end;
 
 function TFHIRStorageService.SupportsHistory: boolean;
@@ -508,12 +573,12 @@ end;
 
 procedure TFHIRStorageService.updateAsyncTaskStatus(key: integer; status: TAsyncTaskStatus; message: String);
 begin
-  raise EFHIRException.create('This server does not support Async tasks');
+  raise EFHIRException.Create('This server does not support Async tasks');
 end;
 
 procedure TFHIRStorageService.updateOAuthSession(id : String; state, key: integer; var client_id : String);
 begin
-  raise EFHIRException.create('This server does not support OAuth');
+  raise EFHIRException.Create('This server does not support OAuth');
 end;
 
 { TFHIROperationEngine }
@@ -543,16 +608,17 @@ end;
 
 { TFHIROperationEngine }
 
-constructor TFHIROperationEngine.create(Storage : TFHIRStorageService; ServerContext : TFslObject; const lang : THTTPLanguages);
+constructor TFHIROperationEngine.Create(Storage: TFHIRStorageService;
+  ServerContext: TFslObject; langList : THTTPLanguageList);
 begin
-  inherited create;
+  inherited Create;
   FServerContext := ServerContext;
-  FLang := lang;
-  FOperations := TFslList<TFhirOperation>.create;
+  FLangList := langList;
+  FOperations := TFslList<TFhirOperation>.Create;
   FStorage := Storage;
 end;
 
-function TFHIROperationEngine.createClient(const lang : THTTPLanguages; session: TFHIRSession): TFHIRClientV;
+function TFHIROperationEngine.createClient(langList : THTTPLanguageList; session: TFHIRSession): TFhirClientV;
 var
   int : TFHIRInternalCommunicator;
 begin
@@ -562,34 +628,50 @@ begin
     int.FEngine := self.link as TFHIROperationEngine;
     int.Context := TFHIRServerContext(FServerContext).ValidatorContext.link;
     int.session := session.link;
-    result := factory.makeClientInt(TFHIRServerContext(FServerContext).ValidatorContext.link, lang, int.link);
+    result := factory.makeClientInt(TFHIRServerContext(FServerContext).ValidatorContext.link, langList, int.link);
   finally
-    int.Free;
+    int.free;
   end;
+end;
+
+procedure TFHIROperationEngine.defineFeatures(features: TFslList<TFHIRFeature>);
+begin
+  TFHIRServerContext(FServerContext).TerminologyServer.defineFeatures(features);
 end;
 
 destructor TFHIROperationEngine.Destroy;
 begin
-  FEngine.Free;
-  FStorage.Free;
-  FOperations.Free;
+  FLangList.free;
+  FEngine.free;
+  FStorage.free;
+  FOperations.free;
   inherited;
+end;
+
+function TFHIROperationEngine.DoSearch(request: TFHIRRequest;
+  requestType: String; params: String): TFHIRBundleW;
+begin
+  result := nil;
+  raise EFHIRException.Create('This server does not implement the "DoSearch" function');
 end;
 
 procedure TFHIROperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
 begin
   response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_MATCH', lang), [request.ResourceName+'?'+request.parameters.source]);
+  response.Message := StringFormat(GetFhirMessage('MSG_NO_MATCH', langList), [request.ResourceName+'?'+request.parameters.source]);
   response.Body := response.Message;
-  response.Resource := factory.BuildOperationOutcome(lang, response.Message);
+  response.Resource := factory.BuildOperationOutcome(langList, response.Message);
 end;
 
 procedure TFHIROperationEngine.NotFound(request: TFHIRRequest; response: TFHIRResponse);
+var
+  t : String;
 begin
   response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id]);
+  t := GetFhirMessage('MSG_NO_EXIST', langList);
+  response.Message := StringFormat(t, [request.ResourceName+':'+request.Id]);
   response.Body := response.Message;
-  response.Resource := factory.BuildOperationOutcome(lang, response.Message);
+  response.Resource := factory.BuildOperationOutcome(langList, response.Message);
 end;
 
 function TFHIROperationEngine.opAllowed(resource: string; command: TFHIRCommandType): Boolean;
@@ -600,21 +682,21 @@ end;
 procedure TFHIROperationEngine.VersionNotFound(request: TFHIRRequest; response: TFHIRResponse);
 begin
   response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', lang), [request.ResourceName+':'+request.Id+'/_history/'+request.subId]);
+  response.Message := StringFormat(GetFhirMessage('MSG_NO_EXIST', langList), [request.ResourceName+':'+request.Id+'/_history/'+request.subId]);
   response.Body := response.Message;
-  response.Resource := factory.BuildOperationOutcome(lang, response.Message);
+  response.Resource := factory.BuildOperationOutcome(langList, response.Message);
 end;
 
 
 procedure TFHIROperationEngine.TypeNotFound(request: TFHIRRequest; response: TFHIRResponse);
 begin
   response.HTTPCode := 404;
-  response.Message := StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', lang), [request.ResourceName]);
+  response.Message := StringFormat(GetFhirMessage('MSG_UNKNOWN_TYPE', langList), [request.ResourceName]);
   response.Body := response.Message;
-  response.Resource := factory.BuildOperationOutcome(lang, response.Message);
+  response.Resource := factory.BuildOperationOutcome(langList, response.Message);
 end;
 
-function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; const lang : THTTPLanguages; message: String; issueCode : TFhirIssueType): Boolean;
+function TFHIROperationEngine.check(response: TFHIRResponse; test: boolean; code : Integer; langList : THTTPLanguageList; message: String; issueCode : TFhirIssueType): Boolean;
 begin
   result := test;
   if not test and (response <> nil) then
@@ -623,18 +705,34 @@ begin
     response.Message := message;
     response.ContentType := 'text/plain';
     response.Body := message;
-    response.Resource := factory.BuildOperationOutcome(lang, message, issueCode);
+    response.Resource := factory.BuildOperationOutcome(langList, message, issueCode);
   end;
 end;
 
+procedure TFHIROperationEngine.deadCheck(start : QWord);
+var
+  now : QWord;
+  delta : UInt64;
+begin
+  now := GetTickCount64;
+  delta := now - start;
+  if (delta > DEAD_CHECK_LIMIT) then
+    raise EWebServerException.create(500, 'Request took too long to process ('+inttostr(DEAD_CHECK_LIMIT div 1000)+'sec)');
+end;
 
-function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): String;
+
+function TFHIROperationEngine.Execute(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker): String;
 begin
   InterlockedIncrement(GCounterFHIRRequests);
   try
     StartTransaction;
     try
-      result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.Id;
+      if Request.Id <> '' then
+        result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName+'/'+Request.Id
+      else if Request.ResourceName <> '' then
+        result := CODES_TFHIRCommandType[request.CommandType]+' on '+Request.ResourceName
+      else
+        result := CODES_TFHIRCommandType[request.CommandType];
       case request.CommandType of
         fcmdRead : ExecuteRead(request, response, false);
         fcmdUpdate : ExecuteUpdate(context, request, response);
@@ -643,19 +741,19 @@ begin
         fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem : ExecuteHistory(request, response);
         fcmdSearch : ExecuteSearch(request, response);
         fcmdCreate : result := ExecuteCreate(context, request, response, request.NewIdStatus, 0);
-        fcmdMetadata : ExecuteMetadata(context, request, response);
+        fcmdMetadata : result := ExecuteMetadata(context, request, response);
         fcmdTransaction : result := ExecuteTransaction(context, request, response);
         fcmdBatch :
           begin
           result := 'Batch';
           ExecuteBatch(context, request, response);
           end;
-        fcmdOperation : result := ExecuteOperation(context, request, response);
+        fcmdOperation : result := ExecuteOperation(context, request, response, tt);
         fcmdUpload : ExecuteUpload(context, request, response);
         fcmdPatch : ExecutePatch(context, request, response);
         fcmdValidate : ExecuteValidation(request, response, 'Validation')
       else
-        raise EFHIRException.create(GetFhirMessage('MSG_UNKNOWN_OPERATION', lang));
+        raise EFHIRException.Create(GetFhirMessage('MSG_UNKNOWN_OPERATION', langList));
       End;
 
       CommitTransaction;
@@ -673,27 +771,29 @@ end;
 
 procedure TFHIROperationEngine.ExecuteBatch(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise EFHIRException.create('This server does not implement the "Batch" function');
+  raise EFHIRException.Create('This server does not implement the "Batch" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteMetadata(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteMetadata(context: TOperationContext;
+  request: TFHIRRequest; response: TFHIRResponse): String;
 begin
   if (context <> nil) then
     context.CacheResponse := true;
 
   if not request.Parameters.has('mode') then
-    ExecuteCapabilityStatement(request, response, true)
+    result := ExecuteCapabilityStatement(request, response, true)
   else if request.Parameters['mode'] = 'full' then
-    ExecuteCapabilityStatement(request, response, true)
+    result := ExecuteCapabilityStatement(request, response, true)
   else if request.Parameters['mode'] = 'normative' then
-    ExecuteCapabilityStatement(request, response, false)
+    result := ExecuteCapabilityStatement(request, response, false)
   else if request.Parameters['mode'] = 'terminology' then
-    ExecuteTerminologyCapabilities(request, response)
+    result := ExecuteTerminologyCapabilities(request, response)
   else
     raise EFHIRException.Create('unknown mode '+request.Parameters['mode']);
 end;
 
-procedure TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest; response: TFHIRResponse; full : boolean);
+function TFHIROperationEngine.ExecuteCapabilityStatement(request: TFHIRRequest;
+  response: TFHIRResponse; full: boolean): String;
 var
   oConf : TFhirCapabilityStatementW;
   res : TFhirCapabilityStatementRestResourceW;
@@ -704,6 +804,11 @@ var
 //  ct : TFhirConformanceContact;
   ServerContext : TFHIRServerContext;
 begin
+  if full then
+    result := 'Metadata (Full)'
+  else
+    result := 'Metadata (Summary)';
+
   ServerContext := TFHIRServerContext(FServerContext);
   try
     response.HTTPCode := 200;
@@ -848,7 +953,7 @@ begin
                 end;
                 html.append('</tr>'#13#10);
                 if (not res.hasInteraction) then
-                  raise Exception.Create('No interactions for '+res.code+'?');
+                  raise EFslException.Create('No interactions for '+res.code+'?');
 
                   //<th>Search/Updates Params</th>
                   // html.append('n : offset<br/>');
@@ -877,7 +982,7 @@ begin
 
         html.append('</div>'#13#10);
         // operations
-        factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(lang, xppReject, [], html.AsString));
+        factory.setXhtml(oConf.Resource, TFHIRXhtmlParser.parse(langList, xppReject, [], html.AsString));
       finally
         html.free;
       end;
@@ -922,7 +1027,7 @@ var
 begin
   response.HTTPCode := 200;
   response.ContentType := 'text/html';
-  s :=
+  s := 
 '<?xml version="1.0" encoding="UTF-8"?>'#13#10+
 '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10+
 '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10+
@@ -936,8 +1041,8 @@ FHIR_JS+
 ''#13#10+
 '<body>'#13#10+
 ''#13#10+
-TFHIRXhtmlComposer.Header(factory, request.Session, request.baseUrl, request.lang, SERVER_FULL_VERSION)+
-'<h2>'+GetFhirMessage('SEARCH_TITLE', lang)+'</h2>'#13#10+
+TFHIRXhtmlComposer.Header(factory, request.Session, request.baseUrl, request.langList, SERVER_FULL_VERSION)+
+'<h2>'+GetFhirMessage('SEARCH_TITLE', langList)+'</h2>'#13#10+
 '</p>'#13#10;
 if Request.DefaultSearch then
 s := s +
@@ -967,7 +1072,7 @@ s := s +
       ix := TFHIRServerContext(FServerContext).Indexes.Indexes[i];
       if (ix.ResourceType = request.ResourceName) and (length(ix.TargetTypes) = 0) then
       begin
-        desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix.name, lang, ix.Description));
+        desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix.name, langList, ix.Description));
         if ix.SearchType = sptDate then
         begin
           s := s + '<tr><td align="left">'+ix.Name+' </td><td><input type="text" name="'+ix.Name+'"></td><td> '+desc+' on given date (yyyy-mm-dd)</td>'+
@@ -989,7 +1094,7 @@ s := s +
         pfx := ix.Name;
         types := ix.TargetTypes;
         s := s +'<tr><td colspan="4"><b>'+ix.Name+'</b> ('+describeResourceTypes(types)+')<b>:</b></td></tr>'+#13#10;
-        m := TStringList.create;
+        m := TStringList.Create;
         try
           for j := 0 to TFHIRServerContext(FServerContext).Indexes.Indexes.Count - 1 Do
           begin
@@ -999,7 +1104,7 @@ s := s +
               ok := ok or (ix2.ResourceType = rn);
             if (ok) and (m.IndexOf(ix2.Name) = -1) then
             begin
-              desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix2.name, lang, ix2.Description));
+              desc := FormatTextToHTML(GetFhirMessage('ndx-'+request.ResourceName+'-'+ix2.name, langList, ix2.Description));
               if (ix2.searchType = sptDate) then
               begin
                 s := s + '<tr>&nbsp;&nbsp;<td align="left">'+ix2.Name+' (exact)</td><td><input type="text" name="'+pfx+'.'+ix2.Name+'"></td><td> '+desc+'</td>'+
@@ -1014,7 +1119,7 @@ s := s +
             end;
           end;
         finally
-          m.Free;
+          m.free;
         end;
       end;
     end;
@@ -1022,10 +1127,10 @@ s := s +
 
   s := s +
 '<tr><td colspan="2"><hr/></td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_TEXT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_TEXT+'"></td><td> '+GetFhirMessage('SEARCH_REC_TEXT_COMMENT', lang)+'</td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_OFFSET', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_OFFSET+'"></td><td> '+GetFhirMessage('SEARCH_REC_OFFSET_COMMENT', lang)+'</td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_COUNT', lang)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_COUNT+'"></td><td> '+StringFormat(GetFhirMessage('SEARCH_REC_COUNT_COMMENT', lang), [SEARCH_PAGE_LIMIT])+'</td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_SORT_BY', lang)+'</td><td><select size="1" name="'+SEARCH_PARAM_NAME_SORT+'">'+#13#10;
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_TEXT', langList)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_TEXT+'"></td><td> '+GetFhirMessage('SEARCH_REC_TEXT_COMMENT', langList)+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_OFFSET', langList)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_OFFSET+'"></td><td> '+GetFhirMessage('SEARCH_REC_OFFSET_COMMENT', langList)+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_REC_COUNT', langList)+'</td><td><input type="text" name="'+SEARCH_PARAM_NAME_COUNT+'"></td><td> '+StringFormat(GetFhirMessage('SEARCH_REC_COUNT_COMMENT', langList), [SEARCH_PAGE_LIMIT])+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_SORT_BY', langList)+'</td><td><select size="1" name="'+SEARCH_PARAM_NAME_SORT+'">'+#13#10;
   for i := 0 to TFHIRServerContext(FServerContext).Indexes.Indexes.Count - 1 Do
   begin
     ix := TFHIRServerContext(FServerContext).Indexes.Indexes[i];
@@ -1033,32 +1138,33 @@ s := s +
       s := s + '<option value="'+ix.Name+'">'+ix.Name+'</option>';
   end;
   s := s + '</select></td><td></td></tr>'#13#10+
-'<tr><td align="right">'+GetFhirMessage('SEARCH_SUMMARY', lang)+'</td><td><input type="checkbox" name="'+SEARCH_PARAM_NAME_SUMMARY+'" value="true"></td><td> '+GetFhirMessage('SEARCH_SUMMARY_COMMENT', lang)+'</td></tr>'#13#10+
+'<tr><td align="right">'+GetFhirMessage('SEARCH_SUMMARY', langList)+'</td><td><input type="checkbox" name="'+SEARCH_PARAM_NAME_SUMMARY+'" value="true"></td><td> '+GetFhirMessage('SEARCH_SUMMARY_COMMENT', langList)+'</td></tr>'#13#10+
 '</table>'#13#10+
 '<p><input type="submit"/></p>'#13#10+
 '</form>'#13#10+
 ''#13#10+
 '<p>'+
-TFHIRXhtmlComposer.Footer(factory, request.baseUrl, lang, request.internalRequestId);
+TFHIRXhtmlComposer.Footer(factory, request.baseUrl, langList, request.internalRequestId);
   response.Body := s;
 end;
 
 function TFHIROperationEngine.ExecuteCreate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; idState: TCreateIdState; iAssignedKey: Integer): String;
 begin
-  raise EFHIRException.create('This server does not implement the "Create" function');
+  result := '';
+  raise EFHIRException.Create('This server does not implement the "Create" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteDelete(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise EFHIRException.create('This server does not implement the "Delete" function');
+  raise EFHIRException.Create('This server does not implement the "Delete" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteHistory(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise EFHIRException.create('This server does not implement the "History" function');
+  raise EFHIRException.Create('This server does not implement the "History" function');
 end;
 
-function TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
+function TFHIROperationEngine.ExecuteOperation(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 var
   i : integer;
   op : TFhirOperation;
@@ -1069,34 +1175,38 @@ begin
     op := TFhirOperation(FOperations[i]);
     if (op.HandlesRequest(request)) then
     begin
-      result := op.Execute(context, self, request, response);
+      result := op.Execute(context, self, request, response, tt);
       exit;
     end;
   end;
-  raise EFHIRException.create('Unsupported Operation '+request.OperationName+' on resource '+request.ResourceName);
+  raise EFHIRException.Create('Unsupported Operation '+request.OperationName+' on resource '+request.ResourceName);
 end;
 
 function TFHIROperationEngine.ExecutePatch(context : TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
-  raise EFHIRException.create('This server does not implement the "Patch" function');
+  result := false;
+  raise EFHIRException.Create('This server does not implement the "Patch" function');
 end;
 
 function TFHIROperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders : boolean) : boolean;
 begin
-  raise EFHIRException.create('This server does not implement the "Read" function');
+  result := false;
+  raise EFHIRException.Create('This server does not implement the "Read" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise EFHIRException.create('This server does not implement the "Search" function');
+  raise EFHIRException.Create('This server does not implement the "Search" function');
 end;
 
-procedure TFHIROperationEngine.ExecuteTerminologyCapabilities(request: TFHIRRequest; response: TFHIRResponse);
+function TFHIROperationEngine.ExecuteTerminologyCapabilities(request: TFHIRRequest; response: TFHIRResponse) : String;
 var
   oConf : TFhirTerminologyCapabilitiesW;
   ServerContext : TFHIRServerContext;
   s : String;
 begin
+  result := 'Metadata (Terminology)';
+
   ServerContext := TFHIRServerContext(FServerContext);
   try
     response.HTTPCode := 200;
@@ -1111,17 +1221,41 @@ begin
       else
         oConf.url := 'http://fhir.healthintersections.com.au/open/metadata';
 
-      oConf.version := factory.versionString+'-'+SERVER_FULL_VERSION; // this conformance statement is versioned by both
-      oConf.name := 'FHIR Reference Server Conformance Statement';
-      oConf.description := 'Standard Conformance Statement for the open source Reference FHIR Server provided by Health Intersections';
+      oConf.version := TX_SERVER_VERSION;
+      oConf.name := 'FHIR Reference Server Teminology Capability Statement';
+      oConf.description := 'Standard Teminology Capability Statement for the open source Reference FHIR Server provided by Health Intersections';
       oConf.status := psActive;
       oConf.date := TFslDateTime.makeUTC;
 
       for s in ServerContext.TerminologyServer.listSystems do
         oConf.systemUri(s);
 
-      oConf.addExpansionParameter('cache-id', 'This server supports caching terminology resources between calls. Clients only need to send value sets and codesystems once; there after tehy are automatically in scope for calls with the same cache-id. The cache is retained for 30 min from last call');
+      oConf.addExpansionParameter('cache-id', 'This server supports caching terminology resources between calls. Clients only need to send value sets and codesystems once; there after they are automatically in scope for calls with the same cache-id. The cache is retained for 30 min from last call');
       oConf.addExpansionParameter('tx-resource', 'Additional valuesets needed for evaluation e.g. value sets referred to from the import statement of the value set being expanded');
+      oConf.addExpansionParameter('_incomplete', '');
+      oConf.addExpansionParameter('abstract', '');
+      oConf.addExpansionParameter('activeOnly', '');
+      oConf.addExpansionParameter('check-system-version', '');
+      oConf.addExpansionParameter('count', '');
+      oConf.addExpansionParameter('default-to-latest-version', '');
+      oConf.addExpansionParameter('displayLanguage', '');
+      oConf.addExpansionParameter('excludeNested', '');
+      oConf.addExpansionParameter('excludeNotForUI', '');
+      oConf.addExpansionParameter('excludePostCoordinated', '');
+      oConf.addExpansionParameter('force-system-version', '');
+      oConf.addExpansionParameter('inactive', '');
+      oConf.addExpansionParameter('includeAlternateCodes', '');
+      oConf.addExpansionParameter('includeDefinition', '');
+      oConf.addExpansionParameter('includeDesignations', '');
+      oConf.addExpansionParameter('incomplete-ok', '');
+      oConf.addExpansionParameter('limitedExpansion', '');
+      oConf.addExpansionParameter('mode', '=lenient-display-validation');
+      oConf.addExpansionParameter('no-cache', '');
+      oConf.addExpansionParameter('offset', '');
+      oConf.addExpansionParameter('profile', '');
+      oConf.addExpansionParameter('property', '');
+      oConf.addExpansionParameter('system-version', '');
+      oConf.addExpansionParameter('valueSetMode', '= CHECK_MEMBERSHIP_ONLY | NO_MEMBERSHIP_CHECK');
 
       if (request.Parameters.has('_graphql') and (response.Resource <> nil) and (response.Resource.fhirType <> 'OperationOutcome')) then
         processGraphQL(request.Parameters['_graphql'], request, response);
@@ -1143,27 +1277,30 @@ end;
 
 function TFHIROperationEngine.ExecuteTransaction(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse) : String;
 begin
-  raise EFHIRException.create('This server does not implement the "Transaction" function');
+  result := '';
+  raise EFHIRException.Create('This server does not implement the "Transaction" function');
 end;
 
 function TFHIROperationEngine.ExecuteUpdate(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse): Boolean;
 begin
-  raise EFHIRException.create('This server does not implement the "Update" function');
+  result := false;
+  raise EFHIRException.Create('This server does not implement the "Update" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteUpload(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise EFHIRException.create('This server does not implement the "Upload" function');
+  raise EFHIRException.Create('This server does not implement the "Upload" function');
 end;
 
 function TFHIROperationEngine.ExecuteValidation(request: TFHIRRequest; response: TFHIRResponse; opDesc: String): boolean;
 begin
-  raise EFHIRException.create('This server does not implement the "Validation" function');
+  result := false;
+  raise EFHIRException.Create('This server does not implement the "Validation" function');
 end;
 
 procedure TFHIROperationEngine.ExecuteVersionRead(request: TFHIRRequest; response: TFHIRResponse);
 begin
-  raise EFHIRException.create('This server does not implement the "VersionRead" function');
+  raise EFHIRException.Create('This server does not implement the "VersionRead" function');
 end;
 
 function TFHIROperationEngine.factory: TFHIRFactory;
@@ -1173,7 +1310,8 @@ end;
 
 function TFHIROperationEngine.FindResource(aType, sId: String; options : TFindResourceOptions; var resourceKey, versionKey: integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean;
 begin
-  raise EFHIRException.create('This server does not implement the "FindResource" function');
+  result := false;
+  raise EFHIRException.Create('This server does not implement the "FindResource" function');
 end;
 
 function TFHIROperationEngine.GetClientCacheManager: TClientCacheManager;
@@ -1181,46 +1319,71 @@ begin
   result := TFHIRServerContext(FServerContext).ClientCacheManager;
 end;
 
+procedure TFHIROperationEngine.SetLangList(AValue: THTTPLanguageList);
+begin
+  FLangList.free;
+  FLangList := AValue;
+end;
+
 function TFHIROperationEngine.GetResourceByKey(key: integer; var needSecure: boolean): TFHIRResourceV;
 begin
-  raise EFHIRException.create('This server does not implement the "GetResourceByKey" function');
+  result := nil;
+  raise EFHIRException.Create('This server does not implement the "GetResourceByKey" function');
 end;
 
 function TFHIROperationEngine.getResourcesByParam(aType: string; name, value: string; var needSecure: boolean): TFslList<TFHIRResourceV>;
 begin
-  raise EFHIRException.create('This server does not implement the "getResourcesByParam" function');
+  result := nil;
+  raise EFHIRException.Create('This server does not implement the "getResourcesByParam" function');
 end;
 
-function TFHIROperationEngine.ResolveSearchId(resourceName : String; requestCompartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>; baseURL, params : String) : TMatchingResourceList;
+function TFHIROperationEngine.link: TFHIROperationEngine;
 begin
-  raise EFHIRException.create('This server does not implement the "GetResourceByKey" function');
+  result := TFHIROperationEngine(inherited link);
+end;
+
+function TFHIROperationEngine.ResolveSearchId(resourceName: String;
+  requestCompartment: TFHIRCompartmentId; SessionCompartments: TFslList<
+  TFHIRCompartmentId>; baseURL, params: String): TMatchingResourceList;
+begin
+  result := nil;
+  raise EFHIRException.Create('This server does not implement the "GetResourceByKey" function');
 end;
 
 function TFHIRStorageService.createAsyncTask(url, id: string; format : TFHIRFormat; secure : boolean): integer;
 begin
-  raise EFHIRException.create('Asynchronous Processing is not supported on this server');
+  result := 0;
+  raise EFHIRException.Create('Asynchronous Processing is not supported on this server');
 end;
 
-function TFHIRStorageService.createClient(const lang : THTTPLanguages; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession): TFHIRClientV;
+function TFHIRStorageService.createClient(langList : THTTPLanguageList; ServerContext : TFslObject; context: TFHIRWorkerContextWithFactory; session: TFHIRSession): TFHIRClientV;
 var
   int : TFHIRInternalCommunicator;
 begin
   int := TFHIRInternalCommunicator.Create;
   try
     int.FServerContext := ServerContext.Link;
-    int.FEngine := createOperationContext(lang).link as TFHIROperationEngine;
+    int.FEngine := createOperationContext(langList).link as TFHIROperationEngine;
     int.Context := context.link;
     int.session := session.link;
-    result := factory.makeClientInt(TFHIRServerContext(ServerContext).ValidatorContext.link, lang, int.link);
+    result := factory.makeClientInt(TFHIRServerContext(ServerContext).ValidatorContext.link, langList, int.link);
   finally
-    int.Free;
+    int.free;
   end;
+end;
+
+procedure TFHIRStorageService.defineFeatures;
+begin
+  FFeatures.defineFeature('rest.feature-header', true);
+  FFeatures.defineFeature('rest.security-cors', true);
+  FFeatures.defineFeature('rest.subscriptions', SupportsSubscriptions);
+  FFeatures.defineFeature('rest.transactions', SupportsTransactions);
 end;
 
 procedure TFHIRStorageService.Yield(client: TFHIRClientV; exception: Exception);
 begin
   yield(TFHIRInternalCommunicator(client.Communicator).FEngine, exception);
-  client.Free;
+  client.free;
 end;
 
 { TMatchingResourceList }
@@ -1247,13 +1410,13 @@ begin
     begin
       oow := FContext.factory.wrapOperationOutcome(resp.Resource.Link);
       try
-        raise EFHIRClientException.Create(oow.text, oow.link);
+        raise EFHIRClientException.Create(resp.HTTPCode, oow.text, oow.link);
       finally
-        oow.Free;
+        oow.free;
       end;
     end
     else
-      raise EFHIRClientException.Create(resp.Body, opWrapper.Create(FContext.factory.BuildOperationOutcome(THTTPLanguages.create('en'), resp.Body)));
+      raise EFHIRClientException.Create(resp.HTTPCode, resp.Body, opWrapper.Create(FContext.factory.BuildOperationOutcome(nil, resp.Body)));
 end;
 
 function TFHIRInternalCommunicator.conformanceV(summary: boolean): TFHIRResourceV;
@@ -1270,14 +1433,39 @@ begin
       checkOutcome(resp);
       result := resp.Resource.Link;
     finally
-      resp.Free;
+      resp.free;
     end;
   finally
-    req.Free;
+    req.free;
   end;
 end;
 
-function TFHIRInternalCommunicator.createResourceV(resource: TFhirResourceV; var id: String): TFHIRResourceV;
+function TFHIRInternalCommunicator.conformanceModeV(mode: string): TFHIRResourceV;
+var
+  req : TFHIRRequest;
+  resp : TFHIRResponse;
+begin
+  req := TFHIRRequest.Create(context, roOperation, nil);
+  try
+    req.CommandType := fcmdMetadata;
+    resp := TFHIRResponse.Create(FContext.link);
+    try
+      if (mode = 'terminology') then
+        FEngine.ExecuteTerminologyCapabilities(req, resp)
+      else
+        FEngine.ExecuteMetadata(nil, req, resp);
+      checkOutcome(resp);
+      result := resp.Resource.Link;
+    finally
+      resp.free;
+    end;
+  finally
+    req.free;
+  end;
+end;
+
+function TFHIRInternalCommunicator.createResourceV(resource: TFHIRResourceV;
+  var id: String): TFHIRResourceV;
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
@@ -1299,48 +1487,52 @@ begin
         id := resp.Id;
         result := resp.Resource.Link;
       finally
-        resp.Free;
+        resp.free;
       end;
     finally
-      req.Free;
+      req.free;
     end;
   finally
     ctxt.free;
   end;
 end;
 
-function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslBuffer;
+function TFHIRInternalCommunicator.customGet(path: String; headers: THTTPHeaders): TFslHTTPBuffer;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.customGet');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.customGet');
 end;
 
-function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslBuffer): TFslBuffer;
+function TFHIRInternalCommunicator.customPost(path: String; headers: THTTPHeaders; body: TFslHTTPBuffer): TFslHTTPBuffer;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.customPost');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.customPost');
 end;
 
 procedure TFHIRInternalCommunicator.deleteResourceV(atype: string; id: String);
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.deleteResourceV');
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.deleteResourceV');
 end;
 
 destructor TFHIRInternalCommunicator.Destroy;
 begin
-  FEngine.Free;
-  FContext.Free;
-  FSession.Free;
-  FServerContext.Free;
+  FEngine.free;
+  FContext.free;
+  FSession.free;
+  FServerContext.free;
   inherited;
 end;
 
 function TFHIRInternalCommunicator.historyTypeV(atype: string; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.historyTypeV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.historyTypeV');
 end;
 
 function TFHIRInternalCommunicator.historyInstanceV(atype: string; id : String; allRecords: boolean; params : string): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.historyInstanceV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.historyInstanceV');
 end;
 
 function TFHIRInternalCommunicator.link: TFHIRInternalCommunicator;
@@ -1350,22 +1542,26 @@ end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; id, opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.operationV');
 end;
 
 function TFHIRInternalCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; patch: TJsonArray): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 function TFHIRInternalCommunicator.patchResourceV(atype: TFhirResourceTypeV; id: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 function TFHIRInternalCommunicator.operationV(atype: string; opName: String; params: TFHIRResourceV): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.operationV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.operationV');
 end;
 
 function TFHIRInternalCommunicator.readResourceV(atype: string; id: String): TFHIRResourceV;
@@ -1389,10 +1585,10 @@ begin
         id := resp.Id;
         result := resp.Resource.Link;
       finally
-        resp.Free;
+        resp.free;
       end;
     finally
-      req.Free;
+      req.free;
     end;
   finally
     ctxt.free;
@@ -1421,10 +1617,10 @@ begin
         id := resp.Id;
         result := resp.Resource.Link;
       finally
-        resp.Free;
+        resp.free;
       end;
     finally
-      req.Free;
+      req.free;
     end;
   finally
     ctxt.free;
@@ -1436,17 +1632,18 @@ var
   bnd : TFHIRBundleW;
 begin
   if context.Format = ffNDJson then
-    raise EFHIRException.CreateLang('NDJSON-ASYNC', request.Lang);
+    raise EFHIRException.CreateLang('NDJSON-ASYNC', request.langList);
   bnd := TFHIRServerContext(FServerContext).Factory.wrapBundle(TFHIRServerContext(FServerContext).Factory.makeResource('Bundle'));
   try
     bnd.type_ := aType;
     builder := TFHIRBundleBuilderSimple.Create(TFHIRServerContext(FServerContext).Factory, bnd.link);;
   finally
-    bnd.Free;
+    bnd.free;
   end;
 end;
 
-function TFHIRInternalCommunicator.searchV(atype: string; allRecords: boolean; params: string): TFhirResourceV;
+function TFHIRInternalCommunicator.searchV(atype: string; allRecords: boolean;
+  params: string): TFHIRResourceV;
 var
   req : TFHIRRequest;
   resp : TFHIRResponse;
@@ -1458,7 +1655,7 @@ begin
     try
       req.CommandType := fcmdSearch;
       req.ResourceName := aType;
-      req.Parameters := THTTPParameters.create(params+'&__wantObject=true');
+      req.Parameters := THTTPParameters.Create(params+'&__wantObject=true');
       req.internalRequestId := TFHIRServerContext(FServerContext).Globals.nextRequestId;
 
       resp := TFHIRResponse.Create(FContext.link);
@@ -1468,10 +1665,10 @@ begin
         checkOutcome(resp);
         result := resp.Resource.Link;
       finally
-        resp.Free;
+        resp.free;
       end;
     finally
-      req.Free;
+      req.free;
     end;
   finally
     ctxt.free;
@@ -1480,23 +1677,27 @@ end;
 
 function TFHIRInternalCommunicator.searchAgainV(link: String): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.searchAgainV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.searchAgainV');
 end;
 
-function TFHIRInternalCommunicator.searchPostV(atype: string; allRecords: boolean; params : TStringList; resource: TFhirResourceV): TFhirResourceV;
+function TFHIRInternalCommunicator.searchPostV(atype: string;
+  allRecords: boolean; params: TStringList; resource: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.searchPostV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.searchPostV');
 end;
 
 procedure TFHIRInternalCommunicator.SetContext(const Value: TFHIRWorkerContextWithFactory);
 begin
-  FContext.Free;
+  FContext.free;
   FContext := Value;
 end;
 
 procedure TFHIRInternalCommunicator.SetSession(const Value: TFHIRSession);
 begin
-  FSession.Free;
+  FSession.free;
   FSession := Value;
 end;
 
@@ -1506,14 +1707,18 @@ begin
 
 end;
 
-function TFHIRInternalCommunicator.transactionV(bundle: TFhirResourceV): TFhirResourceV;
+function TFHIRInternalCommunicator.transactionV(bundle: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.transactionV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.transactionV');
 end;
 
-function TFHIRInternalCommunicator.updateResourceV(resource: TFhirResourceV): TFhirResourceV;
+function TFHIRInternalCommunicator.updateResourceV(resource: TFHIRResourceV
+  ): TFHIRResourceV;
 begin
-  raise EFHIRTodo.create('TFHIRInternalCommunicator.updateResourceV');
+  result := nil;
+  raise EFHIRTodo.Create('TFHIRInternalCommunicator.updateResourceV');
 end;
 
 { TFhirOperation }
@@ -1532,14 +1737,14 @@ begin
   b := false;
   for t in Types do
     if b then
-      raise EFHIRException.create('Multiple types for operation')
+      raise EFHIRException.Create('Multiple types for operation')
     else
     begin
       result := t;
       b := true;
     end;
   if (not b) then
-    raise EFHIRException.create('No types for operation');
+    raise EFHIRException.Create('No types for operation');
 end;
 
 function TFhirOperation.resolvePatient(manager: TFHIROperationEngine; request: TFHIRRequest; ref: String): integer;
@@ -1549,7 +1754,7 @@ var
 begin
   parts := ref.Split(['/']);
   if length(parts) <> 2 then
-    raise EFHIRException.create('Unable to understand the subject reference "'+ref+'"');
+    raise EFHIRException.Create('Unable to understand the subject reference "'+ref+'"');
   if NOT manager.FindResource(parts[0], parts[1], [], result, versionKey, request, nil, nil) then
     result := 0;
 end;
@@ -1559,10 +1764,11 @@ begin
   result := nil;
 end;
 
-constructor TFhirOperation.Create(factory: TFHIRFactory);
+constructor TFhirOperation.Create(factory: TFHIRFactory; languages : TIETFLanguageDefinitions);
 begin
-  inherited create;
+  inherited Create;
   FFactory := factory;
+  FLanguages := languages;
 end;
 
 function TFhirOperation.CreateBaseDefinition(base : String): TFHIROperationDefinitionW;
@@ -1593,7 +1799,7 @@ begin
 //    result.base := !{$IFNDEF FHIR4}TFhirReference.Create{$ENDIF}('http://hl7.org/fhir/OperationDefinition/'+name);
 //    result.Link;
 //  finally
-//    result.Free;
+//    result.free;
 //  end;
 end;
 
@@ -1604,12 +1810,14 @@ end;
 
 destructor TFhirOperation.Destroy;
 begin
-  FFactory.Free;
+  FLanguages.free;
+  FFactory.free;
   inherited;
 end;
 
-function TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse) : String;
+function TFhirOperation.Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt : TTimeTracker) : String;
 begin
+  result := '';
   // nothing
 end;
 
@@ -1655,7 +1863,7 @@ begin
       result.AddParamStr(request.Parameters.Name[i], request.Parameters[request.Parameters.Name[i]]);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1677,7 +1885,7 @@ end;
 
 destructor TRegisteredClientInformation.Destroy;
 begin
-  FRedirects.Free;
+  FRedirects.free;
   inherited;
 end;
 

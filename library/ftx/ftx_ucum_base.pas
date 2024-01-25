@@ -48,7 +48,7 @@ type
   private
     FCommonUnits : TFslStringList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -66,7 +66,7 @@ type
     FText: String;
   protected
     Function GetKind : TConceptKind; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -85,7 +85,7 @@ type
     Fvalue : TFslDecimal;
   protected
     Function GetKind : TConceptKind; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     function Link : TUcumPrefix; Overload;
@@ -98,7 +98,7 @@ type
   private
     FProperty : string;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     function Link : TUcumUnit; Overload;
     Property PropertyType : string read FProperty write FProperty; // the kind of thing this represents
@@ -109,7 +109,7 @@ type
     Fdim : Char;
   protected
     Function GetKind : TConceptKind; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function Link : TUcumBaseUnit; Overload;
     Property dim : Char read FDim write FDim;
@@ -122,7 +122,7 @@ type
     Fvalue : TFslDecimal;
     Ftext : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function Link : TUcumValue; Overload;
     Property unit_ : String read Funit write FUnit;
@@ -141,7 +141,7 @@ type
     Fvalue : TUcumValue;
   protected
     Function GetKind : TConceptKind; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -161,7 +161,7 @@ type
     FVersion : String;
     FRevisionDate : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -195,7 +195,7 @@ end;
 
 destructor TUcumConcept.Destroy;
 begin
-  FNames.Free;
+  FNames.free;
   inherited;
 end;
 
@@ -210,13 +210,13 @@ begin
 end;
 
 
-function TUcumConcept.sizeInBytesV : cardinal;
+function TUcumConcept.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fcode.length * sizeof(char)) + 12);
   inc(result, (FcodeUC.length * sizeof(char)) + 12);
   inc(result, (FprintSymbol.length * sizeof(char)) + 12);
-  inc(result, Fnames.sizeInBytes);
+  inc(result, Fnames.sizeInBytes(magic));
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -238,9 +238,9 @@ begin
   FValue.Precision := i;
 end;
 
-function TUcumPrefix.sizeInBytesV : cardinal;
+function TUcumPrefix.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TUcumUnit }
@@ -250,9 +250,9 @@ begin
   result := TUcumUnit(Inherited Link);
 end;
 
-function TUcumUnit.sizeInBytesV : cardinal;
+function TUcumUnit.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FProperty.length * sizeof(char)) + 12);
 end;
 
@@ -269,9 +269,9 @@ begin
 
 end;
 
-function TUcumBaseUnit.sizeInBytesV : cardinal;
+function TUcumBaseUnit.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TUcumValue }
@@ -287,9 +287,9 @@ begin
   FValue.Precision  := i;
 end;
 
-function TUcumValue.sizeInBytesV : cardinal;
+function TUcumValue.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Funit.length * sizeof(char)) + 12);
   inc(result, (FunitUC.length * sizeof(char)) + 12);
   inc(result, (Ftext.length * sizeof(char)) + 12);
@@ -305,7 +305,7 @@ end;
 
 destructor TUcumDefinedUnit.Destroy;
 begin
-  Fvalue.Free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -319,11 +319,11 @@ begin
   result := TUcumDefinedUnit(Inherited Link);
 end;
 
-function TUcumDefinedUnit.sizeInBytesV : cardinal;
+function TUcumDefinedUnit.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fclass_.length * sizeof(char)) + 12);
-  inc(result, Fvalue.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes(magic));
 end;
 
 { TUcumModel }
@@ -351,10 +351,10 @@ end;
 
 destructor TUcumModel.Destroy;
 begin
-  Fprefixes.Free;
-  FbaseUnits.Free;
-  FdefinedUnits.Free;
-  FProperties.Free;
+  Fprefixes.free;
+  FbaseUnits.free;
+  FdefinedUnits.free;
+  FProperties.free;
   inherited;
 end;
 
@@ -370,13 +370,13 @@ begin
   result := TUcumModel(inherited Link);
 end;
 
-function TUcumModel.sizeInBytesV : cardinal;
+function TUcumModel.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProperties.sizeInBytes);
-  inc(result, Fprefixes.sizeInBytes);
-  inc(result, FbaseUnits.sizeInBytes);
-  inc(result, FdefinedUnits.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProperties.sizeInBytes(magic));
+  inc(result, Fprefixes.sizeInBytes(magic));
+  inc(result, FbaseUnits.sizeInBytes(magic));
+  inc(result, FdefinedUnits.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FRevisionDate.length * sizeof(char)) + 12);
 end;
@@ -391,7 +391,7 @@ end;
 
 destructor TUcumProperty.Destroy;
 begin
-  FCommonUnits.Free;
+  FCommonUnits.free;
   inherited;
 end;
 
@@ -400,10 +400,10 @@ begin
   result := TUcumProperty(Inherited Link);
 end;
 
-function TUcumProperty.sizeInBytesV : cardinal;
+function TUcumProperty.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCommonUnits.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCommonUnits.sizeInBytes(magic));
 end;
 
 End.

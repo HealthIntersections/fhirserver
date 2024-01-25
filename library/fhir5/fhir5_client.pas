@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -38,6 +39,9 @@ uses
   fhir5_parser, fhir5_resources, fhir5_constants, fhir5_utilities, fhir5_context, fhir5_common;
 
 Type
+
+  { TFhirClient5 }
+
   TFhirClient5 = class (TFhirClientV)
   protected
     function opWrapper : TFhirOperationOutcomeWClass; override;
@@ -50,6 +54,7 @@ Type
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; override;
 
     function conformance(summary : boolean) : TFhirCapabilityStatement;
+    function terminologyCaps : TFhirTerminologyCapabilities;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
@@ -75,12 +80,12 @@ implementation
 
 function TFhirClient5.makeParser(fmt : TFHIRFormat) : TFHIRParser;
 begin
-  result := TFHIRParsers5.parser(Worker.Link as TFHIRWorkerContext, fmt, Lang);
+  result := TFHIRParsers5.parser(Worker.Link as TFHIRWorkerContext, fmt, LangList.link);
 end;
 
 function TFhirClient5.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
 begin
-  result := TFHIRParsers5.composer(Worker.Link as TFHIRWorkerContext, fmt, Lang, style);
+  result := TFHIRParsers5.composer(Worker.Link as TFHIRWorkerContext, fmt, LangList.link, style);
 end;
 
 function TFhirClient5.opWrapper : TFhirOperationOutcomeWClass;
@@ -106,6 +111,11 @@ end;
 function TFhirClient5.conformance(summary : boolean) : TFhirCapabilityStatement;
 begin
   result := conformanceV(summary) as TFhirCapabilityStatement;
+end;
+
+function TFhirClient5.terminologyCaps: TFhirTerminologyCapabilities;
+begin
+  result := conformanceModeV('terminology') as TFhirTerminologyCapabilities;
 end;
 
 function TFhirClient5.transaction(bundle : TFHIRBundle) : TFHIRBundle;

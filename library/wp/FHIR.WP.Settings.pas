@@ -1,7 +1,7 @@
 Unit FHIR.WP.Settings;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -175,7 +175,7 @@ Type
       procedure SetTouchMode(const Value: TWPSettingsTouchMode);
       procedure SetDicomDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -357,7 +357,7 @@ Type
       Function GetSettings : TWPSettings;
     Protected
       Procedure SetSettings(Const Value : TWPSettings); Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -379,9 +379,9 @@ End;
 
 Destructor TWPSettings.Destroy;
 Begin
-  FDicomDictionary.Free;
-  FFieldDefinitions.Free;
-  FAnnotationDefinitions.Free;
+  FDicomDictionary.free;
+  FFieldDefinitions.free;
+  FAnnotationDefinitions.free;
   Inherited;
 End;
 
@@ -947,7 +947,7 @@ end;
 
 procedure TWPSettings.SetDicomDictionary(const Value: TDicomDictionary);
 begin
-  FDicomDictionary.Free;
+  FDicomDictionary.free;
   FDicomDictionary := Value;
 end;
 
@@ -1046,15 +1046,15 @@ end;
 
 
 
-function TWPSettings.sizeInBytesV : cardinal;
+function TWPSettings.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFieldDefinitions.sizeInBytes);
-  inc(result, FAnnotationDefinitions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFieldDefinitions.sizeInBytes(magic));
+  inc(result, FAnnotationDefinitions.sizeInBytes(magic));
   inc(result, (FSnapshotEmail.length * sizeof(char)) + 12);
   inc(result, (FAutosavePath.length * sizeof(char)) + 12);
   inc(result, (FAutosaveId.length * sizeof(char)) + 12);
-  inc(result, FDicomDictionary.sizeInBytes);
+  inc(result, FDicomDictionary.sizeInBytes(magic));
 end;
 
 Constructor TWPSettable.Create;
@@ -1066,7 +1066,7 @@ End;
 
 Destructor TWPSettable.Destroy;
 Begin
-  FSettings.Free;
+  FSettings.free;
   Inherited;
 End;
 
@@ -1079,15 +1079,15 @@ End;
 
 Procedure TWPSettable.SetSettings(Const Value : TWPSettings);
 Begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 End;
 
 
-function TWPSettable.sizeInBytesV : cardinal;
+function TWPSettable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 End.

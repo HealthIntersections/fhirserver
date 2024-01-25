@@ -1,5 +1,35 @@
 unit Unit1;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
+
+
 interface
 
 uses
@@ -159,8 +189,8 @@ end;
 procedure TForm1.Button4Click(Sender: TObject);
 begin
 //TFHIRObject.Create;
-ffactory:=TfhirfactoryR4.Create;
-resource:=ffactory.makeByName(edit1.text);
+ffactory := TfhirfactoryR4.Create;
+resource := ffactory.makeByName(edit1.text);
 ffactory.Assign(resource);
   createObjUIGroup(resource, edit1.text, TabItem1);
 
@@ -175,8 +205,8 @@ end;
 function TForm1.objectcount(obj:TFHIRObject): integer;
 var PL:TFHIRPropertyList;
 begin
-  PL:= ffactory.createPropertyList(obj.ClassName,true)     ;
-  result:=PL.Count;
+  PL := ffactory.createPropertyList(obj.ClassName,true)     ;
+  result := PL.Count;
   PL.Destroy
 end;
 
@@ -217,14 +247,14 @@ begin
   Fr.Padding.bottom := 7;
   Fr.ShowScrollBars := true;
   Fr.Parent := T;
-  btns:=0;
-  ffactory:=TfhirfactoryR4.Create;
+  btns := 0;
+  ffactory := TfhirfactoryR4.Create;
   ffactory.Assign(obj);
 
-  st:=obj.fhirType;
-//  st:='ExampleScenario';
+  st := obj.fhirType;
+//  st := 'ExampleScenario';
 
-  PL:= ffactory.createPropertyList(st,true)     ;
+  PL := ffactory.createPropertyList(st,true)     ;
 
   for i := 0 to PL.Count-1 do
   begin
@@ -243,7 +273,7 @@ begin
       begin
 //        obj.createPropertyValue(PL.Properties[i].Name);
 obj.
-        childProperty:=TFHIRProperty(obj.createPropertyValue(PL.Properties[i].Name));
+        childProperty := TFHIRProperty(obj.createPropertyValue(PL.Properties[i].Name));
         createEntry(tAlignLayout.left, childProperty , PL.Properties[i].Name, PL.Properties[i].Name, 'string', Fr);
       end;
     end;
@@ -289,13 +319,13 @@ begin
   Fr.Padding.bottom := 7;
   Fr.ShowScrollBars := true;
   Fr.Parent := T;
-  btns:=0;
-  ffactory:=TfhirfactoryR4.Create;
+  btns := 0;
+  ffactory := TfhirfactoryR4.Create;
   ffactory.Assign(obj);
 
-  st:=parentPrefix+'.'+obj.Name;
+  st := parentPrefix+'.'+obj.Name;
 
-  PL:= ffactory.createPropertyList(st,true)     ;
+  PL := ffactory.createPropertyList(st,true)     ;
 
   for i := 0 to PL.Count-1 do
   begin
@@ -324,9 +354,9 @@ begin
   if datatype = 'string' then
   begin
     edt := TFHIRStringEdit.Create(parentframe);
-    edt.Parent:=parentframe;
-    FHIRProp:= TFHIRProperty(edt.associate(TFHIRString(FHIRProp)));
-    edt.FHIRPropertyName:=propname;
+    edt.Parent := parentframe;
+    FHIRProp := TFHIRProperty(edt.associate(TFHIRString(FHIRProp)));
+    edt.FHIRPropertyName := propname;
   end;
 
   if datatype = 'memo' then
@@ -359,7 +389,7 @@ begin
   B.position.x := 27 + ((bNumber-1) mod ButtonColumns) * 121;
   B.position.y := 10  + ((bNumber-1) div ButtonColumns) * 27;
   B.OnClick := Button1Click;
-  parentframe.Height:= 41 + ((bNumber-1) div ButtonColumns) * 25;
+  parentframe.Height := 41 + ((bNumber-1) div ButtonColumns) * 25;
 
 end;
 
@@ -408,12 +438,12 @@ begin
     for fmxctrl in tabcontrol.ActiveTab.Controls[1].Controls[1].Controls[1].Controls do begin
       if fmxctrl is TScrollBox then
       if fmxctrl.Controls[1].Controls[2].Controls[1].Controls[0] is TFHIRStringEdit then begin
-         fmxeditor:=fmxctrl.Controls[1].Controls[2].Controls[1].Controls[0];
-         st:=TFHIRStringEdit(FMXEditor).FHIRPropertyName;
-//         TFHIRExampleScenario(obj).nameElement:=TFHIRStringEdit(FMXEditor).associate(TFHIRString(TFHIRExampleScenario(obj).nameElement));
+         fmxeditor := fmxctrl.Controls[1].Controls[2].Controls[1].Controls[0];
+         st := TFHIRStringEdit(FMXEditor).FHIRPropertyName;
+//         TFHIRExampleScenario(obj).nameElement := TFHIRStringEdit(FMXEditor).associate(TFHIRString(TFHIRExampleScenario(obj).nameElement));
       end;
     end;
-// working code before (for ref)     TFHIRExampleScenario(obj).nameElement:= edit5.associate(TFHIRExampleScenario(obj).nameElement);
+// working code before (for ref)     TFHIRExampleScenario(obj).nameElement := edit5.associate(TFHIRExampleScenario(obj).nameElement);
 
   end;
 

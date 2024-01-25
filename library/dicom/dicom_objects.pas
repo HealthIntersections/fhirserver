@@ -1,7 +1,7 @@
 Unit dicom_objects;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -332,7 +332,7 @@ Type
     Procedure SetDictionary(const Value: TDicomDictionary);
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
     destructor Destroy; Override;
@@ -357,7 +357,7 @@ Type
     {
       Add an already existing TDicomValue to the End of the list.
     }
-    Procedure AddItem(value : TDicomValue);
+    Function AddItem(value : TDicomValue): TDicomValue;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -488,7 +488,7 @@ type
     {
       Add an already existing TDicomString to the End of the list.
     }
-    Procedure AddItem(value : TDicomString);
+    Function AddItem(value : TDicomString): TDicomString;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -562,7 +562,7 @@ type
     procedure SetElementDefinition(const Value: TDicomDictionaryElement);
     procedure SetDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oDictionary : TDicomDictionary; aKnownType : TDicomVRType; aPossibleTypes : TDicomVRTypes);
     constructor CreateComplex(oDictionary : TDicomDictionary);
@@ -647,7 +647,7 @@ type
 
     Function FindByTags(Const group, element: Word; Out iIndex: Integer): Boolean; Overload;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oDictionary: TDicomDictionary); Overload;
     destructor Destroy; Override;
@@ -697,7 +697,7 @@ type
     {
       Add an already existing TDicomDataElement to the End of the list.
     }
-    Procedure AddItem(value : TDicomDataElement);
+    Function AddItem(value : TDicomDataElement): TDicomDataElement;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -760,7 +760,7 @@ type
     Function MakeElement(sTag : String) : TDicomDataElement; Overload;
     Procedure ExecuteQuery(contexts : TDicomObjectList; results : TDicomDataElementList; path : String; Cursor : Integer; bDescendents : Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(oDictionary: TDicomDictionary); Overload;
@@ -922,7 +922,7 @@ type
   Protected
     Function ItemClass : TFslObjectClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oDictionary: TDicomDictionary); Overload;
     destructor Destroy; Override;
@@ -938,7 +938,7 @@ type
     {
       Add an already existing TDicomObject to the End of the list.
     }
-    Procedure AddItem(value : TDicomObject);
+    Function AddItem(value : TDicomObject): TDicomObject;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1006,7 +1006,7 @@ type
     FDictionary: TDicomDictionary;
     procedure SetDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1055,7 +1055,7 @@ type
     FOffsetStart: Cardinal;
     procedure SetAbstractSyntax(const Value: TDicomString);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1104,7 +1104,7 @@ type
     {
       Add an already existing TDicomPresentationContextInfo to the End of the list.
     }
-    Procedure AddItem(value : TDicomPresentationContextInfo);
+    Function AddItem(value : TDicomPresentationContextInfo): TDicomPresentationContextInfo;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1167,7 +1167,7 @@ type
     FResult: TPresentationAcceptResult;
     procedure SetTransferSyntax(const Value: TDicomString);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
     Function Link : TDicomPresentationAcceptContextInfo; Overload;
@@ -1214,7 +1214,7 @@ type
     {
       Add an already existing TDicomPresentationAcceptContextInfo to the End of the list.
     }
-    Procedure AddItem(value : TDicomPresentationAcceptContextInfo);
+    Function AddItem(value : TDicomPresentationAcceptContextInfo): TDicomPresentationAcceptContextInfo;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1300,7 +1300,7 @@ type
     {
       Add an already existing TDicomUserData to the End of the list.
     }
-    Procedure AddItem(value : TDicomUserData);
+    Function AddItem(value : TDicomUserData): TDicomUserData;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1362,7 +1362,7 @@ type
     Procedure SetCallingEntity(Const Value: TDicomString);
   
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1445,7 +1445,7 @@ type
     procedure SetCalledEntity(const Value: TDicomString);
     procedure SetCallingEntity(const Value: TDicomString);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1545,7 +1545,7 @@ type
     FResult: TDicomAssociateRejectResult;
     FSource: TDicomAssociateRejectSource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     Function Link : TDicomAssociateRejectPDU; Overload;
@@ -1639,7 +1639,7 @@ type
     {
       Add an already existing TDicomPresentationDataValue to the End of the list.
     }
-    Procedure AddItem(value : TDicomPresentationDataValue);
+    Function AddItem(value : TDicomPresentationDataValue): TDicomPresentationDataValue;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -1695,7 +1695,7 @@ type
     FContextId: Byte;
     FDataValues : TDicomPresentationDataValueList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1816,7 +1816,7 @@ type
     procedure SetHeader(const Value: TDicomObject);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -1931,7 +1931,7 @@ type
     procedure SetCommand(const Value: TDicomObject);
     procedure SetData(const Value: TDicomObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -2028,7 +2028,7 @@ type
     {
       Add an already existing TDicomMessage to the End of the list.
     }
-    Procedure AddItem(value : TDicomMessage);
+    Function AddItem(value : TDicomMessage): TDicomMessage;
 
     {
       See if an item is already in the list. returns -1 if not in the list
@@ -2110,7 +2110,7 @@ type
     function GetInstanceType: TDicomInstanceType;
     procedure SetMessage(const Value: TDicomMessage);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -2222,10 +2222,10 @@ End;
 
 destructor TDicomDataElement.Destroy;
 Begin
-  FDictionary.Free;
-  FElementDefinition.Free;
-  FObjects.Free;
-  FValues.Free;
+  FDictionary.free;
+  FElementDefinition.free;
+  FObjects.free;
+  FValues.free;
   inherited;
 End;
 
@@ -2251,13 +2251,13 @@ End;
 
 Procedure TDicomDataElement.SetElementDefinition(const Value: TDicomDictionaryElement);
 Begin
-  FElementDefinition.Free;
+  FElementDefinition.free;
   FElementDefinition := Value;
 End;
 
 Procedure TDicomDataElement.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -2317,7 +2317,7 @@ begin
       End;
       result := oBuilder.AsString;
     Finally
-      oBuilder.Free;
+      oBuilder.free;
     End;
   End;
 end;
@@ -2332,20 +2332,21 @@ begin
   result := (FValues <> nil) and (FValues.Count > 0);
 end;
 
-function TDicomDataElement.sizeInBytesV : cardinal;
+function TDicomDataElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FElementDefinition.sizeInBytes);
-  inc(result, FObjects.sizeInBytes);
-  inc(result, FValues.sizeInBytes);
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FElementDefinition.sizeInBytes(magic));
+  inc(result, FObjects.sizeInBytes(magic));
+  inc(result, FValues.sizeInBytes(magic));
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 { TDicomDataElementList }
 
-Procedure TDicomDataElementList.AddItem(value: TDicomDataElement);
+function TDicomDataElementList.AddItem(value: TDicomDataElement): TDicomDataElement;
 Begin
   Add(value);
+  result := value;
 End;
 
 Procedure TDicomDataElementList.ClearItems;
@@ -2385,7 +2386,7 @@ End;
 
 Destructor TDicomDataElementList.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
 
   Inherited;
 End;
@@ -2414,7 +2415,7 @@ Begin
 
     Result := Find(oElement, iIndex, CompareByTags);
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2526,14 +2527,14 @@ begin
     End;
     result := oBuilder.AsString;
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 end;
 
-function TDicomDataElementList.sizeInBytesV : cardinal;
+function TDicomDataElementList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 { TDicomObject }
@@ -2557,8 +2558,8 @@ End;
 
 destructor TDicomObject.Destroy;
 Begin
-  FDictionary.Free;
-  FElements.Free;
+  FDictionary.free;
+  FElements.free;
   inherited;
 End;
 
@@ -2588,7 +2589,7 @@ function TDicomObject.MakeElement(sTag : String; sValue : String): TDicomDataEle
       oVr.AsString := s;
       result.values.Add(oVr.Link);
     Finally
-      oVr.Free;
+      oVr.free;
     End;
   End;
 var
@@ -2617,7 +2618,7 @@ Begin
       Add(sValue);
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -2635,7 +2636,7 @@ Begin
     result.ElementDefinition := oDefn.Link;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -2657,7 +2658,7 @@ Begin
     work := copy(work, 1, i-1);
   End;
   if pos('[', work) > 0 Then
-    raise EDicomException.create('filters are not yet supported')
+    raise EDicomException.Create('filters are not yet supported')
   Else
     tag := work;
   local := TDicomDataElementList.Create(Elements.Dictionary.Link);
@@ -2675,9 +2676,9 @@ Begin
         results.Add(local[i].Link);
     End
     Else
-      raise EDicomException.create('Tail not supported yet');
+      raise EDicomException.Create('Tail not supported yet');
   Finally
-    local.Free;
+    local.free;
   End;
 End;
 
@@ -2699,8 +2700,8 @@ begin
       ExecuteQuery(context, results, path, 1, false);
     result := results.Link;
   Finally
-    results.Free;
-    context.Free;
+    results.free;
+    context.free;
   End;
 end;
 
@@ -2773,11 +2774,11 @@ begin
   FElements := TDicomDataElementList.Create(FDictionary.Link);
 end;
 
-function TDicomObject.sizeInBytesV : cardinal;
+function TDicomObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FElements.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FElements.sizeInBytes(magic));
 end;
 
 { TDicomObjectList }
@@ -2791,14 +2792,15 @@ End;
 
 Destructor TDicomObjectList.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
 
   Inherited;
 End;
 
-Procedure TDicomObjectList.AddItem(value: TDicomObject);
+function TDicomObjectList.AddItem(value: TDicomObject): TDicomObject;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomObjectList.Append: TDicomObject;
@@ -2807,7 +2809,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2842,7 +2844,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2876,10 +2878,10 @@ Begin
   ObjectByIndex[iIndex] := value;
 End;
 
-function TDicomObjectList.sizeInBytesV : cardinal;
+function TDicomObjectList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 { TDicomInstance }
@@ -2901,25 +2903,25 @@ End;
 
 Procedure TDicomInstance.Clear;
 Begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := nil;
-  FSimpleObject.Free;
+  FSimpleObject.free;
   FSimpleObject := nil;
-  FFileObject.Free;
+  FFileObject.free;
   FFileObject := nil;
-  FAssociateRequest.Free;
+  FAssociateRequest.free;
   FAssociateRequest := nil;
-  FAssociateAccept.Free;
+  FAssociateAccept.free;
   FAssociateAccept := nil;
-  FAssociateReject.Free;
+  FAssociateReject.free;
   FAssociateReject := nil;
-  FData.Free;
+  FData.free;
   FData := nil;
-  FAbort.Free;
+  FAbort.free;
   FAbort := nil;
-  FReleaseRequest.Free;
+  FReleaseRequest.free;
   FReleaseRequest := nil;
-  FReleaseResponse.Free;
+  FReleaseResponse.free;
   FReleaseResponse := nil;
 End;
 
@@ -3004,7 +3006,7 @@ End;
 
 procedure TDicomInstance.SetMessage(const Value: TDicomMessage);
 begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := Value;
 end;
 
@@ -3026,19 +3028,19 @@ Begin
   FSimpleObject := Value;
 End;
 
-function TDicomInstance.sizeInBytesV : cardinal;
+function TDicomInstance.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSimpleObject.sizeInBytes);
-  inc(result, FFileObject.sizeInBytes);
-  inc(result, FAssociateRequest.sizeInBytes);
-  inc(result, FAssociateAccept.sizeInBytes);
-  inc(result, FAssociateReject.sizeInBytes);
-  inc(result, FData.sizeInBytes);
-  inc(result, FAbort.sizeInBytes);
-  inc(result, FReleaseRequest.sizeInBytes);
-  inc(result, FReleaseResponse.sizeInBytes);
-  inc(result, FMessage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSimpleObject.sizeInBytes(magic));
+  inc(result, FFileObject.sizeInBytes(magic));
+  inc(result, FAssociateRequest.sizeInBytes(magic));
+  inc(result, FAssociateAccept.sizeInBytes(magic));
+  inc(result, FAssociateReject.sizeInBytes(magic));
+  inc(result, FData.sizeInBytes(magic));
+  inc(result, FAbort.sizeInBytes(magic));
+  inc(result, FReleaseRequest.sizeInBytes(magic));
+  inc(result, FReleaseResponse.sizeInBytes(magic));
+  inc(result, FMessage.sizeInBytes(magic));
 end;
 
 { TDicomPDU }
@@ -3063,7 +3065,7 @@ End;
 
 destructor TDicomPDU.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 End;
 
@@ -3074,14 +3076,14 @@ End;
 
 Procedure TDicomPDU.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
-function TDicomPDU.sizeInBytesV : cardinal;
+function TDicomPDU.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 { TDicomPresentationContextInfo }
@@ -3107,8 +3109,8 @@ End;
 
 destructor TDicomPresentationContextInfo.Destroy;
 Begin
-  FAbstractSyntax.Free;
-  FTransferSyntaxes.Free;
+  FAbstractSyntax.free;
+  FTransferSyntaxes.free;
   inherited;
 End;
 
@@ -3120,15 +3122,15 @@ End;
 
 Procedure TDicomPresentationContextInfo.SetAbstractSyntax(const Value: TDicomString);
 Begin
-  FAbstractSyntax.Free;
+  FAbstractSyntax.free;
   FAbstractSyntax := Value;
 End;
 
-function TDicomPresentationContextInfo.sizeInBytesV : cardinal;
+function TDicomPresentationContextInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAbstractSyntax.sizeInBytes);
-  inc(result, FTransferSyntaxes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAbstractSyntax.sizeInBytes(magic));
+  inc(result, FTransferSyntaxes.sizeInBytes(magic));
 end;
 
 { TDicomPresentationAcceptContextInfo }
@@ -3148,7 +3150,7 @@ End;
 
 destructor TDicomPresentationAcceptContextInfo.Destroy;
 Begin
-  FTransferSyntax.Free;
+  FTransferSyntax.free;
   inherited;
 End;
 
@@ -3159,14 +3161,14 @@ End;
 
 Procedure TDicomPresentationAcceptContextInfo.SetTransferSyntax(const Value: TDicomString);
 Begin
-  FTransferSyntax.Free;
+  FTransferSyntax.free;
   FTransferSyntax := Value;
 End;
 
-function TDicomPresentationAcceptContextInfo.sizeInBytesV : cardinal;
+function TDicomPresentationAcceptContextInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTransferSyntax.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTransferSyntax.sizeInBytes(magic));
 end;
 
 { TDicomAssociateRequestPDU }
@@ -3197,11 +3199,11 @@ End;
 
 destructor TDicomAssociateRequestPDU.Destroy;
 Begin
-  FPresentationContexts.Free;
-  FUserData.Free;
-  FCalledEntity.Free;
-  FCallingEntity.Free;
-  FApplicationContext.Free;
+  FPresentationContexts.free;
+  FUserData.free;
+  FCalledEntity.free;
+  FCallingEntity.free;
+  FApplicationContext.free;
   inherited;
 End;
 
@@ -3212,37 +3214,38 @@ End;
 
 Procedure TDicomAssociateRequestPDU.SetApplicationContext(const Value: TDicomString);
 Begin
-  FApplicationContext.Free;
+  FApplicationContext.free;
   FApplicationContext := Value;
 End;
 
 Procedure TDicomAssociateRequestPDU.SetCalledEntity(const Value: TDicomString);
 Begin
-  FCalledEntity.Free;
+  FCalledEntity.free;
   FCalledEntity := Value;
 End;
 
 Procedure TDicomAssociateRequestPDU.SetCallingEntity(const Value: TDicomString);
 Begin
-  FCallingEntity.Free;
+  FCallingEntity.free;
   FCallingEntity := Value;
 End;
 
-function TDicomAssociateRequestPDU.sizeInBytesV : cardinal;
+function TDicomAssociateRequestPDU.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCalledEntity.sizeInBytes);
-  inc(result, FCallingEntity.sizeInBytes);
-  inc(result, FApplicationContext.sizeInBytes);
-  inc(result, FPresentationContexts.sizeInBytes);
-  inc(result, FUserData.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCalledEntity.sizeInBytes(magic));
+  inc(result, FCallingEntity.sizeInBytes(magic));
+  inc(result, FApplicationContext.sizeInBytes(magic));
+  inc(result, FPresentationContexts.sizeInBytes(magic));
+  inc(result, FUserData.sizeInBytes(magic));
 end;
 
 { TDicomPresentationContextInfoList }
 
-Procedure TDicomPresentationContextInfoList.AddItem(value: TDicomPresentationContextInfo);
+function TDicomPresentationContextInfoList.AddItem(value: TDicomPresentationContextInfo): TDicomPresentationContextInfo;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomPresentationContextInfoList.Append: TDicomPresentationContextInfo;
@@ -3251,7 +3254,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3276,7 +3279,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3312,9 +3315,10 @@ End;
 
 { TDicomPresentationAcceptContextInfoList }
 
-Procedure TDicomPresentationAcceptContextInfoList.AddItem(value: TDicomPresentationAcceptContextInfo);
+function TDicomPresentationAcceptContextInfoList.AddItem(value: TDicomPresentationAcceptContextInfo): TDicomPresentationAcceptContextInfo;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomPresentationAcceptContextInfoList.Append: TDicomPresentationAcceptContextInfo;
@@ -3323,7 +3327,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3353,7 +3357,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3410,11 +3414,11 @@ End;
 
 destructor TDicomAssociateAcceptPDU.Destroy;
 Begin
-  FPresentationContexts.Free;
-  FUserData.Free;
-  FCalledEntity.Free;
-  FCallingEntity.Free;
-  FApplicationContext.Free;
+  FPresentationContexts.free;
+  FUserData.free;
+  FCalledEntity.free;
+  FCallingEntity.free;
+  FApplicationContext.free;
   inherited;
 End;
 
@@ -3425,30 +3429,30 @@ End;
 
 Procedure TDicomAssociateAcceptPDU.SetApplicationContext(const Value: TDicomString);
 Begin
-  FApplicationContext.Free;
+  FApplicationContext.free;
   FApplicationContext := Value;
 End;
 
 Procedure TDicomAssociateAcceptPDU.SetCalledEntity(const Value: TDicomString);
 Begin
-  FCalledEntity.Free;
+  FCalledEntity.free;
   FCalledEntity := Value;
 End;
 
 Procedure TDicomAssociateAcceptPDU.SetCallingEntity(const Value: TDicomString);
 Begin
-  FCallingEntity.Free;
+  FCallingEntity.free;
   FCallingEntity := Value;
 End;
 
-function TDicomAssociateAcceptPDU.sizeInBytesV : cardinal;
+function TDicomAssociateAcceptPDU.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCalledEntity.sizeInBytes);
-  inc(result, FCallingEntity.sizeInBytes);
-  inc(result, FApplicationContext.sizeInBytes);
-  inc(result, FPresentationContexts.sizeInBytes);
-  inc(result, FUserData.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCalledEntity.sizeInBytes(magic));
+  inc(result, FCallingEntity.sizeInBytes(magic));
+  inc(result, FApplicationContext.sizeInBytes(magic));
+  inc(result, FPresentationContexts.sizeInBytes(magic));
+  inc(result, FUserData.sizeInBytes(magic));
 end;
 
 { TDicomAssociateRejectPDU }
@@ -3477,9 +3481,9 @@ Begin
   result := TDicomAssociateRejectPDU(inherited Link);
 End;
 
-function TDicomAssociateRejectPDU.sizeInBytesV : cardinal;
+function TDicomAssociateRejectPDU.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TDicomDataPDU }
@@ -3504,7 +3508,7 @@ End;
 
 destructor TDicomDataPDU.Destroy;
 Begin
-  FDataValues.Free;
+  FDataValues.free;
   inherited;
 End;
 
@@ -3514,10 +3518,10 @@ Begin
 End;
 
 
-function TDicomDataPDU.sizeInBytesV : cardinal;
+function TDicomDataPDU.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDataValues.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDataValues.sizeInBytes(magic));
 end;
 
 { TDicomAbortPDU }
@@ -3609,12 +3613,12 @@ Begin
   try
     oData.Id := iId;
     oData.FValue := oValue.Value;
-    oValue.Free;
+    oValue.free;
     oData.OffsetStart := iOffsetStart;
     oData.OffsetEnd := iOffsetEnd;
     add(oData.Link);
   Finally
-    oData.Free;
+    oData.free;
   End;
 End;
 
@@ -3628,9 +3632,10 @@ Begin
   result := TDicomUserData;
 End;
 
-Procedure TDicomUserDataList.AddItem(value: TDicomUserData);
+function TDicomUserDataList.AddItem(value: TDicomUserData): TDicomUserData;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomUserDataList.Append: TDicomUserData;
@@ -3639,7 +3644,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3664,7 +3669,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3710,9 +3715,10 @@ End;
 
 { TDicomPresentationDataValueList }
 
-Procedure TDicomPresentationDataValueList.AddItem(value: TDicomPresentationDataValue);
+function TDicomPresentationDataValueList.AddItem(value: TDicomPresentationDataValue): TDicomPresentationDataValue;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomPresentationDataValueList.Append: TDicomPresentationDataValue;
@@ -3721,7 +3727,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3746,7 +3752,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -3781,7 +3787,7 @@ Begin
     oPV.FBytes := oBuffer.AsBytes;
     Add(oPV.Link);
   Finally
-    oPV.Free;
+    oPV.free;
   End;
 End;
 
@@ -3812,8 +3818,8 @@ End;
 
 destructor TDicomFile.Destroy;
 Begin
-  FContent.Free;
-  FHeader.Free;
+  FContent.free;
+  FHeader.free;
   inherited;
 End;
 
@@ -3824,13 +3830,13 @@ End;
 
 Procedure TDicomFile.SetContent(const Value: TDicomObject);
 Begin
-  FContent.Free;
+  FContent.free;
   FContent := Value;
 End;
 
 Procedure TDicomFile.SetHeader(const Value: TDicomObject);
 Begin
-  FHeader.Free;
+  FHeader.free;
   FHeader := Value;
 End;
 
@@ -3877,12 +3883,12 @@ Begin
   result := FHeader.FElements.GetByTags(group, element).SingleValue;
 End;
 
-function TDicomFile.sizeInBytesV : cardinal;
+function TDicomFile.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FContent.sizeInBytes);
-  inc(result, FHeader.sizeInBytes);
+  inc(result, FContent.sizeInBytes(magic));
+  inc(result, FHeader.sizeInBytes(magic));
 end;
 
 { TDicomString }
@@ -3967,9 +3973,10 @@ Begin
   result := TDicomStringList(Inherited Link);
 End;
 
-Procedure TDicomStringList.AddItem(value: TDicomString);
+function TDicomStringList.AddItem(value: TDicomString): TDicomString;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomStringList.Append: TDicomString;
@@ -3978,7 +3985,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4003,7 +4010,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4031,8 +4038,8 @@ End;
 
 destructor TDicomMessage.Destroy;
 Begin
-  FData.Free;
-  FCommand.Free;
+  FData.free;
+  FCommand.free;
   inherited;
 End;
 
@@ -4065,13 +4072,13 @@ End;
 
 Procedure TDicomMessage.SetCommand(const Value: TDicomObject);
 Begin
-  FCommand.Free;
+  FCommand.free;
   FCommand := Value;
 End;
 
 Procedure TDicomMessage.SetData(const Value: TDicomObject);
 Begin
-  FData.Free;
+  FData.free;
   FData := Value;
 End;
 
@@ -4114,20 +4121,21 @@ begin
   result := FCommand.Elements.GetByTag('0000,0900').SingleValue.AsUS;
 end;
 
-function TDicomMessage.sizeInBytesV : cardinal;
+function TDicomMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FData.sizeInBytes);
-  inc(result, FCommand.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FData.sizeInBytes(magic));
+  inc(result, FCommand.sizeInBytes(magic));
   inc(result, (FAbstractSyntax.length * sizeof(char)) + 12);
   inc(result, (FTransferSyntax.length * sizeof(char)) + 12);
 end;
 
 { TDicomMessageList }
 
-Procedure TDicomMessageList.AddItem(value: TDicomMessage);
+function TDicomMessageList.AddItem(value: TDicomMessage): TDicomMessage;
 Begin
   Add(value);
+  result := value;
 End;
 
 Function TDicomMessageList.Append: TDicomMessage;
@@ -4136,7 +4144,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4161,7 +4169,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4250,7 +4258,7 @@ End;
 
 Procedure TDicomValueList.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -4264,7 +4272,7 @@ End;
 
 destructor TDicomValueList.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 End;
 
@@ -4283,13 +4291,14 @@ Begin
 
     Result := oTypes.Link;
   Finally
-    oTypes.Free;
+    oTypes.free;
   End;
 End;
 
-Procedure TDicomValueList.AddItem(value: TDicomValue);
+function TDicomValueList.AddItem(value: TDicomValue): TDicomValue;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TDicomValueList.Append: TDicomValue;
@@ -4298,7 +4307,7 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4323,7 +4332,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4347,10 +4356,10 @@ Begin
   ObjectByIndex[iIndex] := value;
 End;
 
-function TDicomValueList.sizeInBytesV : cardinal;
+function TDicomValueList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 { TDicomValue }
@@ -4366,7 +4375,7 @@ End;
 
 destructor TDicomValue.Destroy;
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 End;
 
@@ -4391,7 +4400,7 @@ End;
 
 Procedure TDicomValue.SetDictionary(const Value: TDicomDictionary);
 Begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -4400,11 +4409,11 @@ Begin
   if bExact Then
   Begin
     If length(FBytes) <> iOffset + ilength Then
-      raise EDicomException.create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES_S[FKnownType]+' (length is wrong)');
+      raise EDicomException.Create('Cannot read VR as '+sType+' as it is '+DICOM_VR_TYPE_NAMES_S[FKnownType]+' (length is wrong)');
   End
   Else
     if length(FBytes) < iOffset + ilength Then
-      raise EDicomException.create('Cannot read VR as '+sType);
+      raise EDicomException.Create('Cannot read VR as '+sType);
   Move(FBytes[iOffset], Dest, iLength);
 End;
 
@@ -4519,7 +4528,7 @@ Begin
   else
   Begin
     if (length(FBytes) mod 4 <> 0) Then
-      raise EDicomException.create('cannot read data type as OF');
+      raise EDicomException.Create('cannot read data type as OF');
     SetLength(Result, length(FBytes) div 4);
     for i := 0 to Length(result) - 1 Do
       MoveCheck('OF', i*4, result[i], 4, false);
@@ -4535,7 +4544,7 @@ Begin
   else
   Begin
     if (length(FBytes) mod 2 <> 0) Then
-      raise EDicomException.create('cannot read data type as OW');
+      raise EDicomException.Create('cannot read data type as OW');
     SetLength(Result, length(FBytes) div 2);
     for i := 0 to Length(result) - 1 Do
       MoveCheck('OW', i*2, result[i], 2, false);
@@ -4822,7 +4831,7 @@ Begin
         End;
         result := oBuilder.AsString;
       Finally
-        oBuilder.Free;
+        oBuilder.free;
       End;
       End;
     dvtOF :
@@ -4839,7 +4848,7 @@ Begin
         End;
         result := oBuilder.AsString;
       Finally
-        oBuilder.Free;
+        oBuilder.free;
       End;
       End;
     dvtUN : result := EncodePercent(BytesAsString(AsUN));
@@ -4880,7 +4889,7 @@ Begin
     dvtFD : AsFD := StrToFloat(s);
     dvtOB : AsUN := StringAsBytes(DecodePercent(s));
     dvtOW : SetAsWords(s);
-    dvtOF : raise EDicomException.create('todo'); // AsOF := s;
+    dvtOF : raise EDicomException.Create('todo'); // AsOF := s;
     dvtUN : AsUN := StringAsBytes(DecodePercent(s));
   End;
 End;

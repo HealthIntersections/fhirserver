@@ -131,12 +131,12 @@ begin
   //  if (session <> nil) and (session.Name <> 'server') and (session.Name <> 'service') then // session is nil if we are reloading. Service is always allowed to create a subscription
   //  begin
   //    if session.Email = '' then
-  //      raise EFHIRException.create('This server does not accept subscription request unless an email address is the client login is associated with an email address');
+  //      raise EFHIRException.Create('This server does not accept subscription request unless an email address is the client login is associated with an email address');
   //    ok := false;
   //    for i := 0 to subscription.contactList.Count - 1 do
   //      ok := ok or ((subscription.contactList[i].systemST = ContactSystemEmail) and (subscription.contactList[i].valueST = session.Email));
   //    if not ok then
-  //      raise EFHIRException.create('The subscription must explicitly list the logged in user email ('+session.Email+') as a contact');
+  //      raise EFHIRException.Create('The subscription must explicitly list the logged in user email ('+session.Email+') as a contact');
   //  end;
 
     // basic setup stuff
@@ -148,9 +148,9 @@ begin
     rule((subscription.channel.type_ <> SubscriptionChannelTypeSms) or subscription.channel.endpoint.StartsWith('tel:'), 'When the channel type is "sms", then the URL must start with "tel:"');
 
     if ts.Count > 0 then
-      raise EFHIRException.create(ts.Text);
+      raise EFHIRException.Create(ts.Text);
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -231,19 +231,19 @@ begin
               begin
                 entry.response := TFhirBundleEntryResponse.Create;
                 entry.response.status := inttostr(e.Status);
-                entry.resource := BuildOperationOutcome(request.Lang, e);
+                entry.resource := BuildOperationOutcome(request.LangList, e);
               end;
               on e : Exception do
               begin
                 entry.response := TFhirBundleEntryResponse.Create;
                 entry.response.status := '500';
-                entry.resource := BuildOperationOutcome(request.Lang, e);
+                entry.resource := BuildOperationOutcome(request.LangList, e);
               end;
             end;
           end;
       finally
-        request.Free;
-        response.Free;
+        request.free;
+        response.free;
       end;
       result := bundle.Link;
     finally
@@ -274,7 +274,7 @@ begin
       value := Codes_TFHIRResourceType[resource.ResourceType]+'/'+resource.id
     else
     begin
-      qry := TFHIRPathEngine.create(nil, nil);
+      qry := TFHIRPathEngine.Create(nil, nil);
       try
         results := qry.evaluate(nil, resource, code);
         try
@@ -284,15 +284,15 @@ begin
             if o.value is TFHIRPrimitiveType then
               CommaAdd(value, TFHIRPrimitiveType(o.value).StringValue)
             else
-              raise EFHIRException.create('URL templates can only refer to primitive types (found '+o.ClassName+')');
+              raise EFHIRException.Create('URL templates can only refer to primitive types (found '+o.ClassName+')');
           end;
           if (value = '') then
             value := '(nil)';
         finally
-          results.Free;
+          results.free;
         end;
       finally
-        qry.Free;
+        qry.free;
       end;
     end;
 

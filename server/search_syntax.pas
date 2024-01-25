@@ -34,8 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_utilities, fsl_base, fsl_fpc,
+  SysUtils, 
+  fsl_utilities, fsl_base, fsl_regex,
   fhir_objects;
 
 Type
@@ -156,20 +156,20 @@ implementation
 
 destructor TFSFilterParameterPath.Destroy;
 begin
-  FFilter.Free;
-  FNext.Free;
+  FFilter.free;
+  FNext.free;
   inherited;
 end;
 
 procedure TFSFilterParameterPath.SetFilter(const Value: TFSFilter);
 begin
-  FFilter.Free;
+  FFilter.free;
   FFilter := Value;
 end;
 
 procedure TFSFilterParameterPath.SetNext(const Value: TFSFilterParameterPath);
 begin
-  FNext.Free;
+  FNext.free;
   FNext := Value;
 end;
 
@@ -187,7 +187,7 @@ end;
 
 destructor TFSFilterParameter.Destroy;
 begin
-  FParamPath.Free;
+  FParamPath.free;
   inherited;
 end;
 
@@ -198,7 +198,7 @@ end;
 
 procedure TFSFilterParameter.SetParamPath(const Value: TFSFilterParameterPath);
 begin
-  FParamPath.Free;
+  FParamPath.free;
   FParamPath := Value;
 end;
 
@@ -214,8 +214,8 @@ end;
 
 destructor TFSFilterLogical.Destroy;
 begin
-  FFilter1.Free;
-  FFilter2.Free;
+  FFilter1.free;
+  FFilter2.free;
   inherited;
 end;
 
@@ -226,13 +226,13 @@ end;
 
 procedure TFSFilterLogical.SetFilter1(const Value: TFSFilter);
 begin
-  FFilter1.Free;
+  FFilter1.free;
   FFilter1 := Value;
 end;
 
 procedure TFSFilterLogical.SetFilter2(const Value: TFSFilter);
 begin
-  FFilter2.Free;
+  FFilter2.free;
   FFilter2 := Value;
 end;
 
@@ -253,7 +253,7 @@ begin
     this.cursor := 1;
     result := this.parse;
   finally
-    this.Free;
+    this.free;
   end;
 end;
 
@@ -262,8 +262,8 @@ begin
   result := parseOpen;
   if cursor <= length(original) then
   begin
-    result.Free;
-    raise EFHIRException.create('Expression did not terminate at '+inttostr(cursor));
+    result.free;
+    raise EFHIRException.Create('Expression did not terminate at '+inttostr(cursor));
   end;
 end;
 
@@ -279,16 +279,16 @@ begin
     try
       grp.contained := parseOpen;
       if peek <> fsltClose then
-        raise EFHIRException.create('Expected '')'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
+        raise EFHIRException.Create('Expected '')'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
       inc(cursor);
       case peek of
         fsltName : result := parseLogical(grp);
         fsltEnded, fsltClose, fsltCloseSq : result := grp.Link as TFSFilter;
       else
-        raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+        raise EFHIRException.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
       end;
     finally
-      grp.Free;
+      grp.free;
     end;
   end
   else
@@ -313,11 +313,11 @@ begin
     filter.ParamPath := parsePath(name);
 
     if peek <> fsltName then
-      raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      raise EFHIRException.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     s := ConsumeName;
     i := StringArrayIndexOfSensitive(CODES_CompareOperation, s);
     if (i < 0) then
-      raise EFHIRException.create('Unknown operation "'+s+'" at '+inttostr(cursor));
+      raise EFHIRException.Create('Unknown operation "'+s+'" at '+inttostr(cursor));
     filter.FOperation := TFSCompareOperation(i);
 
     case peek of
@@ -337,23 +337,23 @@ begin
         filter.FValueType := fvtString;
         end
     else
-      raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      raise EFHIRException.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     end;
 
     // check operation / value type results
     case Filter.FOperation of
-      fscoPR: if (filter.FValue <> 'true') and (filter.FValue <> 'false') then raise EFHIRException.create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
-      fscoPO: if not IsDate(filter.FValue) then raise EFHIRException.create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
+      fscoPR: if (filter.FValue <> 'true') and (filter.FValue <> 'false') then raise EFHIRException.Create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
+      fscoPO: if not IsDate(filter.FValue) then raise EFHIRException.Create('Value "'+filter.Value+'" not valid for Operation '+CODES_CompareOperation[filter.Operation]+' at '+inttostr(cursor));
     end;
 
     case peek of
       fsltName : result := parseLogical(filter);
       fsltEnded, fsltClose, fsltCloseSq : result := filter.Link as TFSFilter;
     else
-      raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+      raise EFHIRException.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
     end;
   finally
-    filter.Free;
+    filter.free;
   end;
 end;
 
@@ -367,9 +367,9 @@ begin
   else
     s := ConsumeName;
   if (s <> 'or') and (s <> 'and') and (s <> 'not') then
-    raise EFHIRException.create('Unexpected Name "'+s+'" at '+inttostr(cursor));
+    raise EFHIRException.Create('Unexpected Name "'+s+'" at '+inttostr(cursor));
 
-  logical:= TFSFilterLogical.Create;
+  logical := TFSFilterLogical.Create;
   try
     logical.FFilter1 := filter.Link as TFSFilter;
     if s = 'or' then
@@ -382,7 +382,7 @@ begin
 
     result := logical.Link as TFSFilter;
   finally
-    logical.Free;
+    logical.free;
   end;
 end;
 
@@ -396,22 +396,22 @@ begin
       inc(Cursor);
       result.FFilter := parseOpen;
       if peek <> fsltCloseSq then
-        raise EFHIRException.create('Expected '']'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
+        raise EFHIRException.Create('Expected '']'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
       inc(cursor);
     end;
     if peek = fsltDot then
     begin
       inc(Cursor);
       if peek <> fsltName then
-        raise EFHIRException.create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
+        raise EFHIRException.Create('Unexpected Character "'+PeekCh+'" at '+inttostr(cursor));
       result.FNext := parsePath(ConsumeName);
     end
     else if result.FFilter <> nil then
-      raise EFHIRException.create('Expected ''.'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
+      raise EFHIRException.Create('Expected ''.'' at '+inttostr(cursor)+' but found "'+peekCh+'"');
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 
 end;
@@ -434,7 +434,7 @@ begin
      '[' : result := fsltOpenSq;
      ']' : result := fsltCloseSq;
    else
-     raise EFHIRException.create('Unknown Character "'+PeekCh+'"  at '+inttostr(cursor));
+     raise EFHIRException.Create('Unknown Character "'+PeekCh+'"  at '+inttostr(cursor));
    end;
 end;
 
@@ -494,15 +494,15 @@ begin
       else if (original[cursor] = 'n') then
         result[l] := #10
       else
-        raise EFHIRException.create('Unknown escape sequence at '+inttostr(cursor));
+        raise EFHIRException.Create('Unknown escape sequence at '+inttostr(cursor));
     end;
     inc(cursor);
   end;
   SetLength(result, l);
   if (cursor > length(original)) or (original[cursor] <> '"') then
-    raise EFHIRException.create('Problem with string termination at '+inttostr(cursor));
+    raise EFHIRException.Create('Problem with string termination at '+inttostr(cursor));
   if result = '' then
-    raise EFHIRException.create('Problem with string at '+inttostr(cursor)+': cannot be empty');
+    raise EFHIRException.Create('Problem with string at '+inttostr(cursor)+': cannot be empty');
 
   inc(cursor);
 end;
@@ -522,10 +522,14 @@ end;
 
 function TFSFilterParser.IsDate(s: String): boolean;
 var
-  reg :  TRegex;
+  reg :  TRegularExpression;
 begin
-  reg := TRegex.Create(XML_DATE_PATTERN);
-  result := reg.IsMatch(s);
+  reg := TRegularExpression.Create(XML_DATE_PATTERN);
+  try
+    result := reg.IsMatch(s);
+  finally
+    reg.free;
+  end;
 end;
 
 { TFSCharIssuer }
@@ -547,7 +551,7 @@ end;
 
 destructor TFSFilterParameterGroup.Destroy;
 begin
-  FContained.Free;
+  FContained.free;
   inherited;
 end;
 
@@ -558,7 +562,7 @@ end;
 
 procedure TFSFilterParameterGroup.SetContained(const Value: TFSFilter);
 begin
-  FContained.Free;
+  FContained.free;
   FContained := Value;
 end;
 

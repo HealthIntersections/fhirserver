@@ -1,7 +1,7 @@
 Unit fui_vclx_controls;
 
 {
-Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2010+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -3617,16 +3617,16 @@ Begin
         Try
           oGraphics.FillRoundedRectangle(oGradientBrush, aRoundedRect, 3);
         Finally
-          oGradientBrush.Free;
+          oGradientBrush.free;
         End;
       End;
 
       oPen.SetColor(argbHalfTransparentWhite);
       oGraphics.DrawRoundedRectangle(oPen, aRoundedRect, 3);
     Finally
-      oPen.Free;
-      oSolidBrush.Free;
-      oGraphics.Free;
+      oPen.free;
+      oSolidBrush.free;
+      oGraphics.free;
     End;
   End
   Else If GradientType <> UixPanelGradientTypeNone Then
@@ -4869,7 +4869,7 @@ End;
 Procedure TUixTimer.Timer;
 Begin
   If ThreadID <> FThreadAffinity Then
-    raise ELibraryException.create('Thread affinity was violated.');
+    raise ELibraryException.Create('Thread affinity was violated.');
 
   Inherited;
 End;
@@ -4919,7 +4919,7 @@ End;
 
 Destructor TUixCodeHighlighter.Destroy;
 Begin
-  FMask.Free;
+  FMask.free;
 
   Inherited;
 End;
@@ -5100,7 +5100,7 @@ End;
 
 Procedure TUixCodeHighlighter.SetMask(Const Value: TUixCodeMask);
 Begin
-  FMask.Free;
+  FMask.free;
   FMask := Value;
 End;
 
@@ -5170,9 +5170,9 @@ End;
 
 Destructor TUixCodeEdit.Destroy;
 Begin
-  FDisallowedCharacterList.Free;
-  FAllowedCharacterList.Free;
-  FMask.Free;
+  FDisallowedCharacterList.free;
+  FAllowedCharacterList.free;
+  FMask.free;
 
   Inherited;
 End;
@@ -7592,7 +7592,7 @@ end;
 
 Destructor TUixUnicodeCodeHighlighter.Destroy;
 Begin
-  FUnicodeMask.Free;
+  FUnicodeMask.free;
 
   Inherited;
 End;
@@ -7661,7 +7661,7 @@ End;
 
 Procedure TUixUnicodeCodeHighlighter.SetMask(const Value: TUixCodeMask);
 Begin
-  FUnicodeMask.Free;
+  FUnicodeMask.free;
   FUnicodeMask := Value;
 End;
 
@@ -7956,7 +7956,7 @@ Begin
 
           Result := oStrings.ExistsByValue(Text);
         Finally
-          oStrings.Free;
+          oStrings.free;
         End;
       End;
 
@@ -9888,8 +9888,8 @@ End;
 
 Destructor TUixEdit.Destroy;
 Begin
-  FAllowedCharacterList.Free;
-  FDisallowedCharacterList.Free;
+  FAllowedCharacterList.free;
+  FDisallowedCharacterList.free;
 
   Inherited;
 End;
@@ -11147,7 +11147,7 @@ End;
 
 Destructor TUixRadioButton.Destroy;
 Begin
-  FCanvas.Free;
+  FCanvas.free;
 
   Inherited;
 End;
@@ -11531,8 +11531,8 @@ Destructor TUixRadioGroup.Destroy;
 Begin
   SetButtonCount(0);
   TStringList(FItemStringList).OnChange := Nil;
-  FItemStringList.Free;
-  FRadioButtonList.Free;
+  FItemStringList.free;
+  FRadioButtonList.free;
 
   Inherited Destroy;
 End;
@@ -11657,7 +11657,7 @@ Begin
     TGroupButton.InternalCreate(Self);
 
   While FRadioButtonList.Count > Value Do
-    TGroupButton(FRadioButtonList.Last).Free;
+    TGroupButton(FRadioButtonList.Last).free;
 End;
 
 
@@ -12534,7 +12534,7 @@ Begin
     For iLoop := 0 To oColumns.Count - 1 Do
       oColumns[iLoop].Position := iLoop;
   Finally
-    oColumns.Free;
+    oColumns.free;
   End;
 End;
 
@@ -12697,28 +12697,28 @@ End;
 
 Procedure TUixTreeView.Finalise;
 Begin
-  FMatch.Free;
-  FColumns.Free;
-  FRoot.Free;
+  FMatch.free;
+  FColumns.free;
+  FRoot.free;
 
   // Some methods are run after Finalise in VirtualTrees that are overriden and
   // use these objects (so they must be set to Nil).
-  FExpandIdentifierList.Free;
+  FExpandIdentifierList.free;
   FExpandIdentifierList := Nil;
 
-  FSelectIdentifierList.Free;
+  FSelectIdentifierList.free;
   FSelectIdentifierList := Nil;
 
-  FReselectIdentifierList.Free;
+  FReselectIdentifierList.free;
   FReselectIdentifierList := Nil;
 
-  FMixedCheckIdentifierList.Free;
+  FMixedCheckIdentifierList.free;
   FMixedCheckIdentifierList := Nil;
 
-  FCheckIdentifierList.Free;
+  FCheckIdentifierList.free;
   FCheckIdentifierList := Nil;
 
-  FRenderIdentifierList.Free;
+  FRenderIdentifierList.free;
   FRenderIdentifierList := Nil;
 
   Inherited;
@@ -13067,9 +13067,9 @@ End;
 
 Destructor TUixTreeViewNode.Destroy;
 Begin
-  FChildren.Free;
-  FCaptions.Free;
-  FCaptionVisibilities.Free;
+  FChildren.free;
+  FCaptions.free;
+  FCaptionVisibilities.free;
 
   Inherited;
 End;
@@ -15063,7 +15063,7 @@ Begin
     While iIndex > 0 Do
     Begin
       Dec(iIndex);
-      Items[iIndex].Free;
+      Items[iIndex].free;
     End;
 
     For iIndex := 0 To oTreeView.Columns.Count - 1 Do

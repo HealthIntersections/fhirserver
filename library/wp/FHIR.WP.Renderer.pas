@@ -1,7 +1,7 @@
 Unit FHIR.WP.Renderer;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -68,7 +68,7 @@ Type
       Procedure SetBackHotspot(Const Value: TWPHotspot);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -102,7 +102,7 @@ Type
 
       Function Get(Const aValue : TColour) : TWPRendererState; Reintroduce; Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -178,7 +178,7 @@ Type
 
       Function MakePenHandle(oPen : TPen; aEndStyle : TFslPenEndStyle; aJoinStyle : TFslPenJoinStyle): HPEN;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -242,7 +242,7 @@ Type
     Function GetContainer : TWPMapContainer;
     procedure SetStateStack(const Value: TWPRendererStates);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oContainer : TWPMapContainer; oStateStack : TWPRendererStates); Overload; Virtual;
     destructor Destroy; Override;
@@ -433,7 +433,7 @@ Type
 
     Function Printing : Boolean; Overload; Virtual;
     Function ApplyOutputColourRules(bBackground : Boolean; aColour : TColour) : TColour; Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -623,7 +623,7 @@ Type
     Procedure DoUpdate; Overload; Override;
     Procedure BuildMetrics; Override;
     Function WantFastDrawing : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -716,7 +716,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -890,7 +890,7 @@ Type
       Function GetColumns : TWPTableColumnMetrics;
       Function GetTable : TWPWorkingDocumentTableStartPiece;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(oTable : TWPWorkingDocumentTableStartPiece; oColumns : TWPTableColumnMetrics; iFPointSize, iWidth : Integer); Overload; Virtual;
       destructor Destroy; Override;
@@ -917,8 +917,8 @@ End;
 
 Destructor TWPRendererTableColumnSizeCalculator.Destroy;
 Begin
-  FTable.Free;
-  FColumns.Free;
+  FTable.free;
+  FColumns.free;
 
   Inherited;
 End;
@@ -926,14 +926,14 @@ End;
 
 Procedure TWPRendererTableColumnSizeCalculator.SetTable(Const Value : TWPWorkingDocumentTableStartPiece);
 Begin
-  FTable.Free;
+  FTable.free;
   FTable := Value;
 End;
 
 
 Procedure TWPRendererTableColumnSizeCalculator.SetColumns(Const Value : TWPTableColumnMetrics);
 Begin
-  FColumns.Free;
+  FColumns.free;
   FColumns := Value;
 End;
 
@@ -952,7 +952,7 @@ Begin
     AllocateMinimums(oToAllocate);
     AllocateExtra(oToAllocate);
   Finally
-    oToAllocate.Free;
+    oToAllocate.free;
   End;
 End;
 
@@ -1264,11 +1264,11 @@ End;
 
 
 
-function TWPRendererTableColumnSizeCalculator.sizeInBytesV : cardinal;
+function TWPRendererTableColumnSizeCalculator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTable.sizeInBytes);
-  inc(result, FColumns.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTable.sizeInBytes(magic));
+  inc(result, FColumns.sizeInBytes(magic));
 end;
 
 Constructor TWPCanvas.Create;
@@ -1280,7 +1280,7 @@ End;
 
 Destructor TWPCanvas.Destroy;
 Begin
-  FFont.Free;
+  FFont.free;
   Inherited;
 End;
 
@@ -1368,7 +1368,7 @@ End;
 
 Procedure TWPCanvas.SetFont(oFont : TFslFont);
 Begin
-  FFont.Free;
+  FFont.free;
   FFont := oFont;
   FFont.OnChange := FontChange;
   FontChange(Nil);
@@ -1506,10 +1506,10 @@ Begin
 End;
 
 
-function TWPCanvas.sizeInBytesV : cardinal;
+function TWPCanvas.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFont.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFont.sizeInBytes(magic));
 end;
 
 Constructor TWPRendererState.Create;
@@ -1520,8 +1520,8 @@ End;
 
 Destructor TWPRendererState.Destroy;
 Begin
-  FForeHotspot.Free;
-  FBackHotspot.Free;
+  FForeHotspot.free;
+  FBackHotspot.free;
   Inherited;
 End;
 
@@ -1550,23 +1550,23 @@ End;
 
 
 
-function TWPRendererState.sizeInBytesV : cardinal;
+function TWPRendererState.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FForeHotspot.sizeInBytes);
-  inc(result, FBackHotspot.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FForeHotspot.sizeInBytes(magic));
+  inc(result, FBackHotspot.sizeInBytes(magic));
 end;
 
 Destructor TWPRendererStates.Destroy;
 Begin
-  FSettings.Free;
+  FSettings.free;
   Inherited;
 End;
 
 
 Procedure TWPRendererStates.SetSettings(oSettings : TWPSettings);
 Begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := oSettings;
 End;
 
@@ -1631,7 +1631,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oState.Free;
+    oState.free;
   End;
 End;
 
@@ -1649,7 +1649,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oState.Free;
+    oState.free;
   End;
 End;
 
@@ -1732,27 +1732,27 @@ Begin
     oNew.BackHotspot := oBackHotspot.Link;
     Add(oNew.Link);
   Finally
-    oNew.Free;
+    oNew.free;
   End;
 End;
 
 
-function TWPRendererStates.sizeInBytesV : cardinal;
+function TWPRendererStates.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSettings.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSettings.sizeInBytes(magic));
 end;
 
 Procedure TWPRendererState.SetForeHotspot(Const Value: TWPHotspot);
 Begin
-  FForeHotspot.Free;
+  FForeHotspot.free;
   FForeHotspot := Value;
 End;
 
 
 Procedure TWPRendererState.SetBackHotspot(Const Value: TWPHotspot);
 Begin
-  FBackHotspot.Free;
+  FBackHotspot.free;
   FBackHotspot := Value;
 End;
 
@@ -1929,9 +1929,9 @@ End;
 
 Destructor TWPRendererParagraphContext.Destroy;
 Begin
-  FBuffer.Free;
-  FContainer.Free;
-  FStateStack.Free;
+  FBuffer.free;
+  FContainer.free;
+  FStateStack.free;
   Inherited;
 End;
 
@@ -1945,7 +1945,7 @@ End;
 
 Procedure TWPRendererParagraphContext.SetContainer(Const Value: TWPMapContainer);
 Begin
-  FContainer.Free;
+  FContainer.free;
   FContainer := Value;
   FContainer.Rows.Clear;
 
@@ -1955,7 +1955,7 @@ Begin
 End;
 
 
-Procedure TWPRendererParagraphContext.AddItem(oItem : TWPMapItem);
+function TWPRendererParagraphContext.AddItem(oItem : TWPMapItem): TWPMapItem;
 Begin
   Case oItem.BreakState Of
     bsText :
@@ -1968,6 +1968,7 @@ Begin
       AddToBuffer(oItem);
       AddBufferToRow;
       StartNewLine;
+  result := value;
       End;
     bsWhitespace :
       Begin
@@ -2074,7 +2075,7 @@ End;
 
 procedure TWPRendererParagraphContext.SetStateStack(const Value: TWPRendererStates);
 begin
-  FStateStack.Free;
+  FStateStack.free;
   FStateStack := Value;
 end;
 
@@ -2084,13 +2085,13 @@ begin
     AddBufferToRow;
 end;
 
-function TWPRendererParagraphContext.sizeInBytesV : cardinal;
+function TWPRendererParagraphContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContainer.sizeInBytes);
-  inc(result, FStateStack.sizeInBytes);
-  inc(result, FBuffer.sizeInBytes);
-  inc(result, FRow.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContainer.sizeInBytes(magic));
+  inc(result, FStateStack.sizeInBytes(magic));
+  inc(result, FBuffer.sizeInBytes(magic));
+  inc(result, FRow.sizeInBytes(magic));
 end;
 
 { TWPRenderer }
@@ -2113,15 +2114,15 @@ End;
 
 Destructor TWPRenderer.Destroy;
 Begin
-  FCurrentHotspot.Free;
-  FCurrentButton.Free;
-  FDefaultTableBorder.Free;
-  FCanvas.Free;
-  FMap.Free;
-  FStateStack.Free;
-  FStyles.Free;
-  FSelection.Free;
-  FDocument.Free;
+  FCurrentHotspot.free;
+  FCurrentButton.free;
+  FDefaultTableBorder.free;
+  FCanvas.free;
+  FMap.free;
+  FStateStack.free;
+  FStyles.free;
+  FSelection.free;
+  FDocument.free;
   Inherited;
 End;
 
@@ -2149,7 +2150,7 @@ End;
 
 Procedure TWPRenderer.SetCanvas(Const Value : TWPCanvas);
 Begin
-  FCanvas.Free;
+  FCanvas.free;
   FCanvas := Value;
   BuildMetrics;
 End;
@@ -2168,7 +2169,7 @@ End;
 
 Procedure TWPRenderer.SetDocument(Const Value: TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
   FValid := False;
 End;
@@ -2176,7 +2177,7 @@ End;
 
 Procedure TWPRenderer.SetSelection(Const Value: TWPSelection);
 Begin
-  FSelection.Free;
+  FSelection.free;
   FSelection := Value;
   FValid := False;
 End;
@@ -2184,7 +2185,7 @@ End;
 
 Procedure TWPRenderer.SetStyles(Const Value: TWPStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := Value;
   FValid := False;
 End;
@@ -2693,11 +2694,11 @@ Begin
       oBreak.Map := oItem.Link;
       oRow.Items.Add(oItem.Link);
     Finally
-      oItem.Free;
+      oItem.free;
     End;
     oBreak.Container.Rows.Add(oRow.Link);
   Finally
-    oRow.Free;
+    oRow.free;
   End;
   iMaxRowCols := 1;
 End;
@@ -2931,7 +2932,7 @@ Begin
       End;
     End;
   Finally
-    oCells.Free;
+    oCells.free;
   End;
 
   If oTableRow.Container.Children.Count = 0 Then
@@ -2960,7 +2961,7 @@ Begin
       oCalc.NestingIndent := Settings.NestingIndent;
       oCalc.Calculate;
     Finally
-      oCalc.Free;
+      oCalc.free;
     End;
 
     If Not oTable.HasContainer Then
@@ -2991,7 +2992,7 @@ Begin
         RaiseError('LayoutTable', 'Unexpected content '+NAMES_WPPIECETYPE[oCurrent.PieceType]+' in table');
     End;
   Finally
-    oMetrics.Free;
+    oMetrics.free;
   End;
   oCurrent := oCurrent.Next; // jump table end
   oTable.StructureDirty := False;
@@ -3103,7 +3104,7 @@ Begin
       oCurrent := oCurrent.Next;
       oContext.Finish;
     Finally
-      oContext.Free;
+      oContext.free;
     End;
 
     Result := oParagraph.Container.InnerTop;
@@ -3141,7 +3142,7 @@ Begin
     End
     Else
     Begin
-      oCurrent:= oParagraph.Next;
+      oCurrent := oParagraph.Next;
       iLine := oParagraph.Container.Rows.Last.Line + 1;
     End;
     If aState.VerticalOffset <> 0 Then
@@ -4652,7 +4653,7 @@ Begin
     Result.Background := aBackground;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4669,7 +4670,7 @@ Begin
     Result.Background := aBackground;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4710,13 +4711,13 @@ Begin
         Try
           PaintTextItem(oPiece, oMap, '[', fsNormal, fcsNormal, Nil, True, False);
         Finally
-          oMap.Free;
+          oMap.free;
         End;
         oMap := ProduceClosingSectionMap(oPiece, aBackground);
         Try
           PaintTextItem(oPiece, oMap, ']', fsNormal, fcsNormal, Nil, True, False);
         Finally
-          oMap.Free;
+          oMap.free;
         End;
       End
       Else If (oPiece.DisplayType <> sdtNone) Then
@@ -4982,14 +4983,14 @@ Begin
     Begin
     If (Assigned(FCurrentHotspot)) Then
       NeedPaintByHotspot(FCurrentHotspot);
-    FCurrentHotspot.Free;
+    FCurrentHotspot.free;
     FCurrentHotspot := Value;
     If (Assigned(FCurrentHotspot)) Then
       NeedPaintByHotspot(FCurrentHotspot);
     DoUpdate;
     End
   Else
-   Value.Free;
+   Value.free;
 End;
 
 
@@ -5016,7 +5017,7 @@ Begin
     Begin
     If (Assigned(FCurrentButton)) Then
       NeedPaintByButton(FCurrentButton);
-    FCurrentButton.Free;
+    FCurrentButton.free;
     FCurrentButton := Value;
     If (Assigned(FCurrentButton)) Then
       NeedPaintByButton(FCurrentButton);
@@ -5060,7 +5061,7 @@ begin
           oCoords.Add(oMap.Left, oRow.Bottom-1);
           FCanvas.DrawPolyLine(Document.AllAnnotations[oPiece.AnnotationId-1].Colour, apsDot, apesSquare, 0,0, oCoords, 1, 1, true);
         Finally
-          oCoords.Free;
+          oCoords.free;
         End;
       End;
     AnnotationStatusStart:
@@ -5073,7 +5074,7 @@ begin
           oCoords.Add(oMap.Right-1, oRow.Bottom-1);
           FCanvas.DrawPolyLine(Document.AllAnnotations[oPiece.AnnotationId-1].Colour, apsDot, apesSquare, 0,0, oCoords, 1, 1, false);
         Finally
-          oCoords.Free;
+          oCoords.free;
         End;
       End;
     AnnotationStatusEnd:
@@ -5086,7 +5087,7 @@ begin
           oCoords.Add(oMap.Left, oRow.Bottom-1);
           FCanvas.DrawPolyLine(Document.AllAnnotations[oPiece.AnnotationId-1].Colour, apsDot, apesSquare, 0,0, oCoords, 1, 1, false);
         Finally
-          oCoords.Free;
+          oCoords.free;
         End;
       End;
     AnnotationStatusContinue:
@@ -5115,18 +5116,18 @@ begin
   end;
 end;
 
-function TWPRenderer.sizeInBytesV : cardinal;
+function TWPRenderer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FSelection.sizeInBytes);
-  inc(result, FMap.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FCanvas.sizeInBytes);
-  inc(result, FStateStack.sizeInBytes);
-  inc(result, FDefaultTableBorder.sizeInBytes);
-  inc(result, FCurrentHotspot.sizeInBytes);
-  inc(result, FCurrentButton.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FSelection.sizeInBytes(magic));
+  inc(result, FMap.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FCanvas.sizeInBytes(magic));
+  inc(result, FStateStack.sizeInBytes(magic));
+  inc(result, FDefaultTableBorder.sizeInBytes(magic));
+  inc(result, FCurrentHotspot.sizeInBytes(magic));
+  inc(result, FCurrentButton.sizeInBytes(magic));
 end;
 
 Constructor TWPScreenRenderer.Create;
@@ -5142,7 +5143,7 @@ End;
 
 Destructor TWPScreenRenderer.Destroy;
 Begin
-  FOperator.Free;
+  FOperator.free;
   Inherited;
 End;
 
@@ -5174,7 +5175,7 @@ End;
 
 Procedure TWPScreenRenderer.SetOperator(Const Value : TWPOperator);
 Begin
-  FOperator.Free;
+  FOperator.free;
   FOperator := Value;
 End;
 
@@ -5691,7 +5692,7 @@ Begin
       Result := GetMouseInfoForPoint(iX, iY-(iPageHeight+1), oInfo) And (oInfo.Offset <> iCurrent);
       iNew := oInfo.Offset;
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -5715,7 +5716,7 @@ Begin
       Result := GetMouseInfoForPoint(iX, iY-1, oInfo) And (oInfo.Offset <> iCurrent);
       iNew := oInfo.Offset;
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -5739,7 +5740,7 @@ Begin
       Result := GetMouseInfoForPoint(iX, iY+1, oInfo) And (oInfo.Offset <> iCurrent);
       iNew := oInfo.Offset;
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -5763,7 +5764,7 @@ Begin
       Result := GetMouseInfoForPoint(iX, iY+iPageHeight+1, oInfo) And (oInfo.Offset <> iCurrent);
       iNew := oInfo.Offset;
     Finally
-      oInfo.Free;
+      oInfo.free;
     End;
   End;
 End;
@@ -6406,10 +6407,10 @@ End;
 
 //-- Administration ------------------------------------------------------------
 
-function TWPScreenRenderer.sizeInBytesV : cardinal;
+function TWPScreenRenderer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOperator.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOperator.sizeInBytes(magic));
 end;
 
 Constructor TWPScreenCanvas.Create;
@@ -6449,7 +6450,7 @@ Begin
     FImage.Canvas.Unlock;
     {$ENDIF}
 
-    FImage.Free;
+    FImage.free;
     FImage := Nil;
   End;
 End;
@@ -6547,10 +6548,10 @@ Begin
     Try
       oPNG.SaveToStream(oFile);
     Finally
-      oFile.Free;
+      oFile.free;
     End;
   Finally
-    oPng.Free;
+    oPng.free;
   End;
 End;
 
@@ -6843,7 +6844,7 @@ Begin
 
       FImage.Canvas.StretchDraw(aRect, oLocal.Handle);
     Finally
-      oLocal.Free;
+      oLocal.free;
     End;
   End;
 End;
@@ -6926,7 +6927,7 @@ End;
 
 Procedure TWPScreenCanvas.Yield;
 Begin
-  FImage.Free;
+  FImage.free;
   FImage := Nil;
 End;
 
@@ -7091,7 +7092,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -7202,7 +7203,7 @@ End;
 
 Destructor TWPPage.Destroy;
 Begin
-  FMap.Free;
+  FMap.free;
   Inherited;
 End;
 
@@ -7221,7 +7222,7 @@ end;
 
 Procedure TWPPage.SetMap(Const Value : TWPMapContainer);
 Begin
-  FMap.Free;
+  FMap.free;
   FMap := Value;
 End;
 
@@ -7256,10 +7257,10 @@ Begin
 End;
 
 
-function TWPPage.sizeInBytesV : cardinal;
+function TWPPage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
 end;
 
 Function TWPPages.Link : TWPPages;
@@ -7314,7 +7315,7 @@ End;
 
 Destructor TWPVisualRange.Destroy;
 Begin
-  FRenderer.Free;
+  FRenderer.free;
   Inherited;
 End;
 
@@ -7331,7 +7332,7 @@ End;
 
 Procedure TWPVisualRange.SetRenderer(Const Value: TWPScreenRenderer);
 Begin
-  FRenderer.Free;
+  FRenderer.free;
   FRenderer := Value;
 End;
 

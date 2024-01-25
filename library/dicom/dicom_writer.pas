@@ -1,7 +1,7 @@
-Unit dicom_Writer;
+Unit dicom_writer;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -99,7 +99,7 @@ Type
     Procedure EncodeReleaseRequest(sPath : string; oReleaseRequest : TDicomReleaseRequestPDU);
     Procedure EncodeReleaseResponse(sPath : string; oReleaseResponse : TDicomReleaseResponsePDU);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -133,21 +133,21 @@ End;
 
 destructor TDicomWriter.Destroy;
 begin
-  FOutput.Free;
-  FDictionary.Free;
-  FBuilder.Free;
+  FOutput.free;
+  FDictionary.free;
+  FBuilder.free;
   inherited;
 end;
 
 procedure TDicomWriter.SetOutput(const Value: TFslStream);
 begin
-  FOutput.Free;
+  FOutput.free;
   FOutput := Value;
 end;
 
 procedure TDicomWriter.SetDictionary(const Value: TDicomDictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 end;
 
@@ -509,7 +509,7 @@ end;
 procedure TDicomWriter.Execute(sPath : string; oInstance: TDicomInstance);
 begin
   case oInstance.InstanceType of
-    ditNull : raise EDicomException.create('no content to encode');
+    ditNull : raise EDicomException.Create('no content to encode');
     ditSimpleObject : Execute(sPath, oInstance.SimpleObject);
     ditFileObject : EncodeFile(sPath, oInstance.FileObject);
     ditMessage : EncodeMessage(sPath, oInstance.Message);
@@ -521,7 +521,7 @@ begin
     ditReleaseRequestPDU : EncodeReleaseRequest(sPath, oInstance.ReleaseRequest);
     ditReleaseResponsePDU : EncodeReleaseResponse(sPath, oInstance.ReleaseResponse);
   else
-    raise EDicomException.create('not supported');
+    raise EDicomException.Create('not supported');
   End;
 end;
 
@@ -640,7 +640,7 @@ function TDicomWriter.MeasureAssociateRequest(oAssociate: TDicomAssociateRequest
 var
   i : integer;
 begin
-  result :=
+  result := 
     2 + // protocol version
     2 + // reserved
     16 + // called AE
@@ -656,7 +656,7 @@ function TDicomWriter.MeasureAssociateAccept(oAssociate: TDicomAssociateAcceptPD
 var
   i : integer;
 begin
-  result :=
+  result := 
     2 + // protocol version
     2 + // reserved
     16 + // called AE
@@ -673,7 +673,7 @@ var
   i : integer;
   r : integer;
 begin
-  r :=
+  r := 
     4 + // id + reserved
     4 + length(oPresentationContext.AbstractSyntax.Value);
   for i := 0 to oPresentationContext.TransferSyntaxes.Count - 1 Do
@@ -703,7 +703,7 @@ end;
 
 function TDicomWriter.MeasurePresentationAcceptContext(oPresentationContext: TDicomPresentationAcceptContextInfo): Cardinal;
 begin
-  result :=
+  result := 
     4 + // id + reserved
     4 + length(oPresentationContext.TransferSyntax.Value);
 end;
@@ -845,7 +845,7 @@ begin
     pduReleaseRequest : EncodeReleaseRequest(sPath, TDicomReleaseRequestPDU(oPDU));
     pduReleaseResponse : EncodeReleaseResponse(sPath, TDicomReleaseResponsePDU(oPDU));
   else
-    raise EDicomException.create('not supported');
+    raise EDicomException.Create('not supported');
   End;
 end;
 
@@ -859,12 +859,12 @@ begin
   EncodeMessage(sPath, oMessage);
 end;
 
-function TDicomWriter.sizeInBytesV : cardinal;
+function TDicomWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOutput.sizeInBytes);
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FBuilder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOutput.sizeInBytes(magic));
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 End.

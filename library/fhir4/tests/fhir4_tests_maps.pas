@@ -1,4 +1,4 @@
-unit fhir4_tests_Maps;
+unit fhir4_tests_maps;
 
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -133,7 +133,7 @@ begin
       // Assert.AreEqual(normalise(source), normalise(output), 'input and output do not match');
       Assert.IsTrue(true);
     finally
-      utils.Free;
+      utils.free;
     end;
   finally
     ctxt.free;
@@ -171,13 +171,13 @@ procedure TMapTransformTests4.setup;
 begin
   ctxt := TTestingWorkerContext4.Use;
   (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_TESTING_FILE('cda', 'cda.zip'));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create('utils'), TTestTransformerServices4.Create, nil);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.Create('utils'), TTestTransformerServices4.Create, nil);
   loadMaps(FHIR_TESTING_FILE('ccda', 'maps'));
 end;
 
 procedure TMapTransformTests4.TearDown;
 begin
-  utils.Free;
+  utils.free;
   ctxt.free;
 end;
 
@@ -198,15 +198,15 @@ begin
         utils.transform(nil, x.resource, utils.Lib['http://hl7.org/fhir/StructureMap/cda-cd'], cd);
         assert.AreEqual(cd.codingList.count, 1);
         assert.AreEqual(cd.codingList[0].code, '34133-9');
-        assert.AreEqual(cd.codingList[0].system, 'http://loinc.org');
+        assert.AreEqual(cd.codingList[0].system, URI_LOINC);
       finally
-        cd.Free;
+        cd.free;
       end;
     finally
-      s.Free;
+      s.free;
     end;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -234,7 +234,7 @@ end;
 
 function TTestTransformerServices4.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise EFHIRTodo.create('TTestTransformerServices4.translate');
+  raise EFHIRTodo.Create('TTestTransformerServices4.translate');
 end;
 
 { MapParserTest2Case4Attribute }
@@ -261,7 +261,7 @@ begin
       result[i].Values[0] := st[i];
     end;
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -291,7 +291,7 @@ procedure TMapParserTests24.setup;
 begin
   ctxt := TTestingWorkerContext4.Use;
 //  (ctxt as TBaseWorkerContext).LoadFromDefinitions(FHIR_SRC_FILE(['guides', 'ccda', 'cda', 'cda.zip']));
-  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.create('utils'), TTestTransformerServices4.Create, nil);
+  utils := TFHIRStructureMapUtilities.Create(ctxt.link, TFslMap<TFHIRStructureMap>.Create('utils'), TTestTransformerServices4.Create, nil);
 end;
 
 procedure TMapParserTests24.TearDown;

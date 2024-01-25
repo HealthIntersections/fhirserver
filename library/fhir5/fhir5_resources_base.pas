@@ -1,57 +1,61 @@
-﻿unit fhir5_resources_base;
+unit fhir5_resources_base;
 
 {
   Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
   All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without modification,
+  
+  Redistribution and use in source and binary forms, with or without modification, 
   are permitted provided that the following conditions are met:
-
-   * Redistributions of source code must retain the above copyright notice, this
+  
+   * Redistributions of source code must retain the above copyright notice, this 
      list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above copyright notice,
-     this list of conditions and the following disclaimer in the documentation
+   * Redistributions in binary form must reproduce the above copyright notice, 
+     this list of conditions and the following disclaimer in the documentation 
      and/or other materials provided with the distribution.
-   * Neither the name of HL7 nor the names of its contributors may be used to
-     endorse or promote products derived from this software without specific
+   * Neither the name of HL7 nor the names of its contributors may be used to 
+     endorse or promote products derived from this software without specific 
      prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
-  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
-  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
-  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
+  IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
+  INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
+  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
   POSSIBILITY OF SUCH DAMAGE.
-
+  
 }
 
-{$I fhir.inc}
-{$I fhir5.inc}
+{$i fhir.inc}
+{$i fhir5.inc}
 
 interface
 
-// Generated on Fri, Aug 21, 2020 11:27+1000 for FHIR v4.5.0
+// Generated on Thu, Nov 10, 2022 for FHIR v5.0.0
+
+
 
 uses
-  SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_stream,
-  fhir_objects, fhir_utilities, 
+  SysUtils, Classes, 
+  fsl_base, fsl_utilities, fsl_stream, 
+  fhir_objects, fhir_utilities,  
   fhir5_base, fhir5_enums, fhir5_types;
 
 type
   TFhirResourceType = (
-    frtNull, // Resource type not known / not Specified
+    frtNull, // Resource type not known / not Specified 
     {$IFDEF FHIR_ACCOUNT}frtAccount, {$ENDIF}
     {$IFDEF FHIR_ACTIVITYDEFINITION}frtActivityDefinition, {$ENDIF}
+    {$IFDEF FHIR_ACTORDEFINITION}frtActorDefinition, {$ENDIF}
     {$IFDEF FHIR_ADMINISTRABLEPRODUCTDEFINITION}frtAdministrableProductDefinition, {$ENDIF}
     {$IFDEF FHIR_ADVERSEEVENT}frtAdverseEvent, {$ENDIF}
     {$IFDEF FHIR_ALLERGYINTOLERANCE}frtAllergyIntolerance, {$ENDIF}
     {$IFDEF FHIR_APPOINTMENT}frtAppointment, {$ENDIF}
     {$IFDEF FHIR_APPOINTMENTRESPONSE}frtAppointmentResponse, {$ENDIF}
+    {$IFDEF FHIR_ARTIFACTASSESSMENT}frtArtifactAssessment, {$ENDIF}
     {$IFDEF FHIR_AUDITEVENT}frtAuditEvent, {$ENDIF}
     {$IFDEF FHIR_BASIC}frtBasic, {$ENDIF}
     {$IFDEF FHIR_BINARY}frtBinary, {$ENDIF}
@@ -59,17 +63,15 @@ type
     {$IFDEF FHIR_BODYSTRUCTURE}frtBodyStructure, {$ENDIF}
     {$IFDEF FHIR_BUNDLE}frtBundle, {$ENDIF}
     {$IFDEF FHIR_CAPABILITYSTATEMENT}frtCapabilityStatement, {$ENDIF}
-    {$IFDEF FHIR_CAPABILITYSTATEMENT2}frtCapabilityStatement2, {$ENDIF}
     {$IFDEF FHIR_CAREPLAN}frtCarePlan, {$ENDIF}
     {$IFDEF FHIR_CARETEAM}frtCareTeam, {$ENDIF}
-    {$IFDEF FHIR_CATALOGENTRY}frtCatalogEntry, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEM}frtChargeItem, {$ENDIF}
     {$IFDEF FHIR_CHARGEITEMDEFINITION}frtChargeItemDefinition, {$ENDIF}
     {$IFDEF FHIR_CITATION}frtCitation, {$ENDIF}
     {$IFDEF FHIR_CLAIM}frtClaim, {$ENDIF}
     {$IFDEF FHIR_CLAIMRESPONSE}frtClaimResponse, {$ENDIF}
     {$IFDEF FHIR_CLINICALIMPRESSION}frtClinicalImpression, {$ENDIF}
-    {$IFDEF FHIR_CLINICALUSEISSUE}frtClinicalUseIssue, {$ENDIF}
+    {$IFDEF FHIR_CLINICALUSEDEFINITION}frtClinicalUseDefinition, {$ENDIF}
     {$IFDEF FHIR_CODESYSTEM}frtCodeSystem, {$ENDIF}
     {$IFDEF FHIR_COMMUNICATION}frtCommunication, {$ENDIF}
     {$IFDEF FHIR_COMMUNICATIONREQUEST}frtCommunicationRequest, {$ENDIF}
@@ -86,9 +88,10 @@ type
     {$IFDEF FHIR_DETECTEDISSUE}frtDetectedIssue, {$ENDIF}
     {$IFDEF FHIR_DEVICE}frtDevice, {$ENDIF}
     {$IFDEF FHIR_DEVICEDEFINITION}frtDeviceDefinition, {$ENDIF}
+    {$IFDEF FHIR_DEVICEDISPENSE}frtDeviceDispense, {$ENDIF}
     {$IFDEF FHIR_DEVICEMETRIC}frtDeviceMetric, {$ENDIF}
     {$IFDEF FHIR_DEVICEREQUEST}frtDeviceRequest, {$ENDIF}
-    {$IFDEF FHIR_DEVICEUSESTATEMENT}frtDeviceUseStatement, {$ENDIF}
+    {$IFDEF FHIR_DEVICEUSAGE}frtDeviceUsage, {$ENDIF}
     {$IFDEF FHIR_DIAGNOSTICREPORT}frtDiagnosticReport, {$ENDIF}
     {$IFDEF FHIR_DOCUMENTMANIFEST}frtDocumentManifest, {$ENDIF}
     {$IFDEF FHIR_DOCUMENTREFERENCE}frtDocumentReference, {$ENDIF}
@@ -105,11 +108,14 @@ type
     {$IFDEF FHIR_EXPLANATIONOFBENEFIT}frtExplanationOfBenefit, {$ENDIF}
     {$IFDEF FHIR_FAMILYMEMBERHISTORY}frtFamilyMemberHistory, {$ENDIF}
     {$IFDEF FHIR_FLAG}frtFlag, {$ENDIF}
+    {$IFDEF FHIR_FORMULARYITEM}frtFormularyItem, {$ENDIF}
+    {$IFDEF FHIR_GENOMICSTUDY}frtGenomicStudy, {$ENDIF}
     {$IFDEF FHIR_GOAL}frtGoal, {$ENDIF}
     {$IFDEF FHIR_GRAPHDEFINITION}frtGraphDefinition, {$ENDIF}
     {$IFDEF FHIR_GROUP}frtGroup, {$ENDIF}
     {$IFDEF FHIR_GUIDANCERESPONSE}frtGuidanceResponse, {$ENDIF}
     {$IFDEF FHIR_HEALTHCARESERVICE}frtHealthcareService, {$ENDIF}
+    {$IFDEF FHIR_IMAGINGSELECTION}frtImagingSelection, {$ENDIF}
     {$IFDEF FHIR_IMAGINGSTUDY}frtImagingStudy, {$ENDIF}
     {$IFDEF FHIR_IMMUNIZATION}frtImmunization, {$ENDIF}
     {$IFDEF FHIR_IMMUNIZATIONEVALUATION}frtImmunizationEvaluation, {$ENDIF}
@@ -117,6 +123,7 @@ type
     {$IFDEF FHIR_IMPLEMENTATIONGUIDE}frtImplementationGuide, {$ENDIF}
     {$IFDEF FHIR_INGREDIENT}frtIngredient, {$ENDIF}
     {$IFDEF FHIR_INSURANCEPLAN}frtInsurancePlan, {$ENDIF}
+    {$IFDEF FHIR_INVENTORYREPORT}frtInventoryReport, {$ENDIF}
     {$IFDEF FHIR_INVOICE}frtInvoice, {$ENDIF}
     {$IFDEF FHIR_LIBRARY}frtLibrary, {$ENDIF}
     {$IFDEF FHIR_LINKAGE}frtLinkage, {$ENDIF}
@@ -162,6 +169,8 @@ type
     {$IFDEF FHIR_REGULATEDAUTHORIZATION}frtRegulatedAuthorization, {$ENDIF}
     {$IFDEF FHIR_RELATEDPERSON}frtRelatedPerson, {$ENDIF}
     {$IFDEF FHIR_REQUESTGROUP}frtRequestGroup, {$ENDIF}
+    {$IFDEF FHIR_REQUESTORCHESTRATION}frtRequestOrchestration, {$ENDIF}
+    {$IFDEF FHIR_REQUIREMENTS}frtRequirements, {$ENDIF}
     {$IFDEF FHIR_RESEARCHSTUDY}frtResearchStudy, {$ENDIF}
     {$IFDEF FHIR_RESEARCHSUBJECT}frtResearchSubject, {$ENDIF}
     {$IFDEF FHIR_RISKASSESSMENT}frtRiskAssessment, {$ENDIF}
@@ -189,16 +198,19 @@ type
     {$IFDEF FHIR_TERMINOLOGYCAPABILITIES}frtTerminologyCapabilities, {$ENDIF}
     {$IFDEF FHIR_TESTREPORT}frtTestReport, {$ENDIF}
     {$IFDEF FHIR_TESTSCRIPT}frtTestScript, {$ENDIF}
+    {$IFDEF FHIR_TRANSPORT}frtTransport, {$ENDIF}
     {$IFDEF FHIR_VALUESET}frtValueSet, {$ENDIF}
     {$IFDEF FHIR_VERIFICATIONRESULT}frtVerificationResult, {$ENDIF}
     {$IFDEF FHIR_VISIONPRESCRIPTION}frtVisionPrescription, {$ENDIF}
     frtCustom);
   TFhirResourceTypeSet = set of TFhirResourceType;
 
+
 type
   TFhirResource = class;
   TFhirResourceList = class;
   TFhirDomainResource = class;
+
 
   // This is the base resource type for everything.
   TFhirResource = class abstract (TFhirResource5)
@@ -217,14 +229,14 @@ type
     procedure SetLanguage(value : TFhirCode);
     function GetLanguageST : String;
     procedure SetLanguageST(value : String);
-
+  
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
+    procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     function GetResourceType : TFhirResourceType; virtual; abstract;
     function GetProfileVersion : TFHIRVersion; override;
     procedure SetProfileVersion(v : TFHIRVersion); override;
-    Procedure listResourceFieldsInOrder(fields: TStringList);
-    procedure listFieldsInOrder(fields : TStringList); override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -244,7 +256,7 @@ type
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function hasExtensions : boolean; override;
-  {$IFNDEF FPC}{$IFNDEF FPC}published{$ENDIF}{$ENDIF}
+  {$IFNDEF FPC}published{$ENDIF}
     property ResourceType : TFhirResourceType read GetResourceType;
 
     // Typed access to The logical id of the resource, as used in the URL for the resource. Once assigned, this value never changes.
@@ -276,7 +288,7 @@ type
     FList : TFhirResourceList;
     function GetCurrent : TFhirResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirResourceList);
     destructor Destroy; override;
@@ -294,35 +306,39 @@ type
     function Link : TFhirResourceList; overload;
     function Clone : TFhirResourceList; overload;
     function GetEnumerator : TFhirResourceListEnumerator;
-
+    
+    
     // Add an already existing FhirResource to the end of the list.
-    procedure AddItem(value : TFhirResource); overload;
-
+    function AddItem(value : TFhirResource) : TFhirResource; overload;
+    
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirResource) : Integer;
-
+    
     // Insert an existing FhirResource before the designated index (0 = first item)
     procedure InsertItem(index : Integer; value : TFhirResource);
-
+    
     // Get the iIndexth FhirResource. (0 = first item)
     procedure SetItemByIndex(index : Integer; value : TFhirResource);
-
+    
     // The number of items in the collection
     function Item(index : Integer) : TFhirResource;
-
+    
     // The number of items in the collection
     function Count : Integer; overload;
-
+    
     // Remove the indexth item. The first item is index 0.
     procedure Remove(index : Integer);
-
+    
     // Remove All Items from the list
     procedure ClearItems;
-
+    
     property FhirResources[index : Integer] : TFhirResource read GetItemN write SetItemN; default;
   End;
 
   // A resource that includes narrative, extensions, and contained resources.
+
+  { TFhirDomainResource }
+
   TFhirDomainResource = class abstract (TFhirResource)
   protected
     FText : TFhirNarrative;
@@ -336,11 +352,11 @@ type
     function GetHasExtensionList : Boolean;
     function GetModifierExtensionList : TFhirExtensionList;
     function GetHasModifierExtensionList : Boolean;
-
+  
     procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); override;
-    Procedure listDomainResourceFieldsInOrder(fields: TStringList);
     procedure listFieldsInOrder(fields : TStringList); override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -356,10 +372,18 @@ type
     procedure reorderProperty(propName : string; source, destination : integer); override;
     function isDomainResource : boolean; override;
     function hasExtension(url : string) : boolean; override;
-    function getExtensionString(url : String) : String; override;
+    function getExtensionString(url : String) : String; override; 
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override;
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); override;
+
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
     function hasExtensions : boolean; override;
@@ -369,7 +393,7 @@ type
     // A human-readable narrative that contains a summary of the resource and can be used to represent the content of the resource to a human. The narrative need not encode all the structured data, but is required to contain sufficient detail to make it "clinically safe" for a human to just read the narrative. Resource definitions may define what content should be represented in the narrative to ensure clinical safety.
     property textElement : TFhirNarrative read FText write SetText;
 
-    // These resources do not have an independent existence apart from the resource that contains them - they cannot be identified independently, nor can they have their own independent transaction scope.
+    // These resources do not have an independent existence apart from the resource that contains them - they cannot be identified independently, nor can they have their own independent transaction scope. This is allowed to be a Parameters resource if and only if it is referenced by a resource that provides context/meaning.
     property containedList : TFhirResourceList read GetContainedList;
     property hasContainedList : boolean read GetHasContainedList;
 
@@ -380,7 +404,13 @@ type
     // May be used to represent additional information that is not part of the basic definition of the resource and that modifies the understanding of the element that contains it and/or the understanding of the containing element's descendants. Usually modifier elements provide negation or qualification. To make the use of extensions safe and manageable, there is a strict set of governance applied to the definition and use of extensions. Though any implementer is allowed to define an extension, there is a set of requirements that SHALL be met as part of the definition of the extension. Applications processing a resource are required to check for modifier extensions.  Modifier extensions SHALL NOT change the meaning of any elements on Resource or DomainResource (including cannot change the meaning of modifierExtension itself).
     property modifierExtensionList : TFhirExtensionList read GetModifierExtensionList;
     property hasModifierExtensionList : boolean read GetHasModifierExtensionList;
+
   end;
+
+
+
+
+
 
 implementation
 
@@ -473,40 +503,32 @@ end;
 procedure TFhirResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'id', 'id', false, TFhirId, FId.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'meta', 'Meta', false, TFhirMeta, FMeta.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'implicitRules', 'uri', false, TFhirUri, FImplicitRules.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'language', 'code', false, TFhirCode, FLanguage.Link)); {L1172}
-end;
-
-procedure TFhirResource.listResourceFieldsInOrder(fields: TStringList);
-begin
-  fields.add('id');
-  fields.add('meta');
-  fields.add('implicitRules');
-  fields.add('language');
+  oList.add(TFHIRProperty.Create(self, 'id', 'id', false, TFhirId, FId.Link));
+  oList.add(TFHIRProperty.Create(self, 'meta', 'Meta', false, TFhirMeta, FMeta.Link));
+  oList.add(TFHIRProperty.Create(self, 'implicitRules', 'uri', false, TFhirUri, FImplicitRules.Link));
+  oList.add(TFHIRProperty.Create(self, 'language', 'code', false, TFhirCode, FLanguage.Link));
 end;
 
 function TFhirResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'id') then
   begin
-    IdElement := asId(propValue) {L1221};
+    IdElement := asId(propValue);
     result := propValue;
   end
   else if (propName = 'meta') then
   begin
-    Meta := propValue as TFhirMeta {L1199};
+    Meta := propValue as TFhirMeta;
     result := propValue;
   end
   else if (propName = 'implicitRules') then
   begin
-    ImplicitRulesElement := asUri(propValue) {L1221};
+    ImplicitRulesElement := asUri(propValue);
     result := propValue;
   end
   else if (propName = 'language') then
   begin
-    LanguageElement := asCode(propValue) {L1221};
+    LanguageElement := asCode(propValue);
     result := propValue;
   end
   else
@@ -520,10 +542,10 @@ end;
 
 function TFhirResource.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'id') then result := TFhirId.create() {L1223}
-  else if (propName = 'meta') then result := TFhirMeta.create() {L1203}
-  else if (propName = 'implicitRules') then result := TFhirUri.create() {L1223}
-  else if (propName = 'language') then result := TFhirCode.create() {L1223}
+  if (propName = 'id') then result := TFhirId.Create()
+  else if (propName = 'meta') then result := TFhirMeta.Create()
+  else if (propName = 'implicitRules') then result := TFhirUri.Create()
+  else if (propName = 'language') then result := TFhirCode.Create()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -548,10 +570,10 @@ end;
 
 procedure TFhirResource.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'id') then IdElement := asId(new) {L1222}
-  else if (propName = 'meta') then MetaElement := new as TFhirMeta {L1195}
-  else if (propName = 'implicitRules') then ImplicitRulesElement := asUri(new) {L1222}
-  else if (propName = 'language') then LanguageElement := asCode(new) {L1222}
+  if (propName = 'id') then IdElement := asId(new)
+  else if (propName = 'meta') then MetaElement := new as TFhirMeta
+  else if (propName = 'implicitRules') then ImplicitRulesElement := asUri(new)
+  else if (propName = 'language') then LanguageElement := asCode(new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
@@ -561,7 +583,7 @@ begin
   inherited reorderProperty(propName, source, destination);
 end;
 
-function TFhirResource.equals(other : TObject) : boolean;
+function TFhirResource.equals(other : TObject) : boolean; 
 var
   o : TFhirResource;
 begin
@@ -572,7 +594,7 @@ begin
   else
   begin
     o := TFhirResource(other);
-    result := compareDeep(idElement, o.idElement, true) and compareDeep(metaElement, o.metaElement, true) and
+    result := compareDeep(idElement, o.idElement, true) and compareDeep(metaElement, o.metaElement, true) and 
       compareDeep(implicitRulesElement, o.implicitRulesElement, true) and compareDeep(languageElement, o.languageElement, true);
   end;
 end;
@@ -580,6 +602,20 @@ end;
 function TFhirResource.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FId) and isEmptyProp(FMeta) and isEmptyProp(FImplicitRules) and isEmptyProp(FLanguage);
+end;
+
+procedure TFhirResource.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('id');
+  fields.add('meta');
+  fields.add('implicitRules');
+  fields.add('language');
+end;
+
+function TFhirResource.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
 end;
 
 function TFhirResource.Link : TFhirResource;
@@ -595,7 +631,7 @@ end;
 procedure TFhirResource.SetId(value : TFhirId);
 begin
   FId.free;
-  FId := value; {L1134}
+  FId := value;
 end;
 
 function TFhirResource.GetIdST : String;
@@ -611,7 +647,7 @@ begin
   if value <> '' then
   begin
     if FId = nil then
-      FId := TFhirId.create;
+      FId := TFhirId.Create;
     FId.value := value
   end
   else if FId <> nil then
@@ -621,13 +657,13 @@ end;
 procedure TFhirResource.SetMeta(value : TFhirMeta);
 begin
   FMeta.free;
-  FMeta := value; {L1134}
+  FMeta := value;
 end;
 
 procedure TFhirResource.SetImplicitRules(value : TFhirUri);
 begin
   FImplicitRules.free;
-  FImplicitRules := value; {L1134}
+  FImplicitRules := value;
 end;
 
 function TFhirResource.GetImplicitRulesST : String;
@@ -643,7 +679,7 @@ begin
   if value <> '' then
   begin
     if FImplicitRules = nil then
-      FImplicitRules := TFhirUri.create;
+      FImplicitRules := TFhirUri.Create;
     FImplicitRules.value := value
   end
   else if FImplicitRules <> nil then
@@ -653,7 +689,7 @@ end;
 procedure TFhirResource.SetLanguage(value : TFhirCode);
 begin
   FLanguage.free;
-  FLanguage := value; {L1134}
+  FLanguage := value;
 end;
 
 function TFhirResource.GetLanguageST : String;
@@ -669,25 +705,17 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
     FLanguage.value := '';
 end;
 
-function TFhirResource.hasExtensions : boolean;
+function TFhirResource.hasExtensions : boolean; 
 begin
   result := false;
 end;
-procedure TFhirResource.listFieldsInOrder(fields : TStringList);
-begin
-  fields.add('id');
-  fields.add('meta');
-  fields.add('implicitRules');
-  fields.add('language');
-end;
-
 { TFhirResourceListEnumerator }
 
 constructor TFhirResourceListEnumerator.Create(list : TFhirResourceList);
@@ -699,7 +727,7 @@ end;
 
 destructor TFhirResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -714,18 +742,19 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirResourceList }
 
-procedure TFhirResourceList.AddItem(value: TFhirResource);
+function TFhirResourceList.AddItem(value: TFhirResource): TFhirResource;
 begin
   assert(value.ClassName = 'TFhirResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirResource');
   add(value);
+  result := value;
 end;
 
 procedure TFhirResourceList.ClearItems;
@@ -805,9 +834,9 @@ end;
 destructor TFhirDomainResource.Destroy;
 begin
   FText.free;
-  FContainedList.Free;
-  FExtensionList.Free;
-  FModifierExtensionList.Free;
+  FContainedList.free;
+  FExtensionList.free;
+  FModifierExtensionList.free;
   inherited;
 end;
 
@@ -863,13 +892,62 @@ begin
     list.addAll(self, 'modifierExtension', FModifierExtensionList);
 end;
 
-procedure TFhirDomainResource.addExtension(url: String; value: TFHIRObject);
+procedure TFhirDomainResource.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirDataType;
+end;
+
+procedure TFhirDomainResource.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
+end;
+
+procedure TFhirDomainResource.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  if FExtensionList <> nil then
+    for i := FExtensionList.count - 1 downto 0 do
+      if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+        FExtensionList.remove(i);
+end;
+
+procedure TFhirDomainResource.copyExtensions(src: TFHIRObject; exemptUrls: TStringArray);
+var
+  ext : TFHIRExtension;
+begin
+  inherited copyExtensions(src, exemptUrls);
+  if (src is TFhirDomainResource) then
+  begin
+    for ext in (src as TFhirDomainResource).extensionList do
+    begin
+      if (length(exemptUrls) = 0) or StringArrayExists(exemptUrls, ext.url) then
+        extensionList.Add(ext.Clone);
+    end;
+  end;
 end;
 
 function TFhirDomainResource.extensionCount(url: String): integer;
@@ -882,18 +960,32 @@ begin
       inc(result);
 end;
 
-function TFhirDomainResource.extensions(url: String): TFslList<TFHIRObject>;
+function TFhirDomainResource.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      result.Add(ex.Link);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+      
+function TFhirDomainResource.getExtensionsV(url: String): TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.Create;
+  try
+    for ex in ExtensionList do
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -912,11 +1004,30 @@ begin
     if ex.url = url then
     begin
       if not ex.value.isPrimitive then
-        raise EFHIRException.create('Complex extension '+url)
+        raise EFHIRException.Create('Complex extension '+url)
       else if result <> '' then
-        raise EFHIRException.create('Duplicate extension '+url)
+        raise EFHIRException.Create('Duplicate extension '+url)
       else
         result := ex.value.primitiveValue;
+    end;
+  end;
+end;
+
+function TFhirDomainResource.getExtensionValue(url: String): TFHIRObject;
+var
+  ex : TFhirExtension;
+begin
+  result := nil;
+  for ex in ExtensionList do
+  begin
+    if ex.url = url then
+    begin
+      if not ex.value.isPrimitive then
+        raise EFHIRException.Create('Complex extension '+url)
+      else if result <> nil then
+        raise EFHIRException.Create('Duplicate extension '+url)
+      else
+        result := ex.value;
     end;
   end;
 end;
@@ -934,32 +1045,32 @@ end;
 procedure TFhirDomainResource.ListProperties(oList: TFHIRPropertyList; bInheritedProperties, bPrimitiveValues: Boolean);
 begin
   inherited;
-  oList.add(TFHIRProperty.create(self, 'text', 'Narrative', false, TFhirNarrative, FText.Link)); {L1172}
-  oList.add(TFHIRProperty.create(self, 'contained', 'Resource', true, TFhirResource, FContainedList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'extension', 'Extension', true, TFhirExtension, FExtensionList.Link)) {L1039};
-  oList.add(TFHIRProperty.create(self, 'modifierExtension', 'Extension', true, TFhirExtension, FModifierExtensionList.Link)) {L1039};
+  oList.add(TFHIRProperty.Create(self, 'text', 'Narrative', false, TFhirNarrative, FText.Link));
+  oList.add(TFHIRProperty.Create(self, 'contained', 'Resource', true, TFhirResource, FContainedList.Link));
+  oList.add(TFHIRProperty.Create(self, 'extension', 'Extension', true, TFhirExtension, FExtensionList.Link));
+  oList.add(TFHIRProperty.Create(self, 'modifierExtension', 'Extension', true, TFhirExtension, FModifierExtensionList.Link));
 end;
 
 function TFhirDomainResource.setProperty(propName: string; propValue: TFHIRObject) : TFHIRObject;
 begin
   if (propName = 'text') then
   begin
-    Text := propValue as TFhirNarrative {L1199};
+    Text := propValue as TFhirNarrative;
     result := propValue;
   end
   else if (propName = 'contained') then
   begin
-    ContainedList.add(propValue as TFhirResource) {L1048};
+    ContainedList.add(propValue as TFhirResource);
     result := propValue;
   end
   else if (propName = 'extension') then
   begin
-    ExtensionList.add(propValue as TFhirExtension) {L1048};
+    ExtensionList.add(propValue as TFhirExtension);
     result := propValue;
   end
   else if (propName = 'modifierExtension') then
   begin
-    ModifierExtensionList.add(propValue as TFhirExtension) {L1048};
+    ModifierExtensionList.add(propValue as TFhirExtension);
     result := propValue;
   end
   else
@@ -968,17 +1079,17 @@ end;
 
 procedure TFhirDomainResource.insertProperty(propName: string; propValue: TFHIRObject; index : integer);
 begin
-  if (propName = 'contained') then ContainedList.insertItem(index, propValue as TFhirResource) {L1049}
-  else if (propName = 'extension') then ExtensionList.insertItem(index, propValue as TFhirExtension) {L1049}
-  else if (propName = 'modifierExtension') then ModifierExtensionList.insertItem(index, propValue as TFhirExtension) {L1049}
+  if (propName = 'contained') then ContainedList.insertItem(index, propValue as TFhirResource)
+  else if (propName = 'extension') then ExtensionList.insertItem(index, propValue as TFhirExtension)
+  else if (propName = 'modifierExtension') then ModifierExtensionList.insertItem(index, propValue as TFhirExtension)
   else inherited;
 end;
 
 function TFhirDomainResource.createPropertyValue(propName: string) : TFHIRObject;
 begin
-  if (propName = 'text') then result := TFhirNarrative.create() {L1203}
-  else if (propName = 'extension') then result := ExtensionList.new() {L1053}
-  else if (propName = 'modifierExtension') then result := ModifierExtensionList.new() {L1053}
+  if (propName = 'text') then result := TFhirNarrative.Create()
+  else if (propName = 'extension') then result := ExtensionList.new()
+  else if (propName = 'modifierExtension') then result := ModifierExtensionList.new()
   else result := inherited createPropertyValue(propName);
 end;
 
@@ -994,33 +1105,33 @@ end;
 procedure TFhirDomainResource.deleteProperty(propName: string; value : TFHIRObject);
 begin
   if (propName = 'text') then TextElement := nil
-  else if (propName = 'contained') then deletePropertyValue('contained', ContainedList, value) {L1054}
-  else if (propName = 'extension') then deletePropertyValue('extension', ExtensionList, value) {L1054}
-  else if (propName = 'modifierExtension') then deletePropertyValue('modifierExtension', ModifierExtensionList, value) {L1054}
+  else if (propName = 'contained') then deletePropertyValue('contained', ContainedList, value)
+  else if (propName = 'extension') then deletePropertyValue('extension', ExtensionList, value)
+  else if (propName = 'modifierExtension') then deletePropertyValue('modifierExtension', ModifierExtensionList, value)
   else
     inherited deleteProperty(propName, value);
 end;
 
 procedure TFhirDomainResource.replaceProperty(propName : string; existing, new : TFHIRObject);
 begin
-  if (propName = 'text') then TextElement := new as TFhirNarrative {L1195}
-  else if (propName = 'contained') then replacePropertyValue('contained', ContainedList, existing, new) {L1055}
-  else if (propName = 'extension') then replacePropertyValue('extension', ExtensionList, existing, new) {L1055}
-  else if (propName = 'modifierExtension') then replacePropertyValue('modifierExtension', ModifierExtensionList, existing, new) {L1055}
+  if (propName = 'text') then TextElement := new as TFhirNarrative
+  else if (propName = 'contained') then replacePropertyValue('contained', ContainedList, existing, new)
+  else if (propName = 'extension') then replacePropertyValue('extension', ExtensionList, existing, new)
+  else if (propName = 'modifierExtension') then replacePropertyValue('modifierExtension', ModifierExtensionList, existing, new)
   else
     inherited replaceProperty(propName, existing, new);
 end;
 
 procedure TFhirDomainResource.reorderProperty(propName : string; source, destination : integer);
 begin
-  if (propName = 'contained') then ContainedList.move(source, destination) {L1050}
-  else if (propName = 'extension') then ExtensionList.move(source, destination) {L1050}
-  else if (propName = 'modifierExtension') then ModifierExtensionList.move(source, destination) {L1050}
+  if (propName = 'contained') then ContainedList.move(source, destination)
+  else if (propName = 'extension') then ExtensionList.move(source, destination)
+  else if (propName = 'modifierExtension') then ModifierExtensionList.move(source, destination)
   else
     inherited reorderProperty(propName, source, destination);
 end;
 
-function TFhirDomainResource.equals(other : TObject) : boolean;
+function TFhirDomainResource.Equals(other: TObject): boolean;
 var
   o : TFhirDomainResource;
 begin
@@ -1031,7 +1142,7 @@ begin
   else
   begin
     o := TFhirDomainResource(other);
-    result := compareDeep(textElement, o.textElement, true) and compareDeep(containedList, o.containedList, true) and
+    result := compareDeep(textElement, o.textElement, true) and compareDeep(containedList, o.containedList, true) and 
       compareDeep(extensionList, o.extensionList, true) and compareDeep(modifierExtensionList, o.modifierExtensionList, true);
   end;
 end;
@@ -1039,6 +1150,23 @@ end;
 function TFhirDomainResource.isEmpty : boolean;
 begin
   result := inherited isEmpty  and isEmptyProp(FText) and isEmptyProp(FcontainedList) and isEmptyProp(FextensionList) and isEmptyProp(FmodifierExtensionList);
+end;
+
+procedure TFhirDomainResource.listFieldsInOrder(fields : TStringList);
+begin;
+  inherited listFieldsInOrder(fields);
+  fields.add('text');
+  fields.add('contained');
+  fields.add('extension');
+  fields.add('modifierExtension');
+end;
+
+function TFhirDomainResource.sizeInBytesV(magic : integer) : cardinal;
+begin;
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContainedList.sizeInBytes(magic));
+  inc(result, FExtensionList.sizeInBytes(magic));
+  inc(result, FModifierExtensionList.sizeInBytes(magic));
 end;
 
 function TFhirDomainResource.Link : TFhirDomainResource;
@@ -1054,7 +1182,7 @@ end;
 procedure TFhirDomainResource.SetText(value : TFhirNarrative);
 begin
   FText.free;
-  FText := value; {L1134}
+  FText := value;
 end;
 
 function TFhirDomainResource.GetContainedList : TFhirResourceList;
@@ -1064,7 +1192,7 @@ begin
   result := FContainedList;
 end;
 
-function TFhirDomainResource.GetHasContainedList : boolean;
+function TFhirDomainResource.GetHasContainedList: Boolean;
 begin
   result := (FContainedList <> nil) and (FContainedList.count > 0);
 end;
@@ -1076,7 +1204,7 @@ begin
   result := FExtensionList;
 end;
 
-function TFhirDomainResource.GetHasExtensionList : boolean;
+function TFhirDomainResource.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;
@@ -1088,7 +1216,7 @@ begin
   result := FModifierExtensionList;
 end;
 
-function TFhirDomainResource.GetHasModifierExtensionList : boolean;
+function TFhirDomainResource.GetHasModifierExtensionList: Boolean;
 begin
   result := (FModifierExtensionList <> nil) and (FModifierExtensionList.count > 0);
 end;
@@ -1098,23 +1226,8 @@ begin
   result := (ExtensionList.Count > 0) or (FModifierExtensionList.Count > 0);
 end;
 
-procedure TFhirDomainResource.listDomainResourceFieldsInOrder(fields: TStringList);
-begin
-  listResourceFieldsInOrder(fields);
-  fields.add('text');
-  fields.add('contained');
-  fields.add('extension');
-  fields.add('modifierExtension');
-end;
 
-procedure TFhirDomainResource.listFieldsInOrder(fields : TStringList);
-begin
-  listResourceFieldsInOrder(fields);
-  fields.add('text');
-  fields.add('contained');
-  fields.add('extension');
-  fields.add('modifierExtension');
-end;
+
 
 end.
 

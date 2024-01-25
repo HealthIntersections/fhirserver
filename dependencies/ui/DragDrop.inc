@@ -6,7 +6,7 @@
 // Authors:         Angus Johnson,   ajohnson@rpi.net.au
 //                  Anders Melander, anders@melander.dk
 //                                   http://www.melander.dk
-// Copyright        © 1997-99 Angus Johnson & Anders Melander
+// Copyright        ) 1997-99 Angus Johnson & Anders Melander
 // -----------------------------------------------------------------------------
 
 

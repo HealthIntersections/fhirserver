@@ -1,5 +1,33 @@
 unit fui_lcl_registry;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 
 {$I fhir.inc}
 
@@ -59,8 +87,9 @@ type
     FManager : TPackageRegistryManager;
     FStop : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
+    procedure SetIni(AValue: TIniFile);
   public
-    property Ini : TIniFile read FIni write FIni;
+    property Ini : TIniFile read FIni write SetIni;
   end;
 
 var
@@ -75,12 +104,12 @@ implementation
 constructor TPackageRegistryManager.Create;
 begin
   inherited Create;
-  FClient := TFHIRPackageClient.create('http://packages.fhir.org');
+  FClient := TFHIRPackageClient.Create('http://packages.fhir.org');
 end;
 
 destructor TPackageRegistryManager.Destroy;
 begin
-  FClient.Free;
+  FClient.free;
   inherited Destroy;
 end;
 
@@ -156,7 +185,8 @@ end;
 
 procedure TPackageRegistryForm.FormCreate(Sender: TObject);
 begin
-  FManager := TPackageRegistryManager.create;
+  FManager := TPackageRegistryManager.Create;
+  FManager.Settings := ini;
   FManager.List := ListView1;
   FManager.Filter := edtFilter;
   FManager.registerControl(btnInstall, copExecute, 'install');
@@ -165,9 +195,9 @@ end;
 procedure TPackageRegistryForm.cbxServerChange(Sender: TObject);
 begin
   case cbxServer.ItemIndex of
-    0: FManager.FClient := TFHIRPackageClient.create('http://packages.fhir.org');
-    1: FManager.FClient := TFHIRPackageClient.create('http://packages2.fhir.org/packages');
-    2: FManager.FClient := TFHIRPackageClient.create('http://packages.fhir.org');
+    0: FManager.FClient := TFHIRPackageClient.Create('http://packages.fhir.org');
+    1: FManager.FClient := TFHIRPackageClient.Create('http://packages2.fhir.org/packages');
+    2: FManager.FClient := TFHIRPackageClient.Create('http://packages.fhir.org');
   end;
   FManager.doLoad;
 end;
@@ -193,7 +223,7 @@ begin
   ini.writeInteger('package-browser-view', 'width-canonical', ListView1.Columns[5].width);
   ini.writeInteger('package-browser-view', 'width', width);
   ini.writeInteger('package-browser-view', 'height', height);
-  FManager.Free;
+  FManager.free;
 end;
 
 procedure TPackageRegistryForm.FormShow(Sender: TObject);
@@ -213,6 +243,12 @@ end;
 procedure TPackageRegistryForm.packageWork(sender: TObject; pct: integer; done: boolean; msg: String);
 begin
 
+end;
+
+procedure TPackageRegistryForm.SetIni(AValue: TIniFile);
+begin
+  FIni := AValue;
+  FManager.Settings := FIni;
 end;
 
 end.

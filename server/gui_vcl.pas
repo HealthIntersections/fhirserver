@@ -37,6 +37,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.FileCtrl, Vcl.Menus, Vcl.Buttons,
   Vcl.StdCtrls, Vcl.ExtCtrls,
   fsl_utilities, fsl_shell,
+  fhir_colour_utils,
   server_config, server_constants, gui_controller;
 
 type
@@ -104,8 +105,8 @@ end;
 
 procedure TServerGUI.FormCreate(Sender: TObject);
 begin
-  Fini := TFHIRServerConfigFile.Create(Path([ExtractFilePath(paramstr(0)), 'fhir-server-gui.cfg']));
-  FServer := TFHIRServerController.create(FIni.link);
+  Fini := TFHIRServerConfigFile.Create(FilePath([TCommandLineParameters.execDir(), 'fhir-server-gui.cfg']));
+  FServer := TFHIRServerController.Create(FIni.link);
   FServer.OnStatusChange := serverStatusChange;
   FServer.OnLog := log;
   FServer.Initialise;
@@ -116,8 +117,8 @@ end;
 
 procedure TServerGUI.FormDestroy(Sender: TObject);
 begin
-  FServer.Free;
-  FIni.Free;
+  FServer.free;
+  FIni.free;
 end;
 
 procedure TServerGUI.log(msg: String);

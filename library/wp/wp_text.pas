@@ -1,7 +1,7 @@
 Unit wp_text;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -48,7 +48,7 @@ Type
       Procedure AddParagraph(oDocument : TWPWorkingDocument);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Read(oDocument : TWPWorkingDocument); Override;
   End;
@@ -67,7 +67,7 @@ Type
       FResetColCount: Boolean;
       FBreakAllowedBefore : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPTextFragment; Overload;
 
@@ -116,7 +116,7 @@ Type
       Function GetPiece(iIndex : Integer) : TWPTextModelPiece;
     Protected
       Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Start(iMaxWidth : Integer); Overload; Virtual;
       Function Finished : Boolean; Overload; Virtual;
@@ -132,7 +132,7 @@ Type
       FExpander : Char;
       FText : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPTextModelExpandingPiece; Overload;
 
@@ -151,7 +151,7 @@ Type
       FFragments : TWPTextFragmentList;
       FLines : TWPTextFragmentListList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -176,7 +176,7 @@ Type
       Function GetPieces : TWPTextModelPieces;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -201,7 +201,7 @@ Type
       FCells : TWPTextModelCells;
       Function GetCells : TWPTextModelCells;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -225,7 +225,7 @@ Type
       FRows : TWPTextModelRows;
       Function GetRows : TWPTextModelRows;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -253,7 +253,7 @@ Type
       Procedure ProduceRow(oRow : TWPTextModelRow; oWidths : TFslIntegerList);
       Procedure ProduceTable(oPiece : TWPTextModelTable; iWidth : Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       Procedure Produce(oContents : TWPTextModelPieces); Overload; Virtual;
@@ -290,7 +290,7 @@ Type
       Function GetTable : TWPTextModelTable;
       Function GetColumns : TWPTableColumnMetrics;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(oTable : TWPTextModelTable; oColumns : TWPTableColumnMetrics; iWidth : Integer); Overload; Virtual;
       destructor Destroy; Override;
@@ -350,7 +350,7 @@ Type
 
     Procedure ConfigureTextWriter(oWriter : TWPTextWriterModelWriter); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
 
@@ -395,7 +395,7 @@ Type
       Procedure WriteTableRowStop(oTableRow : TWPWorkingDocumentTableRowStartPiece; oStop : TWPWorkingDocumentStopPiece; bIsLast : Boolean); Overload; Override;
       Procedure WriteTableCellStop(oTableCell : TWPWorkingDocumentTableCellStartPiece; oStop : TWPWorkingDocumentStopPiece); Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 Implementation
@@ -420,7 +420,7 @@ Begin
     oDocument.Pieces.Add(oPara.Link);
     FLastWasPara := True;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -446,7 +446,7 @@ Begin
       oDocument.Pieces.Add(oText.Link);
       FLastWasPara := False;
     Finally
-      oText.Free;
+      oText.free;
     End;
     End;
 End;
@@ -530,9 +530,9 @@ Begin
 End;
 
 
-function TWPTextReader.sizeInBytesV : cardinal;
+function TWPTextReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TWPTextModelPieces.GetPiece(iIndex : Integer) : TWPTextModelPiece;
@@ -547,9 +547,9 @@ Begin
 End;
 
 
-function TWPTextModelPieces.sizeInBytesV : cardinal;
+function TWPTextModelPieces.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TWPTextModelCells.GetCell(iIndex : Integer) : TWPTextModelCell;
@@ -565,10 +565,10 @@ Begin
 End;
 
 
-function TWPTextModelCell.sizeInBytesV : cardinal;
+function TWPTextModelCell.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPieces.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPieces.sizeInBytes(magic));
 end;
 
 Function TWPTextModelCells.ItemClass : TFslObjectClass;
@@ -598,7 +598,7 @@ End;
 
 Destructor TWPTextModelCell.Destroy;
 Begin
-  FPieces.Free;
+  FPieces.free;
   Inherited;
 End;
 
@@ -612,15 +612,15 @@ End;
 
 Destructor TWPTextModelRow.Destroy;
 Begin
-  FCells.Free;
+  FCells.free;
   Inherited;
 End;
 
 
-function TWPTextModelRow.sizeInBytesV : cardinal;
+function TWPTextModelRow.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCells.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCells.sizeInBytes(magic));
 end;
 
 Constructor TWPTextModelTable.Create;
@@ -632,15 +632,15 @@ End;
 
 Destructor TWPTextModelTable.Destroy;
 Begin
-  FRows.Free;
+  FRows.free;
   Inherited;
 End;
 
 
-function TWPTextModelTable.sizeInBytesV : cardinal;
+function TWPTextModelTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRows.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRows.sizeInBytes(magic));
 end;
 
 Function TWPTextModelParagraphPiece.Contents : String;
@@ -673,7 +673,7 @@ Var
     Try
       FLines.Add(Result.Link);
     Finally
-      Result.Free;
+      Result.free;
     End;
     iWidth := 0;
   End;
@@ -682,7 +682,7 @@ Begin
   oLine := NewLine;
 
   if iMaxWidth = 0 then
-    raise EWPException.create('The text content contained a table that was too complex to layout given the number of columns available');
+    raise EWPException.Create('The text content contained a table that was too complex to layout given the number of columns available');
 
   iLoop := 0;
   While iLoop < FFragments.Count Do
@@ -761,7 +761,7 @@ Begin
         StringAppend(Result, oWords[iLoop], ' ');
     End;
   Finally
-    oWords.Free;
+    oWords.free;
   End;
   Assert(Length(sText)+iGap = Length(Result),
     'failed to add '+IntegerToString(iGap)+' spaces to '+cReturn+
@@ -779,11 +779,11 @@ Begin
 End;
 
 
-function TWPTextModelParagraphPiece.sizeInBytesV : cardinal;
+function TWPTextModelParagraphPiece.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFragments.sizeInBytes);
-  inc(result, FLines.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFragments.sizeInBytes(magic));
+  inc(result, FLines.sizeInBytes(magic));
 end;
 
 Function TWPTextModelExpandingPiece.Contents : String;
@@ -798,9 +798,9 @@ Begin
 End;
 
 
-function TWPTextModelExpandingPiece.sizeInBytesV : cardinal;
+function TWPTextModelExpandingPiece.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -884,8 +884,8 @@ End;
 
 Destructor TWPTextModelParagraphPiece.Destroy;
 Begin
-  FFragments.Free;
-  FLines.Free;
+  FFragments.free;
+  FLines.free;
   Inherited;
 End;
 
@@ -945,9 +945,9 @@ Begin
 End;
 
 
-function TWPTextFragment.sizeInBytesV : cardinal;
+function TWPTextFragment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
   inc(result, (FFormatBefore.length * sizeof(char)) + 12);
   inc(result, (FFormatAfter.length * sizeof(char)) + 12);
@@ -1119,11 +1119,11 @@ Begin
               Result := Result + oUsed[iLoop].Final(nil, nil);
           End;
         Finally
-          oSpaces.Free;
+          oSpaces.free;
         End;
       End;
     Finally
-      oUsed.Free;
+      oUsed.free;
     End;
   End;
 End;
@@ -1159,7 +1159,7 @@ Begin
     oFragment.ResetColCount := bResetColCount;
     FFragments.Add(oFragment.Link);
   Finally
-    oFragment.Free;
+    oFragment.free;
   End;
 End;
 
@@ -1240,7 +1240,7 @@ Begin
       ProduceHorizLine(oWidths);
     End;
   Finally
-    oWidths.Free;
+    oWidths.free;
   End;
   ProduceLine('');
 End;
@@ -1258,7 +1258,7 @@ Begin
     For iLoop := 0 To oCalc.Columns.Count - 1 Do
       oWidths.Add(oCalc.Columns[iLoop].Actual);
   Finally
-    oCalc.Free;
+    oCalc.free;
   End;
 End;
 
@@ -1322,9 +1322,9 @@ Begin
 End;
 
 
-function TWPTextWriterModelWriter.sizeInBytesV : cardinal;
+function TWPTextWriterModelWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FEoln.length * sizeof(char)) + 12);
 end;
 
@@ -1377,9 +1377,9 @@ Begin
     oWriter.Width := FWidth;
     oWriter.Produce(FPieces);
   Finally
-    oWriter.Free;
+    oWriter.free;
   End;
-  FPieces.Free;
+  FPieces.free;
   Inherited;
 End;
 
@@ -1402,7 +1402,7 @@ Begin
     oExpandable.Text := sText;
     FWorkingPieces.Add(oExpandable.Link);
   Finally
-    oExpandable.Free;
+    oExpandable.free;
   End;
 End;
 
@@ -1487,7 +1487,7 @@ Begin
       FWorkingPieces.Add(oPara.Link);
       FCurrentPara := oPara;
     Finally
-      oPara.Free;
+      oPara.free;
     End;
   End;
 End;
@@ -1524,7 +1524,7 @@ Begin
       FCurrentPara := Nil;
       FCurrentTable := oTextTable;
     Finally
-      oTextTable.Free;
+      oTextTable.free;
     End;
   End;
 End;
@@ -1553,7 +1553,7 @@ Begin
       FCurrentTable.Rows.Add(oTextRow.Link);
       FCurrentRow := oTextRow;
     Finally
-      oTextRow.Free;
+      oTextRow.free;
     End;
   End;
 End;
@@ -1580,7 +1580,7 @@ Begin
       FCurrentCell := oTextCell;
       FWorkingPieces := FCurrentCell.Pieces;
     Finally
-      oTextCell.Free;
+      oTextCell.free;
     End;
   End;
 End;
@@ -1597,15 +1597,15 @@ End;
 
 
 
-function TWPTextWriter.sizeInBytesV : cardinal;
+function TWPTextWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPieces.sizeInBytes);
-  inc(result, FWorkingPieces.sizeInBytes);
-  inc(result, FCurrentTable.sizeInBytes);
-  inc(result, FCurrentRow.sizeInBytes);
-  inc(result, FCurrentCell.sizeInBytes);
-  inc(result, FCurrentPara.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPieces.sizeInBytes(magic));
+  inc(result, FWorkingPieces.sizeInBytes(magic));
+  inc(result, FCurrentTable.sizeInBytes(magic));
+  inc(result, FCurrentRow.sizeInBytes(magic));
+  inc(result, FCurrentCell.sizeInBytes(magic));
+  inc(result, FCurrentPara.sizeInBytes(magic));
   inc(result, (FFormatBefore.length * sizeof(char)) + 12);
   inc(result, (FFormatAfter.length * sizeof(char)) + 12);
 end;
@@ -1622,8 +1622,8 @@ End;
 
 Destructor TWPTextWriterTableColumnSizeCalculator.Destroy;
 Begin
-  FTable.Free;
-  FColumns.Free;
+  FTable.free;
+  FColumns.free;
 
   Inherited;
 End;
@@ -1631,14 +1631,14 @@ End;
 
 Procedure TWPTextWriterTableColumnSizeCalculator.SetTable(Const Value : TWPTextModelTable);
 Begin
-  FTable.Free;
+  FTable.free;
   FTable := Value;
 End;
 
 
 Procedure TWPTextWriterTableColumnSizeCalculator.SetColumns(Const Value : TWPTableColumnMetrics);
 Begin
-  FColumns.Free;
+  FColumns.free;
   FColumns := Value;
 End;
 
@@ -1659,7 +1659,7 @@ Begin
     AllocateExtra(oToAllocate);
     RemoveMargins;
   Finally
-    oToAllocate.Free;
+    oToAllocate.free;
   End;
 End;
 
@@ -1700,7 +1700,7 @@ Begin
       oColumn.DeadRights.Add(2);
       FColumns.Add(oColumn.Link);
     Finally
-      oColumn.Free;
+      oColumn.free;
     End;
   End;
 End;
@@ -1961,7 +1961,7 @@ Begin
         // new width           is   existing width         - (amount to remove            *  percentage count
         oColumns[iCount].Actual := oColumns[iCount].Actual - Trunc((iPartialSum - iWidth) * (oColumns[iCount].TotalChars / iTotal) );
     Finally
-      oColumns.Free;
+      oColumns.free;
     End;
   End;
   // try again, this time not considering total char count
@@ -1990,7 +1990,7 @@ Begin
         // new width           is   existing width         - (amount to remove            *  percentage width
         oColumns[iCount].Actual := IntegerMax(COLUMN_MIN_WIDTH, oColumns[iCount].Actual - Trunc((iPartialSum - iWidth) * (oColumns[iCount].Actual / iPartialSum) ));
     Finally
-      oColumns.Free;
+      oColumns.free;
     End;
   End;
 End;
@@ -2021,18 +2021,18 @@ Const
 
 Function ColourDifference(aColour1, aColour2 : TColour):Integer;
 Begin
-  Result :=
+  Result := 
     (TColourParts(aColour1).Red - TColourParts(aColour2).Red) * (TColourParts(aColour1).Red - TColourParts(aColour2).Red) +
     (TColourParts(aColour1).Green - TColourParts(aColour2).Green) * (TColourParts(aColour1).Green - TColourParts(aColour2).Green) +
     (TColourParts(aColour1).Blue - TColourParts(aColour2).Blue) * (TColourParts(aColour1).Blue - TColourParts(aColour2).Blue);
 End;
 
 
-function TWPTextWriterTableColumnSizeCalculator.sizeInBytesV : cardinal;
+function TWPTextWriterTableColumnSizeCalculator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTable.sizeInBytes);
-  inc(result, FColumns.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTable.sizeInBytes(magic));
+  inc(result, FColumns.sizeInBytes(magic));
 end;
 
 Function TWPPITWriter.PickColour(aColour : TColour) : String;
@@ -2152,9 +2152,9 @@ End;
 
 
 
-function TWPPITWriter.sizeInBytesV : cardinal;
+function TWPPITWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FForeground.length * sizeof(char)) + 12);
   inc(result, (FBackground.length * sizeof(char)) + 12);
 end;

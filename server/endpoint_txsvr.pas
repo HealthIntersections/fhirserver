@@ -1,31 +1,58 @@
 unit endpoint_txsvr;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen,
-  fdb_manager,
+  fsl_base, fsl_utilities, fsl_logging, fsl_json, fsl_stream, fsl_fpc, fsl_scim, fsl_http, fsl_npm_cache, fsl_npm, fsl_htmlgen, fsl_threads, fsl_i18n,
+  fdb_manager, fdb_fts,
   ftx_ucum_services,
   fhir_objects,  fhir_factory, fhir_pathengine, fhir_parser, fhir_common, fhir_utilities,
-  {$IFNDEF NO_JS}fhir_javascript, {$ENDIF}
 
   ftx_service, ftx_sct_services,
 
-  fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
-  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir5_indexinfo,
-  fhir2_context, fhir3_context, fhir4_context, fhir5_context,
-  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir5_pathengine,
-  fhir2_validator, fhir3_validator, fhir4_validator, fhir5_validator,
-  validator_r2, validator_r3, validator_r4, validator_r5,
+  fhir2_factory, fhir3_factory, fhir4_factory, fhir4b_factory, fhir5_factory,
+  fhir2_indexinfo, fhir3_indexinfo, fhir4_indexinfo, fhir4b_indexinfo, fhir5_indexinfo,
+  fhir2_context, fhir3_context, fhir4_context, fhir4b_context, fhir5_context,
+  fhir2_pathengine, fhir3_pathengine, fhir4_pathengine, fhir4b_pathengine, fhir5_pathengine,
+  fhir2_validator, fhir3_validator, fhir4_validator, fhir4b_validator, fhir5_validator,
+  validator_r2, validator_r3, validator_r4, validator_r4b, validator_r5,
 
   fhir_indexing, search_base, database_installer,
-  tx_manager, tx_server, tx_operations, operations, tx_icd10,
+  tx_manager, tx_server, tx_operations, operations,
   storage, server_context, session, user_manager, server_config, bundlebuilder,
-  utilities, security, indexing, server_factory, subscriptions,
-  telnet_server,
+  utilities, security, indexing, server_factory, subscriptions, time_tracker,
+  telnet_server, kernel_thread, server_stats, xig_provider,
   web_server, web_base, endpoint, endpoint_storage;
 
 const
@@ -42,7 +69,7 @@ type
   public
     constructor Create(version : TFHIRVersion);
     function makeIndexes : TFHIRIndexBuilder; override;
-    function makeValidator: TFHIRValidatorV; override;
+    function makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV; override;
     function makeIndexer : TFHIRIndexManager; override;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; override;
     function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; override;
@@ -50,21 +77,42 @@ type
     procedure setTerminologyServer(validatorContext : TFHIRWorkerContextWithFactory; server : TFslObject{TTerminologyServer}); override;
   end;
 
+  { TTerminologyServerData }
+
   TTerminologyServerData = class (TFslObject)
   private
     FPackages : TStringList;
-    FCodeSystems : TFslMap<TFHIRMetadataResourceW>;
-    FValueSets : TFslMap<TFHIRMetadataResourceW>;
-    FNamingSystems : TFslMap<TFHIRMetadataResourceW>;
-    FConceptMaps : TFslMap<TFHIRMetadataResourceW>;
+    FCodeSystems : TFslMap<TFHIRResourceProxyV>;
+    FTextIndex: TFDBFullTextSearch;
+    FValueSets : TFslMap<TFHIRResourceProxyV>;
+    FNamingSystems : TFslMap<TFHIRResourceProxyV>;
+    FConceptMaps : TFslMap<TFHIRResourceProxyV>;
+    procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create; override;
+    constructor Create(TextIndex : TFDBFullTextSearch);
     destructor Destroy; override;
     function link : TTerminologyServerData; overload;
-    property CodeSystems : TFslMap<TFHIRMetadataResourceW> read FCodeSystems;
-    property ValueSets : TFslMap<TFHIRMetadataResourceW> read FValueSets;
-    property NamingSystems : TFslMap<TFHIRMetadataResourceW> read FNamingSystems;
-    property ConceptMaps : TFslMap<TFHIRMetadataResourceW> read FConceptMaps;
+
+    procedure clear;
+
+    property CodeSystems : TFslMap<TFHIRResourceProxyV> read FCodeSystems;
+    property ValueSets : TFslMap<TFHIRResourceProxyV> read FValueSets;
+    property NamingSystems : TFslMap<TFHIRResourceProxyV> read FNamingSystems;
+    property ConceptMaps : TFslMap<TFHIRResourceProxyV> read FConceptMaps;
+    property TextIndex : TFDBFullTextSearch read FTextIndex;
+  end;
+
+  { TTerminologyServerDataLoadThread }
+
+  TTerminologyServerDataLoadThread = class (TFslThread)
+  private
+    FEndPoint : TTerminologyServerEndPoint;
+    procedure process(name : String; list : TFslMap<TFHIRResourceProxyV>);
+  public
+    constructor create(ep : TTerminologyServerEndPoint);
+    procedure execute; override;
   end;
 
   TTerminologyFhirServerStorage = class;
@@ -74,8 +122,14 @@ type
     FData : TTerminologyServerData;
 
     function compareDate(base, min, max : TFslDateTime; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
-    function matches(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
+    function matchesNative(resource : TFHIRMetadataResourceW; sp : TSearchParameter) : boolean;
+    function matchesFHIRPath(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
     function matchesObject(obj : TFhirObject; sp : TSearchParameter) : boolean;
+    function tokenMatchesCodeableConcept(obj: TFhirObject; sp: TSearchParameter): boolean;
+    function tokenMatchesCoding(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
+    function tokenMatchesCoding(c: TFhirCodingW; sp: TSearchParameter): boolean; overload;
+    function tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
+    function makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
   protected
     function context : TFHIRServerContext;
     procedure StartTransaction; override;
@@ -89,7 +143,7 @@ type
 
     function Repository : TTerminologyFhirServerStorage; // private - hint busting
   public
-    constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
+    constructor Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; langList : THTTPLanguageList; Data : TTerminologyServerData);
     destructor Destroy; override;
 
     function LookupReference(context : TFHIRRequest; id : String) : TResourceWithReference; override;
@@ -101,13 +155,14 @@ type
     function FindResource(aType, sId : String; options : TFindResourceOptions; var resourceKey, versionKey : integer; request: TFHIRRequest; response: TFHIRResponse; sessionCompartments : TFslList<TFHIRCompartmentId>): boolean; override;
   end;
 
+  { TTerminologyFhirServerStorage }
+
   TTerminologyFhirServerStorage = class (TFHIRStorageService)
   private
+    FLock : TFslLock;
     FData : TTerminologyServerData;
-    FCache : TFHIRPackageManager;
     FServerContext : TFHIRServerContext; // free from owner
-    function loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
-    procedure loadResource(res: TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
+    procedure loadResource(res: TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
     procedure loadBytes(factory: TFHIRFactory; name: String; cnt: TBytes);
     procedure loadFromZip(factory: TFHIRFactory; cnt: TBytes);
   protected
@@ -118,6 +173,7 @@ type
     destructor Destroy; override;
 
     function link : TTerminologyFhirServerStorage; overload;
+    procedure UnLoad; override;
 
     // no OAuth Support
     // server total counts:
@@ -135,7 +191,7 @@ type
     procedure ProcessObservations; override;
     procedure RunValidation; override;
 
-    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
+    function createOperationContext(langList : THTTPLanguageList) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
 
     procedure Sweep; override;
@@ -154,9 +210,13 @@ type
     procedure RecordExchange(req: TFHIRRequest; resp: TFHIRResponse; e: exception); override;
     procedure FinishRecording(); override;
 
-    procedure loadUTGFolder(folder : String);
     procedure loadPackage(pid : String; ignoreEmptyCodeSystems : boolean);
     procedure loadFile(factory : TFHIRFactory; name : String);
+    procedure loadFromXig(xig : TXIGProvider; ignoreEmptyCodeSystems : boolean);
+
+    function cacheSize(magic : integer) : UInt64; override;
+    function issueHealthCardKey : integer; override;
+    procedure logHealthCard(key : integer; source : TSmartHealthCardSource; date : TFslDateTime; nbf, hash, patientId : String; details : TBytes); override;
   end;
 
   TTerminologyFHIRUserProvider = class (TFHIRUserProvider)
@@ -177,45 +237,57 @@ type
     function terminologies : TCommonTerminologies;
   protected
 
-    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; const lang : THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
-    Function BuildFhirUploadPage(const lang : THTTPLanguages; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
-    Function BuildFhirAuthenticationPage(const lang : THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
+    Function BuildFhirHomePage(compList : TFslList<TFHIRCompartmentId>; logId : String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String; override;
+    Function BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL: String; aType: String; Session: TFHIRSession): String; override;
+    Function BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params : String): String; override;
     function HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime; override;
     procedure GetWebUILink(resource: TFhirResourceV; base, statedType, id, ver: String; var link, text: String); override;
-    Function ProcessZip(const lang : THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
-    function DoSearch(Session: TFHIRSession; rtype: string; const lang : THTTPLanguages; params: String): TFHIRBundleW; override;
+    Function ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW; override;
+    function DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW; override;
 
     function AutoCache : boolean; override;
   public
     destructor Destroy; override;
     function link : TTerminologyServerWebServer; overload;
     function description : String; override;
+    function logId : string; override;
   end;
 
+
+  { TTerminologyServerEndPoint }
 
   TTerminologyServerEndPoint = class (TStorageEndPoint)
   private
     FStore : TTerminologyFhirServerStorage;
     UTGFolder : String;
+    FWeb : TTerminologyServerWebServer;
+    FLoadThread : TTerminologyServerDataLoadThread;
     function version : TFHIRVersion;
-    function makeFactory : TFHIRFactory;
-    function makeServerFactory : TFHIRServerFactory;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
     function makeWebEndPoint(common : TFHIRWebServerCommon) : TFhirWebServerEndpoint; override;
 
     procedure Load; override;
     procedure Unload; override;
-    procedure InstallDatabase; override;
+    procedure InstallDatabase(params : TCommandLineParameters); override;
     procedure UninstallDatabase; override;
-    procedure LoadPackages(plist : String); override;
-    procedure updateAdminPassword; override;
-    procedure internalThread; override;
-    function cacheSize : UInt64; override;
+    procedure LoadPackages(installer : boolean; plist : String); override;
+    procedure updateAdminPassword(pw : String); override;
+    procedure internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack); override;
+    function cacheSize(magic : integer) : UInt64; override;
     procedure clearCache; override;
+    procedure SweepCaches; override;
+    procedure SetCacheStatus(status : boolean); override;
+    procedure getCacheInfo(ci: TCacheInformation); override;    
+    procedure recordStats(rec : TStatusRecord); override;
+    procedure Started; override;
+    procedure Stopping; override;
   end;
+
+function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
+function makeTxServerFactory(version : TFHIRVersion) : TFHIRServerFactory;
 
 implementation
 
@@ -227,19 +299,21 @@ begin
     fhirVersionRelease2 : result := TFHIRIndexBuilderR2.create;
     fhirVersionRelease3 : result := TFHIRIndexBuilderR3.create;
     fhirVersionRelease4 : result := TFHIRIndexBuilderR4.create;
+    fhirVersionRelease4B : result := TFHIRIndexBuilderR4B.create;
     fhirVersionRelease5 : result := TFHIRIndexBuilderR5.create;
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating index information');
   end;
 end;
 
-function TTerminologyServerFactory.makeValidator: TFHIRValidatorV;
+function TTerminologyServerFactory.makeValidator(pc : TFHIRPackageManager): TFHIRValidatorV;
 begin
   case FVersion of
-    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create));
-    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create));
-    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create));
-    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create));
+    fhirVersionRelease2 : result := TFHIRValidator2.Create(TFHIRServerWorkerContextR2.Create(TFHIRFactoryR2.create, pc.link));
+    fhirVersionRelease3 : result := TFHIRValidator3.Create(TFHIRServerWorkerContextR3.Create(TFHIRFactoryR3.create, pc.link));
+    fhirVersionRelease4 : result := TFHIRValidator4.Create(TFHIRServerWorkerContextR4.Create(TFHIRFactoryR4.create, pc.link));
+    fhirVersionRelease4B : result := TFHIRValidator4B.Create(TFHIRServerWorkerContextR4B.Create(TFHIRFactoryR4B.create, pc.link));
+    fhirVersionRelease5 : result := TFHIRValidator5.Create(TFHIRServerWorkerContextR5.Create(TFHIRFactoryR5.create, pc.link));
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating Validator');
   end;
@@ -247,11 +321,13 @@ end;
 
 function TTerminologyServerFactory.makeIndexer: TFHIRIndexManager;
 begin
+  result := nil;
   raise EFslException.Create('Not supported in this server');
 end;
 
 function TTerminologyServerFactory.makeSubscriptionManager(ServerContext: TFslObject): TSubscriptionManager;
 begin
+  result := nil;
   raise EFslException.Create('Not supported in this server');
 end;
 
@@ -267,6 +343,7 @@ begin
     fhirVersionRelease2 : result := TFHIRPathEngine2.Create(validatorContext as TFHIRWorkerContext2, ucum);
     fhirVersionRelease3 : result := TFHIRPathEngine3.Create(validatorContext as TFHIRWorkerContext3, ucum);
     fhirVersionRelease4 : result := TFHIRPathEngine4.Create(validatorContext as TFHIRWorkerContext4, ucum);
+    fhirVersionRelease4B : result := TFHIRPathEngine4B.Create(validatorContext as TFHIRWorkerContext4B, ucum);
     fhirVersionRelease5 : result := TFHIRPathEngine5.Create(validatorContext as TFHIRWorkerContext5, ucum);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Creating FHIRPathEngine');
@@ -279,6 +356,7 @@ begin
     fhirVersionRelease2 : TFHIRServerWorkerContextR2(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease3 : TFHIRServerWorkerContextR3(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease4 : TFHIRServerWorkerContextR4(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
+    fhirVersionRelease4B : TFHIRServerWorkerContextR4B(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
     fhirVersionRelease5 : TFHIRServerWorkerContextR5(ValidatorContext).TerminologyServer := (server as TTerminologyServer);
   else
     raise EFHIRUnsupportedVersion.Create(FVersion, 'Setting Terminology Server');
@@ -288,27 +366,29 @@ end;
 
 { TTerminologyServerData }
 
-constructor TTerminologyServerData.Create;
+constructor TTerminologyServerData.Create(TextIndex : TFDBFullTextSearch);
 begin
   inherited create;
-  FCodeSystems := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FCodeSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FCodeSystems.defaultValue := nil;
-  FValueSets := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FValueSets := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FValueSets.defaultValue := nil;
-  FNamingSystems := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FNamingSystems := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FNamingSystems.defaultValue := nil;
-  FConceptMaps := TFslMap<TFHIRMetadataResourceW>.create('FHIR Tx Kernel');
+  FConceptMaps := TFslMap<TFHIRResourceProxyV>.create('FHIR Tx Kernel');
   FConceptMaps.defaultValue := nil;
   FPackages := TStringList.create;
+  FTextIndex := TextIndex;
 end;
 
 destructor TTerminologyServerData.Destroy;
 begin
-  FPackages.Free;
-  FConceptMaps.Free;
-  FNamingSystems.Free;
-  FValueSets.Free;
-  FCodeSystems.Free;
+  FPackages.free;
+  FConceptMaps.free;
+  FNamingSystems.free;
+  FValueSets.free;
+  FCodeSystems.free;
+  FTextIndex.free;
 
   inherited;
 end;
@@ -318,17 +398,87 @@ begin
   result := TTerminologyServerData(inherited link);
 end;
 
+procedure TTerminologyServerData.clear;
+begin
+  FCodeSystems.clear;
+  FValueSets.clear;
+  FNamingSystems.clear;
+  FConceptMaps.clear;
+end;
+
+procedure TTerminologyServerData.addCodesToIndex(cmp : TFDBFullTextSearchCompartment; vurl : String; codes : TFhirCodeSystemConceptListW);
+var
+  cc : TFHIRCodeSystemConceptW;
+begin
+  for cc in codes do
+  begin
+    FTextIndex.addText(cmp, vurl+'#'+cc.code, cc.code+': '+cc.display, cc.definition);
+    addCodesToIndex(cmp, vurl, cc.conceptList);
+  end;
+end;
+
+function TTerminologyServerData.sizeInBytesV(magic: integer): cardinal;
+begin
+  result := inherited sizeInBytesV(magic) + FPackages.sizeInBytes(magic) + FCodeSystems.sizeInBytes(magic) + FValueSets.sizeInBytes(magic) + FNamingSystems.sizeInBytes(magic) + FConceptMaps.sizeInBytes(magic);
+end;
+
+{ TTerminologyServerDataLoadThread }
+
+procedure TTerminologyServerDataLoadThread.process(name : String; list : TFslMap<TFHIRResourceProxyV>);
+var
+  p : TFHIRResourceProxyV;
+  t : TFHIRResourceV;
+  i, c : integer;
+begin
+  SetThreadStatus(name+': 0%');
+  c := list.Count;
+  i := 0;
+  for p in list.values do
+  begin
+    if Stopped then
+      exit;
+    SetThreadStatus(name+': '+inttostr((100 * i) div c)+'% of '+inttostr(c)+' ('+p.url+')');
+    try
+      t := p.resourceV; // prompt to load
+    except
+      on e : Exception do
+        Logging.log('Error loading '+p.url+'|'+p.version+': '+e.message);
+    end;
+    inc(i);
+    SetThreadStatus(name+': '+inttostr((100 * i) div c)+'% of '+inttostr(c));
+    sleep(15);   // if this goes too low, bang on OSX
+  end;
+end;
+
+constructor TTerminologyServerDataLoadThread.create(ep: TTerminologyServerEndPoint);
+begin
+  FEndPoint := ep;
+  inherited create;
+end;
+
+procedure TTerminologyServerDataLoadThread.execute;
+var
+  version : String;
+begin
+  version := FEndPoint.config.prop['version'].value;
+  SetThreadName(version+' Loader');
+  process('CodeSystems', FEndPoint.FStore.FData.CodeSystems);
+  process('ValueSets', FEndPoint.FStore.FData.ValueSets);
+  process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
+  process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
+end;
+
 { TTerminologyServerOperationEngine }
 
-constructor TTerminologyServerOperationEngine.Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; const lang : THTTPLanguages; Data : TTerminologyServerData);
+constructor TTerminologyServerOperationEngine.Create(Storage : TFHIRStorageService; ServerContext : TFHIRServerContext; langList : THTTPLanguageList; Data : TTerminologyServerData);
 begin
-  inherited Create(Storage, ServerContext, lang);
+  inherited Create(Storage, ServerContext, langList);
   FData := data;
 end;
 
 destructor TTerminologyServerOperationEngine.Destroy;
 begin
-  FData.Free;
+  FData.free;
   inherited;
 end;
 
@@ -397,6 +547,7 @@ end;
 
 function TTerminologyServerOperationEngine.LookupReference(context: TFHIRRequest; id: String): TResourceWithReference;
 begin
+  result := nil;
   raise ETodo.Create('Not done yet');
 end;
 
@@ -404,73 +555,84 @@ function TTerminologyServerOperationEngine.GetResourceById(request: TFHIRRequest
 begin
   needSecure := false;
   if aType = 'CodeSystem' then
-    result := FData.CodeSystems[id].Resource.Link
+    result := FData.CodeSystems[id].ResourceV.Link
   else if aType = 'ValueSet' then
-    result := FData.ValueSets[id].Resource.Link
+    result := FData.ValueSets[id].ResourceV.Link
   else if aType = 'NamingSystem' then
-    result := FData.NamingSystems[id].Resource.Link
+    result := FData.NamingSystems[id].ResourceV.Link
   else if aType = 'ConceptMap' then
-    result := FData.ConceptMaps[id].Resource.Link
+    result := FData.ConceptMaps[id].ResourceV.Link
   else
     result := nil;
 end;
 
 function TTerminologyServerOperationEngine.getResourceByUrl(aType, url, version: string; allowNil: boolean; var needSecure: boolean): TFHIRResourceV;
 var
-  res : TFHIRMetadataResourceW;
+  res : TFHIRResourceProxyV;
 begin
   result := nil;
   needSecure := false;
   if (aType = '') or (aType = 'CodeSystem') then
     for res in FData.CodeSystems.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
   if (aType = '') or (aType = 'ConceptMap') then
     for res in FData.ConceptMaps.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
   if (aType = '') or (aType = 'NamingSystem') then
     for res in FData.NamingSystems.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
   if (aType = '') or (aType = 'ValueSet') then
     for res in FData.ValueSets.Values do
       if res.url = url then
-        exit(res.Resource.link);
+        exit(res.ResourceV.link);
 end;
 
 function TTerminologyServerOperationEngine.ExecuteRead(request: TFHIRRequest; response: TFHIRResponse; ignoreHeaders: boolean): boolean;
 var
-  res : TFHIRMetadataResourceW;
+  res : TFHIRResourceV;
 begin
   result := false;
+  res := nil;
   if request.ResourceName = 'CodeSystem' then
-    res := FData.CodeSystems[request.Id].Link
+  begin
+    if (FData.CodeSystems.ContainsKey(request.id)) then
+      res := FData.CodeSystems[request.Id].resourceV.Link
+  end
   else if request.ResourceName = 'ValueSet' then
-    res := FData.ValueSets[request.Id].Link
+  begin
+    if (FData.ValueSets.ContainsKey(request.id)) then
+      res := FData.ValueSets[request.Id].resourceV.Link
+  end
   else if request.ResourceName = 'NamingSystem' then
-    res := FData.NamingSystems[request.Id].Link
+  begin
+    if (FData.NamingSystems.ContainsKey(request.id)) then
+      res := FData.NamingSystems[request.Id].resourceV.Link
+  end
   else if request.ResourceName = 'ConceptMap' then
-    res := FData.ConceptMaps[request.Id].Link
-  else
-    res := nil;
+  begin
+    if (FData.ConceptMaps.ContainsKey(request.id)) then
+      res := FData.ConceptMaps[request.Id].resourceV.Link
+  end;
 
   try
     if res <> nil then
     begin
       response.HTTPCode := 200;
       response.Message := 'OK';
-      response.Resource := res.Resource.link;
+      response.Resource := res.Link;
       result := true;
     end
     else
     begin
       response.HTTPCode := 404;
       response.Message := 'Not Found';
-      response.Resource := factory.BuildOperationOutcome(lang, 'not found', itUnknown);
+      response.Resource := factory.BuildOperationOutcome(langList, 'not found', itUnknown);
     end;
   finally
-    res.Free;
+    res.free;
   end;
 end;
 
@@ -479,29 +641,55 @@ begin
   result := (request.ResourceName = name) or ((request.ResourceName = '') and request.Parameters['_type'].Contains(name));
 end;
 
+function onlyHasElements(ts : TStringList; names : array of String) : boolean;
+var
+  s : String;
+begin
+  result := true;
+  for s in ts do
+    if not StringArrayExists(names, s) then
+      exit(false);
+end;
+
+function TTerminologyServerOperationEngine.makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
+begin
+  result := factory.wrapResource(factory.makeResource(rn)) as TFHIRMetadataResourceW;
+  result.id := p.id;
+  result.url := p.url;
+  result.version := p.version;
+end;
+
 procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
   search : TFslList<TSearchParameter>;
   sp : TSearchParameter;
+  spp : TSearchParser;
   list, filtered : TFslMetadataResourceList;
   res : TFhirMetadataResourceW;
   bundle : TFHIRBundleBuilder;
   op : TFHIROperationOutcomeW;
   base : String;
-  isMatch : boolean;
+  isMatch, defCount : boolean;
   i, t, offset, count : integer;
   be : TFhirBundleEntryW;
+  p : TFHIRResourceProxyV;
+  useProxy : boolean;
+  start : QWord;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
 
   offset := 0;
   count := 50;
+  defCount := true;
   for i := 0 to request.Parameters.Count - 1 do
     if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
       offset := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0)
     else if request.Parameters.Name[i] = '_count' then
+    begin
       count := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0);
+      defCount := false;
+    end;
   if (count < 2) then
     count := TX_SEARCH_PAGE_DEFAULT
   else if (Count > TX_SEARCH_PAGE_LIMIT) then
@@ -509,91 +697,156 @@ begin
   if offset < 0 then
     offset := 0;
 
+  start := GetTickCount64;
   if (request.Parameters.Count = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
     BuildSearchForm(request, response)
   else
   begin
     TypeNotFound(request, response);
-    search := TSearchParser.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
+    spp := TSearchParser.create([scpCount, scpElements, scpSummary]);
     try
-      base := TSearchParser.buildUrl(search);
-      response.OnCreateBuilder(request, response, btSearchset, bundle);
-      op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+      spp.allowedParams.add('url');
+      spp.allowedParams.add('version');
+      spp.allowedParams.add('content-mode');
+      spp.allowedParams.add('date');
+      spp.allowedParams.add('description');
+      spp.allowedParams.add('supplements');
+      spp.allowedParams.add('identifier');
+      spp.allowedParams.add('jurisdiction');
+      spp.allowedParams.add('name');
+      spp.allowedParams.add('publisher');
+      spp.allowedParams.add('status');
+      spp.allowedParams.add('system');
+      spp.allowedParams.add('title');
+      search := spp.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
       try
-        bundle.setLastUpdated(TFslDateTime.makeUTC);
-        bundle.addLink('self', base);
-        bundle.setId(FhirGUIDToString(CreateGUID));
-
-        list := TFslMetadataResourceList.create;
+        base := spp.buildUrl(request.resourceName, search);
+        OnCreateBuilder(request, response, btSearchset, bundle);
+        op := factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
         try
-          if (hasScope(request, 'CodeSystem')) then
-            FData.CodeSystems.listAll(list);
-          if (hasScope(request, 'ValueSet')) then
-            FData.ValueSets.listAll(list);
-          if (hasScope(request, 'ConceptMap')) then
-            FData.ConceptMaps.listAll(list);
-          if (hasScope(request, 'NamingSystem')) then
-            FData.NamingSystems.listAll(list);
+          bundle.setLastUpdated(TFslDateTime.makeUTC);
+          bundle.addLink('self', base);
+          bundle.setId(FhirGUIDToString(CreateGUID));
 
-          filtered := TFslMetadataResourceList.create;
+          list := TFslMetadataResourceList.create;
           try
-            for res in list do
-            begin
-              isMatch := true;
-              for sp in search do
-                if isMatch and not matches(res.Resource, sp) then
-                  isMatch := false;
-              if isMatch then
-              filtered.add(res.link);
-            end;
-
-            if (offset > 0) or (Count < filtered.count) then
-            begin
-              bundle.addLink('first', base+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if offset - count >= 0 then
-                bundle.addLink('previous', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if offset + count < list.count then
-                bundle.addLink('next', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-              if count < list.count then
-                bundle.addLink('last', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((filtered.count div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
-            end;
-
-            i := 0;
-            t := 0;
-            for res in filtered do
-            begin
-              inc(i);
-              if (i > offset) then
+            useProxy := false;
+            if (spp.elements.count > 0) and (search.count = 1) then
+              if onlyHasElements(spp.elements, ['id', 'url' ,'version']) then
               begin
-                be := bundle.makeEntry;
-                try
-                  bundle.addEntry(be, false);
-                  be.Url := res.url;
-                  be.resource := res.Resource.Link;
-                finally
-                  be.free;
-                end;
-                inc(t);
-                if (t = count) then
-                  break;
+                useProxy := true;
+                if (defCount) then
+                  count := 100000;
               end;
+
+            if (hasScope(request, 'CodeSystem')) then
+            begin
+              deadCheck(start);
+              for p in FData.CodeSystems.Values do
+                if useProxy then
+                  list.add(makeWrapper('CodeSystem', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
+            if (hasScope(request, 'ValueSet')) then
+            begin
+              deadCheck(start);
+              for p in FData.ValueSets.Values do
+                if useProxy then
+                  list.add(makeWrapper('ValueSet', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
+            if (hasScope(request, 'ConceptMap')) then
+            begin
+              deadCheck(start);
+              for p in FData.ConceptMaps.Values do
+                if useProxy then
+                  list.add(makeWrapper('ConceptMap', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
+            if (hasScope(request, 'NamingSystem')) then
+            begin
+              deadCheck(start);
+              for p in FData.NamingSystems.Values do
+                if useProxy then
+                  list.add(makeWrapper('NamingSystem', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+            end;
+
+            filtered := TFslMetadataResourceList.create;
+            try
+              for res in list do
+              begin
+                deadCheck(start);
+                isMatch := true;
+                for sp in search do
+                begin
+                  if (sp.Control = scpNull) then
+                  begin
+                    if isMatch and not matchesNative(res, sp) then
+                      isMatch := false;
+                  end;
+                end;
+                if isMatch then
+                  filtered.add(res.link);
+              end;
+
+              bundle.setTotal(filtered.count);
+
+              if (offset > 0) or (Count < filtered.count) then
+              begin
+                bundle.addLink('first', base+'&'+SEARCH_PARAM_NAME_OFFSET+'=0&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if offset - count >= 0 then
+                  bundle.addLink('previous', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset - count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if offset + count < list.count then
+                  bundle.addLink('next', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr(offset + count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+                if count < list.count then
+                  bundle.addLink('last', base+'&'+SEARCH_PARAM_NAME_OFFSET+'='+inttostr((filtered.count div count) * count)+'&'+SEARCH_PARAM_NAME_COUNT+'='+inttostr(Count));
+              end;
+
+              i := 0;
+              t := 0;
+              for res in filtered do
+              begin
+                deadCheck(start);
+                inc(i);
+                if (i > offset) then
+                begin
+                  be := bundle.makeEntry;
+                  try
+                    bundle.addEntry(be, false);
+                    be.Url := URLPath([context.FormalURLPlain, res.fhirType, res.id]);
+                    be.resource := res.Resource.Link;
+                  finally
+                    be.free;
+                  end;
+                  inc(t);
+                  if (t = count) then
+                    break;
+                end;
+              end;
+            finally
+              filtered.free;
             end;
           finally
-            filtered.free;
+            list.free;
           end;
+          response.HTTPCode := 200;
+          response.Message := 'OK';
+          response.Body := '';
+          response.resource := bundle.getBundle;
         finally
-          list.Free;
+          op.free;
+          bundle.free;
         end;
-        response.HTTPCode := 200;
-        response.Message := 'OK';
-        response.Body := '';
-        response.resource := bundle.getBundle;
       finally
-        op.Free;
-        bundle.Free;
+        search.free;
       end;
     finally
-      search.free;
+      spp.free;
     end;
   end;
 end;
@@ -607,20 +860,26 @@ var
   oplist : TStringList;
   s : String;
   i : integer;
+  tt : TTimeTracker;
+  start : QWord;
 begin
+  start := GetTickCount64;
+
   opList := TStringList.create;
   try
     // since we're not making any changes, this is pretty straight forward
     try
-      if check(response, request.Resource.fhirType = 'Bundle', 400, lang, 'A bundle is required for a Transaction operation', itInvalid) then
+      if check(response, request.Resource.fhirType = 'Bundle', 400, langList, 'A bundle is required for a Transaction operation', itInvalid) then
       begin
         req := factory.wrapBundle(request.resource.Link);
         resp := factory.wrapBundle(factory.makeResource('Bundle'));
+        tt := TTimeTracker.create;
         try
           resp.type_ := btBatchResponse;
           resp.id := NewGuidId;
           for src in req.entries.forEnum do
           begin
+            deadCheck(start);
             dest := resp.addEntry;
             try
               try
@@ -640,7 +899,7 @@ begin
                 request.IfMatch := src.requestIfMatch;
                 request.IfNoneExist := src.requestIfNoneExist;
                 request.resource := src.resource.link;
-                s := Execute(context, request, response);
+                s := Execute(context, request, response, tt);
                 if s.contains('#') then
                   s := s.substring(0, s.indexof('#'));
                 i := oplist.IndexOf(s);
@@ -659,14 +918,14 @@ begin
                   if req.type_ = btTransaction then
                     raise;
                   dest.responseStatus := inttostr(e.Status);
-                  dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+                  dest.resource := Factory.BuildOperationOutcome(request.langList, e);
                 end;
                 on e : Exception do
                 begin
                   if req.type_ = btTransaction then
                     raise;
                   dest.responseStatus := '500';
-                  dest.resource := Factory.BuildOperationOutcome(request.Lang, e);
+                  dest.resource := Factory.BuildOperationOutcome(request.langList, e);
                 end;
               end;
             finally
@@ -679,6 +938,7 @@ begin
         finally
           req.free;
           resp.free;
+          tt.free;
         end;
       end;
       AuditRest(request.session, request.internalRequestId, request.externalRequestId, request.ip, '', '', '', 0, fcmdBatch, request.Provenance, response.httpCode, '', response.message, []);
@@ -715,7 +975,60 @@ begin
     result := false;
 end;
 
-function TTerminologyServerOperationEngine.matches(resource: TFhirResourceV; sp: TSearchParameter): boolean;
+function TTerminologyServerOperationEngine.matchesNative(resource : TFHIRMetadataResourceW; sp : TSearchParameter) : boolean;
+  function tokenMatches(mask, value : String) : boolean;
+  begin
+    result := mask = value;
+  end;
+  function stringMatches(mask, value : String) : boolean;
+  begin
+    result := value.toLower.contains(mask.toLower);
+  end;
+  function dateMatches(mask, value : String) : boolean;
+  begin
+    result := mask = value;
+  end;
+var
+  cs : TFHIRCodeSystemW;
+begin
+  if sp.index.Name = 'url' then
+    result := tokenMatches(sp.value, resource.url)
+  else if sp.index.Name = 'version' then
+    result := tokenMatches(sp.value, resource.version)
+  else if sp.index.Name = 'date' then
+    result := dateMatches(sp.value, resource.date.toXML)
+  else if sp.index.Name = 'description' then
+    result := stringMatches(sp.value, resource.description)
+  else if sp.index.Name = 'name' then
+    result := stringMatches(sp.value, resource.name)
+  else if sp.index.Name = 'publisher' then
+    result := stringMatches(sp.value, resource.publisher)
+  else if sp.index.Name = 'status' then
+    result := tokenMatches(sp.value, CODES_TPublicationStatus[resource.status])
+  else if sp.index.Name = 'system' then
+    result := tokenMatches(sp.value, resource.url)
+  else if sp.index.Name = 'title' then
+    result := stringMatches(sp.value, resource.title)
+  else if sp.index.Name = 'identifier' then
+    result := false // todo
+  else if sp.index.Name = 'jurisdiction' then
+    result := false // todo
+  else if (resource is TFHIRCodeSystemW) then
+  begin
+    cs := resource as TFHIRCodeSystemW;
+    if sp.index.Name = 'content-mode' then
+      result := tokenMatches(sp.value, CODES_TFhirCodeSystemContentMode[cs.content])
+    else if sp.index.Name = 'supplements' then
+      result := tokenMatches(sp.value, cs.supplements)
+    else
+      result := false;
+  end
+  else
+    result := false;
+end;
+
+// this is not used - proved too slow for operational use
+function TTerminologyServerOperationEngine.matchesFHIRPath(resource: TFhirResourceV; sp: TSearchParameter): boolean;
 var
   selection : TFHIRSelectionList;
   so : TFHIRSelection;
@@ -727,7 +1040,7 @@ begin
     try
       sp.index.expression := parser.parseV(sp.index.Path);
     finally
-      parser.Free;
+      parser.free;
     end;
   end;
 
@@ -751,9 +1064,81 @@ begin
         result := result or matchesObject(so.value, sp);
     end;
   finally
-    selection.Free;
+    selection.free;
   end;
 end;
+
+function TTerminologyServerOperationEngine.tokenMatchesCoding(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  c : TFhirCodingW;
+begin
+  c := factory.wrapCoding(obj.link);
+  try
+    result := tokenMatchesCoding(c, sp);
+  finally
+    c.free;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.tokenMatchesCoding(c : TFhirCodingW; sp: TSearchParameter): boolean;
+begin
+  case sp.modifier of
+    spmNull, spmExact: result := ((sp.namespace = '') or (sp.namespace = c.systemUri)) and
+                ((sp.value = '') or (sp.value = c.code));
+    spmText: result := c.display.ToLower.Contains(sp.value.ToLower);
+//    spmIn: ; todo: we're a terminology server so we should really implement these!
+//    spmBelow: ;
+//    spmAbove: ;
+//    spmNotIn: ;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.tokenMatchesCodeableConcept(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  cc : TFhirCodeableConceptW;
+  cl : TFslList<TFhirCodingW>;
+  c : TFhirCodingW;
+begin
+  cc := factory.wrapCodeableConcept(obj.link);
+  try
+    if sp.modifier = spmText then
+      result := cc.text.ToLower.Contains(sp.value.ToLower)
+    else
+    begin
+      result := false;
+      cl := cc.codings;
+      try
+        for c in cl do
+          if tokenMatchesCoding(c, sp) then
+            exit(true);
+      finally
+        cl.free;
+      end;
+    end;
+  finally
+    cc.free;
+  end;
+end;
+
+function TTerminologyServerOperationEngine.tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean;
+var
+  id : TFhirIdentifierW;
+begin
+  id := factory.wrapIdentifier(obj.link);
+  try
+    case sp.modifier of
+      spmNull, spmExact : result := ((sp.namespace = '') or (sp.namespace = id.systemUri)) and
+                ((sp.value = '') or (sp.value = id.value));
+      spmText : result := id.type_.text.ToLower.Contains(sp.value.ToLower);
+      spmType : result := tokenMatchesCodeableConcept(id.type_.Element, sp);
+    else
+      result := false;
+    end;
+  finally
+    id.free;
+  end;
+end;
+
 
 function TTerminologyServerOperationEngine.matchesObject(obj: TFhirObject; sp: TSearchParameter): boolean;
 var
@@ -787,7 +1172,13 @@ begin
       else
         raise EFHIRException.create('Modifier is not supported');
     sptToken:
-      if not obj.isPrimitive then
+      if obj.fhirType = 'Coding' then
+        result := tokenMatchesCoding(obj, sp)
+      else if obj.fhirType = 'CodeableConcept' then
+        result := tokenMatchesCodeableConcept(obj, sp)
+      else if obj.fhirType = 'Identifier' then
+        result := tokenMatchesIdentifier(obj, sp)
+      else if not obj.isPrimitive then
         result := false
       else if sp.modifier = spmNull then
         result := obj.primitiveValue = sp.value
@@ -830,13 +1221,14 @@ end;
 constructor TTerminologyFhirServerStorage.Create(factory : TFHIRFactory);
 begin
   inherited Create(factory);
-  FData := TTerminologyServerData.create;
+  FData := TTerminologyServerData.create(TFDBFullTextSearchFactory.makeSQLiteTextSearch(factory.versionName))         ;
+  FLock := TFslLock.create('tx.storage');
 end;
 
 destructor TTerminologyFhirServerStorage.Destroy;
 begin
-  FData.Free;
-  FCache.Free;
+  FLock.free;
+  FData.free;
   inherited;
 end;
 
@@ -847,6 +1239,7 @@ end;
 
 function TTerminologyFhirServerStorage.fetchLoadedPackage(id: String): TBytes;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -864,24 +1257,30 @@ begin
   raise EFslException.Create('Not Implemented');
 end;
 
+function TTerminologyFhirServerStorage.cacheSize(magic: integer): UInt64;
+begin
+  result := inherited cacheSize(magic) + FData.sizeInBytes(magic) + FServerContext.sizeInBytes(magic);
+end;
+
 procedure TTerminologyFhirServerStorage.CloseFhirSession(key: integer);
 begin
   // this server doesn't track sessions
 end;
 
-function TTerminologyFhirServerStorage.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
+function TTerminologyFhirServerStorage.createOperationContext(langList : THTTPLanguageList): TFHIROperationEngine;
 begin
-  result := TTerminologyServerOperationEngine.create(self.link, FServerContext {no link}, lang, FData.link);
-  result.Operations.add(TFhirExpandValueSetOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirLookupCodeSystemOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirValueSetValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirConceptMapTranslationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirConceptMapClosureOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link));
-  result.Operations.add(TFhirVersionsOperation.create(Factory.link));
+  result := TTerminologyServerOperationEngine.create(self.link, FServerContext {no link}, langList, FData.link);
+  result.Operations.add(TFhirExpandValueSetOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirLookupCodeSystemOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirValueSetValidationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirConceptMapTranslationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirConceptMapClosureOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  result.Operations.add(TFhirVersionsOperation.create(Factory.link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
 end;
 
 function TTerminologyFhirServerStorage.FetchResource(key: integer): TFHIRResourceV;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -900,11 +1299,13 @@ end;
 
 function TTerminologyFhirServerStorage.getClientInfo(id: String): TRegisteredClientInformation;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
 function TTerminologyFhirServerStorage.getClientName(id: String): string;
 begin
+  result := '';
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -913,49 +1314,55 @@ begin
   result := FData.FCodeSystems.Count + FData.FValueSets.Count + FData.FNamingSystems.Count + FData.FConceptMaps.Count;
 end;
 
+function TTerminologyFhirServerStorage.issueHealthCardKey: integer;
+begin
+  result := 0;
+  raise EFslException.Create('Not Implemented');
+end;
+
 function TTerminologyFhirServerStorage.link: TTerminologyFhirServerStorage;
 begin
   result := TTerminologyFhirServerStorage(inherited link);
 end;
 
-procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
-var
-  cs : TFhirCodeSystemW;
+procedure TTerminologyFhirServerStorage.UnLoad;
+begin
+  inherited UnLoad;
+  FData.clear;
+end;
+
+procedure TTerminologyFhirServerStorage.loadResource(res : TFHIRResourceProxyV; ignoreEmptyCodeSystems : boolean);
 begin
   if res.fhirType = 'CodeSystem' then
   begin
-    cs := factory.wrapCodeSystem(res.link);
-    try
-      if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
-      begin
-        if FData.FCodeSystems.ContainsKey(res.id) then
-          res.id := inttostr(FData.FCodeSystems.Count+1);
-        FData.FCodeSystems.Add(res.id, cs.link);
-        FServerContext.ValidatorContext.seeResource(res);
-      end;
-    finally
-      cs.Free;
+    if (not ignoreEmptyCodeSystems or StringArrayExists(['fragment', 'complete', 'supplement'], res.content)) then
+    begin
+      if FData.FCodeSystems.ContainsKey(res.id) then
+        res.id := inttostr(FData.FCodeSystems.Count+1);
+      FData.FCodeSystems.Add(res.id, res.link);
+      FServerContext.ValidatorContext.seeResource(res);
+      // todo; index supplements
     end;
   end
   else if res.fhirType = 'ConceptMap' then
   begin
     if FData.FConceptMaps.ContainsKey(res.id) then
       res.id := inttostr(FData.FConceptMaps.Count+1);
-    FData.FConceptMaps.Add(res.id, factory.wrapConceptMap(res.link));
+    FData.FConceptMaps.Add(res.id, res.link);
     FServerContext.ValidatorContext.seeResource(res);
   end
   else if res.fhirType = 'NamingSystem' then
   begin
     if FData.FNamingSystems.ContainsKey(res.id) then
       res.id := inttostr(FData.FNamingSystems.Count+1);
-    FData.FNamingSystems.Add(res.id, factory.wrapNamingSystem(res.link));
+    FData.FNamingSystems.Add(res.id, res.link);
     FServerContext.ValidatorContext.seeResource(res);
   end
   else if res.fhirType = 'ValueSet' then
   begin
     if FData.FValueSets.ContainsKey(res.id) then
       res.id := inttostr(FData.FValueSets.Count+1);
-    FData.FValueSets.Add(res.id, factory.wrapValueSet(res.link));
+    FData.FValueSets.Add(res.id, res.link);
     FServerContext.ValidatorContext.seeResource(res);
   end;
 end;
@@ -964,54 +1371,52 @@ procedure TTerminologyFhirServerStorage.loadPackage(pid: String; ignoreEmptyCode
 var
   npm : TNpmPackage;
   s : String;
-  res : TFHIRResourceV;
+  res : TFHIRResourceProxyV;
   i : integer;
-  p : TFHIRParser;
+  list : TFslList<TNpmPackageResource>;
+  pi : TNpmPackageResource;
 begin
-  Logging.start('Load package '+pid);
-
-  if (FCache = nil) then
-    FCache := TFHIRPackageManager.Create(false);
   i := 0;
 
-  p := factory.makeParser(FServerContext.ValidatorContext.Link, ffJson, THTTPLanguages.Create('en'));
+  npm := FServerContext.pcm.loadPackage(pid);
   try
-    npm := FCache.loadPackage(pid);
+    Logging.start('Load package '+npm.name+'#'+npm.version);
     try
       FData.FPackages.Add(npm.name+'#'+npm.version);
-      for s in npm.listResources(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']) do
-      begin
-        inc(i);
-        if (i mod 100 = 0) then
-          Logging.continue('.');
-        try
-          res := p.parseResource(npm.loadBytes(s));
-        except
-          on e : Exception do
-            raise EFHIRException.Create('Error Parsing '+s+': '+e.Message);
-        end;
-        try
-          try
-            loadResource(res, ignoreEmptyCodeSystems);
-          except
-            on e : Exception do
-              raise EFHIRException.Create('Error Loading '+s+': '+e.Message);
+      list := npm.listResourceInfo('package');
+      try
+        if (list <> nil) then
+        begin
+          for pi in list do
+          begin
+            if StringArrayExists(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap'], pi.ResourceType) then
+            begin
+              inc(i);
+              if (i mod 100 = 0) then
+                Logging.continue('.');
+              res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
+              try
+                loadResource(res, ignoreEmptyCodeSystems);
+              finally
+                res.free;
+              end;
+            end;
           end;
-        finally
-          res.Free;
         end;
+      finally
+        list.free;
       end;
     finally
-      npm.Free;
+      Logging.finish(' '+inttostr(i)+' resources');
     end;
   finally
-    p.Free;
+    npm.free;
   end;
-  Logging.finish(' '+inttostr(i)+' resources');
 end;
 
 function TTerminologyFhirServerStorage.loadPackages: TFslMap<TLoadedPackageInformation>;
 begin
+  result := nil;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1030,7 +1435,7 @@ begin
       loadBytes(factory, zip.Parts[i].Name, zip.Parts[i].AsBytes);
     end;
   finally
-    zip.Free;
+    zip.free;
   end;
 end;
 
@@ -1039,6 +1444,7 @@ var
   fmt : TFHIRFormat;
   p : TFHIRParser;
   res : TFHIRResourceV;
+  pr : TFHIRResourceProxyV;
 begin
   if name.EndsWith('.zip') then
     loadFromZip(factory, cnt)
@@ -1053,16 +1459,21 @@ begin
 
     if fmt = ffUnspecified then
       raise EFslException.Create('Resource in "'+name+'" could not be parsed (format unrecognised)');
-    p := factory.makeParser(FServerContext.ValidatorContext.Link, fmt, THTTPLanguages.Create('en'));
+    p := factory.makeParser(FServerContext.ValidatorContext.Link, fmt, nil);
     try
       res := p.parseResource(cnt);
       try
-        loadResource(res, false);
+        pr := factory.makeProxy(res.link);
+        try
+          loadResource(pr, false);
+        finally
+          pr.free;
+        end;
       finally
-        res.Free;
+        res.free;
       end;
     finally
-      p.Free;
+      p.free;
     end;
   end;
 end;
@@ -1080,58 +1491,38 @@ begin
   Logging.finish(' - done');
 end;
 
-function TTerminologyFhirServerStorage.loadfromUTG(factory : TFHIRFactory; folder : String) : integer;
+procedure TTerminologyFhirServerStorage.loadFromXig(xig: TXIGProvider; ignoreEmptyCodeSystems : boolean);
 var
-  filename : String;
-  p : TFHIRParser;
-  procedure load(fn : String);
-  var
-    res : TFHIRResourceV;
-  begin
-    inc(result);
-    res := p.parseResource(FileToBytes(fn));
-    try
-      loadResource(res, true);
-    finally
-      res.Free;
-    end;
-  end;
+  xl : TXigLoader;
+  res : TFHIRResourceProxyV;
+  i : integer;
 begin
-  p := factory.makeParser(FServerContext.ValidatorContext.Link, ffXml, THTTPLanguages.Create('en'));
+  i := 0;
+  Logging.start('Load from XIG');
+  xl := xig.startLoad(['CodeSystem', 'ValueSet', 'NamingSystem', 'ConceptMap']);
   try
-    Logging.continue('.');
-    result := 0;
-    for filename in TDirectory.GetFiles(folder, '*.xml') do
-      load(filename);
-    if FolderExists(path([folder, 'codeSystems'])) then
-      for filename in TDirectory.GetFiles(path([folder, 'codeSystems']), '*.xml') do
-        load(filename);
-    if  FolderExists(path([folder, 'valueSets'])) then
-      for filename in TDirectory.GetFiles(path([folder, 'valueSets']), '*.xml') do
-        load(filename);
+    xl.factory := Factory.link;
+    while xl.next do
+    begin
+      inc(i);
+      if (i mod 400 = 0) then
+        Logging.continue('.');
+      res := xl.makeResource;
+      try
+        loadResource(res, ignoreEmptyCodeSystems);
+      finally
+        res.free;
+      end;
+    end;
   finally
-    p.Free;
+    Logging.finish(' '+inttostr(i)+' resources');
+    xl.free;
   end;
 end;
 
-procedure TTerminologyFhirServerStorage.loadUTGFolder(folder : String);
-var
-  count : integer;
+procedure TTerminologyFhirServerStorage.logHealthCard(key: integer; source: TSmartHealthCardSource; date: TFslDateTime; nbf, hash, patientId: String; details: TBytes);
 begin
-  if FolderExists(path([folder, 'input'])) then
-    folder := path([folder, 'input']);
-  if FolderExists(path([folder, 'sourceOfTruth'])) then
-    folder := path([folder, 'sourceOfTruth']);
-
-  Logging.start('Load UTG Folder '+folder);
-  count := 0;
-  count := count + loadFromUTG(factory, path([folder, 'cimi']));
-  count := count + loadFromUTG(factory, path([folder, 'v2']));
-  count := count + loadFromUTG(factory, path([folder, 'v3']));
-  count := count + loadFromUTG(factory, path([folder, 'external']));
-  count := count + loadFromUTG(factory, path([folder, 'fhir']));
-  count := count + loadFromUTG(factory, path([folder, 'unified']));
-  Logging.finish(inttostr(count)+' resources loaded');
+  raise EFslException.Create('Not Implemented');
 end;
 
 procedure TTerminologyFhirServerStorage.ProcessEmails;
@@ -1171,6 +1562,7 @@ end;
 
 function TTerminologyFhirServerStorage.RetrieveSession(key: integer; var UserKey, Provider: integer; var Id, Name, Email: String): boolean;
 begin
+  result := false;
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1179,12 +1571,13 @@ begin
   // nothing in this server
 end;
 
-procedure TTerminologyFhirServerStorage.SetupRecording(session: TFhirSession);
+procedure TTerminologyFhirServerStorage.SetUpRecording(session: TFhirSession);
 begin
 end;
 
 function TTerminologyFhirServerStorage.storeClient(client: TRegisteredClientInformation; sessionKey: integer): String;
 begin
+  result := '';
   raise EFslException.Create('Not Implemented');
 end;
 
@@ -1200,7 +1593,7 @@ end;
 
 procedure TTerminologyFhirServerStorage.Yield(op: TFHIROperationEngine; exception: Exception);
 begin
-  op.Free;
+  op.free;
 end;
 
 { TTerminologyFHIRUserProvider }
@@ -1248,7 +1641,7 @@ begin
     for s in ts do
       result.addEntitlement(s);
   finally
-    ts.Free;
+    ts.free;
   end;
 end;
 
@@ -1261,25 +1654,57 @@ end;
 
 { TTerminologyServerEndPoint }
 
-function TTerminologyServerEndPoint.cacheSize: UInt64;
+function TTerminologyServerEndPoint.cacheSize(magic : integer): UInt64;
 begin
-  result := inherited cacheSize;
+  result := inherited cacheSize(magic) + FStore.cacheSize(magic);
 end;
 
 procedure TTerminologyServerEndPoint.clearCache;
 begin
   inherited;
+  ServerContext.ClientCacheManager.clearCache;
 end;
 
-constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies);
+procedure TTerminologyServerEndPoint.SweepCaches;
 begin
-  inherited Create(config, settings, db, common);
+  inherited SweepCaches;
+  ServerContext.ClientCacheManager.sweep;
+end;
+
+constructor TTerminologyServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
+begin
+  inherited Create(config, settings, db, common, pcm, i18n);
+  pcm.Caching := false;
 end;
 
 destructor TTerminologyServerEndPoint.Destroy;
 begin
-  FStore.Free;
+  FStore.free;
   inherited;
+end;
+
+procedure TTerminologyServerEndPoint.getCacheInfo(ci: TCacheInformation);
+begin
+  inherited;
+  ci.add('Terminology Data', FStore.FData.sizeInBytes(ci.magic));
+end;
+
+procedure TTerminologyServerEndPoint.recordStats(rec: TStatusRecord);
+begin
+  inherited recordStats(rec);
+  FServerContext.TerminologyServer.recordStats(rec);
+end;
+
+procedure TTerminologyServerEndPoint.Started;
+begin
+  inherited Started;
+  FLoadThread.Start;
+end;
+
+procedure TTerminologyServerEndPoint.Stopping;
+begin
+  inherited Stopping;
+  FLoadThread.StopAndWait(500);
 end;
 
 function TTerminologyServerEndPoint.summary: String;
@@ -1287,78 +1712,111 @@ begin
   result := 'Terminology Server using '+describeDatabase(Config);
 end;
 
-function TTerminologyServerEndPoint.makeFactory: TFHIRFactory;
+function makeTxFactory(version : TFHIRVersion): TFHIRFactory;
 begin
   case version of
     fhirVersionRelease2 : result := TFHIRFactoryR2.create;
     fhirVersionRelease3 : result := TFHIRFactoryR3.create;
     fhirVersionRelease4 : result := TFHIRFactoryR4.create;
+    fhirVersionRelease4B : result := TFHIRFactoryR4B.create;
     fhirVersionRelease5 : result := TFHIRFactoryR5.create;
   else
-    raise Exception.Create('Unsupported Version');
+    raise EFslException.Create('Unsupported Version');
   end;
 end;
 
-function TTerminologyServerEndPoint.makeServerFactory: TFHIRServerFactory;
+function makeTxServerFactory(version : TFHIRVersion): TFHIRServerFactory;
 begin
   result := TTerminologyServerFactory.Create(version);
 end;
 
 function TTerminologyServerEndPoint.makeWebEndPoint(common: TFHIRWebServerCommon): TFhirWebServerEndpoint;
-var
-  wep : TTerminologyServerWebServer;
 begin
-  wep := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
-  wep.FEndPoint := self;
-  WebEndPoint := wep;
-  result := wep;
+  inherited makeWebEndPoint(common);
+  FWeb := TTerminologyServerWebServer.Create(Config.name, Config['path'].value, common, self);
+  FWeb.FEndPoint := self;
+  WebEndPoint := FWeb;
+  result := FWeb;
+  FServerContext.FormalURLPlain := 'http://'+Common.host+nonDefPort(Common.statedPort, 80)+WebEndPoint.PathNoSlash;
+  FServerContext.FormalURLSecure := 'https://'+Common.host+nonDefPort(Common.statedSSLPort, 443)+WebEndPoint.PathNoSlash;
+end;
+
+procedure TTerminologyServerEndPoint.SetCacheStatus(status: boolean);
+begin
+  inherited;
 end;
 
 procedure TTerminologyServerEndPoint.Load;
+var
+  pid : String;
 begin
-  FStore := TTerminologyFhirServerStorage.Create(makeFactory);
-  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeServerFactory);
+  FStore := TTerminologyFhirServerStorage.Create(makeTxFactory(version));
+  FServerContext := TFHIRServerContext.Create(Config.name, FStore.link, makeTxServerFactory(version), FPcm.link);
   FStore.FServerContext := FServerContext;
   FServerContext.Globals := Settings.Link;
   FServerContext.userProvider := TTerminologyFHIRUserProvider.Create;
-  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link);
-  FStore.loadPackage(FStore.factory.corePackage, false);
-  if UTGFolder <> '' then
-    FStore.loadUTGFolder(UTGFolder)
-  else if FStore.factory.txPackage <> '' then
-    FStore.loadPackage(FStore.factory.txPackage, true);
-  FStore.loadPackage(FStore.factory.txSupportPackage, false);
+  FServerContext.i18nSupport := i18n.link;
+  FServerContext.TerminologyServer := TTerminologyServer.Create(Database.link, FStore.FFactory.Link, Terminologies.link, FServerContext.i18nSupport.link);
 
-  // still to be done: load ad-hoc files
-//    for s in listF do
-//      store.loadFile(factory, s);
+  FServerContext.TerminologyServer.Loading := true;
+  FStore.loadPackage(FStore.factory.corePackage, false);
+
+  for pid in Config['packages'].values do
+    if not pid.StartsWith('hl7.terminology') or (UTGFolder = '') then
+      FStore.loadPackage(pid, true);
+
+  if (FServerContext.Factory.version = fhirVersionRelease5) and (Terminologies.XIG <> nil) then
+    FStore.loadFromXig(Terminologies.XIG, true);
+
+  FServerContext.TerminologyServer.Loading := false;
+
+  FStore.Initialise;
+  FLoadThread := TTerminologyServerDataLoadThread.create(self);
 end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
-  FServerContext.Free;
+  FLoadThread.StopAndWait(500);
+  if FServerContext <> nil then
+  begin
+    FServerContext.Unload;
+    FServerContext.free;
+  end;
   FServerContext := nil;
-  FStore.Free;
+  FStore.free;
   FStore := nil;
 end;
 
-procedure TTerminologyServerEndPoint.internalThread;
+procedure TTerminologyServerEndPoint.internalThread(callback : TFhirServerMaintenanceThreadTaskCallBack);
 begin
-  // nothing to check
+  try
+    callback(self, 'Google Commit', 0);
+    FWeb.Common.Google.commit;
+    callback(self, 'Checking Async Tasks', 25);
+    FWeb.CheckAsyncTasks;
+    //callback(self, 'Sweeping Client Cache', 50);
+    //FServerContext.ClientCacheManager.sweep;
+    //callback(self, 'Build Terminology Indexes', 75);
+    //FServerContext.TerminologyServer.BuildIndexes(false);
+  except
+    on e : exception do
+      Logging.log('Error in internal thread for '+Config.name+': '+e.Message);
+  end;
 end;
 
-procedure TTerminologyServerEndPoint.InstallDatabase;
+procedure TTerminologyServerEndPoint.InstallDatabase(
+  params: TCommandLineParameters);
 var
   conn : TFDBConnection;
   dbi : TFHIRDatabaseInstaller;
 begin
   conn := Database.getConnection('install');
   try
-    dbi := TFHIRDatabaseInstaller.Create(conn, makeFactory, makeServerFactory);
+    dbi := TFHIRDatabaseInstaller.Create(conn, makeTxFactory(version), makeTxServerFactory(version));
     try
       dbi.InstallTerminologyServer;
     finally
-      dbi.Free;
+      dbi.free;
     end;
     conn.Release;
   except
@@ -1393,14 +1851,14 @@ begin
   end;
 end;
 
-procedure TTerminologyServerEndPoint.LoadPackages(plist: String);
+procedure TTerminologyServerEndPoint.LoadPackages(installer : boolean; plist: String);
 begin
-  raise Exception.Create('This operation does not apply to this endpoint');
+  raise EFslException.Create('This operation does not apply to this endpoint');
 end;
 
-procedure TTerminologyServerEndPoint.updateAdminPassword;
+procedure TTerminologyServerEndPoint.updateAdminPassword(pw: String);
 begin
-  raise Exception.Create('This operation does not apply to this endpoint');
+  raise EFslException.Create('This operation does not apply to this endpoint');
 end;
 
 function TTerminologyServerEndPoint.version: TFHIRVersion;
@@ -1414,10 +1872,12 @@ begin
     result := fhirVersionRelease3
   else if (v = 'r4') then
     result := fhirVersionRelease4
+  else if (v = 'r4b') then
+    result := fhirVersionRelease4B
   else if (v = 'r5') then
     result := fhirVersionRelease5
   else
-    raise Exception.Create('Unknown version "'+v+'"');
+    raise EFslException.Create('Unknown version "'+v+'"');
 end;
 
 { TTerminologyServerWebServer }
@@ -1433,23 +1893,29 @@ begin
   result := TTerminologyServerWebServer(inherited link);
 end;
 
+function TTerminologyServerWebServer.logId: string;
+begin
+  result := factory.versionName;
+end;
+
 function TTerminologyServerWebServer.AutoCache: boolean;
 begin
   result := true;
 end;
 
-function TTerminologyServerWebServer.BuildFhirAuthenticationPage(const lang: THTTPLanguages; host, path, logId, Msg: String; secure: boolean; params: String): String;
+function TTerminologyServerWebServer.BuildFhirAuthenticationPage(langList : THTTPLanguageList; host, path, logId, Msg: String; secure: boolean; params: String): String;
 begin
-  raise Exception.Create('Authentication is not supported for the terminology server');
+  result := '';
+  raise EFslException.Create('Authentication is not supported for the terminology server');
 end;
 
-function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; const lang: THTTPLanguages; host, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
+function TTerminologyServerWebServer.BuildFhirHomePage(compList: TFslList<TFHIRCompartmentId>; logId: String; langList : THTTPLanguageList; host, rawHost, sBaseURL: String; Session: TFHIRSession; secure: boolean): String;
 var
   h : THtmlPublisher;
   s : String;
   sct : TSnomedServices;
-  p : TCodeSystemProvider;
-  pl : TFslList<TCodeSystemProvider>;
+  p : TCodeSystemProviderFactory;
+  pl : TFslList<TCodeSystemProviderFactory>;
 begin
   h := THtmlPublisher.Create;
   try
@@ -1497,7 +1963,7 @@ begin
     h.AddTableCell('Uri', true);
     h.EndTableRow;
 
-    pl := TFslList<TCodeSystemProvider>.create;
+    pl := TFslList<TCodeSystemProviderFactory>.create;
     try
       for s in terminologies.ProviderClasses.SortedKeys do
       begin
@@ -1507,17 +1973,8 @@ begin
           pl.add(p.Link);
           h.StartTableRow;
           h.AddTableCell(p.description);
-          if p is TSnomedServices then
-          begin
-            sct := p as TSnomedServices;
-            if p = terminologies.DefSnomed then
-              h.AddTableCell(sct.EditionName+'/'+sct.VersionDate+' (default)')
-            else
-              h.AddTableCell(sct.EditionName+'/'+sct.VersionDate);
-          end
-          else
-            h.AddTableCell(p.version(nil));
-          h.AddTableCell(p.systemUri(nil));
+          h.AddTableCell(p.versionDesc);
+          h.AddTableCell(p.systemUri);
           h.EndTableRow;
         end;
       end;
@@ -1528,13 +1985,14 @@ begin
 
     result := processContent('template-fhir.html', secure, 'Terminology Service Home Page', h.output);
   finally
-    h.Free;
+    h.free;
   end;
 end;
 
-function TTerminologyServerWebServer.BuildFhirUploadPage(const lang: THTTPLanguages; host, sBaseURL, aType: String; Session: TFHIRSession): String;
+function TTerminologyServerWebServer.BuildFhirUploadPage(langList : THTTPLanguageList; host, sBaseURL, aType: String; Session: TFHIRSession): String;
 begin
-  raise Exception.Create('Uploads are not supported for the terminology server');
+  result := '';
+  raise EFslException.Create('Uploads are not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.data: TTerminologyServerData;
@@ -1547,9 +2005,10 @@ begin
   result := 'Terminology server for v'+factory.versionString;
 end;
 
-function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; const lang: THTTPLanguages; params: String): TFHIRBundleW;
+function TTerminologyServerWebServer.DoSearch(Session: TFHIRSession; rtype: string; langList : THTTPLanguageList; params: String): TFHIRBundleW;
 begin
-  raise Exception.Create('Not done yet');
+  result := nil;
+  raise EFslException.Create('Not done yet');
 end;
 
 function TTerminologyServerWebServer.factory: TFHIRFactory;
@@ -1565,12 +2024,14 @@ end;
 
 function TTerminologyServerWebServer.HandleWebUIRequest(request: TFHIRRequest; response: TFHIRResponse; secure: boolean): TDateTime;
 begin
-  raise Exception.Create('The WebUI is not supported for the terminology server');
+  result := 0;
+  raise EFslException.Create('The WebUI is not supported for the terminology server');
 end;
 
-function TTerminologyServerWebServer.ProcessZip(const lang: THTTPLanguages; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
+function TTerminologyServerWebServer.ProcessZip(langList : THTTPLanguageList; oStream: TStream; name, base: String; init: boolean; ini: TFHIRServerConfigFile; Context: TOperationContext; var cursor: integer): TFHIRBundleW;
 begin
-  raise Exception.Create('Uploads are not supported for the terminology server');
+  result := nil;
+  raise EFslException.Create('Uploads are not supported for the terminology server');
 end;
 
 function TTerminologyServerWebServer.terminologies: TCommonTerminologies;

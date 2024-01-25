@@ -189,7 +189,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -227,7 +227,7 @@ Type
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Virtual;
     function MoodCodeIsFixed : Boolean; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -284,7 +284,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -418,7 +418,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -459,7 +459,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -493,7 +493,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -527,7 +527,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -565,7 +565,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -604,7 +604,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -650,7 +650,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -680,7 +680,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function GetClassCode : String; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -712,7 +712,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function GetClassCode : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -748,7 +748,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -784,7 +784,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -868,7 +868,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1053,7 +1053,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1110,7 +1110,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1160,7 +1160,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1230,7 +1230,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1341,7 +1341,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1372,7 +1372,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1408,7 +1408,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1439,7 +1439,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1477,7 +1477,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1512,7 +1512,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1550,7 +1550,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1582,7 +1582,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1659,7 +1659,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1747,7 +1747,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1852,7 +1852,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1886,7 +1886,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1949,7 +1949,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2086,7 +2086,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2226,7 +2226,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function ClassCodeIsFixed : Boolean; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2274,7 +2274,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2339,7 +2339,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2393,7 +2393,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2455,7 +2455,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2509,7 +2509,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2545,7 +2545,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2590,7 +2590,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2632,7 +2632,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2667,7 +2667,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2696,7 +2696,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2748,7 +2748,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2795,7 +2795,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2829,7 +2829,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2864,7 +2864,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2908,7 +2908,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -2949,7 +2949,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3024,7 +3024,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3181,7 +3181,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3297,7 +3297,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3339,7 +3339,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3381,7 +3381,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3428,7 +3428,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3486,7 +3486,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3592,7 +3592,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3630,7 +3630,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3666,7 +3666,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3709,7 +3709,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3771,7 +3771,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3820,7 +3820,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3860,7 +3860,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3897,7 +3897,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3927,7 +3927,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     Function GetClassCode : String; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3957,7 +3957,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -3994,7 +3994,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4028,7 +4028,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4100,7 +4100,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4227,7 +4227,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4261,7 +4261,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4308,7 +4308,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4372,7 +4372,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4404,7 +4404,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function Link : TcdaRegionOfInterest_value; Overload;
     Function Clone(parent : Tv3Base) : TcdaRegionOfInterest_value; Overload;
@@ -4478,7 +4478,7 @@ Type
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Override;
     function MoodCodeIsFixed : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4586,7 +4586,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4625,7 +4625,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4658,7 +4658,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4703,7 +4703,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4762,7 +4762,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4869,7 +4869,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4912,7 +4912,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4955,7 +4955,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -4991,7 +4991,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5035,7 +5035,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5070,7 +5070,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5156,7 +5156,7 @@ Type
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
     function ClassCodeIsFixed : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5349,7 +5349,7 @@ Type
     Procedure ListProperties(oList : Tv3PropertyDefinitionList; bInheritedProperties : Boolean); Override;
     Procedure SetPropertyValue(Const aValue :TV3PropertyDefinition); Override;
     Procedure DoClear; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -5470,7 +5470,7 @@ Type
     {
       Add an already existing Author to the end of the list.
     }
-    Procedure AddItem(value : TcdaAuthor);
+    Function AddItem(value : TcdaAuthor): TcdaAuthor;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5526,7 +5526,7 @@ Type
     {
       Add an already existing EntryRelationship to the end of the list.
     }
-    Procedure AddItem(value : TcdaEntryRelationship);
+    Function AddItem(value : TcdaEntryRelationship): TcdaEntryRelationship;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5581,7 +5581,7 @@ Type
     {
       Add an already existing Informant12 to the end of the list.
     }
-    Procedure AddItem(value : TcdaInformant12);
+    Function AddItem(value : TcdaInformant12): TcdaInformant12;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5637,7 +5637,7 @@ Type
     {
       Add an already existing Participant2 to the end of the list.
     }
-    Procedure AddItem(value : TcdaParticipant2);
+    Function AddItem(value : TcdaParticipant2): TcdaParticipant2;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5692,7 +5692,7 @@ Type
     {
       Add an already existing Performer2 to the end of the list.
     }
-    Procedure AddItem(value : TcdaPerformer2);
+    Function AddItem(value : TcdaPerformer2): TcdaPerformer2;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5747,7 +5747,7 @@ Type
     {
       Add an already existing Precondition to the end of the list.
     }
-    Procedure AddItem(value : TcdaPrecondition);
+    Function AddItem(value : TcdaPrecondition): TcdaPrecondition;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5802,7 +5802,7 @@ Type
     {
       Add an already existing Reference to the end of the list.
     }
-    Procedure AddItem(value : TcdaReference);
+    Function AddItem(value : TcdaReference): TcdaReference;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5857,7 +5857,7 @@ Type
     {
       Add an already existing Specimen to the end of the list.
     }
-    Procedure AddItem(value : TcdaSpecimen);
+    Function AddItem(value : TcdaSpecimen): TcdaSpecimen;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5912,7 +5912,7 @@ Type
     {
       Add an already existing MaintainedEntity to the end of the list.
     }
-    Procedure AddItem(value : TcdaMaintainedEntity);
+    Function AddItem(value : TcdaMaintainedEntity): TcdaMaintainedEntity;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -5967,7 +5967,7 @@ Type
     {
       Add an already existing Authenticator to the end of the list.
     }
-    Procedure AddItem(value : TcdaAuthenticator);
+    Function AddItem(value : TcdaAuthenticator): TcdaAuthenticator;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6022,7 +6022,7 @@ Type
     {
       Add an already existing Authorization to the end of the list.
     }
-    Procedure AddItem(value : TcdaAuthorization);
+    Function AddItem(value : TcdaAuthorization): TcdaAuthorization;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6077,7 +6077,7 @@ Type
     {
       Add an already existing DocumentationOf to the end of the list.
     }
-    Procedure AddItem(value : TcdaDocumentationOf);
+    Function AddItem(value : TcdaDocumentationOf): TcdaDocumentationOf;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6132,7 +6132,7 @@ Type
     {
       Add an already existing TcdaInformationRecipient to the end of the list.
     }
-    Procedure AddItem(value : TcdaInformationRecipient);
+    Function AddItem(value : TcdaInformationRecipient): TcdaInformationRecipient;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6187,7 +6187,7 @@ Type
     {
       Add an already existing InFulfillmentOf to the end of the list.
     }
-    Procedure AddItem(value : TcdaInFulfillmentOf);
+    Function AddItem(value : TcdaInFulfillmentOf): TcdaInFulfillmentOf;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6242,7 +6242,7 @@ Type
     {
       Add an already existing Participant1 to the end of the list.
     }
-    Procedure AddItem(value : TcdaParticipant1);
+    Function AddItem(value : TcdaParticipant1): TcdaParticipant1;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6297,7 +6297,7 @@ Type
     {
       Add an already existing RecordTarget to the end of the list.
     }
-    Procedure AddItem(value : TcdaRecordTarget);
+    Function AddItem(value : TcdaRecordTarget): TcdaRecordTarget;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6352,7 +6352,7 @@ Type
     {
       Add an already existing RelatedDocument to the end of the list.
     }
-    Procedure AddItem(value : TcdaRelatedDocument);
+    Function AddItem(value : TcdaRelatedDocument): TcdaRelatedDocument;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6407,7 +6407,7 @@ Type
     {
       Add an already existing EncounterParticipant to the end of the list.
     }
-    Procedure AddItem(value : TcdaEncounterParticipant);
+    Function AddItem(value : TcdaEncounterParticipant): TcdaEncounterParticipant;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6462,7 +6462,7 @@ Type
     {
       Add an already existing ReferenceRange to the end of the list.
     }
-    Procedure AddItem(value : TcdaReferenceRange);
+    Function AddItem(value : TcdaReferenceRange): TcdaReferenceRange;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6518,7 +6518,7 @@ Type
     {
       Add an already existing Component4 to the end of the list.
     }
-    Procedure AddItem(value : TcdaComponent4);
+    Function AddItem(value : TcdaComponent4): TcdaComponent4;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6573,7 +6573,7 @@ Type
     {
       Add an already existing Guardian to the end of the list.
     }
-    Procedure AddItem(value : TcdaGuardian);
+    Function AddItem(value : TcdaGuardian): TcdaGuardian;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6628,7 +6628,7 @@ Type
     {
       Add an already existing LanguageCommunicaion to the end of the list.
     }
-    Procedure AddItem(value : TcdaLanguageCommunication);
+    Function AddItem(value : TcdaLanguageCommunication): TcdaLanguageCommunication;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6683,7 +6683,7 @@ Type
     {
       Add an already existing LanguageCommunicaion to the end of the list.
     }
-    Procedure AddItem(value : TcdaEntityIdentifier);
+    Function AddItem(value : TcdaEntityIdentifier): TcdaEntityIdentifier;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6740,7 +6740,7 @@ Type
     {
       Add an already existing Entry to the end of the list.
     }
-    Procedure AddItem(value : TcdaEntry);
+    Function AddItem(value : TcdaEntry): TcdaEntry;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6795,7 +6795,7 @@ Type
     {
       Add an already existing Performer1 to the end of the list.
     }
-    Procedure AddItem(value : TcdaPerformer1);
+    Function AddItem(value : TcdaPerformer1): TcdaPerformer1;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6850,7 +6850,7 @@ Type
     {
       Add an already existing ComponentSect to the end of the list.
     }
-    Procedure AddItem(value : TcdaComponentSect);
+    Function AddItem(value : TcdaComponentSect): TcdaComponentSect;
     {
       See if an item is already in the list. returns -1 if not in the list
     }
@@ -6905,7 +6905,7 @@ Type
       {
         Add an already existing RegionOfInterest_value to the end of the list.
       }
-    Procedure AddItem(value : TcdaRegionOfInterest_value);
+    Function AddItem(value : TcdaRegionOfInterest_value): TcdaRegionOfInterest_value;
       {
         See if an item is already in the list. returns -1 if not in the list
       }
@@ -7220,7 +7220,7 @@ end;
 procedure TcdaClinicalStatement.SetClassCode(const sValue: String);
 begin
   if ClassCodeIsFixed Then
-    raise ECDAException.create('classCode is fixed')
+    raise ECDAException.Create('classCode is fixed')
   Else
     FclassCode := sValue;
 end;
@@ -7228,23 +7228,23 @@ end;
 procedure TcdaClinicalStatement.SetMoodCode(const sValue: String);
 begin
   if MoodCodeIsFixed Then
-    raise ECDAException.create('moodCode is fixed')
+    raise ECDAException.Create('moodCode is fixed')
   Else
     FmoodCode := sValue;
 end;
 
 procedure TcdaClinicalStatement.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
 end;
 
-function TcdaClinicalStatement.sizeInBytesV : cardinal;
+function TcdaClinicalStatement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaAct }
@@ -7325,22 +7325,22 @@ end;
 
 destructor TcdaAct.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FpriorityCode.Free;
-  FlanguageCode.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FpriorityCode.free;
+  FlanguageCode.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -7375,7 +7375,7 @@ end;
 
 procedure TcdaAct.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then  author.parent := self;
 
@@ -7383,7 +7383,7 @@ end;
 
 procedure TcdaAct.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -7391,7 +7391,7 @@ end;
 
 procedure TcdaAct.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then  effectiveTime.parent := self;
 
@@ -7399,7 +7399,7 @@ end;
 
 procedure TcdaAct.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then  entryRelationship.parent := self;
 
@@ -7408,7 +7408,7 @@ end;
 
 procedure TcdaAct.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then  informant.parent := self;
 
@@ -7416,31 +7416,31 @@ end;
 
 procedure TcdaAct.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then  languageCode.parent := self;
 
 end;
 
 
-function TcdaAct.sizeInBytesV : cardinal;
+function TcdaAct.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
 end;
 
 { TcdaCustodian }
@@ -7480,7 +7480,7 @@ end;
 
 destructor TcdaCustodian.Destroy;
 begin
-  FassignedCustodian.Free;
+  FassignedCustodian.free;
   inherited;
 end;
 
@@ -7499,7 +7499,7 @@ end;
 
 procedure TcdaCustodian.SetassignedCustodian(const Value: TcdaAssignedCustodian);
 begin
-  FassignedCustodian.Free;
+  FassignedCustodian.free;
   FassignedCustodian := Value;
   if FassignedCustodian <> nil then  assignedCustodian.parent := self;
 
@@ -7515,10 +7515,10 @@ begin
     inherited;
 end;
 
-function TcdaCustodian.sizeInBytesV : cardinal;
+function TcdaCustodian.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedCustodian.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedCustodian.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -7567,10 +7567,10 @@ end;
 
 destructor TcdaCustodianOrganization.Destroy;
 begin
-  Fid.Free;
-  Fname.Free;
-  Ftelecom.Free;
-  Faddr.Free;
+  Fid.free;
+  Fname.free;
+  Ftelecom.free;
+  Faddr.free;
   inherited;
 end;
 
@@ -7593,7 +7593,7 @@ end;
 
 procedure TcdaCustodianOrganization.Setaddr(const Value: Tv3AD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then  addr.parent := self;
 
@@ -7601,7 +7601,7 @@ end;
 
 procedure TcdaCustodianOrganization.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -7609,7 +7609,7 @@ end;
 
 procedure TcdaCustodianOrganization.Setname(const Value: Tv3EN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then  name.parent := self;
 
@@ -7635,21 +7635,21 @@ end;
 
 procedure TcdaCustodianOrganization.Settelecom(const Value: Tv3TEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then  telecom.parent := self;
 
 end;
 
-function TcdaCustodianOrganization.sizeInBytesV : cardinal;
+function TcdaCustodianOrganization.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Faddr.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Faddr.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
 end;
 
 { TcdaDataEnterer }
@@ -7692,8 +7692,8 @@ end;
 
 destructor TcdaDataEnterer.Destroy;
 begin
-  Ftime.Free;
-  FassignedEntity.Free;
+  Ftime.free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -7714,7 +7714,7 @@ end;
 
 procedure TcdaDataEnterer.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then  assignedEntity.parent := self;
 
@@ -7736,20 +7736,20 @@ end;
 
 procedure TcdaDataEnterer.Settime(const Value: Tv3TS);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then  time.parent := self;
 
 end;
 
 
-function TcdaDataEnterer.sizeInBytesV : cardinal;
+function TcdaDataEnterer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 procedure TcdaAct.SetnegationInd(const Value: boolean);
@@ -7760,7 +7760,7 @@ end;
 
 procedure TcdaAct.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then  participant.parent := self;
 
@@ -7768,7 +7768,7 @@ end;
 
 procedure TcdaAct.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then  performer.parent := self;
 
@@ -7776,7 +7776,7 @@ end;
 
 procedure TcdaAct.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then  precondition.parent := self;
 
@@ -7784,7 +7784,7 @@ end;
 
 procedure TcdaAct.SetpriorityCode(const Value: Tv3CD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then  priorityCode.parent := self;
 
@@ -7833,7 +7833,7 @@ end;
 
 procedure TcdaAct.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then  reference.parent := self;
 
@@ -7841,7 +7841,7 @@ end;
 
 procedure TcdaAct.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then  specimen.parent := self;
 
@@ -7849,7 +7849,7 @@ end;
 
 procedure TcdaAct.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then  statusCode.parent := self;
 
@@ -7857,7 +7857,7 @@ end;
 
 procedure TcdaAct.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then  subject.parent := self;
 
@@ -7866,7 +7866,7 @@ end;
 
 procedure TcdaAct.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
@@ -7925,13 +7925,13 @@ end;
 
 destructor TcdaAssignedAuthor.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  FassignedPerson.Free;
-  FassignedAuthoringDevice.Free;
-  FrepresentedOrganization.Free;
+  Fid.free;
+  Fcode.free;
+  Faddr.free;
+  Ftelecom.free;
+  FassignedPerson.free;
+  FassignedAuthoringDevice.free;
+  FrepresentedOrganization.free;
   inherited;
 end;
 
@@ -7956,7 +7956,7 @@ end;
 
 procedure TcdaAssignedAuthor.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then  addr.parent := self;
 
@@ -7964,7 +7964,7 @@ end;
 
 procedure TcdaAssignedAuthor.SetassignedAuthoringDevice(const Value: TcdaAuthoringDevice);
 begin
-  FassignedAuthoringDevice.Free;
+  FassignedAuthoringDevice.free;
   FassignedAuthoringDevice := Value;
   if FassignedAuthoringDevice <> nil then  assignedAuthoringDevice.parent := self;
 
@@ -7972,7 +7972,7 @@ end;
 
 procedure TcdaAssignedAuthor.SetassignedPerson(const Value: TcdaPerson);
 begin
-  FassignedPerson.Free;
+  FassignedPerson.free;
   FassignedPerson := Value;
   if FassignedPerson <> nil then  assignedPerson.parent := self;
 
@@ -7980,7 +7980,7 @@ end;
 
 procedure TcdaAssignedAuthor.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -7988,7 +7988,7 @@ end;
 
 procedure TcdaAssignedAuthor.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -8018,7 +8018,7 @@ end;
 
 procedure TcdaAssignedAuthor.SetrepresentedOrganization(const Value: TcdaOrganization);
 begin
-  FrepresentedOrganization.Free;
+  FrepresentedOrganization.free;
   FrepresentedOrganization := Value;
   if FrepresentedOrganization <> nil then  representedOrganization.parent := self;
 
@@ -8026,7 +8026,7 @@ end;
 
 procedure TcdaAssignedAuthor.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then  telecom.parent := self;
 
@@ -8041,16 +8041,16 @@ begin
     result := FassignedAuthoringDevice;
 end;
 
-function TcdaAssignedAuthor.sizeInBytesV : cardinal;
+function TcdaAssignedAuthor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedAuthoringDevice.sizeInBytes);
-  inc(result, FrepresentedOrganization.sizeInBytes);
-  inc(result, FassignedPerson.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedAuthoringDevice.sizeInBytes(magic));
+  inc(result, FrepresentedOrganization.sizeInBytes(magic));
+  inc(result, FassignedPerson.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -8091,7 +8091,7 @@ end;
 
 destructor TcdaAssignedCustodian.Destroy;
 begin
-  FrepresentedCustodianOrganization.Free;
+  FrepresentedCustodianOrganization.free;
   inherited;
 end;
 
@@ -8120,16 +8120,16 @@ end;
 
 procedure TcdaAssignedCustodian.SetrepresentedCustodianOrganization(const Value: TcdaCustodianOrganization);
 begin
-  FrepresentedCustodianOrganization.Free;
+  FrepresentedCustodianOrganization.free;
   FrepresentedCustodianOrganization := Value;
   if FrepresentedCustodianOrganization <> nil then  representedCustodianOrganization.parent := self;
 
 end;
 
-function TcdaAssignedCustodian.sizeInBytesV : cardinal;
+function TcdaAssignedCustodian.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FrepresentedCustodianOrganization.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FrepresentedCustodianOrganization.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -8177,9 +8177,9 @@ end;
 
 destructor TcdaInformantChoice.Destroy;
 begin
-  Fcode.Free;
-  Faddr.Free;
-  Ftelecom.Free;
+  Fcode.free;
+  Faddr.free;
+  Ftelecom.free;
   inherited;
 end;
 
@@ -8200,7 +8200,7 @@ end;
 
 procedure TcdaInformantChoice.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then  addr.parent := self;
 
@@ -8208,7 +8208,7 @@ end;
 
 procedure TcdaInformantChoice.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -8230,7 +8230,7 @@ end;
 
 procedure TcdaInformantChoice.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then  telecom.parent := self;
 
@@ -8244,18 +8244,18 @@ end;
 procedure TcdaInformantChoice.SetClassCode(const sValue: String);
 begin
   if ClassCodeIsFixed Then
-    raise ECDAException.create('classCode is fixed')
+    raise ECDAException.Create('classCode is fixed')
   Else
     FclassCode := sValue;
 end;
 
-function TcdaInformantChoice.sizeInBytesV : cardinal;
+function TcdaInformantChoice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
 end;
 
 { TcdaAssignedEntity }
@@ -8300,9 +8300,9 @@ end;
 
 destructor TcdaAssignedEntity.Destroy;
 begin
-  Fid.Free;
-  FassignedPerson.Free;
-  FrepresentedOrganization.Free;
+  Fid.free;
+  FassignedPerson.free;
+  FrepresentedOrganization.free;
   inherited;
 end;
 
@@ -8322,7 +8322,7 @@ end;
 
 procedure TcdaAssignedEntity.SetassignedPerson(const Value: TcdaPerson);
 begin
-  FassignedPerson.Free;
+  FassignedPerson.free;
   FassignedPerson := Value;
   if FassignedPerson <> nil then  assignedPerson.parent := self;
 
@@ -8330,7 +8330,7 @@ end;
 
 procedure TcdaAssignedEntity.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -8350,7 +8350,7 @@ end;
 
 procedure TcdaAssignedEntity.SetrepresentedOrganization(const Value: TcdaOrganization);
 begin
-  FrepresentedOrganization.Free;
+  FrepresentedOrganization.free;
   FrepresentedOrganization := Value;
   if FrepresentedOrganization <> nil then  representedOrganization.parent := self;
 
@@ -8361,12 +8361,12 @@ begin
   result := true;
 end;
 
-function TcdaAssignedEntity.sizeInBytesV : cardinal;
+function TcdaAssignedEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FrepresentedOrganization.sizeInBytes);
-  inc(result, FassignedPerson.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FrepresentedOrganization.sizeInBytes(magic));
+  inc(result, FassignedPerson.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaAssociatedEntity }
@@ -8420,12 +8420,12 @@ end;
 
 destructor TcdaAssociatedEntity.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  FassociatedPerson.Free;
-  FscopingOrganization.Free;
+  Fid.free;
+  Fcode.free;
+  Faddr.free;
+  Ftelecom.free;
+  FassociatedPerson.free;
+  FscopingOrganization.free;
   inherited;
 end;
 
@@ -8449,7 +8449,7 @@ end;
 
 procedure TcdaAssociatedEntity.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then  addr.parent := self;
 
@@ -8457,7 +8457,7 @@ end;
 
 procedure TcdaAssociatedEntity.SetassociatedPerson(const Value: TcdaPerson);
 begin
-  FassociatedPerson.Free;
+  FassociatedPerson.free;
   FassociatedPerson := Value;
   if FassociatedPerson <> nil then  associatedPerson.parent := self;
 
@@ -8465,7 +8465,7 @@ end;
 
 procedure TcdaAssociatedEntity.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -8473,7 +8473,7 @@ end;
 
 procedure TcdaAssociatedEntity.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -8501,7 +8501,7 @@ end;
 
 procedure TcdaAssociatedEntity.SetscopingOrganization(const Value: TcdaOrganization);
 begin
-  FscopingOrganization.Free;
+  FscopingOrganization.free;
   FscopingOrganization := Value;
   if FscopingOrganization <> nil then  scopingOrganization.parent := self;
 
@@ -8509,22 +8509,22 @@ end;
 
 procedure TcdaAssociatedEntity.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then  telecom.parent := self;
 
 end;
 
-function TcdaAssociatedEntity.sizeInBytesV : cardinal;
+function TcdaAssociatedEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FscopingOrganization.sizeInBytes);
-  inc(result, FassociatedPerson.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FscopingOrganization.sizeInBytes(magic));
+  inc(result, FassociatedPerson.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
 end;
 
 { TcdaAuthenticator }
@@ -8568,9 +8568,9 @@ end;
 
 destructor TcdaAuthenticator.Destroy;
 begin
-  Ftime.Free;
-  FsignatureCode.Free;
-  FassignedEntity.Free;
+  Ftime.free;
+  FsignatureCode.free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -8591,7 +8591,7 @@ end;
 
 procedure TcdaAuthenticator.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then  assignedEntity.parent := self;
 
@@ -8613,7 +8613,7 @@ end;
 
 procedure TcdaAuthenticator.SetsignatureCode(const Value: Tv3CS);
 begin
-  FsignatureCode.Free;
+  FsignatureCode.free;
   FsignatureCode := Value;
   if FsignatureCode <> nil then  signatureCode.parent := self;
 
@@ -8621,19 +8621,19 @@ end;
 
 procedure TcdaAuthenticator.Settime(const Value: Tv3TS);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then  time.parent := self;
 
 end;
 
-function TcdaAuthenticator.sizeInBytesV : cardinal;
+function TcdaAuthenticator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FsignatureCode.sizeInBytes);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, FsignatureCode.sizeInBytes(magic));
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaAuthor }
@@ -8678,9 +8678,9 @@ end;
 
 destructor TcdaAuthor.Destroy;
 begin
-  FfunctionCode.Free;
-  Ftime.Free;
-  FassignedAuthor.Free;
+  FfunctionCode.free;
+  Ftime.free;
+  FassignedAuthor.free;
   inherited;
 end;
 
@@ -8702,7 +8702,7 @@ end;
 
 procedure TcdaAuthor.SetassignedAuthor(const Value: TcdaAssignedAuthor);
 begin
-  FassignedAuthor.Free;
+  FassignedAuthor.free;
   FassignedAuthor := Value;
   if FassignedAuthor <> nil then  assignedAuthor.parent := self;
 
@@ -8710,7 +8710,7 @@ end;
 
 procedure TcdaAuthor.SetfunctionCode(const Value: Tv3CD);
 begin
-  FfunctionCode.Free;
+  FfunctionCode.free;
   FfunctionCode := Value;
   if FfunctionCode <> nil then  functionCode.parent := self;
 
@@ -8734,20 +8734,20 @@ end;
 
 procedure TcdaAuthor.Settime(const Value: Tv3TS);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then  time.parent := self;
 
 end;
 
-function TcdaAuthor.sizeInBytesV : cardinal;
+function TcdaAuthor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedAuthor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedAuthor.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FfunctionCode.sizeInBytes);
+  inc(result, FfunctionCode.sizeInBytes(magic));
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaAuthorChoice }
@@ -8806,21 +8806,21 @@ end;
 procedure TcdaAuthorChoice.SetPropertyValue(const aValue: TV3PropertyDefinition);
 begin
   if aValue.Name = 'classCode' Then
-    raise ECDAException.create('Cannot set read-only property')
+    raise ECDAException.Create('Cannot set read-only property')
   else if aValue.Name = 'determinerCode' Then
-    raise ECDAException.create('Cannot set read-only property')
+    raise ECDAException.Create('Cannot set read-only property')
   else
     inherited;
 end;
 
 function TcdaAuthorChoice.GetClassCode: String;
 begin
-  raise ECDAException.create('AuthorChoice is an abstract class and should never be create');
+  raise ECDAException.Create('AuthorChoice is an abstract class and should never be create');
 end;
 
-function TcdaAuthorChoice.sizeInBytesV : cardinal;
+function TcdaAuthorChoice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
@@ -8867,10 +8867,10 @@ end;
 
 destructor TcdaAuthoringDevice.Destroy;
 begin
-  Fcode.Free;
-  FmanufacturerModelName.Free;
-  FsoftwareName.Free;
-  FasMaintainedEntity.Free;
+  Fcode.free;
+  FmanufacturerModelName.free;
+  FsoftwareName.free;
+  FasMaintainedEntity.free;
   inherited;
 end;
 
@@ -8891,7 +8891,7 @@ end;
 
 procedure TcdaAuthoringDevice.SetasMaintainedEntity(const Value: TcdaMaintainedEntityList);
 begin
-  FasMaintainedEntity.Free;
+  FasMaintainedEntity.free;
   FasMaintainedEntity := Value;
   if FasMaintainedEntity <> nil then  asMaintainedEntity.parent := self;
 
@@ -8899,7 +8899,7 @@ end;
 
 procedure TcdaAuthoringDevice.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     code.parent := self;
@@ -8907,7 +8907,7 @@ end;
 
 procedure TcdaAuthoringDevice.SetmanufacturerModelName(const Value: Tv3SC);
 begin
-  FmanufacturerModelName.Free;
+  FmanufacturerModelName.free;
   FmanufacturerModelName := Value;
   if FmanufacturerModelName <> nil then  manufacturerModelName.parent := self;
 
@@ -8930,7 +8930,7 @@ end;
 
 procedure TcdaAuthoringDevice.SetsoftwareName(const Value: Tv3SC);
 begin
-  FsoftwareName.Free;
+  FsoftwareName.free;
   FsoftwareName := Value;
   if FsoftwareName <> nil then  softwareName.parent := self;
 
@@ -8942,13 +8942,13 @@ begin
   result := 'DEV';
 end;
 
-function TcdaAuthoringDevice.sizeInBytesV : cardinal;
+function TcdaAuthoringDevice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FasMaintainedEntity.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FmanufacturerModelName.sizeInBytes);
-  inc(result, FsoftwareName.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FasMaintainedEntity.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FmanufacturerModelName.sizeInBytes(magic));
+  inc(result, FsoftwareName.sizeInBytes(magic));
 end;
 
 { TcdaAuthorization }
@@ -8988,7 +8988,7 @@ end;
 
 destructor TcdaAuthorization.Destroy;
 begin
-  Fconsent.Free;
+  Fconsent.free;
   inherited;
 end;
 
@@ -9007,7 +9007,7 @@ end;
 
 procedure TcdaAuthorization.Setconsent(const Value: TcdaConsent);
 begin
-  Fconsent.Free;
+  Fconsent.free;
   Fconsent := Value;
   if Fconsent <> nil then  consent.parent := self;
 
@@ -9023,10 +9023,10 @@ begin
     inherited;
 end;
 
-function TcdaAuthorization.sizeInBytesV : cardinal;
+function TcdaAuthorization.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fconsent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fconsent.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -9067,7 +9067,7 @@ end;
 
 destructor TcdaBirthplace.Destroy;
 begin
-  Fplace.Free;
+  Fplace.free;
   inherited;
 end;
 
@@ -9086,7 +9086,7 @@ end;
 
 procedure TcdaBirthplace.Setplace(const Value: TcdaPlace);
 begin
-  Fplace.Free;
+  Fplace.free;
   Fplace := Value;
   if Fplace <> nil then  place.parent := self;
 
@@ -9102,10 +9102,10 @@ begin
     inherited;
 end;
 
-function TcdaBirthplace.sizeInBytesV : cardinal;
+function TcdaBirthplace.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fplace.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fplace.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -9204,30 +9204,30 @@ end;
 
 destructor TcdaClinicalDocument.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftitle.Free;
-  FeffectiveTime.Free;
-  FconfidentialityCode.Free;
-  FlanguageCode.Free;
-  FsetId.Free;
-  FversionNumber.Free;
-  FcopyTime.Free;
-  FrecordTarget.Free;
-  Fauthor.Free;
-  FdataEnterer.Free;
-  Finformant.Free;
-  Fcustodian.Free;
-  FinformationRecipient.Free;
-  FlegalAuthenticator.Free;
-  Fauthenticator.Free;
-  Fparticipant.Free;
-  FinFulfillmentOf.Free;
-  FdocumentationOf.Free;
-  FrelatedDocument.Free;
-  Fauthorization.Free;
-  FcomponentOf.Free;
-  Fcomponent.Free;
+  Fid.free;
+  Fcode.free;
+  Ftitle.free;
+  FeffectiveTime.free;
+  FconfidentialityCode.free;
+  FlanguageCode.free;
+  FsetId.free;
+  FversionNumber.free;
+  FcopyTime.free;
+  FrecordTarget.free;
+  Fauthor.free;
+  FdataEnterer.free;
+  Finformant.free;
+  Fcustodian.free;
+  FinformationRecipient.free;
+  FlegalAuthenticator.free;
+  Fauthenticator.free;
+  Fparticipant.free;
+  FinFulfillmentOf.free;
+  FdocumentationOf.free;
+  FrelatedDocument.free;
+  Fauthorization.free;
+  FcomponentOf.free;
+  Fcomponent.free;
   inherited;
 end;
 
@@ -9238,7 +9238,7 @@ end;
 
 procedure TcdaClinicalDocument.Set_id(const Value: Tv3II);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.parent := self;
@@ -9246,7 +9246,7 @@ end;
 
 procedure TcdaClinicalDocument.Setauthenticator(const Value: TcdaAuthenticatorList);
 begin
-  Fauthenticator.Free;
+  Fauthenticator.free;
   Fauthenticator := Value;
   if Fauthenticator <> nil then  authenticator.parent := self;
 
@@ -9254,7 +9254,7 @@ end;
 
 procedure TcdaClinicalDocument.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then  author.parent := self;
 
@@ -9262,7 +9262,7 @@ end;
 
 procedure TcdaClinicalDocument.Setauthorization(const Value: TcdaAuthorizationList);
 begin
-  Fauthorization.Free;
+  Fauthorization.free;
   Fauthorization := Value;
   if Fauthorization <> nil then  authorization.parent := self;
 
@@ -9270,7 +9270,7 @@ end;
 
 procedure TcdaClinicalDocument.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -9278,7 +9278,7 @@ end;
 
 procedure TcdaClinicalDocument.Setcomponent(const Value: TcdaComponent2);
 begin
-  Fcomponent.Free;
+  Fcomponent.free;
   Fcomponent := Value;
   if Fcomponent <> nil then  component.parent := self;
 
@@ -9286,7 +9286,7 @@ end;
 
 procedure TcdaClinicalDocument.SetcomponentOf(const Value: TcdaComponent1);
 begin
-  FcomponentOf.Free;
+  FcomponentOf.free;
   FcomponentOf := Value;
   if FcomponentOf <> nil then  componentOf.parent := self;
 
@@ -9294,7 +9294,7 @@ end;
 
 procedure TcdaClinicalDocument.SetconfidentialityCode(const Value: Tv3CD);
 begin
-  FconfidentialityCode.Free;
+  FconfidentialityCode.free;
   FconfidentialityCode := Value;
   if FconfidentialityCode <> nil then  confidentialityCode.parent := self;
 
@@ -9302,7 +9302,7 @@ end;
 
 procedure TcdaClinicalDocument.SetcopyTime(const Value: Tv3TS);
 begin
-  FcopyTime.Free;
+  FcopyTime.free;
   FcopyTime := Value;
   if FcopyTime <> nil then  copyTime.parent := self;
 
@@ -9310,7 +9310,7 @@ end;
 
 procedure TcdaClinicalDocument.Setcustodian(const Value: TcdaCustodian);
 begin
-  Fcustodian.Free;
+  Fcustodian.free;
   Fcustodian := Value;
   if Fcustodian <> nil then  custodian.parent := self;
 
@@ -9318,7 +9318,7 @@ end;
 
 procedure TcdaClinicalDocument.SetdataEnterer(const Value: TcdaDataEnterer);
 begin
-  FdataEnterer.Free;
+  FdataEnterer.free;
   FdataEnterer := Value;
   if FdataEnterer <> nil then  dataEnterer.parent := self;
 
@@ -9326,7 +9326,7 @@ end;
 
 procedure TcdaClinicalDocument.SetdocumentationOf(const Value: TcdaDocumentationOfList);
 begin
-  FdocumentationOf.Free;
+  FdocumentationOf.free;
   FdocumentationOf := Value;
   if FdocumentationOf <> nil then  documentationOf.parent := self;
 
@@ -9334,7 +9334,7 @@ end;
 
 procedure TcdaClinicalDocument.SeteffectiveTime(const Value: Tv3TS);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then  effectiveTime.parent := self;
 
@@ -9342,7 +9342,7 @@ end;
 
 procedure TcdaClinicalDocument.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then  informant.parent := self;
 
@@ -9350,7 +9350,7 @@ end;
 
 procedure TcdaClinicalDocument.SetinformationRecipient(const Value: TcdaInformationRecipientList);
 begin
-  FinformationRecipient.Free;
+  FinformationRecipient.free;
   FinformationRecipient := Value;
   if FinformationRecipient <> nil then  informationRecipient.parent := self;
 
@@ -9358,7 +9358,7 @@ end;
 
 procedure TcdaClinicalDocument.SetinFulfillmentOf(const Value: TcdaInFulfillmentOfList);
 begin
-  FinFulfillmentOf.Free;
+  FinFulfillmentOf.free;
   FinFulfillmentOf := Value;
   if FinFulfillmentOf <> nil then  inFulfillmentOf.parent := self;
 
@@ -9366,7 +9366,7 @@ end;
 
 procedure TcdaClinicalDocument.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then  languageCode.parent := self;
 
@@ -9374,7 +9374,7 @@ end;
 
 procedure TcdaClinicalDocument.SetlegalAuthenticator(const Value: TcdaLegalAuthenticator);
 begin
-  FlegalAuthenticator.Free;
+  FlegalAuthenticator.free;
   FlegalAuthenticator := Value;
   if FlegalAuthenticator <> nil then  legalAuthenticator.parent := self;
 
@@ -9383,7 +9383,7 @@ end;
 
 procedure TcdaClinicalDocument.Setparticipant(const Value: TcdaParticipant1List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then  participant.parent := self;
 
@@ -9391,7 +9391,7 @@ end;
 
 procedure TcdaClinicalDocument.SetrecordTarget(const Value: TcdaRecordTargetList);
 begin
-  FrecordTarget.Free;
+  FrecordTarget.free;
   FrecordTarget := Value;
   if FrecordTarget <> nil then  recordTarget.parent := self;
 
@@ -9399,7 +9399,7 @@ end;
 
 procedure TcdaClinicalDocument.SetrelatedDocument(const Value: TcdaRelatedDocumentList);
 begin
-  FrelatedDocument.Free;
+  FrelatedDocument.free;
   FrelatedDocument := Value;
   if FrelatedDocument <> nil then  relatedDocument.parent := self;
 
@@ -9407,7 +9407,7 @@ end;
 
 procedure TcdaClinicalDocument.SetsetId(const Value: Tv3II);
 begin
-  FsetId.Free;
+  FsetId.free;
   FsetId := Value;
   if FsetId <> nil then  setId.parent := self;
 
@@ -9415,7 +9415,7 @@ end;
 
 procedure TcdaClinicalDocument.Settitle(const Value: Tv3ST);
 begin
-  Ftitle.Free;
+  Ftitle.free;
   Ftitle := Value;
   if Ftitle <> nil then  title.parent := self;
 
@@ -9423,7 +9423,7 @@ end;
 
 procedure TcdaClinicalDocument.SetversionNumber(const Value: Tv3INT);
 begin
-  FversionNumber.Free;
+  FversionNumber.free;
   FversionNumber := Value;
   if FversionNumber <> nil then  versionNumber.parent := self;
 
@@ -9520,35 +9520,35 @@ begin
 end;
 
 
-function TcdaClinicalDocument.sizeInBytesV : cardinal;
+function TcdaClinicalDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthenticator.sizeInBytes);
-  inc(result, Fauthorization.sizeInBytes);
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FcomponentOf.sizeInBytes);
-  inc(result, Fcomponent.sizeInBytes);
-  inc(result, Fcustodian.sizeInBytes);
-  inc(result, FdataEnterer.sizeInBytes);
-  inc(result, FdocumentationOf.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, FinformationRecipient.sizeInBytes);
-  inc(result, FinFulfillmentOf.sizeInBytes);
-  inc(result, FlegalAuthenticator.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, FrecordTarget.sizeInBytes);
-  inc(result, FrelatedDocument.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthenticator.sizeInBytes(magic));
+  inc(result, Fauthorization.sizeInBytes(magic));
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FcomponentOf.sizeInBytes(magic));
+  inc(result, Fcomponent.sizeInBytes(magic));
+  inc(result, Fcustodian.sizeInBytes(magic));
+  inc(result, FdataEnterer.sizeInBytes(magic));
+  inc(result, FdocumentationOf.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, FinformationRecipient.sizeInBytes(magic));
+  inc(result, FinFulfillmentOf.sizeInBytes(magic));
+  inc(result, FlegalAuthenticator.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, FrecordTarget.sizeInBytes(magic));
+  inc(result, FrelatedDocument.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FconfidentialityCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, FsetId.sizeInBytes);
-  inc(result, FversionNumber.sizeInBytes);
-  inc(result, Ftitle.sizeInBytes);
-  inc(result, FcopyTime.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FconfidentialityCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, FsetId.sizeInBytes(magic));
+  inc(result, FversionNumber.sizeInBytes(magic));
+  inc(result, Ftitle.sizeInBytes(magic));
+  inc(result, FcopyTime.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
 end;
 
 { TcdaComponent1 }
@@ -9588,7 +9588,7 @@ end;
 
 destructor TcdaComponent1.Destroy;
 begin
-  FencompassingEncounter.Free;
+  FencompassingEncounter.free;
   inherited;
 end;
 
@@ -9607,7 +9607,7 @@ end;
 
 procedure TcdaComponent1.SetencompassingEncounter(const Value: TcdaEncompassingEncounter);
 begin
-  FencompassingEncounter.Free;
+  FencompassingEncounter.free;
   FencompassingEncounter := Value;
   if FencompassingEncounter <> nil then  encompassingEncounter.parent := self;
 
@@ -9623,10 +9623,10 @@ begin
     inherited;
 end;
 
-function TcdaComponent1.sizeInBytesV : cardinal;
+function TcdaComponent1.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FencompassingEncounter.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FencompassingEncounter.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -9670,8 +9670,8 @@ end;
 
 destructor TcdaComponent2.Destroy;
 begin
-  FnonXMLBody.Free;
-  FstructuredBody.Free;
+  FnonXMLBody.free;
+  FstructuredBody.free;
   inherited;
 end;
 
@@ -9698,7 +9698,7 @@ end;
 
 procedure TcdaComponent2.SetnonXMLBody(const Value: TcdaNonXMLBody);
 begin
-  FnonXMLBody.Free;
+  FnonXMLBody.free;
   FnonXMLBody := Value;
   if FnonXMLBody <> nil then  nonXMLBody.parent := self;
 
@@ -9720,17 +9720,17 @@ end;
 
 procedure TcdaComponent2.SetstructuredBody(const Value: TcdaStructuredBody);
 begin
-  FstructuredBody.Free;
+  FstructuredBody.free;
   FstructuredBody := Value;
   if FstructuredBody <> nil then  structuredBody.parent := self;
 
 end;
 
-function TcdaComponent2.sizeInBytesV : cardinal;
+function TcdaComponent2.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FnonXMLBody.sizeInBytes);
-  inc(result, FstructuredBody.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FnonXMLBody.sizeInBytes(magic));
+  inc(result, FstructuredBody.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -9772,7 +9772,7 @@ end;
 
 destructor TcdaComponentSect.Destroy;
 begin
-  Fsection.Free;
+  Fsection.free;
   inherited;
 end;
 
@@ -9810,16 +9810,16 @@ end;
 
 procedure TcdaComponentSect.Setsection(const Value: TcdaSection);
 begin
-  Fsection.Free;
+  Fsection.free;
   Fsection := Value;
   if Fsection <> nil then  section.parent := self;
 
 end;
 
-function TcdaComponentSect.sizeInBytesV : cardinal;
+function TcdaComponentSect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fsection.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fsection.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -9881,17 +9881,17 @@ end;
 
 destructor TcdaComponent4.Destroy;
 begin
-  FsequenceNumber.Free;
-  FseperatableInd.Free;
-  Fact.Free;
-  Fencounter.Free;
-  Fobservation.Free;
-  FobservationMedia.Free;
-  Forganizer.Free;
-  Fprocedure.Free;
-  FregionOfInterest.Free;
-  FsubstanceAdministration.Free;
-  Fsupply.Free;
+  FsequenceNumber.free;
+  FseperatableInd.free;
+  Fact.free;
+  Fencounter.free;
+  Fobservation.free;
+  FobservationMedia.free;
+  Forganizer.free;
+  Fprocedure.free;
+  FregionOfInterest.free;
+  FsubstanceAdministration.free;
+  Fsupply.free;
   inherited;
 end;
 
@@ -9921,7 +9921,7 @@ end;
 
 procedure TcdaComponent4.Setact(const Value: TcdaAct);
 begin
-  Fact.Free;
+  Fact.free;
   Fact := Value;
   if Fact <> nil then  act.parent := self;
 
@@ -9935,7 +9935,7 @@ end;
 
 procedure TcdaComponent4.Setencounter(const Value: TcdaEncounter);
 begin
-  Fencounter.Free;
+  Fencounter.free;
   Fencounter := Value;
   if Fencounter <> nil then  encounter.parent := self;
 
@@ -9943,7 +9943,7 @@ end;
 
 procedure TcdaComponent4.Setobservation(const Value: TcdaObservation);
 begin
-  Fobservation.Free;
+  Fobservation.free;
   Fobservation := Value;
   if Fobservation <> nil then  observation.parent := self;
 
@@ -9951,7 +9951,7 @@ end;
 
 procedure TcdaComponent4.SetobservationMedia(const Value: TcdaObservationMedia);
 begin
-  FobservationMedia.Free;
+  FobservationMedia.free;
   FobservationMedia := Value;
   if FobservationMedia <> nil then  observationMedia.parent := self;
 
@@ -9959,7 +9959,7 @@ end;
 
 procedure TcdaComponent4.Setorganizer(const Value: TcdaOrganizer);
 begin
-  Forganizer.Free;
+  Forganizer.free;
   Forganizer := Value;
   if Forganizer <> nil then  organizer.parent := self;
 
@@ -9967,7 +9967,7 @@ end;
 
 procedure TcdaComponent4.Setprocedure(const Value: TcdaProcedure);
 begin
-  Fprocedure.Free;
+  Fprocedure.free;
   Fprocedure := Value;
   if Fprocedure <> nil then
     Fprocedure.parent := self;
@@ -10007,7 +10007,7 @@ end;
 
 procedure TcdaComponent4.SetregionOfInterest(const Value: TcdaRegionOfInterest);
 begin
-  FregionOfInterest.Free;
+  FregionOfInterest.free;
   FregionOfInterest := Value;
   if FregionOfInterest <> nil then  regionOfInterest.parent := self;
 
@@ -10015,7 +10015,7 @@ end;
 
 procedure TcdaComponent4.SetseperatableInd(const Value: Tv3BL);
 begin
-  FseperatableInd.Free;
+  FseperatableInd.free;
   FseperatableInd := Value;
   if FseperatableInd <> nil then  seperatableInd.parent := self;
 
@@ -10023,7 +10023,7 @@ end;
 
 procedure TcdaComponent4.SetsequenceNumber(const Value: Tv3INT);
 begin
-  FsequenceNumber.Free;
+  FsequenceNumber.free;
   FsequenceNumber := Value;
   if FsequenceNumber <> nil then  sequenceNumber.parent := self;
 
@@ -10031,7 +10031,7 @@ end;
 
 procedure TcdaComponent4.SetsubstanceAdministration(const Value: TcdaSubstanceAdministration);
 begin
-  FsubstanceAdministration.Free;
+  FsubstanceAdministration.free;
   FsubstanceAdministration := Value;
   if FsubstanceAdministration <> nil then  substanceAdministration.parent := self;
 
@@ -10039,7 +10039,7 @@ end;
 
 procedure TcdaComponent4.Setsupply(const Value: TcdaSupply);
 begin
-  Fsupply.Free;
+  Fsupply.free;
   Fsupply := Value;
   if Fsupply <> nil then  supply.parent := self;
 
@@ -10068,21 +10068,21 @@ begin
 end;
 
 
-function TcdaComponent4.sizeInBytesV : cardinal;
+function TcdaComponent4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fact.sizeInBytes);
-  inc(result, Fencounter.sizeInBytes);
-  inc(result, Fobservation.sizeInBytes);
-  inc(result, FobservationMedia.sizeInBytes);
-  inc(result, Forganizer.sizeInBytes);
-  inc(result, Fprocedure.sizeInBytes);
-  inc(result, FregionOfInterest.sizeInBytes);
-  inc(result, FsubstanceAdministration.sizeInBytes);
-  inc(result, Fsupply.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fact.sizeInBytes(magic));
+  inc(result, Fencounter.sizeInBytes(magic));
+  inc(result, Fobservation.sizeInBytes(magic));
+  inc(result, FobservationMedia.sizeInBytes(magic));
+  inc(result, Forganizer.sizeInBytes(magic));
+  inc(result, Fprocedure.sizeInBytes(magic));
+  inc(result, FregionOfInterest.sizeInBytes(magic));
+  inc(result, FsubstanceAdministration.sizeInBytes(magic));
+  inc(result, Fsupply.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FseperatableInd.sizeInBytes);
-  inc(result, FsequenceNumber.sizeInBytes);
+  inc(result, FseperatableInd.sizeInBytes(magic));
+  inc(result, FsequenceNumber.sizeInBytes(magic));
 end;
 
 { TcdaConsent }
@@ -10128,9 +10128,9 @@ end;
 
 destructor TcdaConsent.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FstatusCode.Free;
+  Fid.free;
+  Fcode.free;
+  FstatusCode.free;
   inherited;
 end;
 
@@ -10152,7 +10152,7 @@ end;
 
 procedure TcdaConsent.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -10160,7 +10160,7 @@ end;
 
 procedure TcdaConsent.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -10184,20 +10184,20 @@ end;
 
 procedure TcdaConsent.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then  statusCode.parent := self;
 
 end;
 
-function TcdaConsent.sizeInBytesV : cardinal;
+function TcdaConsent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaConsumable }
@@ -10237,7 +10237,7 @@ end;
 
 destructor TcdaConsumable.Destroy;
 begin
-  FmanufacturedProduct.Free;
+  FmanufacturedProduct.free;
   inherited;
 end;
 
@@ -10256,7 +10256,7 @@ end;
 
 procedure TcdaConsumable.SetmanufacturedProduct(const Value: TcdaManufacturedProduct);
 begin
-  FmanufacturedProduct.Free;
+  FmanufacturedProduct.free;
   FmanufacturedProduct := Value;
   if FmanufacturedProduct <> nil then  manufacturedProduct.parent := self;
 
@@ -10273,10 +10273,10 @@ begin
     inherited;
 end;
 
-function TcdaConsumable.sizeInBytesV : cardinal;
+function TcdaConsumable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FmanufacturedProduct.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FmanufacturedProduct.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -10324,15 +10324,15 @@ end;
 
 destructor TcdaCriterion.Destroy;
 begin
-  Fcode.Free;
-  Ftext.Free;
-  Fvalue.Free;
+  Fcode.free;
+  Ftext.free;
+  Fvalue.free;
   inherited;
 end;
 
 procedure TcdaCriterion.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
@@ -10340,7 +10340,7 @@ end;
 
 procedure TcdaCriterion.Setvalue(const Value: Tv3ANY);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then  value.parent := self;
 
@@ -10353,7 +10353,7 @@ end;
 
 procedure TcdaCriterion.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -10387,14 +10387,14 @@ begin
     inherited;
 end;
 
-function TcdaCriterion.sizeInBytesV : cardinal;
+function TcdaCriterion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fvalue.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
 end;
 
 { TcdaDevice }
@@ -10441,9 +10441,9 @@ end;
 
 destructor TcdaDevice.Destroy;
 begin
-  Fcode.Free;
-  FmanufacturerModelName.Free;
-  FsoftwareName.Free;
+  Fcode.free;
+  FmanufacturerModelName.free;
+  FsoftwareName.free;
   inherited;
 end;
 
@@ -10466,7 +10466,7 @@ end;
 
 procedure TcdaDevice.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -10474,7 +10474,7 @@ end;
 
 procedure TcdaDevice.SetmanufacturerModelName(const Value: Tv3SC);
 begin
-  FmanufacturerModelName.Free;
+  FmanufacturerModelName.free;
   FmanufacturerModelName := Value;
   if FmanufacturerModelName <> nil then  manufacturerModelName.parent := self;
 
@@ -10498,20 +10498,20 @@ end;
 
 procedure TcdaDevice.SetsoftwareName(const Value: Tv3SC);
 begin
-  FsoftwareName.Free;
+  FsoftwareName.free;
   FsoftwareName := Value;
   if FsoftwareName <> nil then  softwareName.parent := self;
 
 end;
 
-function TcdaDevice.sizeInBytesV : cardinal;
+function TcdaDevice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, FmanufacturerModelName.sizeInBytes);
-  inc(result, FsoftwareName.sizeInBytes);
+  inc(result, FmanufacturerModelName.sizeInBytes(magic));
+  inc(result, FsoftwareName.sizeInBytes(magic));
 end;
 
 { TcdaDocumentationOf }
@@ -10552,7 +10552,7 @@ end;
 
 destructor TcdaDocumentationOf.Destroy;
 begin
-  FserviceEvent.Free;
+  FserviceEvent.free;
   inherited;
 end;
 
@@ -10581,16 +10581,16 @@ end;
 
 procedure TcdaDocumentationOf.SetserviceEvent(const Value: TcdaServiceEvent);
 begin
-  FserviceEvent.Free;
+  FserviceEvent.free;
   FserviceEvent := Value;
   if FserviceEvent <> nil then  serviceEvent.parent := self;
 
 end;
 
-function TcdaDocumentationOf.sizeInBytesV : cardinal;
+function TcdaDocumentationOf.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FserviceEvent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FserviceEvent.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -10646,13 +10646,13 @@ end;
 
 destructor TcdaEncompassingEncounter.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FeffectiveTime.Free;
-  FdischargeDispositionCode.Free;
-  FresponsibleParty.Free;
-  FencounterParticipant.Free;
-  Flocation.Free;
+  Fid.free;
+  Fcode.free;
+  FeffectiveTime.free;
+  FdischargeDispositionCode.free;
+  FresponsibleParty.free;
+  FencounterParticipant.free;
+  Flocation.free;
   inherited;
 end;
 
@@ -10678,7 +10678,7 @@ end;
 
 procedure TcdaEncompassingEncounter.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -10686,7 +10686,7 @@ end;
 
 procedure TcdaEncompassingEncounter.SetdischargeDispositionCode(const Value: Tv3CD);
 begin
-  FdischargeDispositionCode.Free;
+  FdischargeDispositionCode.free;
   FdischargeDispositionCode := Value;
   if FdischargeDispositionCode <> nil then  dischargeDispositionCode.parent := self;
 
@@ -10694,7 +10694,7 @@ end;
 
 procedure TcdaEncompassingEncounter.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then  effectiveTime.parent := self;
 
@@ -10702,7 +10702,7 @@ end;
 
 procedure TcdaEncompassingEncounter.SetencounterParticipant(const Value: TcdaEncounterParticipantList);
 begin
-  FencounterParticipant.Free;
+  FencounterParticipant.free;
   FencounterParticipant := Value;
   if FencounterParticipant <> nil then  encounterParticipant.parent := self;
 
@@ -10710,7 +10710,7 @@ end;
 
 procedure TcdaEncompassingEncounter.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -10718,7 +10718,7 @@ end;
 
 procedure TcdaEncompassingEncounter.Setlocation(const Value: TcdaLocation);
 begin
-  Flocation.Free;
+  Flocation.free;
   Flocation := Value;
   if Flocation <> nil then  location.parent := self;
 
@@ -10750,24 +10750,24 @@ end;
 
 procedure TcdaEncompassingEncounter.SetresponsibleParty(const Value: TcdaResponsibleParty);
 begin
-  FresponsibleParty.Free;
+  FresponsibleParty.free;
   FresponsibleParty := Value;
   if FresponsibleParty <> nil then  responsibleParty.parent := self;
 
 end;
 
-function TcdaEncompassingEncounter.sizeInBytesV : cardinal;
+function TcdaEncompassingEncounter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FencounterParticipant.sizeInBytes);
-  inc(result, Flocation.sizeInBytes);
-  inc(result, FresponsibleParty.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FencounterParticipant.sizeInBytes(magic));
+  inc(result, Flocation.sizeInBytes(magic));
+  inc(result, FresponsibleParty.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FdischargeDispositionCode.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FdischargeDispositionCode.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaEncounter }
@@ -10843,21 +10843,21 @@ end;
 
 destructor TcdaEncounter.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FpriorityCode.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FpriorityCode.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -10890,7 +10890,7 @@ end;
 
 procedure TcdaEncounter.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then  author.parent := self;
 
@@ -10898,7 +10898,7 @@ end;
 
 procedure TcdaEncounter.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -10906,7 +10906,7 @@ end;
 
 procedure TcdaEncounter.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then  effectiveTime.parent := self;
 
@@ -10914,7 +10914,7 @@ end;
 
 procedure TcdaEncounter.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then  entryRelationship.parent := self;
 
@@ -10922,7 +10922,7 @@ end;
 
 procedure TcdaEncounter.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then  informant.parent := self;
 
@@ -10930,7 +10930,7 @@ end;
 
 procedure TcdaEncounter.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then  participant.parent := self;
 
@@ -10938,7 +10938,7 @@ end;
 
 procedure TcdaEncounter.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then  performer.parent := self;
 
@@ -10946,7 +10946,7 @@ end;
 
 procedure TcdaEncounter.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then  precondition.parent := self;
 
@@ -10954,7 +10954,7 @@ end;
 
 procedure TcdaEncounter.SetpriorityCode(const Value: Tv3CD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then  priorityCode.parent := self;
 
@@ -10998,7 +10998,7 @@ end;
 
 procedure TcdaEncounter.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then  reference.parent := self;
 
@@ -11006,21 +11006,21 @@ end;
 
 procedure TcdaEncounter.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then  specimen.parent := self;
 end;
 
 procedure TcdaEncounter.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then  FstatusCode.parent := self;
 end;
 
 procedure TcdaEncounter.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then  subject.parent := self;
 
@@ -11028,29 +11028,29 @@ end;
 
 procedure TcdaEncounter.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
 end;
 
-function TcdaEncounter.sizeInBytesV : cardinal;
+function TcdaEncounter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
 end;
 
 { TcdaEncounterParticipant }
@@ -11093,8 +11093,8 @@ end;
 
 destructor TcdaEncounterParticipant.Destroy;
 begin
-  Ftime.Free;
-  FassignedEntity.Free;
+  Ftime.free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -11114,7 +11114,7 @@ end;
 
 procedure TcdaEncounterParticipant.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then  assignedEntity.parent := self;
 
@@ -11134,18 +11134,18 @@ end;
 
 procedure TcdaEncounterParticipant.Settime(const Value: Tv3IVL);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then
     time.parent := self;
 end;
 
-function TcdaEncounterParticipant.sizeInBytesV : cardinal;
+function TcdaEncounterParticipant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaEntity }
@@ -11193,9 +11193,9 @@ end;
 
 destructor TcdaEntity.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Fdesc.Free;
+  Fid.free;
+  Fcode.free;
+  Fdesc.free;
   inherited;
 end;
 
@@ -11217,7 +11217,7 @@ end;
 
 procedure TcdaEntity.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -11225,7 +11225,7 @@ end;
 
 procedure TcdaEntity.Setdesc(const Value: Tv3ED);
 begin
-  Fdesc.Free;
+  Fdesc.free;
   Fdesc := Value;
   if Fdesc <> nil then  desc.parent := self;
 
@@ -11233,7 +11233,7 @@ end;
 
 procedure TcdaEntity.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -11255,14 +11255,14 @@ begin
     inherited;
 end;
 
-function TcdaEntity.sizeInBytesV : cardinal;
+function TcdaEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Fdesc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Fdesc.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaEntry }
@@ -11321,15 +11321,15 @@ end;
 
 destructor TcdaEntry.Destroy;
 begin
-  Fact.Free;
-  Fencounter.Free;
-  Fobservation.Free;
-  FobservationMedia.Free;
-  Forganizer.Free;
-  Fprocedure.Free;
-  FregionOfInterest.Free;
-  FsubstanceAdministration.Free;
-  Fsupply.Free;
+  Fact.free;
+  Fencounter.free;
+  Fobservation.free;
+  FobservationMedia.free;
+  Forganizer.free;
+  Fprocedure.free;
+  FregionOfInterest.free;
+  FsubstanceAdministration.free;
+  Fsupply.free;
   inherited;
 end;
 
@@ -11357,7 +11357,7 @@ end;
 
 procedure TcdaEntry.Setact(const Value: TcdaAct);
 begin
-  Fact.Free;
+  Fact.free;
   Fact := Value;
   if Fact <> nil then  act.parent := self;
 
@@ -11371,7 +11371,7 @@ end;
 
 procedure TcdaEntry.Setencounter(const Value: TcdaEncounter);
 begin
-  Fencounter.Free;
+  Fencounter.free;
   Fencounter := Value;
   if Fencounter <> nil then  encounter.parent := self;
 
@@ -11379,7 +11379,7 @@ end;
 
 procedure TcdaEntry.Setobservation(const Value: TcdaObservation);
 begin
-  Fobservation.Free;
+  Fobservation.free;
   Fobservation := Value;
   if Fobservation <> nil then  observation.parent := self;
 
@@ -11387,7 +11387,7 @@ end;
 
 procedure TcdaEntry.SetobservationMedia(const Value: TcdaObservationMedia);
 begin
-  FobservationMedia.Free;
+  FobservationMedia.free;
   FobservationMedia := Value;
   if FobservationMedia <> nil then  observationMedia.parent := self;
 
@@ -11395,7 +11395,7 @@ end;
 
 procedure TcdaEntry.Setorganizer(const Value: TcdaOrganizer);
 begin
-  Forganizer.Free;
+  Forganizer.free;
   Forganizer := Value;
   if Forganizer <> nil then  organizer.parent := self;
 
@@ -11403,7 +11403,7 @@ end;
 
 procedure TcdaEntry.Setprocedure(const Value: TcdaProcedure);
 begin
-  Fprocedure.Free;
+  Fprocedure.free;
   Fprocedure := Value;
   if Fprocedure <> nil then
     Fprocedure.parent := self;
@@ -11439,7 +11439,7 @@ end;
 
 procedure TcdaEntry.SetregionOfInterest(const Value: TcdaRegionOfInterest);
 begin
-  FregionOfInterest.Free;
+  FregionOfInterest.free;
   FregionOfInterest := Value;
   if FregionOfInterest <> nil then  regionOfInterest.parent := self;
 
@@ -11447,7 +11447,7 @@ end;
 
 procedure TcdaEntry.SetsubstanceAdministration(const Value: TcdaSubstanceAdministration);
 begin
-  FsubstanceAdministration.Free;
+  FsubstanceAdministration.free;
   FsubstanceAdministration := Value;
   if FsubstanceAdministration <> nil then  substanceAdministration.parent := self;
 
@@ -11455,7 +11455,7 @@ end;
 
 procedure TcdaEntry.Setsupply(const Value: TcdaSupply);
 begin
-  Fsupply.Free;
+  Fsupply.free;
   Fsupply := Value;
   if Fsupply <> nil then  supply.parent := self;
 
@@ -11483,18 +11483,18 @@ begin
     result := Fsupply;
 end;
 
-function TcdaEntry.sizeInBytesV : cardinal;
+function TcdaEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fact.sizeInBytes);
-  inc(result, Fencounter.sizeInBytes);
-  inc(result, Fobservation.sizeInBytes);
-  inc(result, FobservationMedia.sizeInBytes);
-  inc(result, Forganizer.sizeInBytes);
-  inc(result, Fprocedure.sizeInBytes);
-  inc(result, FregionOfInterest.sizeInBytes);
-  inc(result, FsubstanceAdministration.sizeInBytes);
-  inc(result, Fsupply.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fact.sizeInBytes(magic));
+  inc(result, Fencounter.sizeInBytes(magic));
+  inc(result, Fobservation.sizeInBytes(magic));
+  inc(result, FobservationMedia.sizeInBytes(magic));
+  inc(result, Forganizer.sizeInBytes(magic));
+  inc(result, Fprocedure.sizeInBytes(magic));
+  inc(result, FregionOfInterest.sizeInBytes(magic));
+  inc(result, FsubstanceAdministration.sizeInBytes(magic));
+  inc(result, Fsupply.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -11563,17 +11563,17 @@ end;
 
 destructor TcdaEntryRelationship.Destroy;
 begin
-  FsequenceNumber.Free;
-  FseperatableInd.Free;
-  Fact.Free;
-  Fencounter.Free;
-  Fobservation.Free;
-  FobservationMedia.Free;
-  Forganizer.Free;
-  Fprocedure.Free;
-  FregionOfInterest.Free;
-  FsubstanceAdministration.Free;
-  Fsupply.Free;
+  FsequenceNumber.free;
+  FseperatableInd.free;
+  Fact.free;
+  Fencounter.free;
+  Fobservation.free;
+  FobservationMedia.free;
+  Forganizer.free;
+  Fprocedure.free;
+  FregionOfInterest.free;
+  FsubstanceAdministration.free;
+  Fsupply.free;
   inherited;
 end;
 
@@ -11605,7 +11605,7 @@ end;
 
 procedure TcdaEntryRelationship.Setact(const Value: TcdaAct);
 begin
-  Fact.Free;
+  Fact.free;
   Fact := Value;
   if Fact <> nil then  act.parent := self;
 
@@ -11619,7 +11619,7 @@ end;
 
 procedure TcdaEntryRelationship.Setencounter(const Value: TcdaEncounter);
 begin
-  Fencounter.Free;
+  Fencounter.free;
   Fencounter := Value;
   if Fencounter <> nil then  encounter.parent := self;
 
@@ -11639,7 +11639,7 @@ end;
 
 procedure TcdaEntryRelationship.Setobservation(const Value: TcdaObservation);
 begin
-  Fobservation.Free;
+  Fobservation.free;
   Fobservation := Value;
   if Fobservation <> nil then  observation.parent := self;
 
@@ -11647,7 +11647,7 @@ end;
 
 procedure TcdaEntryRelationship.SetobservationMedia(const Value: TcdaObservationMedia);
 begin
-  FobservationMedia.Free;
+  FobservationMedia.free;
   FobservationMedia := Value;
   if FobservationMedia <> nil then  observationMedia.parent := self;
 
@@ -11655,7 +11655,7 @@ end;
 
 procedure TcdaEntryRelationship.Setorganizer(const Value: TcdaOrganizer);
 begin
-  Forganizer.Free;
+  Forganizer.free;
   Forganizer := Value;
   if Forganizer <> nil then  organizer.parent := self;
 
@@ -11663,7 +11663,7 @@ end;
 
 procedure TcdaEntryRelationship.Setprocedure(const Value: TcdaProcedure);
 begin
-  Fprocedure.Free;
+  Fprocedure.free;
   Fprocedure := Value;
 end;
 
@@ -11705,7 +11705,7 @@ end;
 
 procedure TcdaEntryRelationship.SetregionOfInterest(const Value: TcdaRegionOfInterest);
 begin
-  FregionOfInterest.Free;
+  FregionOfInterest.free;
   FregionOfInterest := Value;
   if FregionOfInterest <> nil then  regionOfInterest.parent := self;
 
@@ -11713,7 +11713,7 @@ end;
 
 procedure TcdaEntryRelationship.SetseperatableInd(const Value: Tv3BL);
 begin
-  FseperatableInd.Free;
+  FseperatableInd.free;
   FseperatableInd := Value;
   if FseperatableInd <> nil then  seperatableInd.parent := self;
 
@@ -11721,7 +11721,7 @@ end;
 
 procedure TcdaEntryRelationship.SetsequenceNumber(const Value: Tv3INT);
 begin
-  FsequenceNumber.Free;
+  FsequenceNumber.free;
   FsequenceNumber := Value;
   if FsequenceNumber <> nil then  sequenceNumber.parent := self;
 
@@ -11729,7 +11729,7 @@ end;
 
 procedure TcdaEntryRelationship.SetsubstanceAdministration(const Value: TcdaSubstanceAdministration);
 begin
-  FsubstanceAdministration.Free;
+  FsubstanceAdministration.free;
   FsubstanceAdministration := Value;
   if FsubstanceAdministration <> nil then  substanceAdministration.parent := self;
 
@@ -11737,7 +11737,7 @@ end;
 
 procedure TcdaEntryRelationship.Setsupply(const Value: TcdaSupply);
 begin
-  Fsupply.Free;
+  Fsupply.free;
   Fsupply := Value;
   if Fsupply <> nil then  supply.parent := self;
 
@@ -11765,21 +11765,21 @@ begin
     result := Fsupply;
 end;
 
-function TcdaEntryRelationship.sizeInBytesV : cardinal;
+function TcdaEntryRelationship.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fact.sizeInBytes);
-  inc(result, Fencounter.sizeInBytes);
-  inc(result, Fobservation.sizeInBytes);
-  inc(result, FobservationMedia.sizeInBytes);
-  inc(result, Forganizer.sizeInBytes);
-  inc(result, Fprocedure.sizeInBytes);
-  inc(result, FregionOfInterest.sizeInBytes);
-  inc(result, FsubstanceAdministration.sizeInBytes);
-  inc(result, Fsupply.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fact.sizeInBytes(magic));
+  inc(result, Fencounter.sizeInBytes(magic));
+  inc(result, Fobservation.sizeInBytes(magic));
+  inc(result, FobservationMedia.sizeInBytes(magic));
+  inc(result, Forganizer.sizeInBytes(magic));
+  inc(result, Fprocedure.sizeInBytes(magic));
+  inc(result, FregionOfInterest.sizeInBytes(magic));
+  inc(result, FsubstanceAdministration.sizeInBytes(magic));
+  inc(result, Fsupply.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FseperatableInd.sizeInBytes);
-  inc(result, FsequenceNumber.sizeInBytes);
+  inc(result, FseperatableInd.sizeInBytes(magic));
+  inc(result, FsequenceNumber.sizeInBytes(magic));
 end;
 
 { TcdaExternalActChoice }
@@ -11826,9 +11826,9 @@ end;
 
 destructor TcdaExternalActChoice.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
   inherited;
 end;
 
@@ -11851,7 +11851,7 @@ end;
 
 procedure TcdaExternalActChoice.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -11875,7 +11875,7 @@ end;
 
 procedure TcdaExternalActChoice.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
     text.parent := self;
@@ -11888,7 +11888,7 @@ end;
 
 procedure TcdaExternalActChoice.Set_id(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   FId := value;
   if Fid <> nil then
     Fid.parent := self;
@@ -11897,19 +11897,19 @@ end;
 procedure TcdaExternalActChoice.SetClassCode(sValue: String);
 begin
   if ClassCodeIsFixed Then
-    raise ECDAException.create('classCode is fixed')
+    raise ECDAException.Create('classCode is fixed')
   Else
     FclassCode := sValue;
 end;
 
-function TcdaExternalActChoice.sizeInBytesV : cardinal;
+function TcdaExternalActChoice.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaExternalAct }
@@ -11979,8 +11979,8 @@ end;
 
 destructor TcdaExternalDocument.Destroy;
 begin
-  FsetId.Free;
-  FversionNumber.Free;
+  FsetId.free;
+  FversionNumber.free;
   inherited;
 end;
 
@@ -11991,7 +11991,7 @@ end;
 
 procedure TcdaExternalDocument.SetsetId(const Value: Tv3II);
 begin
-  FsetId.Free;
+  FsetId.free;
   FsetId := Value;
   if FsetId <> nil then  setId.parent := self;
 
@@ -11999,7 +11999,7 @@ end;
 
 procedure TcdaExternalDocument.SetversionNumber(const Value: Tv3INT);
 begin
-  FversionNumber.Free;
+  FversionNumber.free;
   FversionNumber := Value;
   if FversionNumber <> nil then  versionNumber.parent := self;
 
@@ -12024,11 +12024,11 @@ begin
     inherited;
 end;
 
-function TcdaExternalDocument.sizeInBytesV : cardinal;
+function TcdaExternalDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FsetId.sizeInBytes);
-  inc(result, FversionNumber.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FsetId.sizeInBytes(magic));
+  inc(result, FversionNumber.sizeInBytes(magic));
 end;
 
 { TcdaExternalObservation }
@@ -12143,12 +12143,12 @@ end;
 
 destructor TcdaGuardian.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  FguardianPerson.Free;
-  FguardianOrganization.Free;
+  Fid.free;
+  Fcode.free;
+  Faddr.free;
+  Ftelecom.free;
+  FguardianPerson.free;
+  FguardianOrganization.free;
   inherited;
 end;
 
@@ -12172,7 +12172,7 @@ end;
 
 procedure TcdaGuardian.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then  addr.parent := self;
 
@@ -12180,7 +12180,7 @@ end;
 
 procedure TcdaGuardian.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -12188,7 +12188,7 @@ end;
 
 procedure TcdaGuardian.SetguardianOrganization(const Value: TcdaOrganization);
 begin
-  FguardianOrganization.Free;
+  FguardianOrganization.free;
   FguardianOrganization := Value;
   if FguardianOrganization <> nil then  guardianOrganization.parent := self;
 
@@ -12196,7 +12196,7 @@ end;
 
 procedure TcdaGuardian.SetguardianPerson(const Value: TcdaPerson);
 begin
-  FguardianPerson.Free;
+  FguardianPerson.free;
   FguardianPerson := Value;
   if FguardianPerson <> nil then  guardianPerson.parent := self;
 
@@ -12204,7 +12204,7 @@ end;
 
 procedure TcdaGuardian.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -12232,21 +12232,21 @@ end;
 
 procedure TcdaGuardian.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then  telecom.parent := self;
 
 end;
 
-function TcdaGuardian.sizeInBytesV : cardinal;
+function TcdaGuardian.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FguardianOrganization.sizeInBytes);
-  inc(result, FguardianPerson.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FguardianOrganization.sizeInBytes(magic));
+  inc(result, FguardianPerson.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -12296,10 +12296,10 @@ end;
 
 destructor TcdaHealthCareFacility.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Flocation.Free;
-  FserviceProviderOrganization.Free;
+  Fid.free;
+  Fcode.free;
+  Flocation.free;
+  FserviceProviderOrganization.free;
   inherited;
 end;
 
@@ -12321,7 +12321,7 @@ end;
 
 procedure TcdaHealthCareFacility.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -12329,7 +12329,7 @@ end;
 
 procedure TcdaHealthCareFacility.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -12337,7 +12337,7 @@ end;
 
 procedure TcdaHealthCareFacility.Setlocation(const Value: TcdaPlace);
 begin
-  Flocation.Free;
+  Flocation.free;
   Flocation := Value;
   if Flocation <> nil then  location.parent := self;
 
@@ -12361,19 +12361,19 @@ end;
 
 procedure TcdaHealthCareFacility.SetserviceProviderOrganization(const Value: TcdaOrganization);
 begin
-  FserviceProviderOrganization.Free;
+  FserviceProviderOrganization.free;
   FserviceProviderOrganization := Value;
   if FserviceProviderOrganization <> nil then  serviceProviderOrganization.parent := self;
 
 end;
 
-function TcdaHealthCareFacility.sizeInBytesV : cardinal;
+function TcdaHealthCareFacility.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FserviceProviderOrganization.sizeInBytes);
-  inc(result, Flocation.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FserviceProviderOrganization.sizeInBytes(magic));
+  inc(result, Flocation.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -12417,8 +12417,8 @@ end;
 
 destructor TcdaInformant12.Destroy;
 begin
-  FassignedEntity.Free;
-  FrelatedEntity.Free;
+  FassignedEntity.free;
+  FrelatedEntity.free;
   inherited;
 end;
 
@@ -12439,7 +12439,7 @@ end;
 
 procedure TcdaInformant12.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then  assignedEntity.parent := self;
 
@@ -12461,7 +12461,7 @@ end;
 
 procedure TcdaInformant12.SetrelatedEntity(const Value: TcdaRelatedEntity);
 begin
-  FrelatedEntity.Free;
+  FrelatedEntity.free;
   FrelatedEntity := Value;
   if FrelatedEntity <> nil then  relatedEntity.parent := self;
 
@@ -12475,11 +12475,11 @@ begin
     result := FrelatedEntity;
 end;
 
-function TcdaInformant12.sizeInBytesV : cardinal;
+function TcdaInformant12.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
-  inc(result, FrelatedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
+  inc(result, FrelatedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
 end;
@@ -12523,7 +12523,7 @@ end;
 
 destructor TcdaInformationRecipient.Destroy;
 begin
-  FintendedRecipient.Free;
+  FintendedRecipient.free;
   inherited;
 end;
 
@@ -12542,7 +12542,7 @@ end;
 
 procedure TcdaInformationRecipient.SetintendedRecipient(const Value: TcdaIntendedRecipient);
 begin
-  FintendedRecipient.Free;
+  FintendedRecipient.free;
   FintendedRecipient := Value;
   if FintendedRecipient <> nil then  intendedRecipient.parent := self;
 
@@ -12558,10 +12558,10 @@ begin
     inherited;
 end;
 
-function TcdaInformationRecipient.sizeInBytesV : cardinal;
+function TcdaInformationRecipient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FintendedRecipient.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FintendedRecipient.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -12602,7 +12602,7 @@ end;
 
 destructor TcdaInFulfillmentOf.Destroy;
 begin
-  Forder.Free;
+  Forder.free;
   inherited;
 end;
 
@@ -12621,7 +12621,7 @@ end;
 
 procedure TcdaInFulfillmentOf.Setorder(const Value: TcdaOrder);
 begin
-  Forder.Free;
+  Forder.free;
   Forder := Value;
   if Forder <> nil then  order.parent := self;
 
@@ -12637,10 +12637,10 @@ begin
     inherited;
 end;
 
-function TcdaInFulfillmentOf.sizeInBytesV : cardinal;
+function TcdaInFulfillmentOf.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Forder.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Forder.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -12694,11 +12694,11 @@ end;
 
 destructor TcdaIntendedRecipient.Destroy;
 begin
-  Fid.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  FinformationRecipient.Free;
-  FreceivedOrganization.Free;
+  Fid.free;
+  Faddr.free;
+  Ftelecom.free;
+  FinformationRecipient.free;
+  FreceivedOrganization.free;
   inherited;
 end;
 
@@ -12722,7 +12722,7 @@ end;
 
 procedure TcdaIntendedRecipient.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then  addr.parent := self;
 
@@ -12730,7 +12730,7 @@ end;
 
 procedure TcdaIntendedRecipient.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -12738,7 +12738,7 @@ end;
 
 procedure TcdaIntendedRecipient.SetinformationRecipient(const Value: TcdaPerson);
 begin
-  FinformationRecipient.Free;
+  FinformationRecipient.free;
   FinformationRecipient := Value;
   if FinformationRecipient <> nil then  informationRecipient.parent := self;
 
@@ -12764,7 +12764,7 @@ end;
 
 procedure TcdaIntendedRecipient.SetreceivedOrganization(const Value: TcdaOrganization);
 begin
-  FreceivedOrganization.Free;
+  FreceivedOrganization.free;
   FreceivedOrganization := Value;
   if FreceivedOrganization <> nil then  receivedOrganization.parent := self;
 
@@ -12772,21 +12772,21 @@ end;
 
 procedure TcdaIntendedRecipient.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then  telecom.parent := self;
 
 end;
 
-function TcdaIntendedRecipient.sizeInBytesV : cardinal;
+function TcdaIntendedRecipient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FreceivedOrganization.sizeInBytes);
-  inc(result, FinformationRecipient.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FreceivedOrganization.sizeInBytes(magic));
+  inc(result, FinformationRecipient.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
 end;
 
 { TcdaLabeledDrug }
@@ -12829,8 +12829,8 @@ end;
 
 destructor TcdaLabeledDrug.Destroy;
 begin
-  Fcode.Free;
-  Fname.Free;
+  Fcode.free;
+  Fname.free;
   inherited;
 end;
 
@@ -12851,7 +12851,7 @@ end;
 
 procedure TcdaLabeledDrug.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -12859,7 +12859,7 @@ end;
 
 procedure TcdaLabeledDrug.Setname(const Value: Tv3EN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then  name.parent := self;
 
@@ -12879,11 +12879,11 @@ begin
     inherited;
 end;
 
-function TcdaLabeledDrug.sizeInBytesV : cardinal;
+function TcdaLabeledDrug.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
 end;
@@ -12930,10 +12930,10 @@ end;
 
 destructor TcdaLanguageCommunication.Destroy;
 begin
-  FlanguageCode.Free;
-  FmodeCode.Free;
-  FproficiencyLevelCode.Free;
-  FpreferenceInd.Free;
+  FlanguageCode.free;
+  FmodeCode.free;
+  FproficiencyLevelCode.free;
+  FpreferenceInd.free;
   inherited;
 end;
 
@@ -12954,7 +12954,7 @@ end;
 
 procedure TcdaLanguageCommunication.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then  languageCode.parent := self;
 
@@ -12962,7 +12962,7 @@ end;
 
 procedure TcdaLanguageCommunication.SetmodeCode(const Value: Tv3CD);
 begin
-  FmodeCode.Free;
+  FmodeCode.free;
   FmodeCode := Value;
   if FmodeCode <> nil then  modeCode.parent := self;
 
@@ -12970,7 +12970,7 @@ end;
 
 procedure TcdaLanguageCommunication.SetpreferenceInd(const Value: Tv3BL);
 begin
-  FpreferenceInd.Free;
+  FpreferenceInd.free;
   FpreferenceInd := Value;
   if FpreferenceInd <> nil then  preferenceInd.parent := self;
 
@@ -12978,7 +12978,7 @@ end;
 
 procedure TcdaLanguageCommunication.SetproficiencyLevelCode(const Value: Tv3CD);
 begin
-  FproficiencyLevelCode.Free;
+  FproficiencyLevelCode.free;
   FproficiencyLevelCode := Value;
   if FproficiencyLevelCode <> nil then  proficiencyLevelCode.parent := self;
 
@@ -12998,13 +12998,13 @@ begin
     inherited;
 end;
 
-function TcdaLanguageCommunication.sizeInBytesV : cardinal;
+function TcdaLanguageCommunication.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FpreferenceInd.sizeInBytes);
-  inc(result, FmodeCode.sizeInBytes);
-  inc(result, FproficiencyLevelCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FpreferenceInd.sizeInBytes(magic));
+  inc(result, FmodeCode.sizeInBytes(magic));
+  inc(result, FproficiencyLevelCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
 end;
 
 { TcdaEntityIdentifier }
@@ -13045,8 +13045,8 @@ end;
 
 destructor TcdaEntityIdentifier.Destroy;
 begin
-  FId.Free;
-  FCode.Free;
+  FId.free;
+  FCode.free;
   inherited;
 end;
 
@@ -13065,7 +13065,7 @@ end;
 
 procedure TcdaEntityIdentifier.SetId(const Value: Tv3II);
 begin
-  FId.Free;
+  FId.free;
   FId := Value;
   if FId <> nil then  Id.parent := self;
 
@@ -13073,7 +13073,7 @@ end;
 
 procedure TcdaEntityIdentifier.SetCode(const Value: Tv3CD);
 begin
-  FCode.Free;
+  FCode.free;
   FCode := Value;
   if FCode <> nil then  Code.parent := self;
 
@@ -13089,11 +13089,11 @@ begin
     inherited;
 end;
 
-function TcdaEntityIdentifier.sizeInBytesV : cardinal;
+function TcdaEntityIdentifier.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FId.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FId.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
 end;
 
 { TcdaLegalAuthenticator }
@@ -13138,9 +13138,9 @@ end;
 
 destructor TcdaLegalAuthenticator.Destroy;
 begin
-  Ftime.Free;
-  FsignatureCode.Free;
-  FassignedEntity.Free;
+  Ftime.free;
+  FsignatureCode.free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -13162,7 +13162,7 @@ end;
 
 procedure TcdaLegalAuthenticator.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then  assignedEntity.parent := self;
 
@@ -13186,27 +13186,27 @@ end;
 
 procedure TcdaLegalAuthenticator.SetsignatureCode(const Value: Tv3CS);
 begin
-  FsignatureCode.Free;
+  FsignatureCode.free;
   FsignatureCode := Value;
   if FsignatureCode <> nil then  signatureCode.parent := self;
 end;
 
 procedure TcdaLegalAuthenticator.Settime(const Value: Tv3TS);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then  time.parent := self;
 
 end;
 
-function TcdaLegalAuthenticator.sizeInBytesV : cardinal;
+function TcdaLegalAuthenticator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
-  inc(result, FsignatureCode.sizeInBytes);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, FsignatureCode.sizeInBytes(magic));
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaLocation }
@@ -13246,7 +13246,7 @@ end;
 
 destructor TcdaLocation.Destroy;
 begin
-  FhealthCareFacility.Free;
+  FhealthCareFacility.free;
   inherited;
 end;
 
@@ -13265,7 +13265,7 @@ end;
 
 procedure TcdaLocation.SethealthCareFacility(const Value: TcdaHealthCareFacility);
 begin
-  FhealthCareFacility.Free;
+  FhealthCareFacility.free;
   FhealthCareFacility := Value;
   if FhealthCareFacility <> nil then  healthCareFacility.parent := self;
 
@@ -13281,10 +13281,10 @@ begin
     inherited;
 end;
 
-function TcdaLocation.sizeInBytesV : cardinal;
+function TcdaLocation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FhealthCareFacility.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FhealthCareFacility.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -13327,8 +13327,8 @@ end;
 
 destructor TcdaMaintainedEntity.Destroy;
 begin
-  FeffectiveTime.Free;
-  FmaintainingPerson.Free;
+  FeffectiveTime.free;
+  FmaintainingPerson.free;
   inherited;
 end;
 
@@ -13348,7 +13348,7 @@ end;
 
 procedure TcdaMaintainedEntity.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then  effectiveTime.parent := self;
 
@@ -13356,7 +13356,7 @@ end;
 
 procedure TcdaMaintainedEntity.SetmaintainingPerson(const Value: TcdaPerson);
 begin
-  FmaintainingPerson.Free;
+  FmaintainingPerson.free;
   FmaintainingPerson := Value;
   if FmaintainingPerson <> nil then  maintainingPerson.parent := self;
 
@@ -13374,11 +13374,11 @@ begin
     inherited;
 end;
 
-function TcdaMaintainedEntity.sizeInBytesV : cardinal;
+function TcdaMaintainedEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FmaintainingPerson.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FmaintainingPerson.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -13426,10 +13426,10 @@ end;
 
 destructor TcdaManufacturedProduct.Destroy;
 begin
-  Fid.Free;
-  FmanufacturedLabeledDrug.Free;
-  FmanufacturedMaterial.Free;
-  FmanufacturerOrganization.Free;
+  Fid.free;
+  FmanufacturedLabeledDrug.free;
+  FmanufacturedMaterial.free;
+  FmanufacturerOrganization.free;
   inherited;
 end;
 
@@ -13451,7 +13451,7 @@ end;
 
 procedure TcdaManufacturedProduct.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then  id.parent := self;
 
@@ -13459,7 +13459,7 @@ end;
 
 procedure TcdaManufacturedProduct.SetmanufacturedLabeledDrug(const Value: TcdaLabeledDrug);
 begin
-  FmanufacturedLabeledDrug.Free;
+  FmanufacturedLabeledDrug.free;
   FmanufacturedLabeledDrug := Value;
   if FmanufacturedLabeledDrug <> nil then  manufacturedLabeledDrug.parent := self;
 
@@ -13467,7 +13467,7 @@ end;
 
 procedure TcdaManufacturedProduct.SetmanufacturedMaterial(const Value: TcdaMaterial);
 begin
-  FmanufacturedMaterial.Free;
+  FmanufacturedMaterial.free;
   FmanufacturedMaterial := Value;
   if FmanufacturedMaterial <> nil then  manufacturedMaterial.parent := self;
 
@@ -13475,7 +13475,7 @@ end;
 
 procedure TcdaManufacturedProduct.SetmanufacturerOrganization(const Value: TcdaOrganization);
 begin
-  FmanufacturerOrganization.Free;
+  FmanufacturerOrganization.free;
   FmanufacturerOrganization := Value;
   if FmanufacturerOrganization <> nil then  manufacturerOrganization.parent := self;
 
@@ -13497,13 +13497,13 @@ begin
     inherited;
 end;
 
-function TcdaManufacturedProduct.sizeInBytesV : cardinal;
+function TcdaManufacturedProduct.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FmanufacturedLabeledDrug.sizeInBytes);
-  inc(result, FmanufacturedMaterial.sizeInBytes);
-  inc(result, FmanufacturerOrganization.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FmanufacturedLabeledDrug.sizeInBytes(magic));
+  inc(result, FmanufacturedMaterial.sizeInBytes(magic));
+  inc(result, FmanufacturerOrganization.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -13549,9 +13549,9 @@ end;
 
 destructor TcdaMaterial.Destroy;
 begin
-  Fcode.Free;
-  Fname.Free;
-  FlotNumberText.Free;
+  Fcode.free;
+  Fname.free;
+  FlotNumberText.free;
   inherited;
 end;
 
@@ -13573,7 +13573,7 @@ end;
 
 procedure TcdaMaterial.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -13581,7 +13581,7 @@ end;
 
 procedure TcdaMaterial.SetlotNumberText(const Value: Tv3ST);
 begin
-  FlotNumberText.Free;
+  FlotNumberText.free;
   FlotNumberText := Value;
   if FlotNumberText <> nil then  lotNumberText.parent := self;
 
@@ -13589,7 +13589,7 @@ end;
 
 procedure TcdaMaterial.Setname(const Value: Tv3EN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then  name.parent := self;
 
@@ -13611,14 +13611,14 @@ begin
     inherited;
 end;
 
-function TcdaMaterial.sizeInBytesV : cardinal;
+function TcdaMaterial.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, FlotNumberText.sizeInBytes);
+  inc(result, FlotNumberText.sizeInBytes(magic));
 end;
 
 { TcdaNonXMLBody }
@@ -13663,9 +13663,9 @@ end;
 
 destructor TcdaNonXMLBody.Destroy;
 begin
-  Ftext.Free;
-  FconfidentialityCode.Free;
-  FlanguageCode.Free;
+  Ftext.free;
+  FconfidentialityCode.free;
+  FlanguageCode.free;
   inherited;
 end;
 
@@ -13687,7 +13687,7 @@ end;
 
 procedure TcdaNonXMLBody.SetconfidentialityCode(const Value: Tv3CD);
 begin
-  FconfidentialityCode.Free;
+  FconfidentialityCode.free;
   FconfidentialityCode := Value;
   if FconfidentialityCode <> nil then  confidentialityCode.parent := self;
 
@@ -13695,7 +13695,7 @@ end;
 
 procedure TcdaNonXMLBody.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then  languageCode.parent := self;
 
@@ -13719,20 +13719,20 @@ end;
 
 procedure TcdaNonXMLBody.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 
 end;
 
-function TcdaNonXMLBody.sizeInBytesV : cardinal;
+function TcdaNonXMLBody.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, FconfidentialityCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
+  inc(result, FconfidentialityCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
 end;
 
 { TcdaObservation }
@@ -13833,29 +13833,29 @@ end;
 
 destructor TcdaObservation.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FderivationExpr.Free;
-  Ftext.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FpriorityCode.Free;
-  FrepeatNumber.Free;
-  FlanguageCode.Free;
-  Fvalue.Free;
-  FinterpretationCode.Free;
-  FmethodCode.Free;
-  FtargetSiteCode.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
-  FreferenceRange.Free;
+  Fid.free;
+  Fcode.free;
+  FderivationExpr.free;
+  Ftext.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FpriorityCode.free;
+  FrepeatNumber.free;
+  FlanguageCode.free;
+  Fvalue.free;
+  FinterpretationCode.free;
+  FmethodCode.free;
+  FtargetSiteCode.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
+  FreferenceRange.free;
   inherited;
 end;
 
@@ -13896,7 +13896,7 @@ end;
 
 procedure TcdaObservation.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then  author.parent := self;
 
@@ -13904,7 +13904,7 @@ end;
 
 procedure TcdaObservation.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then  code.parent := self;
 
@@ -13912,7 +13912,7 @@ end;
 
 procedure TcdaObservation.SetderivationExpr(const Value: Tv3ST);
 begin
-  FderivationExpr.Free;
+  FderivationExpr.free;
   FderivationExpr := Value;
   if FderivationExpr <> nil then  derivationExpr.parent := self;
 
@@ -13920,7 +13920,7 @@ end;
 
 procedure TcdaObservation.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then  effectiveTime.parent := self;
 
@@ -13928,7 +13928,7 @@ end;
 
 procedure TcdaObservation.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then  entryRelationship.parent := self;
 
@@ -13937,14 +13937,14 @@ end;
 
 procedure TcdaObservation.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then  informant.parent := self;
 end;
 
 procedure TcdaObservation.SetinterpretationCode(const Value: Tv3ListCD);
 begin
-  FinterpretationCode.Free;
+  FinterpretationCode.free;
   FinterpretationCode := Value;
   if FinterpretationCode <> nil then  interpretationCode.parent := self;
 
@@ -13952,7 +13952,7 @@ end;
 
 procedure TcdaObservation.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then  languageCode.parent := self;
 
@@ -13960,7 +13960,7 @@ end;
 
 procedure TcdaObservation.SetmethodCode(const Value: Tv3ListCD);
 begin
-  FmethodCode.Free;
+  FmethodCode.free;
   FmethodCode := Value;
   if FmethodCode <> nil then  methodCode.parent := self;
 end;
@@ -13973,7 +13973,7 @@ end;
 
 procedure TcdaObservation.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then  participant.parent := self;
 
@@ -13981,7 +13981,7 @@ end;
 
 procedure TcdaObservation.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then  performer.parent := self;
 
@@ -13989,14 +13989,14 @@ end;
 
 procedure TcdaObservation.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then  precondition.parent := self;
 end;
 
 procedure TcdaObservation.SetpriorityCode(const Value: Tv3CD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then  priorityCode.parent := self;
 
@@ -14058,7 +14058,7 @@ end;
 
 procedure TcdaObservation.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then  reference.parent := self;
 
@@ -14066,7 +14066,7 @@ end;
 
 procedure TcdaObservation.SetreferenceRange(const Value: TcdaReferenceRangeList);
 begin
-  FreferenceRange.Free;
+  FreferenceRange.free;
   FreferenceRange := Value;
   if FreferenceRange <> nil then  referenceRange.parent := self;
 
@@ -14074,7 +14074,7 @@ end;
 
 procedure TcdaObservation.SetrepeatNumber(const Value: Tv3IVL);
 begin
-  FrepeatNumber.Free;
+  FrepeatNumber.free;
   FrepeatNumber := Value;
   if FrepeatNumber <> nil then  repeatNumber.parent := self;
 
@@ -14082,7 +14082,7 @@ end;
 
 procedure TcdaObservation.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then  specimen.parent := self;
 
@@ -14090,7 +14090,7 @@ end;
 
 procedure TcdaObservation.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then  statusCode.parent := self;
 
@@ -14098,7 +14098,7 @@ end;
 
 procedure TcdaObservation.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then  subject.parent := self;
 
@@ -14106,7 +14106,7 @@ end;
 
 procedure TcdaObservation.SettargetSiteCode(const Value: Tv3ListCD);
 begin
-  FtargetSiteCode.Free;
+  FtargetSiteCode.free;
   FtargetSiteCode := Value;
   if FtargetSiteCode <> nil then  targetSiteCode.parent := self;
 
@@ -14114,44 +14114,44 @@ end;
 
 procedure TcdaObservation.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then  text.parent := self;
 end;
 
 procedure TcdaObservation.Setvalue(const Value: Tv3ListANY);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then
     value.parent := self;
 end;
 
-function TcdaObservation.sizeInBytesV : cardinal;
+function TcdaObservation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, FreferenceRange.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
-  inc(result, FrepeatNumber.sizeInBytes);
-  inc(result, Fvalue.sizeInBytes);
-  inc(result, FtargetSiteCode.sizeInBytes);
-  inc(result, FmethodCode.sizeInBytes);
-  inc(result, FinterpretationCode.sizeInBytes);
-  inc(result, FderivationExpr.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, FreferenceRange.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
+  inc(result, FrepeatNumber.sizeInBytes(magic));
+  inc(result, Fvalue.sizeInBytes(magic));
+  inc(result, FtargetSiteCode.sizeInBytes(magic));
+  inc(result, FmethodCode.sizeInBytes(magic));
+  inc(result, FinterpretationCode.sizeInBytes(magic));
+  inc(result, FderivationExpr.sizeInBytes(magic));
 end;
 
 { TcdaObservationMedia }
@@ -14223,18 +14223,18 @@ end;
 
 destructor TcdaObservationMedia.Destroy;
 begin
-  Fid.Free;
-  FlanguageCode.Free;
-  Fvalue.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  FlanguageCode.free;
+  Fvalue.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -14265,7 +14265,7 @@ end;
 
 procedure TcdaObservationMedia.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     author.parent := self;
@@ -14273,7 +14273,7 @@ end;
 
 procedure TcdaObservationMedia.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then
     FentryRelationship.parent := self;
@@ -14282,7 +14282,7 @@ end;
 
 procedure TcdaObservationMedia.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.parent := self;
@@ -14290,7 +14290,7 @@ end;
 
 procedure TcdaObservationMedia.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then
     FlanguageCode.parent := self;
@@ -14298,7 +14298,7 @@ end;
 
 procedure TcdaObservationMedia.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then
     Fparticipant.parent := self;
@@ -14306,7 +14306,7 @@ end;
 
 procedure TcdaObservationMedia.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.parent := self;
@@ -14314,7 +14314,7 @@ end;
 
 procedure TcdaObservationMedia.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then
     Fprecondition.parent := self;
@@ -14354,7 +14354,7 @@ end;
 
 procedure TcdaObservationMedia.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then
     Freference.parent := self;
@@ -14362,7 +14362,7 @@ end;
 
 procedure TcdaObservationMedia.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then
     Fspecimen.parent := self;
@@ -14370,7 +14370,7 @@ end;
 
 procedure TcdaObservationMedia.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.parent := self;
@@ -14378,26 +14378,26 @@ end;
 
 procedure TcdaObservationMedia.Setvalue(const Value: Tv3ED);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then
     Fvalue.parent := self;
 end;
 
-function TcdaObservationMedia.sizeInBytesV : cardinal;
+function TcdaObservationMedia.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, Fvalue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, Fvalue.sizeInBytes(magic));
   inc(result, (FID_.length * sizeof(char)) + 12);
 end;
 
@@ -14447,10 +14447,10 @@ end;
 
 destructor TcdaObservationRange.Destroy;
 begin
-  Fcode.Free;
-  Ftext.Free;
-  Fvalue.Free;
-  FinterpretationCode.Free;
+  Fcode.free;
+  Ftext.free;
+  Fvalue.free;
+  FinterpretationCode.free;
   inherited;
 end;
 
@@ -14473,7 +14473,7 @@ end;
 
 procedure TcdaObservationRange.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.parent := self;
@@ -14481,7 +14481,7 @@ end;
 
 procedure TcdaObservationRange.SetinterpretationCode(const Value: Tv3CD);
 begin
-  FinterpretationCode.Free;
+  FinterpretationCode.free;
   FinterpretationCode := Value;
   if Fcode <> nil then
     FinterpretationCode.parent := self;
@@ -14507,7 +14507,7 @@ end;
 
 procedure TcdaObservationRange.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
    Ftext.parent := self;
@@ -14515,21 +14515,21 @@ end;
 
 procedure TcdaObservationRange.Setvalue(const Value: Tv3ANY);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then
     Fvalue.parent := self;
 end;
 
-function TcdaObservationRange.sizeInBytesV : cardinal;
+function TcdaObservationRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fvalue.sizeInBytes);
-  inc(result, FinterpretationCode.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
+  inc(result, Fvalue.sizeInBytes(magic));
+  inc(result, FinterpretationCode.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
 end;
 
 { TcdaOrder }
@@ -14577,9 +14577,9 @@ end;
 
 destructor TcdaOrder.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FpriorityCode.Free;
+  Fid.free;
+  Fcode.free;
+  FpriorityCode.free;
   inherited;
 end;
 
@@ -14601,7 +14601,7 @@ end;
 
 procedure TcdaOrder.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.parent := self;
@@ -14609,7 +14609,7 @@ end;
 
 procedure TcdaOrder.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.parent := self;
@@ -14617,7 +14617,7 @@ end;
 
 procedure TcdaOrder.SetpriorityCode(const Value: Tv3CD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then
     FpriorityCode.parent := self;
@@ -14639,14 +14639,14 @@ begin
     inherited;
 end;
 
-function TcdaOrder.sizeInBytesV : cardinal;
+function TcdaOrder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaOrganization }
@@ -14701,12 +14701,12 @@ end;
 
 destructor TcdaOrganization.Destroy;
 begin
-  Fid.Free;
-  Fname.Free;
-  Ftelecom.Free;
-  Faddr.Free;
-  FstandardIndustryClassCode.Free;
-  FasOrganizationPartOf.Free;
+  Fid.free;
+  Fname.free;
+  Ftelecom.free;
+  Faddr.free;
+  FstandardIndustryClassCode.free;
+  FasOrganizationPartOf.free;
   inherited;
 end;
 
@@ -14732,7 +14732,7 @@ end;
 
 procedure TcdaOrganization.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then
     Faddr.parent := self;
@@ -14740,7 +14740,7 @@ end;
 
 procedure TcdaOrganization.SetasOrganizationPartOf(const Value: TcdaOrganizationPartOf);
 begin
-  FasOrganizationPartOf.Free;
+  FasOrganizationPartOf.free;
   FasOrganizationPartOf := Value;
   if FasOrganizationPartOf <> nil then
     FasOrganizationPartOf.parent := self;
@@ -14748,7 +14748,7 @@ end;
 
 procedure TcdaOrganization.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.parent := self;
@@ -14756,7 +14756,7 @@ end;
 
 procedure TcdaOrganization.Setname(const Value: Tv3ListEN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then
     Fname.parent := self;
@@ -14786,7 +14786,7 @@ end;
 
 procedure TcdaOrganization.SetstandardIndustryClassCode(const Value: Tv3CD);
 begin
-  FstandardIndustryClassCode.Free;
+  FstandardIndustryClassCode.free;
   FstandardIndustryClassCode := Value;
   if FstandardIndustryClassCode <> nil then
     FstandardIndustryClassCode.parent := self;
@@ -14794,23 +14794,23 @@ end;
 
 procedure TcdaOrganization.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then
     telecom.parent := self;
 end;
 
-function TcdaOrganization.sizeInBytesV : cardinal;
+function TcdaOrganization.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FasOrganizationPartOf.sizeInBytes);
-  inc(result, FstandardIndustryClassCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FasOrganizationPartOf.sizeInBytes(magic));
+  inc(result, FstandardIndustryClassCode.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
 end;
 
 { TcdaOrganizationPartOf }
@@ -14859,11 +14859,11 @@ end;
 
 destructor TcdaOrganizationPartOf.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FwholeOrganization.Free;
+  Fid.free;
+  Fcode.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FwholeOrganization.free;
   inherited;
 end;
 
@@ -14887,7 +14887,7 @@ end;
 
 procedure TcdaOrganizationPartOf.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.parent := self;
@@ -14895,7 +14895,7 @@ end;
 
 procedure TcdaOrganizationPartOf.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.parent := self;
@@ -14903,7 +14903,7 @@ end;
 
 procedure TcdaOrganizationPartOf.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if FId <> nil then
     Fid.parent := self;
@@ -14929,7 +14929,7 @@ end;
 
 procedure TcdaOrganizationPartOf.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then
     FstatusCode.parent := self;
@@ -14937,20 +14937,20 @@ end;
 
 procedure TcdaOrganizationPartOf.SetwholeOrganization(const Value: TcdaOrganization);
 begin
-  FwholeOrganization.Free;
+  FwholeOrganization.free;
   FwholeOrganization := Value;
   if FwholeOrganization <> nil then
     FwholeOrganization.Parent := self;
 end;
 
-function TcdaOrganizationPartOf.sizeInBytesV : cardinal;
+function TcdaOrganizationPartOf.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FwholeOrganization.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FwholeOrganization.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -15023,19 +15023,19 @@ end;
 
 destructor TcdaOrganizer.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  Freference.Free;
-  Fprecondition.Free;
-  Fcomponent.Free;
+  Fid.free;
+  Fcode.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  Freference.free;
+  Fprecondition.free;
+  Fcomponent.free;
   inherited;
 end;
 
@@ -15065,7 +15065,7 @@ end;
 
 procedure TcdaOrganizer.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     Fauthor.Parent := self;
@@ -15073,7 +15073,7 @@ end;
 
 procedure TcdaOrganizer.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -15081,7 +15081,7 @@ end;
 
 procedure TcdaOrganizer.Setcomponent(const Value: TcdaComponent4List);
 begin
-  Fcomponent.Free;
+  Fcomponent.free;
   Fcomponent := Value;
   if Fcomponent <> nil then
     Fcomponent.Parent := self;
@@ -15089,7 +15089,7 @@ end;
 
 procedure TcdaOrganizer.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.Parent := self;
@@ -15098,7 +15098,7 @@ end;
 
 procedure TcdaOrganizer.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.Parent := self;
@@ -15106,7 +15106,7 @@ end;
 
 procedure TcdaOrganizer.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then
     Fparticipant.Parent := self;
@@ -15114,7 +15114,7 @@ end;
 
 procedure TcdaOrganizer.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.Parent := self;
@@ -15122,7 +15122,7 @@ end;
 
 procedure TcdaOrganizer.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then
     Fprecondition.Parent := self;
@@ -15162,7 +15162,7 @@ end;
 
 procedure TcdaOrganizer.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then
     Freference.Parent := self;
@@ -15171,7 +15171,7 @@ end;
 
 procedure TcdaOrganizer.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then
     Fspecimen.Parent := self;
@@ -15179,7 +15179,7 @@ end;
 
 procedure TcdaOrganizer.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then
     FstatusCode.Parent := self;
@@ -15187,27 +15187,27 @@ end;
 
 procedure TcdaOrganizer.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
 end;
 
-function TcdaOrganizer.sizeInBytesV : cardinal;
+function TcdaOrganizer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, Fcomponent.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, Fcomponent.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
 end;
 
 { TcdaParentDocument }
@@ -15257,11 +15257,11 @@ end;
 
 destructor TcdaParentDocument.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
-  FsetId.Free;
-  FversionNumber.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
+  FsetId.free;
+  FversionNumber.free;
   inherited;
 end;
 
@@ -15272,7 +15272,7 @@ end;
 
 procedure TcdaParentDocument.Set_id(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -15280,7 +15280,7 @@ end;
 
 procedure TcdaParentDocument.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -15288,7 +15288,7 @@ end;
 
 procedure TcdaParentDocument.SetsetId(const Value: Tv3II);
 begin
-  FsetId.Free;
+  FsetId.free;
   FsetId := Value;
   if FsetId <> nil then
     FsetId.Parent := self;
@@ -15296,7 +15296,7 @@ end;
 
 procedure TcdaParentDocument.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
     Ftext.Parent := self;
@@ -15304,7 +15304,7 @@ end;
 
 procedure TcdaParentDocument.SetversionNumber(const Value: Tv3INT);
 begin
-  FversionNumber.Free;
+  FversionNumber.free;
   FversionNumber := Value;
   if FversionNumber <> nil then
     FversionNumber.Parent := self;
@@ -15344,16 +15344,16 @@ begin
     inherited;
 end;
 
-function TcdaParentDocument.sizeInBytesV : cardinal;
+function TcdaParentDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FsetId.sizeInBytes);
-  inc(result, FversionNumber.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FsetId.sizeInBytes(magic));
+  inc(result, FversionNumber.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaParticipant1 }
@@ -15399,9 +15399,9 @@ end;
 
 destructor TcdaParticipant1.Destroy;
 begin
-  FfunctionCode.Free;
-  Ftime.Free;
-  FassociatedEntity.Free;
+  FfunctionCode.free;
+  Ftime.free;
+  FassociatedEntity.free;
   inherited;
 end;
 
@@ -15423,7 +15423,7 @@ end;
 
 procedure TcdaParticipant1.SetassociatedEntity(const Value: TcdaAssociatedEntity);
 begin
-  FassociatedEntity.Free;
+  FassociatedEntity.free;
   FassociatedEntity := Value;
   if FassociatedEntity <> nil then
     FassociatedEntity.Parent := self;
@@ -15431,7 +15431,7 @@ end;
 
 procedure TcdaParticipant1.SetfunctionCode(const Value: Tv3CD);
 begin
-  FfunctionCode.Free;
+  FfunctionCode.free;
   FfunctionCode := Value;
   if FfunctionCode <> nil then
     FfunctionCode.Parent := self;
@@ -15455,20 +15455,20 @@ end;
 
 procedure TcdaParticipant1.Settime(const Value: Tv3IVL);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then
     Ftime.Parent := self;
 end;
 
-function TcdaParticipant1.sizeInBytesV : cardinal;
+function TcdaParticipant1.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassociatedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassociatedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FfunctionCode.sizeInBytes);
+  inc(result, FfunctionCode.sizeInBytes(magic));
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaParticipant2 }
@@ -15514,9 +15514,9 @@ end;
 
 destructor TcdaParticipant2.Destroy;
 begin
-  Ftime.Free;
-  FawarenessCode.Free;
-  FparticipantRole.Free;
+  Ftime.free;
+  FawarenessCode.free;
+  FparticipantRole.free;
   inherited;
 end;
 
@@ -15538,7 +15538,7 @@ end;
 
 procedure TcdaParticipant2.SetawarenessCode(const Value: Tv3CD);
 begin
-  FawarenessCode.Free;
+  FawarenessCode.free;
   FawarenessCode := Value;
   if FawarenessCode <> nil then
     FawarenessCode.Parent := self;
@@ -15546,7 +15546,7 @@ end;
 
 procedure TcdaParticipant2.SetparticipantRole(const Value: TcdaParticipantRole);
 begin
-  FparticipantRole.Free;
+  FparticipantRole.free;
   FparticipantRole := Value;
   if FparticipantRole <> nil then
     FparticipantRole.Parent := self;
@@ -15570,20 +15570,20 @@ end;
 
 procedure TcdaParticipant2.Settime(const Value: Tv3IVL);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then
     Ftime.Parent := self;
 end;
 
-function TcdaParticipant2.sizeInBytesV : cardinal;
+function TcdaParticipant2.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FparticipantRole.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FparticipantRole.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FawarenessCode.sizeInBytes);
+  inc(result, FawarenessCode.sizeInBytes(magic));
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaParticipantRole }
@@ -15640,13 +15640,13 @@ end;
 
 destructor TcdaParticipantRole.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  FplayingDevice.Free;
-  FplayingEntity.Free;
-  FscopingEntity.Free;
+  Fid.free;
+  Fcode.free;
+  Faddr.free;
+  Ftelecom.free;
+  FplayingDevice.free;
+  FplayingEntity.free;
+  FscopingEntity.free;
   inherited;
 end;
 
@@ -15671,7 +15671,7 @@ end;
 
 procedure TcdaParticipantRole.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then
     Faddr.Parent := self;
@@ -15679,7 +15679,7 @@ end;
 
 procedure TcdaParticipantRole.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -15687,7 +15687,7 @@ end;
 
 procedure TcdaParticipantRole.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -15695,7 +15695,7 @@ end;
 
 procedure TcdaParticipantRole.SetplayingDevice(const Value: TcdaDevice);
 begin
-  FplayingDevice.Free;
+  FplayingDevice.free;
   FplayingDevice := Value;
   if FplayingDevice <> nil then
     FplayingDevice.Parent := self;
@@ -15703,7 +15703,7 @@ end;
 
 procedure TcdaParticipantRole.SetplayingEntity(const Value: TcdaPlayingEntity);
 begin
-  FplayingEntity.Free;
+  FplayingEntity.free;
   FplayingEntity := Value;
   if FplayingEntity <> nil then
     FplayingEntity.Parent := self;
@@ -15733,7 +15733,7 @@ end;
 
 procedure TcdaParticipantRole.SetscopingEntity(const Value: TcdaEntity);
 begin
-  FscopingEntity.Free;
+  FscopingEntity.free;
   FscopingEntity := Value;
   if FscopingEntity <> nil then
     FscopingEntity.Parent := self;
@@ -15741,22 +15741,22 @@ end;
 
 procedure TcdaParticipantRole.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then
     Ftelecom.Parent := self;
 end;
 
-function TcdaParticipantRole.sizeInBytesV : cardinal;
+function TcdaParticipantRole.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FplayingDevice.sizeInBytes);
-  inc(result, FscopingEntity.sizeInBytes);
-  inc(result, FplayingEntity.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FplayingDevice.sizeInBytes(magic));
+  inc(result, FscopingEntity.sizeInBytes(magic));
+  inc(result, FplayingEntity.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -15824,17 +15824,17 @@ end;
 
 destructor TcdaPatient.Destroy;
 begin
-  Fid.Free;
-  Fname.Free;
-  FadministrativeGenderCode.Free;
-  FbirthTime.Free;
-  FmaritalStatusCode.Free;
-  FreligiousAffiliationCode.Free;
-  FraceCode.Free;
-  FethnicGroupCode.Free;
-  Fguardian.Free;
-  Fbirthplace.Free;
-  FlanguageCommunication.Free;
+  Fid.free;
+  Fname.free;
+  FadministrativeGenderCode.free;
+  FbirthTime.free;
+  FmaritalStatusCode.free;
+  FreligiousAffiliationCode.free;
+  FraceCode.free;
+  FethnicGroupCode.free;
+  Fguardian.free;
+  Fbirthplace.free;
+  FlanguageCommunication.free;
   FEntityIdentifier.free;
   inherited;
 end;
@@ -15867,7 +15867,7 @@ end;
 
 procedure TcdaPatient.SetadministrativeGenderCode(const Value: Tv3CD);
 begin
-  FadministrativeGenderCode.Free;
+  FadministrativeGenderCode.free;
   FadministrativeGenderCode := Value;
   if FadministrativeGenderCode <> nil then
     FadministrativeGenderCode.Parent := self;
@@ -15875,7 +15875,7 @@ end;
 
 procedure TcdaPatient.Setbirthplace(const Value: TcdaBirthplace);
 begin
-  Fbirthplace.Free;
+  Fbirthplace.free;
   Fbirthplace := Value;
   if Fbirthplace <> nil then
     Fbirthplace.Parent := self;
@@ -15883,7 +15883,7 @@ end;
 
 procedure TcdaPatient.SetbirthTime(const Value: Tv3TS);
 begin
-  FbirthTime.Free;
+  FbirthTime.free;
   FbirthTime := Value;
   if FbirthTime <> nil then
     FbirthTime.Parent := self;
@@ -15891,7 +15891,7 @@ end;
 
 procedure TcdaPatient.SetethnicGroupCode(const Value: Tv3CD);
 begin
-  FethnicGroupCode.Free;
+  FethnicGroupCode.free;
   FethnicGroupCode := Value;
   if FethnicGroupCode <> nil then
     FethnicGroupCode.Parent := self;
@@ -15906,7 +15906,7 @@ end;
 
 procedure TcdaPatient.Setguardian(const Value: TcdaGuardianList);
 begin
-  Fguardian.Free;
+  Fguardian.free;
   Fguardian := Value;
   if Fguardian <> nil then
     Fguardian.Parent := self;
@@ -15914,7 +15914,7 @@ end;
 
 procedure TcdaPatient.Setid(const Value: Tv3II);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -15929,7 +15929,7 @@ end;
 
 procedure TcdaPatient.SetlanguageCommunication(const Value: TcdaLanguageCommunicationList);
 begin
-  FlanguageCommunication.Free;
+  FlanguageCommunication.free;
   FlanguageCommunication := Value;
   if FlanguageCommunication <> nil then
     FlanguageCommunication.Parent := self;
@@ -15944,7 +15944,7 @@ end;
 
 procedure TcdaPatient.SetEntityIdentifier(const Value: TcdaEntityIdentifierList);
 begin
-  FEntityIdentifier.Free;
+  FEntityIdentifier.free;
   FEntityIdentifier := Value;
   if FEntityIdentifier <> nil then
     FEntityIdentifier.Parent := self;
@@ -15952,7 +15952,7 @@ end;
 
 procedure TcdaPatient.SetmaritalStatusCode(const Value: Tv3CD);
 begin
-  FmaritalStatusCode.Free;
+  FmaritalStatusCode.free;
   FmaritalStatusCode := Value;
   if FmaritalStatusCode <> nil then
     FmaritalStatusCode.Parent := self;
@@ -15960,7 +15960,7 @@ end;
 
 procedure TcdaPatient.Setname(const Value: Tv3ListEN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then
     Fname.Parent := self;
@@ -16002,7 +16002,7 @@ end;
 
 procedure TcdaPatient.SetraceCode(const Value: Tv3CD);
 begin
-  FraceCode.Free;
+  FraceCode.free;
   FraceCode := Value;
   if FraceCode <> nil then
     FraceCode.Parent := self;
@@ -16010,29 +16010,29 @@ end;
 
 procedure TcdaPatient.SetreligiousAffiliationCode(const Value: Tv3CD);
 begin
-  FreligiousAffiliationCode.Free;
+  FreligiousAffiliationCode.free;
   FreligiousAffiliationCode := Value;
   if FreligiousAffiliationCode <> nil then
     FreligiousAffiliationCode.Parent := self;
 end;
 
-function TcdaPatient.sizeInBytesV : cardinal;
+function TcdaPatient.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fbirthplace.sizeInBytes);
-  inc(result, Fguardian.sizeInBytes);
-  inc(result, FlanguageCommunication.sizeInBytes);
-  inc(result, FadministrativeGenderCode.sizeInBytes);
-  inc(result, FraceCode.sizeInBytes);
-  inc(result, FmaritalStatusCode.sizeInBytes);
-  inc(result, FreligiousAffiliationCode.sizeInBytes);
-  inc(result, FethnicGroupCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fbirthplace.sizeInBytes(magic));
+  inc(result, Fguardian.sizeInBytes(magic));
+  inc(result, FlanguageCommunication.sizeInBytes(magic));
+  inc(result, FadministrativeGenderCode.sizeInBytes(magic));
+  inc(result, FraceCode.sizeInBytes(magic));
+  inc(result, FmaritalStatusCode.sizeInBytes(magic));
+  inc(result, FreligiousAffiliationCode.sizeInBytes(magic));
+  inc(result, FethnicGroupCode.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
-  inc(result, FbirthTime.sizeInBytes);
-  inc(result, FEntityIdentifier.sizeInBytes);
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
+  inc(result, FbirthTime.sizeInBytes(magic));
+  inc(result, FEntityIdentifier.sizeInBytes(magic));
 end;
 
 { TcdaPatientRole }
@@ -16083,11 +16083,11 @@ end;
 
 destructor TcdaPatientRole.Destroy;
 begin
-  Fid.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  Fpatient.Free;
-  FproviderOrganization.Free;
+  Fid.free;
+  Faddr.free;
+  Ftelecom.free;
+  Fpatient.free;
+  FproviderOrganization.free;
   inherited;
 end;
 
@@ -16111,7 +16111,7 @@ end;
 
 procedure TcdaPatientRole.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then
     Faddr.Parent := self;
@@ -16119,7 +16119,7 @@ end;
 
 procedure TcdaPatientRole.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -16127,7 +16127,7 @@ end;
 
 procedure TcdaPatientRole.Setpatient(const Value: TcdaPatient);
 begin
-  Fpatient.Free;
+  Fpatient.free;
   Fpatient := Value;
   if Fpatient <> nil then
     Fpatient.Parent := self;
@@ -16153,7 +16153,7 @@ end;
 
 procedure TcdaPatientRole.SetproviderOrganization(const Value: TcdaOrganization);
 begin
-  FproviderOrganization.Free;
+  FproviderOrganization.free;
   FproviderOrganization := Value;
   if FproviderOrganization <> nil then
     FproviderOrganization.Parent := self;
@@ -16161,20 +16161,20 @@ end;
 
 procedure TcdaPatientRole.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then
     Ftelecom.Parent := self;
 end;
 
-function TcdaPatientRole.sizeInBytesV : cardinal;
+function TcdaPatientRole.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FproviderOrganization.sizeInBytes);
-  inc(result, Fpatient.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FproviderOrganization.sizeInBytes(magic));
+  inc(result, Fpatient.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -16220,9 +16220,9 @@ end;
 
 destructor TcdaPerformer1.Destroy;
 begin
-  FfunctionCode.Free;
-  Ftime.Free;
-  FassignedEntity.Free;
+  FfunctionCode.free;
+  Ftime.free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -16243,7 +16243,7 @@ end;
 
 procedure TcdaPerformer1.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then
     FassignedEntity.Parent := self;
@@ -16251,7 +16251,7 @@ end;
 
 procedure TcdaPerformer1.SetfunctionCode(const Value: Tv3CD);
 begin
-  FfunctionCode.Free;
+  FfunctionCode.free;
   FfunctionCode := Value;
   if FfunctionCode <> nil then
     FfunctionCode.Parent := self;
@@ -16273,19 +16273,19 @@ end;
 
 procedure TcdaPerformer1.Settime(const Value: Tv3IVL);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then
     Ftime.Parent := self;
 end;
 
-function TcdaPerformer1.sizeInBytesV : cardinal;
+function TcdaPerformer1.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FfunctionCode.sizeInBytes);
-  inc(result, Ftime.sizeInBytes);
+  inc(result, FfunctionCode.sizeInBytes(magic));
+  inc(result, Ftime.sizeInBytes(magic));
 end;
 
 { TcdaPerformer2 }
@@ -16329,9 +16329,9 @@ end;
 
 destructor TcdaPerformer2.Destroy;
 begin
-  Ftime.Free;
-  FmodeCode.Free;
-  FassignedEntity.Free;
+  Ftime.free;
+  FmodeCode.free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -16352,7 +16352,7 @@ end;
 
 procedure TcdaPerformer2.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then
     FassignedEntity.Parent := self;
@@ -16360,7 +16360,7 @@ end;
 
 procedure TcdaPerformer2.SetmodeCode(const Value: Tv3CD);
 begin
-  FmodeCode.Free;
+  FmodeCode.free;
   FmodeCode := Value;
   if FmodeCode <> nil then
     FmodeCode.Parent := self;
@@ -16382,18 +16382,18 @@ end;
 
 procedure TcdaPerformer2.Settime(const Value: Tv3IVL);
 begin
-  Ftime.Free;
+  Ftime.free;
   Ftime := Value;
   if Ftime <> nil then
     Ftime.Parent := self;
 end;
 
-function TcdaPerformer2.sizeInBytesV : cardinal;
+function TcdaPerformer2.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
-  inc(result, FmodeCode.sizeInBytes);
-  inc(result, Ftime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
+  inc(result, FmodeCode.sizeInBytes(magic));
+  inc(result, Ftime.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -16434,7 +16434,7 @@ end;
 
 destructor TcdaPerson.Destroy;
 begin
-  Fname.Free;
+  Fname.free;
   inherited;
 end;
 
@@ -16453,7 +16453,7 @@ end;
 
 procedure TcdaPerson.Setname(const Value: Tv3ListEN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then
     Fname.Parent := self;
@@ -16472,10 +16472,10 @@ begin
   result := 'PSN';
 end;
 
-function TcdaPerson.sizeInBytesV : cardinal;
+function TcdaPerson.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fname.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fname.sizeInBytes(magic));
 end;
 
 { TcdaPlace }
@@ -16518,8 +16518,8 @@ end;
 
 destructor TcdaPlace.Destroy;
 begin
-  Fname.Free;
-  Faddr.Free;
+  Fname.free;
+  Faddr.free;
   inherited;
 end;
 
@@ -16540,7 +16540,7 @@ end;
 
 procedure TcdaPlace.Setaddr(const Value: Tv3AD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then
     Faddr.Parent := self;
@@ -16548,7 +16548,7 @@ end;
 
 procedure TcdaPlace.Setname(const Value: Tv3EN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then
     Fname.Parent := self;
@@ -16568,11 +16568,11 @@ begin
     inherited;
 end;
 
-function TcdaPlace.sizeInBytesV : cardinal;
+function TcdaPlace.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Fname.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Fname.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
 end;
@@ -16625,10 +16625,10 @@ end;
 
 destructor TcdaPlayingEntity.Destroy;
 begin
-  Fcode.Free;
-  Fquantity.Free;
-  Fname.Free;
-  Fdesc.Free;
+  Fcode.free;
+  Fquantity.free;
+  Fname.free;
+  Fdesc.free;
   inherited;
 end;
 
@@ -16652,7 +16652,7 @@ end;
 
 procedure TcdaPlayingEntity.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -16660,7 +16660,7 @@ end;
 
 procedure TcdaPlayingEntity.Setdesc(const Value: Tv3ED);
 begin
-  Fdesc.Free;
+  Fdesc.free;
   Fdesc := Value;
   if Fdesc <> nil then
     Fdesc.Parent := self;
@@ -16668,7 +16668,7 @@ end;
 
 procedure TcdaPlayingEntity.Setname(const Value: Tv3ListEN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then
     Fname.Parent := self;
@@ -16694,21 +16694,21 @@ end;
 
 procedure TcdaPlayingEntity.Setquantity(const Value: Tv3ListPQ);
 begin
-  Fquantity.Free;
+  Fquantity.free;
   Fquantity := Value;
   if Fquantity <> nil then
     Fquantity.Parent := self;
 end;
 
-function TcdaPlayingEntity.sizeInBytesV : cardinal;
+function TcdaPlayingEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Fdesc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Fdesc.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, Fname.sizeInBytes);
-  inc(result, Fquantity.sizeInBytes);
+  inc(result, Fname.sizeInBytes(magic));
+  inc(result, Fquantity.sizeInBytes(magic));
 end;
 
 { TcdaPrecondition }
@@ -16748,7 +16748,7 @@ end;
 
 destructor TcdaPrecondition.Destroy;
 begin
-  Fcriterion.Free;
+  Fcriterion.free;
   inherited;
 end;
 
@@ -16767,7 +16767,7 @@ end;
 
 procedure TcdaPrecondition.Setcriterion(const Value: TcdaCriterion);
 begin
-  Fcriterion.Free;
+  Fcriterion.free;
   Fcriterion := Value;
   if Fcriterion <> nil then
     Fcriterion.Parent := self;
@@ -16783,10 +16783,10 @@ begin
     inherited;
 end;
 
-function TcdaPrecondition.sizeInBytesV : cardinal;
+function TcdaPrecondition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcriterion.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcriterion.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -16878,25 +16878,25 @@ end;
 
 destructor TcdaProcedure.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FpriorityCode.Free;
-  FlanguageCode.Free;
-  FmethodCode.Free;
-  FapproachSiteCode.Free;
-  FtargetSiteCode.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FpriorityCode.free;
+  FlanguageCode.free;
+  FmethodCode.free;
+  FapproachSiteCode.free;
+  FtargetSiteCode.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -16934,7 +16934,7 @@ end;
 
 procedure TcdaProcedure.SetapproachSiteCode(const Value: Tv3ListCD);
 begin
-  FapproachSiteCode.Free;
+  FapproachSiteCode.free;
   FapproachSiteCode := Value;
   if FapproachSiteCode <> nil then
     FapproachSiteCode.Parent := self;
@@ -16949,7 +16949,7 @@ end;
 
 procedure TcdaProcedure.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     Fauthor.Parent := self;
@@ -16957,7 +16957,7 @@ end;
 
 procedure TcdaProcedure.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -16965,7 +16965,7 @@ end;
 
 procedure TcdaProcedure.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.Parent := self;
@@ -16980,7 +16980,7 @@ end;
 
 procedure TcdaProcedure.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then
     FentryRelationship.Parent := self;
@@ -16996,7 +16996,7 @@ end;
 
 procedure TcdaProcedure.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.Parent := self;
@@ -17004,7 +17004,7 @@ end;
 
 procedure TcdaProcedure.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then
     FlanguageCode.Parent := self;
@@ -17012,7 +17012,7 @@ end;
 
 procedure TcdaProcedure.SetmethodCode(const Value: Tv3ListCD);
 begin
-  FmethodCode.Free;
+  FmethodCode.free;
   FmethodCode := Value;
   if FmethodCode <> nil then
     FmethodCode.Parent := self;
@@ -17033,7 +17033,7 @@ end;
 
 procedure TcdaProcedure.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then
     Fparticipant.Parent := self;
@@ -17048,7 +17048,7 @@ end;
 
 procedure TcdaProcedure.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.Parent := self;
@@ -17063,7 +17063,7 @@ end;
 
 procedure TcdaProcedure.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then
     Fprecondition.Parent := self;
@@ -17071,7 +17071,7 @@ end;
 
 procedure TcdaProcedure.SetpriorityCode(const Value: Tv3CD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then
     FpriorityCode.Parent := self;
@@ -17132,7 +17132,7 @@ end;
 
 procedure TcdaProcedure.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then
     Freference.Parent := self;
@@ -17147,7 +17147,7 @@ end;
 
 procedure TcdaProcedure.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then
     Fspecimen.Parent := self;
@@ -17155,7 +17155,7 @@ end;
 
 procedure TcdaProcedure.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then
     FstatusCode.Parent := self;
@@ -17163,7 +17163,7 @@ end;
 
 procedure TcdaProcedure.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
@@ -17171,7 +17171,7 @@ end;
 
 procedure TcdaProcedure.SettargetSiteCode(const Value: Tv3ListCD);
 begin
-  FtargetSiteCode.Free;
+  FtargetSiteCode.free;
   FtargetSiteCode := Value;
   if FtargetSiteCode <> nil then
     FtargetSiteCode.Parent := self;
@@ -17179,33 +17179,33 @@ end;
 
 procedure TcdaProcedure.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
     Ftext.Parent := self;
 end;
 
-function TcdaProcedure.sizeInBytesV : cardinal;
+function TcdaProcedure.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
-  inc(result, FmethodCode.sizeInBytes);
-  inc(result, FapproachSiteCode.sizeInBytes);
-  inc(result, FtargetSiteCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
+  inc(result, FmethodCode.sizeInBytes(magic));
+  inc(result, FapproachSiteCode.sizeInBytes(magic));
+  inc(result, FtargetSiteCode.sizeInBytes(magic));
 end;
 
 { TcdaProduct }
@@ -17245,7 +17245,7 @@ end;
 
 destructor TcdaProduct.Destroy;
 begin
-  FmanufacturedProduct.Free;
+  FmanufacturedProduct.free;
   inherited;
 end;
 
@@ -17264,7 +17264,7 @@ end;
 
 procedure TcdaProduct.SetmanufacturedProduct(const Value: TcdaManufacturedProduct);
 begin
-  FmanufacturedProduct.Free;
+  FmanufacturedProduct.free;
   FmanufacturedProduct := Value;
   if FmanufacturedProduct <> nil then
     FmanufacturedProduct.Parent := self;
@@ -17280,10 +17280,10 @@ begin
     inherited;
 end;
 
-function TcdaProduct.sizeInBytesV : cardinal;
+function TcdaProduct.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FmanufacturedProduct.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FmanufacturedProduct.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -17325,7 +17325,7 @@ end;
 
 destructor TcdaRecordTarget.Destroy;
 begin
-  FpatientRole.Free;
+  FpatientRole.free;
   inherited;
 end;
 
@@ -17345,7 +17345,7 @@ end;
 
 procedure TcdaRecordTarget.SetpatientRole(const Value: TcdaPatientRole);
 begin
-  FpatientRole.Free;
+  FpatientRole.free;
   FpatientRole := Value;
   if FpatientRole <> nil then
     FpatientRole.Parent := self;
@@ -17363,10 +17363,10 @@ begin
     inherited;
 end;
 
-function TcdaRecordTarget.sizeInBytesV : cardinal;
+function TcdaRecordTarget.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FpatientRole.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FpatientRole.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
 end;
@@ -17417,11 +17417,11 @@ end;
 
 destructor TcdaReference.Destroy;
 begin
-  FseperatableInd.Free;
-  FexternalAct.Free;
-  FexternalObservation.Free;
-  FexternalProcedure.Free;
-  FexternalDocument.Free;
+  FseperatableInd.free;
+  FexternalAct.free;
+  FexternalObservation.free;
+  FexternalProcedure.free;
+  FexternalDocument.free;
   inherited;
 end;
 
@@ -17444,7 +17444,7 @@ end;
 
 procedure TcdaReference.SetexternalAct(const Value: TcdaExternalAct);
 begin
-  FexternalAct.Free;
+  FexternalAct.free;
   FexternalAct := Value;
   if FexternalAct <> nil then
     FexternalAct.Parent := self;
@@ -17452,7 +17452,7 @@ end;
 
 procedure TcdaReference.SetexternalDocument(const Value: TcdaExternalDocument);
 begin
-  FexternalDocument.Free;
+  FexternalDocument.free;
   FexternalDocument := Value;
   if FexternalDocument <> nil then
     FexternalDocument.Parent := self;
@@ -17460,7 +17460,7 @@ end;
 
 procedure TcdaReference.SetexternalObservation(const Value: TcdaExternalObservation);
 begin
-  FexternalObservation.Free;
+  FexternalObservation.free;
   FexternalObservation := Value;
   if FexternalObservation <> nil then
     FexternalObservation.Parent := self;
@@ -17468,7 +17468,7 @@ end;
 
 procedure TcdaReference.SetexternalProcedure(const Value: TcdaExternalProcedure);
 begin
-  FexternalProcedure.Free;
+  FexternalProcedure.free;
   FexternalProcedure := Value;
   if FexternalProcedure <> nil then
     FexternalProcedure.Parent := self;
@@ -17494,7 +17494,7 @@ end;
 
 procedure TcdaReference.SetseperatableInd(const Value: Tv3BL);
 begin
-  FseperatableInd.Free;
+  FseperatableInd.free;
   FseperatableInd := Value;
   if FseperatableInd <> nil then
     FseperatableInd.Parent := self;
@@ -17512,15 +17512,15 @@ begin
     result := FexternalProcedure;
 end;
 
-function TcdaReference.sizeInBytesV : cardinal;
+function TcdaReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FexternalAct.sizeInBytes);
-  inc(result, FexternalDocument.sizeInBytes);
-  inc(result, FexternalObservation.sizeInBytes);
-  inc(result, FexternalProcedure.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FexternalAct.sizeInBytes(magic));
+  inc(result, FexternalDocument.sizeInBytes(magic));
+  inc(result, FexternalObservation.sizeInBytes(magic));
+  inc(result, FexternalProcedure.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
-  inc(result, FseperatableInd.sizeInBytes);
+  inc(result, FseperatableInd.sizeInBytes(magic));
 end;
 
 { TcdaReferenceRange }
@@ -17560,7 +17560,7 @@ end;
 
 destructor TcdaReferenceRange.Destroy;
 begin
-  FobservationRange.Free;
+  FobservationRange.free;
   inherited;
 end;
 
@@ -17579,7 +17579,7 @@ end;
 
 procedure TcdaReferenceRange.SetobservationRange(const Value: TcdaObservationRange);
 begin
-  FobservationRange.Free;
+  FobservationRange.free;
   FobservationRange := Value;
   if FobservationRange <> nil then
     FobservationRange.Parent := self;
@@ -17595,10 +17595,10 @@ begin
     inherited;
 end;
 
-function TcdaReferenceRange.sizeInBytesV : cardinal;
+function TcdaReferenceRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FobservationRange.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FobservationRange.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -17674,18 +17674,18 @@ end;
 
 destructor TcdaRegionOfInterest.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Fvalue.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  Fcode.free;
+  Fvalue.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -17723,7 +17723,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     Fauthor.Parent := self;
@@ -17731,7 +17731,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setcode(const Value: Tv3CS);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -17746,7 +17746,7 @@ end;
 
 procedure TcdaRegionOfInterest.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then
     FentryRelationship.Parent := self;
@@ -17762,7 +17762,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.Parent := self;
@@ -17777,7 +17777,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then
     Fparticipant.Parent := self;
@@ -17792,7 +17792,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.Parent := self;
@@ -17807,7 +17807,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then
     Fprecondition.Parent := self;
@@ -17854,7 +17854,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then
     Freference.Parent := self;
@@ -17869,7 +17869,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then
     Fspecimen.Parent := self;
@@ -17877,7 +17877,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
@@ -17892,7 +17892,7 @@ end;
 
 procedure TcdaRegionOfInterest.Setvalue(const Value: TcdaRegionOfInterest_valueList);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := Value;
   if Fvalue <> nil then
     Fvalue.Parent := self;
@@ -17908,20 +17908,20 @@ begin
   result := true;
 end;
 
-function TcdaRegionOfInterest.sizeInBytesV : cardinal;
+function TcdaRegionOfInterest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fvalue.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fvalue.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
   inc(result, (FID_.length * sizeof(char)) + 12);
 end;
 
@@ -17963,7 +17963,7 @@ end;
 
 destructor TcdaRelatedDocument.Destroy;
 begin
-  FparentDocument.Free;
+  FparentDocument.free;
   inherited;
 end;
 
@@ -17982,7 +17982,7 @@ end;
 
 procedure TcdaRelatedDocument.SetparentDocument(const Value: TcdaParentDocument);
 begin
-  FparentDocument.Free;
+  FparentDocument.free;
   FparentDocument := Value;
   if FparentDocument <> nil then
     FparentDocument.Parent := self;
@@ -17998,10 +17998,10 @@ begin
     inherited;
 end;
 
-function TcdaRelatedDocument.sizeInBytesV : cardinal;
+function TcdaRelatedDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FparentDocument.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FparentDocument.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -18044,8 +18044,8 @@ end;
 
 destructor TcdaRelatedEntity.Destroy;
 begin
-  FeffectiveTime.Free;
-  FrelatedPerson.Free;
+  FeffectiveTime.free;
+  FrelatedPerson.free;
   inherited;
 end;
 
@@ -18066,7 +18066,7 @@ end;
 
 procedure TcdaRelatedEntity.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.Parent := self;
@@ -18084,18 +18084,18 @@ end;
 
 procedure TcdaRelatedEntity.SetrelatedPerson(const Value: TcdaPerson);
 begin
-  FrelatedPerson.Free;
+  FrelatedPerson.free;
   FrelatedPerson := Value;
   if FrelatedPerson <> nil then
     FrelatedPerson.Parent := self;
 end;
 
 
-function TcdaRelatedEntity.sizeInBytesV : cardinal;
+function TcdaRelatedEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FrelatedPerson.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FrelatedPerson.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
 end;
 
 { TcdaRelatedSubject }
@@ -18145,10 +18145,10 @@ end;
 
 destructor TcdaRelatedSubject.Destroy;
 begin
-  Fcode.Free;
-  Faddr.Free;
-  Ftelecom.Free;
-  Fsubject.Free;
+  Fcode.free;
+  Faddr.free;
+  Ftelecom.free;
+  Fsubject.free;
   inherited;
 end;
 
@@ -18171,7 +18171,7 @@ end;
 
 procedure TcdaRelatedSubject.Setaddr(const Value: Tv3ListAD);
 begin
-  Faddr.Free;
+  Faddr.free;
   Faddr := Value;
   if Faddr <> nil then
     Faddr.Parent := self;
@@ -18179,7 +18179,7 @@ end;
 
 procedure TcdaRelatedSubject.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -18203,7 +18203,7 @@ end;
 
 procedure TcdaRelatedSubject.Setsubject(const Value: TcdaSubjectPerson);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
@@ -18211,20 +18211,20 @@ end;
 
 procedure TcdaRelatedSubject.Settelecom(const Value: Tv3ListTEL);
 begin
-  Ftelecom.Free;
+  Ftelecom.free;
   Ftelecom := Value;
   if Ftelecom <> nil then
     Ftelecom.Parent := self;
 end;
 
-function TcdaRelatedSubject.sizeInBytesV : cardinal;
+function TcdaRelatedSubject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fsubject.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fsubject.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, Faddr.sizeInBytes);
-  inc(result, Ftelecom.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, Faddr.sizeInBytes(magic));
+  inc(result, Ftelecom.sizeInBytes(magic));
 end;
 
 { TcdaResponsibleParty }
@@ -18264,7 +18264,7 @@ end;
 
 destructor TcdaResponsibleParty.Destroy;
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   inherited;
 end;
 
@@ -18283,7 +18283,7 @@ end;
 
 procedure TcdaResponsibleParty.SetassignedEntity(const Value: TcdaAssignedEntity);
 begin
-  FassignedEntity.Free;
+  FassignedEntity.free;
   FassignedEntity := Value;
   if FassignedEntity <> nil then
     FassignedEntity.Parent := self;
@@ -18299,10 +18299,10 @@ begin
     inherited;
 end;
 
-function TcdaResponsibleParty.sizeInBytesV : cardinal;
+function TcdaResponsibleParty.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FassignedEntity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FassignedEntity.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -18370,17 +18370,17 @@ end;
 
 destructor TcdaSection.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftitle.Free;
-  Ftext.Free;
-  FconfidentialityCode.Free;
-  FlanguageCode.Free;
-  Fsubject.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fentry.Free;
-  Fcomponent.Free;
+  Fid.free;
+  Fcode.free;
+  Ftitle.free;
+  Ftext.free;
+  FconfidentialityCode.free;
+  FlanguageCode.free;
+  Fsubject.free;
+  Fauthor.free;
+  Finformant.free;
+  Fentry.free;
+  Fcomponent.free;
   inherited;
 end;
 
@@ -18419,7 +18419,7 @@ end;
 
 procedure TcdaSection.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     Fauthor.Parent := self;
@@ -18427,7 +18427,7 @@ end;
 
 procedure TcdaSection.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -18442,7 +18442,7 @@ end;
 
 procedure TcdaSection.Setcomponent(const Value: TcdaComponentSectList);
 begin
-  Fcomponent.Free;
+  Fcomponent.free;
   Fcomponent := Value;
   if Fcomponent <> nil then
     Fcomponent.Parent := self;
@@ -18450,7 +18450,7 @@ end;
 
 procedure TcdaSection.SetconfidentialityCode(const Value: Tv3CD);
 begin
-  FconfidentialityCode.Free;
+  FconfidentialityCode.free;
   FconfidentialityCode := Value;
   if FconfidentialityCode <> nil then
     FconfidentialityCode.Parent := self;
@@ -18465,7 +18465,7 @@ end;
 
 procedure TcdaSection.Setentry(const Value: TcdaEntryList);
 begin
-  Fentry.Free;
+  Fentry.free;
   Fentry := Value;
   if Fentry <> nil then
     Fentry.Parent := self;
@@ -18473,7 +18473,7 @@ end;
 
 procedure TcdaSection.Setid(const Value: Tv3II);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -18488,7 +18488,7 @@ end;
 
 procedure TcdaSection.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.Parent := self;
@@ -18496,7 +18496,7 @@ end;
 
 procedure TcdaSection.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then
     FlanguageCode.Parent := self;
@@ -18536,7 +18536,7 @@ end;
 
 procedure TcdaSection.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
@@ -18545,7 +18545,7 @@ end;
 
 procedure TcdaSection.Settext(const Value: TsnText);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
     Ftext.Parent := self;
@@ -18553,29 +18553,29 @@ end;
 
 procedure TcdaSection.Settitle(const Value: Tv3ST);
 begin
-  Ftitle.Free;
+  Ftitle.free;
   Ftitle := Value;
   if Ftitle <> nil then
     Ftitle.Parent := self;
 end;
 
-function TcdaSection.sizeInBytesV : cardinal;
+function TcdaSection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, Fcomponent.sizeInBytes);
-  inc(result, Fentry.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, Fcomponent.sizeInBytes(magic));
+  inc(result, Fentry.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FconfidentialityCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
-  inc(result, Ftitle.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FconfidentialityCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
+  inc(result, Ftitle.sizeInBytes(magic));
   inc(result, (FID_.length * sizeof(char)) + 12);
-  inc(result, Ftext.sizeInBytes);
+  inc(result, Ftext.sizeInBytes(magic));
 end;
 
 { TcdaServiceEvent }
@@ -18626,10 +18626,10 @@ end;
 
 destructor TcdaServiceEvent.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  FeffectiveTime.Free;
-  Fperformer.Free;
+  Fid.free;
+  Fcode.free;
+  FeffectiveTime.free;
+  Fperformer.free;
   inherited;
 end;
 
@@ -18654,7 +18654,7 @@ end;
 
 procedure TcdaServiceEvent.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -18662,7 +18662,7 @@ end;
 
 procedure TcdaServiceEvent.SeteffectiveTime(const Value: Tv3IVL);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.Parent := self;
@@ -18670,7 +18670,7 @@ end;
 
 procedure TcdaServiceEvent.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -18685,7 +18685,7 @@ end;
 
 procedure TcdaServiceEvent.Setperformer(const Value: TcdaPerformer1List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.Parent := self;
@@ -18709,15 +18709,15 @@ begin
     inherited;
 end;
 
-function TcdaServiceEvent.sizeInBytesV : cardinal;
+function TcdaServiceEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fperformer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fperformer.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
 end;
 
 { TcdaSpecimen }
@@ -18757,7 +18757,7 @@ end;
 
 destructor TcdaSpecimen.Destroy;
 begin
-  FspecimenRole.Free;
+  FspecimenRole.free;
   inherited;
 end;
 
@@ -18786,16 +18786,16 @@ end;
 
 procedure TcdaSpecimen.SetspecimenRole(const Value: TcdaSpecimenRole);
 begin
-  FspecimenRole.Free;
+  FspecimenRole.free;
   FspecimenRole := Value;
   if FspecimenRole <> nil then
     FspecimenRole.Parent := self;
 end;
 
-function TcdaSpecimen.sizeInBytesV : cardinal;
+function TcdaSpecimen.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FspecimenRole.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FspecimenRole.sizeInBytes(magic));
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
 
@@ -18839,8 +18839,8 @@ end;
 
 destructor TcdaSpecimenRole.Destroy;
 begin
-  Fid.Free;
-  FspecimenPlayingEntity.Free;
+  Fid.free;
+  FspecimenPlayingEntity.free;
   inherited;
 end;
 
@@ -18861,7 +18861,7 @@ end;
 
 procedure TcdaSpecimenRole.Setid(const Value: Tv3ListII);
 begin
-  Fid.Free;
+  Fid.free;
   Fid := Value;
   if Fid <> nil then
     Fid.Parent := self;
@@ -18881,17 +18881,17 @@ end;
 
 procedure TcdaSpecimenRole.SetspecimenPlayingEntity(const Value: TcdaPlayingEntity);
 begin
-  FspecimenPlayingEntity.Free;
+  FspecimenPlayingEntity.free;
   FspecimenPlayingEntity := Value;
   if FspecimenPlayingEntity <> nil then
     FspecimenPlayingEntity.Parent := self;
 end;
 
-function TcdaSpecimenRole.sizeInBytesV : cardinal;
+function TcdaSpecimenRole.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FspecimenPlayingEntity.sizeInBytes);
-  inc(result, Fid.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FspecimenPlayingEntity.sizeInBytes(magic));
+  inc(result, Fid.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
 end;
 
@@ -18938,9 +18938,9 @@ end;
 
 destructor TcdaStructuredBody.Destroy;
 begin
-  FconfidentialityCode.Free;
-  FlanguageCode.Free;
-  Fcomponent.Free;
+  FconfidentialityCode.free;
+  FlanguageCode.free;
+  Fcomponent.free;
   inherited;
 end;
 
@@ -18970,7 +18970,7 @@ end;
 
 procedure TcdaStructuredBody.Setcomponent(const Value: TcdaComponentSectList);
 begin
-  Fcomponent.Free;
+  Fcomponent.free;
   Fcomponent := Value;
   if Fcomponent <> nil then
     Fcomponent.Parent := self;
@@ -18978,7 +18978,7 @@ end;
 
 procedure TcdaStructuredBody.SetconfidentialityCode(const Value: Tv3CD);
 begin
-  FconfidentialityCode.Free;
+  FconfidentialityCode.free;
   FconfidentialityCode := Value;
   if FconfidentialityCode <> nil then
     FconfidentialityCode.Parent := self;
@@ -18986,7 +18986,7 @@ end;
 
 procedure TcdaStructuredBody.SetlanguageCode(const Value: Tv3CS);
 begin
-  FlanguageCode.Free;
+  FlanguageCode.free;
   FlanguageCode := Value;
   if FlanguageCode <> nil then
     FlanguageCode.Parent := self;
@@ -19008,14 +19008,14 @@ begin
     inherited;
 end;
 
-function TcdaStructuredBody.sizeInBytesV : cardinal;
+function TcdaStructuredBody.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcomponent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcomponent.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FmoodCode.length * sizeof(char)) + 12);
-  inc(result, FconfidentialityCode.sizeInBytes);
-  inc(result, FlanguageCode.sizeInBytes);
+  inc(result, FconfidentialityCode.sizeInBytes(magic));
+  inc(result, FlanguageCode.sizeInBytes(magic));
 end;
 
 { TcdaSubject }
@@ -19058,8 +19058,8 @@ end;
 
 destructor TcdaSubject.Destroy;
 begin
-  FawarenessCode.Free;
-  FrelatedSubject.Free;
+  FawarenessCode.free;
+  FrelatedSubject.free;
   inherited;
 end;
 
@@ -19080,7 +19080,7 @@ end;
 
 procedure TcdaSubject.SetawarenessCode(const Value: Tv3CD);
 begin
-  FawarenessCode.Free;
+  FawarenessCode.free;
   FawarenessCode := Value;
   if FawarenessCode <> nil then
     FawarenessCode.Parent := self;
@@ -19102,17 +19102,17 @@ end;
 
 procedure TcdaSubject.SetrelatedSubject(const Value: TcdaRelatedSubject);
 begin
-  FrelatedSubject.Free;
+  FrelatedSubject.free;
   FrelatedSubject := Value;
   if FrelatedSubject <> nil then
     FrelatedSubject.Parent := self;
 end;
 
-function TcdaSubject.sizeInBytesV : cardinal;
+function TcdaSubject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FrelatedSubject.sizeInBytes);
-  inc(result, FawarenessCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FrelatedSubject.sizeInBytes(magic));
+  inc(result, FawarenessCode.sizeInBytes(magic));
   inc(result, (FcontextControlCode.length * sizeof(char)) + 12);
   inc(result, (FtypeCode.length * sizeof(char)) + 12);
 end;
@@ -19160,9 +19160,9 @@ end;
 
 destructor TcdaSubjectPerson.Destroy;
 begin
-  Fname.Free;
-  FadministrativeGenderCode.Free;
-  FbirthTime.Free;
+  Fname.free;
+  FadministrativeGenderCode.free;
+  FbirthTime.free;
   inherited;
 end;
 
@@ -19185,7 +19185,7 @@ end;
 
 procedure TcdaSubjectPerson.SetadministrativeGenderCode(const Value: Tv3CD);
 begin
-  FadministrativeGenderCode.Free;
+  FadministrativeGenderCode.free;
   FadministrativeGenderCode := Value;
   if FadministrativeGenderCode <> nil then
     FadministrativeGenderCode.Parent := self;
@@ -19193,7 +19193,7 @@ end;
 
 procedure TcdaSubjectPerson.SetbirthTime(const Value: Tv3TS);
 begin
-  FbirthTime.Free;
+  FbirthTime.free;
   FbirthTime := Value;
   if FbirthTime <> nil then
     FbirthTime.Parent := self;
@@ -19201,7 +19201,7 @@ end;
 
 procedure TcdaSubjectPerson.Setname(const Value: Tv3ListEN);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := Value;
   if Fname <> nil then
     Fname.Parent := self;
@@ -19223,14 +19223,14 @@ begin
     inherited;
 end;
 
-function TcdaSubjectPerson.sizeInBytesV : cardinal;
+function TcdaSubjectPerson.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FadministrativeGenderCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FadministrativeGenderCode.sizeInBytes(magic));
   inc(result, (FclassCode.length * sizeof(char)) + 12);
   inc(result, (FdeterminerCode.length * sizeof(char)) + 12);
-  inc(result, Fname.sizeInBytes);
-  inc(result, FbirthTime.sizeInBytes);
+  inc(result, Fname.sizeInBytes(magic));
+  inc(result, FbirthTime.sizeInBytes(magic));
 end;
 
 { TcdaSubstanceAdministration }
@@ -19326,29 +19326,29 @@ end;
 
 destructor TcdaSubstanceAdministration.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FpriorityCode.Free;
-  FrepeatNumber.Free;
-  FrouteCode.Free;
-  FapproachSiteCode.Free;
-  FdoseQuantity.Free;
-  FrateQuantity.Free;
-  FmaxDoseQuantity.Free;
-  FadministrationUnitCode.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fconsumable.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FpriorityCode.free;
+  FrepeatNumber.free;
+  FrouteCode.free;
+  FapproachSiteCode.free;
+  FdoseQuantity.free;
+  FrateQuantity.free;
+  FmaxDoseQuantity.free;
+  FadministrationUnitCode.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fconsumable.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -19390,7 +19390,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetadministrationUnitCode(const Value: Tv3CD);
 begin
-  FadministrationUnitCode.Free;
+  FadministrationUnitCode.free;
   FadministrationUnitCode := Value;
   if FadministrationUnitCode <> nil then
     FadministrationUnitCode.Parent := self;
@@ -19398,7 +19398,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetapproachSiteCode(const Value: Tv3ListCD);
 begin
-  FapproachSiteCode.Free;
+  FapproachSiteCode.free;
   FapproachSiteCode := Value;
   if FapproachSiteCode <> nil then
     FapproachSiteCode.Parent := self;
@@ -19413,7 +19413,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     Fauthor.Parent := self;
@@ -19421,7 +19421,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -19429,7 +19429,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setconsumable(const Value: TcdaConsumable);
 begin
-  Fconsumable.Free;
+  Fconsumable.free;
   Fconsumable := Value;
   if Fconsumable <> nil then
     Fconsumable.Parent := self;
@@ -19437,7 +19437,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetdoseQuantity(const Value: Tv3IVL);
 begin
-  FdoseQuantity.Free;
+  FdoseQuantity.free;
   FdoseQuantity := Value;
   if FdoseQuantity <> nil then
     FdoseQuantity.Parent := self;
@@ -19445,7 +19445,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SeteffectiveTime(const Value: Tv3QSET);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.Parent := self;
@@ -19460,7 +19460,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then
     FentryRelationship.Parent := self;
@@ -19476,7 +19476,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.Parent := self;
@@ -19484,7 +19484,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetmaxDoseQuantity(const Value: Tv3RTO);
 begin
-  FmaxDoseQuantity.Free;
+  FmaxDoseQuantity.free;
   FmaxDoseQuantity := Value;
   if FmaxDoseQuantity <> nil then
     FmaxDoseQuantity.Parent := self;
@@ -19505,7 +19505,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then
     Fparticipant.Parent := self;
@@ -19520,7 +19520,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.Parent := self;
@@ -19535,7 +19535,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then
     Fprecondition.Parent := self;
@@ -19543,7 +19543,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetpriorityCode(const Value: Tv3CD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then
     FpriorityCode.Parent := self;
@@ -19605,7 +19605,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetrateQuantity(const Value: Tv3IVL);
 begin
-  FrateQuantity.Free;
+  FrateQuantity.free;
   FrateQuantity := Value;
   if FrateQuantity <> nil then
     FrateQuantity.Parent := self;
@@ -19620,7 +19620,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then
     Freference.Parent := self;
@@ -19628,7 +19628,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetrepeatNumber(const Value: Tv3IVL);
 begin
-  FrepeatNumber.Free;
+  FrepeatNumber.free;
   FrepeatNumber := Value;
   if FrepeatNumber <> nil then
     FrepeatNumber.Parent := self;
@@ -19636,7 +19636,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetrouteCode(const Value: Tv3CD);
 begin
-  FrouteCode.Free;
+  FrouteCode.free;
   FrouteCode := Value;
   if FrouteCode <> nil then
     FrouteCode.Parent := self;
@@ -19651,7 +19651,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then
     Fspecimen.Parent := self;
@@ -19659,7 +19659,7 @@ end;
 
 procedure TcdaSubstanceAdministration.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then
     FstatusCode.Parent := self;
@@ -19667,7 +19667,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
@@ -19675,7 +19675,7 @@ end;
 
 procedure TcdaSubstanceAdministration.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
     Ftext.Parent := self;
@@ -19686,31 +19686,31 @@ begin
   result := true;
 end;
 
-function TcdaSubstanceAdministration.sizeInBytesV : cardinal;
+function TcdaSubstanceAdministration.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, Fconsumable.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, FrouteCode.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FadministrationUnitCode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FrepeatNumber.sizeInBytes);
-  inc(result, FdoseQuantity.sizeInBytes);
-  inc(result, FrateQuantity.sizeInBytes);
-  inc(result, FapproachSiteCode.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
-  inc(result, FmaxDoseQuantity.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, Fconsumable.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, FrouteCode.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FadministrationUnitCode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FrepeatNumber.sizeInBytes(magic));
+  inc(result, FdoseQuantity.sizeInBytes(magic));
+  inc(result, FrateQuantity.sizeInBytes(magic));
+  inc(result, FapproachSiteCode.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
+  inc(result, FmaxDoseQuantity.sizeInBytes(magic));
 end;
 
 { TcdaSupply }
@@ -19800,26 +19800,26 @@ end;
 
 destructor TcdaSupply.Destroy;
 begin
-  Fid.Free;
-  Fcode.Free;
-  Ftext.Free;
-  FstatusCode.Free;
-  FeffectiveTime.Free;
-  FpriorityCode.Free;
-  FrepeatNumber.Free;
-  FindependentInd.Free;
-  Fquantity.Free;
-  FexpectedUseTime.Free;
-  Fsubject.Free;
-  Fspecimen.Free;
-  Fproduct.Free;
-  Fperformer.Free;
-  Fauthor.Free;
-  Finformant.Free;
-  Fparticipant.Free;
-  FentryRelationship.Free;
-  Freference.Free;
-  Fprecondition.Free;
+  Fid.free;
+  Fcode.free;
+  Ftext.free;
+  FstatusCode.free;
+  FeffectiveTime.free;
+  FpriorityCode.free;
+  FrepeatNumber.free;
+  FindependentInd.free;
+  Fquantity.free;
+  FexpectedUseTime.free;
+  Fsubject.free;
+  Fspecimen.free;
+  Fproduct.free;
+  Fperformer.free;
+  Fauthor.free;
+  Finformant.free;
+  Fparticipant.free;
+  FentryRelationship.free;
+  Freference.free;
+  Fprecondition.free;
   inherited;
 end;
 
@@ -19864,7 +19864,7 @@ end;
 
 procedure TcdaSupply.Setauthor(const Value: TcdaAuthorList);
 begin
-  Fauthor.Free;
+  Fauthor.free;
   Fauthor := Value;
   if Fauthor <> nil then
     Fauthor.Parent := self;
@@ -19872,7 +19872,7 @@ end;
 
 procedure TcdaSupply.Setcode(const Value: Tv3CD);
 begin
-  Fcode.Free;
+  Fcode.free;
   Fcode := Value;
   if Fcode <> nil then
     Fcode.Parent := self;
@@ -19880,7 +19880,7 @@ end;
 
 procedure TcdaSupply.SeteffectiveTime(const Value: Tv3QSET);
 begin
-  FeffectiveTime.Free;
+  FeffectiveTime.free;
   FeffectiveTime := Value;
   if FeffectiveTime <> nil then
     FeffectiveTime.Parent := self;
@@ -19895,7 +19895,7 @@ end;
 
 procedure TcdaSupply.SetentryRelationship(const Value: TcdaEntryRelationshipList);
 begin
-  FentryRelationship.Free;
+  FentryRelationship.free;
   FentryRelationship := Value;
   if FentryRelationship <> nil then
     FentryRelationship.Parent := self;
@@ -19903,7 +19903,7 @@ end;
 
 procedure TcdaSupply.SetexpectedUseTime(const Value: Tv3IVL);
 begin
-  FexpectedUseTime.Free;
+  FexpectedUseTime.free;
   FexpectedUseTime := Value;
   if FexpectedUseTime <> nil then
     FexpectedUseTime.Parent := self;
@@ -19912,7 +19912,7 @@ end;
 
 procedure TcdaSupply.SetindependentInd(const Value: Tv3BL);
 begin
-  FindependentInd.Free;
+  FindependentInd.free;
   FindependentInd := Value;
   if FindependentInd <> nil then
     FindependentInd.Parent := self;
@@ -19927,7 +19927,7 @@ end;
 
 procedure TcdaSupply.Setinformant(const Value: TcdaInformant12List);
 begin
-  Finformant.Free;
+  Finformant.free;
   Finformant := Value;
   if Finformant <> nil then
     Finformant.Parent := self;
@@ -19942,7 +19942,7 @@ end;
 
 procedure TcdaSupply.Setparticipant(const Value: TcdaParticipant2List);
 begin
-  Fparticipant.Free;
+  Fparticipant.free;
   Fparticipant := Value;
   if Fparticipant <> nil then
     Fparticipant.Parent := self;
@@ -19957,7 +19957,7 @@ end;
 
 procedure TcdaSupply.Setperformer(const Value: TcdaPerformer2List);
 begin
-  Fperformer.Free;
+  Fperformer.free;
   Fperformer := Value;
   if Fperformer <> nil then
     Fperformer.Parent := self;
@@ -19972,7 +19972,7 @@ end;
 
 procedure TcdaSupply.Setprecondition(const Value: TcdaPreconditionList);
 begin
-  Fprecondition.Free;
+  Fprecondition.free;
   Fprecondition := Value;
   if Fprecondition <> nil then
     Fprecondition.Parent := self;
@@ -19980,7 +19980,7 @@ end;
 
 procedure TcdaSupply.SetpriorityCode(const Value: Tv3ListCD);
 begin
-  FpriorityCode.Free;
+  FpriorityCode.free;
   FpriorityCode := Value;
   if FpriorityCode <> nil then
     FpriorityCode.Parent := self;
@@ -19988,7 +19988,7 @@ end;
 
 procedure TcdaSupply.Setproduct(const Value: TcdaProduct);
 begin
-  Fproduct.Free;
+  Fproduct.free;
   Fproduct := Value;
   if Fproduct <> nil then
     Fproduct.Parent := self;
@@ -20042,7 +20042,7 @@ end;
 
 procedure TcdaSupply.Setquantity(const Value: Tv3PQ);
 begin
-  Fquantity.Free;
+  Fquantity.free;
   Fquantity := Value;
   if Fquantity <> nil then
     Fquantity.Parent := self;
@@ -20057,7 +20057,7 @@ end;
 
 procedure TcdaSupply.Setreference(const Value: TcdaReferenceList);
 begin
-  Freference.Free;
+  Freference.free;
   Freference := Value;
   if Freference <> nil then
     Freference.Parent := self;
@@ -20065,7 +20065,7 @@ end;
 
 procedure TcdaSupply.SetrepeatNumber(const Value: Tv3IVL);
 begin
-  FrepeatNumber.Free;
+  FrepeatNumber.free;
   FrepeatNumber := Value;
   if FrepeatNumber <> nil then
     FrepeatNumber.Parent := self;
@@ -20080,7 +20080,7 @@ end;
 
 procedure TcdaSupply.Setspecimen(const Value: TcdaSpecimenList);
 begin
-  Fspecimen.Free;
+  Fspecimen.free;
   Fspecimen := Value;
   if Fspecimen <> nil then
     Fspecimen.Parent := self;
@@ -20088,7 +20088,7 @@ end;
 
 procedure TcdaSupply.SetstatusCode(const Value: Tv3CS);
 begin
-  FstatusCode.Free;
+  FstatusCode.free;
   FstatusCode := Value;
   if FstatusCode <> nil then
     FstatusCode.Parent := self;
@@ -20096,7 +20096,7 @@ end;
 
 procedure TcdaSupply.Setsubject(const Value: TcdaSubject);
 begin
-  Fsubject.Free;
+  Fsubject.free;
   Fsubject := Value;
   if Fsubject <> nil then
     Fsubject.Parent := self;
@@ -20104,34 +20104,34 @@ end;
 
 procedure TcdaSupply.Settext(const Value: Tv3ED);
 begin
-  Ftext.Free;
+  Ftext.free;
   Ftext := Value;
   if Ftext <> nil then
     Ftext.Parent := self;
 end;
 
-function TcdaSupply.sizeInBytesV : cardinal;
+function TcdaSupply.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fauthor.sizeInBytes);
-  inc(result, FentryRelationship.sizeInBytes);
-  inc(result, Finformant.sizeInBytes);
-  inc(result, Fparticipant.sizeInBytes);
-  inc(result, Fperformer.sizeInBytes);
-  inc(result, Fprecondition.sizeInBytes);
-  inc(result, Fproduct.sizeInBytes);
-  inc(result, Freference.sizeInBytes);
-  inc(result, Fspecimen.sizeInBytes);
-  inc(result, Fsubject.sizeInBytes);
-  inc(result, FindependentInd.sizeInBytes);
-  inc(result, Fcode.sizeInBytes);
-  inc(result, FstatusCode.sizeInBytes);
-  inc(result, Ftext.sizeInBytes);
-  inc(result, FexpectedUseTime.sizeInBytes);
-  inc(result, FrepeatNumber.sizeInBytes);
-  inc(result, FpriorityCode.sizeInBytes);
-  inc(result, Fquantity.sizeInBytes);
-  inc(result, FeffectiveTime.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fauthor.sizeInBytes(magic));
+  inc(result, FentryRelationship.sizeInBytes(magic));
+  inc(result, Finformant.sizeInBytes(magic));
+  inc(result, Fparticipant.sizeInBytes(magic));
+  inc(result, Fperformer.sizeInBytes(magic));
+  inc(result, Fprecondition.sizeInBytes(magic));
+  inc(result, Fproduct.sizeInBytes(magic));
+  inc(result, Freference.sizeInBytes(magic));
+  inc(result, Fspecimen.sizeInBytes(magic));
+  inc(result, Fsubject.sizeInBytes(magic));
+  inc(result, FindependentInd.sizeInBytes(magic));
+  inc(result, Fcode.sizeInBytes(magic));
+  inc(result, FstatusCode.sizeInBytes(magic));
+  inc(result, Ftext.sizeInBytes(magic));
+  inc(result, FexpectedUseTime.sizeInBytes(magic));
+  inc(result, FrepeatNumber.sizeInBytes(magic));
+  inc(result, FpriorityCode.sizeInBytes(magic));
+  inc(result, Fquantity.sizeInBytes(magic));
+  inc(result, FeffectiveTime.sizeInBytes(magic));
 end;
 
 { TcdaBase }
@@ -20180,9 +20180,9 @@ end;
 
 destructor TcdaBase.Destroy;
 begin
-  FrealmCode.Free;
-  FtypeId.Free;
-  FtemplateId.Free;
+  FrealmCode.free;
+  FtypeId.free;
+  FtemplateId.free;
   inherited;
 end;
 
@@ -20220,7 +20220,7 @@ end;
 
 procedure TcdaBase.SetrealmCode(const Value: Tv3ListCS);
 begin
-  FrealmCode.Free;
+  FrealmCode.free;
   FrealmCode := Value;
   if FrealmCode <> nil then
     FrealmCode.Parent := self;
@@ -20228,7 +20228,7 @@ end;
 
 procedure TcdaBase.SettemplateId(const Value: Tv3ListII);
 begin
-  FtemplateId.Free;
+  FtemplateId.free;
   FtemplateId := Value;
   if FtemplateId <> nil then
     FtemplateId.Parent := self;
@@ -20236,19 +20236,19 @@ end;
 
 procedure TcdaBase.SettypeId(const Value: Tv3II);
 begin
-  FtypeId.Free;
+  FtypeId.free;
   FtypeId := Value;
   if FtypeId <> nil then
     FtypeId.Parent := self;
 end;
 
-function TcdaBase.sizeInBytesV : cardinal;
+function TcdaBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FxmlId.length * sizeof(char)) + 12);
-  inc(result, FtypeId.sizeInBytes);
-  inc(result, FrealmCode.sizeInBytes);
-  inc(result, FtemplateId.sizeInBytes);
+  inc(result, FtypeId.sizeInBytes(magic));
+  inc(result, FrealmCode.sizeInBytes(magic));
+  inc(result, FtemplateId.sizeInBytes(magic));
 end;
 
 { TcdaAuthorList }
@@ -20274,13 +20274,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaAuthorList.AddItem(value : TcdaAuthor);
+function TcdaAuthorList.AddItem(value : TcdaAuthor): TcdaAuthor;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAuthorList.IndexOf(value : TcdaAuthor) : Integer;
@@ -20294,7 +20295,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20345,13 +20346,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaEntryRelationshipList.AddItem(value : TcdaEntryRelationship);
+function TcdaEntryRelationshipList.AddItem(value : TcdaEntryRelationship): TcdaEntryRelationship;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEntryRelationshipList.IndexOf(value : TcdaEntryRelationship) : Integer;
@@ -20365,7 +20367,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20436,13 +20438,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaInformant12List.AddItem(value : TcdaInformant12);
+function TcdaInformant12List.AddItem(value : TcdaInformant12): TcdaInformant12;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaInformant12List.IndexOf(value : TcdaInformant12) : Integer;
@@ -20456,7 +20459,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20523,13 +20526,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaParticipant2List.AddItem(value : TcdaParticipant2);
+function TcdaParticipant2List.AddItem(value : TcdaParticipant2): TcdaParticipant2;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaParticipant2List.IndexOf(value : TcdaParticipant2) : Integer;
@@ -20543,7 +20547,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20614,13 +20618,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaPerformer2List.AddItem(value : TcdaPerformer2);
+function TcdaPerformer2List.AddItem(value : TcdaPerformer2): TcdaPerformer2;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaPerformer2List.IndexOf(value : TcdaPerformer2) : Integer;
@@ -20634,7 +20639,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20700,13 +20705,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaPreconditionList.AddItem(value : TcdaPrecondition);
+function TcdaPreconditionList.AddItem(value : TcdaPrecondition): TcdaPrecondition;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaPreconditionList.IndexOf(value : TcdaPrecondition) : Integer;
@@ -20720,7 +20726,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20786,13 +20792,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaReferenceList.AddItem(value : TcdaReference);
+function TcdaReferenceList.AddItem(value : TcdaReference): TcdaReference;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaReferenceList.IndexOf(value : TcdaReference) : Integer;
@@ -20806,7 +20813,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20872,13 +20879,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaSpecimenList.AddItem(value : TcdaSpecimen);
+function TcdaSpecimenList.AddItem(value : TcdaSpecimen): TcdaSpecimen;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaSpecimenList.IndexOf(value : TcdaSpecimen) : Integer;
@@ -20892,7 +20900,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -20958,13 +20966,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaMaintainedEntityList.AddItem(value : TcdaMaintainedEntity);
+function TcdaMaintainedEntityList.AddItem(value : TcdaMaintainedEntity): TcdaMaintainedEntity;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaMaintainedEntityList.IndexOf(value : TcdaMaintainedEntity) : Integer;
@@ -20978,7 +20987,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21044,13 +21053,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaAuthenticatorList.AddItem(value : TcdaAuthenticator);
+function TcdaAuthenticatorList.AddItem(value : TcdaAuthenticator): TcdaAuthenticator;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAuthenticatorList.IndexOf(value : TcdaAuthenticator) : Integer;
@@ -21064,7 +21074,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21130,13 +21140,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaAuthorizationList.AddItem(value : TcdaAuthorization);
+function TcdaAuthorizationList.AddItem(value : TcdaAuthorization): TcdaAuthorization;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaAuthorizationList.IndexOf(value : TcdaAuthorization) : Integer;
@@ -21150,7 +21161,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21216,13 +21227,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaDocumentationOfList.AddItem(value : TcdaDocumentationOf);
+function TcdaDocumentationOfList.AddItem(value : TcdaDocumentationOf): TcdaDocumentationOf;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaDocumentationOfList.IndexOf(value : TcdaDocumentationOf) : Integer;
@@ -21236,7 +21248,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21302,13 +21314,14 @@ Begin
   Try
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaInformationRecipientList.AddItem(value : TcdaInformationRecipient);
+function TcdaInformationRecipientList.AddItem(value : TcdaInformationRecipient): TcdaInformationRecipient;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaInformationRecipientList.IndexOf(value : TcdaInformationRecipient) : Integer;
@@ -21322,7 +21335,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21388,13 +21401,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaInFulfillmentOfList.AddItem(value : TcdaInFulfillmentOf);
+function TcdaInFulfillmentOfList.AddItem(value : TcdaInFulfillmentOf): TcdaInFulfillmentOf;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaInFulfillmentOfList.IndexOf(value : TcdaInFulfillmentOf) : Integer;
@@ -21408,7 +21422,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21474,13 +21488,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaParticipant1List.AddItem(value : TcdaParticipant1);
+function TcdaParticipant1List.AddItem(value : TcdaParticipant1): TcdaParticipant1;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaParticipant1List.IndexOf(value : TcdaParticipant1) : Integer;
@@ -21494,7 +21509,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21560,13 +21575,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaRecordTargetList.AddItem(value : TcdaRecordTarget);
+function TcdaRecordTargetList.AddItem(value : TcdaRecordTarget): TcdaRecordTarget;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaRecordTargetList.IndexOf(value : TcdaRecordTarget) : Integer;
@@ -21580,7 +21596,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21646,13 +21662,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaRelatedDocumentList.AddItem(value : TcdaRelatedDocument);
+function TcdaRelatedDocumentList.AddItem(value : TcdaRelatedDocument): TcdaRelatedDocument;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaRelatedDocumentList.IndexOf(value : TcdaRelatedDocument) : Integer;
@@ -21666,7 +21683,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21732,13 +21749,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaEncounterParticipantList.AddItem(value : TcdaEncounterParticipant);
+function TcdaEncounterParticipantList.AddItem(value : TcdaEncounterParticipant): TcdaEncounterParticipant;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEncounterParticipantList.IndexOf(value : TcdaEncounterParticipant) : Integer;
@@ -21752,7 +21770,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21818,13 +21836,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaReferenceRangeList.AddItem(value : TcdaReferenceRange);
+function TcdaReferenceRangeList.AddItem(value : TcdaReferenceRange): TcdaReferenceRange;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaReferenceRangeList.IndexOf(value : TcdaReferenceRange) : Integer;
@@ -21838,7 +21857,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21904,13 +21923,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaComponent4List.AddItem(value : TcdaComponent4);
+function TcdaComponent4List.AddItem(value : TcdaComponent4): TcdaComponent4;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaComponent4List.IndexOf(value : TcdaComponent4) : Integer;
@@ -21924,7 +21944,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -21995,13 +22015,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaGuardianList.AddItem(value : TcdaGuardian);
+function TcdaGuardianList.AddItem(value : TcdaGuardian): TcdaGuardian;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaGuardianList.IndexOf(value : TcdaGuardian) : Integer;
@@ -22015,7 +22036,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -22081,13 +22102,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaLanguageCommunicationList.AddItem(value : TcdaLanguageCommunication);
+function TcdaLanguageCommunicationList.AddItem(value : TcdaLanguageCommunication): TcdaLanguageCommunication;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaLanguageCommunicationList.IndexOf(value : TcdaLanguageCommunication) : Integer;
@@ -22101,7 +22123,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -22167,13 +22189,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaEntityIdentifierList.AddItem(value : TcdaEntityIdentifier);
+function TcdaEntityIdentifierList.AddItem(value : TcdaEntityIdentifier): TcdaEntityIdentifier;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEntityIdentifierList.IndexOf(value : TcdaEntityIdentifier) : Integer;
@@ -22187,7 +22210,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -22254,13 +22277,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaEntryList.AddItem(value : TcdaEntry);
+function TcdaEntryList.AddItem(value : TcdaEntry): TcdaEntry;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaEntryList.IndexOf(value : TcdaEntry) : Integer;
@@ -22274,7 +22298,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -22345,13 +22369,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaPerformer1List.AddItem(value : TcdaPerformer1);
+function TcdaPerformer1List.AddItem(value : TcdaPerformer1): TcdaPerformer1;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaPerformer1List.IndexOf(value : TcdaPerformer1) : Integer;
@@ -22365,7 +22390,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -22431,13 +22456,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaComponentSectList.AddItem(value : TcdaComponentSect);
+function TcdaComponentSectList.AddItem(value : TcdaComponentSect): TcdaComponentSect;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaComponentSectList.IndexOf(value : TcdaComponentSect) : Integer;
@@ -22451,7 +22477,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -22553,9 +22579,9 @@ begin
   Funsorted := value;
 end;
 
-function TcdaRegionOfInterest_value.sizeInBytesV : cardinal;
+function TcdaRegionOfInterest_value.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TcdaRegionOfInterest_valueList }
@@ -22576,13 +22602,14 @@ Begin
   Try
     Add(result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
-Procedure TcdaRegionOfInterest_valueList.AddItem(value : TcdaRegionOfInterest_value);
+function TcdaRegionOfInterest_valueList.AddItem(value : TcdaRegionOfInterest_value): TcdaRegionOfInterest_value;
 Begin
-  Add(value.Link);
+  add(value);
+  result := value;
 End;
 
 Function TcdaRegionOfInterest_valueList.IndexOf(value : TcdaRegionOfInterest_value) : Integer;
@@ -22596,7 +22623,7 @@ Begin
   Try
     Inherited Insert(iIndex, Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 

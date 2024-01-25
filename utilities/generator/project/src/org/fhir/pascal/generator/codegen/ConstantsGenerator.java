@@ -16,6 +16,8 @@ import org.fhir.pascal.generator.analysis.Analysis;
 import org.fhir.pascal.generator.engine.Configuration;
 import org.fhir.pascal.generator.engine.Definitions;
 import org.hl7.fhir.r5.model.CodeType;
+import org.hl7.fhir.r5.model.Enumeration;
+import org.hl7.fhir.r5.model.Enumerations.AllResourceTypes;
 import org.hl7.fhir.r5.model.SearchParameter;
 import org.hl7.fhir.r5.model.StructureDefinition;
 import org.hl7.fhir.utilities.Utilities;
@@ -64,7 +66,7 @@ public class ConstantsGenerator extends BaseGenerator {
 
 	public void generate(String filename) throws Exception {
 	  doGen();
-	  String template = config.getTemplate("FHIR.R5.Constants");    
+	  String template = config.getTemplate("fhir{N}_constants");    
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{ver-mmp}}", version);
     template = template.replace("{{ver-mm}}", VersionUtilities.getMajMin(version));

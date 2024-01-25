@@ -285,7 +285,7 @@ procedure TQuestionnaireEditorFrame.btnAddCodeClick(Sender: TObject);
 var
   dlg : TUsageContextDialog;
 begin
-  dlg := TUsageContextDialog.create(nil);
+  dlg := TUsageContextDialog.Create(nil);
   try
     dlg.UsageContext := TFhirUsageContext.Create;
     dlg.Settings := Settings.link;
@@ -474,7 +474,7 @@ begin
   if i < 0 then
     i := 0;
 
-  dlg := TUsageContextDialog.create(nil);
+  dlg := TUsageContextDialog.Create(nil);
   try
     dlg.UsageContext := Questionnaire.useContextList[i].Clone;
     dlg.Settings := Settings.link;
@@ -521,7 +521,7 @@ begin
       ResourceIsDirty := true;
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -602,7 +602,7 @@ procedure TQuestionnaireEditorFrame.Button1Click(Sender: TObject);
 var
   dlg : TQuestionnaireContextForm;
 begin
-  dlg := TQuestionnaireContextForm.create(nil);
+  dlg := TQuestionnaireContextForm.Create(nil);
   try
     dlg.Context := TFHIRExtension.Create;
     dlg.Context.url := 'http://hl7.org/fhir/StructureDefinition/questionnaire-context';
@@ -627,7 +627,7 @@ begin
     i := 0;
 
   ext := Questionnaire.getExtension('http://hl7.org/fhir/StructureDefinition/questionnaire-context', i);
-  dlg := TQuestionnaireContextForm.create(nil);
+  dlg := TQuestionnaireContextForm.Create(nil);
   try
     dlg.Context := ext.Clone;
     if ShowModalHack(dlg) = mrOk then
@@ -767,12 +767,12 @@ end;
 constructor TQuestionnaireEditorFrame.Create(owner: TComponent);
 begin
   inherited;
-  flatItems := TFslList<TFhirQuestionnaireItem>.create;
+  flatItems := TFslList<TFhirQuestionnaireItem>.Create;
 end;
 
 destructor TQuestionnaireEditorFrame.Destroy;
 begin
-  flatItems.Free;
+  flatItems.free;
   inherited;
 end;
 
@@ -1258,7 +1258,7 @@ end;
 
 function template(fragment : String) : String;
 begin
-result :=
+result := 
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
 '<head>'+#13#10+
 '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+

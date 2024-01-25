@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Worker;
+unit fhir5_tests_worker;
 
 {.$.DEFINE DIFF}
 
@@ -30,31 +30,23 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 interface
 
 uses
-  {$IFDEF WINDOWS}Windows, WinAPI.ShellAPI, {$ENDIF}
-  SysUtils, Classes, Soap.EncdDecd,
-  fsl_utilities,
-  fhir_objects,  fhir_common, fhir_factory,
-  FHIR.Version.Parser,
-  fhir5_types, fhir5_resources, fhir5_constants, fhir5_context, fhir5_profiles, fhir5_pathengine,
+  {$IFDEF WINDOWS}Windows, ShellAPI, {$ENDIF}
+  SysUtils, Classes,
+  fsl_testing,
+  fsl_utilities, fsl_json,
   fsl_npm_cache,
-  fsl_json, DUnitX.TestFramework;
+  fhir_objects,  fhir_common, fhir_factory,
+  fhir5_parser,
+  fsl_tests,
+  fhir5_types, fhir5_resources, fhir5_constants, fhir5_context, fhir5_profiles, fhir5_pathengine;
 
 Type
-  FHIRFolderBasedTestCaseAttribute = class (CustomTestCaseSourceAttribute)
-  private
-    FFolder : String;
-    FFilter : String;
-    FCount : integer;
-  protected
-    function GetCaseInfoArray : TestCaseInfoArray; override;
-  public
-    constructor Create(folder, filter : String; count : integer);
-  end;
-
-  TTestingWorkerContext = class (TBaseWorkerContext)
+  TTestingWorkerContext5 = class (TBaseWorkerContext)
   public
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFHIRValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -63,27 +55,9 @@ Type
     function validateCode(code : TFHIRCoding; vs : TFhirValueSet) : TValidationResult; overload; override;
     function validateCode(code : TFHIRCodeableConcept; vs : TFhirValueSet) : TValidationResult; overload; override;
 
+    function getSearchParameter(resourceType, name : String) : TFHIRResourceV; override;
     class function Use : TFHIRWorkerContext;
     class procedure closeUp;
-  protected
-    function sizeInBytesV : cardinal; override;
-  end;
-
-
-  TTestObjectThread = class (TThread)
-  private
-    FProc : TThreadProcedure;
-  protected
-    procedure Execute; override;
-    function sizeInBytesV : cardinal; override;
-  public
-    constructor Create(proc : TThreadProcedure);
-  end;
-  TTestObject = class (TObject)
-  private
-  protected
-    procedure thread(proc : TThreadProcedure);
-  public
   end;
 
 implementation
@@ -92,142 +66,75 @@ uses
   IdGlobalProtocols, fhir5_factory;
 
 
-
-{ TTestingWorkerContext }
+{ TTestingWorkerContext5 }
 var
   GWorkerContext : TBaseWorkerContext;
 
-function TTestingWorkerContext.sizeInBytesV : cardinal;
+class procedure TTestingWorkerContext5.closeUp;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, class function Use.sizeInBytes);
-end;
-
-class procedure TTestingWorkerContext.closeUp;
-begin
-  GWorkerContext.Free;
+  GWorkerContext.free;
   GWorkerContext := nil;
 end;
 
-function TTestingWorkerContext.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
+function TTestingWorkerContext5.expand(vs: TFhirValueSet; options : TExpansionOperationOptionSet = []): TFHIRValueSet;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.expand');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext5.expand');
 end;
 
-function TTestingWorkerContext.supportsSystem(system, version: string): boolean;
+function TTestingWorkerContext5.getSearchParameter(resourceType, name: String): TFHIRResourceV;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.supportsSystem');
+  result := nil;
 end;
 
+function TTestingWorkerContext5.supportsSystem(system, version: string): boolean;
+begin
+  raise EFHIRPathTodo.Create('TTestingWorkerContext5.supportsSystem');
+end;
 
-class function TTestingWorkerContext.Use: TFHIRWorkerContext;
+class function TTestingWorkerContext5.Use: TFHIRWorkerContext;
 var
   pcm : TFHIRPackageManager;
   li : TPackageLoadingInformation;
 begin
   if GWorkerContext = nil then
   begin
-    GWorkerContext := TTestingWorkerContext.create(TFHIRFactoryR4.create);
-    pcm := TFHIRPackageManager.Create(false);
-    li := TPackageLoadingInformation.create(fhir5_constants.FHIR_GENERATED_VERSION);
+    GWorkerContext := TTestingWorkerContext5.Create(TFHIRFactoryR5.create, TFHIRPackageManager.Create(npmModeUser));
+    pcm := TFHIRPackageManager.Create(npmModeUser);
+    li := TPackageLoadingInformation.Create(fhir5_constants.FHIR_GENERATED_VERSION);
     try
       li.OnLoadEvent := GWorkerContext.loadResourceJson;
-      pcm.loadPackage('hl7.fhir.core', fhir5_constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
+      pcm.loadPackage('hl7.fhir.r5.core', fhir5_constants.FHIR_GENERATED_VERSION, ['CodeSystem', 'ValueSet', 'StructureDefinition', 'StructureMap', 'ConceptMap'],
         li);
     finally
-      li.Free;
-      pcm.Free;
+      li.free;
+      pcm.free;
     end;
   end;
   result := GWorkerContext.link;
 end;
 
-function TTestingWorkerContext.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
+function TTestingWorkerContext5.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext5.validateCode');
 end;
 
-function TTestingWorkerContext.validateCode(system, version, code, display: String): TValidationResult;
+function TTestingWorkerContext5.validateCode(system, version, code, display: String): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext5.validateCode');
 end;
 
-function TTestingWorkerContext.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
+function TTestingWorkerContext5.validateCode(code: TFHIRCodeableConcept; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
+  raise EFHIRPathTodo.Create('TTestingWorkerContext5.validateCode');
 end;
 
-function TTestingWorkerContext.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
+function TTestingWorkerContext5.validateCode(code: TFHIRCoding; vs: TFhirValueSet): TValidationResult;
 begin
-  raise EFHIRPathTodo.create('TTestingWorkerContext.validateCode');
-end;
-
-{ FHIRFolderBasedTestCaseAttribute }
-
-constructor FHIRFolderBasedTestCaseAttribute.Create(folder, filter: String; count : integer);
-begin
-  inherited Create;
-  FFolder := folder;
-  FFilter := filter;
-  FCount := count;
-end;
-
-function FHIRFolderBasedTestCaseAttribute.GetCaseInfoArray: TestCaseInfoArray;
-var
-  sl : TStringlist;
-  sr : TSearchRec;
-  s : String;
-  i : integer;
-begin
-  sl := TStringList.create;
-  try
-    if FindFirst(FFolder+'\*.*', faAnyFile, SR) = 0 then
-    repeat
-      s := sr.Name;
-      if ((FFilter = '') or s.endsWith(FFilter)) and ((FCount = 0) or (sl.count < FCount)) then
-        sl.Add(sr.Name);
-    until FindNext(SR) <> 0;
-    setLength(result, sl.Count);
-    for i := 0 to sl.Count - 1 do
-    begin
-      result[i].Name := sl[i];
-      SetLength(result[i].Values, 1);
-      result[i].Values[0] := IncludeTrailingPathDelimiter(FFolder) + sl[i];
-    end;
-  finally
-    sl.Free;
-  end;
-end;
-
-{ TTestObjectThread }
-
-constructor TTestObjectThread.Create(proc: TThreadProcedure);
-begin
-  FProc := proc;
-  FreeOnTerminate := true;
-  inherited Create(false);
-end;
-
-procedure TTestObjectThread.execute;
-begin
-  Fproc;
-end;
-
-function TTestObjectThread.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FProc.sizeInBytes);
-end;
-
-{ TTestObject }
-
-procedure TTestObject.thread(proc: TThreadProcedure);
-begin
-  TTestObjectThread.Create(proc);
+  raise EFHIRPathTodo.Create('TTestingWorkerContext5.validateCode');
 end;
 
 initialization
 finalization
-  TTestingWorkerContext.closeUp;
+  TTestingWorkerContext5.closeUp;
 end.
 

@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{$I fhir5.inc}
 
 interface
 
@@ -48,13 +49,14 @@ type
     pfNull, pfEmpty, pfNot, pfExists, pfSubsetOf, pfSupersetOf, pfIsDistinct, pfDistinct, pfCount, pfWhere, pfSelect, pfAll,
     pfRepeat, pfAggregate, pfItem, pfAs, pfIs, pfSingle, pfFirst, pfLast, pfTail, pfSkip, pfTake, pfUnion, pfCombine, pfIntersect, pfExclude,
     pfIif, pfUpper, pfLower, pfToChars,
-    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
+    pfSubstring, pfStartsWith, pfEndsWith, pfMatches, pfMatchesFull, pfReplaceMatches, pfContains, pfReplace, pfLength, pfChildren, pfDescendants,
     pfMemberOf, pfTrace, pfToday, pfNow, pfResolve, pfExtension, pfHasExtension, pfAllFalse, pfAnyFalse, pfAllTrue, pfAnyTrue,
     pfElementDefinition, pfSlice, pfCheckModifiers, pfConformsTo, pfHasValue, pfHtmlChecks, pfOfType, pfType,
     pfConvertsToBoolean, pfConvertsToInteger, pfConvertsToString, pfConvertsToDecimal, pfConvertsToQuantity, pfConvertsToDateTime, pfConvertsToDate, pfConvertsToTime,
     pfToBoolean, pfToInteger, pfToString, pfToDecimal, pfToQuantity, pfToDateTime, pfToTime,
     pfAbs, pfCeiling, pfExp, pfFloor, pfLn, pfLog, pfPower, pfTruncate, pfRound, pfSqrt,
-    pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin,
+    pfForHtml, pfEncode, pfDecode, pfEscape, pfUnescape, pfTrim, pfSplit, pfJoin, pfIndexOf,
+    pfLowBoundary, pfHighBoundary, pfPrecision, pfComparable,
     pfCustom);
 
   TFHIRPathExpressionNodeKind = (enkName, enkFunction, enkConstant, enkGroup, enkStructure, enkUnary); // structure is not used in fhir4_pathengine, but is in CQL
@@ -69,13 +71,14 @@ const
     '', 'empty', 'not', 'exists', 'subsetOf', 'supersetOf', 'isDistinct', 'distinct', 'count', 'where', 'select', 'all',
     'repeat', 'aggregate', '[]', 'as', 'is', 'single', 'first', 'last', 'tail', 'skip', 'take', 'union', 'combine', 'intersect', 'exclude',
     'iif', 'upper', 'lower', 'toChars',
-    'substring', 'startsWith', 'endsWith', 'matches', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
+    'substring', 'startsWith', 'endsWith', 'matches', 'matchesFull', 'replaceMatches', 'contains', 'replace', 'length', 'children', 'descendants',
     'memberOf', 'trace', 'today', 'now', 'resolve', 'extension', 'hasExtension', 'allFalse', 'anyFalse', 'allTrue', 'anyTrue',
     'elementDefinition', 'slice', 'checkModifiers', 'conformsTo', 'hasValue', 'htmlchecks', 'ofType', 'type',
     'convertsToBoolean', 'convertsToInteger', 'convertsToString', 'convertsToDecimal', 'convertsToQuantity', 'convertsToDateTime', 'convertsToDate', 'convertsToTime',
     'toBoolean', 'toInteger', 'toString', 'toDecimal', 'toQuantity', 'toDateTime', 'toTime',
     'abs', 'ceiling', 'exp', 'floor', 'ln', 'log', 'power', 'truncate', 'round', 'sqrt',
-    'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join',
+    'forHtml', 'encode', 'decode', 'escape', 'unescape', 'trim', 'split', 'join', 'indexOf',
+    'lowBoundary', 'highBoundary', 'precision', 'comparable',
     'xx-custom-xx');
 
   FHIR_SD_NS = 'http://hl7.org/fhir/StructureDefinition/';
@@ -98,7 +101,7 @@ type
     FProfiles : TStringList; // or, not and
     FBindings : TFslList<TFHIRElementDefinitionBinding>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(s : string);
     destructor Destroy; override;
@@ -127,7 +130,7 @@ type
     function typesContains(t : String) : boolean;
     function getSystemType(url : string) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(status : TFHIRCollectionStatus; types : array of String);
     constructor CreateList(status : TFHIRCollectionStatus; types : TFslList<TFHIRProfiledType>); overload;
@@ -146,6 +149,7 @@ type
     function hasType(context : TFHIRWorkerContext; types : TStringList) : boolean; overload;
     procedure update(source : TFHIRTypeDetails); overload;
     procedure update(status : TFHIRCollectionStatus; types : TStringList); overload;
+    procedure update(status : TFHIRCollectionStatus; type_ : string); overload;
     function union(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function intersect(right : TFHIRTypeDetails) : TFHIRTypeDetails;
     function hasNoTypes() : boolean;
@@ -153,6 +157,7 @@ type
     property types : TFslList<TFHIRProfiledType> read FTypes;
     property CollectionStatus : TFHIRCollectionStatus read FCollectionStatus;
     function describe : String;
+    function debugInfo : String; override;
     function type_ : String;
   end;
 
@@ -184,7 +189,7 @@ type
     procedure write(b : TStringBuilder);
     procedure SetConstant(const Value: TFHIRObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(uniqueId : Integer);
     destructor Destroy; override;
@@ -230,18 +235,21 @@ type
     property OpTypes : TFHIRTypeDetails read FOpTypes write SetOpTypes;
   end;
 
+  { TFHIRExpressionNodeComposer }
+
   TFHIRExpressionNodeComposer = class (TFslObject)
   private
     FStyle : TFHIROutputStyle;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
     procedure ComposeXml(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure composeXmlExpression(xml: TXmlBuilder; expr: TFHIRPathExpressionNode);
     procedure ComposeJson(stream : TStream; expr : TFHIRPathExpressionNode; items : TFHIRObjectList; types : TFslStringSet);
     procedure ComposeJsonExpression(json: TJSONWriter; expr : TFHIRPathExpressionNode); reintroduce; overload; virtual;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(style : TFHIROutputStyle; const lang : THTTPLanguages); Virtual;
+    constructor Create(style : TFHIROutputStyle; langList : THTTPLanguageList); Virtual;
+    destructor Destroy; override;
 
     procedure ComposeExpression(stream : TStream; expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet); Virtual;
     function Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items : TFHIRObjectList; types : TFslStringSet): String; Overload;
@@ -262,7 +270,7 @@ begin
     write(b);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -317,7 +325,7 @@ end;
 function TFHIRPathExpressionNode.checkName: boolean;
 begin
   if (name.StartsWith('$')) then
-    result := StringArrayExistsSensitive(['$this', '$resource', '$total'], name)
+    result := StringArrayExistsSensitive(['$this', '$resource', '$total', '$index'], name)
   else
     result := true;
 end;
@@ -331,12 +339,12 @@ end;
 destructor TFHIRPathExpressionNode.Destroy;
 begin
   FParameters.free;
-  FOpNext.Free;
-  FInner.Free;
-  FGroup.Free;
-  FTypes.Free;
-  FOpTypes.Free;
-  FConstant.Free;
+  FOpNext.free;
+  FInner.free;
+  FGroup.free;
+  FTypes.free;
+  FOpTypes.free;
+  FConstant.free;
   inherited;
 end;
 
@@ -426,7 +434,7 @@ end;
 
 procedure TFHIRPathExpressionNode.SetConstant(const Value: TFHIRObject);
 begin
-  FConstant.Free;
+  FConstant.free;
   FConstant := Value;
 end;
 
@@ -434,18 +442,18 @@ procedure TFHIRPathExpressionNode.SetFunctionId(const Value: TFHIRPathFunction);
 begin
   FFunctionId := Value;
   if FParameters = nil then
-    FParameters := TFslList<TFHIRPathExpressionNode>.create;
+    FParameters := TFslList<TFHIRPathExpressionNode>.Create;
 end;
 
 procedure TFHIRPathExpressionNode.SetOpNext(const Value: TFHIRPathExpressionNode);
 begin
-  FOpNext.Free;
+  FOpNext.free;
   FOpNext := Value;
 end;
 
 procedure TFHIRPathExpressionNode.SetTypes(const Value: TFHIRTypeDetails);
 begin
-  FTypes.Free;
+  FTypes.free;
   FTypes := Value;
 end;
 
@@ -496,7 +504,7 @@ var
   first : boolean;
   n : TFHIRPathExpressionNode;
 begin
-  b := TStringBuilder.create();
+  b := TStringBuilder.Create();
   try
     case kind of
     enkName:
@@ -629,7 +637,7 @@ end;
 
 procedure TFHIRPathExpressionNode.SetOpTypes(const Value: TFHIRTypeDetails);
 begin
-  FOpTypes.Free;
+  FOpTypes.free;
   FOpTypes := Value;
 end;
 
@@ -641,21 +649,21 @@ end;
 
 procedure TFHIRPathExpressionNode.SetGroup(const Value: TFHIRPathExpressionNode);
 begin
-  FGroup.Free;
+  FGroup.free;
   FGroup := Value;
 end;
 
-function TFHIRPathExpressionNode.sizeInBytesV : cardinal;
+function TFHIRPathExpressionNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FConstant.sizeInBytes);
-  inc(result, FParameters.sizeInBytes);
-  inc(result, FInner.sizeInBytes);
-  inc(result, FGroup.sizeInBytes);
-  inc(result, FOpNext.sizeInBytes);
-  inc(result, FTypes.sizeInBytes);
-  inc(result, FOpTypes.sizeInBytes);
+  inc(result, FConstant.sizeInBytes(magic));
+  inc(result, FParameters.sizeInBytes(magic));
+  inc(result, FInner.sizeInBytes(magic));
+  inc(result, FGroup.sizeInBytes(magic));
+  inc(result, FOpNext.sizeInBytes(magic));
+  inc(result, FTypes.sizeInBytes(magic));
+  inc(result, FOpTypes.sizeInBytes(magic));
 end;
 
 { TFHIRProfiledType }
@@ -668,8 +676,8 @@ end;
 
 destructor TFHIRProfiledType.Destroy;
 begin
-  FProfiles.Free;
-  FBindings.Free;
+  FProfiles.free;
+  FBindings.free;
   inherited;
 end;
 
@@ -681,7 +689,7 @@ end;
 procedure TFHIRProfiledType.addBinding(b: TFHIRElementDefinitionBinding);
 begin
   if (Fbindings = nil) then
-    Fbindings := TFslList<TFHIRElementDefinitionBinding>.create;
+    Fbindings := TFslList<TFHIRElementDefinitionBinding>.Create;
   FBindings.add(b);
 end;
 
@@ -720,12 +728,12 @@ begin
   result := Furi.startsWith(FP_NS);
 end;
 
-function TFHIRProfiledType.sizeInBytesV : cardinal;
+function TFHIRProfiledType.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Furi.length * sizeof(char)) + 12);
-  inc(result, FProfiles.sizeInBytes);
-  inc(result, FBindings.sizeInBytes);
+  inc(result, FProfiles.sizeInBytes(magic));
+  inc(result, FBindings.sizeInBytes(magic));
 end;
 
 class function TFHIRProfiledType.ns(s: String): String;
@@ -746,17 +754,17 @@ var
 constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TFslList<TFHIRProfiledType>);
 begin
   inherited Create;
-  FTypes := TFslList<TFHIRProfiledType>.create;
+  FTypes := TFslList<TFHIRProfiledType>.Create;
   FCollectionStatus := status;
   FTypes.AddAll(types);
   inc(gc);
   id := gc;
 end;
 
-constructor TFHIRTypeDetails.create(status: TFHIRCollectionStatus; types: array of String);
+constructor TFHIRTypeDetails.Create(status: TFHIRCollectionStatus; types: array of String);
 begin
   inherited Create;
-  FTypes := TFslList<TFHIRProfiledType>.create;
+  FTypes := TFslList<TFHIRProfiledType>.Create;
   FCollectionStatus := status;
   addTypes(types);
   inc(gc);
@@ -766,7 +774,7 @@ end;
 constructor TFHIRTypeDetails.createList(status: TFHIRCollectionStatus; types: TStringList);
 begin
   inherited Create;
-  FTypes := TFslList<TFHIRProfiledType>.create;
+  FTypes := TFslList<TFHIRProfiledType>.Create;
   FCollectionStatus := status;
   addTypes(types);
   inc(gc);
@@ -775,7 +783,7 @@ end;
 
 destructor TFHIRTypeDetails.Destroy;
 begin
-  FTypes.Free;
+  FTypes.free;
   inherited;
 end;
 
@@ -811,6 +819,7 @@ begin
     end;
   end;
   Ftypes.add(pt.Link);
+  updateDebugInfo;
 end;
 
 function TFHIRTypeDetails.addType(n: String) : String;
@@ -822,7 +831,7 @@ begin
     result := pt.uri;
     addType(pt);
   finally
-    pt.Free;
+    pt.free;
   end;
 end;
 
@@ -836,7 +845,7 @@ begin
     result := pt.uri;
     addType(pt);
   finally
-    pt.Free;
+    pt.free;
   end;
 end;
 
@@ -933,17 +942,17 @@ begin
         end
         else
           w := nil;
-        sd.Free;
+        sd.free;
         sd := w;
       end;
     finally
-      sd.Free;
+      sd.free;
     end;
   end;
   result := false;
 end;
 
-function TFHIRTypeDetails.getSystemType(url : String) : String;
+function TFHIRTypeDetails.getSystemType(url: string): String;
 var
   code : String;
 begin
@@ -960,21 +969,21 @@ procedure TFHIRTypeDetails.update(source: TFHIRTypeDetails);
 var
   pt : TFHIRProfiledType;
 begin
-  for pt in source.Types do
-    addType(pt);
   if (FcollectionStatus = csNULL) then
     FcollectionStatus := source.collectionStatus
   else if (source.FcollectionStatus = csUNORDERED) then
     FcollectionStatus := source.collectionStatus
   else
     FcollectionStatus := csORDERED;
+  for pt in source.Types do
+    addType(pt);
 end;
 
 function TFHIRTypeDetails.union(right: TFHIRTypeDetails): TFHIRTypeDetails;
 var
   pt : TFHIRProfiledType;
 begin
-  result := TFHIRTypeDetails.create(csNULL, []);
+  result := TFHIRTypeDetails.Create(csNULL, []);
   try
     if (right.FcollectionStatus = csUNORDERED) or (FCollectionStatus = csUNORDERED) then
       result.FcollectionStatus := csUNORDERED
@@ -986,7 +995,7 @@ begin
       result.addType(pt);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -994,8 +1003,19 @@ procedure TFHIRTypeDetails.update(status: TFHIRCollectionStatus; types: TStringL
 var
   s : String;
 begin
+  if (FcollectionStatus = csNULL) then
+    FcollectionStatus := status
+  else if (status = csUNORDERED) then
+    FcollectionStatus := status
+  else
+    FcollectionStatus := csORDERED;
   for s in Types do
     addType(s);
+end;
+
+procedure TFHIRTypeDetails.update(status: TFHIRCollectionStatus; type_: string);
+begin
+  addType(type_);
   if (FcollectionStatus = csNULL) then
     FcollectionStatus := status
   else if (status = csUNORDERED) then
@@ -1009,7 +1029,7 @@ var
   pt, r : TFHIRProfiledType;
   found : boolean;
 begin
-  result := TFHIRTypeDetails.create(csNULL, []);
+  result := TFHIRTypeDetails.Create(csNULL, []);
   try
     if (right.FcollectionStatus in [csUNORDERED, csSINGLETON]) then
       result.FcollectionStatus := csUNORDERED
@@ -1025,7 +1045,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1036,12 +1056,12 @@ end;
 
 function TFHIRTypeDetails.toSingleton: TFHIRTypeDetails;
 begin
-  result := TFHIRTypeDetails.create(csSINGLETON, []);
+  result := TFHIRTypeDetails.Create(csSINGLETON, []);
   try
     result.FTypes.AddAll(FTypes);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1054,31 +1074,42 @@ begin
      CommaAdd(result, pt.uri);
 end;
 
-function TFHIRTypeDetails.sizeInBytesV : cardinal;
+function TFHIRTypeDetails.debugInfo: String;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTypes.sizeInBytes);
+  Result := describe;
+end;
+
+function TFHIRTypeDetails.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTypes.sizeInBytes(magic));
 end;
 
 { TFHIRExpressionNodeComposer }
 
-constructor TFHIRExpressionNodeComposer.Create(style: TFHIROutputStyle; const lang : THTTPLanguages);
+constructor TFHIRExpressionNodeComposer.Create(style: TFHIROutputStyle; langList : THTTPLanguageList);
 begin
   inherited Create;
-  FLang := lang;
+  FLangList := langList;
   FStyle := Style;
+end;
+
+destructor TFHIRExpressionNodeComposer.Destroy;
+begin
+  FLangList.free;
+  inherited Destroy;
 end;
 
 function TFHIRExpressionNodeComposer.Compose(expr : TFHIRPathExpressionNode; fmt : TFHIRFormat; items: TFHIRObjectList; types : TFslStringSet): String;
 var
   stream : TBytesStream;
 begin
-  stream := TBytesStream.create;
+  stream := TBytesStream.Create;
   try
     composeExpression(stream, expr, fmt, items, types);
     result := TEncoding.UTF8.GetString(copy(stream.Bytes, 0, stream.position));
   finally
-    stream.Free;
+    stream.free;
   end;
 end;
 
@@ -1088,17 +1119,18 @@ begin
     ffXml : ComposeXml(stream, expr, items, types);
     ffJson: ComposeJson(stream, expr, items, types);
   else
-    raise EFHIRException.create('ComposeExpression is Not supported for '+CODES_TFHIRFormat[fmt]);
+    raise EFHIRException.Create('ComposeExpression is Not supported for '+CODES_TFHIRFormat[fmt]);
   end;
 end;
 
-procedure TFHIRExpressionNodeComposer.composeXml(stream: TStream; expr : TFHIRPathExpressionNode; items: TFHIRObjectList; types : TFslStringSet);
+procedure TFHIRExpressionNodeComposer.ComposeXml(stream: TStream;
+  expr: TFHIRPathExpressionNode; items: TFHIRObjectList; types: TFslStringSet);
 var
   xml : TXmlBuilder;
   base : TFHIRObject;
   x : TFHIRXmlComposerBase;
 begin
-  x := TFHIRParsers5.composer(nil, ffXml, FLang, FStyle) as TFHIRXmlComposerBase;
+  x := TFHIRParsers5.composer(nil, ffXml, FLangList.link, FStyle) as TFHIRXmlComposerBase;
   try
     xml := TFslXmlBuilder.Create;
     try
@@ -1132,10 +1164,10 @@ begin
       xml.Finish;
       xml.Build(stream);
     finally
-      xml.Free;
+      xml.free;
     end;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
@@ -1210,9 +1242,9 @@ var
   base : TFHIRObject;
   j : TFHIRJsonComposerBase;
 begin
-  j := TFHIRParsers5.composer(nil, ffJson, FLang, FStyle) as TFHIRJsonComposerBase;
+  j := TFHIRParsers5.composer(nil, ffJson, FLangList.link, FStyle) as TFHIRJsonComposerBase;
   try
-    json := TJsonWriterDirect.create;
+    json := TJsonWriterDirect.Create;
     try
       oStream := TFslVCLStream.Create;
       json.Stream := oStream;
@@ -1234,7 +1266,7 @@ begin
       json.free;
     end;
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -1287,10 +1319,10 @@ begin
 end;
 
 
-function TFHIRExpressionNodeComposer.sizeInBytesV : cardinal;
+function TFHIRExpressionNodeComposer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLang.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLangList.sizeInBytes(magic));
 end;
 
 end.

@@ -1,4 +1,4 @@
-unit FHIR.Cql.Parser;
+unit cql_parser;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -244,7 +244,7 @@ begin
           code.Id := s;
         result.Codes.Add(code.Link);
       finally
-        code.Free;
+        code.free;
       end;
     end;
 
@@ -266,7 +266,7 @@ begin
   try
     result := parseLibrary(lexer);
   finally
-    lexer.Free;
+    lexer.free;
   end;
 end;
 
@@ -278,7 +278,7 @@ var
 begin
   access := CqlAccessDefault;
   lexer.Next;
-  result := TCqlFunctionDefinition.create;
+  result := TCqlFunctionDefinition.Create;
   try
     result.StartPosition := lexer.CurrentLocation;
     result.AccessLevel := access;
@@ -293,13 +293,13 @@ begin
         first := false
       else
         lexer.token(',');
-      param := TCqlFunctionParameterDefinition.create;
+      param := TCqlFunctionParameterDefinition.Create;
       try
         param.name := lexer.readIdentifier('parameter name');
         param.typeDetails := parseTypeDetails(lexer);
         result.parameters.add(param.link);
       finally
-        param.Free;
+        param.free;
       end;
     end;
     lexer.token(')');
@@ -311,7 +311,7 @@ begin
     result.EndPosition := lexer.CurrentLocation;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -617,7 +617,7 @@ begin
     result.TypeInfo := parseTypeDetails(lexer);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;;
 end;
 
@@ -666,7 +666,7 @@ begin
           result.CodeSystems.Add(ref.link);
           ref.EndPosition := lexer.CurrentLocation;
         finally
-          ref.Free;
+          ref.free;
         end;
       end;
       lexer.token('}');
@@ -724,13 +724,13 @@ end;
 constructor TCqlParser.Create;
 begin
   inherited;
-  FRegistry := TCqlFunctionRegistry.create;
+  FRegistry := TCqlFunctionRegistry.Create;
 
 end;
 
 destructor TCqlParser.Destroy;
 begin
-  FRegistry.Free;
+  FRegistry.free;
   inherited;
 end;
 
@@ -742,7 +742,7 @@ begin
     result.kind := enkConstant;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -754,7 +754,7 @@ begin
     result.kind := enkConstant;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1134,14 +1134,14 @@ constructor TCqlFunctionRegistry.Create;
 begin
   inherited;
   FMap := TFslMap<TCqlFunction>.create('Functions');
-  FList := TFslList<TCqlFunction>.create;
+  FList := TFslList<TCqlFunction>.Create;
   Populate;
 end;
 
 destructor TCqlFunctionRegistry.Destroy;
 begin
-  FMap.Free;
-  FList.Free;
+  FMap.free;
+  FList.free;
   inherited;
 end;
 
@@ -1350,7 +1350,7 @@ begin
             c.sortOrder := cqlSortDescending;
           expression.sort.Add(c.Link);
         finally
-          c.Free;
+          c.free;
         end;
       until not lexer.hasToken(',');
     end
@@ -1422,7 +1422,7 @@ begin
           expression.items.Add(l.Link);
         end;
       finally
-        l.Free;
+        l.free;
       end;
     end;
   end;
@@ -1492,7 +1492,7 @@ begin
       c.thenStmt := parseExpression(lexer, [cpsProximal, cpsCheckAlias, cpsNoprocessEnd]);
       expression.items.add(c.Link);
     finally
-      c.Free;
+      c.free;
     end;
   end;
   if lexer.takeToken('else') then
@@ -1726,7 +1726,7 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

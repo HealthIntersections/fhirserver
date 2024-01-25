@@ -39,7 +39,7 @@ uses
   fsl_base,
   fdb_manager, fdb_dialects, fsl_stream,
   fhir_objects, fhir_factory, fhir_utilities,
-  indexing, server_factory, server_version,
+  indexing, server_factory, server_version, server_constants,
   scim_server;
 
 const
@@ -115,7 +115,7 @@ Type
     procedure CreatePackagesTables;
     procedure CreatePackagePermissionsTable;
     procedure CreateLoadedPackagesTable;
-//    procedure CreateTwilioTable;
+    procedure CreateSmartHealthCardsTable;
 //    procedure runScript(s : String);
   public
     constructor Create(conn : TFDBConnection; factory : TFHIRFactory; serverFactory : TFHIRServerFactory);
@@ -131,7 +131,7 @@ Type
     procedure Install(scim : TSCIMServer);
     Procedure Uninstall;
 
-    Procedure Upgrade(version : integer);
+    procedure Upgrade(version : integer = 0);
     property callback : TInstallerCallback read Fcallback write Fcallback;
   end;
 
@@ -374,6 +374,7 @@ begin
        ' Id              nchar(64)                            '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Canonical       nchar(128)                           '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' DownloadCount   int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Security        int                                      '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' ManualToken     nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
        ' CurrentVersion  '+DBKeyType(FConn.owner.platform)+'  '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Packages', 'PackageKey')+') '+CreateTableInfo(FConn.owner.platform));
@@ -388,10 +389,12 @@ begin
        ' Id                nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Version           nchar(64)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Kind              int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' UploadCount       int                                      '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
        ' DownloadCount     int                                      '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
-       ' ManualToken       nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+    //
+       ' ManualToken       nchar(64)                                '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
        ' Canonical         nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' FhirVersions      nchar(255)                               '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
+       ' Hash              nchar(128)                                '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+    //
        ' Description       '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, True) +', '+#13#10+    //
        ' Content           '+DBBlobType(FConn.owner.platform)+'     '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        PrimaryKeyType(FConn.owner.Platform, 'PK_PackageVersions', 'PackageVersionKey')+') '+CreateTableInfo(FConn.owner.platform));
@@ -412,6 +415,8 @@ begin
        ' Dependency            nchar(128)                               '+ColCanBeNull(FConn.owner.platform, False)+')'+#13#10);
   FConn.ExecSQL('Create INDEX SK_PackageDependencies ON PackageDependencies (PackageVersionKey)');
 
+  FConn.ExecSQL('CREATE TABLE PackageURLs(PackageVersionKey int NOT NULL,	URL nchar(128) NOT NULL)');
+  FConn.ExecSQL('Create INDEX SK_PackageURLs ON PackageURLs(PackageVersionKey)');
 end;
 
 procedure TFHIRDatabaseInstaller.CreatePseudoData;
@@ -469,7 +474,7 @@ procedure TFHIRDatabaseInstaller.CreateConcepts;
 begin
   FConn.ExecSQL('CREATE TABLE Concepts ( '+#13#10+
        ' ConceptKey '+DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+',  '+#13#10+
-       ' URL nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
+       ' URL nchar(200) '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' Code nchar(100) '+ColCanBeNull(FConn.owner.platform, False)+', '+
        ' NeedsIndexing int '+ColCanBeNull(FConn.owner.platform, False)+', '+
        PrimaryKeyType(FConn.owner.Platform, 'PK_Concepts', 'ConceptKey')+') '+CreateTableInfo(FConn.owner.platform));
@@ -529,16 +534,16 @@ begin
   FConn.ExecSQL('CREATE TABLE OAuthLogins( '+#13#10+
        ' Id nchar('+inttostr(ID_LENGTH)+') NOT NULL, '+#13#10+
        ' Client nchar(48) NOT NULL, '+#13#10+
-       ' Scope nchar(1024) NOT NULL, '+#13#10+
        ' Redirect nchar(255) NOT NULL, '+#13#10+
        ' Patient nchar(64) NULL, '+#13#10+
        ' Status int NOT NULL, '+#13#10+
+       ' Launch nchar(255) NULL, '+#13#10+
        ' DateAdded '+DBDateTimeType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' DateSignedIn '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateChosen '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' DateTokenAccessed '+DBDateTimeType(FConn.owner.platform)+' NULL, '+#13#10+
        ' SessionKey '+DBKeyType(FConn.owner.platform)+' NULL, '+#13#10+
-       ' Launch nchar(255) NULL, '+#13#10+
+       ' Scope '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' ClientState '+DBBlobType(FConn.owner.platform)+' NOT NULL, '+#13#10+
        ' Rights '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
        ' Jwt '+DBBlobType(FConn.owner.platform)+' Null, '+#13#10+
@@ -724,6 +729,8 @@ Begin
        ' Count int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Summary int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Reverse int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Reverse2 int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       ' Reverse3 int '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
        ' Date '+DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Type int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
        ' Title '+DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
@@ -745,6 +752,8 @@ Begin
        ' SortValue nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Score1 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        ' Score2 int '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' SortValue2 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' SortValue3 nchar(128) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
        InlineForeignKeySql(FConn, 'SearchEntries', 'SearchKey', 'Searches', 'SearchKey', 'FK_Search_Search')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey')+
        InlineForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey')+
@@ -755,6 +764,21 @@ Begin
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'ResourceKey', 'Ids', 'ResourceKey', 'FK_Search_ResKey'));
   FConn.ExecSQL(ForeignKeySql(FConn, 'SearchEntries', 'ResourceVersionKey', 'Versions', 'ResourceVersionKey', 'FK_Search_ResVerKey'));
 End;
+
+procedure TFHIRDatabaseInstaller.CreateSmartHealthCardsTable;
+begin
+  FConn.ExecSQL('CREATE TABLE SmartHealthCards ( '+#13#10+
+       ' SmartHealthCardKey '+   DBKeyType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Source           int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Date '+          DBDateTimeType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Nbf              char(20) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Hash             char(20) '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' Revoked          int '+ColCanBeNull(FConn.owner.platform, False)+', '+#13#10+
+       ' PatientId        char(64) '+ColCanBeNull(FConn.owner.platform, True)+', '+#13#10+
+       ' Details '+       DBBlobType(FConn.owner.platform)+' '+ColCanBeNull(FConn.owner.platform, true)+', '+#13#10+
+       PrimaryKeyType(FConn.owner.Platform, 'PK_SmartHealthCard', 'SmartHealthCardKey')+') '+CreateTableInfo(FConn.owner.platform));
+  FConn.ExecSQL('Create INDEX SK_SmartHealthCards_Hash ON SmartHealthCards (Hash)');
+end;
 
 procedure TFHIRDatabaseInstaller.CreateSubscriptionQueue;
 begin
@@ -930,8 +954,8 @@ End;
 destructor TFHIRDatabaseInstaller.Destroy;
 begin
   FServerFactory.free;
-  FBases.Free;
-  FFactory.Free;
+  FBases.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -1033,7 +1057,7 @@ begin
 //  inc(k);
 //  FConn.terminate;
 
-  m := TFHIRIndexInformation.create(FFactory.link, FServerFactory.link);
+  m := TFHIRIndexInformation.Create(FFactory.link, FServerFactory.link);
   names := TStringList.Create;
   try
     for i := 0 to m.Indexes.count - 1 do
@@ -1153,9 +1177,11 @@ begin
     CreatePackagesTables;
     if assigned(CallBack) then Callback(77, 'Create Package Permissions Table');
     CreatePackagePermissionsTable;
-    if assigned(CallBack) then Callback(79, 'Commit');
+    if assigned(CallBack) then Callback(79, 'Loaded Packages');
     CreateLoadedPackagesTable;
-    if assigned(CallBack) then Callback(80, 'Commit');
+    if assigned(CallBack) then Callback(80, 'SmartHealthCards');
+    CreateSmartHealthCardsTable;
+    if assigned(CallBack) then Callback(81, 'Commit');
 
     FConn.Commit;
   except
@@ -1175,7 +1201,7 @@ end;
 //  lines : TStringList;
 //  sql, l : String;
 //begin
-//  lines := TStringList.create;
+//  lines := TStringList.Create;
 //  try
 //    lines.Text := replaceColumnWrappingChars(FileToString(IncludeTrailingPathDelimiter(Ftxpath)+s, TEncoding.ANSI), FConn.Owner.Platform);
 //    sql := '';
@@ -1221,6 +1247,7 @@ begin
       except
       end;
 
+      drop('SmartHealthCards');
       drop('Connections');
       drop('AuthorizationSessions');
       drop('Authorizations');
@@ -1240,6 +1267,7 @@ begin
 
       drop('PackageFHIRVersions');
       drop('PackageDependencies');
+      drop('PackageURLs');
       drop('PackageVersions');
       drop('Packages');
       drop('PackagePermissions');
@@ -1290,14 +1318,20 @@ begin
 end;
 
 
-procedure TFHIRDatabaseInstaller.Upgrade(version : integer);
+procedure TFHIRDatabaseInstaller.Upgrade(version : integer = 0);
+var
+  isTx : boolean;
 begin
   FConn.StartTransact;
   try
+    if version = 0 then
+      version := Fconn.CountSQL('Select Value from Config where ConfigKey = '+inttostr(CONFIG_DATABASE_VERSION));
+    isTx := Fconn.Lookup('Config', 'ConfigKey', '100', 'Value', '').startsWith('terminology|');
+
     if version > ServerDBVersion then
-      raise EDBException.create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
+      raise EDBException.Create('Database Version mismatch (found='+inttostr(version)+', can handle 12-'+inttostr(ServerDBVersion)+'): you must re-install the database or change which version of the server you are running');
     if (version < ServerDBVersionEarliestSupported) then
-      raise EDBException.create('Database must be rebuilt');
+      raise EDBException.Create('Database must be rebuilt');
     if (version < 13) then
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.Observations ADD  IsComponent int NULL');
@@ -1366,6 +1400,17 @@ begin
     begin
       Fconn.ExecSQL('ALTER TABLE dbo.OAuthLogins ALTER COLUMN Scope nchar(1024) NOT NULL');
     end;
+
+    if not isTx and (version <= 31) then
+    begin
+      Fconn.ExecSQL('Delete from SearchEntries');
+      Fconn.ExecSQL('Delete from Searches');
+      Fconn.ExecSQL('ALTER TABLE SearchEntries ADD SortValue2 nchar(128) NULL, SortValue3 nchar(128) NULL');
+      Fconn.ExecSQL('ALTER TABLE Searches ADD Reverse2 int NULL,Reverse3 int NULL');
+    end;
+
+    if not isTx and (version <= 32) then
+      CreateSmartHealthCardsTable;
 
     Fconn.ExecSQL('update Config set value = '+inttostr(ServerDBVersion)+' where ConfigKey = 5');
     FConn.commit;

@@ -34,8 +34,8 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, {$IFDEF DELPHI} RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_fpc,
+  SysUtils, Classes, 
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_fpc, fsl_regex,
   v2_base, v2_dictionary;
 
 Type
@@ -63,7 +63,7 @@ type
     FBatchProgressEvent: THL7V2BatchLoadProgressEvent;
     FPreventOddBinaryLengths: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Function Link : THL7V2DecodingOptions;
     Function Clone : THL7V2DecodingOptions;
@@ -172,7 +172,7 @@ type
     FSubComponentDelimiter: Char;
     FComponentDelimiter: Char;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
 
@@ -294,7 +294,7 @@ Type
     Function GetModel: THL7V2Model; Override;
     Procedure SetVersion(aValue  : THL7V2Version); Virtual;
     Function CanChangeVersion : Boolean; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(oModel : THL7V2Model); Overload;
     Constructor Create(oDictionary : THL7V2Dictionary); Overload;
@@ -342,7 +342,7 @@ Type
   Private
     FText : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sValue : String); Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Override;
@@ -358,7 +358,7 @@ Type
   Private
     FBinary : String; // but it's really a sequence of bytes
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sValue : String); Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Override;
@@ -374,7 +374,7 @@ Type
   Private
     FEscape : String; // but it's really a sequence of bytes
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sValue : String); Overload; Virtual;
     Procedure Assign(oObject : TFslObject); Overload; Override;
@@ -391,7 +391,7 @@ Type
     Function GetContent(iIndex: Integer): THL7V2Content;
   Protected
     Function ItemClass : TFslObjectClass; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(Const sPath : String; const bComplex : Boolean);
 
@@ -457,7 +457,7 @@ Type
     Function GetFieldName: String; Virtual;
     Function GetDataType: THL7V2ModelDataType; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(aType : THL7V2CellType; iIndex: Integer); Overload; Virtual;
     Destructor Destroy; Override;
@@ -546,7 +546,7 @@ type
     function GetFieldName: String; override;
     function GetDataType: THL7V2ModelDataType; override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; override;
 
@@ -612,7 +612,7 @@ type
     function GetFieldName: String; override;
     function GetDataType: THL7V2ModelDataType; override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -684,7 +684,7 @@ type
     Function SequenceNumber : Integer;
   Protected
     Function ChildrenClass : TFslTreeListClass; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; Override;
 
@@ -768,7 +768,7 @@ type
   Protected
     Function ChildrenClass : TFslTreeListClass; override;
     Function ParentClass : TFslTreeClass; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -841,7 +841,7 @@ Type
     Function ChildrenClass : TFslTreeListClass; Override;
     Procedure SetVersion(aValue  : THL7V2Version); Override;
     Function CanChangeVersion : Boolean; Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -915,7 +915,7 @@ Type
     procedure SetMessage(const oValue: THL7V2Message);
     procedure SetContent(const sValue: TBytes);
   Protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; override;
     function Link : THL7V2BatchMessage; overload;
@@ -965,7 +965,7 @@ type
     Function ChildrenClass : TFslTreeListClass; override;
     procedure SetVersion(aValue  : THL7V2Version); override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1021,7 +1021,7 @@ Type
     Function ChildrenClass : TFslTreeListClass; Override;
     Procedure SetVersion(aValue  : THL7V2Version); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; Override;
@@ -1064,7 +1064,7 @@ type
     function GetPosition: integer;
     procedure SetPosition(iValue: integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
     procedure Reset;
@@ -1100,18 +1100,18 @@ Type
   THL7V2ParsedQuery = class (THL7V2WorkerObject)
   private
     FSegQuery : String;
-    FSegReg : TRegEx;
+    FSegReg : TRegularExpression;
     FHasSegReg : boolean;
     FSegIndex : THL7V2ParsedQueryRange;
     FDE : THL7V2ParsedQueryRange;
     FRep : THL7V2ParsedQueryRange;
-    FDERegEx : TRegEx;
+    FDERegEx : TRegularExpression;
     FHasDERegEx : boolean;
     FComp : THL7V2ParsedQueryRange;
-    FCompRegEx : TRegEx;
+    FCompRegEx : TRegularExpression;
     FHasCompRegEx : boolean;
     FSubComp : THL7V2ParsedQueryRange;
-    FSubCompRegEx : TRegEx;
+    FSubCompRegEx : TRegularExpression;
     FHasSubCompRegEx : boolean;
     procedure parseDE(var VQuery : String);
     procedure parseComp(var VQuery : String);
@@ -1123,7 +1123,7 @@ Type
     procedure SelectComponents(AField : THL7V2DataElement; AResults: THL7V2BaseObjectList);
     procedure SelectDataElements(ASegment : THL7V2Segment; AResults: THL7V2BaseObjectList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     procedure parse(AQuery : String);
@@ -1137,7 +1137,7 @@ Type
     FContent : String;
     FCursor : Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create(sQuery : String);
     function Peek : String;
@@ -1167,7 +1167,7 @@ Type
     FItem : THL7V2QueryItem;
     FOp : THL7V2QueryOp;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
   end;
@@ -1202,7 +1202,7 @@ Type
     function Check(oSegment : THL7V2Segment; iInstance : integer): Boolean; overload;
     function Check(oDataElement : THL7V2DataElement; iInstance : integer): Boolean; overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1228,7 +1228,7 @@ Type
     procedure CheckCondition(oParser : THL7V2QueryParser; oCond : THL7V2QueryConditional);
     procedure CheckTree(oParser : THL7V2QueryParser);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1246,7 +1246,7 @@ Type
     FSubCompId : String;
     procedure ParseQuery(oParser : THL7V2QueryParser; aContextType : THL7V2QueryContextType); overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
     procedure ParseQuery(sQuery : String; aContextType : THL7V2QueryContextType); overload;
@@ -1259,16 +1259,16 @@ Type
   private
     FValue : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    Constructor create(sToken : String);
+    Constructor Create(sToken : String);
     function Evaluate(oSegment : THL7V2Segment; iInstance : integer): String; override;
     function Evaluate(oDataElement : THL7V2DataElement; iInstance : integer): String; override;
   end;
 
   THL7V2QueryIndexRef = class (THL7V2QueryItem)
   public
-    Constructor create(sToken : String);
+    Constructor Create(sToken : String);
     function Evaluate(oSegment : THL7V2Segment; iInstance : integer): String; override;
     function Evaluate(oDataElement : THL7V2DataElement; iInstance : integer): String; override;
   end;
@@ -1277,9 +1277,9 @@ Type
   private
     FQuery : THL7V2Query;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    Constructor create(oParser : THL7V2QueryParser; aContextType : THL7V2QueryContextType);
+    Constructor Create(oParser : THL7V2QueryParser; aContextType : THL7V2QueryContextType);
     Destructor Destroy; override;
     function Evaluate(oSegment : THL7V2Segment; iInstance : integer): String; override;
     function Evaluate(oDataElement : THL7V2DataElement; iInstance : integer): String; override;
@@ -1388,7 +1388,7 @@ type
     function DecodeBatchMessage(sLine : String; oBatch : THL7V2Batch; oExtractor : TFslByteExtractor) : String;
     function DecodeBatch(sLine : String; oFile : THL7V2File; oExtractor : TFslByteExtractor) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1418,7 +1418,7 @@ type
     Procedure FormatSegment(oSegment: THL7V2Segment; oOptions: THL7V2EncodingOptions);
     procedure EncodeBatch(oBatch : THL7V2Batch; oFormatter : THL7V2ER7Formatter; oOptions: THL7V2EncodingOptions);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1450,7 +1450,7 @@ Type
     Procedure ReadDelimiters(oMessage : THL7V2Message);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; Override;
 
@@ -1473,7 +1473,7 @@ Type
     Function FormatSegment(oSegment : THL7V2Segment) : String;
     Function FormatSegments(oGroup : THL7V2SegmentGroup) : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Destructor Destroy; Override;
 
@@ -1514,7 +1514,7 @@ Type
       FElement: THL7V2BaseObject;
       Procedure SetElement(Const Value: THL7V2BaseObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1845,9 +1845,9 @@ begin
   FPreventOddBinaryLengths := false;
 end;
 
-function THL7V2DecodingOptions.sizeInBytesV : cardinal;
+function THL7V2DecodingOptions.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVersionOverride.length * sizeof(char)) + 12);
 end;
 
@@ -1982,9 +1982,9 @@ Begin
     RaiseError('getDelimiterEscapeChar', 'internal error in getDelimiterEscapeChar, illegal char '+ch);
 End;
 
-function THL7V2Delimiters.sizeInBytesV : cardinal;
+function THL7V2Delimiters.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { THL7V2Contents }
@@ -2021,9 +2021,9 @@ begin
   result := THL7V2Contents(inherited Link);
 end;
 
-function THL7V2Contents.sizeInBytesV : cardinal;
+function THL7V2Contents.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FPath.length * sizeof(char)) + 12);
 end;
 
@@ -2111,9 +2111,9 @@ begin
   Result := Text;
 end;
 
-function THL7V2ContentText.sizeInBytesV : cardinal;
+function THL7V2ContentText.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -2152,7 +2152,7 @@ Begin
       buf.Append('&#x'+IntToHex(ord(FBinary[iLoop]), 2)+';');
     result := buf.AsString;
   finally
-    buf.Free;
+    buf.free;
   end;
 End;
 
@@ -2221,9 +2221,9 @@ begin
   Result := '\X'+HexEncode(FBinary)+'\';
 end;
 
-function THL7V2ContentBinary.sizeInBytesV : cardinal;
+function THL7V2ContentBinary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FBinary.length * sizeof(char)) + 12);
 end;
 
@@ -2256,9 +2256,9 @@ begin
   Result := '\'+FEscape+'\';
 end;
 
-function THL7V2ContentEscape.sizeInBytesV : cardinal;
+function THL7V2ContentEscape.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FEscape.length * sizeof(char)) + 12);
 end;
 
@@ -2280,14 +2280,14 @@ End;
 Procedure THL7V2Cell.CreateContents;
 Begin
   If (FContents = nil) Then
-    FContents := THL7V2Contents.create(FullPathName, Escapable)
+    FContents := THL7V2Contents.Create(FullPathName, Escapable)
   Else
     FContents.Clear;
 End;
 
 Procedure THL7V2Cell.ClearContents;
 Begin
-  FContents.Free;
+  FContents.free;
   FContents := Nil;
 End;
 
@@ -2439,7 +2439,7 @@ Begin
         oBuilder.Append(FContents[iLoop].Encoded);
       Result := oBuilder.AsString;
     Finally
-      oBuilder.Free;
+      oBuilder.free;
     End;
   End
   Else If FContents[0].ContentType = CONTENT_TYPE_NULL Then
@@ -2512,7 +2512,7 @@ Begin
     If Not assigned(FContents) Then
       CreateContents;
     If FContents.Count = 0 then
-      FContents.add(THL7V2ContentNull.create());
+      FContents.add(THL7V2ContentNull.Create());
     End
   Else
     Begin
@@ -2536,14 +2536,14 @@ Begin
   Else If sValue = '""' Then
     Begin
     CreateContents; // clear it anyway
-    FContents.add(THL7V2ContentNull.create());
+    FContents.add(THL7V2ContentNull.Create());
     End
   Else If (sValue = '') Then
     ClearContents
   Else
     Begin
     CreateContents; // clear it anyway
-    FContents.add(THL7V2ContentText.create(sValue));
+    FContents.add(THL7V2ContentText.Create(sValue));
     End;
 End;
 
@@ -2750,7 +2750,7 @@ Begin
   Try
     Result := Encode(oOptions);
   Finally
-    oOptions.Free;
+    oOptions.free;
   End;
 End;
 
@@ -2774,7 +2774,7 @@ Begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     End;
   Finally
-    oLocal.Free;
+    oLocal.free;
   End;
 End;
 
@@ -2798,7 +2798,7 @@ Begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     End;
   Finally
-    oLocal.Free;
+    oLocal.free;
   End;
 End;
 
@@ -2939,7 +2939,7 @@ end;
 procedure THL7V2Cell.SetNullify(const Value: Boolean);
 begin
   CreateContents;
-  FContents.add(THL7V2ContentNull.create());
+  FContents.add(THL7V2ContentNull.Create());
 end;
 
 function THL7V2Cell.GetAsPlainText: String;
@@ -2994,10 +2994,10 @@ begin
     result := oTable.Items.getByCode(GetSimpleTextContent).Description;
 end;
 
-function THL7V2Cell.sizeInBytesV : cardinal;
+function THL7V2Cell.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContents.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContents.sizeInBytes(magic));
 end;
 
 { THL7V2Cells }
@@ -3016,7 +3016,7 @@ End;
 
 destructor THL7V2Component.Destroy;
 begin
-  FDefinition.Free;
+  FDefinition.free;
   inherited;
 end;
 
@@ -3038,7 +3038,7 @@ begin
   else
     begin
     while iIndex > Children.Count do
-      Children.Add(THL7V2Component.create(ctSubComponent, Children.Count+1));
+      Children.Add(THL7V2Component.Create(ctSubComponent, Children.Count+1));
     result := Children[iIndex - 1];
     end;
 end;
@@ -3068,7 +3068,7 @@ end;
 
 procedure THL7V2Component.SetDefinition(const oValue: THL7V2ModelComponent);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 end;
 
@@ -3141,7 +3141,7 @@ begin
           oChild.MakeForBuild;
           Children.add(oChild.Link);
         finally
-          oChild.Free;
+          oChild.free;
         end;
         if iLoop = 0 then
           oChild.TakeContent(self);
@@ -3200,10 +3200,10 @@ begin
       Components[i].MapToDefinitions(THL7V2ModelStructure(Definition.RefStructure), i);
 end;
 
-function THL7V2Component.sizeInBytesV : cardinal;
+function THL7V2Component.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { THL7V2Components }
@@ -3232,8 +3232,8 @@ end;
 
 destructor THL7V2DataElement.Destroy;
 begin
-  FDefinition.Free;
-  FRepeats.Free;
+  FDefinition.free;
+  FRepeats.free;
   inherited;
 end;
 
@@ -3248,7 +3248,7 @@ end;
 
 procedure THL7V2DataElement.SetDefinition(const oValue: THL7V2ModelField);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 end;
 
@@ -3326,7 +3326,7 @@ begin
           oChild.MakeForBuild;
           Children.Add(oChild.Link);
         finally
-          oChild.Free;
+          oChild.free;
         end;
         if iLoop = 0 then
           oChild.TakeContent(self);
@@ -3380,7 +3380,7 @@ begin
     begin
     while iIndex > Children.Count do
     Begin
-      Children.Add(THL7V2Component.create(ctComponent, Children.Count+1));
+      Children.Add(THL7V2Component.Create(ctComponent, Children.Count+1));
       if Children.Count = 1 then
         Children[0].TakeContent(self);
     End;
@@ -3424,14 +3424,14 @@ function THL7V2DataElement.GetRepeats: THL7V2DataElements;
 begin
   assert(Condition(CanHaveRepeats, 'GetRepeats', 'Data Elements that are already repeats cannot contain repeats ['+FullPathName+']'));
   if not assigned(FRepeats) then
-    Repeats := THL7V2DataElements.create;
+    Repeats := THL7V2DataElements.Create;
   result := FRepeats;
 end;
 
 procedure THL7V2DataElement.SetRepeats(const oValue: THL7V2DataElements);
 begin
   assert(Condition(CanHaveRepeats, 'GetRepeats', 'Data Elements that are already repeats cannot contain repeats ['+FullPathName+']'));
-  FRepeats.Free;
+  FRepeats.free;
   FRepeats := oValue;
   Reparent;
 end;
@@ -3465,7 +3465,7 @@ begin
       Result.MakeForBuild;
       oRepeats.Add(Result.Link);
     finally
-      Result.Free;
+      Result.free;
     end;
     end;
 end;
@@ -3557,7 +3557,7 @@ begin
         oDst.Clone(self, false); // clone self into new component - before children.add
         Children.Add(oDst.Link);
       finally
-        oDst.Free;
+        oDst.free;
       end;
       end;
     for iLoop := 0 to oSource.Components.Count - 1 do
@@ -3651,12 +3651,12 @@ begin
     RaiseError('DeleteRepeat', 'Invalid reference to repeat #'+IntegerToString(iIndex));
 end;
 
-function THL7V2DataElement.sizeInBytesV : cardinal;
+function THL7V2DataElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
   inc(result, (FSpecifiedDataType.length * sizeof(char)) + 12);
-  inc(result, FRepeats.sizeInBytes);
+  inc(result, FRepeats.sizeInBytes(magic));
 end;
 
 { THL7V2DataElements }
@@ -3717,7 +3717,7 @@ Begin
   Try
     Result := Encode(oOptions);
   Finally
-    oOptions.Free;
+    oOptions.free;
   End;
 End;
 
@@ -3741,7 +3741,7 @@ Begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     End;
   Finally
-    oLocal.Free;
+    oLocal.free;
   End;
 End;
 
@@ -3765,7 +3765,7 @@ Begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     End;
   Finally
-    oLocal.Free;
+    oLocal.free;
   End;
 End;
 
@@ -3816,13 +3816,13 @@ end;
 
 destructor THL7V2Segment.Destroy;
 begin
-  FDefinition.Free;
+  FDefinition.free;
   inherited;
 end;
 
 procedure THL7V2Segment.SetDefinition(const oValue: THL7V2ModelSegment);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := oValue;
 end;
 
@@ -3884,7 +3884,7 @@ begin
   else
     begin
     while iIndex > Children.Count do
-      Children.Add(THL7V2DataElement.create(ctDataElement, Children.Count+1));
+      Children.Add(THL7V2DataElement.Create(ctDataElement, Children.Count+1));
     result := Children[iIndex - 1];
     end;
 end;
@@ -3898,13 +3898,13 @@ begin
     begin
     for iLoop := 0 to FDefinition.Fields.count - 1 do
       begin
-      oField := THL7V2DataElement.create(ctDataElement, iLoop + 1);
+      oField := THL7V2DataElement.Create(ctDataElement, iLoop + 1);
       try
         oField.Definition := FDefinition.Fields[iLoop].Link;
         oFIeld.MakeForBuild;
         Children.Add(oField.Link);
       finally
-        oField.Free;
+        oField.free;
       end;
       end;
     end;
@@ -3921,12 +3921,12 @@ begin
     result := nil
   else if (pos('[', sCode) > 0) or (pos(':', sCode) > 0) then
     begin
-    oParser := THL7V2Query.create;
+    oParser := THL7V2Query.Create;
     try
       oParser.ParseQuery(sCode, qctSegment);
       result := oParser.Execute(self, false);
     finally
-      oParser.Free;
+      oParser.free;
     end
     end
   else
@@ -4048,11 +4048,11 @@ function THL7V2Segment.Encode(aFormat: THL7V2Format; aOptions: THL7V2EncodingOpt
 var
   oOptions: THL7V2EncodingOptions;
 begin
-  oOptions := THL7V2EncodingOptions.create(aFormat, aOptions);
+  oOptions := THL7V2EncodingOptions.Create(aFormat, aOptions);
   try
     result := Encode(oOptions);
   finally
-    oOptions.Free;
+    oOptions.free;
   end;
 end;
 
@@ -4064,7 +4064,7 @@ begin
   if assigned(oOptions) then
     oLocal := oOptions.Link
   else
-    oLocal := THL7V2EncodingOptions.create;
+    oLocal := THL7V2EncodingOptions.Create;
   try
 // todo - do we want to do this?
 //    if (oOptions.Format = hfUnknown) then
@@ -4076,7 +4076,7 @@ begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     end;
   finally
-    oLocal.Free;
+    oLocal.free;
   end;
 end;
 
@@ -4088,7 +4088,7 @@ begin
   if assigned(oOptions) then
     oLocal := oOptions.Link
   else
-    oLocal := THL7V2EncodingOptions.create;
+    oLocal := THL7V2EncodingOptions.Create;
   try
 // todo - do we want to do this?
 //    if (oOptions.Format = hfUnknown) then
@@ -4100,7 +4100,7 @@ begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     end;
   finally
-    oLocal.Free;
+    oLocal.free;
   end;
 end;
 
@@ -4188,11 +4188,11 @@ begin
     Fields[i].MapToDefinitions(Definition, i);
 end;
 
-function THL7V2Segment.sizeInBytesV : cardinal;
+function THL7V2Segment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeof(char)) + 12);
-  inc(result, FDefinition.sizeInBytes);
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { THL7V2Segments }
@@ -4273,7 +4273,7 @@ function THL7V2Segments.IndexByCode(const sValue: String): Integer;
 Var
   oElement : THL7V2Segment;
 Begin
-  oElement := THL7V2Segment.create;
+  oElement := THL7V2Segment.Create;
   Try
     oElement.Code := sValue;
 
@@ -4282,7 +4282,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 end;
 
@@ -4324,12 +4324,12 @@ end;
 constructor THL7V2SegmentGroup.Create;
 begin
   inherited;
-  FSegments := THL7V2SegmentList.create;
+  FSegments := THL7V2SegmentList.Create;
 end;
 
 destructor THL7V2SegmentGroup.Destroy;
 begin
-  FSegments.Free;
+  FSegments.free;
   inherited;
 end;
 
@@ -4365,7 +4365,7 @@ end;
 
 procedure THL7V2SegmentGroup.SetSegments(const oValue: THL7V2SegmentList);
 begin
-  FSegments.Free;
+  FSegments.free;
   FSegments := oValue;
 end;
 
@@ -4394,15 +4394,15 @@ begin
       end;
     oChild.Segments.add(oSegment)
   finally
-    oChild.Free;
+    oChild.free;
   end;
 end;
 
-function THL7V2SegmentGroup.sizeInBytesV : cardinal;
+function THL7V2SegmentGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FSegments.sizeInBytes);
+  inc(result, FSegments.sizeInBytes(magic));
 end;
 
 { THL7V2SegmentGroups }
@@ -4428,7 +4428,7 @@ End;
 Destructor THL7V2Message.Destroy;
 Begin
   Clear;
-  FDelimiters.Free;
+  FDelimiters.free;
   Inherited;
 End;
 
@@ -4436,9 +4436,9 @@ Procedure THL7V2Message.Clear;
 Begin
   Children.Clear;
   FDelimiters.Reset;
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Nil;
-  FSegmentMap.Free;
+  FSegmentMap.free;
   FSegmentMap := Nil;
   FEvent := '';
   FMessageType := '';
@@ -4493,7 +4493,7 @@ Begin
     Result.Code := sCode;
     Result.BuildFields;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4506,7 +4506,7 @@ Begin
     Result.Code := sCode;
     Result.BuildFields;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4543,7 +4543,7 @@ Begin
       oParser.ParseQuery(sCode, qctMessage);
       Result := oParser.Execute(Self, False);
     Finally
-      oParser.Free;
+      oParser.free;
     End
     End
   Else
@@ -4790,7 +4790,7 @@ Begin
     oQuery.SelectSegments(Segments, oResults);
     Result := oResults.Count > 0;
   Finally
-    oQuery.Free;
+    oQuery.free;
   End;
 End;
 
@@ -4803,7 +4803,7 @@ Begin
     oQuery.Parse(sCode);
     Result := oQUery.ResultType;
   Finally
-    oQuery.Free;
+    oQuery.free;
   End;
 End;
 
@@ -4896,13 +4896,13 @@ Procedure THL7V2Message.DropDefinition;
 Begin
   DropMap;
   FStructId := '';
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Nil;
 End;
 
 Procedure THL7V2Message.DropMap;
 Begin
-  FSegmentMap.Free;
+  FSegmentMap.free;
   FSegmentMap := Nil;
 End;
 
@@ -4937,7 +4937,7 @@ Begin
 
   If FStructID <> '' Then
     Begin
-    FDefinition.Free;
+    FDefinition.free;
     FDefinition := Model.MessageStructures.GetByName(FStructID).Link;
     End;
 End;
@@ -5006,7 +5006,7 @@ End;
 
 Procedure THL7V2Message.SetDelimiters(Const Value: THL7V2Delimiters);
 Begin
-  FDelimiters.Free;
+  FDelimiters.free;
   FDelimiters := Value;
 End;
 
@@ -5067,7 +5067,7 @@ Begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     End;
   Finally
-    oLocal.Free;
+    oLocal.free;
   End;
 End;
 
@@ -5079,7 +5079,7 @@ Begin
   Try
     Result := Encode(oOptions);
   Finally
-    oOptions.Free;
+    oOptions.free;
   End;
   FSource := Result;
 End;
@@ -5102,7 +5102,7 @@ Begin
       GHL7V2EncoderFactory.ConsumeEncoder(oEncoder);
     End;
   Finally
-    oLocal.Free;
+    oLocal.free;
   End;
   FSource := oBuffer.AsBytes;
 End;
@@ -5110,9 +5110,9 @@ End;
 Procedure THL7V2Message.Assign(oObject: TFslObject);
 Begin
   Inherited;
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition  := THL7V2Message(oObject).Definition.Link;
-  FSegmentMap.Free;
+  FSegmentMap.free;
   FSegmentMap := THL7V2Message(oObject).FSegmentMap.Link;
   Delimiters  := THL7V2Message(oObject).Delimiters.Link;
   FEvent  := THL7V2Message(oObject).FEvent;
@@ -5225,7 +5225,7 @@ Begin
       ErrorSequence('BuildSegmentGroup', 'No segments found in the The choice Group "' + oGroup.Code);
     Result := Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -5270,7 +5270,7 @@ Begin
           ErrorSequence('BuildXMLSegmentMap', 'The message "' + FMessageID + '" contained some segments not included in the message segment list. The First Segment is "' + Segments[iIndex].Code + '" (#' + IntegerToString(iIndex) + ')');
         FSegmentMap := oMap.Link;
       Finally
-        oMap.Free;
+        oMap.free;
       End;
       End;
     End;
@@ -5313,7 +5313,7 @@ Begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 End;
 
@@ -5344,16 +5344,16 @@ begin
         Segments[i].StripUndefinedContent;
 end;
 
-function THL7V2Message.sizeInBytesV : cardinal;
+function THL7V2Message.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FSegmentMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FSegmentMap.sizeInBytes(magic));
   inc(result, (FEvent.length * sizeof(char)) + 12);
   inc(result, (FMessageType.length * sizeof(char)) + 12);
   inc(result, (FStructID.length * sizeof(char)) + 12);
   inc(result, (FMessageID.length * sizeof(char)) + 12);
-  inc(result, FDelimiters.sizeInBytes);
+  inc(result, FDelimiters.sizeInBytes(magic));
   inc(result, length(FSource));
 end;
 
@@ -5498,7 +5498,7 @@ var
 begin
   if AMsg1.Segments.AsText <> AMsg2.Segments.AsText then
     begin
-    raise EFslException.create('Segment lists differ: '+AMsg1.Segments.AsText+'/'+AMsg2.Segments.AsText);
+    raise EFslException.Create('Segment lists differ: '+AMsg1.Segments.AsText+'/'+AMsg2.Segments.AsText);
     end;
   for SegCount := 0 to AMsg1.Segments.count - 1 do
     begin
@@ -5506,7 +5506,7 @@ begin
     FSeg2 := AMsg2.Segments[SegCount];
     if FSeg1.Fields.count <> FSeg2.Fields.count then
       begin
-      raise EFslException.create(FSeg1.Code+ ': Field count differs: '+IntegerToString(FSeg1.fields.Count)+'/'+IntegerToString(FSeg2.fields.Count));
+      raise EFslException.Create(FSeg1.Code+ ': Field count differs: '+IntegerToString(FSeg1.fields.Count)+'/'+IntegerToString(FSeg2.fields.Count));
       end;
     for FieldCount := 0 to FSeg1.Fields.count - 1 do
       begin
@@ -5514,11 +5514,11 @@ begin
       FF2 := FSeg2.Fields[FieldCount];
       if FF1.Components.count <> FF2.Components.count then
         begin
-        raise EFslException.create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+ ': Component count differs: '+IntegerToString(FF1.Components.Count)+'/'+IntegerToString(FF2.Components.Count));
+        raise EFslException.Create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+ ': Component count differs: '+IntegerToString(FF1.Components.Count)+'/'+IntegerToString(FF2.Components.Count));
         end;
       if (FF1.Components.count = 0) and (FF1.RawContent <> FF2.RawContent) then
         begin
-        raise EFslException.create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+ ': Content differs: '+FF1.RawContent+'/'+FF2.RawContent);
+        raise EFslException.Create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+ ': Content differs: '+FF1.RawContent+'/'+FF2.RawContent);
         end;
       for CompCount := 0 to FF1.Components.count - 1 do
         begin
@@ -5526,11 +5526,11 @@ begin
         FC2 := FF2.Components[CompCount];
         if FC1.Components.Count <> FC2.Components.Count then
           begin
-          raise EFslException.create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+'.'+IntegerToString(CompCount+1)+ ': Component count differs: '+IntegerToString(FF1.Components.Count)+'/'+IntegerToString(FF2.Components.Count));
+          raise EFslException.Create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+'.'+IntegerToString(CompCount+1)+ ': Component count differs: '+IntegerToString(FF1.Components.Count)+'/'+IntegerToString(FF2.Components.Count));
           end;
         if (FC1.Components.Count = 0) and (FC1.RawContent <> FC2.RawContent) then
           begin
-          raise EFslException.create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+'.'+IntegerToString(CompCount+1)+ ': Content differs: '+FC1.RawContent+'/'+FC2.RawContent);
+          raise EFslException.Create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+'.'+IntegerToString(CompCount+1)+ ': Content differs: '+FC1.RawContent+'/'+FC2.RawContent);
           end;
         for SubCount := 0 to FC1.Components.Count - 1 do
           begin
@@ -5538,7 +5538,7 @@ begin
           FS2 := FC2.Components[SubCount];
           if FS1.RawContent <> FS2.RawContent then
             begin
-            raise EFslException.create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+'.'+IntegerToString(CompCount+1)+'.'+IntegerToString(SubCount+1)+ ': Content differs: '+FS1.RawContent+'/'+FS2.RawContent);
+            raise EFslException.Create(FSeg1.Code+'-'+IntegerToString(FieldCount+1)+'.'+IntegerToString(CompCount+1)+'.'+IntegerToString(SubCount+1)+ ': Content differs: '+FS1.RawContent+'/'+FS2.RawContent);
             end;
           end;
         end;
@@ -5603,7 +5603,7 @@ begin
               end;
             end;
         finally
-          ts.Free;
+          ts.free;
           end;
         end;
       CompareHL7Messages(LMsg1, LMsg2);
@@ -5612,10 +5612,10 @@ begin
         raise EFslException.Create('Messages are different - ' + LReason);
         end;
     finally
-      LMsg2.Free;
+      LMsg2.free;
       end;
   finally
-    LMsg1.Free;
+    LMsg1.free;
     end;
 end;
 
@@ -5685,7 +5685,7 @@ End;
 
 destructor THL7V2BatchMessage.Destroy;
 begin
-  FMessage.Free;
+  FMessage.free;
   inherited;
 end;
 
@@ -5711,14 +5711,14 @@ end;
 
 procedure THL7V2BatchMessage.SetContent(const sValue: TBytes);
 begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := nil;
   FContent := sValue;
 end;
 
 procedure THL7V2BatchMessage.SetMessage(const oValue: THL7V2Message);
 begin
-  FMessage.Free;
+  FMessage.free;
   FMessage := oValue;
   FContent := oValue.Encode;
 end;
@@ -5727,10 +5727,10 @@ procedure THL7V2BatchMessage.Decode(oOptions: THL7V2DecodingOptions);
 begin
   if assigned(FMessage) then
     begin
-    FMessage.Free;
+    FMessage.free;
     FMessage := nil;
     end;
-  FMessage := THL7V2Message.create;
+  FMessage := THL7V2Message.Create;
   FMessage.Decode(FContent, oOptions);
 end;
 
@@ -5741,11 +5741,11 @@ begin
   Result := FMessage;
 end;
 
-function THL7V2BatchMessage.sizeInBytesV : cardinal;
+function THL7V2BatchMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FContent));
-  inc(result, FMessage.sizeInBytes);
+  inc(result, FMessage.sizeInBytes(magic));
   inc(result, (FId.length * sizeof(char)) + 12);
 end;
 
@@ -5766,14 +5766,14 @@ end;
 constructor THL7V2Batch.Create;
 begin
   inherited;
-  FDelimiters := THL7V2Delimiters.create;
+  FDelimiters := THL7V2Delimiters.Create;
 end;
 
 destructor THL7V2Batch.Destroy;
 begin
-  FHeader.Free;
-  FTrailer.Free;
-  FDelimiters.Free;
+  FHeader.free;
+  FTrailer.free;
+  FDelimiters.free;
   inherited;
 end;
 
@@ -5817,20 +5817,20 @@ end;
 
 procedure THL7V2Batch.SetDelimiters(const Value: THL7V2Delimiters);
 begin
-  FDelimiters.Free;
-  FDelimiters := THL7V2Delimiters.create;
+  FDelimiters.free;
+  FDelimiters := THL7V2Delimiters.Create;
 end;
 
 procedure THL7V2Batch.SetVersion(aValue: THL7V2Version);
 begin
   inherited;
 
-  FHeader := THL7V2Segment.create;
+  FHeader := THL7V2Segment.Create;
   FHeader.Parent := self;
   FHeader.Code := 'BHS';
   FHeader.BuildFields;
 
-  FTrailer := THL7V2Segment.create;
+  FTrailer := THL7V2Segment.Create;
   FTrailer.Parent := self;
   FTrailer.Code := 'BTS';
   FTrailer.BuildFields;
@@ -5864,20 +5864,20 @@ procedure THL7V2Batch.Clear;
 begin
   Children.Clear;
   if assigned(FHeader) then
-    FHeader.Free;
+    FHeader.free;
   if assigned(FTrailer) then
-    FTrailer.Free;
+    FTrailer.free;
   FHeader := nil;
   FTrailer := nil;
   inherited;
 end;
 
-function THL7V2Batch.sizeInBytesV : cardinal;
+function THL7V2Batch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDelimiters.sizeInBytes);
-  inc(result, FHeader.sizeInBytes);
-  inc(result, FTrailer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDelimiters.sizeInBytes(magic));
+  inc(result, FHeader.sizeInBytes(magic));
+  inc(result, FTrailer.sizeInBytes(magic));
 end;
 
 { THL7V2Batches }
@@ -5902,9 +5902,9 @@ End;
 
 Destructor THL7V2File.Destroy;
 Begin
-  FHeader.Free;
-  FTrailer.Free;
-  FDelimiters.Free;
+  FHeader.free;
+  FTrailer.free;
+  FDelimiters.free;
   Inherited;
 End;
 
@@ -5945,7 +5945,7 @@ End;
 
 Procedure THL7V2File.SetDelimiters(Const Value: THL7V2Delimiters);
 Begin
-  FDelimiters.Free;
+  FDelimiters.free;
   FDelimiters := THL7V2Delimiters.Create;
 End;
 
@@ -5992,9 +5992,9 @@ Procedure THL7V2File.Clear;
 Begin
   Children.Clear;
   If Assigned(FHeader) Then
-    FHeader.Free;
+    FHeader.free;
   If Assigned(FTrailer) Then
-    FTrailer.Free;
+    FTrailer.free;
   FHeader := Nil;
   FTrailer := Nil;
   Inherited;
@@ -6029,7 +6029,7 @@ Begin
   Try
     Load(oFile, oOptions);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -6058,7 +6058,7 @@ Begin
   Try
     Save(oFile, oOptions);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -6067,9 +6067,9 @@ var
   bs : TBytesStream;
   vcl : TFslVCLStream;
 begin
-  bs := TBytesStream.create(bytes);
+  bs := TBytesStream.Create(bytes);
   try
-    vcl := TFslVCLStream.create;
+    vcl := TFslVCLStream.Create;
     try
       vcl.Stream := bs;
       Load(vcl);
@@ -6086,9 +6086,9 @@ var
   bs : TBytesStream;
   vcl : TFslVCLStream;
 begin
-  bs := TBytesStream.create;
+  bs := TBytesStream.Create;
   try
-    vcl := TFslVCLStream.create;
+    vcl := TFslVCLStream.Create;
     try
       vcl.Stream := bs;
       Save(vcl);
@@ -6102,25 +6102,25 @@ begin
 
 end;
 
-function THL7V2File.sizeInBytesV : cardinal;
+function THL7V2File.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDelimiters.sizeInBytes);
-  inc(result, FHeader.sizeInBytes);
-  inc(result, FTrailer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDelimiters.sizeInBytes(magic));
+  inc(result, FHeader.sizeInBytes(magic));
+  inc(result, FTrailer.sizeInBytes(magic));
 end;
 
 { THL7V2BatchIterator }
 
 destructor THL7V2BatchIterator.Destroy;
 begin
-  FBatch.Free;
+  FBatch.free;
   inherited;
 end;
 
 procedure THL7V2BatchIterator.SetBatch(const Value: THL7V2File);
 begin
-  FBatch.Free;
+  FBatch.free;
   FBatch := Value;
 end;
 
@@ -6283,11 +6283,11 @@ Begin
   End;
 End;
 
-function THL7V2BatchIterator.sizeInBytesV : cardinal;
+function THL7V2BatchIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBatch.sizeInBytes);
-  inc(result, FCurrent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBatch.sizeInBytes(magic));
+  inc(result, FCurrent.sizeInBytes(magic));
 end;
 
 { THL7V2ParsedQueryRange }
@@ -6383,13 +6383,19 @@ end;
 
 { THL7V2ParsedQuery }
 
-destructor THL7V2ParsedQuery.destroy;
+destructor THL7V2ParsedQuery.Destroy;
 begin
-  FSegIndex.Free;
-  FDE.Free;
-  FComp.Free;
-  FSubComp.Free;
-  FRep.Free;
+  FSegIndex.free;
+  FDE.free;
+  FComp.free;
+  FSubComp.free;
+  FRep.free;
+
+  FSegReg.free;
+  FDERegEx.free;
+  FCompRegEx.free;
+  FSubCompRegEx.free;
+
   inherited;
 end;
 
@@ -6471,7 +6477,7 @@ begin
   if AQuery[1] = ^ then
     begin
     StringSplit(AQuery, '$', s, AQuery);
-    FSegReg := TRegEx.create(s + '$');
+    FSegReg := TRegularExpression.Create(s + '$');
     FHasSegReg := true;
     end
   else
@@ -6500,7 +6506,7 @@ procedure THL7V2ParsedQuery.parseDE(var VQuery: String);
 var
   s : String;
 begin
-  FDE := THL7V2ParsedQueryRange.create;
+  FDE := THL7V2ParsedQueryRange.Create;
   FDE.Parse(VQuery);
   if VQuery <> '' then
     begin
@@ -6508,7 +6514,7 @@ begin
       begin
       StringSplit(VQuery, ')', s, VQuery);
       delete(s, 1, 1);
-      FDERegEx := TRegEx.create(s);
+      FDERegEx := TRegularExpression.Create(s);
       FHasDERegEx := true;
       end;
     if VQuery <> '' then
@@ -6516,7 +6522,7 @@ begin
       if VQuery[1] = ':' then
         begin
         delete(VQuery, 1, 1);
-        FRep := THL7V2ParsedQueryRange.create;
+        FRep := THL7V2ParsedQueryRange.Create;
         FRep.Parse(VQuery);
         end;
       if VQuery <> '' then
@@ -6534,7 +6540,7 @@ procedure THL7V2ParsedQuery.parseComp(var VQuery: String);
 var
   s : String;
 begin
-  FComp := THL7V2ParsedQueryRange.create;
+  FComp := THL7V2ParsedQueryRange.Create;
   FComp.Parse(VQuery);
   if VQuery <> '' then
     begin
@@ -6542,7 +6548,7 @@ begin
       begin
       StringSplit(VQuery, ')', s, VQuery);
       delete(s, 1, 1);
-      FCompRegEx := TRegEx.create(s);
+      FCompRegEx := TRegularExpression.Create(s);
       FHasCompRegEx := true;
       end;
     if VQuery <> '' then
@@ -6559,7 +6565,7 @@ procedure THL7V2ParsedQuery.parseSubComp(var VQuery: String);
 var
   s : String;
 begin
-  FSubComp := THL7V2ParsedQueryRange.create;
+  FSubComp := THL7V2ParsedQueryRange.Create;
   FSubComp.Parse(VQuery);
   if VQuery <> '' then
     begin
@@ -6567,7 +6573,7 @@ begin
       begin
       StringSplit(VQuery, ')', s, VQuery);
       delete(s, 1, 1);
-      FSubCompRegEx := TRegEx.create(s);
+      FSubCompRegEx := TRegularExpression.Create(s);
       FHasSubCompRegEx := true;
       end;
     if VQuery <> '' then
@@ -6596,22 +6602,22 @@ begin
     result := THL7V2Segment;
 end;
 
-function THL7V2ParsedQuery.sizeInBytesV : cardinal;
+function THL7V2ParsedQuery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSegQuery.length * sizeof(char)) + 12);
-  inc(result, FSegIndex.sizeInBytes);
-  inc(result, FDE.sizeInBytes);
-  inc(result, FRep.sizeInBytes);
-  inc(result, FComp.sizeInBytes);
-  inc(result, FSubComp.sizeInBytes);
+  inc(result, FSegIndex.sizeInBytes(magic));
+  inc(result, FDE.sizeInBytes(magic));
+  inc(result, FRep.sizeInBytes(magic));
+  inc(result, FComp.sizeInBytes(magic));
+  inc(result, FSubComp.sizeInBytes(magic));
 end;
 
 { THL7V2QueryParser }
 
 constructor THL7V2QueryParser.Create(sQuery: String);
 begin
-  inherited create;
+  inherited Create;
   FContent := sQuery;
   FCursor := 1;
 end;
@@ -6709,9 +6715,9 @@ begin
   end;
 end;
 
-function THL7V2QueryParser.sizeInBytesV : cardinal;
+function THL7V2QueryParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -6719,14 +6725,14 @@ end;
 
 destructor THL7V2QueryNode.Destroy;
 begin
-  FItem.Free;
+  FItem.free;
   inherited;
 end;
 
-function THL7V2QueryNode.sizeInBytesV : cardinal;
+function THL7V2QueryNode.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItem.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItem.sizeInBytes(magic));
 end;
 
 { THL7V2QueryItem }
@@ -6743,9 +6749,9 @@ end;
 
 { THL7V2QueryStringConstant }
 
-constructor THL7V2QueryStringConstant.create(sToken: String);
+constructor THL7V2QueryStringConstant.Create(sToken: String);
 begin
-  inherited create;
+  inherited Create;
   FValue := copy(sToken, 2, length(sToken)-2);
 end;
 
@@ -6759,17 +6765,17 @@ begin
   result := FValue;
 end;
 
-function THL7V2QueryStringConstant.sizeInBytesV : cardinal;
+function THL7V2QueryStringConstant.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
 { THL7V2QueryIndexRef }
 
-Constructor THL7V2QueryIndexRef.create(sToken : String);
+Constructor THL7V2QueryIndexRef.Create(sToken : String);
 begin
-  inherited create;
+  inherited Create;
 end;
 
 function THL7V2QueryIndexRef.Evaluate(oSegment: THL7V2Segment; iInstance: integer): String;
@@ -6784,10 +6790,10 @@ end;
 
 { THL7V2QueryNestedQuery }
 
-constructor THL7V2QueryNestedQuery.create(oParser: THL7V2QueryParser; aContextType: THL7V2QueryContextType);
+constructor THL7V2QueryNestedQuery.Create(oParser: THL7V2QueryParser; aContextType: THL7V2QueryContextType);
 begin
-  inherited create;
-  FQuery := THL7V2Query.create;
+  inherited Create;
+  FQuery := THL7V2Query.Create;
   FQuery.ParseQuery(oParser, aContextType);
 end;
 
@@ -6801,7 +6807,7 @@ end;
 
 destructor THL7V2QueryNestedQuery.Destroy;
 begin
-  FQuery.Free;
+  FQuery.free;
   inherited;
 end;
 
@@ -6813,27 +6819,27 @@ begin
   result := oCell.AsString;
 end;
 
-function THL7V2QueryNestedQuery.sizeInBytesV : cardinal;
+function THL7V2QueryNestedQuery.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FQuery.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FQuery.sizeInBytes(magic));
 end;
 
 { THL7V2QueryConditional }
 
-constructor THL7V2QueryConditional.create;
+constructor THL7V2QueryConditional.Create;
 begin
   inherited;
-  FLeft := THL7V2QueryNodes.create;
-  FRight := THL7V2QueryNodes.create;
+  FLeft := THL7V2QueryNodes.Create;
+  FRight := THL7V2QueryNodes.Create;
   FCompOp := qoVoid;
   FLinkOp := qoVoid;
 end;
 
 destructor THL7V2QueryConditional.Destroy;
 begin
-  FLeft.Free;
-  FRight.Free;
+  FLeft.free;
+  FRight.free;
   inherited;
 end;
 
@@ -7014,22 +7020,26 @@ end;
 
 function THL7V2QueryConditional.DoRegex(sLeft, sRight: String): Boolean;
 var
-  oExpr : TRegEx;
+  oExpr : TRegularExpression;
 begin
-  oExpr := TRegEx.Create(sRight);
-  result := oExpr.isMatch(sLeft);
+  oExpr := TRegularExpression.Create(sRight);
+  try
+    result := oExpr.isMatch(sLeft);
+  finally
+    oExpr.free;
+  end;
 end;
 
-function THL7V2QueryConditional.sizeInBytesV : cardinal;
+function THL7V2QueryConditional.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLeft.sizeInBytes);
-  inc(result, FRight.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLeft.sizeInBytes(magic));
+  inc(result, FRight.sizeInBytes(magic));
 end;
 
 { THL7V2QueryCondition }
 
-constructor THL7V2QueryCondition.create;
+constructor THL7V2QueryCondition.Create;
 begin
   inherited;
   FConditions := THL7V2QueryConditionals.Create;
@@ -7037,7 +7047,7 @@ end;
 
 destructor THL7V2QueryCondition.Destroy;
 begin
-  FConditions.Free;
+  FConditions.free;
   inherited;
 end;
 
@@ -7089,7 +7099,7 @@ var
   aOp : THL7V2QueryOp;
   oCondition : THL7V2QueryConditional;
 begin
-  oCondition := THL7V2QueryConditional.create;
+  oCondition := THL7V2QueryConditional.Create;
   FConditions.add(oCondition);
 
   sEnd := oParser.Consume;
@@ -7112,7 +7122,7 @@ begin
       begin
       oParser.Consume;
       if oParser.Peek = 'index' then
-        AddItem(oParser, THL7V2QueryIndexRef.create(oParser.Consume))
+        AddItem(oParser, THL7V2QueryIndexRef.Create(oParser.Consume))
       else
         AddItem(oParser, THL7V2QueryNestedQuery.Create(oParser, aContextType));
       end
@@ -7134,7 +7144,7 @@ procedure THL7V2QueryCondition.ParseIndex(oParser: THL7V2QueryParser);
 var
   oCondition : THL7V2QueryConditional;
 begin
-  oCondition := THL7V2QueryConditional.create;
+  oCondition := THL7V2QueryConditional.Create;
   FConditions.add(oCondition);
   oParser.Consume;
   oParser.Check(StringIsInteger32(oParser.Peek), 'ParseIndex', 'Simple index reference must be a number, not "'+oParser.Peek+'"');
@@ -7155,7 +7165,7 @@ begin
     oList := oCond.FRight;
   if oList.Count > 0 then
     oParser.Check(oList[0].FOp <> qoVoid, 'AddItem', 'Missing Operation');
-  oNode := THL7V2QueryNode.create;
+  oNode := THL7V2QueryNode.Create;
   oNode.FItem := oItem;
   oNode.FOp := qoVoid;
   oList.Add(oNode);
@@ -7188,7 +7198,7 @@ begin
   else if aOp in [qoAnd, qoOr, qoXor] then
     begin
     oCond.FLinkOp := aOp;
-    oCond := THL7V2QueryConditional.create;
+    oCond := THL7V2QueryConditional.Create;
     FConditions.add(oCond);
     end
   else
@@ -7222,7 +7232,7 @@ begin
        (oNode.FItem is THL7V2QueryStringConstant) and StringIsInteger32(THL7V2QueryStringConstant(oNode.FItem).FValue) then
     begin
     AddOp(oParser, qoEqual);
-    AddItem(oParser, THL7V2QueryIndexRef.create(''));
+    AddItem(oParser, THL7V2QueryIndexRef.Create(''));
     end;
 
   for iLoop := 0 to FConditions.Count - 1 do
@@ -7286,10 +7296,10 @@ begin
     end;
 end;
 
-function THL7V2QueryCondition.sizeInBytesV : cardinal;
+function THL7V2QueryCondition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FConditions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FConditions.sizeInBytes(magic));
 end;
 
 { THL7V2Query }
@@ -7298,12 +7308,12 @@ procedure THL7V2Query.ParseQuery(sQuery: String; aContextType: THL7V2QueryContex
 var
   oParser : THL7V2QueryParser;
 begin
-  oParser := THL7V2QueryParser.create(sQuery);
+  oParser := THL7V2QueryParser.Create(sQuery);
   try
     ParseQuery(oParser, aContextType);
     oParser.Check(oParser.Finished, 'ParseQuery', 'Query parsing is finished but expression continues: "'+oParser.Peek+'"');
   finally
-    oParser.Free;
+    oParser.free;
   end;
 end;
 
@@ -7426,18 +7436,18 @@ end;
 
 destructor THL7V2Query.Destroy;
 begin
-  FSegCondition.Free;
-  FRepeatCondition.Free;
+  FSegCondition.free;
+  FRepeatCondition.free;
   inherited;
 end;
 
-function THL7V2Query.sizeInBytesV : cardinal;
+function THL7V2Query.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSegCode.length * sizeof(char)) + 12);
-  inc(result, FSegCondition.sizeInBytes);
+  inc(result, FSegCondition.sizeInBytes(magic));
   inc(result, (FFieldId.length * sizeof(char)) + 12);
-  inc(result, FRepeatCondition.sizeInBytes);
+  inc(result, FRepeatCondition.sizeInBytes(magic));
   inc(result, (FCompId.length * sizeof(char)) + 12);
   inc(result, (FSubCompId.length * sizeof(char)) + 12);
 end;
@@ -7538,7 +7548,7 @@ begin
       DecodeMessage(result, msg, opt);
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     opt.free;
@@ -7563,7 +7573,7 @@ begin
   try
     result := parse(StreamToBytes(s));
   finally
-    s.Free;
+    s.free;
   end;
 end;
 
@@ -7633,15 +7643,15 @@ end;
 
 procedure THL7V2DecoderFactory.ConsumeDecoder(oDecoder: THL7V2Decoder);
 begin
-  oDecoder.Free;
+  oDecoder.free;
 end;
 
 function THL7V2DecoderFactory.ProduceDecoder(aFormat: THL7V2Format): THL7V2Decoder;
 begin
   if aFormat = hfXML then
-    result := THL7V2XMLDecoder.create(Dictionary.Link)
+    result := THL7V2XMLDecoder.Create(Dictionary.Link)
   else
-    result := THL7V2ER7Decoder.create(Dictionary.Link);
+    result := THL7V2ER7Decoder.Create(Dictionary.Link);
 end;
 
 function StartMatches(AStr : String; AMatchList : Array of String; ACase : Boolean = true):Boolean;
@@ -7755,15 +7765,15 @@ end;
 
 procedure THL7V2EncoderFactory.ConsumeEncoder(oEncoder: THL7V2Encoder);
 begin
-  oEncoder.Free;
+  oEncoder.free;
 end;
 
 function THL7V2EncoderFactory.ProduceEncoder(aFormat: THL7V2Format): THL7V2Encoder;
 begin
   if aFormat = hfXML then
-    result := THL7V2XMLEncoder.create(Dictionary.Link)
+    result := THL7V2XMLEncoder.Create(Dictionary.Link)
   else
-    result := THL7V2ER7Encoder.create(Dictionary.Link);
+    result := THL7V2ER7Encoder.Create(Dictionary.Link);
 end;
 
 Constructor THL7V2ModelProvider.Create(oModel : THL7V2Model);
@@ -7788,8 +7798,8 @@ End;
 
 Destructor THL7V2ModelProvider.Destroy;
 Begin
-  FModel.Free;
-  FDictionary.Free;
+  FModel.free;
+  FDictionary.free;
   Inherited;
 End;
 
@@ -7840,7 +7850,7 @@ Begin
 
     If Assigned(FModel) Then
       Begin
-      FModel.Free;
+      FModel.free;
       FModel := Nil;
       End;
 
@@ -7853,7 +7863,7 @@ Begin
   Inherited;
   If Assigned(FDictionary) Then
     Begin
-    FModel.Free;
+    FModel.free;
     FModel := Nil;
     End;
 End;
@@ -7867,7 +7877,7 @@ Procedure THL7V2ModelProvider.SetDictionary(Const Value: THL7V2Dictionary);
 Begin
   If Assigned(Value) And Assigned(FModel) Then
     ErrorApplication('SetDictionary', 'Unable to set dictionary when a model is in use');
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 End;
 
@@ -7881,9 +7891,9 @@ End;
 Procedure THL7V2ModelProvider.Assign(oSource: TFslObject);
 Begin
   Inherited;
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := THL7V2ModelProvider(oSource).Dictionary.Link;
-  FModel.Free;
+  FModel.free;
   FModel := THL7V2ModelProvider(oSource).Model.Link;
 End;
 
@@ -7892,11 +7902,11 @@ begin
   SetVersion(FromVersionCode(aNewVersion));
 end;
 
-function THL7V2ModelProvider.sizeInBytesV : cardinal;
+function THL7V2ModelProvider.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
-  inc(result, FModel.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
+  inc(result, FModel.sizeInBytes(magic));
 end;
 
 { THL7V2ER7Formatter }
@@ -7916,14 +7926,14 @@ end;
 Constructor THL7V2ER7Decoder.Create;
 begin
   inherited;
-  FDeCodingOptions := THL7V2DeCodingOptions.create;
-  FDelimiters := THL7V2Delimiters.create;
+  FDeCodingOptions := THL7V2DeCodingOptions.Create;
+  FDelimiters := THL7V2Delimiters.Create;
 end;
 
 Destructor THL7V2ER7Decoder.Destroy;
 begin
-  FDelimiters.Free;
-  FDeCodingOptions.Free;
+  FDelimiters.free;
+  FDeCodingOptions.free;
   inherited;
 end;
 
@@ -7967,7 +7977,7 @@ Begin
     Else
       RaiseError('ReadBinary', 'Odd length of binary escape in "'+sContent+'"');
 
-  oCell.Contents.add(THL7V2ContentBinary.create(HexDecode(sBuffer)));
+  oCell.Contents.add(THL7V2ContentBinary.Create(HexDecode(sBuffer)));
 End;
 
 Procedure THL7V2ER7Decoder.ReadEscape(oCell : THL7V2Cell; Const sContent : String; var iCursor : integer);
@@ -7984,10 +7994,10 @@ Begin
     // as an escape
     // RaiseError('ReadBinary', 'unterminated escape in '+sContent);
     iCursor := iStart - 1;
-    oCell.Contents.add(THL7V2ContentText.create(FDelimiters.EscapeCharacter));
+    oCell.Contents.add(THL7V2ContentText.Create(FDelimiters.EscapeCharacter));
   End
   Else
-    oCell.Contents.add(THL7V2ContentEscape.create(copy(sContent, iStart, iCursor - iStart)));
+    oCell.Contents.add(THL7V2ContentEscape.Create(copy(sContent, iStart, iCursor - iStart)));
 End;
 
 Procedure THL7V2ER7Decoder.ReadCellContent(oCell : THL7V2Cell; Const sContent : String; bNoEscape : Boolean);
@@ -7998,7 +8008,7 @@ var
   Begin
     if buf.Length > 0 Then
       Begin
-      oCell.Contents.Add(THL7V2ContentText.create(buf.AsString));
+      oCell.Contents.Add(THL7V2ContentText.Create(buf.AsString));
       buf.Clear;
       End;
   End;
@@ -8011,7 +8021,7 @@ Begin
   Else If bNoEscape or (pos(FDelimiters.EscapeCharacter, sContent) = 0) Then
   Begin
     If sContent <> '' Then
-      oCell.Contents.Add(THL7V2ContentText.create(sContent));
+      oCell.Contents.Add(THL7V2ContentText.Create(sContent));
   End
   Else
   Begin
@@ -8049,7 +8059,7 @@ Begin
         End;
       Commit;
     finally
-      buf.Free;
+      buf.free;
     end;
   End;
 End;
@@ -8163,7 +8173,7 @@ begin
   try
     oMessage.Segments.Add(oSegment.Link); // do this to provide a model before setting the code
   finally
-    oSegment.Free;
+    oSegment.free;
   end;
 
   oSegment.Code := sSegCode;
@@ -8191,12 +8201,12 @@ begin
 
   while FSource[iCursor] <> 13 do
     begin
-    oField := THL7V2DataElement.create(ctDataElement, oSegment.Fields.Count + 1);
+    oField := THL7V2DataElement.Create(ctDataElement, oSegment.Fields.Count + 1);
     try
       oSegment.Fields.Add(oField.Link);
       ParseDataElement(oField, iCursor);
     finally
-      oField.Free;
+      oField.free;
     end;
     end;
 
@@ -8428,14 +8438,14 @@ begin
 
   oFile.Clear;
   oFile.Version := hv25;
-  oExtractor := TFslByteExtractor.create;
+  oExtractor := TFslByteExtractor.Create;
   try
     oExtractor.stream := oStream.Link;
     FSource := BytesAdd(oExtractor.ConsumeLine, TByte(13));
     if BytesAsString(copy(FSource, 0, 3)) = 'MSH' then
     begin
       // special case - a series of messages
-      oBatch := THL7V2Batch.create(oFile);
+      oBatch := THL7V2Batch.Create(oFile);
       oFile.Batches.add(oBatch.Link);
       oBatch.Version := oFile.Version;
 
@@ -8464,7 +8474,7 @@ begin
       ParseSegmentInner(oFile.Trailer, iCursor);
     end;
   finally
-    oExtractor.Free;
+    oExtractor.free;
   end;
 end;
 
@@ -8476,7 +8486,7 @@ var
 begin
   iTotal := oExtractor.Stream.Readable;
 
-  oBatch := THL7V2Batch.create(oFile);
+  oBatch := THL7V2Batch.Create(oFile);
   try
     oFile.Batches.add(oBatch.Link);
     oBatch.Version := oFile.Version;
@@ -8504,7 +8514,7 @@ begin
     result := BytesAsString(oExtractor.ConsumeLine)+#13;
 
   finally
-    oBatch.Free;
+    oBatch.free;
   end;
 end;
 
@@ -8512,7 +8522,7 @@ function THL7V2ER7Decoder.DecodeBatchMessage(sLine: String; oBatch: THL7V2Batch;
 var
   oBatchMessage : THL7V2BatchMessage;
 begin
-  oBatchMessage := THL7V2BatchMessage.create;
+  oBatchMessage := THL7V2BatchMessage.Create;
   try
     oBatchMessage.Content := StringAsBytes(sLine);
 
@@ -8531,7 +8541,7 @@ begin
     oBatch.Messages.add(oBatchMessage.Link);
     result := sLine;
   finally
-    oBatchMessage.Free;
+    oBatchMessage.free;
   end;
 end;
 
@@ -8542,11 +8552,11 @@ begin
   ParseCellEx(oCell, iStart, BytesAsString(sContent), false, aLevelOperation);
 end;
 
-function THL7V2ER7Decoder.sizeInBytesV : cardinal;
+function THL7V2ER7Decoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDecodingOptions.sizeInBytes);
-  inc(result, FDelimiters.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDecodingOptions.sizeInBytes(magic));
+  inc(result, FDelimiters.sizeInBytes(magic));
 end;
 
 { THL7V2ER7Encoder }
@@ -8554,16 +8564,16 @@ end;
 Constructor THL7V2ER7Encoder.Create;
 begin
   inherited;
-  FEncodingOptions := THL7V2EncodingOptions.create;
-  FDelimiters := THL7V2Delimiters.create;
+  FEncodingOptions := THL7V2EncodingOptions.Create;
+  FDelimiters := THL7V2Delimiters.Create;
   FStream := TMemoryStream.Create;
 end;
 
 Destructor THL7V2ER7Encoder.Destroy;
 begin
-  FDelimiters.Free;
-  FStream.Free;
-  FEncodingOptions.Free;
+  FDelimiters.free;
+  FStream.free;
+  FEncodingOptions.free;
   inherited;
 end;
 
@@ -8788,7 +8798,7 @@ var
   oFormatter : THL7V2ER7Formatter;
   iLoop : integer;
 begin
-  oFormatter := THL7V2ER7Formatter.create;
+  oFormatter := THL7V2ER7Formatter.Create;
   try
     oFormatter.Stream := oStream.Link;
     FStream.Clear;
@@ -8800,7 +8810,7 @@ begin
     FormatSegment(oFile.Trailer, oOptions);
     oFormatter.ProduceContent(ReadStream);
   finally
-    oFormatter.Free;
+    oFormatter.free;
   end;
 end;
 
@@ -8841,18 +8851,18 @@ begin
   end;
 end;
 
-function THL7V2ER7Encoder.sizeInBytesV : cardinal;
+function THL7V2ER7Encoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FEncodingOptions.sizeInBytes);
-  inc(result, FDelimiters.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FEncodingOptions.sizeInBytes(magic));
+  inc(result, FDelimiters.sizeInBytes(magic));
 end;
 
 { THL7V2XMLDecoder }
 
 Destructor THL7V2XMLDecoder.Destroy;
 Begin
-  FOptions.Free;
+  FOptions.free;
   Inherited;
 End;
 
@@ -8985,7 +8995,7 @@ Begin
   Try
     oMessage.Segments.Add(oSeg.Link);
   Finally
-    oSeg.Free;
+    oSeg.free;
   End;
   oSeg.Code := oRoot.name;
   oSeg.BuildFields;
@@ -9079,18 +9089,18 @@ Begin
         Else If oNode.NodeType = ntElement Then
           Begin
           if (sText <> '') Then
-            oCell.Contents.add(THL7V2ContentText.create(sText));
+            oCell.Contents.add(THL7V2ContentText.Create(sText));
           sText := '';
           XMLCheck((oNode As TMXmlElement).name = 'escape', 'ReadField', 'Encountered unexpected node in mixed content: ' + (oNode As TMXmlElement).name + ' on ' + oRoot.name+ ' at '+oCell.FullPathName);
           sValue := (oNode As TMXmlElement).attribute['V'];
-          oCell.Contents.add(THL7V2ContentEscape.create(sValue));
+          oCell.Contents.add(THL7V2ContentEscape.Create(sValue));
           End
         Else
           XMLCheck(SuppressErrors, 'ReadField', 'Unexpected node type ' + CODES_TMXmlElementType[oNode.NodeType] + ' on ' + oRoot.name+ ' at '+oCell.FullPathName);
         oNode := oNode.next;
         End;
       if (sText <> '') Then
-        oCell.Contents.add(THL7V2ContentText.create(sText));
+        oCell.Contents.add(THL7V2ContentText.Create(sText));
       End;
     End;
 End;
@@ -9149,10 +9159,10 @@ begin
   ErrorHL7Library('DecodeCellEx', 'not supported in xml');
 end;
 
-function THL7V2XMLDecoder.sizeInBytesV : cardinal;
+function THL7V2XMLDecoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOptions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOptions.sizeInBytes(magic));
 end;
 
 { THL7V2XMLEncoder }
@@ -9198,7 +9208,7 @@ End;
 
 Destructor THL7V2XMLEncoder.Destroy;
 Begin
-  FOptions.Free;
+  FOptions.free;
   Inherited;
 End;
 
@@ -9238,7 +9248,7 @@ Begin
 
   XMLCheck(Assigned(oMessage.SegmentMap), 'EncodeMessage', 'Unable to encode to XML (no XML Segment Map) - check for XML support and message details: version (' + oMessage.VersionCode + '), message type (' + oMessage.MessageType + '), and event ID (' + oMessage.Event + ')');
 
-  R :=
+  R := 
     '<?xml version="1.0" encoding="UTF-8"?>' + #10 +
     '<' + oMessage.StructName + ' xmlns="'+V2_XML_NS+'" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="'+V2_XML_NS+' '+oMessage.StructName+'.xsd">'+
     FormatSegments(oMessage.SegmentMap) +
@@ -9366,10 +9376,10 @@ Begin
     Result := '<'+sName+'>'+Result+'</'+sName+'>';
 End;
 
-function THL7V2XMLEncoder.sizeInBytesV : cardinal;
+function THL7V2XMLEncoder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOptions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOptions.sizeInBytes(magic));
 end;
 
 { THL7V2ErrorCollector }
@@ -9392,11 +9402,11 @@ begin
   if (voSegmentOrder in AOptions) then
     begin
     try
-      oOptions := THL7V2EncodingOptions.create;
+      oOptions := THL7V2EncodingOptions.Create;
       try
         oMessage.BuildSegmentMap(false, oOptions);
       finally
-        oOptions.Free;
+        oOptions.free;
       end;
 
       if not assigned(oMessage.SegmentMap) and (oMessage.Version >= hv231) then
@@ -9526,7 +9536,7 @@ End;
 
 Destructor THL7V2ValidationError.Destroy;
 Begin
-  FElement.Free;
+  FElement.free;
   Inherited;
 End;
 
@@ -9548,10 +9558,10 @@ Begin
   Element := THL7V2ValidationError(oObject).Element.Link;
 End;
 
-function THL7V2ValidationError.sizeInBytesV : cardinal;
+function THL7V2ValidationError.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FElement.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FElement.sizeInBytes(magic));
 end;
 
 Function THL7V2ValidationErrors.Link : THL7V2ValidationErrors;
@@ -9602,7 +9612,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -9633,7 +9643,7 @@ End;
 
 Procedure THL7V2ValidationError.SetElement(Const Value: THL7V2BaseObject);
 Begin
-  FElement.Free;
+  FElement.free;
   FElement := Value;
 End;
 
@@ -9668,12 +9678,12 @@ End;
 constructor THL7V2SimpleErrorCollector.Create;
 begin
   inherited;
-  FErrors := THL7V2ValidationErrors.create;
+  FErrors := THL7V2ValidationErrors.Create;
 end;
 
 destructor THL7V2SimpleErrorCollector.Destroy;
 begin
-  FErrors.Free;
+  FErrors.free;
   inherited;
 end;
 
@@ -9681,19 +9691,19 @@ procedure THL7V2SimpleErrorCollector.RecordError(oElement: THL7V2BaseObject; con
 var
   oError : THL7V2ValidationError;
 begin
-  oError := THL7V2ValidationError.create;
+  oError := THL7V2ValidationError.Create;
   try
     oError.Element := oElement.Link;
     oError.ErrorMsg := sError;
     FErrors.Add(oError.Link);
   finally
-    oError.Free;
+    oError.free;
   end;
 end;
 
 procedure THL7V2SimpleErrorCollector.SetErrors(const Value: THL7V2ValidationErrors);
 begin
-  FErrors.Free;
+  FErrors.free;
   FErrors := Value;
 end;
 
@@ -9701,6 +9711,6 @@ initialization
   GHL7V2EncoderFactory := nil;
   GHL7V2DecoderFactory := nil;
 finalization
-  GHL7V2DecoderFactory.Free;
-  GHL7V2EncoderFactory.Free;
+  GHL7V2DecoderFactory.free;
+  GHL7V2EncoderFactory.free;
 end.

@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes, Generics.Collections, Generics.Defaults,
   fsl_http,
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_base, fsl_utilities, fsl_stream, fsl_lang,
   IdContext, IdCustomHTTPServer,
   fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
   fhir_valuesets,
@@ -65,6 +65,7 @@ Type
     FWorker : TFHIRWorkerContextWithFactory;
     FServer : TTerminologyServer;
     FFHIRPath : String;
+    FLanguages : TIETFLanguageDefinitions;
     FReturnProcessFileEvent : TWebReturnProcessedFileEvent;
 
     function asJson(r : TFHIRResourceV) : String;
@@ -76,7 +77,7 @@ Type
 
     function processFind(pm : THTTPParameters) : String;
     function processValidate(pm : THTTPParameters) : String;
-    function processExpand(pm : THTTPParameters; const lang : THTTPLanguages) : String;
+    function processExpand(pm : THTTPParameters; langList : THTTPLanguageList) : String;
     function processTranslate(pm : THTTPParameters) : String;
 
     function HandleTxRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
@@ -102,7 +103,7 @@ Type
     function ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
     function ProcessHome(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
   public
-    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
+    constructor Create(server : TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; languages : TIETFLanguageDefinitions; ReturnProcessFileEvent : TWebReturnProcessedFileEvent); overload;
     destructor Destroy; Override;
     function HandlesRequestVersion(path : String) : boolean;
     function HandlesRequestNoVersion(path : String) : boolean;
@@ -118,20 +119,22 @@ uses
 
 { TTerminologyWebServer }
 
-constructor TTerminologyWebServer.create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
+constructor TTerminologyWebServer.Create(server: TTerminologyServer; Worker : TFHIRWorkerContextWithFactory; BaseURL, FHIRPathEngine : String; languages : TIETFLanguageDefinitions; ReturnProcessFileEvent : TWebReturnProcessedFileEvent);
 begin
-  create;
+  Create;
   FServer := server;
   FFHIRPath := FHIRPathEngine;
   FReturnProcessFileEvent := ReturnProcessFileEvent;
   if (server <> nil) then
     FServer.webBase := BaseURl;
   FWorker := worker;
+  FLanguages := languages;
 end;
 
 destructor TTerminologyWebServer.Destroy;
 begin
-  FWorker.Free;
+  FLanguages.free;
+  FWorker.free;
   FServer.free;
   inherited;
 end;
@@ -185,9 +188,9 @@ var
   vars : TFslMap<TFHIRObject>;
 begin
   result := 'Tx Server Home';
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
-    pm := THTTPParameters.create(request.UnparsedParams);
+    pm := THTTPParameters.Create(request.UnparsedParams);
     try
       vars.Add('prefix', FWorker.Factory.makeString(FServer.WebBase));
 
@@ -216,16 +219,16 @@ begin
       else if pm['op'] = 'validate' then
         vars['validate.results'] := FWorker.Factory.makeString(processValidate(pm))
       else if pm['op'] = 'expand' then
-        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, THTTPLanguages.Create(request.AcceptLanguage)))
+        vars['expand.results'] := FWorker.Factory.makeString(processExpand(pm, THTTPLanguageList.Create(request.AcceptLanguage, true)))
       else if pm['op'] = 'translate' then
         vars['translate.results'] := FWorker.Factory.makeString(processTranslate(pm));
 
       FReturnProcessFileEvent(self, request, response, session, request.Document, 'txhome.html', false, vars);
     finally
-      pm.Free;
+      pm.free;
     end;
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -235,7 +238,7 @@ var
   vars : TFslMap<TFHIRObject>;
 begin
   result := 'Concept Map '+request.Document.Substring(9);
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
     cm := FServer.getConceptMapById(request.Document.Substring(9));
     try
@@ -245,11 +248,11 @@ begin
       vars.Add('json', FWorker.Factory.makeString(asJson(cm.resource.Resource)));
       vars.Add('xml', FWorker.Factory.makeString(asXml(cm.resource.Resource)));
     finally
-      cm.Free;
+      cm.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-cm-id.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -259,7 +262,7 @@ var
   vars : TFslMap<TFHIRObject>;
 begin
   result := 'Value Set '+request.Document.Substring(14);
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
     vs := FServer.getValueSetById(request.Document.Substring(14));
     try
@@ -269,11 +272,11 @@ begin
       vars.Add('json', FWorker.Factory.makeString(asJson(vs.Resource)));
       vars.Add('xml', FWorker.Factory.makeString(asXml(vs.Resource)));
     finally
-      vs.Free;
+      vs.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs-id.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -283,7 +286,7 @@ var
   vars : TFslMap<TFHIRObject>;
 begin
   result := 'Code System '+request.Document.Substring(16);
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
     cs := FServer.getCodeSystemById(request.Document.Substring(16));
     try
@@ -293,23 +296,23 @@ begin
       vars.Add('json', FWorker.Factory.makeString(asJson(cs.Resource)));
       vars.Add('xml', FWorker.Factory.makeString(asXml(cs.Resource)));
     finally
-      cs.Free;
+      cs.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-cs-id.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
 function TTerminologyWebServer.ProcessCodeSystemProviderList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
   html: THtmlPublisher;
-  cs: TCodeSystemProvider;
+  cs: TCodeSystemProviderFactory;
   c: Integer;
   vars : TFslMap<TFHIRObject>;
 begin
   result := 'Code System List';
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
     html := THtmlPublisher.Create();
     try
@@ -324,9 +327,9 @@ begin
       for cs in FServer.ProviderClasses.Values do
       begin
         html.StartTableRow;
-        html.AddTableCell(cs.systemUri(nil));
-        html.AddTableCell(cs.version(nil));
-        html.AddTableCell(cs.name(nil));
+        html.AddTableCell(cs.systemUri);
+        html.AddTableCell(cs.version);
+        html.AddTableCell(cs.name);
         c := cs.TotalCount;
         if c > 0 then
           html.AddTableCell(inttostr(c))
@@ -338,11 +341,11 @@ begin
       vars.Add('table', FWorker.Factory.makeString(html.output));
       vars.add('kind', FWorker.Factory.makeString('Implicit Code System'));
     finally
-      html.Free;
+      html.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -355,9 +358,9 @@ var
   sort : TCodeSystemSorter;
 begin
   result := 'Code System List';
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
-    list := TFslList<TFHIRCodeSystemW>.create;
+    list := TFslList<TFHIRCodeSystemW>.Create;
     try
       FServer.GetCodeSystemList(list);
       sort := TCodeSystemSorter.Create;
@@ -398,14 +401,14 @@ begin
         vars.Add('table', FWorker.Factory.makeString(html.output));
         vars.add('kind', FWorker.Factory.makeString('Code System'));
       finally
-        html.Free;
+        html.free;
       end;
     finally
       list.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -418,7 +421,7 @@ var
   cm : TLoadedConceptMap;
 begin
   result := 'Concept Map List';
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
     mlist := FServer.GetConceptMapList;
     try
@@ -474,18 +477,18 @@ begin
         vars.add('kind', FWorker.Factory.makeString('Concept Map'));
         vars.Add('table', FWorker.Factory.makeString(html.output));
       finally
-        html.Free;
+        html.free;
       end;
     finally
       mlist.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
-function TTerminologyWebServer.processExpand(pm: THTTPParameters; const lang : THTTPLanguages): String;
+function TTerminologyWebServer.processExpand(pm: THTTPParameters; langList : THTTPLanguageList): String;
 var
   res : TFHIRValueSetW;
   vs : TFHIRValueSetW;
@@ -496,8 +499,7 @@ begin
   try
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
-    if lang.header <> '' then
-      profile.displayLanguage := lang;
+    profile.languages := langList.link;
 
     try
       res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil);
@@ -507,15 +509,15 @@ begin
 //          res.text := nil;
         result := result + '<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>';
       finally
-        res.Free;
+        res.free;
       end;
     except
       on e : Exception do
         result := '<div style="background: salmon">'+e.message+'</div>';
     end;
   finally
-    vs.Free;
-    profile.Free;
+    vs.free;
+    profile.free;
   end;
 end;
 
@@ -533,23 +535,23 @@ begin
     resp := FWorker.Factory.makeOpRespLookup;
     try
       try
-        FServer.lookupCode(coding, THTTPLanguages.create('en'), nil, resp);
+        FServer.lookupCode(coding, nil, nil, resp);
         p := resp.asParams;
         try
           result := '<div>'+paramsAsHtml(p)+'</div>'#13 +
             #10'<pre class="json">'+asJson(p)+'</pre>'#13#10+'<pre class="xml">'+asXml(p)+'</pre>'
         finally
-          p.Free;
+          p.free;
         end;
       except
         on e : exception do
           result := '<div>'+e.message+'</div>'#13;
       end;
     finally
-      resp.Free;
+      resp.free;
     end;
   finally
-    coding.Free;
+    coding.free;
   end;
 end;
 
@@ -562,12 +564,12 @@ var
   sort : TValueSetSorter;
 begin
   result := 'Value Set List';
-  vars := TFslMap<TFHIRObject>.create('tx.vars');
+  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
-    list := TFslList<TFhirValueSetW>.create;
+    list := TFslList<TFhirValueSetW>.Create;
     try
       FServer.GetValueSetList(list);
-      sort := TValueSetSorter.create;
+      sort := TValueSetSorter.Create;
       // determine sort order
       if (request.UnparsedParams.EndsWith('=ver')) then
         sort.FSortType := byVer
@@ -611,14 +613,14 @@ begin
         vars.add('kind', FWorker.Factory.makeString('Value Set'));
         vars.Add('table', FWorker.Factory.makeString(html.output));
       finally
-        html.Free;
+        html.free;
       end;
     finally
       list.free;
     end;
     FReturnProcessFileEvent(self, request, response, session, request.Document, 'tx-vs.html', false, vars);
   finally
-    vars.Free;
+    vars.free;
   end;
 end;
 
@@ -642,7 +644,7 @@ function TTerminologyWebServer.HandleTxForm(AContext: TIdContext; request: TIdHT
   }
 begin
   result := 'Tx Form - Disabled';
-{  vars := TFslMap<TFHIRObject>.create('tx.vars');
+{  vars := TFslMap<TFHIRObject>.Create('tx.vars');
   try
     vs := '';
 
@@ -655,8 +657,8 @@ begin
       for i := 0 to ts.Count - 1 do
         vs := vs + ' <option value="'+list.KeyByIndex[Integer(ts.Objects[i])]+'">'+ts[i]+'</option>';
     finally
-      list.Free;
-      ts.Free;
+      list.free;
+      ts.free;
     end;
 
     vars.Add('vslist', vs);
@@ -716,7 +718,7 @@ begin
     html.EndTable;
     result := html.output;
   finally
-    html.Free;
+    html.free;
   end;
 end;
 
@@ -735,15 +737,15 @@ var
 begin
   b := TBytesStream.Create();
   try
-    json := FWorker.factory.makeComposer(FWorker.link, ffJson, THTTPLanguages.create('en'), OutputStylePretty);
+    json := FWorker.factory.makeComposer(FWorker, ffJson, nil, OutputStylePretty);
     try
       json.Compose(b, r);
     finally
-      json.Free;
+      json.free;
     end;
     result := FormatTextToXml(TEncoding.UTF8.GetString(b.Bytes, 0, b.size), xmlText);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -754,15 +756,15 @@ var
 begin
   b := TBytesStream.Create();
   try
-    xml := FWorker.factory.makeComposer(FWorker.link, ffXMl, THTTPLanguages.create('en'), OutputStylePretty);
+    xml := FWorker.factory.makeComposer(FWorker, ffXMl, nil, OutputStylePretty);
     try
       xml.Compose(b, r);
     finally
-      xml.Free;
+      xml.free;
     end;
     result := FormatTextToXml(TEncoding.UTF8.GetString(b.Bytes, 0, b.size), xmlText);
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -790,8 +792,8 @@ end;
 //      html.EndListItem;
 //    end;
 //  finally
-//    list.Free;
-//    ts.Free;
+//    list.free;
+//    ts.free;
 //  end;
 //  html.EndList; }
 //end;
@@ -820,8 +822,8 @@ end;
 //      html.EndListItem;
 //    end;
 //  finally
-//    list.Free;
-//    ts.Free;
+//    list.free;
+//    ts.free;
 //  end;
 //  html.EndList;}
 //end;
@@ -850,8 +852,8 @@ end;
 //      html.EndListItem;
 //    end;
 //  finally
-//    list.Free;
-//    ts.Free;
+//    list.free;
+//    ts.free;
 //  end;
 //  html.EndList;}
 //end;
@@ -877,15 +879,15 @@ end;
 //      html.Line;
 //    end;
 //    s := TStringStream.Create;
-//    xml := TFHIRXmlComposer.Create(THTTPLanguages.create('en'));
+//    xml := TFHIRXmlComposer.Create(nil);
 //    try
 //      xml.Compose(s, vs, true, nil);
 //      html.startPre;
 //      html.AddTextPlain(s.DataString);
 //      html.endPre;
 //    finally
-//      xml.Free;
-//      s.Free;
+//      xml.free;
+//      s.free;
 //    end;
 //  end
 //  else
@@ -905,8 +907,8 @@ end;
 //        html.EndListItem;
 //      end;
 //    finally
-//      list.Free;
-//      ts.Free;
+//      list.free;
+//      ts.free;
 //    end;
 //  end;
 //  html.EndList;}
@@ -927,11 +929,11 @@ begin
       coding.version := pm['version'];
       coding.code := pm['code'];
       try
-        res := FServer.translate(THTTPLanguages.create('en'), nil, coding, vs);
+        res := FServer.translate(nil, nil, coding, vs);
         try
           result := paramsAsHtml(res)+#13#10 + '<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>';
         finally
-          res.Free;
+          res.free;
         end;
       except
         on e : Exception do
@@ -941,7 +943,7 @@ begin
       coding.free;
     end;
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -950,6 +952,7 @@ var
   coding : TFHIRCodingW;
   res : TFHIRParametersW;
   vs : TFHIRValueSetW;
+  summary : string;
 begin
   vs := FServer.getValueSetById(pm['valueset']);
   try
@@ -959,18 +962,18 @@ begin
       coding.version := pm['version'];
       coding.code := pm['code'];
       coding.display := pm['display'];
-      res := FServer.validate(vs, coding, nil, pm['abstract'] = '1', pm['implySystem'] = '1', nil);
+      res := FServer.validate(vs, coding, nil, pm['abstract'] = '1', (pm['implySystem'] = '1') or (pm['inferSystem'] = '1'), nil, summary);
       try
         result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
             #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'
       finally
-        res.Free;
+        res.free;
       end;
     finally
-      coding.Free;
+      coding.free;
     end;
   finally
-    vs.Free;
+    vs.free;
   end;
 end;
 
@@ -982,11 +985,11 @@ var
   s : String;
   sort : TValueSetSorter;
 begin
-  list := TFslList<TFhirValueSetW>.create;
+  list := TFslList<TFhirValueSetW>.Create;
   try
     FServer.GetValueSetList(list);
     // determine sort order
-    sort := TValueSetSorter.create;
+    sort := TValueSetSorter.Create;
     sort.FSortType := byName;
     list.Sort(sort);
     s := '<select name="valueset" size="1">'#13#10;

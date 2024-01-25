@@ -1,7 +1,7 @@
 unit fsl_service;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -34,6 +34,9 @@ interface
 
 uses
   SysUtils, Classes,
+  {$IFNDEF WINDOWS}
+  baseunix,
+  {$ENDIF}
   fsl_base, fsl_utilities;
 
 type
@@ -84,7 +87,7 @@ uses
 
 constructor TSystemService.Create(const ASystemName, ADisplayName: String);
 begin
-  inherited create;
+  inherited Create;
   FStartTime := now;
   FSystemName := ASystemName;
   FDisplayName := ADisplayName;
@@ -128,11 +131,28 @@ procedure TSystemService.dump;
 begin
 end;
 
+{$IFNDEF WINDOWS}
+procedure handleSigTerm(signum: CInt); cdecl;
+begin
+  GService.Stop('SigTerm');
+end;
+
+procedure handleSigQuit(signum: CInt); cdecl;
+begin
+  GService.Stop('SigQuit');
+end;
+
+{$ENDIF}
+
 procedure TSystemService.Execute;
 var
   LMsg : string;
   LCheckTime : TDateTime;
 begin
+  {$IFNDEF WINDOWS}
+  fpSignal(SigTerm, SignalHandler(@handleSigTerm));
+  fpSignal(SigQuit, SignalHandler(@handleSigQuit));
+  {$ENDIF}
   LCheckTime := 0;
   try
     if CanStart then

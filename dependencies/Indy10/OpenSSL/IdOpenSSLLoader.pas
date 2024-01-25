@@ -1,5 +1,25 @@
 unit IdOpenSSLLoader;
 
+{$i IdCompilerDefines.inc}
+
+{$IFDEF FPC}
+  {$IFNDEF MSWINDOWS}
+  { On Mac and Linux, we statically bind to openSSL.
+
+  The impetus for this is that the the openSSL libssl.dylib doesn't bind to libcrypto.dylib
+  in a way that will be approved by the OSX loader for hardened apps.
+
+  And it's esy to do for Linux too.
+
+  But windows... compiling openSSL is a nightmare... just not worth it.
+  So on windows, we distribute the openSSL dlls with the application
+  }
+  {$DEFINE STATICLOAD_OPENSSL}
+  {$LINKLIB libcrypto.a}
+  {$LINKLIB libssl.a}
+  {$ENDIF}
+{$ENDIF}
+
 interface
 
 uses
@@ -12,12 +32,14 @@ type
     function GetOpenSSLPath: string;
     procedure SetOpenSSLPath(const Value: string);
     function GetFailedToLoad: TStringList;
+    function GetLoadError : String;
 
     function Load: Boolean;
     procedure Unload;
 
     property OpenSSLPath: string read GetOpenSSLPath write SetOpenSSLPath;
     property FailedToLoad: TStringList read GetFailedToLoad;
+    property loadError : String read GetLoadError;
   end;
 
 function GetOpenSSLLoader: IOpenSSLLoader;
@@ -115,16 +137,21 @@ end;
 
 {$IFNDEF STATICLOAD_OPENSSL}
 type
+
+  { TOpenSSLLoader }
+
   TOpenSSLLoader = class(TInterfacedObject, IOpenSSLLoader)
   private
     FLibCrypto: TIdLibHandle;
     FLibSSL: TIdLibHandle;
     FOpenSSLPath: string;
     FFailed: TStringList;
+    FLoadError : String;
     FLoadCount: TIdThreadSafeInteger;
     function GetOpenSSLPath: string;
     procedure SetOpenSSLPath(const Value: string);
     function GetFailedToLoad: TStringList;
+    function GetLoadError : String;
   public
     constructor Create;
     destructor Destroy; override;
@@ -134,6 +161,7 @@ type
 
     property OpenSSLPath: string read GetOpenSSLPath write SetOpenSSLPath;
     property FailedToLoad: TStringList read GetFailedToLoad;
+    property LoadError : String read GetLoadError;
   end;
 
 { TOpenSSLLoader }
@@ -157,13 +185,18 @@ begin
   Result := FFailed;
 end;
 
+function TOpenSSLLoader.GetLoadError: String;
+begin
+  result := FLoadError;
+end;
+
 function TOpenSSLLoader.GetOpenSSLPath: string;
 begin
   Result := FOpenSSLPath;
 end;
 
 function TOpenSSLLoader.Load: Boolean;
-begin                                  //FI:C101
+begin
   Result := True;
   FLoadCount.Lock();
   try
@@ -178,7 +211,12 @@ begin                                  //FI:C101
       {$ENDIF}
       Result := not (FLibCrypto = IdNilHandle) and not (FLibSSL = IdNilHandle);
       if not Result then
+      begin
+        {$IFDEF FPC}
+        FLoadError := GetLoadErrorStr;
+        {$ENDIF}
         Exit;
+      end;
 
       FLoadCount.Value := 1;
 

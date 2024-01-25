@@ -133,7 +133,7 @@ begin
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -202,7 +202,7 @@ var
   s : String;
   e : TFhirEncounter;
 begin
-  issues := TStringList.create;
+  issues := TStringList.Create;
   try
     check(issues, request.hook = Self.hook, 'hook must be '+self.hook+' but is '+request.hook);
     check(issues, request.hookInstance <> '', 'hookInstance must be provided');
@@ -213,7 +213,7 @@ begin
     check(issues, request.patient <> '', 'patient is required');
     check(issues, request.encounter <> '', 'encounter is required');
     check(issues, request.context.Count > 0, 'at least one resource is required in context');
-  raise EFHIRException.create('to do');
+  raise EFHIRException.Create('to do');
 
 (*
 !{$IFNDEF FHIR2}
@@ -282,12 +282,12 @@ begin
           b.Append('* '+s+#13#10);
         card.detail := b.ToString;
       finally
-        b.Free;
+        b.free;
       end;
       card.indicator := 'warning';
     end; *.)
   finally
-    issues.Free;
+    issues.free;
   end;
 end;
   *)
@@ -327,7 +327,7 @@ end;
 //
 //    card.detail := b.ToString;
 //  finally
-//    b.Free;
+//    b.free;
 //  end;
 //
 //end;
@@ -384,7 +384,7 @@ end;
 //
 //    card.detail := b.ToString;
 //  finally
-//    b.Free;
+//    b.free;
 //  end;
 //end;
 
@@ -418,7 +418,7 @@ begin
 //            for r in systems do
 //              addNamingSystemInfo(r as TFHIRNamingSystem, request.baseUrl, result);
 //          finally
-//            systems.Free;
+//            systems.free;
 //          end;
 //
 //        finally
@@ -426,7 +426,7 @@ begin
 //        end;
 //      end;
 //      }
-//      if (id.system = 'urn:ietf:rfc:3986') then
+//      if (id.system = URI_URIs) then
 //        addSystemCard(result, 'URI', '', 'W3C', '(any)', 'For when the identifier is any valid URI', '');
 
       for card in result.cards do
@@ -437,7 +437,7 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     params.free;
@@ -487,7 +487,7 @@ begin
       else
         result := nil;
     finally
-      patient.Free;
+      patient.free;
     end;
   finally
     server.Storage.Yield(engine, nil);
@@ -505,7 +505,7 @@ var
   id : TFhirIdentifier;
   ok : boolean;
 begin
-  raise EFHIRException.create('to do');
+  raise EFHIRException.Create('to do');
 
 (*  result := nil;
   // do we know that patient?
@@ -532,7 +532,7 @@ begin
     end;
     if pat <> nil then
     begin
-      matches := TMatchingResourceList.create;
+      matches := TMatchingResourceList.Create;
       try
         for id in pat.identifierList do
         begin
@@ -540,13 +540,13 @@ begin
           try
             matches.AddAll(m);
           finally
-            m.Free;
+            m.free;
           end;
         end;
         if matches.Count = 1 then
           result := engine.GetResourceByKey(matches[0].key, needSecure) as TFhirPatient;
       finally
-        matches.Free;
+        matches.free;
       end;
     end;
   end; *.)
@@ -593,14 +593,14 @@ begin
           end;
         end;
       finally
-        m.Free;
+        m.free;
       end;
     finally
-      comp.Free;
+      comp.free;
     end;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 

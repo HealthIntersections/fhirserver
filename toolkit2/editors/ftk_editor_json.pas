@@ -1,12 +1,40 @@
 unit ftk_editor_json;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils, SynEditHighlighter, SynHighlighterJson,
-  fsl_base, fsl_json, fsl_logging, fsl_stream,
+  fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_stream,
   ftk_context, ftk_store,
   ftk_editor_base;
 
@@ -27,6 +55,8 @@ type
     procedure getNavigationList(navpoints : TStringList); override;
     procedure ContentChanged; override;
     function hasFormatCommands: boolean; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
     procedure makeTextTab; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
@@ -43,7 +73,7 @@ implementation
 constructor TJsonEditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
   inherited Create(context, session, store);
-  FParser := TJsonParser.create;
+  FParser := TJsonParser.Create;
 end;
 
 destructor TJsonEditor.Destroy;
@@ -61,7 +91,7 @@ begin
   try
     SetContentUndoable(TJsonWriter.writeObjectStr(j, true));
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
@@ -73,13 +103,13 @@ begin
   try
     SetContentUndoable(TJsonWriter.writeObjectStr(j, false));
   finally
-    j.Free;
+    j.free;
   end;
 end;
 
 function TJsonEditor.makeHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynJSonSyn.create(nil);
+  Result := TSynJSonSyn.Create(nil);
 end;
 
 procedure TJsonEditor.getNavigationList(navpoints: TStringList);
@@ -157,7 +187,7 @@ begin
         checkForEncoding(s, i);
       end;
     end;
-    FJson.Free;
+    FJson.free;
     FJson := nil;
     try
       FJson := FParser.parseNode(FContent.text);
@@ -184,13 +214,23 @@ end;
 
 procedure TJsonEditor.ContentChanged;
 begin
-  FJson.Free;
+  FJson.free;
   FJson := nil;
 end;
 
 function TJsonEditor.hasFormatCommands: boolean;
 begin
   Result := true;
+end;
+
+function TJsonEditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function TJsonEditor.escapeText(text: String): String;
+begin
+  Result := jsonEscape(text, false);
 end;
 
 procedure TJsonEditor.makeTextTab;

@@ -89,7 +89,7 @@ var
   json : TJSONObject;
   s : String;
 begin
-  post := TBytesStream.create(TEncoding.UTF8.getBytes(request));
+  post := TBytesStream.Create(TEncoding.UTF8.getBytes(request));
   try
     http := TIdHTTP.Create(nil);
     Try
@@ -105,20 +105,20 @@ begin
         ssl.SSLOptions.Mode := sslmClient;
         ssl.SSLOptions.Method := sslvTLSv1_2;
         http.Request.ContentType := 'application/json';
-        resp := TBytesStream.create;
+        resp := TBytesStream.Create;
         try
           try
             http.Post(FServer, post, resp);
             resp.position := 0;
             json := TJSONParser.Parse(resp);
             try
-              raise EFHIRTodo.create();
+              raise EFHIRTodo.Create();
             finally
               json.free;
             end;
           except
             on e : EIdHTTPProtocolException do
-              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.Create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;
@@ -180,16 +180,16 @@ begin
       arr := json.forceArr['redirect_uris'];
       for s in memRedirects.Lines do
         arr.add(s);
-      raise EFHIRTodo.create();
+      raise EFHIRTodo.Create();
     end
     else
     begin
-      jwks := TJWKList.create;
+      jwks := TJWKList.Create;
       try
         jwks.add(TJWTUtils.loadKeyFromRSACert(edtPublicKey.Text));
         json.obj['jwks'] := jwks.obj.Link;
       finally
-        jwks.Free;
+        jwks.free;
       end;
       json.str['token_endpoint_auth_method'] := 'client_secret_post';
       json.str['grant_types'] := 'client_credentials';
@@ -198,7 +198,7 @@ begin
     btnPublicKey.Enabled := edtPublicKey.Enabled;
     result := TJSONWriter.writeObjectStr(json, true)
   finally
-    json.Free;
+    json.free;
   end;
 end;
 

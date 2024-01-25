@@ -1,7 +1,7 @@
 unit FHIR.WP.FieldDefiners;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Vcl.Graphics, RegularExpressions,
+  SysUtils, Vcl.Graphics, 
   fsl_utilities, fsl_collections,
   wp_definers, FHIR.WP.Control, wp_types, wp_document, FHIR.WP.Icons, FHIR.WP.Dialogs;
 
@@ -206,7 +206,7 @@ Var
 Begin
   oDialog := TWPHotspotDialog.Create(WordProcessor);
   Try
-    oField.Hotspot := TWPHotspot.create;
+    oField.Hotspot := TWPHotspot.Create;
     oField.Hotspot.LinkUnderline := true;
     oDialog.ReadOnly := TWordProcessor(WordProcessor).Settings.ReadOnly;
     oDialog.Field := oField.Link;
@@ -217,7 +217,7 @@ Begin
     oField.Deletable := True;
     oField.ReadOnly := ReadOnlyFalse;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
   bAcceptExistingContent := true;
 End;
@@ -238,7 +238,7 @@ Begin
     oDialog.Field := oField.Link;
     Result := oDialog.Execute;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -318,12 +318,12 @@ Begin
           For iLoop := 0 To oList.Count - 1 Do
             oItems.Add(oList[iLoop], oList[iLoop]);
         Finally
-          oList.Free;
+          oList.free;
         End;
       End;
         WordProcessor.CodeCompletePromptList(oItems);
     Finally
-      oItems.Free;
+      oItems.free;
     End;
   End
   Else
@@ -441,7 +441,7 @@ begin
   if StringIsInteger32(sContent) And (Trim(sContent) = sContent) Then
   Begin
     iValue := StringToInteger32(sContent);
-    result :=
+    result := 
       ((oField.DataValue[FIELD_DATA_NAME_INT_MIN] = '') or ((length(sContent) < length(oField.DataValue[FIELD_DATA_NAME_INT_MIN])) or (StringToInteger32(oField.DataValue[FIELD_DATA_NAME_INT_MIN]) <= iValue))) And
       ((oField.DataValue[FIELD_DATA_NAME_INT_MAX] = '') or (StringToInteger32(oField.DataValue[FIELD_DATA_NAME_INT_MAX]) >= iValue));
   End
@@ -505,7 +505,7 @@ begin
           Result := Result Or ((bProgressive and StringStartsWithSensitive(oList[iLoop], sContent)) or
                (not bProgressive and StringEqualsSensitive(oList[iLoop], sContent)));
     Finally
-      oList.Free;
+      oList.free;
     End;
   End;
 End;
@@ -692,7 +692,7 @@ End;
 
 Destructor TWPModelFieldDefinitionProvider.Destroy;
 Begin
-  FModel.Free;
+  FModel.free;
   Inherited;
 End;
 
@@ -709,7 +709,7 @@ Procedure TWPModelFieldDefinitionProvider.SetModel(Const Value: TWPFieldModel);
 Begin
   Assert(Not Assigned(Value) Or Invariants('SetModel', Value, TWPFieldModel, 'Value'));
 
-  FModel.Free;
+  FModel.free;
   FModel := Value;
 End;
 
@@ -765,12 +765,12 @@ Begin
             oPara.Contents.Add(MakeText(oDialog.Selected.Description));
             oSection.Blocks.Add(oPara.Link);
           Finally
-            oPara.Free;
+            oPara.free;
           End;
 
           oSection.Link;
         Finally
-          oSection.Free;
+          oSection.free;
         End;
       End
       Else
@@ -796,7 +796,7 @@ Begin
       End;
     End;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -814,7 +814,7 @@ Begin
     Result.Value := sText;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -855,7 +855,7 @@ Begin
     oDialog.FieldOnly;
     Result := oDialog.Execute;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -870,7 +870,7 @@ Begin
     oDialog.SectionOnly;
     Result := oDialog.Execute;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -908,7 +908,7 @@ Begin
       If (oDialog.IsSection) Then
         oSection := oDialog.Section.Link;
   Finally
-    oDialog.Free;
+    oDialog.free;
   End;
 End;
 
@@ -960,7 +960,7 @@ begin
   oField.Deletable := true;
   oField.FixedFormat := fffWholeField;
   oField.ReadOnly := ReadOnlyDefault;
-  oField.Contents.Add(TWPDocumentText.create('current-date-time'));
+  oField.Contents.Add(TWPDocumentText.Create('current-date-time'));
 end;
 
 Function TWPValueFieldDefinitionProvider.UserCanEditField(oField : TWPDocumentField) : Boolean;

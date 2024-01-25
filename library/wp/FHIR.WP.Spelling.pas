@@ -1,7 +1,7 @@
 Unit FHIR.WP.Spelling;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -45,7 +45,7 @@ Type
     FAllowedWords : TFslStringList;
     procedure SetAllowedWords(const Value: TFslStringList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -113,20 +113,20 @@ end;
 
 destructor TWPSpeller.Destroy;
 begin
-  FAllowedWords.Free;
+  FAllowedWords.free;
   inherited;
 end;
 
 procedure TWPSpeller.SetAllowedWords(const Value: TFslStringList);
 begin
-  FAllowedWords.Free;
+  FAllowedWords.free;
   FAllowedWords := Value;
 end;
 
-function TWPSpeller.sizeInBytesV : cardinal;
+function TWPSpeller.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAllowedWords.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAllowedWords.sizeInBytes(magic));
 end;
 
 End.

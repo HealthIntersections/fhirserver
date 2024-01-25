@@ -5,7 +5,7 @@ unit fdb_sqlite3_wrapper;
  *
  * This unit contains easy-to-use object wrapper over fdb_sqlite3_objects API functions
  *
- * Copyright 2010+ Yury Plashenkov
+ * Copyright (c) 2010+ Yury Plashenkov
  * http://plashenkov.github.io/sqlite/
  *
  * The MIT License (MIT)
@@ -36,10 +36,10 @@ interface
 uses
   SysUtils, Classes, Types,
   fdb_sqlite3_objects,
-  fsl_utilities;
+  fsl_base, fsl_utilities;
 
 type
-  ESQLite3Error = class(Exception);
+  ESQLite3Error = class(EFslException);
 
   TSQLite3Statement = class;
   TSQLite3BlobHandler = class;
@@ -204,10 +204,10 @@ begin
       Rollback;
     // Delete all statements
     for I := FStatementList.Count - 1 downto 0 do
-      TSQLite3Statement(FStatementList[I]).Free;
+      TSQLite3Statement(FStatementList[I]).free;
     // Delete all blob handlers
     for I := FBlobHandlerList.Count - 1 downto 0 do
-      TSQLite3BlobHandler(FBlobHandlerList[I]).Free;
+      TSQLite3BlobHandler(FBlobHandlerList[I]).free;
     sqlite3_close(FHandle);
     FHandle := nil;
   end;
@@ -234,8 +234,8 @@ end;
 destructor TSQLite3Database.Destroy;
 begin
   Close;
-  FBlobHandlerList.Free;
-  FStatementList.Free;
+  FBlobHandlerList.free;
+  FStatementList.free;
   inherited;
 end;
 

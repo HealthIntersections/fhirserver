@@ -34,7 +34,7 @@ interface
 
 Uses
   SysUtils, Classes,
-  fsl_utilities, fsl_threads,
+  fsl_utilities, fsl_threads, fsl_npm_cache,
   fsl_base, fsl_stream,
   fhir_objects, fhir_factory, fhir_common,
   ftx_service,
@@ -44,6 +44,9 @@ Uses
   tx_server;
 
 type
+
+  { TFHIRServerWorkerContextR4 }
+
   TFHIRServerWorkerContextR4 = class (TBaseWorkerContextR4)
   private
     FTerminologyServer : TTerminologyServer;
@@ -58,17 +61,18 @@ type
     function getQuestionnaire(url : string) : TFhirQuestionnaire;
     procedure loadPatientCompartment;
   public
-    constructor Create(factory : TFHIRFactory); Override;
+    constructor Create(factory : TFHIRFactory; pc : TFHIRPackageManager); Override;
     destructor Destroy; Override;
 
     Function Link : TFHIRServerWorkerContextR4; overload;
+    procedure Unload; override;
 
-    procedure SeeResource(r : TFhirResource); override;
+    procedure SeeResourceProxy(r : TFhirResourceProxy); override;
     procedure checkResource(r : TFhirResource);
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
-    function fetchResource(t : TFhirResourceType; url : String) : TFhirResource; override;
+    function fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource; override;
 
     function expand(vs : TFhirValueSet; options : TExpansionOperationOptionSet = []) : TFhirValueSet; override;
     function supportsSystem(system, version : string) : boolean; override;
@@ -92,16 +96,16 @@ begin
   Factory.checkNoModifiers(r, 'Repository.SeeResource', 'Resource');
 end;
 
-constructor TFHIRServerWorkerContextR4.Create(factory : TFHIRFactory);
+constructor TFHIRServerWorkerContextR4.Create(factory : TFHIRFactory; pc : TFHIRPackageManager);
 begin
   inherited;
-  FLock := TFslLock.Create('Validation.questionnaire');
-  FProfile := TFhirExpansionParams.create;
-  FProfile.includeDefinition := false;
+  FLock := TFslLock.Create('Validation.questionnaire r4');
+  FProfile := TFhirExpansionParams.Create;
+  FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
-  FQuestionnaires := TFslMap<TFhirQuestionnaire>.create('ctxt.q');
-  FSearchParameters := TFslMap<TFhirSearchParameter>.create('ctxt.sp');
-  FCompartments := TFslMap<TFhirCompartmentDefinition>.create('ctxt.comp');
+  FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.q');
+  FSearchParameters := TFslMap<TFhirSearchParameter>.Create('ctxt.sp');
+  FCompartments := TFslMap<TFhirCompartmentDefinition>.Create('ctxt.comp');
   FSearchParameters.defaultValue := nil;
   FCompartments.defaultValue := nil;
 end;
@@ -111,13 +115,13 @@ var
   a : TFhirResourceType;
 begin
   for a := low(TFhirResourceType) to High(TFhirResourceType) do
-     FPatientIdExpressions[a].Free;
-  FSearchParameters.Free;
-  FCompartments.Free;
-  FQuestionnaires.Free;
-  FProfile.Free;
-  FTerminologyServer.Free;
-  FLock.Free;
+     FPatientIdExpressions[a].free;
+  FSearchParameters.free;
+  FCompartments.free;
+  FQuestionnaires.free;
+  FProfile.free;
+  FTerminologyServer.free;
+  FLock.free;
   inherited;
 end;
 
@@ -125,6 +129,12 @@ end;
 function TFHIRServerWorkerContextR4.Link: TFHIRServerWorkerContextR4;
 begin
   result := TFHIRServerWorkerContextR4(inherited Link);
+end;
+
+procedure TFHIRServerWorkerContextR4.Unload;
+begin
+  inherited Unload;
+  FQuestionnaires.clear;
 end;
 
 procedure TFHIRServerWorkerContextR4.LoadingFinished;
@@ -144,7 +154,7 @@ var
   sp : TFhirSearchParameter;
   fpe : TFHIRPathEngine;
 begin
-  fpe := TFHIRPathEngine.create(nil, nil);
+  fpe := TFHIRPathEngine.Create(nil, nil);
   try
     comp := FCompartments['http://hl7.org/fhir/CompartmentDefinition/patient'];
     if comp <> nil then
@@ -168,7 +178,7 @@ begin
       end;
     end;
   finally
-    fpe.Free;
+    fpe.free;
   end;
 end;
 
@@ -177,43 +187,40 @@ begin
   result := FPatientIdExpressions[rt];
 end;
 
-procedure TFHIRServerWorkerContextR4.SeeResource(r : TFhirResource);
+procedure TFHIRServerWorkerContextR4.SeeResourceProxy(r : TFhirResourceProxy);
 var
   sp : TFhirSearchParameter;
   b : TFhirEnum;
   s : string;
 begin
-  checkResource(r);
-  if r is TFHIRDomainResource then
-    TFHIRDomainResource(r).text := nil;
-  if (r.ResourceType in [frtValueSet, frtConceptMap, frtCodeSystem]) then
+  if StringArrayExists(TERMINOLOGY_RESOURCES, r.fhirType) then
     FTerminologyServer.SeeSpecificationResource(r)
-  else if r.resourceType = frtSearchParameter then
+  else if r.fhirType = 'SearchParameter' then
   begin
-    sp := r as TFhirSearchParameter;
+    sp := r.resource as TFhirSearchParameter;
     for b in sp.base do
     begin
       s := b.value+'.'+sp.code;
       if not FSearchParameters.ContainsKey(s) then
-        FSearchParameters.Add(b.value+'.'+sp.code, sp.link)
+        FSearchParameters.Add(s, sp.link)
     end;
   end
-  else if r.resourceType = frtCompartmentDefinition then
-    FCompartments.Add(TFhirCompartmentDefinition(r).url, TFhirCompartmentDefinition(r).link)
-  else if r.resourceType = frtQuestionnaire then
+  else if r.fhirType = 'CompartmentDefinition' then
+    FCompartments.Add(r.url, TFhirCompartmentDefinition(r.resource).link)
+  else if r.fhirType = 'Questionnaire' then
   begin
     FLock.lock;
     try
       if FQuestionnaires.ContainsKey(r.id) then
-        FQuestionnaires[r.id] := (r as TFhirQuestionnaire).link
+        FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
       else
-        FQuestionnaires.add(r.id, (r as TFhirQuestionnaire).link)
+        FQuestionnaires.add(r.id, (r.resource as TFhirQuestionnaire).link)
     finally
       FLock.Unlock;
     end;
   end
   else
-    inherited SeeResource(r);
+    inherited SeeResourceProxy(r);
 end;
 
 function TFHIRServerWorkerContextR4.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
@@ -221,6 +228,7 @@ var
   c : TFHIRCodingW;
   p : TFHIRParametersW;
   vsw : TFHIRValueSetW;
+  summary : string;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -229,7 +237,7 @@ begin
       c.systemUri := system;
       c.code := code;
       c.version := version;
-      p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil);
+      p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, summary);
       try
         result := TValidationResult.Create;
         try
@@ -243,10 +251,10 @@ begin
           result.free;
         end;
       finally
-        p.Free;
+        p.free;
       end;
     finally
-      c.Free;
+      c.free;
     end;
   finally
     vsw.free;
@@ -255,17 +263,17 @@ end;
 
 procedure TFHIRServerWorkerContextR4.SetTerminologyServer(const Value: TTerminologyServer);
 begin
-  FTerminologyServer.Free;
+  FTerminologyServer.free;
   FTerminologyServer := Value;
 end;
 
-function TFHIRServerWorkerContextR4.fetchResource(t : TFhirResourceType; url : String) : TFhirResource;
+function TFHIRServerWorkerContextR4.fetchResource(t : TFhirResourceType; url, version : String) : TFhirResource;
 var
   vsw : TFHIRValueSetW;
 begin
   if t = frtValueSet then
   begin
-    vsw := FTerminologyServer.getValueSetByUrl(url);
+    vsw := FTerminologyServer.getValueSetByUrl(url, version);
     if vsw <> nil then
     begin
       try
@@ -280,7 +288,7 @@ begin
   else if t = frtQuestionnaire then
     result := getQuestionnaire(url)
   else
-    result := inherited fetchResource(t, url);
+    result := inherited fetchResource(t, url, version);
 end;
 
 function TFHIRServerWorkerContextR4.getQuestionnaire(url: string): TFhirQuestionnaire;
@@ -319,10 +327,10 @@ begin
     try
       result := res.Resource as TFhirValueSet;
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 
@@ -339,7 +347,7 @@ begin
   try
     result := TValidationResult.Create;
     try
-      if FTerminologyServer.checkCode(op, lang, '', code, system, version, display) then
+      if FTerminologyServer.checkCode(op, langList, '', code, system, version, display) then
         result.Severity := isNull
       else if op.issueCount = 1 then
       begin
@@ -349,14 +357,14 @@ begin
       else
       begin
         result.Severity := isError;
-        result.Message := '??';
+        result.Message := '??val4';
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    op.Free;
+    op.free;
   end;
 end;
 
@@ -366,6 +374,7 @@ var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
   c : TFhirCodingW;
+  summary : string;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -373,7 +382,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, nil, false, true, nil);
+        p := FTerminologyServer.validate(vsw, c, nil, false, true, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then
@@ -381,17 +390,17 @@ begin
           else
             result.Severity := isError;
         finally
-          p.Free;
+          p.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 
@@ -401,6 +410,7 @@ var
   p : TFhirParametersW;
   vsw : TFHIRValueSetW;
   c : TFhirCodeableConceptW;
+  summary : string;
 begin
   vsw := factory.wrapValueSet(vs.Link);
   try
@@ -408,7 +418,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil);
+        p := FTerminologyServer.validate('CodeableConcept', vsw, c, FProfile, false, true, vcmCodeableConcept, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then
@@ -416,17 +426,17 @@ begin
           else
             result.Severity := isError;
         finally
-          p.Free;
+          p.free;
         end;
       finally
-        c.Free;
+        c.free;
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    vsw.Free;
+    vsw.free;
   end;
 end;
 

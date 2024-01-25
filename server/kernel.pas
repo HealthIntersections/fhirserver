@@ -33,24 +33,28 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, FastMM4, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
-  {$IFDEF FPC} gui_lcl, {$ELSE} gui_vcl, {$ENDIF}
+  {$IFDEF FPC} gui_lcl, Interfaces, {$ELSE} gui_vcl, {$ENDIF}
 
   IdOpenSSLLoader,
 
-  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl,
+  fsl_base, fsl_utilities, fsl_fpc, fsl_logging, fsl_threads, fsl_openssl, fsl_stream, fsl_npm_cache, fsl_web_init, fsl_i18n,
   {$IFDEF WINDOWS} fsl_service_win, {$ELSE} fsl_service, {$ENDIF}
   fdb_manager,
   fhir_objects,
   fhir2_factory, fhir3_factory, fhir4_factory, fhir5_factory,
-  fhir2_javascript, fhir3_javascript, fhir4_javascript, fhir5_javascript,
+
+  {$IFDEF FPC}
+  fui_fake_console,
+  {$ENDIF}
 
   server_constants, server_config, utilities, server_context,
-  {$IFNDEF NO_JS}server_javascript, {$ENDIF}
-  tx_manager, telnet_server, web_source, web_server, web_cache,
-  server_testing,
-  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages, endpoint_loinc, endpoint_snomed, endpoint_full;
+  tx_manager, telnet_server, web_source, web_server, web_cache, zero_config,
+  server_testing, kernel_thread, server_stats,
+  endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
+  endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao,
+  endpoint_txregistry, endpoint_xig;
 
 
 // how the kernel works:
@@ -71,18 +75,7 @@ Uses
 type
   TFHIRServiceKernel = class;
 
-  TFhirServerMaintenanceThread = class (TFslThread)
-  private
-    FKernel : TFHIRServiceKernel;
-  protected
-    function ThreadName : String; override;
-    procedure Initialise; override;
-    procedure Execute; override;
-    procedure Finalise; override;
-  public
-    constructor Create(kernel : TFHIRServiceKernel);
-    destructor Destroy; override;
-  end;
+  { TFHIRServiceKernel }
 
   TFHIRServiceKernel = class (TSystemService)
   private
@@ -93,28 +86,35 @@ type
     FTerminologies : TCommonTerminologies;
     FEndPoints : TFslList<TFHIRServerEndPoint>;
     FWebServer : TFhirWebServer;
+    FParams : TCommandLineParameters;
 
     FMaintenanceThread: TFhirServerMaintenanceThread;
+    FPcm : TFHIRPackageManager;
+    FMaxMem : UInt64;
+    FI18n : TI18nSupport;
+    FStatsCount : integer;
+    FStatsRecord : TStatusRecord;
 
+    function endpointName: String;
     procedure loadTerminologies;
     procedure loadEndPoints;
     procedure startWebServer;
+    procedure SetCacheStatus(status : boolean);
     procedure stopWebServer;
     procedure unloadEndpoints;
     procedure unloadTerminologies;
 
-    {$IFNDEF NO_JS}
-    procedure registerJs(sender: TObject; js: TJsHost); virtual;
-    {$ENDIF}
+    procedure recordStats(callback : TFhirServerMaintenanceThreadTaskCallBack);
+    procedure sweepCaches(callback : TFhirServerMaintenanceThreadTaskCallBack);  
 
     function makeEndPoint(config : TFHIRServerConfigSection) : TFHIRServerEndPoint;
 
     function GetNamedContext(sender : TObject; name : String) : TFHIRServerContext;
+    procedure checkMem (callback : TFhirServerMaintenanceThreadTaskCallBack);
   protected
-    FStartTime : UInt64;
     function command(cmd: String): boolean; override;
   public
-    constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile);
+    constructor Create(const ASystemName, ADisplayName, Welcome : String; ini : TFHIRServerConfigFile; params : TCommandLineParameters);
     destructor Destroy; override;
 
     function CanStart : boolean; Override;
@@ -122,106 +122,68 @@ type
     procedure DoStop; Override;
     procedure dump; override;
 
+    procedure StopCommand(sender : TObject);
+
 //    property loadStore : boolean read FLoadStore write FLoadStore;
     property Ini : TFHIRServerConfigFile read FIni;
     property Settings : TFHIRServerSettings read FSettings;
     property WebServer : TFhirWebServer read FWebServer;
     property Terminologies : TCommonTerminologies read FTerminologies;
+    property i18n : TI18nSupport read FI18n;
     property EndPoints : TFslList<TFHIRServerEndPoint> read FEndPoints;
   end;
 
 
-procedure ExecuteFhirServer; overload;
+procedure ExecuteFhirServer(params : TCommandLineParameters); overload;
 
 implementation
 
-{$IFDEF WINDOWS}
+{$IFDEF DELPHI}
 uses
   JclDebug;
 {$ENDIF}
 
-{ TFhirServerMaintenanceThread }
-
-constructor TFhirServerMaintenanceThread.Create(kernel : TFHIRServiceKernel);
-begin
-  inherited Create();
-  FKernel := kernel;
-end;
-
-destructor TFhirServerMaintenanceThread.Destroy;
-begin
-  inherited;
-end;
-
-procedure TFhirServerMaintenanceThread.Initialise;
-begin
-  {$IFDEF WINDOWS}
-  CoInitialize(nil);
-  {$ENDIF}
-  {$IFNDEF NO_JS}
-  GJsHost := TJsHost.Create;
-  //  todo, once eventing is sorted out  GJsHost.registry := FServer.ServerContext.EventScriptRegistry.Link;
-  {$ENDIF}
-  TimePeriod := 5000;
-end;
-
-function TFhirServerMaintenanceThread.threadName: String;
-begin
-  result := 'Server Maintenance Thread';
-end;
-
-procedure TFhirServerMaintenanceThread.Execute;
 var
-  ep : TFhirServerEndpoint;
-begin
-  try
-    for ep in FKernel.FEndPoints do
-      if not Terminated then
-        ep.internalThread;
-    if not Terminated then
-      FKernel.FTerminologies.sweepSnomed;
-    if not Terminated then
-      FKernel.WebServer.Common.cache.Trim;
-  except
-  end;
-end;
-
-procedure TFhirServerMaintenanceThread.Finalise;
-begin
-  {$IFNDEF NO_JS}
-  GJsHost.Free;
-  GJsHost := nil;
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  CoUninitialize;
-  {$ENDIF}
-end;
+  GStartTime : UInt64;
 
 { TFHIRServiceKernel }
 
-constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName, Welcome: String; ini: TFHIRServerCOnfigFile);
+constructor TFHIRServiceKernel.Create(const ASystemName, ADisplayName,
+  Welcome: String; ini: TFHIRServerConfigFile; params : TCommandLineParameters);
 begin
-  FStartTime := GetTickCount64;
-  inherited create(ASystemName, ADisplayName);
+  inherited Create(ASystemName, ADisplayName);
+  FParams := params;
   FTelnet := TFHIRTelnetServer.Create(44123, Welcome);
   FIni := ini;
   FTelnet.Password := FIni.web['telnet-password'].value;
   Logging.addListener(FTelnet);
 
   FSettings := TFHIRServerSettings.Create;
-  FSettings.ForLoad := not hasCommandLineParam('noload');
+  FSettings.ForLoad := not params.has('noload');
   FSettings.load(FIni);
 
-  FEndPoints := TFslList<TFHIRServerEndPoint>.create;
+  if FSettings.Ini.service['package-cache'].value <> '' then
+    FPcm := TFHIRPackageManager.Create(FSettings.Ini.service['package-cache'].value)
+  else
+    FPcm := TFHIRPackageManager.Create(npmModeSystem);
+
+  FMaxMem := FSettings.Ini.service['max-memory'].readAsUInt64(0) * 1024 * 1024;
+  FEndPoints := TFslList<TFHIRServerEndPoint>.Create;
+  FStatsRecord := TStatusRecord.Create;
 end;
 
 destructor TFHIRServiceKernel.Destroy;
 begin
+  FTelnet.ShuttingDown := true;
+  FParams.free;
+  FStatsRecord.free;
+  FI18n.free;
+  FPcm.free;
   Logging.removeListener(FTelnet);
-  FEndPoints.Free;
-  FIni.Free;
-  FSettings.Free;
-  FTelnet.Free;
+  FEndPoints.free;
+  FIni.free;
+  FSettings.free;
+  FTelnet.free;
   inherited;
 end;
 
@@ -232,17 +194,38 @@ begin
 end;
 
 procedure TFHIRServiceKernel.postStart;
+var
+  ep : TFhirServerEndpoint;
+  i : integer;
 begin
   try
     LoadTerminologies;
     LoadEndPoints;
     StartWebServer();
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create(self);
+    for ep in FEndPoints do
+      ep.Started;
+
+    recordStats(nil);
+    FMaintenanceThread := TFhirServerMaintenanceThread.Create;
+    FMaintenanceThread.defineTask('mem-check', checkMem, 35);
+    FMaintenanceThread.defineTask('stats', recordStats, 60);
+    i := 0;
+    for ep in FEndPoints do
+    begin
+      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
+      i := i + 5;
+    end;
+    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
+    FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
+    FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
     FMaintenanceThread.Start;
 
+
+    SetCacheStatus(settings.Ini.web['caching'].value = 'true');
+
     // post start up time.
-    getReport('|', true); // base line the object counting
-    Logging.log('started ('+inttostr((GetTickCount64 - FStartTime) div 1000)+'secs)');
+    getReport('|', true); // base line the object countig
+    Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
     Logging.Starting := false;
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
   except
@@ -254,18 +237,27 @@ begin
   end;
 end;
 
-procedure TFHIRServiceKernel.DoStop;
+procedure TFHIRServiceKernel.DoStop; 
+var
+  ep : TFhirServerEndpoint;
 begin
   try
     Logging.log('stopping: '+StopReason);
-    Logging.log('stop web server');
 
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' is stopping');
+    Logging.log('close web server');
+    if FWebServer <> nil then
+      FWebServer.Close;
+    Logging.log('stop internal thread');
     if FMaintenanceThread <> nil then
     begin
-      FMaintenanceThread.StopAndWait(100);
+      FMaintenanceThread.StopAndWait(21000); // see comments in FMaintenanceThread.finalise
+      FMaintenanceThread.free;
     end;
-    FMaintenanceThread.Free;
+    for ep in FEndPoints do
+      ep.Stopping;
+
+    Logging.log('stop web server');
     StopWebServer;
     Logging.log('closing');
     UnLoadEndPoints;
@@ -277,22 +269,24 @@ begin
   end;
 end;
 
-function endpointName : String;
+function TFHIRServiceKernel.endpointName : String;
 begin
-  if not getCommandLineParam('endpoint', result) then
+  if not FParams.get('endpoint', result) then
     raise EFslException.Create('No endpoint parameter supplied');
 end;
 
-{$IFNDEF NO_JS}
-procedure TFHIRServiceKernel.registerJs(sender : TObject; js : TJsHost);
+procedure TFHIRServiceKernel.SetCacheStatus(status: boolean);
+var
+  ep : TFhirServerEndpoint;
 begin
-  js.engine.registerFactory(fhir2_javascript.registerFHIRTypes, fhirVersionRelease2, TFHIRFactoryR2.create);
-  js.engine.registerFactory(fhir3_javascript.registerFHIRTypes, fhirVersionRelease3, TFHIRFactoryR3.create);
-  js.engine.registerFactory(fhir4_javascript.registerFHIRTypes, fhirVersionRelease4, TFHIRFactoryR4.create);
-  js.engine.registerFactory(fhir4_javascript.registerFHIRTypesDef, fhirVersionUnknown, TFHIRFactoryR4.create);
-  js.engine.registerFactory(fhir5_javascript.registerFHIRTypes, fhirVersionRelease5, TFHIRFactoryR5.create);
+  if (status) then
+    Logging.log('HTTP Caching is On')
+  else
+    Logging.log('HTTP Caching is Off');
+  WebServer.setCacheStatus(status);
+  for ep in FEndPoints do
+    ep.setCacheStatus(status);
 end;
-{$ENDIF}
 
 // --- core functionality ------------------------------------------------------
 
@@ -301,6 +295,36 @@ begin
   Logging.log('Load Terminologies');
   FTerminologies := TCommonTerminologies.Create(Settings.link);
   FTerminologies.load(Ini['terminologies'], false);
+
+  fI18n := TI18nSupport.Create(FTerminologies.Languages.link);
+  FI18n.loadPropertiesFile(partnerFile('Messages.properties'));
+  FI18n.loadPropertiesFile(partnerFile('Messages_es.properties'));
+  FI18n.loadPropertiesFile(partnerFile('Messages_de.properties'));
+  FI18n.loadPropertiesFile(partnerFile('Messages_nl.properties'));
+end;
+
+function epVersion(section : TFHIRServerConfigSection): TFHIRVersion;
+var
+  v : String;
+begin
+  v := section['version'].value;
+  if (v = 'r2') then
+    result := fhirVersionRelease2
+  else if (v = 'r3') then
+    result := fhirVersionRelease3
+  else if (v = 'r4') then
+    result := fhirVersionRelease4
+  else if (v = 'r4b') then
+    result := fhirVersionRelease4B
+  else if (v = 'r5') then
+    result := fhirVersionRelease5
+  else
+    result := fhirVersionUnknown;
+end;
+
+function versionOk(section : TFHIRServerConfigSection) : boolean;
+begin
+   result := epVersion(section) in [fhirVersionUnknown, fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4,  fhirVersionRelease4B,  fhirVersionRelease5]
 end;
 
 procedure TFHIRServiceKernel.loadEndPoints;
@@ -311,7 +335,7 @@ begin
   Logging.log('Load End Points');
   for section in FIni['endpoints'].sections do
   begin
-    if section['active'].valueBool then
+    if (section['active'].valueBool) and (versionOk(section)) then
       FEndPoints.Add(makeEndPoint(section));
   end;
 
@@ -319,32 +343,38 @@ begin
   begin
     Logging.log('Load End Point '+ep.config.name+': '+ep.summary);
     FTelnet.addEndPoint(ep);
-    {$IFNDEF NO_JS}
-    ep.OnRegisterJs := registerJs;
-    {$ENDIF}
     ep.Load;
   end;
 end;
 
-procedure TFHIRServiceKernel.StartWebServer;
+procedure TFHIRServiceKernel.startWebServer;
 var
   ep : TFHIRServerEndPoint;
 begin
-  FWebServer := TFhirWebServer.create(Settings.Link, DisplayName);
-  FWebServer.Common.cache := THTTPCacheManager.Create;
-  {$IFNDEF NO_JS}
-  FWebServer.Common.OnRegisterJs := registerJs;
-  {$ENDIF}
+  FWebServer := TFhirWebServer.Create(Settings.Link, DisplayName);
+  FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
+  FWebServer.Common.cache.cacheDwellTime := Settings.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
   begin
     Logging.log('Web source from c:\work\fhirserver\server\web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('c:\work\fhirserver\server\web')
   end
-  else if FolderExists('..\..\server\web') then
+  else if FolderExists('/Users/grahamegrieve/work/server/server/web') then
   begin
-    Logging.log('Web source from ..\..\server\web');
-    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('..\..\server\web')
+    Logging.log('Web source from /Users/grahamegrieve/work/server/server/web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('/Users/grahamegrieve/work/server/server/web')
+  end
+  else if FolderExists(FilePath([TCommandLineParameters.execDir(), '.\web'])) then
+  begin
+    Logging.log('Web source from ./web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([TCommandLineParameters.execDir(), '.\web']))
+  end
+  else if FolderExists(FilePath([TCommandLineParameters.execDir(), '..\..\server\web'])) then
+  begin
+    Logging.log('Web source from ../../server/web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([TCommandLineParameters.execDir(), '..\..\server\web']))
   end
   else if FileExists(partnerFile('fhirserver.web')) then
   begin
@@ -352,15 +382,16 @@ begin
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceZipProvider.Create(partnerFile('fhirserver.web'))
   end
   else
-    raise Exception.Create('Unable to find web source');
+    raise EFslException.Create('Unable to find web source');
 
   for ep in FEndPoints do
     FWebServer.registerEndPoint(ep);
 
+  FTelnet.stats := FWebServer.stats.link;
   FWebServer.Start;
 end;
 
-procedure TFHIRServiceKernel.StopWebServer;
+procedure TFHIRServiceKernel.stopWebServer;
 begin
   if FWebServer <> nil then
   begin
@@ -382,15 +413,44 @@ begin
   FEndpoints := nil;
 end;
 
-procedure TFHIRServiceKernel.UnloadTerminologies;
+procedure TFHIRServiceKernel.unloadTerminologies;
 begin
-  FTerminologies.Free;
+  FTerminologies.free;
   FTerminologies := nil;
+end;
+
+procedure TFHIRServiceKernel.recordStats (callback : TFhirServerMaintenanceThreadTaskCallBack);
+var
+  ep : TFHIRServerEndPoint;
+begin
+  inc(FStatsCount);
+  FStatsRecord.clear;
+  FStatsRecord.magic := FStatsCount;
+  FStatsRecord.Threads := GetThreadCount;
+  FStatsRecord.Memory := Logging.InternalMem;
+
+  FTerminologies.recordStats(FStatsRecord);
+  for ep in FEndPoints do
+    ep.recordStats(FStatsRecord);
+  FWebServer.recordStats(FStatsRecord);
+end;
+
+procedure TFHIRServiceKernel.sweepCaches(callback: TFhirServerMaintenanceThreadTaskCallBack);
+var
+  ep : TFHIRServerEndPoint;
+begin
+  for ep in FEndPoints do
+    ep.SweepCaches;
 end;
 
 procedure TFHIRServiceKernel.dump;
 begin
   // nothing?
+end;
+
+procedure TFHIRServiceKernel.StopCommand(sender: TObject);
+begin
+  Stop('User command', false);
 end;
 
 function TFHIRServiceKernel.command(cmd: String): boolean;
@@ -403,7 +463,13 @@ begin
   begin
     ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
     try
-      ep.InstallDatabase;
+      ep.InstallDatabase(FParams);
+      Logging.log('  .. installed');
+      if FParams.get('packages', fn) then
+      begin
+        Logging.log('  .. installing packages');
+        ep.LoadPackages(FParams.has('installer'), fn);
+      end;
     finally
       ep.free;
     end;
@@ -412,7 +478,7 @@ begin
   begin
     ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
     try
-      ep.updateAdminPassword;
+      ep.updateAdminPassword(FParams.get('password'));
     finally
       ep.free;
     end;
@@ -429,19 +495,19 @@ begin
   else if (cmd = 'remount') or (cmd = 'installdb') then
   begin
     Logging.log('Install new database (wipe if necessary)');
-    if getCommandLineParam('packages', fn) then
+    if FParams.get('packages', fn) then
       loadTerminologies;
     try
       ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
       try
         ep.UninstallDatabase;
         Logging.log('  .. uninstalled');
-        ep.InstallDatabase;
+        ep.InstallDatabase(FParams);
         Logging.log('  .. installed');
-        if getCommandLineParam('packages', fn) then
+        if FParams.get('packages', fn) then
         begin
           Logging.log('  .. installing packages');
-          ep.LoadPackages(fn);
+          ep.LoadPackages(FParams.has('installer'), fn);
         end;
       finally
         ep.free;
@@ -449,15 +515,15 @@ begin
     finally
       unloadTerminologies;
     end;
-    if hasCommandLineParam('installer') then
+    if FParams.has('installer') then
       Logging.log('---completed ok---');
   end
   else if cmd = 'load' then
   begin
     ep := makeEndPoint(FIni['endpoints'].section[endpointName]);
     try
-      if getCommandLineParam('packages', fn) then
-        ep.LoadPackages(fn)
+      if FParams.get('packages', fn) then
+        ep.LoadPackages(FParams.has('installer'), fn)
       else
         Logging.log('no Packages to install');
     finally
@@ -472,22 +538,30 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FI18n.link)
+  else if config['type'].value = 'tx-registry' then
+    result := TTxRegistryServerEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
+  else if config['type'].value = 'folder' then
+    result := TFolderWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
+  else if config['type'].value = 'icao' then
+    result := TICAOWebEndPoint.Create(config.link, FSettings.Link, FI18n.link)
   else if config['type'].value = 'loinc' then
-    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link)
+    result := TLoincWebEndPoint.Create(config.link, FSettings.Link, nil, Terminologies.link, FI18n.link)
   else if config['type'].value = 'snomed' then
-    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link)
+    result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+  else if config['type'].value = 'xig' then
+    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
   begin
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link);
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link);
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else
-    raise Exception.Create('Unknown server type "' +config['type'].value+'"');
+    raise EFslException.Create('Unknown server type "' +config['type'].value+'"');
 end;
 
 function TFHIRServiceKernel.GetNamedContext(sender: TObject; name: String): TFHIRServerContext;
@@ -500,6 +574,22 @@ begin
       exit((t as TStorageEndPoint).ServerContext);
 end;
 
+procedure TFHIRServiceKernel.checkMem (callback : TFhirServerMaintenanceThreadTaskCallBack);
+var
+  ep : TFhirServerEndpoint;
+  mem : UInt64;
+begin
+  mem := Logging.InternalMem;
+  callback(self, 'Checking Memory Status', -1);
+  if (FMaxMem > 0) and (mem > FMaxMem) then
+  begin
+    Logging.log('Clear Caches because memory in use = '+DescribeBytes(mem)+', and max is '+DescribeBytes(FMaxMem));
+    WebServer.clearCache;
+    for ep in FEndPoints do
+      ep.clearCache;
+    Logging.log('Cleared Cache. Memory in use = '+DescribeBytes(Logging.InternalMem));
+  end;
+end;
 
 { === Core ====================================================================}
 
@@ -510,8 +600,8 @@ begin
   {$ENDIF}
 
   {$IFDEF FPC}
-  RequireDerivedFormResource:=True;
-  Application.Scaled:=True;
+  RequireDerivedFormResource := True;
+  Application.Scaled := True;
   {$ENDIF}
 
   Application.Initialize;
@@ -519,7 +609,7 @@ begin
   Application.Run;
 end;
 
-procedure ExecuteFhirServer(ini : TFHIRServerConfigFile); overload;
+procedure ExecuteFhirServer(params : TCommandLineParameters; ini : TFHIRServerConfigFile); overload;
 var
   svcName : String;
   dispName : String;
@@ -528,13 +618,13 @@ var
   logMsg : String;
 begin
   // if we're running the test or gui, go do that
-  if (hasCommandLineParam('tests') or hasCommandLineParam('-tests')) then
-    RunTests(ini)
-  else if (hasCommandLineParam('testinsight')) then
-    RunTestInsight(ini)
-  else if (hasCommandLineParam('gui') or hasCommandLineParam('manager')) then
+  if (params.has('tests') or params.has('-tests')) then
+    RunTests(params, ini)
+  else if (params.has('testinsight')) then
+    RunTestInsight(params, ini)
+  else if (params.has('gui') or params.has('manager')) then
     RunGui(ini)
-  else if (hasCommandLineParam('help')) then
+  else if (params.has('help')) then
   begin
     writeln('Health Intersections FHIR Server');
     writeln('This is the Server. For command line parameters, see ');
@@ -542,19 +632,19 @@ begin
   end
   else
   begin
-    if not getCommandLineParam('name', svcName) then
+    if not params.get('name', svcName) then
       if ini.service['name'].value <> '' then
         svcName := ini.service['name'].value
       else
         svcName := 'FHIRServer';
 
-    if not getCommandLineParam('title', dispName) then
+    if not params.get('title', dispName) then
       if ini.service['title'].value <> '' then
         dispName := ini.service['title'].value
       else
         dispName := 'FHIR Server';
 
-    {$IFDEF WINDOWS}
+    {$IFDEF DELPHI}
     if JclExceptionTrackingActive then
       logMsg := 'Using Configuration file '+ini.FileName+' (+stack dumps)'
     else
@@ -562,34 +652,62 @@ begin
       logMsg := 'Using Configuration file '+ini.FileName;
     Logging.log(logMsg);
 
-    svc := TFHIRServiceKernel.create(svcName, dispName, logMsg, ini.link);
+    svc := TFHIRServiceKernel.Create(svcName, dispName, logMsg, ini.link, params.link);
     try
-      if getCommandLineParam('cmd', cmd) then
+      {$IFDEF FPC}
+      if FakeConsoleForm <> nil then
+        FakeConsoleForm.OnStop := svc.StopCommand;
+      {$ENDIF}
+      if params.get('cmd', cmd) then
       begin
         if (cmd = 'exec') or (cmd = 'console') then
           svc.ConsoleExecute
         else if (cmd = 'tests') then
-          runTests(ini)
+          runTests(params, ini)
         else if not svc.command(cmd) then
           raise EFslException.Create('Unknown command '+cmd);
       end
       else if (isTestInsight) then
       begin
-        RunTestInsight(ini);
+        RunTestInsight(params, ini);
       end
       else
       begin
+        {$IFDEF WINDOWS}
         try
           writeln('No -cmd parameter - exiting now'); // won't see this if an actual windows service
         except
           // catch 105 err
         end;
         svc.Execute;
+        {$ELSE}
+        svc.ConsoleExecute;
+        {$ENDIF}
       end;
     finally
-      svc.Free;
+      svc.free;
     end;
   end;
+end;
+
+procedure logSystemInfo;
+var
+  l, s : string;
+begin
+  l := 'Running on "'+SystemName+'": '+SystemPlatform;
+  s := SystemArchitecture;
+  if (s <> '') and not sameText(s, 'Unknown') then
+  begin
+    l := l + ' (';
+    l := l + s;
+    s := SystemProcessorName;
+    if s <> '' then
+      l := l + '/'+s;
+    l := l + ')';
+  end;
+  l := l + '. ';
+  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
+  Logging.log(l);
 end;
 
 procedure logCompileInfo;
@@ -611,111 +729,185 @@ begin
   os := 'OSX';
   {$ENDIF}
   {$IFDEF CPU64}
-  cpu := '-64';
+  cpu := ''; //'-64';
   {$ELSE}
   cpu := '-32';
   {$ENDIF}
 
   s := os+cpu+compiler;
   {$IFOPT C+}
-  s := s + ' +Assertions';
+  s := s + '+Assertions';
   {$ENDIF}
 
   {$IFOPT D+}
-  s := s + ' +Debug';
+  s := s + '+Debug';
   {$ENDIF}
 
   {$IFOPT O+}
-  s := s + ' +Optimizations';
+  s := s + '+Optimizations';
+  {$ENDIF}
+
+  {$IFDEF OBJECT_TRACKING}
+  s := s + '+ObjectTracking';
   {$ENDIF}
 
   Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
-procedure ExecuteFhirServer;
+
 var
-  cfg : TFHIRServerConfigFile;
-  cfgName : String;
-  fn : String;
-  tz : TDateTime;
+  logFilename : String;
+
+procedure logDebuggingInfo;
+var
+  s : String;
 begin
-  {$IFDEF WINDOWS}
-  SetConsoleTitle('FHIR Server');
-  {$ENDIF}
-
-  if getCommandLineParam('log', fn) then
-    Logging.logToFile(fn)
-  else if (FolderExists('c:\temp')) then
-    Logging.logToFile('c:\temp\fhirserver.log')
+  s := 'Logging to '+logFilename+'. ';
+  if UnderDebugger then
+    s := s + 'Being debugged. '
   else
-    Logging.logToFile(tempFile('fhirserver.log'));
+    s := s + 'No Debugger. ';
+  {$IFDEF WINDOWS}
+  if SuppressLeakDialog then
+    s := s + 'No Leak Dialog'
+  else
+    s := s + 'Leaks displayed at end.';
+  {$ENDIF}
+  Logging.log(s);
+end;
 
+procedure initLogging(params : TCommandLineParameters; cfg : TCustomIniFile);
+begin
+  if cfg.valueExists('config', 'log') then
+    logFilename := cfg.readString('config', 'log', '')
+  else if params.has('-tests') then
+    logFilename := filePath(['[tmp]', 'fhirserver-tests.log'])
+  else
+    logFilename := filePath(['[tmp]', 'fhirserver.log']);
+  Logging.logToFile(logFilename);
+  Logging.FileLog.Policy.FullPolicy := lfpChop;
+  Logging.FileLog.Policy.MaximumSize := 1024 * 1024;
 
   // if there's no parameters, then we don't log to the screen
   // if the cmd parameter is 'console' or 'exec' then we also log to the screen
+  {$IFDEF WINDOWS}
   if ParamCount > 0 then
     Logging.LogToConsole := true;
+  {$ELSE}
+  Logging.LogToConsole := true;
+  {$ENDIF}
 
   logCompileInfo;
+  logSystemInfo;
+  logDebuggingInfo;
 
-  if ParamCount = 0 then
-    Logging.log('FHIR Server running as a Service')
+  if not params.hasParams then
+  begin
+    {$IFDEF WINDOWS}
+    Logging.log('FHIR Server running as a Service');
+    {$ELSE}
+    Logging.log('FHIR Server: no parameters');
+    {$ENDIF}
+  end
   else
-    Logging.log(commandLineAsString);
+    Logging.log(params.asString+' (dir='+GetCurrentDir+')');
+  Logging.log('Command Line Parameters: see https://github.com/HealthIntersections/fhirserver/wiki/Command-line-Parameters-for-the-server');
 
+end;
+
+procedure loadDependencies;
+var
+  tz : TDateTime;
+begin
+  Logging.Log('Loading Dependencies');
+  {$IFNDEF STATICLOAD_OPENSSL}
+  {$IFDEF WINDOWS}
+  GetOpenSSLLoader.OpenSSLPath := TCommandLineParameters.execDir();
+  {$ENDIF}
+  {$IFDEF OSX}
+  // todo: do something about this
+  GetOpenSSLLoader.OpenSSLPath := '/opt/homebrew/Cellar/openssl@1.1/1.1.1l/lib/';
+  {$ENDIF}
+  if GetOpenSSLLoader.OpenSSLPath = '' then
+    Logging.Log('OpenSSL 1.1 from (default)')
+  else
+    Logging.Log('OpenSSL 1.1 from '+GetOpenSSLLoader.OpenSSLPath);
+  {$ELSE}
+  // Logging.Log('OpenSSL 1.1 Statically bound');
+  {$ENDIF}
+  InitOpenSSL;
+  {$IFDEF DELPHI}
+  JclStartExceptionTracking;
+  CoInitialize(nil);
+  {$ENDIF}
+  fhir_objects.loadMessages;
+  tz := TimeZoneBias;
+  if tz = 0 then
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
+  else if tz < 0 then
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+FormatDateTime('hh:nn', tz))
+  else
+    Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+FormatDateTime('hh:nn', tz));
+  Logging.Log('Loaded');
+end;
+
+procedure ExecuteFhirServerInner(params : TCommandLineParameters);
+var
+  localDir : String;
+  localConfig : TIniFile;
+  cfg : TFHIRServerConfigFile;
+  cfgName, s : String;
+  fn : String;
+  zc : String;
+begin
+  GStartTime := GetTickCount64;
+
+  {$IFDEF WINDOWS}
+  SetConsoleTitle('FHIR Server');
+  {$ENDIF}
+  {$IFDEF OSX}
+    localDir := GetAppConfigDir(false);
+  {$ELSE}
+    localDir := IncludeTrailingPathDelimiter(params.execDir());
+  {$ENDIF}
+
+  if (params.get('cfg', fn)) then
+    localConfig := TIniFile.Create(fn)
+  else
+    localConfig := TIniFile.Create(localDir + 'fhirserver.ini');
   try
-    Logging.Log('Loading Dependencies');
-    {$IFDEF WINDOWS}
-    GetOpenSSLLoader.OpenSSLPath := ExtractFilePath(Paramstr(0));
-    {$ENDIF}
-    InitOpenSSL;
-    {$IFDEF WINDOWS}
-    JclStartExceptionTracking;
-    CoInitialize(nil);
-    {$ENDIF}
-    {$IFDEF FPC}
-    initialiseTZData(partnerFile('tzdata.tar.gz'));
-    {$ENDIF}
-    tz := TimeZoneBias;
-    if tz = 0 then
-      Logging.log('TimeZone: '+TimeZoneIANAName+' @ UTC')
-    else if tz < 0 then
-      Logging.log('TimeZone: '+TimeZoneIANAName+' @ -'+FormatDateTime('hh:nn', tz))
-    else
-      Logging.log('TimeZone: '+TimeZoneIANAName+' @ +'+FormatDateTime('hh:nn', tz));
-
     try
-      {$IFNDEF NO_JS}
-      GJsHost := TJsHost.Create;
+      initLogging(params, localConfig);
+      loadDependencies;
+      Logging.Log('Local config: '+localConfig.FileName+' (exists = '+booleanToString(fileExists(localConfig.FileName))+')');
       try
-      {$ENDIF}
-        if not getCommandLineParam('cfg', cfgName) then
-        {$IFDEF OSX}
-          cfgName := GetAppConfigDir(false)+'fhirserver.cfg';
-        {$ELSE}
-          cfgName := IncludeTrailingPathDelimiter(ExtractFilePath(ParamStr(0)))+'fhirserver.cfg';
-        {$ENDIF}
+        if localConfig.valueExists('config', 'zero') then
+          cfgName := loadRemoteConfig(params, localConfig.readString('config', 'zero', ''), localConfig)
+        else if localConfig.valueExists('config', 'cfgFile') then
+          cfgName := localConfig.ReadString('config', 'cfgFile', '')
+        else
+          cfgName := localDir + 'fhirserver.cfg';
+        Logging.Log('Actual config: '+cfgName);
 
-        cfg := TFHIRServerConfigFile.create(cfgName);
+          // ok, now, what are we running?
+        cfg := TFHIRServerConfigFile.Create(cfgName);
         try
-          ExecuteFhirServer(cfg);
+          ExecuteFhirServer(params, cfg);
         finally
           cfg.free;
         end;
-      {$IFNDEF NO_JS}
       finally
-        GJsHost.free;
+        {$IFDEF WINDOWS}
+        CoUninitialize();
+        {$ENDIF}
       end;
-      {$ENDIF}
     finally
-    {$IFDEF WINDOWS}
-    CoUninitialize();
-    {$ENDIF}
+      localConfig.free;
     end;
   except
     on e : Exception do
     begin
-      if hasCommandLineParam('installer') then
+      if params.has('installer') then
         writeln('##> Exception '+E.Message)
       else
         writeln(E.ClassName+ ': '+E.Message+#13#10#13#10+ExceptionStack(e));
@@ -724,6 +916,63 @@ begin
   end;
 end;
 
+procedure ExecuteFhirServerInnerEvent;
+var
+  cp : TCommandLineParameters;
+begin
+  cp := TCommandLineParameters.create;
+  try
+    ExecuteFhirServerInner(cp);
+  finally
+    cp.free;
+  end;
+end;
+
+procedure ExecuteFhirServer(params : TCommandLineParameters);
+{$IFDEF FPC}
+begin
+  if params.has('debugging') then
+    UnderDebugger := true
+  else
+  begin
+    {$IFDEF WINDOWS}
+    noFMMLeakMessageBox := true;
+    {$ENDIF}
+    SuppressLeakDialog := true;
+  end;
+
+  if params.has('console') or params.has('fake-console') then
+  begin
+    RequireDerivedFormResource := True;
+    Application.Title := 'FHIRServer';
+    Application.Scaled := True;
+    Application.Initialize;
+    Application.CreateForm(TFakeConsoleForm, FakeConsoleForm);
+    FakeConsoleForm.caption := 'FHIRServer';
+    FakeConsoleForm.Op := ExecuteFhirServerInnerEvent;
+    Application.run;
+
+
+    FakeConsoleForm.close;
+    FakeConsoleForm.free;
+  end
+  else
+  begin
+    {$IFDEF WINDOWS}
+    AllocConsole;
+    IsConsole := True;
+    StdInputHandle  := 0;
+    StdOutputHandle := 0;
+    StdErrorHandle  := 0;
+    SysInitStdIO;
+    {$ENDIF}
+    ExecuteFhirServerInner(params);
+  end;
+end;
+{$ELSE}
+begin
+  ExecuteFhirServerInner;
+end;
+{$ENDIF}
 
 end.
-

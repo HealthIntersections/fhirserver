@@ -1246,10 +1246,10 @@ Begin
   { if FKarisma <> Nil Then
     Begin
     FKarisma.Close;
-    FKarisma.Free;
+    FKarisma.free;
     End;
   }
-  config := TIniFile.create('cde.ini');
+  config := TIniFile.Create('cde.ini');
   try
     config.WriteBool('WP', 'SourceVisible', FSourceVisible);
     config.WriteInteger('WP', 'SourceWidth', FSourceWidth);
@@ -2055,7 +2055,7 @@ Begin
     oCell := oBuilder.StartTableCell;
     oCell.Background := clYellow;
     oCell.VerticalAlignment := VerticalAlignmentCentered;
-    oBuilder.StartParagraph.Format.Align :=
+    oBuilder.StartParagraph.Format.Align := 
       WordProcessorParagraphAlignmentRight;
     oBuilder.AddImage(DocRoot + 'Test Docs\button-up-example.jpg')
       .VerticalAlignment := ImageVerticalAlignmentBottom;
@@ -2065,7 +2065,7 @@ Begin
     oBuilder.EndTableCell;
     oBuilder.StartTableCell { .Width := 0.2 };
     // oBuilder.DefineHotspot('any_link:cell', clAqua, clSilver).Key := 'C';
-    oBuilder.StartParagraph.Format.Align :=
+    oBuilder.StartParagraph.Format.Align := 
       WordProcessorParagraphAlignmentRight;
     oBuilder.AddTextPlain('1,1');
     oBuilder.StartField(NS_FIELD_INPUT, 'test').ReadOnly := ReadOnlyFalse;
@@ -2073,7 +2073,7 @@ Begin
     oBuilder.AddTextPlain('sssssssssssssssssssssssssssssssssssssssss');
     oBuilder.EndField;
     oBuilder.EndParagraph;
-    oBuilder.StartParagraph.Format.Align :=
+    oBuilder.StartParagraph.Format.Align := 
       WordProcessorParagraphAlignmentRight;
     oBuilder.AddTextPlain
       ('ssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss');
@@ -2273,12 +2273,12 @@ procedure TWordProcessorForm.EditCDAHeader(Sender: TObject);
 begin
   CdaHeaderDialog := TCdaHeaderDialog.Create(Self);
   try
-    CdaHeaderDialog.CDADocument :=
+    CdaHeaderDialog.CDADocument := 
       (wrdEditor.Document.SourceObjectModel as TCDADocument)
       .root.Clone as TcdaClinicalDocument;
     if CdaHeaderDialog.ShowModal = mrOK then
     begin
-      (wrdEditor.Document.SourceObjectModel as TCDADocument).root :=
+      (wrdEditor.Document.SourceObjectModel as TCDADocument).root := 
         CdaHeaderDialog.CDADocument.Link;
       ContentChange(Self);
     end;
@@ -2776,7 +2776,7 @@ Begin
   End;
   // End;
   // Finally
-  // oFolder.Free;
+  // oFolder.free;
   // End;
 End;
 
@@ -3051,7 +3051,7 @@ Begin
     //
     // FNamedImageMapAreaMatch.Add('unused1', oImageMapArea.Link);
     // Finally
-    // oImageMapArea.Free;
+    // oImageMapArea.free;
     // End;
     //
     // oImageMapArea := oImage.Map.Areas.New;
@@ -3066,7 +3066,7 @@ Begin
     //
     // FNamedImageMapAreaMatch.Add('unused2', oImageMapArea.Link);
     // Finally
-    // oImageMapArea.Free;
+    // oImageMapArea.free;
     // End;
     //
     // oImageMapArea := oImage.Map.Areas.New;
@@ -3081,7 +3081,7 @@ Begin
     //
     // FNamedImageMapAreaMatch.Add('unused3', oImageMapArea.Link);
     // Finally
-    // oImageMapArea.Free;
+    // oImageMapArea.free;
     // End;
 
     oImageMapArea := oImage.Map.Areas.New;
@@ -3587,10 +3587,10 @@ Begin
     if oProvider <> Nil Then
     //              oWizard.Provider.AssignProvider(oProvider);
     Finally
-    oProvider.Free;
+    oProvider.free;
     End;
     Finally
-    oFile.Free;
+    oFile.free;
     End;
     End;
     if oWizard.Execute Then
@@ -3602,27 +3602,27 @@ Begin
     oFile.OpenCreate;
     oFile.Writer['Provider'].DefineObject(oProvider);
     Finally
-    oFile.Free;
+    oFile.free;
     End;
     ConnectToKarisma(oProvider);
     End;
     Finally
-    oWizard.Free;
+    oWizard.free;
     End;
     End
     Else
     Begin
-    FLastBtn.Free;
-    FNextBtn.Free;
-    FPrevBtn.Free;
-    FFirstBtn.Free;
+    FLastBtn.free;
+    FNextBtn.free;
+    FPrevBtn.free;
+    FFirstBtn.free;
     FKarisma.Close;
-    FKarisma.Free;
+    FKarisma.free;
     FKarisma := nil;
     mnuKarismaConnect.Caption := '&Connect';
     End;
   }
-  raise EWPException.create('commented out');
+  raise EWPException.Create('commented out');
 End;
 
 {
@@ -3752,7 +3752,7 @@ End;
   oStream.Buffer := oSQl.ColumnByName['Blob'].AsBlob.Link;
   wrdEditor.DocumentHandler.LoadNative(oStream);
   Finally
-  oStream.Free;
+  oStream.free;
   End;
   end;
 *)
@@ -3866,7 +3866,7 @@ Begin
     End;
   End
   Else
-    raise EWPException.create('File "' + AFilename + '" not found');
+    raise EWPException.Create('File "' + AFilename + '" not found');
 End;
 
 Procedure StringToFile(Const AStr, AFilename: String);
@@ -4032,7 +4032,7 @@ end;
 
 procedure TWordProcessorForm.mnuExportBitmapClick(Sender: TObject);
 begin
-  raise EWPException.create('not done yet');
+  raise EWPException.Create('not done yet');
 end;
 
 Procedure TWordProcessorForm.mnuEmailClick(Sender: TObject);
@@ -4286,10 +4286,10 @@ end;
 
   oDialog.Execute;
   Finally
-  oDialog.Free;
+  oDialog.free;
   End;
   Finally
-  oReportDocument.Free;
+  oReportDocument.free;
   End;
   end;
   end;
@@ -4309,10 +4309,10 @@ begin
       mgr.CompilePrinterList(list);
       result := list.GetByName(PDF_PRINTER_NAME).Link;
     Finally
-      list.Free;
+      list.free;
     End;
   Finally
-    mgr.Free;
+    mgr.free;
   End;
 end;
 
@@ -4338,11 +4338,11 @@ begin
 //        pdfPrinter.ConsumeJob(oJob);
 //      End;
 //    Finally
-//      oEngine.Free;
+//      oEngine.free;
 //    End;
     Abort;
   finally
-    pdfPrinter.Free;
+    pdfPrinter.free;
   end;
 end;
 
@@ -4351,7 +4351,7 @@ var
   f : TFileStream;
 begin
   try
-    f := TFileStream.create(fn, fmOpenRead + fmShareDenyWrite);
+    f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
     try
       result := true;
     finally
@@ -4376,7 +4376,7 @@ begin
     sleep(1000);
     inc(i);
   end;
-  result := TFslBuffer.create;
+  result := TFslBuffer.Create;
   try
     result.LoadFromFileName(fn);
     result.link;
@@ -4398,7 +4398,7 @@ procedure TWordProcessorForm.mnuFaxClick(Sender: TObject);
 //  iJobIdentifier : DWORD;
 begin
 //  sId := '';
-//  dlg := TWordProcessorFaxDialog.create(nil);
+//  dlg := TWordProcessorFaxDialog.Create(nil);
 //  try
 //    if dlg.ShowModal = mrOk then
 //    begin
@@ -4411,12 +4411,12 @@ begin
 //            gofax.open;
 //            gofax.AccessToken := dlg.eToken.text;
 //            if not gofax.Ready then
-//              raise EWPException.create('Unable to send a fax');
+//              raise EWPException.Create('Unable to send a fax');
 //            gofax.Send(stripSpaces(dlg.eNumber.Text), stripSpaces(dlg.eSource.text), 'filename.pdf', pdf, sId);
 //            gofax.close;
 //            ShowMessage('send as '+sId);
 //          finally
-//            gofax.Free;
+//            gofax.free;
 //          end;
 //        finally
 //          pdf.free;
@@ -4448,15 +4448,15 @@ begin
 //            oEngine.Execute;
 //            oJob.Close;
 //          Finally
-//            oJob.Free;
+//            oJob.free;
 //          End;
 //        Finally
-//          oEngine.Free;
+//          oEngine.free;
 //        End;
 //      end;
 //    end;
 //  finally
-//    dlg.Free;
+//    dlg.free;
 //  end;
   Abort;
 end;

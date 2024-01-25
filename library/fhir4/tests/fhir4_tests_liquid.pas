@@ -1,4 +1,4 @@
-unit fhir4_tests_Liquid;
+unit fhir4_tests_liquid;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -76,7 +76,7 @@ var
 begin
   inherited Create;
   if gResources = nil then
-    gResources := TFslMap<TFHIRResource>.create('resources');
+    gResources := TFslMap<TFHIRResource>.Create('resources');
   if gTestDoc = nil then
     gTestDoc := TJSONParser.ParseFile(TestSettings.fhirTestFile(['r4', 'liquid', 'liquid-tests.json']));
   tests := gTestDoc.arr['tests'];
@@ -120,19 +120,19 @@ var
 begin
   if not gResources.ContainsKey(test.str['focus']) then
   begin
-    fn := TestSettings.fhirTestFile(['r4', 'examples', test.str['focus'].replace('/', '-')+'.xml']);
-    p := TFHIRXmlParser.create(TTestingWorkerContext4.Use, engine.engine.context.lang);
+    fn := TestSettings.fhirTestFile(['r4', 'examples', test.str['focus'].replace('/', '-').toLower+'.xml']);
+    p := TFHIRXmlParser.Create(TTestingWorkerContext4.Use, engine.engine.context.langList.link);
     try
-      f := TFileStream.Create(fn, fmOpenRead);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
         p.source := f;
         p.parse;
         gResources.add(test.str['focus'], p.resource.link as TFhirResource);
       finally
-        f.Free;
+        f.free;
       end;
     finally
-      p.Free;
+      p.free;
     end;
   end;
   result := gResources[test.str['focus']];
@@ -146,7 +146,7 @@ end;
 
 procedure TLiquidEngineTest4.TearDown;
 begin
-  engine.Free;
+  engine.free;
 end;
 
 procedure TLiquidEngineTest4.TestCase(Name: String);
@@ -160,7 +160,7 @@ begin
     output := engine.evaluate(doc, loadResource, nil);
     assertTrue(test.str['output'] = output);
   finally
-    doc.Free;
+    doc.free;
   end;
 end;
 
@@ -171,7 +171,7 @@ end;
 
 initialization
 finalization
-  gTestDoc.Free;
-  gResources.Free;
+  gTestDoc.free;
+  gResources.free;
 end.
 

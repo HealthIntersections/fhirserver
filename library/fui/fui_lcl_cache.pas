@@ -1,5 +1,33 @@
 unit fui_lcl_cache;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$I fhir.inc}
 
 interface
@@ -20,7 +48,7 @@ type
   private
     FCache : TFHIRPackageManager;
   public
-    Constructor Create; override;
+    Constructor Create(pc : TFHIRPackageManager);
     destructor Destroy; override;
 
     function canSort : boolean; override;
@@ -31,7 +59,7 @@ type
     function compareItem(left, right : TNpmPackage; col : integer) : integer; override;
 
     function addItem(mode : String) : TNpmPackage; override;
-    procedure DeleteItem(item : TNpmPackage); override;
+    function deleteItem(item : TNpmPackage) : boolean; override;
   end;
 
 
@@ -81,8 +109,13 @@ type
     FManager : TPackageListManager;
     FStop : boolean;
     procedure packageWork(sender : TObject; pct : integer; done : boolean; msg : String);
+    procedure SetIni(AValue: TIniFile);
+    function GetCache: TFHIRPackageManager;
+    procedure SetCache(const Value: TFHIRPackageManager);
+    function npmMode : TFHIRPackageManagerMode;
   public
-    property Ini : TIniFile read FIni write FIni;
+    property Ini : TIniFile read FIni write SetIni;
+    property Cache : TFHIRPackageManager read GetCache write SetCache;
   end;
 
 var
@@ -94,21 +127,21 @@ implementation
 
 { TPackageListManager }
 
-constructor TPackageListManager.Create;
+constructor TPackageListManager.Create(pc : TFHIRPackageManager);
 begin
   inherited Create;
-  FCache := TFHIRPackageManager.create(true);
+  FCache := pc;
 end;
 
 destructor TPackageListManager.Destroy;
 begin
-  FCache.Free;
+  FCache.free;
   inherited Destroy;
 end;
 
 function TPackageListManager.canSort: boolean;
 begin
-  Result:= true;
+  Result := true;
 end;
 
 function TPackageListManager.allowedOperations(item : TNpmPackage): TNodeOperationSet;
@@ -120,9 +153,9 @@ function TPackageListManager.loadList : boolean;
 var
   resp : TFHIRLoadPackagesTaskResponse;
 begin
-  resp := TFHIRLoadPackagesTaskResponse.create;
+  resp := TFHIRLoadPackagesTaskResponse.Create;
   try
-    result := DoBackgroundTask(PackageCacheForm, GPackageLoaderTaskId, TFHIRLoadPackagesTaskRequest.create(FCache.link), resp.link);
+    result := DoBackgroundTask(PackageCacheForm, GPackageLoaderTaskId, TFHIRLoadPackagesTaskRequest.Create(FCache.link), resp.link);
     if result then
       Data.AddAll(resp.Packages);
   finally
@@ -173,7 +206,7 @@ begin
       PackageCacheForm.Cursor := crHourGlass;
       try
         FCache.OnWork := PackageCacheForm.packageWork;
-        result := FCache.Import(fileToBytes(PackageCacheForm.dlgOpen.FileName));
+        result := FCache.Import(fileToBytes(PackageCacheForm.dlgOpen.FileName), PackageCacheForm.dlgOpen.FileName);
       finally
         PackageCacheForm.Cursor := crDefault;
       end;
@@ -183,7 +216,7 @@ begin
   begin
     FCache.OnWork := PackageCacheForm.packageWork;
     if InputQuery('Fetch Package from Web', 'Enter URL:', url) then
-      result := FCache.Import(TInternetFetcher.fetchUrl(url));
+      result := FCache.Import(TInternetFetcher.fetchUrl(url), url);
   end
   else if not FCache.packageExists(mode, '') then
   begin
@@ -193,9 +226,10 @@ begin
   end;
 end;
 
-procedure TPackageListManager.DeleteItem(item: TNpmPackage);
+function TPackageListManager.deleteItem(item: TNpmPackage) : boolean;
 begin
   FCache.remove(item.name, item.version);
+  result := true;
 end;
 
 
@@ -203,7 +237,7 @@ end;
 
 procedure TPackageCacheForm.FormCreate(Sender: TObject);
 begin
-  FManager := TPackageListManager.create;
+  FManager := TPackageListManager.Create;
   FManager.List := ListView1;
   FManager.registerControl(btnImportFile, copAdd, 'file');
   FManager.registerControl(btnImportURL, copAdd, 'url');
@@ -235,7 +269,7 @@ end;
 
 procedure TPackageCacheForm.btnFindPackagesClick(Sender: TObject);
 begin
-  PackageRegistryForm := TPackageRegistryForm.create(self);
+  PackageRegistryForm := TPackageRegistryForm.Create(self);
   try
     PackageRegistryForm.Ini := FIni;
     PackageRegistryForm.showModal;
@@ -269,7 +303,7 @@ begin
   ini.writeInteger('package-manager-view', 'width-canonical', ListView1.Columns[5].width);
   ini.writeInteger('package-manager-view', 'width', width);
   ini.writeInteger('package-manager-view', 'height', height);
-  FManager.Free;
+  FManager.free;
 end;
 
 procedure TPackageCacheForm.FormShow(Sender: TObject);
@@ -282,24 +316,47 @@ begin
   ListView1.Columns[5].width := ini.readInteger('package-manager-view', 'width-canonical', ListView1.Columns[5].width);
   width := ini.readInteger('package-manager-view', 'width', width);
   height := ini.readInteger('package-manager-view', 'height', height);
+  if FManager.FCache = nil then
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
+
   if not FManager.doLoad then
     Close;
 end;
 
+function TPackageCacheForm.npmMode : TFHIRPackageManagerMode;
+begin
+  if rbUserMode.checked then
+    result := npmModeUser
+  else
+    result := npmModeSystem;
+end;
+
+function TPackageCacheForm.GetCache: TFHIRPackageManager;
+begin
+  if FManager.FCache = nil then
+  begin
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
+    FManager.doLoad;
+  end;
+  result := FManager.FCache;
+end;
+
 procedure TPackageCacheForm.rbSystemChange(Sender: TObject);
 begin
-  if FManager.FCache.UserMode then
+  if FManager.FCache.Mode <> npmMode then
   begin
-    FManager.FCache := TFHIRPackageManager.create(false);
+    FManager.FCache.free;
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
     FManager.doLoad;
   end;
 end;
 
 procedure TPackageCacheForm.rbUserModeChange(Sender: TObject);
 begin
-  if not FManager.FCache.UserMode then
+  if FManager.FCache.Mode <> npmMode then
   begin
-    FManager.FCache := TFHIRPackageManager.create(true);
+    FManager.FCache.free;
+    FManager.FCache := TFHIRPackageManager.Create(npmMode);
     FManager.doLoad;
   end;
 end;
@@ -338,6 +395,19 @@ begin
     end;
   end;
   Application.ProcessMessages;
+end;
+
+procedure TPackageCacheForm.SetCache(const Value: TFHIRPackageManager);
+begin
+  FManager.FCache := value;
+  rbUserMode.enabled := false;
+  rbSystem.enabled := false;
+end;
+
+procedure TPackageCacheForm.SetIni(AValue: TIniFile);
+begin
+  FIni := AValue;
+  FManager.Settings := FIni;
 end;
 
 end.

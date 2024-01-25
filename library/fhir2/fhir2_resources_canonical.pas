@@ -39,8 +39,8 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_stream,
-  fhir_objects, fhir_utilities, 
-  fhir2_base, fhir2_types, fhir2_resources_base;
+  fhir_objects,
+  fhir2_types, fhir2_resources_base;
 
 Type
 {$IFDEF FHIR_CONCEPTMAP}
@@ -244,7 +244,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -279,7 +279,7 @@ Type
     FList : TFhirConceptMapContactList;
     function GetCurrent : TFhirConceptMapContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapContactList);
     destructor Destroy; override;
@@ -306,7 +306,7 @@ Type
 
     
     // Add an already existing FhirConceptMapContact to the end of the list.
-    procedure AddItem(value : TFhirConceptMapContact); overload;
+function AddItem(value : TFhirConceptMapContact): TFhirConceptMapContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -356,7 +356,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -396,7 +396,7 @@ Type
     FList : TFhirConceptMapElementList;
     function GetCurrent : TFhirConceptMapElement;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapElementList);
     destructor Destroy; override;
@@ -423,7 +423,7 @@ Type
 
     
     // Add an already existing FhirConceptMapElement to the end of the list.
-    procedure AddItem(value : TFhirConceptMapElement); overload;
+function AddItem(value : TFhirConceptMapElement): TFhirConceptMapElement; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -484,7 +484,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -537,7 +537,7 @@ Type
     FList : TFhirConceptMapElementTargetList;
     function GetCurrent : TFhirConceptMapElementTarget;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapElementTargetList);
     destructor Destroy; override;
@@ -564,7 +564,7 @@ Type
 
     
     // Add an already existing FhirConceptMapElementTarget to the end of the list.
-    procedure AddItem(value : TFhirConceptMapElementTarget); overload;
+function AddItem(value : TFhirConceptMapElementTarget): TFhirConceptMapElementTarget; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -615,7 +615,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -656,7 +656,7 @@ Type
     FList : TFhirConceptMapElementTargetDependsOnList;
     function GetCurrent : TFhirConceptMapElementTargetDependsOn;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapElementTargetDependsOnList);
     destructor Destroy; override;
@@ -683,7 +683,7 @@ Type
 
     
     // Add an already existing FhirConceptMapElementTargetDependsOn to the end of the list.
-    procedure AddItem(value : TFhirConceptMapElementTargetDependsOn); overload;
+function AddItem(value : TFhirConceptMapElementTargetDependsOn): TFhirConceptMapElementTargetDependsOn; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -778,7 +778,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -880,7 +880,7 @@ Type
     FList : TFhirConceptMapList;
     function GetCurrent : TFhirConceptMap;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConceptMapList);
     destructor Destroy; override;
@@ -907,7 +907,7 @@ Type
 
     
     // Add an already existing FhirConceptMap to the end of the list.
-    procedure AddItem(value : TFhirConceptMap); overload;
+function AddItem(value : TFhirConceptMap): TFhirConceptMap; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -957,7 +957,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -992,7 +992,7 @@ Type
     FList : TFhirConformanceContactList;
     function GetCurrent : TFhirConformanceContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceContactList);
     destructor Destroy; override;
@@ -1019,7 +1019,7 @@ Type
 
     
     // Add an already existing FhirConformanceContact to the end of the list.
-    procedure AddItem(value : TFhirConformanceContact); overload;
+function AddItem(value : TFhirConformanceContact): TFhirConformanceContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1070,7 +1070,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1111,7 +1111,7 @@ Type
     FList : TFhirConformanceSoftwareList;
     function GetCurrent : TFhirConformanceSoftware;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceSoftwareList);
     destructor Destroy; override;
@@ -1138,7 +1138,7 @@ Type
 
     
     // Add an already existing FhirConformanceSoftware to the end of the list.
-    procedure AddItem(value : TFhirConformanceSoftware); overload;
+function AddItem(value : TFhirConformanceSoftware): TFhirConformanceSoftware; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1185,7 +1185,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1221,7 +1221,7 @@ Type
     FList : TFhirConformanceImplementationList;
     function GetCurrent : TFhirConformanceImplementation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceImplementationList);
     destructor Destroy; override;
@@ -1248,7 +1248,7 @@ Type
 
     
     // Add an already existing FhirConformanceImplementation to the end of the list.
-    procedure AddItem(value : TFhirConformanceImplementation); overload;
+function AddItem(value : TFhirConformanceImplementation): TFhirConformanceImplementation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1316,7 +1316,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1380,7 +1380,7 @@ Type
     FList : TFhirConformanceRestList;
     function GetCurrent : TFhirConformanceRest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestList);
     destructor Destroy; override;
@@ -1407,7 +1407,7 @@ Type
 
     
     // Add an already existing FhirConformanceRest to the end of the list.
-    procedure AddItem(value : TFhirConformanceRest); overload;
+function AddItem(value : TFhirConformanceRest): TFhirConformanceRest; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1460,7 +1460,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1504,7 +1504,7 @@ Type
     FList : TFhirConformanceRestSecurityList;
     function GetCurrent : TFhirConformanceRestSecurity;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestSecurityList);
     destructor Destroy; override;
@@ -1531,7 +1531,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestSecurity to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestSecurity); overload;
+function AddItem(value : TFhirConformanceRestSecurity): TFhirConformanceRestSecurity; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1578,7 +1578,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1614,7 +1614,7 @@ Type
     FList : TFhirConformanceRestSecurityCertificateList;
     function GetCurrent : TFhirConformanceRestSecurityCertificate;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestSecurityCertificateList);
     destructor Destroy; override;
@@ -1641,7 +1641,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestSecurityCertificate to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestSecurityCertificate); overload;
+function AddItem(value : TFhirConformanceRestSecurityCertificate): TFhirConformanceRestSecurityCertificate; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1722,7 +1722,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1801,7 +1801,7 @@ Type
     FList : TFhirConformanceRestResourceList;
     function GetCurrent : TFhirConformanceRestResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestResourceList);
     destructor Destroy; override;
@@ -1828,7 +1828,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestResource to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestResource); overload;
+function AddItem(value : TFhirConformanceRestResource): TFhirConformanceRestResource; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -1875,7 +1875,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -1910,7 +1910,7 @@ Type
     FList : TFhirConformanceRestResourceInteractionList;
     function GetCurrent : TFhirConformanceRestResourceInteraction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestResourceInteractionList);
     destructor Destroy; override;
@@ -1937,7 +1937,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestResourceInteraction to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestResourceInteraction); overload;
+function AddItem(value : TFhirConformanceRestResourceInteraction): TFhirConformanceRestResourceInteraction; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2003,7 +2003,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2059,7 +2059,7 @@ Type
     FList : TFhirConformanceRestResourceSearchParamList;
     function GetCurrent : TFhirConformanceRestResourceSearchParam;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestResourceSearchParamList);
     destructor Destroy; override;
@@ -2086,7 +2086,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestResourceSearchParam to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestResourceSearchParam); overload;
+function AddItem(value : TFhirConformanceRestResourceSearchParam): TFhirConformanceRestResourceSearchParam; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2133,7 +2133,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2168,7 +2168,7 @@ Type
     FList : TFhirConformanceRestInteractionList;
     function GetCurrent : TFhirConformanceRestInteraction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestInteractionList);
     destructor Destroy; override;
@@ -2195,7 +2195,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestInteraction to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestInteraction); overload;
+function AddItem(value : TFhirConformanceRestInteraction): TFhirConformanceRestInteraction; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2240,7 +2240,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2276,7 +2276,7 @@ Type
     FList : TFhirConformanceRestOperationList;
     function GetCurrent : TFhirConformanceRestOperation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceRestOperationList);
     destructor Destroy; override;
@@ -2303,7 +2303,7 @@ Type
 
     
     // Add an already existing FhirConformanceRestOperation to the end of the list.
-    procedure AddItem(value : TFhirConformanceRestOperation); overload;
+function AddItem(value : TFhirConformanceRestOperation): TFhirConformanceRestOperation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2356,7 +2356,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2400,7 +2400,7 @@ Type
     FList : TFhirConformanceMessagingList;
     function GetCurrent : TFhirConformanceMessaging;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceMessagingList);
     destructor Destroy; override;
@@ -2427,7 +2427,7 @@ Type
 
     
     // Add an already existing FhirConformanceMessaging to the end of the list.
-    procedure AddItem(value : TFhirConformanceMessaging); overload;
+function AddItem(value : TFhirConformanceMessaging): TFhirConformanceMessaging; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2472,7 +2472,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2508,7 +2508,7 @@ Type
     FList : TFhirConformanceMessagingEndpointList;
     function GetCurrent : TFhirConformanceMessagingEndpoint;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceMessagingEndpointList);
     destructor Destroy; override;
@@ -2535,7 +2535,7 @@ Type
 
     
     // Add an already existing FhirConformanceMessagingEndpoint to the end of the list.
-    procedure AddItem(value : TFhirConformanceMessagingEndpoint); overload;
+function AddItem(value : TFhirConformanceMessagingEndpoint): TFhirConformanceMessagingEndpoint; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2596,7 +2596,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2654,7 +2654,7 @@ Type
     FList : TFhirConformanceMessagingEventList;
     function GetCurrent : TFhirConformanceMessagingEvent;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceMessagingEventList);
     destructor Destroy; override;
@@ -2681,7 +2681,7 @@ Type
 
     
     // Add an already existing FhirConformanceMessagingEvent to the end of the list.
-    procedure AddItem(value : TFhirConformanceMessagingEvent); overload;
+function AddItem(value : TFhirConformanceMessagingEvent): TFhirConformanceMessagingEvent; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2730,7 +2730,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -2770,7 +2770,7 @@ Type
     FList : TFhirConformanceDocumentList;
     function GetCurrent : TFhirConformanceDocument;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceDocumentList);
     destructor Destroy; override;
@@ -2797,7 +2797,7 @@ Type
 
     
     // Add an already existing FhirConformanceDocument to the end of the list.
-    procedure AddItem(value : TFhirConformanceDocument); overload;
+function AddItem(value : TFhirConformanceDocument): TFhirConformanceDocument; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -2911,7 +2911,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3033,7 +3033,7 @@ Type
     FList : TFhirConformanceList;
     function GetCurrent : TFhirConformance;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirConformanceList);
     destructor Destroy; override;
@@ -3060,7 +3060,7 @@ Type
 
     
     // Add an already existing FhirConformance to the end of the list.
-    procedure AddItem(value : TFhirConformance); overload;
+function AddItem(value : TFhirConformance): TFhirConformance; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3110,7 +3110,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3145,7 +3145,7 @@ Type
     FList : TFhirDataElementContactList;
     function GetCurrent : TFhirDataElementContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDataElementContactList);
     destructor Destroy; override;
@@ -3172,7 +3172,7 @@ Type
 
     
     // Add an already existing FhirDataElementContact to the end of the list.
-    procedure AddItem(value : TFhirDataElementContact); overload;
+function AddItem(value : TFhirDataElementContact): TFhirDataElementContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3227,7 +3227,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3273,7 +3273,7 @@ Type
     FList : TFhirDataElementMappingList;
     function GetCurrent : TFhirDataElementMapping;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDataElementMappingList);
     destructor Destroy; override;
@@ -3300,7 +3300,7 @@ Type
 
     
     // Add an already existing FhirDataElementMapping to the end of the list.
-    procedure AddItem(value : TFhirDataElementMapping); overload;
+function AddItem(value : TFhirDataElementMapping): TFhirDataElementMapping; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3391,7 +3391,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3480,7 +3480,7 @@ Type
     FList : TFhirDataElementList;
     function GetCurrent : TFhirDataElement;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDataElementList);
     destructor Destroy; override;
@@ -3507,7 +3507,7 @@ Type
 
     
     // Add an already existing FhirDataElement to the end of the list.
-    procedure AddItem(value : TFhirDataElement); overload;
+function AddItem(value : TFhirDataElement): TFhirDataElement; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3557,7 +3557,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3592,7 +3592,7 @@ Type
     FList : TFhirImplementationGuideContactList;
     function GetCurrent : TFhirImplementationGuideContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideContactList);
     destructor Destroy; override;
@@ -3619,7 +3619,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuideContact to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuideContact); overload;
+function AddItem(value : TFhirImplementationGuideContact): TFhirImplementationGuideContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3666,7 +3666,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3701,7 +3701,7 @@ Type
     FList : TFhirImplementationGuideDependencyList;
     function GetCurrent : TFhirImplementationGuideDependency;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideDependencyList);
     destructor Destroy; override;
@@ -3728,7 +3728,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuideDependency to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuideDependency); overload;
+function AddItem(value : TFhirImplementationGuideDependency): TFhirImplementationGuideDependency; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3778,7 +3778,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3818,7 +3818,7 @@ Type
     FList : TFhirImplementationGuidePackageList;
     function GetCurrent : TFhirImplementationGuidePackage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuidePackageList);
     destructor Destroy; override;
@@ -3845,7 +3845,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuidePackage to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuidePackage); overload;
+function AddItem(value : TFhirImplementationGuidePackage): TFhirImplementationGuidePackage; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -3904,7 +3904,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -3959,7 +3959,7 @@ Type
     FList : TFhirImplementationGuidePackageResourceList;
     function GetCurrent : TFhirImplementationGuidePackageResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuidePackageResourceList);
     destructor Destroy; override;
@@ -3986,7 +3986,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuidePackageResource to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuidePackageResource); overload;
+function AddItem(value : TFhirImplementationGuidePackageResource): TFhirImplementationGuidePackageResource; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4031,7 +4031,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4066,7 +4066,7 @@ Type
     FList : TFhirImplementationGuideGlobalList;
     function GetCurrent : TFhirImplementationGuideGlobal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideGlobalList);
     destructor Destroy; override;
@@ -4093,7 +4093,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuideGlobal to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuideGlobal); overload;
+function AddItem(value : TFhirImplementationGuideGlobal): TFhirImplementationGuideGlobal; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4157,7 +4157,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4213,7 +4213,7 @@ Type
     FList : TFhirImplementationGuidePageList;
     function GetCurrent : TFhirImplementationGuidePage;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuidePageList);
     destructor Destroy; override;
@@ -4240,7 +4240,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuidePage to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuidePage); overload;
+function AddItem(value : TFhirImplementationGuidePage): TFhirImplementationGuidePage; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4340,7 +4340,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4444,7 +4444,7 @@ Type
     FList : TFhirImplementationGuideList;
     function GetCurrent : TFhirImplementationGuide;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirImplementationGuideList);
     destructor Destroy; override;
@@ -4471,7 +4471,7 @@ Type
 
     
     // Add an already existing FhirImplementationGuide to the end of the list.
-    procedure AddItem(value : TFhirImplementationGuide); overload;
+function AddItem(value : TFhirImplementationGuide): TFhirImplementationGuide; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4521,7 +4521,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4556,7 +4556,7 @@ Type
     FList : TFhirNamingSystemContactList;
     function GetCurrent : TFhirNamingSystemContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNamingSystemContactList);
     destructor Destroy; override;
@@ -4583,7 +4583,7 @@ Type
 
     
     // Add an already existing FhirNamingSystemContact to the end of the list.
-    procedure AddItem(value : TFhirNamingSystemContact); overload;
+function AddItem(value : TFhirNamingSystemContact): TFhirNamingSystemContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4636,7 +4636,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4681,7 +4681,7 @@ Type
     FList : TFhirNamingSystemUniqueIdList;
     function GetCurrent : TFhirNamingSystemUniqueId;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNamingSystemUniqueIdList);
     destructor Destroy; override;
@@ -4708,7 +4708,7 @@ Type
 
     
     // Add an already existing FhirNamingSystemUniqueId to the end of the list.
-    procedure AddItem(value : TFhirNamingSystemUniqueId); overload;
+function AddItem(value : TFhirNamingSystemUniqueId): TFhirNamingSystemUniqueId; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4793,7 +4793,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4879,7 +4879,7 @@ Type
     FList : TFhirNamingSystemList;
     function GetCurrent : TFhirNamingSystem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirNamingSystemList);
     destructor Destroy; override;
@@ -4906,7 +4906,7 @@ Type
 
     
     // Add an already existing FhirNamingSystem to the end of the list.
-    procedure AddItem(value : TFhirNamingSystem); overload;
+function AddItem(value : TFhirNamingSystem): TFhirNamingSystem; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -4956,7 +4956,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -4991,7 +4991,7 @@ Type
     FList : TFhirOperationDefinitionContactList;
     function GetCurrent : TFhirOperationDefinitionContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionContactList);
     destructor Destroy; override;
@@ -5018,7 +5018,7 @@ Type
 
     
     // Add an already existing FhirOperationDefinitionContact to the end of the list.
-    procedure AddItem(value : TFhirOperationDefinitionContact); overload;
+function AddItem(value : TFhirOperationDefinitionContact): TFhirOperationDefinitionContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5088,7 +5088,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5156,7 +5156,7 @@ Type
     FList : TFhirOperationDefinitionParameterList;
     function GetCurrent : TFhirOperationDefinitionParameter;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionParameterList);
     destructor Destroy; override;
@@ -5183,7 +5183,7 @@ Type
 
     
     // Add an already existing FhirOperationDefinitionParameter to the end of the list.
-    procedure AddItem(value : TFhirOperationDefinitionParameter); overload;
+function AddItem(value : TFhirOperationDefinitionParameter): TFhirOperationDefinitionParameter; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5228,7 +5228,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5263,7 +5263,7 @@ Type
     FList : TFhirOperationDefinitionParameterBindingList;
     function GetCurrent : TFhirOperationDefinitionParameterBinding;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionParameterBindingList);
     destructor Destroy; override;
@@ -5290,7 +5290,7 @@ Type
 
     
     // Add an already existing FhirOperationDefinitionParameterBinding to the end of the list.
-    procedure AddItem(value : TFhirOperationDefinitionParameterBinding); overload;
+function AddItem(value : TFhirOperationDefinitionParameterBinding): TFhirOperationDefinitionParameterBinding; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5401,7 +5401,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5516,7 +5516,7 @@ Type
     FList : TFhirOperationDefinitionList;
     function GetCurrent : TFhirOperationDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirOperationDefinitionList);
     destructor Destroy; override;
@@ -5543,7 +5543,7 @@ Type
 
     
     // Add an already existing FhirOperationDefinition to the end of the list.
-    procedure AddItem(value : TFhirOperationDefinition); overload;
+function AddItem(value : TFhirOperationDefinition): TFhirOperationDefinition; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5615,7 +5615,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5678,7 +5678,7 @@ Type
     FList : TFhirQuestionnaireGroupList;
     function GetCurrent : TFhirQuestionnaireGroup;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireGroupList);
     destructor Destroy; override;
@@ -5705,7 +5705,7 @@ Type
 
     
     // Add an already existing FhirQuestionnaireGroup to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaireGroup); overload;
+function AddItem(value : TFhirQuestionnaireGroup): TFhirQuestionnaireGroup; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5775,7 +5775,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5842,7 +5842,7 @@ Type
     FList : TFhirQuestionnaireGroupQuestionList;
     function GetCurrent : TFhirQuestionnaireGroupQuestion;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireGroupQuestionList);
     destructor Destroy; override;
@@ -5869,7 +5869,7 @@ Type
 
     
     // Add an already existing FhirQuestionnaireGroupQuestion to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaireGroupQuestion); overload;
+function AddItem(value : TFhirQuestionnaireGroupQuestion): TFhirQuestionnaireGroupQuestion; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -5936,7 +5936,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -5997,7 +5997,7 @@ Type
     FList : TFhirQuestionnaireList;
     function GetCurrent : TFhirQuestionnaire;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirQuestionnaireList);
     destructor Destroy; override;
@@ -6024,7 +6024,7 @@ Type
 
     
     // Add an already existing FhirQuestionnaire to the end of the list.
-    procedure AddItem(value : TFhirQuestionnaire); overload;
+function AddItem(value : TFhirQuestionnaire): TFhirQuestionnaire; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6074,7 +6074,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6109,7 +6109,7 @@ Type
     FList : TFhirSearchParameterContactList;
     function GetCurrent : TFhirSearchParameterContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSearchParameterContactList);
     destructor Destroy; override;
@@ -6136,7 +6136,7 @@ Type
 
     
     // Add an already existing FhirSearchParameterContact to the end of the list.
-    procedure AddItem(value : TFhirSearchParameterContact); overload;
+function AddItem(value : TFhirSearchParameterContact): TFhirSearchParameterContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6234,7 +6234,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6328,7 +6328,7 @@ Type
     FList : TFhirSearchParameterList;
     function GetCurrent : TFhirSearchParameter;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirSearchParameterList);
     destructor Destroy; override;
@@ -6355,7 +6355,7 @@ Type
 
     
     // Add an already existing FhirSearchParameter to the end of the list.
-    procedure AddItem(value : TFhirSearchParameter); overload;
+function AddItem(value : TFhirSearchParameter): TFhirSearchParameter; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6405,7 +6405,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6440,7 +6440,7 @@ Type
     FList : TFhirStructureDefinitionContactList;
     function GetCurrent : TFhirStructureDefinitionContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionContactList);
     destructor Destroy; override;
@@ -6467,7 +6467,7 @@ Type
 
     
     // Add an already existing FhirStructureDefinitionContact to the end of the list.
-    procedure AddItem(value : TFhirStructureDefinitionContact); overload;
+function AddItem(value : TFhirStructureDefinitionContact): TFhirStructureDefinitionContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6522,7 +6522,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6568,7 +6568,7 @@ Type
     FList : TFhirStructureDefinitionMappingList;
     function GetCurrent : TFhirStructureDefinitionMapping;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionMappingList);
     destructor Destroy; override;
@@ -6595,7 +6595,7 @@ Type
 
     
     // Add an already existing FhirStructureDefinitionMapping to the end of the list.
-    procedure AddItem(value : TFhirStructureDefinitionMapping); overload;
+function AddItem(value : TFhirStructureDefinitionMapping): TFhirStructureDefinitionMapping; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6637,7 +6637,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6667,7 +6667,7 @@ Type
     FList : TFhirStructureDefinitionSnapshotList;
     function GetCurrent : TFhirStructureDefinitionSnapshot;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionSnapshotList);
     destructor Destroy; override;
@@ -6694,7 +6694,7 @@ Type
 
     
     // Add an already existing FhirStructureDefinitionSnapshot to the end of the list.
-    procedure AddItem(value : TFhirStructureDefinitionSnapshot); overload;
+function AddItem(value : TFhirStructureDefinitionSnapshot): TFhirStructureDefinitionSnapshot; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6736,7 +6736,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -6766,7 +6766,7 @@ Type
     FList : TFhirStructureDefinitionDifferentialList;
     function GetCurrent : TFhirStructureDefinitionDifferential;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionDifferentialList);
     destructor Destroy; override;
@@ -6793,7 +6793,7 @@ Type
 
     
     // Add an already existing FhirStructureDefinitionDifferential to the end of the list.
-    procedure AddItem(value : TFhirStructureDefinitionDifferential); overload;
+function AddItem(value : TFhirStructureDefinitionDifferential): TFhirStructureDefinitionDifferential; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -6923,7 +6923,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7065,7 +7065,7 @@ Type
     FList : TFhirStructureDefinitionList;
     function GetCurrent : TFhirStructureDefinition;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirStructureDefinitionList);
     destructor Destroy; override;
@@ -7092,7 +7092,7 @@ Type
 
     
     // Add an already existing FhirStructureDefinition to the end of the list.
-    procedure AddItem(value : TFhirStructureDefinition); overload;
+function AddItem(value : TFhirStructureDefinition): TFhirStructureDefinition; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7142,7 +7142,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7177,7 +7177,7 @@ Type
     FList : TFhirTestScriptContactList;
     function GetCurrent : TFhirTestScriptContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptContactList);
     destructor Destroy; override;
@@ -7204,7 +7204,7 @@ Type
 
     
     // Add an already existing FhirTestScriptContact to the end of the list.
-    procedure AddItem(value : TFhirTestScriptContact); overload;
+function AddItem(value : TFhirTestScriptContact): TFhirTestScriptContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7249,7 +7249,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7283,7 +7283,7 @@ Type
     FList : TFhirTestScriptMetadataList;
     function GetCurrent : TFhirTestScriptMetadata;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptMetadataList);
     destructor Destroy; override;
@@ -7310,7 +7310,7 @@ Type
 
     
     // Add an already existing FhirTestScriptMetadata to the end of the list.
-    procedure AddItem(value : TFhirTestScriptMetadata); overload;
+function AddItem(value : TFhirTestScriptMetadata): TFhirTestScriptMetadata; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7357,7 +7357,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7393,7 +7393,7 @@ Type
     FList : TFhirTestScriptMetadataLinkList;
     function GetCurrent : TFhirTestScriptMetadataLink;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptMetadataLinkList);
     destructor Destroy; override;
@@ -7420,7 +7420,7 @@ Type
 
     
     // Add an already existing FhirTestScriptMetadataLink to the end of the list.
-    procedure AddItem(value : TFhirTestScriptMetadataLink); overload;
+function AddItem(value : TFhirTestScriptMetadataLink): TFhirTestScriptMetadataLink; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7480,7 +7480,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7535,7 +7535,7 @@ Type
     FList : TFhirTestScriptMetadataCapabilityList;
     function GetCurrent : TFhirTestScriptMetadataCapability;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptMetadataCapabilityList);
     destructor Destroy; override;
@@ -7562,7 +7562,7 @@ Type
 
     
     // Add an already existing FhirTestScriptMetadataCapability to the end of the list.
-    procedure AddItem(value : TFhirTestScriptMetadataCapability); overload;
+function AddItem(value : TFhirTestScriptMetadataCapability): TFhirTestScriptMetadataCapability; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7611,7 +7611,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7652,7 +7652,7 @@ Type
     FList : TFhirTestScriptFixtureList;
     function GetCurrent : TFhirTestScriptFixture;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptFixtureList);
     destructor Destroy; override;
@@ -7679,7 +7679,7 @@ Type
 
     
     // Add an already existing FhirTestScriptFixture to the end of the list.
-    procedure AddItem(value : TFhirTestScriptFixture); overload;
+function AddItem(value : TFhirTestScriptFixture): TFhirTestScriptFixture; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7734,7 +7734,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7780,7 +7780,7 @@ Type
     FList : TFhirTestScriptVariableList;
     function GetCurrent : TFhirTestScriptVariable;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptVariableList);
     destructor Destroy; override;
@@ -7807,7 +7807,7 @@ Type
 
     
     // Add an already existing FhirTestScriptVariable to the end of the list.
-    procedure AddItem(value : TFhirTestScriptVariable); overload;
+function AddItem(value : TFhirTestScriptVariable): TFhirTestScriptVariable; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7851,7 +7851,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7886,7 +7886,7 @@ Type
     FList : TFhirTestScriptSetupList;
     function GetCurrent : TFhirTestScriptSetup;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupList);
     destructor Destroy; override;
@@ -7913,7 +7913,7 @@ Type
 
     
     // Add an already existing FhirTestScriptSetup to the end of the list.
-    procedure AddItem(value : TFhirTestScriptSetup); overload;
+function AddItem(value : TFhirTestScriptSetup): TFhirTestScriptSetup; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -7956,7 +7956,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -7992,7 +7992,7 @@ Type
     FList : TFhirTestScriptSetupActionList;
     function GetCurrent : TFhirTestScriptSetupAction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionList);
     destructor Destroy; override;
@@ -8019,7 +8019,7 @@ Type
 
     
     // Add an already existing FhirTestScriptSetupAction to the end of the list.
-    procedure AddItem(value : TFhirTestScriptSetupAction); overload;
+function AddItem(value : TFhirTestScriptSetupAction): TFhirTestScriptSetupAction; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8111,7 +8111,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8204,7 +8204,7 @@ Type
     FList : TFhirTestScriptSetupActionOperationList;
     function GetCurrent : TFhirTestScriptSetupActionOperation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionOperationList);
     destructor Destroy; override;
@@ -8231,7 +8231,7 @@ Type
 
     
     // Add an already existing FhirTestScriptSetupActionOperation to the end of the list.
-    procedure AddItem(value : TFhirTestScriptSetupActionOperation); overload;
+function AddItem(value : TFhirTestScriptSetupActionOperation): TFhirTestScriptSetupActionOperation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8278,7 +8278,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8314,7 +8314,7 @@ Type
     FList : TFhirTestScriptSetupActionOperationRequestHeaderList;
     function GetCurrent : TFhirTestScriptSetupActionOperationRequestHeader;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionOperationRequestHeaderList);
     destructor Destroy; override;
@@ -8341,7 +8341,7 @@ Type
 
     
     // Add an already existing FhirTestScriptSetupActionOperationRequestHeader to the end of the list.
-    procedure AddItem(value : TFhirTestScriptSetupActionOperationRequestHeader); overload;
+function AddItem(value : TFhirTestScriptSetupActionOperationRequestHeader): TFhirTestScriptSetupActionOperationRequestHeader; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8452,7 +8452,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8564,7 +8564,7 @@ Type
     FList : TFhirTestScriptSetupActionAssertList;
     function GetCurrent : TFhirTestScriptSetupActionAssert;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptSetupActionAssertList);
     destructor Destroy; override;
@@ -8591,7 +8591,7 @@ Type
 
     
     // Add an already existing FhirTestScriptSetupActionAssert to the end of the list.
-    procedure AddItem(value : TFhirTestScriptSetupActionAssert); overload;
+function AddItem(value : TFhirTestScriptSetupActionAssert): TFhirTestScriptSetupActionAssert; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8643,7 +8643,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8688,7 +8688,7 @@ Type
     FList : TFhirTestScriptTestList;
     function GetCurrent : TFhirTestScriptTest;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTestList);
     destructor Destroy; override;
@@ -8715,7 +8715,7 @@ Type
 
     
     // Add an already existing FhirTestScriptTest to the end of the list.
-    procedure AddItem(value : TFhirTestScriptTest); overload;
+function AddItem(value : TFhirTestScriptTest): TFhirTestScriptTest; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8758,7 +8758,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8794,7 +8794,7 @@ Type
     FList : TFhirTestScriptTestActionList;
     function GetCurrent : TFhirTestScriptTestAction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTestActionList);
     destructor Destroy; override;
@@ -8821,7 +8821,7 @@ Type
 
     
     // Add an already existing FhirTestScriptTestAction to the end of the list.
-    procedure AddItem(value : TFhirTestScriptTestAction); overload;
+function AddItem(value : TFhirTestScriptTestAction): TFhirTestScriptTestAction; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8863,7 +8863,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8893,7 +8893,7 @@ Type
     FList : TFhirTestScriptTeardownList;
     function GetCurrent : TFhirTestScriptTeardown;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTeardownList);
     destructor Destroy; override;
@@ -8920,7 +8920,7 @@ Type
 
     
     // Add an already existing FhirTestScriptTeardown to the end of the list.
-    procedure AddItem(value : TFhirTestScriptTeardown); overload;
+function AddItem(value : TFhirTestScriptTeardown): TFhirTestScriptTeardown; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -8961,7 +8961,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -8992,7 +8992,7 @@ Type
     FList : TFhirTestScriptTeardownActionList;
     function GetCurrent : TFhirTestScriptTeardownAction;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptTeardownActionList);
     destructor Destroy; override;
@@ -9019,7 +9019,7 @@ Type
 
     
     // Add an already existing FhirTestScriptTeardownAction to the end of the list.
-    procedure AddItem(value : TFhirTestScriptTeardownAction); overload;
+function AddItem(value : TFhirTestScriptTeardownAction): TFhirTestScriptTeardownAction; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9129,7 +9129,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9253,7 +9253,7 @@ Type
     FList : TFhirTestScriptList;
     function GetCurrent : TFhirTestScript;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirTestScriptList);
     destructor Destroy; override;
@@ -9280,7 +9280,7 @@ Type
 
     
     // Add an already existing FhirTestScript to the end of the list.
-    procedure AddItem(value : TFhirTestScript); overload;
+function AddItem(value : TFhirTestScript): TFhirTestScript; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9330,7 +9330,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9365,7 +9365,7 @@ Type
     FList : TFhirValueSetContactList;
     function GetCurrent : TFhirValueSetContact;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetContactList);
     destructor Destroy; override;
@@ -9392,7 +9392,7 @@ Type
 
     
     // Add an already existing FhirValueSetContact to the end of the list.
-    procedure AddItem(value : TFhirValueSetContact); overload;
+function AddItem(value : TFhirValueSetContact): TFhirValueSetContact; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9446,7 +9446,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9491,7 +9491,7 @@ Type
     FList : TFhirValueSetCodeSystemList;
     function GetCurrent : TFhirValueSetCodeSystem;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetCodeSystemList);
     destructor Destroy; override;
@@ -9518,7 +9518,7 @@ Type
 
     
     // Add an already existing FhirValueSetCodeSystem to the end of the list.
-    procedure AddItem(value : TFhirValueSetCodeSystem); overload;
+function AddItem(value : TFhirValueSetCodeSystem): TFhirValueSetCodeSystem; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9579,7 +9579,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9633,7 +9633,7 @@ Type
     FList : TFhirValueSetCodeSystemConceptList;
     function GetCurrent : TFhirValueSetCodeSystemConcept;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetCodeSystemConceptList);
     destructor Destroy; override;
@@ -9660,7 +9660,7 @@ Type
 
     
     // Add an already existing FhirValueSetCodeSystemConcept to the end of the list.
-    procedure AddItem(value : TFhirValueSetCodeSystemConcept); overload;
+function AddItem(value : TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConcept; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9709,7 +9709,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9750,7 +9750,7 @@ Type
     FList : TFhirValueSetCodeSystemConceptDesignationList;
     function GetCurrent : TFhirValueSetCodeSystemConceptDesignation;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetCodeSystemConceptDesignationList);
     destructor Destroy; override;
@@ -9777,7 +9777,7 @@ Type
 
     
     // Add an already existing FhirValueSetCodeSystemConceptDesignation to the end of the list.
-    procedure AddItem(value : TFhirValueSetCodeSystemConceptDesignation); overload;
+function AddItem(value : TFhirValueSetCodeSystemConceptDesignation): TFhirValueSetCodeSystemConceptDesignation; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9825,7 +9825,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9863,7 +9863,7 @@ Type
     FList : TFhirValueSetComposeList;
     function GetCurrent : TFhirValueSetCompose;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeList);
     destructor Destroy; override;
@@ -9890,7 +9890,7 @@ Type
 
     
     // Add an already existing FhirValueSetCompose to the end of the list.
-    procedure AddItem(value : TFhirValueSetCompose); overload;
+function AddItem(value : TFhirValueSetCompose): TFhirValueSetCompose; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -9943,7 +9943,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -9987,7 +9987,7 @@ Type
     FList : TFhirValueSetComposeIncludeList;
     function GetCurrent : TFhirValueSetComposeInclude;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeIncludeList);
     destructor Destroy; override;
@@ -10014,7 +10014,7 @@ Type
 
     
     // Add an already existing FhirValueSetComposeInclude to the end of the list.
-    procedure AddItem(value : TFhirValueSetComposeInclude); overload;
+function AddItem(value : TFhirValueSetComposeInclude): TFhirValueSetComposeInclude; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10064,7 +10064,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10104,7 +10104,7 @@ Type
     FList : TFhirValueSetComposeIncludeConceptList;
     function GetCurrent : TFhirValueSetComposeIncludeConcept;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeIncludeConceptList);
     destructor Destroy; override;
@@ -10131,7 +10131,7 @@ Type
 
     
     // Add an already existing FhirValueSetComposeIncludeConcept to the end of the list.
-    procedure AddItem(value : TFhirValueSetComposeIncludeConcept); overload;
+function AddItem(value : TFhirValueSetComposeIncludeConcept): TFhirValueSetComposeIncludeConcept; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10182,7 +10182,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10222,7 +10222,7 @@ Type
     FList : TFhirValueSetComposeIncludeFilterList;
     function GetCurrent : TFhirValueSetComposeIncludeFilter;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetComposeIncludeFilterList);
     destructor Destroy; override;
@@ -10249,7 +10249,7 @@ Type
 
     
     // Add an already existing FhirValueSetComposeIncludeFilter to the end of the list.
-    procedure AddItem(value : TFhirValueSetComposeIncludeFilter); overload;
+function AddItem(value : TFhirValueSetComposeIncludeFilter): TFhirValueSetComposeIncludeFilter; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10310,7 +10310,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10364,7 +10364,7 @@ Type
     FList : TFhirValueSetExpansionList;
     function GetCurrent : TFhirValueSetExpansion;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetExpansionList);
     destructor Destroy; override;
@@ -10391,7 +10391,7 @@ Type
 
     
     // Add an already existing FhirValueSetExpansion to the end of the list.
-    procedure AddItem(value : TFhirValueSetExpansion); overload;
+function AddItem(value : TFhirValueSetExpansion): TFhirValueSetExpansion; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10436,7 +10436,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10472,7 +10472,7 @@ Type
     FList : TFhirValueSetExpansionParameterList;
     function GetCurrent : TFhirValueSetExpansionParameter;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetExpansionParameterList);
     destructor Destroy; override;
@@ -10499,7 +10499,7 @@ Type
 
     
     // Add an already existing FhirValueSetExpansionParameter to the end of the list.
-    procedure AddItem(value : TFhirValueSetExpansionParameter); overload;
+function AddItem(value : TFhirValueSetExpansionParameter): TFhirValueSetExpansionParameter; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10561,7 +10561,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10616,7 +10616,7 @@ Type
     FList : TFhirValueSetExpansionContainsList;
     function GetCurrent : TFhirValueSetExpansionContains;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetExpansionContainsList);
     destructor Destroy; override;
@@ -10643,7 +10643,7 @@ Type
 
     
     // Add an already existing FhirValueSetExpansionContains to the end of the list.
-    procedure AddItem(value : TFhirValueSetExpansionContains); overload;
+function AddItem(value : TFhirValueSetExpansionContains): TFhirValueSetExpansionContains; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10749,7 +10749,7 @@ Type
     Procedure GetChildrenByName(child_name : string; list : TFHIRSelectionList); override;
     Procedure ListProperties(oList : TFHIRPropertyList; bInheritedProperties, bPrimitiveValues : Boolean); Override;
     procedure listFieldsInOrder(fields : TStringList); override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; override;
@@ -10867,7 +10867,7 @@ Type
     FList : TFhirValueSetList;
     function GetCurrent : TFhirValueSet;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirValueSetList);
     destructor Destroy; override;
@@ -10894,7 +10894,7 @@ Type
 
     
     // Add an already existing FhirValueSet to the end of the list.
-    procedure AddItem(value : TFhirValueSet); overload;
+function AddItem(value : TFhirValueSet): TFhirValueSet; overload;
 
     
     // See if an item is already in the list. returns -1 if not in the list
@@ -10945,7 +10945,7 @@ end;
 destructor TFhirConceptMapContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -11103,7 +11103,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -11122,11 +11122,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirConceptMapContact.sizeInBytesV : cardinal;
+function TFhirConceptMapContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapContactListEnumerator }
@@ -11140,7 +11140,7 @@ end;
 
 destructor TFhirConceptMapContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11155,22 +11155,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConceptMapContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirConceptMapContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapContactList }
-procedure TFhirConceptMapContactList.AddItem(value: TFhirConceptMapContact);
+function TFhirConceptMapContactList.AddItem(value: TFhirConceptMapContact): TFhirConceptMapContact;
 begin
-  assert(value.ClassName = 'TFhirConceptMapContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapContact');
   add(value);
+  result := value;
 end;
 
 function TFhirConceptMapContactList.Append: TFhirConceptMapContact;
 begin
-  result := TFhirConceptMapContact.create;
+  result := TFhirConceptMapContact.Create;
   try
     add(result.Link);
   finally
@@ -11214,7 +11214,7 @@ end;
 
 function TFhirConceptMapContactList.Insert(index: Integer): TFhirConceptMapContact;
 begin
-  result := TFhirConceptMapContact.create;
+  result := TFhirConceptMapContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11266,7 +11266,7 @@ destructor TFhirConceptMapElement.Destroy;
 begin
   FCodeSystem.free;
   FCode.free;
-  FTargetList.Free;
+  FTargetList.free;
   inherited;
 end;
 
@@ -11439,7 +11439,7 @@ begin
   if value <> '' then
   begin
     if FCodeSystem = nil then
-      FCodeSystem := TFhirUri.create;
+      FCodeSystem := TFhirUri.Create;
     FCodeSystem.value := value
   end
   else if FCodeSystem <> nil then
@@ -11465,7 +11465,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -11484,12 +11484,12 @@ begin
   result := (FTargetList <> nil) and (FTargetList.count > 0);
 end;
 
-function TFhirConceptMapElement.sizeInBytesV : cardinal;
+function TFhirConceptMapElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCodeSystem.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FtargetList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCodeSystem.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FtargetList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapElementListEnumerator }
@@ -11503,7 +11503,7 @@ end;
 
 destructor TFhirConceptMapElementListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11518,22 +11518,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConceptMapElementListEnumerator.sizeInBytesV : cardinal;
+function TFhirConceptMapElementListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapElementList }
-procedure TFhirConceptMapElementList.AddItem(value: TFhirConceptMapElement);
+function TFhirConceptMapElementList.AddItem(value: TFhirConceptMapElement): TFhirConceptMapElement;
 begin
-  assert(value.ClassName = 'TFhirConceptMapElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapElement');
   add(value);
+  result := value;
 end;
 
 function TFhirConceptMapElementList.Append: TFhirConceptMapElement;
 begin
-  result := TFhirConceptMapElement.create;
+  result := TFhirConceptMapElement.Create;
   try
     add(result.Link);
   finally
@@ -11577,7 +11577,7 @@ end;
 
 function TFhirConceptMapElementList.Insert(index: Integer): TFhirConceptMapElement;
 begin
-  result := TFhirConceptMapElement.create;
+  result := TFhirConceptMapElement.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -11631,8 +11631,8 @@ begin
   FCode.free;
   FEquivalence.free;
   FComments.free;
-  FDependsOnList.Free;
-  FProductList.Free;
+  FDependsOnList.free;
+  FProductList.free;
   inherited;
 end;
 
@@ -11859,7 +11859,7 @@ begin
   if value <> '' then
   begin
     if FCodeSystem = nil then
-      FCodeSystem := TFhirUri.create;
+      FCodeSystem := TFhirUri.Create;
     FCodeSystem.value := value
   end
   else if FCodeSystem <> nil then
@@ -11885,7 +11885,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -11933,7 +11933,7 @@ begin
   if value <> '' then
   begin
     if FComments = nil then
-      FComments := TFhirString.create;
+      FComments := TFhirString.Create;
     FComments.value := value
   end
   else if FComments <> nil then
@@ -11964,15 +11964,15 @@ begin
   result := (FProductList <> nil) and (FProductList.count > 0);
 end;
 
-function TFhirConceptMapElementTarget.sizeInBytesV : cardinal;
+function TFhirConceptMapElementTarget.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCodeSystem.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FEquivalence.sizeInBytes);
-  inc(result, FComments.sizeInBytes);
-  inc(result, FdependsOnList.sizeInBytes);
-  inc(result, FproductList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCodeSystem.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FEquivalence.sizeInBytes(magic));
+  inc(result, FComments.sizeInBytes(magic));
+  inc(result, FdependsOnList.sizeInBytes(magic));
+  inc(result, FproductList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapElementTargetListEnumerator }
@@ -11986,7 +11986,7 @@ end;
 
 destructor TFhirConceptMapElementTargetListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12001,22 +12001,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConceptMapElementTargetListEnumerator.sizeInBytesV : cardinal;
+function TFhirConceptMapElementTargetListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapElementTargetList }
-procedure TFhirConceptMapElementTargetList.AddItem(value: TFhirConceptMapElementTarget);
+function TFhirConceptMapElementTargetList.AddItem(value: TFhirConceptMapElementTarget): TFhirConceptMapElementTarget;
 begin
-  assert(value.ClassName = 'TFhirConceptMapElementTarget', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapElementTarget');
   add(value);
+  result := value;
 end;
 
 function TFhirConceptMapElementTargetList.Append: TFhirConceptMapElementTarget;
 begin
-  result := TFhirConceptMapElementTarget.create;
+  result := TFhirConceptMapElementTarget.Create;
   try
     add(result.Link);
   finally
@@ -12060,7 +12060,7 @@ end;
 
 function TFhirConceptMapElementTargetList.Insert(index: Integer): TFhirConceptMapElementTarget;
 begin
-  result := TFhirConceptMapElementTarget.create;
+  result := TFhirConceptMapElementTarget.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12272,7 +12272,7 @@ begin
   if value <> '' then
   begin
     if FElement = nil then
-      FElement := TFhirUri.create;
+      FElement := TFhirUri.Create;
     FElement.value := value
   end
   else if FElement <> nil then
@@ -12298,7 +12298,7 @@ begin
   if value <> '' then
   begin
     if FCodeSystem = nil then
-      FCodeSystem := TFhirUri.create;
+      FCodeSystem := TFhirUri.Create;
     FCodeSystem.value := value
   end
   else if FCodeSystem <> nil then
@@ -12324,19 +12324,19 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirString.create;
+      FCode := TFhirString.Create;
     FCode.value := value
   end
   else if FCode <> nil then
     FCode.value := '';
 end;
 
-function TFhirConceptMapElementTargetDependsOn.sizeInBytesV : cardinal;
+function TFhirConceptMapElementTargetDependsOn.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FElement.sizeInBytes);
-  inc(result, FCodeSystem.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FElement.sizeInBytes(magic));
+  inc(result, FCodeSystem.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapElementTargetDependsOnListEnumerator }
@@ -12350,7 +12350,7 @@ end;
 
 destructor TFhirConceptMapElementTargetDependsOnListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -12365,22 +12365,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConceptMapElementTargetDependsOnListEnumerator.sizeInBytesV : cardinal;
+function TFhirConceptMapElementTargetDependsOnListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapElementTargetDependsOnList }
-procedure TFhirConceptMapElementTargetDependsOnList.AddItem(value: TFhirConceptMapElementTargetDependsOn);
+function TFhirConceptMapElementTargetDependsOnList.AddItem(value: TFhirConceptMapElementTargetDependsOn): TFhirConceptMapElementTargetDependsOn;
 begin
-  assert(value.ClassName = 'TFhirConceptMapElementTargetDependsOn', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMapElementTargetDependsOn');
   add(value);
+  result := value;
 end;
 
 function TFhirConceptMapElementTargetDependsOnList.Append: TFhirConceptMapElementTargetDependsOn;
 begin
-  result := TFhirConceptMapElementTargetDependsOn.create;
+  result := TFhirConceptMapElementTargetDependsOn.Create;
   try
     add(result.Link);
   finally
@@ -12424,7 +12424,7 @@ end;
 
 function TFhirConceptMapElementTargetDependsOnList.Insert(index: Integer): TFhirConceptMapElementTargetDependsOn;
 begin
-  result := TFhirConceptMapElementTargetDependsOn.create;
+  result := TFhirConceptMapElementTargetDependsOn.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -12481,15 +12481,15 @@ begin
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FDescription.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FRequirements.free;
   FCopyright.free;
   FSource.free;
   FTarget.free;
-  FElementList.Free;
+  FElementList.free;
   inherited;
 end;
 
@@ -12878,7 +12878,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -12910,7 +12910,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -12936,7 +12936,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -12982,7 +12982,7 @@ end;
 Procedure TFhirConceptMap.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -13005,7 +13005,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -13041,7 +13041,7 @@ end;
 Procedure TFhirConceptMap.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -13064,7 +13064,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -13102,7 +13102,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -13128,7 +13128,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -13159,25 +13159,25 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
-function TFhirConceptMap.sizeInBytesV : cardinal;
+function TFhirConceptMap.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FelementList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FelementList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapListEnumerator }
@@ -13191,7 +13191,7 @@ end;
 
 destructor TFhirConceptMapListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13206,22 +13206,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConceptMapListEnumerator.sizeInBytesV : cardinal;
+function TFhirConceptMapListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConceptMapList }
-procedure TFhirConceptMapList.AddItem(value: TFhirConceptMap);
+function TFhirConceptMapList.AddItem(value: TFhirConceptMap): TFhirConceptMap;
 begin
-  assert(value.ClassName = 'TFhirConceptMap', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConceptMap');
   add(value);
+  result := value;
 end;
 
 function TFhirConceptMapList.Append: TFhirConceptMap;
 begin
-  result := TFhirConceptMap.create;
+  result := TFhirConceptMap.Create;
   try
     add(result.Link);
   finally
@@ -13265,7 +13265,7 @@ end;
 
 function TFhirConceptMapList.Insert(index: Integer): TFhirConceptMap;
 begin
-  result := TFhirConceptMap.create;
+  result := TFhirConceptMap.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13320,7 +13320,7 @@ end;
 destructor TFhirConformanceContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -13478,7 +13478,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -13497,11 +13497,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirConformanceContact.sizeInBytesV : cardinal;
+function TFhirConformanceContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceContactListEnumerator }
@@ -13515,7 +13515,7 @@ end;
 
 destructor TFhirConformanceContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13530,22 +13530,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceContactList }
-procedure TFhirConformanceContactList.AddItem(value: TFhirConformanceContact);
+function TFhirConformanceContactList.AddItem(value: TFhirConformanceContact): TFhirConformanceContact;
 begin
-  assert(value.ClassName = 'TFhirConformanceContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceContact');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceContactList.Append: TFhirConformanceContact;
 begin
-  result := TFhirConformanceContact.create;
+  result := TFhirConformanceContact.Create;
   try
     add(result.Link);
   finally
@@ -13589,7 +13589,7 @@ end;
 
 function TFhirConformanceContactList.Insert(index: Integer): TFhirConformanceContact;
 begin
-  result := TFhirConformanceContact.create;
+  result := TFhirConformanceContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -13801,7 +13801,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -13827,7 +13827,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -13851,16 +13851,16 @@ end;
 Procedure TFhirConformanceSoftware.SetReleaseDateST(value : TFslDateTime);
 begin
   if FReleaseDate = nil then
-    FReleaseDate := TFhirDateTime.create;
+    FReleaseDate := TFhirDateTime.Create;
   FReleaseDate.value := value
 end;
 
-function TFhirConformanceSoftware.sizeInBytesV : cardinal;
+function TFhirConformanceSoftware.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FReleaseDate.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FReleaseDate.sizeInBytes(magic));
 end;
 
 { TFhirConformanceSoftwareListEnumerator }
@@ -13874,7 +13874,7 @@ end;
 
 destructor TFhirConformanceSoftwareListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -13889,22 +13889,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceSoftwareListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceSoftwareListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceSoftwareList }
-procedure TFhirConformanceSoftwareList.AddItem(value: TFhirConformanceSoftware);
+function TFhirConformanceSoftwareList.AddItem(value: TFhirConformanceSoftware): TFhirConformanceSoftware;
 begin
-  assert(value.ClassName = 'TFhirConformanceSoftware', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceSoftware');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceSoftwareList.Append: TFhirConformanceSoftware;
 begin
-  result := TFhirConformanceSoftware.create;
+  result := TFhirConformanceSoftware.Create;
   try
     add(result.Link);
   finally
@@ -13948,7 +13948,7 @@ end;
 
 function TFhirConformanceSoftwareList.Insert(index: Integer): TFhirConformanceSoftware;
 begin
-  result := TFhirConformanceSoftware.create;
+  result := TFhirConformanceSoftware.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14144,7 +14144,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -14170,18 +14170,18 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
     FUrl.value := '';
 end;
 
-function TFhirConformanceImplementation.sizeInBytesV : cardinal;
+function TFhirConformanceImplementation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
 end;
 
 { TFhirConformanceImplementationListEnumerator }
@@ -14195,7 +14195,7 @@ end;
 
 destructor TFhirConformanceImplementationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14210,22 +14210,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceImplementationListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceImplementationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceImplementationList }
-procedure TFhirConformanceImplementationList.AddItem(value: TFhirConformanceImplementation);
+function TFhirConformanceImplementationList.AddItem(value: TFhirConformanceImplementation): TFhirConformanceImplementation;
 begin
-  assert(value.ClassName = 'TFhirConformanceImplementation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceImplementation');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceImplementationList.Append: TFhirConformanceImplementation;
 begin
-  result := TFhirConformanceImplementation.create;
+  result := TFhirConformanceImplementation.Create;
   try
     add(result.Link);
   finally
@@ -14269,7 +14269,7 @@ end;
 
 function TFhirConformanceImplementationList.Insert(index: Integer): TFhirConformanceImplementation;
 begin
-  result := TFhirConformanceImplementation.create;
+  result := TFhirConformanceImplementation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14322,12 +14322,12 @@ begin
   FMode.free;
   FDocumentation.free;
   FSecurity.free;
-  FResourceList.Free;
-  FInteractionList.Free;
+  FResourceList.free;
+  FInteractionList.free;
   FTransactionMode.free;
-  FSearchParamList.Free;
-  FOperationList.Free;
-  FCompartmentList.Free;
+  FSearchParamList.free;
+  FOperationList.free;
+  FCompartmentList.free;
   inherited;
 end;
 
@@ -14655,7 +14655,7 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
@@ -14750,18 +14750,18 @@ begin
   result := (FCompartmentList <> nil) and (FCompartmentList.count > 0);
 end;
 
-function TFhirConformanceRest.sizeInBytesV : cardinal;
+function TFhirConformanceRest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMode.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
-  inc(result, FSecurity.sizeInBytes);
-  inc(result, FresourceList.sizeInBytes);
-  inc(result, FinteractionList.sizeInBytes);
-  inc(result, FTransactionMode.sizeInBytes);
-  inc(result, FsearchParamList.sizeInBytes);
-  inc(result, FoperationList.sizeInBytes);
-  inc(result, FcompartmentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
+  inc(result, FSecurity.sizeInBytes(magic));
+  inc(result, FresourceList.sizeInBytes(magic));
+  inc(result, FinteractionList.sizeInBytes(magic));
+  inc(result, FTransactionMode.sizeInBytes(magic));
+  inc(result, FsearchParamList.sizeInBytes(magic));
+  inc(result, FoperationList.sizeInBytes(magic));
+  inc(result, FcompartmentList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestListEnumerator }
@@ -14775,7 +14775,7 @@ end;
 
 destructor TFhirConformanceRestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -14790,22 +14790,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestList }
-procedure TFhirConformanceRestList.AddItem(value: TFhirConformanceRest);
+function TFhirConformanceRestList.AddItem(value: TFhirConformanceRest): TFhirConformanceRest;
 begin
-  assert(value.ClassName = 'TFhirConformanceRest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRest');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestList.Append: TFhirConformanceRest;
 begin
-  result := TFhirConformanceRest.create;
+  result := TFhirConformanceRest.Create;
   try
     add(result.Link);
   finally
@@ -14849,7 +14849,7 @@ end;
 
 function TFhirConformanceRestList.Insert(index: Integer): TFhirConformanceRest;
 begin
-  result := TFhirConformanceRest.create;
+  result := TFhirConformanceRest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -14900,9 +14900,9 @@ end;
 destructor TFhirConformanceRestSecurity.Destroy;
 begin
   FCors.free;
-  FServiceList.Free;
+  FServiceList.free;
   FDescription.free;
-  FCertificateList.Free;
+  FCertificateList.free;
   inherited;
 end;
 
@@ -15099,7 +15099,7 @@ end;
 Procedure TFhirConformanceRestSecurity.SetCorsST(value : Boolean);
 begin
   if FCors = nil then
-    FCors := TFhirBoolean.create;
+    FCors := TFhirBoolean.Create;
   FCors.value := value
 end;
 
@@ -15134,7 +15134,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -15153,13 +15153,13 @@ begin
   result := (FCertificateList <> nil) and (FCertificateList.count > 0);
 end;
 
-function TFhirConformanceRestSecurity.sizeInBytesV : cardinal;
+function TFhirConformanceRestSecurity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCors.sizeInBytes);
-  inc(result, FserviceList.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FcertificateList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCors.sizeInBytes(magic));
+  inc(result, FserviceList.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FcertificateList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestSecurityListEnumerator }
@@ -15173,7 +15173,7 @@ end;
 
 destructor TFhirConformanceRestSecurityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -15188,22 +15188,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestSecurityListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestSecurityListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestSecurityList }
-procedure TFhirConformanceRestSecurityList.AddItem(value: TFhirConformanceRestSecurity);
+function TFhirConformanceRestSecurityList.AddItem(value: TFhirConformanceRestSecurity): TFhirConformanceRestSecurity;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestSecurity', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestSecurity');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestSecurityList.Append: TFhirConformanceRestSecurity;
 begin
-  result := TFhirConformanceRestSecurity.create;
+  result := TFhirConformanceRestSecurity.Create;
   try
     add(result.Link);
   finally
@@ -15247,7 +15247,7 @@ end;
 
 function TFhirConformanceRestSecurityList.Insert(index: Integer): TFhirConformanceRestSecurity;
 begin
-  result := TFhirConformanceRestSecurity.create;
+  result := TFhirConformanceRestSecurity.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -15443,7 +15443,7 @@ begin
   if value <> '' then
   begin
     if FType_ = nil then
-      FType_ := TFhirCode.create;
+      FType_ := TFhirCode.Create;
     FType_.value := value
   end
   else if FType_ <> nil then
@@ -15469,18 +15469,18 @@ begin
   if value <> nil then
   begin
     if FBlob = nil then
-      FBlob := TFhirBase64Binary.create;
+      FBlob := TFhirBase64Binary.Create;
     FBlob.value := value
   end
   else if FBlob <> nil then
     FBlob.value := nil;
 end;
 
-function TFhirConformanceRestSecurityCertificate.sizeInBytesV : cardinal;
+function TFhirConformanceRestSecurityCertificate.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FBlob.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FBlob.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestSecurityCertificateListEnumerator }
@@ -15494,7 +15494,7 @@ end;
 
 destructor TFhirConformanceRestSecurityCertificateListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -15509,22 +15509,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestSecurityCertificateListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestSecurityCertificateListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestSecurityCertificateList }
-procedure TFhirConformanceRestSecurityCertificateList.AddItem(value: TFhirConformanceRestSecurityCertificate);
+function TFhirConformanceRestSecurityCertificateList.AddItem(value: TFhirConformanceRestSecurityCertificate): TFhirConformanceRestSecurityCertificate;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestSecurityCertificate', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestSecurityCertificate');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestSecurityCertificateList.Append: TFhirConformanceRestSecurityCertificate;
 begin
-  result := TFhirConformanceRestSecurityCertificate.create;
+  result := TFhirConformanceRestSecurityCertificate.Create;
   try
     add(result.Link);
   finally
@@ -15568,7 +15568,7 @@ end;
 
 function TFhirConformanceRestSecurityCertificateList.Insert(index: Integer): TFhirConformanceRestSecurityCertificate;
 begin
-  result := TFhirConformanceRestSecurityCertificate.create;
+  result := TFhirConformanceRestSecurityCertificate.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -15620,16 +15620,16 @@ destructor TFhirConformanceRestResource.Destroy;
 begin
   FType_.free;
   FProfile.free;
-  FInteractionList.Free;
+  FInteractionList.free;
   FVersioning.free;
   FReadHistory.free;
   FUpdateCreate.free;
   FConditionalCreate.free;
   FConditionalUpdate.free;
   FConditionalDelete.free;
-  FSearchIncludeList.Free;
-  FSearchRevIncludeList.Free;
-  FSearchParamList.Free;
+  FSearchIncludeList.free;
+  FSearchRevIncludeList.free;
+  FSearchParamList.free;
   inherited;
 end;
 
@@ -16025,7 +16025,7 @@ end;
 Procedure TFhirConformanceRestResource.SetReadHistoryST(value : Boolean);
 begin
   if FReadHistory = nil then
-    FReadHistory := TFhirBoolean.create;
+    FReadHistory := TFhirBoolean.Create;
   FReadHistory.value := value
 end;
 
@@ -16046,7 +16046,7 @@ end;
 Procedure TFhirConformanceRestResource.SetUpdateCreateST(value : Boolean);
 begin
   if FUpdateCreate = nil then
-    FUpdateCreate := TFhirBoolean.create;
+    FUpdateCreate := TFhirBoolean.Create;
   FUpdateCreate.value := value
 end;
 
@@ -16067,7 +16067,7 @@ end;
 Procedure TFhirConformanceRestResource.SetConditionalCreateST(value : Boolean);
 begin
   if FConditionalCreate = nil then
-    FConditionalCreate := TFhirBoolean.create;
+    FConditionalCreate := TFhirBoolean.Create;
   FConditionalCreate.value := value
 end;
 
@@ -16088,7 +16088,7 @@ end;
 Procedure TFhirConformanceRestResource.SetConditionalUpdateST(value : Boolean);
 begin
   if FConditionalUpdate = nil then
-    FConditionalUpdate := TFhirBoolean.create;
+    FConditionalUpdate := TFhirBoolean.Create;
   FConditionalUpdate.value := value
 end;
 
@@ -16150,21 +16150,21 @@ begin
   result := (FSearchParamList <> nil) and (FSearchParamList.count > 0);
 end;
 
-function TFhirConformanceRestResource.sizeInBytesV : cardinal;
+function TFhirConformanceRestResource.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FProfile.sizeInBytes);
-  inc(result, FinteractionList.sizeInBytes);
-  inc(result, FVersioning.sizeInBytes);
-  inc(result, FReadHistory.sizeInBytes);
-  inc(result, FUpdateCreate.sizeInBytes);
-  inc(result, FConditionalCreate.sizeInBytes);
-  inc(result, FConditionalUpdate.sizeInBytes);
-  inc(result, FConditionalDelete.sizeInBytes);
-  inc(result, FsearchIncludeList.sizeInBytes);
-  inc(result, FsearchRevIncludeList.sizeInBytes);
-  inc(result, FsearchParamList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FProfile.sizeInBytes(magic));
+  inc(result, FinteractionList.sizeInBytes(magic));
+  inc(result, FVersioning.sizeInBytes(magic));
+  inc(result, FReadHistory.sizeInBytes(magic));
+  inc(result, FUpdateCreate.sizeInBytes(magic));
+  inc(result, FConditionalCreate.sizeInBytes(magic));
+  inc(result, FConditionalUpdate.sizeInBytes(magic));
+  inc(result, FConditionalDelete.sizeInBytes(magic));
+  inc(result, FsearchIncludeList.sizeInBytes(magic));
+  inc(result, FsearchRevIncludeList.sizeInBytes(magic));
+  inc(result, FsearchParamList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestResourceListEnumerator }
@@ -16178,7 +16178,7 @@ end;
 
 destructor TFhirConformanceRestResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16193,22 +16193,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestResourceList }
-procedure TFhirConformanceRestResourceList.AddItem(value: TFhirConformanceRestResource);
+function TFhirConformanceRestResourceList.AddItem(value: TFhirConformanceRestResource): TFhirConformanceRestResource;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestResource');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestResourceList.Append: TFhirConformanceRestResource;
 begin
-  result := TFhirConformanceRestResource.create;
+  result := TFhirConformanceRestResource.Create;
   try
     add(result.Link);
   finally
@@ -16252,7 +16252,7 @@ end;
 
 function TFhirConformanceRestResourceList.Insert(index: Integer): TFhirConformanceRestResource;
 begin
-  result := TFhirConformanceRestResource.create;
+  result := TFhirConformanceRestResource.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16469,18 +16469,18 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
 end;
 
-function TFhirConformanceRestResourceInteraction.sizeInBytesV : cardinal;
+function TFhirConformanceRestResourceInteraction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestResourceInteractionListEnumerator }
@@ -16494,7 +16494,7 @@ end;
 
 destructor TFhirConformanceRestResourceInteractionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -16509,22 +16509,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestResourceInteractionListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestResourceInteractionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestResourceInteractionList }
-procedure TFhirConformanceRestResourceInteractionList.AddItem(value: TFhirConformanceRestResourceInteraction);
+function TFhirConformanceRestResourceInteractionList.AddItem(value: TFhirConformanceRestResourceInteraction): TFhirConformanceRestResourceInteraction;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestResourceInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestResourceInteraction');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestResourceInteractionList.Append: TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceInteraction.create;
+  result := TFhirConformanceRestResourceInteraction.Create;
   try
     add(result.Link);
   finally
@@ -16568,7 +16568,7 @@ end;
 
 function TFhirConformanceRestResourceInteractionList.Insert(index: Integer): TFhirConformanceRestResourceInteraction;
 begin
-  result := TFhirConformanceRestResourceInteraction.create;
+  result := TFhirConformanceRestResourceInteraction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -16622,9 +16622,9 @@ begin
   FDefinition.free;
   FType_.free;
   FDocumentation.free;
-  FTarget.Free;
-  FModifier.Free;
-  FChainList.Free;
+  FTarget.free;
+  FModifier.free;
+  FChainList.free;
   inherited;
 end;
 
@@ -16870,7 +16870,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -16896,7 +16896,7 @@ begin
   if value <> '' then
   begin
     if FDefinition = nil then
-      FDefinition := TFhirUri.create;
+      FDefinition := TFhirUri.Create;
     FDefinition.value := value
   end
   else if FDefinition <> nil then
@@ -16944,7 +16944,7 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
@@ -17011,16 +17011,16 @@ begin
   result := (FChainList <> nil) and (FChainList.count > 0);
 end;
 
-function TFhirConformanceRestResourceSearchParam.sizeInBytesV : cardinal;
+function TFhirConformanceRestResourceSearchParam.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
-  inc(result, FModifier.sizeInBytes);
-  inc(result, FchainList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
+  inc(result, FModifier.sizeInBytes(magic));
+  inc(result, FchainList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestResourceSearchParamListEnumerator }
@@ -17034,7 +17034,7 @@ end;
 
 destructor TFhirConformanceRestResourceSearchParamListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17049,22 +17049,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestResourceSearchParamListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestResourceSearchParamListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestResourceSearchParamList }
-procedure TFhirConformanceRestResourceSearchParamList.AddItem(value: TFhirConformanceRestResourceSearchParam);
+function TFhirConformanceRestResourceSearchParamList.AddItem(value: TFhirConformanceRestResourceSearchParam): TFhirConformanceRestResourceSearchParam;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestResourceSearchParam', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestResourceSearchParam');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestResourceSearchParamList.Append: TFhirConformanceRestResourceSearchParam;
 begin
-  result := TFhirConformanceRestResourceSearchParam.create;
+  result := TFhirConformanceRestResourceSearchParam.Create;
   try
     add(result.Link);
   finally
@@ -17108,7 +17108,7 @@ end;
 
 function TFhirConformanceRestResourceSearchParamList.Insert(index: Integer): TFhirConformanceRestResourceSearchParam;
 begin
-  result := TFhirConformanceRestResourceSearchParam.create;
+  result := TFhirConformanceRestResourceSearchParam.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17325,18 +17325,18 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
 end;
 
-function TFhirConformanceRestInteraction.sizeInBytesV : cardinal;
+function TFhirConformanceRestInteraction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestInteractionListEnumerator }
@@ -17350,7 +17350,7 @@ end;
 
 destructor TFhirConformanceRestInteractionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17365,22 +17365,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestInteractionListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestInteractionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestInteractionList }
-procedure TFhirConformanceRestInteractionList.AddItem(value: TFhirConformanceRestInteraction);
+function TFhirConformanceRestInteractionList.AddItem(value: TFhirConformanceRestInteraction): TFhirConformanceRestInteraction;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestInteraction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestInteraction');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestInteractionList.Append: TFhirConformanceRestInteraction;
 begin
-  result := TFhirConformanceRestInteraction.create;
+  result := TFhirConformanceRestInteraction.Create;
   try
     add(result.Link);
   finally
@@ -17424,7 +17424,7 @@ end;
 
 function TFhirConformanceRestInteractionList.Insert(index: Integer): TFhirConformanceRestInteraction;
 begin
-  result := TFhirConformanceRestInteraction.create;
+  result := TFhirConformanceRestInteraction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17620,7 +17620,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -17633,11 +17633,11 @@ begin
   FDefinition := value;
 end;
 
-function TFhirConformanceRestOperation.sizeInBytesV : cardinal;
+function TFhirConformanceRestOperation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestOperationListEnumerator }
@@ -17651,7 +17651,7 @@ end;
 
 destructor TFhirConformanceRestOperationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -17666,22 +17666,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceRestOperationListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceRestOperationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceRestOperationList }
-procedure TFhirConformanceRestOperationList.AddItem(value: TFhirConformanceRestOperation);
+function TFhirConformanceRestOperationList.AddItem(value: TFhirConformanceRestOperation): TFhirConformanceRestOperation;
 begin
-  assert(value.ClassName = 'TFhirConformanceRestOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceRestOperation');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceRestOperationList.Append: TFhirConformanceRestOperation;
 begin
-  result := TFhirConformanceRestOperation.create;
+  result := TFhirConformanceRestOperation.Create;
   try
     add(result.Link);
   finally
@@ -17725,7 +17725,7 @@ end;
 
 function TFhirConformanceRestOperationList.Insert(index: Integer): TFhirConformanceRestOperation;
 begin
-  result := TFhirConformanceRestOperation.create;
+  result := TFhirConformanceRestOperation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -17775,10 +17775,10 @@ end;
 
 destructor TFhirConformanceMessaging.Destroy;
 begin
-  FEndpointList.Free;
+  FEndpointList.free;
   FReliableCache.free;
   FDocumentation.free;
-  FEventList.Free;
+  FEventList.free;
   inherited;
 end;
 
@@ -17989,7 +17989,7 @@ begin
   if value <> '' then
   begin
     if FReliableCache = nil then
-      FReliableCache := TFhirUnsignedInt.create;
+      FReliableCache := TFhirUnsignedInt.Create;
     FReliableCache.value := value
   end
   else if FReliableCache <> nil then
@@ -18015,7 +18015,7 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
@@ -18034,13 +18034,13 @@ begin
   result := (FEventList <> nil) and (FEventList.count > 0);
 end;
 
-function TFhirConformanceMessaging.sizeInBytesV : cardinal;
+function TFhirConformanceMessaging.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FendpointList.sizeInBytes);
-  inc(result, FReliableCache.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
-  inc(result, FeventList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FendpointList.sizeInBytes(magic));
+  inc(result, FReliableCache.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
+  inc(result, FeventList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceMessagingListEnumerator }
@@ -18054,7 +18054,7 @@ end;
 
 destructor TFhirConformanceMessagingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18069,22 +18069,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceMessagingListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceMessagingListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceMessagingList }
-procedure TFhirConformanceMessagingList.AddItem(value: TFhirConformanceMessaging);
+function TFhirConformanceMessagingList.AddItem(value: TFhirConformanceMessaging): TFhirConformanceMessaging;
 begin
-  assert(value.ClassName = 'TFhirConformanceMessaging', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceMessaging');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceMessagingList.Append: TFhirConformanceMessaging;
 begin
-  result := TFhirConformanceMessaging.create;
+  result := TFhirConformanceMessaging.Create;
   try
     add(result.Link);
   finally
@@ -18128,7 +18128,7 @@ end;
 
 function TFhirConformanceMessagingList.Insert(index: Integer): TFhirConformanceMessaging;
 begin
-  result := TFhirConformanceMessaging.create;
+  result := TFhirConformanceMessaging.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18330,18 +18330,18 @@ begin
   if value <> '' then
   begin
     if FAddress = nil then
-      FAddress := TFhirUri.create;
+      FAddress := TFhirUri.Create;
     FAddress.value := value
   end
   else if FAddress <> nil then
     FAddress.value := '';
 end;
 
-function TFhirConformanceMessagingEndpoint.sizeInBytesV : cardinal;
+function TFhirConformanceMessagingEndpoint.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProtocol.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProtocol.sizeInBytes(magic));
+  inc(result, FAddress.sizeInBytes(magic));
 end;
 
 { TFhirConformanceMessagingEndpointListEnumerator }
@@ -18355,7 +18355,7 @@ end;
 
 destructor TFhirConformanceMessagingEndpointListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18370,22 +18370,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceMessagingEndpointListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceMessagingEndpointListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceMessagingEndpointList }
-procedure TFhirConformanceMessagingEndpointList.AddItem(value: TFhirConformanceMessagingEndpoint);
+function TFhirConformanceMessagingEndpointList.AddItem(value: TFhirConformanceMessagingEndpoint): TFhirConformanceMessagingEndpoint;
 begin
-  assert(value.ClassName = 'TFhirConformanceMessagingEndpoint', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceMessagingEndpoint');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceMessagingEndpointList.Append: TFhirConformanceMessagingEndpoint;
 begin
-  result := TFhirConformanceMessagingEndpoint.create;
+  result := TFhirConformanceMessagingEndpoint.Create;
   try
     add(result.Link);
   finally
@@ -18429,7 +18429,7 @@ end;
 
 function TFhirConformanceMessagingEndpointList.Insert(index: Integer): TFhirConformanceMessagingEndpoint;
 begin
-  result := TFhirConformanceMessagingEndpoint.create;
+  result := TFhirConformanceMessagingEndpoint.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -18784,23 +18784,23 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
     FDocumentation.value := '';
 end;
 
-function TFhirConformanceMessagingEvent.sizeInBytesV : cardinal;
+function TFhirConformanceMessagingEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FCategory.sizeInBytes);
-  inc(result, FMode.sizeInBytes);
-  inc(result, FFocus.sizeInBytes);
-  inc(result, FRequest.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FCategory.sizeInBytes(magic));
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FFocus.sizeInBytes(magic));
+  inc(result, FRequest.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
 end;
 
 { TFhirConformanceMessagingEventListEnumerator }
@@ -18814,7 +18814,7 @@ end;
 
 destructor TFhirConformanceMessagingEventListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -18829,22 +18829,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceMessagingEventListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceMessagingEventListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceMessagingEventList }
-procedure TFhirConformanceMessagingEventList.AddItem(value: TFhirConformanceMessagingEvent);
+function TFhirConformanceMessagingEventList.AddItem(value: TFhirConformanceMessagingEvent): TFhirConformanceMessagingEvent;
 begin
-  assert(value.ClassName = 'TFhirConformanceMessagingEvent', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceMessagingEvent');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceMessagingEventList.Append: TFhirConformanceMessagingEvent;
 begin
-  result := TFhirConformanceMessagingEvent.create;
+  result := TFhirConformanceMessagingEvent.Create;
   try
     add(result.Link);
   finally
@@ -18888,7 +18888,7 @@ end;
 
 function TFhirConformanceMessagingEventList.Insert(index: Integer): TFhirConformanceMessagingEvent;
 begin
-  result := TFhirConformanceMessagingEvent.create;
+  result := TFhirConformanceMessagingEvent.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19121,7 +19121,7 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
@@ -19134,12 +19134,12 @@ begin
   FProfile := value;
 end;
 
-function TFhirConformanceDocument.sizeInBytesV : cardinal;
+function TFhirConformanceDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMode.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
-  inc(result, FProfile.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMode.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
+  inc(result, FProfile.sizeInBytes(magic));
 end;
 
 { TFhirConformanceDocumentListEnumerator }
@@ -19153,7 +19153,7 @@ end;
 
 destructor TFhirConformanceDocumentListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -19168,22 +19168,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceDocumentListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceDocumentListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceDocumentList }
-procedure TFhirConformanceDocumentList.AddItem(value: TFhirConformanceDocument);
+function TFhirConformanceDocumentList.AddItem(value: TFhirConformanceDocument): TFhirConformanceDocument;
 begin
-  assert(value.ClassName = 'TFhirConformanceDocument', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformanceDocument');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceDocumentList.Append: TFhirConformanceDocument;
 begin
-  result := TFhirConformanceDocument.create;
+  result := TFhirConformanceDocument.Create;
   try
     add(result.Link);
   finally
@@ -19227,7 +19227,7 @@ end;
 
 function TFhirConformanceDocumentList.Insert(index: Integer): TFhirConformanceDocument;
 begin
-  result := TFhirConformanceDocument.create;
+  result := TFhirConformanceDocument.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -19283,7 +19283,7 @@ begin
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FDescription.free;
   FRequirements.free;
@@ -19293,11 +19293,11 @@ begin
   FImplementation_.free;
   FFhirVersion.free;
   FAcceptUnknown.free;
-  FFormatList.Free;
-  FProfileList.Free;
-  FRestList.Free;
-  FMessagingList.Free;
-  FDocumentList.Free;
+  FFormatList.free;
+  FProfileList.free;
+  FRestList.free;
+  FMessagingList.free;
+  FDocumentList.free;
   inherited;
 end;
 
@@ -19793,7 +19793,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -19819,7 +19819,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -19845,7 +19845,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -19891,7 +19891,7 @@ end;
 Procedure TFhirConformance.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -19914,7 +19914,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -19950,7 +19950,7 @@ end;
 Procedure TFhirConformance.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -19973,7 +19973,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -19999,7 +19999,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -20025,7 +20025,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -20085,7 +20085,7 @@ begin
   if value <> '' then
   begin
     if FFhirVersion = nil then
-      FFhirVersion := TFhirId.create;
+      FFhirVersion := TFhirId.Create;
     FFhirVersion.value := value
   end
   else if FFhirVersion <> nil then
@@ -20174,30 +20174,30 @@ begin
   result := (FDocumentList <> nil) and (FDocumentList.count > 0);
 end;
 
-function TFhirConformance.sizeInBytesV : cardinal;
+function TFhirConformance.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FKind.sizeInBytes);
-  inc(result, FSoftware.sizeInBytes);
-  inc(result, FImplementation_.sizeInBytes);
-  inc(result, FFhirVersion.sizeInBytes);
-  inc(result, FAcceptUnknown.sizeInBytes);
-  inc(result, FformatList.sizeInBytes);
-  inc(result, FprofileList.sizeInBytes);
-  inc(result, FrestList.sizeInBytes);
-  inc(result, FmessagingList.sizeInBytes);
-  inc(result, FdocumentList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FKind.sizeInBytes(magic));
+  inc(result, FSoftware.sizeInBytes(magic));
+  inc(result, FImplementation_.sizeInBytes(magic));
+  inc(result, FFhirVersion.sizeInBytes(magic));
+  inc(result, FAcceptUnknown.sizeInBytes(magic));
+  inc(result, FformatList.sizeInBytes(magic));
+  inc(result, FprofileList.sizeInBytes(magic));
+  inc(result, FrestList.sizeInBytes(magic));
+  inc(result, FmessagingList.sizeInBytes(magic));
+  inc(result, FdocumentList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceListEnumerator }
@@ -20211,7 +20211,7 @@ end;
 
 destructor TFhirConformanceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20226,22 +20226,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirConformanceListEnumerator.sizeInBytesV : cardinal;
+function TFhirConformanceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirConformanceList }
-procedure TFhirConformanceList.AddItem(value: TFhirConformance);
+function TFhirConformanceList.AddItem(value: TFhirConformance): TFhirConformance;
 begin
-  assert(value.ClassName = 'TFhirConformance', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirConformance');
   add(value);
+  result := value;
 end;
 
 function TFhirConformanceList.Append: TFhirConformance;
 begin
-  result := TFhirConformance.create;
+  result := TFhirConformance.Create;
   try
     add(result.Link);
   finally
@@ -20285,7 +20285,7 @@ end;
 
 function TFhirConformanceList.Insert(index: Integer): TFhirConformance;
 begin
-  result := TFhirConformance.create;
+  result := TFhirConformance.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20340,7 +20340,7 @@ end;
 destructor TFhirDataElementContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -20498,7 +20498,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -20517,11 +20517,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirDataElementContact.sizeInBytesV : cardinal;
+function TFhirDataElementContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirDataElementContactListEnumerator }
@@ -20535,7 +20535,7 @@ end;
 
 destructor TFhirDataElementContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20550,22 +20550,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDataElementContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirDataElementContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDataElementContactList }
-procedure TFhirDataElementContactList.AddItem(value: TFhirDataElementContact);
+function TFhirDataElementContactList.AddItem(value: TFhirDataElementContact): TFhirDataElementContact;
 begin
-  assert(value.ClassName = 'TFhirDataElementContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataElementContact');
   add(value);
+  result := value;
 end;
 
 function TFhirDataElementContactList.Append: TFhirDataElementContact;
 begin
-  result := TFhirDataElementContact.create;
+  result := TFhirDataElementContact.Create;
   try
     add(result.Link);
   finally
@@ -20609,7 +20609,7 @@ end;
 
 function TFhirDataElementContactList.Insert(index: Integer): TFhirDataElementContact;
 begin
-  result := TFhirDataElementContact.create;
+  result := TFhirDataElementContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -20836,7 +20836,7 @@ begin
   if value <> '' then
   begin
     if FIdentity = nil then
-      FIdentity := TFhirId.create;
+      FIdentity := TFhirId.Create;
     FIdentity.value := value
   end
   else if FIdentity <> nil then
@@ -20862,7 +20862,7 @@ begin
   if value <> '' then
   begin
     if FUri = nil then
-      FUri := TFhirUri.create;
+      FUri := TFhirUri.Create;
     FUri.value := value
   end
   else if FUri <> nil then
@@ -20888,7 +20888,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -20914,20 +20914,20 @@ begin
   if value <> '' then
   begin
     if FComments = nil then
-      FComments := TFhirString.create;
+      FComments := TFhirString.Create;
     FComments.value := value
   end
   else if FComments <> nil then
     FComments.value := '';
 end;
 
-function TFhirDataElementMapping.sizeInBytesV : cardinal;
+function TFhirDataElementMapping.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentity.sizeInBytes);
-  inc(result, FUri.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FComments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentity.sizeInBytes(magic));
+  inc(result, FUri.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FComments.sizeInBytes(magic));
 end;
 
 { TFhirDataElementMappingListEnumerator }
@@ -20941,7 +20941,7 @@ end;
 
 destructor TFhirDataElementMappingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -20956,22 +20956,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDataElementMappingListEnumerator.sizeInBytesV : cardinal;
+function TFhirDataElementMappingListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDataElementMappingList }
-procedure TFhirDataElementMappingList.AddItem(value: TFhirDataElementMapping);
+function TFhirDataElementMappingList.AddItem(value: TFhirDataElementMapping): TFhirDataElementMapping;
 begin
-  assert(value.ClassName = 'TFhirDataElementMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataElementMapping');
   add(value);
+  result := value;
 end;
 
 function TFhirDataElementMappingList.Append: TFhirDataElementMapping;
 begin
-  result := TFhirDataElementMapping.create;
+  result := TFhirDataElementMapping.Create;
   try
     add(result.Link);
   finally
@@ -21015,7 +21015,7 @@ end;
 
 function TFhirDataElementMappingList.Insert(index: Integer): TFhirDataElementMapping;
 begin
-  result := TFhirDataElementMapping.create;
+  result := TFhirDataElementMapping.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21066,19 +21066,19 @@ end;
 destructor TFhirDataElement.Destroy;
 begin
   FUrl.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FVersion.free;
   FName.free;
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FCopyright.free;
   FStringency.free;
-  FMappingList.Free;
-  FElementList.Free;
+  FMappingList.free;
+  FElementList.free;
   inherited;
 end;
 
@@ -21461,7 +21461,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -21499,7 +21499,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -21525,7 +21525,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -21571,7 +21571,7 @@ end;
 Procedure TFhirDataElement.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -21594,7 +21594,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -21630,7 +21630,7 @@ end;
 Procedure TFhirDataElement.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -21665,7 +21665,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -21718,23 +21718,23 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
-function TFhirDataElement.sizeInBytesV : cardinal;
+function TFhirDataElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FStringency.sizeInBytes);
-  inc(result, FmappingList.sizeInBytes);
-  inc(result, FelementList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FStringency.sizeInBytes(magic));
+  inc(result, FmappingList.sizeInBytes(magic));
+  inc(result, FelementList.sizeInBytes(magic));
 end;
 
 { TFhirDataElementListEnumerator }
@@ -21748,7 +21748,7 @@ end;
 
 destructor TFhirDataElementListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -21763,22 +21763,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDataElementListEnumerator.sizeInBytesV : cardinal;
+function TFhirDataElementListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDataElementList }
-procedure TFhirDataElementList.AddItem(value: TFhirDataElement);
+function TFhirDataElementList.AddItem(value: TFhirDataElement): TFhirDataElement;
 begin
-  assert(value.ClassName = 'TFhirDataElement', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDataElement');
   add(value);
+  result := value;
 end;
 
 function TFhirDataElementList.Append: TFhirDataElement;
 begin
-  result := TFhirDataElement.create;
+  result := TFhirDataElement.Create;
   try
     add(result.Link);
   finally
@@ -21822,7 +21822,7 @@ end;
 
 function TFhirDataElementList.Insert(index: Integer): TFhirDataElement;
 begin
-  result := TFhirDataElement.create;
+  result := TFhirDataElement.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -21877,7 +21877,7 @@ end;
 destructor TFhirImplementationGuideContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -22035,7 +22035,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -22054,11 +22054,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirImplementationGuideContact.sizeInBytesV : cardinal;
+function TFhirImplementationGuideContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideContactListEnumerator }
@@ -22072,7 +22072,7 @@ end;
 
 destructor TFhirImplementationGuideContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22087,22 +22087,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuideContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuideContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideContactList }
-procedure TFhirImplementationGuideContactList.AddItem(value: TFhirImplementationGuideContact);
+function TFhirImplementationGuideContactList.AddItem(value: TFhirImplementationGuideContact): TFhirImplementationGuideContact;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuideContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideContact');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuideContactList.Append: TFhirImplementationGuideContact;
 begin
-  result := TFhirImplementationGuideContact.create;
+  result := TFhirImplementationGuideContact.Create;
   try
     add(result.Link);
   finally
@@ -22146,7 +22146,7 @@ end;
 
 function TFhirImplementationGuideContactList.Insert(index: Integer): TFhirImplementationGuideContact;
 begin
-  result := TFhirImplementationGuideContact.create;
+  result := TFhirImplementationGuideContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22363,18 +22363,18 @@ begin
   if value <> '' then
   begin
     if FUri = nil then
-      FUri := TFhirUri.create;
+      FUri := TFhirUri.Create;
     FUri.value := value
   end
   else if FUri <> nil then
     FUri.value := '';
 end;
 
-function TFhirImplementationGuideDependency.sizeInBytesV : cardinal;
+function TFhirImplementationGuideDependency.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FUri.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FUri.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideDependencyListEnumerator }
@@ -22388,7 +22388,7 @@ end;
 
 destructor TFhirImplementationGuideDependencyListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22403,22 +22403,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuideDependencyListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuideDependencyListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideDependencyList }
-procedure TFhirImplementationGuideDependencyList.AddItem(value: TFhirImplementationGuideDependency);
+function TFhirImplementationGuideDependencyList.AddItem(value: TFhirImplementationGuideDependency): TFhirImplementationGuideDependency;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuideDependency', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideDependency');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuideDependencyList.Append: TFhirImplementationGuideDependency;
 begin
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependency.Create;
   try
     add(result.Link);
   finally
@@ -22462,7 +22462,7 @@ end;
 
 function TFhirImplementationGuideDependencyList.Insert(index: Integer): TFhirImplementationGuideDependency;
 begin
-  result := TFhirImplementationGuideDependency.create;
+  result := TFhirImplementationGuideDependency.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -22514,7 +22514,7 @@ destructor TFhirImplementationGuidePackage.Destroy;
 begin
   FName.free;
   FDescription.free;
-  FResourceList.Free;
+  FResourceList.free;
   inherited;
 end;
 
@@ -22687,7 +22687,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -22713,7 +22713,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -22732,12 +22732,12 @@ begin
   result := (FResourceList <> nil) and (FResourceList.count > 0);
 end;
 
-function TFhirImplementationGuidePackage.sizeInBytesV : cardinal;
+function TFhirImplementationGuidePackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FresourceList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FresourceList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuidePackageListEnumerator }
@@ -22751,7 +22751,7 @@ end;
 
 destructor TFhirImplementationGuidePackageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -22766,22 +22766,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuidePackageListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuidePackageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuidePackageList }
-procedure TFhirImplementationGuidePackageList.AddItem(value: TFhirImplementationGuidePackage);
+function TFhirImplementationGuidePackageList.AddItem(value: TFhirImplementationGuidePackage): TFhirImplementationGuidePackage;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuidePackage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuidePackage');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuidePackageList.Append: TFhirImplementationGuidePackage;
 begin
-  result := TFhirImplementationGuidePackage.create;
+  result := TFhirImplementationGuidePackage.Create;
   try
     add(result.Link);
   finally
@@ -22825,7 +22825,7 @@ end;
 
 function TFhirImplementationGuidePackageList.Insert(index: Integer): TFhirImplementationGuidePackage;
 begin
-  result := TFhirImplementationGuidePackage.create;
+  result := TFhirImplementationGuidePackage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23104,7 +23104,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -23130,7 +23130,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -23156,7 +23156,7 @@ begin
   if value <> '' then
   begin
     if FAcronym = nil then
-      FAcronym := TFhirString.create;
+      FAcronym := TFhirString.Create;
     FAcronym.value := value
   end
   else if FAcronym <> nil then
@@ -23175,15 +23175,15 @@ begin
   FExampleFor := value;
 end;
 
-function TFhirImplementationGuidePackageResource.sizeInBytesV : cardinal;
+function TFhirImplementationGuidePackageResource.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPurpose.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FAcronym.sizeInBytes);
-  inc(result, FSource.sizeInBytes);
-  inc(result, FExampleFor.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPurpose.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FAcronym.sizeInBytes(magic));
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FExampleFor.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuidePackageResourceListEnumerator }
@@ -23197,7 +23197,7 @@ end;
 
 destructor TFhirImplementationGuidePackageResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23212,22 +23212,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuidePackageResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuidePackageResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuidePackageResourceList }
-procedure TFhirImplementationGuidePackageResourceList.AddItem(value: TFhirImplementationGuidePackageResource);
+function TFhirImplementationGuidePackageResourceList.AddItem(value: TFhirImplementationGuidePackageResource): TFhirImplementationGuidePackageResource;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuidePackageResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuidePackageResource');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuidePackageResourceList.Append: TFhirImplementationGuidePackageResource;
 begin
-  result := TFhirImplementationGuidePackageResource.create;
+  result := TFhirImplementationGuidePackageResource.Create;
   try
     add(result.Link);
   finally
@@ -23271,7 +23271,7 @@ end;
 
 function TFhirImplementationGuidePackageResourceList.Insert(index: Integer): TFhirImplementationGuidePackageResource;
 begin
-  result := TFhirImplementationGuidePackageResource.create;
+  result := TFhirImplementationGuidePackageResource.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23475,11 +23475,11 @@ begin
   FProfile := value;
 end;
 
-function TFhirImplementationGuideGlobal.sizeInBytesV : cardinal;
+function TFhirImplementationGuideGlobal.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FProfile.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FProfile.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideGlobalListEnumerator }
@@ -23493,7 +23493,7 @@ end;
 
 destructor TFhirImplementationGuideGlobalListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -23508,22 +23508,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuideGlobalListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuideGlobalListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideGlobalList }
-procedure TFhirImplementationGuideGlobalList.AddItem(value: TFhirImplementationGuideGlobal);
+function TFhirImplementationGuideGlobalList.AddItem(value: TFhirImplementationGuideGlobal): TFhirImplementationGuideGlobal;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuideGlobal', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuideGlobal');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuideGlobalList.Append: TFhirImplementationGuideGlobal;
 begin
-  result := TFhirImplementationGuideGlobal.create;
+  result := TFhirImplementationGuideGlobal.Create;
   try
     add(result.Link);
   finally
@@ -23567,7 +23567,7 @@ end;
 
 function TFhirImplementationGuideGlobalList.Insert(index: Integer): TFhirImplementationGuideGlobal;
 begin
-  result := TFhirImplementationGuideGlobal.create;
+  result := TFhirImplementationGuideGlobal.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -23620,10 +23620,10 @@ begin
   FSource.free;
   FName.free;
   FKind.free;
-  FType_.Free;
-  FPackageList.Free;
+  FType_.free;
+  FPackageList.free;
   FFormat.free;
-  FPageList.Free;
+  FPageList.free;
   inherited;
 end;
 
@@ -23873,7 +23873,7 @@ begin
   if value <> '' then
   begin
     if FSource = nil then
-      FSource := TFhirUri.create;
+      FSource := TFhirUri.Create;
     FSource.value := value
   end
   else if FSource <> nil then
@@ -23899,7 +23899,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -23971,7 +23971,7 @@ begin
   if value <> '' then
   begin
     if FFormat = nil then
-      FFormat := TFhirCode.create;
+      FFormat := TFhirCode.Create;
     FFormat.value := value
   end
   else if FFormat <> nil then
@@ -23990,16 +23990,16 @@ begin
   result := (FPageList <> nil) and (FPageList.count > 0);
 end;
 
-function TFhirImplementationGuidePage.sizeInBytesV : cardinal;
+function TFhirImplementationGuidePage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSource.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FKind.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FpackageList.sizeInBytes);
-  inc(result, FFormat.sizeInBytes);
-  inc(result, FpageList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSource.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FKind.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FpackageList.sizeInBytes(magic));
+  inc(result, FFormat.sizeInBytes(magic));
+  inc(result, FpageList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuidePageListEnumerator }
@@ -24013,7 +24013,7 @@ end;
 
 destructor TFhirImplementationGuidePageListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24028,22 +24028,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuidePageListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuidePageListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuidePageList }
-procedure TFhirImplementationGuidePageList.AddItem(value: TFhirImplementationGuidePage);
+function TFhirImplementationGuidePageList.AddItem(value: TFhirImplementationGuidePage): TFhirImplementationGuidePage;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuidePage', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuidePage');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuidePageList.Append: TFhirImplementationGuidePage;
 begin
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuidePage.Create;
   try
     add(result.Link);
   finally
@@ -24087,7 +24087,7 @@ end;
 
 function TFhirImplementationGuidePageList.Insert(index: Integer): TFhirImplementationGuidePage;
 begin
-  result := TFhirImplementationGuidePage.create;
+  result := TFhirImplementationGuidePage.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -24143,16 +24143,16 @@ begin
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FDescription.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FCopyright.free;
   FFhirVersion.free;
-  FDependencyList.Free;
-  FPackageList.Free;
-  FGlobalList.Free;
-  FBinaryList.Free;
+  FDependencyList.free;
+  FPackageList.free;
+  FGlobalList.free;
+  FBinaryList.free;
   FPage.free;
   inherited;
 end;
@@ -24593,7 +24593,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -24619,7 +24619,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -24645,7 +24645,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -24691,7 +24691,7 @@ end;
 Procedure TFhirImplementationGuide.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -24714,7 +24714,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -24750,7 +24750,7 @@ end;
 Procedure TFhirImplementationGuide.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -24773,7 +24773,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -24811,7 +24811,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -24837,7 +24837,7 @@ begin
   if value <> '' then
   begin
     if FFhirVersion = nil then
-      FFhirVersion := TFhirId.create;
+      FFhirVersion := TFhirId.Create;
     FFhirVersion.value := value
   end
   else if FFhirVersion <> nil then
@@ -24898,26 +24898,26 @@ begin
   FPage := value;
 end;
 
-function TFhirImplementationGuide.sizeInBytesV : cardinal;
+function TFhirImplementationGuide.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FFhirVersion.sizeInBytes);
-  inc(result, FdependencyList.sizeInBytes);
-  inc(result, FpackageList.sizeInBytes);
-  inc(result, FglobalList.sizeInBytes);
-  inc(result, FbinaryList.sizeInBytes);
-  inc(result, FPage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FFhirVersion.sizeInBytes(magic));
+  inc(result, FdependencyList.sizeInBytes(magic));
+  inc(result, FpackageList.sizeInBytes(magic));
+  inc(result, FglobalList.sizeInBytes(magic));
+  inc(result, FbinaryList.sizeInBytes(magic));
+  inc(result, FPage.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideListEnumerator }
@@ -24931,7 +24931,7 @@ end;
 
 destructor TFhirImplementationGuideListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -24946,22 +24946,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirImplementationGuideListEnumerator.sizeInBytesV : cardinal;
+function TFhirImplementationGuideListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirImplementationGuideList }
-procedure TFhirImplementationGuideList.AddItem(value: TFhirImplementationGuide);
+function TFhirImplementationGuideList.AddItem(value: TFhirImplementationGuide): TFhirImplementationGuide;
 begin
-  assert(value.ClassName = 'TFhirImplementationGuide', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirImplementationGuide');
   add(value);
+  result := value;
 end;
 
 function TFhirImplementationGuideList.Append: TFhirImplementationGuide;
 begin
-  result := TFhirImplementationGuide.create;
+  result := TFhirImplementationGuide.Create;
   try
     add(result.Link);
   finally
@@ -25005,7 +25005,7 @@ end;
 
 function TFhirImplementationGuideList.Insert(index: Integer): TFhirImplementationGuide;
 begin
-  result := TFhirImplementationGuide.create;
+  result := TFhirImplementationGuide.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25060,7 +25060,7 @@ end;
 destructor TFhirNamingSystemContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -25218,7 +25218,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -25237,11 +25237,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirNamingSystemContact.sizeInBytesV : cardinal;
+function TFhirNamingSystemContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirNamingSystemContactListEnumerator }
@@ -25255,7 +25255,7 @@ end;
 
 destructor TFhirNamingSystemContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25270,22 +25270,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNamingSystemContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirNamingSystemContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNamingSystemContactList }
-procedure TFhirNamingSystemContactList.AddItem(value: TFhirNamingSystemContact);
+function TFhirNamingSystemContactList.AddItem(value: TFhirNamingSystemContact): TFhirNamingSystemContact;
 begin
-  assert(value.ClassName = 'TFhirNamingSystemContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNamingSystemContact');
   add(value);
+  result := value;
 end;
 
 function TFhirNamingSystemContactList.Append: TFhirNamingSystemContact;
 begin
-  result := TFhirNamingSystemContact.create;
+  result := TFhirNamingSystemContact.Create;
   try
     add(result.Link);
   finally
@@ -25329,7 +25329,7 @@ end;
 
 function TFhirNamingSystemContactList.Insert(index: Integer): TFhirNamingSystemContact;
 begin
-  result := TFhirNamingSystemContact.create;
+  result := TFhirNamingSystemContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25577,7 +25577,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -25601,7 +25601,7 @@ end;
 Procedure TFhirNamingSystemUniqueId.SetPreferredST(value : Boolean);
 begin
   if FPreferred = nil then
-    FPreferred := TFhirBoolean.create;
+    FPreferred := TFhirBoolean.Create;
   FPreferred.value := value
 end;
 
@@ -25611,13 +25611,13 @@ begin
   FPeriod := value;
 end;
 
-function TFhirNamingSystemUniqueId.sizeInBytesV : cardinal;
+function TFhirNamingSystemUniqueId.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
-  inc(result, FPreferred.sizeInBytes);
-  inc(result, FPeriod.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
+  inc(result, FPreferred.sizeInBytes(magic));
+  inc(result, FPeriod.sizeInBytes(magic));
 end;
 
 { TFhirNamingSystemUniqueIdListEnumerator }
@@ -25631,7 +25631,7 @@ end;
 
 destructor TFhirNamingSystemUniqueIdListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -25646,22 +25646,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNamingSystemUniqueIdListEnumerator.sizeInBytesV : cardinal;
+function TFhirNamingSystemUniqueIdListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNamingSystemUniqueIdList }
-procedure TFhirNamingSystemUniqueIdList.AddItem(value: TFhirNamingSystemUniqueId);
+function TFhirNamingSystemUniqueIdList.AddItem(value: TFhirNamingSystemUniqueId): TFhirNamingSystemUniqueId;
 begin
-  assert(value.ClassName = 'TFhirNamingSystemUniqueId', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNamingSystemUniqueId');
   add(value);
+  result := value;
 end;
 
 function TFhirNamingSystemUniqueIdList.Append: TFhirNamingSystemUniqueId;
 begin
-  result := TFhirNamingSystemUniqueId.create;
+  result := TFhirNamingSystemUniqueId.Create;
   try
     add(result.Link);
   finally
@@ -25705,7 +25705,7 @@ end;
 
 function TFhirNamingSystemUniqueIdList.Insert(index: Integer): TFhirNamingSystemUniqueId;
 begin
-  result := TFhirNamingSystemUniqueId.create;
+  result := TFhirNamingSystemUniqueId.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -25759,14 +25759,14 @@ begin
   FStatus.free;
   FKind.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FResponsible.free;
   FDate.free;
   FType_.free;
   FDescription.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FUsage.free;
-  FUniqueIdList.Free;
+  FUniqueIdList.free;
   FReplacedBy.free;
   inherited;
 end;
@@ -26112,7 +26112,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -26182,7 +26182,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -26220,7 +26220,7 @@ begin
   if value <> '' then
   begin
     if FResponsible = nil then
-      FResponsible := TFhirString.create;
+      FResponsible := TFhirString.Create;
     FResponsible.value := value
   end
   else if FResponsible <> nil then
@@ -26244,7 +26244,7 @@ end;
 Procedure TFhirNamingSystem.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -26273,7 +26273,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -26311,7 +26311,7 @@ begin
   if value <> '' then
   begin
     if FUsage = nil then
-      FUsage := TFhirString.create;
+      FUsage := TFhirString.Create;
     FUsage.value := value
   end
   else if FUsage <> nil then
@@ -26336,22 +26336,22 @@ begin
   FReplacedBy := value;
 end;
 
-function TFhirNamingSystem.sizeInBytesV : cardinal;
+function TFhirNamingSystem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FKind.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FResponsible.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FUsage.sizeInBytes);
-  inc(result, FuniqueIdList.sizeInBytes);
-  inc(result, FReplacedBy.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FKind.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FResponsible.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FUsage.sizeInBytes(magic));
+  inc(result, FuniqueIdList.sizeInBytes(magic));
+  inc(result, FReplacedBy.sizeInBytes(magic));
 end;
 
 { TFhirNamingSystemListEnumerator }
@@ -26365,7 +26365,7 @@ end;
 
 destructor TFhirNamingSystemListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26380,22 +26380,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirNamingSystemListEnumerator.sizeInBytesV : cardinal;
+function TFhirNamingSystemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirNamingSystemList }
-procedure TFhirNamingSystemList.AddItem(value: TFhirNamingSystem);
+function TFhirNamingSystemList.AddItem(value: TFhirNamingSystem): TFhirNamingSystem;
 begin
-  assert(value.ClassName = 'TFhirNamingSystem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirNamingSystem');
   add(value);
+  result := value;
 end;
 
 function TFhirNamingSystemList.Append: TFhirNamingSystem;
 begin
-  result := TFhirNamingSystem.create;
+  result := TFhirNamingSystem.Create;
   try
     add(result.Link);
   finally
@@ -26439,7 +26439,7 @@ end;
 
 function TFhirNamingSystemList.Insert(index: Integer): TFhirNamingSystem;
 begin
-  result := TFhirNamingSystem.create;
+  result := TFhirNamingSystem.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26494,7 +26494,7 @@ end;
 destructor TFhirOperationDefinitionContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -26652,7 +26652,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -26671,11 +26671,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirOperationDefinitionContact.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionContactListEnumerator }
@@ -26689,7 +26689,7 @@ end;
 
 destructor TFhirOperationDefinitionContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -26704,22 +26704,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOperationDefinitionContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionContactList }
-procedure TFhirOperationDefinitionContactList.AddItem(value: TFhirOperationDefinitionContact);
+function TFhirOperationDefinitionContactList.AddItem(value: TFhirOperationDefinitionContact): TFhirOperationDefinitionContact;
 begin
-  assert(value.ClassName = 'TFhirOperationDefinitionContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionContact');
   add(value);
+  result := value;
 end;
 
 function TFhirOperationDefinitionContactList.Append: TFhirOperationDefinitionContact;
 begin
-  result := TFhirOperationDefinitionContact.create;
+  result := TFhirOperationDefinitionContact.Create;
   try
     add(result.Link);
   finally
@@ -26763,7 +26763,7 @@ end;
 
 function TFhirOperationDefinitionContactList.Insert(index: Integer): TFhirOperationDefinitionContact;
 begin
-  result := TFhirOperationDefinitionContact.create;
+  result := TFhirOperationDefinitionContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -26821,7 +26821,7 @@ begin
   FType_.free;
   FProfile.free;
   FBinding.free;
-  FPartList.Free;
+  FPartList.free;
   inherited;
 end;
 
@@ -27079,7 +27079,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirCode.create;
+      FName := TFhirCode.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -27127,7 +27127,7 @@ begin
   if value <> '' then
   begin
     if FMin = nil then
-      FMin := TFhirInteger.create;
+      FMin := TFhirInteger.Create;
     FMin.value := value
   end
   else if FMin <> nil then
@@ -27153,7 +27153,7 @@ begin
   if value <> '' then
   begin
     if FMax = nil then
-      FMax := TFhirString.create;
+      FMax := TFhirString.Create;
     FMax.value := value
   end
   else if FMax <> nil then
@@ -27179,7 +27179,7 @@ begin
   if value <> '' then
   begin
     if FDocumentation = nil then
-      FDocumentation := TFhirString.create;
+      FDocumentation := TFhirString.Create;
     FDocumentation.value := value
   end
   else if FDocumentation <> nil then
@@ -27232,18 +27232,18 @@ begin
   result := (FPartList <> nil) and (FPartList.count > 0);
 end;
 
-function TFhirOperationDefinitionParameter.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionParameter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FUse.sizeInBytes);
-  inc(result, FMin.sizeInBytes);
-  inc(result, FMax.sizeInBytes);
-  inc(result, FDocumentation.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FProfile.sizeInBytes);
-  inc(result, FBinding.sizeInBytes);
-  inc(result, FpartList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FUse.sizeInBytes(magic));
+  inc(result, FMin.sizeInBytes(magic));
+  inc(result, FMax.sizeInBytes(magic));
+  inc(result, FDocumentation.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FProfile.sizeInBytes(magic));
+  inc(result, FBinding.sizeInBytes(magic));
+  inc(result, FpartList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionParameterListEnumerator }
@@ -27257,7 +27257,7 @@ end;
 
 destructor TFhirOperationDefinitionParameterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27272,22 +27272,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOperationDefinitionParameterListEnumerator.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionParameterListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionParameterList }
-procedure TFhirOperationDefinitionParameterList.AddItem(value: TFhirOperationDefinitionParameter);
+function TFhirOperationDefinitionParameterList.AddItem(value: TFhirOperationDefinitionParameter): TFhirOperationDefinitionParameter;
 begin
-  assert(value.ClassName = 'TFhirOperationDefinitionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionParameter');
   add(value);
+  result := value;
 end;
 
 function TFhirOperationDefinitionParameterList.Append: TFhirOperationDefinitionParameter;
 begin
-  result := TFhirOperationDefinitionParameter.create;
+  result := TFhirOperationDefinitionParameter.Create;
   try
     add(result.Link);
   finally
@@ -27331,7 +27331,7 @@ end;
 
 function TFhirOperationDefinitionParameterList.Insert(index: Integer): TFhirOperationDefinitionParameter;
 begin
-  result := TFhirOperationDefinitionParameter.create;
+  result := TFhirOperationDefinitionParameter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27535,11 +27535,11 @@ begin
   FValueSet := value;
 end;
 
-function TFhirOperationDefinitionParameterBinding.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionParameterBinding.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStrength.sizeInBytes);
-  inc(result, FValueSet.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStrength.sizeInBytes(magic));
+  inc(result, FValueSet.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionParameterBindingListEnumerator }
@@ -27553,7 +27553,7 @@ end;
 
 destructor TFhirOperationDefinitionParameterBindingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -27568,22 +27568,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOperationDefinitionParameterBindingListEnumerator.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionParameterBindingListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionParameterBindingList }
-procedure TFhirOperationDefinitionParameterBindingList.AddItem(value: TFhirOperationDefinitionParameterBinding);
+function TFhirOperationDefinitionParameterBindingList.AddItem(value: TFhirOperationDefinitionParameterBinding): TFhirOperationDefinitionParameterBinding;
 begin
-  assert(value.ClassName = 'TFhirOperationDefinitionParameterBinding', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinitionParameterBinding');
   add(value);
+  result := value;
 end;
 
 function TFhirOperationDefinitionParameterBindingList.Append: TFhirOperationDefinitionParameterBinding;
 begin
-  result := TFhirOperationDefinitionParameterBinding.create;
+  result := TFhirOperationDefinitionParameterBinding.Create;
   try
     add(result.Link);
   finally
@@ -27627,7 +27627,7 @@ end;
 
 function TFhirOperationDefinitionParameterBindingList.Insert(index: Integer): TFhirOperationDefinitionParameterBinding;
 begin
-  result := TFhirOperationDefinitionParameterBinding.create;
+  result := TFhirOperationDefinitionParameterBinding.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -27684,7 +27684,7 @@ begin
   FKind.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FDescription.free;
   FRequirements.free;
@@ -27693,9 +27693,9 @@ begin
   FNotes.free;
   FBase.free;
   FSystem.free;
-  FType_.Free;
+  FType_.free;
   FInstance.free;
-  FParameterList.Free;
+  FParameterList.free;
   inherited;
 end;
 
@@ -28123,7 +28123,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -28149,7 +28149,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -28175,7 +28175,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -28243,7 +28243,7 @@ end;
 Procedure TFhirOperationDefinition.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -28266,7 +28266,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -28302,7 +28302,7 @@ end;
 Procedure TFhirOperationDefinition.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -28325,7 +28325,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -28351,7 +28351,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -28375,7 +28375,7 @@ end;
 Procedure TFhirOperationDefinition.SetIdempotentST(value : Boolean);
 begin
   if FIdempotent = nil then
-    FIdempotent := TFhirBoolean.create;
+    FIdempotent := TFhirBoolean.Create;
   FIdempotent.value := value
 end;
 
@@ -28398,7 +28398,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -28424,7 +28424,7 @@ begin
   if value <> '' then
   begin
     if FNotes = nil then
-      FNotes := TFhirString.create;
+      FNotes := TFhirString.Create;
     FNotes.value := value
   end
   else if FNotes <> nil then
@@ -28454,7 +28454,7 @@ end;
 Procedure TFhirOperationDefinition.SetSystemST(value : Boolean);
 begin
   if FSystem = nil then
-    FSystem := TFhirBoolean.create;
+    FSystem := TFhirBoolean.Create;
   FSystem.value := value
 end;
 
@@ -28487,7 +28487,7 @@ end;
 Procedure TFhirOperationDefinition.SetInstanceST(value : Boolean);
 begin
   if FInstance = nil then
-    FInstance := TFhirBoolean.create;
+    FInstance := TFhirBoolean.Create;
   FInstance.value := value
 end;
 
@@ -28503,28 +28503,28 @@ begin
   result := (FParameterList <> nil) and (FParameterList.count > 0);
 end;
 
-function TFhirOperationDefinition.sizeInBytesV : cardinal;
+function TFhirOperationDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FKind.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FIdempotent.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FNotes.sizeInBytes);
-  inc(result, FBase.sizeInBytes);
-  inc(result, FSystem.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FInstance.sizeInBytes);
-  inc(result, FparameterList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FKind.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FIdempotent.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FNotes.sizeInBytes(magic));
+  inc(result, FBase.sizeInBytes(magic));
+  inc(result, FSystem.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FInstance.sizeInBytes(magic));
+  inc(result, FparameterList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionListEnumerator }
@@ -28538,7 +28538,7 @@ end;
 
 destructor TFhirOperationDefinitionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -28553,22 +28553,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirOperationDefinitionListEnumerator.sizeInBytesV : cardinal;
+function TFhirOperationDefinitionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirOperationDefinitionList }
-procedure TFhirOperationDefinitionList.AddItem(value: TFhirOperationDefinition);
+function TFhirOperationDefinitionList.AddItem(value: TFhirOperationDefinition): TFhirOperationDefinition;
 begin
-  assert(value.ClassName = 'TFhirOperationDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirOperationDefinition');
   add(value);
+  result := value;
 end;
 
 function TFhirOperationDefinitionList.Append: TFhirOperationDefinition;
 begin
-  result := TFhirOperationDefinition.create;
+  result := TFhirOperationDefinition.Create;
   try
     add(result.Link);
   finally
@@ -28612,7 +28612,7 @@ end;
 
 function TFhirOperationDefinitionList.Insert(index: Integer): TFhirOperationDefinition;
 begin
-  result := TFhirOperationDefinition.create;
+  result := TFhirOperationDefinition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -28668,12 +28668,12 @@ destructor TFhirQuestionnaireGroup.Destroy;
 begin
   FLinkId.free;
   FTitle.free;
-  FConceptList.Free;
+  FConceptList.free;
   FText.free;
   FRequired.free;
   FRepeats.free;
-  FGroupList.Free;
-  FQuestionList.Free;
+  FGroupList.free;
+  FQuestionList.free;
   inherited;
 end;
 
@@ -28942,7 +28942,7 @@ begin
   if value <> '' then
   begin
     if FLinkId = nil then
-      FLinkId := TFhirString.create;
+      FLinkId := TFhirString.Create;
     FLinkId.value := value
   end
   else if FLinkId <> nil then
@@ -28968,7 +28968,7 @@ begin
   if value <> '' then
   begin
     if FTitle = nil then
-      FTitle := TFhirString.create;
+      FTitle := TFhirString.Create;
     FTitle.value := value
   end
   else if FTitle <> nil then
@@ -29006,7 +29006,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -29030,7 +29030,7 @@ end;
 Procedure TFhirQuestionnaireGroup.SetRequiredST(value : Boolean);
 begin
   if FRequired = nil then
-    FRequired := TFhirBoolean.create;
+    FRequired := TFhirBoolean.Create;
   FRequired.value := value
 end;
 
@@ -29051,7 +29051,7 @@ end;
 Procedure TFhirQuestionnaireGroup.SetRepeatsST(value : Boolean);
 begin
   if FRepeats = nil then
-    FRepeats := TFhirBoolean.create;
+    FRepeats := TFhirBoolean.Create;
   FRepeats.value := value
 end;
 
@@ -29079,17 +29079,17 @@ begin
   result := (FQuestionList <> nil) and (FQuestionList.count > 0);
 end;
 
-function TFhirQuestionnaireGroup.sizeInBytesV : cardinal;
+function TFhirQuestionnaireGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLinkId.sizeInBytes);
-  inc(result, FTitle.sizeInBytes);
-  inc(result, FconceptList.sizeInBytes);
-  inc(result, FText.sizeInBytes);
-  inc(result, FRequired.sizeInBytes);
-  inc(result, FRepeats.sizeInBytes);
-  inc(result, FgroupList.sizeInBytes);
-  inc(result, FquestionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLinkId.sizeInBytes(magic));
+  inc(result, FTitle.sizeInBytes(magic));
+  inc(result, FconceptList.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FRequired.sizeInBytes(magic));
+  inc(result, FRepeats.sizeInBytes(magic));
+  inc(result, FgroupList.sizeInBytes(magic));
+  inc(result, FquestionList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireGroupListEnumerator }
@@ -29103,7 +29103,7 @@ end;
 
 destructor TFhirQuestionnaireGroupListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29118,22 +29118,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireGroupListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireGroupListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireGroupList }
-procedure TFhirQuestionnaireGroupList.AddItem(value: TFhirQuestionnaireGroup);
+function TFhirQuestionnaireGroupList.AddItem(value: TFhirQuestionnaireGroup): TFhirQuestionnaireGroup;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaireGroup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireGroup');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireGroupList.Append: TFhirQuestionnaireGroup;
 begin
-  result := TFhirQuestionnaireGroup.create;
+  result := TFhirQuestionnaireGroup.Create;
   try
     add(result.Link);
   finally
@@ -29177,7 +29177,7 @@ end;
 
 function TFhirQuestionnaireGroupList.Insert(index: Integer): TFhirQuestionnaireGroup;
 begin
-  result := TFhirQuestionnaireGroup.create;
+  result := TFhirQuestionnaireGroup.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29228,14 +29228,14 @@ end;
 destructor TFhirQuestionnaireGroupQuestion.Destroy;
 begin
   FLinkId.free;
-  FConceptList.Free;
+  FConceptList.free;
   FText.free;
   FType_.free;
   FRequired.free;
   FRepeats.free;
   FOptions.free;
-  FOptionList.Free;
-  FGroupList.Free;
+  FOptionList.free;
+  FGroupList.free;
   inherited;
 end;
 
@@ -29518,7 +29518,7 @@ begin
   if value <> '' then
   begin
     if FLinkId = nil then
-      FLinkId := TFhirString.create;
+      FLinkId := TFhirString.Create;
     FLinkId.value := value
   end
   else if FLinkId <> nil then
@@ -29556,7 +29556,7 @@ begin
   if value <> '' then
   begin
     if FText = nil then
-      FText := TFhirString.create;
+      FText := TFhirString.Create;
     FText.value := value
   end
   else if FText <> nil then
@@ -29602,7 +29602,7 @@ end;
 Procedure TFhirQuestionnaireGroupQuestion.SetRequiredST(value : Boolean);
 begin
   if FRequired = nil then
-    FRequired := TFhirBoolean.create;
+    FRequired := TFhirBoolean.Create;
   FRequired.value := value
 end;
 
@@ -29623,7 +29623,7 @@ end;
 Procedure TFhirQuestionnaireGroupQuestion.SetRepeatsST(value : Boolean);
 begin
   if FRepeats = nil then
-    FRepeats := TFhirBoolean.create;
+    FRepeats := TFhirBoolean.Create;
   FRepeats.value := value
 end;
 
@@ -29657,18 +29657,18 @@ begin
   result := (FGroupList <> nil) and (FGroupList.count > 0);
 end;
 
-function TFhirQuestionnaireGroupQuestion.sizeInBytesV : cardinal;
+function TFhirQuestionnaireGroupQuestion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLinkId.sizeInBytes);
-  inc(result, FconceptList.sizeInBytes);
-  inc(result, FText.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FRequired.sizeInBytes);
-  inc(result, FRepeats.sizeInBytes);
-  inc(result, FOptions.sizeInBytes);
-  inc(result, FoptionList.sizeInBytes);
-  inc(result, FgroupList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLinkId.sizeInBytes(magic));
+  inc(result, FconceptList.sizeInBytes(magic));
+  inc(result, FText.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FRequired.sizeInBytes(magic));
+  inc(result, FRepeats.sizeInBytes(magic));
+  inc(result, FOptions.sizeInBytes(magic));
+  inc(result, FoptionList.sizeInBytes(magic));
+  inc(result, FgroupList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireGroupQuestionListEnumerator }
@@ -29682,7 +29682,7 @@ end;
 
 destructor TFhirQuestionnaireGroupQuestionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -29697,22 +29697,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireGroupQuestionListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireGroupQuestionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireGroupQuestionList }
-procedure TFhirQuestionnaireGroupQuestionList.AddItem(value: TFhirQuestionnaireGroupQuestion);
+function TFhirQuestionnaireGroupQuestionList.AddItem(value: TFhirQuestionnaireGroupQuestion): TFhirQuestionnaireGroupQuestion;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaireGroupQuestion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaireGroupQuestion');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireGroupQuestionList.Append: TFhirQuestionnaireGroupQuestion;
 begin
-  result := TFhirQuestionnaireGroupQuestion.create;
+  result := TFhirQuestionnaireGroupQuestion.Create;
   try
     add(result.Link);
   finally
@@ -29756,7 +29756,7 @@ end;
 
 function TFhirQuestionnaireGroupQuestionList.Insert(index: Integer): TFhirQuestionnaireGroupQuestion;
 begin
-  result := TFhirQuestionnaireGroupQuestion.create;
+  result := TFhirQuestionnaireGroupQuestion.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -29806,13 +29806,13 @@ end;
 
 destructor TFhirQuestionnaire.Destroy;
 begin
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FVersion.free;
   FStatus.free;
   FDate.free;
   FPublisher.free;
-  FTelecomList.Free;
-  FSubjectType.Free;
+  FTelecomList.free;
+  FSubjectType.free;
   FGroup.free;
   inherited;
 end;
@@ -30094,7 +30094,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -30140,7 +30140,7 @@ end;
 Procedure TFhirQuestionnaire.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -30163,7 +30163,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -30200,17 +30200,17 @@ begin
   FGroup := value;
 end;
 
-function TFhirQuestionnaire.sizeInBytesV : cardinal;
+function TFhirQuestionnaire.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
-  inc(result, FSubjectType.sizeInBytes);
-  inc(result, FGroup.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
+  inc(result, FSubjectType.sizeInBytes(magic));
+  inc(result, FGroup.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireListEnumerator }
@@ -30224,7 +30224,7 @@ end;
 
 destructor TFhirQuestionnaireListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30239,22 +30239,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirQuestionnaireListEnumerator.sizeInBytesV : cardinal;
+function TFhirQuestionnaireListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirQuestionnaireList }
-procedure TFhirQuestionnaireList.AddItem(value: TFhirQuestionnaire);
+function TFhirQuestionnaireList.AddItem(value: TFhirQuestionnaire): TFhirQuestionnaire;
 begin
-  assert(value.ClassName = 'TFhirQuestionnaire', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirQuestionnaire');
   add(value);
+  result := value;
 end;
 
 function TFhirQuestionnaireList.Append: TFhirQuestionnaire;
 begin
-  result := TFhirQuestionnaire.create;
+  result := TFhirQuestionnaire.Create;
   try
     add(result.Link);
   finally
@@ -30298,7 +30298,7 @@ end;
 
 function TFhirQuestionnaireList.Insert(index: Integer): TFhirQuestionnaire;
 begin
-  result := TFhirQuestionnaire.create;
+  result := TFhirQuestionnaire.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30353,7 +30353,7 @@ end;
 destructor TFhirSearchParameterContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -30511,7 +30511,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -30530,11 +30530,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirSearchParameterContact.sizeInBytesV : cardinal;
+function TFhirSearchParameterContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirSearchParameterContactListEnumerator }
@@ -30548,7 +30548,7 @@ end;
 
 destructor TFhirSearchParameterContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -30563,22 +30563,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSearchParameterContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirSearchParameterContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSearchParameterContactList }
-procedure TFhirSearchParameterContactList.AddItem(value: TFhirSearchParameterContact);
+function TFhirSearchParameterContactList.AddItem(value: TFhirSearchParameterContact): TFhirSearchParameterContact;
 begin
-  assert(value.ClassName = 'TFhirSearchParameterContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSearchParameterContact');
   add(value);
+  result := value;
 end;
 
 function TFhirSearchParameterContactList.Append: TFhirSearchParameterContact;
 begin
-  result := TFhirSearchParameterContact.create;
+  result := TFhirSearchParameterContact.Create;
   try
     add(result.Link);
   finally
@@ -30622,7 +30622,7 @@ end;
 
 function TFhirSearchParameterContactList.Insert(index: Integer): TFhirSearchParameterContact;
 begin
-  result := TFhirSearchParameterContact.create;
+  result := TFhirSearchParameterContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -30677,7 +30677,7 @@ begin
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FRequirements.free;
   FCode.free;
@@ -30686,7 +30686,7 @@ begin
   FDescription.free;
   FXpath.free;
   FXpathUsage.free;
-  FTarget.Free;
+  FTarget.free;
   inherited;
 end;
 
@@ -31042,7 +31042,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -31068,7 +31068,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -31114,7 +31114,7 @@ end;
 Procedure TFhirSearchParameter.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -31137,7 +31137,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -31173,7 +31173,7 @@ end;
 Procedure TFhirSearchParameter.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -31196,7 +31196,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -31222,7 +31222,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -31292,7 +31292,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -31318,7 +31318,7 @@ begin
   if value <> '' then
   begin
     if FXpath = nil then
-      FXpath := TFhirString.create;
+      FXpath := TFhirString.Create;
     FXpath.value := value
   end
   else if FXpath <> nil then
@@ -31359,24 +31359,24 @@ begin
   result := (FTarget <> nil) and (FTarget.count > 0);
 end;
 
-function TFhirSearchParameter.sizeInBytesV : cardinal;
+function TFhirSearchParameter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FBase.sizeInBytes);
-  inc(result, FType_.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FXpath.sizeInBytes);
-  inc(result, FXpathUsage.sizeInBytes);
-  inc(result, FTarget.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FBase.sizeInBytes(magic));
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FXpath.sizeInBytes(magic));
+  inc(result, FXpathUsage.sizeInBytes(magic));
+  inc(result, FTarget.sizeInBytes(magic));
 end;
 
 { TFhirSearchParameterListEnumerator }
@@ -31390,7 +31390,7 @@ end;
 
 destructor TFhirSearchParameterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -31405,22 +31405,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirSearchParameterListEnumerator.sizeInBytesV : cardinal;
+function TFhirSearchParameterListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirSearchParameterList }
-procedure TFhirSearchParameterList.AddItem(value: TFhirSearchParameter);
+function TFhirSearchParameterList.AddItem(value: TFhirSearchParameter): TFhirSearchParameter;
 begin
-  assert(value.ClassName = 'TFhirSearchParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirSearchParameter');
   add(value);
+  result := value;
 end;
 
 function TFhirSearchParameterList.Append: TFhirSearchParameter;
 begin
-  result := TFhirSearchParameter.create;
+  result := TFhirSearchParameter.Create;
   try
     add(result.Link);
   finally
@@ -31464,7 +31464,7 @@ end;
 
 function TFhirSearchParameterList.Insert(index: Integer): TFhirSearchParameter;
 begin
-  result := TFhirSearchParameter.create;
+  result := TFhirSearchParameter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -31519,7 +31519,7 @@ end;
 destructor TFhirStructureDefinitionContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -31677,7 +31677,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -31696,11 +31696,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirStructureDefinitionContact.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionContactListEnumerator }
@@ -31714,7 +31714,7 @@ end;
 
 destructor TFhirStructureDefinitionContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -31729,22 +31729,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirStructureDefinitionContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionContactList }
-procedure TFhirStructureDefinitionContactList.AddItem(value: TFhirStructureDefinitionContact);
+function TFhirStructureDefinitionContactList.AddItem(value: TFhirStructureDefinitionContact): TFhirStructureDefinitionContact;
 begin
-  assert(value.ClassName = 'TFhirStructureDefinitionContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionContact');
   add(value);
+  result := value;
 end;
 
 function TFhirStructureDefinitionContactList.Append: TFhirStructureDefinitionContact;
 begin
-  result := TFhirStructureDefinitionContact.create;
+  result := TFhirStructureDefinitionContact.Create;
   try
     add(result.Link);
   finally
@@ -31788,7 +31788,7 @@ end;
 
 function TFhirStructureDefinitionContactList.Insert(index: Integer): TFhirStructureDefinitionContact;
 begin
-  result := TFhirStructureDefinitionContact.create;
+  result := TFhirStructureDefinitionContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32015,7 +32015,7 @@ begin
   if value <> '' then
   begin
     if FIdentity = nil then
-      FIdentity := TFhirId.create;
+      FIdentity := TFhirId.Create;
     FIdentity.value := value
   end
   else if FIdentity <> nil then
@@ -32041,7 +32041,7 @@ begin
   if value <> '' then
   begin
     if FUri = nil then
-      FUri := TFhirUri.create;
+      FUri := TFhirUri.Create;
     FUri.value := value
   end
   else if FUri <> nil then
@@ -32067,7 +32067,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -32093,20 +32093,20 @@ begin
   if value <> '' then
   begin
     if FComments = nil then
-      FComments := TFhirString.create;
+      FComments := TFhirString.Create;
     FComments.value := value
   end
   else if FComments <> nil then
     FComments.value := '';
 end;
 
-function TFhirStructureDefinitionMapping.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionMapping.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentity.sizeInBytes);
-  inc(result, FUri.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FComments.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentity.sizeInBytes(magic));
+  inc(result, FUri.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FComments.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionMappingListEnumerator }
@@ -32120,7 +32120,7 @@ end;
 
 destructor TFhirStructureDefinitionMappingListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32135,22 +32135,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirStructureDefinitionMappingListEnumerator.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionMappingListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionMappingList }
-procedure TFhirStructureDefinitionMappingList.AddItem(value: TFhirStructureDefinitionMapping);
+function TFhirStructureDefinitionMappingList.AddItem(value: TFhirStructureDefinitionMapping): TFhirStructureDefinitionMapping;
 begin
-  assert(value.ClassName = 'TFhirStructureDefinitionMapping', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionMapping');
   add(value);
+  result := value;
 end;
 
 function TFhirStructureDefinitionMappingList.Append: TFhirStructureDefinitionMapping;
 begin
-  result := TFhirStructureDefinitionMapping.create;
+  result := TFhirStructureDefinitionMapping.Create;
   try
     add(result.Link);
   finally
@@ -32194,7 +32194,7 @@ end;
 
 function TFhirStructureDefinitionMappingList.Insert(index: Integer): TFhirStructureDefinitionMapping;
 begin
-  result := TFhirStructureDefinitionMapping.create;
+  result := TFhirStructureDefinitionMapping.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32244,7 +32244,7 @@ end;
 
 destructor TFhirStructureDefinitionSnapshot.Destroy;
 begin
-  FElementList.Free;
+  FElementList.free;
   inherited;
 end;
 
@@ -32381,10 +32381,10 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
-function TFhirStructureDefinitionSnapshot.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionSnapshot.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FelementList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FelementList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionSnapshotListEnumerator }
@@ -32398,7 +32398,7 @@ end;
 
 destructor TFhirStructureDefinitionSnapshotListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32413,22 +32413,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirStructureDefinitionSnapshotListEnumerator.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionSnapshotListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionSnapshotList }
-procedure TFhirStructureDefinitionSnapshotList.AddItem(value: TFhirStructureDefinitionSnapshot);
+function TFhirStructureDefinitionSnapshotList.AddItem(value: TFhirStructureDefinitionSnapshot): TFhirStructureDefinitionSnapshot;
 begin
-  assert(value.ClassName = 'TFhirStructureDefinitionSnapshot', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionSnapshot');
   add(value);
+  result := value;
 end;
 
 function TFhirStructureDefinitionSnapshotList.Append: TFhirStructureDefinitionSnapshot;
 begin
-  result := TFhirStructureDefinitionSnapshot.create;
+  result := TFhirStructureDefinitionSnapshot.Create;
   try
     add(result.Link);
   finally
@@ -32472,7 +32472,7 @@ end;
 
 function TFhirStructureDefinitionSnapshotList.Insert(index: Integer): TFhirStructureDefinitionSnapshot;
 begin
-  result := TFhirStructureDefinitionSnapshot.create;
+  result := TFhirStructureDefinitionSnapshot.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32522,7 +32522,7 @@ end;
 
 destructor TFhirStructureDefinitionDifferential.Destroy;
 begin
-  FElementList.Free;
+  FElementList.free;
   inherited;
 end;
 
@@ -32659,10 +32659,10 @@ begin
   result := (FElementList <> nil) and (FElementList.count > 0);
 end;
 
-function TFhirStructureDefinitionDifferential.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionDifferential.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FelementList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FelementList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionDifferentialListEnumerator }
@@ -32676,7 +32676,7 @@ end;
 
 destructor TFhirStructureDefinitionDifferentialListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -32691,22 +32691,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirStructureDefinitionDifferentialListEnumerator.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionDifferentialListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionDifferentialList }
-procedure TFhirStructureDefinitionDifferentialList.AddItem(value: TFhirStructureDefinitionDifferential);
+function TFhirStructureDefinitionDifferentialList.AddItem(value: TFhirStructureDefinitionDifferential): TFhirStructureDefinitionDifferential;
 begin
-  assert(value.ClassName = 'TFhirStructureDefinitionDifferential', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinitionDifferential');
   add(value);
+  result := value;
 end;
 
 function TFhirStructureDefinitionDifferentialList.Append: TFhirStructureDefinitionDifferential;
 begin
-  result := TFhirStructureDefinitionDifferential.create;
+  result := TFhirStructureDefinitionDifferential.Create;
   try
     add(result.Link);
   finally
@@ -32750,7 +32750,7 @@ end;
 
 function TFhirStructureDefinitionDifferentialList.Insert(index: Integer): TFhirStructureDefinitionDifferential;
 begin
-  result := TFhirStructureDefinitionDifferential.create;
+  result := TFhirStructureDefinitionDifferential.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -32801,27 +32801,27 @@ end;
 destructor TFhirStructureDefinition.Destroy;
 begin
   FUrl.free;
-  FIdentifierList.Free;
+  FIdentifierList.free;
   FVersion.free;
   FName.free;
   FDisplay.free;
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FDescription.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FRequirements.free;
   FCopyright.free;
-  FCodeList.Free;
+  FCodeList.free;
   FFhirVersion.free;
-  FMappingList.Free;
+  FMappingList.free;
   FKind.free;
   FConstrainedType.free;
   FAbstract.free;
   FContextType.free;
-  FContextList.Free;
+  FContextList.free;
   FBase.free;
   FSnapshot.free;
   FDifferential.free;
@@ -33378,7 +33378,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -33416,7 +33416,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -33442,7 +33442,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -33468,7 +33468,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -33514,7 +33514,7 @@ end;
 Procedure TFhirStructureDefinition.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -33537,7 +33537,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -33573,7 +33573,7 @@ end;
 Procedure TFhirStructureDefinition.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -33596,7 +33596,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -33634,7 +33634,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -33660,7 +33660,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -33698,7 +33698,7 @@ begin
   if value <> '' then
   begin
     if FFhirVersion = nil then
-      FFhirVersion := TFhirId.create;
+      FFhirVersion := TFhirId.Create;
     FFhirVersion.value := value
   end
   else if FFhirVersion <> nil then
@@ -33758,7 +33758,7 @@ begin
   if value <> '' then
   begin
     if FConstrainedType = nil then
-      FConstrainedType := TFhirCode.create;
+      FConstrainedType := TFhirCode.Create;
     FConstrainedType.value := value
   end
   else if FConstrainedType <> nil then
@@ -33782,7 +33782,7 @@ end;
 Procedure TFhirStructureDefinition.SetAbstractST(value : Boolean);
 begin
   if FAbstract = nil then
-    FAbstract := TFhirBoolean.create;
+    FAbstract := TFhirBoolean.Create;
   FAbstract.value := value
 end;
 
@@ -33839,7 +33839,7 @@ begin
   if value <> '' then
   begin
     if FBase = nil then
-      FBase := TFhirUri.create;
+      FBase := TFhirUri.Create;
     FBase.value := value
   end
   else if FBase <> nil then
@@ -33858,34 +33858,34 @@ begin
   FDifferential := value;
 end;
 
-function TFhirStructureDefinition.sizeInBytesV : cardinal;
+function TFhirStructureDefinition.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FidentifierList.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FDisplay.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FcodeList.sizeInBytes);
-  inc(result, FFhirVersion.sizeInBytes);
-  inc(result, FmappingList.sizeInBytes);
-  inc(result, FKind.sizeInBytes);
-  inc(result, FConstrainedType.sizeInBytes);
-  inc(result, FAbstract.sizeInBytes);
-  inc(result, FContextType.sizeInBytes);
-  inc(result, FcontextList.sizeInBytes);
-  inc(result, FBase.sizeInBytes);
-  inc(result, FSnapshot.sizeInBytes);
-  inc(result, FDifferential.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FidentifierList.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDisplay.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FcodeList.sizeInBytes(magic));
+  inc(result, FFhirVersion.sizeInBytes(magic));
+  inc(result, FmappingList.sizeInBytes(magic));
+  inc(result, FKind.sizeInBytes(magic));
+  inc(result, FConstrainedType.sizeInBytes(magic));
+  inc(result, FAbstract.sizeInBytes(magic));
+  inc(result, FContextType.sizeInBytes(magic));
+  inc(result, FcontextList.sizeInBytes(magic));
+  inc(result, FBase.sizeInBytes(magic));
+  inc(result, FSnapshot.sizeInBytes(magic));
+  inc(result, FDifferential.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionListEnumerator }
@@ -33899,7 +33899,7 @@ end;
 
 destructor TFhirStructureDefinitionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -33914,22 +33914,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirStructureDefinitionListEnumerator.sizeInBytesV : cardinal;
+function TFhirStructureDefinitionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirStructureDefinitionList }
-procedure TFhirStructureDefinitionList.AddItem(value: TFhirStructureDefinition);
+function TFhirStructureDefinitionList.AddItem(value: TFhirStructureDefinition): TFhirStructureDefinition;
 begin
-  assert(value.ClassName = 'TFhirStructureDefinition', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirStructureDefinition');
   add(value);
+  result := value;
 end;
 
 function TFhirStructureDefinitionList.Append: TFhirStructureDefinition;
 begin
-  result := TFhirStructureDefinition.create;
+  result := TFhirStructureDefinition.Create;
   try
     add(result.Link);
   finally
@@ -33973,7 +33973,7 @@ end;
 
 function TFhirStructureDefinitionList.Insert(index: Integer): TFhirStructureDefinition;
 begin
-  result := TFhirStructureDefinition.create;
+  result := TFhirStructureDefinition.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34028,7 +34028,7 @@ end;
 destructor TFhirTestScriptContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -34186,7 +34186,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -34205,11 +34205,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirTestScriptContact.sizeInBytesV : cardinal;
+function TFhirTestScriptContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptContactListEnumerator }
@@ -34223,7 +34223,7 @@ end;
 
 destructor TFhirTestScriptContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34238,22 +34238,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptContactList }
-procedure TFhirTestScriptContactList.AddItem(value: TFhirTestScriptContact);
+function TFhirTestScriptContactList.AddItem(value: TFhirTestScriptContact): TFhirTestScriptContact;
 begin
-  assert(value.ClassName = 'TFhirTestScriptContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptContact');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptContactList.Append: TFhirTestScriptContact;
 begin
-  result := TFhirTestScriptContact.create;
+  result := TFhirTestScriptContact.Create;
   try
     add(result.Link);
   finally
@@ -34297,7 +34297,7 @@ end;
 
 function TFhirTestScriptContactList.Insert(index: Integer): TFhirTestScriptContact;
 begin
-  result := TFhirTestScriptContact.create;
+  result := TFhirTestScriptContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34347,8 +34347,8 @@ end;
 
 destructor TFhirTestScriptMetadata.Destroy;
 begin
-  FLink_List.Free;
-  FCapabilityList.Free;
+  FLink_List.free;
+  FCapabilityList.free;
   inherited;
 end;
 
@@ -34523,11 +34523,11 @@ begin
   result := (FCapabilityList <> nil) and (FCapabilityList.count > 0);
 end;
 
-function TFhirTestScriptMetadata.sizeInBytesV : cardinal;
+function TFhirTestScriptMetadata.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Flink_List.sizeInBytes);
-  inc(result, FcapabilityList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Flink_List.sizeInBytes(magic));
+  inc(result, FcapabilityList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptMetadataListEnumerator }
@@ -34541,7 +34541,7 @@ end;
 
 destructor TFhirTestScriptMetadataListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34556,22 +34556,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptMetadataListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptMetadataListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptMetadataList }
-procedure TFhirTestScriptMetadataList.AddItem(value: TFhirTestScriptMetadata);
+function TFhirTestScriptMetadataList.AddItem(value: TFhirTestScriptMetadata): TFhirTestScriptMetadata;
 begin
-  assert(value.ClassName = 'TFhirTestScriptMetadata', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptMetadata');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptMetadataList.Append: TFhirTestScriptMetadata;
 begin
-  result := TFhirTestScriptMetadata.create;
+  result := TFhirTestScriptMetadata.Create;
   try
     add(result.Link);
   finally
@@ -34615,7 +34615,7 @@ end;
 
 function TFhirTestScriptMetadataList.Insert(index: Integer): TFhirTestScriptMetadata;
 begin
-  result := TFhirTestScriptMetadata.create;
+  result := TFhirTestScriptMetadata.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34811,7 +34811,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -34837,18 +34837,18 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
     FDescription.value := '';
 end;
 
-function TFhirTestScriptMetadataLink.sizeInBytesV : cardinal;
+function TFhirTestScriptMetadataLink.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptMetadataLinkListEnumerator }
@@ -34862,7 +34862,7 @@ end;
 
 destructor TFhirTestScriptMetadataLinkListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -34877,22 +34877,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptMetadataLinkListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptMetadataLinkListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptMetadataLinkList }
-procedure TFhirTestScriptMetadataLinkList.AddItem(value: TFhirTestScriptMetadataLink);
+function TFhirTestScriptMetadataLinkList.AddItem(value: TFhirTestScriptMetadataLink): TFhirTestScriptMetadataLink;
 begin
-  assert(value.ClassName = 'TFhirTestScriptMetadataLink', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptMetadataLink');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptMetadataLinkList.Append: TFhirTestScriptMetadataLink;
 begin
-  result := TFhirTestScriptMetadataLink.create;
+  result := TFhirTestScriptMetadataLink.Create;
   try
     add(result.Link);
   finally
@@ -34936,7 +34936,7 @@ end;
 
 function TFhirTestScriptMetadataLinkList.Insert(index: Integer): TFhirTestScriptMetadataLink;
 begin
-  result := TFhirTestScriptMetadataLink.create;
+  result := TFhirTestScriptMetadataLink.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -34990,7 +34990,7 @@ begin
   FValidated.free;
   FDescription.free;
   FDestination.free;
-  FLink_List.Free;
+  FLink_List.free;
   FConformance.free;
   inherited;
 end;
@@ -35205,7 +35205,7 @@ end;
 Procedure TFhirTestScriptMetadataCapability.SetRequiredST(value : Boolean);
 begin
   if FRequired = nil then
-    FRequired := TFhirBoolean.create;
+    FRequired := TFhirBoolean.Create;
   FRequired.value := value
 end;
 
@@ -35226,7 +35226,7 @@ end;
 Procedure TFhirTestScriptMetadataCapability.SetValidatedST(value : Boolean);
 begin
   if FValidated = nil then
-    FValidated := TFhirBoolean.create;
+    FValidated := TFhirBoolean.Create;
   FValidated.value := value
 end;
 
@@ -35249,7 +35249,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -35275,7 +35275,7 @@ begin
   if value <> '' then
   begin
     if FDestination = nil then
-      FDestination := TFhirInteger.create;
+      FDestination := TFhirInteger.Create;
     FDestination.value := value
   end
   else if FDestination <> nil then
@@ -35300,15 +35300,15 @@ begin
   FConformance := value;
 end;
 
-function TFhirTestScriptMetadataCapability.sizeInBytesV : cardinal;
+function TFhirTestScriptMetadataCapability.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRequired.sizeInBytes);
-  inc(result, FValidated.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FDestination.sizeInBytes);
-  inc(result, Flink_List.sizeInBytes);
-  inc(result, FConformance.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRequired.sizeInBytes(magic));
+  inc(result, FValidated.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FDestination.sizeInBytes(magic));
+  inc(result, Flink_List.sizeInBytes(magic));
+  inc(result, FConformance.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptMetadataCapabilityListEnumerator }
@@ -35322,7 +35322,7 @@ end;
 
 destructor TFhirTestScriptMetadataCapabilityListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -35337,22 +35337,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptMetadataCapabilityListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptMetadataCapabilityListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptMetadataCapabilityList }
-procedure TFhirTestScriptMetadataCapabilityList.AddItem(value: TFhirTestScriptMetadataCapability);
+function TFhirTestScriptMetadataCapabilityList.AddItem(value: TFhirTestScriptMetadataCapability): TFhirTestScriptMetadataCapability;
 begin
-  assert(value.ClassName = 'TFhirTestScriptMetadataCapability', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptMetadataCapability');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptMetadataCapabilityList.Append: TFhirTestScriptMetadataCapability;
 begin
-  result := TFhirTestScriptMetadataCapability.create;
+  result := TFhirTestScriptMetadataCapability.Create;
   try
     add(result.Link);
   finally
@@ -35396,7 +35396,7 @@ end;
 
 function TFhirTestScriptMetadataCapabilityList.Insert(index: Integer): TFhirTestScriptMetadataCapability;
 begin
-  result := TFhirTestScriptMetadataCapability.create;
+  result := TFhirTestScriptMetadataCapability.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35606,7 +35606,7 @@ end;
 Procedure TFhirTestScriptFixture.SetAutocreateST(value : Boolean);
 begin
   if FAutocreate = nil then
-    FAutocreate := TFhirBoolean.create;
+    FAutocreate := TFhirBoolean.Create;
   FAutocreate.value := value
 end;
 
@@ -35627,7 +35627,7 @@ end;
 Procedure TFhirTestScriptFixture.SetAutodeleteST(value : Boolean);
 begin
   if FAutodelete = nil then
-    FAutodelete := TFhirBoolean.create;
+    FAutodelete := TFhirBoolean.Create;
   FAutodelete.value := value
 end;
 
@@ -35637,12 +35637,12 @@ begin
   FResource := value;
 end;
 
-function TFhirTestScriptFixture.sizeInBytesV : cardinal;
+function TFhirTestScriptFixture.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAutocreate.sizeInBytes);
-  inc(result, FAutodelete.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAutocreate.sizeInBytes(magic));
+  inc(result, FAutodelete.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptFixtureListEnumerator }
@@ -35656,7 +35656,7 @@ end;
 
 destructor TFhirTestScriptFixtureListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -35671,22 +35671,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptFixtureListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptFixtureListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptFixtureList }
-procedure TFhirTestScriptFixtureList.AddItem(value: TFhirTestScriptFixture);
+function TFhirTestScriptFixtureList.AddItem(value: TFhirTestScriptFixture): TFhirTestScriptFixture;
 begin
-  assert(value.ClassName = 'TFhirTestScriptFixture', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptFixture');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptFixtureList.Append: TFhirTestScriptFixture;
 begin
-  result := TFhirTestScriptFixture.create;
+  result := TFhirTestScriptFixture.Create;
   try
     add(result.Link);
   finally
@@ -35730,7 +35730,7 @@ end;
 
 function TFhirTestScriptFixtureList.Insert(index: Integer): TFhirTestScriptFixture;
 begin
-  result := TFhirTestScriptFixture.create;
+  result := TFhirTestScriptFixture.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -35957,7 +35957,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -35983,7 +35983,7 @@ begin
   if value <> '' then
   begin
     if FHeaderField = nil then
-      FHeaderField := TFhirString.create;
+      FHeaderField := TFhirString.Create;
     FHeaderField.value := value
   end
   else if FHeaderField <> nil then
@@ -36009,7 +36009,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -36035,20 +36035,20 @@ begin
   if value <> '' then
   begin
     if FSourceId = nil then
-      FSourceId := TFhirId.create;
+      FSourceId := TFhirId.Create;
     FSourceId.value := value
   end
   else if FSourceId <> nil then
     FSourceId.value := '';
 end;
 
-function TFhirTestScriptVariable.sizeInBytesV : cardinal;
+function TFhirTestScriptVariable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FHeaderField.sizeInBytes);
-  inc(result, FPath.sizeInBytes);
-  inc(result, FSourceId.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FHeaderField.sizeInBytes(magic));
+  inc(result, FPath.sizeInBytes(magic));
+  inc(result, FSourceId.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptVariableListEnumerator }
@@ -36062,7 +36062,7 @@ end;
 
 destructor TFhirTestScriptVariableListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36077,22 +36077,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptVariableListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptVariableListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptVariableList }
-procedure TFhirTestScriptVariableList.AddItem(value: TFhirTestScriptVariable);
+function TFhirTestScriptVariableList.AddItem(value: TFhirTestScriptVariable): TFhirTestScriptVariable;
 begin
-  assert(value.ClassName = 'TFhirTestScriptVariable', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptVariable');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptVariableList.Append: TFhirTestScriptVariable;
 begin
-  result := TFhirTestScriptVariable.create;
+  result := TFhirTestScriptVariable.Create;
   try
     add(result.Link);
   finally
@@ -36136,7 +36136,7 @@ end;
 
 function TFhirTestScriptVariableList.Insert(index: Integer): TFhirTestScriptVariable;
 begin
-  result := TFhirTestScriptVariable.create;
+  result := TFhirTestScriptVariable.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -36187,7 +36187,7 @@ end;
 destructor TFhirTestScriptSetup.Destroy;
 begin
   FMetadata.free;
-  FActionList.Free;
+  FActionList.free;
   inherited;
 end;
 
@@ -36344,11 +36344,11 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
-function TFhirTestScriptSetup.sizeInBytesV : cardinal;
+function TFhirTestScriptSetup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMetadata.sizeInBytes);
-  inc(result, FactionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMetadata.sizeInBytes(magic));
+  inc(result, FactionList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupListEnumerator }
@@ -36362,7 +36362,7 @@ end;
 
 destructor TFhirTestScriptSetupListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36377,22 +36377,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptSetupListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupList }
-procedure TFhirTestScriptSetupList.AddItem(value: TFhirTestScriptSetup);
+function TFhirTestScriptSetupList.AddItem(value: TFhirTestScriptSetup): TFhirTestScriptSetup;
 begin
-  assert(value.ClassName = 'TFhirTestScriptSetup', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetup');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptSetupList.Append: TFhirTestScriptSetup;
 begin
-  result := TFhirTestScriptSetup.create;
+  result := TFhirTestScriptSetup.Create;
   try
     add(result.Link);
   finally
@@ -36436,7 +36436,7 @@ end;
 
 function TFhirTestScriptSetupList.Insert(index: Integer): TFhirTestScriptSetup;
 begin
-  result := TFhirTestScriptSetup.create;
+  result := TFhirTestScriptSetup.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -36625,11 +36625,11 @@ begin
   FAssert := value;
 end;
 
-function TFhirTestScriptSetupAction.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOperation.sizeInBytes);
-  inc(result, FAssert.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOperation.sizeInBytes(magic));
+  inc(result, FAssert.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionListEnumerator }
@@ -36643,7 +36643,7 @@ end;
 
 destructor TFhirTestScriptSetupActionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -36658,22 +36658,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptSetupActionListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionList }
-procedure TFhirTestScriptSetupActionList.AddItem(value: TFhirTestScriptSetupAction);
+function TFhirTestScriptSetupActionList.AddItem(value: TFhirTestScriptSetupAction): TFhirTestScriptSetupAction;
 begin
-  assert(value.ClassName = 'TFhirTestScriptSetupAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupAction');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptSetupActionList.Append: TFhirTestScriptSetupAction;
 begin
-  result := TFhirTestScriptSetupAction.create;
+  result := TFhirTestScriptSetupAction.Create;
   try
     add(result.Link);
   finally
@@ -36717,7 +36717,7 @@ end;
 
 function TFhirTestScriptSetupActionList.Insert(index: Integer): TFhirTestScriptSetupAction;
 begin
-  result := TFhirTestScriptSetupAction.create;
+  result := TFhirTestScriptSetupAction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -36776,7 +36776,7 @@ begin
   FDestination.free;
   FEncodeRequestUrl.free;
   FParams.free;
-  FRequestHeaderList.Free;
+  FRequestHeaderList.free;
   FResponseId.free;
   FSourceId.free;
   FTargetId.free;
@@ -37116,7 +37116,7 @@ begin
   if value <> '' then
   begin
     if FResource = nil then
-      FResource := TFhirCode.create;
+      FResource := TFhirCode.Create;
     FResource.value := value
   end
   else if FResource <> nil then
@@ -37142,7 +37142,7 @@ begin
   if value <> '' then
   begin
     if FLabel_ = nil then
-      FLabel_ := TFhirString.create;
+      FLabel_ := TFhirString.Create;
     FLabel_.value := value
   end
   else if FLabel_ <> nil then
@@ -37168,7 +37168,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -37238,7 +37238,7 @@ begin
   if value <> '' then
   begin
     if FDestination = nil then
-      FDestination := TFhirInteger.create;
+      FDestination := TFhirInteger.Create;
     FDestination.value := value
   end
   else if FDestination <> nil then
@@ -37262,7 +37262,7 @@ end;
 Procedure TFhirTestScriptSetupActionOperation.SetEncodeRequestUrlST(value : Boolean);
 begin
   if FEncodeRequestUrl = nil then
-    FEncodeRequestUrl := TFhirBoolean.create;
+    FEncodeRequestUrl := TFhirBoolean.Create;
   FEncodeRequestUrl.value := value
 end;
 
@@ -37285,7 +37285,7 @@ begin
   if value <> '' then
   begin
     if FParams = nil then
-      FParams := TFhirString.create;
+      FParams := TFhirString.Create;
     FParams.value := value
   end
   else if FParams <> nil then
@@ -37323,7 +37323,7 @@ begin
   if value <> '' then
   begin
     if FResponseId = nil then
-      FResponseId := TFhirId.create;
+      FResponseId := TFhirId.Create;
     FResponseId.value := value
   end
   else if FResponseId <> nil then
@@ -37349,7 +37349,7 @@ begin
   if value <> '' then
   begin
     if FSourceId = nil then
-      FSourceId := TFhirId.create;
+      FSourceId := TFhirId.Create;
     FSourceId.value := value
   end
   else if FSourceId <> nil then
@@ -37375,7 +37375,7 @@ begin
   if value <> '' then
   begin
     if FTargetId = nil then
-      FTargetId := TFhirId.create;
+      FTargetId := TFhirId.Create;
     FTargetId.value := value
   end
   else if FTargetId <> nil then
@@ -37401,30 +37401,30 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirString.create;
+      FUrl := TFhirString.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
     FUrl.value := '';
 end;
 
-function TFhirTestScriptSetupActionOperation.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionOperation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FType_.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
-  inc(result, FLabel_.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FAccept.sizeInBytes);
-  inc(result, FContentType.sizeInBytes);
-  inc(result, FDestination.sizeInBytes);
-  inc(result, FEncodeRequestUrl.sizeInBytes);
-  inc(result, FParams.sizeInBytes);
-  inc(result, FrequestHeaderList.sizeInBytes);
-  inc(result, FResponseId.sizeInBytes);
-  inc(result, FSourceId.sizeInBytes);
-  inc(result, FTargetId.sizeInBytes);
-  inc(result, FUrl.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FType_.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FLabel_.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FAccept.sizeInBytes(magic));
+  inc(result, FContentType.sizeInBytes(magic));
+  inc(result, FDestination.sizeInBytes(magic));
+  inc(result, FEncodeRequestUrl.sizeInBytes(magic));
+  inc(result, FParams.sizeInBytes(magic));
+  inc(result, FrequestHeaderList.sizeInBytes(magic));
+  inc(result, FResponseId.sizeInBytes(magic));
+  inc(result, FSourceId.sizeInBytes(magic));
+  inc(result, FTargetId.sizeInBytes(magic));
+  inc(result, FUrl.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionOperationListEnumerator }
@@ -37438,7 +37438,7 @@ end;
 
 destructor TFhirTestScriptSetupActionOperationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37453,22 +37453,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptSetupActionOperationListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionOperationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionOperationList }
-procedure TFhirTestScriptSetupActionOperationList.AddItem(value: TFhirTestScriptSetupActionOperation);
+function TFhirTestScriptSetupActionOperationList.AddItem(value: TFhirTestScriptSetupActionOperation): TFhirTestScriptSetupActionOperation;
 begin
-  assert(value.ClassName = 'TFhirTestScriptSetupActionOperation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupActionOperation');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptSetupActionOperationList.Append: TFhirTestScriptSetupActionOperation;
 begin
-  result := TFhirTestScriptSetupActionOperation.create;
+  result := TFhirTestScriptSetupActionOperation.Create;
   try
     add(result.Link);
   finally
@@ -37512,7 +37512,7 @@ end;
 
 function TFhirTestScriptSetupActionOperationList.Insert(index: Integer): TFhirTestScriptSetupActionOperation;
 begin
-  result := TFhirTestScriptSetupActionOperation.create;
+  result := TFhirTestScriptSetupActionOperation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -37708,7 +37708,7 @@ begin
   if value <> '' then
   begin
     if FField = nil then
-      FField := TFhirString.create;
+      FField := TFhirString.Create;
     FField.value := value
   end
   else if FField <> nil then
@@ -37734,18 +37734,18 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
     FValue.value := '';
 end;
 
-function TFhirTestScriptSetupActionOperationRequestHeader.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionOperationRequestHeader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FField.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FField.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator }
@@ -37759,7 +37759,7 @@ end;
 
 destructor TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -37774,22 +37774,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionOperationRequestHeaderListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionOperationRequestHeaderList }
-procedure TFhirTestScriptSetupActionOperationRequestHeaderList.AddItem(value: TFhirTestScriptSetupActionOperationRequestHeader);
+function TFhirTestScriptSetupActionOperationRequestHeaderList.AddItem(value: TFhirTestScriptSetupActionOperationRequestHeader): TFhirTestScriptSetupActionOperationRequestHeader;
 begin
-  assert(value.ClassName = 'TFhirTestScriptSetupActionOperationRequestHeader', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupActionOperationRequestHeader');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptSetupActionOperationRequestHeaderList.Append: TFhirTestScriptSetupActionOperationRequestHeader;
 begin
-  result := TFhirTestScriptSetupActionOperationRequestHeader.create;
+  result := TFhirTestScriptSetupActionOperationRequestHeader.Create;
   try
     add(result.Link);
   finally
@@ -37833,7 +37833,7 @@ end;
 
 function TFhirTestScriptSetupActionOperationRequestHeaderList.Insert(index: Integer): TFhirTestScriptSetupActionOperationRequestHeader;
 begin
-  result := TFhirTestScriptSetupActionOperationRequestHeader.create;
+  result := TFhirTestScriptSetupActionOperationRequestHeader.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -38274,7 +38274,7 @@ begin
   if value <> '' then
   begin
     if FLabel_ = nil then
-      FLabel_ := TFhirString.create;
+      FLabel_ := TFhirString.Create;
     FLabel_.value := value
   end
   else if FLabel_ <> nil then
@@ -38300,7 +38300,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -38348,7 +38348,7 @@ begin
   if value <> '' then
   begin
     if FCompareToSourceId = nil then
-      FCompareToSourceId := TFhirString.create;
+      FCompareToSourceId := TFhirString.Create;
     FCompareToSourceId.value := value
   end
   else if FCompareToSourceId <> nil then
@@ -38374,7 +38374,7 @@ begin
   if value <> '' then
   begin
     if FCompareToSourcePath = nil then
-      FCompareToSourcePath := TFhirString.create;
+      FCompareToSourcePath := TFhirString.Create;
     FCompareToSourcePath.value := value
   end
   else if FCompareToSourcePath <> nil then
@@ -38422,7 +38422,7 @@ begin
   if value <> '' then
   begin
     if FHeaderField = nil then
-      FHeaderField := TFhirString.create;
+      FHeaderField := TFhirString.Create;
     FHeaderField.value := value
   end
   else if FHeaderField <> nil then
@@ -38448,7 +38448,7 @@ begin
   if value <> '' then
   begin
     if FMinimumId = nil then
-      FMinimumId := TFhirString.create;
+      FMinimumId := TFhirString.Create;
     FMinimumId.value := value
   end
   else if FMinimumId <> nil then
@@ -38472,7 +38472,7 @@ end;
 Procedure TFhirTestScriptSetupActionAssert.SetNavigationLinksST(value : Boolean);
 begin
   if FNavigationLinks = nil then
-    FNavigationLinks := TFhirBoolean.create;
+    FNavigationLinks := TFhirBoolean.Create;
   FNavigationLinks.value := value
 end;
 
@@ -38517,7 +38517,7 @@ begin
   if value <> '' then
   begin
     if FPath = nil then
-      FPath := TFhirString.create;
+      FPath := TFhirString.Create;
     FPath.value := value
   end
   else if FPath <> nil then
@@ -38543,7 +38543,7 @@ begin
   if value <> '' then
   begin
     if FResource = nil then
-      FResource := TFhirCode.create;
+      FResource := TFhirCode.Create;
     FResource.value := value
   end
   else if FResource <> nil then
@@ -38591,7 +38591,7 @@ begin
   if value <> '' then
   begin
     if FResponseCode = nil then
-      FResponseCode := TFhirString.create;
+      FResponseCode := TFhirString.Create;
     FResponseCode.value := value
   end
   else if FResponseCode <> nil then
@@ -38617,7 +38617,7 @@ begin
   if value <> '' then
   begin
     if FSourceId = nil then
-      FSourceId := TFhirId.create;
+      FSourceId := TFhirId.Create;
     FSourceId.value := value
   end
   else if FSourceId <> nil then
@@ -38643,7 +38643,7 @@ begin
   if value <> '' then
   begin
     if FValidateProfileId = nil then
-      FValidateProfileId := TFhirId.create;
+      FValidateProfileId := TFhirId.Create;
     FValidateProfileId.value := value
   end
   else if FValidateProfileId <> nil then
@@ -38669,7 +38669,7 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
@@ -38693,31 +38693,31 @@ end;
 Procedure TFhirTestScriptSetupActionAssert.SetWarningOnlyST(value : Boolean);
 begin
   if FWarningOnly = nil then
-    FWarningOnly := TFhirBoolean.create;
+    FWarningOnly := TFhirBoolean.Create;
   FWarningOnly.value := value
 end;
 
-function TFhirTestScriptSetupActionAssert.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionAssert.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLabel_.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FDirection.sizeInBytes);
-  inc(result, FCompareToSourceId.sizeInBytes);
-  inc(result, FCompareToSourcePath.sizeInBytes);
-  inc(result, FContentType.sizeInBytes);
-  inc(result, FHeaderField.sizeInBytes);
-  inc(result, FMinimumId.sizeInBytes);
-  inc(result, FNavigationLinks.sizeInBytes);
-  inc(result, FOperator.sizeInBytes);
-  inc(result, FPath.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
-  inc(result, FResponse.sizeInBytes);
-  inc(result, FResponseCode.sizeInBytes);
-  inc(result, FSourceId.sizeInBytes);
-  inc(result, FValidateProfileId.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
-  inc(result, FWarningOnly.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLabel_.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FDirection.sizeInBytes(magic));
+  inc(result, FCompareToSourceId.sizeInBytes(magic));
+  inc(result, FCompareToSourcePath.sizeInBytes(magic));
+  inc(result, FContentType.sizeInBytes(magic));
+  inc(result, FHeaderField.sizeInBytes(magic));
+  inc(result, FMinimumId.sizeInBytes(magic));
+  inc(result, FNavigationLinks.sizeInBytes(magic));
+  inc(result, FOperator.sizeInBytes(magic));
+  inc(result, FPath.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FResponse.sizeInBytes(magic));
+  inc(result, FResponseCode.sizeInBytes(magic));
+  inc(result, FSourceId.sizeInBytes(magic));
+  inc(result, FValidateProfileId.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
+  inc(result, FWarningOnly.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionAssertListEnumerator }
@@ -38731,7 +38731,7 @@ end;
 
 destructor TFhirTestScriptSetupActionAssertListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -38746,22 +38746,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptSetupActionAssertListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptSetupActionAssertListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptSetupActionAssertList }
-procedure TFhirTestScriptSetupActionAssertList.AddItem(value: TFhirTestScriptSetupActionAssert);
+function TFhirTestScriptSetupActionAssertList.AddItem(value: TFhirTestScriptSetupActionAssert): TFhirTestScriptSetupActionAssert;
 begin
-  assert(value.ClassName = 'TFhirTestScriptSetupActionAssert', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptSetupActionAssert');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptSetupActionAssertList.Append: TFhirTestScriptSetupActionAssert;
 begin
-  result := TFhirTestScriptSetupActionAssert.create;
+  result := TFhirTestScriptSetupActionAssert.Create;
   try
     add(result.Link);
   finally
@@ -38805,7 +38805,7 @@ end;
 
 function TFhirTestScriptSetupActionAssertList.Insert(index: Integer): TFhirTestScriptSetupActionAssert;
 begin
-  result := TFhirTestScriptSetupActionAssert.create;
+  result := TFhirTestScriptSetupActionAssert.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -38858,7 +38858,7 @@ begin
   FName.free;
   FDescription.free;
   FMetadata.free;
-  FActionList.Free;
+  FActionList.free;
   inherited;
 end;
 
@@ -39045,7 +39045,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -39071,7 +39071,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -39096,13 +39096,13 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
-function TFhirTestScriptTest.sizeInBytesV : cardinal;
+function TFhirTestScriptTest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FMetadata.sizeInBytes);
-  inc(result, FactionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FMetadata.sizeInBytes(magic));
+  inc(result, FactionList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTestListEnumerator }
@@ -39116,7 +39116,7 @@ end;
 
 destructor TFhirTestScriptTestListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -39131,22 +39131,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptTestListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptTestListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTestList }
-procedure TFhirTestScriptTestList.AddItem(value: TFhirTestScriptTest);
+function TFhirTestScriptTestList.AddItem(value: TFhirTestScriptTest): TFhirTestScriptTest;
 begin
-  assert(value.ClassName = 'TFhirTestScriptTest', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTest');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptTestList.Append: TFhirTestScriptTest;
 begin
-  result := TFhirTestScriptTest.create;
+  result := TFhirTestScriptTest.Create;
   try
     add(result.Link);
   finally
@@ -39190,7 +39190,7 @@ end;
 
 function TFhirTestScriptTestList.Insert(index: Integer): TFhirTestScriptTest;
 begin
-  result := TFhirTestScriptTest.create;
+  result := TFhirTestScriptTest.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -39379,11 +39379,11 @@ begin
   FAssert := value;
 end;
 
-function TFhirTestScriptTestAction.sizeInBytesV : cardinal;
+function TFhirTestScriptTestAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOperation.sizeInBytes);
-  inc(result, FAssert.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOperation.sizeInBytes(magic));
+  inc(result, FAssert.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTestActionListEnumerator }
@@ -39397,7 +39397,7 @@ end;
 
 destructor TFhirTestScriptTestActionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -39412,22 +39412,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptTestActionListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptTestActionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTestActionList }
-procedure TFhirTestScriptTestActionList.AddItem(value: TFhirTestScriptTestAction);
+function TFhirTestScriptTestActionList.AddItem(value: TFhirTestScriptTestAction): TFhirTestScriptTestAction;
 begin
-  assert(value.ClassName = 'TFhirTestScriptTestAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTestAction');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptTestActionList.Append: TFhirTestScriptTestAction;
 begin
-  result := TFhirTestScriptTestAction.create;
+  result := TFhirTestScriptTestAction.Create;
   try
     add(result.Link);
   finally
@@ -39471,7 +39471,7 @@ end;
 
 function TFhirTestScriptTestActionList.Insert(index: Integer): TFhirTestScriptTestAction;
 begin
-  result := TFhirTestScriptTestAction.create;
+  result := TFhirTestScriptTestAction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -39521,7 +39521,7 @@ end;
 
 destructor TFhirTestScriptTeardown.Destroy;
 begin
-  FActionList.Free;
+  FActionList.free;
   inherited;
 end;
 
@@ -39658,10 +39658,10 @@ begin
   result := (FActionList <> nil) and (FActionList.count > 0);
 end;
 
-function TFhirTestScriptTeardown.sizeInBytesV : cardinal;
+function TFhirTestScriptTeardown.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FactionList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FactionList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTeardownListEnumerator }
@@ -39675,7 +39675,7 @@ end;
 
 destructor TFhirTestScriptTeardownListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -39690,22 +39690,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptTeardownListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptTeardownListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTeardownList }
-procedure TFhirTestScriptTeardownList.AddItem(value: TFhirTestScriptTeardown);
+function TFhirTestScriptTeardownList.AddItem(value: TFhirTestScriptTeardown): TFhirTestScriptTeardown;
 begin
-  assert(value.ClassName = 'TFhirTestScriptTeardown', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTeardown');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptTeardownList.Append: TFhirTestScriptTeardown;
 begin
-  result := TFhirTestScriptTeardown.create;
+  result := TFhirTestScriptTeardown.Create;
   try
     add(result.Link);
   finally
@@ -39749,7 +39749,7 @@ end;
 
 function TFhirTestScriptTeardownList.Insert(index: Integer): TFhirTestScriptTeardown;
 begin
-  result := TFhirTestScriptTeardown.create;
+  result := TFhirTestScriptTeardown.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -39917,10 +39917,10 @@ begin
   FOperation := value;
 end;
 
-function TFhirTestScriptTeardownAction.sizeInBytesV : cardinal;
+function TFhirTestScriptTeardownAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOperation.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOperation.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTeardownActionListEnumerator }
@@ -39934,7 +39934,7 @@ end;
 
 destructor TFhirTestScriptTeardownActionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -39949,22 +39949,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptTeardownActionListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptTeardownActionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptTeardownActionList }
-procedure TFhirTestScriptTeardownActionList.AddItem(value: TFhirTestScriptTeardownAction);
+function TFhirTestScriptTeardownActionList.AddItem(value: TFhirTestScriptTeardownAction): TFhirTestScriptTeardownAction;
 begin
-  assert(value.ClassName = 'TFhirTestScriptTeardownAction', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScriptTeardownAction');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptTeardownActionList.Append: TFhirTestScriptTeardownAction;
 begin
-  result := TFhirTestScriptTeardownAction.create;
+  result := TFhirTestScriptTeardownAction.Create;
   try
     add(result.Link);
   finally
@@ -40008,7 +40008,7 @@ end;
 
 function TFhirTestScriptTeardownActionList.Insert(index: Integer): TFhirTestScriptTeardownAction;
 begin
-  result := TFhirTestScriptTeardownAction.create;
+  result := TFhirTestScriptTeardownAction.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -40065,19 +40065,19 @@ begin
   FIdentifier.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FDescription.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FRequirements.free;
   FCopyright.free;
   FMetadata.free;
   FMultiserver.free;
-  FFixtureList.Free;
-  FProfileList.Free;
-  FVariableList.Free;
+  FFixtureList.free;
+  FProfileList.free;
+  FVariableList.free;
   FSetup.free;
-  FTestList.Free;
+  FTestList.free;
   FTeardown.free;
   inherited;
 end;
@@ -40576,7 +40576,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -40602,7 +40602,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -40628,7 +40628,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -40680,7 +40680,7 @@ end;
 Procedure TFhirTestScript.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -40703,7 +40703,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -40739,7 +40739,7 @@ end;
 Procedure TFhirTestScript.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -40762,7 +40762,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -40800,7 +40800,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -40826,7 +40826,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -40856,7 +40856,7 @@ end;
 Procedure TFhirTestScript.SetMultiserverST(value : Boolean);
 begin
   if FMultiserver = nil then
-    FMultiserver := TFhirBoolean.create;
+    FMultiserver := TFhirBoolean.Create;
   FMultiserver.value := value
 end;
 
@@ -40920,30 +40920,30 @@ begin
   FTeardown := value;
 end;
 
-function TFhirTestScript.sizeInBytesV : cardinal;
+function TFhirTestScript.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FMetadata.sizeInBytes);
-  inc(result, FMultiserver.sizeInBytes);
-  inc(result, FfixtureList.sizeInBytes);
-  inc(result, FprofileList.sizeInBytes);
-  inc(result, FvariableList.sizeInBytes);
-  inc(result, FSetup.sizeInBytes);
-  inc(result, FtestList.sizeInBytes);
-  inc(result, FTeardown.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FMetadata.sizeInBytes(magic));
+  inc(result, FMultiserver.sizeInBytes(magic));
+  inc(result, FfixtureList.sizeInBytes(magic));
+  inc(result, FprofileList.sizeInBytes(magic));
+  inc(result, FvariableList.sizeInBytes(magic));
+  inc(result, FSetup.sizeInBytes(magic));
+  inc(result, FtestList.sizeInBytes(magic));
+  inc(result, FTeardown.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptListEnumerator }
@@ -40957,7 +40957,7 @@ end;
 
 destructor TFhirTestScriptListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -40972,22 +40972,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirTestScriptListEnumerator.sizeInBytesV : cardinal;
+function TFhirTestScriptListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirTestScriptList }
-procedure TFhirTestScriptList.AddItem(value: TFhirTestScript);
+function TFhirTestScriptList.AddItem(value: TFhirTestScript): TFhirTestScript;
 begin
-  assert(value.ClassName = 'TFhirTestScript', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirTestScript');
   add(value);
+  result := value;
 end;
 
 function TFhirTestScriptList.Append: TFhirTestScript;
 begin
-  result := TFhirTestScript.create;
+  result := TFhirTestScript.Create;
   try
     add(result.Link);
   finally
@@ -41031,7 +41031,7 @@ end;
 
 function TFhirTestScriptList.Insert(index: Integer): TFhirTestScript;
 begin
-  result := TFhirTestScript.create;
+  result := TFhirTestScript.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -41086,7 +41086,7 @@ end;
 destructor TFhirValueSetContact.Destroy;
 begin
   FName.free;
-  FTelecomList.Free;
+  FTelecomList.free;
   inherited;
 end;
 
@@ -41244,7 +41244,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -41263,11 +41263,11 @@ begin
   result := (FTelecomList <> nil) and (FTelecomList.count > 0);
 end;
 
-function TFhirValueSetContact.sizeInBytesV : cardinal;
+function TFhirValueSetContact.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FtelecomList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FtelecomList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetContactListEnumerator }
@@ -41281,7 +41281,7 @@ end;
 
 destructor TFhirValueSetContactListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -41296,22 +41296,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetContactListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetContactListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetContactList }
-procedure TFhirValueSetContactList.AddItem(value: TFhirValueSetContact);
+function TFhirValueSetContactList.AddItem(value: TFhirValueSetContact): TFhirValueSetContact;
 begin
-  assert(value.ClassName = 'TFhirValueSetContact', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetContact');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetContactList.Append: TFhirValueSetContact;
 begin
-  result := TFhirValueSetContact.create;
+  result := TFhirValueSetContact.Create;
   try
     add(result.Link);
   finally
@@ -41355,7 +41355,7 @@ end;
 
 function TFhirValueSetContactList.Insert(index: Integer): TFhirValueSetContact;
 begin
-  result := TFhirValueSetContact.create;
+  result := TFhirValueSetContact.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -41408,7 +41408,7 @@ begin
   FSystem.free;
   FVersion.free;
   FCaseSensitive.free;
-  FConceptList.Free;
+  FConceptList.free;
   inherited;
 end;
 
@@ -41595,7 +41595,7 @@ begin
   if value <> '' then
   begin
     if FSystem = nil then
-      FSystem := TFhirUri.create;
+      FSystem := TFhirUri.Create;
     FSystem.value := value
   end
   else if FSystem <> nil then
@@ -41621,7 +41621,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -41645,7 +41645,7 @@ end;
 Procedure TFhirValueSetCodeSystem.SetCaseSensitiveST(value : Boolean);
 begin
   if FCaseSensitive = nil then
-    FCaseSensitive := TFhirBoolean.create;
+    FCaseSensitive := TFhirBoolean.Create;
   FCaseSensitive.value := value
 end;
 
@@ -41661,13 +41661,13 @@ begin
   result := (FConceptList <> nil) and (FConceptList.count > 0);
 end;
 
-function TFhirValueSetCodeSystem.sizeInBytesV : cardinal;
+function TFhirValueSetCodeSystem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSystem.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FCaseSensitive.sizeInBytes);
-  inc(result, FconceptList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSystem.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FCaseSensitive.sizeInBytes(magic));
+  inc(result, FconceptList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetCodeSystemListEnumerator }
@@ -41681,7 +41681,7 @@ end;
 
 destructor TFhirValueSetCodeSystemListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -41696,22 +41696,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetCodeSystemListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetCodeSystemListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetCodeSystemList }
-procedure TFhirValueSetCodeSystemList.AddItem(value: TFhirValueSetCodeSystem);
+function TFhirValueSetCodeSystemList.AddItem(value: TFhirValueSetCodeSystem): TFhirValueSetCodeSystem;
 begin
-  assert(value.ClassName = 'TFhirValueSetCodeSystem', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetCodeSystem');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetCodeSystemList.Append: TFhirValueSetCodeSystem;
 begin
-  result := TFhirValueSetCodeSystem.create;
+  result := TFhirValueSetCodeSystem.Create;
   try
     add(result.Link);
   finally
@@ -41755,7 +41755,7 @@ end;
 
 function TFhirValueSetCodeSystemList.Insert(index: Integer): TFhirValueSetCodeSystem;
 begin
-  result := TFhirValueSetCodeSystem.create;
+  result := TFhirValueSetCodeSystem.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -41809,8 +41809,8 @@ begin
   FAbstract.free;
   FDisplay.free;
   FDefinition.free;
-  FDesignationList.Free;
-  FConceptList.Free;
+  FDesignationList.free;
+  FConceptList.free;
   inherited;
 end;
 
@@ -42038,7 +42038,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -42062,7 +42062,7 @@ end;
 Procedure TFhirValueSetCodeSystemConcept.SetAbstractST(value : Boolean);
 begin
   if FAbstract = nil then
-    FAbstract := TFhirBoolean.create;
+    FAbstract := TFhirBoolean.Create;
   FAbstract.value := value
 end;
 
@@ -42085,7 +42085,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -42111,7 +42111,7 @@ begin
   if value <> '' then
   begin
     if FDefinition = nil then
-      FDefinition := TFhirString.create;
+      FDefinition := TFhirString.Create;
     FDefinition.value := value
   end
   else if FDefinition <> nil then
@@ -42142,15 +42142,15 @@ begin
   result := (FConceptList <> nil) and (FConceptList.count > 0);
 end;
 
-function TFhirValueSetCodeSystemConcept.sizeInBytesV : cardinal;
+function TFhirValueSetCodeSystemConcept.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FAbstract.sizeInBytes);
-  inc(result, FDisplay.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
-  inc(result, FdesignationList.sizeInBytes);
-  inc(result, FconceptList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FAbstract.sizeInBytes(magic));
+  inc(result, FDisplay.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
+  inc(result, FdesignationList.sizeInBytes(magic));
+  inc(result, FconceptList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetCodeSystemConceptListEnumerator }
@@ -42164,7 +42164,7 @@ end;
 
 destructor TFhirValueSetCodeSystemConceptListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -42179,22 +42179,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetCodeSystemConceptListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetCodeSystemConceptListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetCodeSystemConceptList }
-procedure TFhirValueSetCodeSystemConceptList.AddItem(value: TFhirValueSetCodeSystemConcept);
+function TFhirValueSetCodeSystemConceptList.AddItem(value: TFhirValueSetCodeSystemConcept): TFhirValueSetCodeSystemConcept;
 begin
-  assert(value.ClassName = 'TFhirValueSetCodeSystemConcept', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetCodeSystemConcept');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetCodeSystemConceptList.Append: TFhirValueSetCodeSystemConcept;
 begin
-  result := TFhirValueSetCodeSystemConcept.create;
+  result := TFhirValueSetCodeSystemConcept.Create;
   try
     add(result.Link);
   finally
@@ -42238,7 +42238,7 @@ end;
 
 function TFhirValueSetCodeSystemConceptList.Insert(index: Integer): TFhirValueSetCodeSystemConcept;
 begin
-  result := TFhirValueSetCodeSystemConcept.create;
+  result := TFhirValueSetCodeSystemConcept.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -42450,7 +42450,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -42482,19 +42482,19 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirString.create;
+      FValue := TFhirString.Create;
     FValue.value := value
   end
   else if FValue <> nil then
     FValue.value := '';
 end;
 
-function TFhirValueSetCodeSystemConceptDesignation.sizeInBytesV : cardinal;
+function TFhirValueSetCodeSystemConceptDesignation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLanguage.sizeInBytes);
-  inc(result, FUse.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLanguage.sizeInBytes(magic));
+  inc(result, FUse.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirValueSetCodeSystemConceptDesignationListEnumerator }
@@ -42508,7 +42508,7 @@ end;
 
 destructor TFhirValueSetCodeSystemConceptDesignationListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -42523,22 +42523,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetCodeSystemConceptDesignationListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetCodeSystemConceptDesignationListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetCodeSystemConceptDesignationList }
-procedure TFhirValueSetCodeSystemConceptDesignationList.AddItem(value: TFhirValueSetCodeSystemConceptDesignation);
+function TFhirValueSetCodeSystemConceptDesignationList.AddItem(value: TFhirValueSetCodeSystemConceptDesignation): TFhirValueSetCodeSystemConceptDesignation;
 begin
-  assert(value.ClassName = 'TFhirValueSetCodeSystemConceptDesignation', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetCodeSystemConceptDesignation');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetCodeSystemConceptDesignationList.Append: TFhirValueSetCodeSystemConceptDesignation;
 begin
-  result := TFhirValueSetCodeSystemConceptDesignation.create;
+  result := TFhirValueSetCodeSystemConceptDesignation.Create;
   try
     add(result.Link);
   finally
@@ -42582,7 +42582,7 @@ end;
 
 function TFhirValueSetCodeSystemConceptDesignationList.Insert(index: Integer): TFhirValueSetCodeSystemConceptDesignation;
 begin
-  result := TFhirValueSetCodeSystemConceptDesignation.create;
+  result := TFhirValueSetCodeSystemConceptDesignation.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -42632,9 +42632,9 @@ end;
 
 destructor TFhirValueSetCompose.Destroy;
 begin
-  FImportList.Free;
-  FIncludeList.Free;
-  FExcludeList.Free;
+  FImportList.free;
+  FIncludeList.free;
+  FExcludeList.free;
   inherited;
 end;
 
@@ -42848,12 +42848,12 @@ begin
   result := (FExcludeList <> nil) and (FExcludeList.count > 0);
 end;
 
-function TFhirValueSetCompose.sizeInBytesV : cardinal;
+function TFhirValueSetCompose.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FimportList.sizeInBytes);
-  inc(result, FincludeList.sizeInBytes);
-  inc(result, FexcludeList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FimportList.sizeInBytes(magic));
+  inc(result, FincludeList.sizeInBytes(magic));
+  inc(result, FexcludeList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeListEnumerator }
@@ -42867,7 +42867,7 @@ end;
 
 destructor TFhirValueSetComposeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -42882,22 +42882,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetComposeListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetComposeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeList }
-procedure TFhirValueSetComposeList.AddItem(value: TFhirValueSetCompose);
+function TFhirValueSetComposeList.AddItem(value: TFhirValueSetCompose): TFhirValueSetCompose;
 begin
-  assert(value.ClassName = 'TFhirValueSetCompose', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetCompose');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetComposeList.Append: TFhirValueSetCompose;
 begin
-  result := TFhirValueSetCompose.create;
+  result := TFhirValueSetCompose.Create;
   try
     add(result.Link);
   finally
@@ -42941,7 +42941,7 @@ end;
 
 function TFhirValueSetComposeList.Insert(index: Integer): TFhirValueSetCompose;
 begin
-  result := TFhirValueSetCompose.create;
+  result := TFhirValueSetCompose.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -42993,8 +42993,8 @@ destructor TFhirValueSetComposeInclude.Destroy;
 begin
   FSystem.free;
   FVersion.free;
-  FConceptList.Free;
-  FFilterList.Free;
+  FConceptList.free;
+  FFilterList.free;
   inherited;
 end;
 
@@ -43193,7 +43193,7 @@ begin
   if value <> '' then
   begin
     if FSystem = nil then
-      FSystem := TFhirUri.create;
+      FSystem := TFhirUri.Create;
     FSystem.value := value
   end
   else if FSystem <> nil then
@@ -43219,7 +43219,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -43250,13 +43250,13 @@ begin
   result := (FFilterList <> nil) and (FFilterList.count > 0);
 end;
 
-function TFhirValueSetComposeInclude.sizeInBytesV : cardinal;
+function TFhirValueSetComposeInclude.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSystem.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FconceptList.sizeInBytes);
-  inc(result, FfilterList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSystem.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FconceptList.sizeInBytes(magic));
+  inc(result, FfilterList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeIncludeListEnumerator }
@@ -43270,7 +43270,7 @@ end;
 
 destructor TFhirValueSetComposeIncludeListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -43285,22 +43285,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetComposeIncludeListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetComposeIncludeListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeIncludeList }
-procedure TFhirValueSetComposeIncludeList.AddItem(value: TFhirValueSetComposeInclude);
+function TFhirValueSetComposeIncludeList.AddItem(value: TFhirValueSetComposeInclude): TFhirValueSetComposeInclude;
 begin
-  assert(value.ClassName = 'TFhirValueSetComposeInclude', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeInclude');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetComposeIncludeList.Append: TFhirValueSetComposeInclude;
 begin
-  result := TFhirValueSetComposeInclude.create;
+  result := TFhirValueSetComposeInclude.Create;
   try
     add(result.Link);
   finally
@@ -43344,7 +43344,7 @@ end;
 
 function TFhirValueSetComposeIncludeList.Insert(index: Integer): TFhirValueSetComposeInclude;
 begin
-  result := TFhirValueSetComposeInclude.create;
+  result := TFhirValueSetComposeInclude.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -43396,7 +43396,7 @@ destructor TFhirValueSetComposeIncludeConcept.Destroy;
 begin
   FCode.free;
   FDisplay.free;
-  FDesignationList.Free;
+  FDesignationList.free;
   inherited;
 end;
 
@@ -43569,7 +43569,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -43595,7 +43595,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -43614,12 +43614,12 @@ begin
   result := (FDesignationList <> nil) and (FDesignationList.count > 0);
 end;
 
-function TFhirValueSetComposeIncludeConcept.sizeInBytesV : cardinal;
+function TFhirValueSetComposeIncludeConcept.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCode.sizeInBytes);
-  inc(result, FDisplay.sizeInBytes);
-  inc(result, FdesignationList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FDisplay.sizeInBytes(magic));
+  inc(result, FdesignationList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeIncludeConceptListEnumerator }
@@ -43633,7 +43633,7 @@ end;
 
 destructor TFhirValueSetComposeIncludeConceptListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -43648,22 +43648,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetComposeIncludeConceptListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetComposeIncludeConceptListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeIncludeConceptList }
-procedure TFhirValueSetComposeIncludeConceptList.AddItem(value: TFhirValueSetComposeIncludeConcept);
+function TFhirValueSetComposeIncludeConceptList.AddItem(value: TFhirValueSetComposeIncludeConcept): TFhirValueSetComposeIncludeConcept;
 begin
-  assert(value.ClassName = 'TFhirValueSetComposeIncludeConcept', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeIncludeConcept');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetComposeIncludeConceptList.Append: TFhirValueSetComposeIncludeConcept;
 begin
-  result := TFhirValueSetComposeIncludeConcept.create;
+  result := TFhirValueSetComposeIncludeConcept.Create;
   try
     add(result.Link);
   finally
@@ -43707,7 +43707,7 @@ end;
 
 function TFhirValueSetComposeIncludeConceptList.Insert(index: Integer): TFhirValueSetComposeIncludeConcept;
 begin
-  result := TFhirValueSetComposeIncludeConcept.create;
+  result := TFhirValueSetComposeIncludeConcept.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -43918,7 +43918,7 @@ begin
   if value <> '' then
   begin
     if FProperty_ = nil then
-      FProperty_ := TFhirCode.create;
+      FProperty_ := TFhirCode.Create;
     FProperty_.value := value
   end
   else if FProperty_ <> nil then
@@ -43966,19 +43966,19 @@ begin
   if value <> '' then
   begin
     if FValue = nil then
-      FValue := TFhirCode.create;
+      FValue := TFhirCode.Create;
     FValue.value := value
   end
   else if FValue <> nil then
     FValue.value := '';
 end;
 
-function TFhirValueSetComposeIncludeFilter.sizeInBytesV : cardinal;
+function TFhirValueSetComposeIncludeFilter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FProperty_.sizeInBytes);
-  inc(result, FOp.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FProperty_.sizeInBytes(magic));
+  inc(result, FOp.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeIncludeFilterListEnumerator }
@@ -43992,7 +43992,7 @@ end;
 
 destructor TFhirValueSetComposeIncludeFilterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -44007,22 +44007,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetComposeIncludeFilterListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetComposeIncludeFilterListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetComposeIncludeFilterList }
-procedure TFhirValueSetComposeIncludeFilterList.AddItem(value: TFhirValueSetComposeIncludeFilter);
+function TFhirValueSetComposeIncludeFilterList.AddItem(value: TFhirValueSetComposeIncludeFilter): TFhirValueSetComposeIncludeFilter;
 begin
-  assert(value.ClassName = 'TFhirValueSetComposeIncludeFilter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetComposeIncludeFilter');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetComposeIncludeFilterList.Append: TFhirValueSetComposeIncludeFilter;
 begin
-  result := TFhirValueSetComposeIncludeFilter.create;
+  result := TFhirValueSetComposeIncludeFilter.Create;
   try
     add(result.Link);
   finally
@@ -44066,7 +44066,7 @@ end;
 
 function TFhirValueSetComposeIncludeFilterList.Insert(index: Integer): TFhirValueSetComposeIncludeFilter;
 begin
-  result := TFhirValueSetComposeIncludeFilter.create;
+  result := TFhirValueSetComposeIncludeFilter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -44120,8 +44120,8 @@ begin
   FTimestamp.free;
   FTotal.free;
   FOffset.free;
-  FParameterList.Free;
-  FContainsList.Free;
+  FParameterList.free;
+  FContainsList.free;
   inherited;
 end;
 
@@ -44349,7 +44349,7 @@ begin
   if value <> '' then
   begin
     if FIdentifier = nil then
-      FIdentifier := TFhirUri.create;
+      FIdentifier := TFhirUri.Create;
     FIdentifier.value := value
   end
   else if FIdentifier <> nil then
@@ -44373,7 +44373,7 @@ end;
 Procedure TFhirValueSetExpansion.SetTimestampST(value : TFslDateTime);
 begin
   if FTimestamp = nil then
-    FTimestamp := TFhirDateTime.create;
+    FTimestamp := TFhirDateTime.Create;
   FTimestamp.value := value
 end;
 
@@ -44396,7 +44396,7 @@ begin
   if value <> '' then
   begin
     if FTotal = nil then
-      FTotal := TFhirInteger.create;
+      FTotal := TFhirInteger.Create;
     FTotal.value := value
   end
   else if FTotal <> nil then
@@ -44422,7 +44422,7 @@ begin
   if value <> '' then
   begin
     if FOffset = nil then
-      FOffset := TFhirInteger.create;
+      FOffset := TFhirInteger.Create;
     FOffset.value := value
   end
   else if FOffset <> nil then
@@ -44453,15 +44453,15 @@ begin
   result := (FContainsList <> nil) and (FContainsList.count > 0);
 end;
 
-function TFhirValueSetExpansion.sizeInBytesV : cardinal;
+function TFhirValueSetExpansion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FTimestamp.sizeInBytes);
-  inc(result, FTotal.sizeInBytes);
-  inc(result, FOffset.sizeInBytes);
-  inc(result, FparameterList.sizeInBytes);
-  inc(result, FcontainsList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FTimestamp.sizeInBytes(magic));
+  inc(result, FTotal.sizeInBytes(magic));
+  inc(result, FOffset.sizeInBytes(magic));
+  inc(result, FparameterList.sizeInBytes(magic));
+  inc(result, FcontainsList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetExpansionListEnumerator }
@@ -44475,7 +44475,7 @@ end;
 
 destructor TFhirValueSetExpansionListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -44490,22 +44490,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetExpansionListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetExpansionListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetExpansionList }
-procedure TFhirValueSetExpansionList.AddItem(value: TFhirValueSetExpansion);
+function TFhirValueSetExpansionList.AddItem(value: TFhirValueSetExpansion): TFhirValueSetExpansion;
 begin
-  assert(value.ClassName = 'TFhirValueSetExpansion', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansion');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetExpansionList.Append: TFhirValueSetExpansion;
 begin
-  result := TFhirValueSetExpansion.create;
+  result := TFhirValueSetExpansion.Create;
   try
     add(result.Link);
   finally
@@ -44549,7 +44549,7 @@ end;
 
 function TFhirValueSetExpansionList.Insert(index: Integer): TFhirValueSetExpansion;
 begin
-  result := TFhirValueSetExpansion.create;
+  result := TFhirValueSetExpansion.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -44745,7 +44745,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -44758,11 +44758,11 @@ begin
   FValue := value;
 end;
 
-function TFhirValueSetExpansionParameter.sizeInBytesV : cardinal;
+function TFhirValueSetExpansionParameter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FValue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FValue.sizeInBytes(magic));
 end;
 
 { TFhirValueSetExpansionParameterListEnumerator }
@@ -44776,7 +44776,7 @@ end;
 
 destructor TFhirValueSetExpansionParameterListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -44791,22 +44791,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetExpansionParameterListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetExpansionParameterListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetExpansionParameterList }
-procedure TFhirValueSetExpansionParameterList.AddItem(value: TFhirValueSetExpansionParameter);
+function TFhirValueSetExpansionParameterList.AddItem(value: TFhirValueSetExpansionParameter): TFhirValueSetExpansionParameter;
 begin
-  assert(value.ClassName = 'TFhirValueSetExpansionParameter', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansionParameter');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetExpansionParameterList.Append: TFhirValueSetExpansionParameter;
 begin
-  result := TFhirValueSetExpansionParameter.create;
+  result := TFhirValueSetExpansionParameter.Create;
   try
     add(result.Link);
   finally
@@ -44850,7 +44850,7 @@ end;
 
 function TFhirValueSetExpansionParameterList.Insert(index: Integer): TFhirValueSetExpansionParameter;
 begin
-  result := TFhirValueSetExpansionParameter.create;
+  result := TFhirValueSetExpansionParameter.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -44905,7 +44905,7 @@ begin
   FVersion.free;
   FCode.free;
   FDisplay.free;
-  FContainsList.Free;
+  FContainsList.free;
   inherited;
 end;
 
@@ -45121,7 +45121,7 @@ begin
   if value <> '' then
   begin
     if FSystem = nil then
-      FSystem := TFhirUri.create;
+      FSystem := TFhirUri.Create;
     FSystem.value := value
   end
   else if FSystem <> nil then
@@ -45145,7 +45145,7 @@ end;
 Procedure TFhirValueSetExpansionContains.SetAbstractST(value : Boolean);
 begin
   if FAbstract = nil then
-    FAbstract := TFhirBoolean.create;
+    FAbstract := TFhirBoolean.Create;
   FAbstract.value := value
 end;
 
@@ -45168,7 +45168,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -45194,7 +45194,7 @@ begin
   if value <> '' then
   begin
     if FCode = nil then
-      FCode := TFhirCode.create;
+      FCode := TFhirCode.Create;
     FCode.value := value
   end
   else if FCode <> nil then
@@ -45220,7 +45220,7 @@ begin
   if value <> '' then
   begin
     if FDisplay = nil then
-      FDisplay := TFhirString.create;
+      FDisplay := TFhirString.Create;
     FDisplay.value := value
   end
   else if FDisplay <> nil then
@@ -45239,15 +45239,15 @@ begin
   result := (FContainsList <> nil) and (FContainsList.count > 0);
 end;
 
-function TFhirValueSetExpansionContains.sizeInBytesV : cardinal;
+function TFhirValueSetExpansionContains.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSystem.sizeInBytes);
-  inc(result, FAbstract.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FCode.sizeInBytes);
-  inc(result, FDisplay.sizeInBytes);
-  inc(result, FcontainsList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSystem.sizeInBytes(magic));
+  inc(result, FAbstract.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FCode.sizeInBytes(magic));
+  inc(result, FDisplay.sizeInBytes(magic));
+  inc(result, FcontainsList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetExpansionContainsListEnumerator }
@@ -45261,7 +45261,7 @@ end;
 
 destructor TFhirValueSetExpansionContainsListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -45276,22 +45276,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetExpansionContainsListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetExpansionContainsListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetExpansionContainsList }
-procedure TFhirValueSetExpansionContainsList.AddItem(value: TFhirValueSetExpansionContains);
+function TFhirValueSetExpansionContainsList.AddItem(value: TFhirValueSetExpansionContains): TFhirValueSetExpansionContains;
 begin
-  assert(value.ClassName = 'TFhirValueSetExpansionContains', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSetExpansionContains');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetExpansionContainsList.Append: TFhirValueSetExpansionContains;
 begin
-  result := TFhirValueSetExpansionContains.create;
+  result := TFhirValueSetExpansionContains.Create;
   try
     add(result.Link);
   finally
@@ -45335,7 +45335,7 @@ end;
 
 function TFhirValueSetExpansionContainsList.Insert(index: Integer): TFhirValueSetExpansionContains;
 begin
-  result := TFhirValueSetExpansionContains.create;
+  result := TFhirValueSetExpansionContains.Create;
   try
     inherited insert(index, result.Link);
   finally
@@ -45392,11 +45392,11 @@ begin
   FStatus.free;
   FExperimental.free;
   FPublisher.free;
-  FContactList.Free;
+  FContactList.free;
   FDate.free;
   FLockedDate.free;
   FDescription.free;
-  FUseContextList.Free;
+  FUseContextList.free;
   FImmutable.free;
   FRequirements.free;
   FCopyright.free;
@@ -45824,7 +45824,7 @@ begin
   if value <> '' then
   begin
     if FUrl = nil then
-      FUrl := TFhirUri.create;
+      FUrl := TFhirUri.Create;
     FUrl.value := value
   end
   else if FUrl <> nil then
@@ -45856,7 +45856,7 @@ begin
   if value <> '' then
   begin
     if FVersion = nil then
-      FVersion := TFhirString.create;
+      FVersion := TFhirString.Create;
     FVersion.value := value
   end
   else if FVersion <> nil then
@@ -45882,7 +45882,7 @@ begin
   if value <> '' then
   begin
     if FName = nil then
-      FName := TFhirString.create;
+      FName := TFhirString.Create;
     FName.value := value
   end
   else if FName <> nil then
@@ -45928,7 +45928,7 @@ end;
 Procedure TFhirValueSet.SetExperimentalST(value : Boolean);
 begin
   if FExperimental = nil then
-    FExperimental := TFhirBoolean.create;
+    FExperimental := TFhirBoolean.Create;
   FExperimental.value := value
 end;
 
@@ -45951,7 +45951,7 @@ begin
   if value <> '' then
   begin
     if FPublisher = nil then
-      FPublisher := TFhirString.create;
+      FPublisher := TFhirString.Create;
     FPublisher.value := value
   end
   else if FPublisher <> nil then
@@ -45987,7 +45987,7 @@ end;
 Procedure TFhirValueSet.SetDateST(value : TFslDateTime);
 begin
   if FDate = nil then
-    FDate := TFhirDateTime.create;
+    FDate := TFhirDateTime.Create;
   FDate.value := value
 end;
 
@@ -46008,7 +46008,7 @@ end;
 Procedure TFhirValueSet.SetLockedDateST(value : TFslDateTime);
 begin
   if FLockedDate = nil then
-    FLockedDate := TFhirDate.create;
+    FLockedDate := TFhirDate.Create;
   FLockedDate.value := value
 end;
 
@@ -46031,7 +46031,7 @@ begin
   if value <> '' then
   begin
     if FDescription = nil then
-      FDescription := TFhirString.create;
+      FDescription := TFhirString.Create;
     FDescription.value := value
   end
   else if FDescription <> nil then
@@ -46067,7 +46067,7 @@ end;
 Procedure TFhirValueSet.SetImmutableST(value : Boolean);
 begin
   if FImmutable = nil then
-    FImmutable := TFhirBoolean.create;
+    FImmutable := TFhirBoolean.Create;
   FImmutable.value := value
 end;
 
@@ -46090,7 +46090,7 @@ begin
   if value <> '' then
   begin
     if FRequirements = nil then
-      FRequirements := TFhirString.create;
+      FRequirements := TFhirString.Create;
     FRequirements.value := value
   end
   else if FRequirements <> nil then
@@ -46116,7 +46116,7 @@ begin
   if value <> '' then
   begin
     if FCopyright = nil then
-      FCopyright := TFhirString.create;
+      FCopyright := TFhirString.Create;
     FCopyright.value := value
   end
   else if FCopyright <> nil then
@@ -46140,7 +46140,7 @@ end;
 Procedure TFhirValueSet.SetExtensibleST(value : Boolean);
 begin
   if FExtensible = nil then
-    FExtensible := TFhirBoolean.create;
+    FExtensible := TFhirBoolean.Create;
   FExtensible.value := value
 end;
 
@@ -46162,28 +46162,28 @@ begin
   FExpansion := value;
 end;
 
-function TFhirValueSet.sizeInBytesV : cardinal;
+function TFhirValueSet.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUrl.sizeInBytes);
-  inc(result, FIdentifier.sizeInBytes);
-  inc(result, FVersion.sizeInBytes);
-  inc(result, FName.sizeInBytes);
-  inc(result, FStatus.sizeInBytes);
-  inc(result, FExperimental.sizeInBytes);
-  inc(result, FPublisher.sizeInBytes);
-  inc(result, FcontactList.sizeInBytes);
-  inc(result, FDate.sizeInBytes);
-  inc(result, FLockedDate.sizeInBytes);
-  inc(result, FDescription.sizeInBytes);
-  inc(result, FuseContextList.sizeInBytes);
-  inc(result, FImmutable.sizeInBytes);
-  inc(result, FRequirements.sizeInBytes);
-  inc(result, FCopyright.sizeInBytes);
-  inc(result, FExtensible.sizeInBytes);
-  inc(result, FCodeSystem.sizeInBytes);
-  inc(result, FCompose.sizeInBytes);
-  inc(result, FExpansion.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUrl.sizeInBytes(magic));
+  inc(result, FIdentifier.sizeInBytes(magic));
+  inc(result, FVersion.sizeInBytes(magic));
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FStatus.sizeInBytes(magic));
+  inc(result, FExperimental.sizeInBytes(magic));
+  inc(result, FPublisher.sizeInBytes(magic));
+  inc(result, FcontactList.sizeInBytes(magic));
+  inc(result, FDate.sizeInBytes(magic));
+  inc(result, FLockedDate.sizeInBytes(magic));
+  inc(result, FDescription.sizeInBytes(magic));
+  inc(result, FuseContextList.sizeInBytes(magic));
+  inc(result, FImmutable.sizeInBytes(magic));
+  inc(result, FRequirements.sizeInBytes(magic));
+  inc(result, FCopyright.sizeInBytes(magic));
+  inc(result, FExtensible.sizeInBytes(magic));
+  inc(result, FCodeSystem.sizeInBytes(magic));
+  inc(result, FCompose.sizeInBytes(magic));
+  inc(result, FExpansion.sizeInBytes(magic));
 end;
 
 { TFhirValueSetListEnumerator }
@@ -46197,7 +46197,7 @@ end;
 
 destructor TFhirValueSetListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -46212,22 +46212,22 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirValueSetListEnumerator.sizeInBytesV : cardinal;
+function TFhirValueSetListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirValueSetList }
-procedure TFhirValueSetList.AddItem(value: TFhirValueSet);
+function TFhirValueSetList.AddItem(value: TFhirValueSet): TFhirValueSet;
 begin
-  assert(value.ClassName = 'TFhirValueSet', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirValueSet');
   add(value);
+  result := value;
 end;
 
 function TFhirValueSetList.Append: TFhirValueSet;
 begin
-  result := TFhirValueSet.create;
+  result := TFhirValueSet.Create;
   try
     add(result.Link);
   finally
@@ -46271,7 +46271,7 @@ end;
 
 function TFhirValueSetList.Insert(index: Integer): TFhirValueSet;
 begin
-  result := TFhirValueSet.create;
+  result := TFhirValueSet.Create;
   try
     inherited insert(index, result.Link);
   finally

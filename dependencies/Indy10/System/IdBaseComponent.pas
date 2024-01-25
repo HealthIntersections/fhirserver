@@ -16,10 +16,10 @@
   $Log$
 }
 {
-  Rev 1.10    08.11.2004 ã. 20:00:46  DBondzhev
+  Rev 1.10    08.11.2004 c. 20:00:46  DBondzhev
   changed TObject to &Object
 
-  Rev 1.9    07.11.2004 ã. 18:17:54  DBondzhev
+  Rev 1.9    07.11.2004 c. 18:17:54  DBondzhev
   This contains fix for proper call to unit initialization sections.
 
   Rev 1.8    2004.11.06 10:55:00 PM  czhower

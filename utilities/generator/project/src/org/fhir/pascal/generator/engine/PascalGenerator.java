@@ -25,9 +25,10 @@ import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.r5.model.StructureDefinition.TypeDerivationRule;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.utilities.Utilities;
-import org.hl7.fhir.utilities.cache.NpmPackage;
-import org.hl7.fhir.utilities.cache.FilesystemPackageCacheManager;
-import org.hl7.fhir.utilities.cache.ToolsVersion;
+import org.hl7.fhir.utilities.VersionUtilities;
+import org.hl7.fhir.utilities.npm.FilesystemPackageCacheManager;
+import org.hl7.fhir.utilities.npm.NpmPackage;
+import org.hl7.fhir.utilities.npm.ToolsVersion;
 
 public class PascalGenerator {
   
@@ -35,8 +36,8 @@ public class PascalGenerator {
     System.out.println("FHIR Pascal Code Generator");
     if (args.length != 2) {
       System.out.println("Usage: invoke with 2 command line parameters to generate HAPI R5 code");
-      System.out.println("1: fhir version to generate from (e.g. 4.2.0 or 'current'");
-      System.out.println("2: The root path of the local copy of the github repo");
+      System.out.println("1: fhir version to generate from (R5 or R4B)");
+      System.out.println("2: The root path of the local copy of the fhirserver github repo");
     } else {
       String version = args[0];
       String path = args[1];
@@ -48,24 +49,37 @@ public class PascalGenerator {
     long start = System.currentTimeMillis();
     Date date = new Date();
     
+    boolean r4b = "R4B".equalsIgnoreCase(version);
     String tp = Utilities.path(path, "utilities", "generator", "project", "templates");
-    String sp = Utilities.path(path, "library", "r5");
-    String dest = Utilities.path(path, "library", "r5gen");
+    String sp = r4b ?  Utilities.path(path, "library", "fhir4b") : Utilities.path(path, "library", "fhir5");
+    String dest = r4b ?  Utilities.path(path, "library", "fhir4b-gen") : Utilities.path(path, "library", "fhir5-gen");
     System.out.println("Load templates from "+tp);
     System.out.println("Master source in "+sp);
     System.out.println("Produce source in  "+dest);
-    Configuration config = new Configuration(tp, sp, dest);
+    Configuration config = new Configuration(tp, sp, dest, r4b ? "4b" : "5");
     
     FilesystemPackageCacheManager pcm = new FilesystemPackageCacheManager(true, ToolsVersion.TOOLS_VERSION);
     System.out.println("Cache: "+pcm.getFolder());
-    System.out.println("Load hl7.fhir.r5.core#"+version);
-    NpmPackage npm = pcm.loadPackage("hl7.fhir.r5.core", version);
-    Definitions master = DefinitionsLoader.load(npm); 
+    Definitions master;
+    Definitions expansions;
+    NpmPackage npm;
+    if (r4b) {
+      System.out.println("Load hl7.fhir.r4b.core#4.3.0");
+      npm = pcm.loadPackage("hl7.fhir.r4b.core", "4.3.0");
+      master = DefinitionsLoader4b.load(npm); 
+      System.out.println("Load hl7.fhir.r4b.expansions#4.3.0");
+      expansions = DefinitionsLoader4b.load(pcm.loadPackage("hl7.fhir.r4b.expansions", "4.3.0"));
+    } else {
+      System.out.println("Load hl7.fhir.r5.core#5.0.0");
+      npm = pcm.loadPackage("hl7.fhir.r5.core", "5.0.0");
+      master = DefinitionsLoader5.load(npm); 
+      System.out.println("Load hl7.fhir.r5.expansions#5.0.0");
+      expansions = DefinitionsLoader5.load(pcm.loadPackage("hl7.fhir.r5.expansions", "5.0.0"));
+    }
     
+    master.fix();
     markValueSets(master, config);
     
-    System.out.println("Load hl7.fhir.r5.expansions#"+version);
-    Definitions expansions = DefinitionsLoader.load(pcm.loadPackage("hl7.fhir.r5.expansions", version));
     
     System.out.println("Process Expansions");
     updateExpansions(master, expansions);
@@ -87,8 +101,10 @@ public class PascalGenerator {
     processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("Element"));
     processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("BackboneElement"));
     processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("DataType"));
-    processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("BackboneType"));
-    processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("PrimitiveType"));
+    if (!r4b) {
+      processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("BackboneType"));
+      processType(config, master, fgen, jsgen, tgen, fmtgen, master.getType("PrimitiveType"));
+    }
     
     for (StructureDefinition sd : master.getStructures().getList()) {
       if (sd.getDerivation() == TypeDerivationRule.SPECIALIZATION && sd.getKind() == StructureDefinitionKind.COMPLEXTYPE) {
@@ -110,8 +126,10 @@ public class PascalGenerator {
     // process abstracts in particular order
     processResource(config, master, cgen, fgen, igen, iigen, jsgen, rgen, fmtgen, master.getType("Resource"));
     processResource(config, master, cgen, fgen, igen, iigen, jsgen, rgen, fmtgen, master.getType("DomainResource"));
-    processResource(config, master, cgen, fgen, igen, iigen, jsgen, rgen, fmtgen, master.getType("CanonicalResource"));
-    processResource(config, master, cgen, fgen, igen, iigen, jsgen, rgen, fmtgen, master.getType("MetadataResource"));
+    if (!r4b) {
+      processResource(config, master, cgen, fgen, igen, iigen, jsgen, rgen, fmtgen, master.getType("CanonicalResource"));
+      processResource(config, master, cgen, fgen, igen, iigen, jsgen, rgen, fmtgen, master.getType("MetadataResource"));
+    }
 
     for (StructureDefinition sd : master.getStructures().getList()) {
       if (sd.getDerivation() == TypeDerivationRule.SPECIALIZATION && sd.getKind() == StructureDefinitionKind.RESOURCE) {
@@ -132,23 +150,27 @@ public class PascalGenerator {
     System.out.println(" .. Enumerations");
     EnumsGenerator egen = new EnumsGenerator(master, config, date, npm.version());
     egen.genEnums();
-    egen.generate(Utilities.path(dest,  "FHIR.R5.Enums.pas"));
+    egen.generate(Utilities.path(dest,  "fhir"+n(r4b)+"_enums.pas"));
         
     System.out.println("Finish");   
-    cgen.generate(Utilities.path(dest, "FHIR.R5.Constants.pas"));
-    fgen.generate(Utilities.path(dest, "FHIR.R5.Factory.pas"));
-    igen.generate(Utilities.path(dest, "FHIR.R5.inc"));
-    iigen.generate(Utilities.path(dest, "FHIR.R5.IndexInfo.pas"));
-    jsgen.generate(Utilities.path(dest, "FHIR.R5.Javascript.pas"));
-    ogen.generate(Utilities.path(dest, "FHIR.R5.Operations.pas"));
-    rgen.generate(Utilities.path(dest, "FHIR.R5.Resources.pas"));
-    tgen.generate(Utilities.path(dest,  "FHIR.R5.Types.pas"));
-    fmtgen.generateJson(Utilities.path(dest, "FHIR.R5.Json.pas"));
-    fmtgen.generateXml(Utilities.path(dest,  "FHIR.R5.Xml.pas"));
-    fmtgen.generateTurtle(Utilities.path(dest,  "FHIR.R5.Turtle.pas"));
+    cgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_constants.pas"));
+    fgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_factory.pas"));
+    igen.generate(Utilities.path(dest, "fhir"+n(r4b)+".inc"));
+    iigen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_indexinfo.pas"));
+    // jsgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_javascript.pas"));
+    ogen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_operations.pas"));
+    rgen.generate(Utilities.path(dest, "fhir"+n(r4b)+"_resources.pas"));
+    tgen.generate(Utilities.path(dest,  "fhir"+n(r4b)+"_types.pas"));
+    fmtgen.generateJson(Utilities.path(dest, "fhir"+n(r4b)+"_json.pas"));
+    fmtgen.generateXml(Utilities.path(dest,  "fhir"+n(r4b)+"_xml.pas"));
+    fmtgen.generateTurtle(Utilities.path(dest,  "fhir"+n(r4b)+"_turtle.pas"));
 
     System.out.println("Done ("+Long.toString(System.currentTimeMillis()-start)+"ms)");   
     
+  }
+
+  private String n(boolean r4b) {
+    return r4b ? "4b" : "5";
   }
 
   public void processResource(Configuration config, Definitions master, ConstantsGenerator cgen, FactoryGenerator fgen, IncGenerator igen,

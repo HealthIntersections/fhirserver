@@ -62,7 +62,7 @@ type
     procedure writeHeader(b : TStringBuilder; definition : TFhirGraphDefinition);
     procedure writeDefinition(b : TStringBuilder; definition : TFhirGraphDefinition);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -100,7 +100,7 @@ type
 
     procedure SetAppInfo(const Value: TFslObject);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(context : TFHIRWorkerContextWithFactory); virtual;
     destructor Destroy; override;
@@ -127,7 +127,7 @@ implementation
 
 destructor TFHIRGraphDefinitionParser4.Destroy;
 begin
-  FLexer.Free;
+  FLexer.free;
   inherited;
 end;
 
@@ -167,12 +167,12 @@ begin
           expr.free;
         end;
       finally
-        fpp.Free;
+        fpp.free;
       end;
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -189,14 +189,14 @@ begin
       raise FLexer.error('Unexpected content');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 
 end;
 
 procedure TFHIRGraphDefinitionParser4.readHeader(gd: TFhirGraphDefinition);
 begin
-  raise EFHIRTodo.create('TFHIRGraphDefinitionParser4.readHeader');
+  raise EFHIRTodo.Create('TFHIRGraphDefinitionParser4.readHeader');
 end;
 
 procedure TFHIRGraphDefinitionParser4.readLinkList(list: TFhirGraphDefinitionLinkList);
@@ -236,7 +236,7 @@ begin
         expr.free;
       end;
     finally
-      fpp.Free;
+      fpp.free;
     end;
     if (FLexer.takeToken('cardinality')) then
     begin
@@ -265,7 +265,7 @@ begin
     until not FLexer.hasToken(';');
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -314,7 +314,7 @@ begin
     readLinkList(tgt.link_List);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -331,7 +331,7 @@ begin
     writeDefinition(b, t);
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -478,10 +478,10 @@ begin
 end;
 
 
-function TFHIRGraphDefinitionParser4.sizeInBytesV : cardinal;
+function TFHIRGraphDefinitionParser4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FLexer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FLexer.sizeInBytes(magic));
 end;
 
 { TFHIRGraphDefinitionEngine4 }
@@ -495,36 +495,36 @@ end;
 
 destructor TFHIRGraphDefinitionEngine4.Destroy;
 begin
-  FAppinfo.Free;
-  FBundle.Free;
-  FDefinition.Free;
-  FStart.Free;
-  FPathEngine.Free;
-  FContext.Free;
+  FAppinfo.free;
+  FBundle.free;
+  FDefinition.free;
+  FStart.free;
+  FPathEngine.free;
+  FContext.free;
   inherited;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetAppInfo(const Value: TFslObject);
 begin
-  FAppinfo.Free;
+  FAppinfo.free;
   FAppinfo := Value;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetBundle(const Value: TFHIRBundle);
 begin
-  FBundle.Free;
+  FBundle.free;
   FBundle := Value;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetDefinition(const Value: TFhirGraphDefinition);
 begin
-  FDefinition.Free;
+  FDefinition.free;
   FDefinition := Value;
 end;
 
 procedure TFHIRGraphDefinitionEngine4.SetStart(const Value: TFHIRResource);
 begin
-  FStart.Free;
+  FStart.free;
   FStart := Value;
 end;
 
@@ -582,7 +582,7 @@ var
   refed : boolean;
 begin
   refed := false;
-  p := THTTPParameters.create(value, false);
+  p := THTTPParameters.Create(value, false);
   try
     for i := 0 to p.Count -1 do
     begin
@@ -599,7 +599,7 @@ begin
       end;
     end;
   finally
-    p.Free;
+    p.free;
   end;
   check(refed, 'no use of {ref} found');
 end;
@@ -657,16 +657,16 @@ begin
               end;
             end;
           finally
-            tgtCtxt.Free;
-            res.Free;
+            tgtCtxt.free;
+            res.free;
           end;
         end;
       end;
     finally
-      matches.Free;
+      matches.free;
     end;
   finally
-    node.Free;
+    node.free;
   end;
 end;
 
@@ -683,9 +683,9 @@ begin
   check(link.targetList[0].params.Contains('{ref}'), 'If there is no path, the target must have parameters that include a parameter using {ref} at '+focusPath);
   path := focusPath+' -> '+CODES_TFhirResourceTypesEnum[link.targetList[0].type_]+'?'+link.targetList[0].params;
 
-  list := TFslList<TFHIRResourceV>.create;
+  list := TFslList<TFHIRResourceV>.Create;
   try
-    params := TFslList<TGraphQLArgument>.create;
+    params := TFslList<TGraphQLArgument>.Create;
     try
       parseParams(params, link.targetList[0].params, focus);
       FOnListResources(appInfo, CODES_TFhirResourceTypesEnum[link.targetList[0].type_], params, list);
@@ -704,20 +704,20 @@ begin
       end;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
-function TFHIRGraphDefinitionEngine4.sizeInBytesV : cardinal;
+function TFHIRGraphDefinitionEngine4.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FContext.sizeInBytes);
-  inc(result, FPathEngine.sizeInBytes);
-  inc(result, FBundle.sizeInBytes);
-  inc(result, FStart.sizeInBytes);
-  inc(result, FDefinition.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FPathEngine.sizeInBytes(magic));
+  inc(result, FBundle.sizeInBytes(magic));
+  inc(result, FStart.sizeInBytes(magic));
+  inc(result, FDefinition.sizeInBytes(magic));
   inc(result, (FBaseUrl.length * sizeof(char)) + 12);
-  inc(result, FAppinfo.sizeInBytes);
+  inc(result, FAppinfo.sizeInBytes(magic));
 end;
 
 end.

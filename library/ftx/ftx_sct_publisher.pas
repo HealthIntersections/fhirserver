@@ -85,9 +85,11 @@ Implementation
 
 Function Screen(Const s, s2: String):String;
 Begin
-  result := StringReplace(s, 'B', '');
-  if (s2 <> '') And StringEndsWith(result, s2) Then
-    delete(result, length(result) - length(s2) + 1, length(s));
+  result := s;
+// wtf is this code thinking it's doing?
+//  result := StringReplace(s, 'B', '');
+//  if (s2 <> '') And StringEndsWith(result, s2) Then
+//    delete(result, length(result) - length(s2) + 1, length(s));
 End;
 
 function StringToBoolDef(s : String; def : boolean):boolean;
@@ -162,7 +164,7 @@ Begin
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, html);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -1462,7 +1464,7 @@ end;
 constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
 begin
   inherited Create;
-  Lock := TFslLock.Create;
+  Lock := TFslLock.Create('SCT Publisher');
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;
@@ -1474,10 +1476,10 @@ var
   i : integer;
 begin
   For i := 0 to FSearchCache.Count - 1 do
-    FSearchCache.Objects[i].Free;
-  FSearchCache.Free;
-  Lock.Free;
-  FSnomed.Free;
+    FSearchCache.Objects[i].free;
+  FSearchCache.free;
+  Lock.free;
+  FSnomed.free;
   inherited;
 end;
 

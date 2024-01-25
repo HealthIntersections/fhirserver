@@ -66,6 +66,7 @@ type
     FEvents : TFslList<TGoogleAnalyaticsEventData>;
     FServerId: String;
     FCycle : integer;
+    FWorking : boolean;
     procedure post(cnt : String);
     {$IFDEF FPC}
     function filter(sender : TObject; item : TGoogleAnalyaticsEventData) : boolean;
@@ -90,13 +91,13 @@ constructor TGoogleAnalyticsProvider.Create;
 begin
   inherited;
   FLock := TFslLock.Create('GoogleAnalytics');
-  FEvents := TFslList<TGoogleAnalyaticsEventData>.create;
+  FEvents := TFslList<TGoogleAnalyaticsEventData>.Create;
 end;
 
 destructor TGoogleAnalyticsProvider.Destroy;
 begin
-  FEvents.Free;
-  FLock.Free;
+  FEvents.free;
+  FLock.free;
   inherited;
 end;
 
@@ -106,7 +107,8 @@ var
   ssl : TIdSSLIOHandlerSocketOpenSSL;
   post, resp : TStringStream;
 begin
-  post := TStringStream.create(cnt, TEncoding.UTF8);
+  exit;
+  post := TStringStream.Create(cnt, TEncoding.UTF8);
   try
     http := TIdHTTP.Create(nil);
     Try
@@ -116,13 +118,13 @@ begin
         ssl.SSLOptions.Mode := sslmClient;
         ssl.SSLOptions.Method := sslvTLSv1_2;
         http.Request.ContentType := 'application/x-www-form-urlencoded';
-        resp := TStringStream.create;
+        resp := TStringStream.Create;
         try
           try
             http.Post('https://www.google-analytics.com/batch', post, resp);
           except
             on e : EIdHTTPProtocolException do
-              raise EFHIRException.create(e.message+' : '+e.ErrorMessage);
+              raise EFHIRException.Create(e.message+' : '+e.ErrorMessage);
             on e:Exception do
               raise;
           end;
@@ -146,6 +148,8 @@ var
 begin
   if FServerId = '' then
     exit;
+  if not FWorking then
+    exit;
   event := TGoogleAnalyaticsEventData.Create;
   try
     event.resourceName := resourceName;
@@ -160,7 +164,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    event.Free;
+    event.free;
   end;
 end;
 
@@ -178,6 +182,7 @@ var
 begin
   if FServerId = '' then
     exit;
+  FWorking := true;
   b := TStringBuilder.Create;
   try
     FLock.Lock;
@@ -217,7 +222,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 

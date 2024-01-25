@@ -2,7 +2,7 @@ Unit wp_html;
 
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -131,7 +131,7 @@ Type
       procedure AddParaPiece(oDocument: TWPWorkingDocument);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -233,7 +233,7 @@ Type
     Function HTMLStream : TFslStream; Overload; Virtual;
     Function CanSaveImage : Boolean; Overload; Virtual;
     Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -273,7 +273,7 @@ Type
       Function HTMLStream : TFslStream; Override;
       Function CanSaveImage : Boolean; Override;
       Procedure SaveImage(oBuffer : TFslBuffer; Const sExtension : String; Var sName : String); Override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 Implementation
@@ -291,8 +291,8 @@ End;
 
 Destructor TWPHTMLReader.Destroy;
 Begin
-  FContextStack.Free;
-  FDom.Free;
+  FContextStack.free;
+  FDom.free;
 
   Inherited;
 End;
@@ -309,7 +309,7 @@ Begin
   Try
     oParser.ConsumeDocument(FDom);
   Finally
-    oParser.Free;
+    oParser.free;
   End;
 
   ReadCSSStyles;
@@ -405,7 +405,7 @@ Begin
             ReadStyleContextPara(oPiece);
             oDocument.Pieces.Add(oPiece.Link);
           Finally
-            oPiece.Free;
+            oPiece.free;
           End;
         End
         Else If (WPHTMLReaderAllowedItemField In aAllowed) Then
@@ -421,10 +421,10 @@ Begin
             Try
               oDocument.Pieces.Add(oFieldStop.Link);
             Finally
-              oFieldStop.Free;
+              oFieldStop.free;
             End;
           Finally
-            oFieldStart.Free;
+            oFieldStart.free;
           End;
         End;
 
@@ -451,7 +451,7 @@ Begin
 
       oDocument.Pieces.Add(oPiece.Link);
     Finally
-      oPiece.Free;
+      oPiece.free;
     End;
   Finally
     PopStyleContext;
@@ -477,7 +477,7 @@ Begin
 
       oDocument.Pieces.Add(oPiece.Link);
     Finally
-      oPiece.Free;
+      oPiece.free;
     End;
   Finally
     PopStyleContext;
@@ -527,7 +527,7 @@ Begin
 
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -561,7 +561,7 @@ Begin
 
             oDocument.Pieces.Add(oPiece.Link);
           Finally
-            oPiece.Free;
+            oPiece.free;
           End;
         Finally
           PopStyleContext;
@@ -622,10 +622,10 @@ Begin
           oStop.AssignStyle(oSection);
           oDocument.Pieces.Add(oStop.Link);
         Finally
-          oStop.Free;
+          oStop.free;
         End;
       Finally
-        oSection.Free;
+        oSection.free;
       End;
     End
     Else
@@ -749,7 +749,7 @@ Begin
     ReadStyleContext(oPara);
     oDocument.Pieces.Add(oPara.Link);
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -772,7 +772,7 @@ Begin
     oText.Content := sWorkingText;
     oDocument.Pieces.Add(oText.Link);
   Finally
-    oText.Free;
+    oText.free;
   End;
 End;
 
@@ -821,7 +821,7 @@ End;
 (*
 function TWPHTMLReader.ReadSection(oSource: TFslHTMLSection): TWPDSection;
 begin
-  result := TWPDSection.create;
+  result := TWPDSection.Create;
   try
     result.Name := oSource.Id;
     result.DisplayName := oSource.TitleAttribute;
@@ -842,7 +842,7 @@ Begin
     ReadTextFragment(Result, nil, oText, '', Nil);
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -873,7 +873,7 @@ Begin
     oNew.Bold := tsTrue;
     ReadParagraphContent(oParagraph, oField, oBold.Items, sStyle, oNew);
   finally
-    oNew.Free;
+    oNew.free;
   end;
 End;
 
@@ -888,7 +888,7 @@ Begin
     oNew.Underline := tsTrue;
     ReadParagraphContent(oParagraph, oField, oUnderline.Items, sStyle, oNew);
   finally
-    oNew.Free;
+    oNew.free;
   end;
 End;
 
@@ -903,7 +903,7 @@ Begin
     oNew.Italic := tsTrue;
     ReadParagraphContent(oParagraph, oField, oItalic.Items, sStyle, oNew);
   finally
-    oNew.Free;
+    oNew.free;
   end;
 End;
 
@@ -952,7 +952,7 @@ Begin
       ReadStyleContext(oBreak);
       oDocument.Pieces.Add(oBreak.Link);
     Finally
-      oBreak.Free;
+      oBreak.free;
     End;
   Finally
     PopStyleContext;
@@ -979,7 +979,7 @@ Begin
     Try
       LoadImage(oImage, oBuffer, ifUnknown, False);
     Finally
-      oBuffer.Free;
+      oBuffer.free;
     End;
 
     oImage.Height := StrToIntDef(oImg.Height, oImage.Image.Height);
@@ -987,7 +987,7 @@ Begin
 
     oDocument.Pieces.Add(oImage.Link);
   Finally
-    oImage.Free;
+    oImage.free;
   End;
 End;
 
@@ -1008,7 +1008,7 @@ Begin
     ReadCSSFontInfo(oNew, sStyle, oSrcFont.Style);
     ReadParagraphContent(oParagraph, oField, oSrcFont.Items, sStyle, oNew);
   finally
-    oNew.Free;
+    oNew.free;
   end;
 End;
 
@@ -1029,7 +1029,7 @@ Begin
       end;
     ReadCSSFontInfo(oNew, sStyle, oAnchor.Style);
 
-    oFld := TWPDField.create;
+    oFld := TWPDField.Create;
     try
       oFld.Name := oAnchor.Name;
       oFld.URL := oAnchor.URL;
@@ -1045,10 +1045,10 @@ Begin
       ReadParagraphContent(nil, oFld, oAnchor.Items, sStyle, oNew);
       oParagraph.Pieces.Add(oFld.Link);
     finally
-      oFld.Free;
+      oFld.free;
     end;
   finally
-    oNew.Free;
+    oNew.free;
   end;
 end;
 
@@ -1089,7 +1089,7 @@ Begin
 
         Styles.Add(oStyle.Link);
       Finally
-        oStyle.Free;
+        oStyle.free;
       End;
       End;
     End;
@@ -1226,7 +1226,7 @@ Begin
 
     FContextStack.Push(oContext.Link);
   Finally
-    oContext.Free;
+    oContext.free;
   End;
 End;
 
@@ -1328,10 +1328,10 @@ Begin
 
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 End;
 
@@ -1376,7 +1376,7 @@ Begin
       ReadStyleContext(oBreak);
       oDocument.Pieces.Add(oBreak.Link);
     Finally
-      oBreak.Free;
+      oBreak.free;
     End;
   Finally
     PopStyleContext;
@@ -1429,10 +1429,10 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   Finally
-    oStart.Free;
+    oStart.free;
     PopStyleContext;
   End;
 End;
@@ -1464,11 +1464,11 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
 
   Finally
-    oStart.Free;
+    oStart.free;
     PopStyleContext;
   End;
 End;
@@ -1514,10 +1514,10 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   Finally
-    oStart.Free;
+    oStart.free;
     PopStyleContext;
   End;
 
@@ -1582,7 +1582,7 @@ Begin
       End;
     End;
   Finally
-    oIter.Free;
+    oIter.free;
   End;
 End;
 
@@ -1619,20 +1619,20 @@ Begin
       Try
         oDocument.Pieces.Add(oRowStop.Link);
       Finally
-        oRowStop.Free;
+        oRowStop.free;
       End;
     Finally
-      oRowStart.Free;
+      oRowStart.free;
     End;
 
     oTableStop := TWPWorkingDocumentStopPiece.Create(stTable);
     Try
       oDocument.Pieces.Add(oTableStop.Link);
     Finally
-      oTableStop.Free;
+      oTableStop.free;
     End;
   Finally
-    oTableStart.Free;
+    oTableStart.free;
   End;
 End;
 
@@ -1662,21 +1662,21 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 End;
 
 
 
 
-function TWPHTMLReader.sizeInBytesV : cardinal;
+function TWPHTMLReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDom.sizeInBytes);
-  inc(result, FContextStack.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDom.sizeInBytes(magic));
+  inc(result, FContextStack.sizeInBytes(magic));
 end;
 
 { TWPHTMLWriterEngine }
@@ -1694,8 +1694,8 @@ End;
 
 Destructor TWPHTMLWriterEngine.Destroy;
 Begin
-  FCSSStyles.Free;
-  FFormatter.Free;
+  FCSSStyles.free;
+  FFormatter.free;
   Inherited;
 End;
 
@@ -2049,11 +2049,11 @@ Begin
             TFslPortableNetworkGraphic.SavePNGToStream(TFslVCLGraphic(oImg), oMemory);
             End;
         Finally
-          oMemory.Free;
+          oMemory.free;
         End;
         SaveImage(oBuffer, sExt, sName);
       Finally
-        oBuffer.Free;
+        oBuffer.free;
       End;
       End;
     If sName <> '' Then
@@ -2408,7 +2408,7 @@ Begin
           oBorder.BrushImage.SaveToStream(oMem);
           FActiveFormatter.ProduceText(TAG_NAME_BRUSH, EncodeBase64(oMem.Buffer.AsText));
         Finally
-          oMem.Free;
+          oMem.free;
         End;
       End;
       }
@@ -2433,14 +2433,14 @@ Begin
 End;
 
 
-function TWPHTMLWriterEngine.sizeInBytesV : cardinal;
+function TWPHTMLWriterEngine.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFormatter.sizeInBytes);
-  inc(result, FCSSStyles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFormatter.sizeInBytes(magic));
+  inc(result, FCSSStyles.sizeInBytes(magic));
   inc(result, (FTitle.length * sizeof(char)) + 12);
-  inc(result, FParaFont.sizeInBytes);
-  inc(result, FSpanFont.sizeInBytes);
+  inc(result, FParaFont.sizeInBytes(magic));
+  inc(result, FSpanFont.sizeInBytes(magic));
   inc(result, (FParaStyle.length * sizeof(char)) + 12);
   inc(result, (FSpanStyle.length * sizeof(char)) + 12);
 end;
@@ -2467,7 +2467,7 @@ Function TWPMHTWriter.HTMLStream : TFslStream;
 Var
   oPart : TMimePart;
 Begin
-  oPart := TMimePart.create;
+  oPart := TMimePart.Create;
   Try
     oPart.TransferEncoding := '8bit';
     oPart.MediaType := 'text/html';
@@ -2479,7 +2479,7 @@ Begin
 
     FPackage.Parts.Add(oPart.Link);
   Finally
-    oPart.Free;
+    oPart.free;
   End;
 End;
 
@@ -2507,7 +2507,7 @@ Begin
     oPart.Content := oBuffer.Link;
     FPackage.Parts.Add(oPart.Link);
   Finally
-    oPart.Free;
+    oPart.free;
   End;
 End;
 
@@ -2522,10 +2522,10 @@ End;
 Procedure TWPMHTWriter.Finalise;
 Begin
   Inherited;
-  FHTMLStream.Free;
+  FHTMLStream.free;
   SetPackageHeaders;
   WritePackage;
-  FPackage.Free;
+  FPackage.free;
 End;
 
 
@@ -2541,20 +2541,20 @@ Procedure TWPMHTWriter.WritePackage;
 var
   s : TVCLStream;
 Begin
-  s := TVCLStream.create;
+  s := TVCLStream.Create;
   try
     s.Stream := Stream.Link;
     FPackage.WriteToStream(s, true);
   finally
-    s.Free;
+    s.free;
   end;
 End;
 
-function TWPMHTWriter.sizeInBytesV : cardinal;
+function TWPMHTWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHTMLStream.sizeInBytes);
-  inc(result, FPackage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHTMLStream.sizeInBytes(magic));
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 Procedure TWPHTMLReader.ReadAnchor(oDocument: TWPWorkingDocument; oAnchor: TFslHTMLAnchor);
@@ -2592,10 +2592,10 @@ Begin
 
         oDocument.Pieces.Add(oStop.Link);
       Finally
-        oStop.Free;
+        oStop.free;
       End;
     Finally
-      oStart.Free;
+      oStart.free;
     End;
   Finally
     PopStyleContext;

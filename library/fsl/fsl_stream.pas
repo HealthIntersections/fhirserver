@@ -1,7 +1,7 @@
 Unit fsl_stream;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -27,7 +27,6 @@ WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWIS
 ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
-
 {$I fhir.inc}
 
 Interface
@@ -36,10 +35,9 @@ Interface
 Uses
   {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
-  {$IFNDEF FPC} AnsiStrings, {$ENDIF}
+  {$IFDEF FPC} ZStream, {$ELSE} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  IdHeaderList, IdGlobal, IdGlobalProtocols,
-  fsl_fpc, fsl_base, fsl_collections, fsl_utilities;
+  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging, fsl_gzip;
 
 type
   EParserException = class;
@@ -165,7 +163,7 @@ type
     {$ENDIF}
       Procedure SetStream(oStream : TFslStream); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -217,7 +215,7 @@ type
       Function GetStream: TFslAccessStream; Virtual;
       Procedure SetStream(oStream : TFslAccessStream); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -249,7 +247,7 @@ type
       Function GetSize : Int64; Override;
       Procedure SetSize(Const iValue : Int64); Override;
 
-      function sizeInBytesV : cardinal; override;
+      function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Procedure Read(Var aBuffer; iCount : Integer); Override;
       Procedure Write(Const aBuffer; iCount : Integer); Override;
@@ -278,7 +276,7 @@ type
 
     Function ErrorClass : EFslExceptionClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(const AFileName: string; Mode: Word); overload;
     destructor Destroy; override;
@@ -296,6 +294,8 @@ type
     {
     A list of bytes
   }
+
+  { TFslBuffer }
 
   TFslBuffer = Class(TFslObject)
   Private
@@ -319,7 +319,7 @@ type
     procedure SetAsBytes(const Value: TBytes);
     function GetHasFormat: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     constructor Create(bytes : TBytes); Overload;
@@ -366,6 +366,7 @@ type
     Procedure SaveToStream(oStream : TFslStream); overload;
     Procedure LoadFromStream(oStream : TStream); overload;
     Procedure SaveToStream(oStream : TStream); overload;
+    function asStream: TStream;
 
     Property Data : Pointer Read FData Write SetData;
     Property Capacity : Cardinal Read FCapacity Write SetCapacity;
@@ -377,7 +378,6 @@ type
     Property Size : Cardinal Read FCapacity Write SetCapacity;
     Property Format : String read FFormat write FFormat;
     property HasFormat : boolean read GetHasFormat;
-
   End;
 
   TFslBufferClass = Class Of TFslBuffer;
@@ -417,7 +417,7 @@ type
 
     Procedure UpdateCurrentPointer;
 
-  function sizeInBytesV : cardinal; override;
+  function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     constructor Create(cnt : TBytes); Overload;
@@ -513,7 +513,7 @@ Type
       FName : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslNameBuffer;
       Function Clone : TFslNameBuffer;
@@ -819,7 +819,7 @@ Type
     FContent : String;
     FCursor : integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(content : String);
     function Peek: Integer; override;
@@ -830,6 +830,8 @@ Type
     function ReadToEnd: string; override;
     procedure Close; override;
   end;
+
+  { TFslStreamReader }
 
   TFslStreamReader = class(TFslTextReader)
   private
@@ -851,7 +853,7 @@ Type
     function GetEndOfStream: Boolean;
   protected
     Property Stream : TFslStream read FStream;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(aStream: TFslStream); overload;
     constructor Create(aStream: TFslStream; DetectBOM: Boolean); overload;
@@ -873,6 +875,7 @@ Type
     property CurrentEncoding: TEncoding read FEncoding;
     property EndOfStream: Boolean read GetEndOfStream;
     function percent : integer;
+    function progress : integer;
   end;
 
   TFslFormatter = Class(TFslStreamAdapter)
@@ -951,6 +954,8 @@ Type
 
   TFslTextFormatterClass = Class Of TFslTextFormatter;
 
+  { TFslTextExtractor }
+
   TFslTextExtractor = Class(TFslStreamReader)
     Private
       FLine : Integer;
@@ -966,7 +971,7 @@ Type
 
       Procedure RaiseError(Const sMethod, sMessage : String); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Override;
@@ -1008,19 +1013,35 @@ Type
   EFslTextExtractor = Class(EFslExtractor);
 
 
-  TFslCSVExtractor = Class(TFslTextExtractor)
+  { TFslCSVExtractor }
+
+  TFslCSVExtractor = Class(TFslStreamReader)
   Private
     FSeparator : Char;
     FQuote : Char;
     FHasQuote : Boolean;
     FIgnoreWhitespace: boolean;
+
+    FEntry : TStringBuilder;
+    FCache : Char;
+    FReadBuffer: SysUtils.TCharArray;
+
+    procedure SkipCharacterSet(Const aTokenSet : TCharSet);
+    Function NextCharacter : Char;
+    Function ConsumeCharacter : Char; Overload; Virtual;
+    Function ConsumeCharacter(Const cToken : Char) : Char; Overload;
+
+    Function ConsumeUntilCharacterSet(Const aTokenSet : TCharSet) : String;
+
   Public
     constructor Create; Override;
+    destructor Destroy; Override;
 
     Procedure ConsumeEntries(oEntries : TFslStringList); Overload;
     Procedure ConsumeEntries; Overload;
     Function ConsumeEntry : String;
     Function MoreEntries : Boolean;
+    function More : boolean;
 
     Property Separator : Char Read FSeparator Write FSeparator;
     Property Quote : Char Read FQuote Write FQuote;
@@ -1161,7 +1182,7 @@ type
       FComment : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslZipPart;
       Function Clone : TFslZipPart;
@@ -1201,7 +1222,7 @@ type
       Procedure SetParts(oValue : TFslZipPartList);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1242,6 +1263,8 @@ type
     FCompressedSized : LongWord;
     FDate : Word;
     FTime : Word;
+    FName : AnsiString;
+    FComment : AnsiString;
   End;
 
   TFslZipWriter = Class (TFslZipWorker)
@@ -1280,14 +1303,14 @@ TTarArchive Usage
 - read out the current file                          TA.ReadFile (DestFilename);
   (You can ommit this if you want to
   read in the directory only)                        end;
-- You're done                                      TA.Free;
+- You're done                                      TA.free;
 TTarWriter Usage
 ----------------
 - Choose a constructor
 - Make an instance of TTarWriter                   TW := TTarWriter.Create ('my.tar');
 - Add a file to the tar archive                    TW.AddFile ('foobar.txt');
 - Add a String as a file                           TW.AddString (SL.Text, 'joe.txt', Now);
-- Destroy TarWriter instance                       TW.Free;
+- Destroy TarWriter instance                       TW.free;
 - Now your tar file is ready.
 Source
 --------------------------
@@ -1352,7 +1375,7 @@ type
   protected
     FStream     : TStream;   // Internal Stream
     FOwnsStream : boolean;   // True if FStream is owned by the TTarArchive instance
-    FBytesToGo  : int64;     // Bytes until the next Header Record
+    FBytesToGo  : NativeInt;     // Bytes until the next Header Record
   public
     constructor Create (Stream   : TStream); overload;
     constructor Create (Filename : String; FileMode : WORD = fmOpenRead or fmShareDenyWrite);  overload;
@@ -1423,81 +1446,6 @@ function  FileTimeGMT           (FileName    : AnsiString)      : TDateTime;  ov
 function  FileTimeGMT           (SearchRec   : TSearchRec)      : TDateTime;  overload;
 procedure ClearDirRec           (var DirRec  : TTarDirRec);
 
-
-type
-  TMimeBase = class (TFslObject)
-  private
-    FHeaders: TIdHeaderList;
-    procedure ReadHeaders(AStream : TStream);
-    procedure WriteHeaders(AStream : TStream);
-    function ReadBytes(AStream: TStream; AByteCount: Integer): AnsiString;
-    function ReadToValue(AStream: TStream; AValue: AnsiString): AnsiString;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    property Headers : TIdHeaderList read FHeaders;
-  end;
-
-  TMimePart = class (TMimeBase)
-  private
-    FContent: TFslBuffer;
-    FId : string;
-    procedure SetContent(const AValue: TFslBuffer);
-    procedure DecodeContent;
-    procedure ReadFromStream(AStream : TStream; ABoundary : AnsiString);
-    procedure WriteToStream(AStream : TStream);
-    function GetMediaType: String;
-    function GetTransferEncoding: String;
-    procedure SetMediaType(const AValue: String);
-    procedure SetTransferEncoding(const AValue: String);
-    procedure SetId(const AValue: String);
-    function GetContentDisposition: String;
-    procedure SetContentDisposition(const sValue: String);
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    function Link : TMimePart; overload;
-
-    property Content : TFslBuffer read FContent write SetContent;
-    property Id : String read FId write SetId;
-    property MediaType : String read GetMediaType write SetMediaType;
-    property ContentDisposition : String read GetContentDisposition write SetContentDisposition;
-    property TransferEncoding : String read GetTransferEncoding write SetTransferEncoding;
-
-    function ParamName : String;
-    function FileName : String;
-  end;
-
-  TMimeMessage = class (TMimeBase)
-  private
-    FParts: TFslList<TMimePart>;
-    FBoundary : Ansistring;
-    FStart : String;
-    FMainType : String;
-    procedure AnalyseContentType(AContent : String);
-    function GetMainPart: TMimePart;
-    procedure Validate;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    function Link : TMimeMessage; overload;
-    property Parts : TFslList<TMimePart> read FParts;
-    function AddPart(id: String) : TMimePart;
-    property MainPart : TMimePart read GetMainPart;
-    property Boundary : ansistring read FBoundary write FBoundary;
-    property Start : String read FStart write FStart;
-    property MainType : String read FMainType write FMainType;
-
-    // for multi-part forms
-    function getparam(name : String) : TMimePart;
-    function hasParam(name : String) : Boolean;
-
-    procedure ReadFromStream(AStream : TStream); overload;
-    procedure ReadFromStream(AStream : TStream; AContentType : String); overload; // headers are not part of the stream
-
-    function GetContentTypeHeader : String;
-    procedure WriteToStream(AStream : TStream; AHeaders : boolean);
-  end;
 
 
 var
@@ -1641,7 +1589,7 @@ End;
 
 Destructor TFslStreamAdapter.Destroy;
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Nil;
 
   Inherited;
@@ -1660,7 +1608,7 @@ Procedure TFslStreamAdapter.SetStream(oStream : TFslStream);
 Begin
   Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslStream, 'oStream'));
 
-  FStream.Free;
+  FStream.free;
   FStream := oStream;
 End;
 
@@ -1700,10 +1648,10 @@ Begin
 End;  
 
 
-function TFslStreamAdapter.sizeInBytesV : cardinal;
+function TFslStreamAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStream.sizeInBytes(magic));
 end;
 
 Function TFslAccessStream.Link : TFslAccessStream;
@@ -1799,7 +1747,7 @@ Procedure TFslAccessStreamAdapter.SetStream(oStream: TFslAccessStream);
 Begin
   Assert(Not Assigned(oStream) Or Invariants('SetStream', oStream, TFslAccessStream, 'oStream'));
 
-  FStream.Free;
+  FStream.free;
   FStream := oStream;
 End;
 
@@ -1814,17 +1762,17 @@ End;
 
 Destructor TFslAccessStreamAdapter.Destroy;
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Nil;
 
   Inherited;
 End;
 
 
-function TFslAccessStreamAdapter.sizeInBytesV : cardinal;
+function TFslAccessStreamAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStream.sizeInBytes(magic));
 end;
 
 Procedure TFslStringStream.Read(Var aBuffer; iCount : Integer);
@@ -1906,9 +1854,9 @@ End;
 
 
 
-function TFslStringStream.sizeInBytesV : cardinal;
+function TFslStringStream.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FData) + 12);
 end;
 
@@ -1966,7 +1914,7 @@ end;
 
 Destructor TVCLStream.Destroy;
 Begin
-  FStream.Free;
+  FStream.free;
 
   Inherited;
 End;
@@ -2027,7 +1975,7 @@ End;
 
 Procedure TVCLStream.SetStream(Const Value: TFslStream);
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := Value;
 End;
 
@@ -2039,7 +1987,7 @@ Begin
 End;
 
 
-Constructor TFslBuffer.Create;
+constructor TFslBuffer.Create;
 Begin
   Inherited;
   {$IFNDEF VER130}
@@ -2049,7 +1997,7 @@ Begin
 End;
 
 
-Destructor TFslBuffer.Destroy;
+destructor TFslBuffer.Destroy;
 Begin
   If FOwned Then
     MemoryDestroy(FData, FCapacity);
@@ -2058,19 +2006,19 @@ Begin
 End;
 
 
-Function TFslBuffer.Clone : TFslBuffer;
+function TFslBuffer.Clone: TFslBuffer;
 Begin
   Result := TFslBuffer(Inherited Clone);
 End;
 
 
-Function TFslBuffer.Link : TFslBuffer;
+function TFslBuffer.Link: TFslBuffer;
 Begin
   Result := TFslBuffer(Inherited Link);
 End;
 
 
-Procedure TFslBuffer.Assign(oObject : TFslObject);
+procedure TFslBuffer.Assign(oObject: TFslObject);
 Begin 
   Inherited;
 
@@ -2080,7 +2028,7 @@ End;
 
 
 
-Procedure TFslBuffer.LoadFromStream(oStream: TFslStream);
+procedure TFslBuffer.LoadFromStream(oStream: TFslStream);
 Begin
   Assert(Invariants('LoadFromStream', oStream, TFslStream, 'oStream'));
 
@@ -2088,7 +2036,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.LoadFromStream(oStream: TStream);
+procedure TFslBuffer.LoadFromStream(oStream: TStream);
 Begin
 //  Assert(Invariants('LoadFromStream', oStream, TStream, 'oStream'));
 
@@ -2097,7 +2045,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToStream(oStream: TFslStream);
+procedure TFslBuffer.SaveToStream(oStream: TFslStream);
 Begin
   Assert(Invariants('SaveToStream', oStream, TFslStream, 'oStream'));
 
@@ -2105,7 +2053,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToStream(oStream: TStream);
+procedure TFslBuffer.SaveToStream(oStream: TStream);
 var
   i : integer;
 Begin
@@ -2116,8 +2064,13 @@ Begin
    assert(oStream.Position = i + integer(Capacity));
 End;
 
+function TFslBuffer.asStream: TStream;
+begin
+  result := TBytesStream.create(asBytes);
+end;
 
-Procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
+
+procedure TFslBuffer.LoadFromFile(oFile: TFslFile);
 Begin
   Assert(Invariants('LoadFromFile', oFile, TFslFile, 'oFile'));
 
@@ -2127,7 +2080,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.SaveToFile(oFile: TFslFile);
+procedure TFslBuffer.SaveToFile(oFile: TFslFile);
 Begin
   Assert(Invariants('SaveToFile', oFile, TFslFile, 'oFile'));
 
@@ -2135,20 +2088,20 @@ Begin
 End;
 
 
-Procedure TFslBuffer.LoadFromFileName(Const sFilename: String);
+procedure TFslBuffer.LoadFromFileName(const sFilename: String);
 Var
   oFile : TFslFile;
 Begin
-  oFile := TFslFile.Create(sFilename, fmOpenRead);
+  oFile := TFslFile.Create(sFilename, fmOpenRead + fmShareDenyWrite);
   Try
     LoadFromFile(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
 
-Procedure TFslBuffer.SaveToFileName(Const sFilename: String);
+procedure TFslBuffer.SaveToFileName(const sFilename: String);
 Var
   oFile : TFslFile;
 Begin
@@ -2156,19 +2109,19 @@ Begin
   Try
     SaveToFile(oFile);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
 
-Procedure TFslBuffer.Clear;
+procedure TFslBuffer.Clear;
 Begin 
 
   Capacity := 0;
 End;  
 
 
-Function TFslBuffer.Equal(oBuffer: TFslBuffer): Boolean;
+function TFslBuffer.Equal(oBuffer: TFslBuffer): Boolean;
 Begin
   Assert(Invariants('Equal', oBuffer, TFslBuffer, 'oBuffer'));
 
@@ -2176,7 +2129,7 @@ Begin
 End;
 
 
-Function TFslBuffer.Compare(oBuffer: TFslBuffer): Integer;
+function TFslBuffer.Compare(oBuffer: TFslBuffer): Integer;
 Begin
   Assert(Invariants('Compare', oBuffer, TFslBuffer, 'oBuffer'));
 
@@ -2187,7 +2140,7 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetCapacity(Const Value: cardinal);
+procedure TFslBuffer.SetCapacity(const Value: cardinal);
 Begin 
   If (Value <> Capacity) Then
   Begin
@@ -2199,7 +2152,7 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetData(Const Value: Pointer);
+procedure TFslBuffer.SetData(const Value: Pointer);
 Begin 
 
   If FData <> Value Then
@@ -2212,14 +2165,14 @@ Begin
 End;  
 
 
-Procedure TFslBuffer.SetOwned(Const Value: Boolean);
+procedure TFslBuffer.SetOwned(const Value: Boolean);
 Begin 
 
   FOwned := Value;
 End;
 
 
-Function TFslBuffer.GetAsText : AnsiString;
+function TFslBuffer.GetAsText: AnsiString;
 Begin
   Result := ExtractAscii(Capacity);
 End;
@@ -2243,7 +2196,7 @@ begin
 end;
 {$ENDIF}
 
-Procedure TFslBuffer.SetAsText(Const Value: AnsiString);
+procedure TFslBuffer.SetAsText(const Value: AnsiString);
 Begin
 
   Capacity := Length(Value);
@@ -2251,13 +2204,14 @@ Begin
 End;
 
 
-Procedure TFslBuffer.Copy(oBuffer: TFslBuffer);
+procedure TFslBuffer.Copy(oBuffer: TFslBuffer);
 Begin
   CopyRange(oBuffer, 0, oBuffer.Capacity);
 End;
 
 
-Procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; Const iIndex, iLength : cardinal);
+procedure TFslBuffer.CopyRange(oBuffer: TFslBuffer; const iIndex,
+  iLength: cardinal);
 Begin
   Assert(Invariants('CopyRange', oBuffer, TFslBuffer, 'oBuffer'));
   Assert(CheckCondition((iIndex + iLength <= oBuffer.Capacity), 'CopyRange', 'Attempted to copy invalid part of the buffer.'));
@@ -2268,7 +2222,7 @@ Begin
 End;
 
 
-Procedure TFslBuffer.Move(Const iSource, iTarget, iLength : cardinal);
+procedure TFslBuffer.Move(const iSource, iTarget, iLength: cardinal);
 Begin
   Assert(CheckCondition((iSource + iLength <= Capacity), 'Copy', 'Attempted to move from an invalid part of the buffer.'));
   Assert(CheckCondition((iTarget + iLength <= Capacity), 'Copy', 'Attempted to move to an invalid part of the buffer.'));
@@ -2277,7 +2231,7 @@ Begin
 End;
 
 
-Function TFslBuffer.Offset(iIndex: cardinal): Pointer;
+function TFslBuffer.Offset(iIndex: cardinal): Pointer;
 Begin 
   Assert(CheckCondition((iIndex <= Capacity), 'Offset', 'Attempted to access invalid offset in the buffer.'));
 
@@ -2285,9 +2239,9 @@ Begin
 End;
 
 
-function TFslBuffer.sizeInBytesV : cardinal;
+function TFslBuffer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, FCapacity);
   inc(result, sizeof(FEncoding));
   inc(result, (FFormat.length * sizeof(char)) + 12);
@@ -2305,7 +2259,7 @@ Begin
 End;
 
 
-Function TFslBuffer.ExtractAscii(Const iLength: Integer): AnsiString;
+function TFslBuffer.ExtractAscii(const iLength: Integer): AnsiString;
 Begin
   Result := MemoryToString(Data, iLength);
 End;
@@ -2359,9 +2313,9 @@ Begin
 End;
 
 
-function TFslNameBuffer.sizeInBytesV : cardinal;
+function TFslNameBuffer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2427,7 +2381,7 @@ Begin
     If Not Find(oBuffer, Result, CompareByName) Then
       Result := -1;
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -2449,7 +2403,7 @@ End;
 
 Destructor TFslMemoryStream.Destroy;
 Begin
-  FBuffer.Free;
+  FBuffer.free;
 
   Inherited;
 End;
@@ -2616,7 +2570,7 @@ Procedure TFslMemoryStream.SetBuffer(Const Value: TFslBuffer);
 Begin 
   Assert(Not Assigned(Value) Or Invariants('SetBuffer', Value, TFslBuffer, 'Value'));
 
-  FBuffer.Free;
+  FBuffer.free;
   FBuffer := Value;
 
   If Assigned(FBuffer) Then
@@ -2707,23 +2661,23 @@ Begin
 End;
 
 
-function TFslMemoryStream.sizeInBytesV : cardinal;
+function TFslMemoryStream.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuffer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuffer.sizeInBytes(magic));
 end;
 
 { TFslFile }
 
 constructor TFslFile.Create(const AFileName: string; Mode: Word);
 begin
-  inherited create;
+  inherited Create;
   FStream := TFileStream.Create(AFileName, mode);
 end;
 
 destructor TFslFile.Destroy;
 begin
-  FStream.Free;
+  FStream.free;
   inherited;
 end;
 
@@ -2789,9 +2743,9 @@ begin
   result := 0; // ?
 end;
 
-function TFslFile.sizeInBytesV : cardinal;
+function TFslFile.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, sizeof(FStream));
 end;
 
@@ -2942,8 +2896,8 @@ End;  { Constructor TAfsEntity.Create }
 Destructor TAfsEntity.Destroy;
 
 Begin { Destructor TAfsEntity.Destroy }
-  FStream.Free;
-  FVolume.Free;
+  FStream.free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsEntity.Destroy }
@@ -3016,7 +2970,7 @@ End;  { Function TAfsEntity.Valid }
 
 Procedure TAfsEntity.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsEntity.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsEntity.SetVolume }
 
@@ -3032,7 +2986,7 @@ End;  { Constructor TAfsContainer.Create }
 
 Destructor TAfsContainer.Destroy;
 Begin { Destructor TAfsContainer.Destroy }
-  FItems.Free;
+  FItems.free;
 
   Inherited;
 End;  { Destructor TAfsContainer.Destroy }
@@ -3085,7 +3039,7 @@ End;  { Procedure TAfsFiles.SetFiles }
 
 Destructor TAfsIterator.Destroy;
 Begin { Destructor TAfsIterator.Destroy }
-  FVolume.Free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsIterator.Destroy }
@@ -3093,14 +3047,14 @@ End;  { Destructor TAfsIterator.Destroy }
 
 Procedure TAfsIterator.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsIterator.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsIterator.SetVolume }
 
 
 Destructor TAfsStream.Destroy;
 Begin { Destructor TAfsStream.Destroy }
-  FVolume.Free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsStream.Destroy }
@@ -3108,7 +3062,7 @@ End;  { Destructor TAfsStream.Destroy }
 
 Procedure TAfsStream.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsStream.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsStream.SetVolume }
 
@@ -3123,8 +3077,8 @@ End;  { Constructor TAfsStreamManager.Create }
 
 Destructor TAfsStreamManager.Destroy;
 Begin { Destructor TAfsStreamManager.Destroy }
-  FStreams.Free;
-  FVolume.Free;
+  FStreams.free;
+  FVolume.free;
 
   Inherited;
 End;  { Destructor TAfsStreamManager.Destroy }
@@ -3155,7 +3109,7 @@ Begin { Function TAfsStreamManager.Open }
 
     FStreams.Add(Result.Link, oFile.Link);
   Finally
-    oFile.Free;
+    oFile.free;
   End; { Try }
 End;  { Function TAfsStreamManager.Open }
 
@@ -3193,7 +3147,7 @@ End;  { Procedure TAfsStreamManager.Clear }
 
 Procedure TAfsStreamManager.SetVolume(Const Value: TAfsVolume);
 Begin { Procedure TAfsStreamManager.SetVolume }
-  FVolume.Free;
+  FVolume.free;
   FVolume := Value;
 End;  { Procedure TAfsStreamManager.SetVolume }
 
@@ -3391,7 +3345,7 @@ Begin { Function TAfsResourceVolume.Open }
     Result := TAfsHandle(oFile);
   Except
     // Prevent object leaking if initialisation code raises an exception
-    oFile.Free;
+    oFile.free;
     Result := 0;
   End; { Try }
 End;  { Function TAfsResourceVolume.Open }
@@ -3435,7 +3389,7 @@ Begin { Procedure TAfsResourceVolume.Close }
         RaiseError('Close', 'Could not open update handle.');
     End;  { If }
   Finally
-    oFile.Free;
+    oFile.free;
   End; { Try }
 End;  { Procedure TAfsResourceVolume.Close }
 
@@ -3527,7 +3481,7 @@ End;  { Function TAfsResourceVolume.OpenIterator }
 
 Procedure TAfsResourceVolume.CloseIterator(oIterator : TAfsIterator);
 Begin { Procedure TAfsResourceVolume.CloseIterator }
-  oIterator.Free;
+  oIterator.free;
 End;  { Procedure TAfsResourceVolume.CloseIterator }
 
 
@@ -3581,8 +3535,8 @@ End;  { Constructor TAfsResourceIterator.Create }
 
 Destructor TAfsResourceIterator.Destroy;
 Begin { Destructor TAfsResourceIterator.Destroy }
-  FItems.Free;
-  FCurrent.Free;
+  FItems.free;
+  FCurrent.free;
   Inherited;
 End;  { Destructor TAfsResourceIterator.Destroy }
 
@@ -3634,18 +3588,82 @@ End;  { Constructor TAfsResourceManager.Create }
 
 {$ENDIF}
 
-
-Constructor TFslCSVExtractor.Create;
+constructor TFslCSVExtractor.Create;
 Begin
   Inherited;
-
+  FEntry := TStringBuilder.create(2048);
   FSeparator := ',';
   FQuote := '"';
   FHasQuote := True;
+  SetLength(FReadBuffer, 1);
 End;
 
 
-Procedure TFslCSVExtractor.ConsumeEntries(oEntries : TFslStringList);
+destructor TFslCSVExtractor.Destroy;
+Begin
+  FEntry.free;
+  Inherited;
+End;
+
+procedure TFslCSVExtractor.SkipCharacterSet(const aTokenSet: TCharSet);
+begin
+  While More And CharInSet(NextCharacter, aTokenSet) Do
+    ConsumeCharacter;
+end;
+
+function TFslCSVExtractor.More: boolean;
+begin
+  Result := Not Inherited EndOfStream Or (FCache <> #0);
+end;
+
+function TFslCSVExtractor.NextCharacter: Char;
+Begin
+  If FCache = #0 Then
+  Begin
+    if Read(FReadBuffer, 0, 1) = 1 Then
+      result := FReadBuffer[0]
+    Else
+      result := #0;
+    FCache := Result;
+  End
+  Else
+  Begin
+    Result := FCache;
+  End;
+end;
+
+function TFslCSVExtractor.ConsumeCharacter: Char;
+begin
+  Result := NextCharacter;
+  FCache := #0;
+//  CacheRemove(Result);
+end;
+
+function TFslCSVExtractor.ConsumeCharacter(const cToken: Char): Char;
+  Function ToCharacter(Const cChar : Char) : String;
+  Begin
+    If (cChar >= ' ') And (cChar <= #127) Then
+      Result := cChar
+    Else
+      Result := '$' + inttohex(Word(cChar), 4);
+  End;
+
+Begin
+  If Not StringEquals(cToken, NextCharacter) Then
+    RaiseError('Consume(Char)', StringFormat('Expected token ''%s'' but found token ''%s''', [ToCharacter(cToken), ToCharacter(NextCharacter)]));
+
+  Result := ConsumeCharacter;
+end;
+
+function TFslCSVExtractor.ConsumeUntilCharacterSet(const aTokenSet: TCharSet): String;
+begin
+  FEntry.Clear;
+  While More And Not CharInSet(NextCharacter, aTokenSet) Do
+    FEntry.Append(ConsumeCharacter);
+  Result := FEntry.ToString;
+end;
+
+procedure TFslCSVExtractor.ConsumeEntries(oEntries: TFslStringList);
 Var
   sEntry : String;
 Begin
@@ -3654,9 +3672,9 @@ Begin
 
   // Consume all preceeding whitespace.
   if IgnoreWhitespace then
-    ConsumeWhileCharacterSet(setControls + setVertical + setHorizontal)
+    skipCharacterSet(setControls + setVertical + setHorizontal)
   else
-    ConsumeWhileCharacterSet(setVertical);
+    skipCharacterSet(setVertical);
 
   While MoreEntries Do
   Begin
@@ -3668,13 +3686,13 @@ Begin
 End;
 
 
-Function TFslCSVExtractor.ConsumeEntry : String;
+function TFslCSVExtractor.ConsumeEntry: String;
 Var
   bMore : Boolean;
 Begin
   // strip all leading whitespace.
   if IgnoreWhitespace then
-    ConsumeWhileCharacterSet(setControls + setHorizontal);
+    skipCharacterSet(setControls + setHorizontal);
 
   If More Then
   Begin
@@ -3691,7 +3709,7 @@ Begin
 
       ConsumeCharacter(FQuote);
 
-      Result := '';
+      FEntry.clear;
       bMore := True;
       While bMore And More Do
       Begin
@@ -3702,17 +3720,16 @@ Begin
           bMore := More And (NextCharacter = FQuote);
 
           If bMore Then
-            Result := Result + ConsumeCharacter
-          Else
-            ProduceString(FQuote);
+            FEntry.append(ConsumeCharacter);
         End
         Else
         Begin
-          Result := Result + ConsumeCharacter;
+          FEntry.append(ConsumeCharacter);
         End;
       End;
+      Result := FEntry.ToString;
 
-      If More Then
+      If bMore and More Then
         ConsumeCharacter(FQuote);
     End;
 
@@ -3720,7 +3737,7 @@ Begin
     Begin
       // strip trailing whitespace.
       if IgnoreWhitespace then
-        ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
+        skipCharacterSet(setControls + setHorizontal - setVertical);
 
       If More And (NextCharacter = FSeparator) Then
       Begin
@@ -3729,7 +3746,7 @@ Begin
 
         // strip trailing non-newline whitespace after separator.
       if IgnoreWhitespace then
-        ConsumeWhileCharacterSet(setControls + setHorizontal - setVertical);
+        skipCharacterSet(setControls + setHorizontal - setVertical);
       End;
     End;
   End
@@ -3740,13 +3757,13 @@ Begin
 End;
 
 
-Procedure TFslCSVExtractor.ConsumeEntries;
+procedure TFslCSVExtractor.ConsumeEntries;
 Begin
   ConsumeEntries(Nil);
 End;
 
 
-Function TFslCSVExtractor.MoreEntries : Boolean;
+function TFslCSVExtractor.MoreEntries: Boolean;
 Begin
   Result := More And Not CharInSet(NextCharacter, setVertical);
 End;
@@ -3976,7 +3993,7 @@ End;
 
 Destructor TFslTextExtractor.Destroy;
 Begin
-  FBuilder.Free;
+  FBuilder.free;
 
   Inherited;
 End;
@@ -4228,11 +4245,11 @@ Begin
   Result := Not Inherited EndOfStream Or (Length(FCache) > 0);
 End;
 
-function TFslTextExtractor.sizeInBytesV : cardinal;
+function TFslTextExtractor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCache.length * sizeof(char)) + 12);
-  inc(result, FBuilder.sizeInBytes);
+  inc(result, FBuilder.sizeInBytes(magic));
 end;
 
 Function TFslExtractor.ErrorClass : EFslExceptionClass;
@@ -4346,11 +4363,11 @@ constructor TFslStreamReader.Create(const Filename: string; Encoding: TEncoding;
 var
   oFile : TFslFile;
 begin
-  oFile := TFslFile.Create(FileName, fmOpenRead);
+  oFile := TFslFile.Create(FileName, fmOpenRead + fmShareDenyWrite);
   Try
     Create(oFile.Link, Encoding, DetectBOM, BufferSize);
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 end;
 
@@ -4372,7 +4389,7 @@ end;
 
 procedure TFslStreamReader.Close;
 begin
-  FStream.Free;
+  FStream.free;
   FStream := nil;
 
   DiscardBufferedData;
@@ -4389,7 +4406,8 @@ begin
   end;
 end;
 
-function TFslStreamReader.doDetectBOM(var Encoding: TEncoding; Buffer: TBytes): Integer;
+function TFslStreamReader.DoDetectBOM(var Encoding: TEncoding; Buffer: TBytes
+  ): Integer;
 var
   LEncoding: TEncoding;
 begin
@@ -4461,7 +4479,7 @@ begin
       on e : exception do
       begin
 //        dbg := TEncoding.ANSI.getString(LBuffer, StartIndex, ByteBufLen);
-//        BytesToFile(LBuffer, StartIndex, ByteBufLen, 'c:\temp\encoding.bin');
+//        BytesToFile(LBuffer, StartIndex, ByteBufLen, filePath(['[tmp]', 'encoding.bin']));
         if FCheckEncoding and (tries > FEncoding.GetMaxByteCount(1)) then
          raise EEncodingError.create(e.message{+ '('+dbg+')'})
         else
@@ -4509,6 +4527,11 @@ begin
   result := FStream.percent;
 end;
 
+function TFslStreamReader.progress: integer;
+begin
+  result := FCursor - FBufferEnd + FBufferStart;
+end;
+
 function TFslStreamReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
   Result := -1;
@@ -4549,6 +4572,7 @@ function TFslStreamReader.ReadLine: string;
   NewLineIndex: Integer;
   PostNewLineIndex: Integer;}
 begin
+  result := '';
   raise ELibraryException.create('This needs debugging for buffer changes');
 {  Result := '';
   if FClosed then
@@ -4644,11 +4668,11 @@ begin
 end;
 
 
-function TFslStreamReader.sizeInBytesV : cardinal;
+function TFslStreamReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, length(FBufferedData));
-  inc(result, FStream.sizeInBytes);
+  inc(result, FStream.sizeInBytes(magic));
   inc(result, sizeof(FEncoding));
 end;
 
@@ -4698,21 +4722,25 @@ end;
 
 function TFslStringReader.Read(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
+  result := 0;
   raise ETodo.create('TFslStringReader.Read');
 end;
 
 function TFslStringReader.ReadBlock(const Buffer: TCharArray; Index, Count: Integer): Integer;
 begin
+  result := 0;
   raise ETodo.create('TFslStringReader.ReadBlock');
 end;
 
 function TFslStringReader.ReadLine: string;
 begin
+  result := '';
   raise ETodo.create('TFslStringReader.ReadLine');
 end;
 
 function TFslStringReader.ReadToEnd: string;
 begin
+  result := '';
   raise ETodo.create('TFslStringReader.ReadToEnd');
 end;
 
@@ -4731,14 +4759,14 @@ begin
     csv.line;
     values(csv);
   finally
-    csv.Free;
+    csv.free;
   end;
 end;
 {$ENDIF}
 
-function TFslStringReader.sizeInBytesV : cardinal;
+function TFslStringReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FContent.length * sizeof(char)) + 12);
 end;
 
@@ -4778,10 +4806,17 @@ var
 begin
   LFileStream := TFileStream.Create(filename, fmCreate);
   try
-    bytes := encoding.GetBytes(content);
+    if encoding = nil then // special case
+    begin
+      SetLength(bytes, content.length);
+      if (content.length > 0) then
+        move(content[1], bytes[0], content.length);
+    end
+    else
+      bytes := encoding.GetBytes(content);
     LFileStream.write(bytes[0], length(bytes));
   finally
-    LFileStream.Free;
+    LFileStream.free;
   end;
 end;
 
@@ -4816,10 +4851,16 @@ begin
       if LFileStream.Size > 0 then
         LFileStream.Read(bytes[0], LFileStream.size);
     finally
-      LFileStream.Free;
+      LFileStream.free;
     end;
-      result := encoding.GetString(bytes);
+    if encoding = nil then // special case
+    begin
+      SetLength(result, length(bytes));
+      move(bytes[0], result[1], length(bytes));
     end
+    else
+      result := encoding.GetString(bytes);
+  end
   else
     raise ELibraryException.create('File "' + filename + '" not found');
 end;
@@ -4878,7 +4919,7 @@ begin
     if length(bytes) > 0 then
       f.Write(bytes[0], length(bytes));
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4891,7 +4932,7 @@ begin
     if length > 0 then
       f.Write(bytes[start], length);
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4907,7 +4948,7 @@ begin
     f.CopyFrom(stream, stream.Size - stream.Position);
     stream.Position := i;
   finally
-    f.Free;
+    f.free;
   end;
 end;
 
@@ -4923,7 +4964,7 @@ begin
       if LFileStream.Size > 0 then
         LFileStream.Read(result[0], LFileStream.size);
     finally
-      LFileStream.Free;
+      LFileStream.free;
     end;
     end
   else
@@ -4941,8 +4982,8 @@ End;
 
 Destructor TFslZipWorker.Destroy;
 Begin
-  FStream.Free;
-  FParts.Free;
+  FStream.free;
+  FParts.free;
   Inherited;
 End;
 
@@ -4970,13 +5011,13 @@ End;
 
 Procedure TFslZipWorker.SetParts(oValue: TFslZipPartList);
 Begin
-  FParts.Free;
+  FParts.free;
   FParts := oValue;
 End;
 
 Procedure TFslZipWorker.SetStream(oValue: TFslStream);
 Begin
-  FStream.Free;
+  FStream.free;
   FStream := oValue;
 End;
 
@@ -4989,11 +5030,11 @@ Begin
 End;
 
 
-function TFslZipWorker.sizeInBytesV : cardinal;
+function TFslZipWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStream.sizeInBytes);
-  inc(result, FParts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStream.sizeInBytes(magic));
+  inc(result, FParts.sizeInBytes(magic));
 end;
 
 Procedure TFslZipPart.Assign(oObject : TFslObject);
@@ -5017,9 +5058,9 @@ Begin
 End;
 
 
-function TFslZipPart.sizeInBytesV : cardinal;
+function TFslZipPart.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FComment.length * sizeof(char)) + 12);
 end;
 
@@ -5033,7 +5074,7 @@ begin
     part.AsBytes := bytes;
     add(part.Link);
   finally
-    part.Free;
+    part.free;
   end;
 end;
 
@@ -5121,7 +5162,7 @@ Begin
 
     Parts.Add(oBuffer.Link);
   Finally
-    oBuffer.Free;
+    oBuffer.free;
   End;
 End;
 
@@ -5237,7 +5278,7 @@ Begin
       RaiseError('ReadUnknownLengthDeflate', 'Compressed length expected to be '+IntegerToString(iSizeComp)+' bytes but found '+IntegerToString(oMem.Buffer.Capacity)+' bytes');
     ReadKnownDeflate(oMem.Buffer.Data, partName, iSizeComp + 2, iSizeUncomp, oBuffer);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 End;
 
@@ -5255,20 +5296,14 @@ End;
 
 Function TPointerMemoryStream.Write(Const Buffer; Count: LongInt): LongInt;
 Begin
+  result := 0;
   Raise EFslException.Create('Should never be called');
 End;
-
-
-{$IFDEF FPC}
-type
-   TZDecompressionStream = TDecompressionStream;
-{$ENDIF}
 
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
   oSrc : TStream;
   oDecompressor : TZDecompressionStream;
-
 {$IFOPT C+}
   iRead : Integer;
 {$ENDIF}
@@ -5289,10 +5324,10 @@ Begin
         oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
       {$ENDIF}
       Finally
-        oDecompressor.Free;
+        oDecompressor.free;
       End;
     Finally
-      oSrc.Free;
+      oSrc.free;
     End;
   End;
 End;
@@ -5371,7 +5406,7 @@ End;
 
 Destructor TFslZipWriter.Destroy;
 Begin
-  FPartInfo.Free;
+  FPartInfo.free;
   Inherited;
 End;
 
@@ -5423,6 +5458,8 @@ Var
 Begin
   oInfo := TFslZippedData.Create;
   Try
+    oInfo.FName := oPart.Name;
+    oInfo.FComment := oPart.Comment;
     oInfo.FOffset := FOffset;
     WriteLongWord(SIG_LOCAL_FILE_HEADER);
     WriteWord($14);    // version needed to extract. don't know why $14, just observed in any .zip file
@@ -5443,24 +5480,25 @@ Begin
         Compress(oPart, oCompressed);
 
       oInfo.FCompressedSized := oCompressed.Capacity;
+
       WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
       WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
-      WriteWord(Length(oPart.Name));    // filename length                 2 bytes
+      WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
       WriteWord(0);                     // extra field length - we don't use
-      WriteString(AnsiString(oPart.Name));
+      WriteString(oInfo.FName);
 
       If (oCompressed.Capacity > 0) Then
       Begin
-        Stream.Write(oCompressed.Data^, oCompressed.Capacity);
+        Stream.Write(oCompressed.asBytes[0], oCompressed.Capacity);
         Inc(FOffset, oCompressed.Capacity);
       End;
 
     Finally
-      oCompressed.Free;
+      oCompressed.free;
     End;
     FPartInfo.Add(oPart.Link, oInfo.Link);
   Finally
-    oInfo.Free;
+    oInfo.free;
   End;
 End;
 
@@ -5476,30 +5514,31 @@ begin
     part.LoadFromFileName(actual);
     Parts.Add(part.Link);
   finally
-    part.Free;
+    part.free;
   end;
 end;
 
 Procedure TFslZipWriter.Compress(oSource, oDestination: TFslBuffer);
 Var
   oCompressor: TCompressionStream;
-  oCompressedStream: TMemoryStream;
-  pData : PAnsiChar;
+  oCompressedStream: TBytesStream;
+  pData : pointer;
+  bytes : TBytes;
 Begin
-  oCompressedStream := TMemoryStream.Create;
+  oCompressedStream := TBytesStream.Create;
   Try
+    bytes := oSource.AsBytes;
     oCompressor := TCompressionStream.Create(clMax, oCompressedStream);
     Try
-      oCompressor.Write(oSource.Data^, oSource.Capacity);
+      oCompressor.Write(bytes[0], length(bytes));
+      oCompressor.flush;
     Finally
-      oCompressor.Free;
+      oCompressor.free;
     End;
-    pData := oCompressedStream.Memory;
-    pData := PData + 2;
-    oDestination.Capacity := oCompressedStream.Size - 6; // 2 off the front, 4 off the back
-    MemoryMove(oDestination.Data, pData, oDestination.Capacity);
+    bytes := copy(oCompressedStream.Bytes, 0, oCompressedStream.Size);
+    oDestination.AsBytes := copy(bytes, 2, length(bytes)-6);
   Finally
-    oCompressedStream.Free;
+    oCompressedStream.free;
   End;
 End;
 
@@ -5522,15 +5561,15 @@ Begin
   WriteLongWord(GetCRC(oPart.AsBytes));     // crc-32  TODO: cache this?
   WriteLongWord(oInfo.FCompressedSized); // compressed size                 4 bytes
   WriteLongWord(oPart.Capacity);       // uncompressed size               4 bytes
-  WriteWord(Length(oPart.Name));    // filename length                 2 bytes
+  WriteWord(Length(oInfo.FName));    // filename length                 2 bytes
   WriteWord(0);                     // extra field length - we don't use
-  WriteWord(Length(oPart.Comment));    // file comment length             2 bytes
+  WriteWord(Length(oInfo.FComment));    // file comment length             2 bytes
   WriteWord(0);                     // disk number start               2 bytes
   WriteWord(0);                     // internal file attributes        2 bytes
   WriteLongWord(0);                 // external file attributes        4 bytes
   WriteLongWord(oInfo.FOffset);
-  WriteString(AnsiString(oPart.Name));          // filename (variable size)
-  WriteString(AnsiString(oPart.Comment));       // file comment (variable size)
+  WriteString(oPart.Name);          // filename (variable size)
+  WriteString(oPart.Comment);       // file comment (variable size)
 
 End;
 
@@ -5709,7 +5748,8 @@ end;
 {$ENDIF}
 {$IFDEF OSX}
 begin
-  raise Exception.create('To do');
+  result := 0;
+  raise EFslException.Create('To do');
 end;
 {$ENDIF}
 
@@ -5986,7 +6026,7 @@ end;
 destructor TTarArchive.Destroy;
 begin
   if FOwnsStream then
-    FStream.Free;
+    FStream.free;
   inherited Destroy;
 end;
 
@@ -6008,6 +6048,7 @@ var
   I            : integer;
   HeaderChkSum : WORD;
   Checksum     : CARDINAL;
+  path : String;
 begin
   // --- Scan until next pointer
   if FBytesToGo > 0 then
@@ -6015,8 +6056,8 @@ begin
 
   // --- EOF reached?
   Result := FALSE;
-    FStream.ReadBuffer (Rec, RECORDSIZE);
-    if Rec [0] = #0 then EXIT;   // EOF reached
+  FStream.ReadBuffer(Rec[0], RECORDSIZE);
+  if Rec [0] = #0 then EXIT;   // EOF reached
   Result := TRUE;
 
   ClearDirRec (DirRec);
@@ -6069,6 +6110,10 @@ begin
   if DirRec.FileType in [ftLink, ftSymbolicLink, ftDirectory, ftFifo, ftVolumeHeader]
     then FBytesToGo := 0
     else FBytesToGo := DirRec.Size;
+  // zipslip prevention: .. in file names are *never* allowed anywhere
+  path := DirRec.name;
+  If path.contains('../') or path.contains('/..') then
+    raise EIOException.create('Illegal Filename in compressed archive: '+path);
 end;
 
 
@@ -6111,7 +6156,7 @@ begin
   TRY
     ReadFile (FS);
   FINALLY
-    FS.Free;
+    FS.free;
     end;
 end;
 
@@ -6120,12 +6165,12 @@ function  TTarArchive.ReadFile : TBytes;
           // Reads file data for the last Directory Record. The entire file is returned
           // as a large ANSI String.
 var
-  RestBytes : longint;
+  RestBytes : NativeInt;
 begin
   if FBytesToGo = 0 then EXIT;
   RestBytes := Records (FBytesToGo) * RECORDSIZE - FBytesToGo;
   SetLength (Result, FBytesToGo);
-  FStream.ReadBuffer(Result, {$IFNDEF FPC}0, {$ENDIF}FBytesToGo);
+  FStream.ReadBuffer(Result{$IFDEF FPC}[0]{$ELSE}, 0{$ENDIF}, FBytesToGo);
   FStream.Seek (RestBytes, soFromCurrent);
   FBytesToGo := 0;
 end;
@@ -6193,7 +6238,7 @@ begin
     FFinalized := TRUE;
     end;
   if FOwnsStream then
-    FStream.Free;
+    FStream.free;
   inherited Destroy;
 end;
 
@@ -6386,265 +6431,10 @@ begin
   FFinalized := TRUE;
 end;
 
-
-
-
-
-const
-  MIME_TRANSFERENCODING = 'Content-Transfer-Encoding';
-  MIME_DEFAULT_START = 'uuid:{FF461456-FE30-4933-9AF6-F8EB226E1BF7}';
-  MIME_DEFAULT_BOUNDARY = 'MIME_boundary';
-  MIME_ID = 'Content-ID';
-  EOL_WINDOWS = CR + LF;
-  EOL_PLATFORM = EOL_WINDOWS;
-  CONTENT_TYPE = 'Content-Type';
-  CONTENT_DISPOSITION = 'Content-Disposition';
-  MULTIPART_RELATED : AnsiString = 'multipart/related';
-  MULTIPART_FORMDATA : AnsiString = 'multipart/form-data';
-  MIME_BOUNDARY : AnsiString = 'boundary';
-  MIME_START : AnsiString = 'start';
-  MIME_TYPE : AnsiString = 'type';
-
 { Stream Readers }
-
-function TMimeBase.ReadToValue(AStream : TStream; AValue : AnsiString):AnsiString;
-var
-  c : AnsiChar;
-begin
-  result := '';
-  while copy(result, length(result)-length(AValue)+1, length(AValue)) <> AValue do
-    begin
-    CheckCondition(AStream.Size - AStream.Position <> 0, 'ReadToValue', 'Premature termination of stream looking for value "'+string(AValue)+'"');
-    AStream.Read(c, 1);
-    result := result + c;
-    end;
-  delete(result, length(result)-length(AValue)+1, length(AValue));
-end;
-
-function TMimeBase.ReadBytes(AStream : TStream; AByteCount : Integer):AnsiString;
-begin
-  CheckCondition(AStream.Size - AStream.Position >= AByteCount, 'ReadBytes', 'Premature termination of stream reading "'+inttostr(AByteCount)+'" bytes');
-  SetLength(result, AByteCount);
-  if AByteCount > 0 then
-    begin
-    AStream.Read(result[1], AByteCount);
-    end;
-end;
 
 { Stream Writers }
 
-procedure WriteString(AStream : TStream; Const AStr : AnsiString);
-begin
-  If AStr <> '' then
-    begin
-    AStream.Write(AStr[1], length(AStr));
-    end;
-end;
-
-{ TMimeBase }
-
-constructor TMimeBase.create;
-begin
-  inherited;
-  FHeaders := TIdHeaderList.create(QuotePlain);
-end;
-
-destructor TMimeBase.destroy;
-begin
-  FreeAndNil(FHeaders);
-  inherited;
-end;
-
-procedure TMimeBase.ReadHeaders(AStream: TStream);
-var
-  LHeader : AnsiString;
-  LFound : Boolean;
-begin
-  LFound := false;
-  repeat
-    LHeader := ReadToValue(AStream, EOL);
-    if LHeader <> '' then
-      begin
-      LFound := true;
-      FHeaders.Add(string(LHeader));
-      end
-  until LFound and (LHeader = '');
-end;
-
-procedure TMimeBase.WriteHeaders(AStream: TStream);
-var
-  i : integer;
-begin
-
-  For i := 0 to FHeaders.Count - 1 do
-    begin
-    WriteString(AStream, ansiString(FHeaders[i])+EOL);
-    end;
-  WriteString(AStream, EOL);
-end;
-
-{ TMimePart }
-
-constructor TMimePart.create;
-begin
-  inherited;
-  FContent := TFslBuffer.create;
-end;
-
-destructor TMimePart.destroy;
-begin
-  FContent.Free;
-  inherited;
-end;
-
-function TMimePart.FileName: String;
-var
-  s : String;
-begin
-  s := Headers.Values['Content-Disposition'];
-  StringSplit(s, ';', s, result);
-  if (s = 'form-data') and result.Contains('filename="') then
-  begin
-    result := result.Substring(result.IndexOf('filename="')+10);
-    result := copy(result, 1, pos('"', result)-1);
-  end
-  else
-    result := '';
-
-end;
-
-procedure TMimePart.DecodeContent;
-var
-  LCnt : String;
-begin
-  LCnt := FHeaders.Values[MIME_TRANSFERENCODING];
-
-  // possible values (rfc 2045):
-  // "7bit" / "8bit" / "binary" / "quoted-printable" / "base64"
-  // and extendible with ietf-token / x-token
-
-  // we only process base64. everything else is considered to be binary
-  // (this is not an email processor). Where this is a problem, notify
-  // the indysoap team *with an example*, and this will be extended
-  if AnsiSameText(LCnt, 'base64') then
-    begin
-    raise ETodo.create('TMimePart.DecodeContent');
-//    Content := Base64Decode(Content);
-    end
-  else
-    begin
-    // well, we leave the content unchanged
-    end;
-end;
-
-procedure TMimePart.ReadFromStream(AStream: TStream; ABoundary: AnsiString);
-var
-  LBuffer : pansichar;
-  LEnd : word;
-  LComp0 : Pointer;
-  LComp1 : Pointer;
-  LCompLen : Word;
-  offset : integer;
-  b : TBytes;
-const
-  BUF_LEN = 1024;
-begin
-
-  ReadHeaders(AStream);
-  FId := FHeaders.Values[MIME_ID];
-  if (FId <> '') and (FId[1] = '<') then
-    delete(FId, 1, 1);
-  if (FId <> '') and (FId[length(fId)] = '>') then
-    delete(FId, length(FId), 1);
-
-  // do this fast
-  GetMem(LBuffer, BUF_LEN);
-  try
-    FillChar(LBuffer^, BUF_LEN, 0);
-    LEnd := 0;
-    LCompLen := length(ABoundary);
-    LComp1 := pAnsichar(ABoundary);
-    while true do
-      begin
-      if LEnd = BUF_LEN-1 then
-        begin
-        offset := length(b);
-        SetLength(b, offset + LEnd - LCompLen);
-        move(LBuffer^, b[offset], LEnd - LCompLen);
-        move(LBuffer[LEnd - LCompLen], LBuffer[0], LCompLen);
-        LEnd := LCompLen;
-        FillChar(LBuffer[LEnd], BUF_LEN - LEnd, 0);
-        end
-      else
-        begin
-        AStream.Read(LBuffer[LEnd], 1);
-        inc(LEnd);
-        end;
-      LComp0 := pointer(NativeUInt(LBuffer)+LEnd-LCompLen);
-      if (LEnd >= LCompLen) and CompareMem(LComp0, LComp1, LCompLen) then
-        begin
-        offset := length(b);
-        SetLength(b, offset + LEnd - (LCompLen + 2 + 2));// -2 for the EOL, +2 for the other EOL
-        if (length(b) > offset) then
-          move(LBuffer^, b[offset], LEnd - (LCompLen + 2 + 2));
-        FContent.AsBytes := b;
-        break;
-        end;
-      end;
-  finally
-    FreeMem(LBuffer);
-  end;
-  DecodeContent;
-end;
-
-procedure TMimePart.SetContent(const AValue: TFslBuffer);
-begin
-  FContent.Free;
-  FContent := AValue;
-end;
-
-procedure TMimePart.WriteToStream(AStream: TStream);
-var
-  LTemp : AnsiString;
-begin
-
-  WriteHeaders(AStream);
-  if FHeaders.Values[MIME_TRANSFERENCODING] = 'base64' then
-    begin
-    raise ETodo.create('TMimePart.WriteToStream#1');
-//    WriteString(AStream, Base64EncodeAnsi(FContent, true)+EOL_WINDOWS);
-    end
-  else
-    begin
-    raise ETodo.create('TMimePart.WriteToStream#2');
-
-    //AStream.CopyFrom(FContent, (FContent.Size - FContent.Position)-2);
-//    if FContent.Size - FContent.Position >= 2 then
-//      LTemp := ReadBytes(FContent, 2)
-//    else
-//      LTemp := '';
-    WriteString(AStream, LTemp);
-    if LTemp <> EOL_WINDOWS then
-      begin
-      WriteString(AStream, EOL_WINDOWS);
-      end;
-    end;
-end;
-
-function TMimePart.GetMediaType: String;
-begin
-  result := FHeaders.Values[CONTENT_TYPE];
-end;
-
-function TMimePart.GetTransferEncoding: String;
-begin
-  result := FHeaders.Values[MIME_TRANSFERENCODING];
-end;
-
-function TMimePart.Link: TMimePart;
-begin
-  result := TMimePart(inherited Link);
-end;
 
 Function StringSplit(Const sValue, sDelimiter : String; Var sLeft, sRight: String) : Boolean;
 Var
@@ -6675,290 +6465,6 @@ begin
   result := lowercase(copy(s, 1, length(test))) = lowercase(test);
 end;
 
-function TMimePart.ParamName: String;
-var
-  s : String;
-begin
-  s := Headers.Values['Content-Disposition'];
-  StringSplit(s, ';', s, result);
-  if (s = 'form-data') and StartsWith(trim(result), 'name="') then
-  begin
-    result := copy(result, 8, $FFFF);
-    result := copy(result, 1, pos('"', result)-1);
-  end
-  else
-    result := '';
-end;
-
-procedure TMimePart.SetMediaType(const AValue: String);
-begin
-  FHeaders.Values[CONTENT_TYPE] := AValue;
-end;
-
-procedure TMimePart.SetTransferEncoding(const AValue: String);
-begin
-  FHeaders.Values[MIME_TRANSFERENCODING] := AValue;
-end;
-
-procedure TMimePart.SetId(const AValue: String);
-begin
-  FId := AValue;
-  FHeaders.Values[MIME_ID] := '<'+AValue+'>';
-end;
-
-function TMimePart.GetContentDisposition: String;
-begin
-  result := FHeaders.Values[CONTENT_DISPOSITION];
-end;
-
-procedure TMimePart.SetContentDisposition(const sValue: String);
-begin
-  FHeaders.Values[CONTENT_DISPOSITION] := sValue;
-end;
-
-(*{ TMimePartList }
-
-function TMimePart.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FContent.sizeInBytes);
-  inc(result, (FId.length * sizeof(char)) + 12);
-end;
-
-function TMimePartList.GetPartByIndex(i: integer): TMimePart;
-begin
-  result := Items[i] as TMimePart;
-end;
-
-function TMimePartList.GetPart(AName : String): TMimePart;
-var
-  i : integer;
-  s : String;
-begin
-  if (AName <> '') and (AName[1] = '<') then
-    System.delete(AName, 1, 1);
-  if (AName <> '') and (AName[length(AName)] = '>') then
-    System.delete(AName, length(AName), 1);
-
-  result := nil;
-  for i := 0 to Count - 1 do
-    begin
-    s := (Items[i] as TMimePart).Id;
-    if s = AName then
-      begin
-      result := Items[i] as TMimePart;
-      exit;
-      end
-    end;
-  Condition(False, 'Part "'+AName+'" not found in parts '+CommaList);
-end;
-
-function TMimePartList.CommaList: String;
-var
-  i : integer;
-begin
-  result := '';
-  for i := 0 to Count -1 do
-    begin
-    result := CommaAdd(result, (Items[i] as TMimePart).Id);
-    end;
-end;
-
-function TMimePartList.AddPart(AId: String): TMimePart;
-begin
-  result := TMimePart.create;
-  result.Id := AId;
-  add(result);
-end;
-  *)
-
-{ TMimeMessage }
-
-function IdAnsiSameText(const S1, S2: ansistring): Boolean;
-begin
-  Result := AnsiCompareText(String(S1), String(S2)) = 0;
-end;
-
-
-function TMimeMessage.AddPart(id: String): TMimePart;
-begin
-  result := TMimePart.create;
-  FParts.Add(result);
-  result.Id := id;
-end;
-
-procedure TMimeMessage.AnalyseContentType(AContent: String);
-var
-  s, l, r, id : AnsiString;
-begin
-  // this parser is weak - and needs review
-  StringSplitAnsi(AnsiString(Trim(AContent)), ';', l, s);
-  CheckCondition(IdAnsiSameText(l, MULTIPART_RELATED) or IdAnsiSameText(l, MULTIPART_FORMDATA), 'AnalyseContentType', 'attempt to read content as Mime, but the content-Type is "'+String(l)+'", not "'+String(MULTIPART_RELATED)+'" or "'+String(MULTIPART_FORMDATA)+'" in header '+String(AContent));
-  while s <> '' do
-    begin
-    StringSplitAnsi(s, ';',l, s);
-    StringSplitAnsi(AnsiString(trim(String(l))), '=', l, r);
-    CheckCondition(l <> '', 'AnalyseContentType', 'Unnamed part in Content_type header '+AContent);
-    CheckCondition(r <> '', 'AnalyseContentType', 'Unvalued part in Content_type header '+AContent);
-    if r[1] = '"' then
-      begin
-      delete(r, 1, 1);
-      end;
-    if r[length(r)] = '"' then
-      begin
-      delete(r, length(r), 1);
-      end;
-    if AnsiSameText(string(l), string(MIME_BOUNDARY)) then
-      begin
-      FBoundary := r;
-      end
-    else if IdAnsiSameText(l, MIME_START) then
-      begin
-      id := r;
-      if (id <> '') and (id[1] = '<') then
-        delete(id, 1, 1);
-      if (id <> '') and (id[length(id)] = '>') then
-        delete(id, length(id), 1);
-      FStart := string(id);
-      end
-    else if IdAnsiSameText(l, MIME_TYPE) then
-      begin
-      FMainType := String(r);
-      end;
-    end;
-end;
-
-constructor TMimeMessage.create;
-begin
-  inherited create;
-  FParts := TFslList<TMimePart>.create;
-end;
-
-destructor TMimeMessage.destroy;
-begin
-  FParts.Free;
-  inherited;
-end;
-
-procedure TMimeMessage.ReadFromStream(AStream: TStream);
-var
-  LHeader : String;
-begin
-  ReadHeaders(AStream);
-
-  LHeader := FHeaders.Values[CONTENT_TYPE];
-  CheckCondition(LHeader <> '', 'ReadFromStream', ''+CONTENT_TYPE+' header not found in '+FHeaders.CommaText);
-  ReadFromStream(AStream, LHeader);
-end;
-
-function TMimeMessage.GetMainPart: TMimePart;
-begin
-  CheckCondition(FStart <> '', 'GetMainPart', 'Start header not valid');
-  result := getparam(FStart);
-end;
-
-function TMimeMessage.getparam(name: String): TMimePart;
-var
-  i: Integer;
-begin
-  result := nil;
-  for i := 0 to Parts.Count - 1 do
-    if Parts[i].ParamName = name then
-    begin
-      result := Parts[i];
-      exit;
-    end;
-end;
-
-function TMimeMessage.hasParam(name: String): Boolean;
-var
-  i: Integer;
-begin
-  result := false;
-  for i := 0 to Parts.Count - 1 do
-    result := result or (Parts[i].ParamName = name);
-end;
-
-function TMimeMessage.Link: TMimeMessage;
-begin
-  result := TMimeMessage(inherited Link);
-end;
-
-procedure TMimeMessage.ReadFromStream(AStream: TStream; AContentType: String);
-var
-  LTemp : AnsiString;
-  LPart : TMimePart;
-begin
-  CheckCondition(AContentType <> '', 'ReadFromStream', 'Content-Type header not valid');
-  AnalyseContentType(AContentType);
-
-  LTemp := ReadToValue(AStream, FBoundary);
-  // that was getting going. usually LTemp would be empty, but we will throw it away
-  repeat
-    LTemp := ReadBytes(AStream, 2);
-    if LTemp = EOL then
-      begin
-      LPart := TMimePart.create;
-      try
-        LPart.ReadFromStream(AStream, FBoundary);
-      except
-        FreeAndNil(LPart);
-        raise;
-      end;
-      FParts.Add(LPart);
-      end
-  until LTemp = '--';
-end;
-
-function TMimeMessage.GetContentTypeHeader: String;
-begin
-
-  result := String(MULTIPART_RELATED)+'; type="application/xop+xml"; '+String(MIME_START)+'="'+FStart+'"; start-info="application/soap+xml"; '+String(MIME_BOUNDARY)+'="'+String(FBoundary)+'"; action="urn:ihe:iti:2007:ProvideAndRegisterDocumentSet-b"';
-  if FMainType <> '' then
-    begin
-    result := result + '; '+String(MIME_TYPE)+'="'+FMainType+'"';
-    end;
-// oracle   Content-Type: multipart/related; type="application/xop+xml"; start="<rootpart@soapui.org>"; start-info="application/soap+xml"; action="ProvideAndRegisterDocumentSet-b"; boundary="----=_Part_2_2098391526.1311207545005"
-
-end;
-
-procedure TMimeMessage.Validate;
-var
-  i, j : integer;
-  LFound : boolean;
-begin
-  CheckCondition(FBoundary <> '', 'Validate', 'Boundary is not valid');
-  CheckCondition(FStart <> '', 'Validate', 'Start is not valid');
-  LFound := false;
-  for i := 0 to FParts.Count - 1 do
-    begin
-    CheckCondition(FParts[i].Id <> '', 'Validate', 'Part['+inttostr(i)+'].Id is not valid');
-    LFound := LFound or (FParts[i].Id = FStart);
-    for j := 0 to i - 1 do
-      begin
-      CheckCondition(FParts[i].Id <> FParts[j].Id, 'Validate', 'Part['+inttostr(i)+'].Id is a duplicate of Part['+inttostr(j)+'].Id ("'+FParts[i].Id+'")');
-      end;
-    end;
-  CheckCondition(LFound, 'Validate', 'The Start Part "'+FStart+'" was not found in the part list');
-end;
-
-procedure TMimeMessage.WriteToStream(AStream: TStream; AHeaders: boolean);
-var
-  i : integer;
-begin
-  Validate;
-
-  if AHeaders then
-    begin
-    WriteHeaders(AStream);
-    end;
-  for i := 0 to FParts.Count - 1 do
-    begin
-    WriteString(AStream, '--'+FBoundary+EOL);
-    FParts[i].WriteToStream(AStream);
-    end;
-  WriteString(AStream, '--'+FBoundary+'--');
-end;
 
 Constructor TFslByteExtractor.Create;
 Begin
@@ -6968,7 +6474,7 @@ End;
 
 Destructor TFslByteExtractor.Destroy;
 Begin
-  FBuilder.Free;
+  FBuilder.free;
   Inherited;
 End;
 

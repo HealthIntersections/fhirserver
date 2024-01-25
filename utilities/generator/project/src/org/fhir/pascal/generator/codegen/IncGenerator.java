@@ -20,7 +20,7 @@ public class IncGenerator extends BaseGenerator {
   }
 
 	public void generate(String filename) throws Exception {
-	  String template = config.getTemplate("FHIR.R5.inc");
+	  String template = config.getTemplate("fhir5.inc");
     template = template.replace("{{mark}}", startVMarkValue());
     template = template.replace("{{rt.define}}", inc .toString());
     

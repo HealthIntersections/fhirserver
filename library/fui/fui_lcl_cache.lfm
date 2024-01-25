@@ -1,7 +1,7 @@
 object PackageCacheForm: TPackageCacheForm
-  Left = 2821
+  Left = 505
   Height = 538
-  Top = -37
+  Top = 219
   Width = 1092
   Caption = 'Package Cache Manager'
   ClientHeight = 538
@@ -10,7 +10,7 @@ object PackageCacheForm: TPackageCacheForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 57
@@ -28,7 +28,6 @@ object PackageCacheForm: TPackageCacheForm
       Top = 5
       Width = 58
       Caption = 'lblProgress'
-      ParentColor = False
       ParentFont = False
       Visible = False
     end
@@ -82,14 +81,13 @@ object PackageCacheForm: TPackageCacheForm
       Top = 10
       Width = 39
       Caption = 'Files in '
-      ParentColor = False
       ParentFont = False
     end
     object rbUserMode: TRadioButton
       Left = 64
       Height = 19
       Top = 9
-      Width = 79
+      Width = 77
       Caption = 'User Cache'
       Checked = True
       OnChange = rbUserModeChange
@@ -101,7 +99,7 @@ object PackageCacheForm: TPackageCacheForm
       Left = 160
       Height = 19
       Top = 10
-      Width = 94
+      Width = 92
       Caption = 'System Cache'
       OnChange = rbSystemChange
       ParentFont = False

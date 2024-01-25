@@ -39,7 +39,7 @@
   the server-protocol-files
 
   Rev 1.3    3/13/2003 09:14:44 PM  JPMugaas
-  Added property suggested by Henrick Hellström (StreamSec) for checking a
+  Added property suggested by Henrick Hellstrvm (StreamSec) for checking a
   certificate against a URL provided by a user.
 
   Rev 1.2    3/13/2003 11:55:44 AM  JPMugaas
@@ -90,7 +90,7 @@ type
     property PassThrough: Boolean read fPassThrough write SetPassThrough;
     property IsPeer : Boolean read fIsPeer write fIsPeer;
      {
-Pasted from private corresponance from Henrick Hellström - StreamSec http://www.streamsec.com
+Pasted from private corresponance from Henrick Hellstrvm - StreamSec http://www.streamsec.com
 
  This property should be set to the exact value of the URI passed to e.g.
 TIdHTTP.Get and should not be used or modified by any code outside of

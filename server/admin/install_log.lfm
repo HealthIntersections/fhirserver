@@ -1,10 +1,9 @@
 object InstallProgressForm: TInstallProgressForm
-  Left = 1142
+  Left = 668
   Height = 370
-  Top = 292
+  Top = 201
   Width = 540
   BorderIcons = []
-  BorderStyle = bsDialog
   Caption = 'Database Install Progress'
   ClientHeight = 370
   ClientWidth = 540
@@ -12,7 +11,6 @@ object InstallProgressForm: TInstallProgressForm
   OnDestroy = FormDestroy
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 50
@@ -131,9 +129,9 @@ object InstallProgressForm: TInstallProgressForm
     TabOrder = 1
     object lblStatus: TLabel
       Left = 16
-      Height = 15
+      Height = 16
       Top = 35
-      Width = 79
+      Width = 93
       Caption = 'Not Started Yet'
       ParentColor = False
       ParentFont = False

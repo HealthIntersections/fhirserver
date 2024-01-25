@@ -88,7 +88,7 @@ uses
 
 { TQuestionnairePanel }
 
-procedure TQuestionnairePanel.addItem(panel: TQuestionnaireItemPanel);
+function TQuestionnairePanel.addItem(panel: TQuestionnaireItemPanel): TQuestionnaireItemPanel;
 var
   item, new, next, prev : TFhirQuestionnaireItem;
   index : integer;
@@ -109,6 +109,7 @@ begin
     else
       list := Questionnaire.itemList;
     index := list.IndexByReference(item);
+  result := value;
   end;
   new := TFhirQuestionnaireItem.Create;
   try
@@ -181,10 +182,10 @@ begin
       npanel.grabFocus;
       markChange(item);
     finally
-      form.Free;
+      form.free;
     end;
   finally
-    new.Free;
+    new.free;
   end;
 end;
 
@@ -206,7 +207,7 @@ begin
   for panel in FPanels do
   begin
     RemoveObject(panel);
-    panel.Free;
+    panel.free;
   end;
   FPanels.Clear;
   FFocused := nil;
@@ -224,8 +225,8 @@ end;
 constructor TQuestionnairePanel.Create(owner: TComponent);
 begin
   inherited;
-  FPanels := TList<TQuestionnaireItemPanel>.create;
-  FLines := TList<TLine>.create;
+  FPanels := TList<TQuestionnaireItemPanel>.Create;
+  FLines := TList<TLine>.Create;
 end;
 
 procedure TQuestionnairePanel.delete(panel: TQuestionnaireItemPanel);
@@ -274,10 +275,10 @@ end;
 
 destructor TQuestionnairePanel.Destroy;
 begin
-  FLines.Free;
-  FPanels.Free;
-  FQuestionnaire.Free;
-  FSettings.Free;
+  FLines.free;
+  FPanels.free;
+  FQuestionnaire.free;
+  FSettings.free;
   inherited;
 end;
 
@@ -525,7 +526,7 @@ end;
 
 procedure TQuestionnairePanel.SetQuestionnaire(const Value: TFhirQuestionnaire);
 begin
-  FQuestionnaire.Free;
+  FQuestionnaire.free;
   FQuestionnaire := Value;
 end;
 

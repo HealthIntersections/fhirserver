@@ -1,5 +1,6 @@
 unit fui_gfx_jpg;
 
+{ Adapted from? Copyright (c) ? }
 {$i fhir.inc}
 
 interface
@@ -888,7 +889,7 @@ procedure TJPGDecoder.LoadFromStream(Stream: TStream; const Target: TBitmap);
 
 var
   DC: HDC;  // Ermittlung der Farbtiefe, falls ColorDepth = jpgAuto
-  FOutputFormat: TJPGColorDepth;  // tatsächlich verwendetes Format
+  FOutputFormat: TJPGColorDepth;  // tatsï¿½chlich verwendetes Format
 
 var
   LinesPerCall,
@@ -911,7 +912,7 @@ begin
   Target.FreeImage;
   if Stream.Size > 0 then
   begin
-    // Farbtiefe bei jpgAuto über das Display bestimmen
+    // Farbtiefe bei jpgAuto ï¿½ber das Display bestimmen
     if ColorDepth = jpgAuto then
     begin
       DC := GetDC(0);
@@ -948,7 +949,7 @@ begin
       end;
 
       jc.d.dct_method := JDCT_ISLOW;  // Standard. Float ist unwesentlich besser, aber 20 Prozent langsamer
-      if FDither then jc.d.dither_mode := JDITHER_FS  // Ordered ist nicht schneller, aber häßlicher
+      if FDither then jc.d.dither_mode := JDITHER_FS  // Ordered ist nicht schneller, aber hï¿½ï¿½licher
                  else jc.d.dither_mode := JDITHER_NONE;
       jc.FinalDCT := jc.d.dct_method;
       jc.FinalTwoPassQuant := jc.d.two_pass_quantize;  // True
@@ -978,13 +979,13 @@ begin
 
       jpeg_start_decompress(jc.d);  // liefert erst einmal JPGInfo
       with Target do
-      begin  // Bitmap-Größe
+      begin  // Bitmap-Grï¿½ï¿½e
         Width := jc.d.output_width;
         Height := jc.d.output_height;
         ResetDestination;  // Ziel der Ausgabe, Oberkante Display, Timing
         PtrInc := Integer(ScanLine[1]) - Integer(DestScanline);
         if (PtrInc > 0) and ((PtrInc and 3) = 0) then
-           // Width = ScanWidth und Bitmap ist Top Down (nächste Windows-Version?)
+           // Width = ScanWidth und Bitmap ist Top Down (nï¿½chste Windows-Version?)
           LinesPerCall := jc.d.rec_outbuf_height // mehrere Scanlines pro Aufruf
         else
           LinesPerCall := 1; // dabei wird's wohl einstweilen bleiben...
@@ -1011,7 +1012,7 @@ begin
           end;
           jpeg_finish_output(jc.d);
         end;
-        // für den letzten Pass die tatsächlich gewünschte Ausgabequalität
+        // fï¿½r den letzten Pass die tatsï¿½chlich gewï¿½nschte Ausgabequalitï¿½t
         jc.d.dct_method := jc.FinalDCT; jc.d.dither_mode := jc.FinalDitherMode;
         if jc.FinalTwoPassQuant then
         begin
@@ -1021,7 +1022,7 @@ begin
         ResetDestination;  // wieder ab Zeile 0
       end;
 
-      // Palette (bei progressiven JPEGS die endgültige, bei Baseline die einzige)
+      // Palette (bei progressiven JPEGS die endgï¿½ltige, bei Baseline die einzige)
       if (not jc.d.buffered_image or jc.FinalTwoPassQuant) and
         (jc.d.colormap <> nil) and GeneratePalette then
       begin
@@ -1029,7 +1030,7 @@ begin
         ResetDestination;
       end;
 
-      // letzter Pass für progressive JPGs, erster & einziger für Baseline-JPGs
+      // letzter Pass fï¿½r progressive JPGs, erster & einziger fï¿½r Baseline-JPGs
       while (jc.d.output_scanline < jc.d.output_height) do
       begin
         LinesRead := jpeg_read_scanlines(jc.d, @DestScanline, LinesPerCall);
@@ -1085,7 +1086,7 @@ begin
   try
     GetJPEGInfo(Stream, Width, Height);
   finally
-    Stream.Free;
+    Stream.free;
   end;
 end;
 

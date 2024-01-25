@@ -55,7 +55,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -130,7 +130,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -208,7 +208,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -289,7 +289,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -388,7 +388,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -488,7 +488,7 @@ Type
       function getLengthDesc: String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -680,7 +680,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -757,7 +757,7 @@ Type
 
     Protected
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Constructor Create(Const sCode : String; bOptional, bRepeating : Boolean; aType : THL7V2ModelSegmentGroupType); Overload;
@@ -832,7 +832,7 @@ Type
       Procedure SetXMLMap(Const Value: THL7V2ModelSegmentGroup);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -938,7 +938,7 @@ Type
       Procedure SetRefStructure(Const Value: THL7V2ModelMessageStructure);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1026,7 +1026,7 @@ Type
       Procedure SetMessages(Const Value: THL7V2ModelEventMessages);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Overload; Override;
       Destructor Destroy; Overload; Override;
@@ -1120,7 +1120,7 @@ type
     procedure SetMessageStructures(const Value: THL7V2ModelMessageStructures);
     Function isVariableTypeName(Const sName : String) : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Constructor Create; override;
     Destructor Destroy; override;
@@ -1151,7 +1151,7 @@ Type
     FMap : THL7V2ModelSegmentGroup;
     procedure SetMap(const Value: THL7V2ModelSegmentGroup);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Destructor Destroy; override;
 
@@ -1202,7 +1202,7 @@ Type
     Function SaveSegmentMap(oMap : THL7V2ModelSegmentGroup) : String;
     Procedure SaveSchemaMap(oWriter : TWriter; aVersion : THL7V2Version; sName : String; oMap : THL7V2ModelSegmentGroup);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Constructor Create(Const sFileName, sFolder : String); Overload;
@@ -1272,7 +1272,7 @@ type
     procedure AddEventMessages(aVersion : THL7V2Version; oEvents : THL7V2ModelEvents); Overload; Virtual;
     procedure AddMessageStructures(aVersion : THL7V2Version; oMessageStructures : THL7V2ModelMessageStructures); Overload; Virtual;
     procedure AddSegmentMaps(aVersion : THL7V2Version; oStructures : THL7V2ModelMessageStructures); Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create; Override;
     Destructor Destroy; override;
@@ -1368,7 +1368,7 @@ type
     procedure DoneLoading(aTransferEvent: TOnDictTransferProgress); Override;
 
     function GetContents(bForWriting : Boolean) : TFslAccessStream; overload; virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; overload; override;
     destructor Destroy; Override;
@@ -1382,7 +1382,7 @@ type
     FErrorsOk : Boolean;
   protected
     function GetContents(bForWriting : Boolean) : TFslAccessStream; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(const sFilename : String; bSuppressException: Boolean = False); overload;
 
@@ -1397,7 +1397,7 @@ type
     FDictionary : THL7V2Dictionary;
     Procedure SetDictionary(Const Value: THL7V2Dictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Constructor Create(oDictionary : THL7V2Dictionary); Overload;
     Constructor Create(oProvider : THL7V2DictionaryProvider); Overload; // copy providers setup regarding dictionary
@@ -1437,9 +1437,9 @@ Begin
   Length := THL7V2ModelDataType(oObject).Length;
 End;
 
-function THL7V2ModelDataType.sizeInBytesV : cardinal;
+function THL7V2ModelDataType.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
 end;
@@ -1502,7 +1502,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1519,7 +1519,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1582,7 +1582,7 @@ begin
     Result.Length := iLength;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1615,9 +1615,9 @@ Begin
   Description := THL7V2ModelTableItem(oObject).Description;
 End;
 
-function THL7V2ModelTableItem.sizeInBytesV : cardinal;
+function THL7V2ModelTableItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
 end;
@@ -1680,7 +1680,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1697,7 +1697,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1714,7 +1714,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1792,7 +1792,7 @@ begin
     Result.Description := sDesc;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1804,7 +1804,7 @@ End;
 
 Destructor THL7V2ModelTable.Destroy;
 Begin
-  FItems.Free;
+  FItems.free;
   Inherited;
 End;
 
@@ -1827,11 +1827,11 @@ Begin
   Items.Assign(THL7V2ModelTable(oObject).Items);
 End;
 
-function THL7V2ModelTable.sizeInBytesV : cardinal;
+function THL7V2ModelTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
-  inc(result, FItems.sizeInBytes);
+  inc(result, FItems.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelTables.Link : THL7V2ModelTables;
@@ -1887,7 +1887,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1904,7 +1904,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -1955,7 +1955,7 @@ End;
 
 Procedure THL7V2ModelTable.SetItems(Const Value: THL7V2ModelTableItems);
 Begin
-  FItems.Free;
+  FItems.free;
   FItems := Value;
 End;
 
@@ -1967,7 +1967,7 @@ begin
     Result.Description := sDesc;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -1988,7 +1988,7 @@ begin
       Result := oBuilder.AsString;
     End;
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 end;
 
@@ -1999,8 +1999,8 @@ End;
 
 Destructor THL7V2ModelComponent.Destroy;
 Begin
-  FRefTable.Free;
-  FRefDataType.Free;
+  FRefTable.free;
+  FRefDataType.free;
   Inherited;
 End;
 
@@ -2024,14 +2024,14 @@ Begin
   Number := THL7V2ModelComponent(oObject).Number;
 End;
 
-function THL7V2ModelComponent.sizeInBytesV : cardinal;
+function THL7V2ModelComponent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDataType.length * sizeOf(char)) + 12);
-  inc(result, FRefTable.sizeInBytes);
-  inc(result, FRefDataType.sizeInBytes);
-  inc(result, FRefStructure.sizeInBytes);
+  inc(result, FRefTable.sizeInBytes(magic));
+  inc(result, FRefDataType.sizeInBytes(magic));
+  inc(result, FRefStructure.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelComponents.Link : THL7V2ModelComponents;
@@ -2097,7 +2097,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2114,7 +2114,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2131,7 +2131,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2148,7 +2148,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2239,13 +2239,13 @@ End;
 
 Procedure THL7V2ModelComponent.SetRefTable(Const Value: THL7V2ModelTable);
 Begin
-  FRefTable.Free;
+  FRefTable.free;
   FRefTable := Value;
 End;
 
 Procedure THL7V2ModelComponent.SetRefDataType(Const Value: THL7V2ModelDataType);
 Begin
-  FRefDataType.Free;
+  FRefDataType.free;
   FRefDataType := Value;
 End;
 
@@ -2259,7 +2259,7 @@ begin
     Result.Number := iNumber;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -2271,8 +2271,8 @@ End;
 
 Destructor THL7V2ModelStructure.Destroy;
 Begin
-  FComponents.Free;
-  FRefDataType.Free;
+  FComponents.free;
+  FRefDataType.free;
   Inherited;
 End;
 
@@ -2297,14 +2297,14 @@ Begin
   Components.Assign(THL7V2ModelStructure(oObject).Components);
 End;
 
-function THL7V2ModelStructure.sizeInBytesV : cardinal;
+function THL7V2ModelStructure.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FDataType.length * sizeOf(char)) + 12);
-  inc(result, FRefDataType.sizeInBytes);
-  inc(result, FComponents.sizeInBytes);
+  inc(result, FRefDataType.sizeInBytes(magic));
+  inc(result, FComponents.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelStructures.Link : THL7V2ModelStructures;
@@ -2370,7 +2370,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2387,7 +2387,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2404,7 +2404,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2421,7 +2421,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2512,14 +2512,14 @@ End;
 
 Procedure THL7V2ModelStructure.SetRefDataType(Const Value: THL7V2ModelDataType);
 Begin
-  FRefDataType.Free;
+  FRefDataType.free;
   FRefDataType := Value;
 
 End;
 
 Procedure THL7V2ModelStructure.SetComponents(Const Value: THL7V2ModelComponents);
 Begin
-  FComponents.Free;
+  FComponents.free;
   FComponents := Value;
 End;
 
@@ -2534,7 +2534,7 @@ begin
     Result.Id := iId;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -2545,8 +2545,8 @@ End;
 
 Destructor THL7V2ModelDataElement.Destroy;
 Begin
-  FRefTable.Free;
-  FRefStructure.Free;
+  FRefTable.free;
+  FRefStructure.free;
   Inherited;
 End;
 
@@ -2574,14 +2574,14 @@ Begin
   Table := THL7V2ModelDataElement(oObject).Table;
 End;
 
-function THL7V2ModelDataElement.sizeInBytesV : cardinal;
+function THL7V2ModelDataElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FStructure.length * sizeOf(char)) + 12);
   inc(result, (FLength_Conf.length * sizeof(char)) + 12);
-  inc(result, FRefTable.sizeInBytes);
-  inc(result, FRefStructure.sizeInBytes);
+  inc(result, FRefTable.sizeInBytes(magic));
+  inc(result, FRefStructure.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelDataElements.Link : THL7V2ModelDataElements;
@@ -2652,7 +2652,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2669,7 +2669,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2686,7 +2686,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2703,7 +2703,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2720,7 +2720,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -2831,13 +2831,13 @@ End;
 
 Procedure THL7V2ModelDataElement.SetRefTable(Const Value: THL7V2ModelTable);
 Begin
-  FRefTable.Free;
+  FRefTable.free;
   FRefTable := Value;
 End;
 
 Procedure THL7V2ModelDataElement.SetRefStructure(Const Value: THL7V2ModelStructure);
 Begin
-  FRefStructure.Free;
+  FRefStructure.free;
   FRefStructure := Value;
 End;
 
@@ -2852,7 +2852,7 @@ begin
     Result.Table := iTable;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -2869,7 +2869,7 @@ begin
     Result.Table := iTable;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -2897,7 +2897,7 @@ End;
 
 Destructor THL7V2ModelField.Destroy;
 Begin
-  FRefDataElement.Free;
+  FRefDataElement.free;
   Inherited;
 End;
 
@@ -2990,7 +2990,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3007,7 +3007,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3058,7 +3058,7 @@ End;
 
 Procedure THL7V2ModelField.SetRefDataElement(Const Value: THL7V2ModelDataElement);
 Begin
-  FRefDataElement.Free;
+  FRefDataElement.free;
   FRefDataElement := Value;
 End;
 
@@ -3077,7 +3077,7 @@ begin
     Result.FieldNumber := iFieldNumber;
     Add(Result.Link);
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -3089,7 +3089,7 @@ End;
 
 Destructor THL7V2ModelSegment.Destroy;
 Begin
-  FFields.Free;
+  FFields.free;
   Inherited;
 End;
 
@@ -3112,12 +3112,12 @@ Begin
   Fields.Assign(THL7V2ModelSegment(oObject).FFields);
 End;
 
-function THL7V2ModelSegment.sizeInBytesV : cardinal;
+function THL7V2ModelSegment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
-  inc(result, FFields.sizeInBytes);
+  inc(result, FFields.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelSegments.Link : THL7V2ModelSegments;
@@ -3173,7 +3173,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3190,7 +3190,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3241,7 +3241,7 @@ End;
 
 Procedure THL7V2ModelSegment.SetFields(Const Value: THL7V2ModelFields);
 Begin
-  FFields.Free;
+  FFields.free;
   FFields := Value;
 End;
 
@@ -3253,7 +3253,7 @@ begin
     Result.Description := sDesc;
     Add(Result.Link);
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -3274,7 +3274,7 @@ End;
 
 Destructor THL7V2ModelSegmentGroup.Destroy;
 Begin
-  FChildren.Free;
+  FChildren.free;
   Inherited;
 End;
 
@@ -3299,11 +3299,11 @@ Begin
   Children := THL7V2ModelSegmentGroup(oObject).Children.Clone;
 End;
 
-function THL7V2ModelSegmentGroup.sizeInBytesV : cardinal;
+function THL7V2ModelSegmentGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCode.length * sizeOf(char)) + 12);
-  inc(result, FChildren.sizeInBytes);
+  inc(result, FChildren.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelSegmentGroups.Link : THL7V2ModelSegmentGroups;
@@ -3364,7 +3364,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3395,7 +3395,7 @@ End;
 
 Procedure THL7V2ModelSegmentGroup.SetChildren(Const Value: THL7V2ModelSegmentGroups);
 Begin
-  FChildren.Free;
+  FChildren.free;
   FChildren := Value;
 End;
 
@@ -3423,7 +3423,7 @@ begin
     Result.GroupType := aGroupType;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -3434,8 +3434,8 @@ End;
 
 Destructor THL7V2ModelMessageStructure.Destroy;
 Begin
-  FSegmentMap.Free;
-  FXMLMap.Free;
+  FSegmentMap.free;
+  FXMLMap.free;
   Inherited;
 End;
 
@@ -3462,16 +3462,16 @@ Begin
   XMLMap :=  THL7V2ModelMessageStructure(oObject).XMLMap.Clone;
 End;
 
-function THL7V2ModelMessageStructure.sizeInBytesV : cardinal;
+function THL7V2ModelMessageStructure.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
   inc(result, (FExampleEvent.length * sizeOf(char)) + 12);
   inc(result, (FExampleMsgType.length * sizeOf(char)) + 12);
   inc(result, (FAction.length * sizeOf(char)) + 12);
-  inc(result, FSegmentMap.sizeInBytes);
-  inc(result, FXMLMap.sizeInBytes);
+  inc(result, FSegmentMap.sizeInBytes(magic));
+  inc(result, FXMLMap.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelMessageStructures.Link : THL7V2ModelMessageStructures;
@@ -3542,7 +3542,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3559,7 +3559,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3576,7 +3576,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3593,7 +3593,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3610,7 +3610,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3721,13 +3721,13 @@ End;
 
 Procedure THL7V2ModelMessageStructure.SetSegmentMap(Const Value: THL7V2ModelSegmentGroup);
 Begin
-  FSegmentMap.Free;
+  FSegmentMap.free;
   FSegmentMap := Value;
 End;
 
 Procedure THL7V2ModelMessageStructure.SetXMLMap(Const Value: THL7V2ModelSegmentGroup);
 Begin
-  FXMLMap.Free;
+  FXMLMap.free;
   FXMLMap := Value;
 End;
 
@@ -3747,7 +3747,7 @@ begin
     Result.Action := sAction;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -3758,8 +3758,8 @@ End;
 
 Destructor THL7V2ModelEventMessage.Destroy;
 Begin
-  FRefStructure.Free;
-  FRefReplyStructure.Free;
+  FRefStructure.free;
+  FRefReplyStructure.free;
   Inherited;
 End;
 
@@ -3783,15 +3783,15 @@ Begin
   ReplyStructure := THL7V2ModelEventMessage(oObject).ReplyStructure;
 End;
 
-function THL7V2ModelEventMessage.sizeInBytesV : cardinal;
+function THL7V2ModelEventMessage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMessage.length * sizeOf(char)) + 12);
   inc(result, (FStructure.length * sizeOf(char)) + 12);
   inc(result, (FReply.length * sizeOf(char)) + 12);
   inc(result, (FReplyStructure.length * sizeOf(char)) + 12);
-  inc(result, FRefReplyStructure.sizeInBytes);
-  inc(result, FRefStructure.sizeInBytes);
+  inc(result, FRefReplyStructure.sizeInBytes(magic));
+  inc(result, FRefStructure.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelEventMessages.Link : THL7V2ModelEventMessages;
@@ -3857,7 +3857,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3874,7 +3874,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3891,7 +3891,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3908,7 +3908,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -3999,13 +3999,13 @@ End;
 
 Procedure THL7V2ModelEventMessage.SetRefReplyStructure(Const Value: THL7V2ModelMessageStructure);
 Begin
-  FRefReplyStructure.Free;
+  FRefReplyStructure.free;
   FRefReplyStructure := Value;
 End;
 
 Procedure THL7V2ModelEventMessage.SetRefStructure(Const Value: THL7V2ModelMessageStructure);
 Begin
-  FRefStructure.Free;
+  FRefStructure.free;
   FRefStructure := Value;
 End;
 
@@ -4019,7 +4019,7 @@ begin
     Result.ReplyStructure := sReplyStructure;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 
 end;
@@ -4032,7 +4032,7 @@ End;
 
 Destructor THL7V2ModelEvent.Destroy;
 Begin
-  FMessages.Free;
+  FMessages.free;
   Inherited;
 End;
 
@@ -4055,12 +4055,12 @@ Begin
   Messages.Assign(THL7V2ModelEvent(oObject).Messages)
 End;
 
-function THL7V2ModelEvent.sizeInBytesV : cardinal;
+function THL7V2ModelEvent.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeOf(char)) + 12);
   inc(result, (FDescription.length * sizeOf(char)) + 12);
-  inc(result, FMessages.sizeInBytes);
+  inc(result, FMessages.sizeInBytes(magic));
 end;
 
 Function THL7V2ModelEvents.Link : THL7V2ModelEvents;
@@ -4116,7 +4116,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -4133,7 +4133,7 @@ Begin
       Result := -1;
     End;
   Finally
-    oElement.Free;
+    oElement.free;
   End;
 End;
 
@@ -4184,7 +4184,7 @@ End;
 
 Procedure THL7V2ModelEvent.SetMessages(Const Value: THL7V2ModelEventMessages);
 Begin
-  FMessages.Free;
+  FMessages.free;
   FMessages := Value;
 End;
 
@@ -4209,7 +4209,7 @@ begin
     Result.Description := sDesc;
     Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 end;
 
@@ -4218,34 +4218,34 @@ end;
 constructor THL7V2Model.Create;
 begin
   inherited;
-  FTables := THL7V2ModelTables.create;
+  FTables := THL7V2ModelTables.Create;
   FTables.SortedByID;
-  FComponents := THL7V2ModelComponents.create;
+  FComponents := THL7V2ModelComponents.Create;
   FComponents.SortedByNumber;
-  FDataElements := THL7V2ModelDataElements.create;
+  FDataElements := THL7V2ModelDataElements.Create;
   FDataElements.SortedById;
-  FSegments := THL7V2ModelSegments.create;
+  FSegments := THL7V2ModelSegments.Create;
   FSegments.SortedByCode;
-  FDataTypes := THL7V2ModelDataTypes.create;
+  FDataTypes := THL7V2ModelDataTypes.Create;
   FDataTypes.SortedByName;
-  FStructures := THL7V2ModelStructures.create;
+  FStructures := THL7V2ModelStructures.Create;
   FStructures.SortedByID;
-  FEvents := THL7V2ModelEvents.create;
+  FEvents := THL7V2ModelEvents.Create;
   FEvents.SortedByName;
-  FMessageStructures := THL7V2ModelMessageStructures.create;
+  FMessageStructures := THL7V2ModelMessageStructures.Create;
   FMessageStructures.SortedByName;
 end;
 
 destructor THL7V2Model.Destroy;
 begin
-  FTables.Free;
-  FComponents.Free;
-  FDataElements.Free;
-  FSegments.Free;
-  FDataTypes.Free;
-  FStructures.Free;
-  FEvents.Free;
-  FMessageStructures.Free;
+  FTables.free;
+  FComponents.free;
+  FDataElements.free;
+  FSegments.free;
+  FDataTypes.free;
+  FStructures.free;
+  FEvents.free;
+  FMessageStructures.free;
   inherited;
 end;
 
@@ -4275,49 +4275,49 @@ end;
 
 procedure THL7V2Model.SetTables(const Value: THL7V2ModelTables);
 begin
-  FTables.Free;
+  FTables.free;
   FTables := Value;
 end;
 
 procedure THL7V2Model.SetComponents(const Value: THL7V2ModelComponents);
 begin
-  FComponents.Free;
+  FComponents.free;
   FComponents := Value;
 end;
 
 procedure THL7V2Model.SetDataElements(const Value: THL7V2ModelDataElements);
 begin
-  FDataElements.Free;
+  FDataElements.free;
   FDataElements := Value;
 end;
 
 procedure THL7V2Model.SetSegments(const Value: THL7V2ModelSegments);
 begin
-  FSegments.Free;
+  FSegments.free;
   FSegments := Value;
 end;
 
 procedure THL7V2Model.SetDataTypes(const Value: THL7V2ModelDataTypes);
 begin
-  FDataTypes.Free;
+  FDataTypes.free;
   FDataTypes := Value;
 end;
 
 procedure THL7V2Model.SetStructures(const Value: THL7V2ModelStructures);
 begin
-  FStructures.Free;
+  FStructures.free;
   FStructures := Value;
 end;
 
 procedure THL7V2Model.SetEvents(const Value: THL7V2ModelEvents);
 begin
-  FEvents.Free;
+  FEvents.free;
   FEvents := Value;
 end;
 
 procedure THL7V2Model.SetMessageStructures(const Value: THL7V2ModelMessageStructures);
 begin
-  FMessageStructures.Free;
+  FMessageStructures.free;
   FMessageStructures := Value;
 end;
 
@@ -4380,17 +4380,17 @@ begin
       end;
 end;
 
-function THL7V2Model.sizeInBytesV : cardinal;
+function THL7V2Model.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTables.sizeInBytes);
-  inc(result, FComponents.sizeInBytes);
-  inc(result, FDataElements.sizeInBytes);
-  inc(result, FSegments.sizeInBytes);
-  inc(result, FDataTypes.sizeInBytes);
-  inc(result, FStructures.sizeInBytes);
-  inc(result, FEvents.sizeInBytes);
-  inc(result, FMessageStructures.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTables.sizeInBytes(magic));
+  inc(result, FComponents.sizeInBytes(magic));
+  inc(result, FDataElements.sizeInBytes(magic));
+  inc(result, FSegments.sizeInBytes(magic));
+  inc(result, FDataTypes.sizeInBytes(magic));
+  inc(result, FStructures.sizeInBytes(magic));
+  inc(result, FEvents.sizeInBytes(magic));
+  inc(result, FMessageStructures.sizeInBytes(magic));
 end;
 
 { THL7V2SchemaStoreCacheEntries }
@@ -4426,14 +4426,14 @@ function THL7V2SchemaStoreCacheEntries.IndexByVersionAndStructure(aVersion: THL7
 var
   oItem : THL7V2SchemaStoreCacheEntry;
 begin
-  oItem := THL7V2SchemaStoreCacheEntry.create;
+  oItem := THL7V2SchemaStoreCacheEntry.Create;
   try
     oItem.Version := aVersion;
     oItem.Name := sStruct;
     if not find(oItem, result, CompareByVersionAndStructure) then
       result := -1;
   finally
-    oItem.Free;
+    oItem.free;
   end;
 end;
 
@@ -4451,26 +4451,26 @@ end;
 
 destructor THL7V2SchemaStoreCacheEntry.Destroy;
 begin
-  FMap.Free;
+  FMap.free;
   inherited;
 end;
 
 procedure THL7V2SchemaStoreCacheEntry.SetMap(const Value: THL7V2ModelSegmentGroup);
 begin
-  FMap.Free;
+  FMap.free;
   FMap := Value;
 end;
 
-function THL7V2SchemaStoreCacheEntry.sizeInBytesV : cardinal;
+function THL7V2SchemaStoreCacheEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMap.sizeInBytes(magic));
 end;
 
 Constructor THL7V2SchemaStore.Create;
 Begin
   Inherited;
-  FLock := TFslLock.Create;
+  FLock := TFslLock.Create('v2 schema');
   FCache := THL7V2SchemaStoreCacheEntries.Create;
 End;
 
@@ -4483,8 +4483,8 @@ End;
 
 Destructor THL7V2SchemaStore.Destroy;
 Begin
-  FCache.Free;
-  FLock.Free;
+  FCache.free;
+  FLock.free;
   Inherited;
 End;
 
@@ -4574,15 +4574,15 @@ Begin
           Try
             ReadSchemaFromStream(aVer, sStruct, oStream);
           Finally
-            oStream.Free;
+            oStream.free;
           End;
           End;
         oReader.ReadListEnd;
       Finally
-        oReader.Free;
+        oReader.free;
       End;
     Finally
-      oFile.Free;
+      oFile.free;
     End;
     End;
 End;
@@ -4611,11 +4611,11 @@ Begin
     Try
       WriteSegmentGroup(oWriter, oMap);
     Finally
-      oWriter.Free;
+      oWriter.free;
     End;
     Result := oStream.DataString;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -4644,7 +4644,7 @@ Begin
       ReadSegmentGroup(oReader, oChild);
       oGroup.Children.Add(oChild.Link);
     Finally
-      oChild.Free;
+      oChild.free;
     End;
     End;
 End;
@@ -4668,13 +4668,13 @@ Begin
         oEntry.Map := oMap.Link;
         FCache.Add(oEntry.Link);
       Finally
-        oEntry.Free;
+        oEntry.free;
       End;
     Finally
-      oMap.Free;
+      oMap.free;
     End;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 End;
 
@@ -4757,7 +4757,7 @@ Begin
         oChild.Repeating := oNode.attributeNS[XML_NS_SCHEMA, 'maxOccurs'] = 'unbounded';
         oGroup.Children.Add(oChild.Link);
       Finally
-        oChild.Free;
+        oChild.free;
       End;
       End;
     oNode := oNode.nextElement;
@@ -4781,14 +4781,14 @@ Begin
       try
         ReadSchemaGroup(doc, Result, sFilename);
       Finally
-        doc.Free;
+        doc.free;
       end;
     finally
-      f.Free;
+      f.free;
     End;
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -4809,10 +4809,10 @@ Begin
 
       oWriter.WriteListEnd;
     Finally
-      oWriter.Free;
+      oWriter.free;
     End;
   Finally
-    oFile.Free;
+    oFile.free;
   End;
 End;
 
@@ -4852,7 +4852,7 @@ Begin
       Try
         SaveSchemaMap(oWriter, aVersion, sName, oMap);
       Finally
-        oMap.Free;
+        oMap.free;
       End;
       End;
     iFound := FindNext(aSearchRec);
@@ -4860,28 +4860,28 @@ Begin
     End;
 End;
 
-function THL7V2SchemaStore.sizeInBytesV : cardinal;
+function THL7V2SchemaStore.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FCache.sizeInBytes);
+  inc(result, FCache.sizeInBytes(magic));
 end;
 
 constructor THL7V2Dictionary.Create;
 begin
   inherited;
-  FLock := TFslLock.Create;
+  FLock := TFslLock.Create('v2 dict');
 end;
 
 destructor THL7V2Dictionary.Destroy;
 var
   aVersion : THL7V2Version;
 begin
-  FSchemaStore.Free;
+  FSchemaStore.free;
   for aVersion := Low(THL7V2Version) to High(THL7V2Version) do
     FModels[aVersion].free;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -4936,7 +4936,7 @@ begin
   for aVersion := Low(THL7V2Version) to High(THL7V2Version) do
     if aVersion in aVersions then
       begin
-      oModel := THL7V2Model.create;
+      oModel := THL7V2Model.Create;
       try
         oModel.Version := aVersion;
         VersionDefined(aVersion, sDesc);
@@ -4944,7 +4944,7 @@ begin
         oModel.CrossLink;
         oDest.SaveModel(oModel, sDesc);
       finally
-        oModel.Free;
+        oModel.free;
       end;
       end;
   oDest.DoneLoading(FOnTransferProgress);
@@ -5095,14 +5095,14 @@ begin
     result := FModels[aVersion];
     if result = nil then
       begin
-      result := THL7V2Model.create;
+      result := THL7V2Model.Create;
       try
         result.Version := aVersion;
         LoadModel(result);
         result.CrossLink;
         FModels[aVersion] := result.Link;
       finally
-        result.Free;
+        result.free;
       end;
       end;
   Finally
@@ -5255,49 +5255,49 @@ end;
 
 procedure THL7V2Dictionary.SetSchemaStore(const Value: THL7V2SchemaStore);
 begin
-  FSchemaStore.Free;
+  FSchemaStore.free;
   FSchemaStore := Value;
 end;
 
-function THL7V2Dictionary.sizeInBytesV : cardinal;
+function THL7V2Dictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSchemaStore.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSchemaStore.sizeInBytes(magic));
 end;
 
 { THL7V2BinaryDictionaryContext }
 
 destructor THL7V2BinaryDictionaryContext.Destroy;
 begin
-  FReader.Free;
-  FWriter.Free;
-  FStream.Free;
+  FReader.free;
+  FWriter.free;
+  FStream.free;
   inherited;
 end;
 
 procedure THL7V2BinaryDictionaryContext.Read(oBUffer : TFslBuffer);
 begin
   assert(FStream = nil, 'the context is already open');
-  FStream := TMemoryStream.create;
+  FStream := TMemoryStream.Create;
   if oBUffer.AsText <> '' then
     FStream.Write(oBUffer.AsText[1], length(oBUffer.AsText));
   FStream.Position := 0;
-  FReader := TReader.create(FStream, 8192);
-  FReader.ReadListBegin;
+  FReader := TReader.Create(FStream, 8192);
+  FReader.ReadListbegin
 end;
 
 procedure THL7V2BinaryDictionaryContext.Write;
 begin
   assert(FStream = nil, 'the context is already open');
-  FStream := TMemoryStream.create;
-  FWriter := TWriter.create(FStream, 8192);
-  FWriter.WriteListBegin;
+  FStream := TMemoryStream.Create;
+  FWriter := TWriter.Create(FStream, 8192);
+  FWriter.WriteListbegin
 end;
 
 function THL7V2BinaryDictionaryContext.CloseWriting: String;
 begin
   FWriter.WriteListEnd;
-  FWriter.Free;
+  FWriter.free;
   FWriter := nil;
   FStream.position := 0;
   SetLength(Result, FStream.size);
@@ -5326,14 +5326,14 @@ end;
 constructor THL7V2BinaryDictionary.Create;
 begin
   inherited;
-  FContexts := THL7V2BinaryDictionaryContexts.create;
-  FBuffers := TFslNameBufferList.create;
+  FContexts := THL7V2BinaryDictionaryContexts.Create;
+  FBuffers := TFslNameBufferList.Create;
 end;
 
 destructor THL7V2BinaryDictionary.Destroy;
 begin
-  FContexts.Free;
-  FBuffers.Free;
+  FContexts.free;
+  FBuffers.free;
   inherited;
 end;
 
@@ -5349,7 +5349,7 @@ begin
   oContents := GetContents(false);
   if assigned(oContents) then
     try
-      oMem := TMemoryStream.create;
+      oMem := TMemoryStream.Create;
       try
         oMem.SetSize(oContents.Size);
         oContents.Read(oMem.Memory^, oContents.Size);
@@ -5360,24 +5360,24 @@ begin
           r.ReadListBegin;
           while not r.EndOfList do
             begin
-            oBuffer := TFslNameBuffer.create;
+            oBuffer := TFslNameBuffer.Create;
             try
               oBuffer.Name := r.readString;
               oBuffer.AsText := r.readstring;
               FBuffers.Add(oBuffer.Link);
             finally
-              oBuffer.Free;
+              oBuffer.free;
             end;
             end;
           r.ReadListEnd;
         finally
-          r.Free;
+          r.free;
           end;
       finally
-        oMem.Free;
+        oMem.free;
         end;
     finally
-      oContents.Free;
+      oContents.free;
     end;
 end;
 
@@ -5394,7 +5394,7 @@ begin
   oBuffer := FBuffers.GetByName(sName);
   if not assigned(oBuffer) then
     RaiseError('GetReadingContext', 'No Context for '+sName+' found in '+IntegerToString(FBUffers.Count)+' entries');
-  result := THL7V2BinaryDictionaryContext.create;
+  result := THL7V2BinaryDictionaryContext.Create;
   result.Read(oBuffer);
 end;
 
@@ -5406,7 +5406,7 @@ begin
 
   if not assigned(result) then
     begin
-    result := THL7V2BinaryDictionaryContext.create;
+    result := THL7V2BinaryDictionaryContext.Create;
     result.Name := sName;
     FContexts.add(result);
     result.write;
@@ -5437,7 +5437,7 @@ begin
       end;
     w.WriteListEnd;
   finally
-    w.Free;
+    w.free;
   end;
 end;
 
@@ -5448,7 +5448,7 @@ var
   oContents : TFslAccessStream;
 begin
   aTransferEvent(self, 'All', 'Closing Contexts', 0, 3, bDummy);
-  oStream := TMemoryStream.create;
+  oStream := TMemoryStream.Create;
   try
     SaveToStream(oStream);
 
@@ -5458,10 +5458,10 @@ begin
     try
       oContents.Write(oStream.Memory^, oStream.Size);
     finally
-      oContents.Free;
+      oContents.free;
     end;
   finally
-    oStream.Free;
+    oStream.free;
   end;
   aTransferEvent(self, 'All', 'Saving', 3, 3, bDummy);
   LoadDictionary;
@@ -5487,7 +5487,7 @@ begin
         oContext.Reader.ReadString;
       end;
   finally
-    oContext.Free;
+    oContext.free;
     end;
 end;
 
@@ -5504,7 +5504,7 @@ begin
       oContext.Reader.ReadString;
       end;
   finally
-    oContext.Free;
+    oContext.free;
     end;
 end;
 
@@ -5532,7 +5532,7 @@ begin
     try
       while not oContext.Reader.EndOfList do
         begin
-        oField := THL7V2ModelField.create;
+        oField := THL7V2ModelField.Create;
         try
           oContext.Reader.ReadString; // ignore segment code
           oField.DataElement := oContext.Reader.ReadInteger;
@@ -5543,11 +5543,11 @@ begin
           oField.FieldNumber := oContext.Reader.ReadInteger;
           oSegment.Fields.Add(oField.Link);
         finally
-          oField.Free;
+          oField.free;
         end;
         end;
     finally
-      oContext.Free;
+      oContext.free;
     end;
     end;
 end;
@@ -5593,19 +5593,19 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oComponent := THL7V2ModelComponent.create;
+      oComponent := THL7V2ModelComponent.Create;
       try
         oComponent.Name := oContext.Reader.ReadString;
         oComponent.Table := oContext.Reader.ReadInteger;
-        oComponent.DataType:= oContext.Reader.ReadString;
+        oComponent.DataType := oContext.Reader.ReadString;
         oComponent.Number := oContext.Reader.ReadInteger;
         oComponents.Add(oComponent.Link);
       finally
-        oComponent.Free;
+        oComponent.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -5634,7 +5634,7 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oDataElement := THL7V2ModelDataElement.create;
+      oDataElement := THL7V2ModelDataElement.Create;
       try
         oDataElement.Description := oContext.Reader.ReadString;
         oDataElement.Structure := oContext.Reader.ReadString;
@@ -5650,11 +5650,11 @@ begin
         oDataElement.Id := oContext.Reader.ReadInteger;
         oDataElements.Add(oDataElement.Link);
       finally
-        oDataElement.Free;
+        oDataElement.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -5691,18 +5691,18 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oDataType := THL7V2ModelDataType.create;
+      oDataType := THL7V2ModelDataType.Create;
       try
         oDataType.Name := oContext.Reader.ReadString;
         oDataType.Description := oContext.Reader.ReadString;
         oDataType.Length := oContext.Reader.ReadInteger;
         oDataTypes.Add(oDataType.Link);
       finally
-        oDataType.Free;
+        oDataType.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -5730,17 +5730,17 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oSegment := THL7V2ModelSegment.create;
+      oSegment := THL7V2ModelSegment.Create;
       try
         oSegment.Code := oContext.Reader.ReadString;
         oSegment.Description := oContext.Reader.ReadString;
         oSegments.Add(oSegment.Link);
       finally
-        oSegment.Free;
+        oSegment.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
   LoadSegmentFields(aVersion, oSegments);
 end;
@@ -5770,7 +5770,7 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oStructure := THL7V2ModelStructure.create;
+      oStructure := THL7V2ModelStructure.Create;
       try
         oStructure.Name := oContext.Reader.ReadString;
         oStructure.Description := oContext.Reader.ReadString;
@@ -5778,11 +5778,11 @@ begin
         oStructure.ID := oContext.Reader.ReadInteger;
         oStructures.Add(oStructure.Link);
       finally
-        oStructure.Free;
+        oStructure.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -5827,7 +5827,7 @@ begin
       oStructure.Components.add(oComp.Link);
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 End;
 
@@ -5861,23 +5861,23 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oTable := THL7V2ModelTable.create;
+      oTable := THL7V2ModelTable.Create;
       try
         oTable.Description := oContext.Reader.ReadString;
         oTable.ID := oContext.Reader.ReadInteger;
         oTables.Add(oTable.Link);
       finally
-        oTable.Free;
+        oTable.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
   oContext := GetReadingContext('tableitems-' + NAMES_HL7V2_VERSION[aVersion]);
   try
     while not oContext.Reader.EndOfList do
       begin
-      oTableItem := THL7V2ModelTableItem.create;
+      oTableItem := THL7V2ModelTableItem.Create;
       try
         iId := oContext.Reader.ReadInteger;
         oTableItem.ID := oContext.Reader.ReadInteger;
@@ -5885,11 +5885,11 @@ begin
         oTableItem.Description := oContext.Reader.ReadString;
         oTables.GetByID(iId).Items.Add(oTableItem.Link);
       finally
-        oTableItem.Free;
+        oTableItem.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -5931,17 +5931,17 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oEvent := THL7V2ModelEvent.create;
+      oEvent := THL7V2ModelEvent.Create;
       try
         oEvent.Name := oContext.Reader.ReadString;
         oEvent.Description := oContext.Reader.ReadString;
         oEvents.Add(oEvent.Link);
       finally
-        oEvent.Free;
+        oEvent.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -5970,7 +5970,7 @@ begin
     while not oContext.Reader.EndOfList do
       begin
       oEvent := oEVents.GetByName(oContext.Reader.ReadString);
-      oMessage := THL7V2ModelEventMessage.create;
+      oMessage := THL7V2ModelEventMessage.Create;
       try
         oMessage.Message := oContext.Reader.ReadString;
         oMessage.Structure := oContext.Reader.ReadString;
@@ -5978,11 +5978,11 @@ begin
         oMessage.ReplyStructure := oContext.Reader.ReadString;
         oEvent.Messages.add(oMessage.Link);
       finally
-        oMessage.Free;
+        oMessage.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -6018,7 +6018,7 @@ begin
   try
     while not oContext.Reader.EndOfList do
       begin
-      oMessageStructure := THL7V2ModelMessageStructure.create;
+      oMessageStructure := THL7V2ModelMessageStructure.Create;
       try
         oMessageStructure.Name := oContext.Reader.ReadString;
         oMessageStructure.Description := oContext.Reader.ReadString;
@@ -6027,11 +6027,11 @@ begin
         oMessageStructure.Action := oContext.Reader.ReadString;
         oMessageStructures.Add(oMessageStructure.Link);
       finally
-        oMessageStructure.Free;
+        oMessageStructure.free;
       end;
       end;
   finally
-    oContext.Free;
+    oContext.free;
   end;
 end;
 
@@ -6065,12 +6065,12 @@ begin
   iTotal := oContext.Reader.ReadInteger;
   for iLoop := 1 to iTotal do
     begin
-    oChild := THL7V2ModelSegmentGroup.create;
+    oChild := THL7V2ModelSegmentGroup.Create;
     try
       ReadSegmentGroup(oContext, oChild);
       oSegmentGroup.Children.add(oChild.Link);
     finally
-      oChild.Free;
+      oChild.free;
     end;
     end;
 end;
@@ -6091,16 +6091,16 @@ begin
       try
         if oContext.Reader.ReadBoolean then
           begin
-          oSegmentGroup := THL7V2ModelSegmentGroup.create;
+          oSegmentGroup := THL7V2ModelSegmentGroup.Create;
             try
             ReadSegmentGroup(oContext, oSegmentGroup);
             oStructure.SegmentMap := oSegmentGroup.Link;
           finally
-            oSegmentGroup.Free;
+            oSegmentGroup.free;
           end;
           end;
       finally
-        oContext.Free;
+        oContext.free;
       end;
       end;
     end;
@@ -6148,11 +6148,11 @@ begin
   LoadDictionary;
 end;
 
-function THL7V2BinaryDictionary.sizeInBytesV : cardinal;
+function THL7V2BinaryDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuffers.sizeInBytes);
-  inc(result, FContexts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuffers.sizeInBytes(magic));
+  inc(result, FContexts.sizeInBytes(magic));
 end;
 
 { THL7V2FileDictionary }
@@ -6187,9 +6187,9 @@ begin
     Result := 'File';
 end;
 
-function THL7V2FileDictionary.sizeInBytesV : cardinal;
+function THL7V2FileDictionary.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFileName.length * sizeof(char)) + 12);
 end;
 
@@ -6209,20 +6209,20 @@ end;
 
 destructor THL7V2DictionaryProvider.Destroy;
 begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited;
 end;
 
 procedure THL7V2DictionaryProvider.SetDictionary(const Value: THL7V2Dictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := Value;
 end;
 
-function THL7V2DictionaryProvider.sizeInBytesV : cardinal;
+function THL7V2DictionaryProvider.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDictionary.sizeInBytes(magic));
 end;
 
 end.

@@ -37,7 +37,7 @@ uses
   SysUtils, Classes,
   IdTCPServer, IdCustomTCPServer, IdException, IdTelnetServer, IdIOHandlerSocket, IdContext,
   fsl_base, fsl_utilities, fsl_threads, fsl_logging,
-  endpoint;
+  endpoint, server_stats;
 
 type
   TFHIRTelnetServer = class;
@@ -67,16 +67,21 @@ type
     Procedure Execute; override;
   end;
 
+  { TFHIRTelnetServer }
+
   TFHIRTelnetServer = class (TLogListener)
   Private
     FServer: TIdTelnetServer;
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
     FEndPoints : TFslList<TFHIRServerEndPoint>;
+    FShuttingDown: boolean;
+    FStats : TStatusRecords;
     FPassword : String;
     FLog : TStringList;
     FWelcomeMsg : String;
     FThread : TFHIRTelnetServerThread;
+    procedure SetStats(AValue: TStatusRecords);
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
     procedure internalThread;
@@ -87,26 +92,30 @@ type
     destructor Destroy; Override;
     function Link : TFHIRTelnetServer; overload;
     property password : String read FPassword write FPassword;
+    property stats : TStatusRecords read FStats write SetStats;
 
     procedure addEndPoint(ep : TFHIRServerEndPoint);
     procedure removeEndPoint(ep : TFHIRServerEndPoint);
+    property ShuttingDown : boolean read FShuttingDown write FShuttingDown;
   end;
 
 implementation
 
 { TFHIRTelnetServer }
 
-constructor TFHIRTelnetServer.Create(port: Integer; WelcomeMsg : String);
+constructor TFHIRTelnetServer.Create(port: Integer; WelcomeMsg: String);
 begin
   inherited Create;
   FWelcomeMsg := WelcomeMsg;
   FLock := TFslLock.Create('TelnetServer');
-  FClients := TFslList<TTelnetThreadHelper>.create;
-  FEndPoints := TFslList<TFHIRServerEndPoint>.create;
+  FStats := stats;
+  FClients := TFslList<TTelnetThreadHelper>.Create;
+  FEndPoints := TFslList<TFHIRServerEndPoint>.Create;
 
   FLog := TStringList.Create;
 
-  FServer := TidTelnetServer.Create(NIL);
+  FServer := TIdTelnetServer.Create(NIL);
+  FServer.Name := 'Telnet';
   FServer.DefaultPort := port;
   FServer.LoginMessage := 'FHIRServer';
   FServer.OnAuthentication := TelnetLogin;
@@ -123,21 +132,22 @@ end;
 destructor TFHIRTelnetServer.Destroy;
 begin
   try
+    FStats.free;
     FThread.StopAndWait(100);
-    FThread.Free;
+    FThread.free;
     FServer.Active := false;
-    FServer.Free;
-    FClients.Free;
-    FEndPoints.Free;
+    FServer.free;
+    FClients.free;
+    FEndPoints.free;
   except
     // not interested
   end;
-  FLog.Free;
-  FLock.Free;
+  FLog.free;
+  FLock.free;
   inherited;
 end;
 
-procedure TFHIRTelnetServer.Log(const msg: String);
+procedure TFHIRTelnetServer.log(const msg: String);
 begin
   FLock.Lock;
   try
@@ -154,9 +164,9 @@ var
   tth : TTelnetThreadHelper;
   list : TFslList<TTelnetThreadHelper>;
 begin
-  list := TFslList<TTelnetThreadHelper>.create;
+  list := TFslList<TTelnetThreadHelper>.Create;
   try
-    ts := TStringList.create;
+    ts := TStringList.Create;
     try
       FLock.Lock;
       try
@@ -177,10 +187,10 @@ begin
         tth.ping;
       end;
     finally
-      ts.Free;
+      ts.free;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -203,12 +213,18 @@ procedure TFHIRTelnetServer.TelnetLogin(AThread: TIdContext; const username, pas
 begin
   If (username = 'console') and (password = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1') and (AThread.Binding.PeerIP = '127.0.0.1') then
     AAuthenticated := true
-  else If (username = 'g') and (password = 'g') and (AThread.Binding.PeerIP = '127.0.0.1') and FileExists('C:\temp\gg.txt') then
+  else If (username = 'g') and (password = 'g') and (AThread.Binding.PeerIP = '127.0.0.1') and FileExists(filePath(['[tmp]', 'gg.txt'])) then
     AAuthenticated := true
   else If (username = 'console') and (password = FPassword) and (FPassword <> '') then
     AAuthenticated := true
   else
     AAuthenticated := true;
+end;
+
+procedure TFHIRTelnetServer.SetStats(AValue: TStatusRecords);
+begin
+  FStats.free;
+  FStats := AValue;
 end;
 
 procedure TFHIRTelnetServer.telnetExecute(AThread: TIdContext);
@@ -235,7 +251,7 @@ begin
       end;
     end;
   finally
-    tth.Free;
+    tth.free;
   end;
 end;
 
@@ -243,7 +259,7 @@ end;
 
 constructor TTelnetThreadHelper.Create(server : TFHIRTelnetServer; context: TIdContext);
 begin
-  inherited create;
+  inherited Create;
   FServer := server;
   FContext := context;
 end;
@@ -281,36 +297,91 @@ procedure TTelnetThreadHelper.ping;
 var
   mem : UInt64;
   ep : TFHIRServerEndPoint;
+  magic : integer;
 begin
-  if (now > FNextPing) then
+  magic := TFslObject.nextMagic;
+  if FServer.FShuttingDown then
+  begin
+    send('$@ping: '+inttostr(GetThreadCount)+' threads; shutting down');
+  end
+  else if (now > FNextPing) then
   begin
     mem := 0;
     for ep in FServer.FEndPoints do
     begin
-      mem := mem + ep.cacheSize;
+      mem := mem + ep.cacheSize(magic);
     end;
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus+', '+DescribeBytes(mem)+' MB cached');
-    FNextPing := now + (DATETIME_SECOND_ONE * 10);
+    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
   end;
+  FNextPing := now + (DATETIME_SECOND_ONE * 10);
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
 var
   ep : TFHIRServerEndPoint;
+  ci: TCacheInformation;
 begin
   if (s = '@console') then
+  begin
+    Logging.log('Console connected');
     FEnhanced := true
+  end
   else if (s = '@threads') then
+  begin
+    Logging.log('Console requested Thread List');
     send('$@threads: '+GetThreadReport)
+  end
   else if (s = '@classes') then
+  begin
+    Logging.log('Console requested Object Class Count');
     send('$@classes: '+TFslObject.getReport('|', false))
+  end
   else if (s = '@classes+') then
+  begin
+    Logging.log('Console requested Object Class Delta');
     send('$@classes: '+TFslObject.getReport('|', true))
+  end
+  else if (s = '@stats') then
+  begin
+    Logging.log('Console requested stats');
+    send('$@stats: '+FServer.FStats.asCSVLine);
+  end
+  else if (s = '@caches') then
+  begin
+    Logging.log('Console requested Cache Information');
+    ci := TCacheInformation.Create;
+    try
+      for ep in FServer.FEndPoints do
+        ep.getCacheInfo(ci);
+      send('$@cache: '+ci.text('|'));
+    finally
+      ci.free;
+    end;
+  end
+  else if (s = '@locks') then
+  begin
+    Logging.log('Console requested Lock Information');
+    FServer.FLock.Lock('ProcessCommand');
+    try
+      send('$@locks: '+DumpLocks(true, '|'))
+    finally
+      FServer.FLock.Unlock;
+    end;
+  end
   else if (s = '@cache') then
   begin
+    Logging.log('Clear Cache because of instruction from console: '+Logging.MemoryStatus(true));
     for ep in FServer.FEndPoints do
       ep.clearCache;
-    ping;
+    Logging.log('Clear Cache finished: '+Logging.MemoryStatus(true));
+    ci := TCacheInformation.Create;
+    try
+      for ep in FServer.FEndPoints do
+        ep.getCacheInfo(ci);
+      send('$@cache: '+ci.text('|'));
+    finally
+      ci.free;
+    end;
   end
   else
     send('Unrecognised command '+s);

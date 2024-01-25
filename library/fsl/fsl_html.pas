@@ -87,7 +87,7 @@ Type
       FValues : TFslCSSValues;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -116,7 +116,7 @@ Type
       FName : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TFslCSSStyle;
       Function Clone : TFslCSSStyle;
@@ -208,7 +208,7 @@ Type
   Private
     FTitleAttribute : String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Procedure Assign(oSource : TFslObject); Override;
 
@@ -238,7 +238,7 @@ Type
     Procedure SetClasses(Const oValue: TFslCSSClasses);
     Procedure SetStyle(Const oValue: TFslCSSFragment);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -270,7 +270,7 @@ Type
   Private
     FText: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLComment;
     Function Clone : TFslHTMLComment;
@@ -285,7 +285,7 @@ Type
   Private
     FText: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLTextFragment;
     Function Clone : TFslHTMLTextFragment;
@@ -302,7 +302,7 @@ Type
   Private
     FEntity: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLEntity;
     Function Clone : TFslHTMLEntity;
@@ -326,7 +326,7 @@ Type
     FWidth: String;
     FAlign: TFslHTMLAlign;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLImage;
     Function Clone : TFslHTMLImage;
@@ -370,7 +370,7 @@ Type
     FItems: TFslHTMLItems;
     Procedure SetItems(Const oValue: TFslHTMLItems);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -407,7 +407,7 @@ Type
     FName: String;
     FAccessKey: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLAnchor;
     Function Clone : TFslHTMLAnchor;
@@ -574,7 +574,7 @@ Type
     FFace: String;
     FColour: TFslHTMLColour;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLFont;
     Function Clone : TFslHTMLFont;
@@ -628,7 +628,7 @@ Type
     FWidth: String;
     FAlign: TFslHTMLAlign;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLHorizontalRule;
     Function Clone : TFslHTMLHorizontalRule;
@@ -696,7 +696,7 @@ Type
     Procedure SetHasValue(Const Value: Boolean);
     Procedure SetValue(Const Value: Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLListItem;
     Function Clone : TFslHTMLListItem;
@@ -723,7 +723,7 @@ Type
     FList: TFslHTMLListItems;
     Procedure SetList(Const oValue: TFslHTMLListItems);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -770,7 +770,7 @@ Type
     FTerm: TFslHTMLItem;
     Procedure SetTerm(Const oValue: TFslHTMLItem);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -797,7 +797,7 @@ Type
     FListItems: TFslHTMLDefinitionListItems;
     Procedure SetListItems(Const oValue: TFslHTMLDefinitionListItems);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -824,7 +824,7 @@ Type
     FBgColour: TFslHTMLColour;
     FIsHeader: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLTableCell;
     Function Clone : TFslHTMLTableCell;
@@ -860,7 +860,7 @@ Type
     FCells: TFslHTMLTableCells;
     Procedure SetCells(Const oValue: TFslHTMLTableCells);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -891,7 +891,7 @@ Type
     FSectionType: TFslHTMLTableSectionType;
     Procedure SetRows(Const oValue: TFslHTMLTableRows);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -918,7 +918,7 @@ Type
   Private
     FAlign: TFslHTMLAlign;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLTableCaption;
     Function Clone : TFslHTMLTableCaption;
@@ -945,7 +945,7 @@ Type
     Procedure SetRows(Const oValue: TFslHTMLTableRows);
     Procedure SetSections(Const oValue: TFslHTMLTableSections);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -977,7 +977,7 @@ Type
     FName: String;
     FValue: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLFormControl;
     Function Clone : TFslHTMLFormControl;
@@ -1003,7 +1003,7 @@ Type
     FAlign: TFslHTMLAlign;
     FInputType: TFslHTMLFormInputType;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLInput;
     Function Clone : TFslHTMLInput;
@@ -1026,7 +1026,7 @@ Type
   Private
     FButtonType: TFslHTMLFormButtonType;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLButton;
     Function Clone : TFslHTMLButton;
@@ -1042,7 +1042,7 @@ Type
     FDisabled: Boolean;
     FCaption: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLOptionItem;
     Function Clone : TFslHTMLOptionItem;
@@ -1068,7 +1068,7 @@ Type
     FOptions: TFslHTMLOptionItems;
     Procedure SetOptions(Const oValue: TFslHTMLOptionItems);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1086,7 +1086,7 @@ Type
     FSelected: Boolean;
     FValue: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLOption;
     Function Clone : TFslHTMLOption;
@@ -1106,7 +1106,7 @@ Type
     Procedure SetAllOptions(Const oValue: TFslHTMLOptionItems);
     Procedure SetOptions(Const oValue: TFslHTMLOptionItems);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1129,7 +1129,7 @@ Type
     FRows: Integer;
     FCols: Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLTextArea;
     Function Clone : TFslHTMLTextArea;
@@ -1148,7 +1148,7 @@ Type
     FName: String;
     FMethod: TFslHTMLFormMethod;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLForm;
     Function Clone : TFslHTMLForm;
@@ -1171,7 +1171,7 @@ Type
     FVlinkcolor: TFslHTMLColour;
     FAlinkColor: TFslHTMLColour;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLBody;
     Function Clone : TFslHTMLBody;
@@ -1190,7 +1190,7 @@ Type
     FName: String;
     FScheme: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TFslHTMLMetaEntry;
     Function Clone : TFslHTMLMetaEntry;
@@ -1219,7 +1219,7 @@ Type
     Procedure SetMeta(Const oValue: TFslHTMLMetaEntries); // parser - collapse link and profile someday
     Procedure SetStyles(Const oValue: TFslCSSStyles);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1245,7 +1245,7 @@ Type
     Procedure SetHead(Const oValue: TFslHTMLHead);
     Procedure SetStyles(Const oValue: TFslCSSStyles);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1282,7 +1282,7 @@ Type
       FCurrentValue : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function ConsumeIdentifier : TFslHTMLToken;
       Function ConsumeWhitespace : TFslHTMLToken;
@@ -1368,7 +1368,7 @@ Type
       Procedure ReduceToken(aToken : TFslHTMLToken); Overload; 
       Function PeekToken : TFslHTMLToken; 
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1446,7 +1446,7 @@ Type
     Protected
       Procedure SetStream(oStream : TFslStream); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1556,7 +1556,57 @@ Const
       'hellip', 'oline', 'weierp', 'image', 'real');
 
 
+type
+
+  { TFslHtmlBuilder }
+
+  TFslHtmlBuilder = class (TFslStringBuilder)
+  private
+  public
+    procedure text(s : String);
+    procedure start(s : String);
+    procedure finish(s : String);
+
+    procedure ulS;
+    procedure ulF;
+    procedure li(cnt : String);
+  end;
+
 Implementation
+
+{ TFslHtmlBuilder }
+
+procedure TFslHtmlBuilder.text(s: String);
+begin
+  append(EncodeXML(s));
+end;
+
+procedure TFslHtmlBuilder.start(s: String);
+begin
+  append('<'+s+'>');
+end;
+
+procedure TFslHtmlBuilder.finish(s: String);
+begin
+  append('</'+s+'>');
+end;
+
+procedure TFslHtmlBuilder.ulS;
+begin
+  start('ul');
+end;
+
+procedure TFslHtmlBuilder.ulF;
+begin
+  finish('ul');
+end;
+
+procedure TFslHtmlBuilder.li(cnt: String);
+begin
+  start('li');
+  text(cnt);
+  start('li');
+end;
 
 
 Constructor TFslHTMLParser.Create;
@@ -1570,7 +1620,7 @@ End;
 
 Destructor TFslHTMLParser.Destroy;
 Begin
-  FAttributes.Free;
+  FAttributes.free;
 
   Inherited;
 End;
@@ -1641,7 +1691,7 @@ Var
 Begin
   If FNextTagOpen = '' Then
   Begin
-    // <TagOpen> ::= '<' <Identifier> { <Attributes> } { '>' | '/>' }
+    // <TagOpen> : := '<' <Identifier> { <Attributes> } { '>' | '/>' }
 
     ReduceToken(ahtOpenTag);
 
@@ -1742,7 +1792,7 @@ Function TFslHTMLParser.NextTagClose : String;
 Begin
   If FNextTagClose = '' Then
   Begin
-    // <TagClose> ::= '</' <Identifier> '>'
+    // <TagClose> : := '</' <Identifier> '>'
 
     ReduceToken(ahtOpenTagForwardSlash);
 
@@ -2018,7 +2068,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -2033,7 +2083,7 @@ Begin
   Try
     ConsumeSection(sTag, oSection);
   Finally
-    oSection.Free;
+    oSection.free;
   End;
 End;
 
@@ -2123,11 +2173,11 @@ End;
 
 Procedure TFslHTMLParser.ConsumeImage(oImage: TFslHTMLImage);
 Begin
-  // <Image> ::= '<IMG' {<ImageAttributes>} '>'
+  // <Image> : := '<IMG' {<ImageAttributes>} '>'
   //
-  // <ImageAttributes> ::= { 'src' '=' <URL> } { 'alt' '=' <String> } { 'longdesc' = <String> } { 'align' '=' <Align> }
+  // <ImageAttributes> : := { 'src' '=' <URL> } { 'alt' '=' <String> } { 'longdesc' = <String> } { 'align' '=' <Align> }
   //
-  // <Align> ::= 'left' | 'top' | 'right' | 'bottom' | 'middle'
+  // <Align> : := 'left' | 'top' | 'right' | 'bottom' | 'middle'
 
   ConsumeTagOpen('IMG');
 
@@ -2152,9 +2202,9 @@ Procedure TFslHTMLParser.ConsumeTableCell(oTableCell: TFslHTMLTableCell);
 Var
   sTag : String;
 Begin
-  // <TableCell> ::= <TableDataCell> | <TableHeaderCell>
-  // <TableDataCell> ::= '<TD>' <TableCell>* '</TD>'
-  // <TableHeaderCell> ::= '<TH>' <TableCell>* '</TH>'
+  // <TableCell> : := <TableDataCell> | <TableHeaderCell>
+  // <TableDataCell> : := '<TD>' <TableCell>* '</TD>'
+  // <TableHeaderCell> : := '<TH>' <TableCell>* '</TH>'
 
   sTag := ConsumeTagOpen;
 
@@ -2173,7 +2223,7 @@ Procedure TFslHTMLParser.ConsumeTableRow(oTableRow: TFslHTMLTableRow);
 Var
   oCell : TFslHTMLTableCell;
 Begin
-  // <TableRow> ::= '<TR>' <TableCell>* '</TR>'
+  // <TableRow> : := '<TR>' <TableCell>* '</TR>'
 
   ConsumeTagOpen('TR');
   ReadItem(oTableRow);
@@ -2188,7 +2238,7 @@ Begin
 
         oTableRow.Cells.Add(oCell.Link);
       Finally
-        oCell.Free;
+        oCell.free;
       End;
     End
     Else
@@ -2208,7 +2258,7 @@ Var
   oRow : TFslHTMLTableRow;
   sInnerTag : String;
 Begin
-  // <Table> ::= '<TABLE>' <TableRow>* '</TABLE>'
+  // <Table> : := '<TABLE>' <TableRow>* '</TABLE>'
 
   // TODO: COLGROUPS, THEAD/TFOOT/TBODY
 
@@ -2226,7 +2276,7 @@ Begin
 
         oTable.Rows.Add(oRow.Link);
       Finally
-        oRow.Free;
+        oRow.free;
       End;
     End
     Else If NextIsTagOpen Then
@@ -2255,9 +2305,9 @@ Var
   sTag : String;
   iLevel : Integer;
 Begin
-  // <Heading> ::= '<' <HeadingLevel> '>' <Item>* '</' <HeadingLevel '>'
+  // <Heading> : := '<' <HeadingLevel> '>' <Item>* '</' <HeadingLevel '>'
   //
-  // <HeadingLevel> ::= 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
+  // <HeadingLevel> : := 'H1' | 'H2' | 'H3' | 'H4' | 'H5' | 'H6'
 
   sTag := ConsumeTagOpen;
 
@@ -2278,7 +2328,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeAnchor(oAnchor : TFslHTMLAnchor);
 Begin
-  // <Anchor> ::= '<A>' <Item>* '</A>'
+  // <Anchor> : := '<A>' <Item>* '</A>'
 
   ConsumeTagOpen('A');
 
@@ -2296,7 +2346,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeFont(oFont: TFslHTMLFont);
 Begin
-  // <Font> ::= '<FONT>' <Item>* '</FONT>'
+  // <Font> : := '<FONT>' <Item>* '</FONT>'
 
   oFont.Color := FAttributes['color'];
   ConsumeSection('FONT', oFont);
@@ -2305,7 +2355,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeSpan(oSpan: TFslHTMLSpan);
 Begin
-  // <Span> ::= '<Span>' <Item>* '</Span>'
+  // <Span> : := '<Span>' <Item>* '</Span>'
 
   ConsumeSection('SPAN', oSpan);
 End;
@@ -2313,7 +2363,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeUnorderedList(oList: TFslHTMLUnorderedList);
 Begin
-  // <UnorderedList> ::= '<UL>' <Item>* '</UL>'
+  // <UnorderedList> : := '<UL>' <Item>* '</UL>'
 
   ConsumeSection('UL', oList);
 End;
@@ -2321,7 +2371,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeOrderedList(oList: TFslHTMLOrderedList);
 Begin
-  // <OrderedList> ::= '<OL>' <Item>* '</OL>'
+  // <OrderedList> : := '<OL>' <Item>* '</OL>'
 
   ConsumeSection('OL', oList);
 End;
@@ -2329,7 +2379,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeListItem(oItem: TFslHTMLListItem);
 Begin
-  // <ListItem> ::= '<LI value="">' <Item>* '</LI>'
+  // <ListItem> : := '<LI value="">' <Item>* '</LI>'
 
   oItem.Value := StrToIntDef(FAttributes['value'], 0);
   oItem.HasValue := FAttributes['value'] <> '';
@@ -2351,7 +2401,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeBreak(oBreak: TFslHTMLBreak);
 Begin
-  // <Break> ::= '<BR>' Or '<BR />' Or '<BR></BR>'
+  // <Break> : := '<BR>' Or '<BR />' Or '<BR></BR>'
 
   ConsumeTagOpen('BR');
   ReadItem(oBreak);
@@ -2363,7 +2413,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeHorizontalRule(oHorizontalRule: TFslHTMLHorizontalRule);
 Begin
-  // <HorizontalRule> ::= '<HR>' Or '<HR />' Or '<HR></HR>'
+  // <HorizontalRule> : := '<HR>' Or '<HR />' Or '<HR></HR>'
 
   ConsumeTagOpen('HR');
   ReadItem(oHorizontalRule);
@@ -2375,7 +2425,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeInput(oInput: TFslHTMLInput);
 Begin
-  // <Input> ::= '<INPUT' <InputAttributes> '>'
+  // <Input> : := '<INPUT' <InputAttributes> '>'
 
   ConsumeTagOpen('INPUT');
 End;
@@ -2407,7 +2457,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeParagraph(oParagraph: TFslHTMLParagraph);
 Begin
-  // <Paragraph> ::= '<P>' <Item>* '</P>'
+  // <Paragraph> : := '<P>' <Item>* '</P>'
 
   ConsumeSection('P', oParagraph);
 End;
@@ -2427,7 +2477,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeBody(oBody: TFslHTMLBody);
 Begin
-  // <Body> ::= '<BODY>' <Item>* '</BODY>'
+  // <Body> : := '<BODY>' <Item>* '</BODY>'
 
   ConsumeSection('BODY', oBody);
 End;
@@ -2439,8 +2489,8 @@ Var
   sKey   : String;
   sValue : String;
 Begin
-  // <Styles> ::= '<STYLE>' <Style>* '</STYLE>
-  // <Style> ::= <StyleName> '{' ( <StyleKey> ':' <StyleValue> ';' ) * '}'
+  // <Styles> : := '<STYLE>' <Style>* '</STYLE>
+  // <Style> : := <StyleName> '{' ( <StyleKey> ':' <StyleValue> ';' ) * '}'
 
   ConsumeTagOpen('STYLE');
 
@@ -2489,7 +2539,7 @@ Begin
 
       oStyles.Add(oStyle.Link);
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 
@@ -2512,7 +2562,7 @@ Begin
 
     oEntries.Add(oMetaEntry.Link);
   Finally
-    oMetaEntry.Free;
+    oMetaEntry.free;
   End;
 
   If NextTagClose('META') Then
@@ -2522,7 +2572,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeHead(oHead: TFslHTMLHead);
 Begin
-  // <Head> ::= '<HEAD>' { '<TITLE>' <Body> '</TITLE>' } { '<' 'META' <Attributes> '>' }
+  // <Head> : := '<HEAD>' { '<TITLE>' <Body> '</TITLE>' } { '<' 'META' <Attributes> '>' }
 
   ConsumeTagOpen('HEAD');
   ConsumeWhitespace;
@@ -2570,7 +2620,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeDocumentType(oDocument: TFslHTMLDocument);
 Begin
-  // <DocumentType> ::= { '<' !DOCTYPE' 'HTML' 'PUBLIC' <Version> <DTD> '>' }
+  // <DocumentType> : := { '<' !DOCTYPE' 'HTML' 'PUBLIC' <Version> <DTD> '>' }
 
   If PeekToken = ahtOpenTagQuery Then
   Begin
@@ -2616,7 +2666,7 @@ End;
 
 Procedure TFslHTMLParser.ConsumeDocument(oDocument: TFslHTMLDocument);
 Begin
-  // <Document> ::= <DocumentType> '<HTML>' { <Head> } { <Body> } | '</HTML>'
+  // <Document> : := <DocumentType> '<HTML>' { <Head> } { <Body> } | '</HTML>'
 
   oDocument.Clear;
 
@@ -2666,7 +2716,7 @@ Begin
         ConsumeHead(oHead);
     End;
   Finally
-    oDocument.Free;
+    oDocument.free;
   End;
 End;
 
@@ -2677,10 +2727,10 @@ begin
 end;
 
 
-function TFslHTMLParser.sizeInBytesV : cardinal;
+function TFslHTMLParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAttributes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAttributes.sizeInBytes(magic));
   inc(result, (FNextTagOpen.length * sizeof(char)) + 12);
   inc(result, (FNextTagClose.length * sizeof(char)) + 12);
 end;
@@ -2697,7 +2747,7 @@ End;
 
 Destructor TFslCSSFragment.Destroy;
 Begin
-  FValues.Free;
+  FValues.free;
 
   Inherited;
 End;
@@ -2723,10 +2773,10 @@ Begin
 End;
 
 
-function TFslCSSFragment.sizeInBytesV : cardinal;
+function TFslCSSFragment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FValues.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FValues.sizeInBytes(magic));
 end;
 
 Function TFslCSSFragments.GetFragment(iIndex: Integer): TFslCSSFragment;
@@ -2761,9 +2811,9 @@ Begin
 End;
 
 
-function TFslCSSStyle.sizeInBytesV : cardinal;
+function TFslCSSStyle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2835,9 +2885,9 @@ Begin
 End;
 
 
-function TFslHTMLElement.sizeInBytesV : cardinal;
+function TFslHTMLElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTitleAttribute.length * sizeof(char)) + 12);
 end;
 
@@ -2882,8 +2932,8 @@ End;
 
 Destructor TFslHTMLItem.Destroy;
 Begin
-  FClasses.Free;
-  FStyle.Free;
+  FClasses.free;
+  FStyle.free;
 
   Inherited;
 End;
@@ -2904,23 +2954,23 @@ End;
 
 Procedure TFslHTMLItem.SetClasses(Const oValue: TFslCSSClasses);
 Begin
-  FClasses.Free;
+  FClasses.free;
   FClasses := oValue;
 End;
 
 Procedure TFslHTMLItem.SetStyle(Const oValue: TFslCSSFragment);
 Begin
-  FStyle.Free;
+  FStyle.free;
   FStyle := oValue;
 End;
 
 
-function TFslHTMLItem.sizeInBytesV : cardinal;
+function TFslHTMLItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FId.length * sizeof(char)) + 12);
-  inc(result, FClasses.sizeInBytes);
-  inc(result, FStyle.sizeInBytes);
+  inc(result, FClasses.sizeInBytes(magic));
+  inc(result, FStyle.sizeInBytes(magic));
 end;
 
 Function TFslHTMLItems.GetHTMLItem(iIndex: Integer): TFslHTMLItem;
@@ -2961,9 +3011,9 @@ Begin
 End;
 
 
-function TFslHTMLComment.sizeInBytesV : cardinal;
+function TFslHTMLComment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -2989,9 +3039,9 @@ Begin
 End;
 
 
-function TFslHTMLTextFragment.sizeInBytesV : cardinal;
+function TFslHTMLTextFragment.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -3017,9 +3067,9 @@ Begin
 End;
 
 
-function TFslHTMLEntity.sizeInBytesV : cardinal;
+function TFslHTMLEntity.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FEntity.length * sizeof(char)) + 12);
 end;
 
@@ -3054,9 +3104,9 @@ Begin
 End;
 
 
-function TFslHTMLImage.sizeInBytesV : cardinal;
+function TFslHTMLImage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FHorizontalSpace.length * sizeof(char)) + 12);
   inc(result, (FAlternative.length * sizeof(char)) + 12);
   inc(result, (FLongDescription.length * sizeof(char)) + 12);
@@ -3092,9 +3142,9 @@ Begin
 End;
 
 
-function TFslHTMLAnchor.sizeInBytesV : cardinal;
+function TFslHTMLAnchor.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FURL.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FAccessKey.length * sizeof(char)) + 12);
@@ -3149,7 +3199,7 @@ End;
 
 Destructor TFslHTMLSection.Destroy;
 Begin
-  FItems.Free;
+  FItems.free;
   Inherited;
 End;
 
@@ -3165,15 +3215,15 @@ End;
 
 Procedure TFslHTMLSection.SetItems(Const oValue: TFslHTMLItems);
 Begin
-  FItems.Free;
+  FItems.free;
   FItems := oValue;
 End;
 
 
-function TFslHTMLSection.sizeInBytesV : cardinal;
+function TFslHTMLSection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FItems.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FItems.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLSpan.Assign(oSource: TFslObject);
@@ -3494,9 +3544,9 @@ Begin
 End;
 
 
-function TFslHTMLFont.sizeInBytesV : cardinal;
+function TFslHTMLFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, (FFace.length * sizeof(char)) + 12);
 end;
@@ -3590,9 +3640,9 @@ Begin
 End;
 
 
-function TFslHTMLHorizontalRule.sizeInBytesV : cardinal;
+function TFslHTMLHorizontalRule.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, (FWidth.length * sizeof(char)) + 12);
 end;
@@ -3705,9 +3755,9 @@ Begin
 End;
 
 
-function TFslHTMLListItem.sizeInBytesV : cardinal;
+function TFslHTMLListItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TFslHTMLListItems.GetListItem(iIndex: Integer): TFslHTMLListItem;
@@ -3741,7 +3791,7 @@ End;
 
 Destructor TFslHTMLListElement.Destroy;
 Begin
-  FList.Free;
+  FList.free;
   Inherited;
 End;
 
@@ -3757,15 +3807,15 @@ End;
 
 Procedure TFslHTMLListElement.SetList(Const oValue: TFslHTMLListItems);
 Begin
-  FList.Free;
+  FList.free;
   FList := oValue;
 End;
 
 
-function TFslHTMLListElement.sizeInBytesV : cardinal;
+function TFslHTMLListElement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLOrderedList.Assign(oSource: TFslObject);
@@ -3832,7 +3882,7 @@ End;
 
 Destructor TFslHTMLDefinitionListItem.Destroy;
 Begin
-  FTerm.Free;
+  FTerm.free;
   Inherited;
 End;
 
@@ -3848,15 +3898,15 @@ End;
 
 Procedure TFslHTMLDefinitionListItem.SetTerm(Const oValue: TFslHTMLItem);
 Begin
-  FTerm.Free;
+  FTerm.free;
   FTerm := oValue;
 End;
 
 
-function TFslHTMLDefinitionListItem.sizeInBytesV : cardinal;
+function TFslHTMLDefinitionListItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FTerm.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FTerm.sizeInBytes(magic));
 end;
 
 Function TFslHTMLDefinitionListItems.GetListItem(iIndex: Integer): TFslHTMLDefinitionListItem;
@@ -3889,7 +3939,7 @@ End;
 
 Destructor TFslHTMLDefinitionList.Destroy;
 Begin
-  FListItems.Free;
+  FListItems.free;
   Inherited;
 End;
 
@@ -3905,15 +3955,15 @@ End;
 
 Procedure TFslHTMLDefinitionList.SetListItems(Const oValue: TFslHTMLDefinitionListItems);
 Begin
-  FListItems.Free;
+  FListItems.free;
   FListItems := oValue;
 End;
 
 
-function TFslHTMLDefinitionList.sizeInBytesV : cardinal;
+function TFslHTMLDefinitionList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FListItems.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FListItems.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLTableCell.Assign(oSource: TFslObject);
@@ -3946,9 +3996,9 @@ Begin
 End;
 
 
-function TFslHTMLTableCell.sizeInBytesV : cardinal;
+function TFslHTMLTableCell.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FRowspan.length * sizeof(char)) + 12);
   inc(result, (FColspan.length * sizeof(char)) + 12);
   inc(result, (FWidth.length * sizeof(char)) + 12);
@@ -3988,7 +4038,7 @@ End;
 
 Destructor TFslHTMLTableRow.Destroy;
 Begin
-  FCells.Free;
+  FCells.free;
   Inherited;
 End;
 
@@ -4004,15 +4054,15 @@ End;
 
 Procedure TFslHTMLTableRow.SetCells(Const oValue: TFslHTMLTableCells);
 Begin
-  FCells.Free;
+  FCells.free;
   FCells := oValue;
 End;
 
 
-function TFslHTMLTableRow.sizeInBytesV : cardinal;
+function TFslHTMLTableRow.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCells.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCells.sizeInBytes(magic));
 end;
 
 Function TFslHTMLTableRows.GetRow(iIndex: Integer): TFslHTMLTableRow;
@@ -4046,7 +4096,7 @@ End;
 
 Destructor TFslHTMLTableSection.Destroy;
 Begin
-  FRows.Free;
+  FRows.free;
 
   Inherited;
 End;
@@ -4066,15 +4116,15 @@ End;
 
 Procedure TFslHTMLTableSection.SetRows(Const oValue: TFslHTMLTableRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := oValue;
 End;
 
 
-function TFslHTMLTableSection.sizeInBytesV : cardinal;
+function TFslHTMLTableSection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FRows.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FRows.sizeInBytes(magic));
 end;
 
 Function TFslHTMLTableSections.GetSection(iIndex: Integer): TFslHTMLTableSection;
@@ -4114,9 +4164,9 @@ Begin
 End;
 
 
-function TFslHTMLTableCaption.sizeInBytesV : cardinal;
+function TFslHTMLTableCaption.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslHTMLTable.Assign(oSource: TFslObject);
@@ -4154,9 +4204,9 @@ End;
 
 Destructor TFslHTMLTable.Destroy;
 Begin
-  FCaption.Free;
-  FRows.Free;
-  FSections.Free;
+  FCaption.free;
+  FRows.free;
+  FSections.free;
   Inherited;
 End;
 
@@ -4175,36 +4225,36 @@ End;
 
 Procedure TFslHTMLTable.SetCaption(Const oValue: TFslHTMLTableCaption);
 Begin
-  FCaption.Free;
+  FCaption.free;
   FCaption := oValue;
 End;
 
 
 Procedure TFslHTMLTable.SetRows(Const oValue: TFslHTMLTableRows);
 Begin
-  FRows.Free;
+  FRows.free;
   FRows := oValue;
 End;
 
 
 Procedure TFslHTMLTable.SetSections(Const oValue: TFslHTMLTableSections);
 Begin
-  FSections.Free;
+  FSections.free;
   FSections := oValue;
 End;
 
 
-function TFslHTMLTable.sizeInBytesV : cardinal;
+function TFslHTMLTable.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSummary.length * sizeof(char)) + 12);
   inc(result, (FWidth.length * sizeof(char)) + 12);
   inc(result, (FCellpadding.length * sizeof(char)) + 12);
   inc(result, (FCellspacing.length * sizeof(char)) + 12);
   inc(result, (FBorder.length * sizeof(char)) + 12);
-  inc(result, FCaption.sizeInBytes);
-  inc(result, FRows.sizeInBytes);
-  inc(result, FSections.sizeInBytes);
+  inc(result, FCaption.sizeInBytes(magic));
+  inc(result, FRows.sizeInBytes(magic));
+  inc(result, FSections.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLFormControl.Assign(oSource: TFslObject);
@@ -4237,9 +4287,9 @@ Begin
 End;
 
 
-function TFslHTMLFormControl.sizeInBytesV : cardinal;
+function TFslHTMLFormControl.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTabIndex.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FValue.length * sizeof(char)) + 12);
@@ -4280,9 +4330,9 @@ Begin
 End;
 
 
-function TFslHTMLInput.sizeInBytesV : cardinal;
+function TFslHTMLInput.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSize.length * sizeof(char)) + 12);
   inc(result, (FAccept.length * sizeof(char)) + 12);
   inc(result, (FSource.length * sizeof(char)) + 12);
@@ -4317,9 +4367,9 @@ Begin
 End;
 
 
-function TFslHTMLButton.sizeInBytesV : cardinal;
+function TFslHTMLButton.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslHTMLOptionItem.Assign(oSource: TFslObject);
@@ -4350,9 +4400,9 @@ Begin
 End;
 
 
-function TFslHTMLOptionItem.sizeInBytesV : cardinal;
+function TFslHTMLOptionItem.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCaption.length * sizeof(char)) + 12);
 end;
 
@@ -4392,7 +4442,7 @@ End;
 
 Destructor TFslHTMLOptGroup.Destroy;
 Begin
-  FOptions.Free;
+  FOptions.free;
 
   Inherited;
 End;
@@ -4412,15 +4462,15 @@ End;
 
 Procedure TFslHTMLOptGroup.SetOptions(Const oValue: TFslHTMLOptionItems);
 Begin
-  FOptions.Free;
+  FOptions.free;
   FOptions := oValue;
 End;
 
 
-function TFslHTMLOptGroup.sizeInBytesV : cardinal;
+function TFslHTMLOptGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOptions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOptions.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLOption.Assign(oSource: TFslObject);
@@ -4450,9 +4500,9 @@ Begin
 End;
 
 
-function TFslHTMLOption.sizeInBytesV : cardinal;
+function TFslHTMLOption.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FValue.length * sizeof(char)) + 12);
 end;
 
@@ -4484,8 +4534,8 @@ End;
 
 Destructor TFslHTMLSelect.Destroy;
 Begin
-  FAllOptions.Free;
-  FOptions.Free;
+  FAllOptions.free;
+  FOptions.free;
 
   Inherited;
 End;
@@ -4505,24 +4555,24 @@ End;
 
 Procedure TFslHTMLSelect.SetAllOptions(Const oValue: TFslHTMLOptionItems);
 Begin
-  FAllOptions.Free;
+  FAllOptions.free;
   FAllOptions := oValue;
 End;
 
 
 Procedure TFslHTMLSelect.SetOptions(Const oValue: TFslHTMLOptionItems);
 Begin
-  FOptions.Free;
+  FOptions.free;
   FOptions := oValue;
 End;
 
 
-function TFslHTMLSelect.sizeInBytesV : cardinal;
+function TFslHTMLSelect.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSize.length * sizeof(char)) + 12);
-  inc(result, FAllOptions.sizeInBytes);
-  inc(result, FOptions.sizeInBytes);
+  inc(result, FAllOptions.sizeInBytes(magic));
+  inc(result, FOptions.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLTextArea.Assign(oSource: TFslObject);
@@ -4554,9 +4604,9 @@ Begin
 End;
 
 
-function TFslHTMLTextArea.sizeInBytesV : cardinal;
+function TFslHTMLTextArea.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslHTMLForm.Assign(oSource: TFslObject);
@@ -4589,9 +4639,9 @@ Begin
 End;
 
 
-function TFslHTMLForm.sizeInBytesV : cardinal;
+function TFslHTMLForm.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FAction.length * sizeof(char)) + 12);
   inc(result, (FEncType.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -4625,9 +4675,9 @@ Begin
 End;
 
 
-function TFslHTMLBody.sizeInBytesV : cardinal;
+function TFslHTMLBody.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Procedure TFslHTMLMetaEntry.Assign(oSource: TFslObject);
@@ -4654,9 +4704,9 @@ Begin
 End;
 
 
-function TFslHTMLMetaEntry.sizeInBytesV : cardinal;
+function TFslHTMLMetaEntry.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FHttpEquiv.length * sizeof(char)) + 12);
   inc(result, (FContent.length * sizeof(char)) + 12);
   inc(result, (FName.length * sizeof(char)) + 12);
@@ -4694,17 +4744,17 @@ Begin
 End;
 
 
-function TFslHTMLHead.sizeInBytesV : cardinal;
+function TFslHTMLHead.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMeta.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMeta.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
   inc(result, (FTitle.length * sizeof(char)) + 12);
 end;
 
 Procedure TFslHtmlHead.SetStyles(Const oValue: TFslCSSStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := oValue;
 End;
 
@@ -4726,8 +4776,8 @@ End;
 
 Destructor TFslHTMLHead.Destroy;
 Begin
-  FMeta.Free;
-  FStyles.Free;
+  FMeta.free;
+  FStyles.free;
 
   Inherited;
 End;
@@ -4741,7 +4791,7 @@ End;
 
 Procedure TFslHTMLHead.SetMeta(Const oValue: TFslHTMLMetaEntries);
 Begin
-  FMeta.Free;
+  FMeta.free;
   FMeta := oValue;
 End;
 
@@ -4791,9 +4841,9 @@ End;
 
 Destructor TFslHtmlDocument.Destroy;
 Begin
-  FStyles.Free;
-  FBody.Free;
-  FHead.Free;
+  FStyles.free;
+  FBody.free;
+  FHead.free;
 
   Inherited;
 End;
@@ -4807,33 +4857,33 @@ End;
 
 Procedure TFslHtmlDocument.SetBody(Const oValue: TFslHTMLBody);
 Begin
-  FBody.Free;
+  FBody.free;
   FBody := oValue;
 End;
 
 
 Procedure TFslHtmlDocument.SetHead(Const oValue: TFslHTMLHead);
 Begin
-  FHead.Free;
+  FHead.free;
   FHead := oValue;
 End;
 
 
 Procedure TFslHtmlDocument.SetStyles(Const oValue: TFslCSSStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := oValue;
 End;
 
 
-function TFslHtmlDocument.sizeInBytesV : cardinal;
+function TFslHtmlDocument.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDTD.length * sizeof(char)) + 12);
   inc(result, (FVersion.length * sizeof(char)) + 12);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FBody.sizeInBytes);
-  inc(result, FHead.sizeInBytes);
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FBody.sizeInBytes(magic));
+  inc(result, FHead.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLListItem.SetHasValue(Const Value: Boolean);
@@ -5084,9 +5134,9 @@ Begin
 End;
 
 
-function TFslHTMLLexer.sizeInBytesV : cardinal;
+function TFslHTMLLexer.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FCurrentValue.length * sizeof(char)) + 12);
 end;
 
@@ -5100,7 +5150,7 @@ End;
 
 Destructor TFslHTMLFormatter.Destroy;
 Begin
-  FAdapter.Free;
+  FAdapter.free;
 
   Inherited;
 End;
@@ -5584,10 +5634,10 @@ End;
 
 
 
-function TFslHTMLFormatter.sizeInBytesV : cardinal;
+function TFslHTMLFormatter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAdapter.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAdapter.sizeInBytes(magic));
 end;
 
 Procedure TFslHTMLAdapter.Read(Var Buffer; iCount: Integer);

@@ -1,4 +1,4 @@
-Unit FHIR.Ui.GraphDesigner;
+Unit fui_vcl_graphdesigner;
 
 {
 Copyright (c) 1996+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -316,7 +316,7 @@ Begin
     psSolid:gridstyle.itemindex := 0;
     psDot:gridstyle.itemindex := 1;
     psDash:gridstyle.itemindex := 2;
-    psDashDot:gridstyle.itemindex :=3 ;
+    psDashDot:gridstyle.itemindex := 3 ;
     psDashDotDot:gridstyle.itemindex := 4;
   End;
   Spinedit2.value := FGraph.Dimensions.printscalepct;
@@ -428,7 +428,7 @@ Procedure TGraphDesignerForm.FormCreate(Sender: TObject);
 Begin
  editing := False;
 (* {$IFNDEF STATISTICS}
- hideshape := TPanel.create(self);
+ hideshape := TPanel.Create(self);
  hideshape.parent := panel19;
  hideshape.top := 73;
  hideshape.left := 6;
@@ -440,7 +440,7 @@ End;
 
 Procedure TGraphDesignerForm.FormClose(Sender: TObject; Var Action: TCloseAction);
 Begin
-hideshape.Free;
+hideshape.free;
 End;
 
 
@@ -944,7 +944,7 @@ Begin
     GraphDesignerForm.Graph := Graph;
     GraphDesignerForm.showmodal;
   Finally
-    GraphDesignerForm.Free;
+    GraphDesignerForm.free;
   End;
 End;
 

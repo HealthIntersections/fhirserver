@@ -34,9 +34,8 @@ interface
 
 uses
   Sysutils, Classes,
-  fsl_testing,
-  fsl_stream,
-  ftx_lang;
+  fsl_utilities, fsl_stream, fsl_lang,
+  fsl_testing;
 
 
 type
@@ -62,39 +61,39 @@ implementation
 procedure TIETFLangTests.fail(code : String);
 var
   msg : String;
-  o : TIETFLanguageCodeConcept;
+  o : TIETFLang;
 begin
   o := FDefinitions.parse(code, msg);
   try
     assertTrue(o = nil);
     assertTrue(msg <> '');
   finally
-    o.Free;
+    o.free;
   end;
 end;
 
 procedure TIETFLangTests.pass(code : String);
 var
   msg : String;
-  o : TIETFLanguageCodeConcept;
+  o : TIETFLang;
 begin
   o := FDefinitions.parse(code, msg);
   try
     assertTrue(o <> nil, msg);
     assertTrue(msg = '');
   finally
-    o.Free;
+    o.free;
   end;
 end;
 
 procedure TIETFLangTests.Setup;
 begin
-  FDefinitions := TIETFLanguageDefinitions.create(FileToString(TestSettings.serverTestFile(['resources', 'lang.txt']), TEncoding.ASCII));
+  FDefinitions := TIETFLanguageDefinitions.create(FileToString(partnerFile('lang.dat'), TEncoding.ASCII));
 end;
 
 procedure TIETFLangTests.TearDown;
 begin
-  FDefinitions.Free;
+  FDefinitions.free;
 end;
 
 procedure TIETFLangTests.TestSimple;

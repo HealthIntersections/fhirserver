@@ -54,13 +54,13 @@ implementation
 
 destructor TBaseForm.Destroy;
 begin
-  FSettings.Free;
+  FSettings.free;
   inherited;
 end;
 
 procedure TBaseForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 

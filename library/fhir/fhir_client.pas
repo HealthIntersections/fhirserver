@@ -34,18 +34,27 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities,
+  fsl_base, fsl_utilities, fsl_logging,
   fsl_stream, fsl_json, fsl_http,
   fhir_objects,  fhir_parser, fhir_common;
+
+type
+  TSmartAppLaunchMode = (salmNone, salmOAuthClient, salmBackendClient);
+
+const
+  CODES_TSmartAppLaunchMode : array [TSmartAppLaunchMode] of string = ('No Security', 'OAuth Client', 'Backend Services');
 
 Type
   EFHIRClientException = class (EFHIRException)
   private
     FIssue : TFhirOperationOutcomeW;
+    FCode : integer;
   public
-    constructor Create(message : String; issue : TFhirOperationOutcomeW);
+    constructor Create(code : integer; message : String; issue : TFhirOperationOutcomeW); overload;
+    constructor Create(code : integer; message : String); overload;
     destructor Destroy; override;
 
+    property errorCode : Integer read FCode;
     property issue : TFhirOperationOutcomeW read FIssue;
   end;
 
@@ -55,12 +64,62 @@ Type
     prefer : String;
     location : String;
     contentLocation : String;
+    Timestamp : TDateTime;
     lastOperationId : String; // some servers return an id that links to their own internal log for debugging
     progress : String; // X-Progress fgrom bulk data
     function asString : string;
 
     procedure addToHeaders(list : TStringList);
-    function sizeInBytes : cardinal;
+    function sizeInBytes(magic : integer) : cardinal;
+  end;
+
+  { TFslHTTPBuffer }
+
+  TFslHTTPBuffer = class (TFslBuffer)
+  private
+    FTimestamp : TDateTime;
+    FMimeType : String;
+  public
+    function link : TFslHTTPBuffer; overload;
+    property timestamp : TDateTime read FTimestamp write FTimestamp;
+    property mimeType : String read FMimeType write FMimeType;
+  end;
+
+  { TFHIRServerDetails }
+
+  TFHIRServerDetails = class (TFslObject)
+  private
+    FClientId: String;
+    FClientSecret: String;
+    FFormat: TFHIRFormat;
+    FJson: boolean;
+    FName: String;
+    FRedirect: String;
+    FSmartMode: TSmartAppLaunchMode;
+    FURL: String;
+    FSmartConfig : TJsonObject;
+    FVersion: TFHIRVersion;
+    FXml: boolean;
+    procedure SetSmartConfig(AValue: TJsonObject);
+  public
+    destructor Destroy; override;
+
+    function link : TFHIRServerDetails; overload;
+    function clone : TFHIRServerDetails; overload;
+    procedure assign(other : TFslObject); override;
+
+    property name : String read FName write FName;
+    property URL : String read FURL write FURL;
+
+    property version : TFHIRVersion read FVersion write FVersion;
+    property xml: boolean read FXml write FXml;
+    property json : boolean read FJson write FJson;
+    property format : TFHIRFormat read FFormat write FFormat;
+    property smartConfig : TJsonObject read FSmartConfig write SetSmartConfig;
+    property smartMode : TSmartAppLaunchMode read FSmartMode write FSmartMode;
+    property ClientId : String read FClientId write FClientId;
+    property ClientSecret : String read FClientSecret write FClientSecret;
+    property Redirect : String read FRedirect write FRedirect;
   end;
 
   TFHIRClientType = (fctCrossPlatform {indy}, fctWinInet);
@@ -74,7 +133,7 @@ Type
     FPatient: String;
     procedure SetidToken(const Value: TJWT);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
 
@@ -111,6 +170,19 @@ Type
     procedure logExchange(verb, url, status, requestHeaders, responseHeaders : String; request, response : TBytes);  override;
   end;
 
+  { TTextFileLogger }
+
+  TTextFileLogger = class(TFHIRClientLogger)
+  private
+    FLog: TLogger;
+    function toChars(b: TBytes): string;
+  public
+    constructor Create(filename : String = '');
+    destructor Destroy; override;
+
+    procedure logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TBytes); override;
+  end;
+
   // client architecture:
   //
   // the base client is TFhirClientV. There is a subclass for each version.
@@ -129,11 +201,12 @@ Type
     procedure notify(msg : String);
     function ProvenanceString : string;
     function opWrapper : TFhirOperationOutcomeWClass;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV; virtual; abstract;
+    function conformanceModeV(mode : string) : TFHIRResourceV; virtual; abstract;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV; virtual; abstract;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV; virtual; abstract;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV; virtual; abstract;
@@ -151,12 +224,14 @@ Type
     function historyInstanceV(atype : TFHIRResourceTypeV; id : string; allRecords : boolean; params : string) : TFHIRResourceV; virtual; abstract;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual; abstract;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual; abstract;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; virtual; abstract;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; virtual; abstract;
     procedure terminate; virtual;  abstract; // only works for some communicators
   end;
 
   TFhirClientProgressEvent = procedure (client : TObject; details : String; pct : integer; done : boolean) of Object;
+
+  { TFhirClientV }
 
   TFhirClientV = class abstract (TFslObject)
   private
@@ -169,7 +244,7 @@ Type
     FProvenanceString : String;
     FVersionSpecific: boolean;
     FFormat : TFHIRFormat;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FSmartToken: TClientAccessToken;
     FLastStatusMsg: String;
     FOnProgress : TFhirClientProgressEvent;
@@ -185,14 +260,14 @@ Type
     function getResourceVersionId(res : TFHIRResourceV) : string; virtual;
     function getBundleClass : TFHIRBundleWClass; virtual; abstract;
   public
-    constructor Create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
+    constructor Create(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; communicator : TFHIRClientCommunicator);
     destructor Destroy; override;
     function link : TFhirClientV; overload;
 
     function makeParser(fmt : TFHIRFormat) : TFHIRParser; virtual; abstract;
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; virtual; abstract;
 
-    property lang : THTTPLanguages read FLang;
+    Property LangList : THTTPLanguageList read FLangList;
     property Worker : TFHIRWorkerContextV read FWorker;
     function version : TFHIRVersion; virtual; abstract;
     function address : String; // result from the communicator
@@ -212,6 +287,7 @@ Type
 
     // version independent API
     function conformanceV(summary : boolean) : TFHIRResourceV;
+    function conformanceModeV(mode : string) : TFHIRResourceV;
     function transactionV(bundle : TFHIRResourceV) : TFHIRResourceV;
     function createResourceV(resource : TFHIRResourceV; var id : String) : TFHIRResourceV;
     function readResourceV(atype : TFhirResourceTypeV; id : String) : TFHIRResourceV;
@@ -232,25 +308,119 @@ Type
     function historyinstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : TStringList) : TFHIRResourceV;
 
     // special case that gives direct access to the communicator...
-    function customGet(path : String; headers : THTTPHeaders) : TFslBuffer; virtual;
-    function customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer; virtual;
+    function customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer; virtual;
+    function customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer; virtual;
 
     procedure terminate; virtual; // only works for some communicators
   end;
 
 implementation
 
+{ TTextFileLogger }
+
+constructor TTextFileLogger.Create(filename: String);
+begin
+  inherited Create;
+  if Filename <> '' then
+    FLog := TLogger.Create(Filename)
+  else
+    FLog := TLogger.Create(filePath(['[tmp]', PathTitle(ParamStr(0))+'.fhir.log']))
+end;
+
+destructor TTextFileLogger.Destroy;
+begin
+  FLog.free;
+  inherited Destroy;
+end;
+
+function TTextFileLogger.toChars(b: TBytes): string;
+begin
+  result := TEncoding.ANSI.GetString(b);
+end;
+
+procedure TTextFileLogger.logExchange(verb, url, status, requestHeaders, responseHeaders: String; request, response: TBytes);
+begin
+  FLog.WriteToLog('=================================='#13#10);
+  FLog.WriteToLog(verb + ' ' + url + ' HTTP/1.0'#13#10);
+  FLog.WriteToLog(requestHeaders + #13#10);
+  if request <> nil then
+    FLog.WriteToLog(toChars(request) + #13#10);
+  FLog.WriteToLog('----------------------------------'#13#10);
+  FLog.WriteToLog(status + ' HTTP/1.0'#13#10);
+  FLog.WriteToLog(responseHeaders + #13#10);
+  if response <> nil then
+    FLog.WriteToLog(toChars(response) + #13#10);
+end;
+
+{ TFslHTTPBuffer }
+
+function TFslHTTPBuffer.link: TFslHTTPBuffer;
+begin
+  result := TFslHTTPBuffer(inherited link);
+end;
+
+{ TFHIRServerDetails }
+
+destructor TFHIRServerDetails.Destroy;
+begin
+  FSmartConfig.free;
+  inherited Destroy;
+end;
+
+function TFHIRServerDetails.link: TFHIRServerDetails;
+begin
+  result := TFHIRServerDetails(inherited Link);
+end;
+
+function TFHIRServerDetails.clone: TFHIRServerDetails;
+begin
+  result := TFHIRServerDetails(inherited Clone);
+end;
+
+procedure TFHIRServerDetails.assign(other: TFslObject);
+var
+  o : TFHIRServerDetails;
+begin
+  inherited assign(other);
+  o := other as TFHIRServerDetails;
+  Format := o.Format;
+  Json := o.Json;
+  Name := o.Name;
+  URL := o.URL;
+  if o.smartConfig <> nil then
+    SmartConfig := TJSONParser.Parse(TJSONWriter.WriteObject(o.smartConfig));
+  Version := o.Version;
+  Xml := o.Xml;
+  SmartMode := o.SmartMode;
+  ClientId := o.ClientId;
+  ClientSecret := o.ClientSecret;
+  Redirect := o.Redirect;
+end;
+
+procedure TFHIRServerDetails.SetSmartConfig(AValue: TJsonObject);
+begin
+  FSmartConfig.free;
+  FSmartConfig := AValue;
+end;
+
 { EFHIRClientException }
 
-constructor EFHIRClientException.create(message: String; issue: TFhirOperationOutcomeW);
+constructor EFHIRClientException.Create(code : integer; message: String; issue: TFhirOperationOutcomeW);
 begin
-  inherited create(message);
+  inherited Create(message);
+  FCode := code;
   FIssue := issue;
-  end;
+end;
 
-destructor EFHIRClientException.destroy;
+constructor EFHIRClientException.Create(code : integer; message: String);
 begin
-  FIssue.Free;
+  inherited Create(message);
+  FCode := code;
+end;
+
+destructor EFHIRClientException.Destroy;
+begin
+  FIssue.free;
   inherited;
 end;
 
@@ -286,7 +456,7 @@ begin
 end;
 
 
-function THTTPHeaders.sizeInBytes: cardinal;
+function THTTPHeaders.sizeInBytes(magic : integer): cardinal;
 begin
   result := sizeof(self);
   inc(result, (contentType.Length * sizeof(char))+12);
@@ -334,19 +504,19 @@ begin
   result := FClient.getResourceVersionId(res);
 end;
 
-function TFHIRClientCommunicator.sizeInBytesV : cardinal;
+function TFHIRClientCommunicator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FClient.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FClient.sizeInBytes(magic));
 end;
 
 { TFhirClientV }
 
-constructor TFhirClientV.create(worker : TFHIRWorkerContextV; const lang : THTTPLanguages; communicator : TFHIRClientCommunicator);
+constructor TFhirClientV.Create(worker: TFHIRWorkerContextV; langList : THTTPLanguageList; communicator: TFHIRClientCommunicator);
 begin
   inherited Create;
   FWorker := worker;
-  FLang := lang;
+  FLangList := langList;
   FCommunicator := communicator;
   communicator.FClient := self;
   FLogger := TNullLogger.Create;
@@ -355,11 +525,12 @@ end;
 
 destructor TFhirClientV.Destroy;
 begin
-  FSmartToken.Free;
-  FWorker.Free;
-  FCommunicator.Free;
-  FLogger.Free;
-  FProvenance.Free;
+  FLangList.free;
+  FSmartToken.free;
+  FWorker.free;
+  FCommunicator.free;
+  FLogger.free;
+  FProvenance.free;
   inherited;
 end;
 
@@ -370,7 +541,7 @@ end;
 
 function TFhirClientV.getResourceVersionId(res : TFHIRResourceV) : string;
 begin
-  raise EFHIRException.create('Must override getResourceValue in '+className);
+  raise EFHIRException.Create('Must override getResourceValue in '+className);
 end;
 
 function TFhirClientV.link: TFhirClientV;
@@ -380,7 +551,7 @@ end;
 
 procedure TFhirClientV.SetLogger(const Value: TFHIRClientLogger);
 begin
-  FLogger.Free;
+  FLogger.free;
   FLogger := Value;
 end;
 
@@ -388,7 +559,7 @@ procedure TFhirClientV.SetProvenance(const Value: TFhirProvenanceW);
 var
   c : TFHIRComposer;
 begin
-  FProvenance.Free;
+  FProvenance.free;
   FProvenance := Value;
   if FProvenance <> nil then
   begin
@@ -396,7 +567,7 @@ begin
     try
       FProvenanceString := c.Compose(value.Resource);
     finally
-      c.Free;
+      c.free;
     end;
   end
   else
@@ -406,7 +577,7 @@ end;
 procedure TFhirClientV.SetFormat(fmt : TFhirFormat);
 begin
   if not (fmt in [ffXml, ffJson, ffTurtle]) then
-    raise EFHIRException.create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
+    raise EFHIRException.Create('Unsupported format in client: '+CODES_TFHIRFormat[fmt]);
 
   FFormat := fmt;
 end;
@@ -419,6 +590,11 @@ end;
 function TFhirClientV.conformanceV(summary : boolean) : TFHIRResourceV;
 begin
   result := FCommunicator.conformanceV(summary);
+end;
+
+function TFhirClientV.conformanceModeV(mode : string) : TFHIRResourceV;
+begin
+  result := FCommunicator.conformanceModeV('terminology');
 end;
 
 function TFhirClientV.transactionV(bundle : TFHIRResourceV) : TFHIRResourceV;
@@ -506,17 +682,18 @@ begin
   result := FCommunicator.historyTypeV(aType, allRecords, encodeParams(params));
 end;
 
-function TFhirClientV.historyInstanceV(atype : TFHIRResourceTypeV; id : String; allRecords : boolean; params : TStringList) : TFHIRResourceV;
+function TFhirClientV.historyinstanceV(atype: TFHIRResourceTypeV; id: String;
+  allRecords: boolean; params: TStringList): TFHIRResourceV;
 begin
   result := FCommunicator.historyinstanceV(aType, id, allRecords, encodeParams(params));
 end;
 
-function TFhirClientV.customGet(path : String; headers : THTTPHeaders) : TFslBuffer;
+function TFhirClientV.customGet(path : String; headers : THTTPHeaders) : TFslHTTPBuffer;
 begin
   result := FCommunicator.customGet(path, headers);
 end;
 
-function TFhirClientV.customPost(path : String; headers : THTTPHeaders; body : TFslBuffer) : TFslBuffer;
+function TFhirClientV.customPost(path : String; headers : THTTPHeaders; body : TFslHTTPBuffer) : TFslHTTPBuffer;
 begin
   result := FCommunicator.customPost(path, headers, body);
 end;
@@ -528,7 +705,7 @@ end;
 
 procedure TFhirClientV.SetSmartToken(const Value: TClientAccessToken);
 begin
-  FSmartToken.Free;
+  FSmartToken.free;
   FSmartToken := Value;
   // todo: set the header for the access token
 end;
@@ -554,7 +731,7 @@ end;
 
 destructor TClientAccessToken.Destroy;
 begin
-  FidToken.Free;
+  FidToken.free;
   inherited;
 end;
 
@@ -565,7 +742,7 @@ end;
 
 procedure TClientAccessToken.SetidToken(const Value: TJWT);
 begin
-  FidToken.Free;
+  FidToken.free;
   FidToken := Value;
 end;
 
@@ -577,10 +754,10 @@ begin
     result := idtoken.name
 end;
 
-function TClientAccessToken.sizeInBytesV : cardinal;
+function TClientAccessToken.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FidToken.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FidToken.sizeInBytes(magic));
   inc(result, (Fscopes.length * sizeof(char)) + 12);
   inc(result, (FaccessToken.length * sizeof(char)) + 12);
   inc(result, (FPatient.length * sizeof(char)) + 12);

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_stream;
+  fsl_base, fsl_utilities, fsl_stream, fsl_logging;
 
 type
   TFHIRWebServerSourceProvider = class abstract (TFslObject)
@@ -44,6 +44,7 @@ type
     function getSource(filename : String) : String; virtual; abstract;
     function exists(filename : String) : boolean; virtual; abstract;
     function asStream(filename : String) : TStream; virtual; abstract;
+    function asBytes(filename : String) : TBytes; virtual; abstract;
   end;
 
   TFHIRWebServerSourceFolderProvider = class (TFHIRWebServerSourceProvider)
@@ -55,6 +56,7 @@ type
     function getSource(filename : String) : String; override;
     function exists(filename : String) : boolean; override;
     function asStream(filename : String) : TStream; override;
+    function asBytes(filename : String) : TBytes; override;
   end;
 
   TFHIRWebServerSourceZipProvider = class (TFHIRWebServerSourceProvider)
@@ -67,6 +69,7 @@ type
     function getSource(filename : String) : String; override;
     function exists(filename : String) : boolean; override;
     function asStream(filename : String) : TStream; override;
+    function asBytes(filename : String) : TBytes; override;
   end;
 
 implementation
@@ -91,11 +94,19 @@ end;
 
 { TFHIRWebServerSourceFolderProvider }
 
+function TFHIRWebServerSourceFolderProvider.asBytes(filename: String): TBytes;
+var
+  fn : String;
+begin
+  fn := FilePath([FSourcePath, filename]);
+  result := FileToBytes(fn);
+end;
+
 function TFHIRWebServerSourceFolderProvider.asStream(filename: String): TStream;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  fn := FilePath([FSourcePath, filename]);
   result := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
 end;
 
@@ -109,7 +120,7 @@ function TFHIRWebServerSourceFolderProvider.exists(filename: String): boolean;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  fn := FilePath([FSourcePath, filename]);
   result := FileExists(fn);
 end;
 
@@ -117,18 +128,30 @@ function TFHIRWebServerSourceFolderProvider.getSource(filename: String): String;
 var
   fn : String;
 begin
-  fn := path([FSourcePath, filename]);
+  if FileExists(filename) then
+    fn := filename
+  else
+    fn := FilePath([FSourcePath, filename]);
   result := fsl_stream.FileToString(fn, TEncoding.UTF8);
 end;
 
 { TFHIRWebServerSourceZipProvider }
 
+function TFHIRWebServerSourceZipProvider.asBytes(filename: String): TBytes;
+var
+  src : TFslBuffer;
+begin
+  if not FZip.TryGetValue(filename.replace('\', '/'), src) then
+    raise EIOException.Create('Unable to find '+filename+ ' in archive');
+  result := src.AsBytes;
+end;
+
 function TFHIRWebServerSourceZipProvider.asStream(filename: String): TStream;
 var
   src : TFslBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename);
+  if not FZip.TryGetValue(filename.replace('\', '/'), src) then
+    raise EIOException.Create('Unable to find '+filename+ ' in archive');
   result := TMemoryStream.Create;
   src.SaveToStream(result);
   result.Position := 0;
@@ -140,35 +163,36 @@ var
   i : integer;
 begin
   inherited Create;
-  FZip := TFslMap<TFslBuffer>.create('web.source');
+  FZip := TFslMap<TFslBuffer>.Create('web.source');
   zip := TFslZipReader.Create;
   try
-    zip.Stream := TFslFile.Create(path, fmOpenRead);
+    zip.Stream := TFslFile.Create(path, fmOpenRead + fmShareDenyWrite);
     zip.ReadZip;
+    Logging.log(inttostr(zip.Parts.Count)+' files loaded');
     for i := 0 to zip.Parts.Count - 1 do
-      FZip.Add('web/'+zip.Parts[i].Name, zip.Parts[i].Link);
+      FZip.Add(zip.Parts[i].Name, zip.Parts[i].Link);
   finally
-    zip.Free;
+    zip.free;
   end;
 end;
 
 destructor TFHIRWebServerSourceZipProvider.Destroy;
 begin
-  FZip.Free;
+  FZip.free;
   inherited;
 end;
 
 function TFHIRWebServerSourceZipProvider.exists(filename: String): boolean;
 begin
-  result := (filename <> '') and FZip.ContainsKey('web/'+filename.replace('\', '/'));
+  result := (filename <> '') and FZip.ContainsKey(filename.replace('\', '/'));
 end;
 
 function TFHIRWebServerSourceZipProvider.getSource(filename: String): String;
 var
   src : TFslBuffer;
 begin
-  if not FZip.TryGetValue('web/'+filename.replace('\', '/'), src) then
-    raise EIOException.create('Unable to find '+filename);
+  if not FZip.TryGetValue(filename.replace('\', '/'), src) then
+    raise EIOException.Create('Unable to find '+filename+ ' in archive');
   result := src.AsText;
 end;
 

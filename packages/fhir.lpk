@@ -9,12 +9,12 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
-        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\fdb;..\library\ftx;..\library\v2;..\library\dicom"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <OtherUnitFiles Value="..\library\fhir;..\library\cda;..\library\ftx;..\library\v2;..\library\dicom;..\dependencies\qrcodegen"/>
+        <UnitOutputDirectory Value="lib\fhir\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
       <Other>
         <CompilerMessages>
-          <IgnoredMessages idx5024="True"/>
+          <IgnoredMessages idx6058="True" idx5024="True"/>
         </CompilerMessages>
       </Other>
     </CompilerOptions>
@@ -82,14 +82,6 @@
       <Item>
         <Filename Value="..\library\fhir\fhir_indexing.pas"/>
         <UnitName Value="fhir_indexing"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fhir\fhir_javascript.pas"/>
-        <UnitName Value="fhir_javascript"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fhir\fhir_js_client.pas"/>
-        <UnitName Value="fhir_js_client"/>
       </Item>
       <Item>
         <Filename Value="..\library\fhir\fhir_narrative.pas"/>
@@ -162,50 +154,6 @@
       <Item>
         <Filename Value="..\library\cda\cda_writer.pas"/>
         <UnitName Value="cda_writer"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_dialects.pas"/>
-        <UnitName Value="fdb_dialects"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_logging.pas"/>
-        <UnitName Value="fdb_logging"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_manager.pas"/>
-        <UnitName Value="fdb_manager"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_odbc.pas"/>
-        <UnitName Value="fdb_odbc"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_odbc_fpc.pas"/>
-        <UnitName Value="fdb_odbc_fpc"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_odbc_objects.pas"/>
-        <UnitName Value="fdb_odbc_objects"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_settings.pas"/>
-        <UnitName Value="fdb_settings"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3.pas"/>
-        <UnitName Value="fdb_sqlite3"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3_objects.pas"/>
-        <UnitName Value="fdb_sqlite3_objects"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3_utilities.pas"/>
-        <UnitName Value="fdb_sqlite3_utilities"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\fdb\fdb_sqlite3_wrapper.pas"/>
-        <UnitName Value="fdb_sqlite3_wrapper"/>
       </Item>
       <Item>
         <Filename Value="..\library\ftx\fhir_codesystem_service.pas"/>
@@ -297,7 +245,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_dictionary_compiled.pas"/>
-        <UnitName Value="v2_dictionary_Compiled"/>
+        <UnitName Value="v2_dictionary_compiled"/>
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_dictionary_database.pas"/>
@@ -341,11 +289,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_dictionary_versions.pas"/>
-        <UnitName Value="v2_dictionary_Versions"/>
-      </Item>
-      <Item>
-        <Filename Value="..\library\v2\v2_javascript.pas"/>
-        <UnitName Value="v2_javascript"/>
+        <UnitName Value="v2_dictionary_versions"/>
       </Item>
       <Item>
         <Filename Value="..\library\v2\v2_message.pas"/>
@@ -377,14 +321,59 @@
       </Item>
       <Item>
         <Filename Value="..\library\dicom\dicom_writer.pas"/>
-        <UnitName Value="dicom_Writer"/>
+        <UnitName Value="dicom_writer"/>
       </Item>
       <Item>
         <Filename Value="..\library\ftx\ftx_lang.pas"/>
         <UnitName Value="ftx_lang"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_healthcard.pas"/>
+        <UnitName Value="fhir_healthcard"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_context.pas"/>
+        <UnitName Value="fhir_context"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_icao.pas"/>
+        <UnitName Value="fhir_icao"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_qrcode.pas"/>
+        <UnitName Value="fhir_qrcode"/>
+      </Item>
+      <Item>
+        <Filename Value="..\dependencies\qrcodegen\qrcodegen.pas"/>
+        <UnitName Value="qrcodegen"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_colour_utils.pas"/>
+        <UnitName Value="fhir_colour_utils"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_package_upload.pas"/>
+        <UnitName Value="fhir_package_upload"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_tools_settings.pas"/>
+        <UnitName Value="fhir_tools_settings"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fhir\fhir_extensions.pas"/>
+        <UnitName Value="fhir_extensions"/>
+      </Item>
     </Files>
     <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir_web"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_fdb"/>
+      </Item>
+      <Item>
+        <PackageName Value="ZXing"/>
+      </Item>
       <Item>
         <PackageName Value="fhir_fsl"/>
       </Item>

@@ -94,12 +94,12 @@ begin
       gen.description := 'Validation Outcomes';
       gen.generate(op.Resource);
     finally
-      gen.Free;
+      gen.free;
     end;
     result := not Settings.NoValidationSummary;
     if result then
     begin
-      ValidationOutcomeForm := TValidationOutcomeForm.create(owner);
+      ValidationOutcomeForm := TValidationOutcomeForm.Create(owner);
       try
         ValidationOutcomeForm.loadHtml(context.Factory.getXhtml(op.Resource).AsHtmlPage);
         ValidationOutcomeForm.ShowModal;
@@ -108,7 +108,7 @@ begin
       end;
     end;
   finally
-    op.Free;
+    op.free;
   end;
 end;
 
@@ -117,7 +117,7 @@ begin
   result := not Settings.NoValidationSummary;
   if result then
   begin
-    ValidationOutcomeForm := TValidationOutcomeForm.create(owner);
+    ValidationOutcomeForm := TValidationOutcomeForm.Create(owner);
     try
       ValidationOutcomeForm.loadHtml('<html><body>Error validating: '+message+'</body></html>');
       ValidationOutcomeForm.ShowModal;

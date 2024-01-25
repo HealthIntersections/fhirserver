@@ -1,7 +1,7 @@
 Unit FHIR.WP.Builder;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -56,7 +56,7 @@ Type
     Protected
       Function ErrorClass : EFslExceptionClass; Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Overload; Override;
       destructor Destroy; Overload; Override;
@@ -179,7 +179,7 @@ Type
       Function ProcessField(oField : TWPDocumentField; oList : TWPDocumentContents; iIndex : Integer) : Integer; Overload;
     procedure SetDicomDictionary(const Value: TDicomDictionary);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       constructor Create(oDocument : TWPDocument); Overload; Virtual;
@@ -351,7 +351,7 @@ End;
 
 Destructor TWPDocumentBuilderScope.Destroy;
 Begin
-  FObject.Free;
+  FObject.free;
   Inherited;
 End;
 
@@ -394,15 +394,15 @@ End;
 
 Procedure TWPDocumentBuilderScope.SetObject(Const Value : TWPDocumentObject);
 Begin
-  FObject.Free;
+  FObject.free;
   FObject := Value;
 End;
 
 
-function TWPDocumentBuilderScope.sizeInBytesV : cardinal;
+function TWPDocumentBuilderScope.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FObject.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FObject.sizeInBytes(magic));
 end;
 
 Function TWPDocumentBuilderScopes.Link : TWPDocumentBuilderScopes;
@@ -469,7 +469,7 @@ Begin
 
     Insert(0, oScope.Link);
   Finally
-    oScope.Free;
+    oScope.free;
   End;
 End;
 
@@ -503,7 +503,7 @@ begin
       End;
     Result := oBuilder.ToString;
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 end;
 
@@ -542,11 +542,11 @@ End;
 
 Destructor TWPDocumentBuilder.Destroy;
 Begin
-  FDicomDictionary.Free;
-  FScopeList.Free;
-  FDocument.Free;
-  FIterator.Free;
-  FFieldValueProviders.Free;
+  FDicomDictionary.free;
+  FScopeList.free;
+  FDocument.free;
+  FIterator.free;
+  FFieldValueProviders.free;
 
   Inherited;
 End;
@@ -578,7 +578,7 @@ Begin
   Assert(CheckCondition(FIterator = Nil, 'SetDocument', 'Cannot call SetDocument while iterating'));
   Assert(CheckCondition(Not HasStarted, 'SetDocument', 'Cannot call SetDocument when started'));
 
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 
   FFocus := FDocument;
@@ -595,7 +595,7 @@ Procedure TWPDocumentBuilder.SetHasDocument(Const Value : Boolean);
 Begin
   If HasDocument And Not Value Then
   Begin
-    FDocument.Free;
+    FDocument.free;
     FDocument := Nil;
   End
   Else If Not HasDocument And Value Then
@@ -616,7 +616,7 @@ Procedure TWPDocumentBuilder.Home;
 Begin
   Assert(CheckCondition(Not HasStarted, 'SetDocument', 'Cannot Navigate while started'));
   FFocus := FDocument;
-  FIterator.Free;
+  FIterator.free;
   FIterator := Nil;
 End;
 
@@ -767,7 +767,7 @@ Begin
 
     FScopeList.Push([aisSection, aisBreak, aisParaStart, aisTableStart, aisSectionStop], Result.Link, False);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -800,7 +800,7 @@ Begin
 
     FScopeList.Push([aisTableStop, aisRowStart], Result.Link, True);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -829,7 +829,7 @@ Begin
 
     FScopeList.Push([aisRowStop, aisCellStart], Result.Link, False);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -848,7 +848,7 @@ Begin
 
     FScopeList.Push([aisCellStop, aisBreak, aisParaStart], Result.Link, False);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -937,7 +937,7 @@ Begin
       FFocus := FIterator.Current;
     End;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -955,7 +955,7 @@ Begin
 
     FScopeList.Push([aisFieldStop, aisText, aisImage], Result.Link, False);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -980,7 +980,7 @@ Begin
 
     FScopeList.Push([aisFieldStop, aisText, aisImage], Result.Link, False);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1025,7 +1025,7 @@ Begin
 
     FScopeList.Push([aisParaStop, aisFieldStart, aisText, aisImage], Result.Link, False);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1049,7 +1049,7 @@ Begin
         TWPDocumentContainer(Current(TWPDocumentContainer)).Blocks.DeleteByReference(oPara);
     End;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 End;
 
@@ -1066,7 +1066,7 @@ Begin
     Else
       TWPDocumentField(Current(TWPDocumentField)).Contents.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1108,7 +1108,7 @@ Begin
       TWPDocumentField(Current(TWPDocumentField)).Contents.Add(Result.Link);
     End;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1138,7 +1138,7 @@ Begin
       TWPDocumentField(Current(TWPDocumentField)).Contents.Insert(iIndex, Result.Link);
     End;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1164,7 +1164,7 @@ Begin
     Else
       TWPDocumentField(Current(TWPDocumentField)).Contents.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1196,7 +1196,7 @@ Begin
         AddTextPlain(sValue);
     End
   Finally
-    oIter.Free;
+    oIter.free;
   End;
 End;
 
@@ -1226,7 +1226,7 @@ Begin
     Else
       TWPDocumentField(Current(TWPDocumentField)).Contents.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1254,9 +1254,9 @@ Begin
 
     Result := ImportDocument(aOptions, oDocument);
   Finally
-    oReader.Free;
-    oStringStream.Free;
-    oDocument.Free;
+    oReader.free;
+    oStringStream.free;
+    oDocument.free;
   End;
 End;
 
@@ -1273,7 +1273,7 @@ Begin
     oTrans.TranslateToDocument;
     Result := ImportDocument(aOptions, oTrans.Document);
   Finally
-    oTrans.Free;
+    oTrans.free;
   End;
 End;
 
@@ -1444,10 +1444,10 @@ Begin
 
       Result := ImportDocument(aOptions, oDocument);
     Finally
-      oReader.Free;
+      oReader.free;
     End;
   Finally
-    oDocument.Free;
+    oDocument.free;
   End;
 End;
 
@@ -1478,7 +1478,7 @@ Begin
 
       Result := ImportDocument(aOptions, oSource, aImageLoader, bIsText);
     Finally
-      oSource.Free;
+      oSource.free;
     End;
   End;
 End;
@@ -1497,7 +1497,7 @@ Begin
 
       Result := ImportDocument(aOptions, oSource, aImageLoader, bIsText);
     Finally
-      oSource.Free;
+      oSource.free;
     End;
   End
   Else
@@ -1536,13 +1536,13 @@ Begin
         Result := AddImage(oImage, oSelectionImage, oStyle);
         Result.Name := PathTitle(sFilename);
       Finally
-        oSelectionImage.Free;
+        oSelectionImage.free;
       End;
     Finally
-      oImage.Free;
+      oImage.free;
     End;
   Finally
-    oLoader.Free;
+    oLoader.free;
   End;
 End;
 
@@ -1569,7 +1569,7 @@ Begin
     Else
       TWPDocumentField(Current(TWPDocumentField)).Contents.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1601,7 +1601,7 @@ Begin
 
     TWPDocumentContainer(Current(TWPDocumentContainer)).Blocks.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1617,7 +1617,7 @@ Begin
 
     TWPDocumentContainer(Current(TWPDocumentContainer)).Blocks.Add(Result.Link);
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1734,7 +1734,7 @@ Begin
   Try
     ProcessFields(oStack, FDocument);
   Finally
-    oStack.Free;
+    oStack.free;
   End;
 End;
 
@@ -1880,22 +1880,22 @@ Begin
           oList.Insert(iLoop + iIndex + 1, oPara.Contents[iLoop].Link);
         oList.DeleteByIndex(iIndex); // bye bye field
       Finally
-        FFocus.Free;
+        FFocus.free;
       End;
     End;
   End;
 End;
 
 
-function TWPDocumentBuilder.sizeInBytesV : cardinal;
+function TWPDocumentBuilder.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FScopeList.sizeInBytes);
-  inc(result, FIterator.sizeInBytes);
-  inc(result, FFocus.sizeInBytes);
-  inc(result, FFieldValueProviders.sizeInBytes);
-  inc(result, FDicomDictionary.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FScopeList.sizeInBytes(magic));
+  inc(result, FIterator.sizeInBytes(magic));
+  inc(result, FFocus.sizeInBytes(magic));
+  inc(result, FFieldValueProviders.sizeInBytes(magic));
+  inc(result, FDicomDictionary.sizeInBytes(magic));
 end;
 
 { TWPFieldValueProviderList }

@@ -1,4 +1,4 @@
-unit FHIR.Tests.RestfulServer;
+unit tests_server_restful;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -135,9 +135,10 @@ Type
   public
     constructor Create(factory : TFHIRFactory); override;
     destructor Destroy; override;
+    procedure UnLoad; override;
     procedure RecordFhirSession(session: TFhirSession); override;
     procedure QueueResource(session : TFHIRSession; r: TFhirResourceV; dateTime: TFslDateTime); override;
-    function createOperationContext(const lang : THTTPLanguages) : TFHIROperationEngine; override;
+    function createOperationContext(langList : THTTPLanguageList) : TFHIROperationEngine; override;
     Procedure Yield(op : TFHIROperationEngine; exception : Exception); override;
     procedure recordOAuthLogin(id, client_id, scope, redirect_uri, state, launch : String); override;
     function hasOAuthSession(id : String; status : integer) : boolean; override;
@@ -237,8 +238,8 @@ implementation
 
 destructor TTestStorageService.Destroy;
 begin
-  FOAuths.Free;
-  FlastSession.Free;
+  FOAuths.free;
+  FlastSession.free;
   inherited;
 end;
 
@@ -250,19 +251,19 @@ end;
 constructor TTestStorageService.Create(factory : TFHIRFactory);
 begin
   inherited;
-  FOAuths := TFslMap<TTestOAuthLogin>.create('oauths');
+  FOAuths := TFslMap<TTestOAuthLogin>.Create('oauths');
 end;
 
-function TTestStorageService.createOperationContext(const lang : THTTPLanguages): TFHIROperationEngine;
+function TTestStorageService.createOperationContext(langList : THTTPLanguageList): TFHIROperationEngine;
 begin
-  result := TTestFHIROperationEngine.create(self, FContext.Link, lang);
+  result := TTestFHIROperationEngine.Create(self, FContext.Link, lang);
   TTestFHIROperationEngine(result).FIsReadAllowed := true;
   TTestFHIROperationEngine(result).FStorage := self;
 end;
 
 procedure TTestStorageService.Yield(op: TFHIROperationEngine; exception: Exception);
 begin
-  TTestFHIROperationEngine(op).FServerContext.Free;
+  TTestFHIROperationEngine(op).FServerContext.free;
   op.free;
 end;
 
@@ -281,7 +282,7 @@ end;
 
 procedure TTestStorageService.RecordFhirSession(session: TFhirSession);
 begin
-  FlastSession.Free;
+  FlastSession.free;
   FlastSession := session.Link;
 end;
 
@@ -308,7 +309,7 @@ begin
     l.launch := launch;
     FOAuths.Add(id, l.Link);
   finally
-    l.Free;
+    l.free;
   end;
 end;
 
@@ -443,7 +444,7 @@ end;
 
 procedure TTestStorageService.reset;
 begin
-  FlastSession.Free;
+  FlastSession.free;
   FlastSession := nil;
   FLastReadSystem := '';
   FLastReadUser := '';
@@ -659,7 +660,7 @@ begin
   http := TIdHTTP.Create(nil);
   Try
     http.Request.Accept := 'application/fhir+json';
-    resp := TBytesStream.create;
+    resp := TBytesStream.Create;
     try
       http.Get(FEndpoint.ClientAddress(false)+url, resp);
       resp.position := 0;
@@ -685,13 +686,13 @@ begin
   FGlobals := TFHIRServerSettings.Create;
   FGLobals.load(FIni);
 
-  FServer := TFhirWebServer.create(FGlobals.Link, TFHIRTelnetServer.create(44122, 'test'), 'Test-Server');
+  FServer := TFhirWebServer.Create(FGlobals.Link, TFHIRTelnetServer.Create(44122, 'test'), 'Test-Server');
   FServer.OnRegisterJs := registerJs;
   FServer.loadConfiguration(FIni);
   FServer.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('C:\work\fhirserver\server\web');
 
-  FStore := TTestStorageService.create(TFHIRFactoryX.create);
-  FContext := TFHIRServerContext.Create(FStore.Link, TTestServerFactory.create(FStore.Factory.version));
+  FStore := TTestStorageService.Create(TFHIRFactoryX.create);
+  FContext := TFHIRServerContext.Create(FStore.Link, TTestServerFactory.Create(FStore.Factory.version));
   FContext.Globals := FGlobals.Link;
   FStore.ServerContext := FContext;
   FContext.TerminologyServer := TTerminologyServer.Create(nil, FContext.factory.Link, nil);
@@ -713,16 +714,16 @@ end;
 
 procedure TRestFulServerTests.TearDown;
 begin
-  FClientXml.Free;
-  FClientJson.Free;
-  FClientSSL.Free;
-  FClientSSLCert.Free;
+  FClientXml.free;
+  FClientJson.free;
+  FClientSSL.free;
+  FClientSSLCert.free;
   FServer.Stop;
-  FServer.Free;
-  FStore.Free;
-  FContext.Free;
-  FGlobals.Free;
-  FIni.Free;
+  FServer.free;
+  FStore.free;
+  FContext.free;
+  FGlobals.free;
+  FIni.free;
 end;
 
 procedure TRestFulServerTests.TestCapabilityStatementJson;
@@ -733,7 +734,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
 end;
 
@@ -746,7 +747,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
 end;
 
@@ -759,7 +760,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
 end;
 
@@ -779,7 +780,7 @@ begin
 //      ssl.free;
 //    end;
     http.Request.Accept := 'application/fhir+xml';
-    resp := TBytesStream.create;
+    resp := TBytesStream.Create;
     try
       http.Get(FEndpoint.ClientAddress(false)+'/metadata', resp);
       resp.position := 0;
@@ -811,7 +812,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
 
   Assert.IsTrue(FStore.FLastReadSystem  = 'client.test.fhir.org', 'SystemName should be "client.test.fhir.org" not "'+FStore.FLastReadSystem+'"');
@@ -839,7 +840,7 @@ begin
     try
       Assert.IsFalse(true);
     finally
-      cs.Free;
+      cs.free;
     end;
   except
     on e:exception do
@@ -869,7 +870,7 @@ begin
     try
       Assert.IsFalse(true);
     finally
-      cs.Free;
+      cs.free;
     end;
   except
     on e:exception do
@@ -899,7 +900,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
 
   Assert.IsTrue(FStore.FLastReadSystem  = 'Unknown', 'SystemName should be "Unknown" not "'+FStore.FLastReadSystem+'"');
@@ -925,7 +926,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
   Assert.IsTrue(FStore.FLastReadSystem  = 'client.test.fhir.org', 'SystemName should be "client.test.fhir.org" not "'+FStore.FLastReadSystem+'"');
   Assert.IsTrue(FStore.FLastReadUser  = TEST_ANON_USER_NAME, 'Username should be "'+TEST_ANON_USER_NAME+'" not '+FStore.FLastReadUser+'"');
@@ -952,7 +953,7 @@ begin
     try
       Assert.IsFalse(true);
     finally
-      cs.Free;
+      cs.free;
     end;
   except
     on e:exception do
@@ -981,7 +982,7 @@ begin
   try
     Assert.IsNotNull(cs);
   finally
-    cs.Free;
+    cs.free;
   end;
 
   Assert.IsTrue(FStore.FLastReadSystem  = 'client.test.fhir.org', 'SystemName should be "client.test.fhir.org" not "'+FStore.FLastReadSystem+'"');
@@ -1009,7 +1010,7 @@ begin
     try
       Assert.IsFalse(true);
     finally
-      cs.Free;
+      cs.free;
     end;
   except
     on e:exception do
@@ -1062,7 +1063,7 @@ begin
   FServer.Start(true, true);
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := 'C:\work\fhirserver\utilities\tests\client.test.fhir.org.cert';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := 'test';
-  FClientSSL.smartToken := TClientAccessToken.create;
+  FClientSSL.smartToken := TClientAccessToken.Create;
   FClientSSL.smartToken.accessToken := JWT;
   FClientSSL.smartToken.expires := now + 20 * DATETIME_MINUTE_ONE;
 
@@ -1089,7 +1090,7 @@ begin
   FServer.Stop;
   FServer.ServeMissingCertificate := true;
   FServer.Start(true, true);
-  FClientSSL.smartToken := TClientAccessToken.create;
+  FClientSSL.smartToken := TClientAccessToken.Create;
   FClientSSL.smartToken.accessToken := JWT;
   FClientSSL.smartToken.expires := now + 20 * DATETIME_MINUTE_ONE;
 
@@ -1119,7 +1120,7 @@ begin
     Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
     Assert.IsTrue(res.id = 'example');
   finally
-    res.Free;
+    res.free;
   end;
 
   Assert.IsTrue(FStore.FLastReadSystem  = 'Unknown', 'SystemName should be "Unknown" not "'+FStore.FLastReadSystem+'"');
@@ -1148,7 +1149,7 @@ begin
     Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
     Assert.IsTrue(res.id = 'example');
   finally
-    res.Free;
+    res.free;
   end;
   Assert.IsTrue(FStore.FLastReadSystem  = 'test', 'SystemName should be "test" not "'+FStore.FLastReadSystem+'"');
   Assert.IsTrue(FStore.FLastReadUser = TEST_ANON_USER_NAME, 'Username should be "'+TEST_ANON_USER_NAME+'" not "'+FStore.FLastReadUser+'"');
@@ -1170,7 +1171,7 @@ begin
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certFile := '';
   (FClientSSL.Communicator as TFHIRHTTPCommunicator).certPWord := '';
 
-  tester := TSmartOnFhirTestingLogin.create;
+  tester := TSmartOnFhirTestingLogin.Create;
   try
     tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
     tester.server.thishost := 'localhost';
@@ -1185,7 +1186,7 @@ begin
     tester.login(stmAllOk);
     FClientSSL.SmartToken := tester.token.link;
   finally
-    tester.Free;
+    tester.free;
   end;
   res := FClientSSL.readResource(frtPatient, 'example');
   try
@@ -1193,7 +1194,7 @@ begin
     Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
     Assert.IsTrue(res.id = 'example');
   finally
-    res.Free;
+    res.free;
   end;
 
   Assert.IsTrue(FStore.FLastReadSystem  = 'web', 'SystemName should be "web" not "'+FStore.FLastReadSystem+'"');
@@ -1245,7 +1246,7 @@ begin
     Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
     Assert.IsTrue(res.id = 'example');
   finally
-    res.Free;
+    res.free;
   end;
 
   Assert.IsTrue(FStore.FLastReadSystem  = 'Unknown', 'SystemName should be "Unknown" not "'+FStore.FLastReadSystem+'"');
@@ -1266,7 +1267,7 @@ begin
 
   json := getJson('/.well-known/smart-configuration');
   try
-    tester := TSmartOnFhirTestingLogin.create;
+    tester := TSmartOnFhirTestingLogin.Create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
       tester.server.thishost := 'localhost';
@@ -1282,10 +1283,10 @@ begin
         tester.login(stmBadRedirect);
         end, EFHIRException, 'HTTP/1.1 400 Bad Request');
     finally
-      tester.Free;
+      tester.free;
     end;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -1301,7 +1302,7 @@ begin
 
   cs := sslGet('/metadata') as TFhirCapabilityStatement;
   try
-    tester := TSmartOnFhirTestingLogin.create;
+    tester := TSmartOnFhirTestingLogin.Create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
       tester.server.thishost := 'localhost';
@@ -1316,7 +1317,7 @@ begin
       tester.login(stmAllOk);
       FClientSSL.SmartToken := tester.token.link;
     finally
-      tester.Free;
+      tester.free;
     end;
     Assert.IsTrue(FClientSSL.SmartToken.idToken <> nil);
     res := FClientSSL.readResource(frtPatient, 'example');
@@ -1325,10 +1326,10 @@ begin
       Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
       Assert.IsTrue(res.id = 'example');
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    cs.Free;
+    cs.free;
   end;
 end;
 
@@ -1344,7 +1345,7 @@ begin
 
   json := getJson('/.well-known/smart-configuration');
   try
-    tester := TSmartOnFhirTestingLogin.create;
+    tester := TSmartOnFhirTestingLogin.Create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
       tester.server.thishost := 'localhost';
@@ -1361,10 +1362,10 @@ begin
         end, EFHIRException, 'http://localhost:961/done?error=access_denied&error_description=Login%20failed&state='+tester.state);
 
     finally
-      tester.Free;
+      tester.free;
     end;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -1380,7 +1381,7 @@ begin
 
   json := getJson('/.well-known/smart-configuration');
   try
-    tester := TSmartOnFhirTestingLogin.create;
+    tester := TSmartOnFhirTestingLogin.Create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
       tester.server.thishost := 'localhost';
@@ -1395,7 +1396,7 @@ begin
       tester.login(stmAllOk);
       FClientSSL.SmartToken := tester.token.link;
     finally
-      tester.Free;
+      tester.free;
     end;
     Assert.IsTrue(FClientSSL.SmartToken.idToken = nil);
     res := FClientSSL.readResource(frtPatient, 'example');
@@ -1404,10 +1405,10 @@ begin
       Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
       Assert.IsTrue(res.id = 'example');
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -1423,7 +1424,7 @@ begin
 
   json := getJson('/.well-known/smart-configuration');
   try
-    tester := TSmartOnFhirTestingLogin.create;
+    tester := TSmartOnFhirTestingLogin.Create;
     try
       tester.server.fhirEndPoint := FEndpoint.ClientAddress(true);
       tester.server.thishost := 'localhost';
@@ -1438,7 +1439,7 @@ begin
       tester.login(stmAllOk);
       FClientSSL.SmartToken := tester.token.link;
     finally
-      tester.Free;
+      tester.free;
     end;
     Assert.IsTrue(FClientSSL.SmartToken.idToken <> nil);
     res := FClientSSL.readResource(frtPatient, 'example');
@@ -1447,10 +1448,10 @@ begin
       Assert.isTrue(res is TFHIRPatient, 'Resource should be Patient, not '+res.className);
       Assert.IsTrue(res.id = 'example');
     finally
-      res.Free;
+      res.free;
     end;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -1469,7 +1470,7 @@ begin
       ssl.SSLOptions.Mode := sslmClient;
       ssl.SSLOptions.Method := sslvTLSv1_2;
       http.Request.Accept := 'application/fhir+json';
-      resp := TBytesStream.create;
+      resp := TBytesStream.Create;
       try
         http.Get(FEndpoint.ClientAddress(true)+url, resp);
         resp.position := 0;
@@ -1500,7 +1501,7 @@ begin
       ssl.SSLOptions.Mode := sslmClient;
       ssl.SSLOptions.Method := sslvTLSv1_2;
       http.Request.Accept := 'application/fhir+xml';
-      resp := TBytesStream.create;
+      resp := TBytesStream.Create;
       try
         http.Get(FEndpoint.ClientAddress(true)+'/metadata', resp);
         resp.position := 0;
@@ -1533,7 +1534,7 @@ begin
 //      ssl.free;
 //    end;
     http.Request.Accept := 'application/fhir+json';
-    resp := TBytesStream.create;
+    resp := TBytesStream.Create;
     try
       http.Get(FEndpoint.ClientAddress(false)+'/metadata', resp);
       resp.position := 0;
@@ -1556,7 +1557,7 @@ end;
 
 { TTestServerFactory }
 
-constructor TTestServerFactory.create(version : TFHIRVersion);
+constructor TTestServerFactory.Create(version : TFHIRVersion);
 begin
   inherited Create;
   FVersion := version;
@@ -1579,7 +1580,7 @@ end;
 
 function TTestServerFactory.makeIndexes: TFHIRIndexBuilder;
 begin
-  result := TFHIRIndexBuilderR4.create;
+  result := TFHIRIndexBuilderR4.Create;
 end;
 
 function TTestServerFactory.makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager;

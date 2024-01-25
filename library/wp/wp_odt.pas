@@ -1,7 +1,7 @@
 Unit wp_odt;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -44,7 +44,7 @@ Type
       FMimeType : String;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPOpenDocPackagePart;
       Function Clone : TWPOpenDocPackagePart;
@@ -150,7 +150,7 @@ Type
     Procedure LoadManifest; Virtual;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -176,7 +176,7 @@ Type
     Procedure WriteManifest; Virtual;
 
     Function GetByName(Const sName, sMimeType : String) : TFslBuffer;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -303,7 +303,7 @@ Type
     Function GetCapitalization: TWPSCapsState; Overload; Virtual;
     Procedure SetCapitalization(Const oCapitalize: TWPSCapsState); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtTextFormat); Overload;
@@ -382,7 +382,7 @@ Type
     Function GetMarginBottom: Integer; Overload; Virtual;
     Procedure SetMarginBottom(Const aValue: Integer); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtParagraphFormat); Overload;
@@ -429,7 +429,7 @@ Type
     Procedure SetNumberStyle(Const oType: TWPSParagraphNumberType); Virtual;
     Procedure SetNumberFormat(Const oFormat: TWPSParagraphNumberFormat); Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtListLevelFormat); Overload;
@@ -467,7 +467,7 @@ Type
   Protected
     Function ItemClass : TFslObjectClass; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtListFormat); Overload;
@@ -513,7 +513,7 @@ Type
     Function GetVerticalMargin: Integer; Overload; Virtual;
     Procedure SetVerticalMargin(Const aValue: Integer); Overload; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableFormat); Overload;
@@ -593,7 +593,7 @@ Type
     Property WPBorderLeft: TWPBorder Read GetBorderLeft Write SetBorderLeft;
     Property WPBorderRight: TWPBorder Read GetBorderRight Write SetBorderRight;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oFormat: TOdtTableCellFormat); Overload;
@@ -644,7 +644,7 @@ Type
     Procedure SetCellFormat(oFormat: TOdtTableCellFormat);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Overload; Override;
     constructor Create(Const oParent: TOdtStyle); Overload;
@@ -829,7 +829,7 @@ Type
     Procedure ReadOdtStyleRowProperties(oFormat: TOdtTableRowFormat; oReader:TFslXMLExtractor); Overload;
     Procedure ReadOdtStyleCellProperties(oFormat: TOdtTableCellFormat; oReader:TFslXMLExtractor); Overload;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -909,7 +909,7 @@ Type
       Procedure WriteTableRowFormat(oFormatter: TFslXMLFormatter; oRowFormat: TOdtTableRowFormat);
       Procedure WriteTableCellFormat(oFormatter: TFslXMLFormatter; oCellFormat: TOdtTableCellFormat);
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -941,13 +941,13 @@ End;
 
 Destructor TWPOdtReader.Destroy;
 Begin
-  FFontDecls.Free;
-  FDefaultStyles.Free;
-  FStyles.Free;
+  FFontDecls.free;
+  FDefaultStyles.free;
+  FStyles.free;
 
-  FStyleStack.Free;
+  FStyleStack.free;
 
-  FOdtAdapter.Free;
+  FOdtAdapter.free;
 
   Inherited;
 End;
@@ -963,7 +963,7 @@ Begin
   Try
     oReader.Skip([TFslXMLKnownHeaderType, TFslXMLKnownCommentType]);
     If Not oReader.IsNode(OFFICE_NS, 'document-content') Then
-      raise EWPException.create('Expect "document-content" in namespace ' + OFFICE_NS);
+      raise EWPException.Create('Expect "document-content" in namespace ' + OFFICE_NS);
 
     If oReader.PeekIsOpen Then
     Begin
@@ -990,7 +990,7 @@ Begin
     Else
       oReader.SkipNext;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 End;
 
@@ -1005,7 +1005,7 @@ Begin
   Try
     oReader.SkipNext;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
   End;
 End;
@@ -1021,7 +1021,7 @@ Begin
   Try
     oReader.SkipNext;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
   End;
 End;
@@ -1051,7 +1051,7 @@ Begin
       End;
     End;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
   End;
 End;
@@ -1136,7 +1136,7 @@ Begin
             FDefaultStyles.Add(oStyle.Link);
           End;
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else If oReader.IsNode(TEXT_NS, 'list-style') Then
@@ -1146,7 +1146,7 @@ Begin
           oStyle.StyleType := ostCommon;
           FStyles.Add(oStyle.Link);
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else
@@ -1176,7 +1176,7 @@ Begin
           oStyle.StyleType := ostAutomatic;
           FStyles.Add(oStyle.Link);
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else If oReader.IsNode(TEXT_NS, 'list-style') Then
@@ -1186,7 +1186,7 @@ Begin
           oStyle.StyleType := ostAutomatic;
           FStyles.Add(oStyle.Link);
         Finally
-          oStyle.Free;
+          oStyle.free;
         End;
       End
       Else
@@ -1298,7 +1298,7 @@ Begin
         oStyle.TableFormat.ApplyFormat(oStart);
       Result := oDocument.Pieces.Add(oStart.Link);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
     oReader.ConsumeOpen;
 
@@ -1317,7 +1317,7 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
     oReader.ConsumeClose;
   End;
@@ -1373,7 +1373,7 @@ Begin
         oStyle.RowFormat.ApplyFormat(oStart);
       Result := oDocument.Pieces.Add(oStart.Link);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
     oReader.ConsumeOpen;
 
@@ -1390,7 +1390,7 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
     oReader.ConsumeClose;
   End;
@@ -1416,7 +1416,7 @@ Begin
         oStyle.CellFormat.ApplyFormat(oStart);
       Result := oDocument.Pieces.Add(oStart.Link);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     oReader.ConsumeOpen;
@@ -1427,7 +1427,7 @@ Begin
     Try
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
     oReader.ConsumeClose;
   End;
@@ -1552,7 +1552,7 @@ Begin
 
       Result := oDocument.Pieces.Add(oParagraph.Link);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
     oReader.ConsumeClose;
     If bHasStyle Then
@@ -1656,7 +1656,7 @@ Begin
       oText.Content := Splitter.Next;
       oDocument.Pieces.Add(oText.Link);
     Finally
-      oText.Free;
+      oText.free;
     End;
   End;
 End;
@@ -1672,7 +1672,7 @@ Begin
     // TODO: apply style to break piece
     oDocument.Pieces.Add(oPiece.Link);
   Finally
-    oPiece.Free;
+    oPiece.free;
   End;
 End;
 
@@ -1704,12 +1704,12 @@ Begin
         oStop.Style := oStart.Style;
         oStop.Font.Assign(oStart.Font);
       Finally
-        oStart.Free;
+        oStart.free;
       End;
 
       oDocument.Pieces.Add(oStop.Link);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
   End;
 End;
@@ -1724,7 +1724,7 @@ Begin
     // TODO: Read style
     oDocument.Pieces.Add(oBreak.Link);
   Finally
-    oBreak.Free;
+    oBreak.free;
   End;
 
   oReader.SkipNext;
@@ -1805,7 +1805,7 @@ Begin
 
             oStyle.ListFormat.Add(oLevelFormat.Link);
           Finally
-            oLevelFormat.Free;
+            oLevelFormat.free;
           End;
         End;
 
@@ -1816,7 +1816,7 @@ Begin
     End;
     Result := oStyle.Link;
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -1889,7 +1889,7 @@ Begin
     End;
     Result := oStyle.Link;
   Finally
-    oStyle.Free;
+    oStyle.free;
   End;
 End;
 
@@ -2052,15 +2052,15 @@ Begin
   FCurrentListStyle.ListFormat.ApplyStyle(oParaFormat, FCurrentListLevel, iItemCount);
 End;
 
-function TWPOdtReader.sizeInBytesV : cardinal;
+function TWPOdtReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOdtAdapter.sizeInBytes);
-  inc(result, FFontDecls.sizeInBytes);
-  inc(result, FDefaultStyles.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FStyleStack.sizeInBytes);
-  inc(result, FCurrentListStyle.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOdtAdapter.sizeInBytes(magic));
+  inc(result, FFontDecls.sizeInBytes(magic));
+  inc(result, FDefaultStyles.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FStyleStack.sizeInBytes(magic));
+  inc(result, FCurrentListStyle.sizeInBytes(magic));
 end;
 
 Constructor TWPOdtWriter.Create;
@@ -2078,12 +2078,12 @@ End;
 
 Destructor TWPOdtWriter.Destroy;
 Begin
-  FOdtAdapter.Free;
+  FOdtAdapter.free;
 
-  FFontDecls.Free;
-  FDefaultStyles.Free;
-  FStyles.Free;
-  FStyleStack.Free;
+  FFontDecls.free;
+  FDefaultStyles.free;
+  FStyles.free;
+  FStyleStack.free;
 
   Inherited;
 End;
@@ -2126,10 +2126,10 @@ Begin
       oFormatter.HasWhitespace := True;
       WriteStyleSubDoc(oFormatter);
     Finally
-      oFormatter.Free;
+      oFormatter.free;
     End;
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 
   FOdtAdapter.Finish(Stream);
@@ -2156,11 +2156,11 @@ Begin
       Inherited;
       FFormatter.ProduceClose('office:document-content');
     Finally
-      FFormatter.Free;
+      FFormatter.free;
       FFormatter := Nil;
     End;
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 End;
 
@@ -2597,7 +2597,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2632,7 +2632,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2674,7 +2674,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2707,7 +2707,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2740,7 +2740,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2773,7 +2773,7 @@ Begin
       iIndex := FStyles.Add(oStyle.Link);
       Result := FStyles[iIndex];
     Finally
-      oStyle.Free;
+      oStyle.free;
     End;
   End;
 End;
@@ -2841,15 +2841,15 @@ Begin
 End;
 
 
-function TWPOdtWriter.sizeInBytesV : cardinal;
+function TWPOdtWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FOdtAdapter.sizeInBytes);
-  inc(result, FFormatter.sizeInBytes);
-  inc(result, FFontDecls.sizeInBytes);
-  inc(result, FDefaultStyles.sizeInBytes);
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FStyleStack.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FOdtAdapter.sizeInBytes(magic));
+  inc(result, FFormatter.sizeInBytes(magic));
+  inc(result, FFontDecls.sizeInBytes(magic));
+  inc(result, FDefaultStyles.sizeInBytes(magic));
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FStyleStack.sizeInBytes(magic));
 end;
 
 Procedure TWPOpenDocPackagePart.Assign(oObject : TFslObject);
@@ -2872,9 +2872,9 @@ Begin
 End;
 
 
-function TWPOpenDocPackagePart.sizeInBytesV : cardinal;
+function TWPOpenDocPackagePart.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMimeType.length * sizeof(char)) + 12);
 end;
 
@@ -2934,7 +2934,7 @@ End;
 
 Destructor TOdtReaderAdapter.Destroy;
 Begin
-  FPackage.Free;
+  FPackage.free;
 
   Inherited;
 End;
@@ -3003,10 +3003,10 @@ Begin
     Try
       ReadManifest(oExtractor);
     Finally
-      oExtractor.Free;
+      oExtractor.free;
     End;
   Finally
-    oManifestStream.Free;
+    oManifestStream.free;
   End;
 End;
 
@@ -3025,7 +3025,7 @@ Begin
     oReader.Stream := oStream.Link;
     oReader.ReadZip;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 
   LoadManifest;
@@ -3052,10 +3052,10 @@ Begin
     Try
       Result := oResult.Link;
     Finally
-      oResult.Free;
+      oResult.free;
     End
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3063,12 +3063,12 @@ End;
 
 
 
-function TOdtReaderAdapter.sizeInBytesV : cardinal;
+function TOdtReaderAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FVersion.length * sizeof(char)) + 12);
   inc(result, (FMediaType.length * sizeof(char)) + 12);
-  inc(result, FPackage.sizeInBytes);
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 { TOdtWriterAdapter }
@@ -3082,7 +3082,7 @@ End;
 
 Destructor TOdtWriterAdapter.Destroy;
 Begin
-  FPackage.Free;
+  FPackage.free;
 
   Inherited;
 End;
@@ -3107,7 +3107,7 @@ Begin
     oWriter.Stream := oStream.Link;
     oWriter.WriteZip;
   Finally
-    oWriter.Free;
+    oWriter.free;
   End;
 
   FPackage.Clear;
@@ -3129,7 +3129,7 @@ Begin
     FPackage.Add(oPart.Link);
     Result := oPart;
   Finally
-    oPart.Free;
+    oPart.free;
   End;
 End;
 
@@ -3172,10 +3172,10 @@ Begin
         End;
       oFormatter.ProduceClose('manifest:manifest');
     Finally
-      oFormatter.Free;
+      oFormatter.free;
     End;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3191,7 +3191,7 @@ Begin
     sText := 'application/vnd.oasis.opendocument.text';
     oStream.Write(Pointer(sText)^, Length(sText));
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -3258,7 +3258,7 @@ Begin
     End;
     Result := oBorder.Link;
   Finally
-    oBorder.Free;
+    oBorder.free;
   End;
 End;
 
@@ -3299,10 +3299,10 @@ Begin
   Result := (aVal = aVal2) Or ((aVal = fcsUnknown) And (aVal2 = fcsNormal));
 End;
 
-function TOdtWriterAdapter.sizeInBytesV : cardinal;
+function TOdtWriterAdapter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FPackage.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FPackage.sizeInBytes(magic));
 end;
 
 { TOdtTextFormat }
@@ -3656,9 +3656,9 @@ Begin
   Result := FWeight <> '';
 End;
 
-function TOdtTextFormat.sizeInBytesV : cardinal;
+function TOdtTextFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
   inc(result, (FFamily.length * sizeof(char)) + 12);
   inc(result, (FSize.length * sizeof(char)) + 12);
@@ -3811,9 +3811,9 @@ Begin
 End;
 
 
-function TOdtParagraphFormat.sizeInBytesV : cardinal;
+function TOdtParagraphFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTextAlign.length * sizeof(char)) + 12);
   inc(result, (FMarginLeft.length * sizeof(char)) + 12);
   inc(result, ( FMarginRight.length * sizeof(char)) + 12);
@@ -3856,12 +3856,12 @@ End;
 
 Destructor TOdtStyle.Destroy;
 Begin
-  FTextFormat.Free;
-  FParagraphFormat.Free;
-  FListFormat.Free;
-  FTableFormat.Free;
-  FRowFormat.Free;
-  FCellFormat.Free;
+  FTextFormat.free;
+  FParagraphFormat.free;
+  FListFormat.free;
+  FTableFormat.free;
+  FRowFormat.free;
+  FCellFormat.free;
 
   Inherited;
 End;
@@ -3882,7 +3882,7 @@ End;
 
 Procedure TOdtStyle.SetListFormat(oFormat: TOdtListFormat);
 Begin
-  FListFormat.Free;
+  FListFormat.free;
   FListFormat := oFormat;
 End;
 
@@ -3902,7 +3902,7 @@ End;
 
 Procedure TOdtStyle.SetParaFormat(oFormat: TOdtParagraphFormat);
 Begin
-  FParagraphFormat.Free;
+  FParagraphFormat.free;
   FParagraphFormat := oFormat;
 End;
 
@@ -3922,7 +3922,7 @@ End;
 
 Procedure TOdtStyle.SetTextFormat(oFormat: TOdtTextFormat);
 Begin
-  FTextFormat.Free;
+  FTextFormat.free;
   FTextFormat := oFormat;
 End;
 
@@ -3947,7 +3947,7 @@ End;
 
 Procedure TOdtStyle.SetCellFormat(oFormat: TOdtTableCellFormat);
 Begin
-  FCellFormat.Free;
+  FCellFormat.free;
   FCellFormat := oFormat;
 End;
 
@@ -3967,7 +3967,7 @@ End;
 
 Procedure TOdtStyle.SetRowFormat(oFormat: TOdtTableRowFormat);
 Begin
-  FRowFormat.Free;
+  FRowFormat.free;
   FRowFormat := oFormat;
 End;
 
@@ -3987,7 +3987,7 @@ End;
 
 Procedure TOdtStyle.SetTableFormat(oFormat: TOdtTableFormat);
 Begin
-  FTableFormat.Free;
+  FTableFormat.free;
   FTableFormat := oFormat;
 End;
 
@@ -4042,16 +4042,16 @@ Begin
 End;
 
 
-function TOdtStyle.sizeInBytesV : cardinal;
+function TOdtStyle.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
-  inc(result, FTextFormat.sizeInBytes);
-  inc(result, FParagraphFormat.sizeInBytes);
-  inc(result, FListFormat.sizeInBytes);
-  inc(result, FTableFormat.sizeInBytes);
-  inc(result, FRowFormat.sizeInBytes);
-  inc(result, FCellFormat.sizeInBytes);
+  inc(result, FTextFormat.sizeInBytes(magic));
+  inc(result, FParagraphFormat.sizeInBytes(magic));
+  inc(result, FListFormat.sizeInBytes(magic));
+  inc(result, FTableFormat.sizeInBytes(magic));
+  inc(result, FRowFormat.sizeInBytes(magic));
+  inc(result, FCellFormat.sizeInBytes(magic));
 end;
 
 { TOdtStyleList }
@@ -4258,9 +4258,9 @@ Begin
 End;
 
 
-function TOdtListLevelFormat.sizeInBytesV : cardinal;
+function TOdtListLevelFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FNumberStyle.length * sizeof(char)) + 12);
   inc(result, (FNumberFormat.length * sizeof(char)) + 12);
   inc(result, (FStartValue.length * sizeof(char)) + 12);
@@ -4289,7 +4289,7 @@ Begin
     Try
       Self.Add(oLevelFormat.Link);
     Finally
-      oLevelFormat.Free;
+      oLevelFormat.free;
     End;
   End;
 End;
@@ -4307,7 +4307,7 @@ Begin
   Try
     Self.Add(oLevelFormat.Link);
   Finally
-    oLevelFormat.Free;
+    oLevelFormat.free;
   End;
 End;
 
@@ -4348,9 +4348,9 @@ Begin
     Result := Self[0].Matches(oFormat, iCount);
 End;
 
-function TOdtListFormat.sizeInBytesV : cardinal;
+function TOdtListFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -4486,9 +4486,9 @@ Begin
 End;
 
 
-function TOdtTableFormat.sizeInBytesV : cardinal;
+function TOdtTableFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FMarginLeft.length * sizeof(char)) + 12);
   inc(result, ( FMarginRight.length * sizeof(char)) + 12);
   inc(result, (FMarginTop.length * sizeof(char)) + 12);
@@ -4659,15 +4659,15 @@ Begin
     Try
       Result := oCell.TopBorder.IsCompatible(oBorder);
     Finally
-      oBorder.Free;
+      oBorder.free;
       Inc(iIndex);
     End;
   End;
 End;
 
-function TOdtTableCellFormat.sizeInBytesV : cardinal;
+function TOdtTableCellFormat.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FBorderTop.length * sizeof(char)) + 12);
   inc(result, ( FBorderBottom.length * sizeof(char)) + 12);
   inc(result, (FBorderLeft.length * sizeof(char)) + 12);

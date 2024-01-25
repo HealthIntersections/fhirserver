@@ -4,6 +4,7 @@ unit fsl_scrypt;
 
 
 (*
+
   Sample Usage
   ============
 
@@ -114,7 +115,7 @@ unit fsl_scrypt;
       - TODO: Do the same thing canonical scrypt.c does, and do a benchmark before generation to determine parameters.
 
   Version 1.0   20150408
-      - Inital release. Public domain.  Ian Boyd.
+      - Inital release. Public domain.  Ian Boyd. Copyright (c) none
         This is free and unencumbered software released into the public domain.
         Anyone is free to copy, modify, publish, use, compile, sell, or
         distribute this software, either in source code form or as a compiled
@@ -293,7 +294,7 @@ type
     class function CreateObject(ObjectName: string): IInterface;
   end;
 
-  EScryptException = class(Exception);
+  EScryptException = class(EFslException);
 
 implementation
 
@@ -512,7 +513,7 @@ begin
 {
   Reverses the byte order of a 32-bit register.
 }
-  Result :=
+  Result := 
       ( X shr 24) or
       ((X shr  8) and $00FF00) or
       ((X shl  8) and $FF0000) or
@@ -708,7 +709,7 @@ begin
 
     Result := scrypt.DeriveBytes(Passphrase, saltUtf8, costFactor, blockSizeFactor, parallelizationFactor, nDesiredBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1050,7 +1051,7 @@ begin
       scrypt.BurnBytes(expected);
     end;
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1360,7 +1361,7 @@ begin
   try
     Result := scrypt.DeriveBytes(Passphrase, saltUtf8, CostFactor, BlockSizeFactor, ParallelizationFactor, DesiredBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1403,7 +1404,7 @@ begin
 
     Result := scrypt.FormatPasswordHash(costFactor, blockSizeFactor, parallelizationFactor, salt, derivedBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -1513,7 +1514,7 @@ begin
 
     Result := scrypt.FormatPasswordHash(costFactor, blockSizeFactor, ParallelizationFactor, salt, derivedBytes);
   finally
-    scrypt.Free;
+    scrypt.free;
   end;
 end;
 
@@ -2474,7 +2475,7 @@ begin
   begin
     s0 := RRot32(W[t-15],  7) xor RRot32(W[t-15], 18) xor (W[t-15] shr  3); //s0(W[t-15]);
     s1 := RRot32(W[t- 2], 17) xor RRot32(W[t- 2], 19) xor (W[t- 2] shr 10); //s1(W[t-2]);
-    W[t]:= W[t-16] + s0 + W[t-7] + s1;
+    W[t] := W[t-16] + s0 + W[t-7] + s1;
   end;
 
   {2.  Initialize working variables a..h by copying CurrentHash into working variables }
@@ -2653,14 +2654,14 @@ begin
 
   {Finalize the hash value into CurrentHash}
   SetLength(Result, Self.GetDigestSize);
-  PLongWordArray(Result)[0]:= ByteSwap(FCurrentHash[0]);
-  PLongWordArray(Result)[1]:= ByteSwap(FCurrentHash[1]);
-  PLongWordArray(Result)[2]:= ByteSwap(FCurrentHash[2]);
-  PLongWordArray(Result)[3]:= ByteSwap(FCurrentHash[3]);
-  PLongWordArray(Result)[4]:= ByteSwap(FCurrentHash[4]);
-  PLongWordArray(Result)[5]:= ByteSwap(FCurrentHash[5]);
-  PLongWordArray(Result)[6]:= ByteSwap(FCurrentHash[6]);
-  PLongWordArray(Result)[7]:= ByteSwap(FCurrentHash[7]);
+  PLongWordArray(Result)[0] := ByteSwap(FCurrentHash[0]);
+  PLongWordArray(Result)[1] := ByteSwap(FCurrentHash[1]);
+  PLongWordArray(Result)[2] := ByteSwap(FCurrentHash[2]);
+  PLongWordArray(Result)[3] := ByteSwap(FCurrentHash[3]);
+  PLongWordArray(Result)[4] := ByteSwap(FCurrentHash[4]);
+  PLongWordArray(Result)[5] := ByteSwap(FCurrentHash[5]);
+  PLongWordArray(Result)[6] := ByteSwap(FCurrentHash[6]);
+  PLongWordArray(Result)[7] := ByteSwap(FCurrentHash[7]);
 
   {Burn all the temporary areas}
   Burn;
@@ -3064,7 +3065,7 @@ begin
   digestSize := Self.GetDigestSize;
   SetLength(Result, digestSize);
 
-  hr :=_BCryptFinishHash(Hash, @Result[0], digestSize, 0);
+  hr := _BCryptFinishHash(Hash, @Result[0], digestSize, 0);
   NTStatusCheck(hr);
 end;
 

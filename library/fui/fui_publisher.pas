@@ -54,7 +54,7 @@ type
   protected
     Procedure Execute; Override;
   public
-    constructor create(owner : TFHIRIGPublisher; cmd : string);
+    constructor Create(owner : TFHIRIGPublisher; cmd : string);
   end;
 
   TFHIRIGPublisher = class (TFslObject)
@@ -88,9 +88,9 @@ implementation
 
 { TPublishThread }
 
-constructor TPublishThread.create(owner: TFHIRIGPublisher; cmd: string);
+constructor TPublishThread.Create(owner: TFHIRIGPublisher; cmd: string);
 begin
-  inherited create;
+  inherited Create;
   self.FOwner := owner;
   self.cmd := cmd;
 end;
@@ -167,7 +167,7 @@ begin
         FIni.writeString('tools', 'jar', FJarFile);
       end;
     finally
-      od.Free;
+      od.free;
     end;
   end;
 end;
@@ -176,29 +176,29 @@ function TFHIRIGPublisher.execute(folder : String; logProc: TLogProcedure): bool
 var
   thread : TPublishThread;
 begin
-//  raise Exception.Create('Not done yet');
+//  raise EFslException.Create('Not done yet');
 //    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar' then
-//      FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar'
+//      FjarFile := ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar'
 //    else if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-//      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
-  thread := TPublishThread.create(self, 'java -jar '+FJarFile+' -ig '+folder);
+//      then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+  thread := TPublishThread.Create(self, 'java -jar '+FJarFile+' -ig '+folder);
   try
     thread.Open;
     while thread.Running do
       Application.ProcessMessages;
   finally
-    thread.Free;
+    thread.free;
   end;
 end;
 
 function TFHIRIGPublisher.needsUpgrade(folder : String; var msg: String): boolean;
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 procedure TFHIRIGPublisher.upgrade(folder : String; progressProc: TProgressProc);
 begin
-  raise Exception.Create('Not done yet');
+  raise EFslException.Create('Not done yet');
 end;
 
 end.

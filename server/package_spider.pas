@@ -33,16 +33,21 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging,
-  fsl_fetcher,
-  fdb_manager,
+  SysUtils, Classes, IniFiles,
+  IdHashSHA,
+  fsl_base, fsl_utilities, fsl_json, fsl_xml, fsl_logging, fsl_versions,
+  fsl_fetcher, fsl_zulip,
+  fdb_manager, fdb_dialects,
   fsl_npm;
 
 const
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/fhir-ig-list.json';
+  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
+  MANUAL_REG_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/manual-package-list.json';
+  EMAIL_DAYS_LIMIT= 7;
 
 Type
+  EPackageCrawlerException = class (EFslException);
+
   TPackageRestrictions = class (TFslObject)
   private
     FJson : TJsonArray;
@@ -51,10 +56,29 @@ Type
     constructor Create(json : TJsonArray);
     destructor Destroy; override;
 
-    function isOk(package, feed : String) : boolean;
+    function isOk(package, feed : String; var list : String) : boolean;
   end;
 
-  TSendEmailEvent = procedure (dest, subj, body : String);
+  TSendEmailEvent = procedure (dest, subj, body : String) of object;
+
+  TZulipItem = class (TFslObject)
+  private
+    FWhen : TDateTime;
+  end;
+
+  TZulipTracker = class (TFslObject)
+  private
+    FZulip : TZulipSender;
+    FErrors : TFslMap<TZulipItem>;
+  public
+    constructor Create(address, email, apikey : String);
+    destructor Destroy; override;
+
+    function Link : TZulipTracker; overload;
+
+    procedure error(err : String);
+    procedure send;
+  end;
 
   TPackageUpdater = class (TFslObject)
   private
@@ -63,6 +87,9 @@ Type
     FFeedErrors : String;
     FOnSendEmail : TSendEmailEvent;
     FTotalBytes : Cardinal;
+    FIni : TIniFile;
+    FZulip : TZulipTracker;
+    procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
     function fetchUrl(url, mimetype : string) : TBytes;
@@ -70,11 +97,14 @@ Type
     function fetchXml(url : string) : TMXmlElement;
 
     function hasStored(guid : String) : boolean;
-    procedure store(source, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
+    procedure store(source, url, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
-    procedure updateItem(source : String; item : TMXmlElement; pr : TPackageRestrictions);
+    procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
+    constructor Create(zulip : TZulipTracker);
+    destructor Destroy; override;
+
     procedure update(DB : TFDBConnection);
 
     property errors : String read FErrors;
@@ -82,28 +112,38 @@ Type
 
     class procedure test(db : TFDBManager);
 
-    class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; kind : TFHIRPackageKind);
+    class procedure processURLs(npm : TNpmPackage; ts : TStringList);
+    class procedure commit(conn : TFDBConnection; pck : TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token : String; urls : TStringList; kind : TFHIRPackageKind);
   end;
+
+
+function genHash(bytes : TBytes) : String;
 
 implementation
 
+function fix(url : String) : String;
+begin
+  result := url.Replace('http:', 'https:');
+end;
+
 { TPackageUpdater }
 
-class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; kind: TFHIRPackageKind);
+class procedure TPackageUpdater.commit(conn: TFDBConnection; pck: TBytes; npm : TNpmPackage; date : TFslDateTime; guid, id, version, description, canonical, token: String; urls : TStringList; kind: TFHIRPackageKind);
 var
-  fver, dep : String;
-  pkey, vkey, cvkey : integer;
+  fver, dep, u : String;
+  pkey, vkey, cvkey, cc : integer;
 begin
   vkey := conn.CountSQL('Select Max(PackageVersionKey) from PackageVersions') +1;
   conn.SQL := 'Insert into PackageVersions '+
-    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, Description, ManualToken, Content) values ('+
-    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, getDate(), '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, :desc, :mt, :c)';
+    '(PackageVersionKey, GUID, PubDate, Indexed, Id, Version, Kind, DownloadCount, Canonical, FhirVersions, UploadCount, Description, ManualToken, Hash, Content) values ('+
+    inttostr(vkey)+', '''+SQLWrapString(guid)+''', :d, '+DBGetDate(conn.dialect)+', '''+SQLWrapString(id)+''', '''+SQLWrapString(version)+''', '''+inttostr(ord(kind))+''', 0, :u, :f, 1, :desc, :mt, :hash, :c)';
   conn.prepare;
   conn.BindDateTimeEx('d', date);
   conn.BindString('u', canonical);
   conn.BindString('f', npm.fhirVersionList);
   conn.BindBlobFromString('desc', description);
   conn.BindString('mt', token);
+  conn.BindString('hash', genHash(pck));
   conn.BindBlob('c', pck);
   conn.Execute;
   conn.Terminate;
@@ -112,6 +152,8 @@ begin
     conn.ExecSQL('Insert into PackageFHIRVersions (PackageVersionKey, Version) values ('+inttostr(vkey)+', '''+SQLWrapString(fver)+''')');
   for dep in npm.dependencies do
     conn.ExecSQL('Insert into PackageDependencies (PackageVersionKey, Dependency) values('+inttostr(vkey)+', '''+SQLWrapString(dep)+''')');
+  for u in urls do
+    conn.ExecSQL('Insert into PackageURLs (PackageVersionKey, URL) values('+inttostr(vkey)+', '''+SQLWrapString(u)+''')');
 
   pkey := conn.CountSQL('Select Max(PackageKey) from Packages where Id = '''+SQLWrapString(id)+'''');
   if pkey = 0 then
@@ -124,14 +166,39 @@ begin
   end
   else
   begin
-    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions order by PubDate desc, Version desc');
-    if (cvkey = vkey) then    // if we aded the most recent
+    cc := conn.CountSQL('Select count(PackageVersionKey) from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version <> ''current''');
+    cvkey := conn.CountSQL('Select PackageVersionKey from PackageVersions where Id = '''+SQLWrapString(id)+''' and Version <> ''current'' order by PubDate desc, Version');
+    if (cvkey = vkey) or (cc = 1) then    // if we aded the most recent
     begin
-      conn.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(cvkey)+' where PackageKey = '+inttostr(pkey);
+      conn.SQL := 'Update Packages set Canonical = '''+SQLWrapString(canonical)+''', CurrentVersion = '+inttostr(vkey)+' where PackageKey = '+inttostr(pkey);
       conn.prepare;
       conn.Execute;
       conn.Terminate;
     end;
+  end;
+end;
+
+constructor TPackageUpdater.Create(zulip: TZulipTracker);
+begin
+  inherited Create;
+  FZulip := zulip;
+end;
+
+destructor TPackageUpdater.Destroy;
+begin
+  FZulip.free;
+  inherited;
+end;
+
+procedure TPackageUpdater.DoSendEmail(dest, subj, body: String);
+var
+  dt : TDateTime;
+begin
+  dt := FIni.ReadDate('sent', dest, 0);
+  if dt < now - EMAIL_DAYS_LIMIT then
+  begin
+    FIni.WriteDate('sent', dest, now);
+    FOnSendEmail(dest, subj, body);
   end;
 end;
 
@@ -152,7 +219,7 @@ begin
     fetcher.Fetch;
     result := fetcher.Buffer.AsBytes;
   finally
-    fetcher.Free;
+    fetcher.free;
   end;
   FTotalBytes := FTotalBytes + length(result);
 end;
@@ -177,57 +244,115 @@ begin
   begin
     FErrors := FErrors + msg+' (from '+source+')'+#13#10;
     FFeedErrors := FFeedErrors + msg+' (from '+source+')'+#13#10;
+    if FZulip <> nil then
+      FZulip.error(msg+' (from '+source+')');
   end;
   Logging.log(msg);
 end;
 
-procedure TPackageUpdater.store(source, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
+class procedure TPackageUpdater.processURLs(npm : TNpmPackage; ts : TStringList);
+var
+  s : String;
+  json : TJsonObject;
+  xml : TMXmlDocument;
+  e, u : TMXmlElement;
+  bytes : TBytes;
+begin
+  for s in npm.list('package') do
+  begin
+    try
+      if s.EndsWith('.json') then
+      begin
+        bytes := npm.loadBytes('package', s);
+        json := TJSONParser.parse(bytes);
+        try
+          if json.has('url') then
+            ts.Add(json.str['url']);
+        finally
+          json.free;
+        end;
+      end
+      else if s.EndsWith('.xml') then
+      begin
+        bytes := npm.loadBytes('package', s);
+        xml := TMXmlParser.parse(bytes, [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
+        try
+          e := xml.docElement;
+          u := e.element('url');
+          if u <> nil then
+            ts.Add(u.attribute['value']);
+        finally
+          e.free;
+        end;
+      end
+    except
+      on e : Exception do
+      begin
+        BytesToFile(bytes, '/Users/grahamegrieve/temp/content.bin');
+        Logging.log('Error processing '+npm.name+'#'+npm.version+'/package/'+s+': '+e.Message);
+      end;
+    end;
+  end;
+end;
+
+procedure TPackageUpdater.store(source, url, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
 var
   npm : TNpmPackage;
   id, version, description, canonical, fhirVersion : String;
   kind : TFHIRPackageKind;
+  ts : TStringList;
 begin
-  npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil);
+  npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil, true);
   try
     id := npm.name;
     version := npm.version;
     if (id+'#'+version <> idver) then
-    begin
-      log('Error processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
-      exit;
-    end;
+      log('Warning processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
     if npm.notForPublication then
-    begin
-      log('Error processing '+idver+': this package is not suitable for publication', source, true);
-      exit;
-    end;
+      log('Warning processing '+idver+': this package is not suitable for publication (likely broken links)', source, true);
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
-      raise Exception.Create('Id "'+id+'" is not valid');
-    if not isValidSemVer(version) then
-      raise Exception.Create('Version "'+version+'" is not valid');
+      raise EPackageCrawlerException.Create('NPM Id "'+id+'" is not valid from '+source);
+    if not TSemanticVersion.isValid(version) then
+      raise EPackageCrawlerException.Create('NPM Version "'+version+'" is not valid from '+source);
     if (canonical = '') then
-      raise Exception.Create('No canonical found in rss');
+    begin
+      log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
+      canonical := 'http://simplifier.net/packages/fictitious/'+id;
+    end;
     if not isAbsoluteUrl(canonical) then
-      raise Exception.Create('Canonical "'+canonical+'" is not valid');
+      raise EPackageCrawlerException.Create('NPM Canonical "'+canonical+'" is not valid from '+source);
 
-    commit(FDB, package, npm, date, guid, id, version, description, canonical, '', kind);
+    ts := TStringList.Create;
+    try
+      processURLs(npm, ts);
+      
+      commit(FDB, package, npm, date, guid, id, version, description, canonical, '', ts, kind);
+    finally
+      ts.free;
+    end;
 
   finally
-    npm.Free;
+    npm.free;
   end;
 end;
 
 class procedure TPackageUpdater.test(db: TFDBManager);
 var
   conn : TFDBConnection;
+  this : TPackageUpdater;
 begin
   conn := db.GetConnection('test');
   try
-    TPackageUpdater.Create.update(conn);
+    this := TPackageUpdater.Create(nil);
+    try
+      this.update(conn);
+    finally
+      this.free;
+    end;
   finally
     conn.Release;
   end;
@@ -240,32 +365,60 @@ var
   i : integer;
   pr : TPackageRestrictions;
 begin
-  log('Start Package Scan', '', false);
-  FTotalBytes := 0;
-  FErrors := '';
-  FDB := DB;
+  FIni := TIniFile.Create(tempFile('package-spider.ini'));
   try
-    log('Fetch '+MASTER_URL, '', false);
-    json := fetchJson(MASTER_URL);
+    log('Start Package Scan', '', false);
+    FTotalBytes := 0;
+    FErrors := '';
+    FDB := DB;
     try
-      pr := TPackageRestrictions.create(json.arr['package-restrictions'].Link);
+      log('Fetch '+MASTER_URL, '', false);
+      json := fetchJson(MASTER_URL);
       try
-        arr := json.arr['feeds'];
-        for i := 0 to arr.Count - 1 do
-          updateTheFeed(arr.Obj[i].str['url'], MASTER_URL, arr.Obj[i].str['email'], pr);
+        pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
+        try
+          arr := json.arr['feeds'];
+          for i := 0 to arr.Count - 1 do
+            updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
+        finally
+          pr.free;
+        end;
       finally
-        pr.Free;
+        json.free;
       end;
-    finally
-      json.free;
+    except
+      on e : Exception do
+      begin
+        Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
+      end;
     end;
-  except
-    on e : Exception do
-    begin
-      Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
-    end;
+    //try
+    //  log('Fetch '+MANUAL_REG_URL, '', false);
+    //  json := fetchJson(MANUAL_REG_URL);
+    //  try
+    //    pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
+    //    try
+    //      arr := json.arr['feeds'];
+    //      for i := 0 to arr.Count - 1 do
+    //        updateTheFeed(fix(arr.Obj[i].str['url']), MASTER_URL, arr.Obj[i].str['errors'].Replace('|', '@').Replace('_', '.'), pr);
+    //    finally
+    //      pr.free;
+    //    end;
+    //  finally
+    //    json.free;
+    //  end;
+    //except
+    //  on e : Exception do
+    //  begin
+    //    Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
+    //  end;
+    //end;
+    if FZulip <> nil then
+      FZulip.send;
+    log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
+  finally
+    FIni.free;
   end;
-  log('Finish Package Scan - '+Logging.DescribeSize(FTotalBytes, 0), '', false);
 end;
 
 procedure TPackageUpdater.updateTheFeed(url, source, email: String; pr : TPackageRestrictions);
@@ -273,6 +426,7 @@ var
   xml : TMXmlElement;
   channel : TMXmlElement;
   item : TMXmlElement;
+  i : integer;
 begin
   try
     log('Fetch '+url, source, false);
@@ -284,42 +438,49 @@ begin
       begin
         if (channel.Name = 'channel') then
         begin
+          i := 0;
           for item in channel.Children do
           begin
             if (item.Name = 'item') then
             begin
-              updateItem(url, item, pr);
+              updateItem(url, item, i, pr);
+              inc(i);
             end;
           end;
         end;
       end;
     finally
-      xml.Free;
+      xml.free;
     end;
     if (FFeedErrors <> '') and (email <> '') then
-        FOnSendEmail(email, 'Errors Processing '+url, FFeedErrors);
+        DoSendEmail(email, 'Errors Processing '+url, FFeedErrors);
   except
     on e : Exception do
     begin
       log('Exception processing feed: '+url+': '+e.Message, source, false);
       if (email <> '') then
-        FOnSendEmail(email, 'Exception Processing '+url, e.Message);
+        DoSendEmail(email, 'Exception Processing '+url, e.Message);
     end;
   end;
 end;
 
-procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; pr : TPackageRestrictions);
+procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; i : integer; pr : TPackageRestrictions);
 var
   guid : String;
   content : TBytes;
   date : TFslDateTime;
-  id, url, d: String;
+  id, url, d, list: String;
 begin
-  url := '??';
+  url := '??pck';
+  if item.element('guid') = nil then
+  begin
+    log('Error processing item from '+source+'#item['+inttostr(i)+']: no guid provided', source, true);
+    exit;
+  end;
   guid := item.element('guid').Text;
   try
     id := item.element('title').Text;
-    if pr.isOk(id, source) then
+    if pr.isOk(id, source, list) then
     begin
       if (not hasStored(guid)) then
       begin
@@ -327,14 +488,16 @@ begin
         if (d.length > 2) and (d[2] = ' ') and StringIsInteger16(d[1]) then
           d := '0'+d;
         date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
-        log('Fetch '+item.element('link').Text, source, false);
-        url := item.element('link').Text;
+        url := fix(item.element('link').Text);
+        log('Fetch '+url, source, false);
         content := fetchUrl(url, 'application/tar+gzip');
-        store(source, guid, date, content, id);
+        store(source, url, guid, date, content, id);
       end;
     end
     else
-      log('The package '+id+' is not allowed to come from '+source, source, true);
+    begin
+      log('The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', source, true);
+    end;
   except
     on e : Exception do
     begin
@@ -353,26 +516,35 @@ end;
 
 destructor TPackageRestrictions.Destroy;
 begin
-  FJson.Free;
+  FJson.free;
   inherited;
 end;
 
-function TPackageRestrictions.isOk(package, feed: String): boolean;
+function TPackageRestrictions.isOk(package, feed: String; var list : String): boolean;
 var
   e, f : TJsonNode;
   eo : TJsonObject;
+  p, m, ff, v : String;
 begin
   result := true;
+  list := '';
   if FJson <> nil then
   begin
     for e in FJson do
     begin
       eo := e as TJsonObject;
-      if matches(package, eo.str['mask']) then
+      p := fix(package);
+      m := fix(eo.str['mask']);
+      if matches(p, m) then
       begin
         result := false;
         for f in eo.arr['feeds'] do
-          result := result or (feed = TJsonString(f).value);
+        begin
+          ff := fix(feed);
+          v := fix(TJsonString(f).value);
+          result := result or (ff = v);
+          CommaAdd(list, TJsonString(f).value);
+        end;
         exit(result);
       end;
     end;
@@ -388,5 +560,68 @@ begin
   mask := mask.Substring(0, i);
   result := package = mask;
 end;
+
+{ TZulipTracker }
+
+constructor TZulipTracker.Create(address, email, apikey: String);
+begin
+  inherited Create;
+  FZulip := TZulipSender.Create(address, email, apikey);
+  FErrors := TFslMap<TZulipItem>.Create;
+end;
+
+destructor TZulipTracker.Destroy;
+begin
+  FErrors.free;
+  FZulip.free;
+  inherited;
+end;
+
+procedure TZulipTracker.error(err: String);
+begin
+  if not FErrors.ContainsKey(err) then
+    FErrors.Add(err, TZulipItem.create);
+end;
+
+function TZulipTracker.Link: TZulipTracker;
+begin
+  result := TZulipTracker(inherited link);
+end;
+
+procedure TZulipTracker.send;
+var
+  msg : String;
+  s : string;
+  item : TZulipItem;
+begin
+  msg := '';
+  for s in Ferrors.Keys do
+  begin
+    item := FErrors[s];
+    if item.FWhen < now - 1 then
+    begin
+      msg := msg + '* '+s+#13#10;
+      item.FWhen := now;
+    end;
+  end;
+  if msg <> '' then
+  begin
+    Logging.log('Send to Zulip: '+msg);
+    FZulip.sendMessage('tooling/Package Crawlers', 'Packages2', msg);
+  end;
+end;
+
+function genHash(bytes : TBytes) : String;
+var
+  hash : TIdHashSHA1;
+begin
+  hash := TIdHashSHA1.Create;
+  try
+    result := hash.HashBytesAsHex(bytes);
+  finally
+    hash.free;
+  end;
+end;
+
 
 end.

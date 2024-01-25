@@ -1,4 +1,4 @@
-unit fhir4_tests_Objects;
+unit fhir4_tests_objects;
 
 {
 Copyright (c) 2011+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -62,11 +62,11 @@ function TFHIRObjectTests4.json(o: TFHIRResource): String;
 var
   c : TFHIRJsonComposer;
 begin
-  c := TFHIRJsonComposer.Create(nil, OutputStyleCanonical, THTTPLanguages.create('en'));
+  c := TFHIRJsonComposer.Create(nil, OutputStyleCanonical, nil);
   try
     result := c.Compose(o);
   finally
-    c.Free;
+    c.free;
   end;
 end;
 
@@ -88,7 +88,7 @@ begin
     Assert.IsTrue(json(o) = '{"resourceType":"Patient"}');
     Assert.IsTrue(o.idElement = nil);
   finally
-    o.Free;
+    o.free;
   end;
   Assert.IsTrue(true);
 end;
@@ -111,7 +111,7 @@ begin
     Assert.IsTrue(json(o) = '{"resourceType":"Patient"}');
     Assert.IsTrue(o.identifierList.Count = 0);
   finally
-    o.Free;
+    o.free;
   end;
   Assert.IsTrue(true);
 end;

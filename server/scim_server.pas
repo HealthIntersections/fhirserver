@@ -245,7 +245,7 @@ begin
       for s in list do
         user.addEntitlement(s);
     finally
-      list.Free;
+      list.free;
     end;
 
     if conn.CountSQL('select UserKey from Users where Status = 1 and UserName = '''+SQLWrapString(un)+'''') > 0 then
@@ -264,7 +264,7 @@ begin
     IndexUser(conn, user, key);
 
   finally
-    user.Free;
+    user.free;
   end;
 end;
 
@@ -295,7 +295,7 @@ begin
       for s in list do
         user.addEntitlement(s);
     finally
-      list.Free;
+      list.free;
     end;
 
     conn.SQL := 'Insert into Users (UserKey, UserName, Password, Status, Content) values (:uk, :un, :pw, 1, :cnt)';
@@ -311,7 +311,7 @@ begin
     end;
     IndexUser(conn, user, key);
   finally
-    user.Free;
+    user.free;
   end;
 end;
 
@@ -351,15 +351,15 @@ begin
     end;
     IndexUser(conn, user, key);
   finally
-    user.Free;
+    user.free;
   end;
 end;
 
 destructor TSCIMServer.Destroy;
 begin
-  lock.Free;
-  FAnonymousRights.Free;
-  db.Free;
+  lock.free;
+  FAnonymousRights.free;
+  db.free;
   inherited;
 end;
 
@@ -377,7 +377,7 @@ begin
     response.ResponseNo := status;
     response.ResponseText := statusCode;
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -529,7 +529,7 @@ begin
 
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
     conn.Release;
   except
@@ -665,7 +665,7 @@ begin
         raise ESCIMException.Create(404, 'Not Found', '', 'User not found');
       response.CustomHeaders.Add('Location: https://'+request.Host+'/scim/Users/'+id);
       response.ContentType := 'application/scim+json';
-      response.ContentStream := TMemoryStream.create;
+      response.ContentStream := TMemoryStream.Create;
       b := conn.ColBlobByName['Content'];
       response.ContentStream.write(b[0], length(b));
       response.ContentStream.Position := 0;
@@ -765,7 +765,7 @@ begin
       end;
     end;
   finally
-    user.Free;
+    user.free;
   end;
 end;
 
@@ -838,7 +838,7 @@ begin
           response.ResponseNo := 200;
           response.ResponseText := 'OK';
         finally
-          eUser.Free;
+          eUser.free;
         end;
         conn.Commit;
       except
@@ -859,7 +859,7 @@ begin
       end;
     end;
   finally
-    nUser.Free;
+    nUser.free;
   end;
 end;
 
@@ -872,7 +872,7 @@ var
   c, t, l, s : integer;
   sql, sort : String;
 begin
-  params := THTTPParameters.create(request.QueryParams);
+  params := THTTPParameters.Create(request.QueryParams);
   try
     json := TJsonObject.Create;
     try
@@ -929,14 +929,14 @@ begin
       response.ResponseNo := 200;
       response.ResponseText := 'OK';
       response.ContentType := 'application/scim+json';
-      response.ContentStream := TMemoryStream.create;
+      response.ContentStream := TMemoryStream.Create;
       TJSONWriter.writeObject(response.ContentStream, json, false);
       response.ContentStream.Position := 0;
     finally
       json.free;
     end;
   finally
-    params.Free;
+    params.free;
   end;
 end;
 
@@ -955,10 +955,10 @@ begin
       try
         result := ' and ' + BuildUserFilter(f, '', ' ', issuer);
       finally
-        f.Free;
+        f.free;
       end;
     finally
-      issuer.Free;
+      issuer.free;
     end;
   end;
 end;
@@ -991,7 +991,7 @@ begin
   else if s.StartsWith('http://www.hl7.org') then
     result := 'HL7'
   else
-    result := '??';
+    result := '??scim';
 end;
 
 procedure TSCIMServer.processWebRequest(context: TIdContext; session : TFhirSession; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; prefix : String);
@@ -1018,7 +1018,7 @@ var
   uk : integer;
 begin
   bDone := false;
-  variables := TFslMap<TFHIRObject>.create('scim.vars');
+  variables := TFslMap<TFHIRObject>.Create('scim.vars');
   try
     conn := db.GetConnection('scim.user.search');
     try
@@ -1038,7 +1038,7 @@ begin
         if request.Command = 'POST' then
         begin
           p := THTTPParameters.Create(request.UnparsedParams);
-          st := TStringList.create;
+          st := TStringList.Create;
           try
             user.DisplayName := p['display'];
             st.Text := p['emails'];
@@ -1087,41 +1087,41 @@ begin
               end;
             end;
           finally
-            st.Free;
-            p.Free;
+            st.free;
+            p.free;
           end;
         end;
         if user.ExternalId = '' then
-          variables.Add('user.password', TFHIRSystemString.create('<input type="text" name="password" value=""/>'))
+          variables.Add('user.password', TFHIRSystemString.Create('<input type="text" name="password" value=""/>'))
         else
-          variables.Add('user.password', TFHIRSystemString.create('<i>No Password for this user</i>'));
-        variables.Add('prefix', TFHIRSystemString.create(prefix));
-        variables.Add('user.external', TFHIRSystemString.create(user.ExternalId));
+          variables.Add('user.password', TFHIRSystemString.Create('<i>No Password for this user</i>'));
+        variables.Add('prefix', TFHIRSystemString.Create(prefix));
+        variables.Add('user.external', TFHIRSystemString.Create(user.ExternalId));
         if bnew then
         begin
-          variables.Add('user.fname', TFHIRSystemString.create('(new user)'));
-          variables.Add('user.name', TFHIRSystemString.create('<input type="text" name="username" value=""/>'));
-          variables.Add('user.id', TFHIRSystemString.create('$new'));
-          variables.Add('user.display', TFHIRSystemString.create('<input type="text" name="display" value=""/>'));
+          variables.Add('user.fname', TFHIRSystemString.Create('(new user)'));
+          variables.Add('user.name', TFHIRSystemString.Create('<input type="text" name="username" value=""/>'));
+          variables.Add('user.id', TFHIRSystemString.Create('$new'));
+          variables.Add('user.display', TFHIRSystemString.Create('<input type="text" name="display" value=""/>'));
         end
         else
         begin
-          variables.Add('user.fname', TFHIRSystemString.create(user.username));
-          variables.Add('user.name', TFHIRSystemString.create(user.username));
-          variables.Add('user.id', TFHIRSystemString.create(user.id));
-          variables.Add('user.display', TFHIRSystemString.create('<input type="text" name="display" value="'+user.DisplayName+'"/>'));
+          variables.Add('user.fname', TFHIRSystemString.Create(user.username));
+          variables.Add('user.name', TFHIRSystemString.Create(user.username));
+          variables.Add('user.id', TFHIRSystemString.Create(user.id));
+          variables.Add('user.display', TFHIRSystemString.Create('<input type="text" name="display" value="'+user.DisplayName+'"/>'));
         end;
 
         s := '';
         for i := 0 to user.emails.Count - 1 do
           s := s + user.emails[i].Value+#13#10;
-        variables.Add('user.email', TFHIRSystemString.create(s));
+        variables.Add('user.email', TFHIRSystemString.Create(s));
         s := '';
         for i := 0 to user.entitlementCount - 1 do
           s := s + user.entitlement[i]+#13#10;
-        variables.Add('user.rights', TFHIRSystemString.create(s));
+        variables.Add('user.rights', TFHIRSystemString.Create(s));
       finally
-        user.Free;
+        user.free;
       end;
       conn.Release;
     except
@@ -1193,7 +1193,7 @@ begin
 //            b.Append('</td>');
             b.Append('</tr>'#13#10);
           finally
-            user.Free;
+            user.free;
           end;
         end;
       finally
@@ -1209,16 +1209,16 @@ begin
       end;
     end;
 
-    variables := TFslMap<TFHIRObject>.create('scim.vars');
+    variables := TFslMap<TFHIRObject>.Create('scim.vars');
     try
-      variables.Add('usertable', TFHIRSystemString.create(b.ToString));
-      variables.Add('prefix', TFHIRSystemString.create(prefix));
+      variables.Add('usertable', TFHIRSystemString.Create(b.ToString));
+      variables.Add('prefix', TFHIRSystemString.Create(prefix));
       OnProcessFile(request, response, session, '/scimusers.html', true, variables);
     finally
       variables.free;
     end;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -1457,7 +1457,7 @@ end;
 procedure TSCIMServer.WriteOutgoing(response: TIdHTTPResponseInfo; json: TJsonObject);
 begin
   response.ContentType := 'application/scim+json';
-  response.ContentStream := TMemoryStream.create;
+  response.ContentStream := TMemoryStream.Create;
   TJSONWriter.writeObject(response.contentStream, json, false);
   response.ContentStream.Position := 0;
 end;
@@ -1469,7 +1469,7 @@ begin
     sitCriteria : result := BuildUserFilterCriteria(filter as TSCIMSearchFilterCriteria, prefix, parent, issuer);
     sitValuePath : result := BuildUserFilterValuePath(filter as TSCIMSearchFilterValuePath, prefix, parent, issuer);
   else
-    raise EFHIRException.create('Unknown type');
+    raise EFHIRException.Create('Unknown type');
   end;
 end;
 

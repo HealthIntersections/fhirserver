@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xml:lang="en" lang="en">
+<head>
+    <title>XIG (FHIR Server [%id%] Version [%ver%])</title>
+    [%include head.html%]
+</head>
+
+<body>
+[%include top.html%]
+
+  <h2>FHIR IG Statistics ([%ms%] ms)</h2>
+
+<ul style="background-color: #eeeeee; border: 1px black solid; margin: 6px">
+  <li>Version: [%version-bar%]</li>
+  <li>Authority: [%auth-bar%]</li>
+  <li>Realm: [%realm-bar%]</li>
+  <li>View: [%type-bar%]</li>
+</ul> 
+
+[%content%]
+
+<p>
+  XIG built as of [%metadata-date%]. Found [%metadata-resources%] resources in [%metadata-packages%] packages.
+</p>
+
+[%include bottom.html%]
+
+</body>
+
+</html>

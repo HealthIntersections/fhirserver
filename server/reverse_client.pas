@@ -79,7 +79,7 @@ implementation
 
 constructor TReverseProxyInfo.Create(path, target: String);
 begin
-  inherited create;
+  inherited Create;
   FPath := path;
   FTarget := target;
 end;
@@ -93,13 +93,13 @@ end;
 
 destructor TReverseClient.Destroy;
 begin
-  Fproxy.Free;
+  Fproxy.free;
   inherited;
 end;
 
 procedure TReverseClient.Setproxy(const Value: TReverseProxyInfo);
 begin
-  Fproxy.Free;
+  Fproxy.free;
   Fproxy := Value;
 end;
 
@@ -247,13 +247,13 @@ begin
 //    property Destination: string read FDestination write FDestination;
 
   finally
-    client.Free;
+    client.free;
   end;;
 end;
 
 function TReverseClient.getOutput: TStream;
 begin
-  response.ContentStream := TMemoryStream.create;
+  response.ContentStream := TMemoryStream.Create;
   response.FreeContentStream := true;
   result := response.ContentStream;
 end;

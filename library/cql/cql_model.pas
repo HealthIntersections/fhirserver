@@ -1,4 +1,4 @@
-unit FHIR.Cql.Model;
+unit cql_model;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -441,14 +441,14 @@ end;
 
 destructor TCqlValueSetReference.Destroy;
 begin
-  FCodeSystems.Free;
+  FCodeSystems.free;
   inherited;
 end;
 
 function TCqlValueSetReference.GetCodeSystems: TFslList<TCqlScopedIdReference>;
 begin
   if FCodeSystems = nil then
-    FCodeSystems := TFslList<TCqlScopedIdReference>.create;
+    FCodeSystems := TFslList<TCqlScopedIdReference>.Create;
   result := FCodeSystems;
 end;
 
@@ -466,8 +466,8 @@ end;
 
 destructor TCqlParameterDefinition.Destroy;
 begin
-  FTypeDetails.Free;
-  FDefaultValue.Free;
+  FTypeDetails.free;
+  FDefaultValue.free;
   inherited;
 end;
 
@@ -478,13 +478,13 @@ end;
 
 procedure TCqlParameterDefinition.SetDefaultValue(const Value: TCqlExpressionNode);
 begin
-  FDefaultValue.Free;
+  FDefaultValue.free;
   FDefaultValue := Value;
 end;
 
 procedure TCqlParameterDefinition.SetTypeDetails(const Value: TCqlTypeSpecifier);
 begin
-  FTypeDetails.Free;
+  FTypeDetails.free;
   FTypeDetails := Value;
 end;
 
@@ -511,27 +511,27 @@ constructor TCqlLibrary.Create;
 begin
   inherited;
   FUsing := TFslList<TCqlUsing>.Create;
-  FIncludes := TFslList<TCqlInclude>.create;
-  FParameters := TFslList<TCqlParameterDefinition>.create;
-  FCodeSystems := TFslList<TCqlCodeSystemReference>.create;
-  FValueSets := TFslList<TCqlValueSetReference>.create;
-  FCodes := TFslList<TCqlCodeDefinition>.create;
-  FConcepts := TFslList<TCqlConceptDefinition>.create;
-  FDefinitions := TFslList<TCqlExpressionDefinition>.create;
-  FFunctions := TFslList<TCqlFunctionDefinition>.create;
+  FIncludes := TFslList<TCqlInclude>.Create;
+  FParameters := TFslList<TCqlParameterDefinition>.Create;
+  FCodeSystems := TFslList<TCqlCodeSystemReference>.Create;
+  FValueSets := TFslList<TCqlValueSetReference>.Create;
+  FCodes := TFslList<TCqlCodeDefinition>.Create;
+  FConcepts := TFslList<TCqlConceptDefinition>.Create;
+  FDefinitions := TFslList<TCqlExpressionDefinition>.Create;
+  FFunctions := TFslList<TCqlFunctionDefinition>.Create;
 end;
 
 destructor TCqlLibrary.Destroy;
 begin
-  FFunctions.Free;
-  FDefinitions.Free;
-  FConcepts.Free;
-  FCodes.Free;
-  FValueSets.Free;
-  FCodeSystems.Free;
-  FParameters.Free;
-  FIncludes.Free;
-  FUsing.Free;
+  FFunctions.free;
+  FDefinitions.free;
+  FConcepts.free;
+  FCodes.free;
+  FValueSets.free;
+  FCodeSystems.free;
+  FParameters.free;
+  FIncludes.free;
+  FUsing.free;
   inherited;
 end;
 
@@ -573,12 +573,12 @@ end;
 constructor TCqlCodeDefinition.Create;
 begin
   inherited;
-  FSystem := TCqlScopedIdReference.create;
+  FSystem := TCqlScopedIdReference.Create;
 end;
 
 destructor TCqlCodeDefinition.Destroy;
 begin
-  FSystem.Free;
+  FSystem.free;
   inherited;
 end;
 
@@ -592,12 +592,12 @@ end;
 constructor TCqlConceptDefinition.Create;
 begin
   inherited;
-  FCodes := TFslList<TCqlScopedIdReference>.create;
+  FCodes := TFslList<TCqlScopedIdReference>.Create;
 end;
 
 destructor TCqlConceptDefinition.Destroy;
 begin
-  FCodes.Free;
+  FCodes.free;
   inherited;
 end;
 
@@ -611,8 +611,8 @@ end;
 constructor TCqlTypeSpecifier.Create;
 begin
   inherited;
-  FParameters := TFslList<TCqlTypeSpecifier>.create;
-  FElements := TFslMap<TCqlTypeSpecifier>.create('Elements');
+  FParameters := TFslList<TCqlTypeSpecifier>.Create;
+  FElements := TFslMap<TCqlTypeSpecifier>.Create('Elements');
 end;
 
 destructor TCqlTypeSpecifier.Destroy;
@@ -637,7 +637,7 @@ end;
 
 destructor TCqlExpressionDefinition.Destroy;
 begin
-  FExpression.Free;
+  FExpression.free;
   inherited;
 end;
 
@@ -648,7 +648,7 @@ end;
 
 procedure TCqlExpressionDefinition.SetExpression(const Value: TCqlExpressionNode);
 begin
-  FExpression.Free;
+  FExpression.free;
   FExpression := Value;
 end;
 
@@ -657,14 +657,14 @@ end;
 constructor TCqlFunctionDefinition.Create;
 begin
   inherited;
-  FParameters := TFslList<TCqlFunctionParameterDefinition>.create;
+  FParameters := TFslList<TCqlFunctionParameterDefinition>.Create;
 end;
 
 destructor TCqlFunctionDefinition.Destroy;
 begin
-  FTypeInfo.Free;
-  FParameters.Free;
-  FBody.Free;
+  FTypeInfo.free;
+  FParameters.free;
+  FBody.free;
   inherited;
 end;
 
@@ -676,13 +676,13 @@ end;
 
 procedure TCqlFunctionDefinition.SetBody(const Value: TCqlExpressionNode);
 begin
-  FBody.Free;
+  FBody.free;
   FBody := Value;
 end;
 
 procedure TCqlFunctionDefinition.SetTypeInfo(const Value: TCqlTypeSpecifier);
 begin
-  FTypeInfo.Free;
+  FTypeInfo.free;
   FTypeInfo := Value;
 end;
 
@@ -690,38 +690,38 @@ end;
 
 destructor TCqlExpressionNode.Destroy;
 begin
-  FTypeInfo.Free;
-  FItems.Free;
-  FSort.Free;
-  FThenStmt.Free;
-  FIfTest.Free;
-  FElseStmt.Free;
-  FReturn.Free;
+  FTypeInfo.free;
+  FItems.free;
+  FSort.free;
+  FThenStmt.free;
+  FIfTest.free;
+  FElseStmt.free;
+  FReturn.free;
   FElements.free;
-  FWhere.Free;
-  FSuchThat.Free;
-  FWithStmt.Free;
+  FWhere.free;
+  FSuchThat.free;
+  FWithStmt.free;
   inherited;
 end;
 
 function TCqlExpressionNode.getElements: TFslMap<TCqlExpressionNode>;
 begin
   if FElements = nil then
-    FElements := TFslMap<TCqlExpressionNode>.create('Elements');
+    FElements := TFslMap<TCqlExpressionNode>.Create('Elements');
   result := FElements;
 end;
 
 function TCqlExpressionNode.getItems: TFslList<TCqlExpressionNode>;
 begin
   if FItems = nil then
-    FItems := TFslList<TCqlExpressionNode>.create;
+    FItems := TFslList<TCqlExpressionNode>.Create;
   result := FItems;
 end;
 
 function TCqlExpressionNode.GetSort: TFslList<TCqlExpressionNode>;
 begin
   if FSort = nil then
-    FSort := TFslList<TCqlExpressionNode>.create;
+    FSort := TFslList<TCqlExpressionNode>.Create;
   result := FSort;
 end;
 
@@ -732,49 +732,49 @@ end;
 
 procedure TCqlExpressionNode.SetElseStmt(const Value: TCqlExpressionNode);
 begin
-  FElseStmt.Free;
+  FElseStmt.free;
   FElseStmt := Value;
 end;
 
 procedure TCqlExpressionNode.SetIfTest(const Value: TCqlExpressionNode);
 begin
-  FIfTest.Free;
+  FIfTest.free;
   FIfTest := Value;
 end;
 
 procedure TCqlExpressionNode.SetReturn(const Value: TCqlExpressionNode);
 begin
-  FReturn.Free;
+  FReturn.free;
   FReturn := Value;
 end;
 
 procedure TCqlExpressionNode.SetSuchThat(const Value: TCqlExpressionNode);
 begin
-  FSuchThat.Free;
+  FSuchThat.free;
   FSuchThat := Value;
 end;
 
 procedure TCqlExpressionNode.SetThenStmt(const Value: TCqlExpressionNode);
 begin
-  FThenStmt.Free;
+  FThenStmt.free;
   FThenStmt := Value;
 end;
 
 procedure TCqlExpressionNode.SetTypeInfo(const Value: TCqlTypeSpecifier);
 begin
-  FTypeInfo.Free;
+  FTypeInfo.free;
   FTypeInfo := Value;
 end;
 
 procedure TCqlExpressionNode.SetWhere(const Value: TCqlExpressionNode);
 begin
-  FWhere.Free;
+  FWhere.free;
   FWhere := Value;
 end;
 
 procedure TCqlExpressionNode.SetWithStmt(const Value: TCqlExpressionNode);
 begin
-  FWithStmt.Free;
+  FWithStmt.free;
   FWithStmt := Value;
 end;
 
@@ -787,7 +787,7 @@ end;
 
 destructor TCqlFunctionParameterDefinition.Destroy;
 begin
-  FTypeDetails.Free;
+  FTypeDetails.free;
   inherited;
 end;
 
@@ -798,7 +798,7 @@ end;
 
 procedure TCqlFunctionParameterDefinition.SetTypeDetails(const Value: TCqlTypeSpecifier);
 begin
-  FTypeDetails.Free;
+  FTypeDetails.free;
   FTypeDetails := Value;
 end;
 

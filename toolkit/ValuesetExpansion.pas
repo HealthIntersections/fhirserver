@@ -148,7 +148,7 @@ begin
         end
       )
     else
-      raise EFHIRException.create('Unknown format');
+      raise EFHIRException.Create('Unknown format');
   end;
 end;
 
@@ -156,7 +156,7 @@ procedure TValuesetExpansionForm.btnSettingsClick(Sender: TObject);
 var
   form : TSettingsForm;
 begin
-  form := TSettingsForm.create(self);
+  form := TSettingsForm.Create(self);
   try
     form.Settings := FSettings.link;
     form.TabControl1.TabIndex := 1;
@@ -177,10 +177,10 @@ end;
 
 destructor TValuesetExpansionForm.Destroy;
 begin
-  FSettings.Free;
-  FExpansion.Free;
-  FValueSet.Free;
-  FClient.Free;
+  FSettings.free;
+  FExpansion.free;
+  FValueSet.free;
+  FClient.free;
   FServers.free;
   inherited;
 end;
@@ -211,7 +211,7 @@ begin
       form.proc := proc;
       ShowModalHack(form);
     finally
-      form.Free;
+      form.free;
     end;
   finally
     if Assigned(fCS) then
@@ -289,7 +289,7 @@ procedure TValuesetExpansionForm.GoClick(Sender: TObject);
 var
   params :  TFHIRParameters;
 begin
-  FExpansion.Free;
+  FExpansion.free;
   FExpansion := nil;
   gridContains.RowCount := 0;
   btnUse.Enabled := false;
@@ -335,7 +335,7 @@ begin
         btnUse.Enabled := FExpansion.expansion.containsList.Count > 0;
         btnExport.Enabled := FExpansion.expansion.containsList.Count > 0;
       finally
-        params.Free;
+        params.free;
       end;
     end);
 end;
@@ -374,19 +374,19 @@ end;
 
 procedure TValuesetExpansionForm.SetExpansion(const Value: TFHIRValueSet);
 begin
-  FExpansion.Free;
+  FExpansion.free;
   FExpansion := Value;
 end;
 
 procedure TValuesetExpansionForm.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 
 procedure TValuesetExpansionForm.SetValueSet(const Value: TFHIRValueSet);
 begin
-  FValueSet.Free;
+  FValueSet.free;
   FValueSet := Value;
 end;
 

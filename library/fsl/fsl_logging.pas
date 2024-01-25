@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$IFDEF DELPHI} FastMM4, {$ENDIF} {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  fsl_threads, fsl_base, fsl_utilities, fsl_collections;
+  fsl_threads, fsl_base, fsl_utilities, fsl_collections{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -53,8 +53,9 @@ Type
     FDescription: String;
     FHeader: String;
     FFullPolicy: TLogFullPolicy;
+    FCloseLog: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override; //
 
@@ -84,6 +85,11 @@ Type
     // amount to chop off when chopping file. 0 means 1k
     Property ChopAmount : Cardinal Read FChopAmount Write FChopAmount;
 
+    // usually, the log will keep the file open, for performamce reasons,
+    // but holding the log open can be problematic for other uses, so you
+    // get the log to close where the log isn't used intensively
+    property closeLog : boolean read FCloseLog write FCloseLog;
+
   End;
 
   TLogger = Class (TFslObject)
@@ -100,7 +106,7 @@ Type
     Procedure CycleFile(sName : String);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(filename : String);
     destructor Destroy; Override;
@@ -140,11 +146,14 @@ Type
     FLastday : integer;
     FWorkingLine : String;
     FCount : integer;
+    FHeld : TStringlist;
+    FLock : TFslLock;
 
     procedure checkDay;
     procedure close;
+    procedure LogDoubleFreeCallBack(name1, name2: String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -162,11 +171,14 @@ Type
     procedure start(s : String);
     procedure continue(s : String);
     procedure finish(s : String = '');
+    procedure finishIfNeeded;
 
     function Counter : String;
 
-    Function DescribeSize(b, min: Cardinal): String;
-    function MemoryStatus : String;
+    Function DescribeSize(b, min: UInt64): String;
+    function MemoryStatus(full : boolean) : String;
+
+    function InternalMem : UInt64;
   end;
 
 var
@@ -195,9 +207,9 @@ begin
   Result.FFullPolicy := FFullPolicy;
 end;
 
-function TLoggerPolicy.sizeInBytesV : cardinal;
+function TLoggerPolicy.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FDescription.length * sizeof(char)) + 12);
   inc(result, (FHeader.length * sizeof(char)) + 12);
 end;
@@ -216,9 +228,9 @@ End;
 
 Destructor TLogger.Destroy;
 Begin
-  FStream.Free;
-  FPolicy.Free;
-  FLock.Free;
+  FStream.free;
+  FPolicy.free;
+  FLock.free;
   Inherited;
 End;
 
@@ -289,10 +301,10 @@ Begin
       src.Position := cs;
       dst.CopyFrom(src, src.Size - cs);
     finally
-      dst.Free;
+      dst.free;
     end;
   finally
-    src.Free;
+    src.free;
   end;
   DeleteFile(PChar(sName + '.tmp'));
 end;
@@ -359,7 +371,7 @@ begin
     end
     else if FOpenName <> sName then
     begin
-      FStream.Free;
+      FStream.free;
       FStream := nil;
       FOpenName := '';
       exists := FileExists(sName);
@@ -379,7 +391,7 @@ begin
       Begin
         if FStream <> nil then
         begin
-          FStream.Free;
+          FStream.free;
           FStream := nil;
         end;
 
@@ -406,16 +418,22 @@ begin
       FOpenName := sName;
     end;
     FStream.Write(bytes[0], length(bytes));
+    if FPolicy.closeLog then
+    begin
+      FStream.free;
+      FStream := nil;
+      FOpenName := '';
+    end;
   Finally
     FLock.UnLock;
   End;
 end;
 
-function TLogger.sizeInBytesV : cardinal;
+function TLogger.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
-  inc(result, FPolicy.sizeInBytes);
+  inc(result, FPolicy.sizeInBytes(magic));
   inc(result, (FOpenName.length * sizeof(char)) + 12);
 end;
 
@@ -460,18 +478,29 @@ end;
 constructor TLogging.Create;
 begin
   inherited;
-  FListeners := TFslList<TLogListener>.create;
+  FLock := TFslLock.Create('console');
+  FListeners := TFslList<TLogListener>.Create;
   FStarting := true;
   FStartTime := now;
   FLastDay := 0;
+  FHeld := TStringList.Create;
+  DoubleFreeCallBack := LogDoubleFreeCallBack;
 end;
 
 destructor TLogging.Destroy;
 begin
+  DoubleFreeCallBack := nil;
   close;
-  FFileLogger.Free;
-  FListeners.Free;
+  FHeld.free;
+  FFileLogger.free;
+  FListeners.free;
+  FLock.free;
   inherited;
+end;
+
+procedure TLogging.LogDoubleFreeCallBack(name1, name2 : String);
+begin
+  log('Attempt to free a class a second time (of type '+name1+' or '+name2+'?)');
 end;
 
 procedure TLogging.addListener(listener: TLogListener);
@@ -489,7 +518,10 @@ begin
   FFileLogger := TLogger.Create(filename);
 end;
 
-function TLogging.DescribeSize(b, min: Cardinal): String;
+const
+  kb : UInt64 = 1024;
+
+function TLogging.DescribeSize(b, min: UInt64): String;
 Begin
   If b = $FFFFFFFF Then
     Result := '??'
@@ -497,24 +529,24 @@ Begin
     Result := '0'
   Else If b = 0 Then
     Result := '0'
-  Else If b < 1024 Then
+  Else If b < kb * 4 Then
     Result := IntToStr(b) + 'b'
-  Else If b < 1024 * 1024 Then
+  Else If b < kb * kb * 4 Then
     Result := IntToStr(b Div 1024) + 'kb'
-  Else If b < 1204 * 1024 * 1024 Then
-    Result := IntToStr(b Div (1024 * 1024)) + 'Mb'
+  Else If b < kb * kb * kb * 4 Then
+    Result := IntToStr(b Div (kb * kb)) + 'Mb'
   Else
-    Result := IntToStr(b Div (1024 * 1024 * 1024)) + 'Gb';
+    Result := IntToStr(b Div (kb * kb * kb)) + 'Gb';
 End;
 
-
-function memToMb(v : UInt64) : string;
-begin
-  v := v div 1024;
-  v := v div 1024;
-  result := inttostr(v)+'MB';
-end;
-
+//
+//function memToMb(v : UInt64) : string;
+//begin
+//  v := v div 1024;
+//  v := v div 1024;
+//  result := inttostr(v)+'MB';
+//end;
+//
 function OSMem : UInt64;
 {$IFDEF WINDOWS}
 var
@@ -535,30 +567,37 @@ begin
 {$ENDIF}
 end;
 
-function intMem : Uint64;
+function TLogging.InternalMem : UInt64;
 {$IFDEF DELPHI}
 var
   st : TMemoryManagerUsageSummary;
+{$ELSE}
+  //hs : TFPCHeapStatus;
 {$ENDIF}
 begin
 {$IFDEF DELPHI}
   GetMemoryManagerUsageSummary(st);
   result := st.AllocatedBytes + st.OverheadBytes;
 {$ELSE}
-  result := 0;
+  result := TFPCMemoryManagerTracker.totalMemory;
 {$ENDIF}
 end;
 
-function TLogging.MemoryStatus : String;
+function TLogging.MemoryStatus(full : boolean) : String;
 // memory status has 2 parts: internal and OS
 var
   os : UInt64;
 begin
+  if full then
+  begin
   os := OSMem;
   if os <> 0 then
-    result := memToMB(intMem) + ' / '+memToMB(os)
+    result := DescribeSize(Logging.InternalMem, 0) + ' / '+DescribeSize(os, 0)
   else
-    result := memToMB(intMem);
+    result := DescribeSize(Logging.InternalMem, 0);
+  end
+  else
+    result := DescribeSize(Logging.InternalMem, 0);
 end;
 
 procedure TLogging.checkDay;
@@ -576,7 +615,12 @@ begin
     if FLogToConsole then
     begin
       try
-        System.Writeln(s);
+        FLock.Lock;
+        try
+          System.Writeln(s);
+        finally
+          FLock.unlock;
+        end;
       except
         FLogToConsole := false;
       end;
@@ -603,16 +647,26 @@ begin
     except
     end;
   end;
-
 end;
 
 procedure TLogging.log(s: String);
 var
   listener : TLogListener;
 begin
+  FLock.Lock;
+  try
+    if FWorkingLine <> '' then
+    begin
+      FHeld.add(s);
+      exit;
+    end;
+  finally
+    FLock.unlock;
+  end;
+
   checkDay;
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+s
   else
     s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
   if FFileLogger <> nil then
@@ -620,7 +674,12 @@ begin
   if FLogToConsole then
   begin
     try
-      System.Writeln(s);
+      FLock.Lock;
+      try
+        System.Writeln(s);
+      finally
+        FLock.unlock;
+      end;
     except
       FLogToConsole := false;
     end;
@@ -648,7 +707,12 @@ begin
   if FLogToConsole then
   begin
     try
-      System.Write(s);
+      FLock.Lock;
+      try
+        System.Write(s);
+      finally
+        FLock.unlock;
+      end;
     except
       FLogToConsole := false;
     end;
@@ -669,7 +733,14 @@ var
 begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
-    System.Write(s);
+  begin
+    FLock.Lock;
+    try
+      System.Write(s);
+    finally
+      FLock.unlock;
+    end;
+  end;
   for listener in FListeners do
   begin
     try
@@ -683,17 +754,24 @@ end;
 procedure TLogging.finish(s : String = '');
 var
   listener : TLogListener;
-  msg : String;
+  msg, h : String;
 begin
   if FLogToConsole then
-    System.Writeln(s);
+  begin
+    FLock.Lock;
+    try
+      System.Writeln(s);
+    finally
+      FLock.unlock;
+    end;
+  end;
 
   msg := FWorkingLine + s;
   FWorkingLine := '';
   if FStarting then
-    msg := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+s
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+msg
   else
-    msg := FormatDateTime('hh:nn:ss', now)+ ' '+s;
+    msg := FormatDateTime('hh:nn:ss', now)+ ' '+msg;
 
   if FFileLogger <> nil then
     FFileLogger.WriteToLog(s+#13#10);
@@ -707,6 +785,20 @@ begin
     except
     end;
   end;
+  FLock.Lock;
+  try
+    for h in FHeld do
+      log(h);
+    FHeld.clear;
+  finally
+    FLock.unlock;
+  end;
+end;
+
+procedure TLogging.finishIfNeeded;
+begin
+  if FWorkingLine <> '' then
+    finish;
 end;
 
 function TLogging.Counter: String;
@@ -715,17 +807,17 @@ begin
   result := ' #'+inttostr(FCount);
 end;
 
-function TLogging.sizeInBytesV : cardinal;
+function TLogging.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FFileLogger.sizeInBytes);
-  inc(result, FListeners.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FFileLogger.sizeInBytes(magic));
+  inc(result, FListeners.sizeInBytes(magic));
   inc(result, (FWorkingLine.length * sizeof(char)) + 12);
 end;
 
 Initialization
-  Logging := TLogging.create;
+  Logging := TLogging.Create;
 Finalization
-  Logging.Free;
+  Logging.free;
 end.
 

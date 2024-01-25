@@ -1,4 +1,4 @@
-unit FHIR.R5.Tests.Maps;
+unit fhir5_tests_maps;
 
 {
 Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -70,7 +70,7 @@ type
     procedure loadMap(filename : String);
     procedure loadMaps(folder : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     [SetupFixture] Procedure SetUp;
     [TearDownFixture] procedure TearDown;
@@ -95,7 +95,7 @@ type
     [MapParserTest2Case]
     procedure Test(filename : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 implementation
@@ -131,7 +131,7 @@ begin
       // Assert.AreEqual(normalise(source), normalise(output), 'input and output do not match');
       Assert.IsTrue(true);
     finally
-      utils.Free;
+      utils.free;
     end;
   finally
     ctxt.free;
@@ -175,7 +175,7 @@ end;
 
 procedure TMapTransformTests.TearDown;
 begin
-  utils.Free;
+  utils.free;
   ctxt.free;
 end;
 
@@ -185,7 +185,7 @@ var
   s : TStringStream;
   cd : TFhirCodeableConcept;
 begin
-  x := TFHIRXmlParser.Create(ctxt.link, THTTPLanguages.create('en'));
+  x := TFHIRXmlParser.Create(ctxt.link, nil);
   try
     s := TStringStream.Create('<CD xmlns="urn:hl7-org:v3" code="34133-9" displayName="Summarization of Episode Note" codeSystem="2.16.840.1.113883.6.1" codeSystemName="LOINC"/>');
     try
@@ -196,23 +196,23 @@ begin
         utils.transform(nil, x.resource, utils.Lib['http://hl7.org/fhir/StructureMap/cda-cd'], cd);
         assert.AreEqual(cd.codingList.count, 1);
         assert.AreEqual(cd.codingList[0].code, '34133-9');
-        assert.AreEqual(cd.codingList[0].system, 'http://loinc.org');
+        assert.AreEqual(cd.codingList[0].system, URI_LOINC);
       finally
-        cd.Free;
+        cd.free;
       end;
     finally
-      s.Free;
+      s.free;
     end;
   finally
-    x.Free;
+    x.free;
   end;
 end;
 
-function TMapTransformTests.sizeInBytesV : cardinal;
+function TMapTransformTests.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, ctxt.sizeInBytes);
-  inc(result, utils.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, ctxt.sizeInBytes(magic));
+  inc(result, utils.sizeInBytes(magic));
 end;
 
 { TTestTransformerServices }
@@ -239,7 +239,7 @@ end;
 
 function TTestTransformerServices.translate(appInfo: TFslObject; src: TFHIRCoding; conceptMapUrl: String): TFHIRCoding;
 begin
-  raise EFHIRTodo.create('TTestTransformerServices.translate');
+  raise EFHIRTodo.Create('TTestTransformerServices.translate');
 end;
 
 { MapParserTest2CaseAttribute }
@@ -266,7 +266,7 @@ begin
       result[i].Values[0] := st[i];
     end;
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -309,11 +309,4 @@ initialization
   TDUnitX.RegisterTestFixture(TMapParserTests);
   TDUnitX.RegisterTestFixture(TMapParserTests2);
 //  TDUnitX.RegisterTestFixture(TMapTransformTests);
-function TMapParserTests2.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, ctxt.sizeInBytes);
-  inc(result, utils.sizeInBytes);
-end;
-
 end.

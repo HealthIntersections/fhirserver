@@ -1,4 +1,4 @@
-unit FHIR.Ui.ColorSB;
+unit fui_vcl_widgets;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -31,14 +31,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, Messages, Graphics, Types, Controls, Buttons;
+  Windows, SysUtils, StrUtils, Classes, Messages, Variants, Graphics, Types,
+  CommCtrl, Controls, Buttons, StdCtrls, ExtCtrls, Dialogs, Forms;
 
-uses Messages, Windows, SysUtils, CommCtrl, Classes, Controls, StdCtrls, ExtCtrls;
-
-uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, StrUtils, ExtCtrls;
-  
 type
   TColorSpeedButton = class(TSpeedButton)
   private
@@ -210,7 +205,7 @@ end;
 
 destructor TLookAheadEdit.Destroy;
 begin
-  FStoredItems.Free;
+  FStoredItems.free;
   inherited;
 end;
 
@@ -285,7 +280,7 @@ begin
 end;
 
 
-
+(*
 {$R resources\FHIR.Ui.Progress.res}
 
 uses Consts, ComStrs;
@@ -558,7 +553,7 @@ begin
     end
     else
     begin
-      FTimer.Free;
+      FTimer.free;
     end;
     FAnimating := Value;
   end;
@@ -568,5 +563,5 @@ initialization
 
 finalization
   if ShellModule <> 0 then FreeLibrary(ShellModule);
-
+*)
 end.

@@ -1,4 +1,4 @@
-unit fhir_validation_wrapper;
+unit fui_validation_wrapper;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-This code is not functional at this time. It may be brought back to life in the future. 
+{ This code is not functional at this time. It may be brought back to life in the future. }
 
 {$i fhir.inc}
 
@@ -98,17 +98,17 @@ constructor TFHIRValidationWrapper.Create(Cache: TFHIRPackageManager);
 var
   ts : TStringList;
 begin
-  inherited create;
+  inherited Create;
   FCache := cache;
-  FPackages := TStringList.create;
-  FOthers := TStringList.create;
+  FPackages := TStringList.Create;
+  FOthers := TStringList.Create;
 
 end;
 
 destructor TFHIRValidationWrapper.Destroy;
 begin
-  FPackages.Free;
-  FOthers.Free;
+  FPackages.free;
+  FOthers.free;
   FCache.free;
   inherited;
 end;
@@ -178,7 +178,7 @@ end;
 {$ELSE}
 procedure TFHIRValidationWrapper.executeCommand(cmd : String; CallBack: TArg<PAnsiChar>);
 begin
-  raise EFHIRTodo.create('TFHIRValidationWrapper.executeCommand');
+  raise EFHIRTodo.Create('TFHIRValidationWrapper.executeCommand');
 end;
 {$ENDIF}
 

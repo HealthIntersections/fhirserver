@@ -61,12 +61,14 @@ type
     FScopes : string;
     FToken : string;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Property Expires : integer read FExpires write FExpires;
     Property Scopes : string read FScopes write FScopes;
     Property Token : string read FToken write FToken;
   end;
+
+  { TCDSHookRequest }
 
   TCDSHookRequest = class (TFslObject)
   private
@@ -78,13 +80,14 @@ type
     Fuser: String;
     Fpatient: String;
     Fencounter: String;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
     FContext: TFslList<TFHIRResourceV>;
     FPreFetch : TFslMap<TFhirObject>;
     FBaseUrl: String;
+    procedure SetLangList(AValue: THTTPLanguageList);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -105,7 +108,7 @@ type
     property encounter : String read Fencounter write Fencounter;
     property context : TFslList<TFHIRResourceV> read FContext;
     property preFetch : TFslMap<TFhirObject{BundleEntry}> read FPreFetch;
-    property lang : THTTPLanguages read FLang write FLang;
+    Property LangList : THTTPLanguageList read FLangList write SetLangList;
     property baseURL : String read FBaseUrl write FBaseUrl;
   end;
 
@@ -116,7 +119,7 @@ type
     FCreate: String;
     FDelete: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -137,7 +140,7 @@ type
     FUrl: String;
     FType: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -161,7 +164,7 @@ type
     FSuggestions: TFslList<TCDSHookCardSuggestion>;
     FLinks: TFslList<TCDSHookCardLink>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -188,7 +191,7 @@ type
     FCreate: TStringList;
     FDelete: TStringList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -206,7 +209,7 @@ type
     FCards: TFslList<TCDSHookCard>;
     FDecisions : TFslList<TCDSHookDecision>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Overload; Override;
     constructor Create(json : TJsonObject); Overload;
@@ -244,7 +247,7 @@ type
     procedure Setinfo(const Value: TRegisteredFHIRServer);
     procedure SetToken(const Value: TClientAccessToken);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TCDSHooksManagerServerInfo; overload;
@@ -261,7 +264,7 @@ type
     FError: String;
     procedure SetResponse(const Value: TCDSHookResponse);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TCDSHooksManagerCachedResponse; overload;
@@ -290,7 +293,7 @@ type
     function readBody(body : TFslBuffer) : TCDSHookResponse;
   protected
     Procedure Execute; override;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(manager : TCDSHooksManager);
     destructor Destroy; override;
@@ -322,7 +325,7 @@ type
     procedure cacheResponse(hash : String; server : TRegisteredFHIRServer; response : TCDSHookResponse); overload;
     procedure cacheResponse(hash : String; server : TRegisteredFHIRServer; error : String); overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -531,10 +534,10 @@ begin
       begin
         md := TMarkdownProcessor.CreateDialect(mdCommonMark);
         try
-          md.UnSafe := false;
+          md.AllowUnSafe := false;
           b.Append(md.process(card.detail));
         finally
-          md.Free;
+          md.free;
         end;
       end
       else
@@ -582,7 +585,7 @@ begin
     b.Append(CARDS_HTML_FOOT);
     result := b.toString();
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -600,7 +603,7 @@ function TCDSHookRequest.AsJson: String;
 begin
 (*  ss := TFslStringStream.Create;
   try
-    writer := TJsonWriterDirect.create;
+    writer := TJsonWriterDirect.Create;
     try
       writer.HasWhitespace := true;
       writer.Stream := ss.Link;
@@ -623,11 +626,11 @@ begin
       writer.ValueArray('context');
       for c in context do
       begin
-        comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, THTTPLanguages.create('en'));
+        comp := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
         try
           comp.Compose(writer, c);
         finally
-          comp.Free;
+          comp.free;
         end;
       end;
       writer.finishArray;
@@ -647,11 +650,11 @@ begin
           if be.resource <> nil then
           begin
             writer.ValueObject('resource');
-            comp := TFHIRJsonComposer.create(nil, OutputStyleNormal, THTTPLanguages.create('en'));
+            comp := TFHIRJsonComposer.Create(nil, OutputStyleNormal, nil);
             try
               comp.Compose(writer, be.resource);
             finally
-              comp.Free;
+              comp.free;
             end;
             writer.FinishObject;
           end;
@@ -661,11 +664,11 @@ begin
       end;
       writer.Finish;
     finally
-      writer.Free;
+      writer.free;
     end;
     result := ss.Data;
   finally
-    ss.Free;
+    ss.free;
   end;
   *)
 end;
@@ -673,8 +676,8 @@ end;
 constructor TCDSHookRequest.Create;
 begin
   inherited Create;
-//  FContext := TFslList<TFHIRResource>.create;
-//  FPreFetch := TFslMap<TFhirBundleEntry>.create;
+//  FContext := TFslList<TFHIRResource>.Create;
+//  FPreFetch := TFslMap<TFhirBundleEntry>.Create;
 end;
 
 constructor TCDSHookRequest.Create(json: TJsonObject);
@@ -705,12 +708,12 @@ begin
   a := json.arr['context'];
   for n in a do
   begin
-    p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+    p := TFHIRJsonParser.Create(nil, nil);
     try
       p.Parse(TJsonObject(n));
       FContext.Add(p.resource.Link as TFhirResource);
     finally
-      p.Free;
+      p.free;
     end;
   end;
   o := json.obj['prefetch'];
@@ -728,17 +731,17 @@ begin
         end;
         if e.has('resource') then
         begin
-          p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+          p := TFHIRJsonParser.Create(nil, nil);
           try
             p.Parse(e.obj['resource']);
             be.resource := p.resource.Link as TFhirResource;
           finally
-            p.Free;
+            p.free;
           end;
         end;
         prefetch.add(s, be.Link);
       finally
-        be.Free;
+        be.free;
       end;
     end;
   end;
@@ -747,8 +750,9 @@ end;
 
 destructor TCDSHookRequest.Destroy;
 begin
-  FPreFetch.Free;
-  FContext.Free;
+  FLangList.free;
+  FPreFetch.free;
+  FContext.free;
   inherited;
 end;
 
@@ -765,19 +769,25 @@ begin
   result := TCDSHookRequest(inherited Link);
 end;
 
-function TCDSHookRequest.sizeInBytesV : cardinal;
+procedure TCDSHookRequest.SetLangList(AValue: THTTPLanguageList);
 begin
-  result := inherited sizeInBytesV;
+  FLangList.free;
+  FLangList := AValue;
+end;
+
+function TCDSHookRequest.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic);
   inc(result, (FHook.length * sizeof(char)) + 12);
   inc(result, (FHookInstance.length * sizeof(char)) + 12);
   inc(result, (FFhirServer.length * sizeof(char)) + 12);
-  inc(result, Foauth.sizeInBytes);
+  inc(result, Foauth.sizeInBytes(magic));
   inc(result, (Fredirect.length * sizeof(char)) + 12);
   inc(result, (Fuser.length * sizeof(char)) + 12);
   inc(result, (Fpatient.length * sizeof(char)) + 12);
   inc(result, (Fencounter.length * sizeof(char)) + 12);
-  inc(result, FContext.sizeInBytes);
-  inc(result, FPreFetch.sizeInBytes);
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FPreFetch.sizeInBytes(magic));
   inc(result, (FBaseUrl.length * sizeof(char)) + 12);
 end;
 
@@ -821,9 +831,9 @@ begin
   FDelete := json.str['delete'];
 end;
 
-function TCDSHookCardSuggestion.sizeInBytesV : cardinal;
+function TCDSHookCardSuggestion.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FLabel.length * sizeof(char)) + 12);
   inc(result, (FUUID.length * sizeof(char)) + 12);
   inc(result, (FCreate.length * sizeof(char)) + 12);
@@ -866,9 +876,9 @@ begin
   FType := json.str['type'];
 end;
 
-function TCDSHookCardLink.sizeInBytesV : cardinal;
+function TCDSHookCardLink.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FLabel.length * sizeof(char)) + 12);
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FType.length * sizeof(char)) + 12);
@@ -886,7 +896,7 @@ begin
     link.url := uri;
     links.Add(link.Link);
   finally
-    link.Free;
+    link.free;
   end;
 end;
 
@@ -926,15 +936,15 @@ end;
 constructor TCDSHookCard.Create;
 begin
   inherited Create;
-  FSuggestions := TFslList<TCDSHookCardSuggestion>.create;
-  FLinks := TFslList<TCDSHookCardLink>.create;
+  FSuggestions := TFslList<TCDSHookCardSuggestion>.Create;
+  FLinks := TFslList<TCDSHookCardLink>.Create;
 end;
 
 
 destructor TCDSHookCard.Destroy;
 begin
-  FSuggestions.Free;
-  FLinks.Free;
+  FSuggestions.free;
+  FLinks.free;
   inherited;
 end;
 
@@ -981,16 +991,16 @@ end;
 
 
 
-function TCDSHookCard.sizeInBytesV : cardinal;
+function TCDSHookCard.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSourceURL.length * sizeof(char)) + 12);
   inc(result, (Fdetail.length * sizeof(char)) + 12);
   inc(result, (FsourceLabel.length * sizeof(char)) + 12);
   inc(result, (Fsummary.length * sizeof(char)) + 12);
   inc(result, (Findicator.length * sizeof(char)) + 12);
-  inc(result, FSuggestions.sizeInBytes);
-  inc(result, FLinks.sizeInBytes);
+  inc(result, FSuggestions.sizeInBytes(magic));
+  inc(result, FLinks.sizeInBytes(magic));
 end;
 
 { TCDSHookResponse }
@@ -1017,7 +1027,7 @@ var
 begin
   ss := TFslStringStream.Create;
   try
-    writer := TJsonWriterDirect.create;
+    writer := TJsonWriterDirect.Create;
     try
       writer.HasWhitespace := true;
       writer.Stream := ss.Link;
@@ -1032,11 +1042,11 @@ begin
       writer.FinishArray;
       writer.Finish(true);
     finally
-      writer.Free;
+      writer.free;
     end;
     result := string(ss.Data);
   finally
-    ss.Free;
+    ss.free;
   end;
 end;
 
@@ -1060,14 +1070,14 @@ end;
 constructor TCDSHookResponse.Create;
 begin
   inherited Create;
-  FCards := TFslList<TCDSHookCard>.create;
-  FDecisions := TFslList<TCDSHookDecision>.create;
+  FCards := TFslList<TCDSHookCard>.Create;
+  FDecisions := TFslList<TCDSHookDecision>.Create;
 end;
 
 destructor TCDSHookResponse.Destroy;
 begin
-  FCards.Free;
-  FDecisions.Free;
+  FCards.free;
+  FDecisions.free;
   inherited;
 end;
 
@@ -1079,11 +1089,11 @@ end;
 
 
 
-function TCDSHookResponse.sizeInBytesV : cardinal;
+function TCDSHookResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCards.sizeInBytes);
-  inc(result, FDecisions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCards.sizeInBytes(magic));
+  inc(result, FDecisions.sizeInBytes(magic));
 end;
 
 { TCDSHookCache }
@@ -1104,7 +1114,7 @@ end;
 
 class function TCDSHooks.allHooks: TStringList;
 begin
-  result := TStringList.create;
+  result := TStringList.Create;
   result.Add(codeView);
   result.Add(identifierView);
   result.Add(patientView);
@@ -1155,8 +1165,8 @@ end;
 constructor TCDSHookDecision.Create;
 begin
   inherited Create;
-  FCreate := TStringList.create;
-  FDelete := TStringList.create;
+  FCreate := TStringList.Create;
+  FDelete := TStringList.Create;
 end;
 
 constructor TCDSHookDecision.Create(json: TJsonObject);
@@ -1174,8 +1184,8 @@ end;
 
 destructor TCDSHookDecision.Destroy;
 begin
-  FCreate.Free;
-  FDelete.Free;
+  FCreate.free;
+  FDelete.free;
   inherited;
 end;
 
@@ -1184,11 +1194,11 @@ begin
   result := TCDSHookDecision(inherited Link);
 end;
 
-function TCDSHookDecision.sizeInBytesV : cardinal;
+function TCDSHookDecision.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCreate.sizeInBytes);
-  inc(result, FDelete.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCreate.sizeInBytes(magic));
+  inc(result, FDelete.sizeInBytes(magic));
 end;
 
 { TCDSHooksManager }
@@ -1196,19 +1206,19 @@ end;
 constructor TCDSHooksManager.Create;
 begin
   inherited;
-  FServers := TFslList<TCDSHooksManagerServerInfo>.create;
+  FServers := TFslList<TCDSHooksManagerServerInfo>.Create;
   FLock := TFslLock.Create('TCDSHooksManager');
-  FThreads := TFslList<TCDSHooksManagerWorkThread>.create;
-  FCache := TFslMap<TCDSHooksManagerCachedResponse>.create('CDS Hooks Cache');
+  FThreads := TFslList<TCDSHooksManagerWorkThread>.Create;
+  FCache := TFslMap<TCDSHooksManagerCachedResponse>.Create('CDS Hooks Cache');
 end;
 
 destructor TCDSHooksManager.Destroy;
 begin
   cancelAllRequests;
   FThreads.free;
-  FServers.Free;
-  FCache.Free;
-  FLock.Free;
+  FServers.free;
+  FCache.free;
+  FLock.free;
   inherited;
 end;
 
@@ -1241,7 +1251,7 @@ begin
     entry.Finfo := details.Link;
     FServers.Add(entry.Link);
   finally
-    entry.Free;
+    entry.free;
   end;
 end;
 
@@ -1356,7 +1366,7 @@ begin
           checkConnectServer(server);
           if server.okToUse then
           begin
-            work := TCDSHooksManagerWorkThread.create(self);
+            work := TCDSHooksManagerWorkThread.Create(self);
             try
               work.id := hook.name;
               work.request := request.Link;
@@ -1368,7 +1378,7 @@ begin
               FThreads.add(work.link);
               work.Start;
             finally
-              work.Free;
+              work.free;
             end;
           end;
         end;
@@ -1418,20 +1428,20 @@ begin
   end;
 end;
 
-function TCDSHooksManager.sizeInBytesV : cardinal;
+function TCDSHooksManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FServers.sizeInBytes);
-  inc(result, FThreads.sizeInBytes);
-  inc(result, FCache.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FServers.sizeInBytes(magic));
+  inc(result, FThreads.sizeInBytes(magic));
+  inc(result, FCache.sizeInBytes(magic));
 end;
 
 { TCDSHooksManagerServerInfo }
 
 destructor TCDSHooksManagerServerInfo.Destroy;
 begin
-  FToken.Free;
-  FInfo.Free;
+  FToken.free;
+  FInfo.free;
   inherited;
 end;
 
@@ -1447,21 +1457,21 @@ end;
 
 procedure TCDSHooksManagerServerInfo.Setinfo(const Value: TRegisteredFHIRServer);
 begin
-  FInfo.Free;
+  FInfo.free;
   Finfo := Value;
 end;
 
 procedure TCDSHooksManagerServerInfo.SetToken(const Value: TClientAccessToken);
 begin
-  FToken.Free;
+  FToken.free;
   FToken := Value;
 end;
 
-function TCDSHooksManagerServerInfo.sizeInBytesV : cardinal;
+function TCDSHooksManagerServerInfo.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Finfo.sizeInBytes);
-  inc(result, FToken.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Finfo.sizeInBytes(magic));
+  inc(result, FToken.sizeInBytes(magic));
 end;
 
 { TCDSHooksManagerWorkThread }
@@ -1476,16 +1486,16 @@ end;
 
 constructor TCDSHooksManagerWorkThread.Create(manager: TCDSHooksManager);
 begin
-  inherited create;
+  inherited Create;
   FManager := manager;
   FAlive := true;
 end;
 
 destructor TCDSHooksManagerWorkThread.Destroy;
 begin
-  Fserver.Free;
-  Frequest.Free;
-  FToken.Free;
+  Fserver.free;
+  Frequest.free;
+  FToken.free;
   inherited;
 end;
 
@@ -1520,16 +1530,16 @@ try
                     event(FManager, server, FContext, resp, '');
                   end;
                 finally
-                  resp.Free;
+                  resp.free;
                 end;
               finally
-                rep.Free;
+                rep.free;
               end;
             finally
               body.free;
             end;
           finally
-            client.Free;
+            client.free;
           end;
         except
           on e : Exception do
@@ -1568,7 +1578,7 @@ begin
     result.AsBytes := TEncoding.UTF8.GetBytes(FRequest.AsJson);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -1580,45 +1590,45 @@ begin
   try
     result := TCDSHookResponse.Create(json);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
 procedure TCDSHooksManagerWorkThread.Setrequest(const Value: TCDSHookRequest);
 begin
-  Frequest.Free;
+  Frequest.free;
   Frequest := Value;
 end;
 
 procedure TCDSHooksManagerWorkThread.Setserver(const Value: TRegisteredFHIRServer);
 begin
-  Fserver.Free;
+  Fserver.free;
   Fserver := Value;
 end;
 
 procedure TCDSHooksManagerWorkThread.SetToken(const Value: TClientAccessToken);
 begin
-  FToken.Free;
+  FToken.free;
   FToken := Value;
 end;
 
-function TCDSHooksManagerWorkThread.sizeInBytesV : cardinal;
+function TCDSHooksManagerWorkThread.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fmanager.sizeInBytes);
-  inc(result, Frequest.sizeInBytes);
-  inc(result, Fserver.sizeInBytes);
-  inc(result, FToken.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fmanager.sizeInBytes(magic));
+  inc(result, Frequest.sizeInBytes(magic));
+  inc(result, Fserver.sizeInBytes(magic));
+  inc(result, FToken.sizeInBytes(magic));
   inc(result, (FHash.length * sizeof(char)) + 12);
   inc(result, (FID.length * sizeof(char)) + 12);
-  inc(result, FHeaders.sizeInBytes);
+  inc(result, FHeaders.sizeInBytes(magic));
 end;
 
 { TCDSHooksManagerCachedResponse }
 
 destructor TCDSHooksManagerCachedResponse.Destroy;
 begin
-  FResponse.Free;
+  FResponse.free;
   inherited;
 end;
 
@@ -1629,21 +1639,21 @@ end;
 
 procedure TCDSHooksManagerCachedResponse.SetResponse(const Value: TCDSHookResponse);
 begin
-  FResponse.Free;
+  FResponse.free;
   FResponse := Value;
 end;
 
 
-function TCDSHooksManagerCachedResponse.sizeInBytesV : cardinal;
+function TCDSHooksManagerCachedResponse.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FResponse.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FResponse.sizeInBytes(magic));
   inc(result, (FError.length * sizeof(char)) + 12);
 end;
 
-function TCDSRequestOAuthDetails.sizeInBytesV : cardinal;
+function TCDSRequestOAuthDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FScopes.length * sizeof(char)) + 12);
   inc(result, (FToken.length * sizeof(char)) + 12);
 end;

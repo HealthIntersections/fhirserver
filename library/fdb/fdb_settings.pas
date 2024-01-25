@@ -46,7 +46,7 @@ type
 
   }
 
-  ESettingsError = class(Exception);
+  ESettingsError = class(EFslException);
 
 (*  TSettingsAdapter = class(TFslObject)
   Private
@@ -122,7 +122,7 @@ type
     function InternalRead(const AName: String; var VValue: String): Boolean; Override;
     procedure InternalWrite(const AName, AValue: String; ATransient: Boolean = False); Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(const ACopyFrom: TStrings = NIL);
     destructor Destroy; Override;
@@ -303,7 +303,7 @@ begin
       end;
 
   finally
-    LStringSettings.Free;
+    LStringSettings.free;
     end;
 end;
 

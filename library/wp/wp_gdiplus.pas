@@ -1,7 +1,7 @@
 Unit wp_gdiplus;
 
 {
-Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2010+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -49,7 +49,7 @@ Type
   TGPRectF = Winapi.GdipApi.TGPRectF;
 {$ENDIF}
 
-  EGdiPlusException = Class(Exception);
+  EGdiPlusException = Class(EFslException);
 
 Const
   argbAliceBlue = $FFF0F8FF;
@@ -437,7 +437,7 @@ Type
       Function DrawImage(Const oImage : TGPImage; Const aDestinationRectangle : TGPRectF; Const oImageAttributes : TGPImageAttributes) : TGdiPlusStatus; Overload;
   End;
 
-  EGdiPlusExtendedGraphicsException = Class(Exception);
+  EGdiPlusExtendedGraphicsException = Class(EFslException);
 
 Type
   TGdiPlusHotSpot = Class(TFslObject)
@@ -447,7 +447,7 @@ Type
       FHintStringList : TFslStringList;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -621,7 +621,7 @@ Type
       Function GetNativeFont : TGPFont;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -665,7 +665,7 @@ Type
     procedure SetFontSize(const Value: Double);
     procedure SetImage(const Value: TGdiPlusBitmapImage);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
 
@@ -803,7 +803,7 @@ Begin
         DeleteObject(hRegion);
       End;
     Finally
-      oGraphics.Free;
+      oGraphics.free;
     End;
   End;
 End;
@@ -889,7 +889,7 @@ Begin
 
     oGraphics.DrawPath(oPen, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -904,7 +904,7 @@ Begin
 
     oGraphics.FillPath(oBrush, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -1462,7 +1462,7 @@ End;
 
 Function ColourDifference(Const iColourA, iColourB : TArgbColour) : Integer;
 Begin
-  Result :=
+  Result := 
     (IntegerMax(ColourRedValue(iColourA), ColourRedValue(iColourB)) - IntegerMin(ColourRedValue(iColourA), ColourRedValue(iColourB))) +
     (IntegerMax(ColourGreenValue(iColourA), ColourGreenValue(iColourB)) - IntegerMin(ColourGreenValue(iColourA), ColourGreenValue(iColourB))) +
     (IntegerMax(ColourBlueValue(iColourA), ColourBlueValue(iColourB)) - IntegerMin(ColourBlueValue(iColourA), ColourBlueValue(iColourB)))
@@ -1500,7 +1500,7 @@ End;
 
 Destructor TGdiPlusBitmapImage.Destroy;
 Begin
-  FBitmap.Free;
+  FBitmap.free;
 
   Inherited;
 End;
@@ -1531,7 +1531,7 @@ End;
 
 Procedure TGdiPlusBitmapImage.SetBitmap(Const Value: TGPBitmap);
 Begin
-  FBitmap.Free;
+  FBitmap.free;
   FBitmap := Value;
 End;
 
@@ -1576,13 +1576,13 @@ Begin
       Try
         oGraphics.DrawImage(oResourceBitmap, 0, 0, iResourceBitmapWidth, iResourceBitmapHeight);
       Finally
-        oGraphics.Free;
+        oGraphics.free;
       End;
     Finally
-      oResourceBitmap.Free;
+      oResourceBitmap.free;
     End;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 
   CheckBitmapStatus;
@@ -1591,12 +1591,12 @@ End;
 
 
 {$IFDEF VER130}
-function TGdiPlusBitmapImage.sizeInBytesV : cardinal;
+function TGdiPlusBitmapImage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBitmap.sizeInBytes);
-  inc(result, FTransparentColour.sizeInBytes);
-  inc(result, FBytes.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBitmap.sizeInBytes(magic));
+  inc(result, FTransparentColour.sizeInBytes(magic));
+  inc(result, FBytes.sizeInBytes(magic));
 end;
 
 Function TFixedStreamAdapter.Stat(Out statstg: TStatStg; grfStatFlag: Integer): HResult;
@@ -1648,7 +1648,7 @@ Begin
     oMem.Buffer := oBuffer.Link;
     LoadFromMemoryStream(oMem);
   Finally
-    oMem.Free;
+    oMem.free;
   End;
 End;
 
@@ -1666,7 +1666,7 @@ Begin
 //
 //    CheckBitmapStatus;
 //  Finally
-//    oIStreamAdapter.Free;
+//    oIStreamAdapter.free;
 //  End;
 End;
 
@@ -1693,7 +1693,7 @@ Begin
 //
 //    RaiseGdiPlusStatusException('SaveToMemoryStream', Bitmap, 'Bitmap');
 //  Finally
-//    oIStreamAdapter.Free;
+//    oIStreamAdapter.free;
 //  End;
 End;
 
@@ -1719,7 +1719,7 @@ Begin
 //
 //    RaiseGdiPlusStatusException('SaveJPEGToMemoryStream', Bitmap, 'Bitmap');
 //  Finally
-//    oIStreamAdapter.Free;
+//    oIStreamAdapter.free;
 //  End;
 End;
 
@@ -1815,7 +1815,7 @@ Begin
 
     oJpeg.Handle.Assign(oBitmapGraphic.Handle);
   Finally
-    oBitmapGraphic.Free;
+    oBitmapGraphic.free;
   End;
 End;
 
@@ -2008,7 +2008,7 @@ Begin
 
     Result := DrawPath(oPen, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -2029,7 +2029,7 @@ Begin
 
     Result := FillPath(oBrush, oPath);
   Finally
-    oPath.Free;
+    oPath.free;
   End;
 End;
 
@@ -2181,8 +2181,8 @@ End;
 
 Destructor TGdiPlusHotSpot.Destroy;
 Begin
-  FHintStringList.Free;
-  FRegion.Free;
+  FHintStringList.free;
+  FRegion.free;
   FRegion := Nil;
 
   Inherited;
@@ -2202,10 +2202,10 @@ Begin
 End;
 
 
-function TGdiPlusHotSpot.sizeInBytesV : cardinal;
+function TGdiPlusHotSpot.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHintStringList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHintStringList.sizeInBytes(magic));
 end;
 
 Function TGdiPlusHotSpotList.GetRegionByIndex(Const iIndex: Integer): TGdiPlusHotSpot;
@@ -2320,7 +2320,7 @@ Begin
         If PaintChildControls Then
           PaintControls(hMemoryDC, Nil);
       Finally
-        oMemoryGraphics.Free;
+        oMemoryGraphics.free;
       End;
 
       BitBlt(pInputDC, 0, 0, ClientRect.Right, ClientRect.Bottom, hMemoryDC, 0, 0, SRCCOPY);
@@ -2346,7 +2346,7 @@ Begin
       If PaintChildControls Then
         PaintControls(pInputDC, Nil);
     Finally
-      oMemoryGraphics.Free;
+      oMemoryGraphics.free;
     End;
 
     FHasCompletedInitialPaint := True;
@@ -2678,7 +2678,7 @@ End;
 
 Destructor TGdiPlusStringFormat.Destroy;
 Begin
-  FStringFormat.Free;
+  FStringFormat.free;
 
   Inherited;
 End;
@@ -2835,7 +2835,7 @@ End;
 
 Destructor TGdiPlusFont.Destroy;
 Begin
-  FFont.Free;
+  FFont.free;
 
   Inherited;
 End;
@@ -2853,7 +2853,7 @@ Begin
   Assert(CheckCondition(FSize >= 0, 'Font', 'Font size can not be negative.'));
 
   If Assigned(FFont) Then
-    FFont.Free;
+    FFont.free;
 
   FFont := TGPFont.Create(FFontFamily, FSize, FontStyle);
 
@@ -2921,19 +2921,19 @@ End;
         oBrush := TGPSolidBrush.Create(argbGold);
         Try
         Finally
-          oBrush.Free;
+          oBrush.free;
         End;
       Finally
-        oFont.Free;
+        oFont.free;
       End;
     Finally
-      oGDI.Free;
+      oGDI.free;
     End;
     *)
 
-function TGdiPlusFont.sizeInBytesV : cardinal;
+function TGdiPlusFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFontFamily.length * sizeof(char)) + 12);
 end;
 
@@ -2942,7 +2942,7 @@ end;
 destructor TGdiPlusImageAnnotator.Destroy;
 begin
   Closeup;
-  FImage.Free;
+  FImage.free;
   inherited;
 end;
 
@@ -2959,11 +2959,11 @@ end;
 
 procedure TGdiPlusImageAnnotator.Closeup;
 begin
-  FBrush.Free;
+  FBrush.free;
   FBrush := nil;
-  FFont .Free;
+  FFont .free;
   FFont  := nil;
-  FGDI.Free;
+  FGDI.free;
   FGDI := nil;
 end;
 
@@ -2988,7 +2988,7 @@ end;
 procedure TGdiPlusImageAnnotator.SetImage(const Value: TGdiPlusBitmapImage);
 begin
   Closeup;
-  FImage.Free;
+  FImage.free;
   FImage := Value;
 end;
 
@@ -3014,11 +3014,11 @@ begin
   FTop := MARGIN * FImage.Height;
 end;
 
-function TGdiPlusImageAnnotator.sizeInBytesV : cardinal;
+function TGdiPlusImageAnnotator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFontName.length * sizeof(char)) + 12);
-  inc(result, FImage.sizeInBytes);
+  inc(result, FImage.sizeInBytes(magic));
 end;
 
 End.

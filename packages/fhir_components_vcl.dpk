@@ -36,6 +36,6 @@ requires
   xmlrtl;
 
 contains
-  FHIR.Ui.ColorSB in '..\library\ui\FHIR.Ui.ColorSB.pas';
+  fui_vcl_widgets in '..\library\fui\fui_vcl_widgets.pas';
 
 end.

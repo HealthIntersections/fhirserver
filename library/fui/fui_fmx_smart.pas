@@ -1,4 +1,4 @@
-unit FHIR.Client.SmartLoginFMX;
+unit fui_fmx_smart;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -93,7 +93,7 @@ begin
     else if (mr = mrAbort) and (SmartOnFhirLoginForm.ErrorMessage <> '') then
       MessageDlg(SmartOnFhirLoginForm.ErrorMessage, TMsgDlgType.mtError, [TMsgDlgBtn.mbNo], 0);
   finally
-    SmartOnFhirLoginForm.Free;
+    SmartOnFhirLoginForm.free;
   end;
 end;
 
@@ -102,13 +102,13 @@ end;
 destructor TSmartOnFhirLoginForm.Destroy;
 begin
   FToken.free;
-  FClient.Free;
+  FClient.free;
   inherited;
 end;
 
 procedure TSmartOnFhirLoginForm.SetClient(const Value: TFHIRHTTPClient);
 begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
 end;
 

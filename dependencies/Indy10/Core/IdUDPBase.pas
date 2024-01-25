@@ -37,7 +37,7 @@
   Rev 1.10    2004.02.03 4:17:00 PM  czhower
   For unit name changes.
 
-  Rev 1.9    21.1.2004 ã. 12:31:00  DBondzhev
+  Rev 1.9    21.1.2004 c. 12:31:00  DBondzhev
   Fix for Indy source. Workaround for dccil bug
   now it can be compiled using Compile instead of build
 
@@ -338,6 +338,32 @@ procedure TIdUDPBase.SendBuffer(const AHost: string; const APort: TIdPort;
 var
   LIP : String;
 begin
+  //TODO: fire OnStatus(hsResolving) event if AHost is not an IP address...
+  {
+  if AIPVersion = Id_IPv4 then
+  begin
+    if not GStack.IsIP(AHost) then begin
+      if Assigned(OnStatus) then begin
+        DoStatus(hsResolving, [AHost]);
+      end;
+      LIP := GStack.ResolveHost(AHost, AIPVersion);
+    end else begin
+      LIP := AHost;
+    end;
+  end
+  else
+  begin  //IPv6
+    LIP := MakeCanonicalIPv6Address(AHost);
+    if LIP = '' then begin  //if MakeCanonicalIPv6Address failed, we have a hostname
+      if Assigned(OnStatus) then begin
+        DoStatus(hsResolving, [AHost]);
+      end;
+      LIP := GStack.ResolveHost(AHost, AIPVersion);
+    end else begin
+      LIP := AHost;
+    end;
+  end;
+  }
   LIP := GStack.ResolveHost(AHost, AIPVersion);
   Binding.SendTo(LIP, APort, ABuffer,AIPVersion);
 end;

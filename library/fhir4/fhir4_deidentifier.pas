@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-this code is not functional at this time. It may be brought back to life in the future.
+{ this code is not functional at this time. It may be brought back to life in the future. }
 
 {$i fhir.inc}
 
@@ -55,7 +55,7 @@ type
     procedure SetAddress(const Value: TFHIRAddress);
     procedure SetPhoto(const Value: TFhirAttachment);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -72,7 +72,7 @@ type
     FMale : TFslList<TPseudoData>;
     FFemale : TFslList<TPseudoData>;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -103,7 +103,7 @@ type
     procedure processRelatedPerson(res : TFhirRelatedPerson);
     procedure SetDatabase(const Value: TFDBManager);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -125,8 +125,8 @@ implementation
 constructor TFHIRDeIdentifier.Create;
 begin
   inherited;
-  FDataCache := TFslMap<TPseudoData>.create;
-  FLock := TFslLock.create('DeIdentifier');
+  FDataCache := TFslMap<TPseudoData>.Create;
+  FLock := TFslLock.Create('DeIdentifier');
 end;
 
 procedure TFHIRDeIdentifier.DeIdentify(res : TFHIRResource);
@@ -142,9 +142,9 @@ end;
 
 destructor TFHIRDeIdentifier.Destroy;
 begin
-  FDatabase.Free;
-  FDataCache.Free;
-  FLock.Free;
+  FDatabase.free;
+  FDataCache.free;
+  FLock.free;
   inherited;
 end;
 
@@ -185,7 +185,7 @@ begin
     end;
     result := pd.Link;
   finally
-    pd.Free;
+    pd.free;
   end;
 end;
 
@@ -232,7 +232,7 @@ begin
       result.photo.contentType := 'image/png';
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   end;
 end;
@@ -450,12 +450,12 @@ begin
   FDatabase := Value;
 end;
 
-function TFHIRDeIdentifier.sizeInBytesV : cardinal;
+function TFHIRDeIdentifier.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDatabase.sizeInBytes);
-  inc(result, FDataCache.sizeInBytes);
-  inc(result, FLock.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDatabase.sizeInBytes(magic));
+  inc(result, FDataCache.sizeInBytes(magic));
+  inc(result, FLock.sizeInBytes(magic));
 end;
 
 { TPseudoData }
@@ -463,18 +463,18 @@ end;
 constructor TPseudoData.Create;
 begin
   inherited;
-  FName := TFHIRHumanName.create;
-  FTelecom := TFHIRContactPoint.create;
-  FAddress := TFHIRAddress.create;
-  FPhoto := TFhirAttachment.create;
+  FName := TFHIRHumanName.Create;
+  FTelecom := TFHIRContactPoint.Create;
+  FAddress := TFHIRAddress.Create;
+  FPhoto := TFhirAttachment.Create;
 end;
 
 destructor TPseudoData.Destroy;
 begin
-  FName.Free;
-  FTelecom.Free;
-  FAddress.Free;
-  FPhoto.Free;
+  FName.free;
+  FTelecom.free;
+  FAddress.free;
+  FPhoto.free;
   inherited;
 end;
 
@@ -485,35 +485,35 @@ end;
 
 procedure TPseudoData.SetAddress(const Value: TFHIRAddress);
 begin
-  FAddress.Free;
+  FAddress.free;
   FAddress := Value;
 end;
 
 procedure TPseudoData.SetName(const Value: TFHIRHumanName);
 begin
-  FName.Free;
+  FName.free;
   FName := Value;
 end;
 
 procedure TPseudoData.SetPhoto(const Value: TFhirAttachment);
 begin
-  FPhoto.Free;
+  FPhoto.free;
   FPhoto := Value;
 end;
 
 procedure TPseudoData.SetTelecom(const Value: TFHIRContactPoint);
 begin
-  FTelecom.Free;
+  FTelecom.free;
   FTelecom := Value;
 end;
 
-function TPseudoData.sizeInBytesV : cardinal;
+function TPseudoData.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FName.sizeInBytes);
-  inc(result, FTelecom.sizeInBytes);
-  inc(result, FAddress.sizeInBytes);
-  inc(result, FPhoto.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FName.sizeInBytes(magic));
+  inc(result, FTelecom.sizeInBytes(magic));
+  inc(result, FAddress.sizeInBytes(magic));
+  inc(result, FPhoto.sizeInBytes(magic));
 end;
 
 { TFakeDataRepository }
@@ -521,14 +521,14 @@ end;
 constructor TFakeDataRepository.Create;
 begin
   inherited;
-  FMale := TFslList<TPseudoData>.create;
-  FFemale := TFslList<TPseudoData>.create;
+  FMale := TFslList<TPseudoData>.Create;
+  FFemale := TFslList<TPseudoData>.Create;
 end;
 
 destructor TFakeDataRepository.Destroy;
 begin
-  FMale.Free;
-  FFemale.Free;
+  FMale.free;
+  FFemale.free;
   inherited;
 end;
 
@@ -563,11 +563,11 @@ begin
           else
             FFemale.Add(pd.link);
         finally
-          pd.Free;
+          pd.free;
         end;
       end;
     finally
-      csv.Free;
+      csv.free;
     end;
   finally
     line.free;
@@ -592,11 +592,11 @@ begin
   end;
 end;
 
-function TFakeDataRepository.sizeInBytesV : cardinal;
+function TFakeDataRepository.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FMale.sizeInBytes);
-  inc(result, FFemale.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FMale.sizeInBytes(magic));
+  inc(result, FFemale.sizeInBytes(magic));
 end;
 
 end.

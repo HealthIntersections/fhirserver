@@ -225,7 +225,7 @@ Type
     FList : TFhirResourceList;
     function GetCurrent : TFhirResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirResourceList);
     destructor Destroy; override;
@@ -247,7 +247,7 @@ Type
     function GetEnumerator : TFhirResourceListEnumerator;
 
     // Add an already existing FhirResource to the end of the list.
-    procedure AddItem(value : TFhirResource); overload;
+function AddItem(value : TFhirResource): TFhirResource; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirResource) : Integer;
@@ -274,6 +274,9 @@ Type
   End;
 
   // A resource that includes narrative, extensions, and contained resources.
+
+  { TFhirDomainResource }
+
   TFhirDomainResource = class abstract (TFhirResource)
   protected
     FText : TFhirNarrative;
@@ -309,10 +312,18 @@ Type
     function fhirType : string; override;
     function isDomainResource : boolean; override;
     function hasExtension(url : string) : boolean; override;
-    function getExtensionString(url : String) : String; override;
+    function getExtensionString(url : String) : String; override; 
+    function getExtensionValue(url : String) : TFHIRObject; override;
     function extensionCount(url : String) : integer; override;
-    function extensions(url : String) : TFslList<TFHIRObject>; override;
-    procedure addExtension(url : String; value : TFHIRObject); override;
+    function getExtensionsV : TFslList<TFHIRObject>; override;
+    function getExtensionsV(url : String) : TFslList<TFHIRObject>; override;
+    procedure addExtensionV(url : String; value : TFHIRObject); override;
+    procedure addExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionV(extension : TFHIRObject); override;
+    procedure deleteExtensionByUrl(url : String); override;
+    procedure stripExtensions(exemptUrls : TStringArray); override; 
+    procedure copyExtensions(src : TFHIRObject; exemptUrls : TStringArray); override;
+
     function Equals(other : TObject) : boolean; override;
     function isEmpty : boolean; override;
   {$IFNDEF FPC}published{$ENDIF}
@@ -340,7 +351,7 @@ Type
     FList : TFhirDomainResourceList;
     function GetCurrent : TFhirDomainResource;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(list : TFhirDomainResourceList);
     destructor Destroy; override;
@@ -362,7 +373,7 @@ Type
     function GetEnumerator : TFhirDomainResourceListEnumerator;
 
     // Add an already existing FhirDomainResource to the end of the list.
-    procedure AddItem(value : TFhirDomainResource); overload;
+function AddItem(value : TFhirDomainResource): TFhirDomainResource; overload;
 
     // See if an item is already in the list. returns -1 if not in the list
     function IndexOf(value : TFhirDomainResource) : Integer;
@@ -636,7 +647,7 @@ begin
   if value <> '' then
   begin
     if FId = nil then
-      FId := TFhirId.create;
+      FId := TFhirId.Create;
     FId.value := value
   end
   else if FId <> nil then
@@ -668,7 +679,7 @@ begin
   if value <> '' then
   begin
     if FImplicitRules = nil then
-      FImplicitRules := TFhirUri.create;
+      FImplicitRules := TFhirUri.Create;
     FImplicitRules.value := value
   end
   else if FImplicitRules <> nil then
@@ -694,7 +705,7 @@ begin
   if value <> '' then
   begin
     if FLanguage = nil then
-      FLanguage := TFhirCode.create;
+      FLanguage := TFhirCode.Create;
     FLanguage.value := value
   end
   else if FLanguage <> nil then
@@ -712,7 +723,7 @@ end;
 
 destructor TFhirResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -727,17 +738,17 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirResourceList }
-procedure TFhirResourceList.AddItem(value: TFhirResource);
+function TFhirResourceList.AddItem(value: TFhirResource): TFhirResource;
 begin
-  assert(value.ClassName = 'TFhirResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirResource');
   add(value);
+  result := value;
 end;
 
 procedure TFhirResourceList.ClearItems;
@@ -817,9 +828,9 @@ end;
 destructor TFhirDomainResource.Destroy;
 begin
   FText.free;
-  FContainedList.Free;
-  FExtensionList.Free;
-  FModifierExtensionList.Free;
+  FContainedList.free;
+  FExtensionList.free;
+  FModifierExtensionList.free;
   inherited;
 end;
 
@@ -875,13 +886,62 @@ begin
     list.addAll(self, 'modifierExtension', FModifierExtensionList);
 end;
 
-procedure TFhirDomainResource.addExtension(url: String; value: TFHIRObject);
+procedure TFhirDomainResource.addExtensionV(url: String; value: TFHIRObject);
 var
   ex : TFhirExtension;
 begin
   ex := extensionList.Append;
   ex.url := url;
   ex.value := value as TFhirType;
+end;
+
+procedure TFhirDomainResource.addExtensionV(extension: TFHIRObject);
+begin
+  extensionList.Add(extension as TFHIRExtension);
+end;
+
+procedure TFhirDomainResource.deleteExtensionV(extension: TFHIRObject);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i] = extension then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.deleteExtensionByUrl(url: String);
+var
+  i : integer;
+begin
+  for i := ExtensionList.count - 1 downto 0 do
+    if ExtensionList[i].url = url then
+      ExtensionList.DeleteByIndex(i);
+end;
+
+procedure TFhirDomainResource.stripExtensions(exemptUrls: TStringArray);
+var
+  i : integer;
+begin
+  inherited stripExtensions(exemptUrls);
+  if FExtensionList <> nil then
+    for i := FExtensionList.count - 1 downto 0 do
+      if not StringArrayExists(exemptUrls, FExtensionList[i].url) then
+        FExtensionList.remove(i);
+end;
+
+procedure TFhirDomainResource.copyExtensions(src: TFHIRObject;  exemptUrls: TStringArray);
+var
+  ext : TFHIRExtension;
+begin
+  inherited copyExtensions(src, exemptUrls);
+  if (src is TFhirDomainResource) then
+  begin
+    for ext in (src as TFhirDomainResource).extensionList do
+    begin
+      if (length(exemptUrls) = 0) or StringArrayExists(exemptUrls, ext.url) then
+        extensionList.Add(ext.Clone);
+    end;
+  end;
 end;
 
 function TFhirDomainResource.extensionCount(url: String): integer;
@@ -894,18 +954,32 @@ begin
       inc(result);
 end;
 
-function TFhirDomainResource.extensions(url: String): TFslList<TFHIRObject>;
+function TFhirDomainResource.getExtensionsV: TFslList<TFHIRObject>;
 var
   ex : TFhirExtension;
 begin
-  result := TFslList<TFHIRObject>.create;
+  result := TFslList<TFHIRObject>.Create;
   try
     for ex in ExtensionList do
-      if ex.url = url then
+      result.Add(ex.Link);
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+function TFhirDomainResource.getExtensionsV(url: String): TFslList<TFHIRObject>;
+var
+  ex : TFhirExtension;
+begin
+  result := TFslList<TFHIRObject>.Create;
+  try
+    for ex in ExtensionList do
+      if (url = '') or (ex.url = url) then
         result.Add(ex.Link);
     result.link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -929,6 +1003,25 @@ begin
         raise EFHIRException.create('Duplicate extension '+url)
       else
         result := ex.value.primitiveValue;
+    end;
+  end;
+end;
+
+function TFhirDomainResource.getExtensionValue(url: String): TFHIRObject;
+var
+  ex : TFhirExtension;
+begin
+  result := nil;
+  for ex in ExtensionList do
+  begin
+    if ex.url = url then
+    begin
+      if not ex.value.isPrimitive then
+        raise EFHIRException.Create('Complex extension '+url)
+      else if result <> nil then
+        raise EFHIRException.Create('Duplicate extension '+url)
+      else
+        result := ex.value;
     end;
   end;
 end;
@@ -1041,7 +1134,7 @@ begin
   result := 'DomainResource';
 end;
 
-function TFhirDomainResource.equals(other : TObject) : boolean;
+function TFhirDomainResource.Equals(other: TObject): boolean;
 var
   o : TFhirDomainResource;
 begin
@@ -1092,44 +1185,44 @@ end;
 
 { TFhirDomainResource }
 
-Procedure TFhirDomainResource.SetText(value : TFhirNarrative);
+procedure TFhirDomainResource.SetText(value: TFhirNarrative);
 begin
   FText.free;
   FText := value;
 end;
 
-Function TFhirDomainResource.GetContainedList : TFhirResourceList;
+function TFhirDomainResource.GetContainedList: TFhirResourceList;
 begin
   if FContainedList = nil then
     FContainedList := TFhirResourceList.Create;
   result := FContainedList;
 end;
 
-Function TFhirDomainResource.GetHasContainedList : boolean;
+function TFhirDomainResource.GetHasContainedList: Boolean;
 begin
   result := (FContainedList <> nil) and (FContainedList.count > 0);
 end;
 
-Function TFhirDomainResource.GetExtensionList : TFhirExtensionList;
+function TFhirDomainResource.GetExtensionList: TFhirExtensionList;
 begin
   if FExtensionList = nil then
     FExtensionList := TFhirExtensionList.Create;
   result := FExtensionList;
 end;
 
-Function TFhirDomainResource.GetHasExtensionList : boolean;
+function TFhirDomainResource.GetHasExtensionList: Boolean;
 begin
   result := (FExtensionList <> nil) and (FExtensionList.count > 0);
 end;
 
-Function TFhirDomainResource.GetModifierExtensionList : TFhirExtensionList;
+function TFhirDomainResource.GetModifierExtensionList: TFhirExtensionList;
 begin
   if FModifierExtensionList = nil then
     FModifierExtensionList := TFhirExtensionList.Create;
   result := FModifierExtensionList;
 end;
 
-Function TFhirDomainResource.GetHasModifierExtensionList : boolean;
+function TFhirDomainResource.GetHasModifierExtensionList: Boolean;
 begin
   result := (FModifierExtensionList <> nil) and (FModifierExtensionList.count > 0);
 end;
@@ -1145,7 +1238,7 @@ end;
 
 destructor TFhirDomainResourceListEnumerator.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -1160,17 +1253,17 @@ begin
   Result := FList[FIndex];
 end;
 
-function TFhirDomainResourceListEnumerator.sizeInBytesV : cardinal;
+function TFhirDomainResourceListEnumerator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 { TFhirDomainResourceList }
-procedure TFhirDomainResourceList.AddItem(value: TFhirDomainResource);
+function TFhirDomainResourceList.AddItem(value: TFhirDomainResource): TFhirDomainResource;
 begin
-  assert(value.ClassName = 'TFhirDomainResource', 'Attempt to add an item of type '+value.ClassName+' to a List of TFhirDomainResource');
   add(value);
+  result := value;
 end;
 
 procedure TFhirDomainResourceList.ClearItems;

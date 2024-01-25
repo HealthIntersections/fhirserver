@@ -1,4 +1,4 @@
-unit FHIR.Version.Client;
+unit fxver_client;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,16 +34,16 @@ interface
 uses
   SysUtils,
   fsl_base, fsl_utilities, fsl_stream,
-  fhir_objects, fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_factory,
-  {$IFDEF FHIR2}
-  fhir2_client, fhir2_context;
-  {$ENDIF}
-  {$IFDEF FHIR3}
-  fhir3_client, fhir3_context;
-  {$ENDIF}
-  {$IFDEF FHIR4}
-  fhir4_client, fhir4_context;
-  {$ENDIF}
+  fhir_objects, fhir_client, fhir_client_http, fhir_client_threaded, fhir_parser, fhir_factory;
+  //{$IFDEF FHIR2}
+  //fhir2_client, fhir2_context;
+  //{$ENDIF}
+  //{$IFDEF FHIR3}
+  //fhir3_client, fhir3_context;
+  //{$ENDIF}
+  //{$IFDEF FHIR4}
+  //fhir4_client, fhir4_context;
+  //{$ENDIF}
 
 
 Type
@@ -116,12 +116,12 @@ begin
     if fmt = ffUnspecified then
       fmt := ffJson;
 
-    result := TFhirClient.create(worker, worker.lang, http.link);
+    result := TFhirClient.Create(worker, worker.lang, http.link);
     try
       result.format := fmt;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     http.free;
@@ -136,7 +136,7 @@ end;
 
 class function TFhirClients.makeThreaded(worker: TFHIRWorkerContext; internal: TFhirClient; event: TThreadManagementEvent): TFhirClient;
 begin
-  result := TFhirClient.create(worker, worker.lang, TFhirThreadedCommunicator.Create(internal, event));
+  result := TFhirClient.Create(worker, worker.lang, TFhirThreadedCommunicator.Create(internal, event));
 end;
 
 class function TFhirClients.makeIndy(worker: TFHIRWorkerContext; url: String; json: boolean): TFhirClient;

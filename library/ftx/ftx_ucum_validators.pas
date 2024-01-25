@@ -35,7 +35,8 @@ Interface
 Uses
   SysUtils,
   fsl_utilities, fsl_collections, fsl_base,
-  ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers;
+  fhir_objects,
+  ftx_ucum_base, ftx_ucum_expressions, ftx_ucum_handlers, ftx_service;
 
 Type
   TUcumValidator = class (TFslObject)
@@ -48,7 +49,7 @@ Type
     procedure checkUnits;
     procedure checkUnitCode(code : String; primary : boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oModel : TUcumModel; handlers : TUcumRegistry);
     destructor Destroy; Override;
@@ -69,9 +70,9 @@ End;
 
 Destructor TUcumValidator.Destroy;
 Begin
-  FModel.Free;
-  Fhandlers.Free;
-  FResult.Free;
+  FModel.free;
+  Fhandlers.free;
+  FResult.free;
   Inherited;
 End;
 
@@ -129,13 +130,13 @@ Begin
         Try
           // what? oCan.Unit_;
         Finally
-          oCan.Free;
+          oCan.free;
         End;
       Finally
-        oConv.Free;
+        oConv.free;
       End;
     Finally
-      term.Free;
+      term.free;
     End;
   except
     on e : exception do
@@ -151,17 +152,17 @@ Begin
     begin
       if (code[i] = '[') Then
         if (inBrack) Then
-          raise ETerminologyError.create('nested [')
+          raise ETerminologyError.create('nested [', itInvalid)
   else
           inBrack := true;
       if (code[i] = ']') Then
         if (not inBrack) Then
-          raise ETerminologyError.create('] without [')
+          raise ETerminologyError.create('] without [', itInvalid)
         else
           inBrack := false;
       nonDigits := nonDigits or not ((code[i] >= '0') and (code[i] <= '9'));
       if ((code[i] >= '0') and (code[i] <= '9')) And not inBrack and nonDigits Then
-        raise ETerminologyError.create('code '+code+' is ambiguous because  it has digits outside []');
+        raise ETerminologyError.create('code '+code+' is ambiguous because  it has digits outside []', itInvalid);
     End;
   except
     on e : exception do
@@ -171,12 +172,12 @@ End;
 
 
 
-function TUcumValidator.sizeInBytesV : cardinal;
+function TUcumValidator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fmodel.sizeInBytes);
-  inc(result, Fresult.sizeInBytes);
-  inc(result, Fhandlers.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fmodel.sizeInBytes(magic));
+  inc(result, Fresult.sizeInBytes(magic));
+  inc(result, Fhandlers.sizeInBytes(magic));
 end;
 
 End.

@@ -1,7 +1,7 @@
 unit wp_context;
 
 {
-Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2010+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -28,7 +28,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$if fhir.inc}
+{$i fhir.inc}
 
 interface
 
@@ -39,7 +39,7 @@ type
   TWPContext = class (TFSlObject)
   private
   public
-    constructor create(
+   // constructor Create(
   end;
 
 implementation

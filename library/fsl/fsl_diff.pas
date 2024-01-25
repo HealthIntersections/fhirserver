@@ -1,6 +1,7 @@
 unit fsl_diff;
 
 // adapted from http://flocke.vssd.de/prog/code/pascal/pasdiff/cur/Diff.pas.html
+// Copyright (c) see source
 
 {$i fhir.inc}
 
@@ -34,6 +35,7 @@ type
   TDifference = record
     Left: TRangeOfLines;
     Right: TRangeOfLines;
+    different : Boolean;
   end;
 
   PDifferenceArray = ^TDifferenceArray;
@@ -44,7 +46,11 @@ type
 
   { Exception class used by this module.
   }
-  ETextComparerError = class(Exception);
+  ETextComparerError = class(EFslException);
+
+  TChangesMode = (clSource1, clSource2, clOutput1, clOutput2);
+
+  { TFslTextComparer }
 
   TFslTextComparer = class (TFslObject)
   private
@@ -106,6 +112,7 @@ type
 
     property Diff[Index: integer]: TDifference read GetDiff; default;
     property Count: integer read FCount;
+    function hasChanges(mode : TChangesMode; line : integer) : boolean;
   end;
 
 implementation
@@ -514,52 +521,52 @@ end;
   Compare_abc     b = IgnoreSpaces (y/n)
                   c = SpacesAsOne (y/n)
 }
-function TFslTextComparer.Hash_ynn(const s: string): TDiffHashValue;
+function TFslTextComparer.Hash_ynn(const s: string): TDiffHashValue; register;
 begin
   Result := DefaultHash(Lowercase(s));
 end;
 
-function TFslTextComparer.Hash_nyn(const s: string): TDiffHashValue;
+function TFslTextComparer.Hash_nyn(const s: string): TDiffHashValue; register;
 begin
   Result := DefaultHash(RemoveSpaces(s));
 end;
 
-function TFslTextComparer.Hash_yyn(const s: string): TDiffHashValue;
+function TFslTextComparer.Hash_yyn(const s: string): TDiffHashValue; register;
 begin
   Result := DefaultHash(Lowercase(RemoveSpaces(s)));
 end;
 
-function TFslTextComparer.Hash_nny(const s: string): TDiffHashValue;
+function TFslTextComparer.Hash_nny(const s: string): TDiffHashValue; register;
 begin
   Result := DefaultHash(ReduceSpaces(s));
 end;
 
-function TFslTextComparer.Hash_yny(const s: string): TDiffHashValue;
+function TFslTextComparer.Hash_yny(const s: string): TDiffHashValue; register;
 begin
   Result := DefaultHash(Lowercase(ReduceSpaces(s)));
 end;
 
-function TFslTextComparer.Compare_ynn(const s1, s2: string): boolean;
+function TFslTextComparer.Compare_ynn(const s1, s2: string): boolean; register;
 begin
   Result := Lowercase(s1) = Lowercase(s2);
 end;
 
-function TFslTextComparer.Compare_nyn(const s1, s2: string): boolean;
+function TFslTextComparer.Compare_nyn(const s1, s2: string): boolean; register;
 begin
   Result := RemoveSpaces(s1) = RemoveSpaces(s2);
 end;
 
-function TFslTextComparer.Compare_yyn(const s1, s2: string): boolean;
+function TFslTextComparer.Compare_yyn(const s1, s2: string): boolean; register;
 begin
   Result := Lowercase(RemoveSpaces(s1)) = Lowercase(RemoveSpaces(s2));
 end;
 
-function TFslTextComparer.Compare_nny(const s1, s2: string): boolean;
+function TFslTextComparer.Compare_nny(const s1, s2: string): boolean; register;
 begin
   Result := ReduceSpaces(s1) = ReduceSpaces(s2);
 end;
 
-function TFslTextComparer.Compare_yny(const s1, s2: string): boolean;
+function TFslTextComparer.Compare_yny(const s1, s2: string): boolean; register;
 begin
   Result := Lowercase(ReduceSpaces(s1)) = Lowercase(ReduceSpaces(s2));
 end;
@@ -602,6 +609,37 @@ begin
 
   DoCompare;
   GenerateOutput;
+end;
+
+function TFslTextComparer.hasChanges(mode : TChangesMode; line: integer): boolean;
+var
+  idx: integer;
+  Diff: TDifference;
+begin
+  dec(line);
+  result := false;
+  case mode of
+    clSource1 :
+      for idx := 0 to Count - 1 do
+      begin
+        Diff := self.Diff[idx];
+        if line < diff.Left.Start then
+          exit(false);
+        if line < diff.Left.Stop then
+          exit(true);
+      end;
+    clSource2 :
+      for idx := 0 to Count - 1 do
+      begin
+        Diff := self.Diff[idx];
+        if line < diff.Right.Start then
+          exit(false);
+        if line < diff.Right.Stop then
+          exit(true);
+      end;
+    clOutput1 : result := (line = 2);
+    clOutput2 : result := (line = 3);
+  end;
 end;
 
 procedure TFslTextComparer.GenerateOutput;

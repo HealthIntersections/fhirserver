@@ -40,6 +40,9 @@ uses
   fhir3_parser, fhir3_resources, fhir3_constants, fhir3_utilities, fhir3_context, fhir3_common;
 
 Type
+
+  { TFhirClient3 }
+
   TFhirClient3 = class (TFhirClientV)
   protected
     function opWrapper : TFhirOperationOutcomeWClass; override;
@@ -52,6 +55,7 @@ Type
     function makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer; override;
 
     function conformance(summary : boolean) : TFhirCapabilityStatement;
+    function terminologyCaps : TFhirParameters;
     function transaction(bundle : TFHIRBundle) : TFHIRBundle;
     function createResource(resource : TFhirResource; var id : String) : TFHIRResource;
     function readResource(atype : TFhirResourceType; id : String) : TFHIRResource;
@@ -83,12 +87,12 @@ implementation
 
 function TFhirClient3.makeParser(fmt : TFHIRFormat) : TFHIRParser;
 begin
-  result := TFHIRParsers3.parser(Worker.Link as TFHIRWorkerContext, fmt, Lang);
+  result := TFHIRParsers3.parser(Worker.Link as TFHIRWorkerContext, fmt, LangList.link);
 end;
 
 function TFhirClient3.makeComposer(fmt : TFHIRFormat; style : TFHIROutputStyle) : TFHIRComposer;
 begin
-  result := TFHIRParsers3.composer(Worker.Link as TFHIRWorkerContext, fmt, Lang, style);
+  result := TFHIRParsers3.composer(Worker.Link as TFHIRWorkerContext, fmt, LangList.link, style);
 end;
 
 function TFhirClient3.opWrapper : TFhirOperationOutcomeWClass;
@@ -104,6 +108,11 @@ end;
 function TFhirClient3.conformance(summary : boolean) : TFhirCapabilityStatement;
 begin
   result := conformanceV(summary) as TFhirCapabilityStatement;
+end;
+
+function TFhirClient3.terminologyCaps: TFhirParameters;
+begin
+  result := conformanceModeV('terminology') as TFhirParameters;
 end;
 
 function TFhirClient3.transaction(bundle : TFHIRBundle) : TFHIRBundle;
@@ -227,7 +236,8 @@ begin
   result := makeHTTP(worker, url, json, 0);
 end;
 
-class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url, mimeType: String): TFhirClient3;
+class function TFhirClient3.makeHTTP(worker: TFHIRWorkerContext; url: String;
+  mimeType: String): TFhirClient3;
 begin
   result := makeHTTP(worker, url, mimeType.contains('json'));
 end;
@@ -244,12 +254,12 @@ begin
     if fmt = ffUnspecified then
       fmt := ffJson;
 
-    result := TFhirClient3.create(worker, THTTPLanguages.create('en'), http.link);
+    result := TFhirClient3.Create(worker, nil, http.link);
     try
       result.format := fmt;
       result.link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
     http.free;

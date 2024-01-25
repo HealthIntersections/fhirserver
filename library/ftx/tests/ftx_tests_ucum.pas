@@ -36,7 +36,8 @@ uses
   SysUtils, Classes,
   fsl_testing,
   fsl_base, fsl_utilities, fsl_xml,
-  ftx_ucum_services;
+  fhir_objects,
+  ftx_service, ftx_ucum_services;
 
 type
   TUcumTest = class (TFslTestSuiteCase)
@@ -121,8 +122,8 @@ procedure TUcumTest.Setup;
 begin
   if (svc = nil) then
   begin
-    svc := TUcumServices.Create;
-    svc.Import(TestSettings.serverTestFile(['exec', 'pack', 'ucum-essence.xml']));
+    svc := TUcumServices.Create(nil);
+    svc.Import(partnerFile('ucum.dat'));
   end;
 end;
 
@@ -153,7 +154,7 @@ begin
   else if group.name = 'multiplication' then
     TestMultiplication(test)
   else
-    raise ETerminologyError.Create('unknown group '+group.Name);
+    raise ETerminologyError.Create('unknown group '+group.Name, itUnknown);
 end;
 
 procedure TUcumTest.TestValidation(test : TMXmlElement);
@@ -219,13 +220,13 @@ begin
       try
         assertTrue((o3.Value.compares(TFslDecimal.valueOf(vRes)) = 0) and (o3.UnitCode = uRes));
       finally
-        o3.Free;
+        o3.free;
       end;
     finally
-      o2.Free;
+      o2.free;
     end;
   finally
-    o1.Free;
+    o1.free;
   end;
 end;
 
@@ -235,8 +236,8 @@ procedure TUcumSpecialTests.Setup;
 begin
   if (svc = nil) then
   begin
-    svc := TUcumServices.Create;
-    svc.Import(TestSettings.serverTestFile(['exec', 'pack', 'ucum-essence.xml']));
+    svc := TUcumServices.Create(nil);
+    svc.Import(partnerFile('ucum.dat'));
   end;
 end;
 
@@ -265,6 +266,6 @@ end;
 
 initialization
 finalization
-  testList.Free;
-  svc.Free;
+  testList.free;
+  svc.free;
 end.

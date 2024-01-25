@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <Name Value="fhir_web"/>
+    <Type Value="RunAndDesignTime"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <IncludeFiles Value="../library"/>
+        <OtherUnitFiles Value="../library/web"/>
+        <UnitOutputDirectory Value="lib/fhir_web/$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Files>
+      <Item>
+        <Filename Value="../library/web/fsl_crypto.pas"/>
+        <UnitName Value="fsl_crypto"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_web_stream.pas"/>
+        <UnitName Value="fsl_web_stream"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_fetcher.pas"/>
+        <UnitName Value="fsl_fetcher"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_web_init.pas"/>
+        <UnitName Value="fsl_web_init"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_npm_cache.pas"/>
+        <UnitName Value="fsl_npm_cache"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_npm_client.pas"/>
+        <UnitName Value="fsl_npm_client"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_oauth.pas"/>
+        <UnitName Value="fsl_oauth"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_openssl.pas"/>
+        <UnitName Value="fsl_openssl"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_twilio.pas"/>
+        <UnitName Value="fsl_twilio"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_websocket.pas"/>
+        <UnitName Value="fsl_websocket"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_wininet.pas"/>
+        <UnitName Value="fsl_wininet"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_zulip.pas"/>
+        <UnitName Value="fsl_zulip"/>
+      </Item>
+      <Item>
+        <Filename Value="../library/web/fsl_msxml.pas"/>
+        <UnitName Value="fsl_msxml"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="fhir_fsl"/>
+      </Item>
+      <Item>
+        <PackageName Value="fhir_indy"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>

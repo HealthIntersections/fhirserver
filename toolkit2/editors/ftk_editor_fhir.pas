@@ -1,12 +1,40 @@
 unit ftk_editor_fhir;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils,
-  Controls, StdCtrls, ComCtrls,
+  Controls, StdCtrls, ComCtrls, DIalogs,
   SynEditHighlighter, SynHighlighterXml, SynHighlighterJson,
   fsl_base, fsl_utilities, fsl_xml, fsl_json, fsl_logging, fsl_stream,
   fsl_http,
@@ -15,6 +43,9 @@ uses
   fhir4_resources_canonical,
   fui_lcl_managers,
   ftk_context, ftk_store,
+
+  ftk_frame_resource, ftk_frame_codesystem, ftk_frame_resource_tree, ftk_frame_patient,
+
   ftk_editor_base;
 
 type
@@ -27,19 +58,18 @@ type
     FVersion : TFHIRVersion;
     FFactory : TFHIRFactory;
     FResource : TFHIRResourceV;
+    FDesigner : TResourceDesignerFrame;
     actTestEditing : TContentAction;
-    FTree : TTreeView;
-    FMemo : TMemo;
     FSync : TFHIRSynEditSynchroniser;
     actSwitch : TContentSubAction;
     function parseResource(source : String) : TFHirResourceV;
     procedure DoTestEditing(sender : TObject);
-    procedure DoTreeClick(sender : TObject);
-    procedure LoadObject(item : TTreeNode; obj : TFHIRObject);
     procedure DoMnuPretty(sender : TObject);
     procedure DoMnuCondense(sender : TObject);
     procedure DoMnuSwitch(sender : TObject);
     function getCurrentFormat : TFHIRFormat;
+    procedure doSelectSourceRange(sender : TObject; start, stop : TPoint);
+    function frameFactory(rType : String) : TResourceDesignerFrame;
   protected
     function AddActions(tb : TToolBar) : boolean; override;
     function makeHighlighter : TSynCustomHighlighter; override;
@@ -47,6 +77,8 @@ type
     function hasFormatCommands: boolean; override;
     procedure makeTextTab; override;
     procedure updateFormatMenu; override;
+    function GetCanEscape : boolean; override;
+    function escapeText(text : String): String; override;
   public
     constructor Create(context : TToolkitContext; session : TToolkitEditSession; store : TStorageService); override;
     destructor Destroy; override;
@@ -55,10 +87,12 @@ type
     procedure newContent(); override;
     function FileExtension : String; override;
     procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
+    procedure saveStatus; override;
 
     function hasDesigner : boolean; override;
     procedure makeDesigner; override;
     procedure updateDesigner; override;
+    procedure commitDesigner; override;
   end;
 
 
@@ -66,15 +100,16 @@ implementation
 
 constructor TFHIREditor.Create(context: TToolkitContext; session: TToolkitEditSession; store: TStorageService);
 begin
-  inherited Create(context, session, store);
   FFormat := TFHIRFormat(ord(StringArrayIndexOf(CODES_TFHIRFormat, session.info.Values['Format'])));
-  FFactory := TFHIRFactoryR4.create;
+  inherited Create(context, session, store);
+  FFactory := context.factory(fhirVersionRelease4);
 end;
 
 destructor TFHIREditor.Destroy;
 begin
-  FResource.Free;
-  FSync.Free;
+  FResource.free;
+  FFactory.free;
+  FSync.free;
   inherited Destroy;
 end;
 
@@ -82,12 +117,12 @@ function TFHIREditor.parseResource(source: String): TFHirResourceV;
 var
   p : TFHIRParser;
 begin
-  p := FFactory.makeParser(nil, getCurrentFormat, THTTPLanguages.Create('en'));
+  p := FFactory.makeParser(nil, getCurrentFormat, nil);
   try
     p.KeepParseLocations := true;
     result := p.parseResource(source);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -95,61 +130,29 @@ procedure TFHIREditor.DoTestEditing(sender: TObject);
 var
   cs : TFHIRCodeSystem;
 begin
-  if FSync.resource <> nil then
-  begin
-    FSync.Format := getCurrentFormat;
-    FSync.load;
-  end;
-  cs := FSync.resource as TFHIRCodeSystem;
-  Fsync.changeProperty(cs, cs.nameElement);
-  cs.name := 'My Test';
-  Fsync.commit;
-end;
-
-procedure TFHIREditor.DoTreeClick(sender: TObject);
-var
-  loc : TFHIRObjectLocationData;
-  c : TFHIRComposer;
-begin
-  if FTree.Selected <> nil then
-  begin
-    if (TObject(FTree.Selected.Data) is TFHIRObjectList) then
-      loc := TFHIRObjectList(FTree.Selected.Data).LocationData
-    else
-      loc := TFhirObject(FTree.Selected.Data).LocationData;
-
-    if loc.hasLocation2 then
-    begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(loc.parseStart2.toPoint);
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(loc.parseFinish2.toPoint);
-    end
-    else
-    begin
-      TextEditor.SelStart := TextEditor.RowColToCharIndex(loc.parseStart.toPoint);
-      TextEditor.SelEnd := TextEditor.RowColToCharIndex(loc.parseFinish.toPoint);
-    end;
-  end;
-
-  //c := FFactory.makeComposer(nil, FFormat, THTTPLanguages.create('en'), TFHIROutputStyle.OutputStylePretty);
-  //try
-  //  FMemo.text := c.composeBase(o);
-  //finally
-  //  sync.free;
+  //if FSync.resource <> nil then
+  //begin
+  //  FSync.Format := getCurrentFormat;
+  //  FSync.load;
   //end;
+  //cs := FSync.resource as TFHIRCodeSystem;
+  //Fsync.changeProperty(cs, cs.nameElement);
+  //cs.name := 'My Test';
+  //Fsync.commit;
 end;
 
 function TFHIREditor.AddActions(tb : TToolBar): boolean;
 begin
   actTestEditing := makeAction(tb, 'Test Editing', 11, 0, DoTestEditing);
-  Result:= true;
+  Result := true;
 end;
 
 function TFHIREditor.makeHighlighter: TSynCustomHighlighter;
 begin
   if FFormat = ffJson then
-    Result := TSynJSonSyn.create(nil)
+    Result := TSynJSonSyn.Create(nil)
   else
-    Result := TSynXmlSyn.create(nil);
+    Result := TSynXmlSyn.Create(nil);
 end;
 
 procedure TFHIREditor.getNavigationList(navpoints: TStringList);
@@ -198,7 +201,7 @@ begin
         end;
       end;
     finally
-      properties.Free;
+      properties.free;
     end;
   end;
 end;
@@ -234,9 +237,22 @@ begin
   end;
 end;
 
+function TFHIREditor.GetCanEscape: boolean;
+begin
+  Result := sourceHasFocus;
+end;
+
+function TFHIREditor.escapeText(text: String): String;
+begin
+  if FFormat = ffJson then
+    result := jsonEscape(text, false)
+  else
+    result := FormatTextToXML(text, xmlText);
+end;
+
 procedure TFHIREditor.ContentChanged;
 begin
-  FResource.Free;
+  FResource.free;
   FResource := nil;
 end;
 
@@ -294,7 +310,7 @@ begin
         checkForEncoding(s, i);
       end;
     end;
-    FResource.Free;
+    FResource.free;
     FResource := nil;
     try
       FResource := parseResource(FContent.text);
@@ -331,52 +347,44 @@ begin
   end;
 end;
 
+procedure TFHIREditor.saveStatus;
+begin
+  inherited saveStatus;
+  if FDesigner <> nil then
+    FDesigner.saveStatus;
+end;
+
 function TFHIREditor.hasDesigner: boolean;
 begin
   Result := true;
 end;
 
+function TFHIREditor.frameFactory(rType : String) : TResourceDesignerFrame;
+begin
+  if rType = 'Patient' then
+    result := TPatientFrame.Create(FDesignerPanelWork)
+  else
+    result := TResourceTreeFrame.Create(FDesignerPanelWork);
+end;
+
+
 procedure TFHIREditor.makeDesigner;
 begin
   inherited makeDesigner;
-  FSync := TFHIRSynEditSynchroniser.create;
+  FSync := TFHIRSynEditSynchroniser.Create;
   FSync.SynEdit := TextEditor;
-  FSync.Factory := TFHIRFactoryR4.create;
+  FSync.Factory := context.factory(fhirVersionRelease4);
   FSync.Format := FFormat;
 
-  FMemo := TMemo.create(FDesignerPanelWork);
-  FMemo.parent := FDesignerPanelWork;
-  FMemo.align := alBottom;
-  FMemo.ReadOnly := true;
-  FMemo.Height := 300;
-
-  FTree := TTreeView.create(FDesignerPanelWork);
-  FTree.parent := FDesignerPanelWork;
-  FTree.align := alClient;
-  FTree.ReadOnly := true;
-  FTree.OnClick := DoTreeClick;
-end;
-
-procedure TFHIREditor.LoadObject(item : TTreeNode; obj : TFHIRObject);
-var
-  prop : TFHIRNamedValue;
-  child : TTreeNode;
-begin
-  for prop in obj.getNamedChildren.forEnum do
+  if (FResource <> nil) then
   begin
-    if prop.value.isPrimitive then
-    begin
-      child := FTree.items.AddChildObject(item, prop.Name +': '+prop.value.fhirType+' = '+prop.value.primitiveValue, prop.value);
-    end
-    else
-    begin
-      child := FTree.Items.AddChildObject(item, prop.Name +': '+prop.value.fhirType, prop.value);
-      if prop.list <> nil then
-        FTree.Items.AddChildObject(child, '(list)', prop.list);
-      LoadObject(child, prop.value);
-    end;
+    FDesigner := frameFactory(FResource.fhirType);
+    FDesigner.parent := FDesignerPanelWork;
+    FDesigner.Align := alClient;
+    FDesigner.context := Context.link;
+    FDesigner.sync := FSync.link;
+    FDesigner.initialize;
   end;
-
 end;
 
 procedure TFHIREditor.DoMnuPretty(sender: TObject);
@@ -390,7 +398,7 @@ begin
     try
       SetContentUndoable(x.ToXml(true, false));
     finally
-      x.Free;
+      x.free;
     end;
   end
   else
@@ -399,7 +407,7 @@ begin
     try
       SetContentUndoable(TJsonWriter.writeObjectStr(j, true));
     finally
-      j.Free;
+      j.free;
     end;
   end;
 end;
@@ -415,7 +423,7 @@ begin
     try
       SetContentUndoable(x.ToXml(false, false));
     finally
-      x.Free;
+      x.free;
     end;
   end
   else
@@ -424,7 +432,7 @@ begin
     try
       SetContentUndoable(TJsonWriter.writeObjectStr(j, false));
     finally
-      j.Free;
+      j.free;
     end;
   end;
 end;
@@ -441,9 +449,9 @@ begin
   else
     tgt := ffJson;
 
-  p := FFactory.makeParser(nil, getCurrentFormat, THTTPLanguages.create('en'));
+  p := FFactory.makeParser(nil, getCurrentFormat, nil);
   try
-    c := FFactory.makeComposer(nil, tgt, THTTPLanguages.create('en'), OutputStylePretty);
+    c := FFactory.makeComposer(nil, tgt, nil, OutputStylePretty);
     try
       res := p.parseResource(TextEditor.text);
       try
@@ -452,7 +460,7 @@ begin
         res.free;
       end;
     finally
-      c.Free;
+      c.free;
     end;
   finally
     p.free;
@@ -469,21 +477,37 @@ begin
 end;
 
 procedure TFHIREditor.updateDesigner;
-var
-  root : TTreeNode;
 begin
-  FResource.Free;
+  FResource.free;
   FResource := nil;
   FSync.Format := getCurrentFormat;
   FSync.load;
   FResource := FSync.Resource.link;
-  FTree.items.Clear;
-  root := FTree.Items.Add (nil, 'Resource '+FResource.fhirType);
-  root.Data := FResource;
-  loadObject(root, FResource);
+  if (FDesigner = nil) then
+  begin
+    FDesigner := frameFactory(FResource.fhirType);
+    FDesigner.parent := FDesignerPanelWork;
+    FDesigner.Align := alClient;
+    FDesigner.OnSelectSourceRange := doSelectSourceRange;
+    FDesigner.context := Context.link;
+    FDesigner.sync := FSync.link;
+    FDesigner.initialize;
+  end;
+  FDesigner.Client := Store.clientForAddress(Session.Address).Link;
+  FDesigner.resource := FResource.link;
+end;
+
+procedure TFHIREditor.commitDesigner;
+begin
+  ShowMessage('not done yet');
 end;
 
 
+procedure TFHIREditor.doSelectSourceRange(sender : TObject; start, stop : TPoint);
+begin
+  TextEditor.SelStart := TextEditor.RowColToCharIndex(start);
+  TextEditor.SelEnd := TextEditor.RowColToCharIndex(stop);
+end;
 
 end.
 

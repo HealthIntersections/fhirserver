@@ -1,35 +1,39 @@
 object ProgressForm: TProgressForm
-  Left = 1304
+  Left = 1224
   Height = 67
-  Top = -556
-  Width = 387
+  Top = 38
+  Width = 464
   BorderIcons = []
   BorderStyle = bsSingle
   ClientHeight = 67
-  ClientWidth = 387
+  ClientWidth = 464
   OnShow = FormShow
   Position = poOwnerFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.2.5.0'
   object ProgressBar1: TProgressBar
     Left = 16
     Height = 12
     Top = 32
-    Width = 272
+    Width = 344
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Label1: TLabel
     Left = 16
-    Height = 15
+    Height = 16
     Top = 11
-    Width = 79
+    Width = 344
+    Anchors = [akTop, akLeft, akRight]
+    AutoSize = False
     Caption = 'Getting Started'
     ParentColor = False
   end
   object BitBtn1: TBitBtn
-    Left = 296
+    Left = 376
     Height = 42
-    Top = 14
+    Top = 11
     Width = 80
+    Anchors = [akTop, akRight]
     Caption = 'Stop'
     Glyph.Data = {
       36100000424D3610000000000000360000002800000020000000200000000100

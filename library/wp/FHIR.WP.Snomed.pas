@@ -1,7 +1,7 @@
 Unit FHIR.WP.Snomed;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -206,7 +206,7 @@ begin
   inherited;
   FLock := TFslLock.Create;
   FSnomedDescriptions := TFslStringMatch.Create;
-  FIni := TIniFile.Create('c:\temp\snomed.ini');
+  FIni := TIniFile.Create(filePath(['[tmp]', 'snomed.ini']));
   FServiceURL := 'http://localhost:9556/soap';
   FUsername := 'g';
   FPassword := 'g';
@@ -215,9 +215,9 @@ end;
 destructor TSnomedClient.Destroy;
 begin
   Disconnect;
-  FSnomedDescriptions.Free;
-  FLock.Free;
-  FIni.Free;
+  FSnomedDescriptions.free;
+  FLock.free;
+  FIni.free;
   inherited;
 end;
 
@@ -292,7 +292,7 @@ end;
 destructor TSnomedSearcher.Destroy;
 begin
   Clear;
-  FLock.Free;
+  FLock.free;
   inherited;
 end;
 
@@ -503,10 +503,10 @@ Begin
 
 //  If IsModalOK Then
 //    FClient.UseTerm(Term);
-//  FClient.Free;
-//  FMatches.Free;
-  FImages.Free;
-  FTerms.Free;
+//  FClient.free;
+//  FMatches.free;
+  FImages.free;
+  FTerms.free;
 
   Inherited;
 End;
@@ -514,7 +514,7 @@ End;
 
 Procedure TSnomedPicker.SetClient(Const Value: TSnomedClient);
 Begin
-  FClient.Free;
+  FClient.free;
   FClient := Value;
   ClientWidth := FClient.ini.ReadInteger('picker', 'width', 1000);
   ClientHeight := FClient.ini.ReadInteger('picker', 'height', 400);
@@ -533,7 +533,7 @@ Var
 Begin
   FWaiting := False;
   Try
-//    FMatches.Free;
+//    FMatches.free;
 //    FMatches := FClient.AcquireResults;
   Except
     On e:Exception Do
@@ -614,7 +614,7 @@ Begin
 //    Try
 //      FwrdBrowser.DocumentHandler.LoadNative(oBuffer);
 //    Finally
-//      oBuffer.Free;
+//      oBuffer.free;
 //    End;
 //  Except
 //    On E:Exception Do

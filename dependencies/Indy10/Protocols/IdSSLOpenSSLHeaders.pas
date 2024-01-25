@@ -14793,7 +14793,7 @@ type
 
   // PASN1_UTCTIME     = Pointer;
 
-//GREGOR - spremenjana deklaracija ker se tolèe
+//GREGOR - spremenjana deklaracija ker se tolhe
 //  Phostent    = Pointer;
   {$NODEFINE Phostent2}
   Phostent2   = Pointer;

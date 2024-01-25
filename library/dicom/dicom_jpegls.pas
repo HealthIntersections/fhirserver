@@ -6,7 +6,7 @@ Unit dicom_jpegls;
 // https://github.com/team-charls/charls
 //
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -65,12 +65,12 @@ Var
 
 Function DummyJpegLSDecode(Response : Pointer;  ResponseLength : Integer; pResultCode: PCardinal; Data : Pointer; Length : Integer; Width: Integer; Height: Integer; Cbit: Integer; Ccomp: Integer) : Boolean; stdcall;
 Begin
-  raise EDicomException.create('Unable to decode this image as the jpeg-ls library was not found');
+  raise EDicomException.Create('Unable to decode this image as the jpeg-ls library was not found');
 End;
 
 Function DummyJpegLSEncode(Response : Pointer; pResponseLength : PCardinal; pResultCode: PCardinal; Data : Pointer; Length : Cardinal; Width: Cardinal; Height: Cardinal; Cbit: Cardinal; Ccomp: Cardinal; allowedlossyerror : Cardinal) : Boolean; stdcall;
 Begin
-  raise EDicomException.create('Unable to decode this image as the jpeg-ls library was not found');
+  raise EDicomException.Create('Unable to decode this image as the jpeg-ls library was not found');
 End;
 
 

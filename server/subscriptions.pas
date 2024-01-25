@@ -162,6 +162,8 @@ Type
   TExecuteOperationEvent = procedure(request : TFHIRRequest; response : TFHIRResponse; bWantSession : boolean) of object;
   TExecuteSearchEvent = function (typekey : Integer; compartment : TFHIRCompartmentId; sessionCompartments: TFslList<TFHIRCompartmentId>; params : THTTPParameters; conn : TFDBConnection): String of object;
 
+  { TSubscriptionManager }
+
   TSubscriptionManager = class abstract (TFHIRServerWorker)
   private
     FSubscriptions : TFHIRSubscriptionEntryList;
@@ -178,7 +180,7 @@ Type
 
     FCloseAll : boolean;
     FSemaphores : TFslMap<TWebSocketQueueInfo>;
-    FLang : THTTPLanguages;
+    FLangList : THTTPLanguageList;
 //    FLoading: boolean;
 
     function settings : TFHIRServerSettings;
@@ -248,6 +250,7 @@ Type
   public
     constructor Create(ServerContext : TFslObject);
     destructor Destroy; Override;
+    procedure unload;
 
     procedure loadQueue(conn : TFDBConnection);
     procedure SeeResource(key, vkey, pvkey : Integer; id : String; op : TFHIRSubscriptionWOperation; resource : TFHIRResourceV; conn : TFDBConnection; reload : boolean; session : TFHIRSession);
@@ -286,20 +289,28 @@ begin
   FSemaphores := TFslMap<TWebSocketQueueInfo>.Create('subscr.semaphore');
   FCloseAll := false;
   FLastPopCheck := 0;
-  FSubscriptionTopics := TFslMap<TSubscriptionTopic>.create('subscr.event');
-  FLang := THTTPLanguages.create('en');
+  FSubscriptionTopics := TFslMap<TSubscriptionTopic>.Create('subscr.event');
+  FLangList := nil;
 end;
 
 destructor TSubscriptionManager.Destroy;
 begin
+  FLangList.free;
   wsWakeAll;
-  FSemaphores.Free;
-  FSubscriptionTrackers.Free;
-  FSubscriptionTopics.Free;
-  FSubscriptions.Free;
-  FLock.Free;
-  FDatabase.Free;
+  FSemaphores.free;
+  FSubscriptionTrackers.free;
+  FSubscriptionTopics.free;
+  FSubscriptions.free;
+  FLock.free;
+  FDatabase.free;
   inherited;
+end;
+
+procedure TSubscriptionManager.unload;
+begin
+  FSubscriptions.clear;
+  FSubscriptionTrackers.clear;
+  FSubscriptionTopics.clear;
 end;
 
 procedure TSubscriptionManager.ApplyUpdateToResource(userkey : integer; id: String; resource: TFhirResourceV);
@@ -321,13 +332,13 @@ begin
     OnExecuteOperation(request, response, false);
     // and we ignore the outcome, because what can we do?
   finally
-    request.Free;
-    response.Free;
+    request.free;
+    response.free;
   end;
 end;
 
 
-procedure TSubscriptionManager.processEmails;
+procedure TSubscriptionManager.ProcessEmails;
 var
   pop : TIdPOP3;
   msg : TIdMessage;
@@ -347,7 +358,7 @@ begin
       pop.Password := settings.DirectPassword;
       if settings.SMTPUseTLS then
       begin
-        ssl := TIdOpenSSLIOHandlerClient.create;
+        ssl := TIdOpenSSLIOHandlerClient.Create;
         pop.IOHandler := ssl;
         pop.UseTLS := utUseExplicitTLS;
         ssl.Destination := settings.DirectPopHost+':'+settings.DirectPopPort;
@@ -367,7 +378,7 @@ begin
             pop.Retrieve(i+1, msg);
             processIncomingDirectMessage(msg);
           finally
-            msg.Free;
+            msg.free;
           end;
         end;
         for i := 0 to c - 1 do
@@ -376,7 +387,7 @@ begin
         pop.Disconnect;
       end;
     finally
-      pop.Free;
+      pop.free;
     end;
   except
     on e : Exception do
@@ -470,7 +481,7 @@ begin
 //  try
 //    subscription := parser.ParseFragment(json, 'TFhirSubscription') as TFhirSubscription;
 //  finally
-//    parser.Free;
+//    parser.free;
 //  end;
 //  try
 //    subscription.id := NewGuidId;
@@ -491,9 +502,9 @@ var
   cnt : String;
 begin
   if (not IsId(id)) then
-    raise EFHIRException.create('invalid syntax');
+    raise EFHIRException.Create('invalid syntax');
   if not wsConnect(id, true) then
-    raise EFHIRException.create('There is already a web socket bound to '+id);
+    raise EFHIRException.Create('There is already a web socket bound to '+id);
   try
     connection.write('bound '+id);
     repeat
@@ -541,11 +552,11 @@ begin
     try
       cmd := connection.read(true);
       if cmd.op <> wsoText then
-        raise EFHIRException.create('No Bind Statement');
+        raise EFHIRException.Create('No Bind Statement');
       if cmd.text.StartsWith('bind ') then
         handleWebSocketBind(cmd.text.Substring(5), connection)
       else if not cmd.text.Trim.StartsWith('{') then
-        raise EFHIRException.create('invalid syntax - expected bind :id, or a JSON object')
+        raise EFHIRException.Create('invalid syntax - expected bind :id, or a JSON object')
       else
       begin
         json := TJSONParser.Parse(cmd.text);
@@ -555,9 +566,9 @@ begin
           else if (json.str['type'] = 'create-subscription') then
             handleWebSocketSubscribe(json.obj['subscription'], connection)
           else
-            raise EFHIRException.create('invalid syntax - expected type "bind-subscription" or "create-subscription"');
+            raise EFHIRException.Create('invalid syntax - expected type "bind-subscription" or "create-subscription"');
         finally
-          json.Free;
+          json.free;
         end;
       end;
     except
@@ -710,7 +721,7 @@ begin
     sender.Password := chooseSMTPPassword(direct);
     if settings.SMTPUseTLS then
     begin
-      ssl := TIdOpenSSLIOHandlerClient.create;
+      ssl := TIdOpenSSLIOHandlerClient.Create;
       sender.IOHandler := ssl;
       sender.UseTLS := utUseExplicitTLS;
       ssl.Destination := chooseSMTPHost(direct)+':'+chooseSMTPPort(direct);
@@ -736,9 +747,9 @@ begin
       part.ContentType := 'text/plain';
       part.ContentTransfer := '7bit';
       if subst = nil then
-        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, ffJson, FLang, OutputStylePretty)
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, ffJson, FLangList, OutputStylePretty)
       else if subst.payload <> '' then
-        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), FLang, OutputStylePretty)
+        comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(subst.payload), FLangList, OutputStylePretty)
       else
         comp := nil;
       try
@@ -753,7 +764,7 @@ begin
             att.ContentDisposition := 'Content-Disposition: attachment; filename="bundle'+comp.extension+'"';
             att.ContentType := comp.MimeType+'; charset=UTF-8'
           finally
-            m.Free;
+            m.free;
           end;
         end
         else
@@ -761,18 +772,18 @@ begin
           part.Body.Text := 'This email informs you that the FHIR content at '+TFHIRServerContext(ServerContext).FormalURLPlain+'/'+resource.fhirType+'/'+resource.id+' has been updated. Retrieve it with your own personal records program';
         end;
       finally
-        comp.Free;
+        comp.free;
       end;
       Logging.log('Send '+msg.MsgId+' to '+dest);
-//      msg.SaveToFile('c:\temp\out.msg');
+//      msg.SaveToFile(filePath(['[tmp]', 'out.msg');
       sender.Send(msg);
     Finally
-      msg.Free;
+      msg.free;
     End;
     sender.Disconnect;
   Finally
     sender.IOHandler.free;
-    sender.Free;
+    sender.free;
   End;
 end;
 
@@ -797,7 +808,7 @@ begin
   if subst.payload = '' then
   begin
     stream := TMemoryStream.Create;
-    http := TIdHTTP.create(nil);
+    http := TIdHTTP.Create(nil);
     ssl := TIdOpenSSLIOHandlerClient.Create(nil);
     try
       http.IOHandler := ssl;
@@ -805,9 +816,9 @@ begin
         http.Request.CustomHeaders.Add(s);
       http.Post(subst.endpoint, stream);
     finally
-      ssl.Free;
-      http.Free;
-      stream.Free;
+      ssl.free;
+      http.free;
+      stream.free;
     end;
   end
   else
@@ -819,7 +830,7 @@ begin
       else
         client.createResourceV(package, id);
     finally
-      client.Free;
+      client.free;
     end;
   end;
 end;
@@ -843,7 +854,7 @@ begin
       client.Body := 'A new matching resource has been received for Subscription '+subst.resource.id;
     client.send;
   finally
-    client.Free;
+    client.free;
   end;
 end;
 
@@ -854,14 +865,14 @@ var
   comp : TFHIRComposer;
   b : TBytes;
 begin
-  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext.link, mimeTypeToFormat(subst.payload), FLang, OutputStyleNormal);
+  comp := factory.makeComposer(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(subst.payload), FLangList, OutputStyleNormal);
   try
     if comp <> nil then
       b := TEncoding.UTF8.GetBytes(comp.Compose(package))
     else
      SetLength(b, 0);
   finally
-    comp.Free;
+    comp.free;
   end;
 
   if wsPersists(subst.resource.id, b) then
@@ -910,7 +921,7 @@ begin
     sender.Password := settings.DirectPassword;
     if settings.SMTPUseTLS then
     begin
-      ssl := TIdOpenSSLIOHandlerClient.create;
+      ssl := TIdOpenSSLIOHandlerClient.Create;
       sender.IOHandler := ssl;
       sender.UseTLS := utUseExplicitTLS;
       ssl.Destination := settings.DirectHost+':'+settings.DirectPort;
@@ -939,7 +950,7 @@ begin
       begin
         part.Body.Text := 'The receiving server has accepted your message and will attempt to process it.';
         att.ContentType := 'message/disposition-notification';
-        s :=
+        s := 
           'Reporting-UA: '+settings.DirectUsername+'; ('+TFHIRServerContext(ServerContext).Globals.OwnerName+')'+#13#10+
           'Final-Recipient: '+settings.DirectUsername+#13#10+
           'Original-Message-ID: '+id+#13#10+
@@ -964,17 +975,17 @@ begin
         m.position := 0;
         att.LoadFromStream(m);
       finally
-        m.Free;
+        m.free;
       end;
       Logging.log('Send response for '+id+' as '+msg.MsgId+' to '+address+' as '+BoolToStr(ok)+' ('+message+')');
       sender.Send(msg);
     Finally
-      msg.Free;
+      msg.free;
     End;
     sender.Disconnect;
   Finally
     sender.IOHandler.free;
-    sender.Free;
+    sender.free;
   End;
 end;
 
@@ -1033,21 +1044,21 @@ end;
 
 //procedure TSubscriptionManager.processByScript(conn: TFDBConnection; id: String; subst: TFHIRSubscriptionW; package: TFHIRResourceV);
 //begin
-//  raise EFHIRTodo.create('TSubscriptionManager.processByScript');
+//  raise EFHIRTodo.Create('TSubscriptionManager.processByScript');
 //end;
 //
 procedure TSubscriptionManager.processDirectMessage(txt, ct: String; res: TBytesStream);
 var
   p : TFHIRParser;
 begin
-  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct), FLang);
+  p := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, mimeTypeToFormat(ct), FLangList);
   try
     p.source := res;
     p.Parse;
     p.resource.Tags['process'] := 'true';
     TFHIRServerContext(ServerContext).Storage.QueueResource(nil, p.resource);
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -1060,7 +1071,7 @@ var
   ts : TStringList;
   bs : TBytesStream;
 begin
-//  msg.SaveToFile('c:\temp\in.msg');
+//  msg.SaveToFile(filePath(['[tmp]', 'in.msg');
   ct := msg.ContentType.split([' ']);
   if (ct[0] = 'multipart/report;') and (ct[1] = 'report-type=delivery-status') then
   begin
@@ -1079,11 +1090,11 @@ begin
           TIdAttachment(part).SaveToStream(ss);
           ts.Text := ss.DataString;
         finally
-          ss.Free;
+          ss.free;
         end;
         processReportDeliveryMessage(id, s, ts);
       finally
-        ts.Free;
+        ts.free;
       end;
     end
     else
@@ -1106,11 +1117,11 @@ begin
           TIdAttachment(part).SaveToStream(ss);
           ts.Text := ss.DataString;
         finally
-          ss.Free;
+          ss.free;
         end;
         processReportDeliveryNotification(id, s, ts);
       finally
-        ts.Free;
+        ts.free;
       end;
     end
     else
@@ -1125,9 +1136,9 @@ begin
         s := TIdText(part).Body.Text;
       part := partByContentType(msg.MessageParts, 'application/octet-stream');
       if id = '' then
-        raise EFHIRException.create('No id found');
+        raise EFHIRException.Create('No id found');
       if (part = nil) then
-        raise EFHIRException.create('Unable to find direct body');
+        raise EFHIRException.Create('Unable to find direct body');
       bs := TBytesStream.Create;
       try
         TIdAttachment(part).SaveToStream(bs);
@@ -1135,7 +1146,7 @@ begin
         processDirectMessage(s, part.ContentType, bs);
         sendDirectResponse(id, msg.sender.Address, '', true);
       finally
-        bs.Free;
+        bs.free;
       end;
     except
       on e : Exception do
@@ -1212,13 +1223,13 @@ begin
             checkSaveTags(subst, conn, resourceKey, res);
             conn.ExecSQL('update NotificationQueue set Handled = '+DBGetDate(conn.Owner.Platform)+' where NotificationQueueKey = '+inttostr(NotificationnQueueKey));
           finally
-            package.Free;
+            package.free;
           end;
         finally
           res.free;
         end;
       finally
-        subst.Free;
+        subst.free;
       end;
       NotifySuccess(userkey, SubscriptionKey);
     except
@@ -1232,13 +1243,15 @@ begin
 end;
 
 
-procedure TSubscriptionManager.processReportDeliveryMessage(id, txt: String; details: TStringList);
+procedure TSubscriptionManager.processReportDeliveryMessage(id: string;
+  txt: String; details: TStringList);
 begin
   if details.Values['Action'].Trim = 'failed' then
     Logging.log('Direct Message '+id+' failed: '+details.Values['Diagnostic-Code']+' ('+txt+')');
 end;
 
-procedure TSubscriptionManager.processReportDeliveryNotification(id, txt: String; details: TStringList);
+procedure TSubscriptionManager.processReportDeliveryNotification(id: string;
+  txt: String; details: TStringList);
 begin
   if id = '' then
     id := details.Values['Original-Message-ID'];
@@ -1318,10 +1331,10 @@ begin
           list.free;
         end;
       finally
-        oldRes.Free;
+        oldRes.free;
       end;
     finally
-      newRes.Free;
+      newRes.free;
     end;
   end;
 end;
@@ -1355,27 +1368,34 @@ end;
 function TSubscriptionManager.LoadResourceFromDBByVer(conn: TFDBConnection; vkey: integer; var id : String; canBeNull : boolean): TFhirResourceV;
 var
   parser : TFHIRParser;
+  typ : String;
 begin
-  conn.SQL := 'select ResourceName, Ids.Id, Status, Tags, XmlContent From Versions, Ids, Types where ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
+  conn.SQL := 'select ResourceName, Ids.Id, Status, Tags, XmlContent From Versions, Ids, Types where '+
+    'ResourceVersionKey = '+inttostr(vkey)+' and Versions.ResourceKey = IDs.ResourceKey and IDs.ResourceTypeKey = Types.ResourceTypeKey';
   conn.prepare;
   try
     conn.Execute;
     if not conn.FetchNext then
-      raise EFHIRException.create('Cannot find resource');
+      raise EFHIRException.Create('Cannot find resource');
     id := conn.ColStringByName['Id'];
+    typ := conn.ColStringByName['ResourceName'];
     if conn.ColIntegerByName['Status'] = 2 then
     begin
       // deleted
       if canBeNull then
         exit(nil)
       else
-      raise EFHIRException.create('Resource has been deleted');
+      begin
+        conn.terminate;
+        //conn.ExecSQL('Delete from SubscriptionQueue where ResourceVersionKey = '+inttostr(vkey));
+        raise EFHIRException.Create('Resource '+typ+'/'+id+' for vkey '+inttostr(vkey)+' has been deleted');
+      end;
     end;
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['XmlContent'])
+      result := LoadBinaryResource(factory, nil, conn.ColBlobByName['XmlContent'])
     else
     begin
-      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, FLang);
+      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, ffXml, FLangList);
       try
         result := parser.parseResource(conn.ColBlobByName['XmlContent']);
       finally
@@ -1398,13 +1418,13 @@ begin
   try
     conn.Execute;
     if not conn.FetchNext then
-      raise EFHIRException.create('Cannot find resource');
+      raise EFHIRException.Create('Cannot find resource');
     userKey := conn.ColIntegerByName['UserKey'];
     if conn.ColStringByName['ResourceName'] = 'Binary' then
-      result := LoadBinaryResource(factory, THTTPLanguages.create('en'), conn.ColBlobByName['Content'])
+      result := LoadBinaryResource(factory, nil, conn.ColBlobByName['Content'])
     else
     begin
-      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext.link, ffXml, FLang);
+      parser := factory.makeParser(TFHIRServerContext(ServerContext).ValidatorContext, ffXml, FLangList);
       try
         result := parser.parseResource(conn.ColBlobByName['XmlContent']);
       finally
@@ -1456,12 +1476,12 @@ begin
   end
   else
   begin
-    p := THTTPParameters.create('_type='+l+'&'+r, true);
+    p := THTTPParameters.Create('_type='+l+'&'+r, true);
     try
       sql := FOnExecuteSearch(typekey, nil, nil, p, conn);
       result := conn.CountSQL('select count(*) from Ids where not MostRecent is null and ResourceKey = '+inttostr(key)+' and '+sql) > 0;
     finally
-      p.Free;
+      p.free;
     end;
   end;
 end;
@@ -1623,7 +1643,7 @@ begin
 
       add(t.Link);
     finally
-      t.Free;
+      t.free;
     end;
   end
   else
@@ -1657,7 +1677,7 @@ function TSubscriptionManager.wsConnect(id : String; persistent : boolean) : boo
 var
   info : TWebSocketQueueInfo;
 begin
-  info := TWebSocketQueueInfo.create;
+  info := TWebSocketQueueInfo.Create;
   try
     info.Persistent := persistent;
     FLock.Lock;
@@ -1669,7 +1689,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    info.Free;
+    info.free;
   end;
 end;
 
@@ -1678,7 +1698,7 @@ begin
   FLock.Lock;
   try
     if not FSemaphores.ContainsKey(id) then
-      raise EFHIRException.create('WS Queue not found: '+id);
+      raise EFHIRException.Create('WS Queue not found: '+id);
     FSemaphores.Remove(id);
   finally
     FLock.Unlock;
@@ -1764,7 +1784,7 @@ begin
   if (direct) then
     result := settings.DirectPort
   else
-    result:= settings.SMTPPort;
+    result := settings.SMTPPort;
 end;
 
 function TSubscriptionManager.chooseSMTPPassword(direct : boolean): String;
@@ -1772,7 +1792,7 @@ begin
   if (direct) then
     result := settings.DirectPassword
   else
-    result:= settings.SMTPPassword;
+    result := settings.SMTPPassword;
 end;
 
 function TSubscriptionManager.chooseSMTPHost(direct : boolean): String;
@@ -1780,7 +1800,7 @@ begin
   if (direct) then
     result := settings.DirectHost
   else
-    result:= settings.SMTPHost;
+    result := settings.SMTPHost;
 end;
 
 function TSubscriptionManager.chooseSMTPSender(direct : boolean): String;
@@ -1788,7 +1808,7 @@ begin
   if (direct) then
     result := settings.DirectSender
   else
-    result:= settings.SMTPSender;
+    result := settings.SMTPSender;
 end;
 
 function TSubscriptionManager.chooseSMTPUsername(direct : boolean): String;
@@ -1796,7 +1816,7 @@ begin
   if (direct) then
     result := settings.DirectUsername
   else
-    result:= settings.SMTPUsername;
+    result := settings.SMTPUsername;
 end;
 
 
@@ -1809,7 +1829,7 @@ end;
 
 destructor TFHIRSubscriptionEntry.Destroy;
 begin
-  FSubscription.Free;
+  FSubscription.free;
   inherited;
 end;
 
@@ -1830,7 +1850,7 @@ end;
 
 procedure TFHIRSubscriptionEntry.SeTFHIRSubscriptionW(const Value: TFhirSubscriptionW);
 begin
-  FSubscription.Free;
+  FSubscription.free;
   FSubscription := Value;
 end;
 
@@ -1847,19 +1867,19 @@ end;
 
 { TWebSocketQueueInfo }
 
-constructor TWebSocketQueueInfo.create;
+constructor TWebSocketQueueInfo.Create;
 begin
   inherited;
   FConnected := false;
-  FQueue := TFslList<TFslBuffer>.create;
+  FQueue := TFslList<TFslBuffer>.Create;
   FEvent := TEvent.Create(nil, True, False, '');
   FEvent.ResetEvent;
 end;
 
-destructor TWebSocketQueueInfo.destroy;
+destructor TWebSocketQueueInfo.Destroy;
 begin
-  FQueue.Free;
-  Fevent.Free;
+  FQueue.free;
+  Fevent.free;
   inherited;
 end;
 
@@ -1918,7 +1938,7 @@ end;
 
 procedure TSubscriptionTopic.SetResource(const Value: TFHIRResourceV);
 begin
-  FResource.Free;
+  FResource.free;
   FResource := value;
 end;
 

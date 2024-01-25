@@ -153,7 +153,7 @@ var
   i : integer;
 begin
   i := tabs.TabIndex;
-  tab.Free;
+  tab.free;
   if i > 0 then
     tabs.TabIndex := i - 1
   else
@@ -167,8 +167,8 @@ end;
 
 destructor TBaseFrame.Destroy;
 begin
-  FUTGRepo.Free;
-  FSettings.Free;
+  FUTGRepo.free;
+  FSettings.free;
   inherited;
 end;
 
@@ -210,17 +210,17 @@ end;
 
 function TBaseFrame.save : boolean;
 begin
-  raise EFHIRException.create('Not implemented');
+  raise EFHIRException.Create('Not implemented');
 end;
 
 function TBaseFrame.saveAs(filename: String; format: TFHIRFormat): boolean;
 begin
-  raise EFHIRException.create('Not implemented');
+  raise EFHIRException.Create('Not implemented');
 end;
 
 procedure TBaseFrame.SetSettings(const Value: TFHIRToolkitSettings);
 begin
-  FSettings.Free;
+  FSettings.free;
   FSettings := Value;
 end;
 
@@ -231,7 +231,7 @@ end;
 
 procedure TBaseFrame.SetUTGRepo(const Value: TUTGRepositoryBase);
 begin
-  FUTGRepo.Free;
+  FUTGRepo.free;
   FUTGRepo := Value;
 end;
 

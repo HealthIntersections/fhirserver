@@ -52,7 +52,7 @@ type
     FStart : TDateTime;
     FDuration : TDateTime;
   public
-    constructor create(d : TDateTime);
+    constructor Create(d : TDateTime);
   end;
 
   TPublisherForm = class;
@@ -169,7 +169,7 @@ var
   s : String;
   i : integer;
 begin
-  FIni := TIniFile.Create(Path([ExtractFilePath(ParamStr(0)), 'fhir-publisher.ini']));
+  FIni := TIniFile.Create(Path([executableDirectory(), 'fhir-publisher.ini']));
   FIni.ReadSection('folders', lbFolders.Items);
 //  FPublisher := TFHIRIGPublisher.Create(FIni);
 
@@ -180,7 +180,7 @@ begin
   panel2.Width := FIni.ReadInteger('window', 'split', panel2.Width);
   Fini.WriteDateTime('status', 'last-start', now);
   lbFolders.ItemIndex := 0;
-  FRuns := TFslMap<TRunRecord>.create('Publisher');
+  FRuns := TFslMap<TRunRecord>.Create('Publisher');
   for s in lbFolders.Items do
     FRuns.Add(s, TRunRecord.Create(FIni.ReadFloat('folders', s, 0)));
   FLock := TFslLock.Create('msg-queue');
@@ -189,36 +189,36 @@ begin
   for i := 1 to ParamCount do
     if FolderExists(ParamStr(i)) then
       addFolder(paramStr(i), true);
-  firstShow:=true;
+  firstShow := true;
 
 end;
 
 procedure TPublisherForm.FormDestroy(Sender: TObject);
 begin
   saveList;
-  FRuns.Free;
+  FRuns.free;
   FIni.WriteInteger('window', 'left', Left);
   FIni.WriteInteger('window', 'top', Top);
   FIni.WriteInteger('window', 'height', ClientHeight);
   FIni.WriteInteger('window', 'width', ClientWidth);
   FIni.WriteInteger('window', 'split', panel2.Width);
 
-  FIni.Free;
-  FQueue.Free;
-  FLock.Free;
+  FIni.free;
+  FQueue.free;
+  FLock.free;
 end;
 
 procedure TPublisherForm.FormShow(Sender: TObject);
 begin
   if FirstShow then
   begin
-    FirstShow:=False;
+    FirstShow := False;
     if (IGtoPublish <>'') and (directoryexists(IGtoPublish)) then
       addFolder(IGtoPublish, true);
 
 //  FJarFile := FIni.ReadString('tools', 'jar', ''); // 'C:\work\org.hl7.fhir\latest-ig-publisher\org.hl7.fhir.publisher.jar');
 //  if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-//    then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//    then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
 //  if (not FileExists(FJarFile)) then
 //  begin
 //    if not (od.Execute) then
@@ -296,7 +296,7 @@ begin
   s := lbFolders.Items[lbFolders.ItemIndex];
   s := s.Substring(s.IndexOf(':')+1).trim;
 //  Clipboard.AsText := 'java -jar '+FPublisher.Location+' -ig '+s;
-  IGtoPublish:=s;
+  IGtoPublish := s;
 end;
 
 procedure TPublisherForm.ToolButton5Click(Sender: TObject);
@@ -350,16 +350,16 @@ begin
 //>>>>>>> .theirs
 //    sl := lbFolders.Items[lbFolders.ItemIndex];
 //    if not FRuns.ContainsKey(sl) then
-//      FRuns.Add(sl, TRunRecord.create(0));
+//      FRuns.Add(sl, TRunRecord.Create(0));
 //    FRecord := FRuns[sl];
 //    sf := sl.Substring(sl.IndexOf(':')+1).trim;
 //    addFolder(sf, false);
 //
-//    IGtoPublish:=sf;
+//    IGtoPublish := sf;
 //    if fileExists(ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar')
-//      then FjarFile:= ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
+//      then FjarFile := ExtractFileDir(ExcludeTrailingBackslash(IGtoPublish))+'\org.hl7.fhir.publisher.jar';
 //    if fileExists(IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar')
-//      then FjarFile:= IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
+//      then FjarFile := IGtoPublish+'\input-cache\org.hl7.fhir.publisher.jar';
 //
 //    FRecord.FPrevious := FRecord.FLast;
 //    start(sf);
@@ -392,7 +392,7 @@ end;
 
 { TRunRecord }
 
-constructor TRunRecord.create(d: TDateTime);
+constructor TRunRecord.Create(d: TDateTime);
 begin
   inherited Create;
   FDuration := d;

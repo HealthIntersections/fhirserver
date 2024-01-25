@@ -1,12 +1,40 @@
 unit install_form;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils, Forms, Controls, Graphics, Dialogs, Buttons, ExtCtrls,
-  StdCtrls, ComCtrls,
+  StdCtrls, ComCtrls, IniFiles,
   fsl_base, fsl_utilities, fsl_npm_client,
   fdb_manager,
   server_config, utilities, database_installer,
@@ -20,6 +48,7 @@ type
     btnInstall: TBitBtn;
     btnDBTest3: TBitBtn;
     cbxSecurity: TComboBox;
+    edtFilter: TEdit;
     edtUserName: TEdit;
     edtPassword: TEdit;
     edtAnonymousRights: TEdit;
@@ -29,21 +58,26 @@ type
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
     lblCurrentStatus: TLabel;
     lblMode: TLabel;
     lvPackages: TListView;
     Panel1: TPanel;
     Panel2: TPanel;
     Panel3: TPanel;
+    Panel4: TPanel;
     procedure btnInstallClick(Sender: TObject);
+    procedure edtFilterChange(Sender: TObject);
     procedure edtUserNameChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure lvPackagesItemChecked(Sender: TObject; Item: TListItem);
   private
     FConnection: TFDBConnection;
     FEndPoint: String;
     FFilename: String;
     FPackages : TFslList<TFHIRPackageInfo>;
+    FSelectedPackages : TStringList;
     FType: String;
     FVersion: String;
     function isAutomatic(pi: TFHIRPackageInfo): boolean;
@@ -51,13 +85,15 @@ type
     procedure SetConnection(AValue: TFDBConnection);
     procedure SetPackages(AValue: TFslList<TFHIRPackageInfo>);
     procedure loadPackages;
+    function passesFilter(id : String) : boolean;
     function command : String;
+    procedure SetVersion(AValue: String);
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages write SetPackages;
     property Connection : TFDBConnection read FConnection write SetConnection;
     property Filename : String read FFilename write FFilename;
     property endpoint : String read FEndPoint write FEndPoint;
-    property version : String read FVersion write FVersion;
+    property version : String read FVersion write SetVersion;
     property type_ : String read FType write FType;
   end;
 
@@ -89,7 +125,7 @@ begin
     try
       conn := db.GetConnection('install');
       try
-        form := TEndpointInstallForm.create(owner);
+        form := TEndpointInstallForm.Create(owner);
         try
           form.Packages := MainConsoleForm.Packages.link;
           form.Connection := conn.link;
@@ -119,13 +155,14 @@ end;
 
 procedure TEndpointInstallForm.FormDestroy(Sender: TObject);
 begin
-  FPackages.Free;
-  FConnection.Free;
+  FSelectedPackages.free;
+  FPackages.free;
+  FConnection.free;
 end;
 
 procedure TEndpointInstallForm.edtUserNameChange(Sender: TObject);
 begin
-  btnInstall.enabled :=
+  btnInstall.enabled := 
    (not edtUserName.enabled or ((edtUserName.text <> '') and IsValidIdent(edtUserName.text))) and
    (not edtPassword.enabled or ((edtPassword.text <> '') and (pos(' ', edtPassword.text) = 0))) and
    (not edtAnonymousRights.Enabled or (edtAnonymousRights.text <> ''));
@@ -135,7 +172,7 @@ procedure TEndpointInstallForm.btnInstallClick(Sender: TObject);
 var
   form : TInstallProgressForm;
 begin
-  form := TInstallProgressForm.create(self);
+  form := TInstallProgressForm.Create(self);
   try
     form.command := command;
     if form.ShowModal = mrOk then
@@ -143,6 +180,11 @@ begin
   finally
     form.free;
   end;
+end;
+
+procedure TEndpointInstallForm.edtFilterChange(Sender: TObject);
+begin
+  loadPackages;
 end;
 
 function TEndpointInstallForm.matchesVersion(pi, piv : String):boolean;
@@ -153,8 +195,10 @@ begin
     result := SameText(pi, 'STU3') or pi.StartsWith('3.0') or piv.StartsWith('3.0')
   else if version = 'r4' then
     result := SameText(pi, 'R4') or pi.StartsWith('4.0') or piv.StartsWith('4.0')
+  else if version = 'r4b' then
+    result := SameText(pi, 'R4B') or pi.StartsWith('4.3') or piv.StartsWith('4.3')
   else if version = 'r5' then
-    result := SameText(pi, 'R5') or pi.StartsWith('4.5') or piv.StartsWith('4.5')
+    result := SameText(pi, 'R5') or pi.StartsWith('5.0') or piv.StartsWith('5.0')
   else
     result := false;
 end;
@@ -173,6 +217,9 @@ end;
 
 procedure TEndpointInstallForm.FormShow(Sender: TObject);
 begin
+  FSelectedPackages := TStringList.Create;
+  FSelectedPackages.Duplicates := dupIgnore;
+  FSelectedPackages.sorted := true;
   lblMode.caption := 'Install '+type_+' for version '+version;
   if type_ = 'terminology' then
   begin
@@ -188,7 +235,7 @@ begin
     lvPackages.Enabled := false;
     loadPackages;
   end
-  else if type_ = 'general' then
+  else if type_ = 'full' then
   begin
     edtUserName.text := '';
     edtUserName.Enabled := true;
@@ -217,9 +264,17 @@ begin
   end;
 end;
 
+procedure TEndpointInstallForm.lvPackagesItemChecked(Sender: TObject; Item: TListItem);
+begin
+  if item.Checked then
+    FSelectedPackages.add(item.caption)
+  else if (FSelectedPackages.IndexOf(item.caption) > -1) then
+    FSelectedPackages.delete(FSelectedPackages.IndexOf(item.caption));
+end;
+
 procedure TEndpointInstallForm.SetPackages(AValue: TFslList<TFHIRPackageInfo>);
 begin
-  FPackages.Free;
+  FPackages.free;
   FPackages := AValue;
 end;
 
@@ -231,24 +286,38 @@ begin
   lvPackages.Items.clear;
   for pi in FPackages do
   begin
-    if matchesversion(pi.fhirVersion, pi.version) and not isAutomatic(pi) then
+    if matchesversion(pi.fhirVersion, pi.version) and not isAutomatic(pi) and passesFilter(pi.id) then
     begin
       li := lvPackages.items.Add;
       li.Caption := pi.id+'#'+pi.version;
-      li.Checked := false;
+      li.Checked := FSelectedPackages.IndexOf(li.caption) > -1;
     end;
   end;
   lvPackages.ViewStyle := vsIcon;
   lvPackages.ViewStyle := vsList;
 end;
 
+function TEndpointInstallForm.passesFilter(id: String): boolean;
+begin
+  result := (edtFilter.Text = '') or id.contains(edtFilter.text);
+end;
+
 function TEndpointInstallForm.command: String;
 var
-  s : String;
+  f, s : String;
   i : TListItem;
+  ini : TIniFile;
 begin
+  f := FilePath(['[tmp]', 'fhir-server-install.ini']);
+  Ini := TIniFile.create(f);
+  try
+    ini.writeString('config', 'cfgFile', filename);
+  finally
+    Ini.Free;
+  end;
+
   // default-rights
-  result := '-cmd installdb -installer -cfg "'+filename+'" -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
+  result := '-cmd installdb -installer -cfg "'+f+'" -endpoint '+FEndPoint+' -username '+edtUserName.text+' -password '+edtPassword.text;
   case cbxSecurity.ItemIndex of
     0: result := result + ' -security open';
     1: result := result + ' -security oauth?';
@@ -264,11 +333,18 @@ begin
         s := s+','+i.Caption;
   if s <> '' then
     result := result + ' -packages '+s;
+  if edtAnonymousRights.text <> '' then
+    result := result + ' -default-rights '+edtAnonymousRights.text;
+end;
+
+procedure TEndpointInstallForm.SetVersion(AValue: String);
+begin
+  FVersion := AValue.toLower;
 end;
 
 procedure TEndpointInstallForm.SetConnection(AValue: TFDBConnection);
 begin
-  FConnection.Free;
+  FConnection.free;
   FConnection := AValue;
 end;
 

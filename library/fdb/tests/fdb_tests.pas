@@ -34,21 +34,27 @@ interface
 
 Uses
   Sysutils, Classes,
-  fsl_testing,
-
-  fsl_base, fsl_utilities, fsl_stream,
+  fsl_testing, fsl_logging, fsl_base, fsl_utilities, fsl_stream,
   fdb_dialects,
-  fdb_manager, fdb_odbc, fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
+  fdb_manager, fdb_odbc, {$IFDEF FPC}fdb_fpc, {$ENDIF} fdb_sqlite3, fdb_sqlite3_objects, fdb_sqlite3_wrapper;
 
 Type
+
+  { TFDBTests }
+
   TFDBTests = Class (TFslTestCase)
   private
     conn4: TFDBConnection;
-    procedure TestThread;
+    procedure TestThread(context : TObject);
     procedure test(manager: TFDBManager);
   Published
     procedure TestSemaphore;
+//    procedure TestODBC;
+
+    {$IFDEF DELPHI}
     procedure TestMSSQL;
+    {$ENDIF}
+
     procedure TestMySQL;
     // procedure TestMySQLMaria;
     procedure TestSQLite;
@@ -58,11 +64,15 @@ procedure registerTests;
 
 implementation
 
+{$IFDEF DELPHI}
+uses
+  fdb_odbc_headers, fdb_odbc_objects;
+{$ENDIF}
 const
   Name_405 = 'asdasd askjhf asdjfh sif hksdfh skdjfh sdf askjhas dak akdh ajksdh akjsdh askjd hakjsdh aksdh aksjdh aksjdh asdajksdh askd ajksdha askd ajksdh askjdh aksjdh aksjdh asjkdh askjd haskjdh askdhj asskajhd aksjdhaksjd '+'aksdh askjdh kajsdh aksjhd askjdh akjsdh kajsdh akjshdak jshd akjsdh aksjdh akjshdkajsdh akjsdhk ajshd akjsdhaj kshd akjshd asjkdhasjk d akjdh askjdh askjdh askjdh akjsdhakjsdh akjsdh aksjdh';
 
 type
-  ETestException = class(Exception);
+  ETestException = class(EFslException);
 
 function BlobIsSame(l, r: TBytes): boolean;
 var
@@ -103,13 +113,13 @@ begin
 
   conn := manager.GetConnection('test');
   try
-    md := conn.FetchMetaData;
-    try
-      if md.HasTable('TestTable') then
-        conn.DropTable('TestTable');
-    finally
-      md.Free;
-    end;
+    //md := conn.FetchMetaData;
+    //try
+    //  if md.HasTable('TestTable') then
+    //    conn.DropTable('TestTable');
+    //finally
+    //  md.free;
+    //end;
 
     conn.ExecSQL('CREATE TABLE TestTable ( ' + #13#10 + ' TestKey ' + DBKeyType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' +
       #13#10 + ' Name nchar(255) ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Number int ' + ColCanBeNull(conn.owner.platform, true) + ', '
@@ -124,7 +134,7 @@ begin
       try
         assertTrue(md.HasTable('TestTable'))
       finally
-        md.Free;
+        md.free;
       end;
       assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
 
@@ -232,7 +242,7 @@ begin
     try
       assertFalse(md.HasTable('TestTable'), 'dbt.38')
     finally
-      md.Free;
+      md.free;
     end;
 
     conn.Release;
@@ -245,28 +255,36 @@ begin
   end;
 end;
 
+// docker run -d --name mssql-server --platform linux/arm64/v8 -e ACCEPT_EULA=Y -e SA_PASSWORD={pwd} -p 1433:1433 mcr.microsoft.com/azure-sql-edge
+
+{$IFDEF DELPHI}
 procedure TFDBTests.TestMSSQL;
 var
   db: TFDBManager;
   settings : TFslStringMap;
 begin
   if not TestSettings.hasSection('mssql') then
-    assertNotTested
+  begin
+//    Logging.log('ignore mssql test - no settings');
+    assertNotTested('MSSQL not configured');
+  end
   else
   begin
     settings := TestSettings.section('mssql');
     try
-      db := TFDBOdbcManager.create('test', kdbSqlServer, 8, 200, settings);
+//      Logging.log('test mssql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+      db := TFDBOdbcManager.Create('test', kdbSqlServer, 8, 200, settings);
       try
         test(db);
       finally
-        db.Free;
+        db.free;
       end;
     finally
-      settings.Free;
+      settings.free;
     end;
   end;
 end;
+{$ENDIF}
 
 procedure TFDBTests.TestMySQL;
 var
@@ -274,19 +292,28 @@ var
   settings : TFslStringMap;
 begin
   if not TestSettings.hasSection('mysql') then
-    assertNotTested
+  begin
+//    Logging.log('ignore mysql test - no settings');
+    assertNotTested('MySQL not configured');
+  end
   else
   begin
     settings := TestSettings.section('mysql');
     try
-      db := TFDBOdbcManager.create('test', kdbMySql, 8, 200, settings);
+//      Logging.log('test mysql: '+settings['server']+'/'+settings['database']+'@'+settings['username']+':'+StringPadLeft('', 'X', settings['password'].length));
+      {$IFDEF FPC}
+      db := TFDBOdbcManager.Create('test', kdbMySql, 8, 200, settings['driver'], settings['server'], settings['database'], settings['username'], settings['password']);
+//      db := TFDBSQLDBManager.Create('test', kdbMySQL, settings['server'], settings['database'], settings['username'], settings['password'], 100);
+      {$ELSE}
+      db := TFDBOdbcManager.Create('test', kdbMySql, 8, 200, settings);
+      {$ENDIF}
       try
         test(db);
       finally
-        db.Free;
+        db.free;
       end;
     finally
-      settings.Free;
+      settings.free;
     end;
   end;
 end;
@@ -351,7 +378,7 @@ end;
 // Stmt.StepAndReset;
 // IDs[6] := DB.LastInsertRowID;
 // finally
-// Stmt.Free;
+// Stmt.free;
 // end;
 //
 // // Create table "paintings"
@@ -426,17 +453,17 @@ end;
 // Stmt.BindInt (3, IDs[6]);
 // Stmt.StepAndReset;
 // finally
-// Stmt.Free;
+// Stmt.free;
 // end;
 //
 // finally
-// DB.Free;
+// DB.free;
 // end;
 
 // end;
 //
 
-procedure TFDBTests.TestThread;
+procedure TFDBTests.TestThread(context : TObject);
 begin
   sleep(500);
   conn4.Release;
@@ -449,9 +476,17 @@ var
   conn2: TFDBConnection;
   conn3: TFDBConnection;
   conn5: TFDBConnection;
+  fn  : String;
 begin
-  DeleteFile('c:\temp\sql.db');
-  db := TFDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  fn := filePath(['[tmp]', 'sql.db']);
+  if FileExists(fn) then
+  //begin
+  //  Logging.log('SQLite DB @ '+fn+': delete');
+    DeleteFile(fn);
+  //end
+  //else
+  //  Logging.log('SQLite DB @ '+fn);
+  db := TFDBSQLiteManager.Create('test', fn, true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -481,7 +516,7 @@ begin
             end;
           end;
           conn4 := db.GetConnection('test4');
-          thread(testThread);
+          thread(testThread, nil);
           conn5 := db.GetConnection('test');
           try
             assertTrue(db.CurrConnCount = 4);
@@ -520,20 +555,147 @@ begin
     end;
     assertTrue(db.CurrConnCount = 4);
   finally
-    db.Free;
+    db.free;
   end;
 end;
 
+const
+  DefaultStringSize = 255;
+
+function makePChar(len : integer) : pchar;
+begin
+  {$IFDEF FPC}
+  result := Getmem(len);
+  {$ELSE}
+  Getmem(result, len);
+  {$ENDIF}
+end;
+
+function fromPChar(p : PChar; length : integer) : String;
+begin
+  result := p;
+end;
+
+
+{$IFNDEF FPC}
+Function odbcError(ARetCode: SQLRETURN; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE): String;
+Var
+  ErrorNum: Integer;
+
+  RetCode: SQLRETURN;
+  State: PChar;
+  Native: SQLINTEGER;
+  Message: PChar;
+  StringLength: SQLSMALLINT;
+Begin
+  State := makePChar(DefaultStringSize);
+  Message := makePChar(DefaultStringSize);
+  try
+    Result := '';
+
+    Case ARetCode Of
+      SQL_ERROR, -24238,
+      SQL_SUCCESS_WITH_INFO:
+      Begin
+        ErrorNum := 0;
+        Repeat
+          Inc(ErrorNum);
+
+          RetCode := SQLGetDiagRec(aHandleType, aHandle, ErrorNum, State, Native, Message, DefaultStringSize, StringLength);
+          If RetCode = SQL_SUCCESS Then
+            CommaAdd(result, fromPChar(State, 5)+': '+fromPChar(Message, StringLength));
+        Until RetCode <> SQL_SUCCESS;
+        If (Result = '') Or (RetCode <> SQL_NO_DATA) Then
+          result := 'Unable to Retrieve ODBC Error';
+      End;
+      Else
+      Begin
+        Case ARetCode Of
+          SQL_INVALID_HANDLE:
+            result := 'Invalid ODBC Handle';
+          SQL_NO_DATA:
+            result := 'No Data Found';
+          Else
+            result := 'ODBC Return Code '+IntToStr(ARetCode);
+        End;
+      End;
+    End;
+  finally
+    freemem(state);
+    freemem(message);
+  end;
+End;
+
+//procedure TFDBTests.TestODBC;
+//  procedure check(retValue : integer; op : String; aHandleType: SQLSMALLINT; aHandle: SQLHANDLE);
+//  begin
+//    if (retValue <> 0) then
+//      raise ELibraryException.Create('return value from '+op+' = '+inttostr(retValue)+': '+odbcError(retValue, aHandleType, aHandle));
+//  end;
+//var
+//  env : SQLHENV;
+//  dbc : SQLHDBC;
+//  stmt : SQLHSTMT;
+//  cs, sql : String;
+//  co : pchar;
+//  l : smallint;
+//  np : SQLUINTEGER;
+//  srvr, uid, db, pwd, drvr : String;
+//begin
+//  drvr := TestSettings['mysql', 'driver'];
+//  srvr := TestSettings['mysql', 'server'];
+//  db := TestSettings['mysql', 'database'];
+//  uid := TestSettings['mysql', 'username'];
+//  pwd := TestSettings['mysql', 'password'];
+//
+//  {$IFDEF FPC}
+//  if not isODBCLoaded then
+//    InitialiseODBC;
+//  {$ENDIF}
+//
+//  check(SQLAllocHandle(SQL_HANDLE_ENV, Pointer(SQL_NULL_HANDLE), env), 'SQLAllocHandle', SQL_HANDLE_ENV, env);
+//  check(SQLSetEnvAttr(env, SQL_ATTR_ODBC_VERSION, Pointer(SQL_OV_ODBC3), 0), 'SQLSetEnvAttr', SQL_HANDLE_ENV, env);
+//  check(SQLAllocHandle(SQL_HANDLE_DBC, env, dbc), 'SQLSetEnvAttr', SQL_HANDLE_DBC, dbc);
+//  cs := 'UID='+uid+';PWD='+pwd+';DRIVER='+drvr+';Server='+srvr+';Database='+db+';';
+//  co := makePChar(DefaultStringSize);
+//  try
+//    check(SQLDriverConnect(dbc, 0, pchar(cs), SQL_NTS, co, DefaultStringSize, l, SQL_DRIVER_NOPROMPT), 'SQLDriverConnect', SQL_HANDLE_DBC, dbc);
+//  finally
+//    freemem(co);
+//  end;
+//  check(SQLAllocHandle(SQL_HANDLE_STMT, dbc, stmt), 'SQLAllocHandle', SQL_HANDLE_DBC, dbc);
+//  sql := 'SET time_zone = ''+11:00''';
+//  check(SQLPrepare(stmt, pchar(sql), SQL_NTS), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+//  // this line bloews up mysql
+//  //np := 0;
+//  //check(SQLSetStmtAttr(stmt, SQL_ATTR_PARAMSET_SIZE, pointer(np), sizeof(np)), 'SQLPrepare', SQL_HANDLE_STMT, stmt);
+//  check(SQLExecDirect(stmt, pchar(sql), SQL_NTS), 'SQLExecDirect', SQL_HANDLE_STMT, stmt);
+//  check(SQLFreeHandle(SQL_HANDLE_STMT, stmt), 'SQLFreeHandle', SQL_HANDLE_STMT, stmt);
+//  check(SQLDisconnect(dbc), 'SQLDisconnect', SQL_HANDLE_STMT, stmt);
+//  check(SQLFreeHandle(SQL_HANDLE_DBC, dbc), 'SQLFreeHandle', SQL_HANDLE_DBC, dbc);
+//  check(SQLFreeHandle(SQL_HANDLE_ENV, env), 'SQLFreeHandle', SQL_HANDLE_ENV, env);
+//  assertTrue(true); // get to here, success
+//end;
+{$ENDIF}
+
 procedure TFDBTests.TestSQLite;
 var
-  db: TFDBManager;
+  db : TFDBManager;
+  fn : String;
 begin
-  DeleteFile('c:\temp\sql.db');
-  db := TFDBSQLiteManager.create('test', 'c:\temp\sql.db', true, 4);
+  fn := filePath(['[tmp]', 'sql.db']);
+  if FileExists(fn) then
+  //begin
+  //  Logging.log('SQLite DB @ '+fn+': delete');
+    DeleteFile(fn);
+  //end
+  //else
+  //  Logging.log('SQLite DB @ '+fn);
+  db := TFDBSQLiteManager.Create('test', fn, true, 4);
   try
     test(db);
   finally
-    db.Free;
+    db.free;
   end;
 end;
 
@@ -541,11 +703,11 @@ end;
 // var
 // db : TFDBManager;
 // begin
-// db := TFDBOdbcManager.create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
+// db := TFDBOdbcManager.Create('test', 8, 0, 'MariaDB ODBC 3.0 Driver', 'localhost', 'test', 'root', 'h_Erp3ChJ![~C7~oL|61');
 // try
 // test(db);
 // finally
-// db.Free;
+// db.free;
 // end;
 // end;
 //

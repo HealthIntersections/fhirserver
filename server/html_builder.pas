@@ -65,11 +65,13 @@ type
     procedure SetLinks(const Value: TFslStringDictionary);
 
 
+    function renderHealthCards(s : TFslStringBuilder; res : TFHIRResourceV) : boolean;
+
   protected
     function ResourceMediaType: String; override;
     function GetFormat: TFHIRFormat; override;
   public
-    constructor Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; const lang : THTTPLanguages; BaseURL : String); reintroduce; overload;
+    constructor Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; langList : THTTPLanguageList; BaseURL : String); reintroduce; overload;
     destructor Destroy; override;
     property BaseURL : String read FBaseURL write FBaseURL;
     Property Session : TFhirSession read FSession write SetSession;
@@ -85,10 +87,10 @@ type
     Property OperationName : String read FOperationName write FOperationName;
     property links : TFslStringDictionary read FLinks write SetLinks;
 
-    class function ResourceLinks(a : String; const lang : THTTPLanguages; base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
+    class function ResourceLinks(a : String; langList : THTTPLanguageList; base : String; count : integer; bTable, bPrefixLinks, canRead : boolean): String;
     class function PageLinks : String;
-    class function Header(factory : TFHIRFactory; Session : TFhirSession; base : String; const lang : THTTPLanguages; version : String) : String;
-    class function Footer(factory : TFHIRFactory; base : String; const lang : THTTPLanguages; logId : String; tail : boolean = true) : string;
+    class function Header(factory : TFHIRFactory; Session : TFhirSession; base : String; langList : THTTPLanguageList; version : String) : String;
+    class function Footer(factory : TFHIRFactory; base : String; langList : THTTPLanguageList; logId : String; tail : boolean = true) : string;
   end;
 
 
@@ -96,9 +98,9 @@ implementation
 
 { TFHIRXhtmlComposer }
 
-constructor TFHIRXhtmlComposer.Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; const lang : THTTPLanguages; BaseURL: String);
+constructor TFHIRXhtmlComposer.Create(worker: TFHIRWorkerContextWithFactory; Style : TFHIROutputStyle; langList : THTTPLanguageList; BaseURL: String);
 begin
-  Create(worker, Style, lang);
+  Create(worker, Style, langList);
   FFactory := worker.Factory.link;
   FBaseURL := BaseURL;
 end;
@@ -106,10 +108,10 @@ end;
 
 destructor TFHIRXhtmlComposer.Destroy;
 begin
-  FLinks.Free;
+  FLinks.free;
   FSession.free;
   FFactory.free;
-  FTags.Free;
+  FTags.free;
   inherited;
 end;
 
@@ -136,7 +138,7 @@ begin
     try
       composeBundle(stream, b);
     finally
-      b.Free;
+      b.free;
     end;
     exit;
   end;
@@ -153,15 +155,15 @@ begin
     if FOperationName <> '' then
       title := 'Results from '+FOperationName
     else
-      title := FormatTextToXml(GetFhirMessage(res.fhirType, lang), xmlText)
+      title := FormatTextToXml(GetFhirMessage(res.fhirType, langList), xmlText)
   end
   else if (ver = '') then
-    title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id + '" ('+res.fhirType+') ', xmlText)
+    title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', langList)+' "'+id + '" ('+res.fhirType+') ', xmlText)
   else
-    title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', lang)+' "'+id+'" '+GetFhirMessage('NAME_VERSION', lang)+' "'+ver + '" ('+res.fhirType+') ', xmlText);
+    title := FormatTextToXml(GetFhirMessage('NAME_RESOURCE', langList)+' "'+id+'" '+GetFhirMessage('NAME_VERSION', langList)+' "'+ver + '" ('+res.fhirType+') ', xmlText);
 
   c := 0;
-  s := TFslStringBuilder.create;
+  s := TFslStringBuilder.Create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -177,7 +179,7 @@ FHIR_JS+
 ''+#13#10+
 '<body>'+#13#10+
 ''+#13#10+
-Header(FFactory, Session, FBaseURL, lang, version)+
+Header(FFactory, Session, FBaseURL, langList, version)+
 '<h2>'+title+'</h2>'+#13#10);
 
     if res.fhirType = 'Binary' then
@@ -187,9 +189,9 @@ Header(FFactory, Session, FBaseURL, lang, version)+
         if StringStartsWith(bw.ContentType, 'image/') then
           s.append('<img src="'+res.fhirType+'/'+id+'">'+#13#10)
         else
-          s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
+          s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', langList)+')'+#13#10+'</pre>'+#13#10);
       finally
-        bw.Free;
+        bw.free;
       end;
     end
     else
@@ -197,9 +199,9 @@ Header(FFactory, Session, FBaseURL, lang, version)+
       inc(c);
       if assigned(FTags) then
         if ver <> '' then
-          s.append('<p><a href="./_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(res.fhirType, FBaseURL+res.fhirType+'/'+id+'/_history/'+ver+'/_tags', Ftags, c)+'</p>'+#13#10)
+          s.append('<p><a href="./_tags">'+GetFhirMessage('NAME_TAGS', langList)+'</a>: '+PresentTags(res.fhirType, FBaseURL+res.fhirType+'/'+id+'/_history/'+ver+'/_tags', Ftags, c)+'</p>'+#13#10)
         else if id <> '' then
-          s.append('<p><a href="./_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(res.fhirType, FBaseURL+res.fhirType+'/'+id+'/_tags', Ftags, c)+'</p>'+#13#10);
+          s.append('<p><a href="./_tags">'+GetFhirMessage('NAME_TAGS', langList)+'</a>: '+PresentTags(res.fhirType, FBaseURL+res.fhirType+'/'+id+'/_tags', Ftags, c)+'</p>'+#13#10);
       if id <> '' then
       begin
         if assigned(FOnGetLink) then
@@ -207,9 +209,9 @@ Header(FFactory, Session, FBaseURL, lang, version)+
         else
           link := '';
         if link <> '' then
-          s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. <a href="'+link+'">'+FormatTextToHTML(text)+'</a>'+#13#10)
+          s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'. <a href="'+link+'">'+FormatTextToHTML(text)+'</a>'+#13#10)
         else
-          s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+#13#10);
+          s.append('<p><a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+#13#10);
 
         if (links <> nil) and (links.ContainsKey('z-edit-src')) then
           s.append('. Edit this as <a href="'+patchToWeb(links['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(links['z-edit-src'])+'?srcformat=json">JSON</a>');
@@ -230,6 +232,13 @@ Header(FFactory, Session, FBaseURL, lang, version)+
         s.append('</p>'#13#10);
       end;
 
+      if res.Tags['rendering-profile'] <> '' then
+      begin
+        if res.Tags['rendering-profile'] = 'health-cards-issue' then
+          if renderHealthCards(s, res) then
+            s.append('<hr/>'+#13#10);
+      end;
+
 
       x := FFactory.getXhtml(res);
       if (x <> nil) then
@@ -237,10 +246,10 @@ Header(FFactory, Session, FBaseURL, lang, version)+
       s.append('<hr/>'+#13#10);
       bXml := FFactory.version in [fhirVersionRelease2, fhirVersionRelease3];
       if bXML then
-        xml := FFactory.makeComposer(FWorker.link, ffXml, lang, OutputStylePretty)
+        xml := FFactory.makeComposer(FWorker, ffXml, langList, OutputStylePretty)
       else
-        xml := FFactory.makeComposer(FWorker.link, ffJson, lang, OutputStylePretty);
-      ss := TBytesStream.create();
+        xml := FFactory.makeComposer(FWorker, ffJson, langList, OutputStylePretty);
+      ss := TBytesStream.Create();
       try
         xml.Compose(ss, res);
         if bXML then
@@ -254,7 +263,7 @@ Header(FFactory, Session, FBaseURL, lang, version)+
     end;
     s.append(
 '<p><br/>'+
-Footer(FFactory, FBaseURL, lang, logid)
+Footer(FFactory, FBaseURL, langList, logid)
     );
     s.WriteToStream(stream);
   finally
@@ -282,7 +291,7 @@ var
   s : TFslStringBuilder;
   i : integer;
 begin
-  s := TFslStringBuilder.create;
+  s := TFslStringBuilder.Create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -292,13 +301,13 @@ begin
 '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
 '<head>'+#13#10);
   if ResourceType = frtNull then
-    s.append('    <title>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10)
+    s.append('    <title>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', langList))+'</title>'+#13#10)
   else if id = '' then
-    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_String[ResourceType]]))+'</title>'+#13#10)
+    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', langList), [CODES_String[ResourceType]]))+'</title>'+#13#10)
   else if ver = '' then
-    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_String[ResourceType], id]))+'</title>'+#13#10)
+    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', langList), [CODES_String[ResourceType], id]))+'</title>'+#13#10)
   else
-    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_String[ResourceType], id, ver]))+'</title>'+#13#10);
+    s.append('    <title>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', langList), [CODES_String[ResourceType], id, ver]))+'</title>'+#13#10);
 
     s.append(
 PageLinks+#13#10+
@@ -310,25 +319,25 @@ FHIR_JS+#13#10+
 Header(Session, FBaseURL, Lang));
 
   if ResourceType = frtNull then
-    s.append('    <h2>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', lang))+'</title>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+    s.append('    <h2>'+FormatTextToXml(GetFhirMessage('SYSTEM_TAGS', langList))+'</title>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', langList)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'. '+
      'Or: <a href="'+FBaseUrl+'"/>Home Page</a> </p>')
   else if id = '' then
-    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', lang), [CODES_String[ResourceType]]))+'</h2>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TYPE_TAGS', langList), [CODES_String[ResourceType]]))+'</h2>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', langList)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'. '+
      'Or: '+ResourceLinks(ResourceType, lang, FBaseURL, 0, false, false, false)+' </p>')
   else if ver = '' then
-    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', lang), [CODES_String[ResourceType], id]))+'</h2>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_TAGS', langList), [CODES_String[ResourceType], id]))+'</h2>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', langList)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'. '+
      'Or: <a href="../'+id+'">This Resource</a> </p>')
   else
-    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', lang), [CODES_String[ResourceType], id, ver]))+'</h2>'+#13#10+
-     '<p></p><p>'+GetFhirMessage('NAME_LINKS', lang)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'. '+
+    s.append('    <h2>'+FormatTextToXml(StringFormat(GetFhirMessage('RESOURCE_VER_TAGS', langList), [CODES_String[ResourceType], id, ver]))+'</h2>'+#13#10+
+     '<p></p><p>'+GetFhirMessage('NAME_LINKS', langList)+': <a href="?_format=xml">XML</a> or <a href="?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'. '+
      'Or: <a href="../'+ver+'">This Resource Version</a> </p>');
 
    s.append('<p></p>'+#13#10);
    if (oMeta.profileList.Count + oMeta.tagList.Count + oMeta.securityList.Count = 0) then
-     s.append('<p>'+GetFhirMessage('NO_TAGS', lang)+'</p>'+#13#10)
+     s.append('<p>'+GetFhirMessage('NO_TAGS', langList)+'</p>'+#13#10)
    else
    begin
      s.append('<table>'+#13#10);
@@ -374,7 +383,7 @@ var
   x : TFhirXHtmlNode;
   bXml : Boolean;
 begin
-  s := TFslStringBuilder.create;
+  s := TFslStringBuilder.Create;
   try
     s.append(
 '<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -390,7 +399,7 @@ FHIR_JS+#13#10+
 ''+#13#10+
 '<body>'+#13#10+
 ''+#13#10+
-Header(FFactory, Session, FBaseURL, lang, FVersion)+
+Header(FFactory, Session, FBaseURL, langList, FVersion)+
 '<h1>'+bundle.title+'</h1>'+#13#10);
 
   ul := bundle.links['self'];
@@ -398,30 +407,30 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
     ul := ul + '?'
   else
     ul := ul + '&';
-  s.append('<p><a href="'+ul+'_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
+  s.append('<p><a href="'+ul+'_format=xml">XML</a> '+GetFhirMessage('OR', langList)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'</p>'+#13#10);
 
     if (bundle.type_ in [btSearchset, btHistory])  then
     begin
-      s.append('<p>'+GetFhirMessage('NAME_LINKS', lang)+':&nbsp;');
+      s.append('<p>'+GetFhirMessage('NAME_LINKS', langList)+':&nbsp;');
       if (bundle.links['first'] <> '') then
-        s.append('<a href="'+bundle.links['first']+'">'+GetFhirMessage('NAME_FIRST', lang)+'</a>&nbsp;')
+        s.append('<a href="'+bundle.links['first']+'">'+GetFhirMessage('NAME_FIRST', langList)+'</a>&nbsp;')
       else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_FIRST', lang)+'</span>&nbsp;');
+        s.append('<span style="color: grey">'+GetFhirMessage('NAME_FIRST', langList)+'</span>&nbsp;');
       if (bundle.links['previous'] <> '') then
-        s.append('<a href="'+bundle.links['previous']+'">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</a>&nbsp;')
+        s.append('<a href="'+bundle.links['previous']+'">'+GetFhirMessage('NAME_PREVIOUS', langList)+'</a>&nbsp;')
       else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</span>&nbsp;');
+        s.append('<span style="color: grey">'+GetFhirMessage('NAME_PREVIOUS', langList)+'</span>&nbsp;');
       if (bundle.links['next'] <> '') then
-        s.append('<a href="'+bundle.links['next']+'">'+GetFhirMessage('NAME_NEXT', lang)+'</a>&nbsp;')
+        s.append('<a href="'+bundle.links['next']+'">'+GetFhirMessage('NAME_NEXT', langList)+'</a>&nbsp;')
       else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_NEXT', lang)+'</span>&nbsp;');
+        s.append('<span style="color: grey">'+GetFhirMessage('NAME_NEXT', langList)+'</span>&nbsp;');
       if (bundle.links['last'] <> '') then
-        s.append('<a href="'+bundle.links['last']+'">'+GetFhirMessage('NAME_LAST', lang)+'</a>&nbsp;')
+        s.append('<a href="'+bundle.links['last']+'">'+GetFhirMessage('NAME_LAST', langList)+'</a>&nbsp;')
       else
-        s.append('<span style="color: grey">'+GetFhirMessage('NAME_LAST', lang)+'</span>&nbsp;');
+        s.append('<span style="color: grey">'+GetFhirMessage('NAME_LAST', langList)+'</span>&nbsp;');
       if bundle.Total > -1 then
-        s.append(' ('+inttostr(bundle.Total)+' '+GetFhirMessage('FOUND', lang)+'). ');
-      s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', lang)+': '+bundle.links['self']+'</span>&nbsp;</p>');
+        s.append(' ('+inttostr(bundle.Total)+' '+GetFhirMessage('FOUND', langList)+'). ');
+      s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', langList)+': '+bundle.links['self']+'</span>&nbsp;</p>');
       if bundle.tags['sql'] <> '' then
         s.append('<p>SQL (for debugging): <span style="color: maroon">'+FormatTextToXML(bundle.tags['sql'], xmlText)+'</span></p>');
     end;
@@ -449,7 +458,7 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
         end
         else
         begin
-          t := GetFhirMessage(e.resource.fhirType, lang)+' "'+r.id+'"';
+          t := GetFhirMessage(e.resource.fhirType, langList)+' "'+r.id+'"';
           if (r.id = '') then
             sl := ''
           else
@@ -457,7 +466,7 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
             sl := AppendForwardSlash(BaseURL)+ e.resource.fhirType+'/'+r.id;
             if (mw.versionId <> '') then
             begin
-              t := t +' '+GetFhirMessage('NAME_VERSION', lang)+' "'+mw.versionId+'"';
+              t := t +' '+GetFhirMessage('NAME_VERSION', langList)+' "'+mw.versionId+'"';
               sl := sl + '/_history/'+mw.versionId;
             end;
           end;
@@ -470,7 +479,7 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
               s.append(' (<a href="'+BaseURL+e.links['audit']+'">Audit</a>)');
             s.append('</p>'+#13#10);
           end;
-          s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(r.fhirType, sl+'/_tags', mw, i+1)+'</p>'+#13#10);
+          s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', langList)+'</a>: '+PresentTags(r.fhirType, sl+'/_tags', mw, i+1)+'</p>'+#13#10);
 
           if e.searchMode <> smUnknown then
           begin
@@ -484,14 +493,14 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
 
           if (sl <> '')  then
           begin
-            s.append('<p><a href="'+sl+'">'+GetFhirMessage('THIS_RESOURCE', lang)+'</a> ');
+            s.append('<p><a href="'+sl+'">'+GetFhirMessage('THIS_RESOURCE', langList)+'</a> ');
             if (r.fhirType <> 'Binary') then
             begin
               s.append(
-                ', <a href="'+sl+'?_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' '+
-              '<a href="'+sl+'?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang));
+                ', <a href="'+sl+'?_format=xml">XML</a> '+GetFhirMessage('OR', langList)+' '+
+              '<a href="'+sl+'?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList));
               s.append(
-                ', '+GetFhirMessage('OR', lang)+' <a href="'+e.id+'/_history">'+GetFhirMessage('NAME_HISTORY', lang)+'</a>.');
+                ', '+GetFhirMessage('OR', langList)+' <a href="'+e.id+'/_history">'+GetFhirMessage('NAME_HISTORY', langList)+'</a>.');
 
               if (e.tags['z-edit-src'] <> '') then
                 s.append(' Edit this as <a href="'+patchToWeb(e.tags['z-edit-src'])+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(e.tags['z-edit-src'])+'?srcformat=json">JSON</a>.');
@@ -528,23 +537,28 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
               if StringStartsWith(bw.ContentType, 'image/') then
                 s.append('<img src="'+r.fhirType+'/'+r.id+'">'+#13#10)
               else
-                s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
+                s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', langList)+')'+#13#10+'</pre>'+#13#10);
             finally
-              bw.Free;
+              bw.free;
             end;
           end
           else
           begin
             bXml := FFactory.version in [fhirVersionRelease2, fhirVersionRelease3];
             if bXMl then
-              xml := FFactory.makeComposer(FWorker.link, ffXml, lang, OutputStylePretty)
+              xml := FFactory.makeComposer(FWorker, ffXml, langList, OutputStylePretty)
             else
-              xml := FFactory.makeComposer(FWorker.link, ffJson, lang, OutputStylePretty);
-            ss := TBytesStream.create();
+              xml := FFactory.makeComposer(FWorker, ffJson, langList, OutputStylePretty);
+            ss := TBytesStream.Create();
             try
-              x := FFactory.getXhtml(r);
-              if (x <> nil) then
-                TFHIRXhtmlParser.Compose(x, s, false, 2, relativeReferenceAdjustment);
+              if (SummaryOption in [soFull, soText]) then
+              begin
+                x := FFactory.getXhtml(r);
+                if (x <> nil) then
+                  TFHIRXhtmlParser.Compose(x, s, false, 2, relativeReferenceAdjustment);
+              end;
+              xml.SummaryOption := SummaryOption;
+              xml.ElementToCompose.assign(ElementToCompose);
               xml.Compose(ss, r);
               if bXml then
                 s.append('<hr/>'+#13#10+'<pre class="xml">'+#13#10+FormatXmlToHTML(TENcoding.UTF8.getString(ss.bytes, 0, ss.size))+#13#10+'</pre>'+#13#10)
@@ -557,13 +571,13 @@ Header(FFactory, Session, FBaseURL, lang, FVersion)+
           end;
         end;
       finally
-        mw.Free;
+        mw.free;
       end;
       inc(i);
     end;
     s.append(
       '<p><br/>'
-      +footer(FFactory, FBaseUrl, lang, logid)
+      +footer(FFactory, FBaseUrl, langList, logid)
     );
     s.WriteToStream(stream);
   finally
@@ -573,7 +587,7 @@ end;
 
 procedure TFHIRXhtmlComposer.ComposeResourceV(xml: TXmlBuilder; oResource: TFhirResourceV);
 begin
-  raise EFHIRException.create('TFHIRXhtmlComposer.ComposeResourceV should never be called');
+  raise EFHIRException.Create('TFHIRXhtmlComposer.ComposeResourceV should never be called');
 end;
 
 (*
@@ -584,7 +598,7 @@ var
   oHead : TFhirXHtmlNode;
   oWork : TFhirXHtmlNode;
 begin
-  oHtml := TFhirXHtmlNode.create;
+  oHtml := TFhirXHtmlNode.Create;
   try
     oHtml.NodeType := fhntDocument;
     oHtml.AddComment('Generated by Server automatically');
@@ -605,7 +619,7 @@ begin
     end;
     TFHIRXhtmlParser.compose(oHtml, xml);
   finally
-    oHtml.Free;
+    oHtml.free;
   end;
 end;
 *)
@@ -615,9 +629,9 @@ begin
   result := '.html';
 end;
 
-class function TFHIRXhtmlComposer.Footer(factory : TFHIRFactory; base : string; const lang : THTTPLanguages; logId : String; tail : boolean = true): string;
+class function TFHIRXhtmlComposer.Footer(factory : TFHIRFactory; base : string; langList : THTTPLanguageList; logId : String; tail : boolean = true): string;
 begin
-  result :=
+  result := 
     '</div>'+#13#10+
     ''+#13#10+
     ''+#13#10+
@@ -631,7 +645,7 @@ begin
     '    <div class="container">  <!-- container -->'+#13#10+
     '      <div class="inner-wrapper">'+#13#10+
     '        <p>'+#13#10+
-    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', lang)+' <a href="'+factory.specUrl+'" style="color: gold">'+factory.versionString+'</a>'+#13#10+
+    '        <a href="'+base+'" style="color: gold">'+GetFhirMessage('SERVER_HOME', langList)+'</a>.&nbsp;|&nbsp;FHIR &copy; HL7.org 2011+. &nbsp;|&nbsp; FHIR '+GetFhirMessage('NAME_VERSION', langList)+' <a href="'+factory.specUrl+'" style="color: gold">'+factory.versionString+'</a>'+#13#10+
     '        | Request-id: '+logId+
     '        </span>'+#13#10+
     '        </p>'+#13#10+
@@ -675,12 +689,12 @@ begin
   result := ffXhtml;
 end;
 
-class function TFHIRXhtmlComposer.Header(factory : TFHIRFactory; Session : TFhirSession; base : String; const lang : THTTPLanguages; version: String): String;
+class function TFHIRXhtmlComposer.Header(factory : TFHIRFactory; Session : TFhirSession; base : String; langList : THTTPLanguageList; version: String): String;
 var
    id : TFHIRCompartmentId;
    f : boolean;
 begin
-  result :=
+  result := 
     '  <div id="segment-navbar" class="segment">  <!-- segment-breadcrumb -->'+#13#10+
     '    <div id="stripe"> </div>'+#13#10+
     '    <div class="container">  <!-- container -->'+#13#10+
@@ -688,15 +702,15 @@ begin
 
 
   result := result +
-    '  <a href="http://www.hl7.org/fhir" style="color: gold" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', lang)+'"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
+    '  <a href="http://www.hl7.org/fhir" style="color: gold" title="'+GetFhirMessage('MSG_HOME_PAGE_TITLE', langList)+'"><img border="0" src="/icon-fhir-16.png" style="vertical-align: text-bottom"/> <b>FHIR</b></a>'#13#10+
     ''#13#10+
     '  &copy; HL7.org'#13#10+
     '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', lang)+'</a> '+
+    '  <a href="/" style="color: gold">'+GetFhirMessage('SERVER_HOME', langList)+'</a> '+
     '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', lang)+' v'+version+#13#10+
+    '  <a href="http://www.healthintersections.com.au" style="color: gold">Health Intersections</a> '+GetFhirMessage('NAME_SERVER', langList)+' v'+version+#13#10+
     '  &nbsp;|&nbsp;'#13#10+
-    '  <a href="'+factory.specUrl+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', lang)+' '+factory.versionString+'</a>'#13#10;
+    '  <a href="'+factory.specUrl+'" style="color: gold">FHIR '+GetFhirMessage('NAME_VERSION', langList)+' '+factory.versionString+'</a>'#13#10;
 
   if (session <> nil)  then
   begin
@@ -753,7 +767,7 @@ end;
 
 class function TFHIRXhtmlComposer.PageLinks: String;
 begin
-  result :=
+  result := 
     '  <meta charset="utf-8"/>'+#13#10+
     '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
     '  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>'+#13#10+
@@ -836,7 +850,32 @@ begin
     result := result +'&nbsp; <a id="tb'+inttostr(c)+'" class="tag" title="Add a tag" href="javascript:addTag(''tb'+inttostr(c)+''', '''+FBaseUrl+''', '''+target+''')">+</a>';
 end;
 
-class function TFHIRXhtmlComposer.ResourceLinks(a : String; const lang : THTTPLanguages; base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
+function TFHIRXhtmlComposer.renderHealthCards(s: TFslStringBuilder; res: TFHIRResourceV) : boolean;
+var
+  p : TFHIRParametersW;
+  pp : TFhirParametersParameterW;
+  att : TFHIRAttachmentW;
+begin
+  result := false;
+  p := FFactory.wrapParams(res.link);
+  try
+    for pp in p.parameterList do
+      if pp.name = 'image' then
+      begin
+        result := true;
+        att := FFactory.wrapAttachment(pp.value.link);
+        try
+          s.Append('<img height="250px" width="250px" src="data:'+att.contentType+';base64,'+EncodeBase64(att.data)+'"/>');
+        finally
+          att.free;
+        end;
+      end;
+  finally
+    p.free;
+  end;
+end;
+
+class function TFHIRXhtmlComposer.ResourceLinks(a : String; langList : THTTPLanguageList; base : String; count : integer; bTable, bPrefixLinks : boolean; canRead : boolean): String;
 var
   bef, aft, pfx, pfxp : String;
 begin
@@ -869,16 +908,16 @@ begin
   if a = 'Binary' then
     result := result + bef + 'n/a' + aft
   else
-    result := result + bef + '<a class="button" href="'+pfxp+a+'">'+GetFhirMessage('NAME_PROFILE', lang)+'</a>' + aft;
+    result := result + bef + '<a class="button" href="'+pfxp+a+'">'+GetFhirMessage('NAME_PROFILE', langList)+'</a>' + aft;
   if canRead then
   begin
-    result := result + bef + '<a class="button" href="'+pfx+'_history">'+GetFhirMessage('NAME_UPDATES', lang)+'</a>' + aft;
+    result := result + bef + '<a class="button" href="'+pfx+'_history">'+GetFhirMessage('NAME_UPDATES', langList)+'</a>' + aft;
     if a = 'Binary' then
       result := result + bef + 'n/a' + aft
     else
-      result := result + bef + '<a class="button" href="'+pfx+'_search">'+GetFhirMessage('NAME_SEARCH', lang)+'</a>' + aft;
+      result := result + bef + '<a class="button" href="'+pfx+'_search">'+GetFhirMessage('NAME_SEARCH', langList)+'</a>' + aft;
     if bTable then
-      result := result + bef + '<a class="tag" href="'+pfx+'_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>' + aft;
+      result := result + bef + '<a class="tag" href="'+pfx+'_tags">'+GetFhirMessage('NAME_TAGS', langList)+'</a>' + aft;
   end
   else if bTable then
     result := result + bef + aft + bef + aft + bef + aft
@@ -893,7 +932,7 @@ end;
 
 procedure TFHIRXhtmlComposer.SetLinks(const Value: TFslStringDictionary);
 begin
-  FLinks.Free;
+  FLinks.free;
   FLinks := Value;
 end;
 
@@ -924,7 +963,7 @@ end.
 //  u : string;
 //begin
 //  a := oFeed.authorUri;
-//  s := TFslStringBuilder.create;
+//  s := TFslStringBuilder.Create;
 //  try
 //    s.append(
 //'<?xml version="1.0" encoding="UTF-8"?>'+#13#10+
@@ -948,30 +987,30 @@ end.
 //    u := u + '?'
 //  else
 //    u := u + '&';
-//  s.append('<p><a href="'+u+'_format=xml"><img src="/rss.png"> XML</a> '+GetFhirMessage('OR', lang)+' <a href="'+u+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang)+'</p>'+#13#10);
+//  s.append('<p><a href="'+u+'_format=xml"><img src="/rss.png"> XML</a> '+GetFhirMessage('OR', langList)+' <a href="'+u+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'</p>'+#13#10);
 //
 //    if (ofeed.isSearch) then
 //    begin
-//      s.append('<p>'+GetFhirMessage('NAME_LINKS', lang)+':&nbsp;');
+//      s.append('<p>'+GetFhirMessage('NAME_LINKS', langList)+':&nbsp;');
 //      if (ofeed.links['first'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('first')+'">'+GetFhirMessage('NAME_FIRST', lang)+'</a>&nbsp;')
+//        s.append('<a href="'+ofeed.links.getrel('first')+'">'+GetFhirMessage('NAME_FIRST', langList)+'</a>&nbsp;')
 //      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_FIRST', lang)+'</span>&nbsp;');
+//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_FIRST', langList)+'</span>&nbsp;');
 //      if (ofeed.links['previous'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('previous')+'">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</a>&nbsp;')
+//        s.append('<a href="'+ofeed.links.getrel('previous')+'">'+GetFhirMessage('NAME_PREVIOUS', langList)+'</a>&nbsp;')
 //      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_PREVIOUS', lang)+'</span>&nbsp;');
+//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_PREVIOUS', langList)+'</span>&nbsp;');
 //      if (ofeed.links['next'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('next')+'">'+GetFhirMessage('NAME_NEXT', lang)+'</a>&nbsp;')
+//        s.append('<a href="'+ofeed.links.getrel('next')+'">'+GetFhirMessage('NAME_NEXT', langList)+'</a>&nbsp;')
 //      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_NEXT', lang)+'</span>&nbsp;');
+//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_NEXT', langList)+'</span>&nbsp;');
 //      if (ofeed.links['last'] <> '') then
-//        s.append('<a href="'+ofeed.links.getrel('last')+'">'+GetFhirMessage('NAME_LAST', lang)+'</a>&nbsp;')
+//        s.append('<a href="'+ofeed.links.getrel('last')+'">'+GetFhirMessage('NAME_LAST', langList)+'</a>&nbsp;')
 //      else
-//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_LAST', lang)+'</span>&nbsp;');
+//        s.append('<span style="color: grey">'+GetFhirMessage('NAME_LAST', langList)+'</span>&nbsp;');
 //      if oFeed.SearchTotal <> 0 then
-//        s.append(' ('+inttostr(oFeed.SearchTotal)+' '+GetFhirMessage('FOUND', lang)+'). ');
-//      s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', lang)+': '+ofeed.links.getrel('self')+'</span>&nbsp;</p>');
+//        s.append(' ('+inttostr(oFeed.SearchTotal)+' '+GetFhirMessage('FOUND', langList)+'). ');
+//      s.append('<span style="color: grey">'+GetFhirMessage('NAME_SEARCH', langList)+': '+ofeed.links.getrel('self')+'</span>&nbsp;</p>');
 //      s.append('<p>SQL: <span style="color: maroon">'+FormatTextToXML(oFeed.sql)+'</span></p>');
 //    end;
 //
@@ -980,19 +1019,19 @@ end.
 //      e := oFeed.entries[i];
 //      s.append('<h2>'+FormatTextToXml(e.title)+'</h2>'+#13#10);
 //      if (e.categories <> nil) and (e.Resource <> nil) then
-//        s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', lang)+'</a>: '+PresentTags(e.resource.ResourceType, e.links.GetRel('self')+'/_tags', e.categories, i+1        )+'</p>'+#13#10);
+//        s.append('<p><a href="'+e.id+'/_tags">'+GetFhirMessage('NAME_TAGS', langList)+'</a>: '+PresentTags(e.resource.ResourceType, e.links.GetRel('self')+'/_tags', e.categories, i+1        )+'</p>'+#13#10);
 //
 //      u := e.Links.rel['self'];
 //      if (u <> '')  then
 //      begin
-//        s.append('<p><a href="'+e.Links.rel['self']+'">'+GetFhirMessage('THIS_RESOURCE', lang)+'</a> ');
+//        s.append('<p><a href="'+e.Links.rel['self']+'">'+GetFhirMessage('THIS_RESOURCE', langList)+'</a> ');
 //      if not (e.resource is TFhirBinary) then
 //        begin
 //        s.append(
-//          ', <a href="'+e.Links.rel['self']+'?_format=xml">XML</a> '+GetFhirMessage('OR', lang)+' '+
-//        '<a href="'+e.Links.rel['self']+'?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', lang));
+//          ', <a href="'+e.Links.rel['self']+'?_format=xml">XML</a> '+GetFhirMessage('OR', langList)+' '+
+//        '<a href="'+e.Links.rel['self']+'?_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList));
 //        s.append(
-//          ', '+GetFhirMessage('OR', lang)+' <a href="'+e.id+'/_history">'+GetFhirMessage('NAME_HISTORY', lang)+'</a>.');
+//          ', '+GetFhirMessage('OR', langList)+' <a href="'+e.id+'/_history">'+GetFhirMessage('NAME_HISTORY', langList)+'</a>.');
 //
 //        if (e.links <> nil) and (e.links.GetRel('z-edit-src') <> '') then
 //          s.append(' Edit this as <a href="'+patchToWeb(e.links.GetRel('z-edit-src'))+'?srcformat=xml">XML</a> or <a href="'+patchToWeb(e.links.GetRel('z-edit-src'))+'?srcformat=json">JSON</a>.');
@@ -1021,7 +1060,7 @@ end.
 //      end;
 //
 //      if e.deleted then
-//        s.append('<p>'+GetFhirMessage('MSG_DELETED', lang)+'</p>')
+//        s.append('<p>'+GetFhirMessage('MSG_DELETED', langList)+'</p>')
 //      else if e.resource = nil then
 //        s.append('<p>(--)</p>')
 //      else if e.resource is TFhirBinary then
@@ -1029,12 +1068,12 @@ end.
 //        if StringStartsWith(TFhirBinary(e.resource).ContentType, 'image/') then
 //          s.append('<img src="'+CODES_String[e.resource.resourcetype]+'/'+e.id+'">'+#13#10)
 //        else
-//          s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', lang)+')'+#13#10+'</pre>'+#13#10);
+//          s.append('<pre class="xml">'+#13#10+'('+GetFhirMessage('NAME_BINARY', langList)+')'+#13#10+'</pre>'+#13#10);
 //      end
 //      else
 //      begin
-//        xml := TFHIRXmlComposer.create(lang);
-//        ss := TBytesStream.create('');
+//        xml := TFHIRXmlComposer.Create(lang);
+//        ss := TBytesStream.Create('');
 //        try
 //          if (e.resource.text <> nil) and (e.resource.text.div_ <> nil) then
 //            ComposeXHtmlNode(s, e.resource.text.div_, 2, relativeReferenceAdjustment);

@@ -101,8 +101,8 @@ end;
 
 destructor TCovidScriptPlugin.Destroy;
 begin
-  FSource.Free;
-  FContext.Free;
+  FSource.free;
+  FContext.free;
   inherited;
 end;
 
@@ -133,7 +133,7 @@ begin
     try
       if bnd.entryList.count = 0 then
         exit('<p><i>No Matching Patients Found</i></p>');
-      liquid := TFHIRLiquidEngine.create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
+      liquid := TFHIRLiquidEngine.Create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
       try
         liquid.Engine.registerExtension(TCovidExtension.Create(FContext.Link, context.Link as TCovidScriptContext));
         doc := liquid.parse(FSource.getSource(rowName), rowName);
@@ -144,13 +144,13 @@ begin
           doc.free;
         end;
       finally
-        liquid.Free;
+        liquid.free;
       end;
     finally
       bnd.free;
     end;
   finally
-    params.Free;
+    params.free;
   end;
   result := result + '</table>'+#13#10;
 end;
@@ -161,9 +161,9 @@ var
   liquid : TFHIRLiquidEngine;
   doc : TFHIRLiquidDocument;
 begin
-  pat := TFHIRPatient.create;
+  pat := TFHIRPatient.Create;
   try
-    liquid := TFHIRLiquidEngine.create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
+    liquid := TFHIRLiquidEngine.Create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
     try
       liquid.Engine.registerExtension(TCovidExtension.Create(FContext.link, context.Link as TCovidScriptContext));
       doc := liquid.parse(FSource.getSource(formName), formName);
@@ -173,7 +173,7 @@ begin
         doc.free;
       end;
     finally
-      liquid.Free;
+      liquid.free;
     end;
   finally
     pat.free;
@@ -186,9 +186,9 @@ var
   liquid : TFHIRLiquidEngine;
   doc : TFHIRLiquidDocument;
 begin
-  obs := TFHIRObservation.create;
+  obs := TFHIRObservation.Create;
   try
-    liquid := TFHIRLiquidEngine.create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
+    liquid := TFHIRLiquidEngine.Create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
     try
       liquid.Engine.registerExtension(TCovidExtension.Create(FContext.Link, context.Link as TCovidScriptContext));
       doc := liquid.parse(FSource.getSource(formName), formName);
@@ -198,7 +198,7 @@ begin
         doc.free;
       end;
     finally
-      liquid.Free;
+      liquid.free;
     end;
   finally
     obs.free;
@@ -210,7 +210,7 @@ var
   liquid : TFHIRLiquidEngine;
   doc : TFHIRLiquidDocument;
 begin
-  liquid := TFHIRLiquidEngine.create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
+  liquid := TFHIRLiquidEngine.Create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
   try
     liquid.Engine.registerExtension(TCovidExtension.Create(FContext.link, context.Link as TCovidScriptContext));
     doc := liquid.parse(FSource.getSource(formName), formName);
@@ -220,7 +220,7 @@ begin
       doc.free;
     end;
   finally
-    liquid.Free;
+    liquid.free;
   end;
 end;
 
@@ -231,7 +231,7 @@ var
   doc : TFHIRLiquidDocument;
   tuple : TFHIRSystemTuple;
 begin
-  liquid := TFHIRLiquidEngine.create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
+  liquid := TFHIRLiquidEngine.Create(TFHIRPathEngine4.Create(FContext.ValidatorContext.link as TFHIRWorkerContext, nil));
   try
     liquid.Engine.registerExtension(TCovidExtension.Create(FContext.Link, context.Link as TCovidScriptContext));
     tuple := TFHIRSystemTuple.Create;
@@ -244,10 +244,10 @@ begin
         doc.free;
       end;
     finally
-      tuple.Free;
+      tuple.free;
     end;
   finally
-    liquid.Free;
+    liquid.free;
   end;
 end;
 
@@ -257,7 +257,7 @@ var
   t, n : String;
   context : TCovidScriptContext;
 begin
-   context := TCovidScriptContext.create(client.link as TFhirClient4, pm['patient']);
+   context := TCovidScriptContext.Create(client.link as TFhirClient4, pm['patient']);
    try
      b := s.IndexOf('[%covid.');
      while b > 0 do
@@ -375,7 +375,7 @@ begin
       on e : Exception do
       begin
         variables.Add('form', TFHIRSystemTuple.fromParams(pm));
-        variables.Add('form-error', TFHIRSystemString.create(e.message));
+        variables.Add('form-error', TFHIRSystemString.Create(e.message));
         ProcessFile('covid-patient.html', request, pm, response, session, true, variables);
         response.ResponseNo := 500;
         response.ResponseText := 'Error';
@@ -390,14 +390,14 @@ end;
 
 constructor TCovidScriptContext.Create(client: TFhirClient4; id: String);
 begin
-  inherited create;
+  inherited Create;
   FClient := client;
   FId := id;
 end;
 
 destructor TCovidScriptContext.Destroy;
 begin
-  FClient.Free;
+  FClient.free;
   FPatient.free;
   inherited;
 end;
@@ -429,7 +429,7 @@ function TCovidExtension.evaluateToString(context: TFHIRPathExecutionContext; en
 var
   c, n1 : TFHIRSelectionList;
 begin
-  c := TFHIRSelectionList.create(focus.link);
+  c := TFHIRSelectionList.Create(focus.link);
   try
     n1 := executeV(engine, context, c, param, true);
     try
@@ -444,12 +444,12 @@ end;
 
 function TCovidExtension.execute(context: TFHIRPathExecutionContext; focus: TFHIRObject; name: String; params: TFslList<TFHIRPathExpressionNodeV>; engine: TFHIRPathEngineV): TFHIRSelectionList;
 begin
-  result := TFHIRSelectionList.create;
+  result := TFHIRSelectionList.Create;
   try
     if (focus is TFHIRPathServerObject) then
     begin
       if name = 'htmlSelect' then
-        result.add(TFHIRSelection.create(FContext.Factory.makeString(funcHtmlSelect(context, engine, focus, params))));
+        result.add(TFHIRSelection.Create(FContext.Factory.makeString(funcHtmlSelect(context, engine, focus, params))));
     end;
     result.link;
   finally
@@ -473,7 +473,7 @@ begin
     with p.parameterList.Append do
     begin
       name := 'url';
-      value := TFHIRString.create(valueSet);
+      value := TFHIRString.Create(valueSet);
     end;
     vs := FCovid.FClient.operation(frtValueSet, 'expand', p) as TFhirValueSet;
     try
@@ -502,13 +502,13 @@ begin
         s.Append('</select>'#13#10);
         result := s.ToString;
       finally
-        s.Free;
+        s.free;
       end;
     finally
-      vs.Free;
+      vs.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -528,7 +528,7 @@ end;
 function TCovidExtension.resolveConstant(context: TFHIRPathExecutionContext; s: String; var obj: TFHIRObject): boolean;
 begin
   if s = '%covid' then
-    raise Exception.Create('No Covid Specific object yet')
+    raise EFslException.Create('No Covid Specific object yet')
   else
     result := inherited resolveConstant(context, s, obj);
 end;

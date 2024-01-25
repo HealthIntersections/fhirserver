@@ -75,6 +75,7 @@ interface
 {$ENDIF}
 uses
   Classes,
+  Contnrs,
   sockets,
   baseunix,
   IdStack,
@@ -82,11 +83,43 @@ uses
   IdGlobal,
   IdStackBSDBase;
 
+
 {$IFDEF FREEBSD}
   {$DEFINE SOCK_HAS_SINLEN}
 {$ENDIF}
 {$IFDEF DARWIN}
   {$DEFINE SOCK_HAS_SINLEN}
+{$ENDIF}
+
+
+{$IFDEF CPUAARCH64}
+  {$IFDEF DARWIN}
+    {$DEFINE DNSCACHE}
+    // On Mac M1, it seems as though DNS resolution is not cached by the system.
+    // so we're going to cache it here.
+  {$ENDIF}
+{$ENDIF}
+
+{$IFDEF DNSCACHE}
+const
+  DNS_CACHE_MINUTES_EXPIRY = 10; // minutes
+
+type
+  //
+  { TIdStackNameResolution }
+
+  TIdStackNameResolution = class (TObject)
+  private
+    FWhen : TDateTime;
+    FHost : String;
+    FIP : String;
+  public
+    constructor Create(AWhen : TDateTime; AHostName : String; AIP : String);
+
+    property When : TDateTime read FWhen write FWhen;
+    property Host : String read FHost write FHost;
+    property IP : String read FIP write FIP;
+  end;
 {$ENDIF}
 
 type
@@ -119,6 +152,13 @@ type
   end;
 
   TIdStackUnix = class(TIdStackBSDBase)
+  {$IFDEF DNSCACHE}
+  private
+    FHostNames : TObjectList;
+    FLock : TIdCriticalSection;
+    function GetCachedHostAddress(AHostName : string; var VIP : String) : boolean;
+    procedure AddHostAddressToCache(AHostName, AIP : String);
+  {$ENDIF}
   protected
     procedure WriteChecksumIPv6(s: TIdStackSocketHandle; var VBuffer: TIdBytes;
       const AOffset: Integer; const AIP: String; const APort: TIdPort);
@@ -271,16 +311,91 @@ begin
   {$ENDIF}
   VSock.sin6_family := PF_INET6;
 end;
-//
+
+{$IFDEF DNSCACHE}
+
+{ TIdStackNameResolution }
+
+constructor TIdStackNameResolution.Create(AWhen: TDateTime; AHostName: String; AIP: String);
+begin
+  Inherited Create;
+  FWhen := AWhen;
+  FHost := AHostName;
+  FIP := AIP;
+end;
+
+{$ENDIF}
+
+{ TIdStackUnix }
+
 constructor TIdStackUnix.Create;
 begin
   inherited Create;
+  {$IFDEF DNSCACHE}
+  FHostNames := TObjectList.create;
+  FHostNames.OwnsObjects := true;
+  FLock := TIdCriticalSection.Create;
+  {$ENDIF}
 end;
 
 destructor TIdStackUnix.Destroy;
 begin
+  {$IFDEF DNSCACHE}
+  FreeAndNil(FHostNames);
+  FreeAndNil(FLock);
+  {$ENDIF}
   inherited Destroy;
 end;
+
+{$IFDEF DNSCACHE}
+function TIdStackUnix.GetCachedHostAddress(AHostName : string; var VIP : String) : boolean;
+var
+  oldAge : TDateTime;
+  i : integer;
+  t : TIdStackNameResolution;
+begin
+  oldAge := now - (DNS_CACHE_MINUTES_EXPIRY * 0.000694444444444);
+  result := false;
+  VIP := '';
+  FLock.Enter;
+  try
+    for i := FHostNames.count - 1 downto 0 do
+    begin
+      t := FHostNames[i] as TIdStackNameResolution;
+      if (t.when < oldAge) then
+        FHostNames.delete(i)
+      else if SameText(t.Host, AHostName) then
+      begin
+        VIP := t.IP;
+        exit(true);
+      end;
+    end;
+  finally
+    FLock.Leave;
+  end;
+end;
+
+procedure TIdStackUnix.AddHostAddressToCache(AHostName, AIP : String);
+var
+  t : TIdStackNameResolution;
+begin
+  FLock.Enter;
+  try
+    for t in FHostNames do
+    begin
+      if SameText(t.Host, AHostName) then
+      begin
+        t.ip := AIP;
+        t.when := now;
+        exit;
+      end;
+    end;
+    FHostNames.add(TIdStackNameResolution.create(now, AHostName, AIP));
+  finally
+    FLock.Leave;
+  end;
+end;
+{$ENDIF}
 
 function TIdStackUnix.GetLastError : Integer;
 begin
@@ -418,6 +533,10 @@ var
   LH4 : THostEntry;
   LRetVal : Integer;
 begin
+  {$IFDEF DNSCACHE}
+  if not GetCachedHostAddress(AHostName, result) then
+  begin
+  {$ENDIF}
   case AIPVersion of
     Id_IPv4 :
     begin
@@ -443,6 +562,10 @@ begin
       Result := NetAddrToStr6(LI6[0]);
     end;
   end;
+  {$IFDEF DNSCACHE}
+  AddHostAddressToCache(AHostName, result);
+  end;
+  {$ENDIF}
 end;
 
 function TIdStackUnix.ReadHostName: string;
@@ -1228,6 +1351,7 @@ var
   LIndex, i: Integer;
 begin
   Result := 0;
+  // TODO: is this missing Lock/Unlock calls?
   LIndex := 0;
   //? use FMaxHandle div x
   for i:= 0 to __FD_SETSIZE - 1 do begin

@@ -28,24 +28,29 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
-{$IFDEF FPC}{$MODE DELPHI}{$ENDIF}
+{$i fhir.inc}
 
 interface
 
 uses
   SysUtils, Classes,
+  IdHash, IdHashSHA,
   fsl_testing,
-  fsl_base,
-  ftx_sct_services, ftx_sct_expressions;
+  fsl_base, fsl_stream, fsl_utilities,
+  ftx_service, ftx_sct_services, ftx_sct_expressions;
 
 type
+  TSnomedTestContext = class (TFslObject)
+  private
+    c : String;
+  end;
+
   TSnomedTests = Class (TFslTestCase)
   private
     FServices : TSnomedServices;
 
-    Fc : String; // (for pm)
     procedure p(c : String); // parse
-    procedure pm; // parse
+    procedure pm(ctxt : TObject); // parse
     procedure e(e1, e2 : String; yes : boolean); // test equivalence
     procedure n(s, d : String); // normalise from s to d
     procedure s(p, c : String; yes : boolean); // test subsumption
@@ -61,23 +66,49 @@ type
     Procedure Subsumes;
   end;
 
-
 procedure registerTests;
 
 
 implementation
 
+function hashOf(fn : String) : String;
+var
+  hash : TIdHashSHA256;
+  f : TFileStream;
+begin
+  hash := TIdHashSHA256.Create;
+  try
+    f := TFileStream.create(fn, fmOpenRead + fmShareDenyWrite);
+    try
+      result := hash.HashStreamAsHex(f);
+    finally
+      f.free;
+    end;
+  finally
+    hash.free;
+  end;
+end;
+
 { TSnomedTests }
 
 procedure TSnomedTests.Setup;
+var
+  s, h : String;
 begin
-  FServices := TSnomedServices.Create;
-  FServices.Load(TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']), true);
+  FServices := TSnomedServices.Create(nil);
+  if GSnomedDataFile <> '' then
+    s := GSnomedDataFile
+  else
+    s := TestSettings.serverTestFile(['testcases', 'snomed', 'test.cache']);
+  h := hashOf(s);
+  assertTrue(h = 'AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816', 'Hash of SCT test file is wrong: AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816/'+h+', file size is  '+
+    DescribeBytes(FileSize(s)));
+  FServices.Load(s, true)
 end;
 
 procedure TSnomedTests.TearDown;
 begin
-  FServices.Free;
+  FServices.free;
 end;
 
 procedure TSnomedTests.Base;
@@ -89,7 +120,8 @@ procedure TSnomedTests.Parse;
 begin
   p('116680003');
   p('128045006:{363698007=56459004}');
-  p('128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|foot structure|}');
+  p('128045006|Cellulitis (disorder)|:{363698007|finding site|=56459004|foot structure|}');
+
   p('31978002: 272741003=7771000');
   p('31978002|fracture of tibia|: 272741003|laterality|=7771000|left|');
   p('64572001|disease|:{116676008|associated morphology|=72704001|fracture|,363698007|finding site|=(12611008|bone structure of  tibia|:272741003|laterality|=7771000|left|)}');
@@ -125,33 +157,40 @@ begin
   assertTrue(true);
 end;
 
-procedure TSnomedTests.pm;
+procedure TSnomedTests.pm(ctxt : TObject);
 begin
-  FServices.parseExpression(Fc).free;
+  FServices.parseExpression((ctxt as TSnomedTestContext).c).free;
 end;
 
 procedure TSnomedTests.ParseErrors;
+var
+  c : TSnomedTestContext;
 begin
-  Fc := '1166800031';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '1280450061:{363698007=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{363698007=564590041}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:3636980071=56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071,56459004}';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{3636980071=56459004';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006:{363698007=56459004},';
-  assertWillRaise(pm, ETerminologyError, '');
-  Fc := '128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}';
-  assertWillRaise(pm, ETerminologyError, '');
+  c := TSnomedTestContext.Create;
+  try
+    c.c := '1166800031';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '1280450061:{363698007=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{363698007=564590041}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:3636980071=56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071,56459004}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{3636980071=56459004';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006:{363698007=56459004},';
+    assertWillRaise(pm, c, ETerminologyError, '');
+    c.c := '128045006|cellulitis (disorder)|:{363698007|finding site|=56459004|hand structure|}';
+    assertWillRaise(pm, c, ETerminologyError, '');
+  finally
+
+  end;
 end;
 
 procedure TSnomedTests.Subsumes;
@@ -226,7 +265,7 @@ begin
       ce.free;
     end;
   finally
-    pe.Free;
+    pe.free;
   end;
 end;
 
@@ -246,7 +285,7 @@ begin
       ex2.free;
     end;
   finally
-    ex1.Free;
+    ex1.free;
   end;
 end;
 
@@ -274,7 +313,7 @@ begin
       ex2.free;
     end;
   finally
-    ex1.Free;
+    ex1.free;
   end;
 end;
 

@@ -9,9 +9,14 @@
       <PathDelim Value="\"/>
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
-        <OtherUnitFiles Value="..\library\fui"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <OtherUnitFiles Value="..\library\fui;..\dependencies\mediafoundation"/>
+        <UnitOutputDirectory Value="lib\fui\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>
@@ -42,8 +47,19 @@
         <Filename Value="..\library\fui\fui_lcl_utilities.pas"/>
         <UnitName Value="fui_lcl_utilities"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_fake_console.pas"/>
+        <UnitName Value="fui_fake_console"/>
+      </Item>
+      <Item>
+        <Filename Value="..\library\fui\fui_fake_console_settings.pas"/>
+        <UnitName Value="fui_fake_console_settings"/>
+      </Item>
     </Files>
     <RequiredPkgs>
+      <Item>
+        <PackageName Value="laz.virtualtreeview_package"/>
+      </Item>
       <Item>
         <PackageName Value="fhir"/>
       </Item>

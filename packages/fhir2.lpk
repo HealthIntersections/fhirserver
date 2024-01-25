@@ -10,8 +10,13 @@
       <SearchPaths>
         <IncludeFiles Value="..\library"/>
         <OtherUnitFiles Value="..\library\fhir2"/>
-        <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+        <UnitOutputDirectory Value="lib\fhir2\$(TargetCPU)-$(TargetOS)"/>
       </SearchPaths>
+      <Other>
+        <CompilerMessages>
+          <IgnoredMessages idx6058="True"/>
+        </CompilerMessages>
+      </Other>
     </CompilerOptions>
     <Files>
       <Item>
@@ -51,10 +56,6 @@
         <UnitName Value="fhir2_indexinfo"/>
       </Item>
       <Item>
-        <Filename Value="..\library\fhir2\fhir2_javascript.pas"/>
-        <UnitName Value="fhir2_javascript"/>
-      </Item>
-      <Item>
         <Filename Value="..\library\fhir2\fhir2_json.pas"/>
         <UnitName Value="fhir2_json"/>
       </Item>
@@ -72,7 +73,7 @@
       </Item>
       <Item>
         <Filename Value="..\library\fhir2\fhir2_parserbase.pas"/>
-        <UnitName Value="fhir2_parserBase"/>
+        <UnitName Value="fhir2_parserbase"/>
       </Item>
       <Item>
         <Filename Value="..\library\fhir2\fhir2_patch.pas"/>

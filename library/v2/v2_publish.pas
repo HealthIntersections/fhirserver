@@ -46,7 +46,7 @@ Type
       FTitleStyle : TWPStyle;
       procedure SetTitleStyle(const Value: TWPStyle);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Constructor Create; Override;
       Destructor Destroy; Override;
@@ -113,7 +113,7 @@ Type
     procedure SetDict(const Value: THL7V2Dictionary);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; override;
 
@@ -187,13 +187,13 @@ end;
 
 destructor THL7V2DocumentPublisher.Destroy;
 begin
-  FTitleStyle.Free;
+  FTitleStyle.free;
   inherited;
 end;
 
 procedure THL7V2DocumentPublisher.SetTitleStyle(const Value: TWPStyle);
 begin
-  FTitleStyle.Free;
+  FTitleStyle.free;
   FTitleStyle := Value;
 end;
 
@@ -270,11 +270,11 @@ begin
   EndParagraph;
 end;
 
-function THL7V2DocumentPublisher.sizeInBytesV : cardinal;
+function THL7V2DocumentPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTitle.length * sizeof(char)) + 12);
-  inc(result, FTitleStyle.sizeInBytes);
+  inc(result, FTitleStyle.sizeInBytes(magic));
 end;
 
 { THL7V2HTMLPublisher }
@@ -309,7 +309,7 @@ Begin
     ProcessMap(sPath, oMap);
     Result := PublishDict(oMap, sPrefix, sTitle);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -331,13 +331,13 @@ Begin
     Else
       PublishDictHomeInternal(sPrefix, oBuilder);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
 destructor THL7V2HTMLPublisher.Destroy;
 begin
-  FDict.Free;
+  FDict.free;
   inherited;
 end;
 
@@ -350,7 +350,7 @@ Begin
     TWPFormatConvertor.Convert(oDocument, oStream, wpfHTML, [foNoHtmlBody]);
     Result := oStream.Data;
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -372,7 +372,7 @@ Begin
     sTitle := oBuilder.Title;
     Result := DocToHTML(oBuilder.Document, sTitle);
   Finally
-    oBuilder.Free;
+    oBuilder.free;
   End;
 End;
 
@@ -1194,7 +1194,7 @@ End;
 
 procedure THL7V2HTMLPublisher.SetDict(const Value: THL7V2Dictionary);
 begin
-  FDict.Free;
+  FDict.free;
   FDict := Value;
 end;
 
@@ -1221,10 +1221,10 @@ Begin
   End;
 End;
 
-function THL7V2HTMLPublisher.sizeInBytesV : cardinal;
+function THL7V2HTMLPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDict.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDict.sizeInBytes(magic));
 end;
 
 end.

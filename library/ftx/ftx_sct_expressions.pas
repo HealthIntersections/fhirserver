@@ -35,7 +35,9 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults,
-  fsl_base;
+  fsl_base,
+  fhir_objects,
+  ftx_service;
 
 const
   MAX_TERM_LENGTH = 1024;
@@ -51,7 +53,7 @@ Type
     Fstop: integer;
     Fstart: integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Function Link : TSnomedExpressionBase; overload;
     property start : integer read Fstart write Fstart;
@@ -66,7 +68,7 @@ Type
     FLiteral: String;
     FDecimal: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; overload; override;
     constructor Create(reference : cardinal); overload;
@@ -96,7 +98,7 @@ Type
     function GetRefinementGroups: TFslList<TSnomedRefinementGroup>;
     function GetRefinements: TSnomedRefinementList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -127,7 +129,7 @@ Type
     procedure SetName(const Value: TSnomedConcept);
     procedure SetValue(const Value: TSnomedExpression);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -145,7 +147,7 @@ Type
   private
     Frefinements: TSnomedRefinementList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -196,7 +198,7 @@ Type
     procedure refinements(expr : TSnomedExpression);
     function expression : TSnomedExpression;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function parse(source : String) : TSnomedExpression;
   end;
@@ -210,9 +212,9 @@ begin
   result := TSnomedExpressionBase(inherited Link);
 end;
 
-function TSnomedExpressionBase.sizeInBytesV : cardinal;
+function TSnomedExpressionBase.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TSnomedConcept }
@@ -224,7 +226,7 @@ begin
     result.copyFrom(self);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -292,9 +294,9 @@ begin
     result := false;
 end;
 
-function TSnomedConcept.sizeInBytesV : cardinal;
+function TSnomedConcept.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (Fcode.length * sizeof(char)) + 12);
   inc(result, (Fdescription.length * sizeof(char)) + 12);
   inc(result, (FLiteral.length * sizeof(char)) + 12);
@@ -340,7 +342,7 @@ begin
 
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -382,15 +384,15 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
 destructor TSnomedExpression.Destroy;
 begin
-  FrefinementGroups.Free;
-  Frefinements.Free;
-  Fconcepts.Free;
+  FrefinementGroups.free;
+  Frefinements.free;
+  Fconcepts.free;
   inherited;
 end;
 
@@ -516,12 +518,12 @@ begin
   end;
 end;
 
-function TSnomedExpression.sizeInBytesV : cardinal;
+function TSnomedExpression.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FrefinementGroups.sizeInBytes);
-  inc(result, Frefinements.sizeInBytes);
-  inc(result, Fconcepts.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FrefinementGroups.sizeInBytes(magic));
+  inc(result, Frefinements.sizeInBytes(magic));
+  inc(result, Fconcepts.sizeInBytes(magic));
 end;
 
 { TSnomedRefinement }
@@ -555,8 +557,8 @@ end;
 
 destructor TSnomedRefinement.Destroy;
 begin
-  Fname.Free;
-  Fvalue.Free;
+  Fname.free;
+  Fvalue.free;
   inherited;
 end;
 
@@ -576,21 +578,21 @@ end;
 
 procedure TSnomedRefinement.SetName(const Value: TSnomedConcept);
 begin
-  Fname.Free;
+  Fname.free;
   Fname := value;
 end;
 
 procedure TSnomedRefinement.SetValue(const Value: TSnomedExpression);
 begin
-  Fvalue.Free;
+  Fvalue.free;
   Fvalue := value;
 end;
 
-function TSnomedRefinement.sizeInBytesV : cardinal;
+function TSnomedRefinement.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fname.sizeInBytes);
-  inc(result, Fvalue.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fname.sizeInBytes(magic));
+  inc(result, Fvalue.sizeInBytes(magic));
 end;
 
 { TSnomedRefinementGroup }
@@ -605,7 +607,7 @@ begin
       result.refinements.Add(refinement.canonical);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -636,13 +638,13 @@ begin
     end;
     result := b.ToString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
 destructor TSnomedRefinementGroup.Destroy;
 begin
-  Frefinements.Free;
+  Frefinements.free;
   inherited;
 end;
 
@@ -678,10 +680,10 @@ begin
   result := true;
 end;
 
-function TSnomedRefinementGroup.sizeInBytesV : cardinal;
+function TSnomedRefinementGroup.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Frefinements.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Frefinements.sizeInBytes(magic));
 end;
 
 { TSnomedConceptSorter }
@@ -731,7 +733,7 @@ begin
     result.stop := cursor;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -807,7 +809,7 @@ begin
     result.stop := cursor;
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -822,7 +824,7 @@ begin
   else
   begin
     result := expression;
-//    result := TSnomedExpression.create;
+//    result := TSnomedExpression.Create;
 //    try
 //      result.start := cursor;
 //      result.concepts.Add(concept);
@@ -997,7 +999,7 @@ end;
 procedure TSnomedExpressionParser.rule(test : boolean; message : String);
 begin
   if not test then
-    raise ETerminologyError.Create(message+' at character '+inttostr(cursor));
+    raise ETerminologyError.Create(message+' at character '+inttostr(cursor), itInvalid);
 end;
 
 function TSnomedExpressionParser.stringConstant: String;
@@ -1017,9 +1019,9 @@ begin
 end;
 
 
-function TSnomedExpressionParser.sizeInBytesV : cardinal;
+function TSnomedExpressionParser.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (source.length * sizeof(char)) + 12);
 end;
 

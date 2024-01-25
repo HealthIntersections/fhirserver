@@ -23,10 +23,11 @@ import org.hl7.fhir.r5.model.StructureDefinition.StructureDefinitionKind;
 import org.hl7.fhir.r5.model.ValueSet;
 import org.hl7.fhir.r5.model.ValueSet.ConceptSetComponent;
 import org.hl7.fhir.utilities.Utilities;
+import org.hl7.fhir.utilities.VersionUtilities;
 
 
 public class BaseGenerator {
-  private static final boolean MARKERS = true;
+  private static final boolean MARKERS = false;
 
   protected Definitions definitions;
   protected Configuration config;
@@ -63,6 +64,7 @@ public class BaseGenerator {
     private boolean oneEntryPerLine;
     private String itemType;
     private String define;
+    private boolean quoteStrings = true;
     
     public PascalArrayBuilder(String type) {
       super();
@@ -145,11 +147,11 @@ public class BaseGenerator {
           if (e.define != null) {
             b.append("{$IFDEF "+e.define+"} ");
           }
-          if ("String".equals(itemType)) {
+          if (quoteStrings && "String".equals(itemType)) {
             b.append("'");
           }
           b.append(e.constant);
-          if ("String".equals(itemType)) {
+          if (quoteStrings && "String".equals(itemType)) {
             b.append("'");
           }
           b.append(i == entries.size() ? ");" : ","); 
@@ -181,13 +183,13 @@ public class BaseGenerator {
             b.append("{$IFDEF "+e.define+"} ");
             l = l + 10 + e.define.length();
           }
-          if ("String".equals(itemType)) {
+          if (quoteStrings && "String".equals(itemType)) {
             b.append("'");
             l++;
           }
           b.append(e.constant);
           l = l + e.constant.length();
-          if ("String".equals(itemType)) {
+          if (quoteStrings && "String".equals(itemType)) {
             b.append("'");
             l++;
           }
@@ -210,6 +212,11 @@ public class BaseGenerator {
       }
       return b.toString();
     }
+    
+    public void setQuoteStrings(boolean quoteStrings) {
+      this.quoteStrings  = quoteStrings;      
+    }
+    
   }
   
   public BaseGenerator(Definitions definitions, Configuration config, String version, Date genDate) throws UnsupportedEncodingException {
@@ -642,7 +649,7 @@ public class BaseGenerator {
   }
 
   protected ElementDefinition getInheritedElement(Analysis analysis, TypeInfo ti, ElementDefinition c) {
-    if (analysis.getAncestor().hasExtension("http://hl7.org/fhir/StructureDefinition/structuredefinition-interface")
+    if (analysis.getAncestor() != null && analysis.getAncestor().hasExtension("http://hl7.org/fhir/StructureDefinition/structuredefinition-interface")
         && ti == analysis.getRootType()) {
       String name = tail(c.getPath());
       StructureDefinition sd = analysis.getAncestor();
@@ -670,5 +677,10 @@ public class BaseGenerator {
     return path.contains(".") ? path.substring(path.lastIndexOf(".")+1) : "";
   }
 
+
+
+  protected String N() {
+    return VersionUtilities.isR4BVer(version) ? "4b" : "5";
+  }
 
 }

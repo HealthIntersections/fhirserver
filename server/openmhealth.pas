@@ -85,16 +85,16 @@ begin
   json := TJsonObject.Create;
   try
     if response.Resource = nil then
-      raise EFHIRException.create('Cannot represent a resource of (nil) as an OpenMHealth data point')
+      raise EFHIRException.Create('Cannot represent a resource of (nil) as an OpenMHealth data point')
     else if response.Resource.fhirType = 'Observation' then
       writeObservation(FFactory.wrapObservation(response.Resource.link), json)
     else if response.Resource.fhirType = 'Bundle' then
       writeBundle(FFactory.wrapBundle(response.Resource.link), json)
     else
-      raise EFHIRException.create('Cannot represent a resource of type '+response.Resource.fhirType+' as an OpenMHealth data point');
+      raise EFHIRException.Create('Cannot represent a resource of type '+response.Resource.fhirType+' as an OpenMHealth data point');
     TJSONWriter.writeObject(stream, json, true);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -175,9 +175,9 @@ var
   p : String;
 begin
   if req.Parameters['schema_namespace'] <> 'omh' then
-    raise EFHIRException.create('Unknown schema namespace');
+    raise EFHIRException.Create('Unknown schema namespace');
   if req.Parameters['schema_version'] <> '1.0' then
-    raise EFHIRException.create('Unknown schema version for OMH 1.0');
+    raise EFHIRException.Create('Unknown schema version for OMH 1.0');
   p := '_profile=http://www.openmhealth.org/schemas/fhir/'+req.Parameters['schema_namespace']+'/'+req.Parameters['schema_version']+'/'+req.Parameters['schema_name'];
   if req.Parameters.has('created_on_or_after') then
     p := p + '&date=ge'+req.Parameters['created_on_or_after'];
@@ -209,7 +209,7 @@ begin
   try
     result := readDataPoint(json);
   finally
-    json.Free;
+    json.free;
   end;
 end;
 
@@ -233,7 +233,7 @@ begin
     result.status := obssFinal; // final is reasonable for most mobilde data
 
     if (not json.has('header')) then // it must, but check anyway
-      raise EFHIRException.create('Cannot process without header');
+      raise EFHIRException.Create('Cannot process without header');
 
     schema := readHeader(json.obj['header'], result);
     if (schema = 'physical-activity') then
@@ -241,10 +241,10 @@ begin
     else if (schema = 'blood-glucose') then
       readBloodGlucose(json.obj['body'], result)
     else
-      raise EFHIRException.create('Unsupported schema type '+schema);
+      raise EFHIRException.Create('Unsupported schema type '+schema);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 
 end;
@@ -268,7 +268,7 @@ begin
   try
     meta.addProfile('http://www.openmhealth.org/schemas/fhir/'+obj['namespace']+'/'+obj['version']+'/'+obj['name']);
   finally
-    meta.Free;
+    meta.free;
   end;
 
   obj := hdr.obj['acquisition_provenance'];
@@ -291,7 +291,7 @@ begin
       try
         cc.text := obj['modality'];
       finally
-        cc.Free;
+        cc.free;
       end;
     end;
   end;
@@ -327,13 +327,13 @@ begin
     obs.value := readQuantity(body.obj['distance']);
 
   if body.has('kcal_burned') then
-    obs.addComp('http://loinc.org', '41981-2').value := readQuantity(body.obj['kcal_burned']);
+    obs.addComp(URI_LOINC, '41981-2').value := readQuantity(body.obj['kcal_burned']);
 
   if body.has('reported_activity_intensity') then
     obs.addComp('http://openmhealth.org/codes', 'reported_activity_intensity').value := FFactory.makeString(body['reported_activity_intensity']);
 
   if body.has('met_value') then
-    obs.addComp('http://snomed.info/sct', '698834005').value := readQuantity(body.obj['met_value']);
+    obs.addComp(URI_SNOMED, '698834005').value := readQuantity(body.obj['met_value']);
 end;
 
 function TOpenMHealthAdaptor.readQuantity(obj: TJsonObject): TFHIRQuantityW;
@@ -341,12 +341,12 @@ begin
   result := FFactory.wrapQuantity(FFactory.makeByName('Quantity'));
   try
     result.value := obj['value'];
-    result.systemUri := 'http://unitsofmeasure.org';
+    result.systemUri := URI_UCUM;
     result.units := obj['unit'];
     result.code := convertUCUMUnit(result.units);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -374,7 +374,7 @@ begin
       try
         result.end_ := result.start.add(qty.asDuration);
       finally
-        qty.Free;
+        qty.free;
       end;
       result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('start.duration'));
     end
@@ -386,7 +386,7 @@ begin
       try
         result.start := result.start.subtract(qty.asDuration);
       finally
-        qty.Free;
+        qty.free;
       end;
       result.addExtension('http://healthintersections.com.au/fhir/StructureDefinition/period-form', FFactory.makeCode('end.duration'));
     end
@@ -502,9 +502,9 @@ begin
     else if (schema = 'blood-glucose') then
       writeBloodGlucose(obs, json.forceObj['body'])
     else
-      raise EFHIRException.create('Unsupported schema type '+schema);
+      raise EFHIRException.Create('Unsupported schema type '+schema);
   finally
-    obs.Free;
+    obs.free;
   end;
 end;
 
@@ -515,9 +515,9 @@ var
 begin
   try
     if (period.start.null) then
-      raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
+      raise EFHIRException.Create('Can''t convert a period to OpenMHealth when periods are incomplete');
     if (period.end_.null) then
-      raise EFHIRException.create('Can''t convert a period to OpenMHealth when periods are incomplete');
+      raise EFHIRException.Create('Can''t convert a period to OpenMHealth when periods are incomplete');
 
     result := TJsonObject.Create;
     try
@@ -529,7 +529,7 @@ begin
         try
           result.obj['duration'] := writeQuantity(qty);
         finally
-          qty.Free;
+          qty.free;
         end;
       end
       else if (form = 'end.duration') then
@@ -539,7 +539,7 @@ begin
         try
           result.obj['duration'] := writeQuantity(qty);
         finally
-          qty.Free;
+          qty.free;
         end;
       end
       else if (form = 'day.morning') then
@@ -569,10 +569,10 @@ begin
       end;
       result.Link;
     finally
-      result.Free;
+      result.free;
     end;
   finally
-    period.Free;
+    period.free;
   end;
 end;
 
@@ -593,12 +593,12 @@ begin
   if obs.value.fhirType = 'Quantity' then
     body.obj['distance'] := writeQuantity(obs.valueW as TFhirQuantityW);
 
-  if obs.getComponent('http://loinc.org', '41981-2', comp) then
+  if obs.getComponent(URI_LOINC, '41981-2', comp) then
   begin
     try
       body.obj['kcal_burned'] := writeQuantity(comp.valueW as TFhirQuantityW);
     finally
-      comp.Free;
+      comp.free;
     end;
   end;
 
@@ -607,16 +607,16 @@ begin
     try
       body['reported_activity_intensity'] := comp.valueString;
     finally
-      comp.Free;
+      comp.free;
     end;
   end;
 
-  if obs.getComponent('http://snomed.info/sct', '698834005', comp) then
+  if obs.getComponent(URI_SNOMED, '698834005', comp) then
   begin
     try
       body.obj['met_value'] := writeQuantity(comp.value as TFhirQuantityW);
     finally
-      comp.Free;
+      comp.free;
     end;
   end;
 end;
@@ -629,7 +629,7 @@ begin
     result['unit'] := unconvertUCUMUnit(qty.code);
     result.Link;
   finally
-    result.Free;
+    result.free;
   end;
 end;
 
@@ -653,7 +653,7 @@ begin
       if u.StartsWith('http://www.openmhealth.org/schemas/fhir/') then
         s := u;
     if (s = '') then // todo: try doing it anyway
-      raise EFHIRException.create('Cannot represent an observation with no OpenMHealth profile as an OpenMHealth data point');
+      raise EFHIRException.Create('Cannot represent an observation with no OpenMHealth profile as an OpenMHealth data point');
   finally
     meta.free;
   end;
@@ -678,7 +678,7 @@ begin
       try
         obj['modality'] := c.text;
       finally
-        c.Free;
+        c.free;
       end;
     end;
   end;
@@ -700,9 +700,9 @@ begin
   obs.value := qty;
 
   if (qty.code = 'mg/dL') then
-    obs.setCode('http://loinc.org', '2339-0', 'Glucose [Mass/volume] in Blood')
+    obs.setCode(URI_LOINC, '2339-0', 'Glucose [Mass/volume] in Blood')
   else
-    obs.setCode('http://loinc.org', '15074-8', 'Glucose [Moles/volume] in Blood');
+    obs.setCode(URI_LOINC, '15074-8', 'Glucose [Moles/volume] in Blood');
 
   // specimen_source --> observation.specimen.code
 //  if (body.has('specimen_source')) then
@@ -728,9 +728,9 @@ begin
 
   // temporal_relationship_to_meal/sleep --> component.value
   if (body.has('temporal_relationship_to_meal')) then
-    obs.addComp('http://snomed.info/sct', '309602000').value := FFactory.makeString(body['temporal_relationship_to_meal']);
+    obs.addComp(URI_SNOMED, '309602000').value := FFactory.makeString(body['temporal_relationship_to_meal']);
   if (body.has('temporal_relationship_to_sleep')) then
-    obs.addComp('http://snomed.info/sct', '309609009').value := FFactory.makeString(body['temporal_relationship_to_sleep']);
+    obs.addComp(URI_SNOMED, '309609009').value := FFactory.makeString(body['temporal_relationship_to_sleep']);
 
   // descriptive stat- follow the $stats patterns
   if (body.has('descriptive_statistic')) then
@@ -769,17 +769,17 @@ begin
       body.forceObj['effective_time_frame']['date_time'] := obs.effectiveDateTime.toXML
   end;
 
-  if obs.getComponent('http://snomed.info/sct', '309602000', comp) then
+  if obs.getComponent(URI_SNOMED, '309602000', comp) then
     try
       body['temporal_relationship_to_meal'] := comp.valueString;
     finally
-      comp.Free;
+      comp.free;
     end;
-  if obs.getComponent('http://snomed.info/sct', '309609009', comp) then
+  if obs.getComponent(URI_SNOMED, '309609009', comp) then
     try
       body['temporal_relationship_to_sleep'] := comp.valueString;
     finally
-      comp.Free;
+      comp.free;
     end;
 
   body['user_notes'] := obs.comment;

@@ -34,11 +34,9 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_threads,
-  fhir_common;
-
-Const
-  DWELL_TIME = 30 / (24*60) {min};
+  fsl_base, fsl_threads, fsl_logging,
+  fhir_common,
+  server_constants, server_stats;
 
 type
   TClientCacheManagerEntry = class (TFslObject)
@@ -54,18 +52,25 @@ type
     procedure update(list : TFslMetadataResourceList);
   end;
 
+  { TClientCacheManager }
+
   TClientCacheManager = class (TFslObject)
   private
+    FCacheDwellTime: TDateTime;
     FList : TFslList<TClientCacheManagerEntry>;
     FLock : TFslLock;
+  protected
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
 
-    function cacheSize : UInt64;
+    function cacheSize(magic : integer) : UInt64;
     procedure clearCache;
     procedure sweep;
     function processResources(cacheId : String; list : TFslMetadataResourceList) : TFslMetadataResourceList;
+    procedure recordStats(rec : TStatusRecord);
+    property cacheDwellTime : TDateTime read FCacheDwellTime write FCacheDwellTime;
   end;
 
 implementation
@@ -76,7 +81,7 @@ constructor TClientCacheManagerEntry.Create;
 begin
   inherited;
   FLastTouched := now;
-  FList := TFslMetadataResourceList.create;
+  FList := TFslMetadataResourceList.Create;
 end;
 
 destructor TClientCacheManagerEntry.Destroy;
@@ -94,32 +99,44 @@ procedure TClientCacheManagerEntry.update(list: TFslMetadataResourceList);
 var
   i, j : TFHIRMetadataResourceW;
   remove : TFslMetadataResourceList;
+  c : cardinal;
+  magic : integer;
 begin
-  remove := TFslMetadataResourceList.create;
+  magic := nextMagic;
+  remove := TFslMetadataResourceList.Create;
   try
     for i in list do
     begin
       for j in FList do
         if (i.url = j.url) and (i.version = j.version) then
         begin
-          FSize := FSize - j.sizeInBytes;
+          c := j.sizeInBytes(magic);
+          if (c > FSize) then
+            FSize := 0
+          else
+            FSize := FSize - c;
+          //Logging.log('Cache '+FCacheId+': remove '+j.vurl);
           remove.Add(j.link);
         end;
     end;
     FList.RemoveAll(remove);
     for i in list do
     begin
-      FSize := FSize + i.sizeInBytes;
-      FList.Add(i.link);
+      if (i.url <> '') then
+      begin
+        //Logging.log('Cache '+FCacheId+': add '+i.vurl);
+        FSize := FSize + i.sizeInBytes(magic);
+        FList.Add(i.link);
+      end;
     end;
   finally
-    remove.Free;
+    remove.free;
   end;
 end;
 
 { TClientCacheManager }
 
-function TClientCacheManager.cacheSize: UInt64;
+function TClientCacheManager.cacheSize(magic : integer): UInt64;
 var
   item : TClientCacheManagerEntry;
 begin
@@ -147,14 +164,20 @@ constructor TClientCacheManager.Create;
 begin
   inherited;
   FLock := TFslLock.Create('ClientCacheManager');
-  FList := TFslList<TClientCacheManagerEntry>.create;
+  FList := TFslList<TClientCacheManagerEntry>.Create;
+  FCacheDwellTime := DEFAULT_DWELL_TIME;
 end;
 
 destructor TClientCacheManager.Destroy;
 begin
-  FList.Free;
-  FLock.Free;
+  FList.free;
+  FLock.free;
   inherited;
+end;
+
+function TClientCacheManager.sizeInBytesV(magic : integer) : cardinal;
+begin
+  result := inherited sizeInBytesV(magic) + SizeOf(FLock) + FList.sizeInBytes(magic);
 end;
 
 procedure TClientCacheManager.sweep;
@@ -164,13 +187,13 @@ var
   i : TClientCacheManagerEntry;
 begin
   n := now;
-  list := TFslList<TClientCacheManagerEntry>.create;
+  list := TFslList<TClientCacheManagerEntry>.Create;
   try
     FLock.Lock('sweep');
     try
       for i in FList do
       begin
-        if i.FLastTouched + DWELL_TIME < n then
+        if i.FLastTouched + FCacheDwellTime < n then
           list.Add(i.Link);
       end;
       if list.count > 0 then
@@ -179,7 +202,7 @@ begin
       FLock.Unlock;
     end;
   finally
-    list.Free;
+    list.free;
   end;
 end;
 
@@ -188,7 +211,7 @@ var
   i, f : TClientCacheManagerEntry;
   o : TFHIRMetadataResourceW;
 begin
-  result := TFslMetadataResourceList.create;
+  result := TFslMetadataResourceList.Create;
   try
     FLock.Lock('cache='+cacheId);
     try
@@ -216,7 +239,24 @@ begin
     end;
     result.link;
   finally
-    result.Free;
+    result.free;
+  end;
+end;
+
+procedure TClientCacheManager.recordStats(rec: TStatusRecord);
+var
+  e : TClientCacheManagerEntry;
+begin
+  FLock.Lock();
+  try
+    rec.ClientCacheCount := rec.ClientCacheCount + FList.count;
+    for e in FList do
+    begin
+      rec.ClientCacheObjectCount := rec.ClientCacheObjectCount + e.FList.Count;
+      rec.ClientCacheSize := rec.ClientCacheSize + e.FList.sizeInBytes(rec.magic);
+    end;
+  finally
+    FLock.Unlock;
   end;
 end;
 

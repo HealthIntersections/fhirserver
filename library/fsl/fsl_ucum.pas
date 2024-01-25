@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+{$i fhir.inc}
+
 interface
 
 uses
@@ -40,7 +42,7 @@ Type
     FUnitCode: String;
     FValue: TFslDecimal;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oValue : TFslDecimal; sUnitCode : String); Overload;
 
@@ -55,6 +57,8 @@ Type
     function multiply(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
     function divideBy(o1, o2 : TUcumPair) : TUcumPair; virtual; abstract;
     function getCanonicalForm(value : TUcumPair) : TUcumPair; virtual; abstract;
+    function getCanonicalUnits(units : string) : string; virtual; abstract;
+    function isComparable(u1, u2 : String) : boolean; virtual; abstract;
     function isConfigured : boolean; virtual; abstract;
   end;
 
@@ -75,9 +79,9 @@ begin
   result := TUcumPair(inherited link);
 end;
 
-function TUcumPair.sizeInBytesV : cardinal;
+function TUcumPair.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUnitCode.length * sizeof(char)) + 12);
 end;
 

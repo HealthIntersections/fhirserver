@@ -1,7 +1,7 @@
 Unit FHIR.WP.Engine;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -107,7 +107,7 @@ Uses
     Function GetUndoCursors: TFslStringIntegerMatch;
     Function GetUndoText: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     destructor Destroy; Override;
     Function Link : TWPOperation;
@@ -177,7 +177,7 @@ Type
       FStop : Integer;
       Procedure Update(iStart, iStop : Integer);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -204,7 +204,7 @@ Type
     Function GetWorkingSelEnd: Integer;
     Function GetWorkingSelStart: Integer;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     Function Link : TWPSelection; Overload;
     Function Clone : TWPSelection; Overload;
@@ -300,7 +300,7 @@ Type
       Procedure MarkTableStructureForUpdate(Const iIndex: Integer); Overload;
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -482,7 +482,7 @@ Type
       FSpeechMagicDouble: Boolean;
       FIgnoreBackground: Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Property SpeechMagicDouble : Boolean Read FSpeechMagicDouble Write FSpeechMagicDouble;
       Property IgnoreBackground : Boolean Read FIgnoreBackground Write FIgnoreBackground;
@@ -496,7 +496,7 @@ Type
     FOutcome: string;
     FTime: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     Property Time : String read FTime write FTime;
     Property Action : string read FAction write FAction;
@@ -525,7 +525,7 @@ Type
       FCaseSensitive : Boolean;
       FWholeWords : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPSearchDetails; Overload;
       Function Clone : TWPSearchDetails; Overload;
@@ -551,7 +551,7 @@ Type
       FSelection : Boolean;
       FPrompt : Boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       Function Link : TWPReplaceDetails; Overload;
       Function Clone : TWPReplaceDetails; Overload;
@@ -582,7 +582,7 @@ Type
       Function GetDocument : TWPWorkingDocument;
       Procedure SetDocument(Const Value : TWPWorkingDocument);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -622,7 +622,7 @@ Type
 
       Function Search(iLimit : Integer; Out iStart, iEnd : Integer) : Boolean; Overload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create(oDocument : TWPWorkingDocument; oSelection : TWPSelection; oSearchDetails : TWPSearchDetails); Overload; Virtual;
       destructor Destroy; Override;
@@ -802,7 +802,7 @@ Type
       Function SelCursorToChange(bSelect : Boolean) : Integer;
       Function GetWorkingWidth : Integer;  Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1085,7 +1085,7 @@ Type
     Private
       FList : TWPRangeList;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -1192,7 +1192,7 @@ Type
     procedure SetState(const Value: TWPMacroState);
     procedure SetLastError(const Value: Boolean);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -1263,15 +1263,15 @@ End;
 
 Destructor TWPRange.Destroy;
 Begin
-  FParagraph.Free;
-  FFont.Free;
-  FDocument.Free;
-  FSelection.Free;
-  FOperator.Free;
+  FParagraph.free;
+  FFont.free;
+  FDocument.free;
+  FSelection.free;
+  FOperator.free;
   FLog.free;
 
-  FSelectedRows.Free;
-  FSelectedCells.Free;
+  FSelectedRows.free;
+  FSelectedCells.free;
   Inherited;
 End;
 
@@ -1282,14 +1282,14 @@ End;
 
 Procedure TWPRange.SetDocument(Const Value: TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
 
 Procedure TWPRange.SetOperator(Const Value: TWPOperator);
 Begin
-  FOperator.Free;
+  FOperator.free;
   FOperator := Value;
 End;
 
@@ -1565,7 +1565,7 @@ begin
     oAction.outcome := BoolToStr(ok);
     FLog.Add(oAction.Link);
   finally
-    oAction.Free;
+    oAction.free;
   end;
 end;
 
@@ -1583,7 +1583,7 @@ begin
     oAction.Details := details;
     FLog.Add(oAction.Link);
   finally
-    oAction.Free;
+    oAction.free;
   end;
 end;
 
@@ -1692,7 +1692,7 @@ Begin
       bFirst := False;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -1777,7 +1777,7 @@ Begin
       oIterator.Prev;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
   If Selection.HasSelection Then
   Begin
@@ -1807,7 +1807,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -1945,7 +1945,7 @@ Begin
     if result then
       Font.Bold := oFont.Bold;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -1961,7 +1961,7 @@ Begin
     if result then
       Font.Bold := oFont.Bold;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -1976,7 +1976,7 @@ Begin
     if result then
       Font.Italic := oFont.Italic;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -1991,7 +1991,7 @@ Begin
     if result then
       Font.Italic := oFont.Italic;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2006,7 +2006,7 @@ Begin
     if result then
       Font.Strikethrough := oFont.Strikethrough;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2021,7 +2021,7 @@ Begin
     if result then
       Font.Strikethrough := oFont.Strikethrough;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2036,7 +2036,7 @@ Begin
     if result then
       Font.State := oFont.State;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2054,7 +2054,7 @@ Begin
     if result then
       Font.State := oFont.State;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2072,7 +2072,7 @@ Begin
     if result then
       Font.State := oFont.State;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2087,7 +2087,7 @@ Begin
     if result then
       Font.Underline := oFont.Underline;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2102,7 +2102,7 @@ Begin
     if result then
       Font.Underline := oFont.Underline;
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2116,7 +2116,7 @@ Begin
     Font.Foreground := oFont.Foreground;
     Result := ApplyFont(oFont);
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2130,7 +2130,7 @@ Begin
     Font.Background := oFont.Background;
     Result := ApplyFont(oFont);
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2159,7 +2159,7 @@ Begin
     Font.Name := oFont.Name;
     Result := ApplyFont(oFont);
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2173,7 +2173,7 @@ Begin
     Font.Size := oFont.Size;
     Result := ApplyFont(oFont);
   Finally
-    oFont.Free;
+    oFont.free;
   End;
 End;
 
@@ -2201,7 +2201,7 @@ Begin
           oIterator.Next;
           End;
       Finally
-        oIterator.Free;
+        oIterator.free;
       End;
       Operator_.FinishOperation;
       ChangeContent;
@@ -2226,7 +2226,7 @@ Begin
             oIterator.Next;
           End;
         Finally
-          oIterator.Free;
+          oIterator.free;
         End;
         Operator_.FinishOperation;
         ChangeContent;
@@ -2255,7 +2255,7 @@ Begin
     if result then
       Paragraph.Align := WordProcessorParagraphAlignmentCentre;
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 End;
 
@@ -2270,7 +2270,7 @@ Begin
     if result then
       Paragraph.Align := WordProcessorParagraphAlignmentJustify;
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 End;
 
@@ -2285,7 +2285,7 @@ Begin
     if result then
       Paragraph.Align := WordProcessorParagraphAlignmentLeft;
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 End;
 
@@ -2300,7 +2300,7 @@ Begin
     if result then
       Paragraph.Align := WordProcessorParagraphAlignmentRight;
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 End;
 
@@ -2318,7 +2318,7 @@ Begin
     if result then
       Paragraph.ListType := oParagraph.ListType;
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 End;
 
@@ -2339,7 +2339,7 @@ Begin
         oParagraph.FixedNumber := CurrentParagraph.Format.FixedNumber - 1;
       Result := ApplyParagraph(oParagraph);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
   end;
 end;
@@ -2360,7 +2360,7 @@ Begin
         oParagraph.FixedNumber := CurrentParagraph.Format.FixedNumber + 1;
       Result := ApplyParagraph(oParagraph);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
   end;
 end;
@@ -2378,7 +2378,7 @@ Begin
       oParagraph.FixedNumber := DEF_WORD;
       Result := ApplyParagraph(oParagraph);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
   end;
 end;
@@ -2401,7 +2401,7 @@ Begin
       Paragraph.NumberFormat := oParagraph.NumberFormat;
     end;
   Finally
-    oParagraph.Free;
+    oParagraph.free;
   End;
 End;
 
@@ -2461,7 +2461,7 @@ Begin
             End;
           End
       Finally
-        oIterator.Free;
+        oIterator.free;
       End;
       End
     Else If Document.GetPieceByPosition(Selection.Cursor, oPiece, iInternal, iIndex) Then
@@ -2544,7 +2544,7 @@ Begin
             End;
           End
       Finally
-        oIterator.Free;
+        oIterator.free;
       End;
       End
     Else If Document.GetPieceByPosition(Selection.Cursor, oPiece, iInternal, iIndex) Then
@@ -2623,7 +2623,7 @@ Begin
           oIterator.Next;
           End;
       Finally
-        oIterator.Free;
+        oIterator.free;
       End;
       Operator_.FinishOperation;
       ChangeContent;
@@ -2738,7 +2738,7 @@ Begin
           End;
         End
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
 
     Operator_.FinishOperation;
@@ -2788,7 +2788,7 @@ Begin
         ApplyBaseStyle(oPara);
         Operator_.AppendPiece(oPara.Link);
       Finally
-        oPara.Free;
+        oPara.free;
       End;
     End;
 
@@ -2803,7 +2803,7 @@ Begin
       Operator_.AppendPiece(oBreak.Link);
       iNew := Operator_.EndOfRange;
     Finally
-      oBreak.Free;
+      oBreak.free;
     End;
 
     Operator_.FinishOperation;
@@ -2835,7 +2835,7 @@ Begin
         ApplyBaseStyle(oPara);
         Operator_.AppendPiece(oPara.Link);
       Finally
-        oPara.Free;
+        oPara.free;
       End;
     End;
 
@@ -2846,7 +2846,7 @@ Begin
       Operator_.AppendPiece(oBreak.Link);
       iNew := Operator_.EndOfRange;
     Finally
-      oBreak.Free;
+      oBreak.free;
     End;
 
     Operator_.FinishOperation;
@@ -2929,7 +2929,7 @@ Begin
       ApplyBaseStyle(oParagraph);
       iAppendIndex := Operator_.DirectAppendPiece(oParagraph.Link, iAppendIndex);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
 
     oStart := TWPWorkingDocumentTableStartPiece.Create;
@@ -2938,7 +2938,7 @@ Begin
       oStart.BorderPolicy := tbpGrid;
       iAppendIndex := Operator_.DirectAppendPiece(oStart.Link, iAppendIndex);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     iNew := Operator_.EndOfRange+2;
@@ -2951,7 +2951,7 @@ Begin
       ApplyBaseStyle(oStop);
       Operator_.DirectAppendPiece(oStop.Link, iAppendIndex);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
 
     Operator_.EndDirectAppend;
@@ -2986,9 +2986,9 @@ Begin
         Result := DoInsertCopiedRow(oDocument, oStyles, CurrentTableRowStart.Metrics.Position);
 
     Finally
-      oClip.Free;
-      oDocument.Free;
-      oStyles.Free;
+      oClip.free;
+      oDocument.free;
+      oStyles.free;
     End;
   End;
 End;
@@ -3018,9 +3018,9 @@ Begin
         Result := DoInsertCopiedRow(oDocument, oStyles, CurrentTableRowStop.Metrics.Position + CurrentTableRowStop.Metrics.CharCount);
 
     Finally
-      oClip.Free;
-      oDocument.Free;
-      oStyles.Free;
+      oClip.free;
+      oDocument.free;
+      oStyles.free;
     End;
   End;
 End;
@@ -3149,7 +3149,7 @@ Begin
     ApplyBaseStyle(oStart);
     Operator_.InsertPiece(oStart.Link, oCell);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   oPara := TWPWorkingDocumentParaPiece.Create;
@@ -3157,7 +3157,7 @@ Begin
     ApplyBaseStyle(oPara);
     Operator_.InsertPiece(oPara.Link, oCell);
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 
   oStop := TWPWorkingDocumentStopPiece.Create(stTableCell);
@@ -3165,7 +3165,7 @@ Begin
     ApplyBaseStyle(oStop);
     Operator_.InsertPiece(oStop.Link, oCell);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -3281,7 +3281,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3306,7 +3306,7 @@ Begin
       oIterator.Prev;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3570,7 +3570,7 @@ Begin
     ApplyBaseStyle(oStart);
     iAppendIndex := Operator_.DirectAppendPiece(oStart.Link, iAppendIndex);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   oPara := TWPWorkingDocumentParaPiece.Create;
@@ -3579,7 +3579,7 @@ Begin
     iAppendIndex := Operator_.DirectAppendPiece(oPara.Link, iAppendIndex);
     Result := oPara;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 
   oStop := TWPWorkingDocumentStopPiece.Create(stTableCell);
@@ -3587,7 +3587,7 @@ Begin
     ApplyBaseStyle(oStop);
     iAppendIndex := Operator_.DirectAppendPiece(oStop.Link, iAppendIndex);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -3606,7 +3606,7 @@ Begin
     ApplyBaseStyle(oStart);
     iAppendIndex := Operator_.DirectAppendPiece(oStart.Link, iAppendIndex);
   Finally
-    oStart.Free;
+    oStart.free;
   End;
 
   Result := DoInsertCell(iAppendIndex);
@@ -3618,7 +3618,7 @@ Begin
     ApplyBaseStyle(oStop);
     iAppendIndex := Operator_.DirectAppendPiece(oStop.Link, iAppendIndex);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -3646,7 +3646,7 @@ Begin
         ApplyBaseStyle(oPara);
         Operator_.AppendPiece(oPara.Link);
       Finally
-        oPara.Free;
+        oPara.free;
       End;
     End;
 
@@ -3671,7 +3671,7 @@ Begin
           ApplyBaseStyle(oPara);
           Operator_.AppendPiece(oPara.Link);
         Finally
-          oPara.Free;
+          oPara.free;
         End;
 
         oStop := TWPWorkingDocumentStopPiece.Create(stSection);
@@ -3679,10 +3679,10 @@ Begin
           ApplyBaseStyle(oStop);
           Operator_.AppendPiece(oStop.Link);
         Finally
-          oStop.Free;
+          oStop.free;
         End;
       Finally
-        oStart.Free;
+        oStart.free;
       End;
     Finally
       FDocument.Working := False;
@@ -3753,10 +3753,10 @@ Begin
         ApplyBaseStyle(oStop);
         Operator_.AppendPiece(oStop.Link);
       Finally
-        oStop.Free;
+        oStop.free;
       End;
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     If (sText = '') and not bKeep Then
@@ -3818,7 +3818,7 @@ Begin
       End;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3846,7 +3846,7 @@ Begin
       End;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3878,7 +3878,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3915,7 +3915,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -3953,7 +3953,7 @@ Begin
       oIterator.Prev;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -4162,7 +4162,7 @@ Function TWPRange.ReplaceCurrentWord(Const sText: String; Var sMessage : String)
       Operator_.AppendPiece(oText.Link);
       Result := Operator_.EndOfRange;
     Finally
-      oText.Free;
+      oText.free;
     End;
   End;
 Var
@@ -4208,7 +4208,7 @@ Begin
       While oSplit.More Do
         iNew := AddWord(oSplit.Next);
     Finally
-      oSplit.Free;
+      oSplit.free;
     End;
 
     Operator_.FinishOperation;
@@ -4237,7 +4237,7 @@ Begin
       SelectTo(iStop, True);
     End;
   Finally
-    oSearch.Free;
+    oSearch.free;
   End;
 End;
 
@@ -4331,7 +4331,7 @@ Begin
   Else
     sError := 'Unable to insert at this point';
   Finally
-    oClip.Free;
+    oClip.free;
   End;
 End;
 
@@ -4352,7 +4352,7 @@ Begin
     MoveTo(iIndex, False);
     Result := Insert(oStream, wpfText, False, Nil, sError);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -4397,8 +4397,8 @@ Begin
     oMemory.Buffer := oBuffer.Link;
     Result := oMemory.Link;
   Finally
-    oMemory.Free;
-    oBuffer.Free;
+    oMemory.free;
+    oBuffer.free;
   End;
 End;
 
@@ -4411,7 +4411,7 @@ Begin
     oMemory := ReadClipboardContent(oClip, aContentType, sError);
     Result := ParseClipboardContent(aReaderClass, oMemory, oStyles, oSpeechMagicOptions, sError);
   Finally
-    oMemory.Free;
+    oMemory.free;
   End;
 End;
 
@@ -4444,8 +4444,8 @@ Begin
 
     Result := oDocument.Link;
   Finally
-    oReader.Free;
-    oDocument.Free;
+    oReader.free;
+    oDocument.free;
   End;
 End;
 
@@ -4464,9 +4464,9 @@ Begin
     oDocument := ParseClipboardContent(aReaderClass, oMemory, oStyles, oSpeechMagicOptions, sError);
     Result := PasteInsertWorkingDocument(oDocument, oStyles, False, sError);
   Finally
-    oMemory.Free;
-    oDocument.Free;
-    oStyles.Free;
+    oMemory.free;
+    oDocument.free;
+    oStyles.free;
   End;
 End;
 
@@ -4481,8 +4481,8 @@ Begin
     oDocument := ParseClipboardContent(aReaderClass, oSource, oStyles, oSpeechMagicOptions, sError);
     Result := PasteInsertWorkingDocument(oDocument, oStyles, bSkipLastPara, sError)
   Finally
-    oStyles.Free;
-    oDocument.Free;
+    oStyles.free;
+    oDocument.free;
   End;
 End;
 
@@ -4543,7 +4543,7 @@ Begin
       Operator_.AppendPiece(oPiece.Link);
       iNew := Operator_.EndOfRange;
     Finally
-      oPiece.Free;
+      oPiece.free;
     End;
 
     Operator_.FinishOperation;
@@ -4577,7 +4577,7 @@ Begin
 
       Operator_.EndOfRange;
     Finally
-      oPiece.Free;
+      oPiece.free;
     End;
 
     oSpace := TWPWorkingDocumentTextPiece.Create;
@@ -4587,7 +4587,7 @@ Begin
       Operator_.AppendPiece(oSpace.Link);
       iNew := Operator_.EndOfRange;
     Finally
-      oSpace.Free;
+      oSpace.free;
     End;
 
     Operator_.FinishOperation;
@@ -4615,10 +4615,10 @@ Begin
       Try
         Result := InsertImage(sFilename, oImage);
       Finally
-        oImage.Free;
+        oImage.free;
       End;
     Finally
-      oLoader.Free;
+      oLoader.free;
     End;
   end;
 End;
@@ -4629,7 +4629,7 @@ Var
   i : integer;
 Begin
   LogAction('InsertPDF', sFilename);
-  oPDF := TWPWorkingAttachment.create;
+  oPDF := TWPWorkingAttachment.Create;
   Try
     oPDF.Id := GUIDToString(CreateGUID);
     FDocument.Attachments.Add(oPDF.Link);
@@ -4639,7 +4639,7 @@ Begin
 //    for i := 0 to oPDF.PDF.PageCount - 1 do
 //      Result := InsertImage(sFilename, oPDF, i) and result;
   Finally
-    oPDF.Free;
+    oPDF.free;
   End;
 End;
 
@@ -4791,7 +4791,7 @@ Begin
     oClip.PasteBitmap(oImage);
     Result := InsertImage('pasted.bmp-'+FormatDateTime('yyyymmddhhnnsss.zzz', now), oImage);
   Finally
-    oImage.Free;
+    oImage.free;
   End;
 End;
 
@@ -4834,10 +4834,10 @@ Begin
         End;
         oBuffer.SaveToStream(oStream);
       Finally
-        oBuffer.Free;
+        oBuffer.free;
       End;
     Finally
-     oDocument.Free;
+     oDocument.free;
     End;
   End;
 End;
@@ -5007,18 +5007,18 @@ Begin
               try
                 oClip.CopyImage(oTemp);
               finally
-                oTemp.Free;
+                oTemp.free;
               end;
             end;
           end;
         Finally
-          oBuffer.Free;
+          oBuffer.free;
         End;
       Finally
-        oClip.Free;
+        oClip.free;
       End;
     Finally
-     oDocument.Free;
+     oDocument.free;
     End;
     End;
 End;
@@ -5071,7 +5071,7 @@ Begin
                   oParagraph.Style := Operator_.Styles.DefaultStyle.Name;
                   Operator_.InsertPiece(oParagraph.Link);
                 Finally
-                  oParagraph.Free;
+                  oParagraph.free;
                 End;
                 iNew := Operator_.StartOfRange;
                 Operator_.FinishOperation;
@@ -5079,7 +5079,7 @@ Begin
                 DoMove(iNew, cdJump);
                 Result := True;
               Finally
-                oSelection.Free;
+                oSelection.free;
               End;
             End;
           End;
@@ -5122,7 +5122,7 @@ Begin
             End;
           Operator_.InsertPiece(oParagraph.Link);
         Finally
-          oParagraph.Free;
+          oParagraph.free;
         End;
         iNew := Operator_.EndOfRange;
         Operator_.FinishOperation;
@@ -5154,7 +5154,7 @@ Begin
       Operator_.AppendPiece(oBreak.Link);
       iNew := Operator_.EndOfRange;
     Finally
-      oBreak.Free;
+      oBreak.free;
     End;
 
     Operator_.FinishOperation;
@@ -5191,7 +5191,7 @@ Begin
         Operator_.AppendPiece(oText.Link);
         iNew := Operator_.EndOfRange;
       Finally
-        oText.Free;
+        oText.free;
       End;
 
       Operator_.FinishOperation;
@@ -5263,7 +5263,7 @@ Begin
         Operator_.AppendPiece(oText.Link);
         iNew := Operator_.EndOfRange;
       Finally
-        oText.Free;
+        oText.free;
       End;
 
       Operator_.FinishOperation;
@@ -5412,7 +5412,7 @@ Begin
       if Result then
         Paragraph.ListType := WPSParagraphListTypeNone;
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
   end
   else if Operator_.Settings.SmartParagraphs and AdjacentIsPara(dleft) then
@@ -6004,7 +6004,7 @@ Function TWPRange.InsertInOperation(sText : String; oFont : TWPSFontDetails = Ni
       Operator_.AppendPiece(oText.Link);
       Result := Operator_.EndOfRange;
     Finally
-      oText.Free;
+      oText.free;
     End;
   End;
   Function AddPara(bSpeechMagicDouble : Boolean) : Integer;
@@ -6022,7 +6022,7 @@ Function TWPRange.InsertInOperation(sText : String; oFont : TWPSFontDetails = Ni
       Operator_.AppendPiece(oPara.Link);
       Result := Operator_.EndOfRange;
     Finally
-      oPara.Free;
+      oPara.free;
     End;
   End;
   Function AddBreak : Integer;
@@ -6039,7 +6039,7 @@ Function TWPRange.InsertInOperation(sText : String; oFont : TWPSFontDetails = Ni
       Operator_.AppendPiece(oBreak.Link);
       Result := Operator_.EndOfRange;
     Finally
-      oBreak.Free;
+      oBreak.free;
     End;
   End;
 Var
@@ -6071,7 +6071,7 @@ Begin
         Result := AddWord(s);
     End;
   Finally
-    oSplit.Free;
+    oSplit.free;
   End;
 End;
 
@@ -6186,7 +6186,7 @@ Begin
         bNeedsPara := True;
         Include(aAdded, ptText);
       Finally
-        oText.Free;
+        oText.free;
       End;
     End;
 
@@ -6233,7 +6233,7 @@ Begin
       End;
       oWriter.Write(oDocument);
     Finally
-      oWriter.Free;
+      oWriter.free;
     End;
 {$IFDEF VER130}
     oStream.Position := 0;
@@ -6243,7 +6243,7 @@ Begin
     oDest.AsBytes := oStream.Bytes;
 {$ENDIF}
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -6340,7 +6340,7 @@ Begin
         End;
       Result := Result And (sText <> '');
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
     End
   Else
@@ -6392,7 +6392,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -6421,7 +6421,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -6607,7 +6607,7 @@ Function TWPRange.ConvertParagraphsToTable(oLast : TWPWorkingDocumentPiece) : TW
       FDocument.Pieces.Insert(iIndex, oPiece.Link);
       Result := oPiece;
     Finally
-      oPiece.Free;
+      oPiece.free;
     End;
   End;
   Function InsertStopPiece(iIndex : Integer; aType : TWPWorkingDocumentStopType) : TWPWorkingDocumentPiece;
@@ -6619,7 +6619,7 @@ Function TWPRange.ConvertParagraphsToTable(oLast : TWPWorkingDocumentPiece) : TW
       FDocument.Pieces.Insert(iIndex, oPiece.Link);
       Result := oPiece;
     Finally
-      oPiece.Free;
+      oPiece.free;
     End;
   End;
 Var
@@ -6726,11 +6726,11 @@ Begin
           WriteRange(TWPTextWriter, oDocument, oBuffer, -1);
           Result := oBuffer.AsText;
         Finally
-          oBuffer.Free;
+          oBuffer.free;
         End;
       End;
     Finally
-     oDocument.Free;
+     oDocument.free;
     End;
   End;
 End;
@@ -6765,11 +6765,11 @@ Begin
           WriteRange(TWPTextWriter, oDocument, oBuffer, -1);
           Result := oBuffer.AsText;
         Finally
-          oBuffer.Free;
+          oBuffer.free;
         End;
       End;
     Finally
-     oDocument.Free;
+     oDocument.free;
     End;
   End;
 End;
@@ -6924,7 +6924,7 @@ Begin
         oPara.Font.Assign(oPiece.Font);
         oDocument.Pieces.Insert(iLoop, oPara.Link);
       Finally
-        oPara.Free;
+        oPara.free;
       End;
       End;
   End;
@@ -7091,7 +7091,7 @@ Begin
     bCanWrite := bCanWrite And Not (bInField or bInSectionField);
     bCanAnnotate := bCanAnnotate And Not (bInField or bInSectionField);
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
   If Not (bSawField or bSawSectionField) And Operator_.Settings.FormsMode And Not HasCurrentFieldStart Then
   Begin
@@ -7131,7 +7131,7 @@ Begin
         oIterator.Next;
         End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
   End;
 End;
@@ -7216,7 +7216,7 @@ Begin
           End;
         End
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
     End
   Else If Document.GetPieceByPosition(Selection.Cursor, oPiece, iInternal, iIndex) Then
@@ -7256,7 +7256,7 @@ Begin
           End;
         End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
     End
   Else If Document.GetPieceByPosition(Selection.Cursor, oPiece, iInternal, iIndex) Then
@@ -7305,7 +7305,7 @@ Begin
           End;
         End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
     End
   Else
@@ -7353,7 +7353,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-     oIterator.Free;
+     oIterator.free;
   End;
 
   If Result Then
@@ -7373,7 +7373,7 @@ Begin
         oIterator.Next;
       End;
     Finally
-       oIterator.Free;
+       oIterator.free;
     End;
     ChangeContent;
     End;
@@ -7470,7 +7470,7 @@ Begin
         end;
         oField := Nil;
         aFieldValidate := fscsSpelling;
-        oList.Free;
+        oList.free;
         oList := Nil;
       End
       Else If (oPiece.PieceType = ptText) Then
@@ -7617,7 +7617,7 @@ Begin
         oIterator.Next;
       End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
     Operator_.FinishOperation;
     ChangeContent;
@@ -7696,7 +7696,7 @@ Begin
     ApplyBaseStyle(oStartRow);
     Operator_.AppendPiece(oStartRow.Link);
   Finally
-    oStartRow.Free;
+    oStartRow.free;
   End;
 
   // start cell
@@ -7705,7 +7705,7 @@ Begin
     ApplyBaseStyle(oStartCell);
     Operator_.AppendPiece(oStartCell.Link);
   Finally
-    oStartCell.Free;
+    oStartCell.free;
   End;
 
   // cell content
@@ -7718,7 +7718,7 @@ Begin
       ApplyBaseStyle(oPara);
       Operator_.AppendPiece(oPara.Link);
     Finally
-      oPara.Free;
+      oPara.free;
     End;
   End;
 
@@ -7728,7 +7728,7 @@ Begin
     ApplyBaseStyle(oStop);
     Operator_.AppendPiece(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 
   // end row
@@ -7737,7 +7737,7 @@ Begin
     ApplyBaseStyle(oStop);
     Operator_.AppendPiece(oStop.Link);
   Finally
-    oStop.Free;
+    oStop.free;
   End;
 End;
 
@@ -7870,7 +7870,7 @@ Begin
        Operator_.DirectAppendPiece(oPieces[iLoop].Link, iStart + iLoop);
      Operator_.EndDirectAppend;
     Finally
-      oPieces.Free;
+      oPieces.free;
     End;
 
     SelectedTable.StructureDirty := True;
@@ -7948,10 +7948,10 @@ Begin
         If (Not Result) And (sError <> '') Then
           RaiseError('Insert Template', sError);
       Finally
-        oSpeechMagicOptions.Free;
+        oSpeechMagicOptions.free;
       End;
     Finally
-      oMem.Free;
+      oMem.free;
     End;
   End;
 End;
@@ -7996,13 +7996,13 @@ Begin
   Try
     if (oUri.Host = '') and (oUri.Path = '') then
     begin
-      oUri.Free;
-      oUri := TIdURI.create(ExtractFilePath(Context)+sName);
+      oUri.free;
+      oUri := TIdURI.Create(ExtractFilePath(Context)+sName);
     end;
 
     if (oUri.Protocol = 'file') and (Length(oUri.Host) = 1) Then
     begin
-      oBuffer := TFslBuffer.create;
+      oBuffer := TFslBuffer.Create;
       {$IFDEF UNICODE}
       oBuffer.LoadFromFileName(oUri.Host+':'+oUri.Path+oUri.Document);
       {$ELSE}
@@ -8032,11 +8032,11 @@ Begin
         Else
           oBuffer := Nil;
       Finally
-        oClient.Free;
+        oClient.free;
       End;
     end;
   Finally
-    oUri.Free;
+    oUri.free;
   End;
 End;
 
@@ -8087,9 +8087,9 @@ Begin
     Document.RegenerateMetrics(False, False);
 
     If Not Document.GetPieceByPosition(Selection.Cursor, oPiece, iOffset, iIndex) Then
-      raise EWPException.create('unable to find position');
+      raise EWPException.Create('unable to find position');
     If iOffset <> 0 Then
-      raise EWPException.create('internal logic problem');
+      raise EWPException.Create('internal logic problem');
 
     CurrentTableCellStart.Span := CurrentTableCellStart.Span - 1;
     oStart := TWPWorkingDocumentTableCellStartPiece.Create;
@@ -8097,7 +8097,7 @@ Begin
       ApplyBaseStyle(oStart);
       Operator_.DirectAppendPiece(oStart.Link, iIndex);
     Finally
-      oStart.Free;
+      oStart.free;
     End;
 
     oStop := TWPWorkingDocumentStopPiece.Create(stTableCell);
@@ -8105,7 +8105,7 @@ Begin
       ApplyBaseStyle(oStop);
       Operator_.DirectAppendPiece(oStop.Link, iIndex);
     Finally
-      oStop.Free;
+      oStop.free;
     End;
 
     oParagraph := TWPWorkingDocumentParaPiece.Create;
@@ -8113,7 +8113,7 @@ Begin
       ApplyBaseStyle(oParagraph);
       Operator_.DirectAppendPiece(oParagraph.Link, iIndex);
     Finally
-      oParagraph.Free;
+      oParagraph.free;
     End;
 
     CurrentTableStart.StructureDirty := True;
@@ -8208,14 +8208,14 @@ Begin
         oIterator.Next;
         End;
     Finally
-      oIterator.Free;
+      oIterator.free;
     End;
     Operator_.FinishOperation;
     Document.RegenerateMetrics(True, False);
     ChangeContent;
     ChangeState;
   Finally
-    oAnnotation.Free;
+    oAnnotation.free;
   End;
   Result := True;
 End;
@@ -8252,7 +8252,7 @@ Begin
       oIterator.Next;
       End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
   Operator_.FinishOperation;
   Document.RegenerateMetrics(True, False);
@@ -8275,7 +8275,7 @@ Begin
     Operator_.SetRange(oAnnotation.OffsetStart, oAnnotation.OffsetEnd);
     Operator_.CleanRange;
   Finally
-    oAnnotation.Free;
+    oAnnotation.free;
   End;
 
   oIterator := TWPPieceIterator.Create(FDocument.Link);
@@ -8292,7 +8292,7 @@ Begin
       oIterator.Next;
       End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 
   Operator_.FinishOperation;
@@ -8478,7 +8478,7 @@ begin
           oIterator.Next;
         end;
       finally
-        oIterator.Free;
+        oIterator.free;
       end;
     end;
     Operator_.RemovePiece(oSource);
@@ -8549,7 +8549,7 @@ Begin
             End;
           End
       Finally
-        oIterator.Free;
+        oIterator.free;
       End;
       End
     Else If Document.GetPieceByPosition(Selection.Cursor, oPiece, iInternal, iIndex) Then
@@ -8624,40 +8624,40 @@ Begin
     Try
       Result := InsertImage(sName, oImage);
     Finally
-      oImage.Free;
+      oImage.free;
     End;
   Finally
-    oLoader.Free;
+    oLoader.free;
   End;
 end;
 
-function TWPRange.sizeInBytesV : cardinal;
+function TWPRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FOperator.sizeInBytes);
-  inc(result, FFont.sizeInBytes);
-  inc(result, FParagraph.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FOperator.sizeInBytes(magic));
+  inc(result, FFont.sizeInBytes(magic));
+  inc(result, FParagraph.sizeInBytes(magic));
   inc(result, (FStyle.length * sizeof(char)) + 12);
   inc(result, (FLastStyleSummary.length * sizeof(char)) + 12);
-  inc(result, FSelection.sizeInBytes);
-  inc(result, FLog.sizeInBytes);
-  inc(result, FCurrentParagraph.sizeInBytes);
-  inc(result, FCurrentImage.sizeInBytes);
-  inc(result, FCurrentLine.sizeInBytes);
-  inc(result, FCurrentSectionStart.sizeInBytes);
-  inc(result, FCurrentSectionStop.sizeInBytes);
-  inc(result, FCurrentFieldStart.sizeInBytes);
-  inc(result, FCurrentFieldStop.sizeInBytes);
-  inc(result, FCurrentTableStart.sizeInBytes);
-  inc(result, FCurrentTableStop.sizeInBytes);
-  inc(result, FCurrentTableRowStart.sizeInBytes);
-  inc(result, FCurrentTableRowStop.sizeInBytes);
-  inc(result, FCurrentTableCellStart.sizeInBytes);
-  inc(result, FCurrentTableCellStop.sizeInBytes);
-  inc(result, FSelectedTable.sizeInBytes);
-  inc(result, FSelectedRows.sizeInBytes);
-  inc(result, FSelectedCells.sizeInBytes);
+  inc(result, FSelection.sizeInBytes(magic));
+  inc(result, FLog.sizeInBytes(magic));
+  inc(result, FCurrentParagraph.sizeInBytes(magic));
+  inc(result, FCurrentImage.sizeInBytes(magic));
+  inc(result, FCurrentLine.sizeInBytes(magic));
+  inc(result, FCurrentSectionStart.sizeInBytes(magic));
+  inc(result, FCurrentSectionStop.sizeInBytes(magic));
+  inc(result, FCurrentFieldStart.sizeInBytes(magic));
+  inc(result, FCurrentFieldStop.sizeInBytes(magic));
+  inc(result, FCurrentTableStart.sizeInBytes(magic));
+  inc(result, FCurrentTableStop.sizeInBytes(magic));
+  inc(result, FCurrentTableRowStart.sizeInBytes(magic));
+  inc(result, FCurrentTableRowStop.sizeInBytes(magic));
+  inc(result, FCurrentTableCellStart.sizeInBytes(magic));
+  inc(result, FCurrentTableCellStop.sizeInBytes(magic));
+  inc(result, FSelectedTable.sizeInBytes(magic));
+  inc(result, FSelectedRows.sizeInBytes(magic));
+  inc(result, FSelectedCells.sizeInBytes(magic));
 end;
 
 { TWPRangeList }
@@ -8710,13 +8710,13 @@ End;
 
 Destructor TWPOperator.Destroy;
 Begin
-  FRendererRange.Free;
-  FUndoStack.Free;
-  FRedoStack.Free;
+  FRendererRange.free;
+  FUndoStack.free;
+  FRedoStack.free;
 
-  FDocument.Free;
-  FStyles.Free;
-  FSpeller.Free;
+  FDocument.free;
+  FStyles.free;
+  FSpeller.free;
 
   Inherited;
 End;
@@ -8729,13 +8729,13 @@ End;
 
 Procedure TWPOperator.SetStyles(Const Value: TWPStyles);
 Begin
-  FStyles.Free;
+  FStyles.free;
   FStyles := Value;
 End;
 
 Procedure TWPOperator.SetSpeller(Const Value: TWPSpeller);
 Begin
-  FSpeller.Free;
+  FSpeller.free;
   FSpeller := Value;
 End;
 
@@ -8774,7 +8774,7 @@ End;
 
 Procedure TWPOperator.SetDocument(Const Value: TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
   ClearUndo;
   FVersion := 0;
@@ -8834,7 +8834,7 @@ Begin
               oPieces.Add(oOperation.RemovedPieces[iLoop].Piece.Link);
               FOnInsertContent(Self, oOperation.RemovedPieces[iLoop].Offset, oPieces);
             Finally
-              oPieces.Free;
+              oPieces.free;
             End;
           End;
         End
@@ -8848,7 +8848,7 @@ Begin
               oPieces.Add(oOperation.TablePieces[iLoop].Piece.Link);
               FOnInsertContent(Self, oOperation.TablePieces[iLoop].Offset, oPieces);
             Finally
-              oPieces.Free;
+              oPieces.free;
             End;
           End;
         End
@@ -8857,7 +8857,7 @@ Begin
 
       FRedoStack.Push(oOperation.Link);
     Finally
-      oOperation.Free;
+      oOperation.free;
     End;
     End;
 End;
@@ -8889,7 +8889,7 @@ Begin
               oPieces.Add(oOperation.RemovedPieces[iLoop].Piece.Link);
               FOnDeleteContent(Self, oOperation.RemovedPieces[iLoop].Offset, oPieces);
             Finally
-              oPieces.Free;
+              oPieces.free;
             End;
           End;
         End
@@ -8911,7 +8911,7 @@ Begin
       FUndoStack.Push(oOperation.Link);
       FStatus := osNone;
     Finally
-      oOperation.Free;
+      oOperation.free;
     End;
     End;
 End;
@@ -8942,7 +8942,7 @@ Begin
         End;
       FUndostack.Add(FCurrentOp.Link);
     Finally
-      FCurrentOp.Free;
+      FCurrentOp.free;
     End;
     FStatus := osRanging;
     FRedoStack.Clear;
@@ -9116,7 +9116,7 @@ Begin
     oTracker.Offset := oBefore.Metrics.Position;
     FCurrentOp.TablePieces.Add(oTracker.Link);
   Finally
-    oTracker.Free;
+    oTracker.free;
   End;
   FCurrentOp.Add(Length(oPiece.LogicalText), oPiece.LogicalText);
 End;
@@ -9196,7 +9196,7 @@ Begin
     oTracker.Offset := oPiece.Metrics.Position;
     FCurrentOp.RemovedPieces.Add(oTracker.Link);
   Finally
-    oTracker.Free;
+    oTracker.free;
   End;
 
   FCurrentOp.Remove(oPiece.Metrics.CharCount, oPiece.LogicalText);
@@ -9246,7 +9246,7 @@ Begin
           oPieces.Add(FCurrentOp.RemovedPieces[iLoop].Piece.Link);
           FOnDeleteContent(Self, FCurrentOp.RemovedPieces[iLoop].Offset, oPieces);
         Finally
-          oPieces.Free;
+          oPieces.free;
         End;
       End;
     End
@@ -9263,7 +9263,7 @@ Begin
           oPieces.Add(FCurrentOp.TablePieces[iLoop].Piece.Link);
           FOnInsertContent(Self, FCurrentOp.TablePieces[iLoop].Offset, oPieces);
         Finally
-          oPieces.Free;
+          oPieces.free;
         End;
       End;
     End
@@ -9462,16 +9462,16 @@ Begin
 End;
 
 
-function TWPOperator.sizeInBytesV : cardinal;
+function TWPOperator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FStyles.sizeInBytes);
-  inc(result, FSpeller.sizeInBytes);
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FUndoStack.sizeInBytes);
-  inc(result, FRedoStack.sizeInBytes);
-  inc(result, FCurrentOp.sizeInBytes);
-  inc(result, FRendererRange.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FStyles.sizeInBytes(magic));
+  inc(result, FSpeller.sizeInBytes(magic));
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FUndoStack.sizeInBytes(magic));
+  inc(result, FRedoStack.sizeInBytes(magic));
+  inc(result, FCurrentOp.sizeInBytes(magic));
+  inc(result, FRendererRange.sizeInBytes(magic));
   inc(result, (FDirectText.length * sizeof(char)) + 12);
 end;
 
@@ -9510,9 +9510,9 @@ Begin
 End;
 
 
-function TOperationRange.sizeInBytesV : cardinal;
+function TOperationRange.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 Function TWPOperator.RedoType: TWPOperationType;
@@ -9663,12 +9663,12 @@ End;
 
 Destructor TWPOperation.Destroy;
 Begin
-  FOriginalPieces.Free;
-  FModifiedPieces.Free;
-  FInsertedPieces.Free;
-  FRemovedPieces.Free;
-  FTablePieces.Free;
-  FUndoCursors.Free;
+  FOriginalPieces.free;
+  FModifiedPieces.free;
+  FInsertedPieces.free;
+  FRemovedPieces.free;
+  FTablePieces.free;
+  FUndoCursors.free;
   Inherited;
 End;
 
@@ -9768,33 +9768,33 @@ End;
 
 Procedure TWPOperation.SetOriginalPieces(Const Value: TWPWorkingDocumentPieces);
 Begin
-  FOriginalPieces.Free;
+  FOriginalPieces.free;
   FOriginalPieces := Value;
 End;
 
 Procedure TWPOperation.SetModifiedPieces(Const Value: TWPWorkingDocumentPieces);
 Begin
-  FModifiedPieces.Free;
+  FModifiedPieces.free;
   FModifiedPieces := Value;
 End;
 
 Procedure TWPOperation.SetInsertedPieces(Const Value: TWPWorkingDocumentPieces);
 Begin
-  FInsertedPieces.Free;
+  FInsertedPieces.free;
   FInsertedPieces := Value;
   FInsertedPieces.Hooking := False;
 End;
 
 Procedure TWPOperation.SetRemovedPieces(Const Value: TWPWorkingDocumentPieceTrackers);
 Begin
-  FRemovedPieces.Free;
+  FRemovedPieces.free;
   FRemovedPieces := Value;
   FRemovedPieces.SortedByOffset;
 End;
 
 Procedure TWPOperation.SetTablePieces(Const Value: TWPWorkingDocumentPieceTrackers);
 Begin
-  FTablePieces.Free;
+  FTablePieces.free;
   FTablePieces := Value;
   FTablePieces.SortedByOffset;
 End;
@@ -9869,17 +9869,17 @@ Begin
     Result := Result + FOriginalPieces[iLoop].LogicalText;
 End;
 
-function TWPOperation.sizeInBytesV : cardinal;
+function TWPOperation.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUndoCursor.length * sizeof(char)) + 12);
   inc(result, (FRedoCursor.length * sizeof(char)) + 12);
-  inc(result, FUndoCursors.sizeInBytes);
-  inc(result, FOriginalPieces.sizeInBytes);
-  inc(result, FModifiedPieces.sizeInBytes);
-  inc(result, FInsertedPieces.sizeInBytes);
-  inc(result, FRemovedPieces.sizeInBytes);
-  inc(result, FTablePieces.sizeInBytes);
+  inc(result, FUndoCursors.sizeInBytes(magic));
+  inc(result, FOriginalPieces.sizeInBytes(magic));
+  inc(result, FModifiedPieces.sizeInBytes(magic));
+  inc(result, FInsertedPieces.sizeInBytes(magic));
+  inc(result, FRemovedPieces.sizeInBytes(magic));
+  inc(result, FTablePieces.sizeInBytes(magic));
   inc(result, (FAddedText.length * sizeof(char)) + 12);
   inc(result, (FAddedTextThisIteration.length * sizeof(char)) + 12);
 end;
@@ -10115,9 +10115,9 @@ Begin
 End;
 
 
-function TWPSelection.sizeInBytesV : cardinal;
+function TWPSelection.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TWPRangeManager }
@@ -10130,7 +10130,7 @@ End;
 
 Destructor TWPRangeManager.Destroy;
 Begin
-  FList.Free;
+  FList.free;
   Inherited;
 End;
 
@@ -10226,10 +10226,10 @@ Const
   PROPS_SECTION_DISPLAY_TYPE : Array [TWPWorkingDocumentSectionDisplayType] Of String = ('None', 'Line', 'Name');
   PROPS_TEXT_FIELD_STATE : Array [TWPSFontState] Of String = ('Square Brackets', 'None', 'Hints', 'Invisible');
 
-function TWPRangeManager.sizeInBytesV : cardinal;
+function TWPRangeManager.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 Function TWPPropertyServer.GetProperties: TWPPropertyList;
@@ -10257,7 +10257,7 @@ Begin
     AddDocumentProperties(Result.AddGroup('Document'));
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -10688,7 +10688,7 @@ Begin
       oList.AddString(iOffset + PROP_ID_HOTSPOT_UNDERLINE, True, 'URL Underline', '');
     End;
   Finally
-    oKeys.Free;
+    oKeys.free;
   End;
 End;
 
@@ -10703,7 +10703,7 @@ Begin
     Else
       RaiseError('ReadFontName', 'Font "'+sValue+'" is not known');
   Finally
-    oList.Free;
+    oList.free;
   End;
 End;
 
@@ -10857,7 +10857,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetFieldProperties(oField);
   Finally
-    oField.Free;
+    oField.free;
   End;
 End;
 
@@ -10879,7 +10879,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetImageProperties(oImage);
   Finally
-    oImage.Free;
+    oImage.free;
   End;
 End;
 
@@ -10903,7 +10903,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.ApplyParagraph(oFormat);
   Finally
-    oFormat.Free;
+    oFormat.free;
   End;
 End;
 
@@ -10935,7 +10935,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetTableCellProperties(oCell);
   Finally
-    oCell.Free;
+    oCell.free;
   End;
 End;
 
@@ -10964,7 +10964,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetTableRowProperties(oRow);
   Finally
-    oRow.Free;
+    oRow.free;
   End;
 End;
 
@@ -10985,7 +10985,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetTableProperties(oTable);
   Finally
-    oTable.Free;
+    oTable.free;
   End;
 End;
 
@@ -11006,7 +11006,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetSectionProperties(oSection);
   Finally
-    oSection.Free;
+    oSection.free;
   End;
 End;
 
@@ -11028,7 +11028,7 @@ Begin
 
     TWordProcessor(Owner).PrimaryRange.SetLineProperties(oLine);
   Finally
-    oLine.Free;
+    oLine.free;
   End;
 End;
 
@@ -11107,7 +11107,7 @@ end;
 
 destructor TWPMacro.Destroy;
 begin
-  FActions.Free;
+  FActions.free;
   inherited;
 end;
 
@@ -11126,10 +11126,10 @@ begin
       if StringStartsWithInsensitive(s, 'Key') Then
         Actions.Add(TWPMacroKeyAction.Read(s))
       else
-        raise EWPException.create('Unknown macro line '+s);
+        raise EWPException.Create('Unknown macro line '+s);
     End;
   Finally
-    oText.Free;
+    oText.free;
   End;
 end;
 
@@ -11149,7 +11149,7 @@ begin
     for i := 0 to Actions.Count - 1 do
       Actions[i].Save(oText);
   Finally
-    oText.Free;
+    oText.free;
   End;
 end;
 
@@ -11167,10 +11167,10 @@ begin
     FActions.Clear;
 end;
 
-function TWPMacro.sizeInBytesV : cardinal;
+function TWPMacro.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FActions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FActions.sizeInBytes(magic));
 end;
 
 { TWPMacroKeyAction }
@@ -11218,7 +11218,7 @@ begin
     End;
     result.Link;
   Finally
-    result.Free;
+    result.free;
   End;
 end;
 
@@ -11242,7 +11242,7 @@ end;
 
 Destructor TWPCodeCompletionListBox.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -11258,7 +11258,7 @@ Var
   iWidth : Integer;
   iLoop : Integer;
 Begin
-  FList.Free;
+  FList.free;
   FList := Value;
   ClientHeight := ItemHeight * IntegerMin(MAX_ITEM_DISPLAY, FList.Count);
   Canvas.Font.Assign(Font);
@@ -11301,9 +11301,9 @@ begin
   result := 'todo';
 end;
 
-function TWPSearchDetails.sizeInBytesV : cardinal;
+function TWPSearchDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FText.length * sizeof(char)) + 12);
 end;
 
@@ -11328,15 +11328,15 @@ Begin
 End;
 
 
-function TWPReplaceDetails.sizeInBytesV : cardinal;
+function TWPReplaceDetails.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FReplace.length * sizeof(char)) + 12);
 end;
 
 Destructor TWPSearchIterator.Destroy;
 Begin
-  FDocument.Free;
+  FDocument.free;
   Inherited;
 End;
 
@@ -11349,7 +11349,7 @@ End;
 
 Procedure TWPSearchIterator.SetDocument(Const Value : TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
@@ -11469,11 +11469,11 @@ Begin
   Result := (FLimitStart = -1) Or ((iOffset >= FLimitStart) And (iOffset < FLimitStop));
 End;
 
-function TWPSearchIterator.sizeInBytesV : cardinal;
+function TWPSearchIterator.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FCurrent.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FCurrent.sizeInBytes(magic));
 end;
 
 Constructor TWPSearch.Create(oDocument : TWPWorkingDocument; oSelection : TWPSelection; oSearchDetails : TWPSearchDetails);
@@ -11487,9 +11487,9 @@ End;
 
 Destructor TWPSearch.Destroy;
 Begin
-  FDocument.Free;
-  FSelection.Free;
-  FSearchDetails.Free;
+  FDocument.free;
+  FSelection.free;
+  FSearchDetails.free;
   Inherited;
 End;
 
@@ -11517,21 +11517,21 @@ End;
 
 Procedure TWPSearch.SetDocument(Const Value : TWPWorkingDocument);
 Begin
-  FDocument.Free;
+  FDocument.free;
   FDocument := Value;
 End;
 
 
 Procedure TWPSearch.SetSelection(Const Value : TWPSelection);
 Begin
-  FSelection.Free;
+  FSelection.free;
   FSelection := Value;
 End;
 
 
 Procedure TWPSearch.SetSearchDetails(Const Value : TWPSearchDetails);
 Begin
-  FSearchDetails.Free;
+  FSearchDetails.free;
   FSearchDetails := Value;
 End;
 
@@ -11591,7 +11591,7 @@ Begin
       oIterator.Next;
     End;
   Finally
-    oIterator.Free;
+    oIterator.free;
   End;
 End;
 
@@ -11619,22 +11619,22 @@ End;
 
 
 
-function TWPSearch.sizeInBytesV : cardinal;
+function TWPSearch.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FDocument.sizeInBytes);
-  inc(result, FSelection.sizeInBytes);
-  inc(result, FSearchDetails.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FDocument.sizeInBytes(magic));
+  inc(result, FSelection.sizeInBytes(magic));
+  inc(result, FSearchDetails.sizeInBytes(magic));
 end;
 
-function TWPSpeechMagicInsertOptions.sizeInBytesV : cardinal;
+function TWPSpeechMagicInsertOptions.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
-function TWPAction.sizeInBytesV : cardinal;
+function TWPAction.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FSelection.length * sizeof(char)) + 12);
   inc(result, (FDetails.length * sizeof(char)) + 12);
   inc(result, (FAction.length * sizeof(char)) + 12);

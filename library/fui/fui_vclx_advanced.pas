@@ -1,7 +1,7 @@
-Unit fui_vclx_Advanced;
+Unit fui_vclx_advanced;
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -1089,7 +1089,7 @@ End;
 Destructor TUixAdvancedToolbarPresentationButtonEntity.Destroy;
 Begin
   FContext := Nil;
-  FBitmapImage.Free;
+  FBitmapImage.free;
   FParentComponent := Nil;
 
   Inherited;
@@ -1114,7 +1114,7 @@ Procedure TUixAdvancedToolbarPresentationButtonEntity.SetBitmapImage(Const Value
 Begin
   Assert(Invariants('SetBitmapImage', Value, TGdiPlusBitmapImage, 'Value'));
 
-  FBitmapImage.Free;
+  FBitmapImage.free;
   FBitmapImage := Value;
 End;
 
@@ -1129,7 +1129,7 @@ Procedure TUixAdvancedToolbarPresentationButtonEntity.SetHasBitmapImage(Const Va
 Begin
   If Assigned(FBitmapImage) And Not Value Then
   Begin
-    FBitmapImage.Free;
+    FBitmapImage.free;
     FBitmapImage := Nil;
   End
   Else If Not Assigned(FBitmapImage) And Value Then
@@ -1176,7 +1176,7 @@ End;
 
 Destructor TUixAdvancedToolbarPresentationComponentEntity.Destroy;
 Begin
-  FChoice.Free;
+  FChoice.free;
 
   Inherited;
 End;
@@ -1272,7 +1272,7 @@ End;
 
 Destructor TUixAdvancedToolbarPresentationSectionEntity.Destroy;
 Begin
-  FComponentEntityList.Free;
+  FComponentEntityList.free;
 
   Inherited;
 End;
@@ -1313,7 +1313,7 @@ End;
 
 Destructor TUixAdvancedToolbarPresentationGroupEntity.Destroy;
 Begin
-  FSectionEntityList.Free;
+  FSectionEntityList.free;
 
   Inherited;
 End;
@@ -1366,8 +1366,8 @@ End;
 
 Destructor TUixAdvancedToolbarPresentationEntity.Destroy;
 Begin
-  FSpecificationEntity.Free;
-  FGroupEntityList.Free;
+  FSpecificationEntity.free;
+  FGroupEntityList.free;
 
   Inherited;
 End;
@@ -1396,7 +1396,7 @@ End;
 
 Destructor TUixAdvancedToolbarExecutionButtonEntity.Destroy;
 Begin
-  FPresentationButtonEntity.Free;
+  FPresentationButtonEntity.free;
 
   Inherited;
 End;
@@ -1414,7 +1414,7 @@ Procedure TUixAdvancedToolbarExecutionButtonEntity.SetPresentationButtonEntity(C
 Begin
   Assert(Invariants('SetPresentationButtonEntity', Value, TUixAdvancedToolbarPresentationButtonEntity, 'Value'));
 
-  FPresentationButtonEntity.Free;
+  FPresentationButtonEntity.free;
   FPresentationButtonEntity := Value;
 End;
 
@@ -1429,7 +1429,7 @@ End;
 
 Destructor TUixAdvancedToolbarExecutionControlEntity.Destroy;
 Begin
-  FPresentationControlEntity.Free;
+  FPresentationControlEntity.free;
 
   Inherited;
 End;
@@ -1447,7 +1447,7 @@ Procedure TUixAdvancedToolbarExecutionControlEntity.SetPresentationControlEntity
 Begin
   Assert(Invariants('SetPresentationControlEntity', Value, TUixAdvancedToolbarPresentationControlEntity, 'Value'));
 
-  FPresentationControlEntity.Free;
+  FPresentationControlEntity.free;
   FPresentationControlEntity := Value;
 End;
 
@@ -1464,8 +1464,8 @@ End;
 
 Destructor TUixAdvancedToolbarExecutionComponentEntity.Destroy;
 Begin
-  FPresentationComponentEntity.Free;
-  FChoice.Free;
+  FPresentationComponentEntity.free;
+  FChoice.free;
 
   Inherited;
 End;
@@ -1525,7 +1525,7 @@ Procedure TUixAdvancedToolbarExecutionComponentEntity.SetPresentationComponentEn
 Begin
   Assert(Invariants('SetPresentationComponentEntity', Value, TUixAdvancedToolbarPresentationComponentEntity, 'Value'));
 
-  FPresentationComponentEntity.Free;
+  FPresentationComponentEntity.free;
   FPresentationComponentEntity := Value;
 End;
 
@@ -1579,8 +1579,8 @@ End;
 
 Destructor TUixAdvancedToolbarExecutionSectionEntity.Destroy;
 Begin
-  FPresentationSectionEntity.Free;
-  FComponentEntityList.Free;
+  FPresentationSectionEntity.free;
+  FComponentEntityList.free;
 
   Inherited;
 End;
@@ -1598,7 +1598,7 @@ Procedure TUixAdvancedToolbarExecutionSectionEntity.SetPresentationSectionEntity
 Begin
   Assert(Invariants('SetPresentationSectionEntity', Value, TUixAdvancedToolbarPresentationSectionEntity, 'Value'));
 
-  FPresentationSectionEntity.Free;
+  FPresentationSectionEntity.free;
   FPresentationSectionEntity := Value;
 End;
 
@@ -1626,8 +1626,8 @@ End;
 
 Destructor TUixAdvancedToolbarExecutionGroupEntity.Destroy;
 Begin
-  FSectionEntityList.Free;
-  FPresentationGroupEntity.Free;
+  FSectionEntityList.free;
+  FPresentationGroupEntity.free;
 
   Inherited;
 End;
@@ -1651,7 +1651,7 @@ Procedure TUixAdvancedToolbarExecutionGroupEntity.SetPresentationGroupEntity(Con
 Begin
   Assert(Invariants('SetPresentationGroupEntity', Value, TUixAdvancedToolbarPresentationGroupEntity, 'Value'));
 
-  FPresentationGroupEntity.Free;
+  FPresentationGroupEntity.free;
   FPresentationGroupEntity := Value;
 End;
 
@@ -1686,7 +1686,7 @@ Begin
     If Not Find(oExecutionGroupEntity, Result, CompareByPresentationGroupEntity) Then
       Result := -1;
   Finally
-    oExecutionGroupEntity.Free;
+    oExecutionGroupEntity.free;
   End;
 End;
 
@@ -1707,7 +1707,7 @@ End;
 
 Destructor TUixAdvancedToolbarExecutionEntity.Destroy;
 Begin
-  FGroupEntityList.Free;
+  FGroupEntityList.free;
 
   Inherited;
 End;
@@ -1725,9 +1725,9 @@ End;
 
 Destructor TUixAdvancedToolbarHotSpotEntity.Destroy;
 Begin
-  FComponentEntity.Free;
-  FGroupEntity.Free;
-  FHotSpot.Free;
+  FComponentEntity.free;
+  FGroupEntity.free;
+  FHotSpot.free;
 
   Inherited;
 End;
@@ -1799,7 +1799,7 @@ Procedure TUixAdvancedToolbarHotSpotEntity.SetGroupEntity(Const Value : TUixAdva
 Begin
   Assert(Invariants('SetGroupEntity', Value, TUixAdvancedToolbarExecutionGroupEntity, 'Value'));
 
-  FGroupEntity.Free;
+  FGroupEntity.free;
   FGroupEntity := Value;
 End;
 
@@ -1816,7 +1816,7 @@ Procedure TUixAdvancedToolbarHotSpotEntity.SetComponentEntity(Const Value : TUix
 Begin
   Assert(Invariants('SetComponentEntity', Value, TUixAdvancedToolbarExecutionComponentEntity, 'Value'));
 
-  FComponentEntity.Free;
+  FComponentEntity.free;
   FComponentEntity := Value;
 End;
 
@@ -1889,27 +1889,27 @@ End;
 
 Destructor TUixAdvancedToolbar.Destroy;
 Begin
-  FPresentationExecutionButtonEntityMatch.Free;
+  FPresentationExecutionButtonEntityMatch.free;
 
-  FVisibleControlComponentEntityList.Free;
-  FVisibleControlGroupEntityList.Free;
+  FVisibleControlComponentEntityList.free;
+  FVisibleControlGroupEntityList.free;
 
-  FHotSpotMouseHoverEntity.Free;
-  FHotSpotMouseDownEntity.Free;
+  FHotSpotMouseHoverEntity.free;
+  FHotSpotMouseDownEntity.free;
 
-  FHotSpotEntityList.Free;
+  FHotSpotEntityList.free;
 
-  FCaptionStringFormat.Free;
-  FCaptionFont.Free;
+  FCaptionStringFormat.free;
+  FCaptionFont.free;
 
-  FDefaultImageAttributes.Free;
-  FGrayScaleImageAttributes.Free;
-  FChevronPath.Free;
-  FSolidBrush.Free;
-  FPen.Free;
+  FDefaultImageAttributes.free;
+  FGrayScaleImageAttributes.free;
+  FChevronPath.free;
+  FSolidBrush.free;
+  FPen.free;
 
-  FExecutionEntity.Free;
-  FPresentationEntity.Free;
+  FExecutionEntity.free;
+  FPresentationEntity.free;
 
   Inherited;
 End;
@@ -2009,7 +2009,7 @@ Begin
 
         oGraphics.FillRectangle(oLinearGradientBrush, FExecutionEntity.ConfigurationRectangle);
       Finally
-        oLinearGradientBrush.Free;
+        oLinearGradientBrush.free;
       End;
 
       If Assigned(FHotSpotMouseHoverEntity) And FHotSpotMouseHoverEntity.IsEquivalent(FConfigurationHotSpotEntity) Then
@@ -2023,13 +2023,13 @@ Begin
 
           oGraphics.FillRectangle(oLinearGradientBrush, FExecutionEntity.ConfigurationRectangle);
         Finally
-          oLinearGradientBrush.Free;
+          oLinearGradientBrush.free;
         End;
       End;
 
       oGraphics.ResetClip;
     Finally
-      oConfigurationPath.Free;
+      oConfigurationPath.free;
     End;
 
     FConfigurationHotSpotEntity := AddNewHotSpotEntity;
@@ -2076,7 +2076,7 @@ Begin
 
         oGraphics.FillRectangle(oLinearGradientBrush, oExecutionGroupEntity.CaptionBackgroundRectangle);
       Finally
-        oLinearGradientBrush.Free;
+        oLinearGradientBrush.free;
       End;
 
       FSolidBrush.SetColor(argbBlack);
@@ -2167,7 +2167,7 @@ Begin
 
                 oGraphics.DrawPath(FPen, oButtonPath);
               Finally
-                oButtonPath.Free;
+                oButtonPath.free;
               End;
             End;
 
@@ -2227,7 +2227,7 @@ Begin
 
               oGraphics.FillRectangle(oLinearGradientBrush, oExecutionComponentEntity.ButtonEntity.BackgroundRectangle);
             Finally
-              oLinearGradientBrush.Free;
+              oLinearGradientBrush.free;
             End;
 
             If Not oExecutionComponentEntity.ButtonEntity.IsFirstInSection Then
@@ -2330,7 +2330,7 @@ Begin
 
                   oGraphics.FillRectangle(oLinearGradientBrush, oExecutionComponentEntity.ButtonEntity.DropDownBackgroundRectangle);
                 Finally
-                  oLinearGradientBrush.Free;
+                  oLinearGradientBrush.free;
                 End;
 
                 If oExecutionComponentEntity.PresentationComponentEntity.IsEnabled Then
@@ -2415,7 +2415,7 @@ Begin
 
         oGraphics.FillRectangle(oLinearGradientBrush, aChevronRectangle);
       Finally
-        oLinearGradientBrush.Free;
+        oLinearGradientBrush.free;
       End;
     End;
 
@@ -3167,7 +3167,7 @@ Begin
 
                 oPresentationButtonEntity.DropDownHandler(oPackage)
               Finally
-                oPackage.Free;
+                oPackage.free;
               End;
             End
             Else If Assigned(oPresentationButtonEntity.DropDownPopup) Then
@@ -3379,7 +3379,7 @@ Begin
 
               PresentationEntity.DropDownHandler(oPackage)
             Finally
-              oPackage.Free;
+              oPackage.free;
             End;
           End;
         End;
@@ -3410,7 +3410,7 @@ Begin
 
               oPresentationButtonEntity.DropDownHandler(oPackage)
             Finally
-              oPackage.Free;
+              oPackage.free;
             End;
           End;
         End;
@@ -3437,7 +3437,7 @@ Begin
 
               oPresentationButtonEntity.DropDownHandler(oPackage)
             Finally
-              oPackage.Free;
+              oPackage.free;
             End;
           End;
         End;
@@ -3586,7 +3586,7 @@ Begin
     Try
       CalculateMetrics(oGraphics)
     Finally
-      oGraphics.Free;
+      oGraphics.free;
     End;
 
     iRequiredRowCount := FRequiredRowCount;
@@ -3612,7 +3612,7 @@ Begin
   Try
     CalculateMetrics(oGraphics)
   Finally
-    oGraphics.Free;
+    oGraphics.free;
   End;
 
   Result := 0;
@@ -3670,7 +3670,7 @@ Procedure TUixAdvancedToolbar.ApplyMouseDownHotSpot(Const oHotSpotEntity : TUixA
 Begin
   Assert(Not Assigned(oHotSpotEntity) Or Invariants('ApplyMouseDownHotSpot', oHotSpotEntity, TUixAdvancedToolbarHotSpotEntity, 'oHotSpotEntity'));
 
-  FHotSpotMouseDownEntity.Free;
+  FHotSpotMouseDownEntity.free;
   FHotSpotMouseDownEntity := oHotSpotEntity.Link;
 End;
 
@@ -3679,7 +3679,7 @@ Procedure TUixAdvancedToolbar.ApplyMouseHoverHotSpot(Const oHotSpotEntity : TUix
 Begin
   Assert(Not Assigned(oHotSpotEntity) Or Invariants('ApplyMouseHoverHotSpot', oHotSpotEntity, TUixAdvancedToolbarHotSpotEntity, 'oHotSpotEntity'));
 
-  FHotSpotMouseHoverEntity.Free;
+  FHotSpotMouseHoverEntity.free;
   FHotSpotMouseHoverEntity := oHotSpotEntity.Link;
 End;
 
@@ -3696,7 +3696,7 @@ Procedure TUixAdvancedToolbar.SetPresentationEntity(Const Value : TUixAdvancedTo
 Begin
   Assert(Invariants('SetPresentationEntity', Value, TUixAdvancedToolbarPresentationEntity, 'Value'));
 
-  FPresentationEntity.Free;
+  FPresentationEntity.free;
   FPresentationEntity := Value;
 End;
 
@@ -3866,7 +3866,7 @@ End;
 
 Destructor TUixAdvancedToolbarChevronForm.Destroy;
 Begin
-  FPresentationEntity.Free;
+  FPresentationEntity.free;
 
   Inherited;
 End;
@@ -4013,7 +4013,7 @@ Begin
 
         oButtonEntity.DropDownHandler(oPackage)
       Finally
-        oPackage.Free;
+        oPackage.free;
       End;
     End;
 
@@ -4116,7 +4116,7 @@ End;
 
 Destructor TUixAdvancedToolbarPresentationButtonEventPackage.Destroy;
 Begin
-  FButtonEntity.Free;
+  FButtonEntity.free;
 
   Inherited;
 End;
@@ -4142,7 +4142,7 @@ End;
 
 Procedure TUixAdvancedToolbarPresentationButtonEventPackage.SetButtonEntity(Const Value: TUixAdvancedToolbarPresentationButtonEntity);
 Begin
-  FButtonEntity.Free;
+  FButtonEntity.free;
   FButtonEntity := Value;
 End;
 
@@ -4253,10 +4253,10 @@ End;
 
 Destructor TUixAdvancedComboBox.Destroy;
 Begin
-  FDefaultFont.Free;
-  FDefaultStringFormat.Free;
-  FSolidBrush.Free;
-  FPen.Free;
+  FDefaultFont.free;
+  FDefaultStringFormat.free;
+  FSolidBrush.free;
+  FPen.free;
 
   Inherited;
 End;
@@ -4319,7 +4319,7 @@ Begin
 
       oGraphics.FillRectangle(oLinearGradientBrush, FButtonRect);
     Finally
-      oLinearGradientBrush.Free;
+      oLinearGradientBrush.free;
     End;
   End
   Else
@@ -4386,7 +4386,7 @@ Begin
 
         Paint(oMemoryGraphics, aComboBoxInfo);
       Finally
-        oMemoryGraphics.Free;
+        oMemoryGraphics.free;
       End;
 
       BitBlt(pInputDC, 0, 0, ClientRect.Right, ClientRect.Bottom, hMemoryDC, 0, 0, SRCCOPY);
@@ -4406,7 +4406,7 @@ Begin
 
       Paint(oMemoryGraphics, aComboBoxInfo);
     Finally
-      oMemoryGraphics.Free;
+      oMemoryGraphics.free;
     End;
   End;
 End;
@@ -4515,7 +4515,7 @@ Begin
 
       DrawComboBoxItem(oBufferGraphics, Integer(aDrawItemStruct.itemID), aBufferItemRect, TOwnerDrawState(LongRec(aDrawItemStruct.itemState).Lo));
     Finally
-      oBufferGraphics.Free;
+      oBufferGraphics.free;
     End;
 
     oGraphics := TGdiPlusExtendedGraphics.Create(aDrawItemStruct.hDC);
@@ -4524,10 +4524,10 @@ Begin
 
       oGraphics.DrawImage(oBufferBitmap, MakeRectF(aItemRect), Nil);
     Finally
-      oGraphics.Free;
+      oGraphics.free;
     End;
   Finally
-    oBufferBitmap.Free;
+    oBufferBitmap.free;
   End;
 End;
 
@@ -4575,7 +4575,7 @@ Begin
 
       oGraphics.FillRectangle(oLinearGradientBrush, aFocusRect);
     Finally
-      oLinearGradientBrush.Free;
+      oLinearGradientBrush.free;
     End;
 
     FPen.SetColor(argbDarkGray);
@@ -4726,15 +4726,15 @@ Destructor TUixAdvancedFontComboBox.Destroy;
 Begin
   DeleteDC(FCachedDC);
 
-  FHashTable.Free;
-  FLookupHashEntry.Free;
+  FHashTable.free;
+  FLookupHashEntry.free;
 
-  FDefaultFont.Free;
-  FMeasureGraphics.Free;
-  FDefaultStringFormat.Free;
+  FDefaultFont.free;
+  FMeasureGraphics.free;
+  FDefaultStringFormat.free;
 
-  FSelectedFonts.Free;
-  FAllFonts.Free;
+  FSelectedFonts.free;
+  FAllFonts.free;
   Inherited;
 End;
 
@@ -4844,7 +4844,7 @@ Begin
 
       oGraphics.FillRectangle(oLinearGradientBrush, aFocusRect);
     Finally
-      oLinearGradientBrush.Free;
+      oLinearGradientBrush.free;
     End;
 
     Pen.SetColor(argbDarkGray);
@@ -4990,8 +4990,8 @@ End;
 
 Destructor TUixAdvancedFontComboBoxFontNameHashEntry.Destroy;
 Begin
-  FGdiPlusFont.Free;
-  FGdiFont.Free;
+  FGdiPlusFont.free;
+  FGdiFont.free;
 
   Inherited;
 End;
@@ -5047,11 +5047,11 @@ End;
 
 Destructor TUixAdvancedColourComboBox.Destroy;
 Begin
-  FCustomFont.Free;
-  FDefaultFont.Free;
-  FMeasureGraphics.Free;
-  FDefaultStringFormat.Free;
-  FSelectedColours.Free;
+  FCustomFont.free;
+  FDefaultFont.free;
+  FMeasureGraphics.free;
+  FDefaultStringFormat.free;
+  FSelectedColours.free;
   Inherited;
 End;
 
@@ -5096,7 +5096,7 @@ Begin
 
       oGraphics.FillRectangle(oLinearGradientBrush, aFocusRect);
     Finally
-      oLinearGradientBrush.Free;
+      oLinearGradientBrush.free;
     End;
 
     Pen.SetColor(argbDarkGray);
@@ -5301,14 +5301,14 @@ End;
 
 Destructor TUixAdvancedButton.Destroy;
 Begin
-  FPresentationEntity.Free;
-  FImageAttributes.Free;
-  FClientPath.Free;
-  FDefaultStringFormat.Free;
-  FDefaultFont.Free;
+  FPresentationEntity.free;
+  FImageAttributes.free;
+  FClientPath.free;
+  FDefaultStringFormat.free;
+  FDefaultFont.free;
 
-  FSolidBrush.Free;
-  FPen.Free;
+  FSolidBrush.free;
+  FPen.free;
 
   Inherited;
 End;
@@ -5392,7 +5392,7 @@ Begin
 
     oGraphics.FillPath(oLinearGradientBrush, FClientPath);
   Finally
-    oLinearGradientBrush.Free;
+    oLinearGradientBrush.free;
   End;
 
   If Enabled And FMouseHover Then
@@ -5778,7 +5778,7 @@ Begin
     Try
       aStringSize := oGraphics.StringSize(PresentationEntity.Caption, FDefaultFont.NativeFont, FDefaultStringFormat.ProduceStringFormat);
     Finally
-      oGraphics.Free;
+      oGraphics.free;
     End;
 
     Result := RealCeiling(aStringSize.Width) + MarginWidth;
@@ -5931,7 +5931,7 @@ Destructor TUixAdvancedButtonPresentationEntity.Destroy;
 Begin
   Inherited;
 
-  FIconBitmapImage.Free;
+  FIconBitmapImage.free;
 End;
 
 
@@ -5951,7 +5951,7 @@ Procedure TUixAdvancedButtonPresentationEntity.SetHasIconBitmapImage(Const Value
 Begin
   If Assigned(FIconBitmapImage) And Not Value Then
   Begin
-    FIconBitmapImage.Free;
+    FIconBitmapImage.free;
     FIconBitmapImage := Nil;
   End
   Else If Not Assigned(FIconBitmapImage) And Value Then
@@ -5973,7 +5973,7 @@ Procedure TUixAdvancedButtonPresentationEntity.SetIconBitmapImage(Const Value : 
 Begin
   Assert(Invariants('SetIconBitmapImage', Value, TGdiPlusBitmapImage, 'Value'));
 
-  FIconBitmapImage.Free;
+  FIconBitmapImage.free;
   FIconBitmapImage := Value;
 End;
 

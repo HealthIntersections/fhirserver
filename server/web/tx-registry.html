@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xml:lang="en" lang="en">
+<head>
+    <title>Tx Server Registry (FHIR Server [%id%] Version [%ver%])</title>
+    [%include head.html%]
+</head>
+
+<body>
+[%include top.html%]
+
+
+<h3>FHIR Tx Server Registry</h3>
+<p>
+Filter the Tx Servers:
+</p>
+  
+<form method="GET" action="[%path%]">
+<table> 
+  <tr><td>Registry</td><td><input type="text" name="registry" value="[%registry%]"> (by code)</td></tr>
+  <tr><td>Server</td><td><input type="text" name="server" value="[%server%]"> (by code)</td></tr>
+  <tr><td>Version</td><td><input type="text" name="fhirVersion" value="[%fhirVersion%]"> (by code)</td></tr>
+  <tr><td>Code System</td><td><input type="text" name="url" value="[%url%]"> (url or url|version)</td></tr>
+</table>
+<input type="submit" value="Filter"/>
+</form>
+<hr/>
+
+[%matches%]
+
+<hr/>
+<p>
+[%count%] matching Servers found. Status = [%status%]. <a href="[%prefix%]/catalog?lastUpdated=-30">Package History last 30 days</a>
+</p>
+
+<p>
+Registry View:
+</p>
+[%tx-reg-view%]
+<p>
+How to add tx servers to this registry: <i>[%tx-reg-doco%]</i>
+</p>
+
+
+[%include bottom.html%]
+
+</body>
+
+</html>

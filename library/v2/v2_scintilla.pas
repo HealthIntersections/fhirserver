@@ -1,4 +1,4 @@
-unit v2_scint;
+unit v2_scintilla;
 
 {
 Copyright (c) 2014+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)

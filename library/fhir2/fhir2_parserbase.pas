@@ -1,4 +1,4 @@
-unit fhir2_parserBase;
+unit fhir2_parserbase;
 
 {
 Copyright (c) 2017+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -119,7 +119,8 @@ end;
 
 function TFHIRXmlParserBase2.ParseResource(element: TMXmlElement; path: String): TFhirResource;
 begin
-  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  result := nil;
+  raise EFHIRException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRXmlParserBase2.ParseResourceV(element: TMXmlElement; path: String): TFhirResourceV;
@@ -129,7 +130,7 @@ end;
 
 function TFHIRXmlParserBase2.ParseDataType(element: TMXmlElement; name: String; type_: TFHIRTypeClass): TFHIRType;
 begin
-  raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+  raise EFHIRException.Create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 
@@ -140,7 +141,7 @@ end;
 
 procedure TFHIRXmlComposerBase2.ComposeResource(xml: TXmlBuilder; resource: TFhirResource);
 begin
-  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRXmlComposerBase2.ComposeResourceV(xml: TXmlBuilder; resource: TFhirResourceV);
@@ -153,12 +154,12 @@ end;
 
 function TFHIRJsonParserBase2.ParseDataType(jsn : TJsonObject; name : String; type_ : TFHIRTypeClass): TFHIRType;
 begin
-  raise EFHIRException.create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
+  raise EFHIRException.Create('don''t use TFHIRXmlParserBase directly - use TFHIRXmlParser');
 end;
 
 function TFHIRJsonParserBase2.ParseResource(jsn: TJsonObject): TFhirResource;
 begin
-  raise EFHIRException.create('don''t use TFHIRJsonParserBase2 directly - use TFHIRXmlComposer');
+  raise EFHIRException.Create('don''t use TFHIRJsonParserBase2 directly - use TFHIRXmlComposer');
 end;
 
 function TFHIRJsonParserBase2.ParseResourceV(jsn: TJsonObject): TFhirResourceV;
@@ -185,7 +186,7 @@ end;
 
 procedure TFHIRJsonComposerBase2.ComposeResource(json: TJSONWriter; resource: TFhirResource);
 begin
-  raise EFHIRException.create('don''t use '+className+' directly - use TFHIRXmlComposer');
+  raise EFHIRException.Create('don''t use '+className+' directly - use TFHIRXmlComposer');
 end;
 
 procedure TFHIRJsonComposerBase2.ComposeResourceV(json: TJSONWriter; resource: TFhirResourceV);

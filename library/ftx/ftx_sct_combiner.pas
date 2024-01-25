@@ -37,7 +37,7 @@ uses
   {$IFDEF WINDOWS} Windows, {$ENDIF}
   SysUtils, Classes,
   fsl_base, fsl_utilities,
-  ftx_sct_services;
+  ftx_sct_services, ftx_service;
 
 Type
   TTabWriter = class (TFslObject)
@@ -261,14 +261,14 @@ implementation
 
 constructor TTabWriter.Create(filename: String);
 begin
-  inherited create;
+  inherited Create;
   FStream := TFileStream.Create(filename, fmCreate);
   FDiv := false;
 end;
 
-destructor TTabWriter.destroy;
+destructor TTabWriter.Destroy;
 begin
-  FStream.Free;
+  FStream.free;
   inherited;
 end;
 
@@ -330,12 +330,12 @@ constructor TSnomedCombinedRelationshipGroup.Create(source : TSnomedServices);
 begin
   inherited Create;
   self.source := source;
-  FRelationships := TFslList<TSnomedCombinedRelationship>.create;
+  FRelationships := TFslList<TSnomedCombinedRelationship>.Create;
 end;
 
 destructor TSnomedCombinedRelationshipGroup.Destroy;
 begin
-  FRelationships.Free;
+  FRelationships.free;
   inherited;
 end;
 
@@ -359,16 +359,16 @@ end;
 constructor TSnomedCombinedConcept.Create;
 begin
   inherited;
-  FDescriptions := TFslList<TSnomedCombinedDescription>.create;
-  FGroups := TFslList<TSnomedCombinedRelationshipGroup>.create;
-  FChildren := TFslList<TSnomedCombinedConcept>.create;
+  FDescriptions := TFslList<TSnomedCombinedDescription>.Create;
+  FGroups := TFslList<TSnomedCombinedRelationshipGroup>.Create;
+  FChildren := TFslList<TSnomedCombinedConcept>.Create;
 end;
 
 destructor TSnomedCombinedConcept.Destroy;
 begin
-  FChildren.Free;
-  FGroups.Free;
-  FDescriptions.Free;
+  FChildren.free;
+  FGroups.free;
+  FDescriptions.free;
   inherited;
 end;
 
@@ -395,26 +395,26 @@ constructor TSnomedCombiner.Create;
 begin
   inherited;
   FStore := TFslMap<TSnomedCombinedStoreEntry>.create('sn.comb.store');
-  FOthers := TFslList<TSnomedServices>.create;
+  FOthers := TFslList<TSnomedServices>.Create;
   FConcepts := TFslMap<TSnomedCombinedConcept>.create('sn.comb.conc', 500000);
   FDependencies := TFslMap<TSnomedCombinedDependency>.Create('sn.comb.dep');
   FDescriptions := TFslMap<TSnomedCombinedDescription>.create('sn.comb.desc', 1500000);
   FRelationships := TFslMap<TSnomedCombinedRelationship>.create('sn.comb.rel', 3000000);
   FRefSets := TFslMap<TSnomedCombinedReferenceSet>.create('sn.comb.refset', 1000);
-  FSummary := TStringList.create;
-  FIssues := TStringList.create;
+  FSummary := TStringList.Create;
+  FIssues := TStringList.Create;
 end;
 
 destructor TSnomedCombiner.Destroy;
 begin
-  FStore.Free;
-  FRefSets.Free;
-  FDescriptions.Free;
-  FDependencies.Free;
-  FRelationships.Free;
+  FStore.free;
+  FRefSets.free;
+  FDescriptions.free;
+  FDependencies.free;
+  FRelationships.free;
   FSummary.free;
   FIssues.free;
-  FConcepts.Free;
+  FConcepts.free;
   FInternational.free;
   FOthers.free;
   inherited;
@@ -520,7 +520,7 @@ begin
     fsm.date := dep.FDate;
     fsm.module := dep.source;
     fsm.FItem := FConcepts[inttostr(dep.target)];
-    fsm.FValues := TStringList.create;
+    fsm.FValues := TStringList.Create;
     fsm.FValues.Add(formatDateTime('yyyymmdd', dep.startDate));
     fsm.FValues.Add(formatDateTime('yyyymmdd', dep.endDate));
   end;
@@ -623,7 +623,7 @@ begin
     else
       FDependencies.Add(dep.key, dep.Link as TSnomedCombinedDependency);
   finally
-    dep.Free;
+    dep.free;
   end;
 end;
 
@@ -659,7 +659,7 @@ begin
     end
     else
     begin
-      d := TSnomedCombinedDescription.create;
+      d := TSnomedCombinedDescription.Create;
       c.FDescriptions.Add(d);
       FDescriptions.Add(inttostr(id), d.Link);
       d.FId := id;
@@ -1016,7 +1016,7 @@ begin
         FStore.Add(r, TSnomedCombinedStoreEntry.Create(l));
       end;
     finally
-      sl.Free;
+      sl.free;
     end;
   end;
   FModuleId := generateId(1, 0);
@@ -1241,11 +1241,11 @@ begin
       end;
     finally
       c.free;
-      d.Free;
-      r.Free;
+      d.free;
+      r.free;
     end;
   finally
-    st.Free;
+    st.free;
   end;
   for rs in FRefSets.Values do
   begin
@@ -1285,7 +1285,7 @@ begin
         r.endRecord;
       end;
     finally
-      r.Free;
+      r.free;
     end;
   end;
 end;
@@ -1488,11 +1488,11 @@ begin
         dep.endDate := trunc(now);
         FDependencies.Add(dep.key, dep.Link as TSnomedCombinedDependency);
       finally
-        dep.Free;
+        dep.free;
       end;
     end;
   finally
-    st.Free;
+    st.free;
   end;
 end;
 
@@ -1549,7 +1549,7 @@ end;
 
 destructor TSnomedCombinedReferenceSetEntry.Destroy;
 begin
-  FValues.Free;
+  FValues.free;
   inherited;
 end;
 
@@ -1567,16 +1567,16 @@ end;
 constructor TSnomedCombinedReferenceSet.Create;
 begin
   inherited;
-  FTypes := TStringList.create;
-  FFields := TStringList.create;
+  FTypes := TStringList.Create;
+  FFields := TStringList.Create;
   FMembers := TFslMap<TSnomedCombinedReferenceSetEntry>.create('sn.comb.refset');
 end;
 
 destructor TSnomedCombinedReferenceSet.Destroy;
 begin
-  FTypes.Free;
-  FFields.Free;
-  FMembers.Free;
+  FTypes.free;
+  FFields.free;
+  FMembers.free;
   inherited;
 end;
 
@@ -1615,13 +1615,13 @@ end;
 
 constructor TSnomedCombinedStoreEntry.create(s: String);
 begin
-  inherited create;
+  inherited Create;
   id := Strtoint64(s);
 end;
 
 constructor TSnomedCombinedStoreEntry.create(i: int64);
 begin
-  inherited create;
+  inherited Create;
   id := i;
 end;
 

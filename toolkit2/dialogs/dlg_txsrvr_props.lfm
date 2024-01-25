@@ -1,0 +1,131 @@
+object TxServerPropertiesDialog: TTxServerPropertiesDialog
+  Left = 660
+  Height = 163
+  Top = 298
+  Width = 585
+  Caption = 'TxServerPropertiesDialog'
+  ClientHeight = 163
+  ClientWidth = 585
+  OnCreate = FormCreate
+  LCLVersion = '2.2.7.0'
+  object Panel1: TPanel
+    Left = 0
+    Height = 41
+    Top = 122
+    Width = 585
+    Align = alBottom
+    BevelOuter = bvNone
+    ClientHeight = 41
+    ClientWidth = 585
+    TabOrder = 0
+    object btnOk: TButton
+      Left = 420
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Ok'
+      ModalResult = 1
+      TabOrder = 0
+    end
+    object btnCancel: TButton
+      Left = 501
+      Height = 25
+      Top = 6
+      Width = 75
+      Anchors = [akRight, akBottom]
+      Caption = 'Cancel'
+      ModalResult = 2
+      TabOrder = 1
+    end
+    object Button1: TButton
+      Left = 8
+      Height = 25
+      Top = 6
+      Width = 136
+      Caption = 'Reload Version List'
+      TabOrder = 2
+    end
+  end
+  object Panel4: TPanel
+    Left = 0
+    Height = 40
+    Top = 0
+    Width = 585
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 585
+    TabOrder = 1
+    object Label1: TLabel
+      Left = 10
+      Height = 16
+      Top = 8
+      Width = 35
+      Caption = 'Name'
+      ParentColor = False
+    end
+    object edtName: TEdit
+      Left = 72
+      Height = 21
+      Top = 8
+      Width = 498
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+    end
+  end
+  object Panel5: TPanel
+    Left = 0
+    Height = 40
+    Top = 80
+    Width = 585
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 585
+    TabOrder = 2
+    object Label3: TLabel
+      Left = 10
+      Height = 16
+      Top = 8
+      Width = 44
+      Caption = 'Default'
+      ParentColor = False
+    end
+    object chkDefault: TCheckBox
+      Left = 72
+      Height = 18
+      Top = 8
+      Width = 166
+      Caption = 'This is the default server'
+      TabOrder = 0
+    end
+  end
+  object Panel6: TPanel
+    Left = 0
+    Height = 40
+    Top = 40
+    Width = 585
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 40
+    ClientWidth = 585
+    TabOrder = 3
+    object Label2: TLabel
+      Left = 10
+      Height = 16
+      Top = 8
+      Width = 49
+      Caption = 'Address'
+      ParentColor = False
+    end
+    object edtAddress: TEdit
+      Left = 72
+      Height = 21
+      Top = 8
+      Width = 498
+      Anchors = [akTop, akLeft, akRight]
+      TabOrder = 0
+    end
+  end
+end

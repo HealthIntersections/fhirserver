@@ -2,7 +2,7 @@ Unit FHIR.WP.V2Ft;
 
 
 {
-Copyright (c) 2001+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2001+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -208,7 +208,7 @@ Type
       Procedure SetParagraphNumberFormat(Const sValue : String);
 
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -255,7 +255,7 @@ Type
 
       Procedure ConfigureTextWriter(oWriter : TWPTextWriterModelWriter); Overload; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -285,8 +285,8 @@ End;
 
 Destructor TWPHL7FTReader.Destroy;
 Begin
-  FHL7Font.Free;
-  FHL7Para.Free;
+  FHL7Font.free;
+  FHL7Para.free;
 
   Inherited;
 End;
@@ -316,7 +316,7 @@ Begin
     oDocument.Pieces.Add(oPara.Link);
     FLastWasPara := True;
   Finally
-    oPara.Free;
+    oPara.free;
   End;
 
 End;
@@ -342,7 +342,7 @@ Begin
     oDocument.Pieces.Add(oText.Link);
     FLastWasPara := False;
   Finally
-    oText.Free;
+    oText.free;
   End;
 End;
 
@@ -415,7 +415,7 @@ Begin
   Try
     FText := oReader.ConsumeRestStream;
   Finally
-    oReader.Free;
+    oReader.free;
   End;
 
   FLoop := 0;
@@ -859,11 +859,11 @@ Const
   HIGHLIGHT_CODE_ON = #1+'H'+#1;
   HIGHLIGHT_CODE_OFF = #1+'N'+#1;
 
-function TWPHL7FTReader.sizeInBytesV : cardinal;
+function TWPHL7FTReader.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FHL7Font.sizeInBytes);
-  inc(result, FHL7Para.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FHL7Font.sizeInBytes(magic));
+  inc(result, FHL7Para.sizeInBytes(magic));
   inc(result, (FText.length * sizeof(char)) + 12);
   inc(result, (FWord.length * sizeof(char)) + 12);
 end;
@@ -969,9 +969,9 @@ End;
 
 
 
-function TWPHL7FTWriter.sizeInBytesV : cardinal;
+function TWPHL7FTWriter.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 End.

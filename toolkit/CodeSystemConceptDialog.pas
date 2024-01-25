@@ -138,8 +138,8 @@ var
 begin
   for value in FCodeSystem.property_List do
     value.TagObject := nil;
-  FCodeSystem.Free;
-  FConcept.Free;
+  FCodeSystem.free;
+  FConcept.free;
   inherited;
 end;
 
@@ -360,7 +360,7 @@ begin
       edt.Anchors := [TAnchorKind.akLeft, TAnchorKind.akTop, TAnchorKind.akRight];
       if hasBindingExtension(value) then
       begin
-        cbx := TCombobox.create(Panel2);
+        cbx := TCombobox.Create(Panel2);
         cbx.Parent := Panel2;
         cbx.Position.X := edt.Position.X+edt.width+10;
         cbx.Position.Y := top;
@@ -419,14 +419,14 @@ end;
 
 procedure TCodeSystemConceptForm.SetCodeSystem(const Value: TFhirCodeSystem);
 begin
-  FCodeSystem.Free;
+  FCodeSystem.free;
   FCodeSystem := Value;
   loadProperties;
 end;
 
 procedure TCodeSystemConceptForm.SetConcept(const Value: TFHIRCodeSystemConcept);
 begin
-  FConcept.Free;
+  FConcept.free;
   FConcept := Value;
 end;
 

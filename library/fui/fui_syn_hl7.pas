@@ -1,5 +1,33 @@
 unit fui_syn_hl7;
 
+{
+Copyright (c) 2001-2021, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 interface
 
 {$I fhir.inc}
@@ -177,38 +205,38 @@ end;
 constructor TSynHL7Syn.Create(AOwner: TComponent);
 begin
   inherited;
-  FSegmentCodeAttri := TSynHighlighterAttributes.create('Segment Code');
-  FBadSegmentCodeAttri := TSynHighlighterAttributes.create('Unknown Segment Code');
-  FControlAttri := TSynHighlighterAttributes.create('Control Code');
-  FEscapeAttri := TSynHighlighterAttributes.create('Escape Sequence');
-  FRabbitsEarsAttri := TSynHighlighterAttributes.create('Null Characters');
-  FTextAttri := TSynHighlighterAttributes.create('Text');
-  FIDAttri := TSynHighlighterAttributes.create('ID Field');
-  FIDInvalidAttri := TSynHighlighterAttributes.create('ID Field (Invalid Code)');
-  FInvalidAttri := TSynHighlighterAttributes.create('Invalid Structure');
-  FUnknownAttri := TSynHighlighterAttributes.create('Unknown Content');
-  FMissingAttri := TSynHighlighterAttributes.create('Missing Content');
-  FTooLongAttri := TSynHighlighterAttributes.create('Content exceeding allowable length');
-  FDefAttr := TSynHighlighterAttributes.create('Default Background');
+  FSegmentCodeAttri := TSynHighlighterAttributes.Create('Segment Code');
+  FBadSegmentCodeAttri := TSynHighlighterAttributes.Create('Unknown Segment Code');
+  FControlAttri := TSynHighlighterAttributes.Create('Control Code');
+  FEscapeAttri := TSynHighlighterAttributes.Create('Escape Sequence');
+  FRabbitsEarsAttri := TSynHighlighterAttributes.Create('Null Characters');
+  FTextAttri := TSynHighlighterAttributes.Create('Text');
+  FIDAttri := TSynHighlighterAttributes.Create('ID Field');
+  FIDInvalidAttri := TSynHighlighterAttributes.Create('ID Field (Invalid Code)');
+  FInvalidAttri := TSynHighlighterAttributes.Create('Invalid Structure');
+  FUnknownAttri := TSynHighlighterAttributes.Create('Unknown Content');
+  FMissingAttri := TSynHighlighterAttributes.Create('Missing Content');
+  FTooLongAttri := TSynHighlighterAttributes.Create('Content exceeding allowable length');
+  FDefAttr := TSynHighlighterAttributes.Create('Default Background');
 
-  FSegmentCodeAttri.Foreground:= clBlack;
-  FSegmentCodeAttri.Background:= clWhite;
-  FSegmentCodeAttri.Style:= [fsBold];
-  FBadSegmentCodeAttri.Foreground:= clBlack;
-  FBadSegmentCodeAttri.Background:= $E1D6FF;
-  FBadSegmentCodeAttri.Style:= [fsBold];
+  FSegmentCodeAttri.Foreground := clBlack;
+  FSegmentCodeAttri.Background := clWhite;
+  FSegmentCodeAttri.Style := [fsBold];
+  FBadSegmentCodeAttri.Foreground := clBlack;
+  FBadSegmentCodeAttri.Background := $E1D6FF;
+  FBadSegmentCodeAttri.Style := [fsBold];
   FControlAttri.Foreground := clGreen;
-  FControlAttri.Style:= [fsBold];
+  FControlAttri.Style := [fsBold];
   FControlAttri.Background := clWhite;
   FEscapeAttri.Background := $A0F1A0;
-  FTextAttri.Background:= clWhite;
-  FRabbitsEarsAttri.Foreground:= clFuchsia;
+  FTextAttri.Background := clWhite;
+  FRabbitsEarsAttri.Foreground := clFuchsia;
   FRabbitsEarsAttri.Background := clWhite;
-  FIDAttri.Foreground:= clblue;
-  FIDInvalidAttri.Foreground:= clblue;
+  FIDAttri.Foreground := clblue;
+  FIDInvalidAttri.Foreground := clblue;
   FIDInvalidAttri.Background := $E1D6FF;
-  FInvalidAttri.Background:= clRed;
-  FInvalidAttri.Style:= [fsItalic];
+  FInvalidAttri.Background := clRed;
+  FInvalidAttri.Style := [fsItalic];
   FUnknownAttri.Background := $E1D6FF;
   FMissingAttri.Background := $77BFFF;
   FTooLongAttri.Background := $77BFFF;
@@ -237,7 +265,7 @@ end;
 
 destructor TSynHL7Syn.Destroy;
 begin
-  FDictionary.Free;
+  FDictionary.free;
   inherited Destroy;
 end;
 
@@ -559,7 +587,7 @@ end;
 
 procedure TSynHL7Syn.SetDictionary(AValue: THL7V2Dictionary);
 begin
-  FDictionary.Free;
+  FDictionary.free;
   FDictionary := AValue;
 end;
 

@@ -46,7 +46,7 @@ Type
     FValue: TFslDecimal;
     FCode: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(Code : String); Overload;
 
@@ -125,15 +125,15 @@ end;
 
 constructor TUcumUnitHandler.Create(Code : String);
 begin
-  inherited create;
+  inherited Create;
   Name := code;
   FCode := Code;
 end;
 
 
-function TUcumUnitHandler.sizeInBytesV : cardinal;
+function TUcumUnitHandler.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUnits.length * sizeof(char)) + 12);
   inc(result, (FCode.length * sizeof(char)) + 12);
 end;

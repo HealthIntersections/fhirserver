@@ -1,4 +1,4 @@
-unit FHIR.R2.Tests.Validator;
+unit fhir2_tests_validator;
 
 
 {
@@ -47,7 +47,7 @@ type
     procedure validate(path : String; errorCount : integer; fmt : TFHIRFormat);
     procedure validateResource(path : String; errorCount : integer; fmt : TFHIRFormat);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
 
     [SetupFixture] Procedure SetUp;
@@ -129,7 +129,7 @@ end;
 
 procedure TFHIRValidatorTests.TearDown;
 begin
-  FServices.Free;
+  FServices.free;
 end;
 
 procedure TFHIRValidatorTests.validate(path: String; errorCount: integer; fmt : TFHIRFormat);
@@ -150,7 +150,7 @@ begin
       try
         val.validate(ctxt, src, fmt);
       finally
-        val.Free;
+        val.free;
       end;
       ec := 0;
       for msg in ctxt.Issues do
@@ -161,10 +161,10 @@ begin
         end;
       Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d', [errorCount, ec]));
     finally
-      ctxt.Free;
+      ctxt.free;
     end;
   finally
-    src.Free;
+    src.free;
   end;
 end;
 
@@ -180,11 +180,11 @@ var
   s : string;
 begin
   if (fmt = ffXml) then
-    p := TFHIRXmlParser.Create(nil, THTTPLanguages.create('en'))
+    p := TFHIRXmlParser.Create(nil, nil)
   else
-    p := TFHIRJsonParser.Create(nil, THTTPLanguages.create('en'));
+    p := TFHIRJsonParser.Create(nil, nil);
   try
-    f := TFilestream.create(IncludeTrailingBackslash(PUB_HOME)+path, fmOpenRead + fmShareDenywrite);
+    f := TFilestream.Create(IncludeTrailingBackslash(PUB_HOME)+path, fmOpenRead + fmShareDenywrite);
     try
       p.source := f;
       p.Parse;
@@ -196,7 +196,7 @@ begin
         try
           val.validate(ctxt, p.resource as TFHIRResource);
         finally
-          val.Free;
+          val.free;
         end;
         ec := 0;
         s := '';
@@ -208,14 +208,14 @@ begin
           end;
         Assert.areEqual(errorCount, ec, StringFormat('Expected %d errors, but found %d: %s', [errorCount, ec, s]));
       finally
-        ctxt.Free;
+        ctxt.free;
       end;
 
     finally
       f.free;
     end;
   finally
-    p.Free;
+    p.free;
   end;
 end;
 
@@ -507,11 +507,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRValidatorTests);
-function TFHIRValidatorTests.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, FServices.sizeInBytes);
-end;
-
 end.
 

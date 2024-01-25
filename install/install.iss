@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRServer
 AppName=Health Intersections FHIR Server
-AppVerName=FHRServer v1.9.363
+AppVerName=FHIRServer v3.0.5
 
 ; compilation control
 OutputDir=..\install\build
-OutputBaseFilename=fhirserver-1.9.363
+OutputBaseFilename=fhirserver-win64-3.0.5
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -21,7 +21,7 @@ AlwaysShowGroupOnReadyPage=yes
 ChangesAssociations=yes
 DirExistsWarning=auto
 DisableStartUpPrompt=yes
-MinVersion=0,6.0
+MinVersion=0,6.1
 UninstallDisplayIcon=..\Server\fhir.ico
 WizardStyle=modern
 DisableDirPage=false
@@ -34,11 +34,11 @@ UninstallFilesDir={app}\uninstall
 ; win2000+ add/remove programs support
 AppPublisher=Health Intersections P/L
 AppPublisherURL=http://www.healthintersections.com.au
-AppVersion=1.9.362
+AppVersion=3.0.5
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
 AppCopyright=Copyright (c) Health Intersections Pty Ltd 2011+
-VersionInfoVersion=1.9.362.0
+VersionInfoVersion=3.0.5.0
 
 ; dialog support
 LicenseFile=..\license
@@ -95,31 +95,25 @@ Name: envPath;   Description: "Add FHIR Server to the system path"
 Source: "..\exec\64\FHIRServer.exe";                          DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\64\FHIRServer.debug.exe";                    DestDir: "{app}\debug"; Flags: ignoreversion
 Source: "..\exec\64\fhirconsole.exe";                         DestDir: "{app}";       Flags: ignoreversion
-Source: "..\exec\pack\w64\FastMM_FullDebugMode64.dll";        DestDir: "{app}\debug"; Flags: ignoreversion
-Source: "..\exec\pack\w64\ChakraCore.dll";                    DestDir: "{app}";       Flags: ignoreversion
-Source: "..\exec\pack\w64\sqlite3.dll";                       DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libsqlite3.dll";                    DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\pack\w64\libcrypto-1_1-x64.dll";             DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\pack\w64\libssl-1_1-x64.dll";                DestDir: "{app}";       Flags: ignoreversion
 Source: "..\exec\pack\w64\zlib1.dll";                         DestDir: "{app}";       Flags: ignoreversion
+Source: "..\exec\pack\w64\libpdf.dll";                        DestDir: "{app}";       Flags: ignoreversion
 
 ; 3. Data Files
 Source: "..\exec\pack\fhirserver.cfg";                        DestDir: "{app}";       Flags: ignoreversion onlyifdoesntexist; Permissions: users-full
 Source: "..\exec\pack\fhirserver.web";                        DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\ucum-essence.xml";                      DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\lang.txt";                              DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\tzdata.tar.gz";                         DestDir: "{app}";       Flags: ignoreversion 
-Source: "..\exec\pack\translations.xml";                      DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\ucum.dat";                              DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\lang.dat";                              DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\tz.dat";                                DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\fhir-lang.dat";                         DestDir: "{app}";       Flags: ignoreversion 
+Source: "..\exec\pack\*.properties";                          DestDir: "{app}";       Flags: ignoreversion 
 
 ; 4. Documentation
 Source: "..\license";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "license.txt";
 Source: "..\readme.md";                                       DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "readme.txt";
 Source: "readme.rtf";                                         DestDir: "{app}\doco";  Flags: ignoreversion; DestName: "installation-documentation.rtf";
-
-; utilities files - put in app dir because these may be different to ones already on the machine.
-Source: "..\exec\pack\w64\openssl.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqldiff.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqlite3.exe";                       DestDir: "{app}\utils"; Flags: ignoreversion
-Source: "..\exec\pack\w64\sqlite3_analyzer.exe";              DestDir: "{app}\utils"; Flags: ignoreversion
 
 [Icons]
 Name: "{group}\FHIR Server Manager";         Filename: "{app}\fhirconsole.exe";                      WorkingDir: "{app}"    

@@ -35,7 +35,8 @@ Interface
 Uses
   SysUtils, Classes, Math, fsl_threads,
   fsl_base, fsl_collections, fsl_http, fsl_htmlgen,
-  ftx_loinc_services;
+  fhir_objects,
+  ftx_loinc_services, ftx_service;
 
 Const
   MAX_ROWS = 50;
@@ -68,9 +69,9 @@ Type
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher);
     function descLength(i: cardinal): String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
+    constructor Create(oLoinc : TLoincServices; FHIRPathEngine : String; langList : THTTPLanguageList);
     destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THTMLPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THTMLPublisher); Overload; Virtual;
@@ -164,7 +165,7 @@ Begin
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, html);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -257,7 +258,7 @@ var
 begin
   index := FLoinc.findMAConcept(sCode);
   if index = 0 then
-    raise ETerminologyError.create('Unknown Malti-axial code '+sCode);
+    raise ETerminologyError.create('Unknown Malti-axial code '+sCode, itUnknown);
   FLoinc.Entries.GetEntry(index, code, text, parents, children, concepts, descendentConcepts, stems);
   stext := FLoinc.Desc.GetEntry(text, lang);
   arr := FLoinc.Refs.GetRefs(children);
@@ -894,15 +895,15 @@ begin
   html.ParaURL('LOINC Home', sPrefix);
 end;
 
-constructor TloincPublisher.Create(oLoinc : TLoincServices; FHIRPathEngine : String; const lang : THTTPLanguages);
+constructor TloincPublisher.Create(oLoinc : TLoincServices; FHIRPathEngine : String; langList : THTTPLanguageList);
 begin
   inherited Create;
-  Lock := TFslLock.Create;
+  Lock := TFslLock.Create('LOINC publisher');
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
   FLoinc := oLoinc.Link;
   FFHIRPath := FHIRPathEngine;
-  langs := FLoinc.langsForLang(lang);
+  langs := FLoinc.langsForLang(langList);
 end;
 
 destructor TloincPublisher.Destroy;
@@ -910,10 +911,10 @@ var
   i : integer;
 begin
   For i := 0 to FSearchCache.Count - 1 do
-    FSearchCache.Objects[i].Free;
-  FSearchCache.Free;
-  Lock.Free;
-  FLoinc.Free;
+    FSearchCache.Objects[i].free;
+  FSearchCache.free;
+  Lock.free;
+  FLoinc.free;
   inherited;
 end;
 
@@ -987,7 +988,7 @@ begin
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
     html.StartTableRow;
-    if a[i].iscode then
+    if a[i].kind = lpckCode then
     begin
       FLoinc.CodeList.GetInformation(a[i].index, nil, sCode1, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
       html.AddTableCellURL(sCode1, sPrefix + 'code='+sCode1);
@@ -1061,11 +1062,11 @@ begin
       exit(true);
 end;
 
-function TloincPublisher.sizeInBytesV : cardinal;
+function TloincPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FSearchCache.sizeInBytes);
-  inc(result, FLoinc.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FSearchCache.sizeInBytes(magic));
+  inc(result, FLoinc.sizeInBytes(magic));
   inc(result, (FFHIRPath.length * sizeof(char)) + 12);
 end;
 

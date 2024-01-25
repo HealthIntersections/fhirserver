@@ -60,7 +60,7 @@ type
     FTag : integer;
   protected
     FUniqueId : integer;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function link : TFHIRPathExpressionNodeV;
     property tag : integer read FTag write FTag;
@@ -163,10 +163,11 @@ type
     FResource : TFHIRObject;
     FContext : TFHIRObject;
     FTotal : TFHIRSelectionList;
-     FThis : TFHIRObject;
+    FThis : TFHIRObject;
+    FIndex : integer;
     procedure SetTotal(const Value: TFHIRSelectionList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(appInfo : TFslObject; resource : TFHIRObject; context : TFHIRObject);
     destructor Destroy; override;
@@ -176,7 +177,8 @@ type
     property context : TFHIRObject read Fcontext;
     property total : TFHIRSelectionList read FTotal write SetTotal;
     property this : TFHIRObject read FThis write FThis;
-    function changeThis(this : TFHIRObject) : TFHIRPathExecutionContext;
+    property index : integer read FIndex;
+    function changeThis(this : TFHIRObject; index : integer) : TFHIRPathExecutionContext;
   end;
 
   TFHIRPathDebugPackage = class (TFslObject)
@@ -195,7 +197,7 @@ type
     procedure Setinput2(const Value: TFHIRSelectionList);
     procedure Setoutcome(const Value: TFHIRSelectionList);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
     function Link : TFHIRPathDebugPackage; overload;
@@ -235,7 +237,7 @@ type
     FOnResolveReference: TFHIRResolveReferenceEvent;
     function executeV(context : TFHIRPathExecutionContext; focus : TFHIRSelectionList; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
     function executeV(context : TFHIRPathExecutionContext; item : TFHIRObject; exp : TFHIRPathExpressionNodeV; atEntry : boolean) : TFHIRSelectionList; overload; virtual; abstract;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -280,12 +282,12 @@ end;
 constructor TFHIRPathEngineV.Create;
 begin
   inherited;
-  FExtensions := TFslList<TFHIRPathEngineExtension>.create;
+  FExtensions := TFslList<TFHIRPathEngineExtension>.Create;
 end;
 
 destructor TFHIRPathEngineV.Destroy;
 begin
-  FExtensions.Free;
+  FExtensions.free;
   inherited;
 end;
 
@@ -337,7 +339,7 @@ begin
         end;
       end;
     finally
-      pl.Free;
+      pl.free;
     end;
   end;
   if (result = '') and (loc >= base.LocationData.ParseStart) and (loc <= base.LocationData.ParseFinish)  then
@@ -357,10 +359,10 @@ begin
   FExtensions.Add(extension);
 end;
 
-function TFHIRPathEngineV.sizeInBytesV : cardinal;
+function TFHIRPathEngineV.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FExtensions.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FExtensions.sizeInBytes(magic));
 end;
 
 { TFHIRPathExpressionNodeV }
@@ -370,9 +372,9 @@ begin
   result := TFHIRPathExpressionNodeV(inherited link);
 end;
 
-function TFHIRPathExpressionNodeV.sizeInBytesV : cardinal;
+function TFHIRPathExpressionNodeV.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
 end;
 
 { TFHIRPathExecutionContext }
@@ -387,9 +389,9 @@ end;
 
 destructor TFHIRPathExecutionContext.Destroy;
 begin
-  FAppInfo.Free;
-  FResource.Free;
-  FContext.Free;
+  FAppInfo.free;
+  FResource.free;
+  FContext.free;
   inherited;
 end;
 
@@ -398,12 +400,13 @@ begin
   result := TFHIRPathExecutionContext(inherited Link);
 end;
 
-function TFHIRPathExecutionContext.changeThis(this: TFHIRObject): TFHIRPathExecutionContext;
+function TFHIRPathExecutionContext.changeThis(this: TFHIRObject; index : integer): TFHIRPathExecutionContext;
 begin
   result := TFHIRPathExecutionContext.Create(FAppinfo.Link, FResource.Link, FContext.Link);
   try
     result.FThis := this;
     result.total := FTotal.Link;
+    result.FIndex := index;
     result.link;
   finally
     result.free;
@@ -416,25 +419,25 @@ begin
   FTotal := Value;
 end;
 
-function TFHIRPathExecutionContext.sizeInBytesV : cardinal;
+function TFHIRPathExecutionContext.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FAppInfo.sizeInBytes);
-  inc(result, FResource.sizeInBytes);
-  inc(result, FContext.sizeInBytes);
-  inc(result, FTotal.sizeInBytes);
-  inc(result, FThis.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FAppInfo.sizeInBytes(magic));
+  inc(result, FResource.sizeInBytes(magic));
+  inc(result, FContext.sizeInBytes(magic));
+  inc(result, FTotal.sizeInBytes(magic));
+  inc(result, FThis.sizeInBytes(magic));
 end;
 
 { TFHIRPathDebugPackage }
 
-destructor TFHIRPathDebugPackage.destroy;
+destructor TFHIRPathDebugPackage.Destroy;
 begin
-  Fcontext.Free;
-  Finput2.Free;
-  Finput1.Free;
-  FExpression.Free;
-  Foutcome.Free;
+  Fcontext.free;
+  Finput2.free;
+  Finput1.free;
+  FExpression.free;
+  Foutcome.free;
   inherited;
 end;
 
@@ -445,43 +448,43 @@ end;
 
 procedure TFHIRPathDebugPackage.Setcontext(const Value: TFHIRPathExecutionContext);
 begin
-  Fcontext.Free;
+  Fcontext.free;
   Fcontext := Value;
 end;
 
 procedure TFHIRPathDebugPackage.SetExpression(const Value: TFHIRPathExpressionNodeV);
 begin
-  FExpression.Free;
+  FExpression.free;
   FExpression := Value;
 end;
 
 procedure TFHIRPathDebugPackage.Setinput1(const Value: TFHIRSelectionList);
 begin
-  Finput1.Free;
+  Finput1.free;
   Finput1 := Value;
 end;
 
 procedure TFHIRPathDebugPackage.Setinput2(const Value: TFHIRSelectionList);
 begin
-  Finput2.Free;
+  Finput2.free;
   Finput2 := Value;
 end;
 
 procedure TFHIRPathDebugPackage.Setoutcome(const Value: TFHIRSelectionList);
 begin
-  Foutcome.Free;
+  Foutcome.free;
   Foutcome := Value;
 end;
 
 
-function TFHIRPathDebugPackage.sizeInBytesV : cardinal;
+function TFHIRPathDebugPackage.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, Fcontext.sizeInBytes);
-  inc(result, Finput2.sizeInBytes);
-  inc(result, Finput1.sizeInBytes);
-  inc(result, FExpression.sizeInBytes);
-  inc(result, Foutcome.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, Fcontext.sizeInBytes(magic));
+  inc(result, Finput2.sizeInBytes(magic));
+  inc(result, Finput1.sizeInBytes(magic));
+  inc(result, FExpression.sizeInBytes(magic));
+  inc(result, Foutcome.sizeInBytes(magic));
 end;
 
 { TFHIRTypeDetailsV }
@@ -536,10 +539,10 @@ begin
               inc(i,4);
             end
             else
-              raise EFHIRException.create('Improper unicode escape in '+s);
+              raise EFHIRException.Create('Improper unicode escape in '+s);
             end
         else
-          raise EFHIRException.create('Unknown character escape \'+ch);
+          raise EFHIRException.Create('Unknown character escape \'+ch);
         end;
         inc(i);
       end
@@ -551,7 +554,7 @@ begin
     end;
     result := b.toString;
   finally
-    b.Free;
+    b.free;
   end;
 end;
 
@@ -582,7 +585,7 @@ begin
   FPath := path;
   FCursor := offset;
   FCurrentLocation := TSourceLocation.Create;
-  FComments := TStringList.create;
+  FComments := TStringList.Create;
   next;
 end;
 
@@ -593,13 +596,13 @@ begin
   FPath := path;
   FCursor := 1;
   FCurrentLocation := TSourceLocation.Create;
-  FComments := TStringList.create;
+  FComments := TStringList.Create;
   next;
 end;
 
 destructor TFHIRPathLexer.Destroy;
 begin
-  FComments.Free;
+  FComments.free;
   inherited;
 end;
 
@@ -738,7 +741,7 @@ begin
         else
           escape := (FPath[FCursor] = '\');
         if CharInSet(FPath[FCursor], [#13, #10, #9]) then
-          raise EFHIRPath.create('illegal character in string');
+          raise EFHIRPath.Create('illegal character in string');
         nextChar;
       end;
       if (FCursor > FPath.length) then
@@ -757,7 +760,7 @@ begin
         else
           escape := (FPath[FCursor] = '\');
         if CharInSet(FPath[FCursor], [#13, #10, #9]) then
-          raise EFHIRPath.create('illegal character in string');
+          raise EFHIRPath.Create('illegal character in string');
         nextChar;
       end;
       if (FCursor > FPath.length) then
@@ -775,8 +778,8 @@ begin
           escape := false
         else
           escape := (FPath[FCursor] = '\');
-        if CharInSet(FPath[FCursor], [#13, #10, #9]) then
-          raise EFHIRPath.create('illegal character in string');
+        if (ord(FPath[FCursor]) < 32) and not CharInSet(FPath[FCursor], [#13, #10, #9]) then
+          raise EFHIRPath.Create('illegal character in string');
         nextChar;
       end;
       if (FCursor > FPath.length) then
@@ -851,7 +854,7 @@ begin
       end;
       if (FCursor > FPath.length) then
       begin
-        raise EFHIRPath.create('Unfinished comment');
+        raise EFHIRPath.Create('Unfinished comment');
       end
       else
       begin
@@ -1000,7 +1003,7 @@ end;
 function TFHIRPathLexer.readConstant(desc : String): String;
 begin
   if (not isStringConstant()) then
-    raise error('Found '+current+' expecting "['+desc+']"');
+    raise error('Found "'+current+'" expecting "['+desc+']"');
 
   result := processConstant(take);
 end;
@@ -1058,7 +1061,7 @@ function TFHIRPathLexer.takeDottedToken() : String;
 var
   b : TStringBuilder;
 begin
-  b := TStringBuilder.create;
+  b := TStringBuilder.Create;
   try
     b.append(take());
     while not done() and (FCurrent = '.') do

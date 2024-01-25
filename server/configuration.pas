@@ -85,13 +85,13 @@ implementation
 
 constructor TFHIRServerIniFile.Create(const FileName: string);
 begin
-  inherited create;
+  inherited Create;
   FIni := TIniFile.Create(filename);
-  FTerminologies := TFslMap<TFHIRServerIniComplex>.create;
-  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.create;
-  FDatabases := TFslMap<TFHIRServerIniComplex>.create;
-  FEndPoints := TFslMap<TFHIRServerIniComplex>.create;
-  FDestinations := TFslMap<TFHIRServerIniComplex>.create;
+  FTerminologies := TFslMap<TFHIRServerIniComplex>.Create;
+  FIdentityProviders := TFslMap<TFHIRServerIniComplex>.Create;
+  FDatabases := TFslMap<TFHIRServerIniComplex>.Create;
+  FEndPoints := TFslMap<TFHIRServerIniComplex>.Create;
+  FDestinations := TFslMap<TFHIRServerIniComplex>.Create;
   readSection('terminologies', FTerminologies);
   readSection('identity-providers', FIdentityProviders);
   readSection('endpoints', FEndPoints);
@@ -101,12 +101,12 @@ end;
 
 destructor TFHIRServerIniFile.Destroy;
 begin
-  FTerminologies.Free;
-  FIdentityProviders.Free;
-  FDatabases.Free;
-  FEndPoints.Free;
-  FDestinations.Free;
-  FIni.Free;
+  FTerminologies.free;
+  FIdentityProviders.free;
+  FDatabases.free;
+  FEndPoints.free;
+  FDestinations.free;
+  FIni.free;
   inherited;
 end;
 
@@ -144,11 +144,11 @@ begin
   try
     FIni.ReadSection(name, ts);
     for s in ts do
-      map.Add(s, TFHIRServerIniComplex.create(FIni.ReadString(name, s, '')));
+      map.Add(s, TFHIRServerIniComplex.Create(FIni.ReadString(name, s, '')));
   finally
     ts.free;
   end;
-  map.defaultValue := TFHIRServerIniComplex.create('');
+  map.defaultValue := TFHIRServerIniComplex.Create('');
 end;
 
 procedure TFHIRServerIniFile.SetRunNumber(const Value: integer);
@@ -158,7 +158,7 @@ end;
 
 { TFHIRServerIniComplex }
 
-constructor TFHIRServerIniComplex.create(value: String);
+constructor TFHIRServerIniComplex.Create(value: String);
 var
   sl : TArray<String>;
   s, l, r : String;
@@ -179,7 +179,7 @@ end;
 
 destructor TFHIRServerIniComplex.Destroy;
 begin
-  FDetails.Free;
+  FDetails.free;
   inherited;
 end;
 

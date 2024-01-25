@@ -1,0 +1,35 @@
+{
+  "resourceType" : "ValueSet",
+  "id" : "InfectiousDiseaseLabs",
+  "url" : "http://test.fhir.org/r4/ValueSet/InfectiousDiseaseLabsLabs",
+  "version" : "0.0.1",
+  "name" : "Covid19Labs",
+  "title" : "COVID-19 Diagnostic Tests",
+  "status" : "active",
+  "date" : "2021-09-16T06:32:16+10:00",
+  "publisher" : "FHIR Project",
+  "description" : "Laboratory test results related to infection with or immunity to an infectious disease",
+  "jurisdiction" : [
+    {
+      "coding" : [
+        {
+          "system" : "http://unstats.un.org/unsd/methods/m49/m49.htm",
+          "code" : "001"
+        }
+      ]
+    }
+  ],
+  "copyright" : "This material contains content from LOINC (http://loinc.org). LOINC is copyright © 1995-2020, Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at http://loinc.org/license. LOINC® is a registered United States trademark of Regenstrief Institute, Inc",
+  "compose" : {
+    "include" : [
+      {
+        "system" : "http://loinc.org",
+        "filter" : [{
+          "property" : "CLASS",
+          "op" : "=",
+          "value" : "MICRO"
+        }]
+      }
+    ]
+  }
+}

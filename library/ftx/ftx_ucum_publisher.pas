@@ -54,7 +54,7 @@ Type
     procedure PublishUnit(const sPrefix: String; oBuilder: THL7V2DocumentPublisher; oUnit : TUcumUnit);
     procedure PublishExpression(const sPrefix: String; oBuilder: THL7V2DocumentPublisher; sExpression : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   Public
     constructor Create(oUcum : TUcumServices);
     destructor Destroy; Override;
@@ -126,7 +126,7 @@ Begin
     ProcessMap(sPath, oMap);
     PublishDict(oMap, sPrefix, oBuilder);
   Finally
-    oMap.Free;
+    oMap.free;
   End;
 End;
 
@@ -174,7 +174,7 @@ Begin
         oBuilder.ParaURL(o[i], sPrefix+'prop=prop&id='+o[i], '', '');
       oBuilder.EndTableCell;
     Finally
-      o.Free;
+      o.free;
     End;
 
     oBuilder.StartTableCell();
@@ -400,7 +400,7 @@ end;
 
 destructor TUcumPublisher.Destroy;
 begin
-  FUcum.Free;
+  FUcum.free;
   inherited;
 end;
 
@@ -422,10 +422,10 @@ begin
     oBuilder.ParaURL('Enter another unit', sPrefix+'prop=expression&unit=??&caption=Enter Units&prompt=Units');
 end;
 
-function TUcumPublisher.sizeInBytesV : cardinal;
+function TUcumPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FUcum.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FUcum.sizeInBytes(magic));
 end;
 
 End.

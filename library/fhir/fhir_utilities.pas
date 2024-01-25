@@ -34,12 +34,12 @@ interface
 
 uses
   SysUtils, {$IFDEF FPC} zstream, {$ELSE} AnsiStrings, {$ENDIF} Classes, ZLib, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher,
-  fhir_objects;
+  fsl_base, fsl_utilities, fsl_stream, fsl_json, fsl_fpc, fsl_http, fsl_fetcher, fsl_versions,
+  fhir_objects, fhir_uris;
 
 function mimeTypeToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
 function mimeTypeListToFormat(mt : String; def : TFHIRFormat = ffUnspecified) : TFHIRFormat;
-Function RecogniseFHIRFormat(Const sName : String; const lang : THTTPLanguages): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName : String; langList : THTTPLanguageList): TFHIRFormat;
 Function FhirGUIDToString(aGuid : TGuid):String;
 function IsId(s : String) : boolean;
 function isHistoryURL(url : String) : boolean;
@@ -56,9 +56,13 @@ function fullResourceUri(base: String; url : String) : String; overload;
 function hasProp(props : TArray<String>; name : String; def : boolean) : boolean;
 
 type
-  TFHIRVersions = class (TSemVer)
+
+  { TFHIRVersions }
+
+  TFHIRVersions = class (TSemanticVersion)
   public
-    class function getMajMin(v : TFHIRVersion) : String; overload;
+  //  class function getMajMinFromFHIRVersion(v : TFHIRVersion) : String; overload;
+    class function readVersion(s : String) : TFHIRVersion;
   end;
 
   TResourceWithReference = class (TFslObject)
@@ -67,7 +71,7 @@ type
     FResource: TFHIRResourceV;
     procedure SetResource(const Value: TFHIRResourceV);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(reference : String; resource : TFHIRResourceV);
     destructor Destroy; override;
@@ -119,7 +123,7 @@ begin
         break;
     end;
   finally
-    ctl.Free;
+    ctl.free;
   end;
   if result = ffUnspecified then
     result := def;
@@ -151,11 +155,11 @@ begin
     else if StringExistsInsensitive(ct.base, 'turtle') then result := ffTurtle
     else if StringExistsSensitive(ct.base, '*/*') Then result := ffXhtml;
   finally
-    ct.Free;
+    ct.free;
   end;
 end;
 
-Function RecogniseFHIRFormat(Const sName : String; const lang : THTTPLanguages): TFHIRFormat;
+Function RecogniseFHIRFormat(Const sName : String; langList : THTTPLanguageList): TFHIRFormat;
 Begin
   if (sName = '.xml') or (sName = 'xml') or (sName = '.xsd') or (sName = 'xsd') Then
     result := ffXml
@@ -164,7 +168,7 @@ Begin
   else if sName = '' then
     result := ffUnspecified
   else
-    raise ERestfulException.create('fhir_objects.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, itStructure, 'Unknown format '+sName, lang);
+    raise ERestfulException.Create('fhir_objects.RecogniseFHIRFormat', HTTP_ERR_BAD_REQUEST, itStructure, 'Unknown format '+sName, langList);
 End;
 
 Function FhirGUIDToString(aGuid : TGuid):String;
@@ -210,12 +214,12 @@ var
   n : TJsonNode;
 begin
   result := false;
-  fetcher := TInternetFetcher.create;
+  fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := 'http://www.healthintersections.com.au/resource-policy.json';
     fetcher.Fetch;
-//    fetcher.Buffer.SaveToFileName('c:\temp\test.json');
-    stream := TFileStream.Create('c:\temp\test.json', fmOpenRead + fmShareDenyWrite);
+//    fetcher.Buffer.SaveToFileName(filePath(['[tmp]', 'test.json']));
+    stream := TFileStream.Create(filePath(['[tmp]', 'test.json']), fmOpenRead + fmShareDenyWrite);
     try
 //      fetcher.Buffer.SaveToStream(stream);
 //      stream.Position := 0;
@@ -228,13 +232,13 @@ begin
           if name = TJsonString(n).value then
             exit(true);
       finally
-        json.Free;
+        json.free;
       end;
     finally
-      stream.Free;
+      stream.free;
     end;
   finally
-    fetcher.Free;
+    fetcher.free;
   end;
 end;
 
@@ -317,7 +321,6 @@ begin
     result := StringArrayExistsSensitive(props, name);
 end;
 
-
 { TResourceWithReference }
 
 constructor TResourceWithReference.Create(reference: String; resource: TFHIRResourceV);
@@ -347,17 +350,17 @@ begin
     if isOid(id) then
       result := base+id
     else
-      raise EFHIRException.create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
+      raise EFHIRException.Create('The resource id "'+'" has a base of "urn:oid:" but is not a valid OID');
   end
   else if (base = 'urn:uuid:') then
   begin
     if isGuid(id) then
       result := base+id
     else
-      raise EFHIRException.create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
+      raise EFHIRException.Create('The resource id "'+id+'" has a base of "urn:uuid:" but is not a valid UUID');
   end
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.Create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+aType+'/'+id;
 end;
@@ -369,7 +372,7 @@ begin
   else if url.StartsWith('urn:oid:') or url.StartsWith('urn:uuid:') or url.StartsWith('http://') or url.StartsWith('https://') then
     result := url
   else if not base.StartsWith('http://') and not base.StartsWith('https://')  then
-    raise EFHIRException.create('The resource base of "'+base+'" is not understood')
+    raise EFHIRException.Create('The resource base of "'+base+'" is not understood')
   else
     result := AppendForwardSlash(base)+url;
 end;
@@ -422,33 +425,88 @@ begin
 
 end;
 
-function TResourceWithReference.sizeInBytesV : cardinal;
+function TResourceWithReference.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FReference.length * sizeof(char)) + 12);
-  inc(result, FResource.sizeInBytes);
+  inc(result, FResource.sizeInBytes(magic));
 end;
 
-class function TFHIRVersions.getMajMin(v: TFHIRVersion): String;
+class function TFHIRVersions.readVersion(s: String): TFHIRVersion;
 begin
-  result := getMajMin(FHIR_VERSIONS[v])
+  if (s.contains('(')) then
+    s := s.substring(0, s.indexof('(')).trim;
+  s := s.ToLower;
+  if (s.length > 3) then
+    s := s.substring(0, 3);
+  if (s = 'r5') or s.startsWith('5.0') then
+    result := fhirVersionRelease5
+  else if (s = 'r4b') or s.startsWith('4.3') then
+      result := fhirVersionRelease5
+  else if (s = 'r4') or s.startsWith('4.0') then
+    result := fhirVersionRelease4
+  else if (s = 'r3') or s.startsWith('3.0') then
+    result := fhirVersionRelease3
+  else if (s = 'r2') or s.startsWith('1.0') then
+    result := fhirVersionRelease2
+  else
+    result := fhirVersionUnknown;
 end;
 
 
 function csName(url : string) : String;
 begin
-  if url.StartsWith('http://hl7.org/fhir/v2') then
+  if url = '' then
+    result := '[not stated]'
+  else if url = URI_SNOMED then
+    result := 'SNOMED CT'
+  else if url = URI_LOINC then
+    result := 'LOINC'
+  else if url = 'http://www.nlm.nih.gov/research/umls/rxnorm"))' then
+    result := 'RxNorm'
+  else if url = URI_ICD9 then
+    result := 'ICD-9'
+  else if url = URI_ICD10 then
+    result := 'ICD-10'
+  else if url = 'http://id.who.int/icd/release/11/mms' then
+    result := 'ICD-11'
+  else if url = URI_DICOM then
+    result := 'DICOM'
+  else if url = URI_UCUM then
+    result := 'UCUM'
+  else if url = URI_BCP47 then
+    result := 'lang'
+  else if url = URI_BCP13 then
+    result := 'mimetypes'
+  else if url = URI_11073 then
+    result := '11073'
+  else if url = URI_DICOM then
+    result := 'dicom'
+  else if url = URI_CVX then
+    result := 'CVX'
+  else if url = URI_GTIN then
+    result := 'GTIN'
+  else if url = 'https://www.humanservices.gov.au/organisations/health-professionals/enablers/air-vaccine-code-formats' then
+    result := 'AIR'
+  else if url = 'http://www.whocc.no/atc' then
+    result := 'ATC/DDD'
+
+  else if url.StartsWith('http://hl7.org/fhir/v2') then
     result := 'V2-'+url.Substring(22)
   else if url.StartsWith('http://hl7.org/fhir/v3') then
     result := 'V3-'+url.Substring(22)
   else if url.StartsWith('http://hl7.org/fhir') then
-    result := 'FHIR'+url.Substring(19)
-  else if url = 'http://snomed.info/sct' then
-    result := 'SNOMED CT'
-  else if url = 'http://loinc.org' then
-    result := 'LOINC'
+    result := 'FHIR-'+url.Substring(19)
+  else if url.StartsWith('urn:iso:std:iso:') then
+    result := 'iso'+url.substring(16).replace(':', '')
+  else if url.StartsWith('http://terminology.hl7.org/CodeSystem/') then
+    result := url.substring(38).replace('/', '')
+  else if url.StartsWith('http://hl7.org/fhir/') then
+    result := url.substring(20).replace('/', '')
+
   else
     result := url;
+
 end;
 
 

@@ -1,7 +1,7 @@
 unit wp_graphics;
 
 {
-Copyright (c) 2010+, Kestral Computing Pty Ltd (http://www.kestral.com.au)
+Copyright (c) 2010+, Health Intersections Pty Ltd (http://www.healthintersections.com.au)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification,
@@ -33,15 +33,17 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Windows,
+  // Windows,
   SysUtils, Classes, Graphics, Types,
   {$IFDEF DELPHI} Jpeg, PNGImage,  GraphicEx, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_shell;
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_shell,
+  fhir_colour_utils;
 
+{$IFDEF WINDOWS}
 Type
   TRect = Windows.TRect;
   TPoint = Windows.TPoint;
-
+{$ENDIF}
 
 Function Rect(iLeft, iTop, iRight, iBottom : Integer) : TRect; Overload;
 Procedure RectZero(Var aRect : TRect); Overload;
@@ -79,7 +81,7 @@ Type
     Protected
       Function ToWindowsResourceType(oResourceType : TFslResourceType) : PChar;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       Procedure BeforeDestruction; Override;
@@ -218,7 +220,7 @@ Type
       Function HandleNew : TGraphic; Virtual;
       Function HandleClass : TGraphicClass; Virtual;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -332,7 +334,9 @@ Type
 
   TFslGraphicObject = Class (TFslObject)
     Private
+      {$IFDEF WINDOWS}
       FHandle : HGDIOBJ;
+      {$ENDIF}
       FOnChange : TNotifyEvent;
 
       FCapability : TFslGraphicCapability;
@@ -343,7 +347,7 @@ Type
       Function CreateHandle : TFslGraphicHandle; Overload; Virtual;
 
       Procedure Change; Overload; Virtual;
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       destructor Destroy; Override;
 
@@ -410,15 +414,18 @@ Type
 Const
   ADVPENSTYLE_CODES  : Array [TFslPenStyle] Of String = ('Solid',  'Dash',  'DashDot',  'DashDotDot',  'Dot',  'InsideFrame',  'None');
   ADVPENSTYLE_NAMES : Array [TFslPenStyle] Of String = ('Solid',  'Dash',  'Dash Dot',  'Dash Dot Dot',  'Dot',  'Inside Frame',  'None');
-  ADVPENSTYLE_VALUES : Array [TFslPenStyle] Of Cardinal =  (PS_SOLID, PS_DASH, PS_DASHDOT, PS_DASHDOTDOT, PS_DOT, PS_INSIDEFRAME, PS_NULL);
-
   ADVPENENDSTYLE_CODES  : Array [TFslPenEndStyle] Of String = ('Square', 'Flat', 'Round');
-  ADVPENENDSTYLE_VALUES : Array [TFslPenEndStyle] Of Cardinal = (PS_ENDCAP_SQUARE, PS_ENDCAP_FLAT, PS_ENDCAP_ROUND);
 
   ADVPENJOINSTYLE_CODES : Array [TFslPenJoinStyle] Of String = ('Mitre', 'Bevel', 'Round');
-  ADVPENJOINSTYLE_VALUES : Array [TFslPenJoinStyle] Of DWord = (PS_JOIN_MITER, PS_JOIN_BEVEL, PS_JOIN_ROUND);
 
   ADVPENSTYLE_VCLVALUES : Array [TFslPenStyle] Of TPenStyle = (psSolid, psDash, psDashDot, psDashDotDot, psDot, psInsideFrame, psClear);
+
+  {$IFDEF WINDOWS}
+  ADVPENSTYLE_VALUES : Array [TFslPenStyle] Of Cardinal =  (PS_SOLID, PS_DASH, PS_DASHDOT, PS_DASHDOTDOT, PS_DOT, PS_INSIDEFRAME, PS_NULL);
+  ADVPENENDSTYLE_VALUES : Array [TFslPenEndStyle] Of Cardinal = (PS_ENDCAP_SQUARE, PS_ENDCAP_FLAT, PS_ENDCAP_ROUND);
+  ADVPENJOINSTYLE_VALUES : Array [TFslPenJoinStyle] Of DWord = (PS_JOIN_MITER, PS_JOIN_BEVEL, PS_JOIN_ROUND);
+  {$ENDIF}
+
 
 Type
   TFslBrushStyle = (absSolid, absNull, absHorizontal, absVertical, absFDiagonal, absBDiagonal, absCross, absDiagCross);
@@ -441,7 +448,7 @@ Type
     Protected
       Function CreateHandle : TFslGraphicHandle; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
       destructor Destroy; Override;
@@ -474,11 +481,13 @@ Const
   ADVBRUSHSTYLE_NAMES : Array [TFslBrushStyle] Of String =
     ('Solid', 'Clear', 'Horizontal', 'Vertical', 'Forward Diagonal', 'Backward Diagonal', 'Cross', 'Diagonal Cross');
 
+  {$IFDEF WINDOWS}
   ADVBRUSHSTYLE_VALUES : Array [TFslBrushStyle] Of Cardinal =
     (BS_SOLID, BS_NULL, BS_HATCHED, BS_HATCHED, BS_HATCHED, BS_HATCHED, BS_HATCHED, BS_HATCHED);
 
   ADVBRUSHSTYLE_HASHVALUES : Array [TFslBrushStyle] Of Cardinal =
     (0, 0, HS_HORIZONTAL,HS_VERTICAL, HS_FDIAGONAL, HS_BDIAGONAL, HS_CROSS, HS_DIAGCROSS);
+  {$ENDIF}
 
 Type
   TFslFontWeight = (afwUnknown, afwThin, afwExtraLight, afwLight, afwNormal, afwMedium, afwSemiBold, afwBold, afwExtraBold, afwHeavy);
@@ -522,7 +531,7 @@ Type
     Protected
       Function CreateHandle : TFslGraphicHandle; Override;
 
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
     Public
       constructor Create; Override;
 
@@ -564,23 +573,25 @@ Const
   ADVFONTWEIGHT_NAMES : Array [TFslFontWeight] Of String =
     ('Unknown', 'Thin', 'Extra-Light', 'Light', 'Normal', 'Medium', 'Semi-Bold', 'Bold', 'Extra-Bold', 'Heavy');
 
-  ADVFONTWEIGHT_VALUES : Array [TFslFontWeight] Of Cardinal =
-    (FW_DONTCARE, FW_THIN, FW_EXTRALIGHT, FW_LIGHT, FW_NORMAL, FW_MEDIUM, FW_SEMIBOLD, FW_BOLD, FW_EXTRABOLD, FW_HEAVY);
-
   ADVFONTFAMILY_CODES : Array [TFslFontFamily] Of String =
     ('Unknown', 'Decorative', 'Modern', 'Roman', 'Script', 'Swiss');
-
-  ADVFONTFAMILY_VALUES : Array [TFslFontFamily] Of Cardinal =
-    (FF_DECORATIVE, FF_DONTCARE, FF_MODERN, FF_ROMAN, FF_SCRIPT, FF_SWISS);
 
   ADVFONTPITCH_CODES : Array [TFslFontPitch] Of String =
     ('Unknown', 'Fixed', 'Variable');
 
-  ADVFONTPITCH_VALUES : Array [TFslFontPitch] Of Cardinal =
-    (DEFAULT_PITCH, FIXED_PITCH, VARIABLE_PITCH);
-
   ADVFONTPITCH_VCLMAP : Array [TFslFontPitch] Of TFontPitch =
     (fpDefault, fpVariable, fpFixed);
+
+  {$IFDEF WINDOWS}
+  ADVFONTWEIGHT_VALUES : Array [TFslFontWeight] Of Cardinal =
+    (FW_DONTCARE, FW_THIN, FW_EXTRALIGHT, FW_LIGHT, FW_NORMAL, FW_MEDIUM, FW_SEMIBOLD, FW_BOLD, FW_EXTRABOLD, FW_HEAVY);
+
+  ADVFONTFAMILY_VALUES : Array [TFslFontFamily] Of Cardinal =
+    (FF_DECORATIVE, FF_DONTCARE, FF_MODERN, FF_ROMAN, FF_SCRIPT, FF_SWISS);
+
+  ADVFONTPITCH_VALUES : Array [TFslFontPitch] Of Cardinal =
+    (DEFAULT_PITCH, FIXED_PITCH, VARIABLE_PITCH);
+  {$ENDIF}
 
 
 Type
@@ -1059,9 +1070,9 @@ End;
 
 
 
-function TFslResourceStream.sizeInBytesV : cardinal;
+function TFslResourceStream.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FFilename.length * sizeof(char)) + 12);
   inc(result, (FResourceName.length * sizeof(char)) + 12);
 end;
@@ -1190,8 +1201,8 @@ End;
 
 Destructor TFslVCLGraphic.Destroy;
 Begin
-  FHandle.Free;
-  FBuffer.Free;
+  FHandle.free;
+  FBuffer.free;
 
   Inherited;
 End;
@@ -1212,7 +1223,7 @@ Begin
 
     Handle.LoadFromStream(oAdapter);
   Finally
-    oAdapter.Free;
+    oAdapter.free;
   End;
 End;
 
@@ -1227,7 +1238,7 @@ Begin
 
     Handle.SaveToStream(oAdapter);
   Finally
-    oAdapter.Free;
+    oAdapter.free;
   End;
 End;
 
@@ -1267,7 +1278,7 @@ End;
 
 Procedure TFslVCLGraphic.SetHandle(Const Value: TGraphic);
 Begin
-  FHandle.Free;
+  FHandle.free;
   FHandle := Value;
 End;
 
@@ -1335,7 +1346,7 @@ Begin
     oStream.Position := 0;
     Handle.LoadFromStream(oStream);
   Finally
-    oStream.Free;
+    oStream.free;
   End;
 End;
 
@@ -1360,10 +1371,10 @@ Begin
 End;
 
 
-function TFslVCLGraphic.sizeInBytesV : cardinal;
+function TFslVCLGraphic.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBuffer.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBuffer.sizeInBytes(magic));
 end;
 
 Function TFslVCLGraphicList.GetGraphic(iIndex: Integer): TFslVCLGraphic;
@@ -1396,7 +1407,13 @@ Begin
 End;
 
 
+{$IFNDEF WINDOWS}
+type
+  TRGBTriple = packed record
+    rgbtRed, rgbtGreen, rgbtBlue : byte;
+  end;
 
+{$ENDIF}
 
 
 Const
@@ -1546,7 +1563,7 @@ Begin
       Result.Canvas.Unlock;
     End;
   Except
-    Result.Free;
+    Result.free;
 
     Raise;
   End;
@@ -1585,7 +1602,7 @@ Begin
 
     Result.Link;
   Finally
-    Result.Free;
+    Result.free;
   End;
 End;
 
@@ -1603,6 +1620,7 @@ End;
 
 
 Class Function TFslBitmapGraphic.CanLoad(oStream: TStream): Boolean;
+{$IFDEF WINDOWS}
 Var
   aBitmapFileHeader : TBitmapFileHeader;
   iLastPosition : Integer;
@@ -1619,6 +1637,10 @@ Begin
 
     oStream.Position := iLastPosition;
   End;
+{$ELSE}
+begin
+  result := false;
+{$ENDIF}
 End;
 
 
@@ -1847,10 +1869,10 @@ End;
 
 
 
-function TFslGraphicObject.sizeInBytesV : cardinal;
+function TFslGraphicObject.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FCapability.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FCapability.sizeInBytes(magic));
 end;
 
 Function TFslGraphicCapability.FromPixel(iValue: Integer): TFslGraphicMetre;
@@ -1875,7 +1897,7 @@ End;
 
 Destructor TFslBrush.Destroy;
 Begin
-  FBitmap.Free;
+  FBitmap.free;
 
   Inherited;
 End;
@@ -1957,7 +1979,7 @@ Begin
   ClearHandle;
   Change;
 
-  FBitmap.Free;
+  FBitmap.free;
   FBitmap := Value;
 End;
 
@@ -2022,10 +2044,10 @@ End;
 
 
 
-function TFslBrush.sizeInBytesV : cardinal;
+function TFslBrush.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FBitmap.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FBitmap.sizeInBytes(magic));
 end;
 
 Constructor TFslFont.Create;
@@ -2442,9 +2464,9 @@ Type
   End;
 
 
-function TFslFont.sizeInBytesV : cardinal;
+function TFslFont.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FName.length * sizeof(char)) + 12);
 end;
 
@@ -2652,8 +2674,8 @@ Begin
       oResourceStream.Close;
     End;
   Finally
-    oVCLStream.Free;
-    oResourceStream.Free;
+    oVCLStream.free;
+    oResourceStream.free;
   End;
 End;
 
@@ -2674,10 +2696,10 @@ Begin
 
       oPNG.SaveToStream(oAdaptor);
     Finally
-      oAdaptor.Free;
+      oAdaptor.free;
     End;
   Finally
-    oPng.Free;
+    oPng.free;
   End;
 End;
 

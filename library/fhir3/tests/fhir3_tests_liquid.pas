@@ -1,4 +1,4 @@
-unit FHIR.R3.Tests.Liquid;
+unit fhir3_tests_liquid;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -59,7 +59,7 @@ type
     [LiquidTestCase]
     procedure FHIRPathTest(Name : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 implementation
@@ -77,7 +77,7 @@ var
   i : integer;
 begin
   if gResources = nil then
-    gResources := TFslMap<TFHIRResource>.create;
+    gResources := TFslMap<TFHIRResource>.Create;
   if gTestDoc = nil then
     gTestDoc := TJSONParser.ParseFile('C:\work\org.hl7.fhir\build\tests\resources\liquid-tests.json');
   tests := gTestDoc.arr['tests'];
@@ -124,18 +124,18 @@ begin
   if not gResources.ContainsKey(test.str['focus']) then
   begin
     fn := FHIR_PUB_FILE(test.str['focus'].replace('/', '-')+'.xml');
-    p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
+    p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
     try
-      f := TFileStream.Create(fn, fmOpenRead);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
         p.source := f;
         p.parse;
         gResources.add(test.str['focus'], p.resource.link as TFhirResource);
       finally
-        f.Free;
+        f.free;
       end;
     finally
-      p.Free;
+      p.free;
     end;
   end;
   result := gResources[test.str['focus']];
@@ -149,7 +149,7 @@ end;
 
 procedure TLiquidEngineTest.TearDown;
 begin
-  engine.Free;
+  engine.free;
 end;
 
 procedure TLiquidEngineTest.FHIRPathTest(Name: String);
@@ -163,22 +163,22 @@ begin
     output := engine.evaluate(doc, loadResource, nil);
     Assert.IsTrue(test.str['output'] = output);
   finally
-    doc.Free;
+    doc.free;
   end;
 end;
 
-function TLiquidEngineTest.sizeInBytesV : cardinal;
+function TLiquidEngineTest.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, engine.sizeInBytes);
-  inc(result, test.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, engine.sizeInBytes(magic));
+  inc(result, test.sizeInBytes(magic));
 end;
 
 initialization
   TDUnitX.RegisterTestFixture(TLiquidEngineTest);
 finalization
-  gTestDoc.Free;
-  gResources.Free;
+  gTestDoc.free;
+  gResources.free;
 
 end.
 

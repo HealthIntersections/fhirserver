@@ -61,7 +61,7 @@ type
     FCount: integer;
     FError: String;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(resourceType, url : String);
 
@@ -101,7 +101,7 @@ type
     procedure doPing;
     procedure doDownload;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(client : TFhirClientV; factory : TFHIRFactory);
     destructor Destroy; override;
@@ -145,7 +145,7 @@ begin
   end;
 end;
 
-constructor TFHIRClientAsyncTask.create(client: TFhirClientV; factory : TFHIRFactory);
+constructor TFHIRClientAsyncTask.Create(client: TFhirClientV; factory : TFHIRFactory);
 begin
   inherited Create;
   FClient := client;
@@ -153,17 +153,17 @@ begin
   FStart := now;
   FFactory := factory;
   FStatus := asyncReady;
-  FFiles := TFslList<TDownloadFile>.create;
-  FTypes := TStringList.create;
+  FFiles := TFslList<TDownloadFile>.Create;
+  FTypes := TStringList.Create;
   log('Initialised at '+FormatDateTime('c', now));
 end;
 
 destructor TFHIRClientAsyncTask.Destroy;
 begin
-  FFiles.Free;
-  FTypes.Free;
-  FClient.Free;
-  FFactory.Free;
+  FFiles.free;
+  FTypes.free;
+  FClient.free;
+  FFactory.free;
   inherited;
 end;
 
@@ -237,7 +237,7 @@ begin
             end;
             FStatus := asyncDownload;
           finally
-            json.Free;
+            json.free;
           end;
         end
       else if FClient.LastStatus >= 500 then
@@ -260,21 +260,21 @@ begin
                 r.free;
               end;
             finally
-              p.Free;
+              p.free;
             end;
           except
           end;
-        raise EFHIRException.create(FError);
+        raise EFHIRException.Create(FError);
       end
       else
       begin
         FStatus := asyncFailed;
         FError := 'Unexpected response : '+inttostr(FClient.LastStatus)+ ' '+FClient.LastStatusMsg;
-        raise EFHIRException.create(FError);
+        raise EFHIRException.Create(FError);
       end;
     end;
   finally
-    buf.Free;
+    buf.free;
   end;
 end;
 
@@ -341,10 +341,10 @@ begin
     begin
       FStatus := asyncFailed;
       FError := 'Unexpected response : '+inttostr(FClient.LastStatus)+ ' '+FClient.LastStatusMsg;
-      raise EFHIRException.create(FError);
+      raise EFHIRException.Create(FError);
     end;
   finally
-    buf.Free;
+    buf.free;
   end;
 end;
 
@@ -358,7 +358,7 @@ begin
     asyncPinging: ; // nothing
     asyncDownload : doDownload;
     asyncDownloading: ; // nothing
-    asyncFailed: raise EFHIRException.create('Error: '+FError);
+    asyncFailed: raise EFHIRException.Create('Error: '+FError);
   end;
 end;
 
@@ -387,18 +387,18 @@ begin
   result := 'Downloaded '+inttostr(FFiles.Count)+' count for '+DescribeBytes(i)+' bytes';
 end;
 
-function TFHIRClientAsyncTask.sizeInBytesV : cardinal;
+function TFHIRClientAsyncTask.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FClient.sizeInBytes);
-  inc(result, FFiles.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FClient.sizeInBytes(magic));
+  inc(result, FFiles.sizeInBytes(magic));
   inc(result, (FFolder.length * sizeof(char)) + 12);
-  inc(result, FTypes.sizeInBytes);
+  inc(result, FTypes.sizeInBytes(magic));
   inc(result, (FQuery.length * sizeof(char)) + 12);
   inc(result, (FLog.length * sizeof(char)) + 12);
   inc(result, (FTaskLocation.length * sizeof(char)) + 12);
   inc(result, (FError.length * sizeof(char)) + 12);
-  inc(result, FFactory.sizeInBytes);
+  inc(result, FFactory.sizeInBytes(magic));
 end;
 
 { TDownloadFile }
@@ -415,9 +415,9 @@ begin
   result := TDownloadFile(inherited Link);
 end;
 
-function TDownloadFile.sizeInBytesV : cardinal;
+function TDownloadFile.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FUrl.length * sizeof(char)) + 12);
   inc(result, (FResourceType.length * sizeof(char)) + 12);
   inc(result, (FError.length * sizeof(char)) + 12);

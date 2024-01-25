@@ -1,4 +1,4 @@
-unit FHIR.R3.Tests.PathEngine;
+unit fhir3_tests_pathengine;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -63,7 +63,7 @@ Type
     [FHIRPathTestCase]
     procedure FHIRPathTest(Name : String);
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   End;
 
 implementation
@@ -174,18 +174,18 @@ begin
           engine.check(nil, '', '', '', node, false)
         else
         begin
-          p := TFHIRXmlParser.create(TTestingWorkerContext.Use, THTTPLanguages.create('en'));
+          p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
           try
-            f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead);
+            f := TFileStream.Create(IncludeTrailingBackslash('C:\\work\\org.hl7.fhir\\build\\publish')+input, fmOpenRead + fmShareDenyWrite);
             try
               p.source := f;
               p.parse;
               res := p.resource.Link as TFHIRResource;
             finally
-              f.Free;
+              f.free;
             end;
           finally
-            p.Free;
+            p.free;
           end;
 
           engine.check(nil, res.fhirType, res.fhirType, res.fhirType, node, false).free;
@@ -196,14 +196,14 @@ begin
         on e:Exception do
         begin
           Assert.IsTrue(fail, StringFormat('Unexpected exception parsing %s: %s', [expression, e.Message]));
-          outcome := TFHIRSelectionList.create;
+          outcome := TFHIRSelectionList.Create;
         end;
       end;
       if (TMsXmlParser.GetAttribute(test, 'predicate') = 'true') then
       begin
         ok := engine.convertToBoolean(outcome);
         outcome.clear();
-        outcome.add(TFHIRBoolean.create(ok));
+        outcome.add(TFHIRBoolean.Create(ok));
       end;
       s := engine.UseLog;
       if (s <> '') then
@@ -226,10 +226,10 @@ begin
           end;
         end;
       finally
-        expected.Free;
+        expected.free;
       end;
     finally
-      node.Free;
+      node.free;
     end;
   finally
     res.free;
@@ -271,7 +271,7 @@ begin
           end, Exception, error.text)
       else
       begin
-        // ok :=
+        // ok := 
         Assert.IsTrue(ok, s);
       end;
     end;
@@ -286,16 +286,10 @@ end;
 
 procedure TFHIRPathTest.TearDown;
 begin
-  engine.Free;
+  engine.free;
 end;
 
 initialization
   TDUnitX.RegisterTestFixture(TFHIRPathTest);
   TDUnitX.RegisterTestFixture(TFHIRPathTests);
-function TFHIRPathTest.sizeInBytesV : cardinal;
-begin
-  result := inherited sizeInBytesV;
-  inc(result, engine.sizeInBytes);
-end;
-
 end.

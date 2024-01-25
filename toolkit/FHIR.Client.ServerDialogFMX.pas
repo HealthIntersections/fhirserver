@@ -220,25 +220,25 @@ begin
   begin
     server.clientid := edtClientId.Text;
     if server.clientid = '' then
-      raise EFHIRException.create('Client id is required');
+      raise EFHIRException.Create('Client id is required');
     if not StringIsCardinal16(edtRedirectPort.Text) then
-      raise EFHIRException.create('Redirectport must be a valid port number');
+      raise EFHIRException.Create('Redirectport must be a valid port number');
     if server.authorizeEndpoint = '' then
-      raise EFHIRException.create('Authorize end-point is required');
+      raise EFHIRException.Create('Authorize end-point is required');
     if server.tokenEndpoint = '' then
-      raise EFHIRException.create('Token end-point is required');
+      raise EFHIRException.Create('Token end-point is required');
   end
   else if server.SmartAppLaunchMode = salmBackendClient then
   begin
     server.clientid := edtClientId1.Text;
     if server.issuerUrl = '' then
-      raise EFHIRException.create('Issuer URL is required');
+      raise EFHIRException.Create('Issuer URL is required');
     if not FileExists(server.privatekey) then
-      raise EFHIRException.create('Private Key is required (file not found)');
+      raise EFHIRException.Create('Private Key is required (file not found)');
     if server.authorizeEndpoint = '' then
-      raise EFHIRException.create('Authorize end-point is required');
+      raise EFHIRException.Create('Authorize end-point is required');
     if server.tokenEndpoint = '' then
-      raise EFHIRException.create('Token end-point is required');
+      raise EFHIRException.Create('Token end-point is required');
   end;
   ModalResult := mrok;
 end;
@@ -269,7 +269,7 @@ begin
       end;
     end;
   finally
-    form.Free;
+    form.free;
   end;
 end;
 
@@ -298,9 +298,9 @@ end;
 
 procedure TEditRegisteredServerForm.FormDestroy(Sender: TObject);
 begin
-  FServer.Free;
-  FVersions.Free;
-  FCapabilityStatement.Free;
+  FServer.free;
+  FVersions.free;
+  FCapabilityStatement.free;
 end;
 
 procedure TEditRegisteredServerForm.FormShow(Sender: TObject);
@@ -353,21 +353,21 @@ var
   client : TFhirClientV;
 begin
   if not isAbsoluteUrl(edtUrl.Text) then
-    raise EFHIRException.create('Plase supply a valid URL for the server');
+    raise EFHIRException.Create('Plase supply a valid URL for the server');
 
   try
     client := FVersions[readVersion].makeClient(nil, edtUrl.text, fctCrossPlatform, ffJson, 5000);
     try
       FCapabilityStatement := FVersions[readVersion].wrapCapabilityStatement(client.conformanceV(false));
     finally
-      client.Free;
+      client.free;
     end;
   except
     client := FVersions[readVersion].makeClient(nil, edtUrl.text, fctCrossPlatform, ffXml, 5000);
     try
       FCapabilityStatement := FVersions[readVersion].wrapCapabilityStatement(client.conformanceV(false));
     finally
-      client.Free;
+      client.free;
     end;
   end;
 end;
@@ -382,19 +382,19 @@ end;
 
 procedure TEditRegisteredServerForm.SetCapabilityStatement(const Value: TFhirCapabilityStatementW);
 begin
-  FCapabilityStatement.Free;
+  FCapabilityStatement.free;
   FCapabilityStatement := Value;
 end;
 
 procedure TEditRegisteredServerForm.SetServer(const Value: TRegisteredFHIRServer);
 begin
-  FServer.Free;
+  FServer.free;
   FServer := Value;
 end;
 
 procedure TEditRegisteredServerForm.SetVersions(const Value: TFHIRVersionFactories);
 begin
-  FVersions.Free;
+  FVersions.free;
   FVersions := Value;
 end;
 

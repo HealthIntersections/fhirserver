@@ -1,4 +1,4 @@
-unit FHIR.Ui.TextPresentation;
+unit fui_vcl_text;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -64,7 +64,7 @@ begin
     TextPresentationDialog.Memo1.Text := text;
     TextPresentationDialog.ShowModal;
   finally
-    TextPresentationDialog.Free;
+    TextPresentationDialog.free;
   end;
 end;
 

@@ -100,7 +100,6 @@ uses
   v2_publish in '..\..\library\v2\v2_publish.pas',
   wp_format in '..\..\library\wp\wp_format.pas',
   v2_conformance in '..\..\library\v2\v2_conformance.pas',
-  MarkdownHTMLEntities in '..\..\..\markdown\source\MarkdownHTMLEntities.pas',
   VirtualTrees.AccessibilityFactory in '..\..\dependencies\treeview\Source\VirtualTrees.AccessibilityFactory.pas',
   VirtualTrees.HeaderPopup in '..\..\dependencies\treeview\Source\VirtualTrees.HeaderPopup.pas',
   wp_clipboard in '..\..\library\wp\wp_clipboard.pas',
@@ -112,7 +111,11 @@ uses
   GraphicStrings in '..\..\dependencies\ui\GraphicStrings.pas',
   JPG in '..\..\dependencies\ui\JPG.pas',
   MZLib in '..\..\dependencies\ui\MZLib.pas',
-  wp_printing_base in '..\..\library\wp\wp_printing_base.pas';
+  wp_printing_base in '..\..\library\wp\wp_printing_base.pas',
+  MarkdownHTMLEntities in '..\..\..\source\delphi-markdown\source\MarkdownHTMLEntities.pas',
+  fsl_logging in '..\..\library\fsl\fsl_logging.pas',
+  TZDB in '..\..\..\source\tzdb\dist\TZDB.pas',
+  fhir_colour_utils in '..\..\library\fhir\fhir_colour_utils.pas';
 
 {$R *.RES}
 {$R WindowsXP.RES}

@@ -32,7 +32,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  fsl_base,
+  fsl_base, fsl_npm_cache,
   fhir_factory, fhir_pathengine,
   ftx_ucum_services,
   indexing, subscriptions;
@@ -44,7 +44,7 @@ type
   TFHIRServerFactory = class abstract (TFHIRBaseServerFactory)
   public
     function link : TFHIRServerFactory; overload;
-    function makeValidator: TFHIRValidatorV; virtual; abstract;
+    function makeValidator(pc : TFHIRPackageManager) : TFHIRValidatorV; virtual; abstract;
     function makeIndexer : TFHIRIndexManager; virtual; abstract;
     function makeEngine(validatorContext : TFHIRWorkerContextWithFactory; ucum : TUcumServiceImplementation) : TFHIRPathEngineV; virtual; abstract;
     function makeSubscriptionManager(ServerContext : TFslObject) : TSubscriptionManager; virtual; abstract;

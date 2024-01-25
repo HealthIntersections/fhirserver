@@ -35,7 +35,7 @@ interface
 uses
   SysUtils, Classes,
   fsl_base, fsl_json, fsl_stream,
-  fhir_objects, 
+  fhir_objects, fhir_uris, 
   fhir4_types;
 
 const
@@ -62,7 +62,7 @@ type
     FTransactionId: String;
     FConfirmedStored: boolean;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     function Link : TFHIRTag;
     property Key : integer read Fkey write FKey;
@@ -80,7 +80,7 @@ type
     function GetCount: Integer;
     function GetTag(index: integer): TFHIRTag;
   protected
-    function sizeInBytesV : cardinal; override;
+    function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; Override;
     destructor Destroy; Override;
@@ -120,9 +120,9 @@ begin
   result := TFHIRTag(inherited Link);
 end;
 
-function TFHIRTag.sizeInBytesV : cardinal;
+function TFHIRTag.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
+  result := inherited sizeInBytesV(magic);
   inc(result, (FTransactionId.length * sizeof(char)) + 12);
 end;
 
@@ -131,7 +131,7 @@ end;
 Constructor TFHIRTagList.Create;
 begin
   inherited;
-  FList := TFslList<TFHIRTag>.create;
+  FList := TFslList<TFHIRTag>.Create;
 end;
 
 
@@ -158,7 +158,7 @@ end;
 
 Destructor TFHIRTagList.Destroy;
 begin
-  FList.Free;
+  FList.free;
   inherited;
 end;
 
@@ -178,7 +178,7 @@ function TFHIRTagList.addTag(key: integer; kind: TFHIRTagCategory; system, code,
 var
   tag : TFHIRTag;
 begin
-  tag := TFHIRTag.create;
+  tag := TFHIRTag.Create;
   try
     tag.Key := Key;
     tag.Category := kind;
@@ -247,7 +247,7 @@ begin
     vs := TFslVCLStream.Create;
     try
       vs.Stream := s;
-      json := TJsonWriterDirect.create;
+      json := TJsonWriterDirect.Create;
       try
         json.Stream := vs.link;
         json.Start(true);
@@ -269,7 +269,7 @@ begin
         json.free;
       end;
     finally
-      vs.Free;
+      vs.free;
     end;
     result := s.Bytes;
   finally
@@ -289,8 +289,8 @@ begin
     if not hasTag(tcSecurity, c.system, c.code) then
       addTag(0, tcSecurity, c.system, c.code, c.display);
   for u in meta.profileList do
-    if not hasTag(tcProfile, 'urn:ietf:rfc:3986', u.value) then
-      addTag(0, tcProfile, 'urn:ietf:rfc:3986', u.value, '');
+    if not hasTag(tcProfile, URI_URIs, u.value) then
+      addTag(0, tcProfile, URI_URIs, u.value, '');
 end;
 
 procedure TFHIRTagList.removeTag(category: TFHIRTagCategory; system, code: String);
@@ -312,7 +312,7 @@ begin
   for c in meta.securityList do
     removeTag(tcSecurity, c.system, c.code);
   for u in meta.profileList do
-    removeTag(tcProfile, 'urn:ietf:rfc:3986', u.value);
+    removeTag(tcProfile, URI_URIs, u.value);
 end;
 
 procedure TFHIRTagList.writeTags(meta: TFhirMeta);
@@ -331,10 +331,10 @@ begin
 end;
 
 
-function TFHIRTagList.sizeInBytesV : cardinal;
+function TFHIRTagList.sizeInBytesV(magic : integer) : cardinal;
 begin
-  result := inherited sizeInBytesV;
-  inc(result, FList.sizeInBytes);
+  result := inherited sizeInBytesV(magic);
+  inc(result, FList.sizeInBytes(magic));
 end;
 
 end.
