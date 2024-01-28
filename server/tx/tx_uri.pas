@@ -47,6 +47,8 @@ type
     constructor Create(url : String);
   end;
 
+  { TUriServices }
+
   TUriServices = class (TCodeSystemProvider)
   public
     Function Link : TUriServices; overload;
@@ -56,8 +58,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
@@ -76,6 +78,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -93,12 +96,12 @@ begin
 end;
 
 
-function TUriServices.version(context: TCodeSystemProviderContext): String;
+function TUriServices.version: String;
 begin
   result := 'n/a';
 end;
 
-function TUriServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TUriServices.systemUri : String;
 begin
   result := URI_URIs;
 end;
@@ -211,6 +214,11 @@ end;
 function TUriServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
   raise ETerminologyTodo.Create('TUriServices.FilterMore');
+end;
+
+function TUriServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  raise ETerminologyTodo.Create('TUriServices.FilterSize');
 end;
 
 function TUriServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

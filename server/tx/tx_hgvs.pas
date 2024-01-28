@@ -49,6 +49,8 @@ type
    property code : String read FCode write FCode;
  end;
 
+ { THGVSProvider }
+
  THGVSProvider = class (TCodeSystemProvider)
   private
   public
@@ -58,8 +60,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
@@ -81,6 +83,7 @@ type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -169,6 +172,11 @@ begin
 end;
 
 function THGVSProvider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
+begin
+  raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
+end;
+
+function THGVSProvider.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyError.Create('Filters are not supported for HGVS', itNotSupported);
 end;
@@ -287,7 +295,7 @@ begin
   raise ETerminologyError.Create('Subsumption is not supported for HGVS', itNotSupported);
 end;
 
-function THGVSProvider.systemUri(context: TCodeSystemProviderContext): String;
+function THGVSProvider.systemUri: String;
 begin
   result := 'http://varnomen.hgvs.org';
 end;
@@ -297,7 +305,7 @@ begin
   result := 0;
 end;
 
-function THGVSProvider.version(context: TCodeSystemProviderContext): String;
+function THGVSProvider.version: String;
 begin
   result := '2.0';
 end;

@@ -111,6 +111,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -124,8 +125,8 @@ type
   TRxNormServices = class (TUMLSServices)
   public
     constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -136,8 +137,8 @@ type
     function getCodeField : String; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -489,11 +490,11 @@ end;
 
 procedure TUMLSServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:in'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'STY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SAB:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CUI:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'STY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SAB:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'CUI:equals'));
 end;
 
 function TUMLSServices.TotalCount : integer;
@@ -958,6 +959,22 @@ begin
   result := filter.qry.FetchNext;
 end;
 
+function TUMLSServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  filter : TUMLSFilter;
+begin
+  filter := TUMLSFilter(ctxt);
+  if (filter.qry = nil) then
+  begin
+    // search on full rxnorm
+    filter.qry := db.GetConnection(dbprefix+'.filter');
+    filter.qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY'' '+filter.sql;
+    filter.qry.prepare;
+    filter.qry.Execute;
+  end;
+  result := filter.qry.RowsAffected; // todo: check this
+end;
+
 function TUMLSServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
   filter : TUMLSFilter;
@@ -1054,12 +1071,12 @@ begin
   result := 'RxNorm';
 end;
 
-function TRxNormServices.systemUri(context: TCodeSystemProviderContext): String;
+function TRxNormServices.systemUri: String;
 begin
   result := URI_RXNORM;
 end;
 
-function TRxNormServices.version(context: TCodeSystemProviderContext): String;
+function TRxNormServices.version: String;
 begin
   result := '??rx1';
 end;
@@ -1091,12 +1108,12 @@ begin
   result := 'NDFRT';
 end;
 
-function TNDFRTServices.systemUri(context: TCodeSystemProviderContext): String;
+function TNDFRTServices.systemUri: String;
 begin
   result := URI_NDFRT;
 end;
 
-function TNDFRTServices.version(context: TCodeSystemProviderContext): String;
+function TNDFRTServices.version: String;
 begin
   result := '??rx2';
 end;

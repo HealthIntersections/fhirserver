@@ -1,7 +1,7 @@
 object FakeConsoleForm: TFakeConsoleForm
-  Left = 127
+  Left = -2433
   Height = 804
-  Top = 204
+  Top = 559
   Width = 1220
   Caption = 'Fake Console Form'
   ClientHeight = 804

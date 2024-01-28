@@ -318,7 +318,7 @@ end;
 
 function TFhirServerMaintenanceThread.ThreadName: String;
 begin
-  result := 'kernel';
+  result := 'kernel.maintenance';
 end;
 
 procedure TFhirServerMaintenanceThread.Initialise;
