@@ -161,8 +161,8 @@ type
     class function checkDB(conn : TFDBConnection) : String;
 
     function expandLimitation : Integer; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
     function TotalCount : integer;  override;
@@ -183,6 +183,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -619,12 +620,12 @@ begin
   end;
 end;
 
-function TCPTServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TCPTServices.systemUri : String;
 begin
   result := 'http://www.ama-assn.org/go/cpt';
 end;
 
-function TCPTServices.version(context : TCodeSystemProviderContext) : String;
+function TCPTServices.version : String;
 begin
   result := FVersion;
 end;
@@ -915,6 +916,14 @@ begin
   fc := ctxt as TCPTFilterContext;
   fc.next;
   result := (fc.Index < fc.Flist.count);
+end;
+
+function TCPTServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  fc : TCPTFilterContext;
+begin
+  fc := ctxt as TCPTFilterContext;
+  result := fc.Flist.count;
 end;
 
 function TCPTServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

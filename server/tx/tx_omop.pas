@@ -53,8 +53,8 @@ type
 
     class function checkDB(conn : TFDBConnection) : String;
 
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
     function TotalCount : integer;  override;
@@ -78,6 +78,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -161,12 +162,12 @@ begin
 
 end;
 
-function TOMOPServices.systemUri(context: TCodeSystemProviderContext): String;
+function TOMOPServices.systemUri: String;
 begin
   result := 'http://fhir.ohdsi.org/CodeSystem/concepts';
 end;
 
-function TOMOPServices.version(context: TCodeSystemProviderContext): String;
+function TOMOPServices.version: String;
 begin
   Result := FVersion;
 end;
@@ -371,6 +372,11 @@ end;
 function TOMOPServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
   result := (ctxt as TOMOPFilter).Conn.FetchNext;
+end;
+
+function TOMOPServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := (ctxt as TOMOPFilter).Conn.RowsAffected;
 end;
 
 function TOMOPServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

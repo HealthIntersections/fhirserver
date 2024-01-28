@@ -379,7 +379,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="97">
+    <Units Count="98">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -771,6 +771,10 @@
         <Filename Value="web_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit96>
+      <Unit97>
+        <Filename Value="zero_config.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit97>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

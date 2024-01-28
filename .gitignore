@@ -97,3 +97,5 @@ exec/cert/
 *.res
 
 *.fpc
+
+up_props.sh

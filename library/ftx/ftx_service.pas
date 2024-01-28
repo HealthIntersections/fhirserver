@@ -59,7 +59,6 @@ type
 
 const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
-  ALL_CODE_CS = 'http://hl7.org/fhir/CodeSystem/@all';
 
 Type
 
@@ -230,8 +229,8 @@ Type
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; virtual;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
-    function systemUri(context : TCodeSystemProviderContext) : String; virtual; abstract;
-    function version(context : TCodeSystemProviderContext) : String; virtual;
+    function systemUri() : String; virtual; abstract;
+    function version() : String; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String; langList : THTTPLanguageList):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
@@ -267,6 +266,7 @@ Type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; virtual; abstract;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; overload; virtual; abstract;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
@@ -423,13 +423,16 @@ begin
   try
     result.Language := FLanguages.parse(ccd.language);
     result.Use := ccd.use;
-    result.Value := ccd.valueElement; {no .link}
-    list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
-    try
-      if (list.count > 0) then
-        result.extensions.addAll(list);
-    finally
-      list.free;
+    result.Value := ccd.valueElement; {no .link}   
+    if (ccd.hasExtensions) then
+    begin
+      list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
+      try
+        if (list.count > 0) then
+          result.extensions.addAll(list);
+      finally
+        list.free;
+      end;
     end;
     designations.add(result.link);
   finally
@@ -447,12 +450,15 @@ begin
     result.Language := FLanguages.parse(ccd.language);
     result.Use := ccd.use;
     result.Value := ccd.valueElement; {no .link}
-    list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
-    try
-      if (list.count > 0) then
-        result.extensions.addAll(list);
-    finally
-      list.free;
+    if (ccd.hasExtensions) then
+    begin
+      list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
+      try
+        if (list.count > 0) then
+          result.extensions.addAll(list);
+      finally
+        list.free;
+      end;
     end;
     designations.add(result.link);
   finally
@@ -798,7 +804,7 @@ end;
 
 procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  card.summary := 'No CDSHook Implementation for code system '+systemUri(nil)+' for code '+code+' ('+display+')';
+  card.summary := 'No CDSHook Implementation for code system '+systemUri+' for code '+code+' ('+display+')';
 end;
 
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -934,7 +940,7 @@ end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil), itException);
+  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri, itException);
 end;
 
 function TCodeSystemProvider.getExtensions(context : TCodeSystemProviderContext) : TFslList<TFHIRExtensionW>;
@@ -963,7 +969,7 @@ begin
   result := false;
 end;
 
-function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
+function TCodeSystemProvider.version(): String;
 begin
   result := '';
 end;

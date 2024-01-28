@@ -79,8 +79,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
@@ -98,7 +98,8 @@ type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;    
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -119,7 +120,7 @@ var
   s : string;
 begin
   for s in CODES_TIETFLanguageComponent do
-    features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', s+':exists'));
+    features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', s+':exists'));
 end;
 function TIETFLanguageCodeServices.TotalCount : integer;
 begin
@@ -127,12 +128,12 @@ begin
 end;
 
 
-function TIETFLanguageCodeServices.version(context: TCodeSystemProviderContext): String;
+function TIETFLanguageCodeServices.version: String;
 begin
   result := '';
 end;
 
-function TIETFLanguageCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TIETFLanguageCodeServices.systemUri : String;
 begin
   result := URI_BCP47;
 end;
@@ -318,6 +319,11 @@ begin
 end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+begin
+  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
+end;
+
+function TIETFLanguageCodeServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
 end;

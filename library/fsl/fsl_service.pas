@@ -149,6 +149,7 @@ var
   LMsg : string;
   LCheckTime : TDateTime;
 begin
+  SetThreadStatus('Executing');
   {$IFNDEF WINDOWS}
   fpSignal(SigTerm, SignalHandler(@handleSigTerm));
   fpSignal(SigQuit, SignalHandler(@handleSigQuit));
@@ -163,6 +164,7 @@ begin
           // todo: is there a way to do this? SetConsoleTitle(pChar(FDisplayName+MemoryStatus));
           if (LCheckTime < Now) then
             begin
+            SetThreadStatus('Executing');
             LCheckTime := now + 10 * DATETIME_SECOND_ONE;
             if CheckClose(LMsg) then
               begin

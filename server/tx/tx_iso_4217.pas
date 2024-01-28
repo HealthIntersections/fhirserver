@@ -68,6 +68,8 @@ type
     function link : TIso4217ConceptFilter; overload;
   end;
 
+  { TIso4217Services }
+
   TIso4217Services = class (TCodeSystemProvider)
   private
     FCurrencies : TIso4217CurrencySet;
@@ -80,7 +82,7 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -98,6 +100,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -111,7 +114,7 @@ implementation
 
 { TIso4217Services }
 
-Constructor TIso4217Services.Create(languages : TIETFLanguageDefinitions);
+constructor TIso4217Services.Create(languages: TIETFLanguageDefinitions);
 begin
   inherited;
   FCurrencies := TIso4217CurrencySet.Create;
@@ -120,7 +123,7 @@ end;
 
 procedure TIso4217Services.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'decimals:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'decimals:equals'));
 end;
 
 function TIso4217Services.TotalCount : integer;
@@ -129,7 +132,7 @@ begin
 end;
 
 
-function TIso4217Services.systemUri(context : TCodeSystemProviderContext) : String;
+function TIso4217Services.systemUri : String;
 begin
   result := 'urn:iso:std:iso:4217';
 end;
@@ -254,7 +257,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
+    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri, itNotSupported);
 end;
 
 function TIso4217Services.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -266,6 +269,11 @@ function TIso4217Services.FilterMore(ctxt : TCodeSystemProviderFilterContext) : 
 begin
   TIso4217ConceptFilter(ctxt).FCursor := TIso4217ConceptFilter(ctxt).FCursor + 1;
   result := TIso4217ConceptFilter(ctxt).FCursor < TIso4217ConceptFilter(ctxt).FList.Count;
+end;
+
+function TIso4217Services.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := TIso4217ConceptFilter(ctxt).FList.Count;
 end;
 
 function TIso4217Services.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
