@@ -1968,12 +1968,15 @@ var
 begin
   result := TFslList<TFhirExtensionW>.Create;
   try
-    list := getExtensionsV(url);
-    try
-      for o in list do
-        result.add(wrapExtension(o));
-    finally
-      list.free;
+    if (hasExtensions) then
+    begin
+      list := getExtensionsV(url);
+      try
+        for o in list do
+          result.add(wrapExtension(o));
+      finally
+        list.free;
+      end;
     end;
     result.link;
   finally
