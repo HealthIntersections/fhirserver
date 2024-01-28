@@ -2488,7 +2488,12 @@ end;
 
 procedure TSnomedServices.RecordUse(count: integer);
 begin
-  FUseCount := FUseCount + count;
+  FLock.lock('use');
+  try
+    FUseCount := FUseCount + count;
+  finally
+    FLock.unlock;
+  end;
 end;
 
 function TSnomedServices.buildValueSet(factory : TFHIRFactory; url : String): TFhirValueSetW;
