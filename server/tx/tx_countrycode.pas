@@ -60,6 +60,8 @@ type
     function link : TCountryCodeConceptFilter; overload;
   end;
 
+  { TCountryCodeServices }
+
   TCountryCodeServices = class (TCodeSystemProvider)
   private
     FCodes : TFslList<TCountryCodeConcept>;
@@ -75,8 +77,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -94,6 +96,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -106,7 +109,7 @@ implementation
 
 { TCountryCodeServices }
 
-Constructor TCountryCodeServices.Create(languages : TIETFLanguageDefinitions);
+constructor TCountryCodeServices.Create(languages: TIETFLanguageDefinitions);
 begin
   inherited;
   FCodes := TFslList<TCountryCodeConcept>.Create;
@@ -118,7 +121,7 @@ end;
 
 procedure TCountryCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'code:regex'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'code:regex'));
 end;
 
 function TCountryCodeServices.TotalCount : integer;
@@ -127,12 +130,12 @@ begin
 end;
 
 
-function TCountryCodeServices.version(context: TCodeSystemProviderContext): String;
+function TCountryCodeServices.version: String;
 begin
   result := '2018';
 end;
 
-function TCountryCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TCountryCodeServices.systemUri : String;
 begin
   result := URI_3166;
 end;
@@ -1034,7 +1037,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
+    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri, itNotSupported);
 end;
 
 function TCountryCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -1046,6 +1049,11 @@ function TCountryCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext
 begin
   TCountryCodeConceptFilter(ctxt).FCursor := TCountryCodeConceptFilter(ctxt).FCursor + 1;
   result := TCountryCodeConceptFilter(ctxt).FCursor < TCountryCodeConceptFilter(ctxt).FList.Count;
+end;
+
+function TCountryCodeServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := TCountryCodeConceptFilter(ctxt).FList.Count;
 end;
 
 function TCountryCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

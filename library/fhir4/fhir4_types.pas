@@ -13299,7 +13299,7 @@ end;
       
 function TFhirElement.hasExtensions: boolean;
 begin
-  result := FextensionList.Count > 0;
+  result := (FExtensionList <> nil) and (FextensionList.Count > 0);
 end;
 
 function TFhirElement.getExtensionString(url: String): String;

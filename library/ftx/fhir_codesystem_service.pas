@@ -212,12 +212,12 @@ type
     function contentMode : TFhirCodeSystemContentMode; override;
     function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
-    function version(context: TCodeSystemProviderContext): String; override;
+    function version(): String; override;
     function TotalCount : integer; override;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri() : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
@@ -240,6 +240,7 @@ type
     procedure listSupplements(ts : TStringList); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
@@ -470,10 +471,10 @@ end;
 
 procedure TFhirCodeSystemProvider.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-a'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-not-a'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:in'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'child:exists'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:is-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:is-not-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'child:exists'));
 end;
 
 procedure TFhirCodeSystemProvider.getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean);
@@ -893,7 +894,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itUnknown)
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri, itUnknown)
     else
       result := Definition(ctxt);
   finally
@@ -908,7 +909,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itUnknown)
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri, itUnknown)
     else
       result := Display(ctxt, langList);
   finally
@@ -1206,7 +1207,7 @@ begin
   exit('not-subsumed');
 end;
 
-function TFhirCodeSystemProvider.systemUri(context : TCodeSystemProviderContext): String;
+function TFhirCodeSystemProvider.systemUri(): String;
 begin
   result := FCs.CodeSystem.url;
 end;
@@ -1233,7 +1234,7 @@ begin
   Result := FCs.CodeSystem.properties;
 end;
 
-function TFhirCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
+function TFhirCodeSystemProvider.version: String;
 begin
    result := FCs.CodeSystem.version;
 end;
@@ -1522,6 +1523,11 @@ function TFhirCodeSystemProvider.FilterMore(ctxt: TCodeSystemProviderFilterConte
 begin
   inc(TFhirCodeSystemProviderFilterContext(ctxt).ndx);
   result := TFhirCodeSystemProviderFilterContext(ctxt).ndx < TFhirCodeSystemProviderFilterContext(ctxt).concepts.Count;
+end;
+
+function TFhirCodeSystemProvider.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := TFhirCodeSystemProviderFilterContext(ctxt).concepts.Count;
 end;
 
 function TFhirCodeSystemProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

@@ -62,6 +62,8 @@ type
     function link : TAreaCodeConceptFilter; overload;
   end;
 
+  { TAreaCodeServices }
+
   TAreaCodeServices = class (TCodeSystemProvider)
   private
     FCodes : TFslList<TAreaCodeConcept>;
@@ -77,7 +79,7 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -95,6 +97,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -106,7 +109,7 @@ implementation
 
 { TAreaCodeServices }
 
-Constructor TAreaCodeServices.Create(languages : TIETFLanguageDefinitions);
+constructor TAreaCodeServices.Create(languages: TIETFLanguageDefinitions);
 begin
   inherited Create(languages);
   FCodes := TFslList<TAreaCodeConcept>.Create;
@@ -117,8 +120,8 @@ end;
 
 procedure TAreaCodeServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'type:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'type:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'type:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'type:equals'));
 end;
 
 function TAreaCodeServices.TotalCount : integer;
@@ -127,7 +130,7 @@ begin
 end;
 
 
-function TAreaCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TAreaCodeServices.systemUri : String;
 begin
   result := 'http://unstats.un.org/unsd/methods/m49/m49.htm';
 end;
@@ -547,7 +550,7 @@ begin
     end;
   end
   else
-    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
+    raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri, itNotSupported);
 end;
 
 function TAreaCodeServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -566,6 +569,11 @@ function TAreaCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) :
 begin
   TAreaCodeConceptFilter(ctxt).FCursor := TAreaCodeConceptFilter(ctxt).FCursor + 1;
   result := TAreaCodeConceptFilter(ctxt).FCursor < TAreaCodeConceptFilter(ctxt).FList.Count;
+end;
+
+function TAreaCodeServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := TAreaCodeConceptFilter(ctxt).FList.Count;
 end;
 
 function TAreaCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

@@ -737,8 +737,8 @@ operations
     function TotalCount : integer; override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -749,6 +749,7 @@ operations
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
@@ -4898,7 +4899,8 @@ end;
 
 { TSnomedProvider }
 
-constructor TSnomedProvider.create(sct: TSnomedServices; supplements: TFslList<TFHIRCodeSystemW>);
+constructor TSnomedProvider.Create(sct: TSnomedServices; supplements: TFslList<
+  TFHIRCodeSystemW>);
 begin
   inherited Create(sct.FLanguages.link);
   FSct := sct;
@@ -4920,9 +4922,9 @@ end;
 
 procedure TSnomedProvider.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-a'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:descends'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:is-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:descends'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:in'));
 end;
 
 function TSnomedProvider.Definition(context: TCodeSystemProviderContext): string;
@@ -5242,7 +5244,7 @@ begin
   FSct.checkIsLoaded;
   ctxt := context as TSnomedExpressionContext;
   if (ctxt = nil) then
-    raise ETerminologyError.create('Unable to find context in '+systemUri(nil), itInvalid)
+    raise ETerminologyError.create('Unable to find context in '+systemUri, itInvalid)
   else if ctxt.isComplex then
     // there's only one display name - for now?
     list.addDesignation(true, true, '', FSct.displayExpression(ctxt.FExpression).Trim)
@@ -5368,7 +5370,7 @@ begin
   ctxt := locate(code);
   try
     if (ctxt = nil) then
-      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri(nil), itInvalid)
+      raise ETerminologyError.create('Unable to find '+code+' in '+systemUri, itInvalid)
     else
       result := Display(ctxt, langList);
   finally
@@ -5431,12 +5433,12 @@ begin
     result := TSnomedExpressionContext.create(code, index)
   else
   begin
-    Message := ''; // 'Unable to find code '+code+' in '+systemUri(nil)+' (version '+version(nil)+')'; it's not useful to say anything more
+    Message := ''; // 'Unable to find code '+code+' in '+systemUri+' (version '+version+')'; it's not useful to say anything more
     result := nil;
   end;
 end;
 
-function TSnomedProvider.systemUri(context : TCodeSystemProviderContext): String;
+function TSnomedProvider.systemUri: String;
 begin
   result := URI_SNOMED;
 end;
@@ -5447,7 +5449,7 @@ begin
   result := FSct.FTotalCount;
 end;
 
-function TSnomedProvider.version(context: TCodeSystemProviderContext): String;
+function TSnomedProvider.version: String;
 begin
   result := FSct.FVersionUri;
 end;
@@ -5501,6 +5503,16 @@ begin
     result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).members)
   else
     result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).descendants);
+end;
+
+function TSnomedProvider.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  if Length(TSnomedFilterContext(ctxt).matches) > 0 then
+    result := Length(TSnomedFilterContext(ctxt).matches)
+  else if Length(TSnomedFilterContext(ctxt).members) > 0 then
+    result := Length(TSnomedFilterContext(ctxt).members)
+  else
+    result := Length(TSnomedFilterContext(ctxt).descendants);
 end;
 
 function TSnomedProvider.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;

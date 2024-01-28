@@ -238,7 +238,7 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -257,6 +257,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -1240,6 +1241,14 @@ begin
   result := context.FConn.FetchNext;
 end;
 
+function TNDCServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  context : TNDCFilterContext;
+begin
+  context := ctxt as TNDCFilterContext;
+  result := context.FConn.RowsAffected; // todo
+end;
+
 procedure TNDCServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.getCDSInfo');
@@ -1387,7 +1396,7 @@ begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.searchFilter');
 end;
 
-function TNDCServices.systemUri(context: TCodeSystemProviderContext): String;
+function TNDCServices.systemUri: String;
 begin
   result := URI_NDC;
 end;

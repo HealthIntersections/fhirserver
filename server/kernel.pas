@@ -616,7 +616,8 @@ var
   cmd : String;
   svc : TFHIRServiceKernel;
   logMsg : String;
-begin
+begin           
+  SetThreadStatus('ExecuteFhirServer');
   // if we're running the test or gui, go do that
   if (params.has('tests') or params.has('-tests')) then
     RunTests(params, ini)
@@ -860,6 +861,8 @@ var
   fn : String;
   zc : String;
 begin
+  SetThreadName('kernel');
+  SetThreadStatus('ExecuteFhirServerInner');
   GStartTime := GetTickCount64;
 
   {$IFDEF WINDOWS}

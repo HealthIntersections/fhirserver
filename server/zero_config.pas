@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  fsl_base, fsl_utilities, fsl_fetcher, fsl_logging, fsl_json,
+  fsl_base, fsl_utilities, fsl_fetcher, fsl_logging, fsl_json, fsl_threads,
   fdb_manager, fdb_sqlite3,
   fhir_objects,
   server_config, database_installer, server_factory, server_constants,
@@ -532,6 +532,7 @@ var
   cb : TConfigurationBuilder;
   dir : String;
 begin
+  SetThreadStatus('loadRemoteConfig');
   dir := local.ReadString('config', 'local', UserFolder);
 
   result := FilePath([dir, 'fhir-server', 'fhir-server-config.cfg']);

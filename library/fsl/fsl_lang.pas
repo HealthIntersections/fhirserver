@@ -187,6 +187,7 @@ https://www.w3.org/International/articles/language-tags/index.en
     FScripts : TFslMap<TIETFLanguageScript>;
     FRegions : TFslMap<TIETFLanguageRegion>;
     FVariants : TFslMap<TIETFLanguageVariant>;
+    FParsed : TFslMap<TIETFLang>;
     function readVars(st : TStringList; i : integer; vars : TFslStringDictionary) :integer;
     function loadLanguage(vars : TFslStringDictionary; i : integer) :integer;
     function loadExtLang(vars : TFslStringDictionary; i : integer) :integer;
@@ -612,11 +613,13 @@ begin
   FScripts := TFslMap<TIETFLanguageScript>.create('tx.lang.scripts');
   FRegions := TFslMap<TIETFLanguageRegion>.create('tx.lang.reg');
   FVariants := TFslMap<TIETFLanguageVariant>.create('tx.lang.var');
+  FParsed := TFslMap<TIETFLang>.create('tx.lang.parsed');
   Load(source);
 end;
 
 destructor TIETFLanguageDefinitions.Destroy;
 begin
+  FParsed.free;
   FVariants.free;
   FScripts.free;
   FExtLanguages.free;
@@ -669,58 +672,66 @@ begin
   if (code = '') then
     exit(nil);
 
-  msg := '';
-  res := TIETFLang.create(code);
-  try
-    if code <> '' then
-    begin
-      parts := code.Split(['-']);
-      c := 0;
-      t := length(parts);
-      if not FLanguages.ContainsKey(parts[c]) and (parts[c] <> '*') then
-        msg := 'Invalid Language code "'+parts[c]+'"'
-      else
+  if (FParsed.TryGetValue(code, result)) then
+    result.link
+  else
+  begin
+    msg := '';
+    res := TIETFLang.create(code);
+    try
+      if code <> '' then
       begin
-        res.FLanguage := parts[c];
-        inc(c);
-        for i := 1 to 3 do
+        parts := code.Split(['-']);
+        c := 0;
+        t := length(parts);
+        if not FLanguages.ContainsKey(parts[c]) and (parts[c] <> '*') then
+          msg := 'Invalid Language code "'+parts[c]+'"'
+        else
         begin
-          if (c < t) and FExtLanguages.ContainsKey(parts[c]) then
+          res.FLanguage := parts[c];
+          inc(c);
+          for i := 1 to 3 do
           begin
-            res.addExtLang(parts[c]);
+            if (c < t) and FExtLanguages.ContainsKey(parts[c]) then
+            begin
+              res.addExtLang(parts[c]);
+              inc(c);
+            end;
+          end;
+          if (c < t) and FScripts.ContainsKey(parts[c]) then
+          begin
+            res.FScript := parts[c];
             inc(c);
           end;
+          if (c < t) and FRegions.ContainsKey(parts[c]) then
+          begin
+            res.FRegion := parts[c];
+            inc(c);
+          end;
+          if (c < t) and FVariants.ContainsKey(parts[c]) then
+          begin
+            res.FVariant := parts[c];
+            inc(c);
+          end;
+          while (c < t) and parts[c].StartsWith('x') do
+          begin
+            res.addPrivateUse(parts[c]);
+            inc(c);
+          end;
+          if (c < t) then
+            msg := 'Unable to recognise part '+inttostr(c+1)+' ("'+parts[c]+'") as a valid language part';
         end;
-        if (c < t) and FScripts.ContainsKey(parts[c]) then
-        begin
-          res.FScript := parts[c];
-          inc(c);
-        end;
-        if (c < t) and FRegions.ContainsKey(parts[c]) then
-        begin
-          res.FRegion := parts[c];
-          inc(c);
-        end;
-        if (c < t) and FVariants.ContainsKey(parts[c]) then
-        begin
-          res.FVariant := parts[c];
-          inc(c);
-        end;
-        while (c < t) and parts[c].StartsWith('x') do
-        begin
-          res.addPrivateUse(parts[c]);
-          inc(c);
-        end;
-        if (c < t) then
-          msg := 'Unable to recognise part '+inttostr(c+1)+' ("'+parts[c]+'") as a valid language part';
       end;
+      if msg = '' then
+      begin
+        result := res.Link;
+        FParsed.AddOrSetValue(code, result.link);
+      end
+      else
+        result := nil;
+    finally
+      res.free;
     end;
-    if msg = '' then
-      result := res.Link
-    else
-      result := nil;
-  finally
-    res.free;
   end;
 end;
 
