@@ -52,7 +52,9 @@ Type
     FSnomed : TSnomedServices;
     Lock : TFslLock;
     FSearchCache : TStringList;
-    FFHIRPath : String;
+    FFHIRPath : String;       
+    FDead : UInt64;
+    procedure deadCheck;
     Function GetPaths(iIndex : Cardinal) : TArrayofIdArray;
     Function ConceptForDesc(iDesc : Cardinal; var iDescs : Cardinal):Cardinal;
     Procedure ConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; show : TConceptDisplayType; rRating : Double);
@@ -72,7 +74,7 @@ Type
     Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
   Public
-    constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
+    constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String; dead : UInt64);
     destructor Destroy; Override;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
@@ -245,6 +247,7 @@ Begin
       End;
       html.EndList;
     End;
+    deadCheck();
 
     html.Line;
     html.StartParagraph;
@@ -696,6 +699,7 @@ Begin
     End;
     html.EndTable;
     html.Line;
+    deadCheck();
 
     iRefSet := FSnomed.GetConceptRefSet(iIndex, true, iName, iMembers, itypes, iFields);
     allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
@@ -777,6 +781,7 @@ Begin
       html.EndTable;
       html.Line;
     End;
+    deadCheck();
 
     if iRefset <> 0 Then
     Begin
@@ -1461,7 +1466,7 @@ begin
 end;
 *)
 
-constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
+constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : String; dead : UInt64);
 begin
   inherited Create;
   Lock := TFslLock.Create('SCT Publisher');
@@ -1469,6 +1474,7 @@ begin
   FSearchCache.Sorted := true;
   FSnomed := oSnomed.Link;
   FFHIRPath := FHIRPathEngine;
+  FDead := dead;
 end;
 
 destructor TSnomedPublisher.Destroy;
@@ -1508,6 +1514,7 @@ begin
   iTotal := FSnomed.Concept.Count;
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
+    deadCheck();
     if not b2 And ((i - iStart) / Min(MAX_ROWS, iTotal) > 0.5) Then
     Begin
       html.EndList;
@@ -1587,6 +1594,7 @@ begin
     html.Heading(1, 'Search for '+sText+' in all of Snomed');
 
   b2 := false;
+  deadCheck();
 
   html.StartTable(false, 'bare');
   html.StartTableRow;
@@ -1803,6 +1811,12 @@ begin
   FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, iDummy, result, iDummy, iDummy, iDummy, iDummy);
 end;
 
+           
+procedure TSnomedPublisher.deadCheck;
+begin
+  if GetTickCount64 > FDead then
+    raise EFSLException.create('Processing SNOMED took too long');
+end;
 
 End.
 

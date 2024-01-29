@@ -199,7 +199,9 @@ var
   ss, t : TSnomedServices;
   pm : THTTPParameters;
   buf : TFslNameBuffer;
+  dead : UInt64;
 begin
+  dead := GetTickCount64 + (30 * 1000);
   if request.Document.StartsWith(PathWithSlash+'tool/') then // FHIR build process support
   begin
     parts := request.Document.Split(['/']);
@@ -216,7 +218,7 @@ begin
     else
     begin
       ss.RecordUse;
-      ss.checkLoaded;
+      ss.checkLoaded(dead);
       result := 'Snomed Tool: '+parts[length(parts)-1];
       response.ContentType := 'text/xml';
       try
@@ -265,7 +267,10 @@ begin
     ss := nil;
     for t in FTx.Snomed do
       if t.EditionId+'-'+t.VersionDate = parts[2] then
+      begin
         ss := t;
+        break;
+      end;
     if ss = nil then
     begin
       returnContent(request, response, request.Document, secure, 'SNOMED CT Browser', 'Document '+request.Document+' not found');
@@ -274,13 +279,13 @@ begin
     else
     begin
       ss.RecordUse;
-      ss.checkLoaded;
+      ss.checkLoaded(dead);
       code := request.UnparsedParams;
       result := 'Snomed Doco ('+ss.EditionName+'): '+code;
 
       try
-        html := THtmlPublisher.Create();
-        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure));
+        html := THtmlPublisher.Create;
+        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure), dead);
         try
           html.Version := SERVER_FULL_VERSION;
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';

@@ -59,7 +59,7 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang, fsl_logging,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_sct_expressions, ftx_service;
@@ -612,7 +612,7 @@ operations
     Procedure Load(Const sFilename : String; immediate : boolean);
     class function checkFile(Const sFilename : String) : String;
     Procedure Save(Const sFilename : String);
-    procedure checkLoaded;
+    procedure checkLoaded(dead : UInt64);
     procedure checkUnloadMe;
     procedure UnloadMe;
     property Building : boolean read FBuilding write FBuilding;
@@ -1568,6 +1568,7 @@ var
     oread.Read(result, 8);
   end;
 begin
+  Logging.log('Start Loading Snomed from '+FSourceFile);
   FLoading := true;
   try
     oFile := TFileStream.Create(FSourceFile, fmOpenread+fmShareDenyWrite);
@@ -1632,6 +1633,7 @@ begin
   finally
     FLoading := false;
   end;
+  Logging.log('Finished Loading Snomed from '+FSourceFile);
 end;
 
 function TSnomedServices.loadLang(iLang: cardinal): TSnomedReferenceSetMemberArray;
@@ -2486,7 +2488,12 @@ end;
 
 procedure TSnomedServices.RecordUse(count: integer);
 begin
-  FUseCount := FUseCount + count;
+  FLock.lock('use');
+  try
+    FUseCount := FUseCount + count;
+  finally
+    FLock.unlock;
+  end;
 end;
 
 function TSnomedServices.buildValueSet(factory : TFHIRFactory; url : String): TFhirValueSetW;
@@ -2510,7 +2517,7 @@ begin
 
   if id = '?fhir_vs=refset' then
   begin
-    checkLoaded;
+    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2543,7 +2550,7 @@ begin
   end
   else if id = '?fhir_vs' then
   begin
-    checkLoaded;
+    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2565,7 +2572,7 @@ begin
   end
   else if id.StartsWith('?fhir_vs=refset/') And ReferenceSetExists(id.Substring(16)) then
   begin
-    checkLoaded;
+    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2595,7 +2602,7 @@ begin
   end
   else if id.StartsWith('?fhir_vs=isa/') And ConceptExists(id.Substring(13)) then
   begin
-    checkLoaded;
+    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -4335,8 +4342,21 @@ begin
     raise ETerminologyError.Create('This version of SNOMED is not loaded', itInvalid);
 end;
 
-procedure TSnomedServices.checkLoaded;
+procedure TSnomedServices.checkLoaded(dead : UInt64);
 begin
+  if (dead = 0) then
+    dead := GetTickCount64 + (30 * 1000);
+
+  if FLoaded = 0 then
+  begin
+    while FLoading do
+    begin
+      if GetTickCount64 > dead then
+        raise ETooCostly.create('Loading SCT cache took too long');
+      sleep(100);
+    end;
+  end;
+
   FLock.Lock;
   try
     if FLoaded = 0 then
@@ -5141,7 +5161,7 @@ end;
 
 procedure TSnomedProvider.checkReady;
 begin
-  FSct.checkLoaded;
+  FSct.checkLoaded(0);
 end;
 
 function TSnomedProvider.Code(context: TCodeSystemProviderContext): string;

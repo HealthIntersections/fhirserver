@@ -2217,13 +2217,13 @@ begin
           end;
         end;
       End;
-    lpckPart:
+    lpckAnswer:
       begin
         AnswerLists.GetEntry(ctxt.index, iCode, iDescription, iAnswers);
         s := Desc.GetEntry(iDescription, ilang);
         list.addDesignation(true, true, FLangs[iLang], s.Trim);
       end;
-    lpckAnswer:
+    lpckPart:
       begin
         FEntries.GetEntry(ctxt.index, iCode, text, parents, children, concepts, descendentConcepts, stems);
         s := Desc.GetEntry(text, ilang).Trim;

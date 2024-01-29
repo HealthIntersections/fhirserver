@@ -3140,6 +3140,7 @@ var
   cnt : TValueSetCounter;
   vstr : TFHIRObject;
 begin
+  result := nil;
   deadCheck('processCode');
   try
     if not passesImports(imports, system, code, 0) then
