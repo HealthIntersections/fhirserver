@@ -1839,15 +1839,14 @@ begin
             message := '';
 
             if (v = bTrue) then
-            begin
+            begin     
               if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
               begin
                 m := 'The system '+c.systemUri+' was found but did not contain enough information to properly validate the code "'+c.code+'" ("'+c.display+'") (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')';
                 msg(m);
                 op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
               end
-              else
-              if (c.display <> '') and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
+              else if (c.display <> '') and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
               begin
                 if (diff = ddNormalised) then
                   baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
@@ -2049,7 +2048,10 @@ begin
 
         if (ok <> bTrue) and (unknownSystems.count > 0) then
           for us in unknownSystems do
-            result.addParamCanonical('x-caused-by-unknown-system', us);
+            if (ok = bFalse) then
+              result.addParamCanonical('x-unknown-system', us)
+            else
+              result.addParamCanonical('x-caused-by-unknown-system', us);
         if (pcode <>'') then
           result.addParamCode('code', pcode)
         else if (tcode <> '') and (mode <> vcmCodeableConcept) then
@@ -2936,12 +2938,11 @@ end;
 procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW);
 var
   cd : TFhirValueSetComposeIncludeConceptDesignationW;
-  list : TFslList<TFHIRExtensionW>;
-  i : integer;
 begin
-  if c.display <> '' then
+  if (c.display <> '') then
   begin
-    displays.Clear;
+    if (FFactory.version in [fhirVersionRelease2, fhirVersionRelease3]) then // this policy changed in R4
+      displays.Clear;
     displays.baseLang := FLanguages.parse(vs.language);
     displays.addDesignation(true, true, '', c.displayElement); {no .link}
   end;
