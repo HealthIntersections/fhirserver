@@ -128,7 +128,7 @@ var
   installer : TFHIRDatabaseInstaller;
 begin
   result := false;
-  sql := TFDBSQLiteManager.Create('cfg', fn, true);
+  sql := TFDBSQLiteManager.Create('cfg', fn, false, true);
   try
     conn := sql.GetConnection('install');
     try
@@ -162,7 +162,7 @@ var
   conn : TFDBConnection;
   installer : TFHIRDatabaseInstaller;
 begin
-  sql := TFDBSQLiteManager.Create('cfg', fn, true);
+  sql := TFDBSQLiteManager.Create('cfg', fn, false, true);
   try
     conn := sql.GetConnection('install');
     try
