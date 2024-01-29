@@ -269,7 +269,7 @@ begin
   else
   begin
     try
-      db := connectToDatabase(item);
+      db := connectToDatabase(item, true);
       try
         conn := db.GetConnection('check');
         try
@@ -695,7 +695,7 @@ begin
     if dlg.execute then
     begin
       Settings.writeString('ndc', 'source', dlg.Filename);
-      db := connectToDatabase(item);
+      db := connectToDatabase(item, false);
       try
         conn := db.GetConnection('check');
         try
@@ -737,7 +737,7 @@ begin
     if dlg.execute then
     begin
       Settings.writeString('rxnorm', 'source', dlg.Filename);
-      db := connectToDatabase(item);
+      db := connectToDatabase(item, false);
       try
         conn := db.GetConnection('check');
         try
