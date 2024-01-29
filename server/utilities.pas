@@ -158,7 +158,7 @@ type
 
 function buildCompartmentsSQL(resconfig : TFslMap<TFHIRResourceConfig>; compartment : TFHIRCompartmentId; sessionCompartments : TFslList<TFHIRCompartmentId>) : String;
 function LoadBinaryResource(factory : TFHIRFactory; langList : THTTPLanguageList; b: TBytes): TFhirResourceV;
-function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
+function connectToDatabase(details : TFHIRServerConfigSection; readOnly : boolean) : TFDBManager;
 function describeDatabase(details : TFHIRServerConfigSection) : String;
 function checkDatabaseInstall(cfg : TFHIRServerConfigSection) : String;
 procedure sendEmail(settings : TFHIRServerSettings; dest, subj, body: String);
@@ -319,7 +319,7 @@ begin
   result := inttostr(FRunNumber)+'-'+inttostr(v);
 end;
 
-function connectToDatabase(details : TFHIRServerConfigSection) : TFDBManager;
+function connectToDatabase(details : TFHIRServerConfigSection; readOnly : boolean) : TFDBManager;
 var
   dbn, ddr : String;
 begin
@@ -340,7 +340,7 @@ begin
   else if sameText(details['db-type'].value, 'SQLite') then
   begin
     Logging.log('Connect to SQLite3 database '+details['db-file'].value);
-    result := TFDBSQLiteManager.Create(details.name, details['db-file'].value, details['db-auto-create'].value = 'true');
+    result := TFDBSQLiteManager.Create(details.name, details['db-file'].value, readOnly, details['db-auto-create'].value = 'true');
   end
   else
     raise ELibraryException.Create('Unknown database type '+details['db-type'].value);
@@ -366,7 +366,7 @@ var
   t, m, s : String;
 begin
   try
-    db := connectToDatabase(cfg);
+    db := connectToDatabase(cfg, true);
     try
       conn := db.GetConnection('check');
       try

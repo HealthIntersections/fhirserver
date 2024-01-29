@@ -538,7 +538,7 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FI18n.link)
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FI18n.link)
   else if config['type'].value = 'tx-registry' then
     result := TTxRegistryServerEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'folder' then
@@ -550,14 +550,14 @@ begin
   else if config['type'].value = 'snomed' then
     result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'xig' then
-    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
   begin
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link);
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link);
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else

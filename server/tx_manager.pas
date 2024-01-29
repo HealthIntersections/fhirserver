@@ -1861,37 +1861,37 @@ begin
       else if tx['type'].value = 'rxnorm' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        RxNorm := TRxNormServices.Create(FLanguages.link, connectToDatabase(tx))
+        RxNorm := TRxNormServices.Create(FLanguages.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'ndc' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDC := TNDCServices.Create(FLanguages.link, connectToDatabase(tx), tx['version'].value)
+        NDC := TNDCServices.Create(FLanguages.link, connectToDatabase(tx, true), tx['version'].value)
       end
       else if tx['type'].value = 'ndfrt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDFRT := TNDFRTServices.Create(FLanguages.link, connectToDatabase(tx))
+        NDFRT := TNDFRTServices.Create(FLanguages.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'unii' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        Unii := TUniiServices.Create(FLanguages.link, connectToDatabase(tx))
+        Unii := TUniiServices.Create(FLanguages.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'cpt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        CPT := TCPTServices.Create(FLanguages.link, connectToDatabase(tx))
+        CPT := TCPTServices.Create(FLanguages.link, connectToDatabase(tx, true))
       end    
       else if tx['type'].value = 'omop' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        OMOP := TOMOPServices.Create(FLanguages.link, connectToDatabase(tx))
+        OMOP := TOMOPServices.Create(FLanguages.link, connectToDatabase(tx, true))
       end           
       else if tx['type'].value = 'xig' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        XIG := TXIGProvider.Create(FLanguages.link, connectToDatabase(tx))
+        XIG := TXIGProvider.Create(FLanguages.link, connectToDatabase(tx, true))
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);

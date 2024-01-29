@@ -486,7 +486,7 @@ begin
   //end
   //else
   //  Logging.log('SQLite DB @ '+fn);
-  db := TFDBSQLiteManager.Create('test', fn, true, 4);
+  db := TFDBSQLiteManager.Create('test', fn, false, true, 4);
   try
     assertTrue(db.CurrConnCount = 0);
     conn1 := db.GetConnection('test1');
@@ -691,7 +691,7 @@ begin
   //end
   //else
   //  Logging.log('SQLite DB @ '+fn);
-  db := TFDBSQLiteManager.Create('test', fn, true, 4);
+  db := TFDBSQLiteManager.Create('test', fn, false, true, 4);
   try
     test(db);
   finally
