@@ -301,7 +301,7 @@ End;
 
 Procedure TCDAWriter.WriteANYAttributes(Const sPath: string; oXml : TXmlBuilder; oDT : Tv3ANY);
 Begin
-  Attribute(sPath, oXml, 'nullFLavor', writeNullFlavor(sPath, oDt.NullFlavor), true);
+  Attribute(sPath, oXml, 'nullFlavor', writeNullFlavor(sPath, oDt.NullFlavor), true);
   // ignore updateMode and flavorId for now
 End;
 
