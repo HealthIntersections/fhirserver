@@ -257,16 +257,12 @@ begin
 end;
 
 procedure TSQLite3Database.Open(const FileName: WideString; Flags: Integer);
-var
-  start : UInt64;
 begin
   Close;
-  start := GetTickCount64;
   if Flags = 0 then
     Check(sqlite3_open(PAnsiChar(StrToUTF8(FileName)), FHandle))
   else
     Check(sqlite3_open_v2(PAnsiChar(StrToUTF8(FileName)), FHandle, Flags, nil));
-  Logging.log('sqlite3_open_v2: '+inttostr(GetTickCount64-start)+'ms');
   sqlite3_busy_handler(FHandle, whenBusy, self);
 end;
 

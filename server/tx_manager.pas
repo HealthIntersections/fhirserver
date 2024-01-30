@@ -144,8 +144,6 @@ Type
     procedure add(p : TCodeSystemProviderFactory; defVer : boolean); overload;
     Property ProviderClasses : TFslMap<TCodeSystemProviderFactory> read FProviderClasses;
     property Settings : TFHIRServerSettings read FSettings;
-    procedure sweepSnomed(callback : TFhirServerMaintenanceThreadTaskCallBack);
-    procedure clearSnomed;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual;
     procedure getCacheInfo(ci: TCacheInformation); virtual;
 
@@ -1134,7 +1132,6 @@ end;
 
 procedure TTerminologyServerStore.clearCache;
 begin
-  FCommonTerminologies.clearSnomed;
 end;
 
 function TTerminologyServerStore.defToLatestForSystem(system : String) : boolean;
@@ -1598,15 +1595,6 @@ begin
     FProviderClasses.Add(p.systemUri, p.link);
 end;
 
-procedure TCommonTerminologies.clearSnomed;
-var
-  ss : TSnomedServices;
-begin
-  for ss in FSnomed do
-    if ss <> FDefSnomed then
-      ss.unloadMe;
-end;
-
 constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
 begin
   inherited Create;
@@ -1692,8 +1680,7 @@ var
   ss : TSnomedServices;
 begin
   for ss in FSnomed do
-    if (ss.Loaded) then
-      rec.SnomedsLoaded := rec.SnomedsLoaded + 1;
+    rec.SnomedsLoaded := rec.SnomedsLoaded + 1;
 end;
 
 procedure TCommonTerminologies.getSummary(b: TStringBuilder);
@@ -1825,7 +1812,7 @@ begin
         Logging.log('load '+s+' from '+tx['source'].value);
         sn := TSnomedServices.Create(FLanguages.link);
         try
-          sn.Load(fixFile('sct', tx['source'].value), tx['default'].value = 'true');
+          sn.Load(fixFile('sct', tx['source'].value));
           sp := TSnomedProviderFactory.Create(sn.link);
           try
             add(sp, tx['default'].readAsBool);
@@ -2005,16 +1992,6 @@ begin
     FProviderClasses.add(FUnii.systemUri, TCodeSystemProviderGeneralFactory.Create(FUnii.Link));
     FProviderClasses.add(FUnii.systemUri+URI_VERSION_BREAK+FUnii.version, TCodeSystemProviderGeneralFactory.Create(FUnii.Link));
   end;
-end;
-
-procedure TCommonTerminologies.sweepSnomed(callback: TFhirServerMaintenanceThreadTaskCallBack);
-var
-  ss : TSnomedServices;
-begin
-  callback(self, 'Sweeping Snomed', -1);
-  for ss in FSnomed do
-    if ss <> FDefSnomed then
-      ss.checkUnloadMe;
 end;
 
 procedure TCommonTerminologies.SetACIR(const Value: TACIRServices);

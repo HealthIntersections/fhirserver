@@ -70,7 +70,6 @@ Const
   IS_A_MAGIC : UInt64 = 116680003;
   ALL_DISPLAY_NAMES = $FF;
   ASSUME_CLASSIFIED = true;
-  LOAD_PERIOD = 0; // never unload for now... DATETIME_MINUTE_ONE * 30;
 
 var
   SNOMED_DATE_FORMAT : TFormatSettings;
@@ -512,11 +511,9 @@ operations
   Private
     FLock : TFslLock;
     FLanguages : TIETFLanguageDefinitions;
-    FLoaded : TDateTime;
     FLastUse : TDateTime;
     FSourceFile : String;
     FBuilding : boolean;
-    FLoading : boolean;
     FUseCount : integer;
 
     FEdition : String;
@@ -585,7 +582,6 @@ operations
     function GetEditionId: String;
 
     function loadLang(iLang : cardinal) : TSnomedReferenceSetMemberArray;
-    procedure checkIsLoaded;
     function GetConcept: TSnomedConceptList;
     function GetDesc: TSnomedDescriptions;
     function GetDescRef: TSnomedDescriptionIndex;
@@ -596,9 +592,7 @@ operations
     function GetStems: TSnomedStems;
     function GetStrings: TSnomedStrings;
     function GetWords: TSnomedWords;
-    function GetLoaded: Boolean;
     procedure LoadFromSource;
-    procedure InitialLoad;
     function GetActiveRoots: UInt64Array;
     function GetDefaultLanguage: Cardinal;
     function GetInActiveRoots: UInt64Array;
@@ -609,12 +603,9 @@ operations
     constructor Create(languages : TIETFLanguageDefinitions);
     destructor Destroy; Override;
     Function Link : TSnomedServices; Overload;
-    Procedure Load(Const sFilename : String; immediate : boolean);
+    Procedure Load(Const sFilename : String);
     class function checkFile(Const sFilename : String) : String;
     Procedure Save(Const sFilename : String);
-    procedure checkLoaded(dead : UInt64);
-    procedure checkUnloadMe;
-    procedure UnloadMe;
     property Building : boolean read FBuilding write FBuilding;
 
     // helper functions
@@ -678,14 +669,12 @@ operations
     function systemUri : String;
 
     // status stuff
-    Property Loaded : Boolean read GetLoaded;
     Property VersionUri : String read FVersionUri write SetVersionUri;
     Property EditionUri : String read FEditionUri;
     Property VersionDate : String read FVersionDate write FVersionDate;
     Property EditionName : String read GetEditionName;
     Property EditionId : String read GetEditionId;
     Property TotalCount : integer read FTotalCount;
-    function LoadStatus : String;
     function LastUseStatus : String;
     property UseCount : integer read FUseCount;
     procedure RecordUse(count : integer = 1);
@@ -768,7 +757,6 @@ operations
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
     property Services : TSnomedServices read FSct;
-    procedure checkReady; override;
   end;
 
 
@@ -1425,7 +1413,6 @@ end;
 
 function TSnomedServices.DebugDesc(index: cardinal): String;
 begin
-  checkIsLoaded;
   result := GetConceptId(index)+'|'+GetDisplayName(index, FDefaultLanguage)+'|';
 end;
 
@@ -1458,17 +1445,13 @@ begin
   inherited;
 end;
 
-procedure TSnomedServices.Load(const sFilename: String; immediate : boolean);
+procedure TSnomedServices.Load(const sFilename: String);
 begin
-  FLoaded := 0;
   FSourceFile := sFilename;
   if not FileExists(FSourceFile) then
     raise ETerminologySetup.create('The SNOMED CT Source File '+sFilename+' does not exist');
 
-  if immediate or (LOAD_PERIOD = 0) then
-    LoadFromSource
-  else
-    InitialLoad;
+  LoadFromSource;
 end;
 
 class function TSnomedServices.checkFile(const sFilename: String): String;
@@ -1505,52 +1488,6 @@ begin
   end;
 end;
 
-procedure TSnomedServices.InitialLoad;
-var
-  oFile : Tfilestream;
-  oread : TReader;
-  s : TArray<String>;
-  v : String;
-  function readBytes : TBytes;
-  var
-    i : integer;
-  begin
-    i := oRead.ReadInteger;
-    SetLength(result, i);
-    oread.Read(result[0], length(result));
-  end;
-begin
-  oFile := TFileStream.Create(FSourceFile, fmOpenread+fmShareDenyWrite);
-  try
-    oread := TReader.Create(oFile, 8192);
-    try
-      v := oRead.ReadString;
-      if (v <> SNOMED_CACHE_VERSION_CURRENT) and (v <> SNOMED_CACHE_VERSION_UTF16) then
-        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities', itException);
-      VersionUri := oread.ReadString;
-      VersionDate := oread.ReadString;
-      s := VersionUri.split(['/']);
-      FEdition := s[4];
-      FVersion := s[6];
-      FLock.Name := 'SCT '+FVersion;
-      ReadBytes;
-      ReadBytes;
-      ReadBytes;
-      ReadBytes;
-      ReadBytes;
-      FConcept.FMaster := ReadBytes;
-      FConcept.FLength := Length(FConcept.FMaster);
-      FTotalCount := FConcept.Count;
-      FConcept.Clear;
-    Finally
-      oread.free;
-    End;
-  Finally
-    oFile.free;
-  End;
-  FLoaded := 0;
-end;
-
 procedure TSnomedServices.LoadFromSource;
 var
   oFile : Tfilestream;
@@ -1568,72 +1505,64 @@ var
     oread.Read(result, 8);
   end;
 begin
-  Logging.log('Start Loading Snomed from '+FSourceFile);
-  FLoading := true;
+  oFile := TFileStream.Create(FSourceFile, fmOpenread+fmShareDenyWrite);
   try
-    oFile := TFileStream.Create(FSourceFile, fmOpenread+fmShareDenyWrite);
+    oread := TReader.Create(oFile, 8192);
     try
-      oread := TReader.Create(oFile, 8192);
-      try
-        v := oRead.ReadString;
-        if v = SNOMED_CACHE_VERSION_CURRENT Then
-          FStrings.IsUTF16 := false
-        else if v = SNOMED_CACHE_VERSION_UTF16 Then
-          FStrings.IsUTF16 := true
-        else
-          raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities', itException);
-        VersionUri := oread.ReadString;
-        VersionDate := oread.ReadString;
-        s := VersionUri.split(['/']);
-        FEdition := s[4];
-        FVersion := s[6];
-        FLock.Name := 'SCT '+FVersion;
+      v := oRead.ReadString;
+      if v = SNOMED_CACHE_VERSION_CURRENT Then
+        FStrings.IsUTF16 := false
+      else if v = SNOMED_CACHE_VERSION_UTF16 Then
+        FStrings.IsUTF16 := true
+      else
+        raise ETerminologyError.create('The Snomed cache "'+FSourceFile+'" must be rebuilt using the server utilities', itException);
+      VersionUri := oread.ReadString;
+      VersionDate := oread.ReadString;
+      s := VersionUri.split(['/']);
+      FEdition := s[4];
+      FVersion := s[6];
+      FLock.Name := 'SCT '+FVersion;
 
-        FStrings.FMaster := ReadBytes;
-        FStrings.FLength := Length(FStrings.FMaster);
-        FRefs.FMaster := ReadBytes;
-        FRefs.FLength := Length(FRefs.FMaster);
-        FDesc.FMaster := ReadBytes;
-        FDesc.FLength := Length(FDesc.FMaster);
-        FWords.FMaster := ReadBytes;
-        FWords.FLength := Length(FWords.FMaster);
-        FStems.FMaster := ReadBytes;
-        FStems.FLength := Length(FStems.FMaster);
-        FConcept.FMaster := ReadBytes;
-        FConcept.FLength := Length(FConcept.FMaster);
-        FTotalCount := FConcept.Count;
-        FRel.FMaster := ReadBytes;
-        FRel.FLength := Length(FRel.FMaster);
-        FRefSetIndex.FMaster := ReadBytes;
-        FRefSetIndex.FLength := Length(FRefSetIndex.FMaster);
-        FRefSetMembers.FMaster := ReadBytes;
-        FRefSetMembers.FLength := Length(FRefSetMembers.FMaster);
-        FDescRef.FMaster := ReadBytes;
-        FDescRef.FLength := Length(FDescRef.FMaster);
-        FIs_a_Index := oread.ReadInteger;
-        SetLength(FInactiveRoots, oRead.ReadInteger);
-        for i := 0 to Length(FInactiveRoots) - 1 Do
-          FInactiveRoots[i] := ReadUInt64;
-        SetLength(FActiveRoots, oRead.ReadInteger);
-        for i := 0 to Length(FActiveRoots) - 1 Do
-          FActiveRoots[i] := ReadUInt64;
-        FDefaultLanguage := oread.ReadInteger;
-      Finally
-        oread.free;
-      End;
+      FStrings.FMaster := ReadBytes;
+      FStrings.FLength := Length(FStrings.FMaster);
+      FRefs.FMaster := ReadBytes;
+      FRefs.FLength := Length(FRefs.FMaster);
+      FDesc.FMaster := ReadBytes;
+      FDesc.FLength := Length(FDesc.FMaster);
+      FWords.FMaster := ReadBytes;
+      FWords.FLength := Length(FWords.FMaster);
+      FStems.FMaster := ReadBytes;
+      FStems.FLength := Length(FStems.FMaster);
+      FConcept.FMaster := ReadBytes;
+      FConcept.FLength := Length(FConcept.FMaster);
+      FTotalCount := FConcept.Count;
+      FRel.FMaster := ReadBytes;
+      FRel.FLength := Length(FRel.FMaster);
+      FRefSetIndex.FMaster := ReadBytes;
+      FRefSetIndex.FLength := Length(FRefSetIndex.FMaster);
+      FRefSetMembers.FMaster := ReadBytes;
+      FRefSetMembers.FLength := Length(FRefSetMembers.FMaster);
+      FDescRef.FMaster := ReadBytes;
+      FDescRef.FLength := Length(FDescRef.FMaster);
+      FIs_a_Index := oread.ReadInteger;
+      SetLength(FInactiveRoots, oRead.ReadInteger);
+      for i := 0 to Length(FInactiveRoots) - 1 Do
+        FInactiveRoots[i] := ReadUInt64;
+      SetLength(FActiveRoots, oRead.ReadInteger);
+      for i := 0 to Length(FActiveRoots) - 1 Do
+        FActiveRoots[i] := ReadUInt64;
+      FDefaultLanguage := oread.ReadInteger;
     Finally
-      oFile.free;
+      oread.free;
     End;
-    if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
-      FPreferredTerm := 0;
-    if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
-      FFSN := 0;
-    FDefLangSet := FRefSetMembers.GetMembers(FDefaultLanguage);
-    FLoaded := now;
-  finally
-    FLoading := false;
-  end;
-  Logging.log('Finished Loading Snomed from '+FSourceFile);
+  Finally
+    oFile.free;
+  End;
+  if not Concept.FindConcept(RF2_MAGIC_PREFERRED, FPreferredTerm) then
+    FPreferredTerm := 0;
+  if not Concept.FindConcept(RF2_MAGIC_FSN, FFSN) then
+    FFSN := 0;
+  FDefLangSet := FRefSetMembers.GetMembers(FDefaultLanguage);
 end;
 
 function TSnomedServices.loadLang(iLang: cardinal): TSnomedReferenceSetMemberArray;
@@ -1644,21 +1573,10 @@ begin
     result := FRefSetMembers.GetMembers(iLang);
 end;
 
-function TSnomedServices.LoadStatus: String;
-begin
-  if FLoading then
-    result := 'Loading Now'
-  else if FLoaded <> 0 then
-    result := 'Loaded for '+DescribePeriod(now - FLoaded)
-  else
-    result := 'Not Loaded';
-end;
-
 function TSnomedServices.ReferenceSetExists(sid: String): Boolean;
 var
   iName, index, members, types, iFieldNames : Cardinal;
 begin
-  checkIsLoaded;
   result := FConcept.FindConcept(StringToId(sid), index);
   if result then
     result := GetConceptRefSet(index, true, iName, members, types, iFieldNames) > 0;
@@ -1766,7 +1684,6 @@ var
   iAllDesc : TCardinalArray;
   iIndex : integer;
 Begin
-  checkIsLoaded;
   if iParent = iChild then
     result := true
   else
@@ -1965,7 +1882,6 @@ var
   s : String;
   s1 : String;
 begin
-  checkIsLoaded;
   SetLength(words, 0);
   SetLength(aMembers, 0);
   SetLength(aLangMembers, 0);
@@ -2031,7 +1947,6 @@ var
   iParent : Cardinal;
   iChild : Cardinal;
 begin
-  checkIsLoaded;
   if not StringIsInteger64(sParent) or not StringIsInteger64(sChild) then
     exit(false);
 
@@ -2109,7 +2024,6 @@ var
   active : boolean;
   dlist : Array of TDescInfo;
 begin
-  checkIsLoaded;
   SetLength(aMembers, 0);
   result := '';
   if iLang <> 0 then
@@ -2162,7 +2076,6 @@ function TSnomedServices.GetDisplayName(const sTerm, sLangSet: String): String;
 var
   iTerm, iLang : Cardinal;
 begin
-  checkIsLoaded;
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
     raise ETerminologyError.Create('Concept '+sTerm+' not found', itInvalid);
@@ -2222,7 +2135,6 @@ var
   date : TSnomedDate;
   lang : byte;
 begin
-  checkIsLoaded;
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
@@ -2235,19 +2147,12 @@ End;
 
 function TSnomedServices.GetInActiveRoots: UInt64Array;
 begin
-  checkIsLoaded;
   Result := FInActiveRoots;
 end;
 
 function TSnomedServices.GetIs_a_Index: Cardinal;
 begin
-  checkIsLoaded;
   Result := FIs_a_Index;
-end;
-
-function TSnomedServices.GetLoaded: Boolean;
-begin
-  result := FLoaded <> 0;
 end;
 
 procedure TSnomedServices.ListDisplayNames(list: TConceptDesignations; const iConcept, iLang: Cardinal; FlagMask: Byte);
@@ -2263,7 +2168,6 @@ var
   iInt : Integer;
   date : TSnomedDate;
 begin
-  checkIsLoaded;
   if iLang <> 0 then
     aMembers := loadLang(iLang);
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
@@ -2280,7 +2184,6 @@ procedure TSnomedServices.ListDisplayNames(list: TConceptDesignations; const sTe
 var
   iTerm, iLang : Cardinal;
 begin
-  checkIsLoaded;
   iLang := CheckLangSet(sLangSet);
   if not Concept.FindConcept(StringToId(sTerm), iTerm) Then
     raise ETerminologyError.Create('Concept '+sTerm+' not found', itInvalid);
@@ -2301,7 +2204,6 @@ var
   date : TSnomedDate;
   active : boolean;
 begin
-  checkIsLoaded;
   sTerm := '';
   sFSN := '';
   sPreferred := '';
@@ -2330,7 +2232,6 @@ var
   fsn, v, d : String;
   active : boolean;
 begin
-  checkIsLoaded;
   result := '';
   For iLoop := Low(iDescriptions) To High(iDescriptions) Do
   Begin
@@ -2407,7 +2308,6 @@ function TSnomedServices.ConceptExists(conceptId: String): Boolean;
 var
   i : cardinal;
 begin
-  checkIsLoaded;
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), i);
 end;
 
@@ -2417,7 +2317,6 @@ var
   ref : TSnomedRefinement;
   grp : TSnomedRefinementGroup;
 begin
-  checkIsLoaded;
   grps := TFslList<TSnomedRefinementGroup>.Create;
   try
     grps.AddAll(exp.refinementGroups);
@@ -2474,7 +2373,6 @@ end;
 
 function TSnomedServices.GetActiveRoots: UInt64Array;
 begin
-  checkIsLoaded;
   Result := FActiveRoots;
 end;
 
@@ -2491,6 +2389,7 @@ begin
   FLock.lock('use');
   try
     FUseCount := FUseCount + count;
+    FLastUse := now;
   finally
     FLock.unlock;
   end;
@@ -2517,7 +2416,6 @@ begin
 
   if id = '?fhir_vs=refset' then
   begin
-    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2550,7 +2448,6 @@ begin
   end
   else if id = '?fhir_vs' then
   begin
-    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2572,7 +2469,6 @@ begin
   end
   else if id.StartsWith('?fhir_vs=refset/') And ReferenceSetExists(id.Substring(16)) then
   begin
-    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2602,7 +2498,6 @@ begin
   end
   else if id.StartsWith('?fhir_vs=isa/') And ConceptExists(id.Substring(13)) then
   begin
-    checkLoaded(0);
     result := factory.wrapValueSet(factory.makeByName('ValueSet') as TFHIRResourceV);
     try
       result.url := url;
@@ -2638,7 +2533,6 @@ var
   c : Cardinal;
   iFilename, iDummy : cardinal;
 begin
-  checkIsLoaded;
   result := 0;
   For i := 0 to FRefSetIndex.Count - 1 do
   Begin
@@ -2656,13 +2550,11 @@ end;
 
 function TSnomedServices.GetDesc: TSnomedDescriptions;
 begin
-  checkIsLoaded;
   result := FDesc;
 end;
 
 function TSnomedServices.GetDescRef: TSnomedDescriptionIndex;
 begin
-  checkIsLoaded;
   result := FDescRef;
 end;
 
@@ -2674,7 +2566,6 @@ var
   iIndex : Integer;
   iName, iTypes, iFieldNames : Cardinal;
 begin
-  checkIsLoaded;
   SetLength(result, 0);
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
@@ -2700,7 +2591,6 @@ var
   active : Boolean;
   lang : byte;
 begin
-  checkIsLoaded;
   Desc.GetDescription(iDesc, descNdx, id, date, concept, module, kind, caps, refsets, valueses, active, lang);
   result := inttostr(id);
 end;
@@ -2713,7 +2603,6 @@ var
   iIndex : Integer;
   iName, iTypes, iFieldNames : Cardinal;
 begin
-  checkIsLoaded;
   SetLength(result, 0);
   SetLength(aMembers, 0);
   for i := 0 to FRefSetIndex.Count - 1 Do
@@ -2750,7 +2639,6 @@ function TSnomedServices.CheckLangSet(sTerm: String): Cardinal;
 var
   iId  : UInt64;
 begin
-  checkIsLoaded;
   result := 0;
   if sTerm <> '' Then
   Begin
@@ -2789,7 +2677,6 @@ end;
 
 function TSnomedServices.GetConceptDescendants(index: Cardinal): TCardinalArray;
 begin
-  checkIsLoaded;
   result := FRefs.GetReferences(FConcept.GetAllDesc(index));
 end;
 
@@ -2800,7 +2687,6 @@ var
   Parents, Inbounds, outbounds, descriptions, refsets : Cardinal;
   date : TSnomedDate;
 begin
-  checkIsLoaded;
   Concept.GetConcept(iConcept, Identity, Flags, date, Parents, Descriptions, Inbounds, outbounds, refsets);
   result := inttostr(Identity);
 end;
@@ -2816,7 +2702,6 @@ var
   refsets : Cardinal;
   date : word;
 begin
-  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   if ParentIndex = 0 Then
     SetLength(result, 0)
@@ -2826,7 +2711,6 @@ end;
 
 function TSnomedServices.GetConcept: TSnomedConceptList;
 begin
-  checkIsLoaded;
   result := FConcept;
 end;
 
@@ -2845,7 +2729,6 @@ var
   Active, Defining : Boolean;
   Group : Integer;
 begin
-  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   SetLength(result, 0);
   if InboundIndex > 0 then
@@ -2875,7 +2758,6 @@ function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
 var
   iTerm : Cardinal;
 begin
-  checkIsLoaded;
   if not StringIsInteger64(sTerm) then
     result := false
   else
@@ -2890,7 +2772,6 @@ var
   active : boolean;
   lang : byte;
 begin
-  checkIsLoaded;
   result := DescRef.FindDescription(StringToId(sTerm), iTerm);
   if result then
   begin
@@ -3411,14 +3292,12 @@ end;
 
 function TSnomedServices.ConceptExists(conceptId: String; var index: cardinal): Boolean;
 begin
-  checkIsLoaded;
   result := FConcept.FindConcept(StringToIdOrZero(conceptId), index);
 end;
 
 
 function TSnomedServices.GetDefaultLanguage: Cardinal;
 begin
-  checkIsLoaded;
   Result := FDefaultLanguage;
 end;
 
@@ -3439,7 +3318,6 @@ var
   did : UInt64;
   Active, Defining : boolean;
 begin
-  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   if InboundIndex = 0 Then
     SetLength(result, 0)
@@ -3514,7 +3392,6 @@ var
   refsets : Cardinal;
   date : word;
 begin
-  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   result := (flags and MASK_CONCEPT_STATUS in [FLAG_Active, FLAG_PendingMove]);
 end;
@@ -3530,33 +3407,8 @@ var
   refsets : Cardinal;
   date : word;
 begin
-  checkIsLoaded;
   Concept.GetConcept(index, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   result := (flags and MASK_CONCEPT_PRIMITIVE > 0);
-end;
-
-procedure TSnomedServices.UnloadMe;
-begin
-  FLock.Lock;
-  try
-    FStrings.clear;
-    FRefs.clear;
-    FDesc.clear;
-    FWords.clear;
-    FStems.clear;
-    FConcept.clear;
-    FRel.clear;
-    FRefSetIndex.clear;
-    FRefSetMembers.clear;
-    FDescRef.clear;
-    SetLength(FInactiveRoots, 0);
-    SetLength(FActiveRoots, 0);
-    FDefaultLanguage := 0;
-    FLoaded := 0;
-    FDefLangSet := nil;
-  finally
-    FLock.unlock;
-  end;
 end;
 
 function TSnomedServices.filterEquals(id : UInt64): TCodeSystemProviderFilterContext;
@@ -3625,7 +3477,6 @@ var
   Descriptions : TCardinalArray;
   date : TSnomedDate;
 Begin
-  checkIsLoaded;
   Concept.GetConcept(iIndex, Identity, Flags, date, ParentIndex, DescriptionIndex, InboundIndex, outboundIndex, refsets);
   Descriptions := Refs.GetReferences(DescriptionIndex);
   result := GetPN(Descriptions);
@@ -3633,7 +3484,6 @@ End;
 
 function TSnomedServices.GetRefs: TSnomedReferences;
 begin
-  checkIsLoaded;
   result := FRefs;
 end;
 
@@ -3641,7 +3491,6 @@ function TSnomedServices.getRefSet(id: int64): TSnomedReferenceSetMemberArray;
 var
   name, index, members, types, iFieldNames : cardinal;
 begin
-  checkIsLoaded;
   if not Concept.FindConcept(id, index) then
     raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
   if GetConceptRefSet(index, false, name, members, types, iFieldNames) = 0 then
@@ -3656,19 +3505,16 @@ end;
 
 function TSnomedServices.GetRefsetIndex: TSnomedReferenceSetIndex;
 begin
-  checkIsLoaded;
   result := FRefSetIndex;
 end;
 
 function TSnomedServices.GetRefsetMembers: TSnomedReferenceSetMembers;
 begin
-  checkIsLoaded;
   result := FRefSetMembers;
 end;
 
 function TSnomedServices.GetRel: TSnomedRelationshipList;
 begin
-  checkIsLoaded;
   result := FRel;
 end;
 
@@ -3680,7 +3526,6 @@ var
   Active, Defining : Boolean;
   Group : integer;
 begin
-  checkIsLoaded;
   Rel.GetRelationship(iRel, identity, Source, Target, RelType, module, kind, modifier, date, Active, Defining, Group);
   result := inttostr(identity);
 end;
@@ -3693,7 +3538,6 @@ var
   member : TSnomedReferenceSetMember;
   tl, vl : TCardinalArray;
 begin
-  checkIsLoaded;
   result := '';
   for i := 0 to FRefSetIndex.Count - 1 do
   begin
@@ -3722,19 +3566,16 @@ end;
 
 function TSnomedServices.GetStems: TSnomedStems;
 begin
-  checkIsLoaded;
   result := FStems;
 end;
 
 function TSnomedServices.GetStrings: TSnomedStrings;
 begin
-  checkIsLoaded;
   result := FStrings;
 end;
 
 function TSnomedServices.GetWords: TSnomedWords;
 begin
-  checkIsLoaded;
   result := FWords;
 end;
 
@@ -3871,7 +3712,6 @@ begin
   end
   else
   begin
-    checkIsLoaded;
     c := Concept.GetNormalForm(reference);
     parser := TSnomedExpressionParser.Create;
     try
@@ -4113,7 +3953,6 @@ var
   refSrc, refDst : TSnomedRefinement;
   grpSrc, grpDst : TSnomedRefinementGroup;
 begin
-  checkIsLoaded;
   work := TSnomedExpression.Create;
   try
     for concept in exp.concepts do
@@ -4195,7 +4034,6 @@ var
   r, rt : TSnomedRefinementGroup;
   ok : boolean;
 begin
-  checkIsLoaded;
   // subsumes is true if all of the things you can say about a are also things you can say about b
   // b is allowed to say additional things; it's a separate issue as to whether those are coherent
   // (that may be handled elsewhere)
@@ -4331,50 +4169,6 @@ begin
     end
     else if subsumesGroup(grp, g) then
       exit(gmsSubsumed);
-  end;
-end;
-
-procedure TSnomedServices.checkIsLoaded;
-begin
-  if FBuilding or FLoading then
-    exit;
-  if FLoaded = 0 then
-    raise ETerminologyError.Create('This version of SNOMED is not loaded', itInvalid);
-end;
-
-procedure TSnomedServices.checkLoaded(dead : UInt64);
-begin
-  if (dead = 0) then
-    dead := GetTickCount64 + (30 * 1000);
-
-  if FLoaded = 0 then
-  begin
-    while FLoading do
-    begin
-      if GetTickCount64 > dead then
-        raise ETooCostly.create('Loading SCT cache took too long');
-      sleep(100);
-    end;
-  end;
-
-  FLock.Lock;
-  try
-    if FLoaded = 0 then
-      LoadFromSource;
-    FLastUse := now;
-  finally
-    FLock.Unlock;
-  end;
-end;
-
-procedure TSnomedServices.checkUnloadMe;
-begin
-  FLock.Lock;
-  try
-    if (FLoaded > 0) and (LOAD_PERIOD > 0) and (FLastUse < now - LOAD_PERIOD) then
-      UnloadMe;
-  finally
-    FLock.Unlock;
   end;
 end;
 
@@ -4949,13 +4743,11 @@ end;
 
 function TSnomedProvider.Definition(context: TCodeSystemProviderContext): string;
 begin
-  FSct.checkIsLoaded;
   result := '';
 end;
 
 function TSnomedProvider.getDefinition(code: String): String;
 begin
-  FSct.checkIsLoaded;
   result := '';
 end;
 
@@ -4977,7 +4769,6 @@ function TSnomedProvider.searchFilter(filter: TSearchFilterText; prep: TCodeSyst
 var
   res : TSnomedFilterContext;
 begin
-  FSct.checkIsLoaded;
   res := TSnomedFilterContext.Create;
   try
     res.matches := FSct.Search(0, filter.filter, FSct.FDefaultLanguage, false, true);
@@ -5007,7 +4798,6 @@ var
   first : boolean;
   did : UInt64;
 begin
-  FSct.checkIsLoaded;
   b := TStringBuilder.Create;
   try
     SetLength(inbounds, 0);
@@ -5084,7 +4874,6 @@ var
   exprA, exprB : TSnomedExpression;
   b1, b2 : boolean;
 begin
-  FSct.checkIsLoaded;
   exprA := FSct.parseExpression(codeA);
   try
     exprB := FSct.parseExpression(codeB);
@@ -5138,7 +4927,6 @@ var
   Active, Defining : boolean;
   ndx : integer;
 begin
-  FSct.checkIsLoaded;
   SetLength(inbounds, 0);
   if (context = nil) then // root
     ndx := length(FSct.FActiveRoots)
@@ -5159,11 +4947,6 @@ begin
   result := TCodeSystemIteratorContext.Create(context.Link, ndx);
 end;
 
-procedure TSnomedProvider.checkReady;
-begin
-  FSct.checkLoaded(0);
-end;
-
 function TSnomedProvider.Code(context: TCodeSystemProviderContext): string;
 var
   Identity : UInt64;
@@ -5175,7 +4958,6 @@ var
   Inbounds : TCardinalArray;
   date : TSnomedDate;
 begin
-  FSct.checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := FSct.renderExpression(TSnomedExpressionContext(context).Expression, sroMinimal)
   else
@@ -5203,7 +4985,6 @@ var
   Active, Defining : boolean;
   ndx : integer;
 begin
-  FSct.checkIsLoaded;
   result := nil;
   ndx := context.current;
   context.next;
@@ -5243,7 +5024,6 @@ var
   outboundIndex, refsets : Cardinal;
   date : TSnomedDate;
 begin
-  FSct.checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := FSct.displayExpression(TSnomedExpressionContext(context).Expression)
   else
@@ -5261,7 +5041,6 @@ procedure TSnomedProvider.Designations(context: TCodeSystemProviderContext; list
 var
   ctxt : TSnomedExpressionContext;
 begin
-  FSct.checkIsLoaded;
   ctxt := context as TSnomedExpressionContext;
   if (ctxt = nil) then
     raise ETerminologyError.create('Unable to find context in '+systemUri, itInvalid)
@@ -5290,7 +5069,6 @@ var
   did : UInt64;
   exp : TSnomedExpression;
 begin
-  FSct.checkIsLoaded;
   if TSnomedExpressionContext(ctxt).Expression.isSimple then
   begin
     SetLength(inbounds, 0);
@@ -5386,7 +5164,6 @@ function TSnomedProvider.getDisplay(code: String; langList : THTTPLanguageList):
 var
   ctxt : TCodeSystemProviderContext;
 begin
-  FSct.checkIsLoaded;
   ctxt := locate(code);
   try
     if (ctxt = nil) then
@@ -5400,13 +5177,11 @@ end;
 
 function TSnomedProvider.IsAbstract(context: TCodeSystemProviderContext): boolean;
 begin
-  FSct.checkIsLoaded;
   result := false; // snomed don't do abstract?
 end;
 
 function TSnomedProvider.IsInactive(context: TCodeSystemProviderContext): boolean;
 begin
-  FSct.checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := false // not sure what to do here?
   else
@@ -5415,7 +5190,6 @@ end;
 
 function TSnomedProvider.getCodeStatus(context: TCodeSystemProviderContext): String;
 begin
-  FSct.checkIsLoaded;
   if TSnomedExpressionContext(context).isComplex then
     result := ''
   else if FSct.IsActive(TSnomedExpressionContext(context).reference) then
@@ -5426,7 +5200,6 @@ end;
 
 function TSnomedProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
-  FSct.checkIsLoaded;
   result := true;
 end;
 
@@ -5435,7 +5208,6 @@ var
   iId : UInt64;
   index : cardinal;
 begin
-  FSct.checkIsLoaded;
   iId := FSct.StringToIdOrZero(code);
   if iId = 0 then
   begin
@@ -5465,7 +5237,6 @@ end;
 
 function TSnomedProvider.TotalCount: integer;
 begin
-  FSct.checkIsLoaded;
   result := FSct.FTotalCount;
 end;
 
@@ -5478,7 +5249,6 @@ function TSnomedProvider.filter(forIteration : boolean; prop: String; op: TFhirF
 var
   id : UInt64;
 begin
-  FSct.checkIsLoaded;
   result := nil;
   if (prop = 'concept') and FSct.StringIsId(value, id) then
     if op = foIsA then
@@ -5493,7 +5263,6 @@ end;
 
 function TSnomedProvider.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 begin
-  FSct.checkIsLoaded;
   if Length(TSnomedFilterContext(ctxt).matches) > 0 then
     result := TSnomedExpressionContext.create(TSnomedFilterContext(ctxt).Matches[TSnomedFilterContext(ctxt).ndx-1].index)
   else if Length(TSnomedFilterContext(ctxt).members) > 0 then
@@ -5506,7 +5275,6 @@ function TSnomedProvider.InFilter(ctxt: TCodeSystemProviderFilterContext; concep
 var
   index : integer;
 begin
-  FSct.checkIsLoaded;
   if Length(TSnomedFilterContext(ctxt).members) > 0 then
     result := FindMember(TSnomedFilterContext(ctxt).Members, TSnomedExpressionContext(concept).reference, index)
   else
@@ -5515,7 +5283,6 @@ end;
 
 function TSnomedProvider.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
-  FSct.checkIsLoaded;
   inc(TSnomedFilterContext(ctxt).ndx);
   if Length(TSnomedFilterContext(ctxt).matches) > 0 then
     result := TSnomedFilterContext(ctxt).ndx <= Length(TSnomedFilterContext(ctxt).matches)
@@ -5542,7 +5309,6 @@ var
   concept : TCodeSystemProviderContext;
   ok : boolean;
 begin
-  FSct.checkIsLoaded;
   c := TSnomedFilterContext(ctxt);
   concept := locate(code, nil, message);
   try
@@ -5566,7 +5332,6 @@ function TSnomedProvider.locateIsA(code, parent: String; disallowParent : boolea
 var
   ic, ip : Cardinal;
 begin
-  FSct.checkIsLoaded;
   if FSct.Concept.FindConcept(FSct.StringToIdOrZero(parent), ip) And
        FSct.Concept.FindConcept(FSct.StringToIdOrZero(code), ic) And FSct.Subsumes(ip, ic) And (not disallowParent or (ic <> ip)) then
     result := TSnomedExpressionContext.create(code, ic)
@@ -5577,7 +5342,6 @@ end;
 
 function TSnomedProvider.name(context: TCodeSystemProviderContext): String;
 begin
-  FSct.checkIsLoaded;
   result := 'SNOMED CT';
 end;
 

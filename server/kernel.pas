@@ -215,7 +215,6 @@ begin
       FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
       i := i + 5;
     end;
-    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
     FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
     FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
     FMaintenanceThread.Start;
