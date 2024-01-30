@@ -18,6 +18,7 @@
     </General>
     <VersionInfo>
       <MajorVersionNr Value="3"/>
+      <RevisionNr Value="5"/>
       <MinorVersionNr Value="1"/>
     </VersionInfo>
     <BuildModes Count="8">
