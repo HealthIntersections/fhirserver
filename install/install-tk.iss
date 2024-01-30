@@ -3,11 +3,11 @@
 ; AppID can never be changed as subsequent installations require the same installation ID each time
 AppID=FHIRToolkit
 AppName=Health Intersections FHIR Toolkit
-AppVerName=FHIRToolkit v3.1.6
+AppVerName=FHIRToolkit v3.1.7
 
 ; compilation control
 OutputDir=..\install\build
-OutputBaseFilename=fhirtoolkit-win64-3.1.6
+OutputBaseFilename=fhirtoolkit-win64-3.1.7
 Compression=lzma2/ultra64
 
 ; 64 bit
@@ -32,11 +32,11 @@ UninstallFilesDir={app}\uninstall
 ; win2000+ add/remove programs support
 AppPublisher=Health Intersections P/L
 AppPublisherURL=http://www.healthintersections.com.au
-AppVersion=3.1.6
+AppVersion=3.1.7
 AppSupportURL=https://github.com/grahamegrieve/fhirserver
 AppUpdatesURL=https://github.com/grahamegrieve/fhirserver
 AppCopyright=Copyright (c) Health Intersections Pty Ltd 2020+
-VersionInfoVersion=3.1.6.0
+VersionInfoVersion=3.1.7.0
 
 ; dialog support
 LicenseFile=..\license
