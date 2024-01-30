@@ -490,8 +490,6 @@ begin
   Logging.log('Load RxNorm metadata #4');
 end;
 
-
-
 procedure TUMLSServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:in'));
@@ -507,7 +505,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.Count');
   try
-    qry.SQL := 'Select Count(*) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
+    qry.SQL := 'Select Count(RXCUI) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
