@@ -388,7 +388,6 @@ end;
 
 procedure TFHIRServerEndPoint.clearCache;
 begin
-  Terminologies.clearSnomed;
   if WebEndPoint <> nil then
   begin
     WebEndPoint.FTokenRedirects.clear;

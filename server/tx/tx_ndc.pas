@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json, fsl_logging,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -885,12 +885,14 @@ var
 begin
   conn := FDB.getConnection('load');
   try
+    Logging.log('Load NDC metadata');
     loadDict(conn, FTypes, 'select NDCKey, Name from NDCProductTypes');
     loadDict(conn, FOrgs, 'select NDCKey, Name from NDCOrganizations');
     loadDict(conn, FRoutes, 'select NDCKey, Name from NDCRoutes');
     loadDict(conn, FDoseforms, 'select NDCKey, Name from NDCDoseForms');
-    FPackageCount := conn.countSql('Select count(*) from NDCPackages');
-    FProductCount := conn.countSql('Select count(*) from NDCProducts');
+    Logging.log('Load NDC counts');
+    FPackageCount := conn.countSql('Select count(NDCKey) from NDCPackages');
+    FProductCount := conn.countSql('Select count(NDCKey) from NDCProducts');
     conn.release;
   except
     on e : Exception do

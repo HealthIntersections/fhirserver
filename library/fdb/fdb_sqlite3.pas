@@ -181,8 +181,10 @@ end;
 constructor TFDBSQLiteConnection.Create(AOwner: TFDBManager; Filename : String; readOnly, autoCreate : boolean);
 var
   flags : integer;
+  start : UInt64;
 begin
   inherited Create(AOwner);
+  start := GetTickCount64;
   FConnection := TSQLite3Database.Create;
   FConnection.Delay := 2000;
   if readOnly then
@@ -191,6 +193,7 @@ begin
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE or SQLITE_OPEN_CREATE)
   else
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE);
+  Logging.log('TFDBSQLiteConnection.Create: '+inttostr(GetTickCount64-start)+'ms');
 end;
 
 destructor TFDBSQLiteConnection.Destroy;

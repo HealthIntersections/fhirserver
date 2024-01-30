@@ -65,6 +65,7 @@ type
     procedure newContent(); override;
     function FileExtension : String; override;
     procedure validate(validate : boolean; inspect : boolean; cursor : TSourceLocation; inspection : TStringList); override;
+    function canExecute : boolean; override;
   end;
 
 
@@ -212,6 +213,22 @@ begin
   end;
 end;
 
+function TJsonEditor.canExecute: boolean;
+var
+  j : TJsonObject;
+begin
+  try
+    j := TJSONParser.Parse(TextEditor.text);
+    try
+      result := j.str['type'] = 'web.runner';
+    finally
+      j.free;
+    end;
+  except
+    result := false;
+  end;
+end;
+
 procedure TJsonEditor.ContentChanged;
 begin
   FJson.free;
@@ -237,6 +254,7 @@ procedure TJsonEditor.makeTextTab;
 begin
   inherited makeTextTab;
   makeSubAction(actFormat, 'Pretty', 88, 0, DoMnuPretty);
+  makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
   makeSubAction(actFormat, 'Condensed', 87, 0, DoMnuCondense);
 end;
 

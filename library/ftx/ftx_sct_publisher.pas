@@ -202,94 +202,85 @@ Begin
 }
 
   html.Heading(1, 'Snomed-CT Definitions (e: '+FSnomed.EditionName+', v: '+FSnomed.VersionDate+')');
-  if Not FSnomed.Loaded Then
-  Begin
+  html.StartForm('GET', sPrefix);
+  html.StartParagraph;
+  html.AddTextPlain('Search: ');
+  html.textInput('srch');
+  html.submit('Go');
+  html.AddTextPlain(' ');
+  html.checkbox('all', false, 'Tight');
+  html.endForm;
+
+  html.StartList;
+  html.StartListItem;
+  html.URL('Browse All Concepts', sPrefix+'id=*');
+  html.EndListItem;
+  html.EndList;
+
+  if Length(FSnomed.ActiveRoots) = 1 Then
+  begin
     html.StartParagraph;
-    html.AddText('Snomed Definitions are not loaded', true, false);
+    html.AddText('Snomed Root Concept', true, false);
     html.EndParagraph;
+    PublishConcept(true, true, sPrefix, inttostr(FSnomed.Activeroots[0]), 0, html)
   End
   Else
   Begin
-    html.StartForm('GET', sPrefix);
     html.StartParagraph;
-    html.AddTextPlain('Search: ');
-    html.textInput('srch');
-    html.submit('Go');
-    html.AddTextPlain(' ');
-    html.checkbox('all', false, 'Tight');
-    html.endForm;
-
-    html.StartList;
-    html.StartListItem;
-    html.URL('Browse All Concepts', sPrefix+'id=*');
-    html.EndListItem;
-    html.EndList;
-
-    if Length(FSnomed.ActiveRoots) = 1 Then
-    begin
-      html.StartParagraph;
-      html.AddText('Snomed Root Concept', true, false);
-      html.EndParagraph;
-      PublishConcept(true, true, sPrefix, inttostr(FSnomed.Activeroots[0]), 0, html)
-    End
-    Else
-    Begin
-      html.StartParagraph;
-      html.AddText('Snomed Root Concepts ('+inttostr(Length(FSnomed.ActiveRoots))+')', true, false);
-      html.EndParagraph;
-      html.StartList;
-      for i := 0 to min(Length(FSnomed.ActiveRoots) - 1, 1000) Do
-      Begin
-        html.StartListItem;
-        if FSnomed.Concept.FindConcept(FSnomed.ActiveRoots[i], iRef) Then
-          ConceptRef(html, sPrefix, iRef, cdBoth, 0);
-        html.EndListItem;
-      End;
-      html.EndList;
-    End;
-    deadCheck();
-
-    html.Line;
-    html.StartParagraph;
-    html.AddText('Reference Sets', true, false);
+    html.AddText('Snomed Root Concepts ('+inttostr(Length(FSnomed.ActiveRoots))+')', true, false);
     html.EndParagraph;
-    SetLength(aRefs, FSnomed.RefSetIndex.Count);
-    for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
-      aRefs[i] := i;
-    SortRefsets(aRefs);
-    if FSnomed.RefSetIndex.Count = 0 Then
-    Begin
-      html.StartParagraph;
-      html.AddText('No Reference Sets defined', false, true);
-      html.EndParagraph;
-    End;
     html.StartList;
-    for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
+    for i := 0 to min(Length(FSnomed.ActiveRoots) - 1, 1000) Do
     Begin
       html.StartListItem;
-      RefsetRef(html, sPrefix, aRefs[i]);
+      if FSnomed.Concept.FindConcept(FSnomed.ActiveRoots[i], iRef) Then
+        ConceptRef(html, sPrefix, iRef, cdBoth, 0);
       html.EndListItem;
     End;
     html.EndList;
+  End;
+  deadCheck();
 
-    html.Line;
-    Lock.Lock;
-    Try
-      if FSearchCache.Count <> 0 Then
-      Begin
-        html.AddParagraph('Past Searches:');
-        html.StartList(false);
-        For i := 0 to FSearchCache.Count - 1 Do
-        begin
-          html.StartListItem;
-          html.ParaURL('Search for "'+FSearchCache[i]+'"', sPrefix+'srch='+FSearchCache[i]+'&caption=Search Snomed Concepts&prompt=Text');
-          html.EndListItem;
-        end;
-        html.EndList(false);
-      End;
-    Finally
-      Lock.UnLock;
+  html.Line;
+  html.StartParagraph;
+  html.AddText('Reference Sets', true, false);
+  html.EndParagraph;
+  SetLength(aRefs, FSnomed.RefSetIndex.Count);
+  for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
+    aRefs[i] := i;
+  SortRefsets(aRefs);
+  if FSnomed.RefSetIndex.Count = 0 Then
+  Begin
+    html.StartParagraph;
+    html.AddText('No Reference Sets defined', false, true);
+    html.EndParagraph;
+  End;
+  html.StartList;
+  for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
+  Begin
+    html.StartListItem;
+    RefsetRef(html, sPrefix, aRefs[i]);
+    html.EndListItem;
+  End;
+  html.EndList;
+
+  html.Line;
+  Lock.Lock;
+  Try
+    if FSearchCache.Count <> 0 Then
+    Begin
+      html.AddParagraph('Past Searches:');
+      html.StartList(false);
+      For i := 0 to FSearchCache.Count - 1 Do
+      begin
+        html.StartListItem;
+        html.ParaURL('Search for "'+FSearchCache[i]+'"', sPrefix+'srch='+FSearchCache[i]+'&caption=Search Snomed Concepts&prompt=Text');
+        html.EndListItem;
+      end;
+      html.EndList(false);
     End;
+  Finally
+    Lock.UnLock;
   End;
   html.done;
 End;

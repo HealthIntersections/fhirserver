@@ -218,7 +218,6 @@ begin
     else
     begin
       ss.RecordUse;
-      ss.checkLoaded(dead);
       result := 'Snomed Tool: '+parts[length(parts)-1];
       response.ContentType := 'text/xml';
       try
@@ -279,7 +278,6 @@ begin
     else
     begin
       ss.RecordUse;
-      ss.checkLoaded(dead);
       code := request.UnparsedParams;
       result := 'Snomed Doco ('+ss.EditionName+'): '+code;
 
@@ -420,7 +418,6 @@ begin
     html.AddTableCell('Date');
     html.AddTableCell('UseCount');
     html.AddTableCell('Last Used');
-    html.AddTableCell('Load Status');
     html.EndTableRow;
     for ss in FTx.Snomed do
     begin
@@ -430,7 +427,6 @@ begin
       html.AddTableCell(ss.VersionDate);
       html.AddTableCell(inttostr(ss.UseCount));
       html.AddTableCell(ss.LastUseStatus);
-      html.AddTableCell(ss.LoadStatus);
       html.EndTableRow;
     end;
     html.EndTable;

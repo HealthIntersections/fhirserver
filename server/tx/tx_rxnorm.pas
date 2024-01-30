@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -480,6 +480,7 @@ begin
   rels := TStringList.Create;
   reltypes := TStringList.Create;
 
+  Logging.log('Load RxNorm metadata');
   if (TotalCount = 0) then
     raise EDBException.Create('Error Connecting to RxNorm');
   load(rels, 'select distinct REL from RXNREL');
