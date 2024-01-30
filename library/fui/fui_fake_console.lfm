@@ -107,6 +107,8 @@ object FakeConsoleForm: TFakeConsoleForm
       Top = 25
       Width = 221
       Align = alClient
+      Font.Pitch = fpFixed
+      ParentFont = False
       TabOrder = 1
       WordWrap = False
     end

@@ -273,6 +273,8 @@ begin
   mThreads.font.Size := mLog.font.size;
   mLocks.font.Size := mLog.font.Size;
   mLocks.Font.Pitch := fpFixed;
+  mThreads.Font.Pitch := fpFixed;
+  mLog.Font.Pitch := fpFixed;
 
   FCache := TStringList.Create;
 end;

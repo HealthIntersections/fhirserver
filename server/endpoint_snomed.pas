@@ -199,9 +199,9 @@ var
   ss, t : TSnomedServices;
   pm : THTTPParameters;
   buf : TFslNameBuffer;
-  dead : UInt64;
+  start : UInt64;
 begin
-  dead := GetTickCount64 + (30 * 1000);
+  start := GetTickCount64;
   if request.Document.StartsWith(PathWithSlash+'tool/') then // FHIR build process support
   begin
     parts := request.Document.Split(['/']);
@@ -283,12 +283,13 @@ begin
 
       try
         html := THtmlPublisher.Create;
-        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure), dead);
+        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure), start);
         try
           html.Version := SERVER_FULL_VERSION;
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';
           html.LangList := THTTPLanguageList.Create(request.AcceptLanguage, true);
           pub.PublishDict(code, PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/', html);
+          html.AddParagraph('Perf: '+pub.progress.CommaText);
           returnContent(request, response, request.Document, secure, 'SNOMED CT Browser', html.output);
         finally
           html.free;

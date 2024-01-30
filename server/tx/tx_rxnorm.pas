@@ -480,11 +480,14 @@ begin
   rels := TStringList.Create;
   reltypes := TStringList.Create;
 
-  Logging.log('Load RxNorm metadata');
+  Logging.log('Load RxNorm metadata #1');
   if (TotalCount = 0) then
     raise EDBException.Create('Error Connecting to RxNorm');
+  Logging.log('Load RxNorm metadata #2');
   load(rels, 'select distinct REL from RXNREL');
+  Logging.log('Load RxNorm metadata #3');
   load(reltypes, 'select distinct RELA from RXNREL');
+  Logging.log('Load RxNorm metadata #4');
 end;
 
 
