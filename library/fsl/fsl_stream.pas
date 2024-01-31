@@ -5531,7 +5531,9 @@ Begin
     oCompressor := TCompressionStream.Create(clMax, oCompressedStream);
     Try
       oCompressor.Write(bytes[0], length(bytes));
+      {$IFDEF FPC}
       oCompressor.flush;
+      {$ENDIF}
     Finally
       oCompressor.free;
     End;
