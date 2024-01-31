@@ -619,7 +619,7 @@ begin
       raise;
     end;
   end;
-  xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, false));
+  xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, true, false));
   try
     FXIGServer.FLock.lock;
     try

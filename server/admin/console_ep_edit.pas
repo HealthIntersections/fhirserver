@@ -305,7 +305,7 @@ var
 begin
   update;
   try
-    db := connectToDatabase(EP);
+    db := connectToDatabase(EP, true);
     try
       db.checkConnection;
     finally

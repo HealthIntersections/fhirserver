@@ -121,7 +121,7 @@ begin
   cursor := Screen.Cursor;
   try
     Screen.Cursor := crHourGlass;
-    db := connectToDatabase(epInfo);
+    db := connectToDatabase(epInfo, false);
     try
       conn := db.GetConnection('install');
       try

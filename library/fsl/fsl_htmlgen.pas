@@ -42,12 +42,15 @@ Type
 
   THtmlPublisher = class (TFslObject)
   private
-    FBuilder : TFslStringBuilder;
+    FSource : String;
+    FCursor : Integer;
+
     FBaseURL: String;
     FLangList : THTTPLanguageList;
     FVersion: String;
     FLogId: String;
     procedure SetLangList(AValue: THTTPLanguageList);
+    procedure doAppend(s : String);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -143,9 +146,9 @@ end;
 procedure THtmlPublisher.AddTableCellHint(text, hint: String);
 begin
   StartTableCell;
-  FBuilder.Append('<span title="'+FormatTextToXML(hint, xmlAttribute)+'">');
+  doAppend('<span title="'+FormatTextToXML(hint, xmlAttribute)+'">');
   addtext(text, false, false);
-  FBuilder.Append('</span>');
+  doAppend('</span>');
   EndTableCell;
 end;
 
@@ -159,19 +162,19 @@ end;
 procedure THtmlPublisher.AddText(text: String; bold, italics: boolean);
 begin
   if bold then
-    FBuilder.Append('<b>');
+    doAppend('<b>');
   if italics then
-    FBuilder.Append('<i>');
+    doAppend('<i>');
   AddTextPlain(text);
   if italics then
-    FBuilder.Append('</i>');
+    doAppend('</i>');
   if bold then
-    FBuilder.Append('</b>');
+    doAppend('</b>');
 end;
 
 procedure THtmlPublisher.AddTextPlain(text: String);
 begin
-  FBuilder.Append(FormatTextToXml(text, xmlText));
+  doAppend(FormatTextToXml(text, xmlText));
 end;
 
 procedure THtmlPublisher.AddTitle(text: String);
@@ -181,116 +184,114 @@ end;
 
 procedure THtmlPublisher.break;
 begin
-  FBuilder.Append('<br/>');
+  doAppend('<br/>');
 end;
 
 procedure THtmlPublisher.checkbox(name : String; value : boolean; text : String);
 begin
   if value then
-    FBuilder.Append('<input type="checkbox" name="'+name+'" checked value="1"/> '+text)
+    doAppend('<input type="checkbox" name="'+name+'" checked value="1"/> '+text)
   else
-    FBuilder.Append('<input type="checkbox" name="'+name+'" value="1"/> '+text);
+    doAppend('<input type="checkbox" name="'+name+'" value="1"/> '+text);
 end;
 
 procedure THtmlPublisher.endDiv;
 begin
-  FBuilder.Append('</div>')
+  doAppend('</div>')
 end;
 
 constructor THtmlPublisher.Create();
 begin
   inherited Create;
-  FBuilder := TFslStringBuilder.Create;
+  FSource := '';
+  FCursor := 0;
 end;
 
 destructor THtmlPublisher.Destroy;
 begin
   FLangList.free;
-  FBuilder.free;
   inherited;
 end;
 
-
-
 procedure THtmlPublisher.Done;
 begin
-  FBuilder.Append('');
+  doAppend('');
 end;
 
 procedure THtmlPublisher.EndBlockQuote;
 begin
-  FBuilder.Append('</blockquote>'#13#10);
+  doAppend('</blockquote>'#13#10);
 end;
 
 procedure THtmlPublisher.EndForm;
 begin
-  FBuilder.Append('</form>'#13#10);
+  doAppend('</form>'#13#10);
 end;
 
 procedure THtmlPublisher.EndList(ordered: boolean);
 begin
   if ordered then
-    FBuilder.Append('</ol>'#13#10)
+    doAppend('</ol>'#13#10)
   else
-    FBuilder.Append('</ul>'#13#10);
+    doAppend('</ul>'#13#10);
 end;
 
 procedure THtmlPublisher.EndListItem;
 begin
-  FBuilder.Append('</li>'#13#10);
+  doAppend('</li>'#13#10);
 end;
 
 procedure THtmlPublisher.EndParagraph;
 begin
-  FBuilder.Append('<p>'#13#10);
+  doAppend('<p>'#13#10);
 end;
 
 procedure THtmlPublisher.endPre;
 begin
-  FBuilder.Append('<pre>'#13#10);
+  doAppend('<pre>'#13#10);
 end;
 
 procedure THtmlPublisher.EndTable;
 begin
-  FBuilder.Append('</table>'#13#10);
+  doAppend('</table>'#13#10);
 end;
 
 procedure THtmlPublisher.EndTableCell;
 begin
-  FBuilder.Append('</td>'#13#10);
+  doAppend('</td>'#13#10);
 end;
 
 procedure THtmlPublisher.EndTableRow;
 begin
-  FBuilder.Append('</tr>'#13#10);
+  doAppend('</tr>'#13#10);
 end;
 
 procedure THtmlPublisher.Heading(level: integer; text: String);
 begin
-  FBuilder.Append('<h'+inttostr(level)+'>');
+  doAppend('<h'+inttostr(level)+'>');
   AddTextPlain(text);
-  FBuilder.Append('</h'+inttostr(level)+'>');
+  doAppend('</h'+inttostr(level)+'>');
 end;
 
 procedure THtmlPublisher.hiddenInput(name, value: String);
 begin
-  FBuilder.Append('<input type="hidden" name="'+name+'" value="'+value+'"/>');
+  doAppend('<input type="hidden" name="'+name+'" value="'+value+'"/>');
 end;
 
 
 procedure THtmlPublisher.Line;
 begin
-  FBuilder.Append('<hr/>'#13#10);
+  doAppend('<hr/>'#13#10);
 end;
 
 procedure THtmlPublisher.Memo(name, value, text: String);
 begin
-  FBuilder.Append(text+'<textArea name="'+name+'">'#13#10+value+'</textArea>');
+  doAppend(text+'<textArea name="'+name+'">'#13#10+value+'</textArea>');
 end;
 
 function THtmlPublisher.output: String;
 begin
-  result := FBuilder.ToString;
+  result := FSource.subString(0, FCursor);
 end;
 
 procedure THtmlPublisher.ParaURL(text, url: String);
@@ -302,53 +303,53 @@ end;
 
 procedure THtmlPublisher.Spacer;
 begin
-  FBuilder.Append('&nbsp;');
+  doAppend('&nbsp;');
 end;
 
 procedure THtmlPublisher.StartBlockQuote;
 begin
-  FBuilder.Append('<blockquote>');
+  doAppend('<blockquote>');
 end;
 
 procedure THtmlPublisher.startDiv;
 begin
-  FBuilder.Append('<div>')
+  doAppend('<div>')
 end;
 
 procedure THtmlPublisher.StartForm(method, action: String);
 begin
-  FBuilder.Append('<form method="'+method+'" action="'+action+'">'#13#10);
+  doAppend('<form method="'+method+'" action="'+action+'">'#13#10);
 end;
 
 procedure THtmlPublisher.StartList(ordered: boolean);
 begin
   if ordered then
-    FBuilder.Append('<ol>')
+    doAppend('<ol>')
   else
-    FBuilder.Append('<ul>');
+    doAppend('<ul>');
 end;
 
 procedure THtmlPublisher.StartListItem;
 begin
-  FBuilder.Append('<li>');
+  doAppend('<li>');
 end;
 
 procedure THtmlPublisher.StartParagraph;
 begin
-  FBuilder.Append('<p>');
+  doAppend('<p>');
 end;
 
 procedure THtmlPublisher.StartPre;
 begin
-  FBuilder.Append('<pre>'#13#10);
+  doAppend('<pre>'#13#10);
 end;
 
 procedure THtmlPublisher.StartRow(bgcolor : string = '');
 begin
   if (bgcolor <> '') then
-    FBuilder.Append('<tr style="background-color: '+bgcolor+'">')
+    doAppend('<tr style="background-color: '+bgcolor+'">')
   else
-    FBuilder.Append('<tr>')
+    doAppend('<tr>')
 end;
 
 procedure THtmlPublisher.StartTable(borders: boolean; clss : String);
@@ -356,47 +357,47 @@ begin
   if clss <> '' then
     clss := ' class="'+clss+'"';
   if borders then
-    FBuilder.Append('<table border="1"'+clss+'>')
+    doAppend('<table border="1"'+clss+'>')
   else
-    FBuilder.Append('<table border="0"'+clss+'>');
+    doAppend('<table border="0"'+clss+'>');
 end;
 
 procedure THtmlPublisher.StartTableCell(span: integer);
 begin
   if (span <> 1) then
-    FBuilder.Append('<td colspan="'+inttostr(span)+'">')
+    doAppend('<td colspan="'+inttostr(span)+'">')
   else
-   FBuilder.Append('<td>')
+   doAppend('<td>')
 end;
 
 procedure THtmlPublisher.StartTableRow;
 begin
-  FBuilder.Append('<tr>')
+  doAppend('<tr>')
 end;
 
 procedure THtmlPublisher.Submit(name: String);
 begin
-  FBuilder.Append('<input type="submit" value="'+name+'"/>');
+  doAppend('<input type="submit" value="'+name+'"/>');
 end;
 
 procedure THtmlPublisher.TextInput(name, value: String; length: integer);
 begin
-  FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/>');
+  doAppend('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/>');
 end;
 
 procedure THtmlPublisher.TextInput(name: String; length: integer);
 begin
-  FBuilder.Append('<input type="text" name="'+name+'" size="'+inttostr(length)+'"/>');
+  doAppend('<input type="text" name="'+name+'" size="'+inttostr(length)+'"/>');
 end;
 
 procedure THtmlPublisher.URL(text, url: String; hint: string);
 begin
   if (hint <> '') then
-    FBuilder.Append('<a href="'+url+'" title="'+FormatTextToXml(hint, xmlAttribute)+'">')
+    doAppend('<a href="'+url+'" title="'+FormatTextToXml(hint, xmlAttribute)+'">')
   else
-    FBuilder.Append('<a href="'+url+'">');
+    doAppend('<a href="'+url+'">');
   AddTextPlain(text);
-  FBuilder.Append('</a>');
+  doAppend('</a>');
 end;
 
 //procedure THtmlPublisher.writeXhtml(node: TFhirXHtmlNode);
@@ -406,30 +407,30 @@ end;
 //  case node.NodeType of
 //    fhntElement, fhntDocument:
 //      begin
-//        FBuilder.Append('<'+node.Name);
+//        doAppend('<'+node.Name);
 //        if node.HasAttributes then
 //          for i := 0 to node.Attributes.Count - 1 do
-//            FBuilder.Append(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
+//            doAppend(' '+node.Attributes[i].Name+'="'+FormatTextToXml(node.Attributes[i].value, xmlAttribute)+'"');
 //        if node.ChildNodes.Count = 0 then
-//          FBuilder.Append('/>')
+//          doAppend('/>')
 //        else
 //        begin
-//          FBuilder.Append('>');
+//          doAppend('>');
 //          for i := 0 to node.ChildNodes.Count - 1 do
 //            writeXhtml(node.ChildNodes[i]);
-//          FBuilder.Append('</'+node.Name+'>');
+//          doAppend('</'+node.Name+'>');
 //        end;
 //      end;
 //    fhntText:
 //      AddTextPlain(node.Content);
 //    fhntComment:
-//      FBuilder.Append('<!-- '+FormatTextToXml(node.Content, xmlText)+' -->');
+//      doAppend('<!-- '+FormatTextToXml(node.Content, xmlText)+' -->');
 //  end;
 //end;
 //
 procedure THtmlPublisher.TextInput(name, value, text: String; length: integer);
 begin
-  FBuilder.Append('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
+  doAppend('<input type="text" name="'+name+'" value="'+value+'" size="'+inttostr(length)+'"/> '+text);
 end;
 
 procedure THtmlPublisher.SetLangList(AValue: THTTPLanguageList);
@@ -438,10 +439,28 @@ begin
   FLangList := AValue;
 end;
 
+procedure THtmlPublisher.doAppend(s: String);
+var
+  delta : Integer;
+begin
+  if (s <> '') then
+  begin
+    if (s.length + FCursor > FSource.length) then
+    begin
+      delta := 2048;
+      while delta < s.length do
+        delta := delta + 2048;
+      SetLength(FSource, length(FSource)+delta);
+    end;
+    move(s[1], FSource[FCursor+1], s.length * sizeof(char));
+    inc(FCursor, s.length);
+  end;
+end;
+
 function THtmlPublisher.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, FBuilder.sizeInBytes(magic));
+  inc(result, (FSource.length * sizeof(char)) + 12);
   inc(result, (FBaseURL.length * sizeof(char)) + 12);
   inc(result, FLangList.sizeInBytes(magic));
   inc(result, (FVersion.length * sizeof(char)) + 12);

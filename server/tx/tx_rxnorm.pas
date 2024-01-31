@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -111,6 +111,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -124,8 +125,8 @@ type
   TRxNormServices = class (TUMLSServices)
   public
     constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -136,8 +137,8 @@ type
     function getCodeField : String; override;
   public
     constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -479,21 +480,23 @@ begin
   rels := TStringList.Create;
   reltypes := TStringList.Create;
 
+  Logging.log('Load RxNorm metadata #1');
   if (TotalCount = 0) then
     raise EDBException.Create('Error Connecting to RxNorm');
+  Logging.log('Load RxNorm metadata #2');
   load(rels, 'select distinct REL from RXNREL');
+  Logging.log('Load RxNorm metadata #3');
   load(reltypes, 'select distinct RELA from RXNREL');
+  Logging.log('Load RxNorm metadata #4');
 end;
-
-
 
 procedure TUMLSServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:in'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'STY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SAB:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CUI:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'STY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SAB:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'CUI:equals'));
 end;
 
 function TUMLSServices.TotalCount : integer;
@@ -502,7 +505,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.Count');
   try
-    qry.SQL := 'Select Count(*) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
+    qry.SQL := 'Select Count(RXCUI) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
@@ -958,6 +961,22 @@ begin
   result := filter.qry.FetchNext;
 end;
 
+function TUMLSServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  filter : TUMLSFilter;
+begin
+  filter := TUMLSFilter(ctxt);
+  if (filter.qry = nil) then
+  begin
+    // search on full rxnorm
+    filter.qry := db.GetConnection(dbprefix+'.filter');
+    filter.qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY'' '+filter.sql;
+    filter.qry.prepare;
+    filter.qry.Execute;
+  end;
+  result := filter.qry.RowsAffected; // todo: check this
+end;
+
 function TUMLSServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
   filter : TUMLSFilter;
@@ -1054,12 +1073,12 @@ begin
   result := 'RxNorm';
 end;
 
-function TRxNormServices.systemUri(context: TCodeSystemProviderContext): String;
+function TRxNormServices.systemUri: String;
 begin
   result := URI_RXNORM;
 end;
 
-function TRxNormServices.version(context: TCodeSystemProviderContext): String;
+function TRxNormServices.version: String;
 begin
   result := '??rx1';
 end;
@@ -1091,12 +1110,12 @@ begin
   result := 'NDFRT';
 end;
 
-function TNDFRTServices.systemUri(context: TCodeSystemProviderContext): String;
+function TNDFRTServices.systemUri: String;
 begin
   result := URI_NDFRT;
 end;
 
-function TNDFRTServices.version(context: TCodeSystemProviderContext): String;
+function TNDFRTServices.version: String;
 begin
   result := '??rx2';
 end;

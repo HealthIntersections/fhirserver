@@ -371,6 +371,7 @@ Type
   TLOINCServices = class (TCodeSystemProvider)
   Private
     FLang : TLoincLanguages;
+    FLangs: Array of String;
     FDesc : TLoincStrings;
     FCode : TLOINCCodeList;
     FRefs : TLOINCReferences;
@@ -395,8 +396,8 @@ Type
     function FilterByIsA(value: String; this: boolean): TCodeSystemProviderFilterContext;
     function GetConceptDesc(iConcept : cardinal; langs : TLangArray):String;
     function useLang(lang : byte; langs : TLangArray; incLast : boolean) : boolean;
-    function langDesc(iLang : word) : String;
     function allLangs : TLangArray;
+    procedure loadLangs;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -443,8 +444,8 @@ Type
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
     function findMAConcept(code : String) : Cardinal;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -455,6 +456,7 @@ Type
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -560,14 +562,7 @@ begin
       raise ETerminologyError.create('Wrong length index getting LOINC name (2)', itException);
     lang := FMaster[iIndex+2];
     if l > 0 Then
-    begin
-      b := copy(FMaster, iIndex+3, l);
-      try
-        result := TEncoding.UTF8.getString(b);
-      except
-        raise EFslException.Create('Unable to Read LOINC source String @'+inttostr(iIndex+3)+'+'+inttostr(l));
-      end;
-    end;  
+      result := memU8toString(FMaster, iIndex+3, l);
   end;
 end;
 
@@ -947,24 +942,24 @@ end;
 
 procedure TLOINCServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SCALE_TYP:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SCALE_TYP:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CLASS:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'COMPONENT:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'PROPERTY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TIME_ASPCT:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SYSTEM:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'METHOD_TYP:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'ORDER_OBS:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CLASSTYPE:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'STATUS:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'copyright:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'parent:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'ancestor:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:is-a'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'concept:descends'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'LIST:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TYPE:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SCALE_TYP:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SCALE_TYP:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'CLASS:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'COMPONENT:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'PROPERTY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TIME_ASPCT:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SYSTEM:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'METHOD_TYP:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'ORDER_OBS:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'CLASSTYPE:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'STATUS:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'copyright:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'parent:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'ancestor:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:is-a'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:descends'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'LIST:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TYPE:equals'));
 end;
 
 function TLOINCServices.Definition(context: TCodeSystemProviderContext): string;
@@ -1029,7 +1024,7 @@ begin
         s := Desc.GetEntry(name, ilang);
         for l in langs do
           if (l = ilang) then
-            list.addDesignation(false, true, langDesc(iLang), s.trim);
+            list.addDesignation(false, true, FLangs[iLang], s.trim);
       end;
     end;
   End
@@ -1037,13 +1032,13 @@ begin
   begin
     AnswerLists.GetEntry(iIndex, iCode, iDescription, iAnswers);
     s := Desc.GetEntry(iDescription, ilang);
-    list.addDesignation(true, true,langDesc(iLang), s.Trim);
+    list.addDesignation(true, true, FLangs[iLang], s.Trim);
   end
   else if Entries.FindCode(sCode, iIndex, FDesc) then
   begin
     FEntries.GetEntry(iIndex, iCode, text, parents, children, concepts, descendentConcepts, stems);
     s := Desc.GetEntry(text, ilang).Trim;
-    list.addDesignation(true, true,langDesc(iLang), s);
+    list.addDesignation(true, true, FLangs[iLang], s);
   end
 end;
 
@@ -1125,20 +1120,6 @@ begin
   result := false;
 end;
 
-function TLOINCServices.langDesc(iLang: word): String;
-var
-  i : integer;
-  llang, country : String;
-begin
-  if iLang = 0 then
-    result := ''
-  else
-  begin
-    FLang.GetEntry(iLang, llang, country);
-    result := llang +'-'+country;
-  end;
-end;
-
 function TLOINCServices.langsForLang(langList : THTTPLanguageList): TLangArray;
   procedure add(b : byte);
   begin
@@ -1158,8 +1139,7 @@ begin
     // first pass, exact matches
     for i := 0 to FLang.count - 1 do
     begin
-      FLang.GetEntry(i, llang, country);
-      if (langList = nil) or (llang +'-'+country = langList.source) then
+      if (langList = nil) or (FLangs[i] = langList.source) then
         add(i);
     end;
     if length(result) = 0 then
@@ -1216,6 +1196,7 @@ begin
       FCode.CodeLength := oRead.ReadInteger;
       FLang.FMaster := ReadBytes;
       FLang.FLength := Length(FLang.FMaster);
+      loadLangs;
       FCode.FMaster := ReadBytes;
       FCode.FLength := Length(FCode.FMaster);
       FDesc.FMaster := ReadBytes;
@@ -2012,6 +1993,19 @@ begin
     result[i] := i;
 end;
 
+procedure TLOINCServices.loadLangs;
+var
+  i : integer;
+  s,c : String;
+begin
+  SetLength(FLangs, FLang.count);
+  for i := 0 to length(FLangs) - 1 do
+  begin
+    FLang.GetEntry(i, s, c);
+    FLangs[i] := s+'-'+c;
+  end;
+end;
+
 function TLOINCServices.buildValueSet(factory : TFHIRFactory; id: String): TFhirValueSetW;
 var
   index : cardinal;
@@ -2030,7 +2024,7 @@ begin
     try
       result.url := id;
       result.status := psActive;
-      result.version := Version(nil);
+      result.version := version;
       result.name := 'LOINC Value Set - all LOINC codes';
       result.description := 'All LOINC codes';
       result.date := TFslDateTime.makeUTC;
@@ -2053,7 +2047,7 @@ begin
     try
       result.url := id;
       result.status := psActive;
-      result.version := Version(nil);
+      result.version := version;
       result.name := 'LOINC Value Set from Multi-Axial Heirarchy term '+id.Substring(20);
       result.description := 'All LOINC codes for '+Desc.GetEntry(text, lang);
       result.date := TFslDateTime.makeUTC;
@@ -2083,7 +2077,7 @@ begin
     try
       result.url := id;
       result.status := psActive;
-      result.version := Version(nil);
+      result.version := version;
       result.name := 'LOINC Answer List '+id.Substring(20);
       result.description := 'LOINC Answer list for '+Desc.GetEntry(text, lang);
       result.date := TFslDateTime.makeUTC;
@@ -2192,8 +2186,50 @@ begin
 end;
 
 procedure TLOINCServices.Designations(context: TCodeSystemProviderContext; list: TConceptDesignations);
+var
+  ctxt : TLoincProviderContext; 
+  iDescription, iStems, iOtherNames : Cardinal;
+  iEntries : Cardinal;
+  sCode1 : String;
+  iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iCode, iAnswers : cardinal;
+  parents, children, descendentConcepts, text, concepts, stems : cardinal;
+  iFlags : Byte;
+  names : TCardinalArray;
+  name : Cardinal;
+  ilang, l : byte;
+  s : String;
 begin
-  GetDisplaysByName(Code(context), allLangs, list);
+  ctxt := context as TLoincProviderContext;
+  case ctxt.kind of
+    lpckCode:
+      Begin
+        CodeList.GetInformation(ctxt.index, allLangs, sCode1, iDescription, iOtherNames, iEntries, iStems, iComponent, iProperty, iTimeAspect, iSystem, iScale, iMethod, iClass, iFlags);
+        list.addDesignation(true, true, '', Desc.GetEntry(iDescription, ilang).trim);
+        if iOtherNames <> 0 then
+        begin
+          names := FRefs.GetRefs(iOtherNames);
+          for name in names do
+          begin
+            s := Desc.GetEntry(name, ilang);
+            for l in allLangs do
+              if (l = ilang) then
+                list.addDesignation(false, true, FLangs[iLang], s.trim);
+          end;
+        end;
+      End;
+    lpckAnswer:
+      begin
+        AnswerLists.GetEntry(ctxt.index, iCode, iDescription, iAnswers);
+        s := Desc.GetEntry(iDescription, ilang);
+        list.addDesignation(true, true, FLangs[iLang], s.Trim);
+      end;
+    lpckPart:
+      begin
+        FEntries.GetEntry(ctxt.index, iCode, text, parents, children, concepts, descendentConcepts, stems);
+        s := Desc.GetEntry(text, ilang).Trim;
+        list.addDesignation(true, true, FLangs[iLang], s);
+      end;
+  end;
 end;
 
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -2292,7 +2328,7 @@ begin
         begin
           s := Desc.GetEntry(iRefs[i], ll);
           if useLang(ll, langs, false) then
-            resp.addDesignation(langDesc(ll), URI_SNOMED, '446211000124102', 'Alias name', s);
+            resp.addDesignation(FLangs[ll], URI_SNOMED, '446211000124102', 'Alias name', s);
         end;
     End;
     {$ENDIF}
@@ -2309,7 +2345,7 @@ function TLOINCServices.getDisplay(code: String; langList : THTTPLanguageList): 
 begin
   result := GetDisplayByName(code, langsForLang(langList));
   if result = '' then
-    raise ETerminologyError.create('unable to find '+code+' in '+systemUri(nil), itInvalid);
+    raise ETerminologyError.create('unable to find '+code+' in '+systemUri, itInvalid);
 end;
 
 function TLOINCServices.IsAbstract(context: TCodeSystemProviderContext): boolean;
@@ -2331,7 +2367,7 @@ begin
     result := nil;//raise ETerminologyError.create('unable to find '+code+' in '+system);
 end;
 
-function TLOINCServices.systemUri(context: TCodeSystemProviderContext): String;
+function TLOINCServices.systemUri: String;
 begin
   result := URI_LOINC;
 end;
@@ -2351,7 +2387,7 @@ begin
       exit(true);
 end;
 
-function TLOINCServices.version(context: TCodeSystemProviderContext): String;
+function TLOINCServices.version: String;
 begin
   result := FVersion;
 end;
@@ -2710,6 +2746,11 @@ function TLOINCServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): bool
 begin
   inc(TLoincFilterHolder(ctxt).FIndex);
   result := TLoincFilterHolder(ctxt).FIndex <= length(TLoincFilterHolder(ctxt).FChildren);
+end;
+
+function TLOINCServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := length(TLoincFilterHolder(ctxt).FChildren);
 end;
 
 function TLOINCServices.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;

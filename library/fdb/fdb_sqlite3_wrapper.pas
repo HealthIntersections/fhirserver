@@ -36,7 +36,7 @@ interface
 uses
   SysUtils, Classes, Types,
   fdb_sqlite3_objects,
-  fsl_base, fsl_utilities;
+  fsl_base, fsl_utilities, fsl_logging;
 
 type
   ESQLite3Error = class(EFslException);

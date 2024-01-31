@@ -78,7 +78,7 @@ var
 begin
   fn := FilePath(['[tmp]', 'fts-'+name+'.db']);
   deleteFile(fn);
-  result := TFDBSqlLiteFullTextSearch.create(name, TFDBSQLiteManager.create('fts-'+name, fn, true));
+  result := TFDBSqlLiteFullTextSearch.create(name, TFDBSQLiteManager.create('fts-'+name, fn, false, true));
 end;
 
 { TFDBSqlLiteFullTextSearchCompartment }

@@ -180,7 +180,7 @@ var
 begin
   update;
   try
-    db := connectToDatabase(tx);
+    db := connectToDatabase(tx, true);
     try
       db.checkConnection;
     finally

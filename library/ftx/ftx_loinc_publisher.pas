@@ -485,7 +485,7 @@ procedure TloincPublisher.loincFooter(html: THTMLPublisher);
 begin
   html.StartParagraph;
   html.AddTextPlain('LOINC Version: ');
-  html.AddTextPlain(FLoinc.version(nil));
+  html.AddTextPlain(FLoinc.version);
   html.EndParagraph;
 end;
 

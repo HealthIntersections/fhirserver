@@ -301,7 +301,7 @@ begin
     provider := getProvider(coding.systemUri, coding.version, nil);
     try
       resp.name := provider.name(nil);
-      s := provider.version(nil);
+      s := provider.version;
       if (s <> '') then
         resp.version := s;
       ctxt := provider.locate(coding.code);
@@ -576,7 +576,7 @@ begin
     result.status := psActive;
     inc := result.addInclude;
     try
-      inc.systemUri := ALL_CODE_CS;
+      // inc.systemUri := ALL_CODE_CS;
     finally
       inc.free;
     end;

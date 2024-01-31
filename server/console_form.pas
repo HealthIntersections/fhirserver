@@ -1817,12 +1817,12 @@ begin
       combiner := TSnomedCombiner.Create;
       try
         combiner.international := TSnomedServices.Create;
-        combiner.international.Load(edtInternational.Text, true);
+        combiner.international.Load(edtInternational.Text);
         for i := 0 to lbEditions.Items.Count - 1 do
         begin
           svc := TSnomedServices.Create;
           combiner.others.Add(svc);
-          svc.load(lbEditions.Items[i], true);
+          svc.load(lbEditions.Items[i]);
         end;
         combiner.callback := cmbCallBack;
         combiner.destination := edtCombinedDestination.text;
@@ -1974,7 +1974,7 @@ begin
        if rbNDCMSSQL.checked then
          db := TFDBOdbcManager.Create('NDC', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
        else if rbNDCSQLite.checked then
-         db := TFDBSQLiteManager.Create('NDC', edtNDCSQLiteFile.Text, true)
+         db := TFDBSQLiteManager.Create('NDC', edtNDCSQLiteFile.Text, false, true)
        else
          db := TFDBOdbcManager.Create('NDC', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
        try
@@ -2059,7 +2059,7 @@ begin
        if rbUNIIMSSQL.checked then
          db := TFDBOdbcManager.Create('UNII', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
        else if rbUNIISQLite.checked then
-         db := TFDBSQLiteManager.Create('UNII', edtUNIISQLiteFile.text, true)
+         db := TFDBSQLiteManager.Create('UNII', edtUNIISQLiteFile.text, false, true)
        else
          db := TFDBOdbcManager.Create('UNII', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
        try
@@ -2148,7 +2148,7 @@ begin
        if rbRXNMSSQL.checked then
          db := TFDBOdbcManager.Create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
        else if rbRXNSQLite.checked then
-         db := TFDBSQLiteManager.Create('rxnorm', edtRXNSQLiteFile.text, true)
+         db := TFDBSQLiteManager.Create('rxnorm', edtRXNSQLiteFile.text, false, true)
        else
          db := TFDBOdbcManager.Create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
        try
@@ -2212,7 +2212,7 @@ begin
       if rbNDCMSSQL.checked then
         db := TFDBOdbcManager.Create('ndc', kdbSQLServer, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text)
       else if rbNDCSQLite.checked then
-        db := TFDBSQLiteManager.Create('ndc', edtNDCSQLiteFile.Text, true)
+        db := TFDBSQLiteManager.Create('ndc', edtNDCSQLiteFile.Text, false, true)
       else
         db := TFDBOdbcManager.Create('ndc', kdbMySQL, 10, 1000, cbxNDCDriver.text, edtNDCServer.text, edtNDCDBName.text, edtNDCUsername.text, edtNDCPassword.text);
       try
@@ -2261,7 +2261,7 @@ begin
       if rbUNIIMSSQL.checked then
         db := TFDBOdbcManager.Create('unii', kdbSQLServer, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text)
       else if rbUNIISQLite.checked then
-        db := TFDBSQLiteManager.Create('unii', edtUNIISQLiteFile.Text, true)
+        db := TFDBSQLiteManager.Create('unii', edtUNIISQLiteFile.Text, false, true)
       else
         db := TFDBOdbcManager.Create('unii', kdbMySQL, 10, 1000, cbxUNIIDriver.text, edtUNIIServer.text, edtUNIIDBName.text, edtUNIIUsername.text, edtUNIIPassword.text);
       try
@@ -2308,7 +2308,7 @@ begin
       if rbRXNMSSQL.checked then
         db := TFDBOdbcManager.Create('rxnorm', kdbSQLServer, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text)
       else if rbRXNSQLite.checked then
-        db := TFDBSQLiteManager.Create('rxnorm', edtRXNSQLiteFile.text, true)
+        db := TFDBSQLiteManager.Create('rxnorm', edtRXNSQLiteFile.text, false, true)
       else
         db := TFDBOdbcManager.Create('rxnorm', kdbMySQL, 10, 1000, cbxRXNDriver.text, edtRXNServer.text, edtRXNDBName.text, edtRXNUsername.text, edtRXNPassword.text);
       try

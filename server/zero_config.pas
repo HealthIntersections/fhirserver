@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, IniFiles,
-  fsl_base, fsl_utilities, fsl_fetcher, fsl_logging, fsl_json,
+  fsl_base, fsl_utilities, fsl_fetcher, fsl_logging, fsl_json, fsl_threads,
   fdb_manager, fdb_sqlite3,
   fhir_objects,
   server_config, database_installer, server_factory, server_constants,
@@ -128,7 +128,7 @@ var
   installer : TFHIRDatabaseInstaller;
 begin
   result := false;
-  sql := TFDBSQLiteManager.Create('cfg', fn, true);
+  sql := TFDBSQLiteManager.Create('cfg', fn, false, true);
   try
     conn := sql.GetConnection('install');
     try
@@ -162,7 +162,7 @@ var
   conn : TFDBConnection;
   installer : TFHIRDatabaseInstaller;
 begin
-  sql := TFDBSQLiteManager.Create('cfg', fn, true);
+  sql := TFDBSQLiteManager.Create('cfg', fn, false, true);
   try
     conn := sql.GetConnection('install');
     try
@@ -532,6 +532,7 @@ var
   cb : TConfigurationBuilder;
   dir : String;
 begin
+  SetThreadStatus('loadRemoteConfig');
   dir := local.ReadString('config', 'local', UserFolder);
 
   result := FilePath([dir, 'fhir-server', 'fhir-server-config.cfg']);

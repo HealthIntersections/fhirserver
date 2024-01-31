@@ -215,7 +215,6 @@ begin
       FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
       i := i + 5;
     end;
-    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
     FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
     FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
     FMaintenanceThread.Start;
@@ -538,7 +537,7 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FI18n.link)
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FI18n.link)
   else if config['type'].value = 'tx-registry' then
     result := TTxRegistryServerEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'folder' then
@@ -550,14 +549,14 @@ begin
   else if config['type'].value = 'snomed' then
     result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'xig' then
-    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
   begin
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link);
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link);
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else
@@ -616,7 +615,8 @@ var
   cmd : String;
   svc : TFHIRServiceKernel;
   logMsg : String;
-begin
+begin           
+  SetThreadStatus('ExecuteFhirServer');
   // if we're running the test or gui, go do that
   if (params.has('tests') or params.has('-tests')) then
     RunTests(params, ini)
@@ -860,6 +860,8 @@ var
   fn : String;
   zc : String;
 begin
+  SetThreadName('kernel');
+  SetThreadStatus('ExecuteFhirServerInner');
   GStartTime := GetTickCount64;
 
   {$IFDEF WINDOWS}

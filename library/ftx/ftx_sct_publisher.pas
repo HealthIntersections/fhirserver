@@ -47,12 +47,17 @@ Type
 
   TConceptDisplayType = (cdDesc, cdConceptId, cdBoth);
 
+  { TSnomedPublisher }
+
   TSnomedPublisher = class (TFslObject)
   Private
+    FProgress: TStringList;
     FSnomed : TSnomedServices;
     Lock : TFslLock;
     FSearchCache : TStringList;
-    FFHIRPath : String;
+    FFHIRPath : String;       
+    FStart : UInt64;
+    procedure deadCheck;
     Function GetPaths(iIndex : Cardinal) : TArrayofIdArray;
     Function ConceptForDesc(iDesc : Cardinal; var iDescs : Cardinal):Cardinal;
     Procedure ConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; show : TConceptDisplayType; rRating : Double);
@@ -71,9 +76,12 @@ Type
 
     Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
+
+    procedure prog(marker : String);
   Public
-    constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
+    constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String; start : UInt64);
     destructor Destroy; Override;
+    property progress  : TStringList read FProgress;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishTerm(Const sTerm : String; html : THtmlPublisher); Overload; Virtual;
@@ -115,12 +123,14 @@ begin
     result := def;
 end;
 
-Procedure TSnomedPublisher.PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
+procedure TSnomedPublisher.PublishDictInternal(oMap: TFslStringMatch;
+  const sPrefix: String; html: THtmlPublisher);
 Var
   sURL : String;
   sId : String;
 Begin
   sURL := sPrefix +'?type=snomed&';
+  prog('start');
 
   sId := oMap.Matches['id'];
   If sId = '*' Then
@@ -136,7 +146,13 @@ Begin
     PublishHome(sURL, html)
 End;
 
-Procedure TSnomedPublisher.ProcessMap(Const sPath : String; oMap : TFslStringMatch);
+procedure TSnomedPublisher.prog(marker: String);
+begin
+  FProgress.add(marker+' '+inttostr(GetTickCount64 - FStart));
+end;
+
+procedure TSnomedPublisher.ProcessMap(const sPath: String; oMap: TFslStringMatch
+  );
 Var
   sLeft, sRight : String;
   sName, sValue : String;
@@ -155,7 +171,8 @@ Begin
 End;
 
 
-Procedure TSnomedPublisher.PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher);
+procedure TSnomedPublisher.PublishDict(const sPath, sPrefix: String;
+  html: THtmlPublisher);
 Var
   oMap : TFslStringMatch;
 Begin
@@ -200,98 +217,94 @@ Begin
 }
 
   html.Heading(1, 'Snomed-CT Definitions (e: '+FSnomed.EditionName+', v: '+FSnomed.VersionDate+')');
-  if Not FSnomed.Loaded Then
-  Begin
+  html.StartForm('GET', sPrefix);
+  html.StartParagraph;
+  html.AddTextPlain('Search: ');
+  html.textInput('srch');
+  html.submit('Go');
+  html.AddTextPlain(' ');
+  html.checkbox('all', false, 'Tight');
+  html.endForm;
+  prog('h1');
+
+  html.StartList;
+  html.StartListItem;
+  html.URL('Browse All Concepts', sPrefix+'id=*');
+  html.EndListItem;
+  html.EndList;
+
+  if Length(FSnomed.ActiveRoots) = 1 Then
+  begin
     html.StartParagraph;
-    html.AddText('Snomed Definitions are not loaded', true, false);
+    html.AddText('Snomed Root Concept', true, false);
     html.EndParagraph;
+    PublishConcept(true, true, sPrefix, inttostr(FSnomed.Activeroots[0]), 0, html)
   End
   Else
   Begin
-    html.StartForm('GET', sPrefix);
     html.StartParagraph;
-    html.AddTextPlain('Search: ');
-    html.textInput('srch');
-    html.submit('Go');
-    html.AddTextPlain(' ');
-    html.checkbox('all', false, 'Tight');
-    html.endForm;
-
-    html.StartList;
-    html.StartListItem;
-    html.URL('Browse All Concepts', sPrefix+'id=*');
-    html.EndListItem;
-    html.EndList;
-
-    if Length(FSnomed.ActiveRoots) = 1 Then
-    begin
-      html.StartParagraph;
-      html.AddText('Snomed Root Concept', true, false);
-      html.EndParagraph;
-      PublishConcept(true, true, sPrefix, inttostr(FSnomed.Activeroots[0]), 0, html)
-    End
-    Else
-    Begin
-      html.StartParagraph;
-      html.AddText('Snomed Root Concepts ('+inttostr(Length(FSnomed.ActiveRoots))+')', true, false);
-      html.EndParagraph;
-      html.StartList;
-      for i := 0 to min(Length(FSnomed.ActiveRoots) - 1, 1000) Do
-      Begin
-        html.StartListItem;
-        if FSnomed.Concept.FindConcept(FSnomed.ActiveRoots[i], iRef) Then
-          ConceptRef(html, sPrefix, iRef, cdBoth, 0);
-        html.EndListItem;
-      End;
-      html.EndList;
-    End;
-
-    html.Line;
-    html.StartParagraph;
-    html.AddText('Reference Sets', true, false);
+    html.AddText('Snomed Root Concepts ('+inttostr(Length(FSnomed.ActiveRoots))+')', true, false);
     html.EndParagraph;
-    SetLength(aRefs, FSnomed.RefSetIndex.Count);
-    for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
-      aRefs[i] := i;
-    SortRefsets(aRefs);
-    if FSnomed.RefSetIndex.Count = 0 Then
-    Begin
-      html.StartParagraph;
-      html.AddText('No Reference Sets defined', false, true);
-      html.EndParagraph;
-    End;
     html.StartList;
-    for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
+    for i := 0 to min(Length(FSnomed.ActiveRoots) - 1, 1000) Do
     Begin
       html.StartListItem;
-      RefsetRef(html, sPrefix, aRefs[i]);
+      if FSnomed.Concept.FindConcept(FSnomed.ActiveRoots[i], iRef) Then
+        ConceptRef(html, sPrefix, iRef, cdBoth, 0);
       html.EndListItem;
     End;
     html.EndList;
+  End;
+  deadCheck();
+  prog('h2');
 
-    html.Line;
-    Lock.Lock;
-    Try
-      if FSearchCache.Count <> 0 Then
-      Begin
-        html.AddParagraph('Past Searches:');
-        html.StartList(false);
-        For i := 0 to FSearchCache.Count - 1 Do
-        begin
-          html.StartListItem;
-          html.ParaURL('Search for "'+FSearchCache[i]+'"', sPrefix+'srch='+FSearchCache[i]+'&caption=Search Snomed Concepts&prompt=Text');
-          html.EndListItem;
-        end;
-        html.EndList(false);
-      End;
-    Finally
-      Lock.UnLock;
+  html.Line;
+  html.StartParagraph;
+  html.AddText('Reference Sets', true, false);
+  html.EndParagraph;
+  SetLength(aRefs, FSnomed.RefSetIndex.Count);
+  for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
+    aRefs[i] := i;
+  SortRefsets(aRefs);
+  if FSnomed.RefSetIndex.Count = 0 Then
+  Begin
+    html.StartParagraph;
+    html.AddText('No Reference Sets defined', false, true);
+    html.EndParagraph;
+  End;
+  prog('h3');
+  html.StartList;
+  for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
+  Begin
+    html.StartListItem;
+    RefsetRef(html, sPrefix, aRefs[i]);
+    html.EndListItem;
+  End;
+  html.EndList;
+  prog('h4');
+
+  html.Line;
+  Lock.Lock;
+  Try
+    if FSearchCache.Count <> 0 Then
+    Begin
+      html.AddParagraph('Past Searches:');
+      html.StartList(false);
+      For i := 0 to FSearchCache.Count - 1 Do
+      begin
+        html.StartListItem;
+        html.ParaURL('Search for "'+FSearchCache[i]+'"', sPrefix+'srch='+FSearchCache[i]+'&caption=Search Snomed Concepts&prompt=Text');
+        html.EndListItem;
+      end;
+      html.EndList(false);
     End;
+  Finally
+    Lock.UnLock;
   End;
   html.done;
 End;
 
-Procedure TSnomedPublisher.SortRefsets(var a : TCardinalArray);
+procedure TSnomedPublisher.SortRefsets(var a: TCardinalArray);
 
   Procedure QuickSort(L, R: Integer);
   Var
@@ -345,7 +358,7 @@ Begin
 End;
 
 
-Function TSnomedPublisher.GetPaths(iIndex : Cardinal): TArrayofIdArray;
+function TSnomedPublisher.GetPaths(iIndex: Cardinal): TArrayofIdArray;
 var
   iParentIndex : Cardinal;
   iParents : TCardinalArray;
@@ -389,7 +402,9 @@ Begin
     result := inttostr(iGroup);
 End;
 
-Procedure TSnomedPublisher.ConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; show : TConceptDisplayType; rRating : Double);
+procedure TSnomedPublisher.ConceptRef(html: THtmlPublisher;
+  const sPrefix: String; iIndex: cardinal; show: TConceptDisplayType;
+  rRating: Double);
 Begin
   if show = cdBoth Then
     html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(FSnomed.GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
@@ -401,7 +416,9 @@ Begin
     html.AddTextPlain(' '+inttostr(Trunc(rRating * 10)));
 End;
 
-Procedure TSnomedPublisher.CellConceptRef(html : THtmlPublisher; const sPrefix : String; iIndex : cardinal; show : TConceptDisplayType; iDesc : Cardinal = 0);
+procedure TSnomedPublisher.CellConceptRef(html: THtmlPublisher;
+  const sPrefix: String; iIndex: cardinal; show: TConceptDisplayType;
+  iDesc: Cardinal);
 var
   s : String;
 Begin
@@ -450,7 +467,9 @@ Begin
   Until not bSwap;
 End;
 
-procedure TSnomedPublisher.PublishPaths(html: THtmlPublisher; Const sPrefix : String; aPaths : TArrayofIdArray; iFocus : Cardinal; iIndent, iStart, iLow, iHigh : Integer);
+procedure TSnomedPublisher.PublishPaths(html: THtmlPublisher;
+  const sPrefix: String; aPaths: TArrayofIdArray; iFocus: Cardinal; iIndent,
+  iStart, iLow, iHigh: Integer);
 var
   iCommon, iLoop, i, j : Integer;
   iValue : Cardinal;
@@ -579,6 +598,7 @@ var
   ok : boolean;
   did : UInt64;
 Begin
+  prog('d1');
   SetLength(aMembers, 0);
   SetLength(iList, 0);
   SetLength(alLDesc, 0);
@@ -635,6 +655,7 @@ Begin
       ConceptRef(html, sPrefix, iDummy, cdDesc, 0);
     end;
     html.EndParagraph;
+    prog('d2');
 
     // todo: flags
     html.AddParagraph('Descriptions:');
@@ -696,6 +717,8 @@ Begin
     End;
     html.EndTable;
     html.Line;
+    deadCheck();
+    prog('d3');
 
     iRefSet := FSnomed.GetConceptRefSet(iIndex, true, iName, iMembers, itypes, iFields);
     allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
@@ -777,6 +800,8 @@ Begin
       html.EndTable;
       html.Line;
     End;
+    deadCheck();
+    prog('d4');
 
     if iRefset <> 0 Then
     Begin
@@ -827,7 +852,8 @@ Begin
         end;
         html.EndTableRow;
       End;
-      html.EndTable;
+      html.EndTable;  
+    prog('d5');
       if (iStart > 0) or (iStart+MAX_ROWS < High(aMembers)) Then
       Begin
         html.StartParagraph;
@@ -853,7 +879,8 @@ Begin
           html.URL('End', sPrefix+'id='+sId+'&start='+inttostr(MAX_ROWS * (High(aMembers) div MAX_ROWS)));
         End;
         html.EndParagraph;
-      End;
+      End;     
+    prog('d6');
     End
     Else
     Begin
@@ -887,7 +914,8 @@ Begin
           html.EndTableRow;
         End;
       End;
-      html.EndTable;
+      html.EndTable;    
+    prog('d7');
       if (iStart > 0) or (iStart+MAX_ROWS < High(Inbounds)) Then
       Begin
         html.StartParagraph;
@@ -914,7 +942,8 @@ Begin
         End;
         html.EndParagraph;
       End;
-    End;
+    End;        
+    prog('d8');
     if FSnomed.RefSetIndex.count > 0 Then
     Begin
       iList := FSnomed.GetConceptRefsets(iIndex);
@@ -932,7 +961,8 @@ Begin
         ConceptRef(html, sPrefix, iList[i].refset, cdDesc, 0);
         html.EndParagraph;
       End;
-    End;
+    End;    
+    prog('d9');
     if not bRoot then
     begin
       html.ParaURL('Back to Start', sPrefix);
@@ -1461,9 +1491,11 @@ begin
 end;
 *)
 
-constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : String);
+constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : String; start : UInt64);
 begin
   inherited Create;
+  FStart := start;
+  FProgress := TStringList.create;
   Lock := TFslLock.Create('SCT Publisher');
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
@@ -1480,6 +1512,7 @@ begin
   FSearchCache.free;
   Lock.free;
   FSnomed.free;
+  FProgress.free;
   inherited;
 end;
 
@@ -1495,6 +1528,7 @@ var
   iTotal : Integer;
   b2 : Boolean;
 begin
+  prog('c1');
   b2 := false;
 
   html.Heading(1, 'Concept List');
@@ -1508,6 +1542,7 @@ begin
   iTotal := FSnomed.Concept.Count;
   For i := iStart to Min(iStart+MAX_ROWS, iTotal) Do
   Begin
+    deadCheck();
     if not b2 And ((i - iStart) / Min(MAX_ROWS, iTotal) > 0.5) Then
     Begin
       html.EndList;
@@ -1524,6 +1559,7 @@ begin
   html.EndTableCell;
   html.EndTableRow;
   html.EndTable;
+  prog('c2');
   if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
   Begin
     html.StartParagraph;
@@ -1550,6 +1586,7 @@ begin
     End;
     html.EndParagraph;
   End;
+  prog('c3');
   html.ParaURL('Back to Start', sPrefix);
   html.Done;
 end;
@@ -1580,6 +1617,7 @@ begin
   Finally
     Lock.Unlock;
   End;
+  prog('f1');
 
   if iContext <> 0 then
     html.Heading(1, 'Search for '+sText+' in '+sContext)
@@ -1587,6 +1625,7 @@ begin
     html.Heading(1, 'Search for '+sText+' in all of Snomed');
 
   b2 := false;
+  deadCheck();
 
   html.StartTable(false, 'bare');
   html.StartTableRow;
@@ -1614,6 +1653,7 @@ begin
   html.EndTableCell;
   html.EndTableRow;
   html.EndTable;
+  prog('f2');
   if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
   Begin
     html.StartParagraph;
@@ -1641,6 +1681,7 @@ begin
     html.spacer;
     html.spacer;
     html.spacer;
+    prog('f3');
 
     if iContext = 0 then
       html.URL('Back to Context', sPrefix)
@@ -1705,6 +1746,7 @@ Begin
     FSN := FSnomed.GetFSN(Descriptions);
     PN := FSnomed.GetPN(Descriptions);
 
+    prog('e1');
     html.StartParagraph;
     html.AddText(sId, true, true);
     html.AddText(': '+screen(PN, ''), true, false);
@@ -1726,6 +1768,7 @@ Begin
     End;
     html.EndList(false);
     html.Line;
+    prog('e2');
 
     html.StartParagraph;
     html.AddText('Children', true, false);
@@ -1745,6 +1788,7 @@ Begin
       End;
     End;
     html.EndList(false);
+    prog('e3');
   End;
 End;
 
@@ -1803,6 +1847,11 @@ begin
   FSnomed.RefSetIndex.GetReferenceSet(iRefset, iDummy, iDummy, result, iDummy, iDummy, iDummy, iDummy);
 end;
 
+           
+procedure TSnomedPublisher.deadCheck;
+begin
+  // nothing
+end;
 
 End.
 
