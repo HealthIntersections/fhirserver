@@ -1620,9 +1620,9 @@ end;
 
 function TTerminologyServer.Summary: String;
 var
-  b  : TStringBuilder;
+  b  : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     getSummary(b);
     b.append('<li>Cached Expansions : '+inttostr(FExpansions.Count)+'</li>');

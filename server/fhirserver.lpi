@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -20,7 +21,6 @@
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="7"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="7">
       <Item1 Name="default" Default="True"/>
@@ -379,7 +379,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="98">
+    <Units Count="97">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -720,61 +720,57 @@
         <IsPartOfProject Value="True"/>
       </Unit83>
       <Unit84>
-        <Filename Value="remote_config.pas"/>
+        <Filename Value="telnet_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit84>
       <Unit85>
-        <Filename Value="telnet_server.pas"/>
+        <Filename Value="tx\tx_omop.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit85>
       <Unit86>
-        <Filename Value="tx\tx_omop.pas"/>
+        <Filename Value="package_spider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit86>
       <Unit87>
-        <Filename Value="package_spider.pas"/>
+        <Filename Value="tx_registry_spider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit87>
       <Unit88>
-        <Filename Value="tx_registry_spider.pas"/>
+        <Filename Value="tx_registry_model.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit88>
       <Unit89>
-        <Filename Value="tx_registry_model.pas"/>
+        <Filename Value="endpoint_txregistry.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit89>
       <Unit90>
-        <Filename Value="endpoint_txregistry.pas"/>
+        <Filename Value="endpoint_icao.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit90>
       <Unit91>
-        <Filename Value="endpoint_icao.pas"/>
+        <Filename Value="tx\tx_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit91>
       <Unit92>
-        <Filename Value="tx\tx_cpt.pas"/>
+        <Filename Value="tests\tests_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit92>
       <Unit93>
-        <Filename Value="tests\tests_cpt.pas"/>
+        <Filename Value="xig_provider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit93>
       <Unit94>
-        <Filename Value="xig_provider.pas"/>
+        <Filename Value="endpoint_xig.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit94>
       <Unit95>
-        <Filename Value="endpoint_xig.pas"/>
+        <Filename Value="web_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit95>
       <Unit96>
-        <Filename Value="web_server.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit96>
-      <Unit97>
         <Filename Value="zero_config.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit97>
+      </Unit96>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -989,7 +985,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>

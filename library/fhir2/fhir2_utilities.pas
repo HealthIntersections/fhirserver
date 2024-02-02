@@ -1897,10 +1897,10 @@ end;
 
 function TFHIROperationOutcomeHelper.asExceptionMessage: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   issue : TFhirOperationOutcomeIssue;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for issue in issueList do
     begin
@@ -2679,7 +2679,7 @@ end;
 
 function TFHIRBundleHelper.generatePresentation: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   procedure addNarrative(br : boolean; n : TFhirNarrative);
   begin
     if br then
@@ -2704,7 +2704,7 @@ begin
   if type_ = BundleTypeDocument then
   begin
     cmp := entryList[0].resource as TFhirComposition;
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       // header
       b.append(
@@ -3694,12 +3694,12 @@ end;
 
 function TFHIRStringListHelper.summary: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   f : boolean;
   v : TFHIRString;
 begin
   f := true;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for v in self do
     begin

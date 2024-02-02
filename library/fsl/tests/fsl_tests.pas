@@ -1610,11 +1610,11 @@ end;
 function XpathForPath(path : string):string;
 var
   p : TArray<String>;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
   p := path.Split(['.']);
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for s in p do
     begin

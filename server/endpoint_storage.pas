@@ -2440,12 +2440,12 @@ function TStorageWebEndpoint.getReferencesByType(t: String): String;
 var
   bundle : TFHIRBundleW;
   entry : TFhirBundleEntryW;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
   bundle := nil;
 
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for s in t.trim.Split(['|']) do
     begin

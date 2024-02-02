@@ -67,14 +67,14 @@ uses
 function summary(types : TArray<String>) : String;
 var
   s : String;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   f : boolean;
 begin
   if Length(types) = 0 then
     exit('?? unknown');
 
   f := true;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for s in types do
     begin

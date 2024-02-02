@@ -201,7 +201,7 @@ end;
 
 function TFHIRCodeGenerator.enumify(code: String): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ch : char;
   ws : boolean;
 begin
@@ -211,7 +211,7 @@ begin
     result := 'Plus'
   else
   begin
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       result := code.replace('-', ' ').replace('+', ' ');
       ws := true;
@@ -306,11 +306,11 @@ end;
 
 function TFHIRCodeGeneratorJavaRI.generate: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
   processResource;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     imports.Sort;
     for s in imports do
@@ -590,12 +590,12 @@ end;
 
 function TFHIRCodeGeneratorPascal.generate: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   s, l, r : String;
 begin
   processResource;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('// uses ');
     first := true;

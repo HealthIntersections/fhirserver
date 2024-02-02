@@ -1144,11 +1144,11 @@ procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSes
 var
   variables : TFslMap<TFHIRObject>;
   conn : TFDBConnection;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   user : TSCIMUser;
   i : integer;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     conn := db.GetConnection('scim.user.search');
     try

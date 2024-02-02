@@ -2071,10 +2071,10 @@ end;
 
 function TFHIROperationOutcomeHelper.asExceptionMessage: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   issue : TFhirOperationOutcomeIssue;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for issue in issueList do
     begin
@@ -3065,9 +3065,9 @@ end;
 
 function patSummary(pat : TFHIRPatient) : string;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append(HumanNamesAsText(pat.nameList));
     b.Append(' ');
@@ -3082,9 +3082,9 @@ end;
 
 function groupSummary(grp : TFHIRGroup) : string;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append(grp.name);
     if (grp.code <> nil) then
@@ -3171,7 +3171,7 @@ end;
 
 function TFHIRBundleHelper.generatePresentation: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   procedure addNarrative(br : boolean; n : TFhirNarrative);
   begin
     if br then
@@ -3196,7 +3196,7 @@ begin
   if type_ = BundleTypeDocument then
   begin
     cmp := entryList[0].resource as TFhirComposition;
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       // header
       b.append(
@@ -4311,12 +4311,12 @@ end;
 
 function TFHIRStringListHelper.summary: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   f : boolean;
   v : TFHIRString;
 begin
   f := true;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for v in self do
     begin
@@ -5822,11 +5822,11 @@ end;
 
 function makeFileName(s : String) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ws : boolean;
   ch : char;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     ws := true;
     for ch in s do

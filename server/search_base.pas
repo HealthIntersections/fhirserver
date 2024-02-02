@@ -61,7 +61,7 @@ Type
     procedure checkOrderingPrefix;
     procedure processPrefix;
 
-    procedure build(b : TStringBuilder);
+    procedure build(b : TFslStringBuilder);
   public
     destructor Destroy; override;
     function link : TSearchParameter; overload;
@@ -103,7 +103,7 @@ implementation
 
 { TSearchParameter }
 
-procedure TSearchParameter.build(b: TStringBuilder);
+procedure TSearchParameter.build(b: TFslStringBuilder);
 begin
   if (FControl <> scpNull) then
     b.append(CODES_TFHIRSearchControlParameter[FControl])
@@ -247,10 +247,10 @@ end;
 
 function TSearchParser.buildUrl(base : String; search: TFslList<TSearchParameter>): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   sp : TSearchParameter;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append(base);
     b.append('?');

@@ -462,10 +462,10 @@ end;
 
 function TNodeStack.addToLiteralPath(path: Array of String): String;
 var
-  b: TStringBuilder;
+  b: TFslStringBuilder;
   p: String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append(literalPath);
     for p in path do

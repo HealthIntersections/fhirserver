@@ -129,7 +129,7 @@ Type
     procedure SetUnii(const Value: TUniiServices);
     procedure SetACIR(const Value: TACIRServices);
 
-    procedure getSummary(b : TStringBuilder);
+    procedure getSummary(b : TFslStringBuilder);
 
     procedure SetNDFRT(const Value: TNDFRTServices);
     procedure SetXIG(AValue: TXIGProvider);
@@ -250,7 +250,7 @@ Type
     FLock : TFslLock;  // it would be possible to use a read/write lock, but the complexity doesn't seem to be justified by the short amount of time in the lock anyway
     FDB : TFDBManager;
     procedure invalidateVS(id : String); virtual;
-    procedure getSummary(b : TStringBuilder);
+    procedure getSummary(b : TFslStringBuilder);
   public
     constructor Create(db : TFDBManager; factory : TFHIRFactory; common : TCommonTerminologies; i18n : TI18nSupport); virtual;
     destructor Destroy; Override;
@@ -1249,7 +1249,7 @@ begin
   result := FCommonTerminologies.ProviderClasses;
 end;
 
-procedure TTerminologyServerStore.getSummary(b: TStringBuilder);
+procedure TTerminologyServerStore.getSummary(b: TFslStringBuilder);
 begin
   FCommonTerminologies.getSummary(b);
 
@@ -1683,7 +1683,7 @@ begin
     rec.SnomedsLoaded := rec.SnomedsLoaded + 1;
 end;
 
-procedure TCommonTerminologies.getSummary(b: TStringBuilder);
+procedure TCommonTerminologies.getSummary(b: TFslStringBuilder);
 var
   sn : TSnomedServices;
   sp : TSnomedProvider;

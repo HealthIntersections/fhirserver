@@ -512,7 +512,7 @@ end;
 
 function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   card : TCDSHookCard;
   md : TMarkdownProcessor;
   s : String;
@@ -520,7 +520,7 @@ var
   first : boolean;
   cnt : boolean;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append(CARDS_HTML_HEAD);
     cnt := false;
