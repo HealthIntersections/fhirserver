@@ -423,6 +423,9 @@ type
     procedure setVersion(Value: String); override;
   public
     destructor Destroy; override;
+    function renderText : String; override;
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
+
   end;
 
 { TFhirSystemCoding }
@@ -430,6 +433,11 @@ type
 function TFhirSystemCoding.tuple: TFHIRSystemTuple;
 begin
   result := Element as TFhirSystemTuple;
+end;
+
+function TFhirSystemCoding.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  raise EFSLException.Create('Not Implemented Yet');
 end;
 
 function TFhirSystemCoding.getCode: String;
@@ -462,6 +470,11 @@ begin
     result := ''
   else
     result := (tuple.Fields['version'] as TFHIRObject).ToString;
+end;
+
+function TFhirSystemCoding.renderText: String;
+begin
+  result := systemUri+'#'+code;
 end;
 
 procedure TFhirSystemCoding.setCode(Value: String);

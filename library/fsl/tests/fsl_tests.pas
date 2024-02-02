@@ -1,4 +1,4 @@
-unit fsl_tests;
+﻿unit fsl_tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,7 +34,7 @@ interface
 
 Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
-  zlib, zstream,
+  zlib, {$IFDEF FPC} zstream, {$ENDIF}
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} fsl_testing,
   IdGlobalProtocols,
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions, fsl_gzip,

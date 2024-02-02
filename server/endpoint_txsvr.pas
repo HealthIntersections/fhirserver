@@ -674,7 +674,7 @@ var
   be : TFhirBundleEntryW;
   p : TFHIRResourceProxyV;
   useProxy : boolean;
-  start : QWord;
+  start : UInt64;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
@@ -861,7 +861,7 @@ var
   s : String;
   i : integer;
   tt : TTimeTracker;
-  start : QWord;
+  start : UInt64;
 begin
   start := GetTickCount64;
 

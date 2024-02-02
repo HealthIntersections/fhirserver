@@ -587,11 +587,6 @@ function TLogging.MemoryStatus(full : boolean) : String;
 // memory status has 2 parts: internal and OS
 var
   os : UInt64;
-  {$IFDEF WINDOWS}
-  hs : THeapStatus;
-  ms : TMemoryManagerState;
-  us : TMemoryManagerUsageSummary;
-  {$ENDIF}
 begin
   if full then
   begin
@@ -603,32 +598,6 @@ begin
   end
   else
     result := DescribeSize(Logging.InternalMem, 0);
-  {$IFDEF WINDOWS}
-  hs := FastGetHeapStatus;
-  GetMemoryManagerState(ms);
-  us := GetMemoryManagerUsageSummary;
-
-  result := result +' ('++')';
-  THeapStatus = record
-    TotalAddrSpace: Cardinal;
-    TotalUncommitted: Cardinal;
-    TotalCommitted: Cardinal;
-    TotalAllocated: Cardinal;
-    TotalFree: Cardinal;
-    FreeSmall: Cardinal;
-    FreeBig: Cardinal;
-    Unused: Cardinal;
-    Overhead: Cardinal;
-    HeapErrorCode: Cardinal;
-  end;
-
-  function : THeapStatus;
-  {Returns statistics about the current state of the memory manager}
-  procedure GetMemoryManagerState(var AMemoryManagerState: TMemoryManagerState);
-  {Returns a summary of the information returned by GetMemoryManagerState}
-  function GetMemoryManagerUsageSummary: TMemoryManagerUsageSummary; overload;
-  procedure GetMemoryManagerUsageSummary(var AMemoryManagerUsageSummary: TMemoryManagerUsageSummary); overload;
-  {$ENDIF}
 end;
 
 procedure TLogging.checkDay;

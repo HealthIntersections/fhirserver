@@ -875,7 +875,7 @@ end;
 
 function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('not safe');
+  raise ETerminologyError.Create('not safe', itInvalid);
 //  result := nil;
 end;
 

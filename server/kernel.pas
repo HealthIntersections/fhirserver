@@ -551,7 +551,7 @@ begin
   else if config['type'].value = 'bridge' then
     result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'xig' then
-    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
+    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, {connectToDatabase(config, false), }Terminologies.link, {FPcm.link, }FI18n.link)
   else if config['type'].value = 'terminology' then
     result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
@@ -973,7 +973,7 @@ begin
 end;
 {$ELSE}
 begin
-  ExecuteFhirServerInner;
+  ExecuteFhirServerInner(params);
 end;
 {$ENDIF}
 

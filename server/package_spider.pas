@@ -617,7 +617,11 @@ var
 begin
   hash := TIdHashSHA1.Create;
   try
+    {$IFDEF DELPHI}
+    raise EFslException.Create('Not Implemented Yet');
+    {$ELSE}
     result := hash.HashBytesAsHex(bytes);
+    {$ENDIF}
   finally
     hash.free;
   end;

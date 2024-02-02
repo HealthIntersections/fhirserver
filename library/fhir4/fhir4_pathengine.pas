@@ -3649,7 +3649,7 @@ function TFHIRPathEngine.funcSplit(context: TFHIRPathExecutionContext; focus: TF
 var
   nl : TFHIRSelectionList;
   param, s : String;
-  p : TStringArray;
+  p : TArray<String>;
 begin
   nl := execute(context, focus, exp.Parameters[0], true);
   try

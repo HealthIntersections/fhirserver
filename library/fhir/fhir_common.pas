@@ -884,8 +884,8 @@ type
 
     procedure addDesignation(lang, use, value : String); overload; virtual; abstract;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); overload; virtual; abstract;
-    procedure addProperty(code : String; value : TFHIRObject); virtual; abstract; overload;
-    procedure addProperty(code : String; value : TFhirCodeSystemConceptPropertyW); virtual; abstract; overload;
+    procedure addProperty(code : String; value : TFHIRObject); overload; virtual; abstract;
+    procedure addProperty(code : String; value : TFhirCodeSystemConceptPropertyW); overload; virtual; abstract;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); virtual; abstract;
     procedure clearContains(); virtual; abstract;
     function contains : TFslList<TFhirValueSetExpansionContainsW>; virtual; abstract;

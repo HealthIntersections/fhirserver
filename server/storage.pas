@@ -237,7 +237,7 @@ type
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
-    procedure deadCheck(start : QWord);
+    procedure deadCheck(start : UInt64);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
@@ -709,9 +709,9 @@ begin
   end;
 end;
 
-procedure TFHIROperationEngine.deadCheck(start : QWord);
+procedure TFHIROperationEngine.deadCheck(start : UInt64);
 var
-  now : QWord;
+  now : UInt64;
   delta : UInt64;
 begin
   now := GetTickCount64;

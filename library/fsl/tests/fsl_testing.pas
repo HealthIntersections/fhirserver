@@ -293,7 +293,7 @@ begin
   if length(left) <> length(right) then
       raise EFslException.create('Byte Arrays differ in length: '+inttostr(length(left))+'/'+inttostr(length(right)));
   {$ELSE}
-  todo
+  raise EFslException.Create('Not Implemented Yet');
   {$ENDIF}
 end;
 
@@ -308,7 +308,7 @@ begin
   if length(left) <> length(right) then
       raise EFslException.create('Byte Arrays differ in length: '+inttostr(length(left))+'/'+inttostr(length(right)));
   {$ELSE}
-  todo
+  raise EFslException.Create('Not Implemented Yet');
   {$ENDIF}
 end;
 
