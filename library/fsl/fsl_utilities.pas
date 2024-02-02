@@ -16692,11 +16692,11 @@ begin
     #$2C6C : result := 'z';
     #$A763 : result := 'z';
 
-    #$0439 : result := UnicodeToUTF8($0438);
+    #$0439 : result := {$IFDEF FPC}UnicodeToUTF8{$ELSE}Chr{$ENDIF}($0438);
   else if ch < #$FE then
     result := ch
   else
-    result := UnicodeToUTF8(v);
+    result := {$IFDEF FPC}UnicodeToUTF8{$ELSE}Chr{$ENDIF}(v);
   end;
 end;
 

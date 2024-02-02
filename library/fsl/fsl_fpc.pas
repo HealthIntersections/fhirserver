@@ -39,12 +39,12 @@ uses
   {$IFDEF LINUX}
   baseunix, unix,
   {$ENDIF}
-  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, ZStream, Types
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, Types
   {$IFDEF FPC},
   {$IFDEF OSX}
   MacOSAll, CFBase, CFString,
   {$ENDIF}
-  dateutils{$ENDIF};
+  ZStream, dateutils{$ENDIF};
 
 type
   {$IFDEF FPC}
