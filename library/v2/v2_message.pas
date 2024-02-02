@@ -233,14 +233,14 @@ type
     FComponentDelimiter: AnsiChar;
 
     procedure init;
-    function escape(b : TStringBuilder; src : String) : AnsiString;
-    procedure composeBinary(b : TStringBuilder; cnt : TV2Content);
-    procedure composeEscape(b : TStringBuilder; cnt : TV2Content);
-    procedure composeContent(b : TStringBuilder; cnt : TV2Content);
-    procedure composeCell(b : TStringBuilder; cell : TV2Cell; ch : AnsiChar);
-    procedure composeField(b : TStringBuilder; fld : TV2Field);
-    procedure composeSegment(b : TStringBuilder; seg : TV2Segment);
-    procedure composeMessage(b : TStringBuilder; msg : TV2Message);
+    function escape(b : TFslStringBuilder; src : String) : AnsiString;
+    procedure composeBinary(b : TFslStringBuilder; cnt : TV2Content);
+    procedure composeEscape(b : TFslStringBuilder; cnt : TV2Content);
+    procedure composeContent(b : TFslStringBuilder; cnt : TV2Content);
+    procedure composeCell(b : TFslStringBuilder; cell : TV2Cell; ch : AnsiChar);
+    procedure composeField(b : TFslStringBuilder; fld : TV2Field);
+    procedure composeSegment(b : TFslStringBuilder; seg : TV2Segment);
+    procedure composeMessage(b : TFslStringBuilder; msg : TV2Message);
   public
     class function composeString(msg : TV2Message; options : TV2ComposerOptions = []) : String; overload;
     class function composeBytes(msg : TV2Message; options : TV2ComposerOptions = []) : TBytes; overload;
@@ -1255,7 +1255,7 @@ end;
 
 Procedure TV2Parser.parseContent(cell : TV2Cell; Const cnt : String; bNoEscape : Boolean);
 var
-  buf : TStringBuilder;
+  buf : TFslStringBuilder;
   iCursor : Integer;
   Procedure Commit();
   Begin
@@ -1278,7 +1278,7 @@ Begin
   End
   Else
   Begin
-    buf := TStringBuilder.Create;
+    buf := TFslStringBuilder.Create;
     try
       iCursor := 1;
       While (iCursor <= Length(cnt)) Do
@@ -1468,13 +1468,13 @@ end;
 class function TV2Composer.composeString(obj: TV2Object; options: TV2ComposerOptions): String;
 var
   this : TV2Composer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   this := TV2Composer.Create;
   try
     this.FOptions := options;
     this.init;
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       if obj is TV2Message then
         this.composeMessage(b, obj as TV2Message)
@@ -1495,7 +1495,7 @@ begin
   end;
 end;
 
-procedure TV2Composer.composeCell(b: TStringBuilder; cell: TV2Cell; ch: AnsiChar);
+procedure TV2Composer.composeCell(b: TFslStringBuilder; cell: TV2Cell; ch: AnsiChar);
 var
   first : boolean;
   comp : TV2Cell;
@@ -1527,7 +1527,7 @@ begin
   end;
 end;
 
-procedure TV2Composer.composeContent(b: TStringBuilder; cnt: TV2Content);
+procedure TV2Composer.composeContent(b: TFslStringBuilder; cnt: TV2Content);
 begin
   case cnt.kind of
     ckString: b.Append(cnt.FValue);
@@ -1537,7 +1537,7 @@ begin
   end;
 end;
 
-procedure TV2Composer.composeField(b: TStringBuilder; fld: TV2Field);
+procedure TV2Composer.composeField(b: TFslStringBuilder; fld: TV2Field);
 var
   first : boolean;
   cell : TV2Cell;
@@ -1553,7 +1553,7 @@ begin
   end;
 end;
 
-procedure TV2Composer.composeMessage(b: TStringBuilder; msg: TV2Message);
+procedure TV2Composer.composeMessage(b: TFslStringBuilder; msg: TV2Message);
 var
   seg : TV2Segment;
 begin
@@ -1561,7 +1561,7 @@ begin
     composeSegment(b, seg);
 end;
 
-procedure TV2Composer.composeSegment(b: TStringBuilder; seg: TV2Segment);
+procedure TV2Composer.composeSegment(b: TFslStringBuilder; seg: TV2Segment);
 var
   iLoop : integer;
   iStart : Integer;
@@ -1594,13 +1594,13 @@ end;
 class function TV2Composer.composeString(msg: TV2Message; options: TV2ComposerOptions): String;
 var
   this : TV2Composer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   this := TV2Composer.Create;
   try
     this.FOptions := options;
     this.init;
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       this.composeMessage(b, msg);
       result := b.ToString;
@@ -1612,7 +1612,7 @@ begin
   end;
 end;
 
-function TV2Composer.escape(b: TStringBuilder; src: String): AnsiString;
+function TV2Composer.escape(b: TFslStringBuilder; src: String): AnsiString;
 var
   ch : char;
 begin
@@ -1645,14 +1645,14 @@ begin
   end;
 end;
 
-procedure TV2Composer.composeEscape(b: TStringBuilder; cnt: TV2Content);
+procedure TV2Composer.composeEscape(b: TFslStringBuilder; cnt: TV2Content);
 begin
   b.Append(FEscapeCharacter);
   b.Append(cnt.value);
   b.Append(FEscapeCharacter);
 end;
 
-procedure TV2Composer.composeBinary(b: TStringBuilder; cnt: TV2Content);
+procedure TV2Composer.composeBinary(b: TFslStringBuilder; cnt: TV2Content);
 begin
   b.Append(FEscapeCharacter);
   b.Append('X');

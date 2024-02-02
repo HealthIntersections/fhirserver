@@ -505,12 +505,12 @@ end;
 
 class function TFHIRPathLexer.processConstant(s: String) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
   ch : char;
   u : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     i := 2;
     while i < length(s) do
@@ -1059,9 +1059,9 @@ end;
 
 function TFHIRPathLexer.takeDottedToken() : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append(take());
     while not done() and (FCurrent = '.') do

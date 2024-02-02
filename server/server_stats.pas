@@ -233,11 +233,11 @@ end;
 
 function TStatusRecords.asCSV: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
   s, n: String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     s := 'Minutes'+#9+'Date/Time'+#9+'Memory'+#9+'Threads'+#9+
          'Request Count'+#9+'Total Requests'+#9+
@@ -258,11 +258,11 @@ end;
 
 function TStatusRecords.asCSVLine: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
   s, n : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     s := 'Minutes'+#9+'Date/Time'+#9+'Memory'+#9+'Threads'+#9+
          'Request Count'+#9+'Total Requests'+#9+
@@ -284,11 +284,11 @@ end;
 
 function TStatusRecords.asHtml: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
   s, n : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append('<table>'+#13#10);
     s := '<tr><td>Minutes</td><td>Date/Time</td><td>Memory</td><td>Threads</td><td>'+

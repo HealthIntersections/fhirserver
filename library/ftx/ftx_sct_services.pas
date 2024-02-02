@@ -555,13 +555,13 @@ operations
     procedure checkExpr(concept : TSnomedConcept); overload;
     procedure checkExpr(refinement : TSnomedRefinement); overload;
 
-    procedure renderExpr(b : TStringBuilder; expr : TSnomedExpression; option : TSnomedServicesRenderOption); overload;
-    procedure renderExpr(b : TStringBuilder; expr : TSnomedConcept; option : TSnomedServicesRenderOption); overload;
-    procedure renderExpr(b : TStringBuilder; expr : TSnomedRefinement; option : TSnomedServicesRenderOption); overload;
+    procedure renderExpr(b : TFslStringBuilder; expr : TSnomedExpression; option : TSnomedServicesRenderOption); overload;
+    procedure renderExpr(b : TFslStringBuilder; expr : TSnomedConcept; option : TSnomedServicesRenderOption); overload;
+    procedure renderExpr(b : TFslStringBuilder; expr : TSnomedRefinement; option : TSnomedServicesRenderOption); overload;
 
-    procedure displayExpr(b : TStringBuilder; expr : TSnomedExpression); overload;
-    procedure displayExpr(b : TStringBuilder; expr : TSnomedConcept); overload;
-    procedure displayExpr(b : TStringBuilder; expr : TSnomedRefinement); overload;
+    procedure displayExpr(b : TFslStringBuilder; expr : TSnomedExpression); overload;
+    procedure displayExpr(b : TFslStringBuilder; expr : TSnomedConcept); overload;
+    procedure displayExpr(b : TFslStringBuilder; expr : TSnomedRefinement); overload;
 
 //    function findRefinement(ref: cardinal; b : TSnomedExpression): TSnomedExpression;
 //    procedure findRefinements(exp: TSnomedExpression; relationship, focus: Cardinal);
@@ -3733,9 +3733,9 @@ end;
 
 //function TSnomedServices.debugExpr(expr: TSnomedConcept): String;
 //var
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 //begin
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    renderExpr(b, expr, sroFillMissing);
 //    result := b.ToString;
@@ -3746,9 +3746,9 @@ end;
 //
 //function TSnomedServices.debugExpr(expr: TSnomedRefinement): String;
 //var
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 //begin
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    renderExpr(b, expr, sroFillMissing);
 //    result := b.ToString;
@@ -3812,11 +3812,11 @@ end;
 
 function debugArr(arr : TArray<Cardinal>) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : cardinal;
   f : boolean;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     f := true;
     for c in arr do
@@ -4003,11 +4003,11 @@ end;
 
 function TSnomedServices.normalise(s: String): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ws : boolean;
   ch : char;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     ws := false;
     for ch in s do
@@ -4318,9 +4318,9 @@ end;
 
 function TSnomedServices.renderExpression(source : TSnomedExpression; option : TSnomedServicesRenderOption): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     RenderExpr(b, source, option);
     result := b.ToString;
@@ -4329,7 +4329,7 @@ begin
   end;
 end;
 
-procedure TSnomedServices.renderExpr(b: TStringBuilder; expr: TSnomedExpression; option : TSnomedServicesRenderOption);
+procedure TSnomedServices.renderExpr(b: TFslStringBuilder; expr: TSnomedExpression; option : TSnomedServicesRenderOption);
 var
   i, j : integer;
 begin
@@ -4369,9 +4369,9 @@ end;
 
 //function TSnomedServices.debugExpr(expr: TSnomedExpression) : String;
 //var
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 //begin
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    renderExpr(b, expr, sroFillMissing);
 //    result := b.ToString;
@@ -4381,7 +4381,7 @@ end;
 //end;
 
 
-procedure TSnomedServices.renderExpr(b: TStringBuilder; expr: TSnomedConcept;
+procedure TSnomedServices.renderExpr(b: TFslStringBuilder; expr: TSnomedConcept;
   option: TSnomedServicesRenderOption);
 var
   s : String;
@@ -4419,7 +4419,7 @@ begin
 end;
 
 
-procedure TSnomedServices.renderExpr(b: TStringBuilder;
+procedure TSnomedServices.renderExpr(b: TFslStringBuilder;
   expr: TSnomedRefinement; option: TSnomedServicesRenderOption);
 begin
   renderExpr(b, expr.name, option);
@@ -4430,9 +4430,9 @@ end;
 
 function TSnomedServices.displayExpression(source: TSnomedExpression): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     DisplayExpr(b, source);
     result := b.ToString;
@@ -4441,7 +4441,7 @@ begin
   end;
 end;
 
-procedure TSnomedServices.displayExpr(b: TStringBuilder; expr: TSnomedExpression
+procedure TSnomedServices.displayExpr(b: TFslStringBuilder; expr: TSnomedExpression
   );
 var
   i, j : integer;
@@ -4493,7 +4493,7 @@ begin
     end;
 end;
 
-procedure TSnomedServices.displayExpr(b: TStringBuilder; expr: TSnomedConcept);
+procedure TSnomedServices.displayExpr(b: TFslStringBuilder; expr: TSnomedConcept);
 var
   s : String;
 begin
@@ -4504,7 +4504,7 @@ begin
 end;
 
 
-procedure TSnomedServices.displayExpr(b: TStringBuilder; expr: TSnomedRefinement
+procedure TSnomedServices.displayExpr(b: TFslStringBuilder; expr: TSnomedRefinement
   );
 begin
   DisplayExpr(b, expr.name);
@@ -4780,7 +4780,7 @@ end;
 
 procedure TSnomedProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   Identity : UInt64;
   Flags, bLang: Byte;
   Active, Defining : boolean;
@@ -4798,7 +4798,7 @@ var
   first : boolean;
   did : UInt64;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     SetLength(inbounds, 0);
     iId := StrToUInt64Def(code, 0);

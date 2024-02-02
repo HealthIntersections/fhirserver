@@ -157,9 +157,9 @@ Type
     function resolveType(type_ : String; list : TFhirElementDefinitionTypeList) : TFhirElementDefinition; overload; virtual;
     function sliceMatches(hostContext : TFhirValidatorHostContext; element : TFhirMMElement; path : String; slicer : TFhirElementDefinition; ed : TFhirElementDefinition; profile : TFhirStructureDefinition; errors : TFslList<TFhirValidationMessage>; stack : TNodeStack) : boolean; overload; virtual;
     function evaluateSlicingExpression(hostContext : TFhirValidatorHostContext; element : TFhirMMElement; path : String; profile : TFhirStructureDefinition; expression : TFHIRPathExpressionNode) : boolean; overload; virtual;
-    procedure buildPattternExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition); overload; virtual;
-    procedure buildCodeableConceptExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; cc : TFhirCodeableConcept); overload; virtual;
-    procedure buildFixedExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition); overload; virtual;
+    procedure buildPattternExpression(ed : TFhirElementDefinition; expression : TFslStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition); overload; virtual;
+    procedure buildCodeableConceptExpression(ed : TFhirElementDefinition; expression : TFslStringBuilder; discriminator : String; cc : TFhirCodeableConcept); overload; virtual;
+    procedure buildFixedExpression(ed : TFhirElementDefinition; expression : TFslStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition); overload; virtual;
     procedure start(hostContext : TFhirValidatorHostContext; errors : TFslList<TFhirValidationMessage>; resource : TFhirMMElement; element : TFhirMMElement; defn : TFhirStructureDefinition; stack : TNodeStack); overload; virtual;
     procedure validateCodeSystem(errors : TFslList<TFhirValidationMessage>; cs : TFhirMMElement; stack : TNodeStack); overload; virtual;
     procedure validateQuestionannaireResponse(errors : TFslList<TFhirValidationMessage>; element : TFhirMMElement; stack : TNodeStack); overload; virtual;
@@ -685,10 +685,10 @@ end;
 
 function TInstanceValidator.ccSummary(cc : TFhirCodeableConcept) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : TFhirCoding;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     for c in cc.codingList do
     begin
@@ -1411,7 +1411,7 @@ var
   target : TFhirCanonical;
   sd : TFhirStructureDefinition;
   ok : boolean;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   type_ : TFhirElementDefinitionType;
   u : TFhirUri;
   pr : String;
@@ -1491,7 +1491,7 @@ begin
       if (warning(errors, itSTRUCTURE, element.LocationStart.line, element.LocationStart.col, path, ft <> '', 'Unable to determine type_ of target resource')) then
       begin
         ok := false;
-        b := TStringBuilder.Create();
+        b := TFslStringBuilder.Create();
         for type_ in container.type_List do
         begin
           if (not ok) and (type_.code = 'Reference') then
@@ -1682,10 +1682,10 @@ end;
 
 function TInstanceValidator.describeTypes(types : TFhirElementDefinitionTypeList) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   t : TFhirElementDefinitionType;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     for t in types do
       b.append(','+t.code);
@@ -2217,7 +2217,7 @@ function TInstanceValidator.resolve(uri : String; ref : String) : String;
 var
   up : TArray<String>;
   rp : TArray<String>;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
 begin
   if (uri = '') then
@@ -2227,7 +2227,7 @@ begin
   rp :=  ref.split(['/']);
   if (context.getResourceNames().contains(up[length(up) - 2])) and (context.getResourceNames().contains(rp[0])) then
   begin
-    b := TStringBuilder.Create();
+    b := TFslStringBuilder.Create();
     try
       for i := 0 to length(up) - 3 do
       begin
@@ -2370,7 +2370,7 @@ function TInstanceValidator.sliceMatches(hostContext : TFhirValidatorHostContext
 var
   n : TFhirPathExpressionNode;
   t : cardinal;
-  expression : TStringBuilder;
+  expression : TFslStringBuilder;
   s : TFhirElementDefinitionSlicingDiscriminator;
   discriminator : String;
   criteriaElement : TFhirElementDefinition;
@@ -2387,7 +2387,7 @@ begin
   if (n = nil) then
   begin
     t := getTickCount;
-    expression := TStringBuilder.Create('true');
+    expression := TFslStringBuilder.Create('true');
     for s in slicer.slicing.discriminatorList do
     begin
       discriminator := s.path;
@@ -2480,7 +2480,7 @@ begin
   result := ok;
 end;
 
-procedure TInstanceValidator.buildPattternExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition);
+procedure TInstanceValidator.buildPattternExpression(ed : TFhirElementDefinition; expression : TFslStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition);
 var
   pattern : TFhirType;
   cc : TFhirCodeableConcept;
@@ -2495,7 +2495,7 @@ begin
     raise EDefinitionException.Create('Unsupported fixed pattern type_ for discriminator(' + discriminator + ') for slice ' + ed.id + ': ' + pattern.fhirType);
 end;
 
-procedure TInstanceValidator.buildCodeableConceptExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; cc : TFhirCodeableConcept);
+procedure TInstanceValidator.buildCodeableConceptExpression(ed : TFhirElementDefinition; expression : TFslStringBuilder; discriminator : String; cc : TFhirCodeableConcept);
 var
   c : TFhirCoding;
   first : boolean;
@@ -2535,7 +2535,7 @@ begin
   expression.append(').exists()');
 end;
 
-procedure TInstanceValidator.buildFixedExpression(ed : TFhirElementDefinition; expression : TStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition);
+procedure TInstanceValidator.buildFixedExpression(ed : TFhirElementDefinition; expression : TFslStringBuilder; discriminator : String; criteriaElement : TFhirElementDefinition);
 var
   fixed : TFhirType;
   cc : TFhirCodeableConcept;

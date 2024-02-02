@@ -34,7 +34,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, Contnrs, fsl_fpc;
+  Classes, SysUtils, Contnrs, fsl_fpc, fsl_utilities;
 
 const
   LRE = #$202a;
@@ -147,14 +147,18 @@ end;
 
 class function TUnicodeUtilities.replaceBiDiChars(src: String): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : UnicodeChar;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for c in unicodeChars(src) do
       if inSet(c, ALL_BIDI_CHARS) then
-        b.append('|'+describe(c)+'|')
+      begin
+        b.append('|');
+        b.append(describe(c));
+        b.append('|')
+      end
       else
         b.append(TEncoding.UTF8.getString(TEncoding.UTF8.GetBytes(c)));
     result := b.toString();

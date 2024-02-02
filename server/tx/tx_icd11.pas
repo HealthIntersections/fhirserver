@@ -75,7 +75,7 @@ type
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
-    function locate(code : String) : TCodeSystemProviderContext; overload; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
@@ -104,9 +104,6 @@ type
     function SpecialEnumeration : String; override;
     procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
-    procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
@@ -124,21 +121,6 @@ destructor TICD11Provider.Destroy;
 begin
 
   inherited;
-end;
-
-procedure TICD11Provider.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TICD11Provider.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TICD11Provider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  ctxt.free;
 end;
 
 function TICD11Provider.Code(context: TCodeSystemProviderContext): string;
@@ -209,6 +191,11 @@ begin
   result := false;
 end;
 
+function TICD11Provider.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := 0;
+end;
+
 procedure TICD11Provider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
 end;
@@ -268,7 +255,7 @@ begin
   result := TICD11Provider(inherited Link);
 end;
 
-function TICD11Provider.locate(code: String): TCodeSystemProviderContext;
+function TICD11Provider.locate(code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;
 begin
   result := nil;
 end;

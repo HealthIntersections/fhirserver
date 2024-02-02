@@ -427,7 +427,7 @@ Type
   Private
     FLoose : boolean;
     FPeek : String;
-    FValue: TStringBuilder;
+    FValue: TFslStringBuilder;
     FLexType: TJSONLexType;
     FStates : TStringList;
     FLastLocationBWS : TSourceLocation;
@@ -769,10 +769,10 @@ End;
 Function UnJSONString(const value : String) : String;
 var
   i : integer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   hex : String;
 Begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     i := 1;
     while i <= length(value) do
@@ -1449,7 +1449,7 @@ begin
   FLocation := TSourceLocation.Create;
   FPrevLocation := FLocation;
   FStates := TStringList.Create;
-  FValue := TStringBuilder.Create;
+  FValue := TFslStringBuilder.Create;
 end;
 
 destructor TJSONLexer.Destroy;

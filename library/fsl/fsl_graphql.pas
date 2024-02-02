@@ -44,7 +44,7 @@ Type
   TGraphQLValue = class (TFslObject)
   public
     Function Link : TGraphQLValue; overload;
-    procedure write(str : TStringBuilder; indent : integer); virtual;
+    procedure write(str : TFslStringBuilder; indent : integer); virtual;
     function isValue(v : String): boolean; virtual;
   end;
 
@@ -57,7 +57,7 @@ Type
     constructor Create(value : String);
     Function Link : TGraphQLVariableValue; overload;
     property Value : String read FValue write FValue;
-    procedure write(str : TStringBuilder; indent : integer); override;
+    procedure write(str : TFslStringBuilder; indent : integer); override;
     function ToString : String; override;
   end;
 
@@ -70,7 +70,7 @@ Type
     constructor Create(value : String);
     Function Link : TGraphQLNumberValue; overload;
     property Value : String read FValue write FValue;
-    procedure write(str : TStringBuilder; indent : integer); override;
+    procedure write(str : TFslStringBuilder; indent : integer); override;
     function isValue(v : String): boolean; override;
     function ToString : String; override;
   end;
@@ -84,7 +84,7 @@ Type
     constructor Create(value : String);
     Function Link : TGraphQLValue; overload;
     property Value : String read FValue write FValue;
-    procedure write(str : TStringBuilder; indent : integer); override;
+    procedure write(str : TFslStringBuilder; indent : integer); override;
     function isValue(v : String): boolean; override;
     function ToString : String; override;
   end;
@@ -98,7 +98,7 @@ Type
     constructor Create(value : String);
     Function Link : TGraphQLStringValue; overload;
     property Value : String read FValue write FValue;
-    procedure write(str : TStringBuilder; indent : integer); override;
+    procedure write(str : TFslStringBuilder; indent : integer); override;
     function isValue(v : String): boolean; override;
     function ToString : String; override;
   end;
@@ -117,7 +117,7 @@ Type
     Function Link : TGraphQLObjectValue; overload;
     property Fields : TFslList<TGraphQLArgument> read FFields;
     function addField(name : String; listStatus : TGraphQLArgumentListStatus) : TGraphQLArgument;
-    procedure write(str : TStringBuilder; indent : integer); override;
+    procedure write(str : TFslStringBuilder; indent : integer); override;
   end;
 
   TGraphQLArgument = class (TFslObject)
@@ -125,7 +125,7 @@ Type
     FName: String;
     FValues: TFslList<TGraphQLValue>;
     FListStatus: TGraphQLArgumentListStatus;
-    procedure write(str : TStringBuilder; indent : integer);
+    procedure write(str : TFslStringBuilder; indent : integer);
     procedure valuesFromNode(json : TJsonNode);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -320,7 +320,7 @@ type
   TGraphQLParser = class (TFslTextExtractor)
   private
     // lexer
-    FToken : TStringBuilder;
+    FToken : TFslStringBuilder;
     FPeek : String;
     FLexType: TGraphQLLexType;
     FLocation : TSourceLocation;
@@ -433,7 +433,7 @@ begin
 end;
 
 
-procedure TGraphQLArgument.write(str: TStringBuilder; indent : integer);
+procedure TGraphQLArgument.write(str: TFslStringBuilder; indent : integer);
 var
   i : integer;
 Begin
@@ -1352,7 +1352,7 @@ end;
 constructor TGraphQLParser.Create;
 begin
   inherited;
-  FToken := TStringBuilder.Create;
+  FToken := TFslStringBuilder.Create;
 end;
 
 destructor TGraphQLParser.Destroy;
@@ -1398,7 +1398,7 @@ begin
   result := TGraphQLValue(inherited Link);
 end;
 
-procedure TGraphQLValue.write(str : TStringBuilder; indent : integer);
+procedure TGraphQLValue.write(str : TFslStringBuilder; indent : integer);
 begin
   raise ELibraryException.create('Need to override '+className+'.write');
 end;
@@ -1426,7 +1426,7 @@ begin
   result := FValue;
 end;
 
-procedure TGraphQLNumberValue.write(str : TStringBuilder; indent : integer);
+procedure TGraphQLNumberValue.write(str : TFslStringBuilder; indent : integer);
 begin
   str.append(FValue);
 end;
@@ -1455,7 +1455,7 @@ begin
   result := FValue;
 end;
 
-procedure TGraphQLVariableValue.write(str : TStringBuilder; indent : integer);
+procedure TGraphQLVariableValue.write(str : TFslStringBuilder; indent : integer);
 begin
   raise ELibraryException.create('Cannot write a variable to JSON');
 end;
@@ -1489,7 +1489,7 @@ begin
   result := FValue;
 end;
 
-procedure TGraphQLNameValue.write(str: TStringBuilder; indent : integer);
+procedure TGraphQLNameValue.write(str: TFslStringBuilder; indent : integer);
 begin
   str.append(FValue);
 end;
@@ -1523,7 +1523,7 @@ begin
   result := FValue;
 end;
 
-procedure TGraphQLStringValue.write(str: TStringBuilder; indent : integer);
+procedure TGraphQLStringValue.write(str: TFslStringBuilder; indent : integer);
 var
   i : integer;
 Begin
@@ -1602,7 +1602,7 @@ begin
   result := TGraphQLObjectValue(inherited Link);
 end;
 
-procedure TGraphQLObjectValue.write(str: TStringBuilder; indent : integer);
+procedure TGraphQLObjectValue.write(str: TFslStringBuilder; indent : integer);
 var
   i, ni : integer;
   s, se : String;

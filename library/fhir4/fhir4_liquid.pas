@@ -74,7 +74,7 @@ type
   TFHIRLiquidNode = class abstract (TFslObject)
   protected
     procedure closeUp(); virtual;
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); virtual; abstract;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); virtual; abstract;
   public
     function link : TFHIRLiquidNode; overload;
   end;
@@ -82,10 +82,10 @@ type
   TFHIRLiquidConstant = class (TFHIRLiquidNode)
   private
     FConstant : String;
-    b : TStringBuilder;
+    b : TFslStringBuilder;
   protected
     procedure closeUp; override;
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
@@ -100,7 +100,7 @@ type
     FStatement : String;
     FCompiled : TFHIRPathExpressionNode;
   protected
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     destructor Destroy; override;
@@ -117,7 +117,7 @@ type
     FThenBody : TFSLList<TFHIRLiquidNode>;
     FElseBody : TFSLList<TFHIRLiquidNode>;
   protected
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
@@ -137,7 +137,7 @@ type
     FCompiled : TFHIRPathExpressionNode;
     FBody : TFSLList<TFHIRLiquidNode>;
   protected
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
@@ -155,7 +155,7 @@ type
   private
     FBody : TFSLList<TFHIRLiquidNode>;
   protected
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
@@ -171,7 +171,7 @@ type
     FPage : String;
     FParams : TFslMap<TFHIRPathExpressionNode>;
   protected
-    procedure evaluate(b : TStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
+    procedure evaluate(b : TFslStringBuilder; resource : TFHIRResource; ctxt : TFHIRLiquidEngineContext); override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create; override;
@@ -329,7 +329,7 @@ end;
 constructor TFHIRLiquidConstant.Create;
 begin
   inherited;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
 end;
 
 destructor TFHIRLiquidConstant.Destroy;
@@ -338,7 +338,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRLiquidConstant.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+procedure TFHIRLiquidConstant.evaluate(b: TFslStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 begin
   b.append(FConstant);
 end;
@@ -367,7 +367,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRLiquidStatement.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+procedure TFHIRLiquidStatement.evaluate(b: TFslStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
   c : TFHIRLiquidEngineContext;
 begin
@@ -413,7 +413,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRLiquidIf.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+procedure TFHIRLiquidIf.evaluate(b: TFslStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
   ok : boolean;
   list : TFSLList<TFHIRLiquidNode>;
@@ -441,10 +441,10 @@ end;
 
 function TFHIRLiquidIf.ToString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('{% if '+condition+' %}');
     for n in FThenBody do
@@ -486,7 +486,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRLiquidLoop.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+procedure TFHIRLiquidLoop.evaluate(b: TFslStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
   list : TFHIRSelectionList;
   n : TFHIRLiquidNode;
@@ -517,10 +517,10 @@ end;
 
 function TFHIRLiquidLoop.ToString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('{% loop '+condition+' %}');
     for n in FBody do
@@ -562,10 +562,10 @@ end;
 
 function TFHIRLiquidDocument.ToString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for n in FBody do
       b.Append(n.ToString);
@@ -776,12 +776,12 @@ end;
 
 function TFHIRLiquidParser.parseStatement(): TFHIRLiquidStatement;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   res : TFHIRLiquidStatement;
 begin
   grab();
   grab();
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     while (cursor <= source.length) and not ((next1() = '}') and (next2() = '}')) do
       b.append(grab());
@@ -804,12 +804,12 @@ end;
 
 function TFHIRLiquidParser.parseTag(ch: char): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   FLast := FCurrent;
   grab();
   grab();
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     while (cursor <= source.length) and not ((next1() = '%') and(next2() = '}')) do
       b.append(grab());
@@ -873,11 +873,11 @@ end;
 
 function TFHIRLiquidEngine.evaluate(document: TFHIRLiquidDocument; resource: TFHIRResource; appContext: TFslObject; OnDebug: TFHIRLiquidEngineDebugEvent): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ctxt : TFHIRLiquidEngineContext;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     ctxt := TFHIRLiquidEngineContext.Create(nil, nil);
     try
@@ -898,11 +898,11 @@ end;
 
 function TFHIRLiquidEngine.evaluate(document: TFHIRLiquidDocument; resource: TFHIRResource; appContext: TFslObject): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ctxt : TFHIRLiquidEngineContext;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     ctxt := TFHIRLiquidEngineContext.Create(nil, nil);
     try
@@ -997,7 +997,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRLiquidInclude.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+procedure TFHIRLiquidInclude.evaluate(b: TFslStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
   src : String;
   doc : TFHIRLiquidDocument;
@@ -1035,10 +1035,10 @@ end;
 
 function TFHIRLiquidInclude.ToString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('{% include '+FPage+' %}');
     for s in FParams.Keys do
@@ -1071,7 +1071,7 @@ begin
   inherited;
 end;
 
-procedure TFHIRLiquidComment.evaluate(b: TStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
+procedure TFHIRLiquidComment.evaluate(b: TFslStringBuilder; resource: TFHIRResource; ctxt: TFHIRLiquidEngineContext);
 var
   c : TFHIRLiquidEngineContext;
 begin
@@ -1090,10 +1090,10 @@ end;
 
 function TFHIRLiquidComment.ToString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   n : TFHIRLiquidNode;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('{% comment %}');
     for n in FBody do

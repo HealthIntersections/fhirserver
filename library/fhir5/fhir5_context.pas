@@ -57,6 +57,7 @@ type
     procedure SetFactory(AValue: TFHIRFactory);
   protected
     function wrapResource : TFHIRXVersionResourceWrapper; override;
+    procedure loadResource; override;
   public
     constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
     destructor Destroy; override;
@@ -218,6 +219,11 @@ end;
 function TFHIRResourceProxy.link : TFHIRResourceProxy;
 begin
   result := TFHIRResourceProxy(inherited link);
+end;
+
+procedure TFHIRResourceProxy.loadResource;
+begin
+  raise EFslException.Create('Not Implemented Yet');
 end;
 
 function TFHIRResourceProxy.GetResource: TFHIRResource;

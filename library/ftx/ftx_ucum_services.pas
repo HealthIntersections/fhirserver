@@ -528,9 +528,9 @@ end;
 procedure TUcumServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   s : String;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('* Analysis: '+analyse(code)+#13#10);
     b.Append('* Canonical Form: '+getCanonicalUnits(code)+#13#10);
@@ -875,7 +875,7 @@ end;
 
 function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('not safe');
+  raise ETerminologyError.Create('not safe', itInvalid);
 //  result := nil;
 end;
 

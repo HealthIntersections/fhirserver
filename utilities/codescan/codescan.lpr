@@ -235,12 +235,12 @@ end;
 
 function TCodeScanner.checkFileForLineEndings(filename, src : String) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   changed : boolean;
   i, l, fl : integer;
   ch : char;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     i := 1;
     l := 0;

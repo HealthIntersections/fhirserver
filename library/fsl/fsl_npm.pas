@@ -213,7 +213,7 @@ Type
     property size : integer read FSize write FSize;
     function isCore : boolean;
 
-    procedure report(b : TStringBuilder);
+    procedure report(b : TFslStringBuilder);
     function presentation : String;
   end;
 
@@ -1122,7 +1122,7 @@ begin
   checkIndexed(desc);
 end;
 
-procedure TNpmPackage.report(b : TStringBuilder);
+procedure TNpmPackage.report(b : TFslStringBuilder);
 begin
   b.AppendLine('  '+Version+' on '+FhirVersion+' from '+url+' in '+FPath);
   b.AppendLine('    dependencies: '+dependencySummary);

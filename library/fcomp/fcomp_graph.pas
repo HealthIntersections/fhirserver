@@ -42,7 +42,7 @@ uses
   {$ELSE}
   Windows, Messages, Vcl.Controls, Vcl.Graphics, Vcl.StdCtrls, Vcl.Forms, Vcl.ExtCtrls, Vcl.Clipbrd,
   {$ENDIF}
-  fsl_base;
+  fsl_base, fsl_utilities;
 
 const
   tiny = 1.0e-20;  { used to avoid divide by zero errors }
@@ -5574,7 +5574,7 @@ var
 
 function TFGraph.SettingsText(code : boolean): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   procedure p(name, value : String); overload;
   begin
     b.Append('  '+self.Name+'.'+name+' := '''+value+''';');
@@ -5830,7 +5830,7 @@ var
     ps(name+'.Style', value.Style, CODES_TFontStyle);
   end;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     p('Align', Ord(Align), CODES_TAlign);
     p('BevelInner', ord(BevelInner), CODES_TBevelCut);

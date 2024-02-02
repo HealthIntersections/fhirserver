@@ -301,7 +301,7 @@ End;
 
 Procedure TCDAWriter.WriteANYAttributes(Const sPath: string; oXml : TXmlBuilder; oDT : Tv3ANY);
 Begin
-  Attribute(sPath, oXml, 'nullFLavor', writeNullFlavor(sPath, oDt.NullFlavor), true);
+  Attribute(sPath, oXml, 'nullFlavor', writeNullFlavor(sPath, oDt.NullFlavor), true);
   // ignore updateMode and flavorId for now
 End;
 
@@ -316,7 +316,7 @@ Begin
   WriteComments(oXml, oDT);
   WriteANYAttributes(sPath, oXml, oDT);
   if oDT.HasValue Then
-    Attribute(sPath, oXml, 'value', BoolToStr(oDT.value), true);
+    Attribute(sPath, oXml, 'value', BoolToStr(oDT.value, true).ToLower, true);
   oDT.sourcelocation := oXml.Tag(sName);
 End;
 
@@ -349,7 +349,7 @@ Begin
   Attribute(sPath, oXml, 'extension', oDT.extension, true);
   Attribute(sPath, oXml, 'assigningAuthorityName', oDT.identifierName, true);
   if oDT.hasDisplayable Then
-    Attribute(sPath, oXml, 'displayable', BoolToStr(oDT.displayable), true);
+    Attribute(sPath, oXml, 'displayable', BoolToStr(oDT.displayable, true).ToLower, true);
   Attribute(sPath, oXml, 'scope', CODES_Tv3IdentifierScope[oDT.scope], true);
   Attribute(sPath, oXml, 'reliability', CODES_Tv3IdentifierReliability[oDT.reliability], true);
   oDT.sourcelocation := oXml.Tag(sName);

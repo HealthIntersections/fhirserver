@@ -1535,9 +1535,9 @@ end;
 
 procedure TFHIRNarrativeGenerator.renderAnnotation(o: TFHIRAnnotation; x: TFHIRXhtmlNode; showCodeDetails: boolean);
 var
-  s: TStringBuilder;
+  s: TFslStringBuilder;
 begin
-  s := TStringBuilder.Create();
+  s := TFslStringBuilder.Create();
   try
     if (o.author <> nil) then
     begin
@@ -1554,7 +1554,8 @@ begin
       if (s.length > 0) then
         s.append('; ');
 
-      s.append('Made: ').append(o.time.ToString);
+      s.append('Made: ');
+      s.append(o.time.ToString);
     end;
 
     if (o.Text <> '') then
@@ -1562,7 +1563,8 @@ begin
       if (s.length > 0) then
         s.append('; ');
 
-      s.append('Annontation: ').append(o.Text);
+      s.append('Annontation: ');
+      s.append(o.Text);
     end;
 
     x.addText(s.toString());
@@ -1780,9 +1782,9 @@ end;
 
 function TFHIRNarrativeGenerator.displayQuantity(q: TFHIRQuantity): String;
 var
-  s: TStringBuilder;
+  s: TFslStringBuilder;
 begin
-  s := TStringBuilder.Create();
+  s := TFslStringBuilder.Create();
   try
 
     s.append('(system := "');
@@ -1790,7 +1792,8 @@ begin
     s.append('" code ');
     s.append(q.code);
     s.append(' := "');
-    s.append(lookupCode(q.system, '', q.code)).append('")');
+    s.append(lookupCode(q.system, '', q.code));
+    s.append('")');
 
     result := s.toString();
   finally
@@ -1924,10 +1927,10 @@ end;
 
 function TFHIRNarrativeGenerator.displayHumanName(name: TFHIRHumanName): String;
 var
-  s: TStringBuilder;
+  s: TFslStringBuilder;
   p: TFHIRString;
 begin
-  s := TStringBuilder.Create();
+  s := TFslStringBuilder.Create();
   try
     if (name.Text <> '') then
       s.append(name.Text)
@@ -1954,10 +1957,10 @@ end;
 
 function TFHIRNarrativeGenerator.displayAddress(address: TFHIRAddress): String;
 var
-  s: TStringBuilder;
+  s: TFslStringBuilder;
   p: TFHIRString;
 begin
-  s := TStringBuilder.Create();
+  s := TFslStringBuilder.Create();
   try
     if (address.Text <> '') then
       s.append(address.Text)
@@ -2001,9 +2004,9 @@ end;
 
 function TFHIRNarrativeGenerator.displayContactPoint(contact: TFHIRContactPoint): String;
 var
-  s: TStringBuilder;
+  s: TFslStringBuilder;
 begin
-  s := TStringBuilder.Create();
+  s := TFslStringBuilder.Create();
   try
     s.append(describeSystem(contact.system));
     if (contact.value = '') then
@@ -2866,7 +2869,7 @@ end;
 
   private String makeAnchor(String codeSystem, String code) begin
   String s := codeSystem+"-"+code;
-  StringBuilder b := TStringBuilder.Create();
+  StringBuilder b := TFslStringBuilder.Create();
   for (char c : s.toCharArray()) begin
   if (Character.isAlphabetic(c)) or (Character.isDigit(c)) or (c = ".") then
   b.append(c);

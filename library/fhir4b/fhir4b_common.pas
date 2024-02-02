@@ -477,8 +477,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
-    procedure addProperty(code : String; value : TFHIRObject); override; overload;
-    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); override; overload;
+    procedure addProperty(code : String; value : TFHIRObject); overload; override;
+    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); overload; override;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
     function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
@@ -590,6 +590,9 @@ type
     procedure setVersion(value : String); override;
     function getDescription : String; override;
     procedure setDescription(value : String); override;
+
+    function getExperimental : boolean; override;
+    procedure setExperimental(value : boolean); override;
     function checkCompose(place, role : String) : boolean; override;
     function getComposeExtensions : TFslList<TFHIRExtensionW>; override;
     function checkExpansion(place, role : String) : boolean; override;
@@ -3086,6 +3089,11 @@ begin
   vs.Description := value;
 end;
 
+procedure TFHIRValueSet4B.setExperimental(value: boolean);
+begin
+  vs.experimental := value;
+end;
+
 procedure TFHIRValueSet4B.SetLanguage(const Value: String);
 begin
   (resource as TFHIRResource).language := value;
@@ -3094,6 +3102,11 @@ end;
 function TFHIRValueSet4B.getDescription: String;
 begin
   result := vs.Description;
+end;
+
+function TFHIRValueSet4B.getExperimental: boolean;
+begin
+  result := vs.experimental;
 end;
 
 function TFHIRValueSet4B.GetLanguage: String;

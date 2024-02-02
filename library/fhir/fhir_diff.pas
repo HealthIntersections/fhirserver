@@ -626,10 +626,10 @@ end;
 
 function TDifferenceEngine.asHtml(differences: TDifferenceList): string;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   diff : TDifference;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append('<table>'#13#10);
     b.Append('<tr>');
@@ -737,7 +737,7 @@ function TDifferenceEngine.asValue(value: TFHIRObject): string;
 var
   pl : TFHIRPropertyList;
   c : TFHIRComposer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   if value.isEnum then
     result := FormatTextToXml(value.primitiveValue, xmlText)
@@ -756,7 +756,7 @@ begin
   end
   else
   begin
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       b.Append('{');
       // an anonymous type. So what we do here is create the value, but the value

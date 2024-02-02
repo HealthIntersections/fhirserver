@@ -454,8 +454,11 @@ type
 Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCharSet; Var sLeft, sRight: AnsiString) : Boolean;
 Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
 
-Type
+const
+  DEFAULT_STRING_DELTA = 256-12;
+  LARGE_STRING_DELTA = 2048;
 
+Type
   { TCommaSeparatedStringBuilder }
 
   TCommaSeparatedStringBuilder = class (TFslObject)
@@ -473,25 +476,33 @@ Type
     function makeString : String;
   end;
 
+  { TFslStringBuilder }
+
   TFslStringBuilder = Class (TFslObject)
   Private
-    FBuilder : TStringBuilder;
+    FSource : String;
+    FCursor : Integer;
+    FDelta : Word;
 
     Function GetLength : Integer;
     function GetAsString: String;
+    procedure doAppend(s : String);
   Public
     constructor Create; Override;
+    constructor Create(delta : word); Overload;
+    constructor Create(initial : String; delta : word = DEFAULT_STRING_DELTA); Overload;
     destructor Destroy; Override;
     Property AsString : String read GetAsString;
 
     Procedure Clear;
 
     Procedure Append(ch : Char); Overload;
+    Procedure Append(c : Cardinal); Overload;
     Procedure Append(Const sStr : String); Overload;
     {$IFNDEF FPC}
     Procedure Append(Const sStr : AnsiString); Overload;
     {$ENDIF}
-    Procedure AppendLine(Const sStr : String); Overload;
+    Procedure AppendLine(Const sStr : String = ''); Overload;
     Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
     Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
     Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
@@ -516,6 +527,7 @@ Type
 
     Property Length : Integer Read GetLength;
     function ToString : String; override;
+    function MemSize() : integer;
   End;
 
 type
@@ -6188,7 +6200,10 @@ begin
             b.append(chr(StrToInt('$'+hex)));
             end
         Else
-          b.append('?'+ch);
+        begin
+          b.append('?');
+          b.append(ch);
+        end;
         End;
       End
       Else if (ch = '"') then
@@ -6562,351 +6577,102 @@ begin
     end;
 end;
 
-{$IFDEF NO_BUILDER}
-
-
-Constructor TFslStringBuilder.Create;
-Begin
-  Inherited;
-
-  FBufferSize := BUFFER_INCREMENT_SIZE;
-End;
-
-
-Destructor TFslStringBuilder.Destroy;
-Begin
+constructor TFslStringBuilder.Create;
+begin
   inherited;
-End;
+  FSource := '';
+  FCursor := 0;
+  FDelta := DEFAULT_STRING_DELTA;
+end;
 
+constructor TFslStringBuilder.Create(delta: word);
+begin
+  inherited Create;
+  FSource := '';
+  FCursor := 0;
+  FDelta := delta;
+end;
 
-Procedure TFslStringBuilder.Clear;
+constructor TFslStringBuilder.Create(initial : String; delta : word = DEFAULT_STRING_DELTA);
+begin
+  inherited create;
+  FSource := '';
+  FCursor := 0;
+  FDelta := delta;
+  doAppend(initial);
+end;
+
+destructor TFslStringBuilder.Destroy;
+begin
+  inherited;
+end;
+
+function TFslStringBuilder.GetLength: Integer;
+begin
+  result := FCursor;
+end;
+
+procedure TFslStringBuilder.Clear;
 Begin
-  FContent := '';
-  FLength := 0;
+  FCursor := 0;
 End;
 
-
-Function TFslStringBuilder.ToString : String;
+function TFslStringBuilder.GetAsString: String;
 Begin
-  Result := Copy(FContent, 1, FLength);
+  result := FSource.subString(0, FCursor);
 End;
 
-
-Procedure TFslStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Var
-  iLen : Integer;
-Begin
-  iLen := IntegerMax(System.Length(sStr), iCount);
-
-  If (iLen > 0) Then
-  Begin
-    If FLength + iLen > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iLen));
-
-    Move(sStr[1], FContent[FLength + 1], System.Length(sStr) * SizeOf(Char));
-
-    If iLen = iCount Then
-      FillChar(FContent[FLength + 1 + System.Length(sStr)], (iCount - System.Length(sStr)) * SizeOf(Char), cPad);
-
-    Inc(FLength, iLen);
-  End;
-End;
-
-
-Function TFslStringBuilder.AsString: String;
-Begin
-  Result := ToString;
-End;
-
-
-Procedure TFslStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Begin
-  If (iCount > 0) Then
-  Begin
-    If FLength + iCount > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iCount));
-    Move(sStr[1], FContent[FLength + 1], IntegerMin(System.Length(sStr), iCount) * SizeOf(Char));
-
-    If System.Length(sStr) < iCount Then
-      FillChar(FContent[FLength + 1 + System.Length(sStr)], (iCount - System.Length(sStr)) * SizeOf(Char), cPad);
-
-    Inc(FLength, iCount);
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Append(ch : Char);
-Begin
-  If FLength + 1 > System.Length(FContent) Then
-    SetLength(FContent, System.Length(FContent) + FBufferSize);
-
-  Move(ch, FContent[FLength + 1], SizeOf(Char));
-  Inc(FLength);
-End;
-
-
-Procedure TFslStringBuilder.Append(Const sStr : String);
-Begin
- If (sStr <> '') Then
-  Begin
-    If FLength + System.Length(sStr) > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, System.Length(sStr)));
-
-    Move(sStr[1], FContent[FLength + 1], System.Length(sStr) * SizeOf(Char));
-
-    Inc(FLength, System.Length(sStr));
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Append(Const oBuilder : TFslStringBuilder);
-Begin
-  Append(oBuilder.ToString);
-End;
-
-
-Procedure TFslStringBuilder.AppendEOL;
-Begin
-  Append(cReturn);
-End;
-
-
-Procedure TFslStringBuilder.Append(Const iInt : Integer);
-Begin
-  Append(IntegerToString(iInt));
-End;
-
-
-Procedure TFslStringBuilder.Insert(Const sStr : String; iIndex : Integer);
-Begin
-  If (sStr <> '') Then
-  Begin
-    If FLength + System.Length(sStr) > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, System.Length(sStr)));
-
-    If (iIndex) <> FLength Then
-      Move(FContent[iIndex+1], FContent[iIndex+1 + System.Length(sStr)], (FLength - iIndex)  * SizeOf(Char));
-
-    Move(sStr[1], FContent[iIndex+1], System.Length(sStr) * SizeOf(Char));
-
-    Inc(FLength, System.Length(sStr));
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer);
-Begin
-  Insert(oBuilder.ToString, iIndex);
-End;
-
-
-Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
-Begin
-  System.Delete(FContent, iIndex+1, iLength);
-  Dec(FLength, iLength);
-End;
-
-
-Function TFslStringBuilder.IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-Var
-  iLoop : Integer;
-  iUpper : Integer;
-  iLen : Integer;
-Begin
-  Result := -1;
-  iLoop := 1;
-  iLen := System.Length(sStr);
-  iUpper := FLength - iLen + 1;
-
-  While (Result = -1) And (iLoop <= iUpper) Do
-  Begin
-    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And StringEquals(Copy(FContent, iLoop, iLen), sStr)) Then
-      Result := iLoop - 1;
-
-    Inc(iLoop);
-  End;
-End;
-
-
-Function TFslStringBuilder.LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-Var
-  iLoop : Integer;
-  iUpper : Integer;
-  iLen : Integer;
-Begin
-  Result := -1;
-  iLen := System.Length(sStr);
-  iUpper := FLength - iLen + 1;
-  iLoop := iUpper;
-  While (Result = -1) And (iLoop > 0) Do
-  Begin
-    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And StringEquals(Copy(FContent, iLoop, iLen), sStr)) Then
-      Result := iLoop - 1;
-
-    Dec(iLoop);
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Append(Const bytes : TBytes);
-Begin
-{$IFNDEF FPC}
-If (System.length(bytes) > 0) Then
-  Begin
-    If FLength + iBytes > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + Integermax(FBufferSize, iBytes));
-
-    oStream.Read(FContent[FLength + 1], iBytes);
-
-    Inc(FLength, iBytes);
-  End;
-{$ENDIF}
-End;
-
-
-Procedure TFslStringBuilder.Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer);
-Begin
-  {$IFNDEF FPC}
-  If (iBytes > 0) Then
-  Begin
-    If FLength + iBytes > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iBytes));
-
-    If (iIndex) <> FLength Then
-      Move(FContent[iIndex+1], FContent[iIndex+1 + iBytes], (FLength - iIndex) * SizeOf(Char));
-
-    oStream.Read(FContent[iIndex + 1], iBytes);
-
-    Inc(FLength, iBytes);
-  End;
-  {$ENDIF}
-End;
-
-
-
-Procedure TFslStringBuilder.CommaAdd(const sStr: String);
-Begin
-  if Length > 0 Then
-    Append(', ');
-  Append(sStr);
-End;
-
-
-Procedure TFslStringBuilder.AddCardinalAsBytes(iVal: Cardinal);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 4);
-  move(iVal, s[1], 4);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AddWordAsBytes(iVal: word);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 2);
-  move(iVal, s[1], 2);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AddInt64AsBytes(iVal: Int64);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 8);
-  move(iVal, s[1], 8);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AddByteAsBytes(iVal: Byte);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 1);
-  move(iVal, s[1], 1);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AppendLine(const sStr: String);
-Begin
-  Append(sStr);
-  AppendEOL;
-End;
-
-procedure TFslStringBuilder.Append(const bBytes: array of Byte; amount: Integer);
+procedure TFslStringBuilder.doAppend(s: String);
 var
-  i : integer;
+  delta : Integer;
 begin
-  for i := 0 to amount - 1 Do
-    Append(chr(bBytes[i]));
+  if (s <> '') then
+  begin
+    if (s.length + FCursor > FSource.length) then
+    begin
+      delta := FDelta;
+      while delta < s.length do
+        delta := delta + FDelta;
+      SetLength(FSource, FSource.length+delta);
+    end;
 
+    move(s[1], FSource[FCursor+1], s.length * sizeof(char));
+    inc(FCursor, s.length);
+
+    if (FCursor > 1024) then
+      FDelta := LARGE_STRING_DELTA;
+  end;
 end;
 
+procedure TFslStringBuilder.AppendPadded(const sStr: String; iCount: Integer;
+  cPad: Char);
+Begin
+  doAppend(StringPadRight(sStr, cPad, iCount));
+End;
 
-procedure TFslStringBuilder.Overwrite(index: integer; content: String);
+procedure TFslStringBuilder.AppendFixed(const sStr: String; iCount: Integer;
+  cPad: Char);
+Begin
+  doAppend(StringPadRight(copy(sStr, 1, iCount), cPad, iCount));
+End;
+
+
+procedure TFslStringBuilder.Append(ch: Char);
+Begin
+  doAppend(ch);
+End;
+
+procedure TFslStringBuilder.Append(c: Cardinal);
 begin
-  if index < 1 Then
-    RaiseError('Overwrite', 'index < 1');
-  if index + System.length(Content) > FLength Then
-    RaiseError('Overwrite', 'index > length');
-  if content <> '' Then
-    Move(Content[1], FContent[index], System.length(Content));
+  append(inttostr(c));
 end;
 
-procedure TFslStringBuilder.Read(index: integer; var buffer; ilength: integer);
-begin
-  if index < 1 Then
-    RaiseError('Read', 'index < 1');
-  if index + length > FLength Then
-    RaiseError('Read', 'index > length');
-  Move(FContent[index], buffer, length);
-end;
-
-{$ELSE}
-
-
-Procedure TFslStringBuilder.Clear;
+procedure TFslStringBuilder.Append(const sStr: String);
 Begin
-  FBuilder.Clear;
+  doAppend(sStr);
 End;
 
-
-Function TFslStringBuilder.GetAsString : String;
-Begin
-  Result := FBuilder.ToString;
-End;
-
-
-
-Procedure TFslStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Begin
-  FBuilder.Append(StringPadRight(sStr, cPad, iCount));
-End;
-
-Procedure TFslStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Begin
-  FBuilder.Append(StringPadRight(copy(sStr, 1, iCount), cPad, iCount));
-End;
-
-
-Procedure TFslStringBuilder.Append(ch : Char);
-Begin
-  FBuilder.Append(ch);
-End;
-
-Procedure TFslStringBuilder.Append(Const sStr : String);
-Begin
-  FBuilder.Append(sStr);
-End;
-
-
-
-Procedure TFslStringBuilder.Append(Const oBuilder : TFslStringBuilder);
+procedure TFslStringBuilder.Append(const oBuilder: TFslStringBuilder);
 Begin
   Append(oBuilder.AsString);
 End;
@@ -6918,19 +6684,30 @@ begin
 end;
 {$ENDIF}
 
-Procedure TFslStringBuilder.AppendEOL;
+procedure TFslStringBuilder.AppendEOL;
 Begin
   Append(cReturn);
 End;
 
 
-Procedure TFslStringBuilder.Insert(Const sStr : String; iIndex : Integer);
+procedure TFslStringBuilder.Insert(const sStr: String; iIndex: Integer);
 Begin
-  FBuilder.Insert(iIndex, sStr);
+  If (sStr <> '') Then
+  Begin
+    If FCursor + sStr.Length > FSource.Length Then
+      SetLength(FSource, FSource.Length + IntegerMax(FDelta, sStr.length));
+
+    If (iIndex) <> FCursor Then
+      Move(FSource[iIndex+1], FSource[iIndex+1 + sStr.length], (FCursor - iIndex)  * SizeOf(Char));
+
+    Move(sStr[1], FSource[iIndex+1], sStr.length * SizeOf(Char));
+
+    Inc(FCursor, sStr.length);
+  End;
 End;
 
 
-Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer);
+procedure TFslStringBuilder.Insert(const oBuilder: TFslStringBuilder; iIndex: Integer);
 Begin
   Insert(oBuilder.AsString, iIndex);
 End;
@@ -6941,34 +6718,21 @@ begin
     Append(sep);
 end;
 
-function TFslStringBuilder.toString: String;
+function TFslStringBuilder.ToString: String;
 begin
   result := AsString;
 end;
 
-Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
+function TFslStringBuilder.MemSize(): integer;
+begin
+  result := SizeOf(self);
+end;
+
+procedure TFslStringBuilder.Delete(iIndex, iLength: Integer);
 Begin
-  FBuilder.Remove(iIndex, iLength);
+  System.delete(FSource, iIndex, iLength);
+  dec(FCursor, iLength);
 End;
-
-
-destructor TFslStringBuilder.Destroy;
-begin
-  FBuilder.free;
-  inherited;
-end;
-
-function TFslStringBuilder.GetLength: Integer;
-begin
-  result := FBuilder.Length;
-end;
-
-constructor TFslStringBuilder.Create;
-begin
-  inherited;
-  FBuilder := TStringBuilder.Create;
-  FBuilder.Capacity := 2048;
-end;
 
 procedure TFslStringBuilder.CommaAdd(const sStr: String);
 begin
@@ -7023,12 +6787,12 @@ begin
   Append(s);
 end;
 
-procedure TFslStringBuilder.AppendLine(const sStr: String);
+procedure TFslStringBuilder.AppendLine(const sStr: String = '');
 begin
-  Append(sStr);
+  if (sStr <> '') then
+    Append(sStr);
   AppendEOL;
 end;
-{$ENDIF}
 
 procedure TFslStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
 var
@@ -16928,11 +16692,11 @@ begin
     #$2C6C : result := 'z';
     #$A763 : result := 'z';
 
-    #$0439 : result := UnicodeToUTF8($0438);
+    #$0439 : result := {$IFDEF FPC}UnicodeToUTF8{$ELSE}Chr{$ENDIF}($0438);
   else if ch < #$FE then
     result := ch
   else
-    result := UnicodeToUTF8(v);
+    result := {$IFDEF FPC}UnicodeToUTF8{$ELSE}Chr{$ENDIF}(v);
   end;
 end;
 

@@ -669,13 +669,13 @@ end;
 
 procedure TFhirCodeSystemProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ctxt : TFhirCodeSystemProviderContext;
   concept, c : TFhirCodeSystemConceptW;
   d : TFhirCodeSystemConceptDesignationW;
   codes : TFhirCodeSystemConceptListW;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     ctxt := TFhirCodeSystemProviderContext(locate(code));
     if ctxt = nil Then

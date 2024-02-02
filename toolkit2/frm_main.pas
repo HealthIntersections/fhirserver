@@ -3117,9 +3117,9 @@ procedure TMainToolkitForm.mnuLVCopyAllClick(Sender: TObject);
 var
   i : integer;
   msg : TToolkitMessage;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for i := 0 to lvMessages.items.count - 1 do
     begin

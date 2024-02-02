@@ -5,7 +5,8 @@ unit xig_provider;
 interface
 
 uses
-  Classes, SysUtils, ZStream,
+  Classes, SysUtils,
+  {$IFDEF FPC} ZStream, {ELSE} Zlib, {$ENDIF}
   fsl_base, fsl_lang, fsl_utilities, fsl_logging,
   fdb_manager,
   fhir_objects, fhir_factory, fhir_common, fhir_parser,
@@ -68,6 +69,7 @@ begin
   inherited Destroy;
 end;
 
+{$IFDEF FPC}
 procedure DecompressStream(src, dst: TStream);
 var
   ds: TDecompressionStream;
@@ -111,6 +113,7 @@ begin
     ss1.Free;
   end;
 end;
+{$ENDIF}
 
 procedure TXIGResourceProxy.loadResource;
 var
@@ -139,7 +142,12 @@ begin
     if (length(cnt) = 0) then    
         raise Exception.create('Unable to load content for resource key '+inttostr(FKey));
 
+    {$IFDEF FPC}
     cnt := inflate(cnt);
+    {$ELSE}
+    raise EFslException.Create('Not Implemented Yet');
+    {$ENDIF}
+
     p := Factory.makeParser(Worker, ffJson, nil);
     try
       FResourceV := p.parseResource(cnt);

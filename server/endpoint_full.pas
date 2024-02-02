@@ -1021,7 +1021,7 @@ var
   names: TStringList;
   profiles: TFslStringMatch;
   i, j, ix: integer;
-  b: TStringBuilder;
+  b: TFslStringBuilder;
   pol: String;
 begin
   counts := TStringList.Create;
@@ -1049,7 +1049,7 @@ begin
       self.Context.Storage.FetchResourceCounts(compList, counts);
 
       s := host + sBaseURL;
-      b := TStringBuilder.Create;
+      b := TFslStringBuilder.Create;
       try
         b.Append('<?xml version="1.0" encoding="UTF-8"?>'#13#10 + '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10 +
           '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10 + ''#13#10 +

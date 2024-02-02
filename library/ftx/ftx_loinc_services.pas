@@ -1882,7 +1882,7 @@ end;
 
 procedure TLOINCServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   iIndex : Cardinal;
   iDescription, iOtherNames, iCategories, iStems : Cardinal;
   sCode1, s : String;
@@ -1897,7 +1897,7 @@ var
   ok : boolean;
 begin
   langs := langsForLang(langList);
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     iRefs := nil;
     if not CodeList.FindCode(code, iIndex) Then

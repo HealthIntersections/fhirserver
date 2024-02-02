@@ -78,7 +78,7 @@ type
     destructor Destroy; override;
 
     procedure AdjustPosition(top, left, width : integer);
-    procedure addToUrl(b : TStringBuilder);
+    procedure addToUrl(b : TFslStringBuilder);
     procedure readFromURL(pm : THTTPParameters);
   end;
 
@@ -422,7 +422,7 @@ begin
   edit2.Text := '';
 end;
 
-procedure TSearchEntryPanel.addToUrl(b: TStringBuilder);
+procedure TSearchEntryPanel.addToUrl(b: TFslStringBuilder);
 begin
   if edit.text <> '' then
   begin
@@ -775,10 +775,10 @@ end;
 
 function TFetchResourceFrm.asURL: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   se : TSearchEntryPanel;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for se in FSearchItems do
       se.addToUrl(b);
