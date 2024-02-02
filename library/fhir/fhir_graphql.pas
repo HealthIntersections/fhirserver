@@ -352,7 +352,7 @@ function TFHIRGraphQLEngine.filter(context : TFHIRResourceV; prop:TFHIRProperty;
       result := obj.primitiveValue <> '';
   end;
 var
-  fp : TStringBuilder;
+  fp : TFslStringBuilder;
   arg : TGraphQLArgument;
   p : TFHIRProperty;
   v : TFHIRObject;
@@ -367,7 +367,7 @@ begin
   try
     if values.Count > 0 then
     begin
-      fp := TStringBuilder.Create;
+      fp := TFslStringBuilder.Create;
       try
         for arg in arguments do
         begin

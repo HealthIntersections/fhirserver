@@ -362,7 +362,7 @@ var
   aud : String;
   id : String;
   message : String;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ok : boolean;
   variables : TFslMap<TFHIRObject>;
   client : TRegisteredClientInformation;
@@ -386,7 +386,7 @@ begin
 
     id := newguidid;
     ServerContext.Storage.recordOAuthLogin(id, client_id, scope, redirect_uri, state, params['launch']);
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       ok := true;
       variables := TFslMap<TFHIRObject>.Create('scim.vars');
@@ -1517,14 +1517,14 @@ end;
 
 function TAuth2Server.GetPatientListAsOptions(launch : String): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   dict : TFslStringDictionary;
   s : String;
 begin
   dict := TFslStringDictionary.Create;
   try
     FOnGetPatients(dict);
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       b.Append('<option value=""/>');
       for s in dict.Keys do

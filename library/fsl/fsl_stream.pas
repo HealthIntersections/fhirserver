@@ -1022,7 +1022,7 @@ Type
     FHasQuote : Boolean;
     FIgnoreWhitespace: boolean;
 
-    FEntry : TStringBuilder;
+    FEntry : TFslStringBuilder;
     FCache : Char;
     FReadBuffer: SysUtils.TCharArray;
 
@@ -3591,7 +3591,7 @@ End;  { Constructor TAfsResourceManager.Create }
 constructor TFslCSVExtractor.Create;
 Begin
   Inherited;
-  FEntry := TStringBuilder.create(2048);
+  FEntry := TFslStringBuilder.create(2048);
   FSeparator := ',';
   FQuote := '"';
   FHasQuote := True;

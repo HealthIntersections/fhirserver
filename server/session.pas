@@ -135,7 +135,7 @@ Type
     constructor Create(worker : TFHIRWorkerContextWithFactory; secure : boolean);
     destructor Destroy; Override;
     function Link : TFhirSession; overload;
-    procedure describe(b : TStringBuilder);
+    procedure describe(b : TFslStringBuilder);
     Property scopes : String read GetScopes write SetScopes;
 
     {
@@ -1487,7 +1487,7 @@ begin
   FCompartments := TFslList<TFHIRCompartmentId>.Create;
 end;
 
-procedure TFhirSession.describe(b: TStringBuilder);
+procedure TFhirSession.describe(b: TFslStringBuilder);
 var
   id : TFHIRCompartmentId;
   first : boolean;

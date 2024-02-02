@@ -257,7 +257,7 @@ type
     procedure updateHelpText;
     function processHelpContext(helpContext: String): String;
     function searchDesc(s: String): String;
-    procedure fhirDefn(s: String; b: TStringBuilder);
+    procedure fhirDefn(s: String; b: TFslStringBuilder);
     function GetStopped(context : pointer): Boolean;
     procedure DoIdle(out stop: Boolean);
     procedure DoOpenURL(url: String);
@@ -939,7 +939,7 @@ begin
 //  end;
 end;
 
-procedure TMasterToolsForm.fhirDefn(s: String; b: TStringBuilder);
+procedure TMasterToolsForm.fhirDefn(s: String; b: TFslStringBuilder);
 var
   n: string;
   sd: TFhirStructureDefinition;
@@ -1840,11 +1840,11 @@ end;
 
 function TMasterToolsForm.processHelpContext(helpContext: String): String;
 var
-  b: TStringBuilder;
+  b: TFslStringBuilder;
   parts: TArray<String>;
   s: String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     parts := helpContext.Split([',']);
     for s in parts do

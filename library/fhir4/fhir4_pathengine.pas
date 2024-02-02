@@ -147,7 +147,7 @@ type
   TFHIRPathEngine = class (TFHIRPathEngineV)
   private
     worker : TFHIRWorkerContext;
-    FLog : TStringBuilder;
+    FLog : TFslStringBuilder;
     allTypes, primitiveTypes : TStringList;
     FOnResolveConstant: TFHIRResolveConstantEvent;
     FUcum : TUcumServiceInterface;
@@ -1127,7 +1127,7 @@ begin
   inherited Create;
   worker := context;
   self.FUcum := ucum;
-  FLog := TStringBuilder.Create;
+  FLog := TFslStringBuilder.Create;
   allTypes := TStringList.Create;
   primitiveTypes := TStringList.Create;
   if (worker <> nil) then
@@ -1252,11 +1252,11 @@ end;
 
 function TFHIRPathEngine.convertToString(items: TFHIRSelectionList): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   item : TFHIRSelection;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for item in items do

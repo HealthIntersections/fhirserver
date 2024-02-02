@@ -750,7 +750,7 @@ end;
 
 function TIETFLanguageDefinitions.present(code: TIETFLang): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   procedure note(n, v : String);
   begin
@@ -767,7 +767,7 @@ begin
     result := ''
   else
   begin
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       b.append(FLanguages[code.language].display);
       if (code.region <> '') or (code.script <> '') or (code.variant <> '') then

@@ -1099,13 +1099,13 @@ end;
 
 function TFHIRPackageManager.report: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   list : TFslList<TNpmPackage>;
   p : TNpmPackage;
   ts : TStringList;
   s : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.AppendLine('Packages in '+Folder);
     b.AppendLine;

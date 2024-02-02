@@ -620,11 +620,11 @@ end;
 
 function TProfileUtilities.summariseSlicing(slice : TFhirElementDefinitionSlicing) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   d : TFhirString;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for  d in slice.discriminatorList do
@@ -633,7 +633,7 @@ begin
         first := false
       else
         b.append(', ');
-      b.append(d);
+      b.append(d.ToString);
     end;
     b.append('(');
     if (slice.orderedElement <> nil) then
@@ -872,11 +872,11 @@ end;
 
 function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   type_ : TFHIRElementDefinitionType;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for type_ in types do

@@ -1800,13 +1800,13 @@ end;
 
 procedure TFHIRPlugin.DoNppnDwellStart(offset: integer);
 var
-  msg : TStringBuilder;
+  msg : TFslStringBuilder;
   annot : TFHIRAnnotation;
   first : boolean;
   chars : TBytes;
 begin
   first := true;
-  msg := TStringBuilder.Create;
+  msg := TFslStringBuilder.Create;
   try
     for annot in errors do
     begin

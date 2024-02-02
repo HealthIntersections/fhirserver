@@ -51,7 +51,6 @@ Type
 
   TSnomedPublisher = class (TFslObject)
   Private
-    FProgress: TStringList;
     FSnomed : TSnomedServices;
     Lock : TFslLock;
     FSearchCache : TStringList;
@@ -77,11 +76,9 @@ Type
     Procedure ProcessMap(Const sPath : String; oMap : TFslStringMatch);
     Procedure PublishDictInternal(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher);
 
-    procedure prog(marker : String);
   Public
     constructor Create(oSnomed : TSnomedServices; FHIRPathEngine : String; start : UInt64);
     destructor Destroy; Override;
-    property progress  : TStringList read FProgress;
     Procedure PublishDict(Const sPath, sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishDict(oMap : TFslStringMatch; Const sPrefix : String; html : THtmlPublisher); Overload; Virtual;
     Procedure PublishTerm(Const sTerm : String; html : THtmlPublisher); Overload; Virtual;
@@ -130,7 +127,6 @@ Var
   sId : String;
 Begin
   sURL := sPrefix +'?type=snomed&';
-  prog('start');
 
   sId := oMap.Matches['id'];
   If sId = '*' Then
@@ -145,11 +141,6 @@ Begin
   else
     PublishHome(sURL, html)
 End;
-
-procedure TSnomedPublisher.prog(marker: String);
-begin
-  FProgress.add(marker+' '+inttostr(GetTickCount64 - FStart));
-end;
 
 procedure TSnomedPublisher.ProcessMap(const sPath: String; oMap: TFslStringMatch
   );
@@ -225,7 +216,6 @@ Begin
   html.AddTextPlain(' ');
   html.checkbox('all', false, 'Tight');
   html.endForm;
-  prog('h1');
 
   html.StartList;
   html.StartListItem;
@@ -256,7 +246,6 @@ Begin
     html.EndList;
   End;
   deadCheck();
-  prog('h2');
 
   html.Line;
   html.StartParagraph;
@@ -272,7 +261,6 @@ Begin
     html.AddText('No Reference Sets defined', false, true);
     html.EndParagraph;
   End;
-  prog('h3');
   html.StartList;
   for i := 0 to FSnomed.RefSetIndex.Count - 1 Do
   Begin
@@ -281,7 +269,6 @@ Begin
     html.EndListItem;
   End;
   html.EndList;
-  prog('h4');
 
   html.Line;
   Lock.Lock;
@@ -598,7 +585,6 @@ var
   ok : boolean;
   did : UInt64;
 Begin
-  prog('d1');
   SetLength(aMembers, 0);
   SetLength(iList, 0);
   SetLength(alLDesc, 0);
@@ -655,7 +641,6 @@ Begin
       ConceptRef(html, sPrefix, iDummy, cdDesc, 0);
     end;
     html.EndParagraph;
-    prog('d2');
 
     // todo: flags
     html.AddParagraph('Descriptions:');
@@ -718,7 +703,6 @@ Begin
     html.EndTable;
     html.Line;
     deadCheck();
-    prog('d3');
 
     iRefSet := FSnomed.GetConceptRefSet(iIndex, true, iName, iMembers, itypes, iFields);
     allDesc := FSnomed.Refs.GetReferences(FSnomed.Concept.GetAllDesc(iIndex));
@@ -801,7 +785,6 @@ Begin
       html.Line;
     End;
     deadCheck();
-    prog('d4');
 
     if iRefset <> 0 Then
     Begin
@@ -853,7 +836,6 @@ Begin
         html.EndTableRow;
       End;
       html.EndTable;  
-    prog('d5');
       if (iStart > 0) or (iStart+MAX_ROWS < High(aMembers)) Then
       Begin
         html.StartParagraph;
@@ -880,7 +862,6 @@ Begin
         End;
         html.EndParagraph;
       End;     
-    prog('d6');
     End
     Else
     Begin
@@ -915,7 +896,6 @@ Begin
         End;
       End;
       html.EndTable;    
-    prog('d7');
       if (iStart > 0) or (iStart+MAX_ROWS < High(Inbounds)) Then
       Begin
         html.StartParagraph;
@@ -943,7 +923,6 @@ Begin
         html.EndParagraph;
       End;
     End;        
-    prog('d8');
     if FSnomed.RefSetIndex.count > 0 Then
     Begin
       iList := FSnomed.GetConceptRefsets(iIndex);
@@ -962,7 +941,6 @@ Begin
         html.EndParagraph;
       End;
     End;    
-    prog('d9');
     if not bRoot then
     begin
       html.ParaURL('Back to Start', sPrefix);
@@ -1495,7 +1473,6 @@ constructor TSnomedPublisher.Create(oSnomed : TSnomedServices; FHIRPathEngine : 
 begin
   inherited Create;
   FStart := start;
-  FProgress := TStringList.create;
   Lock := TFslLock.Create('SCT Publisher');
   FSearchCache := TStringList.Create;
   FSearchCache.Sorted := true;
@@ -1512,7 +1489,6 @@ begin
   FSearchCache.free;
   Lock.free;
   FSnomed.free;
-  FProgress.free;
   inherited;
 end;
 
@@ -1528,7 +1504,6 @@ var
   iTotal : Integer;
   b2 : Boolean;
 begin
-  prog('c1');
   b2 := false;
 
   html.Heading(1, 'Concept List');
@@ -1559,7 +1534,6 @@ begin
   html.EndTableCell;
   html.EndTableRow;
   html.EndTable;
-  prog('c2');
   if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
   Begin
     html.StartParagraph;
@@ -1586,7 +1560,6 @@ begin
     End;
     html.EndParagraph;
   End;
-  prog('c3');
   html.ParaURL('Back to Start', sPrefix);
   html.Done;
 end;
@@ -1617,7 +1590,6 @@ begin
   Finally
     Lock.Unlock;
   End;
-  prog('f1');
 
   if iContext <> 0 then
     html.Heading(1, 'Search for '+sText+' in '+sContext)
@@ -1653,7 +1625,6 @@ begin
   html.EndTableCell;
   html.EndTableRow;
   html.EndTable;
-  prog('f2');
   if (iStart > 0) or (iStart+MAX_ROWS < iTotal) Then
   Begin
     html.StartParagraph;
@@ -1681,7 +1652,6 @@ begin
     html.spacer;
     html.spacer;
     html.spacer;
-    prog('f3');
 
     if iContext = 0 then
       html.URL('Back to Context', sPrefix)
@@ -1746,7 +1716,6 @@ Begin
     FSN := FSnomed.GetFSN(Descriptions);
     PN := FSnomed.GetPN(Descriptions);
 
-    prog('e1');
     html.StartParagraph;
     html.AddText(sId, true, true);
     html.AddText(': '+screen(PN, ''), true, false);
@@ -1768,7 +1737,6 @@ Begin
     End;
     html.EndList(false);
     html.Line;
-    prog('e2');
 
     html.StartParagraph;
     html.AddText('Children', true, false);
@@ -1788,7 +1756,6 @@ Begin
       End;
     End;
     html.EndList(false);
-    prog('e3');
   End;
 End;
 

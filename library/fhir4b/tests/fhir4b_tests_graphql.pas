@@ -230,7 +230,7 @@ procedure TFHIRGraphQLTest.TestCase(name : String);
 var
   parts : TArray<String>;
   gql : TFHIRGraphQLEngine;
-  str : TStringBuilder;
+  str : TFslStringBuilder;
   ok : boolean;
   msg : String;
   filename : String;
@@ -271,7 +271,7 @@ begin
     if ok then
     begin
       assertTrue(output <> '$error', 'Expected to fail, but didn''t');
-      str := TStringBuilder.Create;
+      str := TFslStringBuilder.Create;
       try
         gql.output.write(str, 0);
         StringToFile(str.ToString, TestSettings.fhirTestFile(['r4', 'graphql', output+'.out']), TEncoding.UTF8);

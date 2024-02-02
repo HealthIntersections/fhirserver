@@ -653,11 +653,11 @@ end;
 //
 //function TProfileUtilities.summariseSlicing(slice : TFhirElementDefinitionSlicing) : String;
 //var
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 //  first : boolean;
 //  d : TFhirElementDefinitionSlicingDiscriminator;
 //begin
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    first := true;
 //    for  d in slice.discriminatorList do
@@ -902,11 +902,11 @@ end;
 //
 //function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;
 //var
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 //  first : boolean;
 //  type_ : TFHIRElementDefinitionType;
 //begin
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    first := true;
 //    for type_ in types do

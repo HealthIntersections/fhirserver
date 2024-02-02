@@ -774,11 +774,11 @@ End;
 
 class Function TUcumExpressionComposer.compose(can : TUcumCanonical; value : boolean) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   c : TUcumCanonicalUnit;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if (value) then
       b.append(can.Value.asDecimal);

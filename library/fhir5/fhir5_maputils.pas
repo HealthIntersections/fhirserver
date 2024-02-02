@@ -167,16 +167,16 @@ type
     FServices : TTransformerServices;
     FFactory : TFHIRFactoryR5;
     FOnDebug: TFHIRStructureMapDebugEvent;
-    procedure renderContained(b : TStringBuilder; map : TFHIRStructureMap);
-    procedure renderUses(b : TStringBuilder; map : TFHIRStructureMap);
-    procedure renderImports(b : TStringBuilder; map : TFHIRStructureMap);
-    procedure renderGroup(b : TStringBuilder; g : TFHIRStructureMapGroup);
-    procedure renderDoco(b : TStringBuilder; doco : String);
-    procedure RenderRule(b : TStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
-    procedure RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
-    procedure renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
-    procedure renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
-    procedure renderConceptMap(b : TStringBuilder; map : TFHIRConceptMap);
+    procedure renderContained(b : TFslStringBuilder; map : TFHIRStructureMap);
+    procedure renderUses(b : TFslStringBuilder; map : TFHIRStructureMap);
+    procedure renderImports(b : TFslStringBuilder; map : TFHIRStructureMap);
+    procedure renderGroup(b : TFslStringBuilder; g : TFHIRStructureMapGroup);
+    procedure renderDoco(b : TFslStringBuilder; doco : String);
+    procedure RenderRule(b : TFslStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
+    procedure RenderSource(b : TFslStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
+    procedure renderTarget(b : TFslStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
+    procedure renderTransformParam(b : TFslStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
+    procedure renderConceptMap(b : TFslStringBuilder; map : TFHIRConceptMap);
 
     function getGroup(map : TFHIRConceptMap; source, target : String) : TFHIRConceptMapGroup;
     function fromEnum(s : String; codes : Array of String; lexer : TFHIRPathLexer) : integer;
@@ -353,10 +353,10 @@ end;
 
 function TFHIRStructureMapUtilities.render(map : TFHIRStructureMap) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   g : TFhirStructureMapGroup;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     b.append('map "');
     b.append(map.Url);
@@ -375,7 +375,7 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.renderUses(b : TStringBuilder; map : TFHIRStructureMap);
+procedure TFHIRStructureMapUtilities.renderUses(b : TFslStringBuilder; map : TFHIRStructureMap);
 var
   s : TFHIRStructureMapStructure;
 begin
@@ -399,7 +399,7 @@ begin
     b.append(#13#10);
 end;
 
-procedure TFHIRStructureMapUtilities.renderImports(b : TStringBuilder; map : TFHIRStructureMap);
+procedure TFHIRStructureMapUtilities.renderImports(b : TFslStringBuilder; map : TFHIRStructureMap);
 var
   s : TFHIRUri;
 begin
@@ -413,7 +413,7 @@ begin
     b.append(#13#10);
 end;
 
-procedure TFHIRStructureMapUtilities.renderGroup(b : TStringBuilder; g : TFHIRStructureMapGroup);
+procedure TFHIRStructureMapUtilities.renderGroup(b : TFslStringBuilder; g : TFHIRStructureMapGroup);
 var
   gi : TFHIRStructureMapGroupInput;
   r : TFHIRStructureMapGroupRule;
@@ -483,7 +483,7 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.RenderRule(b : TStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
+procedure TFHIRStructureMapUtilities.RenderRule(b : TFslStringBuilder; r : TFHIRStructureMapGroupRule; indent : integer);
 var
   first, ifirst : boolean;
   rs : TFHIRStructureMapGroupRuleSource;
@@ -561,7 +561,7 @@ begin
             ifirst := false
           else
             b.append(', ');
-          b.append(rdp.value);
+          b.append(rdp.value.toString);
         end;
         b.append(')');
       end;
@@ -581,7 +581,7 @@ begin
   b.append(#13#10);
 end;
 
-procedure TFHIRStructureMapUtilities.RenderSource(b : TStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
+procedure TFHIRStructureMapUtilities.RenderSource(b : TFslStringBuilder; rs : TFHIRStructureMapGroupRuleSource; canbeAbbreviated : boolean);
 begin
   b.append(rs.Context);
   if (rs.context = '@search') then
@@ -639,7 +639,7 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.renderTarget(b : TStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
+procedure TFHIRStructureMapUtilities.renderTarget(b : TFslStringBuilder; rt : TFHIRStructureMapGroupRuleTarget; canbeAbbreviated : boolean);
 var
   first : boolean;
   rtp : TFHIRStructureMapGroupRuleTargetParameter;
@@ -704,7 +704,7 @@ begin
     end;
 end;
 
-procedure TFHIRStructureMapUtilities.renderTransformParam(b : TStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
+procedure TFHIRStructureMapUtilities.renderTransformParam(b : TFslStringBuilder; rtp : TFHIRStructureMapGroupRuleTargetParameter);
 begin
   if (rtp.Value is TFHIRBoolean) then
     b.append((rtp.Value as TFHIRBoolean).StringValue)
@@ -726,9 +726,9 @@ end;
 
 function TFHIRStructureMapUtilities.render(map: TFHIRConceptMap): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     renderConceptMap(b, map);
     result := b.toString();
@@ -807,7 +807,7 @@ begin
   inc(result, (FUrl.length * sizeof(char)) + 12);
 end;
 
-procedure TFHIRStructureMapUtilities.renderConceptMap(b: TStringBuilder; map: TFHIRConceptMap);
+procedure TFHIRStructureMapUtilities.renderConceptMap(b: TFslStringBuilder; map: TFHIRConceptMap);
 const
   CHARS_RELATIONSHIP : array [TFhirConceptMapRelationshipEnum] of string = ('??', '-', '=', '>', '<', '!=');
 var
@@ -966,7 +966,7 @@ begin
   end;
 end;
 
-procedure TFHIRStructureMapUtilities.renderContained(b: TStringBuilder; map: TFHIRStructureMap);
+procedure TFHIRStructureMapUtilities.renderContained(b: TFslStringBuilder; map: TFHIRStructureMap);
 var
   r : TFHIRResource;
 begin
@@ -975,7 +975,7 @@ begin
       renderConceptMap(b, r as TFhirConceptMap);
 end;
 
-procedure TFHIRStructureMapUtilities.renderDoco(b : TStringBuilder; doco : String);
+procedure TFHIRStructureMapUtilities.renderDoco(b : TFslStringBuilder; doco : String);
 begin
   if (doco <> '') then
   begin
@@ -2174,7 +2174,7 @@ var
   b : TFHIRObject;
   types : TArray<String>;
   uses_ : TFhirStructureMapStructure;
-  sb : TStringBuilder;
+  sb : TFslStringBuilder;
   cc : TFhirCodeableConcept;
 begin
   case tgt.Transform of
@@ -2270,7 +2270,7 @@ begin
       end;
     StructureMapTransformAPPEND :
       begin
-        sb := TStringBuilder.Create(getParamString(vars, tgt.parameterList[0]));
+        sb := TFslStringBuilder.Create(getParamString(vars, tgt.parameterList[0]));
         try
           for i := 1 to tgt.parameterList.count - 1 do
             sb.append(getParamString(vars, tgt.parameterList[i]));

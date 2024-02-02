@@ -56,12 +56,12 @@ type
     procedure readLinkList(list : TFhirGraphDefinitionLinkList);
     function readDefinition : TFhirGraphDefinition;
 
-    procedure writeCompartment(b : TStringBuilder; cr : TFhirGraphDefinitionLinkTargetCompartment);
-    procedure writePathItem(b : TStringBuilder; item : TFhirGraphDefinitionLink; indent : integer);
-    procedure writeSearchItem(b : TStringBuilder; item : TFhirGraphDefinitionLink; indent : integer);
-    procedure writeLinklist(b : TStringBuilder; list : TFhirGraphDefinitionLinkList; indent : integer);
-    procedure writeHeader(b : TStringBuilder; definition : TFhirGraphDefinition);
-    procedure writeDefinition(b : TStringBuilder; definition : TFhirGraphDefinition);
+    procedure writeCompartment(b : TFslStringBuilder; cr : TFhirGraphDefinitionLinkTargetCompartment);
+    procedure writePathItem(b : TFslStringBuilder; item : TFhirGraphDefinitionLink; indent : integer);
+    procedure writeSearchItem(b : TFslStringBuilder; item : TFhirGraphDefinitionLink; indent : integer);
+    procedure writeLinklist(b : TFslStringBuilder; list : TFhirGraphDefinitionLinkList; indent : integer);
+    procedure writeHeader(b : TFslStringBuilder; definition : TFhirGraphDefinition);
+    procedure writeDefinition(b : TFslStringBuilder; definition : TFhirGraphDefinition);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -322,10 +322,10 @@ end;
 function TFHIRGraphDefinitionParser4B.asString(definition: TFhirResourceV; header: boolean): String;
 var
   t : TFhirGraphDefinition;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   t := definition as TFhirGraphDefinition;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if header then
       writeHeader(b, t);
@@ -336,7 +336,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4B.writeCompartment(b: TStringBuilder; cr: TFhirGraphDefinitionLinkTargetCompartment);
+procedure TFHIRGraphDefinitionParser4B.writeCompartment(b: TFslStringBuilder; cr: TFhirGraphDefinitionLinkTargetCompartment);
 begin
   if cr.use = GraphCompartmentUseCondition then
     b.Append('where ')
@@ -352,7 +352,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4B.writeDefinition(b: TStringBuilder; definition: TFhirGraphDefinition);
+procedure TFHIRGraphDefinitionParser4B.writeDefinition(b: TFslStringBuilder; definition: TFhirGraphDefinition);
 begin
   b.Append(CODES_TFhirResourceTypesEnum[definition.start]);
   if definition.profile <> '' then
@@ -364,12 +364,12 @@ begin
   writeLinklist(b, definition.link_List, 2);
 end;
 
-procedure TFHIRGraphDefinitionParser4B.writeHeader(b: TStringBuilder; definition: TFhirGraphDefinition);
+procedure TFHIRGraphDefinitionParser4B.writeHeader(b: TFslStringBuilder; definition: TFhirGraphDefinition);
 begin
 
 end;
 
-procedure TFHIRGraphDefinitionParser4B.writeLinklist(b: TStringBuilder; list: TFhirGraphDefinitionLinkList; indent : integer);
+procedure TFHIRGraphDefinitionParser4B.writeLinklist(b: TFslStringBuilder; list: TFhirGraphDefinitionLinkList; indent : integer);
 var
   i : integer;
 begin
@@ -393,7 +393,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4B.writePathItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
+procedure TFHIRGraphDefinitionParser4B.writePathItem(b: TFslStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
 var
   i : integer;
   cr : TFhirGraphDefinitionLinkTargetCompartment;
@@ -450,7 +450,7 @@ begin
   end;
 end;
 
-procedure TFHIRGraphDefinitionParser4B.writeSearchItem(b: TStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
+procedure TFHIRGraphDefinitionParser4B.writeSearchItem(b: TFslStringBuilder; item: TFhirGraphDefinitionLink; indent: integer);
 begin
   b.Append('search ');
   b.Append(CODES_TFhirResourceTypesEnum[item.targetList[0].type_]);
