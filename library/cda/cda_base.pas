@@ -734,7 +734,7 @@ begin
   FCollectionState := rmpctNone;
   FIsStructural := bIsStructural;
   if bHasValue Then
-    FValueString := BoolToStr(bValue);
+    FValueString := BoolToStr(bValue, true).ToLower;
 end;
 
 
