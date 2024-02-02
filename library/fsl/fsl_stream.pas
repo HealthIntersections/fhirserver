@@ -37,7 +37,7 @@ Uses
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
   {$IFDEF FPC} ZStream, {$ELSE} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging, fsl_gzip;
+  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_gzip;
 
 type
   EParserException = class;
