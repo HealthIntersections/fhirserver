@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http;
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_fpc;
 
 Type
 
@@ -48,7 +48,8 @@ Type
     FLangList : THTTPLanguageList;
     FVersion: String;
     FLogId: String;
-    procedure SetLangList(AValue: THTTPLanguageList);
+    procedure SetLangList(AValue: THTTPLanguageList); 
+    procedure escapeText(AStr: String; attr : boolean);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -120,6 +121,42 @@ implementation
 
 { THtmlPublisher }
 
+
+procedure THtmlPublisher.escapeText(AStr: String; attr : boolean);
+var
+  c : UnicodeChar;
+begin
+  for c in unicodeChars(aStr) do
+  begin
+    case c of
+      '"':  if attr then FBuilder.append('&quot;') else FBuilder.append('"');
+      '''': if attr then FBuilder.append('&apos;') else FBuilder.append('''');
+      '&':  FBuilder.append('&amp;');
+      '<':  FBuilder.append('&lt;');
+      '>':  FBuilder.append('&gt;');
+      #32:  FBuilder.append(' ');
+
+      #13, #10:
+        if attr then
+        begin
+          FBuilder.append('&#');
+          FBuilder.append(IntToStr(Ord(c)));
+          FBuilder.append(';')
+        end
+        else
+          FBuilder.append(char(c));
+      else if (ord(c) < 127) and (Ord(c) >= 32) then
+        FBuilder.append(char(c))
+      else
+      begin
+        FBuilder.append('&#x');
+        FBuilder.append(IntToHex(Ord(c), 2));
+        FBuilder.append(';');
+      end;
+    end;
+  end;
+end;
+
 procedure THtmlPublisher.AddListItem(text: String);
 begin
   StartListItem;
@@ -145,7 +182,7 @@ procedure THtmlPublisher.AddTableCellHint(text, hint: String);
 begin
   StartTableCell;
   FBuilder.append('<span title="');
-  FBuilder.append(FormatTextToXML(hint, xmlAttribute));
+  escapeText(hint, true);
   FBuilder.append('">');
   addtext(text, false, false);
   FBuilder.append('</span>');
@@ -174,7 +211,7 @@ end;
 
 procedure THtmlPublisher.AddTextPlain(text: String);
 begin
-  FBuilder.append(FormatTextToXml(text, xmlText));
+  escapeText(text, false);
 end;
 
 procedure THtmlPublisher.AddTitle(text: String);
@@ -436,7 +473,7 @@ begin
     FBuilder.append('<a href="');
     FBuilder.append(url);
     FBuilder.append('" title="');
-    FBuilder.append(FormatTextToXml(hint, xmlAttribute));
+    escapeText(hint, true);
     FBuilder.append('">')
   end
   else

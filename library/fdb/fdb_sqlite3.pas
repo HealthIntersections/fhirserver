@@ -193,7 +193,6 @@ begin
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE or SQLITE_OPEN_CREATE)
   else
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE);
-  Logging.log('TFDBSQLiteConnection.Create: '+inttostr(GetTickCount64-start)+'ms');
 end;
 
 destructor TFDBSQLiteConnection.Destroy;
