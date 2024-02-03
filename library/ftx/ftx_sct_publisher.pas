@@ -40,6 +40,7 @@ Uses
 
 Const
   MAX_ROWS = 100;
+  DOING_REFSETS_FOR_DESCS = false;
 
 Type
   TIdArray = array of cardinal;
@@ -86,16 +87,6 @@ Type
 
 
 Implementation
-
-
-Function Screen(Const s, s2: String):String;
-Begin
-  result := s;
-// wtf is this code thinking it's doing?
-//  result := StringReplace(s, 'B', '');
-//  if (s2 <> '') And StringEndsWith(result, s2) Then
-//    delete(result, length(result) - length(s2) + 1, length(s));
-End;
 
 function StringToBoolDef(s : String; def : boolean):boolean;
 begin
@@ -394,11 +385,11 @@ procedure TSnomedPublisher.ConceptRef(html: THtmlPublisher;
   rRating: Double);
 Begin
   if show = cdBoth Then
-    html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(FSnomed.GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
+    html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+FSnomed.GetPNForConcept(iIndex), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
   Else if show = cdDesc then
-    html.URL(Screen(FSnomed.GetPNForConcept(iIndex), ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
+    html.URL(FSnomed.GetPNForConcept(iIndex), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
   else
-    html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex)), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)), Screen(FSnomed.GetPNForConcept(iIndex), ''));
+    html.URL(inttostr(FSnomed.Concept.GetIdentity(iIndex)), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)), FSnomed.GetPNForConcept(iIndex));
   if rRating > 0 then
     html.AddTextPlain(' '+inttostr(Trunc(rRating * 10)));
 End;
@@ -415,11 +406,11 @@ Begin
     s := FSnomed.GetPNForConcept(iIndex);
 
   if show = cdBoth Then
-    html.AddTableCellURL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
+    html.AddTableCellURL(inttostr(FSnomed.Concept.GetIdentity(iIndex))+' '+s, sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
   Else if show = cdDesc then
-    html.AddTableCellURL(Screen(s, ''), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
+    html.AddTableCellURL(s, sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)))
   Else
-    html.AddTableCellURL(inttostr(FSnomed.Concept.GetIdentity(iIndex)), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)), Screen(s, ''))
+    html.AddTableCellURL(inttostr(FSnomed.Concept.GetIdentity(iIndex)), sPrefix+'id='+inttostr(FSnomed.Concept.GetIdentity(iIndex)), s)
 End;
 
 Function ComparePaths(p1, p2: TIdArray) : Integer;
@@ -496,7 +487,7 @@ Begin
       if j > 0 Then
         html.AddTextPlain('\');
       if aPaths[iLow][j] = iFocus Then
-        html.AddText(Screen(FSnomed.GetPNForConcept(iFocus), ''), false, true)
+        html.AddText(FSnomed.GetPNForConcept(iFocus), false, true)
       Else
         ConceptRef(html, sPrefix, aPaths[iLow][j], cdDesc, 0);
     End;
@@ -525,7 +516,7 @@ Begin
         if j > 0 Then
           html.AddTextPlain('\');
         if aPaths[i][j] = iFocus Then
-          html.AddText(Screen(FSnomed.GetPNForConcept(iFocus), ''), false, true)
+          html.AddText(FSnomed.GetPNForConcept(iFocus), false, true)
         Else
           ConceptRef(html, sPrefix, aPaths[i][j], cdDesc, 0);
       End;
@@ -617,7 +608,7 @@ Begin
     FSN := FSnomed.GetFSN(Descriptions);
     PN := FSnomed.GetPN(Descriptions);
     if Not bRoot then
-      html.Heading(1, inttostr(Identity)+': '+screen(FSN, ''));
+      html.Heading(1, inttostr(Identity)+': '+FSN);
     if not bRoot Then
     Begin
       FPaths := GetPaths(iIndex);
@@ -653,7 +644,7 @@ Begin
     html.AddTableCell('Status', true);
     html.AddTableCell('Case?', true);
     html.AddTableCell('Module', true);
-    if FSnomed.RefSetIndex.Count > 0 Then
+    if DOING_REFSETS_FOR_DESCS and (FSnomed.RefSetIndex.Count > 0) Then
       html.AddTableCell('Reference Sets', true);
     html.EndTableRow;
     for i := Low(Descriptions) To High(Descriptions) Do
@@ -663,7 +654,7 @@ Begin
       Begin
         html.StartRow();
         html.AddTableCell(inttostr(iId));
-        html.AddTableCell(Screen(FSnomed.Strings.GetEntry(iWork), ''));
+        html.AddTableCell(FSnomed.Strings.GetEntry(iWork));
         html.AddTableCell(codeForLang(lang));
         CellConceptRef(html, sPrefix, kind, cdDesc);
         if (active) then
@@ -675,7 +666,7 @@ Begin
           CellConceptRef(html, sPrefix, module, cdDesc)
         else
           html.AddTableCell('');
-        if FSnomed.RefSetIndex.Count > 0 Then
+        if DOING_REFSETS_FOR_DESCS and (FSnomed.RefSetIndex.Count > 0) Then
         Begin
           iList := FSnomed.GetDescRefsets(Descriptions[i]);
           if Length(ilist) = 0 Then
@@ -767,7 +758,7 @@ Begin
             html.StartRow('#EFEFEF')
           else
             html.StartRow();
-          html.AddTableCellHint(Screen(PN, ''), inttostr(did));
+          html.AddTableCellHint(PN, inttostr(did));
           CellConceptRef(html, sPrefix, iWork3, cdDesc);
           CellConceptRef(html, sPrefix, iWork2, cdDesc);
           if (active) then
@@ -888,7 +879,7 @@ Begin
           CellConceptRef(html, sPrefix, iWork, cdDesc);
           CellConceptRef(html, sPrefix, iWork3, cdDesc);
           html.AddTableCell(BooleanToString(active));
-          html.AddTableCellHint(Screen(PN, ''), inttostr(did));
+          html.AddTableCellHint(PN, inttostr(did));
           CellConceptRef(html, sPrefix, kind, cdDesc);
           CellConceptRef(html, sPrefix, modifier, cdDesc);
           html.AddTableCell(' '+GetRelGroup(Group));
@@ -1718,7 +1709,7 @@ Begin
 
     html.StartParagraph;
     html.AddText(sId, true, true);
-    html.AddText(': '+screen(PN, ''), true, false);
+    html.AddText(': '+PN, true, false);
     html.EndParagraph;
     html.AddParagraph(FSN);
 
@@ -1779,7 +1770,7 @@ var
 begin
   FSnomed.RefSetIndex.GetReferenceSet(iIndex, iFilename, iName, iDefinition, iMembersByName, iMembersByRef, iTypes, iFields);
   id := inttostr(FSnomed.Concept.GetIdentity(iDefinition));
-  html.URL(Screen(id+' '+FSnomed.GetPNForConcept(iDefinition), ' reference set'), sPrefix+'id='+id);
+  html.URL(id+' '+FSnomed.GetPNForConcept(iDefinition), sPrefix+'id='+id);
   html.AddTextPlain('(');
   html.AddTextPlain(inttostr(FSnomed.RefSetMembers.GetMemberCount(iMembersByRef))+' members)');
   if iTypes <> 0 then
