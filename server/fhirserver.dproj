@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <ProjectGuid>{7F316173-C96F-45F2-9CDF-8D999F4C4F82}</ProjectGuid>
     <ProjectVersion>19.5</ProjectVersion>
@@ -91,8 +91,8 @@
     <VerInfo_Keys>CompanyName=;FileVersion=2.1.3.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <VerInfo_MajorVer>3</VerInfo_MajorVer>
-    <VerInfo_MinorVer>1</VerInfo_MinorVer>
-    <VerInfo_Release>8</VerInfo_Release>
+    <VerInfo_MinorVer>2</VerInfo_MinorVer>
+    <VerInfo_Release>0</VerInfo_Release>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Base_Win32)&apos;!=&apos;&apos;">
@@ -167,9 +167,9 @@
     <DCC_RangeChecking>true</DCC_RangeChecking>
     <DCC_DebugDCUs>false</DCC_DebugDCUs>
     <VerInfo_MajorVer>3</VerInfo_MajorVer>
-    <VerInfo_Release>8</VerInfo_Release>
+    <VerInfo_Release>0</VerInfo_Release>
     <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
-    <VerInfo_MinorVer>1</VerInfo_MinorVer>
+    <VerInfo_MinorVer>2</VerInfo_MinorVer>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Cfg_2)&apos;!=&apos;&apos;">
