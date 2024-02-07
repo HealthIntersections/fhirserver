@@ -159,6 +159,7 @@ Type
     FInLog : TLogger;
     FOutLog : TLogger;
     FLogFolder : String;
+    FRobotsText : String;
 
     // operational fields
     FUsageServer : TUsageStatsServer;
@@ -212,6 +213,7 @@ Type
     procedure loadConfiguration(ini : TFHIRServerConfigFile);
     property settings : TFHIRServerSettings read FSettings;
     property stats : TStatusRecords read FStats;
+    property RobotsText : String read FRobotsText write FRobotsText;
 
     procedure DoVerifyPeer(Sender: TObject; const x509: TIdOpenSSLX509; const VerifyResult: Integer; const Depth: Integer; var Accepted: Boolean); // private (hint busting)
 
@@ -344,6 +346,9 @@ begin
   Common.AdminEmail := ini.admin['email'].value;
   if Common.AdminEmail = '' then
     raise EFHIRException.Create('An admin email is required');
+
+  if (ini.web['robots.txt'].value <> '') then
+    FRobotsText := FileToString(ini.web['robots.txt'].value, TEncoding.UTF8);
 
   if Common.StatedPort = 80 then
     txu := 'http://' + Common.Host
@@ -585,10 +590,10 @@ End;
 
 function TFhirWebServer.WebDump: String;
 var
-  b: TStringBuilder;
+  b: TFslStringBuilder;
   ci: TFHIRWebServerClientInfo;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('<table>'#13#10);
     b.Append('<tr><td>IP address</td><td>Count</td><td>Session</td><td>Activity</td><td>Length</td></tr>'#13#10);
@@ -739,6 +744,12 @@ begin
             response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
           epn := '--';
           summ := 'options?';
+        end
+        else if (request.Document = '/robots.txt') and (RobotsText <> '') then
+        begin
+          response.ResponseNo := 200;
+          response.ResponseText := 'OK';
+          response.ContentText := RobotsText;
         end
         else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
         begin
@@ -906,6 +917,12 @@ begin
             response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
           summ := 'options?';
           epn := '--';
+        end
+        else if (request.Document = 'robots.txt') and (RobotsText <> '') then
+        begin
+          response.ResponseNo := 200;
+          response.ResponseText := 'OK';
+          response.ContentText := RobotsText;
         end
         else
         begin
@@ -1218,10 +1235,10 @@ end;
 
 function TFhirWebServer.endpointList : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ep : TFhirWebServerEndpoint;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append('<ul>');
     if FEndPoints.Count = 0 then
@@ -1447,7 +1464,7 @@ end;
 
 procedure TFHIRHTTPServer.DoMaxConnectionsExceeded(AIOHandler: TIdIOHandler);
 begin
-  logging.log('Max Connections Exceeded');
+  logging.log('Max Connections Exceeded ('+inttostr(MaxConnections)+')');
 end;
 
 End.

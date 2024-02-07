@@ -168,7 +168,7 @@ begin
   result := fhir4_utilities.BuildOperationOutcome(langList, e, ExceptionTypeTranslations[issueCode]);
 end;
 
-function TFHIRFactoryR4.buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV; overload;
+function TFHIRFactoryR4.buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV;
 var
   op : TFHIROperationOutcome;
   iss : TFHIROperationOutcomeIssue;

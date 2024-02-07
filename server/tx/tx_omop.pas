@@ -340,7 +340,7 @@ end;
 
 function TOMOPServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('not done yet: searchFilter');
+  raise ETerminologyError.Create('not done yet: searchFilter', itBusinessRule);
 end;
 
 function TOMOPServices.filter(forIteration: boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -361,12 +361,12 @@ begin
     end;
   end
   else
-    raise ETerminologyError.Create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP');
+    raise ETerminologyError.Create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP', itBusinessRule);
 end;
 
 function TOMOPServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('not done yet: filterLocate');
+  raise ETerminologyError.Create('not done yet: filterLocate', itBusinessRule);
 end;
 
 function TOMOPServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
@@ -398,7 +398,7 @@ end;
 
 function TOMOPServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyError.Create('not done yet: InFilter');
+  raise ETerminologyError.Create('not done yet: InFilter', itBusinessRule);
 end;
 
 function TOMOPServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
@@ -408,7 +408,7 @@ end;
 
 procedure TOMOPServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  raise ETerminologyError.Create('not done yet: getCDSInfo');
+  raise ETerminologyError.Create('not done yet: getCDSInfo', itBusinessRule);
 end;
 
 procedure TOMOPServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -437,7 +437,7 @@ end;
 
 procedure TOMOPServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  raise ETerminologyError.Create('not done yet: defineFeatures');
+  raise ETerminologyError.Create('not done yet: defineFeatures', itBusinessRule);
 end;
 
 end.

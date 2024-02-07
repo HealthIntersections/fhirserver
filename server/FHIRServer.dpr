@@ -485,7 +485,6 @@ uses
   operations_r5 in 'operations_r5.pas',
   package_spider in 'package_spider.pas',
   qrcodegen in '..\dependencies\qrcodegen\qrcodegen.pas',
-  remote_config in 'remote_config.pas',
   reverse_client in 'reverse_client.pas',
   scim_search in 'scim_search.pas',
   scim_server in 'scim_server.pas',
@@ -565,10 +564,16 @@ uses
   fsl_i18n in '..\library\fsl\fsl_i18n.pas',
   fhir_extensions in '..\library\fhir\fhir_extensions.pas',
   fsl_web_init in '..\library\web\fsl_web_init.pas',
-  fsl_regex in '..\library\fsl\fsl_regex.pas';
+  fsl_regex in '..\library\fsl\fsl_regex.pas',
+  fsl_gzip in '..\library\fsl\fsl_gzip.pas',
+  tx_cpt in 'tx\tx_cpt.pas',
+  tx_omop in 'tx\tx_omop.pas',
+  fhir4_ips in '..\library\fhir4\fhir4_ips.pas',
+  fdb_fts in '..\library\fdb\fdb_fts.pas',
+  tests_cpt in 'tests\tests_cpt.pas';
 
 begin
-  ExecuteFhirServer;
+  ExecuteFhirServer(TCommandLineParameters.Create);
 end.
 
 

@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$IFDEF DELPHI} FastMM4, {$ENDIF} {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
   fsl_threads, fsl_base, fsl_utilities, fsl_collections{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
 

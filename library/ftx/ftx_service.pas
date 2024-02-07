@@ -839,7 +839,7 @@ var
   hl : THTTPLanguageList;
   l : TIETFLang;
 begin
-  hl := THTTPLanguageList.Create;
+  hl := THTTPLanguageList.Create('', false);
   try
     for l in lang do
       hl.addCode(l.code);

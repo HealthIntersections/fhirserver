@@ -844,10 +844,10 @@ end;
 
 function TIGPublicationFolder.log: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     FManager.FLock.Lock;
     try

@@ -1008,7 +1008,7 @@ begin
   try
     for s in TDirectory.GetDirectories(FFolder) do
       ts.Add(s);
-    for a := semverLabel downto semverMajor do
+    for a := semverLabel downto semverMinor do
     begin
       for s in ts do
       begin
@@ -1016,8 +1016,10 @@ begin
         t := n.Substring(n.IndexOf('#')+1);
         n := n.Substring(0, n.IndexOf('#'));
 
-        if (n = id) and ((ver = '') or TSemanticVersion.matches(ver, t, a)) and FileExists(FilePath([s, 'package', 'package.json'])) then
-          exit(s);
+        if (n = id) then
+          if ((ver = '') or TSemanticVersion.matches(ver, t, a)) then
+            if FileExists(FilePath([s, 'package', 'package.json'])) then
+              exit(s);
       end;
     end;
   finally
@@ -1032,14 +1034,23 @@ end;
 
 function TFHIRPackageManager.latestPackageVersion(id: String): String;
 var
+  ts : TStringList;
   s, n : String;
 begin
   result := '';
-  for s in TDirectory.GetDirectories(FFolder) do
-  begin
-    n := ExtractFileName(s);
-    if n.StartsWith(id+'#') then
-      result := n.Substring(n.IndexOf('#')+1);
+  ts := TStringList.create;
+  try
+    for s in TDirectory.GetDirectories(FFolder) do
+      ts.add(s);
+    ts.sort;
+    for s in ts do
+    begin
+      n := ExtractFileName(s);
+      if n.StartsWith(id+'#') then
+        result := n.Substring(n.IndexOf('#')+1);
+    end;
+  finally
+    ts.free;
   end;
 end;
 
@@ -1056,7 +1067,7 @@ begin
     except
     end;
     try
-      if list.Empty then
+      if list.Empty or StringArrayExists(['us.nlm.vsac'], id) then
         TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
     except
     end;
@@ -1099,13 +1110,13 @@ end;
 
 function TFHIRPackageManager.report: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   list : TFslList<TNpmPackage>;
   p : TNpmPackage;
   ts : TStringList;
   s : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.AppendLine('Packages in '+Folder);
     b.AppendLine;

@@ -198,7 +198,7 @@ var
   be : TFhirBundleEntry;
   c : TFhirCondition;
   card : TCDSHookCard;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
   e : TFhirEncounter;
 begin
@@ -276,7 +276,7 @@ begin
     else
     begin
       card.summary := 'order-review request: '+inttostr(issues.Count)+' issues found';
-      b := TStringBuilder.Create;
+      b := TFslStringBuilder.Create;
       try
         for s in issues do
           b.Append('* '+s+#13#10);
@@ -301,10 +301,10 @@ end;
 //procedure TCDAHooksIdentifierViewService.addSystemCard(resp: TCDSHookResponse; name, publisher, responsible, type_, usage, realm : String);
 //var
 //  card : TCDSHookCard;
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 //begin
 //  card := resp.addCard;
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    b.append('* Identifier System Name: '+name+#13#10);
 //    if publisher <> '' then
@@ -335,7 +335,7 @@ end;
 //procedure TCDAHooksIdentifierViewService.addNamingSystemInfo(ns: TFHIRNamingSystemW; baseURL : String; resp: TCDSHookResponse);
 //var
 //  card : TCDSHookCard;
-//  b : TStringBuilder;
+//  b : TFslStringBuilder;
 ////  cp : TFhirNamingSystemContact;
 ////  !{$IFNDEF FHIR2}
 ////  uc : TFhirUsageContext;
@@ -344,7 +344,7 @@ end;
 //begin
 //  card := resp.addCard;
 //  card.addLink('Further Detail', baseURL+'/open/NamingSystem/'+ns.id);
-//  b := TStringBuilder.Create;
+//  b := TFslStringBuilder.Create;
 //  try
 //    b.Append('todo');
 //(*    b.append('* Identifier System Name: '+ns.name+#13#10);

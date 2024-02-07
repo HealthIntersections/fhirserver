@@ -1301,11 +1301,11 @@ end;
 function normaliseWhitespace(s : String) : String;
 var
   w : boolean;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : Char;
 begin
   w := false;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for c in s do
     begin

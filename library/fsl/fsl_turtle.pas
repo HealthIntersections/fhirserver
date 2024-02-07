@@ -48,7 +48,7 @@ Type
   protected
     FStart : TSourceLocation;
     FStop : TSourceLocation;
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
+    function write(b : TFslStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; virtual; abstract;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
@@ -65,7 +65,7 @@ Type
     Fvalue : String;
     Ftype : String;
   protected
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function write(b : TFslStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
@@ -84,7 +84,7 @@ Type
     Furi : String;
     procedure setUri(value : String);
   protected
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function write(b : TFslStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
@@ -100,7 +100,7 @@ Type
   private
     Flist : TFslList<TTurtleObject>;
   protected
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function write(b : TFslStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
@@ -118,7 +118,7 @@ Type
     FPredicates : TFslMap<TTurtleObject>;
     FNames : TStringList;
   protected
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
+    function write(b : TFslStringBuilder; doc : TTurtleDocument; indent : integer) : boolean; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(start : TSourceLocation); overload;
@@ -148,7 +148,7 @@ Type
     FURL : TTurtleURL;
     FValue : TTurtleComplex;
   protected
-    function write(b : TStringBuilder; doc : TTurtleDocument; indent : integer) : boolean;
+    function write(b : TFslStringBuilder; doc : TTurtleDocument; indent : integer) : boolean;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
     constructor Create(url : TTurtleURL; value : TTurtleComplex);
@@ -229,7 +229,7 @@ type
 
   TTurtleComposer = class (TFslObject)
   public
-    class procedure writePrefixes(b : TStringBuilder; doc : TTurtleDocument);
+    class procedure writePrefixes(b : TFslStringBuilder; doc : TTurtleDocument);
   public
     class function compose(doc : TTurtleDocument) : String; overload;
     class procedure compose(doc : TTurtleDocument; dest : TStream); overload;
@@ -261,7 +261,7 @@ begin
   end;
 end;
 
-procedure ln(b: TStringBuilder; line: String);
+procedure ln(b: TFslStringBuilder; line: String);
 begin
   b.Append(line);
   b.Append(#13#10);
@@ -325,7 +325,7 @@ begin
   result := FValue;
 end;
 
-function TTurtleLiteral.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+function TTurtleLiteral.write(b: TFslStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
 var
   p : String;
   c : char;
@@ -400,7 +400,7 @@ begin
   result := Furi;
 end;
 
-function TTurtleURL.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+function TTurtleURL.write(b: TFslStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
 var
   s : String;
 begin
@@ -470,7 +470,7 @@ begin
     raise EWebException.create('Error finding single value: '+inttostr(FList.count)+' not found');
 end;
 
-function TTurtleList.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+function TTurtleList.write(b: TFslStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
 var
   first : boolean;
   obj : TTurtleObject;
@@ -556,7 +556,7 @@ begin
     result := predicates[uri].singleLiteral;
 end;
 
-function TTurtleComplex.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+function TTurtleComplex.write(b: TFslStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
 var
   left : String;
   i : integer;
@@ -787,7 +787,7 @@ end;
 procedure TTurtleLexer.readNext(postColon : boolean);
 var
   ch : char;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   e, s : String;
 begin
   Ftoken := '';
@@ -797,7 +797,7 @@ begin
     exit;
   startPos := pos;
   ch := grab();
-  b := TStringBuilder.create();
+  b := TFslStringBuilder.create();
   try
     case ch of
       '@', '.', ':', ';', '^', ',', ']', '[', '(', ')':
@@ -895,12 +895,12 @@ end;
 
 function TTurtleLexer.unescape(s : String; isUri : boolean) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i, l, uc : integer;
   ch : char;
   n : String;
 begin
-  b := TStringBuilder.create();
+  b := TFslStringBuilder.create();
   try
     i := 1;
     while (i <= s.length) do
@@ -1391,7 +1391,7 @@ begin
   inherited;
 end;
 
-function TTurtlePredicate.write(b: TStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
+function TTurtlePredicate.write(b: TFslStringBuilder; doc: TTurtleDocument; indent: integer): boolean;
 begin
 //  FURL.write(b, doc, indent);
   b.append('<');
@@ -1491,10 +1491,10 @@ end;
 
 class function TTurtleComposer.compose(doc: TTurtleDocument): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   pred :  TTurtlePredicate;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     writePrefixes(b, doc);
     for pred in doc.objects do
@@ -1515,7 +1515,7 @@ begin
   StringToStream(compose(doc), dest, TEncoding.UTF8);
 end;
 
-class procedure TTurtleComposer.writePrefixes(b: TStringBuilder; doc: TTurtleDocument);
+class procedure TTurtleComposer.writePrefixes(b: TFslStringBuilder; doc: TTurtleDocument);
 var
   p : String;
   done : boolean;

@@ -1003,10 +1003,10 @@ end;
 
 function TNarrativeGenerator.displayHumanName(v : TFHIRHumanName) : String;
 var
-  s : TStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
 begin
-  s := TStringBuilder.Create;
+  s := TFslStringBuilder.Create;
   try
     if (v.Text <> '') then
       s.append(v.Text)
@@ -1034,10 +1034,10 @@ end;
 
 function TNarrativeGenerator.displayAddress(v : TFHIRAddress) : String;
 var
-  s : TStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
 begin
-  s := TStringBuilder.Create;
+  s := TFslStringBuilder.Create;
   try
     if (v.Text <> '') then
       s.append(v.Text)

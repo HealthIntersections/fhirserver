@@ -19,7 +19,6 @@ set "tmp=%2"
 
 call build\windows-libraries.bat %tmp%
 
-
 call build\windows-fhirserver.bat %tmp%
 
 exec\64\fhirserver.exe -tests -test-settings exec\64\fhir-tests.ini

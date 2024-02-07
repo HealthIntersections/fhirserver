@@ -289,7 +289,6 @@ begin
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';
           html.LangList := THTTPLanguageList.Create(request.AcceptLanguage, true);
           pub.PublishDict(code, PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/', html);
-          html.AddParagraph('Perf: '+pub.progress.CommaText);
           returnContent(request, response, request.Document, secure, 'SNOMED CT Browser', html.output);
         finally
           html.free;

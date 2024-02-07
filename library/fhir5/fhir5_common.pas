@@ -475,8 +475,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
-    procedure addProperty(code : String; value : TFHIRObject); override; overload;
-    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); override; overload;
+    procedure addProperty(code : String; value : TFHIRObject); overload; override;
+    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); overload; override;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
     function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
@@ -3142,6 +3142,7 @@ procedure TFHIRValueSet5.setExperimental(value: boolean);
 begin
   vs.experimental := value;
 end;
+
 function TFHIRValueSet5.getVersion: String;
 begin
   result := vs.Version;

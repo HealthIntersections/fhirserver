@@ -1,4 +1,4 @@
-unit tx_cpt;
+﻿unit tx_cpt;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -848,7 +848,7 @@ end;
 
 function TCPTServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Not supported yet');
+  raise ETerminologyError.Create('Not supported yet', itBusinessRule);
 end;
 
 function TCPTServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;

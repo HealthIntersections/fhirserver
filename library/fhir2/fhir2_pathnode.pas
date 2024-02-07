@@ -123,7 +123,7 @@ type
     procedure SetFunctionId(const Value: TFHIRPathFunction);
     procedure SetTypes(const Value: TFHIRTypeDetails);
     procedure SetOpTypes(const Value: TFHIRTypeDetails);
-    procedure write(b : TStringBuilder);
+    procedure write(b : TFslStringBuilder);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -200,9 +200,9 @@ implementation
 
 function TFHIRPathExpressionNode.Canonical: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     write(b);
     result := b.ToString;
@@ -402,11 +402,11 @@ end;
 
 function TFHIRPathExpressionNode.toString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   n : TFHIRPathExpressionNode;
 begin
-  b := TStringBuilder.Create();
+  b := TFslStringBuilder.Create();
   try
     case kind of
     enkName:
@@ -485,7 +485,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TFHIRPathExpressionNode.write(b: TStringBuilder);
+procedure TFHIRPathExpressionNode.write(b: TFslStringBuilder);
 var
   f : boolean;
   n : TFHIRPathExpressionNode;

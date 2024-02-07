@@ -627,13 +627,13 @@ end;
 
 function TBaseEditor.GetBytes: TBytes;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
   first : boolean;
   encoding : TSourceEncoding;
 begin
   updateToContent;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for s in FContent do

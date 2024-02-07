@@ -1933,12 +1933,12 @@ end;
 
 function CommaText(list : TFslList<TFDBColumn>) : String;
 var
-  s : TStringBuilder;
+  s : TFslStringBuilder;
   b : boolean;
   c : TFDBColumn;
 begin
   b := false;
-  s := TStringBuilder.Create;
+  s := TFslStringBuilder.Create;
   try
     for C in list do
     begin

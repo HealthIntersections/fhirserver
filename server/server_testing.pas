@@ -90,7 +90,7 @@ begin
   {$ENDIF}
 end;
 
-procedure RunTestConsole(ini : TFHIRServerConfigFile);
+procedure RunTestConsole(ini : TFHIRServerConfigFile; params : TCommandLineParameters);
 {$IFDEF FPC}
 var
   app : TIdeTesterConsoleRunner;
@@ -108,7 +108,7 @@ end;
 {$ELSE}
 begin
   DUnitTestRunner.RunRegisteredTests;
-  if not hasCommandLineParam('-ci') then
+  if not params.has('-ci') then
   begin
     System.Write('Done.. press <Enter> key to quit.');
     System.Readln;
@@ -119,7 +119,7 @@ end;
 procedure runTests(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
 begin
   test_registry.registerTests(params);
-  if hasCommandLineParam('gui') then
+  if params.has('gui') then
     RunTestGui(ini)
   {$IFDEF FPC}
   else if IsRunningIDETests then
@@ -131,7 +131,7 @@ begin
   else
   begin
     Logging.LogToConsole := false;
-    RunTestConsole(ini);
+    RunTestConsole(ini, params);
   end;
 end;
 

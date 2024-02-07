@@ -463,9 +463,12 @@ begin
   version := FEndPoint.config.prop['version'].value;
   SetThreadName(version+' Loader');
   process('CodeSystems', FEndPoint.FStore.FData.CodeSystems);
-  process('ValueSets', FEndPoint.FStore.FData.ValueSets);
-  process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
-  process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
+  if not Stopped then
+    process('ValueSets', FEndPoint.FStore.FData.ValueSets);
+  if not Stopped then
+    process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
+  if not Stopped then
+    process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
 end;
 
 { TTerminologyServerOperationEngine }
@@ -674,7 +677,7 @@ var
   be : TFhirBundleEntryW;
   p : TFHIRResourceProxyV;
   useProxy : boolean;
-  start : QWord;
+  start : UInt64;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
@@ -861,7 +864,7 @@ var
   s : String;
   i : integer;
   tt : TTimeTracker;
-  start : QWord;
+  start : UInt64;
 begin
   start := GetTickCount64;
 
