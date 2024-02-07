@@ -1151,7 +1151,9 @@ Begin
       clsName := 'n/a';
       nmCls  := 'n/a';
       try
+        {$IFOPT D+}
         nmCls := FNamedClass;
+        {$ENDIF}
       except
         nmCls := '??';
       end;
@@ -1467,7 +1469,9 @@ end;
 
 procedure TFslObject.updateDebugInfo;
 begin
+  {$IFOPT D+}
   FDebugInfo := debugInfo;
+  {$ENDIF}
 end;
 
 function TFslObject.ObjectCrossesThreads: boolean;
@@ -1510,7 +1514,7 @@ begin
     updateDebugInfo;
   except
   end;
-  result := FDebugInfo;
+  result := {$IFOPT D+}FDebugInfo{$ELSE}''{$ENDIF};
 end;
 
 function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod, sMessage: String): Boolean;
