@@ -1846,7 +1846,7 @@ begin
                 msg(m);
                 op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
               end
-              else if (c.display <> '') and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
+              else if (c.display <> '') and (list.designations.count > 0) and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
               begin
                 if (diff = ddNormalised) then
                   baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
@@ -1975,7 +1975,7 @@ begin
                      if (pdisp = '') then
                        pdisp := list.preferredDisplay;
                      severity := dispWarning();
-                     if (c.display <> '') and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
+                     if (c.display <> '') and (list.designations.Count > 0) and (not list.hasDisplay(FParams.languages, c.display, dcsCaseInsensitive, diff)) then
                      begin
                        if (diff = ddNormalised) then
                          baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
