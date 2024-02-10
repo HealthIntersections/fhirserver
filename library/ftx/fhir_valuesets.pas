@@ -815,16 +815,12 @@ var
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeConceptW;
   match : boolean;
-  s, msg : String;
+  msg : String;
   loc : TCodeSystemProviderContext;
   needDoExpansion : boolean;
 begin
   result := '';
   needDoExpansion := false;
-
-  s := fixedSystemFromValueSet();
-  if (s > '') then
-    exit(s);
 
   for vsi in FValueSet.excludes.forEnum do
     needDoExpansion := true;
