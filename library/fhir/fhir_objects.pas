@@ -395,6 +395,7 @@ type
   {$M+}
   TFHIRObject = class (TFslObject)
   private
+    FTagNoLink: TFslObject;
     FTags : TFslStringDictionary;
     FTag : TFslObject;
     FTagInt: integer;
@@ -482,6 +483,7 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
+    property TagNoLink : TFslObject read FTagNoLink write FTagNoLink;
     property TagInt : integer read FTagInt write FTagInt;
 
     // this is populated by the json and xml parsers if requested
