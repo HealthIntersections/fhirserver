@@ -1353,9 +1353,9 @@ begin
         system := determineSystem(code);
         if (system = '') then
         begin
-          message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.languages, [code, FValueSet.url]);
+          message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.languages, [code, FValueSet.vurl]);
           messages.add(message);
-          op.addIssue(isError, itNotFound, path, message, oicInferFailed);
+          op.addIssue(isError, itNotFound, 'code', message, oicInferFailed);
           exit(bFalse);
         end
         else
@@ -2019,6 +2019,8 @@ begin
 
             if mode = vcmCodeableConcept then
               p := ''
+            else if (issuePath = '') then
+              p := 'code'
             else if (issuePath <> 'CodeableConcept') then
               p := issuePath + '.code'
             else if code.codingCount = 1 then
