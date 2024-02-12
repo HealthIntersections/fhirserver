@@ -262,7 +262,7 @@ type
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
-    function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
+    function locateIsA(code, parent : String; disallowSelf : boolean = false) : TCodeSystemProviderContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; overload; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -1649,24 +1649,24 @@ begin
     end;
 end;
 
-function hasParent(c, p : TFHIRCodeSystemCodeEntry; disallowParent : boolean) : boolean;
+function hasParent(c, p : TFHIRCodeSystemCodeEntry) : boolean;
 var
   e : TFHIRCodeSystemCodeEntry;
 begin
   result := false;
   if (c.hasParents) then
     for e in c.parents do
-      if ((e = p) and not disallowParent) or hasParent(e, p, false) then
+      if (e = p) or hasParent(e, p) then
         exit(true);
 end;
 
-function TFhirCodeSystemProvider.locateIsA(code, parent: String; disallowParent : boolean = false): TCodeSystemProviderContext;
+function TFhirCodeSystemProvider.locateIsA(code, parent: String; disallowSelf: boolean = false): TCodeSystemProviderContext;
 var
   c, p : TFHIRCodeSystemCodeEntry;
 begin
   c := FCs.FCodeMap[code];
   p := FCs.FCodeMap[parent];
-  if (c <> nil) and (p <> nil) and (c <> p) and hasParent(c, p, disallowParent) then
+  if (c <> nil) and (p <> nil) and ((c <> p) or not disallowSelf) and hasParent(c, p) then
     result := TFhirCodeSystemProviderContext.create(c.Concept.link)
   else
     result := nil;
