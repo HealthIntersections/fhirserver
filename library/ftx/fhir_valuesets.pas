@@ -1854,7 +1854,7 @@ begin
                 begin
                   severity := isWarning;
                   m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                    ['', c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
+                    ['', c.systemUri, c.code, list.present(FParams.languages, false), c.display, FParams.langSummary])
                 end
                 else if dc = 1 then
                   m := FI18n.translate(baseMsg+'_one', FParams.languages,
