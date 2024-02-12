@@ -16,7 +16,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
-      <RevisionNr Value="4"/>
+      <RevisionNr Value="5"/>
       <MinorVersionNr Value="2"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
