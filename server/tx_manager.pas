@@ -325,45 +325,46 @@ end;
 { TTerminologyServerStore }
 
 procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
-  function stems(c : TFhirCodeSystemConceptW) : TConceptAdornment;
-  var
-    s, t : String;
-  begin
-    result := TConceptAdornment.Create;
-    c.Tag := result;
-    t := c.display;
-    while (t <> '') Do
-    begin
-      StringSplit(t, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, t);
-      if (s <> '') Then
-        result.Add(lowercase(FStem.Stem(s)));
-    end;
-    result.SortAscending;
-  end;
-  procedure processConcepts(parent : TFhirCodeSystemConceptW; list : TFhirCodeSystemConceptListW; map : TFhirCodeSystemConceptMapW);
-  var
-    c : TFhirCodeSystemConceptW;
-  begin
-    for c in list do
-    begin
-      stems(c).parent := parent;
-      if map.ContainsKey(c.code) then
-        Logging.log('Duplicate code '+c.code+' in '+cs.url)
-      else
-        map.Add(c.code, c.Link);
-      processConcepts(c, c.conceptList, map);
-    end;
-  end;
+  //function stems(c : TFhirCodeSystemConceptW) : TConceptAdornment;
+  //var
+  //  s, t : String;
+  //begin
+  //  result := TConceptAdornment.Create;
+  //  c.Tag := result;
+  //  t := c.display;
+  //  while (t <> '') Do
+  //  begin
+  //    StringSplit(t, [',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='], s, t);
+  //    if (s <> '') Then
+  //      result.Add(lowercase(FStem.Stem(s)));
+  //  end;
+  //  result.SortAscending;
+  //end;
+  //procedure processConcepts(parent : TFhirCodeSystemConceptW; list : TFhirCodeSystemConceptListW; map : TFhirCodeSystemConceptMapW);
+  //var
+  //  c : TFhirCodeSystemConceptW;
+  //begin
+  //  for c in list do
+  //  begin
+  //    stems(c).parent := parent;
+  //    if map.ContainsKey(c.code) then
+  //      Logging.log('Duplicate code '+c.code+' in '+cs.url)
+  //    else
+  //      map.Add(c.code, c.Link);
+  //    processConcepts(c, c.conceptList, map);
+  //  end;
+  //end;
 var
   map : TFhirCodeSystemConceptMapW;
 begin
-  map := TFhirCodeSystemConceptMapW.Create('stems');
-  try
-    cs.Tag := TCodeSystemAdornment.Create(map.link);
-    processConcepts(nil, cs.conceptList, map);
-  finally
-    map.free;
-  end;
+  raise Exception.create('todo');
+  //map := TFhirCodeSystemConceptMapW.Create('stems');
+  //try
+  //  !cs.Tag := TCodeSystemAdornment.Create(map.link);
+  //  processConcepts(nil, cs.conceptList, map);
+  //finally
+  //  map.free;
+  //end;
 end;
 
 
