@@ -815,16 +815,12 @@ var
   cs : TCodeSystemProvider;
   cc : TFhirValueSetComposeIncludeConceptW;
   match : boolean;
-  s, msg : String;
+  msg : String;
   loc : TCodeSystemProviderContext;
   needDoExpansion : boolean;
 begin
   result := '';
   needDoExpansion := false;
-
-  s := fixedSystemFromValueSet();
-  if (s > '') then
-    exit(s);
 
   for vsi in FValueSet.excludes.forEnum do
     needDoExpansion := true;
@@ -1357,9 +1353,9 @@ begin
         system := determineSystem(code);
         if (system = '') then
         begin
-          message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.languages, [code, FValueSet.url]);
+          message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.languages, [code, FValueSet.vurl]);
           messages.add(message);
-          op.addIssue(isError, itNotFound, path, message, oicInferFailed);
+          op.addIssue(isError, itNotFound, 'code', message, oicInferFailed);
           exit(bFalse);
         end
         else
@@ -1858,7 +1854,7 @@ begin
                 begin
                   severity := isWarning;
                   m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                    ['', c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
+                    ['', c.systemUri, c.code, list.present(FParams.languages, false), c.display, FParams.langSummary])
                 end
                 else if dc = 1 then
                   m := FI18n.translate(baseMsg+'_one', FParams.languages,
@@ -2023,6 +2019,8 @@ begin
 
             if mode = vcmCodeableConcept then
               p := ''
+            else if (issuePath = '') then
+              p := 'code'
             else if (issuePath <> 'CodeableConcept') then
               p := issuePath + '.code'
             else if code.codingCount = 1 then

@@ -570,15 +570,37 @@ function TConceptDesignations.present(langList : THTTPLanguageList; displayOnly 
 var
   cd : TConceptDesignation;
   b : TCommaSeparatedStringBuilder;
+  c : integer;
 begin
   b := TCommaSeparatedStringBuilder.create(', ', ' or ');
   try
+    c := 0;
     for cd in designations do
-      if  (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+    begin
+      if (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+      begin
+        inc(c);
         if (cd.language <> nil) then
           b.append(''''+cd.display+''' ('+cd.language.code+')')
         else
           b.append(''''+cd.display+'''');
+      end;
+    end;
+    if (c = 0) then
+    begin
+      for cd in designations do
+      begin
+        if (not displayOnly or cd.base or isDisplay(cd)) and (cd.value <> nil) then
+        begin
+          inc(c);
+          if (cd.language <> nil) then
+            b.append(''''+cd.display+''' ('+cd.language.code+')')
+          else
+            b.append(''''+cd.display+'''');
+        end;
+      end;
+    end;
+
     result := b.makeString;
   finally
     b.free;
