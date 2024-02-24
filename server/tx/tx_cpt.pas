@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -154,7 +154,7 @@ type
     function parse(code : String; var msg : String) : TCPTExpression;
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TCPTServices; overload;
 
@@ -375,9 +375,9 @@ end;
 
 { TCPTServices }
 
-constructor TCPTServices.Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+constructor TCPTServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   FMap := TFslMap<TCPTConcept>.Create;
   FMap.defaultValue := nil;
   FList := TFslList<TCPTConcept>.Create;

@@ -114,6 +114,7 @@ begin
 
   FLog := TStringList.Create;
 
+  Logging.log('Start Telnet Server on Port '+inttostr(port));
   FServer := TIdTelnetServer.Create(NIL);
   FServer.Name := 'Telnet';
   FServer.DefaultPort := port;

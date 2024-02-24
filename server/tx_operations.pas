@@ -325,7 +325,7 @@ begin
 
             if (txResources = nil) then
               txResources := processAdditionalResources(context, manager, nil, params);
-            dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
+            dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources, params.str('no-cache') = 'please');
             try
               response.HTTPCode := 200;
               response.Message := 'OK';

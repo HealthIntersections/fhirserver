@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -47,7 +47,7 @@ type
     FVersion : String;
     procedure loadVersion;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TOMOPServices; overload;
 
@@ -109,9 +109,9 @@ end;
 
 { TOMOPServices }
 
-constructor TOMOPServices.Create(languages: TIETFLanguageDefinitions; db: TFDBManager);
+constructor TOMOPServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   self.db := db;
   loadVersion;
 end;

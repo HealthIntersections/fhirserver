@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads,
+  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads, fsl_i18n,
   fdb_manager,
   fhir_objects, fhir_features, fhir_uris,
   ftx_service;
@@ -70,7 +70,7 @@ type
     db : TFDBManager;
     FVersion : String;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUniiServices; overload;
 
@@ -117,11 +117,11 @@ uses
 
 { TUniiServices }
 
-constructor TUniiServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+constructor TUniiServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 var
   conn : TFDBConnection;
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
 
   self.db := db;
   conn := db.GetConnection('version');

@@ -90,7 +90,7 @@ begin
     fn := GCPTDataFile
   else
     fn := TestSettings.serverTestFile(['testcases', 'cpt', 'cpt-fragment.db']);
-  FCPT := TCPTServices.Create(nil, TFDBSQLiteManager.Create('test', fn, true, false, 4));
+  FCPT := TCPTServices.Create(nil, nil, TFDBSQLiteManager.Create('test', fn, true, false, 4));
 end;
 
 procedure TCPTTests.TearDown;

@@ -110,7 +110,7 @@ Type
 
     function workerGetDefinition(sender : TObject; url, version : String) : TFHIRValueSetW;
     function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
-    function workerGetExpansion(sender : TObject; opContext : TTerminologyOperationContext; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer) : TFHIRValueSetW;
+    function workerGetExpansion(sender : TObject; opContext : TTerminologyOperationContext; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW;
     procedure workerGetVersions(sender : TObject; url : String; list : TStringList);
     function handlePrepareException(e : EFHIROperationException; profile : TFHIRExpansionParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
     procedure processCoding(coding : TFHIRCodingW; params : TFhirParametersW);
@@ -128,15 +128,15 @@ Type
     function isKnownValueSet(id : String; out vs : TFhirValueSetW): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
-    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
-    function expandVS(uri, version : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
+    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(vs : TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(uri, version : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
-    function expandVS(uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList) : TFhirValueSetW; overload;
-    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
-    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW; overload;
+    function expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW; overload;
+    function expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW; overload;
 
     procedure lookupCode(coding : TFHIRCodingW; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
     function validate(vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
@@ -380,18 +380,18 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 begin
-  result := expandVS(vs, cacheId, profile, nil, textFilter, limit, count, offset, txResources);
+  result := expandVS(vs, cacheId, profile, nil, textFilter, limit, count, offset, txResources, noCacheThisOne);
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   ts : TStringList;
 begin
   ts := TStringList.Create;
   try
-    result := expandVS(vs, cacheId, profile, opContext, textFilter, ts, limit, count, offset, txResources);
+    result := expandVS(vs, cacheId, profile, opContext, textFilter, ts, limit, count, offset, txResources, noCacheThisOne);
   finally
     ts.free;
   end;
@@ -433,13 +433,13 @@ begin
 end;
 
 function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList;
-    limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+    limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 begin
-  result := expandVS(vs, cacheId, profile, nil, textFilter, dependencies, limit, count, offset, txResources);
+  result := expandVS(vs, cacheId, profile, nil, textFilter, dependencies, limit, count, offset, txResources, noCacheThisOne);
 end;
 
 function TTerminologyServer.expandVS(vs: TFhirValueSetW; cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList;
-    limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+    limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   s, d, key: String;
   p : TArray<String>;
@@ -447,7 +447,7 @@ var
   dt : TDateTime;
 begin
   result := nil;
-  if (dependencies.Count > 0) and FCaching then
+  if (dependencies.Count > 0) and not noCacheThisOne and FCaching then
   begin
     key := cacheId+#1+profile.hash+#1+textFilter+#1+inttostr(limit)+#1+inttostr(count)+#1+inttostr(offset)+#1+inttostr(offset)+#1+hashTx(txResources);
     FLock.Lock('expandVS.1');
@@ -471,8 +471,8 @@ begin
     else
       exp := TFHIRValueSetExpander.Create(Factory.link, opContext.copy, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
-      result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset);
-      if (dependencies.Count > 0) and FCaching and (vs.TagInt = 0) then
+      result := exp.expand(vs, profile, textFilter, dependencies, limit, count, offset, noCacheThisOne);
+      if (dependencies.Count > 0) and not noCacheThisOne and FCaching and (vs.TagInt = 0) then
       begin
         if FCaching then
         begin
@@ -526,7 +526,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
   ts : TStringList;
@@ -535,7 +535,7 @@ begin
   try
     vs := getValueSetByUrl(uri, version, txResources);
     try
-      result := expandVS(vs, uri, profile, nil, textFilter, ts, limit, count, offset.MaxValue, txResources);
+      result := expandVS(vs, uri, profile, nil, textFilter, ts, limit, count, offset.MaxValue, txResources, noCacheThisOne);
     finally
       vs.free;
     end;
@@ -544,12 +544,12 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 begin
-  result := expandVS(uri, version, profile, nil, textFilter, dependencies, limit, count, offset, txResources);
+  result := expandVS(uri, version, profile, nil, textFilter, dependencies, limit, count, offset, txResources, noCacheThisOne);
 end;
 
-function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList): TFhirValueSetW;
+function TTerminologyServer.expandVS(uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
 begin
@@ -557,7 +557,7 @@ begin
   try
     if vs = nil then
       raise ETerminologyError.Create('Unable to find value set "'+uri+'"', itUnknown);
-    result := expandVS(vs, uri, profile, opContext, textFilter, limit, count, offset, txResources);
+    result := expandVS(vs, uri, profile, opContext, textFilter, limit, count, offset, txResources, noCacheThisOne);
   finally
     vs.free;
   end;
@@ -785,9 +785,9 @@ begin
   result := getValueSetByUrl(url, version);
 end;
 
-function TTerminologyServer.workerGetExpansion(sender: TObject; opContext : TTerminologyOperationContext; url, version, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer): TFHIRValueSetW;
+function TTerminologyServer.workerGetExpansion(sender: TObject; opContext : TTerminologyOperationContext; url, version, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer; noCacheThisOne : boolean): TFHIRValueSetW;
 begin
-  result := expandVS(url, version, params, opContext, filter, dependencies, limit, -1, -1, additionalResources);
+  result := expandVS(url, version, params, opContext, filter, dependencies, limit, -1, -1, additionalResources, noCacheThisOne);
 end;
 
 function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;

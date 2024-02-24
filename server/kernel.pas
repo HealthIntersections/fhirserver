@@ -293,13 +293,14 @@ procedure TFHIRServiceKernel.loadTerminologies;
 begin
   Logging.log('Load Terminologies');
   FTerminologies := TCommonTerminologies.Create(Settings.link);
-  FTerminologies.load(Ini['terminologies'], false);
 
-  fI18n := TI18nSupport.Create(FTerminologies.Languages.link);
+  FI18n := TI18nSupport.Create(FTerminologies.Languages.link);
   FI18n.loadPropertiesFile(partnerFile('Messages.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_es.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_de.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_nl.properties'));
+  FTerminologies.i18n := FI18n.link;                   
+  FTerminologies.load(Ini['terminologies'], false);
 end;
 
 function epVersion(section : TFHIRServerConfigSection): TFHIRVersion;

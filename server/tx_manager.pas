@@ -86,8 +86,9 @@ Type
   TSnomedProviderFactory = class (TCodeSystemProviderFactory)
   private
     FSnomed : TSnomedServices;
+    FI18n : TI18nSupport;
   public
-    Constructor Create(snomed : TSnomedServices);
+    Constructor Create(snomed : TSnomedServices; i18n : TI18nSupport);
     Destructor Destroy; override;
 
     function getProvider : TCodeSystemProvider; override;
@@ -118,8 +119,10 @@ Type
     FNDC : TNDCServices;
     FOMOP : TOMOPServices;
     FXIG: TXIGProvider;
+    FI18n : TI18nSupport;
 
     procedure SetCPT(AValue: TCPTServices);
+    procedure SetI18n(AValue: TI18nSupport);
     procedure SetOMOP(AValue: TOMOPServices);
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
@@ -152,6 +155,7 @@ Type
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
     procedure listVersions(url : String; list : TStringList);
 
+    property i18n : TI18nSupport read FI18n write SetI18n;
     property Languages : TIETFLanguageDefinitions read FLanguages;
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
@@ -518,7 +522,7 @@ begin
     addCodesystemUri('LOINC', 'loinc', FCommonTerminologies.FLoinc.systemUri, FCommonTerminologies.FLoinc.version, FCommonTerminologies.FLoinc.TotalCount);
   for sn in FCommonTerminologies.FSnomed do
   begin
-    sp := TSnomedProvider.Create(sn.link, nil);
+    sp := TSnomedProvider.Create(sn.link, FI18n.link, nil);
     try
       addCodesystemUri('SNOMED CT', 'sct', sp.systemUri, sp.version, sp.TotalCount);
     finally
@@ -1191,7 +1195,7 @@ begin
           if cs <> nil then
           begin
             checkCSLoaded(cs);
-            result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
+            result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FI18n.link, ffactory.link, cs.link);
           end;
         finally
           cs.free;
@@ -1242,7 +1246,7 @@ end;
 function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW; profile: TFHIRExpansionParams): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
-  result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
+  result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FI18n.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
 end;
 
 function TTerminologyServerStore.getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
@@ -1596,11 +1600,12 @@ begin
     FProviderClasses.Add(p.systemUri, p.link);
 end;
 
-constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
+constructor TCommonTerminologies.Create(settings: TFHIRServerSettings);
 begin
   inherited Create;
   FSettings := settings;
-  FSnomed := TFslList<TSnomedServices>.Create;
+  FSnomed := TFslList<TSnomedServices>.Create;                        
+  FI18n := i18n;
 end;
 
 procedure TCommonTerminologies.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -1611,7 +1616,7 @@ begin
     FLoinc.defineFeatures(features);
   if FDefSnomed <> nil then
   begin
-    sp := TSnomedProvider.Create(FDefSnomed.link, nil);
+    sp := TSnomedProvider.Create(FDefSnomed.link, FI18n.link, nil);
     try
       sp.defineFeatures(features);
     finally
@@ -1637,7 +1642,8 @@ begin
 end;
 
 destructor TCommonTerminologies.Destroy;
-begin
+begin                   
+  FI18n.free;
   FProviderClasses.free;
   FNDFRT.free;
   FNDC.free;
@@ -1786,7 +1792,7 @@ begin
   FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
   FProviderClasses := TFslMap<TCodeSystemProviderFactory>.Create('tc.common');
 
-  p := TUriServices.Create(FLanguages.link);
+  p := TUriServices.Create(FLanguages.link, FI18n.link);
   try
     FProviderClasses.Add(p.systemUri, TCodeSystemProviderGeneralFactory.Create(p.link));
     FProviderClasses.Add(p.systemUri+URI_VERSION_BREAK+p.version, TCodeSystemProviderGeneralFactory.Create(p.link));
@@ -1794,14 +1800,14 @@ begin
     p.free;
   end;
 
-  add(TIETFLanguageCodeServices.Create(FLanguages.link)).free;
-  add(TACIRServices.Create(FLanguages.link)).free;
-  add(TAreaCodeServices.Create(FLanguages.link)).free;
-  add(TIso4217Services.Create(FLanguages.link)).free;
-  add(TMimeTypeCodeServices.Create(FLanguages.link)).free;
-  add(TCountryCodeServices.Create(FLanguages.link)).free;
-  add(TUSStateServices.Create(FLanguages.link)).free;
-  add(THGVSProvider.Create(FLanguages.link)).free;
+  add(TIETFLanguageCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TACIRServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TAreaCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TIso4217Services.Create(FLanguages.link, FI18n.link)).free;
+  add(TMimeTypeCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TCountryCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TUSStateServices.Create(FLanguages.link, FI18n.link)).free;
+  add(THGVSProvider.Create(FLanguages.link, FI18n.link)).free;
 
   for tx in txList.sections do
   begin
@@ -1814,7 +1820,7 @@ begin
         sn := TSnomedServices.Create(FLanguages.link);
         try
           sn.Load(fixFile('sct', tx['source'].value));
-          sp := TSnomedProviderFactory.Create(sn.link);
+          sp := TSnomedProviderFactory.Create(sn.link, FI18n.link);
           try
             add(sp, tx['default'].readAsBool);
             if not FProviderClasses.ContainsKey(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri) then
@@ -1832,7 +1838,7 @@ begin
       else if tx['type'].value = 'loinc' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        Loinc := TLoincServices.Create(FLanguages.link);
+        Loinc := TLoincServices.Create(FLanguages.link, FI18n.link);
         try
           Loinc.Load(fixFile('loinc', tx['source'].value));
           add(Loinc.link);
@@ -1843,43 +1849,43 @@ begin
       else if tx['type'].value = 'ucum' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        Ucum := TUcumServices.Create(FLanguages.link);
+        Ucum := TUcumServices.Create(FLanguages.link, FI18n.link);
         Ucum.Import(fixFile('ucum', tx['source'].value));
       end
       else if tx['type'].value = 'rxnorm' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        RxNorm := TRxNormServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        RxNorm := TRxNormServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'ndc' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDC := TNDCServices.Create(FLanguages.link, connectToDatabase(tx, true), tx['version'].value)
+        NDC := TNDCServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true), tx['version'].value)
       end
       else if tx['type'].value = 'ndfrt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDFRT := TNDFRTServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        NDFRT := TNDFRTServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'unii' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        Unii := TUniiServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        Unii := TUniiServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'cpt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        CPT := TCPTServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        CPT := TCPTServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end    
       else if tx['type'].value = 'omop' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        OMOP := TOMOPServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        OMOP := TOMOPServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end           
       else if tx['type'].value = 'xig' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        XIG := TXIGProvider.Create(FLanguages.link, connectToDatabase(tx, true))
+        XIG := TXIGProvider.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);
@@ -1907,6 +1913,12 @@ begin
     FProviderClasses.add(FCPT.systemUri, TCodeSystemProviderGeneralFactory.Create(FCPT.Link));
     FProviderClasses.add(FCPT.systemUri+URI_VERSION_BREAK+FCPT.version, TCodeSystemProviderGeneralFactory.Create(FCPT.Link));
   end;
+end;
+
+procedure TCommonTerminologies.SetI18n(AValue: TI18nSupport);
+begin
+  FI18n.free;
+  FI18n := AValue;
 end;
 
 procedure TCommonTerminologies.SetOMOP(AValue: TOMOPServices);
@@ -2084,21 +2096,23 @@ end;
 
 { TSnomedProviderFactory }
 
-constructor TSnomedProviderFactory.Create(snomed: TSnomedServices);
+constructor TSnomedProviderFactory.Create(snomed: TSnomedServices; i18n : TI18nSupport);
 begin
   inherited Create;
   FSnomed := snomed;
+  FI18n := i18n;
 end;
 
 destructor TSnomedProviderFactory.Destroy;
 begin
+  FI18n.free;
   FSnomed.free;
   inherited Destroy;
 end;
 
 function TSnomedProviderFactory.getProvider: TCodeSystemProvider;
 begin
-  result := TSnomedProvider.Create(FSnomed.Link, nil);
+  result := TSnomedProvider.Create(FSnomed.Link, FI18n.link, nil);
 end;
 
 function TSnomedProviderFactory.systemUri: String;

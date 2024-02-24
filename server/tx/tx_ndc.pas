@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json, fsl_logging,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json, fsl_logging, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -228,7 +228,7 @@ type
     function packageDisplay(conn : TFDBConnection) : String;
     function productDisplay(conn : TFDBConnection) : String;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager; version : String);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager; version : String);
     destructor Destroy; Override;
     Function Link : TNDCServices; overload;
 
@@ -821,9 +821,9 @@ end;
 
 { TNDCServices }
 
-constructor TNDCServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager; version : String);
+constructor TNDCServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager; version : String);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
 
   self.FDb := db;
   self.FVersion := version;

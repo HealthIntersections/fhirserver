@@ -7,7 +7,7 @@ interface
 uses
   Classes, SysUtils,
   {$IFDEF FPC} ZStream, {ELSE} Zlib, {$ENDIF}
-  fsl_base, fsl_lang, fsl_utilities, fsl_logging,
+  fsl_base, fsl_lang, fsl_utilities, fsl_logging, fsl_i18n,
   fdb_manager,
   fhir_objects, fhir_factory, fhir_common, fhir_parser,
   fhir5_context;
@@ -52,7 +52,7 @@ type
     FLanguages : TIETFLanguageDefinitions;
     FDb : TFDBManager;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; override;
 
     function link : TXIGProvider; overload;
@@ -199,7 +199,7 @@ end;
 
 { TXIGProvider }
 
-constructor TXIGProvider.Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+constructor TXIGProvider.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
 begin
   inherited Create;
   FLanguages := languages;

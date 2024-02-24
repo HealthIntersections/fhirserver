@@ -323,7 +323,7 @@ begin
     limit := 0;
     if expOptLimited in options then
       limit := 100;
-    res := FTerminologyServer.expandVS(vsw, '', FProfile, '', limit, 0, 0, nil);
+    res := FTerminologyServer.expandVS(vsw, '', FProfile, '', limit, 0, 0, nil, false);
     try
       result := res.Resource as TFhirValueSet;
     finally

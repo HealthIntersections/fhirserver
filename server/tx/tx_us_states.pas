@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang, fsl_i18n,
   fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
@@ -69,7 +69,7 @@ type
 
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TUSStateServices; overload;
 
@@ -108,7 +108,7 @@ implementation
 
 { TUSStateServices }
 
-constructor TUSStateServices.Create(languages: TIETFLanguageDefinitions);
+constructor TUSStateServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited;
   FCodes := TFslList<TUSStateConcept>.Create;

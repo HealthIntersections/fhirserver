@@ -502,7 +502,7 @@ begin
     profile.languages := langList.link;
 
     try
-      res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil);
+      res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil, false);
       try
         result := asHtml(res.Resource)+#13#10;
 //        if (not profile.includeDefinition) then
