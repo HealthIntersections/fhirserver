@@ -753,6 +753,7 @@ type
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setUrl(Value: String); override;
     procedure setVersion(Value: String); override;
+    function GetCaseSensitive: boolean; override;
     function getContent: TFhirCodeSystemContentMode; override;
     procedure setContent(Value: TFhirCodeSystemContentMode); override;
     function getCount: integer; override;
@@ -4114,6 +4115,11 @@ end;
 procedure TFhirCodeSystem4B.setVersion(Value: String);
 begin
   cs.version := value;
+end;
+
+function TFhirCodeSystem4B.GetCaseSensitive: boolean;
+begin
+  result := cs.caseSensitive;
 end;
 
 function TFhirCodeSystem4B.supplements: String;

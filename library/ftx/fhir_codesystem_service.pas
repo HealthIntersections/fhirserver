@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,  
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex, fsl_i18n,
   fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features, fhir_uris,
   ftx_service;
 
@@ -110,6 +110,7 @@ type
 
     FCodeMap : TFslMap<TFHIRCodeSystemCodeEntry>;
     procedure loadCodeSystem;
+    function uc(code : String) : String;
 
     function GetHasSupplements: boolean;
     function GetSupplementProxies: TFslList<TFHIRResourceProxyV>;
@@ -225,7 +226,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; cs : TFhirCodeSystemEntry); overload;
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; factory : TFHIRFactory; cs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
 
     function contentMode : TFhirCodeSystemContentMode; override;
@@ -352,11 +353,11 @@ procedure TFHIRCodeSystemEntry.loadCodeSystem;
   begin
     for item in list do
     begin
-      if not FCodeMap.ContainsKey(item.code) then
+      if not FCodeMap.ContainsKey(uc(item.code)) then
       begin
         entry := TFHIRCodeSystemCodeEntry.create(item.link);
         try
-          FCodeMap.AddOrSetValue(item.code, entry.link);
+          FCodeMap.AddOrSetValue(uc(item.code), entry.link);
           item.TagNoLink := entry;
           if (parent <> nil) then
             entry.addParent(parent.link);
@@ -397,6 +398,14 @@ begin
       end;
     end;
   end;
+end;
+
+function TFHIRCodeSystemEntry.uc(code: String): String;
+begin
+  if FCodeSystem.caseSensitive then
+    result := code
+  else
+    result := code.toUpper;
 end;
 
 function TFHIRCodeSystemEntry.GetHasSupplements: boolean;
@@ -550,10 +559,9 @@ end;
 
 { TFhirCodeSystemProvider }
 
-constructor TFhirCodeSystemProvider.Create(languages: TIETFLanguageDefinitions;
-  factory: TFHIRFactory; cs: TFhirCodeSystemEntry);
+constructor TFhirCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport; factory: TFHIRFactory; cs: TFhirCodeSystemEntry);
 begin
-  Create(languages);
+  Create(languages, i18n);
   FCs := cs;
   FFactory := factory;
 end;
@@ -1082,7 +1090,7 @@ begin
 
   for c in list do
   begin
-    if (c.code = code) then
+    if (FCs.uc(c.code) = FCs.uc(code)) then
       exit(c);
     // legacy
     if (altOpt <> nil) then
@@ -1092,7 +1100,7 @@ begin
         for ext in c.getExtensionsW('http://hl7.org/fhir/StructureDefinition/codesystem-alternate').forEnum do
         begin
           s := ext.getExtensionString('code');
-          if (s = code) then
+          if (FCs.uc(s) = FCs.uc(code)) then
             exit(c);
         end;
       end;
@@ -1109,8 +1117,8 @@ end;
 
 function TFhirCodeSystemProvider.LocateCode(code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemConceptW;
 begin
-  if (FCs.FCodeMap.ContainsKey(code)) then
-    result := FCs.FCodeMap[code].Concept
+  if (FCs.FCodeMap.ContainsKey(FCs.uc(code))) then
+    result := FCs.FCodeMap[FCs.uc(code)].Concept
   else
     result := locCode(FCs.CodeSystem.conceptList, code, FCs.CodeSystem.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), altOpt);
 end;
@@ -1664,8 +1672,8 @@ function TFhirCodeSystemProvider.locateIsA(code, parent: String; disallowSelf: b
 var
   c, p : TFHIRCodeSystemCodeEntry;
 begin
-  c := FCs.FCodeMap[code];
-  p := FCs.FCodeMap[parent];
+  c := FCs.FCodeMap[FCs.uc(code)];
+  p := FCs.FCodeMap[FCs.uc(parent)];
   if (c <> nil) and (p <> nil) and ((c <> p) or not disallowSelf) and hasParent(c, p) then
     result := TFhirCodeSystemProviderContext.create(c.Concept.link)
   else
