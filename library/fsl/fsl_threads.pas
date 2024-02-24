@@ -1171,6 +1171,7 @@ begin
     Col(IntToStr(FCurrLockTime), 9)+
     Col(IntToStr(FTimeLocked), 10)+
     Col(IntToStr(FDelayTime), 10)+
+    Col(IntToStr(FEntryCount), 10)+
     Col(threadToString(FLockThread), 9)+
     Col(FLastLocker, 20);
 end;
@@ -1212,11 +1213,11 @@ Begin
   if (all) then
   begin
     Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
-    Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+    Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) #UseCount Thread ID  Routine'+sep;
   end
   else
   begin
-    Result := 'ID Name (of '+StringPadRight(inttostr(TFslLock.CurrentCount)+')', ' ', 6)+'           Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
+    Result := 'ID Name (of '+StringPadRight(inttostr(TFslLock.CurrentCount)+')', ' ', 6)+'           Use#   Delay# Curr(ms) Total(ms) Delay(ms) #UseCount Thread ID  Routine'+sep;
   end;
   oCrit := GFirst;
   While oCrit <> nil Do
