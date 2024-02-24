@@ -1051,7 +1051,8 @@ Begin
     {$ENDIF}
     if t.firstObject = nil then
     begin
-      assert(t.count = 1);
+      if (t.count <> 1) then
+        assert(t.count = 1, 'Object Tracking Error - tracking record for '+className+' is nil, but count is '+inttostr(t.count));
       t.firstObject := self;
       t.lastObject := self;
       FPrev := nil;
@@ -1110,6 +1111,8 @@ Begin
           self.FNext.FPrev := self.FPrev;
         end;
       end;
+      if (t.firstObject = nil) and (t.count > 0) then
+        assert(t.count = 1, 'Object Tracking Error - tracking record just became nil, but count is '+inttostr(t.count));
     finally
       LeaveCriticalSection(GLock);
     end;
