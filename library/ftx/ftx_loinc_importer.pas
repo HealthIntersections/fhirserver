@@ -1053,7 +1053,7 @@ begin
   FWordList := TStringList.Create;
   FStemList := TStringList.Create;
   FStemmer := TFslWordStemmer.create('english');
-  oSvc := TLOINCServices.Create(nil);
+  oSvc := TLOINCServices.Create(nil, nil);
   Try
     Flanguages.add(TLoincLanguage.create('en', 'US'));
     FWordList.Sorted := true;
@@ -1112,7 +1112,7 @@ begin
     FStemmer.free;
     FLanguages.free;
   End;
-  TLoincServices.Create(nil).Load(FOutputFile);
+  TLoincServices.Create(nil, nil).Load(FOutputFile);
 End;
 
 function TLoincImporter.listConcepts(arr: TConceptArray): TCardinalArray;

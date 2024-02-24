@@ -122,7 +122,7 @@ procedure TUcumTest.Setup;
 begin
   if (svc = nil) then
   begin
-    svc := TUcumServices.Create(nil);
+    svc := TUcumServices.Create(nil, nil);
     svc.Import(partnerFile('ucum.dat'));
   end;
 end;
@@ -236,7 +236,7 @@ procedure TUcumSpecialTests.Setup;
 begin
   if (svc = nil) then
   begin
-    svc := TUcumServices.Create(nil);
+    svc := TUcumServices.Create(nil, nil);
     svc.Import(partnerFile('ucum.dat'));
   end;
 end;

@@ -59,7 +59,7 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang, fsl_logging,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang, fsl_logging, fsl_i18n,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_sct_expressions, ftx_service;
@@ -718,7 +718,7 @@ operations
     FSct : TSnomedServices;
     FSupplements : TFslList<TFHIRCodeSystemW>;
   public
-    constructor Create(sct : TSnomedServices; supplements : TFslList<TFHIRCodeSystemW>);
+    constructor Create(sct : TSnomedServices; i18n : TI18nSupport; supplements : TFslList<TFHIRCodeSystemW>);
     destructor Destroy; override;
 
 
@@ -752,6 +752,7 @@ operations
     procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function getCodeStatus(context : TCodeSystemProviderContext) : String; override;
+    function incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList) : String; override;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -4713,10 +4714,10 @@ end;
 
 { TSnomedProvider }
 
-constructor TSnomedProvider.Create(sct: TSnomedServices; supplements: TFslList<
+constructor TSnomedProvider.Create(sct: TSnomedServices; i18n : TI18nSupport; supplements: TFslList<
   TFHIRCodeSystemW>);
 begin
-  inherited Create(sct.FLanguages.link);
+  inherited Create(sct.FLanguages.link, i18n);
   FSct := sct;
   FSupplements := supplements;
 end;
@@ -5196,6 +5197,14 @@ begin
     result := 'active'
   else
     result := 'inactive';
+end;
+
+function TSnomedProvider.incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList): String;
+begin
+  if TSnomedExpressionContext(context).isComplex then
+    result := FI18n.translate('SCT_NO_MRCM', langs, [])
+  else
+    result := '';
 end;
 
 function TSnomedProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
