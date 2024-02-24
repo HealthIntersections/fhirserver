@@ -1,7 +1,7 @@
 object MainConsoleForm: TMainConsoleForm
   Left = 899
   Height = 625
-  Top = 390
+  Top = 1465
   Width = 866
   Caption = 'FHIRServer Console'
   ClientHeight = 625
@@ -69,6 +69,79 @@ object MainConsoleForm: TMainConsoleForm
         ClientWidth = 853
         OnContextPopup = tbConsoleContextPopup
         ParentFont = False
+        object Panel54: TPanel
+          Left = 0
+          Height = 26
+          Top = 0
+          Width = 853
+          Align = alTop
+          BevelOuter = bvNone
+          ClientHeight = 26
+          ClientWidth = 853
+          TabOrder = 0
+          object ToolBar1: TToolBar
+            Left = 0
+            Height = 26
+            Top = 0
+            Width = 432
+            Align = alClient
+            Caption = 'ToolBar1'
+            Images = ImageList1
+            ParentFont = False
+            TabOrder = 0
+            object ToolButton1: TToolButton
+              Left = 1
+              Hint = 'Clear the log'
+              Top = 2
+              Caption = 'ToolButton1'
+              ImageIndex = 0
+              OnClick = ToolButton1Click
+            end
+            object ToolButton2: TToolButton
+              Left = 24
+              Height = 22
+              Top = 2
+              Caption = 'ToolButton2'
+              Style = tbsSeparator
+            end
+            object edtFilter: TEdit
+              Left = 32
+              Height = 21
+              Hint = 'Filter what you see in the log'
+              Top = 2
+              Width = 144
+              ParentFont = False
+              TabOrder = 0
+              TextHint = 'Filter'
+              OnChange = edtFilterChange
+            end
+            object btnCopyConsole: TToolButton
+              Left = 176
+              Top = 2
+              Caption = 'Copy Console'
+              ImageIndex = 16
+              OnClick = btnCopyConsoleClick
+            end
+            object btnConsoleFont: TToolButton
+              Left = 199
+              Top = 2
+              Caption = 'btnConsoleFont'
+              ImageIndex = 17
+              OnClick = btnConsoleFontClick
+            end
+          end
+          object pnlStatus: TPanel
+            Left = 432
+            Height = 26
+            Top = 0
+            Width = 421
+            Align = alRight
+            Alignment = taLeftJustify
+            BevelOuter = bvLowered
+            Caption = 'Status'
+            TabOrder = 1
+          end
+        end
         object mConsole: TMemo
           Left = 0
           Height = 538
@@ -80,58 +153,8 @@ object MainConsoleForm: TMainConsoleForm
           Font.Pitch = fpFixed
           ParentFont = False
           ReadOnly = True
-          TabOrder = 0
-          WordWrap = False
-        end
-        object ToolBar1: TToolBar
-          Left = 0
-          Height = 26
-          Top = 0
-          Width = 853
-          Caption = 'ToolBar1'
-          Images = ImageList1
-          ParentFont = False
           TabOrder = 1
-          object ToolButton1: TToolButton
-            Left = 1
-            Hint = 'Clear the log'
-            Top = 2
-            Caption = 'ToolButton1'
-            ImageIndex = 0
-            OnClick = ToolButton1Click
-          end
-          object ToolButton2: TToolButton
-            Left = 24
-            Height = 22
-            Top = 2
-            Caption = 'ToolButton2'
-            Style = tbsSeparator
-          end
-          object edtFilter: TEdit
-            Left = 32
-            Height = 21
-            Hint = 'Filter what you see in the log'
-            Top = 2
-            Width = 144
-            ParentFont = False
-            TabOrder = 0
-            TextHint = 'Filter'
-            OnChange = edtFilterChange
-          end
-          object btnCopyConsole: TToolButton
-            Left = 176
-            Top = 2
-            Caption = 'Copy Console'
-            ImageIndex = 16
-            OnClick = btnCopyConsoleClick
-          end
-          object btnConsoleFont: TToolButton
-            Left = 199
-            Top = 2
-            Caption = 'btnConsoleFont'
-            ImageIndex = 17
-            OnClick = btnConsoleFontClick
-          end
+          WordWrap = False
         end
       end
       object tbThreads: TTabSheet
