@@ -1419,7 +1419,7 @@ Begin
                       begin
                         if oResponse.HTTPCode < 300 then
                         begin
-                          result := result + ' (err: Abort)';
+                          result := result + ' (msg: Abort)';
                           recordStack(e);
                           raise;
                         end;
@@ -1505,7 +1505,7 @@ Begin
       end;
       on e: ETerminologySetup do
       begin
-        result := result + ' (err: '+e.message+')';
+        result := result + ' (msg: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else
@@ -1514,7 +1514,7 @@ Begin
       end;
       on e: ETooCostly do
       begin
-        result := result + ' (err: Too-Costly)';
+        result := result + ' (msg: Too-Costly)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly)
         else
@@ -1523,7 +1523,7 @@ Begin
       end;
       on e: ERestfulException do
       begin
-        result := result + ' (err: '+e.message+')';
+        result := result + ' (msg: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else

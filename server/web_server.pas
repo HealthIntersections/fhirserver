@@ -173,7 +173,7 @@ Type
 
     function insertValue(n: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
     function isLogging : boolean;
-    procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo);
+    procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo; logAlways : boolean);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
     function WebDump: String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
@@ -730,7 +730,7 @@ begin
       MarkEntry(AContext, request, response);
       try
         id := FSettings.nextRequestId;
-        logRequest(false, id, ip, request);
+        logRequest(false, id, ip, request, false);
         response.CustomHeaders.Add('X-Request-Id: '+id);
         if (request.CommandType = hcOption) then
         begin
@@ -822,6 +822,9 @@ begin
             end;
           end;
         end;
+        if (summ.contains('Access Violation')) then
+          logRequest(false, id, ip, request, true);
+
         logResponse(id, response);
         logOutput(AContext, request, response, id, tt, false, epn, summ);
         response.CloseConnection := not PLAIN_KEEP_ALIVE;
@@ -900,7 +903,7 @@ begin
       MarkEntry(AContext, request, response);
       try
         id := FSettings.nextRequestId;
-        logRequest(true, id, ip, request);
+        logRequest(true, id, ip, request, false);
         response.CustomHeaders.Add('X-Request-Id: '+id);
         if isLogging then
           response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged internally for debugging purposes; your continued use of the API constitutes agreement to this use');
@@ -970,6 +973,9 @@ begin
           end;
         end;
 
+        if (summ.contains('err:')) then
+          logRequest(false, id, ip, request, true);
+
         logResponse(id, response);
         logOutput(AContext, request, response, id, tt, true, epn, summ);
 
@@ -1014,12 +1020,21 @@ begin
   result := (FInLog <> nil) or (FLogFolder <> '');
 end;
 
-procedure TFhirWebServer.logRequest(secure : boolean; id, clientIP: String; request: TIdHTTPRequestInfo);
+procedure TFhirWebServer.logRequest(secure : boolean; id, clientIP: String; request: TIdHTTPRequestInfo; logAlways : boolean);
 var
   package : TFslBytesBuilder;
   b : TBytes;
+  folder : String;
 begin
-  if (FInLog = nil) and (FLogFolder = '') then
+  folder := FLogFolder;
+  if logAlways then
+  begin
+    if folder = '' then
+      folder := FilePath(['tmp', 'fhir-server-crash']);
+    if not FolderExists(folder) then
+      ForceFolder(folder);
+  end
+  else if (FInLog = nil) and (FLogFolder = '') then
     exit;
 
   package := TFslBytesBuilder.Create;
@@ -1057,8 +1072,8 @@ begin
 
     if FInLog <> nil then
       FInLog.WriteToLog(package.AsBytes);
-    if FLogFolder <> '' then
-      BytesToFile(package.AsBytes, FilePath([FLogFolder, id+'.log']));
+    if folder <> '' then
+      BytesToFile(package.AsBytes, FilePath([folder, id+'.log']));
   finally
     package.free;
   end;
