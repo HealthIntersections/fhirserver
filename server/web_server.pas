@@ -822,7 +822,7 @@ begin
             end;
           end;
         end;
-        if (summ.contains('Access Violation')) then
+        if (summ.contains('err:') and not summ.contains('msg:') ) then
           logRequest(false, id, ip, request, true);
 
         logResponse(id, response);
@@ -973,7 +973,7 @@ begin
           end;
         end;
 
-        if (summ.contains('err:')) then
+        if (summ.contains('err:') and not summ.contains('msg:') ) then
           logRequest(false, id, ip, request, true);
 
         logResponse(id, response);
@@ -1033,6 +1033,7 @@ begin
       folder := FilePath(['tmp', 'fhir-server-crash']);
     if not FolderExists(folder) then
       ForceFolder(folder);
+    Logging.log('Save crash request to '+FilePath([folder, id+'.log']));
   end
   else if (FInLog = nil) and (FLogFolder = '') then
     exit;
