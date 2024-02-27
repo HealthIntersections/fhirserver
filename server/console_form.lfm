@@ -1,7 +1,7 @@
 object MainConsoleForm: TMainConsoleForm
   Left = 899
   Height = 625
-  Top = 1465
+  Top = 1512
   Width = 866
   Caption = 'FHIRServer Console'
   ClientHeight = 625
