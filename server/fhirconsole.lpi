@@ -18,6 +18,8 @@
     </General>
     <VersionInfo>
       <MajorVersionNr Value="3"/>
+      <RevisionNr Value="1"/>
+      <Attributes pvaDebug="False"/>
       <MinorVersionNr Value="3"/>
     </VersionInfo>
     <BuildModes Count="8">
