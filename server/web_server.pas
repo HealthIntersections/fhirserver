@@ -1171,6 +1171,7 @@ begin
       if request.PostStream <> nil then
       begin
         package.addStringUtf8(#13#10);
+        request.PostStream.Position := 0; // it's almost certainly been read;
         SetLength(b, request.PostStream.Size);
         request.PostStream.Read(b[0], length(b));
         request.PostStream.Position := 0;

@@ -114,6 +114,7 @@ begin
   inherited Create(languages, i18n);
   FCodes := TFslList<TAreaCodeConcept>.Create;
   FMap := TFslMap<TAreaCodeConcept>.Create('tx.areacode');
+  FMap.defaultValue := nil;
   Load;
 end;
 
@@ -141,8 +142,14 @@ begin
 end;
 
 function TAreaCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
+var
+  v : TAreaCodeConcept;
 begin
-  result := FMap[code].display;
+  v := FMap[code];
+  if (v = nil) then
+    result := ''
+  else
+    result := v.display;
 end;
 
 function TAreaCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
