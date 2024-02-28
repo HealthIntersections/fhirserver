@@ -173,8 +173,9 @@ Type
 
     function insertValue(n: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
     function isLogging : boolean;
-    procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo; logAlways : boolean);
+    procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
+    procedure logCrash(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo; resp : TIdHTTPResponseInfo);
     function WebDump: String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -730,7 +731,7 @@ begin
       MarkEntry(AContext, request, response);
       try
         id := FSettings.nextRequestId;
-        logRequest(false, id, ip, request, false);
+        logRequest(false, id, ip, request);
         response.CustomHeaders.Add('X-Request-Id: '+id);
         if (request.CommandType = hcOption) then
         begin
@@ -823,7 +824,7 @@ begin
           end;
         end;
         if (summ.contains('err:') and not summ.contains('msg:') ) then
-          logRequest(false, id, ip, request, true);
+          logCrash(false, id, ip, request, response);
 
         logResponse(id, response);
         logOutput(AContext, request, response, id, tt, false, epn, summ);
@@ -903,7 +904,7 @@ begin
       MarkEntry(AContext, request, response);
       try
         id := FSettings.nextRequestId;
-        logRequest(true, id, ip, request, false);
+        logRequest(true, id, ip, request);
         response.CustomHeaders.Add('X-Request-Id: '+id);
         if isLogging then
           response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged internally for debugging purposes; your continued use of the API constitutes agreement to this use');
@@ -973,11 +974,11 @@ begin
           end;
         end;
 
-        if (summ.contains('err:') and not summ.contains('msg:') ) then
-          logRequest(false, id, ip, request, true);
-
         logResponse(id, response);
         logOutput(AContext, request, response, id, tt, true, epn, summ);
+
+        if (summ.contains('err:') and not summ.contains('msg:') ) then
+          logCrash(false, id, ip, request, response);
 
         response.CloseConnection := not SECURE_KEEP_ALIVE;
       finally
@@ -1020,22 +1021,12 @@ begin
   result := (FInLog <> nil) or (FLogFolder <> '');
 end;
 
-procedure TFhirWebServer.logRequest(secure : boolean; id, clientIP: String; request: TIdHTTPRequestInfo; logAlways : boolean);
+procedure TFhirWebServer.logRequest(secure : boolean; id, clientIP: String; request: TIdHTTPRequestInfo);
 var
   package : TFslBytesBuilder;
   b : TBytes;
-  folder : String;
 begin
-  folder := FLogFolder;
-  if logAlways then
-  begin
-    if folder = '' then
-      folder := FilePath(['tmp', 'fhir-server-crash']);
-    if not FolderExists(folder) then
-      ForceFolder(folder);
-    Logging.log('Save crash request to '+FilePath([folder, id+'.log']));
-  end
-  else if (FInLog = nil) and (FLogFolder = '') then
+  if (FInLog = nil) and (FLogFolder = '') then
     exit;
 
   package := TFslBytesBuilder.Create;
@@ -1073,8 +1064,8 @@ begin
 
     if FInLog <> nil then
       FInLog.WriteToLog(package.AsBytes);
-    if folder <> '' then
-      BytesToFile(package.AsBytes, FilePath([folder, id+'.log']));
+    if FLogFolder <> '' then
+      BytesToFile(package.AsBytes, FilePath([FLogFolder, id+'.log']));
   finally
     package.free;
   end;
@@ -1147,6 +1138,92 @@ begin
     end;
   end;
 end;
+
+
+procedure TFhirWebServer.logCrash(secure : boolean; id, clientIP: String; request: TIdHTTPRequestInfo; resp: TIdHTTPResponseInfo);
+var
+  package : TFslBytesBuilder;
+  b : TBytes;
+  folder : String;
+begin
+  try
+    folder := FLogFolder;
+    if folder = '' then
+      folder := FilePath(['[tmp]', 'fhir-server-crash']);
+    if not FolderExists(folder) then
+      ForceFolder(folder);
+    Logging.log('Save crash request to '+FilePath([folder, 'crash-'+id+'.log']));
+
+    package := TFslBytesBuilder.Create;
+    try
+      package.addStringUtf8('-- Request ');
+      package.addStringUtf8(id);
+      package.addStringUtf8(' @ ');
+      package.addStringUtf8(TFslDateTime.makeUTC.toXML);
+      package.addStringUtf8(' from ');
+      package.addStringUtf8(clientIP);
+      if secure then
+        package.addStringUtf8(' (https)');
+      package.addStringUtf8('------------------------------------------'#13#10);
+      package.addStringUtf8(request.RawHTTPCommand);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(request.RawHeaders.Text);
+      if request.PostStream <> nil then
+      begin
+        package.addStringUtf8(#13#10);
+        SetLength(b, request.PostStream.Size);
+        request.PostStream.Read(b[0], length(b));
+        request.PostStream.Position := 0;
+        if isText(request.ContentType) and (request.ContentEncoding = '') then
+          package.Append(b)
+        else
+          package.addBase64(b);
+        package.addStringUtf8(#13#10);
+      end
+      else if request.ContentType = 'application/x-www-form-urlencoded' then
+      begin
+        package.addStringUtf8(#13#10);
+        package.addStringUtf8(request.UnparsedParams);
+        package.addStringUtf8(#13#10);
+      end;
+
+      package.addStringUtf8('-- Response --------------------------------------------------'#13#10);
+      package.addStringUtf8(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(resp.RawHeaders.Text);
+      if resp.ContentStream <> nil then
+      begin
+        package.addStringUtf8(#13#10);
+        SetLength(b, resp.ContentStream.Size);
+        if (length(b) > 0) then
+          resp.ContentStream.Read(b[0], length(b));
+        resp.ContentStream.Position := 0;
+        if isText(resp.ContentType) and (resp.ContentEncoding = '') then
+          package.Append(b)
+        else
+          package.addBase64(b);
+        package.addStringUtf8(#13#10);
+      end
+      else if resp.ContentText <> '' then
+      begin
+        package.addStringUtf8(#13#10);
+        package.addStringUtf8(resp.ContentText);
+        package.addStringUtf8(#13#10);
+      end;
+
+      BytesToFile(package.AsBytes, FilePath([folder, 'crash-'+id+'.log']));
+    finally
+      package.free;
+    end;
+  except
+    on e : exception do
+    begin
+      Logging.log('Error writing crash log: '+e.Message);
+      raise;
+    end;
+  end;
+end;
+
 
 procedure TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var

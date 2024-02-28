@@ -237,7 +237,7 @@ begin
       c.systemUri := system;
       c.code := code;
       c.version := version;
-      p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, summary);
+      p := FTerminologyServer.validate('', vsw, c, FProfile, false, true, nil, summary);
       try
         result := TValidationResult.Create;
         try
@@ -323,7 +323,7 @@ begin
     limit := 0;
     if expOptLimited in options then
       limit := 100;
-    res := FTerminologyServer.expandVS(vsw, '', FProfile, '', limit, 0, 0, nil, false);
+    res := FTerminologyServer.expandVS(vsw, '', '', FProfile, '', limit, 0, 0, nil, false);
     try
       result := res.Resource as TFhirValueSet;
     finally
@@ -382,7 +382,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, nil, false, true, nil, summary);
+        p := FTerminologyServer.validate('', vsw, c, nil, false, true, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then
@@ -418,7 +418,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate('CodeableConcept', vsw, c, FProfile, false, true, vcmCodeableConcept, nil, summary);
+        p := FTerminologyServer.validate('', 'CodeableConcept', vsw, c, FProfile, false, true, vcmCodeableConcept, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then

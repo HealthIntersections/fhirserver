@@ -1424,6 +1424,12 @@ Begin
                           raise;
                         end;
                       end;
+                      on e : EFslException do
+                      begin
+                        result := result + ' (msg: '+e.message+')';
+                        recordStack(e);
+                        raise;
+                      end;
                       on e: exception do
                       begin
                         result := result + ' (err: '+e.message+')';
@@ -1528,6 +1534,14 @@ Begin
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else
           SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code);
+      end;
+      on e: EFslException do
+      begin
+        result := result + ' (msg: '+e.message+')';
+        if noErrCode then
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull)
+        else
+          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull);
       end;
       on e: exception do
       begin
