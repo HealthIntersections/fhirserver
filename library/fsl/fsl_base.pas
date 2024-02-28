@@ -1082,8 +1082,13 @@ Begin
     try
       if GClassTracker.TryGetValue(ClassName, t) then // this will succeed
       begin
+        assert(t.count > 0);
+        if FPrev <> nil then      
+          assert(FPrev.ClassName = className, 'Previous object wrong class: '+ClassName);
+        if FNext <> nil then
+          assert(FNext.ClassName = className, 'Next object wrong class: '+ClassName);
+
         dec(t.Count);
-        assert(t.count >= 0);
         dec(t.deltaCount);
         if FPrev = nil then
         begin
@@ -1110,9 +1115,12 @@ Begin
             self.FPrev.FNext := self.FNext;
           self.FNext.FPrev := self.FPrev;
         end;
-      end;
+      end
+      else
+        assert(false, 'Object Tracking Error - tracking record for '+ClassName+' not found');
+
       if (t.firstObject = nil) and (t.count > 0) then
-        assert(t.count = 1, 'Object Tracking Error - tracking record just became nil, but count is '+inttostr(t.count));
+        assert(t.count = 1, 'Object Tracking Error - tracking record for '+ClassName+' just became nil, but count is '+inttostr(t.count));
     finally
       LeaveCriticalSection(GLock);
     end;
