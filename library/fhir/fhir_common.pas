@@ -735,6 +735,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
+    function hasConcepts : boolean; virtual; abstract;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function designationCount : integer; virtual; abstract;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; virtual; abstract;
@@ -836,6 +837,7 @@ type
     // this is special because it's owned
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
+    function hasConcepts : boolean; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function getCode(code : String) : TFhirCodeSystemConceptW; virtual; abstract;

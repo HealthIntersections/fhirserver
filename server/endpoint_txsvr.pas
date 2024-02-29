@@ -442,10 +442,12 @@ begin
   begin
     if Stopped then
       exit;
-    SetThreadStatus(name+': '+inttostr(((100 * i) div c))+'%');
+    SetThreadStatus(name+': '+inttostr(((100 * i) div c))+'% ('+p.url+')');
     inc(FEndPoint.FStore.FData.FLoaded);
     try
       t := p.resourceV; // prompt to load
+      if name = 'CodeSystems' then
+        FEndPoint.FStore.FServerContext.ValidatorContext.loadCodeSystem(p);
     except
       on e : Exception do
         Logging.log('Error loading '+p.url+'|'+p.version+': '+e.message);

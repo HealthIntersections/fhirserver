@@ -571,7 +571,8 @@ type
     function display : String; override;
     function displayElement : TFHIRPrimitiveW; override;
     function definition : String; override;
-    function conceptList : TFhirCodeSystemConceptListW; override;
+    function conceptList : TFhirCodeSystemConceptListW; override;  
+    function hasConcepts : boolean; override;
     function conceptCount : integer; override;
     function designationCount : integer; override;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; override;
@@ -616,6 +617,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
+    function hasConcepts : boolean; override;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
     function isInactive(c : TFhirCodeSystemConceptW) : boolean; override;    
@@ -3225,6 +3227,11 @@ begin
   result := FConceptList;
 end;
 
+function TFhirCodeSystemConcept2.hasConcepts: boolean;
+begin
+  result := (Element as TFhirCodeSystemConcept).hasConceptList;
+end;
+
 function TFhirCodeSystemConcept2.definition: String;
 begin
   result := (Element as TFhirCodeSystemConcept).definition;
@@ -3682,6 +3689,11 @@ end;
 function TFhirCodeSystem2.conceptCount: integer;
 begin
   result := cs.conceptList.Count;
+end;
+
+function TFhirCodeSystem2.hasConcepts: boolean;
+begin
+  result := cs.hasConceptList;
 end;
 
 function TFhirCodeSystem2.conceptList: TFhirCodeSystemConceptListW;

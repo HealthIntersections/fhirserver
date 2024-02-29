@@ -68,6 +68,7 @@ type
     procedure Unload; override;
 
     procedure checkResource(r : TFhirResource);
+    procedure LoadCodeSystem(r : TFhirResourceProxy); override;
     procedure SeeResourceProxy(r : TFhirResourceProxy); override;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -95,6 +96,11 @@ procedure TFHIRServerWorkerContextR3.checkResource(r: TFhirResource);
 begin
   r.checkNoImplicitRules('Repository.SeeResource', 'Resource');
   Factory.checkNoModifiers(r, 'Repository.SeeResource', 'Resource');
+end;
+
+procedure TFHIRServerWorkerContextR3.LoadCodeSystem(r: TFhirResourceProxy);
+begin
+  FTerminologyServer.LoadCodeSystem(r);
 end;
 
 constructor TFHIRServerWorkerContextR3.Create(factory : TFHIRFactory; pc : TFHIRPackageManager);

@@ -64,6 +64,7 @@ Type
     procedure Unload; override;
 
     procedure SeeResourceProxy(r : TFhirResourceProxy); override;
+    procedure LoadCodeSystem(r : TFhirResourceProxy); override;
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
 
@@ -138,6 +139,11 @@ begin
   end
   else
     inherited SeeResourceProxy(r);
+end;
+
+procedure TFHIRServerWorkerContextR2.LoadCodeSystem(r: TFhirResourceProxy);
+begin
+  FTerminologyServer.LoadCodeSystem(r);
 end;
 
 function TFHIRServerWorkerContextR2.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;

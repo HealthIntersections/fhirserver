@@ -712,6 +712,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
+    function hasConcepts : boolean; override;    
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
     function designationCount : integer; override;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; override;
@@ -767,6 +768,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
+    function hasConcepts : boolean; override;    
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
     function isInactive(c : TFhirCodeSystemConceptW) : boolean; override;
@@ -3778,6 +3780,11 @@ begin
   result := c.conceptList.Count;
 end;
 
+function TFhirCodeSystemConcept5.hasConcepts: boolean;
+begin
+  result := c.hasConceptList;
+end;
+
 function TFhirCodeSystemConcept5.conceptList: TFhirCodeSystemConceptListW;
 var
   i : TFHIRCodeSystemConcept;
@@ -3900,6 +3907,11 @@ end;
 function TFhirCodeSystem5.conceptCount: integer;
 begin
   result := cs.conceptList.Count;
+end;
+
+function TFhirCodeSystem5.hasConcepts: boolean;
+begin
+  result := cs.hasConceptList;
 end;
 
 function TFhirCodeSystem5.conceptList: TFhirCodeSystemConceptListW;

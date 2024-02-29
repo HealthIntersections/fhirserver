@@ -285,6 +285,7 @@ type
     procedure seeResource(res : TFHIRResourceV); overload; virtual; abstract;
     procedure seeResource(res : TFHIRResourceProxyV); overload; virtual; abstract;
     procedure dropResource(rtpe, id : String); overload; virtual; abstract;
+    procedure LoadCodeSystem(r : TFhirResourceProxyV); virtual; abstract;
 
     procedure setNonSecureTypes(names : Array of String); virtual; abstract;
 

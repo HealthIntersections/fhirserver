@@ -269,6 +269,8 @@ Type
     procedure SeeSpecificationResource(resource : TFHIRResourceProxyV);
     procedure SeeTerminologyResource(resource : TFHIRResourceProxyV);
     procedure DropTerminologyResource(aType : String; id : String);
+    procedure loadCodeSystem(cs : TFHIRResourceProxyV); overload;
+    procedure loadCodeSystem(cs : TFHIRCodeSystemW); overload;
 
     // access procedures. All return values are owned, and must be freed
     Function getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider; overload;
@@ -637,6 +639,7 @@ var
 begin
   cse := TFHIRCodeSystemEntry.Create(cs.Link);
   try
+    cs.TagObject := cse;
     if base then
       FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
     if (cs.supplements <> '') then
@@ -918,6 +921,19 @@ begin
   finally
     FLock.Unlock;
   end;
+end;
+
+procedure TTerminologyServerStore.loadCodeSystem(cs: TFHIRResourceProxyV);
+var
+  cse : TFHIRCodeSystemEntry;
+begin
+  cse := cs.TagObject as TFHIRCodeSystemEntry;
+  checkCSLoaded(cse);
+end;
+
+procedure TTerminologyServerStore.loadCodeSystem(cs: TFHIRCodeSystemW);
+begin
+  raise Exception.create('loadCodeSystem(TFHIRCodeSystemW) not done yet');
 end;
 
 procedure TTerminologyServerStore.UpdateConceptMaps;
@@ -1227,19 +1243,84 @@ end;
 procedure TTerminologyServerStore.checkCSLoaded(codesystem: TFHIRCodeSystemEntry);
 var
   p : TFHIRResourceProxyV;
+  state : integer; // go = 0, load = 1, wait for loading = 2, exception = 3
+  msg : String;
 begin
-  // todo: make this more efficient on the lock
   FLock.Lock;
   try
-    if not codeSystem.Loaded then
-    begin
-      codeSystem.Loaded := true;
-      codesystem.CodeSystem := codeSystem.CodeSystemProxy.resourceW.link as TFHIRCodeSystemW;
-      for p in codeSystem.SupplementProxies do
-        codeSystem.Supplements.add(p.resourceW.link as TFHIRCodeSystemW);
+    case codesystem.LoadingState of
+      cseNotLoaded : // first encounter
+        begin
+        state := 1;
+        codesystem.LoadingState := cseLoading;
+        end;
+      cseLoading : // some other thread is loading it
+        begin
+        state := 2;
+        end;
+      cseLoaded:
+        begin
+        state := 0;
+        end;
+      cseLoadingFailed:
+        begin
+          state := 3;
+          msg := codesystem.LoadingFailMessage;
+        end;
     end;
   finally
     FLock.Unlock;
+  end;
+  case state of
+    0: ; // nothing
+    1:
+      begin
+      try
+        msg := '';
+        try        
+          codesystem.CodeSystem := codeSystem.CodeSystemProxy.resourceW.link as TFHIRCodeSystemW;
+          for p in codeSystem.SupplementProxies do
+            codeSystem.Supplements.add(p.resourceW.link as TFHIRCodeSystemW);
+        except
+          on e : Exception do
+            msg := e.Message;
+        end;
+
+      finally
+        FLock.Lock;
+        try
+          if msg = '' then
+            codesystem.LoadingState := cseLoaded
+          else
+          begin
+            codesystem.LoadingState := cseLoadingFailed;
+            codesystem.LoadingFailMessage := msg;
+          end;
+        finally
+          FLock.Unlock;
+        end;
+        if (msg <> '') then
+          raise ETerminologyError.create(msg);
+      end;
+      end;
+    2:
+      begin
+        repeat
+          sleep(100);
+          FLock.Lock;
+          try        
+            case codesystem.LoadingState of
+              cseNotLoaded: raise ETerminologyError.create('Impossible State NotLoaded');
+              cseLoading : state := 0;
+              cseLoaded: state := 1;
+              cseLoadingFailed:raise ETerminologyError.create(codesystem.LoadingFailMessage);
+            end;
+          finally
+            FLock.Unlock;
+          end;
+        until state = 1;
+      end;
+    3: raise ETerminologyError.create(msg);
   end;
 end;
 

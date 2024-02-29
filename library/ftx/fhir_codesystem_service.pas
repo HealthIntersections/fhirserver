@@ -97,11 +97,14 @@ type
 
   { TFHIRCodeSystemEntry }
 
+  TFHIRCodeSystemEntryLoadingState = (cseNotLoaded, cseLoading, cseLoaded, cseLoadingFailed);
+
   TFHIRCodeSystemEntry = class (TFslObject)
   private
+    FLoadingFailMessage: String;
     // we get the proxy, and maybe we load this into the loaded one when we need to
     // makes start up very very much faster
-    FLoaded : boolean;
+    FLoadingState : TFHIRCodeSystemEntryLoadingState;
     FCodeSystemProxy : TFHIRResourceProxyV;
     FSupplementProxies : TFslList<TFHIRResourceProxyV>;
 
@@ -128,7 +131,8 @@ type
     constructor Create(res : TFHIRCodeSystemW); overload;
     destructor Destroy; override;
 
-    property Loaded : boolean read FLoaded write FLoaded;
+    property LoadingState : TFHIRCodeSystemEntryLoadingState read FLoadingState write FLoadingState;
+    property LoadingFailMessage : String read FLoadingFailMessage write FLoadingFailMessage;
     function Link : TFHIRCodeSystemEntry; overload;
     property id : String read GetId write SetId;
     property url : String read GetUrl;
@@ -332,7 +336,7 @@ begin
   inherited Create;
   FCodeSystem := res;
   LoadCodeSystem;
-  FLoaded := true;
+  FLoadingState := cseNotLoaded;
 end;
 
 destructor TFHIRCodeSystemEntry.Destroy;
@@ -361,7 +365,7 @@ procedure TFHIRCodeSystemEntry.loadCodeSystem;
           item.TagNoLink := entry;
           if (parent <> nil) then
             entry.addParent(parent.link);
-          if (item.conceptCount > 0) then
+          if (item.HasConcepts) then
             registerCodes(item.conceptList, entry);
         finally
           entry.free;
@@ -1258,7 +1262,7 @@ begin
   begin
     if conceptHasProperty(item, 'http://hl7.org/fhir/concept-properties#parent', code) then
       children.Add(item.link)
-    else if item.conceptCount > 0 then
+    else if item.HasConcepts then
       listChildrenByProperty(code, item.conceptList, children);
   end;
 end;
