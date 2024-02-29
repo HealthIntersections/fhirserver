@@ -59,12 +59,19 @@ type
     function link : TTelnetThreadHelper; overload;
   end;
 
+  { TFHIRTelnetServerThread }
+
   TFHIRTelnetServerThread = class (TFslThread)
   private
     FServer : TFHIRTelnetServer;
+    FStrings : TStringList;
+    FClientList : TFslList<TTelnetThreadHelper>;
   protected
     function ThreadName : String; Override;
     Procedure Execute; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
   end;
 
   { TFHIRTelnetServer }
@@ -84,7 +91,7 @@ type
     procedure SetStats(AValue: TStatusRecords);
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
-    procedure internalThread;
+    procedure internalThread(ctxt : TFHIRTelnetServerThread);
   protected
     procedure log(const msg : String); override;
   Public
@@ -158,40 +165,33 @@ begin
   end;
 end;
 
-procedure TFHIRTelnetServer.internalThread;
+procedure TFHIRTelnetServer.internalThread(ctxt : TFHIRTelnetServerThread);
 var
-  ts : TStringList;
   s : String;
   tth : TTelnetThreadHelper;
-  list : TFslList<TTelnetThreadHelper>;
 begin
-  list := TFslList<TTelnetThreadHelper>.Create;
+  ctxt.FStrings.clear;
+  ctxt.FClientList.clear;
+
+  FLock.Lock;
   try
-    ts := TStringList.Create;
-    try
-      FLock.Lock;
-      try
-        ts.Assign(FLog);
-        FLog.clear;
-        list.AddAll(FClients);
-      finally
-        FLock.Unlock;
-      end;
-      for tth in list do
-      begin
-        if (not tth.FHasSent) then
-          tth.send(FWelcomeMsg);
-        for s in ts do
-        begin
-          tth.send(s);
-        end;
-        tth.ping;
-      end;
-    finally
-      ts.free;
-    end;
+    ctxt.FStrings.Assign(FLog);
+    FLog.clear;
+    if (ctxt.FStrings.Count > 0) then
+      ctxt.FClientList.AddAll(FClients);
   finally
-    list.free;
+    FLock.Unlock;
+  end;
+
+  for tth in ctxt.FClientList do
+  begin
+    if (not tth.FHasSent) then
+      tth.send(FWelcomeMsg);
+    for s in ctxt.FStrings do
+    begin
+      tth.send(s);
+    end;
+    tth.ping;
   end;
 end;
 
@@ -405,13 +405,27 @@ end;
 procedure TFHIRTelnetServerThread.Execute;
 begin
   try
-    FServer.internalThread;
+    FServer.internalThread(self);
   except
     // nothing.
   end;
 end;
 
-function TFHIRTelnetServerThread.threadName: String;
+constructor TFHIRTelnetServerThread.Create;
+begin
+  inherited Create;
+  FStrings := TStringList.create;
+  FClientList := TFslList<TTelnetThreadHelper>.create;
+end;
+
+destructor TFHIRTelnetServerThread.Destroy;
+begin
+  FStrings.free;
+  FClientList.free;
+  inherited Destroy;
+end;
+
+function TFHIRTelnetServerThread.ThreadName: String;
 begin
   result := 'Telnet Server';
 end;
