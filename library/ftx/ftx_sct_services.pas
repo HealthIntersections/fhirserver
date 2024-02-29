@@ -2759,7 +2759,7 @@ function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
 var
   iTerm : Cardinal;
 begin
-  if not StringIsInteger64(sTerm) then
+  if (sTerm = '') or not StringIsInteger64(sTerm) then
     result := false
   else
     result := Concept.FindConcept(StringToId(sTerm), iTerm);
@@ -2773,7 +2773,7 @@ var
   active : boolean;
   lang : byte;
 begin
-  result := DescRef.FindDescription(StringToId(sTerm), iTerm);
+  result := (sTerm <> '') and DescRef.FindDescription(StringToId(sTerm), iTerm);
   if result then
   begin
     FDesc.GetDescription(iTerm, desc, id, date, cId, module, kind, caps, refsets, valueses, active, lang);
@@ -3293,7 +3293,7 @@ end;
 
 function TSnomedServices.ConceptExists(conceptId: String; var index: cardinal): Boolean;
 begin
-  result := FConcept.FindConcept(StringToIdOrZero(conceptId), index);
+  result := (conceptId <> '') and FConcept.FindConcept(StringToIdOrZero(conceptId), index);
 end;
 
 
