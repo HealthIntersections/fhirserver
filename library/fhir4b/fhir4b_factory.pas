@@ -185,7 +185,7 @@ begin
     finally
       iss.free;
     end;
-    op.link;
+    result := op.link;
   finally
     op.free;
   end;

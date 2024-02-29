@@ -3226,7 +3226,7 @@ begin
       exit;
 
 
-    if (cs.expandLimitation > 0) then
+    if (cs <> nil) and (cs.expandLimitation > 0) then
     begin
       cnt := FCSCounter[cs.systemUri];
       if (cnt = nil) then
@@ -3345,7 +3345,7 @@ begin
               end;
             end;
           end
-          else if csProps <> nil then
+          else if (csProps <> nil) and (cs <> nil) then
           begin
             for cp in csprops do
             begin

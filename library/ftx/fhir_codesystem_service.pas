@@ -329,6 +329,7 @@ constructor TFHIRCodeSystemEntry.Create(res : TFHIRResourceProxyV);
 begin
   inherited Create;
   FCodeSystemProxy := res;
+  FLoadingState := cseNotLoaded;
 end;
 
 constructor TFHIRCodeSystemEntry.Create(res: TFHIRCodeSystemW);
@@ -336,7 +337,7 @@ begin
   inherited Create;
   FCodeSystem := res;
   LoadCodeSystem;
-  FLoadingState := cseNotLoaded;
+  FLoadingState := cseLoaded;
 end;
 
 destructor TFHIRCodeSystemEntry.Destroy;
@@ -451,7 +452,8 @@ procedure TFHIRCodeSystemEntry.SetCodeSystem(const Value: TFHIRCodeSystemW);
 begin
   FCodeSystem.free;
   FCodeSystem := value;
-  LoadCodeSystem;
+  if FCodeSystem <> nil then
+    LoadCodeSystem;
 end;
 
 function TFHIRCodeSystemEntry.GetUrl: String;

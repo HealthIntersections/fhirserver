@@ -1019,7 +1019,7 @@ var
   f : System.text;
 begin
   // Application is pretty much cactus at this point, so we don't mind doing
-  // slow file operation inside such a system critical lock as GLock
+  // a slow file operation inside such a system critical lock as GLock
 
   try
     fn := 'c:\temp\object-tracking-errors.log';
