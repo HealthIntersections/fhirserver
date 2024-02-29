@@ -143,6 +143,72 @@ uses
   JclDebug;
 {$ENDIF}
 
+function systemInfo : string;
+var
+  l, s : string;
+begin
+  l := 'Running on "'+SystemName+'": '+SystemPlatform;
+  s := SystemArchitecture;
+  if (s <> '') and not sameText(s, 'Unknown') then
+  begin
+    l := l + ' (';
+    l := l + s;
+    s := SystemProcessorName;
+    if s <> '' then
+      l := l + '/'+s;
+    l := l + ')';
+  end;
+  l := l + '. ';
+  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
+  result := l;
+end;
+
+function compileInfo : String;
+var
+  compiler, os, cpu, s : String;
+begin
+  {$IFDEF FPC}
+  compiler := '/FreePascal';
+  {$ELSE}
+  compiler := '/Delphi';
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  os := 'Windows';
+  {$ENDIF}
+  {$IFDEF LINUX}
+  os := 'Linux';
+  {$ENDIF}
+  {$IFDEF OSX}
+  os := 'OSX';
+  {$ENDIF}
+  {$IFDEF CPU64}
+  cpu := ''; //'-64';
+  {$ELSE}
+  cpu := '-32';
+  {$ENDIF}
+
+  s := os+cpu+compiler;
+  {$IFOPT C+}
+  s := s + '+Assertions';
+  {$ENDIF}
+
+  {$IFOPT D+}
+  s := s + '+Debug';
+  {$ENDIF}
+
+  {$IFOPT O+}
+  s := s + '+Optimizations';
+  {$ENDIF}
+
+  {$IFDEF OBJECT_TRACKING}
+  s := s + '+ObjectTracking';
+  {$ENDIF}
+
+  result := 'FHIR Server '+SERVER_FULL_VERSION+' '+s;
+end;
+
+
+
 var
   GStartTime : UInt64;
 
@@ -647,13 +713,13 @@ begin
 
     {$IFDEF DELPHI}
     if JclExceptionTrackingActive then
-      logMsg := 'Using Configuration file '+ini.FileName+' (+stack dumps)'
+      logMsg := !'Using Configuration file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
       logMsg := 'Using Configuration file '+ini.FileName;
     Logging.log(logMsg);
 
-    svc := TFHIRServiceKernel.Create(svcName, dispName, logMsg, ini.link, params.link);
+    svc := TFHIRServiceKernel.Create(svcName, dispName, compileInfo+' '+systemInfo+#13#10+logMsg, ini.link, params.link);
     try
       {$IFDEF FPC}
       if FakeConsoleForm <> nil then
@@ -689,70 +755,6 @@ begin
       svc.free;
     end;
   end;
-end;
-
-procedure logSystemInfo;
-var
-  l, s : string;
-begin
-  l := 'Running on "'+SystemName+'": '+SystemPlatform;
-  s := SystemArchitecture;
-  if (s <> '') and not sameText(s, 'Unknown') then
-  begin
-    l := l + ' (';
-    l := l + s;
-    s := SystemProcessorName;
-    if s <> '' then
-      l := l + '/'+s;
-    l := l + ')';
-  end;
-  l := l + '. ';
-  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
-  Logging.log(l);
-end;
-
-procedure logCompileInfo;
-var
-  compiler, os, cpu, s : String;
-begin
-  {$IFDEF FPC}
-  compiler := '/FreePascal';
-  {$ELSE}
-  compiler := '/Delphi';
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  os := 'Windows';
-  {$ENDIF}
-  {$IFDEF LINUX}
-  os := 'Linux';
-  {$ENDIF}
-  {$IFDEF OSX}
-  os := 'OSX';
-  {$ENDIF}
-  {$IFDEF CPU64}
-  cpu := ''; //'-64';
-  {$ELSE}
-  cpu := '-32';
-  {$ENDIF}
-
-  s := os+cpu+compiler;
-  {$IFOPT C+}
-  s := s + '+Assertions';
-  {$ENDIF}
-
-  {$IFOPT D+}
-  s := s + '+Debug';
-  {$ENDIF}
-
-  {$IFOPT O+}
-  s := s + '+Optimizations';
-  {$ENDIF}
-
-  {$IFDEF OBJECT_TRACKING}
-  s := s + '+ObjectTracking';
-  {$ENDIF}
-
-  Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
 
@@ -798,8 +800,8 @@ begin
   Logging.LogToConsole := true;
   {$ENDIF}
 
-  logCompileInfo;
-  logSystemInfo;
+  Logging.log(compileInfo);
+  Logging.log(systemInfo);
   logDebuggingInfo;
 
   if not params.hasParams then
