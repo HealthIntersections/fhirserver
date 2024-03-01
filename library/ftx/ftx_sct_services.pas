@@ -4498,10 +4498,15 @@ procedure TSnomedServices.displayExpr(b: TFslStringBuilder; expr: TSnomedConcept
 var
   s : String;
 begin
-  s := GetDisplayName(expr.code, '');
-  if (s = '') then
-    s := expr.description;
-  b.Append(s);
+  if (expr.code = '') then
+    b.append('<err>')
+  else
+  begin
+    s := GetDisplayName(expr.code, '');
+    if (s = '') then
+      s := expr.description;
+    b.Append(s);
+  end;
 end;
 
 
