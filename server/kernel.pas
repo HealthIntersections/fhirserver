@@ -420,6 +420,7 @@ begin
   FWebServer := TFhirWebServer.Create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
   FWebServer.Common.cache.cacheDwellTime := Settings.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+  FTelnet.OnGetRequestList := FWebServer.GetCurrentRequestReport;
 
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
@@ -461,6 +462,7 @@ procedure TFHIRServiceKernel.stopWebServer;
 begin
   if FWebServer <> nil then
   begin
+    FTelnet.OnGetRequestList := nil;
     FWebServer.Stop;
     FWebServer.free;
   end;

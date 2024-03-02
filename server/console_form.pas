@@ -109,6 +109,7 @@ type
     btnImportUNII: TBitBtn;
     btnImportUNIIStop: TBitBtn;
     btnLockStatus: TButton;
+    btnRequestList: TButton;
     btnReIndexRxNorm: TBitBtn;
     btnLangFile: TSpeedButton;
     btnImportNDC: TBitBtn;
@@ -500,6 +501,7 @@ type
     procedure btnImportUNIIClick(Sender: TObject);
     procedure btnLockStatusClick(Sender: TObject);
     procedure btnReIndexRxNormClick(Sender: TObject);
+    procedure btnRequestListClick(Sender: TObject);
     procedure btnTestNDCClick(Sender: TObject);
     procedure btnTestUNIIClick(Sender: TObject);
     procedure btnTextRxNormClick(Sender: TObject);
@@ -2240,6 +2242,15 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.btnRequestListClick(Sender: TObject);
+begin
+  try
+    if FConnected then
+      FTelnet.SendString('@requests'+#10);
+  except
+  end;
+end;
+
 procedure TMainConsoleForm.btnTestNDCClick(Sender: TObject);
 var
   db : TFDBManager;
@@ -2987,6 +2998,11 @@ begin
     if line.startsWith('$@threads') then
     begin
       FThreads.Text := line.subString(10).replace('|', #13#10).trim();
+      exit(true);
+    end;
+    if line.startsWith('$@requests') then
+    begin
+      FThreads.Text := line.subString(12).replace('|', #13#10).trim();
       exit(true);
     end;
   end;

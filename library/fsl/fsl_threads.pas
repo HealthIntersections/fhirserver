@@ -61,6 +61,7 @@ procedure ThreadPing;
 procedure SetThreadName(name : String);
 procedure SetThreadStatus(status : String);
 function GetThreadInfo : String;
+function GetThreadInfoForThread(threadId : TThreadId) : String;
 function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
@@ -137,6 +138,7 @@ type
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 
 function DumpLocks(all : boolean; sep : String = '') : String;
+function NameLockedToThread(id : TThreadID) : string;
 
 Type
   TFslThreadHandle = TThreadHandle;
@@ -696,6 +698,32 @@ begin
   end;
 end;
 
+function GetThreadInfoForThread(threadId: TThreadId): String;
+var
+  id : TThreadId;
+  i : integer;
+  p : PThreadRecord;
+  s : String;
+begin
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = threadId) then
+      begin
+        s := p.name;
+        if p.state <> '' then
+          s := s + '='+p.state;
+        break;
+      end;
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+  result := s;
+end;
+
 function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 var
   i : integer;
@@ -1219,14 +1247,38 @@ Begin
   begin
     Result := 'ID Name (of '+StringPadRight(inttostr(TFslLock.CurrentCount)+')', ' ', 6)+'           Use#   Delay# Curr(ms) Total(ms) Delay(ms) #UseCount Thread ID  Routine'+sep;
   end;
-  oCrit := GFirst;
-  While oCrit <> nil Do
-  Begin
-    if all or (oCrit.EntryCount > 0) Then
-      Result := Result + oCrit.DebugSummary + sep;
-    oCrit := oCrit.FNext;
-  End;
+  EnterCriticalSection(GCritSct);
+  try
+    oCrit := GFirst;
+    While oCrit <> nil Do
+    Begin
+      if all or (oCrit.EntryCount > 0) Then
+        Result := Result + oCrit.DebugSummary + sep;
+      oCrit := oCrit.FNext;
+    End;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
 End;
+
+function NameLockedToThread(id: TThreadID): string; 
+var
+  oCrit : TFslLock;
+begin
+  result := '';
+  EnterCriticalSection(GCritSct);
+  try
+    oCrit := GFirst;
+    While oCrit <> nil Do
+    Begin
+      if oCrit.FLockThread = id Then
+        CommaAdd(result, oCrit.Name);
+      oCrit := oCrit.FNext;
+    End;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
 
 
 type

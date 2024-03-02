@@ -74,10 +74,13 @@ type
     destructor Destroy; override;
   end;
 
+  TGetStringEvent = function : String of object;
+
   { TFHIRTelnetServer }
 
   TFHIRTelnetServer = class (TLogListener)
   Private
+    FOnGetRequestList: TGetStringEvent;
     FServer: TIdTelnetServer;
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
@@ -104,6 +107,8 @@ type
     procedure addEndPoint(ep : TFHIRServerEndPoint);
     procedure removeEndPoint(ep : TFHIRServerEndPoint);
     property ShuttingDown : boolean read FShuttingDown write FShuttingDown;
+
+    property OnGetRequestList : TGetStringEvent read FOnGetRequestList write FOnGetRequestList;
   end;
 
 implementation
@@ -331,6 +336,14 @@ begin
   begin
     Logging.log('Console requested Thread List');
     send('$@threads: '+GetThreadReport)
+  end
+  else if (s = '@requests') then
+  begin
+    Logging.log('Console requested Current Request List');
+    if not assigned(FServer.OnGetRequestList) then
+      send('$@requests: No Server At this time')
+    else
+      send('$@requests: '+FServer.OnGetRequestList)
   end
   else if (s = '@classes') then
   begin

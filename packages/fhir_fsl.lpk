@@ -148,6 +148,10 @@
         <Filename Value="..\library\fsl\fsl_gzip.pas"/>
         <UnitName Value="fsl_gzip"/>
       </Item>
+      <Item>
+        <Filename Value="..\library\fsl\fsl_cpu.pas"/>
+        <UnitName Value="fsl_cpu"/>
+      </Item>
     </Files>
     <RequiredPkgs>
       <Item>

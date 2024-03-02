@@ -40,7 +40,7 @@ todo:
 }
 uses
   SysUtils, Classes,
-  fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n, fsl_versions,
+  fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n, fsl_versions, fsl_threads,
   fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions, fhir_uris, fhir_parser,
   fhir_codesystem_service;
 
@@ -3025,6 +3025,7 @@ var
   m : TFHIRMetadataResourceW;
   b : TFslBytesBuilder;
 begin
+  SetThreadStatus(ClassName+'.'+place);
   if FOpContext.deadCheck then
   begin
     id := FOpContext.FId;
