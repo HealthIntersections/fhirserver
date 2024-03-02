@@ -74,7 +74,6 @@ uses
 constructor TCPUUsageData.Create(PID : cardinal = 0);  
 {$IFDEF WINDOWS}
 var
-  p : PCPUUsageData;
   mCreationTime, mExitTime, mKernelTime, mUserTime:_FILETIME;
   h : cardinal;
 {$ENDIF}
@@ -129,7 +128,7 @@ var
 begin
   result := 0;
 {$IFDEF WINDOWS}
-  if FHandle <> 0) then
+  if (FHandle <> 0) then
   begin
     result := FLastUsage;
     ThisTime := GetTickCount; //Get the time elapsed since last query
