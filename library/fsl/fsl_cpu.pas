@@ -155,7 +155,7 @@ end;
 
 function TCPUUsageData.usage: String;
 begin
-  result := inttostr(trunc((100 * cpuUsage)))+'%';
+  result := inttostr(trunc(cpuUsage))+'%';
 end;
 
 
