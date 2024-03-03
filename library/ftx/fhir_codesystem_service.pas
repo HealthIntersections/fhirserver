@@ -39,13 +39,6 @@ uses
   ftx_service;
 
 type
-  //TConceptAdornment = class (TFslStringList)
-  //private
-  //  FParent: TFHIRCodeSystemConceptW;
-  //public
-  //  property parent : TFHIRCodeSystemConceptW read FParent write FParent; // not owned, can't be
-  //end;
-
   TFhirCodeSystemProviderContext = class (TCodeSystemProviderContext)
   private
     concept : TFhirCodeSystemConceptW;
@@ -66,17 +59,6 @@ type
     constructor Create(item : TFhirCodeSystemConceptW; rating : double);
     destructor Destroy; override;
   end;
-
-  //TCodeSystemAdornment = class (TFslObject)
-  //private
-  //  FCodeMap : TFhirCodeSystemConceptMapW;
-  //protected
-  //  function sizeInBytesV(magic : integer) : cardinal; override;
-  //public
-  //  constructor Create(map : TFhirCodeSystemConceptMapW);
-  //  destructor Destroy; override;
-  //  property codeMap1 : TFhirCodeSystemConceptMapW read FCodeMap;
-  //end;
 
   { TFHIRCodeSystemCodeEntry }
 

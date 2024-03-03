@@ -249,6 +249,7 @@ Type
     function EndPoint(name : String) : TFhirWebServerEndpoint;
 
     function GetCurrentRequestReport : String;
+    function GetCurrentRequestCount : integer;
 
     procedure registerEndPoint(endPoint : TFHIRServerEndPoint);
   End;
@@ -526,6 +527,18 @@ begin
     result := 'Current Web Requests: '+inttostr(FLiveConnections.count);
     for conn in FLiveConnections do
       result := result + '|' + conn.log;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFhirWebServer.GetCurrentRequestCount: integer;
+var
+  conn : TFHIRHTTPConnectionInfo;
+begin
+  FLock.lock;
+  try
+    result := FLiveConnections.count;
   finally
     FLock.Unlock;
   end;
@@ -907,7 +920,7 @@ begin
               end;
             end;
           end;
-          if (summ.contains('err:') and not summ.contains('msg:') ) then
+          if (summ.contains('err:') and (not summ.contains('msg:') or UnderDebugger)) then
             logCrash(false, id, ip, request, response);
 
           logResponse(id, response);
@@ -969,6 +982,8 @@ begin
   wep.OnReturnFile := ReturnProcessedFile;
   wep.OnReturnFileSource := ReturnFileSource;
   wep.OnProcessFile := ProcessFile;
+  if (endPoint is TStorageEndPoint) then
+    (endPoint as TStorageEndPoint).ServerContext.TerminologyServer.OnGetCurrentRequestCount := GetCurrentRequestCount;
   FStats.EndPointNames.add(endPoint.WebEndPoint.code);
 end;
 

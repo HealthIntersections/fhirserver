@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 
 {$I fhir.inc}
+{.$.DEFINE DUMP_DEAD_VS}
 
 interface
 
@@ -220,23 +221,29 @@ Type
   // this is denial of service protection. A terminology operation is not allowed to take too long, and
   // it's not allowed to recurse
 
+  TGetCurrentRequestCountEvent = function : integer of Object;
+
   { TTerminologyOperationContext }
 
   TTerminologyOperationContext = class (TFslObject)
   private
     FId : String;
-    FDeadTime : UInt64;
+    FStartTime : UInt64;
     FContexts : TStringList;
     FLangList : THTTPLanguageList;
     FI18n : TI18nSupport;
+    FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
   public
-    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList);
+    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; getRequestCount : TGetCurrentRequestCountEvent);
     destructor Destroy; override;
 
     property reqId : String read FId;
     function copy : TTerminologyOperationContext;
-    function deadCheck : boolean;
+    function deadCheck(var time : integer) : boolean;
     procedure seeContext(vurl : String);
+    procedure clearContexts;
+
+    property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
   end;
 
   TGetValueSetEvent = function (sender : TObject; url, version : String) : TFHIRValueSetW of object;
@@ -400,17 +407,15 @@ implementation
 
 { TTerminologyOperationContext }
 
-constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList);
+constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; getRequestCount : TGetCurrentRequestCountEvent);
 begin
   inherited create;
   FI18n := i18n;
   FId := id;
   FLangList := langList;
   FContexts := TStringList.create;
-  if (EXPANSION_DEAD_TIME_SECS = 0) or (UnderDebugger) then
-    FDeadTime := 0
-  else
-    FDeadTime := GetTickCount64 + (EXPANSION_DEAD_TIME_SECS * 1000);
+  FStartTime := GetTickCount64;
+  FOnGetCurrentRequestCount := getRequestCount;
 end;
 
 destructor TTerminologyOperationContext.Destroy;
@@ -423,14 +428,26 @@ end;
 
 function TTerminologyOperationContext.copy: TTerminologyOperationContext;
 begin
-  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link);
+  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, OnGetCurrentRequestCount);
   result.FContexts.assign(FContexts);
-  result.FDeadTime := FDeadTime;
+  result.FStartTime := FStartTime;
 end;
 
-function TTerminologyOperationContext.deadCheck: boolean;
+function TTerminologyOperationContext.deadCheck(var time : integer): boolean;
+var
+  dt : UInt64;
+  rq : integer;
 begin
-  result := (FDeadTime > 0) and (GetTickCount64 > FDeadTime);
+  time := EXPANSION_DEAD_TIME_SECS;
+  if UnderDebugger then
+    exit(false);
+
+  // once timelimit is hit, living on borrowed time until request counts build
+  if assigned(OnGetCurrentRequestCount) and (OnGetCurrentRequestCount < 10) then
+    time := time * 5;
+
+  dt := FStartTime + (time * 1000);
+  result := GetTickCount64 > dt;
 end;
 
 procedure TTerminologyOperationContext.seeContext(vurl: String);
@@ -446,6 +463,11 @@ begin
   end
   else
     FContexts.add(vurl);
+end;
+
+procedure TTerminologyOperationContext.clearContexts;
+begin
+  FContexts.clear;
 end;
 
 { TValueSetCounter }
@@ -1101,6 +1123,7 @@ var
   inactive : boolean;
   normalForm : String;
 begin
+  FOpContext.clearContexts;
   unknownSystems := TStringList.create;
   ts := TStringList.create;
   msgs := TStringList.create;
@@ -1628,6 +1651,7 @@ var
   inactive : boolean;
   vstatus, normalForm : String;
 begin
+  FOpContext.clearContexts;
   inactive := false;
   path := issuePath;
   unknownSystems := TStringList.create;
@@ -1794,6 +1818,7 @@ var
       mt.add(s);
   end;
 begin
+  FOpContext.clearContexts;
   inactive := false;
   cause := itNull;
   if FValueSet = nil then
@@ -2144,6 +2169,7 @@ var
   inactive : boolean;
   vstatus, normalForm : String;
 begin
+  FOpContext.clearContexts;
   unknownSystems := TStringList.create;
   unkCodes := TStringList.create;
   messages := TStringList.create;
@@ -3024,10 +3050,12 @@ var
   comp : TFHIRComposer;
   m : TFHIRMetadataResourceW;
   b : TFslBytesBuilder;
+  time : integer;
 begin
   SetThreadStatus(ClassName+'.'+place);
-  if FOpContext.deadCheck then
+  if FOpContext.deadCheck(time) then
   begin
+    {$IFDEF DUMP_DEAD_VS}
     id := FOpContext.FId;
     if (id = '') then
       id := 'internal';
@@ -3048,7 +3076,10 @@ begin
       b.free;
     end;
     logging.log('Expansion took too long @ '+place+': value set '+FValueSet.vurl+' stored at '+fn+'.json');
-    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.languages, [FValueSet.vurl, inttostr(EXPANSION_DEAD_TIME_SECS)]));
+    {$ELSE}
+    logging.log('Expansion took too long');
+    {$ENDIF}
+    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.languages, [FValueSet.vurl, inttostr(time)]));
   end;
 end;
 
