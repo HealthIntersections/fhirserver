@@ -1021,7 +1021,7 @@ var
   entry : TFHIRCodeSystemCodeEntry;
 begin
   entry := ctxt.TagNoLink as TFHIRCodeSystemCodeEntry;
-  if entry.parents.Count > 0 then
+  if (entry <> nil) and (entry.parents <> nil) and (entry.parents.Count > 0) then
     result := entry.parents[0].Concept
   else
     result := nil;
