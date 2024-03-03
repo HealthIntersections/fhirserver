@@ -35,7 +35,7 @@ interface
 
 uses
   Classes, SysUtils,
-  fsl_base;
+  fsl_base, fsl_threads;
 
 const
   wsMinMeasurementInterval=250;
@@ -47,6 +47,7 @@ type
 
   TCPUUsageData = class (TFslObject)
   private
+    FLock : TFslLock;
     FPID : cardinal;
     {$IFDEF WINDOWS}
     FHandle:cardinal;
@@ -68,7 +69,7 @@ uses
 {$IFDEF WINDOWS}
   Windows;
 {$ELSE}
-  baseunix, Foundation;
+  baseunix;
 {$ENDIF}
 
 constructor TCPUUsageData.Create(PID : cardinal = 0);  
@@ -79,6 +80,7 @@ var
 {$ENDIF}
 begin
   inherited create;
+  FLock := TFslLock.create('cpu.usage');
 {$IFDEF WINDOWS} 
   if FPID = 0 then
     FPID := GetCurrentProcessId;
@@ -106,13 +108,14 @@ begin
   CloseHandle(FHandle);
 {$ELSE}
 {$ENDIF};
+  FLock.Free;
   inherited;
 end;
 
 {$IFNDEF WINDOWS}
 function getrusage(usage : integer; var data : rusage) : integer;
 begin
-  result := host_processor_info();
+//  result := host_processor_info();
   // result := Getrusage();
 end;
 
@@ -127,30 +130,35 @@ var
   {$ENDIF}
 begin
   result := 0;
-{$IFDEF WINDOWS}
-  if (FHandle <> 0) then
-  begin
-    result := FLastUsage;
-    ThisTime := GetTickCount; //Get the time elapsed since last query
-    DeltaMs := ThisTime - FLastUpdateTime;
-    if DeltaMs > wsMinMeasurementInterval then
+  {$IFDEF WINDOWS}
+    if (FHandle <> 0) then
     begin
-      FLastUpdateTime := ThisTime;
-      GetProcessTimes(FHandle, mCreationTime, mExitTime, mKernelTime, mUserTime);
-      //convert _FILETIME to Int64.
-      mKernel := int64(mKernelTime.dwLowDateTime or (mKernelTime.dwHighDateTime shr 32));
-      mUser := int64(mUserTime.dwLowDateTime or (mUserTime.dwHighDateTime shr 32));
-      //get the delta
-      mDelta := mUser + mKernel - FOldUser - FOldKernel;
-      FOldUser := mUser;
-      FOldKernel := mKernel;
-      Result := (mDelta / DeltaMs) / 100; //mDelta is in units of 100 nanoseconds, so…
-      FLastUsage := Result;       //just in case you want to use it later, too
+      FLock.Lock;
+      try
+        result := FLastUsage;
+        ThisTime := GetTickCount; //Get the time elapsed since last query
+        DeltaMs := ThisTime - FLastUpdateTime;
+        if DeltaMs > wsMinMeasurementInterval then
+        begin
+          FLastUpdateTime := ThisTime;
+          GetProcessTimes(FHandle, mCreationTime, mExitTime, mKernelTime, mUserTime);
+          //convert _FILETIME to Int64.
+          mKernel := int64(mKernelTime.dwLowDateTime or (mKernelTime.dwHighDateTime shr 32));
+          mUser := int64(mUserTime.dwLowDateTime or (mUserTime.dwHighDateTime shr 32));
+          //get the delta
+          mDelta := mUser + mKernel - FOldUser - FOldKernel;
+          FOldUser := mUser;
+          FOldKernel := mKernel;
+          Result := (mDelta / DeltaMs) / 100; //mDelta is in units of 100 nanoseconds, so…
+          FLastUsage := Result;       //just in case you want to use it later, too
+        end;
+      finally
+        FLock.Unlock;
+      end;
     end;
-  end;
-{$ELSE}
-  // getrusage...
-{$ENDIF};
+  {$ELSE}
+    // getrusage...
+  {$ENDIF};
 end;
 
 function TCPUUsageData.usage: String;
