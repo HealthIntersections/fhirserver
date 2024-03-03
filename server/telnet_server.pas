@@ -308,7 +308,7 @@ begin
   magic := TFslObject.nextMagic;
   if FServer.FShuttingDown then
   begin
-    send('$@ping: '+inttostr(GetThreadCount)+' threads; shutting down');
+    send('$@ping: '+Logging.cpu.usage+' '+inttostr(GetThreadCount)+' threads; shutting down');
   end
   else if (now > FNextPing) then
   begin
@@ -317,7 +317,7 @@ begin
     begin
       mem := mem + ep.cacheSize(magic);
     end;
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
+    send('$@ping: '+Logging.cpu.usage+' '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
   end;
   FNextPing := now + (DATETIME_SECOND_ONE * 10);
 end;
