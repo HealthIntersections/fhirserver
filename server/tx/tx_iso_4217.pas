@@ -153,8 +153,14 @@ begin
 end;
 
 function TIso4217Services.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
+var
+  c : TIso4217Currency;
 begin
-  result := TIso4217Concept.Create(FCurrencies.Map[code].link);
+  c := FCurrencies.Map[code];
+  if (c = nil) then
+    result := nil
+  else
+    result := TIso4217Concept.Create(c.link);
 end;
 
 function TIso4217Services.Code(context : TCodeSystemProviderContext) : string;
