@@ -961,7 +961,7 @@ Begin
     if (oDT is Tv3PQ) Then
       WritePQ(sPath, oXml, sName, oDT as Tv3PQ, bOptional)
     Else if (oDT is Tv3CD) Then
-      WriteCD(sPath, oXml, sName, oDT as Tv3CD, bOptional, true)
+      WriteCD(sPath, oXml, sName, oDT as Tv3CD, bOptional)
     Else if (oDT is Tv3BL) Then
       WriteBL(sPath, oXml, sName, oDT as Tv3BL, bOptional)
     Else if (oDT is Tv3CS) Then
