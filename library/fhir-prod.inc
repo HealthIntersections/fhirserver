@@ -4,7 +4,8 @@
 
 // do not make changes in the file fhir-status.inc - it is overwritten by either fhir-dev.inc or fhir-prod.inc by the build scripts 
 
-{$C-} // assertions on
-{$I-} // IO checking on
-{$Q-} // overflow checking on
-{$R-} // range checking on 
+{$C-} // assertions off
+{$I-} // IO checking off
+{$Q-} // overflow checking off
+{$R-} // range checking off
+

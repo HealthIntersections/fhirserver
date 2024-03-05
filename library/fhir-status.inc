@@ -6,6 +6,6 @@
 
 {$C+} // assertions on
 {$I+} // IO checking on
-{$Q+} // overflow checking on
-{$R+} // range checking on 
+{$Q-} // overflow checking on
+{$R-} // range checking on 
 
