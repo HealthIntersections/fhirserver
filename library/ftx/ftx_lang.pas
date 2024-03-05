@@ -191,8 +191,14 @@ end;
 
 
 function TIETFLanguageCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
+var
+  info : TIETFLang;
 begin
-  result := TIETFLanguageCodeConcept.Create(FLanguages.parse(code, message));
+  info := FLanguages.parse(code, message);
+  if info = nil then
+    result := nil
+  else
+    result := TIETFLanguageCodeConcept.Create(info);
 end;
 
 
@@ -213,8 +219,14 @@ end;
 
 
 function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
+var
+  ctxt : TIETFLanguageCodeConcept;
 begin
-  result := getDisplay(TIETFLanguageCodeConcept(context).FInfo.code, langList);
+  ctxt := TIETFLanguageCodeConcept(context);
+  if (ctxt.FInfo = nil) then
+    result := ''
+  else
+    result := getDisplay(ctxt.FInfo.code, langList);
 end;
 
 function TIETFLanguageCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;

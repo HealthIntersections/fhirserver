@@ -42,6 +42,8 @@ uses
 type
   TFHIRTelnetServer = class;
 
+  { TTelnetThreadHelper }
+
   TTelnetThreadHelper = class (TFslObject)
   Private
     FServer : TFHIRTelnetServer;
@@ -53,24 +55,37 @@ type
     procedure processCommand(s : String);
     procedure send(s : String);
     procedure ping;
+    function GetRequestCount : String;
   Public
     constructor Create(server : TFHIRTelnetServer; context: TIdContext);
     destructor Destroy; Override;
     function link : TTelnetThreadHelper; overload;
   end;
 
+  { TFHIRTelnetServerThread }
+
   TFHIRTelnetServerThread = class (TFslThread)
   private
     FServer : TFHIRTelnetServer;
+    FStrings : TStringList;
+    FClientList : TFslList<TTelnetThreadHelper>;
   protected
     function ThreadName : String; Override;
     Procedure Execute; override;
+  public
+    constructor Create; override;
+    destructor Destroy; override;
   end;
+
+  TGetStringEvent = function : String of object;
+  TGetCurrentRequestCountEvent = function : integer of Object;
 
   { TFHIRTelnetServer }
 
   TFHIRTelnetServer = class (TLogListener)
   Private
+    FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
+    FOnGetRequestList: TGetStringEvent;
     FServer: TIdTelnetServer;
     FLock : TFslLock;
     FClients: TFslList<TTelnetThreadHelper>;
@@ -84,7 +99,7 @@ type
     procedure SetStats(AValue: TStatusRecords);
     procedure TelnetLogin(AThread: TIdContext; const username, password: String; var AAuthenticated: Boolean);
     procedure telnetExecute(AThread: TIdContext);
-    procedure internalThread;
+    procedure internalThread(ctxt : TFHIRTelnetServerThread);
   protected
     procedure log(const msg : String); override;
   Public
@@ -97,6 +112,9 @@ type
     procedure addEndPoint(ep : TFHIRServerEndPoint);
     procedure removeEndPoint(ep : TFHIRServerEndPoint);
     property ShuttingDown : boolean read FShuttingDown write FShuttingDown;
+
+    property OnGetRequestList : TGetStringEvent read FOnGetRequestList write FOnGetRequestList;
+    property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
   end;
 
 implementation
@@ -114,6 +132,7 @@ begin
 
   FLog := TStringList.Create;
 
+  Logging.log('Start Telnet Server on Port '+inttostr(port));
   FServer := TIdTelnetServer.Create(NIL);
   FServer.Name := 'Telnet';
   FServer.DefaultPort := port;
@@ -157,40 +176,33 @@ begin
   end;
 end;
 
-procedure TFHIRTelnetServer.internalThread;
+procedure TFHIRTelnetServer.internalThread(ctxt : TFHIRTelnetServerThread);
 var
-  ts : TStringList;
   s : String;
   tth : TTelnetThreadHelper;
-  list : TFslList<TTelnetThreadHelper>;
 begin
-  list := TFslList<TTelnetThreadHelper>.Create;
+  ctxt.FStrings.clear;
+  ctxt.FClientList.clear;
+
+  FLock.Lock;
   try
-    ts := TStringList.Create;
-    try
-      FLock.Lock;
-      try
-        ts.Assign(FLog);
-        FLog.clear;
-        list.AddAll(FClients);
-      finally
-        FLock.Unlock;
-      end;
-      for tth in list do
-      begin
-        if (not tth.FHasSent) then
-          tth.send(FWelcomeMsg);
-        for s in ts do
-        begin
-          tth.send(s);
-        end;
-        tth.ping;
-      end;
-    finally
-      ts.free;
-    end;
+    ctxt.FStrings.Assign(FLog);
+    FLog.clear;
+    if (ctxt.FStrings.Count > 0) then
+      ctxt.FClientList.AddAll(FClients);
   finally
-    list.free;
+    FLock.Unlock;
+  end;
+
+  for tth in ctxt.FClientList do
+  begin
+    if (not tth.FHasSent) then
+      tth.send(FWelcomeMsg);
+    for s in ctxt.FStrings do
+    begin
+      tth.send(s);
+    end;
+    tth.ping;
   end;
 end;
 
@@ -302,7 +314,7 @@ begin
   magic := TFslObject.nextMagic;
   if FServer.FShuttingDown then
   begin
-    send('$@ping: '+inttostr(GetThreadCount)+' threads; shutting down');
+    send('$@ping: '+Logging.cpu.usage+' #'+GetRequestCount+' '+inttostr(GetThreadCount)+' threads; shutting down');
   end
   else if (now > FNextPing) then
   begin
@@ -311,9 +323,17 @@ begin
     begin
       mem := mem + ep.cacheSize(magic);
     end;
-    send('$@ping: '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
+    send('$@ping: '+Logging.cpu.usage+' #'+GetRequestCount+' '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
   end;
   FNextPing := now + (DATETIME_SECOND_ONE * 10);
+end;
+
+function TTelnetThreadHelper.GetRequestCount: String;
+begin
+  if assigned(FServer.OnGetCurrentRequestCount) then
+    result := inttostr(FServer.OnGetCurrentRequestCount)
+  else
+    result := '?';
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
@@ -330,6 +350,14 @@ begin
   begin
     Logging.log('Console requested Thread List');
     send('$@threads: '+GetThreadReport)
+  end
+  else if (s = '@requests') then
+  begin
+    Logging.log('Console requested Current Request List');
+    if not assigned(FServer.OnGetRequestList) then
+      send('$@requests: No Server At this time')
+    else
+      send('$@requests: '+FServer.OnGetRequestList)
   end
   else if (s = '@classes') then
   begin
@@ -404,13 +432,27 @@ end;
 procedure TFHIRTelnetServerThread.Execute;
 begin
   try
-    FServer.internalThread;
+    FServer.internalThread(self);
   except
     // nothing.
   end;
 end;
 
-function TFHIRTelnetServerThread.threadName: String;
+constructor TFHIRTelnetServerThread.Create;
+begin
+  inherited Create;
+  FStrings := TStringList.create;
+  FClientList := TFslList<TTelnetThreadHelper>.create;
+end;
+
+destructor TFHIRTelnetServerThread.Destroy;
+begin
+  FStrings.free;
+  FClientList.free;
+  inherited Destroy;
+end;
+
+function TFHIRTelnetServerThread.ThreadName: String;
 begin
   result := 'Telnet Server';
 end;

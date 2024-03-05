@@ -61,13 +61,13 @@ Type
   TObservationStatus = (obssNull, obssRegistered, obssPreliminary, obssFinal, obssAmended, obssCorrected, obssCancelled, obssEnteredInError, obssUnknown);
   TTokenCategory = (tcClinical, tcData, tcMeds, tcSchedule, tcAudit, tcDocuments, tcFinancial, tcMedicationDefinition, tcOther);
   TIdentifierUse = (iuNull, iuUsual, iuOfficial, iuTemp, iuSecondary, iuOld);
-  TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicDisplay, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck, oicInvalidData);
+  TOpIssueCode = (oicVoid, oicNotInVS, oicThisNotInVS, oicInvalidCode, oicDisplay, oicNotFound, oicCodeRule, oicVSProcessing, oicInferFailed, oicStatusCheck, oicInvalidData, oicProcessingNote);
 
 const
   CODES_TFhirFilterOperator: Array[TFilterOperator] of String = ('', '=', 'is-a', 'descendent-of', 'is-not-a', 'regex', 'in', 'not-in', 'generalizes', 'exists', 'child-of', 'descendent-leaf');
   CODES_TPublicationStatus: Array[TPublicationStatus] of String = ('', 'draft', 'active', 'retired');
   CODES_TTokenCategory : array [TTokenCategory] of String = ('Clinical', 'Data', 'Meds', 'Schedule', 'Audit', 'Documents', 'Financial', 'MedicationDefinitions', 'Other');
-  CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data');
+  CODES_TOpIssueCode : array [TOpIssueCode] of String = ('', 'not-in-vs', 'this-code-not-in-vs', 'invalid-code', 'invalid-display', 'not-found', 'code-rule', 'vs-invalid', 'cannot-infer', 'status-check', 'invalid-data', 'process-note');
 
 type
   EFHIROperationException = class (EFslException)
@@ -735,6 +735,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
+    function hasConcepts : boolean; virtual; abstract;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function designationCount : integer; virtual; abstract;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; virtual; abstract;
@@ -807,9 +808,12 @@ type
     function link : TFslMetadataResourceList; overload;
   end;
 
+  { TFhirCodeSystemW }
+
   TFhirCodeSystemW = class (TFHIRMetadataResourceW)
   protected
     FConceptList : TFhirCodeSystemConceptListW;
+    function GetCaseSensitive: boolean; virtual; abstract;
     function getContent: TFhirCodeSystemContentMode; virtual; abstract;
     procedure setContent(Value: TFhirCodeSystemContentMode); virtual; abstract;
     function getCount: integer; virtual; abstract;
@@ -825,6 +829,7 @@ type
     function supplements : String; virtual; abstract;
     function copyright : String; virtual; abstract;
     function language : String; virtual; abstract;
+    property caseSensitive : boolean read GetCaseSensitive;
 
     function properties : TFslList<TFhirCodeSystemPropertyW>;  virtual; abstract;
     function propertyCode(uri : String) : String;
@@ -832,6 +837,7 @@ type
     // this is special because it's owned
     function conceptList : TFhirCodeSystemConceptListW; virtual; abstract;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; virtual; abstract;
+    function hasConcepts : boolean; virtual; abstract;
     function conceptCount : integer; virtual; abstract;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; virtual; abstract;
     function getCode(code : String) : TFhirCodeSystemConceptW; virtual; abstract;

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_http, fsl_lang, fsl_base, fsl_stream,
+  fsl_utilities, fsl_http, fsl_lang, fsl_base, fsl_stream, fsl_i18n,
   fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
@@ -71,7 +71,7 @@ type
 
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TAreaCodeServices; overload;
 
@@ -109,11 +109,12 @@ implementation
 
 { TAreaCodeServices }
 
-constructor TAreaCodeServices.Create(languages: TIETFLanguageDefinitions);
+constructor TAreaCodeServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   FCodes := TFslList<TAreaCodeConcept>.Create;
   FMap := TFslMap<TAreaCodeConcept>.Create('tx.areacode');
+  FMap.defaultValue := nil;
   Load;
 end;
 
@@ -141,8 +142,14 @@ begin
 end;
 
 function TAreaCodeServices.getDisplay(code : String; langList : THTTPLanguageList):String;
+var
+  v : TAreaCodeConcept;
 begin
-  result := FMap[code].display;
+  v := FMap[code];
+  if (v = nil) then
+    result := ''
+  else
+    result := v.display;
 end;
 
 function TAreaCodeServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;

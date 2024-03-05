@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes, Generics.Collections, {$IFDEF FPC} LazUTF8,{$ELSE} IOUtils, RegularExpressions, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http, fsl_regex,
+  fsl_base, fsl_utilities, fsl_stream, fsl_collections, fsl_fpc, fsl_lang, fsl_http, fsl_regex, fsl_i18n,
   fhir_objects, fhir_common, fhir_utilities, fhir_factory, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_service;
@@ -401,7 +401,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TLOINCServices; Overload;
 
@@ -926,7 +926,7 @@ end;
 
 { TLOINCServices }
 
-constructor TLOINCServices.Create(languages : TIETFLanguageDefinitions);
+constructor TLOINCServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited;
   FLang := TLoincLanguages.Create;
@@ -2357,6 +2357,7 @@ function TLOINCServices.locate(code: String; altOpt : TAlternateCodeOptions; var
 var
   i : Cardinal;
 begin
+  code := code.toUpper;
   if CodeList.FindCode(code, i) then
     result := TLoincProviderContext.Create(lpckCode, i)
   else if Entries.FindCode(code, i, FDesc) then

@@ -1564,7 +1564,6 @@ var
 //  iDummy : Cardinal;
   b2 : Boolean;
   icontext : UInt64;
-
 begin
   iContext := StrToUInt64Def(sContext, 0);
   Lock.Lock;

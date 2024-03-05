@@ -96,16 +96,34 @@ Uses
   scim_server,
   auth_manager, reverse_client, cds_hooks_server, web_source, analytics, bundlebuilder, server_factory,
   user_manager, server_context, server_constants, utilities, jwt, usage_stats,
-  subscriptions, twilio, telnet_server, time_tracker,
+  subscriptions, twilio, time_tracker,
   web_base, endpoint, endpoint_storage;
 
 Type
-  TFHIRHTTPServer = class(TIdHTTPServer)
-  protected
-    procedure DoMaxConnectionsExceeded(AIOHandler: TIdIOHandler); override;
+
+  { TFHIRHTTPConnectionInfo }
+
+  TFHIRHTTPConnectionInfo = class (TFslObject)
+  private
+    FRequest : TIdHTTPRequestInfo;
+    FThreadId : TThreadID;
+    FContext: TIdContext;
+    FClientIP : string;
+  public
+    constructor create(request : TIdHTTPRequestInfo; context: TIdContext);
+    destructor Destroy; override;
+    function link : TFHIRHTTPConnectionInfo;
+    function log : String;
   end;
 
   TFhirWebServer = class;
+
+  TFHIRHTTPServer = class(TIdHTTPServer)
+  private
+    FServer : TFhirWebServer;
+  protected
+    procedure DoMaxConnectionsExceeded(AIOHandler: TIdIOHandler); override;
+  end;
 
   TFHIRPathServerObject = class (TFHIRObject)
   protected
@@ -170,11 +188,13 @@ Type
     FEndPoints : TFslList<TFhirWebServerEndpoint>;
     FSecureCount, FPlainCount : Integer;
     FStats : TStatusRecords;
-
+    FLock : TFslLock;
+    FLiveConnections : TFslList<TFHIRHTTPConnectionInfo>;
     function insertValue(n: String; secure: boolean; variables: TFslMap<TFHIRObject>): String;
     function isLogging : boolean;
     procedure logRequest(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo);
     procedure logResponse(id : String; resp : TIdHTTPResponseInfo);
+    procedure logCrash(secure : boolean; id, clientIP : String; request : TIdHTTPRequestInfo; resp : TIdHTTPResponseInfo);
     function WebDump: String;
     Procedure CreatePostStream(AContext: TIdContext; AHeaders: TIdHeaderList; var VPostStream: TStream);
     procedure MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -228,9 +248,11 @@ Type
     property EndPoints : TFslList<TFhirWebServerEndpoint> read FEndPoints;
     function EndPoint(name : String) : TFhirWebServerEndpoint;
 
+    function GetCurrentRequestReport : String;
+    function GetCurrentRequestCount : integer;
+
     procedure registerEndPoint(endPoint : TFHIRServerEndPoint);
   End;
-
 
 Implementation
 
@@ -239,6 +261,39 @@ Uses
   Registry,
 {$ENDIF}
   fsl_oauth{$IFDEF COVID}, FHIR.Server.Covid{$ENDIF};
+
+{ TFHIRHTTPConnectionInfo }
+
+constructor TFHIRHTTPConnectionInfo.create(request: TIdHTTPRequestInfo; context: TIdContext);
+begin
+  inherited Create;
+  FRequest := request;
+  FContext := context;
+  FThreadId := GetCurrentThreadId;
+end;
+
+destructor TFHIRHTTPConnectionInfo.Destroy;
+begin
+  // nothing
+  inherited Destroy;
+end;
+
+function TFHIRHTTPConnectionInfo.link: TFHIRHTTPConnectionInfo;
+begin
+  result := TFHIRHTTPConnectionInfo(inherited Link);
+
+end;
+
+function TFHIRHTTPConnectionInfo.log: String;
+var
+  s : String;
+begin
+  s := NameLockedToThread(FThreadId);
+  if s <> '' then
+    result := '-->! '+FClientIP+'/'+FRequest.RawHTTPCommand+': '+GetThreadInfoForThread(FThreadId)+', locks = '+s
+  else
+    result := FClientIP+'/'+FRequest.RawHTTPCommand+': '+GetThreadInfoForThread(FThreadId);
+end;
 
 
 { TFhirWebServer }
@@ -271,10 +326,14 @@ Begin
   FSettings := settings;
   FClients := TFslList<TFHIRWebServerClientInfo>.Create;
   FStats := TStatusRecords.Create;
+  FLock := TFslLock.create('web.connnections');
+  FLiveConnections := TFslList<TFHIRHTTPConnectionInfo>.create;
 End;
 
 destructor TFhirWebServer.Destroy;
 Begin
+  FLiveConnections.free;
+  FLock.free;
   FStats.free;
   FUsageServer.free;
   FEndPoints.free;
@@ -459,6 +518,32 @@ begin
       exit(t);
 end;
 
+function TFhirWebServer.GetCurrentRequestReport: String;
+var
+  conn : TFHIRHTTPConnectionInfo;
+begin
+  FLock.lock;
+  try
+    result := 'Current Web Requests: '+inttostr(FLiveConnections.count);
+    for conn in FLiveConnections do
+      result := result + '|' + conn.log;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TFhirWebServer.GetCurrentRequestCount: integer;
+var
+  conn : TFHIRHTTPConnectionInfo;
+begin
+  FLock.lock;
+  try
+    result := FLiveConnections.count;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
 procedure TFhirWebServer.Start; // (active, threads: boolean);
 var
   s : String;
@@ -506,6 +591,7 @@ Begin
   if Common.WorkingPort > 0 then
   begin
     FPlainServer := TFHIRHTTPServer.Create(Nil);
+    (FPlainServer as TFHIRHTTPServer).FServer := self;
     FPlainServer.Name := 'http';
 //    FPlainServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
 //    TIdSchedulerOfThreadPool(FPlainServer.Scheduler).PoolSize := 20;
@@ -537,6 +623,7 @@ Begin
     If (FRootCertFile <> '') and (Not FileExists(FRootCertFile)) Then
       raise EIOException.Create('SSL Certificate "' + FRootCertFile + ' could not be found');
     FSSLServer := TFHIRHTTPServer.Create(Nil);
+    (FSSLServer as TFHIRHTTPServer).FServer := self;
     FSSLServer.Name := 'https';
 //    FSSLServer.Scheduler := TIdSchedulerOfThreadPool.Create(nil);
 //    TIdSchedulerOfThreadPool(FSSLServer.Scheduler).PoolSize := 20;
@@ -682,7 +769,7 @@ var
 begin
   s := id + ' ' +
        StringPadLeft(inttostr(tt.total), ' ', 4) + ' ' +
-       Logging.MemoryStatus(false) + ' ';
+       Logging.MemoryStatus(false) +' '+Logging.CPU.usage+ ' #'+inttostr(GetCurrentRequestCount)+' ';
   if (FPlainServer <> nil) and (FSSLServer <> nil) then
     s := s + StringPadLeft(inttostr(FPlainServer.Contexts.count)+':'+inttostr(FSSLServer.Contexts.count), ' ', 5) + ' '
   else if (FPlainServer <> nil) then
@@ -714,125 +801,148 @@ var
   ok : boolean;
   epn, cid, ip : String;
   tt : TTimeTracker;
+  ci : TFHIRHTTPConnectionInfo;
 begin
-  // when running with a reverse proxy, it's easier to let the reverse proxy just use non-ssl upstream, and pass through the certificate details se we know SSL is being used
-  if (Common.SSLHeaderValue <> '') and (request.RawHeaders.Values['X-Client-SSL'] = Common.SSLHeaderValue) then
-    SecureRequest(aContext, request, response)
-  else
-  begin
-    ip := getClientIP(AContext, request);
-    tt := TTimeTracker.Create;
+  ci := TFHIRHTTPConnectionInfo.create(request, AContext);
+  try
+    FLock.lock;
     try
-      InterlockedIncrement(GCounterWebRequests);
-      SetThreadStatus('Processing '+request.Document);
-      epn := '??preq';
-      summ := request.document;
-      MarkEntry(AContext, request, response);
-      try
-        id := FSettings.nextRequestId;
-        logRequest(false, id, ip, request);
-        response.CustomHeaders.Add('X-Request-Id: '+id);
-        if (request.CommandType = hcOption) then
-        begin
-          response.ResponseNo := 200;
-          response.ContentText := 'ok';
-          response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
-          response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-          response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-          response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-          if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-            response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-          epn := '--';
-          summ := 'options?';
-        end
-        else if (request.Document = '/robots.txt') and (RobotsText <> '') then
-        begin
-          response.ResponseNo := 200;
-          response.ResponseText := 'OK';
-          response.ContentText := RobotsText;
-        end
-        else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
-        begin
-          response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-          // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
-          response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-          response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-          // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
-          if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-            response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-          FUsageServer.HandleRequest(AContext, request, response);
-          epn := '--';
-          summ := 'options?';
-        end
-        else
-        begin
-          ok := false;
-          for ep in FEndPoints do
-            if request.Document.StartsWith(ep.PathWithSlash) then
-            begin
-              ok := true;
-              epn := ep.logId;
-              summ := ep.PlainRequest(AContext, ip, request, response, id, tt);
-              break;
-            end else if (request.Document = ep.PathNoSlash) then
-            begin
-              ok := true;
-              epn := ep.logId;
-              response.Redirect(request.Document+'/');
-              summ := '--> redirect to '+request.Document+'/';
-              break;
-            end;
+      FLiveConnections.add(ci.link);
+    finally
+      FLock.Unlock;
+    end;
 
-          if not ok then
+    // when running with a reverse proxy, it's easier to let the reverse proxy just use non-ssl upstream, and pass through the certificate details se we know SSL is being used
+    if (Common.SSLHeaderValue <> '') and (request.RawHeaders.Values['X-Client-SSL'] = Common.SSLHeaderValue) then
+      SecureRequest(aContext, request, response)
+    else
+    begin
+      ip := getClientIP(AContext, request);
+      ci.FClientIP := ip;
+      tt := TTimeTracker.Create;
+      try
+        InterlockedIncrement(GCounterWebRequests);
+        SetThreadStatus('Processing '+request.Document);
+        epn := '??preq';
+        summ := request.document;
+        MarkEntry(AContext, request, response);
+        try
+          id := FSettings.nextRequestId;
+          logRequest(false, id, ip, request);
+          response.CustomHeaders.Add('X-Request-Id: '+id);
+          if (request.CommandType = hcOption) then
           begin
-            if request.Document = '/diagnostics' then
+            response.ResponseNo := 200;
+            response.ContentText := 'ok';
+            response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+            response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+            response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+            response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+            if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+              response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+            epn := '--';
+            summ := 'options?';
+          end
+          else if (request.Document = '/robots.txt') and (RobotsText <> '') then
+          begin
+            response.ResponseNo := 200;
+            response.ResponseText := 'OK';
+            response.ContentText := RobotsText;
+          end
+          else if FUsageServer.enabled and request.Document.StartsWith(FUsageServer.path) then
+          begin
+            response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+            // response.CustomHeaders.add('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+            response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+            response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+            // response.CustomHeaders.add('Access-Control-Expose-Headers: *');
+            if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+              response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+            FUsageServer.HandleRequest(AContext, request, response);
+            epn := '--';
+            summ := 'options?';
+          end
+          else
+          begin
+            ok := false;
+            for ep in FEndPoints do
+              if request.Document.StartsWith(ep.PathWithSlash) then
+              begin
+                ok := true;
+                epn := ep.logId;
+                summ := ep.PlainRequest(AContext, ip, request, response, id, tt);
+                break;
+              end else if (request.Document = ep.PathNoSlash) then
+              begin
+                ok := true;
+                epn := ep.logId;
+                response.Redirect(request.Document+'/');
+                summ := '--> redirect to '+request.Document+'/';
+                break;
+              end;
+
+            if not ok then
             begin
-              epn := 'WS';
-              summ := 'diagnostics';
-              summ := ReturnDiagnostics(AContext, request, response, false, false)
-            end
-            else if request.Document = '/statistics' then
-            begin
-              epn := 'WS';
-              summ := ReturnStatistics(AContext, request, response, false, false, true)
-            end
-            else if request.Document = '/stats' then
-            begin
-              epn := 'WS';
-              summ := ReturnStatistics(AContext, request, response, false, false, false)
-            end
-            else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
-            begin
-              summ := 'Static File '+request.Document;
-              epn := 'WS';
-              ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
-            end
-            else if request.Document = '/' then
-            begin
-              epn := 'WS';
-              summ := 'processed File '+request.Document;
-              ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
-            end
-            else
-            begin
-              response.ResponseNo := 404;
-              response.ContentText := 'Document ' + request.Document + ' not found';
-              summ := 'Not Found: '+request.Document;
-              epn := 'XX';
+              if request.Document = '/diagnostics' then
+              begin
+                epn := 'WS';
+                summ := 'diagnostics';
+                summ := ReturnDiagnostics(AContext, request, response, false, false)
+              end
+              else if request.Document = '/statistics' then
+              begin
+                epn := 'WS';
+                summ := ReturnStatistics(AContext, request, response, false, false, true)
+              end
+              else if request.Document = '/stats' then
+              begin
+                epn := 'WS';
+                summ := ReturnStatistics(AContext, request, response, false, false, false)
+              end
+              else if Common.SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
+              begin
+                summ := 'Static File '+request.Document;
+                epn := 'WS';
+                ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
+              end
+              else if request.Document = '/' then
+              begin
+                epn := 'WS';
+                summ := 'processed File '+request.Document;
+                ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), false);
+              end
+              else
+              begin
+                response.ResponseNo := 404;
+                response.ContentText := 'Document ' + request.Document + ' not found';
+                summ := 'Not Found: '+request.Document;
+                epn := 'XX';
+              end;
             end;
           end;
+          if (summ.contains('err:') and (not summ.contains('msg:') or UnderDebugger)) then
+            logCrash(false, id, ip, request, response);
+
+          logResponse(id, response);
+          logOutput(AContext, request, response, id, tt, false, epn, summ);
+          response.CloseConnection := not PLAIN_KEEP_ALIVE;
+        finally
+          InterlockedDecrement(GCounterWebRequests);
+          MarkExit(AContext);
+          SetThreadStatus('Done');
         end;
-        logResponse(id, response);
-        logOutput(AContext, request, response, id, tt, false, epn, summ);
-        response.CloseConnection := not PLAIN_KEEP_ALIVE;
       finally
-        InterlockedDecrement(GCounterWebRequests);
-        MarkExit(AContext);
-        SetThreadStatus('Done');
+        tt.free;
       end;
-    finally
-      tt.free;
     end;
+  finally
+    FLock.lock;
+    try
+      FLiveConnections.remove(ci);
+    finally
+      FLock.Unlock;
+    end;
+    ci.free;
   end;
 end;
 
@@ -872,6 +982,8 @@ begin
   wep.OnReturnFile := ReturnProcessedFile;
   wep.OnReturnFileSource := ReturnFileSource;
   wep.OnProcessFile := ProcessFile;
+  if (endPoint is TStorageEndPoint) then
+    (endPoint as TStorageEndPoint).ServerContext.TerminologyServer.OnGetCurrentRequestCount := GetCurrentRequestCount;
   FStats.EndPointNames.add(endPoint.WebEndPoint.code);
 end;
 
@@ -884,104 +996,126 @@ var
   ok : boolean;
   ep: TFhirWebServerEndpoint;
   epn, ip: String;
+  ci : TFHIRHTTPConnectionInfo;
 begin
-  if NoUserAuthentication then // we treat this as if it's a plain request
-    PlainRequest(AContext, request, response)
-  else
-  begin
-    ip := getClientIP(AContext, request);
-    tt := TTimeTracker.Create;
+  ci := TFHIRHTTPConnectionInfo.create(request, AContext);
+  try
+    FLock.lock;
     try
-      InterlockedIncrement(GCounterWebRequests);
-      cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
-      epn := '??sreq';
-
-      SetThreadStatus('Processing '+request.Document);
-      MarkEntry(AContext, request, response);
+      FLiveConnections.add(ci.link);
+    finally
+      FLock.Unlock;
+    end;
+    if NoUserAuthentication then // we treat this as if it's a plain request
+      PlainRequest(AContext, request, response)
+    else
+    begin
+      ip := getClientIP(AContext, request);
+      ci.FClientIP := ip;
+      tt := TTimeTracker.Create;
       try
-        id := FSettings.nextRequestId;
-        logRequest(true, id, ip, request);
-        response.CustomHeaders.Add('X-Request-Id: '+id);
-        if isLogging then
-          response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged internally for debugging purposes; your continued use of the API constitutes agreement to this use');
+        InterlockedIncrement(GCounterWebRequests);
+        cert := nil; // (AContext.Connection.IOHandler as TIdSSLIOHandlerSocketOpenSSL).SSLSocket.PeerCert;
+        epn := '??sreq';
 
-        if (request.CommandType = hcOption) then
-        begin
-          response.ResponseNo := 200;
-          response.ContentText := 'ok';
-          response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
-          response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
-          response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
-          response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
-          if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
-            response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
-          summ := 'options?';
-          epn := '--';
-        end
-        else if (request.Document = 'robots.txt') and (RobotsText <> '') then
-        begin
-          response.ResponseNo := 200;
-          response.ResponseText := 'OK';
-          response.ContentText := RobotsText;
-        end
-        else
-        begin
-          ok := false;
-          for ep in FEndPoints do
-            if request.Document.StartsWith(ep.PathWithSlash) then
-            begin
-              ok := true;
-              epn := ep.logId;
-              summ := ep.SecureRequest(AContext, ip, request, response, cert, id, tt);
-            end
-            else if request.Document = ep.PathNoSlash then
-            begin
-              ok := true;
-              epn := ep.logid;
-              response.Redirect(ep.PathWithSlash);
-              summ := '--> redirect to '+request.Document+'/';
-            end;
-          if not ok then
+        SetThreadStatus('Processing '+request.Document);
+        MarkEntry(AContext, request, response);
+        try
+          id := FSettings.nextRequestId;
+          logRequest(true, id, ip, request);
+          response.CustomHeaders.Add('X-Request-Id: '+id);
+          if isLogging then
+            response.CustomHeaders.Add('X-GDPR-Disclosure: All access to this server is logged internally for debugging purposes; your continued use of the API constitutes agreement to this use');
+
+          if (request.CommandType = hcOption) then
           begin
-            if request.Document = '/diagnostics' then
+            response.ResponseNo := 200;
+            response.ContentText := 'ok';
+            response.CustomHeaders.Add('Access-Control-Allow-Credentials: true');
+            response.CustomHeaders.Add('Access-Control-Allow-Origin: *');
+            response.CustomHeaders.Add('Access-Control-Expose-Headers: Content-Location, Location');
+            response.CustomHeaders.Add('Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE');
+            if request.RawHeaders.Values['Access-Control-Request-Headers'] <> '' then
+              response.CustomHeaders.Add('Access-Control-Allow-Headers: ' + request.RawHeaders.Values['Access-Control-Request-Headers']);
+            summ := 'options?';
+            epn := '--';
+          end
+          else if (request.Document = 'robots.txt') and (RobotsText <> '') then
+          begin
+            response.ResponseNo := 200;
+            response.ResponseText := 'OK';
+            response.ContentText := RobotsText;
+          end
+          else
+          begin
+            ok := false;
+            for ep in FEndPoints do
+              if request.Document.StartsWith(ep.PathWithSlash) then
+              begin
+                ok := true;
+                epn := ep.logId;
+                summ := ep.SecureRequest(AContext, ip, request, response, cert, id, tt);
+              end
+              else if request.Document = ep.PathNoSlash then
+              begin
+                ok := true;
+                epn := ep.logid;
+                response.Redirect(ep.PathWithSlash);
+                summ := '--> redirect to '+request.Document+'/';
+              end;
+            if not ok then
             begin
-              summ := ReturnDiagnostics(AContext, request, response, false, false);
-              epn := 'WS';
-            end
-            else if SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
-            begin
-              summ := 'Static File '+request.Document;
-              epn := 'WS';
-              ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
-            end
-            else if request.Document = '/' then
-            begin
-              summ := 'Processed File '+request.Document;
-              epn := 'WS';
-              ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), true)
-            end
-            else
-            begin
-              epn := 'XX';
-              response.ResponseNo := 404;
-              response.ContentText := 'Document ' + request.Document + ' not found';
-              summ := 'Not Found: '+request.Document;
+              if request.Document = '/diagnostics' then
+              begin
+                summ := ReturnDiagnostics(AContext, request, response, false, false);
+                epn := 'WS';
+              end
+              else if SourceProvider.exists(SourceProvider.AltFile(request.Document, '/')) then
+              begin
+                summ := 'Static File '+request.Document;
+                epn := 'WS';
+                ReturnSpecFile(response, request.Document, SourceProvider.AltFile(request.Document, '/'), false)
+              end
+              else if request.Document = '/' then
+              begin
+                summ := 'Processed File '+request.Document;
+                epn := 'WS';
+                ReturnProcessedFile(self, request, response, '/' + FHomePage, SourceProvider.AltFile('/' + FHomePage, ''), true)
+              end
+              else
+              begin
+                epn := 'XX';
+                response.ResponseNo := 404;
+                response.ContentText := 'Document ' + request.Document + ' not found';
+                summ := 'Not Found: '+request.Document;
+              end;
             end;
           end;
+
+          logResponse(id, response);
+          logOutput(AContext, request, response, id, tt, true, epn, summ);
+
+          if (summ.contains('err:') and not summ.contains('msg:') ) then
+            logCrash(false, id, ip, request, response);
+
+          response.CloseConnection := not SECURE_KEEP_ALIVE;
+        finally
+          InterlockedDecrement(GCounterWebRequests);
+          MarkExit(AContext);
+          SetThreadStatus('Done');
         end;
-
-        logResponse(id, response);
-        logOutput(AContext, request, response, id, tt, true, epn, summ);
-
-        response.CloseConnection := not SECURE_KEEP_ALIVE;
       finally
-        InterlockedDecrement(GCounterWebRequests);
-        MarkExit(AContext);
-        SetThreadStatus('Done');
+        tt.free;
       end;
-    finally
-      tt.free;
     end;
+  finally
+    FLock.lock;
+    try
+      FLiveConnections.remove(ci);
+    finally
+      FLock.Unlock;
+    end;
+    ci.free;
   end;
 end;
 
@@ -1132,6 +1266,93 @@ begin
   end;
 end;
 
+
+procedure TFhirWebServer.logCrash(secure : boolean; id, clientIP: String; request: TIdHTTPRequestInfo; resp: TIdHTTPResponseInfo);
+var
+  package : TFslBytesBuilder;
+  b : TBytes;
+  folder : String;
+begin
+  try
+    folder := FLogFolder;
+    if folder = '' then
+      folder := FilePath(['[tmp]', 'fhir-server-crash']);
+    if not FolderExists(folder) then
+      ForceFolder(folder);
+    Logging.log('Save crash request to '+FilePath([folder, 'crash-'+id+'.log']));
+
+    package := TFslBytesBuilder.Create;
+    try
+      package.addStringUtf8('-- Request ');
+      package.addStringUtf8(id);
+      package.addStringUtf8(' @ ');
+      package.addStringUtf8(TFslDateTime.makeUTC.toXML);
+      package.addStringUtf8(' from ');
+      package.addStringUtf8(clientIP);
+      if secure then
+        package.addStringUtf8(' (https)');
+      package.addStringUtf8('------------------------------------------'#13#10);
+      package.addStringUtf8(request.RawHTTPCommand);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(request.RawHeaders.Text);
+      if request.PostStream <> nil then
+      begin
+        package.addStringUtf8(#13#10);
+        request.PostStream.Position := 0; // it's almost certainly been read;
+        SetLength(b, request.PostStream.Size);
+        request.PostStream.Read(b[0], length(b));
+        request.PostStream.Position := 0;
+        if isText(request.ContentType) and (request.ContentEncoding = '') then
+          package.Append(b)
+        else
+          package.addBase64(b);
+        package.addStringUtf8(#13#10);
+      end
+      else if request.ContentType = 'application/x-www-form-urlencoded' then
+      begin
+        package.addStringUtf8(#13#10);
+        package.addStringUtf8(request.UnparsedParams);
+        package.addStringUtf8(#13#10);
+      end;
+
+      package.addStringUtf8('-- Response --------------------------------------------------'#13#10);
+      package.addStringUtf8(inttostr(resp.ResponseNo)+' '+resp.ResponseText);
+      package.addStringUtf8(#13#10);
+      package.addStringUtf8(resp.RawHeaders.Text);
+      if resp.ContentStream <> nil then
+      begin
+        package.addStringUtf8(#13#10);
+        SetLength(b, resp.ContentStream.Size);
+        if (length(b) > 0) then
+          resp.ContentStream.Read(b[0], length(b));
+        resp.ContentStream.Position := 0;
+        if isText(resp.ContentType) and (resp.ContentEncoding = '') then
+          package.Append(b)
+        else
+          package.addBase64(b);
+        package.addStringUtf8(#13#10);
+      end
+      else if resp.ContentText <> '' then
+      begin
+        package.addStringUtf8(#13#10);
+        package.addStringUtf8(resp.ContentText);
+        package.addStringUtf8(#13#10);
+      end;
+
+      BytesToFile(package.AsBytes, FilePath([folder, 'crash-'+id+'.log']));
+    finally
+      package.free;
+    end;
+  except
+    on e : exception do
+    begin
+      Logging.log('Error writing crash log: '+e.Message);
+      raise;
+    end;
+  end;
+end;
+
+
 procedure TFhirWebServer.MarkEntry(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   ci: TFHIRWebServerClientInfo;
@@ -1202,7 +1423,9 @@ begin
   result := 'Diagnostics';
 end;
 
-function TFhirWebServer.ReturnStatistics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure, ashtml: boolean): String;
+function TFhirWebServer.ReturnStatistics(AContext: TIdContext;
+  request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure,
+  asHtml: boolean): String;
 begin
   response.Expires := Now + 1;
   if (asHtml) then
@@ -1463,8 +1686,17 @@ end;
 { TFHIRHTTPServer }
 
 procedure TFHIRHTTPServer.DoMaxConnectionsExceeded(AIOHandler: TIdIOHandler);
+var
+  conn : TFHIRHTTPConnectionInfo;
 begin
-  logging.log('Max Connections Exceeded ('+inttostr(MaxConnections)+')');
+  logging.log('Max Web Connections Exceeded ('+inttostr(MaxConnections)+')');
+  FServer.FLock.lock;
+  try
+    for conn in FServer.FLiveConnections do
+      logging.log(conn.log);
+  finally
+    FServer.FLock.Unlock;
+  end;
 end;
 
 End.

@@ -95,6 +95,7 @@ Type
   // particular subclasses
   EFslAbstract = Class(EFslException);
   EFslAssertion = Class(EFslException);
+  EObjectTrackingFail = class (EFslAssertion);
   ETodo = Class(EFslException)
   public
     Constructor Create(place : String);
@@ -1012,11 +1013,38 @@ Begin
   Message := Description;
 End;
 
+procedure handleObjectTrackingFail(msg : String);
+var
+  fn : String;
+  f : System.text;
+begin
+  // Application is pretty much cactus at this point, so we don't mind doing
+  // a slow file operation inside such a system critical lock as GLock
+
+  try
+    fn := 'c:\temp\object-tracking-errors.log';
+    AssignFile(f, fn);
+    if (FileExists(fn)) then
+      Append(f)
+    else
+      Rewrite(f);
+    writeln(f, msg);
+    closeFile(f);
+  except
+    // nothing - we really can't do anything
+  end;
+
+  raise EObjectTrackingFail.create(msg);
+end;
+
 { TFslObject }
 
 constructor TFslObject.Create;
 var
   t : TClassTrackingType;
+  {$IFOPT C+}
+  isNil : boolean;
+  {$ENDIF}
 Begin
   Inherited;
   {$IFOPT D+}
@@ -1041,6 +1069,12 @@ Begin
       t := TClassTrackingType.Create;
       GClassTracker.Add(ClassName, t);
     end;
+    {$IFOPT C+}
+    isNil := t.firstObject = nil;
+    if not (isNil = (t.count = 0)) then
+      handleObjectTrackingFail(className+': firstObject = '+BoolToStr(isNil, 'Nil', 'not nil')+' and count = '+inttostr(t.count)+' (create)');
+    {$ENDIF}
+
     inc(t.count);
     inc(t.deltaCount);
     inc(t.serial);
@@ -1051,7 +1085,6 @@ Begin
     {$ENDIF}
     if t.firstObject = nil then
     begin
-      assert(t.count = 1);
       t.firstObject := self;
       t.lastObject := self;
       FPrev := nil;
@@ -1072,7 +1105,10 @@ End;
 
 destructor TFslObject.Destroy;
 var
-  t : TClassTrackingType;
+  t : TClassTrackingType;  
+  {$IFOPT C+}
+  isNil : boolean;
+  {$ENDIF}
 Begin
   {$IFDEF OBJECT_TRACKING}
   if GInited then
@@ -1080,9 +1116,17 @@ Begin
     EnterCriticalSection(GLock);
     try
       if GClassTracker.TryGetValue(ClassName, t) then // this will succeed
-      begin
+      begin         
+        {$IFOPT C+}
+        if (t.count = 0) then
+          handleObjectTrackingFail(className+': count is 0 freeing object');
+        if (FPrev <> nil) and (FPrev.ClassName <> className) then
+          handleObjectTrackingFail(className+': Previous object wrong class: '+FPrev.ClassName);
+        if (FNext <> nil) and (FNext.ClassName <> className) then
+          handleObjectTrackingFail(className+': Next object wrong class: '+FNext.ClassName);
+        {$ENDIF}
+
         dec(t.Count);
-        assert(t.count >= 0);
         dec(t.deltaCount);
         if FPrev = nil then
         begin
@@ -1109,7 +1153,19 @@ Begin
             self.FPrev.FNext := self.FNext;
           self.FNext.FPrev := self.FPrev;
         end;
+      end
+      else
+      begin
+        {$IFOPT C+}
+        handleObjectTrackingFail(ClassName+': tracking record not found in destroy');
+        {$ENDIF}
       end;
+
+      {$IFOPT C+}
+      isNil := t.firstObject = nil;
+      if not (isNil = (t.count = 0)) then
+        handleObjectTrackingFail(className+': firstObject = '+BoolToStr(isNil, 'Nil', 'not nil')+' and count = '+inttostr(t.count)+' (destroy)');
+      {$ENDIF}
     finally
       LeaveCriticalSection(GLock);
     end;

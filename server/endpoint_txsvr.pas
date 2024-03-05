@@ -87,6 +87,9 @@ type
     FValueSets : TFslMap<TFHIRResourceProxyV>;
     FNamingSystems : TFslMap<TFHIRResourceProxyV>;
     FConceptMaps : TFslMap<TFHIRResourceProxyV>;
+    FLoadingComplete : boolean;
+    FTotalToLoad : integer;
+    FLoaded : integer;
     procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -116,6 +119,8 @@ type
   end;
 
   TTerminologyFhirServerStorage = class;
+
+  { TTerminologyServerOperationEngine }
 
   TTerminologyServerOperationEngine = class (TFHIROperationEngine)
   private
@@ -437,15 +442,18 @@ begin
   begin
     if Stopped then
       exit;
-    SetThreadStatus(name+': '+inttostr((100 * i) div c)+'% of '+inttostr(c)+' ('+p.url+')');
+    SetThreadStatus(name+': '+inttostr(((100 * i) div c))+'% ('+p.url+')');
+    inc(FEndPoint.FStore.FData.FLoaded);
     try
       t := p.resourceV; // prompt to load
+      if name = 'CodeSystems' then
+        FEndPoint.FStore.FServerContext.ValidatorContext.loadCodeSystem(p);
     except
       on e : Exception do
         Logging.log('Error loading '+p.url+'|'+p.version+': '+e.message);
     end;
     inc(i);
-    SetThreadStatus(name+': '+inttostr((100 * i) div c)+'% of '+inttostr(c));
+    SetThreadStatus(name+': '+inttostr(((100 * i) div c))+'%');
     sleep(15);   // if this goes too low, bang on OSX
   end;
 end;
@@ -462,6 +470,11 @@ var
 begin
   version := FEndPoint.config.prop['version'].value;
   SetThreadName(version+' Loader');
+
+  FEndPoint.FStore.FData.FTotalToLoad :=
+    FEndPoint.FStore.FData.CodeSystems.count + FEndPoint.FStore.FData.ValueSets.Count+
+    FEndPoint.FStore.FData.NamingSystems.count + FEndPoint.FStore.FData.ConceptMaps.Count;
+
   process('CodeSystems', FEndPoint.FStore.FData.CodeSystems);
   if not Stopped then
     process('ValueSets', FEndPoint.FStore.FData.ValueSets);
@@ -469,6 +482,7 @@ begin
     process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
   if not Stopped then
     process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
+  FEndPoint.FStore.FData.FLoadingComplete := true;
 end;
 
 { TTerminologyServerOperationEngine }
@@ -735,48 +749,61 @@ begin
           try
             useProxy := false;
             if (spp.elements.count > 0) and (search.count = 1) then
+            begin
               if onlyHasElements(spp.elements, ['id', 'url' ,'version']) then
               begin
                 useProxy := true;
                 if (defCount) then
                   count := 100000;
-              end;
+              end
+            end;
+
+            if not useProxy and not FData.FLoadingComplete then
+              raise EWebServerException.create(500, 'The full data set is only '+inttostr((100 * FData.FLoaded) div FData.FTotalToLoad)+'% loaded ('+inttostr(FData.FLoaded)+' of '+inttostr(FData.FTotalToLoad)+') for searching - repeat this query in a few minutes (max ~15min)');
 
             if (hasScope(request, 'CodeSystem')) then
             begin
-              deadCheck(start);
               for p in FData.CodeSystems.Values do
+              begin
+                deadCheck(start);
                 if useProxy then
                   list.add(makeWrapper('CodeSystem', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end;
             end;
             if (hasScope(request, 'ValueSet')) then
             begin
-              deadCheck(start);
               for p in FData.ValueSets.Values do
+              begin
+                deadCheck(start);
                 if useProxy then
                   list.add(makeWrapper('ValueSet', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end
             end;
             if (hasScope(request, 'ConceptMap')) then
             begin
-              deadCheck(start);
               for p in FData.ConceptMaps.Values do
+              begin
+                deadCheck(start);
                 if useProxy then
                   list.add(makeWrapper('ConceptMap', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end;
             end;
             if (hasScope(request, 'NamingSystem')) then
             begin
-              deadCheck(start);
               for p in FData.NamingSystems.Values do
+              begin
+                deadCheck(start);
                 if useProxy then
                   list.add(makeWrapper('NamingSystem', p))
                 else
                   list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end;
             end;
 
             filtered := TFslMetadataResourceList.create;
@@ -1774,6 +1801,7 @@ begin
   FServerContext.TerminologyServer.Loading := false;
 
   FStore.Initialise;
+  FStore.FData.FLoadingComplete := false;
   FLoadThread := TTerminologyServerDataLoadThread.create(self);
 end;
 

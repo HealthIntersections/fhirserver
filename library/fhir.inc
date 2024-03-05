@@ -59,6 +59,13 @@
   {$ENDIF}
 
 {$ENDIF}
+{
+OpenSSL is always statically loaded.
+Or in the case of FPC compiled applications, statically bound
+}
+{$DEFINE STATICLOAD_OPENSSL}
+
+{$I fhir-status.inc}  // see notes there
 
 {
 The base class TFslObject can track all instantiated objects.
@@ -68,10 +75,4 @@ Enable it with this define
 {$IFOPT D+}
 {$DEFINE OBJECT_TRACKING}
 {$ENDIF}
-
-{
-OpenSSL is always statically loaded.
-Or in the case of FPC compiled applications, statically bound
-}
-{$DEFINE STATICLOAD_OPENSSL}
 

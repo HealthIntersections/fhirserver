@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang, fsl_logging,
+  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang, fsl_logging, fsl_i18n,
   fsl_http,
   fhir_common, fhir_factory, fhir_features, fhir_objects,
   fhir_cdshooks;
@@ -216,8 +216,9 @@ Type
     FUseCount : cardinal;
   protected
     FLanguages : TIETFLanguageDefinitions;
+    FI18n : TI18nSupport;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function Link : TCodeSystemProvider; overload;
@@ -255,6 +256,7 @@ Type
     function parent(context : TCodeSystemProviderContext) : String; virtual; // return if there is one and only one
     function canParent : boolean; virtual;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
+    function incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList) : String; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
     procedure listSupplements(ts : TStringList); virtual;
@@ -570,15 +572,37 @@ function TConceptDesignations.present(langList : THTTPLanguageList; displayOnly 
 var
   cd : TConceptDesignation;
   b : TCommaSeparatedStringBuilder;
+  c : integer;
 begin
   b := TCommaSeparatedStringBuilder.create(', ', ' or ');
   try
+    c := 0;
     for cd in designations do
-      if  (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+    begin
+      if (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+      begin
+        inc(c);
         if (cd.language <> nil) then
           b.append(''''+cd.display+''' ('+cd.language.code+')')
         else
           b.append(''''+cd.display+'''');
+      end;
+    end;
+    if (c = 0) then
+    begin
+      for cd in designations do
+      begin
+        if (not displayOnly or cd.base or isDisplay(cd)) and (cd.value <> nil) then
+        begin
+          inc(c);
+          if (cd.language <> nil) then
+            b.append(''''+cd.display+''' ('+cd.language.code+')')
+          else
+            b.append(''''+cd.display+'''');
+        end;
+      end;
+    end;
+
     result := b.makeString;
   finally
     b.free;
@@ -640,7 +664,7 @@ begin
 
       if (lang.ietf = nil) then
         lang.ietf := FLanguages.parse(lang.lang);
-      if lang.ietf.matches(stated) then
+      if (lang.ietf <> nil) and lang.ietf.matches(stated) then
         exit(true);
     end;
   end;
@@ -760,10 +784,11 @@ end;
 
 { TCodeSystemProvider }
 
-constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions);
+constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited Create;
   FLanguages := languages;
+  FI18n := i18n;
 end;
 
 function TCodeSystemProvider.defToThisVersion(specifiedVersion : String): boolean;
@@ -774,6 +799,7 @@ end;
 destructor TCodeSystemProvider.Destroy;
 begin
   FLanguages.free;
+  FI18n.free;
   inherited;
 end;
 
@@ -788,6 +814,11 @@ begin
   finally
     ctxt.free;
   end;
+end;
+
+function TCodeSystemProvider.incompleteValidationMessage(context: TCodeSystemProviderContext; langs: THTTPLanguageList): String;
+begin
+  result := '';
 end;
 
 procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);

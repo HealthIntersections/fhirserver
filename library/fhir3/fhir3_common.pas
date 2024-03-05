@@ -708,6 +708,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
+    function hasConcepts : boolean; override;    
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
     function designationCount : integer; override;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; override;
@@ -748,7 +749,8 @@ type
     procedure setName(Value: String); override;
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setUrl(Value: String); override;
-    procedure setVersion(Value: String); override;
+    procedure setVersion(Value: String); override; 
+    function GetCaseSensitive: boolean; override;
     function getContent: TFhirCodeSystemContentMode; override;
     procedure setContent(Value: TFhirCodeSystemContentMode); override;
     function getCount: integer; override;
@@ -771,6 +773,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
+    function hasConcepts : boolean; override;    
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
     function isInactive(c : TFhirCodeSystemConceptW) : boolean; override;
@@ -4090,6 +4093,11 @@ begin
   result := c.conceptList.Count;
 end;
 
+function TFhirCodeSystemConcept3.hasConcepts: boolean;
+begin
+  result := c.hasConceptList;
+end;
+
 function TFhirCodeSystemConcept3.conceptList: TFhirCodeSystemConceptListW;
 var
   i : TFHIRCodeSystemConcept;
@@ -4212,6 +4220,11 @@ end;
 function TFhirCodeSystem3.conceptCount: integer;
 begin
   result := cs.conceptList.Count;
+end;
+
+function TFhirCodeSystem3.hasConcepts: boolean;
+begin
+  result := cs.hasConceptList;
 end;
 
 function TFhirCodeSystem3.conceptList: TFhirCodeSystemConceptListW;
@@ -4434,6 +4447,11 @@ end;
 procedure TFhirCodeSystem3.setVersion(Value: String);
 begin
   cs.version := Value;
+end;
+
+function TFhirCodeSystem3.GetCaseSensitive: boolean;
+begin
+  result := cs.caseSensitive;
 end;
 
 function TFhirCodeSystem3.supplements: String;

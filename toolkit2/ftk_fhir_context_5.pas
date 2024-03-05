@@ -126,7 +126,7 @@ begin
   cs := FCodeSystems.get(url);
   if cs = nil then
     raise ETerminologyError.Create('Unable to resolve code system '+url);
-  result := TFhirCodeSystemProvider.Create(FLanguages.link, Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
+  result := TFhirCodeSystemProvider.Create(FLanguages.link, nil, Factory.link, TFHIRCodeSystemEntry.Create(Factory.wrapCodeSystem(cs.link)));
 end;
 
 procedure TToolkitValidatorContextR5.doGetList(sender: TObject; url: String;
