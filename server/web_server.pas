@@ -769,7 +769,7 @@ var
 begin
   s := id + ' ' +
        StringPadLeft(inttostr(tt.total), ' ', 4) + ' ' +
-       Logging.MemoryStatus(false) +' '+Logging.CPU.usage+ ' ';
+       Logging.MemoryStatus(false) +' '+Logging.CPU.usage+ ' #'+inttostr(GetCurrentRequestCount)+' ';
   if (FPlainServer <> nil) and (FSSLServer <> nil) then
     s := s + StringPadLeft(inttostr(FPlainServer.Contexts.count)+':'+inttostr(FSSLServer.Contexts.count), ' ', 5) + ' '
   else if (FPlainServer <> nil) then

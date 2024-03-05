@@ -42,6 +42,8 @@ uses
 type
   TFHIRTelnetServer = class;
 
+  { TTelnetThreadHelper }
+
   TTelnetThreadHelper = class (TFslObject)
   Private
     FServer : TFHIRTelnetServer;
@@ -53,6 +55,7 @@ type
     procedure processCommand(s : String);
     procedure send(s : String);
     procedure ping;
+    function GetRequestCount : String;
   Public
     constructor Create(server : TFHIRTelnetServer; context: TIdContext);
     destructor Destroy; Override;
@@ -75,11 +78,13 @@ type
   end;
 
   TGetStringEvent = function : String of object;
+  TGetCurrentRequestCountEvent = function : integer of Object;
 
   { TFHIRTelnetServer }
 
   TFHIRTelnetServer = class (TLogListener)
   Private
+    FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
     FOnGetRequestList: TGetStringEvent;
     FServer: TIdTelnetServer;
     FLock : TFslLock;
@@ -109,6 +114,7 @@ type
     property ShuttingDown : boolean read FShuttingDown write FShuttingDown;
 
     property OnGetRequestList : TGetStringEvent read FOnGetRequestList write FOnGetRequestList;
+    property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
   end;
 
 implementation
@@ -308,7 +314,7 @@ begin
   magic := TFslObject.nextMagic;
   if FServer.FShuttingDown then
   begin
-    send('$@ping: '+Logging.cpu.usage+' '+inttostr(GetThreadCount)+' threads; shutting down');
+    send('$@ping: '+Logging.cpu.usage+' #'+GetRequestCount+' '+inttostr(GetThreadCount)+' threads; shutting down');
   end
   else if (now > FNextPing) then
   begin
@@ -317,9 +323,17 @@ begin
     begin
       mem := mem + ep.cacheSize(magic);
     end;
-    send('$@ping: '+Logging.cpu.usage+' '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
+    send('$@ping: '+Logging.cpu.usage+' #'+GetRequestCount+' '+inttostr(GetThreadCount)+' threads, '+Logging.MemoryStatus(true)+', '+DescribeBytes(mem)+' MB used');
   end;
   FNextPing := now + (DATETIME_SECOND_ONE * 10);
+end;
+
+function TTelnetThreadHelper.GetRequestCount: String;
+begin
+  if assigned(FServer.OnGetCurrentRequestCount) then
+    result := inttostr(FServer.OnGetCurrentRequestCount)
+  else
+    result := '?';
 end;
 
 procedure TTelnetThreadHelper.processCommand(s: String);
