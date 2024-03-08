@@ -301,32 +301,34 @@ var
   cc : TIETFLanguageCodeConcept;
   filter : TIETFLanguageCodeFilter;
   ok : boolean;
+  l : TIETFLang;
 begin
   result := nil;
-  cc := TIETFLanguageCodeConcept.Create(FLanguages.parse(code, message));
-  try
-    filter := TIETFLanguageCodeFilter(ctxt);
-    ok := false;
-    if cc <> nil then
-    begin
+  l := FLanguages.parse(code, message);
+  if (l <> nil) then
+  begin
+    try
+      filter := TIETFLanguageCodeFilter(ctxt);
       case filter.component of
-        languageComponentLang: ok := filter.status = (cc.FInfo.language <> '');
-        languageComponentExtLang: ok := filter.status = (length(cc.FInfo.extLang) > 0);
-        languageComponentScript: ok := filter.status = (cc.FInfo.script <> '');
-        languageComponentRegion: ok := filter.status = (cc.FInfo.region <> '');
-        languageComponentVariant: ok := filter.status = (cc.FInfo.variant <> '');
-        languageComponentExtension: ok := filter.status = (cc.FInfo.extension <> '');
-        languageComponentPrivateUse: ok := filter.status = (length(cc.FInfo.privateUse) > 0);
+        languageComponentLang: ok := filter.status = (l.language <> '');
+        languageComponentExtLang: ok := filter.status = (length(l.extLang) > 0);
+        languageComponentScript: ok := filter.status = (l.script <> '');
+        languageComponentRegion: ok := filter.status = (l.region <> '');
+        languageComponentVariant: ok := filter.status = (l.variant <> '');
+        languageComponentExtension: ok := filter.status = (l.extension <> '');
+        languageComponentPrivateUse: ok := filter.status = (length(l.privateUse) > 0);
+      else
+        ok := false;
       end;
+      if ok then
+        result := TIETFLanguageCodeConcept.Create(l.link)
+      else if filter.status then
+        message := 'The language code '+code+' does not contain a '+CODES_TIETFLanguageComponent[filter.component]+', and it is required to'
+      else
+        message := 'The language code '+code+' contains a '+CODES_TIETFLanguageComponent[filter.component]+', and it is not allowed to';
+    finally
+      l.free;
     end;
-    if ok then
-      result := cc.Link
-    else if filter.status then
-      message := 'The language code '+code+' does not contain a '+CODES_TIETFLanguageComponent[filter.component]+', and it is required to'
-    else
-      message := 'The language code '+code+' contains a '+CODES_TIETFLanguageComponent[filter.component]+', and it is not allowed to';
-  finally
-    cc.free;
   end;
 end;
 
