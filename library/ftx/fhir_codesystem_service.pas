@@ -205,9 +205,10 @@ type
     function locateParent(ctxt: TFHIRCodeSystemConceptW; code: String): String;
     function locCode(list: TFhirCodeSystemConceptListW; code, synonym: String; altOpt : TAlternateCodeOptions): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
+    function hasPropForCode(code : String) : boolean;
     function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
-    procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; value : String; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; value : String; List: TFhirCodeSystemProviderFilterContext);
     procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
     procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
@@ -1036,15 +1037,46 @@ function TFhirCodeSystemProvider.getProperty(code: String): TFhirCodeSystemPrope
 var
   p : TFhirCodeSystemPropertyW;
   cs : TFhirCodeSystemW;
+  uri : String;
 begin
   result := nil;
+  uri := csUriForProperty(code);
+  if (uri <> '') then
+  begin
+    for p in FCs.CodeSystem.properties.forEnum do
+      if (p.uri = uri) then
+        exit(p.link);
+    for cs in FCs.Supplements do
+      for p in cs.properties.forEnum do
+        if (p.uri = uri) then
+          exit(p.link);
+  end;
+
+  for p in FCs.CodeSystem.properties.forEnum do
+    if (p.code = code) and ((uri = '') or (p.uri = '')) then
+      exit(p.link);
+
+  for cs in FCs.Supplements do
+    for p in cs.properties.forEnum do
+      if (p.code = code) and ((uri = '') or (p.uri = '')) then
+        exit(p.link);
+end;
+
+function TFhirCodeSystemProvider.hasPropForCode(code: String): boolean;
+var
+  p : TFhirCodeSystemPropertyW;
+  cs : TFhirCodeSystemW;
+  uri : String;
+begin
+  result := false;
   for p in FCs.CodeSystem.properties.forEnum do
     if (p.code = code) then
-      exit(p.link);
+      exit(true);
+
   for cs in FCs.Supplements do
     for p in cs.properties.forEnum do
       if (p.code = code) then
-        exit(p.link);
+        exit(true);
 end;
 
 
@@ -1649,7 +1681,7 @@ begin
           result.free;
         end;
       end
-      else if StringArrayExists(['notSelectable'], prop) then // special known properties  
+      else if StringArrayExists(['notSelectable'], prop) then // special known properties
       begin
         result := TFhirCodeSystemProviderFilterContext.Create;
         try

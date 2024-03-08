@@ -5228,13 +5228,27 @@ end;
 function TFhirCodeSystemHelper.isAbstract(concept: TFhirCodeSystemConcept): boolean;
 var
   p : TFhirCodeSystemConceptProperty;
+  pd : TFhirCodeSystemProperty;
+  c, s : String;
 begin
   result := false;
   for p in concept.property_List do
+  begin
     if (p.code = 'abstract') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
-      exit(true);    
+      exit(true);
+  end;
+  s := csUriForProperty('notSelectable');
+  c := 'notSelectable';
+  if (s <> '') then
+    for pd in property_List do
+      if pd.uri = s then
+      begin
+        c := pd.code;
+        break;
+      end;
+
   for p in concept.property_List do
-      if (p.code = 'notSelectable') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      if (p.code = c) and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
         exit(true);
 end;
 
