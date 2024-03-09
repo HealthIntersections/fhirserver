@@ -363,7 +363,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
 var
   map : TFhirCodeSystemConceptMapW;
 begin
-  raise Exception.create('todo');
+  raise EFslException.create('todo');
   //map := TFhirCodeSystemConceptMapW.Create('stems');
   //try
   //  !cs.Tag := TCodeSystemAdornment.Create(map.link);
@@ -933,7 +933,7 @@ end;
 
 procedure TTerminologyServerStore.loadCodeSystem(cs: TFHIRCodeSystemW);
 begin
-  raise Exception.create('loadCodeSystem(TFHIRCodeSystemW) not done yet');
+  raise EFslException.create('loadCodeSystem(TFHIRCodeSystemW) not done yet');
 end;
 
 procedure TTerminologyServerStore.UpdateConceptMaps;

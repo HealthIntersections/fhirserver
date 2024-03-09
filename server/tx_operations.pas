@@ -513,7 +513,7 @@ begin
                   // raise ETerminologyError.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
                 end;
 
-                abstractOk := params.str('abstract') = 'true';
+                abstractOk := params.str('abstract') <> 'false';
                 inferSystem := (params.str('inferSystem') = 'true') or (params.str('implySystem') = 'true');
 
                 if (oOut = nil) and (pout = nil) then

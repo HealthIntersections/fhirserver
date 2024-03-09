@@ -87,7 +87,7 @@ type
   end;
 
   { TCodeScanner }
-  TSourceScanCheck = (sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse);
+  TSourceScanCheck = (sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse, sscConstructors);
   TSourceScanCheckSet = set of TSourceScanCheck;
 
   TCodeScanner = class(TObject)
@@ -110,6 +110,7 @@ type
     procedure checkFileForLicense(filename, src : String);
     procedure checkFileForExceptionRaise(filename, src : String; ts : TStringList);
     procedure checkFileForExceptionDefine(filename, src : String; ts : TStringList);
+    function checkConstructors(filename, src : String; ts : TStringList) : boolean;
     function checkFileForLineEndings(filename, src : String) : String;
 
     procedure scanFolder(folder: String; checks: TSourceScanCheckSet; incFolder : String);
@@ -216,7 +217,7 @@ begin
   begin
     srcns := ts[i].Replace(#9, '').Replace('  ', ' ').ToLower;
     if srcns.contains('raise exception.') then
-      reportError(filename, i, 'raises a unspecialised exception');
+      reportError(filename, i, 'raises an unspecialised exception');
   end;
 end;
 
@@ -230,6 +231,36 @@ begin
     srcns := ts[i].Replace(#9, '').Replace(' ', '').ToLower;
     if srcns.contains('=class(exception)') and not srcns.contains('efslexception=class(exception)') then
       reportError(filename, i, 'subclasses Exception (should be (EFslException))');
+  end;
+end;
+
+function TCodeScanner.checkConstructors(filename, src: String; ts: TStringList) : boolean;
+var
+  i : integer;
+  inConstructor : boolean;
+  srcns, s : String;
+begin
+  inConstructor := false;
+  result := false;
+  for i := 0 to ts.count - 1 do
+  begin
+    srcns := ts[i].Replace(#9, ' ').Replace('  ', '').ToLower;
+    if inConstructor then
+    begin
+      if srcns.trim = 'begin' then
+      begin
+        inConstructor := false;
+        s := ts[i+1].toLower;
+        if not s.contains('create') and not s.contains('inherited') then
+        begin
+          reportError(filename, i, 'constructor does not call (inherited?) create');
+          //ts[i+1] := '!'+ts[i+1];
+          //result := true;
+        end;
+      end
+    end
+    else if srcns.startsWith('constructor T') then
+      inConstructor := true;
   end;
 end;
 
@@ -373,7 +404,10 @@ procedure TCodeScanner.checkFile(filename: String; checks: TSourceScanCheckSet; 
 var
   src : String;
   ts : TStringList;
+  save : boolean;
 begin
+  save := false;
+
   if (sscUnicode in checks) and StringArrayExists(['.pas', '.inc', '.html', '.css', '.dpr', '.lpr', '.xml', '.json'], ExtractFileExt(filename)) then
     checkFileForUnicode(filename);
 
@@ -413,6 +447,18 @@ begin
       end;
       checkFileForExceptionDefine(filename, src, ts);
     end;
+
+    if (sscConstructors in checks) and StringArrayExists(['.pas'], ExtractFileExt(filename)) then
+    begin
+      if src = '' then
+      begin
+        src := FileToString(filename, nil);
+        ts.Text := src;
+      end;
+      save := checkConstructors(filename, src, ts);
+    end;                
+    if save then
+      ts.SaveToFile(filename, TEncoding.UTF8);
   finally
     ts.free;
   end;
@@ -630,7 +676,7 @@ begin
         scanFolder(FilePath([FSourceDir, 'lazarus-ide-tester']), [sscLicense, sscLineEndings, sscExceptionRaise, sscParse], FilePath([FSourceDir, 'lazarus-ide-tester']));
         output('');
         output(FProjectDir+' [license, eoln, exceptions, full-parse]');
-        scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscParse], FilePath([FProjectDir, 'library']));
+        scanFolder(FProjectDir, [sscUnicode, sscLicense, sscExceptionRaise, sscExceptionDefine, sscLineEndings, sscConstructors, sscParse], FilePath([FProjectDir, 'library']));
         output('');
       end;
     except

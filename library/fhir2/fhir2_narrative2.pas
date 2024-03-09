@@ -110,7 +110,7 @@ implementation
 
 function TNarrativeGenerator.capitalize(s : String):String;
 begin
-  if( s = '') then
+  if (s = '') then
     result := ''
   else
     result := UpperCase(s.substring(0, 1)) + s.substring(1);

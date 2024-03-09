@@ -116,7 +116,6 @@
         <ComponentName Value="CodeScannerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="codeScanForm"/>
       </Unit>
     </Units>
   </ProjectOptions>
