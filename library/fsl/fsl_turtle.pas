@@ -740,6 +740,7 @@ end;
 
 constructor TTurtleLexer.Create(source: String);
 begin
+  inherited create;
   Fsource := source;
   cursor := 1;
   pos := TSourceLocation.Create;
