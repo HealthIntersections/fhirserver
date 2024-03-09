@@ -17,9 +17,9 @@
     </General>
     <VersionInfo>
       <MajorVersionNr Value="3"/>
-      <RevisionNr Value="10"/>
+      <RevisionNr Value="11"/>
       <Attributes pvaDebug="False"/>
-      <MinorVersionNr Value="3"/>
+      <MinorVersionNr Value="1"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>

@@ -6,9 +6,9 @@
 
 // do not make changes in the file fhir-status.inc - it is overwritten by either fhir-dev.inc or fhir-prod.inc by the build scripts 
 
-{$C+} // assertions on - this is the important one - turns object tracking on and off consistently
-{$I+} // IO checking on - though this is probably useless?
+{$C-} // assertions off - this is the important one - turns object tracking off consistently
+{$I-} // IO checking off 
 {$Q-} // overflow checking off - these are always off; doesn't run with them on
 {$R-} // range checking off - these are always off; doesn't run with them on
-{$OPTIMIZATION OFF} // all optimizations off for production
-{$D+} // debugging info on for development
+{$OPTIMIZATION LEVEL3} // level 3 optimizations for production
+{$D-} // debugging info off for production
