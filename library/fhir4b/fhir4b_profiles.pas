@@ -1676,7 +1676,7 @@ var
   list : TFslList<TFhirStructureDefinition>;
   sd : TFhirStructureDefinition;
   sns : String;
-  url : string;
+  url, u : string;
 begin
   list := TFslList<TFhirStructureDefinition>.Create;
   try
@@ -1687,7 +1687,8 @@ begin
       url := 'http://hl7.org/fhir/StructureDefinition/'+name;
       for sd in list do
       begin
-        if (sd.url = url) then
+        u := sd.url;
+        if (u = url) then
           exit(sd);
       end;
     end;

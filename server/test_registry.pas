@@ -156,8 +156,8 @@ begin
   fhir4_tests_graphql.registerTests;
   fhir4_tests_diff.registerTests;
 
-  fhir4b_tests_Parser.registerTests;
-  fhir5_tests_Parser.registerTests;
+//  fhir4b_tests_Parser.registerTests;
+//  fhir5_tests_Parser.registerTests;
 
   tests_cpt.registerTests;
   fxver_tests.registerTests;

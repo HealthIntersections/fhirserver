@@ -44,9 +44,7 @@ const
   {$ENDIF}
   EMPTY_HASH = -1;
 
-{.$.DEFINE TRACK_CLASSES }
-
-{$IFDEF TRACK_CLASSES}
+{$IFDEF OBJECT_TRACKING}
 const
   CLASS_NAME_OF_INTEREST = 'TFhirString';
   ID_OF_INTEREST = -1;
@@ -171,19 +169,15 @@ Type
     FTagObject : TObject;
     FOwningThread : TThreadId;
     FMagic : integer;
-    {$IFDEF TRACK_CLASSES}
-    FNamedInstance : string;
-    {$ENDIF}
-    {$IFOPT D+}
+    {$IFDEF OBJECT_TRACKING}
     // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
     FNamedClass : TNameString;
     FDebugInfo : String;
-    {$ENDIF}
-    {$IFDEF OBJECT_TRACKING}
     FSerial : integer;
     FNext, FPrev : TFslObject; // same class type
     FThreadName : String;
+    FNamedInstance : string;
     {$ENDIF}
 
     function ObjectCrossesThreads : boolean;
@@ -214,7 +208,7 @@ Type
     Function ErrorClass : EFslExceptionClass; Overload; Virtual;
 
     function sizeInBytesV(magic : integer) : cardinal; virtual;
-    {$IFDEF TRACK_CLASSES}
+    {$IFDEF OBJECT_TRACKING}
     procedure freeNotification(done : boolean); virtual;
     {$ENDIF}
   Public
@@ -244,13 +238,9 @@ Type
 
     Property FslObjectReferenceCount : TFslReferenceCount Read FFslObjectReferenceCount;
     property TagObject : TObject read FTagObject write FTagObject; // no ownership....
-    {$IFDEF TRACK_CLASSES}
-    property NamedInstance : string read FNamedInstance write FNamedInstance;
-    {$ENDIF}
-    {$IFOPT D+}
-    property NamedClass : TNameString read FNamedClass;
-    {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
+    property NamedInstance : string read FNamedInstance write FNamedInstance;
+    property NamedClass : TNameString read FNamedClass;
     property SerialNumber : integer read FSerial;
     {$ENDIF}
     function debugInfo : String; virtual; // what's visible to the debugger
@@ -1047,17 +1037,13 @@ var
   {$ENDIF}
 Begin
   Inherited;
-  {$IFOPT D+}
-  FNamedClass := copy(ClassName, 1, 16);
-  {$ENDIF}
   FOwningThread := GetCurrentThreadId;
 
-  {$IFDEF TRACK_CLASSES}
+  {$IFDEF OBJECT_TRACKING}
   if (className = CLASS_NAME_OF_INTEREST) then
     freeNotification(false);
-  {$ENDIF}
 
-  {$IFDEF OBJECT_TRACKING}
+  FNamedClass := copy(ClassName, 1, 16);
   if not GInited then
     initUnit;
   if Assigned(GetThreadNameStatusDelegate) then
@@ -1079,7 +1065,7 @@ Begin
     inc(t.deltaCount);
     inc(t.serial);
     FSerial := t.serial;
-    {$IFDEF TRACK_CLASSES}
+    {$IFDEF OBJECT_TRACKING}
     if (t.serial = ID_OF_INTEREST) and (className = CLASS_NAME_OF_INTEREST) then
       NamedInstance := '!';
     {$ENDIF}
@@ -1207,7 +1193,7 @@ Begin
       clsName := 'n/a';
       nmCls  := 'n/a';
       try
-        {$IFOPT D+}
+        {$IFDEF OBJECT_TRACKING}
         nmCls := FNamedClass;
         {$ENDIF}
       except
@@ -1235,7 +1221,7 @@ Begin
       dec(FFslObjectReferenceCount);
       done := FFslObjectReferenceCount < 0;
     end;
-    {$IFDEF TRACK_CLASSES}
+    {$IFDEF OBJECT_TRACKING}
     if (classname = CLASS_NAME_OF_INTEREST) then
       self.freeNotification(done);
     {$ENDIF}
@@ -1352,7 +1338,7 @@ Begin
       InterlockedIncrement(FFslObjectReferenceCount)
     else
       inc(FFslObjectReferenceCount);
-    {$IFDEF TRACK_CLASSES}
+    {$IFDEF OBJECT_TRACKING}
     if self.classname = CLASS_NAME_OF_INTEREST then
       freeNotification(false);
     {$ENDIF}
@@ -1525,7 +1511,7 @@ end;
 
 procedure TFslObject.updateDebugInfo;
 begin
-  {$IFOPT D+}
+  {$IFDEF OBJECT_TRACKING}
   FDebugInfo := debugInfo;
   {$ENDIF}
 end;
@@ -1548,19 +1534,16 @@ end;
 function TFslObject.dumpSummary: String;
 begin
   result := inttostr(FFslObjectReferenceCount+1);
-  {$IFDEF TRACK_CLASSES}
+  {$IFDEF OBJECT_TRACKING}
   if FNamedInstance <> '' then
     result := result + FNamedInstance
-  {$ELSE}
-  if false then
-  {$ENDIF}
-  {$IFDEF OBJECT_TRACKING}
   else if (updatedDebugInfo <> '?') then
     result := result +'(^'+FDebugInfo+')'
   else if (FSerial > 0) then
     result := result +'(#'+inttostr(FSerial)+')'
+  else
   {$ENDIF}
-  else if FMagic <> 0 then
+  if FMagic <> 0 then
     result := result +'($'+inttostr(FMagic)+')';
 end;
 
@@ -1570,7 +1553,7 @@ begin
     updateDebugInfo;
   except
   end;
-  result := {$IFOPT D+}FDebugInfo{$ELSE}''{$ENDIF};
+  result := {$IFDEF OBJECT_TRACKING}FDebugInfo{$ELSE}''{$ENDIF};
 end;
 
 function TFslObject.CheckCondition(bCorrect: Boolean; const sMethod, sMessage: String): Boolean;
@@ -1652,15 +1635,13 @@ end;
 function TFslObject.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := sizeof(self);
-  {$IFOPT D+}
-  inc(result, (length(FNamedClass))+2);
-  {$ENDIF}
   {$IFDEF OBJECT_TRACKING}
+  inc(result, (length(FNamedClass))+2);
   inc(result, length(FThreadName)+12);
   {$ENDIF}
 end;
 
-{$IFDEF TRACK_CLASSES}
+{$IFDEF OBJECT_TRACKING}
 procedure noop(done : boolean);
 begin
   // nothing;

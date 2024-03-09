@@ -19,7 +19,7 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="1"/>
-      <RevisionNr Value="11"/>
+      <RevisionNr Value="12"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="7">
@@ -815,7 +815,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="54">
+    <Exceptions Count="57">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -870,7 +870,6 @@
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
-        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
@@ -938,7 +937,6 @@
       </Item35>
       <Item36>
         <Name Value="EFHIRPath"/>
-        <Enabled Value="False"/>
       </Item36>
       <Item37>
         <Name Value="00000010EParserException"/>
@@ -997,6 +995,15 @@
       <Item54>
         <Name Value="EFHIROperationException"/>
       </Item54>
+      <Item55>
+        <Name Value="EParserException"/>
+      </Item55>
+      <Item56>
+        <Name Value="EJsonException"/>
+      </Item56>
+      <Item57>
+        <Name Value="EDefinitionException"/>
+      </Item57>
     </Exceptions>
   </Debugging>
 </CONFIG>

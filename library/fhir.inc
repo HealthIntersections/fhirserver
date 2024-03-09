@@ -65,14 +65,6 @@ Or in the case of FPC compiled applications, statically bound
 }
 {$DEFINE STATICLOAD_OPENSSL}
 
-{$I fhir-status.inc}  // see notes there
+{$i fhir-status.inc}  // see notes there
 
-{
-The base class TFslObject can track all instantiated objects.
-Doing so is useful for leak hunting in production, but is also a little costly.
-Enable it with this define
-}
-{$IFOPT D+}
-{$DEFINE OBJECT_TRACKING}
-{$ENDIF}
 

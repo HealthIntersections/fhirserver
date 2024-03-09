@@ -29,6 +29,7 @@ POSSIBILITY OF SUCH DAMAGE.
 }
 {$I fhir.inc}
 
+
 Interface
 
 
@@ -1749,7 +1750,6 @@ Implementation
 
 uses
   fsl_stream;
-
 
 Procedure TFslCollection.BeforeDestruction;
 Begin
@@ -5524,7 +5524,6 @@ function TFslObjectList.ExistsByDefault(oValue: TFslObject): boolean;
 begin
   Result := ExistsByIndex(IndexByDefault(oValue));
 end;
-
 
 function TFslObjectList.Add(oValue: TFslObject): integer;
 begin
