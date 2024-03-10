@@ -25,7 +25,7 @@ call build\windows-fhirserver.bat %tmp%
 
 pause
 
-exec\64\fhirserver.exe -tests -test-settings exec\64\fhir-tests.ini -mode brief
+exec\64\fhirserver.debug.exe -tests -test-settings exec\64\fhir-tests.ini -mode brief
 
 if errorlevel 1 goto Quit
 

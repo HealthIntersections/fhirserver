@@ -5,7 +5,7 @@ REM the folder must exist
 
 set FSDIR=%CD%
 setlocal
-set "tmp=r:\fsbuild"
+set "tmp=c:\temp"
 
 md exec\64
 copy exec\pack\*.cfg exec\64\

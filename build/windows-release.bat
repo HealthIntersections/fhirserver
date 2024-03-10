@@ -15,7 +15,7 @@
 :: parameters
 set FSDIR=%CD%
 setlocal
-set "tmp=r:\fsbuild"
+set "tmp=c:\temp"
 
 :: %1 is the version we're going to release
 
