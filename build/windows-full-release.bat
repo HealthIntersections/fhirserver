@@ -17,23 +17,13 @@ set "tmp=%2"
 
 :No2
 
-copy library\fhir-dev.inc library\fhir-status.inc
-
 call build\windows-libraries.bat %tmp%
 
 call build\windows-fhirserver.bat %tmp%
 
-pause
-
 exec\64\fhirserver.debug.exe -tests -test-settings exec\64\fhir-tests.ini -mode brief
 
 if errorlevel 1 goto Quit
-
-pause
-
-copy library\fhir-prod.inc library\fhir-status.inc
-
-pause
 
 call build\windows-release %1 %tmp%
 
