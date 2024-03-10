@@ -1300,7 +1300,7 @@ begin
           FLock.Unlock;
         end;
         if (msg <> '') then
-          raise ETerminologyError.create(msg);
+          raise ETerminologyError.create(msg, itException);
       end;
       end;
     2:
@@ -1310,17 +1310,17 @@ begin
           FLock.Lock;
           try        
             case codesystem.LoadingState of
-              cseNotLoaded: raise ETerminologyError.create('Impossible State NotLoaded');
+              cseNotLoaded: raise ETerminologyError.create('Impossible State NotLoaded', itException);
               cseLoading : state := 0;
               cseLoaded: state := 1;
-              cseLoadingFailed:raise ETerminologyError.create(codesystem.LoadingFailMessage);
+              cseLoadingFailed:raise ETerminologyError.create(codesystem.LoadingFailMessage, itException);
             end;
           finally
             FLock.Unlock;
           end;
         until state = 1;
       end;
-    3: raise ETerminologyError.create(msg);
+    3: raise ETerminologyError.create(msg, itException);
   end;
 end;
 

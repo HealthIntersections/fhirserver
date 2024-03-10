@@ -574,14 +574,12 @@ end;
 function TLogging.InternalMem : UInt64;
 {$IFDEF DELPHI}
 var
-  st : TMemoryManagerUsageSummary;
-{$ELSE}
-  //hs : TFPCHeapStatus;
+  st : THeapStatus;
 {$ENDIF}
 begin
 {$IFDEF DELPHI}
-  GetMemoryManagerUsageSummary(st);
-  result := st.AllocatedBytes + st.OverheadBytes;
+  st := GetHeapStatus;
+  result := st.TotalAllocated + st.Overhead;
 {$ELSE}
   result := TFPCMemoryManagerTracker.totalMemory;
 {$ENDIF}

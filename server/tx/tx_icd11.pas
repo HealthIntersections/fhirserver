@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_http, fsl_lang, fsl_utilities,
+  fsl_base, fsl_http, fsl_lang, fsl_utilities, fsl_i18n,
   fhir_objects, fhir_common, fhir_factory, fhir_features, fhir_cdshooks,
   ftx_service;
 
@@ -59,7 +59,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; override;
     function link : TICD11Provider; overload;
 
@@ -112,9 +112,9 @@ implementation
 
 { TICD11Provider }
 
-constructor TICD11Provider.Create(languages: TIETFLanguageDefinitions);
+constructor TICD11Provider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
 end;
 
 destructor TICD11Provider.Destroy;

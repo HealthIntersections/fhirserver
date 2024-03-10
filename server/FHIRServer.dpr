@@ -570,7 +570,8 @@ uses
   tx_omop in 'tx\tx_omop.pas',
   fhir4_ips in '..\library\fhir4\fhir4_ips.pas',
   fdb_fts in '..\library\fdb\fdb_fts.pas',
-  tests_cpt in 'tests\tests_cpt.pas';
+  tests_cpt in 'tests\tests_cpt.pas',
+  fsl_cpu in '..\library\fsl\fsl_cpu.pas';
 
 begin
   ExecuteFhirServer(TCommandLineParameters.Create);
