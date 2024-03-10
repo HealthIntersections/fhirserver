@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -18,7 +19,6 @@
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="12"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
@@ -232,7 +232,10 @@
             <CompilerMessages>
               <IgnoredMessages idx6058="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
+            <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
           </Other>
         </CompilerOptions>
       </Item>
@@ -422,11 +425,12 @@
           </Other>
         </CompilerOptions>
       </Item>
-      <SharedMatrixOptions Count="4">
+      <SharedMatrixOptions Count="5">
         <Item1 ID="628482637663" Modes="OSX,osx-m1-release,osx-release,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="759823959655" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk"/>
         <Item3 ID="819787652127" Modes="linux,linux-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item4 ID="299328664200" Modes="win64-release,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item5 ID="633766661563" Modes="osx-release,osx-m1-release,linux-release,win64-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>

@@ -187,22 +187,7 @@ begin
   cpu := '-32';
   {$ENDIF}
 
-  s := os+cpu+compiler;
-  {$IFOPT C+}
-  s := s + '+Assertions';
-  {$ENDIF}
-
-  {$IFOPT D+}
-  s := s + '+Debug';
-  {$ENDIF}
-
-  {$IFOPT O+}
-  s := s + '+Optimizations';
-  {$ENDIF}
-
-  {$IFDEF OBJECT_TRACKING}
-  s := s + '+ObjectTracking';
-  {$ENDIF}
+  s := os+cpu+compiler+', '+BuildDescription;
 
   result := 'FHIR Server '+SERVER_FULL_VERSION+' '+s;
 end;
@@ -717,7 +702,7 @@ begin
 
     {$IFDEF DELPHI}
     if JclExceptionTrackingActive then
-      logMsg := 'Using Configuration file '+ini.FileName+' (+stack dumps)'
+      logMsg := !'Using Configuration file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
       logMsg := 'Using Configuration file '+ini.FileName;

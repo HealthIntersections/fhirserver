@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -20,9 +21,8 @@
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="1"/>
       <RevisionNr Value="12"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
-    <BuildModes Count="7">
+    <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="win64">
         <MacroValues Count="1">
@@ -77,7 +77,48 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="linux">
+      <Item3 Name="win64-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\fhirserver"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseValgrind Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dNO_CONVERSIONX -dProduction"/>
+          </Other>
+        </CompilerOptions>
+      </Item3>
+      <Item4 Name="linux">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -89,7 +130,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="\usr\local\lib64"/>
+            <Libraries Value="\usr\local\lib64\"/>
             <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
@@ -134,8 +175,8 @@
             <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
-      </Item3>
-      <Item4 Name="osx">
+      </Item4>
+      <Item5 Name="osx">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="cocoa"/>
         </MacroValues>
@@ -176,8 +217,8 @@
             <CustomOptions Value="-dODBC"/>
           </Other>
         </CompilerOptions>
-      </Item4>
-      <Item5 Name="osx-m1">
+      </Item5>
+      <Item6 Name="osx-m1">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -223,8 +264,8 @@
             <CustomOptions Value="-dODBC -WM11.0 -XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
           </Other>
         </CompilerOptions>
-      </Item5>
-      <Item6 Name="win64-release">
+      </Item6>
+      <Item7 Name="osx-m1-release">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -232,15 +273,16 @@
             <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="x86_64"/>
-            <TargetOS Value="win64"/>
+            <RelocatableUnit Value="True"/>
+            <TargetCPU Value="aarch64"/>
+            <TargetOS Value="darwin"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -249,9 +291,14 @@
             <Debugging>
               <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
-              <UseValgrind Value="True"/>
+              <TrashVariables Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
@@ -261,11 +308,11 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dNO_CONVERSIONX"/>
+            <CustomOptions Value="-dPRODUCTION -dODBC -WM11.0 -XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
           </Other>
         </CompilerOptions>
-      </Item6>
-      <Item7 Name="linux-release">
+      </Item7>
+      <Item8 Name="linux-release">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -276,7 +323,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);../library"/>
-            <Libraries Value="/usr/local/lib64;/tmp/openssl/lib;/tmp/openssl"/>
+            <Libraries Value="/usr/local/lib64/;/tmp/openssl/lib/;/tmp/openssl/"/>
             <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
             <UnitOutputDirectory Value="lib/$(BuildMode)"/>
           </SearchPaths>
@@ -310,11 +357,12 @@
             <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib -Os"/>
           </Other>
         </CompilerOptions>
-      </Item7>
-      <SharedMatrixOptions Count="3">
+      </Item8>
+      <SharedMatrixOptions Count="4">
         <Item1 ID="678426317693" Modes="OSX" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="714078438566" Modes="Linux,linux-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item3 ID="047760613800" Modes="Win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item4 ID="108668842019" Modes="osx-m1-release,win64-release,linux-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -781,7 +829,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);../library"/>
-      <Libraries Value="/usr/local/lib64;/tmp/openssl/lib;/tmp/openssl"/>
+      <Libraries Value="/usr/local/lib64/;/tmp/openssl/lib/;/tmp/openssl/"/>
       <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -984,7 +1032,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>

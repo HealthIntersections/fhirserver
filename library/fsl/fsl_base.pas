@@ -46,7 +46,7 @@ const
 
 {$IFDEF OBJECT_TRACKING}
 const
-  CLASS_NAME_OF_INTEREST = 'TFhirString';
+  CLASS_NAME_OF_INTEREST = '!TFhirString';
   ID_OF_INTEREST = -1;
 {$ENDIF}
 
@@ -54,6 +54,7 @@ const
 var
   UnderDebugger : boolean = false; // this doesn't automatically detect whether debugging; you have to set this through a command line parameter
   SuppressLeakDialog : boolean = false;
+  BuildDescription : String;
 
 threadvar
   gExceptionStack : String;
@@ -778,7 +779,13 @@ begin
     InitializeCriticalSection(GLock);
     GClassTracker := TDictionary<String, TClassTrackingType>.Create;
     GInited := true;
-    ShowObjectLeaks := true;
+    ShowObjectLeaks := true; 
+  {$IFDEF PRODUCTION}
+  BuildDescription := 'Production Build';
+  {$ELSE}
+  BuildDescription := 'Development Build';
+  {$ENDIF}
+
   end;
 end;
 

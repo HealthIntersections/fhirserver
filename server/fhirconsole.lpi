@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -17,9 +18,8 @@
     </General>
     <VersionInfo>
       <MajorVersionNr Value="3"/>
-      <RevisionNr Value="12"/>
-      <Attributes pvaDebug="False"/>
       <MinorVersionNr Value="1"/>
+      <RevisionNr Value="12"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
@@ -219,7 +219,10 @@
             </Debugging>
           </Linking>
           <Other>
-            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
+            <CustomOptions Value="-WM11.0
+-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+-gw2
+-gw3"/>
           </Other>
         </CompilerOptions>
       </Item6>
@@ -300,11 +303,12 @@
           </Linking>
         </CompilerOptions>
       </Item8>
-      <SharedMatrixOptions Count="4">
+      <SharedMatrixOptions Count="5">
         <Item1 ID="348441424249" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item2 ID="601568390877" Modes="osx,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item3 ID="986226565548" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
         <Item4 ID="116515061841" Modes="win32,win64,win64-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item5 ID="731652424285" Modes="win64-release,linux-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -506,7 +510,7 @@
         <Name Value="ELibraryException"/>
       </Item3>
       <Item4>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item4>
       <Item5>
         <Name Value="0000000eEIdSocketError"/>
