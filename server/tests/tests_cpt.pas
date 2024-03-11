@@ -188,8 +188,9 @@ var
   filter : TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderContext;
   c : integer;
-  s, msg : String;
+  s, msg, log : String;
 begin
+  log := '';
   filter := FCPT.filter(true, 'modifier', foEqual, 'true', nil);
   try
     AssertTrue(filter <> nil);
@@ -201,12 +202,13 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try               
         s := FCPT.code(ctxt);
+        CommaAdd(log, s);
         AssertTrue(StringArrayExists(['25', '95', 'P1', '1P', 'F1'], s), 'Unexpected code '+s);
       finally
         ctxt.free;
       end;
     end;
-    AssertEqual(5, c);
+    AssertEqual(5, c, 'only found '+s);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertFalse(FCPT.inFilter(filter, ctxt));
