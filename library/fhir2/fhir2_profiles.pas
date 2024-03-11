@@ -136,7 +136,7 @@ Type
     procedure seeResource(res : TFHIRResourceV); overload; override;
     procedure seeResource(res : TFHIRResourceProxyV); overload; override;
     procedure dropResource(rtype, id : string); override;
-    procedure LoadCodeSystem(r : TFhirResourceProxyV); override; overload;
+    procedure LoadCodeSystem(r : TFhirResourceProxyV); overload; override;
     procedure LoadCodeSystem(r : TFhirResourceProxy); overload; virtual;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);

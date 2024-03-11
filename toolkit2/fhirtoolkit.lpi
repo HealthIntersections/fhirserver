@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -17,8 +16,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
-      <MinorVersionNr Value="1"/>
-      <RevisionNr Value="12"/>
+      <MinorVersionNr Value="4"/>
+      <RevisionNr Value="1"/>
+      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
@@ -232,10 +232,7 @@
             <CompilerMessages>
               <IgnoredMessages idx6058="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-WM11.0
--XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
--gw2
--gw3"/>
+            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
           </Other>
         </CompilerOptions>
       </Item>

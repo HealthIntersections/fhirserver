@@ -5,7 +5,7 @@ REM the folder must exist
 
 set FSDIR=%CD%
 setlocal
-set "tmp=r:\fsbuild"
+set "tmp=c:\temp"
 
 IF %1.==. GOTO No1
 set "tmp=%1"

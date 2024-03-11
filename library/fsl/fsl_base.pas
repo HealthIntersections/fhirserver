@@ -1065,7 +1065,7 @@ Begin
     {$IFOPT C+}
     isNil := t.firstObject = nil;
     if not (isNil = (t.count = 0)) then
-      handleObjectTrackingFail(className+': firstObject = '+BoolToStr(isNil, 'Nil', 'not nil')+' and count = '+inttostr(t.count)+' (create)');
+      handleObjectTrackingFail(className+': firstObject = '+BoolToStr(isNil{$IFDEF FPC}, 'Nil', 'not nil'{$ENDIF})+' and count = '+inttostr(t.count)+' (create)');
     {$ENDIF}
 
     inc(t.count);
@@ -1157,7 +1157,7 @@ Begin
       {$IFOPT C+}
       isNil := t.firstObject = nil;
       if not (isNil = (t.count = 0)) then
-        handleObjectTrackingFail(className+': firstObject = '+BoolToStr(isNil, 'Nil', 'not nil')+' and count = '+inttostr(t.count)+' (destroy)');
+        handleObjectTrackingFail(className+': firstObject = '+BoolToStr(isNil{$IFDEF FPC}, 'Nil', 'not nil'{$ENDIF})+' and count = '+inttostr(t.count)+' (destroy)');
       {$ENDIF}
     finally
       LeaveCriticalSection(GLock);

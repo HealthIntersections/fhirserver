@@ -702,7 +702,7 @@ begin
 
     {$IFDEF DELPHI}
     if JclExceptionTrackingActive then
-      logMsg := !'Using Configuration file '+ini.FileName+' (+stack dumps)'
+      logMsg := 'Using Configuration file '+ini.FileName+' (+stack dumps)'
     else
     {$ENDIF}
       logMsg := 'Using Configuration file '+ini.FileName;
