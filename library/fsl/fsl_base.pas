@@ -168,11 +168,12 @@ Type
     // Reference counted using Interlocked* Windows API functions.
     FFslObjectReferenceCount : TFslReferenceCount;
     FTagObject : TObject;
-    FOwningThread : TThreadId;
-    FMagic : integer;
+    FOwningThread : TThreadId;  // used to determine if an object has been used on more than one thread, in which case reference counting is thread safe (genuine speed difference)
+    FMagic : integer; // used to stop recursion measuring object size.
     {$IFDEF OBJECT_TRACKING}
-    // This is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
+    // FNamedClass is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
     // It's sole purpose is to be visible in the debugger. No other functionality should depend on it
+    // same for FDebugInfo
     FNamedClass : TNameString;
     FDebugInfo : String;
     FSerial : integer;
@@ -780,12 +781,11 @@ begin
     GClassTracker := TDictionary<String, TClassTrackingType>.Create;
     GInited := true;
     ShowObjectLeaks := true; 
-  {$IFDEF PRODUCTION}
-  BuildDescription := 'Production Build';
-  {$ELSE}
-  BuildDescription := 'Development Build';
-  {$ENDIF}
-
+    {$IFDEF PRODUCTION}
+    BuildDescription := 'Production Build';
+    {$ELSE}
+    BuildDescription := 'Development Build';
+    {$ENDIF}
   end;
 end;
 

@@ -112,14 +112,14 @@ begin
   inherited;
 end;
 
-{$IFNDEF WINDOWS}
-function getrusage(usage : integer; var data : rusage) : integer;
-begin
-//  result := host_processor_info();
-  // result := Getrusage();
-end;
-
-{$ENDIF}
+//{$IFNDEF WINDOWS}
+//function getrusage(usage : integer; var data : rusage) : integer;
+//begin
+////  result := host_processor_info();
+//  // result := Getrusage();
+//end;
+//
+//{$ENDIF}
 
 function TCPUUsageData.cpuUsage : Single;    
 {$IFDEF WINDOWS}
