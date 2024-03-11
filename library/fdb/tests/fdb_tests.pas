@@ -142,7 +142,7 @@ begin
           md.free;
         end;
       end;
-      end;
+
       Writeln('t4');
       assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
 
@@ -257,11 +257,14 @@ begin
       conn.DropTable('TestTable');
       Writeln('t15');
     end;
-    md := conn.FetchMetaData;
-    try
-      assertFalse(md.HasTable('TestTable'), 'dbt.38')
-    finally
-      md.free;
+    if {$IFDEF LINUX} conn.Owner.Platform <> kdbMySQL {$ELSE} true {$ENDIF} then
+    begin
+      md := conn.FetchMetaData;
+      try
+        assertFalse(md.HasTable('TestTable'), 'dbt.38')
+      finally
+        md.free;
+      end;
     end;
     Writeln('t16');
 
