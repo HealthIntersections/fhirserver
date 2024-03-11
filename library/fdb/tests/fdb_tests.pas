@@ -104,7 +104,9 @@ var
   i64: Int64;
   md: TFDBMetaData;
   fn : string;
+  s : String;
 begin
+  s := '1';
   d := TFslDateTime.makeLocal(dtpSec);
   fn := TestSettings.serverTestFile(['library', 'fdb', 'tests', 'fdb_tests.pas']);
   b := FileToBytes(fn);
@@ -120,6 +122,7 @@ begin
     //finally
     //  md.free;
     //end;
+    s := '2';
 
     conn.ExecSQL('CREATE TABLE TestTable ( ' + #13#10 + ' TestKey ' + DBKeyType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, false) + ', ' +
       #13#10 + ' Name nchar(255) ' + ColCanBeNull(conn.owner.platform, false) + ', ' + #13#10 + ' Number int ' + ColCanBeNull(conn.owner.platform, true) + ', '
@@ -128,6 +131,7 @@ begin
       DBBlobType(conn.owner.platform) + ' ' + ColCanBeNull(conn.owner.platform, true) + ', ' + #13#10 + PrimaryKeyType(conn.owner.platform, 'PK_TestTable',
       'TestKey') + ') ' + CreateTableInfo(conn.owner.platform));
     conn.ExecSQL('Create Unique INDEX SK_TestTable_Index ON TestTable (Name, Number)');
+    s := '3';
 
     try
       md := conn.FetchMetaData;
@@ -136,10 +140,12 @@ begin
       finally
         md.free;
       end;
+      s := '4';
       assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.0');
 
        conn.ExecSQL('Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant) values (1, ''a name'', '''', 2, ' + IntToStr(i64) + ', 3.2, ' +
         DBGetDate(manager.platform) + ')');
+       s := '5';
       conn.sql := 'Insert into TestTable (TestKey, Name, BigString, Number, BigNumber, FloatNumber, Instant, Content) values (:k, :n, :bs, :i, :bi, :d, :ts, :c)';
       conn.Prepare;
       conn.BindKey('k', 2);
@@ -151,10 +157,13 @@ begin
       conn.BindDateTimeEx('ts', d);
       conn.BindBlob('c', b);
       conn.Execute;
+      s := '6';
       conn.Terminate;
+      s := '7';
 
       assertTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 1') = 1, 'dbt.1');
       assertTrue(conn.CountSQL('Select count(*) from TestTable where  TestKey = 0') = 0, 'dbt.2');
+      s := '8';
 
       dn := TFslDateTime.makeLocal;
 
@@ -184,6 +193,7 @@ begin
       assertTrue(conn.ColDateTimeExByName['Instant'].equal(d, dtpSec), 'dbt.19');
       assertTrue(BlobIsSame(conn.ColBlobByName['Content'], b), 'dbt.20');
       conn.Terminate;
+      s := '9';
 
       sleep(1000);
 
@@ -200,6 +210,7 @@ begin
       conn.BindNull('c');
       conn.Execute;
       conn.Terminate;
+      s := '10';
 
       conn.sql := 'Select * from TestTable';
       conn.Prepare;
@@ -213,6 +224,7 @@ begin
       assertTrue(conn.ColDateTimeExByName['Instant'].after(od, false), 'dbt.26');
       assertTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.27');
       assertTrue(conn.ColNullByName['Content'], 'dbt.28');
+      s := '11';
 
       conn.FetchNext;
       assertTrue(conn.ColIntegerByName['TestKey'] = 2, 'dbt.29');
@@ -224,6 +236,7 @@ begin
       assertTrue(length(conn.ColBlobByName['Content']) = 0, 'dbt.35');
       assertTrue(conn.ColNullByName['Content'], 'dbt.36');
       conn.Terminate;
+      s := '12';
 
       conn.ExecSQL('Delete from TestTable where TestKey = 1');
       conn.sql := 'Delete from TestTable where TestKey = :k';
@@ -231,12 +244,15 @@ begin
       conn.BindKey('k', 2);
       conn.Execute;
       conn.Terminate;
+      s := '13';
 
       assertTrue(conn.CountSQL('Select count(*) from TestTable') = 0, 'dbt.37');
 
     finally
       conn.terminate;
+      s := '14';
       conn.DropTable('TestTable');
+      s := '15';
     end;
     md := conn.FetchMetaData;
     try
@@ -244,13 +260,19 @@ begin
     finally
       md.free;
     end;
+    s := '16';
 
+    raise EFslException.create('test1');
     conn.Release;
+    raise EFslException.create('test1');
   except
     on e: Exception do
     begin
-      assertTrue(false, e.message);
+      raise EFslException.create('test2: '+e.message+' ('+s+')');
       conn.Error(e);
+      raise EFslException.create('test3: '+e.message+' ('+s+')');
+      assertTrue(false, e.message);
+      raise EFslException.create('test4: '+e.message+' ('+s+')');
     end;
   end;
 end;
