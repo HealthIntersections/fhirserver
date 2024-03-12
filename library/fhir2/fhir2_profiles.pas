@@ -136,6 +136,8 @@ Type
     procedure seeResource(res : TFHIRResourceV); overload; override;
     procedure seeResource(res : TFHIRResourceProxyV); overload; override;
     procedure dropResource(rtype, id : string); override;
+    procedure LoadCodeSystem(r : TFhirResourceProxyV); overload; override;
+    procedure LoadCodeSystem(r : TFhirResourceProxy); overload; virtual;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
@@ -1557,6 +1559,16 @@ procedure TBaseWorkerContextR2.dropResource(rtype, id: string);
 begin
   if rtype = 'StructureDefinition' then
     Profiles.DropProfile(frtStructureDefinition, id);
+end;
+
+procedure TBaseWorkerContextR2.LoadCodeSystem(r: TFhirResourceProxyV);
+begin
+  loadCodeSystem(r as TFHIRResourceProxy);
+end;
+
+procedure TBaseWorkerContextR2.LoadCodeSystem(r: TFhirResourceProxy);
+begin
+  // nothing
 end;
 
 function TBaseWorkerContextR2.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;

@@ -5137,8 +5137,11 @@ begin
 end;
 
 procedure TFslCollectionsTests.executeFail(context : TObject);
+var
+  o : TFslTestObjectList;
 begin
-  list.Add(TFslTestObjectList.create);
+  o:= TFslTestObjectList.create;
+  list.Add(o);
 end;
 
 procedure TFslCollectionsTests.testAddFail;

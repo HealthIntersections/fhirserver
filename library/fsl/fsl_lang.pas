@@ -290,6 +290,7 @@ begin
   inherited;
   FCodes := TFslList<TIso4217Currency>.Create;
   FMap := TFslMap<TIso4217Currency>.create('tx.currency');
+  FMap.defaultValue := nil;
   Load;
 end;
 

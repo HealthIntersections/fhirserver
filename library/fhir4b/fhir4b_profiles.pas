@@ -139,6 +139,8 @@ Type
     procedure seeResource(res : TFHIRResourceV); overload; override;
     procedure seeResource(res : TFHIRResourceProxyV); overload; override;
     procedure dropResource(rtype, id : string); override;
+    procedure LoadCodeSystem(r : TFhirResourceProxyV); overload; override;
+    procedure LoadCodeSystem(r : TFhirResourceProxy); overload; virtual;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
@@ -1582,6 +1584,16 @@ begin
     Profiles.DropProfile(frtStructureDefinition, id);
 end;
 
+procedure TBaseWorkerContextR4B.LoadCodeSystem(r: TFhirResourceProxyV);
+begin
+  loadCodeSystem(r as TFHIRResourceProxy);
+end;
+
+procedure TBaseWorkerContextR4B.LoadCodeSystem(r: TFhirResourceProxy);
+begin
+  // nothing
+end;
+
 function TBaseWorkerContextR4B.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 var
   r : TFHIRResourceProxy;
@@ -1664,7 +1676,7 @@ var
   list : TFslList<TFhirStructureDefinition>;
   sd : TFhirStructureDefinition;
   sns : String;
-  url : string;
+  url, u : string;
 begin
   list := TFslList<TFhirStructureDefinition>.Create;
   try
@@ -1675,7 +1687,8 @@ begin
       url := 'http://hl7.org/fhir/StructureDefinition/'+name;
       for sd in list do
       begin
-        if (sd.url = url) then
+        u := sd.url;
+        if (u = url) then
           exit(sd);
       end;
     end;

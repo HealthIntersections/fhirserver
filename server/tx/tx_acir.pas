@@ -35,7 +35,7 @@ interface
 // based on a table by importing the excel spreadsheet directly
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_http, fsl_lang,
+  fsl_utilities, fsl_base, fsl_http, fsl_lang, fsl_i18n,
   fhir_features,
   ftx_service;
 
@@ -75,7 +75,7 @@ type
 
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TACIRServices; overload;
 
@@ -117,9 +117,9 @@ implementation
 
 { TACIRServices }
 
-constructor TACIRServices.Create(languages: TIETFLanguageDefinitions);
+constructor TACIRServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   FList := TFslList<TACIRConcept>.Create;
   FMap := TFslMap<TACIRConcept>.Create('tx.acir');
   FMap.defaultValue := nil;

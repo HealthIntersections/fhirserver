@@ -59,19 +59,41 @@
   {$ENDIF}
 
 {$ENDIF}
-
-{
-The base class TFslObject can track all instantiated objects.
-Doing so is useful for leak hunting in production, but is also a little costly.
-Enable it with this define
-}
-{$IFOPT D+}
-{$DEFINE OBJECT_TRACKING}
-{$ENDIF}
-
 {
 OpenSSL is always statically loaded.
 Or in the case of FPC compiled applications, statically bound
 }
 {$DEFINE STATICLOAD_OPENSSL}
+                    
+// there's a bug in the lazarus/FPC compiler where global settings
+// such as assertions are not consistently the same across all units.
+// this sets the global compile settings for development consistently based
+// on the presence of the define 'PRODUCTION' in the project set up
+
+{$IFDEF PRODUCTION}
+
+{$C-} // assertions off
+{$I-} // IO checking off
+{$Q-} // overflow checking off
+{$R-} // range checking off
+{$OPTIMIZATION LEVEL3} // FPC level 3 optimizations for production
+{$D-} // debugging info off for production
+
+{$ELSE}
+
+{$C+} // assertions on (needed to pass the tests)
+{$I+} // IO checking on - though this is probably useless?
+{$Q-} // overflow checking off - these are always off; doesn't run with them on
+{$R-} // range checking off - these are always off; doesn't run with them on
+{$OPTIMIZATION OFF} // all optimizations off for development
+{$D+} // debugging info on for development
+
+{
+The base class TFslObject can track all instantiated objects.
+Doing so is useful for leak hunting in production, but is also a little costly.
+}
+{$DEFINE OBJECT_TRACKING}
+
+{$ENDIF}
+
 

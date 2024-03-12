@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -84,7 +84,7 @@ type
     class function getSAB : String; virtual;
     function getCodeField : String; virtual;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; nci : boolean; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; nci : boolean; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUMLSServices; overload;
 
@@ -124,7 +124,7 @@ type
 
   TRxNormServices = class (TUMLSServices)
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -136,7 +136,7 @@ type
     class function getSAB : String; override;
     function getCodeField : String; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     function systemUri : String; override;
     function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
@@ -467,9 +467,9 @@ end;
 
 { TUMLSServices }
 
-constructor TUMLSServices.Create(languages : TIETFLanguageDefinitions; nci: boolean; db: TFDBManager);
+constructor TUMLSServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; nci: boolean; db: TFDBManager);
 begin
-  inherited Create(Languages);
+  inherited Create(Languages, i18n);
 
   self.nci := nci;
   if (nci) then
@@ -1058,9 +1058,9 @@ end;
 
 { TRxNormServices }
 
-constructor TRxNormServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+constructor TRxNormServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 begin
-  inherited Create(languages, false, db);
+  inherited Create(languages, i18n, false, db);
 end;
 
 function TRxNormServices.description: String;
@@ -1085,9 +1085,9 @@ end;
 
 { TNDFRTServices }
 
-constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 begin
-  inherited Create(languages, false, db);
+  inherited Create(languages, i18n, false, db);
 end;
 
 function TNDFRTServices.description: String;

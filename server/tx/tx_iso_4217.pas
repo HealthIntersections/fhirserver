@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http,
+  fsl_utilities, fsl_base, fsl_stream, fsl_lang, fsl_http, fsl_i18n,
   fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
@@ -74,7 +74,7 @@ type
   private
     FCurrencies : TIso4217CurrencySet;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TIso4217Services; overload;
 
@@ -114,7 +114,7 @@ implementation
 
 { TIso4217Services }
 
-constructor TIso4217Services.Create(languages: TIETFLanguageDefinitions);
+constructor TIso4217Services.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited;
   FCurrencies := TIso4217CurrencySet.Create;
@@ -153,8 +153,14 @@ begin
 end;
 
 function TIso4217Services.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
+var
+  c : TIso4217Currency;
 begin
-  result := TIso4217Concept.Create(FCurrencies.Map[code].link);
+  c := FCurrencies.Map[code];
+  if (c = nil) then
+    result := nil
+  else
+    result := TIso4217Concept.Create(c.link);
 end;
 
 function TIso4217Services.Code(context : TCodeSystemProviderContext) : string;

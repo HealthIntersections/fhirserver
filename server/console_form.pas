@@ -47,6 +47,7 @@ uses
 
 const
    DEF_PASSWORD = 'AA8FF8CC-81C8-41D7-93BA-26AD5E89A1C1';
+   TAT_FACTOR = 100;
 
 type
   TConnectionStatus = (csDiconnected, csUsername, csPassword, csConnected, csEnhanced);
@@ -108,6 +109,7 @@ type
     btnImportUNII: TBitBtn;
     btnImportUNIIStop: TBitBtn;
     btnLockStatus: TButton;
+    btnRequestList: TButton;
     btnReIndexRxNorm: TBitBtn;
     btnLangFile: TSpeedButton;
     btnImportNDC: TBitBtn;
@@ -383,6 +385,7 @@ type
     Panel51: TPanel;
     Panel52: TPanel;
     Panel53: TPanel;
+    Panel54: TPanel;
     pgMain: TPageControl;
     pgManage: TPageControl;
     Panel1: TPanel;
@@ -423,6 +426,7 @@ type
     pnlProcessRXN: TPanel;
     pnlProcessNDC: TPanel;
     pnlSnomedImport: TPanel;
+    pnlStatus: TPanel;
     prgCombine: TProgressBar;
     prgLoincImport: TProgressBar;
     prgUNIIImport: TProgressBar;
@@ -497,6 +501,7 @@ type
     procedure btnImportUNIIClick(Sender: TObject);
     procedure btnLockStatusClick(Sender: TObject);
     procedure btnReIndexRxNormClick(Sender: TObject);
+    procedure btnRequestListClick(Sender: TObject);
     procedure btnTestNDCClick(Sender: TObject);
     procedure btnTestUNIIClick(Sender: TObject);
     procedure btnTextRxNormClick(Sender: TObject);
@@ -609,6 +614,12 @@ type
     FIDManager : TIdentityProviderManager;
     FPackages : TFslList<TFHIRPackageInfo>;
     FThreadPackages : TFslList<TFHIRPackageInfo>;
+    FTatAverage : Double;
+    FTatCounter : integer;
+    FReqIvl : TDateTime;
+    FReqCount : integer;
+    FReqAverage : Double;
+    FReqCounter : integer;
 
     procedure recordSessionLength(start, length : int64);
     procedure DoIncoming(Sender: TIdTelnet; const Buffer: TIdBytes);
@@ -632,6 +643,8 @@ type
     procedure SetConfigReadonly;
     procedure EPFocusChange(sender : TObject);
     procedure updateDoco;
+    procedure tryParseMessage(msg : String);
+    procedure seeTat(value : integer);
   public
     property Packages : TFslList<TFHIRPackageInfo> read FPackages;
   end;
@@ -1356,6 +1369,48 @@ begin
   else
     lblDoco.caption := ''
 
+end;
+
+procedure TMainConsoleForm.tryParseMessage(msg: String);
+var
+  s, l, r : String;
+  i, tat : integer;
+begin
+  // if the first is a time, we keep going
+  if (msg[3] <> ':') then
+    exit;
+  if (msg[6] <> ':') then
+    exit;
+  s := msg.subString(0, 2);
+  i := StrToIntDef(s, -1);
+  if (i < 0) or (i >= 24) then
+    exit;
+  s := msg.subString(3, 2);
+  i := StrToIntDef(s, -1);
+  if (i < 0) or (i >= 60) then
+    exit;
+  s := msg.subString(6, 2);
+  i := StrToIntDef(s, -1);
+  if (i < 0) or (i >= 60) then
+    exit;
+  s := msg.subString(10).trim;
+  stringSplit(s, ' ', s, msg);
+  stringSplit(s, '-', l, r);
+  if (StringIsInteger32(l) and StringIsInteger32(r)) then
+  begin
+    // we're getting an identified request.
+    stringSplit(msg.trim, ' ', s, msg);
+    tat := StrToIntDef(s, -1);
+    if (tat >= 0) then
+      seeTat(tat);
+  end;
+end;
+
+procedure TMainConsoleForm.seeTat(value: integer);
+begin
+  inc(FReqCount);
+  inc(FTatCounter);
+  FTatAverage := FTatAverage + ((value - FTatAverage) / min(FTatCounter, TAT_FACTOR));
 end;
 
 procedure TMainConsoleForm.MenuItem7Click(Sender: TObject);
@@ -2187,6 +2242,15 @@ begin
   end;
 end;
 
+procedure TMainConsoleForm.btnRequestListClick(Sender: TObject);
+begin
+  try
+    if FConnected then
+      FTelnet.SendString('@requests'+#10);
+  except
+  end;
+end;
+
 procedure TMainConsoleForm.btnTestNDCClick(Sender: TObject);
 var
   db : TFDBManager;
@@ -2693,6 +2757,8 @@ var
   session : TServerSession;
   i : integer;
   d : TDateTime;
+  thisIvl : TDateTime;
+  lsecs : integer;
 begin
   ts := TStringList.Create;
   tsl := TStringList.Create;
@@ -2764,6 +2830,7 @@ begin
       FLines.add(s);
       if passesFilter(s) then
         mConsole.lines.add(s);
+      tryParseMessage(s);
     end;
     while (mConsole.lines.count > 1000) and (edtFilter.Text = '') do
     begin
@@ -2790,10 +2857,28 @@ begin
   else
   begin
     sBar.Panels[1].Text := DescribePeriodNoMsec(now - FLastIncoming);
+    lsecs := trunc((now - FlastIncoming) * SecsPerDay);
+    if (lsecs < 20) then
+      pnlStatus.Color := TColor($d0f5d7)
+    else if (lsecs < 60) then
+      pnlStatus.color := TColor($d0edf5)
+    else
+      pnlStatus.Color := TColor($e1e1f7);
+
     sBar.Panels[4].Text := 'Server: '+ss;
   end;
   sBar.Panels[2].Text := inttostr(mConsole.lines.count) + ' '+StringPlural('Line', mConsole.lines.count);
   sBar.Panels[3].Text := Logging.MemoryStatus(true);
+
+  thisIvl := RoundDateTimeToNearestInterval(now, 15/SecsPerDay);
+  if thisIvl <> FReqIvl then
+  begin
+    inc(FReqCounter);
+    FReqAverage := FReqAverage + ((FReqCount - FReqAverage) / min(FReqCounter, TAT_FACTOR));
+    FReqCount := 0;
+    FReqIvl := thisIvl;
+  end;
+  pnlStatus.caption := '   Rolling Averages: Requests/min = '+inttostr(trunc(FReqAverage*4))+', TAT = '+inttostr(trunc(FTatAverage));
   updateDoco;
 end;
 
@@ -2817,7 +2902,12 @@ begin
     FLines.clear;
     mConsole.Lines.Clear;
     FTelnet.Disconnect;
-    FStatus := csDiconnected;
+    FLock.lock;
+    try
+      FStatus := csDiconnected;
+    finally
+      FLock.unlock;
+    end;
   end;
 end;
 
@@ -2896,49 +2986,35 @@ end;
 
 function TMainConsoleForm.handleCommand(line: String): boolean;
 begin
+  assert(FLock.LockedToMe, 'not locked');
   result := false;
   if (line.startsWith('$@')) then
   begin
     if line.startsWith('$@ping: ') then
     begin
-      FLock.Lock;
-      try
-        FServerStatus := line.Substring(8);
-      finally
-        FLock.unLock;
-      end;
+      FServerStatus := line.Substring(8);
       exit(true);
     end;
     if line.startsWith('$@threads') then
     begin
-      FLock.Lock;
-      try
-        FThreads.Text := line.subString(10).replace('|', #13#10).trim();
-      finally
-        FLock.unLock;
-      end;
+      FThreads.Text := line.subString(10).replace('|', #13#10).trim();
+      exit(true);
+    end;
+    if line.startsWith('$@requests') then
+    begin
+      FThreads.Text := line.subString(12).replace('|', #13#10).trim();
       exit(true);
     end;
   end;
   if line.startsWith('$@classes') then
   begin
-    FLock.Lock;
-    try
-      FThreads.Text := line.subString(10).replace('|', #13#10).trim();
-      FThreads.Sort;
-    finally
-      FLock.unLock;
-    end;
+    FThreads.Text := line.subString(10).replace('|', #13#10).trim();
+    FThreads.Sort;
     exit(true);
   end;
   if line.startsWith('$@locks') or line.startsWith('$@cache') then
   begin
-    FLock.Lock;
-    try
-      FThreads.Text := line.subString(9).replace('|', #13#10).trim();
-    finally
-      FLock.unLock;
-    end;
+    FThreads.Text := line.subString(9).replace('|', #13#10).trim();
     exit(true);
   end;
 end;
@@ -3161,6 +3237,12 @@ begin
   FConnected := true;
   btnClearCache.enabled := true;
   btnFetchThreads.enabled := true;
+  FTatAverage := 0;
+  FTatCounter := 0;
+  FReqIvl := 0;
+  FReqCount := 0;
+  FReqAverage := 0;
+  FReqCounter := 0;
 end;
 
 procedure TMainConsoleForm.DoDisconnected(Sender: TObject);
@@ -3168,6 +3250,12 @@ begin
   FConnected := false;
   btnClearCache.enabled := false;
   btnFetchThreads.enabled := false;
+  FLock.Lock;
+  try
+    FStatus := csDiconnected;
+  finally
+    FLock.Unlock;
+  end;
 end;
 
 

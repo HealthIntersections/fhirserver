@@ -94,13 +94,23 @@ procedure RunTestConsole(ini : TFHIRServerConfigFile; params : TCommandLineParam
 {$IFDEF FPC}
 var
   app : TIdeTesterConsoleRunner;
+  mode : String;
 begin
   Logging.Log('Run Tests (Console)');
   ShowObjectLeaks := hasCommandLineParam('leak-report');
   app := TIdeTesterConsoleRunner.Create(nil);
   app.Initialize;
-  app.Title := 'FPCUnit Console test runner';
+  app.Title := 'FPCUnit Console test runner';  
   app.Mode := cpmVerbose;
+  if (params.get('mode', mode)) then
+  begin
+    if (mode = 'verbose') then
+      app.Mode := cpmVerbose
+    else if (mode = 'brief') then
+      app.Mode := cpmBrief
+    else if (mode = 'none') then
+      app.Mode := cpmNone
+  end;
   app.sparse := true;
   app.Run;
   app.free;

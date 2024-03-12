@@ -1419,10 +1419,16 @@ Begin
                       begin
                         if oResponse.HTTPCode < 300 then
                         begin
-                          result := result + ' (err: Abort)';
+                          result := result + ' (msg: Abort)';
                           recordStack(e);
                           raise;
                         end;
+                      end;
+                      on e : EFslException do
+                      begin
+                        result := result + ' (msg: '+e.message+')';
+                        recordStack(e);
+                        raise;
                       end;
                       on e: exception do
                       begin
@@ -1505,7 +1511,7 @@ Begin
       end;
       on e: ETerminologySetup do
       begin
-        result := result + ' (err: '+e.message+')';
+        result := result + ' (msg: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else
@@ -1514,7 +1520,7 @@ Begin
       end;
       on e: ETooCostly do
       begin
-        result := result + ' (err: Too-Costly)';
+        result := result + ' (msg: Too-Costly)';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly)
         else
@@ -1523,11 +1529,19 @@ Begin
       end;
       on e: ERestfulException do
       begin
-        result := result + ' (err: '+e.message+')';
+        result := result + ' (msg: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else
           SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code);
+      end;
+      on e: EFslException do
+      begin
+        result := result + ' (msg: '+e.message+')';
+        if noErrCode then
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull)
+        else
+          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull);
       end;
       on e: exception do
       begin

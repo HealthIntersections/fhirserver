@@ -23,8 +23,7 @@ uses
 
 begin
   RequireDerivedFormResource := True;
-  Application.Title := 'Patient Summary Manager';
-  Application.Scaled := True;
+  Application.Scaled:=True;
   Application.Initialize;
 
   Application.CreateForm(TIPSManagerForm, IPSManagerForm);

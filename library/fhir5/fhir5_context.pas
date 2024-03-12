@@ -201,6 +201,7 @@ uses
 
 constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
 begin
+  // inherited
   if resource is TFHIRCanonicalResource then
     inherited Create(resource, TFHIRCanonicalResource(resource).url, TFHIRCanonicalResource(resource).version)
   else

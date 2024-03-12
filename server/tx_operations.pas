@@ -325,7 +325,7 @@ begin
 
             if (txResources = nil) then
               txResources := processAdditionalResources(context, manager, nil, params);
-            dst := FServer.expandVS(vs, cacheId, profile, filter, limit, count, offset, txResources);
+            dst := FServer.expandVS(vs, request.internalRequestId, cacheId, profile, filter, limit, count, offset, txResources, params.str('no-cache') = 'please');
             try
               response.HTTPCode := 200;
               response.Message := 'OK';
@@ -513,7 +513,7 @@ begin
                   // raise ETerminologyError.Create('Unable to find valueset to validate against (not provided by id, identifier, or directly)');
                 end;
 
-                abstractOk := params.str('abstract') = 'true';
+                abstractOk := params.str('abstract') <> 'false';
                 inferSystem := (params.str('inferSystem') = 'true') or (params.str('implySystem') = 'true');
 
                 if (oOut = nil) and (pout = nil) then
@@ -529,7 +529,7 @@ begin
                   if txResources = nil then
                     txResources := processAdditionalResources(context, manager, nil, params);
 
-                  pout := FServer.validate(issuePath, vs, coded, profile, abstractOk, inferSystem, mode, txResources, summary);
+                  pout := FServer.validate(request.id, issuePath, vs, coded, profile, abstractOk, inferSystem, mode, txResources, summary);
                 end;
                 if summary <> '' then
                   result := result + ': '+summary;

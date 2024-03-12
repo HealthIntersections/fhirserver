@@ -17,9 +17,9 @@
     </General>
     <VersionInfo>
       <MajorVersionNr Value="3"/>
-      <RevisionNr Value="6"/>
+      <MinorVersionNr Value="4"/>
+      <RevisionNr Value="1"/>
       <Attributes pvaDebug="False"/>
-      <MinorVersionNr Value="2"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
@@ -300,11 +300,12 @@
           </Linking>
         </CompilerOptions>
       </Item8>
-      <SharedMatrixOptions Count="4">
+      <SharedMatrixOptions Count="5">
         <Item1 ID="348441424249" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item2 ID="601568390877" Modes="osx,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item3 ID="986226565548" Type="IDEMacro" MacroName="LCLWidgetType" Value="carbon"/>
         <Item4 ID="116515061841" Modes="win32,win64,win64-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item5 ID="731652424285" Modes="win64-release,linux-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>

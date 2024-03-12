@@ -59,7 +59,7 @@ The content loads and works extremely quickly.
 
 Uses
   SysUtils, Classes, Generics.Collections, Character,
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang, fsl_logging,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_fpc, fsl_threads, fsl_lang, fsl_logging, fsl_i18n,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
   ftx_sct_expressions, ftx_service;
@@ -718,7 +718,7 @@ operations
     FSct : TSnomedServices;
     FSupplements : TFslList<TFHIRCodeSystemW>;
   public
-    constructor Create(sct : TSnomedServices; supplements : TFslList<TFHIRCodeSystemW>);
+    constructor Create(sct : TSnomedServices; i18n : TI18nSupport; supplements : TFslList<TFHIRCodeSystemW>);
     destructor Destroy; override;
 
 
@@ -752,6 +752,7 @@ operations
     procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
     function getCodeStatus(context : TCodeSystemProviderContext) : String; override;
+    function incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList) : String; override;
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
@@ -2758,7 +2759,7 @@ function TSnomedServices.IsValidConcept(const sTerm: String): Boolean;
 var
   iTerm : Cardinal;
 begin
-  if not StringIsInteger64(sTerm) then
+  if (sTerm = '') or not StringIsInteger64(sTerm) then
     result := false
   else
     result := Concept.FindConcept(StringToId(sTerm), iTerm);
@@ -2772,7 +2773,7 @@ var
   active : boolean;
   lang : byte;
 begin
-  result := DescRef.FindDescription(StringToId(sTerm), iTerm);
+  result := (sTerm <> '') and DescRef.FindDescription(StringToId(sTerm), iTerm);
   if result then
   begin
     FDesc.GetDescription(iTerm, desc, id, date, cId, module, kind, caps, refsets, valueses, active, lang);
@@ -3292,7 +3293,7 @@ end;
 
 function TSnomedServices.ConceptExists(conceptId: String; var index: cardinal): Boolean;
 begin
-  result := FConcept.FindConcept(StringToIdOrZero(conceptId), index);
+  result := (conceptId <> '') and FConcept.FindConcept(StringToIdOrZero(conceptId), index);
 end;
 
 
@@ -4497,10 +4498,15 @@ procedure TSnomedServices.displayExpr(b: TFslStringBuilder; expr: TSnomedConcept
 var
   s : String;
 begin
-  s := GetDisplayName(expr.code, '');
-  if (s = '') then
-    s := expr.description;
-  b.Append(s);
+  if (expr.code = '') then
+    b.append('<err>')
+  else
+  begin
+    s := GetDisplayName(expr.code, '');
+    if (s = '') then
+      s := expr.description;
+    b.Append(s);
+  end;
 end;
 
 
@@ -4713,10 +4719,10 @@ end;
 
 { TSnomedProvider }
 
-constructor TSnomedProvider.Create(sct: TSnomedServices; supplements: TFslList<
+constructor TSnomedProvider.Create(sct: TSnomedServices; i18n : TI18nSupport; supplements: TFslList<
   TFHIRCodeSystemW>);
 begin
-  inherited Create(sct.FLanguages.link);
+  inherited Create(sct.FLanguages.link, i18n);
   FSct := sct;
   FSupplements := supplements;
 end;
@@ -5196,6 +5202,14 @@ begin
     result := 'active'
   else
     result := 'inactive';
+end;
+
+function TSnomedProvider.incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList): String;
+begin
+  if TSnomedExpressionContext(context).isComplex then
+    result := FI18n.translate('SCT_NO_MRCM', langs, [])
+  else
+    result := '';
 end;
 
 function TSnomedProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;

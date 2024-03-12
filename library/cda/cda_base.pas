@@ -463,6 +463,7 @@ constructor Tv3PropertyValueStringCollection.Create(aType: TRMPropertyDefinition
 var
   iLoop : Integer;
 begin
+!
   FValue := TWideStringList.Create;
   if sValues <> '' Then
     FValue.Text := sValues;

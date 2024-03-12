@@ -19149,7 +19149,7 @@ begin
   {Has another MM been set, or has the Embarcadero MM been used? If so, this
    file is not the first unit in the uses clause of the project's .dpr file.}
 
-  if IsMemoryManagerSet then
+  if IsMemoryManagerSet and false then
   begin
     {When using runtime packages, another library may already have installed
      FastMM: Silently ignore the installation request.}

@@ -156,7 +156,7 @@ function THTTPCacheManager.respond(ep : String; request: TIdHTTPRequestInfo; res
 var
   co : TCachedHTTPResponse;
 begin
-  if not FCaching or UnderDebugger then
+  if not FCaching or UnderDebugger or request.QueryParams.contains('no-cache=please') then
     exit(false);
 
   FLock.Lock;

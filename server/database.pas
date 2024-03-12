@@ -5866,11 +5866,11 @@ begin
   try
     profile.limitedExpansion := allowIncomplete;
     if (vs <> nil) then
-      result := ServerContext.TerminologyServer.ExpandVS(vs, '', profile, '', dependencies, limit, count, offset, nil)
+      result := ServerContext.TerminologyServer.ExpandVS(vs, '', '', profile, '', dependencies, limit, count, offset, nil, false)
     else
     begin
       if ServerContext.TerminologyServer.isKnownValueSet(ref, vs) then
-        result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset, nil)
+        result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false)
       else
       begin
         vs := ServerContext.TerminologyServer.getValueSetByUrl(ref, '');
@@ -5879,7 +5879,7 @@ begin
         if vs = nil then
           result := nil
         else
-          result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset, nil)
+          result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false)
       end;
     end;
   finally

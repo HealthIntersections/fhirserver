@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang, fsl_i18n,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
   fhir_common, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -88,7 +88,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
 
@@ -439,7 +439,7 @@ begin
   End;
 end;
 
-constructor TUcumServices.Create(languages : TIETFLanguageDefinitions);
+constructor TUcumServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited;
   FModel := TUcumModel.Create;

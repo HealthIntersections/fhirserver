@@ -502,7 +502,7 @@ begin
     profile.languages := langList.link;
 
     try
-      res := FServer.expandVS(vs, vs.url, profile, pm['filter'], 1000, 0, 0, nil);
+      res := FServer.expandVS(vs, '', vs.url, profile, pm['filter'], 1000, 0, 0, nil, false);
       try
         result := asHtml(res.Resource)+#13#10;
 //        if (not profile.includeDefinition) then
@@ -962,7 +962,7 @@ begin
       coding.version := pm['version'];
       coding.code := pm['code'];
       coding.display := pm['display'];
-      res := FServer.validate(vs, coding, nil, pm['abstract'] = '1', (pm['implySystem'] = '1') or (pm['inferSystem'] = '1'), nil, summary);
+      res := FServer.validate('', vs, coding, nil, pm['abstract'] = '1', (pm['implySystem'] = '1') or (pm['inferSystem'] = '1'), nil, summary);
       try
         result := '<div>'+paramsAsHtml(res)+'</div>'#13 +
             #10'<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>'

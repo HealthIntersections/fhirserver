@@ -1888,6 +1888,8 @@ type
   end;
 
 
+function RoundDateTimeToNearestInterval(vTime : TDateTime; vInterval : TDateTime = 60/SecsPerDay) : TDateTime;
+
 Implementation
 
 Uses
@@ -17329,6 +17331,22 @@ begin
     if Flist.count > 1 then
       result := result + FLastSeperator + FList[FList.count - 1];
   end;
+end;
+
+// from https://www.appsloveworld.com/coding/delphi/2/in-delphi-how-do-i-round-a-tdatetime-to-closest-second-minute-five-minute-etc
+function RoundDateTimeToNearestInterval(vTime : TDateTime; vInterval : TDateTime = 60/SecsPerDay) : TDateTime;
+var
+  vTimeSec,vIntSec,vRoundedSec : int64;
+begin
+  //Rounds to nearest minute by default
+  vTimeSec := round(vTime * SecsPerDay);
+  vIntSec := round(vInterval * SecsPerDay);
+
+  if vIntSec = 0 then exit(vTimeSec / SecsPerDay);
+
+  vRoundedSec := round(vTimeSec / vIntSec) * vIntSec;
+
+  Result := vRoundedSec / SecsPerDay;
 end;
 
 function ProcessCpuUsage : UInt64; // actual value is not accurate but is consistent

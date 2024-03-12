@@ -34,18 +34,11 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults, Generics.Collections,  
-  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex,
+  fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_lang, fsl_versions, fsl_fpc, fsl_logging, fsl_regex, fsl_i18n,
   fhir_objects, fhir_factory, fhir_common, fhir_cdshooks,  fhir_utilities, fhir_features, fhir_uris,
   ftx_service;
 
 type
-  //TConceptAdornment = class (TFslStringList)
-  //private
-  //  FParent: TFHIRCodeSystemConceptW;
-  //public
-  //  property parent : TFHIRCodeSystemConceptW read FParent write FParent; // not owned, can't be
-  //end;
-
   TFhirCodeSystemProviderContext = class (TCodeSystemProviderContext)
   private
     concept : TFhirCodeSystemConceptW;
@@ -67,17 +60,6 @@ type
     destructor Destroy; override;
   end;
 
-  //TCodeSystemAdornment = class (TFslObject)
-  //private
-  //  FCodeMap : TFhirCodeSystemConceptMapW;
-  //protected
-  //  function sizeInBytesV(magic : integer) : cardinal; override;
-  //public
-  //  constructor Create(map : TFhirCodeSystemConceptMapW);
-  //  destructor Destroy; override;
-  //  property codeMap1 : TFhirCodeSystemConceptMapW read FCodeMap;
-  //end;
-
   { TFHIRCodeSystemCodeEntry }
 
   TFHIRCodeSystemCodeEntry = class (TFslObject)
@@ -97,11 +79,14 @@ type
 
   { TFHIRCodeSystemEntry }
 
+  TFHIRCodeSystemEntryLoadingState = (cseNotLoaded, cseLoading, cseLoaded, cseLoadingFailed);
+
   TFHIRCodeSystemEntry = class (TFslObject)
   private
+    FLoadingFailMessage: String;
     // we get the proxy, and maybe we load this into the loaded one when we need to
     // makes start up very very much faster
-    FLoaded : boolean;
+    FLoadingState : TFHIRCodeSystemEntryLoadingState;
     FCodeSystemProxy : TFHIRResourceProxyV;
     FSupplementProxies : TFslList<TFHIRResourceProxyV>;
 
@@ -110,6 +95,7 @@ type
 
     FCodeMap : TFslMap<TFHIRCodeSystemCodeEntry>;
     procedure loadCodeSystem;
+    function uc(code : String) : String;
 
     function GetHasSupplements: boolean;
     function GetSupplementProxies: TFslList<TFHIRResourceProxyV>;
@@ -127,7 +113,8 @@ type
     constructor Create(res : TFHIRCodeSystemW); overload;
     destructor Destroy; override;
 
-    property Loaded : boolean read FLoaded write FLoaded;
+    property LoadingState : TFHIRCodeSystemEntryLoadingState read FLoadingState write FLoadingState;
+    property LoadingFailMessage : String read FLoadingFailMessage write FLoadingFailMessage;
     function Link : TFHIRCodeSystemEntry; overload;
     property id : String read GetId write SetId;
     property url : String read GetUrl;
@@ -218,14 +205,16 @@ type
     function locateParent(ctxt: TFHIRCodeSystemConceptW; code: String): String;
     function locCode(list: TFhirCodeSystemConceptListW; code, synonym: String; altOpt : TAlternateCodeOptions): TFhirCodeSystemConceptW;
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
+    function hasPropForCode(code : String) : boolean;
     function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
     procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; value : String; List: TFhirCodeSystemProviderFilterContext);
     procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
     procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; factory : TFHIRFactory; cs : TFhirCodeSystemEntry); overload;
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; factory : TFHIRFactory; cs : TFhirCodeSystemEntry); overload;
     destructor Destroy; override;
 
     function contentMode : TFhirCodeSystemContentMode; override;
@@ -324,6 +313,7 @@ constructor TFHIRCodeSystemEntry.Create(res : TFHIRResourceProxyV);
 begin
   inherited Create;
   FCodeSystemProxy := res;
+  FLoadingState := cseNotLoaded;
 end;
 
 constructor TFHIRCodeSystemEntry.Create(res: TFHIRCodeSystemW);
@@ -331,7 +321,7 @@ begin
   inherited Create;
   FCodeSystem := res;
   LoadCodeSystem;
-  FLoaded := true;
+  FLoadingState := cseLoaded;
 end;
 
 destructor TFHIRCodeSystemEntry.Destroy;
@@ -352,15 +342,15 @@ procedure TFHIRCodeSystemEntry.loadCodeSystem;
   begin
     for item in list do
     begin
-      if not FCodeMap.ContainsKey(item.code) then
+      if not FCodeMap.ContainsKey(uc(item.code)) then
       begin
         entry := TFHIRCodeSystemCodeEntry.create(item.link);
         try
-          FCodeMap.AddOrSetValue(item.code, entry.link);
+          FCodeMap.AddOrSetValue(uc(item.code), entry.link);
           item.TagNoLink := entry;
           if (parent <> nil) then
             entry.addParent(parent.link);
-          if (item.conceptCount > 0) then
+          if (item.HasConcepts) then
             registerCodes(item.conceptList, entry);
         finally
           entry.free;
@@ -397,6 +387,14 @@ begin
       end;
     end;
   end;
+end;
+
+function TFHIRCodeSystemEntry.uc(code: String): String;
+begin
+  if FCodeSystem.caseSensitive then
+    result := code
+  else
+    result := code.toUpper;
 end;
 
 function TFHIRCodeSystemEntry.GetHasSupplements: boolean;
@@ -438,7 +436,8 @@ procedure TFHIRCodeSystemEntry.SetCodeSystem(const Value: TFHIRCodeSystemW);
 begin
   FCodeSystem.free;
   FCodeSystem := value;
-  LoadCodeSystem;
+  if FCodeSystem <> nil then
+    LoadCodeSystem;
 end;
 
 function TFHIRCodeSystemEntry.GetUrl: String;
@@ -550,10 +549,9 @@ end;
 
 { TFhirCodeSystemProvider }
 
-constructor TFhirCodeSystemProvider.Create(languages: TIETFLanguageDefinitions;
-  factory: TFHIRFactory; cs: TFhirCodeSystemEntry);
+constructor TFhirCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport; factory: TFHIRFactory; cs: TFhirCodeSystemEntry);
 begin
-  Create(languages);
+  Create(languages, i18n);
   FCs := cs;
   FFactory := factory;
 end;
@@ -1025,7 +1023,7 @@ var
   entry : TFHIRCodeSystemCodeEntry;
 begin
   entry := ctxt.TagNoLink as TFHIRCodeSystemCodeEntry;
-  if entry.parents.Count > 0 then
+  if (entry <> nil) and (entry.parents <> nil) and (entry.parents.Count > 0) then
     result := entry.parents[0].Concept
   else
     result := nil;
@@ -1039,15 +1037,46 @@ function TFhirCodeSystemProvider.getProperty(code: String): TFhirCodeSystemPrope
 var
   p : TFhirCodeSystemPropertyW;
   cs : TFhirCodeSystemW;
+  uri : String;
 begin
   result := nil;
+  uri := csUriForProperty(code);
+  if (uri <> '') then
+  begin
+    for p in FCs.CodeSystem.properties.forEnum do
+      if (p.uri = uri) then
+        exit(p.link);
+    for cs in FCs.Supplements do
+      for p in cs.properties.forEnum do
+        if (p.uri = uri) then
+          exit(p.link);
+  end;
+
+  for p in FCs.CodeSystem.properties.forEnum do
+    if (p.code = code) and ((uri = '') or (p.uri = '')) then
+      exit(p.link);
+
+  for cs in FCs.Supplements do
+    for p in cs.properties.forEnum do
+      if (p.code = code) and ((uri = '') or (p.uri = '')) then
+        exit(p.link);
+end;
+
+function TFhirCodeSystemProvider.hasPropForCode(code: String): boolean;
+var
+  p : TFhirCodeSystemPropertyW;
+  cs : TFhirCodeSystemW;
+  uri : String;
+begin
+  result := false;
   for p in FCs.CodeSystem.properties.forEnum do
     if (p.code = code) then
-      exit(p.link);
+      exit(true);
+
   for cs in FCs.Supplements do
     for p in cs.properties.forEnum do
       if (p.code = code) then
-        exit(p.link);
+        exit(true);
 end;
 
 
@@ -1082,7 +1111,7 @@ begin
 
   for c in list do
   begin
-    if (c.code = code) then
+    if (FCs.uc(c.code) = FCs.uc(code)) then
       exit(c);
     // legacy
     if (altOpt <> nil) then
@@ -1092,7 +1121,7 @@ begin
         for ext in c.getExtensionsW('http://hl7.org/fhir/StructureDefinition/codesystem-alternate').forEnum do
         begin
           s := ext.getExtensionString('code');
-          if (s = code) then
+          if (FCs.uc(s) = FCs.uc(code)) then
             exit(c);
         end;
       end;
@@ -1109,8 +1138,8 @@ end;
 
 function TFhirCodeSystemProvider.LocateCode(code : String; altOpt : TAlternateCodeOptions) : TFhirCodeSystemConceptW;
 begin
-  if (FCs.FCodeMap.ContainsKey(code)) then
-    result := FCs.FCodeMap[code].Concept
+  if (FCs.FCodeMap.ContainsKey(FCs.uc(code))) then
+    result := FCs.FCodeMap[FCs.uc(code)].Concept
   else
     result := locCode(FCs.CodeSystem.conceptList, code, FCs.CodeSystem.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), altOpt);
 end;
@@ -1250,7 +1279,7 @@ begin
   begin
     if conceptHasProperty(item, 'http://hl7.org/fhir/concept-properties#parent', code) then
       children.Add(item.link)
-    else if item.conceptCount > 0 then
+    else if item.HasConcepts then
       listChildrenByProperty(code, item.conceptList, children);
   end;
 end;
@@ -1452,6 +1481,66 @@ begin
   end;
 end;
 
+procedure TFhirCodeSystemProvider.iterateConceptsByKnownProperty(src: TFhirCodeSystemConceptListW; code: String; value: String; list: TFhirCodeSystemProviderFilterContext);
+var
+  c, cc : TFhirCodeSystemConceptW;
+  concepts : TFhirCodeSystemConceptListW;
+  css : TFhirCodeSystemW;
+  cp : TFhirCodeSystemConceptPropertyW;
+  ok, val : boolean;
+  coding : TFHIRCodingW;
+  s1, s2 : String;
+begin
+  concepts := TFhirCodeSystemConceptListW.Create;
+  try
+    for c in src do
+    begin
+      concepts.Clear;
+      concepts.Add(c.Link);
+      for css in FCs.Supplements do
+      begin
+        cc := locCode(css.conceptList, c.code, css.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), nil);
+        if (cc <> nil) then
+          concepts.Add(cc.Link);
+      end;
+      for cc in concepts do
+      begin
+        ok := false;
+        val := false;
+        for cp in cc.properties.forEnum do
+        begin
+          if not ok and (cp.code = code) then
+          begin
+            val := true;
+            if (cp.value.isPrimitive) then
+            begin
+              s1 := cp.value.primitiveValue;
+              s2 := value;
+              ok := s1 = s2;
+            end
+            else // Coding:
+            begin
+              coding := FFactory.wrapCoding(cp.value.Link);
+              try
+                ok := coding.code = value;
+              finally
+                coding.free;
+              end;
+            end;
+          end;
+        end;
+        //if (not ok) and (not val and (pp.type_ = cptBoolean) and (value = 'false')) then
+        //  ok := true;
+        if ok then
+          list.Add(c.Link, 0);
+      end;
+      iterateConceptsByKnownProperty(c.conceptList, code, value, list);
+    end;
+  finally
+    concepts.free;
+  end;
+end;
+
 procedure TFhirCodeSystemProvider.iterateConceptsByRegex(src: TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
 var
   c : TFhirCodeSystemConceptW;
@@ -1582,11 +1671,21 @@ begin
   begin
     pp := getProperty(prop);
     try
-      if (pp <> nil) and (op = foEqual)  then
+      if (pp <> nil) and (op = foEqual) then
       begin
         result := TFhirCodeSystemProviderFilterContext.Create;
         try
           iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, value, result as TFhirCodeSystemProviderFilterContext);
+          result.link;
+        finally
+          result.free;
+        end;
+      end
+      else if StringArrayExists(['notSelectable'], prop) then // special known properties
+      begin
+        result := TFhirCodeSystemProviderFilterContext.Create;
+        try
+          iterateConceptsByKnownProperty(FCs.CodeSystem.conceptList, prop, value, result as TFhirCodeSystemProviderFilterContext);
           result.link;
         finally
           result.free;
@@ -1664,8 +1763,8 @@ function TFhirCodeSystemProvider.locateIsA(code, parent: String; disallowSelf: b
 var
   c, p : TFHIRCodeSystemCodeEntry;
 begin
-  c := FCs.FCodeMap[code];
-  p := FCs.FCodeMap[parent];
+  c := FCs.FCodeMap[FCs.uc(code)];
+  p := FCs.FCodeMap[FCs.uc(parent)];
   if (c <> nil) and (p <> nil) and ((c <> p) or not disallowSelf) and hasParent(c, p) then
     result := TFhirCodeSystemProviderContext.create(c.Concept.link)
   else

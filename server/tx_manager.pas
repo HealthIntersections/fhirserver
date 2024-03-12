@@ -86,8 +86,9 @@ Type
   TSnomedProviderFactory = class (TCodeSystemProviderFactory)
   private
     FSnomed : TSnomedServices;
+    FI18n : TI18nSupport;
   public
-    Constructor Create(snomed : TSnomedServices);
+    Constructor Create(snomed : TSnomedServices; i18n : TI18nSupport);
     Destructor Destroy; override;
 
     function getProvider : TCodeSystemProvider; override;
@@ -118,8 +119,10 @@ Type
     FNDC : TNDCServices;
     FOMOP : TOMOPServices;
     FXIG: TXIGProvider;
+    FI18n : TI18nSupport;
 
     procedure SetCPT(AValue: TCPTServices);
+    procedure SetI18n(AValue: TI18nSupport);
     procedure SetOMOP(AValue: TOMOPServices);
     procedure SetLoinc(const Value: TLOINCServices);
     procedure SetDefSnomed(const Value: TSnomedServices);
@@ -152,6 +155,7 @@ Type
     procedure load(txlist: TFHIRServerConfigSection; testing : boolean);
     procedure listVersions(url : String; list : TStringList);
 
+    property i18n : TI18nSupport read FI18n write SetI18n;
     property Languages : TIETFLanguageDefinitions read FLanguages;
     Property Loinc : TLOINCServices read FLoinc write SetLoinc;
     Property Snomed : TFslList<TSnomedServices> read FSnomed;
@@ -265,6 +269,8 @@ Type
     procedure SeeSpecificationResource(resource : TFHIRResourceProxyV);
     procedure SeeTerminologyResource(resource : TFHIRResourceProxyV);
     procedure DropTerminologyResource(aType : String; id : String);
+    procedure loadCodeSystem(cs : TFHIRResourceProxyV); overload;
+    procedure loadCodeSystem(cs : TFHIRCodeSystemW); overload;
 
     // access procedures. All return values are owned, and must be freed
     Function getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider; overload;
@@ -357,7 +363,7 @@ procedure TTerminologyServerStore.BuildStems(cs: TFhirCodeSystemW);
 var
   map : TFhirCodeSystemConceptMapW;
 begin
-  raise Exception.create('todo');
+  raise EFslException.create('todo');
   //map := TFhirCodeSystemConceptMapW.Create('stems');
   //try
   //  !cs.Tag := TCodeSystemAdornment.Create(map.link);
@@ -518,7 +524,7 @@ begin
     addCodesystemUri('LOINC', 'loinc', FCommonTerminologies.FLoinc.systemUri, FCommonTerminologies.FLoinc.version, FCommonTerminologies.FLoinc.TotalCount);
   for sn in FCommonTerminologies.FSnomed do
   begin
-    sp := TSnomedProvider.Create(sn.link, nil);
+    sp := TSnomedProvider.Create(sn.link, FI18n.link, nil);
     try
       addCodesystemUri('SNOMED CT', 'sct', sp.systemUri, sp.version, sp.TotalCount);
     finally
@@ -633,6 +639,7 @@ var
 begin
   cse := TFHIRCodeSystemEntry.Create(cs.Link);
   try
+    cs.TagObject := cse;
     if base then
       FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
     if (cs.supplements <> '') then
@@ -916,6 +923,19 @@ begin
   end;
 end;
 
+procedure TTerminologyServerStore.loadCodeSystem(cs: TFHIRResourceProxyV);
+var
+  cse : TFHIRCodeSystemEntry;
+begin
+  cse := cs.TagObject as TFHIRCodeSystemEntry;
+  checkCSLoaded(cse);
+end;
+
+procedure TTerminologyServerStore.loadCodeSystem(cs: TFHIRCodeSystemW);
+begin
+  raise EFslException.create('loadCodeSystem(TFHIRCodeSystemW) not done yet');
+end;
+
 procedure TTerminologyServerStore.UpdateConceptMaps;
 var
   cm : TLoadedConceptMap;
@@ -1191,7 +1211,7 @@ begin
           if cs <> nil then
           begin
             checkCSLoaded(cs);
-            result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, ffactory.link, cs.link);
+            result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FI18n.link, ffactory.link, cs.link);
           end;
         finally
           cs.free;
@@ -1223,26 +1243,91 @@ end;
 procedure TTerminologyServerStore.checkCSLoaded(codesystem: TFHIRCodeSystemEntry);
 var
   p : TFHIRResourceProxyV;
+  state : integer; // go = 0, load = 1, wait for loading = 2, exception = 3
+  msg : String;
 begin
-  // todo: make this more efficient on the lock
   FLock.Lock;
   try
-    if not codeSystem.Loaded then
-    begin
-      codeSystem.Loaded := true;
-      codesystem.CodeSystem := codeSystem.CodeSystemProxy.resourceW.link as TFHIRCodeSystemW;
-      for p in codeSystem.SupplementProxies do
-        codeSystem.Supplements.add(p.resourceW.link as TFHIRCodeSystemW);
+    case codesystem.LoadingState of
+      cseNotLoaded : // first encounter
+        begin
+        state := 1;
+        codesystem.LoadingState := cseLoading;
+        end;
+      cseLoading : // some other thread is loading it
+        begin
+        state := 2;
+        end;
+      cseLoaded:
+        begin
+        state := 0;
+        end;
+      cseLoadingFailed:
+        begin
+          state := 3;
+          msg := codesystem.LoadingFailMessage;
+        end;
     end;
   finally
     FLock.Unlock;
+  end;
+  case state of
+    0: ; // nothing
+    1:
+      begin
+      try
+        msg := '';
+        try        
+          codesystem.CodeSystem := codeSystem.CodeSystemProxy.resourceW.link as TFHIRCodeSystemW;
+          for p in codeSystem.SupplementProxies do
+            codeSystem.Supplements.add(p.resourceW.link as TFHIRCodeSystemW);
+        except
+          on e : Exception do
+            msg := e.Message;
+        end;
+
+      finally
+        FLock.Lock;
+        try
+          if msg = '' then
+            codesystem.LoadingState := cseLoaded
+          else
+          begin
+            codesystem.LoadingState := cseLoadingFailed;
+            codesystem.LoadingFailMessage := msg;
+          end;
+        finally
+          FLock.Unlock;
+        end;
+        if (msg <> '') then
+          raise ETerminologyError.create(msg, itException);
+      end;
+      end;
+    2:
+      begin
+        repeat
+          sleep(100);
+          FLock.Lock;
+          try        
+            case codesystem.LoadingState of
+              cseNotLoaded: raise ETerminologyError.create('Impossible State NotLoaded', itException);
+              cseLoading : state := 0;
+              cseLoaded: state := 1;
+              cseLoadingFailed:raise ETerminologyError.create(codesystem.LoadingFailMessage, itException);
+            end;
+          finally
+            FLock.Unlock;
+          end;
+        until state = 1;
+      end;
+    3: raise ETerminologyError.create(msg, itException);
   end;
 end;
 
 function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW; profile: TFHIRExpansionParams): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
-  result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
+  result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FI18n.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
 end;
 
 function TTerminologyServerStore.getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
@@ -1596,11 +1681,12 @@ begin
     FProviderClasses.Add(p.systemUri, p.link);
 end;
 
-constructor TCommonTerminologies.Create(settings : TFHIRServerSettings);
+constructor TCommonTerminologies.Create(settings: TFHIRServerSettings);
 begin
   inherited Create;
   FSettings := settings;
-  FSnomed := TFslList<TSnomedServices>.Create;
+  FSnomed := TFslList<TSnomedServices>.Create;                        
+  FI18n := i18n;
 end;
 
 procedure TCommonTerminologies.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -1611,7 +1697,7 @@ begin
     FLoinc.defineFeatures(features);
   if FDefSnomed <> nil then
   begin
-    sp := TSnomedProvider.Create(FDefSnomed.link, nil);
+    sp := TSnomedProvider.Create(FDefSnomed.link, FI18n.link, nil);
     try
       sp.defineFeatures(features);
     finally
@@ -1637,7 +1723,8 @@ begin
 end;
 
 destructor TCommonTerminologies.Destroy;
-begin
+begin                   
+  FI18n.free;
   FProviderClasses.free;
   FNDFRT.free;
   FNDC.free;
@@ -1786,7 +1873,7 @@ begin
   FLanguages := TIETFLanguageDefinitions.Create(FileToString(s, TEncoding.ASCII));
   FProviderClasses := TFslMap<TCodeSystemProviderFactory>.Create('tc.common');
 
-  p := TUriServices.Create(FLanguages.link);
+  p := TUriServices.Create(FLanguages.link, FI18n.link);
   try
     FProviderClasses.Add(p.systemUri, TCodeSystemProviderGeneralFactory.Create(p.link));
     FProviderClasses.Add(p.systemUri+URI_VERSION_BREAK+p.version, TCodeSystemProviderGeneralFactory.Create(p.link));
@@ -1794,14 +1881,14 @@ begin
     p.free;
   end;
 
-  add(TIETFLanguageCodeServices.Create(FLanguages.link)).free;
-  add(TACIRServices.Create(FLanguages.link)).free;
-  add(TAreaCodeServices.Create(FLanguages.link)).free;
-  add(TIso4217Services.Create(FLanguages.link)).free;
-  add(TMimeTypeCodeServices.Create(FLanguages.link)).free;
-  add(TCountryCodeServices.Create(FLanguages.link)).free;
-  add(TUSStateServices.Create(FLanguages.link)).free;
-  add(THGVSProvider.Create(FLanguages.link)).free;
+  add(TIETFLanguageCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TACIRServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TAreaCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TIso4217Services.Create(FLanguages.link, FI18n.link)).free;
+  add(TMimeTypeCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TCountryCodeServices.Create(FLanguages.link, FI18n.link)).free;
+  add(TUSStateServices.Create(FLanguages.link, FI18n.link)).free;
+  add(THGVSProvider.Create(FLanguages.link, FI18n.link)).free;
 
   for tx in txList.sections do
   begin
@@ -1814,7 +1901,7 @@ begin
         sn := TSnomedServices.Create(FLanguages.link);
         try
           sn.Load(fixFile('sct', tx['source'].value));
-          sp := TSnomedProviderFactory.Create(sn.link);
+          sp := TSnomedProviderFactory.Create(sn.link, FI18n.link);
           try
             add(sp, tx['default'].readAsBool);
             if not FProviderClasses.ContainsKey(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri) then
@@ -1832,7 +1919,7 @@ begin
       else if tx['type'].value = 'loinc' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        Loinc := TLoincServices.Create(FLanguages.link);
+        Loinc := TLoincServices.Create(FLanguages.link, FI18n.link);
         try
           Loinc.Load(fixFile('loinc', tx['source'].value));
           add(Loinc.link);
@@ -1843,43 +1930,43 @@ begin
       else if tx['type'].value = 'ucum' then
       begin
         Logging.log('load '+s+' from '+tx['source'].value);
-        Ucum := TUcumServices.Create(FLanguages.link);
+        Ucum := TUcumServices.Create(FLanguages.link, FI18n.link);
         Ucum.Import(fixFile('ucum', tx['source'].value));
       end
       else if tx['type'].value = 'rxnorm' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        RxNorm := TRxNormServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        RxNorm := TRxNormServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'ndc' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDC := TNDCServices.Create(FLanguages.link, connectToDatabase(tx, true), tx['version'].value)
+        NDC := TNDCServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true), tx['version'].value)
       end
       else if tx['type'].value = 'ndfrt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        NDFRT := TNDFRTServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        NDFRT := TNDFRTServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'unii' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        Unii := TUniiServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        Unii := TUniiServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else if tx['type'].value = 'cpt' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        CPT := TCPTServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        CPT := TCPTServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end    
       else if tx['type'].value = 'omop' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        OMOP := TOMOPServices.Create(FLanguages.link, connectToDatabase(tx, true))
+        OMOP := TOMOPServices.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end           
       else if tx['type'].value = 'xig' then
       begin
         Logging.log('load '+s+' from '+describeDatabase(tx));
-        XIG := TXIGProvider.Create(FLanguages.link, connectToDatabase(tx, true))
+        XIG := TXIGProvider.Create(FLanguages.link, FI18n.link, connectToDatabase(tx, true))
       end
       else
         raise EFslException.Create('Unknown type '+tx['type'].value);
@@ -1907,6 +1994,12 @@ begin
     FProviderClasses.add(FCPT.systemUri, TCodeSystemProviderGeneralFactory.Create(FCPT.Link));
     FProviderClasses.add(FCPT.systemUri+URI_VERSION_BREAK+FCPT.version, TCodeSystemProviderGeneralFactory.Create(FCPT.Link));
   end;
+end;
+
+procedure TCommonTerminologies.SetI18n(AValue: TI18nSupport);
+begin
+  FI18n.free;
+  FI18n := AValue;
 end;
 
 procedure TCommonTerminologies.SetOMOP(AValue: TOMOPServices);
@@ -2084,21 +2177,23 @@ end;
 
 { TSnomedProviderFactory }
 
-constructor TSnomedProviderFactory.Create(snomed: TSnomedServices);
+constructor TSnomedProviderFactory.Create(snomed: TSnomedServices; i18n : TI18nSupport);
 begin
   inherited Create;
   FSnomed := snomed;
+  FI18n := i18n;
 end;
 
 destructor TSnomedProviderFactory.Destroy;
 begin
+  FI18n.free;
   FSnomed.free;
   inherited Destroy;
 end;
 
 function TSnomedProviderFactory.getProvider: TCodeSystemProvider;
 begin
-  result := TSnomedProvider.Create(FSnomed.Link, nil);
+  result := TSnomedProvider.Create(FSnomed.Link, FI18n.link, nil);
 end;
 
 function TSnomedProviderFactory.systemUri: String;

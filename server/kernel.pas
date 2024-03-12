@@ -143,6 +143,57 @@ uses
   JclDebug;
 {$ENDIF}
 
+function systemInfo : string;
+var
+  l, s : string;
+begin
+  l := 'Running on "'+SystemName+'": '+SystemPlatform;
+  s := SystemArchitecture;
+  if (s <> '') and not sameText(s, 'Unknown') then
+  begin
+    l := l + ' (';
+    l := l + s;
+    s := SystemProcessorName;
+    if s <> '' then
+      l := l + '/'+s;
+    l := l + ')';
+  end;
+  l := l + '. ';
+  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
+  result := l;
+end;
+
+function compileInfo : String;
+var
+  compiler, os, cpu, s : String;
+begin
+  {$IFDEF FPC}
+  compiler := '/FreePascal';
+  {$ELSE}
+  compiler := '/Delphi';
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  os := 'Windows';
+  {$ENDIF}
+  {$IFDEF LINUX}
+  os := 'Linux';
+  {$ENDIF}
+  {$IFDEF OSX}
+  os := 'OSX';
+  {$ENDIF}
+  {$IFDEF CPU64}
+  cpu := ''; //'-64';
+  {$ELSE}
+  cpu := '-32';
+  {$ENDIF}
+
+  s := os+cpu+compiler+', '+BuildDescription;
+
+  result := 'FHIR Server '+SERVER_FULL_VERSION+' '+s;
+end;
+
+
+
 var
   GStartTime : UInt64;
 
@@ -293,13 +344,14 @@ procedure TFHIRServiceKernel.loadTerminologies;
 begin
   Logging.log('Load Terminologies');
   FTerminologies := TCommonTerminologies.Create(Settings.link);
-  FTerminologies.load(Ini['terminologies'], false);
 
-  fI18n := TI18nSupport.Create(FTerminologies.Languages.link);
+  FI18n := TI18nSupport.Create(FTerminologies.Languages.link);
   FI18n.loadPropertiesFile(partnerFile('Messages.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_es.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_de.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_nl.properties'));
+  FTerminologies.i18n := FI18n.link;                   
+  FTerminologies.load(Ini['terminologies'], false);
 end;
 
 function epVersion(section : TFHIRServerConfigSection): TFHIRVersion;
@@ -353,6 +405,8 @@ begin
   FWebServer := TFhirWebServer.Create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
   FWebServer.Common.cache.cacheDwellTime := Settings.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+  FTelnet.OnGetRequestList := FWebServer.GetCurrentRequestReport;
+  FTelnet.OnGetCurrentRequestCount := FWebServer.GetCurrentRequestCount;
 
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
@@ -394,6 +448,8 @@ procedure TFHIRServiceKernel.stopWebServer;
 begin
   if FWebServer <> nil then
   begin
+    FTelnet.OnGetCurrentRequestCount := nil;
+    FTelnet.OnGetRequestList := nil;
     FWebServer.Stop;
     FWebServer.free;
   end;
@@ -652,7 +708,7 @@ begin
       logMsg := 'Using Configuration file '+ini.FileName;
     Logging.log(logMsg);
 
-    svc := TFHIRServiceKernel.Create(svcName, dispName, logMsg, ini.link, params.link);
+    svc := TFHIRServiceKernel.Create(svcName, dispName, compileInfo+' '+systemInfo+#13#10+logMsg, ini.link, params.link);
     try
       {$IFDEF FPC}
       if FakeConsoleForm <> nil then
@@ -688,70 +744,6 @@ begin
       svc.free;
     end;
   end;
-end;
-
-procedure logSystemInfo;
-var
-  l, s : string;
-begin
-  l := 'Running on "'+SystemName+'": '+SystemPlatform;
-  s := SystemArchitecture;
-  if (s <> '') and not sameText(s, 'Unknown') then
-  begin
-    l := l + ' (';
-    l := l + s;
-    s := SystemProcessorName;
-    if s <> '' then
-      l := l + '/'+s;
-    l := l + ')';
-  end;
-  l := l + '. ';
-  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
-  Logging.log(l);
-end;
-
-procedure logCompileInfo;
-var
-  compiler, os, cpu, s : String;
-begin
-  {$IFDEF FPC}
-  compiler := '/FreePascal';
-  {$ELSE}
-  compiler := '/Delphi';
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  os := 'Windows';
-  {$ENDIF}
-  {$IFDEF LINUX}
-  os := 'Linux';
-  {$ENDIF}
-  {$IFDEF OSX}
-  os := 'OSX';
-  {$ENDIF}
-  {$IFDEF CPU64}
-  cpu := ''; //'-64';
-  {$ELSE}
-  cpu := '-32';
-  {$ENDIF}
-
-  s := os+cpu+compiler;
-  {$IFOPT C+}
-  s := s + '+Assertions';
-  {$ENDIF}
-
-  {$IFOPT D+}
-  s := s + '+Debug';
-  {$ENDIF}
-
-  {$IFOPT O+}
-  s := s + '+Optimizations';
-  {$ENDIF}
-
-  {$IFDEF OBJECT_TRACKING}
-  s := s + '+ObjectTracking';
-  {$ENDIF}
-
-  Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
 
@@ -797,8 +789,8 @@ begin
   Logging.LogToConsole := true;
   {$ENDIF}
 
-  logCompileInfo;
-  logSystemInfo;
+  Logging.log(compileInfo);
+  Logging.log(systemInfo);
   logDebuggingInfo;
 
   if not params.hasParams then

@@ -35,7 +35,7 @@ interface
 uses
   {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  fsl_threads, fsl_base, fsl_utilities, fsl_collections{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
+  fsl_threads, fsl_base, fsl_utilities, fsl_collections, fsl_cpu{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -148,6 +148,7 @@ Type
     FCount : integer;
     FHeld : TStringlist;
     FLock : TFslLock;
+    FCPU : TCPUUsageData;
 
     procedure checkDay;
     procedure close;
@@ -162,6 +163,7 @@ Type
     property LogToConsole : boolean read FLogToConsole write FLogToConsole;
 
     property FileLog : TLogger read FFileLogger;
+    property CPU : TCPUUsageData read FCPU;
 
     procedure logToFile(filename : String);
     procedure addListener(listener : TLogListener);
@@ -485,10 +487,12 @@ begin
   FLastDay := 0;
   FHeld := TStringList.Create;
   DoubleFreeCallBack := LogDoubleFreeCallBack;
+  FCPU := TCPUUsageData.create();
 end;
 
 destructor TLogging.Destroy;
 begin
+  FCPU.free;
   DoubleFreeCallBack := nil;
   close;
   FHeld.free;
@@ -570,14 +574,12 @@ end;
 function TLogging.InternalMem : UInt64;
 {$IFDEF DELPHI}
 var
-  st : TMemoryManagerUsageSummary;
-{$ELSE}
-  //hs : TFPCHeapStatus;
+  st : THeapStatus;
 {$ENDIF}
 begin
 {$IFDEF DELPHI}
-  GetMemoryManagerUsageSummary(st);
-  result := st.AllocatedBytes + st.OverheadBytes;
+  st := GetHeapStatus;
+  result := st.TotalAllocated + st.Overhead;
 {$ELSE}
   result := TFPCMemoryManagerTracker.totalMemory;
 {$ENDIF}
@@ -666,7 +668,7 @@ begin
 
   checkDay;
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+s
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+FCPU.usage+' '+s
   else
     s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
   if FFileLogger <> nil then
