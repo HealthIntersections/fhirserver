@@ -57,3 +57,4 @@ $BUILD/tools/lazarus/lazbuild toolkit2/fhirtoolkit.lpr --build-mode=linux -q -q 
 echo "## compile server"
 $BUILD/tools/lazarus/lazbuild server/fhirserver.lpr --build-mode=linux -q -q --build-all
 
+find ./exec/64 -type f ! -name "*.*" -exec strip {} \;
