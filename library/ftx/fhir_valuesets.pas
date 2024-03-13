@@ -3618,7 +3618,7 @@ var
   ok : boolean;
   prep : TCodeSystemProviderFilterPreparationContext;
   inner : boolean;
-  s, display, ov, code, vsId : String;
+  s, display, ov, code, vsId, sv : String;
   valueSets : TFslList<TFHIRImportedValueSet>;
   base : TFHIRValueSetW;
   cc : TFhirValueSetComposeIncludeConceptW;
@@ -3697,6 +3697,10 @@ begin
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
           checkSupplements(cs, cset);
           checkCanonicalStatus(expansion, cs, FValueSet);
+          sv := canonical(cs.systemUri, cs.version);
+          if not expansion.hasParam('used-codesystem', sv) then
+            expansion.addParamUri('used-codesystem', sv);
+
           for s in cset.valueSets do
           begin
             //Logging.log(' ...import value set '+s);
