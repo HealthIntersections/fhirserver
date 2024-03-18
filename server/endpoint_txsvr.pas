@@ -446,7 +446,7 @@ begin
     inc(FEndPoint.FStore.FData.FLoaded);
     try
       t := p.resourceV; // prompt to load
-      if name = 'CodeSystems' then
+      if (name = 'CodeSystems') and (FEndPoint <> nil) and (FEndPoint.FStore <> nil) and (FEndPoint.FStore.FServerContext <> nil) then
         FEndPoint.FStore.FServerContext.ValidatorContext.loadCodeSystem(p);
     except
       on e : Exception do
@@ -482,7 +482,8 @@ begin
     process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
   if not Stopped then
     process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
-  FEndPoint.FStore.FData.FLoadingComplete := true;
+  if (FEndPoint <> nil) and (FEndPoint.FStore <> nil) and (FEndPoint.FStore.FData <> nil) then
+    FEndPoint.FStore.FData.FLoadingComplete := true;
 end;
 
 { TTerminologyServerOperationEngine }

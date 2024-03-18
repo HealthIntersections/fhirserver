@@ -155,13 +155,15 @@ end;
 function THTTPCacheManager.respond(ep : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; var summary : String): boolean;
 var
   co : TCachedHTTPResponse;
+  key : string;
 begin
   if not FCaching or UnderDebugger or request.QueryParams.contains('no-cache=please') then
     exit(false);
 
+  key := generateKey(ep, request);
   FLock.Lock;
   try
-    result := FCache.TryGetValue(generateKey(ep, request), co);
+    result := FCache.TryGetValue(key, co);
     if result then
     begin
       co.Link;
@@ -198,11 +200,12 @@ var
   list : TStringList;
   v : TCachedHTTPResponse;
   dt : TDateTime;
+  st : QWord;
 begin
   callback(self, 'Trimming Cache', -1);
   list := TStringList.Create;
   try
-    FLock.Lock;
+    FLock.Lock('trim');
     try
       dt := now - FCacheDwellTime;
       for s in FCache.Keys do
@@ -217,8 +220,11 @@ begin
       FCache.RemoveKeys(list);
 
       i := 1;
+      st := GetTickCount64 + 100;
       while FSize > FMaxSize do
       begin
+        if (st < GetTickCount64) then
+          break;
         for s in FCache.Keys do
         begin
           v := FCache[s];
