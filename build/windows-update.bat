@@ -13,7 +13,5 @@ set "tmp=%1"
 :No1
 
 call build\windows-libraries.bat %tmp%
-pause
 
 call build\windows-fhirserver.bat %tmp%
-pause

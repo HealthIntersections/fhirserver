@@ -44,11 +44,6 @@ exit /b 1
 call build\windows-libraries.bat %tmp%
 rem call build\windows-fhirserver.bat %tmp%
 
-pause
-
-
-pause
-
 utilities\codescan\codescan.exe -check library\version.inc -message "Not run from the right directory - run in the root directory of the repo" || goto :error
 del library\version.inc
 utilities\codescan\codescan.exe -check !library\version.inc -message "setting up the version failed" || goto :error
@@ -56,16 +51,11 @@ utilities\codescan\codescan.exe -version %1
 utilities\codescan\codescan.exe -check library\version.inc -message "saving the version failed" || goto :error
 utilities\codescan\codescan.exe -check release-notes.md -message "Please provide some release notes" || goto :error
 
-pause
-
 utilities\codescan\codescan.exe -proj-version c:\work\fhirserver\server\fhirconsole.lpi -version %1 -debug false || goto :error
 utilities\codescan\codescan.exe -proj-version server\fhirserver.lpi -version %1 -debug true || goto :error
 utilities\codescan\codescan.exe -proj-version server\fhirserver.lpi -version %1 -debug false || goto :error
 utilities\codescan\codescan.exe -proj-version toolkit2\fhirtoolkit.lpi -version %1 -debug false || goto :error
 
-pause
-
-REM OK, do the real builds
 del exec\64\*.exe /q /s 1>nul
 del install\build\*.exe 1>nul
 del release-notes-old.md 1>nul
@@ -92,14 +82,10 @@ del *.o /s /q
 %tmp%\tools\lazarus\lazbuild.exe server/fhirserver.lpr --build-mode=win64-release -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64-release -q -q --build-all
 
-pause
-
 utilities\codescan\codescan.exe -check exec\64\fhirconsole.exe -message "Building the console failed" || goto :error
 utilities\codescan\codescan.exe -check exec\64\fhirserver.debug.exe -message "Building the Debug server failed" || goto :error
 utilities\codescan\codescan.exe -check exec\64\fhirserver.exe -message "Building the server failed" || goto :error
 utilities\codescan\codescan.exe -check exec\64\fhirtoolkit.exe -message "Building the toolkit failed" || goto :error
-
-pause
 
 exec\64\fhirserver.debug.exe -tests -test-settings exec\64\fhir-tests.ini -mode brief
 
@@ -143,9 +129,9 @@ cd ..
 echo ## GitHub Release ##
 git commit -a -m "Release Version %1"
 git push 
-pause
+
 install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirserver-win64-%1.zip#Windows Server Installer Zip" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
-pause
+
 rename release-notes.md release-notes-old.md
 
 utilities\codescan\codescan.exe -next-version %1
