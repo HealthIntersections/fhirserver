@@ -686,7 +686,7 @@ var
 begin
   inherited makeWebEndPoint(common);
   FXIGServer := TFHIRXIGWebServer.Create(config.name, config['path'].value, common);
-  (FXIGServer as TFHIRXIGWebServer).FContext := TFHIRXIGWebContext.create(Database.link);
+   (FXIGServer as TFHIRXIGWebServer).FContext := TFHIRXIGWebContext.create(Database.link);
   WebEndPoint := FXIGServer;
   result := FXIGServer.link;
 end;
