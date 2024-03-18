@@ -208,14 +208,14 @@ begin
     FLock.Lock('trim');
     try
       dt := now - FCacheDwellTime;
+      FSize := 0;
       for s in FCache.Keys do
       begin
         v := FCache[s];
         if (v.FLastTouched < dt) then
-        begin
-          list.add(s);
-          FSize := FSize - v.Size;
-        end;
+          list.add(s)
+        else
+          inc(FSize, v.size);
       end;
       FCache.RemoveKeys(list);
 
