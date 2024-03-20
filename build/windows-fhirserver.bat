@@ -38,19 +38,6 @@ del *.o /s /q
 %tmp%\tools\lazarus\lazbuild.exe server/fhirserver.lpr --build-mode=win64 -q -q --build-all
 %tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64 -q -q --build-all
     
-copy exec\64\fhirserver.exe exec\64\FHIRServer.debug.exe
-del exec\64\fhirserver.exe 
-copy exec\64\fhirconsole.exe exec\64\FHIRConsole.debug.exe
-del exec\64\fhirconsole.exe 
-copy exec\64\fhirtoolkit.exe exec\64\FHIRToolkit.debug.exe
-del exec\64\fhirtoolkit.exe 
-
-del *.ppu /s /q
-del *.o /s /q
-
-%tmp%\tools\lazarus\lazbuild.exe server/fhirconsole.lpi --build-mode=win64-release -q -q --build-all
-%tmp%\tools\lazarus\lazbuild.exe server/fhirserver.lpr --build-mode=win64-release -q -q --build-all
-%tmp%\tools\lazarus\lazbuild.exe toolkit2/fhirtoolkit.lpr --build-mode=win64-release -q -q --build-all
     
 :: =========================================================================================
 :: build the web file
