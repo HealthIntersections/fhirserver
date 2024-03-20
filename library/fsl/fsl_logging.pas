@@ -141,6 +141,7 @@ Type
     FLogToConsole : boolean;
     FFileLogger : TLogger;
     FListeners : TFslList<TLogListener>;
+    FShuttingDown: boolean;
     FStarting: boolean;
     FStartTime : TDateTime;
     FLastday : integer;
@@ -153,6 +154,7 @@ Type
     procedure checkDay;
     procedure close;
     procedure LogDoubleFreeCallBack(name1, name2: String);
+    procedure SetShuttingDown(AValue: boolean);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -181,6 +183,8 @@ Type
     function MemoryStatus(full : boolean) : String;
 
     function InternalMem : UInt64;
+
+    property shuttingDown : boolean read FShuttingDown write SetShuttingDown;
   end;
 
 var
@@ -505,6 +509,12 @@ end;
 procedure TLogging.LogDoubleFreeCallBack(name1, name2 : String);
 begin
   log('Attempt to free a class a second time (of type '+name1+' or '+name2+'?)');
+end;
+
+procedure TLogging.SetShuttingDown(AValue: boolean);
+begin
+  if FShuttingDown=AValue then Exit;
+  FShuttingDown:=AValue;
 end;
 
 procedure TLogging.addListener(listener: TLogListener);

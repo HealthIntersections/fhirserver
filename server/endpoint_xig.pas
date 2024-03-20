@@ -143,7 +143,7 @@ type
     procedure downloadAndReload;
     function dateBuilt : String;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -537,9 +537,9 @@ end;
 
 { TXIGServerEndPoint }
 
-constructor TXIGServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
+constructor TXIGServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited Create(config, settings, nil, common, nil, i18n);
+  inherited Create(config, settings, db, common, nil, i18n);
 end;
 
 destructor TXIGServerEndPoint.Destroy;
@@ -686,7 +686,7 @@ var
 begin
   inherited makeWebEndPoint(common);
   FXIGServer := TFHIRXIGWebServer.Create(config.name, config['path'].value, common);
-   (FXIGServer as TFHIRXIGWebServer).FContext := TFHIRXIGWebContext.create(Database.link);
+  (FXIGServer as TFHIRXIGWebServer).FContext := TFHIRXIGWebContext.create(Database.link);
   WebEndPoint := FXIGServer;
   result := FXIGServer.link;
 end;
