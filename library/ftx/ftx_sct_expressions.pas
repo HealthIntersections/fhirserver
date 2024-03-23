@@ -1009,11 +1009,15 @@ begin
   SetLength(result, MAX_TERM_LENGTH);
   fixed('"');
   i := 0;
-  while peek <> '"' do
+  while (peek <> '"') and (peek <> #0) do
   begin
     inc(i);
+    if (i > MAX_TERM_LENGTH) then   
+      raise ETerminologyError.Create('Constant too long (>'+inttostr(MAX_TERM_LENGTH)+' chars) at character '+inttostr(cursor), itInvalid);
     result[i] := next;
   end;
+  if (peek = #0) then
+    raise ETerminologyError.Create('Unterminated Constant at character '+inttostr(cursor), itInvalid);
   fixed('"');
   SetLength(result, i);
 end;
