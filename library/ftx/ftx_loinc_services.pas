@@ -2211,9 +2211,12 @@ begin
           for name in names do
           begin
             s := Desc.GetEntry(name, ilang);
-            for l in allLangs do
-              if (l = ilang) then
-                list.addDesignation(false, true, FLangs[iLang], s.trim);
+            if (s <> '') then
+            begin
+              for l in allLangs do
+                if (l = ilang) then
+                  list.addDesignation(false, true, FLangs[iLang], s.trim);
+            end;
           end;
         end;
       End;
