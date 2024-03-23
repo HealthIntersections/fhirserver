@@ -168,7 +168,9 @@ Type
     // Reference counted using Interlocked* Windows API functions.
     FFslObjectReferenceCount : TFslReferenceCount;
     FTagObject : TObject;
+    {$IFDEF SMART_REF_COUNTING}
     FOwningThread : TThreadId;  // used to determine if an object has been used on more than one thread, in which case reference counting is thread safe (genuine speed difference)
+    {$ENDIF}
     FMagic : integer; // used to stop recursion measuring object size.
     {$IFDEF OBJECT_TRACKING}
     // FNamedClass is a workaround for the delphi debugger not showing the actual class of an object that is polymorphic
@@ -182,7 +184,9 @@ Type
     FNamedInstance : string;
     {$ENDIF}
 
+    {$IFDEF SMART_REF_COUNTING}
     function ObjectCrossesThreads : boolean;
+    {$ENDIF}
     function dumpSummary : String;
     function updatedDebugInfo : String;
   Protected
@@ -499,7 +503,9 @@ Type
       TItemArray = array of TItem;
   private
     FFslObjectReferenceCount : TFslReferenceCount;
+    {$IFDEF SMART_REF_COUNTING}
     FOwningThread : TThreadId;
+    {$ENDIF}
     FItems: TItemArray;
     FCount: Integer;
     FGrowThreshold: Integer;
@@ -522,7 +528,9 @@ Type
     procedure DoSetValue(Index: Integer; const Value: T);
     function DoRemove(const Key: String; HashCode: Integer; Notification: TCollectionNotification): T;
     function InCircularRange(Bottom, Item, TopInc: Integer): Boolean;
+    {$IFDEF SMART_REF_COUNTING}
     function ObjectCrossesThreads : boolean;
+    {$ENDIF}
   private
     function GetEmpty: Boolean;
   private
@@ -666,11 +674,15 @@ Type
   TFslStringDictionary = class (TDictionary<String, String>)
   private
     FFslObjectReferenceCount : TFslReferenceCount;
+    {$IFDEF SMART_REF_COUNTING}
     FOwningThread : TThreadId;
+    {$ENDIF}
     FMagic : integer;
     function GetValue(const Key: String): String;
     procedure SetValue(const Key, Value: String);
+    {$IFDEF SMART_REF_COUNTING}
     function ObjectCrossesThreads : boolean;
+    {$ENDIF}
   public
     // Cannot be virtual as they are allowed to be called from Nil or invalid objects (but will assert).
     constructor Create;
@@ -1043,8 +1055,10 @@ var
   isNil : boolean;
   {$ENDIF}
 Begin
-  Inherited;
+  Inherited;               
+  {$IFDEF SMART_REF_COUNTING}
   FOwningThread := GetCurrentThreadId;
+  {$ENDIF}
 
   {$IFDEF OBJECT_TRACKING}
   if (className = CLASS_NAME_OF_INTEREST) then
@@ -1221,6 +1235,7 @@ Begin
 
     Assert(Invariants('Free', TFslObject));
 
+    {$IFDEF SMART_REF_COUNTING}
     if ObjectCrossesThreads then
       done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
     else
@@ -1228,6 +1243,9 @@ Begin
       dec(FFslObjectReferenceCount);
       done := FFslObjectReferenceCount < 0;
     end;
+    {$ELSE}
+    done := (InterlockedDecrement(FFslObjectReferenceCount) < 0);
+    {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
     if (classname = CLASS_NAME_OF_INTEREST) then
       self.freeNotification(done);
@@ -1317,6 +1335,7 @@ Begin
   Begin
     Assert(Invariants('Unlink', TFslObject));
 
+    {$IFDEF SMART_REF_COUNTING}
     if ObjectCrossesThreads then
       done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
     else
@@ -1324,6 +1343,9 @@ Begin
       dec(FFslObjectReferenceCount);
       done := FFslObjectReferenceCount < 0;
     end;
+    {$ELSE}
+    done := (InterlockedDecrement(FFslObjectReferenceCount) < 0);
+    {$ENDIF}
     If done Then
     Begin
       Destroy;
@@ -1341,10 +1363,14 @@ Begin
   Begin
     Assert(Invariants('Link', TFslObject));
 
+    {$IFDEF SMART_REF_COUNTING}
     if ObjectCrossesThreads then
       InterlockedIncrement(FFslObjectReferenceCount)
     else
       inc(FFslObjectReferenceCount);
+    {$ELSE}
+    InterlockedIncrement(FFslObjectReferenceCount);
+    {$ENDIF}
     {$IFDEF OBJECT_TRACKING}
     if self.classname = CLASS_NAME_OF_INTEREST then
       freeNotification(false);
@@ -1386,7 +1412,9 @@ Begin
   Begin
     Assert(Invariants('_AddRef', TFslObject));
 
+    {$IFDEF SMART_REF_COUNTING}
     FOwningThread := NULL_THREAD;
+    {$ENDIF}
     Result := InterlockedIncrement(FFslObjectReferenceCount);
   End
   Else
@@ -1401,7 +1429,9 @@ Begin
   Begin
     Assert(Invariants('_Release', TFslObject));
 
+    {$IFDEF SMART_REF_COUNTING}
     FOwningThread := NULL_THREAD;
+    {$ENDIF}
     Result := InterlockedDecrement(FFslObjectReferenceCount);
 
     If Result < 0 Then
@@ -1523,6 +1553,7 @@ begin
   {$ENDIF}
 end;
 
+{$IFDEF SMART_REF_COUNTING}
 function TFslObject.ObjectCrossesThreads: boolean;
 var
   t : TThreadID;
@@ -1537,6 +1568,7 @@ begin
       FOwningThread := NULL_THREAD;
   end;
 end;
+{$ENDIF}
 
 function TFslObject.dumpSummary: String;
 begin
@@ -2734,7 +2766,7 @@ begin
   Result := Self;
 
   If Assigned(Self) Then
-    if ObjectCrossesThreads then
+    if {$IFDEF SMART_REF_COUNTING} ObjectCrossesThreads {$ELSE} true {$ENDIF} then
       InterlockedIncrement(FFslObjectReferenceCount)
     else
       inc(FFslObjectReferenceCount);
@@ -2748,6 +2780,7 @@ begin
     other.Add(T(TFslObject(item).link));
 end;
 
+{$IFDEF SMART_REF_COUNTING}
 function TFslMap<T>.ObjectCrossesThreads: boolean;
 var
   t : TThreadID;
@@ -2762,7 +2795,7 @@ begin
       FOwningThread := NULL_THREAD;
   end;
 end;
-
+{$ENDIF}
 procedure TFslMap<T>.ValueNotify(const Value: T; Action: TCollectionNotification);
 begin
   if Assigned(FOnValueNotify) then
@@ -2772,7 +2805,9 @@ end;
 constructor TFslMap<T>.Create(name : String = ''; ACapacity: Integer = 0);
 begin
   inherited Create;
+  {$IFDEF SMART_REF_COUNTING}
   FOwningThread := GetCurrentThreadId;
+  {$ENDIF}
   FName := name;
   if ACapacity < 0 then
     raise EArgumentOutOfRangeException.CreateRes(@SArgumentOutOfRange);
@@ -3008,7 +3043,7 @@ Begin
     if FFslObjectReferenceCount = -1 then
       raise EFslException.Create('Attempt to free a class a second time (of type '+className+'?)');
 
-    if ObjectCrossesThreads then
+    if {$IFDEF SMART_REF_COUNTING} ObjectCrossesThreads  {$ELSE} true {$ENDIF} then
       done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
     else
     begin
@@ -3311,7 +3346,9 @@ end;
 constructor TFslStringDictionary.Create;
 begin
   inherited Create;
+  {$IFDEF SMART_REF_COUNTING}
   FOwningThread := GetCurrentThreadId;
+  {$ENDIF}
 end;
 
 procedure TFslStringDictionary.free;
@@ -3323,7 +3360,7 @@ Begin
     if FFslObjectReferenceCount = -1 then
       raise EFslException.Create('Attempt to free a class a second time (of type '+className+'?)');
 
-    if ObjectCrossesThreads then
+    if {$IFDEF SMART_REF_COUNTING} ObjectCrossesThreads {$ELSE} true {$ENDIF} then
       done := (InterlockedDecrement(FFslObjectReferenceCount) < 0)
     else
     begin
@@ -3345,12 +3382,13 @@ function TFslStringDictionary.Link: TFslStringDictionary;
 begin
   Result := Self;
   If Assigned(Self) Then
-    if ObjectCrossesThreads then
+    if {$IFDEF SMART_REF_COUNTING} ObjectCrossesThreads {$ELSE} true {$ENDIF} then
       InterlockedIncrement(FFslObjectReferenceCount)
     else
       inc(FFslObjectReferenceCount);
 end;
 
+{$IFDEF SMART_REF_COUNTING}
 function TFslStringDictionary.ObjectCrossesThreads: boolean;
 var
   t : TThreadID;
@@ -3365,6 +3403,7 @@ begin
       FOwningThread := NULL_THREAD;
   end;
 end;
+{$ENDIF}
 
 procedure TFslStringDictionary.SetValue(const Key, Value: String);
 begin
