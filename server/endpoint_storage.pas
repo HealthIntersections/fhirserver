@@ -657,7 +657,7 @@ begin
       status(atsError, e.Message);
     end;
   end;
-  FServer.Common.Lock.Lock;
+  FServer.Common.Lock.Lock('AsyncTaskThread.Execute');
   try
     FServer.FThreads.Remove(self);
   finally
@@ -752,7 +752,7 @@ var
   i : integer;
 begin
   done := false;
-  Common.Lock.Lock;
+  Common.Lock.Lock('StopAsyncTasks1');
   try
     for task in FThreads do
     begin
@@ -769,7 +769,7 @@ begin
       sleep(100);
       inc(i);
       done := true;
-      Common.Lock.Lock;
+      Common.Lock.Lock('StopAsyncTasks2');
       try
         for task in FThreads do
           done := false;
@@ -779,7 +779,7 @@ begin
     until done or (i = 10);
     if not done then
     begin
-      Common.Lock.Lock;
+      Common.Lock.Lock('StopAsyncTasks3');
       try
         for task in FThreads do
         begin
@@ -2760,7 +2760,7 @@ begin
   if not (request.CommandType in [fcmdSearch, fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem, fcmdTransaction, fcmdBatch, fcmdUpload, fcmdOperation]) then
     raise EFHIRException.CreateLang('NO_ASYNC', request.LangList);
   thread := TAsyncTaskThread.Create(self);
-  Common.Lock.Lock;
+  Common.Lock.Lock('ProcessAsyncRequest');
   try
     FThreads.add(thread);
   finally

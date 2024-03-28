@@ -219,26 +219,8 @@ begin
       end;
       FCache.RemoveKeys(list);
 
-      i := 1;
-      st := GetTickCount64 + 100;
-      while FSize > FMaxSize do
-      begin
-        if (st < GetTickCount64) then
-          break;
-        for s in FCache.Keys do
-        begin
-          v := FCache[s];
-          if v.HitCount <= i then
-          begin
-            list.Add(s);
-            FSize := FSize - v.Size;
-          end;
-          if (FSize < FMaxSize) then
-            break;
-        end;
-        FCache.RemoveKeys(list);
-        list.clear;
-        inc(i);
+      if FSize > FMaxSize then
+        FCache.clear;
       end;
     finally
       FLock.Unlock;
