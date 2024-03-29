@@ -18,8 +18,8 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
-      <MinorVersionNr Value="4"/>
-      <RevisionNr Value="3"/>
+      <MinorVersionNr Value="5"/>
+      <RevisionNr Value="0"/>
       <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="8">
