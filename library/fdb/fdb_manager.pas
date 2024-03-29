@@ -1375,7 +1375,7 @@ end;
 
 function TFDBManager.GetCurrentCount: Integer;
 begin
-  FLock.Enter;
+  FLock.Enter('GetCurrentCount');
   try
     result := FConnections.Count;
   finally
@@ -1387,7 +1387,7 @@ procedure TFDBManager.CheckWait;
 begin
   if FWaitCreate then
   begin
-    FLock.Lock;
+    FLock.Lock('CheckWait1');
     try
       inc(FThreadWaitCount);
     finally
@@ -1397,7 +1397,7 @@ begin
       if FSemaphore.WaitFor(DEFAULT_CONNECTION_WAIT_LENGTH) = wrError then
         raise EDBException.Create('['+Name+'] fdb_manager Wait Failed' {$IFDEF WINDOWS}+' - '+ ErrorAsString(GetLastError){$ENDIF});
     finally
-      FLock.Lock;
+      FLock.Lock('CheckWait2');
       try
         dec(FThreadWaitCount);
       finally
@@ -1425,7 +1425,7 @@ begin
       except
         on e:exception do
         begin
-          FLock.Enter;
+          FLock.Enter('getConnection1');
           Try
             FServerIsAvailable := False;
             FLastServerError := e.message;
@@ -1436,7 +1436,7 @@ begin
           raise;
         end;
       end;
-      FLock.Enter;
+      FLock.Enter('getConnection2');
       Try
         FConnections.Add(result);
         FServerIsAvailable := true;
@@ -1446,7 +1446,7 @@ begin
       End;
 
       result.FNoFree := true;
-      FLock.Enter;
+      FLock.Enter('getConnection3');
       try
         FWaitCreate := (FMaxConnCount > 0) and (FConnections.Count = FMaxConnCount);
       finally
@@ -1460,7 +1460,7 @@ begin
       raise EDBException.Create('No Database Connections Available for "'+AUsage+'" (used: '+GetConnSummary+')');
       end;
     end;
-  FLock.Enter; // lock this because of debugger
+  FLock.Enter('getConnection4'); // lock this because of debugger
   try
     result.FUsage := AUsage;
     result.FUsed := now;
@@ -1502,7 +1502,7 @@ begin
     raise EDBException.Create('Attempt to release ODBC connection twice');
   AConn.FCurrentlyInUse := false;
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, nil, '');
-  FLock.Enter; // must lock because of the debugger
+  FLock.Enter('release'); // must lock because of the debugger
   try
     LDispose := (FConnections.count > FMaxConnCount) and (FMaxConnCount > 0);
     LIndex := FInUse.IndexOf(AConn);
@@ -1561,7 +1561,7 @@ begin
 
   FDBLogger.RecordUsage(AConn.Usage, AConn.FUsed, AConn.FRowCount, AConn.FPrepareCount, AException, AErrMsg);
 
-  FLock.Enter; // must lock because of the debugger
+  FLock.Enter('error'); // must lock because of the debugger
   try
     LIndex := FInUse.IndexOf(AConn);
     if LIndex > -1 then
@@ -1594,7 +1594,7 @@ var
   i : integer;
 begin
   result := '';
-  FLock.Enter;
+  FLock.Enter('GetConnSummary');
   try
     for i := 0 to FInUse.Count - 1 do
       begin
@@ -1615,7 +1615,7 @@ end;
 
 function TFDBManager.GetCurrentUse: Integer;
 begin
-  FLock.Enter;
+  FLock.Enter('GetCurrentUse');
   try
     result := FInUse.Count;
   finally
@@ -1630,7 +1630,7 @@ end;
 
 function TFDBManager.PopAvail: TFDBConnection;
 begin
-  FLock.Enter;
+  FLock.Enter('PopAvail');
   try
     if FAvail.Count > 0 then
       begin
@@ -1718,7 +1718,7 @@ end;
 
 procedure TFDBManager.SetMaxConnCount(const Value: Integer);
 begin
-  FLock.Enter;
+  FLock.Enter('SetMaxConnCount');
   try
     FMaxConnCount := Value;
   finally
@@ -2098,7 +2098,7 @@ end;
 
 function TFDBManager.ServerErrorStatus: String;
 Begin
-  FLock.Enter;
+  FLock.Enter('ServerErrorStatus');
   try
     if ServerIsAvailable then
       result := ''

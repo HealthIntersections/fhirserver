@@ -221,7 +221,6 @@ begin
 
       if FSize > FMaxSize then
         FCache.clear;
-      end;
     finally
       FLock.Unlock;
     end;

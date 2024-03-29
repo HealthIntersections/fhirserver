@@ -4278,10 +4278,10 @@ begin
     begin
       pdv := ((focus as TFhirValueSetExpansionContains5).element as TFhirValueSetExpansionContains).property_list.append;
       pdv.code := code;
-      pdv.value := value as TFHIRDataType;
+      pdv.value := (value as TFHIRDataType).link;
     end
     else
-      pdv.value := value as TFHIRDataType;
+      pdv.value := (value as TFHIRDataType).link;
   finally
     value.free;
   end;
