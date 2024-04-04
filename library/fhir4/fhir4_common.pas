@@ -177,6 +177,7 @@ type
     function code : TFhirIssueType; override;
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; free : boolean); override;
     procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
+    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, msgId, message : String; code : TOpIssueCode; addIfDuplicate : boolean = false); overload; override;
     function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
@@ -1406,6 +1407,36 @@ begin
   iss.details.text := message;
   iss.locationList.Add(path);
   iss.expressionList.Add(path);
+end;
+
+procedure TFhirOperationOutcome4.addIssue(level: TIssueSeverity;
+  cause: TFhirIssueType; path, msgId, message: String; code: TOpIssueCode;
+  addIfDuplicate: boolean);
+var
+  iss : TFhirOperationOutcomeIssue;
+begin
+  if (message = '') then
+    raise EFslException.Create('Attempt to create an issue with no message');
+  if (cause = itNull) then
+    raise EFslException.Create('Attempt to create an issue with no cause');
+
+  if not addIfDuplicate then
+  begin
+    for iss in (Fres as TFhirOperationOutcome).issueList do
+      if (iss.details <> nil) and (iss.details.text = message) then
+        exit();
+  end;
+
+  iss := (Fres as TFhirOperationOutcome).issueList.Append;
+  iss.code:= ExceptionTypeTranslations[cause];
+  iss.severity := ISSUE_SEVERITY_MAP2[level];
+  iss.details := TFHIRCodeableConcept.Create;
+  if (code <> oicVoid) then
+    iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[code], '');
+  iss.details.text := message;
+  iss.locationList.Add(path);
+  iss.expressionList.Add(path);
+  iss.addExtension('http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id', msgid);
 end;
 
 function TFhirOperationOutcome4.code: TFhirIssueType;
