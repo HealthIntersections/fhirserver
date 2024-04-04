@@ -205,7 +205,7 @@ end;
 
 function TQuestionnaireCache.cacheSize(magic : integer) : UInt64;
 begin
-  FLock.Lock;
+  FLock.Lock('cacheSize');
   try
     result := FQuestionnaires.sizeInBytes(magic) + FForms.sizeInBytes(magic);
   finally
@@ -227,7 +227,7 @@ end;
 
 procedure TQuestionnaireCache.clearCache;
 begin
-  FLock.Lock;
+  FLock.Lock('clearCache');
   try
     FQuestionnaires.Clear;
     FForms.Clear;
@@ -505,7 +505,7 @@ end;
 
 procedure TFHIRServerContext.seeMap(map: TFHIRStructureMapW);
 begin
-  FLock.Lock;
+  FLock.Lock('seeMap');
   try
     FMaps.AddOrSetValue(map.url, map);
   finally
@@ -515,7 +515,7 @@ end;
 
 procedure TFHIRServerContext.seeNamingSystem(key : integer; ns: TFhirNamingSystemW);
 begin
-  FLock.Lock;
+  FLock.Lock('seeNamingSystem');
   try
     FNamingSystems.AddOrSetValue(inttostr(key), ns);
   finally
@@ -599,7 +599,7 @@ function TFHIRServerContext.getMaps: TFslMap<TFHIRStructureMapW>;
 var
   s : String;
 begin
-  FLock.Lock;
+  FLock.Lock('getMaps');
   try
     result := TFslMap<TFHIRStructureMapW>.Create('maps');
     for s in FMaps.Keys do
@@ -614,7 +614,7 @@ var
   ns : TFHIRNamingSystemW;
 begin
   result := '';
-  FLock.Lock;
+  FLock.Lock('oid2Uri');
   try
     result := UriForKnownOid(oid);
     if (result = '') then

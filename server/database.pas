@@ -6712,7 +6712,7 @@ function TFHIRNativeStorageService.TrackValueSet(id: String; conn : TFDBConnecti
 var
   s : String;
 begin
-  FLock.Lock;
+  FLock.Lock('TrackValueSet');
   try
     if not FRegisteredValueSets.TryGetValue(id, s) then
       s := '';
@@ -7205,7 +7205,7 @@ end;
 
 procedure TFHIRNativeStorageService.QueueResource(session : TFHIRSession; r: TFHIRResourceV);
 begin
-  FLock.Lock;
+  FLock.Lock('QueueResource');
   try
     FQueue.add(TFHIRQueuedResource.Create(session.Link, r.Link));
   finally

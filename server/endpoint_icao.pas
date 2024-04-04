@@ -181,7 +181,7 @@ var
   i, t : integer;
   obj : TPDFObject;
 begin
-  FPDFLock.Lock; // Pdfium is not thread safe
+  FPDFLock.Lock('readPDF'); // Pdfium is not thread safe
   try
     pdf := TPdfDocument.Create;
     try

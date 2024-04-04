@@ -621,7 +621,7 @@ begin
   end;
   xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, true, false));
   try
-    FXIGServer.FLock.lock;
+    FXIGServer.FLock.lock('downloadAndReload');
     try
       oxig := FXIGServer.FContext;
       FXIGServer.FContext := xig.link;
@@ -1402,7 +1402,7 @@ end;
 
 function TFHIRXIGWebServer.getContext: TFHIRXIGWebContext;
 begin
-  FLock.Lock;
+  FLock.Lock('getContext');
   try
     result := FContext.link;
   finally

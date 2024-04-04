@@ -132,7 +132,7 @@ end;
 
 procedure TFHIRSessionManager.Clear;
 begin
-  FLock.Lock;
+  FLock.Lock('Clear');
   try
     FSessions.Clear;
   finally

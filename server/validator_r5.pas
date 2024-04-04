@@ -210,7 +210,7 @@ begin
     FCompartments.Add(r.url, TFhirCompartmentDefinition(r.resource).link)
   else if r.fhirType = 'Questionnaire' then
   begin
-    FLock.lock;
+    FLock.lock('SeeResourceProxy');
     try
       if FQuestionnaires.ContainsKey(r.id) then
         FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
@@ -303,7 +303,7 @@ var
 begin
   if url.StartsWith('Questionnaire/') then
     url := url.Substring(14);
-  FLock.lock;
+  FLock.lock('getQuestionnaire');
   try
     if FQuestionnaires.TryGetValue(url, q) then
       exit(q.Link)

@@ -367,7 +367,7 @@ begin
     exit;
   If length(bytes) = 0 Then
     Exit;
-  FLock.Lock;
+  FLock.Lock('WriteToLog');
   Try
     sName := ProcessFileName;
     size := 0;
@@ -627,7 +627,7 @@ begin
     if FLogToConsole then
     begin
       try
-        FLock.Lock;
+        FLock.Lock('checkDay');
         try
           System.Writeln(s);
         finally
@@ -665,7 +665,7 @@ procedure TLogging.log(s: String);
 var
   listener : TLogListener;
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     if FWorkingLine <> '' then
     begin
@@ -686,7 +686,7 @@ begin
   if FLogToConsole then
   begin
     try
-      FLock.Lock;
+      FLock.Lock('log2');
       try
         System.Writeln(s);
       finally
@@ -719,7 +719,7 @@ begin
   if FLogToConsole then
   begin
     try
-      FLock.Lock;
+      FLock.Lock('start');
       try
         System.Write(s);
       finally
@@ -746,7 +746,7 @@ begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
   begin
-    FLock.Lock;
+    FLock.Lock('continue');
     try
       System.Write(s);
     finally
@@ -770,7 +770,7 @@ var
 begin
   if FLogToConsole then
   begin
-    FLock.Lock;
+    FLock.Lock('finish');
     try
       System.Writeln(s);
     finally
@@ -797,7 +797,7 @@ begin
     except
     end;
   end;
-  FLock.Lock;
+  FLock.Lock('finish2');
   try
     for h in FHeld do
       log(h);

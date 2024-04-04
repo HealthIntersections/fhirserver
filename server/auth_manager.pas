@@ -251,7 +251,7 @@ var
   s : String;
 begin
   t := now;
-  FLock.Lock;
+  FLock.Lock('MakeLoginToken');
   try
     login := TFhirLoginToken.Create;
     try
@@ -291,7 +291,7 @@ function TAuth2Server.nonceIsUnique(nonce: String): boolean;
 var
   i : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('nonceIsUnique');
   try
     result := not FNonceList.Find(nonce, i);
     if result then
@@ -1494,7 +1494,7 @@ function TAuth2Server.CheckLoginToken(state: string; var original : String; var 
 var
   token : TFhirLoginToken;
 begin
-  FLock.Lock;
+  FLock.Lock('CheckLoginToken');
   try
     result := FLoginTokens.TryGetValue(state, token);
     if result then

@@ -168,7 +168,7 @@ end;
 
 procedure TFHIRTelnetServer.log(const msg: String);
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     FLog.Add(msg);
   finally
@@ -184,7 +184,7 @@ begin
   ctxt.FStrings.clear;
   ctxt.FClientList.clear;
 
-  FLock.Lock;
+  FLock.Lock('internalThread');
   try
     ctxt.FStrings.Assign(FLog);
     FLog.clear;
@@ -246,7 +246,7 @@ begin
   SetThreadName('Telnet Client at '+AThread.Binding.PeerIP);
   tth := TTelnetThreadHelper.Create(self, AThread);
   try
-    FLock.Lock;
+    FLock.Lock('telnetExecute');
     try
       FClients.Add(tth.Link);
     finally
@@ -255,7 +255,7 @@ begin
     try
       tth.execute();
     finally
-      FLock.Lock;
+      FLock.Lock('telnetExecute2');
       try
         FClients.Remove(tth)
       finally

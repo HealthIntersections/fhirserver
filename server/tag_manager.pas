@@ -87,7 +87,7 @@ procedure TFHIRTagManager.crossLink;
 var
   i : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('crossLink');
   try
     for i := 0 to FTags.Count - 1 do
       FTagsByKey.add(inttostr(FTags[i].key), FTags[i].Link);
@@ -117,7 +117,7 @@ end;
 
 function TFHIRTagManager.add(key: integer; category: TFHIRTagCategory; uri, code, display: String): TFHIRTag;
 begin
-  FLock.Lock;
+  FLock.Lock('add');
   try
     result := FTags.addTag(key, category, uri, code, display);
   finally

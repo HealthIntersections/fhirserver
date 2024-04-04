@@ -153,7 +153,7 @@ end;
 
 procedure TFHIRServerController.log(const msg : String);
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     FMessagesIn.Add(msg);
   finally
@@ -167,7 +167,7 @@ var
   s : String;
 begin
   st := false;
-  FLock.Lock;
+  FLock.Lock('Ping');
   try
     if FPendingStatus <> FStatus then
     begin

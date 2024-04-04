@@ -157,7 +157,7 @@ begin
     event.userId := userId;
     event.ip := ip;
     event.userAgent := userAgent;
-    FLock.Lock;
+    FLock.Lock('recordEvent');
     try
       FEvents.Add(event.Link);
     finally
@@ -185,7 +185,7 @@ begin
   FWorking := true;
   b := TFslStringBuilder.Create;
   try
-    FLock.Lock;
+    FLock.Lock('commit');
     try
       inc(FCycle);
       for event in FEvents do
@@ -215,7 +215,7 @@ begin
     if b.ToString = '' then
       exit;
     post(b.ToString);
-    FLock.Lock;
+    FLock.Lock('commit2');
     try
       {$IFDEF FPC}
       FEvents.removeAll(filter);

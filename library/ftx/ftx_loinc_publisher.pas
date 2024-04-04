@@ -441,7 +441,7 @@ Begin
 
 
     html.Line;
-    Lock.Lock;
+    Lock.Lock('PublishHome');
     Try
       if FSearchCache.Count <> 0 Then
       Begin
@@ -953,7 +953,7 @@ var
   iFlags, ilang : Byte;
   code, text, parents, children, concepts, descendentConcepts, stems: Cardinal;
 begin
-  Lock.Lock;
+  Lock.Lock('PublishSearch');
   Try
     if FSearchCache.Find(sText, i) Then
       a := TSearchCache(FSearchCache.Objects[i]).a

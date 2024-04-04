@@ -138,7 +138,7 @@ begin
       co.LoadFromStream(response.ContentStream);
       co.Summary := summary;
       co.FLastTouched := now;
-      FLock.Lock;
+      FLock.Lock('recordResponse');
       try
         FCache.AddOrSetValue(key, co.Link);
         inc(FSize, co.Size);
@@ -161,7 +161,7 @@ begin
     exit(false);
 
   key := generateKey(ep, request);
-  FLock.Lock;
+  FLock.Lock('respond');
   try
     result := FCache.TryGetValue(key, co);
     if result then
@@ -237,7 +237,7 @@ end;
 
 procedure THTTPCacheManager.Clear;
 begin
-  FLock.Lock;
+  FLock.Lock('Clear');
   try
     FCache.Clear;
     FSize := 0;

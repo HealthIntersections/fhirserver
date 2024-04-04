@@ -966,7 +966,7 @@ procedure TTerminologyServerStore.SetLoading(AValue: boolean);
 begin
   if FLoading then
   begin
-    FLock.Lock;
+    FLock.Lock('SetLoading');
     try
       UpdateConceptMaps;
     finally
@@ -1246,7 +1246,7 @@ var
   state : integer; // go = 0, load = 1, wait for loading = 2, exception = 3
   msg : String;
 begin
-  FLock.Lock;
+  FLock.Lock('checkCSLoaded');
   try
     case codesystem.LoadingState of
       cseNotLoaded : // first encounter
@@ -1287,7 +1287,7 @@ begin
         end;
 
       finally
-        FLock.Lock;
+        FLock.Lock('checkCSLoaded2');
         try
           if msg = '' then
             codesystem.LoadingState := cseLoaded
@@ -1307,7 +1307,7 @@ begin
       begin
         repeat
           sleep(100);
-          FLock.Lock;
+          FLock.Lock('checkCSLoaded3');
           try        
             case codesystem.LoadingState of
               cseNotLoaded: raise ETerminologyError.create('Impossible State NotLoaded', itException);
@@ -1480,7 +1480,7 @@ var
   v : String;
 begin
   FCommonTerminologies.listVersions(url, list);
-  FLock.Lock;
+  FLock.Lock('listVersions');
   try
     for cs in FCodeSystems.list do
     begin
@@ -1499,7 +1499,7 @@ end;
 
 function TTerminologyServerStore.NextConceptKey: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('NextConceptKey');
   try
     inc(FLastConceptKey);
     result := FLastConceptKey;
@@ -1510,7 +1510,7 @@ end;
 
 function TTerminologyServerStore.NextValueSetKey: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('NextValueSetKey');
   try
     inc(FLastValueSetKey);
     result := FLastValueSetKey;
@@ -1521,7 +1521,7 @@ end;
 
 function TTerminologyServerStore.NextValueSetMemberKey: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('NextValueSetMemberKey');
   try
     inc(FLastValueSetMemberKey);
     result := FLastValueSetMemberKey;
@@ -1532,7 +1532,7 @@ end;
 
 function TTerminologyServerStore.NextClosureEntryKey: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('NextClosureEntryKey');
   try
     inc(FLastClosureEntryKey);
     result := FLastClosureEntryKey;
@@ -1543,7 +1543,7 @@ end;
 
 function TTerminologyServerStore.NextClosureKey: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('NextClosureKey');
   try
     inc(FLastClosureKey);
     result := FLastClosureKey;

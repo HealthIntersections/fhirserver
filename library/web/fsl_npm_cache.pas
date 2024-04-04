@@ -417,7 +417,7 @@ begin
       FolderDelete(s);
       FIni.DeleteKey('packages', s);
     end;
-  FLock.Lock;
+  FLock.Lock('clearCache');
   try
     FCache.Clear;
   finally
@@ -885,7 +885,7 @@ function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackage;
 var
   found : boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('loadPackageFromCache');
   try
     found := FCache.TryGetValue(folder, result);
     if found then
@@ -901,7 +901,7 @@ begin
     result := TNpmPackage.fromFolder(folder);
     if FCaching then
     begin
-      FLock.Lock;
+      FLock.Lock('loadPackageFromCache2');
       try
         FCache.add(folder, result.Link);
       finally

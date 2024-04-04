@@ -523,7 +523,7 @@ function TFhirWebServer.GetCurrentRequestReport: String;
 var
   conn : TFHIRHTTPConnectionInfo;
 begin
-  FLock.lock;
+  FLock.lock('GetCurrentRequestReport');
   try
     result := 'Current Web Requests: '+inttostr(FLiveConnections.count);
     for conn in FLiveConnections do
@@ -537,7 +537,7 @@ function TFhirWebServer.GetCurrentRequestCount: integer;
 var
   conn : TFHIRHTTPConnectionInfo;
 begin
-  FLock.lock;
+  FLock.lock('GetCurrentRequestCount');
   try
     result := FLiveConnections.count;
   finally
@@ -806,7 +806,7 @@ var
 begin
   ci := TFHIRHTTPConnectionInfo.create(request, AContext);
   try
-    FLock.lock;
+    FLock.lock('PlainRequest');
     try
       FLiveConnections.add(ci.link);
     finally
@@ -937,7 +937,7 @@ begin
       end;
     end;
   finally
-    FLock.lock;
+    FLock.lock('PlainRequest2');
     try
       FLiveConnections.remove(ci);
     finally
@@ -1001,7 +1001,7 @@ var
 begin
   ci := TFHIRHTTPConnectionInfo.create(request, AContext);
   try
-    FLock.lock;
+    FLock.lock('SecureRequest');
     try
       FLiveConnections.add(ci.link);
     finally
@@ -1110,7 +1110,7 @@ begin
       end;
     end;
   finally
-    FLock.lock;
+    FLock.lock('SecureRequest2');
     try
       FLiveConnections.remove(ci);
     finally
@@ -1691,7 +1691,7 @@ var
   conn : TFHIRHTTPConnectionInfo;
 begin
   logging.log('Max Web Connections Exceeded ('+inttostr(MaxConnections)+')');
-  FServer.FLock.lock;
+  FServer.FLock.lock('DoMaxConnectionsExceeded');
   try
     for conn in FServer.FLiveConnections do
       logging.log(conn.log);

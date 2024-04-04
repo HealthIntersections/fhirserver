@@ -242,7 +242,7 @@ end;
 procedure TTerminologyServer.recordStats(rec: TStatusRecord);
 begin
   inherited recordStats(rec);
-  FLock.Lock;
+  FLock.Lock('recordStats');
   try
     rec.ServerCacheCount := rec.ServerCacheCount + FExpansions.Count + FDependencies.Count;
     rec.ServerCacheSize := rec.ServerCacheSize + FExpansions.sizeInBytes(rec.magic) + FDependencies.sizeInBytes(rec.magic);
@@ -404,7 +404,7 @@ var
   exists : boolean;
   cm : TClosureManager;
 begin
-  FLock.Lock;
+  FLock.Lock('enterIntoClosure');
   try
     exists := FClosures.ContainsKey(name);
     if exists then
@@ -805,7 +805,7 @@ end;
 function TTerminologyServer.cacheSize(magic : integer) : UInt64;
 begin
   result := inherited cacheSize(magic);
-  FLock.Lock;
+  FLock.Lock('cacheSize');
   try
     result := result + FExpansions.sizeInBytes(magic);
     result := result + FDependencies.sizeInBytes(magic);
@@ -883,7 +883,7 @@ end;
 procedure TTerminologyServer.clearCache;
 begin
   inherited ClearCache;
-  FLock.Lock;
+  FLock.Lock('clearCache');
   try
     FExpansions.Clear;
     FDependencies.Clear;
@@ -1134,7 +1134,7 @@ var
 begin
   conn := FDB.GetConnection('InitClosure');
   try
-    FLock.Lock;
+    FLock.Lock('InitClosure');
     try
       if FClosures.ContainsKey(name) then
         closure := FClosures[name]
@@ -1320,7 +1320,7 @@ end;
 
 function TTerminologyServer.UseClosure(name: String; out cm: TClosureManager): boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('UseClosure');
   try
     result := FClosures.ContainsKey(name);
     if result then

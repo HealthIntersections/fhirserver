@@ -127,7 +127,7 @@ begin
     FTerminologyServer.SeeSpecificationResource(r)
   else if r.fhirType = 'Questionnaire' then
   begin
-    FLock.lock;
+    FLock.lock('SeeResourceProxy');
     try
       if FQuestionnaires.ContainsKey(r.id) then
         FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
@@ -220,7 +220,7 @@ var
 begin
   if url.StartsWith('Questionnaire/') then
     url := url.Substring(12);
-  FLock.lock;
+  FLock.lock('getQuestionnaire');
   try
     if FQuestionnaires.TryGetValue(url, q) then
       exit(q.Link)
