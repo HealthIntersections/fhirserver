@@ -868,6 +868,7 @@ var
   res : TUMLSFilter;
   ok : boolean;
 begin
+  prop := prop.toUpper;
   res := TUMLSFilter.Create;
   try
     ok := true;
