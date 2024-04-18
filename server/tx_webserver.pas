@@ -38,7 +38,7 @@ uses
   fsl_base, fsl_utilities, fsl_stream, fsl_lang,
   IdContext, IdCustomHTTPServer,
   fhir_xhtml, fhir_objects, fhir_common, fhir_factory, fhir_parser,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   fsl_htmlgen, ftx_sct_publisher, ftx_sct_services, ftx_loinc_publisher, ftx_loinc_services, ftx_sct_expressions, ftx_sct_analysis,
   session, tx_server, ftx_service, tx_manager, server_constants, web_event;
 
@@ -86,14 +86,14 @@ Type
 //    Procedure BuildCsByURL(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByName(html : THtmlPublisher; id : String);
 //    Procedure BuildVsByURL(html : THtmlPublisher; id : String);
-
-    function sortCmByUrl(pA, pB : Pointer) : Integer;
-    function sortCmByVer(pA, pB : Pointer) : Integer;
-    function sortCmByName(pA, pB : Pointer) : Integer;
-    function sortCmByCtxt(pA, pB : Pointer) : Integer;
-    function sortCmByPub(pA, pB : Pointer) : Integer;
-    function sortCmBySrc(pA, pB : Pointer) : Integer;
-    function sortCmByTgt(pA, pB : Pointer) : Integer;
+//
+//    function sortCmByUrl(pA, pB : Pointer) : Integer;
+//    function sortCmByVer(pA, pB : Pointer) : Integer;
+//    function sortCmByName(pA, pB : Pointer) : Integer;
+//    function sortCmByCtxt(pA, pB : Pointer) : Integer;
+//    function sortCmByPub(pA, pB : Pointer) : Integer;
+//    function sortCmBySrc(pA, pB : Pointer) : Integer;
+//    function sortCmByTgt(pA, pB : Pointer) : Integer;
     function ProcessValueSetList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
     function ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
     function ProcessCodeSystemList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
@@ -234,7 +234,7 @@ end;
 
 function TTerminologyWebServer.ProcessConceptMap(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : string;
 var
-  cm: TLoadedConceptMap;
+  cm: TFHIRConceptMapW;
   vars : TFslMap<TFHIRObject>;
 begin
   result := 'Concept Map '+request.Document.Substring(9);
@@ -242,11 +242,11 @@ begin
   try
     cm := FServer.getConceptMapById(request.Document.Substring(9));
     try
-      vars.Add('url', FWorker.Factory.makeString(cm.resource.url));
-      vars.Add('name', FWorker.Factory.makeString(cm.resource.name));
-      vars.Add('html', FWorker.Factory.makeString(ashtml(cm.resource.Resource)));
-      vars.Add('json', FWorker.Factory.makeString(asJson(cm.resource.Resource)));
-      vars.Add('xml', FWorker.Factory.makeString(asXml(cm.resource.Resource)));
+      vars.Add('url', FWorker.Factory.makeString(cm.url));
+      vars.Add('name', FWorker.Factory.makeString(cm.name));
+      vars.Add('html', FWorker.Factory.makeString(ashtml(cm.Resource)));
+      vars.Add('json', FWorker.Factory.makeString(asJson(cm.Resource)));
+      vars.Add('xml', FWorker.Factory.makeString(asXml(cm.Resource)));
     finally
       cm.free;
     end;
@@ -414,11 +414,11 @@ end;
 
 function TTerminologyWebServer.ProcessConceptMapList(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; session : TFhirSession) : String;
 var
-  mlist: TLoadedConceptMapList;
+  mlist: TFslList<TFHIRConceptMapW>;
   i: Integer;
   vars : TFslMap<TFHIRObject>;
   html : THtmlPublisher;
-  cm : TLoadedConceptMap;
+  cm : TFHIRConceptMapW;
 begin
   result := 'Concept Map List';
   vars := TFslMap<TFHIRObject>.Create('tx.vars');
@@ -426,20 +426,20 @@ begin
     mlist := FServer.GetConceptMapList;
     try
       // determine sort order
-      if (request.UnparsedParams.EndsWith('=ver')) then
-        mlist.SortedBy(sortCmByVer)
-      else if (request.UnparsedParams.EndsWith('=name')) then
-        mlist.SortedBy(sortCmByName)
-      else if (request.UnparsedParams.EndsWith('=ctxt')) then
-        mlist.SortedBy(sortCmByCtxt)
-      else if (request.UnparsedParams.EndsWith('=pub')) then
-        mlist.SortedBy(sortCmByPub)
-      else if (request.UnparsedParams.EndsWith('=src')) then
-        mlist.SortedBy(sortCmBySrc)
-      else if (request.UnparsedParams.EndsWith('=tgt')) then
-        mlist.SortedBy(sortCmByTgt)
-      else
-        mlist.SortedBy(sortCmByUrl);
+      //if (request.UnparsedParams.EndsWith('=ver')) then
+      //  mlist.SortedBy(sortCmByVer)
+      //else if (request.UnparsedParams.EndsWith('=name')) then
+      //  mlist.SortedBy(sortCmByName)
+      //else if (request.UnparsedParams.EndsWith('=ctxt')) then
+      //  mlist.SortedBy(sortCmByCtxt)
+      //else if (request.UnparsedParams.EndsWith('=pub')) then
+      //  mlist.SortedBy(sortCmByPub)
+      //else if (request.UnparsedParams.EndsWith('=src')) then
+      //  mlist.SortedBy(sortCmBySrc)
+      //else if (request.UnparsedParams.EndsWith('=tgt')) then
+      //  mlist.SortedBy(sortCmByTgt)
+      //else
+      //  mlist.SortedBy(sortCmByUrl);
       // build the table
       html := THtmlPublisher.Create();
       try
@@ -458,19 +458,19 @@ begin
         begin
           cm := mlist[i];
           html.StartTableRow;
-          html.AddTableCellURL(cm.Resource.url, '/tx/maps/' + cm.Resource.id);
-          html.AddTableCell(cm.Resource.version);
-          html.AddTableCell(cm.Resource.name);
-          html.AddTableCell(cm.Resource.context);
-          html.AddTableCell(cm.Resource.publisher);
-          if cm.Source <> nil then
-            html.AddTableCellURL(cm.Source.url, '/tx/valuesets/' + cm.Source.id)
+          html.AddTableCellURL(cm.url, '/tx/maps/' + cm.Resource.id);
+          html.AddTableCell(cm.version);
+          html.AddTableCell(cm.name);
+          html.AddTableCell(cm.context);
+          html.AddTableCell(cm.publisher);
+          if cm.Source <> '' then
+            html.AddTableCellURL(cm.Source, '/tx/valuesets/' + cm.Source)
           else
-            html.AddTableCell(cm.Resource.sourceDesc);
-          if cm.Target <> nil then
-            html.AddTableCellURL(cm.Target.url, '/tx/valuesets/' + cm.Target.id)
+            html.AddTableCell(cm.sourceDesc);
+          if cm.Target <> '' then
+            html.AddTableCellURL(cm.Target, '/tx/valuesets/' + cm.Target)
           else
-            html.AddTableCell(cm.Resource.targetDesc);
+            html.AddTableCell(cm.targetDesc);
           html.EndTableRow;
         end;
         html.EndTable;
@@ -492,10 +492,10 @@ function TTerminologyWebServer.processExpand(pm: THTTPParameters; langList : THT
 var
   res : TFHIRValueSetW;
   vs : TFHIRValueSetW;
-  profile : TFhirExpansionParams;
+  profile : TFhirTxOperationParams;
 begin
   vs := FServer.getValueSetById(pm['valueset']);
-  profile := TFhirExpansionParams.Create;
+  profile := TFhirTxOperationParams.Create;
   try
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
@@ -535,7 +535,7 @@ begin
     resp := FWorker.Factory.makeOpRespLookup;
     try
       try
-        FServer.lookupCode(coding, nil, nil, resp);
+        FServer.lookupCode(coding, '', nil, nil, nil, resp, nil);
         p := resp.asParams;
         try
           result := '<div>'+paramsAsHtml(p)+'</div>'#13 +
@@ -929,7 +929,7 @@ begin
       coding.version := pm['version'];
       coding.code := pm['code'];
       try
-        res := FServer.translate(nil, nil, coding, vs);
+        res := FServer.translate(nil, nil, coding, vs, nil, nil, nil);
         try
           result := paramsAsHtml(res)+#13#10 + '<pre class="json">'+asJson(res.Resource)+'</pre>'#13#10+'<pre class="xml">'+asXml(res.Resource)+'</pre>';
         finally
@@ -1005,68 +1005,68 @@ begin
   end;
 end;
 
-function TTerminologyWebServer.sortCmByCtxt(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.context, vb.Resource.context);
-end;
-
-function TTerminologyWebServer.sortCmByName(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.name, vb.Resource.name);
-end;
-
-function TTerminologyWebServer.sortCmByPub(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.publisher, vb.Resource.publisher);
-end;
-
-function TTerminologyWebServer.sortCmBySrc(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.sourceDesc, vb.Resource.sourceDesc);
-end;
-
-function TTerminologyWebServer.sortCmByTgt(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.TargetDesc, vb.Resource.TargetDesc);
-end;
-
-function TTerminologyWebServer.sortCmByUrl(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.url, vb.Resource.url);
-end;
-
-function TTerminologyWebServer.sortCmByVer(pA, pB: Pointer): Integer;
-var
-  vA, vB : TLoadedConceptMap;
-begin
-  vA := TLoadedConceptMap(pA);
-  vB := TLoadedConceptMap(pB);
-  result := CompareStr(vA.Resource.version, vb.Resource.version);
-end;
+//function TTerminologyWebServer.sortCmByCtxt(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.context, vb.Resource.context);
+//end;
+//
+//function TTerminologyWebServer.sortCmByName(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.name, vb.Resource.name);
+//end;
+//
+//function TTerminologyWebServer.sortCmByPub(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.publisher, vb.Resource.publisher);
+//end;
+//
+//function TTerminologyWebServer.sortCmBySrc(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.sourceDesc, vb.Resource.sourceDesc);
+//end;
+//
+//function TTerminologyWebServer.sortCmByTgt(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.TargetDesc, vb.Resource.TargetDesc);
+//end;
+//
+//function TTerminologyWebServer.sortCmByUrl(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.url, vb.Resource.url);
+//end;
+//
+//function TTerminologyWebServer.sortCmByVer(pA, pB: Pointer): Integer;
+//var
+//  vA, vB : TLoadedConceptMap;
+//begin
+//  vA := TLoadedConceptMap(pA);
+//  vB := TLoadedConceptMap(pB);
+//  result := CompareStr(vA.Resource.version, vb.Resource.version);
+//end;
 
 { TCodeSystemSorter }
 

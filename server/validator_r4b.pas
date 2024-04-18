@@ -40,7 +40,7 @@ Uses
   ftx_service,
   fhir4B_enums, fhir4B_types, fhir4B_resources_base, fhir4B_resources, fhir4B_context,
   fhir4B_profiles, fhir4B_client, fhir4B_utilities, fhir4B_pathnode, fhir4B_pathengine,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   tx_server;
 
 type
@@ -50,7 +50,7 @@ type
   TFHIRServerWorkerContextR4B = class (TBaseWorkerContextR4B)
   private
     FTerminologyServer : TTerminologyServer;
-    FProfile : TFhirExpansionParams;
+    FProfile : TFhirTxOperationParams;
     FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
     FSearchParameters : TFslMap<TFhirSearchParameter>;
@@ -101,7 +101,7 @@ constructor TFHIRServerWorkerContextR4B.Create(factory : TFHIRFactory; pc : TFHI
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r4B');
-  FProfile := TFhirExpansionParams.Create;
+  FProfile := TFhirTxOperationParams.Create;
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.q');

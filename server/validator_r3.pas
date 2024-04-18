@@ -40,7 +40,7 @@ Uses
   ftx_service,
   fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_context, fhir3_profiles,
   fhir3_client, fhir3_utilities, fhir3_pathnode, fhir3_pathengine,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   tx_server;
 
 type
@@ -50,7 +50,7 @@ type
   TFHIRServerWorkerContextR3 = class (TBaseWorkerContextR3)
   private
     FTerminologyServer : TTerminologyServer;
-    FProfile : TFhirExpansionParams;
+    FProfile : TFhirTxOperationParams;
     FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
     FSearchParameters : TFslMap<TFhirSearchParameter>;
@@ -107,7 +107,7 @@ constructor TFHIRServerWorkerContextR3.Create(factory : TFHIRFactory; pc : TFHIR
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r3');
-  FProfile := TFhirExpansionParams.Create;
+  FProfile := TFhirTxOperationParams.Create;
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.questionnaires');

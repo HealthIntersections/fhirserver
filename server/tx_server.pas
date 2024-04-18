@@ -43,7 +43,7 @@ uses
   fsl_base, fsl_utilities, fsl_collections, fsl_http, fsl_threads, fsl_i18n,
   fdb_manager,
   fhir_objects, fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   session,
   ftx_service, ftx_sct_services, ftx_loinc_services, ftx_ucum_services, tx_rxnorm, tx_unii,
   ftx_lang, closuremanager, adaptations, utilities, bundlebuilder, server_stats,
@@ -103,17 +103,14 @@ Type
     // database maintenance
     procedure processValueSet(ValueSetKey : integer; URL : String; conn2, conn3 : TFDBConnection);
     procedure processConcept(ConceptKey : integer; URL, version, Code : String; conn2, conn3 : TFDBConnection);
-    function isOkTarget(cm: TLoadedConceptMap; vs: TFhirValueSetW): boolean;
-    function isOkSource(cm: TLoadedConceptMap; vs: TFhirValueSetW; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
-    function isOkSource(cm: TLoadedConceptMap; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
     procedure LoadClosures;
     procedure BuildIndexesInternal(prog : boolean; conn1, conn2, conn3 : TFDBConnection);
 
     function workerGetDefinition(sender : TObject; url, version : String) : TFHIRValueSetW;
-    function workerGetProvider(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
-    function workerGetExpansion(sender : TObject; opContext : TTerminologyOperationContext; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW;
+    function workerGetProvider(sender : TObject; url, version : String; params : TFHIRTxOperationParams; nullOk : boolean) : TCodeSystemProvider;
+    function workerGetExpansion(sender : TObject; opContext : TTerminologyOperationContext; url, version, filter : String; params : TFHIRTxOperationParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW;
     procedure workerGetVersions(sender : TObject; url : String; list : TStringList);
-    function handlePrepareException(e : EFHIROperationException; profile : TFHIRExpansionParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
+    function handlePrepareException(e : EFHIROperationException; profile : TFHIRTxOperationParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
     procedure processCoding(coding : TFHIRCodingW; params : TFhirParametersW);
   protected
     procedure invalidateVS(id : String); override;
@@ -129,24 +126,24 @@ Type
     function isKnownValueSet(id : String; out vs : TFhirValueSetW): Boolean;
 
     // given a value set, expand it
-    function expandVS(vs : TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
-    function expandVS(vs : TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
-    function expandVS(reqId, uri, version : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(vs : TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(vs : TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; opContext : TTerminologyOperationContext; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(reqId, uri, version : String; profile : TFHIRTxOperationParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
 
     // these are internal services - not for use outside the terminology server
-    function expandVS(reqId, uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
-    function expandVS(reqId, uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
-    function expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW; overload;
-    function expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW; overload;
+    function expandVS(reqId, uri, version: String; profile : TFHIRTxOperationParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(reqId, uri, version: String; profile : TFHIRTxOperationParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean) : TFhirValueSetW; overload;
+    function expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW; overload;
+    function expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW; overload;
 
-    procedure lookupCode(coding : TFHIRCodingW; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
-    function validate(reqId : String; vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
-    function validate(reqId, issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, inferSystem: boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
+    procedure lookupCode(coding : TFHIRCodingW; reqId : String; profile : TFHIRTxOperationParams; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW; txResources : TFslMetadataResourceList);
+    function validate(reqId : String; vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRTxOperationParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
+    function validate(reqId, issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRTxOperationParams; abstractOk, inferSystem: boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW; overload;
     function codeInValueSet(c : TFHIRCodingW; valueSet : String) : boolean;
-    function translate(langList : THTTPLanguageList; cm : TLoadedConceptMap; coding : TFHIRCodingW) : TFhirParametersW; overload;
-    function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW; overload;
-    function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW; overload;
-    Function MakeChecker(reqId, uri, version : string; profile : TFHIRExpansionParams) : TValueSetChecker;
+    function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding : TFHIRCodingW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW; overload;
+    function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
+    function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
+    Function MakeChecker(reqId, uri, version : string; profile : TFHIRTxOperationParams) : TValueSetChecker;
     function getDisplayForCode(langList : THTTPLanguageList; system, version, code : String): String;
     function checkCode(op : TFhirOperationOutcomeW; langList : THTTPLanguageList; path : string; code : string; system, version : string; display : string) : boolean;
     function isValidCode(system, code : String) : boolean;
@@ -281,56 +278,15 @@ begin
   end;
 end;
 
-procedure TTerminologyServer.lookupCode(coding : TFHIRCodingW; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
+procedure TTerminologyServer.lookupCode(coding : TFHIRCodingW; reqId : String; profile : TFHIRTxOperationParams; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW; txResources : TFslMetadataResourceList);
 var
-  provider : TCodeSystemProvider;
-  ctxt : TCodeSystemProviderContext;
-  s : String;
-  p : TFHIRLookupOpRespPropertyW;
-  params : TFHIRExpansionParams;
-
-  function hasProp(name : String; def : boolean) : boolean;
-  begin
-    if (props = nil) or (length(props) = 0) then
-      result := def
-    else
-      result := StringArrayExistsInsensitive(props, name);
-  end;
+  worker : TFHIRCodeSystemInformationProvider;
 begin
-  params := TFHIRExpansionParams.Create;
+  worker := TFHIRCodeSystemInformationProvider.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
   try
-    params.defaultToLatestVersion := true;
-    provider := getProvider(coding.systemUri, coding.version, nil);
-    try
-      resp.name := provider.name(nil);
-      s := provider.version;
-      if (s <> '') then
-        resp.version := s;
-      ctxt := provider.locate(coding.code);
-      try
-        if ctxt = nil then
-          raise ETerminologyError.Create('Unable to find code '+coding.code+' in '+coding.systemUri+' version '+s, itInvalid);
-
-        if (hasProp('abstract', true) and provider.IsAbstract(ctxt)) then
-        begin
-          p := resp.addProp('abstract');
-          p.value := Factory.makeBoolean(true);
-        end;
-        if (hasProp('inactive', true)) then
-        begin
-          p := resp.addProp('inactive');
-          p.value := Factory.makeBoolean(provider.IsInactive(ctxt));
-        end;
-        resp.display := provider.Display(ctxt, langList);
-        provider.extendLookup(Factory, ctxt, langList, props, resp);
-      finally
-        ctxt.free;
-      end;
-    finally
-      provider.free;
-    end;
+    worker.lookupCode(coding, profile, props, resp);
   finally
-    params.free;
+    worker.free;
   end;
 end;
 
@@ -382,12 +338,12 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 begin
   result := expandVS(vs, reqId, cacheId, profile, nil, textFilter, limit, count, offset, txResources, noCacheThisOne);
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; opContext : TTerminologyOperationContext;  textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   ts : TStringList;
 begin
@@ -434,13 +390,13 @@ begin
   result := inttostr(HashStringToCode32(s));
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; textFilter : String; dependencies : TStringList;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; textFilter : String; dependencies : TStringList;
     limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 begin
   result := expandVS(vs, reqId, cacheId, profile, nil, textFilter, dependencies, limit, count, offset, txResources, noCacheThisOne);
 end;
 
-function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList;
+function TTerminologyServer.expandVS(vs: TFhirValueSetW; reqId, cacheId : String; profile : TFHIRTxOperationParams; opContext : TTerminologyOperationContext; textFilter : String; dependencies : TStringList;
     limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   s, d, key: String;
@@ -469,7 +425,7 @@ begin
   if result = nil then
   begin
     if opContext = nil then
-      exp := TFHIRValueSetExpander.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link)
+      exp := TFHIRValueSetExpander.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, EXPANSION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link)
     else
       exp := TFHIRValueSetExpander.Create(Factory.link, opContext.copy, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
@@ -528,7 +484,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(reqId, uri, version: String; profile : TFHIRExpansionParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
+function TTerminologyServer.expandVS(reqId, uri, version: String; profile : TFHIRTxOperationParams; textFilter : String; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
   ts : TStringList;
@@ -546,12 +502,12 @@ begin
   end;
 end;
 
-function TTerminologyServer.expandVS(reqId, uri, version: String; profile : TFHIRExpansionParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
+function TTerminologyServer.expandVS(reqId, uri, version: String; profile : TFHIRTxOperationParams; textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 begin
   result := expandVS(reqId, uri, version, profile, nil, textFilter, dependencies, limit, count, offset, txResources, noCacheThisOne);
 end;
 
-function TTerminologyServer.expandVS(reqId, uri, version: String; profile : TFHIRExpansionParams; opContext : TTerminologyOperationContext;  textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
+function TTerminologyServer.expandVS(reqId, uri, version: String; profile : TFHIRTxOperationParams; opContext : TTerminologyOperationContext;  textFilter : String; dependencies: TStringList; limit, count, offset : integer; txResources : TFslMetadataResourceList; noCacheThisOne : boolean): TFhirValueSetW;
 var
   vs : TFhirValueSetW;
 begin
@@ -633,11 +589,11 @@ begin
   result := vs <> nil;
 end;
 
-function TTerminologyServer.MakeChecker(reqId, uri, version: string; profile : TFHIRExpansionParams): TValueSetChecker;
+function TTerminologyServer.MakeChecker(reqId, uri, version: string; profile : TFHIRTxOperationParams): TValueSetChecker;
 var
   vs : TFhirValueSetW;
 begin
-  result := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
+  result := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
   try
     vs := getValueSetByUrl(uri, version);
     try
@@ -651,7 +607,7 @@ begin
   end;
 end;
 
-function TTerminologyServer.handlePrepareException(e : EFHIROperationException; profile : TFHIRExpansionParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
+function TTerminologyServer.handlePrepareException(e : EFHIROperationException; profile : TFHIRTxOperationParams; unknownValueSets : TStringList; url : String) : TFhirParametersW;
 var
   op : TFhirOperationOutcomeW;
   msg : String;
@@ -689,7 +645,7 @@ begin
     params.addParamStr('display', coding.display);
 end;
 
-function TTerminologyServer.validate(reqId : String; vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
+function TTerminologyServer.validate(reqId : String; vs : TFhirValueSetW; coding : TFHIRCodingW; profile : TFHIRTxOperationParams; abstractOk, inferSystem : boolean; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
   unknownValueSets : TStringList;
@@ -701,7 +657,7 @@ begin
 
   try
     unknownValueSets := TStringList.create;
-    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
+    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       unknownValueSets.Sorted := true;
       unknownValueSets.Duplicates := dupIgnore;
@@ -733,7 +689,7 @@ begin
 end;
 
 
-function TTerminologyServer.validate(reqId, issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRExpansionParams; abstractOk, inferSystem : boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
+function TTerminologyServer.validate(reqId, issuePath : String; vs : TFhirValueSetW; coded : TFhirCodeableConceptW; profile : TFHIRTxOperationParams; abstractOk, inferSystem : boolean; mode : TValidationCheckMode; txResources : TFslMetadataResourceList; var summary : string) : TFhirParametersW;
 var
   check : TValueSetChecker;
   coding : TFhirCodingW; 
@@ -748,7 +704,7 @@ begin
 
   try
     unknownValueSets := TStringList.create;
-    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
+    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       unknownValueSets.Sorted := true;
       unknownValueSets.Duplicates := dupIgnore;
@@ -787,12 +743,12 @@ begin
   result := getValueSetByUrl(url, version);
 end;
 
-function TTerminologyServer.workerGetExpansion(sender: TObject; opContext : TTerminologyOperationContext; url, version, filter: String; params: TFHIRExpansionParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer; noCacheThisOne : boolean): TFHIRValueSetW;
+function TTerminologyServer.workerGetExpansion(sender: TObject; opContext : TTerminologyOperationContext; url, version, filter: String; params: TFHIRTxOperationParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer; noCacheThisOne : boolean): TFHIRValueSetW;
 begin
   result := expandVS(opContext.reqId, url, version, params, opContext, filter, dependencies, limit, -1, -1, additionalResources, noCacheThisOne);
 end;
 
-function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
+function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRTxOperationParams; nullOk : boolean): TCodeSystemProvider;
 begin
   result := getProvider(url, version, params, nullOk);
 end;
@@ -926,14 +882,14 @@ function TTerminologyServer.codeInValueSet(c : TFHIRCodingW; valueSet: String): 
 var
   vs : TFHIRValueSetW;
   p : TFhirParametersW;
-  profile : TFHIRExpansionParams;
+  profile : TFHIRTxOperationParams;
   summary : string;
 begin
   vs := getValueSetByUrl(valueSet, '', nil);
   try
     if (vs = nil) then
       exit(false);
-    profile := TFHIRExpansionParams.Create;
+    profile := TFHIRTxOperationParams.Create;
     try
       profile.membershipOnly := true;
       p := validate('', vs, c, profile, true, false, nil, summary);
@@ -1158,31 +1114,6 @@ begin
   result := '0';
 end;
 
-function TTerminologyServer.isOkSource(cm: TLoadedConceptMap; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match: TFhirConceptMapGroupElementW): boolean;
-var
-  g : TFhirConceptMapGroupW;
-  em : TFhirConceptMapGroupElementW;
-begin
-  result := false;
-  for g in cm.Resource.groups.forEnum do
-    for em in g.elements.forEnum do
-      if (g.source = coding.systemUri) and (em.code = coding.code) then
-      begin
-        result := true;
-        match := em.link;
-        group := g.link;
-      end;
-end;
-
-function TTerminologyServer.isOkTarget(cm : TLoadedConceptMap; vs : TFhirValueSetW) : boolean;
-begin
-  if cm.Target <> nil then
-    result := cm.Target.url = vs.url
-  else
-    result := false;
-  // todo: or it might be ok to use this value set if it's a subset of the specified one?
-end;
-
 function TTerminologyServer.isValidCode(system, code: String): boolean;
 var
   cp : TCodeSystemProvider;
@@ -1206,115 +1137,97 @@ begin
   end
 end;
 
-function TTerminologyServer.isOkSource(cm : TLoadedConceptMap; vs : TFhirValueSetW; coding : TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW) : boolean;
-var
-  g : TFhirConceptMapGroupW;
-  em : TFhirConceptMapGroupElementW;
+function TTerminologyServer.translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW;
+//var
+//  op : TFhirOperationOutcomeW;
+//  list : TLoadedConceptMapList;
+//  i : integer;
+//  summary : string;
+//  cm : TLoadedConceptMap;
+//  p : TFhirParametersW;
+//  g : TFhirConceptMapGroupW;
+//  em : TFhirConceptMapGroupElementW;
+//  map : TFhirConceptMapGroupElementTargetW;
+//  outcome : TFHIRCodingW;
 begin
-  result := false;
-  if (vs = nil) or ((cm.source <> nil) and (cm.Source.url = vs.url)) then
-  begin
-    for g in cm.Resource.groups.forEnum do
-      for em in g.elements.forEnum do
-        if (g.source = coding.systemUri) and (em.code = coding.code) then
-      begin
-        result := true;
-        match := em.link;
-        group := g.link;
-      end;
-  end;
+  raise ETerminologyTodo.Create('TTerminologyServer.translate');
+  //op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+  //try
+  //  try
+  //    if not checkCode(op, langList, '', coding.code, coding.systemUri, coding.version, coding.display) then
+  //      raise ETerminologyError.Create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
+  //
+  //    // check to see whether the coding is already in the target value set, and if so, just return it
+  //    p := validate('', target, coding, nil, false, false, nil, summary);
+  //    try
+  //      if p.bool('result') then
+  //      begin
+  //        result := Factory.wrapParams(factory.makeResource('Parameters'));
+  //        result.addParamBool('result', true);
+  //        result.addParam('outcome', coding.Link);
+  //        result.addParamCode('equivalence', 'equal');
+  //        exit;
+  //      end;
+  //    finally
+  //      p.free;
+  //    end;
+  //
+  //    result := Factory.wrapParams(factory.makeResource('Parameters'));
+  //    list := GetConceptMapList;
+  //    try
+  //      for i := 0 to list.Count - 1 do
+  //      begin
+  //        cm := list[i];
+  //        if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
+  //        try
+  //          if em.targetCount = 0 then
+  //            raise ETerminologyError.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri, itInvalid);
+  //          for map in em.targets.forEnum do
+  //          begin
+  //            if (map.equivalence in [cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
+  //            begin
+  //              result.addParamBool('result', true);
+  //              outcome := factory.wrapCoding(factory.makeByName('Coding'));
+  //              result.AddParam('outcome', outcome);
+  //              outcome.systemUri := g.target;
+  //              outcome.code := map.code;
+  //              result.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
+  //              if (map.comments <> '') then
+  //                result.addParamStr('message', map.comments);
+  //              break;
+  //            end
+  //          end;
+  //          exit;
+  //        finally
+  //          em.free;
+  //          g.free;
+  //        end;
+  //      end;
+  //    finally
+  //      list.free;
+  //    end;
+  //
+  //    result.AddParamBool('result', false);
+  //    result.AddParamStr('message', 'no match found');
+  //  except
+  //    on e : exception do
+  //    begin
+  //      result := Factory.wrapParams(factory.makeResource('Parameters'));
+  //      result.AddParamBool('result', false);
+  //      result.AddParamStr('message', e.message);
+  //    end;
+  //  end;
+  //finally
+  //  op.free;
+  //end;
 end;
 
-function TTerminologyServer.translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW) : TFhirParametersW;
-var
-  op : TFhirOperationOutcomeW;
-  list : TLoadedConceptMapList;
-  i : integer;
-  summary : string;
-  cm : TLoadedConceptMap;
-  p : TFhirParametersW;
-  g : TFhirConceptMapGroupW;
-  em : TFhirConceptMapGroupElementW;
-  map : TFhirConceptMapGroupElementTargetW;
-  outcome : TFHIRCodingW;
+function TTerminologyServer.translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW;
+//var
+//  c : TFhirCodingW;
 begin
-  op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
-  try
-    try
-      if not checkCode(op, langList, '', coding.code, coding.systemUri, coding.version, coding.display) then
-        raise ETerminologyError.Create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
-
-      // check to see whether the coding is already in the target value set, and if so, just return it
-      p := validate('', target, coding, nil, false, false, nil, summary);
-      try
-        if p.bool('result') then
-        begin
-          result := Factory.wrapParams(factory.makeResource('Parameters'));
-          result.addParamBool('result', true);
-          result.addParam('outcome', coding.Link);
-          result.addParamCode('equivalence', 'equal');
-          exit;
-        end;
-      finally
-        p.free;
-      end;
-
-      result := Factory.wrapParams(factory.makeResource('Parameters'));
-      list := GetConceptMapList;
-      try
-        for i := 0 to list.Count - 1 do
-        begin
-          cm := list[i];
-          if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
-          try
-            if em.targetCount = 0 then
-              raise ETerminologyError.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri, itInvalid);
-            for map in em.targets.forEnum do
-            begin
-              if (map.equivalence in [cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
-              begin
-                result.addParamBool('result', true);
-                outcome := factory.wrapCoding(factory.makeByName('Coding'));
-                result.AddParam('outcome', outcome);
-                outcome.systemUri := g.target;
-                outcome.code := map.code;
-                result.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
-                if (map.comments <> '') then
-                  result.addParamStr('message', map.comments);
-                break;
-              end
-            end;
-            exit;
-          finally
-            em.free;
-            g.free;
-          end;
-        end;
-      finally
-        list.free;
-      end;
-
-      result.AddParamBool('result', false);
-      result.AddParamStr('message', 'no match found');
-    except
-      on e : exception do
-      begin
-        result := Factory.wrapParams(factory.makeResource('Parameters'));
-        result.AddParamBool('result', false);
-        result.AddParamStr('message', e.message);
-      end;
-    end;
-  finally
-    op.free;
-  end;
-end;
-
-function TTerminologyServer.translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW) : TFhirParametersW;
-var
-  c : TFhirCodingW;
-begin
-  for c in coded.codings.forEnum do
-    exit(translate(langList, source, c, target));
+  //for c in coded.codings.forEnum do
+  //  exit(translate(langList, source, c, target, params, txResources, profile));
   raise ETerminologyTodo.Create('TTerminologyServer.translate');
 end;
 
@@ -1519,7 +1432,7 @@ procedure TTerminologyServer.processConcept(ConceptKey: integer; URL, version, C
 var
   vs : TFhirValueSetW;
   val : TValuesetChecker;
-  profile : TFHIRExpansionParams;
+  profile : TFHIRTxOperationParams;
 begin
   conn2.SQL := 'select ValueSetKey, URL from ValueSets';
   conn2.Prepare;
@@ -1531,10 +1444,10 @@ begin
       conn3.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = ''Unable to find definition'' where ValueSetKey = '+conn2.ColStringByName['ValueSetKey'])
     else
       try
-        profile := TFHIRExpansionParams.Create;
+        profile := TFHIRTxOperationParams.Create;
         try
           try
-            val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.languages.link, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
+            val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
             try
               val.prepare(vs, profile, nil);
               if val.check('code', URL, version, code, true, false, nil) <> bTrue then
@@ -1566,17 +1479,17 @@ var
   vs : TFhirValueSetW;
   val : TValuesetChecker;
   system, version, code : String;
-  profile : TFHIRExpansionParams;
+  profile : TFHIRTxOperationParams;
 begin
   vs := getValueSetByURL(URL, '');
   if vs = nil then
     conn2.ExecSQL('Update ValueSets set NeedsIndexing = 0, Error = ''Unable to find definition'' where ValueSetKey = '+inttostr(valuesetKey))
   else
     try
-      profile := TFHIRExpansionParams.defaultProfile;
+      profile := TFHIRTxOperationParams.defaultProfile;
       try
         try
-          val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.languages.link, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
+          val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
           try
             val.prepare(vs, profile, nil);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
@@ -1640,90 +1553,15 @@ begin
   inherited Unload;
 end;
 
-function TTerminologyServer.translate(langList : THTTPLanguageList; cm: TLoadedConceptMap; coding: TFHIRCodingW): TFhirParametersW;
+function TTerminologyServer.translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW;
 var
-  op : TFhirOperationOutcomeW;
-  g : TFhirConceptMapGroupW;
-  em : TFhirConceptMapGroupElementW;
-  map : TFhirConceptMapGroupElementTargetW;
-  outcome : TFHIRCodingW;
-  p, pp :  TFhirParametersParameterW;
-  prod : TFhirConceptMapGroupElementDependsOnW;
-  added : boolean;
+  worker : TFHIRConceptMapTranslator;
 begin
-  op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+  worker := TFHIRConceptMapTranslator.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
   try
-    try
-      if not checkCode(op, langList, '', coding.code, coding.systemUri, coding.version, coding.display) then
-        raise ETerminologyError.Create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
-
-//      // check to see whether the coding is already in the target value set, and if so, just return it
-//      p := validate(target, coding, false);
-//      try
-//        if TFhirBoolean(p.NamedParameter['result']).value then
-//        begin
-//          result := Factory.wrapParams(factory.makeResource('Parameters'));
-//          result.AddParameter('result', true);
-//          result.AddParameter('outcome', coding.Link);
-//          result.AddParameter('equivalence', TFhirCode.Create('equal'));
-//          exit;
-//        end;
-//      finally
-//        p.free;
-//      end;
-
-      result := Factory.wrapParams(factory.makeResource('Parameters'));
-      if isOkSource(cm, coding, g, em) then
-      try
-        if em.targetCount = 0 then
-          raise ETerminologyError.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri, itUnknown);
-        added := false;
-        for map in em.targets.forEnum do
-        begin
-          if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
-          begin
-            result.AddParamBool('result', true);
-            added := true;
-            outcome := Factory.wrapCoding(factory.makeByName('Coding'));
-            try
-              p := result.AddParam('match');
-              outcome.systemUri := g.target;
-              outcome.code := map.code;
-              p.AddParam('match', outcome.Element.Link);
-              p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
-              if (map.comments <> '') then
-                p.addParamStr('message', map.comments);
-              for prod in map.products.forEnum do
-              begin
-                pp := p.addParam('product');
-                pp.addParamStr('element', prod.property_);
-                pp.addParam('concept').value := Factory.makeCoding(prod.system_, prod.value);
-              end;
-            finally
-              outcome.free;
-            end;
-            break;
-          end;
-        end;
-        if not added then
-        begin
-          result.AddParamBool('result', false);
-          result.AddParamStr('message', 'no match found');
-        end;
-      finally
-        em.free;
-        g.free;
-      end;
-    except
-        on e : exception do
-        begin
-          result := Factory.wrapParams(factory.makeResource('Parameters'));
-          result.AddParamBool('result', false);
-          result.AddParamStr('message', e.message);
-        end;
-      end;
+    result := worker.translate(langList, reqId, cml, coding, params, profile);
   finally
-    op.free;
+    worker.free;
   end;
 end;
 

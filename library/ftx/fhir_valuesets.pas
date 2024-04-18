@@ -33,17 +33,11 @@ POSSIBILITY OF SUCH DAMAGE.
 
 interface
 
-{
-todo:
-  include designations
-  include Inactive
-
-}
 uses
   SysUtils, Classes,
   fsl_base, fsl_collections, fsl_utilities, fsl_http, fsl_lang, fsl_logging, fsl_i18n, fsl_versions, fsl_threads,
   fhir_objects, fhir_common, ftx_service, fhir_factory, fhir_xhtml, fhir_extensions, fhir_uris, fhir_parser,
-  fhir_codesystem_service;
+  fhir_codesystem_service, fhir_tx;
 
 const
   UPPER_LIMIT_NO_TEXT = 1000;
@@ -54,139 +48,10 @@ const
   FHIR_VERSION_CANONICAL_SPLIT_3p = '|';
 
   EXPANSION_DEAD_TIME_SECS = 30;
+  VALIDATION_DEAD_TIME_SECS = 30;
 
 
 Type
-  TTrueFalseUnknown = (bTrue, bFalse, bUnknown);
-
-  TFhirExpansionParamsVersionRuleMode = (fvmDefault, fvmCheck, fvmOverride);
-
-  { TFhirExpansionParamsVersionRule }
-
-  TFhirExpansionParamsVersionRule = class (TFslObject)
-  private
-    Fsystem : String;
-    Fversion : String;
-    FMode : TFhirExpansionParamsVersionRuleMode;
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create(system, version : String); overload;
-    constructor Create(system, version : String; mode : TFhirExpansionParamsVersionRuleMode); overload;
-
-    property system : String read FSystem write FSystem;
-    property version : String read FVersion write FVersion;
-    property mode : TFhirExpansionParamsVersionRuleMode read FMode write FMode;
-
-    function asString : String;
-  end;
-
-  { TFHIRExpansionParams }
-
-  TFHIRExpansionParams = class (TFslObject)
-  private
-    FVersionRules : TFslList<TFhirExpansionParamsVersionRule>;
-    FactiveOnly: boolean;
-    FexcludeNested: boolean;
-    FGenerateNarrative: boolean;
-    FlimitedExpansion: boolean;
-    FexcludeNotForUI: boolean;
-    FexcludePostCoordinated: boolean;
-    FincludeDesignations: boolean;
-    FincludeDefinition: boolean;
-    FUid: String;
-    FMembershipOnly : boolean;
-    FDefaultToLatestVersion : boolean;
-    FIncompleteOK: boolean;
-    FProperties : TStringList;
-    FDisplayWarning : boolean;
-    FLanguages : THTTPLanguageList;
-    FDesignations : TStringList;
-
-    FHasactiveOnly : boolean;
-    FHasExcludeNested : boolean;
-    FHasGenerateNarrative : boolean;
-    FHasLimitedExpansion : boolean;
-
-    FHesExcludeNotForUI : boolean;
-    FHasExcludePostCoordinated : boolean;
-    FHasIncludeDesignations : boolean;
-    FHasIncludeDefinition : boolean;
-    FHasDefaultToLatestVersion : boolean;
-    FHasIncompleteOK : boolean;
-    FHasexcludeNotForUI : boolean;
-    FHasMembershipOnly : boolean;
-    FHasDisplayWarning : boolean;
-    FAltCodeRules : TAlternateCodeOptions;
-
-    function GetHasDesignations: boolean;
-    function GetHasLanguages: boolean;
-    procedure SetLanguages(value : THTTPLanguageList);
-    procedure SetActiveOnly(value : boolean);
-    procedure SetExcludeNested(value : boolean);
-    procedure SetGenerateNarrative(value : boolean);
-    procedure SetLimitedExpansion(value : boolean);
-    procedure SetExcludeNotForUI(value : boolean);
-    procedure SetExcludePostCoordinated(value : boolean);
-    procedure SetIncludeDesignations(value : boolean);
-    procedure SetIncludeDefinition(value : boolean);
-    procedure SetDefaultToLatestVersion(value : boolean);
-    procedure SetIncompleteOK(value : boolean);
-    procedure SetDisplayWarning(value : boolean);
-    procedure SetMembershipOnly(value : boolean);
-  protected
-    function sizeInBytesV(magic : integer) : cardinal; override;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    function link : TFHIRExpansionParams;
-
-    class function defaultProfile : TFHIRExpansionParams;
-
-    procedure seeParameter(name : String; value : TFHIRObject; isValidation, overwrite : boolean);
-
-    property versionRules : TFslList<TFhirExpansionParamsVersionRule> read FVersionRules;
-
-    function getVersionForRule(systemURI : String; mode : TFhirExpansionParamsVersionRuleMode) : String;
-    procedure seeVersionRule(url : String; mode : TFhirExpansionParamsVersionRuleMode);
-
-    property activeOnly : boolean read FactiveOnly write SetActiveOnly;
-    property languages : THTTPLanguageList read FLanguages write SetLanguages;
-    function langSummary : String;
-    property includeDefinition : boolean read FincludeDefinition write SetincludeDefinition;
-    property generateNarrative : boolean read FGenerateNarrative write SetGenerateNarrative;
-    property limitedExpansion : boolean read FlimitedExpansion write SetlimitedExpansion;   // deprecated
-    property includeDesignations : boolean read FincludeDesignations write SetincludeDesignations;
-    property excludeNested : boolean read FexcludeNested write SetexcludeNested;
-    property excludeNotForUI : boolean read FexcludeNotForUI write SetexcludeNotForUI;
-    property excludePostCoordinated : boolean read FexcludePostCoordinated write SetexcludePostCoordinated;
-    property membershipOnly : boolean read FMembershipOnly write SetMembershipOnly;
-    property uid : String read FUid write FUid;
-    property defaultToLatestVersion : boolean read FDefaultToLatestVersion write SetDefaultToLatestVersion;
-    property incompleteOK : boolean read FIncompleteOK write SetIncompleteOK;
-    property displayWarning : boolean read FDisplayWarning write SetDisplayWarning;
-    property properties : TStringList read FProperties;
-    property altCodeRules : TAlternateCodeOptions read FAltCodeRules;
-    property designations : TStringList read FDesignations;
-
-
-    property hasActiveOnly : boolean read FHasactiveOnly;
-    property hasIncludeDefinition : boolean read FHasincludeDefinition;
-    property hasGenerateNarrative : boolean read FHasGenerateNarrative;
-    property hasLimitedExpansion : boolean read FHaslimitedExpansion;
-    property hasIncludeDesignations : boolean read FHasincludeDesignations;
-    property hasExcludeNested : boolean read FHasexcludeNested;
-    property hasExcludeNotForUI : boolean read FHasexcludeNotForUI;
-    property hasExcludePostCoordinated : boolean read FHasexcludePostCoordinated;
-    property hasMembershipOnly : boolean read FHasMembershipOnly;
-    property hasDefaultToLatestVersion : boolean read FHasDefaultToLatestVersion;
-    property hasIncompleteOK : boolean read FHasIncompleteOK;
-    property hasDisplayWarning : boolean read FHasDisplayWarning;
-    property hasLanguages : boolean read GetHasLanguages;
-    property hasDesignations : boolean read GetHasDesignations;
-
-    function hash : String;
-  end;
 
   TSpecialProviderFilterContextNothing = class (TCodeSystemProviderFilterContext);
   TSpecialProviderFilterContextConcepts = class (TCodeSystemProviderFilterContext)
@@ -218,66 +83,21 @@ Type
     property valueSet : TFHIRValueSetW read FValueSet write SetValueSet;
   end;
 
-  // this is denial of service protection. A terminology operation is not allowed to take too long, and
-  // it's not allowed to recurse
-
-  TGetCurrentRequestCountEvent = function : integer of Object;
-
-  { TTerminologyOperationContext }
-
-  TTerminologyOperationContext = class (TFslObject)
-  private
-    FId : String;
-    FStartTime : UInt64;
-    FContexts : TStringList;
-    FLangList : THTTPLanguageList;
-    FI18n : TI18nSupport;
-    FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
-  public
-    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; getRequestCount : TGetCurrentRequestCountEvent);
-    destructor Destroy; override;
-
-    property reqId : String read FId;
-    function copy : TTerminologyOperationContext;
-    function deadCheck(var time : integer) : boolean;
-    procedure seeContext(vurl : String);
-    procedure clearContexts;
-
-    property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
-  end;
 
   TGetValueSetEvent = function (sender : TObject; url, version : String) : TFHIRValueSetW of object;
-  TGetProviderEvent = function (sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider of object;
-  TGetExpansionEvent = function (sender : TObject; opContext: TTerminologyOperationContext; url, version, filter : String; params : TFHIRExpansionParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW of object;
-  TGetSystemVersionsEvent = procedure (sender : TObject; url : String; list : TStringlist) of object;
+  TGetExpansionEvent = function (sender : TObject; opContext: TTerminologyOperationContext; url, version, filter : String; params : TFHIRTxOperationParams; dependencies : TStringList; additionalResources : TFslMetadataResourceList; limit : integer; noCacheThisOne : boolean) : TFHIRValueSetW of object;
 
   { TValueSetWorker }
 
-  TValueSetWorker = class (TFslObject)
+  TValueSetWorker = class (TTerminologyWorker)
   private
-    FFactory : TFHIRFactory;
     FOnGetValueSet : TGetValueSetEvent;
-    FOnGetCSProvider : TGetProviderEvent;
-    FOnListCodeSystemVersions : TGetSystemVersionsEvent;
     FOnGetExpansion : TGetExpansionEvent;
-    FParams : TFHIRExpansionParams;
-    FAdditionalResources : TFslMetadataResourceList;
-    FLanguages : TIETFLanguageDefinitions;
-    FRequiredSupplements : TStringList;
-    FI18n : TI18nSupport;
     FValueSet : TFHIRValueSetW;
-    FLangList : THTTPLanguageList;
-    FNoCacheThisOne : boolean;
 
-    function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
     function findValueSet(url, version : String) : TFHIRValueSetW;
-    function findCodeSystem(url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
-    function listVersions(url : String) : String;
-    procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
-    procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   protected
     FAllAltCodes : TAlternateCodeOptions;
-    FOpContext : TTerminologyOperationContext;
 
     procedure seeValueSet(vs : TFHIRValueSetW);
 
@@ -285,14 +105,15 @@ Type
     procedure listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
     procedure listDisplays(displays : TConceptDesignations; c: TFhirCodeSystemConceptW); overload;
     procedure listDisplays(displays: TConceptDesignations; c: TFhirValueSetComposeIncludeConceptW; vs : TFHIRValueSetW); overload;
-    procedure deadCheck(place : String);
     function isValidating : boolean; virtual; abstract;
+    procedure deadCheck(place : String); override;
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
   end;
 
   { TValueSetChecker }
+
   TValidationCheckMode = (vcmCode, vcmCoding, vcmCodeableConcept);
 
   TValueSetChecker = class (TValueSetWorker)
@@ -328,7 +149,7 @@ Type
     property id : String read FId;
     property name : String read getName;
 
-    procedure prepare(vs : TFHIRValueSetW; params : TFHIRExpansionParams; unknownValueSets : TStringList);
+    procedure prepare(vs : TFHIRValueSetW; params : TFHIRTxOperationParams; unknownValueSets : TStringList);
 
     function check(issuePath, system, version, code : String; abstractOk, inferSystem : boolean; op : TFhirOperationOutcomeW) : TTrueFalseUnknown; overload;
     function check(issuePath, system, version, code : String; inferSystem : boolean) : TFhirParametersW; overload;
@@ -397,78 +218,30 @@ Type
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
 
-    function expand(source : TFHIRValueSetW; params : TFHIRExpansionParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; noCacheThisOne : boolean) : TFHIRValueSetW;
+    function expand(source : TFHIRValueSetW; params : TFHIRTxOperationParams; textFilter : String; dependencies : TStringList; limit, count, offset : integer; noCacheThisOne : boolean) : TFHIRValueSetW;
   end;
 
-const
-   CODES_TFhirExpansionParamsVersionRuleMode : array [TFhirExpansionParamsVersionRuleMode] of String = ('Default', 'Check', 'Override');
+
+  { TFHIRConceptMapTranslator }
+
+  TFHIRConceptMapTranslator = class (TValueSetWorker)
+  private
+    function checkCode(op : TFhirOperationOutcomeW; langList : THTTPLanguageList; path : string; code : string; system, version : string; display : string) : boolean;
+    function isOkTarget(cm: TFhirConceptMapW; vs: TFhirValueSetW): boolean;
+    function isOkSource(cm: TFhirConceptMapW; vs: TFhirValueSetW; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
+    function isOkSource(cm: TFhirConceptMapW; coding: TFHIRCodingW; out group : TFhirConceptMapGroupW; out match : TFhirConceptMapGroupElementW): boolean; overload;
+    function findConceptMap(var cm: TFhirConceptMapW; var msg : String): boolean;
+  public
+    constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
+    destructor Destroy; override;
+
+    function translate(langList : THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; params : TFhirParametersW; profile : TFhirTxOperationParams) : TFhirParametersW;
+    //function translate(langList : THTTPLanguageList; reqId : String; cm : TLoadedConceptMap; coding : TFHIRCodingW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams): TFhirParametersW; overload;
+    //function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
+    //function translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW; overload;
+  end;
 
 implementation
-
-{ TTerminologyOperationContext }
-
-constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; getRequestCount : TGetCurrentRequestCountEvent);
-begin
-  inherited create;
-  FI18n := i18n;
-  FId := id;
-  FLangList := langList;
-  FContexts := TStringList.create;
-  FStartTime := GetTickCount64;
-  FOnGetCurrentRequestCount := getRequestCount;
-end;
-
-destructor TTerminologyOperationContext.Destroy;
-begin
-  FLangList.free;
-  FI18n.free;
-  FContexts.free;
-  inherited Destroy;
-end;
-
-function TTerminologyOperationContext.copy: TTerminologyOperationContext;
-begin
-  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, OnGetCurrentRequestCount);
-  result.FContexts.assign(FContexts);
-  result.FStartTime := FStartTime;
-end;
-
-function TTerminologyOperationContext.deadCheck(var time : integer): boolean;
-var
-  dt : UInt64;
-  rq : integer;
-begin
-  time := EXPANSION_DEAD_TIME_SECS;
-  if UnderDebugger then
-    exit(false);
-
-  // once timelimit is hit, living on borrowed time until request counts build
-  if assigned(OnGetCurrentRequestCount) and (OnGetCurrentRequestCount < 10) then
-    time := time * 5;
-
-  dt := FStartTime + (time * 1000);
-  result := GetTickCount64 > dt;
-end;
-
-procedure TTerminologyOperationContext.seeContext(vurl: String);
-var
-  r, s : String;
-begin
-  if FContexts.IndexOf(vurl) > -1 then
-  begin
-    r := '';
-    for s in FContexts do
-      CommaAdd(r, s);
-    raise ETerminologyError.create(FI18n.translate('VALUESET_CIRCULAR_REFERENCE', FLangList, [vurl, '['+r+']']), itProcessing);
-  end
-  else
-    FContexts.add(vurl);
-end;
-
-procedure TTerminologyOperationContext.clearContexts;
-begin
-  FContexts.clear;
-end;
 
 { TValueSetCounter }
 
@@ -500,47 +273,18 @@ end;
 
 constructor TValueSetWorker.Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  Create;
-  FFactory := factory;
-  FOpContext := opContext;
+  inherited Create(factory, opContext, getCS, getVersions, txResources, languages, i18n);
   FOnGetValueSet := getVS;
-  FOnGetCSProvider := getCS;
-  FOnListCodeSystemVersions := getVersions;
   FOnGetExpansion := getExpansion;
-  FAdditionalResources := txResources;
-  FLanguages := languages;
-  FRequiredSupplements := TStringList.create;
-  FI18n := i18n;
   FAllAltCodes := TAlternateCodeOptions.create;
   FAllAltCodes.all := true;
 end;
 
 destructor TValueSetWorker.Destroy;
 begin
-  FLangList.free;
   FValueSet.free;
   FAllAltCodes.free;
-  FRequiredSupplements.free;
-  FLanguages.free;
-  FAdditionalResources.free;
-  FFactory.free;
-  FParams.free;
-  FI18n.free;
-  FOpContext.free;
   inherited;
-end;
-
-procedure TValueSetWorker.checkSupplements(cs : TCodeSystemProvider; src : TFHIRXVersionElementWrapper);
-var
-  ext : TFHIRExtensionW;
-  i : integer;
-begin
-  for ext in src.getExtensionsW(EXT_VSSUPPLEMENT).forEnum do
-    if not cs.hasSupplement(ext.valueAsString) then
-      raise ETerminologyError.create('ValueSet depends on supplement '''+ext.valueAsString+''' on '+cs.systemUri+' that is not known', itBusinessRule);
-  for i := FRequiredSupplements.count - 1 downto 0 do
-    if cs.hasSupplement(FRequiredSupplements[i]) then
-      FRequiredSupplements.delete(i);
 end;
 
 procedure TValueSetWorker.seeValueSet(vs: TFHIRValueSetW);
@@ -563,130 +307,6 @@ begin
     FParams.languages := THTTPLanguageList.create(vs.language, not isValidating);
 end;
 
-procedure TValueSetWorker.loadSupplements(cse : TFHIRCodeSystemEntry; url : String);
-var
-  r : TFHIRMetadataResourceW;
-  cs : TFhirCodeSystemW;
-begin
-  for r in FAdditionalResources do
-  begin
-    if r is TFHIRCodeSystemW then
-    begin
-      cs := r as TFHIRCodeSystemW;
-      if (cs.supplements = url) then
-        cse.Supplements.add(cs.link);
-    end;
-  end;
-end;
-
-function isLaterVersion(test, base : String) : boolean;
-begin
-  if TSemanticVersion.isValid(test) and TSemanticVersion.isValid(base) then
-    result := TSemanticVersion.isMoreRecent(test, base)
-  else
-    result := StringCompare(test, base) > 0;
-end;
-
-function TValueSetWorker.findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
-var
-  r : TFHIRMetadataResourceW;
-  matches : TFslMetadataResourceList;
-  i, t : integer;
-begin
-  if FAdditionalResources = nil then
-     exit(nil);
-
-  matches := TFslMetadataResourceList.create;
-  try
-    for r in FAdditionalResources do
-    begin
-      deadCheck('findInAdditionalResources');
-      if (url <> '') and ((r.url = url) or (r.vurl = url)) and ((version = '') or (version = r.version)) then
-      begin
-        if r.fhirType <> resourceType then
-          if error then
-            raise EFHIRException.Create('Attempt to reference '+url+' as a '+resourceType+' when it''s a '+r.fhirType)
-          else
-            exit(nil);
-        matches.add(r.link);
-        end;
-      end;
-    if matches.Count = 0 then
-      exit(nil)
-    else
-    begin
-      t := 0;
-      for i := 1 to matches.count - 1 do
-        if isLaterVersion(matches[i].version, matches[t].version) then
-          t := i;
-      exit(matches[t]);
-    end;
-  finally
-    matches.free;
-  end;
-end;
-
-function TValueSetWorker.findCodeSystem(url, version: String; params: TFHIRExpansionParams; nullOk: boolean): TCodeSystemProvider;
-var
-  r, r2 : TFHIRMetadataResourceW;
-  cs, cs2 : TFhirCodeSystemW;
-  ts : TStringlist;
-  cse : TFHIRCodeSystemEntry;
-begin
-  if (url = '') then
-    exit(nil);
-  if (url = URI_NDC) then
-  begin
-    result := nil;
-  end;
-
-  cs := findInAdditionalResources(url, version, 'CodeSystem', not nullOk) as TFhirCodeSystemW;
-  if (cs <> nil) and (cs.content = cscmComplete) then
-  begin
-    cse := TFHIRCodeSystemEntry.Create(cs.link);
-    try
-      loadSupplements(cse, url);
-      exit(TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link));
-    finally
-      cse.free;
-    end;
-  end;
-
-  result := FOnGetCSProvider(self, url, version, FParams, true);
-
-  if (result <> nil) then
-    exit(result);
-
-  if (cs <> nil) and (cs.content = cscmFragment) then
-  begin
-    cse := TFHIRCodeSystemEntry.Create(cs.link);
-    try
-      loadSupplements(cse, url);
-      exit(TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link));
-    finally
-      cse.free;
-    end;
-  end;
-
-  if not nullok then
-    if version = '' then
-      raise ETerminologySetup.create('Unable to provide support for code system '+url)
-    else
-    begin
-      ts := TStringList.Create;
-      try
-        FOnListCodeSystemVersions(self, url, ts);
-        if (ts.Count = 0) then
-          raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version)
-        else
-          raise ETerminologySetup.create('Unable to provide support for code system '+url+' version '+version+' (known versions = '+ts.CommaText+')');
-      finally
-        ts.free;
-      end;
-
-    end;
-end;
-
 function TValueSetWorker.findValueSet(url, version: String): TFHIRValueSetW;
 var
   r : TFHIRMetadataResourceW;
@@ -704,9 +324,6 @@ end;
 function TValueSetWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
-  inc(result, FFactory.sizeInBytes(magic));
-  inc(result, FParams.sizeInBytes(magic));
-  inc(result, FAdditionalResources.sizeInBytes(magic));
 end;
 
 { TValueSetChecker }
@@ -944,7 +561,7 @@ begin
     result := FParams.getVersionForRule(systemURI, fvmDefault);
 end;
 
-procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRExpansionParams; unknownValueSets : TStringList);
+procedure TValueSetChecker.prepare(vs: TFHIRValueSetW; params : TFHIRTxOperationParams; unknownValueSets : TStringList);
 var
   cc : TFhirValueSetComposeIncludeW;
   other : TFHIRValueSetW;
@@ -2596,7 +2213,7 @@ end;
 
 
 function TFHIRValueSetExpander.expand(source: TFHIRValueSetW;
-  params: TFHIRExpansionParams; textFilter: String; dependencies: TStringList;
+  params: TFHIRTxOperationParams; textFilter: String; dependencies: TStringList;
   limit, count, offset: integer; noCacheThisOne : boolean): TFHIRValueSetW;
 var
   i, t, o : integer;
@@ -2746,7 +2363,8 @@ begin
         handleCompose(source, filter, dependencies, exp, notClosed);
 
       if (FRequiredSupplements.count > 0) then
-        raise ETerminologyError.create('Required supplements not found: ['+FRequiredSupplements.commaText+']', itBusinessRule);
+        raise ETerminologyError.create(FI18n.translatePlural(FRequiredSupplements.Count, 'VALUESET_SUPPLEMENT_MISSING', FParams.languages, [FRequiredSupplements.commaText]), itBusinessRule);
+
     except
       on e : EFinished do
       begin
@@ -3080,31 +2698,6 @@ begin
     logging.log('Expansion took too long');
     {$ENDIF}
     raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.languages, [FValueSet.vurl, inttostr(time)]));
-  end;
-end;
-
-function TValueSetWorker.listVersions(url: String): String;
-var
-  ts : TStringList;
-  matches : TFslMetadataResourceList;
-  r : TFHIRMetadataResourceW;
-begin
-  ts := TStringList.Create;
-  try
-    ts.Sorted := true;
-    ts.Duplicates := Classes.dupIgnore;
-    if FAdditionalResources <> nil then
-    begin
-      for r in FAdditionalResources do
-      begin
-        if (r.url = url) then
-          ts.Add(r.version);
-      end;
-    end;
-    FOnListCodeSystemVersions(self, url, ts);
-    result := ts.CommaText;
-  finally
-    ts.free;
   end;
 end;
 
@@ -4005,235 +3598,275 @@ begin
   end;
 end;
 
-{ TFHIRExpansionParams }
+{ TFHIRConceptMapTranslator }
 
-constructor TFHIRExpansionParams.Create;
+function TFHIRConceptMapTranslator.checkCode(op: TFhirOperationOutcomeW; langList: THTTPLanguageList; path: string; code: string; system, version: string; display: string): boolean;
+var
+  cs : TFhirCodeSystemW;
+  cp : TCodeSystemProvider;
+  lct : TCodeSystemProviderContext;
+  def : TFhirCodeSystemConceptW;
+  d : String;
 begin
-  inherited;
-  FVersionRules := TFslList<TFhirExpansionParamsVersionRule>.create;
-  FProperties := TStringList.create;
-  FAltCodeRules := TAlternateCodeOptions.create;
-  FDesignations := TStringlist.create;
-
-  FGenerateNarrative := true;
-end;
-
-procedure TFHIRExpansionParams.SetLanguages(value: THTTPLanguageList);
-begin
-  FLanguages.free;
-  FLanguages := value;
-end;
-
-function TFHIRExpansionParams.GetHasLanguages: boolean;
-begin
-  result := (FLanguages <> nil) and (FLanguages.source <> '');
-end;
-
-function TFHIRExpansionParams.GetHasDesignations: boolean;
-begin
-  result := designations.Count > 0;
-end;
-
-procedure TFHIRExpansionParams.SetActiveOnly(value : boolean);
-begin
-  FActiveOnly := value;
-  FHasActiveOnly := true;
-end;
-
-procedure TFHIRExpansionParams.SetExcludeNested(value : boolean);
-begin
-  FExcludeNested := value;
-  FHasExcludeNested:= true;
-end;
-
-procedure TFHIRExpansionParams.SetGenerateNarrative(value : boolean);
-begin
-  FGenerateNarrative := value;
-  FHasGenerateNarrative := true;
-end;
-
-procedure TFHIRExpansionParams.SetLimitedExpansion(value : boolean);
-begin
-  FLimitedExpansion := value;
-  FHasLimitedExpansion := true;
-end;
-
-procedure TFHIRExpansionParams.SetExcludeNotForUI(value : boolean);
-begin
-  FExcludeNotForUI := value;
-  FHasExcludeNotForUI := true;
-end;
-
-procedure TFHIRExpansionParams.SetExcludePostCoordinated(value : boolean);
-begin
-  FExcludePostCoordinated := value;
-  FHasExcludePostCoordinated := true;
-end;
-
-procedure TFHIRExpansionParams.SetIncludeDesignations(value : boolean);
-begin
-  FIncludeDesignations := value;
-  FHasIncludeDesignations := true;
-end;
-
-procedure TFHIRExpansionParams.SetIncludeDefinition(value : boolean);
-begin
-  FIncludeDefinition := value;
-  FHasIncludeDefinition := true;
-end;
-
-procedure TFHIRExpansionParams.SetDefaultToLatestVersion(value : boolean);
-begin
-  FDefaultToLatestVersion := value;
-  FHasDefaultToLatestVersion := true;
-end;
-
-procedure TFHIRExpansionParams.SetIncompleteOK(value : boolean);
-begin
-  FIncompleteOK := value;
-  FHasIncompleteOK := true;
-end;
-
-procedure TFHIRExpansionParams.SetDisplayWarning(value : boolean);
-begin
-  FDisplayWarning := value;
-  FHasDisplayWarning := true;
-end;
-
-procedure TFHIRExpansionParams.SetMembershipOnly(value : boolean);
-begin
-  FMembershipOnly := value;
-  FHasMembershipOnly := true;
-end;
-
-function TFHIRExpansionParams.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, FVersionRules.sizeInBytes(magic));
-  inc(result, FLanguages.sizeInBytes(magic));
-  inc(result, (FUid.length * sizeof(char)) + 12);
-end;
-
-class function TFHIRExpansionParams.defaultProfile: TFHIRExpansionParams;
-begin
-  result := TFHIRExpansionParams.Create;
-end;
-
-procedure TFHIRExpansionParams.seeParameter(name: String; value: TFHIRObject; isValidation, overwrite: boolean);
-begin
-  if (value <> nil) then
+  result := false;
+  cp := findCodeSystem(system, version, nil, true);
+  if cp <> nil then
   begin
-    if (name = 'displayLanguage') and (not HasLanguages or overwrite) then
-      languages := THTTPLanguageList.create(value.primitiveValue, not isValidation);
-
-    if (name = 'includeAlternateCodes') then
-      altCodeRules.seeParam(value.primitiveValue);
-    if (name = 'designation') then
-      designations.add(value.primitiveValue);
+    try
+      lct := cp.locate(code);
+      try
+        if (op.error('InstanceValidator', itInvalid, path, lct <> nil, 'Unknown Code ('+system+'#'+code+')')) then
+          result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = cp.Display(lct, THTTPLanguageList(nil))),
+          'Display for '+system+' code "'+code+'" should be "'+cp.Display(lct, THTTPLanguageList(nil))+'"');
+      finally
+        lct.free;
+      end;
+    finally
+      cp.free;
+    end;
   end;
 end;
 
-function TFHIRExpansionParams.getVersionForRule(systemURI: String; mode: TFhirExpansionParamsVersionRuleMode): String;
+constructor TFHIRConceptMapTranslator.Create(factory: TFHIRFactory; opContext: TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS: TGetProviderEvent; getVersions: TGetSystemVersionsEvent; getExpansion: TGetExpansionEvent; txResources: TFslMetadataResourceList; languages: TIETFLanguageDefinitions; i18n: TI18nSupport);
+begin
+  inherited create(factory, opContext, getVS, getCS, getVersions, getExpansion, txResources, languages, i18n);
+end;
+
+destructor TFHIRConceptMapTranslator.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TFHIRConceptMapTranslator.translate(langList: THTTPLanguageList; reqId : String; cml : TFslList<TFHIRConceptMapW>; coding: TFHIRCodingW; params: TFhirParametersW; profile: TFhirTxOperationParams): TFhirParametersW;
 var
-  rule : TFhirExpansionParamsVersionRule;
+  cm : TFHIRConceptMapW;
+  g : TFhirConceptMapGroupW;
+  em : TFhirConceptMapGroupElementW;
+  map : TFhirConceptMapGroupElementTargetW;
+  outcome : TFHIRCodingW;
+  p, pp :  TFhirParametersParameterW;
+  prod : TFhirConceptMapGroupElementDependsOnW;
+  added : boolean;
+  msg : String;
 begin
-  for rule in FVersionRules do
-    if (rule.system = systemUri) and (rule.mode = mode) then
-      exit(rule.version);
-  result := '';
-end;
-
-procedure TFHIRExpansionParams.seeVersionRule(url: String; mode: TFhirExpansionParamsVersionRuleMode);
-var
-  sl : TArray<String>;
-begin
-  sl := url.split(['|']);
-  if (Length(sl) = 2) then
-    versionRules.Add(TFhirExpansionParamsVersionRule.Create(sl[0], sl[1], mode))
-  else
-    raise ETerminologyError.Create('Unable to understand '+CODES_TFhirExpansionParamsVersionRuleMode[mode]+' system version "'+url+'"', itInvalid);
-end;
-
-function TFHIRExpansionParams.langSummary: String;
-begin
-  if (FLanguages = nil) or (FLanguages.source = '') then
-    result := '--'
-  else
-    result := FLanguages.asString(false);
-end;
-
-destructor TFHIRExpansionParams.Destroy;
-begin
-  FAltCodeRules.free;
-  FVersionRules.free;
-  FLanguages.free;
-  FProperties.free;
-  FDesignations.free;
-  inherited;
-end;
-
-function TFHIRExpansionParams.hash: String;
-var
-  s : String;
-  l : TIETFLang;
-  t : TFhirExpansionParamsVersionRule;
-  function b(v : boolean):string;
-  begin
-    if v then
-      result := '1|'
-    else
-      result := '0|';
+  result := FFactory.wrapParams(FFactory.makeResource('Parameters'));
+  try
+    try     
+      added := false;
+      for cm in cml do
+      begin
+        //else if not checkCode(op, langList, '', coding.code, coding.systemUri, coding.version, coding.display) then
+        //  raise ETerminologyError.Create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
+        if isOkSource(cm, coding, g, em) then
+        begin
+          try
+            for map in em.targets.forEnum do
+            begin
+              if (map.equivalence in [cmeNull, cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
+              begin
+                result.AddParamBool('result', true);
+                added := true;
+                outcome := FFactory.wrapCoding(FFactory.makeByName('Coding'));
+                try
+                  p := result.AddParam('match');
+                  outcome.systemUri := g.target;
+                  outcome.code := map.code;
+                  p.AddParam('concept', outcome.Element.Link);
+                  p.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
+                  if (map.comments <> '') then
+                    p.addParamStr('message', map.comments);
+                  for prod in map.products.forEnum do
+                  begin
+                    pp := p.addParam('product');
+                    pp.addParamStr('element', prod.property_);
+                    pp.addParam('concept').value := FFactory.makeCoding(prod.system_, prod.value);
+                  end;
+                finally
+                  outcome.free;
+                end;
+              end;
+            end;
+          finally
+            em.free;
+            g.free;
+          end;
+        end;
+      end;
+      if not added then
+      begin
+        result.AddParamBool('result', false);
+        result.AddParamStr('message', 'No translations found');
+      end;
+    except
+      on e : exception do
+      begin
+        result.AddParamBool('result', false);
+        result.AddParamStr('message', e.message);
+      end;
+    end;
+    result.link;
+  finally
+    result.free;
   end;
-begin
-  s := FUid+'|'+ b(FMembershipOnly) + '|' + FProperties.CommaText+'|'+
-    b(FactiveOnly)+b(FIncompleteOK)+b(FDisplayWarning)+b(FexcludeNested)+b(FGenerateNarrative)+b(FlimitedExpansion)+b(FexcludeNotForUI)+b(FexcludePostCoordinated)+
-    b(FincludeDesignations)+b(FincludeDefinition)+b(FHasactiveOnly)+b(FHasExcludeNested)+b(FHasGenerateNarrative)+
-    b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+
-    b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasDisplayWarning)+b(FHasexcludeNotForUI)+b(FHasMembershipOnly)+b(FDefaultToLatestVersion);
-
-  if hasLanguages then
-    s := s + FLanguages.AsString(true)+'|';
-  if hasDesignations then
-    s := s + FDesignations.commaText+'|';
-  for t in FVersionRules do
-    s := s + t.asString+'|';
-  result := inttostr(HashStringToCode32(s));
 end;
 
-function TFHIRExpansionParams.link: TFHIRExpansionParams;
+function TFHIRConceptMapTranslator.isOkTarget(cm: TFhirConceptMapW;
+  vs: TFhirValueSetW): boolean;
 begin
-  result := TFHIRExpansionParams(inherited Link);
+  //if cm.Target <> nil then
+  //  result := cm.Target.url = vs.url
+  //else
+    result := false;
+  // todo: or it might be ok to use this value set if it's a subset of the specified one?
 end;
 
-
-{ TFhirExpansionParamsVersionRule }
-
-constructor TFhirExpansionParamsVersionRule.Create(system, version: String; mode: TFhirExpansionParamsVersionRuleMode);
+function TFHIRConceptMapTranslator.isOkSource(cm: TFhirConceptMapW;
+  vs: TFhirValueSetW; coding: TFHIRCodingW; out group: TFhirConceptMapGroupW;
+  out match: TFhirConceptMapGroupElementW): boolean;
+var
+  g : TFhirConceptMapGroupW;
+  em : TFhirConceptMapGroupElementW;
 begin
-  inherited Create;
-  FSystem := system;
-  FVersion := version;
-  FMode := mode;
+  result := false;
+  if true {(vs = nil) or ((cm.source <> nil) and (cm.Source.url = vs.url))} then
+  begin
+    for g in cm.groups.forEnum do
+      for em in g.elements.forEnum do
+        if (g.source = coding.systemUri) and (em.code = coding.code) then
+      begin
+        result := true;
+        match := em.link;
+        group := g.link;
+      end;
+  end;
 end;
 
-function TFhirExpansionParamsVersionRule.asString: String;
+  
+function TFHIRConceptMapTranslator.isOkSource(cm: TFhirConceptMapW;
+  coding: TFHIRCodingW; out group: TFhirConceptMapGroupW; out
+  match: TFhirConceptMapGroupElementW): boolean;
+var
+  g : TFhirConceptMapGroupW;
+  em : TFhirConceptMapGroupElementW;
 begin
-  result := Fsystem+'#'+Fversion+'/'+inttostr(ord(FMode));
+  result := false;
+  for g in cm.groups.forEnum do
+    if (g.source = coding.systemUri) then
+    begin
+      for em in g.elements.forEnum do
+        if (em.code = coding.code) then
+        begin
+          result := true;
+          match := em.link;
+          group := g.link;
+        end;
+    end;
 end;
 
-constructor TFhirExpansionParamsVersionRule.Create(system, version: String);
+function TFHIRConceptMapTranslator.findConceptMap(var cm: TFhirConceptMapW; var msg: String): boolean;
 begin
-  inherited Create;
-  FSystem := system;
-  FVersion := version;
+  msg := '';
+  if cm <> nil then
+    result := true
+  else
+  begin
+
+  end;
 end;
 
-function TFhirExpansionParamsVersionRule.sizeInBytesV(magic : integer) : cardinal;
-begin
-  result := inherited sizeInBytesV(magic);
-  inc(result, (Fsystem.length * sizeof(char)) + 12);
-  inc(result, (Fversion.length * sizeof(char)) + 12);
-end;
+//function TTerminologyServer.translate(langList : THTTPLanguageList; source : TFhirValueSetW; coding : TFHIRCodingW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW;
+//var
+//  op : TFhirOperationOutcomeW;
+//  list : TLoadedConceptMapList;
+//  i : integer;
+//  summary : string;
+//  cm : TLoadedConceptMap;
+//  p : TFhirParametersW;
+//  g : TFhirConceptMapGroupW;
+//  em : TFhirConceptMapGroupElementW;
+//  map : TFhirConceptMapGroupElementTargetW;
+//  outcome : TFHIRCodingW;
+//begin
+//  op := Factory.wrapOperationOutcome(factory.makeResource('OperationOutcome'));
+//  try
+//    try
+//      if not checkCode(op, langList, '', coding.code, coding.systemUri, coding.version, coding.display) then
+//        raise ETerminologyError.Create('Code '+coding.code+' in system '+coding.systemUri+' not recognized', itUnknown);
+//
+//      // check to see whether the coding is already in the target value set, and if so, just return it
+//      p := validate('', target, coding, nil, false, false, nil, summary);
+//      try
+//        if p.bool('result') then
+//        begin
+//          result := Factory.wrapParams(factory.makeResource('Parameters'));
+//          result.addParamBool('result', true);
+//          result.addParam('outcome', coding.Link);
+//          result.addParamCode('equivalence', 'equal');
+//          exit;
+//        end;
+//      finally
+//        p.free;
+//      end;
+//
+//      result := Factory.wrapParams(factory.makeResource('Parameters'));
+//      list := GetConceptMapList;
+//      try
+//        for i := 0 to list.Count - 1 do
+//        begin
+//          cm := list[i];
+//          if isOkTarget(cm, target) and isOkSource(cm, source, coding, g, em) then
+//          try
+//            if em.targetCount = 0 then
+//              raise ETerminologyError.Create('Concept Map has an element with no map for '+'Code '+coding.code+' in system '+coding.systemUri, itInvalid);
+//            for map in em.targets.forEnum do
+//            begin
+//              if (map.equivalence in [cmeEquivalent, cmeEqual, cmeWider, cmeSubsumes, cmeNarrower, cmeSpecializes, cmeInexact]) then
+//              begin
+//                result.addParamBool('result', true);
+//                outcome := factory.wrapCoding(factory.makeByName('Coding'));
+//                result.AddParam('outcome', outcome);
+//                outcome.systemUri := g.target;
+//                outcome.code := map.code;
+//                result.addParamCode('equivalence', CODES_TFHIRConceptEquivalence[map.equivalence]);
+//                if (map.comments <> '') then
+//                  result.addParamStr('message', map.comments);
+//                break;
+//              end
+//            end;
+//            exit;
+//          finally
+//            em.free;
+//            g.free;
+//          end;
+//        end;
+//      finally
+//        list.free;
+//      end;
+//
+//      result.AddParamBool('result', false);
+//      result.AddParamStr('message', 'no match found');
+//    except
+//      on e : exception do
+//      begin
+//        result := Factory.wrapParams(factory.makeResource('Parameters'));
+//        result.AddParamBool('result', false);
+//        result.AddParamStr('message', e.message);
+//      end;
+//    end;
+//  finally
+//    op.free;
+//  end;
+//end;
+//
+//function TTerminologyServer.translate(langList : THTTPLanguageList; source : TFhirValueSetW; coded : TFhirCodeableConceptW; target : TFhirValueSetW; params : TFhirParametersW; txResources : TFslMetadataResourceList; profile : TFhirTxOperationParams) : TFhirParametersW;
+//var
+//  c : TFhirCodingW;
+//begin
+//  for c in coded.codings.forEnum do
+//    exit(translate(langList, source, c, target, params, txResources, profile));
+//  raise ETerminologyTodo.Create('TTerminologyServer.translate');
+//end;
+//
 
 { TFHIRImportedValueSet }
 

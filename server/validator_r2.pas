@@ -40,7 +40,7 @@ Uses
   ftx_service,
   fhir2_types, fhir2_context, fhir2_profiles, fhir2_client, fhir2_utilities,
   fhir2_resources_base, fhir2_resources_canonical, fhir2_resources_admin, fhir2_resources_clinical, fhir2_resources_other,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   tx_server;
 
 Type
@@ -50,7 +50,7 @@ Type
   TFHIRServerWorkerContextR2 = class (TBaseWorkerContextR2)
   private
     FTerminologyServer : TTerminologyServer;
-    FProfile : TFhirExpansionParams;
+    FProfile : TFHIRTxOperationParams;
     FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
 
@@ -88,7 +88,7 @@ constructor TFHIRServerWorkerContextR2.Create(factory : TFHIRFactory; pc : TFHIR
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r2');
-  FProfile := TFhirExpansionParams.Create;
+  FProfile := TFhirTxOperationParams.Create;
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('questionnaires');

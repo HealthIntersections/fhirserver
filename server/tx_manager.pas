@@ -37,7 +37,7 @@ uses
   fsl_utilities, fsl_stream, fsl_base, fsl_collections, fsl_http, fsl_lang, fsl_logging, fsl_i18n,
   fdb_manager,
   fhir_objects,  fhir_common, fhir_cdshooks, fhir_factory, fhir_features, fhir_uris,
-  fhir_codesystem_service, fhir_valuesets,
+  fhir_codesystem_service, fhir_tx, fhir_valuesets,
   ftx_service, ftx_loinc_services, ftx_ucum_services, ftx_sct_services, tx_rxnorm, tx_unii, tx_acir, xig_provider,
   tx_uri, tx_areacode, tx_countrycode, tx_us_states, tx_iso_4217, tx_version,
   tx_mimetypes, ftx_lang, tx_ndc, tx_hgvs, tx_cpt, tx_omop,
@@ -171,36 +171,6 @@ Type
     property XIG : TXIGProvider read FXIG write SetXIG;
   end;
 
-  TLoadedConceptMap = class (TFslObject)
-  private
-    FSource: TFhirValueSetW;
-    FResource: TFhirConceptMapW;
-    FTarget: TFhirValueSetW;
-    procedure SetResource(const Value: TFhirConceptMapW);
-    procedure SetSource(const Value: TFhirValueSetW);
-    procedure SetTarget(const Value: TFhirValueSetW);
-
-    function HasTranslation(list : TFslList<TFhirConceptMapGroupW>; system, code : String; out maps : TFslList<TFhirConceptMapGroupElementTargetW>) : boolean; overload;
-  public
-    destructor Destroy; override;
-    function Link : TLoadedConceptMap; overload;
-    Property Source : TFhirValueSetW read FSource write SetSource;
-    Property Resource : TFhirConceptMapW read FResource write SetResource;
-    Property Target : TFhirValueSetW read FTarget write SetTarget;
-
-    function HasTranslation(system, code : String; out maps : TFslList<TFhirConceptMapGroupElementTargetW>) : boolean; overload;
-  end;
-
-  TLoadedConceptMapList = class (TFslObjectList)
-  private
-    function getMap(iIndex: integer): TLoadedConceptMap;
-  protected
-    function ItemClass : TFslObjectClass; override;
-  public
-    Property map[iIndex : integer] : TLoadedConceptMap read getMap; default;
-
-  end;
-
   // the terminology server maintains a cache of terminology related resources
   // the rest server notifies terminology server whenever this list changes
   // (and at start up)
@@ -232,9 +202,9 @@ Type
     FBaseValueSets : TFslMap<TFHIRResourceProxyV>; // value sets out of the specification - these can be overriden, but they never go away
     FBaseCodeSystems : TFslMap<TFHIRCodeSystemEntry>; // value sets out of the specification - these can be overriden, but they never go away
 
-    FBaseConceptMaps : TFslMap<TLoadedConceptMap>; // value sets out of the specification - these can be overriden, but they never go away
-    FConceptMapsById : TFslMap<TLoadedConceptMap>;
-    FConceptMapsByURL : TFslMap<TLoadedConceptMap>;
+    FBaseConceptMaps : TFslMap<TFHIRConceptMapW>; // value sets out of the specification - these can be overriden, but they never go away
+    FConceptMapsById : TFslMap<TFHIRConceptMapW>;
+    FConceptMapsByURL : TFslMap<TFHIRConceptMapW>;
 
     FLoading : boolean;
 
@@ -244,7 +214,7 @@ Type
     procedure BuildStems(cs : TFhirCodeSystemW);
 
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptListW; url : String);
-    function checkVersion(system, version: String; profile: TFHIRExpansionParams): String;
+    function checkVersion(system, version: String; profile: TFHIRTxOperationParams): String;
     procedure AddCodeSystemToCache(cs : TFHIRResourceProxyV; base : boolean); overload;
     procedure AddCodeSystemToCache(cs : TFHIRCodeSystemW; base : boolean); overload;
     procedure RemoveCodeSystemFromCache(id : String);
@@ -273,16 +243,17 @@ Type
     procedure loadCodeSystem(cs : TFHIRCodeSystemW); overload;
 
     // access procedures. All return values are owned, and must be freed
-    Function getProvider(system : String; version : String; profile : TFHIRExpansionParams; noException : boolean = false) : TCodeSystemProvider; overload;
-    Function getProvider(codesystem : TFHIRCodeSystemW; profile : TFHIRExpansionParams) : TCodeSystemProvider; overload;
+    Function getProvider(system : String; version : String; profile : TFHIRTxOperationParams; noException : boolean = false) : TCodeSystemProvider; overload;
+    Function getProvider(codesystem : TFHIRCodeSystemW; profile : TFHIRTxOperationParams) : TCodeSystemProvider; overload;
     function getValueSetByUrl(url, version : String; txResources : TFslMetadataResourceList = nil) : TFHIRValueSetW;
     function getValueSetById(id : String) : TFHIRValueSetW;
     function getCodeSystemById(id : String) : TFHIRCodeSystemW;
     function getCodeSystemByValueSet(vs : String) : TFHIRCodeSystemW;
     function getCodeSystem(url : String; txResources : TFslMetadataResourceList = nil) : TFHIRCodeSystemW;
     function hasCodesystemUri(url : String; txResources : TFslMetadataResourceList = nil) : Boolean;
-    function getConceptMapById(id : String) : TLoadedConceptMap;
-    function getConceptMapBySrcTgt(src, tgt : String) : TLoadedConceptMap;
+    function getConceptMapById(id : String) : TFHIRConceptMapW;
+    function getConceptMapByUrl(url : String) : TFHIRConceptMapW;
+    function getConceptMapBySrcTgt(src, tgt : String) : TFHIRConceptMapW;
     procedure listVersions(url : String; list : TStringList);
 
     // publishing access
@@ -290,7 +261,7 @@ Type
     procedure GetCodeSystemList(list : TFslMetadataResourceList); overload;
     procedure GetValueSetList(list : TFslList<TFhirValueSetW>); overload;
     procedure GetValueSetList(list : TFslMetadataResourceList); overload;
-    function GetConceptMapList : TLoadedConceptMapList;
+    function GetConceptMapList : TFslList<TFHIRConceptMapW>;
     Property ProviderClasses : TFslMap<TCodeSystemProviderFactory> read getProviderClasses;
     function ValueSetCount : integer;
     function CodeSystemCount : integer;
@@ -455,9 +426,9 @@ begin
   FBaseCodeSystems := TFslMap<TFHIRCodeSystemEntry>.Create('tx.cs.base');
   FSupplementsById := TFslMap<TFhirResourceProxyV>.Create('tx.cs.suppl');
 
-  FBaseConceptMaps := TFslMap<TLoadedConceptMap>.Create('tx.cm.base');
-  FConceptMapsById := TFslMap<TLoadedConceptMap>.Create('tx.cm.id');
-  FConceptMapsByURL := TFslMap<TLoadedConceptMap>.Create('tx.cm.url');
+  FBaseConceptMaps := TFslMap<TFHIRConceptMapW>.Create('tx.cm.base');
+  FConceptMapsById := TFslMap<TFHIRConceptMapW>.Create('tx.cm.id');
+  FConceptMapsByURL := TFslMap<TFHIRConceptMapW>.Create('tx.cm.url');
 
   FBaseValueSets.defaultValue := nil;
   FBaseCodeSystems.defaultValue := nil;
@@ -744,7 +715,7 @@ procedure TTerminologyServerStore.SeeSpecificationResource(resource : TFHIRResou
 var
   vs : TFhirValueSetW;
   cs : TFhirCodeSystemW;
-  cm : TLoadedConceptMap;
+  cm : TFHIRConceptMapW;
 begin
   FLock.Lock('SeeSpecificationResource');
   try
@@ -777,17 +748,11 @@ begin
     end
     else if (resource.fhirType = 'ConceptMap') then
     begin
-      cm := TLoadedConceptMap.Create;
-      try
-        cm.Resource := resource.resourceW.Link as TFHIRConceptMapW;
-        cm.Source := getValueSetByUrl(cm.Resource.source, '');
-        cm.Target := getValueSetByUrl(cm.Resource.target, '');
-        FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
-        FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
-        FBaseConceptMaps.AddOrSetValue(cm.Resource.url, cm.Link);
-      finally
-        cm.free;
-      end;
+      cm := resource.resourceW as TFHIRConceptMapW;
+      FConceptMapsById.AddOrSetValue(cm.id, cm.Link);
+      FConceptMapsByURL.AddOrSetValue(cm.url, cm.Link);
+      FConceptMapsByURL.AddOrSetValue(cm.vurl, cm.Link);
+      FBaseConceptMaps.AddOrSetValue(cm.url, cm.Link);
     end
   finally
     FLock.Unlock;
@@ -798,7 +763,7 @@ procedure TTerminologyServerStore.SeeTerminologyResource(resource : TFHIRResourc
 var
   vs : TFhirValueSetW;
   cs : TFhirCodeSystemW;
-  cm : TLoadedConceptMap;
+  cm : TFHIRConceptMapW;
 begin
   FLock.Lock('SeeTerminologyResource');
   try
@@ -831,16 +796,10 @@ begin
     end
     else if (resource.fhirType = 'ConceptMap') then
     begin
-      cm := TLoadedConceptMap.Create;
-      try
-        cm.Resource := resource.resourceW.Link as TFHIRConceptMapW;
-        cm.Source := getValueSetByUrl(cm.Resource.source, '');
-        cm.Target := getValueSetByUrl(cm.Resource.target, '');
-        FConceptMapsById.AddOrSetValue(cm.Resource.id, cm.Link);
-        FConceptMapsByURL.AddOrSetValue(cm.Resource.url, cm.Link);
-      finally
-        cm.free;
-      end;
+      cm := resource.resourceW as TFHIRConceptMapW;
+      FConceptMapsById.AddOrSetValue(cm.id, cm.Link);
+      FConceptMapsByURL.AddOrSetValue(cm.url, cm.Link);
+      FConceptMapsByURL.AddOrSetValue(cm.vurl, cm.Link);
     end;
   finally
     FLock.Unlock;
@@ -855,7 +814,7 @@ end;
 procedure TTerminologyServerStore.DropTerminologyResource(aType : String; id : String);
 var
   vs, vs1 : TFhirResourceProxyV;
-  cm, cm1 : TLoadedConceptMap;
+  cm, cm1 : TFhirConceptMapW;
   cs : TFhirCodeSystemW;
   vsW : TFHIRValueSetW;
 begin
@@ -905,16 +864,16 @@ begin
       cm := FConceptMapsById[id];
       if cm <> nil then
       begin
-        cm1 := FBaseConceptMaps[cm.Resource.url];
-        FConceptMapsByURL.Remove(cm.Resource.url);
+        cm1 := FBaseConceptMaps[cm.url];
+        FConceptMapsByURL.Remove(cm.url);
         FConceptMapsByid.Remove(id); // cm is no longer valid
 
         // add the base one back if we are dropping a concept map that overrides it
         // current logical flaw: what if there's another one that overrides this? how do we prevent or deal with this?
         if cm1 <> nil then
         begin
-          FConceptMapsById.AddOrSetValue(cm1.Resource.id, cm1.Link);
-          FConceptMapsByURL.AddOrSetValue(cm1.Resource.url, cm1.Link);
+          FConceptMapsById.AddOrSetValue(cm1.id, cm1.Link);
+          FConceptMapsByURL.AddOrSetValue(cm1.url, cm1.Link);
         end;
       end;
     end;
@@ -937,29 +896,7 @@ begin
 end;
 
 procedure TTerminologyServerStore.UpdateConceptMaps;
-var
-  cm : TLoadedConceptMap;
 begin
-  assert(FLock.LockedToMe);
-  for cm in FConceptMapsById.values do
-  begin
-    if cm.Resource.source = '' then
-      cm.source := nil
-    else
-    begin
-      cm.Source := getValueSetByUrl(cm.Resource.source, '');
-      if (cm.Source = nil) then
-        cm.Source := getValueSetById(cm.Resource.source);
-    end;
-    if cm.Resource.target = '' then
-      cm.Target := nil
-    else
-    begin
-      cm.Target := getValueSetByUrl(cm.Resource.target, '');
-      if (cm.Target = nil) then
-        cm.Target := getValueSetById(cm.Resource.target);
-    end;
-  end;
 end;
 
 procedure TTerminologyServerStore.SetLoading(AValue: boolean);
@@ -1071,29 +1008,55 @@ begin
 end;
 
 
-function TTerminologyServerStore.getConceptMapById( id: String): TLoadedConceptMap;
+function TTerminologyServerStore.getConceptMapById(id: String): TFHIRConceptMapW;
 begin
-  FLock.Lock('getValueSetByUrl');
+  FLock.Lock('getConceptMapById');
   try
     if FConceptMapsById.ContainsKey(id) then
+    begin
+      Logging.log('Found map "'+id+'"');
       result := FConceptMapsById[id].Link
+    end
     else
+    begin
+      Logging.log('Did not find map "'+id+'"');
       result := nil;
+    end;
   finally
     FLock.Unlock;
   end;
 end;
 
-function TTerminologyServerStore.getConceptMapBySrcTgt(src, tgt: String): TLoadedConceptMap;
+function TTerminologyServerStore.getConceptMapByUrl(url: String): TFHIRConceptMapW;
+begin
+  FLock.Lock('getConceptMapByUrl');
+  try
+    if FConceptMapsByUrl.ContainsKey(url) then
+    begin
+      Logging.log('Found map "'+url+'"');
+      result := FConceptMapsByUrl[url].Link
+    end
+    else
+    begin
+      Logging.log('Did not find map "'+url+'"');
+      result := nil;
+    end;
+  finally
+    FLock.Unlock;
+  end;
+end;
+
+function TTerminologyServerStore.getConceptMapBySrcTgt(src, tgt: String
+  ): TFHIRConceptMapW;
 var
-  lcm : TLoadedConceptMap;
+  lcm : TFhirConceptMapW;
 begin
   result := nil;
   FLock.Lock('getValueSetByUrl');
   try
     for lcm in FConceptMapsById.Values do
-      if (lcm.Resource.source = src) and
-         (lcm.Resource.target = src) then
+      if (lcm.source = src) and
+         (lcm.target = src) then
       begin
         result := lcm.Link;
         break;
@@ -1101,18 +1064,22 @@ begin
   finally
     FLock.Unlock;
   end;
+  if result = nil then   
+    Logging.log('did not find map for "'+src+'" -> "'+tgt+'"')
+  else
+    Logging.log('Find map "'+lcm.url+'" for "'+src+'" -> "'+tgt+'"');
 end;
 
-function TTerminologyServerStore.GetConceptMapList: TLoadedConceptMapList;
+function TTerminologyServerStore.GetConceptMapList: TFslList<TFHIRConceptMapW>;
 var
-  cm : TLoadedConceptMap;
+  cm : TFhirConceptMapW;
 begin
-  result := TLoadedConceptMapList.Create;
+  result := TFslList<TFhirConceptMapW>.Create;
   try
     FLock.Lock('GetConceptMapList');
     try
       for cm in FConceptMapsById.values do
-        result.Add(TLoadedConceptMap(cm.Link));
+        result.Add(cm.Link);
     finally
       FLock.Unlock;
     end;
@@ -1121,6 +1088,7 @@ begin
     result.free;
   end;
 end;
+
 
 procedure TTerminologyServerStore.GetValueSetList(list : TFslList<TFhirValueSetW>);
 begin
@@ -1133,7 +1101,7 @@ begin
 end;
 
 
-function TTerminologyServerStore.checkVersion(system, version : String; profile : TFHIRExpansionParams) : String;
+function TTerminologyServerStore.checkVersion(system, version : String; profile : TFHIRTxOperationParams) : String;
 var
   t : TFhirExpansionParamsVersionRule;
 begin
@@ -1161,7 +1129,7 @@ begin
 end;
 
 function TTerminologyServerStore.getProvider(system: String; version: String;
-  profile: TFHIRExpansionParams; noException: boolean): TCodeSystemProvider;
+  profile: TFHIRTxOperationParams; noException: boolean): TCodeSystemProvider;
 var
   defToLatest : boolean;
   cs : TFHIRCodeSystemEntry;
@@ -1324,7 +1292,7 @@ begin
   end;
 end;
 
-function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW; profile: TFHIRExpansionParams): TCodeSystemProvider;
+function TTerminologyServerStore.getProvider(codesystem: TFHIRCodeSystemW; profile: TFHIRTxOperationParams): TCodeSystemProvider;
 begin
   checkVersion(codeSystem.url, codeSystem.version, profile);
   result := TFhirCodeSystemProvider.Create(FCommonTerminologies.FLanguages.link, FI18n.link, FFactory.link, TFHIRCodeSystemEntry.Create(codesystem.link));
@@ -1577,82 +1545,6 @@ begin
     end;
   end;
 end;
-
-{ TLoadedConceptMap }
-
-destructor TLoadedConceptMap.Destroy;
-begin
-  FResource.free;
-  FSource.free;
-  FTarget.free;
-  inherited;
-end;
-
-function TLoadedConceptMap.HasTranslation(system, code : String; out maps : TFslList<TFhirConceptMapGroupElementTargetW>) : boolean;
-var
-  gl : TFslList<TFhirConceptMapGroupW>;
-begin
-  gl := Resource.groups;
-  try
-    result := HasTranslation(gl, system, code, maps);
-  finally
-    gl.free;
-  end;
-end;
-
-function TLoadedConceptMap.Link: TLoadedConceptMap;
-begin
-  result := TLoadedConceptMap(inherited Link);
-end;
-
-function TLoadedConceptMap.HasTranslation(list : TFslList<TFhirConceptMapGroupW>; system, code : String; out maps : TFslList<TFhirConceptMapGroupElementTargetW>) : boolean;
-var
-  g : TFhirConceptMapGroupW;
-  c : TFhirConceptMapGroupElementW;
-begin
-  result := false;
-  for g in list do
-    for c in g.elements.forEnum do
-    begin
-      if (g.source = system) and (c.code = code) then
-      begin
-        maps := c.targets;
-        result := true;
-        exit;
-      end;
-    end;
-end;
-
-procedure TLoadedConceptMap.SetResource(const Value: TFhirConceptMapW);
-begin
-  FResource.free;
-  FResource := Value;
-end;
-
-procedure TLoadedConceptMap.SetSource(const Value: TFhirValueSetW);
-begin
-  FSource.free;
-  FSource := Value;
-end;
-
-procedure TLoadedConceptMap.SetTarget(const Value: TFhirValueSetW);
-begin
-  FTarget.free;
-  FTarget := Value;
-end;
-
-{ TLoadedConceptMapList }
-
-function TLoadedConceptMapList.getMap(iIndex: integer): TLoadedConceptMap;
-begin
-  result := TLoadedConceptMap(ObjectByIndex[iIndex]);
-end;
-
-function TLoadedConceptMapList.itemClass: TFslObjectClass;
-begin
-  result := TLoadedConceptMap;
-end;
-
 
 { TCommonTerminologies }
 
