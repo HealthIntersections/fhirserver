@@ -82,7 +82,7 @@ type
   //   the second structure is a list of lists of word or cardinal references.
   //   the third structure is a list of concepts. each concept has a ref0ernce to a name and a contained list of references which are either children
   //   the fourth structure is the code list - a list of loinc concepts, with codes and references to names and properties
-  //   the fifth structure is the multi-axial heirarchy - parent, children, concepts, and descendent concepts
+  //   the fifth structure is the multi-axial hierarchy - parent, children, concepts, and descendent concepts
 
   // 0. language list
   TLoincLanguages = class (TFslObject)
@@ -288,7 +288,7 @@ Type
     Property CodeLength : Cardinal read FCodeLength Write SetCodeLength;
   End;
 
-  // 5. the multi-axial heirachy
+  // 5. the multi-axial hierarchy
   // it is a list of entries
   // This is the effective logical structure of the bytes:
 //  TLOINCEntry = {private} packed record
