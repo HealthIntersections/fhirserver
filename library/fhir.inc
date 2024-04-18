@@ -96,7 +96,4 @@ Doing so is useful for leak hunting in production, but is also a little costly.
 
 {$ENDIF}
 
-{.$.DEFINE SMART_REF_COUNTING}
-
-// describe...
 

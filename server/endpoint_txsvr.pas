@@ -468,22 +468,27 @@ procedure TTerminologyServerDataLoadThread.execute;
 var
   version : String;
 begin
-  version := FEndPoint.config.prop['version'].value;
-  SetThreadName(version+' Loader');
+  GThreadDoingConstruction := true;
+  try
+    version := FEndPoint.config.prop['version'].value;
+    SetThreadName(version+' Loader');
 
-  FEndPoint.FStore.FData.FTotalToLoad :=
-    FEndPoint.FStore.FData.CodeSystems.count + FEndPoint.FStore.FData.ValueSets.Count+
-    FEndPoint.FStore.FData.NamingSystems.count + FEndPoint.FStore.FData.ConceptMaps.Count;
+    FEndPoint.FStore.FData.FTotalToLoad :=
+      FEndPoint.FStore.FData.CodeSystems.count + FEndPoint.FStore.FData.ValueSets.Count+
+      FEndPoint.FStore.FData.NamingSystems.count + FEndPoint.FStore.FData.ConceptMaps.Count;
 
-  process('CodeSystems', FEndPoint.FStore.FData.CodeSystems);
-  if not Stopped then
-    process('ValueSets', FEndPoint.FStore.FData.ValueSets);
-  if not Stopped then
-    process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
-  if not Stopped then
-    process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
-  if (FEndPoint <> nil) and (FEndPoint.FStore <> nil) and (FEndPoint.FStore.FData <> nil) then
-    FEndPoint.FStore.FData.FLoadingComplete := true;
+    process('CodeSystems', FEndPoint.FStore.FData.CodeSystems);
+    if not Stopped then
+      process('ValueSets', FEndPoint.FStore.FData.ValueSets);
+    if not Stopped then
+      process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
+    if not Stopped then
+      process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
+    if (FEndPoint <> nil) and (FEndPoint.FStore <> nil) and (FEndPoint.FStore.FData <> nil) then
+      FEndPoint.FStore.FData.FLoadingComplete := true;
+  finally
+    GThreadDoingConstruction := false;
+  end;
 end;
 
 { TTerminologyServerOperationEngine }

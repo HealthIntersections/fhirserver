@@ -249,41 +249,46 @@ var
   ep : TFhirServerEndpoint;
   i : integer;
 begin
+  GThreadDoingConstruction := true;
   try
-    LoadTerminologies;
-    LoadEndPoints;
-    StartWebServer();
-    for ep in FEndPoints do
-      ep.Started;
+    try
+      LoadTerminologies;
+      LoadEndPoints;
+      StartWebServer();
+      for ep in FEndPoints do
+        ep.Started;
 
-    recordStats(nil);
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create;
-    FMaintenanceThread.defineTask('mem-check', checkMem, 35);
-    FMaintenanceThread.defineTask('stats', recordStats, 60);
-    i := 0;
-    for ep in FEndPoints do
-    begin
-      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
-      i := i + 5;
+      recordStats(nil);
+      FMaintenanceThread := TFhirServerMaintenanceThread.Create;
+      FMaintenanceThread.defineTask('mem-check', checkMem, 35);
+      FMaintenanceThread.defineTask('stats', recordStats, 60);
+      i := 0;
+      for ep in FEndPoints do
+      begin
+        FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
+        i := i + 5;
+      end;
+      FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
+      FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
+      FMaintenanceThread.Start;
+
+
+      SetCacheStatus(settings.Ini.web['caching'].value = 'true');
+
+      // post start up time.
+      getReport('|', true); // base line the object countig
+      Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
+      Logging.Starting := false;
+      sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
+    except
+      on e : Exception do
+      begin
+        Logging.log('Error starting: '+E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
+        raise;
+      end;
     end;
-    FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
-    FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
-    FMaintenanceThread.Start;
-
-
-    SetCacheStatus(settings.Ini.web['caching'].value = 'true');
-
-    // post start up time.
-    getReport('|', true); // base line the object countig
-    Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
-    Logging.Starting := false;
-    sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
-  except
-    on e : Exception do
-    begin
-      Logging.log('Error starting: '+E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
-      raise;
-    end;
+  finally
+    GThreadDoingConstruction := false;
   end;
 end;
 
