@@ -862,11 +862,16 @@ var
   ccd : TFhirCodeSystemConceptDesignationW;
   css : TFHIRCodeSystemW;
   cc : TFhirCodeSystemConceptW;
+  lm, um : Boolean;
 begin
   result := TFhirCodeSystemProviderContext(context).concept.display;
   for ccd in TFhirCodeSystemProviderContext(context).concept.designations.forEnum do
-    if (langList = nil) or langList.matches(FLanguages, ccd.language) then
+  begin
+    lm := (langList <> nil) and not (langList.matches(FLanguages, FCs.CodeSystem.language)) and langList.matches(FLanguages, ccd.language);
+    um := (ccd.use = nil); // or isDisplayUsage(ccd.use);
+    if (lm and um) then
       result := ccd.value.Trim;
+  end;
   for css in FCs.Supplements do
   begin
     cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).concept.code, css.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), nil);
@@ -1087,7 +1092,7 @@ var
 begin
   result := false;
   for cs in FCs.Supplements do
-    if cs.vurl = url then
+    if (cs.vurl = url) or (cs.url = url) then
       exit(true);
 end;
 
@@ -1238,7 +1243,7 @@ begin
         for ccd in cc.designations.forEnum do
         Begin
           d := resp.addDesignation(ccd.language, ccd.value);
-          d.use := ccd.use;
+          d.use := ccd.use.Element;
         End;
       end;
 
@@ -1384,7 +1389,7 @@ begin
   if includeRoot and filter(context, base) then
       list.Add(base.Link, 0);
 
-  // 1. Add children in the heirarchy
+  // 1. Add children in the hierarchy
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list, filter, context, true);
 
