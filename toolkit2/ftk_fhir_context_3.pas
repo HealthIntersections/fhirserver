@@ -38,7 +38,7 @@ uses
   fhir_objects, fhir_factory, fhir_client, fhir_common,
   ftx_service,
   fhir3_types, fhir3_resources, fhir3_resources_base, fhir3_context, fhir3_profiles, fhir3_client,
-  fhir_valuesets;
+  fhir_tx, fhir_valuesets;
 
 Type
 

@@ -327,7 +327,7 @@ begin
   begin
     ts := TStringlist.Create;
     try
-      FLock.Lock;
+      FLock.Lock('updmemo');
       try
         for i := FCurrentLine to FCurrent.lines.count - 1 do
           ts.add(FCurrent.lines[i]);
@@ -831,7 +831,7 @@ end;
 
 procedure TIGPublicationFolder.emitLine(line: String; repl : boolean);
 begin
-  FManager.FLock.Lock;
+  FManager.FLock.Lock('emit');
   try
     if repl then
       FLines.add('t'+line)
@@ -849,7 +849,7 @@ var
 begin
   b := TFslStringBuilder.Create;
   try
-    FManager.FLock.Lock;
+    FManager.FLock.Lock('log');
     try
       for s in FLines do
       begin

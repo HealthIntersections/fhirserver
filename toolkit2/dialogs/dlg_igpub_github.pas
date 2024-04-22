@@ -239,7 +239,7 @@ end;
 
 procedure TIgGitHubDialog.doLine(sender: TFslExternalProcessThread; line: String; repl : boolean);
 begin
-  FLock.Lock;
+  FLock.Lock('git.line');
   try
     if (repl) then
       FLines.add('t'+line)
@@ -262,7 +262,7 @@ var
   s : String;
   ok : boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('git.timer');
   try
     ok := false;
     for s in FLines do

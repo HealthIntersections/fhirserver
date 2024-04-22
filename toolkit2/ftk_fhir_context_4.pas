@@ -39,7 +39,7 @@ uses
   fhir_objects, fhir_factory, fhir_client, fhir_common, fhir_utilities,
   ftx_service,
   fhir4_types, fhir4_resources, fhir4_resources_base, fhir4_context, fhir4_profiles, fhir4_client,
-  fhir_valuesets;
+  fhir_tx, fhir_valuesets;
 
 Type
 
