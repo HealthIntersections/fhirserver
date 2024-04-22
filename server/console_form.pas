@@ -676,7 +676,7 @@ begin
   try
     list := client.search('', '', '', false);
     list.SortE(compare);
-    MainConsoleForm.Flock.Lock;
+    MainConsoleForm.Flock.Lock('pck.exec');
     try
       MainConsoleForm.FThreadPackages := list;
     finally
@@ -2766,7 +2766,7 @@ begin
   tsth := TStringList.Create;
   try
     d := 0;
-    Flock.Lock;
+    Flock.Lock('console.timer');
     try
       st := FStatus;
       ss := FServerStatus;
@@ -2812,7 +2812,7 @@ begin
           sBar.Panels[0].Text := 'Connected';
           if not FTelnet.connected then
           begin
-            Flock.Lock;
+            Flock.Lock('consoler.timer2');
             try
               FStatus := csDiconnected;
             finally
@@ -2902,7 +2902,7 @@ begin
     FLines.clear;
     mConsole.Lines.Clear;
     FTelnet.Disconnect;
-    FLock.lock;
+    FLock.lock('console.button3');
     try
       FStatus := csDiconnected;
     finally
@@ -2937,7 +2937,7 @@ var
   reply : String;
 begin
   reply := '';
-  FLock.Lock;
+  FLock.Lock('console.line');
   try
     case FStatus of
       csDiconnected :
@@ -3228,7 +3228,7 @@ end;
 
 procedure TMainConsoleForm.DoConnected(Sender: TObject);
 begin
-  FLock.Lock;
+  FLock.Lock('console.connected');
   try
     FStatus := csUsername;
   finally
@@ -3250,7 +3250,7 @@ begin
   FConnected := false;
   btnClearCache.enabled := false;
   btnFetchThreads.enabled := false;
-  FLock.Lock;
+  FLock.Lock('console.disconnect');
   try
     FStatus := csDiconnected;
   finally

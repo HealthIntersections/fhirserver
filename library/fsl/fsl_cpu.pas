@@ -133,7 +133,7 @@ begin
   {$IFDEF WINDOWS}
     if (FHandle <> 0) then
     begin
-      FLock.Lock;
+      FLock.Lock('cpuUage');
       try
         result := FLastUsage;
         ThisTime := GetTickCount; //Get the time elapsed since last query

@@ -165,7 +165,7 @@ end;
 
 procedure TInstallerListener.log(const s: String);
 begin
-  FThread.Flock.Lock;
+  FThread.Flock.Lock('installer.listener');
   try
     FThread.FIncoming.add(s);
   finally
@@ -191,7 +191,7 @@ end;
 
 procedure TInstallerThread.getLog(ts: TStringList; var status : String);
 begin
-  FLock.lock;
+  FLock.lock('installer.log');
   try
     ts.Assign(FIncoming);
     FIncoming.Clear;
