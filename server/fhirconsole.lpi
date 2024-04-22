@@ -36,7 +36,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="admin;tx;..\dependencies\FMM"/>
+            <OtherUnitFiles Value="admin;tx;..\dependencies\FMM;..\library\fsl\tests"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <Parsing>
@@ -163,7 +163,7 @@
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="admin;tx"/>
+            <OtherUnitFiles Value="admin;tx;..\library\fsl\tests"/>
             <UnitOutputDirectory Value="lib\console\$(BuildMode)"/>
           </SearchPaths>
           <CodeGeneration>
@@ -374,7 +374,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="14">
+    <Units Count="15">
       <Unit0>
         <Filename Value="fhirconsole.pas"/>
         <IsPartOfProject Value="True"/>
@@ -459,6 +459,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit13>
+      <Unit14>
+        <Filename Value="..\library\fsl\tests\fsl_testing.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit14>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -468,9 +472,9 @@
       <Filename Value="..\exec\64\FHIRConsole.exe"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);..\library"/>
+      <IncludeFiles Value="$(ProjOutDir);..\library;..\library\fsl\tests"/>
       <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-      <OtherUnitFiles Value="admin;tx;..\dependencies\FMM"/>
+      <OtherUnitFiles Value="admin;tx;..\dependencies\FMM;..\library\fsl\tests;..\library\fcomp\tests;..\library\v2\tests;..\library\cda\tests;..\library\fdb\tests;..\library\ftx\tests;tests"/>
       <UnitOutputDirectory Value="lib\$(BuildMode)"/>
     </SearchPaths>
     <Parsing>
