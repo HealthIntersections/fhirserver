@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 as builder
+FROM ubuntu:24.04 as builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -92,7 +92,7 @@ ENV DEBIAN_FRONTEND=
 
 
 # Runtime stage
-FROM ubuntu:22.04 as runtime
+FROM ubuntu:24.04 as runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
