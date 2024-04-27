@@ -39,7 +39,7 @@ uses
   fhir_objects, fhir_factory, fhir_client, fhir_common,
   ftx_service,
   fhir2_types, fhir2_resources, fhir2_resources_base, fhir2_context, fhir2_profiles, fhir2_client,
-  fhir_valuesets;
+  fhir_tx, fhir_valuesets;
 
 Type
 
@@ -57,7 +57,7 @@ Type
     function  findCode(list : TFhirValueSetCodeSystemConceptList; code : String; caseSensitive : boolean) : TFhirValueSetCodeSystemConcept;
     function validateInternally(system, version, code: String; vs: TFHIRValueSet; var res : TValidationResult) : boolean;
     function doGetVs(sender : TObject; url, version : String) : TFHIRValueSetW;
-    function doGetCs(sender : TObject; url, version : String; params : TFHIRExpansionParams; nullOk : boolean) : TCodeSystemProvider;
+    function doGetCs(sender : TObject; url, version : String; params : TFHIRTxOperationParams; nullOk : boolean) : TCodeSystemProvider;
     procedure doGetList(sender : TObject; url : String; list : TStringList);
   protected
     procedure SeeResourceProxy(r : TFhirResourceProxy); override;
@@ -118,7 +118,7 @@ begin
   inherited;
 end;
 
-function TToolkitValidatorContextR2.doGetCs(sender: TObject; url, version: String; params: TFHIRExpansionParams; nullOk : boolean): TCodeSystemProvider;
+function TToolkitValidatorContextR2.doGetCs(sender: TObject; url, version: String; params: TFHIRTxOperationParams; nullOk : boolean): TCodeSystemProvider;
 var
    cs : TFHIRValueSet;
 begin
@@ -326,14 +326,14 @@ var
   vsw : TFhirValueSetW;
   validator : TValueSetChecker;
   p : TFHIRParametersW;
-  params : TFHIRExpansionParams;
+  params : TFHIRTxOperationParams;
 begin
   try
     vsw := Factory.wrapValueSet(vs.Link);
     try
       validator := TValueSetChecker.Create(Factory.link, nil, doGetVs, doGetCs, doGetList, nil, nil, FLanguages.link, '', nil);
       try
-        params := TFHIRExpansionParams.Create;
+        params := TFHIRTxOperationParams.Create;
         try
           validator.prepare(vsw, params, nil);
           p := validator.check('code', system, version, code, false);

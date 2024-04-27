@@ -269,7 +269,7 @@ begin
   if FInfo = nil then
     exit; // not lazy loading
 
-  FLock.lock;
+  FLock.lock('loadResource');
   try
     if FResourceV <> nil then
       exit;

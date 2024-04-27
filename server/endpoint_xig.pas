@@ -143,7 +143,7 @@ type
     procedure downloadAndReload;
     function dateBuilt : String;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -537,9 +537,9 @@ end;
 
 { TXIGServerEndPoint }
 
-constructor TXIGServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
+constructor TXIGServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited Create(config, settings, nil, common, nil, i18n);
+  inherited Create(config, settings, db, common, nil, i18n);
 end;
 
 destructor TXIGServerEndPoint.Destroy;
@@ -621,7 +621,7 @@ begin
   end;
   xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, true, false));
   try
-    FXIGServer.FLock.lock;
+    FXIGServer.FLock.lock('downloadAndReload');
     try
       oxig := FXIGServer.FContext;
       FXIGServer.FContext := xig.link;
@@ -1402,7 +1402,7 @@ end;
 
 function TFHIRXIGWebServer.getContext: TFHIRXIGWebContext;
 begin
-  FLock.Lock;
+  FLock.Lock('getContext');
   try
     result := FContext.link;
   finally

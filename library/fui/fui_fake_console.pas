@@ -200,7 +200,7 @@ end;
 
 procedure TFakeConsoleListener.log(const s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     FLines.add(s);
   finally
@@ -220,7 +220,7 @@ end;
 
 procedure TFakeConsoleListener.logStart(s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('logStart');
   try
     FLine := s;
     FFinished := false;
@@ -231,7 +231,7 @@ end;
 
 procedure TFakeConsoleListener.logContinue(s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('logContinue');
   try
     FLine := FLine + s;
   finally
@@ -241,7 +241,7 @@ end;
 
 procedure TFakeConsoleListener.logFinish(s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('logFinish');
   try
     FLine := FLine + s;
     FFinished := true;
@@ -386,7 +386,7 @@ var
 begin
   if not FStarted then
     start;
-  FListener.FLock.Lock;
+  FListener.FLock.Lock('Timer1Timer');
   try
     l := FListener.FLine;
     FCache.assign(FListener.FLines);

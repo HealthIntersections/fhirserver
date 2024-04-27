@@ -4497,7 +4497,7 @@ Var
 Begin
   Result := Nil;
   aDate := CheckFileExists(aVersion, sStruct);
-  FLock.Lock;
+  FLock.Lock('ProduceSchemaMap');
   Try
     oEntry := FCache.GetByVersionAndStructure(aVersion, sStruct);
     bOk := Assigned(oEntry) And (aDate < oEntry.Date);
@@ -4514,7 +4514,7 @@ Begin
     Else
       Begin
       Result := LoadSchemaFromXML(aVersion, sStruct);
-      FLock.Lock;
+      FLock.Lock('ProduceSchemaMap2');
       Try
         iIndex := FCache.IndexByVersionAndStructure(aVersion, sStruct);
         If iIndex > -1 Then
@@ -4531,7 +4531,7 @@ Begin
   If sValue <> FFileName Then
     Begin
     FFilename := sValue;
-    FLock.Lock;
+    FLock.Lock('SetFileName');
     Try
       FCache.Clear;
       LoadSchemasFromStore;
@@ -5090,7 +5090,7 @@ end;
 
 function THL7V2Dictionary.GetModel(aVersion: THL7V2Version): THL7V2Model;
 begin
-  FLock.Lock;
+  FLock.Lock('GetModel');
   Try
     result := FModels[aVersion];
     if result = nil then
@@ -5245,7 +5245,7 @@ end;
 
 function THL7V2Dictionary.VersionLoaded(aVer: THL7V2Version): Boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('VersionLoaded');
   Try
     result := assigned(FModels[aVer]);
   Finally

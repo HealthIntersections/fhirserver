@@ -780,7 +780,7 @@ begin
         if (code.region <> '') then
           note('Region', FRegions[code.region].display);
         if (code.variant <> '') then
-          note('Region', FVariants[code.variant].display);
+          note('Variant', FVariants[code.variant].display);
         b.Append(')');
       end;
 

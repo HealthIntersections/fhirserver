@@ -40,7 +40,7 @@ Uses
   ftx_service,
   fhir5_enums, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_context, fhir5_profiles, fhir5_client, fhir5_utilities,
   fhir5_pathnode, fhir5_pathengine,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   tx_server;
 
 type
@@ -50,7 +50,7 @@ type
   TFHIRServerWorkerContextR5 = class (TBaseWorkerContextR5)
   private
     FTerminologyServer : TTerminologyServer;
-    FProfile : TFhirExpansionParams;
+    FProfile : TFhirTxOperationParams;
     FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
     FSearchParameters : TFslMap<TFhirSearchParameter>;
@@ -101,7 +101,7 @@ constructor TFHIRServerWorkerContextR5.Create(factory : TFHIRFactory; pc : TFHIR
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r5');
-  FProfile := TFhirExpansionParams.Create;
+  FProfile := TFhirTxOperationParams.Create;
   FProfile.includeDefinition := false;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.q');
@@ -210,7 +210,7 @@ begin
     FCompartments.Add(r.url, TFhirCompartmentDefinition(r.resource).link)
   else if r.fhirType = 'Questionnaire' then
   begin
-    FLock.lock;
+    FLock.lock('SeeResourceProxy');
     try
       if FQuestionnaires.ContainsKey(r.id) then
         FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
@@ -303,7 +303,7 @@ var
 begin
   if url.StartsWith('Questionnaire/') then
     url := url.Substring(14);
-  FLock.lock;
+  FLock.lock('getQuestionnaire');
   try
     if FQuestionnaires.TryGetValue(url, q) then
       exit(q.Link)

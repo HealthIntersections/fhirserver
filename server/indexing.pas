@@ -356,7 +356,7 @@ procedure TFhirIndexSpaces.RecordSpace(space: String; key: integer);
 begin
   if space.trim <> space then
     raise EFHIRException.Create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
-  FLock.Lock;
+  FLock.Lock('RecordSpace');
   try
     FSpaces.AddObject(space, TObject(key));
     if key > FLast then
@@ -373,7 +373,7 @@ var
 begin
   if space.trim <> space then
     raise EFHIRException.Create('Illegal System Value "'+space+'" - cannot have leading or trailing whitespace');
-  FLock.Lock;
+  FLock.Lock('ResolveSpace');
   try
     result := FSpaces.Find(space, i);
     if result then

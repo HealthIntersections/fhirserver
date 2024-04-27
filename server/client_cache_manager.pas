@@ -140,7 +140,7 @@ function TClientCacheManager.cacheSize(magic : integer): UInt64;
 var
   item : TClientCacheManagerEntry;
 begin
-  FLock.Lock;
+  FLock.Lock('cacheSize');
   try
     result := 0;
     for item in FList do
@@ -152,7 +152,7 @@ end;
 
 procedure TClientCacheManager.clearCache;
 begin
-  FLock.Lock;
+  FLock.Lock('clearCache');
   try
     FList.Clear;
   finally
@@ -247,7 +247,7 @@ procedure TClientCacheManager.recordStats(rec: TStatusRecord);
 var
   e : TClientCacheManagerEntry;
 begin
-  FLock.Lock();
+  FLock.Lock('recordStats');
   try
     rec.ClientCacheCount := rec.ClientCacheCount + FList.count;
     for e in FList do

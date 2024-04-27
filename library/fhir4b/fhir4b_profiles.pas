@@ -1535,7 +1535,7 @@ var
   i : integer;
   s : string;
 begin
-  FLock.Lock;
+  FLock.Lock('allResourceNames');
   try
     SetLength(result, length(ALL_RESOURCE_TYPE_NAMES) - 1 + FCustomResources.Count);
     for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
@@ -1640,7 +1640,7 @@ end;
 
 function TBaseWorkerContextR4B.getCustomResource(name: String): TFHIRCustomResourceInformation;
 begin
-  FLock.Lock;
+  FLock.Lock('getCustomResource');
   try
     if FCustomResources.TryGetValue(name, result) then
       result.Link
@@ -1711,7 +1711,7 @@ end;
 
 function TBaseWorkerContextR4B.hasCustomResource(name: String): boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('hasCustomResource');
   try
     result := FCustomResources.ContainsKey(name);
   finally
@@ -1723,7 +1723,7 @@ function TBaseWorkerContextR4B.hasCustomResourceDefinition(sd: TFHIRStructureDef
 var
   cr : TFHIRCustomResourceInformation;
 begin
-  FLock.Lock;
+  FLock.Lock('hasCustomResourceDefinition');
   try
     result := false;
     for cr in FCustomResources.Values do
@@ -1878,7 +1878,7 @@ end;
 
 procedure TBaseWorkerContextR4B.registerCustomResource(cr: TFHIRCustomResourceInformation);
 begin
-  FLock.Lock;
+  FLock.Lock('registerCustomResource');
   try
     FCustomResources.Add(cr.name, cr.Link);
   finally
@@ -1938,7 +1938,7 @@ procedure TBaseWorkerContextR4B.setNonSecureTypes(names: array of String);
 var
   i : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('setNonSecureTypes');
   try
     SetLength(FNonSecureNames, length(names));
     for i := 0 to length(names)-1 do
@@ -2111,7 +2111,7 @@ begin
   else
   begin
     StringSplit(url, '#', id, code);
-    lock.Lock;
+    lock.Lock('getProfileStructure');
     try
       profile := FProfilesByURL[id].Link;
     finally
@@ -2136,7 +2136,7 @@ end;
 
 procedure TProfileManager.Unload;
 begin
-  lock.Lock;
+  lock.Lock('Unload');
   try
     FProfilesById.Clear;
     FProfilesByURL.Clear;

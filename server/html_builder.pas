@@ -407,7 +407,7 @@ Header(FFactory, Session, FBaseURL, langList, FVersion)+
     ul := ul + '?'
   else
     ul := ul + '&';
-  s.append('<p><a href="'+ul+'_format=xml">XML</a> '+GetFhirMessage('OR', langList)+' <a href="'+ul+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'</p>'+#13#10);
+  s.append('<p><a href="'+URLPath([FBaseUrl, ul])+'_format=xml">XML</a> '+GetFhirMessage('OR', langList)+' <a href="'+URLPath([FBaseUrl, ul])+'_format=json">JSON</a> '+GetFhirMessage('NAME_REPRESENTATION', langList)+'</p>'+#13#10);
 
     if (bundle.type_ in [btSearchset, btHistory])  then
     begin

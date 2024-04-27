@@ -262,7 +262,7 @@ Begin
   html.EndList;
 
   html.Line;
-  Lock.Lock;
+  Lock.Lock('PublishHome');
   Try
     if FSearchCache.Count <> 0 Then
     Begin
@@ -1566,7 +1566,7 @@ var
   icontext : UInt64;
 begin
   iContext := StrToUInt64Def(sContext, 0);
-  Lock.Lock;
+  Lock.Lock('PublishSearch');
   Try
     if FSearchCache.Find(sText+#0+sContext, i) Then
       a := TSearchCache(FSearchCache.Objects[i]).a

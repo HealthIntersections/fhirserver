@@ -203,7 +203,7 @@ end;
 
 function TFHIRWebServerStats.GetRestCount: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('GetRestCount');
   try
     result := FRestCount;
   finally
@@ -213,7 +213,7 @@ end;
 
 function TFHIRWebServerStats.GetRestTime: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('GetRestTime');
   try
     result := FRestTime;
   finally
@@ -223,7 +223,7 @@ end;
 
 function TFHIRWebServerStats.GetTotalCount: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('GetTotalCount');
   try
     result := FTotalCount;
   finally
@@ -233,7 +233,7 @@ end;
 
 function TFHIRWebServerStats.GetTotalTime: integer;
 begin
-  FLock.Lock;
+  FLock.Lock('GetTotalTime');
   try
     result := FTotalTime;
   finally
@@ -250,7 +250,7 @@ function TFHIRWebServerStats.Present: string;
 var
   rt, rc : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('Present');
   try
     rt := FRestTime;
     rc := FRestCount;
@@ -266,7 +266,7 @@ end;
 
 procedure TFHIRWebServerStats.restStart;
 begin
-  FLock.Lock;
+  FLock.Lock('restStart');
   try
     inc(FRestCount, 1);
   finally
@@ -281,7 +281,7 @@ end;
 
 procedure TFHIRWebServerStats.totalStart;
 begin
-  FLock.Lock;
+  FLock.Lock('totalStart');
   try
     inc(FTotalCount, 1);
   finally
@@ -291,7 +291,7 @@ end;
 
 procedure TFHIRWebServerStats.restFinish(ms: integer);
 begin
-  FLock.Lock;
+  FLock.Lock('restFinish');
   try
     inc(FRestTime, ms);
   finally
@@ -301,7 +301,7 @@ end;
 
 procedure TFHIRWebServerStats.totalFinish(ms: integer);
 begin
-  FLock.Lock;
+  FLock.Lock('totalFinish');
   try
     inc(FTotalTime, ms);
   finally

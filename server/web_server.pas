@@ -423,9 +423,10 @@ var
   ci: TFHIRWebServerClientInfo;
 begin
   SetThreadStatus('Connecting');
-  Common.Lock.Lock;
+  ci := TFHIRWebServerClientInfo.Create;
+
+  Common.Lock.Lock('DoConnect');
   try
-    ci := TFHIRWebServerClientInfo.Create;
     FClients.Add(ci);
     AContext.Data := ci;
     ci.Context := AContext;
@@ -459,7 +460,7 @@ begin
     SetThreadStatus('Disconnecting');
     if AContext.Data <> nil then
     begin
-      Common.Lock.Lock;
+      Common.Lock.Lock('DoDisconnect');
       try
         FClients.Remove(TFHIRWebServerClientInfo(AContext.Data));
         AContext.Data := nil;
@@ -522,7 +523,7 @@ function TFhirWebServer.GetCurrentRequestReport: String;
 var
   conn : TFHIRHTTPConnectionInfo;
 begin
-  FLock.lock;
+  FLock.lock('GetCurrentRequestReport');
   try
     result := 'Current Web Requests: '+inttostr(FLiveConnections.count);
     for conn in FLiveConnections do
@@ -536,7 +537,7 @@ function TFhirWebServer.GetCurrentRequestCount: integer;
 var
   conn : TFHIRHTTPConnectionInfo;
 begin
-  FLock.lock;
+  FLock.lock('GetCurrentRequestCount');
   try
     result := FLiveConnections.count;
   finally
@@ -684,7 +685,7 @@ begin
   try
     b.Append('<table>'#13#10);
     b.Append('<tr><td>IP address</td><td>Count</td><td>Session</td><td>Activity</td><td>Length</td></tr>'#13#10);
-    Common.Lock.Lock;
+    Common.Lock.Lock('WebDump');
     try
       for ci in FClients do
       begin
@@ -805,7 +806,7 @@ var
 begin
   ci := TFHIRHTTPConnectionInfo.create(request, AContext);
   try
-    FLock.lock;
+    FLock.lock('PlainRequest');
     try
       FLiveConnections.add(ci.link);
     finally
@@ -936,7 +937,7 @@ begin
       end;
     end;
   finally
-    FLock.lock;
+    FLock.lock('PlainRequest2');
     try
       FLiveConnections.remove(ci);
     finally
@@ -1000,7 +1001,7 @@ var
 begin
   ci := TFHIRHTTPConnectionInfo.create(request, AContext);
   try
-    FLock.lock;
+    FLock.lock('SecureRequest');
     try
       FLiveConnections.add(ci.link);
     finally
@@ -1109,7 +1110,7 @@ begin
       end;
     end;
   finally
-    FLock.lock;
+    FLock.lock('SecureRequest2');
     try
       FLiveConnections.remove(ci);
     finally
@@ -1359,7 +1360,7 @@ var
 begin
   ci := TFHIRWebServerClientInfo(AContext.Data);
 
-  Common.Lock.Lock;
+  Common.Lock.Lock('MarkEntry');
   try
     ci.Activity := request.Command + ' ' + request.Document + '?' + request.UnparsedParams;
     ci.Count := ci.Count + 1;
@@ -1376,7 +1377,7 @@ var
 begin
   ci := TFHIRWebServerClientInfo(AContext.Data);
 
-  Common.Lock.Lock;
+  Common.Lock.Lock('MarkExit');
   try
     ci.Activity := '';
     Common.Stats.totalFinish(GetTickCount64 - ci.Start);
@@ -1690,7 +1691,7 @@ var
   conn : TFHIRHTTPConnectionInfo;
 begin
   logging.log('Max Web Connections Exceeded ('+inttostr(MaxConnections)+')');
-  FServer.FLock.lock;
+  FServer.FLock.lock('DoMaxConnectionsExceeded');
   try
     for conn in FServer.FLiveConnections do
       logging.log(conn.log);

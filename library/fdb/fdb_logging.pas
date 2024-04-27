@@ -125,7 +125,7 @@ begin
   assert(AWhenStarted > 0, ASSERT_LOCATION+': WhenStarted is not valid');
 
 
-  FLock.Lock;
+  FLock.Lock('RecordUsage');
   try
     inc(FTotal);
     GetLogEntry(AUsage).RecordUsage(AWhenStarted, ARowCount, APrepareCount, AException, AErrMsg);
@@ -139,7 +139,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogger.ErrorReport';
 begin
   assert(AUsage <> '', ASSERT_LOCATION+': Usage is not valid');
 
-  FLock.Lock;
+  FLock.Lock('ErrorReport');
   try
     inc(FTotal);
     result := GetLogEntry(AUsage).Report(true, AFormat)
@@ -153,7 +153,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogger.Report';
 var
   i : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('Report');
   try
     result := TFDBLogEntry.Header(AFormat);
     for i := 0 to FList.Count - 1 do
@@ -191,7 +191,7 @@ const ASSERT_LOCATION = ASSERT_UNIT+'.TFDBLogger.InteractiveReport';
 var
   i : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('InteractiveReport');
   try
     if AParam <> '' then
       begin

@@ -98,7 +98,7 @@ type
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
     FCaching : boolean;
-    function PathForPackage(id, ver : String) : String;
+    function PathForPackage(id, ver : String; allowed : TSemanticVersionLevel = semverMinor) : String;
 
     function loadArchive(content : TBytes; description : String) : TDictionary<String, TBytes>;
     procedure clearCache;
@@ -133,7 +133,7 @@ type
     procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TNpmPackage>); overload;
     procedure ListAllPackages(list : TFslList<TNpmPackage>); overload;
 
-    function packageExists(id, ver : String) : boolean; overload;
+    function packageExists(id, ver : String;  allowed : TSemanticVersionLevel = semverMinor) : boolean; overload;
     function autoInstallPackage(id, ver : String) : boolean; overload;
     function latestPublishedVersion(id : String) : String;
 
@@ -417,7 +417,7 @@ begin
       FolderDelete(s);
       FIni.DeleteKey('packages', s);
     end;
-  FLock.Lock;
+  FLock.Lock('clearCache');
   try
     FCache.Clear;
   finally
@@ -885,7 +885,7 @@ function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackage;
 var
   found : boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('loadPackageFromCache');
   try
     found := FCache.TryGetValue(folder, result);
     if found then
@@ -901,7 +901,7 @@ begin
     result := TNpmPackage.fromFolder(folder);
     if FCaching then
     begin
-      FLock.Lock;
+      FLock.Lock('loadPackageFromCache2');
       try
         FCache.add(folder, result.Link);
       finally
@@ -918,7 +918,7 @@ var
 begin
   if (ver = '') then
     ver := latestPublishedVersion(id);
-  result := packageExists(id, ver);
+  result := packageExists(id, ver, semverLabel);
   if (not result) then
   begin
     list := TFslList<TFHIRPackageInfo>.Create;
@@ -992,12 +992,12 @@ begin
   end;
 end;
 
-function TFHIRPackageManager.packageExists(id, ver: String): boolean;
+function TFHIRPackageManager.packageExists(id, ver: String;  allowed : TSemanticVersionLevel = semverMinor): boolean;
 begin
   result := PathForPackage(id, ver) <> '';
 end;
 
-function TFHIRPackageManager.PathForPackage(id, ver: String): String;
+function TFHIRPackageManager.PathForPackage(id, ver: String; allowed : TSemanticVersionLevel = semverMinor): String;
 var
   ts : TStringlist;
   s, n, t : String;
@@ -1008,7 +1008,7 @@ begin
   try
     for s in TDirectory.GetDirectories(FFolder) do
       ts.Add(s);
-    for a := semverLabel downto semverMinor do
+    for a := semverLabel downto allowed do
     begin
       for s in ts do
       begin

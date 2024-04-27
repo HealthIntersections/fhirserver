@@ -149,7 +149,7 @@ end;
 
 procedure TClosureManager.processEntry(conn: TFDBConnection; ClosureEntryKey, ConceptKey: integer; uri, code : String);
 begin
-  FLock.Lock;
+  FLock.Lock('processEntry');
   try
     inc(FVersion);
     processEntryInternal(conn, ClosureEntryKey, ConceptKey, uri, code, nil);
@@ -165,7 +165,7 @@ var
   coding : TFHIRCodingW;
   ck, cek : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('processConcepts');
   try
     inc(FVersion);
     map.version := inttostr(FVersion);

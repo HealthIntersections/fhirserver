@@ -42,7 +42,7 @@ uses
   fhir_objects, fhir_parser, fhir_xhtml, fhir_uris, fhir_utilities, fhir_cdshooks,
   fhir_validator, fhir_common, fhir_factory, fhir_narrative, fhir_indexing,
   fhir_client,
-  fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
+  fhir_tx, fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
   ftx_service, tx_server, ftx_ucum_services,
   fsl_scim, scim_server,
   indexing, session, subscriptions, security, obsservation_stats, bundlebuilder, time_tracker, search,
@@ -5860,9 +5860,9 @@ end;
 
 function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; langList : THTTPLanguageList; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSetW;
 var
-  profile : TFHIRExpansionParams;
+  profile : TFHIRTxOperationParams;
 begin
-  profile := TFHIRExpansionParams.Create;
+  profile := TFHIRTxOperationParams.Create;
   try
     profile.limitedExpansion := allowIncomplete;
     if (vs <> nil) then
@@ -6712,7 +6712,7 @@ function TFHIRNativeStorageService.TrackValueSet(id: String; conn : TFDBConnecti
 var
   s : String;
 begin
-  FLock.Lock;
+  FLock.Lock('TrackValueSet');
   try
     if not FRegisteredValueSets.TryGetValue(id, s) then
       s := '';
@@ -7205,7 +7205,7 @@ end;
 
 procedure TFHIRNativeStorageService.QueueResource(session : TFHIRSession; r: TFHIRResourceV);
 begin
-  FLock.Lock;
+  FLock.Lock('QueueResource');
   try
     FQueue.add(TFHIRQueuedResource.Create(session.Link, r.Link));
   finally
@@ -7664,9 +7664,9 @@ end;
 function TFHIRNativeStorageService.LookupCode(system, version, code: String): String;
 var
   prov: TCodeSystemProvider;
-  params : TFHIRExpansionParams;
+  params : TFHIRTxOperationParams;
 begin
-  params := TFHIRExpansionParams.Create;
+  params := TFHIRTxOperationParams.Create;
   try
     params.defaultToLatestVersion := true;
     try

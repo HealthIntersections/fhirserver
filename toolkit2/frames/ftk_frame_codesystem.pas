@@ -135,7 +135,7 @@ begin
   //FManager.registerControl('valueSet', edtValueSet);
   //FManager.registerControl('count', edtConceptCount);
   //FManager.registerControl('supplements', edtSupplements);
-  //FManager.registerControl('heirarchy', cbxHeirarchy);
+  //FManager.registerControl('hierarchy', cbxHierarchy);
   //FManager.registerControl('content', cbxContent);
   //
   //FManager.registerControl('caseSensitive', chkCase);

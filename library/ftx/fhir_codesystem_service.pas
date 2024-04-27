@@ -170,6 +170,7 @@ type
   TFhirCodeSystemProviderFilterContext = class (TCodeSystemProviderFilterContext)
   private
     ndx : integer;
+    include : boolean;
     concepts : TFslList<TFhirCodeSystemConceptMatch>;
 
     procedure Add(item : TFhirCodeSystemConceptW; rating : double);
@@ -207,8 +208,8 @@ type
     function getProperty(code : String) : TFhirCodeSystemPropertyW;
     function hasPropForCode(code : String) : boolean;
     function conceptHasProperty(concept : TFhirCodeSystemConceptW; url : String; value : string) : boolean;
-    procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; value : String; list: TFhirCodeSystemProviderFilterContext);
-    procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; value : String; List: TFhirCodeSystemProviderFilterContext);
+    procedure iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp : TFhirCodeSystemPropertyW; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
+    procedure iterateConceptsByKnownProperty(src : TFhirCodeSystemConceptListW; code : String; values: TStringArray; List: TFhirCodeSystemProviderFilterContext; include : boolean);
     procedure iterateConceptsByRegex(src : TFhirCodeSystemConceptListW; regex: string; list: TFhirCodeSystemProviderFilterContext);
     procedure listChildrenByProperty(code : String; list, children : TFhirCodeSystemConceptListW);
   protected
@@ -861,11 +862,16 @@ var
   ccd : TFhirCodeSystemConceptDesignationW;
   css : TFHIRCodeSystemW;
   cc : TFhirCodeSystemConceptW;
+  lm, um : Boolean;
 begin
   result := TFhirCodeSystemProviderContext(context).concept.display;
   for ccd in TFhirCodeSystemProviderContext(context).concept.designations.forEnum do
-    if (langList = nil) or langList.matches(FLanguages, ccd.language) then
+  begin
+    lm := (langList <> nil) and not (langList.matches(FLanguages, FCs.CodeSystem.language)) and langList.matches(FLanguages, ccd.language);
+    um := (ccd.use = nil); // or isDisplayUsage(ccd.use);
+    if (lm and um) then
       result := ccd.value.Trim;
+  end;
   for css in FCs.Supplements do
   begin
     cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).concept.code, css.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), nil);
@@ -1086,7 +1092,7 @@ var
 begin
   result := false;
   for cs in FCs.Supplements do
-    if cs.vurl = url then
+    if (cs.vurl = url) or (cs.url = url) then
       exit(true);
 end;
 
@@ -1237,7 +1243,7 @@ begin
         for ccd in cc.designations.forEnum do
         Begin
           d := resp.addDesignation(ccd.language, ccd.value);
-          d.use := ccd.use;
+          d.use := ccd.use.Element;
         End;
       end;
 
@@ -1383,7 +1389,7 @@ begin
   if includeRoot and filter(context, base) then
       list.Add(base.Link, 0);
 
-  // 1. Add children in the heirarchy
+  // 1. Add children in the hierarchy
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list, filter, context, true);
 
@@ -1419,7 +1425,7 @@ begin
 end;
 
 
-procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; value: String; list: TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateConceptsByProperty(src : TFhirCodeSystemConceptListW; pp: TFhirCodeSystemPropertyW; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
 var
   c, cc : TFhirCodeSystemConceptW;
   concepts : TFhirCodeSystemConceptListW;
@@ -1427,7 +1433,6 @@ var
   cp : TFhirCodeSystemConceptPropertyW;
   ok, val : boolean;
   coding : TFHIRCodingW;
-  s1, s2 : String;
 begin
   concepts := TFhirCodeSystemConceptListW.Create;
   try
@@ -1443,25 +1448,23 @@ begin
       end;
       for cc in concepts do
       begin
-        ok := false;
+        ok := not include;
         val := false;
         for cp in cc.properties.forEnum do
         begin
-          if not ok and (cp.code = pp.code) then
+          if (ok <> include) and (cp.code = pp.code) then
           begin
             val := true;
             case pp.type_ of
               cptCode, cptString, cptInteger, cptBoolean, cptDateTime, cptDecimal:
                 begin
-                  s1 := cp.value.primitiveValue;
-                  s2 := value;
-                  ok := s1 = s2;
+                  ok := StringArrayExistsSensitive(values, cp.value.primitiveValue) = include;
                 end;
               cptCoding:
                 begin
                   coding := FFactory.wrapCoding(cp.value.Link);
                   try
-                    ok := coding.code = value;
+                    ok := StringArrayExistsSensitive(values, coding.code) = include;
                   finally
                     coding.free;
                   end;
@@ -1469,19 +1472,18 @@ begin
             end;
           end;
         end;
-        //if (not ok) and (not val and (pp.type_ = cptBoolean) and (value = 'false')) then
-        //  ok := true;
         if ok then
           list.Add(c.Link, 0);
       end;
-      iterateConceptsByProperty(c.conceptList, pp, value, list);
+      if (c.hasConcepts) then
+        iterateConceptsByProperty(c.conceptList, pp, values, list, include);
     end;
   finally
     concepts.free;
   end;
 end;
 
-procedure TFhirCodeSystemProvider.iterateConceptsByKnownProperty(src: TFhirCodeSystemConceptListW; code: String; value: String; list: TFhirCodeSystemProviderFilterContext);
+procedure TFhirCodeSystemProvider.iterateConceptsByKnownProperty(src: TFhirCodeSystemConceptListW; code: String; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
 var
   c, cc : TFhirCodeSystemConceptW;
   concepts : TFhirCodeSystemConceptListW;
@@ -1505,36 +1507,33 @@ begin
       end;
       for cc in concepts do
       begin
-        ok := false;
+        ok := not include;
         val := false;
         for cp in cc.properties.forEnum do
         begin
-          if not ok and (cp.code = code) then
+          if (ok <> include) and (cp.code = code) then
           begin
             val := true;
             if (cp.value.isPrimitive) then
             begin
-              s1 := cp.value.primitiveValue;
-              s2 := value;
-              ok := s1 = s2;
+              ok := StringArrayExistsSensitive(values, cp.value.primitiveValue) = include;
             end
             else // Coding:
             begin
               coding := FFactory.wrapCoding(cp.value.Link);
               try
-                ok := coding.code = value;
+                ok := StringArrayExistsSensitive(values, coding.code) = include;
               finally
                 coding.free;
               end;
             end;
           end;
         end;
-        //if (not ok) and (not val and (pp.type_ = cptBoolean) and (value = 'false')) then
-        //  ok := true;
         if ok then
           list.Add(c.Link, 0);
       end;
-      iterateConceptsByKnownProperty(c.conceptList, code, value, list);
+      if (c.hasConcepts) then
+        iterateConceptsByKnownProperty(c.conceptList, code, values, list, include);
     end;
   finally
     concepts.free;
@@ -1560,6 +1559,21 @@ begin
       list.Add(c.Link, 0);
     iterateConceptsByRegex(c.conceptList, regex, list);
   end;
+end;
+
+function toStringArray(value : String) : TStringArray; overload;
+begin
+  setLength(result, 1);
+  result[0] := value;
+end;
+
+function toStringArray(value : String; ch : Char) : TStringArray; overload;
+var
+  i : integer;
+begin
+  result := value.split([',']);
+  for i := 0 to length(value) - 1 do
+    result[i] := result[i].trim();
 end;
 
 function TFhirCodeSystemProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -1675,17 +1689,57 @@ begin
       begin
         result := TFhirCodeSystemProviderFilterContext.Create;
         try
-          iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, value, result as TFhirCodeSystemProviderFilterContext);
+          iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, toStringArray(value), result as TFhirCodeSystemProviderFilterContext, true);
           result.link;
         finally
           result.free;
         end;
       end
-      else if StringArrayExists(['notSelectable'], prop) then // special known properties
+      else if (pp <> nil) and (op = foIn) then
       begin
         result := TFhirCodeSystemProviderFilterContext.Create;
         try
-          iterateConceptsByKnownProperty(FCs.CodeSystem.conceptList, prop, value, result as TFhirCodeSystemProviderFilterContext);
+          iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, toStringArray(value, ','), result as TFhirCodeSystemProviderFilterContext, true);
+          result.link;
+        finally
+          result.free;
+        end;
+      end    
+      else if (pp <> nil) and (op = foNotIn) then
+      begin
+        result := TFhirCodeSystemProviderFilterContext.Create;
+        try
+          iterateConceptsByProperty(FCs.CodeSystem.conceptList, pp, toStringArray(value, ','), result as TFhirCodeSystemProviderFilterContext, false);
+          result.link;
+        finally
+          result.free;
+        end;
+      end
+      else if StringArrayExists(['notSelectable'], prop) and (op = foEqual) then // special known properties
+      begin
+        result := TFhirCodeSystemProviderFilterContext.Create;
+        try
+          iterateConceptsByKnownProperty(FCs.CodeSystem.conceptList, prop, toStringArray(value), result as TFhirCodeSystemProviderFilterContext, true);
+          result.link;
+        finally
+          result.free;
+        end;
+      end
+      else if StringArrayExists(['notSelectable'], prop) and (op = foIn) then // special known properties
+      begin
+        result := TFhirCodeSystemProviderFilterContext.Create;
+        try
+          iterateConceptsByKnownProperty(FCs.CodeSystem.conceptList, prop, toStringArray(value, ','), result as TFhirCodeSystemProviderFilterContext, true);
+          result.link;
+        finally
+          result.free;
+        end;
+      end
+      else if StringArrayExists(['notSelectable'], prop) and (op = foNotIn) then // special known properties
+      begin
+        result := TFhirCodeSystemProviderFilterContext.Create;
+        try
+          iterateConceptsByKnownProperty(FCs.CodeSystem.conceptList, prop, toStringArray(value, ','), result as TFhirCodeSystemProviderFilterContext, false);
           result.link;
         finally
           result.free;

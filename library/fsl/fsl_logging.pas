@@ -141,6 +141,7 @@ Type
     FLogToConsole : boolean;
     FFileLogger : TLogger;
     FListeners : TFslList<TLogListener>;
+    FShuttingDown: boolean;
     FStarting: boolean;
     FStartTime : TDateTime;
     FLastday : integer;
@@ -153,6 +154,7 @@ Type
     procedure checkDay;
     procedure close;
     procedure LogDoubleFreeCallBack(name1, name2: String);
+    procedure SetShuttingDown(AValue: boolean);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -181,6 +183,8 @@ Type
     function MemoryStatus(full : boolean) : String;
 
     function InternalMem : UInt64;
+
+    property shuttingDown : boolean read FShuttingDown write SetShuttingDown;
   end;
 
 var
@@ -363,7 +367,7 @@ begin
     exit;
   If length(bytes) = 0 Then
     Exit;
-  FLock.Lock;
+  FLock.Lock('WriteToLog');
   Try
     sName := ProcessFileName;
     size := 0;
@@ -507,6 +511,12 @@ begin
   log('Attempt to free a class a second time (of type '+name1+' or '+name2+'?)');
 end;
 
+procedure TLogging.SetShuttingDown(AValue: boolean);
+begin
+  if FShuttingDown=AValue then Exit;
+  FShuttingDown:=AValue;
+end;
+
 procedure TLogging.addListener(listener: TLogListener);
 begin
   FListeners.Add(listener.Link)
@@ -617,7 +627,7 @@ begin
     if FLogToConsole then
     begin
       try
-        FLock.Lock;
+        FLock.Lock('checkDay');
         try
           System.Writeln(s);
         finally
@@ -655,7 +665,7 @@ procedure TLogging.log(s: String);
 var
   listener : TLogListener;
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     if FWorkingLine <> '' then
     begin
@@ -676,7 +686,7 @@ begin
   if FLogToConsole then
   begin
     try
-      FLock.Lock;
+      FLock.Lock('log2');
       try
         System.Writeln(s);
       finally
@@ -709,7 +719,7 @@ begin
   if FLogToConsole then
   begin
     try
-      FLock.Lock;
+      FLock.Lock('start');
       try
         System.Write(s);
       finally
@@ -736,7 +746,7 @@ begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
   begin
-    FLock.Lock;
+    FLock.Lock('continue');
     try
       System.Write(s);
     finally
@@ -760,7 +770,7 @@ var
 begin
   if FLogToConsole then
   begin
-    FLock.Lock;
+    FLock.Lock('finish');
     try
       System.Writeln(s);
     finally
@@ -787,7 +797,7 @@ begin
     except
     end;
   end;
-  FLock.Lock;
+  FLock.Lock('finish2');
   try
     for h in FHeld do
       log(h);

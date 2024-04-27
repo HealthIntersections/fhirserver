@@ -383,7 +383,7 @@ end;
 
 function TSCIMServer.GetNextUserKey: Integer;
 begin
-  lock.Lock;
+  lock.Lock('GetNextUserKey');
   try
     inc(lastUserkey);
     result := lastUserkey;
@@ -394,7 +394,7 @@ end;
 
 function TSCIMServer.GetNextUserIndexKey: Integer;
 begin
-  lock.Lock;
+  lock.Lock('GetNextUserIndexKey');
   try
     inc(lastUserIndexKey);
     result := lastUserIndexKey;

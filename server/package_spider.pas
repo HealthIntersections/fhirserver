@@ -204,6 +204,8 @@ end;
 
 function TPackageUpdater.fetchJson(url: string): TJsonObject;
 begin
+  if Logging.shuttingDown then
+    Abort;
   result := TJSONParser.Parse(fetchUrl(url, 'application/json'));
 end;
 
@@ -211,6 +213,8 @@ function TPackageUpdater.fetchUrl(url, mimetype: string): TBytes;
 var
   fetcher : TInternetFetcher;
 begin
+  if Logging.shuttingDown then
+    Abort;
   fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := url+'?'+TFslDateTime.makeLocal().toHL7;
@@ -226,6 +230,8 @@ end;
 
 function TPackageUpdater.fetchXml(url: string): TMXmlElement;
 begin
+  if Logging.shuttingDown then
+    Abort;
   result := TMXmlParser.Parse(fetchUrl(url, 'application/xml'), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
 end;
 
@@ -302,6 +308,8 @@ var
   kind : TFHIRPackageKind;
   ts : TStringList;
 begin
+  if Logging.shuttingDown then
+    Abort;
   npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil, true);
   try
     id := npm.name;
@@ -387,6 +395,10 @@ begin
         json.free;
       end;
     except
+      on e : EAbort do
+      begin
+        Log('Terminate Package Spider - shutting down', MASTER_URL, true)
+      end;
       on e : Exception do
       begin
         Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
@@ -428,6 +440,8 @@ var
   item : TMXmlElement;
   i : integer;
 begin
+  if Logging.shuttingDown then
+    Abort;
   try
     log('Fetch '+url, source, false);
     FFeedErrors := '';
@@ -471,6 +485,8 @@ var
   date : TFslDateTime;
   id, url, d, list: String;
 begin
+  if Logging.shuttingDown then
+    Abort;
   url := '??pck';
   if item.element('guid') = nil then
   begin
