@@ -29,20 +29,26 @@ for arg in "$@"; do
     esac
 done
 
-run_as_root apt update && run_as_root apt install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev
+run_as_root apt update && run_as_root apt install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev curl
 
 mkdir -p $INSTALL_PATH
+mkdir -p $INSTALL_PATH/config
+mkdir -p $INSTALL_PATH/default_config
 run_as_root mkdir -p $CACHE_FOLDER
 run_as_root chmod 1777 $CACHE_FOLDER
 
 cp bin/* $INSTALL_PATH 
 cp content/* $INSTALL_PATH 
 cp -r config/* $INSTALL_PATH 
+cp -r config/config/* $INSTALL_PATH/config 
+cp -r config/config/* $INSTALL_PATH/default_config 
 cp -r web $INSTALL_PATH
 
 # Download and place the configuration file
 if [ -n "$CONFIG_URL" ]; then
-    wget "$CONFIG_URL" -O $INSTALL_PATH/config/config.json
+    wget "$CONFIG_URL" -O "$INSTALL_PATH/config/config.json"
+else
+    cp "$INSTALL_PATH/default_config/config.json" "$INSTALL_PATH/config/config.json"
 fi
 
 # Copy files based on architecture

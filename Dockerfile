@@ -15,7 +15,7 @@ RUN wget https://www.openssl.org/source/openssl-1.1.1w.tar.gz \
     && make test \
     && make install
 
-RUN ls -la /usr/local/lib/
+# RUN ls -la /usr/local/lib/
 
 # Set the timezone
 RUN echo "UTC" > /etc/timezone
@@ -36,46 +36,45 @@ RUN /work/bootstrap/linux-toolchain.sh /work/bootstrap
 WORKDIR /work/fhirserver
 COPY . /work/fhirserver
 
-RUN /work/bootstrap/linux-libraries.sh /work/bootstrap 
-RUN cp /usr/local/lib/*.so* /usr/lib/
-RUN /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap
-RUN cp exec/pack/*.properties exec/64
+RUN /work/bootstrap/linux-libraries.sh /work/bootstrap && \
+    cp /usr/local/lib/*.so* /usr/lib/ && \
+    /work/fhirserver/build/linux-fhirserver.sh /work/bootstrap && \
+    cp exec/pack/*.properties exec/64
 # RUN cp exec/install/* exec/64
 
-RUN mkdir -p /work/fhirserver/exec/install/bin
-RUN mkdir -p /work/fhirserver/exec/install/x86_64
-RUN mkdir -p /work/fhirserver/exec/install/content
-RUN mkdir -p /work/fhirserver/exec/install/config
-RUN mkdir -p /work/fhirserver/exec/install/config/config
-RUN mkdir -p /work/fhirserver/exec/install/web
+RUN mkdir -p /work/fhirserver/exec/install/bin && \
+    mkdir -p /work/fhirserver/exec/install/x86_64 && \
+    mkdir -p /work/fhirserver/exec/install/content && \
+    mkdir -p /work/fhirserver/exec/install/config && \
+    mkdir -p /work/fhirserver/exec/install/config/config && \
+    mkdir -p /work/fhirserver/exec/install/config/default_config && \
+    mkdir -p /work/fhirserver/exec/install/web
 
-RUN cd /work/fhirserver
-RUN cp /work/fhirserver/exec/64/fhirserver /work/fhirserver/exec/install/bin
-RUN cp /work/fhirserver/exec/64/FHIRToolkit /work/fhirserver/exec/install/bin
-RUN cp /work/fhirserver/exec/64/FHIRConsole /work/fhirserver/exec/install/bin
-RUN cp /work/fhirserver/exec/pack/linux/*so* /work/fhirserver/exec/install/x86_64
+RUN cd /work/fhirserver && \
+    cp /work/fhirserver/exec/64/fhirserver /work/fhirserver/exec/install/bin && \
+    cp /work/fhirserver/exec/64/FHIRToolkit /work/fhirserver/exec/install/bin && \
+    cp /work/fhirserver/exec/64/FHIRConsole /work/fhirserver/exec/install/bin && \
+    cp /work/fhirserver/exec/pack/linux/*so* /work/fhirserver/exec/install/x86_64
 
-RUN cp /work/fhirserver/exec/pack/linux/start_bare.sh /work/fhirserver/exec/install/bin/start.sh
-RUN cp /work/fhirserver/exec/pack/linux/install.sh /work/fhirserver/exec/install
-RUN cp /work/fhirserver/exec/pack/linux/get-openssl.sh /work/fhirserver/exec/install
-RUN cp /tmp/openssl-1.1.1w/*.so* /work/fhirserver/exec/install/x86_64
-
-RUN cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content
-RUN cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content
-
-RUN cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/config
-RUN cp /work/fhirserver/exec/64/web.ini /work/fhirserver/exec/install/config
-RUN cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/config
-RUN cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/config/config/config.json
-
-RUN mkdir -p /work/fhirserver/exec/install/web
-RUN cp -r /work/fhirserver/server/web/* /work/fhirserver/exec/install/web
-
-RUN cd /work/fhirserver/exec && tar -czvf ./install.tgz ./install/  && ls -la /work/fhirserver/exec
+RUN cp /work/fhirserver/exec/pack/linux/start_bare.sh /work/fhirserver/exec/install/bin/start.sh && \
+    cp /work/fhirserver/exec/pack/linux/install.sh /work/fhirserver/exec/install && \
+    cp /work/fhirserver/exec/pack/linux/get-openssl.sh /work/fhirserver/exec/install && \
+    cp /tmp/openssl-1.1.1w/*.so* /work/fhirserver/exec/install/x86_64 && \
+    cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content && \
+    cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content && \
+    cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/config && \
+    cp /work/fhirserver/exec/64/web.ini /work/fhirserver/exec/install/config && \
+    cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/config && \
+    cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/config/config/config.json && \
+    cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/default_config && \
+    cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/config/default_config/config.json && \
+    mkdir -p /work/fhirserver/exec/install/web && \
+    cp -r /work/fhirserver/server/web/* /work/fhirserver/exec/install/web && \
+    cd /work/fhirserver/exec && tar -czvf ./install.tgz ./install/  && ls -la /work/fhirserver/exec
 
 
 # Set the health check
-HEALTHCHECK --interval=1m --timeout=10s --retries=5 \
+HEALTHCHECK --interval=1m --timeout=10s --retries=5 \ 
   CMD curl -f http://localhost:${PORT}/fhir/metadata || exit 1
 
 # Set the environment variables
@@ -104,7 +103,7 @@ ENV PORT=80
 ENV TERMINOLOGY_CACHE=/var/cache/txcache
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev \
+RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev curl \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p $HOME/fhirserver/config $TERMINOLOGY_CACHE /fhirserver \
     && chmod -R 777 $TERMINOLOGY_CACHE \
