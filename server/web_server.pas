@@ -949,28 +949,21 @@ end;
 
 procedure TFhirWebServer.ProcessFile(sender: TObject; session: TFhirSession; named, path: String; secure: boolean; variables: TFslMap<TFHIRObject>; var result: String);
 var
-  s, n: String;
+  s, n, h, t: String;
+  i : integer;
 begin
   s := SourceProvider.getSource(named);
-  s := s.Replace('[%id%]', Common.Name, [rfReplaceAll]);
-  s := s.Replace('[%specurl%]', 'http://hl7.org/fhir', [rfReplaceAll]);
-  s := s.Replace('[%web%]', WebDesc(secure), [rfReplaceAll]);
-  s := s.Replace('[%admin%]', Common.AdminEmail, [rfReplaceAll]);
-  s := s.Replace('[%logout%]', 'User: [n/a]', [rfReplaceAll]);
-  s := s.Replace('[%endpoints%]', endpointList, [rfReplaceAll]);
-  if Common.StatedPort = 80 then
-    s := s.Replace('[%host%]', Common.Host, [rfReplaceAll])
-  else
-    s := s.Replace('[%host%]', Common.Host + ':' + inttostr(Common.StatedPort), [rfReplaceAll]);
-
-  if Common.StatedSSLPort = 443 then
-    s := s.Replace('[%securehost%]', Common.Host, [rfReplaceAll])
-  else
-    s := s.Replace('[%securehost%]', Common.Host + ':' + inttostr(Common.StatedSSLPort), [rfReplaceAll]);
-  if variables <> nil then
-    for n in variables.Keys do
-      s := s.Replace('[%' + n + '%]', variables[n].primitiveValue, [rfReplaceAll]);
-  s := s.Replace('[%ver%]', 'n/a', [rfReplaceAll]);
+  i := s.IndexOf('[%');
+  while (i > -1) do
+  begin
+    h := s.subString(0, i);
+    s := s.subString(i);
+    i := s.indexOf('%]');
+    t := s.subString(i+2);
+    n := s.Substring(2, i-2);
+    s := h + insertValue(n, secure, variables) + t;
+    i := s.IndexOf('[%');
+  end;
   result := s;
 end;
 
