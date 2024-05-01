@@ -1389,7 +1389,7 @@ begin
   if includeRoot and filter(context, base) then
       list.Add(base.Link, 0);
 
-  // 1. Add children in the hierarchy
+  // 1. Add children in the heirarchy
   for i := 0 to base.conceptList.count - 1 do
     iterateCodes(base.conceptList[i], list, filter, context, true);
 
