@@ -1149,14 +1149,23 @@ type
     function displayLanguage : String; virtual; abstract;
   end;
 
+  { TFHIRLookupOpResponseW }
+
   TFHIRLookupOpResponseW = class (TFHIRXVersionOperationWrapper)
   protected
     function getName: String; virtual; abstract;
     procedure setName(Value: String); virtual; abstract;
+    function getCode: String; virtual; abstract;
+    procedure setCode(Value: String); virtual; abstract;
+    function getSystem: String; virtual; abstract;
+    procedure setSystem(Value: String); virtual; abstract;
     function getDisplay: String; virtual; abstract;
     procedure setDisplay(Value: String); virtual; abstract;
+    function getIsAbstract: boolean; virtual; abstract;
+    procedure setIsAbstract(Value: boolean); virtual; abstract;
   public
     function link : TFHIRLookupOpResponseW; overload;
+
     function addProp(name : string) : TFHIRLookupOpRespPropertyW; virtual; abstract;
     function addDesignation(lang, systemUri, code, display, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
     function addDesignation(lang, value : string) : TFHIRLookupOpRespDesignationW; overload; virtual; abstract;
@@ -1165,8 +1174,11 @@ type
     procedure addExtension(name, value : String); overload; virtual; abstract;
     procedure addExtension(name : String; value : boolean); overload; virtual; abstract;
 
+    property isAbstract : boolean read GetIsAbstract write SetIsAbstract;
+    property systemUri : String read GetSystem write SetSystem;
     property version : String read GetVersion write SetVersion;
     property name : String read GetName write SetName;
+    property code : String read GetCode write SetCode;
     property display : String read GetDisplay write SetDisplay;
   end;
 

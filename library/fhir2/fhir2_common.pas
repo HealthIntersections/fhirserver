@@ -723,6 +723,8 @@ type
     procedure setUse(Value: TFHIRObject); override;
   end;
 
+  { TFHIRLookupOpResponse2 }
+
   TFHIRLookupOpResponse2 = class (TFHIRLookupOpResponseW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
@@ -737,8 +739,14 @@ type
     procedure addExtension(name : String; value : boolean); overload; override;
     function getName: String; override;
     procedure setName(Value: String); override;
+    function getCode: String; override;
+    procedure setCode(Value: String); override;
+    function getSystem: String; override;
+    procedure setSystem(Value: String); override;
     function getDisplay: String; override;
-    procedure setDisplay(Value: String); override;
+    procedure setDisplay(Value: String); override;        
+    function getIsAbstract: boolean; override;
+    procedure setIsAbstract(Value: boolean); override;
   end;
 
   { TFhirConceptMapGroupElementDependsOn2 }
@@ -3460,17 +3468,17 @@ begin
   result := (op as TFHIROperationResponse).asParams;
 end;
 
-function TFHIRLookupOpResponse2.GetDisplay: String;
+function TFHIRLookupOpResponse2.getDisplay: String;
 begin
   result := (op as TFHIRLookupOpResponse).display;
 end;
 
-function TFHIRLookupOpResponse2.GetName: String;
+function TFHIRLookupOpResponse2.getName: String;
 begin
   result := (op as TFHIRLookupOpResponse).name;
 end;
 
-function TFHIRLookupOpResponse2.GetVersion: String;
+function TFHIRLookupOpResponse2.getVersion: String;
 begin
   result := (op as TFHIRLookupOpResponse).version;
 end;
@@ -3485,17 +3493,47 @@ begin
   (op as TFHIRLookupOpResponse).load(params as TFhirParameters);
 end;
 
-procedure TFHIRLookupOpResponse2.SetDisplay(Value: String);
+procedure TFHIRLookupOpResponse2.setDisplay(Value: String);
 begin
   (op as TFHIRLookupOpResponse).display := value;
 end;
 
-procedure TFHIRLookupOpResponse2.SetName(Value: String);
+function TFHIRLookupOpResponse2.getIsAbstract: boolean;
+begin
+  result := (op as TFHIRLookupOpResponse).abstract;
+end;
+
+procedure TFHIRLookupOpResponse2.setIsAbstract(Value: boolean);
+begin
+   (op as TFHIRLookupOpResponse).abstract := value;
+end;
+
+procedure TFHIRLookupOpResponse2.setName(Value: String);
 begin
   (op as TFHIRLookupOpResponse).name := value;
 end;
 
-procedure TFHIRLookupOpResponse2.SetVersion(Value: String);
+function TFHIRLookupOpResponse2.getCode: String;
+begin
+  result := (op as TFHIRLookupOpResponse).code;
+end;
+
+procedure TFHIRLookupOpResponse2.setCode(Value: String);
+begin
+  (op as TFHIRLookupOpResponse).code := value;
+end;
+
+function TFHIRLookupOpResponse2.getSystem: String;
+begin
+  result := (op as TFHIRLookupOpResponse).systemUri;
+end;
+
+procedure TFHIRLookupOpResponse2.setSystem(Value: String);
+begin
+  (op as TFHIRLookupOpResponse).systemUri := value;
+end;
+
+procedure TFHIRLookupOpResponse2.setVersion(Value: String);
 begin
   (op as TFHIRLookupOpResponse).version := value;
 end;
