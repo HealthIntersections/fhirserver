@@ -3357,6 +3357,8 @@ begin
           sv := canonical(cs.systemUri, cs.version);
           if not expansion.hasParam('used-codesystem', sv) then
             expansion.addParamUri('used-codesystem', sv);
+          if not expansion.hasParam('version', sv) then
+            expansion.addParamUri('version', sv);
 
           for s in cset.valueSets do
           begin
@@ -3677,6 +3679,8 @@ begin
           sv := canonical(cs.systemUri, cs.version);
           if not expansion.hasParam('used-codesystem', sv) then
             expansion.addParamUri('used-codesystem', sv);
+          if not expansion.hasParam('version', sv) then
+            expansion.addParamUri('version', sv);
 
           for s in cset.valueSets do
           begin

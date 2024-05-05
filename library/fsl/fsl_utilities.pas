@@ -1668,6 +1668,8 @@ function StringIsDecimal(s : String) : Boolean;
 type
   TByte = Byte;
 
+  { TFslBytesBuilder }
+
   TFslBytesBuilder = Class (TFslObject)
     Private
       FContent : TBytes;
@@ -1687,6 +1689,7 @@ type
       Function EndsWith(aBytes : TBytes) : Boolean;
       Property Length : Cardinal Read FLength;
 
+      Procedure AddByte(val : byte);
       Procedure AddWord(val : word);
       Procedure AddCardinal(val : cardinal);
       Procedure AddInteger(val : integer);
@@ -14308,6 +14311,15 @@ begin
       result := result And (aBytes[i] = FContent[FLength - System.Length(aBytes) + i]);
 end;
 
+procedure TFslBytesBuilder.AddByte(val: byte);
+Var
+  s : TBytes;
+Begin
+  SetLength(s, 1);
+  move(val, s[0], 1);
+  Append(s);
+end;
+
 procedure TFslBytesBuilder.Read(index : cardinal; var buffer; ilength: cardinal);
 begin
   if index < 1 Then
@@ -14317,7 +14329,7 @@ begin
   Move(FContent[index], buffer, ilength);
 end;
 
-procedure TFslBytesBuilder.WriteCardinal(index: cardinal; val: cardinal);
+procedure TFslBytesBuilder.WriteCardinal(index: Cardinal; val: cardinal);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14326,7 +14338,7 @@ begin
   Move(val, FContent[index], 4);
 end;
 
-procedure TFslBytesBuilder.WriteString(index: cardinal; val: String);
+procedure TFslBytesBuilder.WriteString(index: Cardinal; val: String);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14335,7 +14347,7 @@ begin
   Move(val[1], FContent[index], (val.Length*2));
 end;
 
-procedure TFslBytesBuilder.WriteUInt64(index: cardinal; val: UInt64);
+procedure TFslBytesBuilder.WriteUInt64(index: Cardinal; val: UInt64);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14344,7 +14356,7 @@ begin
   Move(val, FContent[index], 8);
 end;
 
-procedure TFslBytesBuilder.WriteWord(index: cardinal; val: word);
+procedure TFslBytesBuilder.WriteWord(index: Cardinal; val: word);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14353,20 +14365,20 @@ begin
   Move(val, FContent[index], 2);
 end;
 
-Procedure TFslBytesBuilder.Clear;
+procedure TFslBytesBuilder.Clear;
 Begin
   FContent := nil;
   FLength := 0;
 End;
 
 
-Function TFslBytesBuilder.AsBytes : TBytes;
+function TFslBytesBuilder.AsBytes: TBytes;
 Begin
   Result := Copy(FContent, 0, FLength);
 End;
 
 
-Procedure TFslBytesBuilder.Append(ch : AnsiChar);
+procedure TFslBytesBuilder.Append(ch: AnsiChar);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -14375,7 +14387,7 @@ Begin
   Inc(FLength);
 End;
 
-Procedure TFslBytesBuilder.Append(b : Byte);
+procedure TFslBytesBuilder.Append(b: Byte);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -14486,7 +14498,7 @@ begin
   End;
 end;
 
-Procedure TFslBytesBuilder.Append(Const bytes : TBytes);
+procedure TFslBytesBuilder.Append(const bytes: TBytes);
 Begin
   If System.Length(bytes) > 0 Then
   Begin

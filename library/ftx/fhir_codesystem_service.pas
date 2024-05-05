@@ -867,7 +867,7 @@ begin
   result := TFhirCodeSystemProviderContext(context).concept.display;
   for ccd in TFhirCodeSystemProviderContext(context).concept.designations.forEnum do
   begin
-    lm := (langList <> nil) and not (langList.matches(FLanguages, FCs.CodeSystem.language)) and langList.matches(FLanguages, ccd.language);
+    lm := (langList <> nil) and not (langList.matches(FCs.CodeSystem.language, false)) and langList.matches(ccd.language, false);
     um := (ccd.use = nil); // or isDisplayUsage(ccd.use);
     if (lm and um) then
       result := ccd.value.Trim;
@@ -877,10 +877,10 @@ begin
     cc := locCode(css.conceptList, TFhirCodeSystemProviderContext(context).concept.code, css.propertyCode('http://hl7.org/fhir/concept-properties#alternateCode'), nil);
     if (cc <> nil) then
     begin
-      if (langList <> nil) and langList.matches(FLanguages, css.language) then
+      if (langList <> nil) and langList.matches(css.language, false) then
         result := cc.display.Trim;
       for ccd in cc.designations.forEnum do
-        if (langList <> nil) and langList.matches(FLanguages, ccd.language) then
+        if (langList <> nil) and langList.matches(ccd.language, false) then
           result := ccd.value.Trim;
     end;
   end;
