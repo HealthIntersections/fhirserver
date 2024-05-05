@@ -519,6 +519,7 @@ begin
     provider := findCodeSystem(coding.systemUri, coding.version, profile, false);
     try
       resp.name := provider.name(nil);
+      resp.systemUri := provider.systemUri;
       s := provider.version;
       if (s <> '') then
         resp.version := s;
@@ -537,6 +538,7 @@ begin
           p := resp.addProp('inactive');
           p.value := FFactory.makeBoolean(provider.IsInactive(ctxt));
         end;
+        resp.code := coding.code;
         resp.display := provider.Display(ctxt, FlangList);
         provider.extendLookup(FFactory, ctxt, FlangList, props, resp);
       finally
