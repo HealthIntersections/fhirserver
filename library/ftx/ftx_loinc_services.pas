@@ -65,11 +65,24 @@ const
   LOINC_KEY_SYSTEM = 33;
   LOINC_KEY_METHOD = 13;
 
+  KEY_INCREMENT = 10;
+
+
 
 type
   TKeyArray = array of cardinal;
   TLoincProviderContextKind = (lpckCode, lpckPart, lpckList, lpckAnswer);
 
+  { TKeySet }
+
+  TKeySet = class (TFslObject)
+  private
+    FKeys : TKeyArray;
+    FCount : integer;
+  public
+    function addKey(key : integer) : boolean;
+    property Keys : TKeyArray read FKeys;
+  end;
 
   { TDescriptionCacheEntry }
   TDescriptionCacheEntry = class (TFslObject)
@@ -123,6 +136,7 @@ type
   private
     FKeys : TKeyArray;                                     
     FCursor : integer;
+    lsql : String;
     function HasKey(key : cardinal) : boolean;
   end;
 
@@ -136,11 +150,12 @@ type
     FCodes : TFslMap<TLoincProviderContext>;
     FCodeList : TFslList<TLoincProviderContext>;
     FVersion : String;
+    FRoot : String;
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     function renameRelationship(source : String) : String;
     function renameProperty(source : String) : String;
-    function filterBySQL(sql : String) : TCodeSystemProviderFilterContext;
+    function filterBySQL(sql, lsql : String) : TCodeSystemProviderFilterContext;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -183,6 +198,15 @@ type
     //function subsumes(codeA, codeB : String) : String; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
 
+
+    property DB : TFDBManager read FDB;
+    property Langs : TDictionary<String, cardinal> read FLangs;
+    property Codes : TFslMap<TLoincProviderContext> read FCodes;
+    property CodeList : TFslList<TLoincProviderContext> read FCodelist;
+    property VersionStr : String read FVersion;
+    property Root : String read FRoot;
+    property Relationships : TDictionary<String, String> read FRelationships;
+    property Properties : TDictionary<String, String> read FProperties;
   End;
 
   TLOINCServiceList = class (TFslObjectList)
@@ -396,6 +420,7 @@ begin
     c.terminate;
 
     FVersion := c.Lookup('Config', 'ConfigKey', '2', 'Value', '');
+    FRoot := c.Lookup('Config', 'ConfigKey', '3', 'Value', '');
     c.Release;
   except
     on e : exception do
@@ -894,7 +919,7 @@ begin
   result := (ctxt as TLoincFilterHolder).HasKey((concept as TLoincProviderContext).Key);
 end;
 
-function TLOINCServices.filterBySQL(sql: String): TCodeSystemProviderFilterContext;
+function TLOINCServices.filterBySQL(sql, lsql: String): TCodeSystemProviderFilterContext;
 var
   c : TFDBConnection;
   keys : TKeyArray;
@@ -928,19 +953,27 @@ begin
   SetLength(keys, l);
   result := TLoincFilterHolder.create;
   TLoincFilterHolder(result).FKeys := keys;
+  TLoincFilterHolder(result).lsql := lsql;
 end;
 
 
 function TLOINCServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
   if (FRelationships.ContainsKey(prop) and (op = foEqual)) then
-    result := FilterBySQL('select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by SourceKey ASC')
+    result := FilterBySQL('select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by SourceKey ASC',
+      'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and SourceKey = ')
   else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
-    result := FilterBySQL('select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' order by CodeKey ASC')
+    result := FilterBySQL('select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' order by CodeKey ASC',
+      'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' and CodeKey = ')
   else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
-    result := FilterBySQL('select DescendentKey as Key from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by DescendentKey ASC')
-  //else if (prop = 'LIST') and (op = foEqual) then
-  //  result := FilterByList(op, value)
+    result := FilterBySQL('select DescendentKey as Key from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by DescendentKey ASC',
+      'select count(DescendentKey) from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and DescendentKey = ')
+  else if (prop = 'copyright') and (op = foEqual) and (value = 'LOINC') then
+    result := FilterBySQL('select CodeKey as Key from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
+      'select count(CodeKey) from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ' )
+  else if (prop = 'copyright') and (op = foEqual) and (value = '3rdParty') then
+    result := FilterBySQL('select CodeKey as Key from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
+      'select count(CodeKey) from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ')
   else
     result := nil;
 end;
@@ -983,8 +1016,34 @@ begin
 end;
 
 function TLOINCServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
+var
+  ci : TLoincProviderContext;
+  fi : TLoincFilterHolder;
+  c : TFDBConnection;
 begin
+  fi := ctxt as TLoincFilterHolder;
   result := nil;
+
+  ci := FCodes[code];
+  if (ci = nil) then
+    message := 'Not a valid code: '+code
+  else if fi.lsql = '' then
+    message := 'Filter not understood'
+  else
+  begin
+    c := FDB.getConnection('filterLocate');
+    try
+      if c.CountSQL(fi.lsql+inttostr(ci.key)) > 0 then
+        result := ci.link;
+      c.release;
+    except
+      on e : Exception do
+      begin
+        c.error(e);
+        raise;
+      end;
+    end;
+  end;
 end;
 
 
@@ -1104,6 +1163,22 @@ begin
   inherited Create;
   FLanguage := lang;
   FValue := v;
+end;
+
+{ TKeySet }
+
+function TKeySet.addKey(key: integer) : boolean;
+var
+  i : integer;
+begin
+  for i := low(FKeys) to High(FKeys) do
+    if FKeys[i] = key then
+      exit(false);
+  if (FCount = length(FKeys)) then
+    SetLength(FKeys, length(FKeys) + KEY_INCREMENT);
+  FKeys[FCount] := key;
+  inc(FCount);
+  result := true;
 end;
 
 End.

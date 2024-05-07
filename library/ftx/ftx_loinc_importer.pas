@@ -39,21 +39,7 @@ Uses
   ftx_loinc_services, ftx_service;
 
 
-const
-  KEY_INCREMENT = 10;
-
 type
-         
-  { TKeySet }
-
-  TKeySet = class (TFslObject)
-  private
-    FKeys : TKeyArray;
-    FCount : integer;
-  public
-    procedure addKey(key : integer);
-    procedure getKeys(b : TFslStringBuilder);
-  end;
 
   { TCodeInformation }
   TCodeInformation = class (TFslObject)
@@ -110,7 +96,7 @@ type
     FPropValues : TDictionary<String, Integer>;
 
     // working items
-    conn, dbCodes, dbRels, dbDesc, dbProps: TFDBConnection;
+    conn, dbCodes, dbRels, dbDesc, dbProps, dbText: TFDBConnection;
     codes : TCodeMap;
     codeList : TFslList<TCodeInformation>;
     rels, langs, statii, dTypes, props : TKeyMap;
@@ -225,6 +211,7 @@ begin
       dbRels := db.GetConnection('relationships');
       dbDesc := db.GetConnection('descriptions');
       dbProps := db.GetConnection('properties');
+      dbText := db.GetConnection('text');
       try
         CreateTables(1);
 
@@ -236,6 +223,8 @@ begin
         dbDesc.prepare;
         dbProps.sql := 'Insert into Properties (PropertyKey, PropertyTypeKey, CodeKey, PropertyValueKey) values (:pk, :ptk, :ck, :v)';
         dbProps.prepare;
+        dbText.sql := 'Insert into TextIndex (CodeKey, Type, Lang, Text) values (:ck, :tk, :lk, :t)';
+        dbText.prepare;
 
         ProcessLanguageVariants(2, st);
         FStepCount := 12 + st.count;
@@ -255,11 +244,13 @@ begin
         dbRels.terminate;
         dbDesc.terminate;
         dbProps.terminate;
+        dbText.terminate;
 
         dbCodes.Release;
         dbRels.Release;
         dbDesc.terminate;
         dbProps.terminate;
+        dbText.terminate;
         conn.Release;
       except
         on e : Exception do
@@ -430,6 +421,9 @@ begin
     'PRIMARY KEY (`AncestorKey`, `DescendentKey`))';
   conn.ExecSQL(sql);
 
+  sql := 'CREATE VIRTUAL TABLE TextIndex USING fts5(codekey UNINDEXED, type UNINDEXED, lang UNINDEXED, text)';
+  conn.ExecSQL(sql);
+
   addEntry('Types', 'TypeKey', 'Code', nil, 'Code', 1);
   addEntry('Types', 'TypeKey', 'Code', nil, 'Part', 2);
   addEntry('Types', 'TypeKey', 'Code', nil, 'AnswerList', 3);
@@ -509,7 +503,8 @@ begin
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'AskAtOrderEntry', 6);
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'UNITSREQUIRED', 7);
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'CLASS', 8);
-                                                   
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'Copyright', 9);
+
   conn.ExecSQL('Insert into Languages (LanguageKey, Code, Description) values (1, ''en-US'', ''English (United States)'')');
   langs.addKey('en-US', 1);
 end;
@@ -528,6 +523,12 @@ begin
     dbDesc.BindInteger('tk', descriptionType);
     dbDesc.BindString('v', value);
     dbDesc.Execute;
+
+    dbText.BindInteger('ck', codeKey);
+    dbText.BindInteger('tk', descriptionType);
+    dbDesc.BindInteger('lk', languageKey);
+    dbText.BindString('t', value);
+    dbText.Execute;
   end;
 end;
 
@@ -729,6 +730,7 @@ begin
   ProcessProperty(ck, props.getKey('PanelType'), items[34]);
   ProcessProperty(ck, props.getKey('AskAtOrderEntry'), items[35]);
   ProcessProperty(ck, props.getKey('UNITSREQUIRED'), items[18]);
+  ProcessProperty(ck, props.getKey('Copyright'), items[23]);
 
 
   ProcessDescription(ck, 1, dTypes.getKey('LONG_COMMON_NAME'), d);
@@ -1090,7 +1092,9 @@ begin
     dbCodes.execute;
     ciC := codes.addCode(c, ck, codeList);
   end;
-  if items[2] <> '' then
+  if items[2] = '' then
+    conn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+items[3]+''')')
+  else
   begin
     ciP := codes.GetCode(items[2]);
 
@@ -1148,12 +1152,12 @@ begin
   for ci in codeList do
   begin
     inc(count);
-    if count mod 1000 = 0 then
+    if count mod 10 = 0 then
       Progress(step, count / codeList.count, 'Storing Closure Table: '+pct(count, codeList.count));
     if (ci.FChildren <> nil) then
     begin
       conn.BindInteger('a', ci.FKey);
-      for k in ci.FChildren.FKeys do
+      for k in ci.FChildren.Keys do
       begin
         conn.BindInteger('d', k);
         conn.Execute;
@@ -1183,34 +1187,6 @@ function TKeyMap.getKey(code: String): integer;
 begin
   if not TryGetValue(code, result) then
     raise EFslException.create(code+' not found in '+FName+' Table');
-end;
-
-{ TKeySet }
-
-procedure TKeySet.addKey(key: integer);
-var
-  i : integer;
-begin
-  for i := low(FKeys) to High(FKeys) do
-    if FKeys[i] = key then
-      exit;
-  if (FCount = length(FKeys)) then
-    SetLength(FKeys, length(FKeys) + KEY_INCREMENT);
-  FKeys[FCount] := key;
-  inc(FCount);
-end;
-
-procedure TKeySet.getKeys(b : TFslStringBuilder);
-var
-  i : integer;
-begin
-  b.clear;
-  for i := 0 to FCount - 1 do
-  begin
-    if i > 0 then
-      b.append(',');
-    b.append(inttostr(FKeys[i]));
-  end;
 end;
 
 { TCodeInformation }

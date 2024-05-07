@@ -196,6 +196,7 @@ var
   html : THtmlPublisher;
   i : integer;
   st : TStringList;
+  s : String;
   langList : THTTPLanguageList;
 begin
   FTx.Loinc.RecordUse;
@@ -205,62 +206,59 @@ begin
   try
     result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
 
-    //if ((lang = '') and (code = '')) or ((lang <> '') and not FTX.Loinc.supportsLang(langList)) then
-    //begin
-    //  st := TStringList.Create;
-    //  try
-    //    for i := 0 to FTX.Loinc.Lang.count - 1 do
-    //    begin
-    //      FTX.Loinc.Lang.GetEntry(i, lang, country);
-    //      st.add(lang+'-'+country);
-    //    end;
-    //    st.sort;
-    //    html := THtmlPublisher.Create();
-    //    try
-    //      html.Version := SERVER_FULL_VERSION;
-    //      html.BaseURL := '/loinc/doco/';
-    //      html.LangList := langList.link;
-    //      html.Heading(1, 'LOINC Languages');
-    //      html.StartList();
-    //      for i := 0 to st.count - 1 do
-    //      begin
-    //        html.StartListItem;
-    //        html.URL(st[i], st[i]);
-    //        html.EndListItem;
-    //      end;
-    //      html.EndList();
-    //      returnContent(request, response, request.Document, secure, 'LOINC Langauges', html.output);
-    //    finally
-    //      html.free;
-    //    end;
-    //  finally
-    //    st.free;
-    //  end;
-    //end
-    //else
-    //begin
-    //  result := 'Loinc Doco: '+code;
-    //  try
-    //    html := THtmlPublisher.Create();
-    //    pub := TLoincPublisher.Create(FTX.Loinc, AbsoluteURL(secure), langList.link);
-    //    try
-    //      html.Version := SERVER_FULL_VERSION;
-    //      html.BaseURL := PathWithSlash+lang;
-    //      html.LangList := langList.link;
-    //      pub.PublishDict(code, PathWithSlash+lang, html);
-    //      returnContent(request, response, request.Document, secure, 'LOINC Content', html.output);
-    //    finally
-    //      html.free;
-    //      pub.free;
-    //    end;
-    //  except
-    //    on e:exception do
-    //    begin
-    //      response.ResponseNo := 500;
-    //      response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
-    //    end;
-    //  end;
-    //end;
+    if ((lang = '') and (code = '')) {or ((lang <> '') and not FTX.Loinc.supportsLang(langList))} then
+    begin
+      st := TStringList.Create;
+      try
+        for s in FTX.Loinc.Langs.keys do
+          st.add(s);
+        st.sort;
+        html := THtmlPublisher.Create();
+        try
+          html.Version := SERVER_FULL_VERSION;
+          html.BaseURL := '/loinc/doco/';
+          html.LangList := langList.link;
+          html.Heading(1, 'LOINC Languages');
+          html.StartList();
+          for i := 0 to st.count - 1 do
+          begin
+            html.StartListItem;
+            html.URL(st[i], st[i]);
+            html.EndListItem;
+          end;
+          html.EndList();
+          returnContent(request, response, request.Document, secure, 'LOINC Langauges', html.output);
+        finally
+          html.free;
+        end;
+      finally
+        st.free;
+      end;
+    end
+    else
+    begin
+      result := 'Loinc Doco: '+code;
+      try
+        html := THtmlPublisher.Create();
+        pub := TLoincPublisher.Create(FTX.Loinc, AbsoluteURL(secure), langList.link);
+        try
+          html.Version := SERVER_FULL_VERSION;
+          html.BaseURL := PathWithSlash+lang;
+          html.LangList := langList.link;
+          pub.PublishDict(code, PathWithSlash+lang, html);
+          returnContent(request, response, request.Document, secure, 'LOINC Content', html.output);
+        finally
+          html.free;
+          pub.free;
+        end;
+      except
+        on e:exception do
+        begin
+          response.ResponseNo := 500;
+          response.ContentText := 'error:'+FormatTextToXml(e.Message, xmlText);
+        end;
+      end;
+    end;
   finally
     langList.free;
   end;
