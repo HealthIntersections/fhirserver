@@ -340,7 +340,7 @@ begin
   if version <> '' then
     TFHIRCoding(result).version := version;
   if display <> '' then
-    TFHIRCoding(result).version := display;
+    TFHIRCoding(result).display := display;
 end;
 
 function TFHIRFactoryR4B.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;

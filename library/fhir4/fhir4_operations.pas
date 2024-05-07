@@ -520,8 +520,11 @@ Type
   TFHIRLookupOpResponse = class (TFHIROperationResponse)
   private
     FName : String;
+    FCode : String;
+    FSystem : String;
     FVersion : String;
-    FDisplay : String;
+    FDisplay : String;     
+    FAbstract : Boolean;
     FDesignationList : TFslList<TFHIRLookupOpRespDesignation>;
     FProperty_List : TFslList<TFHIRLookupOpRespProperty_>;
   protected
@@ -534,8 +537,11 @@ Type
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property name : String read FName write FName;
+    property code : String read FCode write FCode;
+    property systemUri : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
-    property display : String read FDisplay write FDisplay;
+    property display : String read FDisplay write FDisplay;  
+    property abstract : Boolean read FAbstract write FAbstract;
     property designationList : TFslList<TFHIRLookupOpRespDesignation> read FDesignationList;
     property property_List : TFslList<TFHIRLookupOpRespProperty_> read FProperty_List;
   end;
@@ -3314,6 +3320,7 @@ procedure TFHIRLookupOpResponse.load(params : TFHIRParameters);
 var
   p : TFhirParametersParameter;
 begin
+  FAbstract := params.bool['abstract'];
   FName := params.str['name'];
   FVersion := params.str['version'];
   FDisplay := params.str['display'];
@@ -3330,7 +3337,8 @@ procedure TFHIRLookupOpResponse.load(params : THTTPParameters);
 begin
   FName := params['name'];
   FVersion := params['version'];
-  FDisplay := params['display'];
+  FDisplay := params['display'];              
+  FAbstract := StrToBoolDef(params['abstract'], false);
   loadExtensions(params);
 end;
 
@@ -3350,6 +3358,10 @@ begin
   try
     if (FName <> '') then
       result.addParameter('name', TFHIRString.Create(FName));{oz.5f}
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.Create(FCode));
+    if (FSystem <> '') then
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.Create(FVersion));{oz.5f}
     if (FDisplay <> '') then
@@ -3358,6 +3370,7 @@ begin
       result.AddParameter(v1.asParams('designation'));
     for v2 in FProperty_List do
       result.AddParameter(v2.asParams('property'));
+    result.addParameter('abstract', TFHIRBoolean.Create(FAbstract));{oz.5f}
     writeExtensions(result);
     result.link;
   finally

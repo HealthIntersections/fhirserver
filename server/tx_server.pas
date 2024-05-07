@@ -791,7 +791,7 @@ begin
   end
   else if system.StartsWith(URI_LOINC) and (CommonTerminologies.Loinc <> nil) then
   begin
-    d := CommonTerminologies.Loinc.GetDisplayByName(code, CommonTerminologies.Loinc.LangsForLang(langList));
+    d := CommonTerminologies.Loinc.getDisplay(code, langList);
     if op.warning('InstanceValidator', itInvalid, path, d <> '', 'The LOINC code "'+code+'" is unknown') then
       result := op.warning('InstanceValidator', itInvalid, path, (display = '') or (display = d), 'Display for Loinc Code "'+code+'" should be "'+d+'"');
   end

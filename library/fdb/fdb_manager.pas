@@ -265,6 +265,9 @@ type
     { internal use only  - platform specific initialization }
     procedure Initialise; virtual;
 
+    { set sql, do prepare and execute }
+    procedure select(sql : string);
+
     {
       After setting the SQL content, prepare the statement so Parameter
       Binding and execution can be done. You must call prepare before
@@ -1031,6 +1034,13 @@ begin
   finally
     Terminate;
     end;
+end;
+
+procedure TFDBConnection.select(sql : string);
+begin
+  self.SQL := sql;
+  prepare;
+  execute;
 end;
 
 procedure TFDBConnection.Prepare;

@@ -137,6 +137,8 @@ type
     property value : double read FValue write FValue;
     property ietf : TIETFLang read FIetf write SetIetf;
     property auto : boolean read FAuto write FAuto;
+
+    function matches(lang : String; exact : boolean) : boolean;
   end;
 
   { THTTPLanguageEntrySorter }
@@ -172,9 +174,10 @@ type
 
     function asString(incWildcard : boolean) : String;
     function prefLang : String;
-    function matches(definitions : TIETFLanguageDefinitions; code: String): boolean;
     //function prefLang : String;
     function sizeInBytes(magic : integer) : cardinal;
+
+    function matches(lang : String; exact : boolean) : boolean;
   end;
 
 implementation
@@ -640,6 +643,13 @@ begin
   inc(result, (FLang.length * sizeof(char)) + 12);
 end;
 
+function THTTPLanguageEntry.matches(lang : String; exact : boolean) : boolean;
+begin
+  if exact then
+    result := FLang = lang
+  else
+    result := FLang.startsWIth(lang);
+end;
 
 { THTTPLanguageEntrySorter }
 
@@ -723,13 +733,16 @@ begin
       exit(e.lang);
 end;
 
-function THTTPLanguageList.matches(definitions: TIETFLanguageDefinitions; code: String): boolean;
+function THTTPLanguageList.matches(lang : String; exact : boolean) : boolean;
+var
+  entry : THTTPLanguageEntry;
 begin
-  if (self = nil) then
-    exit(false);
-
-  RESULT := false;
+  for entry in FLangs do
+    if (entry.matches(lang, exact)) then
+      exit(true);
+  result := FWildcard;
 end;
+
 
 procedure THTTPLanguageList.process;
 var

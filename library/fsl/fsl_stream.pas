@@ -4853,7 +4853,8 @@ begin
     finally
       LFileStream.free;
     end;
-    if encoding = nil then // special case
+    if (encoding = nil) // special case
+      {$IFDEF FPC} {$IFDEF OSX} or (encoding = TEncoding.UTF8) {$ENDIF} {$ENDIF} then  // work around FPC bug
     begin
       SetLength(result, length(bytes));
       move(bytes[0], result[1], length(bytes));

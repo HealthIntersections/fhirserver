@@ -33,207 +33,44 @@ POSSIBILITY OF SUCH DAMAGE.
 Interface
 
 Uses
-  SysUtils, Contnrs, Classes,
+  SysUtils, Contnrs, Classes, Generics.Collections,
   fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_fpc,
+  fdb_manager, fdb_sqlite3,
   ftx_loinc_services, ftx_service;
 
-Const
-  FLAG_LONG_COMMON = 1;
-  FLAG_LONG_RELATED = 2;
-  STEP_COUNT = 100;
-  ESTIMATED_CONCEPTS = 100000;
-  ESTIMATED_HEIRACHY = 100000;
-  ESTIMATED_ANSWERS = 50000;
 
+type
 
-Type
-  TLOINCImporter = class;
-
-  THeirarchyEntry = class;
-  THeirarchyEntryList = class;
-  TCodeList = class;
-
-  TConcept = class (TFslName)
+  { TCodeInformation }
+  TCodeInformation = class (TFslObject)
   private
-    Index : Cardinal;
-    Codes : TObjectList;
-    Flang : integer;
+    FKey : integer;
+    FChildren : TKeySet;
   public
-    constructor Create(lang : byte);
-    destructor Destroy; Override;
-  End;
-
-  TConceptArray = Array of TConcept;
-
-  TConceptManager = class (TFslMap<TConcept>)
-  public
-    Function See(lang: byte; sName : String; oCode : TObject) : TConcept;
-    Function Store(langCount, lang: byte; sName : String; oImp : TLOINCImporter) : Cardinal;
-  End;
-
-  TDescribed = class  (TFslObject)
-  private
-    index : Cardinal;
-    Stems : TFslIntegerList;
-  public
-    constructor Create; Override;
-    destructor Destroy; Override;
+    constructor create; override;
+    destructor destroy; override;
+    function link : TCodeInformation; overload;
   end;
 
-  { THeirarchyEntry }
+  { TCodeMap }
 
-  THeirarchyEntry = class (TDescribed)
-  private
-    FCode : String;
-    FText : String;
-    FParents : THeirarchyEntryList;
-    FChildren : THeirarchyEntryList;
-    FConcepts : TCodeList;
-    FDescendentConcepts : TCodeList;
+  TCodeMap = class (TFslMap<TCodeInformation>)
   public
-    constructor Create; Override;
-    destructor Destroy; Override;
-    function link : THeirarchyEntry;
-  End;
-
-  THeirarchyEntryList = class (TFslObjectList)
-  private
-    function GetEntry(iIndex: Integer): THeirarchyEntry;
-  protected
-    Function ItemClass : TFslObjectClass; Override;
-    Function CompareByCode(pA, pB: Pointer): Integer; Virtual;
-    Function CompareByText(pA, pB: Pointer): Integer; Virtual;
-    Function FindByCode(entry : THeirarchyEntry; Out iIndex: Integer): Boolean; Overload;
-    Function FindByText(entry : THeirarchyEntry; Out iIndex: Integer): Boolean; Overload;
-  public
-    Procedure SortedByCode;
-    Procedure SortedByText;
-
-    Function getByCode(code : String) : THeirarchyEntry;
-    Function FindByCode(code: String; Out iIndex: Integer): Boolean; Overload;
-    Function getByText(text : String) : THeirarchyEntry;
-    Function FindByText(text: String; Out iIndex: Integer): Boolean; Overload;
-
-    Property Entries[iIndex : Integer] : THeirarchyEntry Read GetEntry; Default;
+    function addCode(code : String; key : integer; codeList : TFslList<TCodeInformation>) : TCodeInformation;
+    function getCode(code : String) : TCodeInformation;
   end;
 
-  { TCode }
-
-  TCode = class (TDescribed)
-  Private
-    Code : String;
-    Display : String;
-    QuestionText : String;
-    Names : Cardinal;
-    Comps : TConceptArray;
-    Props : TConceptArray;
-    Time : TConceptArray;
-    System : TConceptArray;
-    Scale : TConceptArray;
-    Method : TConceptArray;
-    Class_ : TConceptArray;
-    Flags : byte;
-    entries : TFslList<THeirarchyEntry>;
-  public
-    constructor Create(langCount : integer);
-    destructor Destroy; override;
-    Function Compare(pA, pB : Pointer) : Integer;
-  End;
-
-  TCodeList = class (TFslObjectList)
+  { TKeyMap }
+  TKeyMap = class (TDictionary<String, Integer>)
   private
-    function GetEntry(iIndex: Integer): TCode;
-  protected
-    Function ItemClass : TFslObjectClass; Override;
-    Function CompareByCode(pA, pB: Pointer): Integer; Virtual;
-    Function FindByCode(entry : TCode; Out iIndex: Integer): Boolean; Overload;
+    FName : String;
   public
-    Procedure SortedByCode;
+    constructor Create(name : String);
 
-    Function getByCode(code : String) : TCode;
-    Function FindByCode(code: String; Out iIndex: Integer): Boolean; Overload;
-
-    Property Entries[iIndex : Integer] : TCode Read GetEntry; Default;
+    procedure addKey(code : String; key : integer);
+    function getKey(code : String) : integer;
   end;
 
-  TAnswerList = class;
-
-  TAnswer = class (TFslObject)
-  private
-    FCode: String;
-    FDescription: String;
-    FParents: TFslList<TAnswerList>;
-    FIndex : integer;
-  public
-    constructor Create; override;
-    destructor Destroy; override;
-    Property Code : String read FCode write FCode;
-    Property Description : String read FDescription write FDescription;
-    Property Index : Integer read FIndex write FIndex;
-    Property Parents : TFslList<TAnswerList> read FParents;
-  end;
-
-  TAnswerList = class (TFslObject)
-  private
-    FCode: String;
-    FDescription: String;
-    FAnswers : TFslList<TAnswer>;
-    FIndex : integer;
-  public
-    constructor Create; Override;
-    destructor Destroy; Override;
-
-    Property Code : String read FCode write FCode;
-    Property Description : String read FDescription write FDescription;
-    Property Answers : TFslList<TAnswer> read FAnswers;
-  end;
-
-  TLoincLanguageCodes = class (TFslObject)
-  private
-    FComponent : String;
-    FProperty : String;
-    FTimeAspect : String;
-    FSystem : String;
-    FScale : String;
-    FMethod  : String;
-    FClass : String;
-    FShortname : String;
-    FLongName : String;
-    FRelatedNames : TStringList;
-  public
-    constructor Create; Override;
-    destructor Destroy; Override;
-    Function link : TLoincLanguageCodes; overload;
-
-    function Display : String;
-
-    property Component : String read FComponent write FComponent;
-    property Prop : String read FProperty write FProperty;
-    property TimeAspect : String read FTimeAspect write FTimeAspect;
-    property System : String read FSystem write FSystem;
-    property Scale : String read FScale write FScale;
-    property Method : String read FMethod write FMethod;
-    property Clss : String read FClass write FClass;
-    property Shortname : String read FShortname write FShortname;
-    property LongName : String read FLongName write FLongName;
-    property RelatedNames : TStringList read FRelatedNames;
-  end;
-
-  TLoincLanguage = class (TFslObject)
-  private
-    FLang : String;
-    FCountry : String;
-    FCodes : TFslMap<TLoincLanguageCodes>;
-  public
-    constructor Create; overload; Override;
-    constructor Create(lang, country : String); overload;
-    destructor Destroy; Override;
-    Function link : TLoincLanguage; overload;
-
-    Property Lang : String read FLang write FLang;
-    Property Country : String read FCountry write FCountry;
-    Property Codes : TFslMap<TLoincLanguageCodes> read FCodes;
-  end;
 
   { TLoincImporter }
 
@@ -245,43 +82,55 @@ Type
     FFolder : String;
     TotalConcepts : Integer;
 
-    FDesc : TLoincStrings;
-    FCode : TLOINCCodeList;
-    FRefs : TLOINCReferences;
-    FConcepts : TLOINCConcepts;
-    FWords : TLoincWords;
-    FStems : TLoincStems;
-    FEntries : TLOINCHeirarchyEntryList;
-    FAnswerLists : TFslMap<TAnswerList>;
-    FAnswerMap : TFslMap<TAnswer>;
-    FAnswers : TLOINCAnswersList;
-    FLanguages : TFslList<TLoincLanguage>;
-    FLangs : TLoincLanguages;
-
-    FStrings : TStringList;
-    FVersion: String;
-    FWordList : TStringList;
-    FStemList : TStringList;
-    FStemmer : TFslWordStemmer;
     FOutputFile: String;
     FDate: String;
+    FVersion: String;
 
-    procedure AddToDescendentConcepts(oHeirarchy: THeirarchyEntryList;  entry: TCode; path: String);
-    procedure SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
-    procedure SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
-    function listConcepts(arr : TConceptArray) : TCardinalArray;
-    procedure registerParents(oHeirarchy : THeirarchyEntryList; entry : THeirarchyEntry; path : String);
+    FStepCount : Integer;
+    FLangKey : integer;
+    FCodeKey : integer;
+    FRelKey : integer;
+    FDescKey : integer;
+    FPropKey : integer;
+    FPropValueKey : integer;
+    FPropValues : TDictionary<String, Integer>;
 
-    Function AddDescription(lang : byte; s : String):Cardinal;
-    procedure readLanguage(i : integer; index : String; lang : TLoincLanguage);
-    procedure ReadLanguageVariants();
-    function LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Cardinal;
-    function ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Cardinal;
-    procedure ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
-    procedure ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln : string);
-    procedure StoreHeirarchyEntry(entry : THeirarchyEntry);
+    // working items
+    conn, dbCodes, dbRels, dbDesc, dbProps, dbText: TFDBConnection;
+    codes : TCodeMap;
+    codeList : TFslList<TCodeInformation>;
+    rels, langs, statii, dTypes, props : TKeyMap;
+    partNames : TDictionary<String, String>;
+
     procedure Progress(Step : integer; pct : real; msg : String);
+    function pv(value : String) : integer;
+
+    procedure CreateTables(step : integer);
+    procedure ProcessDescription(codeKey, languageKey, descriptionType : integer; value : String);
+    procedure ProcessProperty(codeKey, propertyType : integer; value : String);
+    procedure ProcessParts(step : integer);
+    procedure ProcessPartItems(items : TStringArray);
+    procedure ProcessCodes(step : integer);
+    procedure ProcessCodeItems(items : TStringArray);
+    procedure ProcessConsumerNames(step : integer);
+    procedure ProcessConsumerNameItems(items : TStringArray);
+    procedure ProcessLists(step : integer);
+    procedure ProcessListItems(items : TStringArray; var list : String);
+    procedure ProcessPartLinks(step : integer);
+    procedure ProcessPartLinkItems(items : TStringArray);
+    procedure ProcessListLinks(step : integer);
+    procedure ProcessListLinkItems(items : TStringArray);
+    procedure ProcessLanguageVariants(step : integer; list : TStringList);
+    procedure ProcessLanguageVariantsItems(items : TStringArray; list : TStringList);
+    procedure ProcessLanguage(step : integer;  code : String);
+    procedure ProcessLanguageItems(code : String; lk : integer; items : TStringArray);
+    procedure ProcessPropertyValues(step: integer);
+    procedure ProcessHierarchy(step: integer);
+    procedure ProcessHierarchyItems(items : TStringArray);
+    procedure StoreClosureTable(step: integer);
   public
+    constructor Create; overload;
+    destructor Destroy; overload;
     procedure ImportLOINC;
 
     Property Folder : String read FFolder write FFolder;
@@ -294,34 +143,13 @@ function importLoinc(folder, version, date, dest : String; callback : TInstaller
 
 Implementation
 
-Function DetermineVersion(filename : String) : String;
-var
-  txtFile : String;
-  f : TFileStream;
-  txt : AnsiString;
-  s, t : String;
-begin
-  txtFile := ChangeFileExt(filename, '.txt');
-  if not FileExists(txtFile) then
-    raise ETerminologySetup.create('Unable to find the file '+txtFile+' so the version can be determined');
-  f := TFileStream.Create(txtFile, fmOpenRead + fmShareDenyWrite);
-  try
-    setLength(txt, f.Size);
-    f.Read(txt[1], f.Size);
-  finally
-    f.free;
-  end;
-  t := String(txt);
-  StringSplit(t, [#13], s, t);
-  result := copy(s, length(s)-3, 4);
-  if not (StringIsInteger16(copy(result, 1, 1)) and (result[2] = '.') and StringIsInteger16(copy(result, 3, 2))) then
-    raise ETerminologySetup.create('Unable to read the version from '+txtFile);
-end;
 
 function importLoinc(folder, version, date, dest : String; callback : TInstallerCallback = nil) : String;
 var
   imp : TLoincImporter;
 begin
+  if FileExists(dest) then
+    DeleteFile(dest);
   imp := TLoincImporter.Create;
   try
     imp.callback := callback;
@@ -337,990 +165,109 @@ begin
   end;
 end;
 
-
-
-function TCode.Compare(pA, pB: Pointer): Integer;
+constructor TLoincImporter.Create;
 begin
-  result := CompareStr(TCode(pA).Code, TCode(pB).Code);
-End;
+  inherited create;
+  FPropValues := TDictionary<String, Integer>.create;
+  partNames := TDictionary<String, String>.create;
+  codes := TCodeMap.create;
+  statii := TKeyMap.create('Status');
+  langs := TKeyMap.create('Language');
+  rels := TKeyMap.create('Relationship');
+  dTypes := TKeyMap.create('DescriptionType');
+  props := TKeyMap.create('PropertyType');
+  codeList := TFslList<TCodeInformation>.create;
 
-Function MakeSafeFileName(sName : String; newkey : Integer):String;
-var
-  i : integer;
-Begin
-  result := '';
-  for i := 1 to length(sName) Do
-    if CharInSet(sName[i], ['a'..'z', '_', '-', 'A'..'Z', '0'..'9']) Then
-      result := result + sName[i];
-  if result = '' then
-    result := inttostr(newkey);
-End;
-
-procedure TLoincImporter.SeeDesc(sDesc: String; oObj : TDescribed; iFlags: Byte);
-var
-  s : String;
-begin
-  while (sDesc <> '') Do
-  Begin
-    StringSplit(sdesc, [#13, #10, ',', ' ', ':', '.', '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '{', '}', '[', ']', '|', '\', ';', '"', '<', '>', '?', '/', '~', '`', '-', '_', '+', '='],
-      s, sdesc);
-    if (s <> '') {And not StringContainsAny(s, ['0'..'9']) And (length(s) > 3)} Then
-      SeeWord(s, oObj, iFlags);
-  End;
+  FStepCount := 30;
 end;
 
-procedure TLoincImporter.SeeWord(sDesc: String; oObj : TDescribed; iFlags: Byte);
-var
-  i, m : integer;
-  sStem : String;
-  oList : TFslObjectList;
+destructor TLoincImporter.Destroy;
 begin
-  sDesc := lowercase(sdesc);
-  if not FWordList.Find(sDesc, i) Then
-    i := FWordList.Add(sdesc);
-  m := integer(FWordList.Objects[i]);
-  case iFlags of
-    FLAG_LONG_COMMON : m := m or $1;
-    FLAG_LONG_RELATED : m := m or $2;
-  End;
-
-  FWordList.Objects[i] := TObject(m);
-
-  sStem := FStemmer.Stem(sDesc);
-  if not FStemList.Find(sStem, i) Then
-  Begin
-    oList := TFslObjectList.Create;
-    oList.SortedByReference;
-    FStemList.AddObject(sStem, oList);
-  End
-  Else
-    oList := TFslObjectList(FStemList.Objects[i]);
-  if not oList.ExistsByReference(oObj) Then
-    oList.Add(oObj.Link);
-End;
-
-
-procedure TLoincImporter.StoreHeirarchyEntry(entry: THeirarchyEntry);
-var
-  parents, children, concepts, descendentConcepts: Cardinal;
-  refs : TCardinalArray;
-  i : integer;
-begin
-  setLength(refs, entry.FChildren.Count);
-  for i := 0 to entry.FChildren.Count - 1 do
-    refs[i] := entry.FChildren[i].index;
-  children := FRefs.AddRefs(refs);
-
-  setLength(refs, entry.FConcepts.Count);
-  entry.FConcepts.SortedByCode;
-  for i := 0 to entry.FConcepts.Count - 1 do
-    refs[i] := TCode(entry.FConcepts[i]).index;
-  concepts := FRefs.AddRefs(refs);
-
-  setLength(refs, entry.FDescendentConcepts.Count);
-  entry.FDescendentConcepts.SortedByCode;
-  for i := 0 to entry.FDescendentConcepts.Count - 1 do
-    refs[i] := TCode(entry.FDescendentConcepts[i]).index;
-  descendentConcepts := FRefs.AddRefs(refs);
-
-  setLength(refs, entry.FParents.Count);
-  for i := 0 to entry.FParents.Count - 1 do
-    refs[i] := entry.FParents[i].index;
-  parents := FRefs.AddRefs(refs);
-
-  if FEntries.AddEntry(AddDescription(0, entry.FCode), AddDescription(0, entry.FText), parents, children, concepts, descendentConcepts) <> entry.index then
-    raise ETerminologySetup.create('Out of order');
+  FPropValues.free;
+  codeList.free;
+  codes.free;
+  statii.free;
+  langs.free;
+  rels.free;
+  dTypes.free;
+  props.free;
+  partNames.free;
+  inherited;
 end;
 
-Const
-  FLD_LOINC_NUM =                             0;
-  FLD_COMPONENT =                             FLD_LOINC_NUM + 1;
-  FLD_PROPERTY =                              FLD_COMPONENT + 1;
-  FLD_TIME_ASPCT =                            FLD_PROPERTY + 1;
-  FLD_SYSTEM =                                FLD_TIME_ASPCT + 1;
-  FLD_SCALE_TYP =                             FLD_SYSTEM + 1;
-  FLD_METHOD_TYP =                            FLD_SCALE_TYP + 1;
-  FLD_CLASS =                                 FLD_METHOD_TYP + 1;
-//  FLD_SOURCE =                                8; removed as of 2.56
-  FLD_VersionLastChanged =                    FLD_CLASS + 1;
-  FLD_CHNG_TYPE =                             FLD_VersionLastChanged + 1;
-  FLD_DefinitionDescription =                 FLD_CHNG_TYPE + 1;
-  FLD_STATUS =                                FLD_DefinitionDescription + 1;
-  FLD_CONSUMER_NAME =                         FLD_STATUS + 1;
-  FLD_CLASSTYPE =                             FLD_CONSUMER_NAME + 1;
-  FLD_FORMULA =                               FLD_CLASSTYPE + 1;
-//  FLD_SPECIES =                               FLD_FORMULA + 1;
-  FLD_EXMPL_ANSWERS =                         FLD_FORMULA + 1;
-  FLD_SURVEY_QUEST_TEXT =                     FLD_EXMPL_ANSWERS + 1;
-  FLD_SURVEY_QUEST_SRC =                      FLD_SURVEY_QUEST_TEXT + 1;
-  FLD_UNITSREQUIRED =                         FLD_SURVEY_QUEST_SRC + 1;
-  //FLD_SUBMITTED_UNITS =                       FLD_UNITSREQUIRED + 1;
-  FLD_RELATEDNAMES2 =                         FLD_UNITSREQUIRED + 1;
-  FLD_SHORTNAME =                             FLD_RELATEDNAMES2 + 1;
-  FLD_ORDER_OBS =                             FLD_SHORTNAME + 1;
-  //FLD_CDISC_COMMON_TESTS =                    FLD_ORDER_OBS + 1;
-  FLD_HL7_FIELD_SUBFIELD_ID =                 FLD_ORDER_OBS + 1;
-  FLD_EXTERNAL_COPYRIGHT_NOTICE =             FLD_HL7_FIELD_SUBFIELD_ID + 1;
-  FLD_EXAMPLE_UNITS =                         FLD_EXTERNAL_COPYRIGHT_NOTICE + 1;
-  FLD_LONG_COMMON_NAME =                      FLD_EXAMPLE_UNITS + 1;
-  //FLD_UnitsAndRange =                         FLD_LONG_COMMON_NAME + 1;
-//  FLD_DOCUMENT_SECTION =                      FLD_UnitsAndRange + 1;
-  FLD_EXAMPLE_UCUM_UNITS =                    FLD_LONG_COMMON_NAME + 1;
-  //FLD_EXAMPLE_SI_UCUM_UNITS =                 FLD_EXAMPLE_UCUM_UNITS + 1;
-  FLD_STATUS_REASON =                         FLD_EXAMPLE_UCUM_UNITS + 1;
-  FLD_STATUS_TEXT =                           FLD_STATUS_REASON + 1;
-  FLD_CHANGE_REASON_PUBLIC =                  FLD_STATUS_TEXT + 1;
-  FLD_COMMON_TEST_RANK =                      FLD_CHANGE_REASON_PUBLIC + 1;
-  FLD_COMMON_ORDER_RANK =                     FLD_COMMON_TEST_RANK + 1;
-  FLD_COMMON_SI_TEST_RANK =                   FLD_COMMON_ORDER_RANK + 1;
-  FLD_HL7_ATTACHMENT_STRUCTURE =              FLD_COMMON_SI_TEST_RANK + 1;
-  FLD_EXTERNAL_COPYRIGHT_LINK =               FLD_HL7_ATTACHMENT_STRUCTURE + 1;
-  FLD_PanelType =                             FLD_EXTERNAL_COPYRIGHT_LINK + 1;
-  FLD_AskAtOrderEntry =                       FLD_PanelType + 1;
-  FLD_AssociatedObservations =                FLD_AskAtOrderEntry + 1;
-  FLD_VersionFirstReleased =                  FLD_AssociatedObservations + 1;
-  FLD_ValidHL7AttachmentRequest =             FLD_VersionFirstReleased + 1;
-  FLD_DisplayName =                           FLD_ValidHL7AttachmentRequest + 1;
-
-
-Function TLoincImporter.LoadLOINCFiles(folder : String; out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Cardinal;
+procedure TLoincImporter.ImportLOINC;
 var
-  iLength : Integer;
-  iCount : Integer;
-  oCodes : TCodeList;
-  oTemp : TFslObjectList;
-  oCode : TCode;
-  iLoop, iLang : Integer;
-  oNames : TStringList;
-  aNames : TCardinalArray;
-  oComps : TConceptManager;
-  oProps : TConceptManager;
-  oTime : TConceptManager;
-  oSystem : TConceptManager;
-  oScale : TConceptManager;
-  oMethod : TConceptManager;
-  oClass : TConceptManager;
-  oHeirarchy : THeirarchyEntryList;
-  oEntry : THeirarchyEntry;
-  aConcepts : TCardinalArray;
-  oSubsets : Array[TLoincSubsetId] of TCodeList;
-  i, j : integer;
-  iFlag : Byte;
-  aCardinals : TCardinalArray;
-  iStem, e : Cardinal;
-  ma : Text;
-  ln : String;
-  a : TLoincSubsetId;
-  csv : TFslCSVExtractor;
-  items : TFslStringList;
-  f : TFslFile;
-  st, st2 : TStringList;
-  answerlist : TAnswerList;
-  answer : TAnswer;
-  s : String;
-  lc : TLoincLanguageCodes;
+  db : TFDBManager;
+  st : TStringList;
+  s : string;
+  i : integer;
 begin
-  result := 0;
-  iLength := 0;
-
-  oCodes := TCodeList.Create;
-  oComps := TConceptManager.Create;
-  oProps := TConceptManager.Create;
-  oTime := TConceptManager.Create;
-  oSystem := TConceptManager.Create;
-  oScale := TConceptManager.Create;
-  oMethod := TConceptManager.Create;
-  oClass := TConceptManager.Create;
-  FAnswerLists := TFslMap<TAnswerList>.Create('loinc.answers');
-  FAnswerMap := TFslMap<TAnswer>.create('loinc.answers2');
-  oHeirarchy := THeirarchyEntryList.Create;
-  Try
-    for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
-    begin
-      oSubsets[a] := TCodeList.Create;
-      oSubsets[a].SortedByCode;
-    end;
-    Progress(0, 24, 'Loading Languages');
-    if FileExists(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv') then
-      ReadLanguageVariants();
-
-
-    iCount := 0;
-    Progress(0, 0, 'Loading Concepts');
-    items := TFslStringList.Create;
-    f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'loinc.csv', fmOpenRead + fmShareDenyWrite);
+  st := TStringList.create;
+  try
+    db := TFDBSQLiteManager.create('db', FOutputFile, false, true, 10);
     try
-      csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
-      Try
-        // headers
-        csv.ConsumeEntries(items);
+      conn := db.GetConnection('definitions');
+      dbCodes := db.GetConnection('codes');
+      dbRels := db.GetConnection('relationships');
+      dbDesc := db.GetConnection('descriptions');
+      dbProps := db.GetConnection('properties');
+      dbText := db.GetConnection('text');
+      try
+        CreateTables(1);
 
-        while csv.More do
+        dbCodes.sql := 'Insert into Codes (CodeKey, Code, Type, RelationshipKey, StatusKey, Description) values (:ck, :c, :t, :rk, :sk, :d)';
+        dbCodes.prepare;
+        dbRels.sql := 'Insert into Relationships (RelationshipKey, RelationshipTypeKey, SourceKey, TargetKey, StatusKey) values (:rk, :rtk, :sk, :tk, :stk)';
+        dbRels.prepare;
+        dbDesc.sql := 'Insert into Descriptions (DescriptionKey, CodeKey, LanguageKey, DescriptionTypeKey, Value) values (:dk, :ck, :lk, :tk, :v)';
+        dbDesc.prepare;
+        dbProps.sql := 'Insert into Properties (PropertyKey, PropertyTypeKey, CodeKey, PropertyValueKey) values (:pk, :ptk, :ck, :v)';
+        dbProps.prepare;
+        dbText.sql := 'Insert into TextIndex (CodeKey, Type, Lang, Text) values (:ck, :tk, :lk, :t)';
+        dbText.prepare;
+
+        ProcessLanguageVariants(2, st);
+        FStepCount := 12 + st.count;
+        ProcessParts(3);
+        ProcessCodes(4);
+        ProcessConsumerNames(5);
+        ProcessLists(6);
+        ProcessPartLinks(7);
+        ProcessListLinks(8);
+        ProcessHierarchy(9);
+        ProcessPropertyValues(10);
+        storeClosureTable(11);
+        for i := 0 to st.count - 1 do
+          ProcessLanguage(12+i, st[i]);
+
+        dbCodes.terminate;
+        dbRels.terminate;
+        dbDesc.terminate;
+        dbProps.terminate;
+        dbText.terminate;
+
+        dbCodes.Release;
+        dbRels.Release;
+        dbDesc.terminate;
+        dbProps.terminate;
+        dbText.terminate;
+        conn.Release;
+      except
+        on e : Exception do
         begin
-          csv.ConsumeEntries(items);
-          if items.count > 0 then
-          begin
-            oCode := TCode.Create(FLanguages.Count);
-            oCodes.Add(oCode);
-
-            oCode.Names := 0;
-            oCode.Code := Trim(items[FLD_LOINC_NUM]);
-            oCode.Display := Trim(items[FLD_LONG_COMMON_NAME]);
-            oCode.QuestionText := Trim(items[FLD_SURVEY_QUEST_TEXT]);
-            if Length(oCode.Code) > iLength Then
-              iLength := Length(oCode.Code);
-
-            oCode.Comps[0] := oComps.See(0, items[FLD_COMPONENT], oCode);
-            oCode.Props[0] := oProps.See(0, items[FLD_PROPERTY], oCode);
-            oCode.Time[0] := oTime.See(0, items[FLD_TIME_ASPCT], oCode);
-            oCode.System[0] := oSystem.See(0, items[FLD_SYSTEM], oCode);
-            oCode.Scale[0] := oScale.See(0, items[FLD_SCALE_TYP], oCode);
-            oCode.Method[0] := oMethod.See(0, items[FLD_METHOD_TYP], oCode);
-            oCode.Class_[0] := oClass.See(0, items[FLD_CLASS], oCode);
-            for iLang := 1 to Flanguages.count - 1 do
-            begin
-              if Flanguages[iLang].Codes.TryGetValue(oCode.Code, lc) then
-              begin
-                oCode.Comps[iLang] := oComps.See(iLang, lc.Component, oCode);
-                oCode.Props[iLang] := oProps.See(iLang, lc.Prop, oCode);
-                oCode.Time[iLang] := oTime.See(iLang, lc.TimeAspect, oCode);
-                oCode.System[iLang] := oSystem.See(iLang, lc.System, oCode);
-                oCode.Scale[iLang] := oScale.See(iLang, lc.Scale, oCode);
-                oCode.Method[iLang] := oMethod.See(iLang, lc.Method, oCode);
-                oCode.Class_[iLang] := oClass.See(iLang, lc.Clss, oCode);
-              end;
-            end;
-
-            oSubsets[lsiAll].add(oCode.Link);
-            oCode.Flags := 0;
-    //        if o.ColIntegerByName['SETROOT'] = 1 Then
-    //          oCode.Flags := oCode.Flags + FLAGS_ROOT;
-            if sameText(items[FLD_ORDER_OBS], 'Both') Then
-            begin
-              oCode.Flags := oCode.Flags + FLAGS_ORDER + FLAGS_OBS;
-              oSubsets[lsiOrderObs].add(oCode.Link);
-            end
-            else if sameText(items[FLD_ORDER_OBS], 'Observation') Then
-            begin
-              oCode.Flags := oCode.Flags + FLAGS_OBS;
-              oSubsets[lsiObs].add(oCode.Link);
-            end
-            else if sameText(items[FLD_ORDER_OBS], 'Order') Then
-            begin
-              oCode.Flags := oCode.Flags + FLAGS_ORDER;
-              oSubsets[lsiOrder].add(oCode.Link);
-            end
-            else if (items[FLD_ORDER_OBS] <> '') And (items[FLD_ORDER_OBS] <> 'Subset') Then
-              raise ETerminologySetup.create('unknown order/obs '+items[FLD_ORDER_OBS])
-            else
-              oSubsets[lsiOrderSubset].add(oCode.Link);
-
-            if items[FLD_UNITSREQUIRED] = 'Y' Then
-              oCode.Flags := oCode.Flags + FLAGS_UNITS;
-            if items[FLD_EXTERNAL_COPYRIGHT_NOTICE] = '' then
-              oSubsets[lsiInternal].add(oCode.Link)
-            else
-              oSubsets[lsi3rdParty].add(oCode.Link);
-
-            s := items[FLD_CLASSTYPE];
-            if s = '' then
-              s := '1';
-            if not StringIsInteger32(s) then
-              raise ETerminologySetup.create('Error');
-
-            case StrToInt(s) of
-             2: begin
-                oCode.Flags := oCode.Flags + FLAGS_CLIN;
-                oSubsets[lsiTypeClinical].add(oCode.Link);
-                end;
-             3: begin
-                oCode.Flags := oCode.Flags + FLAGS_ATT;
-                oSubsets[lsiTypeAttachment].add(oCode.Link);
-                end;
-             4: begin
-                oCode.Flags := oCode.Flags + FLAGS_SURV;
-                oSubsets[lsiTypeSurvey].add(oCode.Link);
-                end;
-             1: begin
-                oSubsets[lsiTypeObservation].add(oCode.Link);
-                end;
-            else
-              raise ETerminologySetup.create('unexpected class type '+items[FLD_CLASSTYPE]);
-            End;
-            if SameText(items[FLD_STATUS], 'Active') then
-              oSubsets[lsiActive].add(oCode.Link)
-            else if SameText(items[FLD_STATUS], 'Deprecated') then
-              oSubsets[lsiDeprecated].add(oCode.Link)
-            else if SameText(items[FLD_STATUS], 'Discouraged') then
-              oSubsets[lsiDiscouraged].add(oCode.Link)
-            else if SameText(items[FLD_STATUS], 'Trial') then
-              oSubsets[lsiTrial].add(oCode.Link)
-            else
-              raise ETerminologySetup.create('Unknown LOINC Code status '+items[FLD_STATUS]);
-
-            SeeDesc(oCode.Display, oCode, FLAG_LONG_COMMON);
-
-            oNames := TStringList.Create;
-            Try
-              if items[FLD_SHORTNAME] <> '' Then
-                oNames.AddObject(items[FLD_SHORTNAME], TObject(0));
-              if oCode.QuestionText <> '' then
-                oNames.AddObject(oCode.QuestionText, TObject(0));
-              for s in items[FLD_RELATEDNAMES2].Split([';']) do
-                if oNames.IndexOf(items[FLD_SHORTNAME]) = -1 then
-                  oNames.AddObject(items[FLD_SHORTNAME], TObject(0));
-              for iLang := 1 to FLanguages.Count - 1 do
-              begin
-                if FLanguages[iLang].Codes.TryGetValue(oCode.Code, lc) then
-                begin
-                  if lc.Shortname < '' then
-                    if oNames.IndexOf(lc.Shortname) = -1 then
-                      oNames.AddObject(lc.Shortname, TObject(iLang));
-                  for s in lc.RelatedNames do
-                    if oNames.IndexOf(s) = -1 then
-                      oNames.AddObject(s, TObject(iLang));
-                end;
-              end;
-
-              if oNames.Count > 0 Then
-              Begin
-                SetLength(aNames, oNames.Count);
-                For iLoop := 0 to oNames.Count - 1 Do
-                  If Trim(oNames[iLoop]) <> '' Then
-                  Begin
-                    aNames[iLoop] := addDescription(integer(oNames.Objects[iLoop]), Trim(oNames[iLoop]));
-                    if integer(oNames.Objects[iLoop]) = 0 then
-                      SeeDesc(oNames[iLoop], oCode, FLAG_LONG_RELATED);
-                  End
-                  Else
-                    aNames[iLoop] := 0;
-
-                oCode.Names := FRefs.AddRefs(aNames);
-              End;
-            Finally
-              oNames.free;
-            End;
-
-            // properties
-
-            if iCount mod STEP_COUNT = 0 then
-              Progress(0, iCount * 3 / ESTIMATED_CONCEPTS, '');
-            inc(iCount);
-          end;
-        End;
-      Finally
-        csv.free;
-        items.free;
-      End;
-    finally
-      f.free;
-    end;
-    Progress(3, 0, 'Sort Codes');
-    oCodes.SortedByCode;
-
-    // now, process the multi-axial file
-    if FileExists(IncludeTrailingPathDelimiter(folder) + 'ComponentHierarchyBySystem.csv') then
-    begin
-      Progress(3,0,'Loading Multi-Axial Source');
-      oHeirarchy.SortedByCode;
-      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'ComponentHierarchyBySystem.csv');
-      Reset(ma);
-      Readln(ma, ln); // skip header
-
-      iCount := 0;
-      while not eof(ma) do
-      begin
-        Readln(ma, ln);
-        ProcessMultiAxialEntry(oHeirarchy, oCodes, ln);
-        if iCount mod STEP_COUNT = 0 then
-          Progress(3, iCount*2/ESTIMATED_HEIRACHY, '');
-        inc(iCount);
-      end;
-      CloseFile(ma);
-      for i := 0 to oHeirarchy.Count - 1 do
-        // first, we simply assign them all an index. Then we'll create everything else, and then go and actually store them
-        oHeirarchy[i].index := i;
-    end;
-
-    if FileExists(IncludeTrailingPathDelimiter(folder) + 'answerList.csv') then
-    begin
-      Progress(5, 0, 'Loading Answer Lists');
-      AssignFile(ma, IncludeTrailingPathDelimiter(folder) + 'answerList.csv');
-      Reset(ma);
-      Readln(ma, ln); // skip header
-      iCount := 0;
-      while not eof(ma) do
-      begin
-        Readln(ma, ln);
-        if (iCount = 4749) then
-          inc(iCount);
-        ProcessAnswerLine(oHeirarchy, oCodes, ln);
-        if iCount mod STEP_COUNT = 0 then
-          Progress(5, iCount / ESTIMATED_ANSWERS, '');
-        inc(iCount);
-      end;
-      CloseFile(ma);
-    end;
-
-    Progress(6, 0, 'Index Codes');
-    For iLoop := 0 to oCodes.Count - 1 Do
-    Begin
-      oCode := TCode(oCodes[iLoop]);
-      oCode.Code := StringPadRight(oCode.Code, ' ', iLength);
-      if iLoop mod STEP_COUNT = 0 then
-        Progress(6, iCount * 0.5 / oCodes.Count, '');
-    End;
-    FCode.CodeLength := iLength;
-
-    For iLoop := 0 to oCodes.Count - 1 Do
-    Begin
-      if iCount mod STEP_COUNT = 0 then
-        Progress(6, 0.5+(iCount *0.5 / oCodes.Count), '');
-      inc(iCount);
-      oCode := TCode(oCodes[iLoop]);
-      Try
-        SetLength(aCardinals, oCode.entries.Count);
-        for i := 0 to oCode.entries.count - 1 do
-          aCardinals[i] := oCode.entries[i].index;
-        e := FRefs.AddRefs(aCardinals);
-
-        SetLength(aNames, FLanguages.Count);
-        aNames[0] := AddDescription(0, oCode.Display);
-        For iLang := 1 to FLanguages.Count - 1 Do
-        begin
-          if FLanguages[iLang].Codes.TryGetValue(oCode.Code, lc) then
-            aNames[iLang] := AddDescription(iLang, lc.Display)
-          else
-            aNames[iLang] := 0;
-        end;
-        oCode.Index := FCode.AddCode(oCode.Code, FRefs.AddRefs(aNames), oCode.Names, e, oCode.Flags);
-      Except
-        on E:Exception Do
-        Begin
-          e.Message := e.Message + ' (Code = '+oCode.Code+')';
-          recordStack(e);
+          dbCodes.Error(e);
+          dbRels.Error(e);
+          dbDesc.Error(e);
+          dbProps.Error(e);
+          conn.Error(e);
           raise;
-        End;
-      End;
-    End;
-
-    SetLength(aConcepts, 7);
-    Props[lptComponents] := oComps.Store(FLanguages.Count, 0, 'Components', self);
-    aConcepts[0] := Props[lptComponents];
-    Props[lptProperties] := oProps.Store(FLanguages.Count, 0, 'Properties', self);
-    aConcepts[1] := Props[lptProperties];
-    Props[lptTimeAspects] := oTime.Store(FLanguages.Count, 0, 'Time Aspects', self);
-    aConcepts[2] := Props[lptTimeAspects];
-    Props[lptSystems] := oSystem.Store(FLanguages.Count, 0, 'Systems', self);
-    aConcepts[3] := Props[lptSystems];
-    Props[lptScales] := oScale.Store(FLanguages.Count, 0, 'Scales', self);
-    aConcepts[4] := Props[lptScales];
-    Props[lptMethods] := oMethod.Store(FLanguages.Count, 0, 'Methods', self);
-    aConcepts[5] := Props[lptMethods];
-    Props[lptClasses] := oClass.Store(FLanguages.Count, 0, 'Classes', self);
-    aConcepts[6] := Props[lptClasses];
-    result := FConcepts.AddConcept(AddDescription(0, 'LOINC Definitions'), false, FRefs.AddRefs(aConcepts), 0);
-    FCode.donebuild;
-
-    Progress(7, 0, 'Storing Heirachy');
-    FEntries.StartBuild;
-    iCount := 0;
-    SetLength(roots, 0);
-    for i := 0 to oHeirarchy.Count - 1 do
-    begin
-      if iCount mod STEP_COUNT = 0 then
-        Progress(7, i / oHeirarchy.Count, '');
-      inc(iCount);
-      if oHeirarchy[i].FParents.Count = 0 then
-      begin
-        SetLength(roots, Length(roots)+1);
-        roots[Length(roots)-1] := oHeirarchy[i].index;
-      end;
-      StoreHeirarchyEntry(oHeirarchy[i]);
-    end;
-    FEntries.DoneBuild;
-
-    for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
-    begin
-      setLength(aCardinals, oSubsets[a].Count);
-      for i := 0 to oSubsets[a].Count - 1 do
-        aCardinals[i] := oSubsets[a][i].Index;
-      subsets[a] := FRefs.AddRefs(aCardinals);
-    end;
-
-    Progress(8, 0, 'Processing Answer Lists');
-    FAnswers.StartBuild;
-    st := TStringList.Create;
-    st2 := TStringList.Create;
-    try
-      for answerlist in FAnswerLists.Values do
-        st.AddObject(answerlist.FCode, answerlist);
-      st.Sort;
-      for answer in FAnswerMap.Values do
-        st2.AddObject(answer.FCode, answer);
-      st2.Sort;
-
-      for i := 0 to st.Count - 1 do
-      begin
-        answerlist := TAnswerList(st.Objects[i]);
-        answerlist.FIndex := i + st2.Count;
-      end;
-
-      for i := 0 to st2.Count - 1 do
-      begin
-
-
-        if i mod STEP_COUNT = 0 then
-          Progress(8, i/st2.Count, '');
-        answer := TAnswer(st2.Objects[i]);
-        SetLength(aCardinals, answer.FParents.Count);
-        for j := 0 to answer.FParents.Count - 1 do
-          aCardinals[j] := answer.FParents[j].FIndex;
-        answer.Index := FAnswers.AddEntry(AddDescription(0, answer.Code), AddDescription(0, answer.FDescription), FRefs.AddRefs(aCardinals));
-      end;
-      for i := 0 to st.Count - 1 do
-      begin
-        if i mod STEP_COUNT = 0 then
-          Progress(9, i/st2.Count, '');
-        answerlist := TAnswerList(st.Objects[i]);
-        SetLength(aCardinals, answerlist.FAnswers.Count);
-        for j := 0 to answerlist.FAnswers.Count - 1 do
-          aCardinals[j] := answerlist.FAnswers[j].FIndex;
-        j := FAnswers.AddEntry(AddDescription(0, answerlist.Code), AddDescription(0, answerlist.FDescription), FRefs.AddRefs(aCardinals));
-        if (j <> answerlist.FIndex) then
-          raise ETerminologySetup.create('Error Message');
+        end;
       end;
     finally
-      st.free;
-      st2.free;
+      db.free;
     end;
-    FAnswers.DoneBuild;
-
-
-
-    Progress(10, 0, 'Processing Words');
-    FWords.StartBuild;
-    For i := 0 to FWordList.Count - 1 Do
-    Begin
-      if i mod STEP_COUNT = 0 then
-        Progress(10, i/FWordList.Count, '');
-      iFlag := Integer(FWordList.Objects[i]);
-      FWords.AddWord(FDesc.AddEntry(0, FWordList[i]), iFlag);
-    End;
-    FWords.DoneBuild;
-
-    Progress(11, 0, 'Processing Stems');
-    FStems.StartBuild;
-    For i := 0 to FStemList.Count - 1 Do
-    Begin
-      if i mod STEP_COUNT = 0 then
-        Progress(11,  i / FStemList.Count, '');
-      oTemp := TFslObjectList(FStemList.Objects[i]);
-      iStem := FDesc.AddEntry(0, FStemList[i]);
-      FStems.AddStem(iStem);
-      for j := 0 to oTemp.Count - 1 Do
-        TDescribed(oTemp[j]).Stems.Add(iStem);
-      oTemp.free;
-      FStemList.Objects[i] := nil;
-    End;
-    FStems.DoneBuild;
-    For i := 0 to oCodes.Count - 1 Do
-    Begin
-      if i mod STEP_COUNT = 0 then
-        Progress(12,  i / oCodes.Count, '');
-      oCode := TCode(oCodes[i]);
-      SetLength(aCardinals, oCode.Stems.Count);
-      for j := 0 to oCode.Stems.Count - 1 do
-        aCardinals[j] := oCode.Stems[j];
-      FCode.SetStems(oCode.Index, FRefs.AddRefs(aCardinals));
-    End;
-    For i := 0 to oHeirarchy.Count - 1 Do
-    Begin
-      if i mod STEP_COUNT = 0 then
-        Progress(13,  i / oHeirarchy.Count, '');
-      oEntry := oHeirarchy[i];
-      SetLength(aCardinals, oEntry.Stems.Count);
-      for j := 0 to oEntry.Stems.Count - 1 do
-        aCardinals[j] := oEntry.Stems[j];
-      FEntries.SetStems(oEntry.Index, FRefs.AddRefs(aCardinals));
-    End;
-
-    Progress(14, 0, 'Cross-Linking');
-    For iLoop := 0 to oCodes.Count - 1 Do
-    Begin
-      if iLoop mod STEP_COUNT = 0 then
-        Progress(14, iLoop / oCodes.Count, '');
-      oCode := TCode(oCodes[iLoop]);
-      if oCode.Comps <> nil Then
-        FCode.SetComponents(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Comps)));
-      if oCode.Props <> nil Then
-        FCode.SetPropertys(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Props)));
-      if oCode.Time <> nil Then
-        FCode.SetTimeAspects(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Time)));
-      if oCode.System <> nil Then
-        FCode.SetSystems(oCode.Index, FRefs.AddRefs(listConcepts(oCode.System)));
-      if oCode.Scale <> nil Then
-        FCode.SetScales(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Scale)));
-      if oCode.Method <> nil Then
-        FCode.SetMethods(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Method)));
-      if oCode.Class_ <> nil Then
-        FCode.SetClasses(oCode.Index, FRefs.AddRefs(listConcepts(oCode.Class_)));
-    End;
-
-    TotalConcepts := oCodes.Count;
-  Finally
-    for a := Low(TLoincSubsetId) to high(TLoincSubsetId) do
-      osubsets[a].free;
-    oHeirarchy.free;
-    oCodes.free;
-    oComps.free;
-    oProps.free;
-    oTime.free;
-    oSystem.free;
-    oScale.free;
-    oMethod.free;
-    oClass.free;
-    FAnswerLists.free;
-    FAnswerMap.free;
-
-  End;
-End;
-
-procedure TLoincImporter.ReadLanguageVariants;
-var
-  f : TFslFile;
-  items : TFslStringList;
-  csv : TFslCSVExtractor;
-  lang : TLoincLanguage;
-  i : integer;
-begin
-  items := TFslStringList.Create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ 'LinguisticVariants.csv', fmOpenRead + fmShareDenyWrite);
-  try
-    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8);
-    Try
-      csv.ConsumeEntries(items);
-      i := 0;
-      while csv.More do
-      begin
-        csv.ConsumeEntries(items);
-        if items.count > 0 then
-        begin
-          lang := TLoincLanguage.Create(items[1], items[2]);
-          try
-            readLanguage(i, items[0], lang);
-            FLanguages.Add(lang.Link);
-          finally
-            lang.free;
-          end;
-        end;
-        inc(i);
-      End;
-    Finally
-      csv.free;
-    End;
   finally
-    f.free;
-    items.free;
-  end;
-end;
-
-Function TLoincImporter.ReadLOINCDatabase(out props : TLoincPropertyIds; out roots : TCardinalArray; out subsets : TLoincSubsets) : Cardinal;
-Begin
-  FStrings := TStringList.Create;
-  FStrings.Sorted := True;
-  try
-    result := LoadLOINCFiles(folder, props, roots, subsets);
-  Finally
-    FStrings.free;
-  End;
-End;
-
-Procedure TLoincImporter.ImportLOINC;
-var
-  oSvc : TLOINCServices;
-  props : TLoincPropertyIds;
-  i : integer;
-  roots : TCardinalArray;
-  subsets : TLoincSubsets;
-  ls, s : String;
-  code, desc, refs : Cardinal;
-  lang : byte;
-  oLang : TLoincLanguage;
-begin
-  FStart := now;
-  FLanguages := TFslList<TLoincLanguage>.Create;
-  FWordList := TStringList.Create;
-  FStemList := TStringList.Create;
-  FStemmer := TFslWordStemmer.create('english');
-  oSvc := TLOINCServices.Create(nil, nil);
-  Try
-    Flanguages.add(TLoincLanguage.create('en', 'US'));
-    FWordList.Sorted := true;
-    FStemList.Sorted := true;
-    Fdesc := oSvc.Desc;
-    Fdesc.StartBuild;
-    FDesc.AddEntry(0, '');
-    FCode := oSvc.CodeList;
-    FCode.StartBuild;
-    FRefs := oSvc.Refs;
-    FRefs.StartBuild;
-    FLangs := oSvc.Lang;
-    FLangs.StartBuild;
-    FConcepts := oSvc.Concepts;
-    FConcepts.StartBuild;
-    FWords := oSvc.Words;
-    FStems := oSvc.Stems;
-    FEntries := oSvc.Entries;
-    FAnswers := oSvc.AnswerLists;
-
-    Try
-      oSvc.Root := ReadLOINCDatabase(props, roots, subsets);
-      oSvc.LOINCVersion := Version;
-      oSvc.Properties := props;
-      oSvc.HeirarchyRoots := roots;
-      oSvc.Subsets := subsets;
-    Finally
-      FConcepts.DoneBuild;
-      FRefs.DoneBuild;
-      Fdesc.doneBuild;
-    End;
-
-    for oLang in FLanguages do
-      FLangs.AddEntry(olang.FLang, olang.FCountry);
-    FLangs.DoneBuild;
-    ls := '';
-    for I := 0 to FAnswers.Count - 1 do
-    begin
-      FAnswers.GetEntry(i, code, desc, refs);
-      s := FDesc.GetEntry(code, lang);
-      if not((ls = '') or (CompareStr(ls, s) < 0)) then
-        raise ETerminologySetup.create('out of order');
-      ls := s;
-    end;
-
-    Progress(15, 0, 'Save');
-    oSvc.Save(FOutputFile, Date);
-
-    Progress(15, 0.5, 'Cleanup');
-  Finally
-    oSvc.free;
-    FWordList.free;
-    For i := 0 to FStemList.Count - 1 do
-      FStemList.Objects[i].free;
-    FStemList.free;
-    FStemmer.free;
-    FLanguages.free;
-  End;
-  TLoincServices.Create(nil, nil).Load(FOutputFile);
-End;
-
-function TLoincImporter.listConcepts(arr: TConceptArray): TCardinalArray;
-var
-  i : integer;
-begin
-  setlength(result, length(arr));
-  for i := 0 to length(arr) - 1 do
-    if arr[i] = nil then
-      result[i] := 0
-    else
-      result[i] := arr[i].Index;
-end;
-
-Function CSVStringSplit(Const sValue, sDelimiter : String; Var sLeft, sRight: String) : Boolean;
-Var
-  iIndex : Integer;
-  sA, sB : String;
-Begin
-  if (sValue <> '') and (sValue[1] = '"') then
-  begin
-    iIndex := 1;
-    repeat
-      inc(iIndex);
-      if (sValue[iIndex] = '"') then
-        if (iIndex < sValue.Length) and (sValue[iIndex+1] = '"') then
-          inc(iIndex)
-        else
-          break;
-    until iIndex = sValue.Length;
-    Result := iIndex < sValue.Length;
-    if result then
-      inc(iIndex);
-  end
-  else
-  begin
-    // Find the delimiter within the source string
-    iIndex := Pos(sDelimiter, sValue);
-    Result := iIndex <> 0;
-  end;
-
-  If Not Result Then
-  Begin
-    sA := sValue;
-    sB := '';
-  End
-  Else
-  Begin
-    sA := Copy(sValue, 1, iIndex - 1);
-    sB := Copy(sValue, iIndex + Length(sDelimiter), MaxInt);
-  End;
-
-  sLeft := sA;
-  sRight := sB;
-  if (sLeft <> '') and (sLeft[1] = '"') then
-    sLeft := copy(sLeft, 2, length(sleft)-2).replace('""', '"');
-End;
-
-function isLoinc(s : String) : boolean;
-begin
-  result := (s.Length > 3) and (s[length(s)-1] = '-');
-end;
-
-var
-  gc : integer = 0;
-
-procedure TLoincImporter.ProcessAnswerLine(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
-var
-  s, AnswerListId, AnswerListName, AnswerStringID, AnswerCode, DisplayText : String;
-  list : TAnswerList;
-  answer : TAnswer;
-begin
-  inc(gc);
-  CSVStringSplit(ln, ',', AnswerListId, ln);
-  CSVStringSplit(ln, ',', AnswerListName, ln);
-  CSVStringSplit(ln, ',', s, ln);
-  CSVStringSplit(ln, ',', s, ln);
-  CSVStringSplit(ln, ',', s, ln);
-  CSVStringSplit(ln, ',', s, ln);
-  CSVStringSplit(ln, ',', AnswerStringID, ln);
-  CSVStringSplit(ln, ',', AnswerCode, ln);
-  CSVStringSplit(ln, ',', s, ln);
-  CSVStringSplit(ln, ',', s, ln);
-  CSVStringSplit(ln, ',', DisplayText, ln);
-
-  if isLoinc(AnswerListId) then
-  begin
-    if FAnswerLists.ContainsKey(AnswerListId) then
-      list := FAnswerLists[AnswerListId]
-    else
-    begin
-      list := TAnswerList.Create;
-      list.FCode := AnswerListId;
-      list.FDescription := AnswerListName;
-      FAnswerLists.Add(list.Code, list);
-    end;
-
-    if (AnswerStringID = '') then
-      // writeln('?')
-    else
-    begin
-      if FAnswerMap.ContainsKey(AnswerStringID) then
-      begin
-        answer := FAnswerMap[AnswerStringID];
-        list.Answers.Add(answer.link as TAnswer);
-        answer.Parents.Add(list.Link as TAnswerList);
-        // cross-linking and linking means that they'll leak, but we don't care
-      end
-      else
-      begin
-        answer := TAnswer.Create;
-        try
-          answer.FCode := AnswerStringID;
-          answer.Description := DisplayText;
-          list.Answers.Add(answer.link as TAnswer);
-          answer.Parents.Add(list.Link as TAnswerList);
-          FAnswerMap.Add(AnswerStringID, answer.Link as TAnswer);
-        finally
-          answer.free;
-        end;
-      end;
-    end;
-  end;
-end;
-
-procedure TLoincImporter.AddToDescendentConcepts(oHeirarchy : THeirarchyEntryList; entry : TCode; path : String);
-var
-  p : string;
-  parent : THeirarchyEntry;
-begin
-  StringSplit(path, '.', p, path);
-  parent := oHeirarchy.getByCode(p);
-  if parent = nil then
-    raise ETerminologySetup.create('Unable to find entry '+p);
-  if (not parent.FDescendentConcepts.ExistsByReference(entry)) then
-    parent.FDescendentConcepts.add(entry.link);
-  if (path <> '') then
-    AddToDescendentConcepts(oHeirarchy, entry, path);
-end;
-
-procedure TLoincImporter.registerParents(oHeirarchy : THeirarchyEntryList; entry : THeirarchyEntry; path : String);
-var
-  p : string;
-  parent : THeirarchyEntry;
-begin
-  StringSplit(path, '.', p, path);
-  parent := oHeirarchy.getByCode(p);
-  if parent = nil then
-    raise ETerminologySetup.create('Unable to find entry '+p);
-  if (not parent.FChildren.ExistsByReference(entry)) then
-    parent.FChildren.Add(entry.Link);
-  if (not entry.FParents.ExistsByReference(parent)) then
-  begin
-    entry.FParents.add(parent.link);
-  end;
-  if path <> '' then
-    registerParents(oHeirarchy, parent, path);
-end;
-
-procedure TLoincImporter.ProcessMultiAxialEntry(oHeirarchy : THeirarchyEntryList; oCodes : TCodeList; ln: string);
-var
-  PATH_TO_ROOT, SEQUENCE, IMMEDIATE_PARENT, CODE, CODE_TEXT, p : String;
-  entry, parent : THeirarchyEntry;
-  oCode : TCode;
-  i : integer;
-begin
-  StringSplit(ln, ',', PATH_TO_ROOT, ln);
-  StringSplit(ln, ',', SEQUENCE, ln);
-  StringSplit(ln, ',', IMMEDIATE_PARENT, ln);
-  StringSplit(ln, ',', CODE, CODE_TEXT);
-
-  PATH_TO_ROOT := RemoveQuotes(PATH_TO_ROOT);
-  SEQUENCE := RemoveQuotes(SEQUENCE);
-  IMMEDIATE_PARENT := RemoveQuotes(IMMEDIATE_PARENT);
-  CODE := RemoveQuotes(CODE);
-  CODE_TEXT := RemoveQuotes(CODE_TEXT);
-
-  if (CODE.StartsWith('LP')) then
-  begin
-    entry := oHeirarchy.getByCode(CODE);
-    if (entry = nil) then
-    begin
-      entry := THeirarchyEntry.Create;
-      entry.FCode := CODE;
-      entry.FText := CODE_TEXT;
-      oHeirarchy.Add(entry);
-      SeeDesc(entry.FText, entry, FLAG_LONG_COMMON);
-    end;
-
-    if PATH_TO_ROOT <> '' then
-      registerParents(oHeirarchy, entry, PATH_TO_ROOT);
-
-    if (IMMEDIATE_PARENT <> '') then
-      registerParents(oHeirarchy, entry, IMMEDIATE_PARENT);
-  end
-  else
-  begin
-    oCode := oCodes.getByCode(CODE);
-    IF (CODE = '10565-0') then
-      code := '10565-0';
-    if (oCode = nil) then
-      raise ETerminologySetup.create('Unable to find code '+CODE);
-    entry := oHeirarchy.getByCode(IMMEDIATE_PARENT);
-    if (entry = nil) then
-      raise ETerminologySetup.create('Unable to find ma code '+IMMEDIATE_PARENT);
-    entry.FConcepts.Add(oCode.Link);
-    AddToDescendentConcepts(oHeirarchy, oCode, PATH_TO_ROOT);
-    oCode.entries.add(entry.link);
+    st.free;
   end;
 end;
 
@@ -1330,7 +277,7 @@ begin
   begin
     if msg = '' then
       msg := lastmessage;
-    pct := ((step / 16) * 100) + (pct * (100 / 16));
+    pct := ((step / FStepCount) * 100) + (pct * (100 / 16));
     callback(trunc(pct), Msg);
     lastmessage := msg;
   end
@@ -1343,469 +290,937 @@ begin
     write('.');
 end;
 
-procedure TLoincImporter.readLanguage(i : integer; index: String; lang : TLoincLanguage);
-var
-  f : TFslFile;
-  items : TFslStringList;
-  csv : TFslCSVExtractor;
-  code : TLoincLanguageCodes;
-  s, p : String;
-  j, fp, fs : integer;
-
+function TLoincImporter.pv(value: String): integer;
 begin
-  Progress(i, 0, 'Loading Language '+lang.Lang+'-'+lang.Country);
-  items := TFslStringList.Create;
-  f := TFslFile.Create(IncludeTrailingPathDelimiter(folder)+ lang.Lang+lang.Country+index+'LinguisticVariant.csv', fmOpenRead + fmShareDenyWrite);
-  try
-    fs := f.size;
-    csv := TFslCSVExtractor.Create(f.Link, TEncoding.UTF8, false, fs);
-    Try
-      csv.ConsumeEntries(items);
-      j := 0;
-      while csv.More do
-      begin
-        inc(j);
-        if j mod 1000 = 0 then
-        begin
-          fp := csv.progress;
-          Progress(i, fp / fs, 'Loading Language '+lang.Lang+'-'+lang.Country+' '+pct(fp, fs));
-        end;
-        csv.ConsumeEntries(items);
-        if items.count > 0 then
-        begin
-          code := TLoincLanguageCodes.Create;
-          try
-            code.Component := items[1].trim();
-            code.Prop := items[2].trim();
-            code.TimeAspect := items[3].trim();
-            code.System := items[4].trim();
-            code.Scale := items[5].trim();
-            code.Method  := items[6].trim();
-            code.Clss := items[7].trim();
-            code.Shortname := items[8].trim();
-            code.LongName := items[9].trim();
-            s := items[10];
-            for p in s.Split([';']) do
-              if code.RelatedNames.IndexOf(p.Trim) = -1 then
-                code.RelatedNames.add(p.trim());
-            lang.Codes.Add(items[0], code.Link);
-          finally
-            code.free;
-          end;
-        end;
-      End;
-    Finally
-      csv.free;
-    End;
-  finally
-    f.free;
-    items.free;
+  if not FPropValues.TryGetValue(value, result) then
+  begin
+    inc(FPropValueKey);
+    result := FPropValueKey;
+    FPropValues.add(value, result);
   end;
 end;
 
-{ TConcept }
-
-constructor TConcept.Create(lang : byte);
-begin
-  inherited Create;
-  Codes := TObjectList.Create;
-  Codes.OwnsObjects := False;
-  FLang := lang;
-end;
-
-destructor TConcept.Destroy;
-begin
-  Codes.free;
-  inherited;
-end;
-
-{ TConceptManager }
-
-function TConceptManager.See(lang: byte; sName: String; oCode: TObject): TConcept;
+procedure TLoincImporter.CreateTables(step: integer);
 var
-  i : Integer;
-  key : String;
-begin
-  if sname = '' Then
-    result := nil
-  else
+  sql : String;
+  procedure addEntry(tblname, keyName, valueName : String; map : TKeyMap; code : String; key : integer);
   begin
-    key := char(lang+1)+sName;
-    if not tryGetValue(key, result) then
-    Begin
-      result := TConcept.Create(lang);
-      result.Name := char(lang+1)+sName;
-      Add(key, result);
-    End;
-    result.Codes.Add(oCode);
-  End;
-end;
-
-function nameSort(List: TStringList; Index1, Index2: Integer): Integer;
-begin
-  result := CompareStr(list[Index1], list[index2]);
-end;
-
-function TConceptManager.Store(langCount, lang: byte; sName : String; oImp : TLoincImporter): Cardinal;
-var
-  i, j : integer;
-  aChildren : array of TCardinalArray;
-  counter : array of integer;
-  childLangList : TCardinalArray;
-  aConcepts : TCardinalArray;
-  oConcept : TConcept;
-  byLang : boolean;
-  ts : TStringList;
-  s : String;
-begin
-  SetLength(aChildren, langCount);
-  SetLength(counter, langCount);
-  SetLength(childLangList, langCount);
-  for i := 0 to langCount - 1 do
-  begin
-    counter[i] := 0;
-    SetLength(aChildren[i], Count);
+    conn.ExecSQL('Insert into '+tblName+' ('+keyName+', '+valueName+') values ('''+inttostr(key)+''', '''+code+''')');
+    if (map <> nil) then
+      map.addKey(code, key);
   end;
 
-  ts := TStringList.Create;
-  try
-    for s in keys do
-      ts.add(s);
-    ts.CustomSort(nameSort);
-    for s in ts do
+begin
+  sql := 'CREATE TABLE Config ('+
+    '`ConfigKey` int NOT NULL, '+
+    '`Value` varchar(15) NOT NULL, '+
+    'PRIMARY KEY (`ConfigKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'Insert into Config (ConfigKey, Value) values (1, ''c3c89b66-5930-4aa2-8962-124561a5f8c1'')';
+  conn.ExecSQL(sql);
+  sql := 'Insert into Config (ConfigKey, Value) values (2, '''+FVersion+''')';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE Types ('+
+    '`TypeKey` int NOT NULL, '+
+    '`Code` varchar(15) NOT NULL, '+
+    'PRIMARY KEY (`TypeKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE Languages ('+
+    '`LanguageKey` int NOT NULL, '+
+    '`Code` varchar(15) NOT NULL, '+
+    '`Description` varchar(255) NOT NULL, '+
+    'PRIMARY KEY (`LanguageKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE StatusCodes ('+
+    '`StatusKey` int NOT NULL, '+
+    '`Description` varchar(255) NOT NULL, '+
+    'PRIMARY KEY (`StatusKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE RelationshipTypes ('+
+    '`RelationshipTypeKey` int NOT NULL, '+
+    '`Description` varchar(15) NOT NULL, '+
+    'PRIMARY KEY (`RelationshipTypeKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE DescriptionTypes ('+
+    '`DescriptionTypeKey` int NOT NULL, '+
+    '`Description` varchar(15) NOT NULL, '+
+    'PRIMARY KEY (`DescriptionTypeKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE PropertyTypes ('+
+    '`PropertyTypeKey` int NOT NULL, '+
+    '`Description` varchar(15) NOT NULL, '+
+    'PRIMARY KEY (`PropertyTypeKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE Codes ('+
+    '`CodeKey` int NOT NULL, '+
+    '`Code` varchar(15) NOT NULL, '+
+    '`Type` int NOT NULL, '+
+    '`RelationshipKey` int NULL, '+
+    '`StatusKey` int NOT NULL, '+
+    '`Description` varchar NOT NULL, '+
+    'PRIMARY KEY (`CodeKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE Unique Index CodesCode on Codes (Code)';
+  conn.ExecSQL(sql);
+
+
+  sql := 'CREATE TABLE Relationships ('+
+    '`RelationshipKey` int NOT NULL, '+
+    '`RelationshipTypeKey` int NOT NULL, '+
+    '`SourceKey` int NOT NULL, '+
+    '`TargetKey` int NOT NULL, '+
+    '`StatusKey` int NOT NULL, '+
+    'PRIMARY KEY (`RelationshipKey`))';
+  conn.ExecSQL(sql);
+  sql := 'CREATE Index RelationshipsSource on Relationships (RelationshipTypeKey, SourceKey)';
+  conn.ExecSQL(sql);
+  sql := 'CREATE Index RelationshipsTarget on Relationships (RelationshipTypeKey, TargetKey)';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE PropertyValues ('+
+    '`PropertyValueKey` int NOT NULL, '+
+    '`Value` varchar NOT NULL, '+
+    'PRIMARY KEY (`PropertyValueKey`))'; 
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE Properties ('+
+    '`PropertyKey` int NOT NULL, '+
+    '`PropertyTypeKey` int NOT NULL, '+
+    '`CodeKey` int NOT NULL, '+
+    '`PropertyValueKey` int NOT NULL, '+
+    'PRIMARY KEY (`PropertyKey`))';
+  conn.ExecSQL(sql);
+  sql := 'CREATE Index PropertiesCode1 on Properties (PropertyTypeKey, CodeKey)';
+  conn.ExecSQL(sql);
+  sql := 'CREATE Index PropertiesCode2 on Properties (CodeKey, PropertyTypeKey)';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE Descriptions ('+
+    '`DescriptionKey` int NOT NULL, '+
+    '`CodeKey` int NOT NULL, '+
+    '`LanguageKey` int NOT NULL, '+
+    '`DescriptionTypeKey` int NOT NULL, '+
+    '`Value` varchar NOT NULL, '+
+    'PRIMARY KEY (`DescriptionKey`))';
+  conn.ExecSQL(sql);
+  sql := 'CREATE Index DescriptionsCode on Descriptions (CodeKey, LanguageKey)';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE TABLE Closure ('+
+    '`AncestorKey` int NOT NULL, '+
+    '`DescendentKey` int NOT NULL, '+
+    'PRIMARY KEY (`AncestorKey`, `DescendentKey`))';
+  conn.ExecSQL(sql);
+
+  sql := 'CREATE VIRTUAL TABLE TextIndex USING fts5(codekey UNINDEXED, type UNINDEXED, lang UNINDEXED, text)';
+  conn.ExecSQL(sql);
+
+  addEntry('Types', 'TypeKey', 'Code', nil, 'Code', 1);
+  addEntry('Types', 'TypeKey', 'Code', nil, 'Part', 2);
+  addEntry('Types', 'TypeKey', 'Code', nil, 'AnswerList', 3);
+  addEntry('Types', 'TypeKey', 'Code', nil, 'Answer', 4);
+
+
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'NotStated', 0);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'ACTIVE', 1);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'DEPRECATED', 2);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'TRIAL', 3);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'DISCOURAGED', 4);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'EXAMPLE', 5);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'PREFERRED', 6);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'Primary', 7);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'DocumentOntology', 8);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'Radiology', 9);
+  addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'NORMATIVE', 10);
+                                                                                    
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'N/A', 0);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'ADJUSTMENT', 1);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'CHALLENGE', 2);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'CLASS', 3);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'COMPONENT', 4);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'COUNT', 5);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'DIVISORS', 6);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.Kind', 7);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.Role', 8);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.Setting', 9);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.SubjectMatterDomain',10);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.TypeOfService',11);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'GENE',12);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'METHOD',13);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'PROPERTY',14);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Imaging Focus',15);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Action',16);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Approach',17);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Object',18);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Presence',19);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Maneuver.Maneuver Type',20);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Modality.Modality Subtype',21);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Modality.Modality Type',22);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Pharmaceutical.Route',23);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Pharmaceutical.Substance Given',24);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Reason for Exam',25);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Subject',26);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Timing',27);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.View.Aggregation',28);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.View.View Type',29);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SCALE',30);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SUFFIX',31);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SUPER SYSTEM',32);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SYSTEM',33);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'TIME',34);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'TIME MODIFIER',35);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Laterality',36);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Laterality.Presence',37);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Region Imaged',38);
+
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'AnswerList', 39);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Answer', 40);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'answers-for', 41);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'parent', 42);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'child', 43);
+
+  addEntry('DescriptionTypes', 'DescriptionTypeKey', 'Description', dTypes, 'LONG_COMMON_NAME', 1);
+  addEntry('DescriptionTypes', 'DescriptionTypeKey', 'Description', dTypes, 'SHORTNAME', 2);
+  addEntry('DescriptionTypes', 'DescriptionTypeKey', 'Description', dTypes, 'ConsumerName', 3);
+  addEntry('DescriptionTypes', 'DescriptionTypeKey', 'Description', dTypes, 'RELATEDNAMES2', 4);
+  addEntry('DescriptionTypes', 'DescriptionTypeKey', 'Description', dTypes, 'DisplayName', 5);
+  addEntry('DescriptionTypes', 'DescriptionTypeKey', 'Description', dTypes, 'LinguisticVariantDisplayName', 6);
+
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'CLASSTYPE', 1);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'ORDER_OBS', 2);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'EXAMPLE_UNITS', 3);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'EXAMPLE_UCUM_UNITS', 4);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'PanelType', 5);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'AskAtOrderEntry', 6);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'UNITSREQUIRED', 7);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'CLASS', 8);
+  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'Copyright', 9);
+
+  conn.ExecSQL('Insert into Languages (LanguageKey, Code, Description) values (1, ''en-US'', ''English (United States)'')');
+  langs.addKey('en-US', 1);
+end;
+
+procedure TLoincImporter.ProcessDescription(codeKey, languageKey, descriptionType : integer; value : String);
+var
+  dk : integer;
+begin
+  if (value <> '') then
+  begin
+    inc(FDescKey);
+    dk := FDescKey;
+    dbDesc.BindInteger('dk', dk);
+    dbDesc.BindInteger('ck', codeKey);
+    dbDesc.BindInteger('lk', languageKey);
+    dbDesc.BindInteger('tk', descriptionType);
+    dbDesc.BindString('v', value);
+    dbDesc.Execute;
+
+    dbText.BindInteger('ck', codeKey);
+    dbText.BindInteger('tk', descriptionType);
+    dbDesc.BindInteger('lk', languageKey);
+    dbText.BindString('t', value);
+    dbText.Execute;
+  end;
+end;
+
+procedure TLoincImporter.ProcessProperty(codeKey, propertyType: integer; value: String);
+var
+  pk : integer;
+begin
+  if (value <> '') then
+  begin
+    inc(FPropKey);
+    pk := FPropKey;
+    dbProps.BindInteger('pk', pk);
+    dbProps.BindInteger('ck', codeKey);
+    dbProps.BindInteger('ptk', propertyType);
+    dbProps.BindInteger('v', pv(value));
+    dbProps.Execute;
+  end;
+end;
+
+function readLine(src : String; len : integer; var cursor : integer) : String;
+var
+  start : integer;
+  ch : char;
+begin
+  start := cursor;
+  ch := src[cursor];
+  while (cursor <= len) and not CharInSet(src[cursor], [#13, #10]) do
+    inc(cursor);
+  result := src.subString(start-1, cursor-start);
+  inc(cursor); // pass the eoln we found
+  if (cursor <= len) and CharInSet(src[cursor], [#13, #10]) and (src[cursor] <> src[cursor-1]) then
+    inc(cursor);
+end;
+
+function csvSplit(line : String; count : integer) : TStringArray;
+var
+  inQuoted : boolean;
+  ch : char;
+  i, b, e, l: integer;
+  procedure AddCell;
+  begin
+    if (l < count) then
     begin
-      oConcept := Items[s];
-      SetLength(aConcepts, oConcept.Codes.Count);
-      For j := 0 to oConcept.Codes.Count - 1 do
-        aConcepts[j] := TCode(oConcept.Codes[j]).Index;
-      oConcept.Index := oImp.FConcepts.AddConcept(oImp.AddDescription(oConcept.Flang, oConcept.Name.substring(1)), false, 0, oImp.FRefs.AddRefs(aConcepts));
-      aChildren[oConcept.Flang, counter[oConcept.Flang]] := oConcept.Index;
-      inc(counter[oConcept.Flang]);
-    End;
-  finally
-    ts.free;
-  end;
-
-  byLang := false;
-  for i := 1 to langCount - 1 do
-    if counter[i] > 0 then
-      byLang := true;
-  if byLang then
-  begin
-    for i := 0 to langCount - 1 do
-    begin
-      SetLength(aChildren[i], counter[i]);
-      childLangList[i] := oImp.FRefs.AddRefs(aChildren[i]);
+      result[l] := line.subString(b, e-b-1);
+      inc(l);
     end;
-    result := oImp.FConcepts.AddConcept(oImp.AddDescription(lang, sName), true, oImp.FRefs.AddRefs(childLangList), 0);
+    b := i;
+  end;
+begin
+  SetLength(result, count);
+  inQuoted := false;
+  i := 1;
+  b := 0;
+  e := 0;
+  l := 0;
+  while (i <= line.length) do
+  begin
+    ch := line[i];
+    if not Inquoted and (ch = ',') then
+      addCell
+    else if (ch <> '"') then
+      e := i
+    else if inQuoted then
+    begin
+      e := i;
+      InQuoted := false;
+    end
+    else
+    begin
+      InQuoted := true;
+      b := i;
+    end;
+    inc(i);
+  end;
+  addCell;
+end;
+
+procedure TLoincImporter.ProcessParts(step: integer);
+var
+  src, line : String;
+  len, cursor, count : Integer;
+begin
+  Progress(step, 0,'Importing Parts');
+  src := FileToString(FilePath([folder, 'AccessoryFiles', 'PartFile', 'Part.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Parts: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessPartItems(csvSplit(line, 5));
+  end;
+end;
+
+procedure TLoincImporter.ProcessPartItems(items: TStringArray);
+var
+  c, d : String;
+  ck, t, rk, sk : integer;
+begin
+  inc(FCodeKey);
+  ck := FCodeKey;
+  c := items[0];
+  t := 2;
+  rk := rels.getKey(items[1]);
+  d := items[2];
+  sk := statii.getKey(items[4]);
+  dbCodes.bindInteger('ck', ck);
+  dbCodes.bindString('c', c);
+  dbCodes.bindInteger('t', t);
+  dbCodes.bindInteger('rk', rk);
+  dbCodes.bindInteger('sk', sk);
+  dbCodes.bindString('d', d);
+  dbCodes.execute;
+  codes.addCode(c, ck, codeList);
+  partNames.add(items[1]+'.'+items[2], items[0]);
+
+  ProcessDescription(ck, 1, dTypes.getKey('DisplayName'), items[3]);
+end;
+
+procedure TLoincImporter.ProcessCodes(step: integer);
+var
+  src, line : String;
+  len, cursor, count : Integer;
+begin
+  Progress(step, 0,'Importing Codes');
+  src := FileToString(FilePath([folder,  'LoincTable', 'Loinc.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Codes: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessCodeItems(csvSplit(line, 39));
+  end;
+end;
+
+function descClassType(s : String) : String;
+begin
+  if (s = '1') then
+    result := 'Laboratory class'
+  else if (s = '2') then
+    result := 'Clinical class'
+  else if (s = '3') then
+    result := 'Claims attachment'
+  else if (s = '4') then
+    result := 'Surveys'
+  else
+    result := s;
+end;
+
+procedure TLoincImporter.ProcessCodeItems(items: TStringArray);
+var
+  c, d, s, clsCode : String;
+  ck, t, rk, sk, rtk, tk, stk  : integer;
+begin
+  inc(FCodeKey);
+  ck := FCodeKey;
+  c := RemoveQuotes(items[0]);
+  t := 1;
+  d := RemoveQuotes(items[25]); // long common name
+  sk := statii.getKey(items[11]);
+  dbCodes.bindInteger('ck', ck);
+  dbCodes.bindString('c', c);
+  dbCodes.bindInteger('t', t);
+  dbCodes.bindNull('rk');
+  dbCodes.bindInteger('sk', sk);
+  dbCodes.bindString('d', d);
+  dbCodes.execute;
+  codes.addCode(c, ck, codeList);
+
+  clsCode := partNames['CLASS.'+items[7]];
+
+  inc(FRelKey);
+  rk := FRelKey;
+  rtk := rels.getKey('CLASS');
+  sk := ck;
+  tk := codes.getCode(clsCode).FKey;
+  stk := 0;
+
+  dbRels.bindInteger('rk', rk);
+  dbRels.bindInteger('rtk', rtk);
+  dbRels.bindInteger('sk', sk);
+  dbRels.bindInteger('tk', tk);
+  dbRels.bindInteger('stk', stk);
+  dbRels.execute;
+
+  ProcessProperty(ck, props.getKey('CLASSTYPE'), descClassType(items[13]));
+  ProcessProperty(ck, props.getKey('ORDER_OBS'), items[21]);
+  ProcessProperty(ck, props.getKey('EXAMPLE_UNITS'), items[24]);
+  ProcessProperty(ck, props.getKey('EXAMPLE_UCUM_UNITS'), items[26]);
+  ProcessProperty(ck, props.getKey('PanelType'), items[34]);
+  ProcessProperty(ck, props.getKey('AskAtOrderEntry'), items[35]);
+  ProcessProperty(ck, props.getKey('UNITSREQUIRED'), items[18]);
+  ProcessProperty(ck, props.getKey('Copyright'), items[23]);
+
+
+  ProcessDescription(ck, 1, dTypes.getKey('LONG_COMMON_NAME'), d);
+  ProcessDescription(ck, 1, dTypes.getKey('ConsumerName'), items[12]);
+  ProcessDescription(ck, 1, dTypes.getKey('RELATEDNAMES2'), items[19]);
+  ProcessDescription(ck, 1, dTypes.getKey('SHORTNAME'), items[20]);
+  ProcessDescription(ck, 1, dTypes.getKey('DisplayName'), items[38]);
+end;
+
+procedure TLoincImporter.ProcessConsumerNames(step: integer);
+var
+  src, line : String;
+  len, cursor, count : Integer;
+begin
+  Progress(step, 0,'Importing Consumer Names');
+  src := FileToString(FilePath([folder, 'AccessoryFiles',  'ConsumerName', 'ConsumerName.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Consumer Names: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessConsumerNameItems(csvSplit(line, 2));
+  end;
+end;
+
+
+procedure TLoincImporter.ProcessConsumerNameItems(items: TStringArray);
+begin
+  ProcessDescription(codes.getCode(items[0]).FKey, 1, dTypes.getKey('ConsumerName'), items[1]);
+end;
+
+
+procedure TLoincImporter.ProcessLists(step: integer);
+var
+  src, line : String;
+  len, cursor, count : Integer; 
+  list : String;
+begin
+  Progress(step, 0,'Importing Answer Lists');
+  src := FileToString(FilePath([folder, 'AccessoryFiles',  'AnswerFile', 'AnswerList.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;         
+  list := '';
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Answer Lists: '+pct(cursor, len));
+    line := readLine(src, len, cursor);                            
+    ProcessListItems(csvSplit(line, 11), list);
+  end;
+end;
+
+procedure TLoincImporter.ProcessListItems(items: TStringArray; var list: String);
+var
+  c, d : String;
+  ck1, ck2, t, sk : integer;
+  rk, rtk, stk : integer;
+begin
+  c := RemoveQuotes(items[0]);
+  if (c <> list) then
+  begin
+    list := c;
+    inc(FCodeKey);
+    ck1 := FCodeKey;
+    t := 3;
+    d := RemoveQuotes(items[1]); // long common name
+    sk := 0;
+    dbCodes.bindInteger('ck', ck1);
+    dbCodes.bindString('c', c);
+    dbCodes.bindInteger('t', t);
+    dbCodes.bindNull('rk');
+    dbCodes.bindInteger('sk', sk);
+    dbCodes.bindString('d', d);
+    dbCodes.execute;
+    codes.addCode(c, ck1, codeList);
+
   end
   else
-    result := oImp.FConcepts.AddConcept(oImp.AddDescription(lang, sName), false, oImp.FRefs.AddRefs(aChildren[0]), 0);
+    ck1 := codes.getCode(c).FKey;
+
+  c := RemoveQuotes(items[6]);
+  if codes.ContainsKey(c) then
+    ck2 := codes.getCode(c).FKey
+  else
+  begin
+    inc(FCodeKey);
+    ck2 := FCodeKey;
+    t := 4;
+    d := RemoveQuotes(items[10]); // long common name
+    sk := 0;
+    dbCodes.bindInteger('ck', ck2);
+    dbCodes.bindString('c', c);
+    dbCodes.bindInteger('t', t);
+    dbCodes.bindNull('rk');
+    dbCodes.bindInteger('sk', sk);
+    dbCodes.bindString('d', d);
+    dbCodes.execute;
+    codes.addCode(c, ck2, codeList);
+  end;
+
+  inc(FRelKey);
+  rk := FRelKey;
+  rtk := rels.getKey('Answer');
+  stk := 0;
+  dbRels.bindInteger('rk', rk);
+  dbRels.bindInteger('rtk', rtk);
+  dbRels.bindInteger('sk', ck1);
+  dbRels.bindInteger('tk', ck2);
+  dbRels.bindInteger('stk', stk);
+  dbRels.execute;
+
+  // reverse relationship
+  inc(FRelKey);
+  rk := FRelKey;
+  rtk := rels.getKey('AnswerList');
+  dbRels.bindInteger('rk', rk);
+  dbRels.bindInteger('rtk', rtk);
+  dbRels.bindInteger('sk', ck2);
+  dbRels.bindInteger('tk', ck1);
+  dbRels.bindInteger('stk', stk);
+  dbRels.execute;
 end;
 
-function TLoincImporter.AddDescription(lang : byte; s: String): Cardinal;
+procedure TLoincImporter.ProcessPartLinks(step: integer);
 var
-  i : Integer;
+  src, line : String;
+  len, cursor, count : Integer;
 begin
-  s := s.trim;
-  if s = '' then
-    result := 0
-  else if FStrings.Find(char(lang+1)+s, i) Then
-    result := Cardinal(FStrings.Objects[i])
-  Else
-  Begin
-    result := FDesc.AddEntry(lang, s);
-    FStrings.AddObject(char(lang+1)+s, TObject(result));
-  End;
+  Progress(step, 0,'Importing Part Relationships');
+  src := FileToString(FilePath([folder, 'AccessoryFiles',  'PartFile', 'LoincPartLink_Primary.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Part Relationships: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessPartLinkItems(csvSplit(line, 7));
+  end;
 end;
 
-
-{ THeirarchyEntry }
-
-constructor THeirarchyEntry.Create;
+procedure TLoincImporter.ProcessPartLinkItems(items: TStringArray);
+var
+  rk, rtk, sk, tk, stk : integer;
 begin
-  inherited;
-  FChildren := THeirarchyEntryList.Create;
-  FParents := THeirarchyEntryList.Create;
-  FConcepts := TCodeList.Create;
-  FDescendentConcepts := TCodeList.Create;
+  inc(FRelKey);
+  rk := FRelKey;
+  rtk := rels.getKey(items[5]);
+  sk := codes.getCode(items[0]).FKey;
+  tk := codes.getCode(items[2]).FKey;
+  stk := statii.getKey(items[6]);
+
+  dbRels.bindInteger('rk', rk);
+  dbRels.bindInteger('rtk', rtk);
+  dbRels.bindInteger('sk', sk);
+  dbRels.bindInteger('tk', tk);
+  dbRels.bindInteger('stk', stk);
+  dbRels.execute;
 end;
 
-destructor THeirarchyEntry.Destroy;
+procedure TLoincImporter.ProcessListLinks(step: integer);
+var
+  src, line : String;
+  len, cursor, count : Integer;
 begin
-  FConcepts.free;
-  FChildren.free;
-  FDescendentConcepts.free;
-  FParents.free;
-  inherited;
+  Progress(step, 0,'Importing Answer List Links');
+  src := FileToString(FilePath([folder, 'AccessoryFiles',  'AnswerFile', 'LoincAnswerListLink.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Answer List Links: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessListLinkItems(csvSplit(line, 5));
+  end;
 end;
 
-function THeirarchyEntry.link: THeirarchyEntry;
+procedure TLoincImporter.ProcessListLinkItems(items: TStringArray);
+var
+  rk, rtk, sk, tk, stk : integer;
 begin
-  result := THeirarchyEntry(inherited link);
+  inc(FRelKey);
+  rk := FRelKey;
+  sk := codes.getCode(items[0]).FKey;
+  tk := codes.getCode(items[2]).FKey;
+  stk := statii.getKey(items[4]);
+
+  rtk := rels.getKey('AnswerList');
+  dbRels.bindInteger('rk', rk);
+  dbRels.bindInteger('rtk', rtk);
+  dbRels.bindInteger('sk', sk);
+  dbRels.bindInteger('tk', tk);
+  dbRels.bindInteger('stk', stk);
+  dbRels.execute;
+
+  // reverse relationship
+  inc(FRelKey);
+  rk := FRelKey;
+  rtk := rels.getKey('answers-for');
+  dbRels.bindInteger('rk', rk);
+  dbRels.bindInteger('rtk', rtk);
+  dbRels.bindInteger('sk', tk);
+  dbRels.bindInteger('tk', sk);
+  dbRels.bindInteger('stk', stk);
+  dbRels.execute;
+
 end;
 
-{ THeirarchyEntryList }
-
-function THeirarchyEntryList.CompareByCode(pA, pB: Pointer): Integer;
+procedure TLoincImporter.ProcessLanguageVariants(step : integer; list : TStringList);
+var
+  src, line : String;
+  len, cursor, count : Integer;
 begin
-  Result := CompareStr(THeirarchyEntry(pA).FCode, THeirarchyEntry(pB).FCode);
+  conn.SQL := 'Insert into Languages (LanguageKey, Code, Description) values (:k, :c, :d)';
+  conn.prepare;
+  Progress(step, 0,'Importing Languages');
+  src := FileToString(FilePath([folder, 'AccessoryFiles', 'LinguisticVariants', 'LinguisticVariants.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    Progress(step, cursor / len, 'Importing Languages: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessLanguageVariantsItems(csvSplit(line, 4), list);
+  end;
+  conn.terminate;
 end;
 
-function THeirarchyEntryList.CompareByText(pA, pB: Pointer): Integer;
+procedure TLoincImporter.ProcessLanguageVariantsItems(items : TStringArray; list : TStringList);
+var
+  k : integer;
+  c, d : String;
 begin
-  Result := CompareStr(THeirarchyEntry(pA).Ftext, THeirarchyEntry(pB).Ftext);
+  k := strToInt(items[0]);
+  c := items[1]+'-'+items[2];
+  d := items[3];
+  conn.bindInteger('k', k);
+  conn.bindString('c', c);
+  conn.bindString('d', d);
+  conn.Execute;
+  langs.add(c, k);
+  list.add(c);
 end;
 
-function THeirarchyEntryList.FindByCode(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
+procedure TLoincImporter.ProcessLanguage(step: integer; code: String);
+var
+  src, line : String;
+  len, cursor, count : Integer;
+  lk : integer;
 begin
-  Result := Find(entry, iIndex, CompareByCode);
+  Progress(step, 0,'Importing Language '+code);
+  lk := langs.getKey(code);
+  src := FileToString(FilePath([folder,  'AccessoryFiles', 'LinguisticVariants', code.replace('-', '')+inttostr(lk)+'LinguisticVariant.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Importing Language '+code+': '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessLanguageItems(code, lk, csvSplit(line, 12));
+  end;
 end;
 
-function THeirarchyEntryList.FindByCode(code: String; out iIndex: Integer): Boolean;
-Var
-  entry : THeirarchyEntry;
-Begin
-  entry := THeirarchyEntry(ItemNew);
-  Try
-    entry.Fcode := code;
-
-    Result := FindByCode(entry, iIndex);
-  Finally
-    entry.free;
-  End;
-end;
-
-function THeirarchyEntryList.getByCode(code: String): THeirarchyEntry;
-Var
-  iIndex : Integer;
-Begin
-  If FindByCode(code, iIndex) Then
-    Result := Entries[iIndex]
-  Else
-    Result := Nil;
-end;
-
-function THeirarchyEntryList.FindByText(entry: THeirarchyEntry; out iIndex: Integer): Boolean;
+procedure TLoincImporter.ProcessLanguageItems(code: String; lk: integer; items: TStringArray);
+var
+  ck : integer;
 begin
-  Result := Find(entry, iIndex, CompareByText);
+  ck := codes.getCode(items[0]).FKey;
+
+  ProcessDescription(ck, lk, dTypes.getKey('LONG_COMMON_NAME'), items[9]);
+  ProcessDescription(ck, lk, dTypes.getKey('RELATEDNAMES2'), items[10]);
+  ProcessDescription(ck, lk, dTypes.getKey('SHORTNAME'), items[8]);
+  ProcessDescription(ck, lk, dTypes.getKey('LinguisticVariantDisplayName'), items[11]);
 end;
 
-function THeirarchyEntryList.FindByText(text: String; out iIndex: Integer): Boolean;
-Var
-  entry : THeirarchyEntry;
-Begin
-  entry := THeirarchyEntry(ItemNew);
-  Try
-    entry.Ftext := text;
-
-    Result := FindByText(entry, iIndex);
-  Finally
-    entry.free;
-  End;
-end;
-
-function THeirarchyEntryList.getByText(text: String): THeirarchyEntry;
-Var
-  iIndex : Integer;
-Begin
-  If FindByText(text, iIndex) Then
-    Result := Entries[iIndex]
-  Else
-    Result := Nil;
-end;
-
-
-function THeirarchyEntryList.GetEntry(iIndex: Integer): THeirarchyEntry;
+procedure TLoincImporter.ProcessPropertyValues(step: integer);
+var
+  pp : TPair<String,integer>;
 begin
-  result := THeirarchyEntry(ObjectByIndex[iIndex]);
+  conn.sql := 'Insert into PropertyValues (PropertyValueKey, Value) values (:pk, :v)';
+  conn.prepare;
+  for pp in FPropValues do
+  begin
+    conn.BindInteger('pk', pp.Value);
+    conn.bindString('v', pp.Key);
+    conn.execute;
+  end;
+  conn.terminate;
 end;
 
-function THeirarchyEntryList.ItemClass: TFslObjectClass;
+procedure TLoincImporter.ProcessHierarchy(step: integer);
+var
+  src, line : String;
+  len, cursor, count : Integer;
+  lk : integer;
 begin
-  result := THeirarchyEntry;
+  Progress(step, 0,'Processing Hierarchy');
+  src := FileToString(FilePath([folder, 'AccessoryFiles', 'ComponentHierarchyBySystem', 'ComponentHierarchyBySystem.csv']), TEncoding.UTF8);
+  len := src.length;
+  cursor := 1;
+  readLine(src, len, cursor);
+  count := 0;
+  while (cursor < len) do
+  begin
+    inc(count);
+    if count mod 1000 = 0 then
+      Progress(step, cursor / len, 'Processing Hierarchy: '+pct(cursor, len));
+    line := readLine(src, len, cursor);
+    ProcessHierarchyItems(csvSplit(line, 12));
+  end;
 end;
 
-procedure THeirarchyEntryList.SortedByCode;
+procedure TLoincImporter.ProcessHierarchyItems(items : TStringArray);
+var
+  ciC, ciP, ci : TCodeInformation;
+  rk, rtk, sk, tk, stk : integer;
+  s : string;
+  c, d : String;
+  ck, t : integer;
 begin
-  SortedBy(CompareByCode);
+  // "LP432695-7.LP29693-6.LP343406-7","1","LP343406-7","LP7819-8","Microbiology"
+  if not codes.TryGetValue(items[3], ciC) then
+  begin
+    inc(FCodeKey);
+    ck := FCodeKey;
+    c := items[3];
+    t := 2;
+    rk := 0;
+    d := items[4];
+    sk := 0;
+    dbCodes.bindInteger('ck', ck);
+    dbCodes.bindString('c', c);
+    dbCodes.bindInteger('t', t);
+    dbCodes.bindInteger('rk', rk);
+    dbCodes.bindInteger('sk', sk);
+    dbCodes.bindString('d', d);
+    dbCodes.execute;
+    ciC := codes.addCode(c, ck, codeList);
+  end;
+  if items[2] = '' then
+    conn.ExecSQL('Insert into Config (ConfigKey, Value) values (3, '''+items[3]+''')')
+  else
+  begin
+    ciP := codes.GetCode(items[2]);
+
+
+  //  // we do 3 things with this info - store parent and child relationships and generate parent->child closure table for is-a queries
+
+   // 1: parent
+
+    inc(FRelKey);
+    rk := FRelKey;
+    rtk := rels.getKey('parent');
+    sk := ciC.FKey;
+    tk := ciP.FKey;
+    stk := 0;
+    dbRels.bindInteger('rk', rk);
+    dbRels.bindInteger('rtk', rtk);
+    dbRels.bindInteger('sk', sk);
+    dbRels.bindInteger('tk', tk);
+    dbRels.bindInteger('stk', stk);
+    dbRels.execute;
+
+    // 2; child
+    inc(FRelKey);
+    rk := FRelKey;
+    rtk := rels.getKey('child');
+    sk := ciP.FKey;
+    tk := ciC.FKey;
+    stk := 0;
+    dbRels.bindInteger('rk', rk);
+    dbRels.bindInteger('rtk', rtk);
+    dbRels.bindInteger('sk', sk);
+    dbRels.bindInteger('tk', tk);
+    dbRels.bindInteger('stk', stk);
+    dbRels.execute;
+
+    for s in items[0].split(['.']) do
+    begin
+      ci := codes.getCode(s);
+      if (ci.FChildren = nil) then
+        ci.FChildren := TKeySet.create;
+      ci.FChildren.addKey(ciC.FKey);
+    end;
+  end;
 end;
 
-procedure THeirarchyEntryList.SortedByText;
+procedure TLoincImporter.StoreClosureTable(step: integer);
+var
+  count, k : integer;
+  ci : TCodeInformation;
 begin
-  SortedBy(CompareByText);
+  Progress(step, 0,'Storing Closure Table');
+  conn.sql := 'Insert into Closure (AncestorKey, DescendentKey) values (:a, :d)';
+  conn.prepare;
+  count := 0;
+  for ci in codeList do
+  begin
+    inc(count);
+    if count mod 10 = 0 then
+      Progress(step, count / codeList.count, 'Storing Closure Table: '+pct(count, codeList.count));
+    if (ci.FChildren <> nil) then
+    begin
+      conn.BindInteger('a', ci.FKey);
+      for k in ci.FChildren.Keys do
+      begin
+        conn.BindInteger('d', k);
+        conn.Execute;
+      end;
+    end;
+  end;
+  conn.terminate;
 end;
 
-{ TCodeList }
+{ TKeyMap }
 
-function TCodeList.CompareByCode(pA, pB: Pointer): Integer;
+constructor TKeyMap.Create(name: String);
 begin
-  Result := CompareStr(TCode(pA).Code, TCode(pB).Code);
+  inherited create;
+  FName := name;
 end;
 
-function TCodeList.FindByCode(entry: TCode; out iIndex: Integer): Boolean;
+procedure TKeyMap.addKey(code: String; key: integer);
 begin
-  Result := Find(entry, iIndex, CompareByCode);
+  if ContainsKey(code) then
+    raise EFslException.create('Duplicate code '+code+' tried to be added to '+FName+' Table')
+  else
+    Add(code, key);
 end;
 
-function TCodeList.FindByCode(code: String; out iIndex: Integer): Boolean;
-Var
-  entry : TCode;
-Begin
-  entry := TCode(ItemNew);
-  Try
-    entry.code := code;
-
-    Result := FindByCode(entry, iIndex);
-  Finally
-    entry.free;
-  End;
-end;
-
-function TCodeList.getByCode(code: String): TCode;
-Var
-  iIndex : Integer;
-Begin
-  If FindByCode(code, iIndex) Then
-    Result := Entries[iIndex]
-  Else
-    Result := Nil;
-end;
-
-function TCodeList.GetEntry(iIndex: Integer): TCode;
+function TKeyMap.getKey(code: String): integer;
 begin
-  result := TCode(ObjectByIndex[iIndex]);
+  if not TryGetValue(code, result) then
+    raise EFslException.create(code+' not found in '+FName+' Table');
 end;
 
-function TCodeList.ItemClass: TFslObjectClass;
+{ TCodeInformation }
+
+constructor TCodeInformation.create;
 begin
-  result := TCode;
+  inherited create;
 end;
 
-procedure TCodeList.SortedByCode;
+destructor TCodeInformation.destroy;
 begin
-  SortedBy(CompareByCode);
+  FChildren.Free;
+  inherited destroy;
 end;
 
-
-{ TDescribed } 
-
-constructor TDescribed.Create;
+function TCodeInformation.link: TCodeInformation;
 begin
-  inherited;
-  Stems := TFslIntegerList.Create;
+  result := TCodeInformation(inherited link);
 end;
 
-destructor TDescribed.Destroy;
+{ TCodeMap }
+
+function TCodeMap.addCode(code: String; key: integer; codeList : TFslList<TCodeInformation>) : TCodeInformation;
 begin
-  Stems.free;
-  inherited;
+  result := TCodeInformation.create;
+  add(code, result);
+  codeList.add(result.link);
+  result.FKey := key;
 end;
 
-
-{ TAnswerList }
-
-constructor TAnswerList.Create;
+function TCodeMap.getCode(code: String): TCodeInformation;
 begin
-  inherited;
-  FAnswers := TFslList<TAnswer>.create();
-end;
-
-destructor TAnswerList.Destroy;
-begin
-  FAnswers.free;
-  inherited;
-end;
-
-{ TAnswer }
-
-constructor TAnswer.Create;
-begin
-  inherited Create;
-  FParents := TFslList<TAnswerList>.Create;
-end;
-
-destructor TAnswer.Destroy;
-begin
-  FParents.free;
-  inherited;
-end;
-
-{ TLoincLanguageCodes }
-
-constructor TLoincLanguageCodes.Create;
-begin
-  inherited;
-  FRelatedNames := TStringList.Create;
-end;
-
-destructor TLoincLanguageCodes.Destroy;
-begin
-  FRelatedNames.free;
-  inherited;
-end;
-
-function TLoincLanguageCodes.Display: String;
-begin
-  result := Trim(FLongName);
-  if result = '' then
-    result := Trim(FShortName);
-  if result = '' then
-    result := Trim(FComponent);
-  if (result = '') and (FRelatedNames.Count > 0) then
-    result := Trim(FRelatedNames[0]);
-  if result = '' then
-    result := '';
-end;
-
-function TLoincLanguageCodes.link: TLoincLanguageCodes;
-begin
-  result := TLoincLanguageCodes(inherited Link);
-end;
-
-{ TLoincLanguage }
-
-constructor TLoincLanguage.Create;
-begin
-  inherited;
-  FCodes := TFslMap<TLoincLanguageCodes>.create('loinc.lang');
-end;
-
-constructor TLoincLanguage.Create(lang, country: String);
-begin
-  Create;
-  FLang := lang;
-  FCountry := country;
-end;
-
-destructor TLoincLanguage.Destroy;
-begin
-  FCodes.free;
-  inherited;
-end;
-
-function TLoincLanguage.link: TLoincLanguage;
-begin
-  result := TLoincLanguage(inherited Link);
-end;
-
-constructor TCode.Create(langCount: integer);
-begin
-  inherited Create;
-  entries := TFslList<THeirarchyEntry>.Create;
-  SetLength(Comps, langCount);
-  SetLength(Props, langCount);
-  SetLength(Time, langCount);
-  SetLength(System, langCount);
-  SetLength(Scale, langCount);
-  SetLength(Method, langCount);
-  SetLength(Class_, langCount);
-end;
-
-destructor TCode.Destroy;
-begin
-  entries.free;
-  inherited Destroy;
+  if not TryGetValue(code, result) then
+    raise EFslException.create(code+' not found in Code Table');
 end;
 
 End.

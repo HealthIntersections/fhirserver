@@ -196,6 +196,7 @@ var
   html : THtmlPublisher;
   i : integer;
   st : TStringList;
+  s : String;
   langList : THTTPLanguageList;
 begin
   FTx.Loinc.RecordUse;
@@ -205,15 +206,12 @@ begin
   try
     result := 'Loinc doco '+request.UnparsedParams+' ('+request.Document.Substring(12)+')';
 
-    if ((lang = '') and (code = '')) or ((lang <> '') and not FTX.Loinc.supportsLang(langList)) then
+    if ((lang = '') and (code = '')) {or ((lang <> '') and not FTX.Loinc.supportsLang(langList))} then
     begin
       st := TStringList.Create;
       try
-        for i := 0 to FTX.Loinc.Lang.count - 1 do
-        begin
-          FTX.Loinc.Lang.GetEntry(i, lang, country);
-          st.add(lang+'-'+country);
-        end;
+        for s in FTX.Loinc.Langs.keys do
+          st.add(s);
         st.sort;
         html := THtmlPublisher.Create();
         try
