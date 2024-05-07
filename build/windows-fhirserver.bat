@@ -52,8 +52,8 @@ utilities\codescan\codescan.exe -check exec\pack\fhirserver.web -message "Creati
 
 	
 rem IF EXIST "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64" (    
-copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
-copy exec\pack\fhirserver.web "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
+rem copy exec\64\*.exe "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
+rem copy exec\pack\fhirserver.web "C:\Users\graha\Health Intersections Dropbox\Health Intersections Team Folder\fhirserver\win64"
 rem }
 
 IF EXIST exec\64\fhirserver.exe echo Success!
