@@ -69,6 +69,8 @@ Type
     function Link : TCodeSystemProviderContext; overload;
   end;
 
+  { TCodeSystemIteratorContext }
+
   TCodeSystemIteratorContext = class (TFslObject)
   protected
     FContext: TCodeSystemProviderContext;
@@ -86,6 +88,7 @@ Type
 
     function more : boolean; virtual;
     procedure next; // only call from within a provider
+    procedure moveCursor(current : integer); // a LOINC hack
   end;
 
   TCodeSystemProviderFilterContext = class (TFslObject)
@@ -1197,6 +1200,11 @@ end;
 procedure TCodeSystemIteratorContext.next;
 begin
   inc(FCurrent);
+end;
+
+procedure TCodeSystemIteratorContext.moveCursor(current: integer);
+begin
+  FCurrent := current;
 end;
 
 

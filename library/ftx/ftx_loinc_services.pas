@@ -81,6 +81,7 @@ type
     FCount : integer;
   public
     function addKey(key : integer) : boolean;
+    procedure close;
     property Keys : TKeyArray read FKeys;
   end;
 
@@ -107,6 +108,8 @@ type
     FCode : String;
     FDesc : String;
     FDisplays : TFslList<TDescriptionCacheEntry>;
+    FChildren : TKeySet;
+    procedure addChild(key : Integer);
   public
     constructor Create(key : cardinal; kind : TLoincProviderContextKind; code, desc : String);
     destructor Destroy; override;
@@ -130,6 +133,16 @@ type
     property Value : String read FValue;
   end;
 
+  { TLoincIteratorContext }
+
+  TLoincIteratorContext = class (TCodeSystemIteratorContext)
+  private 
+    FKeys : TKeyArray;
+  public
+    constructor create(ctxt : TLoincProviderContext; keys : TKeyArray);
+    function more : boolean; override;
+  end;
+
   { TLoincFilterHolder }
 
   TLoincFilterHolder = class (TCodeSystemProviderFilterContext)
@@ -151,6 +164,7 @@ type
     FCodeList : TFslList<TLoincProviderContext>;
     FVersion : String;
     FRoot : String;
+    FFirstCodeKey : integer;
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     function renameRelationship(source : String) : String;
@@ -406,9 +420,11 @@ begin
       k := c.ColKeyByName['CodeKey'];
       if (i <> k) then
         raise EFslException.create('Error loading LOINC: Primary key has break in sequence at '+inttostr(k));
-      ci := TLoincProviderContext.create(c.ColKeyByName['CodeKey'], TLoincProviderContextKind(c.ColKeyByName['Type']-1), c.ColStringByName['Code'], c.ColStringByName['Description']);
+      ci := TLoincProviderContext.create(c.ColKey[1], TLoincProviderContextKind(c.ColKey[3]-1), c.ColString[2], c.ColString[4]);
       FCodes.Add(c.ColStringByName['Code'], ci);
       FCodeList.add(ci.link);
+      if (FFirstCodeKey = 0) and (ci.Kind = lpckCode) then
+        FFirstCodeKey := ci.Key;
     end;
     c.terminate;
 
@@ -416,8 +432,20 @@ begin
     c.prepare;
     c.execute;
     while c.fetchNext do
-      FCodeList[c.colKeyByName['Key']].FDisplays.add(TDescriptionCacheEntry.create('LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']));
+      FCodeList[c.colKey[2]].FDisplays.add(TDescriptionCacheEntry.create('LongCommonName' = c.ColString[3], c.ColString[1], c.ColString[4]));
     c.terminate;
+
+    c.sql := 'select SourceKey, TargetKey from Relationships where RelationshipTypeKey = '+FRelationships['child'];
+    c.prepare;
+    c.execute;
+    while c.fetchNext do
+      if (c.colKey[1] <> 0) and (c.colKey[2] <> 0) then
+        FCodeList[c.colKey[1]].addChild(c.colKey[2]);
+    c.terminate;
+
+    for ci in FCodeList do
+      if (ci <> nIl) and (ci.FChildren <> nil) then
+        ci.FChildren.close;
 
     FVersion := c.Lookup('Config', 'ConfigKey', '2', 'Value', '');
     FRoot := c.Lookup('Config', 'ConfigKey', '3', 'Value', '');
@@ -670,24 +698,43 @@ end;
 function TLOINCServices.getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext;
 var
   ctxt : TLoincProviderContext;
+  c : TFDBConnection;
+  keys : TKeyArray;
+  l : integer;
 begin
   ctxt := context as TLoincProviderContext;
 
   if context = nil then
-    result := TCodeSystemIteratorContext.Create(nil, TotalCount)
+  begin
+    result := TCodeSystemIteratorContext.Create(nil, TotalCount);
+    result.moveCursor(FFirstCodeKey);
+  end
   else if ctxt.kind = lpckPart then
-    result := TCodeSystemIteratorContext.Create(nil, 0)
+  begin
+    if (ctxt.FChildren = nil) then
+      result := TCodeSystemIteratorContext.Create(nil, 0)
+    else
+      result := TLoincIteratorContext.Create(ctxt.link, ctxt.FChildren.FKeys);
+  end
   else
-    result := TCodeSystemIteratorContext.Create(nil, 0)
+    result := TCodeSystemIteratorContext.Create(nil, 0);
+
 end;
 
 function TLOINCServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
+var
+  ctxt : TLoincIteratorContext;
+  i, k : integer;
 begin
-   if (context.context = nil) then
-   // offset from 0 to avoid ambiguity about nil contxt, and first entry
+  if (context.context = nil) then
     result := FCodeList[context.current].link
   else
-    raise ETerminologyError.create('shouldn''t be here', itException);
+  begin
+    ctxt := context as TLoincIteratorContext;
+    i := context.current;
+    k := ctxt.FKeys[i];
+    result := FCodeList[k].link;
+  end;
   context.next;
 end;
 
@@ -751,51 +798,54 @@ var
   entry : TDescriptionCacheEntry;
 begin
   ctxt := context as TLoincProviderContext;
-  FLock.lock('Designations');
-  try
-    cache := ctxt.FDisplays;
-  finally
-    FLock.unlock;
-  end;
-  list.addDesignation(true, true, 'en-US', (context as TLoincProviderContext).Desc);
-  if (cache = nil) then
+  if (ctxt <> nil) then
   begin
-    cache := TFslList<TDescriptionCacheEntry>.create;
+    FLock.lock('Designations');
     try
-      c := FDB.getConnection('Designations');
-      try
-        c.sql := 'Select Languages.Code as Lang, DescriptionTypes.Description as DType, Value from Descriptions, Languages, DescriptionTypes where CodeKey = '+inttostr((context as TLoincProviderContext).key)+' and Descriptions.DescriptionTypeKey = DescriptionTypes.DescriptionTypeKey and Descriptions.LanguageKey = Languages.LanguageKey';
-        c.prepare;
-        c.execute;
-        while c.fetchNext do
-        begin
-          list.addDesignation(false, 'LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']);
-          cache.add(TDescriptionCacheEntry.create('LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']));
-        end;
-        c.terminate;
-        c.release;
-      except
-        on e : Exception do
-        begin
-          c.error(e);
-          raise;
-        end;
-      end;
-
-      FLock.lock('Designations#2');
-      try
-        ctxt.FDisplays := cache.link;
-      finally
-        FLock.unlock;
-      end
+      cache := ctxt.FDisplays;
     finally
-      cache.free;
+      FLock.unlock;
     end;
-  end
-  else
-  begin
-    for entry in cache do
-      list.addDesignation(false, entry.display, entry.lang, entry.value);
+    list.addDesignation(true, true, 'en-US', (context as TLoincProviderContext).Desc);
+    if (cache = nil) then
+    begin
+      cache := TFslList<TDescriptionCacheEntry>.create;
+      try
+        c := FDB.getConnection('Designations');
+        try
+          c.sql := 'Select Languages.Code as Lang, DescriptionTypes.Description as DType, Value from Descriptions, Languages, DescriptionTypes where CodeKey = '+inttostr((context as TLoincProviderContext).key)+' and Descriptions.DescriptionTypeKey = DescriptionTypes.DescriptionTypeKey and Descriptions.LanguageKey = Languages.LanguageKey';
+          c.prepare;
+          c.execute;
+          while c.fetchNext do
+          begin
+            list.addDesignation(false, 'LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']);
+            cache.add(TDescriptionCacheEntry.create('LongCommonName' = c.ColStringByName['Type'], c.ColStringByName['Lang'], c.ColStringByName['Value']));
+          end;
+          c.terminate;
+          c.release;
+        except
+          on e : Exception do
+          begin
+            c.error(e);
+            raise;
+          end;
+        end;
+
+        FLock.lock('Designations#2');
+        try
+          ctxt.FDisplays := cache.link;
+        finally
+          FLock.unlock;
+        end
+      finally
+        cache.free;
+      end;
+    end
+    else
+    begin
+      for entry in cache do
+        list.addDesignation(false, entry.display, entry.lang, entry.value);
+    end;
   end;
 end;
 
@@ -1074,6 +1124,13 @@ end;
 
 { TLoincProviderContext }
 
+procedure TLoincProviderContext.addChild(key: Integer);
+begin
+  if FChildren = nil then
+    FChildren := TKeySet.create;
+  FChildren.addKey(key);
+end;
+
 constructor TLoincProviderContext.Create(key: cardinal;
   kind: TLoincProviderContextKind; code, desc: String);
 begin
@@ -1088,6 +1145,7 @@ end;
 destructor TLoincProviderContext.Destroy;
 begin
   FDisplays.free;
+  FChildren.free;
   inherited Destroy;
 end;
 
@@ -1165,6 +1223,19 @@ begin
   FValue := v;
 end;
 
+{ TLoincIteratorContext }
+
+constructor TLoincIteratorContext.create(ctxt: TLoincProviderContext; keys: TKeyArray);
+begin
+  inherited create(ctxt, length(keys));
+  FKeys := keys;
+end;
+
+function TLoincIteratorContext.more: boolean;
+begin
+  Result := inherited more;
+end;
+
 { TKeySet }
 
 function TKeySet.addKey(key: integer) : boolean;
@@ -1179,6 +1250,11 @@ begin
   FKeys[FCount] := key;
   inc(FCount);
   result := true;
+end;
+
+procedure TKeySet.close;
+begin
+  SetLength(FKeys, FCount);
 end;
 
 End.
