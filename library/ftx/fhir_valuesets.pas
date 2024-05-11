@@ -169,6 +169,8 @@ Type
     procedure increment;
   end;
 
+  TTotalStatus = (tsUninitialised, tsSet, tsOff);
+
   { TFHIRValueSetExpander }
 
   TFHIRValueSetExpander = class (TValueSetWorker)
@@ -183,6 +185,7 @@ Type
     FFullList : TFslList<TFhirValueSetExpansionContainsW>;
     FMap : TFslMap<TFhirValueSetExpansionContainsW>;
     FCSCounter : TFslMap<TValueSetCounter>;
+    FTotalStatus : TTotalStatus;
     FTotal : integer;
 
     function isExcluded(system, version, code : String) : boolean;
@@ -2235,13 +2238,12 @@ var
   lang : TIETFLang;
   list : TFslList<TFhirValueSetExpansionContainsW>;
   ext : TFHIRExtensionW;
-  noTotal : boolean;
   s : String;
 begin
   FNoCacheThisOne := noCacheThisOne;
 
+  FTotalStatus := tsUninitialised;
   FTotal := 0;
-  noTotal := false;
   source.checkNoImplicitRules('ValueSetExpander.Expand', 'ValueSet');
   FFactory.checkNoModifiers(source, 'ValueSetExpander.Expand', 'ValueSet');
 
@@ -2374,7 +2376,8 @@ begin
       on e : EFinished do
       begin
         // nothing - we're just trapping this
-        noTotal := FTotal = -1;
+        if FTotalStatus = tsUninitialised then
+          FTotalStatus := tsOff; // ?
       end;
       on e : ETooCostly do
       begin
@@ -2408,9 +2411,9 @@ begin
     end
     else
     begin
-      if noTotal and (FTotal = -1) then
+      if (FTotalStatus = tsOff) or (FTotal = -1) then
         FCanBeHierarchy := false
-      else if (FTotal > -1) then
+      else if (FTotal > 0) then
         exp.Total := FTotal
       else
         exp.Total := FFullList.count;
@@ -2498,12 +2501,16 @@ end;
 procedure TFHIRValueSetExpander.NoTotal;
 begin
   FTotal := -1;
+  FTotalStatus := tsOff;
 end;
 
 procedure TFHIRValueSetExpander.AddToTotal(t: Integer);
 begin
-  if FTotal > -1 then
+  if (FTotal > -1) and (FTotalStatus <> tsOff) then
+  begin
     inc(FTotal, t);
+    FTotalStatus := tsSet;
+  end;
 end;
 
 procedure TFHIRValueSetExpander.checkCanonicalStatus(expansion: TFhirValueSetExpansionW; resource: TFHIRMetadataResourceW; source : TFHIRValueSetW);
@@ -3328,7 +3335,6 @@ begin
 
     if cset.systemUri = '' then
     begin
-      NoTotal;
       for s in cset.valueSets do
       begin
         //Logging.log('Processing '+vsId+', import value set '+s);
@@ -3529,9 +3535,9 @@ begin
                   if cs.isNotClosed(filter, f) then
                     notClosed := true;
                   if (cset.filterCount = 1) and (not excludeInactive) and not FParams.activeOnly then
-                    AddToTotal(cs.filterSize(f))
-                  else
-                    NoTotal;
+                    AddToTotal(cs.filterSize(f));
+                  //else
+                    //NoTotal;
                 end;
 
                 inner := cs.prepare(prep);
