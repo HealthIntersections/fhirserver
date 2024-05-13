@@ -510,7 +510,7 @@ var
     if (props = nil) or (length(props) = 0) then
       result := def
     else
-      result := StringArrayExistsInsensitive(props, name);
+      result := StringArrayExistsInsensitive(props, name) or StringArrayExistsInsensitive(props, '*') ;
   end;
 begin
   params := TFHIRTxOperationParams.Create;
@@ -537,6 +537,11 @@ begin
         begin
           p := resp.addProp('inactive');
           p.value := FFactory.makeBoolean(provider.IsInactive(ctxt));
+        end;
+        if hasProp('definition', true) and (provider.Definition(ctxt) <> '') then
+        begin
+          p := resp.addProp('definition');
+          p.value := FFactory.makeString(provider.Definition(ctxt));
         end;
         resp.code := coding.code;
         resp.display := provider.Display(ctxt, FlangList);

@@ -1181,7 +1181,7 @@ begin
   if (props = nil) or (length(props) = 0) then
     result := def
   else
-    result := StringArrayExistsSensitive(props, name);
+    result := StringArrayExistsSensitive(props, name) or StringArrayExistsSensitive(props, '*');
 end;
 
 procedure TFhirCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);

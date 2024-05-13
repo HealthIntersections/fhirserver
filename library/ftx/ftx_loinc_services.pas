@@ -386,6 +386,7 @@ var
   c : TFDBConnection;
   i, k : integer;
   ci : TLoincProviderContext;
+  s : String;
 begin
   FDB := TFDBSQLiteManager.create('db', sFilename, true, false, 10);
   c := FDB.GetConnection('load');
@@ -408,7 +409,12 @@ begin
     c.prepare;
     c.Execute;
     while c.fetchnext do
-      FRelationships.Add(renameRelationship(c.ColStringByName['Description']), c.ColStringByName['RelationshipTypeKey']);
+    begin
+      FRelationships.Add(c.ColStringByName['Description'], c.ColStringByName['RelationshipTypeKey']);
+      s := renameRelationship(c.ColStringByName['Description']);
+      if (s <> c.ColStringByName['Description']) then
+        FRelationships.Add(s, c.ColStringByName['RelationshipTypeKey']);
+    end;
     c.terminate;
 
     c.sql := 'Select PropertyTypeKey, Description from PropertyTypes';
@@ -868,6 +874,8 @@ begin
     result := 'SCALE_TYP'
   else if source = 'TIME' then
     result := 'TIME_ASPCT'
+  else if source = 'AnswerList' then
+    result := 'answer-list'
   else
     result := source;
 end;
@@ -888,7 +896,9 @@ begin
     c.prepare;
     c.execute;
     while c.fetchNext do
+    begin
       resp.AddProp(renameRelationship(c.colStringByName['Relationship'])).value := Factory.makeCoding('http://loinc.org', c.colStringByName['Code'], c.colStringByName['Value']);
+    end;
     c.terminate;
 
     c.sql := 'Select Description, Value from Properties, PropertyTypes, PropertyValues where CodeKey = '+inttostr((ctxt as TLoincProviderContext).key)+' and Properties.PropertyTypeKey = PropertyTypes.PropertyTypeKey and Properties.PropertyValueKey = PropertyValues.PropertyValueKey';
@@ -1017,11 +1027,25 @@ begin
   c := FDB.getConnection('filterBySQL');
   try
     if (FRelationships.ContainsKey(prop) and (op = foEqual)) then
-      result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''') or (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) order by SourceKey ASC',
-        'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''') or (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) and SourceKey = ')
+      if FCodes.ContainsKey(value) then
+        result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by SourceKey ASC',
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and SourceKey = ')
+      else
+        result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) order by SourceKey ASC',
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) and SourceKey = ')
     else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
       result := FilterBySQL(c, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE order by CodeKey ASC',
         'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE and CodeKey = ')
+    else if (FRelationships.ContainsKey(prop) and (op = foExists)) then
+      if FCodes.ContainsKey(value) then
+        result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and SourceKey = ')
+      else
+        result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) order by SourceKey ASC',
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) and SourceKey = ')
+    else if (FProperties.ContainsKey(prop) and (op = foExists)) then
+      result := FilterBySQL(c, 'select distinct CodeKey as Key from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' order by CodeKey ASC',
+        'select count(CodeKey) from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' and CodeKey = ')
     else if (prop = 'STATUS') and (op = foEqual)and (FStatusKeys.ContainsKey(value)) then
       result := FilterBySQL(c, 'select CodeKey as Key from Codes where StatusKey = '+FStatusKeys[value]+' order by CodeKey ASC',
         'select count(CodeKey) from Codes where StatusKey = '+FStatusKeys[value]+' and CodeKey = ')
