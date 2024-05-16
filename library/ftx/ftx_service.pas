@@ -131,6 +131,7 @@ Type
 
   TDisplayCheckingStyle = (dcsExact, dcsCaseInsensitive, dcsNormalised);
   TDisplayDifference = (ddDifferent, ddCase, ddNormalised);
+  TLangMatchType = (lmtLiteral, lmtFull, lmtLangRegion, lmtLang);
 
   { TConceptDesignations }
 
@@ -140,8 +141,9 @@ Type
     FBaseLang : TIETFLang;
     FDesignations : TFslList<TConceptDesignation>;
     FLanguages : TIETFLanguageDefinitions;
-    function langMatches(lang : THTTPLanguageEntry; stated : TIETFLang; exact : boolean) : boolean;
-    function langsMatch(langList : THTTPLanguageList; stated : TIETFLang; exact : boolean) : boolean;
+    function GetCount: Integer;
+    function langMatches(lang : THTTPLanguageEntry; stated : TIETFLang; matchType: TLangMatchType) : boolean;
+    function langsMatch(langList : THTTPLanguageList; stated : TIETFLang; matchType : TLangMatchType) : boolean;
     function stringMatches(source, possible : String; mode : TDisplayCheckingStyle; lang : TIETFLang) : boolean;
     procedure SetBaseLang(value : TIETFLang);
   public
@@ -168,6 +170,7 @@ Type
     property factory : TFHIRFactory read FFactory;
     property baseLang : TIETFLang read FBaseLang write SetBaseLang;
     property designations : TFslList<TConceptDesignation> read FDesignations;
+    property count : Integer read GetCount;
   end;
 
   TSearchFilterText = class (TFslObject)
@@ -504,34 +507,52 @@ begin
     if (lang.value > 0) then
     begin
       for cd in FDesignations do
-        if (cd.base) and langMatches(lang, cd.language, true) then
+        if (cd.base) and langMatches(lang, cd.language, lmtFull) then
         begin
           exit(cd);
         end;
       for cd in FDesignations do
-        if isDisplay(cd) and langMatches(lang, cd.language, true) then
+        if isDisplay(cd) and langMatches(lang, cd.language, lmtFull) then
+        begin
+          exit(cd);
+        end;
+
+
+      for cd in FDesignations do
+        if (cd.base) and langMatches(lang, cd.language, lmtLangRegion) then
+        begin
+          exit(cd);
+        end;
+      for cd in FDesignations do
+        if isDisplay(cd) and langMatches(lang, cd.language, lmtLangRegion) then
+        begin
+          exit(cd);
+        end;
+
+
+      for cd in FDesignations do
+        if (cd.base) and langMatches(lang, cd.language, lmtLang) then
+        begin
+          exit(cd);
+        end;
+      for cd in FDesignations do
+        if isDisplay(cd) and langMatches(lang, cd.language, lmtLang) then
         begin
           exit(cd);
         end;
 
       for cd in FDesignations do
-        if (cd.base) and langMatches(lang, cd.language, false) then
+        if langMatches(lang, cd.language, lmtFull) then
+        begin
+          exit(cd);
+        end;             
+      for cd in FDesignations do
+        if langMatches(lang, cd.language, lmtLangRegion) then
         begin
           exit(cd);
         end;
       for cd in FDesignations do
-        if isDisplay(cd) and langMatches(lang, cd.language, false) then
-        begin
-          exit(cd);
-        end;
-
-      for cd in FDesignations do
-        if langMatches(lang, cd.language, true) then
-        begin
-          exit(cd);
-        end;
-      for cd in FDesignations do
-        if langMatches(lang, cd.language, false) then
+        if langMatches(lang, cd.language, lmtLang) then
         begin
           exit(cd);
         end;
@@ -566,8 +587,16 @@ var
 begin
   result := 0;
   for cd in FDesignations do
-    if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, false)  and (cd.value <> nil) then
+    if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtFull)  and (cd.value <> nil) then
       inc(result);
+  if result = 0 then
+    for cd in FDesignations do
+      if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLangRegion)  and (cd.value <> nil) then
+        inc(result);
+  if result = 0 then
+    for cd in FDesignations do
+      if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLang)  and (cd.value <> nil) then
+        inc(result);
 end;
 
 
@@ -582,7 +611,7 @@ begin
     c := 0;
     for cd in designations do
     begin
-      if (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+      if (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, lmtLang) and (cd.value <> nil)) then
       begin
         inc(c);
         if (cd.language <> nil) then
@@ -614,7 +643,7 @@ end;
 
 function TConceptDesignations.include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
 begin
-  result := langsMatch(langList, cd.language, false);
+  result := langsMatch(langList, cd.language, lmtLang);
 end;
 
 function TConceptDesignations.hasDisplay(langList : THTTPLanguageList; value: String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference): boolean;
@@ -625,12 +654,12 @@ begin
   diff := ddDifferent;
 
   for cd in designations do
-    if (langsMatch(langList, cd.language, false) and (cd.value <> nil) and stringMatches(value, cd.value.asString, mode, cd.language)) then
+    if (langsMatch(langList, cd.language, lmtLang) and (cd.value <> nil) and stringMatches(value, cd.value.asString, mode, cd.language)) then
       exit(true);
   if mode = dcsExact then
   begin
     for cd in designations do
-      if (langsMatch(langList, cd.language, false) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsCaseInsensitive, cd.language)) then
+      if (langsMatch(langList, cd.language, lmtLang) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsCaseInsensitive, cd.language)) then
       begin
         diff := ddCase;
         exit(false);
@@ -639,7 +668,7 @@ begin
   if mode <> dcsNormalised then
   begin
     for cd in designations do
-      if (langsMatch(langList, cd.language, false) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsNormalised, cd.language)) then
+      if (langsMatch(langList, cd.language, lmtLang) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsNormalised, cd.language)) then
       begin
         diff := ddNormalised;
         exit(false);
@@ -647,7 +676,19 @@ begin
   end;
 end;
 
-function TConceptDesignations.langMatches(lang : THTTPLanguageEntry; stated: TIETFLang; exact : boolean): boolean;
+function depthForMatchType(matchType: TLangMatchType) : TIETFLangPartType;
+begin
+  case matchType of
+    lmtLiteral : result := lptExtension; // not that it matters
+    lmtFull : result := lptExtension;
+    lmtLangRegion : result := lptRegion;
+    lmtLang : result := lptLanguage;
+  else
+    result := lptExtension; // not that it matters
+  end;
+end;
+
+function TConceptDesignations.langMatches(lang : THTTPLanguageEntry; stated: TIETFLang; matchType: TLangMatchType): boolean;
 var
   actual : TIETFLang;
 begin
@@ -658,22 +699,28 @@ begin
   result := false;
   if (lang.value > 0) then
   begin
-    if (lang.lang = '*') and not exact then
+    if (lang.lang = '*') and (matchType <> lmtLiteral) then
       exit(true);
+
     if (actual <> nil) then
     begin
-      if (exact) then
+      if (matchType = lmtLiteral) then
         exit(lang.lang = actual.code);
 
       if (lang.ietf = nil) then
         lang.ietf := FLanguages.parse(lang.lang);
-      if (lang.ietf <> nil) and lang.ietf.matches(stated) then
+      if (lang.ietf <> nil) and lang.ietf.matches(stated, depthForMatchType(matchType)) then
         exit(true);
     end;
   end;
 end;
 
-function TConceptDesignations.langsMatch(langList : THTTPLanguageList; stated: TIETFLang; exact : boolean): boolean;
+function TConceptDesignations.GetCount: Integer;
+begin
+  result := FDesignations.count;
+end;
+
+function TConceptDesignations.langsMatch(langList : THTTPLanguageList; stated: TIETFLang; matchType: TLangMatchType): boolean;
 var
   e : THTTPLanguageEntry;
 begin
@@ -683,7 +730,7 @@ begin
   begin
     result := false;
     for e in langList.langs do
-      if langMatches(e, stated, exact) then
+      if langMatches(e, stated, matchType) then
         exit(true);
   end;
 end;

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -20,7 +21,6 @@
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="6"/>
       <RevisionNr Value="3"/>
-      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
@@ -1036,7 +1036,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class&gt;"/>
+        <Name Value="&lt;Unknown Class>"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>
