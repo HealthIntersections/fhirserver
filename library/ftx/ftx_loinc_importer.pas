@@ -144,6 +144,19 @@ function importLoinc(folder, version, date, dest : String; callback : TInstaller
 Implementation
 
 
+const
+  KNOWN_PROPERTY_NAMES : array of String = ['AskAtOrderEntry', 'AssociatedObservations', 'CHANGE_REASON_PUBLIC', 'CHNG_TYPE', 'CLASS', 'CLASSTYPE', 'COMMON_ORDER_RANK', 'COMMON_TEST_RANK', 'COMPONENT', 'CONSUMER_NAME',
+      'DefinitionDescription', 'DisplayName', 'EXAMPLE_UCUM_UNITS', 'EXAMPLE_UNITS', 'EXMPL_ANSWERS', 'EXTERNAL_COPYRIGHT_LINK', 'EXTERNAL_COPYRIGHT_NOTICE', 'FORMULA',
+      'HL7_ATTACHMENT_STRUCTURE', 'HL7_FIELD_SUBFIELD_ID', 'LONG_COMMON_NAME', 'MAP_TO', 'METHOD_TYP', 'ORDER_OBS', 'PROPERTY', 'PanelType', 'RELATEDNAMES2', 'SCALE_TYP',
+      'SHORTNAME', 'STATUS', 'STATUS_REASON', 'STATUS_TEXT', 'SURVEY_QUEST_SRC', 'SURVEY_QUEST_TEXT', 'SYSTEM', 'TIME_ASPCT', 'UNITSREQUIRED', 'ValidHL7AttachmentRequest',
+      'VersionFirstReleased', 'VersionLastChanged', 'adjustment', 'analyte', 'analyte-core', 'analyte-divisor', 'analyte-divisor-suffix', 'analyte-gene', 'analyte-numerator',
+      'analyte-suffix', 'answer-list', 'answers-for', 'category', 'challenge', 'child', 'count', 'document-kind', 'document-role', 'document-setting', 'document-subject-matter-domain',
+      'document-type-of-service', 'parent', 'rad-anatomic-location-imaging-focus', 'rad-anatomic-location-laterality', 'rad-anatomic-location-laterality-presence', 'rad-anatomic-location-region-imaged',
+      'rad-guidance-for-action', 'rad-guidance-for-approach', 'rad-guidance-for-object', 'rad-guidance-for-presence', 'rad-maneuver-maneuver-type', 'rad-modality-modality-subtype',
+      'rad-modality-modality-type', 'rad-pharmaceutical-route', 'rad-pharmaceutical-substance-given', 'rad-reason-for-exam', 'rad-subject', 'rad-timing', 'rad-view-aggregation',
+      'rad-view-view-type', 'search', 'super-system', 'system-core', 'time-core', 'time-modifier',
+      'Answer', 'AnswerList'];
+
 function importLoinc(folder, version, date, dest : String; callback : TInstallerCallback = nil) : String;
 var
   imp : TLoincImporter;
@@ -300,6 +313,89 @@ begin
   end;
 end;
 
+function checkPropName(s : String) : String;
+begin
+  if not StringArrayExists(KNOWN_PROPERTY_NAMES, s) then
+    raise EFslException.create('Unknown Property Name: '+s);
+  result := s;
+end;
+               
+function adjustPropName(s : String) : String;
+begin
+  if StringArrayExistsSensitive(KNOWN_PROPERTY_NAMES, s) then
+    result := s
+  else if (s = 'ADJUSTMENT') then
+    result := 'adjustment'
+  else if (s = 'CHALLENGE') then
+    result := 'challenge'
+  else if (s = 'COUNT') then
+    result := 'count'
+  else if (s = 'DIVISORS') then
+    result := 'analyte-divisor'
+  else if (s = 'Document.Kind') then
+    result := 'document-kind'
+  else if (s = 'Document.Role') then
+    result := 'document-role'
+  else if (s = 'Document.Setting') then
+    result := 'document-setting'
+  else if (s = 'Document.SubjectMatterDomain') then
+    result := 'document-subject-matter-domain'
+  else if (s = 'Document.TypeOfService') then
+    result := 'document-type-of-service'
+  else if (s = 'GENE') then
+    result := 'analyte-gene'
+  else if (s = 'METHOD') then
+    result := 'METHOD_TYP'
+  else if (s = 'Rad.Anatomic Location.Imaging Focus') then
+    result := 'rad-anatomic-location-imaging-focus'
+  else if (s = 'Rad.Anatomic Location.Laterality') then
+    result := 'rad-anatomic-location-laterality'
+  else if (s = 'Rad.Anatomic Location.Laterality.Presence') then
+    result := 'rad-anatomic-location-laterality-presence'
+  else if (s = 'Rad.Anatomic Location.Region Imaged') then
+    result := 'rad-anatomic-location-region-imaged'
+  else if (s = 'Rad.Guidance for.Action') then
+    result := 'rad-guidance-for-action'
+  else if (s = 'Rad.Guidance for.Approach') then
+    result := 'rad-guidance-for-approach'
+  else if (s = 'Rad.Guidance for.Object') then
+    result := 'rad-guidance-for-object'
+  else if (s = 'Rad.Guidance for.Presence') then
+    result := 'rad-guidance-for-presence'
+  else if (s = 'Rad.Maneuver.Maneuver Type') then
+    result := 'rad-maneuver-maneuver-type'
+  else if (s = 'Rad.Modality.Modality Subtype') then
+    result := 'rad-modality-modality-subtype'
+  else if (s = 'Rad.Modality.Modality Type') then
+    result := 'rad-modality-modality-type'
+  else if (s = 'Rad.Pharmaceutical.Route') then
+    result := 'rad-pharmaceutical-route'
+  else if (s = 'Rad.Pharmaceutical.Substance Given') then
+    result := 'rad-pharmaceutical-substance-given'
+  else if (s = 'Rad.Reason for Exam') then
+    result := 'rad-reason-for-exam'
+  else if (s = 'Rad.Subject') then
+    result := 'rad-subject'
+  else if (s = 'Rad.Timing') then
+    result := 'rad-timing'
+  else if (s = 'Rad.View.Aggregation') then
+    result := 'rad-view-aggregation'
+  else if (s = 'Rad.View.View Type') then
+    result := 'rad-view-view-type'
+  else if (s = 'SCALE') then
+    result := 'SCALE_TYP'
+  else if (s = 'SUFFIX') then
+    result := 'analyte-suffix'
+  else if (s = 'SUPER SYSTEM') then
+    result := 'super-system'
+  else if (s = 'TIME') then
+    result := 'TIME_ASPCT'
+  else if (s = 'TIME MODIFIER') then
+    result := 'time-modifier'
+  else
+    raise EFslException.create('Unknown Property Name: '+s);
+end;
+
 procedure TLoincImporter.CreateTables(step: integer);
 var
   sql : String;
@@ -443,44 +539,44 @@ begin
   addEntry('StatusCodes', 'StatusKey', 'Description', statii, 'NORMATIVE', 10);
                                                                                     
   addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'N/A', 0);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'ADJUSTMENT', 1);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'CHALLENGE', 2);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'CLASS', 3);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'COMPONENT', 4);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'COUNT', 5);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'DIVISORS', 6);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.Kind', 7);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.Role', 8);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.Setting', 9);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.SubjectMatterDomain',10);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Document.TypeOfService',11);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'GENE',12);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'METHOD',13);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'PROPERTY',14);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Imaging Focus',15);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Action',16);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Approach',17);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Object',18);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Guidance for.Presence',19);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Maneuver.Maneuver Type',20);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Modality.Modality Subtype',21);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Modality.Modality Type',22);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Pharmaceutical.Route',23);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Pharmaceutical.Substance Given',24);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Reason for Exam',25);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Subject',26);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Timing',27);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.View.Aggregation',28);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.View.View Type',29);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SCALE',30);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SUFFIX',31);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SUPER SYSTEM',32);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'SYSTEM',33);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'TIME',34);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'TIME MODIFIER',35);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Laterality',36);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Laterality.Presence',37);
-  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Rad.Anatomic Location.Region Imaged',38);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('adjustment'), 1);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('challenge'), 2);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('CLASS'), 3);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('COMPONENT'), 4);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('count'), 5);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('analyte-divisor'), 6);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('document-kind'), 7);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('document-role'), 8);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('document-setting'), 9);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('document-subject-matter-domain'),10);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('document-type-of-service'),11);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('analyte-gene'),12);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('METHOD_TYP'),13);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('PROPERTY'),14);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-anatomic-location-imaging-focus'),15);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-guidance-for-action'),16);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-guidance-for-approach'),17);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-guidance-for-object'),18);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-guidance-for-presence'),19);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-maneuver-maneuver-type'),20);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-modality-modality-subtype'),21);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-modality-modality-type'),22);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-pharmaceutical-route'),23);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-pharmaceutical-substance-given'),24);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-reason-for-exam'),25);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-subject'),26);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-timing'),27);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-view-aggregation'),28);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-view-view-type'),29);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('SCALE_TYP'),30);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('analyte-suffix'),31);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('super-system'),32);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('SYSTEM'),33);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('TIME_ASPCT'),34);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('time-modifier'),35);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-anatomic-location-laterality'),36);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-anatomic-location-laterality-presence'),37);
+  addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, checkPropName('rad-anatomic-location-region-imaged'),38);
 
   addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'AnswerList', 39);
   addEntry('RelationshipTypes', 'RelationshipTypeKey', 'Description', rels, 'Answer', 40);
@@ -502,7 +598,7 @@ begin
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'PanelType', 5);
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'AskAtOrderEntry', 6);
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'UNITSREQUIRED', 7);
-  addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'CLASS', 8);
+  //addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'CLASS', 8);
   addEntry('PropertyTypes', 'PropertyTypeKey', 'Description', props, 'Copyright', 9);
 
   conn.ExecSQL('Insert into Languages (LanguageKey, Code, Description) values (1, ''en-US'', ''English (United States)'')');
@@ -636,7 +732,7 @@ begin
   ck := FCodeKey;
   c := items[0];
   t := 2;
-  rk := rels.getKey(items[1]);
+  rk := rels.getKey(adjustPropName(items[1]));
   d := items[2];
   sk := statii.getKey(items[4]);
   dbCodes.bindInteger('ck', ck);
@@ -711,7 +807,7 @@ begin
 
   inc(FRelKey);
   rk := FRelKey;
-  rtk := rels.getKey('CLASS');
+  rtk := rels.getKey(adjustPropName('CLASS'));
   sk := ck;
   tk := codes.getCode(clsCode).FKey;
   stk := 0;
@@ -841,7 +937,7 @@ begin
 
   inc(FRelKey);
   rk := FRelKey;
-  rtk := rels.getKey('Answer');
+  rtk := rels.getKey(checkPropName('Answer'));
   stk := 0;
   dbRels.bindInteger('rk', rk);
   dbRels.bindInteger('rtk', rtk);
@@ -853,7 +949,7 @@ begin
   // reverse relationship
   inc(FRelKey);
   rk := FRelKey;
-  rtk := rels.getKey('AnswerList');
+  rtk := rels.getKey(checkPropName('AnswerList'));
   dbRels.bindInteger('rk', rk);
   dbRels.bindInteger('rtk', rtk);
   dbRels.bindInteger('sk', ck2);
@@ -889,7 +985,7 @@ var
 begin
   inc(FRelKey);
   rk := FRelKey;
-  rtk := rels.getKey(items[5]);
+  rtk := rels.getKey(adjustPropName(items[5]));
   sk := codes.getCode(items[0]).FKey;
   tk := codes.getCode(items[2]).FKey;
   stk := statii.getKey(items[6]);
@@ -933,7 +1029,7 @@ begin
   tk := codes.getCode(items[2]).FKey;
   stk := statii.getKey(items[4]);
 
-  rtk := rels.getKey('AnswerList');
+  rtk := rels.getKey(checkPropName('AnswerList'));
   dbRels.bindInteger('rk', rk);
   dbRels.bindInteger('rtk', rtk);
   dbRels.bindInteger('sk', sk);
@@ -944,7 +1040,7 @@ begin
   // reverse relationship
   inc(FRelKey);
   rk := FRelKey;
-  rtk := rels.getKey('answers-for');
+  rtk := rels.getKey(checkPropName('answers-for'));
   dbRels.bindInteger('rk', rk);
   dbRels.bindInteger('rtk', rtk);
   dbRels.bindInteger('sk', tk);
@@ -1105,7 +1201,7 @@ begin
 
     inc(FRelKey);
     rk := FRelKey;
-    rtk := rels.getKey('parent');
+    rtk := rels.getKey(checkPropName('parent'));
     sk := ciC.FKey;
     tk := ciP.FKey;
     stk := 0;
@@ -1119,7 +1215,7 @@ begin
     // 2; child
     inc(FRelKey);
     rk := FRelKey;
-    rtk := rels.getKey('child');
+    rtk := rels.getKey(checkPropName('child'));
     sk := ciP.FKey;
     tk := ciC.FKey;
     stk := 0;

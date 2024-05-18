@@ -28,6 +28,8 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
 }
 
+// Component:property:time:system:scale:method
+
 {$I fhir.inc}
 
 Interface
@@ -168,8 +170,6 @@ type
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     FStatusKeys : TDictionary<String, String>;
-    function renameRelationship(source : String) : String;
-    function renameProperty(source : String) : String;
     function filterBySQL(c : TFDBConnection; sql, lsql : String) : TCodeSystemProviderFilterContext;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -366,21 +366,6 @@ begin
   result := 'LOINC';
 end;
 
-function renameRelationship(s : String) : String;
-begin
-  if (s = 'SCALE') then
-    result := 'SCALE_TYP'
-  else if (s = 'TIME') then
-    result := 'TIME_ASPCT'
-  else
-    result := s;
-end;
-
-function renameProperty(s : String) : String;
-begin
-  result := s;
-end;
-
 procedure TLOINCServices.Load(const sFilename: String);
 var
   c : TFDBConnection;
@@ -411,7 +396,7 @@ begin
     while c.fetchnext do
     begin
       FRelationships.Add(c.ColStringByName['Description'], c.ColStringByName['RelationshipTypeKey']);
-      s := renameRelationship(c.ColStringByName['Description']);
+      s := c.ColStringByName['Description'];
       if (s <> c.ColStringByName['Description']) then
         FRelationships.Add(s, c.ColStringByName['RelationshipTypeKey']);
     end;
@@ -421,7 +406,7 @@ begin
     c.prepare;
     c.Execute;
     while c.fetchnext do
-      FProperties.Add(renameProperty(c.ColStringByName['Description']), c.ColStringByName['PropertyTypeKey']);
+      FProperties.Add(c.ColStringByName['Description'], c.ColStringByName['PropertyTypeKey']);
     c.terminate;
 
     FCodeList.add(nil); // keys start from 1
@@ -868,23 +853,6 @@ begin
   end;
 end;
 
-function TLOINCServices.renameRelationship(source : String) : String;
-begin
-  if source = 'SCALE' then
-    result := 'SCALE_TYP'
-  else if source = 'TIME' then
-    result := 'TIME_ASPCT'
-  else if source = 'AnswerList' then
-    result := 'answer-list'
-  else
-    result := source;
-end;
-                        
-function TLOINCServices.renameProperty(source : String) : String;
-begin
-  result := source;
-end;
-
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   c : TFDBConnection;
@@ -897,7 +865,7 @@ begin
     c.execute;
     while c.fetchNext do
     begin
-      resp.AddProp(renameRelationship(c.colStringByName['Relationship'])).value := Factory.makeCoding('http://loinc.org', c.colStringByName['Code'], c.colStringByName['Value']);
+      resp.AddProp(c.colStringByName['Relationship']).value := Factory.makeCode(c.colStringByName['Code']);
     end;
     c.terminate;
 
@@ -905,7 +873,7 @@ begin
     c.prepare;
     c.execute;
     while c.fetchNext do
-      resp.AddProp(renameProperty(c.colStringByName['Description'])).value := Factory.makeString(c.colStringByName['Value']);
+      resp.AddProp(c.colStringByName['Description']).value := Factory.makeString(c.colStringByName['Value']);
     c.terminate;
 
     c.sql := 'Select StatusCodes.Description from Codes, StatusCodes where CodeKey = '+inttostr((ctxt as TLoincProviderContext).key)+' and Codes.StatusKey != 0 and Codes.StatusKey = StatusCodes.StatusKey';

@@ -699,7 +699,7 @@ begin
     end
     else
     begin
-      output('All OK', true);
+      output('All OK', false);
     end;
   finally
     cmd.free;
