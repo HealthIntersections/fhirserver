@@ -63,7 +63,7 @@ RUN cp /work/fhirserver/exec/pack/linux/start_bare.sh /work/fhirserver/exec/inst
     cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content && \
     cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content && \
     cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/config && \
-    cp /work/fhirserver/exec/64/web.ini /work/fhirserver/exec/install/config && \
+    cp /work/fhirserver/exec/pack/web.ini /work/fhirserver/exec/install/config && \
     cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/config && \
     cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/config/config/config.json && \
     cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/default_config && \
