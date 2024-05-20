@@ -126,11 +126,15 @@ cd ..
 :: =========================================================================================
 :: now time to do the github release
 
-echo ## GitHub Release ##
+echo ## GitHub Push##
 git commit -a -m "Release Version %1"
 git push 
 
+echo ## GitHub Release ##
+
 install\tools\gh release create v%1 "install\build\fhirserver-win64-%1.exe#Windows Server Installer" "install\build\fhirserver-win64-%1.zip#Windows Server Installer Zip" "install\build\fhirtoolkit-win64-%1.exe#Windows Toolkit Installer" -F release-notes.md
+
+echo ## GitHub Release Done ##
 
 rename release-notes.md release-notes-old.md
 

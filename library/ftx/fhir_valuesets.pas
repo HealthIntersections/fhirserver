@@ -1534,17 +1534,14 @@ begin
                 dc := list.displayCount(FParams.languages, true);
                 severity := dispWarning;
                 if dc = 0 then
-                begin
                   severity := isWarning;
+
+                if dc = 1 then
                   m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                    ['', c.systemUri, c.code, list.present(FParams.languages, false), c.display, FParams.langSummary])
-                end
-                else if dc = 1 then
-                  m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                    ['', c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary])
+                    ['', c.systemUri, c.code, list.present(FParams.languages, dc > 0), c.display, FParams.langSummary])
                 else
                   m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                    [inttostr(dc), c.systemUri, c.code, list.present(FParams.languages, true), c.display, FParams.langSummary]);
+                    [inttostr(dc), c.systemUri, c.code, list.present(FParams.languages, dc > 0), c.display, FParams.langSummary]);
                 msg(m);
                 op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
               end;
