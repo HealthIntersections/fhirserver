@@ -294,6 +294,20 @@ type
     function formalURL : String; override;
   end;
 
+  { TFhirFeatureNegotiation }
+
+  TFhirFeatureNegotiation = class (TFhirNativeOperationR4)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : String; override;
+  public
+    function Name : String; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function formalURL : String; override;
+  end;
+
   TFhirDeleteMetaDataOperation = class (TFhirNativeOperationR4)
   protected
     function isWrite : boolean; override;
@@ -686,6 +700,7 @@ begin
   FOperations.add(TFhirGetMetaDataOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirAddMetaDataOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirDeleteMetaDataOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
+  FOperations.add(TFhirFeatureNegotiation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirDiffOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirConvertOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
   FOperations.add(TFhirTransformOperation.Create(Factory.link, ServerContext.TerminologyServer.CommonTerminologies.Languages.Link));
@@ -2261,6 +2276,43 @@ end;
 function TFhirAddMetaDataOperation.Types: TArray<String>;
 begin
   result := FFactory.ResourceNames;
+end;
+
+{ TFhirFeatureNegotiation }
+
+function TFhirFeatureNegotiation.isWrite: boolean;
+begin
+  Result := false;
+end;
+
+function TFhirFeatureNegotiation.owningResource: String;
+begin
+  Result := '';
+end;
+
+function TFhirFeatureNegotiation.Name: String;
+begin
+  Result := 'feature-query';
+end;
+
+function TFhirFeatureNegotiation.Types: TArray<String>;
+begin
+  Result := [];
+end;
+
+function TFhirFeatureNegotiation.CreateDefinition(base: String): TFHIROperationDefinitionW;
+begin
+  Result := nil;
+end;
+
+function TFhirFeatureNegotiation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt: TTimeTracker): String;
+begin
+  raise EFslException.create('not done yet');
+end;
+
+function TFhirFeatureNegotiation.formalURL: String;
+begin
+  result := 'http://www.hl7.org/fhir/uv/capstmt/OperationDefinition/feature-query';
 end;
 
 { TFhirDeleteMetaDataOperation }

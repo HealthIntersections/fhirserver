@@ -258,6 +258,9 @@ type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
     function DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW; virtual;
+    {$IFDEF DEV_FEATURES}
+    procedure processFeature(item : TFhirFeatureQueryItem; answer : TFhirFeatureQueryAnswer); virtual;
+    {$ENDIF}
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
     property Operations : TFslList<TFhirOperation> read FOperations;
@@ -654,6 +657,13 @@ begin
   result := nil;
   raise EFHIRException.Create('This server does not implement the "DoSearch" function');
 end;
+
+{$IFDEF DEV_FEATURES}
+procedure TFHIROperationEngine.processFeature(item: TFhirFeatureQueryItem; answer: TFhirFeatureQueryAnswer);
+begin
+  // nothing
+end;
+{$ENDIF}
 
 procedure TFHIROperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
 begin

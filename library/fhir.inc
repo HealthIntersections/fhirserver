@@ -96,4 +96,5 @@ Doing so is useful for leak hunting in production, but is also a little costly.
 
 {$ENDIF}
 
+{.$.DEFINE DEV_FEATURES}
 

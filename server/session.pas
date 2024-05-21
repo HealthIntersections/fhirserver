@@ -254,6 +254,49 @@ Type
     function isAnonymous : boolean;
   end;
 
+  {$IFDEF DEV_FEATURES}
+  { TFhirFeatureQueryItem }
+
+  TFhirFeatureQueryItem = class (TFslObject)
+  private
+    FFeature : String;
+    FContext : String;
+    FValues : TFslList<TFHIRObject>;
+  public
+    constructor create(feature, context : String; value : TFHIRObject);
+    destructor Destroy; override;
+    class function fromParam(factory : TFHIRFactory; param : String) : TFhirFeatureQueryItem;
+    function toParam : String;
+    property Feature : String read FFeature write FFeature;
+    property Context : String read FContext write FContext;
+    property values : TFslList<TFHIRObject> read FValues;
+  end;
+
+  TNullOrBoolean = (nbNone, nbFalse, nbTrue);
+  TFeatureQueryProcessingStatus = (fqpsUnknown, fqpsUnknownFeature, fqpsUnknownContext, fqpsUnableToEvaluate, fqpsAllOk);
+
+  { TFhirFeatureQueryAnswer }
+
+  TFhirFeatureQueryAnswer = class (TFslObject)
+  private
+    FFeature : String;
+    FContext : String;
+    FProcessingStatus : TFeatureQueryProcessingStatus;
+    FValues : TFslList<TFHIRObject>;
+    FAnswer : TNullOrBoolean;
+  public
+    constructor create(feature, context : String; value : TFHIRObject);
+    constructor create(feature, context : String; answer : boolean);    
+    destructor Destroy; override;
+    property Feature : String read FFeature write FFeature;
+    property Context : String read FContext write FContext;
+    property ProcessingStatus : TFeatureQueryProcessingStatus read FProcessingStatus write FProcessingStatus;
+    property Values : TFslList<TFHIRObject> read FValues;
+    property Answer : TNullOrBoolean read FAnswer write FAnswer;
+    procedure setAnswer(value : boolean);
+  end;
+  {$ENDIF}
+
   {
     A FHIR request.
 
@@ -311,7 +354,10 @@ Type
     FVersion: TFHIRVersion;
     FTransactionResource: TFhirResourceV;
     FSecureURL: String;
-    FContentLanguage : String;
+    FContentLanguage : String;         
+    {$IFDEF DEV_FEATURES}
+    FRequiredFeatures : TFslList<TFhirFeatureQueryItem>;
+    {$ENDIF}
     procedure SetResource(const Value: TFhirResourceV);
     procedure SetSource(const Value: TFslBuffer);
     procedure SetSession(const Value: TFhirSession);
@@ -375,7 +421,10 @@ Type
       Preferred language of the requester (used for error messages)
     }
     Property LangList : THTTPLanguageList read FLangList write SetLangList;
-
+                                                          
+    {$IFDEF DEV_FEATURES}
+    property requiredFeatures : TFslList<TFhirFeatureQueryItem> read FRequiredFeatures;
+    {$ENDIF}
   published
     {
       The full URL of the original request, if the request was made on a RESTful interface (else empty)
@@ -663,6 +712,11 @@ Type
 
     property Progress : String read FProgress write FProgress;
   end;
+
+
+{$IFDEF DEV_FEATURES}
+Const CODES_TFeatureQueryProcessingStatus : array [TFeatureQueryProcessingStatus] of String = ('unknown', 'feature', 'context', 'unsure', 'all-ok');
+{$ENDIF}
 
 
 Function IdTail(s : String):String;
@@ -1076,11 +1130,17 @@ begin
   FOrigin := origin;
   FCompartmentInformation := compartmentInformation;
   FElements := TStringList.Create;
-  Version := worker.Factory.version;
+  Version := worker.Factory.version;  
+  {$IFDEF DEV_FEATURES}
+  FRequiredFeatures := TFslList<TFhirFeatureQueryItem>.create;
+  {$ENDIF}
 end;
 
 destructor TFHIRRequest.Destroy;
-begin
+begin        
+  {$IFDEF DEV_FEATURES}
+  FRequiredFeatures.free;
+  {$ENDIF}
   FLangList.free;
   FElements.free;
   FAdaptor.free;
@@ -1616,6 +1676,103 @@ begin
   FUser := Value;
 end;
 
+
+{$IFDEF DEV_FEATURES}
+{ TFhirFeatureQueryItem }
+
+constructor TFhirFeatureQueryItem.create(feature, context: String; value: TFHIRObject);
+begin
+  inherited create;
+  FFeature := feature;
+  FContext := context;
+  FValues := TFslList<TFHIRObject>.create;
+  if (value <> nil) then
+    FValues.add(value);
+end;
+
+destructor TFhirFeatureQueryItem.Destroy;
+begin
+  FValues.free;
+  inherited Destroy;
+end;
+
+class function TFhirFeatureQueryItem.fromParam(factory : TFHIRFactory; param: String): TFhirFeatureQueryItem;
+var
+  ss, f, c, v: String;
+begin
+  if (param.contains('(')) and (param.endsWith(')')) then
+  begin
+    StringSplit(param, '(', ss, v);
+    v := copy(v, 1, length(v)-1);
+  end
+  else
+    ss := param;
+  if (ss.contains('@') ) then
+    StringSplit(ss, '@', f, c)
+  else
+    f := ss;
+  result := TFhirFeatureQueryItem.create(f, c, factory.makeString(v));
+end;
+
+function TFhirFeatureQueryItem.toParam: String;
+var
+  i : integer;
+begin
+  result := FFeature;
+  if FContext <> '' then
+    result := result + '@'+FContext;
+  if FValues.count > 0 then
+  begin
+    result := result+'(';
+    for i := 0 to FValues.count - 1 do
+    begin
+      if i > 0 then
+        result := result + ',';
+      result := result + FValues[i].toString;
+    end;
+    result := result + ')';
+  end;
+end;
+
+{ TFhirFeatureQueryAnswer }
+
+constructor TFhirFeatureQueryAnswer.create(feature, context: String; value : TFHIRObject);
+begin
+  inherited Create;
+  FFeature := feature;
+  FContext := context;
+  FValues := TFslList<TFHIRObject>.create;
+  if (value <> nil) then
+    FValues.add(value);
+end;
+
+constructor TFhirFeatureQueryAnswer.create(feature, context: String; answer: boolean);
+begin
+  inherited Create;
+  FFeature := feature;
+  FContext := context;
+  FValues := TFslList<TFHIRObject>.create;
+  if answer then
+    FAnswer := nbTrue
+  else
+    FAnswer := nbFalse;
+end;
+
+destructor TFhirFeatureQueryAnswer.Destroy;
+begin
+  FValues.Free;
+  inherited Destroy;
+end;
+
+procedure TFhirFeatureQueryAnswer.setAnswer(value: boolean);
+begin
+  if value then
+    FAnswer := nbTrue
+  else
+    FAnswer := nbFalse;
+end;
+
+{$ENDIF}
 
 { TFHIRFormatAdaptor }
 

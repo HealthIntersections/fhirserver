@@ -151,6 +151,10 @@ type
     FAdaptors: TFslMap<TFHIRFormatAdaptor>;
     FThreads : TFslList<TAsyncTaskThread>;
 
+    {$IFDEF DEV_FEATURES}
+    procedure processRequiredFeatures(request : TFHIRRequest; header: String);
+    procedure checkRequiredFeatures(op: TFHIROperationEngine; request : TFHIRRequest; response : TFHIRResponse);
+    {$ENDIF}
     procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker) : String;
@@ -800,6 +804,39 @@ begin
   FAuthServer := Value;
 end;
 
+{$IFDEF DEV_FEATURES}
+procedure TStorageWebEndpoint.processRequiredFeatures(request: TFHIRRequest; header: String);
+var
+  s : String;
+begin
+  if (header <> '') then
+    for s in header.Split([';']) do
+      request.requiredFeatures.Add(TFhirFeatureQueryItem.fromParam(FContext.Factory, s.trim));
+end;
+
+procedure TStorageWebEndpoint.checkRequiredFeatures(op: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse);
+var
+  feature : TFhirFeatureQueryItem;
+  answer : TFhirFeatureQueryAnswer;
+begin
+  for feature in request.requiredFeatures do
+  begin
+    answer := TFhirFeatureQueryAnswer.create;
+    try
+      answer.Feature := feature.Feature;
+      answer.Context := feature.Context;
+      answer.Values.addAll(feature.Values);
+      answer.ProcessingStatus := fqpsUnknownFeature;
+      op.processFeature(feature, answer);
+      if (answer.Answer <> nbTrue) then
+        raise ERestfulException.create('TStorageWebEndpoint.checkRequiredFeatures', 501, itNotSupported, 'The feature '''+feature.toParam+''' is not supported', request.langList);
+    finally
+      answer.free;
+    end;
+  end;
+end;
+{$ENDIF}
+
 procedure TStorageWebEndpoint.SetTerminologyWebServer(const Value: TTerminologyWebServer);
 begin
   FTerminologyWebServer.free;
@@ -1286,6 +1323,9 @@ Begin
                   request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
                   esession, cert, tt);
                 try
+                  {$IFDEF DEV_FEATURES}
+                  processRequiredFeatures(oRequest, request.RawHeaders.Values['Required-Feature']);
+                  {$ENDIF}
                   oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
                   oRequest.internalRequestId := logId;
                   if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
@@ -1712,6 +1752,9 @@ begin
   try
     op.OnPopulateConformance := PopulateConformance;
     op.OnCreateBuilder := doGetBundleBuilder;
+    {$IFDEF DEV_FEATURES}
+    checkRequiredFeatures(op, request, response);
+    {$ENDIF}
     result := op.Execute(Context, request, response, tt);
     self.Context.Storage.yield(op, nil);
   except
