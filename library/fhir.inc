@@ -92,7 +92,7 @@ Or in the case of FPC compiled applications, statically bound
 The base class TFslObject can track all instantiated objects.
 Doing so is useful for leak hunting in production, but is also a little costly.
 }
-{.$.DEFINE OBJECT_TRACKING}
+{$DEFINE OBJECT_TRACKING}
 
 {$ENDIF}
 
