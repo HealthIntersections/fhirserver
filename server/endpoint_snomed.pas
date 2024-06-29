@@ -422,7 +422,10 @@ begin
     for ss in FTx.Snomed do
     begin
       html.StartTableRow;
-      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId+'-'+ss.VersionDate);
+      if (ss = FTx.DefSnomed) then
+        html.AddTableCellURL(ss.EditionName+' (default)', '/snomed/'+ss.editionId+'-'+ss.VersionDate)
+      else
+        html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId+'-'+ss.VersionDate);
       html.AddTableCell(ss.VersionUri);
       html.AddTableCell(ss.VersionDate);
       html.AddTableCell(inttostr(ss.UseCount));
