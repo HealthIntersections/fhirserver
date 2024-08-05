@@ -757,6 +757,7 @@ type
   end;
 
   TFhirCodeSystemContentMode = (cscmNull, cscmNotPresent, cscmExample, cscmFragment, cscmComplete, cscmSupplement);
+  TFhirCodeSystemContentModeSet = set of TFhirCodeSystemContentMode;
 
 const
   CODES_TFhirCodeSystemContentMode : Array[TFhirCodesystemContentMode] of String = ('null', 'not-present', 'example', 'fragment', 'complete', 'supplement');

@@ -160,6 +160,26 @@ type
     function formalURL : String; override;
   end;
 
+  {$IFDEF DEV_FEATURES}
+  { TFhirFeatureNegotiation }
+
+  TFhirFeatureNegotiation = class (TFhirOperation)
+  protected
+    function isWrite : boolean; override;
+    function owningResource : String; override;
+
+    procedure loadFromParameters(list : TFslList<TFhirFeatureQueryItem>; params : THTTPParameters);
+    procedure loadFromResource(list : TFslList<TFhirFeatureQueryItem>; params : TFhirResourceV);
+    function processFeature(context : TOperationContext; manager: TFHIROperationEngine; feature : TFhirFeatureQueryItem) : TFhirFeatureQueryAnswer;
+    procedure encodeAnswer(p : TFhirParametersParameterW; answer : TFhirFeatureQueryAnswer);
+  public
+    function Name : String; override;
+    function Types : TArray<String>; override;
+    function CreateDefinition(base : String) : TFHIROperationDefinitionW; override;
+    function Execute(context : TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse; tt : TTimeTracker) : String; override;
+    function formalURL : String; override;
+  end;
+  {$ENDIF}
 
 implementation
 
@@ -1580,5 +1600,161 @@ begin
   else
     raise ETerminologyError.Create('Unable to find code to validate (looked for coding | codeableConcept | code+system in parameters ='+request.Parameters.Source+')', itNotFound);
 end;
+
+
+{$IFDEF DEV_FEATURES}
+{ TFhirFeatureNegotiation }
+
+function TFhirFeatureNegotiation.isWrite: boolean;
+begin
+  Result := false;
+end;
+
+function TFhirFeatureNegotiation.owningResource: String;
+begin
+  Result := '';
+end;
+
+procedure TFhirFeatureNegotiation.loadFromParameters(list: TFslList<TFhirFeatureQueryItem>; params: THTTPParameters);
+var
+  s : String;
+begin
+  for s in params.values('param') do
+    list.add(TFhirFeatureQueryItem.fromParam(FFactory, s));
+end;
+
+procedure TFhirFeatureNegotiation.loadFromResource(list: TFslList<TFhirFeatureQueryItem>; params: TFhirResourceV);
+var
+  p : TFHIRParametersW;
+  pp, ppp : TFhirParametersParameterW;
+  f, c: String;
+  v : TFHIRObject;
+begin
+  p := FFactory.wrapParams(params.link);
+  try
+    for pp in p.parameterList do
+      if pp.name = 'feature' then
+      begin
+        v := nil;
+        for ppp in pp.partList do
+        begin
+          if ppp.name = 'name' then
+            f := ppp.valueString
+          else if ppp.name = 'context' then
+            c := ppp.valueString
+          else if ppp.name = 'value' then
+            v := ppp.value.link;
+        end;
+        if (f <> '') then
+          list.add(TFhirFeatureQueryItem.create(f, c, v));
+      end;
+  finally
+    p.free;
+  end;
+end;
+
+function TFhirFeatureNegotiation.processFeature(context : TOperationContext; manager: TFHIROperationEngine; feature: TFhirFeatureQueryItem): TFhirFeatureQueryAnswer;
+begin
+  result := TFhirFeatureQueryAnswer.create;
+  try
+    result.Feature := feature.Feature;
+    result.Context := feature.context;
+    if (feature.feature = 'instantiates') then
+    begin
+      if (result.Context = '') then
+      begin
+        result.ProcessingStatus := fqpsAllOk;
+        if (feature.values.Empty) then
+          result.values.add(FFactory.makeUri('http://hl7.org/fhir/CapabilityStatement/terminology-server'))
+        else
+        begin
+          result.values.addAll(feature.values.Link);
+          result.setAnswer(feature.Values[0].ToString = 'http://hl7.org/fhir/CapabilityStatement/terminology-server');
+        end;
+      end
+      else
+        result.ProcessingStatus := fqpsUnknownContext;
+    end
+    else
+    begin
+      result.ProcessingStatus := fqpsUnknownFeature;
+      manager.processFeature(feature, result);
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+end;
+
+procedure TFhirFeatureNegotiation.encodeAnswer(p: TFhirParametersParameterW; answer: TFhirFeatureQueryAnswer);
+var
+  v : TFHIRObject;
+begin
+  p.addParamUri('name', answer.Feature);
+  if (answer.Context <> '') then
+    p.addParamUri('context', answer.Context);
+  for v in answer.Values do
+    p.addParam('value', v.link);
+  p.addParamCode('processing-status', CODES_TFeatureQueryProcessingStatus[answer.ProcessingStatus]);
+  if (answer.Answer <> nbNone) then
+    if (answer.Answer = nbFalse) then
+      p.addParamBool('answer', false)
+    else
+      p.addParamBool('answer', true);
+end;
+
+function TFhirFeatureNegotiation.Name: String;
+begin
+  Result := 'feature-query';
+end;
+
+function TFhirFeatureNegotiation.Types: TArray<String>;
+begin
+  Result := [];
+end;
+
+function TFhirFeatureNegotiation.CreateDefinition(base: String): TFHIROperationDefinitionW;
+begin
+  Result := nil;
+end;
+
+function TFhirFeatureNegotiation.Execute(context: TOperationContext; manager: TFHIROperationEngine; request: TFHIRRequest; response: TFHIRResponse; tt: TTimeTracker): String;
+var
+  features : TFslList<TFhirFeatureQueryItem>;
+  feature : TFhirFeatureQueryItem;
+  answers : TFslList<TFhirFeatureQueryAnswer>;
+  answer : TFhirFeatureQueryAnswer;
+  p : TFHIRParametersW;
+begin
+  features := TFslList<TFhirFeatureQueryItem>.create;
+  try
+    loadFromParameters(features, request.Parameters);
+    if (request.Resource <> nil) and (request.Resource.fhirType = 'Parameters') then
+      loadFromResource(features, request.resource);
+    answers := TFslList<TFhirFeatureQueryAnswer>.create;
+    try
+      for feature in features do
+        answers.add(processFeature(context, manager, feature));
+      p := FFactory.makeParameters;
+      try
+        for answer in answers do
+          encodeAnswer(p.addParam('feature'), answer);
+        response.resource := p.Resource.link;
+      finally
+        p.free;
+      end;
+    finally
+      answers.free;
+    end;
+  finally
+    features.free;
+  end;
+end;
+
+function TFhirFeatureNegotiation.formalURL: String;
+begin
+  result := 'http://www.hl7.org/fhir/uv/capstmt/OperationDefinition/feature-query';
+end;
+{$ENDIF}
 
 end.

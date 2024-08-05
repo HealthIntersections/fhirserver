@@ -1742,7 +1742,7 @@ var
   s : string;
   sn: TSnomedServices;
   sp : TSnomedProviderFactory;
-//  def : boolean;
+  def : boolean;
   p : TUriServices;
   function fixFile(name, fn : String) : String;
   begin
@@ -1795,9 +1795,10 @@ begin
           sn.Load(fixFile('sct', tx['source'].value));
           sp := TSnomedProviderFactory.Create(sn.link, FI18n.link);
           try
-            add(sp, tx['default'].readAsBool);
-            if not FProviderClasses.ContainsKey(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri) then
-              FProviderClasses.Add(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri, sp.link);
+            def := tx['default'].readAsBool;
+            add(sp, def);
+            if not FProviderClasses.ContainsKey(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri) or def then
+              FProviderClasses.AddOrSetValue(sn.systemUri()+URI_VERSION_BREAK+sn.EditionUri, sp.link);
           finally
             sp.free;
           end;

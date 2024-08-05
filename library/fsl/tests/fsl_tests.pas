@@ -751,6 +751,7 @@ procedure TFslUtilitiesTestCases.TestObjectTracking;
 var
   a, b, c, d : TFslTestObject;
 begin
+  {$IFDEF OBJECT_TRACKING}
   // ---------------------
   a := TFslTestObject.Create;
   b := TFslTestObject.Create;
@@ -1091,6 +1092,7 @@ begin
   a.free;
   AssertEqual(1, classCount('TFslTestObject'));
   d.free;
+  {$ENDIF}
   AssertEqual(0, classCount('TFslTestObject'));
 end;
 

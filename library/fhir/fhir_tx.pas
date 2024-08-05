@@ -195,7 +195,7 @@ uses
     function sizeInBytesV(magic : integer) : cardinal; override;
     procedure deadCheck(place : String); virtual;
     function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
-    function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; nullOk : boolean) : TCodeSystemProvider;
+    function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk : boolean) : TCodeSystemProvider;
     function listVersions(url : String) : String;
     procedure loadSupplements(cse: TFHIRCodeSystemEntry; url: String);
     procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
@@ -360,7 +360,7 @@ begin
   end;
 end;
 
-function TTerminologyWorker.findCodeSystem(url, version: String; params: TFHIRTxOperationParams; nullOk: boolean): TCodeSystemProvider;
+function TTerminologyWorker.findCodeSystem(url, version: String; params: TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk: boolean): TCodeSystemProvider;
 var
   r, r2 : TFHIRMetadataResourceW;
   cs, cs2 : TFhirCodeSystemW;
@@ -391,11 +391,12 @@ begin
   if (result <> nil) then
     exit(result);
 
-  if (cs <> nil) and (cs.content = cscmFragment) then
+  if (cs <> nil) and (cs.content in kinds) then
   begin
     cse := TFHIRCodeSystemEntry.Create(cs.link);
     try
-      loadSupplements(cse, url);
+      if cs.content <> cscmSupplement then
+        loadSupplements(cse, url);
       exit(TFhirCodeSystemProvider.Create(FLanguages.link, FI18n.link, FFactory.link, cse.link));
     finally
       cse.free;
@@ -516,7 +517,7 @@ begin
   params := TFHIRTxOperationParams.Create;
   try
     params.defaultToLatestVersion := true;
-    provider := findCodeSystem(coding.systemUri, coding.version, profile, false);
+    provider := findCodeSystem(coding.systemUri, coding.version, profile, [cscmComplete, cscmFragment], false);
     try
       resp.name := provider.name(nil);
       resp.systemUri := provider.systemUri;

@@ -495,7 +495,7 @@ begin
     for vsi in FValueSet.includes do
     begin
       deadCheck('determineSystem');
-      cs := findCodeSystem(vsi.systemUri, '', nil, true);
+      cs := findCodeSystem(vsi.systemUri, '', nil, [cscmComplete, cscmFragment], true);
       if (cs = nil) then
         exit('');
       try
@@ -681,7 +681,7 @@ begin
     end;
   end;
   if not FOthers.ExistsByKey(cc.systemUri) then
-    FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, true));
+    FOthers.Add(cc.systemUri, findCodeSystem(cc.systemUri, cc.version, FParams, [cscmComplete, cscmFragment], true));
   if cc.version = '' then
     cs := FOthers.matches[cc.systemUri] as TCodeSystemProvider
   else
@@ -812,7 +812,7 @@ begin
         op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
         exit(bFalse);
       end;
-      cs := findCodeSystem(system, version, FParams, true);
+      cs := findCodeSystem(system, version, FParams, [cscmComplete, cscmFragment], true);
       try
         if cs = nil then
         begin
@@ -824,6 +824,13 @@ begin
           begin
             vss.free;
             msg := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.languages, [system]);
+            messages.add(msg);
+            op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
+          end
+          else if findCodeSystem(system, version, FParams, [cscmSupplement], true) <> nil then
+          begin                                                                                
+            vss.free;
+            msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.languages, [system]);
             messages.add(msg);
             op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
           end
@@ -929,7 +936,7 @@ begin
     else if (false) then
     begin
       // anyhow, we ignore the value set (at least for now)
-      cs := findCodeSystem(system, version, FParams, true);
+      cs := findCodeSystem(system, version, FParams, [cscmComplete, cscmFragment], true);
       try
         if cs = nil then
         begin
@@ -1091,7 +1098,7 @@ begin
             else
               cs := TCodeSystemProvider(FOthers.matches[cc.systemUri+'|'+v]).link;
             if (cs = nil) then
-              cs := findCodeSystem(system, v, FParams, true);
+              cs := findCodeSystem(system, v, FParams, [cscmComplete, cscmFragment], true);
             if (cs = nil) then
             begin
               if (not FParams.membershipOnly) then
@@ -1209,7 +1216,7 @@ begin
             else
               cs := TCodeSystemProvider(FOthers.matches[ccc.systemUri+'|'+v]).link;
             if (cs = nil) then
-              cs := findCodeSystem(system, v, FParams, true);
+              cs := findCodeSystem(system, v, FParams, [cscmComplete, cscmFragment], true);
             if (cs = nil) then
             begin
               if (not FParams.membershipOnly) then
@@ -1568,7 +1575,7 @@ begin
                   p := issuePath;
                 op.addIssue(isError, itInvalid, p, m, oicInvalidData);
               end;
-              prov := findCodeSystem(ws, c.version, FParams, true);
+              prov := findCodeSystem(ws, c.version, FParams, [cscmComplete, cscmFragment], true);
               try
                if (prov = nil) then
                begin
@@ -1579,11 +1586,19 @@ begin
                    m := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.languages, [ws]);
                    msg(m);
                    op.addIssue(isError, itInvalid, addToPath(path, 'system'), m, oicInvalidData);
-                   cause := itNotFound;
+                   cause := itInvalid;
+                 end
+                 else if findCodeSystem(ws, c.version, FParams, [cscmSupplement], true) <> nil then
+                 begin
+                   vss.free;
+                   m := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.languages, [ws]);
+                   msg(m);
+                   op.addIssue(isError, itInvalid, addToPath(path, 'system'), m, oicInvalidData);
+                   cause := itInvalid;
                  end
                  else
                  begin
-                   prov2 := findCodeSystem(ws, '', FParams, true);
+                   prov2 := findCodeSystem(ws, '', FParams, [cscmComplete, cscmFragment], true);
                    try
                      bAdd := true;
                      if (prov2 = nil) and (c.version = '') then
@@ -3229,7 +3244,7 @@ begin
 
   if cset.systemUri <> '' then
   begin
-    cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
+    cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
     try
 
       if cs.contentMode <> cscmComplete then
@@ -3352,7 +3367,7 @@ begin
     begin
       filters := TFslList<TCodeSystemProviderFilterContext>.create;
       try
-        cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
+        cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
           checkSupplements(cs, cset);
@@ -3674,7 +3689,7 @@ begin
     begin
       filters := TFslList<TCodeSystemProviderFilterContext>.create;
       try
-        cs := findCodeSystem(cset.systemUri, cset.version, FParams, false);
+        cs := findCodeSystem(cset.systemUri, cset.version, FParams, [cscmComplete, cscmFragment], false);
         try
           //Logging.log('Processing '+vsId+',code system "'+cset.systemUri+'|'+cset.version+'", '+inttostr(cset.filterCount)+' filters, '+inttostr(cset.conceptCount)+' concepts');
           checkSupplements(cs, cset);
@@ -4045,7 +4060,7 @@ var
   d : String;
 begin
   result := false;
-  cp := findCodeSystem(system, version, nil, true);
+  cp := findCodeSystem(system, version, nil, [cscmComplete, cscmFragment], true);
   if cp <> nil then
   begin
     try
