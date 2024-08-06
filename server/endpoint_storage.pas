@@ -1080,7 +1080,7 @@ begin
     else if request.Document = PathNoSlash then
     begin
       result := 'Home Page';
-      ReturnProcessedFile(request, response, Session, '/hompage.html', Common.SourceProvider.AltFile('/homepage.html', PathNoSlash), true)
+      ReturnProcessedFile(request, response, Session, '/homepage.html', Common.SourceProvider.AltFile('/homepage.html', PathNoSlash), true)
     end
     else
     begin
