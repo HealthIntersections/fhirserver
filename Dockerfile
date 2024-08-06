@@ -3,7 +3,7 @@ FROM ubuntu:24.04 as builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 
-RUN apt update && apt install -y tzdata wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev build-essential curl binutils
+RUN apt update && apt-get upgrade -y && apt install -y tzdata wget git unixodbc-dev libgtk2.0-dev xvfb sqlite3 libsqlite3-dev build-essential curl binutils && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Download and build OpenSSL 1.1.1w
 WORKDIR /tmp
@@ -103,7 +103,7 @@ ENV PORT=80
 ENV TERMINOLOGY_CACHE=/var/cache/txcache
 
 # Install runtime dependencies
-RUN apt-get update && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev curl \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y wget tzdata xvfb libgtk2.0-0 libsqlite3-dev curl && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && mkdir -p $HOME/fhirserver/config $TERMINOLOGY_CACHE /fhirserver \
     && chmod -R 777 $TERMINOLOGY_CACHE \
