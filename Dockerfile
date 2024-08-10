@@ -128,12 +128,22 @@ WORKDIR /fhirserver/install
 
 
 ### Choose your flavour / uncomment one of the following lines ###:
-# 1. Run the installation script
+##
+##
+
+# 1. Run the installation script for a blank, clean install
 RUN chmod a+x ./install.sh && ./install.sh -nodaemon 
+
+# OR
 
 # 2. Run the installation script With Zero  Config as tx.fhir.org
 # RUN chmod a+x ./install.sh && ./install.sh -nodaemon -zero=https://storage.googleapis.com/tx-fhir-org/config.json
                                                       
+##
+##
+##
+####################################################################
+
 
 # Define entrypoint and command
 CMD ["bash", "-c", "cd ~/fhirserver/ && ./start.sh"]
