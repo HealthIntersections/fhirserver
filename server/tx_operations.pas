@@ -1394,7 +1394,9 @@ begin
   if (params.str('default-to-latest-version') <> '') then
     result.defaultToLatestVersion := StrToBoolDef(params.str('default-to-latest-version'), false);
   if (params.str('incomplete-ok') <> '') then
-    result.incompleteOK := StrToBoolDef(params.str('incomplete-ok'), false);
+    result.incompleteOK := StrToBoolDef(params.str('incomplete-ok'), false);                         
+  if (params.str('diagnostics') <> '') then
+    result.diagnostics := StrToBoolDef(params.str('diagnostics'), false);
   for p in params.parameterList do
   begin
     if (p.name = 'system-version') then

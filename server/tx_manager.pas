@@ -216,7 +216,7 @@ Type
     procedure checkForDuplicates(codes: TStringList; list: TFhirCodeSystemConceptListW; url : String);
     function checkVersion(system, version: String; profile: TFHIRTxOperationParams): String;
     procedure AddCodeSystemToCache(cs : TFHIRResourceProxyV; base : boolean); overload;
-    procedure AddCodeSystemToCache(cs : TFHIRCodeSystemW; base : boolean); overload;
+    procedure AddCodeSystemToCache(packageId : String; cs : TFHIRCodeSystemW; base : boolean); overload;
     procedure RemoveCodeSystemFromCache(id : String);
     function getProviderClasses: TFslMap<TCodeSystemProviderFactory>;
     function defToLatestForSystem(system : String) : boolean;
@@ -640,7 +640,7 @@ begin
   end;
 end;
 
-procedure TTerminologyServerStore.AddCodeSystemToCache(cs: TFHIRCodeSystemW; base: boolean);
+procedure TTerminologyServerStore.AddCodeSystemToCache(packageId : String; cs: TFHIRCodeSystemW; base: boolean);
 var
   cse, ct : TFHIRCodeSystemEntry;
   supp : TFHIRResourceProxyV;
@@ -651,14 +651,14 @@ begin
       FBaseCodeSystems.AddOrSetValue(cs.url, cse.Link);
     if (cs.supplements <> '') then
     begin
-      FSupplementsById.AddOrSetValue(cs.id, TFHIRResourceProxyW.create(cs.Link, cs.url, cs.version));
+      FSupplementsById.AddOrSetValue(cs.id, TFHIRResourceProxyW.create(packageId, cs.Link, cs.url, cs.version));
       if cs.supplements.StartsWith('CodeSystem/') then
       begin
         if FCodeSystems.has(cs.supplements.Substring(11), ct) then
-          ct.SupplementProxies.Add(TFHIRResourceProxyW.create(cs.Link, cs.vurl, cs.version));
+          ct.SupplementProxies.Add(TFHIRResourceProxyW.create(packageId, cs.Link, cs.vurl, cs.version));
       end
       else if FCodeSystems.has(cs.supplements, ct) then
-        ct.SupplementProxies.Add(TFHIRResourceProxyW.create(cs.Link, cs.url, cs.version));
+        ct.SupplementProxies.Add(TFHIRResourceProxyW.create(packageId, cs.Link, cs.url, cs.version));
     end
     else
     begin
@@ -669,7 +669,7 @@ begin
       //  BuildStems(cs); // todo: bring it back and move this out of the lock
       for supp in FSupplementsById.values do
         if (supp.supplements = cs.url) or (supp.supplements = 'CodeSystem/'+cs.id) then
-          cse.SupplementProxies.Add(TFHIRResourceProxyW.create(cs.Link, cs.url, cs.version));
+          cse.SupplementProxies.Add(TFHIRResourceProxyW.create(packageId, cs.Link, cs.url, cs.version));
     end;
   finally
     cse.free;
@@ -733,7 +733,7 @@ begin
         begin
           cs := FFactory.wrapCodesystem(vs.Resource.link);
           try
-            AddCodeSystemToCache(cs, true);
+            AddCodeSystemToCache(resource.packageId, cs, true);
           finally
             cs.free;
           end;
@@ -781,7 +781,7 @@ begin
         begin
           cs := FFactory.wrapCodesystem(vs.resource.Link);
           try
-            AddCodeSystemToCache(cs, true);
+            AddCodeSystemToCache(resource.packageId, cs, true);
           finally
             cs.free;
           end;
@@ -792,7 +792,7 @@ begin
     else if (resource.fhirType = 'CodeSystem') then
     begin
       cs := resource.resourceW as TFHIRCodeSystemW;
-      AddCodeSystemToCache(cs, false);
+      AddCodeSystemToCache(resource.packageId, cs, false);
     end
     else if (resource.fhirType = 'ConceptMap') then
     begin
