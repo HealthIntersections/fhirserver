@@ -40,7 +40,7 @@ uses
 
 type
   TCheckEvent = function(sender : TObject; msg : String):boolean of object;
-  TPackageLoadingEvent = procedure (rType, id : String; stream : TStream) of object;
+  TPackageLoadingEvent = procedure (packageId : String; rType, id : String; stream : TStream) of object;
 
   TPackageDefinition = class (TFslObject)
   private
@@ -859,7 +859,7 @@ begin
         f := TFileStream.Create(FilePath([p, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
           try
-            loadInfo.OnLoadEvent(fi.ResourceType, fi.id, f);
+            loadInfo.OnLoadEvent(npm.name+'#'+npm.version, fi.ResourceType, fi.id, f);
           except
             on e : Exception do
             begin

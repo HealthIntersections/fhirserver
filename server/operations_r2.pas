@@ -3068,7 +3068,7 @@ begin
   if (resource.ResourceType in [frtValueSet, frtConceptMap, frtStructureDefinition, frtQuestionnaire, frtSubscription]) and (needsSecure or ((resource.meta <> nil) and not resource.meta.securityList.IsEmpty)) then
     raise ERestfulException.Create('TFHIRNativeStorageService.SeeResource', 400, itBusinessRule, 'Resources of type '+CODES_TFHIRResourceType[resource.ResourceType]+' are not allowed to have a security label on them', langList);
 
-  p := TFHIRResourceProxy.Create(factory.link, resource.link);
+  p := TFHIRResourceProxy.Create('', factory.link, resource.link);
   try
     if resource.ResourceType = frtValueSet then
     begin
@@ -3079,9 +3079,9 @@ begin
     else if resource.ResourceType in [frtConceptMap] then
       ServerContext.TerminologyServer.SeeTerminologyResource(p)
     else if resource.ResourceType = frtStructureDefinition then
-      ServerContext.ValidatorContext.seeResource(resource as TFhirStructureDefinition)
+      ServerContext.ValidatorContext.seeResource('', resource as TFhirStructureDefinition)
     else if resource.ResourceType = frtQuestionnaire then
-      ServerContext.ValidatorContext.seeResource(resource as TFhirQuestionnaire);
+      ServerContext.ValidatorContext.seeResource('', resource as TFhirQuestionnaire);
 
     if created then
       ServerContext.SubscriptionManager.SeeResource(key, vkey, pvkey, id, subscriptionCreate, resource, conn, reload, session)

@@ -91,9 +91,14 @@ Type
     procedure moveCursor(current : integer); // a LOINC hack
   end;
 
+  { TCodeSystemProviderFilterContext }
+
   TCodeSystemProviderFilterContext = class (TFslObject)
+  private
+    FSummary: String;
   public
     function Link : TCodeSystemProviderFilterContext; overload;
+    property summary : String read FSummary write FSummary;
   end;
 
   TCodeSystemProviderFilterPreparationContext = class (TFslObject)
@@ -159,12 +164,12 @@ Type
     function  addDesignation(ccd : TFhirCodeSystemConceptDesignationW) : TConceptDesignation; overload;
     function  addDesignation(ccd : TFhirValueSetComposeIncludeConceptDesignationW) : TConceptDesignation; overload;
 
-    function hasDisplay(langList : THTTPLanguageList; value : String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference) : boolean;
-    function displayCount(langList : THTTPLanguageList; displayOnly : boolean) : integer;
-    function present(langList : THTTPLanguageList; displayOnly : boolean) : String;
-    function include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
-    function preferredDesignation(langList : THTTPLanguageList = nil) : TConceptDesignation;
-    function preferredDisplay(langList : THTTPLanguageList = nil) : String;
+    function hasDisplay(langList : THTTPLanguageList; defLang, value : String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference) : boolean;
+    function displayCount(langList : THTTPLanguageList; defLang : String; displayOnly : boolean) : integer;
+    function present(langList : THTTPLanguageList; defLang : String; displayOnly : boolean) : String;
+    function include(cd : TConceptDesignation; langList : THTTPLanguageList; defLang : String) : boolean;
+    function preferredDesignation(langList : THTTPLanguageList = nil; defLang : String = '') : TConceptDesignation;
+    function preferredDisplay(langList : THTTPLanguageList = nil; defLang : String = '') : String;
     function summary : String;
 
     property factory : TFHIRFactory read FFactory;
@@ -232,12 +237,14 @@ Type
     function contentMode : TFhirCodeSystemContentMode; virtual;
     function expandLimitation : Integer; virtual;
     function description : String; virtual; abstract;
+    function sourcePackage : String; virtual;
     function TotalCount : integer; virtual; abstract;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; virtual;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
     function systemUri() : String; virtual; abstract;
     function version() : String; virtual;
+    function defLang() : String; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String; langList : THTTPLanguageList):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
@@ -480,7 +487,7 @@ begin
   result := (cd.use <> nil) and (cd.use.systemUri = 'http://terminology.hl7.org/CodeSystem/designation-usage') and (cd.use.code = 'display');
 end;
 
-function TConceptDesignations.preferredDesignation(langList : THTTPLanguageList = nil) : TConceptDesignation;
+function TConceptDesignations.preferredDesignation(langList : THTTPLanguageList = nil; defLang : String = '') : TConceptDesignation;
 var
   cd : TConceptDesignation;
   lang : THTTPLanguageEntry;
@@ -560,7 +567,7 @@ begin
   end;
 end;
            
-function TConceptDesignations.preferredDisplay(langList : THTTPLanguageList): String;
+function TConceptDesignations.preferredDisplay(langList : THTTPLanguageList; defLang : String): String;
 var
   cd : TConceptDesignation;
 begin
@@ -581,7 +588,7 @@ begin
 end;
 
 
-function TConceptDesignations.displayCount(langList : THTTPLanguageList; displayOnly : boolean): integer;
+function TConceptDesignations.displayCount(langList : THTTPLanguageList; defLang : String; displayOnly : boolean): integer;
 var
   cd : TConceptDesignation;
 begin
@@ -595,12 +602,12 @@ begin
         inc(result);
   if result = 0 then
     for cd in FDesignations do
-      if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLang)  and (cd.value <> nil) then
+      if (not displayOnly or cd.base or isDisplay(cd)) and (cd.value <> nil) then
         inc(result);
 end;
 
 
-function TConceptDesignations.present(langList : THTTPLanguageList; displayOnly : boolean): String;
+function TConceptDesignations.present(langList : THTTPLanguageList; defLang : String; displayOnly : boolean): String;
 var
   cd : TConceptDesignation;
   b : TCommaSeparatedStringBuilder;
@@ -641,12 +648,12 @@ begin
   end;
 end;
 
-function TConceptDesignations.include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
+function TConceptDesignations.include(cd : TConceptDesignation; langList : THTTPLanguageList; defLang : String) : boolean;
 begin
   result := langsMatch(langList, cd.language, lmtLang);
 end;
 
-function TConceptDesignations.hasDisplay(langList : THTTPLanguageList; value: String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference): boolean;
+function TConceptDesignations.hasDisplay(langList : THTTPLanguageList; defLang : String; value: String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference): boolean;
 var
   cd : TConceptDesignation;
 begin
@@ -945,6 +952,11 @@ begin
   result := 0; // no limit
 end;
 
+function TCodeSystemProvider.sourcePackage: String;
+begin
+  result := '';
+end;
+
 function TCodeSystemProvider.getPropertyDefinitions: TFslList<TFhirCodeSystemPropertyW>;
 begin
   result := nil;
@@ -1053,6 +1065,11 @@ end;
 function TCodeSystemProvider.version(): String;
 begin
   result := '';
+end;
+
+function TCodeSystemProvider.defLang(): String;
+begin
+  result := 'en';
 end;
 
 { TSearchFilterText }
