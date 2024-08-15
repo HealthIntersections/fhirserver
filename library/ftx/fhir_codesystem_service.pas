@@ -1910,7 +1910,7 @@ end;
 
 function escapeUrl(url : String) : String;
 begin
-  result := url.replace('|', '');
+  result := url.replace('|', '%7C');
 end;
 
 procedure TFHIRCodeSystemManager.see(r : TFHIRCodeSystemEntry);
@@ -2163,7 +2163,7 @@ begin
         if (mm <> '') then
           FMap.remove(res.url+'|'+mm);
       end;
-      updateList(res.url, res.version);
+      updateList(escapeUrl(res.url), res.version);
     finally
       res.free;
     end;
