@@ -58,8 +58,8 @@ type
     procedure loadResource;  override;
     function wrapResource : TFHIRXVersionResourceWrapper; override;
   public
-    constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
-    constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+    constructor Create(packageId : String; factory : TFHIRFactory; resource : TFHIRResource); overload;
+    constructor Create(packageId : String; factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
     destructor Destroy; override;
 
     function link : TFHIRResourceProxy; overload;
@@ -169,7 +169,7 @@ type
     function Link : TResourceMemoryCache; overload;
 
     property List : TFslList<TFHIRResource> read FList;
-    procedure load(rType, id : String; stream : TStream);
+    procedure load(packageId : String; rType, id : String; stream : TStream);
     property Packages : TArray<String> read FPackages write FPackages;
     property ResourceTypes : TArray<String> read FResourceTypes write FResourceTypes;
     property OnLog : TWorkProgressEvent read FOnLog write FOnLog;
@@ -185,18 +185,18 @@ uses
 
 { TFHIRResourceProxy }
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
+constructor TFHIRResourceProxy.Create(packageId : String; factory: TFHIRFactory; resource: TFHIRResource);
 begin
   if resource is TFHIRCanonicalResource then
-    inherited Create(resource, TFHIRCanonicalResource(resource).url, TFHIRCanonicalResource(resource).version)
+    inherited Create(packageId, resource, TFHIRCanonicalResource(resource).url, TFHIRCanonicalResource(resource).version)
   else
-    inherited Create(resource, '', '');
+    inherited Create(packageId, resource, '', '');
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock;  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+constructor TFHIRResourceProxy.Create(packageId : String; factory: TFHIRFactory; lock: TFslLock;  worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited Create(fhirVersionRelease4b, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
+  inherited Create(packageId, fhirVersionRelease4b, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;
@@ -352,7 +352,7 @@ var
 begin
   cache.checkLoaded(pcm);
   for r in cache.List do
-    SeeResource(r);
+    SeeResource('', r);
 end;
 
 { TFHIRCustomResourceInformation }
@@ -424,7 +424,7 @@ begin
   result := TResourceMemoryCache(inherited link);
 end;
 
-procedure TResourceMemoryCache.load(rType, id: String; stream: TStream);
+procedure TResourceMemoryCache.load(packageId : String; rType, id: String; stream: TStream);
 var
   p : TFHIRJsonParser;
 begin
@@ -432,6 +432,7 @@ begin
   try
     p.source := stream;
     p.Parse;
+    p.resource.SourcePackage := packageId;
     FList.add(p.resource.link as TFhirResource);
   finally
     p.free;

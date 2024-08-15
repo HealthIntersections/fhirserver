@@ -93,7 +93,7 @@ Type
     destructor Destroy; override;
 
     property bundle : TFHIRBundleW read FBundle;
-    procedure load(rType, id : String; stream : TStream);
+    procedure load(packageId : String; rType, id : String; stream : TStream);
   end;
 
   TFHIRServerThread = class (TFslThread)
@@ -341,17 +341,20 @@ begin
   inherited;
 end;
 
-procedure TPackageLoader.load(rType, id: String; stream: TStream);
+procedure TPackageLoader.load(packageId : String; rType, id: String; stream: TStream);
 var
   p : TFHIRParser;
   s : String;
+  r : TFHIRResourceV;
 begin
   p := FFactory.makeParser(nil, ffJson, nil);
   try
     s := rType + '|' + id;
     if FList.IndexOf(s) = -1 then
     begin
-      FBundle.addEntry.resource := p.parseResource(stream);
+      r := p.parseResource(stream);
+      r.SourcePackage := packageId;
+      FBundle.addEntry.resource := r;
       Flist.Add(s);
     end;
   finally

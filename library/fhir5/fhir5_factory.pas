@@ -71,8 +71,8 @@ type
     function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
 
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
-    function makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
+    function makeProxy(packageId : string; resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -393,14 +393,14 @@ begin
   raise EFslException.Create('Healthcare Cards are not supported in version '+versionString);
 end;
 
-function TFHIRFactoryR5.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+function TFHIRFactoryR5.makeProxy(packageId : String; pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
-  result := TNpmResourceProxy.Create(self.link, lock, worker, pi);
+  result := TNpmResourceProxy.Create(packageId, self.link, lock, worker, pi);
 end;
 
-function TFHIRFactoryR5.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;
+function TFHIRFactoryR5.makeProxy(packageId : String; resource : TFHIRResourceV) : TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.Create(self.link, resource as TFHIRResource);
+  result := TFHIRResourceProxy.Create(packageId, self.link, resource as TFHIRResource);
 end;
 
 function TFHIRFactoryR5.makeInteger(s: string): TFHIRObject;

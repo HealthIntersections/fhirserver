@@ -1433,7 +1433,7 @@ begin
               inc(i);
               if (i mod 100 = 0) then
                 Logging.continue('.');
-              res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
+              res := factory.makeProxy(npm.name+'#'+npm.version, pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
               try
                 loadResource(res, ignoreEmptyCodeSystems);
               finally
@@ -1502,7 +1502,7 @@ begin
     try
       res := p.parseResource(cnt);
       try
-        pr := factory.makeProxy(res.link);
+        pr := factory.makeProxy(name, res.link);
         try
           loadResource(pr, false);
         finally
