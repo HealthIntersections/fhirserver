@@ -78,6 +78,7 @@ type
     db : TFDBManager;
     rels : TStringList;
     reltypes : TStringList;
+    FVersion : String;
 
     procedure load(list : TStringList; sql : String);
   protected
@@ -103,6 +104,7 @@ type
     function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
+    function version : String; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -126,7 +128,6 @@ type
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     function systemUri : String; override;
-    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -138,7 +139,6 @@ type
   public
     constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     function systemUri : String; override;
-    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -477,6 +477,11 @@ begin
   else
     dbprefix := 'RxNorm';
   self.db := db;
+  try
+    FVersion := inttostr(db.CountSQL('select version from RXNVer', 'Version'));
+  except
+    FVersion := '??';
+  end;
   rels := TStringList.Create;
   reltypes := TStringList.Create;
 
@@ -642,6 +647,11 @@ end;
 function TUMLSServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TUMLSServices.version: String;
+begin
+  Result := FVersion;
 end;
 
 destructor TUMLSServices.Destroy;
@@ -1079,11 +1089,6 @@ begin
   result := URI_RXNORM;
 end;
 
-function TRxNormServices.version: String;
-begin
-  result := '??rx1';
-end;
-
 { TNDFRTServices }
 
 constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
@@ -1114,11 +1119,6 @@ end;
 function TNDFRTServices.systemUri: String;
 begin
   result := URI_NDFRT;
-end;
-
-function TNDFRTServices.version: String;
-begin
-  result := '??rx2';
 end;
 
 end.

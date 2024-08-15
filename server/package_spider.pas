@@ -493,6 +493,8 @@ begin
     log('Error processing item from '+source+'#item['+inttostr(i)+']: no guid provided', source, true);
     exit;
   end;
+  if (item.element('notForPublication') <> nil) and ('true' = item.element('notForPublication').text) then
+    exit;
   guid := item.element('guid').Text;
   try
     id := item.element('title').Text;
