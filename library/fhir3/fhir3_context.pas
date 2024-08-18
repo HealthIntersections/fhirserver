@@ -57,8 +57,8 @@ type
      procedure loadResource;  override;
      function wrapResource : TFHIRXVersionResourceWrapper; override;
    public
-     constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
-     constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+     constructor Create(packageId : String; factory : TFHIRFactory; resource : TFHIRResource); overload;
+     constructor Create(packageId : String; factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
      destructor Destroy; override;
 
      function link : TFHIRResourceProxy; overload;
@@ -145,18 +145,18 @@ uses
 
 { TFHIRResourceProxy }
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
+constructor TFHIRResourceProxy.Create(packageId : String; factory: TFHIRFactory; resource: TFHIRResource);
 begin
   if resource is TFHIRMetadataResource then
-    inherited Create(resource, TFHIRMetadataResource(resource).url, TFHIRMetadataResource(resource).version)
+    inherited Create(packageId, resource, TFHIRMetadataResource(resource).url, TFHIRMetadataResource(resource).version)
   else
-    inherited Create(resource, '', '');
+    inherited Create(packageId, resource, '', '');
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+constructor TFHIRResourceProxy.Create(packageId : String; factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited Create(fhirVersionRelease3, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
+  inherited Create(packageId, fhirVersionRelease3, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;

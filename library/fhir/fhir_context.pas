@@ -81,7 +81,7 @@ type
      procedure doNpmWork(sender : TObject; pct : integer; done : boolean; desc : String);
      procedure loadPackage(context : TFHIRWorkerContextWithFactory; id : String; user, ignoreEmptyCodeSystems : boolean);
      procedure doProgress(state : String; c, t : integer);
-     procedure loadResource(context : TFHIRWorkerContextWithFactory; res: TFHIRResourceV; ignoreEmptyCodeSystems: boolean);
+     procedure loadResource(packageId : String; context : TFHIRWorkerContextWithFactory; res: TFHIRResourceV; ignoreEmptyCodeSystems: boolean);
    protected
      function canCancel : boolean; override;
    public
@@ -173,7 +173,7 @@ begin
   end;
 end;
 
-procedure TFHIRContextLoaderEngine.loadResource(context : TFHIRWorkerContextWithFactory; res : TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
+procedure TFHIRContextLoaderEngine.loadResource(packageId : String; context : TFHIRWorkerContextWithFactory; res : TFHIRResourceV; ignoreEmptyCodeSystems : boolean);
 var
   cs : TFhirCodeSystemW;
 begin
@@ -182,13 +182,13 @@ begin
     cs := context.factory.wrapCodeSystem(res.link);
     try
       if (not ignoreEmptyCodeSystems or (cs.content in [cscmFragment, cscmComplete, cscmSupplement])) then
-        context.seeResource(res);
+        context.seeResource(packageId, res);
     finally
       cs.free;
     end;
   end
   else
-    context.seeResource(res);
+    context.seeResource(packageId, res);
 end;
 
 procedure TFHIRContextLoaderEngine.doNpmWork(sender: TObject; pct: integer; done: boolean; desc: String);
@@ -230,7 +230,7 @@ begin
         end;
         try
           try
-            loadResource(context, res, ignoreEmptyCodeSystems);
+            loadResource(npm.name+'#'+npm.version, context, res, ignoreEmptyCodeSystems);
           except
             on e : Exception do
               raise EFHIRException.Create('Error Loading '+s+': '+e.Message);

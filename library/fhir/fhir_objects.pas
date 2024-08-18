@@ -594,6 +594,8 @@ type
   end;
 
   TFHIRResourceV = class (TFHIRObject)
+  private
+    FSourcePackage : String;
   protected
     function GetProfileVersion: TFHIRVersion; virtual;
     procedure SetProfileVersion(Value: TFHIRVersion); virtual;
@@ -606,6 +608,7 @@ type
     procedure checkNoImplicitRules(place, role : String); virtual; abstract;
 
     property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
+    property SourcePackage : String read FSourcePackage write FSourcePackage;
   end;
 
   { TFHIRWorkerContextV }
@@ -628,7 +631,7 @@ type
     property Packages : TStringList read FPackages;
 
     Property LangList : THTTPLanguageList read FLangList write SetLangList;
-    procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
+    procedure loadResourceJson(packageId : String; rtype, id : String; json : TStream); virtual; abstract;
     Property version : TFHIRVersion read GetVersion;
     function versionString : String;
     function oid2Uri(oid : String) : String; virtual; abstract;

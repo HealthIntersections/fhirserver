@@ -206,7 +206,7 @@ function TXigLoader.makeResource: TFHIRResourceProxyV;
 var
   p : TXIGResourceProxy;
 begin
-  p := TXIGResourceProxy.create(factory.version, FConn.ColStringByName['ResourceTypeR5'],
+  p := TXIGResourceProxy.create('', factory.version, FConn.ColStringByName['ResourceTypeR5'],
           FConn.ColStringByName['id'], FConn.ColStringByName['Url'], FConn.ColStringByName['Version'],
           FConn.ColStringByName['Supplements'], FConn.ColStringByName['Content'], FConn.ColStringByName['ValueSet']);
   try

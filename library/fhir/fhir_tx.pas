@@ -28,6 +28,8 @@ uses
     FLangList : THTTPLanguageList;
     FI18n : TI18nSupport;
     FDeadTime : Cardinal;
+    FNotes : TStringList;
+    FOwnsNotes : boolean;
     FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
   public
     constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; deadTime : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
@@ -39,7 +41,17 @@ uses
     procedure seeContext(vurl : String);
     procedure clearContexts;
 
+    procedure addNote(vs : TFHIRValueSetW; note : String);
+    function notes : String;
+    function hasNotes : boolean;
     property OnGetCurrentRequestCount : TGetCurrentRequestCountEvent read FOnGetCurrentRequestCount write FOnGetCurrentRequestCount;
+
+    class function renderCoded(system : TCodeSystemProvider) : String; overload;
+    class function renderCoded(system, version : String) : String; overload;
+    class function renderCoded(system, version, code : String) : String; overload;
+    class function renderCoded(system, version, code, display : String) : String; overload;
+    class function renderCoded(code : TFhirCodingW) : String; overload;
+    class function renderCoded(code : TFhirCodeableConceptW) : String; overload;
   end;
 
   TTrueFalseUnknown = (bTrue, bFalse, bUnknown);
@@ -87,6 +99,7 @@ uses
     FDisplayWarning : boolean;
     FLanguages : THTTPLanguageList;
     FDesignations : TStringList;
+    FDiagnostics : boolean;
 
     FHasactiveOnly : boolean;
     FHasExcludeNested : boolean;
@@ -153,6 +166,7 @@ uses
     property properties : TStringList read FProperties;
     property altCodeRules : TAlternateCodeOptions read FAltCodeRules;
     property designations : TStringList read FDesignations;
+    property diagnostics : boolean read FDiagnostics write FDiagnostics;
 
 
     property hasActiveOnly : boolean read FHasactiveOnly;
@@ -170,6 +184,8 @@ uses
     property hasLanguages : boolean read GetHasLanguages;
     property hasDesignations : boolean read GetHasDesignations;
 
+    function summary : string;
+    function verSummary : String;
     function hash : String;
   end;
           
@@ -201,7 +217,8 @@ uses
     procedure checkSupplements(cs: TCodeSystemProvider; src: TFHIRXVersionElementWrapper);
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
-    destructor Destroy; override;
+    destructor Destroy; override;     
+    property opContext : TTerminologyOperationContext read FOpContext;
   end;
 
   { TFHIRCodeSystemInformationProvider }
@@ -230,10 +247,14 @@ begin
   FStartTime := GetTickCount64;
   FOnGetCurrentRequestCount := getRequestCount;
   FDeadTime := deadTime;
+  FNotes := TStringList.create;
+  FOwnsNotes := true;
 end;
 
 destructor TTerminologyOperationContext.Destroy;
 begin
+  if FOwnsNotes then
+    FNotes.free;
   FLangList.free;
   FI18n.free;
   FContexts.free;
@@ -245,6 +266,9 @@ begin
   result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FDeadTime, OnGetCurrentRequestCount);
   result.FContexts.assign(FContexts);
   result.FStartTime := FStartTime;
+  result.FNotes.free;
+  result.FOwnsNotes := false;
+  result.FNotes := FNotes;
 end;
 
 function TTerminologyOperationContext.deadCheck(var time : integer): boolean;
@@ -282,6 +306,65 @@ end;
 procedure TTerminologyOperationContext.clearContexts;
 begin
   FContexts.clear;
+end;
+
+procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note: String);
+var
+  s : string;
+begin
+  s := vs.vurl+': '+note;
+  Logging.log(s);
+  FNotes.add(s);
+end;
+
+function TTerminologyOperationContext.notes: String;
+begin
+  result := FNotes.Text;
+end;
+
+function TTerminologyOperationContext.hasNotes: boolean;
+begin
+  result := FNotes.Count > 0;
+end;
+
+class function TTerminologyOperationContext.renderCoded(system: TCodeSystemProvider): String;
+begin
+  result := system.systemUri+'|'+system.version;
+  if (system.sourcePackage <> '') then
+    result := result+' (from '+system.sourcePackage+')';
+end;
+
+class function TTerminologyOperationContext.renderCoded(system, version : String): String;
+begin
+  if (version = '') then
+    result := system
+  else
+    result := system+'|'+version;
+end;
+
+class function TTerminologyOperationContext.renderCoded(system, version, code : String): String;
+begin
+  result := renderCoded(system, version)+'#'+code;
+end;
+
+class function TTerminologyOperationContext.renderCoded(system, version, code, display : String): String;
+begin
+  result := renderCoded(system, version, code)+' ("'+display+'")';
+end;
+
+class function TTerminologyOperationContext.renderCoded(code: TFhirCodingW): String;
+begin
+  result := renderCoded(code.systemUri, code.version, code.code, code.display);
+end;
+
+class function TTerminologyOperationContext.renderCoded(code: TFhirCodeableConceptW): String;
+var
+  c : TFHIRCodingW;
+begin
+  result := '';
+  for c in code.codings.forEnum do
+    CommaAdd(result, renderCoded(c));
+  result := '['+result+']';
 end;
 
 { TTerminologyWorker }
@@ -713,6 +796,49 @@ begin
     result := '--'
   else
     result := FLanguages.asString(false);
+end;
+
+function TFHIRTxOperationParams.summary: string;
+  procedure b(s : String; v : boolean);
+  begin
+    if v then
+      CommaAdd(result, s);
+  end;
+  procedure s(s : String; v : String);
+  begin
+    if v <> '' then
+      CommaAdd(result, s+'='+v);
+  end;
+begin
+  result := '';
+  s('uid', FUid);
+  if (FProperties <> nil) then
+    s('properties', FProperties.commaText);
+  if (FLanguages <> nil) then
+    s('lang' , FLanguages.asString(true));
+  if (FDesignations <> nil) then
+    s('designations', FDesignations.commaText);
+  b('active-only', FactiveOnly);
+  b('exclude-nested', FexcludeNested);
+  b('generate-narrative', FGenerateNarrative);
+  b('limited-exansion', FlimitedExpansion);
+  b('for-ui', FexcludeNotForUI);
+  b('exclude-post-coordinated', FexcludePostCoordinated);
+  b('include-designations', FincludeDesignations);
+  b('include-definition', FincludeDefinition);
+  b('membership-only', FMembershipOnly);
+  b('default-to-latest', FDefaultToLatestVersion);
+  b('incomplete-ok', FIncompleteOK);
+  b('display-warning', FDisplayWarning);
+end;
+
+function TFHIRTxOperationParams.verSummary: String;
+var
+  p : TFhirExpansionParamsVersionRule;
+begin
+  result := '';
+  for p in FVersionRules do
+    CommaAdd(result, p.asString);
 end;
 
 destructor TFHIRTxOperationParams.Destroy;

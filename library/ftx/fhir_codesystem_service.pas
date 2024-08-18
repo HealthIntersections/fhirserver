@@ -219,9 +219,11 @@ type
     destructor Destroy; override;
 
     function contentMode : TFhirCodeSystemContentMode; override;
+    function sourcePackage : String; override;
     function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
     function version(): String; override;
+    function defLang() : String; override;
     function TotalCount : integer; override;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
@@ -975,6 +977,14 @@ begin
   result := FCs.CodeSystem.content;
 end;
 
+function TFhirCodeSystemProvider.sourcePackage: String;
+begin
+  if (FCs.CodeSystemProxy <> nil) and (FCs.CodeSystemProxy.packageId <> '') then
+    result := FCs.CodeSystemProxy.packageId
+  else
+    result := '';
+end;
+
 function TFhirCodeSystemProvider.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
 begin
   result := false;
@@ -1370,6 +1380,14 @@ begin
    result := FCs.CodeSystem.version;
 end;
 
+function TFhirCodeSystemProvider.defLang: String;
+begin
+  if FCs.CodeSystem.language <> '' then
+    result := FCs.CodeSystem.language
+  else
+    result := 'en';
+end;
+
 procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
 var
   i : integer;
@@ -1483,7 +1501,9 @@ begin
   end;
 end;
 
-procedure TFhirCodeSystemProvider.iterateConceptsByKnownProperty(src: TFhirCodeSystemConceptListW; code: String; values: TStringArray; list: TFhirCodeSystemProviderFilterContext; include : boolean);
+procedure TFhirCodeSystemProvider.iterateConceptsByKnownProperty(
+  src: TFhirCodeSystemConceptListW; code: String; values: TStringArray;
+  List: TFhirCodeSystemProviderFilterContext; include: boolean);
 var
   c, cc : TFhirCodeSystemConceptW;
   concepts : TFhirCodeSystemConceptListW;
@@ -1888,7 +1908,14 @@ begin
   result := TFHIRCodeSystemManager(inherited link);
 end;
 
+function escapeUrl(url : String) : String;
+begin
+  result := url.replace('|', '%7C');
+end;
+
 procedure TFHIRCodeSystemManager.see(r : TFHIRCodeSystemEntry);
+var
+  eurl : String;
 begin
   if r.url = URI_CVX then
     r.id := r.id;
@@ -1901,13 +1928,14 @@ begin
   FList.add(r.link);
   FMap.add(r.id, r.link); // we do this so we can drop by id
 
+  eurl := escapeUrl(r.url);
   if (r.url <> '') then
   begin
     if (r.version <> '') then
     begin
-      FMap.addorSetValue(r.url+'|'+r.version, r.link);
+      FMap.addorSetValue((eurl)+'|'+r.version, r.link);
     end;
-    updateList(r.url, r.version);
+    updateList(eurl, r.version);
   end;
 end;
 
@@ -2135,7 +2163,7 @@ begin
         if (mm <> '') then
           FMap.remove(res.url+'|'+mm);
       end;
-      updateList(res.url, res.version);
+      updateList(escapeUrl(res.url), res.version);
     finally
       res.free;
     end;

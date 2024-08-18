@@ -730,6 +730,8 @@ begin
       end;
       result := check.check(issuePath, coded, abstractOk, inferSystem, mode);
       summary := check.log;
+      if check.opContext.hasNotes and profile.diagnostics then
+        result.addParamStr('diagnostics', check.opContext.notes);
     finally
       check.free;
    end;

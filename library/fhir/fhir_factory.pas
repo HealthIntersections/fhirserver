@@ -195,8 +195,8 @@ type
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; virtual; abstract;
 
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; virtual; abstract;
-    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; virtual; abstract;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; virtual; abstract;
+    function makeProxy(packageId : String; presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; virtual; abstract;
 
     function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
@@ -281,8 +281,8 @@ type
     property pcm : TFHIRPackageManager read FPcm;
     property LoadInfo : TPackageLoadingInformation read FLoadInfo;
 
-    procedure loadResourceJson(rType, id : String; json : TStream); override;
-    procedure seeResource(res : TFHIRResourceV); overload; virtual; abstract;
+    procedure loadResourceJson(packageId : String; rType, id : String; json : TStream); override;
+    procedure seeResource(packageId : String; res : TFHIRResourceV); overload; virtual; abstract;
     procedure seeResource(res : TFHIRResourceProxyV); overload; virtual; abstract;
     procedure dropResource(rtpe, id : String); overload; virtual; abstract;
     procedure LoadCodeSystem(r : TFhirResourceProxyV); virtual; abstract;
@@ -361,8 +361,8 @@ type
     function makeParameters : TFHIRParametersW; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; override;
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; override;
-    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; override;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; override;
+    function makeProxy(packageId : String; presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; override;
     function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
@@ -796,12 +796,12 @@ begin
   raise EFslException.Create('makeIssue is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeProxy(pi: TNpmPackageResource; worker: TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+function TFHIRFactoryX.makeProxy(packageId : String; pi: TNpmPackageResource; worker: TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
   raise EFslException.Create('makeProxy is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeProxy(presource: TFHIRResourceV): TFHIRResourceProxyV;
+function TFHIRFactoryX.makeProxy(packageId : String; presource: TFHIRResourceV): TFHIRResourceProxyV;
 begin
   raise EFslException.Create('makeProxy is not implemented in the non-versioned FHIRFactory');
 end;
@@ -1237,7 +1237,7 @@ begin
   // nothing here
 end;
 
-procedure TFHIRWorkerContextWithFactory.loadResourceJson(rType, id: String;
+procedure TFHIRWorkerContextWithFactory.loadResourceJson(packageId : String; rType, id: String;
   json: TStream);
 var
   p : TFHIRParser;
@@ -1246,7 +1246,8 @@ begin
   try
     p.source := json;
     p.Parse;
-    SeeResource(p.resource);
+    p.resource.SourcePackage := packageId;
+    SeeResource(packageId, p.resource);
   finally
     p.free;
   end;

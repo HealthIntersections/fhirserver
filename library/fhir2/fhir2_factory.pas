@@ -70,8 +70,8 @@ type
     function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
 
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
-    function makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
+    function makeProxy(packageId : String; resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -400,14 +400,14 @@ begin
   result := TFhirInteger.Create(s);
 end;
 
-function TFHIRFactoryR2.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+function TFHIRFactoryR2.makeProxy(packageId : String; pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.create(self.link, lock, worker, pi);
+  result := TFHIRResourceProxy.create(packageId, self.link, lock, worker, pi);
 end;
 
-function TFHIRFactoryR2.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;
+function TFHIRFactoryR2.makeProxy(packageId : String; resource : TFHIRResourceV) : TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.create(self.link, resource as TFHIRResource);
+  result := TFHIRResourceProxy.create(packageId, self.link, resource as TFHIRResource);
 end;
 
 function TFHIRFactoryR2.makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;

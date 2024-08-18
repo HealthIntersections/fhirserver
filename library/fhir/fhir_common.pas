@@ -270,6 +270,7 @@ type
     property language : String read GetLanguage write SetLanguage;
 
     function AsJson : String; override;
+    function SourcePackage : String;
 
     // extensions:
     function hasExtension(url : String) : boolean; override;
@@ -1551,6 +1552,7 @@ type
     FFhirObjectVersion : TFHIRVersion;
     FFhirType : String;
     FId  : String;
+    FPackageId: String;
     FSupplements: String;
     FUrl : String;
     FVersion : String;
@@ -1564,11 +1566,12 @@ type
     function wrapResource : TFHIRXVersionResourceWrapper; virtual; abstract;
     procedure SetResourceV(value : TFHIRResourceV);
   public
-    constructor Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String); overload;
-    constructor Create(resource : TFHIRResourceV; url, version : String); overload;
+    constructor Create(packageId : String; fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String); overload;
+    constructor Create(packageId : String; resource : TFHIRResourceV; url, version : String); overload;
     destructor Destroy; override;
     function link : TFHIRResourceProxyV; overload;
 
+    property packageId : String read FPackageId;
     property fhirObjectVersion : TFHIRVersion read FFhirObjectVersion;
     property fhirType : String read FFhirType;
     property id  : String read FId write FId;
@@ -1589,7 +1592,7 @@ type
     procedure loadResource; override;
     function wrapResource : TFHIRXVersionResourceWrapper; override;
   public
-    constructor Create(resource : TFHIRXVersionResourceWrapper; url, version : String); overload;
+    constructor Create(packageId : String; resource : TFHIRXVersionResourceWrapper; url, version : String); overload;
   end;
 
   TFHIRMetadataResourceManagerW<T : TFHIRMetadataResourceW> = class (TFslObject)
@@ -1691,9 +1694,9 @@ begin
 
 end;
 
-constructor TFHIRResourceProxyW.Create(resource: TFHIRXVersionResourceWrapper; url, version: String);
+constructor TFHIRResourceProxyW.Create(packageId : String; resource: TFHIRXVersionResourceWrapper; url, version: String);
 begin
-  inherited create(resource.Resource.link, url, version);
+  inherited create(packageId, resource.Resource.link, url, version);
   FResourceW := resource.link;
 end;
 
@@ -1772,6 +1775,11 @@ end;
 function TFHIRXVersionResourceWrapper.AsJson: String;
 begin
   Result := FRes.asJson;
+end;
+
+function TFHIRXVersionResourceWrapper.SourcePackage: String;
+begin
+  result := FRes.SourcePackage;
 end;
 
 function TFHIRXVersionResourceWrapper.hasExtension(url: String): boolean;
@@ -3155,9 +3163,10 @@ end;
 
 { TFHIRResourceProxyV }
 
-constructor TFHIRResourceProxyV.Create(fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String);
+constructor TFHIRResourceProxyV.Create(packageId : String; fhirObjectVersion : TFHIRVersion; fhirType, id : String; url, version, supplements, content, valueSet : String);
 begin
   inherited Create;
+  FPackageId := packageId;
   FFhirObjectVersion := fhirObjectVersion;
   FFhirType := fhirType;
   FId := id;
@@ -3168,9 +3177,10 @@ begin
   FValueSet := valueSet;
 end;
 
-constructor TFHIRResourceProxyV.Create(resource : TFHIRResourceV; url, version : String);
+constructor TFHIRResourceProxyV.Create(packageId : String; resource : TFHIRResourceV; url, version : String);
 begin
   inherited Create;
+  FPackageId := packageId;
   FFhirObjectVersion := resource.fhirObjectVersion;
   FFhirType := resource.fhirType;
   FId := resource.id;
