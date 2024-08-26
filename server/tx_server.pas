@@ -282,7 +282,7 @@ procedure TTerminologyServer.lookupCode(coding : TFHIRCodingW; reqId : String; p
 var
   worker : TFHIRCodeSystemInformationProvider;
 begin
-  worker := TFHIRCodeSystemInformationProvider.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
+  worker := TFHIRCodeSystemInformationProvider.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
   try
     worker.lookupCode(coding, profile, props, resp);
   finally
@@ -425,7 +425,7 @@ begin
   if result = nil then
   begin
     if opContext = nil then
-      exp := TFHIRValueSetExpander.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, EXPANSION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link)
+      exp := TFHIRValueSetExpander.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, EXPANSION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link)
     else
       exp := TFHIRValueSetExpander.Create(Factory.link, opContext.copy, workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, i18n.link);
     try
@@ -593,7 +593,7 @@ function TTerminologyServer.MakeChecker(reqId, uri, version: string; profile : T
 var
   vs : TFhirValueSetW;
 begin
-  result := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
+  result := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, uri, i18n.link);
   try
     vs := getValueSetByUrl(uri, version);
     try
@@ -614,12 +614,12 @@ var
 begin
   result := factory.makeParameters;
   try
-    op := Factory.wrapOperationOutcome(Factory.buildOperationOutcome(i18n, profile.languages, e));
+    op := Factory.wrapOperationOutcome(Factory.buildOperationOutcome(i18n, profile.HTTPLanguages, e));
     try
       if unknownValueSets.Count > 0 then
-        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_VS', profile.languages, [url, unknownValueSets.CommaText])
+        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_VS', profile.HTTPLanguages, [url, unknownValueSets.CommaText])
       else
-        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET', profile.languages, [url]);
+        msg := i18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET', profile.HTTPLanguages, [url]);
       op.addIssue(isWarning, itNotFound, '', msg, oicVSProcessing);
       result.addParam('issues').resource := op.Resource.link;
       result.addParamBool('result', false);
@@ -657,7 +657,7 @@ begin
 
   try
     unknownValueSets := TStringList.create;
-    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
+    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       unknownValueSets.Sorted := true;
       unknownValueSets.Duplicates := dupIgnore;
@@ -704,7 +704,7 @@ begin
 
   try
     unknownValueSets := TStringList.create;
-    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
+    check := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, txResources.link, CommonTerminologies.Languages.link, vs.url, i18n.link);
     try
       unknownValueSets.Sorted := true;
       unknownValueSets.Duplicates := dupIgnore;
@@ -1449,7 +1449,7 @@ begin
         profile := TFHIRTxOperationParams.Create;
         try
           try
-            val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
+            val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.HTTPLanguages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
             try
               val.prepare(vs, profile, nil);
               if val.check('code', URL, version, code, true, false, nil) <> bTrue then
@@ -1491,7 +1491,7 @@ begin
       profile := TFHIRTxOperationParams.defaultProfile;
       try
         try
-          val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.languages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
+          val := TValueSetChecker.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, '', profile.HTTPLanguages.link, VALIDATION_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetDefinition, workerGetProvider, workerGetVersions, workerGetExpansion, nil, CommonTerminologies.Languages.link, vs.url, i18n.link);
           try
             val.prepare(vs, profile, nil);
             conn2.SQL := 'select ConceptKey, URL, Code from Concepts';
@@ -1559,7 +1559,7 @@ function TTerminologyServer.translate(langList : THTTPLanguageList; reqId : Stri
 var
   worker : TFHIRConceptMapTranslator;
 begin
-  worker := TFHIRConceptMapTranslator.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.languages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
+  worker := TFHIRConceptMapTranslator.Create(Factory.link, TTerminologyOperationContext.Create(I18n.link, reqId, profile.HTTPLanguages.link, LOOKUP_DEAD_TIME_SECS, OnGetCurrentRequestCount), workerGetProvider, workerGetVersions, txResources.link, CommonTerminologies.Languages.link, i18n.link);
   try
     result := worker.translate(langList, reqId, cml, coding, params, profile);
   finally

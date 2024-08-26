@@ -499,7 +499,7 @@ begin
   try
     profile.includeDefinition := pm['nodetails'] <> '1';
     profile.limitedExpansion := true;
-    profile.languages := langList.link;
+    profile.HTTPLanguages := langList.link;
 
     try
       res := FServer.expandVS(vs, '', vs.url, profile, pm['filter'], 1000, 0, 0, nil, false);

@@ -629,6 +629,7 @@ type
     function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
     function buildImplicitValueSet : TFHIRValueSetW; override;
+    function hasAnyDisplays(langs : THTTPLanguageList) : boolean; override;
 
     function getDate: TFslDateTime; override;
     function getStatus: TPublicationStatus; override;
@@ -3740,6 +3741,11 @@ end;
 function TFhirCodeSystem2.buildImplicitValueSet: TFHIRValueSetW;
 begin
   result := TFHIRValueSet2.Create(vs.Link);
+end;
+
+function TFhirCodeSystem2.hasAnyDisplays(langs: THTTPLanguageList): boolean;
+begin
+  result := false;
 end;
 
 function TFhirCodeSystem2.concept(ndx: integer): TFhirCodeSystemConceptW;

@@ -223,7 +223,6 @@ type
     function description : String; override;
     function name(context: TCodeSystemProviderContext): String; override;
     function version(): String; override;
-    function defLang() : String; override;
     function TotalCount : integer; override;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
@@ -246,6 +245,7 @@ type
     function parent(context : TCodeSystemProviderContext) : String; override;
     function listCodes(ctxt : TCodeSystemProviderContext; altOpt : TAlternateCodeOptions) : TStringArray; override;
     function canParent : boolean; override;
+    function hasAnyDisplays(langs : THTTPLanguageList) : boolean; override;
 
     function hasSupplement(url : String) : boolean; override;  
     procedure listSupplements(ts : TStringList); override;
@@ -557,6 +557,8 @@ begin
   Create(languages, i18n);
   FCs := cs;
   FFactory := factory;
+  if FCs.CodeSystem.language <> '' then
+    setDefLang(FLanguages.parse(FCs.CodeSystem.language));
 end;
 
 procedure TFhirCodeSystemProvider.defineFeatures(features: TFslList<TFHIRFeature>);
@@ -712,6 +714,11 @@ end;
 function TFhirCodeSystemProvider.canParent: boolean;
 begin
   Result := true;
+end;
+
+function TFhirCodeSystemProvider.hasAnyDisplays(langs: THTTPLanguageList): boolean;
+begin
+  result := fcs.CodeSystem.hasAnyDisplays(langs);
 end;
 
 function TFhirCodeSystemProvider.description: String;
@@ -1378,14 +1385,6 @@ end;
 function TFhirCodeSystemProvider.version: String;
 begin
    result := FCs.CodeSystem.version;
-end;
-
-function TFhirCodeSystemProvider.defLang: String;
-begin
-  if FCs.CodeSystem.language <> '' then
-    result := FCs.CodeSystem.language
-  else
-    result := 'en';
 end;
 
 procedure TFhirCodeSystemProvider.iterateCodes(base : TFhirCodeSystemConceptW; list : TFhirCodeSystemProviderFilterContext; filter : TCodeSystemCodeFilterProc; context : pointer; includeRoot : boolean; exception : TFhirCodeSystemConceptW = nil);
