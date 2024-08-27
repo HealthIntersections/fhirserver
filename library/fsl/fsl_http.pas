@@ -159,6 +159,7 @@ type
     FLangs : TFslList<THTTPLanguageEntry>;
 
     //function codeMatches(code, spec : String) : boolean;
+    function getCount: integer;
     procedure process;
   public
     constructor Create(source : String; wildcard : boolean);
@@ -176,6 +177,7 @@ type
     function prefLang : String;
     //function prefLang : String;
     function sizeInBytes(magic : integer) : cardinal;
+    property count : integer read getCount;
 
     function matches(lang : String; exact : boolean) : boolean;
   end;
@@ -648,7 +650,7 @@ begin
   if exact then
     result := FLang = lang
   else
-    result := FLang.startsWIth(lang);
+    result := FLang.startsWith(lang);
 end;
 
 { THTTPLanguageEntrySorter }
@@ -777,6 +779,11 @@ begin
   if FWildCard and not wc then
     FLangs.Add(THTTPLanguageEntry.create(i, '*', 0.01, true));
   FLangs.Sort(THTTPLanguageEntrySorter.create);
+end;
+
+function THTTPLanguageList.getCount: integer;
+begin
+  result := FLangs.Count;
 end;
 
 

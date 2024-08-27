@@ -735,6 +735,8 @@ type
   TFhirCodeSystem3 = class (TFhirCodeSystemW)
   private
     function cs : TFhirCodeSystem;
+    function hasLanguage(cc: TFhirCodeSystemConcept; langs: THTTPLanguageList
+      ): boolean;
   public
     function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
     function GetLanguage: String; override;
@@ -785,6 +787,7 @@ type
     function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
     function buildImplicitValueSet : TFHIRValueSetW; override;
+    function hasAnyDisplays(langs : THTTPLanguageList) : boolean; override;
   end;
 
   TFHIRLookupOpRequest3 = class (TFHIRLookupOpRequestW)
@@ -4274,6 +4277,46 @@ end;
 function TFhirCodeSystem3.buildImplicitValueSet: TFHIRValueSetW;
 begin
   result := TFHIRValueSet3.Create(cs.buildImplicitValueSet);
+end;
+
+function TFhirCodeSystem3.hasLanguage(cc : TFhirCodeSystemConcept; langs: THTTPLanguageList): boolean;
+var
+  cc1 : TFhirCodeSystemConcept;
+  d : TFhirCodeSystemConceptDesignation;
+  hl : boolean;
+begin
+  if langs.matches(cs.Language, false) and (cc.display <> '') then
+    exit(true);
+
+  result := false;
+
+  for d in cc.designationList do
+    if langs.matches(d.language, false) then
+      exit(true);
+
+  for cc1 in cc.conceptList do
+  begin
+    hl := hasLanguage(cc1, langs);
+    if (hl) then
+      exit(true);
+  end;
+end;
+
+function TFhirCodeSystem3.hasAnyDisplays(langs: THTTPLanguageList): boolean;
+var
+  cc : TFhirCodeSystemConcept;
+  hl : boolean;
+begin
+  result := false;
+  if (langs.count > 0) then
+  begin
+    for cc in cs.conceptList do
+    begin
+      hl := hasLanguage(cc, langs);
+      if (hl) then
+        exit(true);
+    end;
+  end;
 end;
 
 function TFhirCodeSystem3.concept(ndx: integer): TFhirCodeSystemConceptW;

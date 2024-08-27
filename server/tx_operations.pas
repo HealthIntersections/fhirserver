@@ -520,7 +520,7 @@ begin
                         vs := FFactory.wrapValueSet(manager.GetResourceByUrl('ValueSet', url, version, false, needSecure));
                     if vs = nil then
                     begin
-                      msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.languages, [url]);
+                      msg := FServer.i18n.translate('Unable_to_resolve_value_Set_', profile.HTTPLanguages, [url]);
                       oOut := FFactory.wrapOperationOutcome(FFactory.makeResource('OperationOutcome'));
                       oOut.addIssue(isError, itNotFound, '', msg, oicNotFound);
                     end
@@ -1406,7 +1406,7 @@ begin
     else  if (p.name = 'force-system-version') then
       result.seeVersionRule(p.valueString, fvmOverride)
     else if (p.name = 'displayLanguage') then
-      result.languages := THTTPLanguageList.create(p.valueString, not isValidation)
+      result.DisplayLanguages := THTTPLanguageList.create(p.valueString, not isValidation)
     else if (p.name = 'property') then
       result.properties.add(p.valueString)
     else if (p.name = 'lenient-display-validation') and (p.valueString = 'true') then
@@ -1432,10 +1432,10 @@ begin
     end
   end;
 
-  if not result.hasLanguages and (request.ContentLanguage <> '') then
-    result.languages := THTTPLanguageList.create(request.ContentLanguage, not isValidation);;
-  if not result.hasLanguages and (request.LangList <> nil) and (request.LangList.source <> '') then
-    result.languages := THTTPLanguageList.create(request.LangList.source, not isValidation);
+  if not result.hasHTTPLanguages and (request.ContentLanguage <> '') then
+    result.HTTPLanguages := THTTPLanguageList.create(request.ContentLanguage, not isValidation);;
+  if not result.hasHTTPLanguages and (request.LangList <> nil) and (request.LangList.source <> '') then
+    result.HTTPLanguages := THTTPLanguageList.create(request.LangList.source, not isValidation);
 end;
 
 function TFhirTerminologyOperation.buildExpansionParams(request: TFHIRRequest; manager: TFHIROperationEngine; params: TFhirParametersW): TFHIRTxOperationParams;

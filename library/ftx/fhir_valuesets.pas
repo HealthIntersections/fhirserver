@@ -131,7 +131,7 @@ Type
     function determineSystemFromExpansion(code: String): String;
     function determineSystem(code : String) : String;
     function determineVersion(path, systemURI, versionVS, versionCoding : String; op : TFhirOperationOutcomeW; var message : String) : string;
-    function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string; unkCodes, messages : TStringList; out defLang : String) : TTrueFalseUnknown; overload;
+    function check(path, system, version, code : String; abstractOk, inferSystem : boolean; displays : TConceptDesignations; unknownSystems : TStringList; var message, ver : String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause : TFhirIssueType; op : TFhirOperationOutcomeW; vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode : TFhirCodeSystemContentMode; var impliedSystem : string; unkCodes, messages : TStringList; out defLang : TIETFLang) : TTrueFalseUnknown; overload;
     function findCode(cs : TFhirCodeSystemW; code: String; list : TFhirCodeSystemConceptListW; displays : TConceptDesignations; out isabstract : boolean): boolean;
     function checkConceptSet(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetComposeIncludeW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var normalForm : String; var vstatus : String; op : TFHIROperationOutcomeW; vcc : TFHIRCodeableConceptW) : boolean;
     function checkExpansion(path : String; cs: TCodeSystemProvider; cset : TFhirValueSetExpansionContainsW; code : String; abstractOk : boolean; displays : TConceptDesignations; vs : TFHIRValueSetW; var message : String; var inactive : boolean; var vstatus : String; op : TFHIROperationOutcomeW) : boolean;
@@ -311,8 +311,8 @@ begin
       FParams.seeParameter(n, v, isValidating, false);
     end;
   end;
-  if not FParams.hasLanguages and (vs.language <> '') then
-    FParams.languages := THTTPLanguageList.create(vs.language, not isValidating);
+  if not FParams.hasHTTPLanguages and (vs.language <> '') then
+    FParams.HTTPLanguages := THTTPLanguageList.create(vs.language, not isValidating);
 end;
 
 function TValueSetWorker.findValueSet(url, version: String): TFHIRValueSetW;
@@ -379,21 +379,21 @@ begin
   if op <> nil then
   begin
     if standardsStatus = 'deprecated' then
-      op.addIssue(isInformation, itBusinessRule, '', 'MSG_DEPRECATED', FI18n.translate('MSG_DEPRECATED', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
+      op.addIssue(isInformation, itBusinessRule, '', 'MSG_DEPRECATED', FI18n.translate('MSG_DEPRECATED', FParams.HTTPLanguages, [vurl, '', rtype]), oicStatusCheck, false)
     else if standardsStatus = 'withdrawn' then
-      op.addIssue(isInformation, itBusinessRule, '', 'MSG_WITHDRAWN', FI18n.translate('MSG_WITHDRAWN', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
+      op.addIssue(isInformation, itBusinessRule, '', 'MSG_WITHDRAWN', FI18n.translate('MSG_WITHDRAWN', FParams.HTTPLanguages, [vurl, '', rtype]), oicStatusCheck, false)
     else if status = psRetired then
-      op.addIssue(isInformation, itBusinessRule, '', 'MSG_RETIRED', FI18n.translate('MSG_RETIRED', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
+      op.addIssue(isInformation, itBusinessRule, '', 'MSG_RETIRED', FI18n.translate('MSG_RETIRED', FParams.HTTPLanguages, [vurl, '', rtype]), oicStatusCheck, false)
     else if (source <> nil) then
     begin
       if experimental and not source.experimental then
-        op.addIssue(isInformation, itBusinessRule, '', 'MSG_EXPERIMENTAL', FI18n.translate('MSG_EXPERIMENTAL', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
+        op.addIssue(isInformation, itBusinessRule, '', 'MSG_EXPERIMENTAL', FI18n.translate('MSG_EXPERIMENTAL', FParams.HTTPLanguages, [vurl, '', rtype]), oicStatusCheck, false)
       else if ((status = psDraft) or (standardsStatus = 'draft')) and
           not ((source.status = psDraft) or (source.getExtensionString('http://hl7.org/fhir/StructureDefinition/structuredefinition-standards-status') = 'draft')) then
           if (pid <> '') then
-            op.addIssue(isInformation, itBusinessRule, '', 'MSG_DRAFT', FI18n.translate('MSG_DRAFT_SRC', FParams.languages, [vurl, pid, rtype]), oicStatusCheck, false)
+            op.addIssue(isInformation, itBusinessRule, '', 'MSG_DRAFT', FI18n.translate('MSG_DRAFT_SRC', FParams.HTTPLanguages, [vurl, pid, rtype]), oicStatusCheck, false)
           else
-            op.addIssue(isInformation, itBusinessRule, '', 'MSG_DRAFT', FI18n.translate('MSG_DRAFT', FParams.languages, [vurl, '', rtype]), oicStatusCheck, false)
+            op.addIssue(isInformation, itBusinessRule, '', 'MSG_DRAFT', FI18n.translate('MSG_DRAFT', FParams.HTTPLanguages, [vurl, '', rtype]), oicStatusCheck, false)
     end;
   end;
 end;
@@ -648,7 +648,7 @@ begin
     end;
   end;
   if (FRequiredSupplements.count > 0) then
-    raise ETerminologyError.create(FI18n.translatePlural(FRequiredSupplements.Count, 'VALUESET_SUPPLEMENT_MISSING', FParams.languages, [FRequiredSupplements.commaText]), itNotFound);
+    raise ETerminologyError.create(FI18n.translatePlural(FRequiredSupplements.Count, 'VALUESET_SUPPLEMENT_MISSING', FParams.HTTPLanguages, [FRequiredSupplements.commaText]), itNotFound);
 end;
 
 procedure TValueSetChecker.prepareConceptSet(desc: string; cc: TFhirValueSetComposeIncludeW; unknownValueSets : TStringList);
@@ -752,7 +752,8 @@ end;
 
 function TValueSetChecker.check(issuePath, system, version, code: String; abstractOk, inferSystem : boolean; op : TFhirOperationOutcomeW): TTrueFalseUnknown;
 var
-  msg, ver, impliedSystem, vstatus, defLang : string;
+  msg, ver, impliedSystem, vstatus : string;
+  defLang : TIETFLang;
   it : TFhirIssueType;
   contentMode : TFhirCodeSystemContentMode;
   unknownSystems, ts, msgs : TStringList;
@@ -789,7 +790,7 @@ end;
 function TValueSetChecker.check(path, system, version, code: String; abstractOk, inferSystem: boolean; displays: TConceptDesignations;
   unknownSystems : TStringList;
   var message, ver: String; var inactive : boolean; var normalForm : String; var vstatus : String; var cause: TFhirIssueType; op: TFhirOperationOutcomeW;
-  vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string; unkCodes, messages : TStringList; out defLang : String): TTrueFalseUnknown;
+  vcc : TFHIRCodeableConceptW; params: TFHIRParametersW; var contentMode: TFhirCodeSystemContentMode; var impliedSystem: string; unkCodes, messages : TStringList; out defLang : TIETFLang): TTrueFalseUnknown;
 var
   cs : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
@@ -807,7 +808,7 @@ begin
   FOpContext.addNote(FValueSet, 'Check "'+TTerminologyOperationContext.renderCoded(system, version, code)+'"');
   if (system = '') and not inferSystem then
   begin
-    msg := FI18n.translate('Coding_has_no_system__cannot_validate', FParams.languages, []);
+    msg := FI18n.translate('Coding_has_no_system__cannot_validate', FParams.HTTPLanguages, []);
     messages.add(msg);
     op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
     exit(bFalse);
@@ -823,7 +824,7 @@ begin
     begin
       if system = '' then
       begin
-        msg := FI18n.translate('Coding_has_no_system__cannot_validate_NO_INFER', FParams.languages, []);
+        msg := FI18n.translate('Coding_has_no_system__cannot_validate_NO_INFER', FParams.HTTPLanguages, []);
         messages.add(msg);
         op.addIssue(isWarning, itInvalid, path, msg, oicInvalidData);
         exit(bFalse);
@@ -840,20 +841,20 @@ begin
           if (vss <> nil) then
           begin
             vss.free;
-            msg := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.languages, [system]);
+            msg := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.HTTPLanguages, [system]);
             messages.add(msg);
             op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
           end
           else if findCodeSystem(system, version, FParams, [cscmSupplement], true) <> nil then
           begin                                                                                
             vss.free;
-            msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.languages, [system]);
+            msg := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [system]);
             messages.add(msg);
             op.addIssue(isError, itInvalid, addToPath(path, 'system'), msg, oicInvalidData);
           end
           else if (version <> '') then
           begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [system, version, '['+listVersions(system)+']']);
+            msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, version, '['+listVersions(system)+']']);
             messages.add(msg);
             if (unknownSystems.IndexOf(system+'|'+version) = -1) then
             begin
@@ -863,7 +864,7 @@ begin
           end
           else
           begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [system]);
+            msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
             messages.add(msg);
             op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
             unknownSystems.add(system);
@@ -886,7 +887,7 @@ begin
               result := bTrue; // we can't say it isn't valid. Need a third status?
               cause := itCodeInvalid;
               FLog := 'Not found in Incomplete Code System';
-              msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.languages, [code, cs.systemUri, cs.version]);
+              msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]);
               messages.add(msg);
               op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end
@@ -895,7 +896,7 @@ begin
               result := bFalse;
               cause := itCodeInvalid;
               FLog := 'Unknown code';
-              msg := FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri, cs.version]);
+              msg := FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]);
               messages.add(msg);
               op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end;
@@ -904,14 +905,14 @@ begin
           begin
             try
               if vcc <> nil then
-                vcc.addCoding(cs.systemUri, cs.version, cs.code(ctxt), cs.display(ctxt, FParams.languages));
+                vcc.addCoding(cs.systemUri, cs.version, cs.code(ctxt), cs.display(ctxt, FParams.Workinglanguages));
               cause := itNull;
               if not (abstractOk or not cs.IsAbstract(ctxt)) then
               begin
                 result := bFalse;
                 FLog := 'Abstract code when not allowed';
                 cause := itBusinessRule;
-                msg := FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [system, code]);
+                msg := FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [system, code]);
                 messages.add(msg);
                 op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
@@ -920,7 +921,7 @@ begin
                 result := bFalse;
                 FLog := 'Inactive code when not allowed';
                 cause := itBusinessRule;
-                msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.languages, ['not active', code]);
+                msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]);
                 messages.add(msg);
                 op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
@@ -930,11 +931,11 @@ begin
                 result := bTrue;
                 if (cs.Code(ctxt) <> code) then
                 begin
-                  msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.languages, [code, cs.Code(ctxt), cs.systemUri]);
+                  msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(ctxt), cs.systemUri]);
                   messages.add(msg);
                   op.addIssue(isWarning, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
                 end; 
-                msg := cs.incompleteValidationMessage(ctxt, FParams.languages);
+                msg := cs.incompleteValidationMessage(ctxt, FParams.HTTPLanguages);
                 if (msg <> '') then
                   op.addIssue(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
                 inactive := cs.IsInactive(ctxt);
@@ -964,7 +965,7 @@ begin
           FLog := 'Unknown code system';
           if (version <> '') then
           begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [system, version, '['+listVersions(system)+']']);
+            msg := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, version, '['+listVersions(system)+']']);
             messages.add(msg);
             if (unknownSystems.IndexOf(system+'|'+version) = -1) then
             begin
@@ -974,7 +975,7 @@ begin
           end
           else
           begin
-            msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [system]);
+            msg := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
             messages.add(msg);
             op.addIssue(isError, itNotFound, addToPath(path, 'system'), msg, oicNotFound);
             unknownSystems.add(system);
@@ -995,7 +996,7 @@ begin
               result := bTrue; // we can't say it isn't valid. Need a third status?
               cause := itCodeInvalid;
               FLog := 'Not found in Incomplete Code System';
-              msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.languages, [code, system, version]);
+              msg := FI18n.translate('UNKNOWN_CODE_IN_FRAGMENT', FParams.HTTPLanguages, [code, system, version]);
               messages.add(msg);
               op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end
@@ -1004,7 +1005,7 @@ begin
               result := bFalse;
               cause := itCodeInvalid;
               FLog := 'Unknown code';
-              msg := FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, system, version]);
+              msg := FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, system, version]);
               messages.add(msg);
               op.addIssue(isWarning, itCodeInvalid, addToPath(path, 'code'), msg, oicInvalidCode);
             end;
@@ -1018,7 +1019,7 @@ begin
                 result := bFalse;
                 FLog := 'Abstract code when not allowed';
                 cause := itBusinessRule;
-                msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.languages, ['not active', code]);
+                msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]);
                 messages.add(msg);
                 op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
@@ -1027,7 +1028,7 @@ begin
                 result := bFalse;
                 FLog := 'Inactive code when not allowed';
                 cause := itBusinessRule;
-                msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.languages, ['not active', code]);
+                msg := FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]);
                 messages.add(msg);
                 op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
               end
@@ -1054,7 +1055,7 @@ begin
         system := determineSystem(code);
         if (system = '') then
         begin
-          message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.languages, [code, FValueSet.vurl]);
+          message := FI18n.translate('UNABLE_TO_INFER_CODESYSTEM', FParams.HTTPLanguages, [code, FValueSet.vurl]);
           messages.add(message);
           op.addIssue(isError, itNotFound, 'code', message, oicInferFailed);
           exit(bFalse);
@@ -1130,12 +1131,12 @@ begin
                 bAdd := true;
                 if (v = '') then
                 begin
-                  message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [system]);
+                  message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]);
                   unknownSystems.add(system);
                 end
                 else
                 begin
-                  message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [system, v, '['+listVersions(system)+']']);
+                  message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, v, '['+listVersions(system)+']']);
                   badd := unknownSystems.IndexOf(system+'|'+version) = -1;
                   if (bAdd) then
                     unknownSystems.add(system+'|'+v);
@@ -1251,7 +1252,7 @@ begin
                 bAdd := true;
                 if (v = '') then
                 begin
-                  message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [system]) ;
+                  message := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [system]) ;
                   unknownSystems.add(system);
                 end
                 else
@@ -1259,7 +1260,7 @@ begin
                   badd := unknownSystems.IndexOf(system+'|'+version) = -1;
                   if (bAdd) then
                   begin
-                    message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [system, v, '['+listVersions(system)+']']);
+                    message := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [system, v, '['+listVersions(system)+']']);
                     unknownSystems.add(system+'|'+v);
                   end;
                 end;
@@ -1300,7 +1301,8 @@ end;
 function TValueSetChecker.check(issuePath : String; coding: TFhirCodingW; abstractOk, inferSystem : boolean) : TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem, path, us, baseMsg, defLang : String;
+  message, ver, pd, impliedSystem, path, us, baseMsg : String;
+  defLang : TIETFLang;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
@@ -1337,22 +1339,22 @@ begin
           result.AddParamBool('result', true);
           if ((cause = itNotFound) and (contentMode <> cscmComplete)) or (contentMode = cscmExample) then
              result.AddParamStr('message', 'The system "'+coding.systemUri+' was found but did not contain enough information to properly validate the code (mode = '+CODES_TFhirCodeSystemContentMode[contentMode]+')');
-          if (coding.display <> '') and (not list.hasDisplay(FParams.languages, defLang, coding.display, dcsCaseInsensitive, diff)) then
+          if (coding.display <> '') and (not list.hasDisplay(FParams.workingLanguages, defLang, coding.display, dcsCaseInsensitive, diff)) then
           begin
              baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
-             dc := list.displayCount(FParams.languages, defLang, true);
+             dc := list.displayCount(FParams.workingLanguages, nil, true);
              if dc > 0 then
              begin
                if (diff = ddNormalised) then
                  baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of';
                if dc = 1 then
-                 result.AddParamStr('message', FI18n.translate(baseMsg+'_one', FParams.languages,
-                  ['', coding.systemUri, coding.code, list.present(FParams.languages, defLang, true), coding.display, FParams.langSummary]))
+                 result.AddParamStr('message', FI18n.translate(baseMsg+'_one', FParams.HTTPLanguages,
+                  ['', coding.systemUri, coding.code, list.present(FParams.workingLanguages, defLang, true), coding.display, FParams.langSummary]))
                else
-                 result.AddParamStr('message', FI18n.translate(baseMsg+'_other', FParams.languages, [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.languages, defLang, true), coding.display, FParams.langSummary]));
+                 result.AddParamStr('message', FI18n.translate(baseMsg+'_other', FParams.HTTPLanguages, [inttostr(dc), coding.systemUri, coding.code, list.present(FParams.workingLanguages, defLang, true), coding.display, FParams.langSummary]));
              end;
           end;
-          pd := list.preferredDisplay(FParams.languages);
+          pd := list.preferredDisplay(FParams.workingLanguages);
           if (pd <> '') then
             result.AddParamStr('display', pd);
           result.addParamUri('system', coding.systemUri);
@@ -1454,7 +1456,8 @@ var
   ok, v : TTrueFalseUnknown;
   first : boolean;
   contentMode : TFhirCodeSystemContentMode;
-  cc, codelist, message, ver, pd, ws, impliedSystem, path, m, tsys, tcode, tver,vs, tdisp, defLang: String;
+  cc, codelist, message, ver, pd, ws, impliedSystem, path, m, tsys, tcode, tver,vs, tdisp, ds: String;
+  defLang : TIETFLang;
   prov, prov2 : TCodeSystemProvider;
   ctxt : TCodeSystemProviderContext;
   c : TFhirCodingW;
@@ -1550,7 +1553,7 @@ begin
 
             if (v = bFalse) and not FAllValueSet and (mode = vcmCodeableConcept) then
             begin
-              m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.languages, ['', FValueSet.vurl, ''''+cc+'''']);
+              m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.HTTPLanguages, ['', FValueSet.vurl, ''''+cc+'''']);
               msg(m);
               p := issuePath + '.coding['+inttostr(i)+'].code';
               op.addIssue(isInformation, itCodeInvalid, p, m, oicThisNotInVS);
@@ -1570,34 +1573,61 @@ begin
                 msg(m);
                 op.addIssue(isWarning, itNotFound, path, m, oicVSProcessing);
               end
-              else if (c.display <> '') and (list.designations.count > 0) and (not list.hasDisplay(FParams.languages, defLang, c.display, dcsCaseInsensitive, diff)) then
+              else if (c.display <> '') and (list.designations.count > 0) then
               begin
-                if (diff = ddNormalised) then
-                  baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
-                else
-                  baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
-                dc := list.displayCount(FParams.languages, defLang, true);
-                severity := dispWarning;
-                if dc = 0 then
+                if (not list.hasDisplay(FParams.workingLanguages, defLang, c.display, dcsCaseInsensitive, diff)) then
                 begin
-                  severity := isWarning;          
-                  dc := list.displayCount(FParams.languages, defLang, false);
-                end;
+                  if (diff = ddNormalised) then
+                    baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
+                  else
+                    baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
+                  dc := list.displayCount(FParams.workingLanguages, nil, true);
+                  severity := dispWarning;
+                  if dc = 0 then
+                  begin
+                    severity := isWarning;
+                    dc := list.displayCount(FParams.workingLanguages, nil, false);
+                  end;
 
-                if dc = 1 then
-                  m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                    ['', c.systemUri, c.code, list.present(FParams.languages, defLang, dc > 0), c.display, FParams.langSummary])
+                  if dc = 0 then
+                  begin
+                    ds := list.preferredDisplay(nil, defLang);
+                    if (ds = '') then
+                      m := FI18n.translate('NO_VALID_DISPLAY_AT_ALL', FParams.HTTPLanguages, [c.display, c.systemUri, c.code])
+                    else
+                    begin
+                      m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                      severity := isError;
+                    end;
+                  end
+                  else if dc = 1 then
+                    m := FI18n.translate(baseMsg+'_one', FParams.HTTPLanguages,
+                      ['', c.systemUri, c.code, list.present(FParams.workingLanguages, defLang, dc > 0), c.display, FParams.langSummary])
+                  else
+                    m := FI18n.translate(baseMsg+'_other', FParams.HTTPLanguages,
+                      [inttostr(dc), c.systemUri, c.code, list.present(FParams.workingLanguages, defLang, dc > 0), c.display, FParams.langSummary]);
+                  msg(m);
+                  op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
+                end
                 else
-                  m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                    [inttostr(dc), c.systemUri, c.code, list.present(FParams.languages, defLang, dc > 0), c.display, FParams.langSummary]);
-                msg(m);
-                op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
+                begin
+                  if (not list.hasDisplay(FParams.workingLanguages, nil, c.display, dcsCaseInsensitive, diff)) then
+                  begin
+                    if (list.source <> nil) and (list.source.hasAnyDisplays(FParams.workingLanguages)) then
+                      m := FI18n.translatePlural(FParams.workingLanguages.count, 'NO_VALID_DISPLAY_FOUND_LANG_SOME', FParams.HTTPLanguages,
+                        [c.systemUri, c.code, c.display, FParams.workingLanguages.source, c.display])
+                    else
+                      m := FI18n.translatePlural(FParams.workingLanguages.count, 'NO_VALID_DISPLAY_FOUND_LANG_NONE', FParams.HTTPLanguages,
+                        [c.systemUri, c.code, c.display, FParams.workingLanguages.source, c.display]);
+                    op.addIssue(isInformation, itInvalid, addToPath(path, 'display'), m, oicDisplayComment);
+                  end;
+                end;
               end;
               psys := c.systemUri;
               pcode := c.code;
               if (ver <> '') then
                 pver := ver;
-              pd := list.preferredDisplay(FParams.languages);
+              pd := list.preferredDisplay(FParams.workingLanguages);
               if pd <> '' then
                 pdisp := pd;
               if (pdisp = '') then
@@ -1607,7 +1637,7 @@ begin
             begin
               if not isAbsoluteUrl(ws) then
               begin   
-                m := FI18n.translate('Terminology_TX_System_Relative', FParams.languages, []);
+                m := FI18n.translate('Terminology_TX_System_Relative', FParams.HTTPLanguages, []);
                 if mode = vcmCoding then
                   p := issuePath + '.system'
                 else if mode = vcmCodeableConcept then
@@ -1624,7 +1654,7 @@ begin
                  if (vss <> nil) then
                  begin
                    vss.free;
-                   m := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.languages, [ws]);
+                   m := FI18n.translate('Terminology_TX_System_ValueSet2', FParams.HTTPLanguages, [ws]);
                    msg(m);
                    op.addIssue(isError, itInvalid, addToPath(path, 'system'), m, oicInvalidData);
                    cause := itInvalid;
@@ -1632,7 +1662,7 @@ begin
                  else if findCodeSystem(ws, c.version, FParams, [cscmSupplement], true) <> nil then
                  begin
                    vss.free;
-                   m := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.languages, [ws]);
+                   m := FI18n.translate('CODESYSTEM_CS_NO_SUPPLEMENT', FParams.HTTPLanguages, [ws]);
                    msg(m);
                    op.addIssue(isError, itInvalid, addToPath(path, 'system'), m, oicInvalidData);
                    cause := itInvalid;
@@ -1644,14 +1674,14 @@ begin
                      bAdd := true;
                      if (prov2 = nil) and (c.version = '') then
                      begin
-                       m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.languages, [ws]);
+                       m := FI18n.translate('UNKNOWN_CODESYSTEM', FParams.HTTPLanguages, [ws]);
                        badd := unknownSystems.IndexOf(ws) = -1;
                        if (bAdd) then
                          unknownSystems.add(ws);
                      end
                      else
                      begin
-                       m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.languages, [ws, c.version, '['+listVersions(c.systemUri)+']']);
+                       m := FI18n.translate('UNKNOWN_CODESYSTEM_VERSION', FParams.HTTPLanguages, [ws, c.version, '['+listVersions(c.systemUri)+']']);
                        badd := unknownSystems.IndexOf(ws+'|'+c.version) = -1;
                        if (bAdd) then
                          unknownSystems.add(ws+'|'+c.version);
@@ -1660,7 +1690,7 @@ begin
                        op.addIssue(isError, itNotFound, addToPath(path, 'system'), m, oicNotFound);
                      if (valueSetDependsOnCodeSystem(ws, c.version)) then
                      begin
-                       m := FI18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', FParams.languages, [FValueSet.vurl, ws+'|'+c.version]);
+                       m := FI18n.translate('UNABLE_TO_CHECK_IF_THE_PROVIDED_CODES_ARE_IN_THE_VALUE_SET_CS', FParams.HTTPLanguages, [FValueSet.vurl, ws+'|'+c.version]);
                        msg(m);
                        op.addIssue(isWarning, itNotFound, '', m, oicVSProcessing);
                      end
@@ -1692,7 +1722,7 @@ begin
                      if ts.indexOf(vs) = -1 then
                      begin
                        ts.add(vs);
-                       m := FI18N.translate('Unknown_Code_in_Version', FParams.languages, [c.code, ws, prov.version]);
+                       m := FI18N.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [c.code, ws, prov.version]);
                        cause := itCodeInvalid;
                        msg(m);
                        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), m, oicInvalidCode);
@@ -1701,32 +1731,32 @@ begin
                    else
                    begin
                      listDisplays(list, prov, ctxt);
-                     pd := list.preferredDisplay(FParams.languages);
+                     pd := list.preferredDisplay(FParams.workingLanguages);
                      if pd <> '' then
                        pdisp := pd;
                      if (pdisp = '') then
                        pdisp := list.preferredDisplay;
                      severity := dispWarning();
-                     if (c.display <> '') and (list.designations.Count > 0) and (not list.hasDisplay(FParams.languages, defLang, c.display, dcsCaseInsensitive, diff)) then
+                     if (c.display <> '') and (list.designations.Count > 0) and (not list.hasDisplay(FParams.workingLanguages, defLang, c.display, dcsCaseInsensitive, diff)) then
                      begin
                        if (diff = ddNormalised) then
                          baseMsg := 'Display_Name_WS_for__should_be_one_of__instead_of'
                        else
                          baseMsg := 'Display_Name_for__should_be_one_of__instead_of';
 
-                       dc := list.displayCount(FParams.languages, defLang, true);
+                       dc := list.displayCount(FParams.workingLanguages, nil, true);
                        if dc = 0 then
                        begin
                          severity := isWarning;
-                         m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                           ['', prov.systemUri, c.code, list.present(FParams.languages, defLang, true), c.display, FParams.langSummary])
+                         m := FI18n.translate(baseMsg+'_other', FParams.HTTPLanguages,
+                           ['', prov.systemUri, c.code, list.present(FParams.workingLanguages, defLang, true), c.display, FParams.langSummary])
                        end
                        else if dc = 1 then
-                         m := FI18n.translate(baseMsg+'_one', FParams.languages,
-                           ['', prov.systemUri, c.code, list.present(FParams.languages, defLang, true), c.display, FParams.langSummary])
+                         m := FI18n.translate(baseMsg+'_one', FParams.HTTPLanguages,
+                           ['', prov.systemUri, c.code, list.present(FParams.workingLanguages, defLang, true), c.display, FParams.langSummary])
                        else
-                         m := FI18n.translate(baseMsg+'_other', FParams.languages,
-                          [inttostr(dc), prov.systemUri, c.code, list.present(FParams.languages, defLang, true), c.display, FParams.langSummary]);
+                         m := FI18n.translate(baseMsg+'_other', FParams.HTTPLanguages,
+                          [inttostr(dc), prov.systemUri, c.code, list.present(FParams.workingLanguages, defLang, true), c.display, FParams.langSummary]);
                        msg(m);
                        op.addIssue(severity, itInvalid, addToPath(path, 'display'), m, oicDisplay);
                      end;
@@ -1746,11 +1776,11 @@ begin
           if (ok = bFalse) and not FAllValueSet then
           begin
             if mode = vcmCodeableConcept then
-              m := FI18n.translate('TX_GENERAL_CC_ERROR_MESSAGE', FParams.languages, [FValueSet.vurl])
+              m := FI18n.translate('TX_GENERAL_CC_ERROR_MESSAGE', FParams.HTTPLanguages, [FValueSet.vurl])
             else // true... if code.codingCount = 1 then
-              m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.languages, ['', FValueSet.vurl, codelist]);
+              m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_one', FParams.HTTPLanguages, ['', FValueSet.vurl, codelist]);
             //else
-            //  m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.languages, ['', FValueSet.vurl, codelist]);
+            //  m := FI18n.translate('None_of_the_provided_codes_are_in_the_value_set_other', FParams.HTTPLanguages, ['', FValueSet.vurl, codelist]);
             msg(m);
 
             if mode = vcmCodeableConcept then
@@ -1838,7 +1868,8 @@ end;
 function TValueSetChecker.check(issuePath, system, version, code: String; inferSystem : boolean): TFhirParametersW;
 var
   list : TConceptDesignations;
-  message, ver, pd, impliedSystem, us, defLang : String;
+  message, ver, pd, impliedSystem, us : String;
+  defLang : TIETFLang;
   cause : TFhirIssueType;
   op : TFhirOperationOutcomeW;
   contentMode : TFhirCodeSystemContentMode;
@@ -1869,7 +1900,7 @@ begin
           if ok = bTrue then
           begin
             result.AddParamBool('result', true);
-            pd := list.preferredDisplay(FParams.languages);
+            pd := list.preferredDisplay(FParams.workingLanguages);
             if pd <> ''then
               result.AddParamStr('display', pd);
             result.addParamUri('system', system);
@@ -1959,18 +1990,18 @@ begin
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" not found in '+ TTerminologyOperationContext.renderCoded(cs));
         if (not FParams.membershipOnly) then
-          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri, cs.version]), oicInvalidCode)
+          op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
       end
       else if not (abstractOk or not cs.IsAbstract(loc)) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
         if (not FParams.membershipOnly) then
-          op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+          op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
       end
       else if FValueSet.excludeInactives and cs.IsInactive(loc) then
       begin
         FOpContext.addNote(FValueSet, 'Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is inactive');
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.languages, ['not active', code]), oicCodeRule);
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
         result := false;
         if (not FParams.membershipOnly) then
         begin
@@ -1985,7 +2016,7 @@ begin
         result := false;
         inactive := true;
         vstatus := cs.getCodeStatus(loc);
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.languages, ['not active', code]), oicCodeRule);
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('STATUS_CODE_WARNING_CODE', FParams.HTTPLanguages, ['not active', code]), oicCodeRule);
       end
       else
       begin
@@ -1994,13 +2025,13 @@ begin
         if (cs.Code(loc) <> code) then
         begin
           if (cs.version <> '') then
-            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.languages, [code, cs.Code(loc), cs.systemUri+'|'+cs.version])
+            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(loc), cs.systemUri+'|'+cs.version])
           else
-            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.languages, [code, cs.Code(loc), cs.systemUri]);
+            msg := FI18n.translate('CODE_CASE_DIFFERENCE', FParams.HTTPLanguages, [code, cs.Code(loc), cs.systemUri]);
           op.addIssue(isInformation, itBusinessRule, addToPath(path, 'code'), msg, oicCodeRule);
           normalForm := cs.Code(loc);
         end;
-        msg := cs.incompleteValidationMessage(loc, FParams.languages);
+        msg := cs.incompleteValidationMessage(loc, FParams.HTTPLanguages);
         if (msg <> '') then
           op.addIssue(isInformation, itInformational, addToPath(path, 'code'), msg, oicProcessingNote);
         listDisplays(displays, cs, loc);
@@ -2009,7 +2040,7 @@ begin
           vstatus := cs.getCodeStatus(loc);
 
         if vcc <> nil then
-          vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.languages));
+          vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
         exit;
       end;
     finally
@@ -2033,7 +2064,7 @@ begin
           if not (abstractOk or not cs.IsAbstract(loc)) then
           begin
             if (not FParams.membershipOnly) then
-              op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+              op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
           end
           else if FValueSet.excludeInactives and cs.IsInactive(loc) then
           begin
@@ -2047,7 +2078,7 @@ begin
           else
           begin
             if vcc <> nil then
-              vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.languages));
+              vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
             result := true;
             exit;
           end;
@@ -2091,7 +2122,7 @@ begin
               begin
                 OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                 if (not FParams.membershipOnly) then
-                  op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+                  op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
               end
               else if FValueSet.excludeInactives and cs.IsInactive(loc) then
               begin
@@ -2107,7 +2138,7 @@ begin
               begin  
                 OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                 if vcc <> nil then
-                  vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.languages));
+                  vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
                 result := true;
                 exit;
               end;
@@ -2136,13 +2167,13 @@ begin
                   begin
                     OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                     if (not FParams.membershipOnly) then
-                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
                   else
                   begin    
                     OpContext.addNote(FValueSet, 'Filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'": Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                     if vcc <> nil then
-                      vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.languages));
+                      vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
                     result := true;
                     exit;
                   end;
@@ -2171,7 +2202,7 @@ begin
                     begin
                       OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                       if (not FParams.membershipOnly) then
-                        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+                        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                     end
                     else if FValueSet.excludeInactives and cs.IsInactive(loc) then
                     begin
@@ -2187,7 +2218,7 @@ begin
                     begin   
                       OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                       if vcc <> nil then
-                        vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.languages));
+                        vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
                       result := true;
                       exit;
                     end;
@@ -2214,7 +2245,7 @@ begin
                   begin
                     OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs)+' but is abstract');
                     if (not FParams.membershipOnly) then
-                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+                      op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
                   end
                   else if FValueSet.excludeInactives and cs.IsInactive(loc) then
                   begin
@@ -2230,7 +2261,7 @@ begin
                   begin       
                     OpContext.addNote(FValueSet, 'Filter '+ctxt.summary+': Code "'+code+'" found in '+ TTerminologyOperationContext.renderCoded(cs));
                     if vcc <> nil then
-                      vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.languages));
+                      vcc.addCoding(cs.systemUri, cs.version, cs.code(loc), displays.preferredDisplay(FParams.workingLanguages));
                     result := true;
                     exit;
                   end;
@@ -2269,12 +2300,12 @@ begin
     if loc = nil then
     begin
       if (not FParams.membershipOnly) then
-        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.languages, [code, cs.systemUri, cs.version]), oicInvalidCode)
+        op.addIssue(isError, itCodeInvalid, addToPath(path, 'code'), FI18n.translate('Unknown_Code_in_Version', FParams.HTTPLanguages, [code, cs.systemUri, cs.version]), oicInvalidCode)
     end
     else if not (abstractOk or not cs.IsAbstract(loc)) then
     begin
       if (not FParams.membershipOnly) then
-        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.languages, [cs.systemUri, code]), oicCodeRule)
+        op.addIssue(isError, itBusinessRule, addToPath(path, 'code'), FI18n.translate('ABSTRACT_CODE_NOT_ALLOWED', FParams.HTTPLanguages, [cs.systemUri, code]), oicCodeRule)
     end
     else
     begin
@@ -2401,8 +2432,10 @@ begin
 
     if FParams.hasLimitedExpansion then
       exp.addParamBool('limitedExpansion', FParams.limitedExpansion);
-    if (FParams.hasLanguages) then
-      exp.addParamCode('displayLanguage', FParams.languages.asString(false));
+    if (FParams.hasDisplayLanguages) then
+      exp.addParamCode('displayLanguage', FParams.DisplayLanguages.asString(false))
+    else if (FParams.hasHTTPLanguages) then
+      exp.addParamCode('displayLanguage', FParams.HTTPLanguages.asString(false));
     if (FParams.hasDesignations) then
       for s in FParams.Designations do
         exp.addParamStr('designation', s);
@@ -2456,7 +2489,7 @@ begin
         handleCompose(source, filter, dependencies, exp, notClosed);
 
       if (FRequiredSupplements.count > 0) then
-        raise ETerminologyError.create(FI18n.translatePlural(FRequiredSupplements.Count, 'VALUESET_SUPPLEMENT_MISSING', FParams.languages, [FRequiredSupplements.commaText]), itBusinessRule);
+        raise ETerminologyError.create(FI18n.translatePlural(FRequiredSupplements.Count, 'VALUESET_SUPPLEMENT_MISSING', FParams.HTTPLanguages, [FRequiredSupplements.commaText]), itBusinessRule);
 
     except
       on e : EFinished do
@@ -2515,7 +2548,7 @@ begin
 
     if (offset + count < 0) and (FFullList.count > limit) then
     begin
-      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.languages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)]));
+      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.HTTPLanguages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)]));
     end
     else
     begin
@@ -2737,6 +2770,7 @@ procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; cs : TCo
 begin
   // list all known language displays
   cs.Designations(c, displays);
+  displays.source := cs.link;
 end;
 
 procedure TValueSetWorker.listDisplays(displays : TConceptDesignations; c: TFhirCodeSystemConceptW); // todo: supplements
@@ -2800,7 +2834,7 @@ begin
     {$ELSE}
     logging.log('Expansion took too long');
     {$ENDIF}
-    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.languages, [FValueSet.vurl, inttostr(time)]));
+    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time)]));
   end;
 end;
 
@@ -2979,7 +3013,7 @@ begin
       begin
         if (srcUrl = '') then
           srcUrl := '??';
-        raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [srcUrl, '>'+inttostr(FLimitCount)]));
+        raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)]));
       end;
     end;
 
@@ -3052,7 +3086,7 @@ begin
               n.addExtensionV(ext.element.link);
 
         // display and designations
-        pref := displays.preferredDesignation(FParams.languages);
+        pref := displays.preferredDesignation(FParams.workingLanguages);
         if (pref <> nil) and (pref.value <> nil) then
           n.display := pref.value.AsString;
 
@@ -3177,7 +3211,7 @@ begin
     begin
       if (srcUrl = '') then
         srcUrl := '??';
-      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [srcUrl, '>'+inttostr(FLimitCount)]));
+      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)]));
     end;
   end;
 
@@ -3348,7 +3382,7 @@ begin
               raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly');
 
           if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
-            raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [srcUrl, '>'+inttostr(FLimitCount)]));
+            raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)]));
         end
       end;
 
@@ -3497,7 +3531,7 @@ begin
               iter := cs.getIterator(nil);
               try
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
-                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
+                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
                 tcount := 0;
                 while iter.more do
                 begin                
@@ -3819,7 +3853,7 @@ begin
               iter := cs.getIterator(nil);
               try
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
-                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.languages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
+                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
                 while iter.more do
                 begin
                   deadCheck('processCodes#3a');

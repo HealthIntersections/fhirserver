@@ -97,7 +97,8 @@ uses
     FIncompleteOK: boolean;
     FProperties : TStringList;
     FDisplayWarning : boolean;
-    FLanguages : THTTPLanguageList;
+    FHTTPLanguages : THTTPLanguageList;
+    FDisplayLanguages : THTTPLanguageList;
     FDesignations : TStringList;
     FDiagnostics : boolean;
 
@@ -118,8 +119,10 @@ uses
     FAltCodeRules : TAlternateCodeOptions;
 
     function GetHasDesignations: boolean;
-    function GetHasLanguages: boolean;
-    procedure SetLanguages(value : THTTPLanguageList);
+    function GetHasHTTPLanguages: boolean;
+    function GetHasDisplayLanguages: boolean;
+    procedure SetHTTPLanguages(value : THTTPLanguageList);
+    procedure SetDisplayLanguages(value : THTTPLanguageList);
     procedure SetActiveOnly(value : boolean);
     procedure SetExcludeNested(value : boolean);
     procedure SetGenerateNarrative(value : boolean);
@@ -149,7 +152,9 @@ uses
     procedure seeVersionRule(url : String; mode : TFhirExpansionParamsVersionRuleMode);
 
     property activeOnly : boolean read FactiveOnly write SetActiveOnly;
-    property languages : THTTPLanguageList read FLanguages write SetLanguages;
+    property HTTPLanguages : THTTPLanguageList read FHTTPLanguages write SetHTTPLanguages;
+    property DisplayLanguages : THTTPLanguageList read FDisplayLanguages write SetDisplayLanguages;
+    function workingLanguages : THTTPLanguageList;
     function langSummary : String;
     property includeDefinition : boolean read FincludeDefinition write SetincludeDefinition;
     property generateNarrative : boolean read FGenerateNarrative write SetGenerateNarrative;
@@ -181,7 +186,8 @@ uses
     property hasDefaultToLatestVersion : boolean read FHasDefaultToLatestVersion;
     property hasIncompleteOK : boolean read FHasIncompleteOK;
     property hasDisplayWarning : boolean read FHasDisplayWarning;
-    property hasLanguages : boolean read GetHasLanguages;
+    property hasHTTPLanguages : boolean read GetHasHTTPLanguages;
+    property hasDisplayLanguages : boolean read GetHasDisplayLanguages;
     property hasDesignations : boolean read GetHasDesignations;
 
     function summary : string;
@@ -521,7 +527,7 @@ begin
   if FOpContext.deadCheck(time) then
   begin
     logging.log('Operation took too long ('+className+')');
-    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.languages, ['??', inttostr(time)]));
+    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time)]));
   end;
 end;
 
@@ -654,15 +660,26 @@ begin
   FGenerateNarrative := true;
 end;
 
-procedure TFHIRTxOperationParams.SetLanguages(value: THTTPLanguageList);
+procedure TFHIRTxOperationParams.SetHTTPLanguages(value: THTTPLanguageList);
 begin
-  FLanguages.free;
-  FLanguages := value;
+  FHTTPLanguages.free;
+  FHTTPLanguages := value;
 end;
 
-function TFHIRTxOperationParams.GetHasLanguages: boolean;
+procedure TFHIRTxOperationParams.SetDisplayLanguages(value: THTTPLanguageList);
 begin
-  result := (FLanguages <> nil) and (FLanguages.source <> '');
+  FDisplayLanguages.free;
+  FDisplayLanguages := value;
+end;
+
+function TFHIRTxOperationParams.GetHasHTTPLanguages: boolean;
+begin
+  result := (FHTTPLanguages <> nil) and (FHTTPLanguages.source <> '');
+end;
+
+function TFHIRTxOperationParams.GetHasDisplayLanguages: boolean;
+begin
+  result := (FDisplayLanguages <> nil) and (FDisplayLanguages.source <> '');
 end;
 
 function TFHIRTxOperationParams.GetHasDesignations: boolean;
@@ -746,7 +763,8 @@ function TFHIRTxOperationParams.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
   inc(result, FVersionRules.sizeInBytes(magic));
-  inc(result, FLanguages.sizeInBytes(magic));
+  inc(result, FHTTPLanguages.sizeInBytes(magic));
+  inc(result, FDisplayLanguages.sizeInBytes(magic));
   inc(result, (FUid.length * sizeof(char)) + 12);
 end;
 
@@ -759,8 +777,8 @@ procedure TFHIRTxOperationParams.seeParameter(name: String; value: TFHIRObject; 
 begin
   if (value <> nil) then
   begin
-    if (name = 'displayLanguage') and (not HasLanguages or overwrite) then
-      languages := THTTPLanguageList.create(value.primitiveValue, not isValidation);
+    if (name = 'displayLanguage') and (not HasHTTPLanguages or overwrite) then
+      DisplayLanguages := THTTPLanguageList.create(value.primitiveValue, not isValidation);
 
     if (name = 'includeAlternateCodes') then
       altCodeRules.seeParam(value.primitiveValue);
@@ -790,12 +808,22 @@ begin
     raise ETerminologyError.Create('Unable to understand '+CODES_TFhirExpansionParamsVersionRuleMode[mode]+' system version "'+url+'"', itInvalid);
 end;
 
+function TFHIRTxOperationParams.workingLanguages: THTTPLanguageList;
+begin
+  if FDisplayLanguages <> nil then
+    result := FDisplayLanguages
+  else
+    result := FHTTPLanguages;
+end;
+
 function TFHIRTxOperationParams.langSummary: String;
 begin
-  if (FLanguages = nil) or (FLanguages.source = '') then
-    result := '--'
+  if (FDisplayLanguages <> nil) and (FDisplayLanguages.source <> '') then
+    result := FDisplayLanguages.asString(false)
+  else if (FHTTPLanguages <> nil) and (FHTTPLanguages.source <> '') then
+    result := FHTTPLanguages.asString(false)
   else
-    result := FLanguages.asString(false);
+    result := '--'
 end;
 
 function TFHIRTxOperationParams.summary: string;
@@ -814,8 +842,10 @@ begin
   s('uid', FUid);
   if (FProperties <> nil) then
     s('properties', FProperties.commaText);
-  if (FLanguages <> nil) then
-    s('lang' , FLanguages.asString(true));
+  if (FHTTPLanguages <> nil) then
+    s('http-lang' , FHTTPLanguages.asString(true));
+  if (FDisplayLanguages <> nil) then
+    s('disp-lang' , FDisplayLanguages.asString(true));
   if (FDesignations <> nil) then
     s('designations', FDesignations.commaText);
   b('active-only', FactiveOnly);
@@ -845,7 +875,8 @@ destructor TFHIRTxOperationParams.Destroy;
 begin
   FAltCodeRules.free;
   FVersionRules.free;
-  FLanguages.free;
+  FHTTPLanguages.free;
+  FDisplayLanguages.free;
   FProperties.free;
   FDesignations.free;
   inherited;
@@ -870,8 +901,10 @@ begin
     b(FHasLimitedExpansion)+b(FHesExcludeNotForUI)+b(FHasExcludePostCoordinated)+b(FHasIncludeDesignations)+
     b(FHasIncludeDefinition)+b(FHasDefaultToLatestVersion)+b(FHasIncompleteOK)+b(FHasDisplayWarning)+b(FHasexcludeNotForUI)+b(FHasMembershipOnly)+b(FDefaultToLatestVersion);
 
-  if hasLanguages then
-    s := s + FLanguages.AsString(true)+'|';
+  if hasHTTPLanguages then
+    s := s + FHTTPLanguages.AsString(true)+'|';
+  if hasDisplayLanguages then
+    s := s + '*'+FDisplayLanguages.AsString(true)+'|';
   if hasDesignations then
     s := s + FDesignations.commaText+'|';
   for t in FVersionRules do
