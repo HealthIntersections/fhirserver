@@ -80,6 +80,10 @@ Type
     procedure send;
   end;
 
+  TCrawlerLogMode = (clmStart, clmHeader, clmError, clmWarning, clmNote);
+
+  { TPackageUpdater }
+
   TPackageUpdater = class (TFslObject)
   private
     FDB : TFDBConnection;
@@ -89,6 +93,9 @@ Type
     FTotalBytes : Cardinal;
     FIni : TIniFile;
     FZulip : TZulipTracker;
+    FCrawlerLog : TFslStringBuilder;
+    FHasErrors : boolean;
+    procedure clog(s : String; mode : TCrawlerLogMode);
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
@@ -97,6 +104,7 @@ Type
     function fetchXml(url : string) : TMXmlElement;
 
     function hasStored(guid : String) : boolean;
+    procedure SetCrawlerLog(AValue: TFslStringBuilder);
     procedure store(source, url, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
 
     procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions);
@@ -108,6 +116,7 @@ Type
     procedure update(DB : TFDBConnection);
 
     property errors : String read FErrors;
+    property CrawlerLog : TFslStringBuilder read FCrawlerLog write SetCrawlerLog;
     property OnSendEmail : TSendEmailEvent read FOnSendEmail write FOnSendEmail;
 
     class procedure test(db : TFDBManager);
@@ -186,8 +195,24 @@ end;
 
 destructor TPackageUpdater.Destroy;
 begin
+  FCrawlerLog.free;
   FZulip.free;
   inherited;
+end;
+
+procedure TPackageUpdater.clog(s: String; mode: TCrawlerLogMode);
+begin
+  case mode of
+    clmStart: FCrawlerLog.append('<p>'+FormatTextToHTML(s)+'</p>'#13#10);
+    clmHeader: FCrawlerLog.append('<p><b>'+FormatTextToHTML(s)+'</b></p>'#13#10);
+    clmError:
+      begin
+        FCrawlerLog.append('<li style="color: Maroon">'+FormatTextToHTML(s)+'</li>'#13#10);
+        FHasErrors := true;
+      end;
+    clmWarning: FCrawlerLog.append('<li style="color: Navy">'+FormatTextToHTML(s)+'</li>'#13#10);
+    clmNote: FCrawlerLog.append('<li style="color: Black">'+FormatTextToHTML(s)+'</li>'#13#10);
+  end;
 end;
 
 procedure TPackageUpdater.DoSendEmail(dest, subj, body: String);
@@ -242,6 +267,12 @@ begin
   FDB.Execute;
   result := FDB.FetchNext;
   FDB.Terminate;
+end;
+
+procedure TPackageUpdater.SetCrawlerLog(AValue: TFslStringBuilder);
+begin
+  FCrawlerLog.free;
+  FCrawlerLog:=AValue;
 end;
 
 procedure TPackageUpdater.log(msg, source: String; error : boolean);
@@ -315,12 +346,19 @@ begin
     id := npm.name;
     version := npm.version;
     if (id+'#'+version <> idver) then
+    begin
       log('Warning processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
+      clog(idver+': actually found '+id+'#'+version+' in the package', clmWarning);
+    end;
+
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
     if npm.notForPublication then
+    begin
       log('Warning processing '+idver+': this package is not suitable for publication (likely broken links)', source, true);
+      clog(idver+': not suitable for publication (likely broken links)', clmWarning);
+    end;
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
       raise EPackageCrawlerException.Create('NPM Id "'+id+'" is not valid from '+source);
@@ -329,6 +367,7 @@ begin
     if (canonical = '') then
     begin
       log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
+      clog(idver+': No canonical found in npm (from '+url+')', clmWarning);
       canonical := 'http://simplifier.net/packages/fictitious/'+id;
     end;
     if not isAbsoluteUrl(canonical) then
@@ -381,6 +420,7 @@ begin
     FDB := DB;
     try
       log('Fetch '+MASTER_URL, '', false);
+      clog('Master URL: '+MASTER_URL, clmStart);
       json := fetchJson(MASTER_URL);
       try
         pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
@@ -394,6 +434,7 @@ begin
       finally
         json.free;
       end;
+      clog('', clmHeader);
     except
       on e : EAbort do
       begin
@@ -443,8 +484,11 @@ begin
   if Logging.shuttingDown then
     Abort;
   try
+    clog('Process '+url, clmHeader);
+    FCrawlerLog.append('<ul>'#13#10);
     log('Fetch '+url, source, false);
     FFeedErrors := '';
+    FHasErrors := false;
 
     xml := fetchXml(url);
     try
@@ -466,11 +510,16 @@ begin
     finally
       xml.free;
     end;
+    if not FHasErrors then
+      clog('All OK', clmNote);
     if (FFeedErrors <> '') and (email <> '') then
         DoSendEmail(email, 'Errors Processing '+url, FFeedErrors);
+    FCrawlerLog.append('</ul>'#13#10);
   except
     on e : Exception do
-    begin
+    begin                                                   
+      clog('Exception: '+e.Message, clmError);
+      FCrawlerLog.append('</ul>'#13#10);
       log('Exception processing feed: '+url+': '+e.Message, source, false);
       if (email <> '') then
         DoSendEmail(email, 'Exception Processing '+url, e.Message);
@@ -487,39 +536,58 @@ var
 begin
   if Logging.shuttingDown then
     Abort;
-  url := '??pck';
+  url := '[link not found]';
   if item.element('guid') = nil then
   begin
     log('Error processing item from '+source+'#item['+inttostr(i)+']: no guid provided', source, true);
+    clog('item['+inttostr(i)+']: no guid provided', clmError);
     exit;
   end;
-  if (item.element('notForPublication') <> nil) and ('true' = item.element('notForPublication').text) then
-    exit;
   guid := item.element('guid').Text;
   try
     id := item.element('title').Text;
+    if (item.element('notForPublication') <> nil) and ('true' = item.element('notForPublication').text) then
+    begin
+      clog(guid+': not for publication', clmError);
+      exit;
+    end;
     if pr.isOk(id, source, list) then
     begin
       if (not hasStored(guid)) then
       begin
-        d := item.element('pubDate').Text.Replace('  ', ' ').Substring(5);
+        d := item.element('pubDate').Text.toLower.Replace('  ', ' ');
+        if (d.substring(0, 6).contains(',')) then
+          d := d.substring(d.indexOf(',')+1)
+        else if StringStartsWith(d, ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']) then
+          d := d.substring(d.indexOf(' ')+1);
+        d := d.trim;
         if (d.length > 2) and (d[2] = ' ') and StringIsInteger16(d[1]) then
           d := '0'+d;
-        date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
+        try
+          date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
+        except
+          date := TFslDateTime.fromFormat('dd mmmm yyyy hh:nn:ss', d);
+        end;
         url := fix(item.element('link').Text);
         log('Fetch '+url, source, false);
         content := fetchUrl(url, 'application/tar+gzip');
         store(source, url, guid, date, content, id);
+        clog(guid+': Fetched '+url, clmNote);
       end;
     end
     else
     begin
-      log('The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', source, true);
+      if not (source.contains('simplifier.net')) then
+      begin
+        log('The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', source, true);
+        clog(guid+': The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', clmError);
+      end;
     end;
   except
     on e : Exception do
     begin
       log('Exception processing item: '+guid+' from '+url+': '+e.Message, source, true);
+      clog(guid+': '+e.Message, clmError);
     end;
   end;
 end;

@@ -253,6 +253,7 @@ Function StringArrayExistsSensitive(Const aNames : Array Of String; Const sName 
 Function StringArrayExists(Const aNames : Array Of String; Const sName: String) : Boolean; Overload;
 Function StringGet(Const sValue : String; iIndex : Integer) : Char; Overload;
 Function StringStartsWith(Const sValue, sFind : String; sensitive : boolean = false) : Boolean; Overload;
+Function StringStartsWith(Const sValue : String; aFind : Array of String; sensitive : boolean = false) : Boolean; Overload;
 Function StringStartsWithSensitive(Const sValue, sFind : String) : Boolean; Overload;
 Function StringStartsWithInsensitive(Const sValue, sFind : String) : Boolean; Overload;
 Function StringEndsWith(Const sValue, sFind : String; sensitive : boolean = false) : Boolean; Overload;
@@ -5484,6 +5485,15 @@ Begin
 End;
 
 
+Function StringStartsWith(Const sValue : String; aFind : Array of String; sensitive : boolean = false) : Boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in aFind do
+    if StringStartsWith(sValue, s, sensitive) then
+      exit(true);
+end;
 
 Function StringEqualsSensitive(Const sA, sB : String) : Boolean;
 Begin
@@ -8029,7 +8039,7 @@ begin
       else if (s = 'dec') or (s = 'december') then
         Result.FMonth := 12
       else
-        raise EDateFormatError.Create('The Month "' + s + '" is unknown in '+date);
+        raise EDateFormatError.Create('The Month "' + s + '" is unknown in '+date+' (using format '+format+', from '+inttostr(start)+' for '+inttostr(length)+' chars');
       end
     else if s = '' then
       Result.FMonth := 1

@@ -589,7 +589,7 @@ var
 begin
   sl := TStringList.Create;
   try
-    if (info.has('dependencies')) then
+    if (info.has('dependencies')) and (info.obj['dependencies'] <> nil) then
     begin
       for n in info.obj['dependencies'].properties.keys do
         sl.add(n+'#'+info.obj['dependencies'].str[n]);
@@ -1114,8 +1114,11 @@ begin
     bs.free;
   end;
   try
-    FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'));
-  except 
+    if folders['package'] <> nil then
+      FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'))
+    else
+      raise EFslException.create('Error parsing '+desc+'#'+'package/package.json: Not found');
+  except
     on e : Exception do
       raise EFslException.create('Error parsing '+desc+'#'+'package/package.json: '+e.Message);
   end;    

@@ -68,6 +68,8 @@ type
 
   TMatchTableSort = (mtsNull, mtsId, mtsVersion, mtsDate, mtsFhirVersion, mtsCanonical, mtsDownloads, mtsKind);
 
+  { TFHIRPackageWebServer }
+
   TFHIRPackageWebServer = class (TFhirWebServerEndpoint)
   private
     FDB : TFDBManager;
@@ -75,6 +77,7 @@ type
     FNextScan : TDateTIme;
     FScanning: boolean;
     FSystemToken : String;
+    FCrawlerLog : String;
 
     procedure setDB(value : TFDBManager);
     function status : String;
@@ -92,12 +95,14 @@ type
     procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
+    procedure serveLog(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
     procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
     procedure processProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id, pword : String);
     procedure SetScanning(const Value: boolean);
 
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
   public
+    constructor Create(code, path : String; common : TFHIRWebServerCommon); override;
     destructor Destroy; override;
     function link  : TFHIRPackageWebServer; overload;
     function description : String; override;
@@ -416,6 +421,7 @@ begin
   try
     upd := TPackageUpdater.Create(FZulip.link);
     try
+      upd.CrawlerLog := TFslStringBuilder.create;
       upd.OnSendEmail := doSendEmail;
       try
         upd.update(conn);
@@ -431,6 +437,7 @@ begin
           Logging.log('Exception updating packages: '+e.Message);
         end;
       end;
+      FEndPoint.FPackageServer.FCrawlerLog := upd.CrawlerLog.AsString;
     finally
       upd.free;
     end;
@@ -804,6 +811,23 @@ begin
   end;
 end;
 
+procedure TFHIRPackageWebServer.serveLog(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String);
+var
+  vars : TFslMap<TFHIRObject>;
+begin
+  response.ResponseNo := 200;
+  response.ResponseText := 'OK';
+  vars := TFslMap<TFHIRObject>.Create;
+  try
+    vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
+    vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+    vars.add('log', TFHIRObjectText.Create(FCrawlerLog));
+    returnFile(request, response, nil, request.Document, 'packages-log.html', false, vars);
+  finally
+    vars.free;
+  end;
+end;
+
 function codeForKind(kind : integer): String;
 begin
   case TFHIRPackageKind(kind) of
@@ -914,7 +938,9 @@ begin
     result := '';
 end;
 
-procedure TFHIRPackageWebServer.serveSearch(name, canonicalPkg, canonicalURL, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+procedure TFHIRPackageWebServer.serveSearch(name, canonicalPkg, canonicalUrl,
+  FHIRVersion, dependency, sort: String; secure: boolean;
+  request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   conn : TFDBConnection;
   json : TJsonArray;
@@ -1346,6 +1372,10 @@ begin
         result := 'Packages updates since '+pm['lastUpdated'];
       end;
     end
+    else if (request.CommandType = hcGET) and (request.Document = '/packages/log') then
+    begin
+      serveLog(request, response, pm['id']);
+    end
     else if (request.CommandType = hcGET) and (request.Document = '/packages/protect') then
     begin
       serveProtectForm(request, response, pm['id']);
@@ -1401,6 +1431,12 @@ begin
   finally
     pm.free;
   end;
+end;
+
+constructor TFHIRPackageWebServer.Create(code, path: String; common: TFHIRWebServerCommon);
+begin
+  inherited Create(code, path, common);
+  FCrawlerLog := 'The Crawler has not yet completed processing the feed';
 end;
 
 function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;
