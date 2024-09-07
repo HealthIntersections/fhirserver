@@ -77,7 +77,7 @@ type
     FNextScan : TDateTIme;
     FScanning: boolean;
     FSystemToken : String;
-    FCrawlerLog : String;
+    FCrawlerLog : TJsonObject;
 
     procedure setDB(value : TFDBManager);
     function status : String;
@@ -95,7 +95,8 @@ type
     procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
     procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
     procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
-    procedure serveLog(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
+    procedure serveLog(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
+    procedure serveBroken(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; filter : String);
     procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
     procedure processProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id, pword : String);
     procedure SetScanning(const Value: boolean);
@@ -421,7 +422,6 @@ begin
   try
     upd := TPackageUpdater.Create(FZulip.link);
     try
-      upd.CrawlerLog := TFslStringBuilder.create;
       upd.OnSendEmail := doSendEmail;
       try
         upd.update(conn);
@@ -437,7 +437,7 @@ begin
           Logging.log('Exception updating packages: '+e.Message);
         end;
       end;
-      FEndPoint.FPackageServer.FCrawlerLog := upd.CrawlerLog.AsString;
+      FEndPoint.FPackageServer.FCrawlerLog := upd.CrawlerLog.Link;
     finally
       upd.free;
     end;
@@ -811,20 +811,98 @@ begin
   end;
 end;
 
-procedure TFHIRPackageWebServer.serveLog(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String);
+function colorForStatus(s : String) : String;
+begin
+  if s = 'error' then
+    result := 'maroon'
+  else if s = 'warning' then
+    result := 'navy'
+  else
+    result := 'black'
+end;
+
+procedure TFHIRPackageWebServer.serveLog(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
 var
   vars : TFslMap<TFHIRObject>;
+  html : TFslStringBuilder;
+  feed, item : TJsonObject;
+  msgs : TJsonArray;
+  allOK : boolean;
+  i : integer;
 begin
   response.ResponseNo := 200;
   response.ResponseText := 'OK';
-  vars := TFslMap<TFHIRObject>.Create;
-  try
-    vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
-    vars.add('ver', TFHIRObjectText.Create('4.0.1'));
-    vars.add('log', TFHIRObjectText.Create(FCrawlerLog));
-    returnFile(request, response, nil, request.Document, 'packages-log.html', false, vars);
-  finally
-    vars.free;
+  
+  if (request.Accept.contains('/html')) then
+  begin
+    html := TFslStringBuilder.create;
+    try
+      if FCrawlerLog.has('status') then
+        html.append('<p>The Crawler has not yet completed processing the feeds</p>'#13#10)
+      else
+      begin
+        html.append('<p>Feeds from '+FormatTextToHTML(FCrawlerLog['master'])+' ('+FormatTextToHTML(FCrawlerLog['run-time'])+')</p>'#13#10);
+        for feed in FCrawlerLog.arr['feeds'].asObjects do
+        begin
+          html.append('<p><b>'+FormatTextToHTML(feed['url'])+'</b> ('+FormatTextToHTML(feed['fetch-time'])+')</p>'#13#10);
+          html.append('<ul>'#13#10);
+          allOk := true;
+          for item in feed.arr['items'].asObjects do
+          begin
+            if item['status'] = 'Already Processed' then
+            begin
+              // nothing
+            end
+            else
+            begin
+              html.append('<li style="color: Black">'+item['guid']+': ');
+
+              if item['status'] = 'Fetched' then
+                html.append('<span style="color: DarkGreen>')
+              else
+              begin              
+                allOK := false;
+                html.append('<span style="color: Maroon">');
+              end;
+              html.append(item['status']+'</span>');
+              if (item.has('messages')) then
+              begin
+                msgs := item.arr['messages'];
+                if (msgs.Count = 1) then
+                  html.append('. <span style="color: '+colorForStatus(msgs.Obj[0]['type'])+'">'+FormatTextToHTML(msgs.Obj[0]['message'])+'</span>')
+                else
+                begin
+                  html.append('<ul>');
+                  for i := 0 to msgs.Count - 1 do
+                    html.append('<li style="color: '+colorForStatus(msgs.Obj[0]['type'])+'">'+FormatTextToHTML(msgs.Obj[0]['message'])+'</li>');
+                  html.append('</ul>'#13#10);
+                end
+              end;
+              html.append('</li>'#13#10);
+            end;
+          end;
+          if (allOK) then
+            html.append('<li style="color: Black">All OK</li>'#13#10);
+          html.append('</ul>'#13#10);
+        end;
+      end;
+      vars := TFslMap<TFHIRObject>.Create;
+      try
+        vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
+        vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+        vars.add('log', TFHIRObjectText.Create(html.ToString));
+        returnFile(request, response, nil, request.Document, 'packages-log.html', false, vars);
+      finally
+        vars.free;
+      end
+    finally
+      html.free;
+    end;
+  end
+  else
+  begin
+    response.ContentType := 'application/json';
+    response.ContentText := TJsonWriterDirect.writeObjectStr(FCrawlerLog, true);
   end;
 end;
 
@@ -920,6 +998,107 @@ begin
     finally
       list.free;
     end;
+    conn.release;
+  except
+    on e : Exception do
+    begin
+      conn.error(e);
+      raise;
+    end;
+  end;
+end;
+
+procedure TFHIRPackageWebServer.serveBroken(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; filter : String);
+var
+  conn : TFDBConnection;
+  json, v, dist: TJsonObject;
+  src, name, dep, ver : String;
+  vars : TFslMap<TFHIRObject>;
+  list : TJsonArray;
+  html : TFslStringBuilder;
+  i : integer;
+  ids : TStringList;
+begin
+  conn := FDB.getConnection('Package.server.broken');
+  try
+  //  conn.sql := 'select Id || ''#'' || version as Source, Dependency from PackageDependencies, PackageVersions where PackageDependencies.PackageVersionKey =  PackageVersions.PackageVersionKey and Dependency not in (select Id || ''#'' || version from PackageVersions) order by Source';
+    json := TJsonObject.Create;
+    try
+      ids := TStringList.create;
+      try
+        conn.sql := 'select Id, Version from PackageVersions';
+        conn.prepare;
+        conn.Execute;
+        while conn.FetchNext do
+          ids.add(conn.ColStringByName['Id']+'#'+ TSemanticVersion.getMajMin(conn.ColStringByName['Version']));
+        conn.terminate;
+        ids.sort;
+        conn.sql := 'select Id || ''#'' || version as Source, Dependency from PackageDependencies, PackageVersions where PackageDependencies.PackageVersionKey =  PackageVersions.PackageVersionKey';
+        conn.prepare;
+        conn.Execute;
+        while conn.FetchNext do
+        begin
+          if (filter = '') or (conn.ColStringByName['Source'].contains(filter)) then
+          begin
+            dep := conn.ColStringByName['Dependency'];
+            ver := TSemanticVersion.getMajMin(dep.substring(dep.indexOf('#')+1));
+            if ids.IndexOf(dep.substring(0, dep.indexOf('#')+1)+ver) = -1 then
+            begin
+              list := json.forceArr[conn.ColStringByName['Source']];
+              list.add(conn.ColStringByName['Dependency']);
+            end;
+          end;
+        end;
+      finally
+        ids.free;
+      end;
+
+      response.ResponseNo := 200;
+      response.ResponseText := 'OK';
+      if (request.Accept.contains('/html')) then
+      begin
+        html := TFslStringBuilder.create;
+        try           
+          html.Append('<table class="grid">'#13#10);
+          html.Append('<tr><td><b>Source Package</b></td><td><b>Broken Dependencies</b></td></tr>'#13#10);
+          for name in json.properties.SortedKeys do
+          begin
+            list := json.arr[name];
+            html.Append('<tr><td>'+name+'</td><td>');
+            for i := 0 to list.Count - 1 do
+            begin
+              if i > 0 then
+                html.append(', ');
+              html.append(list.Value[i]);
+            end;
+            html.append('</td></tr>'#13#10);
+          end;
+          html.Append('</table>'#13#10);
+          vars := TFslMap<TFHIRObject>.Create('vars');
+          try
+            vars.add('prefix', TFHIRObjectText.Create(AbsoluteUrl(false)));
+            vars.add('ver', TFHIRObjectText.Create('4.0.1'));
+            vars.add('filter', TFHIRObjectText.Create(FormatTextToHTML(filter)));
+            vars.add('table', TFHIRObjectText.Create(html.ToString));
+            vars.add('status', TFHIRObjectText.Create(status));
+            returnFile(request, response, nil, request.Document, 'packages-broken.html', false, vars);
+          finally
+            vars.free;
+          end;
+        finally
+          html.free;
+        end;
+      end
+      else
+      begin
+        json.str['date'] := FormatDateTime('c', now);
+        response.ContentType := 'application/json';
+        response.ContentText := TJsonWriterDirect.writeObjectStr(json, true);
+      end;
+    finally
+      json.free;
+    end;
+    conn.terminate;
     conn.release;
   except
     on e : Exception do
@@ -1374,7 +1553,11 @@ begin
     end
     else if (request.CommandType = hcGET) and (request.Document = '/packages/log') then
     begin
-      serveLog(request, response, pm['id']);
+      serveLog(request, response);
+    end
+    else if (request.CommandType = hcGET) and (request.Document = '/packages/broken') then
+    begin
+      serveBroken(request, response, pm['filter']);
     end
     else if (request.CommandType = hcGET) and (request.Document = '/packages/protect') then
     begin
@@ -1436,7 +1619,8 @@ end;
 constructor TFHIRPackageWebServer.Create(code, path: String; common: TFHIRWebServerCommon);
 begin
   inherited Create(code, path, common);
-  FCrawlerLog := 'The Crawler has not yet completed processing the feed';
+  FCrawlerLog := TJsonObject.create;
+  FCrawlerLog['status'] := 'No crawl has completed yet';
 end;
 
 function TFHIRPackageWebServer.SecureRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo;  cert: TIdOpenSSLX509; id: String; tt : TTimeTracker): String;

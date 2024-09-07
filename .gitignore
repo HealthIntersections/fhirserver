@@ -42,7 +42,6 @@ terminology
 # files to ignore
 tests.ini
 exec/fhir.dev.local.cfg
-exec/pack/fhirserver.web
 server/fhirserver.testing.ini
 testcases/v2dict/hl7_94Jul2018.mdb
 testcases/snomed/snomed.cache
@@ -99,3 +98,5 @@ exec/cert/
 *.fpc
 
 up_props.sh
+
+server/web/fhirserver.web
