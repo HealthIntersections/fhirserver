@@ -99,3 +99,5 @@ exec/cert/
 *.fpc
 
 up_props.sh
+
+server/web/fhirserver.web
