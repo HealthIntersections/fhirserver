@@ -542,7 +542,8 @@ begin
   clItem['guid'] := guid;
   clItem['status'] := '??';
   try
-    id := item.element('title').Text;
+    id := item.element('title').Text;  
+    clItem['id'] := id;
     if (item.element('notForPublication') <> nil) and ('true' = item.element('notForPublication').text) then
     begin
       clItem['status'] := 'not for publication';
@@ -588,7 +589,10 @@ begin
         clItem['status'] := 'prohibited source';
       end
       else
+      begin
         clItem['status'] := 'ignored';
+        clog(clItem, 'error', 'The package '+id+' is published through another source');
+      end;
     end;
   except
     on e : Exception do
