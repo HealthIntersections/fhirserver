@@ -855,7 +855,11 @@ begin
             end
             else
             begin
-              html.append('<li style="color: Black">'+item['guid']+': ');
+              html.append('<li style="color: Black">');
+              if (item.has('id')) then
+                html.append('<span title="'+FormatTextToHTML(item['guid'])+'">'+FormatTextToHTML(item['id'])+'</span>: ')
+              else
+                html.append(item['guid']+': ');
 
               if item['status'] = 'Fetched' then
                 html.append('<span style="color: DarkGreen>')
