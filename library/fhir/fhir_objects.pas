@@ -162,7 +162,13 @@ Type
     Constructor Create(place : String);
   End;
 
-  ETooCostly = class (EFHIRException);
+  ETooCostly = class (EFHIRException)
+  private
+    FDiagnostics : String;
+  public
+    property Diagnostics : String read FDiagnostics write FDiagnostics;
+  end;
+
   EFinished = class (EFHIRException);
   EUnsafeOperation = class (EFHIRException);
   EDefinitionException = class (EFHIRException);
