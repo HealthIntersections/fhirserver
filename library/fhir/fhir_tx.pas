@@ -214,7 +214,9 @@ uses
     FParams : TFHIRTxOperationParams;
     FRequiredSupplements : TStringList;
 
+    function costDiags(e : ETooCostly) : ETooCostly;
     function sizeInBytesV(magic : integer) : cardinal; override;
+    function vsHandle : TFHIRValueSetW; virtual; abstract;
     procedure deadCheck(place : String); virtual;
     function findInAdditionalResources(url, version, resourceType : String; error : boolean) : TFHIRMetadataResourceW;
     function findCodeSystem(url, version : String; params : TFHIRTxOperationParams; kinds : TFhirCodeSystemContentModeSet; nullOk : boolean) : TCodeSystemProvider;
@@ -318,7 +320,7 @@ procedure TTerminologyOperationContext.addNote(vs : TFHIRValueSetW; note: String
 var
   s : string;
 begin
-  s := vs.vurl+': '+note;
+  s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+vs.vurl+': '+note;
   Logging.log(s);
   FNotes.add(s);
 end;
@@ -511,6 +513,12 @@ begin
     end;
 end;
 
+function TTerminologyWorker.costDiags(e: ETooCostly): ETooCostly;
+begin
+  e.diagnostics := FOpContext.notes;
+  result := e;
+end;
+
 function TTerminologyWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
@@ -526,8 +534,8 @@ begin
   SetThreadStatus(ClassName+'.'+place);
   if FOpContext.deadCheck(time) then
   begin
-    logging.log('Operation took too long ('+className+')');
-    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time)]));
+    FOpContext.addNote(vsHandle, 'Operation took too long @ '+place+' ('+className+')');
+    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time)])));
   end;
 end;
 

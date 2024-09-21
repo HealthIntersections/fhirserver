@@ -100,6 +100,7 @@ Type
     FAllAltCodes : TAlternateCodeOptions;
 
     procedure seeValueSet(vs : TFHIRValueSetW);
+    function vsHandle : TFHIRValueSetW; override;
 
     function sizeInBytesV(magic : integer) : cardinal; override;
     procedure listDisplays(displays : TConceptDesignations; cs : TCodeSystemProvider; c: TCodeSystemProviderContext); overload;
@@ -313,6 +314,11 @@ begin
   end;
   if not FParams.hasHTTPLanguages and (vs.language <> '') then
     FParams.HTTPLanguages := THTTPLanguageList.create(vs.language, not isValidating);
+end;
+
+function TValueSetWorker.vsHandle: TFHIRValueSetW;
+begin
+  result := FValueSet;
 end;
 
 function TValueSetWorker.findValueSet(url, version: String): TFHIRValueSetW;
@@ -2548,7 +2554,7 @@ begin
 
     if (offset + count < 0) and (FFullList.count > limit) then
     begin
-      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.HTTPLanguages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)]));
+      raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.HTTPLanguages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)])));
     end
     else
     begin
@@ -2834,7 +2840,7 @@ begin
     {$ELSE}
     logging.log('Expansion took too long');
     {$ENDIF}
-    raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time)]));
+    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time)])));
   end;
 end;
 
@@ -3013,7 +3019,7 @@ begin
       begin
         if (srcUrl = '') then
           srcUrl := '??';
-        raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)]));
+        raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)])));
       end;
     end;
 
@@ -3211,7 +3217,7 @@ begin
     begin
       if (srcUrl = '') then
         srcUrl := '??';
-      raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)]));
+      raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)])));
     end;
   end;
 
@@ -3377,12 +3383,12 @@ begin
         begin
           if cs.isNotClosed(filter) then
             if cs.SpecialEnumeration <> '' then
-              raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+              raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
             else
-              raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly');
+              raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
 
           if not imp and (FLimitCount > 0) and (cs.TotalCount > FLimitCount) and not (FParams.limitedExpansion) then
-            raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)]));
+            raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [srcUrl, '>'+inttostr(FLimitCount)])));
         end
       end;
 
@@ -3524,14 +3530,14 @@ begin
             begin
               if cs.isNotClosed(filter) then
                 if cs.SpecialEnumeration <> '' then
-                  raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+                  raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
                 else
-                  raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly');
+                  raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
 
               iter := cs.getIterator(nil);
               try
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
-                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
+                  raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)])));
                 tcount := 0;
                 while iter.more do
                 begin                
@@ -3846,14 +3852,14 @@ begin
             begin
               if cs.isNotClosed(filter) then
                 if cs.SpecialEnumeration <> '' then
-                  raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned')
+                  raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly. If an incomplete expansion is requested, a limited enumeration will be returned'))
                 else
-                  raise ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly');
+                  raise costDiags(ETooCostly.create('The code System "'+cs.systemUri+'" has a grammar, and cannot be enumerated directly'));
 
               iter := cs.getIterator(nil);
               try
                 if valueSets.Empty and (FLimitCount > 0) and (iter.count > FLimitCount) and not (FParams.limitedExpansion) then
-                  raise ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)]));
+                  raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY', FParams.HTTPLanguages, [vsSrc.url, '>'+inttostr(FLimitCount)])));
                 while iter.more do
                 begin
                   deadCheck('processCodes#3a');
