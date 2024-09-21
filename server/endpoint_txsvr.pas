@@ -263,12 +263,13 @@ type
 
   TTerminologyServerEndPoint = class (TStorageEndPoint)
   private
-    FStore : TTerminologyFhirServerStorage;
+//    FStore : TTerminologyFhirServerStorage;
     UTGFolder : String;
     FWeb : TTerminologyServerWebServer;
     FLoadThread : TTerminologyServerDataLoadThread;
     function version : TFHIRVersion;
   public
+    FStore : TTerminologyFhirServerStorage;
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
@@ -1414,10 +1415,25 @@ var
   i : integer;
   list : TFslList<TNpmPackageResource>;
   pi : TNpmPackageResource;
+  fileToLoad: string;
 begin
   i := 0;
 
-  npm := FServerContext.pcm.loadPackage(pid);
+
+//  FEndPoint.
+fileToLoad := filePath([FServerContext.pcm.folder,pid]) ;
+
+
+  if (FileExists(fileToLoad)) then
+    try
+      npm := FServerContext.pcm.loadPackageFromCache(fileToLoad)
+      except
+        on e : Exception do
+          Logging.log('Error loading package from file '+fileToLoad+': '+e.message);
+      end
+  else
+    npm := FServerContext.pcm.loadPackage(pid);
+
   try
     Logging.start('Load package '+npm.name+'#'+npm.version);
     try

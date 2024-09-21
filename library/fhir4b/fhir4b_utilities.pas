@@ -7491,6 +7491,4 @@ begin
   result := append;
   result.fullUrl := url;
 end;
-
 end.
-

@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, ActiveX, FastMM4, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
   {$IFDEF FPC} gui_lcl, Interfaces, {$ELSE} gui_vcl, {$ENDIF}
 
@@ -936,7 +936,7 @@ begin
   else
   begin
     {$IFDEF WINDOWS}
-    noFMMLeakMessageBox := true;
+    //noFMMLeakMessageBox := true;
     {$ENDIF}
     SuppressLeakDialog := true;
   end;

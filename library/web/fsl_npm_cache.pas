@@ -98,7 +98,6 @@ type
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
     FCaching : boolean;
-    function PathForPackage(id, ver : String; allowed : TSemanticVersionLevel = semverMinor) : String;
 
     function loadArchive(content : TBytes; description : String) : TDictionary<String, TBytes>;
     procedure clearCache;
@@ -106,7 +105,6 @@ type
     procedure work(pct : integer; done : boolean; desc : String);
     procedure progress(sender : TObject; pct : integer);
     function check(desc : String) : boolean;
-    function loadPackageFromCache(folder : String) : TNpmPackage;
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
@@ -134,9 +132,11 @@ type
     procedure ListAllPackages(list : TFslList<TNpmPackage>); overload;
 
     function packageExists(id, ver : String;  allowed : TSemanticVersionLevel = semverMinor) : boolean; overload;
+    function PathForPackage(id, ver : String; allowed : TSemanticVersionLevel = semverMinor) : String;
     function autoInstallPackage(id, ver : String) : boolean; overload;
     function latestPublishedVersion(id : String) : String;
 
+    function loadPackageFromCache(folder : String) : TNpmPackage;
     function loadPackage(id : String) : TNpmPackage; overload;
     function loadPackage(id, ver : String) : TNpmPackage; overload;
     procedure loadPackage(id, ver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;

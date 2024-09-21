@@ -1,4 +1,4 @@
-FROM ubuntu:24.04 as builder
+FROM ubuntu:24.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -46,8 +46,8 @@ RUN mkdir -p /work/fhirserver/exec/install/bin && \
     mkdir -p /work/fhirserver/exec/install/x86_64 && \
     mkdir -p /work/fhirserver/exec/install/content && \
     mkdir -p /work/fhirserver/exec/install/config && \
-    mkdir -p /work/fhirserver/exec/install/config/config && \
-    mkdir -p /work/fhirserver/exec/install/config/default_config && \
+    # mkdir -p /work/fhirserver/exec/install/config/config && \
+    mkdir -p /work/fhirserver/exec/install/default_config && \
     mkdir -p /work/fhirserver/exec/install/web
 
 RUN cd /work/fhirserver && \
@@ -56,18 +56,26 @@ RUN cd /work/fhirserver && \
     cp /work/fhirserver/exec/64/FHIRConsole /work/fhirserver/exec/install/bin && \
     cp /work/fhirserver/exec/pack/linux/*so* /work/fhirserver/exec/install/x86_64
 
-RUN cp /work/fhirserver/exec/pack/linux/start_bare.sh /work/fhirserver/exec/install/bin/start.sh && \
+RUN cp /work/fhirserver/exec/pack/linux/start.sh /work/fhirserver/exec/install/bin/start.sh && \
     cp /work/fhirserver/exec/pack/linux/install.sh /work/fhirserver/exec/install && \
     cp /work/fhirserver/exec/pack/linux/get-openssl.sh /work/fhirserver/exec/install && \
     cp /tmp/openssl-1.1.1w/*.so* /work/fhirserver/exec/install/x86_64 && \
     cp /work/fhirserver/exec/pack/*.properties /work/fhirserver/exec/install/content && \
     cp /work/fhirserver/exec/pack/*.dat /work/fhirserver/exec/install/content && \
+
     cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/config && \
     cp /work/fhirserver/exec/pack/web.ini /work/fhirserver/exec/install/config && \
-    cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/config && \
-    cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/config/config/config.json && \
-    cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/default_config && \
-    cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/config/default_config/config.json && \
+
+
+    cp /work/fhirserver/exec/pack/web.ini /work/fhirserver/exec/install/default_config && \
+    cp /work/fhirserver/exec/pack/fhirserver.cfg /work/fhirserver/exec/install/default_config && \
+    cp /work/fhirserver/config/config.ini /work/fhirserver/exec/install/default_config/config.ini && \
+    cp /work/fhirserver/config/config.json /work/fhirserver/exec/install/default_config/config.json && \
+    # cp /work/fhirserver/config/config.ini /work/fhirserver/exec/install/config/config.ini && \
+
+    # cp /work/fhirserver/config/config_bare.json /work/fhirserver/exec/install/default_config/config.json && \
+    # cp /work/fhirserver/config/config.ini       /work/fhirserver/exec/install/config/default_config && \
+    
     mkdir -p /work/fhirserver/exec/install/web && \
     cp -r /work/fhirserver/server/web/* /work/fhirserver/exec/install/web && \
     cd /work/fhirserver/exec && tar -czvf ./install.tgz ./install/  && ls -la /work/fhirserver/exec
@@ -78,9 +86,9 @@ HEALTHCHECK --interval=1m --timeout=10s --retries=5 \
   CMD curl -f http://localhost:${PORT}/fhir/metadata || exit 1
 
 # Set the environment variables
-ENV DISPLAY :99
-ENV PORT 80
-ENV TERMINOLOGY_CACHE /terminology
+ENV DISPLAY=:99
+ENV PORT=80
+ENV TERMINOLOGY_CACHE=/terminology
 VOLUME /terminology
 
 ENV DEBIAN_FRONTEND=
@@ -92,7 +100,7 @@ ENV DEBIAN_FRONTEND=
 
 
 # Runtime stage
-FROM ubuntu:24.04 as runtime
+FROM ubuntu:24.04 AS runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV TZ=UTC
@@ -132,7 +140,7 @@ WORKDIR /fhirserver/install
 ##
 
 # 1. Run the installation script for a blank, clean install
-RUN chmod a+x ./install.sh && ./install.sh -nodaemon 
+RUN chmod a+x ./install.sh && ./install.sh
 
 # OR
 
@@ -144,6 +152,7 @@ RUN chmod a+x ./install.sh && ./install.sh -nodaemon
 ##
 ####################################################################
 
+WORKDIR /root/fhirserver
 
 # Define entrypoint and command
 CMD ["bash", "-c", "cd ~/fhirserver/ && ./start.sh"]
