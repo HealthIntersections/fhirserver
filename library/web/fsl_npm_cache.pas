@@ -106,7 +106,6 @@ type
     procedure work(pct : integer; done : boolean; desc : String);
     procedure progress(sender : TObject; pct : integer);
     function check(desc : String) : boolean;
-    function loadPackageFromCache(folder : String) : TNpmPackage;
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
@@ -137,6 +136,7 @@ type
     function autoInstallPackage(id, ver : String) : boolean; overload;
     function latestPublishedVersion(id : String) : String;
 
+    function loadPackageFromCache(folder : String) : TNpmPackage;
     function loadPackage(id : String) : TNpmPackage; overload;
     function loadPackage(id, ver : String) : TNpmPackage; overload;
     procedure loadPackage(id, ver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
