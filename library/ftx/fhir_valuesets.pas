@@ -1604,8 +1604,16 @@ begin
                       m := FI18n.translate('NO_VALID_DISPLAY_AT_ALL', FParams.HTTPLanguages, [c.display, c.systemUri, c.code])
                     else
                     begin
-                      m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
-                      severity := isError;
+                      if ds = c.display then
+                      begin
+                        m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_OK', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                        severity := isInformation;
+                      end
+                      else
+                      begin
+                        m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_ERR', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                        severity := isError;
+                      end;
                     end;
                   end
                   else if dc = 1 then
