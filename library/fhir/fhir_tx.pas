@@ -215,6 +215,7 @@ uses
     FRequiredSupplements : TStringList;
 
     function costDiags(e : ETooCostly) : ETooCostly;
+    function opName : String; virtual;
     function sizeInBytesV(magic : integer) : cardinal; override;
     function vsHandle : TFHIRValueSetW; virtual; abstract;
     procedure deadCheck(place : String); virtual;
@@ -519,6 +520,11 @@ begin
   result := e;
 end;
 
+function TTerminologyWorker.opName: String;
+begin
+  result := '??';
+end;
+
 function TTerminologyWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
@@ -535,7 +541,7 @@ begin
   if FOpContext.deadCheck(time) then
   begin
     FOpContext.addNote(vsHandle, 'Operation took too long @ '+place+' ('+className+')');
-    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time)])));
+    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time), opName])));
   end;
 end;
 

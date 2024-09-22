@@ -143,6 +143,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
     function isValidating : boolean; override;
+    function opName : String; override;
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String; i18n : TI18nSupport); overload;
     destructor Destroy; override;
@@ -223,6 +224,7 @@ Type
     function useDesignation(cd: TConceptDesignation): boolean;
   protected
     function isValidating : boolean; override;
+    function opName : String; override;
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
@@ -2340,6 +2342,11 @@ begin
   result := true;
 end;
 
+function TValueSetChecker.opName: String;
+begin
+  Result:= 'validation';
+end;
+
 { TFHIRValueSetExpander }
 
 
@@ -2840,7 +2847,7 @@ begin
     {$ELSE}
     logging.log('Expansion took too long');
     {$ENDIF}
-    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time)])));
+    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time), opName])));
   end;
 end;
 
@@ -2955,6 +2962,11 @@ end;
 function TFHIRValueSetExpander.isValidating: boolean;
 begin
   result := false;
+end;
+
+function TFHIRValueSetExpander.opName: String;
+begin
+  Result := 'expansion';
 end;
 
 function getPropUrl(cs : TCodeSystemProvider; pcode : String) : String;
