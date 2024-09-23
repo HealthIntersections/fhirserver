@@ -135,21 +135,9 @@ RUN tar -xzvf install.tgz
 WORKDIR /fhirserver/install
 
 
-### Choose your flavour / uncomment one of the following lines ###:
-##
-##
-
-# 1. Run the installation script for a blank, clean install
+# Run the installation script for a blank, clean install
 RUN chmod a+x ./install.sh && ./install.sh
 
-# OR
-
-# 2. Run the installation script With Zero  Config as tx.fhir.org
-# RUN chmod a+x ./install.sh && ./install.sh -nodaemon -zero=https://storage.googleapis.com/tx-fhir-org/config.json
-                                                      
-##
-##
-##
 ####################################################################
 
 WORKDIR /root/fhirserver
