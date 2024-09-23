@@ -170,7 +170,7 @@ type
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     FStatusKeys : TDictionary<String, String>;
-    function filterBySQL(c : TFDBConnection; sql, lsql : String) : TCodeSystemProviderFilterContext;
+    function filterBySQL(c : TFDBConnection; sql, lsql : String; forIteration : boolean) : TCodeSystemProviderFilterContext;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -196,6 +196,7 @@ type
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
+    function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
@@ -853,6 +854,44 @@ begin
   end;
 end;
 
+function TLOINCServices.doesFilter(prop: String; op: TFhirFilterOperator; value: String): boolean;
+var
+  ts : TStringList;
+  reg : TRegularExpression;
+begin
+  result := false;
+  if (FRelationships.ContainsKey(prop) and (op = foEqual)) then
+    if FCodes.ContainsKey(value) then
+      result := true
+    else
+      result := true
+  else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
+    result := true
+  else if (FRelationships.ContainsKey(prop) and (op = foExists)) then
+    if FCodes.ContainsKey(value) then
+      result := true
+    else
+      result := true
+  else if (FProperties.ContainsKey(prop) and (op = foExists)) then
+    result := true
+  else if (prop = 'STATUS') and (op = foEqual)and (FStatusKeys.ContainsKey(value)) then
+    result := true
+  else if (prop = 'LIST') and (op = foEqual) and (FCodes.ContainsKey(value)) then
+    result := true
+  else if (FRelationships.ContainsKey(prop)) and (op = foRegex) then
+    result := true
+  else if (FProperties.ContainsKey(prop)) and (op = foRegex) then
+    result := true
+  else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
+    result := true
+  else if (prop = 'copyright') and (op = foEqual) and (value = 'LOINC') then
+    result := true
+  else if (prop = 'copyright') and (op = foEqual) and (value = '3rdParty') then
+    result := true
+  else
+    result := false;
+end;
+
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   c : TFDBConnection;
@@ -960,25 +999,29 @@ begin
   result := (ctxt as TLoincFilterHolder).HasKey((concept as TLoincProviderContext).Key);
 end;
 
-function TLOINCServices.filterBySQL(c : TFDBConnection; sql, lsql: String): TCodeSystemProviderFilterContext;
+function TLOINCServices.filterBySQL(c : TFDBConnection; sql, lsql: String; forIteration : boolean): TCodeSystemProviderFilterContext;
 var
   keys : TKeyArray;
   l : integer;
 begin
-  SetLength(keys, 1000);
   l := 0;
-  c.select(sql);
-  while c.fetchnext do
+  if (forIteration) then
   begin
-    if (c.ColKeyByName['Key'] <> 0) then
+    SetLength(keys, 1000);
+    l := 0;
+    c.select(sql);
+    while c.fetchnext do
     begin
-      if (l = length(keys)) then
-        SetLength(keys, l + 1000);
-      keys[l] := c.ColKeyByName['Key'];
-      inc(l);
+      if (c.ColKeyByName['Key'] <> 0) then
+      begin
+        if (l = length(keys)) then
+          SetLength(keys, l + 1000);
+        keys[l] := c.ColKeyByName['Key'];
+        inc(l);
+      end;
     end;
+    c.terminate;
   end;
-  c.terminate;
   SetLength(keys, l);
   result := TLoincFilterHolder.create;
   TLoincFilterHolder(result).FKeys := keys;
@@ -997,29 +1040,29 @@ begin
     if (FRelationships.ContainsKey(prop) and (op = foEqual)) then
       if FCodes.ContainsKey(value) then
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by SourceKey ASC',
-          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and SourceKey = ')
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and SourceKey = ', forIteration)
       else
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) order by SourceKey ASC',
-          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) and SourceKey = ')
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) and SourceKey = ', forIteration)
     else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
       result := FilterBySQL(c, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE order by CodeKey ASC',
-        'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE and CodeKey = ')
+        'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE and CodeKey = ', forIteration)
     else if (FRelationships.ContainsKey(prop) and (op = foExists)) then
       if FCodes.ContainsKey(value) then
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
-          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and SourceKey = ')
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and SourceKey = ', forIteration)
       else
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) order by SourceKey ASC',
-          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) and SourceKey = ')
+          'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) and SourceKey = ', forIteration)
     else if (FProperties.ContainsKey(prop) and (op = foExists)) then
       result := FilterBySQL(c, 'select distinct CodeKey as Key from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' order by CodeKey ASC',
-        'select count(CodeKey) from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' and CodeKey = ')
+        'select count(CodeKey) from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' and CodeKey = ', forIteration)
     else if (prop = 'STATUS') and (op = foEqual)and (FStatusKeys.ContainsKey(value)) then
       result := FilterBySQL(c, 'select CodeKey as Key from Codes where StatusKey = '+FStatusKeys[value]+' order by CodeKey ASC',
-        'select count(CodeKey) from Codes where StatusKey = '+FStatusKeys[value]+' and CodeKey = ')
+        'select count(CodeKey) from Codes where StatusKey = '+FStatusKeys[value]+' and CodeKey = ', forIteration)
     else if (prop = 'LIST') and (op = foEqual) and (FCodes.ContainsKey(value)) then
     result := FilterBySQL(c, 'select TargetKey as Key from Relationships where RelationshipTypeKey = '+FRelationships['Answer']+' and SourceKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
-      'select count(TargetKey) from Relationships where RelationshipTypeKey = '+FRelationships['Answer']+' and SourceKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and TargetKey = ')
+      'select count(TargetKey) from Relationships where RelationshipTypeKey = '+FRelationships['Answer']+' and SourceKey in (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and TargetKey = ', forIteration)
     else if (FRelationships.ContainsKey(prop)) and (op = foRegex) then
     begin
       reg := TRegularExpression.Create(value);
@@ -1032,7 +1075,7 @@ begin
               ts.add(c.ColStringByName['Key']);
           c.terminate;
           result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in ('+ts.CommaText+') order by SourceKey ASC',
-            'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+'  and TargetKey in ('+ts.CommaText+') and SourceKey = ')
+            'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+'  and TargetKey in ('+ts.CommaText+') and SourceKey = ', forIteration)
         finally
           ts.free;
         end;
@@ -1052,7 +1095,7 @@ begin
               ts.add(c.ColStringByName['PropertyValueKey']);
           c.terminate;
           result := FilterBySQL(c, 'select CodeKey as Key from Properties where PropertyTypeKey = '+FProperties[prop]+' and PropertyValueKey in ('+ts.CommaText+') order by CodeKey ASC',
-            'select count(CodeKey) from Properties where PropertyTypeKey = '+FProperties[prop]+' and PropertyValueKey in ('+ts.CommaText+') and CodeKey = ')
+            'select count(CodeKey) from Properties where PropertyTypeKey = '+FProperties[prop]+' and PropertyValueKey in ('+ts.CommaText+') and CodeKey = ', forIteration)
         finally
           ts.free;
         end;
@@ -1062,13 +1105,13 @@ begin
     end
     else if (prop = 'concept') and (op in [foIsA, foDescendentOf]) then
       result := FilterBySQL(c, 'select DescendentKey as Key from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') order by DescendentKey ASC',
-        'select count(DescendentKey) from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and DescendentKey = ')
+        'select count(DescendentKey) from Closure where AncestorKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and DescendentKey = ', forIteration)
     else if (prop = 'copyright') and (op = foEqual) and (value = 'LOINC') then
       result := FilterBySQL(c, 'select CodeKey as Key from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
-        'select count(CodeKey) from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ' )
+        'select count(CodeKey) from Codes where not CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ', forIteration)
     else if (prop = 'copyright') and (op = foEqual) and (value = '3rdParty') then
       result := FilterBySQL(c, 'select CodeKey as Key from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
-        'select count(CodeKey) from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ')
+        'select count(CodeKey) from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ', forIteration)
     else
       result := nil; 
     c.release;
