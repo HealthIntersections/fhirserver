@@ -3,7 +3,8 @@ on:
   # but only for the main branch
   push:
     branches:
-#  pull_request:
+  pull_request:
+
 jobs:
   Build-Docker-Image:
     runs-on: ubuntu-latest
