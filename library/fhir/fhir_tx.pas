@@ -322,7 +322,8 @@ var
   s : string;
 begin
   s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+vs.vurl+': '+note;
-  Logging.log(s);
+  if UnderDebugger then
+    Logging.log(s);
   FNotes.add(s);
 end;
 
