@@ -78,8 +78,11 @@ To build the Docker image, use the following command:
 ```bash
 docker build -t fhirserver-image .
 ```
+
+
 ### Run the Docker Container
 
+#### Default configuration
 To run the container with the default configuration:
 
 ```bash
@@ -87,7 +90,24 @@ docker run -d -p 80:80 --name fhirserver fhirserver-image`
 ```
 This command will run the FHIR server on port 80 of your host machine.
 
+#### Customizing Configuration
+
+You can customize the configuration of the FHIR server by mapping local directory to the respective Docker container directory (`/root/fhirserver/config`). This can be done using Docker volume mapping.
+
+For example, to override the default configuration by mapping a local folder to the FHIR server's configuration folder:
+```yaml
+version: '3.3'  
+services: 
+  fhirserver:  
+    image: zeora/fhirserver:nightly
+  volumes: 
+  - ./config:/root/fhirserver/config        
+```
+
+You can also map a local terminology cache to `/var/cache/txcache` to persist it between container restarts.
+
+
 ### Access the FHIR Server
 
-Once the container is running, you can access the FHIR server metadata endpoint by opening http://localhost/fhir/metadata
+Once the container is running, you can access the FHIR server at http://localhost
 
