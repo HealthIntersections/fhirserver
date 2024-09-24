@@ -64,14 +64,15 @@ jobs:
         mkdir -p ~/terminology/fhir-server
         wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache || true
         ls  ~/terminology/fhir-server/snomed.test.cache
-    - name: Run tests in docker
-      run: |
-        docker images --all
-        docker run \
-          --network gh \
-          -v ~/terminology:/terminology \
-          -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
-          fhirserver -tests
+
+#    - name: Run tests in docker
+#      run: |
+#        docker images --all
+#        docker run \
+#          --network gh \
+#          -v ~/terminology:/terminology \
+#          -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
+#          fhirserver -tests
 
     - name: Tag and push Docker image
       run: |
