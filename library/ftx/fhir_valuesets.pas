@@ -48,7 +48,7 @@ const
   FHIR_VERSION_CANONICAL_SPLIT_3p = '|';
 
   EXPANSION_DEAD_TIME_SECS = 30;
-  VALIDATION_DEAD_TIME_SECS = 30;
+  VALIDATION_DEAD_TIME_SECS = 60;
 
 
 Type
@@ -2569,6 +2569,7 @@ begin
 
     if (offset + count < 0) and (FFullList.count > limit) then
     begin
+      Logging.log('Operation took too long @ expand ('+className+')');
       raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.HTTPLanguages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)])));
     end
     else
