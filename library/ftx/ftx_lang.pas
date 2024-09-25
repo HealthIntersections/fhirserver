@@ -173,6 +173,7 @@ procedure TIETFLanguageCodeServices.Designations(context: TCodeSystemProviderCon
 var
   c : TIETFLanguageCodeConcept;
   msg : String;
+  i : integer;
 begin
   if (context <> nil) then
   begin
@@ -182,8 +183,17 @@ begin
       list.addDesignation(true, true, '', FLanguages.present(c.FInfo).Trim);
       if (c.FInfo.isLangRegion) then
       begin
-        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, '{{lang}} ({{region}})').Trim);
-        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, '{{lang}} (Region={{region}})').Trim);
+        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, 0, '{{lang}} ({{region}})').Trim);
+        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, 0, '{{lang}} (Region={{region}})').Trim);
+      end;
+      for i := 0 to FLanguages.displayCount(c.FInfo) - 1 do
+      begin
+        list.addDesignation(false, true, '', FLanguages.present(c.FInfo, i).Trim);
+        if (c.FInfo.isLangRegion) then
+        begin
+          list.addDesignation(false, true, '', FLanguages.present(c.FInfo, i, '{{lang}} ({{region}})').Trim);
+          list.addDesignation(false, true, '', FLanguages.present(c.FInfo, i, '{{lang}} (Region={{region}})').Trim);
+        end;
       end;
     end;
   end;
