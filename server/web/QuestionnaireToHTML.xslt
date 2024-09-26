@@ -650,7 +650,6 @@
       <script type="text/javascript" src="{$jQueryPath}/jquery.ui.draggable.js">&#xA0;</script>
       <script type="text/javascript" src="{$jQueryPath}/jtip.js">&#xA0;</script>
       <script type="text/javascript" src="{$jQueryPath}/jcookie.js">&#xA0;</script>
-      <script type="text/javascript" src="{$jQueryPath}/hl7connect.js">&#xA0;</script>
       <script type="text/javascript">
         <xsl:comment>
           <xsl:text>&#x0a;</xsl:text>

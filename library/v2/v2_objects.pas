@@ -249,7 +249,7 @@ type
     Property Parent : THL7V2BaseObject Read GetParent Write SetParent;
     Property Children : THL7V2BaseObjects Read GetChildren Write SetChildren;
     Property Model : THL7V2Model read GetModel;
-    Property Slot : TObject read FSlot write FSlot; // this is deprecated, but parts of HL7Connect use this, so cannot currently be removed
+    Property Slot : TObject read FSlot write FSlot; // this is deprecated
   end;
 
   THL7V2BaseObjectClass = class of THL7V2BaseObject;
@@ -875,7 +875,7 @@ Type
     Procedure SetExceptionCode(Const sMessage, sResponseCode, SErrorCode : String);
 
     Procedure StripEmptyRepeats(bLeading: Boolean);
-    Procedure UpdateSource; // deprecated, but used widely by HL7Connect
+    Procedure UpdateSource; // deprecated
     procedure Clone(oSource: THL7V2Message; aOptions: THL7V2DataElementCloneOptions); overload;
     Function SegmentQuery(query : String):THL7V2SegmentList;
     procedure ChangeVersion(ANewVersion: String; ADeleteInvalidContent: Boolean); Reintroduce; overload;
@@ -900,7 +900,7 @@ Type
     Property Segment[Const sCode: String; iIndex: Integer]: THL7V2Segment Read GetSegment; // Segment 0 is the first instance of a given segment
     Property SegmentMap: THL7V2SegmentGroup Read FSegmentMap;
     Property Segments : THL7V2Segments Read GetChildren Write SetChildren;
-    Property Source : TBytes Read FSource; // deprecated, but used widely by HL7Connect
+    Property Source : TBytes Read FSource; // deprecated
     Property StructName: String Read GetStructID Write SetStructID;
   End;
 
@@ -4641,7 +4641,7 @@ Begin
   End
   Else
   Begin
-    oSegment.Field[3].AsString := 'HL7Connect';
+    oSegment.Field[3].AsString := 'FhirServer';
     oSegment.Field[4].AsString := 'Unknown';
     oSegment.Field[5].AsString := 'Unknown';
     oSegment.Field[6].AsString := 'Unknown';

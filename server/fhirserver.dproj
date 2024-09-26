@@ -179,7 +179,7 @@
     <DCC_DebugInformation>0</DCC_DebugInformation>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Cfg_2_Win32)&apos;!=&apos;&apos;">
-    <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+    <DCC_UnitSearchPath>$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     <Debugger_RunParams>-debug -ini ..\..\server\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\FHIR.Loinc.Base\LOINCDB.MDB</Debugger_RunParams>
     <Manifest_File>None</Manifest_File>
     <VerInfo_Locale>1033</VerInfo_Locale>
