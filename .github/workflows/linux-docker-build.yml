@@ -35,13 +35,9 @@ jobs:
           -d mysql:8
     - name: Docker Build
       run: |
-        docker  build \
-          --tag fhirserver \
-        .
-#    - name: Scan Code
-#      run: |
-#        export DISPLAY=0:0
-#        docker run --entrypoint /work/fhirserver/utilities/codescan/codescan fhirserver /work/bootstrap
+        docker build \
+          --tag ghcr.io/${{ github.repository_owner }}/fhirserver:nightly .
+
 
     - name: Prepare ini file
       env:
@@ -76,11 +72,4 @@ jobs:
 
     - name: Tag and push Docker image
       run: |
-       # Extract the FHIR server version from the library/version.inc file
-        FHIR_VERSION=$(grep -oP "FHIR_CODE_FULL_VERSION = '\K[^']+" library/version.inc)
-
-       # Tag the Docker image with the extracted version and "latest"
-        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:nightly
-
-       # Push both tagged images to Docker Hub
         docker push ghcr.io/${{ github.repository_owner }}/fhirserver:nightly
