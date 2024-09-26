@@ -88,9 +88,6 @@ Const
   SUPPORTED_VERSIONS = [fhirVersionRelease2, fhirVersionRelease3, fhirVersionRelease4];
 
 Type
-  {
-    Possible command types supported by HL7Connect FHIR interfaces
-  }
   TFHIRCommandType = (
     fcmdUnknown, { Unknown command}
     fcmdRead, { Read the resource}

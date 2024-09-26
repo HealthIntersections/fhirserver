@@ -286,8 +286,8 @@ var
   rq : integer;
 begin
   time := FTimeLimit;
-  //if UnderDebugger then
-  //  exit(false);
+  if UnderDebugger then
+    exit(false);
 
   timeToDie := FStartTime + (time * 1000);
   if (GetTickCount64 > timeToDie) then
