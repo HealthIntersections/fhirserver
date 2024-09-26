@@ -83,4 +83,4 @@ jobs:
         docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:nightly
 
        # Push both tagged images to Docker Hub
-        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:nightly
+        docker push ghcr.io/${{ github.repository_owner }}/fhirserver:nightly
