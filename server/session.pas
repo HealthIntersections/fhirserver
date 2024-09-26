@@ -303,7 +303,7 @@ Type
     The request may have been received over a FHIR RESTful interface, or by receiving
     a resource or an atom bundle directly from some other kind of interface.
 
-    The request may be modified by a script. HL7Connect will ignore changes to the following
+    The request may be modified by a script. the server will ignore changes to the following
     properties: url, baseURL, resourceType, and format. These properties should be treated as read-only,
     but the other properties can be changed as desired
   }
@@ -616,14 +616,14 @@ Type
 
       Any http status code may be used, including codes not defined in the
       http standard (i.e. return 299 to prevent a proxy from caching the response).
-      HL7Connect will follow the http standard and use the first digit to determine
+      The server will follow the http standard and use the first digit to determine
       the general outcome
     }
     Property HTTPCode : Integer read FHTTPCode write FHTTPCode;
 
     {
       a specific message to go in the HTTP response line. If left blank,
-      HL7Connect will fill this out from the http specification
+      The server will fill this out from the http specification
     }
     Property Message : String read FMessage write FMessage;
 

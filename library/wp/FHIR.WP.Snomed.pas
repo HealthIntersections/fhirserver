@@ -30,9 +30,9 @@ POSSIBILITY OF SUCH DAMAGE.
 
 
 {
-Snomed Client for HL7Connect Snomed Server.
+Snomed Client for FhirServer.
 
-Needs an HL7Connect, configured with Snomed Content. This
+Needs an FhirServer, configured with Snomed Content. This
 client needs a URL, a username, and a password.
 
 In addition, the client needs an INI file which it uses for local
@@ -174,7 +174,7 @@ Type
     Procedure Initialise; Override;
     Procedure Finalise; Override;
   Public
-    // Access to the Snomed Infrastructure. Needs an HL7Connect behind it.
+    // Access to the Snomed Infrastructure. Needs an FhirServer behind it.
     Property Client : TSnomedClient Read FClient Write SetClient;
 
     // the selected Snomed Term, if one. Optional when opening the

@@ -80,7 +80,7 @@ Uses
 
   fsl_base, fsl_utilities, fsl_crypto, fsl_logging, fsl_stream, fsl_collections, fsl_threads, fsl_json, fsl_xml,
   {$IFDEF WINDOWS} fsl_msxml, fsl_service_win, {$ENDIF}
-  fsl_openssl, fsl_http, fdb_manager, fsl_htmlgen, fdb_dialects, fsl_rdf, fsl_graphql, fsl_twilio,
+  fsl_openssl, fsl_http, fdb_manager, fdb_logging, fsl_htmlgen, fdb_dialects, fsl_rdf, fsl_graphql, fsl_twilio,
 
   {$IFDEF WINDOWS}
   fdb_odbc,
@@ -219,6 +219,7 @@ Type
     Procedure ReturnProcessedFile(sender : TObject; request : TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; claimed, actual: String; secure: boolean; variables: TFslMap<TFHIRObject> = nil); overload;
     Procedure ReturnSpecFile(response: TIdHTTPResponseInfo; stated, path: String; secure : boolean);
     function  ReturnDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
+    function  ReturnDBDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
     function  ReturnStatistics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure, asHtml: boolean) : String;
 
     Procedure PlainRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
@@ -890,6 +891,12 @@ begin
                 summ := 'diagnostics';
                 summ := ReturnDiagnostics(AContext, request, response, false, false)
               end
+              else if request.Document.startsWith('/diagnostics/db/') then
+              begin
+                epn := 'WS';
+                summ := 'diagnostics';
+                summ := ReturnDBDiagnostics(AContext, request, response, false, false)
+              end
               else if request.Document = '/statistics' then
               begin
                 epn := 'WS';
@@ -921,7 +928,7 @@ begin
               end;
             end;
           end;
-          if (summ.contains('err:') and (not summ.contains('msg:') or UnderDebugger)) then
+          if (summ.contains('err:') or (summ.contains('too long')) and (not summ.contains('msg:') or UnderDebugger)) then
             logCrash(false, id, ip, request, response);
 
           logResponse(id, response);
@@ -1411,6 +1418,29 @@ begin
     vars.Add('status.run-time', TFHIRSystemString.Create(DescribePeriod((GetTickCount64 - Common.Stats.StartTime) * DATETIME_MILLISECOND_ONE)));
     vars.Add('status.run-time.ms', TFHIRSystemString.Create(inttostr(GetTickCount64 - Common.Stats.StartTime)));
     ReturnProcessedFile(self, request, response, 'Diagnostics', SourceProvider.AltFile('/diagnostics.html', ''), false, vars);
+  finally
+    vars.free;
+  end;
+  result := 'Diagnostics';
+end;
+
+function TFhirWebServer.ReturnDBDiagnostics(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean) : String;
+var
+  id : String;
+  db : TFDBManager;
+  vars : TFslMap<TFHIRObject>;
+  ep : TFhirWebServerEndpoint;
+  sp : TStorageWebEndpoint;
+begin
+  id := request.Document.subString(16);
+  db := DBManagers.ConnManByName[id];
+  vars := TFslMap<TFHIRObject>.Create('dx.vars');
+  try
+    if (db = nil) then
+      vars.Add('status.db', TFHIRSystemString.Create(FormatTextToHTML('Database '+id+' not known')))
+    else
+      vars.Add('status.db', TFHIRSystemString.Create(db.logger.Report(krfHTML)));
+    ReturnProcessedFile(self, request, response, 'Diagnostics', SourceProvider.AltFile('/diagnostics-db.html', ''), false, vars);
   finally
     vars.free;
   end;

@@ -52,12 +52,12 @@
         <DCC_UsePackage>Vcl50;Vclx50;VclSmp50;Qrpt50;Vcldb50;Vclbde50;ibevnt50;vcldbx50;TeeUI50;TeeDB50;Tee50;TeeQR50;VCLIB50;vclie50;Inetdb50;Inet50;NMFast50;dclocx50;dclaxserver50;$(DCC_UsePackage)</DCC_UsePackage>
         <VerInfo_Locale>3081</VerInfo_Locale>
         <DCC_N>true</DCC_N>
-        <DCC_UnitSearchPath>C:\HL7Connect\v2\Library\Core\Hak\Resources;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\FhirServer\v2\Library\Core\Hak\Resources;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_E>false</DCC_E>
         <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductName=;ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <DCC_Alignment>1</DCC_Alignment>
-        <DCC_DcuOutput>C:\HL7Connect\scratch\Units\debug</DCC_DcuOutput>
-        <DCC_ExeOutput>C:\HL7Connect\v2\Deploy\RunTime\Bin</DCC_ExeOutput>
+        <DCC_DcuOutput>C:\FhirServer\scratch\Units\debug</DCC_DcuOutput>
+        <DCC_ExeOutput>C:\FhirServer\v2\Deploy\RunTime\Bin</DCC_ExeOutput>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_WriteableConstants>true</DCC_WriteableConstants>
         <DCC_Optimize>false</DCC_Optimize>
@@ -93,7 +93,7 @@
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_UnitSearchPath>C:\work\fhirserver\dependencies\Indy10\System;C:\work\fhirserver\dependencies\Indy10\Core;C:\work\fhirserver\dependencies\Indy10\Protocols;C:\work\fhirserver\dependencies\synedit;C:\work\fhirserver\dependencies\d32\debug;C:\work\fhirserver\library;C:\work\fhirserver\dependencies\Indy10\OpenSSL;C:\work\fhirserver\dependencies\Indy10\OpenSSL\dynamic;C:\work\fhirserver\dependencies\Indy10;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_Define>CDE;$(DCC_Define)</DCC_Define>
-        <Debugger_RunParams>;C:\HL7Connect\v2\cde\samples\abaki.cda</Debugger_RunParams>
+        <Debugger_RunParams>;C:\FhirServer\v2\cde\samples\abaki.cda</Debugger_RunParams>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>None</Manifest_File>
         <DCC_DcuOutput>C:\work\fhirserver\tmp\units\32\</DCC_DcuOutput>

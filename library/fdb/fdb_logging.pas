@@ -293,8 +293,7 @@ begin
   '<p>Lists the actual current usage of connections. Typically, a few connections'+#13#10+
   'are in use at any one time - the usage list should roll over constantly. If'+#13#10+
   'connections are persisting in this list, then there is a problem in the code'+#13#10+
-  'that manages the connection (either in HL7Connect, or in a script - check'+#13#10+
-  'scripts to see whether the given name comes from a script).</p>'+#13#10+
+  'that manages the connection.</p>'+#13#10+
   ''+#13#10+
   '<p><b>Table</b></p>'+#13#10+
   '<p>The table summarises the past history of connection usage, and doesn''t include connections in use</p>'+#13#10+

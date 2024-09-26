@@ -14188,7 +14188,7 @@ Begin
       oGrp1.Children.Add('TXA', False, False, gtSingle);
       oGrp1.Children.Add('OBX', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-  oStructure := oStructures.Add('DSR_Q01', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('DSR_Q01', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('DSR_Q01', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -14200,7 +14200,7 @@ Begin
     oStructure.SegmentMap.Children.Add('QRF', True, False, gtSingle);
     oStructure.SegmentMap.Children.Add('DSP', False, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-  oStructure := oStructures.Add('DSR_Q03', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('DSR_Q03', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('DSR_Q03', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -14249,7 +14249,7 @@ Begin
         oGrp2.Children.Add('SPM', True, True, gtSingle);
       oGrp1.Children.Add('ECR', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('ROL', True, False, gtSingle);
-  oStructure := oStructures.Add('EDR_R07', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('EDR_R07', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('EDR_R07', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -14259,14 +14259,14 @@ Begin
     oStructure.SegmentMap.Children.Add('QAK', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('DSP', False, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-  oStructure := oStructures.Add('EQQ_Q04', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('EQQ_Q04', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('EQQ_Q04', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('SFT', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('EQL', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-  oStructure := oStructures.Add('ERP_R09', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('ERP_R09', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('ERP_R09', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -16178,7 +16178,7 @@ Begin
     oStructure.SegmentMap.Children.Add('SFT', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('QPD', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('RCP', False, False, gtSingle);
-  oStructure := oStructures.Add('QCK_Q02', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('QCK_Q02', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('QCK_Q02', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -16220,7 +16220,7 @@ Begin
     oStructure.SegmentMap.Children.Add('QRD', False, False, gtSingle);
     oStructure.SegmentMap.Children.Add('QRF', True, False, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-  oStructure := oStructures.Add('QRY_Q02', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('QRY_Q02', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('QRY_Q02', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -16800,7 +16800,7 @@ Begin
     oStructure.SegmentMap.Children.Add('NK1', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('GT1', True, True, gtSingle);
     oStructure.SegmentMap.Children.Add('NTE', True, True, gtSingle);
-  oStructure := oStructures.Add('RQQ_Q09', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('RQQ_Q09', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('RQQ_Q09', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -17292,7 +17292,7 @@ Begin
       oGrp2 := oGrp1.Children.Add('PERSONNEL_RESOURCE', True, True, gtGroup);
         oGrp2.Children.Add('AIP', False, False, gtSingle);
         oGrp2.Children.Add('NTE', True, True, gtSingle);
-  oStructure := oStructures.Add('SPQ_Q08', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('SPQ_Q08', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('SPQ_Q08', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -17454,7 +17454,7 @@ Begin
         oGrp2.Children.Add('PDC', False, False, gtSingle);
         oGrp2.Children.Add('NTE', False, False, gtSingle);
       oGrp1.Children.Add('ED', False, False, gtSingle);
-  oStructure := oStructures.Add('TBR_R08', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('TBR_R08', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('TBR_R08', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -17475,7 +17475,7 @@ Begin
       oGrp1.Children.Add('SPM', True, False, gtSingle);
       oGrp1.Children.Add('TCC', False, True, gtSingle);
     oStructure.SegmentMap.Children.Add('ROL', True, False, gtSingle);
-  oStructure := oStructures.Add('UDM_Q05', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('UDM_Q05', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('UDM_Q05', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);
@@ -17484,7 +17484,7 @@ Begin
     oStructure.SegmentMap.Children.Add('URS', True, False, gtSingle);
     oStructure.SegmentMap.Children.Add('DSP', False, True, gtSingle);
     oStructure.SegmentMap.Children.Add('DSC', True, False, gtSingle);
-  oStructure := oStructures.Add('VQQ_Q07', '(Implicitly Created by HL7Connect)', '', '', '');
+  oStructure := oStructures.Add('VQQ_Q07', '(Implicitly Created)', '', '', '');
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create;
   oStructure.SegmentMap := THL7V2ModelSegmentGroup.Create('VQQ_Q07', False, False, gtGroup);
     oStructure.SegmentMap.Children.Add('MSH', False, False, gtSingle);

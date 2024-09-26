@@ -79,9 +79,7 @@
 
     Original author Grahame Grieve
 
-    This code was donated by HL7Connect.com
-    For more HL7 open source code see
-    http://www.hl7connect.com/tools
+    This code was donated by Kestral Computing
 
   This unit implements support for the Standard HL7 minimal Lower Layer
   protocol. For further details, consult the HL7 standard (www.hl7.org).

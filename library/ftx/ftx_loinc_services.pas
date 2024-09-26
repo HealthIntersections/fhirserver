@@ -170,6 +170,7 @@ type
     FRelationships : TDictionary<String, String>;
     FProperties : TDictionary<String, String>;
     FStatusKeys : TDictionary<String, String>;
+    function commaListOfCodes(source: String): String;
     function filterBySQL(c : TFDBConnection; sql, lsql : String; forIteration : boolean) : TCodeSystemProviderFilterContext;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -374,7 +375,7 @@ var
   ci : TLoincProviderContext;
   s : String;
 begin
-  FDB := TFDBSQLiteManager.create('db', sFilename, true, false, 10);
+  FDB := TFDBSQLiteManager.create(ExtractFileName(sFilename), sFilename, true, false, 10);
   c := FDB.GetConnection('load');
   try
     c.sql := 'Select LanguageKey, Code from Languages';
@@ -1029,11 +1030,22 @@ begin
 end;
 
 
+function TLOINCServices.commaListOfCodes(source : String) : String;
+var
+  s : String;
+begin
+  result := '';
+  for s in source.split([',']) do
+    if FCodes.ContainsKey(s) then
+      CommaAdd(result, s);
+end;
+
 function TLOINCServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 var
   c : TFDBConnection;
   ts : TStringList;
   reg : TRegularExpression;
+  s : string;
 begin          
   c := FDB.getConnection('filterBySQL');
   try
@@ -1044,9 +1056,21 @@ begin
       else
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) order by SourceKey ASC',
           'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Description = '''+sqlwrapString(value)+''' COLLATE NOCASE) and SourceKey = ', forIteration)
+    else if (FRelationships.ContainsKey(prop) and (op = foIn)) then
+    begin
+      s := commaListOfCodes(value);
+      result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('''+s+''') order by SourceKey ASC',
+        'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code = '''+sqlwrapString(value)+''') and SourceKey = ', forIteration)
+    end
     else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
       result := FilterBySQL(c, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE order by CodeKey ASC',
         'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE and CodeKey = ', forIteration)
+    else if (FProperties.ContainsKey(prop) and (op = foIn)) then
+    begin    
+      s := commaListOfCodes(value);
+      result := FilterBySQL(c, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = ('''+SQLWrapString(s)+''') COLLATE NOCASE order by CodeKey ASC',
+        'select count(CodeKey) from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE and CodeKey = ', forIteration)
+    end
     else if (FRelationships.ContainsKey(prop) and (op = foExists)) then
       if FCodes.ContainsKey(value) then
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) order by SourceKey ASC',
@@ -1054,6 +1078,12 @@ begin
       else
         result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) order by SourceKey ASC',
           'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Description = '''+sqlwrapString(value)+''' COLLATE NOCASE)) and SourceKey = ', forIteration)
+    else if (FRelationships.ContainsKey(prop) and (op = foIn)) then
+    begin
+      s := commaListOfCodes(value);
+      result := FilterBySQL(c, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code in ('''+sqlwrapString(s)+'''))) order by SourceKey ASC',
+        'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and exists (select CodeKey from Codes where (Code = '''+sqlwrapString(value)+''')) and SourceKey = ', forIteration)
+    end
     else if (FProperties.ContainsKey(prop) and (op = foExists)) then
       result := FilterBySQL(c, 'select distinct CodeKey as Key from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' order by CodeKey ASC',
         'select count(CodeKey) from Properties where Properties.PropertyTypeKey = '+FProperties[prop]+' and CodeKey = ', forIteration)
@@ -1113,7 +1143,8 @@ begin
       result := FilterBySQL(c, 'select CodeKey as Key from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) order by CodeKey ASC',
         'select count(CodeKey) from Codes where CodeKey in (select CodeKey from Properties where PropertyTypeKey = 9) and CodeKey = ', forIteration)
     else
-      result := nil; 
+      result := nil;
+
     c.release;
   except
     on e : Exception do

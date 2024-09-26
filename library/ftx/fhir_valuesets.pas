@@ -48,7 +48,7 @@ const
   FHIR_VERSION_CANONICAL_SPLIT_3p = '|';
 
   EXPANSION_DEAD_TIME_SECS = 30;
-  VALIDATION_DEAD_TIME_SECS = 30;
+  VALIDATION_DEAD_TIME_SECS = 60;
 
 
 Type
@@ -2569,6 +2569,7 @@ begin
 
     if (offset + count < 0) and (FFullList.count > limit) then
     begin
+      Logging.log('Operation took too long @ expand ('+className+')');
       raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.HTTPLanguages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)])));
     end
     else
@@ -3802,22 +3803,25 @@ begin
 
     if cset.systemUri = '' then
     begin
-      NoTotal;
-      for s in cset.valueSets do
+      if (cset.hasValueSets) then
       begin
-        //Logging.log('Processing '+vsId+', import value set '+s);
-        deadCheck('processCodes#2');
-        ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
-        try
-          checkCanonicalStatus(expansion, ivs.FValueSet, FValueSet);
-          expansion.addParamUri('used-valueset', ivs.FValueSet.vurl);
-          expansion.addParamUri('version', ivs.FValueSet.vurl);
-          valueSets.add(ivs.link);
-        finally
-          ivs.free;
+        NoTotal;
+        for s in cset.valueSets do
+        begin
+          //Logging.log('Processing '+vsId+', import value set '+s);
+          deadCheck('processCodes#2');
+          ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
+          try
+            checkCanonicalStatus(expansion, ivs.FValueSet, FValueSet);
+            expansion.addParamUri('used-valueset', ivs.FValueSet.vurl);
+            expansion.addParamUri('version', ivs.FValueSet.vurl);
+            valueSets.add(ivs.link);
+          finally
+            ivs.free;
+          end;
         end;
-      end;
-      excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1);
+        excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1);
+      end
     end
     else
     begin
@@ -4005,23 +4009,17 @@ begin
                     if ok then
                     begin
                       inc(count);
-                      cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
-                      try
-                        if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
+                      if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
+                      begin
+                        if cs.canParent then
+                          parent := FMap[key(cs.systemUri, cs.parent(c))]
+                        else
                         begin
-                          listDisplays(cds, cs, c);
-                          if cs.canParent then
-                            parent := FMap[key(cs.systemUri, cs.parent(c))]
-                          else
-                          begin
-                            FCanBeHierarchy := false;
-                            parent := nil;
-                          end;
-                          for code in cs.listCodes(c, FParams.altCodeRules) do
-                            excludeCode(cs, cs.systemUri, cs.version, code, expansion, nil, vsSrc.url);
+                          FCanBeHierarchy := false;
+                          parent := nil;
                         end;
-                      finally
-                        cds.free;
+                        for code in cs.listCodes(c, FParams.altCodeRules) do
+                          excludeCode(cs, cs.systemUri, cs.version, code, expansion, nil, vsSrc.url);
                       end;
                     end;
                   finally
