@@ -3,11 +3,7 @@ name: Build and Push Docker Image to GHCR
 on:
   # Trigger the workflow on push or pull request for the main branch
   push:
-    branches:
-      - main
   pull_request:
-    branches:
-      - main
 
 jobs:
   Build-Docker-Image:
