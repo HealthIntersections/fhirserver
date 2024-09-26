@@ -375,7 +375,7 @@ var
   ci : TLoincProviderContext;
   s : String;
 begin
-  FDB := TFDBSQLiteManager.create('db', sFilename, true, false, 10);
+  FDB := TFDBSQLiteManager.create(ExtractFileName(sFilename), sFilename, true, false, 10);
   c := FDB.GetConnection('load');
   try
     c.sql := 'Select LanguageKey, Code from Languages';

@@ -376,7 +376,6 @@ begin
     b.appendLine('<script src="/js/jquery.ui.draggable.js"></script>');
     b.appendLine('<script type="text/javascript" src="/js/jtip.js"></script>');
     b.appendLine('<script type="text/javascript" src="/js/jcookie.js"></script>');
-    b.appendLine('<script type="text/javascript" src="/js/hl7connect.js"></script>');
     b.appendLine('<script type="text/javascript" src="/js/fhir-gw.js"></script>');
     b.appendLine('</head>');
     b.appendLine('');
