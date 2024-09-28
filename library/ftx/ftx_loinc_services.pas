@@ -155,6 +155,17 @@ type
     function HasKey(key : cardinal) : boolean;
   end;
 
+  { TLOINCPrep }
+
+  TLOINCPrep = class (TCodeSystemProviderFilterPreparationContext)
+  private
+    filters : TFslList<TLoincFilterHolder>;
+  public
+    constructor Create; Override;
+    destructor Destroy; Override;
+  end;
+
+
   { TLOINCServices }
 
   TLOINCServices = class (TCodeSystemProvider)
@@ -198,6 +209,7 @@ type
     function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
+    function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
@@ -893,6 +905,11 @@ begin
     result := false;
 end;
 
+function TLOINCServices.getPrepContext: TCodeSystemProviderFilterPreparationContext;
+begin
+  result := TLOINCPrep.Create;
+end;
+
 procedure TLOINCServices.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
 var
   c : TFDBConnection;
@@ -1236,6 +1253,20 @@ begin
     if (FKeys[i] = key) then
       exit(true);
   end;
+end;
+
+{ TLOINCPrep }
+
+constructor TLOINCPrep.Create;
+begin
+  inherited Create;
+  filters := TFslList<TLoincFilterHolder>.create;
+end;
+
+destructor TLOINCPrep.Destroy;
+begin
+  filters.free;
+  inherited Destroy;
 end;
 
 { TDescriptionCacheEntry }
