@@ -42,7 +42,7 @@ uses
   fsl_oauth, fsl_http, fsl_fetcher, fsl_crypto, fsl_zulip;
 
 const
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
+  MASTER_URL = 'https://fhir.github.io/ig-registry/package-feeds.json';
 
 type
   TIdUriParserTests = Class (TFslTestCase)

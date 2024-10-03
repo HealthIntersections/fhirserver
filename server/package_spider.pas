@@ -41,8 +41,8 @@ uses
   fsl_npm;
 
 const
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/package-feeds.json';
-  MANUAL_REG_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/manual-package-list.json';
+  MASTER_URL = 'https://fhir.github.io/ig-registry/package-feeds.json';
+  MANUAL_REG_URL = 'https://fhir.github.io/ig-registry/manual-package-list.json';
   EMAIL_DAYS_LIMIT= 7;
 
 Type
