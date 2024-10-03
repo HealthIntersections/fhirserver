@@ -616,7 +616,6 @@ constructor TIETFLanguageEntry.Create;
 begin
   inherited Create;
   FDisplays := TStringList.create;
-  FDisplays.Delimiter := '|';
 end;
 
 destructor TIETFLanguageEntry.Destroy;
@@ -1134,11 +1133,13 @@ end;
 function TIETFLanguageDefinitions.loadExtLang(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageExtLang;
+  s : String;
 begin
   cc := TIETFLanguageExtLang.Create;
   try
     cc.code := vars['Subtag'];
-    cc.displays.DelimitedText := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FExtLanguages.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
     FExtLanguages.Add(cc.code, cc.Link);
@@ -1156,7 +1157,8 @@ begin
   cc := TIETFLanguageLanguage.Create;
   try
     cc.code := vars['Subtag'];
-    cc.displays.DelimitedText := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if (vars.ContainsKey('Suppress-Script')) then
       cc.sscript := vars['Suppress-Script'];
     if (vars.ContainsKey('Scope')) then
@@ -1173,11 +1175,13 @@ end;
 function TIETFLanguageDefinitions.loadRegion(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageRegion;
+  s : String;
 begin
   cc := TIETFLanguageRegion.Create;
   try
     cc.code := vars['Subtag'];
-    cc.displays.DelimitedText := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FRegions.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FRegions.Add(cc.code, cc.Link);
@@ -1190,11 +1194,13 @@ end;
 function TIETFLanguageDefinitions.loadScript(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageScript;
+  s : String;
 begin
   cc := TIETFLanguageScript.Create;
   try
     cc.code := vars['Subtag'];
-    cc.displays.DelimitedText := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FScripts.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
     FScripts.Add(cc.code, cc.Link);
@@ -1207,11 +1213,13 @@ end;
 function TIETFLanguageDefinitions.loadVariant(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageVariant;
+  s : String;
 begin
   cc := TIETFLanguageVariant.Create;
   try
     cc.code := vars['Subtag'];
-    cc.displays.DelimitedText := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FVariants.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FVariants.Add(cc.code, cc.Link);
