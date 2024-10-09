@@ -51,7 +51,7 @@ uses
   web_base, web_cache, endpoint;
 
 const
-  POST_SIZE_LIMIT = 20; // MB
+  POST_SIZE_LIMIT = 50; // MB
 
 type
   TStorageEndPoint = class;
