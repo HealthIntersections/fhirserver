@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache,
+  fsl_base, fsl_utilities, fsl_collections, fsl_json, fsl_xml, fsl_stream, fsl_http, fsl_npm_cache, fsl_i18n,
   fsl_ucum, fsl_npm, fsl_threads, fsl_web_stream,
   fhir_objects, fhir_parser, fhir_narrative, fhir_pathengine, fhir_common, fhir_xhtml,
   fhir_elementmodel, fhir_client, fhir_uris;
@@ -168,6 +168,7 @@ type
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); virtual; abstract;
     function buildOperationOutcome(langList : THTTPLanguageList; e : exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
     Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; virtual; abstract;
+    function buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV; overload; virtual; abstract;
 
     function makeByName(const name : String) : TFHIRObject; virtual; abstract;
     function makeResource(const name : String) : TFHIRResourceV;
@@ -194,8 +195,8 @@ type
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; virtual; abstract;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; virtual; abstract;
 
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; virtual; abstract;
-    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; virtual; abstract;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; virtual; abstract;
+    function makeProxy(packageId : String; presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; virtual; abstract;
 
     function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; virtual; abstract;
@@ -280,10 +281,11 @@ type
     property pcm : TFHIRPackageManager read FPcm;
     property LoadInfo : TPackageLoadingInformation read FLoadInfo;
 
-    procedure loadResourceJson(rType, id : String; json : TStream); override;
-    procedure seeResource(res : TFHIRResourceV); overload; virtual; abstract;
+    procedure loadResourceJson(packageId : String; rType, id : String; json : TStream); override;
+    procedure seeResource(packageId : String; res : TFHIRResourceV); overload; virtual; abstract;
     procedure seeResource(res : TFHIRResourceProxyV); overload; virtual; abstract;
     procedure dropResource(rtpe, id : String); overload; virtual; abstract;
+    procedure LoadCodeSystem(r : TFhirResourceProxyV); virtual; abstract;
 
     procedure setNonSecureTypes(names : Array of String); virtual; abstract;
 
@@ -359,8 +361,8 @@ type
     function makeParameters : TFHIRParametersW; override;
     function makeTerminologyCapablities : TFhirTerminologyCapabilitiesW; override;
     function makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String) : TFhirOperationOutcomeIssueW; override;
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; override;
-    function makeProxy(presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; override;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; overload; override;
+    function makeProxy(packageId : String; presource : TFHIRResourceV) : TFHIRResourceProxyV; overload; override;
     function wrapResource(r : TFHIRResourceV) : TFHIRXVersionResourceWrapper; virtual;
     function wrapCapabilityStatement(r : TFHIRResourceV) : TFHIRCapabilityStatementW; override;
     function wrapStructureDefinition(r : TFHIRResourceV) : TFhirStructureDefinitionW; override;
@@ -422,6 +424,9 @@ type
     procedure setVersion(Value: String); override;
   public
     destructor Destroy; override;
+    function renderText : String; override;
+    function wrapExtension(extension : TFHIRObject) : TFHIRExtensionW; override;
+
   end;
 
 { TFhirSystemCoding }
@@ -429,6 +434,11 @@ type
 function TFhirSystemCoding.tuple: TFHIRSystemTuple;
 begin
   result := Element as TFhirSystemTuple;
+end;
+
+function TFhirSystemCoding.wrapExtension(extension: TFHIRObject): TFHIRExtensionW;
+begin
+  raise EFSLException.Create('Not Implemented Yet');
 end;
 
 function TFhirSystemCoding.getCode: String;
@@ -461,6 +471,11 @@ begin
     result := ''
   else
     result := (tuple.Fields['version'] as TFHIRObject).ToString;
+end;
+
+function TFhirSystemCoding.renderText: String;
+begin
+  result := systemUri+'#'+code;
 end;
 
 procedure TFhirSystemCoding.setCode(Value: String);
@@ -781,12 +796,12 @@ begin
   raise EFslException.Create('makeIssue is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeProxy(pi: TNpmPackageResource; worker: TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+function TFHIRFactoryX.makeProxy(packageId : String; pi: TNpmPackageResource; worker: TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
   raise EFslException.Create('makeProxy is not implemented in the non-versioned FHIRFactory');
 end;
 
-function TFHIRFactoryX.makeProxy(presource: TFHIRResourceV): TFHIRResourceProxyV;
+function TFHIRFactoryX.makeProxy(packageId : String; presource: TFHIRResourceV): TFHIRResourceProxyV;
 begin
   raise EFslException.Create('makeProxy is not implemented in the non-versioned FHIRFactory');
 end;
@@ -1222,7 +1237,7 @@ begin
   // nothing here
 end;
 
-procedure TFHIRWorkerContextWithFactory.loadResourceJson(rType, id: String;
+procedure TFHIRWorkerContextWithFactory.loadResourceJson(packageId : String; rType, id: String;
   json: TStream);
 var
   p : TFHIRParser;
@@ -1231,7 +1246,8 @@ begin
   try
     p.source := json;
     p.Parse;
-    SeeResource(p.resource);
+    p.resource.SourcePackage := packageId;
+    SeeResource(packageId, p.resource);
   finally
     p.free;
   end;

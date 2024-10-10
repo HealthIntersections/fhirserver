@@ -178,7 +178,8 @@ type
     function text : String; override;
     function code : TFhirIssueType; override;
     procedure addIssue(issue : TFhirOperationOutcomeIssueW; owns : boolean); override;
-    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path, message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
+    procedure addIssue(level : TIssueSeverity; cause : TFHIRIssueType; path,        message : String; code : TOpIssueCode; addIfDuplicate : boolean); override;
+    procedure addIssue(level : TIssueSeverity; cause : TFhirIssueType; path, msgId, message : String; code : TOpIssueCode; addIfDuplicate : boolean = false); overload; override;
     function hasIssues : boolean; override;
     function issues : TFslList<TFhirOperationOutcomeIssueW>; override;
     function rule(level : TIssueSeverity; source : String; typeCode : TFhirIssueType; path : string; test : boolean; msg : string) : boolean; override;
@@ -468,8 +469,8 @@ type
     function contains : TFslList<TFhirValueSetExpansionContainsW>; override;
     procedure addDesignation(lang, use, value : String); override;
     procedure addDesignation(lang : TIETFLang; use : TFHIRCodingW; value : TFHIRPrimitiveW; extensions : TFslList<TFHIRExtensionW>); override;
-    procedure addProperty(code : String; value : TFHIRObject); override; overload;
-    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); override; overload;
+    procedure addProperty(code : String; value : TFHIRObject); overload; override;
+    procedure addProperty(code : String; prop : TFhirCodeSystemConceptPropertyW); overload; override;
     procedure addContains(contained : TFhirValueSetExpansionContainsW); override;
     procedure clearContains(); override;
     function properties : TFslList<TFhirCodeSystemConceptPropertyW>; override;
@@ -571,7 +572,8 @@ type
     function display : String; override;
     function displayElement : TFHIRPrimitiveW; override;
     function definition : String; override;
-    function conceptList : TFhirCodeSystemConceptListW; override;
+    function conceptList : TFhirCodeSystemConceptListW; override;  
+    function hasConcepts : boolean; override;
     function conceptCount : integer; override;
     function designationCount : integer; override;
     function designations : TFslList<TFhirCodeSystemConceptDesignationW>; override;
@@ -616,6 +618,7 @@ type
     function conceptList : TFhirCodeSystemConceptListW; override;
     function concept(ndx : integer) : TFhirCodeSystemConceptW; override;
     function conceptCount : integer; override;
+    function hasConcepts : boolean; override;
     function hasConcept(c : TFhirCodeSystemConceptW) : boolean; override;
 
     function isInactive(c : TFhirCodeSystemConceptW) : boolean; override;    
@@ -626,6 +629,7 @@ type
     function getChildren(c : TFhirCodeSystemConceptW) : TFhirCodeSystemConceptListW; override;
     function getCode(code : String) : TFhirCodeSystemConceptW; override;
     function buildImplicitValueSet : TFHIRValueSetW; override;
+    function hasAnyDisplays(langs : THTTPLanguageList) : boolean; override;
 
     function getDate: TFslDateTime; override;
     function getStatus: TPublicationStatus; override;
@@ -634,7 +638,8 @@ type
     procedure setName(Value: String); override;
     procedure setStatus(Value: TPublicationStatus); override;
     procedure setUrl(Value: String); override;
-    procedure setVersion(Value: String); override;
+    procedure setVersion(Value: String); override; 
+    function GetCaseSensitive: boolean; override;
     function getContent: TFhirCodeSystemContentMode; override;
     procedure setContent(Value: TFhirCodeSystemContentMode); override;
     function getCount: integer; override;
@@ -642,6 +647,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function valueSet : String; override;
     function supplements : String; override;
     function getExperimental : boolean; override;
@@ -690,6 +697,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function source : String; override;
     function findContains(systemUri, version, code : String) : TFhirValueSetExpansionContainsW; override;
     function getExperimental : boolean; override;
@@ -715,6 +724,8 @@ type
     procedure setUse(Value: TFHIRObject); override;
   end;
 
+  { TFHIRLookupOpResponse2 }
+
   TFHIRLookupOpResponse2 = class (TFHIRLookupOpResponseW)
   public
     procedure load(params : TFHIRResourceV); overload; override;
@@ -729,8 +740,14 @@ type
     procedure addExtension(name : String; value : boolean); overload; override;
     function getName: String; override;
     procedure setName(Value: String); override;
+    function getCode: String; override;
+    procedure setCode(Value: String); override;
+    function getSystem: String; override;
+    procedure setSystem(Value: String); override;
     function getDisplay: String; override;
-    procedure setDisplay(Value: String); override;
+    procedure setDisplay(Value: String); override;        
+    function getIsAbstract: boolean; override;
+    procedure setIsAbstract(Value: boolean); override;
   end;
 
   { TFhirConceptMapGroupElementDependsOn2 }
@@ -811,6 +828,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function sourceDesc : String; override;
     function targetDesc : String; override;
     function getExperimental : boolean; override;
@@ -1109,6 +1128,8 @@ type
     function getContext: String; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
     function getExperimental : boolean; override;
@@ -1138,6 +1159,8 @@ type
     procedure setContext(Value: String); override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     function getVersion: String; override;
     procedure setVersion(Value: String); override;
   public
@@ -1166,6 +1189,8 @@ type
     function getDate: TFslDateTime; override;
     function getPublisher: String; override;
     procedure setPublisher(Value: String); override;
+    function getTitle : String; override;
+    procedure setTitle(value : String); override;
     procedure setDate(Value: TFslDateTime); override;
     procedure setUrl(Value: String); override;
     procedure setVersion(Value: String); override;
@@ -1271,6 +1296,28 @@ begin
     iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[code], '');
   iss.details.text := message;
   iss.locationList.Add(path);
+end;
+
+procedure TFhirOperationOutcome2.addIssue(level: TIssueSeverity; cause: TFhirIssueType; path, msgId, message: String; code: TOpIssueCode; addIfDuplicate: boolean);
+var
+  iss : TFhirOperationOutcomeIssue;
+begin
+  if not addIfDuplicate then
+  begin
+    for iss in (Fres as TFhirOperationOutcome).issueList do
+      if (iss.details <> nil) and (iss.details.text = message) then
+        exit();
+  end;
+
+  iss := (Fres as TFhirOperationOutcome).issueList.Append;
+  iss.code:= ExceptionTypeTranslations[cause];
+  iss.severity := ISSUE_SEVERITY_MAP2[level];
+  iss.details := TFHIRCodeableConcept.Create;
+  if (code <> oicVoid) then
+    iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[code], '');
+  iss.details.text := message;
+  iss.locationList.Add(path);
+  iss.addExtension('http://hl7.org/fhir/StructureDefinition/operationoutcome-message-id', msgid);
 end;
 
 function TFhirOperationOutcome2.code: TFhirIssueType;
@@ -2952,6 +2999,16 @@ begin
   vs.publisher := value;
 end;
 
+function TFHIRValueSet2.getTitle: String;
+begin
+  result := vs.name;
+end;
+
+procedure TFHIRValueSet2.setTitle(value: String);
+begin
+  // nothing
+end;
+
 procedure TFHIRValueSet2.setStatus(Value: TPublicationStatus);
 begin
   vs.status := MAP_TPublicationStatus[value];
@@ -3202,6 +3259,11 @@ begin
   result := FConceptList;
 end;
 
+function TFhirCodeSystemConcept2.hasConcepts: boolean;
+begin
+  result := (Element as TFhirCodeSystemConcept).hasConceptList;
+end;
+
 function TFhirCodeSystemConcept2.definition: String;
 begin
   result := (Element as TFhirCodeSystemConcept).definition;
@@ -3407,17 +3469,17 @@ begin
   result := (op as TFHIROperationResponse).asParams;
 end;
 
-function TFHIRLookupOpResponse2.GetDisplay: String;
+function TFHIRLookupOpResponse2.getDisplay: String;
 begin
   result := (op as TFHIRLookupOpResponse).display;
 end;
 
-function TFHIRLookupOpResponse2.GetName: String;
+function TFHIRLookupOpResponse2.getName: String;
 begin
   result := (op as TFHIRLookupOpResponse).name;
 end;
 
-function TFHIRLookupOpResponse2.GetVersion: String;
+function TFHIRLookupOpResponse2.getVersion: String;
 begin
   result := (op as TFHIRLookupOpResponse).version;
 end;
@@ -3432,17 +3494,47 @@ begin
   (op as TFHIRLookupOpResponse).load(params as TFhirParameters);
 end;
 
-procedure TFHIRLookupOpResponse2.SetDisplay(Value: String);
+procedure TFHIRLookupOpResponse2.setDisplay(Value: String);
 begin
   (op as TFHIRLookupOpResponse).display := value;
 end;
 
-procedure TFHIRLookupOpResponse2.SetName(Value: String);
+function TFHIRLookupOpResponse2.getIsAbstract: boolean;
+begin
+  result := (op as TFHIRLookupOpResponse).abstract;
+end;
+
+procedure TFHIRLookupOpResponse2.setIsAbstract(Value: boolean);
+begin
+   (op as TFHIRLookupOpResponse).abstract := value;
+end;
+
+procedure TFHIRLookupOpResponse2.setName(Value: String);
 begin
   (op as TFHIRLookupOpResponse).name := value;
 end;
 
-procedure TFHIRLookupOpResponse2.SetVersion(Value: String);
+function TFHIRLookupOpResponse2.getCode: String;
+begin
+  result := (op as TFHIRLookupOpResponse).code;
+end;
+
+procedure TFHIRLookupOpResponse2.setCode(Value: String);
+begin
+  (op as TFHIRLookupOpResponse).code := value;
+end;
+
+function TFHIRLookupOpResponse2.getSystem: String;
+begin
+  result := (op as TFHIRLookupOpResponse).systemUri;
+end;
+
+procedure TFHIRLookupOpResponse2.setSystem(Value: String);
+begin
+  (op as TFHIRLookupOpResponse).systemUri := value;
+end;
+
+procedure TFHIRLookupOpResponse2.setVersion(Value: String);
 begin
   (op as TFHIRLookupOpResponse).version := value;
 end;
@@ -3651,6 +3743,11 @@ begin
   result := TFHIRValueSet2.Create(vs.Link);
 end;
 
+function TFhirCodeSystem2.hasAnyDisplays(langs: THTTPLanguageList): boolean;
+begin
+  result := false;
+end;
+
 function TFhirCodeSystem2.concept(ndx: integer): TFhirCodeSystemConceptW;
 begin
   result := TFhirCodeSystemConcept2.Create(cs.conceptList[ndx].Link);
@@ -3659,6 +3756,11 @@ end;
 function TFhirCodeSystem2.conceptCount: integer;
 begin
   result := cs.conceptList.Count;
+end;
+
+function TFhirCodeSystem2.hasConcepts: boolean;
+begin
+  result := cs.hasConceptList;
 end;
 
 function TFhirCodeSystem2.conceptList: TFhirCodeSystemConceptListW;
@@ -3853,6 +3955,16 @@ begin
   vs.publisher := value;
 end;
 
+function TFhirCodeSystem2.getTitle: String;
+begin
+  result := vs.name;
+end;
+
+procedure TFhirCodeSystem2.setTitle(value: String);
+begin
+  // nothing
+end;
+
 procedure TFhirCodeSystem2.setStatus(Value: TPublicationStatus);
 begin
   vs.status := MAP_TPublicationStatus[status];
@@ -3866,6 +3978,11 @@ end;
 procedure TFhirCodeSystem2.setVersion(Value: String);
 begin
   vs.version := value;
+end;
+
+function TFhirCodeSystem2.GetCaseSensitive: boolean;
+begin
+  result := true;
 end;
 
 function TFhirCodeSystem2.supplements: String;
@@ -4308,6 +4425,16 @@ end;
 procedure TFhirConceptMap2.setPublisher(Value: String);
 begin
   cm.publisher := value;
+end;
+
+function TFhirConceptMap2.getTitle: String;
+begin
+  result := cm.name;
+end;
+
+procedure TFhirConceptMap2.setTitle(value: String);
+begin
+  // nothing
 end;
 
 function TFhirConceptMap2.getContext: String;
@@ -5754,6 +5881,17 @@ begin
   nm.publisher := value;
 end;
 
+function TFHIRNamingSystem2.getTitle: String;
+begin
+  result := nm.name;
+end;
+
+procedure TFHIRNamingSystem2.setTitle(value: String);
+begin
+  // nothing
+
+end;
+
 procedure TFHIRNamingSystem2.setStatus(Value: TPublicationStatus);
 begin
   nm.status := MAP_TPublicationStatus[value];
@@ -6034,6 +6172,16 @@ procedure TFhirTerminologyCapabilities2.setPublisher(Value: String);
 begin
 end;
 
+function TFhirTerminologyCapabilities2.getTitle: String;
+begin
+  result := '';
+end;
+
+procedure TFhirTerminologyCapabilities2.setTitle(value: String);
+begin
+  // nothing
+end;
+
 
 procedure TFhirTerminologyCapabilities2.setStatus(Value: TPublicationStatus);
 begin
@@ -6214,6 +6362,16 @@ end;
 procedure TFHIRTestScript2.setPublisher(Value: String);
 begin
   ts.publisher := value;
+end;
+
+function TFHIRTestScript2.getTitle: String;
+begin
+  result := ts.name;
+end;
+
+procedure TFHIRTestScript2.setTitle(value: String);
+begin
+  // nothing
 end;
 
 

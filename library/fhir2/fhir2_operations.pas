@@ -138,6 +138,8 @@ Type
   TFHIRLookupOpResponse = class (TFHIROperationResponse)
   private
     FName : String;
+    FCode : String;
+    FSystem : String;
     FVersion : String;
     FDisplay : String;
     FAbstract : Boolean;
@@ -152,6 +154,8 @@ Type
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property name : String read FName write FName;
+    property code : String read FCode write FCode;
+    property systemUri : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
     property display : String read FDisplay write FDisplay;
     property abstract : Boolean read FAbstract write FAbstract;
@@ -1011,11 +1015,13 @@ begin
   try
     if (FName <> '') then
       result.addParameter('name', TFHIRString.Create(FName));{oz.5f}
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.Create(FCode));
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.Create(FVersion));{oz.5f}
     if (FDisplay <> '') then
       result.addParameter('display', TFHIRString.Create(FDisplay));{oz.5f}
-      result.addParameter('abstract', TFHIRBoolean.Create(FAbstract));{oz.5f}
+    result.addParameter('abstract', TFHIRBoolean.Create(FAbstract));{oz.5f}
     for v1 in FDesignationList do
       result.AddParameter(v1.asParams('designation'));
     writeExtensions(result);

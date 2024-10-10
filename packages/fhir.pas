@@ -28,7 +28,7 @@ uses
   v2_protocol, dicom_dictionary, dicom_jpegls, dicom_objects, dicom_parser, 
   dicom_writer, ftx_lang, fhir_healthcard, fhir_context, fhir_icao, 
   fhir_qrcode, qrcodegen, fhir_colour_utils, fhir_package_upload, 
-  fhir_tools_settings, fhir_extensions, LazarusPackageIntf;
+  fhir_tools_settings, fhir_extensions, fhir_tx, LazarusPackageIntf;
 
 implementation
 
@@ -38,4 +38,4 @@ end;
 
 initialization
   RegisterPackage('fhir', @Register);
-  end.
+end.

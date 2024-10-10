@@ -110,6 +110,10 @@ type
     procedure logStatus(workingOnly, due : boolean);
   end;
 
+const
+  CODES_TFhirServerMaintenanceThreadTaskStatus : array [TFhirServerMaintenanceThreadTaskStatus] of String =
+    ('Initialised', 'Preparing', 'InProcess', 'Resting');
+
 implementation
 
 { TFhirServerMaintenanceThreadTaskThread }
@@ -250,7 +254,39 @@ begin
 end;
 
 destructor TFhirServerMaintenanceThread.Destroy;
+var
+  t : TFhirServerMaintenanceThreadTask;
+  i : integer;
+  ns : integer;
+  ts : TStringList;
 begin
+  Logging.log('Stopping Kernel Tasks');
+  for t in FTasks do
+    t.wantStop;
+  i := 0;
+  repeat
+    sleep(50);
+    inc(i);
+    ns := 0;
+    for t in FTasks do
+      if (not t.stopped) then
+        inc(ns);
+  until (ns = 0) or (i > 200);
+  if (ns = 0) then
+    Logging.log('Stopping Kernel Tasks')
+  else
+  begin
+    ts := TStringList.create;
+    try
+      for t in FTasks do
+        if (not t.Stopped) then
+          ts.add(t.name+': '+CODES_TFhirServerMaintenanceThreadTaskStatus[t.FStatus]);
+      Logging.log(inttostr(ns)+' Kernel Tasks refused to stop: '+ts.commaText);
+    finally
+      ts.free;
+    end;
+    sleep(1000);
+  end;
   FTasks.free;
   inherited;
 end;
@@ -282,7 +318,7 @@ end;
 
 function TFhirServerMaintenanceThread.ThreadName: String;
 begin
-  result := 'kernel';
+  result := 'kernel.maintenance';
 end;
 
 procedure TFhirServerMaintenanceThread.Initialise;

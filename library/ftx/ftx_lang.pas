@@ -79,8 +79,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
@@ -98,7 +98,8 @@ type
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
-    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;    
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -119,7 +120,7 @@ var
   s : string;
 begin
   for s in CODES_TIETFLanguageComponent do
-    features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', s+':exists'));
+    features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', s+':exists'));
 end;
 function TIETFLanguageCodeServices.TotalCount : integer;
 begin
@@ -127,12 +128,12 @@ begin
 end;
 
 
-function TIETFLanguageCodeServices.version(context: TCodeSystemProviderContext): String;
+function TIETFLanguageCodeServices.version: String;
 begin
   result := '';
 end;
 
-function TIETFLanguageCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TIETFLanguageCodeServices.systemUri : String;
 begin
   result := URI_BCP47;
 end;
@@ -190,8 +191,14 @@ end;
 
 
 function TIETFLanguageCodeServices.locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext;
+var
+  info : TIETFLang;
 begin
-  result := TIETFLanguageCodeConcept.Create(FLanguages.parse(code, message));
+  info := FLanguages.parse(code, message);
+  if info = nil then
+    result := nil
+  else
+    result := TIETFLanguageCodeConcept.Create(info);
 end;
 
 
@@ -212,8 +219,14 @@ end;
 
 
 function TIETFLanguageCodeServices.Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string;
+var
+  ctxt : TIETFLanguageCodeConcept;
 begin
-  result := getDisplay(TIETFLanguageCodeConcept(context).FInfo.code, langList);
+  ctxt := TIETFLanguageCodeConcept(context);
+  if (ctxt.FInfo = nil) then
+    result := ''
+  else
+    result := getDisplay(ctxt.FInfo.code, langList);
 end;
 
 function TIETFLanguageCodeServices.IsAbstract(context : TCodeSystemProviderContext) : boolean;
@@ -288,36 +301,43 @@ var
   cc : TIETFLanguageCodeConcept;
   filter : TIETFLanguageCodeFilter;
   ok : boolean;
+  l : TIETFLang;
 begin
   result := nil;
-  cc := TIETFLanguageCodeConcept.Create(FLanguages.parse(code, message));
-  try
-    filter := TIETFLanguageCodeFilter(ctxt);
-    ok := false;
-    if cc <> nil then
-    begin
+  l := FLanguages.parse(code, message);
+  if (l <> nil) then
+  begin
+    try
+      filter := TIETFLanguageCodeFilter(ctxt);
       case filter.component of
-        languageComponentLang: ok := filter.status = (cc.FInfo.language <> '');
-        languageComponentExtLang: ok := filter.status = (length(cc.FInfo.extLang) > 0);
-        languageComponentScript: ok := filter.status = (cc.FInfo.script <> '');
-        languageComponentRegion: ok := filter.status = (cc.FInfo.region <> '');
-        languageComponentVariant: ok := filter.status = (cc.FInfo.variant <> '');
-        languageComponentExtension: ok := filter.status = (cc.FInfo.extension <> '');
-        languageComponentPrivateUse: ok := filter.status = (length(cc.FInfo.privateUse) > 0);
+        languageComponentLang: ok := filter.status = (l.language <> '');
+        languageComponentExtLang: ok := filter.status = (length(l.extLang) > 0);
+        languageComponentScript: ok := filter.status = (l.script <> '');
+        languageComponentRegion: ok := filter.status = (l.region <> '');
+        languageComponentVariant: ok := filter.status = (l.variant <> '');
+        languageComponentExtension: ok := filter.status = (l.extension <> '');
+        languageComponentPrivateUse: ok := filter.status = (length(l.privateUse) > 0);
+      else
+        ok := false;
       end;
+      if ok then
+        result := TIETFLanguageCodeConcept.Create(l.link)
+      else if filter.status then
+        message := 'The language code '+code+' does not contain a '+CODES_TIETFLanguageComponent[filter.component]+', and it is required to'
+      else
+        message := 'The language code '+code+' contains a '+CODES_TIETFLanguageComponent[filter.component]+', and it is not allowed to';
+    finally
+      l.free;
     end;
-    if ok then
-      result := cc.Link
-    else if filter.status then
-      message := 'The language code '+code+' does not contain a '+CODES_TIETFLanguageComponent[filter.component]+', and it is required to'
-    else
-      message := 'The language code '+code+' contains a '+CODES_TIETFLanguageComponent[filter.component]+', and it is not allowed to';
-  finally
-    cc.free;
   end;
 end;
 
 function TIETFLanguageCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+begin
+  raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
+end;
+
+function TIETFLanguageCodeServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyError.create('Language valuesets cannot be expanded as they are based on a grammar', itNotSupported);
 end;

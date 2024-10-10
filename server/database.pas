@@ -42,7 +42,7 @@ uses
   fhir_objects, fhir_parser, fhir_xhtml, fhir_uris, fhir_utilities, fhir_cdshooks,
   fhir_validator, fhir_common, fhir_factory, fhir_narrative, fhir_indexing,
   fhir_client,
-  fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
+  fhir_tx, fhir_valuesets, fhir_diff, fhir_graphql, fhir_codegen,
   ftx_service, tx_server, ftx_ucum_services,
   fsl_scim, scim_server,
   indexing, session, subscriptions, security, obsservation_stats, bundlebuilder, time_tracker, search,
@@ -322,7 +322,7 @@ type
     function getTypeForKey(key: integer): String;
     procedure doRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
     procedure checkRegisterTag(tag: TFHIRTag; conn: TFDBConnection);
-    procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TFslBuffer; b : TStringBuilder);
+    procedure RunValidateResource(i : integer; rtype, id : String; bufJson, bufXml : TFslBuffer; b : TFslStringBuilder);
 
 //    procedure loadCustomResources(guides : TFslStringSet);
     procedure ProcessObservationContent(conn: TFDBConnection; key, rk: integer; obs : TFHIRObservationW; subj : integer; categories : TArray<Integer>);
@@ -1047,7 +1047,7 @@ end;
 procedure TFHIRNativeOperationEngine.ExecuteGraphQLSystem(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   gql : TFHIRGraphQLEngine;
-  str : TStringBuilder;
+  str : TFslStringBuilder;
 begin
   try
     gql := TFHIRGraphQLEngine.Create((FServerContext as TFHIRServerContext).ValidatorContext.factory.link);
@@ -1066,7 +1066,7 @@ begin
       gql.focus := nil;
       gql.execute;
       response.Resource := nil;
-      str := TStringBuilder.Create;
+      str := TFslStringBuilder.Create;
       try
         str.Append('{'+#13#10);
         str.Append('  "data" : '+#13#10);
@@ -1099,7 +1099,7 @@ end;
 procedure TFHIRNativeOperationEngine.ExecuteGraphQLInstance(context: TOperationContext; request: TFHIRRequest; response: TFHIRResponse);
 var
   gql : TFHIRGraphQLEngine;
-  str : TStringBuilder;
+  str : TFslStringBuilder;
 begin
   try
     if ExecuteRead(request, response, true) then
@@ -1120,7 +1120,7 @@ begin
         gql.focus := response.Resource.Link;
         gql.execute;
         response.Resource := nil;
-        str := TStringBuilder.Create;
+        str := TFslStringBuilder.Create;
         try
           str.Append('{'+#13#10);
           str.Append('  "data" : '+#13#10);
@@ -1735,7 +1735,7 @@ end;
 procedure TFHIRNativeOperationEngine.processGraphQL(graphql: String; request : TFHIRRequest; response : TFHIRResponse);
 var
   gql : TFHIRGraphQLEngine;
-  str : TStringBuilder;
+  str : TFslStringBuilder;
 begin
   try
     gql := TFHIRGraphQLEngine.Create((FServerContext as TFHIRServerContext).ValidatorContext.factory.link);
@@ -1748,7 +1748,7 @@ begin
       gql.GraphQL := TGraphQLParser.parse(graphql);
       gql.focus := response.resource.Link;
       gql.execute;
-      str := TStringBuilder.Create;
+      str := TFslStringBuilder.Create;
       try
         str.Append('{'+#13#10);
         str.Append('  "data" : '+#13#10);
@@ -4498,7 +4498,7 @@ var
   rk : integer;
   sp : TSearchProcessor;
   url : String;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   json : TFHIRParser;
   request : TFHIRRequest;
   p : TGraphQLArgument;
@@ -4508,7 +4508,7 @@ begin
   sql := 'Select Ids.ResourceKey, JsonContent from Ids, Versions where Deleted = 0 and Ids.MostRecent = Versions.ResourceVersionKey and Ids.ResourceTypeKey = '+inttostr(rk)+' ';
   if not params.Empty then
   begin
-    b := TStringBuilder.create;
+    b := TFslStringBuilder.create;
     try
       for p in params do
       begin
@@ -4586,11 +4586,11 @@ end;
 function TFHIRNativeOperationEngine.GraphSearch(appInfo: TFslObject; requestType: String; params: TFslList<TGraphQLArgument>) : TFHIRBundleW;
 var
   request : TFHIRRequest;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   p : TGraphQLArgument;
 begin
   request := TFHIRRequest(appInfo);
-  b := TStringBuilder.create;
+  b := TFslStringBuilder.create;
   try
     for p in params do
     begin
@@ -5860,17 +5860,17 @@ end;
 
 function TFHIRNativeStorageService.ExpandVS(vs: TFHIRValueSetW; ref: string; langList : THTTPLanguageList; limit, count, offset: integer; allowIncomplete: Boolean; dependencies: TStringList) : TFHIRValueSetW;
 var
-  profile : TFHIRExpansionParams;
+  profile : TFHIRTxOperationParams;
 begin
-  profile := TFHIRExpansionParams.Create;
+  profile := TFHIRTxOperationParams.Create;
   try
     profile.limitedExpansion := allowIncomplete;
     if (vs <> nil) then
-      result := ServerContext.TerminologyServer.ExpandVS(vs, '', profile, '', dependencies, limit, count, offset, nil)
+      result := ServerContext.TerminologyServer.ExpandVS(vs, '', '', profile, '', dependencies, limit, count, offset, nil, false)
     else
     begin
       if ServerContext.TerminologyServer.isKnownValueSet(ref, vs) then
-        result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset, nil)
+        result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false)
       else
       begin
         vs := ServerContext.TerminologyServer.getValueSetByUrl(ref, '');
@@ -5879,7 +5879,7 @@ begin
         if vs = nil then
           result := nil
         else
-          result := ServerContext.TerminologyServer.ExpandVS(vs, ref, profile, '', dependencies, limit, count, offset, nil)
+          result := ServerContext.TerminologyServer.ExpandVS(vs, '', ref, profile, '', dependencies, limit, count, offset, nil, false)
       end;
     end;
   finally
@@ -6472,7 +6472,7 @@ begin
 end;
 
 
-procedure TFHIRNativeStorageService.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TFslBuffer; b : TStringBuilder);
+procedure TFHIRNativeStorageService.RunValidateResource(i : integer; rtype, id: String; bufJson, bufXml: TFslBuffer; b : TFslStringBuilder);
 var
   ctxt : TFHIRValidatorContext;
   iss : TFHIROperationOutcomeIssueW;
@@ -6509,10 +6509,10 @@ procedure TFHIRNativeStorageService.RunValidation;
 var
   conn : TFDBConnection;
   bufJ, bufX : TFslBuffer;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   i : integer;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     conn := FDB.GetConnection('Run Validation');
     try
@@ -6712,7 +6712,7 @@ function TFHIRNativeStorageService.TrackValueSet(id: String; conn : TFDBConnecti
 var
   s : String;
 begin
-  FLock.Lock;
+  FLock.Lock('TrackValueSet');
   try
     if not FRegisteredValueSets.TryGetValue(id, s) then
       s := '';
@@ -7205,7 +7205,7 @@ end;
 
 procedure TFHIRNativeStorageService.QueueResource(session : TFHIRSession; r: TFHIRResourceV);
 begin
-  FLock.Lock;
+  FLock.Lock('QueueResource');
   try
     FQueue.add(TFHIRQueuedResource.Create(session.Link, r.Link));
   finally
@@ -7664,9 +7664,9 @@ end;
 function TFHIRNativeStorageService.LookupCode(system, version, code: String): String;
 var
   prov: TCodeSystemProvider;
-  params : TFHIRExpansionParams;
+  params : TFHIRTxOperationParams;
 begin
-  params := TFHIRExpansionParams.Create;
+  params := TFHIRTxOperationParams.Create;
   try
     params.defaultToLatestVersion := true;
     try

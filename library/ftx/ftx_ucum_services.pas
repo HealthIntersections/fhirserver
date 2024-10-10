@@ -34,7 +34,7 @@ Interface
 
 Uses
   SysUtils, Classes,
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_xml, fsl_ucum, fsl_http, fsl_lang, fsl_i18n,
   ftx_ucum_handlers, ftx_ucum_validators, ftx_ucum_expressions, ftx_ucum_base,
   fhir_common, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -88,7 +88,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TUcumServices; Overload;
 
@@ -237,8 +237,8 @@ Type
     function TotalCount : integer; override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -248,6 +248,7 @@ Type
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
@@ -438,7 +439,7 @@ begin
   End;
 end;
 
-constructor TUcumServices.Create(languages : TIETFLanguageDefinitions);
+constructor TUcumServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited;
   FModel := TUcumModel.Create;
@@ -448,7 +449,7 @@ end;
 
 procedure TUcumServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'canonical:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'canonical:equals'));
 end;
 
 function TUcumServices.Definition(context: TCodeSystemProviderContext): string;
@@ -527,9 +528,9 @@ end;
 procedure TUcumServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 var
   s : String;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('* Analysis: '+analyse(code)+#13#10);
     b.Append('* Canonical Form: '+getCanonicalUnits(code)+#13#10);
@@ -764,7 +765,7 @@ begin
   End;
 end;
 
-function TUcumServices.version(context: TCodeSystemProviderContext): String;
+function TUcumServices.version: String;
 begin
   result := UcumVersion;
 end;
@@ -874,7 +875,7 @@ end;
 
 function TUcumServices.getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('not safe');
+  raise ETerminologyError.Create('not safe', itInvalid);
 //  result := nil;
 end;
 
@@ -1039,7 +1040,7 @@ begin
   result := TUcumFilterContext.create('')
 end;
 
-function TUcumServices.systemUri(context : TCodeSystemProviderContext): String;
+function TUcumServices.systemUri: String;
 begin
   result := URI_UCUM;
 end;
@@ -1073,6 +1074,11 @@ begin
   context := TUcumFilterContext(ctxt);
   inc(context.FCursor);
   result := context.FCursor < FCommonUnitList.count;
+end;
+
+function TUcumServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := FCommonUnitList.count;
 end;
 
 function TUcumServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message : String): TCodeSystemProviderContext;

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_http, fsl_lang, fsl_utilities,
+  fsl_base, fsl_http, fsl_lang, fsl_utilities, fsl_i18n,
   fhir_objects, fhir_common, fhir_factory, fhir_features, fhir_cdshooks,
   ftx_service;
 
@@ -59,7 +59,7 @@ type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; override;
     function link : TICD11Provider; overload;
 
@@ -69,13 +69,13 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; overload; override;
-    function locate(code : String) : TCodeSystemProviderContext; overload; override;
+    function locate(code : String; altOpt : TAlternateCodeOptions= nil) : TCodeSystemProviderContext; overload; override;
     function locateIsA(code, parent : String; disallowParent : boolean = false) : TCodeSystemProviderContext; override;
     function IsAbstract(context : TCodeSystemProviderContext) : boolean; override;
     function IsInactive(context : TCodeSystemProviderContext) : boolean; override;
@@ -94,6 +94,7 @@ type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -103,9 +104,6 @@ type
     function SpecialEnumeration : String; override;
     procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); override;
 
-    procedure Close(ctxt : TCodeSystemProviderFilterPreparationContext); overload; override;
-    procedure Close(ctxt : TCodeSystemProviderFilterContext); overload; override;
-    procedure Close(ctxt : TCodeSystemProviderContext); overload; override;
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
   end;
@@ -114,30 +112,15 @@ implementation
 
 { TICD11Provider }
 
-constructor TICD11Provider.Create(languages: TIETFLanguageDefinitions);
+constructor TICD11Provider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
 end;
 
 destructor TICD11Provider.Destroy;
 begin
 
   inherited;
-end;
-
-procedure TICD11Provider.Close(ctxt: TCodeSystemProviderContext);
-begin
-  ctxt.free;
-end;
-
-procedure TICD11Provider.Close(ctxt: TCodeSystemProviderFilterContext);
-begin
-  ctxt.free;
-end;
-
-procedure TICD11Provider.Close(ctxt: TCodeSystemProviderFilterPreparationContext);
-begin
-  ctxt.free;
 end;
 
 function TICD11Provider.Code(context: TCodeSystemProviderContext): string;
@@ -208,6 +191,11 @@ begin
   result := false;
 end;
 
+function TICD11Provider.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := 0;
+end;
+
 procedure TICD11Provider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
 end;
@@ -267,7 +255,7 @@ begin
   result := TICD11Provider(inherited Link);
 end;
 
-function TICD11Provider.locate(code: String): TCodeSystemProviderContext;
+function TICD11Provider.locate(code: String; altOpt : TAlternateCodeOptions= nil): TCodeSystemProviderContext;
 begin
   result := nil;
 end;
@@ -317,7 +305,7 @@ begin
   result := '';
 end;
 
-function TICD11Provider.systemUri(context: TCodeSystemProviderContext): String;
+function TICD11Provider.systemUri: String;
 begin
   result := '';
 end;
@@ -327,7 +315,7 @@ begin
   result := 0;
 end;
 
-function TICD11Provider.version(context: TCodeSystemProviderContext): String;
+function TICD11Provider.version: String;
 begin
   result := '';
 end;

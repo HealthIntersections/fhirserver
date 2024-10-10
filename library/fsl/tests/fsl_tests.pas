@@ -1,4 +1,4 @@
-unit fsl_tests;
+﻿unit fsl_tests;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,7 +34,7 @@ interface
 
 Uses
   {$IFDEF WINDOWS} Windows, {$ENDIF} SysUtils, Classes, {$IFNDEF FPC}Soap.EncdDecd, System.NetEncoding, {$ENDIF} SyncObjs,
-  zlib, zstream,
+  zlib, {$IFDEF FPC} zstream, {$ENDIF}
   {$IFDEF FPC} FPCUnit, TestRegistry, RegExpr, {$ELSE} TestFramework, {$ENDIF} fsl_testing,
   IdGlobalProtocols,
   fsl_base, fsl_utilities, fsl_stream, fsl_threads, fsl_collections, fsl_fpc, fsl_versions, fsl_gzip,
@@ -720,7 +720,7 @@ var
   csv : TFslCSVExtractor;
   items : TFslStringList;
 begin
-  csv := TFslCSVExtractor.create(TFslFile.create(TestSettings.serverTestFile(['testcases', 'csv', 'test.csv']), fmOpenRead));
+  csv := TFslCSVExtractor.create(TFslFile.create(TestSettings.serverTestFile(['testcases', 'csv', 'test.csv']), fmOpenRead + fmShareDenyWrite));
   try
     csv.IgnoreWhitespace := true;
     items := TFslStringList.Create;
@@ -751,6 +751,7 @@ procedure TFslUtilitiesTestCases.TestObjectTracking;
 var
   a, b, c, d : TFslTestObject;
 begin
+  {$IFDEF OBJECT_TRACKING}
   // ---------------------
   a := TFslTestObject.Create;
   b := TFslTestObject.Create;
@@ -1091,6 +1092,7 @@ begin
   a.free;
   AssertEqual(1, classCount('TFslTestObject'));
   d.free;
+  {$ENDIF}
   AssertEqual(0, classCount('TFslTestObject'));
 end;
 
@@ -1610,11 +1612,11 @@ end;
 function XpathForPath(path : string):string;
 var
   p : TArray<String>;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
   p := path.Split(['.']);
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for s in p do
     begin
@@ -4384,7 +4386,7 @@ begin
   end;
   assertTrue(FileExists(filename), 'FileExists(filename) #2');
   assertTrue(FileSize(filename) = 27, 'FileSize(filename) = 27');
-  f := TFslFile.Create(filename, fmOpenRead);
+  f := TFslFile.Create(filename, fmOpenRead + fmShareDenyWrite);
   try
     SetLength(s, f.Size);
     f.Read(s[1], f.Size);
@@ -4951,7 +4953,7 @@ var
   f : TFileStream;
   sig : TDigitalSigner;
 begin
-  f := TFileStream.Create(filename, fmOpenRead);
+  f := TFileStream.Create(filename, fmOpenRead + fmShareDenyWrite);
   try
     setLength(bytes, f.Size);
     f.Read(bytes[0], length(bytes));
@@ -5137,8 +5139,11 @@ begin
 end;
 
 procedure TFslCollectionsTests.executeFail(context : TObject);
+var
+  o : TFslTestObjectList;
 begin
-  list.Add(TFslTestObjectList.create);
+  o:= TFslTestObjectList.create;
+  list.Add(o);
 end;
 
 procedure TFslCollectionsTests.testAddFail;
@@ -5278,7 +5283,7 @@ var
 begin      
   result := TFslList<TFslNameBuffer>.Create;
   try
-    bs := TBytesStream.create(ungzip(fileToBytes(filename)));
+    bs := TBytesStream.create(ungzip(fileToBytes(filename), filename));
     try
       tar := TTarArchive.Create(bs);
       try

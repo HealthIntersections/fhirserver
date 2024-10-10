@@ -90,7 +90,7 @@ begin
     fn := GCPTDataFile
   else
     fn := TestSettings.serverTestFile(['testcases', 'cpt', 'cpt-fragment.db']);
-  FCPT := TCPTServices.Create(nil, TFDBSQLiteManager.Create('test', fn, false, 4));
+  FCPT := TCPTServices.Create(nil, nil, TFDBSQLiteManager.Create('test', fn, true, false, 4));
 end;
 
 procedure TCPTTests.TearDown;
@@ -111,7 +111,7 @@ begin
   ctxt := FCPT.locate('99202', nil, msg);
   try
     assertTrue(ctxt <> nil);
-    assertEquals('Office or other outpatient visit for the evaluation and management of a new patient, which requires a medically appropriate history and/or examination and straightforward medical decision making. When using time for code selection, 15-29 minutes of total time is spent on the date of the encounter.', FCPT.Display(ctxt, nil));
+    assertEqual('Office or other outpatient visit for the evaluation and management of a new patient, which '+'requires a medically appropriate history and/or examination and straightforward medical decision making. When using time for code selection, 15-29 minutes of total time is spent on the date of the encounter.', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
@@ -125,7 +125,7 @@ var
 begin
   ctxt := FCPT.locate('99201', nil, msg);
   try
-    assertNull(ctxt);
+    assertTrue(ctxt = nil);
     assertTrue(msg <> '');
   finally
     ctxt.free;
@@ -140,7 +140,7 @@ begin
   ctxt := FCPT.locate('99202:P1', nil, msg);
   try
     assertTrue(ctxt <> nil);
-    assertEquals('', FCPT.Display(ctxt, nil));
+    assertEqual('', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
@@ -153,7 +153,7 @@ var
 begin
   ctxt := FCPT.locate('99202:P1-P1', nil, msg);
   try
-    assertNull(ctxt);
+    assertTrue(ctxt = nil);
     assertTrue(msg <> '');
   finally
     ctxt.free;
@@ -173,7 +173,7 @@ begin
       c := FCPT.getNextContext(iter);
       try
         s := FCPT.code(c);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['metadata-kinds', 'metadata-designations', '99202', '99203', '0001A', '99252', '25', '95', 'P1', '1P', 'F1'], s));
+        AssertTrue(StringArrayExists(['metadata-kinds', 'metadata-designations', '99202', '99203', '0001A', '99252', '25', '95', 'P1', '1P', 'F1'], s), 'Unexpected code '+s);
       finally
         c.free;
       end;
@@ -188,11 +188,12 @@ var
   filter : TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderContext;
   c : integer;
-  s, msg : String;
+  s, msg, log : String;
 begin
+  log := '';
   filter := FCPT.filter(true, 'modifier', foEqual, 'true', nil);
   try
-    AssertNotNull(filter);
+    AssertTrue(filter <> nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
     c := 0;
     while FCPT.FilterMore(filter) do
@@ -201,12 +202,13 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try               
         s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['25', '95', 'P1', '1P', 'F1'], s));
+        CommaAdd(log, s);
+        AssertTrue(StringArrayExists(['25', '95', 'P1', '1P', 'F1'], s), 'Unexpected code '+s);
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(5, c);
+    AssertEqual(5, c, 'only found '+log);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertFalse(FCPT.inFilter(filter, ctxt));
@@ -235,11 +237,12 @@ var
   filter : TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderContext;
   c : integer;
-  s, msg : String;
+  s, msg, log : String;
 begin
+  log := '';
   filter := FCPT.filter(true, 'modifier', foEqual, 'false', nil);
   try
-    AssertNotNull(filter);
+    AssertTrue(filter <> Nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
     c := 0;
     while FCPT.FilterMore(filter) do
@@ -247,13 +250,14 @@ begin
       inc(c);
       ctxt := FCPT.FilterConcept(filter);
       try
-        s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '0001A', '99252'], s));
+        s := FCPT.code(ctxt);              
+        CommaAdd(log, s);
+        AssertTrue(StringArrayExists(['99202', '99203', '0001A', '99252'], s), 'Unexpected code '+s);
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(4, c);
+    AssertEqual(4, c, 'only found '+log);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertTrue(FCPT.inFilter(filter, ctxt));
@@ -282,11 +286,12 @@ var
   filter : TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderContext;
   c : integer;
-  s, msg : String;
+  s, msg, log : String;
 begin
+  log := '';
   filter := FCPT.filter(true, 'modified', foEqual, 'false', nil);
   try
-    AssertNotNull(filter);
+    AssertTrue(filter <> nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
     c := 0;
     while FCPT.FilterMore(filter) do
@@ -295,12 +300,13 @@ begin
       ctxt := FCPT.FilterConcept(filter);
       try
         s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '0001A', '99252', '25', 'P1', '1P', 'F1', '95'], s));
+        CommaAdd(log, s);
+        AssertTrue(StringArrayExists(['99202', '99203', '0001A', '99252', '25', 'P1', '1P', 'F1', '95'], s), 'Unexpected code '+s);
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(9, c);
+    AssertEqual(9, c, 'only found '+log);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertTrue(FCPT.inFilter(filter, ctxt));
@@ -333,12 +339,12 @@ var
 begin
   filter := FCPT.filter(true, 'modified', foEqual, 'true', nil);
   try
-    AssertNotNull(filter);
+    AssertTrue(filter <> nil);
     AssertTrue(FCPT.isNotClosed(nil, filter));
     c := 0;
     while FCPT.FilterMore(filter) do
       inc(c);
-    AssertEquals(0, c);
+    AssertEqual(0, c);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertFalse(FCPT.inFilter(filter, ctxt));
@@ -368,11 +374,12 @@ var
   filter : TCodeSystemProviderFilterContext;
   ctxt : TCodeSystemProviderContext;
   c : integer;
-  s, msg : String;
+  s, msg, log: String;
 begin
+  log := '';
   filter := FCPT.filter(true, 'kind', foEqual, 'code', nil);
   try
-    AssertNotNull(filter);
+    AssertTrue(filter <> nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
     c := 0;
     while FCPT.FilterMore(filter) do
@@ -380,13 +387,14 @@ begin
       inc(c);
       ctxt := FCPT.FilterConcept(filter);
       try
-        s := FCPT.code(ctxt);
-        AssertTrue('Unexpected code '+s, StringArrayExists(['99202', '99203', '99252'], s));
+        s := FCPT.code(ctxt);      
+        CommaAdd(log, s);
+        AssertTrue(StringArrayExists(['99202', '99203', '99252'], s), 'Unexpected code '+s);
       finally
         ctxt.free;
       end;
     end;
-    AssertEquals(3, c);
+    AssertEqual(3, c, 'only found '+log);
     ctxt := FCPT.locate('99202', nil, msg);
     try
       AssertTrue(FCPT.inFilter(filter, ctxt));
@@ -419,7 +427,7 @@ begin
   try
     assertTrue(ctxt <> nil);
     assertTrue(msg = '');
-    assertEquals('', FCPT.Display(ctxt, nil));
+    assertEqual('', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
@@ -433,10 +441,13 @@ begin
   ctxt := FCPT.locate('99252:95', nil, msg);
   try
     assertTrue(ctxt = nil);
-    assertEquals('The modifier 95 cannot be used with the code 99252 as it is not designated for telemedicine', msg);
-    assertEquals('', FCPT.Display(ctxt, nil));
+    assertEqual('The modifier 95 cannot be used with the code 99252 as it is not designated for telemedicine', msg);
+    assertEqual('', FCPT.Display(ctxt, nil));
   finally
     ctxt.free;
   end;
 end;
+
 end.
+
+

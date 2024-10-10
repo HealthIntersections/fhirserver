@@ -89,7 +89,7 @@ type
     function SupportsSizingV : Boolean; Override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   Public
-    constructor Create(AOwner : TFDBManager; Filename : String; autoCreate : boolean);
+    constructor Create(AOwner : TFDBManager; Filename : String; readOnly, autoCreate : boolean);
     destructor Destroy; override;
   end;
 
@@ -97,6 +97,7 @@ type
   private
     FFilename : String;
     FAutoCreate : boolean;
+    FReadOnly : boolean;
   Protected
     function GetDBProvider: TFDBProvider; Override;
     function ConnectionFactory: TFDBConnection; Override;
@@ -106,7 +107,7 @@ type
     procedure init; override;
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
-    constructor Create(AName : String; Filename : String; autoCreate : boolean; maxConn : integer = 100); overload;
+    constructor Create(AName : String; Filename : String; readOnly, autoCreate : boolean; maxConn : integer = 100); overload;
     destructor Destroy; override;
     class function IsSupportAvailable(APlatform : TFDBPlatform; Var VMsg : String):Boolean; override;
     property Filename : String read FFilename;
@@ -116,16 +117,17 @@ implementation
 
 { TFDBSQLiteManager }
 
-constructor TFDBSQLiteManager.Create(AName: String; Filename : String; autoCreate : boolean; maxConn : integer = 100);
+constructor TFDBSQLiteManager.Create(AName: String; Filename : String; readOnly, autoCreate : boolean; maxConn : integer = 100);
 begin
   FFilename := filename;
   FAutoCreate := autoCreate;
+  FReadOnly := readOnly;
   Inherited Create(aName, maxConn);
 end;
 
 function TFDBSQLiteManager.ConnectionFactory: TFDBConnection;
 begin
-  result := TFDBSQLiteConnection.Create(self, FFilename, FAutoCreate);
+  result := TFDBSQLiteConnection.Create(self, FFilename, FReadOnly, FAutoCreate);
 end;
 
 destructor TFDBSQLiteManager.Destroy;
@@ -176,12 +178,18 @@ end;
 
 { TFDBSQLiteConnection }
 
-constructor TFDBSQLiteConnection.Create(AOwner: TFDBManager; Filename : String; autoCreate : boolean);
+constructor TFDBSQLiteConnection.Create(AOwner: TFDBManager; Filename : String; readOnly, autoCreate : boolean);
+var
+  flags : integer;
+  start : UInt64;
 begin
   inherited Create(AOwner);
+  start := GetTickCount64;
   FConnection := TSQLite3Database.Create;
   FConnection.Delay := 2000;
-  if autoCreate then
+  if readOnly then
+    FConnection.Open(Filename, SQLITE_OPEN_READONLY)
+  else if autoCreate then
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE or SQLITE_OPEN_CREATE)
   else
     FConnection.Open(Filename, SQLITE_OPEN_READWRITE);

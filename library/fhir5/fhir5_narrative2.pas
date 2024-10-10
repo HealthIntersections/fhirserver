@@ -109,7 +109,7 @@ implementation
 
 function TNarrativeGenerator.capitalize(s : String):String;
 begin
-  if( s = '') then
+  if (s = '') then
     result := ''
   else
     result := UpperCase(s.substring(0, 1)) + s.substring(1);
@@ -1002,10 +1002,10 @@ end;
 
 function TNarrativeGenerator.displayHumanName(v : TFHIRHumanName) : String;
 var
-  s : TStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
 begin
-  s := TStringBuilder.Create;
+  s := TFslStringBuilder.Create;
   try
     if (v.Text <> '') then
       s.append(v.Text)
@@ -1033,10 +1033,10 @@ end;
 
 function TNarrativeGenerator.displayAddress(v : TFHIRAddress) : String;
 var
-  s : TStringBuilder;
+  s : TFslStringBuilder;
   i : integer;
 begin
-  s := TStringBuilder.Create;
+  s := TFslStringBuilder.Create;
   try
     if (v.Text <> '') then
       s.append(v.Text)

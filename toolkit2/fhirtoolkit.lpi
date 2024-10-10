@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -16,8 +15,10 @@
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
-      <MajorVersionNr Value="2"/>
-      <RevisionNr Value="12"/>
+      <MajorVersionNr Value="3"/>
+      <MinorVersionNr Value="4"/>
+      <RevisionNr Value="11"/>
+      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes>
       <Item Name="default" Default="True"/>
@@ -82,11 +83,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="../exec/64/FHIRToolkit"/>
+            <Filename Value="..\exec\64\FHIRToolkit"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="/usr/local/lib64"/>
+            <Libraries Value="\usr\local\lib64\"/>
             <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -114,7 +115,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R .\"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -124,6 +125,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
       </Item>
@@ -230,10 +232,7 @@
             <CompilerMessages>
               <IgnoredMessages idx6058="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-WM11.0
--XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
--gw2
--gw3"/>
+            <CustomOptions Value="-WM11.0&#10;-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk&#10;-gw2&#10;-gw3"/>
           </Other>
         </CompilerOptions>
       </Item>
@@ -392,7 +391,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="/usr/local/lib64"/>
+            <Libraries Value="\usr\local\lib64\"/>
             <OtherUnitFiles Value="editors;stores;views;frames;dialogs;tasks;..\ipsmanager\forms;..\ipsmanager\views"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
@@ -409,7 +408,7 @@
               <DebugInfoType Value="dsDwarf2Set"/>
             </Debugging>
             <Options>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R .\"/>
               <Win32>
                 <GraphicApplication Value="True"/>
               </Win32>
@@ -419,14 +418,16 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
       </Item>
-      <SharedMatrixOptions Count="4">
+      <SharedMatrixOptions Count="5">
         <Item1 ID="628482637663" Modes="OSX,osx-m1-release,osx-release,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="759823959655" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk"/>
         <Item3 ID="819787652127" Modes="linux,linux-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item4 ID="299328664200" Modes="win64-release,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item5 ID="633766661563" Modes="osx-release,osx-m1-release,linux-release,win64-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -834,12 +835,10 @@
       <Unit>
         <Filename Value="..\ipsmanager\views\mvbase.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mvBase"/>
       </Unit>
       <Unit>
         <Filename Value="..\ipsmanager\views\mvdatasources.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mvDataSources"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -887,7 +886,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-k--library-path=/usr/local/lib64"/>
+      <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
     </Other>
   </CompilerOptions>
   <Debugging>

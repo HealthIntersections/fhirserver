@@ -87,6 +87,9 @@ type
     FValueSets : TFslMap<TFHIRResourceProxyV>;
     FNamingSystems : TFslMap<TFHIRResourceProxyV>;
     FConceptMaps : TFslMap<TFHIRResourceProxyV>;
+    FLoadingComplete : boolean;
+    FTotalToLoad : integer;
+    FLoaded : integer;
     procedure addCodesToIndex(cmp: TFDBFullTextSearchCompartment; vurl : String; codes: TFhirCodeSystemConceptListW);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -104,19 +107,34 @@ type
     property TextIndex : TFDBFullTextSearch read FTextIndex;
   end;
 
+  { TTerminologyServerDataLoadThread }
+
+  TTerminologyServerDataLoadThread = class (TFslThread)
+  private
+    FEndPoint : TTerminologyServerEndPoint;
+    procedure process(name : String; list : TFslMap<TFHIRResourceProxyV>);
+  public
+    constructor create(ep : TTerminologyServerEndPoint);
+    procedure execute; override;
+  end;
+
   TTerminologyFhirServerStorage = class;
+
+  { TTerminologyServerOperationEngine }
 
   TTerminologyServerOperationEngine = class (TFHIROperationEngine)
   private
     FData : TTerminologyServerData;
 
     function compareDate(base, min, max : TFslDateTime; value : String; prefix : TFHIRSearchParamPrefix) : boolean;
-    function matches(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
+    function matchesNative(resource : TFHIRMetadataResourceW; sp : TSearchParameter) : boolean;
+    function matchesFHIRPath(resource : TFhirResourceV; sp : TSearchParameter) : boolean;
     function matchesObject(obj : TFhirObject; sp : TSearchParameter) : boolean;
     function tokenMatchesCodeableConcept(obj: TFhirObject; sp: TSearchParameter): boolean;
     function tokenMatchesCoding(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
     function tokenMatchesCoding(c: TFhirCodingW; sp: TSearchParameter): boolean; overload;
     function tokenMatchesIdentifier(obj: TFhirObject; sp: TSearchParameter): boolean; overload;
+    function makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
   protected
     function context : TFHIRServerContext;
     procedure StartTransaction; override;
@@ -245,11 +263,13 @@ type
 
   TTerminologyServerEndPoint = class (TStorageEndPoint)
   private
-    FStore : TTerminologyFhirServerStorage;
+//    FStore : TTerminologyFhirServerStorage;
     UTGFolder : String;
     FWeb : TTerminologyServerWebServer;
+    FLoadThread : TTerminologyServerDataLoadThread;
     function version : TFHIRVersion;
   public
+    FStore : TTerminologyFhirServerStorage;
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
@@ -267,7 +287,9 @@ type
     procedure SweepCaches; override;
     procedure SetCacheStatus(status : boolean); override;
     procedure getCacheInfo(ci: TCacheInformation); override;    
-    procedure recordStats(rec : TStatusRecord); override;  
+    procedure recordStats(rec : TStatusRecord); override;
+    procedure Started; override;
+    procedure Stopping; override;
   end;
 
 function makeTxFactory(version : TFHIRVersion) : TFHIRFactory;
@@ -404,6 +426,70 @@ end;
 function TTerminologyServerData.sizeInBytesV(magic: integer): cardinal;
 begin
   result := inherited sizeInBytesV(magic) + FPackages.sizeInBytes(magic) + FCodeSystems.sizeInBytes(magic) + FValueSets.sizeInBytes(magic) + FNamingSystems.sizeInBytes(magic) + FConceptMaps.sizeInBytes(magic);
+end;
+
+{ TTerminologyServerDataLoadThread }
+
+procedure TTerminologyServerDataLoadThread.process(name : String; list : TFslMap<TFHIRResourceProxyV>);
+var
+  p : TFHIRResourceProxyV;
+  t : TFHIRResourceV;
+  i, c : integer;
+begin
+  SetThreadStatus(name+': 0%');
+  c := list.Count;
+  i := 0;
+  for p in list.values do
+  begin
+    if Stopped then
+      exit;
+    SetThreadStatus(name+': '+inttostr(((100 * i) div c))+'% ('+p.url+')');
+    inc(FEndPoint.FStore.FData.FLoaded);
+    try
+      t := p.resourceV; // prompt to load
+      if (name = 'CodeSystems') and (FEndPoint <> nil) and (FEndPoint.FStore <> nil) and (FEndPoint.FStore.FServerContext <> nil) then
+        FEndPoint.FStore.FServerContext.ValidatorContext.loadCodeSystem(p);
+    except
+      on e : Exception do
+        Logging.log('Error loading '+p.url+'|'+p.version+': '+e.message);
+    end;
+    inc(i);
+    SetThreadStatus(name+': '+inttostr(((100 * i) div c))+'%');
+    sleep(15);   // if this goes too low, bang on OSX
+  end;
+end;
+
+constructor TTerminologyServerDataLoadThread.create(ep: TTerminologyServerEndPoint);
+begin
+  FEndPoint := ep;
+  inherited create;
+end;
+
+procedure TTerminologyServerDataLoadThread.execute;
+var
+  version : String;
+begin
+  GThreadDoingConstruction := true;
+  try
+    version := FEndPoint.config.prop['version'].value;
+    SetThreadName(version+' Loader');
+
+    FEndPoint.FStore.FData.FTotalToLoad :=
+      FEndPoint.FStore.FData.CodeSystems.count + FEndPoint.FStore.FData.ValueSets.Count+
+      FEndPoint.FStore.FData.NamingSystems.count + FEndPoint.FStore.FData.ConceptMaps.Count;
+
+    process('CodeSystems', FEndPoint.FStore.FData.CodeSystems);
+    if not Stopped then
+      process('ValueSets', FEndPoint.FStore.FData.ValueSets);
+    if not Stopped then
+      process('NamingSystems', FEndPoint.FStore.FData.NamingSystems);
+    if not Stopped then
+      process('ConceptMaps', FEndPoint.FStore.FData.ConceptMaps);
+    if (FEndPoint <> nil) and (FEndPoint.FStore <> nil) and (FEndPoint.FStore.FData <> nil) then
+      FEndPoint.FStore.FData.FLoadingComplete := true;
+  finally
+    GThreadDoingConstruction := false;
+  end;
 end;
 
 { TTerminologyServerOperationEngine }
@@ -579,6 +665,24 @@ begin
   result := (request.ResourceName = name) or ((request.ResourceName = '') and request.Parameters['_type'].Contains(name));
 end;
 
+function onlyHasElements(ts : TStringList; names : array of String) : boolean;
+var
+  s : String;
+begin
+  result := true;
+  for s in ts do
+    if not StringArrayExists(names, s) then
+      exit(false);
+end;
+
+function TTerminologyServerOperationEngine.makeWrapper(rn : String; p : TFHIRResourceProxyV) : TFHIRMetadataResourceW;
+begin
+  result := factory.wrapResource(factory.makeResource(rn)) as TFHIRMetadataResourceW;
+  result.id := p.id;
+  result.url := p.url;
+  result.version := p.version;
+end;
+
 procedure TTerminologyServerOperationEngine.ExecuteSearch(request: TFHIRRequest; response: TFHIRResponse);
 var
   search : TFslList<TSearchParameter>;
@@ -589,21 +693,27 @@ var
   bundle : TFHIRBundleBuilder;
   op : TFHIROperationOutcomeW;
   base : String;
-  isMatch : boolean;
+  isMatch, defCount : boolean;
   i, t, offset, count : integer;
   be : TFhirBundleEntryW;
   p : TFHIRResourceProxyV;
+  useProxy : boolean;
+  start : UInt64;
 begin
   if FEngine = nil then
     FEngine := context.ServerFactory.makeEngine(context.ValidatorContext.Link, TUcumServiceImplementation.Create(context.TerminologyServer.CommonTerminologies.Ucum.link));
 
   offset := 0;
   count := 50;
+  defCount := true;
   for i := 0 to request.Parameters.Count - 1 do
     if request.Parameters.Name[i] = SEARCH_PARAM_NAME_OFFSET then
       offset := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0)
     else if request.Parameters.Name[i] = '_count' then
+    begin
       count := StrToIntDef(request.Parameters.Value[request.Parameters.Name[i]], 0);
+      defCount := false;
+    end;
   if (count < 2) then
     count := TX_SEARCH_PAGE_DEFAULT
   else if (Count > TX_SEARCH_PAGE_LIMIT) then
@@ -611,6 +721,7 @@ begin
   if offset < 0 then
     offset := 0;
 
+  start := GetTickCount64;
   if (request.Parameters.Count = 0) and (response.Format = ffXhtml) and not request.hasCompartments then
     BuildSearchForm(request, response)
   else
@@ -618,6 +729,19 @@ begin
     TypeNotFound(request, response);
     spp := TSearchParser.create([scpCount, scpElements, scpSummary]);
     try
+      spp.allowedParams.add('url');
+      spp.allowedParams.add('version');
+      spp.allowedParams.add('content-mode');
+      spp.allowedParams.add('date');
+      spp.allowedParams.add('description');
+      spp.allowedParams.add('supplements');
+      spp.allowedParams.add('identifier');
+      spp.allowedParams.add('jurisdiction');
+      spp.allowedParams.add('name');
+      spp.allowedParams.add('publisher');
+      spp.allowedParams.add('status');
+      spp.allowedParams.add('system');
+      spp.allowedParams.add('title');
       search := spp.parse(TFHIRServerContext(FServerContext).Indexes, request.ResourceName, request.Parameters);
       try
         base := spp.buildUrl(request.resourceName, search);
@@ -630,35 +754,84 @@ begin
 
           list := TFslMetadataResourceList.create;
           try
+            useProxy := false;
+            if (spp.elements.count > 0) and (search.count = 1) then
+            begin
+              if onlyHasElements(spp.elements, ['id', 'url' ,'version']) then
+              begin
+                useProxy := true;
+                if (defCount) then
+                  count := 100000;
+              end
+            end;
+
+            if not useProxy and not FData.FLoadingComplete then
+              raise EWebServerException.create(500, 'The full data set is only '+inttostr((100 * FData.FLoaded) div FData.FTotalToLoad)+'% loaded ('+inttostr(FData.FLoaded)+' of '+inttostr(FData.FTotalToLoad)+') for searching - repeat this query in a few minutes (max ~15min)');
+
             if (hasScope(request, 'CodeSystem')) then
+            begin
               for p in FData.CodeSystems.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+              begin
+                deadCheck(start);
+                if useProxy then
+                  list.add(makeWrapper('CodeSystem', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end;
+            end;
             if (hasScope(request, 'ValueSet')) then
+            begin
               for p in FData.ValueSets.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+              begin
+                deadCheck(start);
+                if useProxy then
+                  list.add(makeWrapper('ValueSet', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end
+            end;
             if (hasScope(request, 'ConceptMap')) then
+            begin
               for p in FData.ConceptMaps.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+              begin
+                deadCheck(start);
+                if useProxy then
+                  list.add(makeWrapper('ConceptMap', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end;
+            end;
             if (hasScope(request, 'NamingSystem')) then
+            begin
               for p in FData.NamingSystems.Values do
-                list.add(p.resourceW.link as TFhirMetadataResourceW);
+              begin
+                deadCheck(start);
+                if useProxy then
+                  list.add(makeWrapper('NamingSystem', p))
+                else
+                  list.add(p.resourceW.link as TFhirMetadataResourceW);
+              end;
+            end;
 
             filtered := TFslMetadataResourceList.create;
             try
               for res in list do
               begin
+                deadCheck(start);
                 isMatch := true;
                 for sp in search do
                 begin
                   if (sp.Control = scpNull) then
                   begin
-                    if isMatch and not matches(res.Resource, sp) then
+                    if isMatch and not matchesNative(res, sp) then
                       isMatch := false;
                   end;
                 end;
                 if isMatch then
                   filtered.add(res.link);
               end;
+
+              bundle.setTotal(filtered.count);
 
               if (offset > 0) or (Count < filtered.count) then
               begin
@@ -675,13 +848,14 @@ begin
               t := 0;
               for res in filtered do
               begin
+                deadCheck(start);
                 inc(i);
                 if (i > offset) then
                 begin
                   be := bundle.makeEntry;
                   try
                     bundle.addEntry(be, false);
-                    be.Url := res.url;
+                    be.Url := URLPath([context.FormalURLPlain, res.fhirType, res.id]);
                     be.resource := res.Resource.Link;
                   finally
                     be.free;
@@ -724,7 +898,10 @@ var
   s : String;
   i : integer;
   tt : TTimeTracker;
+  start : UInt64;
 begin
+  start := GetTickCount64;
+
   opList := TStringList.create;
   try
     // since we're not making any changes, this is pretty straight forward
@@ -739,6 +916,7 @@ begin
           resp.id := NewGuidId;
           for src in req.entries.forEnum do
           begin
+            deadCheck(start);
             dest := resp.addEntry;
             try
               try
@@ -834,7 +1012,60 @@ begin
     result := false;
 end;
 
-function TTerminologyServerOperationEngine.matches(resource: TFhirResourceV; sp: TSearchParameter): boolean;
+function TTerminologyServerOperationEngine.matchesNative(resource : TFHIRMetadataResourceW; sp : TSearchParameter) : boolean;
+  function tokenMatches(mask, value : String) : boolean;
+  begin
+    result := mask = value;
+  end;
+  function stringMatches(mask, value : String) : boolean;
+  begin
+    result := value.toLower.contains(mask.toLower);
+  end;
+  function dateMatches(mask, value : String) : boolean;
+  begin
+    result := mask = value;
+  end;
+var
+  cs : TFHIRCodeSystemW;
+begin
+  if sp.index.Name = 'url' then
+    result := tokenMatches(sp.value, resource.url)
+  else if sp.index.Name = 'version' then
+    result := tokenMatches(sp.value, resource.version)
+  else if sp.index.Name = 'date' then
+    result := dateMatches(sp.value, resource.date.toXML)
+  else if sp.index.Name = 'description' then
+    result := stringMatches(sp.value, resource.description)
+  else if sp.index.Name = 'name' then
+    result := stringMatches(sp.value, resource.name)
+  else if sp.index.Name = 'publisher' then
+    result := stringMatches(sp.value, resource.publisher)
+  else if sp.index.Name = 'status' then
+    result := tokenMatches(sp.value, CODES_TPublicationStatus[resource.status])
+  else if sp.index.Name = 'system' then
+    result := tokenMatches(sp.value, resource.url)
+  else if sp.index.Name = 'title' then
+    result := stringMatches(sp.value, resource.title)
+  else if sp.index.Name = 'identifier' then
+    result := false // todo
+  else if sp.index.Name = 'jurisdiction' then
+    result := false // todo
+  else if (resource is TFHIRCodeSystemW) then
+  begin
+    cs := resource as TFHIRCodeSystemW;
+    if sp.index.Name = 'content-mode' then
+      result := tokenMatches(sp.value, CODES_TFhirCodeSystemContentMode[cs.content])
+    else if sp.index.Name = 'supplements' then
+      result := tokenMatches(sp.value, cs.supplements)
+    else
+      result := false;
+  end
+  else
+    result := false;
+end;
+
+// this is not used - proved too slow for operational use
+function TTerminologyServerOperationEngine.matchesFHIRPath(resource: TFhirResourceV; sp: TSearchParameter): boolean;
 var
   selection : TFHIRSelectionList;
   so : TFHIRSelection;
@@ -1082,6 +1313,9 @@ begin
   result.Operations.add(TFhirConceptMapTranslationOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirConceptMapClosureOperation.create(FServerContext.Factory.link, FServerContext.TerminologyServer.Link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
   result.Operations.add(TFhirVersionsOperation.create(Factory.link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  {$IFDEF DEV_FEATURES}
+  result.Operations.add(TFhirFeatureNegotiation.create(Factory.link, FServerContext.TerminologyServer.CommonTerminologies.Languages.link));
+  {$ENDIF}
 end;
 
 function TTerminologyFhirServerStorage.FetchResource(key: integer): TFHIRResourceV;
@@ -1181,10 +1415,25 @@ var
   i : integer;
   list : TFslList<TNpmPackageResource>;
   pi : TNpmPackageResource;
+  fileToLoad: string;
 begin
   i := 0;
 
-  npm := FServerContext.pcm.loadPackage(pid);
+
+//  FEndPoint.
+fileToLoad := filePath([FServerContext.pcm.folder,pid]) ;
+
+
+  if (FileExists(fileToLoad)) then
+    try
+      npm := FServerContext.pcm.loadPackageFromCache(fileToLoad)
+      except
+        on e : Exception do
+          Logging.log('Error loading package from file '+fileToLoad+': '+e.message);
+      end
+  else
+    npm := FServerContext.pcm.loadPackage(pid);
+
   try
     Logging.start('Load package '+npm.name+'#'+npm.version);
     try
@@ -1200,7 +1449,7 @@ begin
               inc(i);
               if (i mod 100 = 0) then
                 Logging.continue('.');
-              res := factory.makeProxy(pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
+              res := factory.makeProxy(npm.name+'#'+npm.version, pi.Link, FServerContext.ValidatorContext.Link, FLock.link);
               try
                 loadResource(res, ignoreEmptyCodeSystems);
               finally
@@ -1269,7 +1518,7 @@ begin
     try
       res := p.parseResource(cnt);
       try
-        pr := factory.makeProxy(res.link);
+        pr := factory.makeProxy(name, res.link);
         try
           loadResource(pr, false);
         finally
@@ -1501,6 +1750,18 @@ begin
   FServerContext.TerminologyServer.recordStats(rec);
 end;
 
+procedure TTerminologyServerEndPoint.Started;
+begin
+  inherited Started;
+  FLoadThread.Start;
+end;
+
+procedure TTerminologyServerEndPoint.Stopping;
+begin
+  inherited Stopping;
+  FLoadThread.StopAndWait(500);
+end;
+
 function TTerminologyServerEndPoint.summary: String;
 begin
   result := 'Terminology Server using '+describeDatabase(Config);
@@ -1565,10 +1826,13 @@ begin
   FServerContext.TerminologyServer.Loading := false;
 
   FStore.Initialise;
+  FStore.FData.FLoadingComplete := false;
+  FLoadThread := TTerminologyServerDataLoadThread.create(self);
 end;
 
 procedure TTerminologyServerEndPoint.Unload;
 begin
+  FLoadThread.StopAndWait(500);
   if FServerContext <> nil then
   begin
     FServerContext.Unload;

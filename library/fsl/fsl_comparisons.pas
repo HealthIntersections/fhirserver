@@ -70,10 +70,10 @@ var
   i: Integer;
   l: Integer;
   LLevelIsSimple: Boolean;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
   Result := '';
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     l := -1;
     LLevelIsSimple := False;

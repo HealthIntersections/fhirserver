@@ -124,7 +124,7 @@ Type
     FNamingSystems : TFslMap<TFHIRResourceProxy>;
 
     procedure SetProfiles(const Value: TProfileManager);
-    procedure Load(feed: TFHIRBundle);
+    procedure Load(packageId : String; feed: TFHIRBundle);
   public
     constructor Create(factory : TFHIRFactory; pcm : TFHIRPackageManager); Override;
     destructor Destroy; Override;
@@ -133,9 +133,11 @@ Type
 
     property Profiles : TProfileManager read FProfiles;
     procedure seeResourceProxy(r : TFhirResourceProxy); overload; virtual;
-    procedure seeResource(res : TFHIRResourceV); overload; override;
+    procedure seeResource(packageId : string; res : TFHIRResourceV); overload; override;
     procedure seeResource(res : TFHIRResourceProxyV); overload; override;
     procedure dropResource(rtype, id : string); override;
+    procedure LoadCodeSystem(r : TFhirResourceProxyV); overload; override;
+    procedure LoadCodeSystem(r : TFhirResourceProxy); overload; virtual;
     procedure LoadFromDefinitions(filename : string);
     procedure LoadFromFolder(folder : string);
     procedure LoadFromFile(filename : string); overload;
@@ -620,11 +622,11 @@ end;
 
 function TProfileUtilities.summariseSlicing(slice : TFhirElementDefinitionSlicing) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   d : TFhirString;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for  d in slice.discriminatorList do
@@ -633,7 +635,7 @@ begin
         first := false
       else
         b.append(', ');
-      b.append(d);
+      b.append(d.ToString);
     end;
     b.append('(');
     if (slice.orderedElement <> nil) then
@@ -872,11 +874,11 @@ end;
 
 function TProfileUtilities.typeCode(types : TFhirElementDefinitionTypeList) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   type_ : TFHIRElementDefinitionType;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for type_ in types do
@@ -1509,7 +1511,7 @@ var
   i : integer;
   s : string;
 begin
-  FLock.Lock;
+  FLock.Lock('allResourceNames');
   try
     SetLength(result, length(ALL_RESOURCE_TYPE_NAMES) - 1 + FCustomResources.Count);
     for a := low(TFHIRResourceType) to high(TFHIRResourceType) do
@@ -1559,6 +1561,16 @@ begin
     Profiles.DropProfile(frtStructureDefinition, id);
 end;
 
+procedure TBaseWorkerContextR2.LoadCodeSystem(r: TFhirResourceProxyV);
+begin
+  loadCodeSystem(r as TFHIRResourceProxy);
+end;
+
+procedure TBaseWorkerContextR2.LoadCodeSystem(r: TFhirResourceProxy);
+begin
+  // nothing
+end;
+
 function TBaseWorkerContextR2.fetchResource(t: TFhirResourceType; url, version: String): TFhirResource;
 var
   r : TFHIRResourceProxy;
@@ -1604,7 +1616,7 @@ end;
 
 function TBaseWorkerContextR2.getCustomResource(name: String): TFHIRCustomResourceInformation;
 begin
-  FLock.Lock;
+  FLock.Lock('getCustomResource');
   try
     result := FCustomResources[name].Link;
   finally
@@ -1671,7 +1683,7 @@ end;
 
 function TBaseWorkerContextR2.hasCustomResource(name: String): boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('hasCustomResource');
   try
     result := FCustomResources.ContainsKey(name);
   finally
@@ -1683,7 +1695,7 @@ function TBaseWorkerContextR2.hasCustomResourceDefinition(sd: TFHIRStructureDefi
 var
   cr : TFHIRCustomResourceInformation;
 begin
-  FLock.Lock;
+  FLock.Lock('hasCustomResourceDefinition');
   try
     result := false;
     for cr in FCustomResources.Values do
@@ -1750,9 +1762,9 @@ begin
                   xml.source := vcl;
                   xml.Parse;
                   if xml.resource is TFhirBundle then
-                    Load(xml.resource as TFhirBundle)
+                    Load(filename, xml.resource as TFhirBundle)
                   else
-                    SeeResource(xml.resource as TFHIRResource);
+                    SeeResource(filename, xml.resource as TFHIRResource);
                 finally
                   xml.free;
                 end;
@@ -1788,10 +1800,10 @@ begin
       if parser.resource is TFhirBundle then
       begin
         for be in TFhirBundle(parser.resource).entryList do
-          SeeResource(be.resource)
+          SeeResource(filename, be.resource)
       end
       else
-        SeeResource(parser.resource as TFHIRResource);
+        SeeResource(filename, parser.resource as TFHIRResource);
     finally
       fn.free;
     end;
@@ -1835,7 +1847,7 @@ end;
 
 procedure TBaseWorkerContextR2.registerCustomResource(cr: TFHIRCustomResourceInformation);
 begin
-  FLock.Lock;
+  FLock.Lock('registerCustomResource');
   try
     FCustomResources.Add(cr.name, cr.Link);
   finally
@@ -1848,11 +1860,11 @@ begin
   seeResourceProxy(res as TFHIRResourceProxy)
 end;
 
-procedure TBaseWorkerContextR2.seeResource(res: TFHIRResourceV);
+procedure TBaseWorkerContextR2.seeResource(packageId : String; res: TFHIRResourceV);
 var
   proxy : TFHIRResourceProxy;
 begin
-  proxy := TFHIRResourceProxy.Create(factory.link, res.link as TFHIRResource);
+  proxy := TFHIRResourceProxy.Create(packageId, factory.link, res.link as TFHIRResource);
   try
     SeeResourceProxy(proxy);
   finally
@@ -1860,7 +1872,7 @@ begin
   end;
 end;
 
-procedure TBaseWorkerContextR2.Load(feed: TFHIRBundle);
+procedure TBaseWorkerContextR2.Load(packageId : String; feed: TFHIRBundle);
 var
   i : integer;
   r : TFhirResource;
@@ -1868,7 +1880,7 @@ begin
   for i := 0 to feed.entryList.count - 1 do
   begin
     r := feed.entryList[i].resource;
-    SeeResource(r);
+    SeeResource(packageId, r);
   end;
 end;
 
@@ -1889,7 +1901,7 @@ procedure TBaseWorkerContextR2.setNonSecureTypes(names: array of String);
 var
   i : integer;
 begin
-  FLock.Lock;
+  FLock.Lock('setNonSecureTypes');
   try
     SetLength(FNonSecureNames, length(names));
     for i := 0 to length(names)-1 do
@@ -2045,7 +2057,7 @@ begin
   else
   begin
     StringSplit(url, '#', id, code);
-    lock.Lock;
+    lock.Lock('getProfileStructure');
     try
       profile := FProfilesByURL[id].Link;
     finally
@@ -2070,7 +2082,7 @@ end;
 
 procedure TProfileManager.Unload;
 begin
-  lock.Lock;
+  lock.Lock('Unload');
   try
     FProfilesById.Clear;
     FProfilesByURL.Clear;

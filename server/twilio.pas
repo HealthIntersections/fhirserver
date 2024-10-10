@@ -151,7 +151,7 @@ var
   a, f, b : String;
   conn : TFDBConnection;
 begin
-  FLock.Lock;
+  FLock.Lock('processTwilioPost');
   try
     Inc(FKey);
     tk := FKey;

@@ -40,7 +40,7 @@ Uses
   ftx_service,
   fhir4B_enums, fhir4B_types, fhir4B_resources_base, fhir4B_resources, fhir4B_context,
   fhir4B_profiles, fhir4B_client, fhir4B_utilities, fhir4B_pathnode, fhir4B_pathengine,
-  fhir_valuesets,
+  fhir_tx, fhir_valuesets,
   tx_server;
 
 type
@@ -50,7 +50,7 @@ type
   TFHIRServerWorkerContextR4B = class (TBaseWorkerContextR4B)
   private
     FTerminologyServer : TTerminologyServer;
-    FProfile : TFhirExpansionParams;
+    FProfile : TFhirTxOperationParams;
     FLock : TFslLock;
     FQuestionnaires : TFslMap<TFhirQuestionnaire>;
     FSearchParameters : TFslMap<TFhirSearchParameter>;
@@ -68,6 +68,7 @@ type
     procedure Unload; override;
 
     procedure SeeResourceProxy(r : TFhirResourceProxy); override;
+    procedure LoadCodeSystem(r : TFhirResourceProxy); override;
     procedure checkResource(r : TFhirResource);
 
     Property TerminologyServer : TTerminologyServer read FTerminologyServer write SetTerminologyServer;
@@ -100,7 +101,7 @@ constructor TFHIRServerWorkerContextR4B.Create(factory : TFHIRFactory; pc : TFHI
 begin
   inherited;
   FLock := TFslLock.Create('Validation.questionnaire r4B');
-  FProfile := TFhirExpansionParams.Create;
+  FProfile := TFhirTxOperationParams.Create;
   FProfile.includeDefinition := true;
   FProfile.limitedExpansion := false;
   FQuestionnaires := TFslMap<TFhirQuestionnaire>.Create('ctxt.q');
@@ -209,7 +210,7 @@ begin
     FCompartments.Add(r.url, TFhirCompartmentDefinition(r.resource).link)
   else if r.fhirType = 'Questionnaire' then
   begin
-    FLock.lock;
+    FLock.lock('SeeResourceProxy');
     try
       if FQuestionnaires.ContainsKey(r.id) then
         FQuestionnaires[r.id] := (r.resource as TFhirQuestionnaire).link
@@ -221,6 +222,11 @@ begin
   end
   else
     inherited SeeResourceProxy(r);
+end;
+
+procedure TFHIRServerWorkerContextR4B.LoadCodeSystem(r: TFhirResourceProxy);
+begin
+  FTerminologyServer.LoadCodeSystem(r);
 end;
 
 function TFHIRServerWorkerContextR4B.validateCode(system, version, code: String; vs: TFhirValueSet): TValidationResult;
@@ -237,7 +243,7 @@ begin
       c.systemUri := system;
       c.code := code;
       c.version := version;
-      p := FTerminologyServer.validate(vsw, c, FProfile, false, true, nil, summary);
+      p := FTerminologyServer.validate('', vsw, c, FProfile, false, true, nil, summary);
       try
         result := TValidationResult.Create;
         try
@@ -297,7 +303,7 @@ var
 begin
   if url.StartsWith('Questionnaire/') then
     url := url.Substring(14);
-  FLock.lock;
+  FLock.lock('getQuestionnaire');
   try
     if FQuestionnaires.TryGetValue(url, q) then
       exit(q.Link)
@@ -323,7 +329,7 @@ begin
     limit := 0;
     if expOptLimited in options then
       limit := 100;
-    res := FTerminologyServer.expandVS(vsw, '', FProfile, '', limit, 0, 0, nil);
+    res := FTerminologyServer.expandVS(vsw, '', '', FProfile, '', limit, 0, 0, nil, false);
     try
       result := res.Resource as TFhirValueSet;
     finally
@@ -382,7 +388,7 @@ begin
     try
       c := factory.wrapCoding(code.Link);
       try
-        p := FTerminologyServer.validate(vsw, c, nil, false, true, nil, summary);
+        p := FTerminologyServer.validate('', vsw, c, nil, false, true, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then
@@ -418,7 +424,7 @@ begin
     try
       c := factory.wrapCodeableConcept(code.Link);
       try
-        p := FTerminologyServer.validate('CodeableConcept', vsw, c, FProfile, false, true, vcmCodeableConcept, nil, summary);
+        p := FTerminologyServer.validate('', 'CodeableConcept', vsw, c, FProfile, false, true, vcmCodeableConcept, nil, summary);
         try
           result.Message := p.str('message');
           if p.bool('result') then

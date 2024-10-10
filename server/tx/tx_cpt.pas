@@ -1,4 +1,4 @@
-unit tx_cpt;
+﻿unit tx_cpt;
 
 {
 Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -154,15 +154,15 @@ type
     function parse(code : String; var msg : String) : TCPTExpression;
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TCPTServices; overload;
 
     class function checkDB(conn : TFDBConnection) : String;
 
     function expandLimitation : Integer; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
     function TotalCount : integer;  override;
@@ -183,6 +183,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -374,9 +375,9 @@ end;
 
 { TCPTServices }
 
-constructor TCPTServices.Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+constructor TCPTServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   FMap := TFslMap<TCPTConcept>.Create;
   FMap.defaultValue := nil;
   FList := TFslList<TCPTConcept>.Create;
@@ -619,12 +620,12 @@ begin
   end;
 end;
 
-function TCPTServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TCPTServices.systemUri : String;
 begin
   result := 'http://www.ama-assn.org/go/cpt';
 end;
 
-function TCPTServices.version(context : TCodeSystemProviderContext) : String;
+function TCPTServices.version : String;
 begin
   result := FVersion;
 end;
@@ -847,7 +848,7 @@ end;
 
 function TCPTServices.searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('Not supported yet');
+  raise ETerminologyError.Create('Not supported yet', itBusinessRule);
 end;
 
 function TCPTServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
@@ -917,6 +918,14 @@ begin
   result := (fc.Index < fc.Flist.count);
 end;
 
+function TCPTServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  fc : TCPTFilterContext;
+begin
+  fc := ctxt as TCPTFilterContext;
+  result := fc.Flist.count;
+end;
+
 function TCPTServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
   fc : TCPTFilterContext;
@@ -965,3 +974,4 @@ end;
 
 
 end.
+

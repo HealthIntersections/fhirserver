@@ -18,10 +18,11 @@
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
-      <MajorVersionNr Value="2"/>
-      <RevisionNr Value="12"/>
+      <MajorVersionNr Value="3"/>
+      <MinorVersionNr Value="4"/>
+      <RevisionNr Value="11"/>
     </VersionInfo>
-    <BuildModes Count="7">
+    <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
       <Item2 Name="win64">
         <MacroValues Count="1">
@@ -34,10 +35,10 @@
             <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);../dependencies/jcl;../library"/>
-            <Libraries Value="../dependencies/openssl/$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;../dependencies/jcl;tests;admin;../library/fcomp/tests;tx;../dependencies/FMM"/>
-            <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <Parsing>
             <SyntaxOptions>
@@ -48,13 +49,14 @@
             <SmartLinkUnit Value="True"/>
             <Checks>
               <IOChecks Value="True"/>
-              <RangeChecks Value="True"/>
-              <OverflowChecks Value="True"/>
               <StackChecks Value="True"/>
             </Checks>
             <VerifyObjMethodCallValidity Value="True"/>
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="0"/>
+            </Optimizations>
           </CodeGeneration>
           <Linking>
             <Debugging>
@@ -75,7 +77,48 @@
           </Other>
         </CompilerOptions>
       </Item2>
-      <Item3 Name="linux">
+      <Item3 Name="win64-release">
+        <CompilerOptions>
+          <Version Value="11"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\exec\64\fhirserver"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
+            <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
+          </SearchPaths>
+          <CodeGeneration>
+            <SmartLinkUnit Value="True"/>
+            <TargetCPU Value="x86_64"/>
+            <TargetOS Value="win64"/>
+            <Optimizations>
+              <OptimizationLevel Value="3"/>
+            </Optimizations>
+          </CodeGeneration>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf2Set"/>
+              <UseValgrind Value="True"/>
+            </Debugging>
+            <LinkSmart Value="True"/>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
+            </CompilerMessages>
+            <CustomOptions Value="-dNO_CONVERSIONX -dProduction"/>
+          </Other>
+        </CompilerOptions>
+      </Item3>
+      <Item4 Name="linux">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -83,11 +126,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="../exec/64/fhirserver"/>
+            <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);..\library"/>
-            <Libraries Value="\usr\local\lib64\"/>
+            <Libraries Value="\usr\local\lib64"/>
             <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(BuildMode)"/>
           </SearchPaths>
@@ -118,7 +161,7 @@
             <LinkSmart Value="True"/>
             <Options>
               <PassLinkerOptions Value="True"/>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R .\"/>
             </Options>
           </Linking>
           <Other>
@@ -129,11 +172,11 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-k--library-path=/usr/local/lib64"/>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
           </Other>
         </CompilerOptions>
-      </Item3>
-      <Item4 Name="osx">
+      </Item4>
+      <Item5 Name="osx">
         <MacroValues Count="1">
           <Macro1 Name="LCLWidgetType" Value="cocoa"/>
         </MacroValues>
@@ -174,8 +217,8 @@
             <CustomOptions Value="-dODBC"/>
           </Other>
         </CompilerOptions>
-      </Item4>
-      <Item5 Name="osx-m1">
+      </Item5>
+      <Item6 Name="osx-m1">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -221,8 +264,8 @@
             <CustomOptions Value="-dODBC -WM11.0 -XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
           </Other>
         </CompilerOptions>
-      </Item5>
-      <Item6 Name="win64-release">
+      </Item6>
+      <Item7 Name="osx-m1-release">
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -230,15 +273,16 @@
             <Filename Value="..\exec\64\fhirserver"/>
           </Target>
           <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir);..\dependencies\jcl;..\library"/>
+            <IncludeFiles Value="$(ProjOutDir);..\library"/>
             <Libraries Value="..\dependencies\openssl\$(TargetOS)-$(TargetCPU)"/>
-            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;..\dependencies\jcl;tests;admin;..\library\fcomp\tests;tx;..\dependencies\FMM"/>
+            <OtherUnitFiles Value="..\library\fsl\tests;..\library\fhir\tests;..\library\fhir4\tests;..\library\fhir4b\tests;..\library\fhir5\tests;..\library\ftx\tests;..\library\fxver\tests;..\library\cda\tests;..\library\v2\tests;..\library\fdb\tests;modules;tests;admin;..\library\fcomp\tests;tx"/>
             <UnitOutputDirectory Value="lib\$(TargetCPU)-$(TargetOS)"/>
           </SearchPaths>
           <CodeGeneration>
             <SmartLinkUnit Value="True"/>
-            <TargetCPU Value="x86_64"/>
-            <TargetOS Value="win64"/>
+            <RelocatableUnit Value="True"/>
+            <TargetCPU Value="aarch64"/>
+            <TargetOS Value="darwin"/>
             <Optimizations>
               <OptimizationLevel Value="3"/>
             </Optimizations>
@@ -247,9 +291,14 @@
             <Debugging>
               <GenerateDebugInfo Value="False"/>
               <DebugInfoType Value="dsDwarf2Set"/>
-              <UseValgrind Value="True"/>
+              <TrashVariables Value="True"/>
             </Debugging>
             <LinkSmart Value="True"/>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
@@ -259,11 +308,11 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
-            <CustomOptions Value="-dNO_CONVERSIONX"/>
+            <CustomOptions Value="-dPRODUCTION -dODBC -WM11.0 -XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk"/>
           </Other>
         </CompilerOptions>
-      </Item6>
-      <Item7 Name="linux-release">
+      </Item7>
+      <Item8 Name="linux-release">
         <MacroValues Count="1">
           <Macro2 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
@@ -274,7 +323,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir);../library"/>
-            <Libraries Value="/usr/local/lib64/"/>
+            <Libraries Value="/usr/local/lib64;/tmp/openssl/lib;/tmp/openssl"/>
             <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
             <UnitOutputDirectory Value="lib/$(BuildMode)"/>
           </SearchPaths>
@@ -294,7 +343,7 @@
             <LinkSmart Value="True"/>
             <Options>
               <PassLinkerOptions Value="True"/>
-              <LinkerOptions Value="-R ./"/>
+              <LinkerOptions Value="-R ./ -Xs"/>
             </Options>
           </Linking>
           <Other>
@@ -305,13 +354,15 @@
             <CompilerMessages>
               <IgnoredMessages idx5094="True" idx5093="True" idx5092="True" idx5091="True" idx5090="True" idx5089="True" idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib -Os"/>
           </Other>
         </CompilerOptions>
-      </Item7>
-      <SharedMatrixOptions Count="3">
+      </Item8>
+      <SharedMatrixOptions Count="4">
         <Item1 ID="678426317693" Modes="OSX" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="714078438566" Modes="Linux,linux-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item3 ID="047760613800" Modes="Win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item4 ID="108668842019" Modes="osx-m1-release,win64-release,linux-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -377,7 +428,7 @@
         <PackageName Value="LCL"/>
       </Item18>
     </RequiredPackages>
-    <Units Count="97">
+    <Units Count="98">
       <Unit0>
         <Filename Value="fhirserver.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -614,11 +665,11 @@
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="tests/tests_search_syntax.pas"/>
+        <Filename Value="tests\tests_search_syntax.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
-        <Filename Value="admin/server_config.pas"/>
+        <Filename Value="admin\server_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
       <Unit60>
@@ -662,47 +713,47 @@
         <IsPartOfProject Value="True"/>
       </Unit69>
       <Unit70>
-        <Filename Value="tx/tx_acir.pas"/>
+        <Filename Value="tx\tx_acir.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit70>
       <Unit71>
-        <Filename Value="tx/tx_areacode.pas"/>
+        <Filename Value="tx\tx_areacode.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit71>
       <Unit72>
-        <Filename Value="tx/tx_countrycode.pas"/>
+        <Filename Value="tx\tx_countrycode.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit72>
       <Unit73>
-        <Filename Value="tx/tx_hgvs.pas"/>
+        <Filename Value="tx\tx_hgvs.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit73>
       <Unit74>
-        <Filename Value="tx/tx_iso_4217.pas"/>
+        <Filename Value="tx\tx_iso_4217.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit74>
       <Unit75>
-        <Filename Value="tx/tx_mimetypes.pas"/>
+        <Filename Value="tx\tx_mimetypes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit75>
       <Unit76>
-        <Filename Value="tx/tx_ndc.pas"/>
+        <Filename Value="tx\tx_ndc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit76>
       <Unit77>
-        <Filename Value="tx/tx_rxnorm.pas"/>
+        <Filename Value="tx\tx_rxnorm.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit77>
       <Unit78>
-        <Filename Value="tx/tx_unii.pas"/>
+        <Filename Value="tx\tx_unii.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit78>
       <Unit79>
-        <Filename Value="tx/tx_uri.pas"/>
+        <Filename Value="tx\tx_uri.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit79>
       <Unit80>
-        <Filename Value="tx/tx_us_states.pas"/>
+        <Filename Value="tx\tx_us_states.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit80>
       <Unit81>
@@ -718,68 +769,71 @@
         <IsPartOfProject Value="True"/>
       </Unit83>
       <Unit84>
-        <Filename Value="remote_config.pas"/>
+        <Filename Value="telnet_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit84>
       <Unit85>
-        <Filename Value="telnet_server.pas"/>
+        <Filename Value="tx\tx_omop.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit85>
       <Unit86>
-        <Filename Value="tx/tx_omop.pas"/>
+        <Filename Value="package_spider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit86>
       <Unit87>
-        <Filename Value="package_spider.pas"/>
+        <Filename Value="tx_registry_spider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit87>
       <Unit88>
-        <Filename Value="tx_registry_spider.pas"/>
+        <Filename Value="tx_registry_model.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit88>
       <Unit89>
-        <Filename Value="tx_registry_model.pas"/>
+        <Filename Value="endpoint_txregistry.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit89>
       <Unit90>
-        <Filename Value="endpoint_txregistry.pas"/>
+        <Filename Value="endpoint_icao.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit90>
       <Unit91>
-        <Filename Value="endpoint_icao.pas"/>
+        <Filename Value="tx\tx_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit91>
       <Unit92>
-        <Filename Value="tx/tx_cpt.pas"/>
+        <Filename Value="tests\tests_cpt.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit92>
       <Unit93>
-        <Filename Value="tests/tests_cpt.pas"/>
+        <Filename Value="xig_provider.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit93>
       <Unit94>
-        <Filename Value="xig_provider.pas"/>
+        <Filename Value="endpoint_xig.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit94>
       <Unit95>
-        <Filename Value="endpoint_xig.pas"/>
+        <Filename Value="web_server.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit95>
       <Unit96>
-        <Filename Value="web_server.pas"/>
+        <Filename Value="zero_config.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit96>
+      <Unit97>
+        <Filename Value="web_cache.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit97>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
     <Version Value="11"/>
-    <PathDelim Value="/"/>
     <Target>
       <Filename Value="../exec/64/fhirserver"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);../library"/>
-      <Libraries Value="/usr/local/lib64/"/>
+      <Libraries Value="/usr/local/lib64;/tmp/openssl/lib;/tmp/openssl"/>
       <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -813,7 +867,7 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="53">
+    <Exceptions Count="57">
       <Item1>
         <Name Value="EAbort"/>
       </Item1>
@@ -845,7 +899,6 @@
       </Item8>
       <Item9>
         <Name Value="EIdConnClosedGracefully"/>
-        <Enabled Value="False"/>
       </Item9>
       <Item10>
         <Name Value="EIdCouldNotBindSocket"/>
@@ -869,7 +922,6 @@
       </Item14>
       <Item15>
         <Name Value="EWebException"/>
-        <Enabled Value="False"/>
       </Item15>
       <Item16>
         <Name Value="EConvertError"/>
@@ -882,7 +934,6 @@
       </Item18>
       <Item19>
         <Name Value="EIdReadTimeout"/>
-        <Enabled Value="False"/>
       </Item19>
       <Item20>
         <Name Value="EIdResolveError"/>
@@ -938,7 +989,6 @@
       </Item35>
       <Item36>
         <Name Value="EFHIRPath"/>
-        <Enabled Value="False"/>
       </Item36>
       <Item37>
         <Name Value="00000010EParserException"/>
@@ -994,6 +1044,18 @@
       <Item53>
         <Name Value="ESQLite3Error"/>
       </Item53>
+      <Item54>
+        <Name Value="EFHIROperationException"/>
+      </Item54>
+      <Item55>
+        <Name Value="EParserException"/>
+      </Item55>
+      <Item56>
+        <Name Value="EJsonException"/>
+      </Item56>
+      <Item57>
+        <Name Value="EDefinitionException"/>
+      </Item57>
     </Exceptions>
   </Debugging>
 </CONFIG>

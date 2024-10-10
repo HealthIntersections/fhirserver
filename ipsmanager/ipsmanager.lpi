@@ -422,11 +422,12 @@
           </Other>
         </CompilerOptions>
       </Item>
-      <SharedMatrixOptions Count="4">
+      <SharedMatrixOptions Count="5">
         <Item1 ID="628482637663" Modes="OSX,osx-m1-release,osx-release,osx-m1" Type="IDEMacro" MacroName="LCLWidgetType" Value="cocoa"/>
         <Item2 ID="759823959655" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk"/>
         <Item3 ID="819787652127" Modes="linux,linux-release" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item4 ID="299328664200" Modes="win64-release,win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item5 ID="677307597954" Modes="linux-release,osx-m1-release,osx-release,win64-release" Value="-dProduction"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -508,12 +509,10 @@
       <Unit>
         <Filename Value="views\mvbase.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mvBase"/>
       </Unit>
       <Unit>
         <Filename Value="views\mvdatasources.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mvDataSources"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -561,7 +560,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-k--library-path=/usr/local/lib64"/>
+      <CustomOptions Value="-k--library-path=/usr/local/lib64 -k--library-path=/tmp/openssl/lib"/>
     </Other>
   </CompilerOptions>
   <Debugging>

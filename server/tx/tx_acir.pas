@@ -35,7 +35,7 @@ interface
 // based on a table by importing the excel spreadsheet directly
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_http, fsl_lang,
+  fsl_utilities, fsl_base, fsl_http, fsl_lang, fsl_i18n,
   fhir_features,
   ftx_service;
 
@@ -66,6 +66,8 @@ type
     destructor Destroy; Override;
   end;
 
+  { TACIRServices }
+
   TACIRServices = class (TCodeSystemProvider)
   private
     FList : TFslList<TACIRConcept>;
@@ -73,7 +75,7 @@ type
 
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TACIRServices; overload;
 
@@ -81,8 +83,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
@@ -101,6 +103,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -114,9 +117,9 @@ implementation
 
 { TACIRServices }
 
-Constructor TACIRServices.Create(languages : TIETFLanguageDefinitions);
+constructor TACIRServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   FList := TFslList<TACIRConcept>.Create;
   FMap := TFslMap<TACIRConcept>.Create('tx.acir');
   FMap.defaultValue := nil;
@@ -135,12 +138,12 @@ begin
 end;
 
 
-function TACIRServices.version(context: TCodeSystemProviderContext): String;
+function TACIRServices.version: String;
 begin
   result := '';
 end;
 
-function TACIRServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TACIRServices.systemUri : String;
 begin
   result := 'urn:oid:1.2.36.1.2001.1005.17';
 end;
@@ -346,6 +349,11 @@ begin
 end;
 
 function TACIRServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+begin
+  raise ETerminologyTodo.Create('TACIRServices.FilterMore');
+end;
+
+function TACIRServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyTodo.Create('TACIRServices.FilterMore');
 end;

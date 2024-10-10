@@ -151,6 +151,10 @@ type
     FAdaptors: TFslMap<TFHIRFormatAdaptor>;
     FThreads : TFslList<TAsyncTaskThread>;
 
+    {$IFDEF DEV_FEATURES}
+    procedure processRequiredFeatures(request : TFHIRRequest; header: String);
+    procedure checkRequiredFeatures(op: TFHIROperationEngine; request : TFHIRRequest; response : TFHIRResponse);
+    {$ENDIF}
     procedure SetTerminologyWebServer(const Value: TTerminologyWebServer);
     Procedure HandleOWinToken(AContext: TIdContext; secure: boolean; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo);
     function HandleRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; ssl, secure: boolean; path: String; logId : String; esession: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker) : String;
@@ -166,7 +170,7 @@ type
       sCookie, provenance, sBearer: String; oPostStream: TStream; oResponse: TFHIRResponse; var aFormat: TFHIRFormat; var redirect: boolean; form: TMimeMessage;
       bAuth, secure: boolean; out relativeReferenceAdjustment: integer; var style : TFHIROutputStyle; Session: TFHIRSession; cert: TIdOpenSSLX509; tt : TTimeTracker): TFHIRRequest;
     Procedure ProcessOutput(start : UInt64; oRequest: TFHIRRequest; oResponse: TFHIRResponse; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; relativeReferenceAdjustment: integer; style : TFHIROutputStyle; gzip, cache: boolean; summary : String);
-    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; langList : THTTPLanguageList; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
+    procedure SendError(response: TIdHTTPResponseInfo; logid : string; status: word; format: TFHIRFormat; langList : THTTPLanguageList; message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; diagnostics : String = '');
     function processProvenanceHeader(header : String; langList : THTTPLanguageList): TFhirProvenanceW;
     function EncodeVersionsJson(r: TFHIRResourceV): TBytes;
     function EncodeVersionsXml(r: TFHIRResourceV): TBytes;
@@ -657,7 +661,7 @@ begin
       status(atsError, e.Message);
     end;
   end;
-  FServer.Common.Lock.Lock;
+  FServer.Common.Lock.Lock('AsyncTaskThread.Execute');
   try
     FServer.FThreads.Remove(self);
   finally
@@ -752,7 +756,7 @@ var
   i : integer;
 begin
   done := false;
-  Common.Lock.Lock;
+  Common.Lock.Lock('StopAsyncTasks1');
   try
     for task in FThreads do
     begin
@@ -769,7 +773,7 @@ begin
       sleep(100);
       inc(i);
       done := true;
-      Common.Lock.Lock;
+      Common.Lock.Lock('StopAsyncTasks2');
       try
         for task in FThreads do
           done := false;
@@ -779,7 +783,7 @@ begin
     until done or (i = 10);
     if not done then
     begin
-      Common.Lock.Lock;
+      Common.Lock.Lock('StopAsyncTasks3');
       try
         for task in FThreads do
         begin
@@ -799,6 +803,39 @@ begin
   FAuthServer.free;
   FAuthServer := Value;
 end;
+
+{$IFDEF DEV_FEATURES}
+procedure TStorageWebEndpoint.processRequiredFeatures(request: TFHIRRequest; header: String);
+var
+  s : String;
+begin
+  if (header <> '') then
+    for s in header.Split([';']) do
+      request.requiredFeatures.Add(TFhirFeatureQueryItem.fromParam(FContext.Factory, s.trim));
+end;
+
+procedure TStorageWebEndpoint.checkRequiredFeatures(op: TFHIROperationEngine; request: TFHIRRequest; response : TFHIRResponse);
+var
+  feature : TFhirFeatureQueryItem;
+  answer : TFhirFeatureQueryAnswer;
+begin
+  for feature in request.requiredFeatures do
+  begin
+    answer := TFhirFeatureQueryAnswer.create;
+    try
+      answer.Feature := feature.Feature;
+      answer.Context := feature.Context;
+      answer.Values.addAll(feature.Values);
+      answer.ProcessingStatus := fqpsUnknownFeature;
+      op.processFeature(feature, answer);
+      if (answer.Answer <> nbTrue) then
+        raise ERestfulException.create('TStorageWebEndpoint.checkRequiredFeatures', 501, itNotSupported, 'The feature '''+feature.toParam+''' is not supported', request.langList);
+    finally
+      answer.free;
+    end;
+  end;
+end;
+{$ENDIF}
 
 procedure TStorageWebEndpoint.SetTerminologyWebServer(const Value: TTerminologyWebServer);
 begin
@@ -1043,7 +1080,7 @@ begin
     else if request.Document = PathNoSlash then
     begin
       result := 'Home Page';
-      ReturnProcessedFile(request, response, Session, '/hompage.html', Common.SourceProvider.AltFile('/homepage.html', PathNoSlash), true)
+      ReturnProcessedFile(request, response, Session, '/homepage.html', Common.SourceProvider.AltFile('/homepage.html', PathNoSlash), true)
     end
     else
     begin
@@ -1286,6 +1323,9 @@ Begin
                   request.RawHeaders.Values['X-Provenance'], sBearer, oStream, oResponse, aFormat, redirect, form, secure, ssl, relativeReferenceAdjustment, style,
                   esession, cert, tt);
                 try
+                  {$IFDEF DEV_FEATURES}
+                  processRequiredFeatures(oRequest, request.RawHeaders.Values['Required-Feature']);
+                  {$ENDIF}
                   oRequest.externalRequestId := request.RawHeaders.Values['X-Request-Id'];
                   oRequest.internalRequestId := logId;
                   if TFHIRWebServerClientInfo(AContext.Data).Session = nil then
@@ -1419,10 +1459,16 @@ Begin
                       begin
                         if oResponse.HTTPCode < 300 then
                         begin
-                          result := result + ' (err: Abort)';
+                          result := result + ' (msg: Abort)';
                           recordStack(e);
                           raise;
                         end;
+                      end;
+                      on e : EFslException do
+                      begin
+                        result := result + ' (msg: '+e.message+')';
+                        recordStack(e);
+                        raise;
                       end;
                       on e: exception do
                       begin
@@ -1505,7 +1551,7 @@ Begin
       end;
       on e: ETerminologySetup do
       begin
-        result := result + ' (err: '+e.message+')';
+        result := result + ' (msg: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNotSupported)
         else
@@ -1514,20 +1560,28 @@ Begin
       end;
       on e: ETooCostly do
       begin
-        result := result + ' (err: Too-Costly)';
+        result := result + ' (msg: Too-Costly)';
         if noErrCode then
-          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly)
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itTooCostly, e.Diagnostics)
         else
           SendError(response, logId, HTTP_ERR_BUSINESS_RULES_FAILED, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment,
-            itTooCostly);
+            itTooCostly, e.Diagnostics);
       end;
       on e: ERestfulException do
       begin
-        result := result + ' (err: '+e.message+')';
+        result := result + ' (msg: '+e.message+')';
         if noErrCode then
           SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code)
         else
           SendError(response, logId, e.status, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, e.code);
+      end;
+      on e: EFslException do
+      begin
+        result := result + ' (msg: '+e.message+')';
+        if noErrCode then
+          SendError(response, logId, 200, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull)
+        else
+          SendError(response, logId, HTTP_ERR_INTERNAL, aFormat, langList, e.message, sPath, e, Session, false, path, relativeReferenceAdjustment, itNull);
       end;
       on e: exception do
       begin
@@ -1698,6 +1752,9 @@ begin
   try
     op.OnPopulateConformance := PopulateConformance;
     op.OnCreateBuilder := doGetBundleBuilder;
+    {$IFDEF DEV_FEATURES}
+    checkRequiredFeatures(op, request, response);
+    {$ENDIF}
     result := op.Execute(Context, request, response, tt);
     self.Context.Storage.yield(op, nil);
   except
@@ -2184,7 +2241,7 @@ begin
 end;
 
 procedure TStorageWebEndpoint.SendError(response: TIdHTTPResponseInfo; logid: string; status: word; format: TFHIRFormat; langList : THTTPLanguageList;
-  message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType);
+  message, url: String; e: exception; Session: TFHIRSession; addLogins: boolean; path: String; relativeReferenceAdjustment: integer; code: TFHIRIssueType; diagnostics : String);
 var
   issue: TFhirOperationOutcomeW;
   oComp: TFHIRComposer;
@@ -2440,12 +2497,12 @@ function TStorageWebEndpoint.getReferencesByType(t: String): String;
 var
   bundle : TFHIRBundleW;
   entry : TFhirBundleEntryW;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
 begin
   bundle := nil;
 
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for s in t.trim.Split(['|']) do
     begin
@@ -2746,7 +2803,7 @@ begin
   if not (request.CommandType in [fcmdSearch, fcmdHistoryInstance, fcmdHistoryType, fcmdHistorySystem, fcmdTransaction, fcmdBatch, fcmdUpload, fcmdOperation]) then
     raise EFHIRException.CreateLang('NO_ASYNC', request.LangList);
   thread := TAsyncTaskThread.Create(self);
-  Common.Lock.Lock;
+  Common.Lock.Lock('ProcessAsyncRequest');
   try
     FThreads.add(thread);
   finally

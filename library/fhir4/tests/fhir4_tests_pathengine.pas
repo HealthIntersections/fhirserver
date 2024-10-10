@@ -77,7 +77,7 @@ begin
   resources := TFslMap<TFHIRResource>.Create('resources');
   if gTests = nil then
     gTests := TMXmlParser.ParseFile(TestSettings.fhirTestFile(['r5', 'fhirpath', 'tests-fhir-r4.xml']), [xpDropWhitespace, xpDropComments]);
-  ucum := TUcumServices.Create(nil);
+  ucum := TUcumServices.Create(nil, nil);
   ucum.Import(partnerFile('ucum.dat'));
   engine := TFHIRPathEngine.Create(TTestingWorkerContext4.Use, TUcumServiceImplementation.Create(ucum.link));
 end;
@@ -181,7 +181,7 @@ begin
             else
               p := TFHIRXmlParser.Create(TTestingWorkerContext4.Use, nil);
             try
-              f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead);
+              f := TFileStream.Create(TestSettings.fhirTestFile(['r4', input]), fmOpenRead + fmShareDenyWrite);
               try
                 p.source := f;
                 p.parse;

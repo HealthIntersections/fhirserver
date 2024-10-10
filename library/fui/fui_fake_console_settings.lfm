@@ -1,23 +1,24 @@
 object FakeConsoleSettingsForm: TFakeConsoleSettingsForm
   Left = 690
-  Height = 135
+  Height = 219
   Top = 222
-  Width = 258
+  Width = 219
   Caption = 'Console Preferences'
-  ClientHeight = 135
-  ClientWidth = 258
+  ClientHeight = 219
+  ClientWidth = 219
+  LCLVersion = '3.1.0.0'
   object Panel1: TPanel
     Left = 0
     Height = 41
-    Top = 94
-    Width = 258
+    Top = 178
+    Width = 219
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 41
-    ClientWidth = 258
+    ClientWidth = 219
     TabOrder = 0
     object btnOk: TButton
-      Left = 93
+      Left = 54
       Height = 25
       Top = 6
       Width = 75
@@ -27,7 +28,7 @@ object FakeConsoleSettingsForm: TFakeConsoleSettingsForm
       TabOrder = 0
     end
     object btnCancel: TButton
-      Left = 174
+      Left = 135
       Height = 25
       Top = 6
       Width = 75
@@ -55,8 +56,8 @@ object FakeConsoleSettingsForm: TFakeConsoleSettingsForm
   end
   object eLines: TEdit
     Left = 124
-    Height = 22
-    Top = 36
+    Height = 21
+    Top = 37
     Width = 56
     TabOrder = 3
     Text = 'eLines'
@@ -68,5 +69,28 @@ object FakeConsoleSettingsForm: TFakeConsoleSettingsForm
     Width = 94
     Caption = 'Max Line Count'
     ParentColor = False
+  end
+  object chkWordWrap: TCheckBox
+    Left = 16
+    Height = 18
+    Top = 94
+    Width = 124
+    Caption = 'Word Wrap in log'
+    TabOrder = 4
+  end
+  object Label2: TLabel
+    Left = 20
+    Height = 16
+    Top = 126
+    Width = 60
+    Caption = 'Font Size:'
+  end
+  object eSize: TEdit
+    Left = 88
+    Height = 21
+    Top = 124
+    Width = 56
+    TabOrder = 5
+    Text = 'eSize'
   end
 end

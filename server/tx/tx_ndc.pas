@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections, {$IFDEF DELPHI} IOUtils, {$ENDIF}
-  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json,
+  fsl_base, fsl_utilities, fsl_collections, fsl_stream, fsl_http, fsl_threads, fsl_lang, fsl_fpc, fsl_json, fsl_logging, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -228,7 +228,7 @@ type
     function packageDisplay(conn : TFDBConnection) : String;
     function productDisplay(conn : TFDBConnection) : String;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager; version : String);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager; version : String);
     destructor Destroy; Override;
     Function Link : TNDCServices; overload;
 
@@ -238,7 +238,7 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -257,6 +257,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -820,9 +821,9 @@ end;
 
 { TNDCServices }
 
-constructor TNDCServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager; version : String);
+constructor TNDCServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager; version : String);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
 
   self.FDb := db;
   self.FVersion := version;
@@ -884,12 +885,14 @@ var
 begin
   conn := FDB.getConnection('load');
   try
+    Logging.log('Load NDC metadata');
     loadDict(conn, FTypes, 'select NDCKey, Name from NDCProductTypes');
     loadDict(conn, FOrgs, 'select NDCKey, Name from NDCOrganizations');
     loadDict(conn, FRoutes, 'select NDCKey, Name from NDCRoutes');
     loadDict(conn, FDoseforms, 'select NDCKey, Name from NDCDoseForms');
-    FPackageCount := conn.countSql('Select count(*) from NDCPackages');
-    FProductCount := conn.countSql('Select count(*) from NDCProducts');
+    Logging.log('Load NDC counts');
+    FPackageCount := conn.countSql('Select count(NDCKey) from NDCPackages');
+    FProductCount := conn.countSql('Select count(NDCKey) from NDCProducts');
     conn.release;
   except
     on e : Exception do
@@ -1240,6 +1243,14 @@ begin
   result := context.FConn.FetchNext;
 end;
 
+function TNDCServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  context : TNDCFilterContext;
+begin
+  context := ctxt as TNDCFilterContext;
+  result := context.FConn.RowsAffected; // todo
+end;
+
 procedure TNDCServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.getCDSInfo');
@@ -1387,7 +1398,7 @@ begin
   raise ETerminologyTodo.Create('Not done yet: TNDCServices.searchFilter');
 end;
 
-function TNDCServices.systemUri(context: TCodeSystemProviderContext): String;
+function TNDCServices.systemUri: String;
 begin
   result := URI_NDC;
 end;

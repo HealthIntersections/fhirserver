@@ -78,7 +78,7 @@ var
 begin
   hash := TIdHashSHA256.Create;
   try
-    f := TFileStream.create(fn, fmOpenRead);
+    f := TFileStream.create(fn, fmOpenRead + fmShareDenyWrite);
     try
       result := hash.HashStreamAsHex(f);
     finally
@@ -103,7 +103,7 @@ begin
   h := hashOf(s);
   assertTrue(h = 'AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816', 'Hash of SCT test file is wrong: AA2BF154DC360AD5AFED687638CB8DC1EAE831E2EABD4498F327726F2EF92816/'+h+', file size is  '+
     DescribeBytes(FileSize(s)));
-  FServices.Load(s, true)
+  FServices.Load(s)
 end;
 
 procedure TSnomedTests.TearDown;

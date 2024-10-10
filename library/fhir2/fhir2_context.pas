@@ -56,8 +56,8 @@ type
      procedure loadResource;  override;
      function wrapResource : TFHIRXVersionResourceWrapper; override;
    public
-     constructor Create(factory : TFHIRFactory; resource : TFHIRResource); overload;
-     constructor Create(factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
+     constructor Create(packageId : String; factory : TFHIRFactory; resource : TFHIRResource); overload;
+     constructor Create(packageId : String; factory : TFHIRFactory; lock: TFslLock; worker : TFHIRWorkerContextV; pi: TNpmPackageResource); overload;
      destructor Destroy; override;
 
      function link : TFHIRResourceProxy; overload;
@@ -143,15 +143,15 @@ uses
 
 { TFHIRResourceProxy }
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; resource: TFHIRResource);
+constructor TFHIRResourceProxy.Create(packageId : String; factory: TFHIRFactory; resource: TFHIRResource);
 begin
-  inherited Create(resource, resource.urlGen, resource.versionGen);
+  inherited Create(packageId, resource, resource.urlGen, resource.versionGen);
   FFactory := factory;
 end;
 
-constructor TFHIRResourceProxy.Create(factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
+constructor TFHIRResourceProxy.Create(packageId : String; factory: TFHIRFactory; lock: TFslLock; worker: TFHIRWorkerContextV; pi: TNpmPackageResource);
 begin
-  inherited Create(fhirVersionRelease2, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
+  inherited Create(packageId, fhirVersionRelease2, pi.resourceType, pi.id, pi.url, pi.version, pi.supplements, pi.content, pi.valueSet);
   FFactory := factory;
   FWorker := worker;
   FInfo := pi;
@@ -186,7 +186,7 @@ begin
   if FInfo = nil then
     exit; // not lazy loading
 
-  FLock.lock;
+  FLock.lock('loadResource');
   try
     if FResourceV <> nil then
       exit;
@@ -197,7 +197,7 @@ begin
 
   p := FFactory.makeParser(FWorker, ffJson, nil);
   try
-    stream := TFileStream.Create(FInfo.filename, fmOpenRead);
+    stream := TFileStream.Create(FInfo.filename, fmOpenRead + fmShareDenyWrite);
     try
       try
         r := p.parseResource(stream);

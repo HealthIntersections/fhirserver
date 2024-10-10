@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Defaults,
-  fsl_base,
+  fsl_base, fsl_utilities,
   fhir_objects,
   ftx_service;
 
@@ -354,13 +354,13 @@ end;
 
 function TSnomedExpression.describe: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   concept : TSnomedConcept;
   refinement : TSnomedRefinement;
   refinementGroup : TSnomedRefinementGroup;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     case status of
       SnomedExpressionStatusEquivalent:b.Append('===');
@@ -624,11 +624,11 @@ end;
 
 function TSnomedRefinementGroup.describe: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   refinement : TSnomedRefinement;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for refinement in refinements do
@@ -1009,11 +1009,15 @@ begin
   SetLength(result, MAX_TERM_LENGTH);
   fixed('"');
   i := 0;
-  while peek <> '"' do
+  while (peek <> '"') and (peek <> #0) do
   begin
     inc(i);
+    if (i > MAX_TERM_LENGTH) then   
+      raise ETerminologyError.Create('Constant too long (>'+inttostr(MAX_TERM_LENGTH)+' chars) at character '+inttostr(cursor), itInvalid);
     result[i] := next;
   end;
+  if (peek = #0) then
+    raise ETerminologyError.Create('Unterminated Constant at character '+inttostr(cursor), itInvalid);
   fixed('"');
   SetLength(result, i);
 end;

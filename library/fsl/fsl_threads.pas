@@ -61,7 +61,8 @@ procedure ThreadPing;
 procedure SetThreadName(name : String);
 procedure SetThreadStatus(status : String);
 function GetThreadInfo : String;
-function GetThreadReport : String;
+function GetThreadInfoForThread(threadId : TThreadId) : String;
+function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 function GetThreadCount : Integer;
 function GetThreadNameStatus : String;
 procedure closeThread;
@@ -85,7 +86,8 @@ type
 
     FOwnID: Integer;                 // unique serial number assigned to all critical sections
     FName: String;                   // Name of the critical section object
-    FLockName: Array of String;      // Name of the current Lock (first one to grab)
+    FLockName: String;               // Name(s) of the routines that have the Lock
+    FWaiting : TStringList;          // list of thread ids waiting for the lock // debugging dead lock detection
     FDelayCount: Integer;            // Number of times there has been a failed attempt to lock a critical section
     FUseCount: Integer;              // The amount of times there has been a succesful attempt to lock a critical section
     FCurrLockTime: UInt64;           // Time which the owning thread obtained the lock for the thread
@@ -97,6 +99,7 @@ type
     procedure MarkEntered;
     procedure MarkLeft;
     Function DebugSummary : String;
+    procedure Lock; Overload;
   Public
     constructor Create; Overload;
     constructor Create(AName: String); Overload;
@@ -104,7 +107,6 @@ type
     function link : TFslLock; overload;
 
     // core functionality
-    procedure Lock; Overload;
     procedure Lock(const Name: String); Overload;
     procedure Unlock;
     procedure Enter; Overload;
@@ -137,6 +139,7 @@ type
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
 
 function DumpLocks(all : boolean; sep : String = '') : String;
+function NameLockedToThread(id : TThreadID) : string;
 
 Type
   TFslThreadHandle = TThreadHandle;
@@ -176,6 +179,7 @@ Type
 
     function Terminated : boolean;
     Property Running : Boolean read FRunning;
+    Property Stopped : Boolean read FStopped;
 
     Property AutoFree : boolean read FAutoFree write FAutoFree;
     Property TimePeriod : cardinal read FTimePeriod write FTimePeriod; // milliseconds. If this is >0, execute will called after TimePeriod delay until Stopped
@@ -695,7 +699,33 @@ begin
   end;
 end;
 
-function GetThreadReport : String;
+function GetThreadInfoForThread(threadId: TThreadId): String;
+var
+  id : TThreadId;
+  i : integer;
+  p : PThreadRecord;
+  s : String;
+begin
+  EnterCriticalSection(GCritSct);
+  try
+    for i := GThreadList.Count - 1 downto 0 do
+    begin
+      p := GThreadList[i];
+      if (p.id = threadId) then
+      begin
+        s := p.name;
+        if p.state <> '' then
+          s := s + '='+p.state;
+        break;
+      end;
+    end;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+  result := s;
+end;
+
+function GetThreadReport(ids : boolean = true; sep : String = '|') : String;
 var
   i : integer;
   s : String;
@@ -708,8 +738,8 @@ begin
     begin
       p := GThreadList[i];
       if (s <> '') then
-        s := s + '|';
-      s := s + info(p, true);
+        s := s + sep;
+      s := s + info(p, ids);
     end;
   finally
     LeaveCriticalSection(GCritSct);
@@ -816,7 +846,7 @@ var
   i : integer;
 begin
   {$IFDEF FPC}
-  FLock.Lock;
+  FLock.Lock('execute');
   try
     FStatus := epsRunning;
     FProcess := TProcess.create(nil);
@@ -858,7 +888,7 @@ begin
     until BytesRead = 0;
     FExitCode := FProcess.ExitCode;
   finally
-    FLock.Lock;
+    FLock.Lock('execute2');
     try
       FProcess.free;
       FProcess := nil;
@@ -965,14 +995,15 @@ constructor TFslLock.Create;
 begin
   inherited Create;
   FName := ClassName;
-  SetLength(FLockName, 0);
   FDelayCount := 0;
+  FLockName := '';
   FUseCount := 0;
   FCurrLockTime := 0;
   FTimeLocked := 0;
   FDelayTime := 0;
   FLockThread := NO_THREAD;
   FEntryCount := 0;
+  FWaiting := TStringList.create;
   if not GHaveCritSect then
     InitUnit;
   InitializeCriticalSection(FCritSect);
@@ -982,19 +1013,17 @@ begin
     inc(GTotal);
     FOwnID := GTotal;
     if GFirst = NIL then
-      begin
-      FNext := NIL;
-      end
+      FNext := NIL
     else
-      begin
+    begin
       FNext := GFirst;
       FNext.FPrev := self;
-      end;
+    end;
     FPrev := NIL;
     GFirst := self;
   finally
     LeaveCriticalSection(GCritSct);
-    end;
+  end;
 end;
 
 procedure TFslLock.changeName(aName: String);
@@ -1027,6 +1056,7 @@ begin
       end;
   end;
   DeleteCriticalSection(FCritSect);
+  FWaiting.free;
   inherited;
 end;
 
@@ -1058,20 +1088,19 @@ begin
     inc(FUseCount);
     FCurrLockTime := GetTickCount64;
   end;
-  SetLength(FLockName, FEntryCount);
 end;
 
 procedure TFslLock.MarkLeft;
 begin
   assert(FLockThread = GetCurrentThreadID);
   dec(FEntryCount);
-  SetLength(FLockName, FEntryCount);
   if FEntryCount = 0 then
-    begin
+  begin
     FLockThread := NO_THREAD;
     FTimeLocked := FTimeLocked + (GetTickCount64 - FCurrLockTime);
     FCurrLockTime := 0;
-    end;
+    FLockName := '';
+  end;
 end;
 
 function TFslLock.LockedToMe: Boolean;
@@ -1085,29 +1114,45 @@ var
 begin
   // the current time is set by a successful trylock.
   if not TryLock then
-    begin
-    LStartTime := GetTickCount64;
-    EnterCriticalSection(FCritSect);
-    MarkEntered;
-    inc(FDelayTime, FCurrLockTime);
-    dec(FDelayTime, LStartTime);
-    inc(FDelayCount);
+  begin
+    EnterCriticalSection(GCritSct);
+    try
+      FWaiting.Add(inttostr(NativeUInt(ThreadID)));
+    finally
+      LeaveCriticalSection(GCritSct);
     end;
+    try
+      LStartTime := GetTickCount64;
+      EnterCriticalSection(FCritSect);
+      MarkEntered;
+      inc(FDelayTime, FCurrLockTime);
+      dec(FDelayTime, LStartTime);
+      inc(FDelayCount);
+    finally                   
+      EnterCriticalSection(GCritSct);
+      try
+        FWaiting.Delete(FWaiting.IndexOf(inttostr(NativeUInt(ThreadID))));
+      finally
+        LeaveCriticalSection(GCritSct);
+      end;
+    end;
+  end;
 end;
 
 procedure TFslLock.Lock(const Name: String);
 begin
   Lock;
-  FLockName[FEntryCount - 1] := Name;
+  if (FLockName <> '') then
+    FLockName := Name+'; '+FLockName
+  else
+    FLockName := Name;
 end;
 
 function TFslLock.Trylock: Boolean;
 begin
   Result := TryEnterCriticalSection(FCritSect);
   if Result then
-    begin
     MarkEntered;
-    end;
 end;
 
 procedure TFslLock.Unlock;
@@ -1172,13 +1217,13 @@ begin
     Col(IntToStr(FCurrLockTime), 9)+
     Col(IntToStr(FTimeLocked), 10)+
     Col(IntToStr(FDelayTime), 10)+
+    Col(IntToStr(FEntryCount), 10)+
     Col(threadToString(FLockThread), 9);
-
-  for i := 0 to High(FLockName) do
-    if (i > 0) then
-      result := result + '|' + FLockName[i]
+  if FEntryCount > 0 then
+    if FWaiting.count > 0 then
+      result := result +  FLockName+' ('+FWaiting.CommaText+')'
     else
-      result := result + FLockName[i];
+      result := result +  FLockName;
 end;
 
 Function CriticalSectionChecksPass(Var sMessage : String) : Boolean;
@@ -1215,16 +1260,47 @@ Begin
   if (sep = '') then
     sep := #13#10;
 
-  Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
-  Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) Thread ID  Routine'+sep;
-  oCrit := GFirst;
-  While oCrit <> nil Do
-  Begin
-    if all or (oCrit.EntryCount > 0) Then
-      Result := Result + oCrit.DebugSummary + sep;
-    oCrit := oCrit.FNext;
-  End;
+  if (all) then
+  begin
+    Result := IntToStr(TFslLock.CurrentCount) + ' Critical Sections (@'+InttoStr(GetTickCount64)+')'+sep;
+    Result := Result+'ID Name                      Use#   Delay# Curr(ms) Total(ms) Delay(ms) #UseCount Thread ID  Routine'+sep;
+  end
+  else
+  begin
+    Result := 'ID Name (of '+StringPadRight(inttostr(TFslLock.CurrentCount)+')', ' ', 6)+'           Use#   Delay# Curr(ms) Total(ms) Delay(ms) #UseCount Thread ID  Routine'+sep;
+  end;
+  EnterCriticalSection(GCritSct);
+  try
+    oCrit := GFirst;
+    While oCrit <> nil Do
+    Begin
+      if all or (oCrit.EntryCount > 0) Then
+        Result := Result + oCrit.DebugSummary + sep;
+      oCrit := oCrit.FNext;
+    End;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
 End;
+
+function NameLockedToThread(id: TThreadID): string; 
+var
+  oCrit : TFslLock;
+begin
+  result := '';
+  EnterCriticalSection(GCritSct);
+  try
+    oCrit := GFirst;
+    While oCrit <> nil Do
+    Begin
+      if oCrit.FLockThread = id Then
+        CommaAdd(result, oCrit.Name);
+      oCrit := oCrit.FNext;
+    End;
+  finally
+    LeaveCriticalSection(GCritSct);
+  end;
+end;
 
 
 type

@@ -40,7 +40,7 @@ uses
 
 type
   TCheckEvent = function(sender : TObject; msg : String):boolean of object;
-  TPackageLoadingEvent = procedure (rType, id : String; stream : TStream) of object;
+  TPackageLoadingEvent = procedure (packageId : String; rType, id : String; stream : TStream) of object;
 
   TPackageDefinition = class (TFslObject)
   private
@@ -98,15 +98,13 @@ type
     FCache : TFslMap<TNpmPackage>;
     FTaskDesc : String;
     FCaching : boolean;
-    function PathForPackage(id, ver : String) : String;
 
-    function loadArchive(content : TBytes) : TDictionary<String, TBytes>;
+    function loadArchive(content : TBytes; description : String) : TDictionary<String, TBytes>;
     procedure clearCache;
     function checkPackageSize(dir : String) : integer;
     procedure work(pct : integer; done : boolean; desc : String);
     procedure progress(sender : TObject; pct : integer);
     function check(desc : String) : boolean;
-    function loadPackageFromCache(folder : String) : TNpmPackage;
     procedure buildPackageIndex(folder : String);
     function latestPackageVersion(id: String): String;
     function isIgnored(s : String): boolean;
@@ -133,10 +131,12 @@ type
     procedure ListPackages(kinds : TFHIRPackageKindSet; list : TFslList<TNpmPackage>); overload;
     procedure ListAllPackages(list : TFslList<TNpmPackage>); overload;
 
-    function packageExists(id, ver : String) : boolean; overload;
+    function packageExists(id, ver : String;  allowed : TSemanticVersionLevel = semverMinor) : boolean; overload;
+    function PathForPackage(id, ver : String; allowed : TSemanticVersionLevel = semverMinor) : String;
     function autoInstallPackage(id, ver : String) : boolean; overload;
     function latestPublishedVersion(id : String) : String;
 
+    function loadPackageFromCache(folder : String) : TNpmPackage;
     function loadPackage(id : String) : TNpmPackage; overload;
     function loadPackage(id, ver : String) : TNpmPackage; overload;
     procedure loadPackage(id, ver : String; resources : Array of String; loadInfo : TPackageLoadingInformation); overload;
@@ -146,7 +146,7 @@ type
     procedure clear;
     procedure UnLoad;
 
-    function import(content : TBytes) : TNpmPackage; overload;
+    function import(content : TBytes; description : String) : TNpmPackage; overload;
     function install(url : String) : boolean;
 
     procedure remove(id : String); overload;
@@ -417,7 +417,7 @@ begin
       FolderDelete(s);
       FIni.DeleteKey('packages', s);
     end;
-  FLock.Lock;
+  FLock.Lock('clearCache');
   try
     FCache.Clear;
   finally
@@ -476,7 +476,7 @@ begin
 end;
 
 
-function TFHIRPackageManager.import(content : TBytes) : TNpmPackage;
+function TFHIRPackageManager.import(content : TBytes; description : String) : TNpmPackage;
 var
   npm : TJsonObject;
   id, ver, dir, fn, fver, s : String;
@@ -484,7 +484,7 @@ var
   size,c : integer;
   indexer : TNpmPackageIndexBuilder;
 begin
-  files := loadArchive(content);
+  files := loadArchive(content, description);
   try
     npm := TJSONParser.Parse(files['package\package.json']);
     try
@@ -579,7 +579,7 @@ begin
       raise EIOException.create('Unable to find package for '+url+': '+s);
     if result then
     begin
-      Import(fetch.Buffer.AsBytes).free;
+      Import(fetch.Buffer.AsBytes, url).free;
     end;
   finally
     fetch.free;
@@ -724,7 +724,7 @@ begin
       list.Add(s);
 end;
 
-function TFHIRPackageManager.loadArchive(content: TBytes): TDictionary<String, TBytes>;
+function TFHIRPackageManager.loadArchive(content: TBytes; description : String): TDictionary<String, TBytes>;
 var
   bo, bi : TBytesStream;
   tar : TTarArchive;
@@ -736,7 +736,7 @@ begin
   work(0, false, 'Loading Package ('+DescribeBytes(length(content))+')');
   try
     result := TDictionary<String, TBytes>.Create;
-    bo := TBytesStream.create(ungzip(content));
+    bo := TBytesStream.create(ungzip(content, description));
     try
       work(trunc(bo.Position / bo.Size * 100), false, 'Loading Package');
       tar := TTarArchive.Create(bo);
@@ -859,7 +859,7 @@ begin
         f := TFileStream.Create(FilePath([p, 'package', fi.Name]), fmOpenRead + fmShareDenyWrite);
         try
           try
-            loadInfo.OnLoadEvent(fi.ResourceType, fi.id, f);
+            loadInfo.OnLoadEvent(npm.name+'#'+npm.version, fi.ResourceType, fi.id, f);
           except
             on e : Exception do
             begin
@@ -885,7 +885,7 @@ function TFHIRPackageManager.loadPackageFromCache(folder: String): TNpmPackage;
 var
   found : boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('loadPackageFromCache');
   try
     found := FCache.TryGetValue(folder, result);
     if found then
@@ -901,7 +901,7 @@ begin
     result := TNpmPackage.fromFolder(folder);
     if FCaching then
     begin
-      FLock.Lock;
+      FLock.Lock('loadPackageFromCache2');
       try
         FCache.add(folder, result.Link);
       finally
@@ -918,7 +918,7 @@ var
 begin
   if (ver = '') then
     ver := latestPublishedVersion(id);
-  result := packageExists(id, ver);
+  result := packageExists(id, ver, semverLabel);
   if (not result) then
   begin
     list := TFslList<TFHIRPackageInfo>.Create;
@@ -992,12 +992,12 @@ begin
   end;
 end;
 
-function TFHIRPackageManager.packageExists(id, ver: String): boolean;
+function TFHIRPackageManager.packageExists(id, ver: String;  allowed : TSemanticVersionLevel = semverMinor): boolean;
 begin
   result := PathForPackage(id, ver) <> '';
 end;
 
-function TFHIRPackageManager.PathForPackage(id, ver: String): String;
+function TFHIRPackageManager.PathForPackage(id, ver: String; allowed : TSemanticVersionLevel = semverMinor): String;
 var
   ts : TStringlist;
   s, n, t : String;
@@ -1008,7 +1008,7 @@ begin
   try
     for s in TDirectory.GetDirectories(FFolder) do
       ts.Add(s);
-    for a := semverLabel downto semverMajor do
+    for a := semverLabel downto allowed do
     begin
       for s in ts do
       begin
@@ -1016,8 +1016,10 @@ begin
         t := n.Substring(n.IndexOf('#')+1);
         n := n.Substring(0, n.IndexOf('#'));
 
-        if (n = id) and ((ver = '') or TSemanticVersion.matches(ver, t, a)) and FileExists(FilePath([s, 'package', 'package.json'])) then
-          exit(s);
+        if (n = id) then
+          if ((ver = '') or TSemanticVersion.matches(ver, t, a)) then
+            if FileExists(FilePath([s, 'package', 'package.json'])) then
+              exit(s);
       end;
     end;
   finally
@@ -1032,14 +1034,23 @@ end;
 
 function TFHIRPackageManager.latestPackageVersion(id: String): String;
 var
+  ts : TStringList;
   s, n : String;
 begin
   result := '';
-  for s in TDirectory.GetDirectories(FFolder) do
-  begin
-    n := ExtractFileName(s);
-    if n.StartsWith(id+'#') then
-      result := n.Substring(n.IndexOf('#')+1);
+  ts := TStringList.create;
+  try
+    for s in TDirectory.GetDirectories(FFolder) do
+      ts.add(s);
+    ts.sort;
+    for s in ts do
+    begin
+      n := ExtractFileName(s);
+      if n.StartsWith(id+'#') then
+        result := n.Substring(n.IndexOf('#')+1);
+    end;
+  finally
+    ts.free;
   end;
 end;
 
@@ -1056,7 +1067,7 @@ begin
     except
     end;
     try
-      if list.Empty then
+      if list.Empty or StringArrayExists(['us.nlm.vsac'], id) then
         TFHIRPackageClient.LoadPackages(list, PACKAGE_SERVER_BACKUP, id);
     except
     end;
@@ -1099,13 +1110,13 @@ end;
 
 function TFHIRPackageManager.report: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   list : TFslList<TNpmPackage>;
   p : TNpmPackage;
   ts : TStringList;
   s : String;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.AppendLine('Packages in '+Folder);
     b.AppendLine;

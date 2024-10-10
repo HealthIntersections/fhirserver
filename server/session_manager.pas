@@ -132,7 +132,7 @@ end;
 
 procedure TFHIRSessionManager.Clear;
 begin
-  FLock.Lock;
+  FLock.Lock('Clear');
   try
     FSessions.Clear;
   finally
@@ -724,9 +724,9 @@ end;
 function TFHIRSessionManager.DumpSessions: String;
 var
   session: TFhirSession;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append('<table>'#13#10);
     b.Append('<tr>');

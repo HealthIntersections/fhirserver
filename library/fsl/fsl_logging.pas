@@ -33,9 +33,9 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  {$IFDEF WINDOWS} Windows, {$IFDEF DELPHI} FastMM4, {$ENDIF} {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
+  {$IFDEF WINDOWS} Windows, {$IFDEF FPC}JwaPsApi, {$ELSE} PsApi, {$ENDIF}{$ENDIF}
   SysUtils, Classes,
-  fsl_threads, fsl_base, fsl_utilities, fsl_collections{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
+  fsl_threads, fsl_base, fsl_utilities, fsl_collections, fsl_cpu{$IFDEF FPC}, fsl_fpc_memory{$ENDIF};
 
 Type
   TLogEvent = procedure (msg : String) of object;
@@ -141,6 +141,7 @@ Type
     FLogToConsole : boolean;
     FFileLogger : TLogger;
     FListeners : TFslList<TLogListener>;
+    FShuttingDown: boolean;
     FStarting: boolean;
     FStartTime : TDateTime;
     FLastday : integer;
@@ -148,10 +149,12 @@ Type
     FCount : integer;
     FHeld : TStringlist;
     FLock : TFslLock;
+    FCPU : TCPUUsageData;
 
     procedure checkDay;
     procedure close;
     procedure LogDoubleFreeCallBack(name1, name2: String);
+    procedure SetShuttingDown(AValue: boolean);
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
   public
@@ -162,6 +165,7 @@ Type
     property LogToConsole : boolean read FLogToConsole write FLogToConsole;
 
     property FileLog : TLogger read FFileLogger;
+    property CPU : TCPUUsageData read FCPU;
 
     procedure logToFile(filename : String);
     procedure addListener(listener : TLogListener);
@@ -179,6 +183,8 @@ Type
     function MemoryStatus(full : boolean) : String;
 
     function InternalMem : UInt64;
+
+    property shuttingDown : boolean read FShuttingDown write SetShuttingDown;
   end;
 
 var
@@ -361,7 +367,7 @@ begin
     exit;
   If length(bytes) = 0 Then
     Exit;
-  FLock.Lock;
+  FLock.Lock('WriteToLog');
   Try
     sName := ProcessFileName;
     size := 0;
@@ -485,10 +491,12 @@ begin
   FLastDay := 0;
   FHeld := TStringList.Create;
   DoubleFreeCallBack := LogDoubleFreeCallBack;
+  FCPU := TCPUUsageData.create();
 end;
 
 destructor TLogging.Destroy;
 begin
+  FCPU.free;
   DoubleFreeCallBack := nil;
   close;
   FHeld.free;
@@ -501,6 +509,12 @@ end;
 procedure TLogging.LogDoubleFreeCallBack(name1, name2 : String);
 begin
   log('Attempt to free a class a second time (of type '+name1+' or '+name2+'?)');
+end;
+
+procedure TLogging.SetShuttingDown(AValue: boolean);
+begin
+  if FShuttingDown=AValue then Exit;
+  FShuttingDown:=AValue;
 end;
 
 procedure TLogging.addListener(listener: TLogListener);
@@ -570,14 +584,12 @@ end;
 function TLogging.InternalMem : UInt64;
 {$IFDEF DELPHI}
 var
-  st : TMemoryManagerUsageSummary;
-{$ELSE}
-  //hs : TFPCHeapStatus;
+  st : THeapStatus;
 {$ENDIF}
 begin
 {$IFDEF DELPHI}
-  GetMemoryManagerUsageSummary(st);
-  result := st.AllocatedBytes + st.OverheadBytes;
+  st := GetHeapStatus;
+  result := st.TotalAllocated + st.Overhead;
 {$ELSE}
   result := TFPCMemoryManagerTracker.totalMemory;
 {$ENDIF}
@@ -615,7 +627,7 @@ begin
     if FLogToConsole then
     begin
       try
-        FLock.Lock;
+        FLock.Lock('checkDay');
         try
           System.Writeln(s);
         finally
@@ -653,7 +665,7 @@ procedure TLogging.log(s: String);
 var
   listener : TLogListener;
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     if FWorkingLine <> '' then
     begin
@@ -666,7 +678,7 @@ begin
 
   checkDay;
   if FStarting then
-    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+s
+    s := FormatDateTime('hh:nn:ss', now)+ ' '+FormatDateTime('hh:nn:ss', now - FStartTime)+' '+MemoryStatus(false)+' '+FCPU.usage+' '+s
   else
     s := FormatDateTime('hh:nn:ss', now)+ ' '+s;
   if FFileLogger <> nil then
@@ -674,7 +686,7 @@ begin
   if FLogToConsole then
   begin
     try
-      FLock.Lock;
+      FLock.Lock('log2');
       try
         System.Writeln(s);
       finally
@@ -707,7 +719,7 @@ begin
   if FLogToConsole then
   begin
     try
-      FLock.Lock;
+      FLock.Lock('start');
       try
         System.Write(s);
       finally
@@ -734,7 +746,7 @@ begin
   FWorkingLine := FWorkingLine+s;
   if FLogToConsole then
   begin
-    FLock.Lock;
+    FLock.Lock('continue');
     try
       System.Write(s);
     finally
@@ -758,7 +770,7 @@ var
 begin
   if FLogToConsole then
   begin
-    FLock.Lock;
+    FLock.Lock('finish');
     try
       System.Writeln(s);
     finally
@@ -785,7 +797,7 @@ begin
     except
     end;
   end;
-  FLock.Lock;
+  FLock.Lock('finish2');
   try
     for h in FHeld do
       log(h);

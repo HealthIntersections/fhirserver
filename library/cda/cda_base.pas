@@ -463,6 +463,7 @@ constructor Tv3PropertyValueStringCollection.Create(aType: TRMPropertyDefinition
 var
   iLoop : Integer;
 begin
+!
   FValue := TWideStringList.Create;
   if sValues <> '' Then
     FValue.Text := sValues;
@@ -734,7 +735,7 @@ begin
   FCollectionState := rmpctNone;
   FIsStructural := bIsStructural;
   if bHasValue Then
-    FValueString := BoolToStr(bValue);
+    FValueString := BoolToStr(bValue, true).ToLower;
 end;
 
 
@@ -1001,7 +1002,9 @@ begin
         While oIterator.More Do
         Begin
           If oIterator.Checked Then
-            oBuilder.Append(aCodes[oIterator.Index]+ crlf);
+          begin
+            oBuilder.AppendLine(aCodes[oIterator.Index]);
+          end;
           oIterator.Next;
         End;
 

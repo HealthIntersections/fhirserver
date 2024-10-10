@@ -253,6 +253,7 @@ Function StringArrayExistsSensitive(Const aNames : Array Of String; Const sName 
 Function StringArrayExists(Const aNames : Array Of String; Const sName: String) : Boolean; Overload;
 Function StringGet(Const sValue : String; iIndex : Integer) : Char; Overload;
 Function StringStartsWith(Const sValue, sFind : String; sensitive : boolean = false) : Boolean; Overload;
+Function StringStartsWith(Const sValue : String; aFind : Array of String; sensitive : boolean = false) : Boolean; Overload;
 Function StringStartsWithSensitive(Const sValue, sFind : String) : Boolean; Overload;
 Function StringStartsWithInsensitive(Const sValue, sFind : String) : Boolean; Overload;
 Function StringEndsWith(Const sValue, sFind : String; sensitive : boolean = false) : Boolean; Overload;
@@ -454,8 +455,11 @@ type
 Function AnsiStringSplit(Const sValue : AnsiString; Const aDelimiters : TAnsiCharSet; Var sLeft, sRight: AnsiString) : Boolean;
 Function AnsiPadString(const AStr: AnsiString; AWidth: Integer; APadChar: AnsiChar; APadLeft: Boolean): AnsiString;
 
-Type
+const
+  DEFAULT_STRING_DELTA = 256-12;
+  LARGE_STRING_DELTA = 2048;
 
+Type
   { TCommaSeparatedStringBuilder }
 
   TCommaSeparatedStringBuilder = class (TFslObject)
@@ -473,25 +477,33 @@ Type
     function makeString : String;
   end;
 
+  { TFslStringBuilder }
+
   TFslStringBuilder = Class (TFslObject)
   Private
-    FBuilder : TStringBuilder;
+    FSource : String;
+    FCursor : Integer;
+    FDelta : Word;
 
     Function GetLength : Integer;
     function GetAsString: String;
+    procedure doAppend(s : String);
   Public
     constructor Create; Override;
+    constructor Create(delta : word); Overload;
+    constructor Create(initial : String; delta : word = DEFAULT_STRING_DELTA); Overload;
     destructor Destroy; Override;
     Property AsString : String read GetAsString;
 
     Procedure Clear;
 
     Procedure Append(ch : Char); Overload;
+    Procedure Append(c : Cardinal); Overload;
     Procedure Append(Const sStr : String); Overload;
     {$IFNDEF FPC}
     Procedure Append(Const sStr : AnsiString); Overload;
     {$ENDIF}
-    Procedure AppendLine(Const sStr : String); Overload;
+    Procedure AppendLine(Const sStr : String = ''); Overload;
     Procedure AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
     Procedure AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
     Procedure Append(Const oBuilder : TFslStringBuilder); Overload;
@@ -516,6 +528,7 @@ Type
 
     Property Length : Integer Read GetLength;
     function ToString : String; override;
+    function MemSize() : integer;
   End;
 
 type
@@ -867,26 +880,26 @@ type
   }
   TFslDateTime = record
   private
-    Source : String; // for debugging convenience, and also used to mark whether the record has any content
-    year: Smallint;
-    month: Word;
-    day: Word;
-    hour: Word;
-    minute: Word;
-    second: Word;
-    fraction: Cardinal;
+    FSource : String; // for debugging convenience, and also used to mark whether the record has any content
+    FYear: Smallint;
+    FMonth: Word;
+    FDay: Word;
+    FHour: Word;
+    FMinute: Word;
+    FSecond: Word;
+    FFraction: Cardinal;
     {
       The precision to which the date and time is specified
     }
     FPrecision : TFslDateTimePrecision;
-    FractionPrecision : integer;
+    FFractionPrecision : integer;
     {
       The type of timezone
     }
 
-    TimezoneType : TFslDateTimeTimezone;
-    TimeZoneHours : Integer;
-    TimezoneMins : Integer;
+    FTimezoneType : TFslDateTimeTimezone;
+    FTimeZoneHours : Integer;
+    FTimezoneMins : Integer;
     procedure clear();
     procedure check;
     function checkNoException : boolean;
@@ -894,6 +907,20 @@ type
     function privToString: String;
     function tz(sep: String): String;
   public
+
+    property Source : String read FSource;
+    property Year: Smallint read FYear;
+    property Month: Word read FMonth;
+    property Day: Word read FDay;
+    property Hour: Word read FHour;
+    property Minute: Word read FMinute;
+    property Second: Word read FSecond;
+    property Fraction: Cardinal read FFraction;
+    property Precision : TFslDateTimePrecision read FPrecision;
+    property FractionPrecision : integer read FFractionPrecision;
+    property TimezoneType : TFslDateTimeTimezone read FTimezoneType;
+    property TimeZoneHours : Integer read FTimeZoneHours;
+    property TimezoneMins : Integer read FTimezoneMins;
 
     // various kind of constructors
     class function makeNull : TFslDateTime; static; // because this is record, not a class, it can't be nil. use makeNull / null instead
@@ -989,8 +1016,6 @@ type
 
     class function isValidXmlDate(value : String) : Boolean; static;
     class function isValidDate(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False; noFixYear : boolean = false) : boolean; static;
-
-    property Precision : TFslDateTimePrecision read FPrecision;
 
     function clone : TFslDateTime;
     function link : TFslDateTime;
@@ -1644,6 +1669,8 @@ function StringIsDecimal(s : String) : Boolean;
 type
   TByte = Byte;
 
+  { TFslBytesBuilder }
+
   TFslBytesBuilder = Class (TFslObject)
     Private
       FContent : TBytes;
@@ -1663,6 +1690,7 @@ type
       Function EndsWith(aBytes : TBytes) : Boolean;
       Property Length : Cardinal Read FLength;
 
+      Procedure AddByte(val : byte);
       Procedure AddWord(val : word);
       Procedure AddCardinal(val : cardinal);
       Procedure AddInteger(val : integer);
@@ -1863,6 +1891,8 @@ type
     function text(sep : String) : String;
   end;
 
+
+function RoundDateTimeToNearestInterval(vTime : TDateTime; vInterval : TDateTime = 60/SecsPerDay) : TDateTime;
 
 Implementation
 
@@ -2862,7 +2892,7 @@ End;
 var
   f : TFileStream;
 begin
-  f := TFileStream.create(sFileName, fmOpenRead);
+  f := TFileStream.create(sFileName, fmOpenRead + fmShareDenyWrite);
   try
     result := f.size;
   finally
@@ -5455,6 +5485,15 @@ Begin
 End;
 
 
+Function StringStartsWith(Const sValue : String; aFind : Array of String; sensitive : boolean = false) : Boolean;
+var
+  s : String;
+begin
+  result := false;
+  for s in aFind do
+    if StringStartsWith(sValue, s, sensitive) then
+      exit(true);
+end;
 
 Function StringEqualsSensitive(Const sA, sB : String) : Boolean;
 Begin
@@ -6176,7 +6215,10 @@ begin
             b.append(chr(StrToInt('$'+hex)));
             end
         Else
-          b.append('?'+ch);
+        begin
+          b.append('?');
+          b.append(ch);
+        end;
         End;
       End
       Else if (ch = '"') then
@@ -6550,351 +6592,102 @@ begin
     end;
 end;
 
-{$IFDEF NO_BUILDER}
-
-
-Constructor TFslStringBuilder.Create;
-Begin
-  Inherited;
-
-  FBufferSize := BUFFER_INCREMENT_SIZE;
-End;
-
-
-Destructor TFslStringBuilder.Destroy;
-Begin
+constructor TFslStringBuilder.Create;
+begin
   inherited;
-End;
+  FSource := '';
+  FCursor := 0;
+  FDelta := DEFAULT_STRING_DELTA;
+end;
 
+constructor TFslStringBuilder.Create(delta: word);
+begin
+  inherited Create;
+  FSource := '';
+  FCursor := 0;
+  FDelta := delta;
+end;
 
-Procedure TFslStringBuilder.Clear;
+constructor TFslStringBuilder.Create(initial : String; delta : word = DEFAULT_STRING_DELTA);
+begin
+  inherited create;
+  FSource := '';
+  FCursor := 0;
+  FDelta := delta;
+  doAppend(initial);
+end;
+
+destructor TFslStringBuilder.Destroy;
+begin
+  inherited;
+end;
+
+function TFslStringBuilder.GetLength: Integer;
+begin
+  result := FCursor;
+end;
+
+procedure TFslStringBuilder.Clear;
 Begin
-  FContent := '';
-  FLength := 0;
+  FCursor := 0;
 End;
 
-
-Function TFslStringBuilder.ToString : String;
+function TFslStringBuilder.GetAsString: String;
 Begin
-  Result := Copy(FContent, 1, FLength);
+  result := FSource.subString(0, FCursor);
 End;
 
-
-Procedure TFslStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Var
-  iLen : Integer;
-Begin
-  iLen := IntegerMax(System.Length(sStr), iCount);
-
-  If (iLen > 0) Then
-  Begin
-    If FLength + iLen > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iLen));
-
-    Move(sStr[1], FContent[FLength + 1], System.Length(sStr) * SizeOf(Char));
-
-    If iLen = iCount Then
-      FillChar(FContent[FLength + 1 + System.Length(sStr)], (iCount - System.Length(sStr)) * SizeOf(Char), cPad);
-
-    Inc(FLength, iLen);
-  End;
-End;
-
-
-Function TFslStringBuilder.AsString: String;
-Begin
-  Result := ToString;
-End;
-
-
-Procedure TFslStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Begin
-  If (iCount > 0) Then
-  Begin
-    If FLength + iCount > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iCount));
-    Move(sStr[1], FContent[FLength + 1], IntegerMin(System.Length(sStr), iCount) * SizeOf(Char));
-
-    If System.Length(sStr) < iCount Then
-      FillChar(FContent[FLength + 1 + System.Length(sStr)], (iCount - System.Length(sStr)) * SizeOf(Char), cPad);
-
-    Inc(FLength, iCount);
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Append(ch : Char);
-Begin
-  If FLength + 1 > System.Length(FContent) Then
-    SetLength(FContent, System.Length(FContent) + FBufferSize);
-
-  Move(ch, FContent[FLength + 1], SizeOf(Char));
-  Inc(FLength);
-End;
-
-
-Procedure TFslStringBuilder.Append(Const sStr : String);
-Begin
- If (sStr <> '') Then
-  Begin
-    If FLength + System.Length(sStr) > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, System.Length(sStr)));
-
-    Move(sStr[1], FContent[FLength + 1], System.Length(sStr) * SizeOf(Char));
-
-    Inc(FLength, System.Length(sStr));
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Append(Const oBuilder : TFslStringBuilder);
-Begin
-  Append(oBuilder.ToString);
-End;
-
-
-Procedure TFslStringBuilder.AppendEOL;
-Begin
-  Append(cReturn);
-End;
-
-
-Procedure TFslStringBuilder.Append(Const iInt : Integer);
-Begin
-  Append(IntegerToString(iInt));
-End;
-
-
-Procedure TFslStringBuilder.Insert(Const sStr : String; iIndex : Integer);
-Begin
-  If (sStr <> '') Then
-  Begin
-    If FLength + System.Length(sStr) > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, System.Length(sStr)));
-
-    If (iIndex) <> FLength Then
-      Move(FContent[iIndex+1], FContent[iIndex+1 + System.Length(sStr)], (FLength - iIndex)  * SizeOf(Char));
-
-    Move(sStr[1], FContent[iIndex+1], System.Length(sStr) * SizeOf(Char));
-
-    Inc(FLength, System.Length(sStr));
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer);
-Begin
-  Insert(oBuilder.ToString, iIndex);
-End;
-
-
-Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
-Begin
-  System.Delete(FContent, iIndex+1, iLength);
-  Dec(FLength, iLength);
-End;
-
-
-Function TFslStringBuilder.IndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-Var
-  iLoop : Integer;
-  iUpper : Integer;
-  iLen : Integer;
-Begin
-  Result := -1;
-  iLoop := 1;
-  iLen := System.Length(sStr);
-  iUpper := FLength - iLen + 1;
-
-  While (Result = -1) And (iLoop <= iUpper) Do
-  Begin
-    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And StringEquals(Copy(FContent, iLoop, iLen), sStr)) Then
-      Result := iLoop - 1;
-
-    Inc(iLoop);
-  End;
-End;
-
-
-Function TFslStringBuilder.LastIndexOf(Const sStr : String; bCase : Boolean = False) : Integer;
-Var
-  iLoop : Integer;
-  iUpper : Integer;
-  iLen : Integer;
-Begin
-  Result := -1;
-  iLen := System.Length(sStr);
-  iUpper := FLength - iLen + 1;
-  iLoop := iUpper;
-  While (Result = -1) And (iLoop > 0) Do
-  Begin
-    If (bCase And (Copy(FContent, iLoop, iLen) = sStr)) Or (Not bCase And StringEquals(Copy(FContent, iLoop, iLen), sStr)) Then
-      Result := iLoop - 1;
-
-    Dec(iLoop);
-  End;
-End;
-
-
-Procedure TFslStringBuilder.Append(Const bytes : TBytes);
-Begin
-{$IFNDEF FPC}
-If (System.length(bytes) > 0) Then
-  Begin
-    If FLength + iBytes > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + Integermax(FBufferSize, iBytes));
-
-    oStream.Read(FContent[FLength + 1], iBytes);
-
-    Inc(FLength, iBytes);
-  End;
-{$ENDIF}
-End;
-
-
-Procedure TFslStringBuilder.Insert(Const bytes : TBytes; iBytes : Integer; iIndex : Integer);
-Begin
-  {$IFNDEF FPC}
-  If (iBytes > 0) Then
-  Begin
-    If FLength + iBytes > System.Length(FContent) Then
-      SetLength(FContent, System.Length(FContent) + IntegerMax(FBufferSize, iBytes));
-
-    If (iIndex) <> FLength Then
-      Move(FContent[iIndex+1], FContent[iIndex+1 + iBytes], (FLength - iIndex) * SizeOf(Char));
-
-    oStream.Read(FContent[iIndex + 1], iBytes);
-
-    Inc(FLength, iBytes);
-  End;
-  {$ENDIF}
-End;
-
-
-
-Procedure TFslStringBuilder.CommaAdd(const sStr: String);
-Begin
-  if Length > 0 Then
-    Append(', ');
-  Append(sStr);
-End;
-
-
-Procedure TFslStringBuilder.AddCardinalAsBytes(iVal: Cardinal);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 4);
-  move(iVal, s[1], 4);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AddWordAsBytes(iVal: word);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 2);
-  move(iVal, s[1], 2);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AddInt64AsBytes(iVal: Int64);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 8);
-  move(iVal, s[1], 8);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AddByteAsBytes(iVal: Byte);
-Var
-  s : AnsiString;
-Begin
-  SetLength(s, 1);
-  move(iVal, s[1], 1);
-  Append(s);
-End;
-
-
-Procedure TFslStringBuilder.AppendLine(const sStr: String);
-Begin
-  Append(sStr);
-  AppendEOL;
-End;
-
-procedure TFslStringBuilder.Append(const bBytes: array of Byte; amount: Integer);
+procedure TFslStringBuilder.doAppend(s: String);
 var
-  i : integer;
+  delta : Integer;
 begin
-  for i := 0 to amount - 1 Do
-    Append(chr(bBytes[i]));
+  if (s <> '') then
+  begin
+    if (s.length + FCursor > FSource.length) then
+    begin
+      delta := FDelta;
+      while delta < s.length do
+        delta := delta + FDelta;
+      SetLength(FSource, FSource.length+delta);
+    end;
 
+    move(s[1], FSource[FCursor+1], s.length * sizeof(char));
+    inc(FCursor, s.length);
+
+    if (FCursor > 1024) then
+      FDelta := LARGE_STRING_DELTA;
+  end;
 end;
 
+procedure TFslStringBuilder.AppendPadded(const sStr: String; iCount: Integer;
+  cPad: Char);
+Begin
+  doAppend(StringPadRight(sStr, cPad, iCount));
+End;
 
-procedure TFslStringBuilder.Overwrite(index: integer; content: String);
+procedure TFslStringBuilder.AppendFixed(const sStr: String; iCount: Integer;
+  cPad: Char);
+Begin
+  doAppend(StringPadRight(copy(sStr, 1, iCount), cPad, iCount));
+End;
+
+
+procedure TFslStringBuilder.Append(ch: Char);
+Begin
+  doAppend(ch);
+End;
+
+procedure TFslStringBuilder.Append(c: Cardinal);
 begin
-  if index < 1 Then
-    RaiseError('Overwrite', 'index < 1');
-  if index + System.length(Content) > FLength Then
-    RaiseError('Overwrite', 'index > length');
-  if content <> '' Then
-    Move(Content[1], FContent[index], System.length(Content));
+  append(inttostr(c));
 end;
 
-procedure TFslStringBuilder.Read(index: integer; var buffer; ilength: integer);
-begin
-  if index < 1 Then
-    RaiseError('Read', 'index < 1');
-  if index + length > FLength Then
-    RaiseError('Read', 'index > length');
-  Move(FContent[index], buffer, length);
-end;
-
-{$ELSE}
-
-
-Procedure TFslStringBuilder.Clear;
+procedure TFslStringBuilder.Append(const sStr: String);
 Begin
-  FBuilder.Clear;
+  doAppend(sStr);
 End;
 
-
-Function TFslStringBuilder.GetAsString : String;
-Begin
-  Result := FBuilder.ToString;
-End;
-
-
-
-Procedure TFslStringBuilder.AppendPadded(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Begin
-  FBuilder.Append(StringPadRight(sStr, cPad, iCount));
-End;
-
-Procedure TFslStringBuilder.AppendFixed(Const sStr : String; iCount : Integer; cPad : Char = ' ');
-Begin
-  FBuilder.Append(StringPadRight(copy(sStr, 1, iCount), cPad, iCount));
-End;
-
-
-Procedure TFslStringBuilder.Append(ch : Char);
-Begin
-  FBuilder.Append(ch);
-End;
-
-Procedure TFslStringBuilder.Append(Const sStr : String);
-Begin
-  FBuilder.Append(sStr);
-End;
-
-
-
-Procedure TFslStringBuilder.Append(Const oBuilder : TFslStringBuilder);
+procedure TFslStringBuilder.Append(const oBuilder: TFslStringBuilder);
 Begin
   Append(oBuilder.AsString);
 End;
@@ -6906,19 +6699,30 @@ begin
 end;
 {$ENDIF}
 
-Procedure TFslStringBuilder.AppendEOL;
+procedure TFslStringBuilder.AppendEOL;
 Begin
   Append(cReturn);
 End;
 
 
-Procedure TFslStringBuilder.Insert(Const sStr : String; iIndex : Integer);
+procedure TFslStringBuilder.Insert(const sStr: String; iIndex: Integer);
 Begin
-  FBuilder.Insert(iIndex, sStr);
+  If (sStr <> '') Then
+  Begin
+    If FCursor + sStr.Length > FSource.Length Then
+      SetLength(FSource, FSource.Length + IntegerMax(FDelta, sStr.length));
+
+    If (iIndex) <> FCursor Then
+      Move(FSource[iIndex+1], FSource[iIndex+1 + sStr.length], (FCursor - iIndex)  * SizeOf(Char));
+
+    Move(sStr[1], FSource[iIndex+1], sStr.length * SizeOf(Char));
+
+    Inc(FCursor, sStr.length);
+  End;
 End;
 
 
-Procedure TFslStringBuilder.Insert(Const oBuilder : TFslStringBuilder; iIndex : Integer);
+procedure TFslStringBuilder.Insert(const oBuilder: TFslStringBuilder; iIndex: Integer);
 Begin
   Insert(oBuilder.AsString, iIndex);
 End;
@@ -6929,34 +6733,21 @@ begin
     Append(sep);
 end;
 
-function TFslStringBuilder.toString: String;
+function TFslStringBuilder.ToString: String;
 begin
   result := AsString;
 end;
 
-Procedure TFslStringBuilder.Delete(iIndex, iLength : Integer);
+function TFslStringBuilder.MemSize(): integer;
+begin
+  result := SizeOf(self);
+end;
+
+procedure TFslStringBuilder.Delete(iIndex, iLength: Integer);
 Begin
-  FBuilder.Remove(iIndex, iLength);
+  System.delete(FSource, iIndex, iLength);
+  dec(FCursor, iLength);
 End;
-
-
-destructor TFslStringBuilder.Destroy;
-begin
-  FBuilder.free;
-  inherited;
-end;
-
-function TFslStringBuilder.GetLength: Integer;
-begin
-  result := FBuilder.Length;
-end;
-
-constructor TFslStringBuilder.Create;
-begin
-  inherited;
-  FBuilder := TStringBuilder.Create;
-  FBuilder.Capacity := 2048;
-end;
 
 procedure TFslStringBuilder.CommaAdd(const sStr: String);
 begin
@@ -7011,12 +6802,12 @@ begin
   Append(s);
 end;
 
-procedure TFslStringBuilder.AppendLine(const sStr: String);
+procedure TFslStringBuilder.AppendLine(const sStr: String = '');
 begin
-  Append(sStr);
+  if (sStr <> '') then
+    Append(sStr);
   AppendEOL;
 end;
-{$ENDIF}
 
 procedure TFslStringBuilder.WriteToStream(aStream: TStream; encoding : TEncoding);
 var
@@ -7804,10 +7595,10 @@ function TFslDateTime.add(length: TDuration): TFslDateTime;
 begin
   result := makeUTC(dateTime + length);
   result.FPrecision := FPrecision;
-  result.FractionPrecision := FractionPrecision;
-  result.TimezoneType := TimezoneType;
-  result.TimeZoneHours := TimeZoneHours;
-  result.TimezoneMins := TimezoneMins;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := FTimezoneType;
+  result.FTimeZoneHours := FTimeZoneHours;
+  result.FTimezoneMins := FTimezoneMins;
 end;
 
 function TFslDateTime.precisionMatches(other: TFslDateTime): boolean;
@@ -7815,23 +7606,23 @@ var
   this, that : TFslDateTimePrecision;
 begin
   this := FPrecision;
-  if (this = dtpNanoSeconds) and (fraction = 0) then
+  if (this = dtpNanoSeconds) and (FFraction = 0) then
     this := dtpSec;
   that := other.FPrecision;
-  if (that = dtpNanoSeconds) and (fraction = 0) then
+  if (that = dtpNanoSeconds) and (FFraction = 0) then
     that := dtpSec;
   result := this = that;
   if result and (this = dtpNanoSeconds) then
-    result := FractionPrecision = other.FractionPrecision;
+    result := FFractionPrecision = other.FFractionPrecision;
 end;
 
 function TFslDateTime.canCompare(other: TFslDateTime): boolean;
 begin
   if not precisionMatches(other) then
     exit(false)
-  else if (TimezoneType = dttzUnknown) and (other.TimezoneType = dttzUnknown)  then
+  else if (FTimezoneType = dttzUnknown) and (other.FTimezoneType = dttzUnknown)  then
     exit(true)
-  else if (TimezoneType = dttzUnknown) or (other.TimezoneType = dttzUnknown)  then
+  else if (FTimezoneType = dttzUnknown) or (other.FTimezoneType = dttzUnknown)  then
     exit(false)
   else
     exit(true);
@@ -7842,23 +7633,23 @@ var
   err : String;
 begin
   err := '';
-  if (year < 0001) or (year > 9999) then
+  if (FYear < 0001) or (FYear > 9999) then
     err := 'Year is not valid'
-  else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
+  else if (FPrecision >= dtpMonth) and ((FMonth > 12) or (FMonth < 1)) then
     err := 'Month is not valid'
-  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month)] < Day)) then
-    err := 'Day is not valid for '+inttostr(Year)+'/'+inttostr(Month)
-  else if (FPrecision >= dtpHour) and (Hour > 23) then
+  else if (FPrecision >= dtpDay) and ((FDay < 1) or (FDay >= 32) or (MONTHS_DAYS[IsLeapYear(FYear)][TMonthOfYear(FMonth)] < FDay)) then
+    err := 'Day is not valid for '+inttostr(FYear)+'/'+inttostr(FMonth)
+  else if (FPrecision >= dtpHour) and (FHour > 23) then
     err := 'Hour is not valid'
-  else if (FPrecision >= dtpMin) and (Minute > 59) then
+  else if (FPrecision >= dtpMin) and (FMinute > 59) then
     err := 'Minute is not valid'
-  else if (FPrecision >= dtpSec) and (Second > 59) then
+  else if (FPrecision >= dtpSec) and (FSecond > 59) then
     err := 'Second is not valid'
-  else if (FPrecision >= dtpNanoSeconds) and (FractionPrecision > 999999999) then
+  else if (FPrecision >= dtpNanoSeconds) and (FFractionPrecision > 999999999) then
     err := 'Fraction is not valid'
-  else if (TimezoneType = dttzSpecified) and ((TimezoneHours < -13) or (TimezoneHours > 14)) then
+  else if (FTimezoneType = dttzSpecified) and ((FTimezoneHours < -13) or (FTimezoneHours > 14)) then
     err := 'Timezone hours is not valid'
-  else if (TimezoneType = dttzSpecified) and not ((TimezoneMins = 0) or (TimezoneMins = 15) or (TimezoneMins = 30) or (TimezoneMins = 45)) then
+  else if (FTimezoneType = dttzSpecified) and not ((FTimezoneMins = 0) or (FTimezoneMins = 15) or (FTimezoneMins = 30) or (FTimezoneMins = 45)) then
     err := 'Timezone minutes is not valid';
   if err <> '' then
     raise EDateFormatError.Create(err+' ('+privToString+')');
@@ -7869,42 +7660,42 @@ var
   err : String;
 begin
   err := '';
-  if (year < 1000) or (year > 3000) then
+  if (FYear < 1000) or (FYear > 3000) then
     err := 'Year is not valid'
-  else if (FPrecision >= dtpMonth) and ((Month > 12) or (Month < 1)) then
+  else if (FPrecision >= dtpMonth) and ((FMonth > 12) or (FMonth < 1)) then
     err := 'Month is not valid'
-  else if (FPrecision >= dtpDay) and ((Day < 1) or (Day >= 32) or (MONTHS_DAYS[IsLeapYear(Year)][TMonthOfYear(Month)] < Day)) then
-    err := 'Day is not valid for '+inttostr(Year)+'/'+inttostr(Month)
-  else if (FPrecision >= dtpHour) and (Hour > 23) then
+  else if (FPrecision >= dtpDay) and ((FDay < 1) or (FDay >= 32) or (MONTHS_DAYS[IsLeapYear(FYear)][TMonthOfYear(FMonth)] < FDay)) then
+    err := 'Day is not valid for '+inttostr(FYear)+'/'+inttostr(FMonth)
+  else if (FPrecision >= dtpHour) and (FHour > 23) then
     err := 'Hour is not valid'
-  else if (FPrecision >= dtpMin) and (Minute > 59) then
+  else if (FPrecision >= dtpMin) and (FMinute > 59) then
     err := 'Minute is not valid'
-  else if (FPrecision >= dtpSec) and (Second > 59) then
+  else if (FPrecision >= dtpSec) and (FSecond > 59) then
     err := 'Second is not valid'
-  else if (FPrecision >= dtpNanoSeconds) and (FractionPrecision > 999999999) then
+  else if (FPrecision >= dtpNanoSeconds) and (FFractionPrecision > 999999999) then
     err := 'Fraction is not valid'
-  else if (TimezoneType = dttzSpecified) and ((TimezoneHours < -13) or (TimezoneHours > 14)) then
+  else if (FTimezoneType = dttzSpecified) and ((FTimezoneHours < -13) or (FTimezoneHours > 14)) then
     err := 'Timezone hours is not valid'
-  else if (TimezoneType = dttzSpecified) and not ((TimezoneMins = 0) or (TimezoneMins = 15) or (TimezoneMins = 30) or (TimezoneMins = 45)) then
+  else if (FTimezoneType = dttzSpecified) and not ((FTimezoneMins = 0) or (FTimezoneMins = 15) or (FTimezoneMins = 30) or (FTimezoneMins = 45)) then
     err := 'Timezone minutes is not valid';
   result := err = '';
 end;
 
 procedure TFslDateTime.clear();
 begin
-  Source := '';
-  year := 0;
-  month := 0;
-  day := 0;
-  hour := 0;
-  minute := 0;
-  second := 0;
-  fraction := 0;
+  FSource := '';
+  FYear := 0;
+  FMonth := 0;
+  FDay := 0;
+  FHour := 0;
+  FMinute := 0;
+  FSecond := 0;
+  FFraction := 0;
   FPrecision := dtpYear;
-  FractionPrecision := 0;
-  TimezoneType := dttzUnknown;
-  TimeZoneHours := 0;
-  TimezoneMins := 0;
+  FFractionPrecision := 0;
+  FTimezoneType := dttzUnknown;
+  FTimeZoneHours := 0;
+  FTimezoneMins := 0;
 end;
 
 function TFslDateTime.compare(other: TFslDateTime): integer;
@@ -7972,36 +7763,36 @@ end;
 
 function TFslDateTime.compareTimes(other: TFslDateTime; def: TComparisonQuadState): TComparisonQuadState;
 begin
-  if (self.year < other.year) then
+  if (self.FYear < other.FYear) then
     exit(compLess)
-  else if (self.year > other.year) then
+  else if (self.FYear > other.FYear) then
     exit(compGreater)
   else if (self.FPrecision = dtpYear) and (other.FPrecision = dtpYear) then
     exit(compEqual)
   else if (self.FPrecision = dtpYear) or (other.FPrecision = dtpYear) then
     exit(def);
 
-  if (self.month < other.month) then
+  if (self.FMonth < other.FMonth) then
     exit(compLess)
-  else if (self.month > other.month) then
+  else if (self.FMonth > other.FMonth) then
     exit(compGreater)
   else if (self.FPrecision = dtpMonth) and (other.FPrecision = dtpMonth) then
     exit(compEqual)
   else if (self.FPrecision = dtpMonth) or (other.FPrecision = dtpMonth) then
     exit(def);
 
-  if (self.day < other.day) then
+  if (self.FDay < other.FDay) then
     exit(compLess)
-  else if (self.day > other.day) then
+  else if (self.FDay > other.FDay) then
     exit(compGreater)
   else if (self.FPrecision = dtpDay) and (other.FPrecision = dtpDay) then
     exit(compEqual)
   else if (self.FPrecision = dtpDay) or (other.FPrecision = dtpDay) then
     exit(def);
 
-  if (self.hour < other.hour) then
+  if (self.FHour < other.FHour) then
     exit(compLess)
-  else if (self.hour > other.hour) then
+  else if (self.FHour > other.FHour) then
     exit(compGreater);
 // hour is not a valid precision
 //   else if (self.FPrecision = dtpHour) and (other.FPrecision = dtpHour) then
@@ -8009,25 +7800,25 @@ begin
 //   else if (self.FPrecision = dtpHour) or (other.FPrecision = dtpHour) then
 //     exit(def);
 
-  if (self.minute < other.minute) then
+  if (self.FMinute < other.FMinute) then
     exit(compLess)
-  else if (self.minute > other.minute) then
+  else if (self.FMinute > other.FMinute) then
     exit(compGreater)
   else if (self.FPrecision = dtpMin) and (other.FPrecision = dtpMin) then
     exit(compEqual)
   else if (self.FPrecision = dtpMin) or (other.FPrecision = dtpMin) then
     exit(def);
 
-  if (self.second < other.second) then
+  if (self.FSecond < other.FSecond) then
     exit(compLess)
-  else if (self.second > other.second) then
+  else if (self.FSecond > other.FSecond) then
     exit(compGreater)
   else if (self.FPrecision = dtpSec) and (other.FPrecision = dtpSec) then
     exit(compEqual);
 
-  if (self.fraction < other.fraction) then
+  if (self.FFraction < other.FFraction) then
     exit(compLess)
-  else if (self.fraction > other.fraction) then
+  else if (self.FFraction > other.FFraction) then
     exit(compGreater)
   else
     exit(compEqual);
@@ -8052,19 +7843,19 @@ end;
 
 function TFslDateTime.clone: TFslDateTime;
 begin
-  result.Source := Source;
-  result.year := year;
-  result.month := month;
-  result.day := day;
-  result.hour := hour;
-  result.minute := minute;
-  result.second := second;
-  result.fraction := fraction;
+  result.FSource := FSource;
+  result.FYear := FYear;
+  result.FMonth := FMonth;
+  result.FDay := FDay;
+  result.FHour := FHour;
+  result.FMinute := FMinute;
+  result.FSecond := FSecond;
+  result.FFraction := FFraction;
   result.FPrecision := FPrecision;
-  result.FractionPrecision := FractionPrecision;
-  result.TimezoneType := TimezoneType;
-  result.TimeZoneHours := TimeZoneHours;
-  result.TimezoneMins := TimezoneMins;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := FTimezoneType;
+  result.FTimeZoneHours := FTimeZoneHours;
+  result.FTimezoneMins := FTimezoneMins;
 end;
 
 function TFslDateTime.DateTime: TDateTime;
@@ -8074,13 +7865,13 @@ begin
 
   check;
   case FPrecision of
-    dtpYear : Result := EncodeDate(Year, 1, 1);
-    dtpMonth : Result := EncodeDate(Year, Month, 1);
-    dtpDay: Result := EncodeDate(Year, Month, Day);
-    dtpHour : Result := EncodeDate(Year, Month, Day) + EncodeTime(Hour, 0, 0, 0);
-    dtpMin : Result := EncodeDate(Year, Month, Day) + EncodeTime(Hour, Minute, 0, 0);
-    dtpSec : Result := EncodeDate(Year, Month, Day) + EncodeTime(Hour, Minute, Second, 0);
-    dtpNanoSeconds : Result := EncodeDate(Year, Month, Day) + EncodeTime(Hour, Minute, Second, Fraction div 1000000);
+    dtpYear : Result := EncodeDate(FYear, 1, 1);
+    dtpMonth : Result := EncodeDate(FYear, FMonth, 1);
+    dtpDay: Result := EncodeDate(FYear, FMonth, FDay);
+    dtpHour : Result := EncodeDate(FYear, FMonth, FDay) + EncodeTime(FHour, 0, 0, 0);
+    dtpMin : Result := EncodeDate(FYear, FMonth, FDay) + EncodeTime(FHour, FMinute, 0, 0);
+    dtpSec : Result := EncodeDate(FYear, FMonth, FDay) + EncodeTime(FHour, FMinute, FSecond, 0);
+    dtpNanoSeconds : Result := EncodeDate(FYear, FMonth, FDay) + EncodeTime(FHour, FMinute, FSecond, FFraction div 1000000);
   else
     Result := 0;
   end;
@@ -8095,14 +7886,14 @@ function TFslDateTime.equal(other: TFslDateTime; precision: TFslDateTimePrecisio
 begin
   result := 
     (FPrecision >= precision) and (other.Precision >= precision) and
-    (year = other.year) and
-    ((precision < dtpMonth) or (month = other.month)) and
-    ((precision < dtpDay) or (day = other.day)) and
-    ((precision < dtpHour) or (hour = other.hour)) and
-    ((precision < dtpMin) or (minute = other.minute)) and
-    ((precision < dtpSec) or (second = other.second)) and
-    ((precision < dtpNanoSeconds) or ((fraction = other.fraction) and (FractionPrecision = other.FractionPrecision))) and
-    (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
+    (FYear = other.FYear) and
+    ((precision < dtpMonth) or (FMonth = other.FMonth)) and
+    ((precision < dtpDay) or (FDay = other.FDay)) and
+    ((precision < dtpHour) or (FHour = other.FHour)) and
+    ((precision < dtpMin) or (FMinute = other.FMinute)) and
+    ((precision < dtpSec) or (FSecond = other.FSecond)) and
+    ((precision < dtpNanoSeconds) or ((FFraction = other.FFraction) and (FFractionPrecision = other.FFractionPrecision))) and
+    (FTimezoneType = other.FTimezoneType) and (FTimeZoneHours = other.FTimeZoneHours) and (FTimezoneMins = other.FTimezoneMins);
 end;
 
 procedure FindBlock(ch: Char; const s: String; var start, blength: Integer);
@@ -8133,16 +7924,16 @@ var
   yr: Word;
 begin
   result.clear;
-  DecodeTime(value, result.Hour, result.Minute, result.Second, ms);
-  result.Fraction := ms * 1000000;
-  if result.second > 59 then
+  DecodeTime(value, result.FHour, result.FMinute, result.FSecond, ms);
+  result.FFraction := ms * 1000000;
+  if result.FSecond > 59 then
     raise ELibraryException.create('Fail!');
-  DecodeDate(value, yr, result.Month, result.Day);
-  result.Year := yr;
+  DecodeDate(value, yr, result.FMonth, result.FDay);
+  result.FYear := yr;
   result.FPrecision := dtpNanoSeconds;
-  result.FractionPrecision := 3;
-  result.TimezoneType := tz;
-  result.Source := 'makeDT';
+  result.FFractionPrecision := 3;
+  result.FTimezoneType := tz;
+  result.FSource := 'makeDT';
 end;
 
 class function TFslDateTime.makeLocal(precision: TFslDateTimePrecision): TFslDateTime;
@@ -8174,7 +7965,7 @@ end;
 class function TFslDateTime.fromDB(value: String; tz : TFslDateTimeTimezone = dttzUTC): TFslDateTime;
 begin
   result := fromFormat('yyyy-mm-dd hh:nn:ss.sss', value, true, true, false);
-  result.TimezoneType := tz;
+  result.FTimezoneType := tz;
 end;
 
 class function TFslDateTime.makeDay(d, m, y: word): TFslDateTime;
@@ -8190,13 +7981,13 @@ var
 begin
   result.clear;
   format := checkFormat(format);
-  Result.year := 0;
-  Result.month := 0;
-  Result.day := 0;
-  Result.hour := 0;
-  Result.minute := 0;
-  Result.second := 0;
-  Result.fraction := 0;
+  Result.FYear := 0;
+  Result.FMonth := 0;
+  Result.FDay := 0;
+  Result.FHour := 0;
+  Result.FMinute := 0;
+  Result.FSecond := 0;
+  Result.FFraction := 0;
   FindBlock('y', Format, start, length);
   tmp := copy(date, start, length);
   if lowercase(tmp) = 'nown' then
@@ -8205,14 +7996,14 @@ begin
     // we don't bother with the year
   else
     begin
-    Result.year := UserStrToInt(tmp, 'Year from "' + date + '"');
+    Result.FYear := UserStrToInt(tmp, 'Year from "' + date + '"');
     if not NoFixYear then
     begin
-      if Result.year < 100 then
-        if abs(Result.year) > {$IFNDEF VER130}FormatSettings.{$ENDIF}TwoDigitYearCenturyWindow then      //abs as result.year is a smallint, twodigityearcenturywindow is a word (range checking)
-          inc(Result.year, 1900)
+      if Result.FYear < 100 then
+        if abs(Result.FYear) > {$IFNDEF VER130}FormatSettings.{$ENDIF}TwoDigitYearCenturyWindow then      //abs as result.year is a smallint, twodigityearcenturywindow is a word (range checking)
+          inc(Result.FYear, 1900)
         else
-          inc(Result.year, 2000);
+          inc(Result.FYear, 2000);
     end;
     end;
   FindBlock('m', Format, start, length);
@@ -8224,38 +8015,38 @@ begin
     if length > 2 then
       begin
       if (s = 'jan') or (s = 'january') then
-        Result.month := 1
+        Result.FMonth := 1
       else if (s = 'feb') or (s = 'february') then
-        Result.month := 2
+        Result.FMonth := 2
       else if (s = 'mar') or (s = 'march') then
-        Result.month := 3
+        Result.FMonth := 3
       else if (s = 'apr') or (s = 'april') then
-        Result.month := 4
+        Result.FMonth := 4
       else if (s = 'may') then
-        Result.month := 5
+        Result.FMonth := 5
       else if (s = 'jun') or (s = 'june') then
-        Result.month := 6
+        Result.FMonth := 6
       else if (s = 'jul') or (s = 'july') then
-        Result.month := 7
+        Result.FMonth := 7
       else if (s = 'aug') or (s = 'august') then
-        Result.month := 8
+        Result.FMonth := 8
       else if (s = 'sep') or (s = 'september') then
-        Result.month := 9
+        Result.FMonth := 9
       else if (s = 'oct') or (s = 'october') then
-        Result.month := 10
+        Result.FMonth := 10
       else if (s = 'nov') or (s = 'november') then
-        Result.month := 11
+        Result.FMonth := 11
       else if (s = 'dec') or (s = 'december') then
-        Result.month := 12
+        Result.FMonth := 12
       else
-        raise EDateFormatError.Create('The Month "' + s + '" is unknown in '+date);
+        raise EDateFormatError.Create('The Month "' + s + '" is unknown in '+date+' (using format '+format+', from '+inttostr(start)+' for '+inttostr(length)+' chars');
       end
     else if s = '' then
-      Result.Month := 1
+      Result.FMonth := 1
     else
-      Result.month := UserStrToInt(s, 'Month from "' + date + '"');
-    if (Result.month > 12) or (Result.month < 1) then
-      raise EDateFormatError.Create('invalid month ' + IntToStr(Result.month));
+      Result.FMonth := UserStrToInt(s, 'Month from "' + date + '"');
+    if (Result.FMonth > 12) or (Result.FMonth < 1) then
+      raise EDateFormatError.Create('invalid month ' + IntToStr(Result.FMonth));
     end;
   FindBlock('d', Format, start, length);
   tmp := copy(date, start, length);
@@ -8263,55 +8054,55 @@ begin
     // we don't check the day
   else
     begin
-    Result.day := UserStrToInt(tmp, 'Day from "' + date + '"');
+    Result.FDay := UserStrToInt(tmp, 'Day from "' + date + '"');
     end;
   FindBlock('h', Format, start, length);
   if length <> 0 then
     if AllowBlankTimes then
-      Result.hour := StrToIntDef(copy(date, start, length), 0)
+      Result.FHour := StrToIntDef(copy(date, start, length), 0)
     else
-      Result.hour := UserStrToInt(copy(date, start, length), 'Hour from "' + date + '"');
+      Result.FHour := UserStrToInt(copy(date, start, length), 'Hour from "' + date + '"');
   FindBlock('s', Format, start, length);
   if length <> 0 then
     if AllowBlankTimes then
-      Result.second := StrToIntDef(copy(date, start, length), 0)
+      Result.FSecond := StrToIntDef(copy(date, start, length), 0)
     else
-      Result.second := UserStrToInt(copy(date, start, length), 'Second from "' + date + '"');
+      Result.FSecond := UserStrToInt(copy(date, start, length), 'Second from "' + date + '"');
   FindBlock('n', Format, start, length);
   if length <> 0 then
     if AllowBlankTimes then
-      Result.minute := StrToIntDef(copy(date, start, length), 0)
+      Result.FMinute := StrToIntDef(copy(date, start, length), 0)
     else
-      Result.minute := UserStrToInt(copy(date, start, length), 'Minute from "' + date + '"');
+      Result.FMinute := UserStrToInt(copy(date, start, length), 'Minute from "' + date + '"');
   FindBlock('z', Format, start, length);
   if length <> 0 then
     if AllowBlankTimes then
-      Result.fraction := StrToIntDef(copy(date, start, length), 0);
+      Result.FFraction := StrToIntDef(copy(date, start, length), 0);
   FindBlock('x', Format, start, length);
   if length <> 0 then
     if uppercase(copy(date, start, length)) = 'AM' then
       begin
-      if Result.hour = 12 then
-        Result.hour := 0
+      if Result.FHour = 12 then
+        Result.FHour := 0
       end
     else
-      inc(Result.hour, 12);
+      inc(Result.FHour, 12);
 
-  if Result.hour = 24 then
+  if Result.FHour = 24 then
   begin
-    Result.hour := 0;
-    inc(result.day);
+    Result.FHour := 0;
+    inc(result.FDay);
   end;
   result.RollUp;
 
   result.check;
-  if (result.Hour = 0) and (result.Minute = 0) and (result.Second = 0) then
+  if (result.FHour = 0) and (result.FMinute = 0) and (result.FSecond = 0) then
     result.FPrecision := dtpDay
   else
     result.FPrecision := dtpSec;
-  result.FractionPrecision := 0;
-  result.TimezoneType := dttzLocal;
-  result.Source := date;
+  result.FFractionPrecision := 0;
+  result.FTimezoneType := dttzLocal;
+  result.FSource := date;
 end;
 
 class function TFslDateTime.fromFormatStrict(format, date: String; AllowBlankTimes: Boolean = False; allowNoDay: Boolean = False; allownodate: Boolean = False) : TFslDateTime;
@@ -8322,21 +8113,21 @@ end;
 function TFslDateTime.IncrementMonth : TFslDateTime;
 begin
   result := self;
-  if result.month = 12 then
+  if result.FMonth = 12 then
     begin
-    inc(result.year);
-    result.month := 1
+    inc(result.FYear);
+    result.FMonth := 1
     end
   else
-    inc(result.month);
-  if result.day > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] then
-    result.Day := MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
+    inc(result.FMonth);
+  if result.FDay > MONTHS_DAYS[IsLeapYear(result.FYear), TMonthOfYear(result.FMonth)] then
+    result.FDay := MONTHS_DAYS[IsLeapYear(result.FYear), TMonthOfYear(result.FMonth)];
 end;
 
 function TFslDateTime.IncrementYear : TFslDateTime;
 begin
   result := self;
-  inc(result.year);
+  inc(result.FYear);
 end;
 
 Function sv(i, w : integer):String;
@@ -8377,7 +8168,7 @@ var
 begin
   try
     dt := TFslDateTime.fromFormat(format, date, AllowBlankTimes, allowNoDay, allownodate, noFixYear);
-    result := dt.year > 0;
+    result := dt.FYear > 0;
   except
     result := false;
   end;
@@ -8392,10 +8183,10 @@ begin
   if value = '' then
     exit(false);
 
-  res.Source := Value;
+  res.FSource := Value;
   if pos('Z', value) = length(value) then
   begin
-    res.TimezoneType := dttzUTC;
+    res.FTimezoneType := dttzUTC;
     Delete(value, length(value), 1);
   end
   else if (pos('T', value) > 0) and StringContainsAny(copy(Value, pos('T', value)+1, $FF), ['-', '+']) then
@@ -8404,49 +8195,49 @@ begin
     StringSplitRight(value, ['-', '+'], value, s);
     if length(s) <> 5 then
       raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
-    res.TimezoneHours := vsv(s, 1, 2, 0, 14, 'timezone hours');
-    res.TimezoneMins := vsv(s, 4, 2, 0, 59, 'timezone minutes');
-    res.TimezoneType := dttzSpecified;
+    res.FTimezoneHours := vsv(s, 1, 2, 0, 14, 'timezone hours');
+    res.FTimezoneMins := vsv(s, 4, 2, 0, 59, 'timezone minutes');
+    res.FTimezoneType := dttzSpecified;
     if neg then
-      res.TimezoneHours := -res.TimezoneHours;
+      res.FTimezoneHours := -res.FTimezoneHours;
   end;
 
-  res.FractionPrecision := 0;
+  res.FFractionPrecision := 0;
 
   if Length(value) >=4 then
-    res.Year := vsv(Value, 1, 4, 1800, 2100, 'years');
+    res.FYear := vsv(Value, 1, 4, 1800, 2100, 'years');
   if Length(value) < 7 then
     res.FPrecision := dtpYear
   else
   begin
-    res.Month := vsv(Value, 6, 2, 1, 12, 'months');
+    res.FMonth := vsv(Value, 6, 2, 1, 12, 'months');
     if length(Value) < 10 then
       res.FPrecision := dtpMonth
     else
     begin
-      res.Day := vsv(Value, 9, 2, 1, 31, 'days');
+      res.FDay := vsv(Value, 9, 2, 1, 31, 'days');
       if length(Value) < 13 then
         res.FPrecision := dtpDay
       else
       begin
-        res.Hour := vsv(Value, 12, 2, 0, 23, 'hours');
+        res.FHour := vsv(Value, 12, 2, 0, 23, 'hours');
         if length(Value) < 15 then
           res.FPrecision := dtpHour
         else
         begin
-          res.Minute := vsv(Value, 15, 2, 0, 59, 'minutes');
+          res.FMinute := vsv(Value, 15, 2, 0, 59, 'minutes');
           if length(Value) < 18 then
             res.FPrecision := dtpMin
           else
           begin
-            res.Second := vsv(Value, 18, 2, 0, 59, 'seconds');
+            res.FSecond := vsv(Value, 18, 2, 0, 59, 'seconds');
             if length(Value) <= 20 then
               res.FPrecision := dtpSec
             else
             begin
               s := copy(Value, 21, 6);
-              res.FractionPrecision := length(s);
-              res.fraction := trunc(vsv(Value, 21, 4, 0, 999999, 'fractions') * power(10, 9 - res.FractionPrecision));
+              res.FFractionPrecision := length(s);
+              res.FFraction := trunc(vsv(Value, 21, 4, 0, 999999, 'fractions') * power(10, 9 - res.FFractionPrecision));
               res.FPrecision := dtpNanoSeconds;
             end;
           end;
@@ -8488,7 +8279,7 @@ begin
   result := self;
   for i := 1 to 7 do
   begin
-    inc(result.day);
+    inc(result.FDay);
     result.rollUp;
   end;
 end;
@@ -8496,7 +8287,7 @@ end;
 function TFslDateTime.IncrementDay : TFslDateTime;
 begin
   result := self;
-  inc(result.day);
+  inc(result.FDay);
   result.RollUp;
 end;
 
@@ -8512,13 +8303,13 @@ end;
 function TFslDateTime.tz(sep : String) : String;
 begin
   result := '';
-  case TimezoneType of
+  case FTimezoneType of
     dttzUTC : result := result + 'Z';
     dttzSpecified :
-      if TimezoneHours < 0 then
-        result := result + sv(TimezoneHours, 2) + sep+sv(TimezoneMins, 2)
+      if FTimezoneHours < 0 then
+        result := result + sv(FTimezoneHours, 2) + sep+sv(FTimezoneMins, 2)
       else
-        result := result + '+'+sv(TimezoneHours, 2) + sep+sv(TimezoneMins, 2);
+        result := result + '+'+sv(FTimezoneHours, 2) + sep+sv(FTimezoneMins, 2);
     dttzLocal :
       if TimeZoneBias > 0 then
         result := result + '+'+FormatDateTime('hh'+sep+'nn', TimeZoneBias, FormatSettings)
@@ -8531,27 +8322,27 @@ end;
 
 function TFslDateTime.toString(format: String): String;
 begin
-  if Source = '' then
+  if FSource = '' then
     exit('');
   check;
   format := checkFormat(format);
   Result := format;
-  if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
-    if not replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2)) then ;
-      replaceSubstring(Result, 'y', copy(IntToStr(year), 3, 2));
-  if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month)], 1, 4)) then
-    if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month)]) then
-      if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
-        ReplaceSubString(Result, 'm', IntToStr(month));
-  if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(day), '0', 2)) then
-    ReplaceSubString(Result, 'd', IntToStr(day));
-  ReplaceSubString(Result, 'HH', StringPadLeft(IntToStr(hour), '0', 2));
-  ReplaceSubString(Result, 'H', IntToStr(hour));
-  ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour mod 12), '0', 2));
-  ReplaceSubString(Result, 'h', IntToStr(hour mod 12));
-  ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(minute), '0', 2));
-  ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(second), '0', 2));
-  if hour < 12 then
+  if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(FYear), '0', 4)) then
+    if not replaceSubstring(Result, 'yy', copy(IntToStr(FYear), 3, 2)) then ;
+      replaceSubstring(Result, 'y', copy(IntToStr(FYear), 3, 2));
+  if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(FMonth)], 1, 4)) then
+    if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(FMonth)]) then
+      if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(FMonth), '0', 2)) then
+        ReplaceSubString(Result, 'm', IntToStr(FMonth));
+  if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(FDay), '0', 2)) then
+    ReplaceSubString(Result, 'd', IntToStr(FDay));
+  ReplaceSubString(Result, 'HH', StringPadLeft(IntToStr(FHour), '0', 2));
+  ReplaceSubString(Result, 'H', IntToStr(FHour));
+  ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(FHour mod 12), '0', 2));
+  ReplaceSubString(Result, 'h', IntToStr(FHour mod 12));
+  ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(FMinute), '0', 2));
+  ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(FSecond), '0', 2));
+  if FHour < 12 then
     ReplaceSubString(Result, 'AMPM', 'AM')
   else
     ReplaceSubString(Result, 'AMPM', 'PM');
@@ -8570,11 +8361,11 @@ begin
     exit(makeNull);
 
   result.clear;
-  result.Source := Value;
+  result.FSource := Value;
 
   if pos('Z', value) = length(value) then
   begin
-    result.TimezoneType := dttzUTC;
+    result.FTimezoneType := dttzUTC;
     Delete(value, length(value), 1);
   end
   else if StringContainsAny(Value, ['-', '+']) then
@@ -8583,49 +8374,49 @@ begin
     StringSplit(value, ['-', '+'], value, s);
     if length(s) <> 4 then
       raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 4');
-    result.TimezoneHours := vs(s, 1, 2, 0, 13, 'timezone hours');
-    result.TimezoneMins := vs(s, 3, 2, 0, 59, 'timezone minutes');
-    result.TimezoneType := dttzSpecified;
+    result.FTimezoneHours := vs(s, 1, 2, 0, 13, 'timezone hours');
+    result.FTimezoneMins := vs(s, 3, 2, 0, 59, 'timezone minutes');
+    result.FTimezoneType := dttzSpecified;
     if neg then
-      result.TimezoneHours := -result.TimezoneHours;
+      result.FTimezoneHours := -result.FTimezoneHours;
   end;
 
-  result.FractionPrecision := 0;
+  result.FFractionPrecision := 0;
 
   if Length(value) >=4 then
-    result.Year := vs(Value, 1, 4, 1800, 2100, 'years');
+    result.FYear := vs(Value, 1, 4, 1800, 2100, 'years');
   if Length(value) < 6 then
     result.FPrecision := dtpYear
   else
   begin
-    result.Month := vs(Value, 5, 2, 1, 12, 'months');
+    result.FMonth := vs(Value, 5, 2, 1, 12, 'months');
     if length(Value) < 8 then
       result.FPrecision := dtpMonth
     else
     begin
-      result.Day := vs(Value, 7, 2, 1, 31, 'days');
+      result.FDay := vs(Value, 7, 2, 1, 31, 'days');
       if length(Value) < 10 then
         result.FPrecision := dtpDay
       else
       begin
-        result.Hour := vs(Value, 9, 2, 0, 23, 'hours');
+        result.FHour := vs(Value, 9, 2, 0, 23, 'hours');
         if length(Value) < 12 then
           result.FPrecision := dtpHour
         else
         begin
-          result.Minute := vs(Value, 11, 2, 0, 59, 'minutes');
+          result.FMinute := vs(Value, 11, 2, 0, 59, 'minutes');
           if length(Value) < 14 then
             result.FPrecision := dtpMin
           else
           begin
-            result.Second := vs(Value, 13, 2, 0, 59, 'seconds');
+            result.FSecond := vs(Value, 13, 2, 0, 59, 'seconds');
             if length(Value) <= 15 then
               result.FPrecision := dtpSec
             else
             begin
               s := copy(Value, 16, 4);
-              result.FractionPrecision := length(s);
-              result.fraction := trunc(vs(Value, 16, 4, 0, 9999, 'fractions') * power(10, 9 - result.FractionPrecision));
+              result.FFractionPrecision := length(s);
+              result.FFraction := trunc(vs(Value, 16, 4, 0, 9999, 'fractions') * power(10, 9 - result.FFractionPrecision));
               result.FPrecision := dtpNanoSeconds;
             end;
           end;
@@ -8634,7 +8425,7 @@ begin
     end;
   end;
   result.check;
-  result.source := value;
+  result.FSource := value;
 end;
 
 class function TFslDateTime.fromXML(value: String) : TFslDateTime;
@@ -8646,10 +8437,10 @@ begin
     exit(makeNull);
 
   result.clear;
-  result.Source := Value;
+  result.FSource := Value;
   if pos('Z', value) = length(value) then
   begin
-    result.TimezoneType := dttzUTC;
+    result.FTimezoneType := dttzUTC;
     Delete(value, length(value), 1);
   end
   else if (pos('T', value) > 0) and StringContainsAny(copy(Value, pos('T', value)+1, $FF), ['-', '+']) then
@@ -8658,49 +8449,49 @@ begin
     StringSplitRight(value, ['-', '+'], value, s);
     if length(s) <> 5 then
       raise ELibraryException.create('Unable to parse date/time "'+value+'": timezone is illegal length - must be 5');
-    result.TimezoneHours := vs(s, 1, 2, 0, 14, 'timezone hours');
-    result.TimezoneMins := vs(s, 4, 2, 0, 59, 'timezone minutes');
-    result.TimezoneType := dttzSpecified;
+    result.FTimezoneHours := vs(s, 1, 2, 0, 14, 'timezone hours');
+    result.FTimezoneMins := vs(s, 4, 2, 0, 59, 'timezone minutes');
+    result.FTimezoneType := dttzSpecified;
     if neg then
-      result.TimezoneHours := -result.TimezoneHours;
+      result.FTimezoneHours := -result.FTimezoneHours;
   end;
 
-  result.FractionPrecision := 0;
+  result.FFractionPrecision := 0;
 
   if Length(value) >=4 then
-    result.Year := vs(Value, 1, 4, 0001, 9999, 'years');
+    result.FYear := vs(Value, 1, 4, 0001, 9999, 'years');
   if Length(value) < 7 then
     result.FPrecision := dtpYear
   else
   begin
-    result.Month := vs(Value, 6, 2, 1, 12, 'months');
+    result.FMonth := vs(Value, 6, 2, 1, 12, 'months');
     if length(Value) < 10 then
       result.FPrecision := dtpMonth
     else
     begin
-      result.Day := vs(Value, 9, 2, 1, 31, 'days');
+      result.FDay := vs(Value, 9, 2, 1, 31, 'days');
       if length(Value) < 13 then
         result.FPrecision := dtpDay
       else
       begin
-        result.Hour := vs(Value, 12, 2, 0, 23, 'hours');
+        result.FHour := vs(Value, 12, 2, 0, 23, 'hours');
         if length(Value) < 15 then
           result.FPrecision := dtpHour
         else
         begin
-          result.Minute := vs(Value, 15, 2, 0, 59, 'minutes');
+          result.FMinute := vs(Value, 15, 2, 0, 59, 'minutes');
           if length(Value) < 18 then
             result.FPrecision := dtpMin
           else
           begin
-            result.Second := vs(Value, 18, 2, 0, 59, 'seconds');
+            result.FSecond := vs(Value, 18, 2, 0, 59, 'seconds');
             if length(Value) <= 20 then
               result.FPrecision := dtpSec
             else
             begin
               s := copy(Value, 21, 6);
-              result.FractionPrecision := length(s);
-              result.fraction := trunc(vs(Value, 21, 4, 0, 999999, 'fractions') * power(10, 9 - result.FractionPrecision));
+              result.FFractionPrecision := length(s);
+              result.FFraction := trunc(vs(Value, 21, 4, 0, 999999, 'fractions') * power(10, 9 - result.FFractionPrecision));
               result.FPrecision := dtpNanoSeconds;
             end;
           end;
@@ -8709,7 +8500,7 @@ begin
     end;
   end;
   result.check;
-  result.source := value;
+  result.FSource := value;
 end;
 
 class operator TFslDateTime.GreaterThan(a: TFslDateTime; b: TFslDateTime
@@ -8727,13 +8518,13 @@ end;
 function TFslDateTime.toDB: String;
 begin
   case FPrecision of
-    dtpYear:        result := sv(Year, 4);
-    dtpMonth:       result := sv(Year, 4) + '-'+sv(Month, 2);
-    dtpDay:         result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2);
-    dtpHour:        result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2);
-    dtpMin:         result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2)+ ':'+sv(Minute, 2);
-    dtpSec:         result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2)+ ':'+sv(Minute, 2)+ ':'+sv(Second, 2);
-    dtpNanoSeconds: result := sv(Year, 4) + '-'+sv(Month, 2) + '-'+sv(Day, 2) + ' '+sv(hour, 2)+ ':'+sv(Minute, 2)+ ':'+sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, IntegerMax(FractionPrecision, 3));
+    dtpYear:        result := sv(FYear, 4);
+    dtpMonth:       result := sv(FYear, 4) + '-'+sv(FMonth, 2);
+    dtpDay:         result := sv(FYear, 4) + '-'+sv(FMonth, 2) + '-'+sv(FDay, 2);
+    dtpHour:        result := sv(FYear, 4) + '-'+sv(FMonth, 2) + '-'+sv(FDay, 2) + ' '+sv(FHour, 2);
+    dtpMin:         result := sv(FYear, 4) + '-'+sv(FMonth, 2) + '-'+sv(FDay, 2) + ' '+sv(FHour, 2)+ ':'+sv(FMinute, 2);
+    dtpSec:         result := sv(FYear, 4) + '-'+sv(FMonth, 2) + '-'+sv(FDay, 2) + ' '+sv(FHour, 2)+ ':'+sv(FMinute, 2)+ ':'+sv(FSecond, 2);
+    dtpNanoSeconds: result := sv(FYear, 4) + '-'+sv(FMonth, 2) + '-'+sv(FDay, 2) + ' '+sv(FHour, 2)+ ':'+sv(FMinute, 2)+ ':'+sv(FSecond, 2)+'.'+copy(sv(FFraction, 9), 1, IntegerMax(FFractionPrecision, 3));
   end;
 end;
 
@@ -8742,21 +8533,21 @@ begin
   if null then
     exit('');
   case FPrecision of
-    dtpYear:  result := sv(Year, 4);
-    dtpMonth: result := sv(Year, 4) + sv(Month, 2);
-    dtpDay:   result := sv(Year, 4) + sv(Month, 2) + sv(Day, 2);
-    dtpHour:  result := sv(Year, 4) + sv(Month, 2) + sv(Day, 2) + sv(hour, 2);
-    dtpMin:   result := sv(Year, 4) + sv(Month, 2) + sv(Day, 2) + sv(hour, 2)+ sv(Minute, 2);
-    dtpSec:   result := sv(Year, 4) + sv(Month, 2) + sv(Day, 2) + sv(hour, 2)+ sv(Minute, 2)+ sv(Second, 2);
-    dtpNanoSeconds: result := sv(Year, 4) + sv(Month, 2) + sv(Day, 2) + sv(hour, 2)+ sv(Minute, 2)+ sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, IntegerMax(FractionPrecision, 3));
+    dtpYear:  result := sv(FYear, 4);
+    dtpMonth: result := sv(FYear, 4) + sv(FMonth, 2);
+    dtpDay:   result := sv(FYear, 4) + sv(FMonth, 2) + sv(FDay, 2);
+    dtpHour:  result := sv(FYear, 4) + sv(FMonth, 2) + sv(FDay, 2) + sv(FHour, 2);
+    dtpMin:   result := sv(FYear, 4) + sv(FMonth, 2) + sv(FDay, 2) + sv(FHour, 2)+ sv(FMinute, 2);
+    dtpSec:   result := sv(FYear, 4) + sv(FMonth, 2) + sv(FDay, 2) + sv(FHour, 2)+ sv(FMinute, 2)+ sv(FSecond, 2);
+    dtpNanoSeconds: result := sv(FYear, 4) + sv(FMonth, 2) + sv(FDay, 2) + sv(FHour, 2)+ sv(FMinute, 2)+ sv(FSecond, 2)+'.'+copy(sv(FFraction, 9), 1, IntegerMax(FFractionPrecision, 3));
   end;
-  case TimezoneType of
+  case FTimezoneType of
     dttzUTC : result := result + 'Z';
     dttzSpecified :
-      if TimezoneHours < 0 then
-        result := result + sv(TimezoneHours, 2) + sv(TimezoneMins, 2)
+      if FTimezoneHours < 0 then
+        result := result + sv(FTimezoneHours, 2) + sv(FTimezoneMins, 2)
       else
-        result := result + '+'+sv(TimezoneHours, 2) + sv(TimezoneMins, 2);
+        result := result + '+'+sv(FTimezoneHours, 2) + sv(FTimezoneMins, 2);
     dttzLocal :
       if TimeZoneBias > 0 then
         result := result + '+'+FormatDateTime('hhnn', TimeZoneBias, FormatSettings)
@@ -8778,26 +8569,26 @@ begin
     exit('');
 
   case FPrecision of
-    dtpYear:  result := sv(Year, 4);
-    dtpMonth: result := sv(Year, 4) + '-' + sv(Month, 2);
-    dtpDay:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2);
-    dtpHour:  result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2); // note minutes anyway in this case
-    dtpMin:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2);
-    dtpSec:   result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2);
+    dtpYear:  result := sv(FYear, 4);
+    dtpMonth: result := sv(FYear, 4) + '-' + sv(FMonth, 2);
+    dtpDay:   result := sv(FYear, 4) + '-' + sv(FMonth, 2) + '-' + sv(FDay, 2);
+    dtpHour:  result := sv(FYear, 4) + '-' + sv(FMonth, 2) + '-' + sv(FDay, 2) + 'T' + sv(FHour, 2) + ':' + sv(FMinute, 2); // note minutes anyway in this case
+    dtpMin:   result := sv(FYear, 4) + '-' + sv(FMonth, 2) + '-' + sv(FDay, 2) + 'T' + sv(FHour, 2) + ':' + sv(FMinute, 2);
+    dtpSec:   result := sv(FYear, 4) + '-' + sv(FMonth, 2) + '-' + sv(FDay, 2) + 'T' + sv(FHour, 2) + ':' + sv(FMinute, 2)+ ':' + sv(FSecond, 2);
     dtpNanoSeconds:
-       if FractionPrecision = 0 then
-         result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)
+       if FFractionPrecision = 0 then
+         result := sv(FYear, 4) + '-' + sv(FMonth, 2) + '-' + sv(FDay, 2) + 'T' + sv(FHour, 2) + ':' + sv(FMinute, 2)+ ':' + sv(FSecond, 2)
        else
-         result := sv(Year, 4) + '-' + sv(Month, 2) + '-' + sv(Day, 2) + 'T' + sv(hour, 2) + ':' + sv(Minute, 2)+ ':' + sv(Second, 2)+'.'+copy(sv(Fraction, 9), 1, FractionPrecision);
+         result := sv(FYear, 4) + '-' + sv(FMonth, 2) + '-' + sv(FDay, 2) + 'T' + sv(FHour, 2) + ':' + sv(FMinute, 2)+ ':' + sv(FSecond, 2)+'.'+copy(sv(FFraction, 9), 1, FFractionPrecision);
   end;
   if (FPrecision > dtpDay) then
-    case TimezoneType of
+    case FTimezoneType of
       dttzUTC : result := result + 'Z';
       dttzSpecified :
-        if TimezoneHours < 0 then
-          result := result + sv(TimezoneHours, 2) + ':'+sv(TimezoneMins, 2)
+        if FTimezoneHours < 0 then
+          result := result + sv(FTimezoneHours, 2) + ':'+sv(FTimezoneMins, 2)
         else
-          result := result + '+'+sv(TimezoneHours, 2) + ':'+sv(TimezoneMins, 2);
+          result := result + '+'+sv(FTimezoneHours, 2) + ':'+sv(FTimezoneMins, 2);
       dttzLocal :
         if TimeZoneBias > 0 then
           result := result + '+'+FormatDateTime('hh:nn', TimeZoneBias, FormatSettings)
@@ -8820,11 +8611,11 @@ begin
   result := clone;
   if result.FPrecision > dtpDay then
     result.FPrecision := dtpDay;
-  result.hour := 0;
-  result.minute := 0;
-  result.second := 0;
-  result.fraction := 0;
-  result.TimezoneType := dttzUnknown;
+  result.FHour := 0;
+  result.FMinute := 0;
+  result.FSecond := 0;
+  result.FFraction := 0;
+  result.FTimezoneType := dttzUnknown;
 end;
 
 function TFslDateTime.Local: TFslDateTime;
@@ -8832,22 +8623,22 @@ var
   bias : TDateTime;
 begin
   if FPrecision >= dtpHour then
-    case TimezoneType of
+    case FTimezoneType of
       dttzUTC : result := TFslDateTime.makeLocal(TFslTimeZone.Local.ToLocalTime(self.DateTime));
       dttzSpecified :
         begin
-        if TimezoneHours < 0 then
-          bias := - (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
+        if FTimezoneHours < 0 then
+          bias := - (-FTimezoneHours * DATETIME_HOUR_ONE) + (FTimezoneMins * DATETIME_MINUTE_ONE)
         else
-          bias := (TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
+          bias := (FTimezoneHours * DATETIME_HOUR_ONE) + (FTimezoneMins * DATETIME_MINUTE_ONE);
         result := TFslDateTime.makeLocal(TFslTimeZone.Local.ToLocalTime(self.DateTime-bias));
         end
     else
       result := self;
     end;
   result.FPrecision := FPrecision;
-  result.FractionPrecision := FractionPrecision;
-  result.TimezoneType := dttzLocal;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := dttzLocal;
 end;
 
 function TFslDateTime.Max: TFslDateTime;
@@ -8856,115 +8647,115 @@ begin
   case FPrecision of
     dtpYear:
       begin
-      inc(result.year);
-      result.Month := 1;
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      inc(result.FYear);
+      result.FMonth := 1;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMonth:
       begin
-      inc(result.Month);
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      inc(result.FMonth);
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpDay:
       begin
-      inc(result.Day);
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      inc(result.FDay);
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpHour:
       begin
-      inc(result.Hour);
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      inc(result.FHour);
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMin:
       begin
-      inc(result.minute);
-      result.Second := 0;
-      result.fraction := 0;
+      inc(result.FMinute);
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpSec:
       begin
-      inc(result.Second);
-      result.fraction := 0;
+      inc(result.FSecond);
+      result.FFraction := 0;
       end;
     dtpNanoSeconds:
       begin
-      inc(result.fraction);
+      inc(result.FFraction);
       end;
   end;
   result.RollUp;
   result.FPrecision := dtpNanoSeconds;
-  result.Source := result.toXML;
+  result.FSource := result.toXML;
   result.check;
 end;
 
 function TFslDateTime.MaxUTC: TFslDateTime;
 begin
-  if TimezoneType = dttzUnknown then
+  if FTimezoneType = dttzUnknown then
   begin
     result := add(14/24);
-    result.TimezoneType := dttzUTC;
+    result.FTimezoneType := dttzUTC;
   end
   else
     result := UTC;
   case FPrecision of
     dtpYear:
       begin
-      result.Month := 1;
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FMonth := 1;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMonth:
       begin
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpDay:
       begin
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpHour:
       begin
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMin:
       begin
-      result.Second := 0;
-      result.fraction := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpSec:
       begin
-      result.fraction := 0;
+      result.FFraction := 0;
       end;
     dtpNanoSeconds:
       begin
       end;
   end;
   result.FPrecision := dtpNanoSeconds;
-  result.Source := result.toXML;
+  result.FSource := result.toXML;
 end;
 
 function TFslDateTime.Min: TFslDateTime;
@@ -8973,106 +8764,106 @@ begin
   case FPrecision of
     dtpYear:
       begin
-      result.Month := 1;
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FMonth := 1;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMonth:
       begin
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpDay:
       begin
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpHour:
       begin
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMin:
       begin
-      result.Second := 0;
-      result.fraction := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpSec:
       begin
-      result.fraction := 0;
+      result.FFraction := 0;
       end;
     dtpNanoSeconds:
       begin
       end;
   end;
   result.FPrecision := dtpNanoSeconds;
-  result.Source := result.toXML;
+  result.FSource := result.toXML;
 end;
 
 function TFslDateTime.MinUTC: TFslDateTime;
 begin
-  if TimezoneType = dttzUnknown then
+  if FTimezoneType = dttzUnknown then
   begin
     result := subtract(14/24);
-    result.TimezoneType := dttzUTC;
+    result.FTimezoneType := dttzUTC;
   end
   else
     result := UTC;
   case FPrecision of
     dtpYear:
       begin
-      result.Month := 1;
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FMonth := 1;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMonth:
       begin
-      result.Day := 1;
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FDay := 1;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpDay:
       begin
-      result.Hour := 0;
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FHour := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpHour:
       begin
-      result.minute := 0;
-      result.Second := 0;
-      result.fraction := 0;
+      result.FMinute := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpMin:
       begin
-      result.Second := 0;
-      result.fraction := 0;
+      result.FSecond := 0;
+      result.FFraction := 0;
       end;
     dtpSec:
       begin
-      result.fraction := 0;
+      result.FFraction := 0;
       end;
     dtpNanoSeconds:
       begin
       end;
   end;
   result.FPrecision := dtpNanoSeconds;
-  result.Source := result.toXML;
+  result.FSource := result.toXML;
 end;
 
 class operator TFslDateTime.NotEqual(a: TFslDateTime; b: TFslDateTime): Boolean;
@@ -9082,12 +8873,12 @@ end;
 
 function TFslDateTime.notNull: boolean;
 begin
-  result := Source <> '';
+  result := FSource <> '';
 end;
 
 function TFslDateTime.null: boolean;
 begin
-  result := Source = '';
+  result := FSource = '';
 end;
 
 function TFslDateTime.overlaps(other: TFslDateTime): boolean;
@@ -9110,21 +8901,21 @@ end;
 function TFslDateTime.privToString: String;
 begin
   Result := 'yyyy-mm-ddThh:nn:ss';
-  if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(year), '0', 4)) then
-    replaceSubstring(Result, 'yy', copy(IntToStr(year), 3, 2));
-  if month <> 0 then
+  if not ReplaceSubString(Result, 'yyyy', StringPadRight(IntToStr(FYear), '0', 4)) then
+    replaceSubstring(Result, 'yy', copy(IntToStr(FYear), 3, 2));
+  if FMonth <> 0 then
   begin
-    if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(month)], 1, 4)) then
-      if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(month)]) then
-        if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(month), '0', 2)) then
-          ReplaceSubString(Result, 'm', IntToStr(month));
-    if day > 0 then
+    if not ReplaceSubString(Result, 'mmmm', copy(MONTHOFYEAR_LONG[TMonthOfYear(FMonth)], 1, 4)) then
+      if not ReplaceSubString(Result, 'mmm', MONTHOFYEAR_SHORT[TMonthOfYear(FMonth)]) then
+        if not ReplaceSubString(Result, 'mm', StringPadLeft(IntToStr(FMonth), '0', 2)) then
+          ReplaceSubString(Result, 'm', IntToStr(FMonth));
+    if FDay > 0 then
     begin
-      if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(day), '0', 2)) then
-        ReplaceSubString(Result, 'd', IntToStr(day));
-      ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(hour), '0', 2));
-      ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(minute), '0', 2));
-      ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(second), '0', 2));
+      if not ReplaceSubString(Result, 'dd', StringPadLeft(IntToStr(FDay), '0', 2)) then
+        ReplaceSubString(Result, 'd', IntToStr(FDay));
+      ReplaceSubString(Result, 'hh', StringPadLeft(IntToStr(FHour), '0', 2));
+      ReplaceSubString(Result, 'nn', StringPadLeft(IntToStr(FMinute), '0', 2));
+      ReplaceSubString(Result, 'ss', StringPadLeft(IntToStr(FSecond), '0', 2));
     end;
   end;
 end;
@@ -9141,27 +8932,27 @@ begin
     nbias := (iHr * DATETIME_HOUR_ONE) + (imin * DATETIME_MINUTE_ONE);
 
   bias := timezoneBias;
-  result.TimezoneType := dttzLocal;
+  result.FTimezoneType := dttzLocal;
   if FPrecision >= dtpHour then
-    case TimezoneType of
+    case FTimezoneType of
       dttzUTC : result := TFslDateTime.makeLocal(self.DateTime+nbias);
       dttzLocal : result := TFslDateTime.makeLocal(TFslTimeZone.Local.ToUniversalTime(self.DateTime-bias)+nbias);
       dttzSpecified :
         begin
-        if TimezoneHours < 0 then
-          bias := - (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
+        if FTimezoneHours < 0 then
+          bias := - (-FTimezoneHours * DATETIME_HOUR_ONE) + (FTimezoneMins * DATETIME_MINUTE_ONE)
         else
-          bias := (TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
+          bias := (FTimezoneHours * DATETIME_HOUR_ONE) + (FTimezoneMins * DATETIME_MINUTE_ONE);
         result := TFslDateTime.makeLocal(self.DateTime-bias+nbias);
         end;
     else
       result := self;
     end;
   result.FPrecision := FPrecision;
-  result.FractionPrecision := FractionPrecision;
-  result.TimezoneType := dttzSpecified;
-  result.TimezoneHours := ihr;
-  result.TimezoneMins := imin;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := dttzSpecified;
+  result.FTimezoneHours := ihr;
+  result.FTimezoneMins := imin;
 end;
 
 function TFslDateTime.UTC: TFslDateTime;
@@ -9170,22 +8961,22 @@ var
 begin
   result := self;
   if FPrecision >= dtpHour then
-    case TimezoneType of
+    case FTimezoneType of
       dttzLocal : result := TFslDateTime.makeUTC(TFslTimeZone.Local.ToUniversalTime(self.DateTime));
       dttzSpecified :
         begin
-        if TimezoneHours < 0 then
-          bias := (-TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE)
+        if FTimezoneHours < 0 then
+          bias := (-FTimezoneHours * DATETIME_HOUR_ONE) + (FTimezoneMins * DATETIME_MINUTE_ONE)
         else
-          bias := -(TimezoneHours * DATETIME_HOUR_ONE) + (TimezoneMins * DATETIME_MINUTE_ONE);
+          bias := -(FTimezoneHours * DATETIME_HOUR_ONE) + (FTimezoneMins * DATETIME_MINUTE_ONE);
         result := TFslDateTime.makeUTC(self.DateTime+bias);
         end;
     else
     end;
-  result.Fraction := Fraction; // fix for issue representing fractions digitally.
+  result.FFraction := FFraction; // fix for issue representing fractions digitally.
   result.FPrecision := FPrecision;
-  result.FractionPrecision := FractionPrecision;
-  result.TimezoneType := dttzUTC;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := dttzUTC;
 end;
 
 class function TFslDateTime.makeUTC : TFslDateTime;
@@ -9218,8 +9009,8 @@ begin
   result := make(value, dttzSpecified);
   result.FPrecision := dtpSec;
   offs := {$IFDEF FPC}TTimeSpan.makeTicks{$ENDIF}(TBundledTimeZone.GetTimeZone(zone).GetUtcOffset(value));
-  result.TimeZoneHours := offs.Hours;
-  result.TimezoneMins := offs.Minutes;
+  result.FTimeZoneHours := offs.hours;
+  result.FTimezoneMins := offs.minutes;
 end;
 
 class function TFslDateTime.makeLocal(value: TDateTime) : TFslDateTime;
@@ -9230,7 +9021,7 @@ end;
 class function TFslDateTime.makeNull: TFslDateTime;
 begin
   result.clear;
-  result.Source := '';
+  result.FSource := '';
 end;
 
 class function TFslDateTime.makeToday: TFslDateTime;
@@ -9242,29 +9033,29 @@ end;
 class function TFslDateTime.fromTS(value: TTimestamp; tz : TFslDateTimeTimezone): TFslDateTime;
 begin
   result.clear;
-  result.Year := value.year;
-  result.month := value.month;
-  result.day := value.day;
-  result.hour := value.hour;
-  result.minute := value.minute;
-  result.second := value.second;
-  result.Fraction := value.fraction;
+  result.FYear := value.year;
+  result.FMonth := value.month;
+  result.FDay := value.day;
+  result.FHour := value.hour;
+  result.FMinute := value.minute;
+  result.FSecond := value.second;
+  result.FFraction := value.fraction;
   result.FPrecision := dtpNanoSeconds;
-  result.FractionPrecision := 0;
-  result.TimezoneType := tz;
-  result.Source := 'fromTS';
+  result.FFractionPrecision := 0;
+  result.FTimezoneType := tz;
+  result.FSource := 'fromTS';
 end;
 
 function TFslDateTime.equal(other: TFslDateTime): Boolean;
 begin
-  result := (year = other.year) and
-    ((FPrecision < dtpMonth) or (month = other.month)) and
-    ((FPrecision < dtpDay) or (day = other.day)) and
-    ((FPrecision < dtpHour) or (hour = other.hour)) and
-    ((FPrecision < dtpMin) or (minute = other.minute)) and
-    ((FPrecision < dtpSec) or (second = other.second)) and
-    ((FPrecision < dtpNanoSeconds) or (fraction = other.fraction)) and (FPrecision = other.FPrecision) and (FractionPrecision = other.FractionPrecision) and
-    (TimezoneType = other.TimezoneType) and (TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins);
+  result := (FYear = other.FYear) and
+    ((FPrecision < dtpMonth) or (FMonth = other.FMonth)) and
+    ((FPrecision < dtpDay) or (FDay = other.FDay)) and
+    ((FPrecision < dtpHour) or (FHour = other.FHour)) and
+    ((FPrecision < dtpMin) or (FMinute = other.FMinute)) and
+    ((FPrecision < dtpSec) or (FSecond = other.FSecond)) and
+    ((FPrecision < dtpNanoSeconds) or (FFraction = other.FFraction)) and (FPrecision = other.FPrecision) and (FFractionPrecision = other.FFractionPrecision) and
+    (FTimezoneType = other.FTimezoneType) and (FTimeZoneHours = other.FTimeZoneHours) and (FTimezoneMins = other.FTimezoneMins);
 end;
 
 
@@ -9276,8 +9067,8 @@ end;
 
 function TFslDateTime.sameTime(other: TFslDateTime): Boolean;
 begin
-  if (TimezoneType = dttzUnknown) or (other.TimezoneType = dttzUnknown)  then
-    if (TimezoneType = dttzUnknown) and (other.TimezoneType = dttzUnknown)  then
+  if (FTimezoneType = dttzUnknown) or (other.FTimezoneType = dttzUnknown)  then
+    if (FTimezoneType = dttzUnknown) and (other.FTimezoneType = dttzUnknown)  then
       result := self.equal(other)
     else
       result := false // unknown, really
@@ -9287,15 +9078,15 @@ end;
 
 function TFslDateTime.sameTimezone(other: TFslDateTime): boolean;
 begin
-  case TimezoneType of
-    dttzUnknown: result := other.TimezoneType = dttzUnknown;
-    dttzUTC: result := (other.TimezoneType = dttzUTC) or
-         ((other.TimezoneType = dttzLocal) and (TimeZoneBias = 0)) or
-         ((other.TimezoneType = dttzSpecified) and (other.TimeZoneHours = 0) and (other.TimezoneMins = 0));
-    dttzLocal: result := (other.TimezoneType = dttzLocal) or
-         ((other.TimezoneType = dttzUTC) and (TimeZoneBias = 0));
-    dttzSpecified: result := (other.TimezoneType = dttzSpecified) and
-         ((TimeZoneHours = other.TimeZoneHours) and (TimezoneMins = other.TimezoneMins));
+  case FTimezoneType of
+    dttzUnknown: result := other.FTimezoneType = dttzUnknown;
+    dttzUTC: result := (other.FTimezoneType = dttzUTC) or
+         ((other.FTimezoneType = dttzLocal) and (TimeZoneBias = 0)) or
+         ((other.FTimezoneType = dttzSpecified) and (other.FTimeZoneHours = 0) and (other.FTimezoneMins = 0));
+    dttzLocal: result := (other.FTimezoneType = dttzLocal) or
+         ((other.FTimezoneType = dttzUTC) and (TimeZoneBias = 0));
+    dttzSpecified: result := (other.FTimezoneType = dttzSpecified) and
+         ((FTimeZoneHours = other.FTimeZoneHours) and (FTimezoneMins = other.FTimezoneMins));
   else
     result := false;
   end;
@@ -9342,30 +9133,30 @@ end;
 
 procedure TFslDateTime.RollUp;
 begin
-  if second >= 60 then
+  if FSecond >= 60 then
   begin
-    inc(minute);
-    second := 0;
+    inc(FMinute);
+    FSecond := 0;
   end;
-  if minute >= 60 then
+  if FMinute >= 60 then
   begin
-    inc(hour);
-    minute := 0;
+    inc(FHour);
+    FMinute := 0;
   end;
-  if hour >= 24 then
+  if FHour >= 24 then
   begin
-    inc(day);
-    hour := 0;
+    inc(FDay);
+    FHour := 0;
   end;
-  if day > MONTHS_DAYS[IsLeapYear(Year), TMonthOfYear(month)] then
+  if FDay > MONTHS_DAYS[IsLeapYear(FYear), TMonthOfYear(FMonth)] then
   begin
-    inc(month);
-    day := 1;
+    inc(FMonth);
+    FDay := 1;
   end;
-  if month > 12 then
+  if FMonth > 12 then
   begin
-    inc(year);
-    month := 1;
+    inc(FYear);
+    FMonth := 1;
   end;
 end;
 
@@ -9373,46 +9164,46 @@ function TFslDateTime.subtract(length: TDuration): TFslDateTime;
 begin
   result := TFslDateTime.makeUTC(dateTime - length);
   result.FPrecision := FPrecision;
-  result.FractionPrecision := FractionPrecision;
-  result.TimezoneType := TimezoneType;
-  result.TimeZoneHours := TimeZoneHours;
-  result.TimezoneMins := TimezoneMins;
+  result.FFractionPrecision := FFractionPrecision;
+  result.FTimezoneType := FTimezoneType;
+  result.FTimeZoneHours := FTimeZoneHours;
+  result.FTimezoneMins := FTimezoneMins;
 end;
 
 function TFslDateTime.TimeStamp: TTimeStamp;
 begin
   FillChar(result, sizeof(result), 0);
-  result.Year := year;
+  result.year := FYear;
   if FPrecision >= dtpMonth then
-    result.month := month;
+    result.month := FMonth;
   if FPrecision >= dtpDay then
-    result.day := day;
+    result.day := FDay;
   if FPrecision >= dtpHour then
-    result.hour := hour;
+    result.hour := FHour;
   if FPrecision >= dtpMin then
-    result.minute := minute;
+    result.minute := FMinute;
   if FPrecision >= dtpSec then
-    result.second := second;
+    result.second := FSecond;
   if FPrecision >= dtpNanoSeconds then
-    result.Fraction := fraction;
+    result.fraction := FFraction;
 end;
 
 function afterInstant(uSelf, uOther : TFslDateTime) : boolean;
 begin
-  if (uSelf.year <> uOther.year) then
-    result := uSelf.year > uOther.year
-  else if (uSelf.month <> uOther.month) then
-    result := uSelf.month > uOther.month
-  else if (uSelf.day <> uOther.day) then
-    result := uSelf.day > uOther.day
-  else if (uSelf.hour <> uOther.hour) then
-    result := uSelf.hour > uOther.hour
-  else if (uSelf.minute <> uOther.minute) then
-    result := uSelf.minute > uOther.minute
-  else if (uSelf.second <> uOther.second) then
-    result := uSelf.second > uOther.second
+  if (uSelf.FYear <> uOther.FYear) then
+    result := uSelf.FYear > uOther.FYear
+  else if (uSelf.FMonth <> uOther.FMonth) then
+    result := uSelf.FMonth > uOther.FMonth
+  else if (uSelf.FDay <> uOther.FDay) then
+    result := uSelf.FDay > uOther.FDay
+  else if (uSelf.FHour <> uOther.FHour) then
+    result := uSelf.FHour > uOther.FHour
+  else if (uSelf.FMinute <> uOther.FMinute) then
+    result := uSelf.FMinute > uOther.FMinute
+  else if (uSelf.FSecond <> uOther.FSecond) then
+    result := uSelf.FSecond > uOther.FSecond
   else
-    result := (uSelf.fraction > uOther.fraction);
+    result := (uSelf.FFraction > uOther.FFraction);
 end;
 
 class operator TFslDateTime.Add(a: TFslDateTime; b: TDateTime): TFslDateTime;
@@ -9428,31 +9219,31 @@ begin
   case unit_ of
     dtuYear :
       begin
-      inc(result.year, value);
+      inc(result.FYear, value);
       end;
     dtuMonth :
       begin
-      v := result.month + value;
-      inc(result.year, v div 12);
-      result.month := v mod 12;
-      if result.day > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] then
-        result.Day := MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
+      v := result.FMonth + value;
+      inc(result.FYear, v div 12);
+      result.FMonth := v mod 12;
+      if result.FDay > MONTHS_DAYS[IsLeapYear(result.FYear), TMonthOfYear(result.FMonth)] then
+        result.FDay := MONTHS_DAYS[IsLeapYear(result.FYear), TMonthOfYear(result.FMonth)];
       end;
     dtuDay :
       begin
-      v := result.day + value;
-      while v > MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)] do
+      v := result.FDay + value;
+      while v > MONTHS_DAYS[IsLeapYear(result.FYear), TMonthOfYear(result.FMonth)] do
       begin
-        v := v - MONTHS_DAYS[IsLeapYear(result.Year), TMonthOfYear(result.month)];
-        if result.month = 12 then
+        v := v - MONTHS_DAYS[IsLeapYear(result.FYear), TMonthOfYear(result.FMonth)];
+        if result.FMonth = 12 then
         begin
-          inc(result.year);
-          result.month := 1;
+          inc(result.FYear);
+          result.FMonth := 1;
         end
         else
-          inc(result.month);
+          inc(result.FMonth);
       end;
-      result.day := v;
+      result.FDay := v;
       end;
     dtuHour :
       begin
@@ -12292,7 +12083,7 @@ end;
 
 function TFslDateTime.hasTimezone : boolean;
 begin
-  result := TimezoneType <> dttzUnknown;
+  result := FTimezoneType <> dttzUnknown;
 end;
 
 function TFslDateTime.couldBeTheSameTime(other: TFslDateTime): boolean;
@@ -14530,6 +14321,15 @@ begin
       result := result And (aBytes[i] = FContent[FLength - System.Length(aBytes) + i]);
 end;
 
+procedure TFslBytesBuilder.AddByte(val: byte);
+Var
+  s : TBytes;
+Begin
+  SetLength(s, 1);
+  move(val, s[0], 1);
+  Append(s);
+end;
+
 procedure TFslBytesBuilder.Read(index : cardinal; var buffer; ilength: cardinal);
 begin
   if index < 1 Then
@@ -14539,7 +14339,7 @@ begin
   Move(FContent[index], buffer, ilength);
 end;
 
-procedure TFslBytesBuilder.WriteCardinal(index: cardinal; val: cardinal);
+procedure TFslBytesBuilder.WriteCardinal(index: Cardinal; val: cardinal);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14548,7 +14348,7 @@ begin
   Move(val, FContent[index], 4);
 end;
 
-procedure TFslBytesBuilder.WriteString(index: cardinal; val: String);
+procedure TFslBytesBuilder.WriteString(index: Cardinal; val: String);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14557,7 +14357,7 @@ begin
   Move(val[1], FContent[index], (val.Length*2));
 end;
 
-procedure TFslBytesBuilder.WriteUInt64(index: cardinal; val: UInt64);
+procedure TFslBytesBuilder.WriteUInt64(index: Cardinal; val: UInt64);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14566,7 +14366,7 @@ begin
   Move(val, FContent[index], 8);
 end;
 
-procedure TFslBytesBuilder.WriteWord(index: cardinal; val: word);
+procedure TFslBytesBuilder.WriteWord(index: Cardinal; val: word);
 begin
   if index < 1 Then
     RaiseError('Overwrite', 'index < 1');
@@ -14575,20 +14375,20 @@ begin
   Move(val, FContent[index], 2);
 end;
 
-Procedure TFslBytesBuilder.Clear;
+procedure TFslBytesBuilder.Clear;
 Begin
   FContent := nil;
   FLength := 0;
 End;
 
 
-Function TFslBytesBuilder.AsBytes : TBytes;
+function TFslBytesBuilder.AsBytes: TBytes;
 Begin
   Result := Copy(FContent, 0, FLength);
 End;
 
 
-Procedure TFslBytesBuilder.Append(ch : AnsiChar);
+procedure TFslBytesBuilder.Append(ch: AnsiChar);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -14597,7 +14397,7 @@ Begin
   Inc(FLength);
 End;
 
-Procedure TFslBytesBuilder.Append(b : Byte);
+procedure TFslBytesBuilder.Append(b: Byte);
 Begin
   If FLength + 1 > System.Length(FContent) Then
     SetLength(FContent, System.Length(FContent) + FBufferSize);
@@ -14708,7 +14508,7 @@ begin
   End;
 end;
 
-Procedure TFslBytesBuilder.Append(Const bytes : TBytes);
+procedure TFslBytesBuilder.Append(const bytes: TBytes);
 Begin
   If System.Length(bytes) > 0 Then
   Begin
@@ -16916,11 +16716,11 @@ begin
     #$2C6C : result := 'z';
     #$A763 : result := 'z';
 
-    #$0439 : result := UnicodeToUTF8($0438);
+    #$0439 : result := {$IFDEF FPC}UnicodeToUTF8{$ELSE}Chr{$ENDIF}($0438);
   else if ch < #$FE then
     result := ch
   else
-    result := UnicodeToUTF8(v);
+    result := {$IFDEF FPC}UnicodeToUTF8{$ELSE}Chr{$ENDIF}(v);
   end;
 end;
 
@@ -17553,6 +17353,22 @@ begin
     if Flist.count > 1 then
       result := result + FLastSeperator + FList[FList.count - 1];
   end;
+end;
+
+// from https://www.appsloveworld.com/coding/delphi/2/in-delphi-how-do-i-round-a-tdatetime-to-closest-second-minute-five-minute-etc
+function RoundDateTimeToNearestInterval(vTime : TDateTime; vInterval : TDateTime = 60/SecsPerDay) : TDateTime;
+var
+  vTimeSec,vIntSec,vRoundedSec : int64;
+begin
+  //Rounds to nearest minute by default
+  vTimeSec := round(vTime * SecsPerDay);
+  vIntSec := round(vInterval * SecsPerDay);
+
+  if vIntSec = 0 then exit(vTimeSec / SecsPerDay);
+
+  vRoundedSec := round(vTimeSec / vIntSec) * vIntSec;
+
+  Result := vRoundedSec / SecsPerDay;
 end;
 
 function ProcessCpuUsage : UInt64; // actual value is not accurate but is consistent

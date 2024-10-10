@@ -1,30 +1,158 @@
 object FakeConsoleForm: TFakeConsoleForm
-  Left = 414
-  Height = 409
-  Top = 173
-  Width = 1039
+  Left = -2433
+  Height = 804
+  Top = 559
+  Width = 1220
   Caption = 'Fake Console Form'
-  ClientHeight = 409
-  ClientWidth = 1039
+  ClientHeight = 804
+  ClientWidth = 1220
   Menu = MainMenu1
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  OnResize = FormResize
   OnShow = FormShow
   Position = poScreenCenter
-  object Memo1: TMemo
+  LCLVersion = '3.1.0.0'
+  object Panel2: TPanel
     Left = 0
-    Height = 409
+    Height = 804
     Top = 0
-    Width = 1039
+    Width = 992
     Align = alClient
-    Font.CharSet = ANSI_CHARSET
-    Font.Height = -13
-    Font.Name = '.SF NS'
-    OnChange = Memo1Change
-    ParentFont = False
-    ReadOnly = True
+    ClientHeight = 804
+    ClientWidth = 992
     TabOrder = 0
+    object Panel1: TPanel
+      Left = 1
+      Height = 23
+      Top = 1
+      Width = 990
+      Align = alTop
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      Caption = '  Log'
+      ClientHeight = 23
+      ClientWidth = 990
+      TabOrder = 0
+      object btnCopy: TButton
+        Left = 64
+        Height = 25
+        Top = -1
+        Width = 75
+        Caption = 'Copy'
+        TabOrder = 0
+        OnClick = btnCopyClick
+      end
+      object btnClear: TButton
+        Left = 144
+        Height = 25
+        Top = -1
+        Width = 75
+        Caption = 'Clear'
+        TabOrder = 1
+        OnClick = btnClearClick
+      end
+      object btnStop: TButton
+        Left = 224
+        Height = 25
+        Top = -1
+        Width = 104
+        Caption = 'Close down'
+        TabOrder = 2
+        OnClick = btnStopClick
+      end
+    end
+    object mLog: TMemo
+      Left = 1
+      Height = 779
+      Top = 24
+      Width = 990
+      Align = alClient
+      Font.CharSet = ANSI_CHARSET
+      Font.Height = -12
+      Font.Name = '.SF NS'
+      Font.Pitch = fpFixed
+      ParentFont = False
+      ReadOnly = True
+      TabOrder = 1
+      WordWrap = False
+      OnChange = mLogChange
+    end
+  end
+  object Panel3: TPanel
+    Left = 997
+    Height = 804
+    Top = 0
+    Width = 223
+    Align = alRight
+    ClientHeight = 804
+    ClientWidth = 223
+    TabOrder = 1
+    OnResize = Panel3Resize
+    object Panel4: TPanel
+      Left = 1
+      Height = 24
+      Top = 1
+      Width = 221
+      Align = alTop
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      Caption = '  Threads'
+      TabOrder = 0
+    end
+    object mThreads: TMemo
+      Left = 1
+      Height = 575
+      Top = 25
+      Width = 221
+      Align = alClient
+      Font.Pitch = fpFixed
+      ParentFont = False
+      TabOrder = 1
+      WordWrap = False
+    end
+    object Panel5: TPanel
+      Left = 1
+      Height = 203
+      Top = 600
+      Width = 221
+      Align = alBottom
+      ClientHeight = 203
+      ClientWidth = 221
+      TabOrder = 2
+      object Panel6: TPanel
+        Left = 1
+        Height = 23
+        Top = 1
+        Width = 219
+        Align = alTop
+        Alignment = taLeftJustify
+        Caption = '   Locks'
+        TabOrder = 0
+      end
+      object mLocks: TMemo
+        Left = 1
+        Height = 178
+        Top = 24
+        Width = 219
+        Align = alClient
+        Font.Pitch = fpFixed
+        Lines.Strings = (
+          'mLocks'
+        )
+        ParentFont = False
+        TabOrder = 1
+      end
+    end
+  end
+  object Splitter1: TSplitter
+    Left = 992
+    Height = 804
+    Top = 0
+    Width = 5
+    Align = alRight
+    ResizeAnchor = akRight
   end
   object Timer1: TTimer
     Enabled = False

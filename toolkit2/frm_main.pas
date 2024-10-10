@@ -3117,15 +3117,15 @@ procedure TMainToolkitForm.mnuLVCopyAllClick(Sender: TObject);
 var
   i : integer;
   msg : TToolkitMessage;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for i := 0 to lvMessages.items.count - 1 do
     begin
       msg := TToolkitMessage(lvMessages.items[i].Data);
       b.append(msg.Summary);
-      b.append(EOLN);
+      b.append(#13#10);
     end;
   finally
     b.free;

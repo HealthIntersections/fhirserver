@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 Uses
-  {$IFDEF WINDOWS} Windows, ActiveX, FastMM4, {$ENDIF}
+  {$IFDEF WINDOWS} Windows, ActiveX, {$ENDIF}
   SysUtils, StrUtils, Classes, IniFiles, Forms,
   {$IFDEF FPC} gui_lcl, Interfaces, {$ELSE} gui_vcl, {$ENDIF}
 
@@ -50,7 +50,7 @@ Uses
   {$ENDIF}
 
   server_constants, server_config, utilities, server_context,
-  tx_manager, telnet_server, web_source, web_server, web_cache, remote_config,
+  tx_manager, telnet_server, web_source, web_server, web_cache, zero_config,
   server_testing, kernel_thread, server_stats,
   endpoint, endpoint_storage, endpoint_bridge, endpoint_txsvr, endpoint_packages,
   endpoint_loinc, endpoint_snomed, endpoint_full, endpoint_folder, endpoint_icao,
@@ -143,6 +143,57 @@ uses
   JclDebug;
 {$ENDIF}
 
+function systemInfo : string;
+var
+  l, s : string;
+begin
+  l := 'Running on "'+SystemName+'": '+SystemPlatform;
+  s := SystemArchitecture;
+  if (s <> '') and not sameText(s, 'Unknown') then
+  begin
+    l := l + ' (';
+    l := l + s;
+    s := SystemProcessorName;
+    if s <> '' then
+      l := l + '/'+s;
+    l := l + ')';
+  end;
+  l := l + '. ';
+  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
+  result := l;
+end;
+
+function compileInfo : String;
+var
+  compiler, os, cpu, s : String;
+begin
+  {$IFDEF FPC}
+  compiler := '/FreePascal';
+  {$ELSE}
+  compiler := '/Delphi';
+  {$ENDIF}
+  {$IFDEF WINDOWS}
+  os := 'Windows';
+  {$ENDIF}
+  {$IFDEF LINUX}
+  os := 'Linux';
+  {$ENDIF}
+  {$IFDEF OSX}
+  os := 'OSX';
+  {$ENDIF}
+  {$IFDEF CPU64}
+  cpu := ''; //'-64';
+  {$ELSE}
+  cpu := '-32';
+  {$ENDIF}
+
+  s := os+cpu+compiler+', '+BuildDescription;
+
+  result := 'FHIR Server '+SERVER_FULL_VERSION+' '+s;
+end;
+
+
+
 var
   GStartTime : UInt64;
 
@@ -198,46 +249,55 @@ var
   ep : TFhirServerEndpoint;
   i : integer;
 begin
+  GThreadDoingConstruction := true;
   try
-    LoadTerminologies;
-    LoadEndPoints;
-    StartWebServer();
+    try
+      LoadTerminologies;
+      LoadEndPoints;
+      StartWebServer();
+      for ep in FEndPoints do
+        ep.Started;
 
-    recordStats(nil);
-    FMaintenanceThread := TFhirServerMaintenanceThread.Create;
-    FMaintenanceThread.defineTask('mem-check', checkMem, 35);
-    FMaintenanceThread.defineTask('stats', recordStats, 60);
-    i := 0;
-    for ep in FEndPoints do
-    begin
-      FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
-      i := i + 5;
+      recordStats(nil);
+      FMaintenanceThread := TFhirServerMaintenanceThread.Create;
+      FMaintenanceThread.defineTask('mem-check', checkMem, 35);
+      FMaintenanceThread.defineTask('stats', recordStats, 60);
+      i := 0;
+      for ep in FEndPoints do
+      begin
+        FMaintenanceThread.defineTask('ep:'+ep.Config.Name, ep.internalThread, 60+i);
+        i := i + 5;
+      end;
+      FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
+      FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
+      FMaintenanceThread.Start;
+
+
+      SetCacheStatus(settings.Ini.web['caching'].value = 'true');
+
+      // post start up time.
+      getReport('|', true); // base line the object countig
+      Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
+      Logging.Starting := false;
+      sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
+    except
+      on e : Exception do
+      begin
+        Logging.log('Error starting: '+E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
+        raise;
+      end;
     end;
-    FMaintenanceThread.defineTask('snomed', FTerminologies.sweepSnomed, 600);
-    FMaintenanceThread.defineTask('web-cache', WebServer.Common.cache.Trim, 60);
-    FMaintenanceThread.defineTask('sweep-cache', sweepCaches, 60);
-    FMaintenanceThread.Start;
-
-
-    SetCacheStatus(settings.Ini.web['caching'].value = 'true');
-
-    // post start up time.
-    getReport('|', true); // base line the object countig
-    Logging.log('started ('+inttostr((GetTickCount64 - GStartTime) div 1000)+'secs)');
-    Logging.Starting := false;
-    sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' has started');
-  except
-    on e : Exception do
-    begin
-      Logging.log('Error starting: '+E.ClassName+ ': ' + E.Message+#13#10#13#10+ExceptionStack(e));
-      raise;
-    end;
+  finally
+    GThreadDoingConstruction := false;
   end;
 end;
 
-procedure TFHIRServiceKernel.DoStop;
+procedure TFHIRServiceKernel.DoStop; 
+var
+  ep : TFhirServerEndpoint;
 begin
   try
+    Logging.shuttingDown := true;
     Logging.log('stopping: '+StopReason);
 
     sendSMS(Settings, Settings.HostSms, 'The server ' + DisplayName + ' for ' + FSettings.OwnerName + ' is stopping');
@@ -250,6 +310,9 @@ begin
       FMaintenanceThread.StopAndWait(21000); // see comments in FMaintenanceThread.finalise
       FMaintenanceThread.free;
     end;
+    for ep in FEndPoints do
+      ep.Stopping;
+
     Logging.log('stop web server');
     StopWebServer;
     Logging.log('closing');
@@ -287,13 +350,14 @@ procedure TFHIRServiceKernel.loadTerminologies;
 begin
   Logging.log('Load Terminologies');
   FTerminologies := TCommonTerminologies.Create(Settings.link);
-  FTerminologies.load(Ini['terminologies'], false);
 
-  fI18n := TI18nSupport.Create(FTerminologies.Languages.link);
+  FI18n := TI18nSupport.Create(FTerminologies.Languages.link);
   FI18n.loadPropertiesFile(partnerFile('Messages.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_es.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_de.properties'));
   FI18n.loadPropertiesFile(partnerFile('Messages_nl.properties'));
+  FTerminologies.i18n := FI18n.link;                   
+  FTerminologies.load(Ini['terminologies'], false);
 end;
 
 function epVersion(section : TFHIRServerConfigSection): TFHIRVersion;
@@ -347,6 +411,8 @@ begin
   FWebServer := TFhirWebServer.Create(Settings.Link, DisplayName);
   FWebServer.Common.cache := THTTPCacheManager.Create(Settings.Ini.section['web'].prop['http-cache-time'].readAsInt(0));
   FWebServer.Common.cache.cacheDwellTime := Settings.Ini.service['cache-time'].readAsInt(DEFAULT_DWELL_TIME_MIN) / (24*60);
+  FTelnet.OnGetRequestList := FWebServer.GetCurrentRequestReport;
+  FTelnet.OnGetCurrentRequestCount := FWebServer.GetCurrentRequestCount;
 
   FWebServer.loadConfiguration(Ini);
   if FolderExists('c:\work\fhirserver\server\web') then
@@ -358,6 +424,11 @@ begin
   begin
     Logging.log('Web source from /Users/grahamegrieve/work/server/server/web');
     FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create('/Users/grahamegrieve/work/server/server/web')
+  end
+  else if FolderExists(FilePath([TCommandLineParameters.execDir(), '.\web'])) then
+  begin
+    Logging.log('Web source from ./web');
+    FWebServer.Common.SourceProvider := TFHIRWebServerSourceFolderProvider.Create(FilePath([TCommandLineParameters.execDir(), '.\web']))
   end
   else if FolderExists(FilePath([TCommandLineParameters.execDir(), '..\..\server\web'])) then
   begin
@@ -383,6 +454,8 @@ procedure TFHIRServiceKernel.stopWebServer;
 begin
   if FWebServer <> nil then
   begin
+    FTelnet.OnGetCurrentRequestCount := nil;
+    FTelnet.OnGetRequestList := nil;
     FWebServer.Stop;
     FWebServer.free;
   end;
@@ -526,7 +599,7 @@ function TFHIRServiceKernel.makeEndPoint(config : TFHIRServerConfigSection) : TF
 begin
   // we generate by type and mode
   if config['type'].value = 'package' then
-    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FI18n.link)
+    result := TPackageServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FI18n.link)
   else if config['type'].value = 'tx-registry' then
     result := TTxRegistryServerEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'folder' then
@@ -538,14 +611,14 @@ begin
   else if config['type'].value = 'snomed' then
     result := TSnomedWebEndPoint.Create(config.link, FSettings.Link, Terminologies.link, FI18n.link)
   else if config['type'].value = 'bridge' then
-    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TBridgeEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'xig' then
-    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TXIGServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, {FPcm.link, }FI18n.link)
   else if config['type'].value = 'terminology' then
-    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link)
+    result := TTerminologyServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link)
   else if config['type'].value = 'full' then
   begin
-    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config), Terminologies.link, FPcm.link, FI18n.link);
+    result := TFullServerEndPoint.Create(config.link, FSettings.Link, connectToDatabase(config, false), Terminologies.link, FPcm.link, FI18n.link);
     TFullServerEndPoint(result).OnGetNamedContext := GetNamedContext;
   end
   else
@@ -604,7 +677,8 @@ var
   cmd : String;
   svc : TFHIRServiceKernel;
   logMsg : String;
-begin
+begin           
+  SetThreadStatus('ExecuteFhirServer');
   // if we're running the test or gui, go do that
   if (params.has('tests') or params.has('-tests')) then
     RunTests(params, ini)
@@ -640,7 +714,7 @@ begin
       logMsg := 'Using Configuration file '+ini.FileName;
     Logging.log(logMsg);
 
-    svc := TFHIRServiceKernel.Create(svcName, dispName, logMsg, ini.link, params.link);
+    svc := TFHIRServiceKernel.Create(svcName, dispName, compileInfo+' '+systemInfo+#13#10+logMsg, ini.link, params.link);
     try
       {$IFDEF FPC}
       if FakeConsoleForm <> nil then
@@ -676,70 +750,6 @@ begin
       svc.free;
     end;
   end;
-end;
-
-procedure logSystemInfo;
-var
-  l, s : string;
-begin
-  l := 'Running on "'+SystemName+'": '+SystemPlatform;
-  s := SystemArchitecture;
-  if (s <> '') and not sameText(s, 'Unknown') then
-  begin
-    l := l + ' (';
-    l := l + s;
-    s := SystemProcessorName;
-    if s <> '' then
-      l := l + '/'+s;
-    l := l + ')';
-  end;
-  l := l + '. ';
-  l := l + DescribeBytes(SystemMemory.physicalMem)+'/ '+DescribeBytes(SystemMemory.virtualMem)+' memory';
-  Logging.log(l);
-end;
-
-procedure logCompileInfo;
-var
-  compiler, os, cpu, s : String;
-begin
-  {$IFDEF FPC}
-  compiler := '/FreePascal';
-  {$ELSE}
-  compiler := '/Delphi';
-  {$ENDIF}
-  {$IFDEF WINDOWS}
-  os := 'Windows';
-  {$ENDIF}
-  {$IFDEF LINUX}
-  os := 'Linux';
-  {$ENDIF}
-  {$IFDEF OSX}
-  os := 'OSX';
-  {$ENDIF}
-  {$IFDEF CPU64}
-  cpu := ''; //'-64';
-  {$ELSE}
-  cpu := '-32';
-  {$ENDIF}
-
-  s := os+cpu+compiler;
-  {$IFOPT C+}
-  s := s + '+Assertions';
-  {$ENDIF}
-
-  {$IFOPT D+}
-  s := s + '+Debug';
-  {$ENDIF}
-
-  {$IFOPT O+}
-  s := s + '+Optimizations';
-  {$ENDIF}
-
-  {$IFDEF OBJECT_TRACKING}
-  s := s + '+ObjectTracking';
-  {$ENDIF}
-
-  Logging.log('FHIR Server '+SERVER_FULL_VERSION+' '+s);
 end;
 
 
@@ -785,8 +795,8 @@ begin
   Logging.LogToConsole := true;
   {$ENDIF}
 
-  logCompileInfo;
-  logSystemInfo;
+  Logging.log(compileInfo);
+  Logging.log(systemInfo);
   logDebuggingInfo;
 
   if not params.hasParams then
@@ -848,6 +858,8 @@ var
   fn : String;
   zc : String;
 begin
+  SetThreadName('kernel');
+  SetThreadStatus('ExecuteFhirServerInner');
   GStartTime := GetTickCount64;
 
   {$IFDEF WINDOWS}
@@ -924,12 +936,12 @@ begin
   else
   begin
     {$IFDEF WINDOWS}
-    noFMMLeakMessageBox := true;
+    //noFMMLeakMessageBox := true;
     {$ENDIF}
     SuppressLeakDialog := true;
   end;
 
-  if params.has('fake-console') then
+  if params.has('console') or params.has('fake-console') then
   begin
     RequireDerivedFormResource := True;
     Application.Title := 'FHIRServer';
@@ -959,7 +971,7 @@ begin
 end;
 {$ELSE}
 begin
-  ExecuteFhirServerInner;
+  ExecuteFhirServerInner(params);
 end;
 {$ENDIF}
 

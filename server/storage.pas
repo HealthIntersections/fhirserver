@@ -73,6 +73,7 @@ Type
 const
   OP_MODES_CHECK = [opmRestful, opmInternal];
   OP_CODES_NO_SEC_ON_INSERT = [opmSweep];
+  DEAD_CHECK_LIMIT = 60000;
 
 type
   TFHIRStorageService = class;
@@ -236,6 +237,7 @@ type
     procedure NotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure VersionNotFound(request: TFHIRRequest; response : TFHIRResponse);
     procedure TypeNotFound(request: TFHIRRequest; response : TFHIRResponse);
+    procedure deadCheck(start : UInt64);
 
     Property OnPopulateConformance : TPopulateConformanceEvent read FOnPopulateConformance write FOnPopulateConformance;
     property OnCreateBuilder : TCreateBundleBuilderEvent read FOnCreateBuilder write FOnCreateBuilder;
@@ -256,6 +258,9 @@ type
     procedure AuditRest(session : TFhirSession; intreqid, extreqid, ip, resourceName : string; id, ver : String; verkey : integer; op : TFHIRCommandType; provenance : TFhirProvenanceW; opName : String; httpCode : Integer; name, message : String; patients : TArray<String>); overload; virtual; abstract;
     function patientIds(request : TFHIRRequest; res : TFHIRResourceV) : TArray<String>; virtual; abstract;
     function DoSearch(request: TFHIRRequest; requestType: String; params: String) : TFHIRBundleW; virtual;
+    {$IFDEF DEV_FEATURES}
+    procedure processFeature(item : TFhirFeatureQueryItem; answer : TFhirFeatureQueryAnswer); virtual;
+    {$ENDIF}
 
     property clientCacheManager : TClientCacheManager read GetClientCacheManager;
     property Operations : TFslList<TFhirOperation> read FOperations;
@@ -653,6 +658,13 @@ begin
   raise EFHIRException.Create('This server does not implement the "DoSearch" function');
 end;
 
+{$IFDEF DEV_FEATURES}
+procedure TFHIROperationEngine.processFeature(item: TFhirFeatureQueryItem; answer: TFhirFeatureQueryAnswer);
+begin
+  // nothing
+end;
+{$ENDIF}
+
 procedure TFHIROperationEngine.NoMatch(request: TFHIRRequest; response: TFHIRResponse);
 begin
   response.HTTPCode := 404;
@@ -705,6 +717,17 @@ begin
     response.Body := message;
     response.Resource := factory.BuildOperationOutcome(langList, message, issueCode);
   end;
+end;
+
+procedure TFHIROperationEngine.deadCheck(start : UInt64);
+var
+  now : UInt64;
+  delta : UInt64;
+begin
+  now := GetTickCount64;
+  delta := now - start;
+  if (delta > DEAD_CHECK_LIMIT) then
+    raise EWebServerException.create(500, 'Request took too long to process ('+inttostr(DEAD_CHECK_LIMIT div 1000)+'sec)');
 end;
 
 

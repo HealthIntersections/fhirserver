@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils,
+  SysUtils, Classes,
   fsl_base, fsl_utilities, fsl_http,
   fhir_objects, fhir_common,
   fhir_indexing, indexing;{,
@@ -61,7 +61,7 @@ Type
     procedure checkOrderingPrefix;
     procedure processPrefix;
 
-    procedure build(b : TStringBuilder);
+    procedure build(b : TFslStringBuilder);
   public
     destructor Destroy; override;
     function link : TSearchParameter; overload;
@@ -81,12 +81,18 @@ Type
 
   TSearchParser = class (TFslObject)
   private
+    FElements : TStringList;
+    FAllowedParams : TStringList;
     FSearchControls : TFHIRSearchControlParameterSet;
     function processParam(indexes : TFHIRIndexInformation; resourceType, name, value : String) : TSearchParameter;
   public
     constructor Create(searchControls : TFHIRSearchControlParameterSet);
+    destructor Destroy; override;
+
     function parse(indexes : TFHIRIndexInformation; resourceType : String; pm : THTTPParameters) : TFslList<TSearchParameter>;
     function buildUrl(base : String; search : TFslList<TSearchParameter>): String;
+    property Elements : TStringList read FElements;
+    property allowedParams : TStringList read FAllowedParams;
   end;
 
 const
@@ -97,7 +103,7 @@ implementation
 
 { TSearchParameter }
 
-procedure TSearchParameter.build(b: TStringBuilder);
+procedure TSearchParameter.build(b: TFslStringBuilder);
 begin
   if (FControl <> scpNull) then
     b.append(CODES_TFHIRSearchControlParameter[FControl])
@@ -241,10 +247,10 @@ end;
 
 function TSearchParser.buildUrl(base : String; search: TFslList<TSearchParameter>): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   sp : TSearchParameter;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.append(base);
     b.append('?');
@@ -305,7 +311,7 @@ begin
     n := l;
 
   index := indexes.Indexes.getByName(resourceType, n);
-  if index <> nil then
+  if (index <> nil) and ((FAllowedParams.Count = 0) or (FAllowedParams.indexOf(n) > -1)) then
     begin
     result := TSearchParameter.Create;
     try
@@ -382,6 +388,8 @@ begin
       result := TSearchParameter.Create;
       result.control := cp;
       result.value := value;
+      if (cp = scpElements) then
+        FElements.CommaText := value;
     end;
   end;
 end;
@@ -390,6 +398,15 @@ constructor TSearchParser.Create(searchControls: TFHIRSearchControlParameterSet)
 begin
   inherited Create;
   FSearchControls := searchControls;
+  FAllowedParams := TStringList.create;
+  FElements := TStringList.create;
+end;
+
+destructor TSearchParser.Destroy;
+begin
+  FAllowedParams.free;
+  FElements.free;
+  inherited Destroy;
 end;
 
 end.

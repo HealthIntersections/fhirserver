@@ -132,10 +132,10 @@ end;
 
 function makeFileName(s : String) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ch : char;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for ch in s do
       if (ch in ['a'..'z', 'A'..'Z', '0'..'9', '_', '-', '#', '$', '.']) then
@@ -239,7 +239,7 @@ end;
 
 procedure TIgGitHubDialog.doLine(sender: TFslExternalProcessThread; line: String; repl : boolean);
 begin
-  FLock.Lock;
+  FLock.Lock('git.line');
   try
     if (repl) then
       FLines.add('t'+line)
@@ -262,7 +262,7 @@ var
   s : String;
   ok : boolean;
 begin
-  FLock.Lock;
+  FLock.Lock('git.timer');
   try
     ok := false;
     for s in FLines do

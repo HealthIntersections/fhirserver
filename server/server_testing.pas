@@ -90,17 +90,27 @@ begin
   {$ENDIF}
 end;
 
-procedure RunTestConsole(ini : TFHIRServerConfigFile);
+procedure RunTestConsole(ini : TFHIRServerConfigFile; params : TCommandLineParameters);
 {$IFDEF FPC}
 var
   app : TIdeTesterConsoleRunner;
+  mode : String;
 begin
   Logging.Log('Run Tests (Console)');
   ShowObjectLeaks := hasCommandLineParam('leak-report');
   app := TIdeTesterConsoleRunner.Create(nil);
   app.Initialize;
-  app.Title := 'FPCUnit Console test runner';
+  app.Title := 'FPCUnit Console test runner';  
   app.Mode := cpmVerbose;
+  if (params.get('mode', mode)) then
+  begin
+    if (mode = 'verbose') then
+      app.Mode := cpmVerbose
+    else if (mode = 'brief') then
+      app.Mode := cpmBrief
+    else if (mode = 'none') then
+      app.Mode := cpmNone
+  end;
   app.sparse := true;
   app.Run;
   app.free;
@@ -108,7 +118,7 @@ end;
 {$ELSE}
 begin
   DUnitTestRunner.RunRegisteredTests;
-  if not hasCommandLineParam('-ci') then
+  if not params.has('-ci') then
   begin
     System.Write('Done.. press <Enter> key to quit.');
     System.Readln;
@@ -119,7 +129,7 @@ end;
 procedure runTests(params : TCommandLineParameters; ini : TFHIRServerConfigFile);
 begin
   test_registry.registerTests(params);
-  if hasCommandLineParam('gui') then
+  if params.has('gui') then
     RunTestGui(ini)
   {$IFDEF FPC}
   else if IsRunningIDETests then
@@ -131,7 +141,7 @@ begin
   else
   begin
     Logging.LogToConsole := false;
-    RunTestConsole(ini);
+    RunTestConsole(ini, params);
   end;
 end;
 

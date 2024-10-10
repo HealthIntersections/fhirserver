@@ -35,12 +35,12 @@ interface
 uses
   SysUtils, Classes, IniFiles,
   IdHashSHA,
-  fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_versions, fsl_http,
+  fsl_base, fsl_utilities, fsl_json, fsl_logging, fsl_versions, fsl_http, fsl_threads,
   fsl_fetcher, fsl_zulip,
-  fhir_objects, fhir_client_http,
-  fhir3_client, fhir3_types, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
-  fhir4_client, fhir4_types, fhir4_resources_canonical, fhir4_utilities,
-  fhir5_client, fhir5_types, fhir5_resources_canonical, fhir5_enums, fhir5_utilities,
+  fhir_objects, fhir_client, fhir_client_http,
+  fhir3_client, fhir3_types, fhir3_resources_base, fhir3_resources, fhir3_resources_canonical, fhir3_utilities,
+  fhir4_client, fhir4_types, fhir4_resources_base, fhir4_resources, fhir4_resources_canonical, fhir4_utilities,
+  fhir5_client, fhir5_types, fhir5_resources_base, fhir5_resources, fhir5_resources_canonical, fhir5_enums, fhir5_utilities,
   tx_registry_model;
 
 const                                                        
@@ -80,6 +80,8 @@ Type
     FOnSendEmail : TSendEmailEvent;
     FIni : TIniFile;
     FZulip : TZulipTracker;
+    FLogFileName : String;
+
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
 
@@ -118,6 +120,7 @@ begin
   inherited Create;
   FZulip := zulip;
   FAddress := MASTER_URL;
+  FLogFileName := FilePath(['[tmp]', 'tx-registry-spider.log']);
 end;
 
 destructor TTxRegistryScanner.Destroy;
@@ -178,7 +181,10 @@ var
   arr : TJsonArray;
   i : integer;
   reg : TServerRegistry;
+  s : String;
 begin
+  DeleteFile(FLogFileName);
+
   FIni := TIniFile.Create(tempFile('tx-registry-'+name+'.ini'));
   try
     info.LastRun := TFslDateTime.makeUTC;
@@ -189,9 +195,12 @@ begin
       log('Fetch '+FAddress, '', false);
       json := fetchJson(FAddress);
       try
-        if json.str['formatVersion'] <> '1' then
+        s := json.str['formatVersion'];
+        if s <> '1' then
           raise EFslException.Create('Unable to proceed: registries version is '+json.str['formatVersion']+' not "1"');
 
+        info.doco := json.str['documentation'];
+        info.Address := FAddress;
         arr := json.arr['registries'];
         for i := 0 to arr.Count - 1 do
         begin
@@ -206,7 +215,7 @@ begin
       finally
         json.free;
       end;
-      info.Outcome := 'All OK';
+      info.Outcome := 'Processed OK';
     except
       on e : Exception do
       begin
@@ -227,6 +236,7 @@ var
   json : TJsonObject;
   arr : TJsonArray;
   i : integer;
+  s : String;
   srvr : TServerInformation;
 begin
   try
@@ -238,12 +248,14 @@ begin
     reg.Address := obj.str['url'];
     if (reg.Address = '') then
       raise EFslException.Create('No url provided for '+reg.Name);
+    SetThreadStatus(reg.Address);
 
     log('Fetch '+reg.Address, FAddress, false);
     FRegistryErrors := '';
     json := fetchJson(reg.Address);
     try
-      if json.str['formatVersion'] <> '1' then
+      s := json.str['formatVersion'];
+      if s <> '1' then
         raise EFslException.Create('Unable to proceed: registry version @'+reg.Address+' is '+json.str['formatVersion']+' not "1"');
       
       arr := json.arr['servers'];
@@ -286,9 +298,16 @@ begin
     raise EFslException.Create('No name provided');
   srvr.AccessInfo := obj.str['access_info'];
   srvr.Address := obj.str['url'];
+  SetThreadStatus(srvr.Address);
   if (srvr.Address = '') then
     raise EFslException.Create('No url provided for '+srvr.Name);
-  obj.forceArr['authoritative'].readStrings(srvr.AuthList);
+  obj.forceArr['authoritative'].readStrings(srvr.AuthCSList);
+  obj.forceArr['authoritative-valuesets'].readStrings(srvr.AuthVSList);
+  srvr.AuthCSList.sort;
+  srvr.AuthVSList.sort;
+
+  obj.forceArr['usage'].readStrings(srvr.UsageList);
+  srvr.UsageList.sort;
 
   arr := obj.arr['fhirVersions'];
   for i := 0 to arr.Count - 1 do
@@ -307,22 +326,40 @@ end;
 procedure TTxRegistryScanner.processServerVersion(source: String; srvr: TServerInformation; obj: TJsonObject; ver: TServerVersionInformation);
 var
   v : TSemanticVersion;
-begin   
+  d : TDateTime;
+begin
   try
-    ver.Address := obj.str['url']; 
+    d := now;
+    ver.CodeSystems.clear;
+    ver.ValueSets.clear;
+    ver.Address := obj.str['url'];
+    SetThreadStatus(ver.Address);
+    Logging.log('Check on server '+ver.Address);
     ver.Security := [ssOpen];
     v := TSemanticVersion.fromString(obj.str['version']);
-    case v.Major of
-      3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
-      4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
-      5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
-    else
-      log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
+    try
+      case v.Major of
+        3: processServerVersionR3(obj.str['version'], source, obj.str['url'], ver);
+        4: processServerVersionR4(obj.str['version'], source, obj.str['url'], ver);
+        5: processServerVersionR5(obj.str['version'], source, obj.str['url'], ver);
+      else
+        log('Exception processing server: '+srvr.Name+'@'+srvr.address+' : Version '+obj.str['version']+' not supported', source, false);
+      end;
+    finally
+      v.free;
     end;
+    ver.CodeSystems.sort;
+    ver.ValueSets.sort;
     ver.LastSuccess := TFslDateTime.makeUTC;
+    ver.lastTAT := DescribePeriod(now - d);
+    Logging.log('Server '+ver.Address+': '+DescribePeriod(now - d)+' for '+inttostr(ver.CodeSystems.count)+' CodeSystems and '+inttostr(ver.ValueSets.count)+' ValueSets');
   except
     on e : Exception do
+    begin
+      Logging.log('Server '+ver.Address+': Error after '+DescribePeriod(now - d)+': '+e.message);
       ver.Error := e.message;
+      ver.lastTAT := DescribePeriod(now - d);
+    end;
   end;
 end;
 
@@ -335,49 +372,70 @@ var
   tc :  fhir4_resources_canonical.TFhirTerminologyCapabilities;
   tcs : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir4_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
+  bnd : fhir4_resources.TFhirBundle;
+  be : fhir4_resources.TFhirBundleEntry;
+  vs : fhir4_resources.TFHIRValueSet;
 begin
-  client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try
-    client.format := ffJson;
-    cs := client.conformance(true);
+    client := TFhirClient4.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
     try
-      ver.Version := cs.fhirVersionElement.ToString;
-      for csr in cs.restList do
-        if (csr.mode = fhir4_types.RestfulCapabilityModeServer) then
+      client.Logger := TTextFileLogger.create(FLogFileName);
+      client.format := ffJson;
+      cs := client.conformance(true);
+      try
+        ver.Version := cs.fhirVersionElement.ToString;
+        for csr in cs.restList do
+          if (csr.mode = fhir4_types.RestfulCapabilityModeServer) then
+          begin
+            if csr.security <> nil then
+              for cc in csr.security.serviceList do
+              begin
+                if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'OAuth')) then
+                  ver.Security := ver.Security + [ssOAuth]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR')) then
+                  ver.Security := ver.Security + [ssSmart]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Basic')) then
+                  ver.Security := ver.Security + [ssPassword]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Certificates')) then
+                  ver.Security := ver.Security + [ssCert]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Token')) then
+                  ver.Security := ver.Security + [ssToken]
+                else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Open')) then
+                  ver.Security := ver.Security + [ssOpen];
+              end;
+          end;
+      finally
+        cs.free;
+      end;
+      tc := client. terminologyCaps;
+      try
+        for tcs in tc.codeSystemList do
         begin
-          if csr.security <> nil then
-            for cc in csr.security.serviceList do
-            begin
-              if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'OAuth')) then
-                ver.Security := ver.Security + [ssOAuth]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'SMART-on-FHIR')) then
-                ver.Security := ver.Security + [ssSmart]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Basic')) then
-                ver.Security := ver.Security + [ssPassword]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Certificates')) then
-                ver.Security := ver.Security + [ssCert]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Token')) then
-                ver.Security := ver.Security + [ssToken]
-              else if (cc.hasCode('http://hl7.org/fhir/restful-security-service', 'Open')) then
-                ver.Security := ver.Security + [ssOpen];
-            end;
+          ver.CodeSystems.add(tcs.uri);
+          for tcsv in tcs.versionList do
+            ver.CodeSystems.add(tcs.uri+'|'+tcsv.code);
         end;
-    finally
-      cs.free;
-    end;
-    tc := client. terminologyCaps;
-    try
-      for tcs in tc.codeSystemList do
-      begin
-        ver.Terminologies.add(tcs.uri);
-        for tcsv in tcs.versionList do
-          ver.Terminologies.add(tcs.uri+'|'+tcsv.code);
+      finally
+        tc.free;
+      end;
+      bnd := client.search(fhir4_resources_base.frtValueSet, true, '_elements=url,version');
+      try
+        for be in bnd.entryList do
+        begin
+          vs := be.resource as fhir4_resources.TFHIRValueSet;
+          ver.ValueSets.add(vs.url);
+          if vs.version <> '' then
+            ver.valueSets.add(vs.url+'|'+vs.version);
+        end;
+      finally
+        bnd.free;
       end;
     finally
-      tc.free;
+      client.free;
     end;
-  finally
-    client.free;
+  except
+    on e : Exception do
+      raise EFslException.create('Error getting server details: '+e.message);
   end;
 end;
 
@@ -390,9 +448,13 @@ var
   tc :  fhir5_resources_canonical.TFhirTerminologyCapabilities;
   tcs : fhir5_resources_canonical.TFhirTerminologyCapabilitiesCodeSystem;
   tcsv : fhir5_resources_canonical.TFhirTerminologyCapabilitiesCodeSystemVersion;
+  bnd : fhir5_resources.TFhirBundle;
+  be : fhir5_resources.TFhirBundleEntry;
+  vs : fhir5_resources.TFHIRValueSet;
 begin
   client := TFhirClient5.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try                    
+    client.Logger := TTextFileLogger.create(FilePath(['[tmp]', 'tx-registry-spider.log']));
     client.format := ffJson;
     cs := client.conformance(true);
     try                            
@@ -424,12 +486,24 @@ begin
     try
       for tcs in tc.codeSystemList do
       begin
-        ver.Terminologies.add(tcs.uri);
+        ver.CodeSystems.add(tcs.uri);
         for tcsv in tcs.versionList do
-          ver.Terminologies.add(tcs.uri+'|'+tcsv.code);
+          ver.CodeSystems.add(tcs.uri+'|'+tcsv.code);
       end;
     finally
       tc.free;
+    end;  
+    bnd := client.search(fhir5_resources_base.frtValueSet, true, '_elements=url,version');
+    try
+      for be in bnd.entryList do
+      begin
+        vs := be.resource as fhir5_resources.TFHIRValueSet;
+        ver.ValueSets.add(vs.url);
+        if vs.version <> '' then
+          ver.valueSets.add(vs.url+'|'+vs.version);
+      end;
+    finally
+      bnd.free;
     end;
   finally
     client.free;
@@ -445,10 +519,14 @@ var
   tc :  fhir3_resources.TFhirParameters;
   tcs : fhir3_resources.TFhirParametersParameter;
   tcsv : fhir3_resources.TFhirParametersParameter;
+  bnd : fhir3_resources.TFhirBundle;
+  be : fhir3_resources.TFhirBundleEntry;
+  vs : fhir3_resources.TFHIRValueSet;
   n : String;
 begin
   client := TFhirClient3.Create(nil, nil, TFHIRHTTPCommunicator.Create(url));
   try     
+    client.Logger := TTextFileLogger.create(FilePath(['[tmp]', 'tx-registry-spider.log']));
     client.format := ffJson;
     cs := client.conformance(true);
     try      
@@ -483,17 +561,29 @@ begin
         n := tcs.name;
         if (n = 'system') then
         begin
-          ver.Terminologies.add(tcs.value.primitiveValue);
+          ver.CodeSystems.add(tcs.value.primitiveValue);
           for tcsv in tcs.partList do
           begin
             n := tcsv.name;
             if (n = 'version') then
-              ver.Terminologies.add(tcs.value.primitiveValue+'|'+tcsv.value.primitiveValue);
+              ver.CodeSystems.add(tcs.value.primitiveValue+'|'+tcsv.value.primitiveValue);
           end;
         end;
       end;
     finally
       tc.free;
+    end;
+    bnd := client.search(fhir3_resources_base.frtValueSet, true, '_elements=url,version');
+    try
+      for be in bnd.entryList do
+      begin
+        vs := be.resource as fhir3_resources.TFHIRValueSet;
+        ver.ValueSets.add(vs.url);
+        if vs.version <> '' then
+          ver.valueSets.add(vs.url+'|'+vs.version);
+      end;
+    finally
+      bnd.free;
     end;
   finally
     client.free;

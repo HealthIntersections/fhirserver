@@ -213,7 +213,7 @@ Type
     property size : integer read FSize write FSize;
     function isCore : boolean;
 
-    procedure report(b : TStringBuilder);
+    procedure report(b : TFslStringBuilder);
     function presentation : String;
   end;
 
@@ -589,7 +589,7 @@ var
 begin
   sl := TStringList.Create;
   try
-    if (info.has('dependencies')) then
+    if (info.has('dependencies')) and (info.obj['dependencies'] <> nil) then
     begin
       for n in info.obj['dependencies'].properties.keys do
         sl.add(n+'#'+info.obj['dependencies'].str[n]);
@@ -1086,7 +1086,7 @@ var
   b : TBytes;
   bi : TBytesStream;
 begin
-  bs := TBytesStream.create(ungzip(streamToBytes(tgz)));
+  bs := TBytesStream.create(ungzip(streamToBytes(tgz), desc));
   try
     tar := TTarArchive.Create(bs);
     try
@@ -1114,15 +1114,18 @@ begin
     bs.free;
   end;
   try
-    FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'));
-  except 
+    if folders['package'] <> nil then
+      FNpm := TJsonParser.parse(folders['package'].fetchFile('package.json'))
+    else
+      raise EFslException.create('Error parsing '+desc+'#'+'package/package.json: Not found');
+  except
     on e : Exception do
       raise EFslException.create('Error parsing '+desc+'#'+'package/package.json: '+e.Message);
   end;    
   checkIndexed(desc);
 end;
 
-procedure TNpmPackage.report(b : TStringBuilder);
+procedure TNpmPackage.report(b : TFslStringBuilder);
 begin
   b.AppendLine('  '+Version+' on '+FhirVersion+' from '+url+' in '+FPath);
   b.AppendLine('    dependencies: '+dependencySummary);

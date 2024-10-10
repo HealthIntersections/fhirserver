@@ -877,7 +877,7 @@ begin
 
   if wsPersists(subst.resource.id, b) then
   begin
-    FLock.Lock;
+    FLock.Lock('sendByWebSocket');
     try
       inc(FLastWebSocketKey);
       key := FLastWebSocketKey;
@@ -1680,7 +1680,7 @@ begin
   info := TWebSocketQueueInfo.Create;
   try
     info.Persistent := persistent;
-    FLock.Lock;
+    FLock.Lock('wsConnect');
     try
       result := not FSemaphores.ContainsKey(id);
       if result then
@@ -1695,7 +1695,7 @@ end;
 
 procedure TSubscriptionManager.wsDisconnect(id : String);
 begin
-  FLock.Lock;
+  FLock.Lock('wsDisconnect');
   try
     if not FSemaphores.ContainsKey(id) then
       raise EFHIRException.Create('WS Queue not found: '+id);
@@ -1709,7 +1709,7 @@ function TSubscriptionManager.wsWait(id : String) : boolean;
 var
   info : TWebSocketQueueInfo;
 begin
-  FLock.Lock;
+  FLock.Lock('wsWait');
   try
     info := FSemaphores[id];
   finally
@@ -1724,7 +1724,7 @@ var
   info : TWebSocketQueueInfo;
   buf : TFslBuffer;
 begin
-  FLock.Lock;
+  FLock.Lock('wsPersists');
   try
     if not FSemaphores.ContainsKey(id) then
       result := true // since it doesn't exist, it must be persistent
@@ -1746,7 +1746,7 @@ end;
 
 procedure TSubscriptionManager.wsWake(id : String);
 begin
-  FLock.Lock;
+  FLock.Lock('wsWake');
   try
     if FSemaphores.ContainsKey(id) then
       FSemaphores[id].Event.SetEvent;
@@ -1761,7 +1761,7 @@ var
   ok : boolean;
 begin
   FCloseAll := true;
-  FLock.Lock;
+  FLock.Lock('wsWakeAll');
   try
     for info in FSemaphores.Values do
       info.Event.SetEvent;
@@ -1770,7 +1770,7 @@ begin
   end;
   repeat
     sleep(100);
-    FLock.Lock;
+    FLock.Lock('wsWakeAll2');
     try
       ok := FSemaphores.Count = 0;
     finally

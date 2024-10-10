@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_logging, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -78,13 +78,14 @@ type
     db : TFDBManager;
     rels : TStringList;
     reltypes : TStringList;
+    FVersion : String;
 
     procedure load(list : TStringList; sql : String);
   protected
     class function getSAB : String; virtual;
     function getCodeField : String; virtual;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; nci : boolean; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; nci : boolean; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUMLSServices; overload;
 
@@ -103,6 +104,7 @@ type
     function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
     function Definition(context : TCodeSystemProviderContext) : string; override;
+    function version : String; override;
 
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; override;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; override;
@@ -111,6 +113,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -123,9 +126,8 @@ type
 
   TRxNormServices = class (TUMLSServices)
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
+    function systemUri : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -135,9 +137,8 @@ type
     class function getSAB : String; override;
     function getCodeField : String; override;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
+    function systemUri : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
   end;
@@ -466,9 +467,9 @@ end;
 
 { TUMLSServices }
 
-constructor TUMLSServices.Create(languages : TIETFLanguageDefinitions; nci: boolean; db: TFDBManager);
+constructor TUMLSServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; nci: boolean; db: TFDBManager);
 begin
-  inherited Create(Languages);
+  inherited Create(Languages, i18n);
 
   self.nci := nci;
   if (nci) then
@@ -476,24 +477,31 @@ begin
   else
     dbprefix := 'RxNorm';
   self.db := db;
+  try
+    FVersion := inttostr(db.CountSQL('select version from RXNVer', 'Version'));
+  except
+    FVersion := '??';
+  end;
   rels := TStringList.Create;
   reltypes := TStringList.Create;
 
+  Logging.log('Load RxNorm metadata #1');
   if (TotalCount = 0) then
     raise EDBException.Create('Error Connecting to RxNorm');
+  Logging.log('Load RxNorm metadata #2');
   load(rels, 'select distinct REL from RXNREL');
+  Logging.log('Load RxNorm metadata #3');
   load(reltypes, 'select distinct RELA from RXNREL');
+  Logging.log('Load RxNorm metadata #4');
 end;
-
-
 
 procedure TUMLSServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:in'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'STY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'SAB:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'TTY:equals'));
-  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri(nil)+'.filter', 'CUI:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:in'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'STY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'SAB:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'TTY:equals'));
+  features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'CUI:equals'));
 end;
 
 function TUMLSServices.TotalCount : integer;
@@ -502,7 +510,7 @@ var
 begin
   qry := db.GetConnection(dbprefix+'.Count');
   try
-    qry.SQL := 'Select Count(*) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
+    qry.SQL := 'Select Count(RXCUI) from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY''';
     qry.prepare;
     qry.execute;
     qry.FetchNext;
@@ -639,6 +647,11 @@ end;
 function TUMLSServices.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
+end;
+
+function TUMLSServices.version: String;
+begin
+  Result := FVersion;
 end;
 
 destructor TUMLSServices.Destroy;
@@ -865,6 +878,7 @@ var
   res : TUMLSFilter;
   ok : boolean;
 begin
+  prop := prop.toUpper;
   res := TUMLSFilter.Create;
   try
     ok := true;
@@ -958,6 +972,22 @@ begin
   result := filter.qry.FetchNext;
 end;
 
+function TUMLSServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+var
+  filter : TUMLSFilter;
+begin
+  filter := TUMLSFilter(ctxt);
+  if (filter.qry = nil) then
+  begin
+    // search on full rxnorm
+    filter.qry := db.GetConnection(dbprefix+'.filter');
+    filter.qry.SQL := 'Select RXCUI, STR from rxnconso where SAB = '''+getSAB+''' and TTY <> ''SY'' '+filter.sql;
+    filter.qry.prepare;
+    filter.qry.Execute;
+  end;
+  result := filter.qry.RowsAffected; // todo: check this
+end;
+
 function TUMLSServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
 var
   filter : TUMLSFilter;
@@ -1039,9 +1069,9 @@ end;
 
 { TRxNormServices }
 
-constructor TRxNormServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+constructor TRxNormServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 begin
-  inherited Create(languages, false, db);
+  inherited Create(languages, i18n, false, db);
 end;
 
 function TRxNormServices.description: String;
@@ -1054,21 +1084,16 @@ begin
   result := 'RxNorm';
 end;
 
-function TRxNormServices.systemUri(context: TCodeSystemProviderContext): String;
+function TRxNormServices.systemUri: String;
 begin
   result := URI_RXNORM;
 end;
 
-function TRxNormServices.version(context: TCodeSystemProviderContext): String;
-begin
-  result := '??rx1';
-end;
-
 { TNDFRTServices }
 
-constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+constructor TNDFRTServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 begin
-  inherited Create(languages, false, db);
+  inherited Create(languages, i18n, false, db);
 end;
 
 function TNDFRTServices.description: String;
@@ -1091,14 +1116,9 @@ begin
   result := 'NDFRT';
 end;
 
-function TNDFRTServices.systemUri(context: TCodeSystemProviderContext): String;
+function TNDFRTServices.systemUri: String;
 begin
   result := URI_NDFRT;
-end;
-
-function TNDFRTServices.version(context: TCodeSystemProviderContext): String;
-begin
-  result := '??rx2';
 end;
 
 end.

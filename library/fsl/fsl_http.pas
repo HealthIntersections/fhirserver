@@ -137,6 +137,8 @@ type
     property value : double read FValue write FValue;
     property ietf : TIETFLang read FIetf write SetIetf;
     property auto : boolean read FAuto write FAuto;
+
+    function matches(lang : String; exact : boolean) : boolean;
   end;
 
   { THTTPLanguageEntrySorter }
@@ -157,6 +159,7 @@ type
     FLangs : TFslList<THTTPLanguageEntry>;
 
     //function codeMatches(code, spec : String) : boolean;
+    function getCount: integer;
     procedure process;
   public
     constructor Create(source : String; wildcard : boolean);
@@ -172,9 +175,11 @@ type
 
     function asString(incWildcard : boolean) : String;
     function prefLang : String;
-    function matches(definitions : TIETFLanguageDefinitions; code: String): boolean;
     //function prefLang : String;
     function sizeInBytes(magic : integer) : cardinal;
+    property count : integer read getCount;
+
+    function matches(lang : String; exact : boolean) : boolean;
   end;
 
 implementation
@@ -640,6 +645,13 @@ begin
   inc(result, (FLang.length * sizeof(char)) + 12);
 end;
 
+function THTTPLanguageEntry.matches(lang : String; exact : boolean) : boolean;
+begin
+  if exact then
+    result := FLang = lang
+  else
+    result := FLang.startsWith(lang);
+end;
 
 { THTTPLanguageEntrySorter }
 
@@ -723,13 +735,16 @@ begin
       exit(e.lang);
 end;
 
-function THTTPLanguageList.matches(definitions: TIETFLanguageDefinitions; code: String): boolean;
+function THTTPLanguageList.matches(lang : String; exact : boolean) : boolean;
+var
+  entry : THTTPLanguageEntry;
 begin
-  if (self = nil) then
-    exit(false);
-
-  RESULT := false;
+  for entry in FLangs do
+    if (entry.matches(lang, exact)) then
+      exit(true);
+  result := FWildcard;
 end;
+
 
 procedure THTTPLanguageList.process;
 var
@@ -739,6 +754,7 @@ var
   wc : boolean;
 begin
   i := 0;
+  wc := false;
   for s in FSource.Split([',']) do
   begin
     if (s.trim() <> '') then
@@ -763,6 +779,11 @@ begin
   if FWildCard and not wc then
     FLangs.Add(THTTPLanguageEntry.create(i, '*', 0.01, true));
   FLangs.Sort(THTTPLanguageEntrySorter.create);
+end;
+
+function THTTPLanguageList.getCount: integer;
+begin
+  result := FLangs.Count;
 end;
 
 

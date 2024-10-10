@@ -1017,11 +1017,15 @@ begin
     if not scrypt.TryParseHashString(ExpectedHashString, {out}costFactor, blockSizeFactor, parallelizationFactor, salt, expected) then
       raise EScryptException.Create(SCouldNotParsePassword);
     try
-      {$IFNDEF FPC}
+      {$IFDEF FPC}
+      t1 := GetTickCount64;
+      {$ELSE}
       QueryPerformanceCounter(t1);
       {$ENDIF}
       actual := scrypt.DeriveBytes(Passphrase, salt, costFactor, blockSizeFactor, ParallelizationFactor, Length(expected));
-      {$IFNDEF FPC}
+      {$IFDEF FPC}
+      t2 := GetTickCount64;
+      {$ELSE}
       QueryPerformanceCounter(t2);
       {$ENDIF}
 
@@ -1035,11 +1039,14 @@ begin
         //Only advertise a rehash being needed if they got the correct password.
         //Don't want someone blindly re-hashing with a bad password because they forgot to check the result,
         //or because they decided to handle "PasswordRehashNeeded" first.
-        {$IFNDEF FPC}
+        {$IFDEF FPC}
+        freq := 1;
+        {$ELSE}
         if QueryPerformanceFrequency(freq) then
         begin
+          freq := freq * 1000;    // ms
         {$ENDIF}
-          duration := (t2-t1)/freq * 1000; //ms
+          duration := (t2-t1)/freq;
           if duration < 250 then
             PasswordRehashNeeded := True;
         {$IFNDEF FPC}

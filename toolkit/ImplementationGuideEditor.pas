@@ -1512,7 +1512,7 @@ begin
   try
     for i := 0 to high(InFileNames) do
     begin
-      InStream := TFileStream.Create(InFileNames[i], fmOpenRead);
+      InStream := TFileStream.Create(InFileNames[i], fmOpenRead + fmShareDenyWrite);
       try
         OutStream.CopyFrom(InStream, InStream.Size);
       finally

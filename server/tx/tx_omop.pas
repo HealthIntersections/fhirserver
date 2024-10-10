@@ -1,12 +1,40 @@
 unit tx_omop;
 
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang,
+  fsl_base, fsl_utilities, fsl_http, fsl_threads, fsl_lang, fsl_i18n,
   fdb_manager, fdb_dialects,
   fhir_objects, fhir_common, fhir_factory, fhir_utilities, fhir_features, fhir_uris,
   fhir_cdshooks,
@@ -47,14 +75,14 @@ type
     FVersion : String;
     procedure loadVersion;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TOMOPServices; overload;
 
     class function checkDB(conn : TFDBConnection) : String;
 
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function description : String; override;
     function TotalCount : integer;  override;
@@ -78,6 +106,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -108,9 +137,9 @@ end;
 
 { TOMOPServices }
 
-constructor TOMOPServices.Create(languages: TIETFLanguageDefinitions; db: TFDBManager);
+constructor TOMOPServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
   self.db := db;
   loadVersion;
 end;
@@ -161,12 +190,12 @@ begin
 
 end;
 
-function TOMOPServices.systemUri(context: TCodeSystemProviderContext): String;
+function TOMOPServices.systemUri: String;
 begin
   result := 'http://fhir.ohdsi.org/CodeSystem/concepts';
 end;
 
-function TOMOPServices.version(context: TCodeSystemProviderContext): String;
+function TOMOPServices.version: String;
 begin
   Result := FVersion;
 end;
@@ -339,7 +368,7 @@ end;
 
 function TOMOPServices.searchFilter(filter: TSearchFilterText; prep: TCodeSystemProviderFilterPreparationContext; sort: boolean): TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('not done yet: searchFilter');
+  raise ETerminologyError.Create('not done yet: searchFilter', itBusinessRule);
 end;
 
 function TOMOPServices.filter(forIteration: boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
@@ -360,17 +389,22 @@ begin
     end;
   end
   else
-    raise ETerminologyError.Create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP');
+    raise ETerminologyError.Create('filter "'+prop+' '+CODES_TFhirFilterOperator[op]+' '+value+'" not understood for OMOP', itBusinessRule);
 end;
 
 function TOMOPServices.filterLocate(ctxt: TCodeSystemProviderFilterContext; code: String; var message: String): TCodeSystemProviderContext;
 begin
-  raise ETerminologyError.Create('not done yet: filterLocate');
+  raise ETerminologyError.Create('not done yet: filterLocate', itBusinessRule);
 end;
 
 function TOMOPServices.FilterMore(ctxt: TCodeSystemProviderFilterContext): boolean;
 begin
   result := (ctxt as TOMOPFilter).Conn.FetchNext;
+end;
+
+function TOMOPServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := (ctxt as TOMOPFilter).Conn.RowsAffected;
 end;
 
 function TOMOPServices.FilterConcept(ctxt: TCodeSystemProviderFilterContext): TCodeSystemProviderContext;
@@ -392,7 +426,7 @@ end;
 
 function TOMOPServices.InFilter(ctxt: TCodeSystemProviderFilterContext; concept: TCodeSystemProviderContext): Boolean;
 begin
-  raise ETerminologyError.Create('not done yet: InFilter');
+  raise ETerminologyError.Create('not done yet: InFilter', itBusinessRule);
 end;
 
 function TOMOPServices.isNotClosed(textFilter: TSearchFilterText; propFilter: TCodeSystemProviderFilterContext): boolean;
@@ -402,7 +436,7 @@ end;
 
 procedure TOMOPServices.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  raise ETerminologyError.Create('not done yet: getCDSInfo');
+  raise ETerminologyError.Create('not done yet: getCDSInfo', itBusinessRule);
 end;
 
 procedure TOMOPServices.extendLookup(factory: TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props: TArray<String>; resp: TFHIRLookupOpResponseW);
@@ -431,6 +465,8 @@ end;
 
 procedure TOMOPServices.defineFeatures(features: TFslList<TFHIRFeature>);
 begin
-  raise ETerminologyError.Create('not done yet: defineFeatures');
+  raise ETerminologyError.Create('not done yet: defineFeatures', itBusinessRule);
 end;
+
 end.
+

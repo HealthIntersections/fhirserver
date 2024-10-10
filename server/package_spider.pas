@@ -80,6 +80,10 @@ Type
     procedure send;
   end;
 
+  TCrawlerLogMode = (clmStart, clmHeader, clmError, clmWarning, clmNote);
+
+  { TPackageUpdater }
+
   TPackageUpdater = class (TFslObject)
   private
     FDB : TFDBConnection;
@@ -89,17 +93,21 @@ Type
     FTotalBytes : Cardinal;
     FIni : TIniFile;
     FZulip : TZulipTracker;
+    FCrawlerLog : TJsonObject;
+
     procedure DoSendEmail(dest, subj, body : String);
     procedure log(msg, source : String; error : boolean);
+    procedure clog(clItem : TJsonObject; level, msg : String);
 
     function fetchUrl(url, mimetype : string) : TBytes;
     function fetchJson(url : string) : TJsonObject;
     function fetchXml(url : string) : TMXmlElement;
 
     function hasStored(guid : String) : boolean;
-    procedure store(source, url, guid : String; date : TFslDateTime; package : Tbytes; idver : String);
+    procedure SetCrawlerLog(AValue: TJsonObject);
+    procedure store(source, url, guid : String; date : TFslDateTime; package : Tbytes; idver : String; clItem : TJsonObject);
 
-    procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions);
+    procedure updateItem(source : String; item : TMXmlElement; i : integer; pr : TPackageRestrictions; clFeed : TJsonObject);
     procedure updateTheFeed(url, source, email : String; pr : TPackageRestrictions);
   public
     constructor Create(zulip : TZulipTracker);
@@ -108,6 +116,7 @@ Type
     procedure update(DB : TFDBConnection);
 
     property errors : String read FErrors;
+    property CrawlerLog : TJsonObject read FCrawlerLog write SetCrawlerLog;
     property OnSendEmail : TSendEmailEvent read FOnSendEmail write FOnSendEmail;
 
     class procedure test(db : TFDBManager);
@@ -182,10 +191,12 @@ constructor TPackageUpdater.Create(zulip: TZulipTracker);
 begin
   inherited Create;
   FZulip := zulip;
+  FCrawlerLog := TJsonObject.create;
 end;
 
 destructor TPackageUpdater.Destroy;
 begin
+  FCrawlerLog.free;
   FZulip.free;
   inherited;
 end;
@@ -204,6 +215,8 @@ end;
 
 function TPackageUpdater.fetchJson(url: string): TJsonObject;
 begin
+  if Logging.shuttingDown then
+    Abort;
   result := TJSONParser.Parse(fetchUrl(url, 'application/json'));
 end;
 
@@ -211,6 +224,8 @@ function TPackageUpdater.fetchUrl(url, mimetype: string): TBytes;
 var
   fetcher : TInternetFetcher;
 begin
+  if Logging.shuttingDown then
+    Abort;
   fetcher := TInternetFetcher.Create;
   try
     fetcher.URL := url+'?'+TFslDateTime.makeLocal().toHL7;
@@ -226,6 +241,8 @@ end;
 
 function TPackageUpdater.fetchXml(url: string): TMXmlElement;
 begin
+  if Logging.shuttingDown then
+    Abort;
   result := TMXmlParser.Parse(fetchUrl(url, 'application/xml'), [xpResolveNamespaces, xpDropWhitespace, xpDropComments, xpHTMLEntities]);
 end;
 
@@ -236,6 +253,12 @@ begin
   FDB.Execute;
   result := FDB.FetchNext;
   FDB.Terminate;
+end;
+
+procedure TPackageUpdater.SetCrawlerLog(AValue: TJsonObject);
+begin
+  FCrawlerLog.free;
+  FCrawlerLog:=AValue;
 end;
 
 procedure TPackageUpdater.log(msg, source: String; error : boolean);
@@ -295,24 +318,34 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.store(source, url, guid: String; date : TFslDateTime; package: Tbytes; idver : String);
+procedure TPackageUpdater.store(source, url, guid: String; date : TFslDateTime; package: Tbytes; idver : String; clItem : TJsonObject);
 var
   npm : TNpmPackage;
   id, version, description, canonical, fhirVersion : String;
   kind : TFHIRPackageKind;
   ts : TStringList;
+  cl : TJsonObject;
 begin
+  if Logging.shuttingDown then
+    Abort;
   npm := TNpmPackage.fromPackage(package, source+'#'+guid, nil, true);
   try
     id := npm.name;
     version := npm.version;
     if (id+'#'+version <> idver) then
+    begin
       log('Warning processing '+idver+': actually found '+id+'#'+version+' in the package', source, true);
+      clog(clItem, 'warning', 'actually found '+id+'#'+version+' in the package');
+    end;
+
     description := npm.description;
     kind := npm.kind;
     canonical := npm.canonical;
     if npm.notForPublication then
+    begin
       log('Warning processing '+idver+': this package is not suitable for publication (likely broken links)', source, true);
+      clog(clItem, 'warning', 'not suitable for publication (likely broken links)');
+    end;
     fhirVersion := npm.fhirVersion;
     if not isValidPackageId(id) then
       raise EPackageCrawlerException.Create('NPM Id "'+id+'" is not valid from '+source);
@@ -321,6 +354,7 @@ begin
     if (canonical = '') then
     begin
       log('Warning processing '+idver+': No canonical found in npm (from '+url+')', source, true);
+      clog(clItem, 'warning', 'No canonical found in npm (from '+url+')');
       canonical := 'http://simplifier.net/packages/fictitious/'+id;
     end;
     if not isAbsoluteUrl(canonical) then
@@ -364,15 +398,18 @@ var
   arr : TJsonArray;
   i : integer;
   pr : TPackageRestrictions;
+  start : UInt64;
 begin
   FIni := TIniFile.Create(tempFile('package-spider.ini'));
   try
+    start := GetTickCount64;
     log('Start Package Scan', '', false);
     FTotalBytes := 0;
     FErrors := '';
     FDB := DB;
     try
       log('Fetch '+MASTER_URL, '', false);
+      FCrawlerLog.str['master'] := MASTER_URL;
       json := fetchJson(MASTER_URL);
       try
         pr := TPackageRestrictions.Create(json.arr['package-restrictions'].Link);
@@ -386,10 +423,18 @@ begin
       finally
         json.free;
       end;
+      FCrawlerLog['run-time'] := DescribePeriodMS(GetTickCount64 - start);
     except
+      on e : EAbort do
+      begin
+        Log('Terminate Package Spider - shutting down', MASTER_URL, true);
+        FCrawlerLog['run-time'] := DescribePeriodMS(GetTickCount64 - start);
+      end;
       on e : Exception do
       begin
-        Log('Exception Processing Registry: '+e.Message, MASTER_URL, true)
+        Log('Exception Processing Registry: '+e.Message, MASTER_URL, true);
+        FCrawlerLog['run-time'] := DescribePeriodMS(GetTickCount64 - start);
+        FCrawlerLog['fatal-exception'] := e.Message;
       end;
     end;
     //try
@@ -427,13 +472,20 @@ var
   channel : TMXmlElement;
   item : TMXmlElement;
   i : integer;
+  clFeed : TJsonObject;
+  start : UInt64;
 begin
+  if Logging.shuttingDown then
+    Abort;
+  clFeed := FCrawlerLog.forceArr['feeds'].addObject;
+  clFeed['url'] := url;
+  FFeedErrors := '';
+  log('Fetch '+url, source, false);
+  start := GetTickCount64;
   try
-    log('Fetch '+url, source, false);
-    FFeedErrors := '';
-
     xml := fetchXml(url);
     try
+      clFeed['fetch-time'] := DescribePeriodMS(GetTickCount64 - start);
       for channel in xml.first.Children do
       begin
         if (channel.Name = 'channel') then
@@ -443,7 +495,7 @@ begin
           begin
             if (item.Name = 'item') then
             begin
-              updateItem(url, item, i, pr);
+              updateItem(url, item, i, pr, clFeed);
               inc(i);
             end;
           end;
@@ -457,6 +509,8 @@ begin
   except
     on e : Exception do
     begin
+      clFeed['exception'] := e.Message;
+      clFeed['fail-time'] := DescribePeriodMS(GetTickCount64 - start);
       log('Exception processing feed: '+url+': '+e.Message, source, false);
       if (email <> '') then
         DoSendEmail(email, 'Exception Processing '+url, e.Message);
@@ -464,44 +518,88 @@ begin
   end;
 end;
 
-procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; i : integer; pr : TPackageRestrictions);
+procedure TPackageUpdater.updateItem(source : String; item: TMXmlElement; i : integer; pr : TPackageRestrictions; clFeed : TJsonObject);
 var
   guid : String;
   content : TBytes;
   date : TFslDateTime;
   id, url, d, list: String;
+  clItem : TJsonObject;
+  start : UInt64;
 begin
-  url := '??pck';
+  if Logging.shuttingDown then
+    Abort;
+  url := '[link not found]';
+  clItem := clFeed.forceArr['items'].addObject;
   if item.element('guid') = nil then
   begin
     log('Error processing item from '+source+'#item['+inttostr(i)+']: no guid provided', source, true);
+    clog(clItem, 'error', 'no guid provided');
     exit;
   end;
   guid := item.element('guid').Text;
+  start := GetTickCount64;
+  clItem['guid'] := guid;
+  clItem['status'] := '??';
   try
-    id := item.element('title').Text;
+    id := item.element('title').Text;  
+    clItem['id'] := id;
+    if (item.element('notForPublication') <> nil) and ('true' = item.element('notForPublication').text) then
+    begin
+      clItem['status'] := 'not for publication';
+      clog(clItem, 'error', 'not for publication');
+      exit;
+    end;
     if pr.isOk(id, source, list) then
     begin
-      if (not hasStored(guid)) then
+      if (hasStored(guid)) then
       begin
-        d := item.element('pubDate').Text.Replace('  ', ' ').Substring(5);
+        clItem['status'] := 'Already Processed';
+      end
+      else
+      begin
+        d := item.element('pubDate').Text.toLower.Replace('  ', ' ');
+        if (d.substring(0, 6).contains(',')) then
+          d := d.substring(d.indexOf(',')+1)
+        else if StringStartsWith(d, ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']) then
+          d := d.substring(d.indexOf(' ')+1);
+        d := d.trim;
         if (d.length > 2) and (d[2] = ' ') and StringIsInteger16(d[1]) then
           d := '0'+d;
-        date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
+        try
+          date := TFslDateTime.fromFormat('dd mmm yyyy hh:nn:ss', d);
+        except
+          date := TFslDateTime.fromFormat('dd mmmm yyyy hh:nn:ss', d);
+        end;
         url := fix(item.element('link').Text);
-        log('Fetch '+url, source, false);
+        log('Fetch '+url, source, false);    
+        clItem['url'] := url;
         content := fetchUrl(url, 'application/tar+gzip');
-        store(source, url, guid, date, content, id);
+        store(source, url, guid, date, content, id, clItem);
+        clFeed['process-time'] := DescribePeriodMS(GetTickCount64 - start);
+        clItem['status'] := 'Fetched';
       end;
     end
     else
     begin
-      log('The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', source, true);
+      if not (source.contains('simplifier.net')) then
+      begin
+        log('The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')', source, true);
+        clog(clItem, 'error', 'The package '+id+' is not allowed to come from '+source+' (allowed: '+list+')');
+        clItem['status'] := 'prohibited source';
+      end
+      else
+      begin
+        clItem['status'] := 'ignored';
+        clog(clItem, 'error', 'The package '+id+' is published through another source');
+      end;
     end;
   except
     on e : Exception do
     begin
       log('Exception processing item: '+guid+' from '+url+': '+e.Message, source, true);
+      clItem['status'] := 'Exception';
+      clog(clItem, 'error', e.Message);
     end;
   end;
 end;
@@ -617,11 +715,23 @@ var
 begin
   hash := TIdHashSHA1.Create;
   try
+    {$IFDEF DELPHI}
+    raise EFslException.Create('Not Implemented Yet');
+    {$ELSE}
     result := hash.HashBytesAsHex(bytes);
+    {$ENDIF}
   finally
     hash.free;
   end;
 end;
-
+                                           
+procedure TPackageUpdater.clog(clItem : TJsonObject; level, msg : String);
+var
+  cl : TJsonObject;
+begin
+  cl := clItem.forceArr['messages'].addObject;
+  cl.vStr['type'] := level;
+  cl.vStr['message'] := msg;
+end;
 
 end.

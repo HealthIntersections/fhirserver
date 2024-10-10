@@ -88,6 +88,7 @@ function DetectFormat(bytes : TBytes) : TFHIRFormat; overload;
 function DetectFormat(oContent : TFslBuffer) : TFHIRFormat; overload;
 function csName(url : string) : String;
 
+function csUriForProperty(code : String) : String;
 
 implementation
 
@@ -509,5 +510,22 @@ begin
 
 end;
 
+function csUriForProperty(code : String) : String;
+begin
+  if (code = 'status') then               result := 'http://hl7.org/fhir/concept-properties#status'
+  else if (code = 'inactive') then        result := 'http://hl7.org/fhir/concept-properties#inactive'
+  else if (code = 'effectiveDate') then   result := 'http://hl7.org/fhir/concept-properties#effectiveDate'
+  else if (code = 'deprecationDate') then result := 'http://hl7.org/fhir/concept-properties#deprecationDate'
+  else if (code = 'retirementDate') then  result := 'http://hl7.org/fhir/concept-properties#retirementDate'
+  else if (code = 'notSelectable') then   result := 'http://hl7.org/fhir/concept-properties#notSelectable'
+  else if (code = 'parent') then          result := 'http://hl7.org/fhir/concept-properties#parent'
+  else if (code = 'child') then           result := 'http://hl7.org/fhir/concept-properties#child'
+  else if (code = 'partOf') then          result := 'http://hl7.org/fhir/concept-properties#partOf'
+  else if (code = 'synonym') then         result := 'http://hl7.org/fhir/concept-properties#synonym'
+  else if (code = 'comment') then         result := 'http://hl7.org/fhir/concept-properties#comment'
+  else if (code = 'itemWeight') then      result := 'http://hl7.org/fhir/concept-properties#itemWeight'
+  else
+    result := '';
+end;
 
 end.

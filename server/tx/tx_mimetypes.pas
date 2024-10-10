@@ -51,6 +51,8 @@ type
   end;
 
 
+  { TMimeTypeCodeServices }
+
   TMimeTypeCodeServices = class (TCodeSystemProvider)
   public
     destructor Destroy; Override;
@@ -60,8 +62,8 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
@@ -80,6 +82,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -102,12 +105,12 @@ begin
 end;
 
 
-function TMimeTypeCodeServices.version(context: TCodeSystemProviderContext): String;
+function TMimeTypeCodeServices.version: String;
 begin
   result := '';
 end;
 
-function TMimeTypeCodeServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TMimeTypeCodeServices.systemUri : String;
 begin
   result := URI_BCP13;
 end;
@@ -231,6 +234,11 @@ end;
 function TMimeTypeCodeServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
 begin
   raise ETerminologyTodo.Create('TMimeTypeCodeServices.FilterMore');
+end;
+
+function TMimeTypeCodeServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  raise ETerminologyTodo.Create('TMimeTypeCodeServices.FilterSize');
 end;
 
 function TMimeTypeCodeServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

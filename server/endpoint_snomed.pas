@@ -199,7 +199,9 @@ var
   ss, t : TSnomedServices;
   pm : THTTPParameters;
   buf : TFslNameBuffer;
+  start : UInt64;
 begin
+  start := GetTickCount64;
   if request.Document.StartsWith(PathWithSlash+'tool/') then // FHIR build process support
   begin
     parts := request.Document.Split(['/']);
@@ -216,7 +218,6 @@ begin
     else
     begin
       ss.RecordUse;
-      ss.checkLoaded;
       result := 'Snomed Tool: '+parts[length(parts)-1];
       response.ContentType := 'text/xml';
       try
@@ -265,7 +266,10 @@ begin
     ss := nil;
     for t in FTx.Snomed do
       if t.EditionId+'-'+t.VersionDate = parts[2] then
+      begin
         ss := t;
+        break;
+      end;
     if ss = nil then
     begin
       returnContent(request, response, request.Document, secure, 'SNOMED CT Browser', 'Document '+request.Document+' not found');
@@ -274,13 +278,12 @@ begin
     else
     begin
       ss.RecordUse;
-      ss.checkLoaded;
       code := request.UnparsedParams;
       result := 'Snomed Doco ('+ss.EditionName+'): '+code;
 
       try
-        html := THtmlPublisher.Create();
-        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure));
+        html := THtmlPublisher.Create;
+        pub := TSnomedPublisher.Create(ss, AbsoluteURL(secure), start);
         try
           html.Version := SERVER_FULL_VERSION;
           html.BaseURL := PathWithSlash+ss.EditionId+'-'+ss.VersionDate+'/';
@@ -415,17 +418,18 @@ begin
     html.AddTableCell('Date');
     html.AddTableCell('UseCount');
     html.AddTableCell('Last Used');
-    html.AddTableCell('Load Status');
     html.EndTableRow;
     for ss in FTx.Snomed do
     begin
       html.StartTableRow;
-      html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId+'-'+ss.VersionDate);
+      if (ss = FTx.DefSnomed) then
+        html.AddTableCellURL(ss.EditionName+' (default)', '/snomed/'+ss.editionId+'-'+ss.VersionDate)
+      else
+        html.AddTableCellURL(ss.EditionName, '/snomed/'+ss.editionId+'-'+ss.VersionDate);
       html.AddTableCell(ss.VersionUri);
       html.AddTableCell(ss.VersionDate);
       html.AddTableCell(inttostr(ss.UseCount));
       html.AddTableCell(ss.LastUseStatus);
-      html.AddTableCell(ss.LoadStatus);
       html.EndTableRow;
     end;
     html.EndTable;

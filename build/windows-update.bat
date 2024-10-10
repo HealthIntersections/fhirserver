@@ -5,15 +5,13 @@ REM the folder must exist
 
 set FSDIR=%CD%
 setlocal
-set "tmp=r:\fsbuild"
+set "tmp=c:\temp"
 
 IF %1.==. GOTO No1
 set "tmp=%1"
 
 :No1
 
-call windows-libraries.bat %tmp%
-pause
+call build\windows-libraries.bat %tmp%
 
-call windows-fhirserver.bat %tmp%
-pause
+call build\windows-fhirserver.bat %tmp%

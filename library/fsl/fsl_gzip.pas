@@ -33,31 +33,47 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  Classes, SysUtils, zflate,
+  Classes, SysUtils,
+  {$IFDEF FPC}
+  zflate,
+  {$ELSE}
+  ZLib,
+  {$ENDIF}
   fsl_base;
 
 {
-  for FPC, we use the zflate units by fibonacci.
+  for FPC, we use the zflate units by fibodevy (thanks).
   for delphi, we use delphi's inbuilt ZLib support
-
-  this unit is to handle the $IFDEF between the two (tbd)
 }
 
-function gzip(bytes : TBytes; header : boolean; level: dword=9) : TBytes;
-function ungzip(bytes : TBytes) : TBytes;
+function gzip(bytes : TBytes; header : boolean; level: {$IFDEF FPC}dword=9{$ELSE}TZCompressionLevel=TZCompressionLevel.zcDefault{$ENDIF}) : TBytes;
+function ungzip(bytes : TBytes; description : String) : TBytes;
 
 implementation
 
-function gzip(bytes : TBytes; header : boolean; level: dword=9) : TBytes;
+function gzip(bytes : TBytes; header : boolean; level: {$IFDEF FPC}dword=9{$ELSE}TZCompressionLevel=TZCompressionLevel.zcDefault{$ENDIF}) : TBytes;
 begin
+  {$IFDEF FPC}
   result := zflate.gzcompress(bytes, level);
+  {$ELSE}
+  ZLib.ZCompress(bytes, result, level);
+  {$ENDIF}
 end;
 
-function ungzip(bytes : TBytes) : TBytes;
+function ungzip(bytes : TBytes; description : String) : TBytes;
 begin
+  {$IFDEF FPC}
   result := zflate.zdecompress(bytes);
   if zlastError <> 0 then
-    raise EFslException.create('Failed to read compressed content: '+zflatetranslatecode(zlasterror));
+    raise EFslException.create('Failed to uncompress '+description+': '+zflatetranslatecode(zlasterror));
+  {$ELSE}
+  try
+    ZLib.ZDecompress(bytes, result);
+  except
+    on ex: Exception do
+      raise EFslException.create('Failed to uncompress '+description+': '+ex.Message);
+  end;
+  {$ENDIF}
 end;
 
 

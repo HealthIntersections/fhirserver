@@ -87,8 +87,13 @@ type
   { TFakeConsoleForm }
 
   TFakeConsoleForm = class(TForm)
+    btnCopy: TButton;
+    btnClear: TButton;
+    btnStop: TButton;
     MainMenu1: TMainMenu;
-    Memo1: TMemo;
+    mLocks: TMemo;
+    mLog: TMemo;
+    mThreads: TMemo;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
@@ -99,16 +104,28 @@ type
     mnuApple: TMenuItem;
     MenuItem7: TMenuItem;
     mnuPreferences: TMenuItem;
+    Panel1: TPanel;
+    Panel2: TPanel;
+    Panel3: TPanel;
+    Panel4: TPanel;
+    Panel5: TPanel;
+    Panel6: TPanel;
+    Splitter1: TSplitter;
     Timer1: TTimer;
     FLogger : TFakeConsoleListener;
+    procedure btnCopyClick(Sender: TObject);
+    procedure btnClearClick(Sender: TObject);
+    procedure btnStopClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure FormResize(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure Memo1Change(Sender: TObject);
+    procedure mLogChange(Sender: TObject);
     procedure MenuItem4Click(Sender: TObject);
     procedure mnuPreferencesClick(Sender: TObject);
     procedure mnuStopClick(Sender: TObject);
+    procedure Panel3Resize(Sender: TObject);
     procedure Timer1Timer(Sender: TObject);
   private
     FListener: TFakeConsoleListener;
@@ -121,11 +138,12 @@ type
     FCache : TStringList;
     FWorkingLine : integer;
     FMaxLines : integer;
+    procedure SetOnStop(AValue: TNotifyEvent);
     procedure start;
   public
     property Listener : TFakeConsoleListener read FListener;
     property Op : TWorkProcedure read FOp write FOp;
-    property OnStop : TNotifyEvent read FOnStop write FOnStop;
+    property OnStop : TNotifyEvent read FOnStop write SetOnStop;
   end;
 
 var
@@ -182,7 +200,7 @@ end;
 
 procedure TFakeConsoleListener.log(const s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('log');
   try
     FLines.add(s);
   finally
@@ -202,7 +220,7 @@ end;
 
 procedure TFakeConsoleListener.logStart(s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('logStart');
   try
     FLine := s;
     FFinished := false;
@@ -213,7 +231,7 @@ end;
 
 procedure TFakeConsoleListener.logContinue(s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('logContinue');
   try
     FLine := FLine + s;
   finally
@@ -223,7 +241,7 @@ end;
 
 procedure TFakeConsoleListener.logFinish(s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('logFinish');
   try
     FLine := FLine + s;
     FFinished := true;
@@ -245,12 +263,47 @@ begin
   FAutoClose := FIni.ReadBool('settings', 'autoclose', false);
   FForwards := FIni.ReadBool('settings', 'forwards', true);
   FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
+  Height := FIni.ReadInteger('settings', 'height', Height);
+  Width := FIni.ReadInteger('settings', 'width', Width);
+  Top := FIni.ReadInteger('settings', 'top', Top);
+  Left := FIni.ReadInteger('settings', 'left', Left);
+  panel3.Width := FIni.ReadInteger('settings', 'pwidth', panel3.Width);
+  mLog.font.Size := FIni.ReadInteger('settings', 'fontsize', 9);
+  mLog.WordWrap := FIni.ReadBool('settings', 'wordwrap', true);
+  mThreads.font.Size := mLog.font.size;
+  mLocks.font.Size := mLog.font.Size;
+  mLocks.Font.Pitch := fpFixed;
+  mThreads.Font.Pitch := fpFixed;
+  mLog.Font.Pitch := fpFixed;
+
   FCache := TStringList.Create;
 end;
 
 procedure TFakeConsoleForm.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 begin
   CanClose := GFinished;
+end;
+
+procedure TFakeConsoleForm.btnCopyClick(Sender: TObject);
+var
+  c : integer;
+begin
+  c := mLog.Cursor;
+  mLog.SelectAll;
+  mLog.CopyToClipboard;
+  mLog.Cursor := 0;
+  mLog.Cursor := c;
+end;
+
+procedure TFakeConsoleForm.btnClearClick(Sender: TObject);
+begin
+  mLog.Clear;
+end;
+
+procedure TFakeConsoleForm.btnStopClick(Sender: TObject);
+begin
+  if assigned(FOnStop) then
+    FOnStop(self);
 end;
 
 procedure TFakeConsoleForm.FormDestroy(Sender: TObject);
@@ -260,12 +313,22 @@ begin
   FCache.free;
 end;
 
+procedure TFakeConsoleForm.FormResize(Sender: TObject);
+begin
+  FIni.WriteInteger('settings', 'height', Height);
+  FIni.WriteInteger('settings', 'width', Width);
+  FIni.WriteInteger('settings', 'top', Top);
+  FIni.WriteInteger('settings', 'left', Left);
+end;
+
 procedure TFakeConsoleForm.FormShow(Sender: TObject);
 begin
   Timer1.Enabled := true;
+  btnStop.Enabled := assigned(FOnStop);
+  mnuStop.Enabled := assigned(FOnStop);
 end;
 
-procedure TFakeConsoleForm.Memo1Change(Sender: TObject);
+procedure TFakeConsoleForm.mLogChange(Sender: TObject);
 begin
 
 end;
@@ -281,15 +344,23 @@ begin
   try
     FakeConsoleSettingsForm.chkForwards.checked := FIni.ReadBool('settings', 'forwards', false);
     FakeConsoleSettingsForm.chkAutoClose.checked := FIni.ReadBool('settings', 'autoclose', false);
+    FakeConsoleSettingsForm.chkWordWrap.checked := FIni.ReadBool('settings', 'wordwrap', false);
     FakeConsoleSettingsForm.eLines.text := inttostr(FMaxLines);
+    FakeConsoleSettingsForm.eSize.text := inttostr(FIni.ReadInteger('settings', 'fontsize', 9));
     if FakeConsoleSettingsForm.showModal = mrOK then
     begin
       FIni.WriteBool('settings', 'forwards', FakeConsoleSettingsForm.chkForwards.checked);
       FIni.WriteBool('settings', 'autoclose', FakeConsoleSettingsForm.chkAutoClose.checked);
+      FIni.WriteBool('settings', 'wordwrap', FakeConsoleSettingsForm.chkWordWrap.checked);
       FIni.WriteInteger('settings', 'maxlines', StrToIntDef(FakeConsoleSettingsForm.eLines.text, MAX_MEMO_LINE_COUNT));
+      FIni.WriteInteger('settings', 'fontsize', StrToIntDef(FakeConsoleSettingsForm.eSize.text, 9));
       FAutoClose := FIni.ReadBool('settings', 'autoclose', false);
       FForwards := FIni.ReadBool('settings', 'forwards', true);
       FMaxLines := FIni.ReadInteger('settings', 'maxlines', MAX_MEMO_LINE_COUNT);
+      mLog.font.Size := FIni.ReadInteger('settings', 'fontsize', 9);
+      mThreads.font.Size := mLog.font.Size;
+      mLocks.font.Size := mLog.font.Size;
+      mLog.WordWrap := FIni.ReadBool('settings', 'wordwrap', true);
     end;
   finally
     FakeConsoleSettingsForm.free;
@@ -303,6 +374,11 @@ begin
     FOnStop(self);
 end;
 
+procedure TFakeConsoleForm.Panel3Resize(Sender: TObject);
+begin
+  FIni.WriteInteger('settings', 'pwidth', panel3.Width);
+end;
+
 procedure TFakeConsoleForm.Timer1Timer(Sender: TObject);
 var
   l, s : String;
@@ -310,7 +386,7 @@ var
 begin
   if not FStarted then
     start;
-  FListener.FLock.Lock;
+  FListener.FLock.Lock('Timer1Timer');
   try
     l := FListener.FLine;
     FCache.assign(FListener.FLines);
@@ -323,43 +399,43 @@ begin
   end;
   if FForwards then
   begin
-    while memo1.lines.count > FMaxLines do
-      memo1.lines.delete(0);
+    while mLog.lines.count > FMaxLines do
+      mLog.lines.delete(0);
     if (l <> '') then
     begin
       if FWorkingLine < 0 then
       begin
-        FWorkingLine := memo1.lines.count;
-        memo1.lines.add('');
+        FWorkingLine := mLog.lines.count;
+        mLog.lines.add('');
       end;
-      memo1.lines[FWorkingLine] := l;
+      mLog.lines[FWorkingLine] := l;
     end;
     b := false;
     for s in FCache do
     begin
-      memo1.lines.append(s);
+      mLog.lines.append(s);
       b := true;
     end;
     if (b) then
-      memo1.selStart := length(memo1.text) - length(memo1.lines[memo1.lines.count-1]);
+      mLog.selStart := length(mLog.text) - length(mLog.lines[mLog.lines.count-1]);
   end
   else
   begin
-    while memo1.lines.count > FMaxLines do
-      memo1.lines.delete(memo1.lines.count - 1);
+    while mLog.lines.count > FMaxLines do
+      mLog.lines.delete(mLog.lines.count - 1);
 
     if (l <> '') then
     begin
       if FWorkingLine < 0 then
       begin
         FWorkingLine := 0;
-        memo1.lines.insert(0, s)
+        mLog.lines.insert(0, s)
       end;
-      memo1.lines[FWorkingLine] := l;
+      mLog.lines[FWorkingLine] := l;
     end;
     for s in FCache do
     begin
-      memo1.lines.insert(0, s);
+      mLog.lines.insert(0, s);
       if FWorkingLine >= 0 then
         inc(FWorkingLine);
     end;
@@ -367,7 +443,13 @@ begin
   if f then
     FWorkingLine := -1;
 
+  mThreads.text := GetThreadReport(false, #13#10);
+  mLocks.text := DumpLocks(false, #13#10);
+  caption := 'FHIRServer ('+Logging.MemoryStatus(false)+')';
+
   mnuStop.enabled := not GFinished;
+  btnStop.enabled := not GFinished;
+
   if GFinished and FAutoClose then
     Close;
 end;
@@ -377,6 +459,13 @@ begin
   FStarted := true;
   mnuStop.enabled := Assigned(FOnStop);
   TWorkerThread.Create(FOp);
+end;
+
+procedure TFakeConsoleForm.SetOnStop(AValue: TNotifyEvent);
+begin
+  FOnStop:=AValue;
+  btnStop.Enabled := assigned(FOnStop);
+  mnuStop.Enabled := assigned(FOnStop);
 end;
 
 end.

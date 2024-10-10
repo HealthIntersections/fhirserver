@@ -37,7 +37,7 @@ Uses
   {$IFDEF LINUX} unixtype, baseunix, unix, {$ENDIF}
   {$IFDEF FPC} ZStream, {$ELSE} AnsiStrings, {$ENDIF}
   SysUtils,Classes, RTLConsts, ZLib,
-  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_logging, fsl_gzip;
+  fsl_fpc, fsl_base, fsl_collections, fsl_utilities, fsl_gzip;
 
 type
   EParserException = class;
@@ -1022,7 +1022,7 @@ Type
     FHasQuote : Boolean;
     FIgnoreWhitespace: boolean;
 
-    FEntry : TStringBuilder;
+    FEntry : TFslStringBuilder;
     FCache : Char;
     FReadBuffer: SysUtils.TCharArray;
 
@@ -2092,7 +2092,7 @@ procedure TFslBuffer.LoadFromFileName(const sFilename: String);
 Var
   oFile : TFslFile;
 Begin
-  oFile := TFslFile.Create(sFilename, fmOpenRead);
+  oFile := TFslFile.Create(sFilename, fmOpenRead + fmShareDenyWrite);
   Try
     LoadFromFile(oFile);
   Finally
@@ -3591,7 +3591,7 @@ End;  { Constructor TAfsResourceManager.Create }
 constructor TFslCSVExtractor.Create;
 Begin
   Inherited;
-  FEntry := TStringBuilder.create(2048);
+  FEntry := TFslStringBuilder.create(2048);
   FSeparator := ',';
   FQuote := '"';
   FHasQuote := True;
@@ -4363,7 +4363,7 @@ constructor TFslStreamReader.Create(const Filename: string; Encoding: TEncoding;
 var
   oFile : TFslFile;
 begin
-  oFile := TFslFile.Create(FileName, fmOpenRead);
+  oFile := TFslFile.Create(FileName, fmOpenRead + fmShareDenyWrite);
   Try
     Create(oFile.Link, Encoding, DetectBOM, BufferSize);
   Finally
@@ -4853,7 +4853,8 @@ begin
     finally
       LFileStream.free;
     end;
-    if encoding = nil then // special case
+    if (encoding = nil) // special case
+      {$IFDEF FPC} {$IFDEF OSX} or (encoding = TEncoding.UTF8) {$ENDIF} {$ENDIF} then  // work around FPC bug
     begin
       SetLength(result, length(bytes));
       move(bytes[0], result[1], length(bytes));
@@ -5302,16 +5303,33 @@ End;
 
 Procedure TFslZipReader.ReadKnownDeflate(pIn : Pointer; partName : string; iSizeComp, iSizeDecomp : LongWord; oBuffer : TFslBuffer);
 Var
-  src : TBytes;
+  oSrc : TStream;
+  oDecompressor : TZDecompressionStream;
 {$IFOPT C+}
   iRead : Integer;
 {$ENDIF}
 Begin
   If iSizeDecomp > 0 Then
   Begin
-    setLength(src, iSizeComp);
-    move(pIn^, src[0], iSizeComp);
-    oBuffer.AsBytes := ungzip(src);
+    oSrc := TPointerMemoryStream.Create(pIn, iSizeComp);
+    Try
+      oDecompressor := TZDecompressionStream.Create(oSrc);
+      Try
+        oBuffer.Capacity := iSizeDecomp;
+
+      {$IFOPT C+}
+        iRead := oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
+        Assert(CheckCondition(iRead = iSizeDecomp, 'ReadKnownDeflate', partName+': Expected to read '+IntegerToString(iSizeDecomp)+
+            ' bytes, but actually found '+IntegerToString(iRead)+' bytes'));
+      {$ELSE}
+        oDecompressor.Read(oBuffer.Data^, iSizeDecomp);
+      {$ENDIF}
+      Finally
+        oDecompressor.free;
+      End;
+    Finally
+      oSrc.free;
+    End;
   End;
 End;
 
@@ -5514,7 +5532,9 @@ Begin
     oCompressor := TCompressionStream.Create(clMax, oCompressedStream);
     Try
       oCompressor.Write(bytes[0], length(bytes));
+      {$IFDEF FPC}
       oCompressor.flush;
+      {$ENDIF}
     Finally
       oCompressor.free;
     End;

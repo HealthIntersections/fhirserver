@@ -1,0 +1,19 @@
+{
+  "content" : {
+    "uv" : {
+      "packages" : {
+        "r4" : [
+          "hl7.terminology.r4",
+          "fhir.tx.support.r4"
+        ]
+      }
+    }
+  },
+  "endpoints" : {
+    "cache" : {
+      "path" : "/post/tx-cache",
+      "type" : "folder",
+      "folder": "/var/cache/txcache"
+    }
+  }
+}

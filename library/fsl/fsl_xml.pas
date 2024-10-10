@@ -169,7 +169,7 @@ Type
     procedure SetAttribute(name: String; const Value: String);
     function getAbbreviation(ns : String) : String;
     function getAbbreviationPriv(ns : String; var abbrev : String): boolean;
-    procedure writeToXml(b : TStringBuilder; pretty : boolean; indent : integer);
+    procedure writeToXml(b : TFslStringBuilder; pretty : boolean; indent : integer);
     function GetAttributeNS(ns, name: String): String;
     procedure SetAttributeNS(ns, name: String; const Value: String);
     function GetAllText: String;
@@ -359,7 +359,7 @@ Type
   private
     reader : TFslTextReader;
     options : TMXmlParserOptions;
-    b : TStringBuilder;
+    b : TFslStringBuilder;
     FHtmlEntities : TDictionary<String, String>;
 
     FLocation, FStartLocation : TSourceLocation;
@@ -1178,7 +1178,7 @@ end;
 
 function TMXmlElement.GetAllText: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : TMXmlElement;
 begin
   if not HasChildren then
@@ -1187,7 +1187,7 @@ begin
     result := FChildren[0].Text
   else
   begin
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       for c in FChildren do
         if c.NodeType <> ntComment then
@@ -1434,9 +1434,9 @@ end;
 
 function TMXmlElement.ToXml(pretty : boolean = false): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     writeToXml(b, pretty, 0);
     result := b.toString();
@@ -1445,7 +1445,7 @@ begin
   end;
 end;
 
-procedure TMXmlElement.writeToXml(b: TStringBuilder; pretty : boolean; indent : integer);
+procedure TMXmlElement.writeToXml(b: TFslStringBuilder; pretty : boolean; indent : integer);
 var
   a : TMXmlAttribute;
   c : TMXmlElement;
@@ -1643,7 +1643,7 @@ begin
   FLocation := TSourceLocation.Create;
   FStartLocation := FLocation;
 
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     result := TMXPathExpressionNode.Create;
     try
@@ -1970,7 +1970,7 @@ begin
   FLocation := TSourceLocation.Create;
   FStartLocation := FLocation;
 
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     s := ReadToken(true);
     rule(s[1] = '<', 'Unable to read Document - starts with "'+s+'"');
@@ -2066,13 +2066,13 @@ procedure TMXmlParser.ReadInstruction(parent: TMXmlElement);
 Var
   s : String;
   done : boolean;
-  c : TStringBuilder;
+  c : TFslStringBuilder;
   res : TMXmlElement;
 begin
   res := TMXmlElement.Create(ntProcessingInstruction);
   try
     res.Start := FStartLocation;
-    c := TStringBuilder.Create;
+    c := TFslStringBuilder.Create;
     try
       done := false;
       repeat
@@ -2123,13 +2123,13 @@ procedure TMXmlParser.ReadComment(parent: TMXmlElement);
 Var
   s : String;
   done : boolean;
-  c : TStringBuilder;
+  c : TFslStringBuilder;
   res : TMXmlElement;
 begin
   res := TMXmlElement.Create(ntComment);
   try
     res.Start := FStartLocation;
-    c := TStringBuilder.Create;
+    c := TFslStringBuilder.Create;
     try
       rule(read = '-', 'Syntax Error reading comment');
       rule(read = '-', 'Syntax Error reading comment');
@@ -2582,11 +2582,11 @@ end;
 
 function TMXPathExpressionNode.ToString: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   first : boolean;
   p : TMXPathExpressionNode;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if (FAxis <> axisChild) and (FNodeType <> xentGroup) then
     begin
@@ -3034,7 +3034,7 @@ end;
 
 function TMXmlDocument.funcNormalizeSpace(expr : TMXPathExpressionNode; atEntry : boolean; variables : TXPathVariables; position : integer; focus : TMXmlNode) : TMXmlNode;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   n : TMXmlNode;
   ch : char;
   ws : boolean;
@@ -3042,7 +3042,7 @@ var
 begin
   if expr.Params.Count <> 1 then
     raise EXmlException.Create('Wrong number of parameters for normalize-space: expected at least 1 but found '+inttostr(expr.Params.Count));
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     work := evaluate(expr.Params[0], atEntry, variables, position, focus);
     try
@@ -3092,13 +3092,13 @@ end;
 
 function TMXmlDocument.funcNumber(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   work: TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 1 then
     raise EXmlException.Create('Wrong number of parameters for number: expected 1 but found 0');
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     work := evaluate(expr.Params[0], atEntry, variables, position, focus);
     try
@@ -3145,13 +3145,13 @@ end;
 
 function TMXmlDocument.funcString(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus: TMXmlNode): TMXmlNode;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   work: TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count <> 1 then
     raise EXmlException.Create('Wrong number of parameters for string: expected 1 but found 0');
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     work := evaluate(expr.Params[0], atEntry, variables, position, focus);
     try
@@ -3208,10 +3208,10 @@ end;
 
 function StringTranslate(s1,s2,s3 : string) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ch : char;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if (s3.Length > 1) then
       raise EXmlException.Create('3rd parameter to translate has more than a single character');
@@ -3274,14 +3274,14 @@ end;
 
 function TMXmlDocument.funcConcat(expr: TMXPathExpressionNode; atEntry: boolean; variables: TXPathVariables; position : integer; focus : TMXmlNode) : TMXmlNode;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   p : TMXPathExpressionNode;
   work: TFslList<TMXmlNode>;
   n : TMXmlNode;
 begin
   if expr.Params.Count = 0 then
     raise EXmlException.Create('Wrong number of parameters for concat: expected at least 1 but found 0');
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for p in expr.Params do
     begin
@@ -3880,7 +3880,7 @@ var
 begin
   s := ToXml(pretty, xmlheader);
   b := TEncoding.UTF8.GetBytes(s);
-  stream.Write(b, length(b));
+  stream.Write(b[0], length(b));
 end;
 
 procedure TMXmlDocument.ToXml(stream: TStream; pretty, xmlHeader: boolean);
@@ -3890,14 +3890,14 @@ var
 begin
   s := ToXml(pretty, xmlheader);
   b := TEncoding.UTF8.GetBytes(s);
-  stream.Write(b, length(b));
+  stream.Write(b[0], length(b));
 end;
 
 function TMXmlDocument.ToXml(pretty, xmlHeader: boolean): String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     if xmlHeader then
     begin

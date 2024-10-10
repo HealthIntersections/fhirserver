@@ -37,7 +37,7 @@ interface
 
 uses
   SysUtils, Classes, System.NetEncoding,
-  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_npm, fsl_threads,
+  fsl_base, fsl_utilities, fsl_stream, fsl_http, fsl_npm, fsl_threads, fsl_i18n,
   fsl_ucum, fsl_web_stream,
   fhir_objects, fhir_parser, fhir_validator, fhir_narrative, fhir_factory, fhir_pathengine, fhir_xhtml, fhir_common,  fhir_elementmodel,
   fhir_client, fhir_client_threaded, fhir_uris;
@@ -71,8 +71,8 @@ type
     function makeClientInt(worker : TFHIRWorkerContextV; langList : THTTPLanguageList; comm : TFHIRClientCommunicator) : TFhirClientV; overload; override;
     function makeHealthcareCard : THealthcareCard; override;
 
-    function makeProxy(pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
-    function makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
+    function makeProxy(packageId : String; pi : TNpmPackageResource; worker : TFHIRWorkerContextV; lock : TFslLock) : TFHIRResourceProxyV; override;
+    function makeProxy(packageId : String; resource : TFHIRResourceV) : TFHIRResourceProxyV; override;
 
     function getXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
     function resetXhtml(res : TFHIRResourceV) : TFHIRXhtmlNode; override;
@@ -85,6 +85,7 @@ type
     procedure checkNoModifiers(res : TFHIRObject; method, param : string; allowed : TArray<String> = nil); override;
     function buildOperationOutcome(langList : THTTPLanguageList; e : Exception; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
     Function buildOperationOutcome(langList : THTTPLanguageList; message : String; issueCode : TFhirIssueType = itNull) : TFhirResourceV; overload; override;
+    function buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV; overload; override;
 
     function makeByName(const name : String) : TFHIRObject; override;
     function makeBoolean(b : boolean): TFHIRObject; override;
@@ -165,6 +166,37 @@ end;
 function TFHIRFactoryR4.buildOperationOutcome(langList : THTTPLanguageList; e: Exception; issueCode: TFhirIssueType): TFhirResourceV;
 begin
   result := fhir4_utilities.BuildOperationOutcome(langList, e, ExceptionTypeTranslations[issueCode]);
+end;
+
+function TFHIRFactoryR4.buildOperationOutcome(i18n : TI18nSupport; langList : THTTPLanguageList; exception : EFHIROperationException) : TFhirResourceV;
+var
+  op : TFHIROperationOutcome;
+  iss : TFHIROperationOutcomeIssue;
+begin
+  op := TFHIROperationOutcome.create;
+  try
+    iss := TFHIROperationOutcomeIssue.create;
+    try
+      iss.severity := ISSUE_SEVERITY_MAP2[exception.level];
+      iss.code := ExceptionTypeTranslations[exception.Cause];
+      iss.expressionList.Add(exception.Path);
+      iss.details := TFHIRCodeableConcept.create;
+      iss.details.addCoding('http://hl7.org/fhir/tools/CodeSystem/tx-issue-type', '', CODES_TOpIssueCode[exception.Code], '');
+      if (exception.MsgId <> '') then
+      begin
+        exception.Message := i18n.translate(exception.msgId, langlist, exception.Params);
+        iss.details.text := exception.Message;
+      end
+      else
+        iss.details.text := exception.message;
+      op.issueList.add(iss.link);
+    finally
+      iss.free;
+    end;
+    result := op.link;
+  finally
+    op.free;
+  end;
 end;
 
 function TFHIRFactoryR4.canonicalResources: TArray<String>;
@@ -309,7 +341,7 @@ begin
   if version <> '' then
     TFHIRCoding(result).version := version;
   if display <> '' then
-    TFHIRCoding(result).version := display;
+    TFHIRCoding(result).display := display;
 end;
 
 function TFHIRFactoryR4.makeCodeableConcept(coding: TFHIRCodingW): TFHIRObject;
@@ -369,14 +401,14 @@ begin
   result := TFhirInteger.Create(s);
 end;
 
-function TFHIRFactoryR4.makeProxy(pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
+function TFHIRFactoryR4.makeProxy(packageId : String; pi: TNpmPackageResource; worker : TFHIRWorkerContextV; lock: TFslLock): TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.Create(self.link, lock, worker, pi);
+  result := TFHIRResourceProxy.Create(packageId, self.link, lock, worker, pi);
 end;
 
-function TFHIRFactoryR4.makeProxy(resource : TFHIRResourceV) : TFHIRResourceProxyV;
+function TFHIRFactoryR4.makeProxy(packageId : String; resource : TFHIRResourceV) : TFHIRResourceProxyV;
 begin
-  result := TFHIRResourceProxy.Create(self.link, resource as TFHIRResource);
+  result := TFHIRResourceProxy.Create(packageId, self.link, resource as TFHIRResource);
 end;
 
 function TFHIRFactoryR4.makeIssue(level : TIssueSeverity; issue: TFhirIssueType; location, message: String): TFhirOperationOutcomeIssueW;

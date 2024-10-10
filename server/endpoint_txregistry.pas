@@ -43,6 +43,9 @@ uses
   tx_manager, time_tracker, kernel_thread, server_stats,
   web_event, web_base, endpoint, session;
 
+const
+  SCAN_FREQUENCY = ((1/24) / 4); // 15 min
+
 type
   TTxRegistryServerEndPoint = class;
 
@@ -78,28 +81,15 @@ type
     procedure populate(json: TJsonObject; srvr: TServerInformation; ver: TServerVersionInformation);
     function status : String;
 
-    //function getVersion(v : String) : String;
-    //function interpretVersion(v : String) : String;
-    //
-    //function genTable(url : String; list: TFslList<TJsonObject>; sort : TMatchTableSort; rev, inSearch, secure, packageLevel: boolean): String;
-    //
-    //function serveCreatePackage(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo) : String;
-    //
-    //procedure servePage(fn : String; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean);
-    //procedure serveDownload(id, version : String; response : TIdHTTPResponseInfo);
-    //procedure serveVersions(id, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    //procedure serveSearch(name, canonicalPkg, canonicalUrl, FHIRVersion, dependency, sort : String; secure : boolean; request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo);
-    //procedure serveUpdates(date : TFslDateTime; secure : boolean; response : TIdHTTPResponseInfo);
-    //procedure serveProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id : String);
-    //procedure serveUpload(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; secure : boolean; id : String);
-    //procedure processProtectForm(request : TIdHTTPRequestInfo; response : TIdHTTPResponseInfo; id, pword : String);
     procedure SetScanning(const Value: boolean);
 
     procedure sortJson(json : TJsonObject; sort : String);
     function renderJson(json : TJsonObject; path, reg, srvr, ver : String) : String;
     procedure sendHtml(request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; secure : boolean; json : TJsonObject; reg, srvr, ver, tx : String);
     function listRows(reg, srvr, ver, tx : String) : TJsonObject;
-    function resolve(version, tx : String) : TJsonObject;
+    function resolveCS(version, cs, usage : String; var matches : String) : TJsonObject;
+    function resolveVS(version, vs, usage : String; var matches : String) : TJsonObject;
+    function renderInfo : String;
 
     function doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id: String; secure: boolean): String;
   public
@@ -107,7 +97,7 @@ type
     function link  : TFHIRTxRegistryWebServer; overload;
     function description : String; override;
 
-    property NextScan : TDateTIme read FNextScan write FNextScan;
+    property NextScan : TDateTime read FNextScan write FNextScan;
     property scanning : boolean read FScanning write SetScanning;
 
     function PlainRequest(AContext: TIdContext; ip : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; tt : TTimeTracker) : String; override;
@@ -157,7 +147,7 @@ var
   s : String;
 begin
   inherited Create(config, settings, nil, common, nil, i18n);
-  s := config.clone['folder'].value;
+  s := config['folder'].value;
   FAddress := s;
   if (FAddress = '') then
     FAddress := MASTER_URL;
@@ -294,12 +284,12 @@ begin
   finally
     FEndPoint.FTxRegistryServer.scanning := false;
   end;
-  FEndPoint.FTxRegistryServer.NextScan := now + 1/24;
+  FEndPoint.FTxRegistryServer.NextScan := SCAN_FREQUENCY; // every 15 minutes
 end;
 
 procedure TTxRegistryUpdaterThread.Initialise;
 begin
-  TimePeriod := 60 * 60 * 1000;
+  TimePeriod := 5 * 60 * 1000;
 end;
 
 procedure TTxRegistryUpdaterThread.doSendEmail(dest, subj, body : String);
@@ -311,19 +301,31 @@ end;
 procedure TTxRegistryUpdaterThread.RunUpdater;
 var
   upd : TTxRegistryScanner;
-  info : TServerRegistries;
+  new, existing : TServerRegistries;
 begin
   upd := TTxRegistryScanner.Create(FZulip.link);
   try
     upd.address := FEndPoint.FAddress;
     upd.OnSendEmail := doSendEmail;
     try
-      info := TServerRegistries.Create;
+      existing := FEndPoint.FTxRegistryServer.FInfo;
+      new := TServerRegistries.Create;
       try
-        upd.update(FEndPoint.FTxRegistryServer.code, info);
-        FEndPoint.FTxRegistryServer.FInfo.update(info);
+        existing.Lock('start');
+        try
+          existing.Outcome := 'Processing Now';
+        finally
+          existing.Unlock;
+        end;
+        upd.update(FEndPoint.FTxRegistryServer.code, new);
+        existing.Lock('merge');
+        try
+          existing.update(new);
+        finally
+          existing.Unlock;
+        end;
       finally
-        info.free;
+        new.free;
       end;
       if (TFslDateTime.makeToday.DateTime <> FLastEmail) then
       begin
@@ -433,12 +435,14 @@ begin
         b.append('<td>Last OK '+DurationToSecondsString(row.int['last-success'])+' ago</td>'#13#10);
       b.append('<td>'+inttostr(row.int['systems'])+' systems</td>'#13#10);
       b.append('<td>');
-      arr := row.forceArr['authoritative'];
-      for i := 0 to arr.Count - 1 do
-      begin
-        if i > 0 then b.append(', ');
-        b.append('<code>'+FormatTextToHTML(arr.Value[i])+'</code>');
-      end;
+      if (row.bool['is-authoritative']) then
+        b.append('true');
+      //arr := row.forceArr['authoritative'];
+      //for i := 0 to arr.Count - 1 do
+      //begin
+      //  if i > 0 then b.append(', ');
+      //  b.append('<code>'+FormatTextToHTML(arr.Value[i])+'</code>');
+      //end;
       b.append('</td>'#13#10);
       b.append('<td>');
       if (row.bool[CODES_TServerSecurity[ssOpen]]) then
@@ -489,6 +493,8 @@ begin
     vars.add('fhirVersion', TFHIRObjectText.Create(ver));
     vars.add('url', TFHIRObjectText.Create(tx));
     vars.add('status', TFHIRObjectText.Create(status));
+    vars.add('tx-reg-doco', TFHIRObjectText.Create(FInfo.doco));
+    vars.add('tx-reg-view', TFHIRObjectText.Create(renderInfo));
     returnFile(request, response, nil, request.Document, 'tx-registry.html', false, vars);
   finally
     vars.free;
@@ -532,38 +538,167 @@ begin
   if (ssCert in ver.Security) then json.bool[CODES_TServerSecurity[ssCert]] := true;
 end;
 
-function TFHIRTxRegistryWebServer.resolve(version, tx: String): TJsonObject;
+function TFHIRTxRegistryWebServer.resolveCS(version, cs, usage: String; var matches : String): TJsonObject;
 var
   reg : TServerRegistry;
   srvr : TServerInformation;
   ver : TServerVersionInformation;
+  added : boolean;
 begin
   if (version = '') then
     raise EFslException.Create('A version is required');
-  if (tx = '') then
+  if (cs = '') then
     raise EFslException.Create('A code system url is required');
 
+  matches := '';
   result := TJsonObject.Create;
   try
-    for reg in FInfo.Registries do
-      for srvr in reg.Servers do
-      begin
-        if (srvr.isAuth(tx)) then
+    result.str['formatVersion'] := '1';
+    result.str['registry-url'] := FInfo.address;
+    FInfo.Lock('search');
+    try
+      for reg in FInfo.Registries do
+        for srvr in reg.Servers do
         begin
-          for ver in srvr.Versions do
-            if TSemanticVersion.matches(version, ver.version, semverAuto) and (ver.Terminologies.IndexOf(tx) > -1) then
-              populate(result.forceArr['authoritative'].addObject, srvr, ver);
-        end
-        else
-        begin
-          for ver in srvr.Versions do
-            if TSemanticVersion.matches(version, ver.version, semverAuto) and (ver.Terminologies.IndexOf(tx) > -1) then
-              populate(result.forceArr['candidates'].addObject, srvr, ver);
+          added := false;
+          if (srvr.UsageList.Count = 0) or (srvr.UsageList.IndexOf(usage) > -1) then
+          begin
+            if (srvr.isAuthCS(cs)) then
+            begin
+              for ver in srvr.Versions do
+              begin
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingCodeSystem(cs, ver.CodeSystems, false) then
+                  begin
+                    populate(result.forceArr['authoritative'].addObject, srvr, ver);
+                    added := true;
+                  end;
+              end;
+            end
+            else
+            begin
+              for ver in srvr.Versions do
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingCodeSystem(cs, ver.CodeSystems, false) then
+                  begin
+                    populate(result.forceArr['candidates'].addObject, srvr, ver);
+                    added := true;
+                  end;
+            end;
+            if (added) then
+              CommaAdd(matches, srvr.Code);
+          end;
         end;
+      finally
+        FInfo.Unlock;
       end;
     result.link;
   finally
     result.free;
+  end;
+  if matches = '' then
+    matches := '--';
+end;
+
+function TFHIRTxRegistryWebServer.resolveVS(version, vs, usage: String;
+  var matches: String): TJsonObject;
+var
+  reg : TServerRegistry;
+  srvr : TServerInformation;
+  ver : TServerVersionInformation;
+  added : boolean;
+begin
+  if (version = '') then
+    raise EFslException.Create('A version is required');
+  if (vs = '') then
+    raise EFslException.Create('A ValueSet url is required');
+
+  matches := '';
+  result := TJsonObject.Create;
+  try
+    result.str['formatVersion'] := '1';
+    result.str['registry-url'] := FInfo.address;
+    FInfo.Lock('search');
+    try
+      for reg in FInfo.Registries do
+        for srvr in reg.Servers do
+        begin
+          added := false;
+          if (srvr.UsageList.Count = 0) or (srvr.UsageList.IndexOf(usage) > -1) then
+          begin
+            if (srvr.isAuthVS(vs)) then
+            begin
+              for ver in srvr.Versions do
+              begin
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
+                  begin
+                    populate(result.forceArr['authoritative'].addObject, srvr, ver);
+                    added := true;
+                  end;
+              end;
+            end
+            else
+            begin
+              for ver in srvr.Versions do
+                if TSemanticVersion.matches(version, ver.version, semverAuto) then
+                  if TServerRegistryUtilities.hasMatchingValueSet(vs, ver.ValueSets, false) then
+                  begin
+                    populate(result.forceArr['candidates'].addObject, srvr, ver);
+                    added := true;
+                  end;
+            end;
+            if (added) then
+              CommaAdd(matches, srvr.Code);
+          end;
+        end;
+    finally
+      FInfo.Unlock;
+    end;
+    result.link;
+  finally
+    result.free;
+  end;
+  if matches = '' then
+    matches := '--';
+end;
+
+function TFHIRTxRegistryWebServer.renderInfo: String;
+var
+  b : TFslStringBuilder;
+  r : TServerRegistry;
+  s : TServerInformation;
+  v : TServerVersionInformation;
+begin
+  FInfo.Lock('render');
+  try
+    b := TFslStringBuilder.create();
+    try
+      b.Append('<table class="grid">');
+      b.append('<tr><td width="130px"><img src="/assets/images/tx-registry-root.gif">&nbsp;Registries</td><td>'+FInfo.Address+' ('+FormatTextToHTML(FInfo.Outcome)+')</td></tr>');
+      for r in FInfo.Registries do
+      begin
+        if (r.error <> '') then
+          b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td><a href="'+FormatTextToHTML(r.Address)+'">'+FormatTextToHTML(r.Address)+'</a>. Error: '+FormatTextToHTML(r.Error)+'</td></tr>')
+        else
+          b.append('<tr><td title='+FormatTextToHTML(r.Name)+'">&nbsp;&nbsp;<img src="/assets/images/tx-registry.png">&nbsp;'+r.Code+'</td><td><a href="'+FormatTextToHTML(r.Address)+'">'+FormatTextToHTML(r.Address)+'</a></td></tr>');
+        for s in r.Servers do
+        begin
+          if (s.AuthCSList.Count > 0) or (s.AuthVSList.Count > 0) or (s.UsageList.count > 0) then
+            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a>. '+s.description+'</td></tr>')
+          else
+            b.append('<tr><td title='+FormatTextToHTML(s.Name)+'">&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-server.png">&nbsp;'+s.Code+'</td><td><a href="'+FormatTextToHTML(s.Address)+'">'+FormatTextToHTML(s.Address)+'</a></td></tr>');
+          for v in s.Versions do
+            b.append('<tr><td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="/assets/images/tx-version.png">&nbsp;v'+TSemanticVersion.getMajMin(v.Version)+'</td><td><a href="'+FormatTextToHTML(v.Address)+'">'+FormatTextToHTML(v.Address)+'</a>. Status: '+FormatTextToHTML(v.Details)+'. '+inttostr(v.CodeSystems.Count)+' CodeSystems, '+inttostr(v.ValueSets.Count)+' ValueSets</td></tr>');
+        end;
+      end;
+      b.Append('</table>');
+      result := b.ToString;
+    finally
+      b.free;
+    end;
+  finally
+    FInfo.Unlock;
   end;
 end;
 
@@ -644,9 +779,7 @@ end;
 function TFHIRTxRegistryWebServer.doRequest(AContext: TIdContext; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; id : String; secure : boolean) : String;
 var
   pm : THTTPParameters;
-  reg, srvr, ver, tx : String;
-  //s : TArray<String>;
-  //sId : string;
+  reg, srvr, ver, tx, desc : String;
   json : TJsonObject;
 begin
   pm := THTTPParameters.Create(request.UnparsedParams);
@@ -678,12 +811,16 @@ begin
     end
     else if request.document = PathWithSlash+'resolve' then
     begin
-      result := 'Resolve '+pm.Value['version']+' server for '+pm.Value['url'];
-      json := resolve(pm.Value['version'], pm.Value['url']);
+      result := 'Resolve '+pm.Value['fhirVersion']+' server for '+pm.Value['url']+' (usage = '+pm.Value['usage']+')';
+      if (pm.has('valueSet')) then
+        json := resolveVS(pm.Value['fhirVersion'], pm.Value['valueSet'], pm.Value['usage'], desc)
+      else
+        json := resolveCS(pm.Value['fhirVersion'], pm.Value['url'], pm.Value['usage'], desc);
       try
         response.ResponseNo := 200;
         response.ContentType := 'application/json';
         response.ContentText := TJSONWriter.writeObjectStr(json, true);
+        result := result+'('+desc+')';
       finally
         json.free;
       end;

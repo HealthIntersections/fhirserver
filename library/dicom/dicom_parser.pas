@@ -1569,7 +1569,7 @@ begin
       SetLength(sComp, oInput.Size);
       oInput.Position := 0;
       oInput.Read(sComp[1], oInput.Size);
-      sDecomp := ungzip(sComp);
+      sDecomp := ungzip(sComp, 'dicom');
       oInput.Position := 0;
 
       oPDU := TDicomPDUDecoder.Create(oInput.Size);

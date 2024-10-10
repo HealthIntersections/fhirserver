@@ -72,7 +72,7 @@ end;
 
 procedure TToolkitConsole.log(const s: String);
 begin
-  FLock.Lock;
+  FLock.Lock('console.log');
   try
     FLines.add(s);
   finally
@@ -120,7 +120,7 @@ end;
 
 procedure TToolkitConsole.GetIncoming(list: TStringList);
 begin
-  FLock.Lock;
+  FLock.Lock('console.incoming');
   try
     list.assign(FLines);
     FLines.Clear;

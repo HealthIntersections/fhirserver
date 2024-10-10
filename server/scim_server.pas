@@ -383,7 +383,7 @@ end;
 
 function TSCIMServer.GetNextUserKey: Integer;
 begin
-  lock.Lock;
+  lock.Lock('GetNextUserKey');
   try
     inc(lastUserkey);
     result := lastUserkey;
@@ -394,7 +394,7 @@ end;
 
 function TSCIMServer.GetNextUserIndexKey: Integer;
 begin
-  lock.Lock;
+  lock.Lock('GetNextUserIndexKey');
   try
     inc(lastUserIndexKey);
     result := lastUserIndexKey;
@@ -1144,11 +1144,11 @@ procedure TSCIMServer.processWebUserList(context: TIdContext; session : TFhirSes
 var
   variables : TFslMap<TFHIRObject>;
   conn : TFDBConnection;
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   user : TSCIMUser;
   i : integer;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     conn := db.GetConnection('scim.user.search');
     try

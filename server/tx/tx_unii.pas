@@ -35,7 +35,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads,
+  fsl_utilities, fsl_base, fsl_collections, fsl_stream, fsl_http, fsl_lang, fsl_threads, fsl_i18n,
   fdb_manager,
   fhir_objects, fhir_features, fhir_uris,
   ftx_service;
@@ -70,7 +70,7 @@ type
     db : TFDBManager;
     FVersion : String;
   public
-    constructor Create(languages : TIETFLanguageDefinitions; db : TFDBManager);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db : TFDBManager);
     destructor Destroy; Override;
     Function Link : TUniiServices; overload;
 
@@ -79,9 +79,9 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function version(context : TCodeSystemProviderContext) : String; override;
+    function version : String; override;
     function name(context : TCodeSystemProviderContext) : String; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -100,6 +100,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -116,11 +117,11 @@ uses
 
 { TUniiServices }
 
-constructor TUniiServices.Create(languages : TIETFLanguageDefinitions; db: TFDBManager);
+constructor TUniiServices.Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport; db: TFDBManager);
 var
   conn : TFDBConnection;
 begin
-  inherited Create(languages);
+  inherited Create(languages, i18n);
 
   self.db := db;
   conn := db.GetConnection('version');
@@ -171,12 +172,12 @@ begin
 end;
 
 
-function TUniiServices.version(context: TCodeSystemProviderContext): String;
+function TUniiServices.version: String;
 begin
   result := FVersion;
 end;
 
-function TUniiServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TUniiServices.systemUri : String;
 begin
   result := URI_UNII;
 end;
@@ -252,7 +253,7 @@ begin
     map := TFslStringIntegerMatch.Create;
     try
       map.forced := true;
-      f := TFslFile.Create(filename, fmOpenRead);
+      f := TFslFile.Create(filename, fmOpenRead + fmShareDenyWrite);
       try
         size := f.Size;
         t := 0;
@@ -452,6 +453,11 @@ begin
 end;
 
 function TUniiServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean;
+begin
+  raise ETerminologyTodo.Create('TUniiServices.FilterMore');
+end;
+
+function TUniiServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
 begin
   raise ETerminologyTodo.Create('TUniiServices.FilterMore');
 end;

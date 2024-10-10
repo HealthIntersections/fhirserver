@@ -138,7 +138,7 @@ begin
       co.LoadFromStream(response.ContentStream);
       co.Summary := summary;
       co.FLastTouched := now;
-      FLock.Lock;
+      FLock.Lock('recordResponse');
       try
         FCache.AddOrSetValue(key, co.Link);
         inc(FSize, co.Size);
@@ -155,13 +155,15 @@ end;
 function THTTPCacheManager.respond(ep : String; request: TIdHTTPRequestInfo; response: TIdHTTPResponseInfo; var summary : String): boolean;
 var
   co : TCachedHTTPResponse;
+  key : string;
 begin
-  if not FCaching or UnderDebugger then
+  if not FCaching or UnderDebugger or request.QueryParams.contains('no-cache=please') then
     exit(false);
 
-  FLock.Lock;
+  key := generateKey(ep, request);
+  FLock.Lock('respond');
   try
-    result := FCache.TryGetValue(generateKey(ep, request), co);
+    result := FCache.TryGetValue(key, co);
     if result then
     begin
       co.Link;
@@ -198,42 +200,27 @@ var
   list : TStringList;
   v : TCachedHTTPResponse;
   dt : TDateTime;
+  st : QWord;
 begin
   callback(self, 'Trimming Cache', -1);
   list := TStringList.Create;
   try
-    FLock.Lock;
+    FLock.Lock('trim');
     try
       dt := now - FCacheDwellTime;
+      FSize := 0;
       for s in FCache.Keys do
       begin
         v := FCache[s];
         if (v.FLastTouched < dt) then
-        begin
-          list.add(s);
-          FSize := FSize - v.Size;
-        end;
+          list.add(s)
+        else
+          inc(FSize, v.size);
       end;
       FCache.RemoveKeys(list);
 
-      i := 1;
-      while FSize > FMaxSize do
-      begin
-        for s in FCache.Keys do
-        begin
-          v := FCache[s];
-          if v.HitCount <= i then
-          begin
-            list.Add(s);
-            FSize := FSize - v.Size;
-          end;
-          if (FSize < FMaxSize) then
-            break;
-        end;
-        FCache.RemoveKeys(list);
-        list.clear;
-        inc(i);
-      end;
+      if FSize > FMaxSize then
+        FCache.clear;
     finally
       FLock.Unlock;
     end;
@@ -250,7 +237,7 @@ end;
 
 procedure THTTPCacheManager.Clear;
 begin
-  FLock.Lock;
+  FLock.Lock('Clear');
   try
     FCache.Clear;
     FSize := 0;

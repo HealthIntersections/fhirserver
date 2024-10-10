@@ -1,12 +1,40 @@
 unit tx_registry_model;
 
+{
+Copyright (c) 2011+, HL7 and Health Intersections Pty Ltd (http://www.healthintersections.com.au)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+ * Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+ * Neither the name of HL7 nor the names of its contributors may be used to
+   endorse or promote products derived from this software without specific
+   prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 'AS IS' AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.
+}
+
 {$i fhir.inc}
 
 interface
 
 uses
   Classes, SysUtils,
-  fsl_base, fsl_json, fsl_utilities, fsl_versions;
+  fsl_base, fsl_json, fsl_utilities, fsl_versions, fsl_threads;
 
 Type
   TServerSecurity = (ssOpen, ssPassword, ssToken, ssOAuth, ssSmart, ssCert);
@@ -22,8 +50,10 @@ type
   private
     FError: String;
     FAddress : String;
+    FLastTat: String;
     FVersion : String;
-    FTerminologies : TStringList;
+    FCodeSystems : TStringList;
+    FValueSets : TStringList;
     FLastSuccess : TFslDateTime;
     FSecurity : TServerSecuritySet;
   public
@@ -35,8 +65,14 @@ type
     property Security : TServerSecuritySet read FSecurity write FSecurity;
     property Error : String read FError write FError;
     property LastSuccess : TFslDateTime read FLastSuccess write FLastSuccess;
-    property Terminologies : TStringList read FTerminologies;     
+    property lastTat : String read FLastTat write FLastTat;
+    property CodeSystems : TStringList read FCodeSystems;
+    property ValueSets : TStringList read FValueSets;
     procedure update(source : TServerVersionInformation);
+
+    function Details : String;
+    function cslist : String;
+    function vslist : String;
   end;
 
   { TServerInformation }
@@ -47,7 +83,9 @@ type
     FName : string;      
     FAddress : String;
     FAccessInfo : String;
-    FAuthlist : TStringList;
+    FAuthCSlist : TStringList;
+    FAuthVSlist : TStringList;
+    FUsageList : TStringList;
     FVersions : TFslList<TServerVersionInformation>;
   public
     constructor Create; override;
@@ -57,12 +95,17 @@ type
     property Name : String read FName write FName; 
     property Address : String read FAddress write FAddress;
     property AccessInfo : String read FAccessInfo write FAccessInfo;
-    property AuthList : TStringList read FAuthList;
+    property AuthCSList : TStringList read FAuthCSList;
+    property AuthVSList : TStringList read FAuthVSList;
+    property UsageList : TStringList read FUsageList;
     property Versions : TFslList<TServerVersionInformation> read FVersions;
     function version(ver : String) : TServerVersionInformation;
     procedure update(source : TServerInformation);
 
-    function isAuth(tx : String) : boolean;
+    function Details : String;
+    function isAuthCS(tx : String) : boolean;
+    function isAuthVS(vs : String) : boolean;
+    function Description : String;
   end;
 
   { TServerRegistry }
@@ -95,18 +138,23 @@ type
   TServerRegistries = class (TFslObject)
   private
     FAddress : String;
+    FDoco: String;
     FLastRun : TFslDateTime;
     FOutcome : String;
     FRegistries: TFslList<TServerRegistry>;
+    FLock : TFslLock;
   public
     constructor Create; override;
     destructor Destroy; override;
     function Link : TServerRegistries; overload;
     property Address : String read FAddress write FAddress;
+    property doco : String read FDoco write FDoco;
     property LastRun : TFslDateTime read FLastRun write FLastRun;
     property Outcome : String read FOutcome write FOutcome;
     property Registries : TFslList<TServerRegistry> read FRegistries;
-                                               
+    procedure Lock(name : String);
+    procedure UnLock;
+
     function registry(code : String) : TServerRegistry;
     procedure update(source : TServerRegistries);
   end;
@@ -124,9 +172,12 @@ type
     FServerCode: String;
     FServerName: String;
     FSystems: integer;
+    FSets : integer;
     FURL: String;
     FVersion: String;
-    FAuthlist : TStringList;
+    FAuthCSList : TStringList;
+    FAuthVSList : TStringList;
+    FAuthoritative : boolean;
   public             
     constructor Create; override;
     destructor Destroy; override;
@@ -136,7 +187,8 @@ type
     property RegistryName : String read FRegistryName write FRegistryName;
     property RegistryCode : String read FRegistryCode write FRegistryCode;   
     property RegistryUrl : String read FRegistryUrl write FRegistryUrl;    
-    property AuthList : TStringList read FAuthList;
+    property AuthCSList : TStringList read FAuthCSList;
+    property AuthVSList : TStringList read FAuthVSList;
 
     property Version : String read FVersion write FVersion;
     property URL : String read FURL write FURL;
@@ -144,6 +196,8 @@ type
     property Security : TServerSecuritySet read FSecurity write FSecurity;
     property LastSuccess : cardinal read FLastSuccess write FLastSuccess; // ms
     property systems : integer read FSystems write FSystems;
+    property sets : integer read FSets write FSets;
+    property Authoritative : boolean read FAuthoritative write FAuthoritative;
   end;
 
   { TServerRegistryUtilities }
@@ -160,7 +214,7 @@ type
     class function readServer(fv : String; json : TJsonObject): TServerInformation;
     class function readRegistry(fv : String; json : TJsonObject): TServerRegistry;
 
-    class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation);
+    class procedure addRow(rows : TFslList<TServerRow>; reg: TServerRegistry; srvr : TServerInformation; version : TServerVersionInformation; auth : boolean);
     class procedure buildRows(reg: TServerRegistry; srvr : TServerInformation; version, tx : String; rows : TFslList<TServerRow>); overload;
     class procedure buildRows(reg : TServerRegistry; srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
     class procedure buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String; rows : TFslList<TServerRow>); overload;
@@ -171,6 +225,8 @@ type
     class function toJson(row : TServerRow) : TJsonObject; overload;
 
     class function buildRows(info : TServerRegistries; regCode, srvrCode, version, tx : String) : TFslList<TServerRow>; overload;
+    class function hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
+    class function hasMatchingValueSet(vs : String; list : TStringList; mask : boolean) : boolean;
   end;
 
 implementation
@@ -180,12 +236,14 @@ implementation
 constructor TServerRow.Create;
 begin
   inherited Create;
-  FAuthlist := TStringList.Create;
+  FAuthCSList := TStringList.Create;
+  FAuthVSList := TStringList.Create;
 end;
 
 destructor TServerRow.Destroy;
 begin
-  FAuthlist.free;
+  FAuthCSList.free;
+  FAuthVSList.free;
   inherited Destroy;
 end;
 
@@ -228,8 +286,10 @@ begin
     result.str['security'] := securitySetToString(v.Security);
     result.str['error'] := v.Error;
     result.str['last-success'] := v.LastSuccess.toXML;
-    for s in v.Terminologies do
+    for s in v.CodeSystems do
       result.forceArr['terminologies'].add(s);
+    for s in v.ValueSets do
+      result.forceArr['valuesets'].add(s);
     result.link;
   finally
     result.free;
@@ -247,7 +307,8 @@ begin
     result.Security := stringToSecuritySet(json.str['security']);
     result.Error := json.str['error'];
     result.LastSuccess := TFslDateTime.fromXML(json.str['last-success']);
-    json.forceArr['terminologies'].readStrings(result.Terminologies);
+    json.forceArr['terminologies'].readStrings(result.CodeSystems);
+    json.forceArr['valuesets'].readStrings(result.ValueSets);
     result.link;
   finally
     result.free;
@@ -265,7 +326,8 @@ begin
     result.str['name'] := s.Name;
     result.str['address'] := s.Address;
     result.str['access-info'] := s.AccessInfo;
-    result.str['authoritative'] := s.AuthList.CommaText;
+    result.str['authoritative'] := s.AuthCSList.CommaText;
+    result.str['authoritative-valuesets'] := s.AuthVSList.CommaText;
     for v in s.Versions do
       result.forceArr['versions'].add(toJson(s));
     result.link;
@@ -285,7 +347,8 @@ begin
     result.Name := json.str['name'];
     result.Address := json.str['address'];
     result.AccessInfo := json.str['access-info'];
-    result.AuthList.CommaText := json.str['authoritative'];;
+    result.AuthCSList.CommaText := json.str['authoritative'];
+    result.AuthVSList.CommaText := json.str['authoritative-valuesets'];
     for obj in json.forceArr['versions'].asObjects.forEnum do
       result.versions.add(readVersion(fv, json));
     result.link;
@@ -333,12 +396,13 @@ begin
   end;
 end;
 
-class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg: TServerRegistry; srvr: TServerInformation; version: TServerVersionInformation);
+class procedure TServerRegistryUtilities.addRow(rows: TFslList<TServerRow>; reg: TServerRegistry; srvr: TServerInformation; version: TServerVersionInformation; auth : boolean);
 var
   row : TServerRow;
 begin
   row := TServerRow.Create;
   try
+    row.Authoritative := auth;
     row.ServerName := srvr.Name;
     row.ServerCode := srvr.Code;
     row.RegistryName := reg.Name;
@@ -353,8 +417,10 @@ begin
       row.LastSuccess := trunc(TFslDateTime.makeUTC.difference(version.LastSuccess) * DATETIME_DAY_MILLISECONDS);
     row.security := version.security;
     row.Version := version.Version;
-    row.systems := version.Terminologies.Count;
-    row.Authlist.assign(srvr.AuthList);
+    row.systems := version.CodeSystems.Count;
+    row.sets := version.ValueSets.Count;
+    row.AuthCSList.assign(srvr.AuthCSList);
+    row.AuthVSList.assign(srvr.AuthVSList);
 
     rows.add(row.link);
   finally
@@ -362,14 +428,61 @@ begin
   end;
 end;
 
+function passesMask(mask, tx : string) : Boolean;
+begin
+  if mask.EndsWith('*') then
+    result := tx.StartsWith(mask.Substring(0, mask.length-1))
+  else
+    result := tx = mask;
+end;
+
+
+class function TServerRegistryUtilities.hasMatchingCodeSystem(cs : String; list : TStringList; mask : boolean) : boolean;
+var
+  s, r : String;
+begin
+  r := cs;
+  if r.contains('|') then
+    r := r.subString(0, r.indexOf('|'));
+  result := false;
+  for s in list do
+  begin
+    if mask and passesMask(s, cs) then
+      exit(true);
+    if not mask and ((s = cs) or (r = s)) then
+      exit(true);
+  end;
+end;
+
+class function TServerRegistryUtilities.hasMatchingValueSet(vs : String; list : TStringList; mask : boolean) : boolean;
+var
+  s, r : String;
+begin
+  r := vs;
+  if r.contains('|') then
+    r := r.subString(0, r.indexOf('|'));
+  result := false;
+  for s in list do
+  begin
+    if mask and passesMask(s, vs) then
+      exit(true);
+    if not mask and ((s = vs) or (r = s)) then
+      exit(true);
+  end;
+end;
+
 class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvr: TServerInformation; version, tx: String; rows: TFslList<TServerRow>);
 var
   ver : TServerVersionInformation;
+  auth : boolean;
 begin
+  auth := hasMatchingCodeSystem(tx, srvr.AuthCSList, true);
   for ver in srvr.Versions do
     if (version = '') or (TSemanticVersion.matches(version, ver.version, semverAuto)) then
-      if (tx = '') or (ver.Terminologies.IndexOf(tx) > -1) then
-        addRow(rows, reg, srvr, ver);
+      begin
+        if auth or (tx = '') or hasMatchingCodeSystem(tx, ver.CodeSystems, false) then
+          addRow(rows, reg, srvr, ver, auth);
+      end;
 end;
 
 class procedure TServerRegistryUtilities.buildRows(reg: TServerRegistry; srvrCode, version, tx: String; rows: TFslList<TServerRow>);
@@ -414,6 +527,8 @@ var
 begin
   result := TJsonObject.Create;
   try
+    if (row.Authoritative) then
+      result.bool['is-authoritative'] := true;
     result.str['server-name'] := row.ServerName;
     result.str['server-code'] := row.ServerCode;
 
@@ -426,8 +541,10 @@ begin
     result.str['error'] := row.Error;
     result.int['last-success'] := row.LastSuccess;
     result.int['systems'] := row.systems;
-    for s in row.Authlist do
+    for s in row.AuthCSList do
       result.forceArr['authoritative'].add(s);
+    for s in row.AuthVSList do
+      result.forceArr['authoritative-valuesets'].add(s);
 
     if (ssOpen in row.Security) then result.bool[CODES_TServerSecurity[ssOpen]] := true;
     if (ssPassword in row.Security) then result.bool[CODES_TServerSecurity[ssPassword]] := true;
@@ -444,12 +561,17 @@ end;
 
 class function TServerRegistryUtilities.buildRows(info: TServerRegistries; regCode, srvrCode, version, tx: String): TFslList<TServerRow>;
 begin
-  result := TFslList<TServerRow>.Create;
+  info.Lock('build');
   try
-    buildRows(info, regCode, srvrCode, version, tx, result);
-    result.link;
+    result := TFslList<TServerRow>.Create;
+    try
+      buildRows(info, regCode, srvrCode, version, tx, result);
+      result.link;
+    finally
+      result.free;
+    end;
   finally
-    result.free;
+    info.unlock;
   end;
 end;
 
@@ -485,6 +607,7 @@ end;
 
 destructor TServerRegistries.Destroy;
 begin
+  FLock.Free;
   FRegistries.free;
   inherited Destroy;
 end;
@@ -492,6 +615,18 @@ end;
 function TServerRegistries.Link: TServerRegistries;
 begin
   result := TServerRegistries(inherited link);
+end;
+
+procedure TServerRegistries.Lock(name: String);
+begin
+  if (FLock = nil) then
+    FLock := TFslLock.create('ServerRegistries');
+  FLock.Lock(name);
+end;
+
+procedure TServerRegistries.UnLock;
+begin
+  FLock.unlock;
 end;
 
 function TServerRegistries.registry(code: String): TServerRegistry;
@@ -510,9 +645,10 @@ var
 begin
   FLastRun := source.FLastRun;
   FOutcome := source.FOutcome;
+  FDoco := source.doco;
   for t in source.Registries do
   begin
-    sr := registry(t.Name);
+    sr := registry(t.Code);
     if (sr = nil) then
       FRegistries.add(t.link)
     else
@@ -559,7 +695,7 @@ begin
   FError := source.FError;
   for t in source.Servers do
   begin
-    s := server(t.Name);
+    s := server(t.Code);
     if (s = nil) then
       FServers.add(t.link)
     else
@@ -573,12 +709,16 @@ constructor TServerInformation.Create;
 begin
   inherited Create;  
   FVersions := TFslList<TServerVersionInformation>.Create;
-  FAuthlist := TStringList.Create;
+  FAuthCSList := TStringList.Create;
+  FAuthVSList := TStringList.Create;
+  FUsageList := TStringList.create;
 end;
 
 destructor TServerInformation.Destroy;
 begin
-  FAuthlist.free;
+  FUsageList.free;
+  FAuthVSList.free;
+  FAuthCSList.free;
   FVersions.free;
   inherited Destroy;
 end;
@@ -605,6 +745,9 @@ begin
   FName := source.FName;
   FAddress := source.FAddress;
   FAccessInfo := source.FAccessInfo;
+  FAuthCSList.Assign(source.FAuthCSList);
+  FAuthVSList.Assign(source.FAuthVSList);
+  FUsagelist.Assign(source.FUsagelist);
   for t in source.Versions do
   begin
     v := version(t.Version);
@@ -615,22 +758,56 @@ begin
   end;
 end;
 
-function passesMask(mask, tx : string) : Boolean;
+function TServerInformation.Details: String;
 begin
-  if mask.EndsWith('*') then
-    result := tx.StartsWith(mask.Substring(0, mask.length-1))
-  else
-    result := tx = mask;
+  result := FAccessInfo;
 end;
 
-function TServerInformation.isAuth(tx: String): boolean;
+function TServerInformation.isAuthCS(tx: String): boolean;
 var
   mask : String;
 begin
   result := false;
-  for mask in AuthList do
+  for mask in AuthCSList do
     if passesMask(mask, tx) then
       exit(true);
+end;
+
+function TServerInformation.isAuthVS(vs: String): boolean;
+var
+  mask : String;
+begin
+  result := false;
+  for mask in AuthVSList do
+    if passesMask(mask, vs) then
+      exit(true);
+end;
+
+function TServerInformation.description: String;
+var
+  s : String;
+begin
+  result := '';
+  if (FusageList.count > 0) then
+    result := 'Usage Tags: '+FUsageList.CommaText;
+  if (FAuthCSList.count > 0) then
+  begin
+    if (result <> '') then
+      result := result+'. ';
+    result := result + 'Authoritative for the following CodeSystems: <ul>';
+    for s in FAuthCSlist do
+      result := result + '<li>'+FormatTextToHtml(s).replace('*', '<b>*</b>')+'</li>';
+    result := result + '</ul>';
+  end;
+  if (FAuthVSList.count > 0) then
+  begin
+    if (result <> '') then
+      result := result+'. ';
+    result := result + 'Authoritative for the following ValueSets: <ul>';
+    for s in FAuthVSlist do
+      result := result + '<li>'+FormatTextToHtml(s).replace('*', '<b>*</b>')+'</li>';
+    result := result + '</ul>';
+  end;
 end;
 
 { TServerVersionInformation }
@@ -638,12 +815,19 @@ end;
 constructor TServerVersionInformation.Create;
 begin
   inherited Create;   
-  FTerminologies := TStringList.Create;
+  FCodeSystems := TStringList.Create;
+  FCodeSystems.Sorted := true;
+  FCodeSystems.Duplicates := dupIgnore;
+
+  FValueSets := TStringList.Create;
+  FValueSets.Sorted := true;
+  FValueSets.Duplicates := dupIgnore;
 end;
 
 destructor TServerVersionInformation.Destroy;
 begin
-  FTerminologies.free;
+  FValueSets.free;
+  FCodeSystems.free;
   inherited Destroy;
 end;
 
@@ -660,7 +844,40 @@ begin
   begin
     FSecurity := source.FSecurity;
     FLastSuccess := source.FLastSuccess;
-    FTerminologies.assign(source.Terminologies);
+    FCodeSystems.assign(source.FCodeSystems);
+    FValueSets.assign(source.FValueSets);
   end;
 end;
+
+function TServerVersionInformation.Details: String;
+begin
+  if FError = '' then
+    result := 'Server Processed Ok'
+  else
+    result := FError;
+  result := result + ' (last seen '+LastSuccess.toXML()+', last tat = '+FLastTat+')';
+end;
+
+function TServerVersionInformation.cslist: String;
+var
+  s : String;
+begin
+  result := '<ul>';
+  for s in FCodeSystems do
+    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+  result := result + '</ul>';
+end;
+
+function TServerVersionInformation.vslist: String;
+var
+  s : String;
+begin
+  result := '<ul>';
+  for s in FValueSets do
+    result := result + '<li>'+FormatTextToHtml(s)+'</li>';
+  result := result + '</ul>';
+end;
+
+
 end.
+

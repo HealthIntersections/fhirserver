@@ -157,7 +157,7 @@ begin
     event.userId := userId;
     event.ip := ip;
     event.userAgent := userAgent;
-    FLock.Lock;
+    FLock.Lock('recordEvent');
     try
       FEvents.Add(event.Link);
     finally
@@ -177,29 +177,36 @@ end;
 
 procedure TGoogleAnalyticsProvider.commit;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   event : TGoogleAnalyaticsEventData;
 begin
   if FServerId = '' then
     exit;
   FWorking := true;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
-    FLock.Lock;
+    FLock.Lock('commit');
     try
       inc(FCycle);
       for event in FEvents do
       begin
         event.cycle := FCycle;
         b.append('v=1');
-        b.append('&tid=').append(FServerId);
+        b.append('&tid=');
+        b.append(FServerId);
         b.append('&t=event');
-        b.append('&an=').append('http://test.fhir.org');
-        b.append('&ec=').append(EncodeMIME(event.ResourceName));
-        b.append('&ea=').append(event.operationName);
-        b.append('&cid=').append(event.operationName);
-        b.append('&uip=').append(EncodeMIME(event.ip));
-        b.append('&ua=').append(EncodeMIME(event.userAgent));
+        b.append('&an=');
+        b.append('http://test.fhir.org');
+        b.append('&ec=');
+        b.append(EncodeMIME(event.ResourceName));
+        b.append('&ea=');
+        b.append(event.operationName);
+        b.append('&cid=');
+        b.append(event.operationName);
+        b.append('&uip=');
+        b.append(EncodeMIME(event.ip));
+        b.append('&ua=');
+        b.append(EncodeMIME(event.userAgent));
         b.append(#10);
       end;
     finally
@@ -208,7 +215,7 @@ begin
     if b.ToString = '' then
       exit;
     post(b.ToString);
-    FLock.Lock;
+    FLock.Lock('commit2');
     try
       {$IFDEF FPC}
       FEvents.removeAll(filter);

@@ -53,9 +53,6 @@
             <TargetCPU Value="x86_64"/>
             <TargetOS Value="linux"/>
           </CodeGeneration>
-          <Other>
-            <Compiler>-O2 -Xs</Compiler>
-          </Other>
         </CompilerOptions>
       </Item>
       <Item Name="osx">
@@ -119,7 +116,6 @@
         <ComponentName Value="CodeScannerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="codeScanForm"/>
       </Unit>
     </Units>
   </ProjectOptions>
@@ -144,8 +140,7 @@
       </Debugging>
     </Linking>
     <Other>
-      <CustomOptions Value="-WM11.0
--XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
+      <CustomOptions Value="-XR/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk
 -gw2
 -gw3"/>
     </Other>

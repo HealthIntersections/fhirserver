@@ -2156,10 +2156,10 @@ end;
 
 function TFHIROperationOutcomeHelper.asExceptionMessage: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   issue : TFhirOperationOutcomeIssue;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for issue in issueList do
     begin
@@ -3148,9 +3148,9 @@ end;
 
 function patSummary(pat : TFHIRPatient) : string;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append(HumanNamesAsText(pat.nameList));
     b.Append(' ');
@@ -3165,9 +3165,9 @@ end;
 
 function groupSummary(grp : TFHIRGroup) : string;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append(grp.name);
     if (grp.code <> nil) then
@@ -3253,7 +3253,7 @@ end;
 
 function TFHIRBundleHelper.generatePresentation: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   procedure addNarrative(br : boolean; n : TFhirNarrative);
   begin
     if br then
@@ -3278,25 +3278,23 @@ begin
   if type_ = BundleTypeDocument then
   begin
     cmp := entryList[0].resource as TFhirComposition;
-    b := TStringBuilder.Create;
+    b := TFslStringBuilder.Create;
     try
       // header
-      b.append(
-        '<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">'+#13#10+
-        '<head>'+#13#10+
-        '  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />'+#13#10+
-        '  <title>'+cmp.title+'</title>'+#13#10+
-        '</head>'+#13#10+
-        '<body>'+#13#10);
+      b.appendLine('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">');
+      b.appendLine('<head>');
+      b.appendLine('  <meta charset="utf-8" http-equiv="X-UA-Compatible" content="IE=edge" />');
+      b.appendLine('  <title>'+cmp.title+'</title>');
+      b.appendLine('</head>');
+      b.appendLine('<body>');
       sbj := findResource(cmp.subject) as TFhirDomainResource;
       addNarrative(false, sbj.text);
       addNarrative(true, cmp.text);
       for section in cmp.sectionList do
         processSection(section);
       // foooter
-      b.append(
-        '</body>'+#13#10+
-        '</html>'+#13#10);
+      b.appendLine('</body>');
+      b.appendLine('</html>');
 
       result := b.tostring;
     finally
@@ -4405,12 +4403,12 @@ end;
 
 function TFHIRStringListHelper.summary: String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   f : boolean;
   v : TFHIRString;
 begin
   f := true;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for v in self do
     begin
@@ -5260,13 +5258,27 @@ end;
 function TFhirCodeSystemHelper.isAbstract(concept: TFhirCodeSystemConcept): boolean;
 var
   p : TFhirCodeSystemConceptProperty;
+  pd : TFhirCodeSystemProperty;
+  c, s : String;
 begin
   result := false;
   for p in concept.property_List do
+  begin
     if (p.code = 'abstract') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
       exit(true);
+  end;
+  s := csUriForProperty('notSelectable');
+  c := 'notSelectable';
+  if (s <> '') then
+    for pd in property_List do
+      if pd.uri = s then
+      begin
+        c := pd.code;
+        break;
+      end;
+
   for p in concept.property_List do
-      if (p.code = 'notSelectable') and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
+      if (p.code = c) and (p.value is TFhirBoolean) and (TFHIRBoolean(p.value).value) then
         exit(true);
 end;
 
@@ -5911,11 +5923,11 @@ end;
 
 function makeFileName(s : String) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   ws : boolean;
   ch : char;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     ws := true;
     for ch in s do
@@ -7585,4 +7597,3 @@ begin
 end;
 
 end.
-

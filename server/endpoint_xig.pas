@@ -33,7 +33,7 @@ POSSIBILITY OF SUCH DAMAGE.
 interface
 
 uses
-  SysUtils, Classes, ZStream,
+  SysUtils, Classes, {$IFDEF FPC} ZStream, {$ENDIF}
   IdContext, IdCustomHTTPServer, IdOpenSSLX509,
   fsl_base, fsl_utilities, fsl_json, fsl_i18n, fsl_http, fsl_html, fsl_fetcher, fsl_logging, fsl_threads,
   fhir_objects, fhir_xhtml,
@@ -143,7 +143,7 @@ type
     procedure downloadAndReload;
     function dateBuilt : String;
   public
-    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
+    constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function summary : String; override;
@@ -537,9 +537,9 @@ end;
 
 { TXIGServerEndPoint }
 
-constructor TXIGServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; common : TCommonTerminologies; i18n : TI18nSupport);
+constructor TXIGServerEndPoint.Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; i18n : TI18nSupport);
 begin
-  inherited Create(config, settings, nil, common, nil, i18n);
+  inherited Create(config, settings, db, common, nil, i18n);
 end;
 
 destructor TXIGServerEndPoint.Destroy;
@@ -619,9 +619,9 @@ begin
       raise;
     end;
   end;
-  xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, false));
+  xig := TFHIRXIGWebContext.Create(TFDBSQLiteManager.create('xig-'+FLastDownload, tgt, true, false));
   try
-    FXIGServer.FLock.lock;
+    FXIGServer.FLock.lock('downloadAndReload');
     try
       oxig := FXIGServer.FContext;
       FXIGServer.FContext := xig.link;
@@ -1070,7 +1070,7 @@ end;
 
 procedure TFHIRXIGWebServer.renderExtension(b : TFslStringBuilder; details : String);
 var
-  p1, p2 : TStringArray;
+  p1, p2 : TArray<String>;
 begin
   p1 := details.Split(['|']);
   b.append('<td>'+p1[0].subString(9).replace(',', ' ')+'</td>');
@@ -1092,7 +1092,7 @@ begin
     result := ' <a href="'+FormatTextToHtml(url)+'"><img src="http://hl7.org/fhir/external.png"/></a>';
 end;
 
-
+{$IFDEF FPC}
 procedure DecompressStream(src, dst: TStream);
 var
   ds: TDecompressionStream;
@@ -1133,6 +1133,7 @@ begin
     ss1.Free;
   end;
 end;
+{$ENDIF}
 
 function fixLink(base, link : String) : String;
 begin
@@ -1218,12 +1219,12 @@ begin
     try   
       pck := context.FPackagesById[pid];
       if (pck = nil) then
-        raise EWebServerException.create('Unknown Package '+pid.replace('|', '#'));
+        raise EWebServerException.create(400, 'Unknown Package '+pid.replace('|', '#'));
        db.sql := 'Select * from Resources where PackageKey = '+pck.key+' and ResourceType = '''+SqlWrapString(rtype)+''' and Id = '''+SqlWrapString(id)+'''';
        db.prepare;
        db.Execute;
        if not db.FetchNext then
-         raise EWebServerException.create('Unknown Resource '+rtype+'/'+id+' in package '+pid);
+         raise EWebServerException.create(400, 'Unknown Resource '+rtype+'/'+id+' in package '+pid);
        rk := db.ColStringByName['ResourceKey'];
        base := db.ColStringByName['Web'];
        base := base.Substring(0, base.LastIndexOf('/'));
@@ -1356,7 +1357,11 @@ begin
        db.prepare;
        db.Execute;
        db.fetchNext;
-       j := inflate(db.ColBlobByName['Json']);  
+       {$IFDEF FPC}
+       j := inflate(db.ColBlobByName['Json']);
+       {$ELSE}
+       raise EFslException.Create('Not Implemented Yet');
+       {$ENDIF}
        db.terminate;
        db.release;
 
@@ -1397,7 +1402,7 @@ end;
 
 function TFHIRXIGWebServer.getContext: TFHIRXIGWebContext;
 begin
-  FLock.Lock;
+  FLock.Lock('getContext');
   try
     result := FContext.link;
   finally
@@ -1510,7 +1515,7 @@ var
   //s : TArray<String>;
   //sId : string;
   json : TJsonObject;
-  p : TStringArray;
+  p : TArray<String>;
 begin
   pm := THTTPParameters.Create(request.UnparsedParams);
   try
@@ -1551,4 +1556,5 @@ begin
   countRequest;
   result := doRequest(AContext, request, response, id, true);
 end;
+
 end.

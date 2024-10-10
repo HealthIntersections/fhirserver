@@ -39,12 +39,12 @@ uses
   {$IFDEF LINUX}
   baseunix, unix,
   {$ENDIF}
-  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, Types
+  Classes, SysUtils, SyncObjs, Contnrs, Character, Generics.Collections, ZLib, Types
   {$IFDEF FPC},
   {$IFDEF OSX}
   MacOSAll, CFBase, CFString,
   {$ENDIF}
-  dateutils{$ENDIF};
+  ZStream, dateutils{$ENDIF};
 
 type
   {$IFDEF FPC}
@@ -128,6 +128,8 @@ procedure FileSetModified(const FileName : String; dateTime : TDateTime);
 
 {$IFDEF FPC}
 type
+   TZDecompressionStream = TDecompressionStream;
+   TZCompressionStream = TCompressionStream;
 
 
   { TDirectory }
@@ -190,19 +192,16 @@ var
   i, c, l, cl : integer;
   ch : LongWord;
   p: PChar;
-  ss : String;
 begin
   l := length(s);
   SetLength(result, l); // maximum possible length
   i := 0;
   c := 1;
   p := @s[1];
-  ss := '';
   while l > 0 do
   begin
     ch := UTF8CodepointToUnicode(p, cl);
     result[i] := UnicodeChar(ch);
-    ss := ss + IntToHex(ch, 4)+'.';
     inc(i);
     dec(l, cl);
     inc(p, cl);

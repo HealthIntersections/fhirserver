@@ -538,8 +538,11 @@ Type
   TFHIRLookupOpResponse = class (TFHIROperationResponse)
   private
     FName : String;
+    FCode : String;
+    FSystem : String;
     FVersion : String;
-    FDisplay : String;
+    FDisplay : String;                           
+    FAbstract : Boolean;
     FDesignationList : TFslList<TFHIRLookupOpRespDesignation>;
     FProperty_List : TFslList<TFHIRLookupOpRespProperty_>;
   protected
@@ -552,8 +555,11 @@ Type
     procedure load(params : THTTPParameters); overload; override;
     function asParams : TFHIRParameters; override;
     property name : String read FName write FName;
+    property code : String read FCode write FCode;
+    property systemUri : String read FSystem write FSystem;
     property version : String read FVersion write FVersion;
-    property display : String read FDisplay write FDisplay;
+    property display : String read FDisplay write FDisplay;     
+    property abstract : Boolean read FAbstract write FAbstract;
     property designationList : TFslList<TFHIRLookupOpRespDesignation> read FDesignationList;
     property property_List : TFslList<TFHIRLookupOpRespProperty_> read FProperty_List;
   end;
@@ -3090,6 +3096,7 @@ procedure TFHIRLookupOpResponse.load(params : TFHIRParameters);
 var
   p : TFhirParametersParameter;
 begin
+  FAbstract := params.bool['abstract'];
   if params.param['name'] <> nil then
     FName := (params.param['name'].value as TFHIRString).Value; 
   if params.param['version'] <> nil then
@@ -3106,7 +3113,8 @@ begin
 end;
 procedure TFHIRLookupOpResponse.load(params : THTTPParameters);
 begin
-  loadExtensions(params);
+  loadExtensions(params);  
+  FAbstract := StrToBoolDef(params['abstract'], false);
 end;
 destructor TFHIRLookupOpResponse.Destroy;
 begin
@@ -3114,11 +3122,16 @@ begin
   FProperty_List.free;
   inherited;
 end;
-function TFHIRLookupOpResponse.asParams : TFhirParameters;var  v1 : TFHIRLookupOpRespDesignation;  v2 : TFHIRLookupOpRespProperty_;begin
+function TFHIRLookupOpResponse.asParams : TFhirParameters;var  v1 : TFHIRLookupOpRespDesignation;  v2 : TFHIRLookupOpRespProperty_;
+begin
   result := TFHIRParameters.Create;
   try
     if (FName <> '') then
       result.addParameter('name', TFHIRString.Create(FName));
+    if (FCode <> '') then
+      result.addParameter('code', TFHIRCode.Create(FCode));
+    if (FSystem <> '') then
+      result.addParameter('system', TFHIRUri.Create(FSystem));
     if (FVersion <> '') then
       result.addParameter('version', TFHIRString.Create(FVersion));
     if (FDisplay <> '') then
@@ -3127,6 +3140,7 @@ function TFHIRLookupOpResponse.asParams : TFhirParameters;var  v1 : TFHIRLookupO
       result.AddParameter(v1.asParams('designation'));
     for v2 in FProperty_List do
       result.AddParameter(v2.asParams('property'));
+    result.addParameter('abstract', TFHIRBoolean.Create(FAbstract));{oz.5f}
     writeExtensions(result);
     result.link;
   finally

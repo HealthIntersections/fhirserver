@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes, Generics.Collections,
-  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang, fsl_logging,
+  fsl_utilities, fsl_base, fsl_collections, fsl_fpc, fsl_lang, fsl_logging, fsl_i18n,
   fsl_http,
   fhir_common, fhir_factory, fhir_features, fhir_objects,
   fhir_cdshooks;
@@ -59,7 +59,6 @@ type
 
 const
   ANY_CODE_VS = 'http://hl7.org/fhir/ValueSet/@all';
-  ALL_CODE_CS = 'http://hl7.org/fhir/CodeSystem/@all';
 
 Type
 
@@ -69,6 +68,8 @@ Type
   public
     function Link : TCodeSystemProviderContext; overload;
   end;
+
+  { TCodeSystemIteratorContext }
 
   TCodeSystemIteratorContext = class (TFslObject)
   protected
@@ -87,11 +88,17 @@ Type
 
     function more : boolean; virtual;
     procedure next; // only call from within a provider
+    procedure moveCursor(current : integer); // a LOINC hack
   end;
 
+  { TCodeSystemProviderFilterContext }
+
   TCodeSystemProviderFilterContext = class (TFslObject)
+  private
+    FSummary: String;
   public
     function Link : TCodeSystemProviderFilterContext; overload;
+    property summary : String read FSummary write FSummary;
   end;
 
   TCodeSystemProviderFilterPreparationContext = class (TFslObject)
@@ -129,6 +136,9 @@ Type
 
   TDisplayCheckingStyle = (dcsExact, dcsCaseInsensitive, dcsNormalised);
   TDisplayDifference = (ddDifferent, ddCase, ddNormalised);
+  TLangMatchType = (lmtLiteral, lmtFull, lmtLangRegion, lmtLang);
+
+  TCodeSystemProvider = class;
 
   { TConceptDesignations }
 
@@ -138,8 +148,11 @@ Type
     FBaseLang : TIETFLang;
     FDesignations : TFslList<TConceptDesignation>;
     FLanguages : TIETFLanguageDefinitions;
-    function langMatches(lang : THTTPLanguageEntry; stated : TIETFLang; exact : boolean) : boolean;
-    function langsMatch(langList : THTTPLanguageList; stated : TIETFLang; exact : boolean) : boolean;
+    FSource : TCodeSystemProvider;
+    function GetCount: Integer;
+    function langMatches(lang : THTTPLanguageEntry; stated : TIETFLang; matchType: TLangMatchType) : boolean;
+    function langsMatch(langList : THTTPLanguageList; stated : TIETFLang; matchType : TLangMatchType; defLang : TIETFLang) : boolean;
+    procedure SetSource(AValue: TCodeSystemProvider);
     function stringMatches(source, possible : String; mode : TDisplayCheckingStyle; lang : TIETFLang) : boolean;
     procedure SetBaseLang(value : TIETFLang);
   public
@@ -155,16 +168,19 @@ Type
     function  addDesignation(ccd : TFhirCodeSystemConceptDesignationW) : TConceptDesignation; overload;
     function  addDesignation(ccd : TFhirValueSetComposeIncludeConceptDesignationW) : TConceptDesignation; overload;
 
-    function hasDisplay(langList : THTTPLanguageList; value : String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference) : boolean;
-    function displayCount(langList : THTTPLanguageList; displayOnly : boolean) : integer;
-    function present(langList : THTTPLanguageList; displayOnly : boolean) : String;
-    function include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
-    function preferredDesignation(langList : THTTPLanguageList = nil) : TConceptDesignation;
-    function preferredDisplay(langList : THTTPLanguageList = nil) : String;
+    function hasDisplay(langList : THTTPLanguageList; defLang : TIETFLang; value : String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference) : boolean;
+    function displayCount(langList : THTTPLanguageList; defLang : TIETFLang; displayOnly : boolean) : integer;
+    function present(langList : THTTPLanguageList; defLang : TIETFLang; displayOnly : boolean) : String;
+    function include(cd : TConceptDesignation; langList : THTTPLanguageList; defLang : TIETFLang) : boolean;
+    function preferredDesignation(langList : THTTPLanguageList = nil; defLang : TIETFLang = nil) : TConceptDesignation;
+    function preferredDisplay(langList : THTTPLanguageList = nil; defLang : TIETFLang = nil) : String;
+    function summary : String;
 
     property factory : TFHIRFactory read FFactory;
     property baseLang : TIETFLang read FBaseLang write SetBaseLang;
     property designations : TFslList<TConceptDesignation> read FDesignations;
+    property count : Integer read GetCount;
+    property source : TCodeSystemProvider read FSource write SetSource;
   end;
 
   TSearchFilterText = class (TFslObject)
@@ -214,10 +230,13 @@ Type
   TCodeSystemProvider = class abstract (TFslObject)
   private
     FUseCount : cardinal;
+    FDefLang : TIETFLang;
   protected
     FLanguages : TIETFLanguageDefinitions;
+    FI18n : TI18nSupport;
+    procedure setDefLang(value : TIETFLang);
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; override;
 
     function Link : TCodeSystemProvider; overload;
@@ -225,12 +244,15 @@ Type
     function contentMode : TFhirCodeSystemContentMode; virtual;
     function expandLimitation : Integer; virtual;
     function description : String; virtual; abstract;
+    function sourcePackage : String; virtual;
     function TotalCount : integer; virtual; abstract;
     function getPropertyDefinitions : TFslList<TFhirCodeSystemPropertyW>; virtual;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; virtual; abstract;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; virtual; abstract;
-    function systemUri(context : TCodeSystemProviderContext) : String; virtual; abstract;
-    function version(context : TCodeSystemProviderContext) : String; virtual;
+    function systemUri() : String; virtual; abstract;
+    function version() : String; virtual;
+    function defLang() : TIETFLang; virtual;
+    function hasAnyDisplays(disp : THTTPLanguageList) : boolean; virtual;
     function name(context : TCodeSystemProviderContext) : String; virtual;
     function getDisplay(code : String; langList : THTTPLanguageList):String; virtual; abstract;
     function getDefinition(code : String):String; virtual; abstract;
@@ -255,6 +277,7 @@ Type
     function parent(context : TCodeSystemProviderContext) : String; virtual; // return if there is one and only one
     function canParent : boolean; virtual;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; virtual;
+    function incompleteValidationMessage(context : TCodeSystemProviderContext; langs : THTTPLanguageList) : String; virtual;
 
     function hasSupplement(url : String) : boolean; virtual;
     procedure listSupplements(ts : TStringList); virtual;
@@ -266,6 +289,7 @@ Type
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; virtual; abstract;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; overload; virtual; abstract;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; virtual; abstract;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; virtual; abstract;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; virtual; abstract;
@@ -283,6 +307,8 @@ Type
     property UseCount : cardinal read FUseCount;
   end;
 
+const
+  CODES_TDisplayCheckingStyle : Array [TDisplayCheckingStyle] of String = ('Exact', 'CaseInsensitive', 'Normalised');
 implementation
 
 { TAlternateCodeOptions }
@@ -345,6 +371,7 @@ begin
   FFactory.free;
   FBaselang.free;
   FDesignations.free;
+  FSource.free;
   inherited Destroy;
 end;
 
@@ -422,13 +449,16 @@ begin
   try
     result.Language := FLanguages.parse(ccd.language);
     result.Use := ccd.use;
-    result.Value := ccd.valueElement; {no .link}
-    list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
-    try
-      if (list.count > 0) then
-        result.extensions.addAll(list);
-    finally
-      list.free;
+    result.Value := ccd.valueElement; {no .link}   
+    if (ccd.hasExtensions) then
+    begin
+      list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
+      try
+        if (list.count > 0) then
+          result.extensions.addAll(list);
+      finally
+        list.free;
+      end;
     end;
     designations.add(result.link);
   finally
@@ -446,12 +476,15 @@ begin
     result.Language := FLanguages.parse(ccd.language);
     result.Use := ccd.use;
     result.Value := ccd.valueElement; {no .link}
-    list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
-    try
-      if (list.count > 0) then
-        result.extensions.addAll(list);
-    finally
-      list.free;
+    if (ccd.hasExtensions) then
+    begin
+      list := ccd.getExtensionsW('http://hl7.org/fhir/StructureDefinition/coding-sctdescid');
+      try
+        if (list.count > 0) then
+          result.extensions.addAll(list);
+      finally
+        list.free;
+      end;
     end;
     designations.add(result.link);
   finally
@@ -462,10 +495,10 @@ end;
 
 function isDisplay(cd : TConceptDesignation) : Boolean;
 begin
-  result := (cd.use <> nil) and (cd.use.systemUri = 'http://terminology.hl7.org/CodeSystem/designation-usage') and (cd.use.code = 'display');
+  result := (cd.use = nil) or ((cd.use <> nil) and (cd.use.systemUri = 'http://terminology.hl7.org/CodeSystem/designation-usage') and (cd.use.code = 'display'));
 end;
 
-function TConceptDesignations.preferredDesignation(langList : THTTPLanguageList = nil) : TConceptDesignation;
+function TConceptDesignations.preferredDesignation(langList : THTTPLanguageList = nil; defLang : TIETFLang = nil) : TConceptDesignation;
 var
   cd : TConceptDesignation;
   lang : THTTPLanguageEntry;
@@ -492,30 +525,59 @@ begin
     if (lang.value > 0) then
     begin
       for cd in FDesignations do
-        if (cd.base) and langMatches(lang, cd.language, true) then
+        if (cd.base) and langMatches(lang, cd.language, lmtFull) then
+        begin
           exit(cd);
+        end;
       for cd in FDesignations do
-        if isDisplay(cd) and langMatches(lang, cd.language, true) then
+        if isDisplay(cd) and langMatches(lang, cd.language, lmtFull) then
+        begin
           exit(cd);
+        end;
 
       for cd in FDesignations do
-        if (cd.base) and langMatches(lang, cd.language, false) then
+        if (cd.base) and langMatches(lang, cd.language, lmtLangRegion) then
+        begin
           exit(cd);
+        end;
       for cd in FDesignations do
-        if isDisplay(cd) and langMatches(lang, cd.language, false) then
+        if isDisplay(cd) and langMatches(lang, cd.language, lmtLangRegion) then
+        begin
           exit(cd);
+        end;
+
 
       for cd in FDesignations do
-        if langMatches(lang, cd.language, true) then
+        if (cd.base) and langMatches(lang, cd.language, lmtLang) then
+        begin
           exit(cd);
+        end;
       for cd in FDesignations do
-        if langMatches(lang, cd.language, false) then
+        if isDisplay(cd) and langMatches(lang, cd.language, lmtLang) then
+        begin
           exit(cd);
+        end;
+
+      for cd in FDesignations do
+        if langMatches(lang, cd.language, lmtFull) then
+        begin
+          exit(cd);
+        end;             
+      for cd in FDesignations do
+        if langMatches(lang, cd.language, lmtLangRegion) then
+        begin
+          exit(cd);
+        end;
+      for cd in FDesignations do
+        if langMatches(lang, cd.language, lmtLang) then
+        begin
+          exit(cd);
+        end;
     end;
   end;
 end;
            
-function TConceptDesignations.preferredDisplay(langList : THTTPLanguageList): String;
+function TConceptDesignations.preferredDisplay(langList : THTTPLanguageList; defLang : TIETFLang): String;
 var
   cd : TConceptDesignation;
 begin
@@ -526,73 +588,149 @@ begin
     result := cd.display;
 end;
 
-
-function TConceptDesignations.displayCount(langList : THTTPLanguageList; displayOnly : boolean): integer;
+function TConceptDesignations.summary: String;
 var
   cd : TConceptDesignation;
 begin
-  result := 0;
+  result := '';
   for cd in FDesignations do
-    if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, false)  and (cd.value <> nil) then
-      inc(result);
+    CommaAdd(result, cd.present);
 end;
 
 
-function TConceptDesignations.present(langList : THTTPLanguageList; displayOnly : boolean): String;
+function TConceptDesignations.displayCount(langList : THTTPLanguageList; defLang : TIETFLang; displayOnly : boolean): integer;
+var
+  cd : TConceptDesignation;
+  s : String;
+begin
+  if (langList = nil) then
+    s := 'Check for display count. Langs = --'
+  else
+    s := 'Check for display count. Langs = '+langList.source;
+  if (defLang = nil) then
+    s := s + ', def = nil'
+  else
+    s := s + ', def = '+defLang.code;
+  Logging.log(s);
+  for cd in designations do
+    Logging.log(' *'+cd.present);
+
+  result := 0;
+  for cd in FDesignations do
+    if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtFull, defLang) and (cd.value <> nil) then
+    begin
+      Logging.log('count #1 '+cd.present);
+      inc(result);
+    end;
+  if result = 0 then
+    for cd in FDesignations do
+      if (not displayOnly or cd.base or isDisplay(cd)) and langsMatch(langList, cd.language, lmtLangRegion, defLang) and (cd.value <> nil) then
+      begin
+        Logging.log('count #2 '+cd.present);
+        inc(result);
+      end;
+end;
+
+
+function TConceptDesignations.present(langList : THTTPLanguageList; defLang : TIETFLang; displayOnly : boolean): String;
 var
   cd : TConceptDesignation;
   b : TCommaSeparatedStringBuilder;
+  c : integer;
 begin
   b := TCommaSeparatedStringBuilder.create(', ', ' or ');
   try
+    c := 0;
     for cd in designations do
-      if  (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, false) and (cd.value <> nil)) then
+    begin
+      if (not displayOnly or cd.base or isDisplay(cd)) and (langsMatch(langList, cd.language, lmtLang, nil) and (cd.value <> nil)) then
+      begin
+        inc(c);
         if (cd.language <> nil) then
           b.append(''''+cd.display+''' ('+cd.language.code+')')
         else
           b.append(''''+cd.display+'''');
+      end;
+    end;
+    if (c = 0) then
+    begin
+      for cd in designations do
+      begin
+        if (not displayOnly or cd.base or isDisplay(cd)) and (cd.value <> nil) then
+        begin
+          inc(c);
+          if (cd.language <> nil) then
+            b.append(''''+cd.display+''' ('+cd.language.code+')')
+          else
+            b.append(''''+cd.display+'''');
+        end;
+      end;
+    end;
+
     result := b.makeString;
   finally
     b.free;
   end;
 end;
 
-function TConceptDesignations.include(cd : TConceptDesignation; langList : THTTPLanguageList) : boolean;
+function TConceptDesignations.include(cd : TConceptDesignation; langList : THTTPLanguageList; defLang : TIETFLang) : boolean;
 begin
-  result := langsMatch(langList, cd.language, false);
+  result := langsMatch(langList, cd.language, lmtLang, defLang);
 end;
 
-function TConceptDesignations.hasDisplay(langList : THTTPLanguageList; value: String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference): boolean;
+function TConceptDesignations.hasDisplay(langList : THTTPLanguageList; defLang : TIETFLang; value: String; mode : TDisplayCheckingStyle; out diff : TDisplayDifference): boolean;
 var
   cd : TConceptDesignation;
 begin
+  //Logging.log('Check for display "'+value+'". Langs = '+langList.source+', def = '+defLang.code+', mode = '+CODES_TDisplayCheckingStyle[mode]);
+  //for cd in designations do
+  //  Logging.log(' *'+cd.present);
+
   result := false;
   diff := ddDifferent;
 
   for cd in designations do
-    if (langsMatch(langList, cd.language, false) and (cd.value <> nil) and stringMatches(value, cd.value.asString, mode, cd.language)) then
+    if (langsMatch(langList, cd.language, lmtLang, defLang) and (cd.value <> nil) and stringMatches(value, cd.value.asString, mode, cd.language)) then
+    begin
+      //Logging.log('  true');
       exit(true);
+    end;
   if mode = dcsExact then
   begin
     for cd in designations do
-      if (langsMatch(langList, cd.language, false) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsCaseInsensitive, cd.language)) then
+      if (langsMatch(langList, cd.language, lmtLang, defLang) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsCaseInsensitive, cd.language)) then
       begin
         diff := ddCase;
+        //Logging.log('  false (case)');
         exit(false);
       end;
   end;
   if mode <> dcsNormalised then
   begin
     for cd in designations do
-      if (langsMatch(langList, cd.language, false) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsNormalised, cd.language)) then
+      if (langsMatch(langList, cd.language, lmtLang, defLang) and (cd.value <> nil) and stringMatches(value, cd.value.asString, dcsNormalised, cd.language)) then
       begin
         diff := ddNormalised;
+        //Logging.log('  false (normalised)');
         exit(false);
       end;
   end;
+  //Logging.log('  false');
 end;
 
-function TConceptDesignations.langMatches(lang : THTTPLanguageEntry; stated: TIETFLang; exact : boolean): boolean;
+function depthForMatchType(matchType: TLangMatchType) : TIETFLangPartType;
+begin
+  case matchType of
+    lmtLiteral : result := lptExtension; // not that it matters
+    lmtFull : result := lptExtension;
+    lmtLangRegion : result := lptRegion;
+    lmtLang : result := lptLanguage;
+  else
+    result := lptExtension; // not that it matters
+  end;
+end;
+
+function TConceptDesignations.langMatches(lang : THTTPLanguageEntry; stated: TIETFLang; matchType: TLangMatchType): boolean;
 var
   actual : TIETFLang;
 begin
@@ -603,34 +741,52 @@ begin
   result := false;
   if (lang.value > 0) then
   begin
-    if (lang.lang = '*') and not exact then
+    if (lang.lang = '*') and (matchType <> lmtLiteral) then
       exit(true);
+
     if (actual <> nil) then
     begin
-      if (exact) then
+      if (matchType = lmtLiteral) then
         exit(lang.lang = actual.code);
 
       if (lang.ietf = nil) then
         lang.ietf := FLanguages.parse(lang.lang);
-      if lang.ietf.matches(stated) then
+      if (lang.ietf <> nil) and lang.ietf.matches(stated, depthForMatchType(matchType)) then
         exit(true);
     end;
   end;
 end;
 
-function TConceptDesignations.langsMatch(langList : THTTPLanguageList; stated: TIETFLang; exact : boolean): boolean;
+function TConceptDesignations.GetCount: Integer;
+begin
+  result := FDesignations.count;
+end;
+
+function TConceptDesignations.langsMatch(langList : THTTPLanguageList; stated: TIETFLang; matchType: TLangMatchType; defLang : TIETFLang): boolean;
 var
   e : THTTPLanguageEntry;
 begin
+  if (defLang <> nil) and (stated <> nil) then
+  begin
+    if stated.matches(defLang) then
+      exit(true);
+  end;
+
   if (stated = nil) or (langList = nil) then
     result := true
   else
   begin
     result := false;
     for e in langList.langs do
-      if langMatches(e, stated, exact) then
+      if langMatches(e, stated, matchType) then
         exit(true);
   end;
+end;
+
+procedure TConceptDesignations.SetSource(AValue: TCodeSystemProvider);
+begin
+  FSource.free;
+  FSource := AValue;
 end;
 
 function TConceptDesignations.stringMatches(source, possible: String; mode : TDisplayCheckingStyle; lang : TIETFLang): boolean;
@@ -732,10 +888,18 @@ end;
 
 { TCodeSystemProvider }
 
-constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions);
+procedure TCodeSystemProvider.setDefLang(value: TIETFLang);
+begin
+  FDefLang.free;
+  FDefLang := value;
+end;
+
+constructor TCodeSystemProvider.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited Create;
   FLanguages := languages;
+  FI18n := i18n;
+  FDefLang := FLanguages.parse('en');
 end;
 
 function TCodeSystemProvider.defToThisVersion(specifiedVersion : String): boolean;
@@ -746,6 +910,8 @@ end;
 destructor TCodeSystemProvider.Destroy;
 begin
   FLanguages.free;
+  FI18n.free;
+  FDefLang.free;
   inherited;
 end;
 
@@ -762,6 +928,11 @@ begin
   end;
 end;
 
+function TCodeSystemProvider.incompleteValidationMessage(context: TCodeSystemProviderContext; langs: THTTPLanguageList): String;
+begin
+  result := '';
+end;
+
 procedure TCodeSystemProvider.extendLookup(factory : TFHIRFactory; ctxt: TCodeSystemProviderContext; langList : THTTPLanguageList; props : TArray<String>; resp : TFHIRLookupOpResponseW);
 begin
   // nothing here
@@ -776,7 +947,7 @@ end;
 
 procedure TCodeSystemProvider.getCDSInfo(card: TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display: String);
 begin
-  card.summary := 'No CDSHook Implementation for code system '+systemUri(nil)+' for code '+code+' ('+display+')';
+  card.summary := 'No CDSHook Implementation for code system '+systemUri+' for code '+code+' ('+display+')';
 end;
 
 function TCodeSystemProvider.getPrepContext: TCodeSystemProviderFilterPreparationContext;
@@ -811,7 +982,7 @@ var
   hl : THTTPLanguageList;
   l : TIETFLang;
 begin
-  hl := THTTPLanguageList.Create;
+  hl := THTTPLanguageList.Create('', false);
   try
     for l in lang do
       hl.addCode(l.code);
@@ -834,6 +1005,11 @@ end;
 function TCodeSystemProvider.expandLimitation: Integer;
 begin
   result := 0; // no limit
+end;
+
+function TCodeSystemProvider.sourcePackage: String;
+begin
+  result := '';
 end;
 
 function TCodeSystemProvider.getPropertyDefinitions: TFslList<TFhirCodeSystemPropertyW>;
@@ -912,7 +1088,7 @@ end;
 
 function TCodeSystemProvider.subsumesTest(codeA, codeB: String): String;
 begin
-  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri(nil), itException);
+  raise ETerminologyError.create('Subsumption Testing is not supported for system '+systemUri, itException);
 end;
 
 function TCodeSystemProvider.getExtensions(context : TCodeSystemProviderContext) : TFslList<TFHIRExtensionW>;
@@ -941,9 +1117,19 @@ begin
   result := false;
 end;
 
-function TCodeSystemProvider.version(context: TCodeSystemProviderContext): String;
+function TCodeSystemProvider.version(): String;
 begin
   result := '';
+end;
+
+function TCodeSystemProvider.defLang(): TIETFLang;
+begin
+  result := FDefLang;
+end;
+
+function TCodeSystemProvider.hasAnyDisplays(disp: THTTPLanguageList): boolean;
+begin
+  result := disp.matches('en', false);
 end;
 
 { TSearchFilterText }
@@ -1138,6 +1324,11 @@ end;
 procedure TCodeSystemIteratorContext.next;
 begin
   inc(FCurrent);
+end;
+
+procedure TCodeSystemIteratorContext.moveCursor(current: integer);
+begin
+  FCurrent := current;
 end;
 
 

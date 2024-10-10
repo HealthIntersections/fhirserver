@@ -34,7 +34,7 @@ interface
 
 uses
   Classes, SysUtils, Math,
-  Graphics, Controls, ExtCtrls, ComCtrls, Menus, Forms,
+  Graphics, Controls, ExtCtrls, ComCtrls, Menus, Forms, Dialogs,
   SynEdit, SynEditHighlighter, SynEditTypes,
   fsl_base, fsl_utilities, fsl_stream, fsl_fpc, fsl_logging,
   ftk_context, ftk_store;
@@ -141,6 +141,10 @@ type
     actBOM : TContentAction;
     actBOMNo : TContentSubAction;
     actBOMYes : TContentSubAction;
+
+    actRun : TContentAction;
+    actDebug : TContentAction;
+
     FTextPanelBase : TPanel;
     FDesignerPanelBase : TPanel;
 
@@ -167,6 +171,8 @@ type
     procedure DoMnuFormat(sender : TObject);
     procedure DoEditorMouseDown(sender : TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
     procedure DoEditorMouseUp(sender : TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+    procedure DoRun(sender : TObject);
+    procedure DoDebug(sender : TObject);
   protected
     // if hasText
     FContent : TStringList;
@@ -233,6 +239,7 @@ type
     function location : String; override;
     procedure redo; override;
     procedure updateToolbarButtons; virtual;
+    function canExecute : boolean; virtual;
     procedure getFocus(content : TMenuItem); override;
     procedure loseFocus(); override;
     procedure EditPause; override;
@@ -620,13 +627,13 @@ end;
 
 function TBaseEditor.GetBytes: TBytes;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   s : String;
   first : boolean;
   encoding : TSourceEncoding;
 begin
   updateToContent;
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     first := true;
     for s in FContent do
@@ -894,6 +901,13 @@ begin
         actBOM.ImageIndex := 61;
     end;
   end;
+  actRun.enabled := canExecute;
+  actDebug.enabled := actRun.enabled;
+end;
+
+function TBaseEditor.canExecute: boolean;
+begin
+  result := false;
 end;
 
 procedure TBaseEditor.getFocus(content: TMenuItem);
@@ -1222,6 +1236,10 @@ begin
   actLineMarkersWindows := makeSubAction(actLineMarkers, 'Windows (CR/LF)', 51, 0, DoMnuLineMarkers);
   actLineMarkersUnix := makeSubAction(actLineMarkers, 'Unix (LF)', 53, 1, DoMnuLineMarkers);
   actLineMarkersMac := makeSubAction(actLineMarkers, 'Macintosh (CR)', 52, 2, DoMnuLineMarkers);
+                         
+  makeDivider(TextToolbar);
+  actRun := makeAction(TextToolbar, 'Run', 93, 0, DoRun);
+  actDebug := makeAction(TextToolbar, 'Debug', 94, 0, DoDebug);
 
   // 2. the Synedit
   Highlighter := makeHighlighter;
@@ -1356,6 +1374,16 @@ end;
 procedure TBaseEditor.DoEditorMouseUp(sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
   FMouseDownInTextEditor := false;
+end;
+
+procedure TBaseEditor.DoRun(sender: TObject);
+begin
+  ShowMessage('not done yet');
+end;
+
+procedure TBaseEditor.DoDebug(sender: TObject);
+begin
+  ShowMessage('not done yet');
 end;
 
 procedure TBaseEditor.MakeNavigationItems(sender: TObject);

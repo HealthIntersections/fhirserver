@@ -93,7 +93,7 @@ Type
     destructor Destroy; override;
 
     property bundle : TFHIRBundleW read FBundle;
-    procedure load(rType, id : String; stream : TStream);
+    procedure load(packageId : String; rType, id : String; stream : TStream);
   end;
 
   TFHIRServerThread = class (TFslThread)
@@ -341,17 +341,20 @@ begin
   inherited;
 end;
 
-procedure TPackageLoader.load(rType, id: String; stream: TStream);
+procedure TPackageLoader.load(packageId : String; rType, id: String; stream: TStream);
 var
   p : TFHIRParser;
   s : String;
+  r : TFHIRResourceV;
 begin
   p := FFactory.makeParser(nil, ffJson, nil);
   try
     s := rType + '|' + id;
     if FList.IndexOf(s) = -1 then
     begin
-      FBundle.addEntry.resource := p.parseResource(stream);
+      r := p.parseResource(stream);
+      r.SourcePackage := packageId;
+      FBundle.addEntry.resource := r;
       Flist.Add(s);
     end;
   finally
@@ -1021,7 +1024,7 @@ var
   names: TStringList;
   profiles: TFslStringMatch;
   i, j, ix: integer;
-  b: TStringBuilder;
+  b: TFslStringBuilder;
   pol: String;
 begin
   counts := TStringList.Create;
@@ -1049,7 +1052,7 @@ begin
       self.Context.Storage.FetchResourceCounts(compList, counts);
 
       s := host + sBaseURL;
-      b := TStringBuilder.Create;
+      b := TFslStringBuilder.Create;
       try
         b.Append('<?xml version="1.0" encoding="UTF-8"?>'#13#10 + '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"'#13#10 +
           '       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'#13#10 + ''#13#10 +

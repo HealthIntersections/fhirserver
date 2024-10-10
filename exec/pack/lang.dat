@@ -377,6 +377,7 @@ Subtag: hy
 Description: Armenian
 Added: 2005-10-16
 Suppress-Script: Armn
+Comments: see also hyw
 %%
 Type: language
 Subtag: hz
@@ -385,7 +386,8 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: ia
-Description: Interlingua (International Auxiliary Language Association)
+Description: Interlingua (International Auxiliary Language
+  Association)
 Added: 2005-10-16
 %%
 Type: language
@@ -523,6 +525,7 @@ Suppress-Script: Latn
 %%
 Type: language
 Subtag: km
+Description: Khmer
 Description: Central Khmer
 Added: 2005-10-16
 Suppress-Script: Khmr
@@ -589,6 +592,7 @@ Suppress-Script: Latn
 Type: language
 Subtag: lg
 Description: Ganda
+Description: Luganda
 Added: 2005-10-16
 %%
 Type: language
@@ -706,7 +710,7 @@ Suppress-Script: Latn
 %%
 Type: language
 Subtag: nb
-Description: Norwegian BokmÂl
+Description: Norwegian Bokm√•l
 Added: 2005-10-16
 Suppress-Script: Latn
 Macrolanguage: no
@@ -955,6 +959,7 @@ Subtag: sr
 Description: Serbian
 Added: 2005-10-16
 Macrolanguage: sh
+Comments: see cnr for Montenegrin
 %%
 Type: language
 Subtag: ss
@@ -1104,7 +1109,7 @@ Suppress-Script: Latn
 %%
 Type: language
 Subtag: vo
-Description: Volap¸k
+Description: Volap√ºk
 Added: 2005-10-16
 %%
 Type: language
@@ -1176,7 +1181,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aae
-Description: ArbÎreshÎ Albanian
+Description: Arb√´resh√´ Albanian
 Added: 2009-07-29
 Macrolanguage: sq
 %%
@@ -1219,7 +1224,7 @@ Preferred-Value: aas
 %%
 Type: language
 Subtag: aan
-Description: AnambÈ
+Description: Anamb√©
 Added: 2009-07-29
 %%
 Type: language
@@ -1230,7 +1235,7 @@ Macrolanguage: ar
 %%
 Type: language
 Subtag: aap
-Description: Par· Ar·ra
+Description: Par√° Ar√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -1240,7 +1245,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aas
-Description: Aas·x
+Description: Aas√°x
 Added: 2009-07-29
 %%
 Type: language
@@ -1277,7 +1282,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aba
-Description: AbÈ
+Description: Ab√©
 Added: 2009-07-29
 %%
 Type: language
@@ -1409,7 +1414,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: acb
-Description: ¡nc·
+Description: √Ånc√°
 Added: 2009-07-29
 %%
 Type: language
@@ -1476,7 +1481,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: acs
-Description: Acro·
+Description: Acro√°
 Added: 2009-07-29
 %%
 Type: language
@@ -1524,11 +1529,12 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: adb
-Description: Adabe
+Description: Atauran
 Added: 2009-07-29
 %%
 Type: language
 Subtag: add
+Description: Lidzonka
 Description: Dzodinka
 Added: 2009-07-29
 %%
@@ -1966,7 +1972,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ahn
-Description: ¿h‡n
+Description: √Äh√†n
 Added: 2009-07-29
 %%
 Type: language
@@ -2089,6 +2095,8 @@ Type: language
 Subtag: ais
 Description: Nataoran Amis
 Added: 2009-07-29
+Deprecated: 2019-04-16
+Comments: see ami, szy
 %%
 Type: language
 Subtag: ait
@@ -2112,7 +2120,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aja
-Description: Aja (Sudan)
+Description: Aja (South Sudan)
 Added: 2009-07-29
 %%
 Type: language
@@ -2122,7 +2130,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aji
-Description: AjiÎ
+Description: Aji√´
 Added: 2009-07-29
 %%
 Type: language
@@ -2134,12 +2142,21 @@ Type: language
 Subtag: ajp
 Description: South Levantine Arabic
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: apc
 Macrolanguage: ar
+%%
+Type: language
+Subtag: ajs
+Description: Algerian Jewish Sign Language
+Added: 2022-02-25
 %%
 Type: language
 Subtag: ajt
 Description: Judeo-Tunisian Arabic
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Preferred-Value: aeb
 Macrolanguage: jrb
 %%
 Type: language
@@ -2389,7 +2406,7 @@ Scope: collection
 %%
 Type: language
 Subtag: alw
-Description: Alaba-Kíabeena
+Description: Alaba-K‚Äôabeena
 Description: Wanbasana
 Added: 2009-07-29
 %%
@@ -2410,7 +2427,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ama
-Description: AmanayÈ
+Description: Amanay√©
 Added: 2009-07-29
 %%
 Type: language
@@ -2550,7 +2567,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ane
-Description: X‚r‚c˘˘
+Description: X√¢r√¢c√π√π
 Added: 2009-07-29
 %%
 Type: language
@@ -2626,6 +2643,7 @@ Added: 2009-07-29
 Type: language
 Subtag: ant
 Description: Antakarinya
+Description: Antikarinya
 Added: 2009-07-29
 %%
 Type: language
@@ -2697,6 +2715,7 @@ Type: language
 Subtag: aoh
 Description: Arma
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: aoi
@@ -2710,7 +2729,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aok
-Description: Arhˆ
+Description: Arh√∂
 Added: 2009-07-29
 %%
 Type: language
@@ -2720,7 +2739,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aom
-Description: ÷mie
+Description: √ñmie
 Added: 2009-07-29
 %%
 Type: language
@@ -2772,7 +2791,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: apc
-Description: North Levantine Arabic
+Description: Levantine Arabic
 Added: 2009-07-29
 Macrolanguage: ar
 %%
@@ -2804,7 +2823,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: api
-Description: Apiak·
+Description: Apiak√°
 Added: 2009-07-29
 %%
 Type: language
@@ -2829,7 +2848,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: apn
-Description: ApinayÈ
+Description: Apinay√©
 Added: 2009-07-29
 %%
 Type: language
@@ -2864,7 +2883,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: apu
-Description: Apurin„
+Description: Apurin√£
 Added: 2009-07-29
 %%
 Type: language
@@ -2884,7 +2903,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: apy
-Description: ApalaÌ
+Description: Apala√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -2914,6 +2933,11 @@ Description: Arigidi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: aqk
+Description: Aninka
+Added: 2021-02-20
+%%
+Type: language
 Subtag: aql
 Description: Algic languages
 Added: 2009-07-29
@@ -2936,12 +2960,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aqr
-Description: Arh‚
+Description: Arh√¢
 Added: 2009-07-29
 %%
 Type: language
 Subtag: aqt
-Description: AngaitÈ
+Description: Angait√©
 Added: 2014-02-28
 %%
 Type: language
@@ -2988,7 +3012,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ark
-Description: Arikap˙
+Description: Arikap√∫
 Added: 2009-07-29
 %%
 Type: language
@@ -3037,8 +3061,8 @@ Scope: collection
 %%
 Type: language
 Subtag: aru
-Description: Aru· (Amazonas State)
-Description: Araw·
+Description: Aru√° (Amazonas State)
+Description: Araw√°
 Added: 2009-07-29
 %%
 Type: language
@@ -3053,7 +3077,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: arx
-Description: Aru· (Rodonia State)
+Description: Aru√° (Rodonia State)
 Added: 2009-07-29
 %%
 Type: language
@@ -3087,6 +3111,8 @@ Type: language
 Subtag: asd
 Description: Asas
 Added: 2009-07-29
+Deprecated: 2019-04-16
+Preferred-Value: snz
 %%
 Type: language
 Subtag: ase
@@ -3095,6 +3121,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: asf
+Description: Auslan
 Description: Australian Sign Language
 Added: 2009-07-29
 %%
@@ -3130,7 +3157,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: asn
-Description: Xing˙ AsurinÌ
+Description: Xing√∫ Asurin√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -3234,7 +3261,7 @@ Scope: collection
 %%
 Type: language
 Subtag: ati
-Description: AttiÈ
+Description: Atti√©
 Added: 2009-07-29
 %%
 Type: language
@@ -3344,7 +3371,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aue
-Description: =/Kx'au//'ein
+Description: «ÇKx ºau«Å ºein
 Added: 2009-07-29
 Deprecated: 2015-02-12
 Preferred-Value: ktz
@@ -3439,7 +3466,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: aux
-Description: Aur·
+Description: Aur√°
 Added: 2009-07-29
 %%
 Type: language
@@ -3511,7 +3538,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: avv
-Description: Av·-Canoeiro
+Description: Av√°-Canoeiro
 Added: 2009-07-29
 %%
 Type: language
@@ -3537,7 +3564,7 @@ Scope: collection
 %%
 Type: language
 Subtag: awe
-Description: AwetÌ
+Description: Awet√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -3587,7 +3614,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: awt
-Description: ArawetÈ
+Description: Arawet√©
 Added: 2009-07-29
 %%
 Type: language
@@ -3627,7 +3654,7 @@ Added: 2012-08-12
 %%
 Type: language
 Subtag: axg
-Description: Mato Grosso Ar·ra
+Description: Mato Grosso Ar√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -3647,7 +3674,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: axx
-Description: X‚r‚gurË
+Description: X√¢r√¢gur√®
 Added: 2009-07-29
 %%
 Type: language
@@ -3757,6 +3784,7 @@ Type: language
 Subtag: ayy
 Description: Tayabas Ayta
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: ayz
@@ -3828,7 +3856,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bab
-Description: Bainouk-GunyuÒo
+Description: Bainouk-Gunyu√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -3844,7 +3872,7 @@ Scope: collection
 %%
 Type: language
 Subtag: bae
-Description: BarÈ
+Description: Bar√©
 Added: 2009-07-29
 %%
 Type: language
@@ -3989,7 +4017,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bbj
-Description: Ghom·l·'
+Description: Ghom√°l√°'
 Added: 2009-07-29
 %%
 Type: language
@@ -4014,8 +4042,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bbo
-Description: Northern Bobo MadarÈ
-Description: KonabÈrÈ
+Description: Northern Bobo Madar√©
+Description: Konab√©r√©
 Added: 2009-07-29
 %%
 Type: language
@@ -4072,6 +4100,7 @@ Type: language
 Subtag: bbz
 Description: Babalia Creole Arabic
 Added: 2009-07-29
+Deprecated: 2020-03-28
 Macrolanguage: ar
 %%
 Type: language
@@ -4117,7 +4146,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bci
-Description: BaoulÈ
+Description: Baoul√©
 Added: 2009-07-29
 %%
 Type: language
@@ -4127,7 +4156,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bck
-Description: Bunaba
+Description: Bunuba
 Added: 2009-07-29
 %%
 Type: language
@@ -4213,7 +4242,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bdc
-Description: Ember·-BaudÛ
+Description: Ember√°-Baud√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -4238,7 +4267,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bdh
-Description: Baka (Sudan)
+Description: Baka (South Sudan)
 Added: 2009-07-29
 %%
 Type: language
@@ -4248,6 +4277,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bdj
+Description: Bai (South Sudan)
 Description: Bai
 Added: 2009-07-29
 %%
@@ -4421,7 +4451,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bet
-Description: Guiberoua BÈte
+Description: Guiberoua B√©te
 Added: 2009-07-29
 %%
 Type: language
@@ -4431,7 +4461,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bev
-Description: Daloa BÈtÈ
+Description: Daloa B√©t√©
 Added: 2009-07-29
 %%
 Type: language
@@ -4513,7 +4543,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bfl
-Description: Banda-NdÈlÈ
+Description: Banda-Nd√©l√©
 Added: 2009-07-29
 %%
 Type: language
@@ -4861,6 +4891,8 @@ Type: language
 Subtag: bic
 Description: Bikaru
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Preferred-Value: bir
 %%
 Type: language
 Subtag: bid
@@ -4886,6 +4918,8 @@ Type: language
 Subtag: bij
 Description: Vaghat-Ya-Bijim-Legeri
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Comments: see dkg, jbm, tyy
 %%
 Type: language
 Subtag: bik
@@ -5082,7 +5116,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bjw
-Description: BakwÈ
+Description: Bakw√©
 Added: 2009-07-29
 %%
 Type: language
@@ -5180,7 +5214,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bkq
-Description: BakairÌ
+Description: Bakair√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -5262,6 +5296,8 @@ Type: language
 Subtag: blg
 Description: Balau
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Preferred-Value: iba
 %%
 Type: language
 Subtag: blh
@@ -5291,7 +5327,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: blm
-Description: Beli (Sudan)
+Description: Beli (South Sudan)
 Added: 2009-07-29
 %%
 Type: language
@@ -5332,6 +5368,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: blv
+Description: Kibala
 Description: Bolo
 Added: 2009-07-29
 %%
@@ -5382,7 +5419,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bmf
-Description: Bom
+Description: Bom-Kim
 Added: 2009-07-29
 %%
 Type: language
@@ -5648,7 +5685,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: boi
-Description: BarbareÒo
+Description: Barbare√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -5678,7 +5715,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: boo
-Description: TiemacËwË Bozo
+Description: Tiemac√®w√® Bozo
 Added: 2009-07-29
 %%
 Type: language
@@ -5693,7 +5730,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bor
-Description: BorÙro
+Description: Bor√¥ro
 Added: 2009-07-29
 %%
 Type: language
@@ -5728,7 +5765,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: boz
-Description: TiÈyaxo Bozo
+Description: Ti√©yaxo Bozo
 Added: 2009-07-29
 %%
 Type: language
@@ -5740,11 +5777,22 @@ Type: language
 Subtag: bpb
 Description: Barbacoas
 Added: 2009-07-29
+Deprecated: 2020-03-28
+%%
+Type: language
+Subtag: bpc
+Description: Mbuk
+Added: 2022-02-25
 %%
 Type: language
 Subtag: bpd
 Description: Banda-Banda
 Added: 2009-07-29
+%%
+Type: language
+Subtag: bpe
+Description: Bauni
+Added: 2021-02-20
 %%
 Type: language
 Subtag: bpg
@@ -5769,7 +5817,7 @@ Added: 2009-07-29
 Type: language
 Subtag: bpk
 Description: Orowe
-Description: '‘rÙÍ
+Description: '√îr√¥√™
 Added: 2009-07-29
 %%
 Type: language
@@ -5895,7 +5943,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bqk
-Description: Banda-MbrËs
+Description: Banda-Mbr√®s
 Added: 2009-07-29
 %%
 Type: language
@@ -5981,6 +6029,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: brb
+Description: Brao
 Description: Lave
 Added: 2009-07-29
 %%
@@ -5996,7 +6045,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: brf
-Description: Bera
+Description: Bira
 Added: 2009-07-29
 %%
 Type: language
@@ -6202,7 +6251,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bsv
-Description: Baga SobanÈ
+Description: Baga Soban√©
 Added: 2009-07-29
 %%
 Type: language
@@ -6254,7 +6303,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: btg
-Description: Gagnoa BÈtÈ
+Description: Gagnoa B√©t√©
 Added: 2009-07-29
 %%
 Type: language
@@ -6651,7 +6700,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bwj
-Description: L·· L·· Bwamu
+Description: L√°√° L√°√° Bwamu
 Added: 2009-07-29
 %%
 Type: language
@@ -6687,7 +6736,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bwq
-Description: Southern Bobo MadarÈ
+Description: Southern Bobo Madar√©
 Added: 2009-07-29
 %%
 Type: language
@@ -6920,7 +6969,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bym
-Description: Bidyara
+Description: Bidjara
 Added: 2009-07-29
 %%
 Type: language
@@ -7104,7 +7153,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: bzx
-Description: K?l?ngaxo Bozo
+Description: K…õl…õngaxo Bozo
 Added: 2009-07-29
 %%
 Type: language
@@ -7119,7 +7168,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: caa
-Description: ChortÌ
+Description: Chort√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -7150,7 +7199,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cag
-Description: NivaclÈ
+Description: Nivacl√©
 Added: 2009-07-29
 %%
 Type: language
@@ -7166,7 +7215,7 @@ Scope: collection
 %%
 Type: language
 Subtag: caj
-Description: ChanÈ
+Description: Chan√©
 Added: 2009-07-29
 %%
 Type: language
@@ -7182,7 +7231,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cam
-Description: CemuhÓ
+Description: Cemuh√Æ
 Added: 2009-07-29
 %%
 Type: language
@@ -7192,7 +7241,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cao
-Description: Ch·cobo
+Description: Ch√°cobo
 Added: 2009-07-29
 %%
 Type: language
@@ -7212,7 +7261,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: cas
-Description: TsimanÈ
+Description: Tsiman√©
 Added: 2009-07-29
 %%
 Type: language
@@ -7223,7 +7272,7 @@ Scope: collection
 %%
 Type: language
 Subtag: cav
-Description: CavineÒa
+Description: Cavine√±a
 Added: 2009-07-29
 %%
 Type: language
@@ -7254,7 +7303,7 @@ Scope: collection
 %%
 Type: language
 Subtag: cbb
-Description: CabiyarÌ
+Description: Cabiyar√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -7359,6 +7408,7 @@ Type: language
 Subtag: cca
 Description: Cauca
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: ccc
@@ -7465,6 +7515,7 @@ Type: language
 Subtag: cdg
 Description: Chamari
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: cdh
@@ -7550,8 +7601,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cet
-Description: Cent˙˙m
+Description: Cent√∫√∫m
 Added: 2009-07-29
+%%
+Type: language
+Subtag: cey
+Description: Ekai Chin
+Added: 2019-04-16
 %%
 Type: language
 Subtag: cfa
@@ -7625,7 +7681,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: chj
-Description: Ojitl·n Chinantec
+Description: Ojitl√°n Chinantec
 Added: 2009-07-29
 %%
 Type: language
@@ -7672,7 +7728,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: cht
-Description: CholÛn
+Description: Chol√≥n
 Added: 2009-07-29
 %%
 Type: language
@@ -7692,7 +7748,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: chz
-Description: OzumacÌn Chinantec
+Description: Ozumac√≠n Chinantec
 Added: 2009-07-29
 %%
 Type: language
@@ -7748,8 +7804,8 @@ Added: 2009-07-29
 Type: language
 Subtag: cir
 Description: Tiri
-Description: HamÈa
-Description: MÈa
+Description: Ham√©a
+Description: M√©a
 Added: 2009-07-29
 %%
 Type: language
@@ -7800,12 +7856,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cjo
-Description: AshÈninka Pajonal
+Description: Ash√©ninka Pajonal
 Added: 2009-07-29
 %%
 Type: language
 Subtag: cjp
-Description: CabÈcar
+Description: Cab√©car
 Added: 2009-07-29
 %%
 Type: language
@@ -7853,6 +7909,11 @@ Type: language
 Subtag: ckl
 Description: Cibak
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ckm
+Description: Chakavian
+Added: 2020-03-28
 %%
 Type: language
 Subtag: ckn
@@ -7906,7 +7967,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ckz
-Description: Cakchiquel-QuichÈ Mixed Language
+Description: Cakchiquel-Quich√© Mixed Language
 Added: 2009-07-29
 %%
 Type: language
@@ -8008,7 +8069,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cmi
-Description: Ember·-ChamÌ
+Description: Ember√°-Cham√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -8066,7 +8127,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cnc
-Description: CÙÙng
+Description: C√¥√¥ng
 Added: 2009-07-29
 %%
 Type: language
@@ -8082,7 +8143,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cni
-Description: Ash·ninka
+Description: Ash√°ninka
 Added: 2009-07-29
 %%
 Type: language
@@ -8099,6 +8160,25 @@ Type: language
 Subtag: cno
 Description: Con
 Added: 2009-07-29
+%%
+Type: language
+Subtag: cnp
+Description: Northern Ping Chinese
+Description: Northern Pinghua
+Added: 2020-03-28
+Macrolanguage: zh
+%%
+Type: language
+Subtag: cnq
+Description: Chung
+Added: 2022-02-25
+%%
+Type: language
+Subtag: cnr
+Description: Montenegrin
+Added: 2018-01-23
+Macrolanguage: sh
+Comments: see sr for Serbian
 %%
 Type: language
 Subtag: cns
@@ -8189,7 +8269,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: con
-Description: Cof·n
+Description: Cof√°n
 Added: 2009-07-29
 %%
 Type: language
@@ -8251,12 +8331,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cpb
-Description: Ucayali-Yur˙a AshÈninka
+Description: Ucayali-Yur√∫a Ash√©ninka
 Added: 2009-07-29
 %%
 Type: language
 Subtag: cpc
-Description: AjyÌninka Apurucayali
+Description: Ajy√≠ninka Apurucayali
 Added: 2009-07-29
 %%
 Type: language
@@ -8304,7 +8384,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cpu
-Description: Pichis AshÈninka
+Description: Pichis Ash√©ninka
 Added: 2009-07-29
 %%
 Type: language
@@ -8315,7 +8395,7 @@ Macrolanguage: zh
 %%
 Type: language
 Subtag: cpy
-Description: South Ucayali AshÈninka
+Description: South Ucayali Ash√©ninka
 Added: 2009-07-29
 %%
 Type: language
@@ -8370,7 +8450,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: cri
-Description: S„otomense
+Description: S√£otomense
 Added: 2009-07-29
 %%
 Type: language
@@ -8455,7 +8535,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: crz
-Description: CruzeÒo
+Description: Cruze√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -8471,7 +8551,7 @@ Added: 2005-10-16
 Type: language
 Subtag: csc
 Description: Catalan Sign Language
-Description: Lengua de seÒas catalana
+Description: Lengua de se√±as catalana
 Description: Llengua de Signes Catalana
 Added: 2009-07-29
 %%
@@ -8537,6 +8617,13 @@ Description: Sochiapan Chinantec
 Added: 2009-07-29
 %%
 Type: language
+Subtag: csp
+Description: Southern Ping Chinese
+Description: Southern Pinghua
+Added: 2020-03-28
+Macrolanguage: zh
+%%
+Type: language
 Subtag: csq
 Description: Croatia Sign Language
 Added: 2009-07-29
@@ -8572,6 +8659,11 @@ Subtag: csw
 Description: Swampy Cree
 Added: 2009-07-29
 Macrolanguage: cr
+%%
+Type: language
+Subtag: csx
+Description: Cambodian Sign Language
+Added: 2021-02-20
 %%
 Type: language
 Subtag: csy
@@ -8630,7 +8722,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cto
-Description: Ember·-CatÌo
+Description: Ember√°-Cat√≠o
 Added: 2009-07-29
 %%
 Type: language
@@ -8655,6 +8747,11 @@ Description: Chol
 Added: 2009-07-29
 %%
 Type: language
+Subtag: cty
+Description: Moundadan Chetty
+Added: 2021-02-20
+%%
+Type: language
 Subtag: ctz
 Description: Zacatepec Chatino
 Added: 2009-07-29
@@ -8676,8 +8773,11 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cug
+Description: Chungmboko
 Description: Cung
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Comments: see bpc, cnq
 %%
 Type: language
 Subtag: cuh
@@ -8719,7 +8819,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: cup
-Description: CupeÒo
+Description: Cupe√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -8764,6 +8864,11 @@ Description: Tepeuxila Cuicatec
 Added: 2009-07-29
 %%
 Type: language
+Subtag: cuy
+Description: Cuitlatec
+Added: 2018-03-08
+%%
+Type: language
 Subtag: cvg
 Description: Chug
 Added: 2009-07-29
@@ -8804,6 +8909,11 @@ Type: language
 Subtag: cwt
 Description: Kuwaataay
 Added: 2009-07-29
+%%
+Type: language
+Subtag: cxh
+Description: Cha'ari
+Added: 2023-03-17
 %%
 Type: language
 Subtag: cya
@@ -8849,7 +8959,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: daa
-Description: DangalÈat
+Description: Dangal√©at
 Added: 2009-07-29
 %%
 Type: language
@@ -9285,6 +9395,7 @@ Macrolanguage: doi
 Type: language
 Subtag: dgr
 Description: Dogrib
+Description: T≈Çƒ±Ã®ch«´
 Added: 2005-10-16
 %%
 Type: language
@@ -9301,6 +9412,7 @@ Type: language
 Subtag: dgu
 Description: Degaru
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: dgw
@@ -9416,6 +9528,7 @@ Added: 2009-07-29
 Type: language
 Subtag: dif
 Description: Dieri
+Description: Diyari
 Added: 2009-07-29
 %%
 Type: language
@@ -9492,6 +9605,8 @@ Type: language
 Subtag: dit
 Description: Dirari
 Added: 2009-07-29
+Deprecated: 2019-04-29
+Preferred-Value: dif
 %%
 Type: language
 Subtag: diu
@@ -9537,6 +9652,7 @@ Added: 2009-07-29
 Type: language
 Subtag: djd
 Description: Djamindjung
+Description: Ngaliwurru
 Added: 2009-07-29
 %%
 Type: language
@@ -9580,6 +9696,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: djn
+Description: Jawoyn
 Description: Djauan
 Added: 2009-07-29
 %%
@@ -9607,6 +9724,11 @@ Type: language
 Subtag: dka
 Description: Dakpakha
 Added: 2009-07-29
+%%
+Type: language
+Subtag: dkg
+Description: Kadung
+Added: 2021-02-20
 %%
 Type: language
 Subtag: dkk
@@ -9680,6 +9802,11 @@ Type: language
 Subtag: dme
 Description: Dugwor
 Added: 2009-07-29
+%%
+Type: language
+Subtag: dmf
+Description: Medefaidrin
+Added: 2020-03-28
 %%
 Type: language
 Subtag: dmg
@@ -9786,8 +9913,14 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: dnn
-Description: Dz˘˘ngoo
+Description: Dz√π√πngoo
 Added: 2009-07-29
+%%
+Type: language
+Subtag: dno
+Description: Ndrulo
+Description: Northern Lendu
+Added: 2018-10-28
 %%
 Type: language
 Subtag: dnr
@@ -9816,7 +9949,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: dny
-Description: DenÌ
+Description: Den√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -9892,7 +10025,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: dos
-Description: DogosÈ
+Description: Dogos√©
 Added: 2009-07-29
 %%
 Type: language
@@ -9997,6 +10130,8 @@ Type: language
 Subtag: drr
 Description: Dororo
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Preferred-Value: kzk
 %%
 Type: language
 Subtag: drs
@@ -10047,6 +10182,11 @@ Description: Disa
 Added: 2009-07-29
 %%
 Type: language
+Subtag: dsk
+Description: Dokshi
+Added: 2023-03-17
+%%
+Type: language
 Subtag: dsl
 Description: Danish Sign Language
 Added: 2009-07-29
@@ -10065,6 +10205,11 @@ Type: language
 Subtag: dsq
 Description: Tadaksahak
 Added: 2009-07-29
+%%
+Type: language
+Subtag: dsz
+Description: Mardin Sign Language
+Added: 2022-02-25
 %%
 Type: language
 Subtag: dta
@@ -10103,7 +10248,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: dtn
-Description: Daats'Ìin
+Description: Daats º√≠in
 Added: 2016-05-30
 %%
 Type: language
@@ -10162,6 +10307,8 @@ Type: language
 Subtag: dud
 Description: Hun-Saare
 Added: 2009-07-29
+Deprecated: 2019-04-16
+Comments: see uth, uss
 %%
 Type: language
 Subtag: due
@@ -10284,6 +10431,11 @@ Description: Diri
 Added: 2009-07-29
 %%
 Type: language
+Subtag: dwk
+Description: Dawik Kui
+Added: 2020-03-28
+%%
+Type: language
 Subtag: dwl
 Description: Walo Kumbe Dogon
 Added: 2009-07-29
@@ -10314,6 +10466,11 @@ Type: language
 Subtag: dwy
 Description: Dhuwaya
 Added: 2016-05-30
+%%
+Type: language
+Subtag: dwz
+Description: Dewas Rai
+Added: 2018-10-28
 %%
 Type: language
 Subtag: dya
@@ -10348,6 +10505,7 @@ Added: 2009-07-29
 Type: language
 Subtag: dyn
 Description: Dyangadi
+Description: Dhanggatti
 Added: 2009-07-29
 %%
 Type: language
@@ -10356,12 +10514,18 @@ Description: Jola-Fonyi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: dyr
+Description: Dyarim
+Added: 2023-03-17
+%%
+Type: language
 Subtag: dyu
 Description: Dyula
 Added: 2005-10-16
 %%
 Type: language
 Subtag: dyy
+Description: Djabugay
 Description: Dyaabugay
 Added: 2009-07-29
 %%
@@ -10374,7 +10538,6 @@ Type: language
 Subtag: dzd
 Description: Daza
 Added: 2009-07-29
-Deprecated: 2015-02-12
 %%
 Type: language
 Subtag: dze
@@ -10402,6 +10565,11 @@ Description: Karenggapa
 Added: 2013-09-10
 %%
 Type: language
+Subtag: ebc
+Description: Beginci
+Added: 2020-03-28
+%%
+Type: language
 Subtag: ebg
 Description: Ebughu
 Added: 2009-07-29
@@ -10419,7 +10587,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ebr
-Description: EbriÈ
+Description: Ebri√©
 Added: 2009-07-29
 %%
 Type: language
@@ -10474,6 +10642,11 @@ Description: Emilian
 Added: 2009-07-29
 %%
 Type: language
+Subtag: egm
+Description: Benamanga
+Added: 2022-02-25
+%%
+Type: language
 Subtag: ego
 Description: Eggon
 Added: 2009-07-29
@@ -10488,6 +10661,11 @@ Type: language
 Subtag: egy
 Description: Egyptian (Ancient)
 Added: 2005-10-16
+%%
+Type: language
+Subtag: ehs
+Description: Miyakubo Sign Language
+Added: 2021-02-20
 %%
 Type: language
 Subtag: ehu
@@ -10523,6 +10701,7 @@ Type: language
 Subtag: ekc
 Description: Eastern Karnic
 Added: 2013-09-10
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: eke
@@ -10672,8 +10851,13 @@ Deprecated: 2014-02-28
 %%
 Type: language
 Subtag: emp
-Description: Northern Ember·
+Description: Northern Ember√°
 Added: 2009-07-29
+%%
+Type: language
+Subtag: emq
+Description: Eastern Minyag
+Added: 2021-02-20
 %%
 Type: language
 Subtag: ems
@@ -10699,6 +10883,11 @@ Type: language
 Subtag: emy
 Description: Epigraphic Mayan
 Added: 2009-07-29
+%%
+Type: language
+Subtag: emz
+Description: Mbessa
+Added: 2021-02-20
 %%
 Type: language
 Subtag: ena
@@ -10769,7 +10958,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: env
-Description: Enwan (Edu State)
+Description: Enwan (Edo State)
 Added: 2009-07-29
 %%
 Type: language
@@ -10784,7 +10973,7 @@ Added: 2014-02-28
 %%
 Type: language
 Subtag: eot
-Description: Beti (CÙte d'Ivoire)
+Description: Beti (C√¥te d'Ivoire)
 Added: 2009-07-29
 %%
 Type: language
@@ -10972,6 +11161,11 @@ Description: Semimi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: eud
+Description: Eudeve
+Added: 2023-03-17
+%%
+Type: language
 Subtag: euq
 Description: Basque (family)
 Added: 2009-07-29
@@ -11085,7 +11279,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: fap
-Description: Palor
+Description: Paloor
 Added: 2009-07-29
 %%
 Type: language
@@ -11162,6 +11356,11 @@ Description: Fyer
 Added: 2009-07-29
 %%
 Type: language
+Subtag: fif
+Description: Faifi
+Added: 2020-06-08
+%%
+Type: language
 Subtag: fil
 Description: Filipino
 Description: Pilipino
@@ -11180,6 +11379,7 @@ Added: 2009-07-29
 Type: language
 Subtag: fit
 Description: Tornedalen Finnish
+Description: Me√§nkieli
 Added: 2009-07-29
 %%
 Type: language
@@ -11195,7 +11395,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: fkk
-Description: Kirya-Konz?l
+Description: Kirya-Konz…ôl
 Added: 2012-08-12
 %%
 Type: language
@@ -11338,7 +11538,7 @@ Added: 2005-10-16
 Type: language
 Subtag: frp
 Description: Arpitan
-Description: FrancoprovenÁal
+Description: Francoproven√ßal
 Added: 2009-07-29
 %%
 Type: language
@@ -11376,7 +11576,7 @@ Added: 2009-07-29
 Type: language
 Subtag: fss
 Description: Finland-Swedish Sign Language
-Description: finlandssvenskt teckensprÂk
+Description: finlandssvenskt teckenspr√•k
 Description: suomenruotsalainen viittomakieli
 Added: 2009-07-29
 %%
@@ -11433,7 +11633,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: fun
-Description: FulniÙ
+Description: Fulni√¥
 Added: 2009-07-29
 %%
 Type: language
@@ -11475,7 +11675,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: fwa
-Description: Fw‚i
+Description: Fw√¢i
 Added: 2009-07-29
 %%
 Type: language
@@ -11638,7 +11838,7 @@ Comments: see wny, wrk
 %%
 Type: language
 Subtag: gbd
-Description: Karadjeri
+Description: Karajarri
 Added: 2009-07-29
 %%
 Type: language
@@ -11828,6 +12028,7 @@ Added: 2009-07-29
 Type: language
 Subtag: gdh
 Description: Gadjerawang
+Description: Gajirrabeng
 Added: 2009-07-29
 %%
 Type: language
@@ -11917,6 +12118,11 @@ Description: Gade
 Added: 2009-07-29
 %%
 Type: language
+Subtag: gef
+Description: Gerai
+Added: 2020-03-28
+%%
+Type: language
 Subtag: geg
 Description: Gengle
 Added: 2009-07-29
@@ -12000,7 +12206,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gfx
-Description: Mangetti Dune !Xung
+Description: Mangetti Dune «ÉXung
 Added: 2012-08-12
 Deprecated: 2015-02-12
 Preferred-Value: vaj
@@ -12022,7 +12228,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gge
-Description: Guragone
+Description: Gurr-goni
 Added: 2009-07-29
 %%
 Type: language
@@ -12079,7 +12285,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gha
-Description: GhadamËs
+Description: Ghadam√®s
 Added: 2009-07-29
 %%
 Type: language
@@ -12135,7 +12341,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gia
-Description: Kitja
+Description: Kija
 Added: 2009-07-29
 %%
 Type: language
@@ -12154,6 +12360,12 @@ Description: Gidar
 Added: 2009-07-29
 %%
 Type: language
+Subtag: gie
+Description: Ga…ìogbo
+Description: Gu√©bie
+Added: 2017-02-23
+%%
+Type: language
 Subtag: gig
 Description: Goaria
 Added: 2009-07-29
@@ -12162,6 +12374,11 @@ Type: language
 Subtag: gih
 Description: Githabul
 Added: 2013-09-10
+%%
+Type: language
+Subtag: gii
+Description: Girirra
+Added: 2021-02-20
 %%
 Type: language
 Subtag: gil
@@ -12239,6 +12456,8 @@ Type: language
 Subtag: gji
 Description: Geji
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Comments: see gyz, zbu
 %%
 Type: language
 Subtag: gjk
@@ -12272,6 +12491,11 @@ Description: Guya
 Added: 2009-07-29
 %%
 Type: language
+Subtag: gkd
+Description: Mag…® (Madang Province)
+Added: 2018-03-08
+%%
+Type: language
 Subtag: gke
 Description: Ndai
 Added: 2009-07-29
@@ -12294,9 +12518,13 @@ Macrolanguage: kpe
 %%
 Type: language
 Subtag: gku
-Description: ?Ungkue
-Description: =/Ungkue
+Description: «ÇUngkue
 Added: 2015-02-12
+%%
+Type: language
+Subtag: glb
+Description: Belning
+Added: 2021-02-20
 %%
 Type: language
 Subtag: glc
@@ -12318,6 +12546,8 @@ Type: language
 Subtag: gli
 Description: Guliguli
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Preferred-Value: kzk
 %%
 Type: language
 Subtag: glj
@@ -12371,7 +12601,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gmd
-Description: M·ghdÏ
+Description: M√°ghd√¨
 Added: 2009-07-29
 %%
 Type: language
@@ -12382,7 +12612,7 @@ Scope: collection
 %%
 Type: language
 Subtag: gmg
-Description: Mag?yi
+Description: Mag…®yi
 Added: 2014-02-28
 %%
 Type: language
@@ -12411,6 +12641,12 @@ Subtag: gmq
 Description: North Germanic languages
 Added: 2009-07-29
 Scope: collection
+%%
+Type: language
+Subtag: gmr
+Description: Mirning
+Description: Mirniny
+Added: 2020-03-28
 %%
 Type: language
 Subtag: gmu
@@ -12484,9 +12720,13 @@ Description: Gooniyandi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: gnj
+Description: Ngen
+Added: 2018-03-08
+%%
+Type: language
 Subtag: gnk
-Description: //Gana
-Description: ?Gana
+Description: «ÅGana
 Added: 2009-07-29
 %%
 Type: language
@@ -12532,7 +12772,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gnw
-Description: Western Bolivian GuaranÌ
+Description: Western Bolivian Guaran√≠
 Added: 2009-07-29
 Macrolanguage: gn
 %%
@@ -12558,7 +12798,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: god
-Description: GodiÈ
+Description: Godi√©
 Added: 2009-07-29
 %%
 Type: language
@@ -12647,6 +12887,11 @@ Type: language
 Subtag: gou
 Description: Gavar
 Added: 2009-07-29
+%%
+Type: language
+Subtag: gov
+Description: Goo
+Added: 2022-02-25
 %%
 Type: language
 Subtag: gow
@@ -12870,7 +13115,7 @@ Suppress-Script: Latn
 %%
 Type: language
 Subtag: gta
-Description: GuatÛ
+Description: Guat√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -12892,7 +13137,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gub
-Description: Guajaj·ra
+Description: Guajaj√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -12902,12 +13147,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gud
-Description: YocobouÈ Dida
+Description: Yocobou√© Dida
 Added: 2009-07-29
 %%
 Type: language
 Subtag: gue
-Description: Gurinji
+Description: Gurindji
 Added: 2009-07-29
 %%
 Type: language
@@ -12917,7 +13162,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gug
-Description: Paraguayan GuaranÌ
+Description: Paraguayan Guaran√≠
 Added: 2009-07-29
 Macrolanguage: gn
 %%
@@ -12928,7 +13173,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gui
-Description: Eastern Bolivian GuaranÌ
+Description: Eastern Bolivian Guaran√≠
 Added: 2009-07-29
 Macrolanguage: gn
 %%
@@ -12949,7 +13194,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gun
-Description: Mby· GuaranÌ
+Description: Mby√° Guaran√≠
 Added: 2009-07-29
 Macrolanguage: gn
 %%
@@ -12965,7 +13210,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: guq
-Description: AchÈ
+Description: Ach√©
 Added: 2009-07-29
 %%
 Type: language
@@ -12980,12 +13225,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gut
-Description: MalÈku JaÌka
+Description: Mal√©ku Ja√≠ka
 Added: 2009-07-29
 %%
 Type: language
 Subtag: guu
-Description: Yanomamˆ
+Description: Yanomam√∂
 Added: 2009-07-29
 %%
 Type: language
@@ -13002,7 +13247,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gux
-Description: GourmanchÈma
+Description: Gourmanch√©ma
 Added: 2009-07-29
 %%
 Type: language
@@ -13033,7 +13278,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gvj
-Description: Guaj·
+Description: Guaj√°
 Added: 2009-07-29
 %%
 Type: language
@@ -13053,12 +13298,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gvo
-Description: Gavi„o Do Jiparan·
+Description: Gavi√£o Do Jiparan√°
 Added: 2009-07-29
 %%
 Type: language
 Subtag: gvp
-Description: Par· Gavi„o
+Description: Par√° Gavi√£o
 Added: 2009-07-29
 %%
 Type: language
@@ -13088,6 +13333,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gwc
+Description: Gawri
 Description: Kalami
 Added: 2009-07-29
 %%
@@ -13113,13 +13359,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gwi
-Description: Gwich'in
+Description: Gwich ºin
 Added: 2005-10-16
 %%
 Type: language
 Subtag: gwj
-Description: /Gwi
-Description: |Gwi
+Description: «ÄGwi
 Added: 2009-07-29
 %%
 Type: language
@@ -13159,7 +13404,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gxx
-Description: WË Southern
+Description: W√® Southern
 Added: 2009-07-29
 %%
 Type: language
@@ -13205,13 +13450,18 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: gym
-Description: Ng‰bere
+Description: Ng√§bere
 Added: 2009-07-29
 %%
 Type: language
 Subtag: gyn
 Description: Guyanese Creole English
 Added: 2009-07-29
+%%
+Type: language
+Subtag: gyo
+Description: Gyalsumdo
+Added: 2018-03-08
 %%
 Type: language
 Subtag: gyr
@@ -13222,6 +13472,12 @@ Type: language
 Subtag: gyy
 Description: Gunya
 Added: 2009-07-29
+%%
+Type: language
+Subtag: gyz
+Description: Geji
+Description: Gyaazi
+Added: 2021-02-20
 %%
 Type: language
 Subtag: gza
@@ -13313,7 +13569,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hao
-Description: Hakˆ
+Description: Hak√∂
 Added: 2009-07-29
 %%
 Type: language
@@ -13421,7 +13677,7 @@ Macrolanguage: hmn
 %%
 Type: language
 Subtag: hed
-Description: HerdÈ
+Description: Herd√©
 Added: 2009-07-29
 %%
 Type: language
@@ -13446,8 +13702,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hgm
-Description: Hai//om
-Description: Hai?om
+Description: Hai«Åom
 Added: 2009-07-29
 %%
 Type: language
@@ -13534,7 +13789,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hir
-Description: Himarim„
+Description: Himarim√£
 Added: 2009-07-29
 %%
 Type: language
@@ -13549,7 +13804,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hix
-Description: Hixkary·na
+Description: Hixkary√°na
 Added: 2009-07-29
 %%
 Type: language
@@ -13569,9 +13824,20 @@ Description: Hunde
 Added: 2009-07-29
 %%
 Type: language
+Subtag: hkh
+Description: Khah
+Description: Poguli
+Added: 2021-02-20
+%%
+Type: language
 Subtag: hkk
 Description: Hunjara-Kaina Ke
 Added: 2009-07-29
+%%
+Type: language
+Subtag: hkn
+Description: Mel-Khaonh
+Added: 2018-03-08
 %%
 Type: language
 Subtag: hks
@@ -13737,7 +14003,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hmv
-Description: Hmong DÙ
+Description: Hmong D√¥
 Added: 2009-07-29
 %%
 Type: language
@@ -13784,9 +14050,13 @@ Description: Chhattisgarhi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: hng
+Description: Hungu
+Added: 2020-03-28
+%%
+Type: language
 Subtag: hnh
-Description: //Ani
-Description: ?Ani
+Description: «ÅAni
 Added: 2009-07-29
 %%
 Type: language
@@ -13850,7 +14120,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hoh
-Description: HobyÛt
+Description: Hoby√≥t
 Added: 2009-07-29
 %%
 Type: language
@@ -13904,7 +14174,7 @@ Added: 2009-07-29
 Type: language
 Subtag: hot
 Description: Hote
-Description: MalÍ
+Description: Mal√™
 Added: 2009-07-29
 %%
 Type: language
@@ -13983,7 +14253,7 @@ Preferred-Value: jal
 %%
 Type: language
 Subtag: hrt
-Description: HÈrtevin
+Description: H√©rtevin
 Added: 2009-07-29
 %%
 Type: language
@@ -14065,8 +14335,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: huc
-Description: =/Hua
-Description: ?Hua
+Description: «ÇHua
+Description: «Ç ºAmkhoe
 Added: 2009-07-29
 %%
 Type: language
@@ -14168,12 +14438,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hux
-Description: N¸pode Huitoto
+Description: N√ºpode Huitoto
 Added: 2009-07-29
 %%
 Type: language
 Subtag: huy
-Description: Hulaul·
+Description: Hulaul√°
 Added: 2009-07-29
 %%
 Type: language
@@ -14203,12 +14473,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: hvv
-Description: Santa MarÌa Del Mar Huave
+Description: Santa Mar√≠a Del Mar Huave
 Added: 2009-07-29
 %%
 Type: language
 Subtag: hwa
-Description: WanÈ
+Description: Wan√©
 Added: 2009-07-29
 %%
 Type: language
@@ -14226,6 +14496,12 @@ Type: language
 Subtag: hya
 Description: Hya
 Added: 2009-07-29
+%%
+Type: language
+Subtag: hyw
+Description: Western Armenian
+Added: 2018-03-08
+Comments: see also hy
 %%
 Type: language
 Subtag: hyx
@@ -14278,6 +14554,11 @@ Type: language
 Subtag: ibg
 Description: Ibanag
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ibh
+Description: Bih
+Added: 2017-02-23
 %%
 Type: language
 Subtag: ibi
@@ -14381,7 +14662,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: idt
-Description: IdatÈ
+Description: Idat√©
 Added: 2009-07-29
 %%
 Type: language
@@ -14402,7 +14683,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ife
-Description: IfË
+Description: If√®
 Added: 2009-07-29
 %%
 Type: language
@@ -14542,6 +14823,11 @@ Subtag: ike
 Description: Eastern Canadian Inuktitut
 Added: 2009-07-29
 Macrolanguage: iu
+%%
+Type: language
+Subtag: ikh
+Description: Ikhin-Arokho
+Added: 2023-03-17
 %%
 Type: language
 Subtag: iki
@@ -14716,6 +15002,11 @@ Description: Marsian
 Added: 2009-07-29
 %%
 Type: language
+Subtag: imt
+Description: Imotong
+Added: 2022-02-25
+%%
+Type: language
 Subtag: imy
 Description: Milyan
 Added: 2009-07-29
@@ -14774,7 +15065,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: inp
-Description: IÒapari
+Description: I√±apari
 Added: 2009-07-29
 %%
 Type: language
@@ -14789,7 +15080,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: inz
-Description: IneseÒo
+Description: Inese√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -14845,6 +15136,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: iri
+Description: Rigwe
 Description: Irigwe
 Added: 2009-07-29
 %%
@@ -14855,7 +15147,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: irn
-Description: Ir·ntxe
+Description: Ir√°ntxe
 Added: 2009-07-29
 %%
 Type: language
@@ -15037,7 +15329,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: itz
-Description: Itz·
+Description: Itz√°
 Added: 2009-07-29
 %%
 Type: language
@@ -15113,6 +15405,11 @@ Deprecated: 2013-09-10
 Comments: see eza, gmz, iqw, izz
 %%
 Type: language
+Subtag: izm
+Description: Kizamani
+Added: 2023-03-17
+%%
+Type: language
 Subtag: izr
 Description: Izere
 Added: 2009-07-29
@@ -15124,7 +15421,7 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: jaa
-Description: JamamadÌ
+Description: Jamamad√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -15226,6 +15523,7 @@ Macrolanguage: ms
 Type: language
 Subtag: jay
 Description: Yan-nhangu
+Description: Nhangu
 Added: 2009-07-29
 %%
 Type: language
@@ -15254,6 +15552,11 @@ Description: Barikewa
 Added: 2012-08-12
 %%
 Type: language
+Subtag: jbm
+Description: Bijim
+Added: 2021-02-20
+%%
+Type: language
 Subtag: jbn
 Description: Nafusi
 Added: 2009-07-29
@@ -15270,7 +15573,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: jbt
-Description: JabutÌ
+Description: Jabut√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -15322,6 +15625,8 @@ Type: language
 Subtag: jeg
 Description: Jeng
 Added: 2009-07-29
+Deprecated: 2017-02-23
+Preferred-Value: oyb
 %%
 Type: language
 Subtag: jeh
@@ -15410,7 +15715,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: jid
-Description: Bu
+Description: Bu (Kaduna State)
 Added: 2009-07-29
 %%
 Type: language
@@ -15420,6 +15725,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: jig
+Description: Jingulu
 Description: Djingili
 Added: 2009-07-29
 %%
@@ -15509,6 +15815,11 @@ Type: language
 Subtag: jkr
 Description: Koro (India)
 Added: 2012-08-12
+%%
+Type: language
+Subtag: jks
+Description: Amami Koniya Sign Language
+Added: 2021-02-20
 %%
 Type: language
 Subtag: jku
@@ -15632,7 +15943,7 @@ Added: 2015-05-27
 %%
 Type: language
 Subtag: jor
-Description: Jor·
+Description: Jor√°
 Added: 2009-07-29
 %%
 Type: language
@@ -15684,12 +15995,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: jrt
-Description: Jorto
+Description: Jakattoe
 Added: 2009-07-29
 %%
 Type: language
 Subtag: jru
-Description: JaprerÌa
+Description: Japrer√≠a
 Added: 2009-07-29
 %%
 Type: language
@@ -15699,7 +16010,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: jua
-Description: J˙ma
+Description: J√∫ma
 Added: 2009-07-29
 %%
 Type: language
@@ -15719,7 +16030,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: juh
-Description: Hıne
+Description: H√µne
 Added: 2009-07-29
 %%
 Type: language
@@ -15754,12 +16065,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: jup
-Description: HupdÎ
+Description: Hupd√´
 Added: 2009-07-29
 %%
 Type: language
 Subtag: jur
-Description: Jur˙na
+Description: Jur√∫na
 Added: 2009-07-29
 %%
 Type: language
@@ -15779,7 +16090,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: juw
-Description: W„pha
+Description: W√£pha
 Added: 2009-07-29
 %%
 Type: language
@@ -15821,6 +16132,7 @@ Added: 2009-07-29
 Type: language
 Subtag: kaa
 Description: Kara-Kalpak
+Description: Karakalpak
 Added: 2005-10-16
 %%
 Type: language
@@ -15903,7 +16215,7 @@ Scope: collection
 %%
 Type: language
 Subtag: kav
-Description: KatukÌna
+Description: Katuk√≠na
 Added: 2009-07-29
 %%
 Type: language
@@ -15918,7 +16230,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kay
-Description: Kamayur·
+Description: Kamayur√°
 Added: 2009-07-29
 %%
 Type: language
@@ -15928,12 +16240,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kbb
-Description: Kaxui‚na
+Description: Kaxui√¢na
 Added: 2009-07-29
 %%
 Type: language
 Subtag: kbc
-Description: KadiwÈu
+Description: Kadiw√©u
 Added: 2009-07-29
 %%
 Type: language
@@ -15959,7 +16271,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kbh
-Description: Cams·
+Description: Cams√°
 Added: 2009-07-29
 %%
 Type: language
@@ -15999,7 +16311,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kbp
-Description: KabiyË
+Description: Kabiy√®
 Added: 2009-07-29
 %%
 Type: language
@@ -16070,7 +16382,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kcd
-Description: Ngk‚lmpw Kanum
+Description: Ngk√¢lmpw Kanum
 Added: 2009-07-29
 %%
 Type: language
@@ -16231,8 +16543,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kdk
-Description: NumËË
-Description: KwÈnyi
+Description: Num√®√®
+Description: Kw√©nyi
 Added: 2009-07-29
 %%
 Type: language
@@ -16316,7 +16628,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: keb
-Description: KÈlÈ
+Description: K√©l√©
 Added: 2009-07-29
 %%
 Type: language
@@ -16361,7 +16673,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kek
-Description: KekchÌ
+Description: Kekch√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -16511,7 +16823,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kfo
-Description: Koro (CÙte d'Ivoire)
+Description: Koro (C√¥te d'Ivoire)
 Added: 2009-07-29
 %%
 Type: language
@@ -16567,7 +16879,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kfz
-Description: KoromfÈ
+Description: Koromf√©
 Added: 2009-07-29
 %%
 Type: language
@@ -16591,6 +16903,8 @@ Type: language
 Subtag: kgd
 Description: Kataang
 Added: 2009-07-29
+Deprecated: 2017-02-23
+Comments: see ncq, sct
 %%
 Type: language
 Subtag: kge
@@ -16626,7 +16940,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kgk
-Description: Kaiw·
+Description: Kaiw√°
 Added: 2009-07-29
 %%
 Type: language
@@ -16636,8 +16950,10 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kgm
-Description: Karip˙na
+Description: Karip√∫na
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: plu
 %%
 Type: language
 Subtag: kgn
@@ -16708,7 +17024,7 @@ Comments: as of 2008-04-21 this subtag does not include Lyngngam; see
 %%
 Type: language
 Subtag: khb
-Description: L¸
+Description: L√º
 Added: 2009-07-29
 %%
 Type: language
@@ -16718,7 +17034,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: khd
-Description: B‰di Kanum
+Description: B√§di Kanum
 Added: 2009-07-29
 %%
 Type: language
@@ -16976,8 +17292,9 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kjf
-Description: Khalaj
+Description: Khalaj [Indo-Iranian]
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: kjg
@@ -17011,7 +17328,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kjm
-Description: Kh·ng
+Description: Kh√°ng
 Added: 2009-07-29
 %%
 Type: language
@@ -17111,7 +17428,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kkh
-Description: Kh¸n
+Description: Kh√ºn
 Added: 2009-07-29
 %%
 Type: language
@@ -17152,11 +17469,12 @@ Added: 2009-07-29
 Type: language
 Subtag: kkp
 Description: Gugubera
+Description: Koko-Bera
 Added: 2009-07-29
 %%
 Type: language
 Subtag: kkq
-Description: Kaiku
+Description: Kaeku
 Added: 2009-07-29
 %%
 Type: language
@@ -17196,6 +17514,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kky
+Description: Guugu Yimidhirr
 Description: Guguyimidjir
 Added: 2009-07-29
 %%
@@ -17251,7 +17570,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: klj
-Description: Turkic Khalaj
+Description: Khalaj
 Added: 2009-07-29
 %%
 Type: language
@@ -17317,6 +17636,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: klw
+Description: Tado
 Description: Lindu
 Added: 2009-07-29
 %%
@@ -17367,7 +17687,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kmg
-Description: K‚te
+Description: K√¢te
 Added: 2009-07-29
 %%
 Type: language
@@ -17443,7 +17763,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kmv
-Description: Karip˙na Creole French
+Description: Karip√∫na Creole French
 Added: 2009-07-29
 %%
 Type: language
@@ -17525,7 +17845,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: knm
-Description: KanamarÌ
+Description: Kanamar√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -17561,7 +17881,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: knt
-Description: Panoan KatukÌna
+Description: Panoan Katuk√≠na
 Added: 2009-07-29
 %%
 Type: language
@@ -17592,7 +17912,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: knz
-Description: KalamsÈ
+Description: Kalams√©
 Added: 2009-07-29
 %%
 Type: language
@@ -17612,7 +17932,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: koe
-Description: Kacipo-Balesi
+Description: Kacipo-Bale Suri
 Added: 2009-07-29
 %%
 Type: language
@@ -17760,7 +18080,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kpj
-Description: Karaj·
+Description: Karaj√°
 Added: 2009-07-29
 %%
 Type: language
@@ -17780,7 +18100,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kpn
-Description: Kepkiriw·t
+Description: Kepkiriw√°t
 Added: 2009-07-29
 %%
 Type: language
@@ -17923,7 +18243,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kqp
-Description: KimrÈ
+Description: Kimr√©
 Added: 2009-07-29
 %%
 Type: language
@@ -17998,7 +18318,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kre
-Description: Panar·
+Description: Panar√°
 Added: 2009-07-29
 %%
 Type: language
@@ -18035,6 +18355,8 @@ Type: language
 Subtag: krm
 Description: Krim
 Added: 2009-07-29
+Deprecated: 2017-02-23
+Preferred-Value: bmf
 %%
 Type: language
 Subtag: krn
@@ -18049,12 +18371,12 @@ Scope: collection
 %%
 Type: language
 Subtag: krp
-Description: Korop
+Description: Durop
 Added: 2009-07-29
 %%
 Type: language
 Subtag: krr
-Description: Kru'ng 2
+Description: Krung
 Added: 2009-07-29
 %%
 Type: language
@@ -18102,6 +18424,8 @@ Type: language
 Subtag: ksa
 Description: Shuwa-Zamani
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Comments: see izm, rsw
 %%
 Type: language
 Subtag: ksb
@@ -18135,7 +18459,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ksh
-Description: Kˆlsch
+Description: K√∂lsch
 Added: 2009-07-29
 %%
 Type: language
@@ -18196,7 +18520,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kst
-Description: WinyÈ
+Description: Winy√©
 Added: 2009-07-29
 %%
 Type: language
@@ -18247,6 +18571,7 @@ Added: 2009-07-29
 Type: language
 Subtag: ktd
 Description: Kokata
+Description: Kukatha
 Added: 2009-07-29
 %%
 Type: language
@@ -18296,7 +18621,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ktn
-Description: Kariti‚na
+Description: Kariti√¢na
 Added: 2009-07-29
 %%
 Type: language
@@ -18348,18 +18673,18 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ktx
-Description: KaxararÌ
+Description: Kaxarar√≠
 Added: 2009-07-29
 %%
 Type: language
 Subtag: kty
-Description: Kango (Bas-UÈlÈ District)
+Description: Kango (Bas-U√©l√© District)
 Added: 2009-07-29
 %%
 Type: language
 Subtag: ktz
-Description: Ju/'hoan
-Description: Ju|'hoan
+Description: Ju«Ä ºhoan
+Description: Ju«Ä ºhoansi
 Added: 2009-07-29
 %%
 Type: language
@@ -18399,7 +18724,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kui
-Description: Kuik˙ro-Kalap·lo
+Description: Kuik√∫ro-Kalap√°lo
+Description: Kalapalo
 Added: 2009-07-29
 %%
 Type: language
@@ -18621,7 +18947,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kwa
-Description: D‚w
+Description: D√¢w
 Added: 2009-07-29
 %%
 Type: language
@@ -18728,7 +19054,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kwv
-Description: Sara Kaba N·‡
+Description: Sara Kaba N√°√†
 Added: 2009-07-29
 %%
 Type: language
@@ -18811,6 +19137,8 @@ Type: language
 Subtag: kxl
 Description: Nepali Kurux
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Preferred-Value: kru
 %%
 Type: language
 Subtag: kxm
@@ -18824,7 +19152,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kxo
-Description: KanoÈ
+Description: Kano√©
 Added: 2009-07-29
 %%
 Type: language
@@ -18834,7 +19162,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kxq
-Description: Sm‰rky Kanum
+Description: Sm√§rky Kanum
 Added: 2009-07-29
 %%
 Type: language
@@ -18856,6 +19184,8 @@ Type: language
 Subtag: kxu
 Description: Kui (India)
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Comments: see dwk, uki
 %%
 Type: language
 Subtag: kxv
@@ -18969,7 +19299,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kyr
-Description: Kuru·ya
+Description: Kuru√°ya
 Added: 2009-07-29
 %%
 Type: language
@@ -19009,7 +19339,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kyz
-Description: KayabÌ
+Description: Kayab√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -19130,7 +19460,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: kzw
-Description: KarirÌ-XocÛ
+Description: Karir√≠-Xoc√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -19180,7 +19510,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lag
-Description: Langi
+Description: Rangi
 Added: 2009-07-29
 %%
 Type: language
@@ -19203,6 +19533,8 @@ Type: language
 Subtag: lak
 Description: Laka (Nigeria)
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Preferred-Value: ksp
 %%
 Type: language
 Subtag: lal
@@ -19268,6 +19600,7 @@ Type: language
 Subtag: lba
 Description: Lui
 Added: 2009-07-29
+Deprecated: 2019-04-16
 %%
 Type: language
 Subtag: lbb
@@ -19323,7 +19656,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lbn
-Description: Lamet
+Description: Rmeet
 Added: 2009-07-29
 %%
 Type: language
@@ -19373,6 +19706,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lby
+Description: Lamalama
 Description: Lamu-Lamu
 Added: 2009-07-29
 %%
@@ -19441,7 +19775,7 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: ldb
-Description: Duya
+Description: D≈©ya
 Added: 2009-07-29
 %%
 Type: language
@@ -19487,7 +19821,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ldn
-Description: L·adan
+Description: L√°adan
 Added: 2009-07-29
 %%
 Type: language
@@ -19527,7 +19861,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lee
-Description: LyÈlÈ
+Description: Ly√©l√©
 Added: 2009-07-29
 %%
 Type: language
@@ -19691,8 +20025,14 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lgn
+Description: T'apo
 Description: Opuuo
 Added: 2009-07-29
+%%
+Type: language
+Subtag: lgo
+Description: Lango (South Sudan)
+Added: 2022-02-25
 %%
 Type: language
 Subtag: lgq
@@ -19703,6 +20043,12 @@ Type: language
 Subtag: lgr
 Description: Lengo
 Added: 2009-07-29
+%%
+Type: language
+Subtag: lgs
+Description: Guinea-Bissau Sign Language
+Description: L√≠ngua Gestual Guineense
+Added: 2023-03-17
 %%
 Type: language
 Subtag: lgt
@@ -19756,7 +20102,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lhs
-Description: Mlahsˆ
+Description: Mlahs√∂
 Added: 2009-07-29
 %%
 Type: language
@@ -19941,7 +20287,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lkd
-Description: LakondÍ
+Description: Lakond√™
 Added: 2009-07-29
 %%
 Type: language
@@ -19989,7 +20335,7 @@ Macrolanguage: luy
 %%
 Type: language
 Subtag: lkr
-Description: P‰ri
+Description: P√§ri
 Added: 2009-07-29
 %%
 Type: language
@@ -20088,6 +20434,8 @@ Type: language
 Subtag: llo
 Description: Khlor
 Added: 2009-07-29
+Deprecated: 2019-04-16
+Preferred-Value: ngt
 %%
 Type: language
 Subtag: llp
@@ -20136,7 +20484,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lme
-Description: PÈvÈ
+Description: P√©v√©
 Added: 2009-07-29
 %%
 Type: language
@@ -20235,6 +20583,7 @@ Type: language
 Subtag: lmz
 Description: Lumbee
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: lna
@@ -20289,8 +20638,10 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lno
-Description: Lango (Sudan)
+Description: Lango (South Sudan)
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Comments: see imt, lgo, lqr, oie
 %%
 Type: language
 Subtag: lns
@@ -20344,12 +20695,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: loh
+Description: Laarim
 Description: Narim
 Added: 2009-07-29
 %%
 Type: language
 Subtag: loi
-Description: Loma (CÙte d'Ivoire)
+Description: Loma (C√¥te d'Ivoire)
 Added: 2009-07-29
 %%
 Type: language
@@ -20394,7 +20746,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: lor
-Description: TÈÈn
+Description: T√©√©n
 Added: 2009-07-29
 %%
 Type: language
@@ -20461,6 +20813,11 @@ Type: language
 Subtag: lpx
 Description: Lopit
 Added: 2009-07-29
+%%
+Type: language
+Subtag: lqr
+Description: Logir
+Added: 2022-02-25
 %%
 Type: language
 Subtag: lra
@@ -20542,6 +20899,18 @@ Description: Lasgerdi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: lsb
+Description: Burundian Sign Language
+Description: Langue des Signes Burundaise
+Added: 2021-02-20
+%%
+Type: language
+Subtag: lsc
+Description: Albarradas Sign Language
+Description: Lengua de se√±as Albarradas
+Added: 2022-02-25
+%%
+Type: language
 Subtag: lsd
 Description: Lishana Deni
 Added: 2009-07-29
@@ -20555,6 +20924,7 @@ Type: language
 Subtag: lsg
 Description: Lyons Sign Language
 Added: 2009-07-29
+Deprecated: 2018-03-08
 %%
 Type: language
 Subtag: lsh
@@ -20579,6 +20949,11 @@ Added: 2009-07-29
 Macrolanguage: luy
 %%
 Type: language
+Subtag: lsn
+Description: Tibetan Sign Language
+Added: 2019-04-16
+%%
+Type: language
 Subtag: lso
 Description: Laos Sign Language
 Added: 2009-07-29
@@ -20586,7 +20961,7 @@ Added: 2009-07-29
 Type: language
 Subtag: lsp
 Description: Panamanian Sign Language
-Description: Lengua de SeÒas PanameÒas
+Description: Lengua de Se√±as Paname√±as
 Added: 2009-07-29
 %%
 Type: language
@@ -20605,6 +20980,18 @@ Description: Trinidad and Tobago Sign Language
 Added: 2009-07-29
 %%
 Type: language
+Subtag: lsv
+Description: Sivia Sign Language
+Added: 2019-04-16
+%%
+Type: language
+Subtag: lsw
+Description: Seychelles Sign Language
+Description: Lalang Siny Seselwa
+Description: Langue des Signes Seychelloise
+Added: 2022-02-25
+%%
+Type: language
 Subtag: lsy
 Description: Mauritian Sign Language
 Added: 2010-03-11
@@ -20621,13 +21008,18 @@ Added: 2010-03-11
 Macrolanguage: lv
 %%
 Type: language
+Subtag: lth
+Description: Thur
+Added: 2017-02-23
+%%
+Type: language
 Subtag: lti
 Description: Leti (Indonesia)
 Added: 2009-07-29
 %%
 Type: language
 Subtag: ltn
-Description: LatundÍ
+Description: Latund√™
 Added: 2009-07-29
 %%
 Type: language
@@ -20768,9 +21160,19 @@ Description: Maku'a
 Added: 2009-07-29
 %%
 Type: language
+Subtag: lvi
+Description: Lavi
+Added: 2019-04-16
+%%
+Type: language
 Subtag: lvk
 Description: Lavukaleve
 Added: 2009-07-29
+%%
+Type: language
+Subtag: lvl
+Description: Lwel
+Added: 2023-03-17
 %%
 Type: language
 Subtag: lvs
@@ -20821,6 +21223,11 @@ Description: Luwo
 Added: 2009-07-29
 %%
 Type: language
+Subtag: lws
+Description: Malawian Sign Language
+Added: 2018-03-08
+%%
+Type: language
 Subtag: lwt
 Description: Lewotobi
 Added: 2009-07-29
@@ -20834,6 +21241,11 @@ Type: language
 Subtag: lww
 Description: Lewo
 Added: 2009-07-29
+%%
+Type: language
+Subtag: lxm
+Description: Lakurumau
+Added: 2021-02-20
 %%
 Type: language
 Subtag: lya
@@ -20873,8 +21285,9 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: maa
-Description: San JerÛnimo TecÛatl Mazatec
+Description: San Jer√≥nimo Tec√≥atl Mazatec
 Added: 2009-07-29
+Comments: see also pbm
 %%
 Type: language
 Subtag: mab
@@ -20909,7 +21322,7 @@ Suppress-Script: Deva
 %%
 Type: language
 Subtag: maj
-Description: Jalapa De DÌaz Mazatec
+Description: Jalapa De D√≠az Mazatec
 Added: 2009-07-29
 %%
 Type: language
@@ -20937,7 +21350,7 @@ Scope: collection
 %%
 Type: language
 Subtag: maq
-Description: Chiquihuitl·n Mazatec
+Description: Chiquihuitl√°n Mazatec
 Added: 2009-07-29
 %%
 Type: language
@@ -20957,7 +21370,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mav
-Description: SaterÈ-MawÈ
+Description: Sater√©-Maw√©
 Added: 2009-07-29
 %%
 Type: language
@@ -21018,7 +21431,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mbj
-Description: NadÎb
+Description: Nad√´b
 Added: 2009-07-29
 %%
 Type: language
@@ -21028,7 +21441,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mbl
-Description: MaxakalÌ
+Description: Maxakal√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -21038,7 +21451,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mbn
-Description: Macagu·n
+Description: Macagu√°n
 Added: 2009-07-29
 %%
 Type: language
@@ -21058,7 +21471,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mbr
-Description: Nukak Mak˙
+Description: Nukak Mak√∫
 Added: 2009-07-29
 %%
 Type: language
@@ -21128,7 +21541,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mcf
-Description: MatsÈs
+Description: Mats√©s
 Added: 2009-07-29
 %%
 Type: language
@@ -21173,7 +21586,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mco
-Description: Coatl·n Mixe
+Description: Coatl√°n Mixe
 Added: 2009-07-29
 %%
 Type: language
@@ -21333,7 +21746,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mdv
-Description: Santa LucÌa Monteverde Mixtec
+Description: Santa Luc√≠a Monteverde Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -21353,7 +21766,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mdz
-Description: SuruÌ Do Par·
+Description: Suru√≠ Do Par√°
 Added: 2009-07-29
 %%
 Type: language
@@ -21368,7 +21781,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mec
-Description: Mara
+Description: Marra
 Added: 2009-07-29
 %%
 Type: language
@@ -21437,7 +21850,7 @@ Macrolanguage: ms
 %%
 Type: language
 Subtag: mep
-Description: Miriwung
+Description: Miriwoong
 Added: 2009-07-29
 %%
 Type: language
@@ -21574,7 +21987,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mfr
-Description: Marithiel
+Description: Marrithiyel
 Added: 2009-07-29
 %%
 Type: language
@@ -21818,7 +22231,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mhn
-Description: MÛcheno
+Description: M√≥cheno
 Added: 2009-07-29
 %%
 Type: language
@@ -21886,7 +22299,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mib
-Description: Atatl·huca Mixtec
+Description: Atatl√°huca Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -21922,7 +22335,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mii
-Description: Chigmecatitl·n Mixtec
+Description: Chigmecatitl√°n Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -21938,7 +22351,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mil
-Description: PeÒoles Mixtec
+Description: Pe√±oles Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -21964,7 +22377,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: miq
-Description: MÌskito
+Description: M√≠skito
 Added: 2009-07-29
 %%
 Type: language
@@ -22393,7 +22806,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mmc
-Description: Michoac·n Mazahua
+Description: Michoac√°n Mazahua
 Added: 2009-07-29
 %%
 Type: language
@@ -22418,7 +22831,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mmh
-Description: Mehin·ku
+Description: Mehin√°ku
 Added: 2009-07-29
 %%
 Type: language
@@ -22524,7 +22937,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: mnd
-Description: MondÈ
+Description: Mond√©
 Added: 2009-07-29
 %%
 Type: language
@@ -22649,7 +23062,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: moc
-Description: MocovÌ
+Description: Mocov√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -22659,6 +23072,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: moe
+Description: Innu
 Description: Montagnais
 Added: 2009-07-29
 %%
@@ -22706,7 +23120,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mop
-Description: Mop·n Maya
+Description: Mop√°n Maya
 Added: 2009-07-29
 %%
 Type: language
@@ -22726,7 +23140,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: mot
-Description: BarÌ
+Description: Bar√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -22767,12 +23181,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mpb
+Description: Malak Malak
 Description: Mullukmulluk
 Added: 2009-07-29
 %%
 Type: language
 Subtag: mpc
-Description: Mangarayi
+Description: Mangarrayi
 Added: 2009-07-29
 %%
 Type: language
@@ -22803,6 +23218,7 @@ Added: 2009-07-29
 Type: language
 Subtag: mpj
 Description: Martu Wangka
+Description: Wangkajunga
 Added: 2009-07-29
 %%
 Type: language
@@ -22817,7 +23233,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mpm
-Description: Yosond˙a Mixtec
+Description: Yosond√∫a Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -22837,7 +23253,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mpq
-Description: MatÌs
+Description: Mat√≠s
 Added: 2009-07-29
 %%
 Type: language
@@ -22857,7 +23273,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mpu
-Description: Makur·p
+Description: Makur√°p
 Added: 2009-07-29
 %%
 Type: language
@@ -23205,7 +23621,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: msn
-Description: VurÎs
+Description: Vur√´s
 Added: 2009-07-29
 %%
 Type: language
@@ -23215,7 +23631,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: msp
-Description: Maritsau·
+Description: Maritsau√°
 Added: 2009-07-29
 %%
 Type: language
@@ -23347,7 +23763,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mtp
-Description: WichÌ LhamtÈs Nocten
+Description: Wich√≠ Lhamt√©s Nocten
 Added: 2009-07-29
 %%
 Type: language
@@ -23388,7 +23804,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mtx
-Description: Tida· Mixtec
+Description: Tida√° Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -23428,7 +23844,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: muh
-Description: M¸nd¸
+Description: M√ºnd√º
 Added: 2009-07-29
 %%
 Type: language
@@ -23550,7 +23966,7 @@ Macrolanguage: mn
 %%
 Type: language
 Subtag: mvg
-Description: YucuaÒe Mixtec
+Description: Yucua√±e Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -23577,6 +23993,8 @@ Type: language
 Subtag: mvm
 Description: Muya
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Comments: see emq, wmg
 %%
 Type: language
 Subtag: mvn
@@ -23731,7 +24149,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mwq
-Description: M¸n Chin
+Description: M√ºn Chin
 Added: 2009-07-29
 %%
 Type: language
@@ -23770,11 +24188,13 @@ Type: language
 Subtag: mwx
 Description: Mediak
 Added: 2009-07-29
+Deprecated: 2018-03-08
 %%
 Type: language
 Subtag: mwy
 Description: Mosiro
 Added: 2009-07-29
+Deprecated: 2018-03-08
 %%
 Type: language
 Subtag: mwz
@@ -23788,7 +24208,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mxb
-Description: Tezoatl·n Mixtec
+Description: Tezoatl√°n Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -23889,7 +24309,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mxv
-Description: MetlatÛnoc Mixtec
+Description: Metlat√≥noc Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -23905,7 +24325,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mxy
-Description: Southeastern Nochixtl·n Mixtec
+Description: Southeastern Nochixtl√°n Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -23927,6 +24347,8 @@ Type: language
 Subtag: myd
 Description: Maramba
 Added: 2009-07-29
+Deprecated: 2019-04-16
+Preferred-Value: aog
 %%
 Type: language
 Subtag: mye
@@ -23952,6 +24374,7 @@ Type: language
 Subtag: myi
 Description: Mina (India)
 Added: 2009-07-29
+Deprecated: 2019-04-16
 %%
 Type: language
 Subtag: myj
@@ -23986,7 +24409,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: myp
-Description: Pirah„
+Description: Pirah√£
 Added: 2009-07-29
 %%
 Type: language
@@ -24015,7 +24438,7 @@ Preferred-Value: mry
 %%
 Type: language
 Subtag: myu
-Description: Munduruk˙
+Description: Munduruk√∫
 Added: 2009-07-29
 %%
 Type: language
@@ -24045,7 +24468,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mza
-Description: Santa MarÌa Zacatepec Mixtec
+Description: Santa Mar√≠a Zacatepec Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -24075,12 +24498,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mzh
-Description: WichÌ LhamtÈs G¸isnay
+Description: Wich√≠ Lhamt√©s G√ºisnay
 Added: 2009-07-29
 %%
 Type: language
 Subtag: mzi
-Description: Ixcatl·n Mazatec
+Description: Ixcatl√°n Mazatec
 Added: 2009-07-29
 %%
 Type: language
@@ -24095,7 +24518,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mzl
-Description: Mazatl·n Mixe
+Description: Mazatl√°n Mixe
 Added: 2009-07-29
 %%
 Type: language
@@ -24125,7 +24548,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: mzr
-Description: Mar˙bo
+Description: Mar√∫bo
 Added: 2009-07-29
 %%
 Type: language
@@ -24175,7 +24598,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nab
-Description: Southern Nambiku·ra
+Description: Southern Nambiku√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -24271,7 +24694,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nat
-Description: Ca_hungwa_rya_
+Description: CaÃ±hungwaÃ±ryaÃ±
 Description: Hungworo
 Added: 2009-07-29
 %%
@@ -24287,7 +24710,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nay
-Description: Narrinyeri
+Description: Ngarrindjeri
 Added: 2009-07-29
 %%
 Type: language
@@ -24344,7 +24767,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nbj
-Description: Ngarinman
+Description: Ngarinyman
 Added: 2009-07-29
 %%
 Type: language
@@ -24379,7 +24802,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nbr
-Description: Numana-Nunku-Gbantu-Numbu
+Description: Numana
 Added: 2009-07-29
 %%
 Type: language
@@ -24471,12 +24894,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nck
-Description: Nakara
+Description: Na-kara
 Added: 2009-07-29
 %%
 Type: language
 Subtag: ncl
-Description: Michoac·n Nahuatl
+Description: Michoac√°n Nahuatl
 Added: 2009-07-29
 %%
 Type: language
@@ -24498,6 +24921,13 @@ Type: language
 Subtag: ncp
 Description: Ndaktup
 Added: 2009-07-29
+Deprecated: 2018-03-08
+Preferred-Value: kdz
+%%
+Type: language
+Subtag: ncq
+Description: Northern Katang
+Added: 2017-02-23
 %%
 Type: language
 Subtag: ncr
@@ -24658,7 +25088,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: neb
-Description: Toura (CÙte d'Ivoire)
+Description: Toura (C√¥te d'Ivoire)
 Added: 2009-07-29
 %%
 Type: language
@@ -24673,7 +25103,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nee
-Description: NÍlÍmwa-Nixumwak
+Description: N√™l√™mwa-Nixumwak
 Added: 2009-07-29
 %%
 Type: language
@@ -24718,7 +25148,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: neo
-Description: N·-Meo
+Description: N√°-Meo
 Added: 2009-07-29
 %%
 Type: language
@@ -24785,7 +25215,7 @@ Added: 2009-07-29
 Type: language
 Subtag: nfl
 Description: Ayiwo
-Description: ƒiwoo
+Description: √Ñiwoo
 Added: 2009-07-29
 %%
 Type: language
@@ -24836,8 +25266,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ngh
-Description: N/u
-Description: N|u
+Description: N«Ång
 Added: 2009-07-29
 %%
 Type: language
@@ -24874,6 +25303,8 @@ Type: language
 Subtag: ngo
 Description: Ngoni
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Comments: see xnj, xnq
 %%
 Type: language
 Subtag: ngp
@@ -24898,6 +25329,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ngt
+Description: Kriang
 Description: Ngeq
 Added: 2009-07-29
 %%
@@ -24948,8 +25380,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nhd
-Description: Chirip·
-Description: Ava GuaranÌ
+Description: Chirip√°
+Description: Ava Guaran√≠
 Added: 2009-07-29
 Macrolanguage: gn
 %%
@@ -24975,7 +25407,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nhi
-Description: Zacatl·n-Ahuacatl·n-Tepetzintla Nahuatl
+Description: Zacatl√°n-Ahuacatl√°n-Tepetzintla Nahuatl
 Added: 2009-07-29
 %%
 Type: language
@@ -25045,7 +25477,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nhz
-Description: Santa MarÌa La Alta Nahuatl
+Description: Santa Mar√≠a La Alta Nahuatl
 Added: 2009-07-29
 %%
 Type: language
@@ -25081,7 +25513,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nig
-Description: Ngalakan
+Description: Ngalakgan
 Added: 2009-07-29
 %%
 Type: language
@@ -25423,6 +25855,11 @@ Description: Nihali
 Added: 2009-07-29
 %%
 Type: language
+Subtag: nlm
+Description: Mankiyali
+Added: 2018-03-08
+%%
+Type: language
 Subtag: nln
 Description: Durango Nahuatl
 Added: 2009-07-29
@@ -25473,7 +25910,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nlz
-Description: Nalˆgo
+Description: Nal√∂go
 Added: 2009-07-29
 %%
 Type: language
@@ -25484,7 +25921,7 @@ Added: 2009-07-29
 Type: language
 Subtag: nmb
 Description: Big Nambas
-Description: V'Înen Taut
+Description: V'√´nen Taut
 Added: 2009-07-29
 %%
 Type: language
@@ -25545,8 +25982,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nmn
-Description: !XÛı
-Description: !XÛı
+Description: «ÉX√≥√µ
 Added: 2009-07-29
 %%
 Type: language
@@ -25699,6 +26135,8 @@ Type: language
 Subtag: nns
 Description: Ningye
 Added: 2009-07-29
+Deprecated: 2019-04-16
+Preferred-Value: nbr
 %%
 Type: language
 Subtag: nnt
@@ -25794,8 +26232,10 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: nom
-Description: Nocam·n
+Description: Nocam√°n
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: cbr
 %%
 Type: language
 Subtag: non
@@ -25906,6 +26346,11 @@ Description: Puimei Naga
 Added: 2009-07-29
 %%
 Type: language
+Subtag: npx
+Description: Noipx
+Added: 2017-02-23
+%%
+Type: language
 Subtag: npy
 Description: Napu
 Added: 2009-07-29
@@ -25921,6 +26366,11 @@ Description: Kura Ede Nago
 Added: 2009-07-29
 %%
 Type: language
+Subtag: nql
+Description: Ngendelengo
+Added: 2017-02-23
+%%
+Type: language
 Subtag: nqm
 Description: Ndom
 Added: 2009-07-29
@@ -25933,7 +26383,7 @@ Added: 2009-07-29
 Type: language
 Subtag: nqo
 Description: N'Ko
-Description: NíKo
+Description: N‚ÄôKo
 Added: 2006-06-05
 Suppress-Script: Nkoo
 %%
@@ -25941,6 +26391,11 @@ Type: language
 Subtag: nqq
 Description: Kyan-Karyaw Naga
 Added: 2013-09-10
+%%
+Type: language
+Subtag: nqt
+Description: Nteng
+Added: 2021-02-20
 %%
 Type: language
 Subtag: nqy
@@ -25969,8 +26424,9 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nrf
-Description: JËrriais
-Description: GuernÈsiais
+Description: J√®rriais
+Description: Guern√©siais
+Description: Sercquiais
 Added: 2015-02-12
 %%
 Type: language
@@ -26038,6 +26494,11 @@ Type: language
 Subtag: nsa
 Description: Sangtam Naga
 Added: 2009-07-29
+%%
+Type: language
+Subtag: nsb
+Description: Lower Nossob
+Added: 2020-03-28
 %%
 Type: language
 Subtag: nsc
@@ -26216,7 +26677,7 @@ Preferred-Value: pij
 %%
 Type: language
 Subtag: ntu
-Description: Nat¸gu
+Description: Nat√ºgu
 Added: 2009-07-29
 %%
 Type: language
@@ -26314,7 +26775,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nuo
-Description: NguÙn
+Description: Ngu√¥n
 Added: 2009-07-29
 %%
 Type: language
@@ -26435,6 +26896,11 @@ Description: Nawaru
 Added: 2009-07-29
 %%
 Type: language
+Subtag: nww
+Description: Ndwewe
+Added: 2022-02-25
+%%
+Type: language
 Subtag: nwx
 Description: Middle Newar
 Added: 2009-07-29
@@ -26508,6 +26974,8 @@ Type: language
 Subtag: nxu
 Description: Narau
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Preferred-Value: bpp
 %%
 Type: language
 Subtag: nxx
@@ -26549,7 +27017,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nyh
-Description: Nyigina
+Description: Nyikina
 Added: 2009-07-29
 %%
 Type: language
@@ -26604,7 +27072,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: nys
-Description: Nyunga
+Description: Nyungar
 Added: 2009-07-29
 %%
 Type: language
@@ -26648,6 +27116,11 @@ Description: Njebi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: nzd
+Description: Nzadi
+Added: 2018-03-08
+%%
+Type: language
 Subtag: nzi
 Description: Nzima
 Added: 2005-10-16
@@ -26661,6 +27134,11 @@ Type: language
 Subtag: nzm
 Description: Zeme Naga
 Added: 2009-07-29
+%%
+Type: language
+Subtag: nzr
+Description: Dir-Nyamzak-Mbarimi
+Added: 2023-03-17
 %%
 Type: language
 Subtag: nzs
@@ -26705,7 +27183,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: obi
-Description: ObispeÒo
+Description: Obispe√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -26753,6 +27231,11 @@ Type: language
 Subtag: och
 Description: Old Chinese
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ocm
+Description: Old Cham
+Added: 2021-02-20
 %%
 Type: language
 Subtag: oco
@@ -26845,6 +27328,11 @@ Description: Oirata
 Added: 2009-07-29
 %%
 Type: language
+Subtag: oie
+Description: Okolie
+Added: 2022-02-25
+%%
+Type: language
 Subtag: oin
 Description: Inebu One
 Added: 2009-07-29
@@ -26898,6 +27386,11 @@ Type: language
 Subtag: okb
 Description: Okobo
 Added: 2009-07-29
+%%
+Type: language
+Subtag: okc
+Description: Kobo
+Added: 2021-02-20
 %%
 Type: language
 Subtag: okd
@@ -26979,6 +27472,11 @@ Type: language
 Subtag: okx
 Description: Okpe (Northwestern Edo)
 Added: 2009-07-29
+%%
+Type: language
+Subtag: okz
+Description: Old Khmer
+Added: 2021-02-20
 %%
 Type: language
 Subtag: ola
@@ -27119,6 +27617,11 @@ Description: Old Mon
 Added: 2009-07-29
 %%
 Type: language
+Subtag: omy
+Description: Old Malay
+Added: 2021-02-20
+%%
+Type: language
 Subtag: ona
 Description: Ona
 Added: 2009-07-29
@@ -27210,7 +27713,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: oon
-Description: ÷nge
+Description: √ñnge
 Added: 2009-07-29
 %%
 Type: language
@@ -27250,7 +27753,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: opy
-Description: OfayÈ
+Description: Ofay√©
 Added: 2009-07-29
 %%
 Type: language
@@ -27266,7 +27769,7 @@ Macrolanguage: om
 %%
 Type: language
 Subtag: ore
-Description: OrejÛn
+Description: Orej√≥n
 Added: 2009-07-29
 %%
 Type: language
@@ -27354,6 +27857,11 @@ Description: Osing
 Added: 2009-07-29
 %%
 Type: language
+Subtag: osn
+Description: Old Sundanese
+Added: 2021-02-20
+%%
+Type: language
 Subtag: oso
 Description: Ososo
 Added: 2009-07-29
@@ -27431,7 +27939,7 @@ Scope: collection
 %%
 Type: language
 Subtag: otq
-Description: QuerÈtaro Otomi
+Description: Quer√©taro Otomi
 Added: 2009-07-29
 %%
 Type: language
@@ -27441,7 +27949,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ots
-Description: Estado de MÈxico Otomi
+Description: Estado de M√©xico Otomi
 Added: 2009-07-29
 %%
 Type: language
@@ -27502,15 +28010,15 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: oun
-Description: !O!ung
+Description: «ÉO«Éung
 Added: 2009-07-29
 Deprecated: 2015-02-12
 Preferred-Value: vaj
 %%
 Type: language
 Subtag: ovd
-Description: ÷vdalian
 Description: Elfdalian
+Description: √ñvdalian
 Added: 2016-06-16
 %%
 Type: language
@@ -27556,7 +28064,7 @@ Scope: collection
 %%
 Type: language
 Subtag: pab
-Description: ParecÌs
+Description: Parec√≠s
 Added: 2009-07-29
 %%
 Type: language
@@ -27566,7 +28074,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pad
-Description: PaumarÌ
+Description: Paumar√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -27576,7 +28084,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: paf
-Description: Paranaw·t
+Description: Paranaw√°t
 Added: 2009-07-29
 %%
 Type: language
@@ -27596,7 +28104,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pak
-Description: Parakan„
+Description: Parakan√£
 Added: 2009-07-29
 %%
 Type: language
@@ -27640,6 +28148,8 @@ Type: language
 Subtag: pat
 Description: Papitalai
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Preferred-Value: kxr
 %%
 Type: language
 Subtag: pau
@@ -27648,7 +28158,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: pav
-Description: Paka·snovos
+Description: Paka√°snovos
 Added: 2009-07-29
 %%
 Type: language
@@ -27658,7 +28168,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pax
-Description: PankararÈ
+Description: Pankarar√©
 Added: 2009-07-29
 %%
 Type: language
@@ -27668,12 +28178,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: paz
-Description: Pankarar˙
+Description: Pankarar√∫
 Added: 2009-07-29
 %%
 Type: language
 Subtag: pbb
-Description: P·ez
+Description: P√°ez
 Added: 2009-07-29
 %%
 Type: language
@@ -27698,7 +28208,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pbh
-Description: E'Òapa Woromaipu
+Description: E'√±apa Woromaipu
 Added: 2009-07-29
 %%
 Type: language
@@ -27710,6 +28220,12 @@ Type: language
 Subtag: pbl
 Description: Mak (Nigeria)
 Added: 2009-07-29
+%%
+Type: language
+Subtag: pbm
+Description: Puebla Mazatec
+Added: 2018-03-08
+Comments: see also maa
 %%
 Type: language
 Subtag: pbn
@@ -27766,7 +28282,7 @@ Deprecated: 2012-08-12
 %%
 Type: language
 Subtag: pca
-Description: Santa InÈs Ahuatempan Popoloca
+Description: Santa In√©s Ahuatempan Popoloca
 Added: 2009-07-29
 %%
 Type: language
@@ -27971,7 +28487,7 @@ Macrolanguage: fa
 %%
 Type: language
 Subtag: pev
-Description: PÈmono
+Description: P√©mono
 Added: 2009-07-29
 %%
 Type: language
@@ -27991,12 +28507,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pfa
-Description: P··fang
+Description: P√°√°fang
 Added: 2009-07-29
 %%
 Type: language
 Subtag: pfe
-Description: Peere
+Description: Pere
 Added: 2009-07-29
 %%
 Type: language
@@ -28012,7 +28528,7 @@ Macrolanguage: ar
 %%
 Type: language
 Subtag: pgd
-Description: Gandhari
+Description: GƒÅndhƒÅrƒ´
 Added: 2015-02-12
 %%
 Type: language
@@ -28086,6 +28602,11 @@ Subtag: phi
 Description: Philippine languages
 Added: 2005-10-16
 Scope: collection
+%%
+Type: language
+Subtag: phj
+Description: Pahari
+Added: 2022-02-25
 %%
 Type: language
 Subtag: phk
@@ -28188,6 +28709,7 @@ Type: language
 Subtag: pii
 Description: Pini
 Added: 2009-07-29
+Deprecated: 2022-02-25
 %%
 Type: language
 Subtag: pij
@@ -28272,7 +28794,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pka
-Description: Ardhamagadhi Prakrit
+Description: ArdhamƒÅgadhƒ´ PrƒÅkrit
 Added: 2009-07-29
 %%
 Type: language
@@ -28303,7 +28825,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pko
-Description: Pˆkoot
+Description: P√∂koot
 Added: 2009-07-29
 Macrolanguage: kln
 %%
@@ -28365,7 +28887,7 @@ Scope: collection
 %%
 Type: language
 Subtag: plg
-Description: Pilag·
+Description: Pilag√°
 Added: 2009-07-29
 %%
 Type: language
@@ -28377,6 +28899,8 @@ Type: language
 Subtag: plj
 Description: Polci
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Comments: see nzr, pze, uly, zlu
 %%
 Type: language
 Subtag: plk
@@ -28402,6 +28926,7 @@ Type: language
 Subtag: plp
 Description: Palpa
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: plq
@@ -28427,7 +28952,7 @@ Macrolanguage: mg
 %%
 Type: language
 Subtag: plu
-Description: Palik˙r
+Description: Palik√∫r
 Added: 2009-07-29
 %%
 Type: language
@@ -28484,7 +29009,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pmh
-Description: Mahara??ri Prakrit
+Description: MƒÅhƒÅrƒÅ·π£·π≠ri PrƒÅkrit
 Added: 2009-07-29
 %%
 Type: language
@@ -28501,6 +29026,8 @@ Type: language
 Subtag: pmk
 Description: Pamlico
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: crr
 %%
 Type: language
 Subtag: pml
@@ -28587,12 +29114,18 @@ Description: Pannei
 Added: 2009-07-29
 %%
 Type: language
+Subtag: pnd
+Description: Mpinda
+Added: 2019-04-16
+%%
+Type: language
 Subtag: pne
 Description: Western Penan
 Added: 2009-07-29
 %%
 Type: language
 Subtag: png
+Description: Pangu
 Description: Pongu
 Added: 2009-07-29
 %%
@@ -28674,6 +29207,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pnw
+Description: Banyjima
 Description: Panytyima
 Added: 2009-07-29
 %%
@@ -28717,7 +29251,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pog
-Description: Potigu·ra
+Description: Potigu√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -28732,7 +29266,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pok
-Description: Pokang·
+Description: Pokang√°
 Added: 2009-07-29
 %%
 Type: language
@@ -28752,7 +29286,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pop
-Description: Pwapw‚
+Description: Pwapw√¢
 Added: 2009-07-29
 %%
 Type: language
@@ -28858,7 +29392,7 @@ Preferred-Value: lcq
 %%
 Type: language
 Subtag: pps
-Description: San LuÌs Temalacayuca Popoloca
+Description: San Lu√≠s Temalacayuca Popoloca
 Added: 2009-07-29
 %%
 Type: language
@@ -28903,6 +29437,7 @@ Type: language
 Subtag: prb
 Description: Lua'
 Added: 2009-07-29
+Deprecated: 2017-02-23
 %%
 Type: language
 Subtag: prc
@@ -28936,7 +29471,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pri
-Description: PaicÓ
+Description: Paic√Æ
 Added: 2009-07-29
 %%
 Type: language
@@ -28961,7 +29496,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pro
-Description: Old ProvenÁal (to 1500)
+Description: Old Proven√ßal (to 1500)
 Description: Old Occitan (to 1500)
 Added: 2005-10-16
 %%
@@ -28969,10 +29504,12 @@ Type: language
 Subtag: prp
 Description: Parsi
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: gu
 %%
 Type: language
 Subtag: prq
-Description: AshÈninka PerenÈ
+Description: Ash√©ninka Peren√©
 Added: 2009-07-29
 %%
 Type: language
@@ -29026,6 +29563,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: psc
+Description: Iranian Sign Language
 Description: Persian Sign Language
 Added: 2009-07-29
 %%
@@ -29105,7 +29643,7 @@ Macrolanguage: ps
 %%
 Type: language
 Subtag: psu
-Description: Sauraseni Prakrit
+Description: Sauraseni PrƒÅkrit
 Added: 2009-07-29
 %%
 Type: language
@@ -29125,12 +29663,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pth
-Description: PataxÛ H„-Ha-H„e
+Description: Patax√≥ H√£-Ha-H√£e
 Added: 2009-07-29
 %%
 Type: language
 Subtag: pti
-Description: Pintiini
+Description: Pindiini
+Description: Wangkatha
 Added: 2009-07-29
 %%
 Type: language
@@ -29140,7 +29679,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pto
-Description: Zo'È
+Description: Zo'√©
 Added: 2009-07-29
 %%
 Type: language
@@ -29232,6 +29771,7 @@ Type: language
 Subtag: puk
 Description: Pu Ko
 Added: 2009-07-29
+Deprecated: 2017-02-23
 %%
 Type: language
 Subtag: pum
@@ -29255,7 +29795,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pur
-Description: Purubor·
+Description: Purubor√°
 Added: 2009-07-29
 %%
 Type: language
@@ -29280,7 +29820,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: puy
-Description: PurisimeÒo
+Description: Purisime√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -29352,13 +29892,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: pyn
-Description: Poyan·wa
+Description: Poyan√°wa
 Added: 2009-07-29
 %%
 Type: language
 Subtag: pys
 Description: Paraguayan Sign Language
-Description: Lengua de SeÒas del Paraguay
+Description: Lengua de Se√±as del Paraguay
 Added: 2010-03-11
 %%
 Type: language
@@ -29377,7 +29917,18 @@ Description: Pyen
 Added: 2009-07-29
 %%
 Type: language
+Subtag: pze
+Description: Pesse
+Added: 2023-03-17
+%%
+Type: language
+Subtag: pzh
+Description: Pazeh
+Added: 2022-02-25
+%%
+Type: language
 Subtag: pzn
+Description: Jejara Naga
 Description: Para Naga
 Added: 2009-07-29
 %%
@@ -29394,19 +29945,19 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: qub
-Description: Huallaga Hu·nuco Quechua
+Description: Huallaga Hu√°nuco Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
 Type: language
 Subtag: quc
 Description: K'iche'
-Description: QuichÈ
+Description: Quich√©
 Added: 2009-07-29
 %%
 Type: language
 Subtag: qud
-Description: CalderÛn Highland Quichua
+Description: Calder√≥n Highland Quichua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29521,13 +30072,13 @@ Macrolanguage: qu
 %%
 Type: language
 Subtag: qve
-Description: Eastern ApurÌmac Quechua
+Description: Eastern Apur√≠mac Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
 Type: language
 Subtag: qvh
-Description: HuamalÌes-Dos de Mayo Hu·nuco Quechua
+Description: Huamal√≠es-Dos de Mayo Hu√°nuco Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29557,7 +30108,7 @@ Macrolanguage: qu
 %%
 Type: language
 Subtag: qvn
-Description: North JunÌn Quechua
+Description: North Jun√≠n Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29575,7 +30126,7 @@ Macrolanguage: qu
 %%
 Type: language
 Subtag: qvs
-Description: San MartÌn Quechua
+Description: San Mart√≠n Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29638,7 +30189,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: qxa
-Description: Chiqui·n Ancash Quechua
+Description: Chiqui√°n Ancash Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29650,7 +30201,7 @@ Macrolanguage: qu
 %%
 Type: language
 Subtag: qxh
-Description: Panao Hu·nuco Quechua
+Description: Panao Hu√°nuco Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29685,7 +30236,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: qxr
-Description: CaÒar Highland Quichua
+Description: Ca√±ar Highland Quichua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29702,7 +30253,7 @@ Macrolanguage: qu
 %%
 Type: language
 Subtag: qxu
-Description: Arequipa-La UniÛn Quechua
+Description: Arequipa-La Uni√≥n Quechua
 Added: 2009-07-29
 Macrolanguage: qu
 %%
@@ -29875,7 +30426,7 @@ Added: 2012-08-12
 %%
 Type: language
 Subtag: rcf
-Description: RÈunion Creole French
+Description: R√©union Creole French
 Added: 2009-07-29
 %%
 Type: language
@@ -29970,7 +30521,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: rgr
-Description: ResÌgaro
+Description: Res√≠garo
 Added: 2009-07-29
 %%
 Type: language
@@ -29999,9 +30550,15 @@ Description: Riang (India)
 Added: 2009-07-29
 %%
 Type: language
+Subtag: rib
+Description: Bribri Sign Language
+Added: 2022-02-25
+%%
+Type: language
 Subtag: rie
 Description: Rien
 Added: 2009-07-29
+Deprecated: 2017-02-23
 %%
 Type: language
 Subtag: rif
@@ -30010,6 +30567,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ril
+Description: Riang Lang
 Description: Riang (Myanmar)
 Added: 2009-07-29
 %%
@@ -30030,7 +30588,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: rit
-Description: Ritarungo
+Description: Ritharrngu
 Added: 2009-07-29
 %%
 Type: language
@@ -30096,7 +30654,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: rmb
-Description: Rembarunga
+Description: Rembarrnga
 Added: 2009-07-29
 %%
 Type: language
@@ -30171,12 +30729,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: rmq
-Description: CalÛ
+Description: Cal√≥
 Added: 2010-03-11
 %%
 Type: language
 Subtag: rmr
-Description: CalÛ
+Description: Cal√≥
 Added: 2009-07-29
 Deprecated: 2010-03-11
 Comments: see emx, rmq
@@ -30228,6 +30786,11 @@ Subtag: rna
 Description: Runa
 Added: 2009-07-29
 Deprecated: 2016-05-30
+%%
+Type: language
+Subtag: rnb
+Description: Brunca Sign Language
+Added: 2022-02-25
 %%
 Type: language
 Subtag: rnd
@@ -30370,6 +30933,13 @@ Type: language
 Subtag: rsi
 Description: Rennellese Sign Language
 Added: 2009-07-29
+Deprecated: 2017-02-23
+%%
+Type: language
+Subtag: rsk
+Description: Ruthenian
+Description: Rusnak
+Added: 2022-02-25
 %%
 Type: language
 Subtag: rsl
@@ -30380,6 +30950,16 @@ Type: language
 Subtag: rsm
 Description: Miriwoong Sign Language
 Added: 2016-05-30
+%%
+Type: language
+Subtag: rsn
+Description: Rwandan Sign Language
+Added: 2022-02-25
+%%
+Type: language
+Subtag: rsw
+Description: Rishiwa
+Added: 2023-03-17
 %%
 Type: language
 Subtag: rtc
@@ -30494,6 +31074,11 @@ Description: Rwa
 Added: 2009-07-29
 %%
 Type: language
+Subtag: rwl
+Description: Ruwila
+Added: 2021-02-20
+%%
+Type: language
 Subtag: rwm
 Description: Amba (Uganda)
 Added: 2009-07-29
@@ -30517,6 +31102,7 @@ Added: 2013-09-10
 Type: language
 Subtag: rxw
 Description: Karuwali
+Description: Garuwali
 Added: 2013-09-10
 %%
 Type: language
@@ -30536,7 +31122,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: rzh
-Description: Razi?i
+Description: RƒÅzi·∏•ƒ´
 Added: 2016-05-30
 %%
 Type: language
@@ -30561,7 +31147,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: sae
-Description: SabanÍ
+Description: Saban√™
 Added: 2009-07-29
 %%
 Type: language
@@ -30608,7 +31194,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: sap
-Description: Sanapan·
+Description: Sanapan√°
 Added: 2009-07-29
 Deprecated: 2014-02-28
 Comments: see aqt, spn
@@ -30736,7 +31322,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: sbo
-Description: Sab¸m
+Description: Sab√ºm
 Added: 2009-07-29
 %%
 Type: language
@@ -30853,6 +31439,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: scp
+Description: Hyolmo
 Description: Helambu Sherpa
 Added: 2009-07-29
 %%
@@ -30866,6 +31453,11 @@ Subtag: scs
 Description: North Slavey
 Added: 2009-07-29
 Macrolanguage: den
+%%
+Type: language
+Subtag: sct
+Description: Southern Katang
+Added: 2017-02-23
 %%
 Type: language
 Subtag: scu
@@ -30943,6 +31535,8 @@ Type: language
 Subtag: sdm
 Description: Semandang
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Comments: see ebc, gef, sdq
 %%
 Type: language
 Subtag: sdn
@@ -30959,6 +31553,11 @@ Type: language
 Subtag: sdp
 Description: Sherdukpen
 Added: 2009-07-29
+%%
+Type: language
+Subtag: sdq
+Description: Semandang
+Added: 2020-03-28
 %%
 Type: language
 Subtag: sdr
@@ -31064,7 +31663,7 @@ Scope: collection
 %%
 Type: language
 Subtag: sen
-Description: NanerigÈ SÈnoufo
+Description: Nanerig√© S√©noufo
 Added: 2009-07-29
 %%
 Type: language
@@ -31074,12 +31673,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: sep
-Description: SÏcÏtÈ SÈnoufo
+Description: S√¨c√¨t√© S√©noufo
 Added: 2009-07-29
 %%
 Type: language
 Subtag: seq
-Description: Senara SÈnoufo
+Description: Senara S√©noufo
 Added: 2009-07-29
 %%
 Type: language
@@ -31428,7 +32027,7 @@ Added: 2009-07-29
 Type: language
 Subtag: sih
 Description: Zire
-Description: SÓshÎÎ
+Description: S√Æsh√´√´
 Added: 2009-07-29
 %%
 Type: language
@@ -31626,7 +32225,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: skf
-Description: Sakirabi·
+Description: Sakirabi√°
 Added: 2009-07-29
 %%
 Type: language
@@ -31654,6 +32253,8 @@ Type: language
 Subtag: skk
 Description: Sok
 Added: 2009-07-29
+Deprecated: 2017-02-23
+Preferred-Value: oyb
 %%
 Type: language
 Subtag: skm
@@ -31735,7 +32336,7 @@ Scope: collection
 %%
 Type: language
 Subtag: slc
-Description: S·liba
+Description: S√°liba
 Added: 2009-07-29
 %%
 Type: language
@@ -31770,7 +32371,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: slj
-Description: Salum·
+Description: Salum√°
 Added: 2009-07-29
 %%
 Type: language
@@ -31797,6 +32398,7 @@ Type: language
 Subtag: slq
 Description: Salchuq
 Added: 2009-07-29
+Deprecated: 2023-03-17
 %%
 Type: language
 Subtag: slr
@@ -31857,6 +32459,8 @@ Type: language
 Subtag: smd
 Description: Sama
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Preferred-Value: kmb
 %%
 Type: language
 Subtag: smf
@@ -31963,6 +32567,8 @@ Type: language
 Subtag: snb
 Description: Sebuyau
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Preferred-Value: iba
 %%
 Type: language
 Subtag: snc
@@ -31988,6 +32594,7 @@ Type: language
 Subtag: snh
 Description: Shinabo
 Added: 2009-07-29
+Deprecated: 2017-02-23
 %%
 Type: language
 Subtag: sni
@@ -32073,7 +32680,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: snz
-Description: Sinsauru
+Description: Kou
 Added: 2009-07-29
 %%
 Type: language
@@ -32199,7 +32806,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: spc
-Description: SapÈ
+Description: Sap√©
 Added: 2009-07-29
 %%
 Type: language
@@ -32239,7 +32846,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: spn
-Description: Sanapan·
+Description: Sanapan√°
 Added: 2014-02-28
 %%
 Type: language
@@ -32357,6 +32964,11 @@ Description: Squamish
 Added: 2009-07-29
 %%
 Type: language
+Subtag: sqx
+Description: Kufr Qassem Sign Language (KQSL)
+Added: 2021-02-20
+%%
+Type: language
 Subtag: sra
 Description: Saruga
 Added: 2009-07-29
@@ -32425,7 +33037,7 @@ Macrolanguage: sc
 %%
 Type: language
 Subtag: srq
-Description: SirionÛ
+Description: Sirion√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -32445,7 +33057,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: sru
-Description: SuruÌ
+Description: Suru√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -32568,7 +33180,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: sss
-Description: SÙ
+Description: S√¥
 Added: 2009-07-29
 %%
 Type: language
@@ -32750,6 +33362,7 @@ Type: language
 Subtag: suj
 Description: Shubi
 Added: 2009-07-29
+Comments: see also xsj
 %%
 Type: language
 Subtag: suk
@@ -32771,7 +33384,13 @@ Deprecated: 2010-03-11
 Comments: see ulw, yan
 %%
 Type: language
+Subtag: suo
+Description: Bouni
+Added: 2021-02-20
+%%
+Type: language
 Subtag: suq
+Description: Tirmaga-Chai Suri
 Description: Suri
 Added: 2009-07-29
 %%
@@ -32807,7 +33426,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: suy
-Description: Suy·
+Description: Suy√°
 Added: 2009-07-29
 %%
 Type: language
@@ -32967,7 +33586,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: swx
-Description: Suruah·
+Description: Suruah√°
 Added: 2009-07-29
 %%
 Type: language
@@ -32992,6 +33611,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: sxg
+Description: Shuhi
 Description: Shixing
 Added: 2009-07-29
 %%
@@ -33136,6 +33756,8 @@ Type: language
 Subtag: szd
 Description: Seru
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: umi
 %%
 Type: language
 Subtag: sze
@@ -33163,6 +33785,11 @@ Description: Suabo
 Added: 2009-07-29
 %%
 Type: language
+Subtag: szs
+Description: Solomon Islands Sign Language
+Added: 2017-02-23
+%%
+Type: language
 Subtag: szv
 Description: Isu (Fako Division)
 Added: 2009-07-29
@@ -33171,6 +33798,11 @@ Type: language
 Subtag: szw
 Description: Sawai
 Added: 2009-07-29
+%%
+Type: language
+Subtag: szy
+Description: Sakizaya
+Added: 2019-04-16
 %%
 Type: language
 Subtag: taa
@@ -33199,7 +33831,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: taf
-Description: TapirapÈ
+Description: Tapirap√©
 Added: 2009-07-29
 %%
 Type: language
@@ -33291,13 +33923,14 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tba
-Description: Aikan„
+Description: Aikan√£
 Added: 2009-07-29
 %%
 Type: language
 Subtag: tbb
 Description: Tapeba
 Added: 2009-07-29
+Deprecated: 2020-03-28
 %%
 Type: language
 Subtag: tbc
@@ -33326,6 +33959,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tbh
+Description: Dharawal
 Description: Thurawal
 Added: 2009-07-29
 %%
@@ -33464,7 +34098,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tci
-Description: W·ra
+Description: W√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -33505,6 +34139,7 @@ Added: 2009-07-29
 Type: language
 Subtag: tcs
 Description: Torres Strait Creole
+Description: Yumplatok
 Added: 2009-07-29
 %%
 Type: language
@@ -33519,7 +34154,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tcw
-Description: Tecpatl·n Totonac
+Description: Tecpatl√°n Totonac
 Added: 2009-07-29
 %%
 Type: language
@@ -33549,12 +34184,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tdc
-Description: Ember·-TadÛ
+Description: Ember√°-Tad√≥
 Added: 2009-07-29
 %%
 Type: language
 Subtag: tdd
-Description: Tai N¸a
+Description: Tai N√ºa
 Added: 2009-07-29
 %%
 Type: language
@@ -33773,6 +34408,11 @@ Description: Tulishi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: tez
+Description: Tetserret
+Added: 2018-03-08
+%%
+Type: language
 Subtag: tfi
 Description: Tofin Gbe
 Added: 2009-07-29
@@ -33923,6 +34563,7 @@ Preferred-Value: tpo
 %%
 Type: language
 Subtag: thd
+Description: Kuuk Thaayorre
 Description: Thayore
 Added: 2009-07-29
 %%
@@ -34007,6 +34648,8 @@ Type: language
 Subtag: thw
 Description: Thudam
 Added: 2009-07-29
+Deprecated: 2020-06-08
+Preferred-Value: ola
 %%
 Type: language
 Subtag: thx
@@ -34107,7 +34750,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tiq
-Description: TiÈfo
+Description: Ti√©fo
 Added: 2009-07-29
 %%
 Type: language
@@ -34166,6 +34809,11 @@ Description: Northern Tujia
 Added: 2009-07-29
 %%
 Type: language
+Subtag: tjj
+Description: Tjungundji
+Added: 2019-04-16
+%%
+Type: language
 Subtag: tjl
 Description: Tai Laing
 Added: 2012-08-12
@@ -34186,6 +34834,11 @@ Description: Temacine Tamazight
 Added: 2009-07-29
 %%
 Type: language
+Subtag: tjp
+Description: Tjupany
+Added: 2019-04-16
+%%
+Type: language
 Subtag: tjs
 Description: Southern Tujia
 Added: 2009-07-29
@@ -34202,7 +34855,7 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: tka
-Description: Truk·
+Description: Truk√°
 Added: 2009-07-29
 %%
 Type: language
@@ -34222,7 +34875,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tkf
-Description: TukumanfÈd
+Description: Tukumanf√©d
 Added: 2009-07-29
 %%
 Type: language
@@ -34337,7 +34990,7 @@ Added: 2009-07-29
 Type: language
 Subtag: tlh
 Description: Klingon
-Description: tlhIngan-Hol
+Description: tlhIngan Hol
 Added: 2005-10-16
 %%
 Type: language
@@ -34377,7 +35030,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tlp
-Description: Filomena Mata-Coahuitl·n Totonac
+Description: Filomena Mata-Coahuitl√°n Totonac
 Added: 2009-07-29
 %%
 Type: language
@@ -34451,7 +35104,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tme
-Description: TremembÈ
+Description: Trememb√©
 Added: 2009-07-29
 %%
 Type: language
@@ -34461,7 +35114,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tmg
-Description: TernateÒo
+Description: Ternate√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -34485,6 +35138,8 @@ Type: language
 Subtag: tmk
 Description: Northwestern Tamang
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: tdg
 %%
 Type: language
 Subtag: tml
@@ -34508,7 +35163,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tmp
-Description: Tai MËne
+Description: Tai M√®ne
 Added: 2009-07-29
 Deprecated: 2016-05-30
 Preferred-Value: tyj
@@ -34571,7 +35226,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tnc
-Description: Tanimuca-Retuar„
+Description: Tanimuca-Retuar√£
 Added: 2009-07-29
 %%
 Type: language
@@ -34645,7 +35300,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tnr
-Description: MÈnik
+Description: M√©nik
 Added: 2009-07-29
 %%
 Type: language
@@ -34735,6 +35390,11 @@ Description: Tojolabal
 Added: 2009-07-29
 %%
 Type: language
+Subtag: tok
+Description: Toki Pona
+Added: 2022-02-25
+%%
+Type: language
 Subtag: tol
 Description: Tolowa
 Added: 2009-07-29
@@ -34746,7 +35406,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: too
-Description: Xicotepec De Ju·rez Totonac
+Description: Xicotepec De Ju√°rez Totonac
 Added: 2009-07-29
 %%
 Type: language
@@ -34806,8 +35466,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tpc
-Description: Azoy˙ Me'phaa
-Description: Azoy˙ Tlapanec
+Description: Azoy√∫ Me'phaa
+Description: Azoy√∫ Tlapanec
 Added: 2009-07-29
 %%
 Type: language
@@ -34833,7 +35493,7 @@ Suppress-Script: Latn
 %%
 Type: language
 Subtag: tpj
-Description: TapietÈ
+Description: Tapiet√©
 Added: 2009-07-29
 %%
 Type: language
@@ -34854,7 +35514,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tpn
-Description: Tupinamb·
+Description: Tupinamb√°
 Added: 2009-07-29
 %%
 Type: language
@@ -34874,7 +35534,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tpr
-Description: TuparÌ
+Description: Tupar√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -34894,8 +35554,10 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tpw
-Description: TupÌ
+Description: Tup√≠
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: tpn
 %%
 Type: language
 Subtag: tpx
@@ -34915,7 +35577,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tqb
-Description: TembÈ
+Description: Temb√©
 Added: 2009-07-29
 %%
 Type: language
@@ -35000,7 +35662,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: trg
-Description: Lish·n Did·n
+Description: Lish√°n Did√°n
 Added: 2009-07-29
 %%
 Type: language
@@ -35010,7 +35672,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tri
-Description: TriÛ
+Description: Tri√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -35051,7 +35713,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: trq
-Description: San MartÌn Itunyoso Triqui
+Description: San Mart√≠n Itunyoso Triqui
 Added: 2009-07-29
 %%
 Type: language
@@ -35077,6 +35739,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: trv
+Description: Sediq
+Description: Seediq
 Description: Taroko
 Added: 2009-07-29
 %%
@@ -35097,7 +35761,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: trz
-Description: Tor·
+Description: Tor√°
 Added: 2009-07-29
 %%
 Type: language
@@ -35159,13 +35823,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tsl
-Description: Ts'¸n-Lao
+Description: Ts'√ºn-Lao
 Added: 2009-07-29
 %%
 Type: language
 Subtag: tsm
 Description: Turkish Sign Language
-Description: T¸rk Isaret Dili
+Description: T√ºrk ƒ∞≈üaret Dili
 Added: 2009-07-29
 %%
 Type: language
@@ -35356,7 +36020,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tub
-Description: T¸batulabal
+Description: T√ºbatulabal
 Added: 2009-07-29
 %%
 Type: language
@@ -35366,7 +36030,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tud
-Description: Tux·
+Description: Tux√°
 Added: 2009-07-29
 %%
 Type: language
@@ -35459,7 +36123,7 @@ Scope: collection
 %%
 Type: language
 Subtag: tux
-Description: Tuxin·wa
+Description: Tuxin√°wa
 Added: 2009-07-29
 %%
 Type: language
@@ -35487,6 +36151,11 @@ Type: language
 Subtag: tve
 Description: Te'un
 Added: 2009-07-29
+%%
+Type: language
+Subtag: tvi
+Description: Tulai
+Added: 2023-03-17
 %%
 Type: language
 Subtag: tvk
@@ -35535,6 +36204,11 @@ Description: Sedoa
 Added: 2009-07-29
 %%
 Type: language
+Subtag: tvx
+Description: Taivoan
+Added: 2019-04-16
+%%
+Type: language
 Subtag: tvy
 Description: Timor Pidgin
 Added: 2009-07-29
@@ -35576,7 +36250,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: twh
-Description: Tai DÛn
+Description: Tai D√≥n
 Added: 2009-07-29
 %%
 Type: language
@@ -35616,7 +36290,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: twt
-Description: Turiw·ra
+Description: Turiw√°ra
 Added: 2009-07-29
 %%
 Type: language
@@ -35716,7 +36390,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: txu
-Description: KayapÛ
+Description: Kayap√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -35778,12 +36452,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: tys
-Description: T‡y Sa Pa
+Description: T√†y Sa Pa
 Added: 2009-07-29
 %%
 Type: language
 Subtag: tyt
-Description: T‡y Tac
+Description: T√†y Tac
 Added: 2009-07-29
 %%
 Type: language
@@ -35802,8 +36476,13 @@ Description: Teke-Tyee
 Added: 2009-07-29
 %%
 Type: language
+Subtag: tyy
+Description: Tiyaa
+Added: 2021-02-20
+%%
+Type: language
 Subtag: tyz
-Description: T‡y
+Description: T√†y
 Added: 2009-07-29
 %%
 Type: language
@@ -35848,7 +36527,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: uam
-Description: UamuÈ
+Description: Uamu√©
 Added: 2009-07-29
 %%
 Type: language
@@ -35958,6 +36637,11 @@ Description: Ughele
 Added: 2009-07-29
 %%
 Type: language
+Subtag: ugh
+Description: Kubachi
+Added: 2022-02-25
+%%
+Type: language
 Subtag: ugn
 Description: Ugandan Sign Language
 Added: 2009-07-29
@@ -36013,6 +36697,16 @@ Description: Ukhwejo
 Added: 2009-07-29
 %%
 Type: language
+Subtag: uki
+Description: Kui (India)
+Added: 2020-03-28
+%%
+Type: language
+Subtag: ukk
+Description: Muak Sa-aak
+Added: 2017-02-23
+%%
+Type: language
 Subtag: ukl
 Description: Ukrainian Sign Language
 Added: 2009-07-29
@@ -36029,7 +36723,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: uks
-Description: Urub˙-Kaapor Sign Language
+Description: Urub√∫-Kaapor Sign Language
 Description: Kaapor Sign Language
 Added: 2009-07-29
 %%
@@ -36037,6 +36731,11 @@ Type: language
 Subtag: uku
 Description: Ukue
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ukv
+Description: Kuku
+Added: 2020-03-28
 %%
 Type: language
 Subtag: ukw
@@ -36081,7 +36780,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ulk
-Description: Meriam
+Description: Meriam Mir
 Added: 2009-07-29
 %%
 Type: language
@@ -36110,6 +36809,11 @@ Description: Ulwa
 Added: 2010-03-11
 %%
 Type: language
+Subtag: uly
+Description: Buli
+Added: 2023-03-17
+%%
+Type: language
 Subtag: uma
 Description: Umatilla
 Added: 2009-07-29
@@ -36131,6 +36835,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: umg
+Description: Morrobalama
 Description: Umbuygamu
 Added: 2009-07-29
 %%
@@ -36151,7 +36856,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: umo
-Description: UmotÌna
+Description: Umot√≠na
 Added: 2009-07-29
 %%
 Type: language
@@ -36197,8 +36902,13 @@ Description: Ngarinyin
 Added: 2009-07-29
 %%
 Type: language
+Subtag: uni
+Description: Uni
+Added: 2021-02-20
+%%
+Type: language
 Subtag: unk
-Description: EnawenÈ-NawÈ
+Description: Enawen√©-Naw√©
 Added: 2009-07-29
 %%
 Type: language
@@ -36247,6 +36957,11 @@ Deprecated: 2015-02-12
 Preferred-Value: ema
 %%
 Type: language
+Subtag: uon
+Description: Kulon
+Added: 2022-02-25
+%%
+Type: language
 Subtag: upi
 Description: Umeda
 Added: 2009-07-29
@@ -36263,7 +36978,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: urb
-Description: Urub˙-Kaapor
+Description: Urub√∫-Kaapor
 Description: Kaapor
 Added: 2009-07-29
 %%
@@ -36337,7 +37052,7 @@ Added: 2009-07-29
 Type: language
 Subtag: urr
 Description: Lehalurup
-Description: Lˆyˆp
+Description: L√∂y√∂p
 Added: 2009-07-29
 %%
 Type: language
@@ -36401,6 +37116,11 @@ Description: Uspanteco
 Added: 2009-07-29
 %%
 Type: language
+Subtag: uss
+Description: us-Saare
+Added: 2019-04-16
+%%
+Type: language
 Subtag: usu
 Description: Uya
 Added: 2009-07-29
@@ -36414,6 +37134,11 @@ Type: language
 Subtag: ute
 Description: Ute-Southern Paiute
 Added: 2009-07-29
+%%
+Type: language
+Subtag: uth
+Description: ut-Hun
+Added: 2019-04-16
 %%
 Type: language
 Subtag: utp
@@ -36439,6 +37164,8 @@ Type: language
 Subtag: uun
 Description: Kulon-Pazeh
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Comments: see pzh, uon
 %%
 Type: language
 Subtag: uur
@@ -36521,8 +37248,7 @@ Added: 2005-10-16
 Type: language
 Subtag: vaj
 Description: Sekele
-Description: Northwestern !Kung
-Description: Northwestern !Kung
+Description: Northwestern «ÉKung
 Description: Vasekele
 Added: 2009-07-29
 %%
@@ -36609,7 +37335,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: veo
-Description: VentureÒo
+Description: Venture√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -36679,6 +37405,11 @@ Description: Iduna
 Added: 2009-07-29
 %%
 Type: language
+Subtag: vjk
+Description: Bajjika
+Added: 2023-03-17
+%%
+Type: language
 Subtag: vka
 Description: Kariyarra
 Added: 2009-07-29
@@ -36687,6 +37418,8 @@ Type: language
 Subtag: vki
 Description: Ija-Zuba
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Comments: see vkn, vkz
 %%
 Type: language
 Subtag: vkj
@@ -36710,6 +37443,11 @@ Description: Kamakan
 Added: 2009-07-29
 %%
 Type: language
+Subtag: vkn
+Description: Koro Nulu
+Added: 2021-02-20
+%%
+Type: language
 Subtag: vko
 Description: Kodeoha
 Added: 2009-07-29
@@ -36729,6 +37467,11 @@ Type: language
 Subtag: vku
 Description: Kurrama
 Added: 2009-07-29
+%%
+Type: language
+Subtag: vkz
+Description: Koro Zuba
+Added: 2021-02-20
 %%
 Type: language
 Subtag: vlp
@@ -36767,7 +37510,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: vmf
-Description: Mainfr‰nkisch
+Description: Mainfr√§nkisch
 Added: 2009-07-29
 %%
 Type: language
@@ -36853,7 +37596,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: vmz
-Description: Mazatl·n Mazatec
+Description: Mazatl√°n Mazatec
 Added: 2009-07-29
 %%
 Type: language
@@ -36890,7 +37633,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: vro
-Description: Vıro
+Description: V√µro
 Added: 2009-07-29
 Macrolanguage: et
 %%
@@ -36963,7 +37706,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wad
-Description: Wandamen
+Description: Wamesa
+Description: Wondama
 Added: 2009-07-29
 %%
 Type: language
@@ -36973,7 +37717,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: waf
-Description: Wakon·
+Description: Wakon√°
 Added: 2009-07-29
 %%
 Type: language
@@ -37030,7 +37774,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: waq
-Description: Wageman
+Description: Wagiman
 Added: 2009-07-29
 %%
 Type: language
@@ -37050,7 +37794,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wau
-Description: Waur·
+Description: Waur√°
 Added: 2009-07-29
 %%
 Type: language
@@ -37147,8 +37891,13 @@ Added: 2009-07-29
 Macrolanguage: raj
 %%
 Type: language
+Subtag: wbs
+Description: West Bengal Sign Language
+Added: 2017-02-23
+%%
+Type: language
 Subtag: wbt
-Description: Wanman
+Description: Warnman
 Added: 2009-07-29
 %%
 Type: language
@@ -37163,7 +37912,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wca
-Description: Yanom·mi
+Description: Yanom√°mi
 Added: 2009-07-29
 %%
 Type: language
@@ -37192,6 +37941,11 @@ Description: Wadikali
 Added: 2013-09-10
 %%
 Type: language
+Subtag: wdt
+Description: Wendat
+Added: 2022-02-25
+%%
+Type: language
 Subtag: wdu
 Description: Wadjigu
 Added: 2009-07-29
@@ -37208,7 +37962,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wec
-Description: WË Western
+Description: W√® Western
 Added: 2009-07-29
 %%
 Type: language
@@ -37295,6 +38049,7 @@ Added: 2010-03-11
 %%
 Type: language
 Subtag: wgg
+Description: Wangkangurru
 Description: Wangganguru
 Added: 2009-07-29
 %%
@@ -37368,7 +38123,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wig
-Description: Wik-Ngathana
+Description: Wik Ngathan
 Added: 2009-07-29
 %%
 Type: language
@@ -37408,7 +38163,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wir
-Description: WirafÈd
+Description: Wiraf√©d
 Added: 2009-07-29
 %%
 Type: language
@@ -37472,6 +38227,11 @@ Description: Kalanadi
 Added: 2009-07-29
 %%
 Type: language
+Subtag: wkr
+Description: Keerray-Woorroong
+Added: 2019-04-16
+%%
+Type: language
 Subtag: wku
 Description: Kunduvadi
 Added: 2009-07-29
@@ -37505,6 +38265,11 @@ Type: language
 Subtag: wlg
 Description: Kunbarlang
 Added: 2009-07-29
+%%
+Type: language
+Subtag: wlh
+Description: Welaun
+Added: 2020-03-28
 %%
 Type: language
 Subtag: wli
@@ -37548,7 +38313,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wlv
-Description: WichÌ LhamtÈs Vejoz
+Description: Wich√≠ Lhamt√©s Vejoz
 Added: 2009-07-29
 %%
 Type: language
@@ -37583,13 +38348,18 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wmd
-Description: MamaindÈ
+Description: Mamaind√©
 Added: 2009-07-29
 %%
 Type: language
 Subtag: wme
 Description: Wambule
 Added: 2009-07-29
+%%
+Type: language
+Subtag: wmg
+Description: Western Minyag
+Added: 2021-02-20
 %%
 Type: language
 Subtag: wmh
@@ -37638,7 +38408,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: wnb
-Description: Wanambre
+Description: Mokati
 Added: 2009-07-29
 %%
 Type: language
@@ -37704,16 +38474,18 @@ Added: 2013-09-10
 Type: language
 Subtag: wny
 Description: Wanyi
+Description: Waanyi
 Added: 2012-08-12
 %%
 Type: language
 Subtag: woa
+Description: Kuwema
 Description: Tyaraity
 Added: 2009-07-29
 %%
 Type: language
 Subtag: wob
-Description: WË Northern
+Description: W√® Northern
 Added: 2009-07-29
 %%
 Type: language
@@ -37795,9 +38567,12 @@ Type: language
 Subtag: wra
 Description: Warapu
 Added: 2009-07-29
+Deprecated: 2021-02-20
+Comments: see bpe, suo, uni
 %%
 Type: language
 Subtag: wrb
+Description: Waluwarra
 Description: Warluwara
 Added: 2009-07-29
 %%
@@ -37805,15 +38580,17 @@ Type: language
 Subtag: wrd
 Description: Warduji
 Added: 2009-07-29
+Deprecated: 2022-02-25
 %%
 Type: language
 Subtag: wrg
 Description: Warungu
+Description: Gudjal
 Added: 2009-07-29
 %%
 Type: language
 Subtag: wrh
-Description: Wiradhuri
+Description: Wiradjuri
 Added: 2009-07-29
 %%
 Type: language
@@ -37932,6 +38709,11 @@ Type: language
 Subtag: wsv
 Description: Wotapuri-Katarqalai
 Added: 2009-07-29
+%%
+Type: language
+Subtag: wtb
+Description: Matambwe
+Added: 2023-03-17
 %%
 Type: language
 Subtag: wtf
@@ -38069,6 +38851,8 @@ Type: language
 Subtag: wya
 Description: Wyandot
 Added: 2009-07-29
+Deprecated: 2022-02-25
+Comments: see wdt, wyn
 %%
 Type: language
 Subtag: wyb
@@ -38086,8 +38870,13 @@ Description: Wymysorys
 Added: 2009-07-29
 %%
 Type: language
+Subtag: wyn
+Description: Wyandot
+Added: 2022-02-25
+%%
+Type: language
 Subtag: wyr
-Description: WayorÛ
+Description: Wayor√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -38127,17 +38916,17 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xai
-Description: KaimbÈ
+Description: Kaimb√©
 Added: 2009-07-29
 %%
 Type: language
 Subtag: xaj
-Description: Ararandew·ra
+Description: Ararandew√°ra
 Added: 2014-02-28
 %%
 Type: language
 Subtag: xak
-Description: M·ku
+Description: M√°ku
 Added: 2016-05-30
 %%
 Type: language
@@ -38148,8 +38937,7 @@ Added: 2005-10-16
 %%
 Type: language
 Subtag: xam
-Description: /Xam
-Description: |Xam
+Description: «ÄXam
 Added: 2009-07-29
 %%
 Type: language
@@ -38194,7 +38982,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xav
-Description: Xav·nte
+Description: Xav√°nte
 Added: 2009-07-29
 %%
 Type: language
@@ -38276,17 +39064,18 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xbw
-Description: Kambiw·
+Description: Kambiw√°
 Added: 2009-07-29
 %%
 Type: language
 Subtag: xbx
-Description: KabixÌ
+Description: Kabix√≠
 Added: 2009-07-29
 Deprecated: 2016-05-30
 %%
 Type: language
 Subtag: xby
+Description: Batjala
 Description: Batyala
 Added: 2013-09-10
 %%
@@ -38387,6 +39176,16 @@ Description: Edomite
 Added: 2009-07-29
 %%
 Type: language
+Subtag: xdo
+Description: Kwandu
+Added: 2017-02-23
+%%
+Type: language
+Subtag: xdq
+Description: Kaitag
+Added: 2022-02-25
+%%
+Type: language
 Subtag: xdy
 Description: Malayic Dayak
 Added: 2009-07-29
@@ -38403,8 +39202,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xeg
-Description: //Xegwi
-Description: ?Xegwi
+Description: «ÅXegwi
 Added: 2009-07-29
 %%
 Type: language
@@ -38424,7 +39222,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xer
-Description: XerÈnte
+Description: Xer√©nte
 Added: 2009-07-29
 %%
 Type: language
@@ -38434,7 +39232,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xet
-Description: Xet·
+Description: Xet√°
 Added: 2009-07-29
 %%
 Type: language
@@ -38464,7 +39262,7 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: xgf
-Description: Gabrielino-FernandeÒo
+Description: Gabrielino-Fernande√±o
 Added: 2009-07-29
 %%
 Type: language
@@ -38531,6 +39329,11 @@ Added: 2009-07-29
 Macrolanguage: lah
 %%
 Type: language
+Subtag: xhm
+Description: Middle Khmer (1400 to 1850 CE)
+Added: 2022-02-25
+%%
+Type: language
 Subtag: xhr
 Description: Hernican
 Added: 2009-07-29
@@ -38579,13 +39382,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xip
-Description: Xipin·wa
+Description: Xipin√°wa
 Added: 2009-07-29
 Deprecated: 2016-05-30
 %%
 Type: language
 Subtag: xir
-Description: Xiri‚na
+Description: Xiri√¢na
 Added: 2009-07-29
 %%
 Type: language
@@ -38667,6 +39470,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xkk
+Description: Kachok
 Description: Kaco'
 Added: 2009-07-29
 %%
@@ -38697,7 +39501,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xkr
-Description: Xakriab·
+Description: Xakriab√°
 Added: 2009-07-29
 %%
 Type: language
@@ -38842,7 +39646,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xmh
-Description: Kuku-Muminh
+Description: Kugu-Muminh
 Added: 2009-07-29
 %%
 Type: language
@@ -38921,6 +39725,7 @@ Macrolanguage: mg
 %%
 Type: language
 Subtag: xmx
+Description: Salawati
 Description: Maden
 Added: 2009-07-29
 %%
@@ -38966,9 +39771,19 @@ Description: Ngarigu
 Added: 2013-09-10
 %%
 Type: language
+Subtag: xnj
+Description: Ngoni (Tanzania)
+Added: 2021-02-20
+%%
+Type: language
 Subtag: xnk
 Description: Nganakarti
 Added: 2013-09-10
+%%
+Type: language
+Subtag: xnm
+Description: Ngumbarl
+Added: 2020-03-28
 %%
 Type: language
 Subtag: xnn
@@ -38979,6 +39794,11 @@ Type: language
 Subtag: xno
 Description: Anglo-Norman
 Added: 2009-07-29
+%%
+Type: language
+Subtag: xnq
+Description: Ngoni (Mozambique)
+Added: 2021-02-20
 %%
 Type: language
 Subtag: xnr
@@ -39049,7 +39869,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xoo
-Description: Xukur˙
+Description: Xukur√∫
 Added: 2009-07-29
 %%
 Type: language
@@ -39073,9 +39893,20 @@ Description: Pirriya
 Added: 2013-09-10
 %%
 Type: language
+Subtag: xpb
+Description: Northeastern Tasmanian
+Description: Pyemmairrener
+Added: 2020-03-28
+%%
+Type: language
 Subtag: xpc
 Description: Pecheneg
 Added: 2009-07-29
+%%
+Type: language
+Subtag: xpd
+Description: Oyster Bay Tasmanian
+Added: 2020-03-28
 %%
 Type: language
 Subtag: xpe
@@ -39084,9 +39915,21 @@ Added: 2009-07-29
 Macrolanguage: kpe
 %%
 Type: language
+Subtag: xpf
+Description: Southeast Tasmanian
+Description: Nuenonne
+Added: 2020-03-28
+%%
+Type: language
 Subtag: xpg
 Description: Phrygian
 Added: 2009-07-29
+%%
+Type: language
+Subtag: xph
+Description: North Midlands Tasmanian
+Description: Tyerrenoterpanner
+Added: 2020-03-28
 %%
 Type: language
 Subtag: xpi
@@ -39104,13 +39947,18 @@ Description: Kulina Pano
 Added: 2009-07-29
 %%
 Type: language
+Subtag: xpl
+Description: Port Sorell Tasmanian
+Added: 2020-03-28
+%%
+Type: language
 Subtag: xpm
 Description: Pumpokol
 Added: 2009-07-29
 %%
 Type: language
 Subtag: xpn
-Description: Kapinaw·
+Description: Kapinaw√°
 Added: 2009-07-29
 %%
 Type: language
@@ -39149,9 +39997,32 @@ Description: Punic
 Added: 2009-07-29
 %%
 Type: language
+Subtag: xpv
+Description: Northern Tasmanian
+Description: Tommeginne
+Added: 2020-03-28
+%%
+Type: language
+Subtag: xpw
+Description: Northwestern Tasmanian
+Description: Peerapper
+Added: 2020-03-28
+%%
+Type: language
+Subtag: xpx
+Description: Southwestern Tasmanian
+Description: Toogee
+Added: 2020-03-28
+%%
+Type: language
 Subtag: xpy
 Description: Puyo
 Added: 2009-07-29
+%%
+Type: language
+Subtag: xpz
+Description: Bruny Island Tasmanian
+Added: 2020-03-28
 %%
 Type: language
 Subtag: xqa
@@ -39165,7 +40036,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xra
-Description: KrahÙ
+Description: Krah√¥
 Added: 2009-07-29
 %%
 Type: language
@@ -39207,6 +40078,8 @@ Type: language
 Subtag: xrq
 Description: Karranga
 Added: 2013-09-10
+Deprecated: 2020-03-28
+Preferred-Value: dmw
 %%
 Type: language
 Subtag: xrr
@@ -39267,8 +40140,7 @@ Type: language
 Subtag: xsj
 Description: Subi
 Added: 2009-07-29
-Deprecated: 2015-02-12
-Preferred-Value: suj
+Comments: see also suj
 %%
 Type: language
 Subtag: xsl
@@ -39310,10 +40182,12 @@ Type: language
 Subtag: xss
 Description: Assan
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: zko
 %%
 Type: language
 Subtag: xsu
-Description: Sanum·
+Description: Sanum√°
 Added: 2009-07-29
 %%
 Type: language
@@ -39378,7 +40252,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: xtm
-Description: Magdalena PeÒasco Mixtec
+Description: Magdalena Pe√±asco Mixtec
 Added: 2009-07-29
 %%
 Type: language
@@ -39428,7 +40302,7 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: xtw
-Description: TawandÍ
+Description: Tawand√™
 Added: 2009-07-29
 %%
 Type: language
@@ -39440,6 +40314,8 @@ Type: language
 Subtag: xtz
 Description: Tasmanian
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Comments: see xpb, xpd, xpf, xph, xpl, xpv, xpw, xpx, xpz
 %%
 Type: language
 Subtag: xua
@@ -39469,6 +40345,7 @@ Added: 2009-07-29
 Type: language
 Subtag: xul
 Description: Ngunawal
+Description: Nunukul
 Added: 2013-09-10
 %%
 Type: language
@@ -39504,6 +40381,7 @@ Added: 2009-07-29
 Type: language
 Subtag: xuu
 Description: Kxoe
+Description: Khwedam
 Added: 2009-07-29
 %%
 Type: language
@@ -39608,7 +40486,7 @@ Added: 2013-09-10
 %%
 Type: language
 Subtag: xxr
-Description: KoropÛ
+Description: Korop√≥
 Added: 2009-07-29
 %%
 Type: language
@@ -39688,7 +40566,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yae
-Description: PumÈ
+Description: Pum√©
 Added: 2009-07-29
 %%
 Type: language
@@ -39698,7 +40576,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yag
-Description: Y·mana
+Description: Y√°mana
 Added: 2009-07-29
 %%
 Type: language
@@ -39778,7 +40656,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yaw
-Description: YawalapitÌ
+Description: Yawalapit√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -39850,7 +40728,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ybn
-Description: Yaba‚na
+Description: Yaba√¢na
 Added: 2009-07-29
 %%
 Type: language
@@ -39887,6 +40765,11 @@ Type: language
 Subtag: ycp
 Description: Chepya
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ycr
+Description: Yilan Creole
+Added: 2023-03-17
 %%
 Type: language
 Subtag: yda
@@ -40019,7 +40902,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: ygs
-Description: Yol?u Sign Language
+Description: Yol≈ãu Sign Language
 Added: 2014-02-28
 %%
 Type: language
@@ -40050,7 +40933,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yhs
-Description: Yan-nha?u Sign Language
+Description: Yan-nha≈ãu Sign Language
 Added: 2015-04-17
 %%
 Type: language
@@ -40101,6 +40984,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yin
+Description: Riang Lai
 Description: Yinchia
 Added: 2009-07-29
 %%
@@ -40165,6 +41049,11 @@ Type: language
 Subtag: ykg
 Description: Northern Yukaghir
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ykh
+Description: Khamnigan Mongol
+Added: 2023-03-17
 %%
 Type: language
 Subtag: yki
@@ -40273,8 +41162,8 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yly
-Description: Ny‚layu
-Description: Nyel‚yu
+Description: Ny√¢layu
+Description: Nyel√¢yu
 Added: 2009-07-29
 %%
 Type: language
@@ -40563,12 +41452,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yre
-Description: YaourÈ
+Description: Yaour√©
 Added: 2009-07-29
 %%
 Type: language
 Subtag: yri
-Description: YarÌ
+Description: Yar√≠
 Added: 2009-07-29
 Deprecated: 2016-05-30
 %%
@@ -40594,7 +41483,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yro
-Description: YaroamÎ
+Description: Yaroam√´
 Added: 2016-05-30
 %%
 Type: language
@@ -40631,6 +41520,11 @@ Type: language
 Subtag: ysl
 Description: Yugoslavian Sign Language
 Added: 2009-07-29
+%%
+Type: language
+Subtag: ysm
+Description: Myanmar Sign Language
+Added: 2021-02-20
 %%
 Type: language
 Subtag: ysn
@@ -40728,7 +41622,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: yui
-Description: YurutÌ
+Description: Yurut√≠
 Added: 2009-07-29
 %%
 Type: language
@@ -40916,20 +41810,20 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zaa
-Description: Sierra de Ju·rez Zapotec
+Description: Sierra de Ju√°rez Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: zab
 Description: Western Tlacolula Valley Zapotec
-Description: San Juan GuelavÌa Zapotec
+Description: San Juan Guelav√≠a Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: zac
-Description: Ocotl·n Zapotec
+Description: Ocotl√°n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -40984,7 +41878,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zam
-Description: Miahuatl·n Zapotec
+Description: Miahuatl√°n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41002,13 +41896,13 @@ Scope: macrolanguage
 %%
 Type: language
 Subtag: zaq
-Description: Alo·pam Zapotec
+Description: Alo√°pam Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: zar
-Description: RincÛn Zapotec
+Description: Rinc√≥n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41059,6 +41953,11 @@ Description: Zari
 Added: 2009-07-29
 %%
 Type: language
+Subtag: zba
+Description: Balaibalan
+Added: 2020-03-28
+%%
+Type: language
 Subtag: zbc
 Description: Central Berawan
 Added: 2009-07-29
@@ -41082,6 +41981,11 @@ Description: Batui
 Added: 2009-07-29
 %%
 Type: language
+Subtag: zbu
+Description: Bu (Bauchi State)
+Added: 2021-02-20
+%%
+Type: language
 Subtag: zbw
 Description: West Berawan
 Added: 2009-07-29
@@ -41090,6 +41994,12 @@ Type: language
 Subtag: zca
 Description: Coatecas Altas Zapotec
 Added: 2009-07-29
+Macrolanguage: zap
+%%
+Type: language
+Subtag: zcd
+Description: Las Delicias Zapotec
+Added: 2022-02-25
 Macrolanguage: zap
 %%
 Type: language
@@ -41118,6 +42028,11 @@ Subtag: zeh
 Description: Eastern Hongshuihe Zhuang
 Added: 2009-07-29
 Macrolanguage: za
+%%
+Type: language
+Subtag: zem
+Description: Zeem
+Added: 2023-03-17
 %%
 Type: language
 Subtag: zen
@@ -41224,6 +42139,8 @@ Type: language
 Subtag: zir
 Description: Ziriya
 Added: 2009-07-29
+Deprecated: 2020-03-28
+Preferred-Value: scv
 %%
 Type: language
 Subtag: ziw
@@ -41244,6 +42161,8 @@ Type: language
 Subtag: zkb
 Description: Koibal
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Preferred-Value: kjh
 %%
 Type: language
 Subtag: zkd
@@ -41277,7 +42196,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zkp
-Description: S„o Paulo Kaing·ng
+Description: S√£o Paulo Kaing√°ng
 Added: 2009-07-29
 %%
 Type: language
@@ -41304,6 +42223,11 @@ Type: language
 Subtag: zkz
 Description: Khazar
 Added: 2009-07-29
+%%
+Type: language
+Subtag: zla
+Description: Zula
+Added: 2021-02-20
 %%
 Type: language
 Subtag: zle
@@ -41340,6 +42264,11 @@ Subtag: zls
 Description: South Slavic languages
 Added: 2009-07-29
 Scope: collection
+%%
+Type: language
+Subtag: zlu
+Description: Zul
+Added: 2023-03-17
 %%
 Type: language
 Subtag: zlw
@@ -41405,12 +42334,13 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zml
-Description: Madngele
+Description: Matngala
 Added: 2009-07-29
 %%
 Type: language
 Subtag: zmm
 Description: Marimanindji
+Description: Marramaninyshi
 Added: 2009-07-29
 %%
 Type: language
@@ -41511,7 +42441,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zoc
-Description: Copainal· Zoque
+Description: Copainal√° Zoque
 Added: 2009-07-29
 %%
 Type: language
@@ -41526,7 +42456,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zoo
-Description: AsunciÛn Mixtepec Zapotec
+Description: Asunci√≥n Mixtepec Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41537,12 +42467,12 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zor
-Description: RayÛn Zoque
+Description: Ray√≥n Zoque
 Added: 2009-07-29
 %%
 Type: language
 Subtag: zos
-Description: Francisco LeÛn Zoque
+Description: Francisco Le√≥n Zoque
 Added: 2009-07-29
 %%
 Type: language
@@ -41565,7 +42495,7 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: zpd
-Description: Southeastern Ixtl·n Zapotec
+Description: Southeastern Ixtl√°n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41595,7 +42525,7 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: zpi
-Description: Santa MarÌa Quiegolani Zapotec
+Description: Santa Mar√≠a Quiegolani Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41613,7 +42543,7 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: zpl
-Description: LachixÌo Zapotec
+Description: Lachix√≠o Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41625,13 +42555,13 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: zpn
-Description: Santa InÈs Yatzechi Zapotec
+Description: Santa In√©s Yatzechi Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: zpo
-Description: Amatl·n Zapotec
+Description: Amatl√°n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41655,19 +42585,19 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: zps
-Description: Coatl·n Zapotec
+Description: Coatl√°n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: zpt
-Description: San Vicente Coatl·n Zapotec
+Description: San Vicente Coatl√°n Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: zpu
-Description: Yal·lag Zapotec
+Description: Yal√°lag Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41724,7 +42654,7 @@ Added: 2009-07-29
 %%
 Type: language
 Subtag: zro
-Description: Z·paro
+Description: Z√°paro
 Added: 2009-07-29
 %%
 Type: language
@@ -41777,19 +42707,19 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: ztg
-Description: XanaguÌa Zapotec
+Description: Xanagu√≠a Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: ztl
-Description: LapaguÌa-Guivini Zapotec
+Description: Lapagu√≠a-Guivini Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
 Type: language
 Subtag: ztm
-Description: San AgustÌn Mixtepec Zapotec
+Description: San Agust√≠n Mixtepec Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41807,7 +42737,7 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: ztq
-Description: Quioquitani-QuierÌ Zapotec
+Description: Quioquitani-Quier√≠ Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41825,7 +42755,7 @@ Macrolanguage: zap
 %%
 Type: language
 Subtag: ztu
-Description: G¸il· Zapotec
+Description: G√ºil√° Zapotec
 Added: 2009-07-29
 Macrolanguage: zap
 %%
@@ -41845,6 +42775,8 @@ Type: language
 Subtag: zua
 Description: Zeem
 Added: 2009-07-29
+Deprecated: 2023-03-17
+Comments: see cxh, dsk, dyr, tvi, zem
 %%
 Type: language
 Subtag: zuh
@@ -42052,13 +42984,21 @@ Type: extlang
 Subtag: ajp
 Description: South Levantine Arabic
 Added: 2009-07-29
+Deprecated: 2023-03-17
 Preferred-Value: ajp
 Prefix: ar
 Macrolanguage: ar
 %%
 Type: extlang
+Subtag: ajs
+Description: Algerian Jewish Sign Language
+Added: 2022-02-25
+Preferred-Value: ajs
+Prefix: sgn
+%%
+Type: extlang
 Subtag: apc
-Description: North Levantine Arabic
+Description: Levantine Arabic
 Added: 2009-07-29
 Preferred-Value: apc
 Prefix: ar
@@ -42121,6 +43061,7 @@ Prefix: sgn
 %%
 Type: extlang
 Subtag: asf
+Description: Auslan
 Description: Australian Sign Language
 Added: 2009-07-29
 Preferred-Value: asf
@@ -42199,6 +43140,7 @@ Type: extlang
 Subtag: bbz
 Description: Babalia Creole Arabic
 Added: 2009-07-29
+Deprecated: 2020-03-28
 Preferred-Value: bbz
 Prefix: ar
 Macrolanguage: ar
@@ -42316,6 +43258,15 @@ Prefix: zh
 Macrolanguage: zh
 %%
 Type: extlang
+Subtag: cnp
+Description: Northern Ping Chinese
+Description: Northern Pinghua
+Added: 2020-03-28
+Preferred-Value: cnp
+Prefix: zh
+Macrolanguage: zh
+%%
+Type: extlang
 Subtag: coa
 Description: Cocos Islands Malay
 Added: 2009-07-29
@@ -42334,7 +43285,7 @@ Macrolanguage: zh
 Type: extlang
 Subtag: csc
 Description: Catalan Sign Language
-Description: Lengua de seÒas catalana
+Description: Lengua de se√±as catalana
 Description: Llengua de Signes Catalana
 Added: 2009-07-29
 Preferred-Value: csc
@@ -42383,6 +43334,15 @@ Preferred-Value: csn
 Prefix: sgn
 %%
 Type: extlang
+Subtag: csp
+Description: Southern Ping Chinese
+Description: Southern Pinghua
+Added: 2020-03-28
+Preferred-Value: csp
+Prefix: zh
+Macrolanguage: zh
+%%
+Type: extlang
 Subtag: csq
 Description: Croatia Sign Language
 Added: 2009-07-29
@@ -42394,6 +43354,13 @@ Subtag: csr
 Description: Costa Rican Sign Language
 Added: 2009-07-29
 Preferred-Value: csr
+Prefix: sgn
+%%
+Type: extlang
+Subtag: csx
+Description: Cambodian Sign Language
+Added: 2021-02-20
+Preferred-Value: csx
 Prefix: sgn
 %%
 Type: extlang
@@ -42434,6 +43401,13 @@ Preferred-Value: dsl
 Prefix: sgn
 %%
 Type: extlang
+Subtag: dsz
+Description: Mardin Sign Language
+Added: 2022-02-25
+Preferred-Value: dsz
+Prefix: sgn
+%%
+Type: extlang
 Subtag: dup
 Description: Duano
 Added: 2009-07-29
@@ -42446,6 +43420,13 @@ Subtag: ecs
 Description: Ecuadorian Sign Language
 Added: 2009-07-29
 Preferred-Value: ecs
+Prefix: sgn
+%%
+Type: extlang
+Subtag: ehs
+Description: Miyakubo Sign Language
+Added: 2021-02-20
+Preferred-Value: ehs
 Prefix: sgn
 %%
 Type: extlang
@@ -42500,7 +43481,7 @@ Prefix: sgn
 Type: extlang
 Subtag: fss
 Description: Finland-Swedish Sign Language
-Description: finlandssvenskt teckensprÂk
+Description: finlandssvenskt teckenspr√•k
 Description: suomenruotsalainen viittomakieli
 Added: 2009-07-29
 Preferred-Value: fss
@@ -42733,6 +43714,13 @@ Preferred-Value: jhs
 Prefix: sgn
 %%
 Type: extlang
+Subtag: jks
+Description: Amami Koniya Sign Language
+Added: 2021-02-20
+Preferred-Value: jks
+Prefix: sgn
+%%
+Type: extlang
 Subtag: jls
 Description: Jamaican Sign Language
 Added: 2010-03-11
@@ -42831,6 +43819,14 @@ Prefix: ms
 Macrolanguage: ms
 %%
 Type: extlang
+Subtag: lgs
+Description: Guinea-Bissau Sign Language
+Description: L√≠ngua Gestual Guineense
+Added: 2023-03-17
+Preferred-Value: lgs
+Prefix: sgn
+%%
+Type: extlang
 Subtag: liw
 Description: Col
 Added: 2009-07-29
@@ -42846,9 +43842,26 @@ Preferred-Value: lls
 Prefix: sgn
 %%
 Type: extlang
+Subtag: lsb
+Description: Burundian Sign Language
+Description: Langue des Signes Burundaise
+Added: 2021-02-20
+Preferred-Value: lsb
+Prefix: sgn
+%%
+Type: extlang
+Subtag: lsc
+Description: Albarradas Sign Language
+Description: Lengua de se√±as Albarradas
+Added: 2022-02-25
+Preferred-Value: lsc
+Prefix: sgn
+%%
+Type: extlang
 Subtag: lsg
 Description: Lyons Sign Language
 Added: 2009-07-29
+Deprecated: 2018-03-08
 Preferred-Value: lsg
 Prefix: sgn
 %%
@@ -42857,6 +43870,13 @@ Subtag: lsl
 Description: Latvian Sign Language
 Added: 2009-07-29
 Preferred-Value: lsl
+Prefix: sgn
+%%
+Type: extlang
+Subtag: lsn
+Description: Tibetan Sign Language
+Added: 2019-04-16
+Preferred-Value: lsn
 Prefix: sgn
 %%
 Type: extlang
@@ -42869,7 +43889,7 @@ Prefix: sgn
 Type: extlang
 Subtag: lsp
 Description: Panamanian Sign Language
-Description: Lengua de SeÒas PanameÒas
+Description: Lengua de Se√±as Paname√±as
 Added: 2009-07-29
 Preferred-Value: lsp
 Prefix: sgn
@@ -42879,6 +43899,22 @@ Subtag: lst
 Description: Trinidad and Tobago Sign Language
 Added: 2009-07-29
 Preferred-Value: lst
+Prefix: sgn
+%%
+Type: extlang
+Subtag: lsv
+Description: Sivia Sign Language
+Added: 2019-04-16
+Preferred-Value: lsv
+Prefix: sgn
+%%
+Type: extlang
+Subtag: lsw
+Description: Seychelles Sign Language
+Description: Lalang Siny Seselwa
+Description: Langue des Signes Seychelloise
+Added: 2022-02-25
+Preferred-Value: lsw
 Prefix: sgn
 %%
 Type: extlang
@@ -42903,6 +43939,13 @@ Added: 2010-03-11
 Preferred-Value: lvs
 Prefix: lv
 Macrolanguage: lv
+%%
+Type: extlang
+Subtag: lws
+Description: Malawian Sign Language
+Added: 2018-03-08
+Preferred-Value: lws
+Prefix: sgn
 %%
 Type: extlang
 Subtag: lzh
@@ -43166,6 +44209,7 @@ Prefix: sgn
 %%
 Type: extlang
 Subtag: psc
+Description: Iranian Sign Language
 Description: Persian Sign Language
 Added: 2009-07-29
 Preferred-Value: psc
@@ -43224,9 +44268,16 @@ Prefix: sgn
 Type: extlang
 Subtag: pys
 Description: Paraguayan Sign Language
-Description: Lengua de SeÒas del Paraguay
+Description: Lengua de Se√±as del Paraguay
 Added: 2010-03-11
 Preferred-Value: pys
+Prefix: sgn
+%%
+Type: extlang
+Subtag: rib
+Description: Bribri Sign Language
+Added: 2022-02-25
+Preferred-Value: rib
 Prefix: sgn
 %%
 Type: extlang
@@ -43237,9 +44288,17 @@ Preferred-Value: rms
 Prefix: sgn
 %%
 Type: extlang
+Subtag: rnb
+Description: Brunca Sign Language
+Added: 2022-02-25
+Preferred-Value: rnb
+Prefix: sgn
+%%
+Type: extlang
 Subtag: rsi
 Description: Rennellese Sign Language
 Added: 2009-07-29
+Deprecated: 2017-02-23
 Preferred-Value: rsi
 Prefix: sgn
 %%
@@ -43255,6 +44314,13 @@ Subtag: rsm
 Description: Miriwoong Sign Language
 Added: 2016-05-30
 Preferred-Value: rsm
+Prefix: sgn
+%%
+Type: extlang
+Subtag: rsn
+Description: Rwandan Sign Language
+Added: 2022-02-25
+Preferred-Value: rsn
 Prefix: sgn
 %%
 Type: extlang
@@ -43330,6 +44396,13 @@ Preferred-Value: sqs
 Prefix: sgn
 %%
 Type: extlang
+Subtag: sqx
+Description: Kufr Qassem Sign Language (KQSL)
+Added: 2021-02-20
+Preferred-Value: sqx
+Prefix: sgn
+%%
+Type: extlang
 Subtag: ssh
 Description: Shihhi Arabic
 Added: 2009-07-29
@@ -43390,6 +44463,13 @@ Preferred-Value: syy
 Prefix: sgn
 %%
 Type: extlang
+Subtag: szs
+Description: Solomon Islands Sign Language
+Added: 2017-02-23
+Preferred-Value: szs
+Prefix: sgn
+%%
+Type: extlang
 Subtag: tmw
 Description: Temuan
 Added: 2009-07-29
@@ -43407,7 +44487,7 @@ Prefix: sgn
 Type: extlang
 Subtag: tsm
 Description: Turkish Sign Language
-Description: T¸rk Isaret Dili
+Description: T√ºrk ƒ∞≈üaret Dili
 Added: 2009-07-29
 Preferred-Value: tsm
 Prefix: sgn
@@ -43463,7 +44543,7 @@ Prefix: sgn
 %%
 Type: extlang
 Subtag: uks
-Description: Urub˙-Kaapor Sign Language
+Description: Urub√∫-Kaapor Sign Language
 Description: Kaapor Sign Language
 Added: 2009-07-29
 Preferred-Value: uks
@@ -43540,6 +44620,13 @@ Preferred-Value: vsv
 Prefix: sgn
 %%
 Type: extlang
+Subtag: wbs
+Description: West Bengal Sign Language
+Added: 2017-02-23
+Preferred-Value: wbs
+Prefix: sgn
+%%
+Type: extlang
 Subtag: wuu
 Description: Wu Chinese
 Added: 2009-07-29
@@ -43581,18 +44668,19 @@ Subtag: yds
 Description: Yiddish Sign Language
 Added: 2009-07-29
 Deprecated: 2015-02-12
+Preferred-Value: yds
 Prefix: sgn
 %%
 Type: extlang
 Subtag: ygs
-Description: Yol?u Sign Language
+Description: Yol≈ãu Sign Language
 Added: 2014-02-28
 Preferred-Value: ygs
 Prefix: sgn
 %%
 Type: extlang
 Subtag: yhs
-Description: Yan-nha?u Sign Language
+Description: Yan-nha≈ãu Sign Language
 Added: 2015-04-17
 Preferred-Value: yhs
 Prefix: sgn
@@ -43602,6 +44690,13 @@ Subtag: ysl
 Description: Yugoslavian Sign Language
 Added: 2009-07-29
 Preferred-Value: ysl
+Prefix: sgn
+%%
+Type: extlang
+Subtag: ysm
+Description: Myanmar Sign Language
+Added: 2021-02-20
+Preferred-Value: ysm
 Prefix: sgn
 %%
 Type: extlang
@@ -43784,6 +44879,16 @@ Description: Cherokee
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Chis
+Description: Chisoi
+Added: 2023-10-16
+%%
+Type: script
+Subtag: Chrs
+Description: Chorasmian
+Added: 2019-09-11
+%%
+Type: script
 Subtag: Cirt
 Description: Cirth
 Added: 2005-10-16
@@ -43794,8 +44899,13 @@ Description: Coptic
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Cpmn
+Description: Cypro-Minoan
+Added: 2017-08-13
+%%
+Type: script
 Subtag: Cprt
-Description: Cypriot
+Description: Cypriot syllabary
 Added: 2005-10-16
 %%
 Type: script
@@ -43813,6 +44923,11 @@ Subtag: Deva
 Description: Devanagari
 Description: Nagari
 Added: 2005-10-16
+%%
+Type: script
+Subtag: Diak
+Description: Dives Akuru
+Added: 2019-09-11
 %%
 Type: script
 Subtag: Dogr
@@ -43852,11 +44967,21 @@ Description: Elbasan
 Added: 2010-08-16
 %%
 Type: script
+Subtag: Elym
+Description: Elymaic
+Added: 2018-10-28
+%%
+Type: script
 Subtag: Ethi
 Description: Ethiopic
-Description: Ge?ez
+Description: Ge ªez
 Description: Ge'ez
 Added: 2005-10-16
+%%
+Type: script
+Subtag: Gara
+Description: Garay
+Added: 2023-10-16
 %%
 Type: script
 Subtag: Geok
@@ -43904,6 +45029,11 @@ Description: Gujarati
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Gukh
+Description: Gurung Khema
+Added: 2023-10-16
+%%
+Type: script
 Subtag: Guru
 Description: Gurmukhi
 Added: 2005-10-16
@@ -43916,7 +45046,7 @@ Added: 2016-02-08
 Type: script
 Subtag: Hang
 Description: Hangul
-Description: Hangul
+Description: Hang≈≠l
 Description: Hangeul
 Added: 2005-10-16
 %%
@@ -43931,7 +45061,7 @@ Added: 2005-10-16
 Type: script
 Subtag: Hano
 Description: Hanunoo
-Description: HanunÛo
+Description: Hanun√≥o
 Added: 2005-10-16
 %%
 Type: script
@@ -43970,6 +45100,11 @@ Type: script
 Subtag: Hmng
 Description: Pahawh Hmong
 Added: 2005-10-16
+%%
+Type: script
+Subtag: Hmnp
+Description: Nyiakeng Puachue Hmong
+Added: 2017-08-13
 %%
 Type: script
 Subtag: Hrkt
@@ -44024,6 +45159,11 @@ Description: Katakana
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Kawi
+Description: Kawi
+Added: 2021-12-24
+%%
+Type: script
 Subtag: Khar
 Description: Kharoshthi
 Added: 2005-10-16
@@ -44064,6 +45204,11 @@ Description: Kpelle
 Added: 2010-04-10
 %%
 Type: script
+Subtag: Krai
+Description: Kirat Rai
+Added: 2023-10-16
+%%
+Type: script
 Subtag: Kthi
 Description: Kaithi
 Added: 2007-12-05
@@ -44102,7 +45247,7 @@ Added: 2015-07-24
 Type: script
 Subtag: Lepc
 Description: Lepcha
-Description: RÛng
+Description: R√≥ng
 Added: 2005-10-16
 %%
 Type: script
@@ -44176,7 +45321,7 @@ Type: script
 Subtag: Medf
 Description: Medefaidrin
 Description: Oberi Okaime
-Description: Oberi ?kaim?
+Description: Oberi ∆Ükaim…õ
 Added: 2017-01-13
 %%
 Type: script
@@ -44202,7 +45347,7 @@ Added: 2005-10-16
 Type: script
 Subtag: Modi
 Description: Modi
-Description: Mo?i
+Description: Mo·∏çƒ´
 Added: 2013-12-02
 %%
 Type: script
@@ -44243,6 +45388,16 @@ Description: Burmese
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Nagm
+Description: Nag Mundari
+Added: 2021-12-24
+%%
+Type: script
+Subtag: Nand
+Description: Nandinagari
+Added: 2018-10-28
+%%
+Type: script
 Subtag: Narb
 Description: Old North Arabian
 Description: Ancient North Arabian
@@ -44258,25 +45413,33 @@ Subtag: Newa
 Description: Newa
 Description: Newar
 Description: Newari
-Description: Nepala lipi
+Description: NepƒÅla lipi
 Added: 2016-01-04
 %%
 Type: script
+Subtag: Nkdb
+Description: Naxi Dongba
+Description: na¬≤¬π…ïi¬≥¬≥ to¬≥¬≥ba¬≤¬π
+Description: Nakhi Tomba
+Added: 2017-08-13
+%%
+Type: script
 Subtag: Nkgb
-Description: Nakhi Geba
-Description: 'Na-'Khi ≤Ggo-πbaw
 Description: Naxi Geba
+Description: na¬≤¬π…ïi¬≥¬≥ g å¬≤¬πba¬≤¬π
+Description: 'Na-'Khi ¬≤Gg≈è-¬πbaw
+Description: Nakhi Geba
 Added: 2009-03-13
 %%
 Type: script
 Subtag: Nkoo
-Description: NíKo
+Description: N‚ÄôKo
 Description: N'Ko
 Added: 2005-10-16
 %%
 Type: script
 Subtag: Nshu
-Description: N¸shu
+Description: N√ºshu
 Added: 2011-01-07
 %%
 Type: script
@@ -44291,6 +45454,11 @@ Description: Ol Cemet'
 Description: Ol
 Description: Santali
 Added: 2006-07-21
+%%
+Type: script
+Subtag: Onao
+Description: Ol Onal
+Added: 2023-10-16
 %%
 Type: script
 Subtag: Orkh
@@ -44315,6 +45483,11 @@ Description: Osmanya
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Ougr
+Description: Old Uyghur
+Added: 2021-02-12
+%%
+Type: script
 Subtag: Palm
 Description: Palmyrene
 Added: 2010-04-10
@@ -44323,6 +45496,16 @@ Type: script
 Subtag: Pauc
 Description: Pau Cin Hau
 Added: 2013-12-02
+%%
+Type: script
+Subtag: Pcun
+Description: Proto-Cuneiform
+Added: 2021-02-12
+%%
+Type: script
+Subtag: Pelm
+Description: Proto-Elamite
+Added: 2021-02-12
 %%
 Type: script
 Subtag: Perm
@@ -44371,9 +45554,19 @@ Description: Inscriptional Parthian
 Added: 2007-12-05
 %%
 Type: script
+Subtag: Psin
+Description: Proto-Sinaitic
+Added: 2021-02-12
+%%
+Type: script
 Subtag: Qaaa..Qabx
 Description: Private use
 Added: 2005-10-16
+%%
+Type: script
+Subtag: Ranj
+Description: Ranjana
+Added: 2021-02-12
 %%
 Type: script
 Subtag: Rjng
@@ -44381,6 +45574,11 @@ Description: Rejang
 Description: Redjang
 Description: Kaganga
 Added: 2006-10-17
+%%
+Type: script
+Subtag: Rohg
+Description: Hanifi Rohingya
+Added: 2017-12-13
 %%
 Type: script
 Subtag: Roro
@@ -44426,15 +45624,25 @@ Added: 2005-10-16
 Type: script
 Subtag: Shrd
 Description: Sharada
-Description: Sarada
+Description: ≈öƒÅradƒÅ
 Added: 2011-01-07
+%%
+Type: script
+Subtag: Shui
+Description: Shuishu
+Added: 2017-08-13
 %%
 Type: script
 Subtag: Sidd
 Description: Siddham
-Description: Siddha?
-Description: Siddhamat?ka
+Description: Siddha·πÉ
+Description: SiddhamƒÅt·πõkƒÅ
 Added: 2013-12-02
+%%
+Type: script
+Subtag: Sidt
+Description: Sidetic
+Added: 2023-10-16
 %%
 Type: script
 Subtag: Sind
@@ -44446,6 +45654,16 @@ Type: script
 Subtag: Sinh
 Description: Sinhala
 Added: 2005-10-16
+%%
+Type: script
+Subtag: Sogd
+Description: Sogdian
+Added: 2017-12-13
+%%
+Type: script
+Subtag: Sogo
+Description: Old Sogdian
+Added: 2017-12-13
 %%
 Type: script
 Subtag: Sora
@@ -44461,6 +45679,11 @@ Type: script
 Subtag: Sund
 Description: Sundanese
 Added: 2006-07-21
+%%
+Type: script
+Subtag: Sunu
+Description: Sunuwar
+Added: 2021-12-24
 %%
 Type: script
 Subtag: Sylo
@@ -44495,8 +45718,8 @@ Added: 2005-10-16
 Type: script
 Subtag: Takr
 Description: Takri
-Description: ?akri
-Description: ?a?kri
+Description: ·π¨ƒÅkrƒ´
+Description: ·π¨ƒÅ·πÖkrƒ´
 Added: 2011-01-07
 %%
 Type: script
@@ -44523,6 +45746,11 @@ Type: script
 Subtag: Tavt
 Description: Tai Viet
 Added: 2007-12-05
+%%
+Type: script
+Subtag: Tayo
+Description: Tai Yo
+Added: 2023-10-16
 %%
 Type: script
 Subtag: Telu
@@ -44568,6 +45796,31 @@ Description: Tirhuta
 Added: 2011-08-16
 %%
 Type: script
+Subtag: Tnsa
+Description: Tangsa
+Added: 2021-03-05
+%%
+Type: script
+Subtag: Todr
+Description: Todhri
+Added: 2023-10-16
+%%
+Type: script
+Subtag: Tols
+Description: Tolong Siki
+Added: 2023-10-16
+%%
+Type: script
+Subtag: Toto
+Description: Toto
+Added: 2020-05-12
+%%
+Type: script
+Subtag: Tutg
+Description: Tulu-Tigalari
+Added: 2023-10-16
+%%
+Type: script
 Subtag: Ugar
 Description: Ugaritic
 Added: 2005-10-16
@@ -44583,10 +45836,20 @@ Description: Visible Speech
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Vith
+Description: Vithkuqi
+Added: 2021-03-05
+%%
+Type: script
 Subtag: Wara
 Description: Warang Citi
 Description: Varang Kshiti
 Added: 2009-12-09
+%%
+Type: script
+Subtag: Wcho
+Description: Wancho
+Added: 2017-08-13
 %%
 Type: script
 Subtag: Wole
@@ -44604,6 +45867,11 @@ Description: Sumero-Akkadian cuneiform
 Added: 2005-10-16
 %%
 Type: script
+Subtag: Yezi
+Description: Yezidi
+Added: 2019-09-11
+%%
+Type: script
 Subtag: Yiii
 Description: Yi
 Added: 2005-10-16
@@ -44611,8 +45879,8 @@ Added: 2005-10-16
 Type: script
 Subtag: Zanb
 Description: Zanabazar Square
-Description: Zanabazarin Dˆrbˆljin Useg
-Description: Xewtee Dˆrbˆljin Bicig
+Description: Zanabazarin D√∂rb√∂ljin Useg
+Description: Xewtee D√∂rb√∂ljin Bicig
 Description: Horizontal Square Script
 Added: 2017-01-13
 %%
@@ -44741,7 +46009,7 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: AX
-Description: ≈land Islands
+Description: √Öland Islands
 Added: 2005-10-16
 %%
 Type: region
@@ -44796,7 +46064,7 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: BL
-Description: Saint BarthÈlemy
+Description: Saint Barth√©lemy
 Added: 2007-11-02
 %%
 Type: region
@@ -44893,7 +46161,7 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: CI
-Description: CÙte d'Ivoire
+Description: C√¥te d'Ivoire
 Added: 2005-10-16
 %%
 Type: region
@@ -44927,6 +46195,11 @@ Description: Clipperton Island
 Added: 2009-07-29
 %%
 Type: region
+Subtag: CQ
+Description: Sark
+Added: 2023-02-07
+%%
+Type: region
 Subtag: CR
 Description: Costa Rica
 Added: 2005-10-16
@@ -44951,7 +46224,7 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: CW
-Description: CuraÁao
+Description: Cura√ßao
 Added: 2011-01-07
 %%
 Type: region
@@ -45448,7 +46721,7 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: MK
-Description: The Former Yugoslav Republic of Macedonia
+Description: North Macedonia
 Added: 2005-10-16
 %%
 Type: region
@@ -45679,7 +46952,7 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: RE
-Description: RÈunion
+Description: R√©union
 Added: 2005-10-16
 %%
 Type: region
@@ -45810,6 +47083,8 @@ Added: 2005-10-16
 %%
 Type: region
 Subtag: SZ
+Description: Eswatini
+Description: eSwatini
 Description: Swaziland
 Added: 2005-10-16
 %%
@@ -45882,6 +47157,7 @@ Preferred-Value: TL
 %%
 Type: region
 Subtag: TR
+Description: T√ºrkiye
 Description: Turkey
 Added: 2005-10-16
 %%
@@ -46191,6 +47467,11 @@ Description: Western Europe
 Added: 2005-10-16
 %%
 Type: region
+Subtag: 202
+Description: Sub-Saharan Africa
+Added: 2017-04-18
+%%
+Type: region
 Subtag: 419
 Description: Latin America and the Caribbean
 Added: 2005-10-16
@@ -46210,7 +47491,7 @@ Description: Early Modern French
 Added: 2007-03-20
 Prefix: fr
 Comments: 17th century French, as catalogued in the "Dictionnaire de
-  l'acadÈmie franÁoise", 4eme ed. 1694; frequently includes
+  l'acad√©mie fran√ßoise", 4eme ed. 1694; frequently includes
   elements of Middle French, as this is a transitional period
 %%
 Type: variant
@@ -46246,11 +47527,17 @@ Prefix: de
 Type: variant
 Subtag: abl1943
 Description: Orthographic formulation of 1943 - Official in Brazil
-  (Formul·rio Ortogr·fico de 1943 - Oficial no Brasil)
+  (Formul√°rio Ortogr√°fico de 1943 - Oficial no Brasil)
 Added: 2015-05-06
 Prefix: pt-BR
 Comments: Denotes conventions established by the Academia Brasileira de
   Letras in 1943 and generally used in Brazil until 2009
+%%
+Type: variant
+Subtag: akuapem
+Description: Akuapem Twi
+Added: 2017-06-05
+Prefix: tw
 %%
 Type: variant
 Subtag: alalc97
@@ -46273,7 +47560,7 @@ Comments: Aluku dialect of the "Busi Nenge Tongo" English-based Creole
 Type: variant
 Subtag: ao1990
 Description: Portuguese Language Orthographic Agreement of 1990 (Acordo
-  Ortogr·fico da LÌngua Portuguesa de 1990)
+  Ortogr√°fico da L√≠ngua Portuguesa de 1990)
 Added: 2015-05-06
 Prefix: pt
 Prefix: gl
@@ -46281,16 +47568,49 @@ Comments: Portuguese orthography conventions established in 1990 but
   not brought into effect until 2009
 %%
 Type: variant
+Subtag: aranes
+Description: Aranese
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in the Val d'Aran
+%%
+Type: variant
 Subtag: arevela
 Description: Eastern Armenian
 Added: 2006-09-18
+Deprecated: 2018-03-24
 Prefix: hy
+Comments: Preferred tag is hy
 %%
 Type: variant
 Subtag: arevmda
 Description: Western Armenian
 Added: 2006-09-18
+Deprecated: 2018-03-24
 Prefix: hy
+Comments: Preferred tag is hyw
+%%
+Type: variant
+Subtag: arkaika
+Description: Arcaicam Esperantom
+Description: Arkaika Esperanto
+Added: 2020-12-17
+Prefix: eo
+Comments: Archaic Esperanto variant devised by Manuel Halvelik
+%%
+Type: variant
+Subtag: asante
+Description: Asante Twi
+Description: Ashanti Twi
+Added: 2017-06-05
+Prefix: tw
+%%
+Type: variant
+Subtag: auvern
+Description: Auvergnat
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in Auvergne
 %%
 Type: variant
 Subtag: baku1926
@@ -46309,9 +47629,9 @@ Prefix: uz
 Comments: Denotes alphabet used in Turkic republics/regions of the
   former USSR in late 1920s, and throughout 1930s, which aspired to
   represent equivalent phonemes in a unified fashion. Also known as: New
-  Turkic Alphabet; Birl?sdirilmis Jeni Tyrk
-  ?lifbas? (Birlesdirilmis Jeni Tyrk Elifbasi);
-  Ja?alif (Janalif).
+  Turkic Alphabet; Birl”ô≈üdirilmi≈ü Jeni Tyrk
+  ”òlifbas—å (Birlesdirilmis Jeni Tyrk Elifbasi);
+  Ja≈ãalif (Janalif).
 %%
 Type: variant
 Subtag: balanka
@@ -46341,6 +47661,23 @@ Added: 2010-07-28
 Prefix: sa
 %%
 Type: variant
+Subtag: bciav
+Description: BCI Blissymbolics AV
+Added: 2023-05-11
+Prefix: zbl
+Comments: Name given to a subset of the variety of Blissymbolics curated
+  by Blissymbolics Communication International, as represented by
+  entries in the BCI Authorized Vocabulary
+%%
+Type: variant
+Subtag: bcizbl
+Description: BCI Blissymbolics
+Added: 2023-05-11
+Prefix: zbl
+Comments: Name given to the variety of Blissymbolics curated by
+  Blissymbolics Communication International
+%%
+Type: variant
 Subtag: biscayan
 Description: Biscayan dialect of Basque
 Added: 2010-04-13
@@ -46356,11 +47693,20 @@ Comments: The dialect of San Giorgio/Bila is one of the four major local
   dialects of Resian
 %%
 Type: variant
+Subtag: blasl
+Description: Black American Sign Language dialect
+Added: 2023-07-31
+Prefix: ase
+Prefix: sgn-ase
+Comments: Black American Sign Language (BASL) or Black Sign Variation
+  (BSV) is a dialect of American Sign Language (ASL)
+%%
+Type: variant
 Subtag: bohoric
-Description: Slovene in Bohoric alphabet
+Description: Slovene in Bohoriƒç alphabet
 Added: 2012-06-27
 Prefix: sl
-Comments: The subtag represents the alphabet codified by Adam Bohoric
+Comments: The subtag represents the alphabet codified by Adam Bohoriƒç
   in 1584 and used from the first printed Slovene book and up to the
   mid-19th century.
 %%
@@ -46372,9 +47718,22 @@ Prefix: en
 Comments: Jargon embedded in American English
 %%
 Type: variant
+Subtag: bornholm
+Description: Bornholmsk
+Added: 2019-03-27
+Prefix: da
+%%
+Type: variant
+Subtag: cisaup
+Description: Cisalpine
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in northwestern Italy
+%%
+Type: variant
 Subtag: colb1945
 Description: Portuguese-Brazilian Orthographic Convention of 1945
-  (ConvenÁ„o Ortogr·fica Luso-Brasileira de 1945)
+  (Conven√ß√£o Ortogr√°fica Luso-Brasileira de 1945)
 Added: 2015-05-06
 Prefix: pt
 Comments: Portuguese orthography conventions established in 1945,
@@ -46388,6 +47747,12 @@ Description: Cornish English
 Description: Anglo-Cornish
 Added: 2015-12-07
 Prefix: en
+%%
+Type: variant
+Subtag: creiss
+Description: Occitan variants of the Croissant area
+Added: 2018-04-22
+Prefix: oc
 %%
 Type: variant
 Subtag: dajnko
@@ -46418,6 +47783,11 @@ Description: International Phonetic Alphabet
 Added: 2006-12-11
 %%
 Type: variant
+Subtag: fonkirsh
+Description: Kirshenbaum Phonetic Alphabet
+Added: 2018-04-22
+%%
+Type: variant
 Subtag: fonnapa
 Description: North American Phonetic Alphabet
 Description: Americanist Phonetic Notation
@@ -46433,6 +47803,65 @@ Subtag: fonxsamp
 Description: X-SAMPA transcription
 Added: 2010-10-23
 Comments: Indicates that the content is transcribed according to X-SAMPA
+%%
+Type: variant
+Subtag: gallo
+Description: Gallo
+Added: 2021-08-05
+Prefix: fr
+%%
+Type: variant
+Subtag: gascon
+Description: Gascon
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in Gascony
+%%
+Type: variant
+Subtag: grclass
+Description: Classical Occitan orthography
+Added: 2018-04-22
+Prefix: oc
+Prefix: oc-aranes
+Prefix: oc-auvern
+Prefix: oc-cisaup
+Prefix: oc-creiss
+Prefix: oc-gascon
+Prefix: oc-lemosin
+Prefix: oc-lengadoc
+Prefix: oc-nicard
+Prefix: oc-provenc
+Prefix: oc-vivaraup
+Comments: Classical written standard for Occitan developed in 1935 by
+  Alib√®rt
+%%
+Type: variant
+Subtag: grital
+Description: Italian-inspired Occitan orthography
+Added: 2018-04-22
+Prefix: oc
+Prefix: oc-cisaup
+Prefix: oc-nicard
+Prefix: oc-provenc
+%%
+Type: variant
+Subtag: grmistr
+Description: Mistralian or Mistralian-inspired Occitan orthography
+Added: 2018-04-22
+Prefix: oc
+Prefix: oc-aranes
+Prefix: oc-auvern
+Prefix: oc-cisaup
+Prefix: oc-creiss
+Prefix: oc-gascon
+Prefix: oc-lemosin
+Prefix: oc-lengadoc
+Prefix: oc-nicard
+Prefix: oc-provenc
+Prefix: oc-vivaraup
+Comments: Written standard developed by Romanilha in 1853 and used by
+  Mistral and the F√©libres, including derived standards such as Escolo
+  d√≥u Po, Escolo Gaston Febus, and others
 %%
 Type: variant
 Subtag: hepburn
@@ -46451,11 +47880,18 @@ Comments: Preferred tag is ja-Latn-alalc97
 %%
 Type: variant
 Subtag: hognorsk
-Description: Norwegian in H¯gnorsk (High Norwegian) orthography
+Description: Norwegian in H√∏gnorsk (High Norwegian) orthography
 Added: 2010-01-02
 Prefix: nn
 Comments: Norwegian following Ivar Aasen's orthographical principles,
   including modern usage.
+%%
+Type: variant
+Subtag: hsistemo
+Description: Standard H-system orthographic fallback for spelling
+  Esperanto
+Added: 2017-03-14
+Prefix: eo
 %%
 Type: variant
 Subtag: ijekavsk
@@ -46472,11 +47908,18 @@ Added: 2010-07-28
 Prefix: sa
 %%
 Type: variant
+Subtag: ivanchov
+Description: Bulgarian in 1899 orthography
+Added: 2017-12-13
+Prefix: bg
+Comments: Bulgarian orthography introduced by Todor Ivanchov in 1899
+%%
+Type: variant
 Subtag: jauer
 Description: Jauer dialect of Romansh
 Added: 2010-06-29
 Prefix: rm
-Comments: The spoken dialect of the Val M¸stair, which has no written
+Comments: The spoken dialect of the Val M√ºstair, which has no written
   standard.
 %%
 Type: variant
@@ -46498,7 +47941,7 @@ Description: The Kociewie dialect of Polish
 Added: 2014-11-27
 Prefix: pl
 Comments: The dialect of Kociewie is spoken in the region around
-  Starogard Gdanski, Tczew and Swiecie in northern Poland.
+  Starogard Gda≈Ñski, Tczew and ≈öwiecie in northern Poland.
 %%
 Type: variant
 Subtag: kscor
@@ -46514,6 +47957,20 @@ Added: 2010-07-28
 Prefix: sa
 %%
 Type: variant
+Subtag: lemosin
+Description: Limousin
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in Limousin
+%%
+Type: variant
+Subtag: lengadoc
+Description: Languedocien
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in Languedoc
+%%
+Type: variant
 Subtag: lipaw
 Description: The Lipovaz dialect of Resian
 Description: The Lipovec dialect of Resian
@@ -46521,6 +47978,19 @@ Added: 2007-08-11
 Prefix: sl-rozaj
 Comments: The dialect of Lipovaz/Lipovec is one of the minor local
   dialects of Resian
+%%
+Type: variant
+Subtag: ltg1929
+Description: The Latgalian language orthography codified in 1929
+Added: 2022-08-05
+Prefix: ltg
+%%
+Type: variant
+Subtag: ltg2007
+Description: The Latgalian language orthography codified in the language
+  law in 2007
+Added: 2022-06-23
+Prefix: ltg
 %%
 Type: variant
 Subtag: luna1918
@@ -46567,6 +48037,13 @@ Added: 2015-11-25
 Prefix: en-CA
 %%
 Type: variant
+Subtag: nicard
+Description: Ni√ßard
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in Nice
+%%
+Type: variant
 Subtag: njiva
 Description: The Gniva dialect of Resian
 Description: The Njiva dialect of Resian
@@ -46577,13 +48054,13 @@ Comments: The dialect of Gniva/Njiva is one of the four major local
 %%
 Type: variant
 Subtag: nulik
-Description: Volap¸k nulik
-Description: Volap¸k perevidˆl
-Description: Volap¸k nul‰dik
-Description: de Jong's Volap¸k
-Description: New Volap¸k
-Description: Revised Volap¸k
-Description: Modern Volap¸k
+Description: Volap√ºk nulik
+Description: Volap√ºk perevid√∂l
+Description: Volap√ºk nul√§dik
+Description: de Jong's Volap√ºk
+Description: New Volap√ºk
+Description: Revised Volap√ºk
+Description: Modern Volap√ºk
 Added: 2012-01-28
 Prefix: vo
 %%
@@ -46632,6 +48109,16 @@ Comments: Pamaka dialect of the "Busi Nenge Tongo" English-based
   Creole continuum in Eastern Suriname and Western French Guiana
 %%
 Type: variant
+Subtag: peano
+Description: Latino Sine Flexione
+Description: Interlingua de API
+Description: Interlingua de Peano
+Prefix: la
+Comments: Peano‚Äôs Interlingua, created in 1903 by Giuseppe Peano as an
+  international auxiliary language
+Added: 2020-03-12
+%%
+Type: variant
 Subtag: petr1708
 Description: Petrine orthography
 Added: 2010-10-10
@@ -46653,6 +48140,13 @@ Added: 2006-12-11
 Prefix: el
 %%
 Type: variant
+Subtag: provenc
+Description: Proven√ßal
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in Provence
+%%
+Type: variant
 Subtag: puter
 Description: Puter idiom of Romansh
 Added: 2010-06-29
@@ -46662,10 +48156,10 @@ Comments: Puter is one of the five traditional written standards or
 %%
 Type: variant
 Subtag: rigik
-Description: Volap¸k rigik
-Description: Schleyer's Volap¸k
-Description: Original Volap¸k
-Description: Classic Volap¸k
+Description: Volap√ºk rigik
+Description: Schleyer's Volap√ºk
+Description: Original Volap√ºk
+Description: Classic Volap√ºk
 Added: 2012-01-28
 Prefix: vo
 %%
@@ -46720,6 +48214,14 @@ Comments: Sotavento is one of the two main dialect groups of
 Added: 2013-12-10
 %%
 Type: variant
+Subtag: spanglis
+Description: Spanglish
+Added: 2017-02-23
+Prefix: en
+Prefix: es
+Comments: A variety of contact dialects of English and Spanish
+%%
+Type: variant
 Subtag: surmiran
 Description: Surmiran idiom of Romansh
 Added: 2010-06-29
@@ -46744,6 +48246,13 @@ Comments: Sutsilvan is one of the five traditional written standards or
   "idioms" of the Romansh language.
 %%
 Type: variant
+Subtag: synnejyl
+Description: Synnejysk
+Description: South Jutish
+Added: 2021-07-17
+Prefix: da
+%%
+Type: variant
 Subtag: tarask
 Description: Belarusian in Taraskievica orthography
 Added: 2007-04-27
@@ -46752,6 +48261,23 @@ Comments: The subtag represents Branislau Taraskievic's Belarusian
   orthography as published in "Bielaruski klasycny pravapis" by Juras
   Buslakou, Vincuk Viacorka, Zmicier Sanko, and Zmicier Sauka (Vilnia-
   Miensk 2005).
+%%
+Type: variant
+Subtag: tongyong
+Description: Tongyong Pinyin romanization
+Added: 2020-06-08
+Prefix: zh-Latn
+Comments: Former official transcription standard for Mandarin Chinese in
+  Taiwan.
+%%
+Type: variant
+Subtag: tunumiit
+Description: Tunumiisiut
+Description: East Greenlandic
+Description: √òstgr√∏nlandsk
+Added: 2020-07-16
+Prefix: kl
+Comments: Also known as Tunumiit oraasiat
 %%
 Type: variant
 Subtag: uccor
@@ -46806,10 +48332,32 @@ Comments: Vallader is one of the five traditional written standards or
   "idioms" of the Romansh language.
 %%
 Type: variant
+Subtag: vecdruka
+Description: Latvian orthography used before 1920s ("vecƒÅ druka")
+Added: 2020-09-26
+Prefix: lv
+Comments: The subtag represents the old orthography of the Latvian
+  language used during c. 1600s‚Äì1920s.
+%%
+Type: variant
+Subtag: vivaraup
+Description: Vivaro-Alpine
+Added: 2018-04-22
+Prefix: oc
+Comments: Occitan variant spoken in northeastern Occitania
+%%
+Type: variant
 Subtag: wadegile
 Description: Wade-Giles romanization
 Added: 2008-10-03
 Prefix: zh-Latn
+%%
+Type: variant
+Subtag: xsistemo
+Description: Standard X-system orthographic fallback for spelling
+  Esperanto
+Added: 2017-03-14
+Prefix: eo
 %%
 Type: grandfathered
 Tag: art-lojban

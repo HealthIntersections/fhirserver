@@ -747,7 +747,10 @@ begin
         ei := rt.patientRole.patient.asEntityIdentifier[j];
         s.Append(', ');
         if (ei.id.identifierName = '') and (ei.code <> nil) then
-          s.Append(ei.code.render+': ');
+        begin
+          s.Append(ei.code.render);
+          s.Append(': ');
+         end;
         s.Append(ei.id.render);
       end;
       for j := 0 to rt.patientRole.id.Count - 1 do

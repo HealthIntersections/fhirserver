@@ -512,7 +512,7 @@ end;
 
 function presentAsHtml(cards : TFslList<TCDSHookCard>; inprogress, errors : TStringList) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   card : TCDSHookCard;
   md : TMarkdownProcessor;
   s : String;
@@ -520,7 +520,7 @@ var
   first : boolean;
   cnt : boolean;
 begin
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     b.Append(CARDS_HTML_HEAD);
     cnt := false;
@@ -1231,7 +1231,7 @@ procedure TCDSHooksManager.listInProgress(list: TStrings);
 var
   thread : TCDSHooksManagerWorkThread;
 begin
-  FLock.Lock;
+  FLock.Lock('listInProgress');
   try
     for thread in FThreads do
       if thread.FAlive then
@@ -1260,7 +1260,7 @@ var
   thread : TCDSHooksManagerWorkThread;
 begin
   result := false;
-  FLock.Lock;
+  FLock.Lock('waiting');
   try
     for thread in FThreads do
       if thread.FAlive then
@@ -1294,7 +1294,7 @@ end;
 
 procedure TCDSHooksManager.closeThread(thread: TCDSHooksManagerWorkThread);
 begin
-  FLock.Lock;
+  FLock.Lock('closeThread');
   try
     FThreads.Remove(thread);
     thread.Fmanager := nil;
@@ -1326,7 +1326,7 @@ end;
 
 procedure TCDSHooksManager.dropCache;
 begin
-  FLock.Lock;
+  FLock.Lock('dropCache');
   try
     FCache.Clear;
   finally
@@ -1357,7 +1357,7 @@ begin
   begin
     if server.info.doesHook(request.hook, hook) then
     begin
-      FLock.Lock;
+      FLock.Lock('makeRequest');
       try
         if FCache.TryGetValue(hash+'|'+server.info.fhirEndpoint, cached) then
           event(self, server.info, context, cached.response, cached.error)
@@ -1419,7 +1419,7 @@ procedure TCDSHooksManager.cancelAllRequests;
 var
   thread : TCDSHooksManagerWorkThread;
 begin
-  FLock.Lock;
+  FLock.Lock('cancelAllRequests');
   try
     for thread in FThreads do
       thread.Cancel;

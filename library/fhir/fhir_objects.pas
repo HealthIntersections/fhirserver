@@ -162,7 +162,13 @@ Type
     Constructor Create(place : String);
   End;
 
-  ETooCostly = class (EFHIRException);
+  ETooCostly = class (EFHIRException)
+  private
+    FDiagnostics : String;
+  public
+    property Diagnostics : String read FDiagnostics write FDiagnostics;
+  end;
+
   EFinished = class (EFHIRException);
   EUnsafeOperation = class (EFHIRException);
   EDefinitionException = class (EFHIRException);
@@ -395,6 +401,7 @@ type
   {$M+}
   TFHIRObject = class (TFslObject)
   private
+    FTagNoLink: TFslObject;
     FTags : TFslStringDictionary;
     FTag : TFslObject;
     FTagInt: integer;
@@ -482,6 +489,7 @@ type
     Property Tags[name : String] : String read getTags write SetTags;
     function HasTag(name : String): boolean; overload;
     property Tag : TFslObject read FTag write SetTag;
+    property TagNoLink : TFslObject read FTagNoLink write FTagNoLink;
     property TagInt : integer read FTagInt write FTagInt;
 
     // this is populated by the json and xml parsers if requested
@@ -592,6 +600,8 @@ type
   end;
 
   TFHIRResourceV = class (TFHIRObject)
+  private
+    FSourcePackage : String;
   protected
     function GetProfileVersion: TFHIRVersion; virtual;
     procedure SetProfileVersion(Value: TFHIRVersion); virtual;
@@ -604,6 +614,7 @@ type
     procedure checkNoImplicitRules(place, role : String); virtual; abstract;
 
     property profileVersion : TFHIRVersion read GetProfileVersion write SetProfileVersion;
+    property SourcePackage : String read FSourcePackage write FSourcePackage;
   end;
 
   { TFHIRWorkerContextV }
@@ -626,7 +637,7 @@ type
     property Packages : TStringList read FPackages;
 
     Property LangList : THTTPLanguageList read FLangList write SetLangList;
-    procedure loadResourceJson(rtype, id : String; json : TStream); virtual; abstract;
+    procedure loadResourceJson(packageId : String; rtype, id : String; json : TStream); virtual; abstract;
     Property version : TFHIRVersion read GetVersion;
     function versionString : String;
     function oid2Uri(oid : String) : String; virtual; abstract;

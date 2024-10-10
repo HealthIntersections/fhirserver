@@ -126,7 +126,7 @@ begin
     fn := FHIR_PUB_FILE(test.str['focus'].replace('/', '-')+'.xml');
     p := TFHIRXmlParser.Create(TTestingWorkerContext.Use, nil);
     try
-      f := TFileStream.Create(fn, fmOpenRead);
+      f := TFileStream.Create(fn, fmOpenRead + fmShareDenyWrite);
       try
         p.source := f;
         p.parse;

@@ -34,7 +34,7 @@ interface
 
 uses
   SysUtils, Classes,
-  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang,
+  fsl_utilities, fsl_base, fsl_stream, fsl_http, fsl_lang, fsl_i18n,
   fhir_objects, fhir_common, fhir_features,
   ftx_service;
 
@@ -60,6 +60,8 @@ type
     function link : TUSStateConceptFilter; overload;
   end;
 
+  { TUSStateServices }
+
   TUSStateServices = class (TCodeSystemProvider)
   private
     FCodes : TFslList<TUSStateConcept>;
@@ -67,7 +69,7 @@ type
 
     procedure load;
   public
-    constructor Create(languages : TIETFLanguageDefinitions);
+    constructor Create(languages : TIETFLanguageDefinitions; i18n : TI18nSupport);
     destructor Destroy; Override;
     Function Link : TUSStateServices; overload;
 
@@ -75,7 +77,7 @@ type
     function TotalCount : integer;  override;
     function getIterator(context : TCodeSystemProviderContext) : TCodeSystemIteratorContext; override;
     function getNextContext(context : TCodeSystemIteratorContext) : TCodeSystemProviderContext; override;
-    function systemUri(context : TCodeSystemProviderContext) : String; override;
+    function systemUri : String; override;
     function getDisplay(code : String; langList : THTTPLanguageList):String; override;
     function getDefinition(code : String):String; override;
     function locate(code : String; altOpt : TAlternateCodeOptions; var message : String) : TCodeSystemProviderContext; override;
@@ -93,6 +95,7 @@ type
     function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
+    function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
     function InFilter(ctxt : TCodeSystemProviderFilterContext; concept : TCodeSystemProviderContext) : Boolean; override;
     function isNotClosed(textFilter : TSearchFilterText; propFilter : TCodeSystemProviderFilterContext = nil) : boolean; override;
@@ -105,7 +108,7 @@ implementation
 
 { TUSStateServices }
 
-Constructor TUSStateServices.Create(languages : TIETFLanguageDefinitions);
+constructor TUSStateServices.Create(languages: TIETFLanguageDefinitions; i18n : TI18nSupport);
 begin
   inherited;
   FCodes := TFslList<TUSStateConcept>.Create;
@@ -125,7 +128,7 @@ begin
 end;
 
 
-function TUSStateServices.systemUri(context : TCodeSystemProviderContext) : String;
+function TUSStateServices.systemUri : String;
 begin
   result := 'https://www.usps.com/';
 end;
@@ -322,7 +325,7 @@ end;
 
 function TUSStateServices.filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext;
 begin
-  raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri(nil), itNotSupported);
+  raise ETerminologyError.Create('the filter '+prop+' '+CODES_TFhirFilterOperator[op]+' = '+value+' is not supported for '+systemUri, itNotSupported);
 end;
 
 function TUSStateServices.filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext;
@@ -334,6 +337,11 @@ function TUSStateServices.FilterMore(ctxt : TCodeSystemProviderFilterContext) : 
 begin
   TUSStateConceptFilter(ctxt).FCursor := TUSStateConceptFilter(ctxt).FCursor + 1;
   result := TUSStateConceptFilter(ctxt).FCursor < TUSStateConceptFilter(ctxt).FList.Count;
+end;
+
+function TUSStateServices.filterSize(ctxt: TCodeSystemProviderFilterContext): integer;
+begin
+  result := TUSStateConceptFilter(ctxt).FList.Count;
 end;
 
 function TUSStateServices.FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext;

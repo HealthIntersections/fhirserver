@@ -3,7 +3,6 @@ on:
   # but only for the main branch
   push:
     branches:
-      - master
 #  pull_request:
 jobs:
   Build-Docker-Image:
@@ -11,12 +10,12 @@ jobs:
     steps:
     - name: Check out repository code
       uses: actions/checkout@v2
-    -
-      name: Login to Docker Hub
-      uses: docker/login-action@v2
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}      
+#    -
+#      name: Login to Docker Hub
+#      uses: docker/login-action@v2
+#      with:
+#        username: ${{ secrets.DOCKERHUB_USERNAME }}
+#        password: ${{ secrets.DOCKERHUB_TOKEN }}      
     - name: Cache terminology files
       uses: actions/cache@v2
       with:
@@ -64,24 +63,24 @@ jobs:
         mkdir -p ~/terminology/fhir-server
         wget -q --no-clobber https://storage.googleapis.com/ig-build/snomed.test.cache -O ~/terminology/fhir-server/snomed.test.cache || true
         ls  ~/terminology/fhir-server/snomed.test.cache
-    - name: Run tests in docker
-      run: |
-        docker images --all
-        docker run \
-          --network gh \
-          -v ~/terminology:/terminology \
-          -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
-          fhirserver -tests
-
-#    - name: Tag and push Docker image
+#    - name: Run tests in docker
 #      run: |
-#        # Extract the FHIR server version from the library/version.inc file
-#        FHIR_VERSION=$(grep -oP "FHIR_CODE_FULL_VERSION = '\K[^']+" library/version.inc)
-#
-#        # Tag the Docker image with the extracted version and "latest"
-#        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
-#        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
-#
-#        # Push both tagged images to Docker Hub
-#        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
-#        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+#        docker images --all
+#        docker run \
+#          --network gh \
+#          -v ~/terminology:/terminology \
+#          -v ~/test-settings.ini:/work/fhirserver/exec/64/test-settings.ini \
+#          fhirserver -tests
+
+    - name: Tag and push Docker image
+      run: |
+        # Extract the FHIR server version from the library/version.inc file
+        FHIR_VERSION=$(grep -oP "FHIR_CODE_FULL_VERSION = '\K[^']+" library/version.inc)
+
+        # Tag the Docker image with the extracted version and "latest"
+        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
+        docker tag fhirserver ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest
+
+        # Push both tagged images to Docker Hub
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:$FHIR_VERSION
+        docker push ${{ secrets.DOCKERHUB_USERNAME }}/fhirserver:latest

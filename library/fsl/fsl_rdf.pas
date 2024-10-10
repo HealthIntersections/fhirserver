@@ -78,7 +78,7 @@ type
   public
     constructor Create(gen : TRDFGenerator);
     destructor Destroy; override;
-    function write(b : TStringBuilder; indent : integer) : boolean;
+    function write(b : TFslStringBuilder; indent : integer) : boolean;
     function predicate(predicate, obj : String) : TRDFComplex; overload;
     function predicate(predicate, obj, xtype : String) : TRDFComplex; overload;
     function predicate(predicate : String; obj : TRDFTriple) : TRDFComplex; overload;
@@ -146,16 +146,16 @@ type
     FFormat: TRDFFormat;
     FLastId : integer;
 
-    procedure ln(b: TStringBuilder; s : String);
+    procedure ln(b: TFslStringBuilder; s : String);
     function sorted(list : TEnumerable<String>) : TArray<String>;
     procedure checkPrefix(pname : String); overload;
     procedure checkPrefix(obj : TRDFTriple);  overload;
     function hasSection(sn : String) : boolean;
-    procedure writeTurtlePrefixes(b : TStringBuilder; header : boolean);
-    procedure writeTurtleSection(b : TStringBuilder; section : TRDFSection);
-    procedure writeNTripleSection(b : TStringBuilder; section : TRDFSection);
-    procedure writeNTripleComplex(b: TStringBuilder; complex: TRDFComplex);
-    procedure writeNTriple(b: TStringBuilder; url1, url2, url3: String);
+    procedure writeTurtlePrefixes(b : TFslStringBuilder; header : boolean);
+    procedure writeTurtleSection(b : TFslStringBuilder; section : TRDFSection);
+    procedure writeNTripleSection(b : TFslStringBuilder; section : TRDFSection);
+    procedure writeNTripleComplex(b: TFslStringBuilder; complex: TRDFComplex);
+    procedure writeNTriple(b: TFslStringBuilder; url1, url2, url3: String);
     function fullUrl(s: String): String;
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
@@ -167,7 +167,7 @@ type
     property format : TRDFFormat read FFormat write FFormat;
     procedure prefix(code, url : String);
     function section(sn: String) : TRDFSection;
-    procedure generate(b : TStringBuilder; header : boolean);
+    procedure generate(b : TFslStringBuilder; header : boolean);
   end;
 
 function ttlLiteral(s : String) : String;
@@ -181,12 +181,12 @@ end;
 
 function pctEncode(s : String; isString : boolean) : String;
 var
-  b : TStringBuilder;
+  b : TFslStringBuilder;
   c : char;
 begin
   if s = '' then
     exit('');
-  b := TStringBuilder.Create;
+  b := TFslStringBuilder.Create;
   try
     for c in s do
     begin
@@ -277,7 +277,7 @@ begin
   result := self;
 end;
 
-function TRDFComplex.write(b: TStringBuilder; indent: integer): boolean;
+function TRDFComplex.write(b: TFslStringBuilder; indent: integer): boolean;
 var
   left : String;
   i : integer;
@@ -537,7 +537,7 @@ begin
   result := TRDFGenerator(inherited link);
 end;
 
-procedure TRDFGenerator.ln(b: TStringBuilder; s: String);
+procedure TRDFGenerator.ln(b: TFslStringBuilder; s: String);
 begin
   b.Append(s);
   b.Append(#13#10);
@@ -644,7 +644,7 @@ begin
   end;
 end;
 
-procedure TRDFGenerator.writeNTriple(b: TStringBuilder; url1, url2, url3 : String);
+procedure TRDFGenerator.writeNTriple(b: TFslStringBuilder; url1, url2, url3 : String);
 begin
   b.Append(url1);
   b.Append(' ');
@@ -654,7 +654,7 @@ begin
   b.Append(#13#10);
 end;
 
-procedure TRDFGenerator.writeNTripleComplex(b: TStringBuilder; complex : TRDFComplex);
+procedure TRDFGenerator.writeNTripleComplex(b: TFslStringBuilder; complex : TRDFComplex);
 var
   pred : TRDFPredicate;
 begin
@@ -676,7 +676,7 @@ begin
       writeNTripleComplex(b, pred.FObj as TRDFComplex);
 end;
 
-procedure TRDFGenerator.writeNTripleSection(b: TStringBuilder; section: TRDFSection);
+procedure TRDFGenerator.writeNTripleSection(b: TFslStringBuilder; section: TRDFSection);
 var
   subject : TRDFSubject;
 begin
@@ -687,7 +687,7 @@ begin
   end;
 end;
 
-procedure TRDFGenerator.writeTurtlePrefixes(b: TStringBuilder; header : boolean);
+procedure TRDFGenerator.writeTurtlePrefixes(b: TFslStringBuilder; header : boolean);
 var
   p : String;
 begin
@@ -702,7 +702,7 @@ begin
   ln(b, '');
 end;
 
-procedure TRDFGenerator.writeTurtleSection(b: TStringBuilder; section: TRDFSection);
+procedure TRDFGenerator.writeTurtleSection(b: TFslStringBuilder; section: TRDFSection);
 var
   sbj : TRDFSubject;
   i : integer;
@@ -743,7 +743,7 @@ begin
   end;
 end;
 
-procedure TRDFGenerator.generate(b: TStringBuilder; header: boolean);
+procedure TRDFGenerator.generate(b: TFslStringBuilder; header: boolean);
 var
   s : TRDFSection;
 begin
