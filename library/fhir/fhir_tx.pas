@@ -27,12 +27,12 @@ uses
     FContexts : TStringList;
     FLangList : THTTPLanguageList;
     FI18n : TI18nSupport;
-    FDeadTime : Cardinal;
+    FTimeLimit : Cardinal;
     FNotes : TStringList;
     FOwnsNotes : boolean;
     FOnGetCurrentRequestCount: TGetCurrentRequestCountEvent;
   public
-    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; deadTime : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
+    constructor Create(i18n : TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
     destructor Destroy; override;
 
     property reqId : String read FId;
@@ -215,6 +215,7 @@ uses
     FRequiredSupplements : TStringList;
 
     function costDiags(e : ETooCostly) : ETooCostly;
+    function opName : String; virtual;
     function sizeInBytesV(magic : integer) : cardinal; override;
     function vsHandle : TFHIRValueSetW; virtual; abstract;
     procedure deadCheck(place : String); virtual;
@@ -245,7 +246,7 @@ implementation
 
 { TTerminologyOperationContext }
 
-constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; deadTime : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
+constructor TTerminologyOperationContext.Create(i18n: TI18nSupport; id : String; langList : THTTPLanguageList; timeLimit : cardinal; getRequestCount : TGetCurrentRequestCountEvent);
 begin
   inherited create;
   FI18n := i18n;
@@ -254,7 +255,7 @@ begin
   FContexts := TStringList.create;
   FStartTime := GetTickCount64;
   FOnGetCurrentRequestCount := getRequestCount;
-  FDeadTime := deadTime;
+  FTimeLimit := timeLimit;
   FNotes := TStringList.create;
   FOwnsNotes := true;
 end;
@@ -271,7 +272,7 @@ end;
 
 function TTerminologyOperationContext.copy: TTerminologyOperationContext;
 begin
-  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FDeadTime, OnGetCurrentRequestCount);
+  result := TTerminologyOperationContext.create(FI18n.link, FId, FLangList.link, FTimeLimit, OnGetCurrentRequestCount);
   result.FContexts.assign(FContexts);
   result.FStartTime := FStartTime;
   result.FNotes.free;
@@ -281,19 +282,27 @@ end;
 
 function TTerminologyOperationContext.deadCheck(var time : integer): boolean;
 var
-  dt : UInt64;
+  timeToDie : UInt64;
   rq : integer;
 begin
-  time := FDeadTime;
+  time := FTimeLimit;
   if UnderDebugger then
     exit(false);
 
-  // once timelimit is hit, living on borrowed time until request counts build
-  if assigned(OnGetCurrentRequestCount) and (OnGetCurrentRequestCount > 10) then
-    time := time * 5;
-
-  dt := FStartTime + (time * 1000);
-  result := GetTickCount64 > dt;
+  timeToDie := FStartTime + (time * 1000);
+  if (GetTickCount64 > timeToDie) then
+    exit(true)
+  else
+  begin
+    if assigned(OnGetCurrentRequestCount) and (OnGetCurrentRequestCount < 10) then
+    begin
+      // once timelimit is hit, living on borrowed time until request counts build
+      time := time + (time div 2);
+      // but we only give it so much time
+    end;
+    timeToDie := FStartTime + (time * 1000);
+    result := GetTickCount64 > timeToDie;
+  end;
 end;
 
 procedure TTerminologyOperationContext.seeContext(vurl: String);
@@ -321,7 +330,8 @@ var
   s : string;
 begin
   s := DescribePeriodMS(GetTickCount64 - FStartTime)+' '+vs.vurl+': '+note;
-  Logging.log(s);
+  if false and UnderDebugger then
+    Logging.log(s);
   FNotes.add(s);
 end;
 
@@ -519,6 +529,11 @@ begin
   result := e;
 end;
 
+function TTerminologyWorker.opName: String;
+begin
+  result := '??';
+end;
+
 function TTerminologyWorker.sizeInBytesV(magic : integer) : cardinal;
 begin
   result := inherited sizeInBytesV(magic);
@@ -535,7 +550,8 @@ begin
   if FOpContext.deadCheck(time) then
   begin
     FOpContext.addNote(vsHandle, 'Operation took too long @ '+place+' ('+className+')');
-    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time)])));
+    Logging.log('Operation took too long @ '+place+' ('+className+')');
+    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPlanguages, ['??', inttostr(time), opName])));
   end;
 end;
 

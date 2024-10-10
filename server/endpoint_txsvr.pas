@@ -263,13 +263,12 @@ type
 
   TTerminologyServerEndPoint = class (TStorageEndPoint)
   private
-//    FStore : TTerminologyFhirServerStorage;
+    FStore : TTerminologyFhirServerStorage;
     UTGFolder : String;
     FWeb : TTerminologyServerWebServer;
     FLoadThread : TTerminologyServerDataLoadThread;
     function version : TFHIRVersion;
   public
-    FStore : TTerminologyFhirServerStorage;
     constructor Create(config : TFHIRServerConfigSection; settings : TFHIRServerSettings; db : TFDBManager; common : TCommonTerminologies; pcm : TFHIRPackageManager; i18n : TI18nSupport);
     destructor Destroy; override;
     function summary : String; override;
@@ -1419,10 +1418,7 @@ var
 begin
   i := 0;
 
-
-//  FEndPoint.
-fileToLoad := filePath([FServerContext.pcm.folder,pid]) ;
-
+  fileToLoad := filePath([FServerContext.pcm.folder,pid]) ;
 
   if (FileExists(fileToLoad)) then
     try

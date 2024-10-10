@@ -58,7 +58,6 @@ const
     '<script src="/js/jquery.ui.draggable.js"></script>'+#13#10+
     '<script type="text/javascript" src="/js/jtip.js"></script>'+#13#10+
     '<script type="text/javascript" src="/js/jcookie.js"></script>'+#13#10+
-    '<script type="text/javascript" src="/js/hl7connect.js"></script>'+#13#10+
     '<script type="text/javascript" src="/js/fhir-gw.js"></script>'+#13#10;
   MAP_ATTR_NAME = 'B88BF977DA9543B8A5915C84A70F03F7';
 

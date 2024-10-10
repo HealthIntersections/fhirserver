@@ -1143,7 +1143,7 @@ begin
               oStructure := THL7V2ModelMessageStructure.Create;
               try
                 oStructure.Name := sLastName;
-                oStructure.Description := '(Implicitly Created by HL7Connect)';
+                oStructure.Description := '(Implicitly Created)';
                 oMessageStructures.Add(oStructure.Link);
               finally
                 oStructure.free;

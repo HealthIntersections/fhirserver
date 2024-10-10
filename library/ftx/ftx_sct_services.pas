@@ -3421,7 +3421,7 @@ begin
   try
     if not Concept.FindConcept(id, index) then
       raise ETerminologyError.Create('The Snomed Concept '+inttostr(id)+' was not known', itInvalid);
-    Setlength(res.descendants, 0);
+    Setlength(res.descendants, 1);
     res.descendants[0] := index;
     result := TSnomedFilterContext(res.link);
   finally

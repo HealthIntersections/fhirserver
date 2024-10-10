@@ -44,7 +44,7 @@ uses
   tx_registry_model;
 
 const                                                        
-  MASTER_URL = 'https://raw.githubusercontent.com/FHIR/ig-registry/master/tx-servers.json';
+  MASTER_URL = 'https://fhir.github.io/ig-registry/tx-servers.json';
   EMAIL_DAYS_LIMIT = 7;
 
 Type

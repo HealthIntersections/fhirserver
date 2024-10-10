@@ -139,13 +139,18 @@ https://www.w3.org/International/articles/language-tags/index.en
     function isLangRegion : boolean;
   end;
 
+  { TIETFLanguageEntry }
+
   TIETFLanguageEntry = class (TFslObject)
   private
     FCode: String;
-    FDisplay: String;
+    FDisplays: TStringList;
   public
+    constructor Create; override;
+    destructor Destroy; override;
+
     property code : String read FCode write FCode;
-    property display : String read FDisplay write FDisplay;
+    property displays : TStringList read FDisplays;
   end;
 
   TIETFLanguageLanguage = class (TIETFLanguageEntry)
@@ -205,8 +210,9 @@ https://www.w3.org/International/articles/language-tags/index.en
     class function checkSource(source : String) : String;
     function parse(code : String; var msg : String) : TIETFLang; overload;
     function parse(code : String) : TIETFLang; overload;
-    function present(code : TIETFLang) : String; overload;
-    function present(code : TIETFLang; template : String) : String; overload;
+    function present(code : TIETFLang; i : integer = 0) : String; overload;
+    function present(code : TIETFLang; i : integer; template : String) : String; overload;
+    function displayCount(code : TIETFLang) : integer;
 
     function getDisplayForRegion(code : String):String;
     function getDisplayForLang(code : String):String;
@@ -604,6 +610,20 @@ begin
   exit(FLanguage = other.FLanguage);
 end;
 
+{ TIETFLanguageEntry }
+
+constructor TIETFLanguageEntry.Create;
+begin
+  inherited Create;
+  FDisplays := TStringList.create;
+end;
+
+destructor TIETFLanguageEntry.Destroy;
+begin
+  FDisplays.free;
+  inherited Destroy;
+end;
+
 { TIETFLanguageDefinitions }
 
 constructor TIETFLanguageDefinitions.Create(source : String);
@@ -744,12 +764,17 @@ begin
   result := parse(code, m);
 end;
 
-function TIETFLanguageDefinitions.present(code: TIETFLang; template: String): String;
+function TIETFLanguageDefinitions.present(code: TIETFLang; i : integer; template: String): String;
 begin
-  result := template.Replace('{{lang}}', FLanguages[code.language].display).Replace('{{region}}', FRegions[code.region].display);
+  result := template.Replace('{{lang}}', FLanguages[code.language].displays[i]).Replace('{{region}}', FRegions[code.region].displays[0]);
 end;
 
-function TIETFLanguageDefinitions.present(code: TIETFLang): String;
+function TIETFLanguageDefinitions.displayCount(code: TIETFLang): integer;
+begin
+  result := FLanguages[code.language].displays.Count;
+end;
+
+function TIETFLanguageDefinitions.present(code: TIETFLang; i : integer = 0): String;
 var
   b : TFslStringBuilder;
   first : boolean;
@@ -770,17 +795,17 @@ begin
   begin
     b := TFslStringBuilder.Create;
     try
-      b.append(FLanguages[code.language].display);
+      b.append(FLanguages[code.language].displays[i]);
       if (code.region <> '') or (code.script <> '') or (code.variant <> '') then
       begin
         b.Append(' (');
         first := true;
         if (code.script <> '') then
-          note('Script', FScripts[code.script].display);
+          note('Script', FScripts[code.script].displays[0]);
         if (code.region <> '') then
-          note('Region', FRegions[code.region].display);
+          note('Region', FRegions[code.region].displays[0]);
         if (code.variant <> '') then
-          note('Variant', FVariants[code.variant].display);
+          note('Variant', FVariants[code.variant].displays[0]);
         b.Append(')');
       end;
 
@@ -801,8 +826,12 @@ begin
     if not st[i].StartsWith(' ') then
     begin
       StringSplit(st[i], ':', l, r);
-      if not vars.ContainsKey(l.trim) then
-        vars.Add(l.trim, r.Trim);
+      l := l.trim;
+      r := r.trim;
+      if not vars.ContainsKey(l) then
+        vars.Add(l, r)
+      else
+        vars.Values[l] := vars.Values[l]+'|'+r;
     end;
     inc(i);
   end;
@@ -1104,11 +1133,13 @@ end;
 function TIETFLanguageDefinitions.loadExtLang(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageExtLang;
+  s : String;
 begin
   cc := TIETFLanguageExtLang.Create;
   try
     cc.code := vars['Subtag'];
-    cc.display := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FExtLanguages.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate extlang code '+cc.code+' at line '+inttostr(i+1));
     FExtLanguages.Add(cc.code, cc.Link);
@@ -1121,11 +1152,13 @@ end;
 function TIETFLanguageDefinitions.loadLanguage(vars : TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageLanguage;
+  s : string;
 begin
   cc := TIETFLanguageLanguage.Create;
   try
     cc.code := vars['Subtag'];
-    cc.display := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if (vars.ContainsKey('Suppress-Script')) then
       cc.sscript := vars['Suppress-Script'];
     if (vars.ContainsKey('Scope')) then
@@ -1142,11 +1175,13 @@ end;
 function TIETFLanguageDefinitions.loadRegion(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageRegion;
+  s : String;
 begin
   cc := TIETFLanguageRegion.Create;
   try
     cc.code := vars['Subtag'];
-    cc.display := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FRegions.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FRegions.Add(cc.code, cc.Link);
@@ -1159,11 +1194,13 @@ end;
 function TIETFLanguageDefinitions.loadScript(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageScript;
+  s : String;
 begin
   cc := TIETFLanguageScript.Create;
   try
     cc.code := vars['Subtag'];
-    cc.display := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FScripts.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate script code '+cc.code+' at line '+inttostr(i+1));
     FScripts.Add(cc.code, cc.Link);
@@ -1176,11 +1213,13 @@ end;
 function TIETFLanguageDefinitions.loadVariant(vars: TFslStringDictionary; i: integer): integer;
 var
   cc : TIETFLanguageVariant;
+  s : String;
 begin
   cc := TIETFLanguageVariant.Create;
   try
     cc.code := vars['Subtag'];
-    cc.display := vars['Description'];
+    for s in vars['Description'].split(['|']) do
+      cc.displays.add(s);
     if FVariants.ContainsKey(cc.code) then
       raise EFSLException.create('IETFLang: Unable to parse definitions expecting Type: duplicate region code '+cc.code+' at line '+inttostr(i+1));
     FVariants.Add(cc.code, cc.Link);

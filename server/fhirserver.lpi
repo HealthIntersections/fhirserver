@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <CONFIG>
   <ProjectOptions>
     <Version Value="12"/>
@@ -20,7 +19,8 @@
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="3"/>
       <MinorVersionNr Value="4"/>
-      <RevisionNr Value="11"/>
+      <RevisionNr Value="20"/>
+      <Attributes pvaDebug="False"/>
     </VersionInfo>
     <BuildModes Count="8">
       <Item1 Name="default" Default="True"/>
@@ -833,7 +833,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);../library"/>
-      <Libraries Value="/usr/local/lib64;/tmp/openssl/lib;/tmp/openssl"/>
+      <Libraries Value="/usr/local/lib64/;/tmp/openssl/lib/;/tmp/openssl/"/>
       <OtherUnitFiles Value="../library/fsl/tests;../library/fhir/tests;../library/fhir4/tests;../library/fhir4b/tests;../library/fhir5/tests;../library/ftx/tests;../library/fxver/tests;../library/cda/tests;../library/v2/tests;../library/fdb/tests;modules;tests;admin;../library/fcomp/tests;tx"/>
       <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
     </SearchPaths>
@@ -1036,7 +1036,7 @@
         <Name Value="EPackageCrawlerException"/>
       </Item50>
       <Item51>
-        <Name Value="&lt;Unknown Class>"/>
+        <Name Value="&lt;Unknown Class&gt;"/>
       </Item51>
       <Item52>
         <Name Value="EDateFormatError"/>

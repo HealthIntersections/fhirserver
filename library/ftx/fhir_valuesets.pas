@@ -48,7 +48,7 @@ const
   FHIR_VERSION_CANONICAL_SPLIT_3p = '|';
 
   EXPANSION_DEAD_TIME_SECS = 30;
-  VALIDATION_DEAD_TIME_SECS = 30;
+  VALIDATION_DEAD_TIME_SECS = 60;
 
 
 Type
@@ -143,6 +143,7 @@ Type
   protected
     function sizeInBytesV(magic : integer) : cardinal; override;
     function isValidating : boolean; override;
+    function opName : String; override;
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; id : String; i18n : TI18nSupport); overload;
     destructor Destroy; override;
@@ -223,6 +224,7 @@ Type
     function useDesignation(cd: TConceptDesignation): boolean;
   protected
     function isValidating : boolean; override;
+    function opName : String; override;
   public
     constructor Create(factory : TFHIRFactory; opContext : TTerminologyOperationContext; getVS: TGetValueSetEvent; getCS : TGetProviderEvent; getVersions : TGetSystemVersionsEvent; getExpansion : TGetExpansionEvent; txResources : TFslMetadataResourceList; languages : TIETFLanguageDefinitions; i18n : TI18nSupport); overload;
     destructor Destroy; override;
@@ -1602,8 +1604,16 @@ begin
                       m := FI18n.translate('NO_VALID_DISPLAY_AT_ALL', FParams.HTTPLanguages, [c.display, c.systemUri, c.code])
                     else
                     begin
-                      m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
-                      severity := isError;
+                      if ds = c.display then
+                      begin
+                        m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_OK', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                        severity := isInformation;
+                      end
+                      else
+                      begin
+                        m := FI18n.translate('NO_VALID_DISPLAY_FOUND_NONE_FOR_LANG_ERR', FParams.HTTPLanguages, [c.display, c.systemUri, c.code, FParams.langSummary, ds]);
+                        severity := isError;
+                      end;
                     end;
                   end
                   else if dc = 1 then
@@ -2340,6 +2350,11 @@ begin
   result := true;
 end;
 
+function TValueSetChecker.opName: String;
+begin
+  Result:= 'validation';
+end;
+
 { TFHIRValueSetExpander }
 
 
@@ -2554,6 +2569,7 @@ begin
 
     if (offset + count < 0) and (FFullList.count > limit) then
     begin
+      Logging.log('Operation took too long @ expand ('+className+')');
       raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_COUNT', FParams.HTTPLanguages, [source.vurl, '>'+inttostr(limit), inttostr(FFullList.count)])));
     end
     else
@@ -2840,7 +2856,7 @@ begin
     {$ELSE}
     logging.log('Expansion took too long');
     {$ENDIF}
-    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time)])));
+    raise costDiags(ETooCostly.create(FI18n.translate('VALUESET_TOO_COSTLY_TIME', FParams.HTTPLanguages, [FValueSet.vurl, inttostr(time), opName])));
   end;
 end;
 
@@ -2955,6 +2971,11 @@ end;
 function TFHIRValueSetExpander.isValidating: boolean;
 begin
   result := false;
+end;
+
+function TFHIRValueSetExpander.opName: String;
+begin
+  Result := 'expansion';
 end;
 
 function getPropUrl(cs : TCodeSystemProvider; pcode : String) : String;
@@ -3782,22 +3803,25 @@ begin
 
     if cset.systemUri = '' then
     begin
-      NoTotal;
-      for s in cset.valueSets do
+      if (cset.hasValueSets) then
       begin
-        //Logging.log('Processing '+vsId+', import value set '+s);
-        deadCheck('processCodes#2');
-        ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
-        try
-          checkCanonicalStatus(expansion, ivs.FValueSet, FValueSet);
-          expansion.addParamUri('used-valueset', ivs.FValueSet.vurl);
-          expansion.addParamUri('version', ivs.FValueSet.vurl);
-          valueSets.add(ivs.link);
-        finally
-          ivs.free;
+        NoTotal;
+        for s in cset.valueSets do
+        begin
+          //Logging.log('Processing '+vsId+', import value set '+s);
+          deadCheck('processCodes#2');
+          ivs := TFHIRImportedValueSet.create(expandValueset(s, '', filter.filter, dependencies, notClosed));
+          try
+            checkCanonicalStatus(expansion, ivs.FValueSet, FValueSet);
+            expansion.addParamUri('used-valueset', ivs.FValueSet.vurl);
+            expansion.addParamUri('version', ivs.FValueSet.vurl);
+            valueSets.add(ivs.link);
+          finally
+            ivs.free;
+          end;
         end;
-      end;
-      excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1);
+        excludeValueSet(valueSets[0].valueSet, expansion, valueSets, 1);
+      end
     end
     else
     begin
@@ -3985,23 +4009,17 @@ begin
                     if ok then
                     begin
                       inc(count);
-                      cds := TConceptDesignations.Create(FFactory.link, FLanguages.link);
-                      try
-                        if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
+                      if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
+                      begin
+                        if cs.canParent then
+                          parent := FMap[key(cs.systemUri, cs.parent(c))]
+                        else
                         begin
-                          listDisplays(cds, cs, c);
-                          if cs.canParent then
-                            parent := FMap[key(cs.systemUri, cs.parent(c))]
-                          else
-                          begin
-                            FCanBeHierarchy := false;
-                            parent := nil;
-                          end;
-                          for code in cs.listCodes(c, FParams.altCodeRules) do
-                            excludeCode(cs, cs.systemUri, cs.version, code, expansion, nil, vsSrc.url);
+                          FCanBeHierarchy := false;
+                          parent := nil;
                         end;
-                      finally
-                        cds.free;
+                        for code in cs.listCodes(c, FParams.altCodeRules) do
+                          excludeCode(cs, cs.systemUri, cs.version, code, expansion, nil, vsSrc.url);
                       end;
                     end;
                   finally

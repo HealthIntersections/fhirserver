@@ -475,8 +475,16 @@ begin
   end
   else
   begin
-    src := UrlPath([FUrl, fn]);
-    tgt := FilePath([FFolder, fn]);
+    if (isAbsoluteUrl(fn)) then
+    begin
+      src := fn;
+      tgt := FilePath([FFolder, ExtractFileName(fn)]);
+    end
+    else
+    begin
+      src := UrlPath([FUrl, fn]);
+      tgt := FilePath([FFolder, fn]);
+    end;
   end;
   downloadFile(src, tgt);
 end;

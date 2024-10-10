@@ -742,11 +742,11 @@ Begin
   parser := TDicomDictionaryParser.Create;
   Try
     parser.Dictionary := TDicomDictionary.Create;
-    if FileExists('c:\ProgramData\HL7Connect\data\dicom.cache') Then
+    if FileExists('c:\ProgramData\FhirServer\data\dicom.cache') Then
     Begin
       reader := TFslZipReader.Create;
       Try
-        f := TFslFile.Create('c:\ProgramData\HL7Connect\data\dicom.cache', fmOpenRead + fmShareDenyWrite);
+        f := TFslFile.Create('c:\ProgramData\FhirServer\data\dicom.cache', fmOpenRead + fmShareDenyWrite);
         Try
           reader.Stream := f.Link;
         Finally
@@ -4019,7 +4019,7 @@ End;
 
 function TWordProcessorForm.UnderDevelopment: boolean;
 begin
-  result := FileExists('C:\HL7Connect\v2\development_readme.txt');
+  result := FileExists('C:\FhirServer\v2\development_readme.txt');
 end;
 
 procedure TWordProcessorForm.UpdateField(oSender: TObject;

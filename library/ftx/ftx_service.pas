@@ -751,7 +751,7 @@ begin
 
       if (lang.ietf = nil) then
         lang.ietf := FLanguages.parse(lang.lang);
-      if (lang.ietf <> nil) and lang.ietf.matches(stated, depthForMatchType(matchType)) then
+      if (lang.ietf <> nil) and lang.ietf.matches(actual, depthForMatchType(matchType)) then
         exit(true);
     end;
   end;

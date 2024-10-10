@@ -92,7 +92,7 @@
     <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
     <VerInfo_MajorVer>3</VerInfo_MajorVer>
     <VerInfo_MinorVer>4</VerInfo_MinorVer>
-    <VerInfo_Release>11</VerInfo_Release>
+    <VerInfo_Release>20</VerInfo_Release>
     <VerInfo_Debug>false</VerInfo_Debug>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Base_Win32)&apos;!=&apos;&apos;">
@@ -167,7 +167,7 @@
     <DCC_RangeChecking>true</DCC_RangeChecking>
     <DCC_DebugDCUs>false</DCC_DebugDCUs>
     <VerInfo_MajorVer>3</VerInfo_MajorVer>
-    <VerInfo_Release>11</VerInfo_Release>
+    <VerInfo_Release>20</VerInfo_Release>
     <AppDPIAwarenessMode>none</AppDPIAwarenessMode>
     <VerInfo_MinorVer>4</VerInfo_MinorVer>
     <VerInfo_Debug>false</VerInfo_Debug>
@@ -179,7 +179,7 @@
     <DCC_DebugInformation>0</DCC_DebugInformation>
   </PropertyGroup>
   <PropertyGroup Condition="&apos;$(Cfg_2_Win32)&apos;!=&apos;&apos;">
-    <DCC_UnitSearchPath>C:\HL7Connect\indysoap\source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+    <DCC_UnitSearchPath>$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     <Debugger_RunParams>-debug -ini ..\..\server\Exec\fhir.local.ini -xsnomed-rf2 &quot;C:\Data\terminologies\snomed-ct au\20130530\RF2 Release\Snapshot&quot; -xremount -xtests -xloinc C:\Data\terminologies\FHIR.Loinc.Base\LOINCDB.MDB</Debugger_RunParams>
     <Manifest_File>None</Manifest_File>
     <VerInfo_Locale>1033</VerInfo_Locale>
