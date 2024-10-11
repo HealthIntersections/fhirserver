@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="ascii"?>
-<root xmlns="http://unitsofmeasure.org/ucum-essence" version="2.0.1"
-      revision="$Revision: 439 $"
-      revision-date="$Date: 2015-11-13 15:13:19 -0500 (Fri, 13 Nov 2015) $">
+<root xmlns="http://unitsofmeasure.org/ucum-essence" version="2.2" revision="N/A"
+      revision-date="2024-06-17">
    <prefix Code="Y" CODE="YA">
       <name>yotta</name>
       <printSymbol>Y</printSymbol>
@@ -210,7 +209,7 @@
       <name>mole</name>
       <printSymbol>mol</printSymbol>
       <property>amount of substance</property>
-      <value Unit="10*23" UNIT="10*23" value="6.0221367">6.0221367</value>
+      <value Unit="10*23" UNIT="10*23" value="6.02214076">6.02214076</value>
    </unit>
    <unit Code="sr" CODE="SR" isMetric="yes" class="si">
       <name>steradian</name>
@@ -281,7 +280,7 @@
    <unit Code="Wb" CODE="WB" isMetric="yes" class="si">
       <name>weber</name>
       <printSymbol>Wb</printSymbol>
-      <property>magentic flux</property>
+      <property>magnetic flux</property>
       <value Unit="V.s" UNIT="V.S" value="1">1</value>
    </unit>
    <unit Code="Cel" CODE="CEL" isMetric="yes" isSpecial="yes" class="si">
@@ -337,7 +336,8 @@
    <unit Code="gon" CODE="GON" isMetric="no" class="iso1000">
       <name>gon</name>
       <name>grade</name>
-      <printSymbol>&#9633;<sup>g</sup>
+      <printSymbol>
+         <sup>g</sup>
       </printSymbol>
       <property>plane angle</property>
       <value Unit="deg" UNIT="DEG" value="0.9">0.9</value>
@@ -366,11 +366,11 @@
       <property>volume</property>
       <value Unit="dm3" UNIT="DM3" value="1">1</value>
    </unit>
-   <unit Code="L" isMetric="yes" class="iso1000">
+   <unit Code="L" CODE="L" isMetric="yes" class="iso1000">
       <name>liter</name>
       <printSymbol>L</printSymbol>
       <property>volume</property>
-      <value Unit="l" value="1">1</value>
+      <value Unit="l" UNIT="L" value="1">1</value>
    </unit>
    <unit Code="ar" CODE="AR" isMetric="yes" class="iso1000">
       <name>are</name>
@@ -474,7 +474,7 @@
       <name>unified atomic mass unit</name>
       <printSymbol>u</printSymbol>
       <property>mass</property>
-      <value Unit="g" UNIT="G" value="1.6605402e-24">1.6605402 &#215; 10<sup>-24</sup>
+      <value Unit="g" UNIT="G" value="1.66053906660e-24">1.66053906660 &#215; 10<sup>-24</sup>
       </value>
    </unit>
    <unit Code="eV" CODE="EV" isMetric="yes" class="iso1000">
@@ -510,7 +510,7 @@
          <i>h</i>
       </printSymbol>
       <property>action</property>
-      <value Unit="J.s" UNIT="J.S" value="6.6260755e-34">6.6260755 &#215; 10<sup>-34</sup>
+      <value Unit="J.s" UNIT="J.S" value="6.62607015e-34">6.62607015 &#215; 10<sup>-34</sup>
       </value>
    </unit>
    <unit Code="[k]" CODE="[K]" isMetric="yes" class="const">
@@ -519,7 +519,7 @@
          <i>k</i>
       </printSymbol>
       <property>(unclassified)</property>
-      <value Unit="J/K" UNIT="J/K" value="1.380658e-23">1.380658 &#215; 10<sup>-23</sup>
+      <value Unit="J/K" UNIT="J/K" value="1.380649e-23">1.380649 &#215; 10<sup>-23</sup>
       </value>
    </unit>
    <unit Code="[eps_0]" CODE="[EPS_0]" isMetric="yes" class="const">
@@ -551,7 +551,7 @@
          <i>e</i>
       </printSymbol>
       <property>electric charge</property>
-      <value Unit="C" UNIT="C" value="1.60217733e-19">1.60217733 &#215; 10<sup>-19</sup>
+      <value Unit="C" UNIT="C" value="1.602176634e-19">1.602176634 &#215; 10<sup>-19</sup>
       </value>
    </unit>
    <unit Code="[m_e]" CODE="[M_E]" isMetric="yes" class="const">
@@ -563,7 +563,7 @@
          </i>
       </printSymbol>
       <property>mass</property>
-      <value Unit="g" UNIT="g" value="9.1093897e-28">9.1093897 &#215; 10<sup>-28</sup>
+      <value Unit="kg" UNIT="kg" value="9.1093837139e-31">9.1093837139 &#215; 10<sup>-31</sup>
       </value>
    </unit>
    <unit Code="[m_p]" CODE="[M_P]" isMetric="yes" class="const">
@@ -575,7 +575,7 @@
          </i>
       </printSymbol>
       <property>mass</property>
-      <value Unit="g" UNIT="g" value="1.6726231e-24">1.6726231 &#215; 10<sup>-24</sup>
+      <value Unit="kg" UNIT="kg" value="1.67262192595e-27">1.67262192595 &#215; 10<sup>-27</sup>
       </value>
    </unit>
    <unit Code="[G]" CODE="[GC]" isMetric="yes" class="const">
@@ -584,7 +584,7 @@
          <i>G</i>
       </printSymbol>
       <property>(unclassified)</property>
-      <value Unit="m3.kg-1.s-2" UNIT="M3.KG-1.S-2" value="6.67259e-11">6.67259 &#215; 10<sup>-11</sup>
+      <value Unit="m3.kg-1.s-2" UNIT="M3.KG-1.S-2" value="6.67430e-11">6.67430 &#215; 10<sup>-11</sup>
       </value>
    </unit>
    <unit Code="[g]" CODE="[G]" isMetric="yes" class="const">
@@ -1166,7 +1166,7 @@
       <value Unit="[lb_av]" UNIT="[LB_AV]" value="100">100</value>
    </unit>
    <unit Code="[lcwt_av]" CODE="[LCWT_AV]" isMetric="no" class="avoirdupois">
-      <name>long hunderdweight</name>
+      <name>long hundredweight</name>
       <name>British hundredweight</name>
       <property>mass</property>
       <value Unit="[lb_av]" UNIT="[LB_AV]" value="112">112</value>
@@ -1470,7 +1470,7 @@
       <printSymbol>PD</printSymbol>
       <property>refraction of a prism</property>
       <value Unit="100tan(1 rad)" UNIT="100TAN(1 RAD)">
-         <function name="tanTimes100" value="1" Unit="deg"/>
+         <function name="tanTimes100" value="1" Unit="rad"/>
       </value>
    </unit>
    <unit Code="%[slope]" CODE="%[SLOPE]" isMetric="no" isSpecial="yes" class="clinical">
@@ -1660,7 +1660,7 @@
       <value Unit="[iU]" UNIT="[IU]" value="1">1</value>
    </unit>
    <unit Code="[arb'U]" CODE="[ARB'U]" isMetric="no" isArbitrary="yes" class="chemical">
-      <name>arbitary unit</name>
+      <name>arbitrary unit</name>
       <printSymbol>arb. U</printSymbol>
       <property>arbitrary</property>
       <value Unit="1" UNIT="1" value="1">1</value>
@@ -1787,13 +1787,13 @@
    <unit Code="[IR]" CODE="[IR]" isMetric="no" isArbitrary="yes" class="chemical">
       <name>index of reactivity</name>
       <printSymbol>IR</printSymbol>
-      <property>amount of an allergen callibrated through in-vivo testing using the Stallergenes&#174; method.</property>
+      <property>amount of an allergen calibrated through in-vivo testing using the Stallergenes&#174; method</property>
       <value Unit="1" UNIT="1" value="1">1</value>
    </unit>
    <unit Code="[BAU]" CODE="[BAU]" isMetric="no" isArbitrary="yes" class="chemical">
       <name>bioequivalent allergen unit</name>
       <printSymbol>BAU</printSymbol>
-      <property>amount of an allergen callibrated through in-vivo testing based on the ID50EAL method of (intradermal dilution for 50mm sum of erythema diameters</property>
+      <property>amount of an allergen calibrated through in-vivo testing based on the ID50EAL method of (intradermal dilution for 50mm sum of erythema diameters</property>
       <value Unit="1" UNIT="1" value="1">1</value>
    </unit>
    <unit Code="[AU]" CODE="[AU]" isMetric="no" isArbitrary="yes" class="chemical">
@@ -1806,7 +1806,7 @@
          class="chemical">
       <name>allergen unit for Ambrosia artemisiifolia</name>
       <printSymbol>Amb a 1 U</printSymbol>
-      <property>procedure defined amount of the major allergen of ragweed.</property>
+      <property>procedure defined amount of the major allergen of ragweed</property>
       <value Unit="1" UNIT="1" value="1">1</value>
    </unit>
    <unit Code="[PNU]" CODE="[PNU]" isMetric="no" isArbitrary="yes" class="chemical">
@@ -1949,7 +1949,7 @@
       <value Unit="S" UNIT="S" value="1">1</value>
    </unit>
    <unit Code="[psi]" CODE="[PSI]" isMetric="no" class="misc">
-      <name>pound per sqare inch</name>
+      <name>pound per square inch</name>
       <printSymbol>psi</printSymbol>
       <property>pressure</property>
       <value Unit="[lbf_av]/[in_i]2" UNIT="[LBF_AV]/[IN_I]2" value="1">1</value>
@@ -1961,7 +1961,7 @@
       <value Unit="[pi].rad" UNIT="[PI].RAD" value="2">2</value>
    </unit>
    <unit Code="sph" CODE="SPH" isMetric="no" class="misc">
-      <name>spere</name>
+      <name>sphere</name>
       <printSymbol>sph</printSymbol>
       <property>solid angle</property>
       <value Unit="[pi].sr" UNIT="[PI].SR" value="4">4</value>
@@ -1996,6 +1996,18 @@
       <value Unit="sqrt(1 m2/s4/Hz)" UNIT="SQRT(1 M2/S4/HZ)">
          <function name="sqrt" value="1" Unit="m2/s4/Hz"/>
       </value>
+   </unit>
+   <unit Code="[NTU]" CODE="[NTU]" isMetric="no" class="misc">
+      <name>Nephelometric Turbidity Unit</name>
+      <printSymbol/>
+      <property>turbidity</property>
+      <value Unit="1" UNIT="1" value="1">1</value>
+   </unit>
+   <unit Code="[FNU]" CODE="[FNU]" isMetric="no" class="misc">
+      <name>Formazin Nephelometric Unit</name>
+      <printSymbol/>
+      <property>turbidity</property>
+      <value Unit="1" UNIT="1" value="1">1</value>
    </unit>
    <unit Code="bit_s" CODE="BIT_S" isMetric="no" isSpecial="yes" class="infotech">
       <name>bit</name>
