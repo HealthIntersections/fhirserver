@@ -667,6 +667,7 @@ operations
     function ReferenceSetExists(sid : String) : Boolean;
     function getRefSet(id : int64) : TSnomedReferenceSetMemberArray;
     function systemUri : String;
+    function versionIsMoreDetailed(v1, v2 : String): boolean; virtual;
 
     // status stuff
     Property VersionUri : String read FVersionUri write SetVersionUri;
@@ -736,7 +737,7 @@ operations
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -3504,6 +3505,11 @@ begin
   result := URI_SNOMED;
 end;
 
+function TSnomedServices.versionIsMoreDetailed(v1, v2: String): boolean;
+begin
+  result := (v2 <> '') and v2.startsWith(v1);
+end;
+
 function TSnomedServices.GetRefsetIndex: TSnomedReferenceSetIndex;
 begin
   result := FRefSetIndex;
@@ -5259,7 +5265,7 @@ begin
   result := FSct.FVersionUri;
 end;
 
-function TSnomedProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TSnomedProvider.filter(forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   id : UInt64;
 begin

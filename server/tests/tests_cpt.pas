@@ -191,7 +191,7 @@ var
   s, msg, log : String;
 begin
   log := '';
-  filter := FCPT.filter(true, 'modifier', foEqual, 'true', nil);
+  filter := FCPT.filter(true, true, 'modifier', foEqual, 'true', nil);
   try
     AssertTrue(filter <> nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
@@ -240,7 +240,7 @@ var
   s, msg, log : String;
 begin
   log := '';
-  filter := FCPT.filter(true, 'modifier', foEqual, 'false', nil);
+  filter := FCPT.filter(true, true, 'modifier', foEqual, 'false', nil);
   try
     AssertTrue(filter <> Nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
@@ -289,7 +289,7 @@ var
   s, msg, log : String;
 begin
   log := '';
-  filter := FCPT.filter(true, 'modified', foEqual, 'false', nil);
+  filter := FCPT.filter(true, true, 'modified', foEqual, 'false', nil);
   try
     AssertTrue(filter <> nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));
@@ -337,7 +337,7 @@ var
   c : integer;
   s, msg : String;
 begin
-  filter := FCPT.filter(true, 'modified', foEqual, 'true', nil);
+  filter := FCPT.filter(true, true, 'modified', foEqual, 'true', nil);
   try
     AssertTrue(filter <> nil);
     AssertTrue(FCPT.isNotClosed(nil, filter));
@@ -377,7 +377,7 @@ var
   s, msg, log: String;
 begin
   log := '';
-  filter := FCPT.filter(true, 'kind', foEqual, 'code', nil);
+  filter := FCPT.filter(true, true, 'kind', foEqual, 'code', nil);
   try
     AssertTrue(filter <> nil);
     AssertFalse(FCPT.isNotClosed(nil, filter));

@@ -254,7 +254,7 @@ type
 
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; override;
     function doesFilter(prop : String; op : TFhirFilterOperator; value : String) : boolean; override;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
@@ -1136,7 +1136,7 @@ begin
   end;
 end;
 
-function TNDCServices.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TNDCServices.filter(forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep: TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   ctxt : TNDCFilterPreparationContext;
   res : TNDCFilterContext;

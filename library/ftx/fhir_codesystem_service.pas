@@ -249,7 +249,7 @@ type
 
     function hasSupplement(url : String) : boolean; override;  
     procedure listSupplements(ts : TStringList); override;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -1595,7 +1595,7 @@ begin
     result[i] := result[i].trim();
 end;
 
-function TFhirCodeSystemProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TFhirCodeSystemProvider.filter(forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   code : TFhirCodeSystemProviderContext;
   ts : TStringList;
