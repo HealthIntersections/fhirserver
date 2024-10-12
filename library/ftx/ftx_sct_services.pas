@@ -667,7 +667,6 @@ operations
     function ReferenceSetExists(sid : String) : Boolean;
     function getRefSet(id : int64) : TSnomedReferenceSetMemberArray;
     function systemUri : String;
-    function versionIsMoreDetailed(v1, v2 : String): boolean; virtual;
 
     // status stuff
     Property VersionUri : String read FVersionUri write SetVersionUri;
@@ -757,6 +756,7 @@ operations
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+    function versionIsMoreDetailed(v1, v2 : String): boolean; override;
 
     property Services : TSnomedServices read FSct;
   end;
@@ -3505,11 +3505,6 @@ begin
   result := URI_SNOMED;
 end;
 
-function TSnomedServices.versionIsMoreDetailed(v1, v2: String): boolean;
-begin
-  result := (v2 <> '') and v2.startsWith(v1);
-end;
-
 function TSnomedServices.GetRefsetIndex: TSnomedReferenceSetIndex;
 begin
   result := FRefSetIndex;
@@ -4751,6 +4746,11 @@ begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:is-a'));
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:descends'));
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:in'));
+end;
+
+function TSnomedProvider.versionIsMoreDetailed(v1, v2: String): boolean;
+begin
+  result := (v2 <> '') and v2.startsWith(v1);
 end;
 
 function TSnomedProvider.Definition(context: TCodeSystemProviderContext): string;
