@@ -284,7 +284,7 @@ Type
     function getPrepContext : TCodeSystemProviderFilterPreparationContext; virtual;
     function searchFilter(filter : TSearchFilterText; prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual; abstract;
     function specialFilter(prep : TCodeSystemProviderFilterPreparationContext; sort : boolean) : TCodeSystemProviderFilterContext; virtual;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
+    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; virtual; abstract;
     function prepare(prep : TCodeSystemProviderFilterPreparationContext) : boolean; virtual; // true if the underlying provider collapsed multiple filters
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String; var message : String) : TCodeSystemProviderContext; overload; virtual; abstract;
     function filterLocate(ctxt : TCodeSystemProviderFilterContext; code : String) : TCodeSystemProviderContext; overload; virtual;
@@ -298,6 +298,7 @@ Type
 
     function SpecialEnumeration : String; virtual;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); virtual; abstract;
+    function versionIsMoreDetailed(v1, v2 : String): boolean; virtual;
     procedure getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean); virtual;
     procedure getCDSInfo(card : TCDSHookCard; langList : THTTPLanguageList; baseURL, code, display : String); virtual;
 
@@ -920,7 +921,7 @@ var
   ctxt : TCodeSystemProviderFilterContext;
 begin
   result := false;
-  ctxt := filter(true, prop, op, value, nil);
+  ctxt := filter(false, true, prop, op, value, nil);
   try
     result := ctxt <> nil;
   finally
@@ -1072,6 +1073,11 @@ end;
 function TCodeSystemProvider.SpecialEnumeration: String;
 begin
   result := '';
+end;
+
+function TCodeSystemProvider.versionIsMoreDetailed(v1, v2: String): boolean;
+begin
+  result := false;
 end;
 
 procedure TCodeSystemProvider.getStatus(out status: TPublicationStatus; out standardsStatus: String; out experimental : boolean);

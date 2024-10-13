@@ -736,7 +736,7 @@ operations
     function Code(context : TCodeSystemProviderContext) : string; override;
     function Display(context : TCodeSystemProviderContext; langList : THTTPLanguageList) : string; override;
     procedure Designations(context : TCodeSystemProviderContext; list : TConceptDesignations); override;
-    function filter(forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
+    function filter(forExpansion, forIteration : boolean; prop : String; op : TFhirFilterOperator; value : String; prep : TCodeSystemProviderFilterPreparationContext) : TCodeSystemProviderFilterContext; override;
     function FilterMore(ctxt : TCodeSystemProviderFilterContext) : boolean; override;
     function filterSize(ctxt : TCodeSystemProviderFilterContext) : integer; override;
     function FilterConcept(ctxt : TCodeSystemProviderFilterContext): TCodeSystemProviderContext; override;
@@ -756,6 +756,7 @@ operations
 
     function defToThisVersion(specifiedVersion : String) : boolean; override;
     procedure defineFeatures(features : TFslList<TFHIRFeature>); override;
+    function versionIsMoreDetailed(v1, v2 : String): boolean; override;
 
     property Services : TSnomedServices read FSct;
   end;
@@ -4747,6 +4748,11 @@ begin
   features.Add(TFHIRFeature.fromString('rest.Codesystem:'+systemUri+'.filter', 'concept:in'));
 end;
 
+function TSnomedProvider.versionIsMoreDetailed(v1, v2: String): boolean;
+begin
+  result := (v2 <> '') and v2.startsWith(v1);
+end;
+
 function TSnomedProvider.Definition(context: TCodeSystemProviderContext): string;
 begin
   result := '';
@@ -5259,7 +5265,7 @@ begin
   result := FSct.FVersionUri;
 end;
 
-function TSnomedProvider.filter(forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
+function TSnomedProvider.filter(forExpansion, forIteration : boolean; prop: String; op: TFhirFilterOperator; value: String; prep : TCodeSystemProviderFilterPreparationContext): TCodeSystemProviderFilterContext;
 var
   id : UInt64;
 begin

@@ -555,6 +555,7 @@ end;
 function TValueSetChecker.determineVersion(path, systemURI, versionVS, versionCoding: String; op : TFhirOperationOutcomeW; var message : String): string;
 var
   v : string;
+  cs : TCodeSystemProvider;
 begin
   // version might come from multiple places
   v := FParams.getVersionForRule(systemURI, fvmOverride);
@@ -571,9 +572,21 @@ begin
     result := versionVS
   else
   begin
-    message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
-    op.addIssue(isError, itInvalid, addToPath(path, 'version'), message, oicVSProcessing);
-    exit('');
+    cs := FOthers.matches[systemUri] as TCodeSystemProvider;
+    if (cs = nil) then
+      cs := FOthers.matches[systemUri+'|'+versionVS] as TCodeSystemProvider;
+    if (cs = nil) then
+      cs := FOthers.matches[systemUri+'|'+versionCoding] as TCodeSystemProvider;
+    if (cs <> nil) and (cs.versionIsMoreDetailed(versionVS, versionCoding)) then
+      result := versionCoding
+    else if (cs <> nil) and (cs.versionIsMoreDetailed(versionCoding, versionVS)) then
+      result := versionVS
+    else
+    begin
+      message := 'The code system "'+systemUri+'" version "'+versionVS+'" in the ValueSet include is different to the one in the value ("'+versionCoding+'")';
+      op.addIssue(isError, itInvalid, addToPath(path, 'version'), message, oicVSProcessing);
+      exit('');
+    end;
   end;
   if result = '' then
     result := FParams.getVersionForRule(systemURI, fvmDefault);
@@ -2119,7 +2132,7 @@ begin
         begin
           deadCheck('checkConceptSet#2');
           // gg - why? if ('concept' = fc.property_) and (fc.Op = FilterOperatorIsA) then
-          f := cs.filter(false, fc.prop, fc.Op, fc.value, prep);
+          f := cs.filter(false, false, fc.prop, fc.Op, fc.value, prep);
           if f = nil then
             raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vs.vurl+' was not understood in the context of '+cs.systemUri, itNotSupported);
           f.summary := '"'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'"';
@@ -2700,7 +2713,7 @@ begin
       begin
         for cf in inc.filters.forEnum do // will only cycle once
         begin
-          exit(cs.filter(false, cf.prop, cf.op, cf.value, nil));
+          exit(cs.filter(true, false, cf.prop, cf.op, cf.value, nil));
         end;
       end
       else
@@ -3675,7 +3688,7 @@ begin
                   deadCheck('processCodes#4a');
                   fc := fcl[i];
                   ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
+                  f := cs.filter(true, i = 0, fc.prop, fc.Op, fc.value, prep);
                   if f = nil then
                     raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
                   filters.Insert(offset, f);
@@ -3990,7 +4003,7 @@ begin
                   deadCheck('processCodes#4a');
                   fc := fcl[i];
                   ffactory.checkNoModifiers(fc, 'ValueSetExpander.processCodes', 'filter');
-                  f := cs.filter(i = 0, fc.prop, fc.Op, fc.value, prep);
+                  f := cs.filter(true, i = 0, fc.prop, fc.Op, fc.value, prep);
                   if f = nil then
                     raise ETerminologyError.create('The filter "'+fc.prop +' '+ CODES_TFhirFilterOperator[fc.Op]+ ' '+fc.value+'" from the value set '+vsSrc.url+' was not understood in the context of '+cs.systemUri, itNotSupported);
                   filters.Insert(offset, f);
@@ -4006,7 +4019,7 @@ begin
                   c := cs.FilterConcept(filters[0]);
                   try
                     ok := (not FParams.activeOnly or not cs.IsInactive(c)) and (inner or passesFilters(c, 1));
-                    if ok then
+                     if ok then
                     begin
                       inc(count);
                       if passesImports(valueSets, cs.systemUri, cs.code(c), 0) then
