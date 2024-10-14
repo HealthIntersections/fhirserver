@@ -1083,8 +1083,8 @@ begin
     else if (FRelationships.ContainsKey(prop) and (op = foIn)) then
     begin
       s := commaListOfCodes(value);
-      result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+') order by SourceKey ASC',
-        'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+') and SourceKey = ', forExpansion)
+      result := FilterBySQL(c, d, 'select SourceKey as Key from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+')) order by SourceKey ASC',
+        'select count(SourceKey) from Relationships where RelationshipTypeKey = '+FRelationships[prop]+' and TargetKey in (select CodeKey from Codes where Code in ('+s+')) and SourceKey = ', forExpansion)
     end
     else if (FProperties.ContainsKey(prop) and (op = foEqual)) then
       result := FilterBySQL(c, d, 'select CodeKey as Key from Properties, PropertyValues where Properties.PropertyTypeKey = '+FProperties[prop]+' and Properties.PropertyValueKey  = PropertyValues.PropertyValueKey and PropertyValues.Value = '''+SQLWrapString(value)+''' COLLATE NOCASE order by CodeKey ASC',
