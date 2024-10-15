@@ -668,7 +668,7 @@ begin
     '================================================== -->'+#13#10+
     '  <!-- Placed at the end of the document so the pages load faster -->'+#13#10+
     '<script src="/assets/js/jquery.js"/>'+#13#10+
-    '<script src="/dist/js/bootstrap.min.js"/>'+#13#10+
+    '<script src="/assets/js/bootstrap.min.js"/>'+#13#10+
     '<script src="/assets/js/respond.min.js"/>'+#13#10+
     ''+#13#10+
     '<script src="/assets/js/fhir.js"/>'+#13#10+
@@ -777,7 +777,7 @@ begin
     ''+#13#10+
     ''+#13#10+
     '    <!-- Bootstrap core CSS -->'+#13#10+
-    '  <link rel="stylesheet" href="/dist/css/bootstrap.css"/>'+#13#10+
+    '  <link rel="stylesheet" href="/assets/css/bootstrap.css"/>'+#13#10+
     '  <link rel="stylesheet" href="/assets/css/bootstrap-fhir.css"/>'+#13#10+
     ''+#13#10+
     '    <!-- Project extras -->'+#13#10+
@@ -785,7 +785,7 @@ begin
     '  <link rel="stylesheet" href="/assets/css/pygments-manni.css"/>'+#13#10+
     ''+#13#10+
     '    <!-- FHIR Server stuff -->'+#13#10+
-    '  <link rel="stylesheet" href="/css/tags.css"/>'+#13#10+
+    '  <link rel="stylesheet" href="/assets/css/tags.css"/>'+#13#10+
     ''+#13#10+
     '    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->'+#13#10+
     '    <!-- [if lt IE 9]>'+#13#10+
