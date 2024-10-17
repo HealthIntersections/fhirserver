@@ -755,7 +755,7 @@ end;
 
 function TTerminologyServer.workerGetExpansion(sender: TObject; opContext : TTerminologyOperationContext; url, version, filter: String; params: TFHIRTxOperationParams; dependencies: TStringList; additionalResources : TFslMetadataResourceList; limit: integer; noCacheThisOne : boolean): TFHIRValueSetW;
 begin
-  result := expandVS(opContext.reqId, url, version, params, opContext, filter, dependencies, limit, -1, -1, additionalResources, noCacheThisOne, false, nil);
+  result := expandVS(opContext.reqId, url, version, params, opContext, filter, dependencies, limit, -1, -1, additionalResources, noCacheThisOne, false, opContext.TimeTracker);
 end;
 
 function TTerminologyServer.workerGetProvider(sender: TObject; url, version: String; params: TFHIRTxOperationParams; nullOk : boolean): TCodeSystemProvider;
